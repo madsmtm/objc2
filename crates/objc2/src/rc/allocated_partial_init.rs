@@ -38,15 +38,15 @@ use crate::{DeclaredClass, Message};
 pub struct Allocated<T: ?Sized> {
     /// The yet-to-be initialized object.
     ///
-    /// We don't use `Id` here, since that has different auto-trait impls, and
-    /// requires in its safety contract that the object is initialized (which
-    /// makes it difficult to ensure correctness if such things are split
-    /// across different files). Additionally, we want to have fine control
-    /// over NULL-ness.
+    /// We don't use `Retained` here, since that has different auto-trait
+    /// impls, and requires in its safety contract that the object is
+    /// initialized (which makes it difficult to ensure correctness if such
+    /// things are split across different files). Additionally, we want to
+    /// have fine control over NULL-ness.
     ///
-    /// Covariance is correct, same as `Id`.
+    /// Covariance is correct, same as `Retained`.
     ptr: *const T, // Intentially not `NonNull`!
-    /// Necessary for dropck, as with `Id`.
+    /// Necessary for dropck, as with `Retained`.
     p: PhantomData<T>,
     /// Necessary for restricting auto traits.
     ///
@@ -191,7 +191,7 @@ impl<T: ?Sized> Drop for Allocated<T> {
         // This is also safe in the case where the object is NULL,
         // since `objc_release` allows NULL pointers.
         //
-        // Rest is same as `Id`'s `Drop`.
+        // Rest is same as `Retained`'s `Drop`.
         unsafe { objc_release_fast(self.ptr as *mut _) };
     }
 }
@@ -223,9 +223,9 @@ impl<T: ?Sized> fmt::Pointer for Allocated<T> {
 pub struct PartialInit<T: ?Sized> {
     /// The partially initialized object.
     ///
-    /// Variance is same as `Id`.
+    /// Variance is same as `Retained`.
     ptr: *const T, // Intentionally not NonNull<T>
-    /// Necessary for dropck, as with `Id`.
+    /// Necessary for dropck, as with `Retained`.
     p: PhantomData<T>,
     /// Restrict auto traits, same as `Allocated<T>`.
     p_auto_traits: PhantomData<AnyObject>,
@@ -293,7 +293,7 @@ impl<T: ?Sized> Drop for PartialInit<T> {
         // This is also safe in the case where the object is NULL,
         // since `objc_release` allows NULL pointers.
         //
-        // Rest is same as `Id`.
+        // Rest is same as `Retained`.
         unsafe { objc_release_fast(self.ptr as *mut _) };
     }
 }

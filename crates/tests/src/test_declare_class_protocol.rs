@@ -1,6 +1,6 @@
 #![cfg(feature = "all")]
 use objc2::mutability::Immutable;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSZone};
 use objc2::{declare_class, ClassType, DeclaredClass, ProtocolType};
 use objc2_foundation::NSCopying;
@@ -52,7 +52,7 @@ fn test_declare_class_protocol() {
 
         unsafe impl NSCopying for Custom {
             #[method_id(copyWithZone:)]
-            fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self> {
+            fn copy_with_zone(&self, _zone: *const NSZone) -> Retained<Self> {
                 unimplemented!()
             }
         }
@@ -159,7 +159,7 @@ fn test_declare_class_extra_protocol_method() {
 
         unsafe impl NSCopying for Custom {
             #[method_id(copyWithZone:)]
-            fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self> {
+            fn copy_with_zone(&self, _zone: *const NSZone) -> Retained<Self> {
                 unimplemented!()
             }
 

@@ -3,7 +3,7 @@ use core::ptr;
 
 use crate::encode::RefEncode;
 use crate::mutability::IsMutable;
-use crate::rc::Id;
+use crate::rc::Retained;
 use crate::runtime::{AnyClass, AnyObject, MessageReceiver, Sel};
 use crate::{ClassType, Encode, Message};
 
@@ -79,7 +79,7 @@ pub trait MsgSend: Sized {
 
     #[inline]
     #[track_caller]
-    unsafe fn send_message_error<A, E>(self, sel: Sel, args: A) -> Result<(), Id<E>>
+    unsafe fn send_message_error<A, E>(self, sel: Sel, args: A) -> Result<(), Retained<E>>
     where
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
@@ -103,7 +103,7 @@ pub trait MsgSend: Sized {
         superclass: &AnyClass,
         sel: Sel,
         args: A,
-    ) -> Result<(), Id<E>>
+    ) -> Result<(), Retained<E>>
     where
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
@@ -122,7 +122,11 @@ pub trait MsgSend: Sized {
 
     #[inline]
     #[track_caller]
-    unsafe fn send_super_message_static_error<A, E>(self, sel: Sel, args: A) -> Result<(), Id<E>>
+    unsafe fn send_super_message_static_error<A, E>(
+        self,
+        sel: Sel,
+        args: A,
+    ) -> Result<(), Retained<E>>
     where
         Self::Inner: ClassType,
         <Self::Inner as ClassType>::Super: ClassType,
@@ -144,9 +148,10 @@ pub trait MsgSend: Sized {
 
 #[cold]
 #[track_caller]
-unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E> {
+unsafe fn encountered_error<E: Message>(err: *mut E) -> Retained<E> {
     // SAFETY: Ensured by caller
-    unsafe { Id::retain(err) }.expect("error parameter should be set if the method returns NO")
+    unsafe { Retained::retain(err) }
+        .expect("error parameter should be set if the method returns NO")
 }
 
 impl<T: ?Sized + MessageReceiver> MsgSend for T {
@@ -158,30 +163,30 @@ impl<T: ?Sized + MessageReceiver> MsgSend for T {
     }
 }
 
-impl<'a, T: ?Sized + Message> MsgSend for &'a Id<T> {
+impl<'a, T: ?Sized + Message> MsgSend for &'a Retained<T> {
     type Inner = T;
 
     #[inline]
     fn into_raw_receiver(self) -> *mut AnyObject {
-        (Id::as_ptr(self) as *mut T).cast()
+        (Retained::as_ptr(self) as *mut T).cast()
     }
 }
 
-impl<'a, T: ?Sized + Message + IsMutable> MsgSend for &'a mut Id<T> {
+impl<'a, T: ?Sized + Message + IsMutable> MsgSend for &'a mut Retained<T> {
     type Inner = T;
 
     #[inline]
     fn into_raw_receiver(self) -> *mut AnyObject {
-        Id::as_mut_ptr(self).cast()
+        Retained::as_mut_ptr(self).cast()
     }
 }
 
-impl<T: ?Sized + Message> MsgSend for ManuallyDrop<Id<T>> {
+impl<T: ?Sized + Message> MsgSend for ManuallyDrop<Retained<T>> {
     type Inner = T;
 
     #[inline]
     fn into_raw_receiver(self) -> *mut AnyObject {
-        Id::into_raw(ManuallyDrop::into_inner(self)).cast()
+        Retained::into_raw(ManuallyDrop::into_inner(self)).cast()
     }
 }
 
@@ -207,7 +212,7 @@ mod tests {
     macro_rules! test_error_bool {
         ($expected:expr, $($obj:tt)*) => {
             // Succeeds
-            let res: Result<(), Id<RcTestObject>> = unsafe {
+            let res: Result<(), Retained<RcTestObject>> = unsafe {
                 msg_send![$($obj)*, boolAndShouldError: false, error: _]
             };
             assert_eq!(res, Ok(()));
@@ -216,7 +221,7 @@ mod tests {
             // Errors
             let res = autoreleasepool(|_pool| {
                 // `Ok` type is inferred to be `()`
-                let res: Id<RcTestObject> = unsafe {
+                let res: Retained<RcTestObject> = unsafe {
                     msg_send![$($obj)*, boolAndShouldError: true, error: _]
                 }.expect_err("not err");
                 $expected.alloc += 1;
@@ -252,7 +257,7 @@ mod tests {
 
     #[cfg_attr(not(test), allow(unused))]
     impl RcTestObjectSubclass {
-        fn new() -> Id<Self> {
+        fn new() -> Retained<Self> {
             unsafe { msg_send_id![Self::class(), new] }
         }
     }

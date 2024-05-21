@@ -3,21 +3,21 @@
 //! Works on macOS 10.7+
 #![deny(unsafe_op_in_unsafe_fn)]
 
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::{AnyClass, AnyObject, ProtocolObject};
 use objc2::ClassType;
 use objc2_app_kit::{NSPasteboard, NSPasteboardTypeString};
 use objc2_foundation::{NSArray, NSCopying, NSString};
 
 /// Simplest implementation
-pub fn get_text_1(pasteboard: &NSPasteboard) -> Option<Id<NSString>> {
+pub fn get_text_1(pasteboard: &NSPasteboard) -> Option<Retained<NSString>> {
     unsafe { pasteboard.stringForType(NSPasteboardTypeString) }
 }
 
 /// More complex implementation using `readObjectsForClasses:options:`,
 /// intended to show how some patterns might require more knowledge of
 /// nitty-gritty details.
-pub fn get_text_2(pasteboard: &NSPasteboard) -> Option<Id<NSString>> {
+pub fn get_text_2(pasteboard: &NSPasteboard) -> Option<Retained<NSString>> {
     // The NSPasteboard API is a bit weird, it requires you to pass classes as
     // objects, which `objc2_foundation::NSArray` was not really made for - so
     // we convert the class to an `AnyObject` type instead.
@@ -26,7 +26,7 @@ pub fn get_text_2(pasteboard: &NSPasteboard) -> Option<Id<NSString>> {
     let string_class = {
         let cls: *const AnyClass = NSString::class();
         let cls = cls as *mut AnyObject;
-        unsafe { Id::retain(cls).unwrap() }
+        unsafe { Retained::retain(cls).unwrap() }
     };
     let class_array = NSArray::from_vec(vec![string_class]);
     let objects = unsafe { pasteboard.readObjectsForClasses_options(&class_array, None) };
@@ -36,7 +36,7 @@ pub fn get_text_2(pasteboard: &NSPasteboard) -> Option<Id<NSString>> {
     // into an NSString, which we know it to be since that's what we told
     // `readObjectsForClasses:options:`.
     let obj = obj as *mut NSString;
-    Some(unsafe { Id::retain(obj) }.unwrap())
+    Some(unsafe { Retained::retain(obj) }.unwrap())
 }
 
 pub fn set_text(pasteboard: &NSPasteboard, text: &NSString) {

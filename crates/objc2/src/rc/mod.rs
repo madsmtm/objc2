@@ -3,12 +3,12 @@
 //! The types in this module provide roughly the same benefits as ARC does to
 //! Objective-C.
 //!
-//! Most importantly, a smart pointer [`Id`] is provided to ensure that
+//! Most importantly, a smart pointer [`Retained`] is provided to ensure that
 //! objects are correctly retained and released when created and dropped,
 //! respectively. This ties in strongly with the [`msg_send_id!`] macro.
 //!
 //! Weak references may be created using the [`Weak`] struct; these will not
-//! retain the object, but one can attempt to load them and obtain an `Id`, or
+//! retain the object, but one can attempt to load them and obtain an `Retained`, or
 //! safely fail if the object has been deallocated.
 //!
 //! See [the clang documentation][clang-arc] and [the Apple article on memory
@@ -28,18 +28,18 @@
 //! ## Example
 //!
 //! ```
-//! use objc2::rc::{autoreleasepool, Id, Weak};
+//! use objc2::rc::{autoreleasepool, Retained, Weak};
 //! use objc2::runtime::NSObject;
 //!
-//! // Id will release the object when dropped
-//! let obj: Id<NSObject> = NSObject::new();
+//! // Retained will release the object when dropped
+//! let obj: Retained<NSObject> = NSObject::new();
 //!
 //! // Cloning retains the object an additional time
 //! let cloned = obj.clone();
 //! autoreleasepool(|pool| {
-//!     // Autorelease consumes the Id, but won't actually
+//!     // Autorelease consumes the Retained, but won't actually
 //!     // release it until the end of the autoreleasepool
-//!     let obj_ref: &NSObject = Id::autorelease(cloned, pool);
+//!     let obj_ref: &NSObject = Retained::autorelease(cloned, pool);
 //! });
 //!
 //! // Weak references won't retain the object

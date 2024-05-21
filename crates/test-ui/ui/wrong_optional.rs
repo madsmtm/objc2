@@ -1,4 +1,4 @@
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 use objc2::{declare_class, extern_class, extern_methods, mutability, ClassType, DeclaredClass};
 
@@ -25,7 +25,7 @@ extern_methods!(
         /// Doc comment
         #[optional]
         #[method_id(b)]
-        fn b(&self) -> Id<Self>;
+        fn b(&self) -> Retained<Self>;
     }
 );
 
@@ -63,7 +63,7 @@ declare_class!(
         #[optional]
         /// Doc comment
         #[method_id(d)]
-        fn d(&self) -> Id<Self> {
+        fn d(&self) -> Retained<Self> {
             unimplemented!()
         }
     }

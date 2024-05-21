@@ -93,7 +93,7 @@
 /// # #[cfg(not_available)]
 /// use objc2_foundation::{NSCoding, NSCopying, NSObjectProtocol};
 /// # use objc2::runtime::NSObjectProtocol;
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 /// use objc2::runtime::NSObject;
 /// use objc2::{extern_class, msg_send_id, mutability, ClassType};
 ///
@@ -126,7 +126,7 @@
 ///     let cls = NSFormatter::class();
 ///
 ///     // `NSFormatter` implements `Message`:
-///     let obj: Id<NSFormatter> = unsafe { msg_send_id![cls, new] };
+///     let obj: Retained<NSFormatter> = unsafe { msg_send_id![cls, new] };
 /// }
 /// ```
 ///

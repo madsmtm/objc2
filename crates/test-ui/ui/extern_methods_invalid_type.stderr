@@ -1,17 +1,17 @@
-error[E0277]: the trait bound `Id<MyObject>: ConvertReturn` is not satisfied
+error[E0277]: the trait bound `Retained<MyObject>: ConvertReturn` is not satisfied
  --> ui/extern_methods_invalid_type.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method(a)]
-  | |         fn a(&self) -> Id<Self>;
+  | |         fn a(&self) -> Retained<Self>;
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Id<MyObject>`, which is required by `Id<MyObject>: ConvertReturn`
+  | |_^ the trait `Encode` is not implemented for `Retained<MyObject>`, which is required by `Retained<MyObject>: ConvertReturn`
   |
   = help: the trait `ConvertReturn` is implemented for `bool`
-  = note: required for `Id<MyObject>` to implement `EncodeReturn`
-  = note: required for `Id<MyObject>` to implement `ConvertReturn`
+  = note: required for `Retained<MyObject>` to implement `EncodeReturn`
+  = note: required for `Retained<MyObject>` to implement `ConvertReturn`
 note: required by a bound in `MsgSend::send_message`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send.rs
   |
@@ -35,8 +35,8 @@ error[E0277]: the trait bound `i32: MaybeUnwrap` is not satisfied
   |
   = help: the following other types implement trait `MaybeUnwrap`:
             Allocated<T>
-            Id<T>
-            Option<Id<T>>
+            Option<Retained<T>>
+            Retained<T>
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
@@ -78,20 +78,20 @@ note: required by a bound in `MsgSend::send_message`
   |            ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Result<(), Id<NSObject>>: ConvertReturn` is not satisfied
+error[E0277]: the trait bound `Result<(), Retained<NSObject>>: ConvertReturn` is not satisfied
  --> ui/extern_methods_invalid_type.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method(error:)]
-  | |         fn error(arg: i32) -> Result<(), Id<NSObject>>;
+  | |         fn error(arg: i32) -> Result<(), Retained<NSObject>>;
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Result<(), Id<NSObject>>`, which is required by `Result<(), Id<NSObject>>: ConvertReturn`
+  | |_^ the trait `Encode` is not implemented for `Result<(), Retained<NSObject>>`, which is required by `Result<(), Retained<NSObject>>: ConvertReturn`
   |
   = help: the trait `ConvertReturn` is implemented for `bool`
-  = note: required for `Result<(), Id<NSObject>>` to implement `EncodeReturn`
-  = note: required for `Result<(), Id<NSObject>>` to implement `ConvertReturn`
+  = note: required for `Result<(), Retained<NSObject>>` to implement `EncodeReturn`
+  = note: required for `Result<(), Retained<NSObject>>` to implement `ConvertReturn`
 note: required by a bound in `MsgSend::send_message`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send.rs
   |
@@ -102,21 +102,21 @@ note: required by a bound in `MsgSend::send_message`
   |            ^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Result<Id<MyObject>, Id<NSObject>>: MaybeUnwrap` is not satisfied
+error[E0277]: the trait bound `Result<Retained<MyObject>, Retained<NSObject>>: MaybeUnwrap` is not satisfied
  --> ui/extern_methods_invalid_type.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method_id(error:)]
-  | |         fn error_id(arg: i32) -> Result<Id<Self>, Id<NSObject>>;
+  | |         fn error_id(arg: i32) -> Result<Retained<Self>, Retained<NSObject>>;
   | |     }
   | | );
-  | |_^ the trait `MaybeUnwrap` is not implemented for `Result<Id<MyObject>, Id<NSObject>>`
+  | |_^ the trait `MaybeUnwrap` is not implemented for `Result<Retained<MyObject>, Retained<NSObject>>`
   |
   = help: the following other types implement trait `MaybeUnwrap`:
             Allocated<T>
-            Id<T>
-            Option<Id<T>>
+            Option<Retained<T>>
+            Retained<T>
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |

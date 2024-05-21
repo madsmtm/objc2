@@ -22,7 +22,7 @@ use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::encode::Encoding;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 
 use crate::Foundation::NSNumber;
 
@@ -35,7 +35,7 @@ macro_rules! def_new_fn {
         ($fn_name:ident($fn_inp:ty); $method_name:ident),
     )*} => {$(
         $(#[$($m)*])*
-        pub fn $fn_name(val: $fn_inp) -> Id<Self> {
+        pub fn $fn_name(val: $fn_inp) -> Retained<Self> {
             Self::$method_name(val as _)
         }
     )*}
@@ -61,7 +61,7 @@ impl NSNumber {
 
     #[inline]
     #[cfg(feature = "NSGeometry")]
-    pub fn new_cgfloat(val: crate::Foundation::CGFloat) -> Id<Self> {
+    pub fn new_cgfloat(val: crate::Foundation::CGFloat) -> Retained<Self> {
         #[cfg(target_pointer_width = "64")]
         {
             Self::new_f64(val)
@@ -141,7 +141,7 @@ impl NSNumber {
     /// ```
     /// use objc2_foundation::NSNumber;
     /// use objc2::encode::Encoding;
-    /// use objc2::rc::Id;
+    /// use objc2::rc::Retained;
     ///
     /// // Note: `bool` would convert to either `Signed` or `Unsigned`,
     /// // depending on platform
@@ -153,7 +153,7 @@ impl NSNumber {
     /// }
     ///
     /// impl Number {
-    ///     fn into_nsnumber(self) -> Id<NSNumber> {
+    ///     fn into_nsnumber(self) -> Retained<NSNumber> {
     ///         match self {
     ///             Self::Signed(val) => NSNumber::new_i64(val),
     ///             Self::Unsigned(val) => NSNumber::new_u64(val),

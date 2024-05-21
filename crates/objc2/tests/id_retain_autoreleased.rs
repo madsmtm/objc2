@@ -1,16 +1,16 @@
 use core::mem::ManuallyDrop;
 
 use objc2::msg_send;
-use objc2::rc::{autoreleasepool, Id};
+use objc2::rc::{autoreleasepool, Retained};
 use objc2::runtime::{NSObject, NSObjectProtocol};
 
-fn create_obj() -> Id<NSObject> {
+fn create_obj() -> Retained<NSObject> {
     let obj = ManuallyDrop::new(NSObject::new());
     unsafe {
         let obj: *mut NSObject = msg_send![&*obj, autorelease];
         // All code between the `msg_send!` and the `retain_autoreleased` must
         // be able to be optimized away for this to work.
-        Id::retain_autoreleased(obj).unwrap()
+        Retained::retain_autoreleased(obj).unwrap()
     }
 }
 

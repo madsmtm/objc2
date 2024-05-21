@@ -381,7 +381,7 @@ pub enum Ty {
     // Instead of:
     //     type NSAbc = *const NSString;
     //
-    // Because that means we can use ordinary Id<NSAbc> elsewhere.
+    // Because that means we can use ordinary Retained<NSAbc> elsewhere.
     TypeDef {
         id: ItemIdentifier,
         nullability: Nullability,
@@ -1445,18 +1445,18 @@ impl Ty {
                     ..
                 } if pointee.is_object_like() => {
                     if *nullability == Nullability::NonNull {
-                        write!(f, "Id<{}>", pointee.behind_pointer())
+                        write!(f, "Retained<{}>", pointee.behind_pointer())
                     } else {
-                        write!(f, "Option<Id<{}>>", pointee.behind_pointer())
+                        write!(f, "Option<Retained<{}>>", pointee.behind_pointer())
                     }
                 }
                 Self::TypeDef {
                     id, nullability, ..
                 } if self.is_object_like() => {
                     if *nullability == Nullability::NonNull {
-                        write!(f, "Id<{}>", id.path())
+                        write!(f, "Retained<{}>", id.path())
                     } else {
-                        write!(f, "Option<Id<{}>>", id.path())
+                        write!(f, "Option<Retained<{}>>", id.path())
                     }
                 }
                 Self::Pointer {
@@ -1492,7 +1492,7 @@ impl Ty {
                     // NULL -> error
                     write!(
                         f,
-                        " -> Result<Id<{}>, Id<{}>>",
+                        " -> Result<Retained<{}>, Retained<{}>>",
                         pointee.behind_pointer(),
                         ItemIdentifier::nserror().path(),
                     )
@@ -1506,7 +1506,7 @@ impl Ty {
                     // NULL -> error
                     write!(
                         f,
-                        " -> Result<Id<{}>, Id<{}>>",
+                        " -> Result<Retained<{}>, Retained<{}>>",
                         id.path(),
                         ItemIdentifier::nserror().path(),
                     )
@@ -1515,7 +1515,7 @@ impl Ty {
                     // NO -> error
                     write!(
                         f,
-                        " -> Result<(), Id<{}>>",
+                        " -> Result<(), Retained<{}>>",
                         ItemIdentifier::nserror().path()
                     )
                 }
@@ -1647,9 +1647,9 @@ impl Ty {
                     pointee,
                 } => {
                     let tokens = if *inner_nullability == Nullability::NonNull {
-                        format!("Id<{}>", pointee.behind_pointer())
+                        format!("Retained<{}>", pointee.behind_pointer())
                     } else {
-                        format!("Option<Id<{}>>", pointee.behind_pointer())
+                        format!("Option<Retained<{}>>", pointee.behind_pointer())
                     };
                     if *nullability == Nullability::NonNull {
                         write!(f, "&mut {tokens}")
@@ -1826,7 +1826,7 @@ impl Ty {
         // to be sure (Swift also uses forced unwrapping here).
         //
         // This unwrap is done by `#[method_id(...)]` when we specify the
-        // return type as `Id`.
+        // return type as `Retained`.
         if is_copy {
             match &mut ty {
                 Self::Pointer { nullability, .. } | Self::TypeDef { nullability, .. } => {
@@ -1910,7 +1910,7 @@ impl Ty {
         false
     }
 
-    pub(crate) fn is_id(&self) -> bool {
+    pub(crate) fn is_retainable(&self) -> bool {
         match self {
             Self::Pointer { pointee, .. } if pointee.is_object_like() => true,
             Self::TypeDef { .. } if self.is_object_like() => true,

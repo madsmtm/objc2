@@ -5,7 +5,7 @@ use static_assertions::{assert_impl_all, assert_not_impl_any};
 
 use crate::Foundation::*;
 use objc2::mutability::{Immutable, Mutable};
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
 use objc2::{declare_class, ClassType, DeclaredClass};
 
@@ -67,11 +67,11 @@ unsafe impl Sync for MutableSendSyncObject {}
 #[test]
 fn test_generic_auto_traits() {
     assert_auto_traits::<NSArray<NSString>>();
-    assert_auto_traits::<Id<NSArray<NSString>>>();
+    assert_auto_traits::<Retained<NSArray<NSString>>>();
     assert_auto_traits::<NSMutableArray<NSString>>();
-    assert_auto_traits::<Id<NSMutableArray<NSString>>>();
+    assert_auto_traits::<Retained<NSMutableArray<NSString>>>();
     assert_auto_traits::<NSDictionary<NSString, NSString>>();
-    assert_auto_traits::<Id<NSDictionary<NSString, NSString>>>();
+    assert_auto_traits::<Retained<NSDictionary<NSString, NSString>>>();
 
     macro_rules! assert_id_like {
         ($wrapper:ident<T>) => {
@@ -110,19 +110,19 @@ fn test_generic_auto_traits() {
 
     assert_id_like!(NSArray<T>);
     #[allow(dead_code)]
-    type NSArrayId<T> = Id<NSArray<T>>;
+    type NSArrayId<T> = Retained<NSArray<T>>;
     assert_arc_like!(NSArrayId<T>);
 
     assert_id_like!(NSMutableArray<T>);
     #[allow(dead_code)]
-    type NSMutableArrayId<T> = Id<NSMutableArray<T>>;
+    type NSMutableArrayId<T> = Retained<NSMutableArray<T>>;
     assert_id_like!(NSMutableArrayId<T>);
 
     #[allow(dead_code)]
     type NSDictionarySingle<T> = NSDictionary<T, T>;
     assert_id_like!(NSDictionarySingle<T>);
     #[allow(dead_code)]
-    type NSDictionarySingleId<T> = Id<NSDictionary<T, T>>;
+    type NSDictionarySingleId<T> = Retained<NSDictionary<T, T>>;
     assert_arc_like!(NSDictionarySingleId<T>);
 }
 
@@ -133,7 +133,7 @@ fn send_sync_unwindsafe() {
     assert_auto_traits::<NSData>();
     assert_auto_traits::<NSDictionary<NSString, NSString>>();
     assert_auto_traits::<NSSet<NSString>>();
-    assert_auto_traits::<Id<NSSet<NSString>>>();
+    assert_auto_traits::<Retained<NSSet<NSString>>>();
     // TODO: Figure out if Send + Sync is safe?
     // assert_auto_traits::<NSEnumerator2<NSString>>();
     // assert_auto_traits::<NSFastEnumerator2<NSArray<NSString>>>();

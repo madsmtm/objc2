@@ -30,7 +30,7 @@ error: variadic methods are not yet supported
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method_id(a:)]
-  | |         fn variadic_id(arg: i32, arg2: ...) -> Id<NSObject>;
+  | |         fn variadic_id(arg: i32, arg2: ...) -> Retained<NSObject>;
   | |     }
   | | );
   | |_^
@@ -43,7 +43,7 @@ error: variadic methods are not yet supported
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method(a:_)]
-  | |         fn variadic_error(arg2: ...) -> Result<(), Id<NSObject>>;
+  | |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
   | |     }
   | | );
   | |_^
@@ -65,19 +65,19 @@ error: only foreign or `unsafe extern "C"` functions may be C-variadic
 error: only foreign or `unsafe extern "C"` functions may be C-variadic
  --> ui/extern_methods_variadic.rs
   |
-  |         fn variadic_id(arg: i32, arg2: ...) -> Id<NSObject>;
+  |         fn variadic_id(arg: i32, arg2: ...) -> Retained<NSObject>;
   |                                  ^^^^^^^^^
 
 error: C-variadic function must be declared with at least one named argument
  --> ui/extern_methods_variadic.rs
   |
-  |         fn variadic_error(arg2: ...) -> Result<(), Id<NSObject>>;
+  |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
   |                           ^^^^^^^^^
 
 error: only foreign or `unsafe extern "C"` functions may be C-variadic
  --> ui/extern_methods_variadic.rs
   |
-  |         fn variadic_error(arg2: ...) -> Result<(), Id<NSObject>>;
+  |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
   |                           ^^^^^^^^^
 
 error[E0658]: C-variadic functions are unstable
@@ -116,7 +116,7 @@ error[E0658]: C-variadic functions are unstable
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method_id(a:)]
-  | |         fn variadic_id(arg: i32, arg2: ...) -> Id<NSObject>;
+  | |         fn variadic_id(arg: i32, arg2: ...) -> Retained<NSObject>;
   | |     }
   | | );
   | |_^
@@ -131,7 +131,7 @@ error[E0658]: C-variadic functions are unstable
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method(a:_)]
-  | |         fn variadic_error(arg2: ...) -> Result<(), Id<NSObject>>;
+  | |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
   | |     }
   | | );
   | |_^

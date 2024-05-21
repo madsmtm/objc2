@@ -4,7 +4,7 @@ use core::ptr::{self, NonNull};
 use std::os::raw::c_ulong;
 
 use objc2::mutability::IsIdCloneable;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
 use objc2::{mutability::IsMutable, runtime::ProtocolObject};
 use objc2::{ClassType, Message};
@@ -390,14 +390,14 @@ impl<'a, C: FastEnumerationHelper> Iterator for IterRetained<'a, C>
 where
     C::Item: IsIdCloneable,
 {
-    type Item = Id<C::Item>;
+    type Item = Retained<C::Item>;
 
     #[inline]
     #[track_caller]
-    fn next(&mut self) -> Option<Id<C::Item>> {
+    fn next(&mut self) -> Option<Retained<C::Item>> {
         let obj = self.inner.next()?;
         // SAFETY: The object is stored inside the enumerated collection.
-        Some(unsafe { util::collection_retain_id(obj) })
+        Some(unsafe { util::collection_retain(obj) })
     }
 
     #[inline]
@@ -418,11 +418,11 @@ where
 pub(crate) struct IntoIter<C: ?Sized> {
     helper: FastEnumeratorHelper,
     /// C is covariant.
-    collection: Id<C>,
+    collection: Retained<C>,
 }
 
 impl<C: FastEnumerationHelper> IntoIter<C> {
-    pub(crate) fn new_immutable(collection: Id<C>) -> Self
+    pub(crate) fn new_immutable(collection: Retained<C>) -> Self
     where
         C: IsIdCloneable,
         C::Item: IsIdCloneable,
@@ -433,17 +433,17 @@ impl<C: FastEnumerationHelper> IntoIter<C> {
         }
     }
 
-    pub(crate) fn new_mutable<T: ClassType<Super = C> + IsMutable>(collection: Id<T>) -> Self
+    pub(crate) fn new_mutable<T: ClassType<Super = C> + IsMutable>(collection: Retained<T>) -> Self
     where
         C: IsIdCloneable,
     {
         Self {
             helper: FastEnumeratorHelper::new(),
-            collection: unsafe { Id::cast(collection) },
+            collection: unsafe { Retained::cast(collection) },
         }
     }
 
-    pub(crate) fn new(collection: Id<C>) -> Self
+    pub(crate) fn new(collection: Retained<C>) -> Self
     where
         C: IsMutable,
     {
@@ -455,16 +455,16 @@ impl<C: FastEnumerationHelper> IntoIter<C> {
 }
 
 impl<C: FastEnumerationHelper> Iterator for IntoIter<C> {
-    type Item = Id<C::Item>;
+    type Item = Retained<C::Item>;
 
     #[inline]
     #[track_caller]
-    fn next(&mut self) -> Option<Id<C::Item>> {
+    fn next(&mut self) -> Option<Retained<C::Item>> {
         let collection = ProtocolObject::from_ref(&*self.collection);
         // SAFETY: The collection is the same on each iteration.
         let obj = unsafe { self.helper.next_from(collection)? };
         // SAFETY: TODO
-        let obj = unsafe { Id::retain(obj.cast::<C::Item>().as_ptr()) };
+        let obj = unsafe { Retained::retain(obj.cast::<C::Item>().as_ptr()) };
         // SAFETY: The object was `NonNull`, and `retain` returns the same
         // pointer.
         Some(unsafe { obj.unwrap_unchecked() })
@@ -485,7 +485,7 @@ pub(crate) struct IterWithBackingEnum<'a, C: ?Sized + 'a, E: ?Sized + 'a> {
     /// 'a and C are covariant.
     collection: &'a C,
     /// E is covariant.
-    enumerator: Id<E>,
+    enumerator: Retained<E>,
 }
 
 impl<'a, C, E> IterWithBackingEnum<'a, C, E>
@@ -493,7 +493,7 @@ where
     C: ?Sized + FastEnumerationHelper,
     E: ?Sized + FastEnumerationHelper,
 {
-    pub(crate) unsafe fn new(collection: &'a C, enumerator: Id<E>) -> Self {
+    pub(crate) unsafe fn new(collection: &'a C, enumerator: Retained<E>) -> Self {
         Self {
             helper: FastEnumeratorHelper::new(),
             collection,
@@ -538,7 +538,7 @@ pub(crate) struct IterMutWithBackingEnum<'a, C: ?Sized + 'a, E: ?Sized + 'a> {
     /// 'a and C are covariant.
     collection: &'a mut C,
     /// E is covariant.
-    enumerator: Id<E>,
+    enumerator: Retained<E>,
 }
 
 impl<'a, C, E> IterMutWithBackingEnum<'a, C, E>
@@ -547,7 +547,7 @@ where
     E: ?Sized + FastEnumerationHelper + IsMutable,
     E::Item: IsMutable,
 {
-    pub(crate) unsafe fn new(collection: &'a mut C, enumerator: Id<E>) -> Self {
+    pub(crate) unsafe fn new(collection: &'a mut C, enumerator: Retained<E>) -> Self {
         Self {
             helper: FastEnumeratorHelper::new(),
             collection,
@@ -598,7 +598,7 @@ where
     E: ?Sized + FastEnumerationHelper,
     E::Item: IsIdCloneable,
 {
-    pub(crate) unsafe fn new(collection: &'a C, enumerator: Id<E>) -> Self {
+    pub(crate) unsafe fn new(collection: &'a C, enumerator: Retained<E>) -> Self {
         // SAFETY: Upheld by caller.
         let inner = unsafe { IterWithBackingEnum::new(collection, enumerator) };
         Self { inner }
@@ -611,14 +611,14 @@ where
     E: FastEnumerationHelper,
     E::Item: IsIdCloneable,
 {
-    type Item = Id<E::Item>;
+    type Item = Retained<E::Item>;
 
     #[inline]
     #[track_caller]
-    fn next(&mut self) -> Option<Id<E::Item>> {
+    fn next(&mut self) -> Option<Retained<E::Item>> {
         let obj = self.inner.next()?;
         // SAFETY: The object is stored inside the enumerated collection.
-        Some(unsafe { util::collection_retain_id(obj) })
+        Some(unsafe { util::collection_retain(obj) })
     }
 
     #[inline]
@@ -631,9 +631,9 @@ where
 pub(crate) struct IntoIterWithBackingEnum<C: ?Sized, E: ?Sized> {
     helper: FastEnumeratorHelper,
     /// C is covariant.
-    collection: Id<C>,
+    collection: Retained<C>,
     /// E is covariant.
-    enumerator: Id<E>,
+    enumerator: Retained<E>,
 }
 
 impl<C, E> IntoIterWithBackingEnum<C, E>
@@ -641,7 +641,7 @@ where
     C: FastEnumerationHelper,
     E: ?Sized + FastEnumerationHelper,
 {
-    pub(crate) unsafe fn new_immutable(collection: Id<C>, enumerator: Id<E>) -> Self
+    pub(crate) unsafe fn new_immutable(collection: Retained<C>, enumerator: Retained<E>) -> Self
     where
         C: IsIdCloneable,
         E::Item: IsIdCloneable,
@@ -654,14 +654,14 @@ where
     }
 
     pub(crate) unsafe fn new_mutable<T: ClassType<Super = C> + IsMutable>(
-        collection: Id<T>,
-        enumerator: Id<E>,
+        collection: Retained<T>,
+        enumerator: Retained<E>,
     ) -> Self
     where
         C: IsIdCloneable,
     {
         Self {
-            collection: unsafe { Id::cast(collection) },
+            collection: unsafe { Retained::cast(collection) },
             enumerator,
             helper: FastEnumeratorHelper::new(),
         }
@@ -673,16 +673,16 @@ where
     C: ?Sized + FastEnumerationHelper,
     E: FastEnumerationHelper,
 {
-    type Item = Id<E::Item>;
+    type Item = Retained<E::Item>;
 
     #[inline]
     #[track_caller]
-    fn next(&mut self) -> Option<Id<E::Item>> {
+    fn next(&mut self) -> Option<Retained<E::Item>> {
         let enumerator = ProtocolObject::from_ref(&*self.enumerator);
         // SAFETY: The enumerator is the same on each iteration.
         let obj = unsafe { self.helper.next_from(enumerator)? };
         // SAFETY: TODO
-        let obj = unsafe { Id::retain(obj.cast::<E::Item>().as_ptr()) };
+        let obj = unsafe { Retained::retain(obj.cast::<E::Item>().as_ptr()) };
         // SAFETY: TODO
         Some(unsafe { obj.unwrap_unchecked() })
     }
@@ -771,19 +771,19 @@ macro_rules! __impl_into_iter {
     };
     (
         $(#[$m:meta])*
-        impl<T: Message + IsIdCloneable> IntoIterator for Id<$ty:ident<T>> {
+        impl<T: Message + IsIdCloneable> IntoIterator for Retained<$ty:ident<T>> {
             type IntoIter = $into_iter:ident<T>;
         }
 
         $($rest:tt)*
     ) => {
         $(#[$m])*
-        impl<T: Message + IsIdCloneable> objc2::rc::IdIntoIterator for $ty<T> {
-            type Item = Id<T>;
+        impl<T: Message + IsIdCloneable> objc2::rc::RetainedIntoIterator for $ty<T> {
+            type Item = Retained<T>;
             type IntoIter = $into_iter<T>;
 
             #[inline]
-            fn id_into_iter(this: Id<Self>) -> Self::IntoIter {
+            fn id_into_iter(this: Retained<Self>) -> Self::IntoIter {
                 $into_iter(super::iter::IntoIter::new_immutable(this))
             }
         }
@@ -794,19 +794,19 @@ macro_rules! __impl_into_iter {
     };
     (
         $(#[$m:meta])*
-        impl<T: Message> IntoIterator for Id<$ty:ident<T>> {
+        impl<T: Message> IntoIterator for Retained<$ty:ident<T>> {
             type IntoIter = $into_iter:ident<T>;
         }
 
         $($rest:tt)*
     ) => {
         $(#[$m])*
-        impl<T: Message> objc2::rc::IdIntoIterator for $ty<T> {
-            type Item = Id<T>;
+        impl<T: Message> objc2::rc::RetainedIntoIterator for $ty<T> {
+            type Item = Retained<T>;
             type IntoIter = $into_iter<T>;
 
             #[inline]
-            fn id_into_iter(this: Id<Self>) -> Self::IntoIter {
+            fn id_into_iter(this: Retained<Self>) -> Self::IntoIter {
                 $into_iter(super::iter::IntoIter::new_mutable(this))
             }
         }

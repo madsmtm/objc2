@@ -79,7 +79,7 @@ enum Never {}
 /// all others inherit from.
 ///
 /// Functionality that is provided with this:
-/// - [`IsIdCloneable`] -> [`Id::clone`][crate::rc::Id#impl-Clone-for-Id<T>].
+/// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
 /// - [`IsAllowedMutable`].
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
@@ -94,7 +94,7 @@ pub struct Root {
 ///
 /// Functionality that is provided with this:
 /// - [`IsRetainable`] -> [`ClassType::retain`].
-/// - [`IsIdCloneable`] -> [`Id::clone`][crate::rc::Id#impl-Clone-for-Id<T>].
+/// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
 /// - You are allowed to hand out pointers / references to an instance's
 ///   internal data, since you know such data will never be mutated.
@@ -112,7 +112,7 @@ pub struct Immutable {
 /// Functionality that is provided with this:
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
 /// - [`IsAllowedMutable`].
-/// - [`IsMutable`] -> [`impl DerefMut for Id`][crate::rc::Id#impl-DerefMut-for-Id<T>].
+/// - [`IsMutable`] -> [`impl DerefMut for Retained`][crate::rc::Retained#impl-DerefMut-for-Retained<T>].
 /// - You are allowed to hand out pointers / references to an instance's
 ///   internal data, since you know such data will never be mutated without
 ///   the borrowchecker catching it.
@@ -123,8 +123,8 @@ pub struct Immutable {
 /// - (Safe) methods that mutate the object (without synchronization) are
 ///   required to use `&mut self`.
 /// - The `retain` selector is not generally safe to use on classes `T` that
-///   specify this, since `Id<T>` allows having `&mut T` references, which
-///   Rust assume are unique.
+///   specify this, since `Retained<T>` allows having `&mut T` references,
+///   which Rust assume are unique.
 /// - As a special case of that, `-[NSCopying copy]` and
 ///   `-[NSMutableCopying mutableCopy]`, if implemented, must return a new
 ///   instance (e.g. cannot be implemented by just `retain`-ing the instance).
@@ -180,7 +180,7 @@ pub struct ImmutableWithMutableSubclass<MS: ?Sized> {
 /// Functionality that is provided with this:
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
 /// - [`IsAllowedMutable`].
-/// - [`IsMutable`] -> [`impl DerefMut for Id`][crate::rc::Id#impl-DerefMut-for-Id<T>].
+/// - [`IsMutable`] -> [`impl DerefMut for Retained`][crate::rc::Retained#impl-DerefMut-for-Retained<T>].
 /// - You are allowed to hand out pointers / references to an instance's
 ///   internal data, since you know such data will never be mutated without
 ///   the borrowchecker catching it.
@@ -214,7 +214,7 @@ pub struct MutableWithImmutableSuperclass<IS: ?Sized> {
 ///
 /// Functionality that is provided with this:
 /// - [`IsRetainable`] -> [`ClassType::retain`].
-/// - [`IsIdCloneable`] -> [`Id::clone`][crate::rc::Id#impl-Clone-for-Id<T>].
+/// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
 ///
 ///
@@ -249,7 +249,7 @@ pub struct InteriorMutable {
 ///
 /// Functionality that is provided with this:
 /// - [`IsRetainable`] -> [`ClassType::retain`].
-/// - [`IsIdCloneable`] -> [`Id::clone`][crate::rc::Id#impl-Clone-for-Id<T>].
+/// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
 /// - [`IsMainThreadOnly`] -> `MainThreadMarker::from`.
 //
 // While Xcode's Main Thread Checker doesn't report `alloc` and `dealloc` as
@@ -272,11 +272,11 @@ impl<T: ?Sized + ClassType> private_traits::Sealed for T {}
 impl<P: ?Sized> private_traits::Sealed for ProtocolObject<P> {}
 impl private_traits::Sealed for AnyObject {}
 
-/// Marker trait for classes where [`Id::clone`] is safe.
+/// Marker trait for classes where [`Retained::clone`] / [`Id::clone`] is safe.
 ///
 /// Since the `Foundation` collection types (`NSArray<T>`,
-/// `NSDictionary<K, V>`, ...) act as if they store [`Id`]s, this also makes
-/// certain functionality on those types possible.
+/// `NSDictionary<K, V>`, ...) act as if they store [`Retained`]s, this also
+/// makes certain functionality on those types possible.
 ///
 /// This is implemented for classes whose [`ClassType::Mutability`] is one of:
 /// - [`Root`].
@@ -285,8 +285,9 @@ impl private_traits::Sealed for AnyObject {}
 /// - [`InteriorMutable`].
 /// - [`MainThreadOnly`].
 ///
-/// [`Id`]: crate::rc::Id
-/// [`Id::clone`]: crate::rc::Id#impl-Clone-for-Id<T>
+/// [`Retained`]: crate::rc::Retained
+/// [`Retained::clone`]: crate::rc::Retained#impl-Clone-for-Retained<T>
+/// [`Id::clone`]: crate::rc::Retained#impl-Clone-for-Retained<T>
 ///
 ///
 /// # Safety
@@ -309,9 +310,9 @@ unsafe impl IsIdCloneable for AnyObject {}
 
 /// Marker trait for classes where the `retain` selector is always safe.
 ///
-/// [`Id::clone`] takes `&Id<T>`, while [`ClassType::retain`] only takes `&T`;
-/// the difference between these two is that in the former case, you know that
-/// there are no live mutable subclasses.
+/// [`Retained::clone`] takes `&Retained<T>`, while [`ClassType::retain`] only
+/// takes `&T`; the difference between these two is that in the former case,
+/// you know that there are no live mutable subclasses.
 ///
 /// This is implemented for classes whose [`ClassType::Mutability`] is one of:
 /// - [`Immutable`].
@@ -321,7 +322,7 @@ unsafe impl IsIdCloneable for AnyObject {}
 /// This trait inherits [`IsIdCloneable`], so if a function is bound by this,
 /// functionality given with that trait is available.
 ///
-/// [`Id::clone`]: crate::rc::Id#impl-Clone-for-Id<T>
+/// [`Retained::clone`]: crate::rc::Retained#impl-Clone-for-Retained<T>
 ///
 ///
 /// # Safety

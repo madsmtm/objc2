@@ -6,7 +6,7 @@ pub trait MTLDeviceExtension {
     //     MTLCreateSystemDefaultDevice()
     // }
     //
-    // pub fn all() -> Id<NSArray<Self>> {
+    // pub fn all() -> Retained<NSArray<Self>> {
     //     #[cfg(target_os = "macos")]
     //     MTLCopyAllDevices()
     //     #[cfg(not(target_os = "macos"))]

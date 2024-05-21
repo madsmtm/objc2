@@ -1,4 +1,4 @@
-//! Trivial forwarding impls on `Id`.
+//! Trivial forwarding impls on `Retained`.
 //!
 //! Kept here to keep `id.rs` free from this boilerplate.
 //!
@@ -18,11 +18,11 @@ use core::task::{Context, Poll};
 use std::error::Error;
 use std::io;
 
-use super::Id;
+use super::Retained;
 use crate::mutability::IsMutable;
 
 #[allow(clippy::unconditional_recursion)]
-impl<T: PartialEq + ?Sized> PartialEq for Id<T> {
+impl<T: PartialEq + ?Sized> PartialEq for Retained<T> {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         (**self).eq(&**other)
@@ -35,9 +35,9 @@ impl<T: PartialEq + ?Sized> PartialEq for Id<T> {
     }
 }
 
-impl<T: Eq + ?Sized> Eq for Id<T> {}
+impl<T: Eq + ?Sized> Eq for Retained<T> {}
 
-impl<T: PartialOrd + ?Sized> PartialOrd for Id<T> {
+impl<T: PartialOrd + ?Sized> PartialOrd for Retained<T> {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         (**self).partial_cmp(&**other)
@@ -60,20 +60,20 @@ impl<T: PartialOrd + ?Sized> PartialOrd for Id<T> {
     }
 }
 
-impl<T: Ord + ?Sized> Ord for Id<T> {
+impl<T: Ord + ?Sized> Ord for Retained<T> {
     #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
         (**self).cmp(&**other)
     }
 }
 
-impl<T: hash::Hash + ?Sized> hash::Hash for Id<T> {
+impl<T: hash::Hash + ?Sized> hash::Hash for Retained<T> {
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
         (**self).hash(state);
     }
 }
 
-impl<T: hash::Hasher + ?Sized + IsMutable> hash::Hasher for Id<T> {
+impl<T: hash::Hasher + ?Sized + IsMutable> hash::Hasher for Retained<T> {
     fn finish(&self) -> u64 {
         (**self).finish()
     }
@@ -118,53 +118,53 @@ impl<T: hash::Hasher + ?Sized + IsMutable> hash::Hasher for Id<T> {
     }
 }
 
-impl<T: fmt::Display + ?Sized> fmt::Display for Id<T> {
+impl<T: fmt::Display + ?Sized> fmt::Display for Retained<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         (**self).fmt(f)
     }
 }
 
-impl<T: fmt::Debug + ?Sized> fmt::Debug for Id<T> {
+impl<T: fmt::Debug + ?Sized> fmt::Debug for Retained<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         (**self).fmt(f)
     }
 }
 
-impl<T: ?Sized> borrow::Borrow<T> for Id<T> {
+impl<T: ?Sized> borrow::Borrow<T> for Retained<T> {
     fn borrow(&self) -> &T {
         // Auto-derefs
         self
     }
 }
 
-impl<T: ?Sized + IsMutable> borrow::BorrowMut<T> for Id<T> {
+impl<T: ?Sized + IsMutable> borrow::BorrowMut<T> for Retained<T> {
     fn borrow_mut(&mut self) -> &mut T {
         // Auto-derefs
         self
     }
 }
 
-impl<T: ?Sized> AsRef<T> for Id<T> {
+impl<T: ?Sized> AsRef<T> for Retained<T> {
     fn as_ref(&self) -> &T {
         // Auto-derefs
         self
     }
 }
 
-impl<T: ?Sized + IsMutable> AsMut<T> for Id<T> {
+impl<T: ?Sized + IsMutable> AsMut<T> for Retained<T> {
     fn as_mut(&mut self) -> &mut T {
         // Auto-derefs
         self
     }
 }
 
-impl<T: Error + ?Sized> Error for Id<T> {
+impl<T: Error + ?Sized> Error for Retained<T> {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         (**self).source()
     }
 }
 
-impl<T: io::Read + ?Sized + IsMutable> io::Read for Id<T> {
+impl<T: io::Read + ?Sized + IsMutable> io::Read for Retained<T> {
     #[inline]
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
         (**self).read(buf)
@@ -191,7 +191,7 @@ impl<T: io::Read + ?Sized + IsMutable> io::Read for Id<T> {
     }
 }
 
-impl<T: io::Write + ?Sized + IsMutable> io::Write for Id<T> {
+impl<T: io::Write + ?Sized + IsMutable> io::Write for Retained<T> {
     #[inline]
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         (**self).write(buf)
@@ -218,7 +218,7 @@ impl<T: io::Write + ?Sized + IsMutable> io::Write for Id<T> {
     }
 }
 
-impl<T: io::Seek + ?Sized + IsMutable> io::Seek for Id<T> {
+impl<T: io::Seek + ?Sized + IsMutable> io::Seek for Retained<T> {
     #[inline]
     fn seek(&mut self, pos: io::SeekFrom) -> io::Result<u64> {
         (**self).seek(pos)
@@ -230,7 +230,7 @@ impl<T: io::Seek + ?Sized + IsMutable> io::Seek for Id<T> {
     }
 }
 
-impl<T: io::BufRead + ?Sized + IsMutable> io::BufRead for Id<T> {
+impl<T: io::BufRead + ?Sized + IsMutable> io::BufRead for Retained<T> {
     #[inline]
     fn fill_buf(&mut self) -> io::Result<&[u8]> {
         (**self).fill_buf()
@@ -252,7 +252,7 @@ impl<T: io::BufRead + ?Sized + IsMutable> io::BufRead for Id<T> {
     }
 }
 
-impl<T: Future + Unpin + ?Sized + IsMutable> Future for Id<T> {
+impl<T: Future + Unpin + ?Sized + IsMutable> Future for Retained<T> {
     type Output = T::Output;
 
     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {

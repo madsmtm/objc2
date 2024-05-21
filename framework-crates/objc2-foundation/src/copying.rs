@@ -1,5 +1,5 @@
 use objc2::mutability::CounterpartOrSelf;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 #[cfg(feature = "NSZone")]
 use objc2::runtime::NSZone;
 use objc2::{extern_protocol, ProtocolType};
@@ -22,7 +22,7 @@ extern_protocol!(
         /// usually `Self`, but e.g. `NSMutableString` returns `NSString`.
         #[method_id(copy)]
         #[optional]
-        fn copy(&self) -> Id<Self::Immutable>
+        fn copy(&self) -> Retained<Self::Immutable>
         where
             Self: CounterpartOrSelf;
 
@@ -37,7 +37,7 @@ extern_protocol!(
         /// The zone pointer must be valid or NULL.
         #[method_id(copyWithZone:)]
         #[cfg(feature = "NSZone")]
-        unsafe fn copyWithZone(&self, zone: *mut NSZone) -> Id<Self::Immutable>
+        unsafe fn copyWithZone(&self, zone: *mut NSZone) -> Retained<Self::Immutable>
         where
             Self: CounterpartOrSelf;
     }
@@ -62,7 +62,7 @@ extern_protocol!(
         /// `NSString` and `NSMutableString` return `NSMutableString`.
         #[method_id(mutableCopy)]
         #[optional]
-        fn mutableCopy(&self) -> Id<Self::Mutable>
+        fn mutableCopy(&self) -> Retained<Self::Mutable>
         where
             Self: CounterpartOrSelf;
 
@@ -77,7 +77,7 @@ extern_protocol!(
         /// The zone pointer must be valid or NULL.
         #[method_id(mutableCopyWithZone:)]
         #[cfg(feature = "NSZone")]
-        unsafe fn mutableCopyWithZone(&self, zone: *mut NSZone) -> Id<Self::Mutable>
+        unsafe fn mutableCopyWithZone(&self, zone: *mut NSZone) -> Retained<Self::Mutable>
         where
             Self: CounterpartOrSelf;
     }

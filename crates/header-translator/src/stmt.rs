@@ -1835,21 +1835,22 @@ impl Stmt {
                     writeln!(f, "    }}")?;
                     writeln!(f, ");")?;
 
-                    if let Some(method) =
-                        methods.iter().find(|method| method.usable_in_default_id())
+                    if let Some(method) = methods
+                        .iter()
+                        .find(|method| method.usable_in_default_retained())
                     {
                         writeln!(f)?;
                         // Assume `new` methods require no extra features
                         write!(f, "{}", self.cfg_gate_ln(config))?;
                         writeln!(
                             f,
-                            "impl{} DefaultId for {}{} {{",
+                            "impl{} DefaultRetained for {}{} {{",
                             GenericParamsHelper(cls_generics, "Message"),
                             cls.path(),
                             GenericTyHelper(cls_generics),
                         )?;
                         writeln!(f, "    #[inline]")?;
-                        writeln!(f, "    fn default_id() -> Id<Self> {{")?;
+                        writeln!(f, "    fn default_id() -> Retained<Self> {{")?;
                         writeln!(f, "        Self::{}()", method.fn_name)?;
                         writeln!(f, "    }}")?;
                         writeln!(f, "}}")?;
@@ -1947,7 +1948,7 @@ impl Stmt {
                             // `NSCopying`.
                             //
                             // The types does have to be cloneable, since generic
-                            // types effectively store an `Id<T>` of the type.
+                            // types effectively store an `Retained<T>` of the type.
                             ("Foundation", "NSCopying") => ("?Sized + IsIdCloneable", None),
                             ("Foundation", "NSMutableCopying") => ("?Sized + IsIdCloneable", None),
                             // TODO: Do we need further tweaks to this?

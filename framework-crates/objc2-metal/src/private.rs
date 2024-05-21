@@ -9,16 +9,16 @@ use std::ffi::c_void;
 
 use crate::*;
 
-use objc2::rc::{Allocated, Id};
+use objc2::rc::{Allocated, Retained};
 use objc2::runtime::{AnyObject, ProtocolObject};
 use objc2::{extern_methods, msg_send_id, Message};
 
 pub unsafe trait MTLDevicePrivate: Message {
-    unsafe fn vendorName(&self) -> Id<objc2_foundation::NSString> {
+    unsafe fn vendorName(&self) -> Retained<objc2_foundation::NSString> {
         unsafe { msg_send_id![self, vendorName] }
     }
 
-    unsafe fn familyName(&self) -> Id<objc2_foundation::NSString> {
+    unsafe fn familyName(&self) -> Retained<objc2_foundation::NSString> {
         unsafe { msg_send_id![self, familyName] }
     }
 }
@@ -39,13 +39,13 @@ extern_methods!(
             device: &ProtocolObject<dyn MTLDevice>,
             options: u64,
             flags: u64,
-        ) -> Option<Id<Self>>;
+        ) -> Option<Retained<Self>>;
 
         #[method_id(newSerializedVertexDataWithFlags:error:_)]
         pub unsafe fn newSerializedVertexDataWithFlags_error(
             &self,
             flags: u64,
-        ) -> Result<Id<AnyObject>, Id<objc2_foundation::NSError>>;
+        ) -> Result<Retained<AnyObject>, Retained<objc2_foundation::NSError>>;
 
         #[method(serializeFragmentData)]
         pub unsafe fn serializeFragmentData(&self) -> *mut c_void;
@@ -64,6 +64,6 @@ extern_methods!(
     #[cfg(feature = "MTLVertexDescriptor")]
     unsafe impl MTLVertexDescriptor {
         #[method_id(newSerializedDescriptor)]
-        pub unsafe fn newSerializedDescriptor(&self) -> Option<Id<AnyObject>>;
+        pub unsafe fn newSerializedDescriptor(&self) -> Option<Retained<AnyObject>>;
     }
 );

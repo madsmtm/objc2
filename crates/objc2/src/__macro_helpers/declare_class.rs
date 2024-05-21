@@ -5,7 +5,7 @@ use core::marker::PhantomData;
 use std::collections::HashSet;
 
 use crate::encode::{Encode, Encoding};
-use crate::rc::{Allocated, Id};
+use crate::rc::{Allocated, Retained};
 use crate::runtime::{
     AnyClass, AnyObject, ClassBuilder, MessageReceiver, MethodImplementation, Sel,
 };
@@ -66,7 +66,7 @@ where
 impl<Ret, T> MessageRecieveId<Allocated<T>, Ret> for Init
 where
     T: Message,
-    Ret: MaybeOptionId<Input = Option<Id<T>>>,
+    Ret: MaybeOptionId<Input = Option<Retained<T>>>,
 {
     #[inline]
     fn into_return(obj: Ret) -> IdReturnValue {
@@ -98,7 +98,7 @@ where
     }
 }
 
-/// Helper trait for specifying an `Id<T>` or an `Option<Id<T>>`.
+/// Helper trait for specifying an `Retained<T>` or an `Option<Retained<T>>`.
 ///
 /// (Both of those are valid return types from declare_class! `#[method_id]`).
 pub trait MaybeOptionId: MaybeUnwrap {
@@ -106,30 +106,30 @@ pub trait MaybeOptionId: MaybeUnwrap {
     fn autorelease_return(self) -> IdReturnValue;
 }
 
-impl<T: Message> MaybeOptionId for Id<T> {
+impl<T: Message> MaybeOptionId for Retained<T> {
     #[inline]
     fn consumed_return(self) -> IdReturnValue {
-        let ptr: *mut T = Id::into_raw(self);
+        let ptr: *mut T = Retained::into_raw(self);
         IdReturnValue(ptr.cast())
     }
 
     #[inline]
     fn autorelease_return(self) -> IdReturnValue {
-        let ptr: *mut T = Id::autorelease_return(self);
+        let ptr: *mut T = Retained::autorelease_return(self);
         IdReturnValue(ptr.cast())
     }
 }
 
-impl<T: Message> MaybeOptionId for Option<Id<T>> {
+impl<T: Message> MaybeOptionId for Option<Retained<T>> {
     #[inline]
     fn consumed_return(self) -> IdReturnValue {
-        let ptr: *mut T = Id::consume_as_ptr_option(self);
+        let ptr: *mut T = Retained::consume_as_ptr_option(self);
         IdReturnValue(ptr.cast())
     }
 
     #[inline]
     fn autorelease_return(self) -> IdReturnValue {
-        let ptr: *mut T = Id::autorelease_return_option(self);
+        let ptr: *mut T = Retained::autorelease_return_option(self);
         IdReturnValue(ptr.cast())
     }
 }

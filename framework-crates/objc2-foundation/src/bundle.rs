@@ -10,7 +10,7 @@ impl NSBundle {
     #[cfg(feature = "NSString")]
     #[cfg(feature = "NSDictionary")]
     #[cfg(feature = "NSObject")]
-    pub fn name(&self) -> Option<objc2::rc::Id<crate::Foundation::NSString>> {
+    pub fn name(&self) -> Option<objc2::rc::Retained<crate::Foundation::NSString>> {
         use crate::Foundation::{NSCopying, NSString};
         use objc2::runtime::AnyObject;
 

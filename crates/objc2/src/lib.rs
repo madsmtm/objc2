@@ -23,22 +23,22 @@
 //!
 //! First, we allocate a new [`NSObject`] using [`ClassType::alloc`].
 //! Next, we initialize this object. It is ensured to be deallocated using
-//! [`rc::Id`].
+//! [`rc::Retained`].
 //! Now we're free to send messages to the object to our hearts desire using
 //! the [`msg_send!`] or [`msg_send_id!`] macros (depending on the return type
 //! of the method).
-//! Finally, the `Id` goes out of scope, and the object is released and
+//! Finally, the `Retained` goes out of scope, and the object is released and
 //! deallocated.
 //!
 //! ```
 //! use objc2::{msg_send, msg_send_id, ClassType};
 //! use objc2::ffi::NSUInteger;
-//! use objc2::rc::Id;
+//! use objc2::rc::Retained;
 //! use objc2::runtime::{NSObject, NSObjectProtocol};
 //!
 //! // Creation
 //!
-//! let obj1: Id<NSObject> = unsafe {
+//! let obj1: Retained<NSObject> = unsafe {
 //!     msg_send_id![NSObject::alloc(), init]
 //! };
 //! // Or
@@ -55,7 +55,7 @@
 //! };
 //! assert!(is_kind);
 //!
-//! let obj1_self: Id<NSObject> = unsafe { msg_send_id![&obj1, self] };
+//! let obj1_self: Retained<NSObject> = unsafe { msg_send_id![&obj1, self] };
 //! assert_eq!(obj1, obj1_self);
 //!
 //! // Deallocation on drop
@@ -75,7 +75,7 @@
 //! crate has:
 //!
 //! [`NSObject`]: crate::runtime::NSObject
-//! [`rc::Id`]: crate::rc::Id
+//! [`rc::Retained`]: crate::rc::Retained
 //! [the framework crates]: crate::topics::about_generated
 //!
 //!

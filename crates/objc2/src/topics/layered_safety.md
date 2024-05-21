@@ -153,12 +153,12 @@ whether you need to `retain` and `release` the object involves subtle rules
 that depend on the name of the method!
 
 Objective-C solved this years ago with the introduction of "ARC". Similarly,
-we can solve this with [`msg_send_id!`] and the smart pointer [`rc::Id`],
+we can solve this with [`msg_send_id!`] and the smart pointer [`rc::Retained`],
 which work together to ensure that the memory management of the object is done
 correctly.
 
 [`msg_send_id!`]: crate::msg_send_id
-[`rc::Id`]: crate::rc::Id
+[`rc::Retained`]: crate::rc::Retained
 
 
 ### Example
@@ -167,11 +167,11 @@ The `NSData` example again.
 
 ```rust
 use objc2::ffi::NSUInteger;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 use objc2::{class, msg_send, msg_send_id};
 
-let obj: Id<NSObject> = unsafe { msg_send_id![class!(NSData), new] };
+let obj: Retained<NSObject> = unsafe { msg_send_id![class!(NSData), new] };
 let length: NSUInteger = unsafe { msg_send![&obj, length] };
 // `obj` goes out of scope, `release` is automatically sent to the object
 ```
@@ -203,7 +203,7 @@ The `NSData` example again.
 
 ```rust
 use objc2::ffi::NSUInteger;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 use objc2::{extern_class, extern_methods, mutability, ClassType};
 
@@ -220,7 +220,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSData {
         #[method_id(new)]
-        pub fn new() -> Id<Self>;
+        pub fn new() -> Retained<Self>;
 
         #[method(length)]
         pub fn length(&self) -> NSUInteger;

@@ -3,11 +3,11 @@
 #![cfg(feature = "NSObject")]
 use alloc::{format, vec};
 
-use objc2::rc::{autoreleasepool, Id};
+use objc2::rc::{autoreleasepool, Retained};
 
 use crate::Foundation::{NSDictionary, NSObject, NSString};
 
-fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {
+fn sample_dict(key: &str) -> Retained<NSDictionary<NSString, NSObject>> {
     let string = NSString::from_str(key);
     let obj = NSObject::new();
     NSDictionary::from_vec(&[&*string], vec![obj])

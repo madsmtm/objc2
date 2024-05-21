@@ -2,7 +2,7 @@
 use core::ptr::{self, NonNull};
 
 use objc2::mutability::Immutable;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 use objc2::{declare_class, extern_methods, sel, ClassType, DeclaredClass};
 
@@ -111,7 +111,7 @@ declare_class!(
 extern_methods!(
     unsafe impl DeclareClassCfg {
         #[method_id(new)]
-        fn new() -> Id<Self>;
+        fn new() -> Retained<Self>;
     }
 
     unsafe impl DeclareClassCfg {
@@ -219,7 +219,7 @@ declare_class!(
             _arg2: i32,
             _arg3: i32,
             _obj: *const Self,
-        ) -> Option<Id<Self>> {
+        ) -> Option<Retained<Self>> {
             None
         }
     }
@@ -228,7 +228,7 @@ declare_class!(
 extern_methods!(
     unsafe impl TestMultipleColonSelector {
         #[method_id(new)]
-        fn new() -> Id<Self>;
+        fn new() -> Retained<Self>;
 
         #[method(test::arg3:)]
         fn test_class(arg1: i32, arg2: i32, arg3: i32) -> i32;
@@ -237,7 +237,7 @@ extern_methods!(
         fn test_instance(&self, arg1: i32, arg2: i32, arg3: i32) -> i32;
 
         #[method(test::error:_)]
-        fn test_error(&self, arg1: i32, arg2: i32) -> Result<(), Id<NSObject>>;
+        fn test_error(&self, arg1: i32, arg2: i32) -> Result<(), Retained<NSObject>>;
 
         #[method_id(test:::withObject:)]
         fn test_object(
@@ -246,7 +246,7 @@ extern_methods!(
             arg2: i32,
             arg3: i32,
             obj: *const Self,
-        ) -> Option<Id<Self>>;
+        ) -> Option<Retained<Self>>;
     }
 );
 
@@ -309,12 +309,12 @@ declare_class!(
         }
 
         #[method_id(idTakesBool:)]
-        fn id_takes_bool(_b: bool) -> Option<Id<Self>> {
+        fn id_takes_bool(_b: bool) -> Option<Retained<Self>> {
             None
         }
 
         #[method_id(idTakesBoolInstance:)]
-        fn id_takes_bool_instance(&self, _b: bool) -> Option<Id<Self>> {
+        fn id_takes_bool_instance(&self, _b: bool) -> Option<Retained<Self>> {
             None
         }
     }
@@ -359,12 +359,12 @@ declare_class!(
         }
 
         #[method_id(unreachableId)]
-        fn unreachable_id(&self) -> Id<Self> {
+        fn unreachable_id(&self) -> Retained<Self> {
             unreachable!()
         }
 
         #[method_id(unreachableClassId)]
-        fn unreachable_class_id() -> Id<Self> {
+        fn unreachable_class_id() -> Retained<Self> {
             unreachable!()
         }
     }
@@ -389,40 +389,40 @@ declare_class!(
 
     unsafe impl OutParam {
         #[method(unsupported1:)]
-        fn _unsupported1(_param: &mut Id<Self>) {}
+        fn _unsupported1(_param: &mut Retained<Self>) {}
 
         #[method(unsupported2:)]
-        fn _unsupported2(_param: Option<&mut Id<Self>>) {}
+        fn _unsupported2(_param: Option<&mut Retained<Self>>) {}
 
         #[method(unsupported3:)]
-        fn _unsupported3(_param: &mut Option<Id<Self>>) {}
+        fn _unsupported3(_param: &mut Option<Retained<Self>>) {}
 
         #[method(unsupported4:)]
-        fn _unsupported4(_param: Option<&mut Option<Id<Self>>>) {}
+        fn _unsupported4(_param: Option<&mut Option<Retained<Self>>>) {}
     }
 );
 
 extern_methods!(
     unsafe impl OutParam {
         #[method_id(new)]
-        fn new() -> Id<Self>;
+        fn new() -> Retained<Self>;
 
         #[method(unsupported1:)]
-        fn unsupported1(_param: &mut Id<Self>);
+        fn unsupported1(_param: &mut Retained<Self>);
 
         #[method(unsupported2:)]
-        fn unsupported2(_param: Option<&mut Id<Self>>);
+        fn unsupported2(_param: Option<&mut Retained<Self>>);
 
         #[method(unsupported3:)]
-        fn unsupported3(_param: &mut Option<Id<Self>>);
+        fn unsupported3(_param: &mut Option<Retained<Self>>);
 
         #[method(unsupported4:)]
-        fn unsupported4(_param: Option<&mut Option<Id<Self>>>);
+        fn unsupported4(_param: Option<&mut Option<Retained<Self>>>);
     }
 );
 
 #[test]
-#[should_panic = "`&mut Id<_>` is not supported in `declare_class!` yet"]
+#[should_panic = "`&mut Retained<_>` is not supported in `declare_class!` yet"]
 #[cfg_attr(
     not(all(target_pointer_width = "64", not(feature = "catch-all"))),
     ignore = "unwinds through FFI boundary"
@@ -433,7 +433,7 @@ fn out_param1() {
 }
 
 #[test]
-#[should_panic = "`Option<&mut Id<_>>` is not supported in `declare_class!` yet"]
+#[should_panic = "`Option<&mut Retained<_>>` is not supported in `declare_class!` yet"]
 #[cfg_attr(
     not(all(target_pointer_width = "64", not(feature = "catch-all"))),
     ignore = "unwinds through FFI boundary"
@@ -443,7 +443,7 @@ fn out_param2() {
 }
 
 #[test]
-#[should_panic = "`&mut Option<Id<_>>` is not supported in `declare_class!` yet"]
+#[should_panic = "`&mut Option<Retained<_>>` is not supported in `declare_class!` yet"]
 #[cfg_attr(
     not(all(target_pointer_width = "64", not(feature = "catch-all"))),
     ignore = "unwinds through FFI boundary"
@@ -454,7 +454,7 @@ fn out_param3() {
 }
 
 #[test]
-#[should_panic = "`Option<&mut Option<Id<_>>>` is not supported in `declare_class!` yet"]
+#[should_panic = "`Option<&mut Option<Retained<_>>>` is not supported in `declare_class!` yet"]
 #[cfg_attr(
     not(all(target_pointer_width = "64", not(feature = "catch-all"))),
     ignore = "unwinds through FFI boundary"

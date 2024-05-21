@@ -1,5 +1,5 @@
 error[E0282]: type annotations needed
  --> ui/msg_send_id_underspecified_error2.rs
   |
-  |     let _: Result<_, Id<NSError>> = unsafe { msg_send_id![obj, error: _] };
-  |            ^^^^^^^^^^^^^^^^^^^^^^ cannot infer type
+  |     let _: Result<_, Retained<NSError>> = unsafe { msg_send_id![obj, error: _] };
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type

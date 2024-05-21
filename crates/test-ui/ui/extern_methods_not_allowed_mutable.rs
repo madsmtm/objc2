@@ -1,5 +1,5 @@
 //! Test extern_methods! with mutable receivers that are not IsAllowedMutable.
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 use objc2::{extern_class, extern_methods, mutability, ClassType};
 
@@ -22,7 +22,7 @@ extern_methods!(
 extern_methods!(
     unsafe impl MyObject {
         #[method_id(testId)]
-        fn test_id(&mut self) -> Id<Self>;
+        fn test_id(&mut self) -> Retained<Self>;
     }
 );
 

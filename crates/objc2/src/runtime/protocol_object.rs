@@ -4,7 +4,7 @@ use core::marker::PhantomData;
 use core::ptr::NonNull;
 
 use crate::encode::{Encoding, RefEncode};
-use crate::rc::{autoreleasepool_leaking, Id};
+use crate::rc::{autoreleasepool_leaking, Retained};
 use crate::runtime::__nsstring::nsstring_to_str;
 use crate::runtime::{AnyObject, NSObjectProtocol};
 use crate::Message;
@@ -47,13 +47,13 @@ pub unsafe trait ImplementedBy<T: ?Sized + Message> {
 ///
 /// ```
 /// use objc2::runtime::ProtocolObject;
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 /// # use objc2::runtime::NSObject as MyObject;
 /// # use objc2::runtime::NSObjectProtocol as MyProtocol;
 ///
-/// let obj: Id<MyObject> = MyObject::new();
+/// let obj: Retained<MyObject> = MyObject::new();
 /// let proto: &ProtocolObject<dyn MyProtocol> = ProtocolObject::from_ref(&*obj);
-/// let proto: Id<ProtocolObject<dyn MyProtocol>> = ProtocolObject::from_retained(obj);
+/// let proto: Retained<ProtocolObject<dyn MyProtocol>> = ProtocolObject::from_retained(obj);
 /// ```
 #[doc(alias = "id")]
 #[repr(C)]
@@ -117,7 +117,7 @@ impl<P: ?Sized> ProtocolObject<P> {
     ///
     /// Soft-deprecated alias of [`ProtocolObject::from_retained`].
     #[inline]
-    pub fn from_id<T>(obj: Id<T>) -> Id<Self>
+    pub fn from_id<T>(obj: Retained<T>) -> Retained<Self>
     where
         P: ImplementedBy<T> + 'static,
         T: Message + 'static,
@@ -127,7 +127,7 @@ impl<P: ?Sized> ProtocolObject<P> {
 
     /// Get a type-erased object from a type implementing a protocol.
     #[inline]
-    pub fn from_retained<T>(obj: Id<T>) -> Id<Self>
+    pub fn from_retained<T>(obj: Retained<T>) -> Retained<Self>
     where
         P: ImplementedBy<T> + 'static,
         T: Message + 'static,
@@ -136,7 +136,7 @@ impl<P: ?Sized> ProtocolObject<P> {
         // - The type can be represented as the casted-to type.
         // - Both types are `'static` (this could maybe be relaxed a bit, but
         //   let's be on the safe side)!
-        unsafe { Id::cast::<Self>(obj) }
+        unsafe { Retained::cast::<Self>(obj) }
     }
 }
 
@@ -286,7 +286,7 @@ mod tests {
     extern_methods!(
         unsafe impl DummyClass {
             #[method_id(new)]
-            fn new() -> Id<Self>;
+            fn new() -> Retained<Self>;
         }
     );
 
@@ -363,7 +363,7 @@ mod tests {
             ProtocolObject::from_ref(&*obj);
 
         let _foobar: &mut ProtocolObject<dyn FooBar> = ProtocolObject::from_mut(&mut *obj);
-        let _foobar: Id<ProtocolObject<dyn FooBar>> = ProtocolObject::from_retained(obj);
+        let _foobar: Retained<ProtocolObject<dyn FooBar>> = ProtocolObject::from_retained(obj);
     }
 
     #[test]

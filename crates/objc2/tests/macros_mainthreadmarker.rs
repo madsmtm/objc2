@@ -1,4 +1,4 @@
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSObjectProtocol};
 use objc2::{
     declare_class, extern_methods, extern_protocol, mutability, ClassType, DeclaredClass,
@@ -12,7 +12,7 @@ extern_protocol!(
         fn protocol_method(mtm: MainThreadMarker, arg: i32) -> i32;
 
         #[method_id(myMethodId:)]
-        fn protocol_method_id(mtm: MainThreadMarker, arg: &Self) -> Id<Self>;
+        fn protocol_method_id(mtm: MainThreadMarker, arg: &Self) -> Retained<Self>;
     }
 
     unsafe impl ProtocolType for dyn Proto {
@@ -39,8 +39,8 @@ declare_class!(
         }
 
         #[method_id(myMethodId:)]
-        fn _my_mainthreadonly_method_id(arg: &Self) -> Id<Self> {
-            unsafe { Id::retain(arg as *const Self as *mut Self).unwrap() }
+        fn _my_mainthreadonly_method_id(arg: &Self) -> Retained<Self> {
+            unsafe { Retained::retain(arg as *const Self as *mut Self).unwrap() }
         }
     }
 );
@@ -58,13 +58,13 @@ struct MainThreadMarker {
 extern_methods!(
     unsafe impl Cls {
         #[method_id(new)]
-        fn new(mtm: MainThreadMarker) -> Id<Self>;
+        fn new(mtm: MainThreadMarker) -> Retained<Self>;
 
         #[method(myMethod:)]
         fn method(mtm: MainThreadMarker, arg: i32, mtm2: MainThreadMarker) -> i32;
 
         #[method_id(myMethodId:)]
-        fn method_id(mtm: MainThreadMarker, arg: &Self, mtm2: MainThreadMarker) -> Id<Self>;
+        fn method_id(mtm: MainThreadMarker, arg: &Self, mtm2: MainThreadMarker) -> Retained<Self>;
     }
 );
 

@@ -4,7 +4,7 @@ use std::thread_local;
 use alloc::string::ToString;
 use block2::{global_block, Block, RcBlock, StackBlock};
 use objc2::encode::{Encode, Encoding};
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, Bool, NSObject};
 
 #[repr(C)]
@@ -391,7 +391,7 @@ fn retain_release_rc_block() {
     expected.assert_current();
 
     let ptr = &*block as *const Block<_> as *mut AnyObject;
-    let obj = unsafe { Id::retain(ptr) }.unwrap();
+    let obj = unsafe { Retained::retain(ptr) }.unwrap();
     expected.assert_current();
 
     drop(block);
@@ -421,13 +421,13 @@ fn retain_release_stack_block() {
     expected.assert_current();
 
     let ptr = &*block as *const Block<_> as *mut AnyObject;
-    // Don't use `Id::retain`, as that has debug assertions against the kind
+    // Don't use `Retained::retain`, as that has debug assertions against the kind
     // of things GNUStep is doing.
     let obj = if cfg!(feature = "gnustep-1-7") {
         let ptr = unsafe { objc2::ffi::objc_retain(ptr.cast()).cast() };
-        unsafe { Id::from_raw(ptr) }.unwrap()
+        unsafe { Retained::from_raw(ptr) }.unwrap()
     } else {
-        unsafe { Id::retain(ptr) }.unwrap()
+        unsafe { Retained::retain(ptr) }.unwrap()
     };
     if cfg!(feature = "gnustep-1-7") {
         expected.clone += 1;

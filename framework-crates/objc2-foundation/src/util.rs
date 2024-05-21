@@ -2,11 +2,11 @@
 use core::ptr::NonNull;
 
 use objc2::mutability::IsIdCloneable;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::Message;
 
-pub(crate) fn id_ptr_cast<T: ?Sized>(objects: *mut Id<T>) -> *mut NonNull<T> {
-    // SAFETY: `Id<T>` has the same memory layout as `NonNull<T>`, and
+pub(crate) fn retained_ptr_cast<T: ?Sized>(objects: *mut Retained<T>) -> *mut NonNull<T> {
+    // SAFETY: `Retained<T>` has the same memory layout as `NonNull<T>`, and
     // stronger guarantees.
     objects.cast()
 }
@@ -21,8 +21,8 @@ pub(crate) fn ref_ptr_cast_const<T: ?Sized>(objects: *const &T) -> *mut NonNull<
     ref_ptr_cast(objects as _)
 }
 
-pub(crate) fn id_ptr_cast_const<T: ?Sized>(objects: *const Id<T>) -> *mut NonNull<T> {
-    id_ptr_cast(objects as _)
+pub(crate) fn retained_ptr_cast_const<T: ?Sized>(objects: *const Retained<T>) -> *mut NonNull<T> {
+    retained_ptr_cast(objects as _)
 }
 
 // Foundation collection types store their items in such a way that they can
@@ -40,23 +40,23 @@ pub(crate) fn id_ptr_cast_const<T: ?Sized>(objects: *const Id<T>) -> *mut NonNul
 // inefficient) implementation of the method with that type.
 //
 // In table form:
-// | Objective-C                    | Equivalent Rust storage  |
-// | ------------------------------ | ------------------------ |
-// | Id<NSArray<T>>                 | Arc<[Id<T>]>             |
-// | Id<NSSet<T>>                   | Arc<[Id<T>]>             |
-// | Id<NSDictionary<K, V>>         | Arc<[(Id<K>, Id<V>)]>    |
-// | Id<NSMutableArray<T>>          | Vec<Id<T>>               |
-// | Id<NSMutableSet<T>>            | Vec<Id<T>>               |
-// | Id<NSMutableDictionary<K, V>>  | Vec<(Id<K>, Id<V>)>      |
-// | ------------------------------ | ------------------------ |
-// | &NSArray<T>                    | &[Id<T>]                 |
-// | &NSDictionary<K, V>            | &[(Id<K>, Id<V>)]        |
-// | &mut NSArray<T>                | &mut [Id<T>]             |
-// | &mut NSMutableArray<T>         | &mut Vec<Id<T>>          |
-// | &mut NSDictionary<K, V>        | &mut [(Id<K>, Id<V>)]    |
-// | &mut NSMutableDictionary<K, V> | &mut Vec<(Id<K>, Id<V>)> |
+// | Objective-C                         | Equivalent Rust storage              |
+// | ----------------------------------- | ------------------------------------ |
+// | Retained<NSArray<T>>                | Arc<[Retained<T>]>                   |
+// | Retained<NSSet<T>>                  | Arc<[Retained<T>]>                   |
+// | Retained<NSDictionary<K, V>>        | Arc<[(Retained<K>, Retained<V>)]>    |
+// | Retained<NSMutableArray<T>>         | Vec<Retained<T>>                     |
+// | Retained<NSMutableSet<T>>           | Vec<Retained<T>>                     |
+// | Retained<NSMutableDictionary<K, V>> | Vec<(Retained<K>, Retained<V>)>      |
+// | ----------------------------------- | ------------------------------------ |
+// | &NSArray<T>                         | &[Retained<T>]                       |
+// | &NSDictionary<K, V>                 | &[(Retained<K>, Retained<V>)]        |
+// | &mut NSArray<T>                     | &mut [Retained<T>]                   |
+// | &mut NSMutableArray<T>              | &mut Vec<Retained<T>>                |
+// | &mut NSDictionary<K, V>             | &mut [(Retained<K>, Retained<V>)]    |
+// | &mut NSMutableDictionary<K, V>      | &mut Vec<(Retained<K>, Retained<V>)> |
 
-/// We should be able to access `&Id<T>` from `&self` in collection types,
+/// We should be able to access `&Retained<T>` from `&self` in collection types,
 /// though that is not directly possible since we don't have raw access to the
 /// internal allocation; so instead we use this helper function to allow
 /// roughly the same functionality.
@@ -66,16 +66,16 @@ pub(crate) fn id_ptr_cast_const<T: ?Sized>(objects: *const Id<T>) -> *mut NonNul
 ///
 /// The object must be stored inside a collection.
 #[inline]
-pub(crate) unsafe fn collection_retain_id<T>(obj: &T) -> Id<T>
+pub(crate) unsafe fn collection_retain<T>(obj: &T) -> Retained<T>
 where
     T: Message + IsIdCloneable,
 {
-    // SAFETY: We're allowed to access `&Id<T>` from `&self` in collections,
-    // and since `T: IsIdCloneable`, we can convert that to `Id<T>`.
-    unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() }
+    // SAFETY: We're allowed to access `&Retained<T>` from `&self` in collections,
+    // and since `T: IsIdCloneable`, we can convert that to `Retained<T>`.
+    unsafe { Retained::retain(obj as *const T as *mut T).unwrap_unchecked() }
 }
 
-/// The mutable variants give us the extra benefit that we may get `Id<T>`
+/// The mutable variants give us the extra benefit that we may get `Retained<T>`
 /// out, provided we've removed it from the collection first.
 ///
 ///
@@ -87,12 +87,12 @@ where
 // TODO: Take a pointer here to avoid assuming `T` is immutable - this only
 // works now because `T` is usually `UnsafeCell` anyway.
 #[inline]
-pub(crate) unsafe fn mutable_collection_retain_removed_id<T>(obj: &T) -> Id<T>
+pub(crate) unsafe fn mutable_collection_retain_removed<T>(obj: &T) -> Retained<T>
 where
     T: Message,
 {
     // SAFETY: The collection had mutable ownership over the object, and since
     // the object will never again be accessed from the collection, we can
-    // convert it to `Id<T>`.
-    unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() }
+    // convert it to `Retained<T>`.
+    unsafe { Retained::retain(obj as *const T as *mut T).unwrap_unchecked() }
 }

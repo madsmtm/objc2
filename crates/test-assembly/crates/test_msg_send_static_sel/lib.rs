@@ -1,6 +1,6 @@
 //! Test how static selectors work in relation to `msg_send!` and `msg_send_id!`
 #![cfg(target_vendor = "apple")]
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::{AnyClass, AnyObject, Sel};
 use objc2::{msg_send, msg_send_id, sel};
 
@@ -10,7 +10,7 @@ unsafe fn handle_with_sel(obj: &AnyObject) -> *mut AnyObject {
 }
 
 #[no_mangle]
-unsafe fn handle_alloc_init(cls: &AnyClass) -> Id<AnyObject> {
+unsafe fn handle_alloc_init(cls: &AnyClass) -> Retained<AnyObject> {
     msg_send_id![msg_send_id![cls, alloc], init]
 }
 

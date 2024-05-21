@@ -226,7 +226,7 @@ impl MainThreadMarker {
     /// # use objc2_foundation::NSObject as SomeClass;
     /// # #[cfg(for_example)]
     /// use objc2_app_kit::NSView as SomeClass; // An example class
-    /// use objc2::rc::Id;
+    /// use objc2::rc::Retained;
     /// use objc2::msg_send_id;
     ///
     /// # let mtm = unsafe { MainThreadMarker::new_unchecked() };
@@ -237,7 +237,7 @@ impl MainThreadMarker {
     /// let obj = mtm.alloc::<SomeClass>();
     ///
     /// // Though more knowledge is required for safe initialization
-    /// let obj: Id<SomeClass> = unsafe { msg_send_id![obj, init] };
+    /// let obj: Retained<SomeClass> = unsafe { msg_send_id![obj, init] };
     /// ```
     #[inline]
     pub fn alloc<T: ClassType>(self) -> Allocated<T> {

@@ -104,8 +104,9 @@
 /// [`extern_methods!`] macro.
 ///
 /// If the `#[method_id(...)]` attribute is used, the return type must be
-/// `Option<Id<T>>` or `Id<T>`. Additionally, if the selector is in the
-/// "init"-family, the `self`/`this` parameter must be `Allocated<Self>`.
+/// `Option<Retained<T>>` or `Retained<T>`. Additionally, if the selector is
+/// in the "init"-family, the `self`/`this` parameter must be
+/// `Allocated<Self>`.
 ///
 /// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
 /// `deprecated` and so on is supported. However, note that `cfg_attr` may not
@@ -121,7 +122,7 @@
 /// make it behave similarly to the Objective-C `BOOL`. Use [`runtime::Bool`]
 /// if you want to control this manually.
 ///
-/// Note that `&mut Id<_>` and other such out parameters are not yet
+/// Note that `&mut Retained<_>` and other such out parameters are not yet
 /// supported, and may generate a panic at runtime.
 ///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
@@ -205,7 +206,7 @@
 /// # use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
 /// # #[cfg(available_in_foundation)]
 /// use objc2_foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
-/// use objc2::rc::{Allocated, Id};
+/// use objc2::rc::{Allocated, Retained};
 /// use objc2::{
 ///     declare_class, extern_protocol, msg_send, msg_send_id, mutability, ClassType,
 ///     DeclaredClass, ProtocolType,
@@ -215,7 +216,7 @@
 /// struct Ivars {
 ///     foo: u8,
 ///     bar: c_int,
-///     object: Id<NSObject>,
+///     object: Retained<NSObject>,
 /// }
 ///
 /// declare_class!(
@@ -237,7 +238,7 @@
 ///
 ///     unsafe impl MyCustomObject {
 ///         #[method_id(initWithFoo:)]
-///         fn init_with(this: Allocated<Self>, foo: u8) -> Option<Id<Self>> {
+///         fn init_with(this: Allocated<Self>, foo: u8) -> Option<Retained<Self>> {
 ///             let this = this.set_ivars(Ivars {
 ///                 foo,
 ///                 bar: 42,
@@ -252,7 +253,7 @@
 ///         }
 ///
 ///         #[method_id(object)]
-///         fn __get_object(&self) -> Id<NSObject> {
+///         fn __get_object(&self) -> Retained<NSObject> {
 ///             self.ivars().object.clone()
 ///         }
 ///
@@ -262,7 +263,7 @@
 ///         }
 /// #
 /// #       #[method_id(copyWithZone:)]
-/// #       fn copyWithZone(&self, _zone: *const NSZone) -> Id<Self> {
+/// #       fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
 /// #           let new = Self::alloc().set_ivars(self.ivars().clone());
 /// #           unsafe { msg_send_id![super(new), init] }
 /// #       }
@@ -273,7 +274,7 @@
 ///     # #[cfg(available_in_foundation)]
 ///     unsafe impl NSCopying for MyCustomObject {
 ///         #[method_id(copyWithZone:)]
-///         fn copyWithZone(&self, _zone: *const NSZone) -> Id<Self> {
+///         fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
 ///             let new = Self::alloc().set_ivars(self.ivars().clone());
 ///             unsafe { msg_send_id![super(new), init] }
 ///         }
@@ -284,7 +285,7 @@
 /// );
 ///
 /// impl MyCustomObject {
-///     pub fn new(foo: u8) -> Id<Self> {
+///     pub fn new(foo: u8) -> Retained<Self> {
 ///         unsafe { msg_send_id![Self::alloc(), initWithFoo: foo] }
 ///     }
 ///
@@ -292,7 +293,7 @@
 ///         unsafe { msg_send![self, foo] }
 ///     }
 ///
-///     pub fn get_object(&self) -> Id<NSObject> {
+///     pub fn get_object(&self) -> Retained<NSObject> {
 ///         unsafe { msg_send_id![self, object] }
 ///     }
 ///
@@ -307,7 +308,7 @@
 ///     assert_eq!(obj.ivars().bar, 42);
 ///     assert!(obj.ivars().object.is_kind_of::<NSObject>());
 ///
-/// #   let obj: Id<MyCustomObject> = unsafe { msg_send_id![&obj, copy] };
+/// #   let obj: Retained<MyCustomObject> = unsafe { msg_send_id![&obj, copy] };
 /// #   #[cfg(available_in_foundation)]
 ///     let obj = obj.copy();
 ///

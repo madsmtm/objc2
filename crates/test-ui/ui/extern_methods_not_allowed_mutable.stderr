@@ -28,7 +28,7 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method_id(testId)]
-  | |         fn test_id(&mut self) -> Id<Self>;
+  | |         fn test_id(&mut self) -> Retained<Self>;
   | |     }
   | | );
   | |_^ the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `RetainSemantics<5>: MsgSendId<_, _>`
@@ -41,5 +41,5 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   = note: required for `MyObject` to implement `IsAllowedMutable`
   = note: required for `&mut MyObject` to implement `MessageReceiver`
   = note: required for `&mut MyObject` to implement `MsgSend`
-  = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut MyObject, Option<Id<_>>>`
+  = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut MyObject, Option<Retained<_>>>`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

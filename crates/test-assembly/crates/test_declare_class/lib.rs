@@ -6,7 +6,7 @@
 #![cfg(target_pointer_width = "64")]
 use core::ptr;
 
-use objc2::rc::{Allocated, Id};
+use objc2::rc::{Allocated, Retained};
 use objc2::runtime::AnyClass;
 use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass};
 use objc2_foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
@@ -42,14 +42,14 @@ declare_class!(
 
         #[no_mangle]
         #[method_id(methodId)]
-        fn method_id(&self) -> Option<Id<NSObject>> {
+        fn method_id(&self) -> Option<Retained<NSObject>> {
             unsafe { msg_send_id![Self::class(), new] }
         }
 
         // Test that `objc_autoreleaseReturnValue` is tail-called
         #[no_mangle]
         #[method_id(methodIdWithParam:)]
-        fn method_id_with_param(&self, param: bool) -> Option<Id<NSObject>> {
+        fn method_id_with_param(&self, param: bool) -> Option<Retained<NSObject>> {
             // Intentionally create this outside condition
             let obj = NSObject::new();
             if param {
@@ -65,7 +65,7 @@ declare_class!(
     unsafe impl NSCopying for NoIvars {
         #[no_mangle]
         #[method_id(copyWithZone:)]
-        fn copyWithZone(&self, _zone: *const NSZone) -> Option<Id<Self>> {
+        fn copyWithZone(&self, _zone: *const NSZone) -> Option<Retained<Self>> {
             unsafe { msg_send_id![Self::class(), new] }
         }
     }
@@ -93,7 +93,7 @@ declare_class!(
     unsafe impl ForgetableIvars {
         #[no_mangle]
         #[method_id(init)]
-        fn init_forgetable_ivars(this: Allocated<Self>) -> Option<Id<Self>> {
+        fn init_forgetable_ivars(this: Allocated<Self>) -> Option<Retained<Self>> {
             let this = this.set_ivars(ForgetableIvarsIvars { foo: 42, bar: 43 });
             unsafe { msg_send_id![super(this), init] }
         }
@@ -113,8 +113,8 @@ impl ForgetableIvars {
 }
 
 pub struct DropIvarsIvars {
-    obj: Id<NSObject>,
-    obj_option: Option<Id<NSObject>>,
+    obj: Retained<NSObject>,
+    obj_option: Option<Retained<NSObject>>,
 }
 
 declare_class!(
@@ -134,7 +134,7 @@ declare_class!(
     unsafe impl DropIvars {
         #[no_mangle]
         #[method_id(init)]
-        fn init_drop_ivars(this: Allocated<Self>) -> Option<Id<Self>> {
+        fn init_drop_ivars(this: Allocated<Self>) -> Option<Retained<Self>> {
             let this = this.set_ivars(DropIvarsIvars {
                 obj: NSObject::new(),
                 obj_option: Some(NSObject::new()),
@@ -160,11 +160,11 @@ impl DropIvars {
     #[no_mangle]
     pub fn access_drop_ivars(&self) -> (*const NSObject, *const NSObject) {
         (
-            Id::as_ptr(&self.ivars().obj),
+            Retained::as_ptr(&self.ivars().obj),
             self.ivars()
                 .obj_option
                 .as_ref()
-                .map(Id::as_ptr)
+                .map(Retained::as_ptr)
                 .unwrap_or_else(ptr::null),
         )
     }

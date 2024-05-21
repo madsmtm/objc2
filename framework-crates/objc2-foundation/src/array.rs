@@ -7,7 +7,7 @@ use core::ops::Range;
 use core::ops::{Index, IndexMut};
 
 use objc2::mutability::{IsIdCloneable, IsMutable, IsRetainable};
-use objc2::rc::{Id, IdFromIterator};
+use objc2::rc::{Retained, RetainedFromIterator};
 use objc2::{extern_methods, ClassType, Message};
 
 #[cfg(feature = "NSEnumerator")]
@@ -16,26 +16,26 @@ use super::util;
 use crate::Foundation::{NSArray, NSMutableArray};
 
 impl<T: Message> NSArray<T> {
-    pub fn from_vec(mut vec: Vec<Id<T>>) -> Id<Self> {
+    pub fn from_vec(mut vec: Vec<Retained<T>>) -> Retained<Self> {
         // We intentionally extract the length before we access the
         // pointer as mutable, to not invalidate that mutable pointer.
         let len = vec.len();
-        let ptr = util::id_ptr_cast(vec.as_mut_ptr());
-        // SAFETY: We've consumed the `Id<T>`s, which means that we can
+        let ptr = util::retained_ptr_cast(vec.as_mut_ptr());
+        // SAFETY: We've consumed the `Retained<T>`s, which means that we can
         // now safely take ownership (even if `T` is mutable).
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
         // The drop of `Vec` here would invalidate our mutable pointer,
         // except for the fact that we're using `UnsafeCell` in `AnyObject`.
     }
 
-    pub fn from_id_slice(slice: &[Id<T>]) -> Id<Self>
+    pub fn from_id_slice(slice: &[Retained<T>]) -> Retained<Self>
     where
         T: IsIdCloneable,
     {
         let len = slice.len();
-        let ptr = util::id_ptr_cast_const(slice.as_ptr());
+        let ptr = util::retained_ptr_cast_const(slice.as_ptr());
         // SAFETY: Because of the `T: IsIdCloneable` bound, and since we
-        // take `&[Id<T>]` (effectively `&Id<T>`), we are allowed to give
+        // take `&[Retained<T>]` (effectively `&Retained<T>`), we are allowed to give
         // the slice to Objective-C, which will retain it internally.
         //
         // Faster version of:
@@ -43,7 +43,7 @@ impl<T: Message> NSArray<T> {
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
     }
 
-    pub fn from_slice(slice: &[&T]) -> Id<Self>
+    pub fn from_slice(slice: &[&T]) -> Retained<Self>
     where
         T: IsRetainable,
     {
@@ -67,42 +67,42 @@ impl<T: Message> NSArray<T> {
 
     #[doc(alias = "getObjects:range:")]
     #[cfg(feature = "NSRange")]
-    pub fn to_vec_retained(&self) -> Vec<Id<T>>
+    pub fn to_vec_retained(&self) -> Vec<Retained<T>>
     where
         T: IsIdCloneable,
     {
         // SAFETY: The objects are stored in the array
         self.to_vec()
             .into_iter()
-            .map(|obj| unsafe { util::collection_retain_id(obj) })
+            .map(|obj| unsafe { util::collection_retain(obj) })
             .collect()
     }
 
-    // `fn into_vec(Id<NSArray>) -> Vec<Id<T>>` would not be safe, since
+    // `fn into_vec(Retained<NSArray>) -> Vec<Retained<T>>` would not be safe, since
     // the array itself is unconditionally `IsIdCloneable`, even when
     // containing mutable elements, and hence we would be able to
     // duplicate those.
 }
 
 impl<T: Message> NSMutableArray<T> {
-    pub fn from_vec(mut vec: Vec<Id<T>>) -> Id<Self> {
+    pub fn from_vec(mut vec: Vec<Retained<T>>) -> Retained<Self> {
         let len = vec.len();
-        let ptr = util::id_ptr_cast(vec.as_mut_ptr());
+        let ptr = util::retained_ptr_cast(vec.as_mut_ptr());
         // SAFETY: Same as `NSArray::from_vec`.
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
     }
 
-    pub fn from_id_slice(slice: &[Id<T>]) -> Id<Self>
+    pub fn from_id_slice(slice: &[Retained<T>]) -> Retained<Self>
     where
         T: IsIdCloneable,
     {
         let len = slice.len();
-        let ptr = util::id_ptr_cast_const(slice.as_ptr());
+        let ptr = util::retained_ptr_cast_const(slice.as_ptr());
         // SAFETY: Same as `NSArray::from_id_slice`
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
     }
 
-    pub fn from_slice(slice: &[&T]) -> Id<Self>
+    pub fn from_slice(slice: &[&T]) -> Retained<Self>
     where
         T: IsRetainable,
     {
@@ -113,13 +113,13 @@ impl<T: Message> NSMutableArray<T> {
     }
 
     #[cfg(feature = "NSRange")]
-    pub fn into_vec(array: Id<Self>) -> Vec<Id<T>> {
+    pub fn into_vec(array: Retained<Self>) -> Vec<Retained<T>> {
         // SAFETY: We've consumed the array, so taking ownership of the
         // returned values is safe.
         array
             .to_vec()
             .into_iter()
-            .map(|obj| unsafe { util::mutable_collection_retain_removed_id(obj) })
+            .map(|obj| unsafe { util::mutable_collection_retain_removed(obj) })
             .collect()
     }
 }
@@ -152,13 +152,13 @@ extern_methods!(
         }
 
         #[doc(alias = "objectAtIndex:")]
-        pub fn get_retained(&self, index: usize) -> Option<Id<T>>
+        pub fn get_retained(&self, index: usize) -> Option<Retained<T>>
         where
             T: IsIdCloneable,
         {
             // SAFETY: The object is stored in the array
             self.get(index)
-                .map(|obj| unsafe { util::collection_retain_id(obj) })
+                .map(|obj| unsafe { util::collection_retain(obj) })
         }
 
         #[method(objectAtIndex:)]
@@ -185,13 +185,13 @@ extern_methods!(
         pub fn first(&self) -> Option<&T>;
 
         #[doc(alias = "firstObject")]
-        pub fn first_retained(&self) -> Option<Id<T>>
+        pub fn first_retained(&self) -> Option<Retained<T>>
         where
             T: IsIdCloneable,
         {
             // SAFETY: The object is stored in the array
             self.first()
-                .map(|obj| unsafe { util::collection_retain_id(obj) })
+                .map(|obj| unsafe { util::collection_retain(obj) })
         }
 
         #[doc(alias = "firstObject")]
@@ -205,13 +205,13 @@ extern_methods!(
         pub fn last(&self) -> Option<&T>;
 
         #[doc(alias = "lastObject")]
-        pub fn last_retained(&self) -> Option<Id<T>>
+        pub fn last_retained(&self) -> Option<Retained<T>>
         where
             T: IsIdCloneable,
         {
             // SAFETY: The object is stored in the array
             self.last()
-                .map(|obj| unsafe { util::collection_retain_id(obj) })
+                .map(|obj| unsafe { util::collection_retain(obj) })
         }
 
         #[doc(alias = "lastObject")]
@@ -247,13 +247,13 @@ impl<T: Message> NSArray<T> {
 
 impl<T: Message> NSMutableArray<T> {
     #[doc(alias = "addObject:")]
-    pub fn push(&mut self, obj: Id<T>) {
+    pub fn push(&mut self, obj: Retained<T>) {
         // SAFETY: We've consumed ownership of the object.
         unsafe { self.addObject(&obj) }
     }
 
     #[doc(alias = "insertObject:atIndex:")]
-    pub fn insert(&mut self, index: usize, obj: Id<T>) {
+    pub fn insert(&mut self, index: usize, obj: Retained<T>) {
         // TODO: Replace this check with catching the thrown NSRangeException
         let len = self.len();
         if index < len {
@@ -269,10 +269,10 @@ impl<T: Message> NSMutableArray<T> {
     }
 
     #[doc(alias = "replaceObjectAtIndex:withObject:")]
-    pub fn replace(&mut self, index: usize, obj: Id<T>) -> Result<Id<T>, Id<T>> {
+    pub fn replace(&mut self, index: usize, obj: Retained<T>) -> Result<Retained<T>, Retained<T>> {
         if let Some(old_obj) = self.get(index) {
             // SAFETY: We remove the object from the array below.
-            let old_obj = unsafe { util::mutable_collection_retain_removed_id(old_obj) };
+            let old_obj = unsafe { util::mutable_collection_retain_removed(old_obj) };
             // SAFETY: The index is checked to be in bounds, and we've
             // consumed ownership of the new object.
             unsafe { self.replaceObjectAtIndex_withObject(index, &obj) };
@@ -283,20 +283,20 @@ impl<T: Message> NSMutableArray<T> {
     }
 
     #[doc(alias = "removeObjectAtIndex:")]
-    pub fn remove(&mut self, index: usize) -> Option<Id<T>> {
+    pub fn remove(&mut self, index: usize) -> Option<Retained<T>> {
         let obj = self.get(index)?;
         // SAFETY: We remove the object from the array below.
-        let obj = unsafe { util::mutable_collection_retain_removed_id(obj) };
+        let obj = unsafe { util::mutable_collection_retain_removed(obj) };
         // SAFETY: The index is checked to be in bounds.
         unsafe { self.removeObjectAtIndex(index) };
         Some(obj)
     }
 
     #[doc(alias = "removeLastObject")]
-    pub fn pop(&mut self) -> Option<Id<T>> {
+    pub fn pop(&mut self) -> Option<Retained<T>> {
         let obj = self.last()?;
         // SAFETY: We remove the object from the array below.
-        let obj = unsafe { util::mutable_collection_retain_removed_id(obj) };
+        let obj = unsafe { util::mutable_collection_retain_removed(obj) };
         // SAFETY: Just checked that there is an object.
         unsafe { self.removeLastObject() };
         Some(obj)
@@ -412,7 +412,7 @@ pub struct IterRetained<'a, T: Message>(iter::IterRetained<'a, NSArray<T>>);
 
 #[cfg(feature = "NSEnumerator")]
 __impl_iter! {
-    impl<'a, T: Message + IsIdCloneable> Iterator<Item = Id<T>> for IterRetained<'a, T> { ... }
+    impl<'a, T: Message + IsIdCloneable> Iterator<Item = Retained<T>> for IterRetained<'a, T> { ... }
 }
 
 /// A consuming iterator over the items of a `NSArray`.
@@ -422,7 +422,7 @@ pub struct IntoIter<T: Message>(iter::IntoIter<NSArray<T>>);
 
 #[cfg(feature = "NSEnumerator")]
 __impl_iter! {
-    impl<'a, T: Message> Iterator<Item = Id<T>> for IntoIter<T> { ... }
+    impl<'a, T: Message> Iterator<Item = Retained<T>> for IntoIter<T> { ... }
 }
 
 #[cfg(feature = "NSEnumerator")]
@@ -443,11 +443,11 @@ __impl_into_iter! {
         type IntoIter = IterMut<'_, T>;
     }
 
-    impl<T: Message + IsIdCloneable> IntoIterator for Id<NSArray<T>> {
+    impl<T: Message + IsIdCloneable> IntoIterator for Retained<NSArray<T>> {
         type IntoIter = IntoIter<T>;
     }
 
-    impl<T: Message> IntoIterator for Id<NSMutableArray<T>> {
+    impl<T: Message> IntoIterator for Retained<NSMutableArray<T>> {
         type IntoIter = IntoIter<T>;
     }
 }
@@ -496,8 +496,8 @@ impl<T: fmt::Debug + Message> fmt::Debug for NSMutableArray<T> {
     }
 }
 
-impl<T: Message> Extend<Id<T>> for NSMutableArray<T> {
-    fn extend<I: IntoIterator<Item = Id<T>>>(&mut self, iter: I) {
+impl<T: Message> Extend<Retained<T>> for NSMutableArray<T> {
+    fn extend<I: IntoIterator<Item = Retained<T>>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| self.push(item));
     }
 }
@@ -511,29 +511,29 @@ impl<'a, T: Message + IsRetainable> Extend<&'a T> for NSMutableArray<T> {
     }
 }
 
-impl<'a, T: Message + IsRetainable + 'a> IdFromIterator<&'a T> for NSArray<T> {
-    fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
+impl<'a, T: Message + IsRetainable + 'a> RetainedFromIterator<&'a T> for NSArray<T> {
+    fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
-impl<T: Message> IdFromIterator<Id<T>> for NSArray<T> {
-    fn id_from_iter<I: IntoIterator<Item = Id<T>>>(iter: I) -> Id<Self> {
+impl<T: Message> RetainedFromIterator<Retained<T>> for NSArray<T> {
+    fn id_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
     }
 }
 
-impl<'a, T: Message + IsRetainable + 'a> IdFromIterator<&'a T> for NSMutableArray<T> {
-    fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
+impl<'a, T: Message + IsRetainable + 'a> RetainedFromIterator<&'a T> for NSMutableArray<T> {
+    fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
-impl<T: Message> IdFromIterator<Id<T>> for NSMutableArray<T> {
-    fn id_from_iter<I: IntoIterator<Item = Id<T>>>(iter: I) -> Id<Self> {
+impl<T: Message> RetainedFromIterator<Retained<T>> for NSMutableArray<T> {
+    fn id_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
     }

@@ -1,7 +1,7 @@
 //! Test that implementing `NSApplicationDelegate` and similar requires
 //! a `MainThreadOnly` class.
 use objc2::mutability::IsMainThreadOnly;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::{
     declare_class, extern_methods, extern_protocol, mutability, ClassType, DeclaredClass,
     ProtocolType,
@@ -46,7 +46,7 @@ declare_class!(
 extern_methods!(
     unsafe impl CustomObject {
         #[method_id(new)]
-        fn new(mtm: MainThreadMarker) -> Id<Self>;
+        fn new(mtm: MainThreadMarker) -> Retained<Self>;
     }
 );
 

@@ -4,11 +4,11 @@
 use alloc::vec;
 
 use objc2::msg_send;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 
 use crate::Foundation::{self, NSMutableDictionary, NSNumber, NSObject};
 
-fn sample_dict() -> Id<NSMutableDictionary<NSNumber, NSObject>> {
+fn sample_dict() -> Retained<NSMutableDictionary<NSNumber, NSObject>> {
     NSMutableDictionary::from_id_slice(
         &[
             &*NSNumber::new_i32(1),
@@ -20,7 +20,7 @@ fn sample_dict() -> Id<NSMutableDictionary<NSNumber, NSObject>> {
 }
 
 #[cfg(feature = "NSString")]
-fn sample_dict_mut() -> Id<NSMutableDictionary<NSNumber, Foundation::NSMutableString>> {
+fn sample_dict_mut() -> Retained<NSMutableDictionary<NSNumber, Foundation::NSMutableString>> {
     NSMutableDictionary::from_vec(
         &[
             &*NSNumber::new_i32(1),
@@ -38,10 +38,12 @@ fn sample_dict_mut() -> Id<NSMutableDictionary<NSNumber, Foundation::NSMutableSt
 #[test]
 #[cfg(feature = "NSString")]
 fn dict_from_mutable() {
-    let _: Id<NSMutableDictionary<Foundation::NSString, Foundation::NSString>> =
+    let _: Retained<NSMutableDictionary<Foundation::NSString, Foundation::NSString>> =
         NSMutableDictionary::from_id_slice(
             &[&*Foundation::NSMutableString::from_str("a")],
-            &[Id::into_super(Foundation::NSMutableString::from_str("b"))],
+            &[Retained::into_super(Foundation::NSMutableString::from_str(
+                "b",
+            ))],
         );
 }
 

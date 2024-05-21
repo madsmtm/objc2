@@ -3,7 +3,7 @@ use core::hash;
 
 use crate::ffi::NSUInteger;
 use crate::mutability::Root;
-use crate::rc::{Allocated, DefaultRetained, Id};
+use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject, Sel};
 use crate::{extern_methods, msg_send, msg_send_id, Message};
 use crate::{ClassType, ProtocolType};
@@ -242,17 +242,17 @@ pub unsafe trait NSObjectProtocol {
     /// # Example
     ///
     /// ```
-    /// use objc2::rc::Id;
+    /// use objc2::rc::Retained;
     /// # use objc2::runtime::{NSObjectProtocol, NSObject, NSObject as NSString};
     /// # #[cfg(available_in_foundation)]
     /// use objc2_foundation::{NSObject, NSObjectProtocol, NSString};
     ///
     /// # let obj = NSObject::new();
     /// // SAFETY: Descriptions are always `NSString`.
-    /// let desc: Id<NSString> = unsafe { Id::cast(obj.description()) };
+    /// let desc: Retained<NSString> = unsafe { Retained::cast(obj.description()) };
     /// println!("{desc:?}");
     /// ```
-    fn description(&self) -> Id<NSObject>
+    fn description(&self) -> Retained<NSObject>
     where
         Self: Sized + Message,
     {
@@ -269,7 +269,7 @@ pub unsafe trait NSObjectProtocol {
     /// same value as `description`. Override either to provide custom object
     /// descriptions.
     // optional, introduced in macOS 10.8
-    fn debugDescription(&self) -> Id<NSObject>
+    fn debugDescription(&self) -> Retained<NSObject>
     where
         Self: Sized + Message,
     {
@@ -373,7 +373,7 @@ extern_methods!(
         /// This method is a shorthand for calling [`alloc`][ClassType::alloc]
         /// and then [`init`][Self::init].
         #[method_id(new)]
-        pub fn new() -> Id<Self>;
+        pub fn new() -> Retained<Self>;
 
         /// Initialize an already allocated object.
         ///
@@ -391,7 +391,7 @@ extern_methods!(
         /// let obj = NSObject::init(NSObject::alloc());
         /// ```
         #[method_id(init)]
-        pub fn init(this: Allocated<Self>) -> Id<Self>;
+        pub fn init(this: Allocated<Self>) -> Retained<Self>;
 
         #[method(doesNotRecognizeSelector:)]
         fn doesNotRecognizeSelector_inner(&self, sel: Sel);
@@ -453,7 +453,7 @@ impl fmt::Debug for NSObject {
 
 impl DefaultRetained for NSObject {
     #[inline]
-    fn default_id() -> Id<Self> {
+    fn default_id() -> Retained<Self> {
         Self::new()
     }
 }
@@ -479,21 +479,21 @@ mod tests {
     );
 
     impl NSObjectMutable {
-        fn new() -> Id<Self> {
-            unsafe { Id::cast(NSObject::new()) }
+        fn new() -> Retained<Self> {
+            unsafe { Retained::cast(NSObject::new()) }
         }
     }
 
     #[test]
     fn test_deref() {
-        let obj: Id<NSObject> = NSObject::new();
+        let obj: Retained<NSObject> = NSObject::new();
         let _: &NSObject = &obj;
         let _: &AnyObject = &obj;
     }
 
     #[test]
     fn test_deref_mut() {
-        let mut obj: Id<NSObjectMutable> = NSObjectMutable::new();
+        let mut obj: Retained<NSObjectMutable> = NSObjectMutable::new();
         let _: &NSObjectMutable = &obj;
         let _: &mut NSObjectMutable = &mut obj;
         let _: &NSObject = &obj;
@@ -510,8 +510,8 @@ mod tests {
         fn impls_as_mut<T: AsMut<U> + BorrowMut<U> + ?Sized, U: ?Sized>(_: &mut T) {}
 
         let mut obj = NSObjectMutable::new();
-        impls_as_ref::<Id<NSObjectMutable>, NSObjectMutable>(&obj);
-        impls_as_mut::<Id<NSObjectMutable>, NSObjectMutable>(&mut obj);
+        impls_as_ref::<Retained<NSObjectMutable>, NSObjectMutable>(&obj);
+        impls_as_mut::<Retained<NSObjectMutable>, NSObjectMutable>(&mut obj);
         impls_as_ref::<NSObjectMutable, NSObjectMutable>(&obj);
         impls_as_mut::<NSObjectMutable, NSObjectMutable>(&mut obj);
         impls_as_ref::<NSObject, NSObject>(&obj);
@@ -520,7 +520,7 @@ mod tests {
         impls_as_mut::<NSObject, AnyObject>(&mut obj);
 
         let obj = NSObject::new();
-        impls_as_ref::<Id<NSObject>, NSObject>(&obj);
+        impls_as_ref::<Retained<NSObject>, NSObject>(&obj);
         impls_as_ref::<NSObject, NSObject>(&obj);
         impls_as_ref::<NSObject, AnyObject>(&obj);
     }
@@ -577,10 +577,10 @@ mod tests {
     #[test]
     fn test_retain_same() {
         let obj1 = NSObject::new();
-        let ptr1 = Id::as_ptr(&obj1);
+        let ptr1 = Retained::as_ptr(&obj1);
 
         let obj2 = obj1.clone();
-        let ptr2 = Id::as_ptr(&obj2);
+        let ptr2 = Retained::as_ptr(&obj2);
 
         assert_eq!(ptr1, ptr2);
     }

@@ -1,6 +1,6 @@
 #![cfg(feature = "NSData")]
 
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
 
 use crate::Foundation::{NSData, NSMutableData, NSObject};
@@ -88,8 +88,8 @@ fn test_as_ref_borrow() {
     } else {
         NSMutableData::new()
     };
-    impls_borrow::<Id<NSMutableData>, NSMutableData>(&obj);
-    impls_borrow_mut::<Id<NSMutableData>, NSMutableData>(&mut obj);
+    impls_borrow::<Retained<NSMutableData>, NSMutableData>(&obj);
+    impls_borrow_mut::<Retained<NSMutableData>, NSMutableData>(&mut obj);
 
     impls_borrow::<NSMutableData, NSMutableData>(&obj);
     impls_borrow_mut::<NSMutableData, NSMutableData>(&mut obj);

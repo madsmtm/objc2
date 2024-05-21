@@ -1,7 +1,7 @@
 use core::ffi::c_void;
 use std::mem::ManuallyDrop;
 
-use objc2::rc::{autoreleasepool, Id};
+use objc2::rc::{autoreleasepool, Retained};
 use objc2::runtime::{AnyClass, NSObject, Sel};
 use objc2::{class, msg_send, sel};
 
@@ -29,13 +29,13 @@ fn alloc_nsobject() -> *mut NSObject {
     unsafe { msg_send![class!(NSObject), alloc] }
 }
 
-fn new_nsobject() -> Id<NSObject> {
+fn new_nsobject() -> Retained<NSObject> {
     let obj = alloc_nsobject();
     let obj: *mut NSObject = unsafe { msg_send![obj, init] };
-    unsafe { Id::from_raw(obj).unwrap_unchecked() }
+    unsafe { Retained::from_raw(obj).unwrap_unchecked() }
 }
 
-fn new_nsdata() -> Id<NSObject> {
+fn new_nsdata() -> Retained<NSObject> {
     let bytes_ptr: *const c_void = BYTES.as_ptr().cast();
     let obj: *mut NSObject = unsafe { msg_send![class!(NSData), alloc] };
     let obj: *mut NSObject = unsafe {
@@ -45,11 +45,11 @@ fn new_nsdata() -> Id<NSObject> {
             length: BYTES.len(),
         ]
     };
-    unsafe { Id::from_raw(obj).unwrap_unchecked() }
+    unsafe { Retained::from_raw(obj).unwrap_unchecked() }
 }
 
 fn new_leaked_nsdata() -> *const NSObject {
-    Id::as_ptr(&*ManuallyDrop::new(new_nsdata()))
+    Retained::as_ptr(&*ManuallyDrop::new(new_nsdata()))
 }
 
 fn autoreleased_nsdata() -> *const NSObject {
@@ -64,14 +64,14 @@ fn autoreleased_nsdata() -> *const NSObject {
     unsafe { msg_send![new_leaked_nsdata(), autorelease] }
 }
 
-fn new_nsstring() -> Id<NSObject> {
+fn new_nsstring() -> Retained<NSObject> {
     let obj: *mut NSObject = unsafe { msg_send![class!(NSString), alloc] };
     let obj: *mut NSObject = unsafe { msg_send![obj, init] };
-    unsafe { Id::from_raw(obj).unwrap_unchecked() }
+    unsafe { Retained::from_raw(obj).unwrap_unchecked() }
 }
 
 fn new_leaked_nsstring() -> *const NSObject {
-    Id::as_ptr(&*ManuallyDrop::new(new_nsstring()))
+    Retained::as_ptr(&*ManuallyDrop::new(new_nsstring()))
 }
 
 fn autoreleased_nsstring() -> *const NSObject {
@@ -79,19 +79,19 @@ fn autoreleased_nsstring() -> *const NSObject {
     unsafe { msg_send![new_leaked_nsstring(), autorelease] }
 }
 
-fn retain_autoreleased(obj: *const NSObject) -> Id<NSObject> {
-    unsafe { Id::retain_autoreleased((obj as *mut NSObject).cast()).unwrap_unchecked() }
+fn retain_autoreleased(obj: *const NSObject) -> Retained<NSObject> {
+    unsafe { Retained::retain_autoreleased((obj as *mut NSObject).cast()).unwrap_unchecked() }
 }
 
 fn autoreleased_nsdata_pool_cleanup() -> *const NSObject {
     autoreleasepool(|_| autoreleased_nsdata())
 }
 
-fn autoreleased_nsdata_fast_caller_cleanup() -> Id<NSObject> {
+fn autoreleased_nsdata_fast_caller_cleanup() -> Retained<NSObject> {
     retain_autoreleased(autoreleased_nsdata())
 }
 
-fn autoreleased_nsdata_fast_caller_cleanup_pool_cleanup() -> Id<NSObject> {
+fn autoreleased_nsdata_fast_caller_cleanup_pool_cleanup() -> Retained<NSObject> {
     autoreleasepool(|_| retain_autoreleased(autoreleased_nsdata()))
 }
 
@@ -99,11 +99,11 @@ fn autoreleased_nsstring_pool_cleanup() -> *const NSObject {
     autoreleasepool(|_| autoreleased_nsstring())
 }
 
-fn autoreleased_nsstring_fast_caller_cleanup() -> Id<NSObject> {
+fn autoreleased_nsstring_fast_caller_cleanup() -> Retained<NSObject> {
     retain_autoreleased(autoreleased_nsstring())
 }
 
-fn autoreleased_nsstring_fast_caller_cleanup_pool_cleanup() -> Id<NSObject> {
+fn autoreleased_nsstring_fast_caller_cleanup_pool_cleanup() -> Retained<NSObject> {
     autoreleasepool(|_| retain_autoreleased(autoreleased_nsstring()))
 }
 

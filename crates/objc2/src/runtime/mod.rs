@@ -1163,7 +1163,7 @@ impl fmt::Display for AnyProtocol {
 /// a subclass of `NSObject`, so it can represent other root classes like
 /// `NSProxy`).
 ///
-/// `Id<AnyObject>` is equivalent to Objective-C's `id _Nonnull`.
+/// `Retained<AnyObject>` is equivalent to Objective-C's `id _Nonnull`.
 ///
 /// This contains [`UnsafeCell`], and is similar to that in that one can
 /// safely access and perform interior mutability on this (both via.

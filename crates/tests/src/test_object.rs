@@ -3,7 +3,7 @@ use core::mem::{size_of, ManuallyDrop};
 use std::os::raw::c_int;
 
 use objc2::encode::{Encoding, RefEncode};
-use objc2::rc::{autoreleasepool, AutoreleasePool, Id};
+use objc2::rc::{autoreleasepool, AutoreleasePool, Retained};
 use objc2::runtime::{
     AnyClass, AnyObject, AnyProtocol, Bool, NSObject, NSObjectProtocol, ProtocolObject,
 };
@@ -24,11 +24,11 @@ extern_protocol!(
 
         #[cfg(feature = "all")]
         #[method_id(c)]
-        fn c(&self) -> Id<NSNumber>;
+        fn c(&self) -> Retained<NSNumber>;
 
         #[cfg(feature = "all")]
         #[method_id(d)]
-        fn d() -> Id<NSNumber>;
+        fn d() -> Retained<NSNumber>;
 
         #[method(e)]
         #[optional]
@@ -41,12 +41,12 @@ extern_protocol!(
         #[cfg(feature = "all")]
         #[optional]
         #[method_id(g)]
-        fn g(&self) -> Id<NSNumber>;
+        fn g(&self) -> Retained<NSNumber>;
 
         #[cfg(feature = "all")]
         #[optional]
         #[method_id(h)]
-        fn h() -> Id<NSNumber>;
+        fn h() -> Retained<NSNumber>;
     }
 
     unsafe impl ProtocolType for dyn MyTestProtocol {
@@ -110,7 +110,7 @@ unsafe impl NSObjectProtocol for MyTestObject {}
 unsafe impl MyTestProtocol for MyTestObject {}
 
 impl MyTestObject {
-    fn new() -> Id<Self> {
+    fn new() -> Retained<Self> {
         let cls = Self::class();
         unsafe { msg_send_id![cls, new] }
     }
@@ -122,7 +122,7 @@ impl MyTestObject {
         unsafe { pool.ptr_as_ref(ptr) }
     }
 
-    fn new_autoreleased_retained() -> Id<Self> {
+    fn new_autoreleased_retained() -> Retained<Self> {
         let cls = Self::class();
         unsafe { msg_send_id![cls, getAutoreleasedInstance] }
     }
@@ -290,12 +290,12 @@ fn test_object() {
     assert!(obj.var3().is_null());
     assert!(obj.var3_ivar().is_null());
 
-    let obj2 = Id::as_ptr(&*ManuallyDrop::new(NSObject::new())) as _;
+    let obj2 = Retained::as_ptr(&*ManuallyDrop::new(NSObject::new())) as _;
     obj.set_var3(obj2);
     assert_eq!(obj.var3(), obj2);
     assert_eq!(*obj.var3_ivar(), obj2);
 
-    let obj3 = Id::as_ptr(&*ManuallyDrop::new(NSObject::new())) as _;
+    let obj3 = Retained::as_ptr(&*ManuallyDrop::new(NSObject::new())) as _;
     *obj.var3_ivar_mut() = obj3;
     assert_ne!(obj.var3(), obj2);
     assert_ne!(*obj.var3_ivar(), obj2);
@@ -306,7 +306,7 @@ fn test_object() {
 #[test]
 fn test_protocol() {
     let obj = MyTestObject::new();
-    let proto: Id<ProtocolObject<dyn MyTestProtocol>> = ProtocolObject::from_id(obj);
+    let proto: Retained<ProtocolObject<dyn MyTestProtocol>> = ProtocolObject::from_id(obj);
     assert_eq!(proto.a(), 1);
     assert_eq!(MyTestObject::b(), 2);
     #[cfg(feature = "all")]

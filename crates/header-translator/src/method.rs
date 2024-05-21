@@ -188,7 +188,7 @@ impl MemoryManagement {
         //
         // Which is:
         // > must return a retainable object pointer
-        if result_type.is_id() {
+        if result_type.is_retainable() {
             // We also check that the correct modifier flags were set for the
             // given method family.
             match (
@@ -322,7 +322,7 @@ impl Method {
         (self.is_class, self.selector.clone())
     }
 
-    pub(crate) fn usable_in_default_id(&self) -> bool {
+    pub(crate) fn usable_in_default_retained(&self) -> bool {
         self.selector == "new"
             && self.is_class
             && self.arguments.is_empty()
@@ -379,7 +379,7 @@ impl Method {
             "alloc" | "allocWithZone:" if is_class => {
                 return None;
             }
-            // Available via. `Id` (and disallowed by ARC).
+            // Available via. `Retained` (and disallowed by ARC).
             "retain" | "release" | "autorelease" | "dealloc" if !is_class => {
                 return None;
             }

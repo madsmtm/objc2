@@ -7,11 +7,11 @@ use core::ptr;
 
 use crate::Foundation::{NSArray, NSNumber, NSObject};
 use objc2::mutability::IsRetainable;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, ProtocolObject};
 use objc2::{extern_protocol, ProtocolType};
 
-fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
+fn sample_array(len: usize) -> Retained<NSArray<NSObject>> {
     let mut vec = Vec::with_capacity(len);
     for _ in 0..len {
         vec.push(NSObject::new());
@@ -19,7 +19,7 @@ fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
     NSArray::from_vec(vec)
 }
 
-fn sample_number_array(len: u8) -> Id<NSArray<NSNumber>> {
+fn sample_number_array(len: u8) -> Retained<NSArray<NSNumber>> {
     let mut vec = Vec::with_capacity(len as usize);
     for i in 0..len {
         vec.push(NSNumber::new_u8(i));
@@ -178,7 +178,7 @@ fn test_trait_retainable() {
 
     unsafe impl TestProtocol for NSNumber {}
 
-    let obj: Id<ProtocolObject<dyn TestProtocol>> =
+    let obj: Retained<ProtocolObject<dyn TestProtocol>> =
         ProtocolObject::from_retained(NSNumber::new_i32(42));
     let _ = NSArray::from_slice(&[&*obj, &*obj]);
     let _ = NSArray::from_id_slice(&[obj.clone(), obj.clone()]);
@@ -187,7 +187,7 @@ fn test_trait_retainable() {
 
 #[test]
 fn test_access_anyobject() {
-    let obj: Id<AnyObject> = Id::into_super(NSObject::new());
+    let obj: Retained<AnyObject> = Retained::into_super(NSObject::new());
     let array = NSArray::from_id_slice(&[obj.clone(), obj.clone()]);
     assert!(ptr::eq(&array[0], &*obj));
     assert!(ptr::eq(array.get(0).unwrap(), &*obj));

@@ -12,7 +12,7 @@ use std::thread;
 use std::time::Duration;
 
 use objc2::mutability::InteriorMutable;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 use objc2_foundation::{ns_string, NSObject, NSString};
 
@@ -39,7 +39,7 @@ mod implementation {
 
     impl Synthesizer {
         // Uses default voice
-        pub(crate) fn new() -> Id<Self> {
+        pub(crate) fn new() -> Retained<Self> {
             unsafe { msg_send_id![Self::class(), new] }
         }
 
@@ -75,7 +75,7 @@ mod implementation {
     pub(crate) struct Utterance {
         rate: Cell<f32>,
         volume: Cell<f32>,
-        string: Id<NSString>,
+        string: Retained<NSString>,
     }
 
     impl Utterance {
@@ -117,7 +117,7 @@ mod implementation {
     );
 
     impl Synthesizer {
-        pub(crate) fn new() -> Id<Self> {
+        pub(crate) fn new() -> Retained<Self> {
             unsafe { msg_send_id![Self::class(), new] }
         }
 
@@ -143,7 +143,7 @@ mod implementation {
     );
 
     impl Utterance {
-        pub(crate) fn new(string: &NSString) -> Id<Self> {
+        pub(crate) fn new(string: &NSString) -> Retained<Self> {
             unsafe { msg_send_id![Self::alloc(), initWithString: string] }
         }
 

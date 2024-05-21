@@ -108,7 +108,7 @@ new_objc2::declare_class!(
         fn _a() {}
 
         #[method_id(b)]
-        fn _b() -> new_objc2::rc::Id<CustomObject> {
+        fn _b() -> new_objc2::rc::Retained<CustomObject> {
             ::core::unimplemented!()
         }
     }
@@ -171,10 +171,11 @@ fn test_msg_send(obj: &CustomObject) {
 }
 
 fn test_msg_send_id(obj: &new_objc2::runtime::AnyObject) {
-    let _: new_objc2::rc::Id<new_objc2::runtime::AnyObject> =
+    let _: new_objc2::rc::Retained<new_objc2::runtime::AnyObject> =
         unsafe { new_objc2::msg_send_id![obj, a] };
-    let _: new_objc2::__macro_helpers::Option<new_objc2::rc::Id<new_objc2::runtime::AnyObject>> =
-        unsafe { new_objc2::msg_send_id![obj, a] };
-    let _: new_objc2::rc::Id<new_objc2::runtime::AnyObject> =
+    let _: new_objc2::__macro_helpers::Option<
+        new_objc2::rc::Retained<new_objc2::runtime::AnyObject>,
+    > = unsafe { new_objc2::msg_send_id![obj, a] };
+    let _: new_objc2::rc::Retained<new_objc2::runtime::AnyObject> =
         unsafe { new_objc2::msg_send_id![obj, a: obj, b: obj] };
 }

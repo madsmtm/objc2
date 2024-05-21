@@ -1,8 +1,8 @@
 error[E0277]: the trait bound `i32: Message` is not satisfied
  --> ui/nsarray_not_message.rs
   |
-  |     let _: Id<NSArray<i32>> = NSArray::new();
-  |                               ^^^^^^^^^^^^^^ the trait `Message` is not implemented for `i32`
+  |     let _: Retained<NSArray<i32>> = NSArray::new();
+  |                                     ^^^^^^^^^^^^^^ the trait `Message` is not implemented for `i32`
   |
   = help: the following other types implement trait `Message`:
             AnyObject
@@ -21,27 +21,27 @@ note: required by a bound in `objc2_foundation::generated::__NSArray::<impl NSAr
   | |     /// Methods declared on superclass `NSObject`
   | |     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
   | |         #[method_id(@__retain_semantics New new)]
-  | |         pub fn new() -> Id<Self>;
+  | |         pub fn new() -> Retained<Self>;
   | |                --- required by a bound in this associated function
   | |     }
   | | );
   | |_^ required by this bound in `objc2_foundation::generated::__NSArray::<impl NSArray<ObjectType>>::new`
   = note: this error originates in the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Id<NSObject>: IsRetainable` is not satisfied
+error[E0277]: the trait bound `Retained<NSObject>: IsRetainable` is not satisfied
  --> ui/nsarray_not_message.rs
   |
-  |     let _: Id<NSArray<Id<NSObject>>> = NSArray::from_slice(&[&NSObject::new()]);
-  |                                        ------------------- ^^^^^^^^^^^^^^^^^^^ the trait `ClassType` is not implemented for `Id<NSObject>`, which is required by `Id<NSObject>: IsRetainable`
-  |                                        |
-  |                                        required by a bound introduced by this call
+  |     let _: Retained<NSArray<Retained<NSObject>>> = NSArray::from_slice(&[&NSObject::new()]);
+  |                                                    ------------------- ^^^^^^^^^^^^^^^^^^^ the trait `ClassType` is not implemented for `Retained<NSObject>`, which is required by `Retained<NSObject>: IsRetainable`
+  |                                                    |
+  |                                                    required by a bound introduced by this call
   |
   = help: the trait `IsRetainable` is implemented for `ProtocolObject<P>`
-  = note: required for `Id<NSObject>` to implement `IsRetainable`
+  = note: required for `Retained<NSObject>` to implement `IsRetainable`
 note: required by a bound in `objc2_foundation::array::<impl NSArray<T>>::from_slice`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/array.rs
   |
-  |     pub fn from_slice(slice: &[&T]) -> Id<Self>
+  |     pub fn from_slice(slice: &[&T]) -> Retained<Self>
   |            ---------- required by a bound in this associated function
   |     where
   |         T: IsRetainable,

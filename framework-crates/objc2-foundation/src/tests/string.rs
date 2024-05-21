@@ -74,16 +74,16 @@ fn test_interior_nul() {
 #[cfg(feature = "NSObject")]
 fn test_copy() {
     use crate::Foundation::{NSCopying, NSMutableCopying, NSMutableString, NSObjectProtocol};
-    use objc2::rc::Id;
+    use objc2::rc::Retained;
 
     let s1 = NSString::from_str("abc");
     let s2 = s1.copy();
     // An optimization that NSString makes, since it is immutable
-    assert_eq!(Id::as_ptr(&s1), Id::as_ptr(&s2));
+    assert_eq!(Retained::as_ptr(&s1), Retained::as_ptr(&s2));
     assert!(s2.is_kind_of::<NSString>());
 
     let s3 = s1.mutableCopy();
-    assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3).cast());
+    assert_ne!(Retained::as_ptr(&s1), Retained::as_ptr(&s3).cast());
     assert!(s3.is_kind_of::<NSMutableString>());
 }
 

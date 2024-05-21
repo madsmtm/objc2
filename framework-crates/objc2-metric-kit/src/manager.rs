@@ -14,15 +14,15 @@ objc2::extern_methods!(
         pub unsafe fn extendLaunchMeasurementForTaskID_error(
             &self,
             task_id: &MXLaunchTaskID,
-        ) -> Result<(), objc2::rc::Id<objc2_foundation::NSError>>;
+        ) -> Result<(), objc2::rc::Retained<objc2_foundation::NSError>>;
 
         #[method(finishExtendedLaunchMeasurementForTaskID:error:_)]
         pub unsafe fn finishExtendedLaunchMeasurementForTaskID_error(
             &self,
             task_id: &MXLaunchTaskID,
-        ) -> Result<(), objc2::rc::Id<objc2_foundation::NSError>>;
+        ) -> Result<(), objc2::rc::Retained<objc2_foundation::NSError>>;
 
         // #[method(makeLogHandleWithCategory:)]
-        // pub unsafe fn makeLogHandleWithCategory(category: &objc2_foundation::NSString) -> Id<os_log_t>;
+        // pub unsafe fn makeLogHandleWithCategory(category: &objc2_foundation::NSString) -> Retained<os_log_t>;
     }
 );

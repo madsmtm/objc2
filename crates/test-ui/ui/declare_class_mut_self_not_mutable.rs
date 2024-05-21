@@ -1,4 +1,4 @@
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 use objc2::{declare_class, mutability, ClassType, DeclaredClass};
 
@@ -25,7 +25,7 @@ declare_class!(
         }
 
         #[method_id(testMethodId)]
-        fn test_method_id(&mut self) -> Id<Self> {
+        fn test_method_id(&mut self) -> Retained<Self> {
             unimplemented!()
         }
     }

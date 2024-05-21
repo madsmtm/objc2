@@ -17,7 +17,7 @@ pub use crate::mutability::{
     Immutable, ImmutableWithMutableSubclass, InteriorMutable, IsIdCloneable, IsMainThreadOnly,
     IsRetainable, MainThreadOnly, Mutable, MutableWithImmutableSuperclass,
 };
-pub use crate::rc::{Allocated, DefaultId, Id};
+pub use crate::rc::{Allocated, DefaultId, DefaultRetained, Id, Retained};
 pub use crate::runtime::{
     AnyClass, AnyObject, Bool, NSObject, NSObjectProtocol, ProtocolObject, Sel,
 };

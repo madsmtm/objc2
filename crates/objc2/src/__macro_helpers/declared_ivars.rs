@@ -427,30 +427,30 @@ mod tests {
 
     use super::*;
     use crate::mutability::{InteriorMutable, Mutable};
-    use crate::rc::{Allocated, Id, PartialInit, RcTestObject, ThreadTestData};
+    use crate::rc::{Allocated, PartialInit, RcTestObject, Retained, ThreadTestData};
     use crate::runtime::NSObject;
     use crate::{declare_class, msg_send, msg_send_id};
 
     /// Initialize superclasses, but not own class.
-    unsafe fn init_only_superclasses<T: DeclaredClass>(obj: Allocated<T>) -> Id<T>
+    unsafe fn init_only_superclasses<T: DeclaredClass>(obj: Allocated<T>) -> Retained<T>
     where
         T::Super: ClassType,
     {
-        unsafe { Id::from_raw(msg_send![super(Allocated::into_ptr(obj)), init]) }.unwrap()
+        unsafe { Retained::from_raw(msg_send![super(Allocated::into_ptr(obj)), init]) }.unwrap()
     }
 
     /// Initialize, but fail to finalize (which is only done by `msg_send_id!`).
-    unsafe fn init_no_finalize<T: DeclaredClass>(obj: Allocated<T>) -> Id<T>
+    unsafe fn init_no_finalize<T: DeclaredClass>(obj: Allocated<T>) -> Retained<T>
     where
         T::Super: ClassType,
         T::Ivars: Default,
     {
         let obj = obj.set_ivars(Default::default());
-        unsafe { Id::from_raw(msg_send![super(PartialInit::into_ptr(obj)), init]) }.unwrap()
+        unsafe { Retained::from_raw(msg_send![super(PartialInit::into_ptr(obj)), init]) }.unwrap()
     }
 
     /// Initialize properly.
-    unsafe fn init<T: DeclaredClass>(obj: Allocated<T>) -> Id<T> {
+    unsafe fn init<T: DeclaredClass>(obj: Allocated<T>) -> Retained<T> {
         unsafe { msg_send_id![obj, init] }
     }
 
@@ -502,7 +502,7 @@ mod tests {
 
             unsafe impl ImplsDrop {
                 #[method_id(init)]
-                fn init(this: Allocated<Self>) -> Option<Id<Self>> {
+                fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     unsafe { msg_send_id![super(this.set_ivars(())), init] }
                 }
             }
@@ -543,7 +543,7 @@ mod tests {
 
             unsafe impl IvarsImplDrop {
                 #[method_id(init)]
-                fn init(this: Allocated<Self>) -> Option<Id<Self>> {
+                fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     unsafe { msg_send_id![super(this.set_ivars(IvarThatImplsDrop)), init] }
                 }
             }
@@ -578,7 +578,7 @@ mod tests {
 
             unsafe impl BothIvarsAndTypeImplsDrop {
                 #[method_id(init)]
-                fn init(this: Allocated<Self>) -> Option<Id<Self>> {
+                fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     unsafe { msg_send_id![super(this.set_ivars(IvarThatImplsDrop)), init] }
                 }
             }
@@ -662,7 +662,7 @@ mod tests {
 
             unsafe impl IvarZst {
                 #[method_id(init)]
-                fn init(this: Allocated<Self>) -> Option<Id<Self>> {
+                fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     unsafe { msg_send_id![super(this.set_ivars(Ivar)), init] }
                 }
             }
@@ -732,12 +732,12 @@ mod tests {
             }
 
             impl DeclaredClass for RcIvar {
-                type Ivars = Option<Id<RcTestObject>>;
+                type Ivars = Option<Retained<RcTestObject>>;
             }
 
             unsafe impl RcIvar {
                 #[method_id(init)]
-                fn init(this: Allocated<Self>) -> Option<Id<Self>> {
+                fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     let this = this.set_ivars(Some(RcTestObject::new()));
                     unsafe { msg_send_id![super(this), init] }
                 }
@@ -784,7 +784,7 @@ mod tests {
         #[derive(Default, Debug, PartialEq, Eq)]
         struct RcIvarSubclassIvars {
             int: i32,
-            obj: Id<RcTestObject>,
+            obj: Retained<RcTestObject>,
         }
 
         declare_class!(
@@ -802,7 +802,7 @@ mod tests {
 
             unsafe impl RcIvarSubclass {
                 #[method_id(init)]
-                fn init(this: Allocated<Self>) -> Option<Id<Self>> {
+                fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     let this = this.set_ivars(RcIvarSubclassIvars {
                         int: 42,
                         obj: RcTestObject::new(),
@@ -865,7 +865,7 @@ mod tests {
 
             impl DeclaredClass for InvalidAccess {
                 // Type has to have a drop flag to detect invalid access
-                type Ivars = Id<NSObject>;
+                type Ivars = Retained<NSObject>;
             }
         );
 
@@ -899,7 +899,7 @@ mod tests {
         }
 
         let obj = DropPanics::alloc().set_ivars(());
-        let obj: Id<DropPanics> = unsafe { msg_send_id![super(obj), init] };
+        let obj: Retained<DropPanics> = unsafe { msg_send_id![super(obj), init] };
         drop(obj);
     }
 
@@ -933,7 +933,7 @@ mod tests {
         );
 
         let obj = IvarDropPanics::alloc().set_ivars(DropPanics);
-        let obj: Id<IvarDropPanics> = unsafe { msg_send_id![super(obj), init] };
+        let obj: Retained<IvarDropPanics> = unsafe { msg_send_id![super(obj), init] };
         drop(obj);
     }
 }

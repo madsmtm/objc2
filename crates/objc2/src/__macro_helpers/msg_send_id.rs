@@ -1,7 +1,7 @@
 use core::ptr::{self, NonNull};
 
 use crate::encode::{Encode, RefEncode};
-use crate::rc::{Allocated, Id, PartialInit};
+use crate::rc::{Allocated, PartialInit, Retained};
 use crate::runtime::{AnyClass, AnyObject, Sel};
 use crate::{sel, ClassType, DeclaredClass, Message};
 
@@ -20,7 +20,7 @@ pub trait MsgSendId<T, U> {
     /// `send_message_id` with that, and return an error if one occurred.
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id_error<A, E, R>(obj: T, sel: Sel, args: A) -> Result<R, Id<E>>
+    unsafe fn send_message_id_error<A, E, R>(obj: T, sel: Sel, args: A) -> Result<R, Retained<E>>
     where
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
@@ -58,11 +58,11 @@ pub trait MsgSendId<T, U> {
     }
 }
 
-/// new: T -> Option<Id<U>>
+/// new: T -> Option<Retained<U>>
 /// alloc: &AnyClass -> Allocated<T>
-/// init: PartialInit<T> -> Option<Id<T>> // Changed
-/// copy/mutableCopy: T -> Option<Id<U>>
-/// others: T -> Option<Id<U>>
+/// init: PartialInit<T> -> Option<Retained<T>> // Changed
+/// copy/mutableCopy: T -> Option<Retained<U>>
+/// others: T -> Option<Retained<U>>
 #[doc(hidden)]
 pub trait MsgSendSuperId<T, U> {
     type Inner: ?Sized + RefEncode;
@@ -97,7 +97,7 @@ pub trait MsgSendSuperId<T, U> {
         superclass: &AnyClass,
         sel: Sel,
         args: A,
-    ) -> Result<R, Id<E>>
+    ) -> Result<R, Retained<E>>
     where
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
@@ -123,7 +123,7 @@ pub trait MsgSendSuperId<T, U> {
         obj: T,
         sel: Sel,
         args: A,
-    ) -> Result<R, Id<E>>
+    ) -> Result<R, Retained<E>>
     where
         Self::Inner: ClassType,
         <Self::Inner as ClassType>::Super: ClassType,
@@ -150,14 +150,15 @@ pub trait MsgSendSuperId<T, U> {
 // And intentionally not inlined, for much the same reason.
 #[cold]
 #[track_caller]
-unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E> {
+unsafe fn encountered_error<E: Message>(err: *mut E) -> Retained<E> {
     // SAFETY: Ensured by caller
-    unsafe { Id::retain(err) }.expect("error parameter should be set if the method returns NULL")
+    unsafe { Retained::retain(err) }
+        .expect("error parameter should be set if the method returns NULL")
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for New {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Retained<U>>> for New {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Retained<U>>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -166,7 +167,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for New {
         // SAFETY: Checked by caller
         let obj = unsafe { MsgSend::send_message(ptr, sel, args) };
         // SAFETY: The selector is `new`, so this has +1 retain count
-        let obj = unsafe { Id::from_raw(obj) };
+        let obj = unsafe { Retained::from_raw(obj) };
 
         // SAFETY: The object is still valid after a message send to a `new`
         // method - it would not be if the method was `init`.
@@ -174,11 +175,14 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for New {
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Id<U>>> for New {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Retained<U>>> for New {
     type Inner = T::Inner;
 
     #[inline]
-    unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
+    unsafe fn send_super_message_id<
+        A: ConvertArguments,
+        R: MaybeUnwrap<Input = Option<Retained<U>>>,
+    >(
         obj: T,
         superclass: &AnyClass,
         sel: Sel,
@@ -188,7 +192,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Id<U>>> for New {
         // SAFETY: Same as in `send_message_id`
         let obj = unsafe { MsgSend::send_super_message(ptr, superclass, sel, args) };
         // SAFETY: Same as in `send_message_id`
-        let obj = unsafe { Id::from_raw(obj) };
+        let obj = unsafe { Retained::from_raw(obj) };
         // SAFETY: Same as in `send_message_id`
         R::maybe_unwrap::<Self>(obj, (unsafe { ptr.as_ref() }, sel))
     }
@@ -256,9 +260,9 @@ impl Alloc {
     }
 }
 
-impl<T: ?Sized + Message> MsgSendId<Allocated<T>, Option<Id<T>>> for Init {
+impl<T: ?Sized + Message> MsgSendId<Allocated<T>, Option<Retained<T>>> for Init {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<T>>>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Retained<T>>>>(
         obj: Allocated<T>,
         sel: Sel,
         args: A,
@@ -272,16 +276,19 @@ impl<T: ?Sized + Message> MsgSendId<Allocated<T>, Option<Id<T>>> for Init {
         // did not intend after every `alloc`.
         let obj = unsafe { MsgSend::send_message(ptr, sel, args) };
         // SAFETY: The selector is `init`, so this has +1 retain count
-        let obj = unsafe { Id::from_raw(obj) };
+        let obj = unsafe { Retained::from_raw(obj) };
         R::maybe_unwrap::<Self>(obj, (ptr.cast(), sel))
     }
 }
 
-impl<T: DeclaredClass> MsgSendSuperId<PartialInit<T>, Option<Id<T>>> for Init {
+impl<T: DeclaredClass> MsgSendSuperId<PartialInit<T>, Option<Retained<T>>> for Init {
     type Inner = T;
 
     #[inline]
-    unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<T>>>>(
+    unsafe fn send_super_message_id<
+        A: ConvertArguments,
+        R: MaybeUnwrap<Input = Option<Retained<T>>>,
+    >(
         obj: PartialInit<T>,
         superclass: &AnyClass,
         sel: Sel,
@@ -298,14 +305,14 @@ impl<T: DeclaredClass> MsgSendSuperId<PartialInit<T>, Option<Id<T>>> for Init {
             unsafe { set_finalized(ptr) };
         }
         // SAFETY: Same as `send_message_id`
-        let obj = unsafe { Id::from_raw(ptr) };
+        let obj = unsafe { Retained::from_raw(ptr) };
         R::maybe_unwrap::<Self>(obj, (ptr.cast(), sel))
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for CopyOrMutCopy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Retained<U>>> for CopyOrMutCopy {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Retained<U>>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -314,16 +321,19 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for CopyOrMutC
         let obj = unsafe { MsgSend::send_message(obj, sel, args) };
         // SAFETY: The selector is `copy` or `mutableCopy`, so this has +1
         // retain count
-        let obj = unsafe { Id::from_raw(obj) };
+        let obj = unsafe { Retained::from_raw(obj) };
         R::maybe_unwrap::<Self>(obj, ())
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Id<U>>> for CopyOrMutCopy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Retained<U>>> for CopyOrMutCopy {
     type Inner = T::Inner;
 
     #[inline]
-    unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
+    unsafe fn send_super_message_id<
+        A: ConvertArguments,
+        R: MaybeUnwrap<Input = Option<Retained<U>>>,
+    >(
         obj: T,
         superclass: &AnyClass,
         sel: Sel,
@@ -332,14 +342,14 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Id<U>>> for CopyO
         // SAFETY: Same as in `send_message_id`
         let obj = unsafe { MsgSend::send_super_message(obj, superclass, sel, args) };
         // SAFETY: Same as in `send_message_id`
-        let obj = unsafe { Id::from_raw(obj) };
+        let obj = unsafe { Retained::from_raw(obj) };
         R::maybe_unwrap::<Self>(obj, ())
     }
 }
 
-impl<T: MsgSend, U: Message> MsgSendId<T, Option<Id<U>>> for Other {
+impl<T: MsgSend, U: Message> MsgSendId<T, Option<Retained<U>>> for Other {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Retained<U>>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -352,7 +362,7 @@ impl<T: MsgSend, U: Message> MsgSendId<T, Option<Id<U>>> for Other {
 
         // SAFETY: The selector is not `new`, `alloc`, `init`, `copy` nor
         // `mutableCopy`, so the object must be manually retained.
-        let obj = unsafe { Id::retain_autoreleased(obj) };
+        let obj = unsafe { Retained::retain_autoreleased(obj) };
 
         // SAFETY: The object is still valid after a message send to a
         // normal method - it would not be if the method was `init`.
@@ -360,11 +370,14 @@ impl<T: MsgSend, U: Message> MsgSendId<T, Option<Id<U>>> for Other {
     }
 }
 
-impl<T: MsgSend, U: Message> MsgSendSuperId<T, Option<Id<U>>> for Other {
+impl<T: MsgSend, U: Message> MsgSendSuperId<T, Option<Retained<U>>> for Other {
     type Inner = T::Inner;
 
     #[inline]
-    unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
+    unsafe fn send_super_message_id<
+        A: ConvertArguments,
+        R: MaybeUnwrap<Input = Option<Retained<U>>>,
+    >(
         obj: T,
         superclass: &AnyClass,
         sel: Sel,
@@ -374,7 +387,7 @@ impl<T: MsgSend, U: Message> MsgSendSuperId<T, Option<Id<U>>> for Other {
         // SAFETY: Same as `send_message_id`
         let obj = unsafe { MsgSend::send_super_message(ptr, superclass, sel, args) };
         // SAFETY: Same as `send_message_id`
-        let obj = unsafe { Id::retain_autoreleased(obj) };
+        let obj = unsafe { Retained::retain_autoreleased(obj) };
         // SAFETY: Same as `send_message_id`
         R::maybe_unwrap::<Self>(obj, (unsafe { ptr.as_ref() }, sel))
     }
@@ -386,20 +399,20 @@ pub trait MaybeUnwrap {
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Self::Input, args: F::Args) -> Self;
 }
 
-impl<T: ?Sized> MaybeUnwrap for Option<Id<T>> {
-    type Input = Option<Id<T>>;
+impl<T: ?Sized> MaybeUnwrap for Option<Retained<T>> {
+    type Input = Option<Retained<T>>;
 
     #[inline]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T>>, _args: F::Args) -> Self {
+    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Retained<T>>, _args: F::Args) -> Self {
         obj
     }
 }
 
-impl<T: ?Sized> MaybeUnwrap for Id<T> {
-    type Input = Option<Id<T>>;
+impl<T: ?Sized> MaybeUnwrap for Retained<T> {
+    type Input = Option<Retained<T>>;
 
     #[inline]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T>>, args: F::Args) -> Self {
+    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Retained<T>>, args: F::Args) -> Self {
         match obj {
             Some(obj) => obj,
             None => F::failed(args),
@@ -525,7 +538,7 @@ mod tests {
 
         #[test]
         fn test_macro_still_works() {
-            let _: Id<NSObject> = unsafe { msg_send_id![NSObject::class(), new] };
+            let _: Retained<NSObject> = unsafe { msg_send_id![NSObject::class(), new] };
         }
     }
 
@@ -536,15 +549,16 @@ mod tests {
         let mut expected = ThreadTestData::current();
         let cls = RcTestObject::class();
 
-        let _obj: Id<AnyObject> = unsafe { msg_send_id![cls, new] };
-        let _obj: Option<Id<AnyObject>> = unsafe { msg_send_id![cls, new] };
+        let _obj: Retained<AnyObject> = unsafe { msg_send_id![cls, new] };
+        let _obj: Option<Retained<AnyObject>> = unsafe { msg_send_id![cls, new] };
         // This is just a roundabout way of calling `[__RcTestObject new]`.
-        let _obj: Id<AnyObject> = unsafe { msg_send_id![super(cls, cls.metaclass()), new] };
-        let _obj: Option<Id<AnyObject>> = unsafe { msg_send_id![super(cls, cls.metaclass()), new] };
+        let _obj: Retained<AnyObject> = unsafe { msg_send_id![super(cls, cls.metaclass()), new] };
+        let _obj: Option<Retained<AnyObject>> =
+            unsafe { msg_send_id![super(cls, cls.metaclass()), new] };
 
         // `__RcTestObject` does not override `new`, so this just ends up
         // calling `[[__RcTestObject alloc] init]` as usual.
-        let _obj: Id<RcTestObject> =
+        let _obj: Retained<RcTestObject> =
             unsafe { msg_send_id![super(cls, NSObject::class().metaclass()), new] };
 
         expected.alloc += 5;
@@ -560,11 +574,11 @@ mod tests {
         expected.init += 1;
         expected.assert_current();
 
-        let _obj: Id<AnyObject> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
-        let _obj: Option<Id<AnyObject>> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
-        let _obj: Id<AnyObject> =
+        let _obj: Retained<AnyObject> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
+        let _obj: Option<Retained<AnyObject>> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
+        let _obj: Retained<AnyObject> =
             unsafe { msg_send_id![super(&obj, RcTestObject::class()), newMethodOnInstance] };
-        let _obj: Option<Id<AnyObject>> =
+        let _obj: Option<Retained<AnyObject>> =
             unsafe { msg_send_id![super(&obj, RcTestObject::class()), newMethodOnInstance] };
         expected.alloc += 4;
         expected.init += 4;
@@ -578,11 +592,11 @@ mod tests {
         let mut expected = ThreadTestData::current();
 
         let object_class = RcTestObject::class();
-        let key: Id<AnyObject> = unsafe { msg_send_id![class!(NSString), new] };
+        let key: Retained<AnyObject> = unsafe { msg_send_id![class!(NSString), new] };
         let contents_value: *const AnyObject = ptr::null();
-        let properties: Id<AnyObject> = unsafe { msg_send_id![class!(NSDictionary), new] };
+        let properties: Retained<AnyObject> = unsafe { msg_send_id![class!(NSDictionary), new] };
 
-        let _obj: Option<Id<AnyObject>> = unsafe {
+        let _obj: Option<Retained<AnyObject>> = unsafe {
             msg_send_id![
                 NSObject::class(),
                 newScriptingObjectOfClass: object_class,
@@ -601,20 +615,20 @@ mod tests {
     // GNUStep instead returns an invalid instance that panics on accesses
     #[cfg_attr(feature = "gnustep-1-7", ignore)]
     fn new_nsvalue_fails() {
-        let _val: Id<AnyObject> = unsafe { msg_send_id![class!(NSValue), new] };
+        let _val: Retained<AnyObject> = unsafe { msg_send_id![class!(NSValue), new] };
     }
 
     #[test]
     #[should_panic = "failed creating new instance using +[__RcTestObject newReturningNull]"]
     fn test_new_with_null() {
-        let _obj: Id<RcTestObject> =
+        let _obj: Retained<RcTestObject> =
             unsafe { msg_send_id![RcTestObject::class(), newReturningNull] };
     }
 
     #[test]
     #[should_panic = "failed creating new instance using +[__RcTestObject newReturningNull]"]
     fn test_super_new_with_null() {
-        let _: Id<RcTestObject> = unsafe {
+        let _: Retained<RcTestObject> = unsafe {
             msg_send_id![
                 super(RcTestObject::class(), RcTestObject::class().metaclass()),
                 newReturningNull
@@ -626,14 +640,14 @@ mod tests {
     #[should_panic = "unexpected NULL returned from -[__RcTestObject newMethodOnInstanceNull]"]
     fn test_new_any_with_null() {
         let obj = RcTestObject::new();
-        let _obj: Id<AnyObject> = unsafe { msg_send_id![&obj, newMethodOnInstanceNull] };
+        let _obj: Retained<AnyObject> = unsafe { msg_send_id![&obj, newMethodOnInstanceNull] };
     }
 
     #[test]
     #[should_panic = "unexpected NULL returned from -[__RcTestObject newMethodOnInstanceNull]"]
     fn test_super_new_any_with_null() {
         let obj = RcTestObject::new();
-        let _obj: Id<AnyObject> =
+        let _obj: Retained<AnyObject> =
             unsafe { msg_send_id![super(&obj, RcTestObject::class()), newMethodOnInstanceNull] };
     }
 
@@ -648,7 +662,7 @@ mod tests {
     )]
     fn test_new_any_with_null_receiver() {
         let obj: *const NSObject = ptr::null();
-        let _obj: Id<AnyObject> = unsafe { msg_send_id![obj, newMethodOnInstance] };
+        let _obj: Retained<AnyObject> = unsafe { msg_send_id![obj, newMethodOnInstance] };
     }
 
     #[test]
@@ -662,7 +676,7 @@ mod tests {
     )]
     fn test_super_new_any_with_null_receiver() {
         let obj: *const RcTestObject = ptr::null();
-        let _obj: Id<AnyObject> = unsafe { msg_send_id![super(obj), newMethodOnInstance] };
+        let _obj: Retained<AnyObject> = unsafe { msg_send_id![super(obj), newMethodOnInstance] };
     }
 
     // `alloc` family
@@ -726,7 +740,7 @@ mod tests {
     fn test_init() {
         let mut expected = ThreadTestData::current();
 
-        let _: Id<RcTestObject> = unsafe { msg_send_id![RcTestObject::alloc(), init] };
+        let _: Retained<RcTestObject> = unsafe { msg_send_id![RcTestObject::alloc(), init] };
         expected.alloc += 1;
         expected.init += 1;
         expected.release += 1;
@@ -734,7 +748,7 @@ mod tests {
         expected.assert_current();
 
         let obj = RcTestObject::alloc().set_ivars(());
-        let _: Id<RcTestObject> = unsafe { msg_send_id![super(obj), init] };
+        let _: Retained<RcTestObject> = unsafe { msg_send_id![super(obj), init] };
         expected.alloc += 1;
         expected.release += 1;
         expected.drop += 1;
@@ -744,7 +758,7 @@ mod tests {
         let obj = RcTestObject::alloc();
         expected.alloc += 1;
         assert!(!Allocated::as_ptr(&obj).is_null());
-        let _: Id<RcTestObject> = unsafe { msg_send_id![obj, init] };
+        let _: Retained<RcTestObject> = unsafe { msg_send_id![obj, init] };
         expected.init += 1;
         expected.release += 1;
         expected.drop += 1;
@@ -755,7 +769,7 @@ mod tests {
     #[should_panic = "failed initializing object with -initReturningNull"]
     fn test_init_with_null() {
         let obj: Allocated<RcTestObject> = unsafe { msg_send_id![RcTestObject::class(), alloc] };
-        let _obj: Id<RcTestObject> = unsafe { msg_send_id![obj, initReturningNull] };
+        let _obj: Retained<RcTestObject> = unsafe { msg_send_id![obj, initReturningNull] };
     }
 
     #[test]
@@ -764,7 +778,7 @@ mod tests {
     fn test_init_with_null_receiver() {
         let obj: Allocated<RcTestObject> =
             unsafe { msg_send_id![RcTestObject::class(), allocReturningNull] };
-        let _obj: Id<RcTestObject> = unsafe { msg_send_id![obj, init] };
+        let _obj: Retained<RcTestObject> = unsafe { msg_send_id![obj, init] };
     }
 
     #[test]
@@ -779,7 +793,8 @@ mod tests {
     )]
     fn test_super_init_not_initialized() {
         let obj = RcTestObject::alloc().set_ivars(());
-        let _: Id<RcTestObject> = unsafe { msg_send_id![super(obj, RcTestObject::class()), init] };
+        let _: Retained<RcTestObject> =
+            unsafe { msg_send_id![super(obj, RcTestObject::class()), init] };
     }
 
     #[test]
@@ -787,7 +802,8 @@ mod tests {
     #[cfg_attr(not(debug_assertions), ignore = "only checked with debug assertions")]
     fn test_super_init_not_finalized() {
         let obj = unsafe { PartialInit::new(Allocated::into_ptr(RcTestObject::alloc())) };
-        let _: Id<RcTestObject> = unsafe { msg_send_id![super(obj, RcTestObject::class()), init] };
+        let _: Retained<RcTestObject> =
+            unsafe { msg_send_id![super(obj, RcTestObject::class()), init] };
     }
 
     // `copy` family
@@ -797,7 +813,7 @@ mod tests {
         let obj = RcTestObject::new();
         let mut expected = ThreadTestData::current();
 
-        let _: Id<RcTestObject> = unsafe { msg_send_id![&obj, copy] };
+        let _: Retained<RcTestObject> = unsafe { msg_send_id![&obj, copy] };
         expected.copy += 1;
         expected.alloc += 1;
         expected.init += 1;
@@ -807,7 +823,7 @@ mod tests {
 
         // `+[NSObject copy]` forwards to `copyWithZone:`, so this still
         // creates a `__RcTestObject`.
-        let _: Id<NSObject> = unsafe { msg_send_id![super(&obj), copy] };
+        let _: Retained<NSObject> = unsafe { msg_send_id![super(&obj), copy] };
         expected.copy += 1;
         expected.alloc += 1;
         expected.init += 1;
@@ -820,14 +836,14 @@ mod tests {
     #[should_panic = "failed copying object"]
     fn test_copy_with_null() {
         let obj = RcTestObject::new();
-        let _obj: Id<RcTestObject> = unsafe { msg_send_id![&obj, copyReturningNull] };
+        let _obj: Retained<RcTestObject> = unsafe { msg_send_id![&obj, copyReturningNull] };
     }
 
     #[test]
     #[should_panic = "failed copying object"]
     fn test_super_copy_with_null() {
         let obj = RcTestObject::new();
-        let _obj: Id<RcTestObject> =
+        let _obj: Retained<RcTestObject> =
             unsafe { msg_send_id![super(&obj, RcTestObject::class()), copyReturningNull] };
     }
 
@@ -838,7 +854,7 @@ mod tests {
         let obj = RcTestObject::new();
         let mut expected = ThreadTestData::current();
 
-        let _: Id<RcTestObject> = unsafe { msg_send_id![&obj, mutableCopy] };
+        let _: Retained<RcTestObject> = unsafe { msg_send_id![&obj, mutableCopy] };
         expected.mutable_copy += 1;
         expected.alloc += 1;
         expected.init += 1;
@@ -848,7 +864,7 @@ mod tests {
 
         // `+[NSObject mutableCopy]` forwards to `mutableCopyWithZone:`, so
         // this still creates a `__RcTestObject`.
-        let _: Id<NSObject> = unsafe { msg_send_id![super(&obj), mutableCopy] };
+        let _: Retained<NSObject> = unsafe { msg_send_id![super(&obj), mutableCopy] };
         expected.mutable_copy += 1;
         expected.alloc += 1;
         expected.init += 1;
@@ -864,20 +880,20 @@ mod tests {
         let obj = RcTestObject::new();
         let mut expected = ThreadTestData::current();
 
-        let _: Id<RcTestObject> = unsafe { msg_send_id![&obj, self] };
+        let _: Retained<RcTestObject> = unsafe { msg_send_id![&obj, self] };
         expected.retain += 1;
         expected.release += 1;
         expected.assert_current();
 
-        let _: Id<RcTestObject> = unsafe { msg_send_id![super(&obj), self] };
+        let _: Retained<RcTestObject> = unsafe { msg_send_id![super(&obj), self] };
         expected.retain += 1;
         expected.release += 1;
         expected.assert_current();
 
-        let _: Option<Id<RcTestObject>> = unsafe { msg_send_id![&obj, description] };
+        let _: Option<Retained<RcTestObject>> = unsafe { msg_send_id![&obj, description] };
         expected.assert_current();
 
-        let _: Option<Id<RcTestObject>> = unsafe { msg_send_id![super(&obj), description] };
+        let _: Option<Retained<RcTestObject>> = unsafe { msg_send_id![super(&obj), description] };
         expected.assert_current();
     }
 
@@ -885,14 +901,14 @@ mod tests {
     #[should_panic = "unexpected NULL returned from -[__RcTestObject methodReturningNull]"]
     fn test_normal_with_null() {
         let obj = RcTestObject::new();
-        let _obj: Id<RcTestObject> = unsafe { msg_send_id![&obj, methodReturningNull] };
+        let _obj: Retained<RcTestObject> = unsafe { msg_send_id![&obj, methodReturningNull] };
     }
 
     #[test]
     #[should_panic = "unexpected NULL returned from -[__RcTestObject aMethod:]"]
     fn test_normal_with_param_and_null() {
         let obj = RcTestObject::new();
-        let _obj: Id<RcTestObject> = unsafe { msg_send_id![&obj, aMethod: false] };
+        let _obj: Retained<RcTestObject> = unsafe { msg_send_id![&obj, aMethod: false] };
     }
 
     #[test]
@@ -903,7 +919,7 @@ mod tests {
     )]
     fn test_normal_with_null_receiver() {
         let obj: *const NSObject = ptr::null();
-        let _obj: Id<AnyObject> = unsafe { msg_send_id![obj, description] };
+        let _obj: Retained<AnyObject> = unsafe { msg_send_id![obj, description] };
     }
 
     // This is imperfect, but will do for now.
@@ -939,7 +955,7 @@ mod tests {
         ($expected:expr, $if_autorelease_not_skipped:expr, $sel:ident, $($obj:tt)*) => {
             // Succeeds
             let res = autoreleasepool(|_pool| {
-                let res: Result<Id<RcTestObject>, Id<RcTestObject>> = unsafe {
+                let res: Result<Retained<RcTestObject>, Retained<RcTestObject>> = unsafe {
                     msg_send_id![$($obj)*, $sel: false, error: _]
                 };
                 let res = res.expect("not ok");
@@ -960,7 +976,7 @@ mod tests {
 
             // Errors
             let res = autoreleasepool(|_pool| {
-                let res: Result<Id<RcTestObject>, Id<RcTestObject>> = unsafe {
+                let res: Result<Retained<RcTestObject>, Retained<RcTestObject>> = unsafe {
                     msg_send_id![$($obj)*, $sel: true, error: _]
                 };
                 $expected.alloc += 1;
@@ -1018,12 +1034,12 @@ mod tests {
         expected.init += 1;
         expected.assert_current();
 
-        let res: Option<Id<RcTestObject>> = unsafe { msg_send_id![&obj, aMethod: false] };
+        let res: Option<Retained<RcTestObject>> = unsafe { msg_send_id![&obj, aMethod: false] };
         assert!(res.is_none());
         expected.assert_current();
 
         let _res = autoreleasepool(|_pool| {
-            let res: Option<Id<RcTestObject>> = unsafe { msg_send_id![&obj, aMethod: true] };
+            let res: Option<Retained<RcTestObject>> = unsafe { msg_send_id![&obj, aMethod: true] };
             assert!(res.is_some());
             expected.alloc += 1;
             expected.init += 1;

@@ -11,7 +11,7 @@
 ///   The added restrictions are:
 ///   - `new`, `alloc`, `copy` and `mutableCopy`: The method must return a
 ///     retainable object pointer type - we ensure this by making
-///     `message_send_id` return `Id`.
+///     `message_send_id` return `Retained`.
 ///   - `init`: The method must be an instance method and must return an
 ///     Objective-C pointer type - We ensure this by taking `Allocated<T>`,
 ///     which means it can't be a class method!

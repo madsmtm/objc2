@@ -3,7 +3,7 @@ use core::cell::RefCell;
 use core::ptr;
 
 use crate::mutability::Immutable;
-use crate::rc::{Allocated, DefaultId, Id};
+use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{NSObject, NSZone};
 use crate::{declare_class, msg_send, msg_send_id, ClassType, DeclaredClass};
 
@@ -78,17 +78,17 @@ declare_class!(
 
     unsafe impl RcTestObject {
         #[method_id(newReturningNull)]
-        fn new_returning_null() -> Option<Id<Self>> {
+        fn new_returning_null() -> Option<Retained<Self>> {
             None
         }
 
         #[method_id(newMethodOnInstance)]
-        fn new_method_on_instance(&self) -> Id<Self> {
+        fn new_method_on_instance(&self) -> Retained<Self> {
             Self::new()
         }
 
         #[method_id(newMethodOnInstanceNull)]
-        fn new_method_on_instance_null(&self) -> Option<Id<Self>> {
+        fn new_method_on_instance_null(&self) -> Option<Retained<Self>> {
             None
         }
 
@@ -113,14 +113,14 @@ declare_class!(
         }
 
         #[method_id(init)]
-        unsafe fn init(this: Allocated<Self>) -> Id<Self> {
+        unsafe fn init(this: Allocated<Self>) -> Retained<Self> {
             TEST_DATA.with(|data| data.borrow_mut().init += 1);
             let this = this.set_ivars(());
             unsafe { msg_send_id![super(this), init] }
         }
 
         #[method_id(initReturningNull)]
-        fn init_returning_null(_this: Allocated<Self>) -> Option<Id<Self>> {
+        fn init_returning_null(_this: Allocated<Self>) -> Option<Retained<Self>> {
             None
         }
 
@@ -154,29 +154,29 @@ declare_class!(
         }
 
         #[method_id(copyWithZone:)]
-        fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self> {
+        fn copy_with_zone(&self, _zone: *const NSZone) -> Retained<Self> {
             TEST_DATA.with(|data| data.borrow_mut().copy += 1);
             Self::new()
         }
 
         #[method_id(mutableCopyWithZone:)]
-        fn mutable_copy_with_zone(&self, _zone: *const NSZone) -> Id<Self> {
+        fn mutable_copy_with_zone(&self, _zone: *const NSZone) -> Retained<Self> {
             TEST_DATA.with(|data| data.borrow_mut().mutable_copy += 1);
             Self::new()
         }
 
         #[method_id(copyReturningNull)]
-        fn copy_returning_null(_this: &Self) -> Option<Id<Self>> {
+        fn copy_returning_null(_this: &Self) -> Option<Retained<Self>> {
             None
         }
 
         #[method_id(methodReturningNull)]
-        fn method_returning_null(self: &Self) -> Option<Id<Self>> {
+        fn method_returning_null(self: &Self) -> Option<Retained<Self>> {
             None
         }
 
         #[method_id(aMethod:)]
-        fn a_method(&self, param: bool) -> Option<Id<Self>> {
+        fn a_method(&self, param: bool) -> Option<Retained<Self>> {
             param.then(Self::new)
         }
 
@@ -184,7 +184,7 @@ declare_class!(
         fn class_error_bool(should_error: bool, err: Option<&mut *mut RcTestObject>) -> bool {
             if should_error {
                 if let Some(err) = err {
-                    *err = Id::autorelease_ptr(RcTestObject::new());
+                    *err = Retained::autorelease_ptr(RcTestObject::new());
                 }
                 false
             } else {
@@ -200,7 +200,7 @@ declare_class!(
         ) -> bool {
             if should_error {
                 if let Some(err) = err {
-                    *err = Id::autorelease_ptr(RcTestObject::new());
+                    *err = Retained::autorelease_ptr(RcTestObject::new());
                 }
                 false
             } else {
@@ -212,10 +212,10 @@ declare_class!(
         fn class_error_id(
             should_error: bool,
             err: Option<&mut *mut RcTestObject>,
-        ) -> Option<Id<Self>> {
+        ) -> Option<Retained<Self>> {
             if should_error {
                 if let Some(err) = err {
-                    *err = Id::autorelease_ptr(RcTestObject::new());
+                    *err = Retained::autorelease_ptr(RcTestObject::new());
                 }
                 None
             } else {
@@ -228,10 +228,10 @@ declare_class!(
             self: &Self,
             should_error: bool,
             err: Option<&mut *mut RcTestObject>,
-        ) -> Option<Id<Self>> {
+        ) -> Option<Retained<Self>> {
             if should_error {
                 if let Some(err) = err {
-                    *err = Id::autorelease_ptr(RcTestObject::new());
+                    *err = Retained::autorelease_ptr(RcTestObject::new());
                 }
                 None
             } else {
@@ -243,10 +243,10 @@ declare_class!(
         fn new_error(
             should_error: bool,
             err: Option<&mut *mut RcTestObject>,
-        ) -> Option<Id<Self>> {
+        ) -> Option<Retained<Self>> {
             if should_error {
                 if let Some(err) = err {
-                    *err = Id::autorelease_ptr(RcTestObject::new());
+                    *err = Retained::autorelease_ptr(RcTestObject::new());
                 }
                 None
             } else {
@@ -258,7 +258,7 @@ declare_class!(
         fn alloc_error(should_error: bool, err: Option<&mut *mut RcTestObject>) -> *mut Self {
             if should_error {
                 if let Some(err) = err {
-                    *err = Id::autorelease_ptr(RcTestObject::new());
+                    *err = Retained::autorelease_ptr(RcTestObject::new());
                 }
                 ptr::null_mut()
             } else {
@@ -271,10 +271,10 @@ declare_class!(
             this: Allocated<Self>,
             should_error: bool,
             err: Option<&mut *mut RcTestObject>,
-        ) -> Option<Id<Self>> {
+        ) -> Option<Retained<Self>> {
             if should_error {
                 if let Some(err) = err {
-                    *err = Id::autorelease_ptr(RcTestObject::new());
+                    *err = Retained::autorelease_ptr(RcTestObject::new());
                 }
                 None
             } else {
@@ -297,8 +297,8 @@ impl Drop for RcTestObject {
     }
 }
 
-impl DefaultId for RcTestObject {
-    fn default_id() -> Id<Self> {
+impl DefaultRetained for RcTestObject {
+    fn default_id() -> Retained<Self> {
         Self::new()
     }
 }
@@ -308,8 +308,8 @@ unsafe impl Sync for RcTestObject {}
 
 impl RcTestObject {
     #[doc(hidden)]
-    pub(crate) fn new() -> Id<Self> {
+    pub(crate) fn new() -> Retained<Self> {
         // Use msg_send! - msg_send_id! is tested elsewhere!
-        unsafe { Id::from_raw(msg_send![Self::class(), new]) }.unwrap()
+        unsafe { Retained::from_raw(msg_send![Self::class(), new]) }.unwrap()
     }
 }

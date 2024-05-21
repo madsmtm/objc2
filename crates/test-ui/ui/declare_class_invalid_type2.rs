@@ -1,4 +1,4 @@
-use objc2::rc::{Allocated, Id};
+use objc2::rc::{Allocated, Retained};
 use objc2::runtime::NSObject;
 use objc2::{declare_class, mutability, ClassType, DeclaredClass};
 
@@ -15,7 +15,7 @@ declare_class!(
 
     unsafe impl CustomObject {
         #[method_id(initNotSameGenerics)]
-        fn test_init_not_same_generics(this: Allocated<Self>) -> Id<NSObject> {
+        fn test_init_not_same_generics(this: Allocated<Self>) -> Retained<NSObject> {
             unimplemented!()
         }
 

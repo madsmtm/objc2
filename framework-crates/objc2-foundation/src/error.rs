@@ -12,7 +12,10 @@ impl NSError {
     /// Construct a new [`NSError`] with the given code in the given domain.
     #[cfg(feature = "NSDictionary")]
     #[cfg(feature = "NSString")]
-    pub fn new(code: objc2::ffi::NSInteger, domain: &crate::NSErrorDomain) -> objc2::rc::Id<Self> {
+    pub fn new(
+        code: objc2::ffi::NSInteger,
+        domain: &crate::NSErrorDomain,
+    ) -> objc2::rc::Retained<Self> {
         use objc2::ClassType;
         // SAFETY: `domain` and `user_info` are copied to the error object, so
         // even if the `&NSString` came from a `&mut NSMutableString`, we're

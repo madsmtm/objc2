@@ -4,7 +4,7 @@ use crate::__macro_helpers::declared_ivars::get_initialized_ivar_ptr;
 use crate::encode::RefEncode;
 use crate::msg_send_id;
 use crate::mutability::{IsAllocableAnyThread, IsRetainable, Mutability};
-use crate::rc::{Allocated, Id};
+use crate::rc::{Allocated, Retained};
 use crate::runtime::{AnyClass, AnyProtocol};
 
 /// Types that can be sent Objective-C messages.
@@ -13,7 +13,7 @@ use crate::runtime::{AnyClass, AnyProtocol};
 /// pointer types and references to the type, which allows using them as the
 /// receiver (first argument) in the [`msg_send!`][`crate::msg_send`] macro.
 ///
-/// This trait also allows the object to be used in [`rc::Id`][`Id`].
+/// This trait also allows the object to be used in [`Retained`].
 ///
 /// This is a subtrait of [`RefEncode`], meaning the type must also implement
 /// that, almost always with [`RefEncode::ENCODING_REF`] being
@@ -78,17 +78,17 @@ use crate::runtime::{AnyClass, AnyProtocol};
 /// // `*mut MyObject` and other pointer/reference types to the object can
 /// // now be used in `msg_send!`
 /// //
-/// // And `Id<MyObject>` can now be constructed.
+/// // And `Retained<MyObject>` can now be constructed.
 /// ```
 pub unsafe trait Message: RefEncode {}
 
 /// Marks types that represent specific classes.
 ///
 /// Sometimes it is enough to generically know that a type is messageable,
-/// e.g. [`rc::Id`][crate::rc::Id] works with any type that implements the
-/// [`Message`] trait. But often, you have an object that you know represents
-/// a specific Objective-C class - this trait allows you to communicate that,
-/// as well as a few properties of the class to the rest of the type-system.
+/// e.g. [`Retained`] works with any type that implements the [`Message`]
+/// trait. But often, you have an object that you know represents a specific
+/// Objective-C class - this trait allows you to communicate that, as well as
+/// a few properties of the class to the rest of the type-system.
 ///
 /// This is implemented automatically for your type by the
 /// [`declare_class!`][crate::declare_class] and
@@ -122,7 +122,7 @@ pub unsafe trait Message: RefEncode {}
 ///
 /// ```
 /// use objc2::{ClassType, msg_send_id};
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 /// # use objc2::runtime::{NSObject as MyObject};
 ///
 /// // Get the class of the object.
@@ -138,14 +138,14 @@ pub unsafe trait Message: RefEncode {}
 /// // SAFETY:
 /// // - The class is `MyObject`, which can safely be initialized with `new`.
 /// // - The return type is correctly specified.
-/// let obj: Id<MyObject> = unsafe { msg_send_id![cls, new] };
+/// let obj: Retained<MyObject> = unsafe { msg_send_id![cls, new] };
 /// ```
 ///
 /// Use the trait to allocate a new instance of an object.
 ///
 /// ```
 /// use objc2::{ClassType, msg_send_id};
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 /// # use objc2::runtime::{NSObject as MyObject};
 ///
 /// let obj = MyObject::alloc();
@@ -153,7 +153,7 @@ pub unsafe trait Message: RefEncode {}
 /// // Now we can call initializers on this newly allocated object.
 /// //
 /// // SAFETY: `MyObject` can safely be initialized with `init`.
-/// let obj: Id<MyObject> = unsafe { msg_send_id![obj, init] };
+/// let obj: Retained<MyObject> = unsafe { msg_send_id![obj, init] };
 /// ```
 ///
 /// Use the [`extern_class!`][crate::extern_class] macro to implement this
@@ -239,10 +239,10 @@ pub unsafe trait ClassType: Message {
     /// This extends the duration in which the receiver is alive by detaching
     /// it from the lifetime information carried by the reference.
     ///
-    /// This is similar to using [`Clone` on `Id<Self>`][clone-id], with the
-    /// addition that it can be used on a plain reference. Note however that
-    /// this is not possible to use on certain types like `NSString`, since
-    /// if you only hold `&NSString`, that may have come from
+    /// This is similar to using [`Clone` on `Retained<Self>`][clone-id], with
+    /// the addition that it can be used on a plain reference. Note however
+    /// that this is not possible to use on certain types like `NSString`,
+    /// since if you only hold `&NSString`, that may have come from
     /// `&mut NSMutableString`, in which case it would be unsound to erase the
     /// lifetime information carried by the reference.
     ///
@@ -250,14 +250,14 @@ pub unsafe trait ClassType: Message {
     /// that gives you a `NSString` whether the string was originally a
     /// `NSString` or a `NSMutableString`).
     ///
-    /// [clone-id]: crate::rc::Id#impl-Clone-for-Id<T>
+    /// [clone-id]: crate::rc::Retained#impl-Clone-for-Retained<T>
     //
     // Note: We could have placed this on `mutability::IsRetainable`, but
     // `ClassType` is more often already in scope, allowing easier access to
     // `obj.retain()`.
     #[inline]
     #[doc(alias = "objc_retain")]
-    fn retain(&self) -> Id<Self>
+    fn retain(&self) -> Retained<Self>
     where
         Self: IsRetainable,
         Self: Sized, // Temporary
@@ -270,7 +270,7 @@ pub unsafe trait ClassType: Message {
         // - The pointer is valid since it came from `&self`.
         // - The lifetime of the pointer itself is extended, but any lifetime
         //   that the object may carry is still kept within the type itself.
-        let obj = unsafe { Id::retain(ptr) };
+        let obj = unsafe { Retained::retain(ptr) };
         // SAFETY: The pointer came from `&self`, which is always non-null
         // (and objc_retain always returns the same value).
         unsafe { obj.unwrap_unchecked() }

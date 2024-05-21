@@ -3,7 +3,7 @@
 use alloc::string::ToString;
 use alloc::{format, vec};
 
-use objc2::rc::{autoreleasepool, Id};
+use objc2::rc::{autoreleasepool, Retained};
 use objc2::runtime::AnyObject;
 
 use crate::Foundation::{self, NSAttributedString, NSObject, NSString};
@@ -38,11 +38,11 @@ fn test_copy() {
     let s2 = s1.copy();
     // NSAttributedString performs this optimization in GNUStep's runtime,
     // but not in Apple's; so we don't test for it!
-    // assert_eq!(Id::as_ptr(&s1), Id::as_ptr(&s2));
+    // assert_eq!(Retained::as_ptr(&s1), Retained::as_ptr(&s2));
     assert!(s2.is_kind_of::<NSAttributedString>());
 
     let s3 = s1.mutableCopy();
-    assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3).cast());
+    assert_ne!(Retained::as_ptr(&s1), Retained::as_ptr(&s3).cast());
     assert!(s3.is_kind_of::<Foundation::NSMutableAttributedString>());
 }
 
@@ -57,7 +57,7 @@ fn test_debug() {
     };
     assert_eq!(format!("{s:?}"), expected);
 
-    let obj = Id::into_super(NSObject::new());
+    let obj = Retained::into_super(NSObject::new());
     let ptr: *const AnyObject = &*obj;
     let s = unsafe {
         NSAttributedString::new_with_attributes(
@@ -89,10 +89,10 @@ fn test_copy_mutable() {
 
     let s1 = Foundation::NSMutableAttributedString::from_nsstring(&NSString::from_str("abc"));
     let s2 = s1.copy();
-    assert_ne!(Id::as_ptr(&s1).cast(), Id::as_ptr(&s2));
+    assert_ne!(Retained::as_ptr(&s1).cast(), Retained::as_ptr(&s2));
     assert!(s2.is_kind_of::<NSAttributedString>());
 
     let s3 = s1.mutableCopy();
-    assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3));
+    assert_ne!(Retained::as_ptr(&s1), Retained::as_ptr(&s3));
     assert!(s3.is_kind_of::<Foundation::NSMutableAttributedString>());
 }

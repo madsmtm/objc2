@@ -3,7 +3,7 @@ use std::os::raw::c_char;
 use std::sync::Once;
 
 use crate::encode::{Encode, Encoding, RefEncode};
-use crate::rc::Id;
+use crate::rc::Retained;
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ClassBuilder, ProtocolBuilder, Sel};
 use crate::{ffi, msg_send, mutability, sel, ClassType, Message};
 
@@ -241,9 +241,9 @@ pub(crate) fn custom_subprotocol() -> &'static AnyProtocol {
     AnyProtocol::get("CustomSubProtocol").unwrap()
 }
 
-pub(crate) fn custom_object() -> Id<CustomObject> {
+pub(crate) fn custom_object() -> Retained<CustomObject> {
     let ptr: *const AnyClass = custom_class();
-    unsafe { Id::from_raw(ffi::class_createInstance(ptr.cast(), 0).cast()) }.unwrap()
+    unsafe { Retained::from_raw(ffi::class_createInstance(ptr.cast(), 0).cast()) }.unwrap()
 }
 
 pub(crate) fn custom_subclass() -> &'static AnyClass {
@@ -275,7 +275,7 @@ pub(crate) fn custom_subclass() -> &'static AnyClass {
     AnyClass::get("CustomSubclassObject").unwrap()
 }
 
-pub(crate) fn custom_subclass_object() -> Id<CustomObject> {
+pub(crate) fn custom_subclass_object() -> Retained<CustomObject> {
     let ptr: *const AnyClass = custom_subclass();
-    unsafe { Id::from_raw(ffi::class_createInstance(ptr.cast(), 0).cast()) }.unwrap()
+    unsafe { Retained::from_raw(ffi::class_createInstance(ptr.cast(), 0).cast()) }.unwrap()
 }

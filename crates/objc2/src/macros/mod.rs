@@ -733,7 +733,7 @@ macro_rules! __class_inner {
 ///
 /// The first expression, know as the "receiver", can be any type that
 /// implements [`MessageReceiver`], like a reference or a pointer to an
-/// object. Additionally, it can even be a reference to an [`rc::Id`]
+/// object. Additionally, it can even be a reference to an [`rc::Retained`]
 /// containing an object.
 ///
 /// The expression can be wrapped in `super`, with an optional superclass
@@ -744,7 +744,7 @@ macro_rules! __class_inner {
 /// the exceptions below).
 ///
 /// If the last argument is the special marker `_`, the macro will return a
-/// `Result<(), Id<E>>`, see below.
+/// `Result<(), Retained<E>>`, see below.
 ///
 /// This macro roughly translates into a call to [`sel!`], and afterwards a
 /// fully qualified call to [`MessageReceiver::send_message`]. Note that this
@@ -756,7 +756,7 @@ macro_rules! __class_inner {
 /// Variadic arguments are currently not supported.
 ///
 /// [`MessageReceiver`]: crate::runtime::MessageReceiver
-/// [`rc::Id`]: crate::rc::Id
+/// [`rc::Retained`]: crate::rc::Retained
 /// [`ClassType`]: crate::ClassType
 /// [`Encode`]: crate::Encode
 /// [`sel!`]: crate::sel
@@ -788,10 +788,10 @@ macro_rules! __class_inner {
 ///
 /// This macro has support for passing such parameters using the following
 /// types:
-/// - `&mut Id<_>`
-/// - `Option<&mut Id<_>>`
-/// - `&mut Option<Id<_>>`,
-/// - `Option<&mut Option<Id<_>>>`
+/// - `&mut Retained<_>`
+/// - `Option<&mut Retained<_>>`
+/// - `&mut Option<Retained<_>>`,
+/// - `Option<&mut Option<Retained<_>>>`
 ///
 /// Beware with the first two, since they will cause undefined behaviour if
 /// the method overwrites the value with `nil`.
@@ -813,8 +813,8 @@ macro_rules! __class_inner {
 /// returns `BOOL`, into the Rust equivalent, the [`Result`] type.
 ///
 /// In particular, if you make the last argument the special marker `_`, then
-/// the macro will return a `Result<(), Id<E>>` (where you must specify `E`
-/// yourself, usually you'd use `objc2_foundation::NSError`).
+/// the macro will return a `Result<(), Retained<E>>` (where you must specify
+/// `E` yourself, usually you'd use `objc2_foundation::NSError`).
 ///
 /// At runtime, we create the temporary error variable for you on the stack
 /// and send it as the out-parameter to the method. If the method then returns
@@ -948,14 +948,14 @@ macro_rules! __class_inner {
 ///
 /// ```no_run
 /// use objc2::msg_send;
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 ///
 /// # type NSBundle = objc2::runtime::NSObject;
 /// # type NSError = objc2::runtime::NSObject;
 /// let obj: &NSBundle;
 /// # obj = todo!();
 /// // The `_` tells the macro that the return type should be `Result`.
-/// let res: Result<(), Id<NSError>> = unsafe {
+/// let res: Result<(), Retained<NSError>> = unsafe {
 ///     msg_send![obj, preflightAndReturnError: _]
 /// };
 /// ```
@@ -964,7 +964,7 @@ macro_rules! __class_inner {
 ///
 /// ```no_run
 /// use objc2::msg_send;
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 ///
 /// # type NSFileManager = objc2::runtime::NSObject;
 /// # type NSURL = objc2::runtime::NSObject;
@@ -973,7 +973,7 @@ macro_rules! __class_inner {
 /// # obj = todo!();
 /// let url: &NSURL;
 /// # url = todo!();
-/// let mut result_url: Option<Id<NSURL>> = None;
+/// let mut result_url: Option<Retained<NSURL>> = None;
 /// unsafe {
 ///     msg_send![
 ///         obj,
@@ -986,7 +986,7 @@ macro_rules! __class_inner {
 ///
 /// // Use `result_url` here
 ///
-/// # Ok::<(), Id<NSError>>(())
+/// # Ok::<(), Retained<NSError>>(())
 /// ```
 #[macro_export]
 macro_rules! msg_send {
@@ -1068,10 +1068,10 @@ macro_rules! msg_send_bool {
 ///
 /// Object pointers in Objective-C have certain rules for when they should be
 /// retained and released across function calls. This macro helps doing that,
-/// and returns an [`rc::Id`] with the object, optionally wrapped in an
+/// and returns an [`rc::Retained`] with the object, optionally wrapped in an
 /// [`Option`] if you want to handle failures yourself.
 ///
-/// [`rc::Id`]: crate::rc::Id
+/// [`rc::Retained`]: crate::rc::Retained
 ///
 ///
 /// # A little history
@@ -1117,7 +1117,7 @@ macro_rules! msg_send_bool {
 ///
 /// - The `new` family: The receiver may be anything that implements
 ///   [`MessageReceiver`] (though often you'll want to use `&AnyClass`). The
-///   return type is a generic `Id<T>` or `Option<Id<T>>`.
+///   return type is a generic `Retained<T>` or `Option<Retained<T>>`.
 ///
 /// - The `alloc` family: The receiver must be `&AnyClass`, and the return
 ///   type is a generic `Allocated<T>`.
@@ -1126,44 +1126,45 @@ macro_rules! msg_send_bool {
 ///   `alloc`, or if sending messages to the superclass, it must be
 ///   `PartialInit<T>`.
 ///
-///   The receiver is consumed, and a the now-initialized `Id<T>` or
-///   `Option<Id<T>>` (with the same `T`) is returned.
+///   The receiver is consumed, and a the now-initialized `Retained<T>` or
+///   `Option<Retained<T>>` (with the same `T`) is returned.
 ///
 /// - The `copy` family: The receiver may be anything that implements
-///   [`MessageReceiver`] and the return type is a generic `Id<T>` or
-///   `Option<Id<T>>`.
+///   [`MessageReceiver`] and the return type is a generic `Retained<T>` or
+///   `Option<Retained<T>>`.
 ///
 /// - The `mutableCopy` family: Same as the `copy` family.
 ///
 /// - No family: The receiver may be anything that implements
 ///   [`MessageReceiver`]. The result is retained using
-///   [`Id::retain_autoreleased`], and a generic `Id<T>` or `Option<Id<T>>` is
-///   returned. This retain is in most cases faster than using autorelease
-///   pools!
+///   [`Retained::retain_autoreleased`], and a generic `Retained<T>` or
+///   `Option<Retained<T>>` is returned. This retain is in most cases faster
+///   than using autorelease pools!
 ///
 /// See [the clang documentation][arc-retainable] for the precise
 /// specification of Objective-C's ownership rules.
 ///
-/// As you may have noticed, the return type is usually either `Id` or
-/// `Option<Id>`. Internally, the return type is always `Option<Id>` (for
-/// example: almost all `new` methods can fail if the allocation failed), but
-/// for convenience, if the return type is `Id<T>`, this macro will
-/// automatically unwrap the object, or panic with an error message if it
-/// couldn't be retrieved.
+/// As you may have noticed, the return type is usually either `Retained` or
+/// `Option<Retained>`. Internally, the return type is always
+/// `Option<Retained>` (for example: almost all `new` methods can fail if the
+/// allocation failed), but for convenience, if the return type is
+/// `Retained<T>`, this macro will automatically unwrap the object, or panic
+/// with an error message if it couldn't be retrieved.
 ///
 /// As a special case, if the last argument is the marker `_`, the macro will
-/// return a `Result<Id<T>, Id<E>>`, see below.
+/// return a `Result<Retained<T>, Retained<E>>`, see below.
 ///
 /// The `retain`, `release` and `autorelease` selectors are not supported, use
-/// [`Id::retain`], [`Id::drop`] and [`Id::autorelease`] for that.
+/// [`Retained::retain`], [`Retained::drop`] and [`Retained::autorelease`] for
+/// that.
 ///
 /// [sel-families]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families
 /// [`MessageReceiver`]: crate::runtime::MessageReceiver
-/// [`Id::retain_autoreleased`]: crate::rc::Id::retain_autoreleased
+/// [`Retained::retain_autoreleased`]: crate::rc::Retained::retain_autoreleased
 /// [arc-retainable]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments
-/// [`Id::retain`]: crate::rc::Id::retain
-/// [`Id::drop`]: crate::rc::Id::drop
-/// [`Id::autorelease`]: crate::rc::Id::autorelease
+/// [`Retained::retain`]: crate::rc::Retained::retain
+/// [`Retained::drop`]: crate::rc::Retained::drop
+/// [`Retained::autorelease`]: crate::rc::Retained::autorelease
 ///
 ///
 /// # Errors
@@ -1173,13 +1174,13 @@ macro_rules! msg_send_bool {
 /// equivalent, the [`Result`] type.
 ///
 /// In particular, you can make the last argument the special marker `_`, and
-/// then the macro will return a `Result<Id<T>, Id<E>>` (where you must
-/// specify `E` yourself, usually you'd use `objc2_foundation::NSError`).
+/// then the macro will return a `Result<Retained<T>, Retained<E>>` (where you
+/// must specify `E` yourself, usually you'd use `objc2_foundation::NSError`).
 ///
 ///
 /// # Panics
 ///
-/// Panics if the return type is specified as `Id<_, _>` and the method
+/// Panics if the return type is specified as `Retained<_, _>` and the method
 /// returned NULL.
 ///
 /// Additional panicking cases are documented in [`msg_send!`].
@@ -1194,8 +1195,8 @@ macro_rules! msg_send_bool {
 ///
 /// Note that if you're using this inside a context that expects unwinding to
 /// have Objective-C semantics (like [`exception::catch`]), you should make
-/// sure that the return type is `Option<Id<_, _>>` so that you don't get an
-/// unexpected unwind through incompatible ABIs!
+/// sure that the return type is `Option<Retained<_, _>>` so that you don't
+/// get an unexpected unwind through incompatible ABIs!
 ///
 #[cfg_attr(
     feature = "exception",
@@ -1212,17 +1213,17 @@ macro_rules! msg_send_bool {
 /// ```no_run
 /// use objc2::{class, msg_send_id};
 /// use objc2::ffi::NSUInteger;
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 /// use objc2::runtime::NSObject;
 /// // Allocate new object
 /// let obj = unsafe { msg_send_id![class!(NSObject), alloc] };
 /// // Consume the allocated object, return initialized object
-/// let obj: Id<NSObject> = unsafe { msg_send_id![obj, init] };
+/// let obj: Retained<NSObject> = unsafe { msg_send_id![obj, init] };
 /// // Copy the object
-/// let copy: Id<NSObject> = unsafe { msg_send_id![&obj, copy] };
+/// let copy: Retained<NSObject> = unsafe { msg_send_id![&obj, copy] };
 /// // Call ordinary selector that returns an object
 /// // This time, we handle failures ourselves
-/// let s: Option<Id<NSObject>> = unsafe { msg_send_id![&obj, description] };
+/// let s: Option<Retained<NSObject>> = unsafe { msg_send_id![&obj, description] };
 /// let s = s.expect("description was NULL");
 /// ```
 #[macro_export]
@@ -1307,7 +1308,7 @@ macro_rules! __msg_send_id_helper {
         ()
     } => {{
         $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, retain] is not supported. Use `Id::retain` instead"
+            "msg_send_id![obj, retain] is not supported. Use `Retained::retain` instead"
         )
     }};
     {
@@ -1319,7 +1320,7 @@ macro_rules! __msg_send_id_helper {
         ()
     } => {{
         $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, release] is not supported. Drop an `Id` instead"
+            "msg_send_id![obj, release] is not supported. Drop an `Retained` instead"
         )
     }};
     {
@@ -1331,7 +1332,7 @@ macro_rules! __msg_send_id_helper {
         ()
     } => {{
         $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, autorelease] is not supported. Use `Id::autorelease`"
+            "msg_send_id![obj, autorelease] is not supported. Use `Retained::autorelease`"
         )
     }};
     {
@@ -1343,7 +1344,7 @@ macro_rules! __msg_send_id_helper {
         ()
     } => {{
         $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, dealloc] is not supported. Drop an `Id` instead"
+            "msg_send_id![obj, dealloc] is not supported. Drop an `Retained` instead"
         )
     }};
     {

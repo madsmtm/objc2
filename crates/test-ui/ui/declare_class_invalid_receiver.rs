@@ -1,5 +1,5 @@
 #![allow(unused_variables)]
-use objc2::rc::{Allocated, Id};
+use objc2::rc::{Allocated, Retained};
 use objc2::runtime::{AnyClass, NSObject};
 use objc2::{declare_class, mutability, ClassType, DeclaredClass};
 
@@ -21,7 +21,7 @@ declare_class!(
         }
 
         #[method(testIdSelf)]
-        fn test_id_self(this: Id<Self>) {
+        fn test_id_self(this: Retained<Self>) {
             unimplemented!()
         }
 
@@ -43,29 +43,29 @@ declare_class!(
 
     unsafe impl CustomObject {
         #[method_id(testBoxId)]
-        fn test_box_id(self: Box<Self>) -> Id<Self> {
+        fn test_box_id(self: Box<Self>) -> Retained<Self> {
             unimplemented!()
         }
 
         #[method_id(testIdSelfId)]
-        fn test_id_self_id(this: Id<Self>) -> Id<Self> {
+        fn test_id_self_id(this: Retained<Self>) -> Retained<Self> {
             unimplemented!()
         }
 
         #[method_id(testSelfId)]
-        fn test_self_id(this: Self) -> Id<Self> {
+        fn test_self_id(this: Self) -> Retained<Self> {
             unimplemented!()
         }
     }
 
     unsafe impl CustomObject {
         #[method_id(testAlloc)]
-        fn test_alloc(this: Allocated<Self>) -> Id<Self> {
+        fn test_alloc(this: Allocated<Self>) -> Retained<Self> {
             unimplemented!()
         }
 
         #[method_id(initTestNotAlloc)]
-        fn test_init_not_alloc(&self) -> Id<Self> {
+        fn test_init_not_alloc(&self) -> Retained<Self> {
             unimplemented!()
         }
     }

@@ -4,7 +4,7 @@ use core::hint::unreachable_unchecked;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::exception::Exception;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSObjectProtocol};
 use objc2::{extern_methods, sel};
 
@@ -36,7 +36,7 @@ impl NSException {
         name: &crate::Foundation::NSExceptionName,
         reason: Option<&crate::Foundation::NSString>,
         user_info: Option<&crate::Foundation::NSDictionary>,
-    ) -> Option<Id<Self>> {
+    ) -> Option<Retained<Self>> {
         use objc2::ClassType;
 
         unsafe {
@@ -68,9 +68,9 @@ impl NSException {
     }
 
     /// Convert this into an [`Exception`] object.
-    pub fn into_exception(this: Id<Self>) -> Id<Exception> {
+    pub fn into_exception(this: Retained<Self>) -> Retained<Exception> {
         // SAFETY: Downcasting to "subclass"
-        unsafe { Id::cast(this) }
+        unsafe { Retained::cast(this) }
     }
 
     fn is_nsexception(obj: &Exception) -> bool {
@@ -88,10 +88,10 @@ impl NSException {
     ///
     /// This should be considered a hint; it may return `Err` in very, very
     /// few cases where the object is actually an instance of `NSException`.
-    pub fn from_exception(obj: Id<Exception>) -> Result<Id<Self>, Id<Exception>> {
+    pub fn from_exception(obj: Retained<Exception>) -> Result<Retained<Self>, Retained<Exception>> {
         if Self::is_nsexception(&obj) {
             // SAFETY: Just checked the object is an NSException
-            Ok(unsafe { Id::cast::<Self>(obj) })
+            Ok(unsafe { Retained::cast::<Self>(obj) })
         } else {
             Err(obj)
         }

@@ -8,7 +8,7 @@ use std::ptr;
 use std::sync::Mutex;
 
 use objc2::encode::Encode;
-use objc2::rc::{self, Allocated, Id};
+use objc2::rc::{self, Allocated, Retained};
 use objc2::runtime::{self, NSObject};
 use objc2::{class, declare_class, msg_send, msg_send_id, mutability, ClassType, DeclaredClass};
 
@@ -107,7 +107,7 @@ fn test_nil(checker: &PanicChecker) {
         let _: *mut NSObject = unsafe { msg_send![super(nil, NSObject::class()), description] };
     });
     checker.assert_panics(msg, line!() + 1, || {
-        let _: Option<Id<NSObject>> = unsafe { msg_send_id![nil, description] };
+        let _: Option<Retained<NSObject>> = unsafe { msg_send_id![nil, description] };
     });
 }
 
@@ -121,7 +121,7 @@ fn test_verify(checker: &PanicChecker) {
 
     let msg = format!("invalid message send to -[NSObject hash]: expected return to have type code '{}', but found '@'", usize::ENCODING);
     checker.assert_panics(&msg, line!() + 1, || {
-        let _: Option<Id<NSObject>> = unsafe { msg_send_id![&obj, hash] };
+        let _: Option<Retained<NSObject>> = unsafe { msg_send_id![&obj, hash] };
     });
 }
 
@@ -130,21 +130,21 @@ fn test_error_methods(checker: &PanicChecker) {
 
     let msg = "messsaging someSelectorWithError: to nil";
     checker.assert_panics(msg, line!() + 1, || {
-        let _: Result<(), Id<NSObject>> = unsafe { msg_send![nil, someSelectorWithError: _] };
+        let _: Result<(), Retained<NSObject>> = unsafe { msg_send![nil, someSelectorWithError: _] };
     });
     checker.assert_panics(msg, line!() + 2, || {
-        let _: Result<(), Id<NSObject>> =
+        let _: Result<(), Retained<NSObject>> =
             unsafe { msg_send![super(nil, NSObject::class()), someSelectorWithError: _] };
     });
     checker.assert_panics(msg, line!() + 2, || {
-        let _: Result<Id<NSObject>, Id<NSObject>> =
+        let _: Result<Retained<NSObject>, Retained<NSObject>> =
             unsafe { msg_send_id![nil, someSelectorWithError: _] };
     });
 
     let msg = "invalid message send to -[NSObject someSelectorWithError:]: method not found";
     checker.assert_panics(msg, line!() + 3, || {
         let obj = RcTestObject::new();
-        let _: Result<(), Id<NSObject>> =
+        let _: Result<(), Retained<NSObject>> =
             unsafe { msg_send![super(&obj), someSelectorWithError: _] };
     });
 }
@@ -155,7 +155,7 @@ fn test_id_unwrap(checker: &PanicChecker) {
 
     let msg = "failed creating new instance using +[__RcTestObject newReturningNull]";
     checker.assert_panics(msg, line!() + 1, || {
-        let _obj: Id<RcTestObject> = unsafe { msg_send_id![cls, newReturningNull] };
+        let _obj: Retained<RcTestObject> = unsafe { msg_send_id![cls, newReturningNull] };
     });
 
     let msg = if cfg!(debug_assertions) {
@@ -165,28 +165,28 @@ fn test_id_unwrap(checker: &PanicChecker) {
     };
     checker.assert_panics(msg, line!() + 2, || {
         let obj: Allocated<RcTestObject> = unsafe { msg_send_id![cls, allocReturningNull] };
-        let _obj: Id<RcTestObject> = unsafe { msg_send_id![obj, init] };
+        let _obj: Retained<RcTestObject> = unsafe { msg_send_id![obj, init] };
     });
 
     let msg = "failed initializing object with -initReturningNull";
     checker.assert_panics(msg, line!() + 2, || {
-        let _obj: Id<RcTestObject> =
+        let _obj: Retained<RcTestObject> =
             unsafe { msg_send_id![RcTestObject::alloc(), initReturningNull] };
     });
 
     let msg = "failed copying object";
     checker.assert_panics(msg, line!() + 1, || {
-        let _obj: Id<RcTestObject> = unsafe { msg_send_id![&obj, copyReturningNull] };
+        let _obj: Retained<RcTestObject> = unsafe { msg_send_id![&obj, copyReturningNull] };
     });
 
     let msg = "unexpected NULL returned from -[__RcTestObject methodReturningNull]";
     checker.assert_panics(msg, line!() + 1, || {
-        let _obj: Id<RcTestObject> = unsafe { msg_send_id![&obj, methodReturningNull] };
+        let _obj: Retained<RcTestObject> = unsafe { msg_send_id![&obj, methodReturningNull] };
     });
 }
 
 fn test_catch_all(checker: &PanicChecker) {
-    let obj: Id<NSObject> = unsafe { msg_send_id![class!(NSArray), new] };
+    let obj: Retained<NSObject> = unsafe { msg_send_id![class!(NSArray), new] };
 
     let msg = "NSRangeException";
     checker.assert_panics(msg, line!() + 1, || {
@@ -195,7 +195,7 @@ fn test_catch_all(checker: &PanicChecker) {
 
     let msg = "NSRangeException";
     checker.assert_panics(msg, line!() + 1, || {
-        let _: Id<NSObject> = unsafe { msg_send_id![&obj, objectAtIndex: 0usize] };
+        let _: Retained<NSObject> = unsafe { msg_send_id![&obj, objectAtIndex: 0usize] };
     });
 }
 
@@ -225,7 +225,7 @@ fn test_unwind(checker: &PanicChecker) {
         let _: *mut NSObject = unsafe { msg_send![PanickingClass::class(), panic] };
     });
     checker.assert_panics(msg, line, || {
-        let _: Id<NSObject> = unsafe { msg_send_id![PanickingClass::class(), panic] };
+        let _: Retained<NSObject> = unsafe { msg_send_id![PanickingClass::class(), panic] };
     });
 }
 

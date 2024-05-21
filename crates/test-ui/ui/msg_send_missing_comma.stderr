@@ -56,8 +56,8 @@ error: use of deprecated function `main::__msg_send_missing_comma`: using msg_se
        msg_send_id![super(obj), e: obj, f: obj]
   --> ui/msg_send_missing_comma.rs
    |
-   |     let _: Id<NSString> = unsafe { msg_send_id![super(obj), e:obj f:obj] };
-   |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |     let _: Retained<NSString> = unsafe { msg_send_id![super(obj), e:obj f:obj] };
+   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: this error originates in the macro `$crate::__comma_between_args_inner` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -65,8 +65,8 @@ error: use of deprecated function `main::__msg_send_missing_comma`: using msg_se
        msg_send_id![super(obj, NSString::class()), e: obj, f: obj]
   --> ui/msg_send_missing_comma.rs
    |
-   |     let _: Id<NSString> = unsafe { msg_send_id![super(obj, NSString::class()), e:obj f:obj] };
-   |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |     let _: Retained<NSString> = unsafe { msg_send_id![super(obj, NSString::class()), e:obj f:obj] };
+   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: this error originates in the macro `$crate::__comma_between_args_inner` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -74,7 +74,7 @@ error: use of deprecated function `main::__msg_send_missing_comma`: using msg_se
        msg_send_id![obj, e: obj, f: obj]
   --> ui/msg_send_missing_comma.rs
    |
-   |     let _: Id<NSString> = unsafe { msg_send_id![obj, e:obj f:obj] };
-   |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |     let _: Retained<NSString> = unsafe { msg_send_id![obj, e:obj f:obj] };
+   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: this error originates in the macro `$crate::__comma_between_args_inner` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -8,7 +8,7 @@ error[E0277]: the trait bound `{integer}: MsgSend` is not satisfied
   |              required by a bound introduced by this call
   |
   = help: the following other types implement trait `MsgSend`:
-            &'a Id<T>
-            &'a mut Id<T>
-            ManuallyDrop<Id<T>>
+            &'a Retained<T>
+            &'a mut Retained<T>
+            ManuallyDrop<Retained<T>>
   = note: required for `{integer}` to implement `MsgSend`

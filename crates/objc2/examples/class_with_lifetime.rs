@@ -5,7 +5,7 @@ use std::marker::PhantomData;
 use std::sync::Once;
 
 use objc2::mutability::Mutable;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::{AnyClass, ClassBuilder, NSObject, Sel};
 use objc2::{msg_send, msg_send_id, sel};
 use objc2::{ClassType, Encoding, Message, RefEncode};
@@ -42,7 +42,7 @@ impl<'a> MyObject<'a> {
         })
     }
 
-    fn new(number: &'a mut u8) -> Id<Self> {
+    fn new(number: &'a mut u8) -> Retained<Self> {
         // SAFETY: The lifetime of the reference is properly bound to the
         // returned type
         unsafe { msg_send_id![Self::alloc(), initWithPtr: number] }
@@ -104,10 +104,10 @@ fn main() {
     let mut obj = MyObject::new(&mut number);
     assert_eq!(obj.get(), 54);
 
-    // It is not possible to convert to `Id<NSObject>`, since that would loose
-    // the lifetime information that `MyObject` stores.
+    // It is not possible to convert to `Retained<NSObject>`, since that would
+    // loose the lifetime information that `MyObject` stores.
     //
-    // let obj = Id::into_super(obj);
+    // let obj = Retained::into_super(obj);
     //
     // Neither is it possible to clone or retain the object, since it is
     // marked as `Mutable` in `ClassType::Mutability`.

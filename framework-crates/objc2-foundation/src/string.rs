@@ -10,7 +10,7 @@ use core::str;
 use std::os::raw::c_void;
 
 use objc2::msg_send_id;
-use objc2::rc::{autoreleasepool_leaking, Allocated, AutoreleasePool, Id};
+use objc2::rc::{autoreleasepool_leaking, Allocated, AutoreleasePool, Retained};
 use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
 use objc2::{ClassType, Message};
 
@@ -121,7 +121,7 @@ impl NSString {
     #[doc(alias = "initWithBytes")]
     #[doc(alias = "initWithBytes:length:encoding:")]
     #[allow(clippy::should_implement_trait)] // Not really sure of a better name
-    pub fn from_str(string: &str) -> Id<Self> {
+    pub fn from_str(string: &str) -> Retained<Self> {
         unsafe { init_with_str(Self::alloc(), string) }
     }
 
@@ -136,12 +136,12 @@ impl NSMutableString {
     /// Creates a new [`NSMutableString`] by copying the given string slice.
     #[doc(alias = "initWithBytes:length:encoding:")]
     #[allow(clippy::should_implement_trait)] // Not really sure of a better name
-    pub fn from_str(string: &str) -> Id<Self> {
+    pub fn from_str(string: &str) -> Retained<Self> {
         unsafe { init_with_str(Self::alloc(), string) }
     }
 }
 
-unsafe fn init_with_str<T: Message>(obj: Allocated<T>, string: &str) -> Id<T> {
+unsafe fn init_with_str<T: Message>(obj: Allocated<T>, string: &str) -> Retained<T> {
     let bytes: *const c_void = string.as_ptr().cast();
     // We use `msg_send_id` instead of the generated method, since that
     // assumes the encoding is `usize`, whereas GNUStep assumes `i32`.

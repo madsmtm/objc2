@@ -11,7 +11,7 @@ use core::ptr::{self, NonNull};
 #[cfg(feature = "NSObject")]
 use objc2::mutability::IsRetainable;
 use objc2::mutability::{CounterpartOrSelf, HasStableHash, IsIdCloneable, IsMutable};
-use objc2::rc::Id;
+use objc2::rc::Retained;
 #[cfg(feature = "NSObject")]
 use objc2::runtime::ProtocolObject;
 #[cfg(feature = "NSObject")]
@@ -39,7 +39,7 @@ where
 
 #[cfg(feature = "NSObject")]
 impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
-    pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Id<V>>) -> Id<Self>
+    pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Retained<V>>) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
     {
@@ -51,7 +51,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
         let count = min(keys.len(), objects.len());
 
         let keys = keys_to_ptr(keys);
-        let objects = util::id_ptr_cast(objects.as_mut_ptr());
+        let objects = util::retained_ptr_cast(objects.as_mut_ptr());
 
         // SAFETY:
         // - The objects are valid, similar reasoning as `NSArray::from_vec`.
@@ -73,7 +73,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 
-    pub fn from_id_slice<Q>(keys: &[&Q], objects: &[Id<V>]) -> Id<Self>
+    pub fn from_id_slice<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
         V: IsIdCloneable,
@@ -81,13 +81,13 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
         let count = min(keys.len(), objects.len());
 
         let keys = keys_to_ptr(keys);
-        let objects = util::id_ptr_cast_const(objects.as_ptr());
+        let objects = util::retained_ptr_cast_const(objects.as_ptr());
 
         // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_id_slice`.
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 
-    pub fn from_slice<Q>(keys: &[&Q], objects: &[&V]) -> Id<Self>
+    pub fn from_slice<Q>(keys: &[&Q], objects: &[&V]) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
         V: IsRetainable,
@@ -104,7 +104,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
 
 #[cfg(feature = "NSObject")]
 impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, V> {
-    pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Id<V>>) -> Id<Self>
+    pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Retained<V>>) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
     {
@@ -112,13 +112,13 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
 
         let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
         let keys: *mut NonNull<ProtocolObject<dyn NSCopying>> = keys.cast();
-        let objects = util::id_ptr_cast(objects.as_mut_ptr());
+        let objects = util::retained_ptr_cast(objects.as_mut_ptr());
 
         // SAFETY: See `NSDictionary::from_vec`
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 
-    pub fn from_id_slice<Q>(keys: &[&Q], objects: &[Id<V>]) -> Id<Self>
+    pub fn from_id_slice<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
         V: IsIdCloneable,
@@ -126,13 +126,13 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
         let count = min(keys.len(), objects.len());
 
         let keys = keys_to_ptr(keys);
-        let objects = util::id_ptr_cast_const(objects.as_ptr());
+        let objects = util::retained_ptr_cast_const(objects.as_ptr());
 
         // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_id_slice`.
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 
-    pub fn from_slice<Q>(keys: &[&Q], objects: &[&V]) -> Id<Self>
+    pub fn from_slice<Q>(keys: &[&Q], objects: &[&V]) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
         V: IsRetainable,
@@ -166,13 +166,13 @@ extern_methods!(
         pub fn get(&self, key: &K) -> Option<&V>;
 
         #[doc(alias = "objectForKey:")]
-        pub fn get_retained(&self, key: &K) -> Option<Id<V>>
+        pub fn get_retained(&self, key: &K) -> Option<Retained<V>>
         where
             V: IsIdCloneable,
         {
             // SAFETY: The object is stored in the dictionary
             self.get(key)
-                .map(|obj| unsafe { util::collection_retain_id(obj) })
+                .map(|obj| unsafe { util::collection_retain(obj) })
         }
 
         /// Returns a mutable reference to the value corresponding to the key.
@@ -298,11 +298,11 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     /// assert_eq!(array.len(), 1);
     /// ```
     #[cfg(feature = "NSArray")]
-    pub fn to_array(&self) -> Id<crate::Foundation::NSArray<V>>
+    pub fn to_array(&self) -> Retained<crate::Foundation::NSArray<V>>
     where
         V: IsIdCloneable,
     {
-        // SAFETY: The elements are retainable behind `Id<V>`, so getting
+        // SAFETY: The elements are retainable behind `Retained<V>`, so getting
         // another reference to them (via. `NSArray`) is sound.
         unsafe { self.allValues() }
     }
@@ -325,14 +325,14 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
     /// ```
     #[cfg(feature = "NSObject")]
     #[doc(alias = "setObject:forKey:")]
-    pub fn insert_id(&mut self, key: &K, value: Id<V>) -> Option<Id<V>>
+    pub fn insert_id(&mut self, key: &K, value: Retained<V>) -> Option<Retained<V>>
     where
         K: NSCopying + CounterpartOrSelf<Immutable = K>,
     {
         // SAFETY: We remove the object from the dictionary below
         let old_obj = self
             .get(key)
-            .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
+            .map(|old_obj| unsafe { util::mutable_collection_retain_removed(old_obj) });
 
         let key = ProtocolObject::from_ref(key);
         // SAFETY: We have ownership over the value.
@@ -356,7 +356,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
     /// ```
     #[cfg(feature = "NSObject")]
     #[doc(alias = "setObject:forKey:")]
-    pub fn insert(&mut self, key: &K, value: &V) -> Option<Id<V>>
+    pub fn insert(&mut self, key: &K, value: &V) -> Option<Retained<V>>
     where
         K: NSCopying + CounterpartOrSelf<Immutable = K>,
         V: IsRetainable,
@@ -364,7 +364,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
         // SAFETY: We remove the object from the dictionary below
         let old_obj = self
             .get(key)
-            .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
+            .map(|old_obj| unsafe { util::mutable_collection_retain_removed(old_obj) });
 
         let key = ProtocolObject::from_ref(key);
         // SAFETY: The value is `IsRetainable`, and hence safe for the
@@ -391,14 +391,14 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
     /// assert!(dict.is_empty());
     /// ```
     #[doc(alias = "removeObjectForKey:")]
-    pub fn remove(&mut self, key: &K) -> Option<Id<V>>
+    pub fn remove(&mut self, key: &K) -> Option<Retained<V>>
     where
         K: CounterpartOrSelf<Immutable = K>,
     {
         // SAFETY: We remove the object from the dictionary below
         let old_obj = self
             .get(key)
-            .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
+            .map(|old_obj| unsafe { util::mutable_collection_retain_removed(old_obj) });
         self.removeObjectForKey(key);
         old_obj
     }
@@ -421,7 +421,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     }
 
     // TODO: Is this ever useful?
-    // pub fn into_keys(this: Id<Self>) -> IntoKeys<K, V> {
+    // pub fn into_keys(this: Retained<Self>) -> IntoKeys<K, V> {
     //     todo!()
     // }
 
@@ -457,7 +457,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
 
     #[doc(alias = "objectEnumerator")]
     #[cfg(feature = "NSEnumerator")]
-    pub fn into_values(this: Id<Self>) -> IntoValues<K, V>
+    pub fn into_values(this: Retained<Self>) -> IntoValues<K, V>
     where
         V: IsIdCloneable,
     {
@@ -511,7 +511,7 @@ mod iter_helpers {
     );
 
     __impl_iter! {
-        impl<'a, K: Message + IsIdCloneable, V: Message> Iterator<Item = Id<K>> for KeysRetained<'a, K, V> { ... }
+        impl<'a, K: Message + IsIdCloneable, V: Message> Iterator<Item = Retained<K>> for KeysRetained<'a, K, V> { ... }
     }
 
     /// An iterator over the values of a `NSDictionary`.
@@ -541,7 +541,7 @@ mod iter_helpers {
     );
 
     __impl_iter! {
-        impl<'a, K: Message, V: Message + IsIdCloneable> Iterator<Item = Id<V>> for ValuesRetained<'a, K, V> { ... }
+        impl<'a, K: Message, V: Message + IsIdCloneable> Iterator<Item = Retained<V>> for ValuesRetained<'a, K, V> { ... }
     }
 
     /// A consuming iterator over the values of a `NSDictionary`.
@@ -551,7 +551,7 @@ mod iter_helpers {
     );
 
     __impl_iter! {
-        impl<K: Message, V: Message> Iterator<Item = Id<V>> for IntoValues<K, V> { ... }
+        impl<K: Message, V: Message> Iterator<Item = Retained<V>> for IntoValues<K, V> { ... }
     }
 }
 

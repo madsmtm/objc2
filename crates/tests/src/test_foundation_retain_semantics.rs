@@ -3,7 +3,7 @@ use std::ptr;
 use std::vec::Vec;
 
 use objc2::mutability::Immutable;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::{declare_class, extern_methods, ClassType, DeclaredClass};
 use objc2_foundation::{
     NSArray, NSCopying, NSMutableArray, NSMutableCopying, NSMutableDictionary, NSMutableSet,
@@ -368,7 +368,7 @@ declare_class!(
 extern_methods!(
     unsafe impl NSCopyingRcTestObject {
         #[method_id(new)]
-        fn new() -> Id<Self>;
+        fn new() -> Retained<Self>;
     }
 );
 

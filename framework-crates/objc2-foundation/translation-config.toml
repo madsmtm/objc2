@@ -302,9 +302,9 @@ class.NSMutableURLRequest.mutability = "MutableWithImmutableSuperclass(Foundatio
 # add a lifetime parameter (to prevent the original collection from
 # being modified).
 #
-# So e.g. `Id<NSMutableArray<T>> -> Id<NSEnumerator<T>>` is safe, as is
-# `&Id<NSArray<T: IsCloneable>> -> Id<NSEnumerator<T>>`, and so is
-# `&'a NSArray<T: IsCloneable> -> Id<NSEnumerator<T>> + 'a`.
+# So e.g. `Retained<NSMutableArray<T>> -> Retained<NSEnumerator<T>>` is safe, as is
+# `&Retained<NSArray<T: IsCloneable>> -> Retained<NSEnumerator<T>>`, and so is
+# `&'a NSArray<T: IsCloneable> -> Retained<NSEnumerator<T>> + 'a`.
 class.NSEnumerator.mutability = "Mutable"
 class.NSDirectoryEnumerator.mutability = "Mutable"
 
@@ -398,7 +398,7 @@ class.NSMutableDictionary.methods.new.unsafe = false
 class.NSMutableDictionary.methods."removeObjectForKey:".unsafe = false
 class.NSMutableDictionary.methods.removeAllObjects.unsafe = false
 
-# SAFETY: This removes the object from the internal collection, so it may safely return `Id<T>`.
+# SAFETY: This removes the object from the internal collection, so it may safely return `Retained<T>`.
 class.NSEnumerator.methods.nextObject.unsafe = false
 # SAFETY: The objects are removed from the internal collection and as such are safe to give ownership over.
 class.NSEnumerator.methods.allObjects.unsafe = false

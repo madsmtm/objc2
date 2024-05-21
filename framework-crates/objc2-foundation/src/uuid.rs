@@ -3,7 +3,7 @@ use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::encode::{Encode, Encoding, RefEncode};
-use objc2::rc::{Allocated, Id};
+use objc2::rc::{Allocated, Retained};
 use objc2::{extern_methods, ClassType};
 
 use crate::Foundation::NSUUID;
@@ -31,7 +31,7 @@ unsafe impl RefEncode for UuidBytes {
 extern_methods!(
     unsafe impl NSUUID {
         #[method_id(initWithUUIDBytes:)]
-        fn initWithUUIDBytes(this: Allocated<Self>, bytes: &UuidBytes) -> Id<Self>;
+        fn initWithUUIDBytes(this: Allocated<Self>, bytes: &UuidBytes) -> Retained<Self>;
 
         #[method(getUUIDBytes:)]
         fn getUUIDBytes(&self, bytes: &mut UuidBytes);
@@ -40,7 +40,7 @@ extern_methods!(
 
 impl NSUUID {
     /// The 'nil UUID'.
-    pub fn nil() -> Id<Self> {
+    pub fn nil() -> Retained<Self> {
         Self::from_bytes([0; 16])
     }
 
@@ -60,13 +60,13 @@ impl NSUUID {
     /// let obj = NSUUID::from_bytes(uuid.into_bytes());
     /// assert_eq!(obj.as_bytes(), uuid.into_bytes());
     /// ```
-    pub fn from_bytes(bytes: [u8; 16]) -> Id<Self> {
+    pub fn from_bytes(bytes: [u8; 16]) -> Retained<Self> {
         let bytes = UuidBytes(bytes);
         Self::initWithUUIDBytes(Self::alloc(), &bytes)
     }
 
     #[cfg(feature = "NSString")]
-    pub fn from_string(string: &crate::NSString) -> Option<Id<Self>> {
+    pub fn from_string(string: &crate::NSString) -> Option<Retained<Self>> {
         Self::initWithUUIDString(Self::alloc(), string)
     }
 

@@ -6,7 +6,7 @@ use objc2::sel;
 fn main() {
     let obj = NSObject::new();
 
-    // Receiver `&Id` not allowed
+    // Receiver `&Retained` not allowed
     let _: usize = unsafe { MessageReceiver::send_message(&obj, sel!(hash), ()) };
 
     // No `bool` argument conversion

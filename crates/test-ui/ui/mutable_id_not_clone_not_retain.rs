@@ -1,6 +1,6 @@
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::NSObject;
-use objc2::{extern_class, mutability, msg_send_id, ClassType};
+use objc2::{extern_class, msg_send_id, mutability, ClassType};
 
 extern_class!(
     struct NSMutableObject;
@@ -13,7 +13,7 @@ extern_class!(
 );
 
 fn main() {
-    let obj: Id<NSMutableObject> = unsafe { msg_send_id![NSMutableObject::class(), new] };
+    let obj: Retained<NSMutableObject> = unsafe { msg_send_id![NSMutableObject::class(), new] };
     let _ = obj.clone();
     let _ = obj.retain();
 }

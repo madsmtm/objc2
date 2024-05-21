@@ -10,9 +10,9 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
 use core::slice::{self, SliceIndex};
 
-use objc2::rc::Id;
+use objc2::rc::Retained;
 #[cfg(feature = "block2")]
-use objc2::rc::IdFromIterator;
+use objc2::rc::RetainedFromIterator;
 use objc2::{extern_methods, ClassType};
 
 use crate::Foundation::{NSData, NSMutableData};
@@ -39,13 +39,13 @@ extern_methods!(
 );
 
 impl NSData {
-    pub fn with_bytes(bytes: &[u8]) -> Id<Self> {
+    pub fn with_bytes(bytes: &[u8]) -> Retained<Self> {
         let bytes_ptr = bytes.as_ptr() as *mut c_void;
         unsafe { Self::initWithBytes_length(Self::alloc(), bytes_ptr, bytes.len()) }
     }
 
     #[cfg(feature = "block2")]
-    pub fn from_vec(bytes: Vec<u8>) -> Id<Self> {
+    pub fn from_vec(bytes: Vec<u8>) -> Retained<Self> {
         // GNUStep's NSData `initWithBytesNoCopy:length:deallocator:` has a
         // bug; it forgets to assign the input buffer and length to the
         // instance before it swizzles to NSDataWithDeallocatorBlock.
@@ -63,14 +63,14 @@ impl NSData {
 }
 
 impl NSMutableData {
-    pub fn with_bytes(bytes: &[u8]) -> Id<Self> {
+    pub fn with_bytes(bytes: &[u8]) -> Retained<Self> {
         let bytes_ptr = bytes.as_ptr() as *mut c_void;
         // SAFETY: Same as `NSData::with_bytes`
         unsafe { Self::initWithBytes_length(Self::alloc(), bytes_ptr, bytes.len()) }
     }
 
     #[cfg(feature = "block2")]
-    pub fn from_vec(bytes: Vec<u8>) -> Id<Self> {
+    pub fn from_vec(bytes: Vec<u8>) -> Retained<Self> {
         // SAFETY: Same as `NSData::from_vec`
         unsafe { with_vec(Self::alloc(), bytes) }
     }
@@ -262,23 +262,23 @@ impl std::io::Write for NSMutableData {
 }
 
 #[cfg(feature = "block2")]
-impl IdFromIterator<u8> for NSData {
-    fn id_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Id<Self> {
+impl RetainedFromIterator<u8> for NSData {
+    fn id_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
     }
 }
 
 #[cfg(feature = "block2")]
-impl IdFromIterator<u8> for NSMutableData {
-    fn id_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Id<Self> {
+impl RetainedFromIterator<u8> for NSMutableData {
+    fn id_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
     }
 }
 
 #[cfg(feature = "block2")]
-unsafe fn with_vec<T: objc2::Message>(obj: objc2::rc::Allocated<T>, bytes: Vec<u8>) -> Id<T> {
+unsafe fn with_vec<T: objc2::Message>(obj: objc2::rc::Allocated<T>, bytes: Vec<u8>) -> Retained<T> {
     use core::mem::ManuallyDrop;
 
     use block2::{Block, RcBlock};

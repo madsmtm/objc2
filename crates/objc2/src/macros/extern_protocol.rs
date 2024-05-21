@@ -75,7 +75,7 @@
 /// ```
 /// use std::ffi::c_void;
 /// use objc2::ffi::NSInteger;
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 /// use objc2::runtime::{NSObject, NSObjectProtocol};
 /// use objc2::{extern_protocol, ProtocolType};
 ///
@@ -99,11 +99,11 @@
 ///             &self,
 ///             type_identifier: &NSString,
 ///             completion_handler: *mut c_void,
-///         ) -> Option<Id<NSProgress>>;
+///         ) -> Option<Retained<NSProgress>>;
 ///
 ///         #[method_id(writableTypeIdentifiersForItemProvider)]
 ///         fn writableTypeIdentifiersForItemProvider_class()
-///             -> Id<NSArray<NSString>>;
+///             -> Retained<NSArray<NSString>>;
 ///
 ///         // The rest of these are optional, which means that a user of
 ///         // `declare_class!` would not need to implement them.
@@ -111,7 +111,7 @@
 ///         #[optional]
 ///         #[method_id(writableTypeIdentifiersForItemProvider)]
 ///         fn writableTypeIdentifiersForItemProvider(&self)
-///             -> Id<NSArray<NSString>>;
+///             -> Retained<NSArray<NSString>>;
 ///
 ///         #[optional]
 ///         #[method(itemProviderVisibilityForRepresentationWithTypeIdentifier:)]

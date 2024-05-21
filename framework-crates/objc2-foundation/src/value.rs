@@ -7,7 +7,7 @@ use core::str;
 use std::ffi::{CStr, CString};
 
 use objc2::encode::Encode;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::ClassType;
 
 use crate::Foundation::NSValue;
@@ -34,7 +34,7 @@ impl NSValue {
     /// ```
     ///
     /// [`NSPoint`]: crate::Foundation::NSPoint
-    pub fn new<T: 'static + Copy + Encode>(value: T) -> Id<Self> {
+    pub fn new<T: 'static + Copy + Encode>(value: T) -> Retained<Self> {
         let bytes: NonNull<T> = NonNull::from(&value);
         let encoding = CString::new(T::ENCODING.to_string()).unwrap();
         unsafe {

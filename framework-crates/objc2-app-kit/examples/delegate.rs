@@ -1,5 +1,5 @@
 #![deny(unsafe_op_in_unsafe_fn)]
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
 use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass};
 use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate};
@@ -14,8 +14,8 @@ struct Ivars {
     another_ivar: bool,
     box_ivar: Box<i32>,
     maybe_box_ivar: Option<Box<i32>>,
-    id_ivar: Id<NSString>,
-    maybe_id_ivar: Option<Id<NSString>>,
+    id_ivar: Retained<NSString>,
+    maybe_id_ivar: Option<Retained<NSString>>,
 }
 
 declare_class!(
@@ -53,7 +53,7 @@ declare_class!(
 );
 
 impl AppDelegate {
-    fn new(ivar: u8, another_ivar: bool, mtm: MainThreadMarker) -> Id<Self> {
+    fn new(ivar: u8, another_ivar: bool, mtm: MainThreadMarker) -> Retained<Self> {
         let this = mtm.alloc();
         let this = this.set_ivars(Ivars {
             ivar,

@@ -400,7 +400,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// Call the `copy` method, but using a dynamic selector instead.
     ///
     /// ```no_run
-    /// use objc2::rc::Id;
+    /// use objc2::rc::Retained;
     /// use objc2::runtime::MessageReceiver;
     /// use objc2::sel;
     /// # use objc2::runtime::NSObject as MyObject;
@@ -409,7 +409,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// // SAFETY: The `copy` method takes no arguments, and returns an object
     /// let copy: *mut MyObject = unsafe { obj.send_message(sel!(copy), ()) };
     /// // SAFETY: The `copy` method returns an object with +1 retain count
-    /// let copy = unsafe { Id::from_raw(copy) }.unwrap();
+    /// let copy = unsafe { Retained::from_raw(copy) }.unwrap();
     /// ```
     #[inline]
     #[track_caller]
@@ -561,7 +561,7 @@ mod tests {
 
     use super::*;
     use crate::mutability;
-    use crate::rc::{Allocated, Id};
+    use crate::rc::{Allocated, Retained};
     use crate::runtime::NSObject;
     use crate::test_utils;
     use crate::{declare_class, msg_send, msg_send_id, ClassType, DeclaredClass};
@@ -579,7 +579,7 @@ mod tests {
     );
 
     #[allow(unused)]
-    fn test_different_receivers(mut obj: Id<MutableObject>) {
+    fn test_different_receivers(mut obj: Retained<MutableObject>) {
         unsafe {
             let x = &mut obj;
             let _: () = msg_send![x, mutable1];
@@ -625,7 +625,7 @@ mod tests {
         let nil: *mut NSObject = ::core::ptr::null_mut();
 
         // This result should not be relied on
-        let result: Option<Id<NSObject>> = unsafe { msg_send_id![nil, description] };
+        let result: Option<Retained<NSObject>> = unsafe { msg_send_id![nil, description] };
         assert!(result.is_none());
 
         // This result should not be relied on
@@ -642,13 +642,13 @@ mod tests {
         assert_eq!(result, 0.0);
 
         // This result should not be relied on
-        let result: Option<Id<NSObject>> =
+        let result: Option<Retained<NSObject>> =
             unsafe { msg_send_id![nil, multiple: 1u32, arguments: 2i8] };
         assert!(result.is_none());
 
         // This result should not be relied on
         let obj = unsafe { Allocated::new(ptr::null_mut()) };
-        let result: Option<Id<NSObject>> = unsafe { msg_send_id![obj, init] };
+        let result: Option<Retained<NSObject>> = unsafe { msg_send_id![obj, init] };
         assert!(result.is_none());
     }
 

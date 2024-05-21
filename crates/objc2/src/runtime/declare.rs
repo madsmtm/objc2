@@ -56,7 +56,7 @@ impl<T> Log2Alignment for T {
 /// use core::cell::Cell;
 ///
 /// use objc2::declare::ClassBuilder;
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 /// use objc2::runtime::{AnyClass, AnyObject, NSObject, Sel};
 /// use objc2::{sel, msg_send, msg_send_id, ClassType};
 ///
@@ -99,13 +99,13 @@ impl<T> Log2Alignment for T {
 ///         _cmd: Sel,
 ///         number: u32,
 ///     ) -> *mut NSObject {
-///         let obj: Option<Id<NSObject>> = unsafe {
+///         let obj: Option<Retained<NSObject>> = unsafe {
 ///             msg_send_id![
 ///                 msg_send_id![cls, alloc],
 ///                 initWithNumber: number,
 ///             ]
 ///         };
-///         obj.map(Id::autorelease_return).unwrap_or(std::ptr::null_mut())
+///         obj.map(Retained::autorelease_return).unwrap_or(std::ptr::null_mut())
 ///     }
 ///     unsafe {
 ///         builder.add_class_method(
@@ -143,7 +143,7 @@ impl<T> Log2Alignment for T {
 /// // with `std::sync::Once` or the `once_cell` crate.
 /// let cls = register_class();
 ///
-/// let obj: Id<NSObject> = unsafe {
+/// let obj: Retained<NSObject> = unsafe {
 ///     msg_send_id![cls, withNumber: 42u32]
 /// };
 ///
@@ -579,7 +579,7 @@ mod tests {
     use super::*;
     use crate::encode::RefEncode;
     use crate::mutability::Immutable;
-    use crate::rc::Id;
+    use crate::rc::Retained;
     use crate::runtime::{NSObject, NSObjectProtocol};
     use crate::{
         declare_class, extern_methods, msg_send, msg_send_id, test_utils, ClassType, DeclaredClass,
@@ -877,7 +877,7 @@ mod tests {
         extern_methods!(
             unsafe impl Custom {
                 #[method_id(new)]
-                fn new() -> Id<Self>;
+                fn new() -> Retained<Self>;
             }
         );
 
@@ -1044,7 +1044,7 @@ mod tests {
         );
 
         // Ensure our ivar loading works correctly
-        let obj: Id<NSObject> = unsafe { msg_send_id![subclass, new] };
+        let obj: Retained<NSObject> = unsafe { msg_send_id![subclass, new] };
         let ptr = unsafe { *subclass_ivar3.load::<*const AnyObject>(&obj) };
         assert!(ptr.is_null());
 

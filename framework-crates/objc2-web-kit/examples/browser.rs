@@ -5,7 +5,7 @@ use core::cell::OnceCell;
 use objc2::{
     declare_class, msg_send_id,
     mutability::MainThreadOnly,
-    rc::Id,
+    rc::Retained,
     runtime::{AnyObject, ProtocolObject, Sel},
     sel, ClassType, DeclaredClass,
 };
@@ -42,9 +42,9 @@ macro_rules! idcell {
 
 #[derive(Default)]
 struct Ivars {
-    nav_url: OnceCell<Id<NSTextField>>,
-    web_view: OnceCell<Id<WKWebView>>,
-    window: OnceCell<Id<NSWindow>>,
+    nav_url: OnceCell<Retained<NSTextField>>,
+    web_view: OnceCell<Retained<WKWebView>>,
+    window: OnceCell<Retained<NSWindow>>,
 }
 
 declare_class!(
@@ -287,7 +287,7 @@ declare_class!(
 );
 
 impl Delegate {
-    fn new(mtm: MainThreadMarker) -> Id<Self> {
+    fn new(mtm: MainThreadMarker) -> Retained<Self> {
         let this = mtm.alloc();
         let this = this.set_ivars(Ivars::default());
         unsafe { msg_send_id![super(this), init] }

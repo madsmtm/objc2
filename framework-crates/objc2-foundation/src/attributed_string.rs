@@ -1,7 +1,7 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::ClassType;
 
 use crate::Foundation::*;
@@ -30,14 +30,14 @@ impl NSAttributedString {
     pub unsafe fn new_with_attributes(
         string: &NSString,
         attributes: &NSDictionary<NSAttributedStringKey, objc2::runtime::AnyObject>,
-    ) -> Id<Self> {
+    ) -> Retained<Self> {
         unsafe { Self::initWithString_attributes(Self::alloc(), string, Some(attributes)) }
     }
 
     /// Creates a new attributed string without any attributes.
     #[doc(alias = "initWithString:")]
     #[cfg(feature = "NSString")]
-    pub fn from_nsstring(string: &NSString) -> Id<Self> {
+    pub fn from_nsstring(string: &NSString) -> Retained<Self> {
         Self::initWithString(Self::alloc(), string)
     }
 }
@@ -47,12 +47,12 @@ impl NSMutableAttributedString {
 
     #[doc(alias = "initWithString:")]
     #[cfg(feature = "NSString")]
-    pub fn from_nsstring(string: &NSString) -> Id<Self> {
+    pub fn from_nsstring(string: &NSString) -> Retained<Self> {
         Self::initWithString(Self::alloc(), string)
     }
 
     #[doc(alias = "initWithAttributedString:")]
-    pub fn from_attributed_nsstring(attributed_string: &NSAttributedString) -> Id<Self> {
+    pub fn from_attributed_nsstring(attributed_string: &NSAttributedString) -> Retained<Self> {
         Self::initWithAttributedString(Self::alloc(), attributed_string)
     }
 }

@@ -4,7 +4,7 @@
 use core::{cell::OnceCell, ptr::NonNull};
 
 use objc2::{
-    declare_class, msg_send_id, mutability::MainThreadOnly, rc::Id, runtime::ProtocolObject,
+    declare_class, msg_send_id, mutability::MainThreadOnly, rc::Retained, runtime::ProtocolObject,
     ClassType, DeclaredClass,
 };
 use objc2_app_kit::{
@@ -55,10 +55,10 @@ macro_rules! idcell {
 
 // declare the desired instance variables
 struct Ivars {
-    start_date: Id<NSDate>,
-    command_queue: OnceCell<Id<ProtocolObject<dyn MTLCommandQueue>>>,
-    pipeline_state: OnceCell<Id<ProtocolObject<dyn MTLRenderPipelineState>>>,
-    window: OnceCell<Id<NSWindow>>,
+    start_date: Retained<NSDate>,
+    command_queue: OnceCell<Retained<ProtocolObject<dyn MTLCommandQueue>>>,
+    pipeline_state: OnceCell<Retained<ProtocolObject<dyn MTLRenderPipelineState>>>,
+    window: OnceCell<Retained<NSWindow>>,
 }
 
 // declare the Objective-C class machinery
@@ -109,7 +109,7 @@ declare_class!(
             // get the default device
             let device = {
                 let ptr = unsafe { MTLCreateSystemDefaultDevice() };
-                unsafe { Id::retain(ptr) }.expect("Failed to get default system device.")
+                unsafe { Retained::retain(ptr) }.expect("Failed to get default system device.")
             };
 
             // create the command queue
@@ -280,7 +280,7 @@ declare_class!(
 );
 
 impl Delegate {
-    fn new(mtm: MainThreadMarker) -> Id<Self> {
+    fn new(mtm: MainThreadMarker) -> Retained<Self> {
         let this = mtm.alloc();
         let this = this.set_ivars(Ivars {
             start_date: unsafe { NSDate::now() },

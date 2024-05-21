@@ -1,5 +1,5 @@
 use crate::encode::{EncodeArgument, EncodeArguments, EncodeReturn};
-use crate::rc::Id;
+use crate::rc::Retained;
 use crate::runtime::Bool;
 use crate::Message;
 
@@ -13,7 +13,7 @@ mod argument_private {
 /// Objective-C `BOOL`, where it would otherwise not be allowed (since they
 /// are not ABI compatible).
 ///
-/// This is also done specially for `&mut Id<_>`-like arguments, to allow
+/// This is also done specially for `&mut Retained<_>`-like arguments, to allow
 /// using those as "out" parameters.
 pub trait ConvertArgument: argument_private::Sealed {
     /// The inner type that this can be converted to and from.
@@ -36,10 +36,10 @@ pub trait ConvertArgument: argument_private::Sealed {
 }
 
 // Implemented in writeback.rs
-impl<T: Message> argument_private::Sealed for &mut Id<T> {}
-impl<T: Message> argument_private::Sealed for Option<&mut Id<T>> {}
-impl<T: Message> argument_private::Sealed for &mut Option<Id<T>> {}
-impl<T: Message> argument_private::Sealed for Option<&mut Option<Id<T>>> {}
+impl<T: Message> argument_private::Sealed for &mut Retained<T> {}
+impl<T: Message> argument_private::Sealed for Option<&mut Retained<T>> {}
+impl<T: Message> argument_private::Sealed for &mut Option<Retained<T>> {}
+impl<T: Message> argument_private::Sealed for Option<&mut Option<Retained<T>>> {}
 
 impl<T: EncodeArgument> argument_private::Sealed for T {}
 impl<T: EncodeArgument> ConvertArgument for T {

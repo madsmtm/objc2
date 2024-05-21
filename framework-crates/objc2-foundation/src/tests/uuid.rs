@@ -2,11 +2,11 @@
 use alloc::format;
 
 use crate::Foundation::NSUUID;
-use objc2::rc::Id;
+use objc2::rc::Retained;
 
 #[test]
 fn default_is_random() {
-    let uuid1 = <Id<NSUUID>>::default();
+    let uuid1 = <Retained<NSUUID>>::default();
     let uuid2 = NSUUID::UUID();
     assert_ne!(uuid1, uuid2, "Statistically very unlikely");
 }

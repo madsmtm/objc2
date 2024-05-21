@@ -356,12 +356,12 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 /// Basic usage:
 ///
 /// ```
-/// use objc2::rc::{autoreleasepool, Id};
+/// use objc2::rc::{autoreleasepool, Retained};
 /// use objc2::runtime::NSObject;
 ///
 /// autoreleasepool(|pool| {
 ///     // Create `obj` and autorelease it to the pool
-///     let obj = Id::autorelease(NSObject::new(), pool);
+///     let obj = Retained::autorelease(NSObject::new(), pool);
 ///     // We now have a reference that we can freely use
 ///     println!("{obj:?}");
 ///     // `obj` is deallocated when the pool ends
@@ -373,11 +373,11 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 /// out of the pool:
 ///
 /// ```compile_fail
-/// use objc2::rc::{autoreleasepool, Id};
+/// use objc2::rc::{autoreleasepool, Retained};
 /// use objc2::runtime::NSObject;
 ///
 /// let obj = autoreleasepool(|pool| {
-///     Id::autorelease(NSObject::new(), pool)
+///     Retained::autorelease(NSObject::new(), pool)
 /// });
 /// ```
 ///
@@ -387,12 +387,12 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 ///
 #[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail")]
 #[cfg_attr(not(feature = "unstable-autoreleasesafe"), doc = "```should_panic")]
-/// use objc2::rc::{autoreleasepool, Id};
+/// use objc2::rc::{autoreleasepool, Retained};
 /// use objc2::runtime::NSObject;
 ///
 /// autoreleasepool(|outer_pool| {
 ///     let obj = autoreleasepool(|inner_pool| {
-///         Id::autorelease(NSObject::new(), outer_pool)
+///         Retained::autorelease(NSObject::new(), outer_pool)
 ///     });
 ///     // `obj` could wrongly be used here because its lifetime was
 ///     // assigned to the outer pool, even though it was released by the
@@ -456,12 +456,12 @@ where
 /// Autorelease an object to an outer pool, from inside an inner, "fake" pool.
 ///
 /// ```
-/// use objc2::rc::{autoreleasepool, autoreleasepool_leaking, Id};
+/// use objc2::rc::{autoreleasepool, autoreleasepool_leaking, Retained};
 /// use objc2::runtime::NSObject;
 ///
 /// autoreleasepool(|outer_pool| {
 ///     let obj = autoreleasepool_leaking(|inner_pool| {
-///         Id::autorelease(NSObject::new(), outer_pool)
+///         Retained::autorelease(NSObject::new(), outer_pool)
 ///     });
 ///     // `obj` is still usable here, since the leaking pool doesn't actually
 ///     // do anything.
@@ -475,11 +475,11 @@ where
 /// outside the closure.
 ///
 /// ```compile_fail
-/// use objc2::rc::{autoreleasepool_leaking, Id};
+/// use objc2::rc::{autoreleasepool_leaking, Retained};
 /// use objc2::runtime::NSObject;
 ///
 /// let obj = autoreleasepool_leaking(|pool| {
-///     Id::autorelease(NSObject::new(), pool)
+///     Retained::autorelease(NSObject::new(), pool)
 /// });
 /// ```
 ///
@@ -488,12 +488,12 @@ where
 ///
 #[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail")]
 #[cfg_attr(not(feature = "unstable-autoreleasesafe"), doc = "```should_panic")]
-/// use objc2::rc::{autoreleasepool, autoreleasepool_leaking, Id};
+/// use objc2::rc::{autoreleasepool, autoreleasepool_leaking, Retained};
 /// use objc2::runtime::NSObject;
 ///
 /// autoreleasepool_leaking(|outer_pool| {
 ///     let obj = autoreleasepool(|inner_pool| {
-///         Id::autorelease(NSObject::new(), outer_pool)
+///         Retained::autorelease(NSObject::new(), outer_pool)
 ///     });
 /// });
 /// #

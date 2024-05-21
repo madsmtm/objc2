@@ -2,7 +2,7 @@
 use core::marker::PhantomData;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, NSObject};
 use objc2::{__inner_extern_class, mutability, ClassType, Message};
 
@@ -24,7 +24,7 @@ __inner_extern_class!(
     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
-        /// `NSArray` and `NSMutableArray` have `Id`-like storage.
+        /// `NSArray` and `NSMutableArray` have `Retained`-like storage.
         ///
         /// This fairly trivially true for `NSMutableArray<T: IsMutable>` and
         /// `NSArray<T: IsIdCloneable>`, but let's explore the two other cases
@@ -40,7 +40,7 @@ __inner_extern_class!(
         /// accessible from multiple threads, therefore we require `T: Sync`:
         /// ```ignore
         /// std::thread::scope(|s| {
-        ///     let obj: Id<NSMutableArray<T>>;
+        ///     let obj: Retained<NSMutableArray<T>>;
         ///     let obj2 = obj.mutableCopy();
         ///     s.spawn(move || {
         ///         let obj = obj;
@@ -54,7 +54,7 @@ __inner_extern_class!(
         /// Similarly, if we had `NSMutableArray<T: Sync>: Sync`, `T` would be
         /// dropable from other threads, therefore we require `T: Send`:
         /// ```ignore
-        /// let obj: Id<NSMutableArray<T>>;
+        /// let obj: Retained<NSMutableArray<T>>;
         /// std::thread::spawn(|| {
         ///     let obj2 = obj.mutableCopy();
         ///
@@ -80,10 +80,10 @@ __inner_extern_class!(
         /// `ImmutableWithMutableSubclass`.
         ///
         /// But since we already require `T: IsCloneable` on `NSCopying`, and
-        /// already prevent other forms of `&NSArray<T> -> Id<NSArray<T>>`,
-        /// this is actually fine, since `Id<NSArray<T>>: Send | Sync`
+        /// already prevent other forms of `&NSArray<T> -> Retained<NSArray<T>>`,
+        /// this is actually fine, since `Retained<NSArray<T>>: Send | Sync`
         /// requires `NSArray<T>: Send + Sync` (and hence `T: Send + Sync`).
-        __inner: PhantomData<Id<ObjectType>>,
+        __inner: PhantomData<Retained<ObjectType>>,
     }
 
     #[cfg(feature = "NSArray")]
@@ -133,7 +133,7 @@ __inner_extern_class!(
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         // Same as if the dictionary was implemented with:
         // `(NSArray<KeyType>, NSArray<ObjectType>)`
-        __inner: PhantomData<(Id<KeyType>, Id<ObjectType>)>,
+        __inner: PhantomData<(Retained<KeyType>, Retained<ObjectType>)>,
     }
 
     #[cfg(feature = "NSDictionary")]
@@ -188,7 +188,7 @@ __inner_extern_class!(
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         // Same as if the set was implemented as `NSArray<ObjectType>`.
-        __inner: PhantomData<Id<ObjectType>>,
+        __inner: PhantomData<Retained<ObjectType>>,
     }
 
     #[cfg(feature = "NSSet")]
@@ -261,7 +261,7 @@ __inner_extern_class!(
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         // Same as if the set was implemented with `NSArray<ObjectType>`.
-        __inner: PhantomData<Id<ObjectType>>,
+        __inner: PhantomData<Retained<ObjectType>>,
     }
 
     #[cfg(feature = "NSOrderedSet")]
@@ -318,7 +318,7 @@ __inner_extern_class!(
         // ownership, we'd have to modify the ownership of enumerators to
         // match with that (if we wanted to safely use enumerators returned by
         // that type).
-        __inner: PhantomData<Id<ObjectType>>,
+        __inner: PhantomData<Retained<ObjectType>>,
     }
 
     #[cfg(feature = "NSEnumerator")]

@@ -109,7 +109,7 @@ Toll-free bridging between `CFString` and `NSString`.
 use core_foundation::base::TCFType;
 use core_foundation::string::{CFString, CFStringRef};
 use objc2_foundation::{NSString, ns_string};
-use objc2::rc::Id;
+use objc2::rc::Retained;
 
 fn cf_string_to_ns(s: &CFString) -> &NSString {
     let ptr: CFStringRef = s.as_concrete_TypeRef();
@@ -118,17 +118,17 @@ fn cf_string_to_ns(s: &CFString) -> &NSString {
     unsafe { ptr.as_ref().unwrap() }
 }
 
-// Note: `NSString` is currently a bit special, and requires that we convert
-// from `Id<NSString>`, as it could otherwise have come from `&NSMutableString`,
+// Note: `NSString` is currently a bit special, and requires that we convert from
+// `Retained<NSString>`, as it could otherwise have come from `&NSMutableString`,
 // and then we'd loose lifetime information by converting to `CFString`.
 //
 // This will be changed in the future, see https://github.com/madsmtm/objc2/issues/563.
-fn ns_string_to_cf(s: Id<NSString>) -> CFString {
+fn ns_string_to_cf(s: Retained<NSString>) -> CFString {
     // Yield ownership over the string
-    let ptr: *const NSString = Id::into_raw(s);
+    let ptr: *const NSString = Retained::into_raw(s);
     let ptr: CFStringRef = ptr.cast();
-    // SAFETY: NSString is toll-free bridged with CFString,
-    // and ownership was passed above with `Id::into_raw`.
+    // SAFETY: NSString is toll-free bridged with CFString, and
+    // ownership was passed above with `Retained::into_raw`.
     unsafe { CFString::wrap_under_create_rule(ptr) }
 }
 

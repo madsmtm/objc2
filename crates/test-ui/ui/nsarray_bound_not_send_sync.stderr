@@ -15,8 +15,8 @@ note: required because it appears within the type `objc2::rc::id::private::Equiv
   |
   |     pub struct EquivalentType<T: ?Sized + ClassType>(
   |                ^^^^^^^^^^^^^^
-  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Sync`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
+  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Sync`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
@@ -54,8 +54,8 @@ note: required because it appears within the type `NSObject`
   |
   | pub struct NSObject {
   |            ^^^^^^^^
-  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Sync`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
+  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Sync`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
@@ -88,8 +88,8 @@ note: required because it appears within the type `objc2::rc::id::private::Equiv
   |
   |     pub struct EquivalentType<T: ?Sized + ClassType>(
   |                ^^^^^^^^^^^^^^
-  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Send`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
+  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Send`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
@@ -138,8 +138,8 @@ note: required because it appears within the type `NSObject`
   |
   | pub struct NSObject {
   |            ^^^^^^^^
-  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Send`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
+  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Send`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
@@ -172,8 +172,8 @@ note: required because it appears within the type `objc2::rc::id::private::Equiv
   |
   |     pub struct EquivalentType<T: ?Sized + ClassType>(
   |                ^^^^^^^^^^^^^^
-  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Sync`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
+  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Sync`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
@@ -216,8 +216,8 @@ note: required because it appears within the type `NSObject`
   |
   | pub struct NSObject {
   |            ^^^^^^^^
-  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Sync`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
+  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Sync`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
@@ -255,8 +255,8 @@ note: required because it appears within the type `objc2::rc::id::private::Equiv
   |
   |     pub struct EquivalentType<T: ?Sized + ClassType>(
   |                ^^^^^^^^^^^^^^
-  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Send`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
+  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Send`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
@@ -310,8 +310,8 @@ note: required because it appears within the type `NSObject`
   |
   | pub struct NSObject {
   |            ^^^^^^^^
-  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Send`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
+  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Send`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;

@@ -3,7 +3,7 @@ use alloc::string::ToString;
 
 use objc2::exception::{catch, throw};
 use objc2::msg_send;
-use objc2::rc::{autoreleasepool, Id};
+use objc2::rc::{autoreleasepool, Retained};
 use objc2::runtime::{NSObject, NSObjectProtocol};
 use objc2_foundation::{NSArray, NSException, NSString};
 
@@ -35,7 +35,7 @@ fn throw_catch_raise_catch() {
     let exc = autoreleasepool(|_| {
         let inner = || {
             autoreleasepool(|pool| {
-                let exc = Id::autorelease(exc, pool);
+                let exc = Retained::autorelease(exc, pool);
                 unsafe { exc.raise() }
             })
         };
@@ -91,7 +91,7 @@ fn raise_catch() {
     assert_eq!(exc.retainCount(), 1);
 
     let exc = autoreleasepool(|pool| {
-        let exc = Id::autorelease(exc, pool);
+        let exc = Retained::autorelease(exc, pool);
         let inner = || {
             if exc.name() == name {
                 unsafe { exc.raise() };
@@ -122,7 +122,7 @@ fn raise_catch() {
 fn catch_actual() {
     let res = unsafe {
         catch(|| {
-            let arr: Id<NSArray<NSObject>> = NSArray::new();
+            let arr: Retained<NSArray<NSObject>> = NSArray::new();
             let _obj: *mut NSObject = msg_send![&arr, objectAtIndex: 0usize];
         })
     };
