@@ -368,10 +368,10 @@ jobs:
           target: x86_64-apple-darwin
           os: macos-13
           frameworks: MACOS_13
-        - name: Test macOS 11
-          target: x86_64-apple-darwin
-          os: macos-11
-          frameworks: MACOS_11
+        - name: Test macOS 14
+          target: aarch64-apple-darwin
+          os: macos-14
+          frameworks: MACOS_14
         - name: Build macOS AArch64
           target: aarch64-apple-darwin
           frameworks: MACOS_11
