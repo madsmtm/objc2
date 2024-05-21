@@ -63,6 +63,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   This improves iOS support, as crates like `objc2-app-kit` are no longer
   enabled on this platform.
+* Fix dependency feature flags (e.g. `block2`) not enabling the matching
+  features in dependencies (e.g. not enabling `objc2-foundation/block2`).
 
 ### Removed
 * `objc2-metal`: Removed internal `__MTLPackedFloat3` and made `MTLPackedFloat3` public.
