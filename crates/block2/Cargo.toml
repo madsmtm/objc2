@@ -49,7 +49,7 @@ unstable-objfw = []
 unstable-private = []
 
 [dependencies]
-objc2 = { path = "../objc2", version = "0.5.1", default-features = false }
+objc2 = { path = "../objc2", version = "0.5.2", default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
