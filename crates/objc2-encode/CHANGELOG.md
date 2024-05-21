@@ -7,7 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
-## 4.0.2 - 2024-05-21
+## 4.0.3 - 2024-05-21
+
+### Fixed
+* Fixed an issue with publishing using an older version of Cargo that didn't
+  handle the `lints.workspace = true` Cargo setup properly.
+
+
+## 4.0.2 - 2024-05-21 (Yanked)
 
 ### Added
 * Added `Encoding::None`, which represents encodings where the host compiler

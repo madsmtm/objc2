@@ -169,7 +169,7 @@
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
 #![allow(missing_debug_implementations)]
-#![doc(html_root_url = "https://docs.rs/objc-sys/0.3.4")]
+#![doc(html_root_url = "https://docs.rs/objc-sys/0.3.5")]
 #![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide))]
 #![cfg_attr(docsrs, doc(cfg_hide(doc)))]

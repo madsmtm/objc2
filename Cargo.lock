@@ -333,7 +333,7 @@ dependencies = [
 
 [[package]]
 name = "objc-sys"
-version = "0.3.4"
+version = "0.3.5"
 dependencies = [
  "cc",
 ]
@@ -616,7 +616,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-encode"
-version = "4.0.2"
+version = "4.0.3"
 
 [[package]]
 name = "objc2-event-kit"
@@ -949,7 +949,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-proc-macros"
-version = "0.1.2"
+version = "0.1.3"
 
 [[package]]
 name = "objc2-quartz-core"

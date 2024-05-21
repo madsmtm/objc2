@@ -5,7 +5,7 @@ name = "objc-sys"
 #
 # Also, beware of using pre-release versions here, since because of the
 # `links` key, two pre-releases requested with `=...` are incompatible.
-version = "0.3.4"
+version = "0.3.5"
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 rust-version = "1.60"
