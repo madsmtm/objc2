@@ -49,19 +49,18 @@ fn test_feature_sets<'a>(
     package: &str,
 ) -> Result<(), Box<dyn Error>> {
     for features in feature_sets {
-        println!("running: cargo check --features={}", features.join(","));
+        let mut cmd = Command::new("cargo");
+        cmd.arg("check");
+        cmd.arg("--package");
+        cmd.arg(package);
+        cmd.arg("--features");
+        cmd.arg(features.join(","));
 
-        let status = Command::new("cargo")
-            .current_dir(workspace_dir)
-            .args([
-                "check",
-                "--quiet",
-                "--package",
-                package,
-                "--features",
-                &features.join(","),
-            ])
-            .status()?;
+        println!("running: {cmd:?}");
+
+        cmd.current_dir(workspace_dir);
+        cmd.arg("--quiet");
+        let status = cmd.status()?;
 
         if !status.success() {
             *success = false;
@@ -113,6 +112,19 @@ fn main() -> Result<(), Box<dyn Error>> {
     )?;
     let feature_sets = features.iter().map(|feature| vec![&**feature]);
     test_feature_sets(&mut success, workspace_dir, feature_sets, "objc2-metal")?;
+
+    println!("Testing building each framework with `--features=all` and only their own features");
+    for dir in workspace_dir.join("framework-crates").read_dir().unwrap() {
+        let dir = dir.unwrap();
+        if dir.file_type().unwrap().is_dir() {
+            test_feature_sets(
+                &mut success,
+                workspace_dir,
+                [vec!["all"]],
+                dir.file_name().to_str().unwrap(),
+            )?;
+        }
+    }
 
     if !success {
         panic!("one or more checks failed");
