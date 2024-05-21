@@ -36,8 +36,6 @@ targets = [
     "aarch64-apple-ios",
     "aarch64-apple-tvos",
     "aarch64-apple-ios-macabi",
-    "x86_64-unknown-linux-gnu",
-    "i686-unknown-linux-gnu",
 ]
 
 [features]
@@ -47,11 +45,11 @@ default = ["std"]
 std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-foundation/std", "objc2-metal?/std"]
 alloc = ["block2?/alloc", "objc2/alloc", "objc2-foundation/alloc", "objc2-metal?/alloc"]
 apple = []
-gnustep-1-7 = ["objc2/gnustep-1-7", "block2?/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
-gnustep-1-8 = ["gnustep-1-7", "objc2/gnustep-1-8", "block2?/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
-gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9", "block2?/gnustep-1-9", "objc2-foundation/gnustep-1-9"]
-gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0", "block2?/gnustep-2-0", "objc2-foundation/gnustep-2-0"]
-gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1", "objc2-foundation/gnustep-2-1"]
+gnustep-1-7 = []
+gnustep-1-8 = []
+gnustep-1-9 = []
+gnustep-2-0 = []
+gnustep-2-1 = []
 bitflags = ["dep:bitflags", "objc2-foundation/bitflags", "objc2-metal?/bitflags"]
 block2 = ["dep:block2", "objc2-foundation/block2", "objc2-metal?/block2"]
 objc2-metal = ["dep:objc2-metal"]

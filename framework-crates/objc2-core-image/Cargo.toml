@@ -35,8 +35,6 @@ targets = [
     "aarch64-apple-ios",
     "aarch64-apple-tvos",
     "aarch64-apple-ios-macabi",
-    "x86_64-unknown-linux-gnu",
-    "i686-unknown-linux-gnu",
 ]
 
 [features]

@@ -11,6 +11,7 @@ use clang::{Entity, EntityVisitResult};
 use tracing::span::EnteredSpan;
 
 mod availability;
+mod cfgs;
 mod config;
 mod context;
 mod display_helper;

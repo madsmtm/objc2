@@ -59,9 +59,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   implements the protocol, but was marked with `Mutability = Mutable`, but
   Metal protocols are assumed retainable by Objective-C code, so that'd have
   been unsound anyway.
+* Add `#[cfg(target_os = "...")]` when a platform-specific dependency is used.
+
+  This improves iOS support, as crates like `objc2-app-kit` are no longer
+  enabled on this platform.
 
 ### Removed
 * `objc2-metal`: Removed internal `__MTLPackedFloat3` and made `MTLPackedFloat3` public.
+* `objc2-core-data`: Removed broken GNUStep support.
+* `objc2-quartz-core`: Removed broken GNUStep support.
 
 
 ## 0.2.0 - 2024-04-17

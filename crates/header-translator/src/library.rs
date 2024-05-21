@@ -10,6 +10,7 @@ use std::path::Path;
 use toml_edit::InlineTable;
 use toml_edit::{value, Array, DocumentMut, Formatted, Item, Table, Value};
 
+use crate::cfgs::PlatformCfg;
 use crate::config::LibraryConfig;
 use crate::display_helper::FormatterFn;
 use crate::module::Module;
@@ -250,7 +251,7 @@ see that for related crates.", self.data.krate, self.link_name)?;
         cargo_toml["package"]["metadata"]["docs"]["rs"]["default-target"] =
             value(default_target.unwrap());
 
-        for (krate, (required, _, features)) in &dependency_map[&*self.link_name] {
+        for (krate, (required, _, required_features)) in &dependency_map[&*self.link_name] {
             let mut table = match *krate {
                 "objc2" => InlineTable::from_iter([
                     ("path", Value::from("../../crates/objc2".to_string())),
@@ -273,15 +274,57 @@ see that for related crates.", self.data.krate, self.link_name)?;
             if !required {
                 table.insert("optional", Value::from(true));
             }
-            if !features.is_empty() {
-                let array: Array = features.iter().collect();
+            if !required_features.is_empty() {
+                let array: Array = required_features.iter().collect();
                 table.insert("features", Value::from(array));
             }
 
+            let mut platform_cfg = PlatformCfg::from_config(&self.data);
+            platform_cfg.dependency(config.library_from_crate(krate));
+            let dependency_table = if let Some(cfgs) = platform_cfg.cfgs() {
+                let dep_position = cargo_toml["dependencies"]
+                    .as_table()
+                    .unwrap()
+                    .position()
+                    .unwrap();
+
+                let target = cargo_toml
+                    .entry("target")
+                    .or_insert({
+                        let mut table = Table::new();
+                        table.set_implicit(true);
+                        Item::Table(table)
+                    })
+                    .as_table_mut()
+                    .unwrap();
+
+                target.set_position(dep_position);
+
+                let key = format!("'cfg({cfgs})'").parse().unwrap();
+                let cfg = target
+                    .entry_format(&key)
+                    .or_insert({
+                        let mut table = Table::new();
+                        table.set_implicit(true);
+                        Item::Table(table)
+                    })
+                    .as_table_mut()
+                    .unwrap();
+
+                cfg.entry("dependencies")
+                    .or_insert({
+                        let mut table = Table::new();
+                        table.set_implicit(true);
+                        Item::Table(table)
+                    })
+                    .as_table_mut()
+                    .unwrap()
+            } else {
+                cargo_toml["dependencies"].as_table_mut().unwrap()
+            };
+
             // Don't override if set by Cargo.modified.toml
-            cargo_toml["dependencies"]
-                .as_table_mut()
-                .unwrap()
+            dependency_table
                 .entry(krate)
                 .or_insert(Item::Value(Value::InlineTable(table)));
 
