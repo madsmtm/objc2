@@ -1001,7 +1001,12 @@ mod tests {
         let mut expected = ThreadTestData::current();
 
         let cls = RcTestObject::class();
-        test_error_id!(expected, IF_AUTORELEASE_NOT_SKIPPED, idAndShouldError, cls);
+        test_error_id!(
+            expected,
+            IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK,
+            idAndShouldError,
+            cls
+        );
         test_error_id!(expected, 0, newAndShouldError, cls);
 
         let obj = RcTestObject::new();

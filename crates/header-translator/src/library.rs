@@ -255,11 +255,11 @@ see that for related crates.", self.data.krate, self.link_name)?;
             let mut table = match *krate {
                 "objc2" => InlineTable::from_iter([
                     ("path", Value::from("../../crates/objc2".to_string())),
-                    ("version", Value::from("0.5.1")),
+                    ("version", Value::from("0.5.2")),
                 ]),
                 "block2" => InlineTable::from_iter([
                     ("path", Value::from("../../crates/block2".to_string())),
-                    ("version", Value::from("0.5.0")),
+                    ("version", Value::from("0.5.1")),
                 ]),
                 // Use a reasonably new version of libc
                 "libc" => InlineTable::from_iter([("version", Value::from("0.2.80"))]),

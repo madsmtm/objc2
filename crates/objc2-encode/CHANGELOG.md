@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
+## 4.0.2 - 2024-05-21
+
+### Added
+* Added `Encoding::None`, which represents encodings where the host compiler
+  (i.e. `clang`) couldn't generate an encoding for a given type.
+
+  This is useful when working with SIMD types.
+
+
 ## 4.0.1 - 2024-04-17
 
 ### Changed
