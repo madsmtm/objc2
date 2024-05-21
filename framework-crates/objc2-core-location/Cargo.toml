@@ -25,7 +25,7 @@ block2 = { path = "../../crates/block2", version = "0.5.0", default-features = f
 objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.0", default-features = false }
 
-[target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "watchos", target_os = "visionos"))'.dependencies]
+[target.'cfg(not(target_os = "tvos"))'.dependencies]
 objc2-contacts = { path = "../objc2-contacts", version = "0.2.0", default-features = false, optional = true }
 
 [package.metadata.docs.rs]

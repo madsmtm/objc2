@@ -111,15 +111,43 @@ impl PlatformCfg {
         }
 
         Some(FormatterFn(|f| {
-            // Emit `target_vendor = "apple"` if possible
-            if self.macos.allowed_active()
-                && self.maccatalyst.allowed_active()
-                && self.ios.allowed_active()
-                && self.tvos.allowed_active()
-                && self.watchos.allowed_active()
-                && self.visionos.allowed_active()
-            {
-                return write!(f, "target_vendor = \"apple\"");
+            match (
+                self.macos.allowed_active(),
+                self.maccatalyst.allowed_active(),
+                self.ios.allowed_active(),
+                self.tvos.allowed_active(),
+                self.watchos.allowed_active(),
+                self.visionos.allowed_active(),
+                self.gnustep.allowed_active(),
+            ) {
+                // Emit `target_vendor = "apple"` if at all possible, since
+                // it's more general.
+                (true, true, true, true, true, true, false) => {
+                    return write!(f, "target_vendor = \"apple\"");
+                }
+                // Emit negative `cfg`s when only a niche platform is
+                // excluded, since it's more likely to be the "true" config
+                // for this item (e.g. if something is excluded on iOS and
+                // macOS, it'll likely be on other targets in the future. But
+                // if something is excluded just for tvOS, that exclusion
+                // probably only applies to tvOS).
+                (true, false, true, true, true, true, true) => {
+                    return write!(f, "not(target_abi = \"macabi\")");
+                }
+                (true, true, true, false, true, true, true) => {
+                    return write!(f, "not(target_os = \"tvos\")");
+                }
+                (true, true, true, true, false, true, true) => {
+                    return write!(f, "not(target_os = \"watchos\")");
+                }
+                (true, true, true, false, false, true, true) => {
+                    // tvOS and watchOS are more bare-bones that the others
+                    return write!(f, "not(any(target_os = \"tvos\", target_os = \"watchos\"))");
+                }
+                (true, true, true, true, true, false, true) => {
+                    return write!(f, "not(target_os = \"visionos\")");
+                }
+                _ => {}
             }
 
             let mut cfgs: Vec<&str> = Vec::new();
@@ -154,7 +182,7 @@ impl PlatformCfg {
             }
 
             match &*cfgs {
-                [] => write!(f, "any()"), // Should be unreachable
+                [] => write!(f, "any()"), // Should be unreachable in reality
                 [cfg] => write!(f, "{cfg}"),
                 cfgs => write!(f, "any({})", cfgs.join(", ")),
             }
@@ -203,6 +231,7 @@ mod tests {
     fn maccatalyst() {
         let mut platform = PlatformCfg::default();
         platform.macos = CfgState::Omit;
+        platform.tvos = CfgState::Omit;
 
         // iOS Gated
         platform.ios = CfgState::ShouldGate;

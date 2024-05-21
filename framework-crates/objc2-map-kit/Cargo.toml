@@ -30,7 +30,7 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.0", default-fe
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.0", default-features = false, optional = true }
 
-[target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "watchos", target_os = "visionos"))'.dependencies]
+[target.'cfg(not(target_os = "tvos"))'.dependencies]
 objc2-contacts = { path = "../objc2-contacts", version = "0.2.0", default-features = false, optional = true }
 
 [package.metadata.docs.rs]

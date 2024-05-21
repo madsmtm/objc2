@@ -32,7 +32,7 @@ objc2-symbols = { path = "../objc2-symbols", version = "0.2.0", default-features
 objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", version = "0.2.0", default-features = false, optional = true }
 objc2-user-notifications = { path = "../objc2-user-notifications", version = "0.2.0", default-features = false, optional = true }
 
-[target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "visionos"))'.dependencies]
+[target.'cfg(not(target_os = "watchos"))'.dependencies]
 objc2-core-image = { path = "../objc2-core-image", version = "0.2.0", default-features = false, optional = true }
 objc2-link-presentation = { path = "../objc2-link-presentation", version = "0.2.0", default-features = false, optional = true }
 objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.0", default-features = false, optional = true }
