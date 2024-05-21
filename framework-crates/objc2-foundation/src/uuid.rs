@@ -20,6 +20,7 @@ impl RefUnwindSafe for NSUUID {}
 struct UuidBytes([u8; 16]);
 
 unsafe impl RefEncode for UuidBytes {
+    // Encoding depends on Foundation version, we hack it for now.
     const ENCODING_REF: Encoding = if cfg!(target_arch = "aarch64") {
         Encoding::String
     } else {

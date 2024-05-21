@@ -19,6 +19,10 @@ fn test_new() {
 }
 
 #[test]
+#[cfg_attr(
+    not(target_arch = "aarch64"),
+    ignore = "encoding depends on Foundation version"
+)]
 fn test_bytes() {
     let uuid = NSUUID::from_bytes([10; 16]);
     assert_eq!(uuid.as_bytes(), [10; 16]);
@@ -26,6 +30,10 @@ fn test_bytes() {
 
 #[test]
 #[cfg(feature = "NSString")]
+#[cfg_attr(
+    not(target_arch = "aarch64"),
+    ignore = "encoding depends on Foundation version"
+)]
 fn display_debug() {
     let uuid = NSUUID::from_bytes([10; 16]);
     let expected = "0A0A0A0A-0A0A-0A0A-0A0A-0A0A0A0A0A0A";
