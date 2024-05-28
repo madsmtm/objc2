@@ -231,7 +231,7 @@ impl MainThreadMarker {
     /// must ensure that any use of the marker is actually safe to do from
     /// another thread than the main one.
     #[inline]
-    pub unsafe fn new_unchecked() -> Self {
+    pub const unsafe fn new_unchecked() -> Self {
         // SAFETY: Upheld by caller
         //
         // We can't debug_assert that this actually is the main thread, see
@@ -382,18 +382,44 @@ impl<T> MainThreadBound<T> {
     ///
     /// # Example
     ///
-    /// ```no_run
+    /// ```
     /// use objc2_foundation::{MainThreadMarker, MainThreadBound};
     ///
     /// let foo;
     /// # foo = ();
+    /// # let mtm = unsafe { MainThreadMarker::new_unchecked() };
+    /// # #[cfg(doctests_not_always_run_on_main_thread)]
     /// let mtm = MainThreadMarker::new().expect("must be on the main thread");
     /// let foo = MainThreadBound::new(foo, mtm);
     ///
     /// // `foo` is now `Send + Sync`.
     /// ```
+    ///
+    /// Create a shared static that is only available from the main thread.
+    ///
+    /// ```
+    /// use std::cell::Cell;
+    /// use objc2_foundation::{MainThreadMarker, MainThreadBound};
+    ///
+    /// // Note: The destructor for this will never be run.
+    /// static SHARED: MainThreadBound<Cell<i32>> = MainThreadBound::new(
+    ///     Cell::new(42),
+    ///     // SAFETY: The MainThreadBound is created at `const`-time and put
+    ///     // into a static, there is no thread associated with this, and
+    ///     // hence no thread safety to worry about.
+    ///     unsafe { MainThreadMarker::new_unchecked() },
+    /// );
+    ///
+    /// # let mtm = unsafe { MainThreadMarker::new_unchecked() };
+    /// # #[cfg(doctests_not_always_run_on_main_thread)]
+    /// let mtm = MainThreadMarker::new();
+    ///
+    /// assert_eq!(SHARED.get(mtm).get(), 42);
+    /// SHARED.get(mtm).set(43);
+    /// assert_eq!(SHARED.get(mtm).get(), 43);
+    /// ```
     #[inline]
-    pub fn new(inner: T, _mtm: MainThreadMarker) -> Self {
+    pub const fn new(inner: T, _mtm: MainThreadMarker) -> Self {
         Self(ManuallyDrop::new(inner))
     }
 
