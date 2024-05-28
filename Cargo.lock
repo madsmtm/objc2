@@ -1040,6 +1040,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-system-extensions"
+version = "0.2.2"
+dependencies = [
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-ui-kit"
 version = "0.2.2"
 dependencies = [
