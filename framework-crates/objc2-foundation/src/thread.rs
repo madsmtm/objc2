@@ -299,7 +299,7 @@ impl<T: ?Sized + IsMainThreadOnly> From<&T> for MainThreadMarker {
     #[inline]
     #[cfg_attr(debug_assertions, track_caller)]
     fn from(_obj: &T) -> Self {
-        #[cfg(debug_assertions)]
+        #[cfg(all(debug_assertions, feature = "NSThread"))]
         assert!(is_main_thread(), "the main-thread-only object that we tried to fetch a MainThreadMarker from was somehow not on the main thread");
 
         // SAFETY: Objects which are `IsMainThreadOnly` are guaranteed
