@@ -820,17 +820,47 @@ impl AnyClass {
     }
 
     /// Returns the metaclass of self.
+    ///
+    ///
+    /// # Example
+    ///
+    /// Get the metaclass of an object.
+    ///
+    /// ```
+    /// use objc2::runtime::NSObject;
+    /// use objc2::ClassType;
+    ///
+    /// let cls = NSObject::class();
+    /// let metacls = cls.metaclass();
+    ///
+    /// assert_eq!(metacls.name(), "NSObject");
+    /// ```
     #[inline]
     #[doc(alias = "object_getClass")]
+    #[doc(alias = "objc_getMetaClass")] // Same as `AnyClass::get(name).metaclass()`
     pub fn metaclass(&self) -> &Self {
         let ptr: *const Self = unsafe { ffi::object_getClass(self.as_ptr().cast()) }.cast();
         unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 
-    // objc_getMetaClass -> Same as `AnyClass::get(name).metaclass()`
-
-    #[allow(unused)]
-    pub(crate) fn is_metaclass(&self) -> bool {
+    /// Whether the class is a metaclass.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use objc2::runtime::NSObject;
+    /// use objc2::ClassType;
+    ///
+    /// let cls = NSObject::class();
+    /// let metacls = cls.metaclass();
+    ///
+    /// assert!(!cls.is_metaclass());
+    /// assert!(metacls.is_metaclass());
+    /// ```
+    #[inline]
+    #[doc(alias = "class_isMetaClass")]
+    pub fn is_metaclass(&self) -> bool {
         unsafe { Bool::from_raw(ffi::class_isMetaClass(self.as_ptr())).as_bool() }
     }
 
