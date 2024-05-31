@@ -320,7 +320,9 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 /// Execute `f` in the context of a new autorelease pool. The pool is drained
 /// after the execution of `f` completes.
 ///
-/// This corresponds to `@autoreleasepool` blocks in Objective-C and Swift.
+/// This corresponds to `@autoreleasepool` blocks in Objective-C and Swift,
+/// see [Apple's documentation][apple-autorelease] for general information on
+/// when to use those.
 ///
 /// The pool is passed as a parameter to the closure to give you a lifetime
 /// parameter that autoreleased objects can refer to.
@@ -332,6 +334,7 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 /// it is usually more efficient, and having to use this function can be quite
 /// cumbersome for users.
 ///
+/// [apple-autorelease]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
 /// [`msg_send_id!`]: crate::msg_send_id
 ///
 ///
