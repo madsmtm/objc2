@@ -8,14 +8,19 @@ fn main() {
     builder.file("extern/block_utils.c");
     println!("cargo:rerun-if-changed=extern/block_utils.c");
 
-    for flag in env::var("DEP_BLOCK_0_2_CC_ARGS").unwrap().split(' ') {
-        builder.flag(flag);
-    }
-
     for flag in env::var("DEP_OBJC_0_3_CC_ARGS").unwrap().split(' ') {
         builder.flag(flag);
     }
 
+    if cfg!(feature = "gnustep-1-7") && !cfg!(feature = "gnustep-2-0") {
+        builder.include("compat-headers/gnustep-pre-2-0");
+    }
+
+    if cfg!(feature = "unstable-objfw") {
+        builder.include("compat-headers/objfw");
+    }
+
+    builder.flag("-fblocks");
     builder.flag("-fno-objc-arc");
 
     builder.flag("-xobjective-c");
@@ -26,12 +31,13 @@ fn main() {
     builder.compiler("clang");
     builder.file("extern/encode_utils.m");
     builder.file("extern/test_object.m");
+    #[cfg(feature = "unstable-simd")]
+    builder.file("extern/test_simd_return.m");
     println!("cargo:rerun-if-changed=extern/encode_utils.m");
     println!("cargo:rerun-if-changed=extern/test_object.m");
+    println!("cargo:rerun-if-changed=extern/test_simd_return.m");
 
-    for flag in env::var("DEP_BLOCK_0_2_CC_ARGS").unwrap().split(' ') {
-        builder.flag(flag);
-    }
+    builder.flag("-fblocks");
 
     for flag in env::var("DEP_OBJC_0_3_CC_ARGS").unwrap().split(' ') {
         builder.flag(flag);

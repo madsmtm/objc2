@@ -104,7 +104,7 @@ impl From<ParseIntError> for EncodingParseError {
 impl fmt::Display for EncodingParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if !matches!(self, Self::ParseError(_)) {
-            write!(f, "failed parsing encoding: ")?
+            write!(f, "failed parsing encoding: ")?;
         }
 
         match self {
@@ -114,10 +114,10 @@ impl fmt::Display for EncodingParseError {
             Self::MissingReceiver => write!(f, "receiver type must be present")?,
             Self::MissingSel => write!(f, "selector type must be present")?,
             Self::InvalidReceiver(enc) => {
-                write!(f, "receiver encoding must be '@', but it was '{enc}'")?
+                write!(f, "receiver encoding must be '@', but it was '{enc}'")?;
             }
             Self::InvalidSel(enc) => {
-                write!(f, "selector encoding must be '@', but it was '{enc}'")?
+                write!(f, "selector encoding must be '@', but it was '{enc}'")?;
             }
         }
         write!(f, ". This is likely a bug, please report it!")
@@ -179,10 +179,10 @@ mod tests {
                 (
                     EncodingBox::Struct(
                         "bitfield".into(),
-                        Some(vec![
+                        vec![
                             EncodingBox::BitField(64, None),
                             EncodingBox::BitField(1, None),
-                        ]),
+                        ],
                     ),
                     Some(32),
                 ),

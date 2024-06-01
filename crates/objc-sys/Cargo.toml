@@ -5,7 +5,7 @@ name = "objc-sys"
 #
 # Also, beware of using pre-release versions here, since because of the
 # `links` key, two pre-releases requested with `=...` are incompatible.
-version = "0.3.0"
+version = "0.3.5"
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 rust-version = "1.60"
@@ -28,16 +28,17 @@ readme = "README.md"
 links = "objc_0_3"
 build = "build.rs"
 
+[lints]
+workspace = true
+
 [features]
-# The default runtime is Apple's. Other platforms will probably error if the
-# correct feature flag is not specified.
-default = ["std", "apple"]
+default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc"]
 alloc = []
 
-# Link to Apple's objc4
+# Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
 apple = []
 
 # Link to GNUStep's libobjc2
@@ -58,29 +59,25 @@ unstable-c-unwind = []
 
 # Private
 unstable-exception = ["cc"]
-unstable-docsrs = []
 
 [build-dependencies]
-cc = { version = "1", optional = true }
+cc = { version = "1.0.80", optional = true }
 
 [package.metadata.docs.rs]
-default-target = "x86_64-apple-darwin"
-no-default-features = true
-features = ["std", "unstable-docsrs"]
-
+default-target = "aarch64-apple-darwin"
 targets = [
-    # MacOS
-    "x86_64-apple-darwin",
     "aarch64-apple-darwin",
-    # "i686-apple-darwin",
-    # iOS
+    "x86_64-apple-darwin",
     "aarch64-apple-ios",
     "x86_64-apple-ios",
-    # "armv7-apple-ios",
-    # "i386-apple-ios",
-    # GNUStep
+    "aarch64-apple-tvos",
+    "aarch64-apple-watchos",
+    "aarch64-apple-ios-macabi",
     "x86_64-unknown-linux-gnu",
     "i686-unknown-linux-gnu",
-    # Windows
-    "x86_64-pc-windows-msvc",
 ]
+
+[package.metadata.release]
+shared-version = false
+tag-prefix = "objc-sys"
+enable-features = []

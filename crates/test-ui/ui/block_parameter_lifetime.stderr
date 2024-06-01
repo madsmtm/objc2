@@ -1,0 +1,44 @@
+error: implementation of `BlockFn` is not general enough
+ --> ui/block_parameter_lifetime.rs
+  |
+  |     is_encode::<&Block<dyn Fn(&i8)>>();
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `BlockFn` is not general enough
+  |
+  = note: `BlockFn` would have to be implemented for the type `dyn for<'a> Fn(&'a i8)`
+  = note: ...but `BlockFn` is actually implemented for the type `dyn Fn(&'0 i8)`, for some specific lifetime `'0`
+
+error: implementation of `BlockFn` is not general enough
+ --> ui/block_parameter_lifetime.rs
+  |
+  |     is_encode::<&Block<dyn Fn(&i32) -> &i32>>();
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `BlockFn` is not general enough
+  |
+  = note: `BlockFn` would have to be implemented for the type `dyn for<'a> Fn(&'a i32) -> &i32`
+  = note: ...but `BlockFn` is actually implemented for the type `dyn Fn(&'0 i32) -> &i32`, for some specific lifetime `'0`
+
+error: implementation of `BlockFn` is not general enough
+ --> ui/block_parameter_lifetime.rs
+  |
+  |     is_encode::<&Block<dyn Fn(&i32) -> &i32>>();
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `BlockFn` is not general enough
+  |
+  = note: `BlockFn` would have to be implemented for the type `dyn for<'a> Fn(&'a i32) -> &i32`
+  = note: ...but `BlockFn` is actually implemented for the type `dyn Fn(&i32) -> &'0 i32`, for some specific lifetime `'0`
+
+error: implementation of `BlockFn` is not general enough
+ --> ui/block_parameter_lifetime.rs
+  |
+  |     is_encode::<&Block<dyn for<'a> Fn(&'a i64, &'a i64) -> &'a i64>>();
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `BlockFn` is not general enough
+  |
+  = note: `BlockFn` would have to be implemented for the type `dyn for<'a> Fn(&'a i64, &'a i64) -> &'a i64`
+  = note: ...but `BlockFn` is actually implemented for the type `dyn Fn(&'0 i64, &'0 i64) -> &i64`, for some specific lifetime `'0`
+
+error: implementation of `BlockFn` is not general enough
+ --> ui/block_parameter_lifetime.rs
+  |
+  |     is_encode::<&Block<dyn for<'a> Fn(&'a i64, &'a i64) -> &'a i64>>();
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `BlockFn` is not general enough
+  |
+  = note: `BlockFn` would have to be implemented for the type `dyn for<'a> Fn(&'a i64, &'a i64) -> &'a i64`
+  = note: ...but `BlockFn` is actually implemented for the type `dyn Fn(&i64, &i64) -> &'0 i64`, for some specific lifetime `'0`

@@ -1,23 +1,22 @@
 //! Test the output of the `ns_string!` macro.
-#![cfg(feature = "Foundation_NSString")]
+#![cfg(feature = "all")]
 
-use icrate::ns_string;
-use icrate::Foundation::NSString;
+use objc2_foundation::{ns_string, NSString};
 
 // Temporary to allow testing putting string references in statics.
 // This doesn't yet compile on other platforms, but could in the future!
-#[cfg(all(feature = "apple", feature = "assembly-features"))]
+#[cfg(all(target_vendor = "apple", feature = "assembly-features"))]
 #[no_mangle]
 static EMPTY: &NSString = {
     const INPUT: &[u8] = b"";
-    icrate::__ns_string_inner!(@inner INPUT);
+    objc2_foundation::__ns_string_static!(INPUT);
     CFSTRING.as_nsstring_const()
 };
-#[cfg(all(feature = "apple", feature = "assembly-features"))]
+#[cfg(all(target_vendor = "apple", feature = "assembly-features"))]
 #[no_mangle]
 static XYZ: &NSString = {
     const INPUT: &[u8] = b"xyz";
-    icrate::__ns_string_inner!(@inner INPUT);
+    objc2_foundation::__ns_string_static!(INPUT);
     CFSTRING.as_nsstring_const()
 };
 

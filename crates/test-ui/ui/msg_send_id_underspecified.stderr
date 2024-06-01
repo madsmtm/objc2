@@ -1,12 +1,5 @@
 error[E0282]: type annotations needed
  --> ui/msg_send_id_underspecified.rs
   |
-  |     let _: &Object = &*unsafe { msg_send_id![obj, description] };
-  |                       ----------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^-- type must be known at this point
-  |
-  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
-help: consider giving `result` an explicit type
- --> $WORKSPACE/crates/objc2/src/macros/mod.rs
-  |
-  |         let result: /* Type */;
-  |                   ++++++++++++
+  |     let _: &NSObject = &*unsafe { msg_send_id![obj, description] };
+  |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type

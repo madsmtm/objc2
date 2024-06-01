@@ -1,0 +1,9 @@
+framework = "Symbols"
+crate = "objc2-symbols"
+required-dependencies = ["objc2-foundation"]
+macos = "14.0"
+maccatalyst = "17.0"
+ios = "17.0"
+tvos = "17.0"
+watchos = "10.0"
+visionos = "1.0"

@@ -1,21 +1,26 @@
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt;
 use std::iter;
-use std::mem;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::availability::Availability;
 use crate::config::{ClassData, MethodData};
 use crate::context::Context;
+use crate::display_helper::FormatterFn;
 use crate::expr::Expr;
+use crate::id::cfg_gate_ln;
 use crate::id::ItemIdentifier;
+use crate::id::Location;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
-use crate::rust_type::{Ownership, Ty};
+use crate::rust_type::Ty;
+use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
+use crate::Config;
 
 #[derive(serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Derives(Cow<'static, str>);
@@ -36,9 +41,9 @@ impl fmt::Display for Derives {
 }
 
 /// Find all protocols, protocol's protocols and superclass' protocols.
-fn parse_protocols(
-    entity: &Entity<'_>,
-    protocols: &mut BTreeSet<ItemIdentifier>,
+fn parse_protocols<'tu>(
+    entity: &Entity<'tu>,
+    protocols: &mut BTreeMap<ItemIdentifier, Entity<'tu>>,
     context: &Context<'_>,
 ) {
     immediate_children(entity, |entity, _span| match entity.get_kind() {
@@ -46,10 +51,10 @@ fn parse_protocols(
             let entity = entity
                 .get_reference()
                 .expect("ObjCProtocolRef to reference entity");
-            if protocols.insert(
-                ItemIdentifier::new(&entity, context)
-                    .map_name(|name| context.replace_protocol_name(name)),
-            ) {
+            if protocols
+                .insert(ItemIdentifier::new(&entity, context), entity)
+                .is_none()
+            {
                 // Only recurse if we haven't already seen this protocol
                 parse_protocols(&entity, protocols, context);
             }
@@ -64,152 +69,355 @@ fn parse_protocols(
     });
 }
 
-fn parse_superclass<'ty>(
+/// Parse the directly referenced protocols of a declaration.
+pub(crate) fn parse_direct_protocols<'clang>(
+    entity: &Entity<'clang>,
+    _context: &Context<'_>,
+) -> Vec<Entity<'clang>> {
+    let mut protocols = Vec::new();
+
+    #[allow(clippy::single_match)]
+    immediate_children(entity, |child, _span| match child.get_kind() {
+        EntityKind::ObjCProtocolRef => {
+            let child = child
+                .get_reference()
+                .expect("ObjCProtocolRef to reference entity");
+            if child == *entity {
+                error!(?entity, "recursive protocol");
+            } else {
+                protocols.push(child);
+            }
+        }
+        _ => {}
+    });
+
+    protocols
+}
+
+pub(crate) fn parse_superclasses<'ty>(
     entity: &Entity<'ty>,
     context: &Context<'_>,
-) -> Option<(Entity<'ty>, ItemIdentifier, Vec<String>)> {
-    let mut superclass = None;
+) -> Vec<(ItemIdentifier, Vec<String>, Entity<'ty>)> {
+    let mut current_entity = *entity;
+    let mut superclasses = vec![];
+
+    loop {
+        let mut superclass = None;
+        let mut applied_generics = Vec::new();
+
+        immediate_children(&current_entity, |entity, _span| match entity.get_kind() {
+            EntityKind::ObjCSuperClassRef => {
+                superclass = Some(
+                    entity
+                        .get_reference()
+                        .expect("ObjCSuperClassRef to reference entity"),
+                );
+            }
+            EntityKind::TypeRef => {
+                let name = entity.get_name().expect("typeref name");
+                applied_generics.push(name);
+            }
+            _ => {}
+        });
+
+        if let Some(superclass) = superclass {
+            current_entity = superclass;
+            superclasses.push((
+                ItemIdentifier::new(&superclass, context),
+                applied_generics,
+                superclass,
+            ));
+        } else {
+            return superclasses;
+        }
+    }
+}
+
+fn parse_class_generics(entity: &Entity<'_>, _context: &Context<'_>) -> Vec<String> {
     let mut generics = Vec::new();
 
+    #[allow(clippy::single_match)]
     immediate_children(entity, |entity, _span| match entity.get_kind() {
-        EntityKind::ObjCSuperClassRef => {
-            superclass = Some(
-                entity
-                    .get_reference()
-                    .expect("ObjCSuperClassRef to reference entity"),
-            );
-        }
-        EntityKind::TypeRef => {
-            let name = entity.get_name().expect("typeref name");
+        EntityKind::TemplateTypeParameter => {
+            // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
+            // let ty = entity.get_type().expect("template type");
+            let name = entity.get_name().expect("template name");
             generics.push(name);
         }
         _ => {}
     });
 
-    superclass.map(|entity| (entity, ItemIdentifier::new(&entity, context), generics))
+    generics
+}
+
+/// Deduplicate methods that are autogenerated from properties.
+///
+/// Guaranteed to only contain `ObjCInstanceMethodDecl`, `ObjCClassMethodDecl`
+/// and `ObjCPropertyDecl`.
+pub(crate) fn method_or_property_entities<'tu>(
+    entity: &Entity<'tu>,
+    get_data: impl Fn(&str) -> MethodData,
+) -> Vec<Entity<'tu>> {
+    let mut entities = Vec::new();
+
+    // Track seen properties, so that when methods are autogenerated by the
+    // compiler from them, we can skip them
+    let mut properties = HashSet::new();
+
+    immediate_children(entity, |entity, _span| match entity.get_kind() {
+        EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
+            let is_class = entity.get_kind() == EntityKind::ObjCClassMethodDecl;
+            let selector = entity.get_name().expect("method selector");
+
+            if get_data(&selector).skipped {
+                return;
+            }
+
+            if !properties.remove(&(is_class, selector)) {
+                entities.push(entity);
+            }
+        }
+        EntityKind::ObjCPropertyDecl => {
+            entities.push(entity);
+
+            let partial = Method::partial_property(entity);
+
+            // TODO: Use `get_overridden_methods` to deduplicate property
+            // getters (when declared on both immutable and mutable class).
+
+            if !get_data(&partial.getter_sel).skipped
+                && !properties.insert((partial.is_class, partial.getter_sel.clone()))
+            {
+                error!(?partial, ?entity, "already exisiting getter property");
+            }
+
+            if let Some(setter_sel) = &partial.setter_sel {
+                if !get_data(setter_sel).skipped
+                    && !properties.insert((partial.is_class, setter_sel.clone()))
+                {
+                    error!(?partial, ?entity, "already exisiting setter property");
+                }
+            }
+        }
+        _ => {}
+    });
+
+    if !properties.is_empty() {
+        error!(
+            ?entities,
+            ?properties,
+            "did not properly add methods to properties"
+        );
+    }
+
+    entities
+}
+
+fn parse_methods(
+    entity: &Entity<'_>,
+    get_data: impl Fn(&str) -> MethodData,
+    is_mutable: bool,
+    thread_safety: &ThreadSafety,
+    is_pub: bool,
+    context: &Context<'_>,
+) -> (Vec<Method>, Vec<String>) {
+    let mut methods = Vec::new();
+    let mut designated_initializers = Vec::new();
+
+    for entity in method_or_property_entities(entity, &get_data) {
+        match entity.get_kind() {
+            EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
+                let selector = entity.get_name().expect("method selector");
+
+                let data = get_data(&selector);
+
+                if let Some((designated_initializer, method)) = Method::parse_method(
+                    entity,
+                    data,
+                    is_mutable,
+                    thread_safety.inferred_mainthreadonly(),
+                    is_pub,
+                    context,
+                ) {
+                    if designated_initializer {
+                        designated_initializers.push(method.selector.clone());
+                    }
+                    methods.push(method);
+                }
+            }
+            EntityKind::ObjCPropertyDecl => {
+                let partial = Method::partial_property(entity);
+
+                // TODO: Use `get_overridden_methods` to deduplicate property
+                // getters (when declared on both immutable and mutable class).
+
+                let getter_data = get_data(&partial.getter_sel);
+                let setter_data = partial
+                    .setter_sel
+                    .as_ref()
+                    .map(|setter_sel| get_data(setter_sel));
+
+                let (getter, setter) = Method::parse_property(
+                    partial,
+                    getter_data,
+                    setter_data,
+                    is_mutable,
+                    thread_safety.inferred_mainthreadonly(),
+                    is_pub,
+                    context,
+                );
+                if let Some(getter) = getter {
+                    methods.push(getter);
+                }
+                if let Some(setter) = setter {
+                    methods.push(setter);
+                }
+            }
+            kind => unreachable!("method/property entity {kind:?}"),
+        }
+    }
+
+    (methods, designated_initializers)
+}
+
+/// Get the items required for a given interface or protocol declaration to be
+/// enabled.
+pub(crate) fn items_required_by_decl(
+    entity: &Entity<'_>,
+    context: &Context<'_>,
+) -> Vec<ItemIdentifier> {
+    let id = ItemIdentifier::new(entity, context);
+
+    let mut items = vec![ItemIdentifier::objc2("__macros__")];
+
+    match entity.get_kind() {
+        EntityKind::ObjCInterfaceDecl => {
+            let data = context.library(id.library_name()).class_data.get(&id.name);
+
+            for (superclass, _, _) in parse_superclasses(entity, context) {
+                items.push(superclass);
+            }
+            if let Some(Mutability::ImmutableWithMutableSubclass(subclass)) =
+                data.map(|data| &data.mutability)
+            {
+                items.push(subclass.clone());
+            }
+        }
+        EntityKind::ObjCProtocolDecl => {
+            for entity in parse_direct_protocols(entity, context) {
+                items.extend(items_required_by_decl(&entity, context));
+            }
+        }
+        _ => panic!("invalid required_by_decl kind {entity:?}"),
+    }
+
+    items.push(id);
+
+    items
 }
 
 /// Takes one of:
 /// - `EntityKind::ObjCInterfaceDecl`
 /// - `EntityKind::ObjCProtocolDecl`
 /// - `EntityKind::ObjCCategoryDecl`
-fn parse_objc_decl(
-    entity: &Entity<'_>,
-    superclass: bool,
-    mut generics: Option<&mut Vec<String>>,
-    get_data: impl Fn(&str) -> MethodData,
-    context: &Context<'_>,
-) -> (BTreeSet<ItemIdentifier>, Vec<Method>, Vec<String>) {
-    let mut protocols = BTreeSet::new();
-    let mut methods = Vec::new();
-    let mut designated_initializers = Vec::new();
+fn verify_objc_decl(entity: &Entity<'_>, _context: &Context<'_>) {
+    let parent_kind = entity.get_kind();
 
-    // Track seen properties, so that when methods are autogenerated by the
-    // compiler from them, we can skip them
-    let mut properties = HashSet::new();
-
-    immediate_children(entity, |entity, span| match entity.get_kind() {
-        EntityKind::ObjCExplicitProtocolImpl if generics.is_none() && !superclass => {
-            // TODO NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION
-        }
-        EntityKind::ObjCIvarDecl | EntityKind::StructDecl | EntityKind::UnionDecl if superclass => {
-            // Explicitly ignored
-        }
-        EntityKind::ObjCSuperClassRef | EntityKind::TypeRef if superclass => {
-            // Parsed in parse_superclass
-        }
-        EntityKind::ObjCSubclassingRestricted if superclass => {
-            // TODO: https://clang.llvm.org/docs/AttributeReference.html#objc-subclassing-restricted
-        }
-        EntityKind::ObjCRootClass => {
-            debug!("parsing root class");
-        }
-        EntityKind::ObjCClassRef if generics.is_some() => {
-            // debug!("ObjCClassRef: {:?}", entity.get_display_name());
-        }
-        EntityKind::TemplateTypeParameter => {
-            if let Some(generics) = &mut generics {
-                // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
-                // let ty = entity.get_type().expect("template type");
-                let name = entity.get_name().expect("template name");
-                generics.push(name);
-            } else {
-                error!("unsupported generics");
+    immediate_children(entity, |entity, _span| {
+        match (entity.get_kind(), parent_kind) {
+            (EntityKind::ObjCExplicitProtocolImpl, EntityKind::ObjCProtocolDecl) => {
+                // TODO NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION
             }
-        }
-        EntityKind::ObjCProtocolRef => {
-            let entity = entity
-                .get_reference()
-                .expect("ObjCProtocolRef to reference entity");
-            protocols.insert(
-                ItemIdentifier::new(&entity, context)
-                    .map_name(|name| context.replace_protocol_name(name)),
-            );
-        }
-        EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
-            drop(span);
-            let partial = Method::partial(entity);
-
-            if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
-                let data = get_data(&partial.fn_name);
-                if let Some((designated_initializer, method)) =
-                    partial.parse(data, generics.is_none(), context)
-                {
-                    if designated_initializer {
-                        designated_initializers.push(method.fn_name.clone());
-                    }
-                    methods.push(method);
-                }
+            (
+                EntityKind::ObjCIvarDecl | EntityKind::StructDecl | EntityKind::UnionDecl,
+                EntityKind::ObjCInterfaceDecl,
+            ) => {
+                // Explicitly ignored
             }
-        }
-        EntityKind::ObjCPropertyDecl => {
-            drop(span);
-            let partial = Method::partial_property(entity);
-
-            let getter_data = get_data(&partial.getter_name);
-            let setter_data = partial
-                .setter_name
-                .as_ref()
-                .map(|setter_name| get_data(setter_name));
-
-            let (getter, setter) =
-                partial.parse(getter_data, setter_data, generics.is_none(), context);
-            if let Some(getter) = getter {
-                if !properties.insert((getter.is_class, getter.fn_name.clone())) {
-                    error!(?setter, "already exisiting property");
-                }
-                methods.push(getter);
+            (
+                EntityKind::ObjCSuperClassRef | EntityKind::TypeRef,
+                EntityKind::ObjCInterfaceDecl,
+            ) => {
+                // Parsed in parse_superclasses
             }
-            if let Some(setter) = setter {
-                if !properties.insert((setter.is_class, setter.fn_name.clone())) {
-                    error!(?setter, "already exisiting property");
-                }
-                methods.push(setter);
+            (EntityKind::ObjCSubclassingRestricted, EntityKind::ObjCInterfaceDecl) => {
+                // TODO: https://clang.llvm.org/docs/AttributeReference.html#objc-subclassing-restricted
             }
-        }
-        EntityKind::VisibilityAttr => {
-            // Already exposed as entity.get_visibility()
-        }
-        EntityKind::ObjCException if superclass => {
-            // Maybe useful for knowing when to implement `Error` for the type
-        }
-        EntityKind::UnexposedAttr => {
-            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                error!(?attr, "unknown attribute");
+            (EntityKind::ObjCRootClass, EntityKind::ObjCInterfaceDecl) => {
+                debug!("parsing root class");
             }
+            (
+                EntityKind::ObjCClassRef,
+                EntityKind::ObjCInterfaceDecl | EntityKind::ObjCCategoryDecl,
+            ) => {
+                // debug!("ObjCClassRef: {:?}", entity.get_display_name());
+            }
+            (
+                EntityKind::TemplateTypeParameter,
+                EntityKind::ObjCInterfaceDecl | EntityKind::ObjCCategoryDecl,
+            ) => {
+                // Parsed in parse_class_generics
+            }
+            (EntityKind::ObjCProtocolRef, _) => {
+                // Parsed in parse_protocols and parse_direct_protocols
+            }
+            (
+                EntityKind::ObjCInstanceMethodDecl
+                | EntityKind::ObjCClassMethodDecl
+                | EntityKind::ObjCPropertyDecl,
+                _,
+            ) => {
+                // Parsed in method_or_property_entities
+            }
+            (EntityKind::VisibilityAttr, _) => {
+                // Already exposed as entity.get_visibility()
+            }
+            (EntityKind::ObjCException, EntityKind::ObjCInterfaceDecl) => {
+                // Maybe useful for knowing when to implement `Error` for the type
+            }
+            (EntityKind::UnexposedAttr, _) => {
+                // Parsed in parse_attributes
+            }
+            (_, parent_kind) => error!(?parent_kind, "unknown in parent"),
         }
-        _ => error!("unknown"),
     });
+}
 
-    if !properties.is_empty() {
-        error!(
-            ?methods,
-            ?properties,
-            "did not properly add methods to properties"
-        );
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
+pub enum Mutability {
+    Immutable,
+    Mutable,
+    ImmutableWithMutableSubclass(ItemIdentifier),
+    MutableWithImmutableSuperclass(ItemIdentifier),
+    #[default]
+    InteriorMutable,
+    MainThreadOnly,
+}
+
+impl Mutability {
+    pub fn is_mutable(&self) -> bool {
+        matches!(
+            self,
+            Mutability::Mutable | Mutability::MutableWithImmutableSuperclass(_)
+        )
     }
+}
 
-    (protocols, methods, designated_initializers)
+impl fmt::Display for Mutability {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Immutable => write!(f, "Immutable"),
+            Self::Mutable => write!(f, "Mutable"),
+            Self::ImmutableWithMutableSubclass(subclass) => {
+                write!(f, "ImmutableWithMutableSubclass<{}>", subclass.path())
+            }
+            Self::MutableWithImmutableSuperclass(superclass) => {
+                write!(f, "MutableWithImmutableSuperclass<{}>", superclass.path())
+            }
+            Self::InteriorMutable => write!(f, "InteriorMutable"),
+            Self::MainThreadOnly => write!(f, "MainThreadOnly"),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -219,24 +427,39 @@ pub enum Stmt {
     /// extern_class!
     ClassDecl {
         id: ItemIdentifier,
+        required_items: Vec<ItemIdentifier>,
         generics: Vec<String>,
         availability: Availability,
         superclasses: Vec<(ItemIdentifier, Vec<String>)>,
         designated_initializers: Vec<String>,
         derives: Derives,
-        ownership: Ownership,
         comment: Option<String>,
+        mutability: Mutability,
+        skipped: bool,
+        sendable: bool,
     },
-    /// @interface class_name (name) <protocols*>
+    /// @interface class_name (category_name) <protocols*>
     /// ->
     /// extern_methods!
-    Methods {
-        cls: ItemIdentifier,
-        generics: Vec<String>,
-        /// For the categories that have a name (though some don't, see NSClipView)
-        category: ItemIdentifier<Option<String>>,
+    ExternMethods {
+        location: Location,
         availability: Availability,
-        superclasses: Vec<(ItemIdentifier, Vec<String>)>,
+        cls: ItemIdentifier,
+        cls_required_items: Vec<ItemIdentifier>,
+        source_superclass: Option<ItemIdentifier>,
+        cls_generics: Vec<String>,
+        category_name: Option<String>,
+        methods: Vec<Method>,
+    },
+    /// @interface class_name (category_name) <protocols*>
+    /// ->
+    /// extern_category!
+    ExternCategory {
+        id: ItemIdentifier,
+        actual_name: Option<String>,
+        availability: Availability,
+        cls: ItemIdentifier,
+        cls_required_items: Vec<ItemIdentifier>,
         methods: Vec<Method>,
         description: Option<String>,
         comment: Option<String>,
@@ -246,16 +469,23 @@ pub enum Stmt {
     /// extern_protocol!
     ProtocolDecl {
         id: ItemIdentifier,
+        required_items: Vec<ItemIdentifier>,
+        actual_name: Option<String>,
         availability: Availability,
         protocols: BTreeSet<ItemIdentifier>,
         methods: Vec<Method>,
         comment: Option<String>,
+        required_sendable: bool,
+        required_mainthreadonly: bool,
     },
     /// @interface ty: _ <protocols*>
     /// @interface ty (_) <protocols*>
     ProtocolImpl {
+        location: Location,
         cls: ItemIdentifier,
+        cls_required_items: Vec<ItemIdentifier>,
         protocol: ItemIdentifier,
+        protocol_required_items: Vec<ItemIdentifier>,
         generics: Vec<String>,
         availability: Availability,
         comment: Option<String>,
@@ -280,6 +510,7 @@ pub enum Stmt {
         boxable: bool,
         fields: Vec<(String, Ty)>,
         comment: Option<String>,
+        sendable: Option<bool>,
     },
     /// typedef NS_OPTIONS(type, name) {
     ///     variants*
@@ -297,12 +528,26 @@ pub enum Stmt {
     ///     variants*
     /// };
     EnumDecl {
-        id: ItemIdentifier<Option<String>>,
+        id: ItemIdentifier,
         availability: Availability,
         ty: Ty,
         kind: Option<UnexposedAttr>,
         variants: Vec<(String, Availability, Expr)>,
         comment: Option<String>,
+        sendable: Option<bool>,
+    },
+    /// Anonymous enum variants are emitted as free constants.
+    ///
+    /// enum {
+    ///     variants*
+    /// };
+    ConstDecl {
+        id: ItemIdentifier,
+        availability: Availability,
+        ty: Ty,
+        value: Expr,
+        // Hack to get prettier output
+        is_last: bool,
     },
     /// static const ty name = expr;
     /// extern const ty name;
@@ -335,40 +580,6 @@ pub enum Stmt {
     },
 }
 
-fn parse_struct(entity: &Entity<'_>, context: &Context<'_>) -> (bool, Vec<(String, Ty)>) {
-    let mut boxable = false;
-    let mut fields = Vec::new();
-
-    immediate_children(entity, |entity, span| match entity.get_kind() {
-        EntityKind::UnexposedAttr => {
-            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                error!(?attr, "unknown attribute");
-            }
-        }
-        EntityKind::FieldDecl => {
-            drop(span);
-            let name = entity.get_name().expect("struct field name");
-            let _span = debug_span!("field", name).entered();
-
-            let ty = entity.get_type().expect("struct field type");
-            let ty = Ty::parse_struct_field(ty, context);
-
-            if entity.is_bit_field() {
-                error!("unsound struct bitfield");
-            }
-
-            fields.push((name, ty))
-        }
-        EntityKind::ObjCBoxable => {
-            boxable = true;
-        }
-        EntityKind::UnionDecl => error!("can't handle unions in structs yet"),
-        _ => error!("unknown"),
-    });
-
-    (boxable, fields)
-}
-
 fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
     immediate_children(entity, |entity, _span| match entity.get_kind() {
         EntityKind::UnexposedAttr => {
@@ -376,12 +587,43 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
                 error!(?attr, "unknown attribute");
             }
         }
-        EntityKind::ObjCClassRef | EntityKind::TypeRef | EntityKind::ObjCProtocolRef => {}
+        EntityKind::ObjCClassRef
+        | EntityKind::TypeRef
+        | EntityKind::ObjCProtocolRef
+        | EntityKind::ParmDecl => {}
         EntityKind::NSConsumed => {
             error!("found NSConsumed, which requires manual handling");
         }
         kind => error!(?kind, "unknown"),
     });
+}
+
+pub(crate) fn new_enum_id(
+    entity: &Entity<'_>,
+    context: &Context<'_>,
+) -> ItemIdentifier<Option<String>> {
+    assert_eq!(entity.get_kind(), EntityKind::EnumDecl);
+    let mut id = ItemIdentifier::new_optional(entity, context);
+
+    if id
+        .name
+        .as_deref()
+        .map(|name| name.starts_with("enum (unnamed at"))
+        .unwrap_or(false)
+    {
+        id.name = None;
+    }
+
+    id
+}
+
+/// Quick n' dirty logic for minimizing the enum constant name.
+pub(crate) fn enum_constant_name<'a>(enum_name: &str, constant_name: &'a str) -> &'a str {
+    let res = constant_name.trim_start_matches(enum_name);
+    if res.starts_with(|c: char| c.is_numeric()) {
+        return constant_name;
+    }
+    res
 }
 
 impl Stmt {
@@ -399,99 +641,167 @@ impl Stmt {
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
                 let id = ItemIdentifier::new(entity, context);
-                let data = context.class_data.get(&id.name);
                 let comment = entity.get_comment();
+                let data = context.library(id.library_name()).class_data.get(&id.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
                 }
 
                 let availability = Availability::parse(entity, context);
-                let mut generics = Vec::new();
+                let thread_safety = ThreadSafety::from_decl(entity, context);
 
-                let (_, methods, designated_initializers) = parse_objc_decl(
+                let required_items = items_required_by_decl(entity, context);
+
+                verify_objc_decl(entity, context);
+                let generics = parse_class_generics(entity, context);
+                let (methods, designated_initializers) = parse_methods(
                     entity,
-                    true,
-                    Some(&mut generics),
                     |name| ClassData::get_method_data(data, name),
+                    data.map(|data| data.mutability.is_mutable())
+                        .unwrap_or(false),
+                    &thread_safety,
+                    true,
                     context,
                 );
 
                 let mut protocols = Default::default();
                 parse_protocols(entity, &mut protocols, context);
-
                 let skipped_protocols = data
                     .map(|data| data.skipped_protocols.clone())
                     .unwrap_or_default();
-                protocols.retain(|protocol| !skipped_protocols.contains(&protocol.name));
+                protocols.retain(|protocol, _| !skipped_protocols.contains(&protocol.name));
 
-                let mut superclass_entity = *entity;
-                let mut superclasses = vec![];
+                let superclasses_full = parse_superclasses(entity, context);
 
-                while let Some((next_entity, superclass, generics)) =
-                    parse_superclass(&superclass_entity, context)
-                {
-                    superclass_entity = next_entity;
-                    superclasses.push((superclass, generics));
-                }
+                let superclasses: Vec<_> = superclasses_full
+                    .iter()
+                    .map(|(id, generics, _)| (id.clone(), generics.clone()))
+                    .collect();
 
-                let methods = Self::Methods {
-                    cls: id.clone(),
-                    generics: generics.clone(),
-                    category: ItemIdentifier::with_name(None, entity, context),
+                // Used for duplicate checking (sometimes the subclass
+                // defines the same method that the superclass did).
+                let mut seen_methods: BTreeSet<_> =
+                    methods.iter().map(|method| method.id()).collect();
+
+                let superclass_methods: Vec<_> = superclasses_full
+                    .iter()
+                    .filter_map(|(superclass_id, _, entity)| {
+                        let superclass_data = context
+                            .library(superclass_id.library_name())
+                            .class_data
+                            .get(&superclass_id.name);
+
+                        // Explicitly keep going, even if the class itself is skipped
+                        // if superclass_data.skipped
+
+                        let (mut methods, _) = parse_methods(
+                            entity,
+                            |name| {
+                                let data = ClassData::get_method_data(data, name);
+                                let superclass_data =
+                                    ClassData::get_method_data(superclass_data, name);
+                                data.merge_with_superclass(superclass_data)
+                            },
+                            data.map(|data| data.mutability.is_mutable())
+                                .or(superclass_data.map(|data| data.mutability.is_mutable()))
+                                .unwrap_or(false),
+                            &thread_safety,
+                            true,
+                            context,
+                        );
+                        methods.retain(|method| {
+                            method.emit_on_subclasses() && !seen_methods.contains(&method.id())
+                        });
+                        seen_methods.extend(methods.iter().map(|method| method.id()));
+                        if methods.is_empty() {
+                            None
+                        } else {
+                            Some(Self::ExternMethods {
+                                location: id.location().clone(),
+                                availability: Availability::parse(entity, context),
+                                cls: id.clone(),
+                                cls_required_items: required_items.clone(),
+                                source_superclass: Some(superclass_id.clone()),
+                                cls_generics: generics.clone(),
+                                category_name: None,
+                                methods,
+                            })
+                        }
+                    })
+                    .collect();
+
+                let methods = Self::ExternMethods {
+                    location: id.location().clone(),
                     availability: availability.clone(),
-                    superclasses: superclasses.clone(),
+                    cls: id.clone(),
+                    cls_required_items: required_items.clone(),
+                    source_superclass: None,
+                    cls_generics: generics.clone(),
+                    category_name: None,
                     methods,
                     comment: comment.clone(),
                     description: None,
                 };
 
-                if !data.map(|data| data.definition_skipped).unwrap_or_default() {
-                    iter::once(Self::ClassDecl {
-                        id: id.clone(),
-                        generics: generics.clone(),
-                        availability: availability.clone(),
-                        superclasses,
-                        designated_initializers,
-                        derives: data.map(|data| data.derives.clone()).unwrap_or_default(),
-                        ownership: data.map(|data| data.ownership.clone()).unwrap_or_default(),
-                        comment: comment.clone(),
-                    })
-                    .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
-                        cls: id.clone(),
-                        protocol,
-                        generics: generics.clone(),
-                        availability: availability.clone(),
-                        comment: comment.clone(),
-                    }))
-                    .chain(iter::once(methods))
-                    .collect()
-                } else {
-                    vec![methods]
-                }
+                iter::once(Self::ClassDecl {
+                    id: id.clone(),
+                    required_items: required_items.clone(),
+                    generics: generics.clone(),
+                    availability: availability.clone(),
+                    superclasses,
+                    designated_initializers,
+                    derives: data.map(|data| data.derives.clone()).unwrap_or_default(),
+                    mutability: if thread_safety.inferred_mainthreadonly() {
+                        Mutability::MainThreadOnly
+                    } else {
+                        data.map(|data| data.mutability.clone()).unwrap_or_default()
+                    },
+                    skipped: data.map(|data| data.definition_skipped).unwrap_or_default(),
+                    // Ignore sendability on superclasses; since it's an auto
+                    // trait, it's propagated to subclasses anyhow!
+                    sendable: thread_safety.explicit_sendable(),
+                })
+                .chain(protocols.into_iter().map(|(p, entity)| Self::ProtocolImpl {
+                    location: id.location().clone(),
+                    cls: id.clone(),
+                    cls_required_items: required_items.clone(),
+                    protocol: context.replace_protocol_name(p),
+                    protocol_required_items: items_required_by_decl(&entity, context),
+                    generics: generics.clone(),
+                    availability: availability.clone(),
+                }))
+                .chain(iter::once(methods))
+                .chain(superclass_methods)
+                .collect()
             }
             EntityKind::ObjCCategoryDecl => {
                 let category = ItemIdentifier::new_optional(entity, context);
                 let availability = Availability::parse(entity, context);
                 let comment = entity.get_comment();
 
-                let mut cls = None;
+                let mut cls_entity = None;
                 entity.visit_children(|entity, _parent| {
                     if entity.get_kind() == EntityKind::ObjCClassRef {
-                        if cls.is_some() {
+                        if cls_entity.is_some() {
                             panic!("could not find unique category class")
                         }
                         let definition = entity
                             .get_definition()
                             .expect("category class ref definition");
-                        cls = Some(ItemIdentifier::new(&definition, context));
+                        cls_entity = Some(definition);
                         EntityVisitResult::Break
                     } else {
                         EntityVisitResult::Continue
                     }
                 });
-                let cls = cls.expect("could not find category class");
-                let data = context.class_data.get(&cls.name);
+                let cls_entity = cls_entity.expect("could not find category class");
+
+                let cls = ItemIdentifier::new(&cls_entity, context);
+                let data = context
+                    .library(category.library_name())
+                    .class_data
+                    .get(&cls.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -508,73 +818,220 @@ impl Stmt {
                     }
                 }
 
-                let mut generics = Vec::new();
+                let cls_thread_safety = ThreadSafety::from_decl(&cls_entity, context);
+                let cls_required_items = items_required_by_decl(&cls_entity, context);
 
-                let (protocols, methods, designated_initializers) = parse_objc_decl(
-                    entity,
-                    false,
-                    Some(&mut generics),
-                    |name| ClassData::get_method_data(data, name),
-                    context,
-                );
+                verify_objc_decl(entity, context);
+                let generics = parse_class_generics(entity, context);
 
-                if !designated_initializers.is_empty() {
-                    warn!(
-                        ?designated_initializers,
-                        "designated initializer in category"
-                    )
-                }
+                let skipped_protocols = data
+                    .map(|data| data.skipped_protocols.clone())
+                    .unwrap_or_default();
+                let protocols = parse_direct_protocols(entity, context);
+                let protocols: BTreeMap<_, _> = protocols
+                    .into_iter()
+                    .map(|entity| (ItemIdentifier::new(&entity, context), entity))
+                    .filter(|(protocol, _)| !skipped_protocols.contains(&protocol.name))
+                    .collect();
 
-                let mut superclass_entity = *entity;
-                let mut superclasses = vec![];
-
-                while let Some((next_entity, superclass, generics)) =
-                    parse_superclass(&superclass_entity, context)
-                {
-                    superclass_entity = next_entity;
-                    superclasses.push((superclass, generics));
-                }
-
-                iter::once(Self::Methods {
+                let protocol_impls = protocols.into_iter().map(|(p, entity)| Self::ProtocolImpl {
+                    location: category.location().clone(),
                     cls: cls.clone(),
-                    generics: generics.clone(),
-                    category,
-                    availability: availability.clone(),
-                    superclasses,
-                    methods,
-                    comment: comment.clone(),
-                    description: None,
-                })
-                .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
-                    cls: cls.clone(),
+                    cls_required_items: cls_required_items.clone(),
                     generics: generics.clone(),
                     availability: availability.clone(),
-                    comment: comment.clone(),
-                    protocol,
-                }))
-                .collect()
+                    protocol: context.replace_protocol_name(p),
+                    protocol_required_items: items_required_by_decl(&entity, context),
+                });
+
+                // For ease-of-use, if the category is defined in the same
+                // library as the class, we just emit it as `extern_methods!`.
+                if cls.library_name() == category.library_name() {
+                    // extern_methods!
+
+                    let (methods, designated_initializers) = parse_methods(
+                        entity,
+                        |name| ClassData::get_method_data(data, name),
+                        data.map(|data| data.mutability.is_mutable())
+                            .unwrap_or(false),
+                        &cls_thread_safety,
+                        true,
+                        context,
+                    );
+
+                    if !designated_initializers.is_empty() {
+                        warn!(
+                            ?designated_initializers,
+                            "designated initializer in category"
+                        );
+                    }
+
+                    let extra_methods = if let Mutability::ImmutableWithMutableSubclass(subclass) =
+                        data.map(|data| data.mutability.clone()).unwrap_or_default()
+                    {
+                        let subclass_data = context
+                            .library(subclass.library_name())
+                            .class_data
+                            .get(&subclass.name);
+                        assert!(!subclass_data.map(|data| data.skipped).unwrap_or_default());
+
+                        let (mut methods, _) = parse_methods(
+                            entity,
+                            |name| {
+                                let data = ClassData::get_method_data(data, name);
+                                let subclass_data = ClassData::get_method_data(subclass_data, name);
+                                subclass_data.merge_with_superclass(data)
+                            },
+                            data.map(|data| data.mutability.is_mutable())
+                                .or(subclass_data.map(|data| data.mutability.is_mutable()))
+                                .unwrap_or(false),
+                            &cls_thread_safety,
+                            true,
+                            context,
+                        );
+                        methods.retain(|method| method.emit_on_subclasses());
+                        if methods.is_empty() {
+                            None
+                        } else {
+                            Some(Self::ExternMethods {
+                                location: category.location().clone(),
+                                source_superclass: Some(cls.clone()),
+                                // Assume that immutable/mutable pairs have the
+                                // same availability ...
+                                availability: availability.clone(),
+                                cls: subclass,
+                                // ... the same required items ...
+                                cls_required_items: cls_required_items.clone(),
+                                // ... and that they have the same amount of generics.
+                                cls_generics: generics.clone(),
+                                category_name: category.name.clone(),
+                                methods,
+                            })
+                        }
+                    } else {
+                        None
+                    };
+
+                    iter::once(Self::ExternMethods {
+                        location: category.location().clone(),
+                        availability: availability.clone(),
+                        cls: cls.clone(),
+                        cls_required_items: cls_required_items.clone(),
+                        source_superclass: None,
+                        cls_generics: generics.clone(),
+                        category_name: category.name.clone(),
+                        methods,
+                    })
+                    .chain(extra_methods)
+                    .chain(protocol_impls)
+                    .collect()
+                } else {
+                    // extern_category!
+
+                    if !generics.is_empty() {
+                        panic!("external category: cannot handle generics");
+                    }
+
+                    // Rough heuristic to determine category name.
+                    //
+                    // Note: There isn't really a good way to do this, as
+                    // category names are not part of the public API in
+                    // Objective-C.
+                    let id = category.clone().map_name(|name| match name {
+                        None => format!("{}Category", cls.name),
+                        Some(name) => {
+                            if name.contains(&cls.name)
+                                || name.contains(&cls.name.replace("Mutable", ""))
+                            {
+                                name.clone()
+                            } else {
+                                format!("{}{}", cls.name, name)
+                            }
+                        }
+                    });
+
+                    let (methods, designated_initializers) = parse_methods(
+                        entity,
+                        |name| ClassData::get_method_data(data, name),
+                        false,
+                        &cls_thread_safety,
+                        false,
+                        context,
+                    );
+
+                    if !designated_initializers.is_empty() {
+                        warn!(
+                            ?designated_initializers,
+                            "designated initializer in category"
+                        );
+                    }
+
+                    // Categories are often used to implement protocols for a
+                    // type, so as an optimization let's not emit empty
+                    // external declarations.
+                    //
+                    // Additionally, if all methods are deprecated, then there
+                    // really isn't a need for us to emit the category
+                    // (especially on NSObject, as that just adds a bunch of
+                    // clutter).
+                    if methods
+                        .iter()
+                        .all(|method| method.availability.is_deprecated())
+                    {
+                        None
+                    } else {
+                        Some(Self::ExternCategory {
+                            id,
+                            actual_name: category.name.clone(),
+                            availability: availability.clone(),
+                            cls: cls.clone(),
+                            cls_required_items: cls_required_items.clone(),
+                            methods,
+                        })
+                    }
+                    .into_iter()
+                    .chain(protocol_impls)
+                    .collect()
+                }
             }
             EntityKind::ObjCProtocolDecl => {
-                let id = ItemIdentifier::new(entity, context)
-                    .map_name(|name| context.replace_protocol_name(name));
-                let data = context.protocol_data.get(&id.name);
-                let comment = entity.get_comment();
+                let actual_id = ItemIdentifier::new(entity, context);
+                let data = context
+                    .library(actual_id.library_name())
+                    .protocol_data
+                    .get(&actual_id.name);
+                let actual_name = data
+                    .map(|data| data.renamed.is_some())
+                    .unwrap_or_default()
+                    .then(|| actual_id.name.clone());
+
+                let id = context.replace_protocol_name(actual_id);
+>>>>>>> 2066b7f47edfd6a254a401ee7139ff0ed7fe18da
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
                 }
 
                 let availability = Availability::parse(entity, context);
+                let thread_safety = ThreadSafety::from_decl(entity, context);
 
-                let (protocols, methods, designated_initializers) = parse_objc_decl(
+                verify_objc_decl(entity, context);
+                let protocols = parse_direct_protocols(entity, context);
+                let protocols: BTreeSet<_> = protocols
+                    .into_iter()
+                    .map(|protocol| ItemIdentifier::new(&protocol, context))
+                    .map(|protocol| context.replace_protocol_name(protocol))
+                    .collect();
+                let (methods, designated_initializers) = parse_methods(
                     entity,
-                    false,
-                    None,
                     |name| {
                         data.and_then(|data| data.methods.get(name))
                             .copied()
                             .unwrap_or_default()
                     },
+                    false,
+                    &thread_safety,
+                    false,
                     context,
                 );
 
@@ -588,17 +1045,18 @@ impl Stmt {
                 vec![Self::ProtocolDecl {
                     id,
                     comment,
+                    required_items: items_required_by_decl(entity, context),
+                    actual_name,
                     availability,
                     protocols,
                     methods,
+                    required_sendable: thread_safety.explicit_sendable(),
+                    required_mainthreadonly: thread_safety.explicit_mainthreadonly(),
                 }]
             }
             EntityKind::TypedefDecl => {
                 let id = ItemIdentifier::new(entity, context);
                 let availability = Availability::parse(entity, context);
-                let mut struct_ = None;
-                let mut encoding_name = "?".to_string();
-                let mut skip_struct = false;
                 let mut kind = None;
                 let comment = entity.get_comment();
 
@@ -608,59 +1066,24 @@ impl Stmt {
                             if kind.is_some() {
                                 panic!("got multiple unexposed attributes {kind:?}, {attr:?}");
                             }
-                            kind = Some(attr);
+                            match attr {
+                                // TODO
+                                UnexposedAttr::Sendable => warn!("sendable on typedef"),
+                                _ => kind = Some(attr),
+                            }
                         }
                     }
-                    EntityKind::StructDecl => {
-                        if context
-                            .struct_data
-                            .get(&id.name)
-                            .map(|data| data.skipped)
-                            .unwrap_or_default()
-                        {
-                            skip_struct = true;
-                            return;
-                        }
-
-                        if let Some(name) = entity.get_name() {
-                            // if the struct has a name use it
-                            // otherwise it will be the default "?"
-                            encoding_name = name;
-                        }
-
-                        if encoding_name == "?" || encoding_name.starts_with('_') {
-                            // If this struct doesn't have a name, or the
-                            // name is private, let's parse it with the
-                            // typedef name.
-                            struct_ = Some(parse_struct(&entity, context))
-                        } else {
-                            skip_struct = true;
-                        }
-                    }
-                    EntityKind::ObjCClassRef
+                    EntityKind::StructDecl
+                    | EntityKind::ObjCClassRef
                     | EntityKind::ObjCProtocolRef
                     | EntityKind::TypeRef
-                    | EntityKind::ParmDecl => {}
+                    | EntityKind::ParmDecl
+                    | EntityKind::EnumDecl => {}
                     _ => error!("unknown"),
                 });
 
-                if let Some((boxable, fields)) = struct_ {
-                    assert_eq!(kind, None, "should not have parsed a kind");
-                    return vec![Self::StructDecl {
-                        id,
-                        encoding_name: Some(encoding_name),
-                        availability,
-                        boxable,
-                        fields,
-                        comment,
-                    }];
-                }
-
-                if skip_struct {
-                    return vec![];
-                }
-
                 if context
+                    .library(id.library_name())
                     .typedef_data
                     .get(&id.name)
                     .map(|data| data.skipped)
@@ -684,38 +1107,77 @@ impl Stmt {
                 }
             }
             EntityKind::StructDecl => {
-                if let Some(name) = entity.get_name() {
-                    let availability = Availability::parse(entity, context);
-                    let id = ItemIdentifier::with_name(name, entity, context);
-                    let comment = entity.get_comment();
+                let id = ItemIdentifier::new(entity, context);
 
-                    if context
-                        .struct_data
-                        .get(&id.name)
-                        .map(|data| data.skipped)
-                        .unwrap_or_default()
-                    {
-                        return vec![];
-                    }
+                let availability = Availability::parse(entity, context);
 
-                    // See https://github.com/rust-lang/rust-bindgen/blob/95fd17b874910184cc0fcd33b287fa4e205d9d7a/bindgen/ir/comp.rs#L1392-L1408
-                    if !entity.is_definition() {
-                        return vec![];
-                    }
-
-                    if !id.name.starts_with('_') {
-                        let (boxable, fields) = parse_struct(entity, context);
-                        return vec![Self::StructDecl {
-                            id,
-                            encoding_name: None,
-                            availability,
-                            boxable,
-                            fields,
-                            comment,
-                        }];
-                    }
+                if context
+                    .library(id.library_name())
+                    .struct_data
+                    .get(&id.name)
+                    .map(|data| data.skipped)
+                    .unwrap_or_default()
+                {
+                    return vec![];
                 }
-                vec![]
+
+                // See https://github.com/rust-lang/rust-bindgen/blob/95fd17b874910184cc0fcd33b287fa4e205d9d7a/bindgen/ir/comp.rs#L1392-L1408
+                if !entity.is_definition() {
+                    return vec![];
+                }
+
+                let ty = entity.get_type().unwrap();
+                let enc = ty.get_objc_encoding().unwrap();
+                let encoding_name = enc.strip_prefix('{').unwrap().split_once('=').unwrap().0;
+                let encoding_name = if encoding_name == id.name {
+                    None
+                } else {
+                    Some(encoding_name.to_string())
+                };
+
+                let mut boxable = false;
+                let mut fields = Vec::new();
+                let mut sendable = None;
+
+                immediate_children(entity, |entity, span| match entity.get_kind() {
+                    EntityKind::UnexposedAttr => {
+                        if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                            match attr {
+                                UnexposedAttr::Sendable => sendable = Some(true),
+                                UnexposedAttr::NonSendable => sendable = Some(false),
+                                attr => error!(?attr, "unknown attribute"),
+                            }
+                        }
+                    }
+                    EntityKind::FieldDecl => {
+                        drop(span);
+                        let name = entity.get_name().expect("struct field name");
+                        let _span = debug_span!("field", name).entered();
+
+                        let ty = entity.get_type().expect("struct field type");
+                        let ty = Ty::parse_struct_field(ty, context);
+
+                        if entity.is_bit_field() {
+                            error!("unsound struct bitfield");
+                        }
+
+                        fields.push((name, ty))
+                    }
+                    EntityKind::ObjCBoxable => {
+                        boxable = true;
+                    }
+                    EntityKind::UnionDecl => error!("can't handle unions in structs yet"),
+                    _ => error!("unknown"),
+                });
+
+                vec![Self::StructDecl {
+                    id,
+                    encoding_name,
+                    availability,
+                    boxable,
+                    fields,
+                    sendable,
+                }]
             }
             EntityKind::EnumDecl => {
                 // Enum declarations show up twice for some reason, but
@@ -724,9 +1186,10 @@ impl Stmt {
                     return vec![];
                 }
 
-                let id = ItemIdentifier::new_optional(entity, context);
+                let id = new_enum_id(entity, context);
 
                 let data = context
+                    .library(id.library_name())
                     .enum_data
                     .get(id.name.as_deref().unwrap_or("anonymous"))
                     .cloned()
@@ -743,6 +1206,7 @@ impl Stmt {
                 let mut kind = None;
                 let mut variants = Vec::new();
                 let comment = entity.get_comment();
+                let mut sendable = None;
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::EnumConstantDecl => {
@@ -758,29 +1222,54 @@ impl Stmt {
                             return;
                         }
 
-                        let pointer_width =
-                            entity.get_translation_unit().get_target().pointer_width;
+                        let value = entity
+                            .get_enum_constant_value()
+                            .expect("enum constant value");
 
-                        let val = Expr::from_val(
-                            entity
-                                .get_enum_constant_value()
-                                .expect("enum constant value"),
-                            is_signed,
-                            pointer_width,
-                        );
-                        let expr = if data.use_value {
-                            val
+                        let mut expr = if is_signed {
+                            Expr::Signed(value.0)
                         } else {
-                            Expr::parse_enum_constant(&entity, context).unwrap_or(val)
+                            Expr::Unsigned(value.1)
                         };
+
+                        if !data.use_value {
+                            // Some enums constants don't declare a value, but
+                            // let it be inferred from the position in the
+                            // enum instead; in those cases, we use the value
+                            // generated above.
+                            immediate_children(&entity, |entity, _span| match entity.get_kind() {
+                                EntityKind::UnexposedAttr => {
+                                    if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                                        error!(?attr, "unknown attribute");
+                                    }
+                                }
+                                EntityKind::VisibilityAttr => {}
+                                _ if entity.is_expression() => {
+                                    expr = Expr::parse_enum_constant(&entity, context);
+                                }
+                                _ => {
+                                    panic!("unknown EnumConstantDecl child in {name:?}: {entity:?}")
+                                }
+                            });
+                        };
+
                         variants.push((name, availability, expr));
                     }
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                            if let Some(kind) = &kind {
-                                assert_eq!(kind, &attr, "got differing enum kinds in {id:?}");
-                            } else {
-                                kind = Some(attr);
+                            match attr {
+                                UnexposedAttr::Sendable => sendable = Some(true),
+                                UnexposedAttr::NonSendable => sendable = Some(false),
+                                attr => {
+                                    if let Some(kind) = &kind {
+                                        assert_eq!(
+                                            kind, &attr,
+                                            "got differing enum kinds in {id:?}"
+                                        );
+                                    } else {
+                                        kind = Some(attr);
+                                    }
+                                }
                             }
                         }
                     }
@@ -798,23 +1287,43 @@ impl Stmt {
                     _ => error!("unknown"),
                 });
 
-                if id.name.is_none() && variants.is_empty() {
-                    return vec![];
+                if id.name.is_none() {
+                    // Availability propagates to the variants automatically
+                    let _ = availability;
+                    // TODO: Unsure how to handle error enums
+                    assert!(matches!(
+                        kind,
+                        None | Some(UnexposedAttr::Enum) | Some(UnexposedAttr::ErrorEnum)
+                    ));
+                    assert_eq!(sendable, None);
+                    let variants_len = variants.len();
+                    variants
+                        .into_iter()
+                        .enumerate()
+                        .map(|(i, (name, availability, value))| Self::ConstDecl {
+                            id: id.clone().map_name(|_| name),
+                            availability,
+                            ty: ty.clone(),
+                            value,
+                            is_last: i == variants_len - 1,
+                        })
+                        .collect()
+                } else {
+                    vec![Self::EnumDecl {
+                        id: id.map_name(|name| name.unwrap()),
+                        availability,
+                        ty,
+                        kind,
+                        variants,
+                        sendable,
+                    }]
                 }
-
-                vec![Self::EnumDecl {
-                    id,
-                    availability,
-                    ty,
-                    kind,
-                    variants,
-                    comment,
-                }]
             }
             EntityKind::VarDecl => {
                 let id = ItemIdentifier::new(entity, context);
 
                 if context
+                    .library(id.library_name())
                     .statics
                     .get(&id.name)
                     .map(|data| data.skipped)
@@ -839,22 +1348,13 @@ impl Stmt {
                     EntityKind::TypeRef => {}
                     _ if entity.is_expression() => {
                         if value.is_none() {
-                            value = Some(Expr::parse_var(&entity));
+                            value = Some(Expr::parse_var(&entity, context));
                         } else {
-                            panic!("got variable value twice")
+                            error!(?value, ?entity, "got variable value twice");
                         }
                     }
                     _ => panic!("unknown vardecl child in {id:?}: {entity:?}"),
                 });
-
-                let value = match value {
-                    Some(Some(expr)) => Some(expr),
-                    Some(None) => {
-                        warn!("skipped static");
-                        return vec![];
-                    }
-                    None => None,
-                };
 
                 vec![Self::VarDecl {
                     id,
@@ -866,7 +1366,12 @@ impl Stmt {
             EntityKind::FunctionDecl => {
                 let id = ItemIdentifier::new(entity, context);
 
-                let data = context.fns.get(&id.name).cloned().unwrap_or_default();
+                let data = context
+                    .library(id.library_name())
+                    .fns
+                    .get(&id.name)
+                    .cloned()
+                    .unwrap_or_default();
 
                 if data.skipped {
                     return vec![];
@@ -946,557 +1451,1007 @@ impl Stmt {
         }
     }
 
-    pub fn compare(&self, other: &Self) {
-        if self != other {
-            if let (
-                Self::Methods {
-                    methods: self_methods,
-                    ..
-                },
-                Self::Methods {
-                    methods: other_methods,
-                    ..
-                },
-            ) = (&self, &other)
-            {
-                super::compare_slice(
-                    self_methods,
-                    other_methods,
-                    |i, self_method, other_method| {
-                        let _span = debug_span!("method", i).entered();
-                        assert_eq!(self_method, other_method, "methods were not equal");
-                    },
-                );
+    pub(crate) fn provided_item(&self) -> Option<ItemIdentifier> {
+        match self {
+            Self::ClassDecl { id, skipped, .. } => {
+                if *skipped {
+                    None
+                } else {
+                    Some(id.clone())
+                }
             }
-
-            panic!("statements were not equal:\n{self:#?}\n{other:#?}");
+            Self::ExternMethods { .. } => None,
+            Self::ExternCategory { id, .. } => Some(id.clone()),
+            Self::ProtocolDecl { id, .. } => Some(id.clone()),
+            Self::ProtocolImpl { .. } => None,
+            Self::StructDecl { id, .. } => Some(id.clone()),
+            Self::EnumDecl { id, .. } => Some(id.clone()),
+            Self::ConstDecl { id, .. } => Some(id.clone()),
+            Self::VarDecl { id, .. } => Some(id.clone()),
+            Self::FnDecl { id, body: None, .. } => Some(id.clone()),
+            // TODO
+            Self::FnDecl { body: Some(_), .. } => None,
+            Self::AliasDecl { id, .. } => Some(id.clone()),
         }
     }
 
-    pub fn visit_required_types(&self, mut f: impl FnMut(&ItemIdentifier)) {
+    pub(crate) fn location(&self) -> &Location {
         match self {
-            Stmt::ClassDecl { id, .. } => {
-                f(id);
-            }
-            Stmt::FnDecl {
-                arguments,
-                result_type,
+            Self::ClassDecl { id, .. } => id.location(),
+            Self::ExternMethods { location, .. } => location,
+            Self::ExternCategory { id, .. } => id.location(),
+            Self::ProtocolDecl { id, .. } => id.location(),
+            Self::ProtocolImpl { location, .. } => location,
+            Self::StructDecl { id, .. } => id.location(),
+            Self::EnumDecl { id, .. } => id.location(),
+            Self::ConstDecl { id, .. } => id.location(),
+            Self::VarDecl { id, .. } => id.location(),
+            Self::FnDecl { id, .. } => id.location(),
+            Self::AliasDecl { id, .. } => id.location(),
+        }
+    }
+
+    /// Items required by the statement at the top-level.
+    pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
+        match self {
+            Self::ClassDecl { required_items, .. } => required_items.clone(),
+            Self::ExternMethods {
+                cls_required_items, ..
+            } => cls_required_items.clone(),
+            // Intentionally doesn't require anything, the impl itself is
+            // cfg-gated
+            Self::ExternCategory { .. } => vec![ItemIdentifier::objc2("__macros__")],
+            Self::ProtocolDecl { required_items, .. } => required_items.clone(),
+            Self::ProtocolImpl {
+                cls_required_items,
+                protocol_required_items,
                 ..
             } => {
-                for (_, arg) in arguments {
-                    arg.visit_required_types(&mut f);
-                }
-
-                result_type.visit_required_types(&mut f);
+                let mut items = Vec::new();
+                items.extend(cls_required_items.clone());
+                items.extend(protocol_required_items.clone());
+                items
             }
-            _ => {}
-        }
-    }
-
-    pub(crate) fn declared_types(&self) -> impl Iterator<Item = &str> {
-        match self {
-            Stmt::ClassDecl { id, .. } => Some(&*id.name),
-            Stmt::Methods { .. } => None,
-            Stmt::ProtocolDecl { id, .. } => Some(&*id.name),
-            Stmt::ProtocolImpl { .. } => None,
-            Stmt::StructDecl { id, .. } => Some(&*id.name),
-            Stmt::EnumDecl { id, .. } => id.name.as_deref(),
-            Stmt::VarDecl { id, .. } => Some(&*id.name),
-            Stmt::FnDecl { id, body, .. } if body.is_none() => Some(&*id.name),
+            Self::StructDecl { fields, .. } => {
+                let mut items = Vec::new();
+                for (_, field_ty) in fields {
+                    items.extend(field_ty.required_items());
+                }
+                items.push(ItemIdentifier::objc2("Encoding"));
+                items
+            }
+            // Variants manage required items themselves
+            Self::EnumDecl { ty, .. } => {
+                let mut items = ty.required_items();
+                items.push(ItemIdentifier::objc2("Encoding"));
+                items
+            }
+            Self::ConstDecl { ty, value, .. } => {
+                let mut items = ty.required_items();
+                items.extend(value.required_items());
+                items
+            }
+            Self::VarDecl { ty, value, .. } => {
+                let mut items = ty.required_items();
+                if let Some(value) = value {
+                    items.extend(value.required_items());
+                }
+                items
+            }
+            Self::FnDecl {
+                arguments,
+                result_type,
+                body: None,
+                ..
+            } => {
+                let mut items = Vec::new();
+                for (_, arg_ty) in arguments {
+                    items.extend(arg_ty.required_items());
+                }
+                items.extend(result_type.required_items());
+                items
+            }
             // TODO
-            Stmt::FnDecl { .. } => None,
-            Stmt::AliasDecl { id, .. } => Some(&*id.name),
+            Self::FnDecl { body: Some(_), .. } => Vec::new(),
+            Self::AliasDecl { ty, .. } => ty.required_items(),
         }
-        .into_iter()
-        .chain({
-            if let Stmt::EnumDecl { variants, .. } = self {
-                variants.iter().map(|(name, _, _)| &**name).collect()
-            } else {
-                vec![]
-            }
-        })
     }
-}
 
-impl fmt::Display for Stmt {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let _span = debug_span!("stmt", discriminant = ?mem::discriminant(self)).entered();
-
-        struct GenericTyHelper<'a>(&'a [String]);
-
-        impl fmt::Display for GenericTyHelper<'_> {
-            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if !self.0.is_empty() {
-                    write!(f, "<")?;
-                    for generic in self.0 {
-                        write!(f, "{generic}, ")?;
-                    }
-                    for generic in self.0 {
-                        write!(f, "{generic}Ownership, ")?;
-                    }
-                    write!(f, ">")?;
-                }
-                Ok(())
-            }
-        }
-
-        struct GenericParamsHelper<'a>(&'a [String]);
-
-        impl fmt::Display for GenericParamsHelper<'_> {
-            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if !self.0.is_empty() {
-                    write!(f, "<")?;
-                    for generic in self.0 {
-                        write!(f, "{generic}: Message, ")?;
-                    }
-                    for generic in self.0 {
-                        write!(f, "{generic}Ownership: Ownership, ")?;
-                    }
-                    write!(f, ">")?;
-                }
-                Ok(())
-            }
-        }
-
-        match self {
-            Self::ClassDecl {
-                id,
-                generics,
-                availability,
-                superclasses,
-                designated_initializers: _,
-                derives,
-                ownership: _,
-                comment,
-            } => {
-                let macro_name = if generics.is_empty() {
-                    "extern_class"
-                } else {
-                    "__inner_extern_class"
-                };
-
-                writeln!(f, "{macro_name}!(")?;
-                writeln!(f, "    {derives}")?;
-                if let Some(feature) = id.feature() {
-                    writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
-                }
-                if let Some(comment) = comment {
-                    let comment = crate::comment::preprocess(comment);
-                    writeln!(f, "/**\n {comment} \n*/")?;
-                }
-                write!(f, "{availability}")?;
-                write!(f, "    pub struct {}", id.name)?;
-                if !generics.is_empty() {
-                    write!(f, "<")?;
-                    for generic in generics {
-                        write!(f, "{generic}: Message = Object, ")?;
-                    }
-                    for generic in generics {
-                        write!(f, "{generic}Ownership: Ownership = Shared, ")?;
-                    }
-                    write!(f, ">")?;
-                };
-                if generics.is_empty() {
-                    writeln!(f, ";")?;
-                } else {
-                    writeln!(f, " {{")?;
-                    for (i, generic) in generics.iter().enumerate() {
-                        // Invariant over the generic (for now)
-                        writeln!(
-                            f,
-                            "_inner{i}: PhantomData<*mut ({generic}, {generic}Ownership)>,"
-                        )?;
-                    }
-                    writeln!(f, "notunwindsafe: PhantomData<&'static mut ()>,")?;
-                    writeln!(f, "}}")?;
-                }
-
-                writeln!(f)?;
-
-                if let Some(feature) = id.feature() {
-                    writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
-                }
-                writeln!(
-                    f,
-                    "    unsafe impl{} ClassType for {}{} {{",
-                    GenericParamsHelper(generics),
-                    id.name,
-                    GenericTyHelper(generics),
-                )?;
-                let (superclass, rest) = superclasses.split_at(1);
-                let (superclass, generics) =
-                    superclass.get(0).expect("must have a least one superclass");
-                if !rest.is_empty() {
-                    write!(f, "    #[inherits(")?;
-                    let mut iter = rest.iter();
-                    // Using generics in here is not technically correct, but
-                    // should work for our use-cases.
-                    if let Some((superclass, generics)) = iter.next() {
-                        write!(
-                            f,
-                            "{}{}",
-                            superclass.path_in_relation_to(id),
-                            GenericTyHelper(generics)
-                        )?;
-                    }
-                    for (superclass, generics) in iter {
-                        write!(
-                            f,
-                            ", {}{}",
-                            superclass.path_in_relation_to(id),
-                            GenericTyHelper(generics)
-                        )?;
-                    }
-                    writeln!(f, ")]")?;
-                }
-                writeln!(
-                    f,
-                    "        type Super = {}{};",
-                    superclass.path_in_relation_to(id),
-                    GenericTyHelper(generics)
-                )?;
-                writeln!(f, "    }}")?;
-                writeln!(f, ");")?;
-            }
-            Self::Methods {
-                cls,
-                generics,
-                category,
-                // TODO: Output `#[deprecated]` only on categories
-                availability: _,
-                superclasses,
+    /// Items required for any part of the statement.
+    pub(crate) fn required_items_inner(&self) -> Vec<ItemIdentifier> {
+        let required_by_inner: Vec<_> = match self {
+            Self::ExternCategory {
+                cls_required_items,
                 methods,
-                comment,
-                description,
-            } => {
-                writeln!(f, "extern_methods!(")?;
-                if let Some(description) = description {
-                    writeln!(f, "    /// {description}")?;
-                    if category.name.is_some() {
-                        writeln!(f, "    ///")?;
-                    }
+                ..
+            } => methods
+                .iter()
+                .flat_map(|method| method.required_items())
+                .chain(cls_required_items.clone())
+                .collect(),
+            Self::ExternMethods { methods, .. } | Self::ProtocolDecl { methods, .. } => methods
+                .iter()
+                .flat_map(|method| method.required_items())
+                .collect(),
+            Self::EnumDecl { kind, variants, .. } => {
+                let mut items: Vec<_> = variants
+                    .iter()
+                    .flat_map(|(_, _, expr)| expr.required_items())
+                    .collect();
+                if let Some(UnexposedAttr::Options) = kind {
+                    items.push(ItemIdentifier::bitflags());
                 }
-                if let Some(comment) = comment {
-                    let comment = crate::comment::preprocess(comment);
-                    writeln!(f, "/**\n {comment} \n*/")?;
-                }
-                if let Some(category_name) = &category.name {
-                    writeln!(f, "    /// {category_name}")?;
-                }
-                if let Some(feature) = cls.feature() {
-                    writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
-                }
-                writeln!(
-                    f,
-                    "    unsafe impl{} {}{} {{",
-                    GenericParamsHelper(generics),
-                    cls.path_in_relation_to(category),
-                    GenericTyHelper(generics),
-                )?;
-                for method in methods {
-                    // Use a set to deduplicate features, and to have them in
-                    // a consistent order
-                    let mut features = BTreeSet::new();
-                    method.visit_required_types(|item| {
-                        if cls.library == item.library && cls.name == item.name {
-                            // The feature is guaranteed enabled if the class
-                            // itself is enabled.
-                            return;
+                items
+            }
+            _ => vec![],
+        };
+        self.required_items()
+            .into_iter()
+            .chain(required_by_inner)
+            .collect()
+    }
+
+    fn cfg_gate_ln<'a>(&'a self, config: &'a Config) -> impl fmt::Display + 'a {
+        cfg_gate_ln(
+            self.required_items(),
+            [self.location()],
+            config,
+            self.location(),
+        )
+    }
+
+    pub fn fmt<'a>(&'a self, config: &'a Config) -> impl fmt::Display + 'a {
+        FormatterFn(move |f| {
+            let _span = debug_span!("stmt", provided_item = ?self.provided_item()).entered();
+
+            struct GenericTyHelper<'a>(&'a [String]);
+
+            impl fmt::Display for GenericTyHelper<'_> {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                    if !self.0.is_empty() {
+                        write!(f, "<")?;
+                        for generic in self.0 {
+                            write!(f, "{generic}, ")?;
                         }
-                        for (superclass, _) in superclasses {
-                            if superclass.library == item.library && superclass.name == item.name {
-                                // Same for superclasses.
-                                return;
+                        write!(f, ">")?;
+                    }
+                    Ok(())
+                }
+            }
+
+            struct GenericParamsHelper<'a>(&'a [String], &'a str);
+
+            impl fmt::Display for GenericParamsHelper<'_> {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                    if !self.0.is_empty() {
+                        write!(f, "<")?;
+                        for generic in self.0 {
+                            write!(f, "{generic}: {}, ", self.1)?;
+                        }
+                        write!(f, ">")?;
+                    }
+                    Ok(())
+                }
+            }
+
+            struct WhereBoundHelper<'a>(&'a [String], Option<&'a str>);
+
+            impl fmt::Display for WhereBoundHelper<'_> {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                    if let Some(bound) = self.1 {
+                        if !self.0.is_empty() {
+                            writeln!(f, "where")?;
+                            for generic in self.0 {
+                                writeln!(f, "{generic}{bound},")?;
                             }
                         }
-                        if let Some(feature) = item.feature() {
-                            features.insert(format!("feature = \"{feature}\""));
-                        }
-                    });
-                    match features.len() {
-                        0 => {}
-                        1 => {
-                            writeln!(f, "        #[cfg({})]", features.first().unwrap())?;
-                        }
-                        _ => {
-                            writeln!(
-                                f,
-                                "        #[cfg(all({}))]",
-                                features
-                                    .iter()
-                                    .map(|s| &**s)
-                                    .collect::<Vec<&str>>()
-                                    .join(",")
-                            )?;
-                        }
+                    }
+                    Ok(())
+                }
+            }
+
+            // TODO: Derive this after https://github.com/madsmtm/objc2/issues/55
+            fn unsafe_impl_encode<'a>(
+                ident: impl fmt::Display + 'a,
+                encoding: impl fmt::Display + 'a,
+            ) -> impl fmt::Display + 'a {
+                FormatterFn(move |f| {
+                    writeln!(f, "unsafe impl Encode for {ident} {{")?;
+                    writeln!(f, "    const ENCODING: Encoding = {encoding};")?;
+                    writeln!(f, "}}")?;
+                    Ok(())
+                })
+            }
+
+            // TODO: Derive this after https://github.com/madsmtm/objc2/issues/55
+            fn unsafe_impl_refencode<'a>(ident: impl fmt::Display + 'a) -> impl fmt::Display + 'a {
+                FormatterFn(move |f| {
+                    writeln!(f, "unsafe impl RefEncode for {ident} {{")?;
+                    writeln!(
+                        f,
+                        "    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);"
+                    )?;
+                    writeln!(f, "}}")?;
+                    Ok(())
+                })
+            }
+
+            match self {
+                Self::ClassDecl {
+                    id,
+                    required_items: _,
+                    generics,
+                    availability,
+                    superclasses,
+                    designated_initializers: _,
+                    derives,
+                    mutability,
+                    skipped,
+                    sendable,
+                } => {
+                    if *skipped {
+                        return Ok(());
                     }
 
-                    writeln!(f, "{method}")?;
-                }
-                writeln!(f, "    }}")?;
-                writeln!(f, ");")?;
-            }
-            Self::ProtocolImpl {
-                cls: _,
-                generics: _,
-                protocol,
-                comment: _,
-                availability: _,
-            } if protocol.name == "NSCopying" || protocol.name == "NSMutableCopying" => {
-                // TODO
-            }
-            Self::ProtocolImpl {
-                cls,
-                generics,
-                comment,
-                protocol,
-                availability: _,
-            } => {
-                if let Some(feature) = cls.feature() {
-                    writeln!(f, "#[cfg(feature = \"{feature}\")]")?;
-                }
-                if let Some(comment) = comment {
-                    let comment = crate::comment::preprocess(comment);
-                    writeln!(f, "/**\n {comment} \n*/")?;
-                }
-                writeln!(
-                    f,
-                    "unsafe impl{} {} for {}{} {{}}",
-                    GenericParamsHelper(generics),
-                    protocol.path_in_relation_to(cls),
-                    cls.path(),
-                    GenericTyHelper(generics),
-                )?;
-            }
-            Self::ProtocolDecl {
-                id,
-                availability,
-                comment,
-                protocols,
-                methods,
-            } => {
-                writeln!(f, "extern_protocol!(")?;
-                write!(f, "{availability}")?;
+                    let macro_name = if generics.is_empty() {
+                        "extern_class"
+                    } else {
+                        "__inner_extern_class"
+                    };
 
-                if let Some(comment) = comment {
-                    let comment = crate::comment::preprocess(comment);
-                    writeln!(f, "/**\n {comment} \n*/")?;
+                    let (superclass, superclasses_rest) = superclasses.split_at(1);
+                    let (superclass, superclass_generics) = superclass
+                        .first()
+                        .expect("must have a least one superclass");
+
+                    writeln!(f, "{macro_name}!(")?;
+                    writeln!(f, "    {derives}")?;
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    write!(f, "    {availability}")?;
+                    write!(f, "    pub struct {}", id.name)?;
+                    if !generics.is_empty() {
+                        write!(f, "<")?;
+                        for generic in generics {
+                            write!(f, "{generic}: ?Sized = AnyObject, ")?;
+                        }
+                        write!(f, ">")?;
+                    };
+                    if generics.is_empty() {
+                        writeln!(f, ";")?;
+                    } else {
+                        writeln!(f, " {{")?;
+                        writeln!(
+                            f,
+                            "__superclass: {}{},",
+                            superclass.path_in_relation_to(id.location()),
+                            GenericTyHelper(superclass_generics),
+                        )?;
+                        for (i, generic) in generics.iter().enumerate() {
+                            // Invariant over the generic by default
+                            writeln!(f, "_inner{i}: PhantomData<*mut {generic}>,")?;
+                        }
+                        writeln!(f, "notunwindsafe: PhantomData<&'static mut ()>,")?;
+                        writeln!(f, "}}")?;
+                    }
+
+                    writeln!(f)?;
+
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    writeln!(
+                        f,
+                        "    unsafe impl{} ClassType for {}{} {{",
+                        GenericParamsHelper(generics, "?Sized + Message"),
+                        id.name,
+                        GenericTyHelper(generics),
+                    )?;
+                    if !superclasses_rest.is_empty() {
+                        write!(f, "        #[inherits(")?;
+                        let mut iter = superclasses_rest.iter();
+                        // Using generics in here is not technically correct, but
+                        // should work for our use-cases.
+                        if let Some((superclass, generics)) = iter.next() {
+                            write!(
+                                f,
+                                "{}{}",
+                                superclass.path_in_relation_to(id.location()),
+                                GenericTyHelper(generics)
+                            )?;
+                        }
+                        for (superclass, generics) in iter {
+                            write!(
+                                f,
+                                ", {}{}",
+                                superclass.path_in_relation_to(id.location()),
+                                GenericTyHelper(generics)
+                            )?;
+                        }
+                        writeln!(f, ")]")?;
+                    }
+                    writeln!(
+                        f,
+                        "        type Super = {}{};",
+                        superclass.path_in_relation_to(id.location()),
+                        GenericTyHelper(superclass_generics),
+                    )?;
+                    writeln!(f, "        type Mutability = {mutability};")?;
+                    if !generics.is_empty() {
+                        writeln!(f)?;
+                        writeln!(
+                            f,
+                            "        fn as_super(&self) -> &Self::Super {{ &self.__superclass }}"
+                        )?;
+                        writeln!(f)?;
+                        writeln!(f, "        fn as_super_mut(&mut self) -> &mut Self::Super {{ &mut self.__superclass }}")?;
+                    }
+                    writeln!(f, "    }}")?;
+                    writeln!(f, ");")?;
+
+                    if *sendable && generics.is_empty() {
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
+
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
+                    }
                 }
-                write!(f, "    pub unsafe trait {}", id.name)?;
-                if !protocols.is_empty() {
-                    for (i, protocol) in protocols
+                Self::ExternMethods {
+                    location: _,
+                    availability: _,
+                    cls,
+                    cls_required_items: _,
+                    source_superclass,
+                    cls_generics,
+                    category_name,
+                    methods,
+                } => {
+                    writeln!(f, "extern_methods!(")?;
+                    if let Some(source_superclass) = source_superclass {
+                        writeln!(
+                            f,
+                            "    /// Methods declared on superclass `{}`",
+                            source_superclass.name
+                        )?;
+                        if let Some(category_name) = category_name {
+                            writeln!(f, "///")?;
+                            writeln!(f, "    /// {category_name}")?;
+                        }
+                    } else if let Some(category_name) = category_name {
+                        writeln!(f, "    /// {category_name}")?;
+                    }
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    // TODO: Add ?Sized here once `extern_methods!` supports it.
+                    writeln!(
+                        f,
+                        "    unsafe impl{} {}{} {{",
+                        GenericParamsHelper(cls_generics, "Message"),
+                        cls.path(),
+                        GenericTyHelper(cls_generics),
+                    )?;
+                    let required_items = self.required_items();
+                    for method in methods {
+                        let implied_features = required_items
+                            .iter()
+                            .map(|item| item.location())
+                            .chain(iter::once(self.location()));
+                        write!(
+                            f,
+                            "{}",
+                            cfg_gate_ln(
+                                method.required_items(),
+                                implied_features,
+                                config,
+                                self.location()
+                            )
+                        )?;
+                        writeln!(f, "{method}")?;
+                    }
+                    writeln!(f, "    }}")?;
+                    writeln!(f, ");")?;
+
+                    if let Some(method) = methods
                         .iter()
-                        .filter(|protocol| {
-                            protocol.name != "NSCopying" && protocol.name != "NSMutableCopying"
-                        })
-                        .enumerate()
+                        .find(|method| method.usable_in_default_retained())
                     {
-                        if i == 0 {
+                        writeln!(f)?;
+                        // Assume `new` methods require no extra features
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(
+                            f,
+                            "impl{} DefaultRetained for {}{} {{",
+                            GenericParamsHelper(cls_generics, "Message"),
+                            cls.path(),
+                            GenericTyHelper(cls_generics),
+                        )?;
+                        writeln!(f, "    #[inline]")?;
+                        writeln!(f, "    fn default_id() -> Retained<Self> {{")?;
+                        writeln!(f, "        Self::{}()", method.fn_name)?;
+                        writeln!(f, "    }}")?;
+                        writeln!(f, "}}")?;
+                    }
+                }
+                Self::ExternCategory {
+                    id,
+                    actual_name,
+                    availability,
+                    cls,
+                    cls_required_items,
+                    methods,
+                } => {
+                    writeln!(f, "extern_category!(")?;
+
+                    if let Some(actual_name) = actual_name {
+                        if *actual_name != id.name {
+                            writeln!(f, "    /// Category \"{actual_name}\" on [`{}`].", cls.name)?;
+                            writeln!(f, "    #[doc(alias = \"{actual_name}\")]")?;
+                        } else {
+                            writeln!(f, "    /// Category on [`{}`].", cls.name)?;
+                        }
+                    } else {
+                        writeln!(f, "    /// Category on [`{}`].", cls.name)?;
+                    }
+
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    write!(f, "    {availability}")?;
+                    writeln!(f, "    pub unsafe trait {} {{", id.name)?;
+                    let required_items = self.required_items();
+                    for method in methods {
+                        let implied_features = required_items
+                            .iter()
+                            .map(|item| item.location())
+                            .chain(iter::once(self.location()));
+                        write!(
+                            f,
+                            "{}",
+                            cfg_gate_ln(
+                                method.required_items(),
+                                implied_features,
+                                config,
+                                self.location()
+                            )
+                        )?;
+                        writeln!(f, "{method}")?;
+                    }
+                    writeln!(f, "    }}")?;
+
+                    writeln!(f)?;
+
+                    write!(
+                        f,
+                        "    {}",
+                        cfg_gate_ln(
+                            cls_required_items,
+                            [self.location()],
+                            config,
+                            self.location()
+                        )
+                    )?;
+                    writeln!(
+                        f,
+                        "    unsafe impl {} for {} {{}}",
+                        id.name,
+                        cls.path_in_relation_to(id.location()),
+                    )?;
+
+                    writeln!(f, ");")?;
+                }
+                Self::ProtocolImpl {
+                    location: id,
+                    cls,
+                    cls_required_items: _,
+                    generics,
+                    protocol,
+                    protocol_required_items: _,
+                    availability: _,
+                } => {
+                    let (generic_bound, where_bound) = if !generics.is_empty() {
+                        match (protocol.library_name(), &*protocol.name) {
+                            // The object inherits from `NSObject` or `NSProxy` no
+                            // matter what the generic type is, so this must be
+                            // safe.
+                            (_, _) if protocol.is_nsobject() => ("?Sized", None),
+                            // Encoding and decoding requires that the inner types
+                            // are codable as well.
+                            ("Foundation", "NSCoding") => ("?Sized + NSCoding", None),
+                            ("Foundation", "NSSecureCoding") => ("?Sized + NSSecureCoding", None),
+                            // Copying collections is done as a shallow copy:
+                            // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Collections/Articles/Copying.html>
+                            //
+                            // E.g. it does a retain count bump on the items, and
+                            // hence does not require the inner type to implement
+                            // `NSCopying`.
+                            //
+                            // The types does have to be cloneable, since generic
+                            // types effectively store an `Retained<T>` of the type.
+                            ("Foundation", "NSCopying") => ("?Sized + IsIdCloneable", None),
+                            ("Foundation", "NSMutableCopying") => ("?Sized + IsIdCloneable", None),
+                            // TODO: Do we need further tweaks to this?
+                            ("Foundation", "NSFastEnumeration") => ("?Sized", None),
+                            // AppKit/UIKit fixes. TODO: Should we add more bounds here?
+                            ("AppKit", "NSCollectionViewDataSource") => ("?Sized", None),
+                            ("UIKit", "UICollectionViewDataSource") => ("?Sized + Message", None),
+                            ("AppKit", "NSTableViewDataSource") => ("?Sized", None),
+                            ("UIKit", "UITableViewDataSource") => ("?Sized + Message", None),
+                            _ => {
+                                error!(
+                                    ?protocol,
+                                    ?cls,
+                                    "unknown where bound for generic protocol impl"
+                                );
+                                ("?Sized", None)
+                            }
+                        }
+                    } else {
+                        ("InvalidGenericBound", None)
+                    };
+
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(
+                        f,
+                        "unsafe impl{} {} for {}{} {}{{}}",
+                        GenericParamsHelper(generics, generic_bound),
+                        protocol.path_in_relation_to(id),
+                        cls.path_in_relation_to(id),
+                        GenericTyHelper(generics),
+                        WhereBoundHelper(generics, where_bound)
+                    )?;
+                }
+                Self::ProtocolDecl {
+                    id,
+                    required_items: _,
+                    actual_name,
+                    availability,
+                    protocols,
+                    methods,
+                    required_sendable: _,
+                    required_mainthreadonly,
+                } => {
+                    writeln!(f, "extern_protocol!(")?;
+
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    write!(f, "    {availability}")?;
+                    write!(f, "    pub unsafe trait {}", id.name)?;
+                    if !protocols.is_empty() {
+                        for (i, protocol) in protocols.iter().enumerate() {
+                            if i == 0 {
+                                write!(f, ": ")?;
+                            } else {
+                                write!(f, "+ ")?;
+                            }
+                            write!(f, "{}", protocol.path())?;
+                        }
+                    }
+                    // TODO
+                    // if *required_sendable {
+                    //     if protocols.is_empty() {
+                    //         write!(f, ": ")?;
+                    //     } else {
+                    //         write!(f, "+ ")?;
+                    //     }
+                    //     write!(f, "Send + Sync")?;
+                    // }
+                    if *required_mainthreadonly {
+                        if protocols.is_empty() {
                             write!(f, ": ")?;
                         } else {
                             write!(f, "+ ")?;
                         }
-                        write!(f, "{}", protocol.path())?;
+                        write!(f, "IsMainThreadOnly")?;
                     }
-                }
-                writeln!(f, " {{")?;
+                    // HACK: Make all Metal protocols retainable (i.e. allow
+                    // using `.retain()` on `&ProtocolObject<dyn MTLDevice>`).
+                    //
+                    // This is a problem generally, but especially useful in
+                    // Metal, as most of the functionality is only exposed
+                    // through protocols (instead of concrete classes).
+                    //
+                    // This should become unnecessary after #563.
+                    if id.library_name() == "Metal" {
+                        if protocols.is_empty() {
+                            write!(f, ": ")?;
+                        } else {
+                            write!(f, "+ ")?;
+                        }
+                        write!(f, "IsRetainable")?;
+                    }
+                    writeln!(f, " {{")?;
 
-                for method in methods {
-                    // Use a set to deduplicate features, and to have them in
-                    // a consistent order
-                    let mut features = BTreeSet::new();
-                    method.visit_required_types(|item| {
-                        if let Some(feature) = item.feature() {
-                            features.insert(format!("feature = \"{feature}\""));
-                        }
-                    });
-                    match features.len() {
-                        0 => {}
-                        1 => {
-                            writeln!(f, "        #[cfg({})]", features.first().unwrap())?;
-                        }
-                        _ => {
-                            writeln!(
-                                f,
-                                "        #[cfg(all({}))]",
-                                features
-                                    .iter()
-                                    .map(|s| &**s)
-                                    .collect::<Vec<&str>>()
-                                    .join(",")
-                            )?;
-                        }
+                    let required_items = self.required_items();
+                    for method in methods {
+                        let implied_features = required_items
+                            .iter()
+                            .map(|item| item.location())
+                            .chain(iter::once(self.location()));
+                        write!(
+                            f,
+                            "{}",
+                            cfg_gate_ln(
+                                method.required_items(),
+                                implied_features,
+                                config,
+                                self.location()
+                            )
+                        )?;
+                        writeln!(f, "{method}")?;
                     }
-                    writeln!(f, "{method}")?;
-                }
-                writeln!(f, "    }}")?;
-                writeln!(f)?;
-                writeln!(f, "    unsafe impl ProtocolType for dyn {} {{}}", id.name)?;
-                writeln!(f, ");")?;
-            }
-            Self::StructDecl {
-                id,
-                encoding_name,
-                availability,
-                boxable: _,
-                fields,
-                comment,
-            } => {
-                writeln!(f, "extern_struct!(")?;
-                if let Some(encoding_name) = encoding_name {
-                    writeln!(f, "    #[encoding_name({encoding_name:?})]")?;
-                }
-                if let Some(comment) = comment {
-                    let comment = crate::comment::preprocess(comment);
-                    writeln!(f, "/**\n {comment} \n*/")?;
-                }
-                write!(f, "{availability}")?;
-                writeln!(f, "    pub struct {} {{", id.name)?;
-                for (name, ty) in fields {
-                    write!(f, "        ")?;
-                    if !name.starts_with('_') {
-                        write!(f, "pub ")?;
+                    writeln!(f, "    }}")?;
+                    writeln!(f)?;
+
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "    unsafe impl ProtocolType for dyn {} {{", id.name)?;
+                    if let Some(actual_name) = actual_name {
+                        writeln!(f)?;
+                        writeln!(f, "        const NAME: &'static str = {actual_name:?};")?;
+                        write!(f, "    ")?;
                     }
-                    let name = handle_reserved(name);
-                    writeln!(f, "{name}: {ty},")?;
+                    writeln!(f, "}}")?;
+                    writeln!(f, ");")?;
                 }
-                writeln!(f, "    }}")?;
-                writeln!(f, ");")?;
-            }
-            Self::EnumDecl {
-                id,
-                availability,
-                ty,
-                kind,
-                variants,
-                comment,
-            } => {
-                let macro_name = match kind {
-                    None => "extern_enum",
-                    Some(UnexposedAttr::Enum) => "ns_enum",
-                    Some(UnexposedAttr::Options) => "ns_options",
-                    Some(UnexposedAttr::ClosedEnum) => "ns_closed_enum",
-                    Some(UnexposedAttr::ErrorEnum) => "ns_error_enum",
-                    _ => panic!("invalid enum kind"),
-                };
-                writeln!(f, "{macro_name}!(")?;
-                writeln!(f, "    #[underlying({ty})]")?;
-                if let Some(comment) = comment {
-                    let comment = crate::comment::preprocess(comment);
-                    writeln!(f, "/**\n {comment} \n*/")?;
-                }
-                write!(f, "{availability}")?;
-                writeln!(
-                    f,
-                    "    pub enum {} {{",
-                    id.name.as_deref().unwrap_or("__anonymous__")
-                )?;
-                for (name, availability, expr) in variants {
+                Self::StructDecl {
+                    id,
+                    encoding_name,
+                    availability,
+                    boxable: _,
+                    fields,
+                    sendable,
+                } => {
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
-                    writeln!(f, "        {name} = {expr},")?;
-                }
-                writeln!(f, "    }}")?;
-                writeln!(f, ");")?;
-            }
-            Self::VarDecl {
-                id,
-                availability: _,
-                ty,
-                value: None,
-            } => {
-                writeln!(f, "extern_static!({}: {ty});", id.name)?;
-            }
-            Self::VarDecl {
-                id,
-                availability: _,
-                ty,
-                value: Some(expr),
-            } => {
-                writeln!(f, "extern_static!({}: {ty} = {expr});", id.name)?;
-            }
-            Self::FnDecl {
-                id,
-                availability,
-                arguments,
-                result_type,
-                body,
-                safe,
-            } => {
-                // Use a set to deduplicate features, and to have them in
-                // a consistent order
-                let mut features = BTreeSet::new();
-                self.visit_required_types(|item| {
-                    if let Some(feature) = item.feature() {
-                        features.insert(format!("feature = \"{feature}\""));
+                    write!(f, "#[repr(C)]")?;
+                    write!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
+                    writeln!(f, "pub struct {} {{", id.name)?;
+                    for (name, ty) in fields {
+                        write!(f, "    ")?;
+                        if !name.starts_with('_') {
+                            write!(f, "pub ")?;
+                        }
+                        let name = handle_reserved(name);
+                        writeln!(f, "{name}: {},", ty.struct_())?;
                     }
-                });
+                    writeln!(f, "}}")?;
+                    writeln!(f)?;
 
-                if body.is_some() {
-                    writeln!(f, "inline_fn!(")?;
-                } else {
-                    writeln!(f, "extern_fn!(")?;
-                }
+                    let encoding = FormatterFn(|f| {
+                        write!(
+                            f,
+                            "Encoding::Struct({:?}, &[",
+                            encoding_name.as_deref().unwrap_or(&id.name),
+                        )?;
+                        for (_, ty) in fields {
+                            write!(f, "<{}>::ENCODING,", ty.struct_())?;
+                        }
+                        write!(f, "])")?;
+                        Ok(())
+                    });
 
-                match features.len() {
-                    0 => {}
-                    1 => {
-                        writeln!(f, "    #[cfg({})]", features.first().unwrap())?;
+                    // SAFETY: The struct is marked `#[repr(C)]`.
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
+
+                    if let Some(true) = sendable {
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
+
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
                     }
-                    _ => {
+                }
+                Self::EnumDecl {
+                    id,
+                    availability,
+                    ty,
+                    kind,
+                    variants,
+                    sendable,
+                } => {
+                    match kind {
+                    // TODO: Once Rust gains support for more precisely
+                    // specifying niches, use that to convert this into a
+                    // native enum with a hidden variant that contains the
+                    // remaining cases.
+                    None
+                    // Swift emits these slightly differently, with
+                    // only `NS_ENUM` being a "native" enum with
+                    // exhaustiveness-checking and all.
+                    //
+                    // <https://developer.apple.com/documentation/swift/grouping-related-objective-c-constants#Declare-Simple-Enumerations>
+                    | Some(UnexposedAttr::Enum)
+                    // TODO: Handle this differently.
+                    | Some(UnexposedAttr::ErrorEnum) => {
+                        match kind {
+                            None => {}
+                            Some(UnexposedAttr::Enum) => writeln!(f, "// NS_ENUM")?,
+                            Some(UnexposedAttr::ErrorEnum) => writeln!(f, "// NS_ERROR_ENUM")?,
+                            _ => unreachable!(),
+                        }
+
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        write!(f, "{availability}")?;
+                        writeln!(f, "#[repr(transparent)]")?;
+                        // TODO: Implement `Debug` manually
                         writeln!(
                             f,
-                            "    #[cfg(all({}))]",
-                            features
-                                .iter()
-                                .map(|s| &**s)
-                                .collect::<Vec<&str>>()
-                                .join(",")
+                            "#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]"
                         )?;
+                        // External enums can be safely constructed from the
+                        // raw value, and as such it is safe to expose it
+                        // directly without causing unsoundess in external
+                        // libraries (but it will likely lead to an exception
+                        // or a crash, if the invalid value is used).
+                        //
+                        // Note: This cannot be a Rust `enum`, since that
+                        // assumes that the enum is exhaustive ABI-wise, even
+                        // with `#[non_exhaustive]`, see:
+                        // <https://play.rust-lang.org/?version=stable&mode=release&edition=2021&gist=3a19fcb4267d6fdb0d26b0c9defd946a>
+                        //
+                        // What we really need here is some way to specify
+                        // niches of integers, then a hacky solution to this
+                        // would be doable.
+                        writeln!(f, "pub struct {}(pub {});", id.name, ty.enum_())?;
+
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "impl {} {{", id.name)?;
+
+                        let required_items = self.required_items();
+                        for (name, availability, expr) in variants {
+                            let implied_features = required_items
+                                .iter()
+                                .map(|item| item.location())
+                                .chain(iter::once(self.location()));
+                            write!(f, "    {}", cfg_gate_ln(expr.required_items(), implied_features, config, self.location()))?;
+                            write!(f, "    {availability}")?;
+                            let pretty_name = enum_constant_name(&id.name, name);
+                            if pretty_name != name {
+                                writeln!(f, "    #[doc(alias = \"{name}\")]")?;
+                            }
+                            writeln!(f, "    pub const {pretty_name}: Self = Self({expr});")?;
+                        }
+                        writeln!(f, "}}")?;
+                        writeln!(f)?;
+                    }
+                    Some(UnexposedAttr::Options) => {
+                        writeln!(f, "// NS_OPTIONS")?;
+
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        write!(f, "{availability}")?;
+                        writeln!(f, "#[repr(transparent)]")?;
+                        writeln!(
+                            f,
+                            "#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]"
+                        )?;
+                        // TODO(breaking): Make the inner field private
+                        writeln!(f, "pub struct {}(pub {});", id.name, ty.enum_())?;
+
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "bitflags::bitflags! {{")?;
+
+                        writeln!(f, "    impl {}: {} {{", id.name, ty.enum_())?;
+
+                        let required_items = self.required_items();
+                        for (name, availability, expr) in variants {
+                            let implied_features = required_items
+                                .iter()
+                                .map(|item| item.location())
+                                .chain(iter::once(self.location()));
+                            write!(f, "{}", cfg_gate_ln(expr.required_items(), implied_features, config, self.location()))?;
+                            write!(f, "{availability}")?;
+                            let pretty_name = enum_constant_name(&id.name, name);
+                            if pretty_name != name {
+                                writeln!(f, "        #[doc(alias = \"{name}\")]")?;
+                            }
+                            writeln!(f, "        const {pretty_name} = {expr};")?;
+                        }
+                        writeln!(f, "    }}")?;
+                        writeln!(f, "}}")?;
+                        writeln!(f)?;
+                    }
+                    Some(UnexposedAttr::ClosedEnum) => {
+                        // SAFETY: `NS_CLOSED_ENUM` is guaranteed to never
+                        // gain additional cases, so we are allowed to use a
+                        // Rust enum (which in turn will assume that the
+                        // unused patterns are valid to use as a niche).
+                        writeln!(f, "// NS_CLOSED_ENUM")?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        write!(f, "{availability}")?;
+                        writeln!(f, "{}", ty.closed_enum_repr())?;
+                        writeln!(
+                            f,
+                            "#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]"
+                        )?;
+                        writeln!(f, "pub enum {} {{", id.name)?;
+
+                        let required_items = self.required_items();
+                        for (name, availability, expr) in variants {
+                            let implied_features = required_items
+                                .iter()
+                                .map(|item| item.location())
+                                .chain(iter::once(self.location()));
+                            write!(f, "    {}", cfg_gate_ln(expr.required_items(), implied_features, config, self.location()))?;
+                            write!(f, "    {availability}")?;
+                            let pretty_name = enum_constant_name(&id.name, name);
+                            if pretty_name != name {
+                                writeln!(f, "    #[doc(alias = \"{name}\")]")?;
+                            }
+                            writeln!(f, "    {pretty_name} = {expr},")?;
+                        }
+                        writeln!(f, "}}")?;
+                        writeln!(f)?;
+                    }
+                    _ => panic!("invalid enum kind"),
+                }
+
+                    // SAFETY: The enum is either a `#[repr(transparent)]` newtype
+                    // over the type, or a `#[repr(REPR)]`, where REPR is a valid
+                    // repr with the same size and alignment as the type.
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    let encoding = format!("{}::ENCODING", ty.enum_());
+                    writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
+
+                    if let Some(true) = sendable {
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
+
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
                     }
                 }
-
-                let unsafe_ = if *safe { "" } else { " unsafe" };
-
-                write!(f, "{availability}")?;
-                write!(f, "    pub{unsafe_} fn {}(", id.name)?;
-                for (param, arg_ty) in arguments {
-                    let param = handle_reserved(&crate::to_snake_case(param));
-                    write!(f, "{param}: {arg_ty},")?;
+                Self::ConstDecl {
+                    id,
+                    availability,
+                    ty,
+                    value,
+                    is_last,
+                } => {
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
+                    write!(f, "pub const {}: {} = {value};", id.name, ty.enum_())?;
+                    if *is_last {
+                        writeln!(f)?;
+                    }
                 }
-                write!(f, "){result_type}")?;
+                Self::VarDecl {
+                    id,
+                    availability: _,
+                    ty,
+                    value: None,
+                } => {
+                    writeln!(f, "extern \"C\" {{")?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "pub static {}: {};", id.name, ty.var())?;
+                    writeln!(f, "}}")?;
+                }
+                Self::VarDecl {
+                    id,
+                    availability: _,
+                    ty,
+                    value: Some(expr),
+                } => {
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "pub static {}: {} = ", id.name, ty.var())?;
 
-                if body.is_some() {
-                    writeln!(f, "{{")?;
-                    writeln!(f, "        todo!()")?;
-                    writeln!(f, "    }}")?;
-                } else {
+                    if ty.is_floating_through_typedef() {
+                        write!(f, "{expr} as _")?;
+                    } else if ty.is_enum_through_typedef() {
+                        write!(f, "{}({expr})", ty.var())?;
+                    } else {
+                        write!(f, "{expr}")?;
+                    }
                     writeln!(f, ";")?;
                 }
-
-                writeln!(f, ");")?;
-            }
-            Self::AliasDecl {
-                id,
-                availability: _,
-                ty,
-                kind,
-            } => {
-                match kind {
-                    Some(UnexposedAttr::TypedEnum) => {
-                        writeln!(f, "typed_enum!(pub type {} = {ty};);", id.name)?;
+                Self::FnDecl {
+                    id,
+                    availability: _,
+                    arguments,
+                    result_type,
+                    body: Some(_),
+                    safe: _,
+                } => {
+                    write!(f, "// TODO: ")?;
+                    write!(f, "pub fn {}(", id.name)?;
+                    for (param, arg_ty) in arguments {
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        write!(f, "{param}: {},", arg_ty.fn_argument())?;
                     }
-                    Some(UnexposedAttr::TypedExtensibleEnum) => {
-                        writeln!(f, "typed_extensible_enum!(pub type {} = {ty};);", id.name)?;
-                    }
-                    None | Some(UnexposedAttr::BridgedTypedef) => {
-                        // "bridged" typedefs should just use a normal type
-                        // alias.
-                        writeln!(f, "pub type {} = {ty};", id.name)?;
-                    }
-                    kind => panic!("invalid alias kind {kind:?} for {ty:?}"),
+                    writeln!(f, "){};", result_type.fn_return())?;
                 }
-            }
-        };
-        Ok(())
+                Self::FnDecl {
+                    id,
+                    availability,
+                    arguments,
+                    result_type,
+                    body: None,
+                    safe: false,
+                } => {
+                    writeln!(f, "extern \"C\" {{")?;
+
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    write!(f, "    {availability}")?;
+                    write!(f, "    pub fn {}(", id.name)?;
+                    for (param, arg_ty) in arguments {
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        write!(f, "{param}: {},", arg_ty.fn_argument())?;
+                    }
+                    write!(f, "){}", result_type.fn_return())?;
+                    writeln!(f, ";")?;
+
+                    writeln!(f, "}}")?;
+                }
+                Self::FnDecl {
+                    id,
+                    availability,
+                    arguments,
+                    result_type,
+                    body: None,
+                    safe: true,
+                } => {
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
+                    writeln!(f, "#[inline]")?;
+                    write!(f, "pub extern \"C\" fn {}(", id.name)?;
+                    for (param, arg_ty) in arguments {
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        write!(f, "{param}: {},", arg_ty.fn_argument())?;
+                    }
+                    writeln!(f, "){} {{", result_type.fn_return())?;
+
+                    writeln!(f, "    extern \"C\" {{")?;
+
+                    write!(f, "        fn {}(", id.name)?;
+                    for (param, arg_ty) in arguments {
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        write!(f, "{param}: {},", arg_ty.fn_argument())?;
+                    }
+                    writeln!(f, "){};", result_type.fn_return())?;
+
+                    writeln!(f, "    }}")?;
+
+                    write!(f, "    unsafe {{ {}(", id.name)?;
+                    for (param, _) in arguments {
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        write!(f, "{param},")?;
+                    }
+                    writeln!(f, ") }}")?;
+
+                    writeln!(f, "}}")?;
+                }
+                Self::AliasDecl {
+                    id,
+                    availability: _,
+                    ty,
+                    kind,
+                } => {
+                    match kind {
+                        Some(UnexposedAttr::TypedEnum) => {
+                            // TODO: Handle this differently
+                            writeln!(f, "// NS_TYPED_ENUM")?;
+                            write!(f, "{}", self.cfg_gate_ln(config))?;
+                            writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
+                        }
+                        Some(UnexposedAttr::TypedExtensibleEnum) => {
+                            // TODO: Handle this differently
+                            writeln!(f, "// NS_TYPED_EXTENSIBLE_ENUM")?;
+                            write!(f, "{}", self.cfg_gate_ln(config))?;
+                            writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
+                        }
+                        None | Some(UnexposedAttr::BridgedTypedef) => {
+                            // "bridged" typedefs should use a normal type alias.
+                            write!(f, "{}", self.cfg_gate_ln(config))?;
+                            writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
+                        }
+                        kind => panic!("invalid alias kind {kind:?} for {ty:?}"),
+                    }
+                }
+            };
+            Ok(())
+        })
     }
 }

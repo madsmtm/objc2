@@ -23,7 +23,7 @@ get_ascii:
 	lea	eax, [ebx + .Lanon.[ID].0@GOTOFF]
 	push	3
 	push	eax
-	call	SYM(icrate::Foundation::additions::string::<impl icrate::Foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation::string::<impl objc2_foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	mov	ecx, eax
 	xchg	dword ptr [ebx + SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0@GOTOFF], ecx
@@ -56,7 +56,7 @@ get_utf16:
 	lea	eax, [ebx + .Lanon.[ID].1@GOTOFF]
 	push	5
 	push	eax
-	call	SYM(icrate::Foundation::additions::string::<impl icrate::Foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation::string::<impl objc2_foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	mov	ecx, eax
 	xchg	dword ptr [ebx + SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0@GOTOFF], ecx
@@ -89,7 +89,7 @@ get_with_nul:
 	lea	eax, [ebx + .Lanon.[ID].2@GOTOFF]
 	push	6
 	push	eax
-	call	SYM(icrate::Foundation::additions::string::<impl icrate::Foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation::string::<impl objc2_foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	mov	ecx, eax
 	xchg	dword ptr [ebx + SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0@GOTOFF], ecx
@@ -101,7 +101,7 @@ get_with_nul:
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0,@object
 	.section	.bss.SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0,"aw",@nobits
-	.p2align	2
+	.p2align	2, 0x0
 SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0:
 	.long	0
 	.size	SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0, 4
@@ -114,7 +114,7 @@ SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0:
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0,@object
 	.section	.bss.SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0,"aw",@nobits
-	.p2align	2
+	.p2align	2, 0x0
 SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0:
 	.long	0
 	.size	SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0, 4
@@ -127,7 +127,7 @@ SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0:
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0,@object
 	.section	.bss.SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0,"aw",@nobits
-	.p2align	2
+	.p2align	2, 0x0
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0:
 	.long	0
 	.size	SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0, 4

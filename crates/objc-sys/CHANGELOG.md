@@ -7,6 +7,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
+## 0.3.5 - 2024-05-21
+
+### Fixed
+* Fixed an issue with publishing using an older version of Cargo that didn't
+  handle the `lints.workspace = true` Cargo setup properly.
+
+
+## 0.3.4 - 2024-05-21 (Yanked)
+
+### Deprecated
+* Deprecated the `apple` Cargo feature flag, it is assumed by default on Apple
+  platforms.
+
+
+## 0.3.3 - 2024-04-17
+
+### Added
+* Added `free` method (same as `libc::free`).
+* Moved documentation from `README.md` to `docs.rs`.
+
+
+## 0.3.2 - 2023-12-03
+
+### Added
+* Added `objc_terminate`, `object_isClass`, `objc_alloc` and
+  `objc_allocWithZone` now that Rust's macOS deployment target is 10.12.
+
+
+## 0.3.1 - 2023-06-20
+
+### Added
+* Improved documentation slightly.
+
+### Changed
+* Internal optimizations.
+
+
 ## 0.3.0 - 2023-02-07
 
 ### Changed
@@ -45,8 +82,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 * **BREAKING**: Removed type aliases `Class`, `Ivar`, `Method` and `Protocol`
-  since they could easily be mistaken for the `objc2::runtime` structs with
-  the same name.
+  since they could be mistaken for the `objc2::runtime` structs with the same
+  name.
 * **BREAKING**: Removed `objc_property_t`.
 * **BREAKING**: Removed `objc_hook_getClass` and `objc_hook_lazyClassNamer`
   type aliases (for now).

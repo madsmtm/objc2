@@ -1,0 +1,20 @@
+framework = "CoreLocation"
+crate = "objc2-core-location"
+required-dependencies = ["objc2-foundation"]
+# macos = "10.6"
+macos = "10.11"      # Temporarily raised since `CoreLocation` imports `Contacts`
+maccatalyst = "13.0"
+ios = "2.0"
+tvos = "9.0"
+watchos = "2.0"
+visionos = "1.0"
+
+# error: translator assertion failure: (left `"CLLocation"`) (right `"const CLLocation"`)
+class.CLLocation.methods."getDistanceFrom:".skipped = true
+class.CLLocation.methods."distanceFromLocation:".skipped = true
+
+# Needs `dispatch_queue_t`
+class.CLLocationUpdater.methods."liveUpdaterWithQueue:handler:".skipped = true
+class.CLLocationUpdater.methods."liveUpdaterWithConfiguration:queue:handler:".skipped = true
+class.CLMonitorConfiguration.methods.queue.skipped = true
+class.CLMonitorConfiguration.methods."configWithMonitorName:queue:eventHandler:".skipped = true

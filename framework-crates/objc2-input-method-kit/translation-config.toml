@@ -1,0 +1,24 @@
+framework = "InputMethodKit"
+crate = "objc2-input-method-kit"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
+macos = "10.5"
+
+# Needs `TISInputSourceRef` from Carbon (HIToolbox)
+class.IMKCandidates.methods."setSelectionKeysKeylayout:".skipped = true
+class.IMKCandidates.methods.selectionKeysKeylayout.skipped = true
+
+# error: translator assertion failure: (left `"NSString"`) (right `"const NSString"`)
+static.kIMKCommandClientName.skipped = true
+static.kIMKCommandMenuItemName.skipped = true
+static.IMKCandidatesOpacityAttributeName.skipped = true
+static.IMKCandidatesSendServerKeyEventFirst.skipped = true
+static.IMKControllerClass.skipped = true
+static.IMKDelegateClass.skipped = true
+static.IMKModeDictionary.skipped = true
+
+# Needs `IMKTextInput`, which is defined in `Carbon` for some reason
+class.IMKInputController.methods.client.skipped = true
+
+# TODO: Re-enable these once the relevant frameworks are present
+class.IMKServer.skipped-protocols = ["IMKServerProxy"]

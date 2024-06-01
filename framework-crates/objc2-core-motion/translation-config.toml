@@ -1,0 +1,8 @@
+framework = "CoreMotion"
+crate = "objc2-core-motion"
+required-dependencies = ["objc2-foundation"]
+macos = "10.15"
+maccatalyst = "13.0"
+ios = "4.0"
+watchos = "2.0"
+visionos = "1.0"

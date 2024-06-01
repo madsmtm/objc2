@@ -1,10 +1,10 @@
 //! Test invalid msg_send![super(...)] syntax
 use objc2::msg_send;
-use objc2::runtime::{Class, Object};
+use objc2::runtime::{AnyClass, NSObject};
 
 fn main() {
-    let obj: &Object;
-    let superclass: &Class;
+    let obj: &NSObject;
+    let superclass: &AnyClass;
 
     let _: () = unsafe { msg_send![super, init] };
     let _: () = unsafe { msg_send![super(), init] };

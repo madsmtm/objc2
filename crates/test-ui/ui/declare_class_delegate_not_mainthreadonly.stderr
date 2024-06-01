@@ -1,0 +1,21 @@
+error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsMainThreadOnly` is not satisfied
+ --> ui/declare_class_delegate_not_mainthreadonly.rs
+  |
+  |     unsafe impl NSApplicationDelegate for CustomObject {
+  |                                           ^^^^^^^^^^^^ the trait `mutability::MutabilityIsMainThreadOnly` is not implemented for `InteriorMutable`, which is required by `CustomObject: IsMainThreadOnly`
+  |
+  = help: the trait `mutability::MutabilityIsMainThreadOnly` is implemented for `MainThreadOnly`
+  = note: required for `CustomObject` to implement `IsMainThreadOnly`
+note: required by a bound in `NSApplicationDelegate`
+ --> ui/declare_class_delegate_not_mainthreadonly.rs
+  |
+  | / extern_protocol!(
+  | |     pub unsafe trait NSApplicationDelegate: NSObjectProtocol + IsMainThreadOnly {
+  | |                      --------------------- required by a bound in this trait
+  | |         #[optional]
+  | |         #[method(applicationDidFinishLaunching:)]
+... |
+  | |     unsafe impl ProtocolType for dyn NSApplicationDelegate {}
+  | | );
+  | |_^ required by this bound in `NSApplicationDelegate`
+  = note: this error originates in the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)

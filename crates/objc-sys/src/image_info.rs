@@ -1,7 +1,11 @@
+// TODO: Move this to `objc2` once we can detect simulator targets without a
+// build script.
+
 /// Note: While `objc2` relies on this, you can freely break this, since it is
 /// only used behind experimental features (`unstable-static-*`).
 #[repr(C)]
 #[doc(hidden)]
+#[allow(missing_copy_implementations)]
 pub struct __ImageInfo {
     // These are not actually `unsigned int`, even though the docs say so
     /// The version of the image info struct.
@@ -35,7 +39,7 @@ impl __ImageInfo {
     #[inline]
     pub const fn system() -> Self {
         // We don't currently do anything relating to class properties, but
-        // let's just mimic what Clang does!
+        // let's mimic what Clang does!
         let mut flags = Self::CLASS_PROPERTIES;
 
         if cfg!(target_simulator) {

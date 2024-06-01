@@ -3,8 +3,7 @@
 #[macro_use]
 extern crate tracing;
 
-use std::collections::BTreeMap;
-use std::fmt;
+use std::fmt::{self, Display};
 use std::path::Path;
 use std::process::{Command, Stdio};
 
@@ -12,63 +11,34 @@ use clang::{Entity, EntityVisitResult};
 use tracing::span::EnteredSpan;
 
 mod availability;
-mod cache;
-mod comment;
+mod cfgs;
 mod config;
 mod context;
-mod data;
+mod display_helper;
 mod expr;
-mod file;
+mod global_analysis;
 mod id;
 mod library;
 mod method;
+mod module;
 mod objc2_utils;
-mod output;
 mod rust_type;
 mod stmt;
+mod thread_safety;
 mod unexposed_attr;
 
-pub use self::cache::Cache;
-pub use self::config::Config;
+pub use self::config::{Config, LibraryConfig};
 pub use self::context::Context;
-pub use self::file::File;
-pub use self::id::ItemIdentifier;
+pub use self::global_analysis::global_analysis;
+pub use self::id::{ItemIdentifier, Location};
 pub use self::library::Library;
-pub use self::output::Output;
-pub use self::stmt::Stmt;
+pub use self::module::Module;
+pub use self::stmt::{Mutability, Stmt};
 
-pub fn compare_btree<T>(
-    data1: &BTreeMap<String, T>,
-    data2: &BTreeMap<String, T>,
-    f: impl Fn(&str, &T, &T),
-) {
-    for (key1, item1) in data1 {
-        let item2 = data2
-            .get(key1)
-            .unwrap_or_else(|| panic!("did not find key {key1} in data2"));
-        f(key1, item1, item2);
-    }
-    assert_eq!(data1.len(), data2.len(), "too few items in first map");
-}
-
-pub fn compare_slice<T: core::fmt::Debug>(data1: &[T], data2: &[T], f: impl Fn(usize, &T, &T)) {
-    let mut iter2 = data1.iter();
-    for (i, item1) in data2.iter().enumerate() {
-        if let Some(item2) = iter2.next() {
-            f(i, item1, item2);
-        } else {
-            panic!("no more statements in second vec at index {i}");
-        }
-    }
-    let remaining: Vec<_> = iter2.collect();
-    if !remaining.is_empty() {
-        panic!("remaining statements in second vec: {remaining:#?}");
-    }
-}
-
-pub fn run_cargo_fmt(package: &str) {
+pub fn run_cargo_fmt(packages: impl IntoIterator<Item = impl Display>) {
     let status = Command::new("cargo")
-        .args(["fmt", "--package", package])
+        .arg("fmt")
+        .args(packages.into_iter().map(|package| format!("-p{package}")))
         .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap())
         .status()
         .expect("failed running cargo fmt");
@@ -127,3 +97,5 @@ pub(crate) fn to_snake_case(input: impl AsRef<str>) -> String {
         heck::ToSnakeCase::to_snake_case(input)
     }
 }
+
+pub const VERSION: &str = "0.2.2";

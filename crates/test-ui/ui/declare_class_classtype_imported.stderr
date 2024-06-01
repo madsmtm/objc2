@@ -7,5 +7,5 @@ error: no rules expected the token `objc2`
 note: while trying to match `ClassType`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         unsafe impl ClassType for $for:ty {
+  |         unsafe impl ClassType for $for_class:ty {
   |                     ^^^^^^^^^

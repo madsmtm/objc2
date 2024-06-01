@@ -1,19 +1,19 @@
 mod __attribute_helpers;
-mod __field_helpers;
 mod __method_msg_send;
 mod __msg_send_parse;
-mod __rewrite_self_arg;
+mod __rewrite_self_param;
 mod declare_class;
+mod extern_category;
 mod extern_class;
 mod extern_methods;
 mod extern_protocol;
 
-/// Gets a reference to a [`Class`] from the given name.
+/// Gets a reference to an [`AnyClass`] from the given name.
 ///
 /// If you have an object that implements [`ClassType`], consider using the
 /// [`ClassType::class`] method instead.
 ///
-/// [`Class`]: crate::runtime::Class
+/// [`AnyClass`]: crate::runtime::AnyClass
 /// [`ClassType`]: crate::ClassType
 /// [`ClassType::class`]: crate::ClassType::class
 ///
@@ -22,9 +22,9 @@ mod extern_protocol;
 ///
 /// Panics if no class with the given name can be found.
 ///
-/// To check for a class that may not exist, use [`Class::get`].
+/// To dynamically check for a class that may not exist, use [`AnyClass::get`].
 ///
-/// [`Class::get`]: crate::runtime::Class::get
+/// [`AnyClass::get`]: crate::runtime::AnyClass::get
 ///
 ///
 /// # Features
@@ -49,16 +49,31 @@ mod extern_protocol;
 ///
 /// # Examples
 ///
-/// ```no_run
-/// # use objc2::class;
-/// let cls = class!(NSObject);
+/// Get and compare the class with one returned from [`ClassType::class`].
+///
+/// ```
+/// use objc2::runtime::NSObject;
+/// use objc2::{class, ClassType};
+///
+/// let cls1 = class!(NSObject);
+/// let cls2 = NSObject::class();
+/// assert_eq!(cls1, cls2);
+/// ```
+///
+/// Try to get a non-existing class (this will panic, or fail to link).
+///
+#[cfg_attr(not(feature = "unstable-static-class"), doc = "```should_panic")]
+#[cfg_attr(feature = "unstable-static-class", doc = "```ignore")]
+/// use objc2::class;
+///
+/// let _ = class!(NonExistantClass);
 /// ```
 #[macro_export]
 macro_rules! class {
     ($name:ident) => {{
         $crate::__class_inner!(
             $crate::__macro_helpers::stringify!($name),
-            $crate::__hash_idents!($name),
+            $crate::__hash_idents!($name)
         )
     }};
 }
@@ -67,15 +82,12 @@ macro_rules! class {
 #[macro_export]
 #[cfg(not(feature = "unstable-static-class"))]
 macro_rules! __class_inner {
-    ($name:expr, $_hash:expr,) => {{
-        use $crate::__macro_helpers::{concat, panic, CachedClass, None, Some};
-        static CACHED_CLASS: CachedClass = CachedClass::new();
-        let name = concat!($name, '\0');
+    ($name:expr, $_hash:expr) => {{
+        static CACHED_CLASS: $crate::__macro_helpers::CachedClass =
+            $crate::__macro_helpers::CachedClass::new();
         #[allow(unused_unsafe)]
-        let cls = unsafe { CACHED_CLASS.get(name) };
-        match cls {
-            Some(cls) => cls,
-            None => panic!("Class with name {} could not be found", $name),
+        unsafe {
+            CACHED_CLASS.get($crate::__macro_helpers::concat!($name, '\0'))
         }
     }};
 }
@@ -208,14 +220,17 @@ macro_rules! __class_inner {
 /// ```
 #[macro_export]
 macro_rules! sel {
-    (alloc) => ({
-        $crate::__macro_helpers::alloc_sel()
+    (new) => ({
+        $crate::__macro_helpers::new_sel()
     });
     (init) => ({
         $crate::__macro_helpers::init_sel()
     });
-    (new) => ({
-        $crate::__macro_helpers::new_sel()
+    (alloc) => ({
+        $crate::__macro_helpers::alloc_sel()
+    });
+    (dealloc) => ({
+        $crate::__macro_helpers::dealloc_sel()
     });
     ($sel:ident) => ({
         $crate::__sel_inner!(
@@ -232,7 +247,7 @@ macro_rules! sel {
     ($($sel:tt)*) => {
         $crate::__sel_inner!(
             $crate::__sel_helper! {
-                @()
+                ()
                 $($sel)*
             },
             $crate::__hash_idents!($($sel)*)
@@ -248,37 +263,37 @@ macro_rules! sel {
 macro_rules! __sel_helper {
     // Base-case
     {
-        @($($parsed_sel:tt)*)
+        ($($parsed_sel:tt)*)
     } => ({
         $crate::__sel_data!($($parsed_sel)*)
     });
     // Single identifier
     {
-        @()
+        ()
         $ident:ident
     } => {
         $crate::__sel_helper! {
-            @($ident)
+            ($ident)
         }
     };
     // Parse identitifer + colon token
     {
-        @($($parsed_sel:tt)*)
+        ($($parsed_sel:tt)*)
         $($ident:ident)? : $($rest:tt)*
     } => {
         $crate::__sel_helper! {
-            @($($parsed_sel)* $($ident)? :)
+            ($($parsed_sel)* $($ident)? :)
             $($rest)*
         }
     };
     // Parse identitifer + path separator token
     {
-        @($($parsed_sel:tt)*)
+        ($($parsed_sel:tt)*)
         $($ident:ident)? :: $($rest:tt)*
     } => {
         $crate::__sel_helper! {
             // Notice space between these
-            @($($parsed_sel)* $($ident)? : :)
+            ($($parsed_sel)* $($ident)? : :)
             $($rest)*
         }
     };
@@ -301,8 +316,8 @@ macro_rules! __sel_data {
 #[cfg(not(feature = "unstable-static-sel"))]
 macro_rules! __sel_inner {
     ($data:expr, $_hash:expr) => {{
-        use $crate::__macro_helpers::CachedSel;
-        static CACHED_SEL: CachedSel = CachedSel::new();
+        static CACHED_SEL: $crate::__macro_helpers::CachedSel =
+            $crate::__macro_helpers::CachedSel::new();
         #[allow(unused_unsafe)]
         unsafe {
             CACHED_SEL.get($data)
@@ -312,26 +327,25 @@ macro_rules! __sel_inner {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __inner_statics_apple_generic {
-    {
-        @string_to_known_length_bytes;
-        $x:ident;
-    } => {{
+macro_rules! __statics_string_to_known_length_bytes {
+    ($inp:ident) => {{
         // Convert the `&[u8]` slice to an array with known length, so
         // that we can place that directly in a static.
-        let mut res: [u8; $x.len()] = [0; $x.len()];
+        let mut res: [$crate::__macro_helpers::u8; $inp.len()] = [0; $inp.len()];
         let mut i = 0;
-        while i < $x.len() {
-            res[i] = $x[i];
+        while i < $inp.len() {
+            res[i] = $inp[i];
             i += 1;
         }
         res
     }};
-    {
-        @image_info;
-        $image_info_section:literal;
-        $hash:expr;
-    } => {
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(target_vendor = "apple")]
+macro_rules! __statics_image_info {
+    ($hash:expr) => {
         /// We always emit the image info tag, since we need it to:
         /// - End up in the same codegen unit as the other statics below.
         /// - End up in the final binary so it can be read by dyld.
@@ -339,24 +353,27 @@ macro_rules! __inner_statics_apple_generic {
         /// Unfortunately however, this leads to duplicated tags - the linker
         /// reports `__DATA/__objc_imageinfo has unexpectedly large size XXX`,
         /// but things still seems to work.
-        #[link_section = $image_info_section]
-        #[export_name = $crate::__macro_helpers::concat!(
-            "\x01L_OBJC_IMAGE_INFO_",
-            $hash,
+        #[cfg_attr(
+            not(all(target_os = "macos", target_arch = "x86")),
+            link_section = "__DATA,__objc_imageinfo,regular,no_dead_strip"
         )]
+        #[cfg_attr(
+            all(target_os = "macos", target_arch = "x86"),
+            link_section = "__OBJC,__image_info,regular"
+        )]
+        #[export_name = $crate::__macro_helpers::concat!("\x01L_OBJC_IMAGE_INFO_", $hash)]
         #[used] // Make sure this reaches the linker
         static _IMAGE_INFO: $crate::ffi::__ImageInfo = $crate::ffi::__ImageInfo::system();
     };
-    {
-        @module_info;
-        $hash:expr;
-    } => {
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(target_vendor = "apple")]
+macro_rules! __statics_module_info {
+    ($hash:expr) => {
         #[link_section = "__TEXT,__cstring,cstring_literals"]
-        #[export_name = $crate::__macro_helpers::concat!(
-            "\x01L_OBJC_CLASS_NAME_",
-            $hash,
-            "_MODULE_INFO"
-        )]
+        #[export_name = $crate::__macro_helpers::concat!("\x01L_OBJC_CLASS_NAME_", $hash, "_MODULE_INFO")]
         static MODULE_INFO_NAME: [$crate::__macro_helpers::u8; 1] = [0];
 
         /// Emit module info.
@@ -364,39 +381,39 @@ macro_rules! __inner_statics_apple_generic {
         /// This is similar to image info, and must be present in the final
         /// binary on macOS 32-bit.
         #[link_section = "__OBJC,__module_info,regular,no_dead_strip"]
-        #[export_name = $crate::__macro_helpers::concat!(
-            "\x01L_OBJC_MODULES_",
-            $hash,
-        )]
+        #[export_name = $crate::__macro_helpers::concat!("\x01L_OBJC_MODULES_", $hash)]
         #[used] // Make sure this reaches the linker
-        static _MODULE_INFO: $crate::__macro_helpers::ModuleInfo = $crate::__macro_helpers::ModuleInfo::new(
-            MODULE_INFO_NAME.as_ptr()
-        );
+        static _MODULE_INFO: $crate::__macro_helpers::ModuleInfo =
+            $crate::__macro_helpers::ModuleInfo::new(MODULE_INFO_NAME.as_ptr());
     };
-    {
-        @sel;
-        $var_name_section:literal;
-        $selector_ref_section:literal;
-        $data:expr;
-        $hash:expr;
-    } => {
-        use $crate::__macro_helpers::{u8, UnsafeCell};
-        use $crate::runtime::Sel;
+}
 
-        const X: &[u8] = $data.as_bytes();
+#[doc(hidden)]
+#[macro_export]
+#[cfg(target_vendor = "apple")]
+macro_rules! __statics_sel {
+    {
+        ($data:expr)
+        ($hash:expr)
+    } => {
+        const X: &[$crate::__macro_helpers::u8] = $data.as_bytes();
 
         /// Clang marks this with LLVM's `unnamed_addr`.
         /// See rust-lang/rust#18297
         /// Should only be an optimization (?)
-        #[link_section = $var_name_section]
+        #[cfg_attr(
+            not(all(target_os = "macos", target_arch = "x86")),
+            link_section = "__TEXT,__objc_methname,cstring_literals",
+        )]
+        #[cfg_attr(
+            all(target_os = "macos", target_arch = "x86"),
+            link_section = "__TEXT,__cstring,cstring_literals",
+        )]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_METH_VAR_NAME_",
             $hash,
         )]
-        static NAME_DATA: [u8; X.len()] = $crate::__inner_statics_apple_generic! {
-            @string_to_known_length_bytes;
-            X;
-        };
+        static NAME_DATA: [$crate::__macro_helpers::u8; X.len()] = $crate::__statics_string_to_known_length_bytes!(X);
 
         /// Place the constant value in the correct section.
         ///
@@ -421,23 +438,49 @@ macro_rules! __inner_statics_apple_generic {
         ///
         /// See the [`ctor`](https://crates.io/crates/ctor) crate for more
         /// info on "life before main".
-        #[link_section = $selector_ref_section]
-        #[export_name = $crate::__macro_helpers::concat!(
-            "\x01L_OBJC_SELECTOR_REFERENCES_",
-            $hash,
+        #[cfg_attr(
+            not(all(target_os = "macos", target_arch = "x86")),
+            // Clang uses `no_dead_strip` in the link section for some reason,
+            // which other tools (notably some LLVM tools) now assume is
+            // present, so we have to add it as well.
+            link_section = "__DATA,__objc_selrefs,literal_pointers,no_dead_strip",
         )]
-        static mut REF: UnsafeCell<Sel> = unsafe {
-            UnsafeCell::new(Sel::__internal_from_ptr(NAME_DATA.as_ptr().cast()))
+        #[cfg_attr(
+            all(target_os = "macos", target_arch = "x86"),
+            link_section = "__OBJC,__message_refs,literal_pointers,no_dead_strip",
+        )]
+        #[export_name = $crate::__macro_helpers::concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $hash)]
+        static mut REF: $crate::__macro_helpers::UnsafeCell<$crate::runtime::Sel> = unsafe {
+            $crate::__macro_helpers::UnsafeCell::new($crate::runtime::Sel::__internal_from_ptr(NAME_DATA.as_ptr().cast()))
         };
-    };
-    {
-        @class;
-        $name:expr;
-        $hash:expr;
-    } => {
-        use $crate::__macro_helpers::UnsafeCell;
-        use $crate::runtime::Class;
 
+        $crate::__statics_image_info!($hash);
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(not(target_vendor = "apple"))]
+macro_rules! __statics_sel {
+    ($($args:tt)*) => {
+        // TODO
+        $crate::__macro_helpers::compile_error!(
+            "The `\"unstable-static-sel\"` feature is not yet supported on GNUStep!"
+        )
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    target_vendor = "apple",
+    not(all(target_os = "macos", target_arch = "x86"))
+))]
+macro_rules! __statics_class {
+    {
+        ($name:expr)
+        ($hash:expr)
+    } => {
         extern "C" {
             /// Link to the Objective-C class static.
             ///
@@ -452,147 +495,61 @@ macro_rules! __inner_statics_apple_generic {
             ///   though _should_ be a static linker error.
             ///
             /// Ideally, we'd have some way of allowing this to be weakly
-            /// linked, and return `Option<&Class>` in that case, but Rust
+            /// linked, and return `Option<&AnyClass>` in that case, but Rust
             /// doesn't have the capability to do so yet!
             /// <https://github.com/rust-lang/rust/issues/29603>
             /// <https://stackoverflow.com/a/16936512>
             /// <http://sealiesoftware.com/blog/archive/2010/4/8/Do-it-yourself_Objective-C_weak_import.html>
-            #[link_name = $crate::__macro_helpers::concat!(
-                "OBJC_CLASS_$_",
-                $name,
-            )]
-            static CLASS: Class;
+            #[link_name = $crate::__macro_helpers::concat!("OBJC_CLASS_$_", $name)]
+            static CLASS: $crate::runtime::AnyClass;
         }
 
-        /// SAFETY: Same as `REF` above in `@sel`.
+        /// SAFETY: Same as `REF` above in `__statics_sel!`.
         #[link_section = "__DATA,__objc_classrefs,regular,no_dead_strip"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASSLIST_REFERENCES_$_",
             $hash,
         )]
-        static mut REF: UnsafeCell<&Class> = unsafe {
-            UnsafeCell::new(&CLASS)
+        static mut REF: $crate::__macro_helpers::UnsafeCell<&$crate::runtime::AnyClass> = unsafe {
+            $crate::__macro_helpers::UnsafeCell::new(&CLASS)
         };
+
+        $crate::__statics_image_info!($hash);
     };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(target_vendor = "apple", all(target_os = "macos", target_arch = "x86")))]
+macro_rules! __statics_class {
     {
-        @class_old;
-        $name:expr;
-        $hash:expr;
+        ($name:expr)
+        ($hash:expr)
     } => {
-        use $crate::__macro_helpers::{u8, UnsafeCell};
-        use $crate::runtime::Class;
+        const X: &[$crate::__macro_helpers::u8] = $name.as_bytes();
 
-        const X: &[u8] = $name.as_bytes();
-
-        /// Similar to NAME_DATA above in `@sel`.
+        /// Similar to NAME_DATA above in `__statics_sel!`.
         #[link_section = "__TEXT,__cstring,cstring_literals"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASS_NAME_",
             $hash,
         )]
-        static NAME_DATA: [u8; X.len()] = $crate::__inner_statics_apple_generic! {
-            @string_to_known_length_bytes;
-            X;
-        };
+        static NAME_DATA: [$crate::__macro_helpers::u8; X.len()] = $crate::__statics_string_to_known_length_bytes!(X);
 
-        /// SAFETY: Same as `REF` above in `@sel`.
+        /// SAFETY: Same as `REF` above in `__statics_sel!`.
         #[link_section = "__OBJC,__cls_refs,literal_pointers,no_dead_strip"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASS_REFERENCES_",
             $hash,
         )]
-        static mut REF: UnsafeCell<&Class> = unsafe {
-            let ptr: *const Class = NAME_DATA.as_ptr().cast();
-            UnsafeCell::new(&*ptr)
+        static mut REF: $crate::__macro_helpers::UnsafeCell<&$crate::runtime::AnyClass> = unsafe {
+            let ptr: *const $crate::runtime::AnyClass = NAME_DATA.as_ptr().cast();
+            $crate::__macro_helpers::UnsafeCell::new(&*ptr)
         };
+
+        $crate::__statics_image_info!($hash);
+        $crate::__statics_module_info!($hash);
     }
-}
-
-// These sections are found by reading clang/LLVM sources
-#[doc(hidden)]
-#[macro_export]
-#[cfg(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))))]
-macro_rules! __inner_statics {
-    (@image_info $hash:expr) => {
-        $crate::__inner_statics_apple_generic! {
-            @image_info;
-            "__DATA,__objc_imageinfo,regular,no_dead_strip";
-            $hash;
-        }
-    };
-    (@sel $data:expr, $hash:expr) => {
-        $crate::__inner_statics_apple_generic! {
-            @sel;
-            "__TEXT,__objc_methname,cstring_literals";
-            // Clang uses `no_dead_strip` in the link section for some reason,
-            // which other tools (notably some LLVM tools) now assume is
-            // present, so we have to add it as well.
-            "__DATA,__objc_selrefs,literal_pointers,no_dead_strip";
-            $data;
-            $hash;
-        }
-    };
-    (@class $name:expr, $hash:expr) => {
-        $crate::__inner_statics_apple_generic! {
-            @class;
-            $name;
-            $hash;
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-#[cfg(all(feature = "apple", target_os = "macos", target_arch = "x86"))]
-macro_rules! __inner_statics {
-    (@image_info $hash:expr) => {
-        $crate::__inner_statics_apple_generic! {
-            @image_info;
-            "__OBJC,__image_info,regular";
-            $hash;
-        }
-    };
-    (@sel $data:expr, $hash:expr) => {
-        $crate::__inner_statics_apple_generic! {
-            @sel;
-            "__TEXT,__cstring,cstring_literals";
-            "__OBJC,__message_refs,literal_pointers,no_dead_strip";
-            $data;
-            $hash;
-        }
-    };
-    (@class $name:expr, $hash:expr) => {
-        $crate::__inner_statics_apple_generic! {
-            @class_old;
-            $name;
-            $hash;
-        }
-        $crate::__inner_statics_apple_generic! {
-            @module_info;
-            $hash;
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-#[cfg(not(feature = "apple"))]
-macro_rules! __inner_statics {
-    (@image_info $($args:tt)*) => {
-        // TODO
-    };
-    (@sel $($args:tt)*) => {
-        // TODO
-        $crate::__macro_helpers::compile_error!(
-            "The `\"unstable-static-sel\"` feature is not yet supported on GNUStep!"
-        )
-    };
-    (@class $($args:tt)*) => {
-        // TODO
-        $crate::__macro_helpers::compile_error!(
-            "The `\"unstable-static-class\"` feature is not yet supported on GNUStep!"
-        )
-    };
 }
 
 #[doc(hidden)]
@@ -603,8 +560,10 @@ macro_rules! __inner_statics {
 ))]
 macro_rules! __sel_inner {
     ($data:expr, $hash:expr) => {{
-        $crate::__inner_statics!(@image_info $hash);
-        $crate::__inner_statics!(@sel $data, $hash);
+        $crate::__statics_sel! {
+            ($data)
+            ($hash)
+        }
 
         /// HACK: Wrap the access in a non-generic, `#[inline(never)]`
         /// function to make the compiler group it into the same codegen unit
@@ -629,15 +588,19 @@ macro_rules! __sel_inner {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(all(feature = "unstable-static-sel-inlined"))]
+#[cfg(feature = "unstable-static-sel-inlined")]
 macro_rules! __sel_inner {
     ($data:expr, $hash:expr) => {{
-        $crate::__inner_statics!(@image_info $hash);
-        $crate::__inner_statics!(@sel $data, $hash);
+        $crate::__statics_sel! {
+            ($data)
+            ($hash)
+        }
 
         #[allow(unused_unsafe)]
         // SAFETY: See above
-        unsafe { *REF.get() }
+        unsafe {
+            *REF.get()
+        }
     }};
 }
 
@@ -645,15 +608,18 @@ macro_rules! __sel_inner {
 #[macro_export]
 #[cfg(all(
     feature = "unstable-static-class",
+    not(feature = "gnustep-1-7"),
     not(feature = "unstable-static-class-inlined")
 ))]
 macro_rules! __class_inner {
-    ($name:expr, $hash:expr,) => {{
-        $crate::__inner_statics!(@image_info $hash);
-        $crate::__inner_statics!(@class $name, $hash);
+    ($name:expr, $hash:expr) => {{
+        $crate::__statics_class! {
+            ($name)
+            ($hash)
+        }
 
         #[inline(never)]
-        fn objc_static_workaround() -> &'static Class {
+        fn objc_static_workaround() -> &'static $crate::runtime::AnyClass {
             // SAFETY: Same as __sel_inner
             unsafe { *REF.get() }
         }
@@ -664,15 +630,64 @@ macro_rules! __class_inner {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(all(feature = "unstable-static-class-inlined"))]
+#[cfg(all(
+    feature = "unstable-static-class",
+    not(feature = "gnustep-1-7"),
+    feature = "unstable-static-class-inlined"
+))]
 macro_rules! __class_inner {
-    ($name:expr, $hash:expr,) => {{
-        $crate::__inner_statics!(@image_info $hash);
-        $crate::__inner_statics!(@class $name, $hash);
+    ($name:expr, $hash:expr) => {{
+        $crate::__statics_class! {
+            ($name)
+            ($hash)
+        }
 
         #[allow(unused_unsafe)]
         // SAFETY: See above
-        unsafe { *REF.get() }
+        unsafe {
+            *REF.get()
+        }
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+// The linking changed in libobjc2 v2.0
+#[cfg(all(feature = "gnustep-1-7", not(feature = "gnustep-2-0"),))]
+macro_rules! __class_static_name {
+    ($name:expr) => {
+        $crate::__macro_helpers::concat!("_OBJC_CLASS_", $name)
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(feature = "gnustep-2-0")]
+macro_rules! __class_static_name {
+    ($name:expr) => {
+        $crate::__macro_helpers::concat!("._OBJC_CLASS_", $name)
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(feature = "unstable-static-class", feature = "gnustep-1-7"))]
+macro_rules! __class_inner {
+    ($name:expr, $_hash:expr) => {{
+        // NOTE: This is not verified for correctness in any way whatsoever.
+        extern "C" {
+            #[link_name = $crate::__class_static_name!($name)]
+            static CLASS: $crate::runtime::AnyClass;
+
+            // Others:
+            // __objc_class_name_
+            // _OBJC_CLASS_REF_
+        }
+
+        #[allow(unused_unsafe)]
+        unsafe {
+            $crate::__macro_helpers::disallow_in_static(&CLASS)
+        }
     }};
 }
 
@@ -688,8 +703,8 @@ macro_rules! __class_inner {
 /// ```
 /// # use std::os::raw::{c_int, c_char};
 /// # use objc2::msg_send;
-/// # use objc2::runtime::Object;
-/// unsafe fn do_something(obj: &Object, arg: c_int) -> *const c_char {
+/// # use objc2::runtime::NSObject;
+/// unsafe fn do_something(obj: &NSObject, arg: c_int) -> *const c_char {
 ///     msg_send![obj, doSomething: arg]
 /// }
 /// ```
@@ -710,53 +725,57 @@ macro_rules! __class_inner {
 ///
 /// # Specification
 ///
-/// The syntax is similar to the message syntax in Objective-C, except with
-/// an (optional, though consider that deprecated) comma between arguments,
-/// since that works much better with rustfmt.
+/// The syntax is somewhat similar to the message syntax in Objective-C,
+/// except with a comma between arguments. Eliding the comma is possible,
+/// but it is soft-deprecated, and will be fully deprecated in a future
+/// release. The deprecation can be tried out with the
+/// `"unstable-msg-send-always-comma"` feature flag.
 ///
 /// The first expression, know as the "receiver", can be any type that
 /// implements [`MessageReceiver`], like a reference or a pointer to an
-/// object, or even a reference to an [`rc::Id`] containing an object.
+/// object. Additionally, it can even be a reference to an [`rc::Retained`]
+/// containing an object.
 ///
 /// The expression can be wrapped in `super`, with an optional superclass
 /// as the second argument. If no specific superclass is specified, the
 /// direct superclass is retrieved from [`ClassType`].
 ///
-/// All arguments, and the return type, must implement [`Encode`].
+/// All arguments, as well as the return type, must implement [`Encode`] (bar
+/// the exceptions below).
 ///
 /// If the last argument is the special marker `_`, the macro will return a
-/// `Result<(), Id<E>>`, see below.
+/// `Result<(), Retained<E>>`, see below.
 ///
-/// This macro translates into a call to [`sel!`], and afterwards a fully
-/// qualified call to [`MessageReceiver::send_message`]. Note that this means
-/// that auto-dereferencing of the receiver is not supported, and that the
-/// receiver is consumed. You may encounter a little trouble with `&mut`
+/// This macro roughly translates into a call to [`sel!`], and afterwards a
+/// fully qualified call to [`MessageReceiver::send_message`]. Note that this
+/// means that auto-dereferencing of the receiver is not supported, and that
+/// the receiver is consumed. You may encounter a little trouble with `&mut`
 /// references, try refactoring into a separate method or reborrowing the
 /// reference.
 ///
 /// Variadic arguments are currently not supported.
 ///
-/// [`MessageReceiver`]: crate::MessageReceiver
-/// [`rc::Id`]: crate::rc::Id
+/// [`MessageReceiver`]: crate::runtime::MessageReceiver
+/// [`rc::Retained`]: crate::rc::Retained
 /// [`ClassType`]: crate::ClassType
 /// [`Encode`]: crate::Encode
 /// [`sel!`]: crate::sel
-/// [`MessageReceiver::send_message`]: crate::MessageReceiver::send_message
+/// [`MessageReceiver::send_message`]: crate::runtime::MessageReceiver::send_message
 ///
 ///
 /// # `bool` handling
 ///
-/// Objective-C's `BOOL` is different from Rust's [`bool`], and hence a
-/// conversion step must be performed before using it. This is _very_ easy to
-/// forget (because it'll happen to work in _most_ cases), so for ease of use,
-/// this macro does the conversion step automatically whenever the argument or
-/// return type is `bool`!
+/// Objective-C's `BOOL` is slightly different from Rust's [`bool`], and hence
+/// a conversion step must be performed before using it. This is _very_ easy
+/// to forget (because it'll happen to work in _most_ cases), so this macro
+/// does the conversion step automatically whenever an argument or the return
+/// type is `bool`.
 ///
-/// That means that any Objective-C method that take or return `BOOL` can
-/// simply be translated to use `bool` on the Rust side.
+/// That means that any Objective-C method that take or return `BOOL` can be
+/// translated to use `bool` on the Rust side.
 ///
 /// If you want to handle the conversion explicitly, or the Objective-C method
-/// expects a pointer to a `BOOL`, use [`runtime::Bool`] instead.
+/// expects e.g. a pointer to a `BOOL`, use [`runtime::Bool`] instead.
 ///
 /// [`runtime::Bool`]: crate::runtime::Bool
 ///
@@ -764,15 +783,15 @@ macro_rules! __class_inner {
 /// # Out-parameters
 ///
 /// Parameters like `NSString**` in Objective-C are passed by "writeback",
-/// which essentially just means that the callee autoreleases any value that
-/// they may write into the parameter.
+/// which means that the callee autoreleases any value that they may write
+/// into the parameter.
 ///
 /// This macro has support for passing such parameters using the following
 /// types:
-/// - `&mut Id<_, _>`
-/// - `Option<&mut Id<_, _>>`
-/// - `&mut Option<Id<_, _>>`,
-/// - `Option<&mut Option<Id<_, _>>>`
+/// - `&mut Retained<_>`
+/// - `Option<&mut Retained<_>>`
+/// - `&mut Option<Retained<_>>`,
+/// - `Option<&mut Option<Retained<_>>>`
 ///
 /// Beware with the first two, since they will cause undefined behaviour if
 /// the method overwrites the value with `nil`.
@@ -794,8 +813,8 @@ macro_rules! __class_inner {
 /// returns `BOOL`, into the Rust equivalent, the [`Result`] type.
 ///
 /// In particular, if you make the last argument the special marker `_`, then
-/// the macro will return a `Result<(), Id<E>>` (where you must specify `E`
-/// yourself, usually you'd use `icrate::Foundation::NSError`).
+/// the macro will return a `Result<(), Retained<E>>` (where you must specify
+/// `E` yourself, usually you'd use `objc2_foundation::NSError`).
 ///
 /// At runtime, we create the temporary error variable for you on the stack
 /// and send it as the out-parameter to the method. If the method then returns
@@ -838,7 +857,8 @@ macro_rules! __class_inner {
 ///
 /// 4. The call must not violate Rust's mutability rules, for example if
 ///    passing an `&T`, the Objective-C method must not mutate the variable
-///    (of course except if the variable is inside [`std::cell::UnsafeCell`]).
+///    (except if the variable is inside [`std::cell::UnsafeCell`] or
+///    derivatives).
 ///
 /// 5. If the receiver is a raw pointer it must be valid (aligned,
 ///    dereferenceable, initialized and so on). Messages to `null` pointers
@@ -872,11 +892,11 @@ macro_rules! __class_inner {
 ///
 /// ```no_run
 /// use objc2::msg_send;
-/// use objc2::runtime::Object;
+/// use objc2::runtime::NSObject;
 ///
-/// let obj: *mut Object;
-/// # obj = 0 as *mut Object;
-/// let description: *const Object = unsafe { msg_send![obj, description] };
+/// let obj: *mut NSObject;
+/// # obj = 0 as *mut NSObject;
+/// let description: *const NSObject = unsafe { msg_send![obj, description] };
 /// // Usually you'd use msg_send_id here ^
 /// let _: () = unsafe { msg_send![obj, setArg1: 1i32, arg2: true] };
 /// let arg1: i32 = unsafe { msg_send![obj, getArg1] };
@@ -887,16 +907,20 @@ macro_rules! __class_inner {
 ///
 /// ```no_run
 /// use objc2::msg_send;
+/// #
 /// # use objc2::runtime::NSObject;
-/// # use objc2::{declare_class, ClassType};
+/// # use objc2::{declare_class, mutability, ClassType, DeclaredClass};
 /// #
 /// # declare_class!(
 /// #     struct MyObject;
 /// #
 /// #     unsafe impl ClassType for MyObject {
 /// #         type Super = NSObject;
+/// #         type Mutability = mutability::InteriorMutable;
 /// #         const NAME: &'static str = "MyObject";
 /// #     }
+/// #
+/// #     impl DeclaredClass for MyObject {}
 /// # );
 ///
 /// let obj: &MyObject; // Some object that implements ClassType
@@ -909,13 +933,13 @@ macro_rules! __class_inner {
 /// ```no_run
 /// # use objc2::class;
 /// use objc2::msg_send;
-/// use objc2::runtime::{Class, Object};
+/// use objc2::runtime::{AnyClass, NSObject};
 ///
 /// // Since we specify the superclass ourselves, this doesn't need to
 /// // implement ClassType
-/// let obj: *mut Object;
-/// # obj = 0 as *mut Object;
-/// let superclass: &Class;
+/// let obj: *mut NSObject;
+/// # obj = 0 as *mut NSObject;
+/// let superclass: &AnyClass;
 /// # superclass = class!(NSObject);
 /// let arg3: u32 = unsafe { msg_send![super(obj, superclass), getArg3] };
 /// ```
@@ -924,14 +948,14 @@ macro_rules! __class_inner {
 ///
 /// ```no_run
 /// use objc2::msg_send;
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 ///
-/// # type NSBundle = objc2::runtime::Object;
-/// # type NSError = objc2::runtime::Object;
+/// # type NSBundle = objc2::runtime::NSObject;
+/// # type NSError = objc2::runtime::NSObject;
 /// let obj: &NSBundle;
 /// # obj = todo!();
 /// // The `_` tells the macro that the return type should be `Result`.
-/// let res: Result<(), Id<NSError>> = unsafe {
+/// let res: Result<(), Retained<NSError>> = unsafe {
 ///     msg_send![obj, preflightAndReturnError: _]
 /// };
 /// ```
@@ -940,16 +964,16 @@ macro_rules! __class_inner {
 ///
 /// ```no_run
 /// use objc2::msg_send;
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 ///
-/// # type NSFileManager = objc2::runtime::Object;
-/// # type NSURL = objc2::runtime::Object;
-/// # type NSError = objc2::runtime::Object;
+/// # type NSFileManager = objc2::runtime::NSObject;
+/// # type NSURL = objc2::runtime::NSObject;
+/// # type NSError = objc2::runtime::NSObject;
 /// let obj: &NSFileManager;
 /// # obj = todo!();
 /// let url: &NSURL;
 /// # url = todo!();
-/// let mut result_url: Option<Id<NSURL>> = None;
+/// let mut result_url: Option<Retained<NSURL>> = None;
 /// unsafe {
 ///     msg_send![
 ///         obj,
@@ -962,44 +986,44 @@ macro_rules! __class_inner {
 ///
 /// // Use `result_url` here
 ///
-/// # Ok::<(), Id<NSError>>(())
+/// # Ok::<(), Retained<NSError>>(())
 /// ```
 #[macro_export]
 macro_rules! msg_send {
     [super($obj:expr), $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            ($crate::__msg_send_helper)
-            @(__send_super_message_static_error)
-            @()
-            @()
-            @($($selector_and_arguments)+)
-            @(__send_super_message_static)
+            (send_super_message_static_error)
+            ()
+            ()
+            ($($selector_and_arguments)+)
+            (send_super_message_static)
 
-            @($obj)
+            ($crate::__msg_send_helper)
+            ($obj)
         }
     };
     [super($obj:expr, $superclass:expr), $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            ($crate::__msg_send_helper)
-            @(__send_super_message_error)
-            @()
-            @()
-            @($($selector_and_arguments)+)
-            @(send_super_message)
+            (send_super_message_error)
+            ()
+            ()
+            ($($selector_and_arguments)+)
+            (send_super_message)
 
-            @($obj, $superclass)
+            ($crate::__msg_send_helper)
+            ($obj, $superclass)
         }
     };
     [$obj:expr, $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            ($crate::__msg_send_helper)
-            @(__send_message_error)
-            @()
-            @()
-            @($($selector_and_arguments)+)
-            @(send_message)
+            (send_message_error)
+            ()
+            ()
+            ($($selector_and_arguments)+)
+            (send_message)
 
-            @($obj)
+            ($crate::__msg_send_helper)
+            ($obj)
         }
     };
 }
@@ -1008,10 +1032,10 @@ macro_rules! msg_send {
 #[macro_export]
 macro_rules! __msg_send_helper {
     {
-        @($fn:ident)
-        @($($fn_args:tt)+)
-        @($($selector:tt)*)
-        @($($argument:expr,)*)
+        ($($fn_args:tt)+)
+        ($fn:ident)
+        ($($selector:tt)*)
+        ($($argument:expr,)*)
     } => ({
         // Assign to intermediary variable for better UI, and to prevent
         // miscompilation on older Rust versions.
@@ -1023,7 +1047,7 @@ macro_rules! __msg_send_helper {
         // 1-tuple if there is only one.
         //
         // And use `::<_, _>` for better UI
-        result = $crate::MessageReceiver::$fn::<_, _>($($fn_args)+, $crate::sel!($($selector)*), ($($argument,)*));
+        result = $crate::__macro_helpers::MsgSend::$fn::<_, _>($($fn_args)+, $crate::sel!($($selector)*), ($($argument,)*));
         result
     });
 }
@@ -1044,17 +1068,18 @@ macro_rules! msg_send_bool {
 ///
 /// Object pointers in Objective-C have certain rules for when they should be
 /// retained and released across function calls. This macro helps doing that,
-/// and returns an [`rc::Id`] with the object, optionally wrapped in an
+/// and returns an [`rc::Retained`] with the object, optionally wrapped in an
 /// [`Option`] if you want to handle failures yourself.
 ///
-/// [`rc::Id`]: crate::rc::Id
+/// [`rc::Retained`]: crate::rc::Retained
 ///
 ///
 /// # A little history
 ///
-/// Objective-C's type system is... limited, so you can't easily tell who is
-/// responsible for releasing an object. To remedy this problem, Apple/Cocoa
-/// introduced approximately the following rule:
+/// Objective-C's type system is... limited, so you can't tell without
+/// consulting the documentation who is responsible for releasing an object.
+/// To remedy this problem, Apple/Cocoa introduced (approximately) the
+/// following rule:
 ///
 /// The caller is responsible for releasing objects return from methods that
 /// begin with `new`, `alloc`, `copy`, `mutableCopy` or `init`, and method
@@ -1088,58 +1113,58 @@ macro_rules! msg_send_bool {
 ///
 /// The accepted receiver and return types, and how we handle them, differ
 /// depending on which, if any, of the [recognized selector
-/// families][sel-families] the selector belongs to (here `T: Message` and
-/// `O: Ownership`):
+/// families][sel-families] the selector belongs to:
 ///
 /// - The `new` family: The receiver may be anything that implements
-///   [`MessageReceiver`] (though often you'll want to use `&Class`). The
-///   return type is a generic `Id<T, O>` or `Option<Id<T, O>>`.
+///   [`MessageReceiver`] (though often you'll want to use `&AnyClass`). The
+///   return type is a generic `Retained<T>` or `Option<Retained<T>>`.
 ///
-/// - The `alloc` family: The receiver must be `&Class`, and the return type
-///   is a generic `Allocated<T>` or `Option<Allocated<T>>`.
+/// - The `alloc` family: The receiver must be `&AnyClass`, and the return
+///   type is a generic `Allocated<T>`.
 ///
-/// - The `init` family: The receiver must be `Option<Allocated<T>>`
-///   as returned from `alloc`. The receiver is consumed, and a the
-///   now-initialized `Id<T, O>` or `Option<Id<T, O>>` (with the same `T`) is
-///   returned.
+/// - The `init` family: The receiver must be `Allocated<T>` as returned from
+///   `alloc`, or if sending messages to the superclass, it must be
+///   `PartialInit<T>`.
+///
+///   The receiver is consumed, and a the now-initialized `Retained<T>` or
+///   `Option<Retained<T>>` (with the same `T`) is returned.
 ///
 /// - The `copy` family: The receiver may be anything that implements
-///   [`MessageReceiver`] and the return type is a generic `Id<T, O>` or
-///   `Option<Id<T, O>>`.
+///   [`MessageReceiver`] and the return type is a generic `Retained<T>` or
+///   `Option<Retained<T>>`.
 ///
 /// - The `mutableCopy` family: Same as the `copy` family.
 ///
 /// - No family: The receiver may be anything that implements
 ///   [`MessageReceiver`]. The result is retained using
-///   [`Id::retain_autoreleased`], and a generic `Id<T, O>` or
-///   `Option<Id<T, O>>` is returned. This retain is in most cases faster than
-///   using autorelease pools!
+///   [`Retained::retain_autoreleased`], and a generic `Retained<T>` or
+///   `Option<Retained<T>>` is returned. This retain is in most cases faster
+///   than using autorelease pools!
 ///
 /// See [the clang documentation][arc-retainable] for the precise
 /// specification of Objective-C's ownership rules.
 ///
-/// As you may have noticed, the return type is always either `Id / Allocated`
-/// or `Option<Id / Allocated>`. Internally, the return type is always
-/// `Option<Id / Allocated>` (for example: almost all `new` methods can fail
-/// if the allocation failed), but for convenience, if the return type is
-/// `Id / Allocated` this macro will automatically unwrap the object, or panic
+/// As you may have noticed, the return type is usually either `Retained` or
+/// `Option<Retained>`. Internally, the return type is always
+/// `Option<Retained>` (for example: almost all `new` methods can fail if the
+/// allocation failed), but for convenience, if the return type is
+/// `Retained<T>`, this macro will automatically unwrap the object, or panic
 /// with an error message if it couldn't be retrieved.
 ///
-/// Though as a special case, if the last argument is the marker `_`, the
-/// macro will return a `Result<Id<T, O>, Id<E>>`, see below.
+/// As a special case, if the last argument is the marker `_`, the macro will
+/// return a `Result<Retained<T>, Retained<E>>`, see below.
 ///
-/// This macro doesn't support super methods yet, see [#173].
 /// The `retain`, `release` and `autorelease` selectors are not supported, use
-/// [`Id::retain`], [`Id::drop`] and [`Id::autorelease`] for that.
+/// [`Retained::retain`], [`Retained::drop`] and [`Retained::autorelease`] for
+/// that.
 ///
 /// [sel-families]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families
-/// [`MessageReceiver`]: crate::MessageReceiver
-/// [`Id::retain_autoreleased`]: crate::rc::Id::retain_autoreleased
+/// [`MessageReceiver`]: crate::runtime::MessageReceiver
+/// [`Retained::retain_autoreleased`]: crate::rc::Retained::retain_autoreleased
 /// [arc-retainable]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments
-/// [#173]: https://github.com/madsmtm/objc2/pull/173
-/// [`Id::retain`]: crate::rc::Id::retain
-/// [`Id::drop`]: crate::rc::Id::drop
-/// [`Id::autorelease`]: crate::rc::Id::autorelease
+/// [`Retained::retain`]: crate::rc::Retained::retain
+/// [`Retained::drop`]: crate::rc::Retained::drop
+/// [`Retained::autorelease`]: crate::rc::Retained::autorelease
 ///
 ///
 /// # Errors
@@ -1149,13 +1174,13 @@ macro_rules! msg_send_bool {
 /// equivalent, the [`Result`] type.
 ///
 /// In particular, you can make the last argument the special marker `_`, and
-/// then the macro will return a `Result<Id<T, O>, Id<E>>` (where you must
-/// specify `E` yourself, usually you'd use `icrate::Foundation::NSError`).
+/// then the macro will return a `Result<Retained<T>, Retained<E>>` (where you
+/// must specify `E` yourself, usually you'd use `objc2_foundation::NSError`).
 ///
 ///
 /// # Panics
 ///
-/// Panics if the return type is specified as `Id<_, _>` and the method
+/// Panics if the return type is specified as `Retained<_, _>` and the method
 /// returned NULL.
 ///
 /// Additional panicking cases are documented in [`msg_send!`].
@@ -1170,8 +1195,8 @@ macro_rules! msg_send_bool {
 ///
 /// Note that if you're using this inside a context that expects unwinding to
 /// have Objective-C semantics (like [`exception::catch`]), you should make
-/// sure that the return type is `Option<Id<_, _>>` so that you don't get an
-/// unexpected unwind through incompatible ABIs!
+/// sure that the return type is `Option<Retained<_, _>>` so that you don't
+/// get an unexpected unwind through incompatible ABIs!
 ///
 #[cfg_attr(
     feature = "exception",
@@ -1188,50 +1213,84 @@ macro_rules! msg_send_bool {
 /// ```no_run
 /// use objc2::{class, msg_send_id};
 /// use objc2::ffi::NSUInteger;
-/// use objc2::rc::Id;
-/// use objc2::runtime::Object;
+/// use objc2::rc::Retained;
+/// use objc2::runtime::NSObject;
 /// // Allocate new object
 /// let obj = unsafe { msg_send_id![class!(NSObject), alloc] };
 /// // Consume the allocated object, return initialized object
-/// let obj: Id<Object> = unsafe { msg_send_id![obj, init] };
+/// let obj: Retained<NSObject> = unsafe { msg_send_id![obj, init] };
 /// // Copy the object
-/// let copy: Id<Object> = unsafe { msg_send_id![&obj, copy] };
+/// let copy: Retained<NSObject> = unsafe { msg_send_id![&obj, copy] };
 /// // Call ordinary selector that returns an object
 /// // This time, we handle failures ourselves
-/// let s: Option<Id<Object>> = unsafe { msg_send_id![&obj, description] };
+/// let s: Option<Retained<NSObject>> = unsafe { msg_send_id![&obj, description] };
 /// let s = s.expect("description was NULL");
 /// ```
 #[macro_export]
 macro_rules! msg_send_id {
+    [super($obj:expr), $($selector_and_arguments:tt)+] => {
+        $crate::__msg_send_parse! {
+            (send_super_message_id_static_error)
+            ()
+            ()
+            ($($selector_and_arguments)+)
+            (send_super_message_id_static)
+
+            ($crate::__msg_send_id_helper)
+            ($obj)
+            () // No retain semantics
+            (MsgSendSuperId)
+        }
+    };
+    [super($obj:expr, $superclass:expr), $($selector_and_arguments:tt)+] => {
+        $crate::__msg_send_parse! {
+            (send_super_message_id_error)
+            ()
+            ()
+            ($($selector_and_arguments)+)
+            (send_super_message_id)
+
+            ($crate::__msg_send_id_helper)
+            ($obj, $superclass)
+            () // No retain semantics
+            (MsgSendSuperId)
+        }
+    };
     [$obj:expr, new $(,)?] => ({
-        let sel = $crate::sel!(new);
         let result;
-        result = <$crate::__macro_helpers::New as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result = <$crate::__macro_helpers::New as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id(
+            $obj,
+            $crate::sel!(new),
+            (),
+        );
         result
     });
     [$obj:expr, alloc $(,)?] => ({
-        let sel = $crate::sel!(alloc);
         let result;
-        result = <$crate::__macro_helpers::Alloc as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result = $crate::__macro_helpers::Alloc::send_message_id_alloc($obj);
         result
     });
     [$obj:expr, init $(,)?] => ({
-        let sel = $crate::sel!(init);
         let result;
-        result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id(
+            $obj,
+            $crate::sel!(init),
+            (),
+        );
         result
     });
     [$obj:expr, $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            ($crate::__msg_send_id_helper)
-            @(send_message_id_error)
-            @()
-            @()
-            @($($selector_and_arguments)+)
-            @(send_message_id)
+            (send_message_id_error)
+            ()
+            ()
+            ($($selector_and_arguments)+)
+            (send_message_id)
 
-            @($obj)
-            @()
+            ($crate::__msg_send_id_helper)
+            ($obj)
+            () // No retain semantics
+            (MsgSendId)
         }
     };
 }
@@ -1241,68 +1300,74 @@ macro_rules! msg_send_id {
 #[macro_export]
 macro_rules! __msg_send_id_helper {
     {
-        @($fn:ident)
-        @($obj:expr)
-        @($($retain_semantics:ident)?)
-        @(retain)
-        @()
+        ($($fn_args:tt)+)
+        ($($retain_semantics:ident)?)
+        ($trait:ident)
+        ($fn:ident)
+        (retain)
+        ()
     } => {{
         $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, retain] is not supported. Use `Id::retain` instead"
+            "msg_send_id![obj, retain] is not supported. Use `Retained::retain` instead"
         )
     }};
     {
-        @($fn:ident)
-        @($obj:expr)
-        @($($retain_semantics:ident)?)
-        @(release)
-        @()
+        ($($fn_args:tt)+)
+        ($($retain_semantics:ident)?)
+        ($trait:ident)
+        ($fn:ident)
+        (release)
+        ()
     } => {{
         $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, release] is not supported. Drop an `Id` instead"
+            "msg_send_id![obj, release] is not supported. Drop an `Retained` instead"
         )
     }};
     {
-        @($fn:ident)
-        @($obj:expr)
-        @($($retain_semantics:ident)?)
-        @(autorelease)
-        @()
+        ($($fn_args:tt)+)
+        ($($retain_semantics:ident)?)
+        ($trait:ident)
+        ($fn:ident)
+        (autorelease)
+        ()
     } => {{
         $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, autorelease] is not supported. Use `Id::autorelease`"
+            "msg_send_id![obj, autorelease] is not supported. Use `Retained::autorelease`"
         )
     }};
     {
-        @($fn:ident)
-        @($obj:expr)
-        @($($retain_semantics:ident)?)
-        @(dealloc)
-        @()
+        ($($fn_args:tt)+)
+        ($($retain_semantics:ident)?)
+        ($trait:ident)
+        ($fn:ident)
+        (dealloc)
+        ()
     } => {{
         $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, dealloc] is not supported. Drop an `Id` instead"
+            "msg_send_id![obj, dealloc] is not supported. Drop an `Retained` instead"
         )
     }};
     {
-        @($fn:ident)
-        @($obj:expr)
-        @($retain_semantics:ident)
-        @($($selector:tt)*)
-        @($($argument:expr,)*)
+        ($($fn_args:tt)+)
+        ($retain_semantics:ident)
+        ($trait:ident)
+        ($fn:ident)
+        ($($selector:tt)*)
+        ($($argument:expr,)*)
     } => ({
-        <$crate::__macro_helpers::$retain_semantics as $crate::__macro_helpers::MsgSendId<_, _>>::$fn::<_, _>(
-            $obj,
+        <$crate::__macro_helpers::$retain_semantics as $crate::__macro_helpers::$trait<_, _>>::$fn(
+            $($fn_args)+,
             $crate::sel!($($selector)*),
             ($($argument,)*),
         )
     });
     {
-        @($fn:ident)
-        @($obj:expr)
-        @()
-        @($($selector:tt)*)
-        @($($argument:expr,)*)
+        ($($fn_args:tt)+)
+        ()
+        ($trait:ident)
+        ($fn:ident)
+        ($($selector:tt)*)
+        ($($argument:expr,)*)
     } => ({
         // Don't use `sel!`, otherwise we'd end up with defining this data twice.
         const __SELECTOR_DATA: &$crate::__macro_helpers::str = $crate::__sel_data!(
@@ -1311,8 +1376,8 @@ macro_rules! __msg_send_id_helper {
         let result;
         result = <$crate::__macro_helpers::RetainSemantics<{
             $crate::__macro_helpers::retain_semantics(__SELECTOR_DATA)
-        }> as $crate::__macro_helpers::MsgSendId<_, _>>::$fn::<_, _>(
-            $obj,
+        }> as $crate::__macro_helpers::$trait<_, _>>::$fn(
+            $($fn_args)+,
             $crate::__sel_inner!(
                 __SELECTOR_DATA,
                 $crate::__hash_idents!($($selector)*)

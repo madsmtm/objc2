@@ -9,8 +9,14 @@ license = "MIT"
 
 build = "build.rs"
 
+[lints]
+workspace = true
+
 [dependencies]
-cargo_metadata = "0.15.2"
+cargo_metadata = "0.18"
 rustc-demangle = "0.1"
 regex = "1.6"
 lazy_static = "1.4.0"
+
+[package.metadata.release]
+release = false

@@ -1,12 +1,17 @@
-error[E0282]: type annotations needed
+error[E0283]: type annotations needed
  --> ui/msg_send_no_return_type.rs
   |
-  |         msg_send![cls, new];
-  |         ^^^^^^^^^^^^^^^^^^^
+  |     unsafe { msg_send![cls, new] };
+  |              ^^^^^^^^^^^^^^^^^^^ cannot infer type
   |
+  = note: cannot satisfy `_: ConvertReturn`
+  = help: the trait `ConvertReturn` is implemented for `bool`
+note: required by a bound in `MsgSend::send_message`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send.rs
+  |
+  |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
+  |               ------------ required by a bound in this associated function
+...
+  |         R: ConvertReturn,
+  |            ^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
-help: consider giving `result` an explicit type
- --> $WORKSPACE/crates/objc2/src/macros/mod.rs
-  |
-  |         let result: /* Type */;
-  |                   ++++++++++++

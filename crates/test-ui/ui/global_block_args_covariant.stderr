@@ -1,0 +1,12 @@
+error[E0597]: `x` does not live long enough
+ --> ui/global_block_args_covariant.rs
+  |
+  |         let x = 5 + 2;
+  |             - binding `x` declared here
+  |         PUT_STATIC_IN_THREAD_LOCAL.call((&x,));
+  |         ---------------------------------^^---
+  |         |                                |
+  |         |                                borrowed value does not live long enough
+  |         argument requires that `x` is borrowed for `'static`
+  |     }
+  |     - `x` dropped here while still borrowed

@@ -10,7 +10,9 @@ use crate::ffi;
 /// soon as possible.
 ///
 /// This is FFI-safe and can be used directly with `msg_send!` and `extern`
-/// functions.
+/// functions as a substitute for `BOOL` in Objective-C. If your Objective-C
+/// code uses C99 `_Bool`, you should use a `#[repr(transparent)]` wrapper
+/// around `bool` instead.
 ///
 /// Note that this is able to contain more states than `bool` on some
 /// platforms, but these cases should not be relied on!
@@ -137,7 +139,7 @@ unsafe impl RefEncode for Bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::encode::__unstable::{EncodeConvertArgument, EncodeConvertReturn};
+    use crate::__macro_helpers::{ConvertArgument, ConvertReturn};
     use alloc::format;
 
     #[test]
@@ -175,12 +177,12 @@ mod tests {
         assert_eq!(bool::__ENCODING, Encoding::Bool);
 
         assert_eq!(
-            <bool as EncodeConvertArgument>::__Inner::__ENCODING,
-            <bool as EncodeConvertArgument>::__Inner::ENCODING
+            <bool as ConvertArgument>::__Inner::__ENCODING,
+            <bool as ConvertArgument>::__Inner::ENCODING
         );
         assert_eq!(
-            <bool as EncodeConvertReturn>::__Inner::__ENCODING,
-            <bool as EncodeConvertReturn>::__Inner::ENCODING
+            <bool as ConvertReturn>::__Inner::__ENCODING,
+            <bool as ConvertReturn>::__Inner::ENCODING
         );
     }
 
@@ -206,7 +208,7 @@ mod tests {
 
     #[test]
     // Test on platform where we know the type of BOOL
-    #[cfg(all(feature = "apple", target_os = "macos", target_arch = "x86_64"))]
+    #[cfg(all(target_vendor = "apple", target_os = "macos", target_arch = "x86_64"))]
     fn test_outside_normal() {
         let b = Bool::from_raw(42);
         assert!(b.is_true());

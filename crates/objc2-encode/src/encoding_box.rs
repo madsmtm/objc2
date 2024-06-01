@@ -5,7 +5,7 @@ use core::fmt;
 use core::str::FromStr;
 
 use crate::helper::{compare_encodings, Helper, NestingLevel};
-use crate::parse::{ParseError, Parser};
+use crate::parse::{ErrorKind, ParseError, Parser};
 use crate::Encoding;
 
 /// The boxed version of [`Encoding`].
@@ -17,7 +17,7 @@ use crate::Encoding;
 /// In `Encoding`, the data is stored in static memory, while in `EncodingBox`
 /// it is stored on the heap. The former allows storing in constants (which is
 /// required by the `objc2::encode::Encode` and `objc2::encode::RefEncode`
-/// traits), while the latter allows dynamically, such as in the case of
+/// traits), while the latter allows dynamic creation, such as in the case of
 /// parsing encodings.
 ///
 /// **This should be considered a _temporary_ restriction**. `Encoding` and
@@ -85,9 +85,11 @@ pub enum EncodingBox {
     /// Same as [`Encoding::Array`].
     Array(u64, Box<Self>),
     /// Same as [`Encoding::Struct`].
-    Struct(String, Option<Vec<Self>>),
+    Struct(String, Vec<Self>),
     /// Same as [`Encoding::Union`].
-    Union(String, Option<Vec<Self>>),
+    Union(String, Vec<Self>),
+    /// Same as [`Encoding::None`].
+    None,
 }
 
 impl EncodingBox {
@@ -111,11 +113,22 @@ impl EncodingBox {
     /// returned by `method_getTypeEncoding`.
     ///
     /// [`from_str`][Self::from_str] is simpler, use that instead if you can.
+    ///
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the string was an ill-formatted encoding string.
     pub fn from_start_of_str(s: &mut &str) -> Result<Self, ParseError> {
         let mut parser = Parser::new(s);
         parser.strip_leading_qualifiers();
 
-        match parser.parse_encoding() {
+        match parser.parse_encoding_or_none() {
+            Err(ErrorKind::Unknown(b'0'..=b'9')) => {
+                let remaining = parser.remaining();
+                *s = remaining;
+
+                Ok(EncodingBox::None)
+            }
             Err(err) => Err(ParseError::new(parser, err)),
             Ok(encoding) => {
                 let remaining = parser.remaining();
@@ -130,13 +143,13 @@ impl EncodingBox {
 /// Same formatting as [`Encoding`]'s `Display` implementation.
 impl fmt::Display for EncodingBox {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", Helper::from_box(self, NestingLevel::new()))
+        Helper::from_box(self).fmt(f, NestingLevel::new())
     }
 }
 
 impl PartialEq<Encoding> for EncodingBox {
     fn eq(&self, other: &Encoding) -> bool {
-        compare_encodings(self, NestingLevel::new(), other, NestingLevel::new(), true)
+        compare_encodings(self, other, NestingLevel::new(), true)
     }
 }
 
@@ -154,7 +167,7 @@ impl FromStr for EncodingBox {
         parser.strip_leading_qualifiers();
 
         parser
-            .parse_encoding()
+            .parse_encoding_or_none()
             .and_then(|enc| parser.expect_empty().map(|()| enc))
             .map_err(|err| ParseError::new(parser, err))
     }
@@ -183,20 +196,20 @@ mod tests {
         ));
         let enc2 = EncodingBox::Atomic(Box::new(EncodingBox::Struct(
             "test".to_string(),
-            Some(vec![EncodingBox::Array(2, Box::new(EncodingBox::Int))]),
+            vec![EncodingBox::Array(2, Box::new(EncodingBox::Int))],
         )));
         let enc3 = EncodingBox::Atomic(Box::new(EncodingBox::Struct(
             "test".to_string(),
-            Some(vec![EncodingBox::Array(2, Box::new(EncodingBox::Char))]),
+            vec![EncodingBox::Array(2, Box::new(EncodingBox::Char))],
         )));
         assert_eq!(enc1, enc2);
         assert_ne!(enc1, enc3);
     }
 
     #[test]
-    fn ne_struct_with_without_fields() {
-        let enc1 = EncodingBox::Struct("test".to_string(), Some(vec![EncodingBox::Char]));
-        let enc2 = EncodingBox::Struct("test".to_string(), None);
+    fn struct_nested_in_pointer() {
+        let enc1 = EncodingBox::Struct("test".to_string(), vec![EncodingBox::Char]);
+        let enc2 = EncodingBox::Struct("test".to_string(), vec![EncodingBox::Int]);
         const ENC3A: Encoding = Encoding::Struct("test", &[Encoding::Char]);
         assert_ne!(enc1, enc2);
         assert!(ENC3A.equivalent_to_box(&enc1));
@@ -220,15 +233,12 @@ mod tests {
     #[test]
     fn parse_atomic_struct() {
         let expected = EncodingBox::Atomic(Box::new(EncodingBox::Atomic(Box::new(
-            EncodingBox::Struct("a".into(), Some(Vec::new())),
+            EncodingBox::Struct("a".into(), vec![]),
         ))));
         let actual = EncodingBox::from_str("AA{a=}").unwrap();
         assert_eq!(expected, actual);
         assert_eq!(expected.to_string(), "AA{a}");
 
-        let expected = EncodingBox::Atomic(Box::new(EncodingBox::Atomic(Box::new(
-            EncodingBox::Struct("a".into(), None),
-        ))));
         let actual = EncodingBox::from_str("AA{a}").unwrap();
         assert_eq!(expected, actual);
         assert_eq!(expected.to_string(), "AA{a}");
@@ -238,7 +248,7 @@ mod tests {
     fn parse_part_of_string() {
         let mut s = "{a}cb0i16";
 
-        let expected = EncodingBox::Struct("a".into(), None);
+        let expected = EncodingBox::Struct("a".into(), vec![]);
         let actual = EncodingBox::from_start_of_str(&mut s).unwrap();
         assert_eq!(expected, actual);
 

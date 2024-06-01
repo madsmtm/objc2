@@ -3,19 +3,11 @@
 //! You should not need to use this crate directly, all its public items are
 //! exported in other crates.
 
-#![warn(elided_lifetimes_in_paths)]
 #![warn(missing_docs)]
-#![deny(non_ascii_idents)]
-#![warn(unreachable_pub)]
-#![deny(unsafe_op_in_unsafe_fn)]
-#![warn(clippy::cargo)]
-#![warn(clippy::ptr_as_ptr)]
+#![warn(clippy::missing_errors_doc)]
+#![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-proc-macros/0.1.1")]
-
-#[cfg(doctest)]
-#[doc = include_str!("../README.md")]
-extern "C" {}
+#![doc(html_root_url = "https://docs.rs/objc2-proc-macros/0.1.3")]
 
 use core::hash::{Hash, Hasher};
 

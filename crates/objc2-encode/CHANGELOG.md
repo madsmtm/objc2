@@ -7,6 +7,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
+## 4.0.3 - 2024-05-21
+
+### Fixed
+* Fixed an issue with publishing using an older version of Cargo that didn't
+  handle the `lints.workspace = true` Cargo setup properly.
+
+
+## 4.0.2 - 2024-05-21 (Yanked)
+
+### Added
+* Added `Encoding::None`, which represents encodings where the host compiler
+  (i.e. `clang`) couldn't generate an encoding for a given type.
+
+  This is useful when working with SIMD types.
+
+
+## 4.0.1 - 2024-04-17
+
+### Changed
+* Build documentation on docs.rs on more Apple platforms.
+
+
+## 4.0.0 - 2023-12-03
+
+### Changed
+* **BREAKING**: Changed the type of `EncodingBox::Struct` and
+  `EncodingBox::Union` to no longer contain an `Option`.
+
+### Fixed
+* Fixed encoding equivalence between empty structs and unions.
+* Parse (and ignore) extended type information.
+
+
+## 3.0.0 - 2023-07-31
+
+### Fixed
+* Bumped version number to ensure that this crate can be compiled together
+  with code that depends on pre-releases of `2.0.0`.
+
+
+## 2.0.0 - 2023-06-20
+
+### Added
+* Improved documentation slightly.
+
+
 ## 2.0.0-pre.4 - 2023-02-07
 
 ### Added

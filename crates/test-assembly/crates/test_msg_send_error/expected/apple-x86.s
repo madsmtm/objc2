@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.p2align	4, 0x90
-SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0):
+SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	ebp
 	mov	ebp, esp
 	push	edi
@@ -29,7 +29,7 @@ LBB0_2:
 	call	SYM(core::option::expect_failed::GENERATED_ID, 0)
 
 	.p2align	4, 0x90
-SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0):
+SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	ebp
 	mov	ebp, esp
 	push	esi
@@ -84,7 +84,7 @@ _error_bool:
 	ret
 LBB2_1:
 	mov	ecx, dword ptr [ebp - 8]
-	call	SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	add	esp, 4
 	pop	esi
 	pop	ebp
@@ -121,7 +121,7 @@ L3$pb:
 LBB3_2:
 	mov	ecx, dword ptr [ebp - 8]
 	lea	edx, [esi + l_anon.[ID].4-L3$pb]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	edx, eax
 	mov	eax, 1
 	add	esp, 4
@@ -129,9 +129,9 @@ LBB3_2:
 	pop	ebp
 	ret
 
-	.globl	_error_alloc
+	.globl	_error_init
 	.p2align	4, 0x90
-_error_alloc:
+_error_init:
 	push	ebp
 	mov	ebp, esp
 	push	esi
@@ -160,7 +160,7 @@ L4$pb:
 LBB4_2:
 	mov	ecx, dword ptr [ebp - 8]
 	lea	edx, [esi + l_anon.[ID].5-L4$pb]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	edx, eax
 	mov	eax, 1
 	add	esp, 4
@@ -168,9 +168,9 @@ LBB4_2:
 	pop	ebp
 	ret
 
-	.globl	_error_init
+	.globl	_error_copy
 	.p2align	4, 0x90
-_error_init:
+_error_copy:
 	push	ebp
 	mov	ebp, esp
 	push	esi
@@ -199,46 +199,7 @@ L5$pb:
 LBB5_2:
 	mov	ecx, dword ptr [ebp - 8]
 	lea	edx, [esi + l_anon.[ID].6-L5$pb]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0)
-	mov	edx, eax
-	mov	eax, 1
-	add	esp, 4
-	pop	esi
-	pop	ebp
-	ret
-
-	.globl	_error_copy
-	.p2align	4, 0x90
-_error_copy:
-	push	ebp
-	mov	ebp, esp
-	push	esi
-	push	eax
-	call	L6$pb
-L6$pb:
-	pop	esi
-	mov	eax, dword ptr [ebp + 8]
-	mov	ecx, dword ptr [ebp + 12]
-	mov	dword ptr [ebp - 8], 0
-	sub	esp, 4
-	lea	edx, [ebp - 8]
-	push	edx
-	push	ecx
-	push	eax
-	call	_objc_msgSend
-	add	esp, 16
-	test	eax, eax
-	je	LBB6_2
-	mov	edx, eax
-	xor	eax, eax
-	add	esp, 4
-	pop	esi
-	pop	ebp
-	ret
-LBB6_2:
-	mov	ecx, dword ptr [ebp - 8]
-	lea	edx, [esi + l_anon.[ID].7-L6$pb]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	edx, eax
 	mov	eax, 1
 	add	esp, 4
@@ -253,8 +214,8 @@ _error_autoreleased:
 	mov	ebp, esp
 	push	esi
 	push	eax
-	call	L7$pb
-L7$pb:
+	call	L6$pb
+L6$pb:
 	pop	esi
 	mov	eax, dword ptr [ebp + 8]
 	mov	ecx, dword ptr [ebp + 12]
@@ -276,17 +237,17 @@ L7$pb:
 	call	_objc_retainAutoreleasedReturnValue
 	add	esp, 16
 	test	eax, eax
-	je	LBB7_2
+	je	LBB6_2
 	mov	edx, eax
 	xor	eax, eax
 	add	esp, 4
 	pop	esi
 	pop	ebp
 	ret
-LBB7_2:
+LBB6_2:
 	mov	ecx, dword ptr [ebp - 8]
-	lea	edx, [esi + l_anon.[ID].8-L7$pb]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0)
+	lea	edx, [esi + l_anon.[ID].7-L6$pb]
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	edx, eax
 	mov	eax, 1
 	add	esp, 4
@@ -305,34 +266,29 @@ l_anon.[ID].2:
 	.ascii	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].3:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\013\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\n\000\000\000\005\000\000"
 
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].4:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\020\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\017\000\000\000\005\000\000"
 
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].5:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\025\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\026\000\000\000\005\000\000"
 
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].6:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\032\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\033\000\000\000\005\000\000"
 
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].7:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\037\000\000\000\005\000\000"
-
-	.p2align	2
-l_anon.[ID].8:
-	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000$\000\000\000\005\000\000"
+	.asciz	"6\000\000\000 \000\000\000\005\000\000"
 
 .subsections_via_symbols

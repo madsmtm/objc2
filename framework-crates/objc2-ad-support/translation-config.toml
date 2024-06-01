@@ -1,0 +1,7 @@
+framework = "AdSupport"
+crate = "objc2-ad-support"
+required-dependencies = ["objc2-foundation"]
+macos = "10.14"
+maccatalyst = "13.0"
+ios = "6.0"
+tvos = "9.0"

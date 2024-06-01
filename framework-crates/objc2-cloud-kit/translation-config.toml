@@ -1,0 +1,12 @@
+framework = "CloudKit"
+crate = "objc2-cloud-kit"
+required-dependencies = ["objc2-foundation"]
+macos = "10.10"
+maccatalyst = "13.0"
+ios = "8.0"
+tvos = "9.0"
+watchos = "3.0"
+visionos = "1.0"
+
+class.CKRecordID.mutability = "Immutable"
+class.CKRecordZoneID.mutability = "Immutable"

@@ -8,7 +8,7 @@
 //! it can be parsed from an encoding at runtime.
 //!
 //! The types from this crate is exported under the [`objc2`] crate as
-//! `objc2::encode`, so usually you would just use it from there.
+//! `objc2::encode`, so usually you would use it from there.
 //!
 //! [`objc2`]: https://crates.io/crates/objc2
 //!
@@ -36,20 +36,11 @@
 //! - [`clang`'s source code for generating `@encode`](https://github.com/llvm/llvm-project/blob/fae0dfa6421ea6c02f86ba7292fa782e1e2b69d1/clang/lib/AST/ASTContext.cpp#L7500-L7850).
 
 #![no_std]
-#![warn(elided_lifetimes_in_paths)]
 #![warn(missing_docs)]
-#![deny(non_ascii_idents)]
-#![warn(unreachable_pub)]
-#![deny(unsafe_op_in_unsafe_fn)]
-#![warn(clippy::cargo)]
-#![warn(clippy::ptr_as_ptr)]
+#![warn(clippy::missing_errors_doc)]
+#![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-encode/2.0.0-pre.4")]
-#![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
-
-#[cfg(doctest)]
-#[doc = include_str!("../README.md")]
-extern "C" {}
+#![doc(html_root_url = "https://docs.rs/objc2-encode/4.0.3")]
 
 #[cfg(not(feature = "alloc"))]
 compile_error!("the `alloc` feature currently must be enabled");

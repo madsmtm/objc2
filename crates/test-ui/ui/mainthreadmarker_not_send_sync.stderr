@@ -4,9 +4,17 @@ error[E0277]: `*mut ()` cannot be shared between threads safely
   |     needs_sync::<MainThreadMarker>();
   |                  ^^^^^^^^^^^^^^^^ `*mut ()` cannot be shared between threads safely
   |
-  = help: within `MainThreadMarker`, the trait `Sync` is not implemented for `*mut ()`
-  = note: required because it appears within the type `PhantomData<*mut ()>`
-  = note: required because it appears within the type `MainThreadMarker`
+  = help: within `MainThreadMarker`, the trait `Sync` is not implemented for `*mut ()`, which is required by `MainThreadMarker: Sync`
+note: required because it appears within the type `PhantomData<*mut ()>`
+ --> $RUST/core/src/marker.rs
+  |
+  | pub struct PhantomData<T: ?Sized>;
+  |            ^^^^^^^^^^^
+note: required because it appears within the type `MainThreadMarker`
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/thread.rs
+  |
+  | pub struct MainThreadMarker {
+  |            ^^^^^^^^^^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/mainthreadmarker_not_send_sync.rs
   |
@@ -19,9 +27,17 @@ error[E0277]: `*mut ()` cannot be sent between threads safely
   |     needs_send::<MainThreadMarker>();
   |                  ^^^^^^^^^^^^^^^^ `*mut ()` cannot be sent between threads safely
   |
-  = help: within `MainThreadMarker`, the trait `Send` is not implemented for `*mut ()`
-  = note: required because it appears within the type `PhantomData<*mut ()>`
-  = note: required because it appears within the type `MainThreadMarker`
+  = help: within `MainThreadMarker`, the trait `Send` is not implemented for `*mut ()`, which is required by `MainThreadMarker: Send`
+note: required because it appears within the type `PhantomData<*mut ()>`
+ --> $RUST/core/src/marker.rs
+  |
+  | pub struct PhantomData<T: ?Sized>;
+  |            ^^^^^^^^^^^
+note: required because it appears within the type `MainThreadMarker`
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/thread.rs
+  |
+  | pub struct MainThreadMarker {
+  |            ^^^^^^^^^^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/mainthreadmarker_not_send_sync.rs
   |

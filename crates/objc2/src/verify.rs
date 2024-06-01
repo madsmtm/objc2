@@ -40,13 +40,13 @@ impl fmt::Display for Inner {
 
 /// Failed verifying selector on a class.
 ///
-/// This is returned in the error case of [`Class::verify_sel`], see that for
-/// details.
+/// This is returned in the error case of [`AnyClass::verify_sel`], see that
+/// for details.
 ///
 /// This implements [`Error`], and a description of the error can be retrieved
 /// using [`fmt::Display`].
 ///
-/// [`Class::verify_sel`]: crate::runtime::Class::verify_sel
+/// [`AnyClass::verify_sel`]: crate::runtime::AnyClass::verify_sel
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub struct VerificationError(Inner);
 
@@ -71,6 +71,45 @@ impl fmt::Display for VerificationError {
 
 impl Error for VerificationError {}
 
+/// Relaxed version of `Encoding::equivalent_to_box` that allows
+/// `*mut c_void` and `*const c_void` to be used in place of other pointers,
+/// and allows signed types where unsigned types are excepted.
+///
+/// Note: This is a top-level comparison; `*mut *mut c_void` or structures
+/// containing `*mut c_void` are not allowed differently than usual.
+fn relaxed_equivalent_to_box(encoding: &Encoding, expected: &EncodingBox) -> bool {
+    if cfg!(feature = "relax-void-encoding")
+        && matches!(encoding, Encoding::Pointer(&Encoding::Void))
+        && matches!(expected, EncodingBox::Pointer(_))
+    {
+        return true;
+    }
+
+    if cfg!(feature = "relax-sign-encoding") {
+        let actual_signed = match encoding {
+            Encoding::UChar => &Encoding::Char,
+            Encoding::UShort => &Encoding::Short,
+            Encoding::UInt => &Encoding::Int,
+            Encoding::ULong => &Encoding::Long,
+            Encoding::ULongLong => &Encoding::LongLong,
+            enc => enc,
+        };
+        let expected_signed = match expected {
+            EncodingBox::UChar => &EncodingBox::Char,
+            EncodingBox::UShort => &EncodingBox::Short,
+            EncodingBox::UInt => &EncodingBox::Int,
+            EncodingBox::ULong => &EncodingBox::Long,
+            EncodingBox::ULongLong => &EncodingBox::LongLong,
+            enc => enc,
+        };
+        if actual_signed == expected_signed {
+            return true;
+        }
+    }
+
+    encoding.equivalent_to_box(expected)
+}
+
 pub(crate) fn verify_method_signature(
     method: &Method,
     args: &[Encoding],
@@ -80,7 +119,7 @@ pub(crate) fn verify_method_signature(
 
     // TODO: Verify stack layout
     let (expected, _stack_layout) = iter.extract_return()?;
-    if !ret.equivalent_to_box(&expected) {
+    if !relaxed_equivalent_to_box(ret, &expected) {
         return Err(Inner::MismatchedReturn(expected, ret.clone()).into());
     }
 
@@ -93,7 +132,7 @@ pub(crate) fn verify_method_signature(
         if let Some(res) = iter.next() {
             // TODO: Verify stack layout
             let (expected, _stack_layout) = res?;
-            if !actual.equivalent_to_box(&expected) {
+            if !relaxed_equivalent_to_box(actual, &expected) {
                 return Err(Inner::MismatchedArgument(i, expected, actual.clone()).into());
             }
         } else {
@@ -117,10 +156,12 @@ pub(crate) fn verify_method_signature(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ffi;
     use crate::runtime::Sel;
-    use crate::sel;
     use crate::test_utils;
+    use crate::{msg_send, sel};
     use alloc::string::ToString;
+    use core::ffi::c_void;
     use core::panic::{RefUnwindSafe, UnwindSafe};
 
     #[test]
@@ -166,6 +207,17 @@ mod tests {
             "expected argument at index 0 to have type code 'I', but found ':'"
         );
 
+        // <https://github.com/madsmtm/objc2/issues/566>
+        let res = cls.verify_sel::<(), ffi::NSUInteger>(sel!(getNSInteger));
+        let expected = if cfg!(feature = "relax-sign-encoding") {
+            Ok(())
+        } else if cfg!(target_pointer_width = "64") {
+            Err("expected return to have type code 'q', but found 'Q'".to_string())
+        } else {
+            Err("expected return to have type code 'i', but found 'I'".to_string())
+        };
+        assert_eq!(res.map_err(|e| e.to_string()), expected);
+
         // Metaclass
         let metaclass = cls.metaclass();
         let err = metaclass
@@ -176,10 +228,10 @@ mod tests {
 
     #[test]
     #[cfg(debug_assertions)]
-    #[should_panic = "invalid message send to -[CustomObject foo]: expected return to have type code 'I', but found 'i'"]
+    #[should_panic = "invalid message send to -[CustomObject foo]: expected return to have type code 'I', but found '^i'"]
     fn test_send_message_verified() {
         let obj = test_utils::custom_object();
-        let _: i32 = unsafe { crate::msg_send![&obj, foo] };
+        let _: *const i32 = unsafe { msg_send![&obj, foo] };
     }
 
     #[test]
@@ -187,12 +239,47 @@ mod tests {
     #[should_panic = "invalid message send to +[CustomObject abcDef]: method not found"]
     fn test_send_message_verified_to_class() {
         let cls = test_utils::custom_class();
-        let _: i32 = unsafe { crate::msg_send![cls, abcDef] };
+        let _: i32 = unsafe { msg_send![cls, abcDef] };
     }
 
     #[test]
     fn test_marker_traits() {
         fn assert_marker_traits<T: Send + Sync + UnwindSafe + RefUnwindSafe + Unpin>() {}
         assert_marker_traits::<VerificationError>();
+    }
+
+    #[test]
+    fn test_get_reference() {
+        let mut obj = test_utils::custom_object();
+        let _: () = unsafe { msg_send![&mut obj, setFoo: 42u32] };
+
+        let res: &u32 = unsafe { msg_send![&obj, fooReference] };
+        assert_eq!(*res, 42);
+        let res: *const u32 = unsafe { msg_send![&obj, fooReference] };
+        assert_eq!(unsafe { *res }, 42);
+        let res: *mut u32 = unsafe { msg_send![&obj, fooReference] };
+        assert_eq!(unsafe { *res }, 42);
+    }
+
+    #[test]
+    #[cfg_attr(
+        all(debug_assertions, not(feature = "relax-void-encoding")),
+        should_panic = "invalid message send to -[CustomObject fooReference]: expected return to have type code '^I', but found '^v'"
+    )]
+    fn test_get_reference_void() {
+        let mut obj = test_utils::custom_object();
+        let _: () = unsafe { msg_send![&mut obj, setFoo: 42u32] };
+
+        let res: *mut c_void = unsafe { msg_send![&obj, fooReference] };
+        let res: *mut u32 = res.cast();
+        assert_eq!(unsafe { *res }, 42);
+    }
+
+    #[test]
+    #[cfg(debug_assertions)]
+    #[should_panic = "invalid message send to -[CustomObject foo]: expected return to have type code 'I', but found '^v'"]
+    fn test_get_integer_void() {
+        let obj = test_utils::custom_object();
+        let _: *mut c_void = unsafe { msg_send![&obj, foo] };
     }
 }

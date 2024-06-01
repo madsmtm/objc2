@@ -9,7 +9,7 @@
 
 extern crate objc2 as new_objc2;
 
-use new_objc2::{ClassType, ProtocolType};
+use new_objc2::{ClassType, DeclaredClass, ProtocolType};
 
 mod core {}
 mod std {}
@@ -82,18 +82,25 @@ type ExactSizeIterator = BogusType;
 type SliceConcatExt = BogusType;
 type ToString = BogusType;
 
+type PhantomData = BogusType;
+
 // Test begin below this line
 
-type PhantomData<T> = T;
+struct MyCustomIvars {
+    ivars: i32,
+}
 
 new_objc2::declare_class!(
-    pub struct CustomObject {
-        field1: PhantomData<i32>,
-    }
+    struct CustomObject;
 
     unsafe impl ClassType for CustomObject {
         type Super = new_objc2::runtime::NSObject;
+        type Mutability = new_objc2::mutability::Immutable;
         const NAME: &'static str = "CustomObject";
+    }
+
+    impl DeclaredClass for CustomObject {
+        type Ivars = MyCustomIvars;
     }
 
     unsafe impl CustomObject {
@@ -101,7 +108,7 @@ new_objc2::declare_class!(
         fn _a() {}
 
         #[method_id(b)]
-        fn _b() -> new_objc2::rc::Id<CustomObject, new_objc2::rc::Shared> {
+        fn _b() -> new_objc2::rc::Retained<CustomObject> {
             ::core::unimplemented!()
         }
     }
@@ -114,10 +121,10 @@ mod test_extern_methods {
     new_objc2::extern_methods!(
         unsafe impl CustomObject {
             #[method(a)]
-            pub fn a();
+            fn a();
 
             #[method(b)]
-            pub fn b(&self);
+            fn b(&self);
         }
     );
 }
@@ -127,6 +134,7 @@ new_objc2::extern_class!(
 
     unsafe impl ClassType for NSObject2 {
         type Super = new_objc2::runtime::NSObject;
+        type Mutability = new_objc2::mutability::Immutable;
         const NAME: &'static str = "NSObject";
     }
 );
@@ -141,16 +149,18 @@ new_objc2::extern_protocol!(
     unsafe impl ProtocolType for dyn CustomProtocol {}
 );
 
-pub fn test_selector() {
+#[test]
+fn test_selector() {
     let _sel = new_objc2::sel!(abc);
     let _sel = new_objc2::sel!(abc:def:);
 }
 
-pub fn test_class() {
+#[test]
+fn test_class() {
     let _class = new_objc2::class!(NSObject);
 }
 
-pub fn test_msg_send(obj: &CustomObject) {
+fn test_msg_send(obj: &CustomObject) {
     let superclass = obj.class().superclass().unwrap();
     let _: () = unsafe { new_objc2::msg_send![obj, a] };
     let _: () = unsafe { new_objc2::msg_send![obj, a: obj, b: obj] };
@@ -160,12 +170,12 @@ pub fn test_msg_send(obj: &CustomObject) {
     let _: () = unsafe { new_objc2::msg_send![super(obj, superclass), a: obj, b: obj] };
 }
 
-pub fn test_msg_send_id(obj: &new_objc2::runtime::Object) {
-    let _: new_objc2::rc::Id<new_objc2::runtime::Object, new_objc2::rc::Shared> =
+fn test_msg_send_id(obj: &new_objc2::runtime::AnyObject) {
+    let _: new_objc2::rc::Retained<new_objc2::runtime::AnyObject> =
         unsafe { new_objc2::msg_send_id![obj, a] };
     let _: new_objc2::__macro_helpers::Option<
-        new_objc2::rc::Id<new_objc2::runtime::Object, new_objc2::rc::Shared>,
+        new_objc2::rc::Retained<new_objc2::runtime::AnyObject>,
     > = unsafe { new_objc2::msg_send_id![obj, a] };
-    let _: new_objc2::rc::Id<new_objc2::runtime::Object, new_objc2::rc::Shared> =
+    let _: new_objc2::rc::Retained<new_objc2::runtime::AnyObject> =
         unsafe { new_objc2::msg_send_id![obj, a: obj, b: obj] };
 }

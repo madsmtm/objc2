@@ -64,6 +64,8 @@ pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result
         .as_os_str()
         .to_str()
         .unwrap();
+
+    // Replace paths
     let s = s.replace(workspace_dir, "$WORKSPACE");
     let s = s.replace(
         package_path
@@ -76,6 +78,21 @@ pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result
             .unwrap(),
         "$DIR",
     );
+    let s = regex::Regex::new(r"/rustc/[0-9a-f]*/")
+        .unwrap()
+        .replace_all(&s, |_: &regex::Captures<'_>| "$RUSTC/");
+    let s = regex::Regex::new(r"/.*/rustlib/src/rust/")
+        .unwrap()
+        .replace_all(&s, |_: &regex::Captures<'_>| "$RUSTC/");
+
+    // HACK: Make location data the same no matter which platform generated
+    // the data.
+    let s = s.replace(".asciz\t\"}\\000", ".asciz\t\"p\\000");
+    let s = s.replace(".asciz\t\"L\\000", ".asciz\t\"p\\000");
+    let s = s.replace(".asciz\t\"t\\000", ".asciz\t\"p\\000");
+    let s = s.replace(".asciz\t\"{\\000", ".asciz\t\"p\\000");
+    let s = s.replace(".asciz\t\"T\\000", ".asciz\t\"P\\000");
+
     // HACK: Replace Objective-C image info for simulator targets
     let s = s.replace(
         ".asciz\t\"\\000\\000\\000\\000`\\000\\000\"",
@@ -89,6 +106,7 @@ pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result
     let s = strip_lines(&s, ".file");
     // Added in nightly-2022-07-21
     let s = strip_lines(&s, ".no_dead_strip");
+    let s = strip_lines(&s, ".ident\t\"rustc ");
     // We remove the __LLVM,__bitcode and __LLVM,__cmdline sections because
     // they're uninteresting for out use-case.
     //
@@ -156,8 +174,17 @@ fn demangle_assembly(assembly: &str) -> String {
     let mut demangle_unique: HashMap<String, Vec<String>> = HashMap::new();
 
     // Find all identifiers, and attempt to demangle them
-    let assembly = RE_SYMBOL.replace_all(assembly, |caps: &Captures| {
-        let symbol = caps.get(0).unwrap().as_str();
+    let assembly = RE_SYMBOL.replace_all(assembly, |caps: &Captures<'_>| {
+        let mut symbol = caps.get(0).unwrap().as_str();
+        let (mut prefix, mut suffix) = ("", "");
+        if symbol.starts_with("L__") {
+            prefix = "L";
+            symbol = symbol.strip_prefix('L').unwrap();
+            if let Some(stripped) = symbol.strip_suffix("$non_lazy_ptr") {
+                suffix = "$non_lazy_ptr";
+                symbol = stripped;
+            }
+        }
         match rustc_demangle::try_demangle(symbol) {
             Ok(s) => {
                 let s = s.to_string();
@@ -174,9 +201,9 @@ fn demangle_assembly(assembly: &str) -> String {
                         list_for_this_symbol.len() - 1
                     });
 
-                format!("SYM({s}, {unique_identifier})")
+                format!("{prefix}SYM({s}, {unique_identifier}){suffix}")
             }
-            Err(_) => symbol.to_string(),
+            Err(_) => format!("{prefix}{symbol}{suffix}"),
         }
     });
     // Replace anonymous section names
@@ -188,6 +215,29 @@ mod tests {
     #[test]
     fn test_demangle() {
         use super::*;
+
+        let before = r#"
+   movw    r10, :lower16:(L__ZN16objc2_foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17hb82d9a01a97e5b26E$non_lazy_ptr-(LPC5_0+8))
+   movt    r10, :upper16:(L__ZN16objc2_foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17hb82d9a01a97e5b26E$non_lazy_ptr-(LPC5_0+8))
+
+   .section __DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
+   .p2align    2, 0x0
+L__ZN16objc2_foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17hb82d9a01a97e5b26E$non_lazy_ptr:
+   .indirect_symbol    __ZN16objc2_foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17hb82d9a01a97e5b26E
+   .long   0
+        "#;
+        let after = r#"
+   movw    r10, :lower16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
+   movt    r10, :upper16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
+
+   .section __DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
+   .p2align    2, 0x0
+LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
+   .indirect_symbol    SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)
+   .long   0
+        "#;
+        let output = demangle_assembly(before);
+        assert_eq!(output, after, "Got {output}");
 
         let before = r#"
     .section    __TEXT,__text,regular,pure_instructions

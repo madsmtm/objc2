@@ -9,7 +9,9 @@ typedef struct {
 
 typedef int32_t (^IntBlock)();
 typedef int32_t (^AddBlock)(int32_t);
+typedef int32_t (^Add12)(int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
 typedef LargeStruct (^LargeStructBlock)(LargeStruct);
+
 
 IntBlock get_int_block() {
     return ^{ return (int32_t)7; };
@@ -19,6 +21,11 @@ IntBlock get_int_block_with(int32_t i) {
     return Block_copy(^{ return i; });
 }
 
+int32_t invoke_int_block(IntBlock block) {
+    return block();
+}
+
+
 AddBlock get_add_block() {
     return ^(int32_t a) { return a + 7; };
 }
@@ -27,12 +34,34 @@ AddBlock get_add_block_with(int32_t i) {
     return Block_copy(^(int32_t a) { return a + i; });
 }
 
-int32_t invoke_int_block(IntBlock block) {
-    return block();
-}
-
 int32_t invoke_add_block(AddBlock block, int32_t a) {
     return block(a);
+}
+
+
+Add12 get_add_12() {
+    return ^(
+        int32_t a1, int32_t a2, int32_t a3, int32_t a4,
+        int32_t a5, int32_t a6, int32_t a7, int32_t a8,
+        int32_t a9, int32_t a10, int32_t a11, int32_t a12
+    ) { return a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9 + a10 + a11 + a12; };
+}
+
+Add12 get_add_12_with(int32_t x) {
+    return Block_copy(^(
+        int32_t a1, int32_t a2, int32_t a3, int32_t a4,
+        int32_t a5, int32_t a6, int32_t a7, int32_t a8,
+        int32_t a9, int32_t a10, int32_t a11, int32_t a12
+    ) { return a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9 + a10 + a11 + a12 + x; });
+}
+
+int32_t invoke_add_12(
+    Add12 block,
+    int32_t a1, int32_t a2, int32_t a3, int32_t a4,
+    int32_t a5, int32_t a6, int32_t a7, int32_t a8,
+    int32_t a9, int32_t a10, int32_t a11, int32_t a12
+) {
+    return block(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
 }
 
 LargeStructBlock get_large_struct_block() {
@@ -100,5 +129,3 @@ void try_block_debugging(int32_t x) {
         return obj;
     }));
 }
-
-

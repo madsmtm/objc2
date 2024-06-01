@@ -1,20 +1,16 @@
 use core::mem::ManuallyDrop;
 
 use objc2::msg_send;
-use objc2::rc::{autoreleasepool, Id};
-use objc2::runtime::NSObject;
+use objc2::rc::{autoreleasepool, Retained};
+use objc2::runtime::{NSObject, NSObjectProtocol};
 
-fn retain_count(obj: &NSObject) -> usize {
-    unsafe { msg_send![obj, retainCount] }
-}
-
-fn create_obj() -> Id<NSObject> {
+fn create_obj() -> Retained<NSObject> {
     let obj = ManuallyDrop::new(NSObject::new());
     unsafe {
         let obj: *mut NSObject = msg_send![&*obj, autorelease];
         // All code between the `msg_send!` and the `retain_autoreleased` must
         // be able to be optimized away for this to work.
-        Id::retain_autoreleased(obj).unwrap()
+        Retained::retain_autoreleased(obj).unwrap()
     }
 }
 
@@ -34,20 +30,20 @@ fn test_retain_autoreleased() {
         } else if cfg!(all(target_arch = "arm", panic = "unwind")) {
             // 32-bit ARM unwinding interferes with the optimization
             2
-        } else if cfg!(any(debug_assertions, feature = "exception")) {
+        } else if cfg!(any(debug_assertions, feature = "catch-all")) {
             2
         } else {
             1
         };
 
         let data = create_obj();
-        assert_eq!(retain_count(&data), expected);
+        assert_eq!(data.retainCount(), expected);
 
         let data = create_obj();
-        assert_eq!(retain_count(&data), expected);
+        assert_eq!(data.retainCount(), expected);
 
         // Here we manually clean up the autorelease, so it will always be 1.
         let data = autoreleasepool(|_| create_obj());
-        assert_eq!(retain_count(&data), 1);
+        assert_eq!(data.retainCount(), 1);
     });
 }

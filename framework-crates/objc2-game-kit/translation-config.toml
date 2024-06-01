@@ -1,0 +1,20 @@
+framework = "GameKit"
+crate = "objc2-game-kit"
+required-dependencies = ["objc2-foundation"]
+macos = "10.8"
+maccatalyst = "13.0"
+ios = "3.0"
+tvos = "9.0"
+watchos = "3.0"
+visionos = "1.0"
+
+# error: translator assertion failure: invalid error nullability (left: Unspecified) (Right: Nullable)
+class.GKSession.methods."acceptConnectionFromPeer:error:".skipped = true
+class.GKSession.methods."sendData:toPeers:withDataMode:error:".skipped = true
+class.GKSession.methods."sendDataToAllPeers:withDataMode:error:".skipped = true
+class.GKVoiceChatService.methods."acceptCallID:error:".skipped = true
+class.GKVoiceChatService.methods."startVoiceChatWithParticipantID:error:".skipped = true
+
+# Marked as API_UNAVAILABLE in a category, so we hit the duplicate checking
+class.GKLeaderboard.methods.init.skipped = true
+class.GKLeaderboard.methods.new.skipped = true

@@ -1,18 +1,21 @@
-use objc2::{declare_class, ClassType};
-use objc2::rc::Id;
+use objc2::rc::Retained;
 use objc2::runtime::NSObject;
+use objc2::{declare_class, mutability, ClassType, DeclaredClass};
 
 declare_class!(
     struct CustomObject;
 
     unsafe impl ClassType for CustomObject {
         type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "CustomObject";
     }
 
+    impl DeclaredClass for CustomObject {}
+
     unsafe impl CustomObject {
         #[method(test1)]
-        fn test1() -> Id<Self> {
+        fn test1() -> Retained<Self> {
             unimplemented!()
         }
 

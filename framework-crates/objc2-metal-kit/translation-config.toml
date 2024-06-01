@@ -1,0 +1,44 @@
+framework = "MetalKit"
+crate = "objc2-metal-kit"
+required-dependencies = ["objc2-foundation", "objc2-metal"]
+macos = "10.11"
+maccatalyst = "13.0"
+ios = "9.0"
+tvos = "9.0"
+visionos = "1.0"
+
+# TODO: Re-enable these once the relevant frameworks are present
+class.MTKMeshBufferAllocator.skipped-protocols = ["MDLMeshBufferAllocator"]
+class.MTKMeshBuffer.skipped-protocols = ["MDLMeshBuffer", "MDLNamed"]
+
+# error: unknown error result type
+class.MTKTextureLoader.methods."newTexturesWithContentsOfURLs:options:error:".skipped = true
+
+# Needs `MDLMeshBufferZone` from ModelIO framework
+class.MTKMeshBuffer.methods.zone.skipped = true
+
+# Needs `MDLMeshBufferType` from ModelIO framework
+class.MTKMeshBuffer.methods.type.skipped = true
+
+# Needs `MDLVertexFormat` from ModelIO framework
+fn.MTKModelIOVertexFormatFromMetal.skipped = true
+fn.MTKMetalVertexFormatFromModelIO.skipped = true
+
+# Needs `CGImageRef`
+class.MTKTextureLoader.methods."newTextureWithCGImage:options:completionHandler:".skipped = true
+class.MTKTextureLoader.methods."newTextureWithCGImage:options:error:".skipped = true
+
+# Needs `CGColorSpaceRef`
+class.MTKView.methods.colorspace.skipped = true
+class.MTKView.methods."setColorspace:".skipped = true
+
+# Needs `ModelIO` framework
+class.MTKMesh.methods."initWithMesh:device:error:".skipped = true
+class.MTKMesh.methods."newMeshesFromAsset:device:sourceMeshes:error:".skipped = true
+class.MTKMesh.methods.vertexDescriptor.skipped = true
+fn.MTKModelIOVertexDescriptorFromMetal.skipped = true
+fn.MTKModelIOVertexDescriptorFromMetalWithError.skipped = true
+fn.MTKMetalVertexDescriptorFromModelIO.skipped = true
+fn.MTKMetalVertexDescriptorFromModelIOWithError.skipped = true
+class.MTKTextureLoader.methods."newTextureWithMDLTexture:options:completionHandler:".skipped = true
+class.MTKTextureLoader.methods."newTextureWithMDLTexture:options:error:".skipped = true

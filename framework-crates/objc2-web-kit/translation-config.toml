@@ -1,0 +1,38 @@
+framework = "WebKit"
+crate = "objc2-web-kit"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
+macos = "10.2"
+maccatalyst = "13.0"
+ios = "16.0"
+visionos = "1.0"
+
+# Uses NS_RETURNS_NOT_RETAINED on a `NSString*`
+class.DOMMutationEvent.methods.newValue.skipped = true
+
+# Not marked as nullable but should be; manually defined in additions
+class.WKNavigationAction.methods.sourceFrame.skipped = true
+
+# uses `SecTrustRef` from Security.framework (not yet translated)
+class.WKWebView.methods.serverTrust.skipped = true
+
+# Needs `nw_proxy_config_t`
+class.WKWebsiteDataStore.methods.proxyConfigurations.skipped = true
+class.WKWebsiteDataStore.methods."setProxyConfigurations:".skipped = true
+
+# Needs `JSValue` from the `JavaScriptCore` framework
+class.WebScriptObject.methods.JSValue.skipped = true
+
+# Needs `JSContext` from JavaScriptCore
+class.WebFrame.methods.javaScriptContext.skipped = true
+protocol.WebFrameLoadDelegate.methods."webView:didCreateJavaScriptContext:forFrame:".skipped = true
+
+# Needs `JSGlobalContextRef` from JavaScriptCore
+class.WebFrame.methods.globalContext.skipped = true
+
+# Needs `JSObjectRef` from JavaScriptCore
+class.WebScriptObject.methods.JSObject.skipped = true
+
+# error: translator assertion failure: invalid error nullability (left: Unspecified) (Right: Nullable)
+class.WebHistory.methods."loadFromURL:error:".skipped = true
+class.WebHistory.methods."saveToURL:error:".skipped = true

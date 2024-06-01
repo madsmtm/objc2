@@ -1,0 +1,14 @@
+framework = "ExternalAccessory"
+crate = "objc2-external-accessory"
+required-dependencies = ["objc2-foundation"]
+macos = "10.13"
+maccatalyst = "16.0"
+ios = "3.0"
+tvos = "10.0"
+visionos = "1.0"
+
+# Needs `dispatch_queue_t`
+class.EAWiFiUnconfiguredAccessoryBrowser.methods."initWithDelegate:queue:".skipped = true
+
+# Needs the `UIKit` framework
+class.EAWiFiUnconfiguredAccessoryBrowser.methods."configureAccessory:withConfigurationUIOnViewController:".skipped = true

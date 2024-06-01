@@ -1,7 +1,7 @@
 [package]
 name = "objc2-proc-macros"
 # Remember to update html_root_url in lib.rs
-version = "0.1.1"
+version = "0.1.3"
 authors = ["Mads Marquart <mads@marquart.dk>", "Calvin Watford"]
 edition = "2021"
 rust-version = "1.60"
@@ -20,11 +20,16 @@ license = "MIT"
 [lib]
 proc-macro = true
 
+[lints]
+workspace = true
+
 [features]
-default = ["apple"]
+default = []
+
+# Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
+apple = []
 
 # Runtime selection (for future compatibility)
-apple = []
 gnustep-1-7 = []
 gnustep-1-8 = ["gnustep-1-7"]
 gnustep-1-9 = ["gnustep-1-8"]
@@ -32,4 +37,20 @@ gnustep-2-0 = ["gnustep-1-9"]
 gnustep-2-1 = ["gnustep-2-0"]
 
 [package.metadata.docs.rs]
-default-target = "x86_64-apple-darwin"
+default-target = "aarch64-apple-darwin"
+targets = [
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin",
+    "aarch64-apple-ios",
+    "x86_64-apple-ios",
+    "aarch64-apple-tvos",
+    "aarch64-apple-watchos",
+    "aarch64-apple-ios-macabi",
+    "x86_64-unknown-linux-gnu",
+    "i686-unknown-linux-gnu",
+]
+
+[package.metadata.release]
+shared-version = false
+tag-prefix = "objc-proc-macros"
+enable-features = []

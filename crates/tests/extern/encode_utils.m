@@ -2,8 +2,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <uuid/uuid.h>
-// For NSInteger / NSUInteger. Linking is not required.
-#include <Foundation/NSObject.h>
+#include <Foundation/NSObject.h> // For NSInteger / NSUInteger. Linking is not required.
 
 #define ENCODING_INNER(name, type) char* ENCODING_ ## name = @encode(type);
 
@@ -202,6 +201,20 @@ ENCODING(PTRDIFF_T, ptrdiff_t);
 // uuid.h
 
 ENCODING_NO_ATOMIC(UUID_T, uuid_t);
+
+// simd
+
+#ifdef TARGET_OS_MAC
+#include <simd/simd.h>
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wencode-type"
+ENCODING(SIMD_INT2, vector_int2);
+ENCODING(SIMD_FLOAT1, float);
+ENCODING(SIMD_FLOAT2, vector_float2);
+ENCODING(SIMD_FLOAT2X4, matrix_float2x4);
+ENCODING(SIMD_FLOAT4X2, matrix_float4x2);
+# pragma clang diagnostic pop
+#endif
 
 // Possible extras
 

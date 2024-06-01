@@ -1,9 +1,22 @@
 [workspace]
 members = [
     "crates/*",
+    "framework-crates/*",
     "crates/test-assembly/crates/*",
 ]
 resolver = "2"
+
+[workspace.lints.rust]
+elided_lifetimes_in_paths = "warn"
+missing_copy_implementations = "warn"
+missing_debug_implementations = "warn"
+non_ascii_idents = "deny"
+unreachable_pub = "warn"
+unsafe_op_in_unsafe_fn = "deny"
+
+[workspace.lints.clippy]
+cargo = "warn"
+ptr_as_ptr = "warn"
 
 [profile.assembly-tests]
 inherits = "release"
@@ -12,3 +25,13 @@ lto = true
 # Don't emit unwind info; while important to get right, the control flow is
 # very hard to glean from assembly output.
 panic = "abort"
+
+# Release data for framework crates
+[workspace.metadata.release]
+allow-branch = ["master"]
+push-remote = "0origin"
+shared-version = true # Framework crates share a version number
+tag-prefix = "icrate"
+tag-name = "{{prefix}}-{{version}}"
+enable-features = ["all"]
+owners = ["madsmtm", "simlay"]

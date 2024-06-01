@@ -1,0 +1,93 @@
+framework = "Vision"
+crate = "objc2-vision"
+required-dependencies = ["objc2-foundation"]
+macos = "10.13"
+maccatalyst = "13.0"
+ios = "11.0"
+tvos = "11.0"
+visionos = "1.0"
+
+# Needs SIMD types, which we cannot yet describe the ABI of in Rust
+fn.VNNormalizedFaceBoundingBoxPointForLandmarkPoint.skipped = true
+fn.VNImagePointForFaceLandmarkPoint.skipped = true
+class.VNPoint3D.methods."initWithPosition:".skipped = true
+class.VNPoint3D.methods.position.skipped = true
+class.VNContour.methods.normalizedPoints.skipped = true
+class.VNGeometryUtils.methods."boundingCircleForSIMDPoints:pointCount:error:".skipped = true
+class.VNHumanBodyRecognizedPoint3D.methods.localPosition.skipped = true
+class.VNTrajectoryObservation.methods.equationCoefficients.skipped = true
+class.VNImageHomographicAlignmentObservation.methods.warpTransform.skipped = true
+class.VNHumanBodyPose3DObservation.methods.cameraOriginMatrix.skipped = true
+class.VNHumanBodyPose3DObservation.methods."getCameraRelativePosition:forJointName:error:".skipped = true
+
+# error: unknown error result type
+class.VNTrackingRequest.methods."supportedNumberOfTrackersAndReturnError:".skipped = true
+
+# Needs CoreMedia
+class.VNDetectHumanBodyPose3DRequest.methods."initWithFrameAnalysisSpacing:completionHandler:".skipped = true
+class.VNDetectTrajectoriesRequest.methods."initWithFrameAnalysisSpacing:completionHandler:".skipped = true
+class.VNDetectTrajectoriesRequest.methods."initWithFrameAnalysisSpacing:trajectoryLength:completionHandler:".skipped = true
+class.VNDetectTrajectoriesRequest.methods.targetFrameTime.skipped = true
+class.VNDetectTrajectoriesRequest.methods."setTargetFrameTime:".skipped = true
+class.VNGeneratePersonSegmentationRequest.methods."initWithFrameAnalysisSpacing:completionHandler:".skipped = true
+class.VNObservation.methods.timeRange.skipped = true
+class.VNImageRequestHandler.methods."initWithCMSampleBuffer:options:".skipped = true
+class.VNSequenceRequestHandler.methods."performRequests:onCMSampleBuffer:error:".skipped = true
+class.VNStatefulRequest.methods."initWithFrameAnalysisSpacing:completionHandler:".skipped = true
+class.VNStatefulRequest.methods.frameAnalysisSpacing.skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:options:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:options:completionHandler:".skipped = true
+class.VNVideoProcessor.methods."analyzeTimeRange:error:".skipped = true
+class.VNVideoProcessor.methods."analyzeWithTimeRange:error:".skipped = true
+
+# Needs `CFTimeInterval` from CoreFoundation
+class.VNVideoProcessorTimeIntervalCadence.methods."initWithTimeInterval:".skipped = true
+class.VNVideoProcessorTimeIntervalCadence.methods.timeInterval.skipped = true
+
+# Needs CoreVideo
+class.VNTargetedImageRequest.methods."initWithTargetedCVPixelBuffer:options:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCVPixelBuffer:options:completionHandler:".skipped = true
+class.VNPixelBufferObservation.methods.pixelBuffer.skipped = true
+class.VNInstanceMaskObservation.methods.instanceMask.skipped = true
+class.VNInstanceMaskObservation.methods."generateMaskForInstances:error:".skipped = true
+class.VNInstanceMaskObservation.methods."generateMaskedImageOfInstances:fromRequestHandler:croppedToInstancesExtent:error:".skipped = true
+class.VNInstanceMaskObservation.methods."generateScaledMaskForImageForInstances:fromRequestHandler:error:".skipped = true
+class.VNImageRequestHandler.methods."initWithCVPixelBuffer:options:".skipped = true
+class.VNSequenceRequestHandler.methods."performRequests:onCVPixelBuffer:error:".skipped = true
+
+# Needs CoreGraphics
+class.VNContour.methods.normalizedPath.skipped = true
+class.VNHorizonObservation.methods.transform.skipped = true
+class.VNHorizonObservation.methods."transformForImageWidth:height:".skipped = true
+class.VNImageTranslationAlignmentObservation.methods.alignmentTransform.skipped = true
+class.VNContoursObservation.methods.normalizedPath.skipped = true
+class.VNImageRequestHandler.methods."initWithCVPixelBuffer:orientation:options:".skipped = true
+class.VNImageRequestHandler.methods."initWithCVPixelBuffer:depthData:orientation:options:".skipped = true
+class.VNImageRequestHandler.methods."initWithCGImage:options:".skipped = true
+class.VNImageRequestHandler.methods."initWithCGImage:orientation:options:".skipped = true
+class.VNImageRequestHandler.methods."initWithCIImage:orientation:options:".skipped = true
+class.VNImageRequestHandler.methods."initWithURL:orientation:options:".skipped = true
+class.VNImageRequestHandler.methods."initWithData:orientation:options:".skipped = true
+class.VNImageRequestHandler.methods."initWithCMSampleBuffer:orientation:options:".skipped = true
+class.VNImageRequestHandler.methods."initWithCMSampleBuffer:depthData:orientation:options:".skipped = true
+class.VNSequenceRequestHandler.methods."performRequests:onCVPixelBuffer:orientation:error:".skipped = true
+class.VNSequenceRequestHandler.methods."performRequests:onCGImage:error:".skipped = true
+class.VNSequenceRequestHandler.methods."performRequests:onCGImage:orientation:error:".skipped = true
+class.VNSequenceRequestHandler.methods."performRequests:onCIImage:orientation:error:".skipped = true
+class.VNSequenceRequestHandler.methods."performRequests:onImageURL:orientation:error:".skipped = true
+class.VNSequenceRequestHandler.methods."performRequests:onImageData:orientation:error:".skipped = true
+class.VNSequenceRequestHandler.methods."performRequests:onCMSampleBuffer:orientation:error:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCVPixelBuffer:orientation:options:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCVPixelBuffer:orientation:options:completionHandler:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCGImage:options:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCGImage:options:completionHandler:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCGImage:orientation:options:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCGImage:orientation:options:completionHandler:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCIImage:orientation:options:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCIImage:orientation:options:completionHandler:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedImageURL:orientation:options:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedImageURL:orientation:options:completionHandler:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedImageData:orientation:options:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedImageData:orientation:options:completionHandler:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:orientation:options:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:orientation:options:completionHandler:".skipped = true

@@ -1,0 +1,1 @@
+../crates/objc2/src/topics/about_generated/CHANGELOG.md

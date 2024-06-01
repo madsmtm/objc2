@@ -1,8 +1,11 @@
-use std::io::{Read, Write};
+use std::collections::{BTreeMap, BTreeSet};
+use std::io::{ErrorKind, Read, Seek, Write};
 use std::path::{Path, PathBuf};
+use std::{fs, io};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, EntityKind, EntityVisitResult, Index, TranslationUnit};
+use semver::VersionReq;
 use tracing::{debug_span, error, info, info_span, trace, trace_span};
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::layer::{Layer, SubscriberExt};
@@ -10,7 +13,9 @@ use tracing_subscriber::registry::Registry;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
-use header_translator::{run_cargo_fmt, Cache, Config, Context, File, Output, Stmt};
+use header_translator::{
+    global_analysis, run_cargo_fmt, Config, Context, Library, LibraryConfig, Stmt,
+};
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
 
@@ -28,6 +33,7 @@ fn main() -> Result<(), BoxError> {
         //             metadata.is_span() && metadata.level() == &tracing::Level::INFO
         //         })),
         // )
+        // .with(tracing_subscriber::fmt::Layer::default().with_filter(LevelFilter::ERROR))
         .with(
             HierarchicalLayer::new(2)
                 .with_targets(false)
@@ -39,10 +45,9 @@ fn main() -> Result<(), BoxError> {
     let _span = info_span!("running").entered();
 
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let workspace_dir = manifest_dir.parent().unwrap();
-    let crate_src = workspace_dir.join("icrate/src");
+    let workspace_dir = manifest_dir.parent().unwrap().parent().unwrap();
 
-    let config = load_config(manifest_dir);
+    let config = load_config(workspace_dir)?;
 
     clang_sys::load()?;
     info!(clang_version = clang::get_version());
@@ -74,32 +79,46 @@ fn main() -> Result<(), BoxError> {
         })
         .collect();
 
-    if sdks.len() != 8 {
+    if sdks.len() != 10 {
         error!("should have one of each platform: {sdks:?}");
     }
 
-    let mut final_result = None;
+    let mut libraries = BTreeMap::new();
+
+    let tempdir = workspace_dir.join("target").join("header-translator");
+    fs::create_dir_all(&tempdir)?;
 
     // TODO: Compare between SDKs
     for sdk in sdks {
         // These are found using the `get_llvm_targets.fish` helper script
-        let llvm_targets: &[_] = match &sdk.platform {
-            Platform::MacOsX => &[
-                "x86_64-apple-macosx10.7.0",
-                // "arm64-apple-macosx11.0.0",
-                // "i686-apple-macosx10.7.0",
-            ],
-            Platform::IPhoneOs => &[
-                // "arm64-apple-ios7.0.0",
-                // "armv7-apple-ios7.0.0",
-                // "armv7s-apple-ios",
-                // "arm64-apple-ios14.0-macabi",
-                // "x86_64-apple-ios13.0-macabi",
-            ],
+        let (llvm_targets, platform_header, platform_config_filter): (
+            &[_],
+            _,
+            fn(&LibraryConfig) -> bool,
+        ) = match &sdk.platform {
+            Platform::MacOsX => (
+                &[
+                    // "x86_64-apple-macosx10.12.0",
+                    "arm64-apple-macosx11.0.0",
+                    // "i686-apple-macosx10.12.0",
+                ],
+                "macos.h",
+                |config| config.macos.is_some(),
+            ),
+            Platform::IPhoneOs => (
+                &[
+                    "arm64-apple-ios10.0.0",
+                    // "armv7s-apple-ios10.0.0",
+                    // "arm64-apple-ios14.0-macabi",
+                    // "x86_64-apple-ios13.0-macabi",
+                ],
+                "ios.h",
+                |config| config.ios.is_some(),
+            ),
             // Platform::IPhoneSimulator => &[
-            //     "arm64-apple-ios7.0.0-simulator",
-            //     "x86_64-apple-ios7.0.0-simulator",
-            //     "i386-apple-ios7.0.0-simulator",
+            //     "arm64-apple-ios10.0.0-simulator",
+            //     "x86_64-apple-ios10.0.0-simulator",
+            //     "i386-apple-ios10.0.0-simulator",
             // ],
             // Platform::AppleTvOs => &["arm64-apple-tvos", "x86_64-apple-tvos"],
             // Platform::WatchOs => &["arm64_32-apple-watchos", "armv7k-apple-watchos"],
@@ -110,120 +129,189 @@ fn main() -> Result<(), BoxError> {
             _ => continue,
         };
 
-        let mut result: Option<Output> = None;
+        let mut result: Option<BTreeMap<String, Library>> = None;
+
+        let includes = tempdir.join(platform_header);
+
+        let mut includes_file = fs::File::create(&includes).unwrap();
+        for lib in config.libraries.values() {
+            if !platform_config_filter(lib) {
+                continue;
+            }
+            if let Some(umbrella_header) = &lib.umbrella_header {
+                writeln!(
+                    &mut includes_file,
+                    "#import <{}/{}>",
+                    lib.framework, umbrella_header
+                )?;
+            } else {
+                writeln!(
+                    &mut includes_file,
+                    "#import <{}/{}.h>",
+                    lib.framework, lib.framework,
+                )?;
+            }
+        }
+        includes_file.flush().unwrap();
+        drop(includes_file);
 
         for llvm_target in llvm_targets {
             let _span = info_span!("parsing", platform = ?sdk.platform, llvm_target).entered();
-            let curr_result = parse_sdk(&index, &sdk, llvm_target, &config);
+
+            let curr_result = parse_sdk(&index, &sdk, llvm_target, &config, &includes);
 
             if let Some(prev_result) = &result {
-                let _span = info_span!("comparing results").entered();
-                prev_result.compare(&curr_result);
-
-                // Extra check in case our comparison above was not exaustive
+                // Ensure that each target produces the same result.
                 assert_eq!(*prev_result, curr_result);
             } else {
                 result = Some(curr_result);
             }
         }
 
-        if sdk.platform == Platform::MacOsX {
-            final_result = result;
+        let result = result.unwrap();
+
+        // Hacky way to support UIKit
+        match sdk.platform {
+            Platform::MacOsX => {
+                for (name, library) in result {
+                    if library.data.macos.is_some() {
+                        libraries.insert(name, library);
+                    }
+                }
+            }
+            Platform::IPhoneOs => {
+                for (name, library) in result {
+                    if library.data.macos.is_none() {
+                        libraries.insert(name, library);
+                    }
+                }
+            }
+            _ => {}
         }
     }
 
-    let mut final_result = final_result.expect("got a result");
     let span = info_span!("analyzing").entered();
-    let cache = Cache::new(&final_result, &config);
-    cache.update(&mut final_result);
+    for (name, library) in &mut libraries {
+        let _span = debug_span!("library", name).entered();
+        global_analysis(library);
+    }
     drop(span);
 
-    for (library_name, files) in &final_result.libraries {
+    let dependency_map: BTreeMap<_, _> = libraries
+        .iter()
+        .map(|(library_name, library)| (&**library_name, library.dependencies(&config)))
+        .collect();
+
+    for (library_name, library) in &libraries {
         let _span = info_span!("writing", library_name).entered();
-        let output_path = crate_src.join("generated").join(library_name);
-        std::fs::create_dir_all(&output_path)?;
-        files.output(&output_path).unwrap();
+
+        let crate_dir = workspace_dir
+            .join("framework-crates")
+            .join(&library.data.krate);
+
+        // Ensure directories exist
+        let generated_dir = workspace_dir.join("generated").join(library_name);
+        fs::create_dir_all(&generated_dir)?;
+        fs::create_dir_all(&crate_dir.join("src"))?;
+
+        // Recreate symlink to generated directory
+        let symlink_path = crate_dir.join("src").join("generated");
+        match fs::remove_file(&symlink_path) {
+            Ok(()) => {}
+            Err(err) if err.kind() == ErrorKind::NotFound => {}
+            Err(err) => Err(err)?,
+        }
+        #[cfg(unix)]
+        let res =
+            std::os::unix::fs::symlink(format!("../../../generated/{library_name}"), &symlink_path);
+        #[cfg(windows)]
+        let res = std::os::windows::fs::symlink_dir(
+            format!("..\\..\\..\\generated\\{library_name}"),
+            &symlink_path,
+        );
+        match res {
+            Ok(()) => {}
+            Err(err) if err.kind() == ErrorKind::AlreadyExists => {}
+            Err(err) => Err(err)?,
+        }
+
+        library.output(&crate_dir, &config, &dependency_map)?;
     }
 
-    let span = info_span!("writing features").entered();
-    const FEATURE_SECTION_PATTERN:
-        &str = "# This section has been automatically generated by `objc2`'s `header-translator`.\n# DO NOT EDIT\n";
-    let mut cargo_toml = {
-        let path = crate_src.parent().unwrap().join("Cargo.toml");
-        std::fs::OpenOptions::new()
-            .read(true)
-            .write(true)
-            .append(true)
-            .open(path)?
-    };
-    // find the features section
-    if let Some(pos) = {
-        let mut text = String::new();
-        cargo_toml.read_to_string(&mut text)?;
-        text.find(FEATURE_SECTION_PATTERN)
-    } {
-        // truncate the file to the section header before writing the features
-        let len = u64::try_from(pos + FEATURE_SECTION_PATTERN.len())?;
-        cargo_toml.set_len(len)?;
-    } else {
-        return Err("feature section not found in icrate/Cargo.toml".into());
-    }
-    for (feature, required_features) in final_result.cargo_features(&config) {
-        write!(cargo_toml, "{feature} = [")?;
-        if !required_features.is_empty() {
-            writeln!(cargo_toml)?;
-        }
-        for feature in required_features {
-            writeln!(cargo_toml, "    \"{feature}\",")?;
-        }
-        writeln!(cargo_toml, "]")?;
-    }
+    let span = info_span!("formatting").entered();
+    run_cargo_fmt(libraries.values().map(|library| &library.data.krate));
     drop(span);
 
-    let _span = info_span!("formatting").entered();
-    run_cargo_fmt("icrate");
+    update_ci(workspace_dir, &config)?;
+
+    update_list(workspace_dir, &config)?;
 
     Ok(())
 }
 
-fn load_config(manifest_dir: &Path) -> Config {
-    let _span = info_span!("loading config").entered();
+fn load_config(workspace_dir: &Path) -> Result<Config, BoxError> {
+    let _span = info_span!("loading configs").entered();
 
-    Config::from_file(&manifest_dir.join("translation-config.toml")).expect("read config")
+    let mut libraries = BTreeMap::default();
+
+    for dir in fs::read_dir(workspace_dir.join("framework-crates"))? {
+        let dir = dir?;
+        if !dir.file_type()?.is_dir() {
+            continue;
+        }
+        let path = dir.path().join("translation-config.toml");
+        let config =
+            LibraryConfig::from_file(&path).unwrap_or_else(|e| panic!("read {path:?} config: {e}"));
+        assert_eq!(*config.krate, *dir.file_name());
+        libraries.insert(config.framework.to_string(), config);
+    }
+
+    let path = workspace_dir
+        .join("crates")
+        .join("header-translator")
+        .join("system-config.toml");
+    let system = LibraryConfig::from_file(&path).expect("read system config");
+
+    Ok(Config { libraries, system })
 }
 
-fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Config) -> Output {
-    let tu = get_translation_unit(index, sdk, llvm_target);
+fn parse_sdk(
+    index: &Index<'_>,
+    sdk: &SdkPath,
+    llvm_target: &str,
+    config: &Config,
+    includes: &Path,
+) -> BTreeMap<String, Library> {
+    let tu = get_translation_unit(index, sdk, llvm_target, includes);
 
     let mut preprocessing = true;
-    let mut result = Output::from_libraries(config.libraries.keys());
+    let mut libraries: BTreeMap<String, Library> = config
+        .libraries
+        .iter()
+        .map(|(name, data)| (name.into(), Library::new(name, data)))
+        .collect();
 
-    let mut library_span = None;
-    let mut library_span_name = String::new();
-    let mut file_span = None;
-    let mut file_span_name = String::new();
+    let mut library_span: Option<(_, String)> = None;
+    let mut file_span: Option<(_, _)> = None;
 
     let mut context = Context::new(config, sdk);
 
     tu.get_entity().visit_children(|entity, _parent| {
         let _span = trace_span!("entity", ?entity).entered();
-        if let Some((library_name, Some(file_name))) = context.get_library_and_file_name(&entity) {
-            if library_span_name != library_name {
-                library_span.take();
+        if let Some(location) = context.get_location(&entity) {
+            let library_name = location.library_name();
+            if library_span.as_ref().map(|(_, s)| &**s) != Some(library_name) {
+                library_span = Some((
+                    debug_span!("library", name = library_name).entered(),
+                    library_name.to_string(),
+                ));
                 file_span.take();
-                file_span_name = String::new();
-
-                library_span_name = library_name.clone();
-                library_span = Some(debug_span!("library", name = library_name).entered());
             }
-            if file_span_name != file_name {
-                file_span.take();
-
-                file_span_name = file_name.clone();
-                file_span = Some(debug_span!("file", name = file_name).entered());
+            if file_span.as_ref().map(|(_, l)| l) != Some(&location) {
+                file_span = Some((debug_span!("file", ?location).entered(), location.clone()));
             }
 
-            if let Some(library) = result.libraries.get_mut(&library_name) {
+            if let Some(library) = libraries.get_mut(library_name) {
                 match entity.get_kind() {
                     EntityKind::InclusionDirective if preprocessing => {
                         let name = entity.get_name().expect("inclusion name");
@@ -241,21 +329,18 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
                             }
 
                             // If inclusion is not umbrella header
-                            if included != library_name {
+                            if included != *library_name {
                                 // The file is often included twice, even
                                 // within the same file, so insertion can fail
-                                library
-                                    .files
-                                    .entry(included)
-                                    .or_insert_with(|| File::new(&library_name, &context));
+                                library.add_module(vec![included])
                             }
                         }
                     }
                     EntityKind::MacroExpansion if preprocessing => {
-                        let location = entity.get_location().expect("macro location");
+                        let clang_location = entity.get_location().expect("macro location");
                         context
                             .macro_invocations
-                            .insert(location.get_spelling_location(), entity);
+                            .insert(clang_location.get_spelling_location(), entity);
                     }
                     EntityKind::MacroDefinition if preprocessing => {
                         // let name = entity.get_name().expect("macro def name");
@@ -268,9 +353,9 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
                         }
                         preprocessing = false;
                         // No more includes / macro expansions after this line
-                        let file = library.files.get_mut(&file_name).expect("file");
                         for stmt in Stmt::parse(&entity, &context) {
-                            file.add_stmt(stmt);
+                            let module = library.module_mut(&location);
+                            module.add_stmt(stmt);
                         }
                     }
                 }
@@ -281,20 +366,19 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
         EntityVisitResult::Continue
     });
 
-    result
+    libraries
 }
 
 fn get_translation_unit<'i: 'tu, 'tu>(
     index: &'i Index<'tu>,
     sdk: &SdkPath,
     llvm_target: &str,
+    includes: &Path,
 ) -> TranslationUnit<'tu> {
     let _span = info_span!("initializing translation unit").entered();
 
-    let target = format!("--target={llvm_target}");
-
     let tu = index
-        .parser(Path::new(env!("CARGO_MANIFEST_DIR")).join("framework-includes.h"))
+        .parser(includes)
         .detailed_preprocessing_record(true)
         .incomplete(true)
         .skip_function_bodies(true)
@@ -307,7 +391,8 @@ fn get_translation_unit<'i: 'tu, 'tu>(
         .arguments(&[
             "-x",
             "objective-c",
-            &target,
+            "-target",
+            llvm_target,
             "-Wall",
             "-Wextra",
             "-fobjc-arc",
@@ -347,4 +432,117 @@ fn get_translation_unit<'i: 'tu, 'tu>(
     // dbg_file(cursor_file);
 
     tu
+}
+
+fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
+    let _span = info_span!("updating ci.yml").entered();
+    let mut ci = fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(workspace_dir.join(".github/workflows/ci.yml"))?;
+    // find the features section
+    let mut text = String::new();
+    ci.read_to_string(&mut text)?;
+    let (before, after) = text
+        .split_once("BEGIN AUTOMATICALLY GENERATED")
+        .expect("begin section not found in ci.yml");
+    let (_, after) = after
+        .split_once("  # END AUTOMATICALLY GENERATED")
+        .expect("end section not found in ci.yml");
+
+    // Clear file
+    ci.set_len(0)?;
+    ci.seek(io::SeekFrom::Start(0))?;
+
+    writeln!(ci, "{before}BEGIN AUTOMATICALLY GENERATED")?;
+
+    fn writer(
+        mut ci: impl Write,
+        config: &Config,
+        env_name: &str,
+        check: impl Fn(&LibraryConfig) -> bool,
+    ) -> io::Result<()> {
+        // Use a BTreeSet to sort the libraries
+        let mut frameworks = BTreeSet::new();
+        for library in config.libraries.values() {
+            if check(library) {
+                frameworks.insert(&*library.krate);
+            }
+        }
+        write!(ci, "  {env_name}:")?;
+        for framework in frameworks {
+            write!(ci, " --package={}", framework)?;
+        }
+        writeln!(ci)?;
+
+        Ok(())
+    }
+
+    writer(&mut ci, config, "FRAMEWORKS_MACOS_10_12", |lib| {
+        lib.macos
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=10.12").unwrap().matches(v))
+            // HACK: These depend on `objc2-uniform-type-identifiers`, which
+            // is not available on macOS 10.12, but will be enabled by `"all"`
+            && !["objc2-file-provider", "objc2-health-kit", "objc2-photos"].contains(&&*lib.krate)
+    })?;
+    writer(&mut ci, config, "FRAMEWORKS_MACOS_10_13", |lib| {
+        lib.macos
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=10.13").unwrap().matches(v))
+            // HACK: These depend on `objc2-uniform-type-identifiers`, which
+            // is not available on macOS 10.13, but will be enabled by `"all"`
+            && !["objc2-file-provider", "objc2-health-kit", "objc2-photos"].contains(&&*lib.krate)
+    })?;
+    writer(&mut ci, config, "FRAMEWORKS_MACOS_11", |lib| {
+        lib.macos
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=11.0").unwrap().matches(v))
+    })?;
+    writer(&mut ci, config, "FRAMEWORKS_MACOS_12", |lib| {
+        lib.macos
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=12.0").unwrap().matches(v))
+    })?;
+    writer(&mut ci, config, "FRAMEWORKS_MACOS_13", |lib| {
+        lib.macos
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=13.0").unwrap().matches(v))
+    })?;
+    writer(&mut ci, config, "FRAMEWORKS_MACOS_14", |lib| {
+        lib.macos
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=14.0").unwrap().matches(v))
+    })?;
+    writer(&mut ci, config, "FRAMEWORKS_IOS_10", |lib| {
+        lib.ios
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=10.0").unwrap().matches(v))
+    })?;
+    writer(&mut ci, config, "FRAMEWORKS_GNUSTEP", |lib| lib.gnustep)?;
+
+    write!(&mut ci, "  # END AUTOMATICALLY GENERATED{after}")?;
+
+    Ok(())
+}
+
+fn update_list(workspace_dir: &Path, config: &Config) -> io::Result<()> {
+    let _span = info_span!("updating list_data.md").entered();
+
+    let mut f = fs::File::create(
+        workspace_dir.join("crates/objc2/src/topics/about_generated/list_data.md"),
+    )?;
+
+    writeln!(f, "| Framework | Crate | Documentation |")?;
+    writeln!(f, "| --- | --- | --- |")?;
+
+    for (name, library) in &config.libraries {
+        let package = &library.krate;
+        writeln!(
+            f,
+            "| `{name}` | [![`{package}`](https://badgen.net/crates/v/{package})](https://crates.io/crates/{package}) | [![docs.rs](https://docs.rs/{package}/badge.svg)](https://docs.rs/{package}/) |",
+        )?;
+    }
+
+    Ok(())
 }

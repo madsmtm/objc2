@@ -1,0 +1,25 @@
+framework = "SoundAnalysis"
+crate = "objc2-sound-analysis"
+required-dependencies = ["objc2-foundation"]
+macos = "10.15"
+maccatalyst = "13.0"
+ios = "13.0"
+tvos = "13.0"
+watchos = "9.0"
+visionos = "1.0"
+
+# Needs `CMTime`
+class.SNClassifySoundRequest.methods."setWindowDuration:".skipped = true
+class.SNClassifySoundRequest.methods.windowDuration.skipped = true
+
+# Needs `CMTimeRange`
+class.SNTimeDurationConstraint.methods.durationRange.skipped = true
+class.SNTimeDurationConstraint.methods."initWithDurationRange:".skipped = true
+class.SNClassificationResult.methods.timeRange.skipped = true
+
+# Needs `AVFAudio` framework
+class.SNAudioStreamAnalyzer.methods."initWithFormat:".skipped = true
+class.SNAudioStreamAnalyzer.methods."analyzeAudioBuffer:atAudioFramePosition:".skipped = true
+
+# Needs `MLModel` from the `CoreML` framework
+class.SNClassifySoundRequest.methods."initWithMLModel:error:".skipped = true

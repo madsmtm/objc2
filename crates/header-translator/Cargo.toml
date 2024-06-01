@@ -8,15 +8,21 @@ repository = "https://github.com/madsmtm/objc2"
 license = "Zlib OR Apache-2.0 OR MIT"
 
 [dependencies]
-clang = { version = "2.0", features = ["runtime", "clang_10_0"] }
+# https://github.com/KyleMayes/clang-rs/pull/58
+clang = { git = "https://github.com/madsmtm/clang-rs.git", branch = "fix-ub-tokenize", features = ["runtime", "clang_10_0"] }
 clang-sys = { version = "1.4.0" }
-toml = "0.5.9"
+toml_edit = "0.22.9"
+basic-toml = "0.1.2"
 serde = { version = "1.0.144", features = ["derive"] }
-apple-sdk = { version = "0.4.0", default-features = false }
+apple-sdk = { version = "0.5.1", default-features = false }
 tracing = { version = "0.1.37", default-features = false, features = ["std"] }
 tracing-subscriber = { version = "0.3.16", features = ["fmt"] }
 tracing-tree = { git = "https://github.com/madsmtm/tracing-tree.git" }
-proc-macro2 = "1.0.49"
-syn = { version = "1.0", features = ["parsing"] }
-heck = "0.4"
+proc-macro2 = "1.0.66"
+syn = { version = "2.0", features = ["parsing"] }
+heck = "0.5"
 semver = { version = "1.0", features = ["serde"] }
+lenient_semver_parser = "0.4"
+
+[package.metadata.release]
+release = false

@@ -1,37 +1,41 @@
-error[E0277]: the trait bound `objc2::runtime::Object: ClassType` is not satisfied
+error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
  --> ui/msg_send_super_not_classtype.rs
   |
   |     let _: () = unsafe { msg_send![super(obj), method] };
   |                          ----------------^^^----------
   |                          |               |
-  |                          |               the trait `ClassType` is not implemented for `objc2::runtime::Object`
+  |                          |               the trait `ClassType` is not implemented for `AnyObject`
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `ClassType`:
             NSObject
             __NSProxy
-            __RcTestObject
-note: required by a bound in `__send_super_message_static`
- --> $WORKSPACE/crates/objc2/src/message/mod.rs
+note: required by a bound in `send_super_message_static`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send.rs
   |
-  |         Self::__Inner: ClassType,
-  |                        ^^^^^^^^^ required by this bound in `MessageReceiver::__send_super_message_static`
+  |     unsafe fn send_super_message_static<A, R>(self, sel: Sel, args: A) -> R
+  |               ------------------------- required by a bound in this associated function
+  |     where
+  |         Self::Inner: ClassType,
+  |                      ^^^^^^^^^ required by this bound in `MsgSend::send_super_message_static`
 
-error[E0277]: the trait bound `objc2::runtime::Object: ClassType` is not satisfied
+error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
  --> ui/msg_send_super_not_classtype.rs
   |
   |     let _: () = unsafe { msg_send![super(obj), method] };
   |                          ----------------^^^----------
   |                          |               |
-  |                          |               the trait `ClassType` is not implemented for `objc2::runtime::Object`
+  |                          |               the trait `ClassType` is not implemented for `AnyObject`
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `ClassType`:
             NSObject
             __NSProxy
-            __RcTestObject
-note: required by a bound in `__send_super_message_static`
- --> $WORKSPACE/crates/objc2/src/message/mod.rs
+note: required by a bound in `send_super_message_static`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send.rs
   |
-  |         <Self::__Inner as ClassType>::Super: ClassType,
-  |                                              ^^^^^^^^^ required by this bound in `MessageReceiver::__send_super_message_static`
+  |     unsafe fn send_super_message_static<A, R>(self, sel: Sel, args: A) -> R
+  |               ------------------------- required by a bound in this associated function
+...
+  |         <Self::Inner as ClassType>::Super: ClassType,
+  |                                            ^^^^^^^^^ required by this bound in `MsgSend::send_super_message_static`

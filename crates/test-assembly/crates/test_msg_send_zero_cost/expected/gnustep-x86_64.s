@@ -8,11 +8,11 @@ handle:
 	push	r14
 	push	rbx
 	push	rax
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	add	rsp, 8
 	pop	rbx
 	pop	r14
@@ -28,13 +28,13 @@ handle_with_sel:
 	push	r14
 	push	rbx
 	push	rax
-	mov	r14, rdi
+	mov	rbx, rdi
 	mov	rax, qword ptr [rip + SEL_REF@GOTPCREL]
-	mov	rbx, qword ptr [rax]
-	mov	rsi, rbx
+	mov	r14, qword ptr [rax]
+	mov	rsi, r14
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rdi, r14
-	mov	rsi, rbx
+	mov	rdi, rbx
+	mov	rsi, r14
 	add	rsp, 8
 	pop	rbx
 	pop	r14
@@ -52,7 +52,7 @@ SEL:
 	.type	SEL_REF,@object
 	.section	.data.rel.ro.SEL_REF,"aw",@progbits
 	.globl	SEL_REF
-	.p2align	3
+	.p2align	3, 0x0
 SEL_REF:
 	.quad	SEL
 	.size	SEL_REF, 8

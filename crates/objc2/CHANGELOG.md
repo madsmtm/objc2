@@ -7,12 +7,375 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
-* Added `objc2::rc::autoreleasepool_leaking`, and improve performance of
-  objects `Debug` impls.
+* Added `AnyClass::is_metaclass`.
+
+
+## 0.5.2 - 2024-05-21
+
+### Added
+* Added `Retained::autorelease_ptr`.
+* Added the feature flag `"relax-sign-encoding"`, which when enabled, allows
+  using e.g. `NSInteger` in places where you would otherwise have to use
+  `NSUInteger`.
 
 ### Changed
-* Made the default ownership in `Id` be `Shared`. This means that you can now
-  write `Id<NSString>`, and it'll mean `Id<NSString, Shared>`.
+* Renamed `Id` to `Retained`, to better reflect what it represents.
+
+  The old name is kept as a soft-deprecated type-alias (will be fully
+  deprecated in `v0.6.0`).
+
+  The same is done for:
+  - `rc::WeakId` to `rc::Weak`.
+  - `rc::DefaultId` to `rc::DefaultRetained`.
+  - `rc::IdFromIterator` to `rc::RetainedFromIterator`.
+  - `rc::IdIntoIterator` to `rc::RetainedIntoIterator`.
+
+### Deprecated
+* Deprecated the `apple` Cargo feature flag, it is assumed by default on Apple
+  platforms.
+
+
+## 0.5.1 - 2024-04-17
+
+### Added
+* Made the following runtime methods available without the `"malloc"` feature
+  flag:
+  - `Method::return_type`.
+  - `Method::argument_type`.
+  - `AnyClass::classes`.
+  - `AnyClass::instance_methods`.
+  - `AnyClass::adopted_protocols`.
+  - `AnyClass::instance_variables`.
+  - `AnyProtocol::protocols`.
+  - `AnyProtocol::adopted_protocols`.
+* Added `Id::into_raw` as the oppositve of `Id::from_raw`.
+* Added the following missing methods on `NSObjectProtocol`:
+  - `isEqual`.
+  - `hash`.
+  - `isKindOfClass`.
+  - `isMemberOfClass`.
+  - `respondsToSelector`.
+  - `conformsToProtocol`.
+  - `description`.
+  - `debugDescription`.
+  - `isProxy`.
+  - `retainCount`.
+* Added `NSObject::init`.
+* Added `NSObject::doesNotRecognizeSelector`.
+
+### Changed
+* Moved `ClassBuilder` and `ProtocolBuilder` from the `declare` module to the
+  `runtime` module. The old locations are deprecated.
+* Enabled the `"verify"` feature flag's functionality when debug assertions are
+  enabled.
+* Renamed `Id::new` to `Id::from_raw`. The previous name is kept as a
+  deprecated alias.
+
+
+## 0.5.0 - 2023-12-03
+
+### Added
+* Added the following traits to the `mutability` module (see the documentation
+  for motivation and usage info):
+  - `HasStableHash`.
+  - `IsAllowedMutable`.
+  - `IsMainThreadOnly`.
+  - `CounterpartOrSelf`.
+* Added new `encode` traits `EncodeReturn`, `EncodeArgument` and
+  `EncodeArguments`.
+* Added methods `as_ptr` and `as_mut_ptr` to `Allocated`.
+* Added optimization for converting `msg_send_id![cls, alloc]` to a call to
+  the faster runtime function `objc_alloc`.
+* Added `DeclaredClass`, which represents classes that are declared in Rust.
+* Added `Allocated::set_ivars`, which sets the instance variables of an
+  object, and returns the new `rc::PartialInit`.
+* Added the ability for `msg_send_id!` to call `super` methods.
+* Implement `Send` and `Sync` for `ProtocolObject` if the underlying protocol
+  implements it.
+* Added ability to create `Send` and `Sync` versions of
+  `ProtocolObject<dyn NSObjectProtocol>`.
+
+### Changed
+* **BREAKING**: Changed how instance variables work in `declare_class!`.
+
+  Previously, instance variables had to implement `Encode`, and you had to
+  initialize them properly, which was difficult to ensure.
+
+  Now, you implement the new `DeclaredClass` trait instead, which helps to
+  ensure all of this for you.
+
+  ```rust
+  // Before
+  declare_class!(
+      struct MyObject {
+          object: IvarDrop<Id<NSObject>, "_object">,
+          data: IvarDrop<Option<Box<MyData>>, "_data">,
+      }
+
+      mod ivars;
+
+      unsafe impl ClassType for MyObject {
+          type Super = NSObject;
+          type Mutability = InteriorMutable;
+          const NAME: &'static str = "MyObject";
+      }
+
+      unsafe impl MyObject {
+          #[method(init)]
+          unsafe fn init(this: *mut Self) -> Option<NonNull<Self>> {
+              let this: Option<&mut Self> = msg_send![super(this), init];
+              this.map(|this| {
+                  Ivar::write(&mut this.object, NSObject::new());
+                  Ivar::write(&mut this.data, Box::new(MyData::new()));
+                  NonNull::from(this)
+              })
+          }
+      }
+  );
+
+  extern_methods!(
+      unsafe impl MyObject {
+          #[method_id(new)]
+          pub fn new() -> Id<Self>;
+      }
+  );
+
+  fn main() {
+      let obj = MyObject::new();
+      println!("{:?}", obj.object);
+  }
+
+  // After
+  struct MyIvars {
+      object: Id<NSObject>,
+      data: Option<Box<MyData>>,
+  }
+
+  declare_class!(
+      struct MyObject;
+
+      unsafe impl ClassType for MyObject {
+          type Super = NSObject;
+          type Mutability = InteriorMutable;
+          const NAME: &'static str = "MyObject";
+      }
+
+      impl DeclaredClass for MyObject {
+          type Ivars = MyIvars;
+      }
+
+      unsafe impl MyObject {
+          #[method_id(init)]
+          pub fn init(this: Allocated<Self>) -> Option<Id<Self>> {
+              let this = this.set_ivars(MyIvars {
+                  object: NSObject::new(),
+                  data: MyData::new(),
+              });
+              unsafe { msg_send_id![super(this), init] }
+          }
+      }
+  );
+
+  extern_methods!(
+      unsafe impl MyObject {
+          #[method_id(new)]
+          pub fn new() -> Id<Self>;
+      }
+  );
+
+  fn main() {
+      let obj = MyObject::new();
+      println!("{:?}", obj.ivars().object);
+  }
+  ```
+* **BREAKING**: `AnyClass::verify_sel` now take more well-defined types
+  `EncodeArguments` and  `EncodeReturn`.
+* **BREAKING**: Changed how the `mutability` traits work; these no longer have
+  `ClassType` as a super trait, allowing them to work for `ProtocolObject` as
+  well.
+
+  This effectively means you can now `copy` a `ProtocolObject<dyn NSCopying>`.
+* **BREAKING**: Allow implementing `DefaultId` for any type, not just those
+  who are `IsAllocableAnyThread`.
+* **BREAKING**: Moved the `MethodImplementation` trait from the `declare`
+  module to the `runtime` module.
+* **BREAKING**: Moved the `MessageReceiver` trait to the `runtime` module.
+* **BREAKING**: Make the `MessageReceiver` trait no longer implemented for
+  references to `Id`. Dereference the `Id` yourself.
+
+  Note: Passing `&Id` in `msg_send!` is still supported.
+* **BREAKING**: `MessageReceiver::send_message` and
+  `MessageReceiver::send_super_message` now take `EncodeArguments` and return
+  `EncodeReturn`, instead of internal traits.
+
+  This is done to make `MessageReceiver` more straightforward to understand,
+  although it now also has slightly less functionality than `msg_send!`.
+
+  In particular automatic conversion of `bool` is not supported in
+  `MessageReceiver`.
+* Relaxed the requirements for receivers in `MethodImplementation`; now,
+  anything that implements `MessageReceiver` can be used as the receiver of
+  a method.
+* **BREAKING**: Renamed the associated types `Ret` and `Args` on
+  `MethodImplementation` to `Return` and `Arguments`.
+* **BREAKING**: Make `rc::Allocated` allowed to be `NULL` internally, such
+  that uses of `Option<Allocated<T>>` is now simply `Allocated<T>`.
+* `AnyObject::class` now returns a `'static` reference to the class.
+* Relaxed `ProtocolType` requirement on `ProtocolObject`.
+* **BREAKING**: Updated `encode` types to those from `objc2-encode v4.0.0`.
+
+### Deprecated
+* Soft deprecated using `msg_send!` without a comma between arguments (i.e.
+  deprecated when the `"unstable-msg-send-always-comma"` feature is enabled).
+
+  See the following for an example of how to upgrade:
+  ```rust
+  // Before
+  let _: NSInteger = msg_send![
+      obj,
+      addTrackingRect:rect
+      owner:obj
+      userData:ptr::null_mut::<c_void>()
+      assumeInside:Bool::NO
+  ];
+  // After
+  let _: NSInteger = msg_send![
+      obj,
+      addTrackingRect: rect,
+      owner: obj,
+      userData: ptr::null_mut::<c_void>(),
+      assumeInside: false,
+  ];
+  ```
+
+### Fixed
+* Fixed the name of the protocol that `NSObjectProtocol` references.
+* Allow cloning `Id<AnyObject>`.
+* **BREAKING**: Restrict message sending to `&mut` references to things that
+  implement `IsAllowedMutable`.
+* Disallow the ability to use non-`Self`-like types as the receiver in
+  `declare_class!`.
+* Allow adding instance variables with the same name on Apple platforms.
+* **BREAKING**: Make loading instance variables robust and sound in the face
+  of instance variables with the same name.
+
+  To read or write the instance variable for an object, you should now use the
+  `load`, `load_ptr` and `load_mut` methods on `Ivar`, instead of the `ivar`,
+  `ivar_ptr` and `ivar_mut` methods on `AnyObject`.
+
+  This _is_ more verbose, but it also ensures that the class for the instance
+  variable you're loading is the same as the one the instance variable you
+  want to access is defined on.
+
+  ```rust
+  // Before
+  let number = unsafe { *obj.ivar::<u32>("number") };
+
+  // After
+  let ivar = cls.instance_variable("number").unwrap();
+  let number = unsafe { *ivar.load::<u32>(&obj) };
+  ```
+* Implement `RefEncode` normally for `c_void`. This makes `AtomicPtr<c_void>`
+  implement `Encode`.
+
+### Removed
+* **BREAKING**: Removed `ProtocolType` implementation for `NSObject`.
+  Use the more precise `NSObjectProtocol` trait instead!
+* **BREAKING**: Removed the `MessageArguments` trait.
+* **BREAKING**: Removed the following items from the `declare` module: `Ivar`,
+  `IvarEncode`, `IvarBool`, `IvarDrop`, `IvarType` and `InnerIvarType`.
+
+  Ivar functionality is available in a different form now, see above under
+  "Changed".
+* **BREAKING**: Removed `ClassBuilder::add_static_ivar`.
+
+
+## 0.4.1 - 2023-07-31
+
+### Added
+* Allow using `MainThreadMarker` in `extern_methods!`.
+* Added the feature flag `"relax-void-encoding"`, which when enabled, allows
+  using `*mut c_void` in a few places where you would otherwise have to
+  specify the encoding precisely.
+
+### Changed
+* Renamed `runtime` types:
+  - `Object` to `AnyObject`.
+  - `Class` to `AnyClass`.
+  - `Protocol` to `AnyProtocol`.
+
+  To better fit with Swift's naming scheme. The types are still available
+  under the old names as deprecated aliases.
+
+### Fixed
+* **BREAKING**: Updated `encode` types to those from `objc2-encode v3.0.0`.
+
+  This is technically a breaking change, but it should allow this crate to be
+  compiled together with pre-release versions of it, meaning that in practice
+  strictly more code out there will compile because of this. Hence it was
+  deemed the better trade-off.
+
+
+## 0.4.0 - 2023-06-20
+
+### Added
+* Added `objc2::rc::autoreleasepool_leaking`, and improve performance of
+  objects `Debug` impls.
+* **BREAKING**: Added associated type `ClassType::Mutability`, which replaces
+  the ownership type on `Id`, and must be specified for all class types.
+
+  An example:
+  ```rust
+  // Before
+  use objc2::runtime::NSObject;
+  use objc2::{declare_class, ClassType};
+
+  declare_class!(
+      struct MyDelegate;
+
+      unsafe impl ClassType for MyDelegate {
+          type Super = NSObject;
+      }
+
+      // ... methods
+  );
+
+  // After
+  use objc2::runtime::NSObject;
+  use objc2::mutability::InteriorMutable;
+  use objc2::{declare_class, ClassType};
+
+  declare_class!(
+      struct MyDelegate;
+
+      unsafe impl ClassType for MyDelegate {
+          type Super = NSObject;
+          type Mutability = InteriorMutable; // Added
+      }
+
+      // ... methods
+  );
+  ```
+* Added `ClassType::retain`, which is a safe way to go from a reference `&T`
+  to an `Id<T>`.
+* Added `mutability` module, containing various types that can be specified
+  for the above.
+* Preliminary support for specifying `where` bounds on methods inside
+  `extern_protocol!` and `extern_methods!`.
+* Allow arbitary expressions in `const NAME` in `extern_class!`,
+  `extern_protocol!` and `declare_class!`.
+* Added `rc::IdIntoIterator` helper trait and forwarding `IntoIterator`
+  implementations for `rc::Id`.
+* Added `rc::IdFromIterator` helper trait for implementing `IntoIterator`
+  for `rc::Id`.
+* Added `Display` impl for `runtime::Class`, `runtime::Sel` and
+  `runtime::Protocol`.
+* Added `Debug` impl for `runtime::Method` and `runtime::Ivar`.
+* Added `Method::set_implementation`.
+* Added `Method::exchange_implementation`.
+* Added `Object::set_class`.
+
+### Changed
 * **BREAKING**: `objc2::rc::AutoreleasePool` is now a zero-sized `Copy` type
   with a lifetime parameter, instead of the lifetime parameter being the
   reference it was behind.
@@ -23,9 +386,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Additionally, rename the mutable version to `Id::autorelease_mut`.
 * **BREAKING**: Moved `VerificationError`, `ProtocolObject` and
   `ImplementedBy` into the `runtime` module.
+* Relaxed a `fmt::Debug` bound on `WeakId`'s own `fmt::Debug` impl.
+* Changed `Debug` impl for `runtime::Class`, `runtime::Sel` and
+  `runtime::Protocol` to give more information.
+* **BREAKING**: Updated `encode` module to `objc2-encode v2.0.0`.
 
 ### Fixed
 * Fixed using autorelease pools on 32bit macOS and older macOS versions.
+* Fixed memory leaks in and improved performance of `exception::catch`.
+
+### Removed
+* **BREAKING**: Removed `rc::SliceId`, since it is implementable outside
+  `objc2` from the layout guarantees of `rc::Id`.
+* **BREAKING**: Removed `Ownership` type parameter from `Id`, as well as
+  `rc::Ownership`, `rc::Owned`, `rc::Shared`, `Id::from_shared` and
+  `Id::into_shared`. This functionality has been moved from being at the
+  "usage-level", to being moved to the "type-level" in the associated type
+  `ClassType::Mutability`.
+
+  While being slightly more restrictive, it should vastly help you avoid
+  making mistakes around mutability (e.g. it is usually a mistake to make a
+  mutable reference `&mut` to an Objective-C object).
+
+  An example:
+  ```rust
+  // Before
+  use objc2::rc::{Id, Shared};
+  use objc2::runtime::NSObject;
+  use objc2::msg_send_id;
+
+  let obj: Id<NSObject, Shared> = unsafe { msg_send_id![NSObject::class(), new] };
+
+  // After
+  use objc2::rc::Id;
+  use objc2::runtime::NSObject;
+  use objc2::msg_send_id;
+
+  let obj: Id<NSObject> = unsafe { msg_send_id![NSObject::class(), new] };
+  ```
+* **BREAKING**: Removed `impl<T> TryFrom<WeakId<T>> for Id<T>` impl since it
+  did not have a proper error type, making it less useful than `WeakId::load`.
+* **BREAKING**: Removed forwarding `Iterator` implementation for `Id`, since
+  it conflicts with the `IntoIterator` implementation that it now has instead.
 
 
 ## 0.3.0-beta.5 - 2023-02-07
@@ -35,7 +437,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added support for selectors with multiple colons like `abc::` in the `sel!`,
   `extern_class!`, `extern_protocol!` and `declare_class!` macros.
 * Added ability to use `#[method_id(mySelector:)]` inside `declare_class!`,
-  just like you would do in `extern_methods!`.
+  like you would do in `extern_methods!`.
 * Added 16-fold impls for `EncodeArguments`, `MessageArguments`, and `MethodImplementation`.
 * Added `NSObjectProtocol` trait for allowing `ProtocolObject` to implement
   `Debug`, `Hash`, `PartialEq` and `Eq`.
@@ -53,7 +455,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `#[method(myMethod:error:_)]` instead of `#[method(myMethod:error:)]`).
 * **BREAKING**: Fundamentally changed how protocols work. Instead of being
   structs with inherent methods, they're now traits. This means that you can
-  use their methods much more naturally from your Objective-C objects.
+  use their methods more naturally from your Objective-C objects.
 
   An example:
   ```rust
@@ -280,8 +682,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Change syntax in `declare_class!` macro to be more Rust-like.
 * **BREAKING**: Renamed `Id::from_owned` to `Id::into_shared`.
 * **BREAKING**: The return type of `msg_send_id!` is now more generic; it can
-  now either be `Option<Id<_, _>>` or `Id<_, _>` (if the latter, it'll simply
-  panic).
+  now either be `Option<Id<_, _>>` or `Id<_, _>` (if the latter, it'll panic
+  if the method returned `NULL`).
 
   Example:
   ```rust
@@ -402,7 +804,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ```
 
   Unfortunately, you will now encounter a very confusing error:
-  ```
+  ```text
     |
   2 | builder.add_method(sel!(init), init);
     |         ^^^^^^^^^^ implementation of `MethodImplementation` is not general enough
@@ -411,8 +813,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
      = note: ...but `MethodImplementation` is actually implemented for the type `extern "C" fn(&'0 mut Object, Sel) -> *mut Object`, for some specific lifetime `'0`
   ```
 
-  Fret not, the fix is easy! Just let the compiler infer the argument and
-  return types:
+  To fix this, let the compiler infer the argument and return types:
   ```rust
   // After
   let init: extern "C" fn(_, _) -> _ = init;
@@ -584,8 +985,8 @@ Note: To use this version, specify `objc2-encode = "=2.0.0-beta.0"` in your
   extra functionality on `rc::Id`.
 
 ### Changed
-* **BREAKING**: The `exception` feature now just enables the `exception`
-  module for general use. Use the new `catch_all` feature to wrap all message
+* **BREAKING**: The `exception` feature now only enables the `exception`
+  module, for general use. Use the new `catch_all` feature to wrap all message
   sends in a `@try/@catch`.
 * **BREAKING**: Updated `objc-sys` to `v0.1.0`.
 * **BREAKING**: Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
@@ -661,13 +1062,13 @@ Note: To use this version, specify `objc2-encode = "=2.0.0-alpha.1"` in your
   `INSString::as_str` so that it knows which lifetime to bound the returned
   `&str` with.
 
-  Simple migration:
   ```rust
-  // Change
+  // Before
   autoreleasepool(|| {
       // Some code that autoreleases objects
   });
-  // To
+
+  // After
   autoreleasepool(|_pool| {
       // Some code that autoreleases objects
   });

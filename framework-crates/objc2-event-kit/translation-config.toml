@@ -1,0 +1,18 @@
+framework = "EventKit"
+crate = "objc2-event-kit"
+required-dependencies = ["objc2-foundation"]
+macos = "10.8"
+maccatalyst = "13.0"
+ios = "4.0"
+watchos = "2.0"
+visionos = "1.0"
+
+# CF_RETURNS_NOT_RETAINED
+class.EKParticipant.methods."ABRecordWithAddressBook:".skipped = true
+
+# Needs `CGColorRef`
+class.EKCalendar.methods.CGColor.skipped = true
+class.EKCalendar.methods."setCGColor:".skipped = true
+
+# Needs the `AddressBook` framework
+class.EKParticipant.methods."ABPersonInAddressBook:".skipped = true

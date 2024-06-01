@@ -1,0 +1,25 @@
+framework = "ScreenCaptureKit"
+crate = "objc2-screen-capture-kit"
+required-dependencies = ["objc2-foundation"]
+macos = "12.3"
+
+# Needs `dispatch_queue_t`
+class.SCStream.methods."addStreamOutput:type:sampleHandlerQueue:error:".skipped = true
+
+# Needs CoreMedia
+class.SCScreenshotManager.methods."captureSampleBufferWithFilter:configuration:completionHandler:".skipped = true
+class.SCStreamConfiguration.methods.minimumFrameInterval.skipped = true
+class.SCStreamConfiguration.methods."setMinimumFrameInterval:".skipped = true
+class.SCStream.methods.synchronizationClock.skipped = true
+protocol.SCStreamOutput.methods."stream:didOutputSampleBuffer:ofType:".skipped = true
+
+# Needs CoreGraphics
+class.SCScreenshotManager.methods."captureImageWithFilter:configuration:completionHandler:".skipped = true
+class.SCWindow.methods.windowID.skipped = true
+class.SCDisplay.methods.displayID.skipped = true
+class.SCStreamConfiguration.methods.backgroundColor.skipped = true
+class.SCStreamConfiguration.methods."setBackgroundColor:".skipped = true
+class.SCStreamConfiguration.methods.colorMatrix.skipped = true
+class.SCStreamConfiguration.methods."setColorMatrix:".skipped = true
+class.SCStreamConfiguration.methods.colorSpaceName.skipped = true
+class.SCStreamConfiguration.methods."setColorSpaceName:".skipped = true

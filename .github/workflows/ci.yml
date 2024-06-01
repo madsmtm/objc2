@@ -25,9 +25,11 @@ env:
   # Faster compilation, error on warnings and only document current crate
   RUSTFLAGS: "--codegen=debuginfo=0 --deny=warnings"
   RUSTDOCFLAGS: "--deny=warnings"
-  # Minimum deployment target
-  MACOSX_DEPLOYMENT_TARGET: 10.7
-  IPHONEOS_DEPLOYMENT_TARGET: 7.0
+  # Minimum deployment targets.
+  # Follows `rustc --target=x86_64-apple-darwin --print deployment-target`
+  MACOSX_DEPLOYMENT_TARGET: 10.12
+  # Follows `rustc --target=x86_64-apple-ios --print deployment-target`
+  IPHONEOS_DEPLOYMENT_TARGET: 10.0
   # We only support compiling Objective-C code with clang
   CC: clang
   CXX: clang++
@@ -36,23 +38,31 @@ env:
   #
   # This excludes `header-translator`, `test-assembly`, `tests` and `test-ui`.
   PUBLIC_CRATES: >-
-    --package=block-sys
     --package=block2
-    --package=icrate
     --package=objc-sys
     --package=objc2
     --package=objc2-encode
     --package=objc2-proc-macros
-  # The current nightly Rust version that our CI uses
-  CURRENT_NIGHTLY: nightly-2023-02-07
+
+  # BEGIN AUTOMATICALLY GENERATED
+  FRAMEWORKS_MACOS_10_12: --package=objc2-accounts --package=objc2-app-kit --package=objc2-automator --package=objc2-av-kit --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-contacts-ui --package=objc2-core-bluetooth --package=objc2-core-data --package=objc2-core-image --package=objc2-core-location --package=objc2-core-wlan --package=objc2-event-kit --package=objc2-exception-handling --package=objc2-finder-sync --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-input-method-kit --package=objc2-local-authentication --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-kit --package=objc2-multipeer-connectivity --package=objc2-network-extension --package=objc2-osa-kit --package=objc2-photos-ui --package=objc2-quartz-core --package=objc2-service-management --package=objc2-social --package=objc2-store-kit --package=objc2-web-kit
+  FRAMEWORKS_MACOS_10_13: --package=objc2-accounts --package=objc2-app-kit --package=objc2-automator --package=objc2-av-kit --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-contacts-ui --package=objc2-core-bluetooth --package=objc2-core-data --package=objc2-core-image --package=objc2-core-location --package=objc2-core-ml --package=objc2-core-wlan --package=objc2-event-kit --package=objc2-exception-handling --package=objc2-external-accessory --package=objc2-finder-sync --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-input-method-kit --package=objc2-local-authentication --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-kit --package=objc2-multipeer-connectivity --package=objc2-network-extension --package=objc2-osa-kit --package=objc2-photos-ui --package=objc2-quartz-core --package=objc2-service-management --package=objc2-social --package=objc2-store-kit --package=objc2-vision --package=objc2-web-kit
+  FRAMEWORKS_MACOS_11: --package=objc2-accessibility --package=objc2-accounts --package=objc2-ad-support --package=objc2-app-kit --package=objc2-app-tracking-transparency --package=objc2-authentication-services --package=objc2-automatic-assessment-configuration --package=objc2-automator --package=objc2-av-kit --package=objc2-business-chat --package=objc2-class-kit --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-contacts-ui --package=objc2-core-bluetooth --package=objc2-core-data --package=objc2-core-image --package=objc2-core-location --package=objc2-core-ml --package=objc2-core-motion --package=objc2-core-wlan --package=objc2-device-check --package=objc2-event-kit --package=objc2-exception-handling --package=objc2-external-accessory --package=objc2-file-provider --package=objc2-file-provider-ui --package=objc2-finder-sync --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-identity-lookup --package=objc2-input-method-kit --package=objc2-link-presentation --package=objc2-local-authentication --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-kit --package=objc2-ml-compute --package=objc2-multipeer-connectivity --package=objc2-natural-language --package=objc2-nearby-interaction --package=objc2-network-extension --package=objc2-osa-kit --package=objc2-photos --package=objc2-photos-ui --package=objc2-quartz-core --package=objc2-service-management --package=objc2-social --package=objc2-sound-analysis --package=objc2-speech --package=objc2-store-kit --package=objc2-system-extensions --package=objc2-uniform-type-identifiers --package=objc2-user-notifications --package=objc2-virtualization --package=objc2-vision --package=objc2-web-kit
+  FRAMEWORKS_MACOS_12: --package=objc2-accessibility --package=objc2-accounts --package=objc2-ad-services --package=objc2-ad-support --package=objc2-app-kit --package=objc2-app-tracking-transparency --package=objc2-authentication-services --package=objc2-automatic-assessment-configuration --package=objc2-automator --package=objc2-av-kit --package=objc2-business-chat --package=objc2-class-kit --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-contacts-ui --package=objc2-core-bluetooth --package=objc2-core-data --package=objc2-core-image --package=objc2-core-location --package=objc2-core-ml --package=objc2-core-motion --package=objc2-core-wlan --package=objc2-data-detection --package=objc2-device-check --package=objc2-event-kit --package=objc2-exception-handling --package=objc2-external-accessory --package=objc2-file-provider --package=objc2-file-provider-ui --package=objc2-finder-sync --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-identity-lookup --package=objc2-input-method-kit --package=objc2-link-presentation --package=objc2-local-authentication --package=objc2-local-authentication-embedded-ui --package=objc2-mail-kit --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-kit --package=objc2-metric-kit --package=objc2-ml-compute --package=objc2-multipeer-connectivity --package=objc2-natural-language --package=objc2-nearby-interaction --package=objc2-network-extension --package=objc2-osa-kit --package=objc2-photos --package=objc2-photos-ui --package=objc2-quartz-core --package=objc2-service-management --package=objc2-social --package=objc2-sound-analysis --package=objc2-speech --package=objc2-store-kit --package=objc2-system-extensions --package=objc2-uniform-type-identifiers --package=objc2-user-notifications --package=objc2-virtualization --package=objc2-vision --package=objc2-web-kit
+  FRAMEWORKS_MACOS_13: --package=objc2-accessibility --package=objc2-accounts --package=objc2-ad-services --package=objc2-ad-support --package=objc2-app-kit --package=objc2-app-tracking-transparency --package=objc2-authentication-services --package=objc2-automatic-assessment-configuration --package=objc2-automator --package=objc2-av-kit --package=objc2-background-assets --package=objc2-business-chat --package=objc2-call-kit --package=objc2-class-kit --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-contacts-ui --package=objc2-core-bluetooth --package=objc2-core-data --package=objc2-core-image --package=objc2-core-location --package=objc2-core-ml --package=objc2-core-motion --package=objc2-core-wlan --package=objc2-data-detection --package=objc2-device-check --package=objc2-event-kit --package=objc2-exception-handling --package=objc2-extension-kit --package=objc2-external-accessory --package=objc2-file-provider --package=objc2-file-provider-ui --package=objc2-finder-sync --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-health-kit --package=objc2-identity-lookup --package=objc2-input-method-kit --package=objc2-link-presentation --package=objc2-local-authentication --package=objc2-local-authentication-embedded-ui --package=objc2-mail-kit --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-fx --package=objc2-metal-kit --package=objc2-metric-kit --package=objc2-ml-compute --package=objc2-multipeer-connectivity --package=objc2-natural-language --package=objc2-nearby-interaction --package=objc2-network-extension --package=objc2-osa-kit --package=objc2-photos --package=objc2-photos-ui --package=objc2-quartz-core --package=objc2-screen-capture-kit --package=objc2-service-management --package=objc2-social --package=objc2-sound-analysis --package=objc2-speech --package=objc2-store-kit --package=objc2-system-extensions --package=objc2-uniform-type-identifiers --package=objc2-user-notifications --package=objc2-virtualization --package=objc2-vision --package=objc2-web-kit
+  FRAMEWORKS_MACOS_14: --package=objc2-accessibility --package=objc2-accounts --package=objc2-ad-services --package=objc2-ad-support --package=objc2-app-kit --package=objc2-app-tracking-transparency --package=objc2-authentication-services --package=objc2-automatic-assessment-configuration --package=objc2-automator --package=objc2-av-kit --package=objc2-background-assets --package=objc2-business-chat --package=objc2-call-kit --package=objc2-class-kit --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-contacts-ui --package=objc2-core-bluetooth --package=objc2-core-data --package=objc2-core-image --package=objc2-core-location --package=objc2-core-ml --package=objc2-core-motion --package=objc2-core-wlan --package=objc2-data-detection --package=objc2-device-check --package=objc2-event-kit --package=objc2-exception-handling --package=objc2-extension-kit --package=objc2-external-accessory --package=objc2-file-provider --package=objc2-file-provider-ui --package=objc2-finder-sync --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-health-kit --package=objc2-identity-lookup --package=objc2-input-method-kit --package=objc2-link-presentation --package=objc2-local-authentication --package=objc2-local-authentication-embedded-ui --package=objc2-mail-kit --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-fx --package=objc2-metal-kit --package=objc2-metric-kit --package=objc2-ml-compute --package=objc2-multipeer-connectivity --package=objc2-natural-language --package=objc2-nearby-interaction --package=objc2-network-extension --package=objc2-osa-kit --package=objc2-photos --package=objc2-photos-ui --package=objc2-quartz-core --package=objc2-screen-capture-kit --package=objc2-sensitive-content-analysis --package=objc2-service-management --package=objc2-social --package=objc2-sound-analysis --package=objc2-speech --package=objc2-store-kit --package=objc2-symbols --package=objc2-system-extensions --package=objc2-uniform-type-identifiers --package=objc2-user-notifications --package=objc2-virtualization --package=objc2-vision --package=objc2-web-kit
+  FRAMEWORKS_IOS_10: --package=objc2-accounts --package=objc2-ad-support --package=objc2-av-kit --package=objc2-call-kit --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-contacts-ui --package=objc2-core-bluetooth --package=objc2-core-data --package=objc2-core-image --package=objc2-core-location --package=objc2-core-motion --package=objc2-event-kit --package=objc2-external-accessory --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-health-kit --package=objc2-local-authentication --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-kit --package=objc2-multipeer-connectivity --package=objc2-network-extension --package=objc2-photos --package=objc2-photos-ui --package=objc2-quartz-core --package=objc2-social --package=objc2-speech --package=objc2-store-kit --package=objc2-ui-kit --package=objc2-user-notifications
+  FRAMEWORKS_GNUSTEP: --package=objc2-app-kit --package=objc2-foundation
+  # END AUTOMATICALLY GENERATED
+
+  # The current nightly Rust version. Keep this synced with `rust-toolchain.toml`
+  CURRENT_NIGHTLY: nightly-2024-05-01
   # Various features that we'd usually want to test with
   #
   # Note: The `exception` feature is not enabled here, since it requires
   # compiling C code, even if just running a `check`/`clippy` build.
-  INTERESTING_FEATURES: malloc,block,verify,unstable-private
-  UNSTABLE_FEATURES: unstable-autoreleasesafe,unstable-c-unwind
-  # Required when we want to use a different runtime than the default `apple`
-  OTHER_RUNTIME: --no-default-features --features=std
+  INTERESTING_FEATURES: --features=malloc,block2,unstable-private,all
+  UNSTABLE_FEATURES: --features=unstable-autoreleasesafe,unstable-c-unwind
   # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
   # Note: We don't cache `~/.cargo/bin`, that is done separately when needed.
   CARGO_CACHE_PATH: |
@@ -71,12 +81,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
     - name: Use system Rust
-      run: cargo --version
+      run: rustup override set stable
 
     - name: cargo fmt
       # This runs on the entire repository, including submodules
@@ -94,25 +104,14 @@ jobs:
         include:
         - name: macOS 64bit
           target: aarch64-apple-darwin
-          args: >-
-            $PUBLIC_CRATES
-            --features=$INTERESTING_FEATURES
-            --features=unstable-frameworks-macos-12
+          args: $PUBLIC_CRATES $FRAMEWORKS_MACOS_14 $INTERESTING_FEATURES
         - name: iOS 32bit
-          target: armv7-apple-ios
+          target: armv7s-apple-ios
           build-std: true
-          args: >-
-            -Zbuild-std
-            $PUBLIC_CRATES
-            --features=$INTERESTING_FEATURES
-            --features=unstable-frameworks-ios
+          args: $PUBLIC_CRATES $FRAMEWORKS_IOS_10 $INTERESTING_FEATURES -Zbuild-std
         - name: GNUStep + exceptions
           target: x86_64-unknown-linux-gnu
-          args: >-
-            $PUBLIC_CRATES
-            $OTHER_RUNTIME --features=gnustep-1-9
-            --features=$INTERESTING_FEATURES,catch-all
-            --features=unstable-frameworks-gnustep
+          args: $PUBLIC_CRATES $FRAMEWORKS_GNUSTEP $INTERESTING_FEATURES --features=gnustep-1-9,catch-all
         - name: header-translator
           target: x86_64-unknown-linux-gnu
           args: -pheader-translator
@@ -124,21 +123,28 @@ jobs:
       CARGO_BUILD_TARGET: ${{ matrix.target }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ env.CURRENT_NIGHTLY }}
-        profile: minimal
-        override: true
-        components: clippy ${{ matrix.build-std && ', rust-src' || '' }}
-        target: ${{ (!matrix.build-std) && matrix.target || null }}
+    - name: Use nightly toolchain
+      run: |
+        rustup toolchain install ${{ env.CURRENT_NIGHTLY }} --profile=minimal --no-self-update
+        rustup override set ${{ env.CURRENT_NIGHTLY }}
+
+    - name: Add clippy component
+      run: rustup component add clippy
+
+    - name: Add rust-src component for -Zbuild-std
+      if: matrix.build-std
+      run: rustup component add rust-src
+
+    - name: Install target
+      if: ${{ matrix.target && !matrix.build-std }}
+      run: rustup target add ${{ matrix.target }}
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -157,58 +163,64 @@ jobs:
       CARGO_BUILD_TARGET: x86_64-apple-darwin
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: '1.60'
-        profile: minimal
-        override: true
-        target: x86_64-apple-darwin
+    - name: Use MSRV toolchain
+      run: |
+        rustup toolchain install 1.60 --profile=minimal --no-self-update
+        rustup override set 1.60
+
+    - name: Install target
+      run: rustup target add x86_64-apple-darwin
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: cargo check
-      run: >-
-        cargo check
-        $PUBLIC_CRATES
-        --features=$INTERESTING_FEATURES
-        --features=unstable-frameworks-macos-12
+      run: cargo check $PUBLIC_CRATES $FRAMEWORKS_MACOS_14 $INTERESTING_FEATURES
+      env:
+        RUSTFLAGS: "--codegen=debuginfo=0" # Removed --deny=warnings
 
   ui:
     name: Compiler UI
-    runs-on: macos-latest
+    runs-on: macos-13
     needs:
     - fmt
     - lint
 
+    env:
+      TRYBUILD: overwrite
+
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ env.CURRENT_NIGHTLY }}
-        profile: minimal
-        override: true
+    - name: Use nightly toolchain
+      run: |
+        rustup toolchain install ${{ env.CURRENT_NIGHTLY }} --profile=minimal --no-self-update
+        rustup override set ${{ env.CURRENT_NIGHTLY }}
+
+    - name: Add rust-src component to allow compiler UI to display sources
+      run: rustup component add rust-src
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Run UI tests
       run: cargo run --features=run --bin=test-ui
+
+    - name: Check diff
+      if: ${{ always() }}
+      run: git diff --exit-code
 
   assembly:
     name: Assembly tests
@@ -217,60 +229,59 @@ jobs:
     - fmt
     - lint
 
+    env:
+      TEST_OVERWRITE: 1
+
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ env.CURRENT_NIGHTLY }}
-        profile: minimal
-        override: true
-        components: rust-src
+    - name: Use nightly toolchain
+      run: |
+        rustup toolchain install ${{ env.CURRENT_NIGHTLY }} --profile=minimal --no-self-update
+        rustup override set ${{ env.CURRENT_NIGHTLY }}
 
-    - name: Install remaining targets
-      run: >-
-        rustup target add
-        x86_64-apple-darwin
-        aarch64-apple-darwin
-        x86_64-unknown-linux-gnu
-        i686-unknown-linux-gnu
+    - name: Add rust-src component for -Zbuild-std
+      run: rustup component add rust-src
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Run macOS x86_64 assembly tests
-      run: cargo run --bin=test-assembly -- --target=x86_64-apple-darwin
+      run: cargo run --bin=test-assembly -- -Z build-std --target=x86_64-apple-darwin
 
     - name: Run all assembly tests
       if: ${{ env.FULL }}
       run: ./helper-scripts/run-assembly-tests.sh
 
+    - name: Check diff
+      if: ${{ always() }}
+      run: git diff --exit-code
+
   header-translator:
     name: Verify header translator output
-    runs-on: macos-12
+    runs-on: macos-14
     needs:
     - fmt
     - lint
 
     env:
-      DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
     - name: Use system Rust
-      run: cargo --version
+      run: rustup override set stable
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -281,32 +292,32 @@ jobs:
     - name: Verify that no files changed
       run: git diff --exit-code --submodule=diff
 
-  check-icrate-features:
+  check-framework-features:
     # if: ${{ env.FULL }}
     # This will take ~40 minutes
     if: ${{ github.head_ref == 'new-versions' || github.ref_name == 'ci-full' }}
-    name: Check icrate features
+    name: Check framework features
     runs-on: macos-12
     needs:
     - fmt
     - lint
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
     - name: Use system Rust
-      run: cargo --version
+      run: rustup override set stable
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Check `icrate` with each feature enabled separately
-      run: cargo run --bin=check_icrate_features
+    - name: Check frameworks with each feature enabled separately
+      run: cargo run --bin=check_framework_features
 
   test-macos:
     name: Test macOS 12
@@ -316,32 +327,27 @@ jobs:
     # Currently the slowest check, so let's get it started as soon as possible
     # - lint
 
-    env:
-      ARGS: --no-default-features --features=std,apple
-
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        profile: minimal
-        override: true
+    - name: Use nightly toolchain
+      run: |
+        rustup toolchain install ${{ env.CURRENT_NIGHTLY }} --profile=minimal --no-self-update
+        rustup override set ${{ env.CURRENT_NIGHTLY }}
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Test without features
-      run: cargo test $ARGS $PUBLIC_CRATES -ptests
+      run: cargo test $PUBLIC_CRATES -ptests
 
     - name: Test all frameworks
-      run: cargo test $ARGS $PUBLIC_CRATES -ptests --features=$INTERESTING_FEATURES,unstable-frameworks-macos-12
+      run: cargo test $PUBLIC_CRATES $FRAMEWORKS_MACOS_10_12 -ptests $INTERESTING_FEATURES
 
   test-apple:
     # if: ${{ env.FULL }}
@@ -358,73 +364,86 @@ jobs:
       fail-fast: true
       matrix:
         include:
-        - name: Test macOS 11
-          os: macos-11
-          frameworks: macos-11
+        - name: Test macOS 13
+          target: x86_64-apple-darwin
+          os: macos-13
+          frameworks: MACOS_13
+        - name: Test macOS 14
+          target: aarch64-apple-darwin
+          os: macos-14
+          frameworks: MACOS_14
         - name: Build macOS AArch64
           target: aarch64-apple-darwin
-          frameworks: macos-11
+          frameworks: MACOS_11
         - name: Test macOS old SDK
+          target: x86_64-apple-darwin
           # Oldest macOS version we support
-          sdk: "10.7"
-          frameworks: macos-10-7
+          sdk: "10.12"
+          frameworks: MACOS_10_12
+          # The SDK itself only supports compiling build scripts for x86_64
+          os: macos-13
         - name: Test macOS nightly
+          target: aarch64-apple-darwin
           nightly: true
-          frameworks: macos-11
+          frameworks: MACOS_11
         - name: Build macOS 32bit
           target: i686-apple-darwin
           nightly: true
           build-std: true
           # Newest SDK that supports 32-bit
           sdk: "10.13"
-          frameworks: macos-10-13
+          frameworks: MACOS_10_13
+          # The SDK itself only supports compiling build scripts for x86_64
+          os: macos-13
         - name: Build iOS simulator ARM64
           target: aarch64-apple-ios-sim
-          frameworks: ios
+          frameworks: IOS_10
         - name: Build iOS ARM64
           target: aarch64-apple-ios
-          frameworks: ios
-        - name: Build iOS ARMv7
-          target: armv7-apple-ios
-          nightly: true
-          build-std: true
-          frameworks: ios
+          frameworks: IOS_10
         - name: Build iOS ARMv7s
           target: armv7s-apple-ios
           nightly: true
           build-std: true
-          frameworks: ios
+          frameworks: IOS_10
         - name: Build iOS 32bit x86
           target: i386-apple-ios
           nightly: true
           build-std: true
-          frameworks: ios
+          frameworks: IOS_10
 
     env:
-      CARGO_BUILD_TARGET: ${{ matrix.target || 'x86_64-apple-darwin' }}
+      CARGO_BUILD_TARGET: ${{ matrix.target }}
       # Modern macOS can only run the target that they're built for.
       # So we pass `--no-run` when building for other targets.
       ARGS: >-
-        --no-default-features --features=std,apple
         ${{ matrix.build-std && '-Zbuild-std -Zdoctest-xcompile' }}
         ${{ matrix.target && '--no-run' }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ matrix.nightly && env.CURRENT_NIGHTLY || 'stable' }}
-        profile: minimal
-        override: true
-        components: ${{ matrix.build-std && 'rust-src' }}
-        target: ${{ (!matrix.build-std) && matrix.target || null }}
+    - name: Use nightly toolchain
+      if: ${{ matrix.nightly }}
+      run: |
+        rustup toolchain install ${{ env.CURRENT_NIGHTLY }} --profile=minimal --no-self-update
+        rustup override set ${{ env.CURRENT_NIGHTLY }}
+    - name: Use stable toolchain
+      if: ${{ !matrix.nightly }}
+      run: rustup override set stable
+
+    - name: Add rust-src component for -Zbuild-std
+      if: matrix.build-std
+      run: rustup component add rust-src
+
+    - name: Install target
+      if: ${{ !matrix.build-std }}
+      run: rustup target add ${{ matrix.target }}
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -432,7 +451,7 @@ jobs:
     - name: Cache SDK
       id: sdk-cache
       if: matrix.sdk
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/sdk
         key: sdk-test-apple-${{ matrix.name }}
@@ -461,74 +480,57 @@ jobs:
       run: cargo test $ARGS $PUBLIC_CRATES -ptests
 
     - name: Test Foundation
-      run: >-
-        cargo test $ARGS $PUBLIC_CRATES -ptests
-        --features=$INTERESTING_FEATURES,Foundation_all
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests $INTERESTING_FEATURES -pobjc2-foundation
 
     - name: Test all frameworks
-      run: >-
-        cargo test $ARGS $PUBLIC_CRATES -ptests
-        --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests $INTERESTING_FEATURES --features=catch-all $FRAMEWORKS_${{ matrix.frameworks }}
 
-    - name: Test in release mode
-      run: >-
-        cargo test $ARGS $PUBLIC_CRATES -ptests
-        --features=$INTERESTING_FEATURES,catch-all,Foundation_all --release
+    - name: Test Foundation in release mode
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests $INTERESTING_FEATURES -pobjc2-foundation --features=catch-all --release
 
-    - name: Test with unstable features
+    - name: Test Foundation with unstable features
       if: ${{ matrix.nightly }}
-      run: >-
-        cargo test $ARGS $PUBLIC_CRATES -ptests
-        --features=$INTERESTING_FEATURES,catch-all,Foundation_all,$UNSTABLE_FEATURES
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests $INTERESTING_FEATURES -pobjc2-foundation --features=catch-all $UNSTABLE_FEATURES ${{ matrix.sdk != '10.12' && '--features=unstable-simd' || '' }}
 
     # TODO: Re-enable this on all of Foundation once we do some form of
     # availability checking.
     - name: Test static class and selectors
-      if: ${{ !contains(matrix.frameworks, 'ios') && !contains(matrix.frameworks, 'macos-10-7') }}
+      if: ${{ !contains(matrix.frameworks, 'IOS') && !contains(matrix.frameworks, 'MACOS_10_12') }}
       run: >-
-        cargo test $ARGS $PUBLIC_CRATES -ptests
+        cargo test $ARGS $PUBLIC_CRATES -ptests -pobjc2-foundation
         --features=unstable-static-sel,unstable-static-class,unstable-static-nsstring
-        --features=Foundation,Foundation_NSString
+        --features=NSString
 
   test-ios:
     # if: ${{ env.FULL }}
     if: ${{ github.head_ref == 'new-versions' || github.ref_name == 'ci-full' }}
     name: Test on iOS simulator w. dinghy
-    runs-on: macos-11
+    runs-on: macos-13
     needs:
     - fmt
     - lint
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        profile: minimal
-        override: true
-        target: x86_64-apple-ios
+    - name: Use stable toolchain
+      run: rustup override set stable
+
+    - name: Install simulator target
+      run: rustup target add x86_64-apple-ios
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Cache cargo-dinghy
-      id: dinghy-cache
-      uses: actions/cache@v3
-      with:
-        path: ~/.cargo/bin/cargo-dinghy
-        # Change this key if we update the required cargo-dinghy version
-        key: cargo-dinghy-${{ github.job }}-${{ matrix.name }}-v0-6-0
-
     - name: Install cargo-dinghy
-      if: ${{ steps.dinghy-cache.outputs.cache-hit != 'true' }}
-      run: cargo install cargo-dinghy --version=^0.6.0
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-dinghy@0.6
 
     - name: Launch XCode Simulator and prepare Dinghy
       # Note that we're not testing all configurations with dinghy, since that
@@ -539,18 +541,14 @@ jobs:
 
         # Launch the simulator
         RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
-        SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
+        SIM_ID=$(xcrun simctl create MyIphone com.apple.CoreSimulator.SimDeviceType.iPhone-14-Pro $RUNTIME_ID)
         xcrun simctl boot $SIM_ID
 
         # Export simulator ID
         echo "SIM_ID=$SIM_ID" >> $GITHUB_ENV
 
     - name: Test
-      run: >-
-        cargo-dinghy --device=$SIM_ID test
-        $PUBLIC_CRATES -ptests
-        --features=$INTERESTING_FEATURES,catch-all
-        --features=unstable-frameworks-ios
+      run: cargo-dinghy --device=$SIM_ID test $PUBLIC_CRATES $FRAMEWORKS_IOS_10 -ptests $INTERESTING_FEATURES --features=catch-all
 
   test-gnustep:
     name: ${{ matrix.name }}
@@ -560,27 +558,26 @@ jobs:
     - lint
 
     strategy:
+      # GNUStep tests are currently flaky, this makes it easier to see
+      fail-fast: false
       matrix:
         include:
         - name: Test GNUStep with libobjc2 v1.9
           target: x86_64-unknown-linux-gnu
           runtime: gnustep-1-9
           libobjc2: "1.9"
-          frameworks: gnustep
         - name: Test GNUStep with libobjc2 v2.0
           # Fails for some reason on Ubuntu 22
           os: ubuntu-20.04
           target: x86_64-unknown-linux-gnu
           runtime: gnustep-2-0
           libobjc2: "2.0"
-          frameworks: gnustep
         - name: Test GNUStep with libobjc2 v2.1 on nightly
           target: x86_64-unknown-linux-gnu
           nightly: true
           runtime: gnustep-2-1
           libobjc2: "2.1"
-          fuzz: true
-          frameworks: gnustep
+          # fuzz: true # Disable fuzzing for now, it fails because it tries to load all symbols in Foundation
         - name: Test GNUStep 32bit
           # Ubuntu 22 image doesn't have the required C++ libraries
           # installed for 32-bit
@@ -590,7 +587,6 @@ jobs:
           configureflags: --target=x86-pc-linux-gnu
           runtime: gnustep-1-9
           libobjc2: "1.9"
-          frameworks: gnustep-32bit
 
     env:
       CARGO_BUILD_TARGET: ${{ matrix.target }}
@@ -598,16 +594,17 @@ jobs:
       CXXFLAGS: ${{ matrix.cflags }}
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
-      ARGS: --no-default-features --features=std,${{ matrix.runtime }}
+      # http://wiki.gnustep.org/index.php/Building_GNUstep_under_Debian_FreeBSD#installing_gnustep-make
+      RUNTIME_VERSION: gnustep-${{ matrix.libobjc2 }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
     - name: Cache external dependencies
       id: extern-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         # We could have just cached build-files, and then rerun the build tool
         # every time, letting it figure out what's changed. However, this has
@@ -711,16 +708,21 @@ jobs:
         make install
         ls -al $HOME/extern/*
 
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ matrix.nightly && env.CURRENT_NIGHTLY || 'stable' }}
-        profile: minimal
-        override: true
-        target: ${{ matrix.target }}
+    - name: Use nightly toolchain
+      if: ${{ matrix.nightly }}
+      run: |
+        rustup toolchain install ${{ env.CURRENT_NIGHTLY }} --profile=minimal --no-self-update
+        rustup override set ${{ env.CURRENT_NIGHTLY }}
+    - name: Use stable toolchain
+      if: ${{ !matrix.nightly }}
+      run: rustup override set stable
+
+    - name: Install target
+      if: ${{ matrix.target }}
+      run: rustup target add ${{ matrix.target }}
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -728,39 +730,40 @@ jobs:
     - name: Cache cargo-fuzz
       if: ${{ matrix.fuzz }}
       id: fuzz-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cargo/bin/cargo-fuzz
         # Change this key if we update the required cargo-fuzz version
-        key: cargo-fuzz-${{ github.job }}-${{ matrix.name }}-v0-11-1
+        key: cargo-fuzz-${{ github.job }}-${{ matrix.name }}-v0-11-2
 
     - name: Install cargo-fuzz
       if: ${{ matrix.fuzz && steps.fuzz-cache.outputs.cache-hit != 'true' }}
-      run: cargo install cargo-fuzz --version=^0.11.1
+      run: cargo install cargo-fuzz --version=^0.11.2
 
     - name: Test Foundation
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation
+      run: cargo test --features=${{ matrix.runtime }} $PUBLIC_CRATES $INTERESTING_FEATURES -ptests -pobjc2-foundation --features=catch-all
 
     - name: Test all frameworks
-      if: ${{ env.FULL }}
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
+      if: ${{ env.FULL && matrix.target == 'x86_64-unknown-linux-gnu' }}
+      run: cargo test --features=${{ matrix.runtime }} $PUBLIC_CRATES $INTERESTING_FEATURES -ptests $FRAMEWORKS_GNUSTEP --features=catch-all
 
     - name: Test in release mode
       # Disabled on GNUStep 2.1 for now
       if: ${{ env.FULL && matrix.runtime != 'gnustep-2-1' }}
-      run: cargo test $ARGS --features=Foundation --release
+      run: cargo test --features=${{ matrix.runtime }} $PUBLIC_CRATES -pobjc2-foundation --release
 
     - name: Run fuzzing
       if: ${{ matrix.fuzz }}
       run: |
-        # Run each target for 100000 runs (approx. 5 seconds), and timeout
-        # after 2 seconds.
+        # Run each fuzz target for 100000 runs (approx. 5 seconds), and
+        # timeout after 2 seconds.
         #
         # We specify the number of runs explicitly instead of using
         # `max_total_time`, to get more determinism.
-        for target in $(cargo-fuzz list)
+        for fuzz_target in $(cargo-fuzz list --fuzz-dir=./crates/test-fuzz/)
         do
-          cargo-fuzz run $target $ARGS -- -runs=10000 -timeout=2 -jobs=10
+          echo "Fuzzing $fuzz_target"
+          cargo-fuzz run --fuzz-dir=./crates/test-fuzz/ $fuzz_target --features=${{ matrix.runtime }},fuzz-all -- -runs=10000 -timeout=2 -jobs=10
         done
 
         # Check if the fuzzer encountered something that should be added to
@@ -772,11 +775,11 @@ jobs:
       if: ${{ false }}
       # Difficult to install Valgrind on macOS
       # See https://github.com/LouisBrunner/valgrind-macos
-      run: cargo bench $ARGS
+      run: cargo bench --features=${{ matrix.runtime }}
 
     - name: Test with unstable features
       if: ${{ env.FULL && matrix.nightly }}
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation,$UNSTABLE_FEATURES
+      run: cargo test --features=${{ matrix.runtime }} -ptests $PUBLIC_CRATES $INTERESTING_FEATURES -pobjc2-foundation --features=catch-all $UNSTABLE_FEATURES
 
   test-compiler-rt:
     name: Test Compiler-RT
@@ -786,21 +789,19 @@ jobs:
     - lint
 
     env:
-      # `compiler-rt` is only relevant for these crates
-      PUBLIC_CRATES: >-
-        --package=block-sys
-        --package=block2
+      # `compiler-rt` is only relevant for block2
+      PUBLIC_CRATES: --package=block2
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
     - name: Use system Rust
-      run: cargo --version
+      run: rustup override set stable
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -811,7 +812,7 @@ jobs:
         sudo apt-get -y install clang libblocksruntime-dev
 
     - name: Test
-      run: cargo test $PUBLIC_CRATES $OTHER_RUNTIME --features=compiler-rt
+      run: cargo test $PUBLIC_CRATES --features=compiler-rt
 
     - name: Test in release mode
-      run: cargo test $PUBLIC_CRATES $OTHER_RUNTIME --features=compiler-rt --release
+      run: cargo test $PUBLIC_CRATES --features=compiler-rt --release

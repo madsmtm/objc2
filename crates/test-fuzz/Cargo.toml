@@ -1,0 +1,54 @@
+[package]
+name = "test-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[lints]
+workspace = true
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+objc2 = { path = "../objc2" }
+objc2-foundation = { path = "../../framework-crates/objc2-foundation" }
+
+[features]
+gnustep-1-7 = ["objc2-foundation/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc2-foundation/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc2-foundation/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc2-foundation/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc2-foundation/gnustep-2-1"]
+
+# The features required for fuzzing all targets (used by CI)
+fuzz-all = ["objc2-foundation/NSString"]
+
+[[bin]]
+name = "class"
+path = "fuzz_targets/class.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "sel"
+path = "fuzz_targets/sel.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "encoding_parse"
+path = "fuzz_targets/encoding_parse.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "nsstring"
+path = "fuzz_targets/nsstring.rs"
+test = false
+doc = false
+required-features = ["objc2-foundation/NSString"]
+
+[package.metadata.release]
+release = false

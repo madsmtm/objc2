@@ -9,40 +9,40 @@
 macro_rules! __extract_and_apply_cfg_attributes {
     // Base case
     {
-        @() // No attributes left to process
-        @($($output:tt)*)
+        () // No attributes left to process
+        $($output:tt)*
     } => {
         $($output)*
     };
     // `cfg` attribute
     {
-        @(
+        (
             #[cfg $($args:tt)*]
             $($m_rest:tt)*
         )
-        @($($output:tt)*)
+        $($output:tt)*
     } => {
         // Apply the attribute and continue
         #[cfg $($args)*]
         {
             $crate::__extract_and_apply_cfg_attributes! {
-                @($($m_rest)*)
-                @($($output)*)
+                ($($m_rest)*)
+                $($output)*
             }
         }
     };
     // Other attributes
     {
-        @(
+        (
             #[$($m_ignored:tt)*]
             $($m_rest:tt)*
         )
-        @($($output:tt)*)
+        $($output:tt)*
     } => {
-        // Simply ignore the attribute, and continue parsing the rest
+        // Ignore the attribute, and continue parsing the rest
         $crate::__extract_and_apply_cfg_attributes! {
-            @($($m_rest)*)
-            @($($output)*)
+            ($($m_rest)*)
+            $($output)*
         }
     };
 }
@@ -53,23 +53,34 @@ macro_rules! __extract_and_apply_cfg_attributes {
 /// This will ensure that there is one and only one of the method attributes
 /// present.
 ///
-/// This is implemented as a tt-muncher, taking the following arguments:
-/// - The attributes to parse.
-/// - The function name, for better UI if an error occurs.
-/// - The output macro that will be called.
-/// - Any extra arguments given to the output macro.
+/// This takes the following arguments:
+/// 1. The attributes to parse.
+///    ($($m:tt)*)
 ///
-/// And will call the output macro with the given arguments, along with the
-/// following extra arguments:
-/// - The `method` or `method_id` attribute.
-/// - The `optional` attribute, if any.
-/// - The rest of the attributes.
+/// 2. The output macro.
+///    ($out_macro:path)
+///
+/// Further arguments are passed on to the output macro, with the following
+/// arguments appended to it:
+/// 1. The `method` or `method_id` attribute.
+///    (#[$method_or_method_id:ident($($sel:tt)*)])
+///
+/// 2. The retain semantics, if any was present in the selector for
+///    `#[method_id(...)]`.
+///
+///    One of `New`, `Alloc`, `Init`, `CopyOrMutCopy` and `Other`.
+///    ($($retain_semantics:ident)?)
+///
+/// 3. The `optional` attribute, if any.
+///    ($(#[optional])?)
+///
+/// 4. The remaining attributes.
+///    ($(#[$($m_checked:tt)*])*)
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extract_custom_attributes {
     {
         ($($m:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -77,10 +88,10 @@ macro_rules! __extract_custom_attributes {
         $crate::__extract_custom_attributes_inner! {
             ($($m)*)
             // No already parsed attributes
-            ()
-            ()
-            ()
-            ($name)
+            () // method/method_id
+            () // retain semantics
+            () // optional
+            () // checked
 
             ($out_macro)
             $($macro_args)*
@@ -97,16 +108,14 @@ macro_rules! __extract_custom_attributes_inner {
         ()
         // And we found no `method` or `method_id` attributes
         ()
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        fn $name() {
-            compile_error!("must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`")
-        }
+        $crate::__macro_helpers::compile_error!("must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`");
     };
 
     // Base case
@@ -115,9 +124,9 @@ macro_rules! __extract_custom_attributes_inner {
         ()
         // And we found a `method` or `method_id` attribute
         ($($m_method:tt)*)
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -127,6 +136,7 @@ macro_rules! __extract_custom_attributes_inner {
             $($macro_args)*
             // Append attributes to the end of the macro arguments
             ($($m_method)*)
+            ($($retain_semantics)*)
             ($($m_optional)*)
             ($($m_checked)*)
         }
@@ -135,14 +145,14 @@ macro_rules! __extract_custom_attributes_inner {
     // `method` attribute
     {
         (
-            #[method($($args:tt)*)]
+            #[method($($sel:tt)*)]
             $($rest:tt)*
         )
         // If no existing `method` nor `method_id` attributes exist
         ()
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -150,10 +160,10 @@ macro_rules! __extract_custom_attributes_inner {
         $crate::__extract_custom_attributes_inner! {
             ($($rest)*)
             // Add method attribute
-            (#[method($($args)*)])
+            (#[method($($sel)*)])
+            ($($retain_semantics)*)
             ($($m_optional)*)
             ($($m_checked)*)
-            ($name)
 
             ($out_macro)
             $($macro_args)*
@@ -162,33 +172,31 @@ macro_rules! __extract_custom_attributes_inner {
     // Duplicate `method` attributes
     {
         (
-            #[method($($args:tt)*)]
+            #[method($($sel:tt)*)]
             $($rest:tt)*
         )
         ($($m_method:tt)*)
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        fn $name() {
-            compile_error!("cannot specify the `method`/`method_id` attribute twice")
-        }
+        $crate::__macro_helpers::compile_error!("cannot specify the `method`/`method_id` attribute twice");
     };
 
-    // `method_id` attribute
+    // `method_id` attribute with retain semantics
     {
         (
-            #[method_id($($args:tt)*)]
+            #[method_id(@__retain_semantics $retain_semantics:ident $($sel:tt)*)]
             $($rest:tt)*
         )
         // If no existing `method` nor `method_id` attributes exist
         ()
+        ()
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -196,32 +204,57 @@ macro_rules! __extract_custom_attributes_inner {
         $crate::__extract_custom_attributes_inner! {
             ($($rest)*)
             // Add method_id attribute
-            (#[method_id($($args)*)])
+            (#[method_id($($sel)*)])
+            ($retain_semantics)
             ($($m_optional)*)
             ($($m_checked)*)
-            ($name)
 
             ($out_macro)
             $($macro_args)*
         }
     };
-    // Duplicate `method` attributes
+    // `method_id` attribute
     {
         (
-            #[method_id($($args:tt)*)]
+            #[method_id($($sel:tt)*)]
             $($rest:tt)*
         )
-        ($($m_method:tt)*)
+        // If no existing `method` nor `method_id` attributes exist
+        ()
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        fn $name() {
-            compile_error!("cannot specify the `method`/`method_id` attribute twice")
+        $crate::__extract_custom_attributes_inner! {
+            ($($rest)*)
+            // Add method_id attribute
+            (#[method_id($($sel)*)])
+            ($($retain_semantics)*)
+            ($($m_optional)*)
+            ($($m_checked)*)
+
+            ($out_macro)
+            $($macro_args)*
         }
+    };
+    // Duplicate `method_id` attributes
+    {
+        (
+            #[method_id($($sel:tt)*)]
+            $($rest:tt)*
+        )
+        ($($m_method:tt)*)
+        ($($retain_semantics:tt)*)
+        ($($m_optional:tt)*)
+        ($($m_checked:tt)*)
+
+        ($out_macro:path)
+        $($macro_args:tt)*
+    } => {
+        $crate::__macro_helpers::compile_error!("cannot specify the `method`/`method_id` attribute twice");
     };
 
     // `optional` attribute
@@ -231,10 +264,10 @@ macro_rules! __extract_custom_attributes_inner {
             $($rest:tt)*
         )
         ($($m_method:tt)*)
+        ($($retain_semantics:tt)*)
         // If no existing `optional` attributes exist
         ()
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -242,10 +275,10 @@ macro_rules! __extract_custom_attributes_inner {
         $crate::__extract_custom_attributes_inner! {
             ($($rest)*)
             ($($m_method)*)
+            ($($retain_semantics)*)
             // Add optional attribute
             (#[optional])
             ($($m_checked)*)
-            ($name)
 
             ($out_macro)
             $($macro_args)*
@@ -258,16 +291,14 @@ macro_rules! __extract_custom_attributes_inner {
             $($rest:tt)*
         )
         ($($m_method:tt)*)
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        fn $name() {
-            compile_error!("cannot specify the `optional` attribute twice")
-        }
+        $crate::__macro_helpers::compile_error!("cannot specify the `optional` attribute twice");
     };
 
     // Other attributes
@@ -277,9 +308,9 @@ macro_rules! __extract_custom_attributes_inner {
             $($rest:tt)*
         )
         ($($m_method:tt)*)
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -287,6 +318,7 @@ macro_rules! __extract_custom_attributes_inner {
         $crate::__extract_custom_attributes_inner! {
             ($($rest)*)
             ($($m_method)*)
+            ($($retain_semantics)*)
             ($($m_optional)*)
             (
                 $($m_checked)*
@@ -294,7 +326,6 @@ macro_rules! __extract_custom_attributes_inner {
                 // been consuming the attributes from the front.
                 #[$($checked)*]
             )
-            ($name)
 
             ($out_macro)
             $($macro_args)*

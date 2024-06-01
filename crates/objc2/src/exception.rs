@@ -1,4 +1,4 @@
-//! Objective-C's @throw and @try/@catch.
+//! # `@throw` and `@try/@catch` exceptions.
 //!
 //! By default, if the [`msg_send!`] macro causes an exception to be thrown,
 //! this will unwind into Rust, resulting in undefined behavior. However, this
@@ -6,8 +6,8 @@
 //! [`msg_send!`] in a `@catch` and panics if an exception is caught,
 //! preventing Objective-C from unwinding into Rust.
 //!
-//! The `@try`/`@catch` functionality in this module is only available when
-//! the `"exception"` feature is enabled.
+//! Most of the functionality in this module is only available when the
+//! `"exception"` feature is enabled.
 //!
 //! See the following links for more information:
 //! - [Exception Programming Topics for Cocoa](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Exceptions/Exceptions.html)
@@ -34,9 +34,9 @@ use std::error::Error;
 use crate::encode::{Encoding, RefEncode};
 #[cfg(feature = "exception")]
 use crate::ffi;
-use crate::rc::{autoreleasepool_leaking, Id};
+use crate::rc::{autoreleasepool_leaking, Retained};
 use crate::runtime::__nsstring::nsstring_to_str;
-use crate::runtime::{Class, NSObject, NSObjectProtocol, Object};
+use crate::runtime::{AnyClass, AnyObject, NSObject, NSObjectProtocol};
 use crate::{extern_methods, sel, Message};
 
 /// An Objective-C exception.
@@ -47,7 +47,7 @@ use crate::{extern_methods, sel, Message};
 ///
 /// [`panic_any`]: std::panic::panic_any
 #[repr(transparent)]
-pub struct Exception(Object);
+pub struct Exception(AnyObject);
 
 unsafe impl RefEncode for Exception {
     const ENCODING_REF: Encoding = Encoding::Object;
@@ -56,17 +56,17 @@ unsafe impl RefEncode for Exception {
 unsafe impl Message for Exception {}
 
 impl Deref for Exception {
-    type Target = Object;
+    type Target = AnyObject;
 
     #[inline]
-    fn deref(&self) -> &Object {
+    fn deref(&self) -> &AnyObject {
         &self.0
     }
 }
 
-impl AsRef<Object> for Exception {
+impl AsRef<AnyObject> for Exception {
     #[inline]
-    fn as_ref(&self) -> &Object {
+    fn as_ref(&self) -> &AnyObject {
         self
     }
 }
@@ -78,7 +78,7 @@ impl Exception {
             let obj: *const Exception = self;
             let obj = unsafe { obj.cast::<NSObject>().as_ref().unwrap() };
             // Get class dynamically instead of with `class!` macro
-            Some(obj.__isKindOfClass(Class::get("NSException")?))
+            Some(obj.isKindOfClass(AnyClass::get("NSException")?))
         } else {
             Some(false)
         }
@@ -90,12 +90,12 @@ extern_methods!(
         // Only safe on NSException
         // Returns NSString
         #[method_id(name)]
-        unsafe fn name(&self) -> Option<Id<NSObject>>;
+        unsafe fn name(&self) -> Option<Retained<NSObject>>;
 
         // Only safe on NSException
         // Returns NSString
         #[method_id(reason)]
-        unsafe fn reason(&self) -> Option<Id<NSObject>>;
+        unsafe fn reason(&self) -> Option<Retained<NSObject>>;
     }
 );
 
@@ -121,7 +121,7 @@ impl fmt::Debug for Exception {
                     .as_deref()
                     .map(|reason| unsafe { nsstring_to_str(reason, pool) });
 
-                let obj: &Object = self.as_ref();
+                let obj: &AnyObject = self.as_ref();
                 write!(f, "{obj:?} '{}'", name.unwrap_or_default())?;
                 if let Some(reason) = reason {
                     write!(f, " reason:{reason}")?;
@@ -131,7 +131,7 @@ impl fmt::Debug for Exception {
                 Ok(())
             })
         } else {
-            // Fall back to `Object` Debug
+            // Fall back to `AnyObject` Debug
             write!(f, "{:?}", self.0)
         }
     }
@@ -180,15 +180,17 @@ impl RefUnwindSafe for Exception {}
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 #[inline]
 #[cfg(feature = "exception")] // For consistency, not strictly required
-pub unsafe fn throw(exception: Id<Exception>) -> ! {
+pub unsafe fn throw(exception: Retained<Exception>) -> ! {
+    // We consume the exception object since we can't make any guarantees
+    // about its mutability.
     let ptr = exception.0.as_ptr() as *mut ffi::objc_object;
-    // SAFETY: Object is valid and non-null (nil exceptions are not valid in
-    // the old runtime).
+    // SAFETY: The object is valid and non-null (nil exceptions are not valid
+    // in the old runtime).
     unsafe { ffi::objc_exception_throw(ptr) }
 }
 
 #[cfg(feature = "exception")]
-unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception>>> {
+unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exception>>> {
     #[cfg(not(feature = "unstable-c-unwind"))]
     let f = {
         extern "C" fn try_objc_execute_closure<F>(closure: &mut Option<F>)
@@ -235,12 +237,13 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception>
         // SAFETY:
         // The exception is always a valid object or NULL.
         //
-        // The ownership is safe as Shared; Objective-C code throwing an
-        // exception knows that they don't hold sole access to that exception
-        // instance any more, and Rust code is forbidden by requiring a Shared
-        // Id in `throw` (instead of just a shared reference, which could have
-        // come from an Owned Id).
-        Err(unsafe { Id::new(exception.cast()) })
+        // Since we do a retain inside `extern/exception.m`, the object has
+        // +1 retain count.
+        //
+        // Code throwing an exception know that they don't hold sole access to
+        // that object any more, so even if the type was originally mutable,
+        // it is okay to create a new `Retained` to it here.
+        Err(unsafe { Retained::from_raw(exception.cast()) })
     }
 }
 
@@ -251,15 +254,19 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception>
 /// Accordingly, if your Rust code is compiled with `panic=abort` this cannot
 /// catch the exception.
 ///
+/// [`catch_unwind`]: std::panic::catch_unwind
+///
+///
+/// # Errors
+///
 /// Returns a `Result` that is either `Ok` if the closure succeeded without an
 /// exception being thrown, or an `Err` with the exception. The exception is
 /// automatically released.
 ///
 /// The exception is `None` in the extremely exceptional case that the
 /// exception object is `nil`. This should basically never happen, but is
-/// technically possible on some systems with `@throw nil`.
-///
-/// [`catch_unwind`]: std::panic::catch_unwind
+/// technically possible on some systems with `@throw nil`, or in OOM
+/// situations.
 ///
 ///
 /// # Safety
@@ -275,15 +282,15 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception>
 #[cfg(feature = "exception")]
 pub unsafe fn catch<R>(
     closure: impl FnOnce() -> R + UnwindSafe,
-) -> Result<R, Option<Id<Exception>>> {
+) -> Result<R, Option<Retained<Exception>>> {
     let mut value = None;
     let value_ref = &mut value;
     let closure = move || {
         *value_ref = Some(closure());
     };
     let result = unsafe { try_no_ret(closure) };
-    // If the try succeeded, this was set so it's safe to unwrap
-    result.map(|()| value.unwrap())
+    // If the try succeeded, value was set so it's safe to unwrap
+    result.map(|()| value.unwrap_or_else(|| unreachable!()))
 }
 
 #[cfg(test)]
@@ -291,10 +298,10 @@ pub unsafe fn catch<R>(
 mod tests {
     use alloc::format;
     use alloc::string::ToString;
+    use core::panic::AssertUnwindSafe;
 
     use super::*;
-    use crate::runtime::NSObject;
-    use crate::{msg_send_id, ClassType};
+    use crate::msg_send_id;
 
     #[test]
     fn test_catch() {
@@ -310,7 +317,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        all(feature = "apple", target_os = "macos", target_arch = "x86"),
+        all(target_vendor = "apple", target_os = "macos", target_arch = "x86"),
         ignore = "`NULL` exceptions are invalid on 32-bit / w. fragile runtime"
     )]
     fn test_catch_null() {
@@ -327,10 +334,32 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(
+        feature = "catch-all",
+        ignore = "Panics inside `catch` when catch-all is enabled"
+    )]
+    fn test_catch_unknown_selector() {
+        let obj = AssertUnwindSafe(NSObject::new());
+        let ptr = Retained::as_ptr(&obj);
+        let result = unsafe {
+            catch(|| {
+                let _: Retained<NSObject> = msg_send_id![&*obj, copy];
+            })
+        };
+        let err = result.unwrap_err().unwrap();
+
+        assert_eq!(
+            format!("{err}"),
+            format!("-[NSObject copyWithZone:]: unrecognized selector sent to instance {ptr:?}"),
+        );
+    }
+
+    #[test]
     fn test_throw_catch_object() {
-        let obj: Id<Exception> = unsafe { msg_send_id![NSObject::class(), new] };
+        let obj = NSObject::new();
         // TODO: Investigate why this is required on GNUStep!
         let _obj2 = obj.clone();
+        let obj: Retained<Exception> = unsafe { Retained::cast(obj) };
         let ptr: *const Exception = &*obj;
 
         let result = unsafe { catch(|| throw(obj)) };

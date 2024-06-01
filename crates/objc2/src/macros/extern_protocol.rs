@@ -1,4 +1,4 @@
-/// Create a new trait to represent an Objective-C protocol.
+/// Create a new trait to represent a protocol.
 ///
 /// This is similar to a `@protocol` declaration in Objective-C.
 ///
@@ -7,9 +7,12 @@
 /// general information about protocols in Objective-C.
 ///
 /// This macro will create an `unsafe` trait with methods which all have
-/// default implementations, such that an object that conforms to the protocol
-/// can simply write `unsafe impl MyProtocol for MyClass {}`, and get access
+/// default implementations, such that an external class that conforms to the
+/// protocol can write `unsafe impl MyProtocol for MyClass {}`, and get access
 /// to the functionality exposed by the protocol.
+///
+/// Note that that conforming to a protocol in a custom object requires
+/// putting the implementation inside the [`declare_class!`] invocation.
 ///
 /// Objective-C has a smart feature where you can write `id<MyProtocol>`, and
 /// then work with the protocol as-if it was an object; this is very similar
@@ -43,8 +46,7 @@
 /// future when implementing protocols in [`declare_class!`].
 ///
 /// This macro otherwise shares similarities with [`extern_class!`] and
-/// [`extern_methods!`], if you are familiar with those, it should be fairly
-/// straightforward to use.
+/// [`extern_methods!`].
 ///
 /// [`ProtocolObject<dyn T>`]: crate::runtime::ProtocolObject
 /// [`ProtocolType`]: crate::ProtocolType
@@ -73,11 +75,12 @@
 /// ```
 /// use std::ffi::c_void;
 /// use objc2::ffi::NSInteger;
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 /// use objc2::runtime::{NSObject, NSObjectProtocol};
 /// use objc2::{extern_protocol, ProtocolType};
 ///
-/// // Assume these were correctly define, as if the came from `icrate`
+/// // Assume these were correctly defined, as if they came from
+/// // `objc2-foundation`
 /// type NSArray<T> = T;
 /// type NSString = NSObject;
 /// type NSProgress = NSObject;
@@ -87,7 +90,7 @@
 ///     /// This comment will appear on the trait as expected.
 ///     pub unsafe trait NSItemProviderWriting: NSObjectProtocol {
 ///         //                                  ^^^^^^^^^^^^^^^^
-///         // This trait inherits from `NSObject`
+///         // This protocol inherits from the `NSObject` protocol
 ///
 ///         // This method we mark as `unsafe`, since we aren't using the correct
 ///         // type for the completion handler
@@ -96,11 +99,11 @@
 ///             &self,
 ///             type_identifier: &NSString,
 ///             completion_handler: *mut c_void,
-///         ) -> Option<Id<NSProgress>>;
+///         ) -> Option<Retained<NSProgress>>;
 ///
 ///         #[method_id(writableTypeIdentifiersForItemProvider)]
 ///         fn writableTypeIdentifiersForItemProvider_class()
-///             -> Id<NSArray<NSString>>;
+///             -> Retained<NSArray<NSString>>;
 ///
 ///         // The rest of these are optional, which means that a user of
 ///         // `declare_class!` would not need to implement them.
@@ -108,7 +111,7 @@
 ///         #[optional]
 ///         #[method_id(writableTypeIdentifiersForItemProvider)]
 ///         fn writableTypeIdentifiersForItemProvider(&self)
-///             -> Id<NSArray<NSString>>;
+///             -> Retained<NSArray<NSString>>;
 ///
 ///         #[optional]
 ///         #[method(itemProviderVisibilityForRepresentationWithTypeIdentifier:)]
@@ -142,7 +145,7 @@
 /// // from it as we specified.
 /// ```
 ///
-/// See the source code of `icrate` for many more examples.
+/// See the source code of `objc2-foundation` for many more examples.
 #[doc(alias = "@protocol")]
 #[macro_export]
 macro_rules! extern_protocol {
@@ -154,7 +157,7 @@ macro_rules! extern_protocol {
 
         $(#[$impl_m:meta])*
         unsafe impl ProtocolType for dyn $for:ident {
-            $(const NAME: &'static str = $name_const:literal;)?
+            $(const NAME: &'static str = $name_const:expr;)?
         }
     ) => {
         $(#[$m])*
@@ -164,22 +167,40 @@ macro_rules! extern_protocol {
             }
         }
 
+        $crate::__inner_extern_protocol!(
+            ($(#[$impl_m])*)
+            ($name)
+            (dyn $for)
+            ($crate::__select_name!($name; $($name_const)?))
+        );
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __inner_extern_protocol {
+    (
+        ($(#[$impl_m:meta])*)
+        ($name:ident)
+        (dyn $for:ident)
+        ($name_str:expr)
+    ) => {
         $(#[$impl_m])*
         unsafe impl<T> $name for $crate::runtime::ProtocolObject<T>
         where
-            T: ?$crate::__macro_helpers::Sized + $crate::ProtocolType + $name
+            T: ?$crate::__macro_helpers::Sized + $name
         {}
 
         // SAFETY: The specified name is ensured by caller to be a protocol,
         // and is correctly defined.
         $(#[$impl_m])*
         unsafe impl ProtocolType for dyn $for {
-            const NAME: &'static $crate::__macro_helpers::str = $crate::__select_name!($name; $($name_const)?);
+            const NAME: &'static $crate::__macro_helpers::str = $name_str;
             const __INNER: () = ();
         }
 
-        // SAFETY: Anything that implements the protocol `$name` is valid to
-        // convert to `ProtocolObject<dyn $name>`.
+        // SAFETY: Anything that implements the protocol is valid to convert
+        // to `ProtocolObject<dyn [PROTO]>`.
         $(#[$impl_m])*
         unsafe impl<T> $crate::runtime::ImplementedBy<T> for dyn $for
         where
@@ -187,7 +208,10 @@ macro_rules! extern_protocol {
         {
             const __INNER: () = ();
         }
-    }
+
+        // TODO: Should we also implement `ImplementedBy` for `Send + Sync`
+        // types, as is done for `NSObjectProtocol`?
+    };
 }
 
 /// tt-munch each protocol method.
@@ -200,19 +224,21 @@ macro_rules! __extern_protocol_rewrite_methods {
     // Unsafe variant
     {
         $(#[$($m:tt)*])*
-        $v:vis unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)?;
+        $v:vis unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)?
+        // TODO: Handle where bounds better
+        $(where $($where:ty : $bound:path),+ $(,)?)?;
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_arg! {
-            ($($args)*)
+        $crate::__rewrite_self_param! {
+            ($($params)*)
 
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
-            ($name)
 
             ($crate::__extern_protocol_method_out)
-            ($v unsafe fn $name($($args)*) $(-> $ret)?)
+            ($v unsafe fn $name($($params)*) $(-> $ret)?)
+            ($($($where : $bound ,)+)?)
         }
 
         $crate::__extern_protocol_rewrite_methods! {
@@ -223,19 +249,21 @@ macro_rules! __extern_protocol_rewrite_methods {
     // Safe variant
     {
         $(#[$($m:tt)*])*
-        $v:vis fn $name:ident($($args:tt)*) $(-> $ret:ty)?;
+        $v:vis fn $name:ident($($params:tt)*) $(-> $ret:ty)?
+        // TODO: Handle where bounds better
+        $(where $($where:ty : $bound:path),+ $(,)?)?;
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_arg! {
-            ($($args)*)
+        $crate::__rewrite_self_param! {
+            ($($params)*)
 
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
-            ($name)
 
             ($crate::__extern_protocol_method_out)
-            ($v fn $name($($args)*) $(-> $ret)?)
+            ($v fn $name($($params)*) $(-> $ret)?)
+            ($($($where : $bound ,)+)?)
         }
 
         $crate::__extern_protocol_rewrite_methods! {
@@ -250,14 +278,16 @@ macro_rules! __extern_protocol_method_out {
     // Instance #[method(...)]
     {
         ($($function_start:tt)*)
+        ($($where:ty : $bound:path ,)*)
 
         (add_method)
         ($receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         (#[method($($sel:tt)*)])
+        ()
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -265,13 +295,14 @@ macro_rules! __extern_protocol_method_out {
         $($function_start)*
         where
             Self: $crate::__macro_helpers::Sized + $crate::Message
+            $(, $where : $bound)*
         {
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send! {
                     ($receiver)
                     ($($sel)*)
-                    ($($args_rest)*)
+                    ($($params_rest)*)
 
                     ()
                     ()
@@ -283,14 +314,16 @@ macro_rules! __extern_protocol_method_out {
     // Instance #[method_id(...)]
     {
         ($($function_start:tt)*)
+        ($($where:ty : $bound:path ,)*)
 
         (add_method)
         ($receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         (#[method_id($($sel:tt)*)])
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -298,17 +331,18 @@ macro_rules! __extern_protocol_method_out {
         $($function_start)*
         where
             Self: $crate::__macro_helpers::Sized + $crate::Message
+            $(, $where : $bound)*
         {
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send_id! {
                     ($receiver)
                     ($($sel)*)
-                    ($($args_rest)*)
+                    ($($params_rest)*)
 
                     ()
                     ()
-                    ()
+                    ($($retain_semantics)*)
                 }
             }
         }
@@ -317,14 +351,16 @@ macro_rules! __extern_protocol_method_out {
     // Class #[method(...)]
     {
         ($($function_start:tt)*)
+        ($($where:ty : $bound:path ,)*)
 
         (add_class_method)
         ($receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         (#[method($($sel:tt)*)])
+        ()
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -332,13 +368,14 @@ macro_rules! __extern_protocol_method_out {
         $($function_start)*
         where
             Self: $crate::__macro_helpers::Sized + $crate::ClassType
+            $(, $where : $bound)*
         {
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send! {
                     ($receiver)
                     ($($sel)*)
-                    ($($args_rest)*)
+                    ($($params_rest)*)
 
                     ()
                     ()
@@ -350,14 +387,16 @@ macro_rules! __extern_protocol_method_out {
     // Class #[method_id(...)]
     {
         ($($function_start:tt)*)
+        ($($where:ty : $bound:path ,)*)
 
         (add_class_method)
         ($receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         (#[method_id($($sel:tt)*)])
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -365,17 +404,18 @@ macro_rules! __extern_protocol_method_out {
         $($function_start)*
         where
             Self: $crate::__macro_helpers::Sized + $crate::ClassType
+            $(, $where : $bound)*
         {
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send_id! {
                     ($receiver)
                     ($($sel)*)
-                    ($($args_rest)*)
+                    ($($params_rest)*)
 
                     ()
                     ()
-                    ()
+                    ($($retain_semantics)*)
                 }
             }
         }

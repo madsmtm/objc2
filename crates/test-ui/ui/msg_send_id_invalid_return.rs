@@ -1,30 +1,32 @@
 //! Test compiler output with invalid msg_send_id return values.
 use objc2::msg_send_id;
-use objc2::rc::{Allocated, Id};
-use objc2::runtime::{Class, Object, NSObject};
+use objc2::rc::{Allocated, Retained};
+use objc2::runtime::{AnyClass, AnyObject, NSObject};
 
 fn main() {
-    let cls: &Class;
-    let _: &Object = unsafe { msg_send_id![cls, new] };
-    let _: Id<Class> = unsafe { msg_send_id![cls, new] };
-    let _: Option<Id<Class>> = unsafe { msg_send_id![cls, new] };
+    let cls: &AnyClass;
+    let _: &AnyObject = unsafe { msg_send_id![cls, new] };
+    let _: Retained<AnyClass> = unsafe { msg_send_id![cls, new] };
+    let _: Option<Retained<AnyClass>> = unsafe { msg_send_id![cls, new] };
 
-    let _: &Object = unsafe { msg_send_id![cls, alloc] };
-    let _: Allocated<Class> = unsafe { msg_send_id![cls, alloc] };
-    let _: Id<Object> = unsafe { msg_send_id![cls, alloc] };
+    let _: &AnyObject = unsafe { msg_send_id![cls, alloc] };
+    let _: Allocated<AnyClass> = unsafe { msg_send_id![cls, alloc] };
+    let _: Retained<AnyObject> = unsafe { msg_send_id![cls, alloc] };
     // Earlier design worked like this
-    let _: Id<Allocated<Object>> = unsafe { msg_send_id![cls, alloc] };
+    let _: Option<Allocated<AnyObject>> = unsafe { msg_send_id![cls, alloc] };
+    // And even earlier design like this
+    let _: Retained<Allocated<AnyObject>> = unsafe { msg_send_id![cls, alloc] };
 
-    let obj: Option<Allocated<Object>>;
-    let _: &Object = unsafe { msg_send_id![obj, init] };
-    let obj: Option<Allocated<Object>>;
-    let _: Id<Class> = unsafe { msg_send_id![obj, init] };
-    let obj: Option<Allocated<Object>>;
-    let _: Id<NSObject> = unsafe { msg_send_id![obj, init] };
+    let obj: Allocated<AnyObject>;
+    let _: &AnyObject = unsafe { msg_send_id![obj, init] };
+    let obj: Allocated<AnyObject>;
+    let _: Retained<AnyClass> = unsafe { msg_send_id![obj, init] };
+    let obj: Allocated<AnyObject>;
+    let _: Retained<NSObject> = unsafe { msg_send_id![obj, init] };
 
-    let obj: &Object;
-    let _: &Object = unsafe { msg_send_id![obj, copy] };
+    let obj: &AnyObject;
+    let _: &AnyObject = unsafe { msg_send_id![obj, copy] };
 
-    let _: &Object = unsafe { msg_send_id![obj, description] };
-    let _: Option<&Object> = unsafe { msg_send_id![obj, description] };
+    let _: &AnyObject = unsafe { msg_send_id![obj, description] };
+    let _: Option<&AnyObject> = unsafe { msg_send_id![obj, description] };
 }

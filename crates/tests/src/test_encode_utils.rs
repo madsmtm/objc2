@@ -2,7 +2,7 @@
 use core::fmt::Display;
 use core::sync::atomic::{AtomicI32, AtomicPtr};
 use objc2::ffi::{NSInteger, NSUInteger};
-use objc2::runtime::{Bool, Class, Object, Sel};
+use objc2::runtime::{AnyClass, AnyObject, Bool, Sel};
 use objc2::{Encode, Encoding};
 use paste::paste;
 use std::ffi::CStr;
@@ -12,7 +12,7 @@ use std::string::ToString;
 use super::*;
 
 unsafe fn assert_encoding(s: *const c_char, e: Encoding) {
-    let s = CStr::from_ptr(s).to_str().unwrap();
+    let s = unsafe { CStr::from_ptr(s) }.to_str().unwrap();
     if !e.equivalent_to_str(s) {
         panic!("{} were not equivalent to {}", e, s);
     }
@@ -22,9 +22,8 @@ unsafe fn assert_encoding(s: *const c_char, e: Encoding) {
 
 #[allow(unused)]
 unsafe fn assert_str<T: Display>(s: *const c_char, expected: T) {
-    let s = CStr::from_ptr(s).to_str().unwrap();
-    // Exact comparison to ensure we catch regressions (and that they are not
-    // just masked by ).
+    let s = unsafe { CStr::from_ptr(s) }.to_str().unwrap();
+    // Exact comparison to ensure we catch regressions.
     assert_eq!(s, expected.to_string());
 }
 
@@ -100,7 +99,7 @@ const WITH_ATOMIC_INNER: Encoding = Encoding::Struct(
     ],
 );
 
-#[cfg(feature = "apple")]
+#[cfg(not(feature = "gnustep-1-7"))]
 const BITFIELD: Encoding = Encoding::Struct(
     "bitfield",
     &[
@@ -109,7 +108,7 @@ const BITFIELD: Encoding = Encoding::Struct(
         Encoding::BitField(2, None),
     ],
 );
-#[cfg(feature = "apple")]
+#[cfg(not(feature = "gnustep-1-7"))]
 const BITFIELD_ALL_TYPES: Encoding = Encoding::Struct(
     "bitfield_all_types",
     &[
@@ -258,9 +257,11 @@ assert_types! {
 
     // Objective-C
 
+    // https://github.com/llvm/llvm-project/issues/87490
+    #[ignore = "pointers to booleans are broken on newer Clang versions"]
     OBJC_BOOL => Bool,
-    ID => enc <*mut Object>::ENCODING,
-    CLASS => enc <&Class>::ENCODING,
+    ID => enc <*mut AnyObject>::ENCODING,
+    CLASS => enc <&AnyClass>::ENCODING,
     // Sel is (intentionally) not RefEncode
     SEL => enc <Sel>::ENCODING,
     NS_INTEGER => NSInteger,
@@ -277,8 +278,8 @@ assert_types! {
     UINT32 => u32,
     UINT64 => u64,
 
-    // `intptr`, `uintptr` and `size_t` are cfg-guarded because they are
-    // simply just too much of a hassle to get working on this old platform.
+    // `intptr`, `uintptr` and `size_t` are cfg-guarded because they are too
+    // much of a hassle to get working on old platforms.
     //
     // Pointers (`intptr*`) works, but not plain `intptr`...
 
@@ -296,6 +297,19 @@ assert_types! {
     // uuid.h
 
     UUID_T no_atomic => enc Encoding::Array(16, &u8::ENCODING),
+
+    // simd
+
+    #[cfg(target_vendor = "apple")]
+    SIMD_INT2 => enc Encoding::None,
+    #[cfg(target_vendor = "apple")]
+    SIMD_FLOAT1 => c_float,
+    #[cfg(target_vendor = "apple")]
+    SIMD_FLOAT2 => enc Encoding::None,
+    #[cfg(target_vendor = "apple")]
+    SIMD_FLOAT2X4 => enc Encoding::Struct("?", &[Encoding::Array(2, &Encoding::None)]),
+    #[cfg(target_vendor = "apple")]
+    SIMD_FLOAT4X2 => enc Encoding::Struct("?", &[Encoding::Array(4, &Encoding::None)]),
 
     // Possible extras; need to be #[cfg]-ed somehow
 

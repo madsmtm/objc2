@@ -9,38 +9,46 @@ license = "MIT"
 
 build = "build.rs"
 
+[lints]
+workspace = true
+
 [features]
-default = ["apple", "std", "Foundation_all"]
-std = ["block2/std", "objc2/std", "icrate/std"]
-exception = ["objc2/exception", "Foundation_all"]
+default = ["all"]
+exception = ["objc2/exception", "all"]
 catch-all = ["objc2/catch-all", "exception"]
 # TODO: Fix this
-Foundation_all = [
-    "icrate/Foundation",
-    "icrate/Foundation_NSString",
-    "icrate/Foundation_NSException",
-    "icrate/Foundation_NSArray",
-    "icrate/Foundation_NSNumber",
+all = [
+    "objc2-foundation/NSException",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSValue",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSObjCRuntime",
 ]
 
-apple = ["block2/apple", "objc2/apple", "icrate/apple"]
-gnustep-1-7 = ["block2/gnustep-1-7", "objc2/gnustep-1-7", "icrate/gnustep-1-7"]
-gnustep-1-8 = ["gnustep-1-7", "block2/gnustep-1-8", "objc2/gnustep-1-8", "icrate/gnustep-1-8"]
-gnustep-1-9 = ["gnustep-1-8", "block2/gnustep-1-9", "objc2/gnustep-1-9", "icrate/gnustep-1-9"]
-gnustep-2-0 = ["gnustep-1-9", "block2/gnustep-2-0", "objc2/gnustep-2-0", "icrate/gnustep-2-0"]
-gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1", "objc2/gnustep-2-1", "icrate/gnustep-2-1"]
+unstable-simd = []
 
-malloc = ["objc2/malloc"]
+gnustep-1-7 = ["block2/gnustep-1-7", "objc2/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "block2/gnustep-1-8", "objc2/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "block2/gnustep-1-9", "objc2/gnustep-1-9", "objc2-foundation/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "block2/gnustep-2-0", "objc2/gnustep-2-0", "objc2-foundation/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1", "objc2/gnustep-2-1", "objc2-foundation/gnustep-2-1"]
+unstable-objfw = ["block2/unstable-objfw", "objc-sys/unstable-objfw"]
 
 [dependencies]
-block2 = { path = "../block2", default-features = false }
-block-sys = { path = "../block-sys", default-features = false }
-objc-sys = { path = "../objc-sys", default-features = false }
-objc2 = { path = "../objc2", default-features = false }
-icrate = { path = "../icrate", default-features = false }
+block2 = { path = "../block2" }
+objc-sys = { path = "../objc-sys" }
+objc2 = { path = "../objc2" }
+objc2-foundation = { path = "../../framework-crates/objc2-foundation" }
 
 [build-dependencies]
 cc = "1.0"
 
 [dev-dependencies]
 paste = "1.0"
+
+[package.metadata.release]
+release = false

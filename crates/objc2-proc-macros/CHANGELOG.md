@@ -7,6 +7,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
+## 0.1.3 - 2024-05-21
+
+### Fixed
+* Fixed an issue with publishing using an older version of Cargo that didn't
+  handle the `lints.workspace = true` Cargo setup properly.
+
+
+## 0.1.2 - 2024-05-21 (Yanked)
+
+### Deprecated
+* Deprecated the `apple` Cargo feature flag, it is assumed by default on Apple
+  platforms.
+
+
 ## 0.1.1 - 2023-02-07
 
 ### Fixed

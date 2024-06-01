@@ -1,6 +1,6 @@
-[submodule "crates/icrate/src/generated"]
-	path = crates/icrate/src/generated
-	url = https://github.com/madsmtm/icrate-generated.git
+[submodule "generated"]
+	path = generated
+	url = https://github.com/madsmtm/objc2-generated.git
 	# We recommend a shallow clone here since there are a lot of generated
 	# files in history, and I suspect most contributors won't need to look at
 	# the history of these.

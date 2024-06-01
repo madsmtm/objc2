@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.p2align	4, 0x90
-SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0):
+SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	rbp
 	mov	rbp, rsp
 	push	rbx
@@ -21,7 +21,7 @@ LBB0_2:
 	call	SYM(core::option::expect_failed::GENERATED_ID, 0)
 
 	.p2align	4, 0x90
-SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0):
+SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	rbp
 	mov	rbp, rsp
 	call	_objc_retain
@@ -52,7 +52,7 @@ _error_bool:
 	ret
 LBB2_2:
 	mov	rdi, qword ptr [rbp - 8]
-	call	SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	add	rsp, 16
 	pop	rbp
 	ret
@@ -76,33 +76,7 @@ _error_new:
 LBB3_2:
 	mov	rdi, qword ptr [rbp - 8]
 	lea	rsi, [rip + l_anon.[ID].4]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0)
-	mov	rdx, rax
-	mov	eax, 1
-	add	rsp, 16
-	pop	rbp
-	ret
-
-	.globl	_error_alloc
-	.p2align	4, 0x90
-_error_alloc:
-	push	rbp
-	mov	rbp, rsp
-	sub	rsp, 16
-	mov	qword ptr [rbp - 8], 0
-	lea	rdx, [rbp - 8]
-	call	_objc_msgSend
-	test	rax, rax
-	je	LBB4_2
-	mov	rdx, rax
-	xor	eax, eax
-	add	rsp, 16
-	pop	rbp
-	ret
-LBB4_2:
-	mov	rdi, qword ptr [rbp - 8]
-	lea	rsi, [rip + l_anon.[ID].5]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 16
@@ -119,16 +93,16 @@ _error_init:
 	lea	rdx, [rbp - 8]
 	call	_objc_msgSend
 	test	rax, rax
-	je	LBB5_2
+	je	LBB4_2
 	mov	rdx, rax
 	xor	eax, eax
 	add	rsp, 16
 	pop	rbp
 	ret
-LBB5_2:
+LBB4_2:
 	mov	rdi, qword ptr [rbp - 8]
-	lea	rsi, [rip + l_anon.[ID].6]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0)
+	lea	rsi, [rip + l_anon.[ID].5]
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 16
@@ -145,16 +119,16 @@ _error_copy:
 	lea	rdx, [rbp - 8]
 	call	_objc_msgSend
 	test	rax, rax
-	je	LBB6_2
+	je	LBB5_2
 	mov	rdx, rax
 	xor	eax, eax
 	add	rsp, 16
 	pop	rbp
 	ret
-LBB6_2:
+LBB5_2:
 	mov	rdi, qword ptr [rbp - 8]
-	lea	rsi, [rip + l_anon.[ID].7]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0)
+	lea	rsi, [rip + l_anon.[ID].6]
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 16
@@ -178,16 +152,16 @@ _error_autoreleased:
 
 	## InlineAsm End
 	test	rax, rax
-	je	LBB7_2
+	je	LBB6_2
 	mov	rdx, rax
 	xor	eax, eax
 	add	rsp, 16
 	pop	rbp
 	ret
-LBB7_2:
+LBB6_2:
 	mov	rdi, qword ptr [rbp - 8]
-	lea	rsi, [rip + l_anon.[ID].8]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::Object>, 0)
+	lea	rsi, [rip + l_anon.[ID].7]
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 16
@@ -205,34 +179,29 @@ l_anon.[ID].2:
 	.ascii	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].3:
 	.quad	l_anon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\013\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\n\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	l_anon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\020\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\017\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].5:
 	.quad	l_anon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\025\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\026\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].6:
 	.quad	l_anon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\032\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\033\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].7:
 	.quad	l_anon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\037\000\000\000\005\000\000"
-
-	.p2align	3
-l_anon.[ID].8:
-	.quad	l_anon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000$\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000 \000\000\000\005\000\000"
 
 .subsections_via_symbols

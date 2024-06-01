@@ -41,7 +41,7 @@ LBB1_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<1_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc
 	.p2align	4, 0x90
@@ -50,41 +50,6 @@ _handle_alloc:
 	mov	ebp, esp
 	pop	ebp
 	jmp	_objc_msgSend
-
-	.globl	_handle_alloc_fallible
-	.p2align	4, 0x90
-_handle_alloc_fallible:
-	push	ebp
-	mov	ebp, esp
-	push	ebx
-	push	edi
-	push	esi
-	sub	esp, 12
-	call	L3$pb
-L3$pb:
-	pop	ebx
-	mov	edi, dword ptr [ebp + 12]
-	mov	esi, dword ptr [ebp + 8]
-	sub	esp, 8
-	push	edi
-	push	esi
-	call	_objc_msgSend
-	add	esp, 16
-	test	eax, eax
-	je	LBB3_2
-	add	esp, 12
-	pop	esi
-	pop	edi
-	pop	ebx
-	pop	ebp
-	ret
-LBB3_2:
-	sub	esp, 4
-	lea	eax, [ebx + l_anon.[ID].2-L3$pb]
-	push	eax
-	push	edi
-	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<2_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_init
 	.p2align	4, 0x90
@@ -103,8 +68,8 @@ _handle_init_fallible:
 	push	edi
 	push	esi
 	sub	esp, 12
-	call	L5$pb
-L5$pb:
+	call	L4$pb
+L4$pb:
 	pop	ebx
 	mov	edi, dword ptr [ebp + 12]
 	mov	esi, dword ptr [ebp + 8]
@@ -114,20 +79,20 @@ L5$pb:
 	call	_objc_msgSend
 	add	esp, 16
 	test	eax, eax
-	je	LBB5_2
+	je	LBB4_2
 	add	esp, 12
 	pop	esi
 	pop	edi
 	pop	ebx
 	pop	ebp
 	ret
-LBB5_2:
+LBB4_2:
 	sub	esp, 4
-	lea	eax, [ebx + l_anon.[ID].3-L5$pb]
+	lea	eax, [ebx + l_anon.[ID].2-L4$pb]
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<3_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc_init
 	.p2align	4, 0x90
@@ -205,8 +170,8 @@ _handle_copy_fallible:
 	mov	ebp, esp
 	push	esi
 	sub	esp, 20
-	call	L10$pb
-L10$pb:
+	call	L9$pb
+L9$pb:
 	pop	esi
 	mov	eax, dword ptr [ebp + 8]
 	mov	ecx, dword ptr [ebp + 12]
@@ -214,15 +179,15 @@ L10$pb:
 	mov	dword ptr [esp], eax
 	call	_objc_msgSend
 	test	eax, eax
-	je	LBB10_2
+	je	LBB9_2
 	add	esp, 20
 	pop	esi
 	pop	ebp
 	ret
-LBB10_2:
-	lea	eax, [esi + l_anon.[ID].4-L10$pb]
+LBB9_2:
+	lea	eax, [esi + l_anon.[ID].3-L9$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<4_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_autoreleased
 	.p2align	4, 0x90
@@ -243,6 +208,31 @@ _handle_autoreleased:
 	mov	dword ptr [esp], eax
 	call	_objc_retainAutoreleasedReturnValue
 	add	esp, 8
+	pop	ebp
+	ret
+
+	.globl	_handle_autoreleased_with_arg
+	.p2align	4, 0x90
+_handle_autoreleased_with_arg:
+	push	ebp
+	mov	ebp, esp
+	sub	esp, 8
+	movzx	eax, byte ptr [ebp + 16]
+	sub	esp, 4
+	push	eax
+	push	dword ptr [ebp + 12]
+	push	dword ptr [ebp + 8]
+	call	_objc_msgSend
+	add	esp, 16
+	## InlineAsm Start
+
+	mov	ebp, ebp
+
+	## InlineAsm End
+	sub	esp, 12
+	push	eax
+	call	_objc_retainAutoreleasedReturnValue
+	add	esp, 24
 	pop	ebp
 	ret
 
@@ -284,11 +274,11 @@ L12$pb:
 	ret
 LBB12_2:
 	sub	esp, 4
-	lea	eax, [ebx + l_anon.[ID].5-L12$pb]
+	lea	eax, [ebx + l_anon.[ID].4-L12$pb]
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<5_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_with_out_param
 	.p2align	4, 0x90
@@ -332,29 +322,24 @@ l_anon.[ID].0:
 	.ascii	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].1:
 	.long	l_anon.[ID].0
 	.asciz	"3\000\000\000\r\000\000\000\005\000\000"
 
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].2:
 	.long	l_anon.[ID].0
-	.asciz	"3\000\000\000\027\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\034\000\000\000\005\000\000"
 
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].3:
 	.long	l_anon.[ID].0
-	.asciz	"3\000\000\000!\000\000\000\005\000\000"
+	.asciz	"3\000\000\0008\000\000\000\005\000\000"
 
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].4:
 	.long	l_anon.[ID].0
-	.asciz	"3\000\000\000>\000\000\000\005\000\000"
-
-	.p2align	2
-l_anon.[ID].5:
-	.long	l_anon.[ID].0
-	.asciz	"3\000\000\000H\000\000\000\005\000\000"
+	.asciz	"3\000\000\000L\000\000\000\005\000\000"
 
 .subsections_via_symbols

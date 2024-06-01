@@ -18,8 +18,17 @@ pub enum UnexposedAttr {
     Bridged,
     BridgedMutable,
 
+    /// `ns_returns_retained` / `cf_returns_retained` / `os_returns_retained`
     ReturnsRetained,
+    /// `ns_returns_not_retained` / `cf_returns_not_retained` / `os_returns_not_retained`
     ReturnsNotRetained,
+
+    Sendable,
+    NonSendable,
+    UIActor,
+    NonIsolated,
+
+    NoEscape,
 }
 
 impl UnexposedAttr {
@@ -42,6 +51,7 @@ impl UnexposedAttr {
             }
             "NS_ERROR_ENUM" => {
                 let _ = get_arguments();
+                // TODO: Add error domain here
                 Some(Self::ErrorEnum)
             }
             "NS_TYPED_ENUM" | "NS_STRING_ENUM" | "CF_TYPED_ENUM" => Some(Self::TypedEnum),
@@ -55,46 +65,80 @@ impl UnexposedAttr {
             "NS_RETURNS_RETAINED" | "CF_RETURNS_RETAINED" => Some(Self::ReturnsRetained),
             "NS_RETURNS_NOT_RETAINED" | "CF_RETURNS_NOT_RETAINED" => Some(Self::ReturnsNotRetained),
             "NS_RETURNS_INNER_POINTER" => None,
+            // This has two arguments: `sendability` and `nullability`.
+            // `nullability` is already exposed, so we won't bother with that.
+            // `sendability` is most for backwards-compatibility with older
+            // versions of system headers that didn't assign sendability.
+            "NS_HEADER_AUDIT_BEGIN" => {
+                let _ = get_arguments();
+                None
+            }
+            "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" => Some(Self::Sendable),
+            "NS_SWIFT_NONSENDABLE" => Some(Self::NonSendable),
+            "NS_SWIFT_UI_ACTOR" => Some(Self::UIActor),
+            "NS_SWIFT_NONISOLATED" | "UIKIT_SWIFT_ACTOR_INDEPENDENT" => Some(Self::NonIsolated),
             // TODO
             "NS_FORMAT_FUNCTION" | "NS_FORMAT_ARGUMENT" => {
                 let _ = get_arguments();
                 None
             }
-            // TODO
-            "NS_NOESCAPE" => None,
+            "NS_NOESCAPE" => Some(Self::NoEscape),
             // TODO: We could potentially automatically elide this argument
             // from the method call, though it's rare enough that it's
             // probably not really worth the effort.
             "__unused" => None,
             // We assume that a function is inline if it has a body, so not
             // interesting.
-            "NS_INLINE" => None,
+            "CF_INLINE" | "NS_INLINE" => None,
             // We don't synthethize properties, so irrelevant for us.
             "NS_REQUIRES_PROPERTY_DEFINITIONS" => None,
             // Weak specifiers - would be interesting if Rust supported weak statics
-            "GK_EXTERN_WEAK" => None,
+            "GK_EXTERN_WEAK" | "MC_EXTERN_WEAK" => None,
             // Availability attributes - their data is already exposed.
-            "__IOS_AVAILABLE"
+            "__API_AVAILABLE"
+            | "__API_DEPRECATED"
+            | "__API_DEPRECATED_WITH_REPLACEMENT"
+            | "__API_UNAVAILABLE"
+            | "__IOS_AVAILABLE"
+            | "__IOS_DEPRECATED"
+            | "__OSX_AVAILABLE"
             | "__OSX_AVAILABLE_STARTING"
+            | "__OSX_DEPRECATED"
             | "__TVOS_AVAILABLE"
+            | "__TVOS_DEPRECATED"
             | "__WATCHOS_AVAILABLE"
+            | "__WATCHOS_DEPRECATED"
             | "API_AVAILABLE_BEGIN"
             | "API_AVAILABLE"
-            | "API_DEPRECATED_WITH_REPLACEMENT"
             | "API_DEPRECATED"
+            | "API_DEPRECATED_BEGIN"
+            | "API_DEPRECATED_WITH_REPLACEMENT"
             | "API_UNAVAILABLE_BEGIN"
             | "API_UNAVAILABLE"
+            | "CF_AVAILABLE_IOS"
+            | "CF_AVAILABLE_MAC"
             | "CF_SWIFT_UNAVAILABLE"
             | "CG_AVAILABLE_BUT_DEPRECATED"
             | "CG_AVAILABLE_STARTING"
+            | "CI_GL_DEPRECATED"
+            | "CI_GL_DEPRECATED_IOS"
+            | "CI_GL_DEPRECATED_MAC"
+            | "CIKL_DEPRECATED"
+            | "CK_UNAVAILABLE"
             | "FPUI_AVAILABLE"
+            | "MLCOMPUTE_AVAILABLE_STARTING"
+            | "MLCOMPUTE_AVAILABLE_STARTING_BUT_DEPRECATED_MACOS14"
+            | "MLCOMPUTE_CLASS_AVAILABLE_STARTING"
+            | "MLCOMPUTE_ENUM_AVAILABLE_STARTING"
             | "MP_API"
-            | "MP_DEPRECATED_WITH_REPLACEMENT"
             | "MP_DEPRECATED"
+            | "MP_DEPRECATED_WITH_REPLACEMENT"
             | "MP_UNAVAILABLE_BEGIN"
             | "MP_UNAVAILABLE"
+            | "NS_AVAILABLE_IOS"
             | "NS_AVAILABLE_MAC"
             | "NS_AVAILABLE"
+            | "NS_CLASS_AVAILABLE_IOS"
             | "NS_CLASS_AVAILABLE_MAC"
             | "NS_CLASS_AVAILABLE"
             | "NS_CLASS_DEPRECATED_IOS"
@@ -103,9 +147,13 @@ impl UnexposedAttr {
             | "NS_DEPRECATED_MAC"
             | "NS_DEPRECATED"
             | "NS_ENUM_AVAILABLE"
-            | "NS_ENUM_DEPRECATED_IOS"
+            | "NS_ENUM_AVAILABLE_IOS"
+            | "NS_ENUM_AVAILABLE_MAC"
             | "NS_ENUM_DEPRECATED"
+            | "NS_ENUM_DEPRECATED_IOS"
+            | "NS_ENUM_DEPRECATED_MAC"
             | "NS_EXTENSION_UNAVAILABLE"
+            | "NS_EXTENSION_UNAVAILABLE_IOS"
             | "NS_OPENGL_CLASS_DEPRECATED"
             | "NS_OPENGL_DEPRECATED"
             | "NS_OPENGL_ENUM_DEPRECATED"
@@ -113,6 +161,15 @@ impl UnexposedAttr {
             | "OBJC_AVAILABLE"
             | "OBJC_DEPRECATED"
             | "OBJC_SWIFT_UNAVAILABLE"
+            | "OPENGL_DEPRECATED"
+            | "OPENGLES_DEPRECATED"
+            | "SOCIAL_CLASS_AVAILABLE"
+            | "SOCIAL_CLASS_AVAILABLE_IOS"
+            | "SOCIAL_CLASS_AVAILABLE_MAC"
+            | "UIKIT_AVAILABLE_TVOS_ONLY"
+            | "UIKIT_AVAILABLE_IOS_ONLY"
+            | "UIKIT_CLASS_AVAILABLE_IOS_ONLY"
+            | "UIKIT_CLASS_AVAILABLE_IOS_TVOS"
             | "WEBKIT_AVAILABLE_MAC"
             | "WEBKIT_CLASS_DEPRECATED_MAC"
             | "WEBKIT_DEPRECATED_MAC"
@@ -120,6 +177,9 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
+            // For some reason we don't need to extract the arguments for
+            // these, perhaps because they simply delegate to other macros.
+            "AS_API_AVAILABLE" | "AS_HEADER_AUDIT_BEGIN" => None,
             "__IOS_PROHIBITED"
             | "__IOS_UNAVAILABLE"
             | "__OSX_AVAILABLE_BUT_DEPRECATED"
@@ -129,18 +189,21 @@ impl UnexposedAttr {
             | "__WATCHOS_PROHIBITED"
             | "__WATCHOS_UNAVAILABLE"
             | "APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST"
+            | "AVKIT_INIT_UNAVAILABLE"
+            | "CB_CM_API_AVAILABLE"
             | "MP_INIT_UNAVAILABLE"
             | "NS_AUTOMATED_REFCOUNT_UNAVAILABLE"
             | "NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE"
             | "NS_UNAVAILABLE"
             | "UNAVAILABLE_ATTRIBUTE"
-            | "UT_AVAILABLE_BEGIN" => None,
+            | "UT_AVAILABLE_BEGIN"
+            | "MP_DEPRECATED_BEGIN" => None,
             s if s.starts_with("AVAILABLE_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("DEPRECATED_IN_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("FILEPROVIDER_API_AVAILABILITY_") => None,
             // Might be interesting in the future
             "CF_SWIFT_NAME"
-            | "NS_HEADER_AUDIT_BEGIN"
+            | "DISPATCH_SWIFT_NAME"
             | "NS_REFINED_FOR_SWIFT_ASYNC"
             | "NS_SWIFT_ASYNC_NAME"
             | "NS_SWIFT_ASYNC_THROWS_ON_FALSE"
@@ -155,11 +218,7 @@ impl UnexposedAttr {
             "CF_REFINED_FOR_SWIFT"
             | "NS_REFINED_FOR_SWIFT"
             | "NS_SWIFT_DISABLE_ASYNC"
-            | "NS_SWIFT_NONISOLATED"
-            | "NS_SWIFT_NONSENDABLE"
-            | "NS_SWIFT_NOTHROW"
-            | "NS_SWIFT_SENDABLE"
-            | "NS_SWIFT_UI_ACTOR" => None,
+            | "NS_SWIFT_NOTHROW" => None,
             _ => return Err(()),
         })
     }
@@ -220,7 +279,7 @@ fn get_argument_tokens<'a>(entity: &Entity<'a>) -> Vec<Token<'a>> {
     // Remove the macro name from the full macro tokens
     let name_ranges = entity.get_name_ranges();
     assert_eq!(name_ranges.len(), 1, "macro name ranges");
-    let name_range = name_ranges.get(0).unwrap();
+    let name_range = name_ranges.first().unwrap();
     let range = entity.get_range().expect("macro range");
 
     let mut tokens = SourceRange::new(name_range.get_end(), range.get_end()).tokenize();

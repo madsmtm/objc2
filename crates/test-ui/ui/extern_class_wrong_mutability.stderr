@@ -1,0 +1,123 @@
+error[E0277]: the trait bound `MainThreadOnly: ValidSubclassMutability<InteriorMutable>` is not satisfied
+ --> ui/extern_class_wrong_mutability.rs
+  |
+  | / extern_class!(
+  | |     pub struct MyAnyThreadClass;
+  | |
+  | |     unsafe impl ClassType for MyAnyThreadClass {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `ValidSubclassMutability<InteriorMutable>` is not implemented for `MainThreadOnly`
+  |
+  = help: the trait `ValidSubclassMutability<MainThreadOnly>` is implemented for `MainThreadOnly`
+  = help: for that trait implementation, expected `MainThreadOnly`, found `InteriorMutable`
+note: required by a bound in `assert_mutability_matches_superclass_mutability`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
+  |
+  | pub fn assert_mutability_matches_superclass_mutability<T>()
+  |        ----------------------------------------------- required by a bound in this function
+...
+  |     <T::Super as ClassType>::Mutability: ValidSubclassMutability<T::Mutability>,
+  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `assert_mutability_matches_superclass_mutability`
+  = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0271]: type mismatch resolving `<NSObject as ClassType>::Mutability == ImmutableWithMutableSubclass<MyMutableClass1>`
+ --> ui/extern_class_wrong_mutability.rs
+  |
+  | / extern_class!(
+  | |     pub struct MyImmutableClass1;
+  | |
+  | |     unsafe impl ClassType for MyImmutableClass1 {
+... |
+  | |     }
+  | | );
+  | |_^ expected `ImmutableWithMutableSubclass<MyMutableClass1>`, found `Root`
+  |
+  = note: expected struct `ImmutableWithMutableSubclass<MyMutableClass1>`
+             found struct `Root`
+  = note: required for `Root` to implement `ValidSubclassMutability<ImmutableWithMutableSubclass<MyMutableClass1>>`
+note: required by a bound in `assert_mutability_matches_superclass_mutability`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
+  |
+  | pub fn assert_mutability_matches_superclass_mutability<T>()
+  |        ----------------------------------------------- required by a bound in this function
+...
+  |     <T::Super as ClassType>::Mutability: ValidSubclassMutability<T::Mutability>,
+  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `assert_mutability_matches_superclass_mutability`
+  = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0271]: type mismatch resolving `<NSObject as ClassType>::Mutability == ImmutableWithMutableSubclass<MyMutableClass1>`
+ --> ui/extern_class_wrong_mutability.rs
+  |
+  | / extern_class!(
+  | |     pub struct MyMutableClass1;
+  | |
+  | |     unsafe impl ClassType for MyMutableClass1 {
+... |
+  | |     }
+  | | );
+  | |_^ expected `ImmutableWithMutableSubclass<MyMutableClass1>`, found `Root`
+  |
+  = note: expected struct `ImmutableWithMutableSubclass<MyMutableClass1>`
+             found struct `Root`
+  = note: required for `ImmutableWithMutableSubclass<MyMutableClass1>` to implement `ValidSubclassMutability<MutableWithImmutableSuperclass<NSObject>>`
+note: required by a bound in `assert_mutability_matches_superclass_mutability`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
+  |
+  | pub fn assert_mutability_matches_superclass_mutability<T>()
+  |        ----------------------------------------------- required by a bound in this function
+...
+  |     <T::Super as ClassType>::Mutability: ValidSubclassMutability<T::Mutability>,
+  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `assert_mutability_matches_superclass_mutability`
+  = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0271]: type mismatch resolving `<NSObject as ClassType>::Mutability == MutableWithImmutableSuperclass<_>`
+ --> ui/extern_class_wrong_mutability.rs
+  |
+  | / extern_class!(
+  | |     pub struct MyImmutableClass2;
+  | |
+  | |     unsafe impl ClassType for MyImmutableClass2 {
+... |
+  | |     }
+  | | );
+  | |_^ expected `MutableWithImmutableSuperclass<_>`, found `Root`
+  |
+  = note: expected struct `MutableWithImmutableSuperclass<_>`
+             found struct `Root`
+  = note: required for `Root` to implement `ValidSubclassMutability<ImmutableWithMutableSubclass<NSObject>>`
+note: required by a bound in `assert_mutability_matches_superclass_mutability`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
+  |
+  | pub fn assert_mutability_matches_superclass_mutability<T>()
+  |        ----------------------------------------------- required by a bound in this function
+...
+  |     <T::Super as ClassType>::Mutability: ValidSubclassMutability<T::Mutability>,
+  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `assert_mutability_matches_superclass_mutability`
+  = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0271]: type mismatch resolving `<NSObject as ClassType>::Mutability == MutableWithImmutableSuperclass<MyImmutableClass2>`
+ --> ui/extern_class_wrong_mutability.rs
+  |
+  | / extern_class!(
+  | |     pub struct MyMutableClass2;
+  | |
+  | |     unsafe impl ClassType for MyMutableClass2 {
+... |
+  | |     }
+  | | );
+  | |_^ expected `MutableWithImmutableSuperclass<MyImmutableClass2>`, found `Root`
+  |
+  = note: expected struct `MutableWithImmutableSuperclass<MyImmutableClass2>`
+             found struct `Root`
+  = note: required for `ImmutableWithMutableSubclass<NSObject>` to implement `ValidSubclassMutability<MutableWithImmutableSuperclass<MyImmutableClass2>>`
+note: required by a bound in `assert_mutability_matches_superclass_mutability`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
+  |
+  | pub fn assert_mutability_matches_superclass_mutability<T>()
+  |        ----------------------------------------------- required by a bound in this function
+...
+  |     <T::Super as ClassType>::Mutability: ValidSubclassMutability<T::Mutability>,
+  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `assert_mutability_matches_superclass_mutability`
+  = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

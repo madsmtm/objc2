@@ -4,11 +4,23 @@ error[E0277]: `*mut c_void` cannot be shared between threads safely
   |     needs_sync::<AutoreleasePool<'_>>();
   |                  ^^^^^^^^^^^^^^^^^^^ `*mut c_void` cannot be shared between threads safely
   |
-  = help: within `AutoreleasePool<'_>`, the trait `Sync` is not implemented for `*mut c_void`
-  = note: required because it appears within the type `Pool`
-  = note: required because it appears within the type `&Pool`
-  = note: required because it appears within the type `Option<&Pool>`
-  = note: required because it appears within the type `AutoreleasePool<'_>`
+  = help: within `AutoreleasePool<'_>`, the trait `Sync` is not implemented for `*mut c_void`, which is required by `AutoreleasePool<'_>: Sync`
+note: required because it appears within the type `objc2::rc::autorelease::Pool`
+ --> $WORKSPACE/crates/objc2/src/rc/autorelease.rs
+  |
+  | struct Pool {
+  |        ^^^^
+  = note: required because it appears within the type `&objc2::rc::autorelease::Pool`
+note: required because it appears within the type `Option<&objc2::rc::autorelease::Pool>`
+ --> $RUST/core/src/option.rs
+  |
+  | pub enum Option<T> {
+  |          ^^^^^^
+note: required because it appears within the type `AutoreleasePool<'_>`
+ --> $WORKSPACE/crates/objc2/src/rc/autorelease.rs
+  |
+  | pub struct AutoreleasePool<'pool> {
+  |            ^^^^^^^^^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/autoreleasepool_not_send_sync.rs
   |
@@ -21,11 +33,23 @@ error[E0277]: `*mut c_void` cannot be shared between threads safely
   |     needs_send::<AutoreleasePool<'_>>();
   |                  ^^^^^^^^^^^^^^^^^^^ `*mut c_void` cannot be shared between threads safely
   |
-  = help: within `objc2::rc::autorelease::Pool`, the trait `Sync` is not implemented for `*mut c_void`
-  = note: required because it appears within the type `Pool`
+  = help: within `objc2::rc::autorelease::Pool`, the trait `Sync` is not implemented for `*mut c_void`, which is required by `AutoreleasePool<'_>: Send`
+note: required because it appears within the type `objc2::rc::autorelease::Pool`
+ --> $WORKSPACE/crates/objc2/src/rc/autorelease.rs
+  |
+  | struct Pool {
+  |        ^^^^
   = note: required for `&objc2::rc::autorelease::Pool` to implement `Send`
-  = note: required because it appears within the type `Option<&Pool>`
-  = note: required because it appears within the type `AutoreleasePool<'_>`
+note: required because it appears within the type `Option<&objc2::rc::autorelease::Pool>`
+ --> $RUST/core/src/option.rs
+  |
+  | pub enum Option<T> {
+  |          ^^^^^^
+note: required because it appears within the type `AutoreleasePool<'_>`
+ --> $WORKSPACE/crates/objc2/src/rc/autorelease.rs
+  |
+  | pub struct AutoreleasePool<'pool> {
+  |            ^^^^^^^^^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/autoreleasepool_not_send_sync.rs
   |

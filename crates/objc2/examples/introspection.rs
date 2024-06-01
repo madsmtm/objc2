@@ -1,4 +1,4 @@
-use objc2::runtime::{Class, NSObject};
+use objc2::runtime::{AnyClass, NSObject};
 use objc2::{sel, ClassType, Encode};
 
 fn main() {
@@ -29,7 +29,7 @@ fn main() {
         ivar.name(),
         ivar.type_encoding()
     );
-    assert!(<*const Class>::ENCODING.equivalent_to_str(ivar.type_encoding()));
+    assert!(<*const AnyClass>::ENCODING.equivalent_to_str(ivar.type_encoding()));
 
     // Inspect a method of the class
     let method = cls.instance_method(sel!(hash)).unwrap();
@@ -37,21 +37,16 @@ fn main() {
         "-[NSObject hash] takes {} parameters",
         method.arguments_count()
     );
-    #[cfg(feature = "malloc")]
-    {
-        let hash_return = method.return_type();
-        println!("-[NSObject hash] return type: {hash_return:?}");
-        assert!(usize::ENCODING.equivalent_to_str(&hash_return));
-    }
+    let hash_return = method.return_type();
+    println!("-[NSObject hash] return type: {hash_return:?}");
+    assert!(usize::ENCODING.equivalent_to_str(&hash_return));
 
     // Create an instance
     let obj = NSObject::new();
 
     println!("NSObject address: {obj:p}");
 
-    // Access an ivar of the object
-    //
-    // As before, you should not rely on the `isa` ivar being available!
-    let isa = unsafe { *obj.ivar::<*const Class>("isa") };
+    // Read an ivar on the object
+    let isa: *const AnyClass = unsafe { *ivar.load(&obj) };
     println!("NSObject isa: {isa:?}");
 }

@@ -1,22 +1,20 @@
 //! # Objective-C interface and runtime bindings
 //!
+//! Quick links:
+//! - [All Topics][crate::topics].
+//! - [About framework crates][crate::topics::about_generated].
+//! - [List of framework crates][crate::topics::about_generated::list].
+//!
 //! Objective-C was the standard programming language on Apple platforms like
 //! macOS, iOS, iPadOS, tvOS and watchOS. It is an object-oriented language
 //! centered around "sending messages" to its instances - this can for the
-//! most part be viewed as a simple method call.
+//! most part be viewed as a function call.
 //!
 //! It has since been superseded by Swift, but most of the core libraries and
 //! frameworks that are in use on Apple systems are still written in
 //! Objective-C, and hence we would like the ability to interract with these
 //! using Rust. This crate enables you to do that, in as safe a manner as
 //! possible.
-//!
-//! See [the document on "Layered Safety"][layered-safety] for a bit of an
-//! introduction to how the safety in this crate works, and see [`icrate`] for
-//! higher-level bindings to Apple's frameworks.
-//!
-//! [layered-safety]: https://github.com/madsmtm/objc2/blob/master/LAYERED_SAFETY.md
-//! [`icrate`]: https://docs.rs/icrate/latest/icrate/
 //!
 //!
 //! ## Basic usage
@@ -25,26 +23,25 @@
 //!
 //! First, we allocate a new [`NSObject`] using [`ClassType::alloc`].
 //! Next, we initialize this object. It is ensured to be deallocated using
-//! [`rc::Id`].
+//! [`rc::Retained`].
 //! Now we're free to send messages to the object to our hearts desire using
 //! the [`msg_send!`] or [`msg_send_id!`] macros (depending on the return type
 //! of the method).
-//! Finally, the `Id` goes out of scope, and the object is released and
+//! Finally, the `Retained` goes out of scope, and the object is released and
 //! deallocated.
 //!
-#![cfg_attr(feature = "apple", doc = "```")]
-#![cfg_attr(not(feature = "apple"), doc = "```no_run")]
+//! ```
 //! use objc2::{msg_send, msg_send_id, ClassType};
 //! use objc2::ffi::NSUInteger;
-//! use objc2::rc::Id;
+//! use objc2::rc::Retained;
 //! use objc2::runtime::{NSObject, NSObjectProtocol};
 //!
 //! // Creation
 //!
-//! let obj1: Id<NSObject> = unsafe {
+//! let obj1: Retained<NSObject> = unsafe {
 //!     msg_send_id![NSObject::alloc(), init]
 //! };
-//! // Or we can simply do
+//! // Or
 //! let obj2 = NSObject::new();
 //!
 //! // Usage
@@ -58,27 +55,28 @@
 //! };
 //! assert!(is_kind);
 //!
-//! let obj1_self: Id<NSObject> = unsafe { msg_send_id![&obj1, self] };
+//! let obj1_self: Retained<NSObject> = unsafe { msg_send_id![&obj1, self] };
 //! assert_eq!(obj1, obj1_self);
 //!
 //! // Deallocation on drop
 //! ```
 //!
-//! Note that this very simple example contains a lot of `unsafe` (which
-//! should all ideally be justified with a `// SAFETY` comment). This is
-//! required because our compiler can verify very little about the Objective-C
-//! invocation, including all argument and return types used in [`msg_send!`];
-//! we could have just as easily accidentally made `hash` an `f32`, or any
-//! other type, and this would trigger undefined behaviour!
+//! Note that this example contains a lot of `unsafe` (which should all
+//! ideally be justified with a `// SAFETY` comment). This is required because
+//! our compiler can verify very little about the Objective-C invocation,
+//! including all argument and return types used in [`msg_send!`]. We could
+//! have accidentally made `hash` an `f32`, or any other type, and this would
+//! trigger undefined behaviour!
 //!
-//! See the `icrate` crate for much more ergonomic usage of the system
+//! See [the framework crates] for much more ergonomic usage of the system
 //! frameworks like `Foundation`, `AppKit`, `UIKit` and so on.
 //!
 //! Anyhow, all of this `unsafe` nicely leads us to another feature that this
 //! crate has:
 //!
 //! [`NSObject`]: crate::runtime::NSObject
-//! [`rc::Id`]: crate::rc::Id
+//! [`rc::Retained`]: crate::rc::Retained
+//! [the framework crates]: crate::topics::about_generated
 //!
 //!
 //! ## Encodings and message type verification
@@ -106,8 +104,7 @@
 //! To take the example above, if we changed the `hash` method's return type
 //! as in the following example, it'll panic if debug assertions are enabled:
 //!
-#![cfg_attr(all(feature = "apple", debug_assertions), doc = "```should_panic")]
-#![cfg_attr(not(all(feature = "apple", debug_assertions)), doc = "```no_run")]
+//! ```should_panic
 //! # use objc2::{msg_send, ClassType};
 //! # use objc2::runtime::NSObject;
 //! #
@@ -119,8 +116,7 @@
 //! # panic!("does not panic in release mode, so for testing we make it!");
 //! ```
 //!
-//! This library contains further such debug checks, most of which are enabled
-//! by default. To enable all of them, use the `"verify"` cargo feature.
+//! This library contains further such debug checks.
 //!
 //! [`Vec`]: std::vec::Vec
 //!
@@ -143,12 +139,11 @@
 //! ## Other functionality
 //!
 //! That was a quick introduction, this library also has [support for handling
-//! exceptions][exc], [the ability to dynamically declare Objective-C
-//! classes][declare], [advanced reference-counting utilities][rc], and more -
+//! exceptions][exc], [the ability to declare Objective-C
+//! classes][declare_class!], [advanced reference-counting utilities][rc], and more -
 //! peruse the documentation at will!
 //!
 //! [exc]: crate::exception
-//! [declare]: crate::declare
 //! [rc]: crate::rc
 
 #![no_std]
@@ -157,16 +152,12 @@
     feature(negative_impls, auto_traits)
 )]
 #![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
-#![cfg_attr(feature = "unstable-docsrs", feature(doc_cfg, doc_auto_cfg))]
-#![warn(elided_lifetimes_in_paths)]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 #![warn(missing_docs)]
-#![deny(non_ascii_idents)]
-#![warn(unreachable_pub)]
-#![deny(unsafe_op_in_unsafe_fn)]
-#![warn(clippy::cargo)]
-#![warn(clippy::ptr_as_ptr)]
+#![warn(clippy::missing_errors_doc)]
+#![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2/0.3.0-beta.5")]
+#![doc(html_root_url = "https://docs.rs/objc2/0.5.2")]
 
 #[cfg(not(feature = "alloc"))]
 compile_error!("The `alloc` feature currently must be enabled.");
@@ -177,18 +168,12 @@ compile_error!("The `std` feature currently must be enabled.");
 extern crate alloc;
 extern crate std;
 
-#[cfg(doctest)]
-#[doc = include_str!("../README.md")]
-extern "C" {}
-
 #[doc(no_inline)]
 pub use objc_sys as ffi;
 
-pub use self::class_type::ClassType;
 #[doc(no_inline)]
 pub use self::encode::{Encode, Encoding, RefEncode};
-pub use self::message::{Message, MessageArguments, MessageReceiver};
-pub use self::protocol_type::ProtocolType;
+pub use self::top_level_traits::{ClassType, DeclaredClass, Message, ProtocolType};
 
 #[cfg(feature = "objc2-proc-macros")]
 #[doc(hidden)]
@@ -204,25 +189,45 @@ macro_rules! __hash_idents {
     };
 }
 
+// Note: While this is not public, it is still a breaking change to change,
+// since framework crates rely on it.
+#[doc(hidden)]
+pub mod __framework_prelude;
 #[doc(hidden)]
 pub mod __macro_helpers;
-mod class_type;
-pub mod declare;
 pub mod encode;
 pub mod exception;
 mod macros;
-mod message;
-mod protocol_type;
+pub mod mutability;
 pub mod rc;
 pub mod runtime;
 #[cfg(test)]
 mod test_utils;
+mod top_level_traits;
+#[cfg(any(doc, doctest, test))]
+pub mod topics;
 mod verify;
 
+/// Deprecated location for a few things that are now in the [`runtime`]
+/// module.
+#[deprecated = "Moved to the `runtime` module"]
+pub mod declare {
+    pub use super::runtime::{ClassBuilder, ProtocolBuilder};
+    use super::*;
+
+    /// Use [`runtime::ClassBuilder`] instead.
+    #[deprecated = "Use `runtime::ClassBuilder` instead."]
+    pub type ClassDecl = runtime::ClassBuilder;
+
+    /// Use [`runtime::ProtocolBuilder`] instead.
+    #[deprecated = "Use `runtime::ProtocolBuilder` instead."]
+    pub type ProtocolDecl = runtime::ProtocolBuilder;
+}
+
 // Link to Foundation to make NSObject work
+#[cfg_attr(target_vendor = "apple", link(name = "Foundation", kind = "framework"))]
 #[cfg_attr(
-    all(feature = "apple", not(feature = "unstable-compiler-rt")),
-    link(name = "Foundation", kind = "framework")
+    all(feature = "gnustep-1-7", not(feature = "unstable-compiler-rt")),
+    link(name = "gnustep-base", kind = "dylib")
 )]
-#[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
 extern "C" {}

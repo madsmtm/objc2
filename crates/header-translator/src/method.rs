@@ -1,7 +1,6 @@
 use std::fmt;
 
 use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
-use tracing::span::EnteredSpan;
 
 use crate::availability::Availability;
 use crate::config::MethodData;
@@ -45,16 +44,19 @@ impl MethodArgumentQualifier {
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, Default)]
-struct MethodModifiers {
+pub(crate) struct MethodModifiers {
     returns_inner_pointer: bool,
     consumes_self: bool,
     returns_retained: bool,
     returns_not_retained: bool,
     designated_initializer: bool,
+    non_isolated: bool,
+    sendable: Option<bool>,
+    pub(crate) mainthreadonly: bool,
 }
 
 impl MethodModifiers {
-    fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Self {
+    pub(crate) fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let mut this = Self::default();
 
         immediate_children(entity, |entity, _span| match entity.get_kind() {
@@ -66,6 +68,18 @@ impl MethodModifiers {
                         }
                         UnexposedAttr::ReturnsNotRetained => {
                             this.returns_not_retained = true;
+                        }
+                        UnexposedAttr::NonIsolated => {
+                            this.non_isolated = true;
+                        }
+                        UnexposedAttr::Sendable => {
+                            this.sendable = Some(true);
+                        }
+                        UnexposedAttr::NonSendable => {
+                            this.sendable = Some(false);
+                        }
+                        UnexposedAttr::UIActor => {
+                            this.mainthreadonly = true;
                         }
                         attr => error!(?attr, "unknown attribute"),
                     }
@@ -110,6 +124,9 @@ impl MethodModifiers {
             }
             EntityKind::VisibilityAttr => {
                 // TODO: Handle these visibility attributes
+            }
+            EntityKind::AnnotateAttr => {
+                // TODO: `UI_APPEARANCE_SELECTOR`
             }
             _ => error!("unknown"),
         });
@@ -169,9 +186,9 @@ impl MemoryManagement {
         // And if:
         // > its signature obeys the added restrictions of the method family.
         //
-        // Which is just:
+        // Which is:
         // > must return a retainable object pointer
-        if result_type.is_id() {
+        if result_type.is_retainable() {
             // We also check that the correct modifier flags were set for the
             // given method family.
             match (
@@ -206,13 +223,14 @@ impl MemoryManagement {
                 }
             }
         } else if let MethodModifiers {
-            designated_initializer: false,
             // TODO: Maybe we can use this to emit things with lifetime of:
             // `'self + 'autoreleasepool`
             returns_inner_pointer: _,
             consumes_self: false,
             returns_retained: false,
             returns_not_retained: false,
+            designated_initializer: false,
+            ..
         } = modifiers
         {
             Self::Normal
@@ -228,31 +246,128 @@ impl MemoryManagement {
 pub struct Method {
     pub selector: String,
     pub fn_name: String,
-    availability: Availability,
+    pub availability: Availability,
     pub is_class: bool,
-    is_optional_protocol: bool,
+    is_optional: bool,
     memory_management: MemoryManagement,
     arguments: Vec<(String, Ty)>,
-    pub result_type: Ty,
+    result_type: Ty,
+    is_error: bool,
     safe: bool,
     mutating: bool,
     is_protocol: bool,
     comment: Option<String>,
+    is_pub: bool,
+    // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
+    non_isolated: bool,
+    mainthreadonly: bool,
+}
+
+#[derive(Debug)]
+pub struct PartialProperty<'tu> {
+    pub entity: Entity<'tu>,
+    pub name: String,
+    pub getter_sel: String,
+    pub setter_sel: Option<String>,
+    pub is_class: bool,
+    pub attributes: Option<ObjCAttributes>,
+}
+
+fn mainthreadonly_override<'a>(
+    result_type: &Ty,
+    argument_types: impl IntoIterator<Item = &'a Ty>,
+    parent_is_mainthreadonly: bool,
+    is_class: bool,
+    mainthreadonly_modifier: bool,
+) -> bool {
+    let mut result_type_requires_mainthreadmarker =
+        result_type.requires_mainthreadmarker(parent_is_mainthreadonly);
+
+    let mut any_argument_provides_mainthreadmarker = argument_types
+        .into_iter()
+        .any(|arg_ty| arg_ty.provides_mainthreadmarker(parent_is_mainthreadonly));
+
+    if parent_is_mainthreadonly {
+        if is_class {
+            // Assume the method needs main thread if it's
+            // declared on a main thread only class.
+            result_type_requires_mainthreadmarker = true;
+        } else {
+            // Method takes `&self` or `&mut self`, or is
+            // an initialization method, all of which
+            // already require the main thread.
+            //
+            // Note: Initialization methods can be passed
+            // `None`, but in that case the return will
+            // always be NULL.
+            any_argument_provides_mainthreadmarker = true;
+        }
+    }
+
+    if any_argument_provides_mainthreadmarker {
+        // MainThreadMarker can be retrieved from
+        // `MainThreadMarker::from` inside these methods,
+        // and hence passing it is redundant.
+        false
+    } else if result_type_requires_mainthreadmarker {
+        true
+    } else {
+        // If neither, then we respect any annotation
+        // the method may have had before
+        mainthreadonly_modifier
+    }
 }
 
 impl Method {
     /// Value that uniquely identifies the method in a class.
-    pub fn id(&self) -> (bool, &str) {
-        (self.is_class, &self.selector)
+    pub fn id(&self) -> (bool, String) {
+        (self.is_class, self.selector.clone())
     }
 
-    /// Takes one of `EntityKind::ObjCInstanceMethodDecl` or
-    /// `EntityKind::ObjCClassMethodDecl`.
-    pub fn partial(entity: Entity<'_>) -> PartialMethod<'_> {
-        let selector = entity.get_name().expect("method selector");
-        let fn_name = selector.trim_end_matches(|c| c == ':').replace(':', "_");
+    pub(crate) fn usable_in_default_retained(&self) -> bool {
+        self.selector == "new"
+            && self.is_class
+            && self.arguments.is_empty()
+            && self.safe
+            && !self.mainthreadonly
+    }
 
-        let _span = debug_span!("method", fn_name).entered();
+    /// Takes `EntityKind::ObjCPropertyDecl`.
+    pub(crate) fn partial_property(entity: Entity<'_>) -> PartialProperty<'_> {
+        let attributes = entity.get_objc_attributes();
+        let has_setter = attributes.map(|a| !a.readonly).unwrap_or(true);
+
+        let name = entity.get_display_name().expect("property name");
+
+        PartialProperty {
+            entity,
+            name,
+            getter_sel: entity.get_objc_getter_name().expect("property getter name"),
+            setter_sel: has_setter.then(|| {
+                entity
+                    .get_objc_setter_name()
+                    .expect("property setter name")
+                    .to_string()
+            }),
+            is_class: attributes.map(|a| a.class).unwrap_or(false),
+            attributes,
+        }
+    }
+
+    pub(crate) fn parse_method(
+        entity: Entity<'_>,
+        data: MethodData,
+        parent_is_mutable: bool,
+        parent_is_mainthreadonly: bool,
+        is_pub: bool,
+        context: &Context<'_>,
+    ) -> Option<(bool, Method)> {
+        let selector = entity.get_name().expect("method selector");
+        let _span = debug_span!("method", selector).entered();
+
+        if data.skipped {
+            return None;
+        }
 
         let is_class = match entity.get_kind() {
             EntityKind::ObjCInstanceMethodDecl => false,
@@ -260,86 +375,17 @@ impl Method {
             _ => unreachable!("unknown method kind"),
         };
 
-        PartialMethod {
-            entity,
-            selector,
-            is_class,
-            fn_name,
-            _span,
-        }
-    }
-
-    /// Takes `EntityKind::ObjCPropertyDecl`.
-    pub fn partial_property(entity: Entity<'_>) -> PartialProperty<'_> {
-        let attributes = entity.get_objc_attributes();
-        let has_setter = attributes.map(|a| !a.readonly).unwrap_or(true);
-
-        let name = entity.get_display_name().expect("property name");
-        let _span = debug_span!("property", name).entered();
-
-        PartialProperty {
-            entity,
-            name,
-            getter_name: entity.get_objc_getter_name().expect("property getter name"),
-            setter_name: has_setter.then(|| {
-                entity
-                    .get_objc_setter_name()
-                    .expect("property setter name")
-                    .trim_end_matches(|c| c == ':')
-                    .to_string()
-            }),
-            is_class: attributes.map(|a| a.class).unwrap_or(false),
-            attributes,
-            _span,
-        }
-    }
-
-    pub fn update(mut self, data: MethodData) -> Option<Self> {
-        if data.skipped {
-            return None;
-        }
-
-        self.mutating = data.mutating;
-        self.safe = !data.unsafe_;
-
-        Some(self)
-    }
-
-    pub fn visit_required_types(&self, mut f: impl FnMut(&ItemIdentifier)) {
-        for (_, arg) in &self.arguments {
-            arg.visit_required_types(&mut f);
-        }
-
-        self.result_type.visit_required_types(&mut f);
-    }
-}
-
-#[derive(Debug)]
-pub struct PartialMethod<'tu> {
-    entity: Entity<'tu>,
-    selector: String,
-    pub is_class: bool,
-    pub fn_name: String,
-    _span: EnteredSpan,
-}
-
-impl<'tu> PartialMethod<'tu> {
-    pub fn parse(
-        self,
-        data: MethodData,
-        is_protocol: bool,
-        context: &Context<'_>,
-    ) -> Option<(bool, Method)> {
-        let Self {
-            entity,
-            selector,
-            is_class,
-            fn_name,
-            _span,
-        } = self;
-
-        if data.skipped {
-            return None;
+        // Don't emit memory-management methods
+        match &*selector {
+            // Available via. `ClassType`
+            "alloc" | "allocWithZone:" if is_class => {
+                return None;
+            }
+            // Available via. `Retained` (and disallowed by ARC).
+            "retain" | "release" | "autorelease" | "dealloc" if !is_class => {
+                return None;
+            }
+            _ => {}
         }
 
         if entity.is_variadic() {
@@ -351,6 +397,10 @@ impl<'tu> PartialMethod<'tu> {
 
         let modifiers = MethodModifiers::parse(&entity, context);
 
+        if modifiers.sendable.is_some() {
+            error!("sendable on method");
+        }
+
         let mut arguments: Vec<_> = entity
             .get_arguments()
             .expect("method arguments")
@@ -361,6 +411,8 @@ impl<'tu> PartialMethod<'tu> {
                 let qualifier = entity
                     .get_objc_qualifiers()
                     .map(MethodArgumentQualifier::parse);
+                let mut sendable = None;
+                let mut no_escape = false;
 
                 immediate_children(&entity, |entity, _span| match entity.get_kind() {
                     EntityKind::ObjCClassRef
@@ -369,12 +421,18 @@ impl<'tu> PartialMethod<'tu> {
                     | EntityKind::ParmDecl => {
                         // Ignore
                     }
+                    // `ns_consumed`, `cf_consumed` and `os_consumed`
                     EntityKind::NSConsumed => {
                         error!("found NSConsumed, which requires manual handling");
                     }
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                            error!(?attr, "unknown attribute");
+                            match attr {
+                                UnexposedAttr::Sendable => sendable = Some(true),
+                                UnexposedAttr::NonSendable => sendable = Some(false),
+                                UnexposedAttr::NoEscape => no_escape = true,
+                                attr => error!(?attr, "unknown attribute"),
+                            }
                         }
                     }
                     // For some reason we recurse into array types
@@ -383,7 +441,7 @@ impl<'tu> PartialMethod<'tu> {
                 });
 
                 let ty = entity.get_type().expect("argument type");
-                let ty = Ty::parse_method_argument(ty, qualifier, context);
+                let ty = Ty::parse_method_argument(ty, qualifier, sendable, no_escape, context);
 
                 (name, ty)
             })
@@ -410,7 +468,8 @@ impl<'tu> PartialMethod<'tu> {
 
         let result_type = entity.get_result_type().expect("method return type");
         //let comment = entity.get_comment();
-        let mut result_type = Ty::parse_method_return(result_type, context);
+        let default_nonnull = (selector == "init" && !is_class) || (selector == "new" && is_class);
+        let mut result_type = Ty::parse_method_return(result_type, default_nonnull, context);
 
         let memory_management = MemoryManagement::new(is_class, &selector, &result_type, modifiers);
 
@@ -426,9 +485,15 @@ impl<'tu> PartialMethod<'tu> {
             result_type.try_fix_related_result_type();
         }
 
-        if is_error {
-            result_type.set_is_error();
-        }
+        let fn_name = selector.trim_end_matches(|c| c == ':').replace(':', "_");
+
+        let mainthreadonly = mainthreadonly_override(
+            &result_type,
+            arguments.iter().map(|(_, ty)| ty),
+            parent_is_mainthreadonly,
+            is_class,
+            modifiers.mainthreadonly,
+        );
 
         Some((
             modifiers.designated_initializer,
@@ -437,47 +502,44 @@ impl<'tu> PartialMethod<'tu> {
                 fn_name,
                 availability,
                 is_class,
-                is_optional_protocol: entity.is_objc_optional(),
+                is_optional: entity.is_objc_optional(),
                 memory_management,
                 arguments,
                 result_type,
+                is_error,
                 safe: !data.unsafe_,
-                mutating: data.mutating,
+                // Mutable if the parent is mutable is a reasonable default,
+                // since immutable methods are usually either declared on an
+                // immutable subclass, or as a property.
+                mutating: data.mutating.unwrap_or(parent_is_mutable),
                 is_protocol,
                 comment: None,
+                is_pub,
+                non_isolated: modifiers.non_isolated,
+                mainthreadonly,
             },
         ))
     }
-}
 
-#[derive(Debug)]
-pub struct PartialProperty<'tu> {
-    pub entity: Entity<'tu>,
-    pub name: String,
-    pub getter_name: String,
-    pub setter_name: Option<String>,
-    pub is_class: bool,
-    pub attributes: Option<ObjCAttributes>,
-    pub _span: EnteredSpan,
-}
-
-impl PartialProperty<'_> {
-    pub fn parse(
-        self,
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn parse_property(
+        property: PartialProperty<'_>,
         getter_data: MethodData,
         setter_data: Option<MethodData>,
-        is_protocol: bool,
+        parent_is_mutable: bool,
+        parent_is_mainthreadonly: bool,
+        is_pub: bool,
         context: &Context<'_>,
     ) -> (Option<Method>, Option<Method>) {
-        let Self {
+        let PartialProperty {
             entity,
             name,
-            getter_name,
-            setter_name,
+            getter_sel,
+            setter_sel,
             is_class,
             attributes,
-            _span,
-        } = self;
+        } = property;
+        let _span = debug_span!("property", name).entered();
 
         // Early return if both getter and setter are skipped
         //
@@ -501,53 +563,86 @@ impl PartialProperty<'_> {
             let ty = Ty::parse_property_return(
                 entity.get_type().expect("property type"),
                 is_copy,
+                modifiers.sendable,
                 context,
             );
 
-            let memory_management = MemoryManagement::new(is_class, &getter_name, &ty, modifiers);
+            let memory_management = MemoryManagement::new(is_class, &getter_sel, &ty, modifiers);
+
+            let mainthreadonly = mainthreadonly_override(
+                &ty,
+                &[],
+                parent_is_mainthreadonly,
+                is_class,
+                modifiers.mainthreadonly,
+            );
 
             Some(Method {
-                selector: getter_name.clone(),
-                fn_name: getter_name,
+                selector: getter_sel.clone(),
+                fn_name: getter_sel,
                 availability: availability.clone(),
                 is_class,
-                is_optional_protocol: entity.is_objc_optional(),
+                is_optional: entity.is_objc_optional(),
                 memory_management,
                 arguments: Vec::new(),
                 result_type: ty,
+                is_error: false,
                 safe: !getter_data.unsafe_,
-                mutating: getter_data.mutating,
+                // Getters are usually not mutable, even if the class itself
+                // is, so let's default to immutable.
+                mutating: getter_data.mutating.unwrap_or(false),
+                is_pub,
                 is_protocol,
                 comment,
+                non_isolated: modifiers.non_isolated,
+                mainthreadonly,
             })
         } else {
             None
         };
 
-        let setter = if let Some(setter_name) = setter_name {
-            let setter_data = setter_data.expect("setter_data must be present if setter_name was");
+        let setter = if let Some(selector) = setter_sel {
+            let setter_data = setter_data.expect("setter_data must be present if setter_sel was");
             if !setter_data.skipped {
-                let ty =
-                    Ty::parse_property(entity.get_type().expect("property type"), is_copy, context);
+                let result_type = Ty::VOID_RESULT;
+                let ty = Ty::parse_property(
+                    entity.get_type().expect("property type"),
+                    is_copy,
+                    modifiers.sendable,
+                    context,
+                );
 
-                let selector = setter_name.clone() + ":";
-                let memory_management =
-                    MemoryManagement::new(is_class, &selector, &Ty::VOID_RESULT, modifiers);
+                let fn_name = selector.strip_suffix(':').unwrap().to_string();
                 let comment = entity.get_comment();
+                let memory_management =
+                    MemoryManagement::new(is_class, &selector, &result_type, modifiers);
+
+                let mainthreadonly = mainthreadonly_override(
+                    &result_type,
+                    std::iter::once(&ty),
+                    parent_is_mainthreadonly,
+                    is_class,
+                    modifiers.mainthreadonly,
+                );
 
                 Some(Method {
                     selector,
-                    fn_name: setter_name,
+                    fn_name,
                     availability,
                     is_class,
-                    is_optional_protocol: entity.is_objc_optional(),
+                    is_optional: entity.is_objc_optional(),
                     memory_management,
                     arguments: vec![(name, ty)],
-                    result_type: Ty::VOID_RESULT,
+                    result_type,
+                    is_error: false,
                     safe: !setter_data.unsafe_,
-                    mutating: setter_data.mutating,
+                    // Setters are usually mutable if the class itself is.
+                    mutating: setter_data.mutating.unwrap_or(parent_is_mutable),
                     is_protocol,
                     comment,
+                    is_pub,
+                    non_isolated: modifiers.non_isolated,
+                    mainthreadonly,
                 })
             } else {
                 None
@@ -558,25 +653,42 @@ impl PartialProperty<'_> {
 
         (getter, setter)
     }
-}
 
-impl Method {
     pub(crate) fn emit_on_subclasses(&self) -> bool {
         if !self.result_type.is_instancetype() {
             return false;
         }
         if self.is_class {
-            !matches!(&*self.selector, "new" | "supportsSecureCoding")
+            true
         } else {
             self.memory_management == MemoryManagement::IdInit
-                && !matches!(&*self.selector, "init" | "initWithCoder:")
         }
+    }
+
+    pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
+        let mut items = Vec::new();
+        for (_, arg_ty) in &self.arguments {
+            items.extend(arg_ty.required_items());
+        }
+        items.extend(self.result_type.required_items());
+        if self.is_error {
+            items.push(ItemIdentifier::nserror());
+        }
+        if self.mainthreadonly {
+            items.push(ItemIdentifier::main_thread_marker());
+        }
+        items
     }
 }
 
 impl fmt::Display for Method {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let _span = debug_span!("method", self.fn_name).entered();
+
+        // TODO: Use this somehow?
+        // if self.non_isolated {
+        //     writeln!(f, "// non_isolated")?;
+        // }
 
         //
         // Attributes
@@ -588,7 +700,7 @@ impl fmt::Display for Method {
         }
         write!(f, "{}", self.availability)?;
 
-        if self.is_optional_protocol {
+        if self.is_optional {
             writeln!(f, "        #[optional]")?;
         }
 
@@ -604,7 +716,7 @@ impl fmt::Display for Method {
         } else {
             write!(f, "        #[method(")?;
         }
-        let error_trailing = if self.result_type.is_error() { "_" } else { "" };
+        let error_trailing = if self.is_error { "_" } else { "" };
         writeln!(f, "{}{})]", self.selector, error_trailing)?;
 
         //
@@ -612,7 +724,7 @@ impl fmt::Display for Method {
         //
 
         write!(f, "        ")?;
-        if !self.is_protocol {
+        if self.is_pub {
             write!(f, "pub ")?;
         }
 
@@ -623,14 +735,8 @@ impl fmt::Display for Method {
 
         // Receiver
         if let MemoryManagement::IdInit = self.memory_management {
-            if self.mutating {
-                error!("invalid mutating method");
-            }
-            write!(f, "this: Option<Allocated<Self>>, ")?;
+            write!(f, "this: Allocated<Self>, ")?;
         } else if self.is_class {
-            if self.mutating {
-                error!("invalid mutating method");
-            }
             // Insert nothing; a class method is assumed
         } else if self.mutating {
             write!(f, "&mut self, ")?;
@@ -641,12 +747,20 @@ impl fmt::Display for Method {
         // Arguments
         for (param, arg_ty) in &self.arguments {
             let param = handle_reserved(&crate::to_snake_case(param));
-            write!(f, "{param}: {arg_ty},")?;
+            write!(f, "{param}: {}, ", arg_ty.method_argument())?;
+        }
+        if self.mainthreadonly {
+            write!(f, "mtm: MainThreadMarker")?;
         }
         write!(f, ")")?;
 
         // Result
-        writeln!(f, "{};", self.result_type)?;
+        if self.is_error {
+            write!(f, "{}", self.result_type.method_return_with_error())?;
+        } else {
+            write!(f, "{}", self.result_type.method_return())?;
+        }
+        writeln!(f, ";")?;
 
         Ok(())
     }

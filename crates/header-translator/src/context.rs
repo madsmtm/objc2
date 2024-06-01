@@ -1,19 +1,19 @@
-use std::collections::{HashMap, HashSet};
+use std::borrow::Cow;
+use std::collections::HashMap;
 use std::ops;
 use std::path::{Path, PathBuf};
 
 use apple_sdk::SdkPath;
-use clang::source::Location;
 use clang::Entity;
 
 use crate::config::Config;
+use crate::id::Location;
 
 pub struct Context<'a> {
     config: &'a Config,
-    pub macro_invocations: HashMap<Location<'a>, Entity<'a>>,
+    pub macro_invocations: HashMap<clang::source::Location<'a>, Entity<'a>>,
     framework_dir: PathBuf,
     include_dir: PathBuf,
-    system_headers: HashSet<&'static Path>,
 }
 
 impl<'a> Context<'a> {
@@ -23,27 +23,49 @@ impl<'a> Context<'a> {
             macro_invocations: Default::default(),
             framework_dir: sdk.path.join("System/Library/Frameworks"),
             include_dir: sdk.path.join("usr/include"),
-            system_headers: HashSet::from([
-                Path::new("MacTypes.h"),
-                Path::new("objc/objc.h"),
-                Path::new("objc/NSObject.h"),
-                Path::new("objc/NSObjCRuntime.h"),
-            ]),
         }
     }
 
-    pub fn get_library_and_file_name(
-        &self,
-        entity: &Entity<'_>,
-    ) -> Option<(String, Option<String>)> {
+    pub fn get_location(&self, entity: &Entity<'_>) -> Option<Location> {
         if let Some(location) = entity.get_location() {
             if let Some(file) = location.get_file_location().file {
                 let path = file.get_path();
                 if let Ok(path) = path.strip_prefix(&self.framework_dir) {
-                    return Some(split_path(path));
+                    let mut components: Vec<Cow<'_, str>> = path
+                        .components()
+                        .filter(|component| {
+                            component.as_os_str() != "Headers"
+                                && component.as_os_str() != "Frameworks"
+                        })
+                        .map(|component| component.as_os_str().to_str().expect("component to_str"))
+                        .map(|component| component.strip_suffix(".framework").unwrap_or(component))
+                        .map(|component| component.strip_suffix(".h").unwrap_or(component))
+                        .map(|s| s.to_string().into())
+                        .collect();
+
+                    // Put items in umbrella header in `mod.rs`
+                    if let [.., innermost_framework_name, file_name] = &*components {
+                        let umbrella_header = self
+                            .libraries
+                            .get(&**innermost_framework_name)
+                            .and_then(|lib| lib.umbrella_header.as_deref())
+                            .unwrap_or(innermost_framework_name);
+
+                        if file_name == umbrella_header {
+                            let _ = components.pop();
+                        }
+                    }
+
+                    return Some(Location::from_components(components));
                 } else if let Ok(path) = path.strip_prefix(&self.include_dir) {
-                    if self.system_headers.contains(path) {
-                        return Some(("System".to_string(), None));
+                    if path.starts_with("objc") {
+                        return Some(Location::from_components(vec!["objc2".into()]));
+                    }
+                    if path == Path::new("MacTypes.h") {
+                        return Some(Location::from_components(vec!["System".into()]));
+                    }
+                    if path.starts_with("sys") {
+                        return Some(Location::from_components(vec!["libc".into()]));
                     }
                 }
             }
@@ -58,26 +80,4 @@ impl ops::Deref for Context<'_> {
     fn deref(&self) -> &Self::Target {
         self.config
     }
-}
-
-fn split_path(path: &Path) -> (String, Option<String>) {
-    let mut components = path.components();
-    let library_name = components
-        .next()
-        .expect("components next")
-        .as_os_str()
-        .to_str()
-        .expect("component to_str")
-        .strip_suffix(".framework")
-        .expect("framework fileending")
-        .to_string();
-
-    let path = components.as_path();
-    let file_name = path
-        .file_stem()
-        .expect("path file stem")
-        .to_string_lossy()
-        .to_string();
-
-    (library_name, Some(file_name))
 }

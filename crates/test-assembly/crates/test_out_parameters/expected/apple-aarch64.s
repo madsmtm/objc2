@@ -28,13 +28,13 @@ _null_nonnull:
 	stp	x20, x19, [sp, #16]
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
-	mov	x19, x2
-	ldr	x20, [x2]
+	ldr	x19, [x2]
+	mov	x20, x2
 	bl	_objc_msgSend
 	mov	x21, x0
-	ldr	x0, [x19]
+	ldr	x0, [x20]
 	bl	_objc_retain
-	mov	x0, x20
+	mov	x0, x19
 	bl	_objc_release
 	mov	x0, x21
 	ldp	x29, x30, [sp, #32]
@@ -75,8 +75,8 @@ _null_null:
 	stp	x20, x19, [sp, #16]
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
-	mov	x21, x2
 	ldr	x19, [x2]
+	mov	x21, x2
 	bl	_objc_msgSend
 	mov	x20, x0
 	ldr	x0, [x21]

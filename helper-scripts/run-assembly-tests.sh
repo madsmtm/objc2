@@ -4,30 +4,21 @@
 
 set -euxo pipefail
 
-export ARGS="run --features=run --bin=test-assembly -- --target"
-
-# Add `+nightly` when using `-Zbuild-std` if the user's `cargo` is not a
-# `nightly` by default
-if grep -q nightly <<< $(cargo --version); then
-    export NIGHTLY=""
-else
-    export NIGHTLY="+nightly"
-fi
+RUN="cargo run --bin=test-assembly --  -Zbuild-std -Zbuild-std --target"
 
 echo "Apple"
-cargo $ARGS x86_64-apple-darwin
-cargo $ARGS aarch64-apple-darwin
-cargo $NIGHTLY $ARGS armv7s-apple-ios -Zbuild-std
-cargo $NIGHTLY $ARGS armv7-apple-ios -Zbuild-std
-cargo $NIGHTLY $ARGS i386-apple-ios -Zbuild-std
+$RUN x86_64-apple-darwin
+$RUN aarch64-apple-darwin
+$RUN armv7s-apple-ios
+$RUN i386-apple-ios
 
 echo "Old Apple"
-cargo $NIGHTLY $ARGS i686-apple-darwin -Zbuild-std
+$RUN i686-apple-darwin
 
 echo "GNUStep"
-cargo $ARGS x86_64-unknown-linux-gnu --no-default-features --features=std,gnustep-2-1
-cargo $ARGS i686-unknown-linux-gnu --no-default-features --features=std,gnustep-2-1
+$RUN x86_64-unknown-linux-gnu --no-default-features --features=gnustep-2-1
+$RUN i686-unknown-linux-gnu --no-default-features --features=gnustep-2-1
 
 echo "Old GNUStep"
-cargo $ARGS x86_64-unknown-linux-gnu --no-default-features --features=std,gnustep-1-7
-cargo $ARGS i686-unknown-linux-gnu --no-default-features --features=std,gnustep-1-7
+$RUN x86_64-unknown-linux-gnu --no-default-features --features=gnustep-1-7
+$RUN i686-unknown-linux-gnu --no-default-features --features=gnustep-1-7

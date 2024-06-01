@@ -1,14 +1,18 @@
+#![allow(clippy::missing_safety_doc)]
 use core::mem::{size_of, ManuallyDrop};
 use std::os::raw::c_int;
 
-#[cfg(feature = "Foundation_all")]
-use icrate::Foundation::NSNumber;
 use objc2::encode::{Encoding, RefEncode};
-use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
-use objc2::runtime::{Bool, Class, NSObject, NSObjectProtocol, Object, Protocol, ProtocolObject};
-#[cfg(feature = "malloc")]
+use objc2::rc::{autoreleasepool, AutoreleasePool, Retained};
+use objc2::runtime::{
+    AnyClass, AnyObject, AnyProtocol, Bool, NSObject, NSObjectProtocol, ProtocolObject,
+};
 use objc2::sel;
-use objc2::{class, extern_protocol, msg_send, msg_send_id, ClassType, Message, ProtocolType};
+use objc2::{
+    class, extern_protocol, msg_send, msg_send_id, mutability, ClassType, Message, ProtocolType,
+};
+#[cfg(feature = "all")]
+use objc2_foundation::NSNumber;
 
 extern_protocol!(
     unsafe trait MyTestProtocol: NSObjectProtocol {
@@ -18,13 +22,13 @@ extern_protocol!(
         #[method(b)]
         fn b() -> c_int;
 
-        #[cfg(feature = "Foundation_all")]
+        #[cfg(feature = "all")]
         #[method_id(c)]
-        fn c(&self) -> Id<NSNumber>;
+        fn c(&self) -> Retained<NSNumber>;
 
-        #[cfg(feature = "Foundation_all")]
+        #[cfg(feature = "all")]
         #[method_id(d)]
-        fn d() -> Id<NSNumber>;
+        fn d() -> Retained<NSNumber>;
 
         #[method(e)]
         #[optional]
@@ -34,15 +38,15 @@ extern_protocol!(
         #[optional]
         fn f() -> c_int;
 
-        #[cfg(feature = "Foundation_all")]
+        #[cfg(feature = "all")]
         #[optional]
         #[method_id(g)]
-        fn g(&self) -> Id<NSNumber>;
+        fn g(&self) -> Retained<NSNumber>;
 
-        #[cfg(feature = "Foundation_all")]
+        #[cfg(feature = "all")]
         #[optional]
         #[method_id(h)]
-        fn h() -> Id<NSNumber>;
+        fn h() -> Retained<NSNumber>;
     }
 
     unsafe impl ProtocolType for dyn MyTestProtocol {
@@ -78,17 +82,18 @@ struct MyTestObject {
     inner: NSObject,
 }
 
-unsafe impl Message for MyTestObject {}
-
 unsafe impl RefEncode for MyTestObject {
     const ENCODING_REF: Encoding = Encoding::Object;
 }
 
+unsafe impl Message for MyTestObject {}
+
 unsafe impl ClassType for MyTestObject {
     type Super = NSObject;
+    type Mutability = mutability::Mutable;
     const NAME: &'static str = "MyTestObject";
 
-    fn class() -> &'static Class {
+    fn class() -> &'static AnyClass {
         class!(MyTestObject)
     }
 
@@ -105,18 +110,19 @@ unsafe impl NSObjectProtocol for MyTestObject {}
 unsafe impl MyTestProtocol for MyTestObject {}
 
 impl MyTestObject {
-    fn new() -> Id<Self, Owned> {
+    fn new() -> Retained<Self> {
         let cls = Self::class();
         unsafe { msg_send_id![cls, new] }
     }
 
+    #[allow(clippy::needless_lifetimes)]
     fn new_autoreleased<'p>(pool: AutoreleasePool<'p>) -> &'p Self {
         let cls = Self::class();
         let ptr: *const Self = unsafe { msg_send![cls, getAutoreleasedInstance] };
         unsafe { pool.ptr_as_ref(ptr) }
     }
 
-    fn new_autoreleased_retained() -> Id<Self, Owned> {
+    fn new_autoreleased_retained() -> Retained<Self> {
         let cls = Self::class();
         unsafe { msg_send_id![cls, getAutoreleasedInstance] }
     }
@@ -131,11 +137,13 @@ impl MyTestObject {
     }
 
     fn var1_ivar(&self) -> &c_int {
-        unsafe { self.inner.ivar("var1") }
+        let ivar = Self::class().instance_variable("var1").unwrap();
+        unsafe { ivar.load(&self.inner) }
     }
 
     fn var1_ivar_mut(&mut self) -> &mut c_int {
-        unsafe { self.inner.ivar_mut("var1") }
+        let ivar = Self::class().instance_variable("var1").unwrap();
+        unsafe { ivar.load_mut(&mut self.inner) }
     }
 
     fn add_to_ivar1(&mut self, number: c_int) {
@@ -147,31 +155,34 @@ impl MyTestObject {
     }
 
     fn var2_ivar(&self) -> &Bool {
-        unsafe { self.inner.ivar("var2") }
+        let ivar = Self::class().instance_variable("var2").unwrap();
+        unsafe { ivar.load(&self.inner) }
     }
 
     fn var2_ivar_mut(&mut self) -> &mut Bool {
-        unsafe { self.inner.ivar_mut("var2") }
+        let ivar = Self::class().instance_variable("var2").unwrap();
+        unsafe { ivar.load_mut(&mut self.inner) }
     }
 
-    fn var3(&self) -> *mut Object {
+    fn var3(&self) -> *mut AnyObject {
         unsafe { msg_send![self, var3] }
     }
 
-    fn set_var3(&mut self, obj: *mut Object) {
+    fn set_var3(&mut self, obj: *mut AnyObject) {
         unsafe { msg_send![self, setVar3: obj] }
     }
 
-    fn var3_ivar(&self) -> &*mut Object {
-        unsafe { self.inner.ivar("var3") }
+    fn var3_ivar(&self) -> &*mut AnyObject {
+        let ivar = Self::class().instance_variable("var3").unwrap();
+        unsafe { ivar.load(&self.inner) }
     }
 
-    fn var3_ivar_mut(&mut self) -> &mut *mut Object {
-        unsafe { self.inner.ivar_mut("var3") }
+    fn var3_ivar_mut(&mut self) -> &mut *mut AnyObject {
+        let ivar = Self::class().instance_variable("var3").unwrap();
+        unsafe { ivar.load_mut(&mut self.inner) }
     }
 }
 
-#[cfg(feature = "malloc")]
 macro_rules! assert_in {
     ($item:expr, $lst:expr) => {{
         let mut found = false;
@@ -188,7 +199,6 @@ macro_rules! assert_in {
         );
     }};
 }
-#[cfg(feature = "malloc")]
 macro_rules! assert_not_in {
     ($item:expr, $lst:expr) => {{
         let mut found = false;
@@ -211,15 +221,12 @@ fn test_class() {
     let cls = MyTestObject::class();
     assert_eq!(MyTestObject::add_numbers(-3, 15), 12);
 
-    #[cfg(feature = "malloc")]
-    {
-        let classes = Class::classes();
-        assert_eq!(classes.len(), Class::classes_count());
-        assert_in!(cls, classes);
-    }
+    let classes = AnyClass::classes();
+    assert_eq!(classes.len(), AnyClass::classes_count());
+    assert_in!(cls, classes);
 
     // Test objc2::runtime functionality
-    assert_eq!(Class::get("MyTestObject"), Some(cls));
+    assert_eq!(AnyClass::get("MyTestObject"), Some(cls));
     assert_ne!(cls, class!(NSObject));
     assert_eq!(cls.name(), "MyTestObject");
     assert_eq!(cls.superclass(), Some(class!(NSObject)));
@@ -228,7 +235,7 @@ fn test_class() {
     assert_eq!(cls.instance_size(), {
         #[repr(C)]
         struct MyTestObjectLayout {
-            isa: *const Class,
+            isa: *const AnyClass,
             var1: c_int,
             var2: Bool,
             var3: *mut NSObject,
@@ -236,26 +243,20 @@ fn test_class() {
         size_of::<MyTestObjectLayout>()
     });
 
-    let protocol = Protocol::get("NSObject").unwrap();
+    let protocol = AnyProtocol::get("NSObject").unwrap();
     assert!(cls.conforms_to(protocol));
-    assert!(!cls.conforms_to(Protocol::get("NSCopying").unwrap()));
-    #[cfg(feature = "malloc")]
-    {
-        assert_not_in!(protocol, cls.adopted_protocols());
-        assert_in!(
-            Protocol::get("MyTestProtocol").unwrap(),
-            cls.adopted_protocols()
-        );
-    }
+    assert!(!cls.conforms_to(AnyProtocol::get("NSCopying").unwrap()));
+    assert_not_in!(protocol, cls.adopted_protocols());
+    assert_in!(
+        AnyProtocol::get("MyTestProtocol").unwrap(),
+        cls.adopted_protocols()
+    );
 
-    #[cfg(feature = "malloc")]
-    {
-        let method = cls.instance_method(sel!(addToVar1:)).unwrap();
-        assert_in!(method, cls.instance_methods());
+    let method = cls.instance_method(sel!(addToVar1:)).unwrap();
+    assert_in!(method, cls.instance_methods());
 
-        let ivar = cls.instance_variable("var1").unwrap();
-        assert_in!(ivar, cls.instance_variables());
-    }
+    let ivar = cls.instance_variable("var1").unwrap();
+    assert_in!(ivar, cls.instance_variables());
 }
 
 #[test]
@@ -289,12 +290,12 @@ fn test_object() {
     assert!(obj.var3().is_null());
     assert!(obj.var3_ivar().is_null());
 
-    let obj2 = Id::as_mut_ptr(&mut *ManuallyDrop::new(NSObject::new())).cast::<Object>();
+    let obj2 = Retained::as_ptr(&*ManuallyDrop::new(NSObject::new())) as _;
     obj.set_var3(obj2);
     assert_eq!(obj.var3(), obj2);
     assert_eq!(*obj.var3_ivar(), obj2);
 
-    let obj3 = Id::as_mut_ptr(&mut *ManuallyDrop::new(NSObject::new())).cast::<Object>();
+    let obj3 = Retained::as_ptr(&*ManuallyDrop::new(NSObject::new())) as _;
     *obj.var3_ivar_mut() = obj3;
     assert_ne!(obj.var3(), obj2);
     assert_ne!(*obj.var3_ivar(), obj2);
@@ -305,20 +306,20 @@ fn test_object() {
 #[test]
 fn test_protocol() {
     let obj = MyTestObject::new();
-    let proto: Id<ProtocolObject<dyn MyTestProtocol>, _> = ProtocolObject::from_id(obj);
+    let proto: Retained<ProtocolObject<dyn MyTestProtocol>> = ProtocolObject::from_id(obj);
     assert_eq!(proto.a(), 1);
     assert_eq!(MyTestObject::b(), 2);
-    #[cfg(feature = "Foundation_all")]
+    #[cfg(feature = "all")]
     assert_eq!(proto.c().as_i32(), 3);
-    #[cfg(feature = "Foundation_all")]
+    #[cfg(feature = "all")]
     assert_eq!(MyTestObject::d().as_i32(), 4);
     assert_eq!(proto.e(), 5);
     assert_eq!(MyTestObject::f(), 6);
-    #[cfg(feature = "Foundation_all")]
+    #[cfg(feature = "all")]
     assert_eq!(proto.g().as_i32(), 7);
-    #[cfg(feature = "Foundation_all")]
+    #[cfg(feature = "all")]
     assert_eq!(MyTestObject::h().as_i32(), 8);
 
-    // Check that transforming to `NSObject` works
-    let _obj: &ProtocolObject<NSObject> = ProtocolObject::from_ref(&*proto);
+    // Check that transforming to `NSObjectProtocol` works
+    let _obj: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(&*proto);
 }

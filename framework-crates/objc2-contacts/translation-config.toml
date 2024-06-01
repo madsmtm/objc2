@@ -1,0 +1,8 @@
+framework = "Contacts"
+crate = "objc2-contacts"
+required-dependencies = ["objc2-foundation"]
+macos = "10.11"
+maccatalyst = "13.0"
+ios = "9.0"
+watchos = "2.0"
+visionos = "1.0"

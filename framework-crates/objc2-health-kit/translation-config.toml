@@ -1,0 +1,8 @@
+framework = "HealthKit"
+crate = "objc2-health-kit"
+required-dependencies = ["objc2-foundation"]
+macos = "13.0"
+maccatalyst = "13.0"
+ios = "8.0"
+watchos = "2.0"
+visionos = "1.0"

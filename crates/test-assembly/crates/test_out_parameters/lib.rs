@@ -1,40 +1,40 @@
 //! Test that out parameters are handled correctly.
-use objc2::rc::{Id, Owned};
-use objc2::runtime::{Object, Sel};
-use objc2::MessageReceiver;
+use objc2::__macro_helpers::MsgSend;
+use objc2::rc::Retained;
+use objc2::runtime::{NSObject, Sel};
 
 #[no_mangle]
-unsafe fn nonnull_nonnull(obj: &Object, sel: Sel, param: &mut Id<Object, Owned>) -> usize {
-    MessageReceiver::send_message(obj, sel, (param,))
+unsafe fn nonnull_nonnull(obj: &NSObject, sel: Sel, param: &mut Retained<NSObject>) -> usize {
+    MsgSend::send_message(obj, sel, (param,))
 }
 
 #[no_mangle]
-unsafe fn null_nonnull(obj: &Object, sel: Sel, param: Option<&mut Id<Object, Owned>>) -> usize {
-    MessageReceiver::send_message(obj, sel, (param,))
+unsafe fn null_nonnull(obj: &NSObject, sel: Sel, param: Option<&mut Retained<NSObject>>) -> usize {
+    MsgSend::send_message(obj, sel, (param,))
 }
 
 #[no_mangle]
-unsafe fn nonnull_null(obj: &Object, sel: Sel, param: &mut Option<Id<Object, Owned>>) -> usize {
-    MessageReceiver::send_message(obj, sel, (param,))
+unsafe fn nonnull_null(obj: &NSObject, sel: Sel, param: &mut Option<Retained<NSObject>>) -> usize {
+    MsgSend::send_message(obj, sel, (param,))
 }
 
 #[no_mangle]
 unsafe fn null_null(
-    obj: &Object,
+    obj: &NSObject,
     sel: Sel,
-    param: Option<&mut Option<Id<Object, Owned>>>,
+    param: Option<&mut Option<Retained<NSObject>>>,
 ) -> usize {
-    MessageReceiver::send_message(obj, sel, (param,))
+    MsgSend::send_message(obj, sel, (param,))
 }
 
 #[no_mangle]
 unsafe fn two_nonnull_nonnull(
-    obj: &Object,
+    obj: &NSObject,
     sel: Sel,
-    param1: &mut Id<Object, Owned>,
-    param2: &mut Id<Object, Owned>,
+    param1: &mut Retained<NSObject>,
+    param2: &mut Retained<NSObject>,
 ) -> usize {
-    MessageReceiver::send_message(obj, sel, (param1, param2))
+    MsgSend::send_message(obj, sel, (param1, param2))
 }
 
 //
@@ -43,25 +43,25 @@ unsafe fn two_nonnull_nonnull(
 
 // These should fully avoid any extra `retain/release`
 #[no_mangle]
-unsafe fn call_with_none1(obj: &Object, sel: Sel) -> usize {
+unsafe fn call_with_none1(obj: &NSObject, sel: Sel) -> usize {
     null_nonnull(obj, sel, None)
 }
 #[no_mangle]
-unsafe fn call_with_none2(obj: &Object, sel: Sel) -> usize {
+unsafe fn call_with_none2(obj: &NSObject, sel: Sel) -> usize {
     null_null(obj, sel, None)
 }
 
-type Res = (usize, Option<Id<Object, Owned>>);
+type Res = (usize, Option<Retained<NSObject>>);
 
 // These should only need a `retain`
 #[no_mangle]
-unsafe fn call_with_none3(obj: &Object, sel: Sel) -> Res {
+unsafe fn call_with_none3(obj: &NSObject, sel: Sel) -> Res {
     let mut param = None;
     let res = nonnull_null(obj, sel, &mut param);
     (res, param)
 }
 #[no_mangle]
-unsafe fn call_with_none4(obj: &Object, sel: Sel) -> Res {
+unsafe fn call_with_none4(obj: &NSObject, sel: Sel) -> Res {
     let mut param = None;
     let res = null_null(obj, sel, Some(&mut param));
     (res, param)
@@ -69,18 +69,18 @@ unsafe fn call_with_none4(obj: &Object, sel: Sel) -> Res {
 
 // These should need `retain/release`, but not have any branches
 #[no_mangle]
-unsafe fn call_with_some1(obj: &Object, sel: Sel, mut param: Id<Object, Owned>) -> Res {
+unsafe fn call_with_some1(obj: &NSObject, sel: Sel, mut param: Retained<NSObject>) -> Res {
     let res = null_nonnull(obj, sel, Some(&mut param));
     (res, Some(param))
 }
 #[no_mangle]
-unsafe fn call_with_some2(obj: &Object, sel: Sel, param: Id<Object, Owned>) -> Res {
+unsafe fn call_with_some2(obj: &NSObject, sel: Sel, param: Retained<NSObject>) -> Res {
     let mut param = Some(param);
     let res = nonnull_null(obj, sel, &mut param);
     (res, param)
 }
 #[no_mangle]
-unsafe fn call_with_some3(obj: &Object, sel: Sel, param: Id<Object, Owned>) -> Res {
+unsafe fn call_with_some3(obj: &NSObject, sel: Sel, param: Retained<NSObject>) -> Res {
     let mut param = Some(param);
     let res = null_null(obj, sel, Some(&mut param));
     (res, param)

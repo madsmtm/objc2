@@ -1,0 +1,50 @@
+error[E0308]: mismatched types
+ --> ui/extern_methods_invalid_receiver.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method_id(initWithMut)]
+  | |         fn init_with_mut(&mut self) -> Option<Retained<Self>>;
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_expected `Allocated<_>`, found `&mut MyObject`
+  |   arguments to this function are incorrect
+  |
+  = note:         expected struct `Allocated<_>`
+          found mutable reference `&mut MyObject`
+note: associated function defined here
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
+  |
+  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+  |               ^^^^^^^^^^^^^^^
+  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+ --> ui/extern_methods_invalid_receiver.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method_id(initWithOptionAllocated)]
+  | |         fn init_with_option_allocated(this: Option<Allocated<Self>>) -> Option<Retained<Self>>;
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_expected `Allocated<_>`, found `Option<Allocated<MyObject>>`
+  |   arguments to this function are incorrect
+  |
+  = note: expected struct `Allocated<_>`
+               found enum `Option<Allocated<MyObject>>`
+note: associated function defined here
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
+  |
+  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+  |               ^^^^^^^^^^^^^^^
+  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: use the `?` operator to extract the `Option<Allocated<MyObject>>` value, propagating an `Option::None` value to the caller
+ --> $WORKSPACE/crates/objc2/src/macros/__rewrite_self_param.rs
+  |
+  |         }?
+  |          +

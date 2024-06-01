@@ -4,18 +4,12 @@
 //! this is better than having it show up as part of the `msg_send_id!` macro
 //! itself!
 use objc2::msg_send_id;
-use objc2::runtime::Object;
+use objc2::runtime::NSObject;
 
 fn main() {
-    let object: &Object;
+    let object: &NSObject;
     unsafe { msg_send_id![object, retain] };
     unsafe { msg_send_id![object, release] };
     unsafe { msg_send_id![object, autorelease] };
     unsafe { msg_send_id![object, dealloc] };
-    unsafe {
-        msg_send_id![
-            object,
-            retain,
-        ]
-    };
 }

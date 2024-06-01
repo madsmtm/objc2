@@ -1,0 +1,9 @@
+framework = "ExtensionKit"
+crate = "objc2-extension-kit"
+required-dependencies = ["objc2-foundation"]
+macos = "13.0"
+maccatalyst = "13.0"
+ios = "16.1"
+tvos = "16.0"
+watchos = "9.0"
+visionos = "1.0"
