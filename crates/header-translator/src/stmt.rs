@@ -433,8 +433,9 @@ pub enum Stmt {
         superclasses: Vec<(ItemIdentifier, Vec<String>)>,
         designated_initializers: Vec<String>,
         derives: Derives,
-        comment: Option<String>,
         mutability: Mutability,
+        description: Option<String>,
+        comment: Option<String>,
         skipped: bool,
         sendable: bool,
     },
@@ -449,6 +450,8 @@ pub enum Stmt {
         source_superclass: Option<ItemIdentifier>,
         cls_generics: Vec<String>,
         category_name: Option<String>,
+        description: Option<String>,
+        comment: Option<String>,
         methods: Vec<Method>,
     },
     /// @interface class_name (category_name) <protocols*>
@@ -725,6 +728,8 @@ impl Stmt {
                                 source_superclass: Some(superclass_id.clone()),
                                 cls_generics: generics.clone(),
                                 category_name: None,
+                                description: None,
+                                comment: None,
                                 methods,
                             })
                         }
@@ -757,6 +762,8 @@ impl Stmt {
                     } else {
                         data.map(|data| data.mutability.clone()).unwrap_or_default()
                     },
+                    description: None,
+                    comment: None,
                     skipped: data.map(|data| data.definition_skipped).unwrap_or_default(),
                     // Ignore sendability on superclasses; since it's an auto
                     // trait, it's propagated to subclasses anyhow!
@@ -770,6 +777,7 @@ impl Stmt {
                     protocol_required_items: items_required_by_decl(&entity, context),
                     generics: generics.clone(),
                     availability: availability.clone(),
+                    comment: None,
                 }))
                 .chain(iter::once(methods))
                 .chain(superclass_methods)
@@ -842,6 +850,7 @@ impl Stmt {
                     availability: availability.clone(),
                     protocol: context.replace_protocol_name(p),
                     protocol_required_items: items_required_by_decl(&entity, context),
+                    comment: None,
                 });
 
                 // For ease-of-use, if the category is defined in the same
@@ -906,6 +915,8 @@ impl Stmt {
                                 cls_generics: generics.clone(),
                                 category_name: category.name.clone(),
                                 methods,
+                                description: None,
+                                comment: None,
                             })
                         }
                     } else {
@@ -921,6 +932,8 @@ impl Stmt {
                         cls_generics: generics.clone(),
                         category_name: category.name.clone(),
                         methods,
+                        description: None,
+                        comment: None,
                     })
                     .chain(extra_methods)
                     .chain(protocol_impls)
@@ -987,6 +1000,8 @@ impl Stmt {
                             cls: cls.clone(),
                             cls_required_items: cls_required_items.clone(),
                             methods,
+                            description: None,
+                            comment: None,
                         })
                     }
                     .into_iter()
@@ -1006,7 +1021,6 @@ impl Stmt {
                     .then(|| actual_id.name.clone());
 
                 let id = context.replace_protocol_name(actual_id);
->>>>>>> 2066b7f47edfd6a254a401ee7139ff0ed7fe18da
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -1044,7 +1058,7 @@ impl Stmt {
 
                 vec![Self::ProtocolDecl {
                     id,
-                    comment,
+                    comment: None,
                     required_items: items_required_by_decl(entity, context),
                     actual_name,
                     availability,
@@ -1177,6 +1191,7 @@ impl Stmt {
                     boxable,
                     fields,
                     sendable,
+                    comment: None,
                 }]
             }
             EntityKind::EnumDecl => {
@@ -1316,6 +1331,7 @@ impl Stmt {
                         kind,
                         variants,
                         sendable,
+                        comment: None,
                     }]
                 }
             }
@@ -1688,6 +1704,8 @@ impl Stmt {
                     mutability,
                     skipped,
                     sendable,
+                    comment: _,
+                    description: _,
                 } => {
                     if *skipped {
                         return Ok(());
@@ -1805,6 +1823,8 @@ impl Stmt {
                     cls_generics,
                     category_name,
                     methods,
+                    comment: _,
+                    description: _,
                 } => {
                     writeln!(f, "extern_methods!(")?;
                     if let Some(source_superclass) = source_superclass {
@@ -1878,6 +1898,8 @@ impl Stmt {
                     cls,
                     cls_required_items,
                     methods,
+                    comment: _,
+                    description: _,
                 } => {
                     writeln!(f, "extern_category!(")?;
 
@@ -1944,6 +1966,7 @@ impl Stmt {
                     protocol,
                     protocol_required_items: _,
                     availability: _,
+                    comment: _,
                 } => {
                     let (generic_bound, where_bound) = if !generics.is_empty() {
                         match (protocol.library_name(), &*protocol.name) {
@@ -2006,6 +2029,7 @@ impl Stmt {
                     methods,
                     required_sendable: _,
                     required_mainthreadonly,
+                    comment: _,
                 } => {
                     writeln!(f, "extern_protocol!(")?;
 
@@ -2095,6 +2119,7 @@ impl Stmt {
                     boxable: _,
                     fields,
                     sendable,
+                    comment: _,
                 } => {
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
@@ -2148,6 +2173,7 @@ impl Stmt {
                     kind,
                     variants,
                     sendable,
+                    comment: _,
                 } => {
                     match kind {
                     // TODO: Once Rust gains support for more precisely

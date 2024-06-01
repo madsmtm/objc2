@@ -12,6 +12,7 @@ use tracing::span::EnteredSpan;
 
 mod availability;
 mod cfgs;
+mod comment;
 mod config;
 mod context;
 mod display_helper;

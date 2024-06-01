@@ -72,6 +72,7 @@ fn update_module(module: &mut Module) {
                 kind: _,
                 variants: _,
                 sendable: _,
+                comment: _,
             }) = iter.peek_mut()
             {
                 if enum_ty.is_typedef_to(&id.name) {

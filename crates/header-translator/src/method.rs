@@ -255,7 +255,6 @@ pub struct Method {
     is_error: bool,
     safe: bool,
     mutating: bool,
-    is_protocol: bool,
     comment: Option<String>,
     is_pub: bool,
     // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
@@ -512,7 +511,6 @@ impl Method {
                 // since immutable methods are usually either declared on an
                 // immutable subclass, or as a property.
                 mutating: data.mutating.unwrap_or(parent_is_mutable),
-                is_protocol,
                 comment: None,
                 is_pub,
                 non_isolated: modifiers.non_isolated,
@@ -592,7 +590,6 @@ impl Method {
                 // is, so let's default to immutable.
                 mutating: getter_data.mutating.unwrap_or(false),
                 is_pub,
-                is_protocol,
                 comment,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
@@ -638,7 +635,6 @@ impl Method {
                     safe: !setter_data.unsafe_,
                     // Setters are usually mutable if the class itself is.
                     mutating: setter_data.mutating.unwrap_or(parent_is_mutable),
-                    is_protocol,
                     comment,
                     is_pub,
                     non_isolated: modifiers.non_isolated,
