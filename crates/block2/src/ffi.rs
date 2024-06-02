@@ -5,6 +5,30 @@ use core::ffi::c_void;
 use core::marker::{PhantomData, PhantomPinned};
 use std::os::raw::c_int;
 
+#[cfg(not(feature = "unstable-c-unwind"))]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __c_unwind {
+    (unsafe extern "C" $($t:tt)*) => {
+        unsafe extern "C" $($t)*
+    };
+    (extern "C" $($t:tt)*) => {
+        extern "C" $($t)*
+    };
+}
+
+#[cfg(feature = "unstable-c-unwind")]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __c_unwind {
+    (unsafe extern "C" $($t:tt)*) => {
+        unsafe extern "C-unwind" $($t)*
+    };
+    (extern "C" $($t:tt)*) => {
+        extern "C-unwind" $($t)*
+    };
+}
+
 /// Type for block class ISAs.
 ///
 /// This will likely become an extern type in the future.
@@ -31,9 +55,26 @@ pub struct Class {
     _opaque: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,
 }
 
-// TODO: Use `extern "C-unwind"` when in MSRV (because the runtime functions
-// may call external routines).
-extern "C" {
+#[cfg(not(feature = "unstable-c-unwind"))]
+macro_rules! extern_c_unwind {
+    ($($t:tt)*) => {
+        extern "C" {
+            $($t)*
+        }
+    };
+}
+
+#[cfg(feature = "unstable-c-unwind")]
+macro_rules! extern_c_unwind {
+    ($($t:tt)*) => {
+        extern "C-unwind" {
+            $($t)*
+        }
+    };
+}
+
+// Use `extern "C-unwind"`, runtime functions may call external routines.
+extern_c_unwind! {
     /// Class ISA used for global blocks.
     pub static _NSConcreteGlobalBlock: Class;
 
@@ -85,7 +126,7 @@ pub mod private {
     #[cfg(any(doc, target_vendor = "apple", feature = "compiler-rt"))]
     use std::os::raw::c_ulong;
 
-    extern "C" {
+    extern_c_unwind! {
         pub static _NSConcreteMallocBlock: Class;
         #[cfg(any(doc, target_vendor = "apple", feature = "compiler-rt"))]
         pub static _NSConcreteAutoBlock: Class;
@@ -160,12 +201,21 @@ mod tests {
         println!("{:?}", unsafe {
             ptr::addr_of!(private::_NSConcreteMallocBlock)
         });
-        println!("{:p}", _Block_copy as unsafe extern "C" fn(_) -> _);
         println!(
             "{:p}",
-            _Block_object_assign as unsafe extern "C" fn(_, _, _)
+            _Block_copy as __c_unwind!(unsafe extern "C" fn(_) -> _)
         );
-        println!("{:p}", _Block_object_dispose as unsafe extern "C" fn(_, _));
-        println!("{:p}", _Block_release as unsafe extern "C" fn(_));
+        println!(
+            "{:p}",
+            _Block_object_assign as __c_unwind!(unsafe extern "C" fn(_, _, _))
+        );
+        println!(
+            "{:p}",
+            _Block_object_dispose as __c_unwind!(unsafe extern "C" fn(_, _))
+        );
+        println!(
+            "{:p}",
+            _Block_release as __c_unwind!(unsafe extern "C" fn(_))
+        );
     }
 }

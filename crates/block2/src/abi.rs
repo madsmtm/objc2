@@ -199,7 +199,7 @@ pub struct BlockHeader {
     /// If the BLOCK_USE_SRET & BLOCK_HAS_SIGNATURE flag is set, there is an
     /// additional hidden parameter, which is a pointer to the space on the
     /// stack allocated to hold the return value.
-    pub invoke: Option<unsafe extern "C" fn()>,
+    pub invoke: Option<crate::__c_unwind!(unsafe extern "C" fn())>,
     /// The block's descriptor.
     pub(crate) descriptor: BlockDescriptorPtr,
 }
@@ -257,12 +257,13 @@ pub(crate) struct BlockDescriptorCopyDispose {
     ///
     /// This may be NULL since macOS 11.0.1 in Apple's runtime, but this
     /// should not be relied on.
-    pub(crate) copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *const c_void)>,
+    pub(crate) copy:
+        Option<crate::__c_unwind!(unsafe extern "C" fn(dst: *mut c_void, src: *const c_void))>,
     /// Helper to destroy the block after being copied.
     ///
     /// This may be NULL since macOS 11.0.1 in Apple's runtime, but this
     /// should not be relied on.
-    pub(crate) dispose: Option<unsafe extern "C" fn(src: *mut c_void)>,
+    pub(crate) dispose: Option<crate::__c_unwind!(unsafe extern "C" fn(src: *mut c_void))>,
 }
 
 /// Block descriptor that has an encoding / a signature.
@@ -302,12 +303,13 @@ pub(crate) struct BlockDescriptorCopyDisposeSignature {
     ///
     /// This may be NULL since macOS 11.0.1 in Apple's runtime, but this
     /// should not be relied on.
-    pub(crate) copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *const c_void)>,
+    pub(crate) copy:
+        Option<crate::__c_unwind!(unsafe extern "C" fn(dst: *mut c_void, src: *const c_void))>,
     /// Helper to destroy the block after being copied.
     ///
     /// This may be NULL since macOS 11.0.1 in Apple's runtime, but this
     /// should not be relied on.
-    pub(crate) dispose: Option<unsafe extern "C" fn(src: *mut c_void)>,
+    pub(crate) dispose: Option<crate::__c_unwind!(unsafe extern "C" fn(src: *mut c_void))>,
 
     /// Objective-C type encoding of the block.
     #[doc(alias = "signature")]

@@ -186,14 +186,17 @@ macro_rules! global_block {
             let mut header = $crate::GlobalBlock::<dyn Fn($($t),*) $(-> $r)? + 'static>::__DEFAULT_HEADER;
             header.isa = ::core::ptr::addr_of!($crate::ffi::_NSConcreteGlobalBlock);
             header.invoke = ::core::option::Option::Some({
-                unsafe extern "C" fn inner(_: *mut $crate::GlobalBlock<dyn Fn($($t),*) $(-> $r)? + 'static>, $($a: $t),*) $(-> $r)? {
+                $crate::__c_unwind!(unsafe extern "C" fn inner(
+                    _: *mut $crate::GlobalBlock<dyn Fn($($t),*) $(-> $r)? + 'static>,
+                    $($a: $t),*
+                ) $(-> $r)? {
                     $body
-                }
+                });
 
                 // TODO: SAFETY
                 ::core::mem::transmute::<
-                    unsafe extern "C" fn(*mut $crate::GlobalBlock<dyn Fn($($t),*) $(-> $r)? + 'static>, $($a: $t),*) $(-> $r)?,
-                    unsafe extern "C" fn(),
+                    $crate::__c_unwind!(unsafe extern "C" fn(*mut $crate::GlobalBlock<dyn Fn($($t),*) $(-> $r)? + 'static>, $($a: $t),*) $(-> $r)?),
+                    $crate::__c_unwind!(unsafe extern "C" fn()),
                 >(inner)
             });
             $crate::GlobalBlock::from_header(header)
