@@ -79,5 +79,5 @@ fn main() {
     app.setDelegate(Some(object));
 
     // run the app
-    unsafe { app.run() };
+    app.run();
 }

@@ -1,4 +1,5 @@
 //! Various explanations and topics of discussion.
+#![allow(clippy::needless_doctest_main)]
 
 pub mod about_generated;
 
