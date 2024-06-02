@@ -200,6 +200,8 @@ impl ClassData {
 pub struct CategoryData {
     #[serde(default)]
     pub skipped: bool,
+    #[serde(default)]
+    pub renamed: Option<String>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

@@ -796,15 +796,16 @@ impl Stmt {
                     return vec![];
                 }
 
-                if let Some(category_name) = &category.name {
-                    let category_data = data
-                        .and_then(|data| data.categories.get(category_name))
+                let category_data = if let Some(category_name) = &category.name {
+                    data.and_then(|data| data.categories.get(category_name))
                         .cloned()
-                        .unwrap_or_default();
+                        .unwrap_or_default()
+                } else {
+                    Default::default()
+                };
 
-                    if category_data.skipped {
-                        return vec![];
-                    }
+                if category_data.skipped {
+                    return vec![];
                 }
 
                 let cls_thread_safety = ThreadSafety::from_decl(&cls_entity, context);
@@ -836,6 +837,11 @@ impl Stmt {
                 // For ease-of-use, if the category is defined in the same
                 // library as the class, we just emit it as `extern_methods!`.
                 if cls.library_name() == category.library_name() {
+                    assert!(
+                        category_data.renamed.is_none(),
+                        "cannot rename categories emitted in same crate"
+                    );
+
                     // extern_methods!
 
                     let (methods, designated_initializers) = parse_methods(
@@ -926,9 +932,10 @@ impl Stmt {
                     // Note: There isn't really a good way to do this, as
                     // category names are not part of the public API in
                     // Objective-C.
-                    let id = category.clone().map_name(|name| match name {
-                        None => format!("{}Category", cls.name),
-                        Some(name) => {
+                    let id = category.clone().map_name(|name| {
+                        if let Some(name) = category_data.renamed {
+                            name
+                        } else if let Some(name) = name {
                             if name.contains(&cls.name)
                                 || name.contains(&cls.name.replace("Mutable", ""))
                             {
@@ -936,6 +943,9 @@ impl Stmt {
                             } else {
                                 format!("{}{}", cls.name, name)
                             }
+                        } else {
+                            error!(?cls, "missing category name for external category");
+                            format!("{}Category", cls.name)
                         }
                     });
 
