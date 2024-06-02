@@ -19,6 +19,12 @@
 //! a safe default is often [`InteriorMutable`], or of you're working with GUI
 //! code, [`MainThreadOnly`].
 //!
+//! An explicit design decision in `objc2` is that once you type-erase a
+//! mutable object, you are allowed to do normal reference-counting with it
+//! (that's also an implicit assumption in Objective-C, e.g. classes are
+//! allowed to pass `NSString` in their public API, while actually giving
+//! access to a `NSMutableString`).
+//!
 //! [`UnsafeCell`]: core::cell::UnsafeCell
 //! [`ClassType::Mutability`]: crate::ClassType::Mutability
 //! [`extern_class!`]: crate::extern_class
