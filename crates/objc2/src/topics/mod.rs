@@ -7,6 +7,9 @@ pub mod about_generated;
 pub mod core_foundation_interop {}
 #[doc = include_str!("layered_safety.md")]
 pub mod layered_safety {}
+#[doc = include_str!("mvc.md")]
+pub mod mvc {}
+
 #[cfg(not(doctest))]
 #[doc = include_str!("../../CHANGELOG.md")]
 pub mod changelog {}
