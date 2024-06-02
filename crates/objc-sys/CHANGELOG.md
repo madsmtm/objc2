@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Deprecated
+* Deprecated the unstable function `try_catch`, it is exposed in
+  `objc2-exception-helper` instead.
+
 
 ## 0.3.5 - 2024-05-21
 

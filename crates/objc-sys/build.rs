@@ -109,7 +109,8 @@ fn main() {
     // fail anyways, since we're using newer runtimes than GCC supports.
     //
     // TODO: -fobjc-weak ?
-    let mut cc_args = format!("-fobjc-exceptions{clang_objc_runtime}");
+    let mut cc_args =
+        format!("-fobjc-exceptions{clang_objc_runtime} -fobjc-arc -fobjc-arc-exceptions");
 
     if let Runtime::ObjFW(_) = &runtime {
         // Add compability headers to make `#include <objc/objc.h>` work.
@@ -125,37 +126,6 @@ fn main() {
         // Link to libobjc
         println!("cargo:rustc-link-lib=dylib=objc");
     }
-
-    // We do this compilation step here instead of in `objc2` to cut down on
-    // the total number of build scripts required.
-    #[cfg(feature = "unstable-exception")]
-    {
-        if std::env::var("DOCS_RS").is_ok() {
-            // docs.rs doesn't have clang, so skip building this. The
-            // documentation will still work since it doesn't need to link.
-            //
-            // This is independent of the `docsrs` cfg; we never want to try
-            // invoking clang on docs.rs, whether we're the crate being
-            // documented currently, or a dependency of another crate.
-            return;
-        }
-        println!("cargo:rerun-if-changed=extern/exception.m");
-
-        let mut builder = cc::Build::new();
-        builder.file("extern/exception.m");
-
-        // Compile with exceptions enabled and with the correct runtime, but
-        // _without ARC_!
-        for flag in cc_args.split(' ') {
-            builder.flag(flag);
-        }
-
-        builder.compile("librust_objc_sys_0_3_try_catch_exception.a");
-    }
-
-    // Add this to the `CC` args _after_ we've omitted it when compiling
-    // `extern/exception.m`.
-    cc_args.push_str(" -fobjc-arc -fobjc-arc-exceptions");
 
     println!("cargo:cc_args={cc_args}"); // DEP_OBJC_[version]_CC_ARGS
 }

@@ -127,38 +127,12 @@ extern_c! {
     pub fn objc_terminate() -> !;
 }
 
-extern "C" {
-    /// Call the given function inside an Objective-C `@try/@catch` block.
-    ///
-    /// Defined in `extern/exception.m` and compiled in `build.rs`.
-    ///
-    /// Alternatively, we could manually write assembly for this function like
-    /// [`objrs` does][manual-asm] does, that would cut down on a build stage
-    /// (and would probably give us a bit better performance), but it gets
-    /// unwieldy _very_ quickly, so I chose the much more stable option.
-    ///
-    /// Another thing to remember: While Rust's and Objective-C's unwinding
-    /// mechanisms are similar now, Rust's is explicitly unspecified, and they
-    /// may diverge significantly in the future; so handling this in pure Rust
-    /// (using mechanisms like core::intrinsics::r#try) is not an option!
-    ///
-    /// [manual-asm]: https://gitlab.com/objrs/objrs/-/blob/b4f6598696b3fa622e6fddce7aff281770b0a8c2/src/exception.rs
-    #[cfg(feature = "unstable-exception")]
-    #[link_name = "rust_objc_sys_0_3_try_catch_exception"]
-    pub fn try_catch(
-        f: TryCatchClosure,
-        context: *mut core::ffi::c_void,
-        error: *mut *mut objc_object,
-    ) -> std::os::raw::c_uchar;
-}
-
-#[cfg(all(test, feature = "unstable-exception"))]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_try_catch_linkable() {
-        let fptr: unsafe extern "C" fn(_, _, _) -> _ = try_catch;
-        std::println!("{fptr:p}");
-    }
+#[cfg(feature = "unstable-exception")]
+#[deprecated = "re-exported from `objc2-exception-helper`"]
+pub unsafe extern "C" fn try_catch(
+    f: TryCatchClosure,
+    context: *mut core::ffi::c_void,
+    error: *mut *mut objc_object,
+) -> std::os::raw::c_uchar {
+    unsafe { objc2_exception_helper::try_catch(std::mem::transmute(f), context, error.cast()) }
 }

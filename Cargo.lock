@@ -335,7 +335,7 @@ dependencies = [
 name = "objc-sys"
 version = "0.3.5"
 dependencies = [
- "cc",
+ "objc2-exception-helper",
 ]
 
 [[package]]
@@ -349,6 +349,7 @@ dependencies = [
  "memoffset",
  "objc-sys",
  "objc2-encode",
+ "objc2-exception-helper",
  "objc2-foundation",
  "objc2-proc-macros",
  "static_assertions",
@@ -637,6 +638,13 @@ version = "0.2.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
+]
+
+[[package]]
+name = "objc2-exception-helper"
+version = "0.1.0"
+dependencies = [
+ "cc",
 ]
 
 [[package]]

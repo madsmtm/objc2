@@ -26,11 +26,11 @@ workspace = true
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2-encode/std", "objc-sys/std", "block2/std", "objc2-foundation/std"]
-alloc = ["objc2-encode/alloc", "objc-sys/alloc", "block2/alloc", "objc2-foundation/alloc"]
+std = ["alloc", "objc2-encode/std", "objc-sys/std", "block2/std", "objc2-foundation/std", "objc2-exception-helper?/std"]
+alloc = ["objc2-encode/alloc", "objc-sys/alloc", "block2/alloc", "objc2-foundation/alloc", "objc2-exception-helper?/alloc"]
 
 # Enables `objc2::exception::throw` and `objc2::exception::catch`
-exception = ["objc-sys/unstable-exception"]
+exception = ["dep:objc2-exception-helper"]
 
 # Wrap every `objc2::msg_send` call in a `@try/@catch` block
 catch-all = ["exception"]
@@ -80,7 +80,8 @@ unstable-autoreleasesafe = []
 #
 # This raises MSRV to `1.71`.
 #
-# You must manually enable `objc-sys/unstable-c-unwind` to use this.
+# You must manually enable `objc-sys/unstable-c-unwind` and
+# `objc2-exception-helper/unstable-c-unwind` to use this.
 unstable-c-unwind = []
 
 # Enable some new features available on ARM64 on:
@@ -104,11 +105,11 @@ apple = []
 #
 # `unstable-static-class` is always enabled on GNUStep, as it fails to link in
 # release mode otherwise.
-gnustep-1-7 = ["unstable-static-class", "objc-sys/gnustep-1-7", "block2/gnustep-1-7"]
-gnustep-1-8 = ["gnustep-1-7", "objc-sys/gnustep-1-8", "block2/gnustep-1-8"]
-gnustep-1-9 = ["gnustep-1-8", "objc-sys/gnustep-1-9", "block2/gnustep-1-9"]
-gnustep-2-0 = ["gnustep-1-9", "objc-sys/gnustep-2-0", "block2/gnustep-2-0"]
-gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1", "block2/gnustep-2-1"]
+gnustep-1-7 = ["unstable-static-class", "objc-sys/gnustep-1-7", "block2/gnustep-1-7", "objc2-exception-helper?/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc-sys/gnustep-1-8", "block2/gnustep-1-8", "objc2-exception-helper?/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc-sys/gnustep-1-9", "block2/gnustep-1-9", "objc2-exception-helper?/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc-sys/gnustep-2-0", "block2/gnustep-2-0", "objc2-exception-helper?/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1", "block2/gnustep-2-1", "objc2-exception-helper?/gnustep-2-1"]
 # Used by `block2`
 unstable-compiler-rt = ["gnustep-1-7"]
 
@@ -117,6 +118,7 @@ malloc_buf = { version = "1.0", optional = true }
 objc-sys = { path = "../objc-sys", version = "0.3.5", default-features = false }
 objc2-encode = { path = "../objc2-encode", version = "4.0.3", default-features = false }
 objc2-proc-macros = { path = "../objc2-proc-macros", version = "0.1.3", optional = true }
+objc2-exception-helper = { path = "../objc2-exception-helper", version = "0.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
 iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callgrind" }

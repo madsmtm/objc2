@@ -228,7 +228,7 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exce
     let context = context.cast();
 
     let mut exception = ptr::null_mut();
-    let success = unsafe { ffi::try_catch(f, context, &mut exception) };
+    let success = unsafe { objc2_exception_helper::try_catch(f, context, &mut exception) };
 
     if success == 0 {
         Ok(())

@@ -77,6 +77,7 @@ Copy and fill out the following checklist into the release PR:
 - [ ] Changelogs have only been modified under the `Unreleased` header.
 - [ ] Version numbers are bumped in the following order:
     - `objc2-proc-macros`
+    - `objc2-exception-helper`
     - `objc-sys`
     - `objc2-encode`
     - `objc2`

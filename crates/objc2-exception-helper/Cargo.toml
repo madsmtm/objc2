@@ -1,0 +1,62 @@
+[package]
+name = "objc2-exception-helper"
+version = "0.1.0" # Remember to update html_root_url in lib.rs and the `links` key
+authors = ["Mads Marquart <mads@marquart.dk>"]
+edition = "2021"
+rust-version = "1.60"
+
+description = "External helper function for catching Objective-C exceptions"
+keywords = ["objective-c", "macos", "ios", "exception"]
+categories = ["no_std", "os::macos-apis"]
+repository = "https://github.com/madsmtm/objc2"
+license = "MIT"
+
+# Use the `links` key to ensure that only one of these symbols are compiled
+links = "objc2_exception_helper_0_1"
+build = "build.rs"
+
+[lints]
+workspace = true
+
+[features]
+default = ["std"]
+
+std = ["alloc"]
+alloc = []
+
+# Compile for GNUStep's libobjc2
+gnustep-1-7 = []
+gnustep-1-8 = ["gnustep-1-7"]
+gnustep-1-9 = ["gnustep-1-8"]
+gnustep-2-0 = ["gnustep-1-9"]
+gnustep-2-1 = ["gnustep-2-0"]
+
+# Uses `extern "C-unwind"` on relevant function declarations.
+#
+# This raises MSRV to `1.71`.
+#
+# Warning: Enabling this is a breaking change for consumer crates, as it
+# changes the signature of functions.
+unstable-c-unwind = []
+
+[build-dependencies]
+cc = "1.0.80"
+
+[package.metadata.docs.rs]
+default-target = "aarch64-apple-darwin"
+targets = [
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin",
+    "aarch64-apple-ios",
+    "x86_64-apple-ios",
+    "aarch64-apple-tvos",
+    "aarch64-apple-watchos",
+    "aarch64-apple-ios-macabi",
+    "x86_64-unknown-linux-gnu",
+    "i686-unknown-linux-gnu",
+]
+
+[package.metadata.release]
+shared-version = false
+tag-prefix = "objc2-exception-helper"
+enable-features = []
