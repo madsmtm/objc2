@@ -181,6 +181,12 @@ extern crate std;
 #[cfg(not(feature = "std"))]
 compile_error!("The `std` feature currently must be enabled.");
 
+// Link to libobjc
+#[cfg_attr(not(feature = "unstable-objfw"), link(name = "objc", kind = "dylib"))]
+// Link to libobjfw-rt
+#[cfg_attr(feature = "unstable-objfw", link(name = "objfw-rt", kind = "dylib"))]
+extern "C" {}
+
 use core::cell::UnsafeCell;
 use core::marker::{PhantomData, PhantomPinned};
 

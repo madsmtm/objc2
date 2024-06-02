@@ -37,13 +37,19 @@ mod inner {
 }
 
 // GNUStep's and Microsoft's libobjc2
-#[cfg(all(feature = "gnustep-1-7", libobjc2_strict_apple_compat))]
+#[cfg(all(
+    feature = "gnustep-1-7",
+    feature = "unstable-gnustep-strict-apple-compat"
+))]
 mod inner {
     // C: (explicitly) signed char
     pub(crate) type BOOL = i8;
 }
 
-#[cfg(all(feature = "gnustep-1-7", not(libobjc2_strict_apple_compat)))]
+#[cfg(all(
+    feature = "gnustep-1-7",
+    not(feature = "unstable-gnustep-strict-apple-compat")
+))]
 mod inner {
     // windows && !32bit-MinGW
     #[cfg(all(windows, not(all(target_pointer_width = "64", target_env = "gnu"))))]

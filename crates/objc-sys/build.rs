@@ -38,10 +38,6 @@ fn main() {
         println!("cargo:rustc-cfg=target_simulator");
     }
 
-    println!("cargo:rustc-check-cfg=cfg(libobjc2_strict_apple_compat)");
-    // TODO: Figure out when to enable this
-    // println!("cargo:rustc-cfg=libobjc2_strict_apple_compat");
-
     let runtime = match (
         env::var_os("CARGO_FEATURE_GNUSTEP_1_7").is_some(),
         env::var_os("CARGO_FEATURE_UNSTABLE_OBJFW").is_some(),
@@ -117,14 +113,6 @@ fn main() {
         let compat_headers = Path::new(env!("CARGO_MANIFEST_DIR")).join("compat-headers-objfw");
         cc_args.push_str(" -I");
         cc_args.push_str(compat_headers.to_str().unwrap());
-    }
-
-    if let Runtime::ObjFW(_) = &runtime {
-        // Link to libobjfw-rt
-        println!("cargo:rustc-link-lib=dylib=objfw-rt");
-    } else {
-        // Link to libobjc
-        println!("cargo:rustc-link-lib=dylib=objc");
     }
 
     println!("cargo:cc_args={cc_args}"); // DEP_OBJC_[version]_CC_ARGS
