@@ -19,6 +19,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * `objc2-foundation`: `MainThreadMarker::from` now debug-asserts that it is
   actually running on the main thread.
 
+### Removed
+* **BREAKING** `objc2-ui-kit`: Removed dependency on `objc2-link-presentation`.
+
+  `objc2-link-presentation` is going to depend on `objc2-ui-kit` in the future,
+  so this would result in a recursive dependency. This does mean that the
+  following APIs are no longer available:
+  - `UIActivityItemSource::activityViewControllerLinkMetadata`
+  - `UIDocumentProperties::initWithMetadata`
+  - `UIDocumentProperties::metadata`
+  - `UIDocumentProperties::setMetadata`
+
 
 ## 0.2.2 - 2024-05-21
 

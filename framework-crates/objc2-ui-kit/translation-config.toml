@@ -145,6 +145,12 @@ fn.UIGraphicsPushContext.skipped = true
 class.UIGraphicsRendererContext.methods.CGContext.skipped = true
 class.UIGraphicsRenderer.methods."prepareCGContext:withRendererContext:".skipped = true
 
+# Needs LinkPresentation, which itself depends on UIKit
+protocol.UIActivityItemSource.methods."activityViewControllerLinkMetadata:".skipped = true
+class.UIDocumentProperties.methods."initWithMetadata:".skipped = true
+class.UIDocumentProperties.methods.metadata.skipped = true
+class.UIDocumentProperties.methods."setMetadata:".skipped = true
+
 # Protocols require that these are main thread only
 class.UIDocumentBrowserTransitionController.mutability = "MainThreadOnly"
 class.UIDocumentInteractionController.mutability = "MainThreadOnly"
