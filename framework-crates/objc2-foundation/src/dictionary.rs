@@ -237,9 +237,12 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     ///
     /// # Examples
     ///
-    #[cfg_attr(all(feature = "NSString", feature = "NSObject"), doc = "```")]
     #[cfg_attr(
-        not(all(feature = "NSString", feature = "NSObject")),
+        all(feature = "NSString", feature = "NSObject", feature = "NSEnumerator"),
+        doc = "```"
+    )]
+    #[cfg_attr(
+        not(all(feature = "NSString", feature = "NSObject", feature = "NSEnumerator")),
         doc = "```ignore"
     )]
     /// use objc2_foundation::{ns_string, NSMutableDictionary, NSMutableString, NSString};
