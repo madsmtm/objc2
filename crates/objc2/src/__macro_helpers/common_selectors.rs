@@ -56,7 +56,7 @@ fn cxx_construct_sel() -> Sel {
 /// take a selector, unlike every other Objective-C method, see:
 /// <https://github.com/apple-oss-distributions/objc4/blob/objc4-906/runtime/objc-class.mm#L457>
 ///
-/// So the signature is `extern "C" fn(*mut AnyObject)`.
+/// So the signature is `extern "C-unwind" fn(*mut AnyObject)`.
 ///
 /// This is likely because it's not a real Objective-C method that can be
 /// called from userspace / objc_msgSend, and it's more efficient to not pass
@@ -66,8 +66,6 @@ fn cxx_construct_sel() -> Sel {
 /// ignoring it will still be sound, since the function uses the C calling
 /// convention, where such an ignored parameter would be allowed on all
 /// relevant architectures.
-///
-/// TODO: Unsure whether "C-unwind" is allowed?
 ///
 /// [gcc-docs]: https://gcc.gnu.org/onlinedocs/gcc/Objective-C-and-Objective-C_002b_002b-Dialect-Options.html#index-fobjc-call-cxx-cdtors
 #[inline]

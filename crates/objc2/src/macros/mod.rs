@@ -831,16 +831,14 @@ macro_rules! __class_inner {
 /// # Panics
 ///
 /// Panics if the `"catch-all"` feature is enabled and the Objective-C method
-/// throws an exception. Exceptions may still cause UB until
-/// `extern "C-unwind"` is stable, see [RFC-2945].
+/// throws an exception. Exceptions may still cause UB unless you enable the
+/// `"unstable-c-unwind"` feature (raises MSRV to 1.71).
 ///
 /// Panics if `debug_assertions` are enabled and the Objective-C method's
 /// encoding does not match the encoding of the given arguments and return.
 ///
 /// And panics if the `NSError**` handling functionality described above is
 /// used, and the error object was unexpectedly `NULL`.
-///
-/// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 ///
 ///
 /// # Safety

@@ -151,7 +151,6 @@
     feature = "unstable-autoreleasesafe",
     feature(negative_impls, auto_traits)
 )]
-#![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
 #![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 #![warn(missing_docs)]
 #![warn(clippy::missing_errors_doc)]

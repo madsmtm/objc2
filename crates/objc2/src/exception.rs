@@ -172,12 +172,11 @@ impl RefUnwindSafe for Exception {}
 /// Objective-C exception handler like [`catch`] (and specifically not
 /// [`catch_unwind`]).
 ///
-/// This also invokes undefined behaviour until `C-unwind` is stabilized, see
-/// [RFC-2945] - you can try this out on nightly using the `unstable-c-unwind`
-/// feature flag.
+/// This also invokes undefined behaviour unless `C-unwind` is used, which it
+/// only is if the `unstable-c-unwind` feature flag is enabled (raises MSRV to
+/// 1.71).
 ///
 /// [`catch_unwind`]: std::panic::catch_unwind
-/// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 #[inline]
 #[cfg(feature = "exception")] // For consistency, not strictly required
 pub unsafe fn throw(exception: Retained<Exception>) -> ! {
@@ -274,11 +273,9 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exce
 /// The given closure must not panic (e.g. normal Rust unwinding into this
 /// causes undefined behaviour).
 ///
-/// Additionally, this unwinds through the closure from Objective-C, which is
-/// undefined behaviour until `C-unwind` is stabilized, see [RFC-2945] - you
-/// can try this out on nightly using the `unstable-c-unwind` feature flag.
-///
-/// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
+/// This also invokes undefined behaviour unless `C-unwind` is used, which it
+/// only is if the `unstable-c-unwind` feature flag is enabled (raises MSRV to
+/// 1.71).
 #[cfg(feature = "exception")]
 pub unsafe fn catch<R>(
     closure: impl FnOnce() -> R + UnwindSafe,

@@ -182,7 +182,7 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: cargo check
-      run: cargo check $PUBLIC_CRATES $FRAMEWORKS_MACOS_14 $INTERESTING_FEATURES
+      run: cargo check $PUBLIC_CRATES $FRAMEWORKS_MACOS_14 --features=all
       env:
         RUSTFLAGS: "--codegen=debuginfo=0" # Removed --deny=warnings
 

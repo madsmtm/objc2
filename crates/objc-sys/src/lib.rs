@@ -170,9 +170,8 @@
 #![allow(non_snake_case)]
 #![allow(missing_debug_implementations)]
 #![doc(html_root_url = "https://docs.rs/objc-sys/0.3.5")]
-#![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide))]
-#![cfg_attr(docsrs, doc(cfg_hide(doc)))]
+#![cfg_attr(docsrs, doc(cfg_hide(doc, feature = "unstable-c-unwind")))]
 
 // TODO: Remove this and add "no-std" category to Cargo.toml
 // Requires a better solution for C-types in `no_std` crates.
@@ -213,10 +212,6 @@ macro_rules! generate_linking_tests {
                     // Get function pointer to make the linker require the
                     // symbol to be available.
                     let f: unsafe extern $abi fn($($(#[$a_m])* $t),*) $(-> $r)? = crate::$name;
-                    // Workaround for https://github.com/rust-lang/rust/pull/92964
-                    #[cfg(feature = "unstable-c-unwind")]
-                    #[allow(clippy::useless_transmute)]
-                    let f: unsafe extern "C" fn() = unsafe { core::mem::transmute(f) };
                     // Execute side-effect to ensure it is not optimized away.
                     std::println!("{:p}", f);
                 }

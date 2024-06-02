@@ -76,7 +76,9 @@ unstable-static-class-inlined = ["unstable-static-class"]
 # Uses nightly features to make autorelease pools fully sound
 unstable-autoreleasesafe = []
 
-# Uses the nightly c_unwind feature to make throwing safe
+# Uses `extern "C-unwind"` to make method calls that throw safe.
+#
+# This raises MSRV to `1.71`.
 #
 # You must manually enable `objc-sys/unstable-c-unwind` to use this.
 unstable-c-unwind = []
@@ -137,7 +139,7 @@ harness = false
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["exception"]
+features = ["unstable-c-unwind", "exception"]
 targets = [
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",

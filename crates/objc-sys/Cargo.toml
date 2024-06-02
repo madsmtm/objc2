@@ -54,7 +54,12 @@ unstable-winobjc = ["gnustep-1-8"]
 # Link to ObjFW
 unstable-objfw = []
 
-# Use nightly c_unwind feature
+# Uses `extern "C-unwind"` on relevant function declarations.
+#
+# This raises MSRV to `1.71`.
+#
+# Warning: Enabling this is a breaking change for consumer crates, as it
+# changes the signature of functions.
 unstable-c-unwind = []
 
 # Private
@@ -65,6 +70,7 @@ cc = { version = "1.0.80", optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
+features = ["unstable-c-unwind"]
 targets = [
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",
