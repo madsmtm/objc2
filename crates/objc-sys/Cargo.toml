@@ -14,7 +14,7 @@ description = "Raw bindings to the Objective-C runtime and ABI"
 keywords = ["objective-c", "macos", "ios", "objc_msgSend", "sys"]
 categories = [
     "external-ffi-bindings",
-    # "no_std" # TODO
+    # "no-std", "no-std::no-alloc", # TODO
     "os::macos-apis",
 ]
 repository = "https://github.com/madsmtm/objc2"

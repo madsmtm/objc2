@@ -7,7 +7,7 @@ rust-version = "1.60"
 
 description = "External helper function for catching Objective-C exceptions"
 keywords = ["objective-c", "macos", "ios", "exception"]
-categories = ["no_std", "os::macos-apis"]
+categories = ["no-std", "no-std::no-alloc", "os::macos-apis"]
 repository = "https://github.com/madsmtm/objc2"
 license = "MIT"
 
