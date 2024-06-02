@@ -270,8 +270,8 @@ class.NSApplication.methods."setActivationPolicy:".unsafe = false
 class.NSApplication.methods."setMainMenu:".unsafe = false
 class.NSApplication.methods.effectiveAppearance.unsafe = false
 class.NSApplication.methods."setAppearance:".unsafe = false
-# Cannot be safe, the user must ensure there is no re-entrancy.
-class.NSApplication.methods.run.unsafe = true
+# Re-entrancy here is safe, just very confusing.
+class.NSApplication.methods.run.unsafe = false
 
 class.NSColor.methods.clear.unsafe = false
 
