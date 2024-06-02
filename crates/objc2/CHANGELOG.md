@@ -854,11 +854,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ```rust
   // Before
   let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
-  let obj = NonNull::new(obj).expect("Failed to allocate object.");
+  let obj = NonNull::new(obj).expect("failed to allocate object");
   let obj = unsafe { Id::new(obj) };
   // After
   let obj: *mut Object = unsafe { msg_send![class!(NSObject), new] };
-  let obj = unsafe { Id::new(obj) }.expect("Failed to allocate object.");
+  let obj = unsafe { Id::new(obj) }.expect("failed to allocate object");
   ```
 * Allow specifying any receiver `T: Message` for methods added with
   `ClassBuilder::add_method`.

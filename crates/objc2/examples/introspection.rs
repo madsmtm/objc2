@@ -23,7 +23,7 @@ fn main() {
     // this is only for demonstration.
     let ivar = cls
         .instance_variable("isa")
-        .expect("No ivar with name 'isa' found on NSObject");
+        .expect("no ivar with name 'isa' found on NSObject");
     println!(
         "Instance variable {} has type encoding {:?}",
         ivar.name(),
