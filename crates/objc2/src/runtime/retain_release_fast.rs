@@ -201,6 +201,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(target_arch = "aarch64")]
     fn move_to_register_x16() {
         let obj = NSObject::new();
         let mut ptr = Retained::into_raw(obj);
@@ -214,6 +215,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(target_arch = "aarch64")]
     fn move_to_register_x17() {
         let obj = NSObject::new();
         let mut ptr = Retained::into_raw(obj);
@@ -227,6 +229,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(target_arch = "aarch64")]
     fn move_to_register_x30() {
         let obj = NSObject::new();
         let mut ptr = Retained::into_raw(obj);
