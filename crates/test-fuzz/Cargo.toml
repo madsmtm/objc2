@@ -28,7 +28,14 @@ gnustep-2-1 = ["gnustep-2-0", "objc2-foundation/gnustep-2-1"]
 afl = ["dep:afl"]
 
 # The features required for fuzzing all targets (used by CI)
-fuzz-all = ["objc2-foundation/NSString"]
+fuzz-all = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSZone",
+]
 
 [[bin]]
 name = "class"
@@ -58,6 +65,20 @@ test = false
 doc = false
 bench = false
 required-features = ["objc2-foundation/NSString"]
+
+[[bin]]
+name = "collection_interior_mut"
+path = "fuzz_targets/collection_interior_mut.rs"
+test = false
+doc = false
+bench = false
+required-features = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSZone",
+]
 
 [package.metadata.release]
 release = false
