@@ -189,25 +189,11 @@ impl MainThreadMarker {
 
 /// Get a [`MainThreadMarker`] from a main-thread-only object.
 ///
-/// This function exists purely in the type-system, and will always
-/// succeed at runtime (with a check when debug assertions are enabled).
+/// This is a soft-deprecated shorthand for [`IsMainThreadOnly::mtm`].
 impl<T: ?Sized + IsMainThreadOnly> From<&T> for MainThreadMarker {
     #[inline]
-    #[cfg_attr(debug_assertions, track_caller)]
-    fn from(_obj: &T) -> Self {
-        #[cfg(debug_assertions)]
-        assert!(
-            Self::new().is_some(),
-            "the main-thread-only object that we tried to fetch a MainThreadMarker from was somehow not on the main thread",
-        );
-
-        // SAFETY: Objects which are `IsMainThreadOnly` are guaranteed
-        // `!Send + !Sync` and are only constructible on the main thread.
-        //
-        // Since we hold a reference to such an object, and we know it cannot
-        // now possibly be on another thread than the main, we know that the
-        // current thread is the main thread.
-        unsafe { Self::new_unchecked() }
+    fn from(obj: &T) -> Self {
+        obj.mtm()
     }
 }
 

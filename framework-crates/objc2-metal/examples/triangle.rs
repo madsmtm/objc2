@@ -3,10 +3,10 @@
 
 use core::{cell::OnceCell, ptr::NonNull};
 
-use objc2::{
-    declare_class, msg_send_id, mutability::MainThreadOnly, rc::Retained, runtime::ProtocolObject,
-    ClassType, DeclaredClass, MainThreadMarker,
-};
+use objc2::mutability::{IsMainThreadOnly, MainThreadOnly};
+use objc2::rc::Retained;
+use objc2::runtime::ProtocolObject;
+use objc2::{declare_class, msg_send_id, ClassType, DeclaredClass, MainThreadMarker};
 use objc2_app_kit::{
     NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSBackingStoreType,
     NSWindow, NSWindowStyleMask,
@@ -85,7 +85,7 @@ declare_class!(
         #[method(applicationDidFinishLaunching:)]
         #[allow(non_snake_case)]
         unsafe fn applicationDidFinishLaunching(&self, _notification: &NSNotification) {
-            let mtm = MainThreadMarker::from(self);
+            let mtm = self.mtm();
             // create the app window
             let window = {
                 let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(768., 768.));

@@ -4,7 +4,7 @@ use core::cell::OnceCell;
 
 use objc2::{
     declare_class, msg_send_id,
-    mutability::MainThreadOnly,
+    mutability::{IsMainThreadOnly, MainThreadOnly},
     rc::Retained,
     runtime::{AnyObject, ProtocolObject, Sel},
     sel, ClassType, DeclaredClass, MainThreadMarker,
@@ -70,7 +70,7 @@ declare_class!(
         #[method(applicationDidFinishLaunching:)]
         #[allow(non_snake_case)]
         unsafe fn applicationDidFinishLaunching(&self, _notification: &NSNotification) {
-            let mtm = MainThreadMarker::from(self);
+            let mtm = self.mtm();
             // create the app window
             let window = {
                 let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(1024., 768.));

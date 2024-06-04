@@ -307,7 +307,6 @@ pub unsafe trait ClassType: Message {
     }
 
     // TODO: `fn alloc_on_main(mtm: MainThreadMarker)`
-    // TODO: `fn mtm(&self) -> MainThreadMarker where T::Mutability: MainThreadOnly`
 }
 
 /// Marks types whose implementation is defined in Rust.
