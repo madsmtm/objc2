@@ -39,7 +39,7 @@
 use core::marker::PhantomData;
 
 use crate::runtime::{AnyObject, ProtocolObject};
-use crate::{ClassType, Message};
+use crate::{ClassType, MainThreadMarker, Message};
 
 mod private_mutability {
     pub trait Sealed {}
@@ -256,7 +256,7 @@ pub struct InteriorMutable {
 /// Functionality that is provided with this:
 /// - [`IsRetainable`] -> [`ClassType::retain`].
 /// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
-/// - [`IsMainThreadOnly`] -> `MainThreadMarker::from`.
+/// - [`IsMainThreadOnly`] -> `IsMainThreadOnly::mtm`.
 //
 // While Xcode's Main Thread Checker doesn't report `alloc` and `dealloc` as
 // unsafe from other threads, things like `NSView` and `NSWindow` still do a
@@ -443,14 +443,36 @@ unsafe impl<P: ?Sized + IsMutable> IsMutable for ProtocolObject<P> {}
 ///
 /// Since `MainThreadOnly` types must be `!Send` and `!Sync`, if you hold a
 /// type that implements this trait, then you're guaranteed to be on the main
-/// thread (and can get a `MainThreadMarker` using `MainThreadMarker::from`).
+/// thread (and can get a `MainThreadMarker` using `IsMainThreadOnly::mtm`).
 ///
 ///
 /// # Safety
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait IsMainThreadOnly: private_traits::Sealed {}
+pub unsafe trait IsMainThreadOnly: private_traits::Sealed {
+    /// Get a [`MainThreadMarker`] from a main-thread-only object.
+    ///
+    /// This function exists purely in the type-system, and will succeed at
+    /// runtime (with a safety check when debug assertions are enabled).
+    #[inline]
+    #[cfg_attr(debug_assertions, track_caller)]
+    fn mtm(&self) -> MainThreadMarker {
+        #[cfg(debug_assertions)]
+        assert!(
+            MainThreadMarker::new().is_some(),
+            "the main-thread-only object that we tried to fetch a MainThreadMarker from was somehow not on the main thread",
+        );
+
+        // SAFETY: Objects which are `IsMainThreadOnly` are guaranteed
+        // `!Send + !Sync` and are only constructible on the main thread.
+        //
+        // Since we hold a reference to such an object, and we know it cannot
+        // now possibly be on another thread than the main, we know that the
+        // current thread is the main thread.
+        unsafe { MainThreadMarker::new_unchecked() }
+    }
+}
 
 trait MutabilityIsMainThreadOnly: Mutability {}
 impl MutabilityIsMainThreadOnly for MainThreadOnly {}

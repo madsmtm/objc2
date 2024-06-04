@@ -2,10 +2,10 @@ use core::ptr::NonNull;
 
 use crate::__macro_helpers::declared_ivars::get_initialized_ivar_ptr;
 use crate::encode::RefEncode;
-use crate::msg_send_id;
 use crate::mutability::{IsAllocableAnyThread, IsRetainable, Mutability};
 use crate::rc::{Allocated, Retained};
 use crate::runtime::{AnyClass, AnyProtocol};
+use crate::{msg_send_id, MainThreadMarker};
 
 /// Types that can be sent Objective-C messages.
 ///
@@ -306,8 +306,45 @@ pub unsafe trait ClassType: Message {
         unsafe { msg_send_id![Self::class(), alloc] }
     }
 
-    // TODO: `fn alloc_on_main(mtm: MainThreadMarker)`
-    // TODO: `fn mtm(&self) -> MainThreadMarker where T::Mutability: MainThreadOnly`
+    /// Allocate a new instance of the class on the main thread.
+    ///
+    /// This is essentially the same as [`ClassType::alloc`], the difference
+    /// being that it is also callable with classes that can only be used on
+    /// the main thread.
+    ///
+    ///
+    /// # Example
+    ///
+    /// Create an object on the main thread.
+    ///
+    /// ```
+    /// # use objc2::runtime::NSObject as SomeClass;
+    /// # #[cfg(for_example)]
+    /// use objc2_app_kit::NSView as SomeClass; // An example class
+    /// use objc2::rc::Retained;
+    /// use objc2::{msg_send_id, ClassType, MainThreadMarker};
+    ///
+    /// # let mtm = unsafe { MainThreadMarker::new_unchecked() };
+    /// # #[cfg(doctests_not_always_run_on_main_thread)]
+    /// let mtm = MainThreadMarker::new().expect("must be on the main thread");
+    ///
+    /// // _All_ objects are safe to allocate on the main thread!
+    /// let obj = SomeClass::alloc_main_thread(mtm);
+    ///
+    /// // Though more knowledge is required for safe initialization
+    /// let obj: Retained<SomeClass> = unsafe { msg_send_id![obj, init] };
+    /// ```
+    #[inline]
+    fn alloc_main_thread(mtm: MainThreadMarker) -> Allocated<Self>
+    where
+        Self: Sized,
+    {
+        // SAFETY: Same as `ClassType::alloc`, with the addition that since we
+        // take `mtm: MainThreadMarker`, the `IsAllocableAnyThread` bound is
+        // not required.
+        let _ = mtm;
+        unsafe { msg_send_id![Self::class(), alloc] }
+    }
 }
 
 /// Marks types whose implementation is defined in Rust.

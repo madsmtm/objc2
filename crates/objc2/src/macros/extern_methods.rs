@@ -26,11 +26,11 @@
 /// [`Result`]. See the error section in [`msg_send!`] and [`msg_send_id!`]
 /// for details.
 ///
-/// If you use `objc2_foundation::MainThreadMarker` as a parameter type, the
-/// macro will ignore it, allowing you to neatly specify "this method must be
-/// run on the main thread". Note that due to type-system limitations, this is
-/// currently a textual match on `MainThreadMarker`; so you must use that
-/// exact identifier.
+/// If you use `objc2::MainThreadMarker` as a parameter type, the macro will
+/// ignore it, allowing you to neatly specify "this method must be run on the
+/// main thread". Note that due to type-system limitations, this is currently
+/// a textual match on `MainThreadMarker`; so you must use that exact
+/// identifier.
 ///
 /// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
 /// `deprecated` and so on is supported. However, note that `cfg_attr` may not

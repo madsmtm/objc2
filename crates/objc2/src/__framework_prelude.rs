@@ -23,7 +23,7 @@ pub use crate::runtime::{
 };
 pub use crate::{
     __inner_extern_class, extern_category, extern_class, extern_methods, extern_protocol,
-    ClassType, Message, ProtocolType,
+    ClassType, MainThreadMarker, Message, ProtocolType,
 };
 
 // TODO
