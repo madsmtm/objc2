@@ -10,7 +10,7 @@ use core::ptr::{self, NonNull};
 
 #[cfg(feature = "NSObject")]
 use objc2::mutability::IsRetainable;
-use objc2::mutability::{CounterpartOrSelf, HasStableHash, IsIdCloneable, IsMutable};
+use objc2::mutability::{CounterpartOrSelf, IsIdCloneable, IsMutable};
 use objc2::rc::Retained;
 #[cfg(feature = "NSObject")]
 use objc2::runtime::ProtocolObject;
@@ -38,7 +38,11 @@ where
 }
 
 #[cfg(feature = "NSObject")]
-impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
+impl<K: Message + Eq + Hash, V: Message> NSDictionary<K, V> {
+    // The dictionary copies its keys, which is why we require `NSCopying` and
+    // use `CounterpartOrSelf` on all input data - we want to ensure that the
+    // type-system knows that it's not actually `NSMutableString` that is
+    // being stored, but instead `NSString`.
     pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Retained<V>>) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
@@ -56,20 +60,15 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
         // SAFETY:
         // - The objects are valid, similar reasoning as `NSArray::from_vec`.
         //
-        // - The key must not be mutated, as that may cause the hash value to
-        //   change, which is unsound as stated in:
-        //   https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html#//apple_ref/doc/uid/TP40010810-CH5-SW69
-        //
-        //   The dictionary always copies its keys, which is why we require
-        //   `NSCopying` and use `CounterpartOrSelf` on all input data - we
-        //   want to ensure that it is very clear that it's not actually
-        //   `NSMutableString` that is being stored, but `NSString`.
-        //
-        //   But that is not by itself enough to verify that the key does not
-        //   still contain interior mutable objects (e.g. if the copy was only
-        //   a shallow copy), which is why we also require `HasStableHash`.
-        //
         // - The length is lower than or equal to the length of the two arrays.
+        //
+        // - While recommended against in the below link, the key _can_ be
+        //   mutated, it'll "just" corrupt the collection's invariants (but
+        //   won't cause undefined behaviour).
+        //
+        //   This is tested via. fuzzing in `collection_interior_mut.rs`.
+        //
+        //   <https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html#//apple_ref/doc/uid/TP40010810-CH5-SW69>
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 
@@ -103,7 +102,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
 }
 
 #[cfg(feature = "NSObject")]
-impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, V> {
+impl<K: Message + Eq + Hash, V: Message> NSMutableDictionary<K, V> {
     pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Retained<V>>) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
@@ -311,7 +310,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     }
 }
 
-impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, V> {
+impl<K: Message + Eq + Hash, V: Message> NSMutableDictionary<K, V> {
     /// Inserts a key-value pair into the dictionary.
     ///
     /// If the dictionary did not have this key present, None is returned.

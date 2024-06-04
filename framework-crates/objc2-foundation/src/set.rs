@@ -4,7 +4,7 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::hash::Hash;
 
-use objc2::mutability::{HasStableHash, IsIdCloneable, IsRetainable};
+use objc2::mutability::{IsIdCloneable, IsRetainable};
 use objc2::rc::{Retained, RetainedFromIterator};
 use objc2::{extern_methods, ClassType, Message};
 
@@ -56,10 +56,7 @@ impl<T: Message + Eq + Hash> NSSet<T> {
     /// let strs = ["one", "two", "three"].map(NSString::from_str).to_vec();
     /// let set = NSSet::from_vec(strs);
     /// ```
-    pub fn from_vec(mut vec: Vec<Retained<T>>) -> Retained<Self>
-    where
-        T: HasStableHash,
-    {
+    pub fn from_vec(mut vec: Vec<Retained<T>>) -> Retained<Self> {
         let len = vec.len();
         let ptr = util::retained_ptr_cast(vec.as_mut_ptr());
         // SAFETY: Same as `NSArray::from_vec`.
@@ -78,7 +75,7 @@ impl<T: Message + Eq + Hash> NSSet<T> {
     /// ```
     pub fn from_id_slice(slice: &[Retained<T>]) -> Retained<Self>
     where
-        T: HasStableHash + IsIdCloneable,
+        T: IsIdCloneable,
     {
         let len = slice.len();
         let ptr = util::retained_ptr_cast_const(slice.as_ptr());
@@ -88,7 +85,7 @@ impl<T: Message + Eq + Hash> NSSet<T> {
 
     pub fn from_slice(slice: &[&T]) -> Retained<Self>
     where
-        T: HasStableHash + IsRetainable,
+        T: IsRetainable,
     {
         let len = slice.len();
         let ptr = util::ref_ptr_cast_const(slice.as_ptr());
@@ -171,10 +168,7 @@ impl<T: Message + Eq + Hash> NSMutableSet<T> {
     /// let strs = ["one", "two", "three"].map(NSString::from_str).to_vec();
     /// let set = NSMutableSet::from_vec(strs);
     /// ```
-    pub fn from_vec(mut vec: Vec<Retained<T>>) -> Retained<Self>
-    where
-        T: HasStableHash,
-    {
+    pub fn from_vec(mut vec: Vec<Retained<T>>) -> Retained<Self> {
         let len = vec.len();
         let ptr = util::retained_ptr_cast(vec.as_mut_ptr());
         // SAFETY: Same as `NSArray::from_vec`.
@@ -193,7 +187,7 @@ impl<T: Message + Eq + Hash> NSMutableSet<T> {
     /// ```
     pub fn from_id_slice(slice: &[Retained<T>]) -> Retained<Self>
     where
-        T: HasStableHash + IsIdCloneable,
+        T: IsIdCloneable,
     {
         let len = slice.len();
         let ptr = util::retained_ptr_cast_const(slice.as_ptr());
@@ -203,7 +197,7 @@ impl<T: Message + Eq + Hash> NSMutableSet<T> {
 
     pub fn from_slice(slice: &[&T]) -> Retained<Self>
     where
-        T: HasStableHash + IsRetainable,
+        T: IsRetainable,
     {
         let len = slice.len();
         let ptr = util::ref_ptr_cast_const(slice.as_ptr());
@@ -376,7 +370,7 @@ impl<T: Message + Eq + Hash> NSMutableSet<T> {
     #[doc(alias = "addObject:")]
     pub fn insert(&mut self, value: &T) -> bool
     where
-        T: HasStableHash + IsRetainable,
+        T: IsRetainable,
     {
         let contains_value = self.contains(value);
         // SAFETY: Because of the `T: IsRetainable` bound, it is safe for the
@@ -400,10 +394,7 @@ impl<T: Message + Eq + Hash> NSMutableSet<T> {
     /// assert_eq!(set.len(), 1);
     /// ```
     #[doc(alias = "addObject:")]
-    pub fn insert_id(&mut self, value: Retained<T>) -> bool
-    where
-        T: HasStableHash,
-    {
+    pub fn insert_id(&mut self, value: Retained<T>) -> bool {
         let contains_value = self.contains(&value);
         // SAFETY: We've consumed ownership of the object.
         unsafe { self.addObject(&value) };
@@ -425,10 +416,7 @@ impl<T: Message + Eq + Hash> NSMutableSet<T> {
     /// assert_eq!(set.remove(ns_string!("one")), false);
     /// ```
     #[doc(alias = "removeObject:")]
-    pub fn remove(&mut self, value: &T) -> bool
-    where
-        T: HasStableHash,
-    {
+    pub fn remove(&mut self, value: &T) -> bool {
         let contains_value = self.contains(value);
         unsafe { self.removeObject(value) };
         contains_value
@@ -563,7 +551,7 @@ impl<T: fmt::Debug + Message> fmt::Debug for crate::Foundation::NSCountedSet<T> 
     }
 }
 
-impl<T: Message + Eq + Hash + HasStableHash> Extend<Retained<T>> for NSMutableSet<T> {
+impl<T: Message + Eq + Hash> Extend<Retained<T>> for NSMutableSet<T> {
     fn extend<I: IntoIterator<Item = Retained<T>>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
             self.insert_id(item);
@@ -571,7 +559,7 @@ impl<T: Message + Eq + Hash + HasStableHash> Extend<Retained<T>> for NSMutableSe
     }
 }
 
-impl<'a, T: Message + Eq + Hash + HasStableHash + IsRetainable> Extend<&'a T> for NSMutableSet<T> {
+impl<'a, T: Message + Eq + Hash + IsRetainable> Extend<&'a T> for NSMutableSet<T> {
     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
             self.insert(item);
@@ -579,23 +567,21 @@ impl<'a, T: Message + Eq + Hash + HasStableHash + IsRetainable> Extend<&'a T> fo
     }
 }
 
-impl<'a, T: Message + Eq + Hash + HasStableHash + IsRetainable + 'a> RetainedFromIterator<&'a T>
-    for NSSet<T>
-{
+impl<'a, T: Message + Eq + Hash + IsRetainable + 'a> RetainedFromIterator<&'a T> for NSSet<T> {
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
-impl<T: Message + Eq + Hash + HasStableHash> RetainedFromIterator<Retained<T>> for NSSet<T> {
+impl<T: Message + Eq + Hash> RetainedFromIterator<Retained<T>> for NSSet<T> {
     fn id_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
     }
 }
 
-impl<'a, T: Message + Eq + Hash + HasStableHash + IsRetainable + 'a> RetainedFromIterator<&'a T>
+impl<'a, T: Message + Eq + Hash + IsRetainable + 'a> RetainedFromIterator<&'a T>
     for NSMutableSet<T>
 {
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
@@ -604,7 +590,7 @@ impl<'a, T: Message + Eq + Hash + HasStableHash + IsRetainable + 'a> RetainedFro
     }
 }
 
-impl<T: Message + Eq + Hash + HasStableHash> RetainedFromIterator<Retained<T>> for NSMutableSet<T> {
+impl<T: Message + Eq + Hash> RetainedFromIterator<Retained<T>> for NSMutableSet<T> {
     fn id_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
