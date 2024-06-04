@@ -81,7 +81,7 @@ declare_class!(
                 let flag = false;
                 unsafe {
                     NSWindow::initWithContentRect_styleMask_backing_defer(
-                        mtm.alloc(),
+                        NSWindow::alloc_main_thread(mtm),
                         content_rect,
                         style,
                         backing_store_type,
@@ -93,13 +93,13 @@ declare_class!(
             // create the web view
             let web_view = {
                 let frame_rect = NSRect::ZERO;
-                unsafe { WKWebView::initWithFrame(mtm.alloc(), frame_rect) }
+                unsafe { WKWebView::initWithFrame(WKWebView::alloc_main_thread(mtm), frame_rect) }
             };
 
             // create the nav bar view
             let nav_bar = {
                 let frame_rect = NSRect::ZERO;
-                let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
+                let this = unsafe { NSStackView::initWithFrame(NSStackView::alloc_main_thread(mtm), frame_rect) };
                 unsafe {
                     this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
                     this.setAlignment(NSLayoutAttribute::Height);
@@ -112,7 +112,7 @@ declare_class!(
             // create the nav buttons view
             let nav_buttons = {
                 let frame_rect = NSRect::ZERO;
-                let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
+                let this = unsafe { NSStackView::initWithFrame(NSStackView::alloc_main_thread(mtm), frame_rect) };
                 unsafe {
                     this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
                     this.setAlignment(NSLayoutAttribute::Height);
@@ -160,7 +160,7 @@ declare_class!(
             // create the url text field
             let nav_url = {
                 let frame_rect = NSRect::ZERO;
-                let this = unsafe { NSTextField::initWithFrame(mtm.alloc(), frame_rect) };
+                let this = unsafe { NSTextField::initWithFrame(NSTextField::alloc_main_thread(mtm), frame_rect) };
                 unsafe {
                     this.setDrawsBackground(true);
                     this.setBackgroundColor(Some(&NSColor::lightGrayColor()));
@@ -177,7 +177,7 @@ declare_class!(
             // create the window content view
             let content_view = {
                 let frame_rect = window.frame();
-                let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
+                let this = unsafe { NSStackView::initWithFrame(NSStackView::alloc_main_thread(mtm), frame_rect) };
                 unsafe {
                     this.setOrientation(NSUserInterfaceLayoutOrientation::Vertical);
                     this.setAlignment(NSLayoutAttribute::Width);
@@ -204,14 +204,14 @@ declare_class!(
 
             // create the menu with a "quit" entry
             unsafe {
-                let menu = NSMenu::initWithTitle(mtm.alloc(), ns_string!(""));
+                let menu = NSMenu::initWithTitle(NSMenu::alloc_main_thread(mtm), ns_string!(""));
                 let menu_app_item = NSMenuItem::initWithTitle_action_keyEquivalent(
-                    mtm.alloc(),
+                    NSMenuItem::alloc_main_thread(mtm),
                     ns_string!(""),
                     None,
                     ns_string!(""),
                 );
-                let menu_app_menu = NSMenu::initWithTitle(mtm.alloc(), ns_string!(""));
+                let menu_app_menu = NSMenu::initWithTitle(NSMenu::alloc_main_thread(mtm), ns_string!(""));
                 menu_app_menu.addItemWithTitle_action_keyEquivalent(
                     ns_string!("Quit"),
                     Some(sel!(terminate:)),
@@ -288,7 +288,7 @@ declare_class!(
 
 impl Delegate {
     fn new(mtm: MainThreadMarker) -> Retained<Self> {
-        let this = mtm.alloc();
+        let this = Self::alloc_main_thread(mtm);
         let this = this.set_ivars(Ivars::default());
         unsafe { msg_send_id![super(this), init] }
     }

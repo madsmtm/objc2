@@ -3,7 +3,7 @@ use core::marker::PhantomData;
 
 use crate::mutability::IsMainThreadOnly;
 use crate::rc::Allocated;
-use crate::{msg_send_id, ClassType};
+use crate::ClassType;
 
 /// Whether the current thread is the main thread.
 #[inline]
@@ -152,38 +152,14 @@ impl MainThreadMarker {
 
     /// Allocate a new instance of the specified class on the main thread.
     ///
-    /// This is essentially the same as [`ClassType::alloc`], the difference
-    /// being that it is also callable with classes that can only be used on
-    /// the main thread.
+    /// This is a soft-deprecated shorthand for
+    /// [`ClassType::alloc_main_thread`], it will be fully deprecated once
+    /// [arbitrary self types][tracking] become stable.
     ///
-    ///
-    /// # Example
-    ///
-    /// Create an object on the main thread.
-    ///
-    /// ```
-    /// # use objc2::runtime::NSObject as SomeClass;
-    /// # #[cfg(for_example)]
-    /// use objc2_app_kit::NSView as SomeClass; // An example class
-    /// use objc2::rc::Retained;
-    /// use objc2::{msg_send_id, MainThreadMarker};
-    ///
-    /// # let mtm = unsafe { MainThreadMarker::new_unchecked() };
-    /// # #[cfg(doctests_not_always_run_on_main_thread)]
-    /// let mtm = MainThreadMarker::new().expect("must be on the main thread");
-    ///
-    /// // _All_ objects are safe to allocate on the main thread!
-    /// let obj = mtm.alloc::<SomeClass>();
-    ///
-    /// // Though more knowledge is required for safe initialization
-    /// let obj: Retained<SomeClass> = unsafe { msg_send_id![obj, init] };
-    /// ```
+    /// [tracking]: https://github.com/rust-lang/rust/issues/44874
     #[inline]
     pub fn alloc<T: ClassType>(self) -> Allocated<T> {
-        // SAFETY: Same as `ClassType::alloc`, with the addition that since we
-        // take `self: MainThreadMarker`, the `IsAllocableAnyThread` bound is
-        // not required.
-        unsafe { msg_send_id![T::class(), alloc] }
+        T::alloc_main_thread(self)
     }
 }
 

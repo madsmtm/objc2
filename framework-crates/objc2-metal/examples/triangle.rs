@@ -96,7 +96,7 @@ declare_class!(
                 let flag = false;
                 unsafe {
                     NSWindow::initWithContentRect_styleMask_backing_defer(
-                        mtm.alloc(),
+                        NSWindow::alloc_main_thread(mtm),
                         content_rect,
                         style,
                         backing_store_type,
@@ -119,7 +119,7 @@ declare_class!(
             // create the metal view
             let mtk_view = {
                 let frame_rect = window.frame();
-                unsafe { MTKView::initWithFrame_device(mtm.alloc(), frame_rect, Some(&device)) }
+                unsafe { MTKView::initWithFrame_device(MTKView::alloc_main_thread(mtm), frame_rect, Some(&device)) }
             };
 
             // create the pipeline descriptor
@@ -280,7 +280,7 @@ declare_class!(
 
 impl Delegate {
     fn new(mtm: MainThreadMarker) -> Retained<Self> {
-        let this = mtm.alloc();
+        let this = Self::alloc_main_thread(mtm);
         let this = this.set_ivars(Ivars {
             start_date: unsafe { NSDate::now() },
             command_queue: OnceCell::default(),

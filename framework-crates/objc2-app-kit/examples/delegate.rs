@@ -54,7 +54,7 @@ declare_class!(
 
 impl AppDelegate {
     fn new(ivar: u8, another_ivar: bool, mtm: MainThreadMarker) -> Retained<Self> {
-        let this = mtm.alloc();
+        let this = Self::alloc_main_thread(mtm);
         let this = this.set_ivars(Ivars {
             ivar,
             another_ivar,

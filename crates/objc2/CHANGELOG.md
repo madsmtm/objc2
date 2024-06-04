@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `AnyClass::is_metaclass`.
 * Added `MainThreadMarker` from `objc2-foundation`.
+* Added `ClassType::alloc_main_thread`.
 * Added `IsMainThreadOnly::mtm`.
 
 
