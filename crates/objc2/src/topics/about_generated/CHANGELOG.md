@@ -22,6 +22,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 * `objc2-foundation`: Allow using `MainThreadBound` without the `NSThread`
   feature flag.
+* `objc2-foundation`: Removed `HasStableHash` requirement on `NSDictionary` and
+  `NSSet` creation methods. This was added in an abundance of caution, but
+  prevents real-world usage of these types, and isn't actually needed for
+  soundness (the documentation mentions the collection being "corrupt" if the
+  hash is changed, but that's not the same as it being unsound).
 
 ### Deprecated
 * `objc2-foundation`: Moved `MainThreadMarker` to `objc2`.

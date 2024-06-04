@@ -4,7 +4,7 @@
 use alloc::vec::Vec;
 use alloc::{format, vec};
 
-use crate::Foundation::{self, ns_string, NSNumber, NSSet, NSString};
+use crate::Foundation::{self, ns_string, NSNumber, NSObject, NSSet, NSString};
 
 #[test]
 fn test_new() {
@@ -209,4 +209,9 @@ fn invalid_generic() {
     ])]);
     let _ = set.get_any().unwrap().get(0).unwrap();
     // something_interior_mutable.setAbc(...)
+}
+
+#[test]
+fn new_from_nsobject() {
+    let _ = NSSet::from_vec(vec![NSObject::new()]);
 }

@@ -1,7 +1,10 @@
 //! Fuzz hashing collection operations with interior mutability.
 //!
 //! This is explicitly not done with any form of oracle, since while this is
-//! not language-level undefined behaviour, the behaviour is not specified.
+//! not language-level undefined behaviour, the behaviour is not specified,
+//! and will "corrupt the collection", and may behave differently on different
+//! versions of Foundation:
+//! <https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html#//apple_ref/doc/uid/TP40010810-CH5-SW69>
 #![cfg_attr(not(feature = "afl"), no_main)]
 use std::cell::Cell;
 use std::hint::black_box;
@@ -48,8 +51,7 @@ declare_class!(
 
     unsafe impl ClassType for Key {
         type Super = NSObject;
-        // Intentionally `Immutable` to see what breaks if we allow mutation.
-        type Mutability = mutability::Immutable;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "Key";
     }
 
