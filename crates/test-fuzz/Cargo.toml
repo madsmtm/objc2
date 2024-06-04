@@ -14,6 +14,8 @@ cargo-fuzz = true
 libfuzzer-sys = "0.4"
 objc2 = { path = "../objc2" }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation" }
+arbitrary = { version = "1", features = ["derive"] }
+afl = { version = "0.15", optional = true }
 
 [features]
 gnustep-1-7 = ["objc2-foundation/gnustep-1-7"]
@@ -21,6 +23,9 @@ gnustep-1-8 = ["gnustep-1-7", "objc2-foundation/gnustep-1-8"]
 gnustep-1-9 = ["gnustep-1-8", "objc2-foundation/gnustep-1-9"]
 gnustep-2-0 = ["gnustep-1-9", "objc2-foundation/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "objc2-foundation/gnustep-2-1"]
+
+# Enable fuzzing with AFL
+afl = ["dep:afl"]
 
 # The features required for fuzzing all targets (used by CI)
 fuzz-all = ["objc2-foundation/NSString"]
@@ -30,24 +35,28 @@ name = "class"
 path = "fuzz_targets/class.rs"
 test = false
 doc = false
+bench = false
 
 [[bin]]
 name = "sel"
 path = "fuzz_targets/sel.rs"
 test = false
 doc = false
+bench = false
 
 [[bin]]
 name = "encoding_parse"
 path = "fuzz_targets/encoding_parse.rs"
 test = false
 doc = false
+bench = false
 
 [[bin]]
 name = "nsstring"
 path = "fuzz_targets/nsstring.rs"
 test = false
 doc = false
+bench = false
 required-features = ["objc2-foundation/NSString"]
 
 [package.metadata.release]

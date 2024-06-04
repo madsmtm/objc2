@@ -1,10 +1,9 @@
-#![no_main]
+#![cfg_attr(not(feature = "afl"), no_main)]
 use std::str::FromStr;
 
-use libfuzzer_sys::fuzz_target;
 use objc2::encode::{Encoding, EncodingBox};
 
-fuzz_target!(|s: &str| {
+fn run(s: &str) {
     // Limit string length to < 1024 so that we don't hit stack overflows
     if s.len() > 1024 {
         return;
@@ -28,4 +27,14 @@ fuzz_target!(|s: &str| {
         let s3 = enc2.to_string();
         assert_eq!(s2, s3);
     }
-});
+}
+
+#[cfg(not(feature = "afl"))]
+libfuzzer_sys::fuzz_target!(|s: &str| run(s));
+
+#[cfg(feature = "afl")]
+fn main() {
+    afl::fuzz!(|s: &str| {
+        run(s);
+    });
+}
