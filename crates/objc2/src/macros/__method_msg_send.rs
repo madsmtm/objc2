@@ -24,9 +24,9 @@ macro_rules! __method_msg_send {
 
     // Skip using `MainThreadMarker` in the message send.
     //
-    // This is a purely textual match, and using e.g.
-    // `Foundation::MainThreadMarker` would fail - but that would just be
-    // detected as giving a wrong number of arguments, so it's fine for now.
+    // This is a purely textual match, and using e.g. `objc2::MainThreadMarker`
+    // would fail - but that would just be detected as giving a wrong number
+    // of arguments, so it's fine for now.
     (
         ($receiver:expr)
         ($($sel_rest:tt)*)
@@ -176,9 +176,9 @@ macro_rules! __method_msg_send_id {
 
     // Skip using `MainThreadMarker` in the message send.
     //
-    // This is a purely textual match, and using e.g.
-    // `Foundation::MainThreadMarker` would fail - but that would just be
-    // detected as giving a wrong number of arguments, so it's fine for now.
+    // This is a purely textual match, and using e.g. `objc2::MainThreadMarker`
+    // would fail - but that would just be detected as giving a wrong number
+    // of arguments, so it's fine for now.
     (
         ($receiver:expr)
         ($($sel_rest:tt)*)

@@ -19,7 +19,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * `objc2-foundation`: `MainThreadMarker::from` now debug-asserts that it is
   actually running on the main thread.
 
+### Changed
+* `objc2-foundation`: Allow using `MainThreadBound` without the `NSThread`
+  feature flag.
+
+### Deprecated
+* `objc2-foundation`: Moved `MainThreadMarker` to `objc2`.
+* `objc2-foundation`: Deprecated the free-standing function `is_main_thread`.
+
 ### Removed
+* `objc2-foundation` **BREAKING**: Removed the deprecated function
+  `MainThreadMarker::run_on_main`.
 * **BREAKING** `objc2-ui-kit`: Removed dependency on `objc2-link-presentation`.
 
   `objc2-link-presentation` is going to depend on `objc2-ui-kit` in the future,

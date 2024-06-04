@@ -1,10 +1,10 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass};
+use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass, MainThreadMarker};
 use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate};
 use objc2_foundation::{
-    ns_string, MainThreadMarker, NSCopying, NSNotification, NSObject, NSObjectProtocol, NSString,
+    ns_string, NSCopying, NSNotification, NSObject, NSObjectProtocol, NSString,
 };
 
 #[derive(Debug)]

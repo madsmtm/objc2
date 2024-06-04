@@ -109,6 +109,8 @@ mod generics;
 #[cfg(feature = "NSGeometry")]
 mod geometry;
 mod macros;
+#[cfg(feature = "dispatch")]
+mod main_thread_bound;
 mod ns_consumed;
 #[cfg(feature = "NSValue")]
 mod number;
@@ -122,6 +124,7 @@ pub mod set;
 mod string;
 #[cfg(test)]
 mod tests;
+#[cfg(feature = "NSThread")]
 mod thread;
 #[cfg(feature = "NSObject")]
 mod to_owned;
@@ -145,16 +148,14 @@ pub use self::generated::*;
 pub use self::generics::*;
 #[cfg(feature = "NSGeometry")]
 pub use self::geometry::{CGFloat, CGPoint, CGRect, CGSize, NSPoint, NSRect, NSRectEdge, NSSize};
+#[cfg(feature = "dispatch")]
+pub use self::main_thread_bound::*;
 #[cfg(feature = "NSMapTable")]
 pub use self::ns_consumed::NSFreeMapTable;
 #[cfg(feature = "NSRange")]
 pub use self::range::NSRange;
-pub use self::thread::MainThreadMarker;
 #[cfg(feature = "NSThread")]
-pub use self::thread::{is_main_thread, is_multi_threaded};
-#[cfg(feature = "NSThread")]
-#[cfg(feature = "dispatch")]
-pub use self::thread::{run_on_main, MainThreadBound};
+pub use self::thread::*;
 
 // Available under Foundation, so makes sense here as well:
 // https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
@@ -168,6 +169,8 @@ pub use objc2::runtime::NSZone;
 #[cfg(feature = "NSProxy")]
 pub use objc2::runtime::__NSProxy as NSProxy;
 pub use objc2::runtime::{NSObject, NSObjectProtocol};
+#[deprecated = "Moved to `objc2::MainThreadMarker`"]
+pub use objc2::MainThreadMarker;
 
 #[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
 extern "C" {}

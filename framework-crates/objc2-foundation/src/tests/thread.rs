@@ -1,7 +1,8 @@
 #![cfg(feature = "NSThread")]
 use alloc::format;
 
-use crate::Foundation::{is_main_thread, MainThreadMarker, NSThread};
+use crate::NSThread;
+use objc2::MainThreadMarker;
 
 #[test]
 #[cfg_attr(
@@ -16,28 +17,19 @@ fn test_main_thread() {
 
     if main == current {
         assert!(current.isMainThread());
-        assert!(is_main_thread());
+        assert!(MainThreadMarker::new().is_some());
     } else {
         assert!(!current.isMainThread());
-        assert!(!is_main_thread());
+        assert!(MainThreadMarker::new().is_none());
     }
 }
 
 #[test]
 fn test_not_main_thread() {
-    let res = std::thread::spawn(|| (is_main_thread(), NSThread::currentThread().isMainThread()))
+    let res = std::thread::spawn(|| NSThread::currentThread().isMainThread())
         .join()
         .unwrap();
-    assert_eq!(res, (false, false));
-}
-
-#[test]
-fn test_main_thread_auto_traits() {
-    use std::panic::{RefUnwindSafe, UnwindSafe};
-
-    fn assert_traits<T: Unpin + UnwindSafe + RefUnwindSafe + Sized>() {}
-
-    assert_traits::<MainThreadMarker>();
+    assert!(!res);
 }
 
 #[test]
@@ -61,65 +53,4 @@ fn test_debug() {
         expected.contains(&actual),
         "Expected one of {expected:?}, got {actual:?}",
     );
-
-    // SAFETY: We don't use the marker for anything other than its Debug
-    // impl, so this test doesn't actually need to run on the main thread!
-    let marker = unsafe { MainThreadMarker::new_unchecked() };
-    assert_eq!(format!("{marker:?}"), "MainThreadMarker");
-}
-
-#[test]
-#[cfg(feature = "dispatch")]
-#[cfg(feature = "NSThread")]
-fn test_main_thread_bound_traits() {
-    use crate::Foundation::MainThreadBound;
-
-    struct Foo {
-        _inner: *const (),
-    }
-
-    fn assert_send_sync<T: Send + Sync>() {}
-
-    assert_send_sync::<MainThreadBound<MainThreadMarker>>();
-    assert_send_sync::<MainThreadBound<Foo>>();
-
-    fn foo<T>() {
-        assert_send_sync::<MainThreadBound<T>>();
-    }
-
-    foo::<()>();
-}
-
-#[test]
-#[cfg(feature = "dispatch")]
-#[cfg(feature = "NSThread")]
-fn test_main_thread_bound_into_inner() {
-    use crate::Foundation::MainThreadBound;
-    use core::cell::Cell;
-
-    // SAFETY: For testing only
-    let mtm = unsafe { MainThreadMarker::new_unchecked() };
-
-    struct Foo<'a> {
-        is_dropped: &'a Cell<bool>,
-    }
-
-    impl Drop for Foo<'_> {
-        fn drop(&mut self) {
-            self.is_dropped.set(true);
-        }
-    }
-
-    let is_dropped = Cell::new(false);
-    let foo = Foo {
-        is_dropped: &is_dropped,
-    };
-    let foo = MainThreadBound::new(foo, mtm);
-    assert!(!is_dropped.get());
-
-    let foo = foo.into_inner(mtm);
-    assert!(!is_dropped.get());
-
-    drop(foo);
-    assert!(is_dropped.get());
 }

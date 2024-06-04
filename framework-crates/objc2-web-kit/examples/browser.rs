@@ -7,7 +7,7 @@ use objc2::{
     mutability::MainThreadOnly,
     rc::Retained,
     runtime::{AnyObject, ProtocolObject, Sel},
-    sel, ClassType, DeclaredClass,
+    sel, ClassType, DeclaredClass, MainThreadMarker,
 };
 #[allow(deprecated)]
 use objc2_app_kit::{
@@ -17,8 +17,8 @@ use objc2_app_kit::{
     NSTextView, NSUserInterfaceLayoutOrientation, NSWindow, NSWindowStyleMask,
 };
 use objc2_foundation::{
-    ns_string, MainThreadMarker, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect,
-    NSSize, NSURLRequest, NSURL,
+    ns_string, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize, NSURLRequest,
+    NSURL,
 };
 use objc2_web_kit::{WKNavigation, WKNavigationDelegate, WKWebView};
 

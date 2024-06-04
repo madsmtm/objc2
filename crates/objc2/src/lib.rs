@@ -172,6 +172,7 @@ pub use objc_sys as ffi;
 
 #[doc(no_inline)]
 pub use self::encode::{Encode, Encoding, RefEncode};
+pub use self::main_thread_marker::MainThreadMarker;
 pub use self::top_level_traits::{ClassType, DeclaredClass, Message, ProtocolType};
 
 #[cfg(feature = "objc2-proc-macros")]
@@ -197,6 +198,7 @@ pub mod __macro_helpers;
 pub mod encode;
 pub mod exception;
 mod macros;
+mod main_thread_marker;
 pub mod mutability;
 pub mod rc;
 pub mod runtime;

@@ -11,7 +11,7 @@ note: required because it appears within the type `PhantomData<*mut ()>`
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `MainThreadMarker`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/thread.rs
+ --> $WORKSPACE/crates/objc2/src/main_thread_marker.rs
   |
   | pub struct MainThreadMarker {
   |            ^^^^^^^^^^^^^^^^
@@ -34,7 +34,7 @@ note: required because it appears within the type `PhantomData<*mut ()>`
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `MainThreadMarker`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/thread.rs
+ --> $WORKSPACE/crates/objc2/src/main_thread_marker.rs
   |
   | pub struct MainThreadMarker {
   |            ^^^^^^^^^^^^^^^^

@@ -328,7 +328,7 @@ impl ItemIdentifier {
     pub fn main_thread_marker() -> Self {
         Self {
             name: "MainThreadMarker".into(),
-            location: Location::from_components(vec!["Foundation".into()]),
+            location: Location::from_components(vec!["objc2".into()]),
         }
     }
 
