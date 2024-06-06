@@ -22,6 +22,7 @@ pub const UTF8_ENCODING: i32 = 4;
 //
 // Note: While this is not public, it is still a breaking change to modify,
 // since `objc2-foundation` relies on it.
+#[inline]
 pub unsafe fn nsstring_len(obj: &NSObject) -> NSUInteger {
     unsafe { msg_send![obj, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
 }
@@ -72,6 +73,14 @@ pub unsafe fn nsstring_to_str<'r, 's: 'r, 'p: 'r>(
     // it is never a NULL pointer.
     let bytes: &'r [u8] = unsafe { slice::from_raw_parts(bytes, len) };
 
-    // TODO: Always UTF-8, so should we use `from_utf8_unchecked`?
-    str::from_utf8(bytes).unwrap()
+    // SAFETY: The bytes are valid UTF-8.
+    #[cfg(not(debug_assertions))]
+    unsafe {
+        str::from_utf8_unchecked(bytes)
+    }
+
+    #[cfg(debug_assertions)]
+    {
+        str::from_utf8(bytes).expect("invalid UTF-8 in NSString")
+    }
 }
