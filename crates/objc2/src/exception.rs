@@ -113,7 +113,15 @@ impl fmt::Debug for Exception {
                 // SAFETY: Just checked that object is an NSException
                 let (name, reason) = unsafe { (self.name(), self.reason()) };
 
-                // SAFETY: `name` and `reason` are guaranteed to be NSString.
+                // SAFETY:
+                // - `name` and `reason` are guaranteed to be `NSString`s.
+                // - We control the scope in which they are alive, so we know
+                //   they are not moved outside the current autorelease pool.
+                //
+                // Note that these strings are immutable (`NSException` is
+                // immutable, and the properties are marked as `readonly` and
+                // `copy` and are copied upon creation), so we also don't have
+                // to worry about the string being mutated under our feet.
                 let name = name
                     .as_deref()
                     .map(|name| unsafe { nsstring_to_str(name, pool) });
@@ -145,7 +153,7 @@ impl fmt::Display for Exception {
                 let reason = unsafe { self.reason() };
 
                 if let Some(reason) = &reason {
-                    // SAFETY: `reason` is guaranteed to be NSString.
+                    // SAFETY: Same as above in `Debug`.
                     let reason = unsafe { nsstring_to_str(reason, pool) };
                     return write!(f, "{reason}");
                 }

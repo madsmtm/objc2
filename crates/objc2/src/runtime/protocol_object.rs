@@ -160,14 +160,33 @@ impl<P: ?Sized + NSObjectProtocol> hash::Hash for ProtocolObject<P> {
 impl<P: ?Sized + NSObjectProtocol> fmt::Debug for ProtocolObject<P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let description = self.description();
-        // We use a leaking autorelease pool since often the string
-        // will be UTF-8, and in that case the pool will be
-        // irrelevant. Also, it allows us to pass the formatter into
-        // the pool (since it may contain a pool internally that it
-        // assumes is current when writing).
+
+        // `NSString`s in return types, such as the one in `description`, are
+        // in general _supposed_ to be immutable:
+        // <https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html#//apple_ref/doc/uid/TP40010810-CH5-SW65>
+        //
+        // In reality, that isn't actually the case for `NSMutableString`,
+        // the `description` of that just returns itself instead of copying.
+        //
+        // Luckily though, the `UTF8String` returned by mutable objects do not
+        // return a reference to internal data, and instead always allocate
+        // a new autoreleased object (see details in `nsstring_to_str`), so
+        // we do not have to worry about the string being mutated in e.g. a
+        // malicious `Write` implementation in `fmt::Formatter` while we hold
+        // the `&str`.
+
+        // We use a leaking autorelease pool since often the string will be
+        // UTF-8, and in that case the pool will be irrelevant. Also, it
+        // allows us to pass the formatter into the pool (since it may contain
+        // a pool internally that it assumes is current when writing).
         autoreleasepool_leaking(|pool| {
-            // SAFETY: `description` selector is guaranteed to always
-            // return an instance of `NSString`.
+            // SAFETY:
+            // - The `description` selector is guaranteed to always return an
+            //   instance of `NSString`.
+            // - We control the scope in which the string is alive, so we know
+            //   it is not moved outside the current autorelease pool
+            //   (`autoreleasepool_leaking` is greatly helping with this,
+            //   though by itself does not fully ensure it).
             let s = unsafe { nsstring_to_str(&description, pool) };
             fmt::Display::fmt(s, f)
         })

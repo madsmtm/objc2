@@ -55,11 +55,21 @@ impl NSString {
     /// Returns [`None`] if the internal storage does not allow this to be
     /// done efficiently. Use [`NSString::as_str`] or `NSString::to_string`
     /// if performance is not an issue.
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The `NSString` must not be mutated for the lifetime of the returned
+    /// string.
+    ///
+    /// Warning: This is very difficult to ensure in generic contexts.
     #[doc(alias = "CFStringGetCStringPtr")]
     #[allow(unused)]
     #[cfg(target_vendor = "apple")]
     // TODO: Finish this
-    fn as_str_wip(&self) -> Option<&str> {
+    // TODO: Can this be used on NSStrings that are not internally CFString?
+    // (i.e. custom subclasses of NSString)?
+    unsafe fn as_str_wip(&self) -> Option<&str> {
         use core::ptr::NonNull;
         use std::os::raw::c_char;
 
@@ -90,7 +100,7 @@ impl NSString {
     #[allow(unused)]
     #[cfg(target_vendor = "apple")]
     // TODO: Finish this
-    fn as_utf16(&self) -> Option<&[u16]> {
+    unsafe fn as_utf16(&self) -> Option<&[u16]> {
         use core::ptr::NonNull;
 
         extern "C" {
@@ -102,12 +112,78 @@ impl NSString {
             .map(|ptr| unsafe { slice::from_raw_parts(ptr.as_ptr(), self.len_utf16()) })
     }
 
-    /// Get the [`str`](`prim@str`) representation of this.
+    /// Convert the string into a [string slice](`prim@str`).
     ///
-    /// TODO: Further explain this.
+    /// The signature of this method can be a bit confusing, as it contains
+    /// several lifetimes; the lifetime `'s` of the `NSString`, the lifetime
+    /// `'p` of the current autorelease pool and the lifetime `'r` of the
+    /// returned string slice.
+    ///
+    /// In general, this method converts the string to a newly allocated UTF-8
+    /// string, autoreleases the buffer, and returns a slice pointer to this
+    /// internal buffer, which will become invalid once the autorelease pool
+    /// is popped. So the lifetime of the return value is bound to the current
+    /// autorelease pool.
+    ///
+    /// However, as an optimization, this method may choose to instead return
+    /// an internal reference to the `NSString` when it can, and when the
+    /// string is immutable, and that is why the lifetime of the returned
+    /// string slice is also bound to the string itself.
+    ///
+    /// You should prefer the [`to_string`] method or the
+    /// [`Display` implementation][display-impl] over this method when
+    /// possible.
+    ///
+    /// [`to_string`]: alloc::string::ToString::to_string
+    /// [display-impl]: NSString#impl-Display-for-NSString
+    ///
+    ///
+    /// # Examples
+    ///
+    /// Get the string slice of the `NSString`, and compare it with another
+    /// inside an autorelease pool.
+    ///
+    /// ```
+    /// use objc2_foundation::NSString;
+    /// use objc2::rc::autoreleasepool;
+    ///
+    /// let string = NSString::from_str("foo");
+    /// autoreleasepool(|pool| {
+    ///     assert_eq!(string.as_str(pool), "foo");
+    /// });
+    /// ```
+    ///
+    /// Fails to compile because the lifetime of the string slice is bound to
+    /// the autorelease pool:
+    ///
+    /// ```compile_fail
+    /// # use objc2_foundation::NSString;
+    /// # use objc2::rc::autoreleasepool;
+    /// #
+    /// let string = NSString::from_str("foo");
+    /// let s = autoreleasepool(|pool| string.as_str(pool));
+    /// assert_eq!(s, "foo");
+    /// ```
+    ///
+    /// Fails to compile because the lifetime of the string slice is bound to
+    /// the string itself:
+    ///
+    /// ```compile_fail
+    /// # use objc2_foundation::NSString;
+    /// # use objc2::rc::autoreleasepool;
+    /// #
+    /// autoreleasepool(|pool| {
+    ///     let string = NSString::from_str("foo");
+    ///     let s = string.as_str(pool);
+    ///     drop(string);
+    ///     assert_eq!(s, "foo");
+    /// });
+    /// ```
     #[doc(alias = "UTF8String")]
     pub fn as_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: AutoreleasePool<'p>) -> &'r str {
         // SAFETY: This is an instance of `NSString`
+        //
+        // TODO: Caller upholds that the string is not moved outside the pool.
         unsafe { nsstring_to_str(self, pool) }
     }
 
@@ -229,7 +305,26 @@ impl AddAssign<&NSString> for NSMutableString {
 
 impl fmt::Display for NSString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        autoreleasepool_leaking(|pool| fmt::Display::fmt(self.as_str(pool), f))
+        // SAFETY:
+        // - The object is an instance of `NSString`.
+        // - We control the scope in which the string is alive, so we know
+        //   it is not moved outside the current autorelease pool.
+        //
+        // TODO: Use more performant APIs, maybe by copying bytes into a
+        // temporary stack buffer so that we avoid allocating?
+        //
+        // Beware though that the string may be mutable internally, and that
+        // mutation may happen on every call to the formatter `f` (so
+        // `CFStringGetCharactersPtr` is probably out of the question, unless
+        // we somehow check that the string is immutable?).
+        autoreleasepool_leaking(|pool| fmt::Display::fmt(unsafe { nsstring_to_str(self, pool) }, f))
+    }
+}
+
+impl fmt::Debug for NSString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // SAFETY: Same as for `Display` above.
+        autoreleasepool_leaking(|pool| fmt::Debug::fmt(unsafe { nsstring_to_str(self, pool) }, f))
     }
 }
 
@@ -237,12 +332,6 @@ impl fmt::Display for NSMutableString {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&**self, f)
-    }
-}
-
-impl fmt::Debug for NSString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        autoreleasepool_leaking(|pool| fmt::Debug::fmt(self.as_str(pool), f))
     }
 }
 
