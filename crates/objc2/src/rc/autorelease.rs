@@ -108,16 +108,21 @@ impl Drop for Pool {
 /// use objc2::runtime::NSObject;
 /// use objc2::msg_send;
 ///
-/// fn needs_lifetime_from_pool<'p>(pool: AutoreleasePool<'p>) -> &'p NSObject {
+/// unsafe fn needs_lifetime_from_pool<'p>(pool: AutoreleasePool<'p>) -> &'p NSObject {
 ///     let obj = NSObject::new();
 ///     // Do action that returns an autoreleased object
 ///     let description: *mut NSObject = unsafe { msg_send![&obj, description] };
-///     // Bound the lifetime of the reference to the pool
+///     // Bound the lifetime of the reference to that of the pool.
+///     //
+///     // Note that this only helps ensuring soundness, our function is still
+///     // unsafe because the pool cannot be guaranteed to be the innermost
+///     // pool.
 ///     unsafe { pool.ptr_as_ref(description) }
 /// }
 ///
 /// autoreleasepool(|pool| {
-///     let obj = needs_lifetime_from_pool(pool);
+///     // SAFETY: The given pool is the innermost pool.
+///     let obj = unsafe { needs_lifetime_from_pool(pool) };
 ///     println!("{obj:?}");
 /// });
 /// ```
@@ -178,10 +183,8 @@ impl<'pool> AutoreleasePool<'pool> {
         }
     }
 
-    /// This will be removed in a future version.
     #[inline]
-    #[doc(hidden)]
-    pub fn __verify_is_inner(self) {
+    pub(crate) fn __verify_is_inner(self) {
         #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
         if let Some(pool) = &self.inner {
             POOLS.with(|c| {
@@ -200,11 +203,24 @@ impl<'pool> AutoreleasePool<'pool> {
     /// objects, since it binds the lifetime of the reference to the pool, and
     /// does some extra checks when debug assertions are enabled.
     ///
+    /// Note that this is helpful, but not sufficient, for ensuring that the
+    /// lifetime of the reference does not exceed the lifetime of the
+    /// autorelease pool. When calling this, you must also ensure that the
+    /// pool is actually the current innermost pool.
+    ///
+    ///
+    /// # Panics
+    ///
+    /// If the pool is not the innermost pool, this function may panic when
+    /// the `"std"` Cargo feature and debug assertions are enabled.
+    ///
     ///
     /// # Safety
     ///
     /// This is equivalent to `&*ptr`, and shares the unsafety of that, except
     /// the lifetime is bound to the pool instead of being unbounded.
+    ///
+    /// The pool must be the innermost pool for the lifetime to be correct.
     #[inline]
     pub unsafe fn ptr_as_ref<T: ?Sized>(self, ptr: *const T) -> &'pool T {
         self.__verify_is_inner();
@@ -304,39 +320,54 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 /// see [Apple's documentation][apple-autorelease] for general information on
 /// when to use those.
 ///
-/// The pool is passed as a parameter to the closure to give you a lifetime
+/// [The pool] is passed as a parameter to the closure to give you a lifetime
 /// parameter that autoreleased objects can refer to.
 ///
 /// Note that this is mostly useful for preventing leaks (as any Objective-C
 /// method may autorelease internally - see also [`autoreleasepool_leaking`]).
 /// If implementing an interface to an object, you should try to return
 /// retained pointers with [`msg_send_id!`] wherever you can instead, since
-/// it is usually more efficient, and having to use this function can be quite
-/// cumbersome for users.
+/// it is usually more efficient, safer, and having to use this function can
+/// be quite cumbersome for users.
 ///
 /// [apple-autorelease]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
+/// [The pool]: AutoreleasePool
 /// [`msg_send_id!`]: crate::msg_send_id
 ///
 ///
 /// # Restrictions
 ///
-/// The given parameter must not be used in an inner `autoreleasepool` - doing
-/// so will panic with debug assertions enabled, and be a compile error in a
-/// future release.
+/// The given parameter must not be used inside a nested `autoreleasepool`,
+/// since doing so will give the objects that it is used with an incorrect
+/// lifetime bound.
 ///
-/// Note that this means that **this function is currently unsound**, since it
-/// doesn't disallow wrong usage in all cases. Enabling the assertions in
-/// release mode would be prohibitively expensive though, so this is the
-/// least-bad solution.
+/// You can try to enable the `"unstable-autoreleasesafe"` Cargo feature using
+/// nightly Rust - if your use of this function compiles with that, it is more
+/// likely to be correct, though note that Rust does not have a way to express
+/// the lifetimes involved, so we cannot detect all invalid usage. See issue
+/// [#540] for details.
 ///
-/// You can try to compile your crate with the `"unstable-autoreleasesafe"`
-/// crate feature enabled on nightly Rust - if your crate compiles with that,
-/// its autoreleasepool usage is guaranteed to be correct.
+/// [#540]: https://github.com/madsmtm/objc2/issues/540
 ///
 ///
 /// # Examples
 ///
-/// Basic usage:
+/// Use an external API, and ensure that the memory that it used is cleaned
+/// up afterwards.
+///
+/// ```
+/// use objc2::rc::autoreleasepool;
+/// # fn example_function() {}
+/// # #[cfg(for_illustrative_purposes)]
+/// use example_crate::example_function;
+///
+/// autoreleasepool(|_| {
+///     // Call `example_function` in the context of a pool
+///     example_function();
+/// }); // Memory released into the pool is cleaned up when the scope ends
+/// ```
+///
+/// Autorelease an object into an autorelease pool:
 ///
 /// ```
 /// use objc2::rc::{autoreleasepool, Retained};
@@ -344,11 +375,11 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 ///
 /// autoreleasepool(|pool| {
 ///     // Create `obj` and autorelease it to the pool
-///     let obj = Retained::autorelease(NSObject::new(), pool);
+///     // SAFETY: The pool is the current innermost pool
+///     let obj = unsafe { Retained::autorelease(NSObject::new(), pool) };
 ///     // We now have a reference that we can freely use
 ///     println!("{obj:?}");
-///     // `obj` is deallocated when the pool ends
-/// });
+/// }); // `obj` is deallocated when the pool ends
 /// // And is no longer usable outside the closure
 /// ```
 ///
@@ -359,7 +390,7 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 /// use objc2::rc::{autoreleasepool, Retained};
 /// use objc2::runtime::NSObject;
 ///
-/// let obj = autoreleasepool(|pool| {
+/// let obj = autoreleasepool(|pool| unsafe {
 ///     Retained::autorelease(NSObject::new(), pool)
 /// });
 /// ```
@@ -375,7 +406,8 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 ///
 /// autoreleasepool(|outer_pool| {
 ///     let obj = autoreleasepool(|inner_pool| {
-///         Retained::autorelease(NSObject::new(), outer_pool)
+///         // SAFETY: NOT safe, the pool is _not_ the innermost pool!
+///         unsafe { Retained::autorelease(NSObject::new(), outer_pool) }
 ///     });
 ///     // `obj` could wrongly be used here because its lifetime was
 ///     // assigned to the outer pool, even though it was released by the
@@ -444,7 +476,8 @@ where
 ///
 /// autoreleasepool(|outer_pool| {
 ///     let obj = autoreleasepool_leaking(|inner_pool| {
-///         Retained::autorelease(NSObject::new(), outer_pool)
+///         // SAFETY: The given `outer_pool` is the actual innermost pool.
+///         unsafe { Retained::autorelease(NSObject::new(), outer_pool) }
 ///     });
 ///     // `obj` is still usable here, since the leaking pool doesn't actually
 ///     // do anything.
@@ -461,8 +494,8 @@ where
 /// use objc2::rc::{autoreleasepool_leaking, Retained};
 /// use objc2::runtime::NSObject;
 ///
-/// let obj = autoreleasepool_leaking(|pool| {
-///     Retained::autorelease(NSObject::new(), pool)
+/// let obj = autoreleasepool_leaking(|pool| unsafe {
+///     unsafe { Retained::autorelease(NSObject::new(), pool) }
 /// });
 /// ```
 ///
@@ -476,7 +509,8 @@ where
 ///
 /// autoreleasepool_leaking(|outer_pool| {
 ///     let obj = autoreleasepool(|inner_pool| {
-///         Retained::autorelease(NSObject::new(), outer_pool)
+///         // SAFETY: NOT safe, the pool is _not_ the innermost pool!
+///         unsafe { Retained::autorelease(NSObject::new(), outer_pool) }
 ///     });
 /// });
 /// #
@@ -564,7 +598,7 @@ mod tests {
                 let mut expected = expected;
 
                 autoreleasepool(|pool| {
-                    let _autoreleased = Retained::autorelease(obj.0, pool);
+                    let _autoreleased = unsafe { Retained::autorelease(obj.0, pool) };
                     expected.autorelease += 1;
                     expected.assert_current();
                     panic!("unwind");

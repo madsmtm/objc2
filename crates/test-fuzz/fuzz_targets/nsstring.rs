@@ -3,9 +3,9 @@ use objc2::rc::autoreleasepool;
 use objc2_foundation::NSString;
 
 fn run(s: &str) {
-    autoreleasepool(|pool| {
+    autoreleasepool(|pool| unsafe {
         let obj = NSString::from_str(s);
-        assert_eq!(obj.as_str(pool), s);
+        assert_eq!(obj.to_str(pool), s);
     });
 }
 

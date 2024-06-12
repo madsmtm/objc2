@@ -39,7 +39,8 @@
 //! autoreleasepool(|pool| {
 //!     // Autorelease consumes the Retained, but won't actually
 //!     // release it until the end of the autoreleasepool
-//!     let obj_ref: &NSObject = Retained::autorelease(cloned, pool);
+//!     // SAFETY: The given is the innermost pool.
+//!     let obj_ref: &NSObject = unsafe { Retained::autorelease(cloned, pool) };
 //! });
 //!
 //! // Weak references won't retain the object

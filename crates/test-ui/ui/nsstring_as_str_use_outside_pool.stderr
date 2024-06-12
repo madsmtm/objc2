@@ -1,8 +1,8 @@
 error: lifetime may not live long enough
  --> ui/nsstring_as_str_use_outside_pool.rs
   |
-  |     let _s = autoreleasepool(|pool| ns_string.as_str(pool));
-  |                               ----- ^^^^^^^^^^^^^^^^^^^^^^ returning this value requires that `'1` must outlive `'2`
+  |     let _s = autoreleasepool(|pool| unsafe { ns_string.to_str(pool) });
+  |                               -----          ^^^^^^^^^^^^^^^^^^^^^^ returning this value requires that `'1` must outlive `'2`
   |                               |   |
   |                               |   return type of closure is &'2 str
   |                               has type `AutoreleasePool<'1>`

@@ -35,7 +35,7 @@ fn throw_catch_raise_catch() {
     let exc = autoreleasepool(|_| {
         let inner = || {
             autoreleasepool(|pool| {
-                let exc = Retained::autorelease(exc, pool);
+                let exc = unsafe { Retained::autorelease(exc, pool) };
                 unsafe { exc.raise() }
             })
         };
@@ -93,7 +93,7 @@ fn raise_catch() {
     assert_eq!(exc.retainCount(), 1);
 
     let exc = autoreleasepool(|pool| {
-        let exc = Retained::autorelease(exc, pool);
+        let exc = unsafe { Retained::autorelease(exc, pool) };
         let inner = || {
             if exc.name() == name {
                 unsafe { exc.raise() };

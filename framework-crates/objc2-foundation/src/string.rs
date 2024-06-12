@@ -89,7 +89,7 @@ impl NSString {
     /// Returns [`None`] if the internal storage of `self` does not allow this
     /// to be returned efficiently.
     ///
-    /// See [`as_str`](Self::as_str) for the UTF-8 equivalent.
+    /// See [`to_str`](Self::to_str) for the UTF-8 equivalent.
     ///
     /// [UTF-16]: https://en.wikipedia.org/wiki/UTF-16
     #[allow(unused)]
@@ -133,6 +133,14 @@ impl NSString {
     /// [display-impl]: NSString#impl-Display-for-NSString
     ///
     ///
+    /// # Safety
+    ///
+    /// The pool must be the innermost pool, see [the documentation on
+    /// `autoreleasepool`][autoreleasepool].
+    ///
+    /// [autoreleasepool]: objc2::rc::autoreleasepool
+    ///
+    ///
     /// # Examples
     ///
     /// Get the string slice of the `NSString`, and compare it with another
@@ -144,41 +152,15 @@ impl NSString {
     ///
     /// let string = NSString::from_str("foo");
     /// autoreleasepool(|pool| {
-    ///     assert_eq!(string.as_str(pool), "foo");
-    /// });
-    /// ```
-    ///
-    /// Fails to compile because the lifetime of the string slice is bound to
-    /// the autorelease pool:
-    ///
-    /// ```compile_fail
-    /// # use objc2_foundation::NSString;
-    /// # use objc2::rc::autoreleasepool;
-    /// #
-    /// let string = NSString::from_str("foo");
-    /// let s = autoreleasepool(|pool| string.as_str(pool));
-    /// assert_eq!(s, "foo");
-    /// ```
-    ///
-    /// Fails to compile because the lifetime of the string slice is bound to
-    /// the string itself:
-    ///
-    /// ```compile_fail
-    /// # use objc2_foundation::NSString;
-    /// # use objc2::rc::autoreleasepool;
-    /// #
-    /// autoreleasepool(|pool| {
-    ///     let string = NSString::from_str("foo");
-    ///     let s = string.as_str(pool);
-    ///     drop(string);
-    ///     assert_eq!(s, "foo");
+    ///     // SAFETY: The str is not used outside the autorelease pool.
+    ///     assert_eq!(unsafe { string.to_str(pool) }, "foo");
     /// });
     /// ```
     #[doc(alias = "UTF8String")]
-    pub fn as_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: AutoreleasePool<'p>) -> &'r str {
-        // SAFETY: This is an instance of `NSString`
+    pub unsafe fn to_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: AutoreleasePool<'p>) -> &'r str {
+        // SAFETY: This is an instance of `NSString`.
         //
-        // TODO: Caller upholds that the string is not moved outside the pool.
+        // Caller upholds that the string is not moved outside the pool.
         unsafe { nsstring_to_str(self, pool) }
     }
 

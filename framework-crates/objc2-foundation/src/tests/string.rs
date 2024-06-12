@@ -34,9 +34,9 @@ fn test_empty() {
 
     assert_eq!(s1, s2);
 
-    autoreleasepool(|pool| {
-        assert_eq!(s1.as_str(pool), "");
-        assert_eq!(s2.as_str(pool), "");
+    autoreleasepool(|pool| unsafe {
+        assert_eq!(s1.to_str(pool), "");
+        assert_eq!(s2.to_str(pool), "");
     });
 
     assert_eq!(s1.to_string(), "");
@@ -48,8 +48,8 @@ fn test_utf8() {
     let expected = "ประเทศไทย中华Việt Nam";
     let s = NSString::from_str(expected);
     assert_eq!(s.len(), expected.len());
-    autoreleasepool(|pool| {
-        assert_eq!(s.as_str(pool), expected);
+    autoreleasepool(|pool| unsafe {
+        assert_eq!(s.to_str(pool), expected);
     });
     assert_eq!(s.to_string(), expected);
 }
@@ -59,8 +59,8 @@ fn test_nul() {
     let expected = "\0";
     let s = NSString::from_str(expected);
     assert_eq!(s.len(), expected.len());
-    autoreleasepool(|pool| {
-        assert_eq!(s.as_str(pool), expected);
+    autoreleasepool(|pool| unsafe {
+        assert_eq!(s.to_str(pool), expected);
     });
     assert_eq!(s.to_string(), expected);
 }
@@ -70,8 +70,8 @@ fn test_interior_nul() {
     let expected = "Hello\0World";
     let s = NSString::from_str(expected);
     assert_eq!(s.len(), expected.len());
-    autoreleasepool(|pool| {
-        assert_eq!(s.as_str(pool), expected);
+    autoreleasepool(|pool| unsafe {
+        assert_eq!(s.to_str(pool), expected);
     });
     assert_eq!(s.to_string(), expected);
 }
@@ -111,8 +111,8 @@ fn test_copy_nsstring_is_same() {
 fn test_strips_first_leading_zero_width_no_break_space() {
     let ns_string = NSString::from_str("\u{feff}");
     let expected = "";
-    autoreleasepool(|pool| {
-        assert_eq!(ns_string.as_str(pool), expected);
+    autoreleasepool(|pool| unsafe {
+        assert_eq!(ns_string.to_str(pool), expected);
     });
     assert_eq!(ns_string.to_string(), expected);
     assert_eq!(ns_string.len(), 0);
@@ -127,8 +127,8 @@ fn test_strips_first_leading_zero_width_no_break_space() {
     };
 
     let ns_string = NSString::from_str(s);
-    autoreleasepool(|pool| {
-        assert_eq!(ns_string.as_str(pool), expected);
+    autoreleasepool(|pool| unsafe {
+        assert_eq!(ns_string.to_str(pool), expected);
     });
     assert_eq!(ns_string.to_string(), expected);
     assert_eq!(ns_string.len(), expected.len());

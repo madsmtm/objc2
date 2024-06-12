@@ -3,9 +3,9 @@ use objc2::rc::autoreleasepool;
 use objc2_foundation::NSString;
 
 fn main() {
-    autoreleasepool(|pool| {
+    autoreleasepool(|pool| unsafe {
         let ns_string = NSString::new();
-        let s = ns_string.as_str(pool);
+        let s = ns_string.to_str(pool);
         drop(ns_string);
         println!("{}", s);
     });

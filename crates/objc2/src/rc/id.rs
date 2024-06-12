@@ -502,17 +502,20 @@ impl<T: Message> Retained<T> {
     /// Autoreleases the [`Retained`], returning a pointer.
     ///
     /// The object is not immediately released, but will be when the innermost
-    /// / current autorelease pool (given as a parameter) is drained.
+    /// / current autorelease pool is drained.
     ///
     /// This is useful when defining your own classes and you have some error
     /// parameter passed as `Option<&mut *mut NSError>`, and you want to
     /// create and autorelease an error before returning.
     ///
-    /// See [`Retained::autorelease`] for an alternative that yields safe
-    /// references.
-    ///
     /// This is an associated method, and must be called as
     /// `Retained::autorelease_ptr(obj)`.
+    ///
+    /// # Safety
+    ///
+    /// This method is safe to call, but the returned pointer is only
+    /// guaranteed to be valid until the innermost autorelease pool is
+    /// drained.
     #[doc(alias = "objc_autorelease")]
     #[must_use = "if you don't intend to use the object any more, drop it as usual"]
     #[inline]
@@ -535,11 +538,17 @@ impl<T: Message> Retained<T> {
     ///
     /// This is an associated method, and must be called as
     /// `Retained::autorelease(obj, pool)`.
+    ///
+    /// # Safety
+    ///
+    /// The given pool must represent the innermost pool, to ensure that the
+    /// reference is not moved outside the autorelease pool into which it has
+    /// been put in.
     #[doc(alias = "objc_autorelease")]
     #[must_use = "if you don't intend to use the object any more, drop it as usual"]
     #[inline]
     #[allow(clippy::needless_lifetimes)]
-    pub fn autorelease<'p>(this: Self, pool: AutoreleasePool<'p>) -> &'p T {
+    pub unsafe fn autorelease<'p>(this: Self, pool: AutoreleasePool<'p>) -> &'p T {
         let ptr = Self::autorelease_ptr(this);
         // SAFETY: The pointer is valid as a reference
         unsafe { pool.ptr_as_ref(ptr) }
@@ -569,14 +578,10 @@ impl<T: Message> Retained<T> {
     /// will often find yourself in need of returning autoreleased objects to
     /// properly follow [Cocoa's Memory Management Policy][mmRules].
     ///
-    /// To that end, you could use [`Retained::autorelease`], but that would require
-    /// you to have an [`AutoreleasePool`] object at hand, which you often
-    /// won't have in such cases. This function doesn't require a `pool`
-    /// object (but as a downside returns a pointer instead of a reference).
-    ///
-    /// This is also more efficient than a normal `autorelease`, since it
-    /// makes a best effort attempt to hand off ownership of the retain count
-    /// to a subsequent call to `objc_retainAutoreleasedReturnValue` /
+    /// To that end, you could also use [`Retained::autorelease_ptr`], but
+    /// this is more efficient than a normal `autorelease`, since it makes a
+    /// best effort attempt to hand off ownership of the retain count to a
+    /// subsequent call to `objc_retainAutoreleasedReturnValue` /
     /// [`Retained::retain_autoreleased`] in the enclosing call frame.
     ///
     /// This optimization relies heavily on this function being tail called,
@@ -803,7 +808,7 @@ mod tests {
         let mut expected = ThreadTestData::current();
 
         autoreleasepool(|pool| {
-            let _ref = Retained::autorelease(obj, pool);
+            let _ref = unsafe { Retained::autorelease(obj, pool) };
             expected.autorelease += 1;
             expected.assert_current();
             assert_eq!(cloned.retainCount(), 2);
@@ -813,7 +818,7 @@ mod tests {
         assert_eq!(cloned.retainCount(), 1);
 
         autoreleasepool(|pool| {
-            let _ref = Retained::autorelease(cloned, pool);
+            let _ref = unsafe { Retained::autorelease(cloned, pool) };
             expected.autorelease += 1;
             expected.assert_current();
         });

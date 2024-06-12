@@ -4,5 +4,5 @@ use objc2_foundation::NSString;
 
 fn main() {
     let ns_string = NSString::new();
-    let _s = autoreleasepool(|pool| ns_string.as_str(pool));
+    let _s = autoreleasepool(|pool| unsafe { ns_string.to_str(pool) });
 }

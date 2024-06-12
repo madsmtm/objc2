@@ -48,6 +48,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed `NSSet` methods `contains`, `is_subset`, `is_superset`
   and `is_disjoint` that were simple wrappers over the original methods.
 * **BREAKING**: Renamed `from_id_slice` to `from_retained_slice`.
+* **BREAKING**: Renamed `NSString::as_str` to `to_str`, and made it `unsafe`,
+  since we cannot ensure that the given pool is actually the innermost pool.
 
 ### Deprecated
 * Moved `MainThreadMarker` from `objc2-foundation` to `objc2`.

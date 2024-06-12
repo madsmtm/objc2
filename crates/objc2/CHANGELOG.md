@@ -114,6 +114,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Classes now always use interior mutability.
 * **BREAKING**: Removed `DerefMut` implementation for `Retained<T>` when the
   `Retained` was mutable.
+* **BREAKING**: Mark `Retained::autorelease` as `unsafe`, since we cannot
+  ensure that the given pool is actually the innermost pool.
 
 ### Fixed
 * Remove an incorrect assertion when adding protocols to classes in an unexpected

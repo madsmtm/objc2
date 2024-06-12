@@ -121,7 +121,7 @@ impl MyTestObject {
     }
 
     #[allow(clippy::needless_lifetimes)]
-    fn new_autoreleased<'p>(pool: AutoreleasePool<'p>) -> &'p Self {
+    unsafe fn new_autoreleased<'p>(pool: AutoreleasePool<'p>) -> &'p Self {
         let cls = Self::class();
         let ptr: *const Self = unsafe { msg_send![cls, getAutoreleasedInstance] };
         unsafe { pool.ptr_as_ref(ptr) }
@@ -275,7 +275,7 @@ fn test_class() {
 )]
 fn test_object() {
     autoreleasepool(|pool| {
-        let _obj = MyTestObject::new_autoreleased(pool);
+        let _obj = unsafe { MyTestObject::new_autoreleased(pool) };
     });
     let _obj = MyTestObject::new_autoreleased_retained();
 

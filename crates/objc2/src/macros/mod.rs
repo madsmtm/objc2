@@ -1153,8 +1153,8 @@ macro_rules! msg_send_bool {
 /// return a `Result<Retained<T>, Retained<E>>`, see below.
 ///
 /// The `retain`, `release` and `autorelease` selectors are not supported, use
-/// [`Retained::retain`], [`Retained::drop`] and [`Retained::autorelease`] for
-/// that.
+/// [`Retained::retain`], [`Retained::drop`] and [`Retained::autorelease_ptr`]
+/// for that.
 ///
 /// [sel-families]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families
 /// [`MessageReceiver`]: crate::runtime::MessageReceiver
@@ -1162,7 +1162,7 @@ macro_rules! msg_send_bool {
 /// [arc-retainable]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments
 /// [`Retained::retain`]: crate::rc::Retained::retain
 /// [`Retained::drop`]: crate::rc::Retained::drop
-/// [`Retained::autorelease`]: crate::rc::Retained::autorelease
+/// [`Retained::autorelease_ptr`]: crate::rc::Retained::autorelease_ptr
 ///
 ///
 /// # Errors
