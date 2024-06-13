@@ -2,9 +2,9 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
  --> ui/msg_send_not_allowed_mutable.rs
   |
   |     let _: () = unsafe { msg_send![&mut *obj, test] };
-  |                          ----------^^^^^^^^^-------
-  |                          |         |
-  |                          |         the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `&mut NSThread: MsgSend`
+  |                          ---------------^^^^-------
+  |                          |              |
+  |                          |              the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `&mut NSThread: MsgSend`
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:

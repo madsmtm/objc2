@@ -211,8 +211,8 @@ fn main() -> Result<(), BoxError> {
 
         // Ensure directories exist
         let generated_dir = workspace_dir.join("generated").join(library_name);
-        fs::create_dir_all(&generated_dir)?;
-        fs::create_dir_all(&crate_dir.join("src"))?;
+        fs::create_dir_all(generated_dir)?;
+        fs::create_dir_all(crate_dir.join("src"))?;
 
         // Recreate symlink to generated directory
         let symlink_path = crate_dir.join("src").join("generated");

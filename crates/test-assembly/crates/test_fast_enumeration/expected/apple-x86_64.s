@@ -147,20 +147,10 @@ _iter:
 	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	lea	r12, [rip + l_anon.[ID].0]
 	xor	eax, eax
-	jmp	LBB3_1
-	.p2align	4, 0x90
-LBB3_6:
-	mov	rcx, qword ptr [rbp - 112]
-	lea	rdx, [rax + 1]
-	mov	qword ptr [rbp - 56], rdx
-	mov	rdi, qword ptr [rcx + 8*rax]
-	call	_use_obj
-	mov	rdi, qword ptr [rbp - 256]
-	mov	rax, qword ptr [rbp - 56]
-	mov	rcx, qword ptr [rbp - 48]
-LBB3_1:
 	cmp	rax, rcx
 	jb	LBB3_6
+	.p2align	4, 0x90
+LBB3_2:
 	mov	rsi, qword ptr [r15]
 	test	rsi, rsi
 	je	LBB3_3
@@ -173,6 +163,19 @@ LBB3_4:
 	test	rax, rax
 	je	LBB3_7
 	xor	eax, eax
+LBB3_6:
+	mov	rcx, qword ptr [rbp - 112]
+	lea	rdx, [rax + 1]
+	mov	qword ptr [rbp - 56], rdx
+	mov	rdi, qword ptr [rcx + 8*rax]
+	test	rdi, rdi
+	je	LBB3_7
+	call	_use_obj
+	mov	rdi, qword ptr [rbp - 256]
+	mov	rax, qword ptr [rbp - 56]
+	mov	rcx, qword ptr [rbp - 48]
+	cmp	rax, rcx
+	jae	LBB3_2
 	jmp	LBB3_6
 LBB3_3:
 	mov	r13, rdi
@@ -232,18 +235,23 @@ _iter_noop:
 	mov	qword ptr [rbp - 120], 0
 	mov	qword ptr [rbp - 48], 0
 	mov	qword ptr [rbp - 56], 0
-	xor	eax, eax
+	xor	ecx, ecx
 	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	lea	r12, [rip + l_anon.[ID].0]
-	xor	ecx, ecx
+	xor	eax, eax
+	xor	edx, edx
 	jmp	LBB4_1
 	.p2align	4, 0x90
 LBB4_6:
-	inc	rcx
-	mov	qword ptr [rbp - 56], rcx
+	lea	rsi, [rdx + 1]
+	mov	qword ptr [rbp - 56], rsi
+	cmp	qword ptr [rcx + 8*rdx], 0
+	mov	rdx, rsi
+	je	LBB4_7
 LBB4_1:
-	cmp	rcx, rax
+	cmp	rdx, rax
 	jb	LBB4_6
+	mov	rdi, qword ptr [rbp - 256]
 	mov	rsi, qword ptr [r15]
 	test	rsi, rsi
 	je	LBB4_3
@@ -255,8 +263,8 @@ LBB4_4:
 	mov	qword ptr [rbp - 48], rax
 	test	rax, rax
 	je	LBB4_7
-	mov	rdi, qword ptr [rbp - 256]
-	xor	ecx, ecx
+	mov	rcx, qword ptr [rbp - 112]
+	xor	edx, edx
 	jmp	LBB4_6
 LBB4_3:
 	mov	r13, rdi
@@ -320,25 +328,10 @@ _iter_retained:
 	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	lea	r12, [rip + l_anon.[ID].0]
 	xor	eax, eax
-	jmp	LBB5_1
-	.p2align	4, 0x90
-LBB5_6:
-	mov	rcx, qword ptr [rbp - 112]
-	lea	rdx, [rax + 1]
-	mov	qword ptr [rbp - 56], rdx
-	mov	rdi, qword ptr [rcx + 8*rax]
-	call	_objc_retain
-	mov	r13, rax
-	mov	rdi, rax
-	call	_use_obj
-	mov	rdi, r13
-	call	_objc_release
-	mov	rdi, qword ptr [rbp - 256]
-	mov	rax, qword ptr [rbp - 56]
-	mov	rcx, qword ptr [rbp - 48]
-LBB5_1:
 	cmp	rax, rcx
 	jb	LBB5_6
+	.p2align	4, 0x90
+LBB5_2:
 	mov	rsi, qword ptr [r15]
 	test	rsi, rsi
 	je	LBB5_3
@@ -351,6 +344,24 @@ LBB5_4:
 	test	rax, rax
 	je	LBB5_7
 	xor	eax, eax
+LBB5_6:
+	mov	rcx, qword ptr [rbp - 112]
+	lea	rdx, [rax + 1]
+	mov	qword ptr [rbp - 56], rdx
+	mov	rdi, qword ptr [rcx + 8*rax]
+	test	rdi, rdi
+	je	LBB5_7
+	call	_objc_retain
+	mov	r13, rax
+	mov	rdi, rax
+	call	_use_obj
+	mov	rdi, r13
+	call	_objc_release
+	mov	rdi, qword ptr [rbp - 256]
+	mov	rax, qword ptr [rbp - 56]
+	mov	rcx, qword ptr [rbp - 48]
+	cmp	rax, rcx
+	jae	LBB5_2
 	jmp	LBB5_6
 LBB5_3:
 	mov	r13, rdi

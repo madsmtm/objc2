@@ -28,6 +28,7 @@ unsafe fn assert_str<T: Display>(s: *const c_char, expected: T) {
 }
 
 macro_rules! assert_inner {
+    (no_atomic $($t:tt)*) => {};
     (enc $(#[$m:meta])* $stat:ident => $expected:expr) => {
         $(#[$m])*
         #[test]
@@ -66,9 +67,8 @@ macro_rules! assert_types {
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER>] => Encoding::Pointer(&$encoding));
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER>] => Encoding::Pointer(&Encoding::Pointer(&$encoding)));
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER_POINTER>] => Encoding::Pointer(&Encoding::Pointer(&Encoding::Pointer(&$encoding))));
-            $(assert_types!(#$should_atomic);)?
-            assert_inner!(enc $(#[$m])* $(#[cfg($should_atomic)])? [<ENCODING_ $stat _ATOMIC>] => Encoding::Atomic(&$encoding));
-            assert_inner!(enc $(#[$m])* $(#[cfg($should_atomic)])? [<ENCODING_ $stat _ATOMIC_POINTER>] => Encoding::Pointer(&Encoding::Atomic(&$encoding)));
+            assert_inner!($($should_atomic)? enc $(#[$m])* [<ENCODING_ $stat _ATOMIC>] => Encoding::Atomic(&$encoding));
+            assert_inner!($($should_atomic)? enc $(#[$m])* [<ENCODING_ $stat _ATOMIC_POINTER>] => Encoding::Pointer(&Encoding::Atomic(&$encoding)));
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_ATOMIC>] => Encoding::Atomic(&Encoding::Pointer(&$encoding)));
         }
     };
@@ -81,13 +81,11 @@ macro_rules! assert_types {
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER>] => <*const $type>::ENCODING);
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER>] => <*const *const $type>::ENCODING);
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_POINTER_POINTER>] => <*const *const *const $type>::ENCODING);
-            $(assert_types!(#$should_atomic);)?
-            assert_inner!(enc $(#[$m])* $(#[cfg($should_atomic)])? [<ENCODING_ $stat _ATOMIC>] => Encoding::Atomic(&<$type>::ENCODING));
-            assert_inner!(enc $(#[$m])* $(#[cfg($should_atomic)])? [<ENCODING_ $stat _ATOMIC_POINTER>] => Encoding::Pointer(&Encoding::Atomic(&<$type>::ENCODING)));
+            assert_inner!($($should_atomic)? enc $(#[$m])* [<ENCODING_ $stat _ATOMIC>] => Encoding::Atomic(&<$type>::ENCODING));
+            assert_inner!($($should_atomic)? enc $(#[$m])* [<ENCODING_ $stat _ATOMIC_POINTER>] => Encoding::Pointer(&Encoding::Atomic(&<$type>::ENCODING)));
             assert_inner!(enc $(#[$m])* [<ENCODING_ $stat _POINTER_ATOMIC>] => Encoding::Atomic(&<*const $type>::ENCODING));
         }
     };
-    (#no_atomic) => {};
 }
 
 const WITH_ATOMIC_INNER: Encoding = Encoding::Struct(

@@ -15,7 +15,7 @@ unreachable_pub = "warn"
 unsafe_op_in_unsafe_fn = "deny"
 
 [workspace.lints.clippy]
-cargo = "warn"
+cargo = { level = "warn", priority = -1 } # Because of `lint_groups_priority`
 ptr_as_ptr = "warn"
 
 [profile.assembly-tests]

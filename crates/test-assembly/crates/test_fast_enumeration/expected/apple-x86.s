@@ -115,7 +115,7 @@ _iter:
 	call	L3$pb
 L3$pb:
 	pop	eax
-	mov	ebx, dword ptr [ebp + 8]
+	mov	esi, dword ptr [ebp + 8]
 	xorps	xmm0, xmm0
 	movsd	qword ptr [ebp - 36], xmm0
 	movsd	qword ptr [ebp - 44], xmm0
@@ -128,20 +128,25 @@ L3$pb:
 	movsd	qword ptr [ebp - 80], xmm0
 	movsd	qword ptr [ebp - 72], xmm0
 	movsd	qword ptr [ebp - 64], xmm0
-	mov	dword ptr [ebp - 124], ebx
+	mov	dword ptr [ebp - 124], esi
 	lea	edi, [ebp - 56]
 	mov	dword ptr [ebp - 56], 0
 	mov	dword ptr [ebp - 52], 0
 	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
 	mov	dword ptr [ebp - 20], 0
-	mov	esi, dword ptr [eax + LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L3$pb]
+	mov	ebx, dword ptr [eax + LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L3$pb]
 	lea	eax, [eax + l_anon.[ID].0-L3$pb]
 	mov	dword ptr [ebp - 16], eax
 	xor	eax, eax
 	xor	ecx, ecx
-	jmp	LBB3_1
+	cmp	ecx, eax
+	jb	LBB3_5
 	.p2align	4, 0x90
+LBB3_2:
+	mov	eax, dword ptr [ebx]
+	test	eax, eax
+	je	LBB3_3
 LBB3_4:
 	sub	esp, 12
 	push	16
@@ -149,37 +154,38 @@ LBB3_4:
 	push	ecx
 	push	edi
 	push	eax
-	push	ebx
+	push	esi
 	call	_objc_msgSend
 	add	esp, 32
 	mov	dword ptr [ebp - 20], eax
 	xor	ecx, ecx
 	test	eax, eax
-	je	LBB3_5
-LBB3_6:
+	je	LBB3_6
+LBB3_5:
 	mov	eax, dword ptr [ebp - 52]
 	lea	edx, [ecx + 1]
 	mov	dword ptr [ebp - 24], edx
+	mov	eax, dword ptr [eax + 4*ecx]
+	test	eax, eax
+	je	LBB3_6
 	sub	esp, 12
-	push	dword ptr [eax + 4*ecx]
+	push	eax
 	call	_use_obj
 	add	esp, 16
-	mov	ebx, dword ptr [ebp - 124]
+	mov	esi, dword ptr [ebp - 124]
 	mov	ecx, dword ptr [ebp - 24]
 	mov	eax, dword ptr [ebp - 20]
-LBB3_1:
 	cmp	ecx, eax
-	jb	LBB3_6
-	mov	eax, dword ptr [esi]
-	test	eax, eax
-	jne	LBB3_4
+	jae	LBB3_2
+	jmp	LBB3_5
+LBB3_3:
 	sub	esp, 8
 	push	dword ptr [ebp - 16]
-	push	esi
+	push	ebx
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	jmp	LBB3_4
-LBB3_5:
+LBB3_6:
 	add	esp, 124
 	pop	esi
 	pop	edi
@@ -199,7 +205,7 @@ _iter_noop:
 	call	L4$pb
 L4$pb:
 	pop	eax
-	mov	edi, dword ptr [ebp + 8]
+	mov	ecx, dword ptr [ebp + 8]
 	xorps	xmm0, xmm0
 	movsd	qword ptr [ebp - 36], xmm0
 	movsd	qword ptr [ebp - 44], xmm0
@@ -212,27 +218,32 @@ L4$pb:
 	movsd	qword ptr [ebp - 80], xmm0
 	movsd	qword ptr [ebp - 72], xmm0
 	movsd	qword ptr [ebp - 64], xmm0
-	mov	dword ptr [ebp - 124], edi
-	lea	ebx, [ebp - 56]
+	mov	dword ptr [ebp - 124], ecx
+	lea	edi, [ebp - 56]
 	mov	dword ptr [ebp - 56], 0
 	mov	dword ptr [ebp - 52], 0
 	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
 	mov	dword ptr [ebp - 20], 0
-	mov	esi, dword ptr [eax + LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L4$pb]
+	xor	ecx, ecx
+	mov	ebx, dword ptr [eax + LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L4$pb]
 	lea	eax, [eax + l_anon.[ID].0-L4$pb]
 	mov	dword ptr [ebp - 16], eax
 	xor	eax, eax
-	xor	ecx, ecx
+	xor	edx, edx
 	jmp	LBB4_1
 	.p2align	4, 0x90
 LBB4_6:
-	inc	ecx
-	mov	dword ptr [ebp - 24], ecx
+	lea	esi, [edx + 1]
+	mov	dword ptr [ebp - 24], esi
+	cmp	dword ptr [ecx + 4*edx], 0
+	mov	edx, esi
+	je	LBB4_7
 LBB4_1:
-	cmp	ecx, eax
+	cmp	edx, eax
 	jb	LBB4_6
-	mov	eax, dword ptr [esi]
+	mov	esi, dword ptr [ebp - 124]
+	mov	eax, dword ptr [ebx]
 	test	eax, eax
 	je	LBB4_3
 LBB4_4:
@@ -240,21 +251,21 @@ LBB4_4:
 	push	16
 	lea	ecx, [ebp - 120]
 	push	ecx
-	push	ebx
-	push	eax
 	push	edi
+	push	eax
+	push	esi
 	call	_objc_msgSend
 	add	esp, 32
 	mov	dword ptr [ebp - 20], eax
 	test	eax, eax
 	je	LBB4_7
-	xor	ecx, ecx
-	mov	edi, dword ptr [ebp - 124]
+	xor	edx, edx
+	mov	ecx, dword ptr [ebp - 52]
 	jmp	LBB4_6
 LBB4_3:
 	sub	esp, 8
 	push	dword ptr [ebp - 16]
-	push	esi
+	push	ebx
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	jmp	LBB4_4
@@ -303,8 +314,13 @@ L5$pb:
 	mov	dword ptr [ebp - 16], eax
 	xor	eax, eax
 	xor	ecx, ecx
-	jmp	LBB5_1
+	cmp	ecx, eax
+	jb	LBB5_5
 	.p2align	4, 0x90
+LBB5_2:
+	mov	eax, dword ptr [edi]
+	test	eax, eax
+	je	LBB5_3
 LBB5_4:
 	sub	esp, 12
 	push	16
@@ -318,13 +334,16 @@ LBB5_4:
 	mov	dword ptr [ebp - 20], eax
 	xor	ecx, ecx
 	test	eax, eax
-	je	LBB5_5
-LBB5_6:
+	je	LBB5_6
+LBB5_5:
 	mov	eax, dword ptr [ebp - 52]
 	lea	edx, [ecx + 1]
 	mov	dword ptr [ebp - 24], edx
+	mov	eax, dword ptr [eax + 4*ecx]
+	test	eax, eax
+	je	LBB5_6
 	sub	esp, 12
-	push	dword ptr [eax + 4*ecx]
+	push	eax
 	call	_objc_retain
 	add	esp, 16
 	mov	esi, eax
@@ -338,19 +357,17 @@ LBB5_6:
 	mov	esi, dword ptr [ebp - 124]
 	mov	ecx, dword ptr [ebp - 24]
 	mov	eax, dword ptr [ebp - 20]
-LBB5_1:
 	cmp	ecx, eax
-	jb	LBB5_6
-	mov	eax, dword ptr [edi]
-	test	eax, eax
-	jne	LBB5_4
+	jae	LBB5_2
+	jmp	LBB5_5
+LBB5_3:
 	sub	esp, 8
 	push	dword ptr [ebp - 16]
 	push	edi
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	jmp	LBB5_4
-LBB5_5:
+LBB5_6:
 	add	esp, 124
 	pop	esi
 	pop	edi

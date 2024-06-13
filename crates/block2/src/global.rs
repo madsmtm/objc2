@@ -48,6 +48,7 @@ impl<F: ?Sized> GlobalBlock<F> {
         BlockFlags(BlockFlags::BLOCK_IS_GLOBAL.0 | BlockFlags::BLOCK_USE_STRET.0);
 
     #[doc(hidden)]
+    #[allow(clippy::declare_interior_mutable_const)]
     pub const __DEFAULT_HEADER: BlockHeader = BlockHeader {
         // Populated in `global_block!`
         isa: ptr::null_mut(),
