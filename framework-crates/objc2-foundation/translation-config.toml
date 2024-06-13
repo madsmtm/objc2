@@ -272,8 +272,8 @@ class.NSMutableString.mutability = "InteriorMutableWithSuperclass(Foundation::NS
 class.NSAttributedString.mutability = "InteriorMutableWithSubclass(Foundation::NSAttributedString::NSMutableAttributedString)"
 class.NSMutableAttributedString.mutability = "InteriorMutableWithSuperclass(Foundation::NSAttributedString::NSAttributedString)"
 
-class.NSData.mutability = "ImmutableWithMutableSubclass(Foundation::NSData::NSMutableData)"
-class.NSMutableData.mutability = "MutableWithImmutableSuperclass(Foundation::NSData::NSData)"
+class.NSData.mutability = "InteriorMutableWithSubclass(Foundation::NSData::NSMutableData)"
+class.NSMutableData.mutability = "InteriorMutableWithSuperclass(Foundation::NSData::NSData)"
 
 class.NSDictionary.mutability = "ImmutableWithMutableSubclass(Foundation::NSDictionary::NSMutableDictionary)"
 class.NSMutableDictionary.mutability = "MutableWithImmutableSuperclass(Foundation::NSDictionary::NSDictionary)"
@@ -307,11 +307,6 @@ class.NSMutableURLRequest.mutability = "InteriorMutableWithSuperclass(Foundation
 # `&'a NSArray<T: IsCloneable> -> Retained<NSEnumerator<T>> + 'a`.
 class.NSEnumerator.mutability = "Mutable"
 class.NSDirectoryEnumerator.mutability = "Mutable"
-
-# Allowed to be just `Mutable` since we've removed the `NSCopying` and
-# `NSMutableCopying` impls from this for now (since they'd return the
-# wrong type).
-class.NSPurgeableData.mutability = "Mutable"
 
 class.NSValue.mutability = "Immutable"
 class.NSNumber.mutability = "Immutable"

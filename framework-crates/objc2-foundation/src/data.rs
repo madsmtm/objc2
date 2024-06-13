@@ -2,13 +2,12 @@
 use alloc::vec::Vec;
 use core::ffi::c_void;
 use core::fmt;
-use core::ops::Index;
-use core::ops::IndexMut;
+use core::marker::PhantomData;
 #[cfg(feature = "NSRange")]
 use core::ops::Range;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
-use core::slice::{self, SliceIndex};
+use core::slice::{self};
 
 use objc2::rc::Retained;
 #[cfg(feature = "block2")]
@@ -17,24 +16,20 @@ use objc2::{extern_methods, ClassType};
 
 use crate::Foundation::{NSData, NSMutableData};
 
-// SAFETY: `NSData` is immutable and `NSMutableData` can only be mutated from
-// `&mut` methods.
-unsafe impl Sync for NSData {}
-unsafe impl Send for NSData {}
-
 impl UnwindSafe for NSData {}
 impl RefUnwindSafe for NSData {}
 
-// GNUStep returns NULL from these methods
+// GNUStep returns NULL from these methods, and Apple's documentation says
+// that's valid (even though the headers say otherwise).
 extern_methods!(
     unsafe impl NSData {
         #[method(bytes)]
-        pub(crate) fn bytes_raw(&self) -> Option<NonNull<c_void>>;
+        pub(crate) fn bytes_raw(&self) -> *const c_void;
     }
 
     unsafe impl NSMutableData {
         #[method(mutableBytes)]
-        pub(crate) fn mutable_bytes_raw(&mut self) -> Option<NonNull<c_void>>;
+        pub(crate) fn mutable_bytes_raw(&self) -> *mut c_void;
     }
 );
 
@@ -85,26 +80,69 @@ impl NSData {
         self.len() == 0
     }
 
-    pub fn bytes(&self) -> &[u8] {
-        if let Some(ptr) = self.bytes_raw() {
-            let ptr: *const u8 = ptr.as_ptr().cast();
+    /// The bytes in the data.
+    ///
+    /// # Safety
+    ///
+    /// The data must not be mutated while the returned slice is alive.
+    /// Consider using [`to_vec`] instead if this requirement is a bit
+    /// difficult to uphold.
+    ///
+    /// [`to_vec`]: Self::to_vec
+    pub unsafe fn as_slice_unchecked(&self) -> &[u8] {
+        let ptr = self.bytes_raw();
+        if !ptr.is_null() {
+            let ptr: *const u8 = ptr.cast();
             // SAFETY: The pointer is checked to not be NULL, and since we're
             // working with raw bytes (`u8`), the alignment is also correct.
+            //
+            // The pointer is guaranteed to be valid for as long as the data
+            // is alive, or until it is mutated, see the documentation:
+            // <https://developer.apple.com/documentation/foundation/nsdata/1410616-bytes?language=objc>
+            //
+            // By bounding the lifetime of the returned slice to `self`, we
+            // ensure that the data is not deallocated while the slice is
+            // alive.
+            //
+            // Caller ensures that the data is not mutated for the lifetime of
+            // the slice.
             unsafe { slice::from_raw_parts(ptr, self.len()) }
         } else {
-            // The bytes pointer may be null for length zero on GNUStep
+            // The bytes pointer may be null for length zero
             &[]
         }
+    }
+
+    /// Copy the contents of the data into a new [`Vec`].
+    pub fn to_vec(&self) -> Vec<u8> {
+        // SAFETY: The bytes are immediately copied to a new `Vec`.
+        unsafe { self.as_slice_unchecked() }.to_vec()
+    }
+
+    /// Iterate over the bytes of the data.
+    pub fn iter(&self) -> Iter<'_> {
+        Iter::new(self)
     }
 }
 
 impl NSMutableData {
+    /// A mutable view of the bytes in the data.
+    ///
+    /// # Safety
+    ///
+    /// No methods on the `NSMutableData` may be called while the returned
+    /// slice is alive.
     #[doc(alias = "mutableBytes")]
-    pub fn bytes_mut(&mut self) -> &mut [u8] {
-        if let Some(ptr) = self.mutable_bytes_raw() {
-            let ptr: *mut u8 = ptr.as_ptr().cast();
+    #[allow(clippy::mut_from_ref)]
+    pub unsafe fn as_mut_slice_unchecked(&self) -> &mut [u8] {
+        let ptr = self.mutable_bytes_raw();
+        // &Cell<[u8]> is safe because the slice length is not actually in the
+        // cell
+        if !ptr.is_null() {
+            let ptr: *mut u8 = ptr.cast();
             // SAFETY: Same as `NSData::bytes`, with the addition that a
-            // mutable slice is safe, since we take `&mut NSMutableData`.
+            // mutable slice is safe, as the caller upholds that the slice is
+            // not .
             unsafe { slice::from_raw_parts_mut(ptr, self.len()) }
         } else {
             &mut []
@@ -112,18 +150,18 @@ impl NSMutableData {
     }
 
     #[doc(alias = "appendBytes:length:")]
-    pub fn extend_from_slice(&mut self, bytes: &[u8]) {
+    pub fn extend_from_slice(&self, bytes: &[u8]) {
         let bytes_ptr: NonNull<c_void> = NonNull::new(bytes.as_ptr() as *mut u8).unwrap().cast();
         unsafe { self.appendBytes_length(bytes_ptr, bytes.len()) }
     }
 
-    pub fn push(&mut self, byte: u8) {
+    pub fn push(&self, byte: u8) {
         self.extend_from_slice(&[byte]);
     }
 
     #[doc(alias = "replaceBytesInRange:withBytes:length:")]
     #[cfg(feature = "NSRange")]
-    pub fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
+    pub fn replace_range(&self, range: Range<usize>, bytes: &[u8]) {
         // No need to verify the length of the range here,
         // `replaceBytesInRange:` zero-fills if out of bounds.
         let ptr = bytes.as_ptr() as *mut c_void;
@@ -131,56 +169,9 @@ impl NSMutableData {
     }
 
     #[cfg(feature = "NSRange")]
-    pub fn set_bytes(&mut self, bytes: &[u8]) {
+    pub fn set_bytes(&self, bytes: &[u8]) {
         let len = self.len();
         self.replace_range(0..len, bytes);
-    }
-}
-
-impl AsRef<[u8]> for NSData {
-    fn as_ref(&self) -> &[u8] {
-        self.bytes()
-    }
-}
-
-impl AsRef<[u8]> for NSMutableData {
-    fn as_ref(&self) -> &[u8] {
-        self.bytes()
-    }
-}
-
-impl AsMut<[u8]> for NSMutableData {
-    fn as_mut(&mut self) -> &mut [u8] {
-        self.bytes_mut()
-    }
-}
-
-// Note: We don't implement `Borrow<[u8]>` since we can't guarantee that `Eq`,
-// `Ord` and `Hash` are equal for `NSData` vs. `[u8]`!
-
-impl<I: SliceIndex<[u8]>> Index<I> for NSData {
-    type Output = I::Output;
-
-    #[inline]
-    fn index(&self, index: I) -> &Self::Output {
-        // Replaces the need for getBytes:range:
-        Index::index(self.bytes(), index)
-    }
-}
-
-impl<I: SliceIndex<[u8]>> Index<I> for NSMutableData {
-    type Output = I::Output;
-
-    #[inline]
-    fn index(&self, index: I) -> &Self::Output {
-        Index::index(self.bytes(), index)
-    }
-}
-
-impl<I: SliceIndex<[u8]>> IndexMut<I> for NSMutableData {
-    #[inline]
-    fn index_mut(&mut self, index: I) -> &mut Self::Output {
-        IndexMut::index_mut(self.bytes_mut(), index)
     }
 }
 
@@ -188,7 +179,7 @@ impl fmt::Debug for NSData {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // -[NSData description] is quite unreadable
-        fmt::Debug::fmt(self.bytes(), f)
+        f.debug_list().entries(self.iter()).finish()
     }
 }
 
@@ -199,38 +190,99 @@ impl fmt::Debug for NSMutableData {
     }
 }
 
+/// An iterator over the bytes in an `NSData`.
+///
+///
+/// # Panics
+///
+/// The iteration may panic if the data is mutated while being iterated upon.
+//
+// TODO: The implementation of this currently copies the `NSData` and iterates
+// using `Vec`. We should consider optimizing this by using a stack buffer
+// that we continously copy into using `CFDataGetBytes`, or perhaps by getting
+// the pointer from `bytes` (or `CFDataGetBytePtr`) and copying directly from
+// that.
+#[derive(Debug, Clone)]
+pub struct Iter<'a> {
+    p: PhantomData<&'a NSData>,
+    #[cfg(debug_assertions)]
+    data: &'a NSData,
+    #[cfg(debug_assertions)]
+    length: usize,
+    bytes: std::vec::IntoIter<u8>,
+}
+
+impl<'a> Iter<'a> {
+    fn new(data: &'a NSData) -> Self {
+        Self {
+            p: PhantomData,
+            #[cfg(debug_assertions)]
+            data,
+            #[cfg(debug_assertions)]
+            length: data.length(),
+            bytes: data.to_vec().into_iter(),
+        }
+    }
+}
+
+impl ExactSizeIterator for Iter<'_> {
+    fn len(&self) -> usize {
+        self.bytes.len()
+    }
+}
+
+impl Iterator for Iter<'_> {
+    type Item = u8;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        #[cfg(debug_assertions)]
+        {
+            if self.length != self.data.length() {
+                panic!("NSData was mutated while iterating");
+            }
+        }
+
+        self.bytes.next()
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let len = self.len();
+        (len, Some(len))
+    }
+}
+
+// TODO: Consider this after the final implementation
+// impl DoubleEndedIterator for Iter<'_> {
+//     fn next_back(&mut self) -> Option<Self::Item> {
+//         self.bytes.next_back()
+//     }
+// }
+
+impl core::iter::FusedIterator for Iter<'_> {}
+
 impl<'a> IntoIterator for &'a NSData {
-    type Item = &'a u8;
-    type IntoIter = core::slice::Iter<'a, u8>;
+    type Item = u8;
+    type IntoIter = Iter<'a>;
 
     fn into_iter(self) -> Self::IntoIter {
-        self.bytes().iter()
+        Iter::new(self)
     }
 }
 
 impl<'a> IntoIterator for &'a NSMutableData {
-    type Item = &'a u8;
-    type IntoIter = core::slice::Iter<'a, u8>;
+    type Item = u8;
+    type IntoIter = Iter<'a>;
 
     fn into_iter(self) -> Self::IntoIter {
-        self.bytes().iter()
+        Iter::new(self)
     }
 }
 
-impl<'a> IntoIterator for &'a mut NSMutableData {
-    type Item = &'a mut u8;
-    type IntoIter = core::slice::IterMut<'a, u8>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.bytes_mut().iter_mut()
-    }
-}
-
-impl Extend<u8> for NSMutableData {
+impl Extend<u8> for &NSMutableData {
     /// You should use [`extend_from_slice`] whenever possible, it is more
     /// performant.
     ///
-    /// [`extend_from_slice`]: Self::extend_from_slice
+    /// [`extend_from_slice`]: NSMutableData::extend_from_slice
     fn extend<T: IntoIterator<Item = u8>>(&mut self, iter: T) {
         let iterator = iter.into_iter();
         iterator.for_each(move |item| self.push(item));
@@ -238,14 +290,14 @@ impl Extend<u8> for NSMutableData {
 }
 
 // Vec also has this impl
-impl<'a> Extend<&'a u8> for NSMutableData {
+impl<'a> Extend<&'a u8> for &NSMutableData {
     fn extend<T: IntoIterator<Item = &'a u8>>(&mut self, iter: T) {
         let iterator = iter.into_iter();
         iterator.for_each(move |item| self.push(*item));
     }
 }
 
-impl std::io::Write for NSMutableData {
+impl std::io::Write for &NSMutableData {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         self.extend_from_slice(buf);
         Ok(buf.len())

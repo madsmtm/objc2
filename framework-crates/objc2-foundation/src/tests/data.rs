@@ -8,13 +8,13 @@ fn test_bytes() {
     let bytes = [3, 7, 16, 52, 112, 19];
     let data = NSData::with_bytes(&bytes);
     assert_eq!(data.len(), bytes.len());
-    assert_eq!(data.bytes(), bytes);
+    assert_eq!(data.to_vec(), bytes);
 }
 
 #[test]
 fn test_no_bytes() {
     let data = NSData::new();
-    assert!(Some(data.bytes()).is_some());
+    assert!(Some(data.to_vec()).is_some());
 }
 
 #[cfg(feature = "block2")]
@@ -24,7 +24,7 @@ fn test_from_vec() {
     let bytes_ptr = bytes.as_ptr();
 
     let data = NSData::from_vec(bytes);
-    assert_eq!(data.bytes().as_ptr(), bytes_ptr);
+    assert_eq!(unsafe { data.as_slice_unchecked() }.as_ptr(), bytes_ptr);
 }
 
 #[test]
