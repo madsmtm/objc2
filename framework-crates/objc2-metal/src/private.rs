@@ -53,7 +53,7 @@ extern_methods!(
 );
 
 extern_methods!(
-    #[cfg(feature = "MTLSamplerDescriptor")]
+    #[cfg(feature = "MTLSampler")]
     unsafe impl MTLSamplerDescriptor {
         #[method(setLodBias:)]
         pub unsafe fn setLodBias(&self, bias: f32);

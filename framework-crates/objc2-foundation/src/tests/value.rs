@@ -34,16 +34,15 @@ fn test_equality_across_types() {
 }
 
 #[test]
-#[ignore = "the debug output changes depending on OS version"]
 fn test_debug() {
-    let expected = if cfg!(feature = "gnustep-1-7") {
-        r#"NSValue { encoding: "C", bytes: (C) <ab> }"#
-    } else if cfg!(newer_apple) {
-        r#"NSValue { encoding: "C", bytes: {length = 1, bytes = 0xab} }"#
-    } else {
-        r#"NSValue { encoding: "C", bytes: <ab> }"#
-    };
-    assert_eq!(format!("{:?}", NSValue::new(171u8)), expected);
+    // Output changes depending on OS and OS version
+    let expected = [
+        r#"NSValue { encoding: "C", bytes: (C) <ab> }"#,
+        r#"NSValue { encoding: "C", bytes: {length = 1, bytes = 0xab} }"#,
+        r#"NSValue { encoding: "C", bytes: <ab> }"#,
+    ];
+    let actual = format!("{:?}", NSValue::new(171u8));
+    assert!(expected.contains(&&*actual), "{actual}");
 }
 
 #[test]

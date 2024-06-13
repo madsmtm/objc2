@@ -68,12 +68,6 @@ error: only foreign or `unsafe extern "C"` functions may be C-variadic
   |         fn variadic_id(arg: i32, arg2: ...) -> Retained<NSObject>;
   |                                  ^^^^^^^^^
 
-error: C-variadic function must be declared with at least one named argument
- --> ui/extern_methods_variadic.rs
-  |
-  |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
-  |                           ^^^^^^^^^
-
 error: only foreign or `unsafe extern "C"` functions may be C-variadic
  --> ui/extern_methods_variadic.rs
   |

@@ -155,8 +155,13 @@ iter:
 	mov	dword ptr [esp + 92], 0
 	mov	dword ptr [esp + 116], 0
 	mov	dword ptr [esp + 120], 0
-	jmp	.LBB3_1
+	cmp	ecx, eax
+	jb	.LBB3_5
 	.p2align	4, 0x90
+.LBB3_2:
+	mov	esi, dword ptr [edi]
+	test	esi, esi
+	je	.LBB3_3
 .LBB3_4:
 	sub	esp, 8
 	push	esi
@@ -175,24 +180,25 @@ iter:
 	xor	ecx, ecx
 	test	eax, eax
 	mov	dword ptr [esp + 120], eax
-	je	.LBB3_5
-.LBB3_6:
+	je	.LBB3_6
+.LBB3_5:
 	mov	eax, dword ptr [esp + 88]
 	lea	edx, [ecx + 1]
 	mov	dword ptr [esp + 116], edx
+	mov	eax, dword ptr [eax + 4*ecx]
+	test	eax, eax
+	je	.LBB3_6
 	sub	esp, 12
-	push	dword ptr [eax + 4*ecx]
+	push	eax
 	call	use_obj@PLT
 	add	esp, 16
 	mov	ebp, dword ptr [esp + 16]
 	mov	ecx, dword ptr [esp + 116]
 	mov	eax, dword ptr [esp + 120]
-.LBB3_1:
 	cmp	ecx, eax
-	jb	.LBB3_6
-	mov	esi, dword ptr [edi]
-	test	esi, esi
-	jne	.LBB3_4
+	jae	.LBB3_2
+	jmp	.LBB3_5
+.LBB3_3:
 	sub	esp, 8
 	push	dword ptr [esp + 20]
 	push	edi
@@ -200,7 +206,7 @@ iter:
 	add	esp, 16
 	mov	esi, eax
 	jmp	.LBB3_4
-.LBB3_5:
+.LBB3_6:
 	add	esp, 124
 	pop	esi
 	pop	edi
@@ -223,10 +229,11 @@ iter_noop:
 	call	.L4$pb
 .L4$pb:
 	pop	ebx
-	mov	ebp, dword ptr [esp + 144]
+	mov	eax, dword ptr [esp + 144]
 	xorps	xmm0, xmm0
-	xor	eax, eax
 	mov	dword ptr [esp + 112], 0
+	xor	ecx, ecx
+	xor	edx, edx
 .Ltmp2:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L4$pb)
 	movsd	qword ptr [esp + 104], xmm0
@@ -240,23 +247,27 @@ iter_noop:
 	movsd	qword ptr [esp + 68], xmm0
 	movsd	qword ptr [esp + 76], xmm0
 	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
-	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
-	mov	dword ptr [esp + 12], ecx
-	xor	ecx, ecx
-	mov	dword ptr [esp + 16], ebp
+	mov	dword ptr [esp + 16], eax
+	lea	eax, [ebx + .Lanon.[ID].0@GOTOFF]
 	mov	dword ptr [esp + 84], 0
 	mov	dword ptr [esp + 88], 0
 	mov	dword ptr [esp + 92], 0
 	mov	dword ptr [esp + 116], 0
 	mov	dword ptr [esp + 120], 0
+	mov	dword ptr [esp + 12], eax
+	xor	eax, eax
 	jmp	.LBB4_1
 	.p2align	4, 0x90
 .LBB4_6:
-	inc	ecx
-	mov	dword ptr [esp + 116], ecx
+	lea	esi, [edx + 1]
+	mov	dword ptr [esp + 116], esi
+	cmp	dword ptr [ecx + 4*edx], 0
+	mov	edx, esi
+	je	.LBB4_7
 .LBB4_1:
-	cmp	ecx, eax
+	cmp	edx, eax
 	jb	.LBB4_6
+	mov	ebp, dword ptr [esp + 16]
 	mov	esi, dword ptr [edi]
 	test	esi, esi
 	je	.LBB4_3
@@ -278,8 +289,8 @@ iter_noop:
 	test	eax, eax
 	mov	dword ptr [esp + 120], eax
 	je	.LBB4_7
-	mov	ebp, dword ptr [esp + 16]
-	xor	ecx, ecx
+	mov	ecx, dword ptr [esp + 88]
+	xor	edx, edx
 	jmp	.LBB4_6
 .LBB4_3:
 	sub	esp, 8
@@ -338,8 +349,13 @@ iter_retained:
 	mov	dword ptr [esp + 92], 0
 	mov	dword ptr [esp + 116], 0
 	mov	dword ptr [esp + 120], 0
-	jmp	.LBB5_1
+	cmp	ecx, eax
+	jb	.LBB5_5
 	.p2align	4, 0x90
+.LBB5_2:
+	mov	esi, dword ptr [edi]
+	test	esi, esi
+	je	.LBB5_3
 .LBB5_4:
 	sub	esp, 8
 	push	esi
@@ -358,13 +374,16 @@ iter_retained:
 	xor	ecx, ecx
 	test	eax, eax
 	mov	dword ptr [esp + 120], eax
-	je	.LBB5_5
-.LBB5_6:
+	je	.LBB5_6
+.LBB5_5:
 	mov	eax, dword ptr [esp + 88]
 	lea	edx, [ecx + 1]
 	mov	dword ptr [esp + 116], edx
+	mov	eax, dword ptr [eax + 4*ecx]
+	test	eax, eax
+	je	.LBB5_6
 	sub	esp, 12
-	push	dword ptr [eax + 4*ecx]
+	push	eax
 	call	objc_retain@PLT
 	add	esp, 16
 	mov	esi, eax
@@ -378,12 +397,10 @@ iter_retained:
 	mov	ebp, dword ptr [esp + 16]
 	mov	ecx, dword ptr [esp + 116]
 	mov	eax, dword ptr [esp + 120]
-.LBB5_1:
 	cmp	ecx, eax
-	jb	.LBB5_6
-	mov	esi, dword ptr [edi]
-	test	esi, esi
-	jne	.LBB5_4
+	jae	.LBB5_2
+	jmp	.LBB5_5
+.LBB5_3:
 	sub	esp, 8
 	push	dword ptr [esp + 20]
 	push	edi
@@ -391,7 +408,7 @@ iter_retained:
 	add	esp, 16
 	mov	esi, eax
 	jmp	.LBB5_4
-.LBB5_5:
+.LBB5_6:
 	add	esp, 124
 	pop	esi
 	pop	edi

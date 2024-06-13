@@ -110,18 +110,9 @@ Lloh6:
 	adrp	x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh7:
 	ldr	x20, [x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
-	b	LBB3_2
-LBB3_1:
-	ldr	x9, [sp, #152]
-	add	x10, x8, #1
-	str	x10, [sp, #208]
-	ldr	x0, [x9, x8, lsl #3]
-	bl	_use_obj
-	ldr	x0, [sp, #8]
-	ldp	x8, x9, [sp, #208]
-LBB3_2:
 	cmp	x8, x9
-	b.lo	LBB3_1
+	b.lo	LBB3_4
+LBB3_1:
 	ldr	x1, [x20]
 	cbz	x1, LBB3_6
 	add	x2, x21, #136
@@ -130,9 +121,20 @@ LBB3_2:
 	bl	_objc_msgSend
 	str	x0, [sp, #216]
 	cbz	x0, LBB3_7
-LBB3_5:
+LBB3_3:
 	mov	x8, #0
-	b	LBB3_1
+LBB3_4:
+	ldr	x9, [sp, #152]
+	add	x10, x8, #1
+	str	x10, [sp, #208]
+	ldr	x0, [x9, x8, lsl #3]
+	cbz	x0, LBB3_7
+	bl	_use_obj
+	ldr	x0, [sp, #8]
+	ldp	x8, x9, [sp, #208]
+	cmp	x8, x9
+	b.hs	LBB3_1
+	b	LBB3_4
 LBB3_6:
 	mov	x22, x0
 	mov	x0, x20
@@ -145,7 +147,7 @@ LBB3_6:
 	mov	w4, #16
 	bl	_objc_msgSend
 	str	x0, [sp, #216]
-	cbnz	x0, LBB3_5
+	cbnz	x0, LBB3_3
 LBB3_7:
 	ldp	x29, x30, [sp, #272]
 	ldp	x20, x19, [sp, #256]
@@ -165,8 +167,10 @@ _iter_noop:
 	stp	x20, x19, [sp, #256]
 	stp	x29, x30, [sp, #272]
 	add	x29, sp, #272
-	mov	x8, #0
+	mov	x8, x0
 	mov	x9, #0
+	mov	x0, #0
+	mov	x10, #0
 	stp	xzr, xzr, [sp, #200]
 	movi.2d	v0, #0000000000000000
 	stur	q0, [sp, #184]
@@ -176,7 +180,7 @@ _iter_noop:
 	stp	q0, q0, [sp, #48]
 	stp	q0, q0, [sp, #80]
 	stp	q0, q0, [sp, #112]
-	str	x0, [sp, #8]
+	str	x8, [sp, #8]
 	stp	xzr, xzr, [sp, #152]
 	str	xzr, [sp, #144]
 	str	xzr, [sp, #216]
@@ -190,11 +194,15 @@ Lloh11:
 	ldr	x20, [x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
 	b	LBB4_2
 LBB4_1:
-	add	x9, x9, #1
-	str	x9, [sp, #208]
+	add	x8, x10, #1
+	str	x8, [sp, #208]
+	ldr	x11, [x9, x10, lsl #3]
+	mov	x10, x8
+	cbz	x11, LBB4_7
 LBB4_2:
-	cmp	x9, x8
+	cmp	x10, x0
 	b.lo	LBB4_1
+	ldr	x0, [sp, #8]
 	ldr	x1, [x20]
 	cbz	x1, LBB4_6
 	add	x2, x21, #136
@@ -204,9 +212,8 @@ LBB4_2:
 	str	x0, [sp, #216]
 	cbz	x0, LBB4_7
 LBB4_5:
-	mov	x8, x0
-	mov	x9, #0
-	ldr	x0, [sp, #8]
+	mov	x10, #0
+	ldr	x9, [sp, #152]
 	b	LBB4_1
 LBB4_6:
 	mov	x22, x0
@@ -263,22 +270,9 @@ Lloh14:
 	adrp	x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh15:
 	ldr	x20, [x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
-	b	LBB5_2
-LBB5_1:
-	ldr	x9, [sp, #152]
-	add	x10, x8, #1
-	str	x10, [sp, #208]
-	ldr	x0, [x9, x8, lsl #3]
-	bl	_objc_retain
-	mov	x21, x0
-	bl	_use_obj
-	mov	x0, x21
-	bl	_objc_release
-	ldr	x0, [sp, #8]
-	ldp	x8, x9, [sp, #208]
-LBB5_2:
 	cmp	x8, x9
-	b.lo	LBB5_1
+	b.lo	LBB5_4
+LBB5_1:
 	ldr	x1, [x20]
 	cbz	x1, LBB5_6
 	add	x2, x22, #136
@@ -287,9 +281,24 @@ LBB5_2:
 	bl	_objc_msgSend
 	str	x0, [sp, #216]
 	cbz	x0, LBB5_7
-LBB5_5:
+LBB5_3:
 	mov	x8, #0
-	b	LBB5_1
+LBB5_4:
+	ldr	x9, [sp, #152]
+	add	x10, x8, #1
+	str	x10, [sp, #208]
+	ldr	x0, [x9, x8, lsl #3]
+	cbz	x0, LBB5_7
+	bl	_objc_retain
+	mov	x21, x0
+	bl	_use_obj
+	mov	x0, x21
+	bl	_objc_release
+	ldr	x0, [sp, #8]
+	ldp	x8, x9, [sp, #208]
+	cmp	x8, x9
+	b.hs	LBB5_1
+	b	LBB5_4
 LBB5_6:
 	mov	x21, x0
 	mov	x0, x20
@@ -302,7 +311,7 @@ LBB5_6:
 	mov	w4, #16
 	bl	_objc_msgSend
 	str	x0, [sp, #216]
-	cbnz	x0, LBB5_5
+	cbnz	x0, LBB5_3
 LBB5_7:
 	ldp	x29, x30, [sp, #272]
 	ldp	x20, x19, [sp, #256]

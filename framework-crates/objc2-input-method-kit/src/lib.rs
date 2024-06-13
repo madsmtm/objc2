@@ -26,10 +26,10 @@ extern "C" {
     #[cfg(feature = "IMKInputController")]
     pub static kIMKCommandClientName: &'static objc2_foundation::NSString;
 
-    #[cfg(all(feature = "IMKCandidates", feature = "NSString_TODO"))]
-    pub static IMKCandidatesOpacityAttributeName: &'static objc2_foundation::NSString;
-    #[cfg(all(feature = "IMKCandidates", feature = "NSString_TODO"))]
-    pub static IMKCandidatesSendServerKeyEventFirst: &'static objc2_foundation::NSString;
+    // #[cfg(all(feature = "IMKCandidates", feature = "NSString_TODO"))]
+    // pub static IMKCandidatesOpacityAttributeName: &'static objc2_foundation::NSString;
+    // #[cfg(all(feature = "IMKCandidates", feature = "NSString_TODO"))]
+    // pub static IMKCandidatesSendServerKeyEventFirst: &'static objc2_foundation::NSString;
 
     #[cfg(feature = "IMKServer")]
     pub static IMKModeDictionary: &'static objc2_foundation::NSString;
