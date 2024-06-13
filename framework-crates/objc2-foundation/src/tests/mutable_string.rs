@@ -1,7 +1,9 @@
 #![cfg(feature = "NSString")]
 use alloc::format;
-use alloc::string::ToString;
-use core::any::TypeId;
+use alloc::string::{String, ToString};
+use core::fmt::Write;
+use core::{any::TypeId, mem};
+use objc2::runtime::NSObject;
 
 use objc2::mutability::CounterpartOrSelf;
 
@@ -98,4 +100,33 @@ fn test_copy_with_zone() {
         Retained::as_ptr(&s3)
     );
     assert!(s3.is_kind_of::<NSMutableString>());
+}
+
+/// Test that writing a NSMutableString to itself works (i.e. ensure that
+/// `NSString`'s `Debug` implementation is correct).
+#[test]
+fn write_same_string() {
+    let mut string = NSMutableString::from_str("foo");
+    let mut expected = String::from("foo");
+
+    for i in 0..3 {
+        // Erase lifetime, hack for now since this pattern would be outlawed
+        // by `NSMutableString` requring `&mut` for mutation.
+        let string_immutable = unsafe { mem::transmute::<&NSString, &'static NSString>(&**string) };
+        write!(&mut string, "{string_immutable}").unwrap();
+        let string_immutable = unsafe { mem::transmute::<&NSString, &'static NSString>(&**string) };
+        write!(&mut string, "{string_immutable:?}").unwrap();
+        // Test `NSObject`'s Debug impl as well.
+        let object_immutable = unsafe { mem::transmute::<&NSObject, &'static NSObject>(&**string) };
+        write!(&mut string, "{object_immutable:?}").unwrap();
+
+        let expected_clone = expected.clone();
+        write!(&mut expected, "{expected_clone}").unwrap();
+        let expected_clone = expected.clone();
+        write!(&mut expected, "{expected_clone:?}").unwrap();
+        let expected_clone = expected.clone();
+        write!(&mut expected, "{expected_clone}").unwrap();
+
+        assert_eq!(string.to_string(), expected, "failed at iteration {i}");
+    }
 }

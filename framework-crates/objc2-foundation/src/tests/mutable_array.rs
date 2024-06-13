@@ -1,7 +1,7 @@
 #![cfg(feature = "NSArray")]
 use alloc::vec;
 
-use objc2::rc::{autoreleasepool, Allocated};
+use objc2::rc::Allocated;
 use objc2::{msg_send, ClassType};
 
 #[cfg(feature = "NSValue")]
@@ -112,14 +112,13 @@ fn test_into_vec() {
 #[test]
 #[cfg(all(feature = "NSObjCRuntime", feature = "NSString"))]
 fn test_sort() {
+    use alloc::string::ToString;
     use Foundation::NSString;
 
     let strings = vec![NSString::from_str("hello"), NSString::from_str("hi")];
     let mut strings = NSMutableArray::from_vec(strings);
 
-    autoreleasepool(|pool| {
-        strings.sort_by(|s1, s2| s1.as_str(pool).len().cmp(&s2.as_str(pool).len()));
-        assert_eq!(strings[0].as_str(pool), "hi");
-        assert_eq!(strings[1].as_str(pool), "hello");
-    });
+    strings.sort_by(|s1, s2| s1.len().cmp(&s2.len()));
+    assert_eq!(strings[0].to_string(), "hi");
+    assert_eq!(strings[1].to_string(), "hello");
 }

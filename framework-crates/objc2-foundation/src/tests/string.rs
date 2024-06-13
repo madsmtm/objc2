@@ -38,6 +38,9 @@ fn test_empty() {
         assert_eq!(s1.as_str(pool), "");
         assert_eq!(s2.as_str(pool), "");
     });
+
+    assert_eq!(s1.to_string(), "");
+    assert_eq!(s2.to_string(), "");
 }
 
 #[test]
@@ -48,6 +51,7 @@ fn test_utf8() {
     autoreleasepool(|pool| {
         assert_eq!(s.as_str(pool), expected);
     });
+    assert_eq!(s.to_string(), expected);
 }
 
 #[test]
@@ -58,6 +62,7 @@ fn test_nul() {
     autoreleasepool(|pool| {
         assert_eq!(s.as_str(pool), expected);
     });
+    assert_eq!(s.to_string(), expected);
 }
 
 #[test]
@@ -68,6 +73,7 @@ fn test_interior_nul() {
     autoreleasepool(|pool| {
         assert_eq!(s.as_str(pool), expected);
     });
+    assert_eq!(s.to_string(), expected);
 }
 
 #[test]
@@ -108,6 +114,7 @@ fn test_strips_first_leading_zero_width_no_break_space() {
     autoreleasepool(|pool| {
         assert_eq!(ns_string.as_str(pool), expected);
     });
+    assert_eq!(ns_string.to_string(), expected);
     assert_eq!(ns_string.len(), 0);
 
     let s = "\u{feff}\u{feff}a\u{feff}";
@@ -123,6 +130,7 @@ fn test_strips_first_leading_zero_width_no_break_space() {
     autoreleasepool(|pool| {
         assert_eq!(ns_string.as_str(pool), expected);
     });
+    assert_eq!(ns_string.to_string(), expected);
     assert_eq!(ns_string.len(), expected.len());
 }
 

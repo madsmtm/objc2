@@ -1,11 +1,12 @@
 #![cfg(feature = "NSDictionary")]
 #![cfg(feature = "NSString")]
 #![cfg(feature = "NSObject")]
+use alloc::string::ToString;
 use alloc::{format, vec};
 
-use objc2::rc::{autoreleasepool, Retained};
+use objc2::rc::Retained;
 
-use crate::Foundation::{NSDictionary, NSObject, NSString};
+use crate::{NSDictionary, NSObject, NSString};
 
 fn sample_dict(key: &str) -> Retained<NSDictionary<NSString, NSObject>> {
     let string = NSString::from_str(key);
@@ -36,9 +37,7 @@ fn test_keys() {
     let keys = dict.keys_vec();
 
     assert_eq!(keys.len(), 1);
-    autoreleasepool(|pool| {
-        assert_eq!(keys[0].as_str(pool), "abcd");
-    });
+    assert_eq!(keys[0].to_string(), "abcd");
 }
 
 #[test]
@@ -56,9 +55,7 @@ fn test_keys_and_objects() {
 
     assert_eq!(keys.len(), 1);
     assert_eq!(objs.len(), 1);
-    autoreleasepool(|pool| {
-        assert_eq!(keys[0].as_str(pool), "abcd");
-    });
+    assert_eq!(keys[0].to_string(), "abcd");
     assert_eq!(objs[0], dict.get(keys[0]).unwrap());
 }
 
@@ -67,9 +64,7 @@ fn test_keys_and_objects() {
 fn test_iter_keys() {
     let dict = sample_dict("abcd");
     assert_eq!(dict.keys().count(), 1);
-    autoreleasepool(|pool| {
-        assert_eq!(dict.keys().next().unwrap().as_str(pool), "abcd");
-    });
+    assert_eq!(dict.keys().next().unwrap().to_string(), "abcd");
 }
 
 #[test]
@@ -86,9 +81,7 @@ fn test_arrays() {
 
     let keys = unsafe { dict.allKeys() };
     assert_eq!(keys.len(), 1);
-    autoreleasepool(|pool| {
-        assert_eq!(keys[0].as_str(pool), "abcd");
-    });
+    assert_eq!(keys[0].to_string(), "abcd");
 
     // let objs = dict.to_array();
     // assert_eq!(objs.len(), 1);

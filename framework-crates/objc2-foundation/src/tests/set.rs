@@ -193,7 +193,7 @@ fn test_debug() {
 
     let set = NSSet::from_id_slice(&["one", "two"].map(NSString::from_str));
     assert!(matches!(
-        format!("{set:?}").as_str(),
+        &*format!("{set:?}"),
         "{\"one\", \"two\"}" | "{\"two\", \"one\"}"
     ));
 }

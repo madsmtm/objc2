@@ -1,4 +1,3 @@
-use objc2::rc::autoreleasepool;
 use objc2_foundation::{ns_string, NSArray, NSDictionary, NSObject};
 
 fn main() {
@@ -26,13 +25,10 @@ fn main() {
 
     // Create a static NSString
     let string = ns_string!("Hello, world!");
-    // Use an autoreleasepool to get the `str` contents of the NSString
-    autoreleasepool(|pool| {
-        println!("{}", string.as_str(pool));
-    });
-    // Or use the `Display` implementation
-    let _s = string.to_string(); // Using ToString
-    println!("{string}"); // Or Display directly
+    // And use the `ToString` implementation to convert it into a string
+    let _s = string.to_string();
+    // Or use the `Display` implementation directly
+    println!("{string}");
 
     // Create a dictionary mapping strings to objects
     let keys = &[string];
