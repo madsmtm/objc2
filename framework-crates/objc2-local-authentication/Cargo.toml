@@ -45,12 +45,28 @@ alloc = ["block2?/alloc", "objc2/alloc", "objc2-foundation/alloc"]
 block2 = ["dep:block2", "objc2-foundation/block2"]
 
 LABase = []
+LABiometryType = []
+LACompanionType = []
 LAContext = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
+]
+LADomainState = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSValue",
+]
+LAEnvironment = []
+LAEnvironmentMechanism = ["objc2-foundation/NSString"]
+LAEnvironmentMechanismBiometry = ["objc2-foundation/NSData"]
+LAEnvironmentMechanismCompanion = ["objc2-foundation/NSData"]
+LAEnvironmentMechanismUserPassword = []
+LAEnvironmentState = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
 ]
 LAError = ["objc2-foundation/NSString"]
 LAPersistedRight = []
@@ -76,7 +92,16 @@ LASecret = [
 ]
 all = [
     "LABase",
+    "LABiometryType",
+    "LACompanionType",
     "LAContext",
+    "LADomainState",
+    "LAEnvironment",
+    "LAEnvironmentMechanism",
+    "LAEnvironmentMechanismBiometry",
+    "LAEnvironmentMechanismCompanion",
+    "LAEnvironmentMechanismUserPassword",
+    "LAEnvironmentState",
     "LAError",
     "LAPersistedRight",
     "LAPrivateKey",

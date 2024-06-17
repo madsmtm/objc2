@@ -65,6 +65,15 @@ objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 objc2-user-notifications = ["dep:objc2-user-notifications"]
 
 DocumentManager = []
+NSAdaptiveImageGlyph = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-uniform-type-identifiers?/UTType",
+]
 NSAttributedString = [
     "bitflags",
     "objc2-foundation/NSAttributedString",
@@ -305,6 +314,11 @@ UIActivity = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
 ]
+UIActivityCollaborationModeRestriction = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
 UIActivityIndicatorView = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
@@ -312,6 +326,7 @@ UIActivityIndicatorView = [
     "objc2-quartz-core?/CALayer",
 ]
 UIActivityItemProvider = [
+    "objc2-foundation/NSArray",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSOperation",
     "objc2-foundation/NSString",
@@ -328,7 +343,9 @@ UIActivityItemsConfigurationReading = [
     "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSString",
 ]
+UIActivityItemsConfigurationReading_ShareSheet = ["objc2-foundation/NSString"]
 UIActivityViewController = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
@@ -446,6 +463,7 @@ UICalendarSelectionMultiDate = [
     "objc2-foundation/NSCalendar",
 ]
 UICalendarSelectionSingleDate = ["objc2-foundation/NSCalendar"]
+UICalendarSelectionWeekOfYear = ["objc2-foundation/NSCalendar"]
 UICalendarView = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCalendar",
@@ -484,6 +502,7 @@ UICloudSharingController = [
     "objc2-foundation/NSString",
 ]
 UICollectionLayoutList = [
+    "bitflags",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSIndexPath",
     "objc2-foundation/NSObject",
@@ -749,6 +768,7 @@ UIDocumentViewController = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+UIDocumentViewControllerLaunchOptions = ["objc2-foundation/NSString"]
 UIDragInteraction = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSGeometry",
@@ -1484,6 +1504,7 @@ UISearchSuggestion = [
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSString",
 ]
+UISearchTab = ["objc2-foundation/NSString"]
 UISearchTextField = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
@@ -1577,6 +1598,7 @@ UISwitch = [
     "objc2-quartz-core?/CALayer",
 ]
 UISymbolEffectCompletion = ["objc2-symbols?/NSSymbolEffect"]
+UITab = ["objc2-foundation/NSString"]
 UITabBar = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
@@ -1597,8 +1619,10 @@ UITabBarController = [
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSProgress",
     "objc2-foundation/NSString",
 ]
+UITabBarControllerSidebar = ["objc2-foundation/NSObject"]
 UITabBarItem = [
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
@@ -1607,7 +1631,16 @@ UITabBarItem = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+UITabGroup = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+]
+UITabSidebarItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
 UITableView = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
@@ -1700,6 +1733,7 @@ UITextInput = [
 ]
 UITextInputContext = []
 UITextInputTraits = [
+    "bitflags",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -1743,6 +1777,7 @@ UITextView = [
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
+    "objc2-foundation/NSValue",
     "objc2-quartz-core?/CALayer",
 ]
 UITimingCurveProvider = ["objc2-foundation/NSObject"]
@@ -1789,6 +1824,10 @@ UITraitCollection = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+UITraitListEnvironment = []
+UIUpdateActionPhase = []
+UIUpdateInfo = ["objc2-foundation/NSDate"]
+UIUpdateLink = ["objc2-quartz-core?/CAFrameRateRange"]
 UIUserActivity = ["objc2-foundation/NSUserActivity"]
 UIUserNotificationSettings = [
     "bitflags",
@@ -1841,6 +1880,7 @@ UIViewController = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+UIViewControllerTransition = []
 UIViewControllerTransitionCoordinator = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSGeometry",
@@ -1912,10 +1952,17 @@ UIWindowSceneGeometryPreferencesMac = ["objc2-foundation/NSGeometry"]
 UIWindowSceneGeometryPreferencesVision = ["objc2-foundation/NSGeometry"]
 UIWindowScenePlacement = ["objc2-foundation/NSObject"]
 UIWindowSceneProminentPlacement = ["objc2-foundation/NSObject"]
+UIWindowScenePushPlacement = ["objc2-foundation/NSObject"]
+UIWindowSceneReplacePlacement = ["objc2-foundation/NSObject"]
 UIWindowSceneStandardPlacement = ["objc2-foundation/NSObject"]
+UIZoomTransitionOptions = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
 UNNotificationResponse_UIKitAdditions = ["objc2-user-notifications?/UNNotificationResponse"]
 all = [
     "DocumentManager",
+    "NSAdaptiveImageGlyph",
     "NSAttributedString",
     "NSDataAsset",
     "NSDiffableDataSourceSectionSnapshot",
@@ -1963,10 +2010,12 @@ all = [
     "UIAction",
     "UIActionSheet",
     "UIActivity",
+    "UIActivityCollaborationModeRestriction",
     "UIActivityIndicatorView",
     "UIActivityItemProvider",
     "UIActivityItemsConfiguration",
     "UIActivityItemsConfigurationReading",
+    "UIActivityItemsConfigurationReading_ShareSheet",
     "UIActivityViewController",
     "UIAlert",
     "UIAlertController",
@@ -1991,6 +2040,7 @@ all = [
     "UICalendarSelection",
     "UICalendarSelectionMultiDate",
     "UICalendarSelectionSingleDate",
+    "UICalendarSelectionWeekOfYear",
     "UICalendarView",
     "UICalendarViewDecoration",
     "UICanvasFeedbackGenerator",
@@ -2043,6 +2093,7 @@ all = [
     "UIDocumentPickerViewController",
     "UIDocumentProperties",
     "UIDocumentViewController",
+    "UIDocumentViewControllerLaunchOptions",
     "UIDragInteraction",
     "UIDragItem",
     "UIDragPreview",
@@ -2201,6 +2252,7 @@ all = [
     "UISearchController",
     "UISearchDisplayController",
     "UISearchSuggestion",
+    "UISearchTab",
     "UISearchTextField",
     "UISegmentedControl",
     "UISelectionFeedbackGenerator",
@@ -2224,10 +2276,14 @@ all = [
     "UISwipeGestureRecognizer",
     "UISwitch",
     "UISymbolEffectCompletion",
+    "UITab",
     "UITabBar",
     "UITabBarAppearance",
     "UITabBarController",
+    "UITabBarControllerSidebar",
     "UITabBarItem",
+    "UITabGroup",
+    "UITabSidebarItem",
     "UITableView",
     "UITableViewCell",
     "UITableViewController",
@@ -2268,6 +2324,10 @@ all = [
     "UITrackingLayoutGuide",
     "UITrait",
     "UITraitCollection",
+    "UITraitListEnvironment",
+    "UIUpdateActionPhase",
+    "UIUpdateInfo",
+    "UIUpdateLink",
     "UIUserActivity",
     "UIUserNotificationSettings",
     "UIVibrancyEffect",
@@ -2276,6 +2336,7 @@ all = [
     "UIViewAnimating",
     "UIViewConfigurationState",
     "UIViewController",
+    "UIViewControllerTransition",
     "UIViewControllerTransitionCoordinator",
     "UIViewControllerTransitioning",
     "UIViewPropertyAnimator",
@@ -2296,7 +2357,10 @@ all = [
     "UIWindowSceneGeometryPreferencesVision",
     "UIWindowScenePlacement",
     "UIWindowSceneProminentPlacement",
+    "UIWindowScenePushPlacement",
+    "UIWindowSceneReplacePlacement",
     "UIWindowSceneStandardPlacement",
+    "UIZoomTransitionOptions",
     "UNNotificationResponse_UIKitAdditions",
     "bitflags",
     "block2",

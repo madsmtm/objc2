@@ -125,11 +125,13 @@ NSItemProvider = ["bitflags"]
 NSJSONSerialization = ["bitflags"]
 NSKeyValueCoding = []
 NSKeyValueObserving = ["bitflags"]
+NSKeyValueSharedObservers = []
 NSKeyedArchiver = []
 NSLengthFormatter = []
 NSLinguisticTagger = ["bitflags"]
 NSListFormatter = []
 NSLocale = []
+NSLocalizedNumberFormatRule = []
 NSLock = []
 NSMapTable = []
 NSMassFormatter = []
@@ -293,11 +295,13 @@ all = [
     "NSJSONSerialization",
     "NSKeyValueCoding",
     "NSKeyValueObserving",
+    "NSKeyValueSharedObservers",
     "NSKeyedArchiver",
     "NSLengthFormatter",
     "NSLinguisticTagger",
     "NSListFormatter",
     "NSLocale",
+    "NSLocalizedNumberFormatRule",
     "NSLock",
     "NSMapTable",
     "NSMassFormatter",

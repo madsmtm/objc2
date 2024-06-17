@@ -89,10 +89,7 @@ CKFetchDatabaseChangesOperation = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSOperation",
 ]
-CKFetchNotificationChangesOperation = [
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSOperation",
-]
+CKFetchNotificationChangesOperation = ["objc2-foundation/NSOperation"]
 CKFetchRecordChangesOperation = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
@@ -154,15 +151,8 @@ CKLocationSortDescriptor = [
     "objc2-foundation/NSSortDescriptor",
     "objc2-foundation/NSString",
 ]
-CKMarkNotificationsReadOperation = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSOperation",
-]
-CKModifyBadgeOperation = [
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSOperation",
-]
+CKMarkNotificationsReadOperation = ["objc2-foundation/NSOperation"]
+CKModifyBadgeOperation = ["objc2-foundation/NSOperation"]
 CKModifyRecordZonesOperation = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
@@ -249,7 +239,10 @@ CKShareMetadata = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-CKShareParticipant = ["objc2-foundation/NSObject"]
+CKShareParticipant = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 CKSubscription = [
     "bitflags",
     "objc2-foundation/NSArray",

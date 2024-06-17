@@ -79,6 +79,10 @@ CMErrorDomain = ["objc2-foundation/NSString"]
 CMFallDetectionEvent = ["objc2-foundation/NSDate"]
 CMFallDetectionManager = []
 CMGyro = ["objc2-foundation/NSObject"]
+CMHeadphoneActivityManager = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
+]
 CMHeadphoneMotionManager = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSOperation",
@@ -175,6 +179,7 @@ all = [
     "CMFallDetectionEvent",
     "CMFallDetectionManager",
     "CMGyro",
+    "CMHeadphoneActivityManager",
     "CMHeadphoneMotionManager",
     "CMHeadphoneMotionManagerDelegate",
     "CMHighFrequencyHeartRateData",

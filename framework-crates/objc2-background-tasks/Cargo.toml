@@ -44,7 +44,10 @@ alloc = ["block2?/alloc", "objc2/alloc", "objc2-foundation/alloc"]
 block2 = ["dep:block2", "objc2-foundation/block2"]
 
 BGDefines = []
-BGTask = ["objc2-foundation/NSString"]
+BGTask = [
+    "objc2-foundation/NSProgress",
+    "objc2-foundation/NSString",
+]
 BGTaskRequest = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSFileManager",

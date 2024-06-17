@@ -58,10 +58,13 @@ NSFileProviderDefines = []
 NSFileProviderDomain = [
     "bitflags",
     "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSObjCRuntime",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSUUID",
 ]
 NSFileProviderEnumerating = [
     "objc2-foundation/NSArray",
@@ -92,6 +95,10 @@ NSFileProviderItem = [
 ]
 NSFileProviderItemDecoration = [
     "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+]
+NSFileProviderKnownFolders = [
+    "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
 NSFileProviderManager = [
@@ -150,6 +157,7 @@ all = [
     "NSFileProviderExtension",
     "NSFileProviderItem",
     "NSFileProviderItemDecoration",
+    "NSFileProviderKnownFolders",
     "NSFileProviderManager",
     "NSFileProviderModifyItemOptions",
     "NSFileProviderReplicatedExtension",

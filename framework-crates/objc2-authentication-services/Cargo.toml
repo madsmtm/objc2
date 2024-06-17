@@ -178,6 +178,7 @@ ASAuthorizationProviderExtensionLoginConfiguration = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
+    "objc2-foundation/NSValue",
 ]
 ASAuthorizationProviderExtensionLoginManager = [
     "objc2-foundation/NSDictionary",
@@ -186,7 +187,9 @@ ASAuthorizationProviderExtensionLoginManager = [
 ]
 ASAuthorizationProviderExtensionRegistrationHandler = [
     "bitflags",
+    "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
 ASAuthorizationProviderExtensionUserLoginConfiguration = [
     "objc2-foundation/NSDictionary",
@@ -211,7 +214,14 @@ ASAuthorizationPublicKeyCredentialDescriptor = [
 ASAuthorizationPublicKeyCredentialLargeBlobAssertionInput = ["objc2-foundation/NSData"]
 ASAuthorizationPublicKeyCredentialLargeBlobAssertionOutput = ["objc2-foundation/NSData"]
 ASAuthorizationPublicKeyCredentialLargeBlobRegistrationInput = []
-ASAuthorizationPublicKeyCredentialLargeBlobRegistrationOutput = []
+ASAuthorizationPublicKeyCredentialLargeBlobRegistrationOutput = ["objc2-foundation/NSObject"]
+ASAuthorizationPublicKeyCredentialPRFAssertionInput = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+]
+ASAuthorizationPublicKeyCredentialPRFAssertionOutput = ["objc2-foundation/NSData"]
+ASAuthorizationPublicKeyCredentialPRFRegistrationInput = []
+ASAuthorizationPublicKeyCredentialPRFRegistrationOutput = []
 ASAuthorizationPublicKeyCredentialParameters = ["objc2-foundation/NSObject"]
 ASAuthorizationPublicKeyCredentialRegistration = [
     "objc2-foundation/NSData",
@@ -321,11 +331,22 @@ ASExtensionErrors = [
     "objc2-foundation/NSString",
 ]
 ASFoundation = []
+ASOneTimeCodeCredential = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+ASOneTimeCodeCredentialIdentity = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+ASOneTimeCodeCredentialRequest = ["objc2-foundation/NSObject"]
 ASPasskeyAssertionCredential = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+ASPasskeyAssertionCredentialExtensionInput = ["objc2-foundation/NSObject"]
+ASPasskeyAssertionCredentialExtensionOutput = ["objc2-foundation/NSObject"]
 ASPasskeyCredentialIdentity = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
@@ -349,6 +370,8 @@ ASPasskeyRegistrationCredential = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+ASPasskeyRegistrationCredentialExtensionInput = ["objc2-foundation/NSObject"]
+ASPasskeyRegistrationCredentialExtensionOutput = ["objc2-foundation/NSObject"]
 ASPasswordCredential = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -429,6 +452,10 @@ all = [
     "ASAuthorizationPublicKeyCredentialLargeBlobAssertionOutput",
     "ASAuthorizationPublicKeyCredentialLargeBlobRegistrationInput",
     "ASAuthorizationPublicKeyCredentialLargeBlobRegistrationOutput",
+    "ASAuthorizationPublicKeyCredentialPRFAssertionInput",
+    "ASAuthorizationPublicKeyCredentialPRFAssertionOutput",
+    "ASAuthorizationPublicKeyCredentialPRFRegistrationInput",
+    "ASAuthorizationPublicKeyCredentialPRFRegistrationOutput",
     "ASAuthorizationPublicKeyCredentialParameters",
     "ASAuthorizationPublicKeyCredentialRegistration",
     "ASAuthorizationPublicKeyCredentialRegistrationRequest",
@@ -461,11 +488,18 @@ all = [
     "ASCredentialServiceIdentifier",
     "ASExtensionErrors",
     "ASFoundation",
+    "ASOneTimeCodeCredential",
+    "ASOneTimeCodeCredentialIdentity",
+    "ASOneTimeCodeCredentialRequest",
     "ASPasskeyAssertionCredential",
+    "ASPasskeyAssertionCredentialExtensionInput",
+    "ASPasskeyAssertionCredentialExtensionOutput",
     "ASPasskeyCredentialIdentity",
     "ASPasskeyCredentialRequest",
     "ASPasskeyCredentialRequestParameters",
     "ASPasskeyRegistrationCredential",
+    "ASPasskeyRegistrationCredentialExtensionInput",
+    "ASPasskeyRegistrationCredentialExtensionOutput",
     "ASPasswordCredential",
     "ASPasswordCredentialIdentity",
     "ASPasswordCredentialRequest",

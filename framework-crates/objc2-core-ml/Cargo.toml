@@ -74,6 +74,7 @@ MLCustomLayer = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
+    "objc2-metal?/MTLAllocation",
     "objc2-metal?/MTLCommandBuffer",
     "objc2-metal?/MTLResource",
     "objc2-metal?/MTLTexture",
@@ -133,8 +134,11 @@ MLModel = [
     "objc2-foundation/NSURL",
 ]
 MLModelAsset = [
+    "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
 MLModelCollection = [
     "objc2-foundation/NSDictionary",
@@ -198,6 +202,7 @@ MLModel_MLModelCompilation = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSURL",
 ]
+MLModel_MLState = ["objc2-foundation/NSError"]
 MLMultiArray = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
@@ -241,6 +246,12 @@ MLSequence = [
 MLSequenceConstraint = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
+]
+MLState = ["objc2-foundation/NSString"]
+MLStateConstraint = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSValue",
 ]
 MLTask = [
     "objc2-foundation/NSError",
@@ -307,6 +318,7 @@ all = [
     "MLModelStructureProgramValueType",
     "MLModel_MLComputeDevice",
     "MLModel_MLModelCompilation",
+    "MLModel_MLState",
     "MLMultiArray",
     "MLMultiArrayConstraint",
     "MLMultiArrayShapeConstraint",
@@ -320,6 +332,8 @@ all = [
     "MLReshapeFrequencyHint",
     "MLSequence",
     "MLSequenceConstraint",
+    "MLState",
+    "MLStateConstraint",
     "MLTask",
     "MLUpdateContext",
     "MLUpdateProgressEvent",

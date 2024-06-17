@@ -122,6 +122,7 @@ CAMetalLayer = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
+    "objc2-metal?/MTLAllocation",
     "objc2-metal?/MTLDevice",
     "objc2-metal?/MTLDrawable",
     "objc2-metal?/MTLPixelFormat",

@@ -45,6 +45,7 @@ alloc = ["objc2/alloc", "objc2-foundation/alloc", "objc2-metal/alloc"]
 MTLFXDefines = []
 MTLFXSpatialScaler = [
     "objc2-foundation/NSObject",
+    "objc2-metal/MTLAllocation",
     "objc2-metal/MTLCommandBuffer",
     "objc2-metal/MTLDevice",
     "objc2-metal/MTLFence",
@@ -54,6 +55,7 @@ MTLFXSpatialScaler = [
 ]
 MTLFXTemporalScaler = [
     "objc2-foundation/NSObject",
+    "objc2-metal/MTLAllocation",
     "objc2-metal/MTLCommandBuffer",
     "objc2-metal/MTLDevice",
     "objc2-metal/MTLFence",

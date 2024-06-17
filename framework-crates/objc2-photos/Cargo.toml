@@ -57,7 +57,7 @@ block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-core-image?/block2", "ob
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-image = ["dep:objc2-core-image", "objc2-app-kit?/objc2-core-image"]
 objc2-core-location = ["dep:objc2-core-location"]
-objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
+objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers", "objc2-app-kit?/objc2-uniform-type-identifiers"]
 
 PHAdjustmentData = [
     "objc2-foundation/NSData",

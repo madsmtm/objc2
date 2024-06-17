@@ -437,6 +437,7 @@ dependencies = [
  "objc2-core-image",
  "objc2-foundation",
  "objc2-quartz-core",
+ "objc2-uniform-type-identifiers",
 ]
 
 [[package]]

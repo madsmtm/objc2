@@ -2437,12 +2437,14 @@ impl Stmt {
                             write!(f, "{}", self.cfg_gate_ln(config))?;
                             writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
                         }
-                        None | Some(UnexposedAttr::BridgedTypedef) => {
+                        kind => {
+                            if !matches!(kind, None | Some(UnexposedAttr::BridgedTypedef)) {
+                                error!("invalid alias kind {kind:?} for {ty:?}");
+                            }
                             // "bridged" typedefs should use a normal type alias.
                             write!(f, "{}", self.cfg_gate_ln(config))?;
                             writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
                         }
-                        kind => panic!("invalid alias kind {kind:?} for {ty:?}"),
                     }
                 }
             };

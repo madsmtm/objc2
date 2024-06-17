@@ -137,6 +137,7 @@ CLRegion = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+CLServiceSession = ["objc2-foundation/NSString"]
 CLVisit = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
@@ -167,6 +168,7 @@ all = [
     "CLMonitoringRecord",
     "CLPlacemark",
     "CLRegion",
+    "CLServiceSession",
     "CLVisit",
     "block2",
     "objc2-contacts",

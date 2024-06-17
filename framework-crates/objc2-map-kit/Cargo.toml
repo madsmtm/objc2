@@ -57,6 +57,10 @@ objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-contacts = ["dep:objc2-contacts", "objc2-core-location?/objc2-contacts"]
 objc2-core-location = ["dep:objc2-core-location"]
 
+MKAddressFilter = [
+    "bitflags",
+    "objc2-foundation/NSObject",
+]
 MKAnnotation = [
     "objc2-core-location?/CLLocation",
     "objc2-foundation/NSString",
@@ -194,10 +198,29 @@ MKMapItem = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
     "objc2-foundation/NSTimeZone",
     "objc2-foundation/NSURL",
 ]
+MKMapItemAnnotation = []
+MKMapItemDetailViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MKMapItemIdentifier = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MKMapItemRequest = ["objc2-foundation/NSError"]
 MKMapSnapshot = [
     "objc2-app-kit?/NSAppearance",
     "objc2-app-kit?/NSImage",
@@ -314,6 +337,10 @@ MKPolygon = [
 MKPolygonRenderer = ["objc2-foundation/NSGeometry"]
 MKPolyline = ["objc2-core-location?/CLLocation"]
 MKPolylineRenderer = ["objc2-foundation/NSGeometry"]
+MKSelectionAccessory = [
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSViewController",
+]
 MKShape = ["objc2-foundation/NSString"]
 MKStandardMapConfiguration = ["objc2-foundation/NSObject"]
 MKTileOverlay = [
@@ -357,6 +384,7 @@ MKZoomControl = [
 ]
 NSUserActivity_MKMapItem = ["objc2-foundation/NSUserActivity"]
 all = [
+    "MKAddressFilter",
     "MKAnnotation",
     "MKAnnotationView",
     "MKCircle",
@@ -391,6 +419,10 @@ all = [
     "MKMapCameraZoomRange",
     "MKMapConfiguration",
     "MKMapItem",
+    "MKMapItemAnnotation",
+    "MKMapItemDetailViewController",
+    "MKMapItemIdentifier",
+    "MKMapItemRequest",
     "MKMapSnapshot",
     "MKMapSnapshotOptions",
     "MKMapSnapshotter",
@@ -414,6 +446,7 @@ all = [
     "MKPolygonRenderer",
     "MKPolyline",
     "MKPolylineRenderer",
+    "MKSelectionAccessory",
     "MKShape",
     "MKStandardMapConfiguration",
     "MKTileOverlay",

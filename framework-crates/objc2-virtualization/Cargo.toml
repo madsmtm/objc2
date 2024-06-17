@@ -188,9 +188,21 @@ VZSingleDirectoryShare = []
 VZSocketDevice = []
 VZSocketDeviceConfiguration = ["objc2-foundation/NSObject"]
 VZSpiceAgentPortAttachment = ["objc2-foundation/NSString"]
+VZStorageDevice = []
 VZStorageDeviceAttachment = []
 VZStorageDeviceConfiguration = ["objc2-foundation/NSObject"]
+VZUSBController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+]
+VZUSBControllerConfiguration = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
+VZUSBDevice = ["objc2-foundation/NSUUID"]
+VZUSBDeviceConfiguration = ["objc2-foundation/NSUUID"]
 VZUSBKeyboardConfiguration = ["objc2-foundation/NSObject"]
+VZUSBMassStorageDevice = []
 VZUSBMassStorageDeviceConfiguration = ["objc2-foundation/NSObject"]
 VZUSBScreenCoordinatePointingDeviceConfiguration = ["objc2-foundation/NSObject"]
 VZVirtioBlockDeviceConfiguration = [
@@ -260,6 +272,8 @@ VZVirtualMachineView = [
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
+VZXHCIController = []
+VZXHCIControllerConfiguration = ["objc2-foundation/NSObject"]
 all = [
     "VZAudioDeviceConfiguration",
     "VZAudioInputStreamSource",
@@ -332,9 +346,15 @@ all = [
     "VZSocketDevice",
     "VZSocketDeviceConfiguration",
     "VZSpiceAgentPortAttachment",
+    "VZStorageDevice",
     "VZStorageDeviceAttachment",
     "VZStorageDeviceConfiguration",
+    "VZUSBController",
+    "VZUSBControllerConfiguration",
+    "VZUSBDevice",
+    "VZUSBDeviceConfiguration",
     "VZUSBKeyboardConfiguration",
+    "VZUSBMassStorageDevice",
     "VZUSBMassStorageDeviceConfiguration",
     "VZUSBScreenCoordinatePointingDeviceConfiguration",
     "VZVirtioBlockDeviceConfiguration",
@@ -368,6 +388,8 @@ all = [
     "VZVirtualMachineDelegate",
     "VZVirtualMachineStartOptions",
     "VZVirtualMachineView",
+    "VZXHCIController",
+    "VZXHCIControllerConfiguration",
     "bitflags",
     "block2",
     "objc2-app-kit",

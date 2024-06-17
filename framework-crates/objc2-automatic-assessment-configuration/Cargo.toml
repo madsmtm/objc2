@@ -52,7 +52,11 @@ AEAssessmentConfiguration = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
 ]
-AEAssessmentParticipantConfiguration = ["objc2-foundation/NSObject"]
+AEAssessmentParticipantConfiguration = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 AEAssessmentSession = []
 AEAssessmentSessionDelegate = ["objc2-foundation/NSError"]
 AEErrors = [

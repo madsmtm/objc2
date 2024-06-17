@@ -53,6 +53,7 @@ GKAccessPoint = [
     "objc2-app-kit?/NSResponder",
     "objc2-app-kit?/NSWindow",
     "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
 ]
 GKAchievement = [
     "objc2-foundation/NSArray",

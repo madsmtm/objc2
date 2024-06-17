@@ -75,6 +75,7 @@ AXHearingUtilities = [
     "objc2-foundation/NSUUID",
 ]
 AXSettings = [
+    "objc2-foundation/NSError",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
 ]
