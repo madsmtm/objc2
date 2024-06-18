@@ -22,6 +22,7 @@ fn uses_system_config(library_name: &str) -> bool {
         "System" | "bitflags" | "block2" | "libc" | "objc2" => true,
         // Temporary
         "CoreFoundation" => true,
+        "CoreGraphics" => true,
         _ => false,
     }
 }

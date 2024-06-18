@@ -1,0 +1,9 @@
+framework = "CoreGraphics"
+crate = "objc2-core-graphics"
+required-dependencies = ["objc2-foundation", "objc2-dispatch"]
+macos = "10.8"
+maccatalyst = "13.0"
+ios = "2.0"
+tvos = "9.0"
+watchos = "2.0"
+visionos = "1.0"

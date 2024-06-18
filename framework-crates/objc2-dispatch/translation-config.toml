@@ -1,0 +1,9 @@
+framework = "Dispatch"
+crate = "objc2-dispatch"
+required-dependencies = []
+macos = "10.10"
+maccatalyst = "13.0"
+ios = "8.0"
+tvos = "9.0"
+watchos = "2.0"
+visionos = "1.0"

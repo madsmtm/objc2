@@ -81,7 +81,7 @@ impl MethodModifiers {
                         UnexposedAttr::UIActor => {
                             this.mainthreadonly = true;
                         }
-                        attr => error!(?attr, "unknown attribute"),
+                        attr => error!(?attr, "unknown attribute on method modifiers"),
                     }
                 }
             }
@@ -128,7 +128,7 @@ impl MethodModifiers {
             EntityKind::AnnotateAttr => {
                 // TODO: `UI_APPEARANCE_SELECTOR`
             }
-            _ => error!("unknown"),
+            kind => error!(?kind, "unknown entity kind"),
         });
 
         this
@@ -428,13 +428,13 @@ impl Method {
                                 UnexposedAttr::Sendable => sendable = Some(true),
                                 UnexposedAttr::NonSendable => sendable = Some(false),
                                 UnexposedAttr::NoEscape => no_escape = true,
-                                attr => error!(?attr, "unknown attribute"),
+                                attr => error!(?attr, "unknown attribute on method"),
                             }
                         }
                     }
                     // For some reason we recurse into array types
                     EntityKind::IntegerLiteral => {}
-                    _ => error!("unknown"),
+                    kind => error!(?kind, "unknown entity kind"),
                 });
 
                 let ty = entity.get_type().expect("argument type");
