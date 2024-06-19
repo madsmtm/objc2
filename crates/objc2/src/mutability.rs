@@ -71,6 +71,12 @@ impl<IS: ?Sized> Mutability for MutableWithImmutableSuperclass<IS> {}
 impl private_mutability::Sealed for InteriorMutable {}
 impl Mutability for InteriorMutable {}
 
+impl<S: ?Sized> private_mutability::Sealed for InteriorMutableWithSubclass<S> {}
+impl<S: ?Sized> Mutability for InteriorMutableWithSubclass<S> {}
+
+impl<S: ?Sized> private_mutability::Sealed for InteriorMutableWithSuperclass<S> {}
+impl<S: ?Sized> Mutability for InteriorMutableWithSuperclass<S> {}
+
 impl private_mutability::Sealed for MainThreadOnly {}
 impl Mutability for MainThreadOnly {}
 
@@ -241,6 +247,26 @@ pub struct InteriorMutable {
     inner: Never,
 }
 
+/// Marker type for classes that have a mutable counterpart.
+///
+/// This is effectively the same as [`InteriorMutable`], except that the type
+/// returned by `NSMutableCopying::mutableCopy` is the mutable counterpart.
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+pub struct InteriorMutableWithSubclass<Subclass: ?Sized> {
+    inner: Never,
+    subclass: PhantomData<Subclass>,
+}
+
+/// Marker type for classes that have an immutable counterpart.
+///
+/// This is effectively the same as [`InteriorMutable`], except that the type
+/// returned by `NSCopying::copy` is the immutable counterpart.
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+pub struct InteriorMutableWithSuperclass<Superclass: ?Sized> {
+    inner: Never,
+    superclass: PhantomData<Superclass>,
+}
+
 /// Marker type for classes that are only safe to use from the main thread.
 ///
 /// This is effectively the same as [`InteriorMutable`], except that classes
@@ -307,6 +333,8 @@ impl MutabilityIsIdCloneable for Root {}
 impl MutabilityIsIdCloneable for Immutable {}
 impl<MS: ?Sized> MutabilityIsIdCloneable for ImmutableWithMutableSubclass<MS> {}
 impl MutabilityIsIdCloneable for InteriorMutable {}
+impl<S: ?Sized> MutabilityIsIdCloneable for InteriorMutableWithSubclass<S> {}
+impl<S: ?Sized> MutabilityIsIdCloneable for InteriorMutableWithSuperclass<S> {}
 impl MutabilityIsIdCloneable for MainThreadOnly {}
 
 unsafe impl<T: ?Sized + ClassType> IsIdCloneable for T where T::Mutability: MutabilityIsIdCloneable {}
@@ -340,6 +368,8 @@ pub unsafe trait IsRetainable: private_traits::Sealed + IsIdCloneable {}
 trait MutabilityIsRetainable: MutabilityIsIdCloneable {}
 impl MutabilityIsRetainable for Immutable {}
 impl MutabilityIsRetainable for InteriorMutable {}
+impl<S: ?Sized> MutabilityIsRetainable for InteriorMutableWithSubclass<S> {}
+impl<S: ?Sized> MutabilityIsRetainable for InteriorMutableWithSuperclass<S> {}
 impl MutabilityIsRetainable for MainThreadOnly {}
 
 unsafe impl<T: ?Sized + ClassType> IsRetainable for T where T::Mutability: MutabilityIsRetainable {}
@@ -369,6 +399,8 @@ impl MutabilityIsAllocableAnyThread for Mutable {}
 impl<MS: ?Sized> MutabilityIsAllocableAnyThread for ImmutableWithMutableSubclass<MS> {}
 impl<IS: ?Sized> MutabilityIsAllocableAnyThread for MutableWithImmutableSuperclass<IS> {}
 impl MutabilityIsAllocableAnyThread for InteriorMutable {}
+impl<S: ?Sized> MutabilityIsAllocableAnyThread for InteriorMutableWithSubclass<S> {}
+impl<S: ?Sized> MutabilityIsAllocableAnyThread for InteriorMutableWithSuperclass<S> {}
 
 unsafe impl<T: ?Sized + ClassType> IsAllocableAnyThread for T where
     T::Mutability: MutabilityIsAllocableAnyThread
@@ -600,6 +632,22 @@ mod private_counterpart {
         type Immutable = T;
         type Mutable = T;
     }
+    impl<T, S> MutabilityCounterpartOrSelf<T> for InteriorMutableWithSubclass<S>
+    where
+        T: ClassType<Mutability = InteriorMutableWithSubclass<S>>,
+        S: ClassType<Mutability = InteriorMutableWithSuperclass<T>>,
+    {
+        type Immutable = T;
+        type Mutable = S;
+    }
+    impl<T, S> MutabilityCounterpartOrSelf<T> for InteriorMutableWithSuperclass<S>
+    where
+        T: ClassType<Mutability = InteriorMutableWithSuperclass<S>>,
+        S: ClassType<Mutability = InteriorMutableWithSubclass<T>>,
+    {
+        type Immutable = S;
+        type Mutable = T;
+    }
     impl<T: ClassType<Mutability = MainThreadOnly>> MutabilityCounterpartOrSelf<T> for MainThreadOnly {
         type Immutable = T;
         type Mutable = T;
@@ -661,6 +709,8 @@ mod tests {
         assert_traits::<ImmutableWithMutableSubclass<()>>();
         assert_traits::<MutableWithImmutableSuperclass<()>>();
         assert_traits::<InteriorMutable>();
+        assert_traits::<InteriorMutableWithSubclass<()>>();
+        assert_traits::<InteriorMutableWithSuperclass<()>>();
         assert_traits::<MainThreadOnly>();
 
         #[allow(unused)]

@@ -828,6 +828,14 @@ mod private {
         type EquivalentType = ArcLikeStorage<T>;
     }
 
+    impl<T: ?Sized, S: ?Sized> SendSyncHelper<T> for mutability::InteriorMutableWithSubclass<S> {
+        type EquivalentType = ArcLikeStorage<T>;
+    }
+
+    impl<T: ?Sized, S: ?Sized> SendSyncHelper<T> for mutability::InteriorMutableWithSuperclass<S> {
+        type EquivalentType = ArcLikeStorage<T>;
+    }
+
     impl<T: ?Sized> SendSyncHelper<T> for mutability::MainThreadOnly {
         type EquivalentType = ArcLikeStorage<T>;
     }

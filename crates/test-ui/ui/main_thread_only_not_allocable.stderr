@@ -8,6 +8,8 @@ error[E0277]: the trait bound `MainThreadOnly: mutability::MutabilityIsAllocable
             Immutable
             ImmutableWithMutableSubclass<MS>
             InteriorMutable
+            InteriorMutableWithSubclass<S>
+            InteriorMutableWithSuperclass<S>
             Mutable
             MutableWithImmutableSuperclass<IS>
             Root

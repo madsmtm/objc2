@@ -39,6 +39,8 @@ error[E0277]: the trait bound `Mutable: mutability::MutabilityIsRetainable` is n
   = help: the following other types implement trait `mutability::MutabilityIsRetainable`:
             Immutable
             InteriorMutable
+            InteriorMutableWithSubclass<S>
+            InteriorMutableWithSuperclass<S>
             MainThreadOnly
   = note: required for `NSMutableObject` to implement `IsRetainable`
 note: required by a bound in `retain`

@@ -297,8 +297,10 @@ pub(crate) fn items_required_by_decl(
             for (superclass, _, _) in parse_superclasses(entity, context) {
                 items.push(superclass);
             }
-            if let Some(Mutability::ImmutableWithMutableSubclass(subclass)) =
-                data.map(|data| &data.mutability)
+            if let Some(
+                Mutability::ImmutableWithMutableSubclass(subclass)
+                | Mutability::InteriorMutableWithSubclass(subclass),
+            ) = data.map(|data| &data.mutability)
             {
                 items.push(subclass.clone());
             }
@@ -391,6 +393,8 @@ pub enum Mutability {
     MutableWithImmutableSuperclass(ItemIdentifier),
     #[default]
     InteriorMutable,
+    InteriorMutableWithSubclass(ItemIdentifier),
+    InteriorMutableWithSuperclass(ItemIdentifier),
     MainThreadOnly,
 }
 
@@ -415,6 +419,12 @@ impl fmt::Display for Mutability {
                 write!(f, "MutableWithImmutableSuperclass<{}>", superclass.path())
             }
             Self::InteriorMutable => write!(f, "InteriorMutable"),
+            Self::InteriorMutableWithSubclass(subclass) => {
+                write!(f, "InteriorMutableWithSubclass<{}>", subclass.path())
+            }
+            Self::InteriorMutableWithSuperclass(superclass) => {
+                write!(f, "InteriorMutableWithSuperclass<{}>", superclass.path())
+            }
             Self::MainThreadOnly => write!(f, "MainThreadOnly"),
         }
     }
@@ -861,7 +871,8 @@ impl Stmt {
                         );
                     }
 
-                    let extra_methods = if let Mutability::ImmutableWithMutableSubclass(subclass) =
+                    let extra_methods = if let Mutability::ImmutableWithMutableSubclass(subclass)
+                    | Mutability::InteriorMutableWithSubclass(subclass) =
                         data.map(|data| data.mutability.clone()).unwrap_or_default()
                     {
                         let subclass_data = context
