@@ -281,8 +281,8 @@ class.NSMutableDictionary.mutability = "MutableWithImmutableSuperclass(Foundatio
 class.NSSet.mutability = "ImmutableWithMutableSubclass(Foundation::NSSet::NSMutableSet)"
 class.NSMutableSet.mutability = "MutableWithImmutableSuperclass(Foundation::NSSet::NSSet)"
 
-class.NSCharacterSet.mutability = "ImmutableWithMutableSubclass(Foundation::NSCharacterSet::NSMutableCharacterSet)"
-class.NSMutableCharacterSet.mutability = "MutableWithImmutableSuperclass(Foundation::NSCharacterSet::NSCharacterSet)"
+class.NSCharacterSet.mutability = "InteriorMutableWithSubclass(Foundation::NSCharacterSet::NSMutableCharacterSet)"
+class.NSMutableCharacterSet.mutability = "InteriorMutableWithSuperclass(Foundation::NSCharacterSet::NSCharacterSet)"
 
 class.NSOrderedSet.mutability = "ImmutableWithMutableSubclass(Foundation::NSOrderedSet::NSMutableOrderedSet)"
 class.NSMutableOrderedSet.mutability = "MutableWithImmutableSuperclass(Foundation::NSOrderedSet::NSOrderedSet)"
@@ -290,8 +290,8 @@ class.NSMutableOrderedSet.mutability = "MutableWithImmutableSuperclass(Foundatio
 class.NSIndexSet.mutability = "ImmutableWithMutableSubclass(Foundation::NSIndexSet::NSMutableIndexSet)"
 class.NSMutableIndexSet.mutability = "MutableWithImmutableSuperclass(Foundation::NSIndexSet::NSIndexSet)"
 
-class.NSURLRequest.mutability = "ImmutableWithMutableSubclass(Foundation::NSURLRequest::NSMutableURLRequest)"
-class.NSMutableURLRequest.mutability = "MutableWithImmutableSuperclass(Foundation::NSURLRequest::NSURLRequest)"
+class.NSURLRequest.mutability = "InteriorMutableWithSubclass(Foundation::NSURLRequest::NSMutableURLRequest)"
+class.NSMutableURLRequest.mutability = "InteriorMutableWithSuperclass(Foundation::NSURLRequest::NSURLRequest)"
 
 # SAFETY: `NSEnumerator` and subclasses are safe as mutable because even
 # though the items it contains are not mutable, the enumerator itself is
