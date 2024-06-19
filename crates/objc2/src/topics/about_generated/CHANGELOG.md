@@ -29,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   hash is changed, but that's not the same as it being unsound).
 * `objc2-foundation` **BREAKING**: Made the following types `InteriorMutable`:
   - `NSString` and `NSMutableString`.
+  - `NSAttributedString` and `NSMutableAttributedString`.
 
   This means that these can now be `retain`-ed like you would expect, and you
   no longer need to use `mut` to mutate them, but it also means that they are

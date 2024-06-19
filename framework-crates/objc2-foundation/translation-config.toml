@@ -269,8 +269,8 @@ class.NSMutableArray.mutability = "MutableWithImmutableSuperclass(Foundation::NS
 class.NSString.mutability = "InteriorMutableWithSubclass(Foundation::NSString::NSMutableString)"
 class.NSMutableString.mutability = "InteriorMutableWithSuperclass(Foundation::NSString::NSString)"
 
-class.NSAttributedString.mutability = "ImmutableWithMutableSubclass(Foundation::NSAttributedString::NSMutableAttributedString)"
-class.NSMutableAttributedString.mutability = "MutableWithImmutableSuperclass(Foundation::NSAttributedString::NSAttributedString)"
+class.NSAttributedString.mutability = "InteriorMutableWithSubclass(Foundation::NSAttributedString::NSMutableAttributedString)"
+class.NSMutableAttributedString.mutability = "InteriorMutableWithSuperclass(Foundation::NSAttributedString::NSAttributedString)"
 
 class.NSData.mutability = "ImmutableWithMutableSubclass(Foundation::NSData::NSMutableData)"
 class.NSMutableData.mutability = "MutableWithImmutableSuperclass(Foundation::NSData::NSData)"

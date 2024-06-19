@@ -6,11 +6,6 @@ use objc2::ClassType;
 
 use crate::Foundation::*;
 
-// SAFETY: `NSAttributedString` is immutable and `NSMutableAttributedString`
-// can only be mutated from `&mut` methods.
-unsafe impl Sync for NSAttributedString {}
-unsafe impl Send for NSAttributedString {}
-
 // Same reasoning as `NSString`.
 impl UnwindSafe for NSAttributedString {}
 impl RefUnwindSafe for NSAttributedString {}

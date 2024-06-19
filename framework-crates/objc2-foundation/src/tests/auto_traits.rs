@@ -128,7 +128,7 @@ fn test_generic_auto_traits() {
 
 #[test]
 fn send_sync_unwindsafe() {
-    assert_auto_traits::<NSAttributedString>();
+    assert_unwindsafe::<NSAttributedString>();
     assert_auto_traits::<NSComparisonResult>();
     assert_auto_traits::<NSData>();
     assert_auto_traits::<NSDictionary<NSProcessInfo, NSProcessInfo>>();
@@ -144,7 +144,7 @@ fn send_sync_unwindsafe() {
     assert_auto_traits::<NSRect>();
     assert_auto_traits::<NSSize>();
     assert_auto_traits::<NSMutableArray<NSProcessInfo>>();
-    assert_auto_traits::<NSMutableAttributedString>();
+    assert_unwindsafe::<NSMutableAttributedString>();
     assert_auto_traits::<NSMutableData>();
     assert_auto_traits::<NSMutableDictionary<NSProcessInfo, NSProcessInfo>>();
     assert_auto_traits::<NSMutableSet<NSProcessInfo>>();
