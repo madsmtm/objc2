@@ -8,7 +8,7 @@ use objc2_ml_compute::{MLCDataType, MLCTensor};
 fn new() {
     unsafe {
         MLCTensor::tensorWithShape_dataType(
-            &NSArray::from_vec(vec![NSNumber::new_u8(4), NSNumber::new_u8(4)]),
+            &NSArray::from_retained_slice(&[NSNumber::new_u8(4), NSNumber::new_u8(4)]),
             MLCDataType::Float32,
         );
     }

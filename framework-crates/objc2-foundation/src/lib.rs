@@ -14,24 +14,27 @@
 //! A quick overview of some types you will encounter often in Objective-C,
 //! and their approximate Rust equivalent.
 //!
-//! | Objective-C | (approximately) equivalent Rust |
-//! | --- | --- |
-//! | `NSData*` | `Arc<[u8]>` |
-//! | `NSMutableData*` | `Vec<u8>` |
-//! | `NSString*` | `Arc<str>` |
-//! | `NSMutableString*` | `String` |
-//! | `NSValue*` | `Arc<dyn Any>` |
-//! | `NSNumber*` | `Arc<enum { I8(i8), U8(u8), I16(i16), U16(u16), I32(i32), U32(u32), I64(i64), U64(u64), F32(f32), F64(f64), CLong(ffi::c_long), CULong(ffi::c_ulong) }>` |
-//! | `NSError*` | `Arc<dyn Error + Send + Sync>` |
-//! | `NSException*` | `Arc<dyn Error + Send + Sync>` |
-//! | `NSRange` | `ops::Range<usize>` |
-//! | `NSComparisonResult` | `cmp::Ordering` |
-//! | `NSArray<T>*` | `Arc<[T]>` |
-//! | `NSMutableArray<T>*` | `Vec<T>` |
-//! | `NSDictionary<K, V>*` | `Arc<HashMap<K, V>>` |
-//! | `NSMutableDictionary<K, V>*` | `HashMap<K, V>` |
-//! | `NSEnumerator<T>*` | `Box<dyn Iterator<T>>` |
-//! | `NSCopying*` | `Box<dyn Clone>` |
+//! | Objective-C                  | (approximately) equivalent Rust               |
+//! | ---------------------------- | --------------------------------------------- |
+//! | `NSData*`                    | `Rc<[u8]>`                                    |
+//! | `NSMutableData*`             | `Rc<Cell<Vec<u8>>>`                           |
+//! | `NSString*`                  | `Rc<str>`                                     |
+//! | `NSMutableString*`           | `Rc<Cell<String>>`                            |
+//! | `NSValue*`                   | `Rc<dyn Any>`                                 |
+//! | `NSNumber*`                  | `Arc<enum { I8(i8), U8(u8), I16(i16), ... }>` |
+//! | `NSError*`                   | `Arc<dyn Error + Send + Sync>`                |
+//! | `NSException*`               | `Arc<dyn Error + Send + Sync>`                |
+//! | `NSRange`                    | `ops::Range<usize>`                           |
+//! | `NSComparisonResult`         | `cmp::Ordering`                               |
+//! | `NSEnumerator<T>*`           | `Rc<dyn Iterator<Item = Retained<T>>>`        |
+//! | `NSCopying*`                 | `Rc<dyn Clone>`                               |
+//! | `NSArray<T>*`                | `Rc<[Retained<T>]>`                           |
+//! | `NSMutableArray<T>*`         | `Rc<Cell<Vec<Retained<T>>>>`                  |
+//! | `NSDictionary<K, V>*`        | `Rc<HashMap<Retained<K>, Retained<V>>>`       |
+//! | `NSMutableDictionary<K, V>*` | `Rc<Cell<HashMap<Retained<K>, Retained<V>>>>` |
+//!
+//! Note, in particular, that all "Mutable" variants use interior mutability,
+//! and that some things are thread-safe (`Arc`), while others are not (`Rc`).
 //!
 //!
 //! ## Examples
@@ -105,7 +108,6 @@ mod exception;
 #[cfg(feature = "NSEnumerator")]
 mod fast_enumeration_state;
 mod generated;
-mod generics;
 #[cfg(feature = "NSGeometry")]
 mod geometry;
 mod macros;
@@ -144,8 +146,6 @@ pub use self::decimal::NSDecimal;
 pub use self::fast_enumeration_state::NSFastEnumerationState;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
-#[allow(unused_imports, unreachable_pub)]
-pub use self::generics::*;
 #[cfg(feature = "NSGeometry")]
 pub use self::geometry::{CGFloat, CGPoint, CGRect, CGSize, NSPoint, NSRect, NSRectEdge, NSSize};
 #[cfg(feature = "dispatch")]

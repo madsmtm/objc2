@@ -257,81 +257,108 @@ _iter_retained:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
 	push	{r8, r10, r11}
-	sub	sp, sp, #120
+	sub	sp, sp, #128
 	bfc	sp, #0, #3
-	add	r2, sp, #8
-	add	r3, r2, #80
+	add	r1, sp, #8
+	add	r2, r1, #88
 	vmov.i32	q8, #0x0
-	vst1.64	{d16, d17}, [r3]!
-	mov	r1, #0
-	orr	r4, r2, #4
+	vst1.64	{d16, d17}, [r2]!
+	mov	r11, #0
+	add	r4, r1, #12
 	mov	r5, r4
 	vst1.32	{d16, d17}, [r5]!
 	vst1.32	{d16, d17}, [r5]!
 	vst1.32	{d16, d17}, [r5]!
 	vst1.32	{d16, d17}, [r5]!
-	str	r1, [r3]
-	str	r0, [sp, #8]
-	str	r1, [r5]
-	str	r1, [sp, #80]
-	str	r1, [sp, #84]
-	str	r1, [sp, #108]
+	str	r11, [r2]
+	str	r11, [sp, #8]
+	str	r0, [sp, #16]
+	str	r11, [r5]
+	str	r11, [sp, #88]
+	str	r11, [sp, #92]
+	str	r11, [sp, #116]
+	str	r11, [sp, #120]
 	movw	r10, :lower16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
 	movt	r10, :upper16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
 LPC5_0:
 	ldr	r10, [pc, r10]
-	movw	r8, :lower16:(l_anon.[ID].0-(LPC5_1+8))
-	movt	r8, :upper16:(l_anon.[ID].0-(LPC5_1+8))
-LPC5_1:
-	add	r8, pc, r8
-	str	r1, [sp, #112]
-	mov	r11, #16
+	mov	r8, #16
 	mov	r2, #0
-	cmp	r2, r1
-	blo	LBB5_3
+	mov	r1, #0
+	cmp	r1, r2
+	blo	LBB5_4
 LBB5_1:
 	ldr	r1, [r10]
 	cmp	r1, #0
-	beq	LBB5_5
+	beq	LBB5_10
 LBB5_2:
-	str	r11, [sp]
+	str	r8, [sp]
 	mov	r2, r5
 	mov	r3, r4
 	bl	_objc_msgSend
-	str	r0, [sp, #112]
-	mov	r2, #0
+	str	r0, [sp, #120]
+	str	r11, [sp, #116]
 	cmp	r0, #0
-	beq	LBB5_6
-LBB5_3:
-	ldr	r0, [sp, #80]
-	add	r1, r2, #1
-	str	r1, [sp, #108]
-	ldr	r0, [r0, r2, lsl #2]
+	beq	LBB5_11
+	ldr	r0, [sp, #88]
+	mov	r1, #0
 	cmp	r0, #0
-	beq	LBB5_6
+	beq	LBB5_12
+LBB5_4:
+	ldr	r0, [sp, #92]
+	cmp	r0, #0
+	beq	LBB5_8
+	ldr	r0, [r0]
+	ldr	r2, [sp, #8]
+	cmp	r2, #0
+	beq	LBB5_7
+	ldr	r2, [sp, #12]
+	cmp	r2, r0
+	beq	LBB5_8
+	b	LBB5_13
+LBB5_7:
+	mov	r2, #1
+	str	r2, [sp, #8]
+	str	r0, [sp, #12]
+LBB5_8:
+	ldr	r0, [sp, #88]
+	add	r2, r1, #1
+	str	r2, [sp, #116]
+	ldr	r0, [r0, r1, lsl #2]
+	cmp	r0, #0
+	beq	LBB5_11
 	bl	_objc_retain
 	mov	r6, r0
 	bl	_use_obj
 	mov	r0, r6
 	bl	_objc_release
-	ldr	r0, [sp, #8]
-	ldr	r2, [sp, #108]
-	ldr	r1, [sp, #112]
-	cmp	r2, r1
+	ldr	r0, [sp, #16]
+	ldr	r1, [sp, #116]
+	ldr	r2, [sp, #120]
+	cmp	r1, r2
 	bhs	LBB5_1
-	b	LBB5_3
-LBB5_5:
+	b	LBB5_4
+LBB5_10:
 	mov	r6, r0
 	mov	r0, r10
-	mov	r1, r8
+	movw	r1, :lower16:(l_anon.[ID].0-(LPC5_1+8))
+	movt	r1, :upper16:(l_anon.[ID].0-(LPC5_1+8))
+LPC5_1:
+	add	r1, pc, r1
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r6
 	b	LBB5_2
-LBB5_6:
+LBB5_11:
 	sub	sp, r7, #24
 	pop	{r8, r10, r11}
 	pop	{r4, r5, r6, r7, pc}
+LBB5_12:
+	mov	lr, pc
+	b	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)
+LBB5_13:
+	mov	lr, pc
+	b	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)
 
 	.section	__TEXT,__const
 l_anon.[ID].0:

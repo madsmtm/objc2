@@ -39,3 +39,8 @@ gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1"]
 unstable-static-nsstring = []
 
 dispatch = ["dep:dispatch"]
+
+# Make mutation while iterating return NSNull.
+#
+# Useful when fuzzing, but very unsound.
+unstable-mutation-return-null = ["NSNull"]

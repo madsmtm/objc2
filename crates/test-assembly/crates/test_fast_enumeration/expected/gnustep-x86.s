@@ -325,7 +325,7 @@ iter_retained:
 	pop	ebx
 	mov	ebp, dword ptr [esp + 144]
 	xorps	xmm0, xmm0
-	xor	eax, eax
+	xor	ecx, ecx
 	mov	dword ptr [esp + 112], 0
 .Ltmp3:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp3-.L5$pb)
@@ -339,18 +339,19 @@ iter_retained:
 	movsd	qword ptr [esp + 60], xmm0
 	movsd	qword ptr [esp + 68], xmm0
 	movsd	qword ptr [esp + 76], xmm0
+	mov	dword ptr [esp + 8], 0
 	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
-	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
-	mov	dword ptr [esp + 12], ecx
-	xor	ecx, ecx
+	lea	eax, [ebx + .Lanon.[ID].0@GOTOFF]
+	mov	dword ptr [esp + 4], eax
+	xor	eax, eax
 	mov	dword ptr [esp + 16], ebp
 	mov	dword ptr [esp + 84], 0
 	mov	dword ptr [esp + 88], 0
 	mov	dword ptr [esp + 92], 0
 	mov	dword ptr [esp + 116], 0
 	mov	dword ptr [esp + 120], 0
-	cmp	ecx, eax
-	jb	.LBB5_5
+	cmp	eax, ecx
+	jb	.LBB5_11
 	.p2align	4, 0x90
 .LBB5_2:
 	mov	esi, dword ptr [edi]
@@ -371,17 +372,34 @@ iter_retained:
 	push	ebp
 	call	eax
 	add	esp, 32
-	xor	ecx, ecx
 	test	eax, eax
 	mov	dword ptr [esp + 120], eax
+	mov	dword ptr [esp + 116], 0
+	je	.LBB5_13
+	xor	eax, eax
+	cmp	dword ptr [esp + 88], 0
 	je	.LBB5_6
-.LBB5_5:
-	mov	eax, dword ptr [esp + 88]
-	lea	edx, [ecx + 1]
+.LBB5_11:
+	mov	ecx, dword ptr [esp + 92]
+	test	ecx, ecx
+	je	.LBB5_12
+	mov	ecx, dword ptr [ecx]
+	cmp	dword ptr [esp + 8], 0
+	je	.LBB5_8
+	cmp	dword ptr [esp + 12], ecx
+	je	.LBB5_12
+	jmp	.LBB5_10
+	.p2align	4, 0x90
+.LBB5_8:
+	mov	dword ptr [esp + 8], 1
+	mov	dword ptr [esp + 12], ecx
+.LBB5_12:
+	mov	ecx, dword ptr [esp + 88]
+	lea	edx, [eax + 1]
 	mov	dword ptr [esp + 116], edx
-	mov	eax, dword ptr [eax + 4*ecx]
+	mov	eax, dword ptr [ecx + 4*eax]
 	test	eax, eax
-	je	.LBB5_6
+	je	.LBB5_13
 	sub	esp, 12
 	push	eax
 	call	objc_retain@PLT
@@ -395,26 +413,30 @@ iter_retained:
 	call	objc_release@PLT
 	add	esp, 16
 	mov	ebp, dword ptr [esp + 16]
-	mov	ecx, dword ptr [esp + 116]
-	mov	eax, dword ptr [esp + 120]
-	cmp	ecx, eax
+	mov	eax, dword ptr [esp + 116]
+	mov	ecx, dword ptr [esp + 120]
+	cmp	eax, ecx
 	jae	.LBB5_2
-	jmp	.LBB5_5
+	jmp	.LBB5_11
 .LBB5_3:
 	sub	esp, 8
-	push	dword ptr [esp + 20]
+	push	dword ptr [esp + 12]
 	push	edi
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	mov	esi, eax
 	jmp	.LBB5_4
-.LBB5_6:
+.LBB5_13:
 	add	esp, 124
 	pop	esi
 	pop	edi
 	pop	ebx
 	pop	ebp
 	ret
+.LBB5_6:
+	call	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)@PLT
+.LBB5_10:
+	call	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)@PLT
 .Lfunc_end5:
 	.size	iter_retained, .Lfunc_end5-iter_retained
 

@@ -29,6 +29,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `NSCharacterSet` and `NSMutableCharacterSet`.
   - `NSURLRequest` and `NSMutableURLRequest`.
   - `NSData` and `NSMutableData`.
+  - `NSEnumerator`.
+  - `NSArray` and `NSMutableArray`.
+  - `NSDictionary` and `NSMutableDictionary`.
+  - `NSSet`, `NSMutableSet`, `NSCountedSet`, `NSOrderedSet` and
+    `NSMutableOrderedSet`.
 
   This means that these can now be `retain`-ed like you would expect, and you
   no longer need to use `mut` to mutate them, but it also means that they are

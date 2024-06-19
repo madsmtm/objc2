@@ -1,6 +1,5 @@
 #![cfg(feature = "all")]
 use std::ptr;
-use std::vec::Vec;
 
 use objc2::mutability::InteriorMutable;
 use objc2::rc::Retained;
@@ -25,21 +24,24 @@ fn array_retains_stored() {
     expected.retain += 2;
     expected.assert_current();
 
-    let _obj = array.first().unwrap();
+    drop(input);
+    expected.release += 2;
+    expected.assert_current();
+
+    let _obj = unsafe { array.firstObject_unchecked() }.unwrap();
     expected.assert_current();
 
     drop(array);
     expected.release += 2;
     expected.assert_current();
 
-    let array = NSArray::from_vec(Vec::from(input));
+    let array = NSArray::from_slice(&[&*obj, &*obj]);
     expected.retain += 2;
-    expected.release += 2;
     expected.assert_current();
 
-    let _obj = array.get(0).unwrap();
-    let _obj = array.get(1).unwrap();
-    assert!(array.get(2).is_none());
+    let _obj = unsafe { array.objectAtIndex_unchecked(0) };
+    let _obj = unsafe { array.objectAtIndex_unchecked(1) };
+    assert_eq!(array.len(), 2);
     expected.assert_current();
 
     drop(array);
@@ -65,16 +67,19 @@ fn set_retains_stored() {
     expected.retain += 1;
     expected.assert_current();
 
-    let _obj = set.get_any().unwrap();
+    drop(input);
+    expected.release += 2;
+    expected.assert_current();
+
+    let _obj = unsafe { set.anyObject_unchecked().unwrap() };
     expected.assert_current();
 
     drop(set);
     expected.release += 1;
     expected.assert_current();
 
-    let set = NSSet::from_vec(Vec::from(input));
+    let set = NSSet::from_slice(&[&*obj]);
     expected.retain += 1;
-    expected.release += 2;
     expected.assert_current();
 
     drop(set);
@@ -131,18 +136,18 @@ fn array_iter_minimal_retains() {
     expected.assert_current();
 
     assert!(iter.next().is_some());
+    expected.retain += 1;
+    expected.release += 1;
     expected.assert_current();
 
     assert_eq!(iter.count(), 0);
     expected.assert_current();
 
-    // IterRetained
-    let mut iter = array.iter_retained();
+    // IterUnchecked
+    let mut iter = unsafe { array.iter_unchecked() };
     expected.assert_current();
 
     assert!(iter.next().is_some());
-    expected.retain += 1;
-    expected.release += 1;
     expected.assert_current();
 
     assert_eq!(iter.count(), 0);
@@ -179,18 +184,18 @@ fn set_iter_minimal_retains() {
     expected.assert_current();
 
     assert!(iter.next().is_some());
+    expected.retain += 1;
+    expected.release += 1;
     expected.assert_current();
 
     assert_eq!(iter.count(), 0);
     expected.assert_current();
 
-    // IterRetained
-    let mut iter = set.iter_retained();
+    // IterUnchecked
+    let mut iter = unsafe { set.iter_unchecked() };
     expected.assert_current();
 
     assert!(iter.next().is_some());
-    expected.retain += 1;
-    expected.release += 1;
     expected.assert_current();
 
     assert_eq!(iter.count(), 0);
@@ -217,23 +222,22 @@ fn set_iter_minimal_retains() {
     ignore = "thread safety issues regarding initialization"
 )]
 fn array_adding() {
-    let mut array = NSMutableArray::new();
+    let array = NSMutableArray::new();
     let obj1 = RcTestObject::new();
     let obj2 = RcTestObject::new();
     let mut expected = ThreadTestData::current();
 
-    array.push(obj1);
+    array.addObject(&*obj1);
     expected.retain += 1;
-    expected.release += 1;
     expected.assert_current();
     assert_eq!(array.len(), 1);
-    assert_eq!(array.get(0), array.get(0));
+    assert_eq!(unsafe { array.objectAtIndex_unchecked(0) }, &*obj1);
 
-    array.insert(0, obj2);
+    array.insert(0, &obj2);
     expected.retain += 1;
-    expected.release += 1;
     expected.assert_current();
     assert_eq!(array.len(), 2);
+    assert_eq!(unsafe { array.objectAtIndex_unchecked(0) }, &*obj2);
 }
 
 #[test]
@@ -242,17 +246,16 @@ fn array_adding() {
     ignore = "thread safety issues regarding initialization"
 )]
 fn array_replace() {
-    let mut array = NSMutableArray::new();
+    let array = NSMutableArray::new();
     let obj1 = RcTestObject::new();
     let obj2 = RcTestObject::new();
-    array.push(obj1);
+    array.addObject(&*obj1);
     let mut expected = ThreadTestData::current();
 
-    let old_obj = array.replace(0, obj2).unwrap();
-    expected.retain += 2;
-    expected.release += 2;
+    array.replaceObjectAtIndex_withObject(0, &obj2);
+    expected.retain += 1;
+    expected.release += 1;
     expected.assert_current();
-    assert_ne!(&*old_obj, array.get(0).unwrap());
 }
 
 #[test]
@@ -261,21 +264,21 @@ fn array_replace() {
     ignore = "thread safety issues regarding initialization"
 )]
 fn array_remove() {
-    let mut array = NSMutableArray::new();
+    let array = NSMutableArray::new();
     for _ in 0..4 {
-        array.push(RcTestObject::new());
+        array.addObject(&*RcTestObject::new());
     }
     let mut expected = ThreadTestData::current();
 
-    let _obj = array.remove(1);
-    expected.retain += 1;
+    array.removeObjectAtIndex(1);
     expected.release += 1;
+    expected.drop += 1;
     expected.assert_current();
     assert_eq!(array.len(), 3);
 
-    let _obj = array.pop();
-    expected.retain += 1;
+    array.removeLastObject();
     expected.release += 1;
+    expected.drop += 1;
     expected.assert_current();
     assert_eq!(array.len(), 2);
 
@@ -288,26 +291,25 @@ fn array_remove() {
 
 #[test]
 fn set_insert_retain_release() {
-    let mut set = <NSMutableSet<RcTestObject>>::new();
+    let set = <NSMutableSet<RcTestObject>>::new();
     let obj1 = RcTestObject::new();
     let obj2 = RcTestObject::new();
-    let obj2_copy = obj2.retain();
     let mut expected = ThreadTestData::current();
 
-    set.insert(&obj1);
+    set.addObject(&obj1);
     // Retain to store in set
     expected.retain += 1;
     expected.assert_current();
     assert_eq!(set.len(), 1);
-    assert_eq!(set.get_any(), set.get_any());
+    assert_eq!(unsafe { set.anyObject_unchecked().unwrap() }, &*obj1);
 
-    set.insert(&obj2);
+    set.addObject(&obj2);
     // Retain to store in set
     expected.retain += 1;
     expected.assert_current();
     assert_eq!(set.len(), 2);
 
-    set.insert(&obj2_copy);
+    set.addObject(&obj2);
     // No retain, since the object is already in the set
     expected.retain += 0;
     expected.assert_current();
@@ -316,9 +318,9 @@ fn set_insert_retain_release() {
 
 #[test]
 fn set_clear_release_dealloc() {
-    let mut set = NSMutableSet::new();
+    let set = NSMutableSet::new();
     for _ in 0..4 {
-        set.insert_id(RcTestObject::new());
+        set.addObject(&*RcTestObject::new());
     }
     let mut expected = ThreadTestData::current();
 
@@ -374,11 +376,11 @@ extern_methods!(
 
 #[test]
 fn dictionary_insert_key_copies() {
-    let mut dict = <NSMutableDictionary<NSCopyingRcTestObject, _>>::new();
+    let dict = NSMutableDictionary::new();
     let key1 = NSCopyingRcTestObject::new();
     let mut expected = ThreadTestData::current();
 
-    let _ = dict.insert_id(&key1, NSNumber::new_i32(1));
+    let _ = dict.insert(&*key1, &*NSNumber::new_i32(1));
     // Create copy
     expected.copy += 1;
     expected.alloc += 1;
@@ -394,34 +396,26 @@ fn dictionary_insert_key_copies() {
 
 #[test]
 fn dictionary_get_key_copies() {
-    let mut dict = <NSMutableDictionary<NSCopyingRcTestObject, _>>::new();
+    let dict = NSMutableDictionary::new();
     let key1 = NSCopyingRcTestObject::new();
-    let _ = dict.insert_id(&key1, NSNumber::new_i32(1));
+    let _ = dict.insert(&*key1, &*NSNumber::new_i32(1));
     let expected = ThreadTestData::current();
 
-    let _ = dict.get(&key1);
+    let _ = dict.objectForKey(&key1);
     // No change, getting doesn't do anything to the key!
     expected.assert_current();
 }
 
 #[test]
 fn dictionary_insert_value_retain_release() {
-    let mut dict = <NSMutableDictionary<NSNumber, _>>::new();
-    dict.insert_id(&NSNumber::new_i32(1), RcTestObject::new());
+    let dict = NSMutableDictionary::new();
+    dict.insert(&*NSNumber::new_i32(1), &*RcTestObject::new());
     let to_insert = RcTestObject::new();
     let mut expected = ThreadTestData::current();
 
-    let old = dict.insert(&NSNumber::new_i32(1), &to_insert);
-    // Grab old value
-    expected.retain += 1;
-
+    dict.insert(&*NSNumber::new_i32(1), &to_insert);
     // Dictionary takes new value and overwrites the old one
     expected.retain += 1;
-    expected.release += 1;
-
-    expected.assert_current();
-
-    drop(old);
     expected.release += 1;
     expected.drop += 1;
     expected.assert_current();
@@ -429,21 +423,21 @@ fn dictionary_insert_value_retain_release() {
 
 #[test]
 fn dictionary_remove_clear_release_dealloc() {
-    let mut dict = <NSMutableDictionary<NSNumber, _>>::new();
+    let dict = NSMutableDictionary::new();
     for i in 0..4 {
-        dict.insert_id(&NSNumber::new_i32(i), RcTestObject::new());
+        dict.insert(&*NSNumber::new_i32(i), &*RcTestObject::new());
     }
     let mut expected = ThreadTestData::current();
 
-    let _obj = dict.remove(&NSNumber::new_i32(1));
-    expected.retain += 1;
+    dict.removeObjectForKey(&NSNumber::new_i32(1));
     expected.release += 1;
+    expected.drop += 1;
     expected.assert_current();
     assert_eq!(dict.len(), 3);
 
-    let _obj = dict.remove(&NSNumber::new_i32(2));
-    expected.retain += 1;
+    dict.removeObjectForKey(&NSNumber::new_i32(2));
     expected.release += 1;
+    expected.drop += 1;
     expected.assert_current();
     assert_eq!(dict.len(), 2);
 

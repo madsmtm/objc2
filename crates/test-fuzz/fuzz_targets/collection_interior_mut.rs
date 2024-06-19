@@ -11,7 +11,7 @@ use std::hint::black_box;
 
 use arbitrary::Arbitrary;
 use objc2::rc::{autoreleasepool, Id, Retained};
-use objc2::runtime::{AnyObject, ProtocolObject};
+use objc2::runtime::AnyObject;
 use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass};
 use objc2_foundation::{
     NSCopying, NSMutableDictionary, NSMutableSet, NSObject, NSObjectProtocol, NSUInteger, NSZone,
@@ -105,8 +105,8 @@ fn run(ops: Vec<Operation>) {
     let keys: Vec<_> = (0..=KeyIndex::MAX).map(Key::new).collect();
     let key = |idx: KeyIndex| -> &Key { &keys[idx as usize] };
 
-    let mut set: Id<NSMutableSet<Key>> = NSMutableSet::new();
-    let mut dict: Id<NSMutableDictionary<Key, NSObject>> = NSMutableDictionary::new();
+    let set: Id<NSMutableSet<Key>> = NSMutableSet::new();
+    let dict: Id<NSMutableDictionary<Key, NSObject>> = NSMutableDictionary::new();
 
     for op in ops {
         autoreleasepool(|_| match op {
@@ -115,8 +115,8 @@ fn run(ops: Vec<Operation>) {
                 dict.count();
             }
             Operation::Get(idx) => {
-                unsafe { set.member(key(idx)) };
-                unsafe { dict.objectForKey(key(idx)) };
+                set.member(key(idx));
+                dict.objectForKey(key(idx));
             }
             Operation::Enumerate => {
                 for key in unsafe { set.objectEnumerator() } {
@@ -130,13 +130,11 @@ fn run(ops: Vec<Operation>) {
                 }
             }
             Operation::Add(idx) => {
-                unsafe { set.addObject(key(idx)) };
-                unsafe {
-                    dict.setObject_forKey(&NSObject::new(), ProtocolObject::from_ref(key(idx)))
-                };
+                set.addObject(key(idx));
+                dict.insert(key(idx), &NSObject::new());
             }
             Operation::Remove(idx) => {
-                unsafe { set.removeObject(key(idx)) };
+                set.removeObject(key(idx));
                 dict.removeObjectForKey(key(idx));
             }
             Operation::SetHash(idx, hash) => {

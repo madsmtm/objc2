@@ -241,27 +241,29 @@ LBB4_7:
 	.globl	_iter_retained
 	.p2align	2
 _iter_retained:
-	sub	sp, sp, #288
-	stp	x28, x27, [sp, #224]
-	stp	x22, x21, [sp, #240]
-	stp	x20, x19, [sp, #256]
-	stp	x29, x30, [sp, #272]
-	add	x29, sp, #272
+	sub	sp, sp, #304
+	stp	x24, x23, [sp, #240]
+	stp	x22, x21, [sp, #256]
+	stp	x20, x19, [sp, #272]
+	stp	x29, x30, [sp, #288]
+	add	x29, sp, #288
 	mov	x9, #0
 	mov	x8, #0
-	stp	xzr, xzr, [sp, #200]
+	stp	xzr, xzr, [sp, #216]
 	movi.2d	v0, #0000000000000000
+	stur	q0, [sp, #200]
 	stur	q0, [sp, #184]
-	stur	q0, [sp, #168]
 	add	x22, sp, #8
-	stp	q0, q0, [sp, #16]
-	stp	q0, q0, [sp, #48]
-	stp	q0, q0, [sp, #80]
-	stp	q0, q0, [sp, #112]
-	str	x0, [sp, #8]
-	stp	xzr, xzr, [sp, #152]
-	str	xzr, [sp, #144]
-	str	xzr, [sp, #216]
+	stp	q0, q0, [sp, #32]
+	stp	q0, q0, [sp, #64]
+	stp	q0, q0, [sp, #96]
+	stp	q0, q0, [sp, #128]
+	str	xzr, [sp, #8]
+	str	x0, [sp, #24]
+	stp	xzr, xzr, [sp, #168]
+	str	xzr, [sp, #160]
+	mov	w23, #1
+	str	xzr, [sp, #232]
 Lloh12:
 	adrp	x19, l_anon.[ID].0@PAGE
 Lloh13:
@@ -271,54 +273,78 @@ Lloh14:
 Lloh15:
 	ldr	x20, [x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
 	cmp	x8, x9
-	b.lo	LBB5_4
+	b.lo	LBB5_5
 LBB5_1:
 	ldr	x1, [x20]
-	cbz	x1, LBB5_6
-	add	x2, x22, #136
-	add	x3, x22, #8
+	cbz	x1, LBB5_11
+	add	x2, x22, #152
+	add	x3, x22, #24
 	mov	w4, #16
 	bl	_objc_msgSend
-	str	x0, [sp, #216]
-	cbz	x0, LBB5_7
+	stp	xzr, x0, [sp, #224]
+	cbz	x0, LBB5_12
 LBB5_3:
+	ldr	x8, [sp, #168]
+	cbz	x8, LBB5_13
 	mov	x8, #0
-LBB5_4:
-	ldr	x9, [sp, #152]
+LBB5_5:
+	ldr	x9, [sp, #176]
+	cbz	x9, LBB5_8
+	ldr	x9, [x9]
+	ldr	x10, [sp, #8]
+	cbz	x10, LBB5_10
+	ldr	x10, [sp, #16]
+	cmp	x10, x9
+	b.ne	LBB5_14
+LBB5_8:
+	ldr	x9, [sp, #168]
 	add	x10, x8, #1
-	str	x10, [sp, #208]
+	str	x10, [sp, #224]
 	ldr	x0, [x9, x8, lsl #3]
-	cbz	x0, LBB5_7
+	cbz	x0, LBB5_12
+LBB5_9:
 	bl	_objc_retain
 	mov	x21, x0
 	bl	_use_obj
 	mov	x0, x21
 	bl	_objc_release
-	ldr	x0, [sp, #8]
-	ldp	x8, x9, [sp, #208]
+	ldr	x0, [sp, #24]
+	ldp	x8, x9, [sp, #224]
 	cmp	x8, x9
 	b.hs	LBB5_1
-	b	LBB5_4
-LBB5_6:
+	b	LBB5_5
+LBB5_10:
+	stp	x23, x9, [sp, #8]
+	ldr	x9, [sp, #168]
+	add	x10, x8, #1
+	str	x10, [sp, #224]
+	ldr	x0, [x9, x8, lsl #3]
+	cbnz	x0, LBB5_9
+	b	LBB5_12
+LBB5_11:
 	mov	x21, x0
 	mov	x0, x20
 	mov	x1, x19
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	x1, x0
 	mov	x0, x21
-	add	x2, x22, #136
-	add	x3, x22, #8
+	add	x2, x22, #152
+	add	x3, x22, #24
 	mov	w4, #16
 	bl	_objc_msgSend
-	str	x0, [sp, #216]
+	stp	xzr, x0, [sp, #224]
 	cbnz	x0, LBB5_3
-LBB5_7:
-	ldp	x29, x30, [sp, #272]
-	ldp	x20, x19, [sp, #256]
-	ldp	x22, x21, [sp, #240]
-	ldp	x28, x27, [sp, #224]
-	add	sp, sp, #288
+LBB5_12:
+	ldp	x29, x30, [sp, #288]
+	ldp	x20, x19, [sp, #272]
+	ldp	x22, x21, [sp, #256]
+	ldp	x24, x23, [sp, #240]
+	add	sp, sp, #304
 	ret
+LBB5_13:
+	bl	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)
+LBB5_14:
+	bl	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)
 	.loh AdrpLdrGot	Lloh14, Lloh15
 	.loh AdrpAdd	Lloh12, Lloh13
 
