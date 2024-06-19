@@ -308,14 +308,6 @@ class.NSMutableURLRequest.mutability = "InteriorMutableWithSuperclass(Foundation
 class.NSEnumerator.mutability = "Mutable"
 class.NSDirectoryEnumerator.mutability = "Mutable"
 
-class.NSValue.mutability = "Immutable"
-class.NSNumber.mutability = "Immutable"
-class.NSDecimalNumber.mutability = "Immutable"
-
-class.NSIndexPath.mutability = "Immutable"
-
-class.NSUUID.mutability = "Immutable"
-
 ###
 ### Safety
 ###

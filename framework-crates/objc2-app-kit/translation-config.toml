@@ -217,30 +217,6 @@ class.NSWindow.mutability = "MainThreadOnly"
 # Documented as "Thread-Unsafe"
 # class.NSResponder.mutability = "InteriorMutable"
 
-# Documentation says:
-# > Color objects are immutable and thread-safe
-#
-# TODO: Send + Sync
-class.NSColor.mutability = "Immutable"
-
-# NSCursor is immutable, stated here:
-# https://developer.apple.com/documentation/appkit/nscursor/1527062-image?language=objc
-#
-# TODO: Send + Sync
-class.NSCursor.mutability = "Immutable"
-
-# Since this is immutable, it _may_ be possible to make Send+Sync, but
-# let's refrain from doing so, because of:
-# > Safely handled only on the same thread, whether that be the main
-# > thread or a secondary thread; otherwise you run the risk of having
-# > events get out of sequence.
-# <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CocoaFundamentals/AddingBehaviortoaCocoaProgram/AddingBehaviorCocoa.html#//apple_ref/doc/uid/TP40002974-CH5-SW47>
-# <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Multithreading/ThreadSafetySummary/ThreadSafetySummary.html#//apple_ref/doc/uid/10000057i-CH12-123383>
-class.NSEvent.mutability = "Immutable"
-
-class.NSTouch.mutability = "Immutable"
-class.NSUserInterfaceCompressionOptions.mutability = "Immutable"
-
 ###
 ### Safety
 ###

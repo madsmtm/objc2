@@ -578,7 +578,7 @@ mod tests {
 
     use super::*;
     use crate::encode::RefEncode;
-    use crate::mutability::Immutable;
+    use crate::mutability::InteriorMutable;
     use crate::rc::Retained;
     use crate::runtime::{NSObject, NSObjectProtocol};
     use crate::{
@@ -824,7 +824,7 @@ mod tests {
 
         unsafe impl<T> ClassType for GenericDeclareClass<T> {
             type Super = NSObject;
-            type Mutability = Immutable;
+            type Mutability = InteriorMutable;
             const NAME: &'static str = "GenericDeclareClass";
 
             #[inline]
@@ -867,7 +867,7 @@ mod tests {
 
             unsafe impl ClassType for Custom {
                 type Super = NSObject;
-                type Mutability = Immutable;
+                type Mutability = InteriorMutable;
                 const NAME: &'static str = "TestInheritedNSObjectMethodsWork";
             }
 

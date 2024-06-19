@@ -79,6 +79,25 @@ pub use self::text::*;
 #[allow(unused)]
 pub(crate) type UTF32Char = u32; // Or maybe Rust's char?
 
+// TODO: Send + Sync for NSColor. Documentation says:
+// > Color objects are immutable and thread-safe
+//
+// But unsure if this applies for things like `-setFill`?
+
+// TODO: Send + Sync for NSCursor. It is immutable, stated here:
+// https://developer.apple.com/documentation/appkit/nscursor/1527062-image?language=objc
+//
+// But unsure if `push`/`pop` methods are safe from non-main threads?
+
+// NOTE: NSEvent is immutable, so it _may_ be possible to make Send + Sync,
+// but let's refrain from doing so, because of:
+// > Safely handled only on the same thread, whether that be the main
+// > thread or a secondary thread; otherwise you run the risk of having
+// > events get out of sequence.
+//
+// <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CocoaFundamentals/AddingBehaviortoaCocoaProgram/AddingBehaviorCocoa.html#//apple_ref/doc/uid/TP40002974-CH5-SW47>
+// <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Multithreading/ThreadSafetySummary/ThreadSafetySummary.html#//apple_ref/doc/uid/10000057i-CH12-123383>
+
 #[cfg(test)]
 mod tests {
     #[test]

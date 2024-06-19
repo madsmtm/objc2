@@ -2,7 +2,7 @@
 use std::ptr;
 use std::vec::Vec;
 
-use objc2::mutability::Immutable;
+use objc2::mutability::InteriorMutable;
 use objc2::rc::Retained;
 use objc2::{declare_class, extern_methods, ClassType, DeclaredClass};
 use objc2_foundation::{
@@ -356,7 +356,7 @@ declare_class!(
 
     unsafe impl ClassType for NSCopyingRcTestObject {
         type Super = RcTestObject;
-        type Mutability = Immutable;
+        type Mutability = InteriorMutable;
         const NAME: &'static str = "NSCopyingRcTestObject";
     }
 

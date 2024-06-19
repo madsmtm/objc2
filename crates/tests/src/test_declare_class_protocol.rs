@@ -1,5 +1,5 @@
 #![cfg(feature = "all")]
-use objc2::mutability::Immutable;
+use objc2::mutability::InteriorMutable;
 use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSZone};
 use objc2::{declare_class, ClassType, DeclaredClass, ProtocolType};
@@ -13,7 +13,7 @@ fn test_declare_class_duplicate() {
 
         unsafe impl ClassType for Custom1 {
             type Super = NSObject;
-            type Mutability = Immutable;
+            type Mutability = InteriorMutable;
             const NAME: &'static str = "TestDeclareClassDuplicate";
         }
 
@@ -25,7 +25,7 @@ fn test_declare_class_duplicate() {
 
         unsafe impl ClassType for Custom2 {
             type Super = NSObject;
-            type Mutability = Immutable;
+            type Mutability = InteriorMutable;
             const NAME: &'static str = "TestDeclareClassDuplicate";
         }
 
@@ -44,7 +44,7 @@ fn test_declare_class_protocol() {
 
         unsafe impl ClassType for Custom {
             type Super = NSObject;
-            type Mutability = Immutable;
+            type Mutability = InteriorMutable;
             const NAME: &'static str = "TestDeclareClassProtocolNotFound";
         }
 
@@ -73,7 +73,7 @@ fn test_declare_class_invalid_method() {
 
         unsafe impl ClassType for Custom {
             type Super = NSObject;
-            type Mutability = Immutable;
+            type Mutability = InteriorMutable;
             const NAME: &'static str = "TestDeclareClassInvalidMethod";
         }
 
@@ -100,7 +100,7 @@ fn test_declare_class_missing_protocol_method() {
 
         unsafe impl ClassType for Custom {
             type Super = NSObject;
-            type Mutability = Immutable;
+            type Mutability = InteriorMutable;
             const NAME: &'static str = "TestDeclareClassMissingProtocolMethod";
         }
 
@@ -122,7 +122,7 @@ fn test_declare_class_invalid_protocol_method() {
 
         unsafe impl ClassType for Custom {
             type Super = NSObject;
-            type Mutability = Immutable;
+            type Mutability = InteriorMutable;
             const NAME: &'static str = "TestDeclareClassInvalidProtocolMethod";
         }
 
@@ -151,7 +151,7 @@ fn test_declare_class_extra_protocol_method() {
 
         unsafe impl ClassType for Custom {
             type Super = NSObject;
-            type Mutability = Immutable;
+            type Mutability = InteriorMutable;
             const NAME: &'static str = "TestDeclareClassExtraProtocolMethod";
         }
 

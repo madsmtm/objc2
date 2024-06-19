@@ -248,7 +248,7 @@ mod tests {
         unsafe impl ClassType for RcTestObjectSubclass {
             #[inherits(NSObject)]
             type Super = RcTestObject;
-            type Mutability = mutability::Immutable;
+            type Mutability = mutability::InteriorMutable;
             const NAME: &'static str = "RcTestObjectSubclass";
         }
 

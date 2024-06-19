@@ -96,7 +96,7 @@ use crate::{ffi, ClassType, Message};
 /// #     unsafe impl ClassType for NSString {
 /// #         type Super = NSObject;
 /// #         // This is wrong, but let's do it for the example
-/// #         type Mutability = objc2::mutability::Immutable;
+/// #         type Mutability = objc2::mutability::InteriorMutable;
 /// #     }
 /// # );
 ///
