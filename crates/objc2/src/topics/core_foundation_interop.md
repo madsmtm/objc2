@@ -118,11 +118,9 @@ fn cf_string_to_ns(s: &CFString) -> &NSString {
     unsafe { ptr.as_ref().unwrap() }
 }
 
-// Note: `NSString` is currently a bit special, and requires that we convert from
-// `Retained<NSString>`, as it could otherwise have come from `&NSMutableString`,
-// and then we'd loose lifetime information by converting to `CFString`.
-//
-// This will be changed in the future, see https://github.com/madsmtm/objc2/issues/563.
+// Note: The `core_foundation` crate does not allow zero-cost (non-owning)
+// references to objects, so we have to convert from a `Retained<NSString>` to
+// the owning `CFString` (i.e. `&NSString -> &CFString` is not possible).
 fn ns_string_to_cf(s: Retained<NSString>) -> CFString {
     // Yield ownership over the string
     let ptr: *const NSString = Retained::into_raw(s);

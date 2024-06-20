@@ -19,10 +19,10 @@ impl<T: Message> NSSet<T> {
     /// # Examples
     ///
     /// ```
-    /// use objc2_foundation::{NSSet, NSString};
+    /// use objc2_foundation::{ns_string, NSSet};
     ///
-    /// let strs = ["one", "two", "three"].map(NSString::from_str);
-    /// let set = NSSet::from_id_slice(&strs);
+    /// let strs = [ns_string!("one"), ns_string!("two"), ns_string!("three")];
+    /// let set = NSSet::from_slice(&strs);
     /// assert_eq!(set.len(), 3);
     /// ```
     #[doc(alias = "count")]
@@ -35,9 +35,9 @@ impl<T: Message> NSSet<T> {
     /// # Examples
     ///
     /// ```
-    /// use objc2_foundation::{NSSet, NSString};
+    /// use objc2_foundation::{NSSet, NSObject};
     ///
-    /// let set = NSSet::<NSString>::new();
+    /// let set = NSSet::<NSObject>::new();
     /// assert!(set.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
@@ -235,10 +235,10 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2_foundation::{NSSet, NSString};
+        /// use objc2_foundation::{ns_string, NSSet};
         ///
-        /// let strs = ["one", "two", "three"].map(NSString::from_str);
-        /// let set = NSSet::from_id_slice(&strs);
+        /// let strs = [ns_string!("one"), ns_string!("two"), ns_string!("three")];
+        /// let set = NSSet::from_slice(&strs);
         /// let any = set.get_any().unwrap();
         /// assert!(any == &*strs[0] || any == &*strs[1] || any == &*strs[2]);
         /// ```
@@ -253,10 +253,10 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2_foundation::{ns_string, NSSet, NSString};
+        /// use objc2_foundation::{ns_string, NSSet};
         ///
-        /// let strs = ["one", "two", "three"].map(NSString::from_str);
-        /// let set = NSSet::from_id_slice(&strs);
+        /// let strs = [ns_string!("one"), ns_string!("two"), ns_string!("three")];
+        /// let set = NSSet::from_slice(&strs);
         /// assert!(set.contains(ns_string!("one")));
         /// ```
         #[doc(alias = "containsObject:")]
@@ -270,10 +270,10 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2_foundation::{ns_string, NSSet, NSString};
+        /// use objc2_foundation::{ns_string, NSSet};
         ///
-        /// let strs = ["one", "two", "three"].map(NSString::from_str);
-        /// let set = NSSet::from_id_slice(&strs);
+        /// let strs = [ns_string!("one"), ns_string!("two"), ns_string!("three")];
+        /// let set = NSSet::from_slice(&strs);
         /// assert_eq!(set.get(ns_string!("one")), Some(&*strs[0]));
         /// assert_eq!(set.get(ns_string!("four")), None);
         /// ```
@@ -299,10 +299,10 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2_foundation::{NSSet, NSString};
+        /// use objc2_foundation::{ns_string, NSSet};
         ///
-        /// let set1 = NSSet::from_id_slice(&["one", "two"].map(NSString::from_str));
-        /// let set2 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
+        /// let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
+        /// let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
         ///
         /// assert!(set1.is_subset(&set2));
         /// assert!(!set2.is_subset(&set1));
@@ -318,10 +318,10 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2_foundation::{NSSet, NSString};
+        /// use objc2_foundation::{ns_string, NSSet};
         ///
-        /// let set1 = NSSet::from_id_slice(&["one", "two"].map(NSString::from_str));
-        /// let set2 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
+        /// let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
+        /// let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
         ///
         /// assert!(!set1.is_superset(&set2));
         /// assert!(set2.is_superset(&set1));
@@ -335,11 +335,11 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2_foundation::{NSSet, NSString};
+        /// use objc2_foundation::{ns_string, NSSet};
         ///
-        /// let set1 = NSSet::from_id_slice(&["one", "two"].map(NSString::from_str));
-        /// let set2 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
-        /// let set3 = NSSet::from_id_slice(&["four", "five", "six"].map(NSString::from_str));
+        /// let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
+        /// let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
+        /// let set3 = NSSet::from_slice(&[ns_string!("four"), ns_string!("five"), ns_string!("six")]);
         ///
         /// assert!(!set1.is_disjoint(&set2));
         /// assert!(set1.is_disjoint(&set3));
@@ -432,10 +432,9 @@ impl<T: Message> NSSet<T> {
     /// # Examples
     ///
     /// ```
-    /// use objc2_foundation::{NSSet, NSString};
+    /// use objc2_foundation::{ns_string, NSSet};
     ///
-    /// let strs = ["one", "two", "three"].map(NSString::from_str);
-    /// let set = NSSet::from_id_slice(&strs);
+    /// let set = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
     /// for s in &set {
     ///     println!("{s}");
     /// }

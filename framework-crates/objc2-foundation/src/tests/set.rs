@@ -4,17 +4,17 @@
 use alloc::vec::Vec;
 use alloc::{format, vec};
 
-use crate::Foundation::{self, ns_string, NSNumber, NSObject, NSSet, NSString};
+use crate::Foundation::{ns_string, NSNumber, NSObject, NSSet, NSString};
 
 #[test]
 fn test_new() {
-    let set = NSSet::<NSString>::new();
+    let set = NSSet::<NSObject>::new();
     assert!(set.is_empty());
 }
 
 #[test]
 fn test_from_vec() {
-    let set = NSSet::<NSString>::from_vec(Vec::new());
+    let set = NSSet::<NSObject>::from_vec(Vec::new());
     assert!(set.is_empty());
 
     let strs = ["one", "two", "three"].map(NSString::from_str);
@@ -27,13 +27,13 @@ fn test_from_vec() {
 }
 
 #[test]
-fn test_from_id_slice() {
-    let set = NSSet::<NSString>::from_id_slice(&[]);
+fn test_from_slice() {
+    let set = NSSet::<NSString>::from_slice(&[]);
     assert!(set.is_empty());
 
-    let strs = ["one", "two", "three"].map(NSString::from_str);
-    let set = NSSet::from_id_slice(&strs);
-    assert!(strs.into_iter().all(|s| set.contains(&s)));
+    let strs = [ns_string!("one"), ns_string!("two"), ns_string!("three")];
+    let set = NSSet::from_slice(&strs);
+    assert!(strs.into_iter().all(|s| set.contains(s)));
 
     let nums = [1, 2, 3].map(NSNumber::new_i32);
     let set = NSSet::from_id_slice(&nums);
@@ -42,10 +42,10 @@ fn test_from_id_slice() {
 
 #[test]
 fn test_len() {
-    let set = NSSet::<NSString>::new();
+    let set = NSSet::<NSObject>::new();
     assert!(set.is_empty());
 
-    let set = NSSet::from_id_slice(&["one", "two", "two"].map(NSString::from_str));
+    let set = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("two")]);
     assert_eq!(set.len(), 2);
 
     let set = NSSet::from_vec(vec![
@@ -61,14 +61,14 @@ fn test_get() {
     let set = NSSet::<NSString>::new();
     assert!(set.get(ns_string!("one")).is_none());
 
-    let set = NSSet::from_id_slice(&["one", "two", "two"].map(NSString::from_str));
+    let set = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("two")]);
     assert!(set.get(ns_string!("two")).is_some());
     assert!(set.get(ns_string!("three")).is_none());
 }
 
 #[test]
 fn test_get_return_lifetime() {
-    let set = NSSet::from_id_slice(&["one", "two", "two"].map(NSString::from_str));
+    let set = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("two")]);
 
     let res = {
         let value = NSString::from_str("one");
@@ -80,13 +80,13 @@ fn test_get_return_lifetime() {
 
 #[test]
 fn test_get_any() {
-    let set = NSSet::<NSString>::new();
+    let set = NSSet::<NSObject>::new();
     assert!(set.get_any().is_none());
 
-    let strs = ["one", "two", "three"].map(NSString::from_str);
-    let set = NSSet::from_id_slice(&strs);
+    let strs = [ns_string!("one"), ns_string!("two"), ns_string!("three")];
+    let set = NSSet::from_slice(&strs);
     let any = set.get_any().unwrap();
-    assert!(any == &*strs[0] || any == &*strs[1] || any == &*strs[2]);
+    assert!(any == strs[0] || any == strs[1] || any == strs[2]);
 }
 
 #[test]
@@ -94,15 +94,15 @@ fn test_contains() {
     let set = NSSet::<NSString>::new();
     assert!(!set.contains(ns_string!("one")));
 
-    let set = NSSet::from_id_slice(&["one", "two", "two"].map(NSString::from_str));
+    let set = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("two")]);
     assert!(set.contains(ns_string!("one")));
     assert!(!set.contains(ns_string!("three")));
 }
 
 #[test]
 fn test_is_subset() {
-    let set1 = NSSet::from_id_slice(&["one", "two"].map(NSString::from_str));
-    let set2 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
+    let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
+    let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
 
     assert!(set1.is_subset(&set2));
     assert!(!set2.is_subset(&set1));
@@ -110,8 +110,8 @@ fn test_is_subset() {
 
 #[test]
 fn test_is_superset() {
-    let set1 = NSSet::from_id_slice(&["one", "two"].map(NSString::from_str));
-    let set2 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
+    let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
+    let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
 
     assert!(!set1.is_superset(&set2));
     assert!(set2.is_superset(&set1));
@@ -119,9 +119,9 @@ fn test_is_superset() {
 
 #[test]
 fn test_is_disjoint() {
-    let set1 = NSSet::from_id_slice(&["one", "two"].map(NSString::from_str));
-    let set2 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
-    let set3 = NSSet::from_id_slice(&["four", "five", "six"].map(NSString::from_str));
+    let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
+    let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
+    let set3 = NSSet::from_slice(&[ns_string!("four"), ns_string!("five"), ns_string!("six")]);
 
     assert!(!set1.is_disjoint(&set2));
     assert!(set1.is_disjoint(&set3));
@@ -156,14 +156,9 @@ fn test_into_iter() {
 }
 
 #[test]
-#[cfg(feature = "NSString")]
 fn test_into_vec() {
-    let strs = vec![
-        Foundation::NSString::from_str("one"),
-        Foundation::NSString::from_str("two"),
-        Foundation::NSString::from_str("three"),
-    ];
-    let set = NSSet::from_vec(strs);
+    let strs = vec![ns_string!("one"), ns_string!("two"), ns_string!("three")];
+    let set = NSSet::from_slice(&strs);
 
     assert_eq!(set.len(), 3);
     assert_eq!(set.to_vec().len(), 3);
@@ -171,27 +166,27 @@ fn test_into_vec() {
 
 #[test]
 fn test_equality() {
-    let set1 = NSSet::<NSString>::new();
-    let set2 = NSSet::<NSString>::new();
+    let set1 = NSSet::<NSObject>::new();
+    let set2 = NSSet::<NSObject>::new();
     assert_eq!(set1, set2);
 }
 
 #[test]
 #[cfg(feature = "NSObject")]
 fn test_copy() {
-    use Foundation::NSCopying;
+    use crate::NSCopying;
 
-    let set1 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
+    let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
     let set2 = set1.copy();
     assert_eq!(set1, set2);
 }
 
 #[test]
 fn test_debug() {
-    let set = NSSet::<NSString>::new();
+    let set = NSSet::<NSObject>::new();
     assert_eq!(format!("{set:?}"), "{}");
 
-    let set = NSSet::from_id_slice(&["one", "two"].map(NSString::from_str));
+    let set = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
     assert!(matches!(
         &*format!("{set:?}"),
         "{\"one\", \"two\"}" | "{\"two\", \"one\"}"
@@ -203,10 +198,8 @@ fn test_debug() {
 #[cfg(all(feature = "NSArray", feature = "NSCalendar"))]
 #[allow(deprecated)]
 fn invalid_generic() {
-    let something_interior_mutable = unsafe { Foundation::NSCalendar::currentCalendar() };
-    let set = NSSet::from_id_slice(&[Foundation::NSArray::from_id_slice(&[
-        something_interior_mutable,
-    ])]);
+    let something_interior_mutable = unsafe { crate::NSCalendar::currentCalendar() };
+    let set = NSSet::from_id_slice(&[crate::NSArray::from_id_slice(&[something_interior_mutable])]);
     let _ = set.get_any().unwrap().get(0).unwrap();
     // something_interior_mutable.setAbc(...)
 }

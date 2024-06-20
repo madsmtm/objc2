@@ -13,13 +13,13 @@ use objc2::{declare_class, ClassType, DeclaredClass};
 // since they follow Rust's usual mutability rules (&T = immutable).
 //
 // A _lot_ of Objective-C code out there would be subtly broken if e.g.
-// `NSString` wasn't exception safe!
-// As an example: -[NSArray objectAtIndex:] can throw, but it is still
-// perfectly valid to access the array after that!
+// `NSString` wasn't exception safe! As an example: `-[NSArray objectAtIndex:]`
+// can throw, but it is still perfectly valid to access the array after that!
 //
-// Note that e.g. `&mut NSMutableString` is still not exception safe, but
-// that is the entire idea of `UnwindSafe` (that if the object could have
-// been mutated, it is not exception safe).
+// I'm pretty sure that even mutable classes like `NSMutableString` is still
+// exception safe, since preconditions are checked before the mutation is
+// executed, and more "internal" errors like Out-Of-Memory either crash the
+// application, or return / throw an error value.
 //
 // Also note that this is still only a speed bump, not actually part of any
 // unsafe contract; we can't really protect against it if something is not
@@ -66,12 +66,12 @@ unsafe impl Sync for MutableSendSyncObject {}
 
 #[test]
 fn test_generic_auto_traits() {
-    assert_auto_traits::<NSArray<NSString>>();
-    assert_auto_traits::<Retained<NSArray<NSString>>>();
-    assert_auto_traits::<NSMutableArray<NSString>>();
-    assert_auto_traits::<Retained<NSMutableArray<NSString>>>();
-    assert_auto_traits::<NSDictionary<NSString, NSString>>();
-    assert_auto_traits::<Retained<NSDictionary<NSString, NSString>>>();
+    assert_auto_traits::<NSArray<NSProcessInfo>>();
+    assert_auto_traits::<Retained<NSArray<NSProcessInfo>>>();
+    assert_auto_traits::<NSMutableArray<NSProcessInfo>>();
+    assert_auto_traits::<Retained<NSMutableArray<NSProcessInfo>>>();
+    assert_auto_traits::<NSDictionary<NSProcessInfo, NSProcessInfo>>();
+    assert_auto_traits::<Retained<NSDictionary<NSProcessInfo, NSProcessInfo>>>();
 
     macro_rules! assert_id_like {
         ($wrapper:ident<T>) => {
@@ -128,32 +128,32 @@ fn test_generic_auto_traits() {
 
 #[test]
 fn send_sync_unwindsafe() {
-    assert_auto_traits::<NSAttributedString>();
+    assert_unwindsafe::<NSAttributedString>();
     assert_auto_traits::<NSComparisonResult>();
-    assert_auto_traits::<NSData>();
-    assert_auto_traits::<NSDictionary<NSString, NSString>>();
-    assert_auto_traits::<NSSet<NSString>>();
-    assert_auto_traits::<Retained<NSSet<NSString>>>();
+    assert_unwindsafe::<NSData>();
+    assert_auto_traits::<NSDictionary<NSProcessInfo, NSProcessInfo>>();
+    assert_auto_traits::<NSSet<NSProcessInfo>>();
+    assert_auto_traits::<Retained<NSSet<NSProcessInfo>>>();
     // TODO: Figure out if Send + Sync is safe?
-    // assert_auto_traits::<NSEnumerator2<NSString>>();
-    // assert_auto_traits::<NSFastEnumerator2<NSArray<NSString>>>();
+    // assert_auto_traits::<NSEnumerator2<NSProcessInfo>>();
+    // assert_auto_traits::<NSFastEnumerator2<NSArray<NSProcessInfo>>>();
     assert_auto_traits::<NSError>();
     assert_auto_traits::<NSException>();
     assert_auto_traits::<CGFloat>();
     assert_auto_traits::<NSPoint>();
     assert_auto_traits::<NSRect>();
     assert_auto_traits::<NSSize>();
-    assert_auto_traits::<NSMutableArray<NSString>>();
-    assert_auto_traits::<NSMutableAttributedString>();
-    assert_auto_traits::<NSMutableData>();
-    assert_auto_traits::<NSMutableDictionary<NSString, NSString>>();
-    assert_auto_traits::<NSMutableSet<NSString>>();
-    assert_auto_traits::<NSMutableString>();
+    assert_auto_traits::<NSMutableArray<NSProcessInfo>>();
+    assert_unwindsafe::<NSMutableAttributedString>();
+    assert_unwindsafe::<NSMutableData>();
+    assert_auto_traits::<NSMutableDictionary<NSProcessInfo, NSProcessInfo>>();
+    assert_auto_traits::<NSMutableSet<NSProcessInfo>>();
+    assert_unwindsafe::<NSMutableString>();
     assert_auto_traits::<NSNumber>();
     // assert_auto_traits::<NSObject>(); // Intentional
     assert_auto_traits::<NSProcessInfo>();
     assert_auto_traits::<NSRange>();
-    assert_auto_traits::<NSString>();
+    assert_unwindsafe::<NSString>();
     assert_unwindsafe::<MainThreadMarker>(); // Intentional
     assert_auto_traits::<NSThread>();
     assert_auto_traits::<NSUUID>();

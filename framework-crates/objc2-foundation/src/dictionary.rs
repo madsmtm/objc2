@@ -160,6 +160,18 @@ impl<K: Message + Eq + Hash, V: Message> NSMutableDictionary<K, V> {
 
 extern_methods!(
     unsafe impl<K: Message + Eq + Hash, V: Message> NSDictionary<K, V> {
+        /// Returns a reference to the value corresponding to the key.
+        ///
+        /// # Examples
+        ///
+        #[cfg_attr(feature = "NSString", doc = "```")]
+        #[cfg_attr(not(feature = "NSString"), doc = "```ignore")]
+        /// use objc2_foundation::{ns_string, NSMutableDictionary};
+        ///
+        /// let mut dict = NSMutableDictionary::new();
+        /// dict.insert(ns_string!("key"), ns_string!("value"));
+        /// assert_eq!(dict.get(ns_string!("key")), Some(ns_string!("value")));
+        /// ```
         #[doc(alias = "objectForKey:")]
         #[method(objectForKey:)]
         pub fn get(&self, key: &K) -> Option<&V>;
@@ -175,20 +187,6 @@ extern_methods!(
         }
 
         /// Returns a mutable reference to the value corresponding to the key.
-        ///
-        /// # Examples
-        ///
-        #[cfg_attr(all(feature = "NSString", feature = "NSObject"), doc = "```")]
-        #[cfg_attr(
-            not(all(feature = "NSString", feature = "NSObject")),
-            doc = "```ignore"
-        )]
-        /// use objc2_foundation::{ns_string, NSMutableDictionary, NSMutableString, NSString};
-        ///
-        /// let mut dict = NSMutableDictionary::new();
-        /// dict.insert_id(ns_string!("one"), NSMutableString::new());
-        /// println!("{:?}", dict.get_mut(ns_string!("one")));
-        /// ```
         #[doc(alias = "objectForKey:")]
         #[method(objectForKey:)]
         pub fn get_mut(&mut self, key: &K) -> Option<&mut V>
@@ -233,25 +231,6 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     }
 
     /// Returns a vector of mutable references to the values in the dictionary.
-    ///
-    /// # Examples
-    ///
-    #[cfg_attr(
-        all(feature = "NSString", feature = "NSObject", feature = "NSEnumerator"),
-        doc = "```"
-    )]
-    #[cfg_attr(
-        not(all(feature = "NSString", feature = "NSObject", feature = "NSEnumerator")),
-        doc = "```ignore"
-    )]
-    /// use objc2_foundation::{ns_string, NSMutableDictionary, NSMutableString, NSString};
-    ///
-    /// let mut dict = NSMutableDictionary::new();
-    /// dict.insert_id(ns_string!("one"), NSMutableString::from_str("two"));
-    /// for val in dict.values_mut() {
-    ///     println!("{:?}", val);
-    /// }
-    /// ```
     #[doc(alias = "getObjects:andKeys:")]
     pub fn values_vec_mut(&mut self) -> Vec<&mut V>
     where
@@ -351,10 +330,10 @@ impl<K: Message + Eq + Hash, V: Message> NSMutableDictionary<K, V> {
     /// # Examples
     ///
     /// ```
-    /// use objc2_foundation::{ns_string, NSCopying, NSMutableDictionary};
+    /// use objc2_foundation::{ns_string, NSMutableDictionary};
     ///
     /// let mut dict = NSMutableDictionary::new();
-    /// dict.insert_id(ns_string!("key"), ns_string!("value").copy());
+    /// dict.insert(ns_string!("key"), ns_string!("value"));
     /// ```
     #[cfg(feature = "NSObject")]
     #[doc(alias = "setObject:forKey:")]
@@ -427,6 +406,24 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     //     todo!()
     // }
 
+    /// Returns an iterator of references to the values in the dictionary.
+    ///
+    /// # Examples
+    ///
+    #[cfg_attr(all(feature = "NSString", feature = "NSEnumerator"), doc = "```")]
+    #[cfg_attr(
+        not(all(feature = "NSString", feature = "NSEnumerator")),
+        doc = "```ignore"
+    )]
+    /// use objc2_foundation::{ns_string, NSMutableDictionary, NSString};
+    ///
+    /// let mut dict = NSMutableDictionary::new();
+    /// dict.insert(ns_string!("key1"), ns_string!("value1"));
+    /// dict.insert(ns_string!("key2"), ns_string!("value2"));
+    /// for val in dict.values() {
+    ///     assert!(val.hasPrefix(ns_string!("value")));
+    /// }
+    /// ```
     #[doc(alias = "objectEnumerator")]
     #[cfg(feature = "NSEnumerator")]
     pub fn values(&self) -> Values<'_, K, V> {

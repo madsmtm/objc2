@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added the feature flag `"relax-sign-encoding"`, which when enabled, allows
   using e.g. `NSInteger` in places where you would otherwise have to use
   `NSUInteger`.
+* Added new mutability options `InteriorMutableWithSubclass` and
+  `InteriorMutableWithSuperclass`.
 
 ### Changed
 * Renamed `Id` to `Retained`, to better reflect what it represents.

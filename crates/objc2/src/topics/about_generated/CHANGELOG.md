@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   creating main-thread only statics.
 * `objc2-foundation`: `MainThreadMarker::from` now debug-asserts that it is
   actually running on the main thread.
+* `objc2-foundation`: Added `NSData::to_vec` and `NSData::iter` helper methods.
 
 ### Changed
 * `objc2-foundation`: Allow using `MainThreadBound` without the `NSThread`
@@ -27,6 +28,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   prevents real-world usage of these types, and isn't actually needed for
   soundness (the documentation mentions the collection being "corrupt" if the
   hash is changed, but that's not the same as it being unsound).
+* `objc2-foundation` **BREAKING**: Made the following types `InteriorMutable`:
+  - `NSString` and `NSMutableString`.
+  - `NSAttributedString` and `NSMutableAttributedString`.
+  - `NSCharacterSet` and `NSMutableCharacterSet`.
+  - `NSURLRequest` and `NSMutableURLRequest`.
+  - `NSData` and `NSMutableData`.
+
+  This means that these can now be `retain`-ed like you would expect, and you
+  no longer need to use `mut` to mutate them, but it also means that they are
+  no longer `Send + Sync`.
+* `objc2-foundation` **BREAKING**: Renamed the `bytes[_mut]` methods on
+  `NSData` to `as[_mut]_slice_unchecked`, and made them `unsafe`, since the
+  data can no longer ensure that it is not mutated while the bytes are in use.
 
 ### Deprecated
 * `objc2-foundation`: Moved `MainThreadMarker` to `objc2`.

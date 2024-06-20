@@ -2,15 +2,16 @@
 use alloc::vec;
 
 use objc2::rc::Allocated;
+use objc2::runtime::AnyObject;
 use objc2::{msg_send, ClassType};
 
-#[cfg(feature = "NSValue")]
-use crate::Foundation::NSNumber;
-use crate::Foundation::{self, NSMutableArray, NSObject};
+use crate::{NSMutableArray, NSObject};
 
 #[test]
 #[cfg(feature = "NSValue")]
 fn test_creation() {
+    use crate::NSNumber;
+
     let _ = <NSMutableArray<NSNumber>>::from_vec(vec![]);
     let _ = NSMutableArray::from_vec(vec![NSNumber::new_u8(4), NSNumber::new_u8(2)]);
 
@@ -22,19 +23,16 @@ fn test_creation() {
 }
 
 #[test]
-#[cfg(feature = "NSString")]
 #[cfg_attr(
     feature = "gnustep-1-7",
     ignore = "thread safety issues regarding initialization"
 )]
 fn test_containing_mutable_objects() {
-    use Foundation::NSMutableString;
-
-    let mut array = NSMutableArray::from_vec(vec![NSMutableString::new()]);
-    let _: &mut NSMutableString = &mut array[0];
-    let _: &mut NSMutableString = array.get_mut(0).unwrap();
-    let _: &mut NSMutableString = array.first_mut().unwrap();
-    let _: &mut NSMutableString = array.last_mut().unwrap();
+    let mut array = NSMutableArray::from_vec(vec![NSMutableArray::<AnyObject>::new()]);
+    let _: &mut NSMutableArray = &mut array[0];
+    let _: &mut NSMutableArray = array.get_mut(0).unwrap();
+    let _: &mut NSMutableArray = array.first_mut().unwrap();
+    let _: &mut NSMutableArray = array.last_mut().unwrap();
 }
 
 #[test]
@@ -44,12 +42,12 @@ fn test_containing_mutable_objects() {
     ignore = "thread safety issues regarding initialization"
 )]
 fn test_allowed_mutation_while_iterating() {
-    use Foundation::{NSMutableString, NSString};
+    use crate::{NSMutableString, NSString};
 
-    let mut array = NSMutableArray::from_vec(vec![NSMutableString::new(), NSMutableString::new()]);
+    let array = NSMutableArray::from_vec(vec![NSMutableString::new(), NSMutableString::new()]);
     let to_add = NSString::from_str("test");
 
-    for s in &mut array {
+    for s in &array {
         s.appendString(&to_add);
     }
 
@@ -103,7 +101,7 @@ fn test_threaded() {
     ignore = "thread safety issues regarding initialization"
 )]
 fn test_into_vec() {
-    let array = NSMutableArray::from_id_slice(&[Foundation::NSString::new()]);
+    let array = NSMutableArray::from_id_slice(&[crate::NSString::new()]);
 
     let vec = NSMutableArray::into_vec(array);
     assert_eq!(vec.len(), 1);
@@ -112,11 +110,11 @@ fn test_into_vec() {
 #[test]
 #[cfg(all(feature = "NSObjCRuntime", feature = "NSString"))]
 fn test_sort() {
+    use crate::ns_string;
     use alloc::string::ToString;
-    use Foundation::NSString;
 
-    let strings = vec![NSString::from_str("hello"), NSString::from_str("hi")];
-    let mut strings = NSMutableArray::from_vec(strings);
+    let strings = [ns_string!("hello"), ns_string!("hi")];
+    let mut strings = NSMutableArray::from_slice(&strings);
 
     strings.sort_by(|s1, s2| s1.len().cmp(&s2.len()));
     assert_eq!(strings[0].to_string(), "hi");

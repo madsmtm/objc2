@@ -16,11 +16,6 @@ use objc2::{ClassType, Message};
 
 use crate::{NSMutableString, NSString};
 
-// SAFETY: `NSString` is immutable and `NSMutableString` can only be mutated
-// from `&mut` methods.
-unsafe impl Sync for NSString {}
-unsafe impl Send for NSString {}
-
 // Even if an exception occurs inside a string method, the state of the string
 // (should) still be perfectly safe to access.
 impl UnwindSafe for NSString {}
@@ -296,7 +291,7 @@ impl Ord for NSMutableString {
 // See `fruity`'s implementation:
 // https://github.com/nvzqz/fruity/blob/320efcf715c2c5fbd2f3084f671f2be2e03a6f2b/src/foundation/ns_string/mod.rs#L69-L163
 
-impl AddAssign<&NSString> for NSMutableString {
+impl AddAssign<&NSString> for &NSMutableString {
     #[inline]
     fn add_assign(&mut self, other: &NSString) {
         self.appendString(other);
@@ -342,7 +337,7 @@ impl fmt::Debug for NSMutableString {
     }
 }
 
-impl fmt::Write for NSMutableString {
+impl fmt::Write for &NSMutableString {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         let nsstring = NSString::from_str(s);
         self.appendString(&nsstring);

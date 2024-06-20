@@ -149,6 +149,13 @@ where
 {
 }
 impl ValidSubclassMutability<mutability::InteriorMutable> for mutability::Root {}
+impl<MS, IS> ValidSubclassMutability<mutability::InteriorMutableWithSubclass<MS>>
+    for mutability::Root
+where
+    MS: ?Sized + ClassType<Mutability = mutability::InteriorMutableWithSuperclass<IS>>,
+    IS: ?Sized + ClassType<Mutability = mutability::InteriorMutableWithSubclass<MS>>,
+{
+}
 impl ValidSubclassMutability<mutability::MainThreadOnly> for mutability::Root {}
 
 // Immutable
@@ -181,6 +188,25 @@ impl<IS: ?Sized + ClassType> ValidSubclassMutability<mutability::Mutable>
 // InteriorMutable
 impl ValidSubclassMutability<mutability::InteriorMutable> for mutability::InteriorMutable {}
 impl ValidSubclassMutability<mutability::MainThreadOnly> for mutability::InteriorMutable {}
+
+// InteriorMutableWithSubclass
+impl<MS, IS> ValidSubclassMutability<mutability::InteriorMutableWithSuperclass<IS>>
+    for mutability::InteriorMutableWithSubclass<MS>
+where
+    MS: ?Sized + ClassType<Mutability = mutability::InteriorMutableWithSuperclass<IS>>,
+    IS: ?Sized + ClassType<Mutability = mutability::InteriorMutableWithSubclass<MS>>,
+{
+}
+impl<S: ?Sized + ClassType> ValidSubclassMutability<mutability::InteriorMutable>
+    for mutability::InteriorMutableWithSubclass<S>
+{
+}
+
+// InteriorMutableWithSuperclass
+impl<S: ?Sized + ClassType> ValidSubclassMutability<mutability::InteriorMutable>
+    for mutability::InteriorMutableWithSuperclass<S>
+{
+}
 
 // MainThreadOnly
 impl ValidSubclassMutability<mutability::MainThreadOnly> for mutability::MainThreadOnly {}

@@ -48,7 +48,7 @@
 //! let string = ns_string!("world");
 //! println!("hello {string}");
 //!
-//! let array = NSArray::from_id_slice(&[string.copy()]);
+//! let array = NSArray::from_slice(&[string]);
 //! println!("{array:?}");
 //! ```
 //!

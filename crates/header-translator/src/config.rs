@@ -366,6 +366,24 @@ impl<'de> Deserialize<'de> for Mutability {
                     return Ok(Mutability::MutableWithImmutableSuperclass(item));
                 }
 
+                if let Some(value) = value.strip_prefix("InteriorMutableWithSubclass(") {
+                    let value = value
+                        .strip_suffix(')')
+                        .ok_or(de::Error::custom("end parenthesis"))?;
+                    let item =
+                        parse_itemidentifier(value).ok_or(de::Error::custom("requires ::"))?;
+                    return Ok(Mutability::InteriorMutableWithSubclass(item));
+                }
+
+                if let Some(value) = value.strip_prefix("InteriorMutableWithSuperclass(") {
+                    let value = value
+                        .strip_suffix(')')
+                        .ok_or(de::Error::custom("end parenthesis"))?;
+                    let item =
+                        parse_itemidentifier(value).ok_or(de::Error::custom("requires ::"))?;
+                    return Ok(Mutability::InteriorMutableWithSuperclass(item));
+                }
+
                 match value {
                     "Immutable" => Ok(Mutability::Immutable),
                     "Mutable" => Ok(Mutability::Mutable),

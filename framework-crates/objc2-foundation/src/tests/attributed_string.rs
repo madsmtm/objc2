@@ -6,7 +6,7 @@ use alloc::{format, vec};
 use objc2::rc::{autoreleasepool, Retained};
 use objc2::runtime::AnyObject;
 
-use crate::Foundation::{self, NSAttributedString, NSObject, NSString};
+use crate::Foundation::{self, ns_string, NSAttributedString, NSObject, NSString};
 
 #[test]
 fn test_new() {
@@ -26,7 +26,7 @@ fn test_string_bound_to_attributed() {
 
 #[test]
 fn test_from_nsstring() {
-    let s = NSAttributedString::from_nsstring(&NSString::from_str("abc"));
+    let s = NSAttributedString::from_nsstring(ns_string!("abc"));
     assert_eq!(&s.string().to_string(), "abc");
 }
 
@@ -34,7 +34,7 @@ fn test_from_nsstring() {
 fn test_copy() {
     use Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
 
-    let s1 = NSAttributedString::from_nsstring(&NSString::from_str("abc"));
+    let s1 = NSAttributedString::from_nsstring(ns_string!("abc"));
     let s2 = s1.copy();
     // NSAttributedString performs this optimization in GNUStep's runtime,
     // but not in Apple's; so we don't test for it!
@@ -49,7 +49,7 @@ fn test_copy() {
 #[test]
 #[cfg(feature = "NSDictionary")]
 fn test_debug() {
-    let s = NSAttributedString::from_nsstring(&NSString::from_str("abc"));
+    let s = NSAttributedString::from_nsstring(ns_string!("abc"));
     let expected = if cfg!(feature = "gnustep-1-7") {
         "abc{}"
     } else {
@@ -61,8 +61,8 @@ fn test_debug() {
     let ptr: *const AnyObject = &*obj;
     let s = unsafe {
         NSAttributedString::new_with_attributes(
-            &NSString::from_str("abc"),
-            &Foundation::NSDictionary::from_vec(&[&*NSString::from_str("test")], vec![obj]),
+            ns_string!("abc"),
+            &Foundation::NSDictionary::from_vec(&[ns_string!("test")], vec![obj]),
         )
     };
     let expected = if cfg!(feature = "gnustep-1-7") {
@@ -87,7 +87,7 @@ fn test_new_mutable() {
 fn test_copy_mutable() {
     use Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
 
-    let s1 = Foundation::NSMutableAttributedString::from_nsstring(&NSString::from_str("abc"));
+    let s1 = Foundation::NSMutableAttributedString::from_nsstring(ns_string!("abc"));
     let s2 = s1.copy();
     assert_ne!(Retained::as_ptr(&s1).cast(), Retained::as_ptr(&s2));
     assert!(s2.is_kind_of::<NSAttributedString>());

@@ -241,10 +241,6 @@ class.NSEvent.mutability = "Immutable"
 class.NSTouch.mutability = "Immutable"
 class.NSUserInterfaceCompressionOptions.mutability = "Immutable"
 
-# Subclasses `NSMutableAttributedString`, though I think this should
-# actually be `InteriorMutable`?
-class.NSTextStorage.mutability = "Mutable"
-
 ###
 ### Safety
 ###

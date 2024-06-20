@@ -1,5 +1,5 @@
 error[E0282]: type annotations needed
  --> ui/msg_send_id_underspecified_error1.rs
   |
-  |     let _: Result<Retained<NSString>, _> = unsafe { msg_send_id![obj, error: _] };
+  |     let _: Result<Retained<NSObject>, _> = unsafe { msg_send_id![obj, error: _] };
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type

@@ -35,9 +35,8 @@ use crate::{ffi, ClassType, Message};
 /// `Retained<T>` can be thought of as kind of a weird combination of [`Arc`]
 /// and [`Box`]:
 ///
-/// If `T` implements [`IsMutable`] (like it does on `NSMutableString` and
-/// `NSMutableArray<_>`), `Retained<T>` acts like `Box<T>`, and allows mutable
-/// / unique access to the type.
+/// If `T` implements [`IsMutable`], `Retained<T>` acts like `Box<T>`, and
+/// allows mutable / unique access to the type.
 ///
 /// Otherwise, which is the most common case, `Retained<T>` acts like
 /// `Arc<T>`, and allows cloning by bumping the reference count.
@@ -53,9 +52,10 @@ use crate::{ffi, ClassType, Message};
 ///
 /// It also forwards the implementation of a bunch of standard library traits
 /// such as [`PartialEq`], [`AsRef`], and so on, so that it becomes possible
-/// to use e.g. `Retained<NSString>` as if it was `NSString`. (Having
+/// to use e.g. `Retained<NSString>` as if it was `NSString`. Note that having
 /// `NSString` directly is not possible since Objective-C objects cannot live
-/// on the stack, but instead must reside on the heap).
+/// on the stack, but instead must reside on the heap, and as such must be
+/// accessed behind a pointer or a reference (i.e. `&NSString`).
 ///
 /// Note that because of current limitations in the Rust trait system, some
 /// traits like [`Default`], [`IntoIterator`], [`FromIterator`], [`From`] and
@@ -84,9 +84,9 @@ use crate::{ffi, ClassType, Message};
 /// Various usage of `Retained` on an immutable object.
 ///
 /// ```
-/// # #[cfg(not_available)]
-/// use objc2_foundation::{NSObject, NSString};
 /// # use objc2::runtime::NSObject;
+/// # #[cfg(available_in_foundation)]
+/// use objc2_foundation::{NSObject, NSString};
 /// use objc2::rc::Retained;
 /// use objc2::{ClassType, msg_send_id};
 /// #
@@ -109,11 +109,10 @@ use crate::{ffi, ClassType, Message};
 /// // let string = NSString::new();
 ///
 /// // Methods on `NSString` is usable via. `Deref`
-/// #[cfg(not_available)]
-/// assert_eq!(string.len(), 0);
+/// # #[cfg(available_in_foundation)]
+/// assert_eq!(string.length(), 0);
 ///
-/// // Bump the reference count of the object (possible because the object is
-/// // immutable, would not be possible for `NSMutableString`).
+/// // Bump the reference count of the object.
 /// let another_ref: Retained<NSString> = string.clone();
 ///
 /// // Convert one of the references to a reference to `NSObject` instead
@@ -335,11 +334,14 @@ impl<T: Message> Retained<T> {
     /// Additionally, you must ensure that any safety invariants that the new
     /// type has are upheld.
     ///
-    /// Note that it is not in general safe to cast e.g. `Retained<NSString>` to
-    /// `Retained<NSMutableString>`, even if you've checked at runtime that the
-    /// object is an instance of `NSMutableString`! This is because
-    /// `Retained<NSMutableString>` assumes the string is unique, whereas it may
-    /// have been cloned while being an `Retained<NSString>`.
+    /// Note that it is generally discouraged to cast e.g. `NSString` to
+    /// `NSMutableString`, even if you've checked at runtime that the object
+    /// is an instance of `NSMutableString`! This is because APIs are
+    /// generally allowed to return mutable objects internally, but still
+    /// assume that no-one mutates those objects if the API declares the
+    /// object as immutable, see [Apple's documentation on this][recv-mut].
+    ///
+    /// [recv-mut]: https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html#//apple_ref/doc/uid/TP40010810-CH5-SW66
     #[inline]
     pub unsafe fn cast<U: Message>(this: Self) -> Retained<U> {
         let ptr = ManuallyDrop::new(this).ptr.cast();
@@ -703,12 +705,12 @@ impl<T: Message + IsIdCloneable> Clone for Retained<T> {
     fn clone(&self) -> Self {
         // SAFETY:
         // - The object is known to not be mutable due to the `IsIdCloneable`
-        //   bound. Additionally, since the object is already an `Retained`, types
-        //   like `NSObject` and `NSString` that have a mutable subclass is
-        //   also allowed (since even if the object is originally an
-        //   `Retained<NSMutableString>`, by converting it into `Retained<NSObject>` or
-        //   `Retained<NSString>` that fact is wholly forgotten, and the object
-        //   cannot ever be mutated again).
+        //   bound. Additionally, since the object is already a `Retained`,
+        //   types that have a mutable subclass are also allowed (since even
+        //   if the object is originally a `Retained<MyMutableObject>`, by
+        //   converting it into `Retained<NSObject>` or `Retained<MyObject>`,
+        //   that fact is wholly forgotten, and the object cannot ever be
+        //   mutated again).
         // - The pointer is valid.
         let obj = unsafe { Retained::retain(self.ptr.as_ptr()) };
         // SAFETY: `objc_retain` always returns the same object pointer, and
@@ -825,6 +827,14 @@ mod private {
     }
 
     impl<T: ?Sized> SendSyncHelper<T> for mutability::InteriorMutable {
+        type EquivalentType = ArcLikeStorage<T>;
+    }
+
+    impl<T: ?Sized, S: ?Sized> SendSyncHelper<T> for mutability::InteriorMutableWithSubclass<S> {
+        type EquivalentType = ArcLikeStorage<T>;
+    }
+
+    impl<T: ?Sized, S: ?Sized> SendSyncHelper<T> for mutability::InteriorMutableWithSuperclass<S> {
         type EquivalentType = ArcLikeStorage<T>;
     }
 

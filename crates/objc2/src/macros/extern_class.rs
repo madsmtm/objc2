@@ -456,14 +456,14 @@ macro_rules! __extern_class_impl_traits {
         // consideration, the lifetime of `&mut Self::Target` is still tied to
         // `&mut self`.
         //
-        // Usually we don't want to allow `&mut` of immutable objects like
-        // `NSString`, because their `NSCopying` implementation returns the
-        // same object, and would violate aliasing rules.
+        // Usually we don't want to allow `&mut` of immutable objects, because
+        // their `NSCopying` implementation returns the same object, and that
+        // would violate aliasing rules.
         //
-        // But `&mut NSMutableString` -> `&mut NSString` safe, since the
-        // `NSCopying` implementation of `NSMutableString` is still used on
-        // the `&mut NSString`, and that is guaranteed to return a different
-        // object.
+        // But even then, `&mut MyMutableObject` -> `&mut MyObject` is still
+        // safe, as it's the `NSCopying` implementation of `MyMutableObject`
+        // that is used on the `&mut MyObject`, and that is guaranteed to
+        // return a different object.
         $(#[$impl_m])*
         impl<$($t)*> $crate::__macro_helpers::DerefMut for $for {
             #[inline]

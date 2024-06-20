@@ -20,9 +20,6 @@ static.UIKeyInputF1.skipped = true
 
 # These protocol impls would return the wrong types
 class.NSTextStorage.skipped-protocols = ["NSCopying", "NSMutableCopying"]
-# Subclasses `NSMutableAttributedString`, though I think this should
-# actually be `InteriorMutable`?
-class.NSTextStorage.mutability = "Mutable"
 
 # These subclass a generic struct, and hence the type parameter defaults to
 # `AnyObject`, which is not PartialEq, Eq nor Hash.

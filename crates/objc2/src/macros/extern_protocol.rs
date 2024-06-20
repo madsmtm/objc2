@@ -70,7 +70,9 @@
 ///
 /// # Examples
 ///
-/// Create a trait to represent the `NSItemProviderWriting` protocol.
+/// Create a trait to represent the `NSItemProviderWriting` protocol (in
+/// practice, you would import this from `objc2-foundation`, this is just for
+/// demonstration purposes).
 ///
 /// ```
 /// use std::ffi::c_void;
@@ -78,13 +80,12 @@
 /// use objc2::rc::Retained;
 /// use objc2::runtime::{NSObject, NSObjectProtocol};
 /// use objc2::{extern_protocol, ProtocolType};
-///
-/// // Assume these were correctly defined, as if they came from
-/// // `objc2-foundation`
-/// type NSArray<T> = T;
-/// type NSString = NSObject;
-/// type NSProgress = NSObject;
-/// type NSItemProviderRepresentationVisibility = NSInteger;
+/// # type NSArray<T> = T;
+/// # type NSString = NSObject;
+/// # type NSProgress = NSObject;
+/// # type NSItemProviderRepresentationVisibility = NSInteger;
+/// # #[cfg(defined_in_foundation)]
+/// use objc2_foundation::{NSArray, NSString, NSProgress, NSItemProviderRepresentationVisibility};
 ///
 /// extern_protocol!(
 ///     /// This comment will appear on the trait as expected.

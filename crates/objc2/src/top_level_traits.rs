@@ -229,8 +229,8 @@ pub unsafe trait ClassType: Message {
     // Note: No `Self: IsMutable` bound required here, since there is no way
     // to get `&mut self` in the first place.
     //
-    // Or at least, if we have `&mut NSMutableString`, we're allowed to get
-    // `&mut NSString`, and from that it will also make sense to allow getting
+    // Or at least, if we have `&mut MyMutableObject`, we're allowed to get
+    // `&mut MyObject`, and from that it will also make sense to allow getting
     // `&mut NSObject`.
     fn as_super_mut(&mut self) -> &mut Self::Super;
 
@@ -241,14 +241,11 @@ pub unsafe trait ClassType: Message {
     ///
     /// This is similar to using [`Clone` on `Retained<Self>`][clone-id], with
     /// the addition that it can be used on a plain reference. Note however
-    /// that this is not possible to use on certain types like `NSString`,
-    /// since if you only hold `&NSString`, that may have come from
-    /// `&mut NSMutableString`, in which case it would be unsound to erase the
-    /// lifetime information carried by the reference.
+    /// that this is not possible to use on types that may have come from
+    /// mutable types, as it would be unsound to erase the lifetime
+    /// information carried by such a reference.
     ///
-    /// In cases like that, you should rather use `NSCopying::copy` (since
-    /// that gives you a `NSString` whether the string was originally a
-    /// `NSString` or a `NSMutableString`).
+    /// In cases like that, you should rather use `NSCopying::copy`.
     ///
     /// [clone-id]: crate::rc::Retained#impl-Clone-for-Retained<T>
     //
