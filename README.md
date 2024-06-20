@@ -17,6 +17,13 @@ The crates you're interested in is probably:
 [`block2`]: ./crates/block2
 
 
+## Contact Us
+
+Always feel free to [open an issue on GitHub](https://github.com/madsmtm/objc2/issues/new/choose).
+
+If you prefer to have a more synchronous and less "formal" discussion, we have [a Matrix workspace](https://matrix.to/#/#objc2:matrix.org), feel free to ask any questions in the "Users" room.
+
+
 ## Goals
 
 There are many conflicting priorities in an open-source project like this
