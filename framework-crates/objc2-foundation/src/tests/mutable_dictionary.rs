@@ -6,7 +6,7 @@ use alloc::vec;
 use objc2::msg_send;
 use objc2::rc::Retained;
 
-use crate::Foundation::{self, NSMutableDictionary, NSNumber, NSObject};
+use crate::Foundation::{NSMutableDictionary, NSNumber, NSObject};
 
 fn sample_dict() -> Retained<NSMutableDictionary<NSNumber, NSObject>> {
     NSMutableDictionary::from_id_slice(
@@ -19,8 +19,7 @@ fn sample_dict() -> Retained<NSMutableDictionary<NSNumber, NSObject>> {
     )
 }
 
-#[cfg(feature = "NSString")]
-fn sample_dict_mut() -> Retained<NSMutableDictionary<NSNumber, Foundation::NSMutableString>> {
+fn sample_dict_mut() -> Retained<NSMutableDictionary<NSNumber, NSMutableDictionary>> {
     NSMutableDictionary::from_vec(
         &[
             &*NSNumber::new_i32(1),
@@ -28,9 +27,9 @@ fn sample_dict_mut() -> Retained<NSMutableDictionary<NSNumber, Foundation::NSMut
             &*NSNumber::new_i32(3),
         ],
         vec![
-            Foundation::NSMutableString::from_str("a"),
-            Foundation::NSMutableString::from_str("b"),
-            Foundation::NSMutableString::from_str("c"),
+            NSMutableDictionary::new(),
+            NSMutableDictionary::new(),
+            NSMutableDictionary::new(),
         ],
     )
 }
@@ -38,13 +37,12 @@ fn sample_dict_mut() -> Retained<NSMutableDictionary<NSNumber, Foundation::NSMut
 #[test]
 #[cfg(feature = "NSString")]
 fn dict_from_mutable() {
-    let _: Retained<NSMutableDictionary<Foundation::NSString, Foundation::NSString>> =
-        NSMutableDictionary::from_id_slice(
-            &[&*Foundation::NSMutableString::from_str("a")],
-            &[Retained::into_super(Foundation::NSMutableString::from_str(
-                "b",
-            ))],
-        );
+    use crate::{NSMutableString, NSString};
+
+    let _: Retained<NSMutableDictionary<NSString, NSString>> = NSMutableDictionary::from_slice(
+        &[&*NSMutableString::from_str("a")],
+        &[&**NSMutableString::from_str("b")],
+    );
 }
 
 #[test]
@@ -54,7 +52,6 @@ fn test_new() {
 }
 
 #[test]
-#[cfg(feature = "NSString")]
 fn test_get_mut() {
     let mut dict = sample_dict_mut();
 
@@ -64,7 +61,6 @@ fn test_get_mut() {
 }
 
 #[test]
-#[cfg(feature = "NSString")]
 fn test_values_mut() {
     let mut dict = sample_dict_mut();
     let vec = dict.values_vec_mut();

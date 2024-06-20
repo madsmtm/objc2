@@ -160,23 +160,6 @@ pub struct Mutable {
 /// - [`IsAllowedMutable`].
 /// - You are allowed to hand out pointers / references to an instance's
 ///   internal data, since you know such data will never be mutated.
-///
-///
-/// # Example
-///
-/// ```ignore
-/// unsafe impl ClassType for NSString {
-///     type Super = NSObject;
-///     type Mutability = ImmutableWithMutableSubclass<NSMutableString>;
-///     // ...
-/// }
-///
-/// unsafe impl ClassType for NSMutableString {
-///     type Super = NSString;
-///     type Mutability = MutableWithImmutableSubclass<NSString>;
-///     // ...
-/// }
-/// ```
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct ImmutableWithMutableSubclass<MS: ?Sized> {
     inner: Never,
@@ -196,23 +179,6 @@ pub struct ImmutableWithMutableSubclass<MS: ?Sized> {
 /// - You are allowed to hand out pointers / references to an instance's
 ///   internal data, since you know such data will never be mutated without
 ///   the borrowchecker catching it.
-///
-///
-/// # Example
-///
-/// ```ignore
-/// unsafe impl ClassType for NSData {
-///     type Super = NSObject;
-///     type Mutability = ImmutableWithMutableSubclass<NSMutableData>;
-///     // ...
-/// }
-///
-/// unsafe impl ClassType for NSMutableData {
-///     type Super = NSData;
-///     type Mutability = MutableWithImmutableSubclass<NSData>;
-///     // ...
-/// }
-/// ```
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct MutableWithImmutableSuperclass<IS: ?Sized> {
     inner: Never,
@@ -251,6 +217,28 @@ pub struct InteriorMutable {
 ///
 /// This is effectively the same as [`InteriorMutable`], except that the type
 /// returned by `NSMutableCopying::mutableCopy` is the mutable counterpart.
+///
+/// Functionality that is provided with this:
+/// - [`IsRetainable`] -> [`ClassType::retain`].
+/// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
+/// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
+///
+///
+/// # Example
+///
+/// ```ignore
+/// unsafe impl ClassType for NSString {
+///     type Super = NSObject;
+///     type Mutability = InteriorMutableWithSubclass<NSMutableString>;
+///     // ...
+/// }
+///
+/// unsafe impl ClassType for NSMutableString {
+///     type Super = NSString;
+///     type Mutability = InteriorMutableWithSuperclass<NSString>;
+///     // ...
+/// }
+/// ```
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct InteriorMutableWithSubclass<Subclass: ?Sized> {
     inner: Never,
@@ -261,6 +249,28 @@ pub struct InteriorMutableWithSubclass<Subclass: ?Sized> {
 ///
 /// This is effectively the same as [`InteriorMutable`], except that the type
 /// returned by `NSCopying::copy` is the immutable counterpart.
+///
+/// Functionality that is provided with this:
+/// - [`IsRetainable`] -> [`ClassType::retain`].
+/// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
+/// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
+
+///
+/// # Example
+///
+/// ```ignore
+/// unsafe impl ClassType for NSData {
+///     type Super = NSObject;
+///     type Mutability = InteriorMutableWithSubclass<NSMutableData>;
+///     // ...
+/// }
+///
+/// unsafe impl ClassType for NSMutableData {
+///     type Super = NSData;
+///     type Mutability = InteriorMutableWithSuperclass<NSData>;
+///     // ...
+/// }
+/// ```
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct InteriorMutableWithSuperclass<Superclass: ?Sized> {
     inner: Never,

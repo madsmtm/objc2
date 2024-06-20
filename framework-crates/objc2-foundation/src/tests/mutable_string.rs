@@ -1,8 +1,8 @@
 #![cfg(feature = "NSString")]
 use alloc::format;
 use alloc::string::{String, ToString};
+use core::any::TypeId;
 use core::fmt::Write;
-use core::{any::TypeId, mem};
 use objc2::runtime::NSObject;
 
 use objc2::mutability::CounterpartOrSelf;
@@ -24,25 +24,27 @@ fn test_from_nsstring() {
 }
 
 #[test]
+#[allow(clippy::deref_addrof)]
 fn test_append() {
-    let mut s = NSMutableString::from_str("abc");
+    let s = NSMutableString::from_str("abc");
     s.appendString(&NSString::from_str("def"));
-    *s += &NSString::from_str("ghi");
+    *&mut &*s += &NSString::from_str("ghi");
     assert_eq!(&s.to_string(), "abcdefghi");
 }
 
 #[test]
 fn test_set() {
-    let mut s = NSMutableString::from_str("abc");
+    let s = NSMutableString::from_str("abc");
     s.setString(&NSString::from_str("def"));
     assert_eq!(&s.to_string(), "def");
 }
 
 #[test]
+#[allow(clippy::deref_addrof)]
 fn test_with_capacity() {
-    let mut s = NSMutableString::stringWithCapacity(3);
-    *s += &NSString::from_str("abc");
-    *s += &NSString::from_str("def");
+    let s = NSMutableString::stringWithCapacity(3);
+    *&mut &*s += &NSString::from_str("abc");
+    *&mut &*s += &NSString::from_str("def");
     assert_eq!(&s.to_string(), "abcdef");
 }
 
@@ -106,19 +108,15 @@ fn test_copy_with_zone() {
 /// `NSString`'s `Debug` implementation is correct).
 #[test]
 fn write_same_string() {
-    let mut string = NSMutableString::from_str("foo");
+    let string = NSMutableString::from_str("foo");
     let mut expected = String::from("foo");
 
     for i in 0..3 {
-        // Erase lifetime, hack for now since this pattern would be outlawed
-        // by `NSMutableString` requring `&mut` for mutation.
-        let string_immutable = unsafe { mem::transmute::<&NSString, &'static NSString>(&**string) };
-        write!(&mut string, "{string_immutable}").unwrap();
-        let string_immutable = unsafe { mem::transmute::<&NSString, &'static NSString>(&**string) };
-        write!(&mut string, "{string_immutable:?}").unwrap();
+        write!(&mut &*string, "{string}").unwrap();
+        write!(&mut &*string, "{string:?}").unwrap();
         // Test `NSObject`'s Debug impl as well.
-        let object_immutable = unsafe { mem::transmute::<&NSObject, &'static NSObject>(&**string) };
-        write!(&mut string, "{object_immutable:?}").unwrap();
+        let object: &NSObject = &string;
+        write!(&mut &*string, "{object:?}").unwrap();
 
         let expected_clone = expected.clone();
         write!(&mut expected, "{expected_clone}").unwrap();
@@ -126,6 +124,20 @@ fn write_same_string() {
         write!(&mut expected, "{expected_clone:?}").unwrap();
         let expected_clone = expected.clone();
         write!(&mut expected, "{expected_clone}").unwrap();
+
+        assert_eq!(string.to_string(), expected, "failed at iteration {i}");
+    }
+}
+
+/// Test that appending a NSMutableString to itself works (i.e. ensure that
+/// `appendString` is sound).
+#[test]
+fn append_same_string() {
+    let string = NSMutableString::from_str("foo");
+    let mut expected = String::from("foo");
+    for i in 0..3 {
+        string.appendString(&string);
+        expected += &*expected.clone();
 
         assert_eq!(string.to_string(), expected, "failed at iteration {i}");
     }

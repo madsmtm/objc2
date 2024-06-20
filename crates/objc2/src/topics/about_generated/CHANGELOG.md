@@ -27,6 +27,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   prevents real-world usage of these types, and isn't actually needed for
   soundness (the documentation mentions the collection being "corrupt" if the
   hash is changed, but that's not the same as it being unsound).
+* `objc2-foundation` **BREAKING**: Made the following types `InteriorMutable`:
+  - `NSString` and `NSMutableString`.
+
+  This means that these can now be `retain`-ed like you would expect, and you
+  no longer need to use `mut` to mutate them, but it also means that they are
+  no longer `Send + Sync`.
 
 ### Deprecated
 * `objc2-foundation`: Moved `MainThreadMarker` to `objc2`.

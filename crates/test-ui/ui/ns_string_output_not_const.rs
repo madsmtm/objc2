@@ -1,5 +1,9 @@
 use objc2_foundation::{ns_string, NSString};
 
 fn main() {
-    static STRING: &NSString = ns_string!("abc");
+    struct SyncString(&'static NSString);
+
+    unsafe impl Sync for SyncString {}
+
+    static STRING: SyncString = SyncString(ns_string!("abc"));
 }

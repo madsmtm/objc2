@@ -266,8 +266,8 @@ class.NSXPCCoder.methods."decodeXPCObjectOfType:forKey:".skipped = true
 class.NSArray.mutability = "ImmutableWithMutableSubclass(Foundation::NSArray::NSMutableArray)"
 class.NSMutableArray.mutability = "MutableWithImmutableSuperclass(Foundation::NSArray::NSArray)"
 
-class.NSString.mutability = "ImmutableWithMutableSubclass(Foundation::NSString::NSMutableString)"
-class.NSMutableString.mutability = "MutableWithImmutableSuperclass(Foundation::NSString::NSString)"
+class.NSString.mutability = "InteriorMutableWithSubclass(Foundation::NSString::NSMutableString)"
+class.NSMutableString.mutability = "InteriorMutableWithSuperclass(Foundation::NSString::NSString)"
 
 class.NSAttributedString.mutability = "ImmutableWithMutableSubclass(Foundation::NSAttributedString::NSMutableAttributedString)"
 class.NSMutableAttributedString.mutability = "MutableWithImmutableSuperclass(Foundation::NSAttributedString::NSAttributedString)"
@@ -308,11 +308,6 @@ class.NSMutableURLRequest.mutability = "MutableWithImmutableSuperclass(Foundatio
 class.NSEnumerator.mutability = "Mutable"
 class.NSDirectoryEnumerator.mutability = "Mutable"
 
-# Allowed to be just `Immutable` since we've removed the `NSCopying` and
-# `NSMutableCopying` impls from these for now (they'd return the wrong
-# type).
-class.NSSimpleCString.mutability = "Immutable"
-class.NSConstantString.mutability = "Immutable"
 # Allowed to be just `Mutable` since we've removed the `NSCopying` and
 # `NSMutableCopying` impls from this for now (since they'd return the
 # wrong type).

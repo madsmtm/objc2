@@ -6,7 +6,7 @@ use alloc::{format, vec};
 
 use objc2::rc::Retained;
 
-use crate::{NSDictionary, NSObject, NSString};
+use crate::{ns_string, NSDictionary, NSObject, NSString};
 
 fn sample_dict(key: &str) -> Retained<NSDictionary<NSString, NSObject>> {
     let string = NSString::from_str(key);
@@ -24,11 +24,8 @@ fn test_len() {
 fn test_get() {
     let dict = sample_dict("abcd");
 
-    let string = NSString::from_str("abcd");
-    assert!(dict.get(&string).is_some());
-
-    let string = NSString::from_str("abcde");
-    assert!(dict.get(&string).is_none());
+    assert!(dict.get(ns_string!("abcd")).is_some());
+    assert!(dict.get(ns_string!("abcde")).is_none());
 }
 
 #[test]
@@ -89,20 +86,16 @@ fn test_arrays() {
 
 #[test]
 fn test_debug() {
-    let key = NSString::from_str("a");
-    let val = NSString::from_str("b");
-    let dict = NSDictionary::from_id_slice(&[&*key], &[val]);
+    let key = ns_string!("a");
+    let val = ns_string!("b");
+    let dict = NSDictionary::from_slice(&[key], &[val]);
     assert_eq!(format!("{dict:?}"), r#"{"a": "b"}"#);
 }
 
 #[test]
 fn new_different_lengths() {
     let dict = NSDictionary::from_id_slice(
-        &[
-            &*NSString::from_str("a"),
-            &*NSString::from_str("b"),
-            &*NSString::from_str("c"),
-        ],
+        &[ns_string!("a"), ns_string!("b"), ns_string!("c")],
         &[NSObject::new(), NSObject::new()],
     );
     assert_eq!(dict.len(), 2);

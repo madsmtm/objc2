@@ -4,19 +4,14 @@
 #![cfg(feature = "NSObjCRuntime")]
 use alloc::format;
 
-use crate::Foundation::{NSException, NSObject, NSString};
+use crate::{ns_string, NSException, NSObject};
 
 #[test]
 fn create_and_query() {
-    let exc = NSException::new(
-        &NSString::from_str("abc"),
-        Some(&NSString::from_str("def")),
-        None,
-    )
-    .unwrap();
+    let exc = NSException::new(ns_string!("abc"), Some(ns_string!("def")), None).unwrap();
 
-    assert_eq!(exc.name(), NSString::from_str("abc"));
-    assert_eq!(exc.reason().unwrap(), NSString::from_str("def"));
+    assert_eq!(&*exc.name(), ns_string!("abc"));
+    assert_eq!(&*exc.reason().unwrap(), ns_string!("def"));
     assert!(exc.userInfo().is_none());
 
     let debug = format!("<NSException: {exc:p}> 'abc' reason:def");
@@ -42,12 +37,7 @@ fn create_and_query() {
 #[test]
 #[should_panic = "'abc' reason:def"]
 fn unwrap() {
-    let exc = NSException::new(
-        &NSString::from_str("abc"),
-        Some(&NSString::from_str("def")),
-        None,
-    )
-    .unwrap();
+    let exc = NSException::new(ns_string!("abc"), Some(ns_string!("def")), None).unwrap();
 
     panic!("{exc:?}");
 }
