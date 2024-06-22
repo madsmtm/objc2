@@ -444,6 +444,8 @@ pub enum Stmt {
         designated_initializers: Vec<String>,
         derives: Derives,
         mutability: Mutability,
+        description: Option<String>,
+        comment: Option<String>,
         skipped: bool,
         sendable: bool,
     },
@@ -458,6 +460,8 @@ pub enum Stmt {
         source_superclass: Option<ItemIdentifier>,
         cls_generics: Vec<String>,
         category_name: Option<String>,
+        description: Option<String>,
+        comment: Option<String>,
         methods: Vec<Method>,
     },
     /// @interface class_name (category_name) <protocols*>
@@ -470,6 +474,8 @@ pub enum Stmt {
         cls: ItemIdentifier,
         cls_required_items: Vec<ItemIdentifier>,
         methods: Vec<Method>,
+        description: Option<String>,
+        comment: Option<String>,
     },
     /// @protocol name <protocols*>
     /// ->
@@ -481,6 +487,7 @@ pub enum Stmt {
         availability: Availability,
         protocols: BTreeSet<ItemIdentifier>,
         methods: Vec<Method>,
+        comment: Option<String>,
         required_sendable: bool,
         required_mainthreadonly: bool,
     },
@@ -494,6 +501,7 @@ pub enum Stmt {
         protocol_required_items: Vec<ItemIdentifier>,
         generics: Vec<String>,
         availability: Availability,
+        comment: Option<String>,
     },
     /// struct name {
     ///     fields*
@@ -514,6 +522,7 @@ pub enum Stmt {
         availability: Availability,
         boxable: bool,
         fields: Vec<(String, Ty)>,
+        comment: Option<String>,
         sendable: Option<bool>,
     },
     /// typedef NS_OPTIONS(type, name) {
@@ -537,6 +546,7 @@ pub enum Stmt {
         ty: Ty,
         kind: Option<UnexposedAttr>,
         variants: Vec<(String, Availability, Expr)>,
+        comment: Option<String>,
         sendable: Option<bool>,
     },
     /// Anonymous enum variants are emitted as free constants.
@@ -644,6 +654,7 @@ impl Stmt {
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
                 let id = ItemIdentifier::new(entity, context);
+                let comment = entity.get_comment();
                 let data = context.library(id.library_name()).class_data.get(&id.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
@@ -727,6 +738,8 @@ impl Stmt {
                                 source_superclass: Some(superclass_id.clone()),
                                 cls_generics: generics.clone(),
                                 category_name: None,
+                                description: None,
+                                comment: None,
                                 methods,
                             })
                         }
@@ -742,6 +755,8 @@ impl Stmt {
                     cls_generics: generics.clone(),
                     category_name: None,
                     methods,
+                    comment: comment.clone(),
+                    description: None,
                 };
 
                 iter::once(Self::ClassDecl {
@@ -757,6 +772,8 @@ impl Stmt {
                     } else {
                         data.map(|data| data.mutability.clone()).unwrap_or_default()
                     },
+                    description: None,
+                    comment: None,
                     skipped: data.map(|data| data.definition_skipped).unwrap_or_default(),
                     // Ignore sendability on superclasses; since it's an auto
                     // trait, it's propagated to subclasses anyhow!
@@ -770,6 +787,7 @@ impl Stmt {
                     protocol_required_items: items_required_by_decl(&entity, context),
                     generics: generics.clone(),
                     availability: availability.clone(),
+                    comment: None,
                 }))
                 .chain(iter::once(methods))
                 .chain(superclass_methods)
@@ -778,6 +796,7 @@ impl Stmt {
             EntityKind::ObjCCategoryDecl => {
                 let category = ItemIdentifier::new_optional(entity, context);
                 let availability = Availability::parse(entity, context);
+                let comment = entity.get_comment();
 
                 let mut cls_entity = None;
                 entity.visit_children(|entity, _parent| {
@@ -842,6 +861,7 @@ impl Stmt {
                     availability: availability.clone(),
                     protocol: context.replace_protocol_name(p),
                     protocol_required_items: items_required_by_decl(&entity, context),
+                    comment: None,
                 });
 
                 // For ease-of-use, if the category is defined in the same
@@ -912,6 +932,8 @@ impl Stmt {
                                 cls_generics: generics.clone(),
                                 category_name: category.name.clone(),
                                 methods,
+                                description: None,
+                                comment: None,
                             })
                         }
                     } else {
@@ -927,6 +949,8 @@ impl Stmt {
                         cls_generics: generics.clone(),
                         category_name: category.name.clone(),
                         methods,
+                        description: None,
+                        comment: None,
                     })
                     .chain(extra_methods)
                     .chain(protocol_impls)
@@ -997,6 +1021,8 @@ impl Stmt {
                             cls: cls.clone(),
                             cls_required_items: cls_required_items.clone(),
                             methods,
+                            description: None,
+                            comment: None,
                         })
                     }
                     .into_iter()
@@ -1053,6 +1079,7 @@ impl Stmt {
 
                 vec![Self::ProtocolDecl {
                     id,
+                    comment: None,
                     required_items: items_required_by_decl(entity, context),
                     actual_name,
                     availability,
@@ -1066,6 +1093,7 @@ impl Stmt {
                 let id = ItemIdentifier::new(entity, context);
                 let availability = Availability::parse(entity, context);
                 let mut kind = None;
+                let comment = entity.get_comment();
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
@@ -1184,6 +1212,7 @@ impl Stmt {
                     boxable,
                     fields,
                     sendable,
+                    comment: None,
                 }]
             }
             EntityKind::EnumDecl => {
@@ -1212,6 +1241,7 @@ impl Stmt {
                 let ty = Ty::parse_enum(ty, context);
                 let mut kind = None;
                 let mut variants = Vec::new();
+                let comment = entity.get_comment();
                 let mut sendable = None;
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
@@ -1322,6 +1352,7 @@ impl Stmt {
                         kind,
                         variants,
                         sendable,
+                        comment: None,
                     }]
                 }
             }
@@ -1694,6 +1725,8 @@ impl Stmt {
                     mutability,
                     skipped,
                     sendable,
+                    comment: _,
+                    description: _,
                 } => {
                     if *skipped {
                         return Ok(());
@@ -1811,6 +1844,8 @@ impl Stmt {
                     cls_generics,
                     category_name,
                     methods,
+                    comment: _,
+                    description: _,
                 } => {
                     writeln!(f, "extern_methods!(")?;
                     if let Some(source_superclass) = source_superclass {
@@ -1884,6 +1919,8 @@ impl Stmt {
                     cls,
                     cls_required_items,
                     methods,
+                    comment: _,
+                    description: _,
                 } => {
                     writeln!(f, "extern_category!(")?;
 
@@ -1950,6 +1987,7 @@ impl Stmt {
                     protocol,
                     protocol_required_items: _,
                     availability: _,
+                    comment: _,
                 } => {
                     let (generic_bound, where_bound) = if !generics.is_empty() {
                         match (protocol.library_name(), &*protocol.name) {
@@ -2012,6 +2050,7 @@ impl Stmt {
                     methods,
                     required_sendable: _,
                     required_mainthreadonly,
+                    comment: _,
                 } => {
                     writeln!(f, "extern_protocol!(")?;
 
@@ -2101,6 +2140,7 @@ impl Stmt {
                     boxable: _,
                     fields,
                     sendable,
+                    comment: _,
                 } => {
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
@@ -2154,6 +2194,7 @@ impl Stmt {
                     kind,
                     variants,
                     sendable,
+                    comment: _,
                 } => {
                     match kind {
                     // TODO: Once Rust gains support for more precisely

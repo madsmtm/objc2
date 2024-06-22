@@ -255,6 +255,7 @@ pub struct Method {
     is_error: bool,
     safe: bool,
     mutating: bool,
+    comment: Option<String>,
     is_pub: bool,
     // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
     non_isolated: bool,
@@ -464,6 +465,7 @@ impl Method {
         }
 
         let result_type = entity.get_result_type().expect("method return type");
+        //let comment = entity.get_comment();
         let default_nonnull = (selector == "init" && !is_class) || (selector == "new" && is_class);
         let mut result_type = Ty::parse_method_return(result_type, default_nonnull, context);
 
@@ -508,6 +510,7 @@ impl Method {
                 // since immutable methods are usually either declared on an
                 // immutable subclass, or as a property.
                 mutating: data.mutating.unwrap_or(parent_is_mutable),
+                comment: None,
                 is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
@@ -543,6 +546,7 @@ impl Method {
         }
 
         let availability = Availability::parse(&entity, context);
+        let comment = entity.get_comment();
 
         let modifiers = MethodModifiers::parse(&entity, context);
 
@@ -585,6 +589,7 @@ impl Method {
                 // is, so let's default to immutable.
                 mutating: getter_data.mutating.unwrap_or(false),
                 is_pub,
+                comment,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
             })
@@ -604,6 +609,7 @@ impl Method {
                 );
 
                 let fn_name = selector.strip_suffix(':').unwrap().to_string();
+                let comment = entity.get_comment();
                 let memory_management =
                     MemoryManagement::new(is_class, &selector, &result_type, modifiers);
 
@@ -628,6 +634,7 @@ impl Method {
                     safe: !setter_data.unsafe_,
                     // Setters are usually mutable if the class itself is.
                     mutating: setter_data.mutating.unwrap_or(parent_is_mutable),
+                    comment,
                     is_pub,
                     non_isolated: modifiers.non_isolated,
                     mainthreadonly,
@@ -682,6 +689,10 @@ impl fmt::Display for Method {
         // Attributes
         //
 
+        if let Some(ref comment) = self.comment {
+            let comment = crate::comment::preprocess(comment);
+            writeln!(f, "/**\n {comment} \n*/")?;
+        }
         write!(f, "{}", self.availability)?;
 
         if self.is_optional {
