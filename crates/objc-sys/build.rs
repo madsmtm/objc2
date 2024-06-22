@@ -22,7 +22,10 @@ fn main() {
     // aarch64-apple-ios-macabi
     // x86_64-apple-ios-macabi
     println!("cargo:rustc-check-cfg=cfg(target_abi_macabi)");
-    if target.ends_with("macabi") {
+    if std::env::var("CARGO_CFG_TARGET_ABI").as_deref() == Ok("macabi")
+        // Legacy check for Rust versions < 1.78 (still within MSRV)
+        || target.ends_with("macabi")
+    {
         println!("cargo:rustc-cfg=target_abi_macabi");
     }
 
@@ -34,7 +37,12 @@ fn main() {
     // i386-apple-ios
     // x86_64-apple-ios
     println!("cargo:rustc-check-cfg=cfg(target_simulator)");
-    if target.ends_with("sim") || target == "i386-apple-ios" || target == "x86_64-apple-ios" {
+    if std::env::var("CARGO_CFG_TARGET_ABI").as_deref() == Ok("sim")
+        // Legacy check for Rust versions < 1.78 (still within MSRV)
+        || target.ends_with("sim")
+        || target == "i386-apple-ios"
+        || target == "x86_64-apple-ios"
+    {
         println!("cargo:rustc-cfg=target_simulator");
     }
 
