@@ -3,6 +3,7 @@ use clang::token::{Token, TokenKind};
 use clang::{Entity, EntityKind};
 
 use crate::context::Context;
+use crate::unexposed_attr::UnexposedAttr::{Deprecated, NoEscape, NotOnEmbedded};
 
 /// Parts of `EntityKind::UnexposedAttr` that we can easily parse.
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -29,6 +30,8 @@ pub enum UnexposedAttr {
     NonIsolated,
 
     NoEscape,
+    NotOnEmbedded,
+    Deprecated
 }
 
 impl UnexposedAttr {
@@ -176,6 +179,18 @@ impl UnexposedAttr {
             | "WEBKIT_ENUM_DEPRECATED_MAC" => {
                 let _ = get_arguments();
                 None
+            }
+            "CF_IMPLICIT_BRIDGING_ENABLED" => {
+                None
+            },
+            "CG_UNAVAILABLE_EMBEDDED" => {
+                Some(NotOnEmbedded)
+            },
+            "__CG_DEPRECATED_ENUMERATOR" => {
+                Some(Deprecated)
+            },
+            "CF_NOESCAPE" => {
+                Some(NoEscape)
             }
             // For some reason we don't need to extract the arguments for
             // these, perhaps because they simply delegate to other macros.

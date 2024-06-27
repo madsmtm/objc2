@@ -457,7 +457,7 @@ impl Ty {
                     // Ignored for now; these are usually also emitted on the method/property,
                     // which is where they will be useful in any case.
                 }
-                Some(attr) => error!(?attr, "unknown attribute"),
+                Some(attr) => error!(?attr, "unknown attribute b"),
                 None => {}
             }
 

@@ -583,6 +583,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-core-graphics"
+version = "0.2.2"
+dependencies = [
+ "bitflags",
+ "block2",
+ "libc",
+ "objc2",
+ "objc2-foundation",
+ "objc2-metal",
+]
+
+[[package]]
 name = "objc2-core-image"
 version = "0.2.2"
 dependencies = [
@@ -649,6 +661,10 @@ dependencies = [
  "objc2",
  "objc2-foundation",
 ]
+
+[[package]]
+name = "objc2-dispatch"
+version = "0.2.2"
 
 [[package]]
 name = "objc2-encode"
