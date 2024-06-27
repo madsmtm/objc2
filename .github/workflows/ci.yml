@@ -24,7 +24,6 @@ env:
   RUST_BACKTRACE: 1
   # Faster compilation, error on warnings and only document current crate
   RUSTFLAGS: "--codegen=debuginfo=0 --deny=warnings"
-  RUSTDOCFLAGS: "--deny=warnings"
   # Minimum deployment targets.
   # Follows `rustc --target=x86_64-apple-darwin --print deployment-target`
   MACOSX_DEPLOYMENT_TARGET: 10.12
@@ -152,6 +151,9 @@ jobs:
 
     - name: cargo doc
       run: cargo doc --no-deps --document-private-items ${{ matrix.args }}
+      env:
+        # docsrs runs on nightly, so we can use nightly features when `docsrs` is enabled.
+        RUSTDOCFLAGS: "--deny=warnings --cfg=docsrs"
 
     - name: cargo clippy
       run: cargo clippy --all-targets ${{ matrix.args }}
