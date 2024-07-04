@@ -106,10 +106,7 @@ declare_class!(
             };
 
             // get the default device
-            let device = {
-                let ptr = unsafe { MTLCreateSystemDefaultDevice() };
-                unsafe { Retained::retain(ptr) }.expect("Failed to get default system device.")
-            };
+            let device = MTLCreateSystemDefaultDevice().expect("Failed to get default system device.");
 
             // create the command queue
             let command_queue = device
