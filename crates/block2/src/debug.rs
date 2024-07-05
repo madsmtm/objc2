@@ -43,8 +43,8 @@ pub(crate) fn debug_block_header(header: &BlockHeader, f: &mut DebugStruct<'_, '
     f.field(
         "descriptor",
         &BlockDescriptorHelper {
-            has_copy_dispose: header.flags.0 & BlockFlags::BLOCK_HAS_COPY_DISPOSE.0 != 0,
-            has_signature: header.flags.0 & BlockFlags::BLOCK_HAS_SIGNATURE.0 != 0,
+            has_copy_dispose: header.flags.has(BlockFlags::BLOCK_HAS_COPY_DISPOSE),
+            has_signature: header.flags.has(BlockFlags::BLOCK_HAS_SIGNATURE),
             descriptor: header.descriptor,
         },
     );
