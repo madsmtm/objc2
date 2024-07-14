@@ -169,6 +169,21 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
             // TODO: Use `Self::DESCRIPTOR_BASIC` when `F: Copy`
             // (probably only possible with specialization).
             descriptor: BlockDescriptorPtr {
+                // SAFETY: The descriptor must (probably) point to `static`
+                // memory, as Objective-C code may assume the block's
+                // descriptor to be alive past the lifetime of the block
+                // itself.
+                //
+                // Ideally, we'd have declared the descriptor as a `static`
+                // but since Rust doesn't have generic statics, we have to
+                // rely on [promotion] here to convert the constant into a
+                // static.
+                //
+                // For this to work, it requires that the descriptor type does
+                // not implement `Drop` (it does not), and that the descriptor
+                // does not contain `UnsafeCell` (it does not).
+                //
+                // [promotion]: https://doc.rust-lang.org/reference/destructors.html#constant-promotion
                 with_copy_dispose: &Self::DESCRIPTOR_WITH_CLONE,
             },
         };
@@ -213,6 +228,8 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
         } else {
             BlockFlags::EMPTY
         };
+        // See discussion in `new` above with regards to the safety of the
+        // pointer to the descriptor.
         let descriptor = if mem::needs_drop::<Self>() {
             BlockDescriptorPtr {
                 with_copy_dispose: &Self::DESCRIPTOR_WITH_DROP,
