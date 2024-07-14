@@ -572,6 +572,8 @@ pub enum Stmt {
         result_type: Ty,
         // Some -> inline function.
         body: Option<()>,
+        must_use: bool,
+        pure: bool,
         safe: bool,
     },
     /// typedef Type TypedefName;
@@ -587,7 +589,15 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
     immediate_children(entity, |entity, _span| match entity.get_kind() {
         EntityKind::UnexposedAttr => {
             if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                error!(?attr, "unknown attribute");
+                match attr {
+                    UnexposedAttr::NoEscape => {
+                        // TODO: Pass this up
+                    },
+                    _ => {
+                        error!(?attr, "unknown attribute f");
+                    }
+                }
+
             }
         }
         EntityKind::ObjCClassRef
@@ -597,7 +607,10 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
         EntityKind::NSConsumed => {
             error!("found NSConsumed, which requires manual handling");
         }
-        kind => error!(?kind, "unknown"),
+        EntityKind::IntegerLiteral => {
+            // This is an array, probably fine...
+        }
+        kind => error!(?kind, ?entity, "unknown abc"),
     });
 }
 
@@ -1086,7 +1099,7 @@ impl Stmt {
                     | EntityKind::TypeRef
                     | EntityKind::ParmDecl
                     | EntityKind::EnumDecl => {}
-                    _ => error!("unknown"),
+                    kind => error!(?kind, "unknown entity kind"),
                 });
 
                 if context
@@ -1152,7 +1165,7 @@ impl Stmt {
                             match attr {
                                 UnexposedAttr::Sendable => sendable = Some(true),
                                 UnexposedAttr::NonSendable => sendable = Some(false),
-                                attr => error!(?attr, "unknown attribute"),
+                                attr => error!(?attr, "unknown attribute e"),
                             }
                         }
                     }
@@ -1174,7 +1187,7 @@ impl Stmt {
                         boxable = true;
                     }
                     EntityKind::UnionDecl => error!("can't handle unions in structs yet"),
-                    _ => error!("unknown"),
+                    kind => error!(?kind, "unknown entity kind"),
                 });
 
                 vec![Self::StructDecl {
@@ -1246,7 +1259,15 @@ impl Stmt {
                             immediate_children(&entity, |entity, _span| match entity.get_kind() {
                                 EntityKind::UnexposedAttr => {
                                     if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                                        error!(?attr, "unknown attribute");
+                                        match attr {
+                                            UnexposedAttr::Deprecated => {
+                                                // TODO: Do we pass through the deprecated attribute here?
+                                            },
+                                            _ => {
+                                                error!(?attr, "unknown attribute d");
+                                            }
+                                        }
+
                                     }
                                 }
                                 EntityKind::VisibilityAttr => {}
@@ -1290,7 +1311,7 @@ impl Stmt {
                     EntityKind::VisibilityAttr => {
                         // Already exposed as entity.get_visibility()
                     }
-                    _ => error!("unknown"),
+                    kind => error!(?kind, "unknown entity kind"),
                 });
 
                 if id.name.is_none() {
@@ -1346,7 +1367,7 @@ impl Stmt {
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                            error!(?attr, "unknown attribute");
+                            error!(?attr, "unknown attribute c");
                         }
                     }
                     EntityKind::VisibilityAttr => {}
@@ -1392,6 +1413,8 @@ impl Stmt {
                 let result_type = entity.get_result_type().expect("function result type");
                 let result_type = Ty::parse_function_return(result_type, context);
                 let mut arguments = Vec::new();
+                let mut must_use = false;
+                let mut is_pure = false;
 
                 if entity.is_static_method() {
                     warn!("unexpected static method");
@@ -1400,7 +1423,13 @@ impl Stmt {
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                            error!(?attr, "unknown attribute");
+                            match attr {
+                                UnexposedAttr::NotOnEmbedded => {
+                                    // TODO: We might have to make availability mut here...
+                                },
+                                _ => error!(?attr, "unknown attribute a")
+                            }
+
                         }
                     }
                     EntityKind::ObjCClassRef
@@ -1417,7 +1446,13 @@ impl Stmt {
                     EntityKind::VisibilityAttr => {
                         // CG_EXTERN or UIKIT_EXTERN
                     }
-                    _ => error!("unknown"),
+                    EntityKind::WarnUnusedResultAttr => {
+                        must_use = true;
+                    }
+                    EntityKind::PureAttr => {
+                        is_pure = true;
+                    }
+                    kind => error!(?kind, "unknown entity kind"),
                 });
 
                 let body = if entity.is_inline_function() {
@@ -1431,6 +1466,8 @@ impl Stmt {
                     availability,
                     arguments,
                     result_type,
+                    must_use,
+                    pure: is_pure,
                     body,
                     safe: !data.unsafe_,
                 }]
@@ -2358,10 +2395,15 @@ impl Stmt {
                     availability: _,
                     arguments,
                     result_type,
+                    must_use,
+                    pure: _,
                     body: Some(_),
                     safe: _,
                 } => {
                     write!(f, "// TODO: ")?;
+                    if *must_use {
+                        writeln!(f, "#[must_use]")?;
+                    }
                     write!(f, "pub fn {}(", id.name)?;
                     for (param, arg_ty) in arguments {
                         let param = handle_reserved(&crate::to_snake_case(param));
@@ -2374,9 +2416,14 @@ impl Stmt {
                     availability,
                     arguments,
                     result_type,
+                    must_use,
+                    pure: _,
                     body: None,
                     safe: false,
                 } => {
+                    if *must_use {
+                        writeln!(f, "#[must_use]")?;
+                    }
                     writeln!(f, "extern \"C\" {{")?;
 
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
@@ -2396,12 +2443,17 @@ impl Stmt {
                     availability,
                     arguments,
                     result_type,
+                    must_use,
+                    pure: _,
                     body: None,
                     safe: true,
                 } => {
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     writeln!(f, "#[inline]")?;
+                    if *must_use {
+                        writeln!(f, "#[must_use]")?;
+                    }
                     write!(f, "pub extern \"C\" fn {}(", id.name)?;
                     for (param, arg_ty) in arguments {
                         let param = handle_reserved(&crate::to_snake_case(param));

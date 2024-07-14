@@ -8,3 +8,4 @@ target/
 
 tests-ios/*
 !tests-ios/prelude.rs
+.idea/

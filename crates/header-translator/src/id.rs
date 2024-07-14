@@ -178,7 +178,7 @@ impl Location {
                         }
                     }
                 } else {
-                    error!(location = ?self, "failed getting crate name");
+                    error!(location = ?self, ?library,  "failed getting crate name");
                     LocationLibrary::System
                 }
             }
