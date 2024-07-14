@@ -162,7 +162,7 @@ pub type Id<T> = Retained<T>;
 
 impl<T: ?Sized> Retained<T> {
     #[inline]
-    pub(crate) unsafe fn new_nonnull(ptr: NonNull<T>) -> Self {
+    pub unsafe fn new_nonnull(ptr: NonNull<T>) -> Self {
         Self {
             ptr,
             item: PhantomData,
