@@ -10,9 +10,11 @@ use core::ptr::{self, NonNull};
 use objc2::encode::{EncodeArguments, EncodeReturn, Encoding, RefEncode};
 
 use crate::abi::{
-    BlockDescriptor, BlockDescriptorCopyDispose, BlockDescriptorPtr, BlockFlags, BlockHeader,
+    BlockDescriptor, BlockDescriptorCopyDispose, BlockDescriptorCopyDisposeSignature,
+    BlockDescriptorPtr, BlockDescriptorSignature, BlockFlags, BlockHeader,
 };
 use crate::debug::debug_block_header;
+use crate::traits::{ManualBlockEncoding, ManualBlockEncodingExt, NoBlockEncoding, UserSpecified};
 use crate::{ffi, Block, IntoBlock};
 
 /// An Objective-C block constructed on the stack.
@@ -142,7 +144,12 @@ impl<'f, A, R, Closure: Clone> StackBlock<'f, A, R, Closure> {
     };
 }
 
-impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
+impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure>
+where
+    A: EncodeArguments,
+    R: EncodeReturn,
+    Closure: IntoBlock<'f, A, R> + Clone,
+{
     /// Construct a `StackBlock` with the given closure.
     ///
     /// Note that this requires [`Clone`], as a C block is generally assumed
@@ -154,22 +161,100 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
     ///
     /// [`RcBlock::new`]: crate::RcBlock::new
     #[inline]
-    pub fn new(closure: Closure) -> Self
+    pub fn new(closure: Closure) -> Self {
+        // SAFETY: no encoding is given.
+        unsafe { Self::maybe_encoded::<NoBlockEncoding<A, R>>(closure) }
+    }
+
+    /// Constructs a new [`StackBlock`] with the given function and encoding
+    /// information.
+    ///
+    /// Some particular newer-ish Apple Objective-C APIs expect the block they
+    /// are given to be created with encoding information set in the block
+    /// object itself and crash the calling process if they fail to find it,
+    /// which renders them pretty much unusable with only [`Self::new`] that
+    /// currently does not set such encoding information. This is for example
+    /// the case in [`FileProvider`] for [`NSFileProviderManager`]'s
+    /// [`reimportItemsBelowItemWithIdentifier:completionHandler:`] and
+    /// [`waitForStabilizationWithCompletionHandler:`], but also in
+    /// [`NetworkExtension`] for [`NEFilterDataProvider`]'s
+    /// [`applySettings:completionHandler`]. A complete list of such APIs may
+    /// not be easily obtained, though.
+    ///
+    /// This encoding information string could technically be generated at
+    /// compile time using the generic parameters already available to
+    /// [`Self::new`]. However, doing so would require some constant evaluation
+    /// features that are yet to be implemented and stabilized in the Rust
+    /// compiler. This function is therefore exposed in the meantime so users
+    /// may still be able to call the concerned APIs by providing the raw
+    /// encoding information string themselves, thus obtaining a block
+    /// containing it and working with these APIs.
+    ///
+    /// The same requirements as [`Self::new`] apply here as well.
+    ///
+    /// [`FileProvider`]: https://developer.apple.com/documentation/fileprovider?language=objc
+    /// [`NSFileProviderManager`]: https://developer.apple.com/documentation/fileprovider/nsfileprovidermanager?language=objc
+    /// [`reimportItemsBelowItemWithIdentifier:completionHandler:`]: https://developer.apple.com/documentation/fileprovider/nsfileprovidermanager/reimportitems(below:completionhandler:)?language=objc
+    /// [`waitForStabilizationWithCompletionHandler:`]: https://developer.apple.com/documentation/fileprovider/nsfileprovidermanager/waitforstabilization(completionhandler:)?language=objc
+    /// [`NetworkExtension`]: https://developer.apple.com/documentation/networkextension?language=objc
+    /// [`NEFilterDataProvider`]: https://developer.apple.com/documentation/networkextension/nefilterdataprovider?language=objc
+    /// [`applySettings:completionHandler`]: https://developer.apple.com/documentation/networkextension/nefilterdataprovider/3181998-applysettings?language=objc
+    ///
+    /// # Safety
+    ///
+    /// The raw encoding string given through `E` must be correct with respect
+    /// to the given closure's argument and return types: see
+    /// [`ManualBlockEncoding`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use std::ffi::CStr;
+    /// # use block2::{Block, ManualBlockEncoding, StackBlock};
+    /// # use objc2_foundation::NSError;
+    /// #
+    /// struct MyBlockEncoding;
+    /// unsafe impl ManualBlockEncoding for MyBlockEncoding {
+    ///     type Arguments = (*mut NSError,);
+    ///     type Return = i32;
+    ///     const ENCODING_CSTR: &'static CStr = cr#"i16@?0@"NSError"8"#;
+    /// }
+    ///
+    /// let my_block = unsafe {
+    ///     StackBlock::with_encoding::<MyBlockEncoding>(|_err: *mut NSError| {
+    ///         42i32
+    ///     })
+    /// };
+    /// assert_eq!(my_block.call((std::ptr::null_mut(),)), 42);
+    /// ```
+    #[inline]
+    pub unsafe fn with_encoding<E>(closure: Closure) -> Self
     where
-        A: EncodeArguments,
-        R: EncodeReturn,
-        Closure: IntoBlock<'f, A, R> + Clone,
+        E: ManualBlockEncoding<Arguments = A, Return = R>,
+    {
+        // SAFETY: supposed to be upheld by the caller.
+        unsafe { Self::maybe_encoded::<UserSpecified<E>>(closure) }
+    }
+
+    #[inline]
+    unsafe fn maybe_encoded<E>(closure: Closure) -> Self
+    where
+        E: ManualBlockEncodingExt<Arguments = A, Return = R>,
     {
         let header = BlockHeader {
             #[allow(unused_unsafe)]
             isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
-            // TODO: Add signature.
-            flags: BlockFlags::BLOCK_HAS_COPY_DISPOSE,
+            flags: BlockFlags::BLOCK_HAS_COPY_DISPOSE
+                | if !E::IS_NONE {
+                    BlockFlags::BLOCK_HAS_SIGNATURE
+                } else {
+                    BlockFlags::EMPTY
+                },
             reserved: MaybeUninit::new(0),
             invoke: Some(Closure::__get_invoke_stack_block()),
             // TODO: Use `Self::DESCRIPTOR_BASIC` when `F: Copy`
             // (probably only possible with specialization).
-            descriptor: BlockDescriptorPtr {
+            descriptor: if E::IS_NONE {
                 // SAFETY: The descriptor must (probably) point to `static`
                 // memory, as Objective-C code may assume the block's
                 // descriptor to be alive past the lifetime of the block
@@ -185,7 +270,19 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
                 // does not contain `UnsafeCell` (it does not).
                 //
                 // [promotion]: https://doc.rust-lang.org/reference/destructors.html#constant-promotion
-                with_copy_dispose: &Self::DESCRIPTOR_WITH_CLONE,
+                BlockDescriptorPtr {
+                    with_copy_dispose: &Self::DESCRIPTOR_WITH_CLONE,
+                }
+            } else {
+                // SAFETY: see above; the value is already a similar constant,
+                // so promotion can be guaranteed as well here.
+                BlockDescriptorPtr {
+                    // TODO: move to a `const fn` defined next to the partially-
+                    // copied constant and called here in an inline `const` when
+                    // the MSRV is at least 1.79.
+                    with_copy_dispose_signature:
+                        &<Self as EncodedCloneDescriptors<E>>::DESCRIPTOR_WITH_CLONE_AND_ENCODING,
+                }
             },
         };
         Self {
@@ -196,11 +293,11 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
     }
 }
 
-// `RcBlock::new`
+// `RcBlock::with_encoding`
 impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
     unsafe extern "C-unwind" fn empty_clone_closure(_dst: *mut c_void, _src: *const c_void) {
         // We do nothing, the closure has been `memmove`'d already, and
-        // ownership will be passed in `RcBlock::new`.
+        // ownership will be passed in `RcBlock::with_encoding`.
     }
 
     const DESCRIPTOR_WITH_DROP: BlockDescriptorCopyDispose = BlockDescriptorCopyDispose {
@@ -212,32 +309,60 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
 
     /// # Safety
     ///
-    /// `_Block_copy` must be called on the resulting stack block only once.
+    ///  * `_Block_copy` must be called on the resulting stack block only once.
+    ///  * Encoding must be correct with respect to the given function's input
+    ///    and output types: see [`ManualBlockEncoding`].
     #[inline]
-    pub(crate) unsafe fn new_no_clone(closure: Closure) -> Self
+    pub(crate) unsafe fn new_no_clone<E>(closure: Closure) -> Self
     where
         A: EncodeArguments,
         R: EncodeReturn,
         Closure: IntoBlock<'f, A, R>,
+        E: ManualBlockEncodingExt<Arguments = A, Return = R>,
     {
         // Don't need to emit copy and dispose helpers if the closure
         // doesn't need it.
-        //
-        // TODO: Add signature.
         let flags = if mem::needs_drop::<Self>() {
             BlockFlags::BLOCK_HAS_COPY_DISPOSE
+        } else {
+            BlockFlags::EMPTY
+        } | if !E::IS_NONE {
+            BlockFlags::BLOCK_HAS_SIGNATURE
         } else {
             BlockFlags::EMPTY
         };
         // See discussion in `new` above with regards to the safety of the
         // pointer to the descriptor.
         let descriptor = if mem::needs_drop::<Self>() {
-            BlockDescriptorPtr {
-                with_copy_dispose: &Self::DESCRIPTOR_WITH_DROP,
+            if E::IS_NONE {
+                // SAFETY: see above.
+                BlockDescriptorPtr {
+                    with_copy_dispose: &Self::DESCRIPTOR_WITH_DROP,
+                }
+            } else {
+                // SAFETY: see above; the value is already a similar constant,
+                // so promotion can be guaranteed as well here.
+                BlockDescriptorPtr {
+                    // TODO: move to a `const fn` defined next to the partially-
+                    // copied constant and called here in an inline `const` when
+                    // the MSRV is at least 1.79.
+                    with_copy_dispose_signature:
+                        &<Self as EncodedDescriptors<E>>::DESCRIPTOR_WITH_DROP_AND_ENCODING,
+                }
             }
-        } else {
+        } else if E::IS_NONE {
+            // SAFETY: see above.
             BlockDescriptorPtr {
                 basic: &Self::DESCRIPTOR_BASIC,
+            }
+        } else {
+            // SAFETY: see above; the value is already a similar constant,
+            // so promotion can be guaranteed as well here.
+            BlockDescriptorPtr {
+                // TODO: move to a `const fn` defined next to the partially-
+                // copied constant and called here in an inline `const` when
+                // the MSRV is at least 1.79.
+                with_signature: &<Self as EncodedDescriptors<E>>::DESCRIPTOR_BASIC_WITH_ENCODING,
             }
         };
 
@@ -255,6 +380,68 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
             closure,
         }
     }
+}
+
+/// Dummy trait used in order to link [`StackBlock`]'s descriptor constants and
+/// a [`ManualBlockEncoding`] into new derived constants at compile time.
+///
+/// This is definitely a hack that should be replaced with `const fn`s defined
+/// next to [`StackBlock`]'s descriptor constants and used in the below
+/// constants' stead with inline `const`s to guarantee proper promotion.
+///
+/// See also the below [`EncodedCloneDescriptors`].
+trait EncodedDescriptors<E: ManualBlockEncoding> {
+    const DESCRIPTOR_BASIC_WITH_ENCODING: BlockDescriptorSignature;
+    const DESCRIPTOR_WITH_DROP_AND_ENCODING: BlockDescriptorCopyDisposeSignature;
+}
+
+impl<'f, A, R, Closure, E> EncodedDescriptors<E> for StackBlock<'f, A, R, Closure>
+where
+    A: EncodeArguments,
+    R: EncodeReturn,
+    Closure: IntoBlock<'f, A, R>,
+    E: ManualBlockEncoding<Arguments = A, Return = R>,
+{
+    /// [`Self::DESCRIPTOR_BASIC`] with the signature added from `E`.
+    const DESCRIPTOR_BASIC_WITH_ENCODING: BlockDescriptorSignature = BlockDescriptorSignature {
+        reserved: Self::DESCRIPTOR_BASIC.reserved,
+        size: Self::DESCRIPTOR_BASIC.size,
+        encoding: E::ENCODING_CSTR.as_ptr(),
+    };
+    /// [`Self::DESCRIPTOR_WITH_DROP`] with the signature added from `E`.
+    const DESCRIPTOR_WITH_DROP_AND_ENCODING: BlockDescriptorCopyDisposeSignature =
+        BlockDescriptorCopyDisposeSignature {
+            reserved: Self::DESCRIPTOR_WITH_DROP.reserved,
+            size: Self::DESCRIPTOR_WITH_DROP.size,
+            copy: Self::DESCRIPTOR_WITH_DROP.copy,
+            dispose: Self::DESCRIPTOR_WITH_DROP.dispose,
+            encoding: E::ENCODING_CSTR.as_ptr(),
+        };
+}
+
+/// Identical role as [`EncodedDescriptors`], with the additional requirement
+/// that the block closure be [`Clone`] when implemented on [`StackBlock`]
+/// since [`StackBlock::DESCRIPTOR_WITH_CLONE`] is defined in such a context.
+trait EncodedCloneDescriptors<E: ManualBlockEncoding> {
+    const DESCRIPTOR_WITH_CLONE_AND_ENCODING: BlockDescriptorCopyDisposeSignature;
+}
+
+impl<'f, A, R, Closure, E> EncodedCloneDescriptors<E> for StackBlock<'f, A, R, Closure>
+where
+    A: EncodeArguments,
+    R: EncodeReturn,
+    Closure: IntoBlock<'f, A, R> + Clone,
+    E: ManualBlockEncoding<Arguments = A, Return = R>,
+{
+    /// [`Self::DESCRIPTOR_WITH_CLONE`] with the signature added from `E`.
+    const DESCRIPTOR_WITH_CLONE_AND_ENCODING: BlockDescriptorCopyDisposeSignature =
+        BlockDescriptorCopyDisposeSignature {
+            reserved: Self::DESCRIPTOR_WITH_CLONE.reserved,
+            size: Self::DESCRIPTOR_WITH_CLONE.size,
+            copy: Self::DESCRIPTOR_WITH_CLONE.copy,
+            dispose: Self::DESCRIPTOR_WITH_CLONE.dispose,
+            encoding: E::ENCODING_CSTR.as_ptr(),
+        };
 }
 
 impl<'f, A, R, Closure: Clone> Clone for StackBlock<'f, A, R, Closure> {

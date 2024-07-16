@@ -7,6 +7,7 @@ use objc2::encode::{EncodeArguments, EncodeReturn};
 
 use crate::abi::BlockHeader;
 use crate::debug::debug_block_header;
+use crate::traits::{ManualBlockEncoding, ManualBlockEncodingExt, NoBlockEncoding, UserSpecified};
 use crate::{ffi, Block, IntoBlock, StackBlock};
 
 /// A reference-counted Objective-C block that is stored on the heap.
@@ -91,14 +92,70 @@ impl<F: ?Sized> RcBlock<F> {
     ///
     /// When the block is called, it will return the value that results from
     /// calling the closure.
-    //
     // Note: Unsure if this should be #[inline], but I think it may be able to
-    // benefit from not being so.
+    // benefit from not being completely so.
+    #[inline]
     pub fn new<'f, A, R, Closure>(closure: Closure) -> Self
     where
         A: EncodeArguments,
         R: EncodeReturn,
         Closure: IntoBlock<'f, A, R, Dyn = F>,
+    {
+        // SAFETY: no encoding is given.
+        unsafe { Self::maybe_encoded::<_, _, _, NoBlockEncoding<A, R>>(closure) }
+    }
+
+    /// Constructs a new [`RcBlock`] with the given function and encoding
+    /// information.
+    ///
+    /// See [`StackBlock::with_encoding`] as to why and how this could be
+    /// useful. The same requirements as [`Self::new`] apply here as well.
+    ///
+    /// # Safety
+    ///
+    /// The raw encoding string given through `E` must be correct with respect
+    /// to the given closure's argument and return types: see
+    /// [`ManualBlockEncoding`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use std::ffi::CStr;
+    /// # use block2::{Block, ManualBlockEncoding, RcBlock};
+    /// # use objc2_foundation::NSError;
+    /// #
+    /// struct MyBlockEncoding;
+    /// unsafe impl ManualBlockEncoding for MyBlockEncoding {
+    ///     type Arguments = (*mut NSError,);
+    ///     type Return = i32;
+    ///     const ENCODING_CSTR: &'static CStr = cr#"i16@?0@"NSError"8"#;
+    /// }
+    ///
+    /// let my_block = unsafe {
+    ///     RcBlock::with_encoding::<_, _, _, MyBlockEncoding>(|_err: *mut NSError| {
+    ///         42i32
+    ///     })
+    /// };
+    /// assert_eq!(my_block.call((std::ptr::null_mut(),)), 42);
+    /// ```
+    #[inline]
+    pub unsafe fn with_encoding<'f, A, R, Closure, E>(closure: Closure) -> Self
+    where
+        A: EncodeArguments,
+        R: EncodeReturn,
+        Closure: IntoBlock<'f, A, R, Dyn = F>,
+        E: ManualBlockEncoding<Arguments = A, Return = R>,
+    {
+        // SAFETY: supposed to be upheld by the caller.
+        unsafe { Self::maybe_encoded::<_, _, _, UserSpecified<E>>(closure) }
+    }
+
+    unsafe fn maybe_encoded<'f, A, R, Closure, E>(closure: Closure) -> Self
+    where
+        A: EncodeArguments,
+        R: EncodeReturn,
+        Closure: IntoBlock<'f, A, R, Dyn = F>,
+        E: ManualBlockEncodingExt<Arguments = A, Return = R>,
     {
         // SAFETY: The stack block is copied once below.
         //
@@ -108,7 +165,9 @@ impl<F: ?Sized> RcBlock<F> {
         //
         // Clang doesn't do this optimization either.
         // <https://github.com/llvm/llvm-project/blob/llvmorg-17.0.6/clang/lib/CodeGen/CGBlocks.cpp#L281-L284>
-        let block = unsafe { StackBlock::new_no_clone(closure) };
+        //
+        // Encoding safety is supposed to be upheld by the caller.
+        let block = unsafe { StackBlock::new_no_clone::<E>(closure) };
 
         // Transfer ownership from the stack to the heap.
         let mut block = ManuallyDrop::new(block);
