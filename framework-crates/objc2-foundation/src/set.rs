@@ -2,7 +2,6 @@
 use alloc::vec::Vec;
 #[cfg(feature = "NSEnumerator")]
 use core::fmt;
-use core::hash::Hash;
 
 use objc2::mutability::{IsIdCloneable, IsRetainable};
 use objc2::rc::{Retained, RetainedFromIterator};
@@ -45,7 +44,7 @@ impl<T: Message> NSSet<T> {
     }
 }
 
-impl<T: Message + Eq + Hash> NSSet<T> {
+impl<T: Message> NSSet<T> {
     /// Creates an [`NSSet`] from a vector.
     ///
     /// # Examples
@@ -157,7 +156,7 @@ impl<T: Message + Eq + Hash> NSSet<T> {
     }
 }
 
-impl<T: Message + Eq + Hash> NSMutableSet<T> {
+impl<T: Message> NSMutableSet<T> {
     /// Creates an [`NSMutableSet`] from a vector.
     ///
     /// # Examples
@@ -247,23 +246,7 @@ extern_methods!(
         pub fn get_any(&self) -> Option<&T>;
     }
 
-    unsafe impl<T: Message + Eq + Hash> NSSet<T> {
-        /// Returns `true` if the set contains a value.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use objc2_foundation::{ns_string, NSSet};
-        ///
-        /// let strs = [ns_string!("one"), ns_string!("two"), ns_string!("three")];
-        /// let set = NSSet::from_slice(&strs);
-        /// assert!(set.contains(ns_string!("one")));
-        /// ```
-        #[doc(alias = "containsObject:")]
-        pub fn contains(&self, value: &T) -> bool {
-            unsafe { self.containsObject(value) }
-        }
-
+    unsafe impl<T: Message> NSSet<T> {
         /// Returns a reference to the value in the set, if any, that is equal
         /// to the given value.
         ///
@@ -292,66 +275,10 @@ extern_methods!(
 
         // Note: No `get_mut` method exposed on sets, since their objects'
         // hashes are immutable.
-
-        /// Returns `true` if the set is a subset of another, i.e., `other`
-        /// contains at least all the values in `self`.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use objc2_foundation::{ns_string, NSSet};
-        ///
-        /// let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
-        /// let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
-        ///
-        /// assert!(set1.is_subset(&set2));
-        /// assert!(!set2.is_subset(&set1));
-        /// ```
-        #[doc(alias = "isSubsetOfSet:")]
-        pub fn is_subset(&self, other: &NSSet<T>) -> bool {
-            unsafe { self.isSubsetOfSet(other) }
-        }
-
-        /// Returns `true` if the set is a superset of another, i.e., `self`
-        /// contains at least all the values in `other`.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use objc2_foundation::{ns_string, NSSet};
-        ///
-        /// let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
-        /// let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
-        ///
-        /// assert!(!set1.is_superset(&set2));
-        /// assert!(set2.is_superset(&set1));
-        /// ```
-        pub fn is_superset(&self, other: &NSSet<T>) -> bool {
-            other.is_subset(self)
-        }
-
-        /// Returns `true` if `self` has no elements in common with `other`.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use objc2_foundation::{ns_string, NSSet};
-        ///
-        /// let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
-        /// let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
-        /// let set3 = NSSet::from_slice(&[ns_string!("four"), ns_string!("five"), ns_string!("six")]);
-        ///
-        /// assert!(!set1.is_disjoint(&set2));
-        /// assert!(set1.is_disjoint(&set3));
-        /// assert!(set2.is_disjoint(&set3));
-        /// ```
-        pub fn is_disjoint(&self, other: &NSSet<T>) -> bool {
-            !unsafe { self.intersectsSet(other) }
-        }
     }
 );
 
-impl<T: Message + Eq + Hash> NSMutableSet<T> {
+impl<T: Message> NSMutableSet<T> {
     /// Add a value to the set. Returns whether the value was
     /// newly inserted.
     ///
@@ -372,7 +299,7 @@ impl<T: Message + Eq + Hash> NSMutableSet<T> {
     where
         T: IsRetainable,
     {
-        let contains_value = self.contains(value);
+        let contains_value = self.containsObject(value);
         // SAFETY: Because of the `T: IsRetainable` bound, it is safe for the
         // set to retain the object here.
         unsafe { self.addObject(value) };
@@ -395,7 +322,7 @@ impl<T: Message + Eq + Hash> NSMutableSet<T> {
     /// ```
     #[doc(alias = "addObject:")]
     pub fn insert_id(&mut self, value: Retained<T>) -> bool {
-        let contains_value = self.contains(&value);
+        let contains_value = self.containsObject(&value);
         // SAFETY: We've consumed ownership of the object.
         unsafe { self.addObject(&value) };
         !contains_value
@@ -417,15 +344,12 @@ impl<T: Message + Eq + Hash> NSMutableSet<T> {
     /// ```
     #[doc(alias = "removeObject:")]
     pub fn remove(&mut self, value: &T) -> bool {
-        let contains_value = self.contains(value);
+        let contains_value = self.containsObject(value);
         unsafe { self.removeObject(value) };
         contains_value
     }
 }
 
-// Iteration is not supposed to touch the elements, not even do comparisons.
-//
-// TODO: Verify that this is actually the case.
 impl<T: Message> NSSet<T> {
     /// An iterator visiting all elements in arbitrary order.
     ///
@@ -550,7 +474,7 @@ impl<T: fmt::Debug + Message> fmt::Debug for crate::Foundation::NSCountedSet<T> 
     }
 }
 
-impl<T: Message + Eq + Hash> Extend<Retained<T>> for NSMutableSet<T> {
+impl<T: Message> Extend<Retained<T>> for NSMutableSet<T> {
     fn extend<I: IntoIterator<Item = Retained<T>>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
             self.insert_id(item);
@@ -558,7 +482,7 @@ impl<T: Message + Eq + Hash> Extend<Retained<T>> for NSMutableSet<T> {
     }
 }
 
-impl<'a, T: Message + Eq + Hash + IsRetainable> Extend<&'a T> for NSMutableSet<T> {
+impl<'a, T: Message + IsRetainable> Extend<&'a T> for NSMutableSet<T> {
     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
             self.insert(item);
@@ -566,30 +490,28 @@ impl<'a, T: Message + Eq + Hash + IsRetainable> Extend<&'a T> for NSMutableSet<T
     }
 }
 
-impl<'a, T: Message + Eq + Hash + IsRetainable + 'a> RetainedFromIterator<&'a T> for NSSet<T> {
+impl<'a, T: Message + IsRetainable + 'a> RetainedFromIterator<&'a T> for NSSet<T> {
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
-impl<T: Message + Eq + Hash> RetainedFromIterator<Retained<T>> for NSSet<T> {
+impl<T: Message> RetainedFromIterator<Retained<T>> for NSSet<T> {
     fn id_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
     }
 }
 
-impl<'a, T: Message + Eq + Hash + IsRetainable + 'a> RetainedFromIterator<&'a T>
-    for NSMutableSet<T>
-{
+impl<'a, T: Message + IsRetainable + 'a> RetainedFromIterator<&'a T> for NSMutableSet<T> {
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
-impl<T: Message + Eq + Hash> RetainedFromIterator<Retained<T>> for NSMutableSet<T> {
+impl<T: Message> RetainedFromIterator<Retained<T>> for NSMutableSet<T> {
     fn id_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
