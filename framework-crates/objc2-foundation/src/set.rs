@@ -2,7 +2,6 @@
 use alloc::vec::Vec;
 #[cfg(feature = "NSEnumerator")]
 use core::fmt;
-use core::hash::Hash;
 
 use objc2::mutability::{IsIdCloneable, IsRetainable};
 use objc2::rc::{Retained, RetainedFromIterator};
@@ -45,7 +44,7 @@ impl<T: Message> NSSet<T> {
     }
 }
 
-impl<T: Message + Eq + Hash> NSSet<T> {
+impl<T: Message> NSSet<T> {
     /// Creates an [`NSSet`] from a vector.
     ///
     /// # Examples
@@ -157,7 +156,7 @@ impl<T: Message + Eq + Hash> NSSet<T> {
     }
 }
 
-impl<T: Message + Eq + Hash> NSMutableSet<T> {
+impl<T: Message> NSMutableSet<T> {
     /// Creates an [`NSMutableSet`] from a vector.
     ///
     /// # Examples
@@ -247,7 +246,7 @@ extern_methods!(
         pub fn get_any(&self) -> Option<&T>;
     }
 
-    unsafe impl<T: Message + Eq + Hash> NSSet<T> {
+    unsafe impl<T: Message> NSSet<T> {
         /// Returns `true` if the set contains a value.
         ///
         /// # Examples
@@ -351,7 +350,7 @@ extern_methods!(
     }
 );
 
-impl<T: Message + Eq + Hash> NSMutableSet<T> {
+impl<T: Message> NSMutableSet<T> {
     /// Add a value to the set. Returns whether the value was
     /// newly inserted.
     ///
@@ -423,9 +422,6 @@ impl<T: Message + Eq + Hash> NSMutableSet<T> {
     }
 }
 
-// Iteration is not supposed to touch the elements, not even do comparisons.
-//
-// TODO: Verify that this is actually the case.
 impl<T: Message> NSSet<T> {
     /// An iterator visiting all elements in arbitrary order.
     ///
@@ -550,7 +546,7 @@ impl<T: fmt::Debug + Message> fmt::Debug for crate::Foundation::NSCountedSet<T> 
     }
 }
 
-impl<T: Message + Eq + Hash> Extend<Retained<T>> for NSMutableSet<T> {
+impl<T: Message> Extend<Retained<T>> for NSMutableSet<T> {
     fn extend<I: IntoIterator<Item = Retained<T>>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
             self.insert_id(item);
@@ -558,7 +554,7 @@ impl<T: Message + Eq + Hash> Extend<Retained<T>> for NSMutableSet<T> {
     }
 }
 
-impl<'a, T: Message + Eq + Hash + IsRetainable> Extend<&'a T> for NSMutableSet<T> {
+impl<'a, T: Message + IsRetainable> Extend<&'a T> for NSMutableSet<T> {
     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
             self.insert(item);
@@ -566,30 +562,28 @@ impl<'a, T: Message + Eq + Hash + IsRetainable> Extend<&'a T> for NSMutableSet<T
     }
 }
 
-impl<'a, T: Message + Eq + Hash + IsRetainable + 'a> RetainedFromIterator<&'a T> for NSSet<T> {
+impl<'a, T: Message + IsRetainable + 'a> RetainedFromIterator<&'a T> for NSSet<T> {
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
-impl<T: Message + Eq + Hash> RetainedFromIterator<Retained<T>> for NSSet<T> {
+impl<T: Message> RetainedFromIterator<Retained<T>> for NSSet<T> {
     fn id_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
     }
 }
 
-impl<'a, T: Message + Eq + Hash + IsRetainable + 'a> RetainedFromIterator<&'a T>
-    for NSMutableSet<T>
-{
+impl<'a, T: Message + IsRetainable + 'a> RetainedFromIterator<&'a T> for NSMutableSet<T> {
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
-impl<T: Message + Eq + Hash> RetainedFromIterator<Retained<T>> for NSMutableSet<T> {
+impl<T: Message> RetainedFromIterator<Retained<T>> for NSMutableSet<T> {
     fn id_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
