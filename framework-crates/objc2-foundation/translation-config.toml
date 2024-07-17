@@ -67,10 +67,9 @@ class.NSProcessInfo.derives = "PartialEq, Eq, Hash"
 class.NSString.derives = "PartialEq, Eq, Hash"
 class.NSUUID.derives = "PartialEq, Eq, Hash"
 
-# Overridden because whether or not it is Eq depends on the inner value
+# Overridden to use more performant implementation for `PartialEq`
 class.NSValue.derives = ""
 class.NSNumber.derives = ""
-class.NSDecimalNumber.derives = "Debug, PartialEq, Hash"
 
 # Returns `nil` on Apple and GNUStep throws an exception on all other messages
 # to this invalid instance.
