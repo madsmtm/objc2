@@ -69,6 +69,6 @@ fn test_mutable_copy() {
     let mut set2 = set1.mutableCopy();
     set2.insert(ns_string!("four"));
 
-    assert!(set1.is_subset(&set2));
+    assert!(set1.isSubsetOfSet(&set2));
     assert_ne!(set1.mutableCopy(), set2);
 }

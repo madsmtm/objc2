@@ -247,22 +247,6 @@ extern_methods!(
     }
 
     unsafe impl<T: Message> NSSet<T> {
-        /// Returns `true` if the set contains a value.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use objc2_foundation::{ns_string, NSSet};
-        ///
-        /// let strs = [ns_string!("one"), ns_string!("two"), ns_string!("three")];
-        /// let set = NSSet::from_slice(&strs);
-        /// assert!(set.contains(ns_string!("one")));
-        /// ```
-        #[doc(alias = "containsObject:")]
-        pub fn contains(&self, value: &T) -> bool {
-            unsafe { self.containsObject(value) }
-        }
-
         /// Returns a reference to the value in the set, if any, that is equal
         /// to the given value.
         ///
@@ -291,62 +275,6 @@ extern_methods!(
 
         // Note: No `get_mut` method exposed on sets, since their objects'
         // hashes are immutable.
-
-        /// Returns `true` if the set is a subset of another, i.e., `other`
-        /// contains at least all the values in `self`.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use objc2_foundation::{ns_string, NSSet};
-        ///
-        /// let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
-        /// let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
-        ///
-        /// assert!(set1.is_subset(&set2));
-        /// assert!(!set2.is_subset(&set1));
-        /// ```
-        #[doc(alias = "isSubsetOfSet:")]
-        pub fn is_subset(&self, other: &NSSet<T>) -> bool {
-            unsafe { self.isSubsetOfSet(other) }
-        }
-
-        /// Returns `true` if the set is a superset of another, i.e., `self`
-        /// contains at least all the values in `other`.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use objc2_foundation::{ns_string, NSSet};
-        ///
-        /// let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
-        /// let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
-        ///
-        /// assert!(!set1.is_superset(&set2));
-        /// assert!(set2.is_superset(&set1));
-        /// ```
-        pub fn is_superset(&self, other: &NSSet<T>) -> bool {
-            other.is_subset(self)
-        }
-
-        /// Returns `true` if `self` has no elements in common with `other`.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use objc2_foundation::{ns_string, NSSet};
-        ///
-        /// let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
-        /// let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
-        /// let set3 = NSSet::from_slice(&[ns_string!("four"), ns_string!("five"), ns_string!("six")]);
-        ///
-        /// assert!(!set1.is_disjoint(&set2));
-        /// assert!(set1.is_disjoint(&set3));
-        /// assert!(set2.is_disjoint(&set3));
-        /// ```
-        pub fn is_disjoint(&self, other: &NSSet<T>) -> bool {
-            !unsafe { self.intersectsSet(other) }
-        }
     }
 );
 
@@ -371,7 +299,7 @@ impl<T: Message> NSMutableSet<T> {
     where
         T: IsRetainable,
     {
-        let contains_value = self.contains(value);
+        let contains_value = self.containsObject(value);
         // SAFETY: Because of the `T: IsRetainable` bound, it is safe for the
         // set to retain the object here.
         unsafe { self.addObject(value) };
@@ -394,7 +322,7 @@ impl<T: Message> NSMutableSet<T> {
     /// ```
     #[doc(alias = "addObject:")]
     pub fn insert_id(&mut self, value: Retained<T>) -> bool {
-        let contains_value = self.contains(&value);
+        let contains_value = self.containsObject(&value);
         // SAFETY: We've consumed ownership of the object.
         unsafe { self.addObject(&value) };
         !contains_value
@@ -416,7 +344,7 @@ impl<T: Message> NSMutableSet<T> {
     /// ```
     #[doc(alias = "removeObject:")]
     pub fn remove(&mut self, value: &T) -> bool {
-        let contains_value = self.contains(value);
+        let contains_value = self.containsObject(value);
         unsafe { self.removeObject(value) };
         contains_value
     }
