@@ -1,8 +1,9 @@
 use core::cell::RefCell;
+use std::ffi::CStr;
 use std::thread_local;
 
 use alloc::string::ToString;
-use block2::{global_block, Block, RcBlock, StackBlock};
+use block2::{global_block, Block, ManualBlockEncoding, RcBlock, StackBlock};
 use objc2::encode::{Encode, Encoding};
 use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, Bool, NSObject};
@@ -34,6 +35,36 @@ unsafe impl Encode for LargeStruct {
 }
 
 type Add12 = Block<dyn Fn(i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32) -> i32>;
+
+struct VoidToVoid;
+unsafe impl ManualBlockEncoding for VoidToVoid {
+    type Arguments = ();
+    type Return = ();
+    #[cfg(target_pointer_width = "64")]
+    const ENCODING_CSTR: &'static CStr = c"v8@?0";
+    #[cfg(target_pointer_width = "32")]
+    const ENCODING_CSTR: &'static CStr = c"v4@?0";
+}
+
+struct VoidToInt;
+unsafe impl ManualBlockEncoding for VoidToInt {
+    type Arguments = ();
+    type Return = i32;
+    #[cfg(target_pointer_width = "64")]
+    const ENCODING_CSTR: &'static CStr = c"i8@?0";
+    #[cfg(target_pointer_width = "32")]
+    const ENCODING_CSTR: &'static CStr = c"i4@?0";
+}
+
+struct IntToInt;
+unsafe impl ManualBlockEncoding for IntToInt {
+    type Arguments = (i32,);
+    type Return = i32;
+    #[cfg(target_pointer_width = "64")]
+    const ENCODING_CSTR: &'static CStr = c"i12@?0i8";
+    #[cfg(target_pointer_width = "32")]
+    const ENCODING_CSTR: &'static CStr = c"i8@?0i4";
+}
 
 extern "C" {
     /// Returns a pointer to a global block that returns 7.
@@ -108,6 +139,14 @@ fn test_int_block() {
     );
     invoke_assert(&StackBlock::new(|| 10), 10);
     invoke_assert(&RcBlock::new(|| 6), 6);
+    invoke_assert(
+        unsafe { &StackBlock::with_encoding::<VoidToInt>(|| 10) },
+        10,
+    );
+    invoke_assert(
+        unsafe { &RcBlock::with_encoding::<_, _, _, VoidToInt>(|| 6) },
+        6,
+    );
     invoke_assert(&GLOBAL_BLOCK, 42);
 }
 
@@ -132,6 +171,14 @@ fn test_add_block() {
     );
     invoke_assert(&StackBlock::new(|a: i32| a + 6), 11);
     invoke_assert(&RcBlock::new(|a: i32| a + 6), 11);
+    invoke_assert(
+        unsafe { &StackBlock::with_encoding::<IntToInt>(|a: i32| a + 6) },
+        11,
+    );
+    invoke_assert(
+        unsafe { &RcBlock::with_encoding::<_, _, _, IntToInt>(|a: i32| a + 6) },
+        11,
+    );
     invoke_assert(&GLOBAL_BLOCK, 47);
 }
 
@@ -147,6 +194,16 @@ fn test_add_12() {
             unsafe { invoke_add_12(block, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) },
             expected
         );
+    }
+
+    struct Enc;
+    unsafe impl ManualBlockEncoding for Enc {
+        type Arguments = (i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32);
+        type Return = i32;
+        #[cfg(target_pointer_width = "64")]
+        const ENCODING_CSTR: &'static CStr = c"i56@?0i8i12i16i20i24i28i32i36i40i44i48i52";
+        #[cfg(target_pointer_width = "32")]
+        const ENCODING_CSTR: &'static CStr = c"i52@?0i4i8i12i16i20i24i28i32i36i40i44i48";
     }
 
     global_block! {
@@ -166,6 +223,11 @@ fn test_add_12() {
     };
     invoke_assert(&StackBlock::new(closure), 78);
     invoke_assert(&RcBlock::new(closure), 78);
+    invoke_assert(unsafe { &StackBlock::with_encoding::<Enc>(closure) }, 78);
+    invoke_assert(
+        unsafe { &RcBlock::with_encoding::<_, _, _, Enc>(closure) },
+        78,
+    );
     invoke_assert(&GLOBAL_BLOCK, 120);
 }
 
@@ -192,6 +254,16 @@ fn test_large_struct_block() {
         };
     }
 
+    struct Enc;
+    unsafe impl ManualBlockEncoding for Enc {
+        type Arguments = (LargeStruct,);
+        type Return = LargeStruct;
+        #[cfg(target_pointer_width = "64")]
+        const ENCODING_CSTR: &'static CStr = c"{LargeStruct=f[100C]}112@?0{LargeStruct=f[100C]}8";
+        #[cfg(target_pointer_width = "32")]
+        const ENCODING_CSTR: &'static CStr = c"{LargeStruct=f[100C]}108@?0{LargeStruct=f[100C]}4";
+    }
+
     let data = LargeStruct::get();
     let mut new_data = data;
     new_data.mutate();
@@ -203,6 +275,16 @@ fn test_large_struct_block() {
         x.mutate();
         x
     });
+    assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
+    let block = block.copy();
+    assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
+
+    let block = unsafe {
+        StackBlock::with_encoding::<Enc>(|mut x: LargeStruct| {
+            x.mutate();
+            x
+        })
+    };
     assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
     let block = block.copy();
     assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
@@ -220,10 +302,32 @@ fn test_block_copy() {
 }
 
 #[test]
+fn test_block_copy_with_encoding() {
+    let s = "Hello!".to_string();
+    let expected_len = s.len() as i32;
+    let block = unsafe { StackBlock::with_encoding::<VoidToInt>(move || s.len() as i32) };
+    assert_eq!(unsafe { invoke_int_block(&block) }, expected_len);
+
+    let copied = block.copy();
+    assert_eq!(unsafe { invoke_int_block(&copied) }, expected_len);
+}
+
+#[test]
 fn test_block_stack_move() {
     fn make_block() -> StackBlock<'static, (), i32, impl Fn() -> i32> {
         let x = 7;
         StackBlock::new(move || x)
+    }
+
+    let block = make_block();
+    assert_eq!(unsafe { invoke_int_block(&block) }, 7);
+}
+
+#[test]
+fn test_block_stack_move_with_encoding() {
+    fn make_block() -> StackBlock<'static, (), i32, impl Fn() -> i32> {
+        let x = 7;
+        unsafe { StackBlock::with_encoding::<VoidToInt>(move || x) }
     }
 
     let block = make_block();
@@ -314,6 +418,34 @@ fn stack_new_clone_drop() {
 }
 
 #[test]
+fn stack_new_clone_drop_with_encoding() {
+    let mut expected = Count::current();
+
+    let counter = CloneDropTracker::new();
+    expected.new += 1;
+    expected.assert_current();
+
+    let block = unsafe {
+        StackBlock::with_encoding::<VoidToVoid>(move || {
+            let _ = &counter;
+        })
+    };
+    expected.assert_current();
+
+    let clone = block.clone();
+    expected.clone += 1;
+    expected.assert_current();
+
+    drop(clone);
+    expected.drop += 1;
+    expected.assert_current();
+
+    drop(block);
+    expected.drop += 1;
+    expected.assert_current();
+}
+
+#[test]
 fn rc_new_clone_drop() {
     let mut expected = Count::current();
 
@@ -324,6 +456,32 @@ fn rc_new_clone_drop() {
     let block = RcBlock::new(move || {
         let _ = &counter;
     });
+    expected.assert_current();
+
+    let clone = block.clone();
+    expected.assert_current();
+
+    drop(clone);
+    expected.assert_current();
+
+    drop(block);
+    expected.drop += 1;
+    expected.assert_current();
+}
+
+#[test]
+fn rc_new_clone_drop_with_encoding() {
+    let mut expected = Count::current();
+
+    let counter = CloneDropTracker::new();
+    expected.new += 1;
+    expected.assert_current();
+
+    let block = unsafe {
+        RcBlock::with_encoding::<_, _, _, VoidToVoid>(move || {
+            let _ = &counter;
+        })
+    };
     expected.assert_current();
 
     let clone = block.clone();
@@ -378,6 +536,48 @@ fn stack_to_rc() {
 }
 
 #[test]
+fn stack_to_rc_with_encoding() {
+    let mut expected = Count::current();
+
+    let counter = CloneDropTracker::new();
+    expected.new += 1;
+    expected.assert_current();
+
+    let stack = unsafe {
+        StackBlock::with_encoding::<VoidToVoid>(move || {
+            let _ = &counter;
+        })
+    };
+    expected.assert_current();
+
+    let rc1 = stack.copy();
+    expected.clone += 1;
+    expected.assert_current();
+
+    let rc2 = stack.copy();
+    expected.clone += 1;
+    expected.assert_current();
+
+    let clone2 = rc2.clone();
+    expected.assert_current();
+
+    drop(rc2);
+    expected.assert_current();
+
+    drop(stack);
+    expected.drop += 1;
+    expected.assert_current();
+
+    drop(rc1);
+    expected.drop += 1;
+    expected.assert_current();
+
+    drop(clone2);
+    expected.drop += 1;
+    expected.assert_current();
+}
+
+#[test]
 fn retain_release_rc_block() {
     let mut expected = Count::current();
 
@@ -388,6 +588,33 @@ fn retain_release_rc_block() {
     let block = RcBlock::new(move || {
         let _ = &counter;
     });
+    expected.assert_current();
+
+    let ptr = &*block as *const Block<_> as *mut AnyObject;
+    let obj = unsafe { Retained::retain(ptr) }.unwrap();
+    expected.assert_current();
+
+    drop(block);
+    expected.assert_current();
+
+    drop(obj);
+    expected.drop += 1;
+    expected.assert_current();
+}
+
+#[test]
+fn retain_release_rc_block_with_encoding() {
+    let mut expected = Count::current();
+
+    let counter = CloneDropTracker::new();
+    expected.new += 1;
+    expected.assert_current();
+
+    let block = unsafe {
+        RcBlock::with_encoding::<_, _, _, VoidToVoid>(move || {
+            let _ = &counter;
+        })
+    };
     expected.assert_current();
 
     let ptr = &*block as *const Block<_> as *mut AnyObject;
@@ -451,6 +678,31 @@ fn capture_id() {
         let obj1 = NSObject::new();
         let obj2 = NSObject::new();
         StackBlock::new(move || Bool::new(obj1 == obj2))
+    };
+
+    let rc_block = stack_block.copy();
+
+    assert!(rc_block.call(()).is_false());
+}
+
+#[test]
+fn capture_id_with_encoding() {
+    struct Enc;
+    unsafe impl ManualBlockEncoding for Enc {
+        type Arguments = ();
+        type Return = Bool;
+
+        #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
+        const ENCODING_CSTR: &'static CStr = c"c8@?0";
+        #[cfg(all(target_os = "linux", target_pointer_width = "64"))]
+        const ENCODING_CSTR: &'static CStr = c"C8@?0";
+        #[cfg(all(target_os = "linux", target_pointer_width = "32"))]
+        const ENCODING_CSTR: &'static CStr = c"C4@?0";
+    }
+    let stack_block = {
+        let obj1 = NSObject::new();
+        let obj2 = NSObject::new();
+        unsafe { StackBlock::with_encoding::<Enc>(move || Bool::new(obj1 == obj2)) }
     };
 
     let rc_block = stack_block.copy();
