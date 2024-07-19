@@ -1,4 +1,5 @@
 use core::fmt;
+use core::mem;
 use core::write;
 
 use crate::parse::verify_name;
@@ -171,6 +172,26 @@ impl Primitive {
             Unknown => "?",
         }
     }
+
+    pub(crate) const fn size(self) -> usize {
+        match self {
+            // Numbers.
+            Self::Char | Self::UChar => 1,
+            Self::Short | Self::UShort => 2,
+            Self::Int | Self::UInt | Self::Float | Self::Bool => 4,
+            Self::Long | Self::ULong | Self::Double => 8,
+            Self::LongLong | Self::ULongLong | Self::LongDouble => 16,
+            Self::FloatComplex => 2 * Self::Float.size(),
+            Self::DoubleComplex => 2 * Self::Double.size(),
+            Self::LongDoubleComplex => 2 * Self::LongDouble.size(),
+            // Pointers.
+            Self::String | Self::Object | Self::Block | Self::Class | Self::Sel => {
+                mem::size_of::<*const ()>()
+            }
+            // Nothing.
+            Self::Void | Self::Unknown => 0,
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -284,6 +305,37 @@ impl<E: EncodingType> Helper<'_, E> {
             Self::NoneInvalid => {}
         }
         Ok(())
+    }
+
+    pub(crate) fn size(&self, level: NestingLevel) -> usize {
+        // TODO: alignment?
+        match self {
+            Self::NoneInvalid => 0,
+            Self::Primitive(prim) => prim.size(),
+            Self::BitField(size_bits, off_typ) => {
+                (usize::from(*size_bits).next_power_of_two().max(8) / 8)
+                    .max(off_typ.map_or(0, |(_, typ)| typ.helper().size(level.bitfield())))
+            }
+            Self::Indirection(kind, typ) => match kind {
+                IndirectionKind::Pointer => mem::size_of::<*const ()>(),
+                IndirectionKind::Atomic => typ.helper().size(level.indirection(*kind)),
+            },
+            Self::Array(len, typ) => *len as usize * typ.helper().size(level.array()),
+            Self::Container(kind, _, fields) => {
+                level
+                    .container_include_fields()
+                    .map_or(0, |level| match kind {
+                        ContainerKind::Struct => {
+                            fields.iter().map(|field| field.helper().size(level)).sum()
+                        }
+                        ContainerKind::Union => fields
+                            .iter()
+                            .map(|field| field.helper().size(level))
+                            .max()
+                            .unwrap_or_default(),
+                    })
+            }
+        }
     }
 }
 
