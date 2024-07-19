@@ -368,6 +368,7 @@ extern crate objc2 as _;
 mod abi;
 mod block;
 mod debug;
+mod encoding;
 pub mod ffi;
 mod global;
 mod rc_block;
