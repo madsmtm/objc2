@@ -241,6 +241,7 @@ where
     where
         E: ManualBlockEncodingExt<Arguments = A, Return = R>,
     {
+        // TODO: Re-consider calling `crate::traits::debug_assert_block_encoding`.
         let header = BlockHeader {
             #[allow(unused_unsafe)]
             isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
@@ -320,6 +321,7 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
         Closure: IntoBlock<'f, A, R>,
         E: ManualBlockEncodingExt<Arguments = A, Return = R>,
     {
+        // TODO: Re-consider calling `crate::traits::debug_assert_block_encoding`.
         // Don't need to emit copy and dispose helpers if the closure
         // doesn't need it.
         let flags = if mem::needs_drop::<Self>() {
