@@ -71,6 +71,7 @@
 #![doc = include_str!("../examples/encode_opaque_type.rs")]
 //! ```
 
+use alloc::string::String;
 use core::cell::{Cell, UnsafeCell};
 use core::ffi::c_void;
 use core::mem::{self, ManuallyDrop, MaybeUninit};
@@ -884,6 +885,31 @@ encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I);
 encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J);
 encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K);
 encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
+
+/// Computes the raw signature string of the object corresponding to the block
+/// taking `A` as inputs and returning `R`.
+///
+/// Although this is currently implemented on a best-effort basis, this should
+/// still serve as a good way to obtain what to fill in the encoding string
+/// when implementing [`block2::ManualBlockEncoding`].
+///
+/// [`block2::ManualBlockEncoding`]: https://docs.rs/block2/latest/block2/trait.ManualBlockEncoding.html
+///
+/// # Example
+///
+/// ```
+/// # use objc2::encode::{EncodeArguments, EncodeReturn, block_signature_string};
+/// #
+/// assert_eq!(block_signature_string::<(i32, f32), u8>(), "C16@?0i8f12");
+/// ```
+pub fn block_signature_string<A, R>() -> String
+where
+    A: EncodeArguments,
+    R: EncodeReturn,
+{
+    // See there for unit tests.
+    Encoding::block_signature_string(A::ENCODINGS, &R::ENCODING_RETURN)
+}
 
 #[cfg(test)]
 mod tests {
