@@ -126,6 +126,10 @@ impl<F: ?Sized> RcBlock<F> {
     /// unsafe impl ManualBlockEncoding for MyBlockEncoding {
     ///     type Arguments = (*mut NSError,);
     ///     type Return = i32;
+    ///     #[cfg(debug_assertions)]
+    ///     const ENCODING_CSTR: &'static CStr = cr#"i16@?0@8"#;
+    ///     // Optionally. Will fail a static check under `cfg(debug_assertions)`.
+    ///     #[cfg(not(debug_assertions))]
     ///     const ENCODING_CSTR: &'static CStr = cr#"i16@?0@"NSError"8"#;
     /// }
     ///

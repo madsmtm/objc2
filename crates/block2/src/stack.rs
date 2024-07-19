@@ -217,6 +217,10 @@ where
     /// unsafe impl ManualBlockEncoding for MyBlockEncoding {
     ///     type Arguments = (*mut NSError,);
     ///     type Return = i32;
+    ///     #[cfg(debug_assertions)]
+    ///     const ENCODING_CSTR: &'static CStr = cr#"i16@?0@8"#;
+    ///     // Optionally. Will fail a static check under `cfg(debug_assertions)`.
+    ///     #[cfg(not(debug_assertions))]
     ///     const ENCODING_CSTR: &'static CStr = cr#"i16@?0@"NSError"8"#;
     /// }
     ///
@@ -240,6 +244,7 @@ where
     where
         E: ManualBlockEncodingExt<Arguments = A, Return = R>,
     {
+        crate::traits::debug_assert_block_encoding::<A, R, E>();
         let header = BlockHeader {
             isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
             flags: BlockFlags::BLOCK_HAS_COPY_DISPOSE
@@ -318,6 +323,7 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
         Closure: IntoBlock<'f, A, R>,
         E: ManualBlockEncodingExt<Arguments = A, Return = R>,
     {
+        crate::traits::debug_assert_block_encoding::<A, R, E>();
         // Don't need to emit copy and dispose helpers if the closure
         // doesn't need it.
         let flags = if mem::needs_drop::<Self>() {
