@@ -34,10 +34,14 @@ use std::error::Error;
 use crate::encode::{Encoding, RefEncode};
 #[cfg(feature = "exception")]
 use crate::ffi;
+#[cfg(feature = "catch-all")]
+use crate::ffi::NSUInteger;
 use crate::rc::{autoreleasepool_leaking, Retained};
 use crate::runtime::__nsstring::nsstring_to_str;
 use crate::runtime::{AnyClass, AnyObject, NSObject, NSObjectProtocol};
 use crate::{extern_methods, sel, Message};
+#[cfg(feature = "catch-all")]
+use crate::{msg_send, msg_send_id};
 
 /// An Objective-C exception.
 ///
@@ -82,6 +86,48 @@ impl Exception {
         } else {
             Some(false)
         }
+    }
+
+    #[cfg(feature = "catch-all")]
+    pub(crate) fn stack_trace(&self) -> impl fmt::Display + '_ {
+        struct Helper<'a>(&'a Exception);
+
+        impl fmt::Display for Helper<'_> {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                if let Some(true) = self.0.is_nsexception() {
+                    autoreleasepool_leaking(|pool| {
+                        // SAFETY: The object is an `NSException`.
+                        // Returns `NSArray<NSString *>`.
+                        let call_stack_symbols: Option<Retained<NSObject>> =
+                            unsafe { msg_send_id![self.0, callStackSymbols] };
+                        if let Some(call_stack_symbols) = call_stack_symbols {
+                            writeln!(f, "stack backtrace:")?;
+
+                            // SAFETY: `call_stack_symbols` is an `NSArray`, and
+                            // `count` returns `NSUInteger`.
+                            let count: NSUInteger =
+                                unsafe { msg_send![&call_stack_symbols, count] };
+                            let mut i = 0;
+                            while i < count {
+                                // SAFETY: The index is in-bounds (so no exception will be thrown).
+                                let symbol: Retained<NSObject> =
+                                    unsafe { msg_send_id![&call_stack_symbols, objectAtIndex: i] };
+                                // SAFETY: The symbol is an NSString, and is not used
+                                // beyond this scope.
+                                let symbol = unsafe { nsstring_to_str(&symbol, pool) };
+                                writeln!(f, "{symbol}")?;
+                                i += 1;
+                            }
+                        }
+                        Ok(())
+                    })
+                } else {
+                    Ok(())
+                }
+            }
+        }
+
+        Helper(self)
     }
 }
 

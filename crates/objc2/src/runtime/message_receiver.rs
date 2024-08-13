@@ -26,7 +26,7 @@ macro_rules! conditional_try {
             Ok(r) => r,
             Err(exception) => {
                 if let Some(exception) = exception {
-                    panic!("uncaught {exception:?}")
+                    panic!("uncaught {exception:?}\n{}", exception.stack_trace())
                 } else {
                     panic!("uncaught exception nil")
                 }
