@@ -14,7 +14,7 @@ fn create_and_query() {
     assert_eq!(&*exc.reason().unwrap(), ns_string!("def"));
     assert!(exc.userInfo().is_none());
 
-    let debug = format!("<NSException: {exc:p}> 'abc' reason:def");
+    let debug = format!("<NSException: {exc:p}> 'abc' reason: def");
     assert_eq!(format!("{exc:?}"), debug);
 
     let description = if cfg!(feature = "gnustep-1-7") {
@@ -35,7 +35,7 @@ fn create_and_query() {
 }
 
 #[test]
-#[should_panic = "'abc' reason:def"]
+#[should_panic = "'abc' reason: def"]
 fn unwrap() {
     let exc = NSException::new(ns_string!("abc"), Some(ns_string!("def")), None).unwrap();
 

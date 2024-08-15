@@ -104,9 +104,9 @@ impl fmt::Debug for NSException {
         let obj: &objc2::runtime::AnyObject = self.as_ref();
         write!(f, "{obj:?} '{}'", self.name())?;
         if let Some(reason) = self.reason() {
-            write!(f, " reason:{reason}")?;
+            write!(f, " reason: {reason}")?;
         } else {
-            write!(f, " reason:(NULL)")?;
+            write!(f, " reason: (NULL)")?;
         }
         Ok(())
     }

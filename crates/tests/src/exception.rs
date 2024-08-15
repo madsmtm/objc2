@@ -69,7 +69,7 @@ fn raise_catch_all1() {
 
 #[test]
 #[cfg(feature = "catch-all")]
-#[should_panic = "> 'abc' reason:def"]
+#[should_panic = "> 'abc' reason: def"]
 fn raise_catch_all2() {
     let name = NSString::from_str("abc");
     let reason = NSString::from_str("def");
@@ -110,7 +110,7 @@ fn raise_catch() {
     assert_eq!(format!("{exc}"), "def");
     assert_eq!(
         format!("{exc:?}"),
-        format!("exception <NSException: {:p}> 'abc' reason:def", &*exc)
+        format!("exception <NSException: {:p}> 'abc' reason: def", &*exc)
     );
 }
 
@@ -137,7 +137,7 @@ fn catch_actual() {
 
     assert!(format!("{}", exc).starts_with(reason));
     assert!(format!("{:?}", exc).starts_with(&format!(
-        "exception <NSException: {:p}> '{}' reason:{}",
+        "exception <NSException: {:p}> '{}' reason: {}",
         &*exc, name, reason
     )));
 

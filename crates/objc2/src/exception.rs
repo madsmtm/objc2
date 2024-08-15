@@ -178,9 +178,9 @@ impl fmt::Debug for Exception {
                 let obj: &AnyObject = self.as_ref();
                 write!(f, "{obj:?} '{}'", name.unwrap_or_default())?;
                 if let Some(reason) = reason {
-                    write!(f, " reason:{reason}")?;
+                    write!(f, " reason: {reason}")?;
                 } else {
-                    write!(f, " reason:(NULL)")?;
+                    write!(f, " reason: (NULL)")?;
                 }
                 Ok(())
             })
