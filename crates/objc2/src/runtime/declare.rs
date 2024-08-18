@@ -423,6 +423,7 @@ impl ClassBuilder {
     /// This may commonly return false if you first add e.g.
     /// `NSProgressReporting`, and then later try to add `NSObjectProtocol`,
     /// which is a super-protocol thereof.
+    #[inline]
     pub fn add_protocol(&mut self, proto: &AnyProtocol) -> bool {
         let success = unsafe { ffi::class_addProtocol(self.as_mut_ptr(), proto.as_ptr()) };
         Bool::from_raw(success).as_bool()
@@ -432,6 +433,7 @@ impl ClassBuilder {
 
     /// Registers the [`ClassBuilder`], consuming it, and returns a reference
     /// to the newly registered [`AnyClass`].
+    #[inline]
     pub fn register(self) -> &'static AnyClass {
         // Forget self, otherwise the class will be disposed in drop
         let mut this = ManuallyDrop::new(self);
