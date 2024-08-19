@@ -414,17 +414,18 @@ impl ClassBuilder {
         assert!(success.as_bool(), "failed to add ivar {name}");
     }
 
-    /// Adds the given protocol to self.
+    /// Makes the class conform to the given protocol.
     ///
-    /// # Panics
+    /// This will also make the class conform to any super-protocols that the
+    /// given protocol may have.
     ///
-    /// If the protocol wasn't successfully added.
-    pub fn add_protocol(&mut self, proto: &AnyProtocol) {
+    /// Returns whether the class did not already conform to the protocol.
+    /// This may commonly return false if you first add e.g.
+    /// `NSProgressReporting`, and then later try to add `NSObjectProtocol`,
+    /// which is a super-protocol thereof.
+    pub fn add_protocol(&mut self, proto: &AnyProtocol) -> bool {
         let success = unsafe { ffi::class_addProtocol(self.as_mut_ptr(), proto.as_ptr()) };
-        let success = Bool::from_raw(success).as_bool();
-        if cfg!(not(feature = "gnustep-1-7")) {
-            assert!(success, "failed to add protocol {proto}");
-        }
+        Bool::from_raw(success).as_bool()
     }
 
     // fn add_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
@@ -741,25 +742,51 @@ mod tests {
 
         let protocol = <dyn NSObjectProtocol>::protocol().unwrap();
 
-        builder.add_protocol(protocol);
+        // GNUStep is more eagerly returning false in the case where we
+        // inherit something that implements the protocol.
+        if cfg!(feature = "gnustep-1-7") {
+            assert!(!builder.add_protocol(protocol));
+        } else {
+            assert!(builder.add_protocol(protocol));
+        }
+
         let cls = builder.register();
         assert!(cls.conforms_to(protocol));
     }
 
     #[test]
-    #[cfg_attr(
-        not(feature = "gnustep-1-7"),
-        should_panic = "failed to add protocol NSObject"
-    )]
     fn duplicate_protocol() {
         let cls = test_utils::custom_class();
         let mut builder = ClassBuilder::new("TestClassBuilderDuplicateProtocol", cls).unwrap();
 
-        let protocol = AnyProtocol::get("NSObject").unwrap();
+        let protocol = ProtocolBuilder::new("TestClassBuilderDuplicateProtocol")
+            .unwrap()
+            .register();
 
-        builder.add_protocol(protocol);
-        // Should panic:
-        builder.add_protocol(protocol);
+        assert!(builder.add_protocol(protocol));
+        assert!(!builder.add_protocol(protocol));
+    }
+
+    #[test]
+    fn add_protocol_subprotocol_ordering() {
+        // The value returned by `class_addProtocol` is inherently dependent
+        // on the order in which you add the super- and subprotocols.
+        let builder = ProtocolBuilder::new("Superprotocol").unwrap();
+        let superprotocol = builder.register();
+
+        let mut builder = ProtocolBuilder::new("Subprotocol").unwrap();
+        builder.add_protocol(superprotocol);
+        let subprotocol = builder.register();
+
+        let mut builder = ClassBuilder::new("AddProtocolSuperThenSub", NSObject::class()).unwrap();
+        assert!(builder.add_protocol(superprotocol));
+        assert!(builder.add_protocol(subprotocol));
+        let _cls = builder.register();
+
+        let mut builder = ClassBuilder::new("AddProtocolSubThenSuper", NSObject::class()).unwrap();
+        assert!(builder.add_protocol(subprotocol));
+        assert!(!builder.add_protocol(superprotocol));
+        let _cls = builder.register();
     }
 
     #[test]

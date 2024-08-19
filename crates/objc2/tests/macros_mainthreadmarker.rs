@@ -32,6 +32,8 @@ declare_class!(
 
     impl DeclaredClass for Cls {}
 
+    unsafe impl NSObjectProtocol for Cls {}
+
     unsafe impl Proto for Cls {
         #[method(myMethod:)]
         fn _my_mainthreadonly_method(arg: i32) -> i32 {
@@ -44,8 +46,6 @@ declare_class!(
         }
     }
 );
-
-unsafe impl NSObjectProtocol for Cls {}
 
 // The macro does a textual match; but when users actually use
 // `objc2_foundation::MainThreadMarker` to ensure soundness, they will not

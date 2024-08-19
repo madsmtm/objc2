@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 * Print backtrace when catching exceptions with the `"catch-all"` feature.
+* Changed the return value of `ClassBuilder::add_protocol` to indicate whether
+  the protocol was already present on the class or not.
+
+### Fixed
+* Remove an incorrect assertion when adding protocols to classes in an unexpected
+  order.
 
 
 ## 0.5.2 - 2024-05-21

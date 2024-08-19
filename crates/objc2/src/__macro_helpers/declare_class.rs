@@ -267,6 +267,8 @@ impl<T: DeclaredClass> ClassBuilderHelper<T> {
         let protocol = P::protocol();
 
         if let Some(protocol) = protocol {
+            // Ignore the return value; whether the protocol is added is
+            // inherently dependent on the order of the protocols.
             self.builder.add_protocol(protocol);
         }
 
