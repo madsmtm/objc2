@@ -1,4 +1,3 @@
-#[cfg(feature = "block2")]
 use alloc::vec::Vec;
 use core::ffi::c_void;
 use core::fmt;
