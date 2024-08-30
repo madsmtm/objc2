@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * `objc2-foundation`: `MainThreadMarker::from` now debug-asserts that it is
   actually running on the main thread.
 * `objc2-foundation`: Added `NSData::to_vec` and `NSData::iter` helper methods.
+* `objc2-foundation`: Added `Eq` implementation for `NSValue` and subclasses.
 
 ### Changed
 * `objc2-foundation`: Allow using `MainThreadBound` without the `NSThread`
@@ -41,6 +42,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * `objc2-foundation` **BREAKING**: Renamed the `bytes[_mut]` methods on
   `NSData` to `as[_mut]_slice_unchecked`, and made them `unsafe`, since the
   data can no longer ensure that it is not mutated while the bytes are in use.
+* No longer require `Eq + Hash` for `NSDictionary` keys and `NSSet` values,
+  since it was overly restrictive.
+* Removed `NSSet` methods `contains`, `is_subset`, `is_superset` and
+  `is_disjoint` that were simple wrappers over the original methods.
 
 ### Deprecated
 * `objc2-foundation`: Moved `MainThreadMarker` to `objc2`.

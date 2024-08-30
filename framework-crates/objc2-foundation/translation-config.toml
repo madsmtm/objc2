@@ -67,10 +67,9 @@ class.NSProcessInfo.derives = "PartialEq, Eq, Hash"
 class.NSString.derives = "PartialEq, Eq, Hash"
 class.NSUUID.derives = "PartialEq, Eq, Hash"
 
-# Overridden because whether or not it is Eq depends on the inner value
+# Overridden to use more performant implementation for `PartialEq`
 class.NSValue.derives = ""
 class.NSNumber.derives = ""
-class.NSDecimalNumber.derives = "Debug, PartialEq, Hash"
 
 # Returns `nil` on Apple and GNUStep throws an exception on all other messages
 # to this invalid instance.
@@ -420,6 +419,9 @@ class.NSProcessInfo.methods.operatingSystemVersion.unsafe = false
 class.NSSet.methods.init.unsafe = false
 class.NSSet.methods.new.unsafe = false
 class.NSSet.methods.count.unsafe = false
+class.NSSet.methods."containsObject:".unsafe = false
+class.NSSet.methods."isSubsetOfSet:".unsafe = false
+class.NSSet.methods."intersectsSet:".unsafe = false
 class.NSMutableSet.methods.init.unsafe = false
 class.NSMutableSet.methods.new.unsafe = false
 class.NSMutableSet.methods.removeAllObjects.unsafe = false

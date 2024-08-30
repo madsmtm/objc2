@@ -172,6 +172,8 @@ impl PartialEq for NSValue {
     }
 }
 
+impl Eq for NSValue {}
+
 impl fmt::Debug for NSValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let enc = self.encoding().unwrap_or("(NULL)");

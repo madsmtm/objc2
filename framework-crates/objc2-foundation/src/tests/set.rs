@@ -19,11 +19,11 @@ fn test_from_vec() {
 
     let strs = ["one", "two", "three"].map(NSString::from_str);
     let set = NSSet::from_vec(strs.to_vec());
-    assert!(strs.into_iter().all(|s| set.contains(&s)));
+    assert!(strs.into_iter().all(|s| set.containsObject(&s)));
 
     let nums = [1, 2, 3].map(NSNumber::new_i32);
     let set = NSSet::from_vec(nums.to_vec());
-    assert!(nums.into_iter().all(|n| set.contains(&n)));
+    assert!(nums.into_iter().all(|n| set.containsObject(&n)));
 }
 
 #[test]
@@ -33,11 +33,11 @@ fn test_from_slice() {
 
     let strs = [ns_string!("one"), ns_string!("two"), ns_string!("three")];
     let set = NSSet::from_slice(&strs);
-    assert!(strs.into_iter().all(|s| set.contains(s)));
+    assert!(strs.into_iter().all(|s| set.containsObject(s)));
 
     let nums = [1, 2, 3].map(NSNumber::new_i32);
     let set = NSSet::from_id_slice(&nums);
-    assert!(nums.into_iter().all(|n| set.contains(&n)));
+    assert!(nums.into_iter().all(|n| set.containsObject(&n)));
 }
 
 #[test]
@@ -92,11 +92,11 @@ fn test_get_any() {
 #[test]
 fn test_contains() {
     let set = NSSet::<NSString>::new();
-    assert!(!set.contains(ns_string!("one")));
+    assert!(!set.containsObject(ns_string!("one")));
 
     let set = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("two")]);
-    assert!(set.contains(ns_string!("one")));
-    assert!(!set.contains(ns_string!("three")));
+    assert!(set.containsObject(ns_string!("one")));
+    assert!(!set.containsObject(ns_string!("three")));
 }
 
 #[test]
@@ -104,28 +104,19 @@ fn test_is_subset() {
     let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
     let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
 
-    assert!(set1.is_subset(&set2));
-    assert!(!set2.is_subset(&set1));
+    assert!(set1.isSubsetOfSet(&set2));
+    assert!(!set2.isSubsetOfSet(&set1));
 }
 
 #[test]
-fn test_is_superset() {
-    let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
-    let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
-
-    assert!(!set1.is_superset(&set2));
-    assert!(set2.is_superset(&set1));
-}
-
-#[test]
-fn test_is_disjoint() {
+fn test_intersection() {
     let set1 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
     let set2 = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("three")]);
     let set3 = NSSet::from_slice(&[ns_string!("four"), ns_string!("five"), ns_string!("six")]);
 
-    assert!(!set1.is_disjoint(&set2));
-    assert!(set1.is_disjoint(&set3));
-    assert!(set2.is_disjoint(&set3));
+    assert!(set1.intersectsSet(&set2));
+    assert!(!set1.intersectsSet(&set3));
+    assert!(!set2.intersectsSet(&set3));
 }
 
 #[test]
