@@ -3,7 +3,6 @@ use alloc::vec::Vec;
 #[cfg(feature = "NSObject")]
 use core::cmp::min;
 use core::fmt;
-use core::hash::Hash;
 use core::mem;
 use core::ops::{Index, IndexMut};
 use core::ptr::{self, NonNull};
@@ -38,7 +37,7 @@ where
 }
 
 #[cfg(feature = "NSObject")]
-impl<K: Message + Eq + Hash, V: Message> NSDictionary<K, V> {
+impl<K: Message, V: Message> NSDictionary<K, V> {
     // The dictionary copies its keys, which is why we require `NSCopying` and
     // use `CounterpartOrSelf` on all input data - we want to ensure that the
     // type-system knows that it's not actually `NSMutableString` that is
@@ -102,7 +101,7 @@ impl<K: Message + Eq + Hash, V: Message> NSDictionary<K, V> {
 }
 
 #[cfg(feature = "NSObject")]
-impl<K: Message + Eq + Hash, V: Message> NSMutableDictionary<K, V> {
+impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Retained<V>>) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
@@ -159,7 +158,7 @@ impl<K: Message + Eq + Hash, V: Message> NSMutableDictionary<K, V> {
 // let's just use a simple normal reference.
 
 extern_methods!(
-    unsafe impl<K: Message + Eq + Hash, V: Message> NSDictionary<K, V> {
+    unsafe impl<K: Message, V: Message> NSDictionary<K, V> {
         /// Returns a reference to the value corresponding to the key.
         ///
         /// # Examples
@@ -289,7 +288,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     }
 }
 
-impl<K: Message + Eq + Hash, V: Message> NSMutableDictionary<K, V> {
+impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     /// Inserts a key-value pair into the dictionary.
     ///
     /// If the dictionary did not have this key present, None is returned.
@@ -557,7 +556,7 @@ mod iter_helpers {
 #[cfg(feature = "NSEnumerator")]
 pub use self::iter_helpers::*;
 
-impl<'a, K: Message + Eq + Hash, V: Message> Index<&'a K> for NSDictionary<K, V> {
+impl<'a, K: Message, V: Message> Index<&'a K> for NSDictionary<K, V> {
     type Output = V;
 
     fn index<'s>(&'s self, index: &'a K) -> &'s V {
@@ -565,7 +564,7 @@ impl<'a, K: Message + Eq + Hash, V: Message> Index<&'a K> for NSDictionary<K, V>
     }
 }
 
-impl<'a, K: Message + Eq + Hash, V: Message> Index<&'a K> for NSMutableDictionary<K, V> {
+impl<'a, K: Message, V: Message> Index<&'a K> for NSMutableDictionary<K, V> {
     type Output = V;
 
     fn index<'s>(&'s self, index: &'a K) -> &'s V {
@@ -573,15 +572,13 @@ impl<'a, K: Message + Eq + Hash, V: Message> Index<&'a K> for NSMutableDictionar
     }
 }
 
-impl<'a, K: Message + Eq + Hash, V: Message + IsMutable> IndexMut<&'a K> for NSDictionary<K, V> {
+impl<'a, K: Message, V: Message + IsMutable> IndexMut<&'a K> for NSDictionary<K, V> {
     fn index_mut<'s>(&'s mut self, index: &'a K) -> &'s mut V {
         self.get_mut(index).unwrap()
     }
 }
 
-impl<'a, K: Message + Eq + Hash, V: Message + IsMutable> IndexMut<&'a K>
-    for NSMutableDictionary<K, V>
-{
+impl<'a, K: Message, V: Message + IsMutable> IndexMut<&'a K> for NSMutableDictionary<K, V> {
     fn index_mut<'s>(&'s mut self, index: &'a K) -> &'s mut V {
         self.get_mut(index).unwrap()
     }
