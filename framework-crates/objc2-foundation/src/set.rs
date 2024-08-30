@@ -70,15 +70,15 @@ impl<T: Message> NSSet<T> {
     /// use objc2_foundation::{NSSet, NSString};
     ///
     /// let strs = ["one", "two", "three"].map(NSString::from_str);
-    /// let set = NSSet::from_id_slice(&strs);
+    /// let set = NSSet::from_retained_slice(&strs);
     /// ```
-    pub fn from_id_slice(slice: &[Retained<T>]) -> Retained<Self>
+    pub fn from_retained_slice(slice: &[Retained<T>]) -> Retained<Self>
     where
         T: IsIdCloneable,
     {
         let len = slice.len();
         let ptr = util::retained_ptr_cast_const(slice.as_ptr());
-        // SAFETY: Same as `NSArray::from_id_slice`
+        // SAFETY: Same as `NSArray::from_retained_slice`
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
     }
 
@@ -135,7 +135,7 @@ impl<T: Message> NSSet<T> {
     /// use objc2_foundation::{NSNumber, NSSet, NSString};
     ///
     /// let nums = [1, 2, 3];
-    /// let set = NSSet::from_id_slice(&nums.map(NSNumber::new_i32));
+    /// let set = NSSet::from_retained_slice(&nums.map(NSNumber::new_i32));
     ///
     /// assert_eq!(set.to_array().len(), 3);
     /// assert!(set.to_array().iter().all(|i| nums.contains(&i.as_i32())));
@@ -182,15 +182,15 @@ impl<T: Message> NSMutableSet<T> {
     /// use objc2_foundation::{NSMutableSet, NSString};
     ///
     /// let strs = ["one", "two", "three"].map(NSString::from_str);
-    /// let set = NSMutableSet::from_id_slice(&strs);
+    /// let set = NSMutableSet::from_retained_slice(&strs);
     /// ```
-    pub fn from_id_slice(slice: &[Retained<T>]) -> Retained<Self>
+    pub fn from_retained_slice(slice: &[Retained<T>]) -> Retained<Self>
     where
         T: IsIdCloneable,
     {
         let len = slice.len();
         let ptr = util::retained_ptr_cast_const(slice.as_ptr());
-        // SAFETY: Same as `NSArray::from_id_slice`
+        // SAFETY: Same as `NSArray::from_retained_slice`
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
     }
 

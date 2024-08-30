@@ -46,6 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   since it was overly restrictive.
 * Removed `NSSet` methods `contains`, `is_subset`, `is_superset` and
   `is_disjoint` that were simple wrappers over the original methods.
+* `objc2-foundation` **BREAKING**: Renamed `from_id_slice` to `from_retained_slice`.
 
 ### Deprecated
 * `objc2-foundation`: Moved `MainThreadMarker` to `objc2`.

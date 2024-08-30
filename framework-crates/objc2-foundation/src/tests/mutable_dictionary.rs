@@ -9,7 +9,7 @@ use objc2::rc::Retained;
 use crate::Foundation::{NSMutableDictionary, NSNumber, NSObject};
 
 fn sample_dict() -> Retained<NSMutableDictionary<NSNumber, NSObject>> {
-    NSMutableDictionary::from_id_slice(
+    NSMutableDictionary::from_retained_slice(
         &[
             &*NSNumber::new_i32(1),
             &*NSNumber::new_i32(2),

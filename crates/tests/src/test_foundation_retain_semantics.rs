@@ -21,7 +21,7 @@ fn array_retains_stored() {
     expected.retain += 2;
     expected.assert_current();
 
-    let array = NSArray::from_id_slice(&input);
+    let array = NSArray::from_retained_slice(&input);
     expected.retain += 2;
     expected.assert_current();
 
@@ -61,7 +61,7 @@ fn set_retains_stored() {
     expected.retain += 2;
     expected.assert_current();
 
-    let set = NSSet::from_id_slice(&input);
+    let set = NSSet::from_retained_slice(&input);
     expected.retain += 1;
     expected.assert_current();
 
@@ -90,7 +90,7 @@ fn set_retains_stored() {
 #[test]
 fn array_nscopying_uses_retain() {
     let obj = RcTestObject::new();
-    let array = NSArray::from_id_slice(&[obj]);
+    let array = NSArray::from_retained_slice(&[obj]);
     let mut expected = ThreadTestData::current();
 
     let _copy = array.copy();
@@ -104,7 +104,7 @@ fn array_nscopying_uses_retain() {
 #[test]
 fn set_nscopying_uses_retain() {
     let obj = RcTestObject::new();
-    let set = NSSet::from_id_slice(&[obj]);
+    let set = NSSet::from_retained_slice(&[obj]);
     let mut expected = ThreadTestData::current();
 
     let _copy = set.copy();
@@ -122,7 +122,7 @@ fn set_nscopying_uses_retain() {
 )]
 fn array_iter_minimal_retains() {
     let objs = [RcTestObject::new()];
-    let array = NSArray::from_id_slice(&objs);
+    let array = NSArray::from_retained_slice(&objs);
     drop(objs);
     let mut expected = ThreadTestData::current();
 
@@ -170,7 +170,7 @@ fn array_iter_minimal_retains() {
 )]
 fn set_iter_minimal_retains() {
     let objs = [RcTestObject::new()];
-    let set = NSSet::from_id_slice(&objs);
+    let set = NSSet::from_retained_slice(&objs);
     drop(objs);
     let mut expected = ThreadTestData::current();
 

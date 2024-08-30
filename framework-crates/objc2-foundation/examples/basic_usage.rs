@@ -33,7 +33,7 @@ fn main() {
     // Create a dictionary mapping strings to objects
     let keys = &[string];
     let objects = &[obj];
-    let dict = NSDictionary::from_id_slice(keys, objects);
+    let dict = NSDictionary::from_retained_slice(keys, objects);
     println!("{:?}", dict.get(string));
     println!("{}", dict.len());
 }

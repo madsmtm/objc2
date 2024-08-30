@@ -36,7 +36,7 @@ fn test_from_slice() {
     assert!(strs.into_iter().all(|s| set.containsObject(s)));
 
     let nums = [1, 2, 3].map(NSNumber::new_i32);
-    let set = NSSet::from_id_slice(&nums);
+    let set = NSSet::from_retained_slice(&nums);
     assert!(nums.into_iter().all(|n| set.containsObject(&n)));
 }
 
@@ -123,7 +123,7 @@ fn test_intersection() {
 #[cfg(feature = "NSArray")]
 fn test_to_array() {
     let nums = [1, 2, 3];
-    let set = NSSet::from_id_slice(&nums.map(NSNumber::new_i32));
+    let set = NSSet::from_retained_slice(&nums.map(NSNumber::new_i32));
 
     assert_eq!(set.to_array().len(), 3);
     assert!(set.to_array().iter().all(|i| nums.contains(&i.as_i32())));
@@ -132,7 +132,7 @@ fn test_to_array() {
 #[test]
 fn test_iter() {
     let nums = [1, 2, 3];
-    let set = NSSet::from_id_slice(&nums.map(NSNumber::new_i32));
+    let set = NSSet::from_retained_slice(&nums.map(NSNumber::new_i32));
 
     assert_eq!(set.iter().count(), 3);
     assert!(set.iter().all(|i| nums.contains(&i.as_i32())));
@@ -141,7 +141,7 @@ fn test_iter() {
 #[test]
 fn test_into_iter() {
     let nums = [1, 2, 3];
-    let set = NSSet::from_id_slice(&nums.map(NSNumber::new_i32));
+    let set = NSSet::from_retained_slice(&nums.map(NSNumber::new_i32));
 
     assert!(set.into_iter().all(|i| nums.contains(&i.as_i32())));
 }
@@ -190,7 +190,9 @@ fn test_debug() {
 #[allow(deprecated)]
 fn invalid_generic() {
     let something_interior_mutable = unsafe { crate::NSCalendar::currentCalendar() };
-    let set = NSSet::from_id_slice(&[crate::NSArray::from_id_slice(&[something_interior_mutable])]);
+    let set = NSSet::from_retained_slice(&[crate::NSArray::from_retained_slice(&[
+        something_interior_mutable,
+    ])]);
     let _ = set.get_any().unwrap().get(0).unwrap();
     // something_interior_mutable.setAbc(...)
 }

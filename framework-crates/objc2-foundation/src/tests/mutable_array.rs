@@ -15,8 +15,8 @@ fn test_creation() {
     let _ = <NSMutableArray<NSNumber>>::from_vec(vec![]);
     let _ = NSMutableArray::from_vec(vec![NSNumber::new_u8(4), NSNumber::new_u8(2)]);
 
-    let _ = <NSMutableArray<NSNumber>>::from_id_slice(&[]);
-    let _ = NSMutableArray::from_id_slice(&[NSNumber::new_u8(4), NSNumber::new_u8(2)]);
+    let _ = <NSMutableArray<NSNumber>>::from_retained_slice(&[]);
+    let _ = NSMutableArray::from_retained_slice(&[NSNumber::new_u8(4), NSNumber::new_u8(2)]);
 
     let _ = <NSMutableArray<NSNumber>>::from_slice(&[]);
     let _ = NSMutableArray::from_slice(&[&*NSNumber::new_u8(4), &*NSNumber::new_u8(2)]);
@@ -66,7 +66,7 @@ fn test_allowed_mutation_while_iterating() {
     ignore = "thread safety issues regarding initialization"
 )]
 fn test_iter_mutation_detection() {
-    let array = NSMutableArray::from_id_slice(&[NSObject::new(), NSObject::new()]);
+    let array = NSMutableArray::from_retained_slice(&[NSObject::new(), NSObject::new()]);
 
     for item in &array {
         let item: &NSObject = item;
@@ -101,7 +101,7 @@ fn test_threaded() {
     ignore = "thread safety issues regarding initialization"
 )]
 fn test_into_vec() {
-    let array = NSMutableArray::from_id_slice(&[crate::NSString::new()]);
+    let array = NSMutableArray::from_retained_slice(&[crate::NSString::new()]);
 
     let vec = NSMutableArray::into_vec(array);
     assert_eq!(vec.len(), 1);

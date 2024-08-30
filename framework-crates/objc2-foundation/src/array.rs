@@ -28,7 +28,7 @@ impl<T: Message> NSArray<T> {
         // except for the fact that we're using `UnsafeCell` in `AnyObject`.
     }
 
-    pub fn from_id_slice(slice: &[Retained<T>]) -> Retained<Self>
+    pub fn from_retained_slice(slice: &[Retained<T>]) -> Retained<Self>
     where
         T: IsIdCloneable,
     {
@@ -92,13 +92,13 @@ impl<T: Message> NSMutableArray<T> {
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
     }
 
-    pub fn from_id_slice(slice: &[Retained<T>]) -> Retained<Self>
+    pub fn from_retained_slice(slice: &[Retained<T>]) -> Retained<Self>
     where
         T: IsIdCloneable,
     {
         let len = slice.len();
         let ptr = util::retained_ptr_cast_const(slice.as_ptr());
-        // SAFETY: Same as `NSArray::from_id_slice`
+        // SAFETY: Same as `NSArray::from_retained_slice`
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
     }
 

@@ -100,7 +100,7 @@ fn test_debug() {
 
 #[test]
 fn new_different_lengths() {
-    let dict = NSDictionary::from_id_slice(
+    let dict = NSDictionary::from_retained_slice(
         &[ns_string!("a"), ns_string!("b"), ns_string!("c")],
         &[NSObject::new(), NSObject::new()],
     );
@@ -165,7 +165,8 @@ fn test_from_base_class(cls: &AnyClass) {
             .unwrap()
     };
 
-    let _dict = NSDictionary::from_id_slice(&[&*obj1, &*obj2], &[NSObject::new(), NSObject::new()]);
+    let _dict =
+        NSDictionary::from_retained_slice(&[&*obj1, &*obj2], &[NSObject::new(), NSObject::new()]);
 }
 
 #[test]

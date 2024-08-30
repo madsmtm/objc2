@@ -71,7 +71,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 
-    pub fn from_id_slice<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
+    pub fn from_retained_slice<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
         V: IsIdCloneable,
@@ -81,7 +81,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
         let keys = keys_to_ptr(keys);
         let objects = util::retained_ptr_cast_const(objects.as_ptr());
 
-        // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_id_slice`.
+        // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_retained_slice`.
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 
@@ -116,7 +116,7 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 
-    pub fn from_id_slice<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
+    pub fn from_retained_slice<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
         V: IsIdCloneable,
@@ -126,7 +126,7 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
         let keys = keys_to_ptr(keys);
         let objects = util::retained_ptr_cast_const(objects.as_ptr());
 
-        // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_id_slice`.
+        // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_retained_slice`.
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 

@@ -38,8 +38,8 @@ fn test_creation() {
     let _ = <NSArray<NSNumber>>::from_vec(vec![]);
     let _ = NSArray::from_vec(vec![NSNumber::new_u8(4), NSNumber::new_u8(2)]);
 
-    let _ = <NSArray<NSNumber>>::from_id_slice(&[]);
-    let _ = NSArray::from_id_slice(&[NSNumber::new_u8(4), NSNumber::new_u8(2)]);
+    let _ = <NSArray<NSNumber>>::from_retained_slice(&[]);
+    let _ = NSArray::from_retained_slice(&[NSNumber::new_u8(4), NSNumber::new_u8(2)]);
 
     let _ = <NSArray<NSNumber>>::from_slice(&[]);
     let _ = NSArray::from_slice(&[&*NSNumber::new_u8(4), &*NSNumber::new_u8(2)]);
@@ -181,14 +181,14 @@ fn test_trait_retainable() {
     let obj: Retained<ProtocolObject<dyn TestProtocol>> =
         ProtocolObject::from_retained(NSNumber::new_i32(42));
     let _ = NSArray::from_slice(&[&*obj, &*obj]);
-    let _ = NSArray::from_id_slice(&[obj.clone(), obj.clone()]);
+    let _ = NSArray::from_retained_slice(&[obj.clone(), obj.clone()]);
     let _ = NSArray::from_vec(vec![obj.clone(), obj.clone()]);
 }
 
 #[test]
 fn test_access_anyobject() {
     let obj: Retained<AnyObject> = Retained::into_super(NSObject::new());
-    let array = NSArray::from_id_slice(&[obj.clone(), obj.clone()]);
+    let array = NSArray::from_retained_slice(&[obj.clone(), obj.clone()]);
     assert!(ptr::eq(&array[0], &*obj));
     assert!(ptr::eq(array.get(0).unwrap(), &*obj));
     assert!(ptr::eq(&*array.get_retained(0).unwrap(), &*obj));
