@@ -13,23 +13,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
-* `objc2-foundation`: `MainThreadMarker::new_unchecked` and
-  `MainThreadBound::new` is now available in `const`. This is useful for
-  creating main-thread only statics.
-* `objc2-foundation`: `MainThreadMarker::from` now debug-asserts that it is
-  actually running on the main thread.
-* `objc2-foundation`: Added `NSData::to_vec` and `NSData::iter` helper methods.
-* `objc2-foundation`: Added `Eq` implementation for `NSValue` and subclasses.
+* Added `NSData::to_vec` and `NSData::iter` helper methods.
+* Added `Eq` implementation for `NSValue` and subclasses.
 
 ### Changed
-* `objc2-foundation`: Allow using `MainThreadBound` without the `NSThread`
-  feature flag.
-* `objc2-foundation`: Removed `HasStableHash` requirement on `NSDictionary` and
-  `NSSet` creation methods. This was added in an abundance of caution, but
-  prevents real-world usage of these types, and isn't actually needed for
-  soundness (the documentation mentions the collection being "corrupt" if the
-  hash is changed, but that's not the same as it being unsound).
-* `objc2-foundation` **BREAKING**: Made the following types `InteriorMutable`:
+* Allow using `MainThreadBound` without the `NSThread` feature flag.
+* Removed `HasStableHash` requirement on `NSDictionary` and `NSSet` creation
+  methods. This was added in an abundance of caution, but prevents real-world
+  usage of these types, and isn't actually needed for soundness (the
+  documentation mentions the collection being "corrupt" if the hash is
+  changed, but that's not the same as it being unsound).
+* **BREAKING**: Made the following types `InteriorMutable`:
   - `NSString` and `NSMutableString`.
   - `NSAttributedString` and `NSMutableAttributedString`.
   - `NSCharacterSet` and `NSMutableCharacterSet`.
@@ -39,23 +33,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   This means that these can now be `retain`-ed like you would expect, and you
   no longer need to use `mut` to mutate them, but it also means that they are
   no longer `Send + Sync`.
-* `objc2-foundation` **BREAKING**: Renamed the `bytes[_mut]` methods on
-  `NSData` to `as[_mut]_slice_unchecked`, and made them `unsafe`, since the
-  data can no longer ensure that it is not mutated while the bytes are in use.
+* **BREAKING**: Renamed the `bytes[_mut]` methods on `NSData` to
+  `as[_mut]_slice_unchecked`, and made them `unsafe`, since the data can no
+  longer ensure that it is not mutated while the bytes are in use.
 * No longer require `Eq + Hash` for `NSDictionary` keys and `NSSet` values,
   since it was overly restrictive.
-* Removed `NSSet` methods `contains`, `is_subset`, `is_superset` and
-  `is_disjoint` that were simple wrappers over the original methods.
-* `objc2-foundation` **BREAKING**: Renamed `from_id_slice` to `from_retained_slice`.
+* **BREAKING**: Removed `NSSet` methods `contains`, `is_subset`, `is_superset`
+  and `is_disjoint` that were simple wrappers over the original methods.
+* **BREAKING**: Renamed `from_id_slice` to `from_retained_slice`.
 
 ### Deprecated
-* `objc2-foundation`: Moved `MainThreadMarker` to `objc2`.
-* `objc2-foundation`: Deprecated the free-standing function `is_main_thread`.
+* Moved `MainThreadMarker` from `objc2-foundation` to `objc2`.
+* Deprecated the free-standing function `objc2_foundation::is_main_thread`.
 
 ### Removed
-* `objc2-foundation` **BREAKING**: Removed the deprecated function
-  `MainThreadMarker::run_on_main`.
-* **BREAKING** `objc2-ui-kit`: Removed dependency on `objc2-link-presentation`.
+* **BREAKING**: Removed the deprecated function `MainThreadMarker::run_on_main`.
+* **BREAKING**: Removed dependency on `objc2-link-presentation` from `objc2-ui-kit`.
 
   `objc2-link-presentation` is going to depend on `objc2-ui-kit` in the future,
   so this would result in a recursive dependency. This does mean that the

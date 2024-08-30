@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `AnyClass::is_metaclass`.
 * Added `MainThreadMarker` from `objc2-foundation`.
+  * `MainThreadMarker::new_unchecked` and `MainThreadBound::new` is now available
+    in `const`. This is useful for creating main-thread only statics.
+  * `MainThreadMarker::from` now debug-asserts that it is actually running on
+    the main thread.
 * Added `ClassType::alloc_main_thread`.
 * Added `IsMainThreadOnly::mtm`.
 
