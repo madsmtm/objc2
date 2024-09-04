@@ -1,8 +1,8 @@
 #![cfg(feature = "NSDictionary")]
 #![cfg(feature = "NSString")]
 #![cfg(feature = "NSObject")]
+use alloc::format;
 use alloc::string::ToString;
-use alloc::{format, vec};
 use core::ptr;
 
 use objc2::{
@@ -17,7 +17,7 @@ use crate::{ns_string, NSDictionary, NSObject, NSString, NSUInteger};
 fn sample_dict(key: &str) -> Retained<NSDictionary<NSString, NSObject>> {
     let string = NSString::from_str(key);
     let obj = NSObject::new();
-    NSDictionary::from_vec(&[&*string], vec![obj])
+    NSDictionary::from_retained_objects(&[&*string], &[obj])
 }
 
 #[test]
@@ -30,25 +30,8 @@ fn test_len() {
 fn test_get() {
     let dict = sample_dict("abcd");
 
-    assert!(dict.get(ns_string!("abcd")).is_some());
-    assert!(dict.get(ns_string!("abcde")).is_none());
-}
-
-#[test]
-fn test_keys() {
-    let dict = sample_dict("abcd");
-    let keys = dict.keys_vec();
-
-    assert_eq!(keys.len(), 1);
-    assert_eq!(keys[0].to_string(), "abcd");
-}
-
-#[test]
-fn test_values() {
-    let dict = sample_dict("abcd");
-    let vals = dict.values_vec();
-
-    assert_eq!(vals.len(), 1);
+    assert!(dict.objectForKey(ns_string!("abcd")).is_some());
+    assert!(dict.objectForKey(ns_string!("abcde")).is_none());
 }
 
 #[test]
@@ -59,7 +42,7 @@ fn test_keys_and_objects() {
     assert_eq!(keys.len(), 1);
     assert_eq!(objs.len(), 1);
     assert_eq!(keys[0].to_string(), "abcd");
-    assert_eq!(objs[0], dict.get(keys[0]).unwrap());
+    assert_eq!(objs[0], dict.objectForKey(&keys[0]).unwrap());
 }
 
 #[test]
@@ -72,9 +55,9 @@ fn test_iter_keys() {
 
 #[test]
 #[cfg(feature = "NSEnumerator")]
-fn test_iter_values() {
+fn test_iter_objects() {
     let dict = sample_dict("abcd");
-    assert_eq!(dict.values().count(), 1);
+    assert_eq!(dict.objects().count(), 1);
 }
 
 #[test]
@@ -82,25 +65,26 @@ fn test_iter_values() {
 fn test_arrays() {
     let dict = sample_dict("abcd");
 
-    let keys = unsafe { dict.allKeys() };
+    let keys = dict.allKeys();
     assert_eq!(keys.len(), 1);
-    assert_eq!(keys[0].to_string(), "abcd");
+    assert_eq!(keys.objectAtIndex(0).to_string(), "abcd");
 
-    // let objs = dict.to_array();
-    // assert_eq!(objs.len(), 1);
+    let objs = dict.allValues();
+    assert_eq!(objs.len(), 1);
 }
 
 #[test]
 fn test_debug() {
     let key = ns_string!("a");
     let val = ns_string!("b");
-    let dict = NSDictionary::from_slice(&[key], &[val]);
+    let dict = NSDictionary::from_slices(&[key], &[val]);
     assert_eq!(format!("{dict:?}"), r#"{"a": "b"}"#);
 }
 
 #[test]
+#[should_panic = "key slice and object slice should have the same length"]
 fn new_different_lengths() {
-    let dict = NSDictionary::from_retained_slice(
+    let dict = NSDictionary::from_retained_objects(
         &[ns_string!("a"), ns_string!("b"), ns_string!("c")],
         &[NSObject::new(), NSObject::new()],
     );
@@ -166,7 +150,7 @@ fn test_from_base_class(cls: &AnyClass) {
     };
 
     let _dict =
-        NSDictionary::from_retained_slice(&[&*obj1, &*obj2], &[NSObject::new(), NSObject::new()]);
+        NSDictionary::from_retained_objects(&[&*obj1, &*obj2], &[NSObject::new(), NSObject::new()]);
 }
 
 #[test]

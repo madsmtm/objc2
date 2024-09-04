@@ -1,13 +1,12 @@
 #![allow(dead_code)]
 use core::ptr::{self, NonNull};
-#[cfg(debug_assertions)]
 use std::os::raw::c_ulong;
 
-use objc2::mutability::IsIdCloneable;
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
-use objc2::{mutability::IsMutable, runtime::ProtocolObject};
-use objc2::{ClassType, Message};
+use objc2::runtime::ProtocolObject;
+use objc2::ClassType;
+use objc2::Message;
 
 use super::util;
 use crate::Foundation::{NSFastEnumeration, NSFastEnumerationState};
@@ -19,6 +18,14 @@ use crate::Foundation::{NSFastEnumeration, NSFastEnumerationState};
 /// enumeration (e.g. NSArray) doesn't use the buffer:
 /// [CFArray's NSFastEnumeration implementation](https://github.com/apple-oss-distributions/CF/blob/dc54c6bb1c1e5e0b9486c1d26dd5bef110b20bf3/CFArray.c#L618-L642)
 const BUF_SIZE: usize = 16;
+
+/// Track mutation mistakes when debug assertions are enabled (they should
+/// be made impossible by Rust at compile-time, so hence we don't need to
+/// track them in release mode).
+///
+/// This is set to `None` initially, but later loaded to `Some(_)` after
+/// the first enumeration.
+type MutationState = Option<c_ulong>;
 
 /// Helper type for doing fast enumeration.
 ///
@@ -43,17 +50,9 @@ struct FastEnumeratorHelper {
     // ensure, so don't think we should consider that one.
     current_item: usize,
     items_count: usize,
-    /// Track mutation mistakes when debug assertions are enabled (they should
-    /// be made impossible by Rust at compile-time, so hence we don't need to
-    /// track them in release mode).
-    ///
-    /// This is set to `None` initially, but later loaded to `Some(_)` after
-    /// the first enumeration.
-    #[cfg(debug_assertions)]
-    mutations_state: Option<c_ulong>,
 }
 
-// SAFETY: Neither `FastEnumeratorHelper`, nor inner the enumeration state,
+// SAFETY: Neither `FastEnumeratorHelper`, nor the inner enumeration state,
 // need to be bound to any specific thread (at least, we can generally assume
 // this for the enumerable types in Foundation - but `NSEnumerator` won't be
 // `Send`, and neither will its iterator types).
@@ -62,6 +61,24 @@ unsafe impl Send for FastEnumeratorHelper {}
 // SAFETY: `FastEnumeratorHelper` is only mutable behind `&mut`, and as such
 // is safe to share with other threads.
 unsafe impl Sync for FastEnumeratorHelper {}
+
+#[cfg(feature = "unstable-mutation-return-null")]
+extern "C" {
+    static kCFNull: NonNull<AnyObject>;
+}
+
+// Extracted as separate functions to make assembly nicer
+#[cfg(not(feature = "unstable-mutation-return-null"))]
+#[cfg_attr(debug_assertions, track_caller)]
+fn items_ptr_null() -> ! {
+    panic!("`itemsPtr` was NULL, likely due to mutation during iteration");
+}
+
+#[cfg(not(feature = "unstable-mutation-return-null"))]
+#[cfg_attr(debug_assertions, track_caller)]
+fn mutation_detected() -> ! {
+    panic!("mutation detected during enumeration");
+}
 
 impl FastEnumeratorHelper {
     #[inline]
@@ -76,8 +93,6 @@ impl FastEnumeratorHelper {
             buf: [ptr::null_mut(); BUF_SIZE],
             current_item: 0,
             items_count: 0,
-            #[cfg(debug_assertions)]
-            mutations_state: None,
         }
     }
 
@@ -93,7 +108,6 @@ impl FastEnumeratorHelper {
     ///
     /// The collection must be the same on each call.
     #[inline]
-    #[track_caller]
     unsafe fn load_next_items(&mut self, collection: &ProtocolObject<dyn NSFastEnumeration>) {
         // SAFETY: The ptr comes from a slice, which is always non-null.
         //
@@ -113,13 +127,6 @@ impl FastEnumeratorHelper {
             )
         };
 
-        #[cfg(debug_assertions)]
-        {
-            if self.items_count > 0 && self.state.itemsPtr.is_null() {
-                panic!("`itemsPtr` was NULL");
-            }
-        }
-
         // For unwind safety, we only set this _after_ the message send has
         // completed, otherwise, if it unwinded, upon iterating again we might
         // invalidly assume that the buffer was ready.
@@ -132,6 +139,8 @@ impl FastEnumeratorHelper {
     /// one instance of this function in the compilation unit (should improve
     /// compilation speed).
     ///
+    /// If `mutations_state` is `Some`, mutation tracking is activated.
+    ///
     ///
     /// # Safety
     ///
@@ -141,6 +150,7 @@ impl FastEnumeratorHelper {
     unsafe fn next_from(
         &mut self,
         collection: &ProtocolObject<dyn NSFastEnumeration>,
+        mutations_state: Option<&mut MutationState>,
     ) -> Option<NonNull<AnyObject>> {
         // If we've exhausted the current array of items.
         if self.current_item >= self.items_count {
@@ -154,10 +164,16 @@ impl FastEnumeratorHelper {
                 // We are done enumerating.
                 return None;
             }
+
+            if mutations_state.is_some() && self.state.itemsPtr.is_null() {
+                #[cfg(feature = "unstable-mutation-return-null")]
+                return Some(unsafe { kCFNull });
+                #[cfg(not(feature = "unstable-mutation-return-null"))]
+                items_ptr_null();
+            }
         }
 
-        #[cfg(debug_assertions)]
-        {
+        if let Some(mutations_state) = mutations_state {
             // If the mutation ptr is not set, we do nothing.
             if let Some(ptr) = NonNull::new(self.state.mutationsPtr) {
                 // SAFETY:
@@ -185,16 +201,19 @@ impl FastEnumeratorHelper {
                 // We do an unaligned read here since we have no guarantees
                 // about this pointer, and efficiency doesn't really matter.
                 let new_state = unsafe { ptr.as_ptr().read_unaligned() };
-                match self.mutations_state {
+                match *mutations_state {
                     // On the first iteration, initialize the mutation state
                     None => {
-                        self.mutations_state = Some(new_state);
+                        *mutations_state = Some(new_state);
                     }
                     // On subsequent iterations, verify that the state hasn't
                     // changed.
                     Some(current_state) => {
                         if current_state != new_state {
-                            panic!("mutation detected during enumeration. This is undefined behaviour, and must be avoided");
+                            #[cfg(feature = "unstable-mutation-return-null")]
+                            return Some(unsafe { kCFNull });
+                            #[cfg(not(feature = "unstable-mutation-return-null"))]
+                            mutation_detected();
                         }
                     }
                 }
@@ -204,7 +223,7 @@ impl FastEnumeratorHelper {
         // Compute a pointer to the current item.
         //
         // SAFETY: The index is checked above to be in bounds of the returned
-        // array.
+        // array, and the item pointer is checked to not be NULL.
         let ptr = unsafe { self.state.itemsPtr.add(self.current_item) };
         // Move to the next item.
         self.current_item += 1;
@@ -272,31 +291,42 @@ pub(crate) unsafe trait FastEnumerationHelper: Message + NSFastEnumeration {
 // TODO: Consider adding `#[repr(C)]`, to allow LLVM to perform better
 // zero-initialization.
 #[derive(Debug, PartialEq)]
-pub(crate) struct Iter<'a, C: ?Sized + 'a> {
+pub(crate) struct IterUnchecked<'a, C: ?Sized + 'a> {
     helper: FastEnumeratorHelper,
     /// 'a and C are covariant.
     collection: &'a C,
+    #[cfg(debug_assertions)]
+    mutations_state: MutationState,
 }
 
-impl<'a, C: ?Sized + FastEnumerationHelper> Iter<'a, C> {
+impl<'a, C: ?Sized + FastEnumerationHelper> IterUnchecked<'a, C> {
     pub(crate) fn new(collection: &'a C) -> Self {
         Self {
             helper: FastEnumeratorHelper::new(),
             collection,
+            #[cfg(debug_assertions)]
+            mutations_state: None,
         }
     }
 }
 
-impl<'a, C: FastEnumerationHelper> Iterator for Iter<'a, C> {
+impl<'a, C: FastEnumerationHelper> Iterator for IterUnchecked<'a, C> {
     type Item = &'a C::Item;
 
     #[inline]
     #[track_caller]
     fn next(&mut self) -> Option<&'a C::Item> {
+        #[cfg(debug_assertions)]
+        let mutations_state = Some(&mut self.mutations_state);
+        #[cfg(not(debug_assertions))]
+        let mutations_state = None;
         // SAFETY: The collection is the same on each iteration.
+        //
+        // Passing the collection as immutable here is safe since it isn't
+        // mutated itself, and it is `UnsafeCell` anyhow.
         let obj = unsafe {
             self.helper
-                .next_from(ProtocolObject::from_ref(self.collection))?
+                .next_from(ProtocolObject::from_ref(self.collection), mutations_state)?
         };
         // SAFETY: The lifetime is bound to the collection, and the type is
         // correct.
@@ -318,47 +348,36 @@ impl<'a, C: FastEnumerationHelper> Iterator for Iter<'a, C> {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct IterMut<'a, C: ?Sized + 'a> {
+pub(crate) struct Iter<'a, C: ?Sized + 'a> {
     helper: FastEnumeratorHelper,
     /// 'a and C are covariant.
-    collection: &'a mut C,
+    collection: &'a C,
+    mutations_state: MutationState,
 }
 
-impl<'a, C: ?Sized + FastEnumerationHelper> IterMut<'a, C>
-where
-    C::Item: IsMutable,
-{
-    pub(crate) fn new(collection: &'a mut C) -> Self {
+impl<'a, C: ?Sized + FastEnumerationHelper> Iter<'a, C> {
+    pub(crate) fn new(collection: &'a C) -> Self {
         Self {
             helper: FastEnumeratorHelper::new(),
             collection,
+            mutations_state: None,
         }
     }
 }
 
-impl<'a, C: FastEnumerationHelper> Iterator for IterMut<'a, C>
-where
-    C::Item: IsMutable,
-{
-    type Item = &'a mut C::Item;
+impl<'a, C: FastEnumerationHelper> Iterator for Iter<'a, C> {
+    type Item = Retained<C::Item>;
 
     #[inline]
     #[track_caller]
-    fn next(&mut self) -> Option<&'a mut C::Item> {
-        // SAFETY: The collection is the same on each iteration.
-        //
-        // Passing the collection as immutable here is safe since it isn't
-        // mutated itself, and it is `UnsafeCell` anyhow.
+    fn next(&mut self) -> Option<Retained<C::Item>> {
         let obj = unsafe {
-            self.helper
-                .next_from(ProtocolObject::from_mut(self.collection))?
+            self.helper.next_from(
+                ProtocolObject::from_ref(self.collection),
+                Some(&mut self.mutations_state),
+            )?
         };
-        // SAFETY: That we take the collection by `&mut`, along with the
-        // `C::Item: IsMutable` bound, ensure that the items are safe to
-        // return as mutable.
-        //
-        // Rest is same as `Iter<'a, C>`.
-        Some(unsafe { obj.cast::<C::Item>().as_mut() })
+        Some(util::retain(unsafe { obj.cast::<C::Item>().as_ref() }))
     }
 
     #[inline]
@@ -367,42 +386,6 @@ where
             self.helper.remaining_items_at_least(),
             self.collection.maybe_len(),
         )
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub(crate) struct IterRetained<'a, C: ?Sized + 'a> {
-    inner: Iter<'a, C>,
-}
-
-impl<'a, C: ?Sized + FastEnumerationHelper> IterRetained<'a, C>
-where
-    C::Item: IsIdCloneable,
-{
-    pub(crate) fn new(collection: &'a C) -> Self {
-        Self {
-            inner: Iter::new(collection),
-        }
-    }
-}
-
-impl<'a, C: FastEnumerationHelper> Iterator for IterRetained<'a, C>
-where
-    C::Item: IsIdCloneable,
-{
-    type Item = Retained<C::Item>;
-
-    #[inline]
-    #[track_caller]
-    fn next(&mut self) -> Option<Retained<C::Item>> {
-        let obj = self.inner.next()?;
-        // SAFETY: The object is stored inside the enumerated collection.
-        Some(unsafe { util::collection_retain(obj) })
-    }
-
-    #[inline]
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        self.inner.size_hint()
     }
 }
 
@@ -419,37 +402,30 @@ pub(crate) struct IntoIter<C: ?Sized> {
     helper: FastEnumeratorHelper,
     /// C is covariant.
     collection: Retained<C>,
+    mutations_state: MutationState,
 }
 
-impl<C: FastEnumerationHelper> IntoIter<C> {
-    pub(crate) fn new_immutable(collection: Retained<C>) -> Self
-    where
-        C: IsIdCloneable,
-        C::Item: IsIdCloneable,
-    {
+impl<C: ?Sized + FastEnumerationHelper> IntoIter<C> {
+    pub(crate) fn new(collection: Retained<C>) -> Self {
         Self {
             helper: FastEnumeratorHelper::new(),
             collection,
+            mutations_state: None,
         }
     }
 
-    pub(crate) fn new_mutable<T: ClassType<Super = C> + IsMutable>(collection: Retained<T>) -> Self
+    pub(crate) fn new_mutable<T>(collection: Retained<T>) -> Self
     where
-        C: IsIdCloneable,
+        T: ClassType<Super = C>,
+        C: Sized,
     {
         Self {
             helper: FastEnumeratorHelper::new(),
+            // SAFETY: Same as `Retained::into_super`, except we avoid the
+            // `'static` bounds, which aren't needed because the superclass
+            // carries the same generics.
             collection: unsafe { Retained::cast(collection) },
-        }
-    }
-
-    pub(crate) fn new(collection: Retained<C>) -> Self
-    where
-        C: IsMutable,
-    {
-        Self {
-            helper: FastEnumeratorHelper::new(),
-            collection,
+            mutations_state: None,
         }
     }
 }
@@ -462,7 +438,10 @@ impl<C: FastEnumerationHelper> Iterator for IntoIter<C> {
     fn next(&mut self) -> Option<Retained<C::Item>> {
         let collection = ProtocolObject::from_ref(&*self.collection);
         // SAFETY: The collection is the same on each iteration.
-        let obj = unsafe { self.helper.next_from(collection)? };
+        let obj = unsafe {
+            self.helper
+                .next_from(collection, Some(&mut self.mutations_state))?
+        };
         // SAFETY: TODO
         let obj = unsafe { Retained::retain(obj.cast::<C::Item>().as_ptr()) };
         // SAFETY: The object was `NonNull`, and `retain` returns the same
@@ -480,15 +459,17 @@ impl<C: FastEnumerationHelper> Iterator for IntoIter<C> {
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct IterWithBackingEnum<'a, C: ?Sized + 'a, E: ?Sized + 'a> {
+pub(crate) struct IterUncheckedWithBackingEnum<'a, C: ?Sized + 'a, E: ?Sized + 'a> {
     helper: FastEnumeratorHelper,
     /// 'a and C are covariant.
     collection: &'a C,
     /// E is covariant.
     enumerator: Retained<E>,
+    #[cfg(debug_assertions)]
+    mutations_state: MutationState,
 }
 
-impl<'a, C, E> IterWithBackingEnum<'a, C, E>
+impl<'a, C, E> IterUncheckedWithBackingEnum<'a, C, E>
 where
     C: ?Sized + FastEnumerationHelper,
     E: ?Sized + FastEnumerationHelper,
@@ -498,11 +479,13 @@ where
             helper: FastEnumeratorHelper::new(),
             collection,
             enumerator,
+            #[cfg(debug_assertions)]
+            mutations_state: None,
         }
     }
 }
 
-impl<'a, C, E> Iterator for IterWithBackingEnum<'a, C, E>
+impl<'a, C, E> Iterator for IterUncheckedWithBackingEnum<'a, C, E>
 where
     C: ?Sized + FastEnumerationHelper,
     E: FastEnumerationHelper,
@@ -512,10 +495,14 @@ where
     #[inline]
     #[track_caller]
     fn next(&mut self) -> Option<&'a E::Item> {
+        #[cfg(debug_assertions)]
+        let mutations_state = Some(&mut self.mutations_state);
+        #[cfg(not(debug_assertions))]
+        let mutations_state = None;
         // SAFETY: The enumerator is the same on each iteration.
         let obj = unsafe {
             self.helper
-                .next_from(ProtocolObject::from_ref(&*self.enumerator))?
+                .next_from(ProtocolObject::from_ref(&*self.enumerator), mutations_state)?
         };
         // SAFETY: TODO
         Some(unsafe { obj.cast::<E::Item>().as_ref() })
@@ -533,142 +520,31 @@ where
 }
 
 #[derive(Debug, PartialEq)]
-pub(crate) struct IterMutWithBackingEnum<'a, C: ?Sized + 'a, E: ?Sized + 'a> {
+pub(crate) struct IterWithBackingEnum<'a, C: ?Sized + 'a, E: ?Sized + 'a> {
     helper: FastEnumeratorHelper,
     /// 'a and C are covariant.
-    collection: &'a mut C,
+    collection: &'a C,
     /// E is covariant.
     enumerator: Retained<E>,
+    mutations_state: MutationState,
 }
 
-impl<'a, C, E> IterMutWithBackingEnum<'a, C, E>
-where
-    C: ?Sized + FastEnumerationHelper,
-    E: ?Sized + FastEnumerationHelper + IsMutable,
-    E::Item: IsMutable,
-{
-    pub(crate) unsafe fn new(collection: &'a mut C, enumerator: Retained<E>) -> Self {
-        Self {
-            helper: FastEnumeratorHelper::new(),
-            collection,
-            enumerator,
-        }
-    }
-}
-
-impl<'a, C, E> Iterator for IterMutWithBackingEnum<'a, C, E>
-where
-    C: ?Sized + FastEnumerationHelper,
-    E: FastEnumerationHelper + IsMutable,
-    E::Item: IsMutable,
-{
-    type Item = &'a mut E::Item;
-
-    #[inline]
-    #[track_caller]
-    fn next(&mut self) -> Option<&'a mut E::Item> {
-        // SAFETY: The enumerator is the same on each iteration.
-        let obj = unsafe {
-            self.helper
-                .next_from(ProtocolObject::from_mut(&mut *self.enumerator))?
-        };
-        // SAFETY: TODO
-        Some(unsafe { obj.cast::<E::Item>().as_mut() })
-    }
-
-    #[inline]
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        (
-            self.helper.remaining_items_at_least(),
-            // Assume that the length of the collection matches the length of
-            // the enumerator.
-            self.collection.maybe_len(),
-        )
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub(crate) struct IterRetainedWithBackingEnum<'a, C: ?Sized + 'a, E: ?Sized + 'a> {
-    inner: IterWithBackingEnum<'a, C, E>,
-}
-
-impl<'a, C, E> IterRetainedWithBackingEnum<'a, C, E>
+impl<'a, C, E> IterWithBackingEnum<'a, C, E>
 where
     C: ?Sized + FastEnumerationHelper,
     E: ?Sized + FastEnumerationHelper,
-    E::Item: IsIdCloneable,
 {
     pub(crate) unsafe fn new(collection: &'a C, enumerator: Retained<E>) -> Self {
-        // SAFETY: Upheld by caller.
-        let inner = unsafe { IterWithBackingEnum::new(collection, enumerator) };
-        Self { inner }
-    }
-}
-
-impl<'a, C, E> Iterator for IterRetainedWithBackingEnum<'a, C, E>
-where
-    C: ?Sized + FastEnumerationHelper,
-    E: FastEnumerationHelper,
-    E::Item: IsIdCloneable,
-{
-    type Item = Retained<E::Item>;
-
-    #[inline]
-    #[track_caller]
-    fn next(&mut self) -> Option<Retained<E::Item>> {
-        let obj = self.inner.next()?;
-        // SAFETY: The object is stored inside the enumerated collection.
-        Some(unsafe { util::collection_retain(obj) })
-    }
-
-    #[inline]
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        self.inner.size_hint()
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub(crate) struct IntoIterWithBackingEnum<C: ?Sized, E: ?Sized> {
-    helper: FastEnumeratorHelper,
-    /// C is covariant.
-    collection: Retained<C>,
-    /// E is covariant.
-    enumerator: Retained<E>,
-}
-
-impl<C, E> IntoIterWithBackingEnum<C, E>
-where
-    C: FastEnumerationHelper,
-    E: ?Sized + FastEnumerationHelper,
-{
-    pub(crate) unsafe fn new_immutable(collection: Retained<C>, enumerator: Retained<E>) -> Self
-    where
-        C: IsIdCloneable,
-        E::Item: IsIdCloneable,
-    {
         Self {
             helper: FastEnumeratorHelper::new(),
             collection,
             enumerator,
-        }
-    }
-
-    pub(crate) unsafe fn new_mutable<T: ClassType<Super = C> + IsMutable>(
-        collection: Retained<T>,
-        enumerator: Retained<E>,
-    ) -> Self
-    where
-        C: IsIdCloneable,
-    {
-        Self {
-            collection: unsafe { Retained::cast(collection) },
-            enumerator,
-            helper: FastEnumeratorHelper::new(),
+            mutations_state: None,
         }
     }
 }
 
-impl<C, E> Iterator for IntoIterWithBackingEnum<C, E>
+impl<'a, C, E> Iterator for IterWithBackingEnum<'a, C, E>
 where
     C: ?Sized + FastEnumerationHelper,
     E: FastEnumerationHelper,
@@ -678,13 +554,15 @@ where
     #[inline]
     #[track_caller]
     fn next(&mut self) -> Option<Retained<E::Item>> {
-        let enumerator = ProtocolObject::from_ref(&*self.enumerator);
         // SAFETY: The enumerator is the same on each iteration.
-        let obj = unsafe { self.helper.next_from(enumerator)? };
+        let obj = unsafe {
+            self.helper.next_from(
+                ProtocolObject::from_ref(&*self.enumerator),
+                Some(&mut self.mutations_state),
+            )?
+        };
         // SAFETY: TODO
-        let obj = unsafe { Retained::retain(obj.cast::<E::Item>().as_ptr()) };
-        // SAFETY: TODO
-        Some(unsafe { obj.unwrap_unchecked() })
+        Some(util::retain(unsafe { obj.cast::<E::Item>().as_ref() }))
     }
 
     #[inline]
@@ -733,58 +611,12 @@ macro_rules! __impl_into_iter {
     ) => {
         $(#[$m])*
         impl<'a, T: Message> IntoIterator for &'a $ty<T> {
-            type Item = &'a T;
+            type Item = Retained<T>;
             type IntoIter = $iter<'a, T>;
 
             #[inline]
             fn into_iter(self) -> Self::IntoIter {
-                $iter(super::iter::Iter::new(&self))
-            }
-        }
-
-        __impl_into_iter! {
-            $($rest)*
-        }
-    };
-    (
-        $(#[$m:meta])*
-        impl<T: Message + IsMutable> IntoIterator for &mut $ty:ident<T> {
-            type IntoIter = $iter_mut:ident<'_, T>;
-        }
-
-        $($rest:tt)*
-    ) => {
-        $(#[$m])*
-        impl<'a, T: Message + IsMutable> IntoIterator for &'a mut $ty<T> {
-            type Item = &'a mut T;
-            type IntoIter = $iter_mut<'a, T>;
-
-            #[inline]
-            fn into_iter(self) -> Self::IntoIter {
-                $iter_mut(super::iter::IterMut::new(&mut *self))
-            }
-        }
-
-        __impl_into_iter! {
-            $($rest)*
-        }
-    };
-    (
-        $(#[$m:meta])*
-        impl<T: Message + IsIdCloneable> IntoIterator for Retained<$ty:ident<T>> {
-            type IntoIter = $into_iter:ident<T>;
-        }
-
-        $($rest:tt)*
-    ) => {
-        $(#[$m])*
-        impl<T: Message + IsIdCloneable> objc2::rc::RetainedIntoIterator for $ty<T> {
-            type Item = Retained<T>;
-            type IntoIter = $into_iter<T>;
-
-            #[inline]
-            fn id_into_iter(this: Retained<Self>) -> Self::IntoIter {
-                $into_iter(super::iter::IntoIter::new_immutable(this))
+                $iter($crate::iter::Iter::new(&self))
             }
         }
 
@@ -795,6 +627,7 @@ macro_rules! __impl_into_iter {
     (
         $(#[$m:meta])*
         impl<T: Message> IntoIterator for Retained<$ty:ident<T>> {
+            #[uses($new_fn:ident)]
             type IntoIter = $into_iter:ident<T>;
         }
 
@@ -807,7 +640,7 @@ macro_rules! __impl_into_iter {
 
             #[inline]
             fn id_into_iter(this: Retained<Self>) -> Self::IntoIter {
-                $into_iter(super::iter::IntoIter::new_mutable(this))
+                $into_iter($crate::iter::IntoIter::$new_fn(this))
             }
         }
 
@@ -821,6 +654,8 @@ macro_rules! __impl_into_iter {
 #[cfg(feature = "NSArray")]
 #[cfg(feature = "NSValue")]
 mod tests {
+    use alloc::vec::Vec;
+
     use super::*;
     use core::mem::size_of;
 
@@ -835,13 +670,15 @@ mod tests {
         // We should attempt to reduce these if possible
         assert_eq!(size_of::<NSFastEnumerationState>(), 64);
         assert_eq!(size_of::<FastEnumeratorHelper>(), 208);
-        assert_eq!(size_of::<Iter<'_, NSArray<NSNumber>>>(), 216);
+        assert_eq!(size_of::<IterUnchecked<'_, NSArray<NSNumber>>>(), 216);
+        assert_eq!(size_of::<Iter<'_, NSArray<NSNumber>>>(), 232);
+        assert_eq!(size_of::<IntoIter<NSArray<NSNumber>>>(), 232);
     }
 
     #[test]
     fn test_enumerator() {
-        let vec = (0..4).map(NSNumber::new_usize).collect();
-        let array = NSArray::from_vec(vec);
+        let vec: Vec<_> = (0..4).map(NSNumber::new_usize).collect();
+        let array = NSArray::from_retained_slice(&vec);
 
         let enumerator = array.iter();
         assert_eq!(enumerator.count(), 4);
@@ -852,8 +689,8 @@ mod tests {
 
     #[test]
     fn test_into_enumerator() {
-        let vec = (0..4).map(NSNumber::new_usize).collect();
-        let array = NSArray::from_vec(vec);
+        let vec: Vec<_> = (0..4).map(NSNumber::new_usize).collect();
+        let array = NSArray::from_retained_slice(&vec);
 
         let enumerator = array.into_iter();
         assert!(enumerator.enumerate().all(|(i, obj)| obj.as_usize() == i));

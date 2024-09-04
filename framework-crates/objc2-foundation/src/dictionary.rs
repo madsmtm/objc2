@@ -1,28 +1,23 @@
 //! Utilities for the `NSDictionary` and `NSMutableDictionary` classes.
 use alloc::vec::Vec;
-#[cfg(feature = "NSObject")]
-use core::cmp::min;
 use core::fmt;
 use core::mem;
-use core::ops::{Index, IndexMut};
-use core::ptr::{self, NonNull};
+use core::ptr::NonNull;
+use objc2::msg_send;
 
-#[cfg(feature = "NSObject")]
-use objc2::mutability::IsRetainable;
-use objc2::mutability::{CounterpartOrSelf, IsIdCloneable, IsMutable};
+use objc2::mutability::CounterpartOrSelf;
 use objc2::rc::Retained;
 #[cfg(feature = "NSObject")]
 use objc2::runtime::ProtocolObject;
 #[cfg(feature = "NSObject")]
 use objc2::ClassType;
-use objc2::{extern_methods, Message};
+use objc2::Message;
 
 #[cfg(feature = "NSEnumerator")]
-use super::iter;
-use super::util;
+use crate::iter;
 #[cfg(feature = "NSObject")]
-use crate::Foundation::NSCopying;
-use crate::Foundation::{NSDictionary, NSMutableDictionary};
+use crate::NSCopying;
+use crate::{util, NSDictionary, NSMutableDictionary};
 
 #[cfg(feature = "NSObject")]
 fn keys_to_ptr<Q>(keys: &[&Q]) -> *mut NonNull<ProtocolObject<dyn NSCopying>>
@@ -36,30 +31,59 @@ where
     keys
 }
 
-#[cfg(feature = "NSObject")]
+/// Convenience creation methods.
 impl<K: Message, V: Message> NSDictionary<K, V> {
-    // The dictionary copies its keys, which is why we require `NSCopying` and
-    // use `CounterpartOrSelf` on all input data - we want to ensure that the
-    // type-system knows that it's not actually `NSMutableString` that is
-    // being stored, but instead `NSString`.
-    pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Retained<V>>) -> Retained<Self>
+    /// Create a new dictionary from a slice of keys, and a slice of objects.
+    ///
+    /// This is a safe interface to `initWithObjects:forKeys:count:`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the slices have different lengths, as this is likely a
+    /// programmer error.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use objc2_foundation::{NSDictionary, ns_string};
+    ///
+    /// let dict = NSDictionary::from_slices(
+    ///     &[ns_string!("key1"), ns_string!("key2"), ns_string!("key3")],
+    ///     &[ns_string!("value1"), ns_string!("value2"), ns_string!("value3")],
+    /// );
+    ///
+    /// assert_eq!(&*dict.objectForKey(ns_string!("key2")).unwrap(), ns_string!("value2"));
+    /// ```
+    #[cfg(feature = "NSObject")]
+    pub fn from_slices<Q>(keys: &[&Q], objects: &[&V]) -> Retained<Self>
     where
+        // The dictionary copies its keys, which is why we require `NSCopying`
+        // and use `CounterpartOrSelf` on all input data - we want to ensure
+        // that the type-system knows that it's not actually e.g.
+        // `NSMutableString` that is being stored, but instead `NSString`.
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
     {
-        // Find the minimum of the two provided lengths, to ensure that we
-        // don't read too far in one of the buffers.
-        //
-        // Note: We could also have chosen to just panic here if the buffers have
-        // different lengths, either would be fine.
-        let count = min(keys.len(), objects.len());
+        // Ensure that we don't read too far into one of the buffers.
+        assert_eq!(
+            keys.len(),
+            objects.len(),
+            "key slice and object slice should have the same length",
+        );
+        let count = keys.len();
 
         let keys = keys_to_ptr(keys);
-        let objects = util::retained_ptr_cast(objects.as_mut_ptr());
+        let objects = util::ref_ptr_cast_const(objects.as_ptr());
 
         // SAFETY:
-        // - The objects are valid, similar reasoning as `NSArray::from_vec`.
+        // - All `T: Message` use interior mutability, and the dictionary
+        //   extends the lifetime of them internally by retaining them.
         //
-        // - The length is lower than or equal to the length of the two arrays.
+        // - The pointers are valid until the method has finished executing,
+        //   at which point the dictionary will have created its own internal
+        //   storage for holding the keys and objects.
+        //
+        // - The length is lower than or equal to the length of the two
+        //   pointers.
         //
         // - While recommended against in the below link, the key _can_ be
         //   mutated, it'll "just" corrupt the collection's invariants (but
@@ -71,190 +95,142 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 
-    pub fn from_retained_slice<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
+    #[cfg(feature = "NSObject")]
+    pub fn from_retained_objects<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
-        V: IsIdCloneable,
     {
-        let count = min(keys.len(), objects.len());
+        // Ensure that we don't read too far into one of the buffers.
+        assert_eq!(
+            keys.len(),
+            objects.len(),
+            "key slice and object slice should have the same length",
+        );
+        let count = keys.len();
 
         let keys = keys_to_ptr(keys);
         let objects = util::retained_ptr_cast_const(objects.as_ptr());
 
-        // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_retained_slice`.
-        unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
-    }
-
-    pub fn from_slice<Q>(keys: &[&Q], objects: &[&V]) -> Retained<Self>
-    where
-        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
-        V: IsRetainable,
-    {
-        let count = min(keys.len(), objects.len());
-
-        let keys = keys_to_ptr(keys);
-        let objects = util::ref_ptr_cast_const(objects.as_ptr());
-
-        // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_slice`.
+        // SAFETY: Same as `from_slices`.
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 }
 
-#[cfg(feature = "NSObject")]
+/// Convenience creation methods.
 impl<K: Message, V: Message> NSMutableDictionary<K, V> {
-    pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Retained<V>>) -> Retained<Self>
+    #[cfg(feature = "NSObject")]
+    pub fn from_slices<Q>(keys: &[&Q], objects: &[&V]) -> Retained<Self>
     where
         Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
     {
-        let count = min(keys.len(), objects.len());
-
-        let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
-        let keys: *mut NonNull<ProtocolObject<dyn NSCopying>> = keys.cast();
-        let objects = util::retained_ptr_cast(objects.as_mut_ptr());
-
-        // SAFETY: See `NSDictionary::from_vec`
-        unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
-    }
-
-    pub fn from_retained_slice<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
-    where
-        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
-        V: IsIdCloneable,
-    {
-        let count = min(keys.len(), objects.len());
-
-        let keys = keys_to_ptr(keys);
-        let objects = util::retained_ptr_cast_const(objects.as_ptr());
-
-        // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_retained_slice`.
-        unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
-    }
-
-    pub fn from_slice<Q>(keys: &[&Q], objects: &[&V]) -> Retained<Self>
-    where
-        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
-        V: IsRetainable,
-    {
-        let count = min(keys.len(), objects.len());
+        // Ensure that we don't read too far into one of the buffers.
+        assert_eq!(
+            keys.len(),
+            objects.len(),
+            "key slice and object slice should have the same length",
+        );
+        let count = keys.len();
 
         let keys = keys_to_ptr(keys);
         let objects = util::ref_ptr_cast_const(objects.as_ptr());
 
-        // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_slice`.
+        // SAFETY: Same as `NSDictionary::from_slices`.
+        unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
+    }
+
+    #[cfg(feature = "NSObject")]
+    pub fn from_retained_objects<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
+    where
+        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
+    {
+        // Ensure that we don't read too far into one of the buffers.
+        assert_eq!(
+            keys.len(),
+            objects.len(),
+            "key slice and object slice should have the same length",
+        );
+        let count = keys.len();
+
+        let keys = keys_to_ptr(keys);
+        let objects = util::retained_ptr_cast_const(objects.as_ptr());
+
+        // SAFETY: Same as `NSDictionary::from_retained_objects`.
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 }
 
 // Note: We'd like to make getter methods take `K: Borrow<Q>` like
-// `std::collections::HashMap`, so that e.g.
-// `NSDictionary<NSString, ...>` could take a `&NSObject` as input,
-// and still make that work since `NSString` borrows to `NSObject`.
+// `std::collections::HashMap`, so that e.g. `NSDictionary<NSString, ...>`
+// could take a `&NSObject` as input, and still make that work since
+// `NSString` borrows to `NSObject`.
 //
-// But we can't really, at least not with extra `unsafe` / an extra
-// trait, since we don't control how the comparisons happen.
+// But we can't really, at least not with extra `unsafe` / an extra trait,
+// since we don't control how the comparisons happen.
 //
-// The most useful alternative would probably be to take
-// `impl AsRef<K>`, but objc2 classes deref to their superclass anyhow, so
-// let's just use a simple normal reference.
+// The most useful alternative would probably be to take `impl AsRef<K>`, but
+// objc2 classes deref to their superclass anyhow, so let's just use a simple,
+// normal reference.
 
-extern_methods!(
-    unsafe impl<K: Message, V: Message> NSDictionary<K, V> {
-        /// Returns a reference to the value corresponding to the key.
-        ///
-        /// # Examples
-        ///
-        #[cfg_attr(feature = "NSString", doc = "```")]
-        #[cfg_attr(not(feature = "NSString"), doc = "```ignore")]
-        /// use objc2_foundation::{ns_string, NSMutableDictionary};
-        ///
-        /// let mut dict = NSMutableDictionary::new();
-        /// dict.insert(ns_string!("key"), ns_string!("value"));
-        /// assert_eq!(dict.get(ns_string!("key")), Some(ns_string!("value")));
-        /// ```
-        #[doc(alias = "objectForKey:")]
-        #[method(objectForKey:)]
-        pub fn get(&self, key: &K) -> Option<&V>;
-
-        #[doc(alias = "objectForKey:")]
-        pub fn get_retained(&self, key: &K) -> Option<Retained<V>>
-        where
-            V: IsIdCloneable,
-        {
-            // SAFETY: The object is stored in the dictionary
-            self.get(key)
-                .map(|obj| unsafe { util::collection_retain(obj) })
-        }
-
-        /// Returns a mutable reference to the value corresponding to the key.
-        #[doc(alias = "objectForKey:")]
-        #[method(objectForKey:)]
-        pub fn get_mut(&mut self, key: &K) -> Option<&mut V>
-        where
-            V: IsMutable;
-    }
-);
-
+/// Direct, unsafe object accessors.
+///
+/// Foundation's collection types store their items in such a way that they
+/// can give out references to their data without having to autorelease it
+/// first, see [the docs][collections-own].
+///
+/// This means that we can more efficiently access the dictionary's keys and
+/// objects, but _only_ if the dictionary isn't mutated via. e.g.
+/// `NSMutableDictionary` methods while doing so - otherwise, we might end up
+/// accessing a deallocated object.
+///
+/// [collections-own]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmPractical.html#//apple_ref/doc/uid/TP40004447-SW12
 impl<K: Message, V: Message> NSDictionary<K, V> {
-    pub fn len(&self) -> usize {
-        self.count()
+    /// Get a direct reference to the object corresponding to the key.
+    ///
+    /// Consider using the [`objectForKey`](Self::objectForKey) method
+    /// instead, unless you're seeing performance issues from the retaining.
+    ///
+    /// # Safety
+    ///
+    /// The dictionary must not be mutated while the reference is live.
+    #[doc(alias = "objectForKey:")]
+    #[inline]
+    pub unsafe fn objectForKey_unchecked(&self, key: &K) -> Option<&V> {
+        unsafe { msg_send![self, objectForKey: key] }
     }
 
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-
+    /// Two vectors containing direct references to respectively the
+    /// dictionary's keys and objects.
+    ///
+    /// Consider using the [`to_vecs`](Self::to_vecs) method instead, unless
+    /// you're seeing performance issues from the retaining.
+    ///
+    /// # Safety
+    ///
+    /// The dictionary must not be mutated while the returned references are
+    /// alive.
     #[doc(alias = "getObjects:andKeys:")]
-    pub fn keys_vec(&self) -> Vec<&K> {
-        let len = self.len();
-        let mut keys = Vec::with_capacity(len);
-        unsafe {
-            #[allow(deprecated)]
-            self.getObjects_andKeys(ptr::null_mut(), keys.as_mut_ptr());
-            keys.set_len(len);
-            mem::transmute::<Vec<NonNull<K>>, Vec<&K>>(keys)
-        }
-    }
-
-    // We don't provide `keys_mut_vec`, since keys are immutable.
-
-    #[doc(alias = "getObjects:andKeys:")]
-    pub fn values_vec(&self) -> Vec<&V> {
-        let len = self.len();
-        let mut vals = Vec::with_capacity(len);
-        unsafe {
-            #[allow(deprecated)]
-            self.getObjects_andKeys(vals.as_mut_ptr(), ptr::null_mut());
-            vals.set_len(len);
-            mem::transmute::<Vec<NonNull<V>>, Vec<&V>>(vals)
-        }
-    }
-
-    /// Returns a vector of mutable references to the values in the dictionary.
-    #[doc(alias = "getObjects:andKeys:")]
-    pub fn values_vec_mut(&mut self) -> Vec<&mut V>
-    where
-        V: IsMutable,
-    {
-        let len = self.len();
-        let mut vals = Vec::with_capacity(len);
-        unsafe {
-            #[allow(deprecated)]
-            self.getObjects_andKeys(vals.as_mut_ptr(), ptr::null_mut());
-            vals.set_len(len);
-            mem::transmute::<Vec<NonNull<V>>, Vec<&mut V>>(vals)
-        }
-    }
-
-    #[doc(alias = "getObjects:andKeys:")]
-    pub fn to_vecs(&self) -> (Vec<&K>, Vec<&V>) {
+    pub unsafe fn to_vecs_unchecked(&self) -> (Vec<&K>, Vec<&V>) {
         let len = self.len();
         let mut keys = Vec::with_capacity(len);
         let mut objs = Vec::with_capacity(len);
+
+        // SAFETY: The pointers are valid.
         unsafe {
+            // No reason to use `getObjects:andKeys:count:`, the dictionary is
+            // not thread safe, so we know it won't change within this scope.
             #[allow(deprecated)]
             self.getObjects_andKeys(objs.as_mut_ptr(), keys.as_mut_ptr());
+        }
+
+        // SAFETY: The vecs were just initialized by `getObjects:andKeys:`.
+        unsafe {
             keys.set_len(len);
             objs.set_len(len);
+        }
+
+        // SAFETY: `NonNull<T>` and `&T` have the same memory layout, and the
+        // lifetime is upheld by the caller.
+        unsafe {
             (
                 mem::transmute::<Vec<NonNull<K>>, Vec<&K>>(keys),
                 mem::transmute::<Vec<NonNull<V>>, Vec<&V>>(objs),
@@ -262,206 +238,146 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
         }
     }
 
-    /// Returns an [`NSArray`] containing the dictionary's values.
+    /// Iterate over the dictionary's keys without retaining them.
     ///
-    /// [`NSArray`]: crate::Foundation::NSArray
+    /// Consider using the [`keys`](Self::keys) method instead, unless you're
+    /// seeing performance issues from the retaining.
     ///
+    /// # Safety
     ///
-    /// # Examples
-    ///
-    /// ```
-    /// use objc2_foundation::{ns_string, NSMutableDictionary, NSObject, NSString};
-    ///
-    /// let mut dict = NSMutableDictionary::new();
-    /// dict.insert_id(ns_string!("one"), NSObject::new());
-    /// let array = dict.to_array();
-    /// assert_eq!(array.len(), 1);
-    /// ```
-    #[cfg(feature = "NSArray")]
-    pub fn to_array(&self) -> Retained<crate::Foundation::NSArray<V>>
-    where
-        V: IsIdCloneable,
-    {
-        // SAFETY: The elements are retainable behind `Retained<V>`, so getting
-        // another reference to them (via. `NSArray`) is sound.
-        unsafe { self.allValues() }
-    }
-}
-
-impl<K: Message, V: Message> NSMutableDictionary<K, V> {
-    /// Inserts a key-value pair into the dictionary.
-    ///
-    /// If the dictionary did not have this key present, None is returned.
-    /// If the dictionary did have this key present, the value is updated,
-    /// and the old value is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use objc2_foundation::{NSMutableDictionary, NSObject, ns_string};
-    ///
-    /// let mut dict = NSMutableDictionary::new();
-    /// dict.insert_id(ns_string!("one"), NSObject::new());
-    /// ```
-    #[cfg(feature = "NSObject")]
-    #[doc(alias = "setObject:forKey:")]
-    pub fn insert_id(&mut self, key: &K, value: Retained<V>) -> Option<Retained<V>>
-    where
-        K: NSCopying + CounterpartOrSelf<Immutable = K>,
-    {
-        // SAFETY: We remove the object from the dictionary below
-        let old_obj = self
-            .get(key)
-            .map(|old_obj| unsafe { util::mutable_collection_retain_removed(old_obj) });
-
-        let key = ProtocolObject::from_ref(key);
-        // SAFETY: We have ownership over the value.
-        unsafe { self.setObject_forKey(&value, key) };
-        old_obj
-    }
-
-    /// Inserts a key-value pair into the dictionary.
-    ///
-    /// If the dictionary did not have this key present, None is returned.
-    /// If the dictionary did have this key present, the value is updated,
-    /// and the old value is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use objc2_foundation::{ns_string, NSMutableDictionary};
-    ///
-    /// let mut dict = NSMutableDictionary::new();
-    /// dict.insert(ns_string!("key"), ns_string!("value"));
-    /// ```
-    #[cfg(feature = "NSObject")]
-    #[doc(alias = "setObject:forKey:")]
-    pub fn insert(&mut self, key: &K, value: &V) -> Option<Retained<V>>
-    where
-        K: NSCopying + CounterpartOrSelf<Immutable = K>,
-        V: IsRetainable,
-    {
-        // SAFETY: We remove the object from the dictionary below
-        let old_obj = self
-            .get(key)
-            .map(|old_obj| unsafe { util::mutable_collection_retain_removed(old_obj) });
-
-        let key = ProtocolObject::from_ref(key);
-        // SAFETY: The value is `IsRetainable`, and hence safe for the
-        // collection to retain.
-        unsafe { self.setObject_forKey(value, key) };
-        old_obj
-    }
-
-    /// Removes a key from the dictionary, returning the value at the key
-    /// if the key was previously in the dictionary.
-    ///
-    /// # Examples
-    ///
-    #[cfg_attr(all(feature = "NSString", feature = "NSObject"), doc = "```")]
-    #[cfg_attr(
-        not(all(feature = "NSString", feature = "NSObject")),
-        doc = "```ignore"
-    )]
-    /// use objc2_foundation::{ns_string, NSMutableDictionary, NSObject};
-    ///
-    /// let mut dict = NSMutableDictionary::new();
-    /// dict.insert_id(ns_string!("one"), NSObject::new());
-    /// dict.remove(ns_string!("one"));
-    /// assert!(dict.is_empty());
-    /// ```
-    #[doc(alias = "removeObjectForKey:")]
-    pub fn remove(&mut self, key: &K) -> Option<Retained<V>>
-    where
-        K: CounterpartOrSelf<Immutable = K>,
-    {
-        // SAFETY: We remove the object from the dictionary below
-        let old_obj = self
-            .get(key)
-            .map(|old_obj| unsafe { util::mutable_collection_retain_removed(old_obj) });
-        self.removeObjectForKey(key);
-        old_obj
-    }
-}
-
-impl<K: Message, V: Message> NSDictionary<K, V> {
-    #[doc(alias = "keyEnumerator")]
+    /// The dictionary must not be mutated for the lifetime of the iterator,
+    /// or the elements it returns.
     #[cfg(feature = "NSEnumerator")]
+    #[doc(alias = "keyEnumerator")]
+    #[inline]
+    pub unsafe fn keys_unchecked(&self) -> KeysUnchecked<'_, K, V> {
+        KeysUnchecked(iter::IterUnchecked::new(self))
+    }
+
+    /// Iterate over the dictionary's objects / values without retaining them.
+    ///
+    /// Consider using the [`objects`](Self::objects) method instead, unless
+    /// you're seeing performance issues from the retaining.
+    ///
+    /// # Safety
+    ///
+    /// The dictionary must not be mutated for the lifetime of the iterator,
+    /// or the elements it returns.
+    #[cfg(feature = "NSEnumerator")]
+    #[doc(alias = "objectEnumerator")]
+    #[inline]
+    pub unsafe fn objects_unchecked(&self) -> ObjectsUnchecked<'_, K, V> {
+        // SAFETY: Avoiding mutation is upheld by caller.
+        let enumerator = unsafe { self.objectEnumerator() };
+        // SAFETY: The enumerator came from the dictionary.
+        ObjectsUnchecked(unsafe { iter::IterUncheckedWithBackingEnum::new(self, enumerator) })
+    }
+}
+
+/// Various accessor methods.
+impl<K: Message, V: Message> NSDictionary<K, V> {
+    /// The amount of elements in the dictionary.
+    #[doc(alias = "count")]
+    #[inline]
+    pub fn len(&self) -> usize {
+        self.count()
+    }
+
+    /// Whether the dictionary is empty or not.
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
+    /// Two vectors containing respectively the dictionary's keys and objects.
+    ///
+    /// # Example
+    ///
+    /// Iterate over the keys and values of the dictionary.
+    ///
+    /// ```
+    /// use objc2_foundation::{NSDictionary, ns_string};
+    ///
+    /// let dict = NSDictionary::from_slices(
+    ///     &[ns_string!("a"), ns_string!("b")],
+    ///     &[ns_string!("a"), ns_string!("b")],
+    /// );
+    /// let (keys, objects) = dict.to_vecs();
+    /// for (key, obj) in keys.into_iter().zip(objects) {
+    ///     assert_eq!(key, obj);
+    /// }
+    /// ```
+    #[doc(alias = "getObjects:")]
+    pub fn to_vecs(&self) -> (Vec<Retained<K>>, Vec<Retained<V>>) {
+        // SAFETY: We retain the elements below, so that we know that the
+        // dictionary isn't mutated while they are alive.
+        let (keys, objects) = unsafe { self.to_vecs_unchecked() };
+        (
+            keys.into_iter().map(util::retain).collect(),
+            objects.into_iter().map(util::retain).collect(),
+        )
+    }
+
+    /// Iterate over the dictionary's keys.
+    #[cfg(feature = "NSEnumerator")]
+    #[doc(alias = "keyEnumerator")]
+    #[inline]
     pub fn keys(&self) -> Keys<'_, K, V> {
         Keys(iter::Iter::new(self))
     }
 
-    #[doc(alias = "keyEnumerator")]
-    #[cfg(feature = "NSEnumerator")]
-    pub fn keys_retained(&self) -> KeysRetained<'_, K, V>
-    where
-        K: IsIdCloneable,
-    {
-        KeysRetained(iter::IterRetained::new(self))
-    }
-
-    // TODO: Is this ever useful?
-    // pub fn into_keys(this: Retained<Self>) -> IntoKeys<K, V> {
-    //     todo!()
-    // }
-
-    /// Returns an iterator of references to the values in the dictionary.
+    /// Iterate over the dictionary's objects / values.
     ///
     /// # Examples
     ///
-    #[cfg_attr(all(feature = "NSString", feature = "NSEnumerator"), doc = "```")]
-    #[cfg_attr(
-        not(all(feature = "NSString", feature = "NSEnumerator")),
-        doc = "```ignore"
-    )]
+    #[cfg_attr(feature = "NSString", doc = "```")]
+    #[cfg_attr(not(feature = "NSString"), doc = "```ignore")]
     /// use objc2_foundation::{ns_string, NSMutableDictionary, NSString};
     ///
-    /// let mut dict = NSMutableDictionary::new();
+    /// let dict = NSMutableDictionary::new();
     /// dict.insert(ns_string!("key1"), ns_string!("value1"));
     /// dict.insert(ns_string!("key2"), ns_string!("value2"));
-    /// for val in dict.values() {
-    ///     assert!(val.hasPrefix(ns_string!("value")));
+    /// for obj in dict.objects() {
+    ///     assert!(obj.hasPrefix(ns_string!("value")));
     /// }
     /// ```
-    #[doc(alias = "objectEnumerator")]
     #[cfg(feature = "NSEnumerator")]
-    pub fn values(&self) -> Values<'_, K, V> {
+    #[doc(alias = "objectEnumerator")]
+    #[inline]
+    pub fn objects(&self) -> Objects<'_, K, V> {
+        // SAFETY: The iterator checks for mutation while enumerating.
         let enumerator = unsafe { self.objectEnumerator() };
         // SAFETY: The enumerator came from the dictionary.
-        Values(unsafe { iter::IterWithBackingEnum::new(self, enumerator) })
+        Objects(unsafe { iter::IterWithBackingEnum::new(self, enumerator) })
     }
+}
 
-    #[doc(alias = "objectEnumerator")]
-    #[cfg(feature = "NSEnumerator")]
-    pub fn values_mut(&mut self) -> ValuesMut<'_, K, V>
+/// Convenience mutation methods.
+impl<K: Message, V: Message> NSMutableDictionary<K, V> {
+    /// Inserts a key-value pair into the dictionary.
+    ///
+    /// If the dictionary did not have this key present, the value is
+    /// inserted. If the dictionary already had this key present, the value
+    /// and the key is updated.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use objc2_foundation::{ns_string, NSMutableDictionary, NSObject};
+    ///
+    /// let dict = NSMutableDictionary::new();
+    /// dict.insert(ns_string!("key"), &*NSObject::new());
+    /// ```
+    #[cfg(feature = "NSObject")]
+    #[doc(alias = "setObject:forKey:")]
+    #[inline]
+    pub fn insert<Q>(&self, key: &Q, object: &V)
     where
-        V: IsMutable,
+        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
     {
-        let enumerator = unsafe { self.objectEnumerator() };
-        // SAFETY: The enumerator came from the dictionary.
-        ValuesMut(unsafe { iter::IterMutWithBackingEnum::new(self, enumerator) })
-    }
-
-    #[doc(alias = "objectEnumerator")]
-    #[cfg(feature = "NSEnumerator")]
-    pub fn values_retained(&self) -> ValuesRetained<'_, K, V>
-    where
-        V: IsIdCloneable,
-    {
-        let enumerator = unsafe { self.objectEnumerator() };
-        // SAFETY: The enumerator came from the dictionary.
-        ValuesRetained(unsafe { iter::IterRetainedWithBackingEnum::new(self, enumerator) })
-    }
-
-    #[doc(alias = "objectEnumerator")]
-    #[cfg(feature = "NSEnumerator")]
-    pub fn into_values(this: Retained<Self>) -> IntoValues<K, V>
-    where
-        V: IsIdCloneable,
-    {
-        let enumerator = unsafe { this.objectEnumerator() };
-        // SAFETY: The enumerator came from the dictionary.
-        IntoValues(unsafe { iter::IntoIterWithBackingEnum::new_immutable(this, enumerator) })
+        let key = ProtocolObject::from_ref(key);
+        // SAFETY: The key is copied, and then has the correct type `K`.
+        unsafe { self.setObject_forKey(object, key) };
     }
 }
 
@@ -487,108 +403,64 @@ unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSMutableDic
     }
 }
 
-// We also cfg-gate `Keys` behind `NSEnumerator` for symmetry, even though we
-// don't necessarily need to.
+/// An iterator over the keys of a dictionary.
+#[derive(Debug)]
 #[cfg(feature = "NSEnumerator")]
-mod iter_helpers {
-    use super::*;
-    use crate::Foundation::NSEnumerator;
-
-    /// An iterator over the keys of a `NSDictionary`.
-    #[derive(Debug)]
-    pub struct Keys<'a, K: Message, V: Message>(pub(super) iter::Iter<'a, NSDictionary<K, V>>);
-
-    __impl_iter! {
-        impl<'a, K: Message, V: Message> Iterator<Item = &'a K> for Keys<'a, K, V> { ... }
-    }
-
-    /// An iterator that retains the keys of a `NSDictionary`.
-    #[derive(Debug)]
-    pub struct KeysRetained<'a, K: Message, V: Message>(
-        pub(super) iter::IterRetained<'a, NSDictionary<K, V>>,
-    );
-
-    __impl_iter! {
-        impl<'a, K: Message + IsIdCloneable, V: Message> Iterator<Item = Retained<K>> for KeysRetained<'a, K, V> { ... }
-    }
-
-    /// An iterator over the values of a `NSDictionary`.
-    #[derive(Debug)]
-    pub struct Values<'a, K: Message, V: Message>(
-        pub(super) iter::IterWithBackingEnum<'a, NSDictionary<K, V>, NSEnumerator<V>>,
-    );
-
-    __impl_iter! {
-        impl<'a, K: Message, V: Message> Iterator<Item = &'a V> for Values<'a, K, V> { ... }
-    }
-
-    /// A mutable iterator over the values of a `NSDictionary`.
-    #[derive(Debug)]
-    pub struct ValuesMut<'a, K: Message, V: Message>(
-        pub(super) iter::IterMutWithBackingEnum<'a, NSDictionary<K, V>, NSEnumerator<V>>,
-    );
-
-    __impl_iter! {
-        impl<'a, K: Message, V: Message + IsMutable> Iterator<Item = &'a mut V> for ValuesMut<'a, K, V> { ... }
-    }
-
-    /// A iterator that retains the values of a `NSDictionary`.
-    #[derive(Debug)]
-    pub struct ValuesRetained<'a, K: Message, V: Message>(
-        pub(super) iter::IterRetainedWithBackingEnum<'a, NSDictionary<K, V>, NSEnumerator<V>>,
-    );
-
-    __impl_iter! {
-        impl<'a, K: Message, V: Message + IsIdCloneable> Iterator<Item = Retained<V>> for ValuesRetained<'a, K, V> { ... }
-    }
-
-    /// A consuming iterator over the values of a `NSDictionary`.
-    #[derive(Debug)]
-    pub struct IntoValues<K: Message, V: Message>(
-        pub(super) iter::IntoIterWithBackingEnum<NSDictionary<K, V>, NSEnumerator<V>>,
-    );
-
-    __impl_iter! {
-        impl<K: Message, V: Message> Iterator<Item = Retained<V>> for IntoValues<K, V> { ... }
-    }
-}
+pub struct Keys<'a, K: Message, V: Message>(iter::Iter<'a, NSDictionary<K, V>>);
 
 #[cfg(feature = "NSEnumerator")]
-pub use self::iter_helpers::*;
-
-impl<'a, K: Message, V: Message> Index<&'a K> for NSDictionary<K, V> {
-    type Output = V;
-
-    fn index<'s>(&'s self, index: &'a K) -> &'s V {
-        self.get(index).unwrap()
-    }
+__impl_iter! {
+    impl<'a, K: Message, V: Message> Iterator<Item = Retained<K>> for Keys<'a, K, V> { ... }
 }
 
-impl<'a, K: Message, V: Message> Index<&'a K> for NSMutableDictionary<K, V> {
-    type Output = V;
+/// An iterator over unretained keys of a dictionary.
+///
+/// # Safety
+///
+/// The dictionary must not be mutated while this is alive.
+#[derive(Debug)]
+#[cfg(feature = "NSEnumerator")]
+pub struct KeysUnchecked<'a, K: Message, V: Message>(iter::IterUnchecked<'a, NSDictionary<K, V>>);
 
-    fn index<'s>(&'s self, index: &'a K) -> &'s V {
-        self.get(index).unwrap()
-    }
+#[cfg(feature = "NSEnumerator")]
+__impl_iter! {
+    impl<'a, K: Message, V: Message> Iterator<Item = &'a K> for KeysUnchecked<'a, K, V> { ... }
 }
 
-impl<'a, K: Message, V: Message + IsMutable> IndexMut<&'a K> for NSDictionary<K, V> {
-    fn index_mut<'s>(&'s mut self, index: &'a K) -> &'s mut V {
-        self.get_mut(index).unwrap()
-    }
+/// An iterator over the objects / values in a dictionary.
+#[derive(Debug)]
+#[cfg(feature = "NSEnumerator")]
+pub struct Objects<'a, K: Message, V: Message>(
+    iter::IterWithBackingEnum<'a, NSDictionary<K, V>, crate::NSEnumerator<V>>,
+);
+
+#[cfg(feature = "NSEnumerator")]
+__impl_iter! {
+    impl<'a, K: Message, V: Message> Iterator<Item = Retained<V>> for Objects<'a, K, V> { ... }
 }
 
-impl<'a, K: Message, V: Message + IsMutable> IndexMut<&'a K> for NSMutableDictionary<K, V> {
-    fn index_mut<'s>(&'s mut self, index: &'a K) -> &'s mut V {
-        self.get_mut(index).unwrap()
-    }
+/// An iterator over unretained objects / values of a dictionary.
+///
+/// # Safety
+///
+/// The dictionary must not be mutated while this is alive.
+#[derive(Debug)]
+#[cfg(feature = "NSEnumerator")]
+pub struct ObjectsUnchecked<'a, K: Message, V: Message + 'a>(
+    iter::IterUncheckedWithBackingEnum<'a, NSDictionary<K, V>, crate::NSEnumerator<V>>,
+);
+
+#[cfg(feature = "NSEnumerator")]
+__impl_iter! {
+    impl<'a, K: Message, V: Message> Iterator<Item = &'a V> for ObjectsUnchecked<'a, K, V> { ... }
 }
 
 impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSDictionary<K, V> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let (keys, values) = self.to_vecs();
-        let iter = keys.into_iter().zip(values);
+        // SAFETY: Unsound, use `to_vecs` instead when that doesn't have extra bounds
+        let (keys, objects) = unsafe { self.to_vecs_unchecked() };
+        let iter = keys.into_iter().zip(objects);
         f.debug_map().entries(iter).finish()
     }
 }

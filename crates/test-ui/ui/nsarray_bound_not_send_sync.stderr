@@ -1,28 +1,17 @@
-error[E0277]: `*const NSObject` cannot be shared between threads safely
+error[E0277]: `*mut NSObject` cannot be shared between threads safely
  --> ui/nsarray_bound_not_send_sync.rs
   |
   |     needs_sync::<NSArray<NSObject>>();
-  |                  ^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be shared between threads safely
+  |                  ^^^^^^^^^^^^^^^^^ `*mut NSObject` cannot be shared between threads safely
   |
-  = help: within `objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`, which is required by `NSArray<NSObject>: Sync`
-note: required because it appears within the type `objc2::rc::id::private::UnknownStorage<NSObject>`
- --> $WORKSPACE/crates/objc2/src/rc/id.rs
-  |
-  |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
-  |                ^^^^^^^^^^^^^^
-note: required because it appears within the type `objc2::rc::id::private::EquivalentType<NSObject>`
- --> $WORKSPACE/crates/objc2/src/rc/id.rs
-  |
-  |     pub struct EquivalentType<T: ?Sized + ClassType>(
-  |                ^^^^^^^^^^^^^^
-  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Sync`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
+  = help: within `NSArray<NSObject>`, the trait `Sync` is not implemented for `*mut NSObject`, which is required by `NSArray<NSObject>: Sync`
+note: required because it appears within the type `PhantomData<*mut NSObject>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
@@ -38,7 +27,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |     needs_sync::<NSArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
-  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `NSArray<NSObject>: Sync`
+  = help: within `NSArray<NSObject>`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `NSArray<NSObject>: Sync`
 note: required because it appears within the type `objc_sys::object::objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
@@ -54,14 +43,8 @@ note: required because it appears within the type `NSObject`
   |
   | pub struct NSObject {
   |            ^^^^^^^^
-  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Sync`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
- --> $RUST/core/src/marker.rs
-  |
-  | pub struct PhantomData<T: ?Sized>;
-  |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
@@ -71,31 +54,20 @@ note: required by a bound in `needs_sync`
   | fn needs_sync<T: ?Sized + Sync>() {}
   |                           ^^^^ required by this bound in `needs_sync`
 
-error[E0277]: `*const NSObject` cannot be sent between threads safely
+error[E0277]: `*mut NSObject` cannot be sent between threads safely
  --> ui/nsarray_bound_not_send_sync.rs
   |
   |     needs_send::<NSArray<NSObject>>();
-  |                  ^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be sent between threads safely
+  |                  ^^^^^^^^^^^^^^^^^ `*mut NSObject` cannot be sent between threads safely
   |
-  = help: within `objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`, which is required by `NSArray<NSObject>: Send`
-note: required because it appears within the type `objc2::rc::id::private::UnknownStorage<NSObject>`
- --> $WORKSPACE/crates/objc2/src/rc/id.rs
-  |
-  |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
-  |                ^^^^^^^^^^^^^^
-note: required because it appears within the type `objc2::rc::id::private::EquivalentType<NSObject>`
- --> $WORKSPACE/crates/objc2/src/rc/id.rs
-  |
-  |     pub struct EquivalentType<T: ?Sized + ClassType>(
-  |                ^^^^^^^^^^^^^^
-  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Send`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
+  = help: within `NSArray<NSObject>`, the trait `Send` is not implemented for `*mut NSObject`, which is required by `NSArray<NSObject>: Send`
+note: required because it appears within the type `PhantomData<*mut NSObject>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
@@ -111,7 +83,7 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |     needs_send::<NSArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
   |
-  = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`, which is required by `NSArray<NSObject>: Send`
+  = help: within `NSArray<NSObject>`, the trait `Send` is not implemented for `*const UnsafeCell<()>`, which is required by `NSArray<NSObject>: Send`
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
  --> $RUST/core/src/marker.rs
@@ -138,14 +110,8 @@ note: required because it appears within the type `NSObject`
   |
   | pub struct NSObject {
   |            ^^^^^^^^
-  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Send`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
- --> $RUST/core/src/marker.rs
-  |
-  | pub struct PhantomData<T: ?Sized>;
-  |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
@@ -155,36 +121,20 @@ note: required by a bound in `needs_send`
   | fn needs_send<T: ?Sized + Send>() {}
   |                           ^^^^ required by this bound in `needs_send`
 
-error[E0277]: `*const NSObject` cannot be shared between threads safely
+error[E0277]: `*mut NSObject` cannot be shared between threads safely
  --> ui/nsarray_bound_not_send_sync.rs
   |
   |     needs_sync::<NSMutableArray<NSObject>>();
-  |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be shared between threads safely
+  |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*mut NSObject` cannot be shared between threads safely
   |
-  = help: within `objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`, which is required by `NSMutableArray<NSObject>: Sync`
-note: required because it appears within the type `objc2::rc::id::private::UnknownStorage<NSObject>`
- --> $WORKSPACE/crates/objc2/src/rc/id.rs
-  |
-  |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
-  |                ^^^^^^^^^^^^^^
-note: required because it appears within the type `objc2::rc::id::private::EquivalentType<NSObject>`
- --> $WORKSPACE/crates/objc2/src/rc/id.rs
-  |
-  |     pub struct EquivalentType<T: ?Sized + ClassType>(
-  |                ^^^^^^^^^^^^^^
-  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Sync`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
+  = help: within `NSMutableArray<NSObject>`, the trait `Sync` is not implemented for `*mut NSObject`, which is required by `NSMutableArray<NSObject>: Sync`
+note: required because it appears within the type `PhantomData<*mut NSObject>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
-note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
-  |
-  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
-  |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
   |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
@@ -200,7 +150,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |     needs_sync::<NSMutableArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
-  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `NSMutableArray<NSObject>: Sync`
+  = help: within `NSMutableArray<NSObject>`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `NSMutableArray<NSObject>: Sync`
 note: required because it appears within the type `objc_sys::object::objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
@@ -216,19 +166,13 @@ note: required because it appears within the type `NSObject`
   |
   | pub struct NSObject {
   |            ^^^^^^^^
-  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Sync`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
- --> $RUST/core/src/marker.rs
-  |
-  | pub struct PhantomData<T: ?Sized>;
-  |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
   |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
@@ -238,36 +182,20 @@ note: required by a bound in `needs_sync`
   | fn needs_sync<T: ?Sized + Sync>() {}
   |                           ^^^^ required by this bound in `needs_sync`
 
-error[E0277]: `*const NSObject` cannot be sent between threads safely
+error[E0277]: `*mut NSObject` cannot be sent between threads safely
  --> ui/nsarray_bound_not_send_sync.rs
   |
   |     needs_send::<NSMutableArray<NSObject>>();
-  |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be sent between threads safely
+  |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*mut NSObject` cannot be sent between threads safely
   |
-  = help: within `objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`, which is required by `NSMutableArray<NSObject>: Send`
-note: required because it appears within the type `objc2::rc::id::private::UnknownStorage<NSObject>`
- --> $WORKSPACE/crates/objc2/src/rc/id.rs
-  |
-  |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
-  |                ^^^^^^^^^^^^^^
-note: required because it appears within the type `objc2::rc::id::private::EquivalentType<NSObject>`
- --> $WORKSPACE/crates/objc2/src/rc/id.rs
-  |
-  |     pub struct EquivalentType<T: ?Sized + ClassType>(
-  |                ^^^^^^^^^^^^^^
-  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Send`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
+  = help: within `NSMutableArray<NSObject>`, the trait `Send` is not implemented for `*mut NSObject`, which is required by `NSMutableArray<NSObject>: Send`
+note: required because it appears within the type `PhantomData<*mut NSObject>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
-note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
-  |
-  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
-  |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
   |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
@@ -283,7 +211,7 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |     needs_send::<NSMutableArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
   |
-  = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`, which is required by `NSMutableArray<NSObject>: Send`
+  = help: within `NSMutableArray<NSObject>`, the trait `Send` is not implemented for `*const UnsafeCell<()>`, which is required by `NSMutableArray<NSObject>: Send`
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
  --> $RUST/core/src/marker.rs
@@ -310,19 +238,13 @@ note: required because it appears within the type `NSObject`
   |
   | pub struct NSObject {
   |            ^^^^^^^^
-  = note: required for `objc2::rc::id::Retained<NSObject>` to implement `Send`
-note: required because it appears within the type `PhantomData<objc2::rc::id::Retained<NSObject>>`
- --> $RUST/core/src/marker.rs
-  |
-  | pub struct PhantomData<T: ?Sized>;
-  |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
   |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^

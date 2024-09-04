@@ -19,11 +19,12 @@ error[E0277]: `&mut Retained<NSArray<NSMutableArray>>` is not an iterator
   |              ^^^^^^^^ `&mut Retained<NSArray<NSMutableArray>>` is not an iterator
   |
   = help: the trait `IntoIterator` is not implemented for `&mut Retained<NSArray<NSMutableArray>>`
-  = help: the following other types implement trait `IntoIterator`:
-            &'a Retained<T>
-            &'a mut Retained<T>
-            Retained<T>
   = note: `IntoIterator` is implemented for `&Retained<NSArray<NSMutableArray>>`, but not for `&mut Retained<NSArray<NSMutableArray>>`
+help: consider removing the leading `&`-reference
+  |
+11 -     for s in &mut arr {
+11 +     for s in arr {
+   |
 
 error[E0277]: `&mut Retained<NSMutableArray<NSArray>>` is not an iterator
  --> ui/array_iter_invalid.rs
@@ -39,14 +40,16 @@ help: consider removing the leading `&`-reference
 16 +     for s in arr {
    |
 
-error[E0277]: `Retained<NSArray<NSMutableArray>>` is not an iterator
+error[E0277]: `&mut Retained<NSMutableArray<NSMutableArray>>` is not an iterator
  --> ui/array_iter_invalid.rs
   |
-  |     for _ in arr {}
-  |              ^^^ `Retained<NSArray<NSMutableArray>>` is not an iterator
+  |     for s in &mut arr {
+  |              ^^^^^^^^ `&mut Retained<NSMutableArray<NSMutableArray>>` is not an iterator
   |
-  = help: the trait `IntoIterator` is not implemented for `Retained<NSArray<NSMutableArray>>`
-  = help: the following other types implement trait `IntoIterator`:
-            &'a Retained<T>
-            &'a mut Retained<T>
-            Retained<T>
+  = help: the trait `IntoIterator` is not implemented for `&mut Retained<NSMutableArray<NSMutableArray>>`
+  = note: `IntoIterator` is implemented for `&Retained<NSMutableArray<NSMutableArray>>`, but not for `&mut Retained<NSMutableArray<NSMutableArray>>`
+help: consider removing the leading `&`-reference
+  |
+21 -     for s in &mut arr {
+21 +     for s in arr {
+   |

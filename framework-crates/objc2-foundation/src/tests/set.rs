@@ -1,10 +1,9 @@
 #![cfg(feature = "NSSet")]
 #![cfg(feature = "NSString")]
 #![cfg(feature = "NSValue")]
-use alloc::vec::Vec;
-use alloc::{format, vec};
+use alloc::format;
 
-use crate::Foundation::{ns_string, NSNumber, NSObject, NSSet, NSString};
+use crate::{ns_string, NSCopying, NSNumber, NSObject, NSSet, NSString};
 
 #[test]
 fn test_new() {
@@ -13,16 +12,16 @@ fn test_new() {
 }
 
 #[test]
-fn test_from_vec() {
-    let set = NSSet::<NSObject>::from_vec(Vec::new());
+fn test_from_retained_slice() {
+    let set = NSSet::<NSObject>::from_retained_slice(&[]);
     assert!(set.is_empty());
 
     let strs = ["one", "two", "three"].map(NSString::from_str);
-    let set = NSSet::from_vec(strs.to_vec());
+    let set = NSSet::from_retained_slice(&strs);
     assert!(strs.into_iter().all(|s| set.containsObject(&s)));
 
     let nums = [1, 2, 3].map(NSNumber::new_i32);
-    let set = NSSet::from_vec(nums.to_vec());
+    let set = NSSet::from_retained_slice(&nums);
     assert!(nums.into_iter().all(|n| set.containsObject(&n)));
 }
 
@@ -48,7 +47,7 @@ fn test_len() {
     let set = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("two")]);
     assert_eq!(set.len(), 2);
 
-    let set = NSSet::from_vec(vec![
+    let set = NSSet::from_retained_slice(&[
         NSNumber::new_i32(1),
         NSNumber::new_i32(2),
         NSNumber::new_i32(3),
@@ -59,11 +58,11 @@ fn test_len() {
 #[test]
 fn test_get() {
     let set = NSSet::<NSString>::new();
-    assert!(set.get(ns_string!("one")).is_none());
+    assert!(set.member(ns_string!("one")).is_none());
 
     let set = NSSet::from_slice(&[ns_string!("one"), ns_string!("two"), ns_string!("two")]);
-    assert!(set.get(ns_string!("two")).is_some());
-    assert!(set.get(ns_string!("three")).is_none());
+    assert!(set.member(ns_string!("two")).is_some());
+    assert!(set.member(ns_string!("three")).is_none());
 }
 
 #[test]
@@ -72,21 +71,21 @@ fn test_get_return_lifetime() {
 
     let res = {
         let value = NSString::from_str("one");
-        set.get(&value)
+        set.member(&value)
     };
 
-    assert_eq!(res, Some(ns_string!("one")));
+    assert_eq!(res, Some(ns_string!("one").copy()));
 }
 
 #[test]
 fn test_get_any() {
     let set = NSSet::<NSObject>::new();
-    assert!(set.get_any().is_none());
+    assert!(set.anyObject().is_none());
 
     let strs = [ns_string!("one"), ns_string!("two"), ns_string!("three")];
     let set = NSSet::from_slice(&strs);
-    let any = set.get_any().unwrap();
-    assert!(any == strs[0] || any == strs[1] || any == strs[2]);
+    let any = set.anyObject().unwrap();
+    assert!(&*any == strs[0] || &*any == strs[1] || &*any == strs[2]);
 }
 
 #[test]
@@ -125,8 +124,8 @@ fn test_to_array() {
     let nums = [1, 2, 3];
     let set = NSSet::from_retained_slice(&nums.map(NSNumber::new_i32));
 
-    assert_eq!(set.to_array().len(), 3);
-    assert!(set.to_array().iter().all(|i| nums.contains(&i.as_i32())));
+    assert_eq!(set.allObjects().len(), 3);
+    assert!(set.allObjects().iter().all(|i| nums.contains(&i.as_i32())));
 }
 
 #[test]
@@ -148,7 +147,7 @@ fn test_into_iter() {
 
 #[test]
 fn test_into_vec() {
-    let strs = vec![ns_string!("one"), ns_string!("two"), ns_string!("three")];
+    let strs = [ns_string!("one"), ns_string!("two"), ns_string!("three")];
     let set = NSSet::from_slice(&strs);
 
     assert_eq!(set.len(), 3);
@@ -184,20 +183,7 @@ fn test_debug() {
     ));
 }
 
-/// This currently works, but we should figure out a way to disallow it!
-#[test]
-#[cfg(all(feature = "NSArray", feature = "NSCalendar"))]
-#[allow(deprecated)]
-fn invalid_generic() {
-    let something_interior_mutable = unsafe { crate::NSCalendar::currentCalendar() };
-    let set = NSSet::from_retained_slice(&[crate::NSArray::from_retained_slice(&[
-        something_interior_mutable,
-    ])]);
-    let _ = set.get_any().unwrap().get(0).unwrap();
-    // something_interior_mutable.setAbc(...)
-}
-
 #[test]
 fn new_from_nsobject() {
-    let _ = NSSet::from_vec(vec![NSObject::new()]);
+    let _ = NSSet::from_retained_slice(&[NSObject::new()]);
 }

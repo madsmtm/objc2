@@ -66,6 +66,13 @@ class.NSException.derives = "PartialEq, Eq, Hash"
 class.NSProcessInfo.derives = "PartialEq, Eq, Hash"
 class.NSString.derives = "PartialEq, Eq, Hash"
 class.NSUUID.derives = "PartialEq, Eq, Hash"
+class.NSArray.derives = "PartialEq, Eq, Hash"
+class.NSMutableArray.derives = "PartialEq, Eq, Hash"
+class.NSDictionary.derives = "PartialEq, Eq, Hash"
+class.NSMutableDictionary.derives = "PartialEq, Eq, Hash"
+class.NSSet.derives = "PartialEq, Eq, Hash"
+class.NSMutableSet.derives = "PartialEq, Eq, Hash"
+class.NSCountedSet.derives = "PartialEq, Eq, Hash"
 
 # Overridden to use more performant implementation for `PartialEq`
 class.NSValue.derives = ""
@@ -122,18 +129,6 @@ class.NSUUID.methods."getUUIDBytes:".skipped = true
 
 # Wrong type on GNUStep
 class.NSMutableData.methods.mutableBytes.skipped = true
-
-# Custom generics because of auto traits
-class.NSArray.definition-skipped = true
-class.NSMutableArray.definition-skipped = true
-class.NSDictionary.definition-skipped = true
-class.NSMutableDictionary.definition-skipped = true
-class.NSSet.definition-skipped = true
-class.NSMutableSet.definition-skipped = true
-class.NSCountedSet.definition-skipped = true
-class.NSOrderedSet.definition-skipped = true
-class.NSMutableOrderedSet.definition-skipped = true
-class.NSEnumerator.definition-skipped = true
 
 # Uses va_list
 class.NSAttributedString.methods."initWithFormat:options:locale:arguments:".skipped = true
@@ -259,11 +254,8 @@ class.NSXPCCoder.methods."decodeXPCObjectOfType:forKey:".skipped = true
 ### Mutability
 ###
 
-# SAFETY: `new` or `initWithObjects:` may choose to deduplicate arrays,
-# and returning mutable references to those would be unsound - hence
-# `NSArray` cannot be mutable.
-class.NSArray.mutability = "ImmutableWithMutableSubclass(Foundation::NSArray::NSMutableArray)"
-class.NSMutableArray.mutability = "MutableWithImmutableSuperclass(Foundation::NSArray::NSArray)"
+class.NSArray.mutability = "InteriorMutableWithSubclass(Foundation::NSArray::NSMutableArray)"
+class.NSMutableArray.mutability = "InteriorMutableWithSuperclass(Foundation::NSArray::NSArray)"
 
 class.NSString.mutability = "InteriorMutableWithSubclass(Foundation::NSString::NSMutableString)"
 class.NSMutableString.mutability = "InteriorMutableWithSuperclass(Foundation::NSString::NSString)"
@@ -274,38 +266,43 @@ class.NSMutableAttributedString.mutability = "InteriorMutableWithSuperclass(Foun
 class.NSData.mutability = "InteriorMutableWithSubclass(Foundation::NSData::NSMutableData)"
 class.NSMutableData.mutability = "InteriorMutableWithSuperclass(Foundation::NSData::NSData)"
 
-class.NSDictionary.mutability = "ImmutableWithMutableSubclass(Foundation::NSDictionary::NSMutableDictionary)"
-class.NSMutableDictionary.mutability = "MutableWithImmutableSuperclass(Foundation::NSDictionary::NSDictionary)"
+# Auto traits and mutability can be deduced as if the dictionary was implemented as `(NSArray<KeyType>, NSArray<ObjectType>)`.
+class.NSDictionary.mutability = "InteriorMutableWithSubclass(Foundation::NSDictionary::NSMutableDictionary)"
+class.NSMutableDictionary.mutability = "InteriorMutableWithSuperclass(Foundation::NSDictionary::NSDictionary)"
 
-class.NSSet.mutability = "ImmutableWithMutableSubclass(Foundation::NSSet::NSMutableSet)"
-class.NSMutableSet.mutability = "MutableWithImmutableSuperclass(Foundation::NSSet::NSSet)"
+# Auto traits and mutability can be viewed as if the set was implemented with `NSArray`.
+class.NSSet.mutability = "InteriorMutableWithSubclass(Foundation::NSSet::NSMutableSet)"
+class.NSMutableSet.mutability = "InteriorMutableWithSuperclass(Foundation::NSSet::NSSet)"
 
 class.NSCharacterSet.mutability = "InteriorMutableWithSubclass(Foundation::NSCharacterSet::NSMutableCharacterSet)"
 class.NSMutableCharacterSet.mutability = "InteriorMutableWithSuperclass(Foundation::NSCharacterSet::NSCharacterSet)"
 
-class.NSOrderedSet.mutability = "ImmutableWithMutableSubclass(Foundation::NSOrderedSet::NSMutableOrderedSet)"
-class.NSMutableOrderedSet.mutability = "MutableWithImmutableSuperclass(Foundation::NSOrderedSet::NSOrderedSet)"
+# Auto traits and mutability can be viewed as if the set was implemented with `NSArray`.
+class.NSOrderedSet.mutability = "InteriorMutableWithSubclass(Foundation::NSOrderedSet::NSMutableOrderedSet)"
+class.NSMutableOrderedSet.mutability = "InteriorMutableWithSuperclass(Foundation::NSOrderedSet::NSOrderedSet)"
 
-class.NSIndexSet.mutability = "ImmutableWithMutableSubclass(Foundation::NSIndexSet::NSMutableIndexSet)"
-class.NSMutableIndexSet.mutability = "MutableWithImmutableSuperclass(Foundation::NSIndexSet::NSIndexSet)"
+class.NSIndexSet.mutability = "InteriorMutableWithSubclass(Foundation::NSIndexSet::NSMutableIndexSet)"
+class.NSMutableIndexSet.mutability = "InteriorMutableWithSuperclass(Foundation::NSIndexSet::NSIndexSet)"
 
 class.NSURLRequest.mutability = "InteriorMutableWithSubclass(Foundation::NSURLRequest::NSMutableURLRequest)"
 class.NSMutableURLRequest.mutability = "InteriorMutableWithSuperclass(Foundation::NSURLRequest::NSURLRequest)"
 
-# SAFETY: `NSEnumerator` and subclasses are safe as mutable because even
-# though the items it contains are not mutable, the enumerator itself is
-# (and it is important that the methods below are marked `&mut` as well).
+# NOTE: `NSEnumerator` and subclasses should be interior mutable because
+# regardless of what kind the items it contains are, the enumerator itself is.
 #
 # However, instances of this are only safe for others to create if
 # they're ready to pass ownership to the enumerator, or if they somehow
 # add a lifetime parameter (to prevent the original collection from
 # being modified).
 #
-# So e.g. `Retained<NSMutableArray<T>> -> Retained<NSEnumerator<T>>` is safe, as is
-# `&Retained<NSArray<T: IsCloneable>> -> Retained<NSEnumerator<T>>`, and so is
-# `&'a NSArray<T: IsCloneable> -> Retained<NSEnumerator<T>> + 'a`.
-class.NSEnumerator.mutability = "Mutable"
-class.NSDirectoryEnumerator.mutability = "Mutable"
+# So e.g. `Retained<NSMutableArray<T>> -> Retained<NSEnumerator<T>>` is safe,
+# as is `&Retained<NSArray<T: IsCloneable>> -> Retained<NSEnumerator<T>>`, and
+# so is `&'a NSArray<T: IsCloneable> -> Retained<NSEnumerator<T>> + 'a`.
+#
+# The implementation can be viewed as-if the enumerator internally retains a
+# `NSMutableArray<ObjectType>`, and removed an element from that on each
+# iteration.
+class.NSEnumerator.mutability = "InteriorMutable"
 
 ###
 ### Safety
@@ -314,9 +311,22 @@ class.NSDirectoryEnumerator.mutability = "Mutable"
 class.NSArray.methods.init.unsafe = false
 class.NSArray.methods.new.unsafe = false
 class.NSArray.methods.count.unsafe = false
+class.NSArray.methods."objectAtIndex:".unsafe = false
+class.NSArray.methods.firstObject.unsafe = false
+class.NSArray.methods.lastObject.unsafe = false
 class.NSMutableArray.methods.init.unsafe = false
 class.NSMutableArray.methods.new.unsafe = false
+class.NSMutableArray.methods."initWithCapacity:".unsafe = false
+class.NSMutableArray.methods."insertObject:atIndex:".unsafe = false
+class.NSMutableArray.methods."removeObjectAtIndex:".unsafe = false
+class.NSMutableArray.methods."removeObject:".unsafe = false
+class.NSMutableArray.methods."addObject:".unsafe = false
+class.NSMutableArray.methods.removeLastObject.unsafe = false
+class.NSMutableArray.methods."replaceObjectAtIndex:withObject:".unsafe = false
 class.NSMutableArray.methods.removeAllObjects.unsafe = false
+# The array may not be mutated while enumerating.
+class.NSArray.methods.objectEnumerator.unsafe = true
+class.NSArray.methods.reverseObjectEnumerator.unsafe = true
 
 class.NSString.methods.init.unsafe = false
 class.NSString.methods.new.unsafe = false
@@ -374,14 +384,20 @@ class.NSMutableData.methods.mutableBytes.unsafe = false
 class.NSDictionary.methods.init.unsafe = false
 class.NSDictionary.methods.new.unsafe = false
 class.NSDictionary.methods.count.unsafe = false
+class.NSDictionary.methods."objectForKey:".unsafe = false
+class.NSDictionary.methods.allValues.unsafe = false
+class.NSDictionary.methods.allKeys.unsafe = false
 class.NSMutableDictionary.methods.init.unsafe = false
 class.NSMutableDictionary.methods.new.unsafe = false
+class.NSMutableDictionary.methods."initWithCapacity:".unsafe = false
 class.NSMutableDictionary.methods."removeObjectForKey:".unsafe = false
 class.NSMutableDictionary.methods.removeAllObjects.unsafe = false
+# The dictionary may not be mutated while enumerating.
+class.NSDictionary.methods.keyEnumerator.unsafe = true
+class.NSDictionary.methods.objectEnumerator.unsafe = true
 
-# SAFETY: This removes the object from the internal collection, so it may safely return `Retained<T>`.
+# Enumerators are safe to use, we move unsoundness to their creation.
 class.NSEnumerator.methods.nextObject.unsafe = false
-# SAFETY: The objects are removed from the internal collection and as such are safe to give ownership over.
 class.NSEnumerator.methods.allObjects.unsafe = false
 
 class.NSError.methods.domain.unsafe = false
@@ -419,12 +435,20 @@ class.NSProcessInfo.methods.operatingSystemVersion.unsafe = false
 class.NSSet.methods.init.unsafe = false
 class.NSSet.methods.new.unsafe = false
 class.NSSet.methods.count.unsafe = false
+class.NSSet.methods.anyObject.unsafe = false
+class.NSSet.methods."member:".unsafe = false
+class.NSSet.methods.allObjects.unsafe = false
 class.NSSet.methods."containsObject:".unsafe = false
 class.NSSet.methods."isSubsetOfSet:".unsafe = false
 class.NSSet.methods."intersectsSet:".unsafe = false
 class.NSMutableSet.methods.init.unsafe = false
 class.NSMutableSet.methods.new.unsafe = false
+class.NSMutableSet.methods."initWithCapacity:".unsafe = false
+class.NSMutableSet.methods."addObject:".unsafe = false
+class.NSMutableSet.methods."removeObject:".unsafe = false
 class.NSMutableSet.methods.removeAllObjects.unsafe = false
+# The set may not be mutated while enumerating.
+class.NSSet.methods.objectEnumerator.unsafe = true
 
 class.NSValue.methods.objCType.unsafe = false
 class.NSValue.methods."isEqualToValue:".unsafe = false

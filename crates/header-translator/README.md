@@ -86,6 +86,10 @@ specific API!
 3. If the method can throw an exception if provided with invalid inputs, it is
     not safe. Consider declaring a helper method that checks the preconditions
     first!
+
+    Invalid indexes will throw `NSRangeException`, which is _technically_ still
+    unsafe, but everything in Objective-C can throw, so we won't really bother
+    with that in our evaluation.
 4. Beware of `Mutable` classes; these usually need to be passed as `&mut T`, or
     operate on `&mut self`.
 

@@ -1,13 +1,12 @@
 #![cfg(feature = "all")] // TODO: More precise
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use static_assertions::{assert_impl_all, assert_not_impl_any};
+use static_assertions::assert_not_impl_any;
 
-use crate::Foundation::*;
-use objc2::mutability::{Immutable, Mutable};
+use crate::*;
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
-use objc2::{declare_class, ClassType, DeclaredClass};
+use objc2::{declare_class, mutability, ClassType, DeclaredClass};
 
 // We expect most Foundation types to be UnwindSafe and RefUnwindSafe,
 // since they follow Rust's usual mutability rules (&T = immutable).
@@ -30,100 +29,48 @@ fn assert_auto_traits<T: Send + Sync + UnwindSafe + RefUnwindSafe>() {
     assert_unwindsafe::<T>();
 }
 
-macro_rules! helper {
-    ($name:ident, $mutability:ty) => {
-        declare_class!(
-            struct $name;
+declare_class!(
+    struct ImmutableSendSyncObject;
 
-            unsafe impl ClassType for $name {
-                type Super = NSObject;
-                type Mutability = $mutability;
-                const NAME: &'static str = concat!(stringify!($name), "Test");
-            }
+    unsafe impl ClassType for ImmutableSendSyncObject {
+        type Super = NSObject;
+        type Mutability = mutability::Immutable;
+        const NAME: &'static str = "ImmutableSendSyncObject";
+    }
 
-            impl DeclaredClass for $name {}
-        );
-    };
-}
+    impl DeclaredClass for ImmutableSendSyncObject {}
+);
 
-helper!(ImmutableObject, Immutable);
-helper!(ImmutableSendObject, Immutable);
-unsafe impl Send for ImmutableSendObject {}
-helper!(ImmutableSyncObject, Immutable);
-unsafe impl Sync for ImmutableSyncObject {}
-helper!(ImmutableSendSyncObject, Immutable);
 unsafe impl Send for ImmutableSendSyncObject {}
 unsafe impl Sync for ImmutableSendSyncObject {}
 
-helper!(MutableObject, Mutable);
-helper!(MutableSendObject, Mutable);
-unsafe impl Send for MutableSendObject {}
-helper!(MutableSyncObject, Mutable);
-unsafe impl Sync for MutableSyncObject {}
-helper!(MutableSendSyncObject, Mutable);
-unsafe impl Send for MutableSendSyncObject {}
-unsafe impl Sync for MutableSendSyncObject {}
-
 #[test]
 fn test_generic_auto_traits() {
-    assert_auto_traits::<NSArray<NSProcessInfo>>();
-    assert_auto_traits::<Retained<NSArray<NSProcessInfo>>>();
-    assert_auto_traits::<NSMutableArray<NSProcessInfo>>();
-    assert_auto_traits::<Retained<NSMutableArray<NSProcessInfo>>>();
-    assert_auto_traits::<NSDictionary<NSProcessInfo, NSProcessInfo>>();
-    assert_auto_traits::<Retained<NSDictionary<NSProcessInfo, NSProcessInfo>>>();
+    // assert_unwindsafe::<NSArray<NSProcessInfo>>();
+    // assert_unwindsafe::<Retained<NSArray<NSProcessInfo>>>();
+    // assert_unwindsafe::<NSMutableArray<NSProcessInfo>>();
+    // assert_unwindsafe::<Retained<NSMutableArray<NSProcessInfo>>>();
+    // assert_unwindsafe::<NSDictionary<NSProcessInfo, NSProcessInfo>>();
+    // assert_unwindsafe::<Retained<NSDictionary<NSProcessInfo, NSProcessInfo>>>();
 
-    macro_rules! assert_id_like {
-        ($wrapper:ident<T>) => {
-            assert_not_impl_any!($wrapper<ImmutableObject>: Send, Sync);
-            assert_not_impl_any!($wrapper<ImmutableSendObject>: Send, Sync);
-            assert_not_impl_any!($wrapper<ImmutableSyncObject>: Send, Sync);
-            assert_impl_all!($wrapper<ImmutableSendSyncObject>: Send, Sync);
-
-            assert_not_impl_any!($wrapper<MutableObject>: Send, Sync);
-            assert_not_impl_any!($wrapper<MutableSendObject>: Sync);
-            assert_impl_all!($wrapper<MutableSendObject>: Send);
-            assert_not_impl_any!($wrapper<MutableSyncObject>: Send);
-            assert_impl_all!($wrapper<MutableSyncObject>: Sync);
-            assert_impl_all!($wrapper<MutableSendSyncObject>: Send, Sync);
-        };
-    }
-
-    macro_rules! assert_arc_like {
-        ($wrapper:ident<T>) => {
-            assert_not_impl_any!($wrapper<ImmutableObject>: Send, Sync);
-            assert_not_impl_any!($wrapper<ImmutableSendObject>: Send, Sync);
-            assert_not_impl_any!($wrapper<ImmutableSyncObject>: Send, Sync);
-            assert_impl_all!($wrapper<ImmutableSendSyncObject>: Send, Sync);
-
-            assert_not_impl_any!($wrapper<MutableObject>: Send, Sync);
-            assert_not_impl_any!($wrapper<MutableSendObject>: Send, Sync);
-            assert_not_impl_any!($wrapper<MutableSyncObject>: Send, Sync);
-            assert_impl_all!($wrapper<MutableSendSyncObject>: Send, Sync);
-        };
-    }
-
-    // TODO
+    // TODO: Unpin?
     assert_not_impl_any!(NSArray<AnyObject>: Unpin);
     assert_not_impl_any!(NSMutableArray<AnyObject>: Unpin);
     assert_not_impl_any!(NSDictionary<AnyObject, AnyObject>: Unpin);
 
-    assert_id_like!(NSArray<T>);
-    #[allow(dead_code)]
-    type NSArrayId<T> = Retained<NSArray<T>>;
-    assert_arc_like!(NSArrayId<T>);
+    // Collections are not Send + Sync, since they are interior mutable, i.e.
+    // mutable from `&self`.
+    assert_not_impl_any!(NSArray<ImmutableSendSyncObject>: Send, Sync);
+    assert_not_impl_any!(NSMutableArray<ImmutableSendSyncObject>: Send, Sync);
+    assert_not_impl_any!(NSDictionary<ImmutableSendSyncObject, ImmutableSendSyncObject>: Send, Sync);
 
-    assert_id_like!(NSMutableArray<T>);
-    #[allow(dead_code)]
-    type NSMutableArrayId<T> = Retained<NSMutableArray<T>>;
-    assert_id_like!(NSMutableArrayId<T>);
-
-    #[allow(dead_code)]
-    type NSDictionarySingle<T> = NSDictionary<T, T>;
-    assert_id_like!(NSDictionarySingle<T>);
-    #[allow(dead_code)]
-    type NSDictionarySingleId<T> = Retained<NSDictionary<T, T>>;
-    assert_arc_like!(NSDictionarySingleId<T>);
+    // TODO: Make these UnwindSafe?
+    assert_not_impl_any!(NSDictionary<NSProcessInfo, NSProcessInfo>: UnwindSafe, RefUnwindSafe);
+    assert_not_impl_any!(NSSet<NSProcessInfo>: UnwindSafe, RefUnwindSafe);
+    assert_not_impl_any!(Retained<NSSet<NSProcessInfo>>: UnwindSafe, RefUnwindSafe);
+    assert_not_impl_any!(NSMutableArray<NSProcessInfo>: UnwindSafe, RefUnwindSafe);
+    assert_not_impl_any!(NSMutableDictionary<NSProcessInfo, NSProcessInfo>: UnwindSafe, RefUnwindSafe);
+    assert_not_impl_any!(NSMutableSet<NSProcessInfo>: UnwindSafe, RefUnwindSafe);
 }
 
 #[test]
@@ -131,9 +78,6 @@ fn send_sync_unwindsafe() {
     assert_unwindsafe::<NSAttributedString>();
     assert_auto_traits::<NSComparisonResult>();
     assert_unwindsafe::<NSData>();
-    assert_auto_traits::<NSDictionary<NSProcessInfo, NSProcessInfo>>();
-    assert_auto_traits::<NSSet<NSProcessInfo>>();
-    assert_auto_traits::<Retained<NSSet<NSProcessInfo>>>();
     // TODO: Figure out if Send + Sync is safe?
     // assert_auto_traits::<NSEnumerator2<NSProcessInfo>>();
     // assert_auto_traits::<NSFastEnumerator2<NSArray<NSProcessInfo>>>();
@@ -143,11 +87,8 @@ fn send_sync_unwindsafe() {
     assert_auto_traits::<NSPoint>();
     assert_auto_traits::<NSRect>();
     assert_auto_traits::<NSSize>();
-    assert_auto_traits::<NSMutableArray<NSProcessInfo>>();
     assert_unwindsafe::<NSMutableAttributedString>();
     assert_unwindsafe::<NSMutableData>();
-    assert_auto_traits::<NSMutableDictionary<NSProcessInfo, NSProcessInfo>>();
-    assert_auto_traits::<NSMutableSet<NSProcessInfo>>();
     assert_unwindsafe::<NSMutableString>();
     assert_auto_traits::<NSNumber>();
     // assert_auto_traits::<NSObject>(); // Intentional

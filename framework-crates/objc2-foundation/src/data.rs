@@ -343,13 +343,16 @@ unsafe fn with_vec<T: objc2::Message>(obj: objc2::rc::Allocated<T>, bytes: Vec<u
     let dealloc: &Block<dyn Fn(*mut c_void, usize) + 'static> = &dealloc;
 
     let mut bytes = ManuallyDrop::new(bytes);
+    // We intentionally extract the length before we access the
+    // pointer as mutable, to not invalidate that mutable pointer.
+    let len = bytes.len();
     let bytes_ptr: *mut c_void = bytes.as_mut_ptr().cast();
 
     unsafe {
         objc2::msg_send_id![
             obj,
             initWithBytesNoCopy: bytes_ptr,
-            length: bytes.len(),
+            length: len,
             deallocator: dealloc,
         ]
     }

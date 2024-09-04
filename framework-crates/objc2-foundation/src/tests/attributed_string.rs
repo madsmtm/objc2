@@ -1,7 +1,7 @@
 #![cfg(feature = "NSAttributedString")]
 #![cfg(feature = "NSString")]
+use alloc::format;
 use alloc::string::ToString;
-use alloc::{format, vec};
 
 use objc2::rc::{autoreleasepool, Retained};
 use objc2::runtime::AnyObject;
@@ -62,7 +62,7 @@ fn test_debug() {
     let s = unsafe {
         NSAttributedString::new_with_attributes(
             ns_string!("abc"),
-            &Foundation::NSDictionary::from_vec(&[ns_string!("test")], vec![obj]),
+            &Foundation::NSDictionary::from_retained_objects(&[ns_string!("test")], &[obj]),
         )
     };
     let expected = if cfg!(feature = "gnustep-1-7") {

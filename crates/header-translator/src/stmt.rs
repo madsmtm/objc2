@@ -3,6 +3,7 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt;
+use std::fmt::Display;
 use std::iter;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
@@ -405,28 +406,46 @@ impl Mutability {
             Mutability::Mutable | Mutability::MutableWithImmutableSuperclass(_)
         )
     }
-}
 
-impl fmt::Display for Mutability {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
+    fn display<'a>(&'a self, other_generics: impl Display + 'a) -> impl Display + 'a {
+        FormatterFn(move |f| match self {
             Self::Immutable => write!(f, "Immutable"),
             Self::Mutable => write!(f, "Mutable"),
             Self::ImmutableWithMutableSubclass(subclass) => {
-                write!(f, "ImmutableWithMutableSubclass<{}>", subclass.path())
+                write!(
+                    f,
+                    "ImmutableWithMutableSubclass<{}{}>",
+                    subclass.path(),
+                    other_generics
+                )
             }
             Self::MutableWithImmutableSuperclass(superclass) => {
-                write!(f, "MutableWithImmutableSuperclass<{}>", superclass.path())
+                write!(
+                    f,
+                    "MutableWithImmutableSuperclass<{}{}>",
+                    superclass.path(),
+                    other_generics
+                )
             }
             Self::InteriorMutable => write!(f, "InteriorMutable"),
             Self::InteriorMutableWithSubclass(subclass) => {
-                write!(f, "InteriorMutableWithSubclass<{}>", subclass.path())
+                write!(
+                    f,
+                    "InteriorMutableWithSubclass<{}{}>",
+                    subclass.path(),
+                    other_generics
+                )
             }
             Self::InteriorMutableWithSuperclass(superclass) => {
-                write!(f, "InteriorMutableWithSuperclass<{}>", superclass.path())
+                write!(
+                    f,
+                    "InteriorMutableWithSuperclass<{}{}>",
+                    superclass.path(),
+                    other_generics
+                )
             }
             Self::MainThreadOnly => write!(f, "MainThreadOnly"),
-        }
+        })
     }
 }
 
@@ -1779,7 +1798,12 @@ impl Stmt {
                         superclass.path_in_relation_to(id.location()),
                         GenericTyHelper(superclass_generics),
                     )?;
-                    writeln!(f, "        type Mutability = {mutability};")?;
+                    writeln!(
+                        f,
+                        "        type Mutability = {};",
+                        // Counterpart classes are required to have the same generics.
+                        mutability.display(GenericTyHelper(generics)),
+                    )?;
                     if !generics.is_empty() {
                         writeln!(f)?;
                         writeln!(

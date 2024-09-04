@@ -302,6 +302,7 @@ L5$pb:
 	movsd	qword ptr [ebp - 80], xmm0
 	movsd	qword ptr [ebp - 72], xmm0
 	movsd	qword ptr [ebp - 64], xmm0
+	mov	dword ptr [ebp - 132], 0
 	mov	dword ptr [ebp - 124], esi
 	lea	ebx, [ebp - 56]
 	mov	dword ptr [ebp - 56], 0
@@ -312,10 +313,10 @@ L5$pb:
 	mov	edi, dword ptr [eax + LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L5$pb]
 	lea	eax, [eax + l_anon.[ID].0-L5$pb]
 	mov	dword ptr [ebp - 16], eax
-	xor	eax, eax
 	xor	ecx, ecx
-	cmp	ecx, eax
-	jb	LBB5_5
+	xor	eax, eax
+	cmp	eax, ecx
+	jb	LBB5_11
 	.p2align	4, 0x90
 LBB5_2:
 	mov	eax, dword ptr [edi]
@@ -332,16 +333,33 @@ LBB5_4:
 	call	_objc_msgSend
 	add	esp, 32
 	mov	dword ptr [ebp - 20], eax
-	xor	ecx, ecx
+	mov	dword ptr [ebp - 24], 0
 	test	eax, eax
+	je	LBB5_13
+	xor	eax, eax
+	cmp	dword ptr [ebp - 52], 0
 	je	LBB5_6
-LBB5_5:
-	mov	eax, dword ptr [ebp - 52]
-	lea	edx, [ecx + 1]
+LBB5_11:
+	mov	ecx, dword ptr [ebp - 48]
+	test	ecx, ecx
+	je	LBB5_12
+	mov	ecx, dword ptr [ecx]
+	cmp	dword ptr [ebp - 132], 0
+	je	LBB5_8
+	cmp	dword ptr [ebp - 128], ecx
+	je	LBB5_12
+	jmp	LBB5_10
+	.p2align	4, 0x90
+LBB5_8:
+	mov	dword ptr [ebp - 132], 1
+	mov	dword ptr [ebp - 128], ecx
+LBB5_12:
+	mov	ecx, dword ptr [ebp - 52]
+	lea	edx, [eax + 1]
 	mov	dword ptr [ebp - 24], edx
-	mov	eax, dword ptr [eax + 4*ecx]
+	mov	eax, dword ptr [ecx + 4*eax]
 	test	eax, eax
-	je	LBB5_6
+	je	LBB5_13
 	sub	esp, 12
 	push	eax
 	call	_objc_retain
@@ -355,11 +373,11 @@ LBB5_5:
 	call	_objc_release
 	add	esp, 16
 	mov	esi, dword ptr [ebp - 124]
-	mov	ecx, dword ptr [ebp - 24]
-	mov	eax, dword ptr [ebp - 20]
-	cmp	ecx, eax
+	mov	eax, dword ptr [ebp - 24]
+	mov	ecx, dword ptr [ebp - 20]
+	cmp	eax, ecx
 	jae	LBB5_2
-	jmp	LBB5_5
+	jmp	LBB5_11
 LBB5_3:
 	sub	esp, 8
 	push	dword ptr [ebp - 16]
@@ -367,13 +385,17 @@ LBB5_3:
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	jmp	LBB5_4
-LBB5_6:
+LBB5_13:
 	add	esp, 124
 	pop	esi
 	pop	edi
 	pop	ebx
 	pop	ebp
 	ret
+LBB5_6:
+	call	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)
+LBB5_10:
+	call	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)
 
 	.section	__TEXT,__const
 l_anon.[ID].0:

@@ -13,14 +13,14 @@ fn main() {
 
     // Create an NSArray from a Vec
     let objs = vec![obj, obj2];
-    let array = NSArray::from_vec(objs);
+    let array = NSArray::from_retained_slice(&objs);
     for obj in array.iter() {
         println!("{obj:?}");
     }
     println!("{}", array.len());
 
     // Turn the NSArray back into a Vec
-    let mut objs = array.to_vec_retained();
+    let mut objs = array.to_vec();
     let obj = objs.pop().unwrap();
 
     // Create a static NSString
@@ -32,8 +32,8 @@ fn main() {
 
     // Create a dictionary mapping strings to objects
     let keys = &[string];
-    let objects = &[obj];
-    let dict = NSDictionary::from_retained_slice(keys, objects);
-    println!("{:?}", dict.get(string));
+    let objects = &[&*obj];
+    let dict = NSDictionary::from_slices(keys, objects);
+    println!("{:?}", dict.objectForKey(string));
     println!("{}", dict.len());
 }

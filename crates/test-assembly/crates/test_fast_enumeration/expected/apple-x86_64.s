@@ -294,7 +294,7 @@ _iter_retained:
 	push	r13
 	push	r12
 	push	rbx
-	sub	rsp, 216
+	sub	rsp, 232
 	mov	qword ptr [rbp - 64], 0
 	mov	qword ptr [rbp - 72], 0
 	mov	qword ptr [rbp - 80], 0
@@ -317,11 +317,12 @@ _iter_retained:
 	mov	qword ptr [rbp - 144], 0
 	mov	qword ptr [rbp - 136], 0
 	mov	qword ptr [rbp - 128], 0
+	mov	qword ptr [rbp - 272], 0
 	mov	qword ptr [rbp - 256], rdi
 	lea	r14, [rbp - 120]
-	mov	qword ptr [rbp - 104], 0
-	mov	qword ptr [rbp - 112], 0
 	mov	qword ptr [rbp - 120], 0
+	mov	qword ptr [rbp - 112], 0
+	mov	qword ptr [rbp - 104], 0
 	mov	qword ptr [rbp - 48], 0
 	mov	qword ptr [rbp - 56], 0
 	xor	ecx, ecx
@@ -329,7 +330,7 @@ _iter_retained:
 	lea	r12, [rip + l_anon.[ID].0]
 	xor	eax, eax
 	cmp	rax, rcx
-	jb	LBB5_6
+	jb	LBB5_7
 	.p2align	4, 0x90
 LBB5_2:
 	mov	rsi, qword ptr [r15]
@@ -341,16 +342,33 @@ LBB5_4:
 	mov	rcx, rbx
 	call	_objc_msgSend
 	mov	qword ptr [rbp - 48], rax
+	mov	qword ptr [rbp - 56], 0
 	test	rax, rax
-	je	LBB5_7
+	je	LBB5_15
+	cmp	qword ptr [rbp - 112], 0
+	je	LBB5_13
 	xor	eax, eax
-LBB5_6:
+LBB5_7:
+	mov	rcx, qword ptr [rbp - 104]
+	test	rcx, rcx
+	je	LBB5_11
+	mov	rcx, qword ptr [rcx]
+	cmp	qword ptr [rbp - 272], 0
+	je	LBB5_9
+	cmp	qword ptr [rbp - 264], rcx
+	je	LBB5_11
+	jmp	LBB5_14
+	.p2align	4, 0x90
+LBB5_9:
+	mov	qword ptr [rbp - 272], 1
+	mov	qword ptr [rbp - 264], rcx
+LBB5_11:
 	mov	rcx, qword ptr [rbp - 112]
 	lea	rdx, [rax + 1]
 	mov	qword ptr [rbp - 56], rdx
 	mov	rdi, qword ptr [rcx + 8*rax]
 	test	rdi, rdi
-	je	LBB5_7
+	je	LBB5_15
 	call	_objc_retain
 	mov	r13, rax
 	mov	rdi, rax
@@ -362,7 +380,7 @@ LBB5_6:
 	mov	rcx, qword ptr [rbp - 48]
 	cmp	rax, rcx
 	jae	LBB5_2
-	jmp	LBB5_6
+	jmp	LBB5_7
 LBB5_3:
 	mov	r13, rdi
 	mov	rdi, r15
@@ -371,8 +389,8 @@ LBB5_3:
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB5_4
-LBB5_7:
-	add	rsp, 216
+LBB5_15:
+	add	rsp, 232
 	pop	rbx
 	pop	r12
 	pop	r13
@@ -380,6 +398,10 @@ LBB5_7:
 	pop	r15
 	pop	rbp
 	ret
+LBB5_13:
+	call	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)
+LBB5_14:
+	call	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)
 
 	.section	__TEXT,__const
 l_anon.[ID].0:

@@ -7,7 +7,7 @@ use objc2::rc::Retained;
 use objc2::runtime::{AnyClass, AnyObject, ProtocolObject};
 use objc2::ClassType;
 use objc2_app_kit::{NSPasteboard, NSPasteboardTypeString};
-use objc2_foundation::{NSArray, NSCopying, NSString};
+use objc2_foundation::{NSArray, NSString};
 
 /// Simplest implementation
 pub fn get_text_1(pasteboard: &NSPasteboard) -> Option<Retained<NSString>> {
@@ -23,26 +23,25 @@ pub fn get_text_2(pasteboard: &NSPasteboard) -> Option<Retained<NSString>> {
     // we convert the class to an `AnyObject` type instead.
     //
     // TODO: Investigate and find a better way to express this in `objc2`.
-    let string_class = {
-        let cls: *const AnyClass = NSString::class();
-        let cls = cls as *mut AnyObject;
-        unsafe { Retained::retain(cls).unwrap() }
-    };
-    let class_array = NSArray::from_vec(vec![string_class]);
+    let cls: *const AnyClass = NSString::class();
+    let cls: *const AnyObject = cls.cast();
+    let string_class = unsafe { &*cls };
+
+    let class_array = NSArray::from_slice(&[string_class]);
     let objects = unsafe { pasteboard.readObjectsForClasses_options(&class_array, None) };
 
-    let obj: *const AnyObject = objects?.first()?;
+    let obj = objects?.firstObject()?;
     // And this part is weird as well, since we now have to convert the object
     // into an NSString, which we know it to be since that's what we told
     // `readObjectsForClasses:options:`.
-    let obj = obj as *mut NSString;
-    Some(unsafe { Retained::retain(obj) }.unwrap())
+    let obj: Retained<NSString> = unsafe { Retained::cast(obj) };
+    Some(obj)
 }
 
 pub fn set_text(pasteboard: &NSPasteboard, text: &NSString) {
     let _ = unsafe { pasteboard.clearContents() };
-    let obj = ProtocolObject::from_retained(text.copy());
-    let objects = NSArray::from_vec(vec![obj]);
+    let obj = ProtocolObject::from_ref(text);
+    let objects = NSArray::from_slice(&[obj]);
     let res = unsafe { pasteboard.writeObjects(&objects) };
     if !res {
         panic!("Failed writing to pasteboard");
