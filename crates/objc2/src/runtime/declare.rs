@@ -420,7 +420,7 @@ impl ClassBuilder {
     /// which is a super-protocol thereof.
     #[inline]
     pub fn add_protocol(&mut self, proto: &AnyProtocol) -> bool {
-        let success = unsafe { ffi::class_addProtocol(self.as_mut_ptr(), proto.as_ptr()) };
+        let success = unsafe { ffi::class_addProtocol(self.as_mut_ptr(), proto) };
         Bool::from_raw(success).as_bool()
     }
 
@@ -466,8 +466,8 @@ unsafe impl Send for ProtocolBuilder {}
 unsafe impl Sync for ProtocolBuilder {}
 
 impl ProtocolBuilder {
-    fn as_mut_ptr(&mut self) -> *mut ffi::objc_protocol {
-        self.proto.as_ptr().cast()
+    fn as_mut_ptr(&mut self) -> *mut AnyProtocol {
+        self.proto.as_ptr()
     }
 
     /// Constructs a [`ProtocolBuilder`] with the given name.
@@ -543,9 +543,7 @@ impl ProtocolBuilder {
 
     /// Adds a requirement on another protocol.
     pub fn add_protocol(&mut self, proto: &AnyProtocol) {
-        unsafe {
-            ffi::protocol_addProtocol(self.as_mut_ptr(), proto.as_ptr());
-        }
+        unsafe { ffi::protocol_addProtocol(self.as_mut_ptr(), proto) };
     }
 
     /// Registers the [`ProtocolBuilder`], consuming it and returning a reference

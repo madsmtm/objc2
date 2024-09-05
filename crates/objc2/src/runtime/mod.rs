@@ -931,7 +931,7 @@ impl AnyClass {
     #[inline]
     #[doc(alias = "class_conformsToProtocol")]
     pub fn conforms_to(&self, proto: &AnyProtocol) -> bool {
-        unsafe { Bool::from_raw(ffi::class_conformsToProtocol(self, proto.as_ptr())).as_bool() }
+        unsafe { Bool::from_raw(ffi::class_conformsToProtocol(self, proto)).as_bool() }
     }
 
     /// Get a list of the protocols to which this class conforms.
@@ -1035,10 +1035,19 @@ impl fmt::Display for AnyClass {
     }
 }
 
-/// A type that represents an Objective-C protocol.
+/// An opaque type that represents an Objective-C protocol.
+///
+/// Note that, although protocols are objects, sending messages to them is
+/// deprecated and may not work in the future.
+//
+// The naming of this follows GNUStep; this struct does not exist in Apple's
+// runtime, there `Protocol` is a type alias of `objc_object`.
 #[repr(C)]
 #[doc(alias = "objc_protocol")]
-pub struct AnyProtocol(ffi::objc_protocol);
+pub struct AnyProtocol {
+    _priv: [u8; 0],
+    _p: ffi::OpaqueData,
+}
 
 /// Use [`AnyProtocol`] instead.
 #[deprecated = "renamed to `runtime::AnyProtocol`"]
@@ -1052,12 +1061,6 @@ impl RefUnwindSafe for AnyProtocol {}
 // Note that Unpin is not applicable.
 
 impl AnyProtocol {
-    #[inline]
-    pub(crate) fn as_ptr(&self) -> *const ffi::objc_protocol {
-        let ptr: *const Self = self;
-        ptr.cast()
-    }
-
     /// Returns the protocol definition of a specified protocol, or [`None`]
     /// if the protocol is not registered with the Objective-C runtime.
     #[doc(alias = "objc_getProtocol")]
@@ -1085,7 +1088,7 @@ impl AnyProtocol {
         unsafe {
             let mut count: c_uint = 0;
             let protocols: *mut &AnyProtocol =
-                ffi::protocol_copyProtocolList(self.as_ptr(), &mut count).cast();
+                ffi::protocol_copyProtocolList(self, &mut count).cast();
             MallocSlice::from_array(protocols, count as usize)
         }
     }
@@ -1094,19 +1097,13 @@ impl AnyProtocol {
     #[inline]
     #[doc(alias = "protocol_conformsToProtocol")]
     pub fn conforms_to(&self, proto: &AnyProtocol) -> bool {
-        unsafe {
-            Bool::from_raw(ffi::protocol_conformsToProtocol(
-                self.as_ptr(),
-                proto.as_ptr(),
-            ))
-            .as_bool()
-        }
+        unsafe { Bool::from_raw(ffi::protocol_conformsToProtocol(self, proto)).as_bool() }
     }
 
     /// Returns the name of self.
     #[doc(alias = "protocol_getName")]
     pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(ffi::protocol_getName(self.as_ptr())) };
+        let name = unsafe { CStr::from_ptr(ffi::protocol_getName(self)) };
         str::from_utf8(name.to_bytes()).unwrap()
     }
 
@@ -1114,7 +1111,7 @@ impl AnyProtocol {
         let mut count: c_uint = 0;
         let descriptions = unsafe {
             ffi::protocol_copyMethodDescriptionList(
-                self.as_ptr(),
+                self,
                 Bool::new(required).as_raw(),
                 Bool::new(instance).as_raw(),
                 &mut count,
@@ -1150,7 +1147,7 @@ impl PartialEq for AnyProtocol {
     #[inline]
     #[doc(alias = "protocol_isEqual")]
     fn eq(&self, other: &Self) -> bool {
-        unsafe { Bool::from_raw(ffi::protocol_isEqual(self.as_ptr(), other.as_ptr())).as_bool() }
+        unsafe { Bool::from_raw(ffi::protocol_isEqual(self, other)).as_bool() }
     }
 }
 

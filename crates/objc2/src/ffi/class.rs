@@ -1,8 +1,8 @@
 #![allow(non_camel_case_types)]
 use std::os::raw::{c_char, c_int, c_uint};
 
-use crate::ffi::{objc_protocol, BOOL};
-use crate::runtime::{AnyClass, Imp, Method, Sel};
+use crate::ffi::BOOL;
+use crate::runtime::{AnyClass, AnyProtocol, Imp, Method, Sel};
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use crate::{
     ffi::{objc_property, objc_property_attribute_t},
@@ -90,8 +90,8 @@ extern_c! {
         attributes_count: c_uint,
     ) -> BOOL;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn class_addProtocol(cls: *mut AnyClass, protocol: *const objc_protocol) -> BOOL;
-    pub fn class_conformsToProtocol(cls: *const AnyClass, protocol: *const objc_protocol)
+    pub fn class_addProtocol(cls: *mut AnyClass, protocol: *const AnyProtocol) -> BOOL;
+    pub fn class_conformsToProtocol(cls: *const AnyClass, protocol: *const AnyProtocol)
         -> BOOL;
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))] // Available in newer versions
@@ -117,7 +117,7 @@ extern_c! {
     pub fn class_copyProtocolList(
         cls: *const AnyClass,
         out_len: *mut c_uint,
-    ) -> *mut *const objc_protocol;
+    ) -> *mut *const AnyProtocol;
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn class_createInstance(cls: *const AnyClass, extra_bytes: usize) -> *mut crate::runtime::AnyObject;
