@@ -22,6 +22,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   the protocol was already present on the class or not.
 * Merged `objc-sys` into this crate's `ffi` module.
 
+### Deprecated
+* Merged `ffi::objc_class` and `runtime::AnyClass`, and deprecated the former.
+
 ### Fixed
 * Remove an incorrect assertion when adding protocols to classes in an unexpected
   order.

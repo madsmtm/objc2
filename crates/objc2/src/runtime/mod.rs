@@ -106,14 +106,15 @@ macro_rules! standard_pointer_impls {
         impl PartialEq for $name {
             #[inline]
             fn eq(&self, other: &Self) -> bool {
-                self.as_ptr() == other.as_ptr()
+                ptr::eq(self, other)
             }
         }
         impl Eq for $name {}
         impl hash::Hash for $name {
             #[inline]
             fn hash<H: hash::Hasher>(&self, state: &mut H) {
-                self.as_ptr().hash(state)
+                let ptr: *const Self = self;
+                ptr.hash(state)
             }
         }
     };
@@ -712,7 +713,7 @@ impl fmt::Debug for Method {
     }
 }
 
-/// A type that represents an Objective-C class.
+/// An opaque type that represents an Objective-C class.
 ///
 /// This is an opaque type meant to be used behind a shared reference
 /// `&AnyClass`, which is semantically equivalent to `Class _Nonnull`.
@@ -723,7 +724,12 @@ impl fmt::Debug for Method {
 #[repr(C)]
 #[doc(alias = "Class")]
 #[doc(alias = "objc_class")]
-pub struct AnyClass(ffi::objc_class);
+pub struct AnyClass {
+    // `isa` field is deprecated and not available on GNUStep, so we don't
+    // expose it here. Use `class_getSuperclass` instead.
+    _priv: [u8; 0],
+    _p: ffi::OpaqueData,
+}
 
 /// Use [`AnyClass`] instead.
 #[deprecated = "renamed to `runtime::AnyClass`"]
@@ -738,19 +744,13 @@ impl RefUnwindSafe for AnyClass {}
 // Note that Unpin is not applicable.
 
 impl AnyClass {
-    #[inline]
-    pub(crate) fn as_ptr(&self) -> *const ffi::objc_class {
-        let ptr: *const Self = self;
-        ptr.cast()
-    }
-
     /// Returns the class definition of a specified class, or [`None`] if the
     /// class is not registered with the Objective-C runtime.
     #[doc(alias = "objc_getClass")]
     pub fn get(name: &str) -> Option<&'static Self> {
         let name = CString::new(name).unwrap();
         let cls = unsafe { ffi::objc_getClass(name.as_ptr()) };
-        unsafe { cls.cast::<Self>().as_ref() }
+        unsafe { cls.as_ref() }
     }
 
     // Same as `get`, but ...
@@ -777,7 +777,7 @@ impl AnyClass {
     ///
     /// 1. The class pointer must be valid.
     /// 2. The string is unbounded, so the caller must bound it.
-    pub(crate) unsafe fn name_raw<'a>(ptr: *const ffi::objc_class) -> &'a str {
+    pub(crate) unsafe fn name_raw<'a>(ptr: *const Self) -> &'a str {
         // SAFETY: Caller ensures that the pointer is valid
         let name = unsafe { ffi::class_getName(ptr) };
         if name.is_null() {
@@ -795,7 +795,7 @@ impl AnyClass {
     #[doc(alias = "class_getName")]
     pub fn name(&self) -> &str {
         // SAFETY: The pointer is valid, and the return is properly bounded
-        unsafe { Self::name_raw(self.as_ptr()) }
+        unsafe { Self::name_raw(self) }
     }
 
     /// # Safety
@@ -803,10 +803,9 @@ impl AnyClass {
     /// 1. The class pointer must be valid.
     /// 2. The caller must bound the lifetime of the returned class.
     #[inline]
-    pub(crate) unsafe fn superclass_raw<'a>(ptr: *const ffi::objc_class) -> Option<&'a AnyClass> {
+    pub(crate) unsafe fn superclass_raw<'a>(ptr: *const Self) -> Option<&'a AnyClass> {
         // SAFETY: Caller ensures that the pointer is valid
         let superclass = unsafe { ffi::class_getSuperclass(ptr) };
-        let superclass: *const AnyClass = superclass.cast();
         // SAFETY: The result is properly bounded by the caller.
         unsafe { superclass.as_ref() }
     }
@@ -816,7 +815,7 @@ impl AnyClass {
     #[doc(alias = "class_getSuperclass")]
     pub fn superclass(&self) -> Option<&AnyClass> {
         // SAFETY: The pointer is valid, and the return is properly bounded
-        unsafe { Self::superclass_raw(self.as_ptr()) }
+        unsafe { Self::superclass_raw(self) }
     }
 
     /// Returns the metaclass of self.
@@ -839,7 +838,8 @@ impl AnyClass {
     #[doc(alias = "object_getClass")]
     #[doc(alias = "objc_getMetaClass")] // Same as `AnyClass::get(name).metaclass()`
     pub fn metaclass(&self) -> &Self {
-        let ptr: *const Self = unsafe { ffi::object_getClass(self.as_ptr().cast()) }.cast();
+        let ptr: *const Self = self;
+        let ptr = unsafe { ffi::object_getClass(ptr.cast()) };
         unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 
@@ -861,14 +861,14 @@ impl AnyClass {
     #[inline]
     #[doc(alias = "class_isMetaClass")]
     pub fn is_metaclass(&self) -> bool {
-        unsafe { Bool::from_raw(ffi::class_isMetaClass(self.as_ptr())).as_bool() }
+        unsafe { Bool::from_raw(ffi::class_isMetaClass(self)).as_bool() }
     }
 
     /// Returns the size of instances of self.
     #[inline]
     #[doc(alias = "class_getInstanceSize")]
     pub fn instance_size(&self) -> usize {
-        unsafe { ffi::class_getInstanceSize(self.as_ptr()) }
+        unsafe { ffi::class_getInstanceSize(self) }
     }
 
     /// Returns a specified instance method for self, or [`None`] if self and
@@ -878,7 +878,7 @@ impl AnyClass {
     #[doc(alias = "class_getInstanceMethod")]
     pub fn instance_method(&self, sel: Sel) -> Option<&Method> {
         unsafe {
-            let method = ffi::class_getInstanceMethod(self.as_ptr(), sel.as_ptr());
+            let method = ffi::class_getInstanceMethod(self, sel.as_ptr());
             method.cast::<Method>().as_ref()
         }
     }
@@ -892,7 +892,7 @@ impl AnyClass {
     #[doc(alias = "class_getClassMethod")]
     pub fn class_method(&self, sel: Sel) -> Option<&Method> {
         unsafe {
-            let method = ffi::class_getClassMethod(self.as_ptr(), sel.as_ptr());
+            let method = ffi::class_getClassMethod(self, sel.as_ptr());
             method.cast::<Method>().as_ref()
         }
     }
@@ -909,7 +909,7 @@ impl AnyClass {
     pub fn instance_variable(&self, name: &str) -> Option<&Ivar> {
         let name = CString::new(name).unwrap();
         unsafe {
-            let ivar = ffi::class_getInstanceVariable(self.as_ptr(), name.as_ptr());
+            let ivar = ffi::class_getInstanceVariable(self, name.as_ptr());
             ivar.cast::<Ivar>().as_ref()
         }
     }
@@ -918,7 +918,7 @@ impl AnyClass {
     #[doc(alias = "class_getClassVariable")]
     fn class_variable(&self, name: &str) -> Option<&Ivar> {
         let name = CString::new(name).unwrap();
-        let ivar = unsafe { ffi::class_getClassVariable(self.as_ptr(), name.as_ptr()) };
+        let ivar = unsafe { ffi::class_getClassVariable(self, name.as_ptr()) };
         // SAFETY: TODO
         unsafe { ivar.cast::<Ivar>().as_ref() }
     }
@@ -928,7 +928,7 @@ impl AnyClass {
     pub fn instance_methods(&self) -> MallocSlice!(&Method) {
         unsafe {
             let mut count: c_uint = 0;
-            let methods: *mut &Method = ffi::class_copyMethodList(self.as_ptr(), &mut count).cast();
+            let methods: *mut &Method = ffi::class_copyMethodList(self, &mut count).cast();
             MallocSlice::from_array(methods, count as usize)
         }
     }
@@ -937,9 +937,7 @@ impl AnyClass {
     #[inline]
     #[doc(alias = "class_conformsToProtocol")]
     pub fn conforms_to(&self, proto: &AnyProtocol) -> bool {
-        unsafe {
-            Bool::from_raw(ffi::class_conformsToProtocol(self.as_ptr(), proto.as_ptr())).as_bool()
-        }
+        unsafe { Bool::from_raw(ffi::class_conformsToProtocol(self, proto.as_ptr())).as_bool() }
     }
 
     /// Get a list of the protocols to which this class conforms.
@@ -947,8 +945,7 @@ impl AnyClass {
     pub fn adopted_protocols(&self) -> MallocSlice!(&AnyProtocol) {
         unsafe {
             let mut count: c_uint = 0;
-            let protos: *mut &AnyProtocol =
-                ffi::class_copyProtocolList(self.as_ptr(), &mut count).cast();
+            let protos: *mut &AnyProtocol = ffi::class_copyProtocolList(self, &mut count).cast();
             MallocSlice::from_array(protos, count as usize)
         }
     }
@@ -958,7 +955,7 @@ impl AnyClass {
     pub fn instance_variables(&self) -> MallocSlice!(&Ivar) {
         unsafe {
             let mut count: c_uint = 0;
-            let ivars: *mut &Ivar = ffi::class_copyIvarList(self.as_ptr(), &mut count).cast();
+            let ivars: *mut &Ivar = ffi::class_copyIvarList(self, &mut count).cast();
             MallocSlice::from_array(ivars, count as usize)
         }
     }
@@ -978,7 +975,7 @@ impl AnyClass {
     pub fn responds_to(&self, sel: Sel) -> bool {
         // This may call `resolveInstanceMethod:` and `resolveClassMethod:`
         // SAFETY: The selector is guaranteed non-null.
-        let res = unsafe { ffi::class_respondsToSelector(self.as_ptr(), sel.as_ptr()) };
+        let res = unsafe { ffi::class_respondsToSelector(self, sel.as_ptr()) };
         Bool::from_raw(res).as_bool()
     }
 
@@ -1251,7 +1248,7 @@ impl AnyObject {
     #[inline]
     #[doc(alias = "object_getClass")]
     pub fn class(&self) -> &'static AnyClass {
-        let ptr: *const AnyClass = unsafe { ffi::object_getClass(self.as_ptr()) }.cast();
+        let ptr = unsafe { ffi::object_getClass(self.as_ptr()) };
         // SAFETY: The class is not NULL because the object is not NULL, and
         // it is safe as `'static` since classes are static, and it could be
         // retrieved via. `AnyClass::get(self.class().name())` anyhow.
@@ -1286,9 +1283,7 @@ impl AnyObject {
     #[inline]
     #[doc(alias = "object_setClass")]
     pub unsafe fn set_class<'s>(this: &Self, cls: &AnyClass) -> &'s AnyClass {
-        let ptr =
-            unsafe { ffi::object_setClass(this.as_ptr() as *mut ffi::objc_object, cls.as_ptr()) };
-        let ptr: *const AnyClass = ptr.cast();
+        let ptr = unsafe { ffi::object_setClass(this.as_ptr() as *mut ffi::objc_object, cls) };
         // SAFETY: The class is not NULL because the object is not NULL.
         let old_cls = unsafe { ptr.as_ref().unwrap_unchecked() };
         // TODO: Check the superclass requirement too?
@@ -1675,8 +1670,7 @@ mod tests {
     }
 
     fn get_ivar_layout(cls: &AnyClass) -> *const u8 {
-        let cls: *const AnyClass = cls;
-        unsafe { ffi::class_getIvarLayout(cls.cast()) }
+        unsafe { ffi::class_getIvarLayout(cls) }
     }
 
     #[test]

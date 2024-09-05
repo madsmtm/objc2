@@ -11,6 +11,7 @@
 //! [ARC]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#runtime-support
 use core::ffi::c_void;
 
+use crate::ffi::objc_object;
 #[cfg(any(
     doc,
     all(
@@ -18,8 +19,7 @@ use core::ffi::c_void;
         not(all(target_os = "macos", target_arch = "x86"))
     )
 ))]
-use crate::ffi::objc_class;
-use crate::ffi::objc_object;
+use crate::runtime::AnyClass;
 
 // All of these very rarely unwind, but may if the user defined methods
 // `retain`, `release`, `autorelease` or `dealloc` do.
@@ -81,11 +81,11 @@ extern_c_unwind! {
 
     // Available since macOS 10.9.
     #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
-    pub fn objc_alloc(value: *const objc_class) -> *mut objc_object;
+    pub fn objc_alloc(value: *const AnyClass) -> *mut objc_object;
 
     // Available since macOS 10.9.
     #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
-    pub fn objc_allocWithZone(value: *const objc_class) -> *mut objc_object;
+    pub fn objc_allocWithZone(value: *const AnyClass) -> *mut objc_object;
 
     // TODO: objc_alloc_init once supported
 }

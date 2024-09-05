@@ -7,14 +7,6 @@
 // A few things here are defined differently depending on the __OBJC2__
 // variable, which is set for all platforms except 32-bit macOS.
 
-#[cfg(any(
-    doc,
-    all(
-        target_vendor = "apple",
-        not(all(target_os = "macos", target_arch = "x86"))
-    )
-))]
-use crate::ffi::objc_class;
 use crate::ffi::objc_object;
 
 /// Remember that this is non-null!
@@ -26,7 +18,7 @@ use crate::ffi::objc_object;
     )
 ))]
 pub type objc_exception_matcher = unsafe extern "C" fn(
-    catch_type: *mut objc_class,
+    catch_type: *mut crate::runtime::AnyClass,
     exception: *mut objc_object,
 ) -> std::os::raw::c_int;
 

@@ -4,9 +4,10 @@ use std::os::raw::c_char;
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use crate::ffi::objc_ivar;
+use crate::ffi::OpaqueData;
 #[cfg(any(doc, target_vendor = "apple"))]
 use crate::ffi::BOOL;
-use crate::ffi::{objc_class, OpaqueData};
+use crate::runtime::AnyClass;
 
 /// An opaque type that represents an object / an instance of a class.
 #[repr(C)]
@@ -22,9 +23,9 @@ pub struct objc_object {
 }
 
 extern_c! {
-    pub fn object_getClass(obj: *const objc_object) -> *const objc_class;
+    pub fn object_getClass(obj: *const objc_object) -> *const AnyClass;
     pub fn object_getClassName(obj: *const objc_object) -> *const c_char;
-    pub fn object_setClass(obj: *mut objc_object, cls: *const objc_class) -> *const objc_class;
+    pub fn object_setClass(obj: *mut objc_object, cls: *const AnyClass) -> *const AnyClass;
     #[cfg(any(doc, target_vendor = "apple"))]
     pub fn object_isClass(obj: *const objc_object) -> BOOL;
 
@@ -70,10 +71,10 @@ extern_c! {
 
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, target_vendor = "apple"))]
-    pub fn objc_getFutureClass(name: *const c_char) -> *const objc_class;
+    pub fn objc_getFutureClass(name: *const c_char) -> *const AnyClass;
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, target_vendor = "apple"))]
-    pub fn objc_constructInstance(cls: *const objc_class, bytes: *mut c_void) -> *mut objc_object;
+    pub fn objc_constructInstance(cls: *const AnyClass, bytes: *mut c_void) -> *mut objc_object;
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, target_vendor = "apple"))]
     pub fn objc_destructInstance(obj: *mut objc_object) -> *mut c_void;

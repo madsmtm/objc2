@@ -273,6 +273,9 @@ pub use self::selector::*;
 pub use self::types::*;
 pub use self::various::*;
 
+#[deprecated = "merged in `runtime::AnyClass`"]
+pub type objc_class = crate::runtime::AnyClass;
+
 /// We don't know much about the actual structs, so better mark them `!Send`,
 /// `!Sync`, `!UnwindSafe`, `!RefUnwindSafe`, `!Unpin` and as mutable behind
 /// shared references.
@@ -281,7 +284,7 @@ pub use self::various::*;
 /// (It's also less of a breaking change on our part if we re-add these).
 ///
 /// TODO: Replace this with `extern type` to also mark it as `!Sized`.
-type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;
+pub(crate) type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;
 
 #[cfg(test)]
 mod tests {

@@ -3,9 +3,9 @@
 //! Most of these are `cfg`-gated, these configs are semver-stable.
 //!
 //! TODO: Some of these are only supported on _some_ GNUStep targets!
-use crate::ffi::{objc_class, objc_object};
 #[cfg(any(doc, feature = "gnustep-1-7", feature = "unstable-objfw"))]
 use crate::ffi::{objc_selector, IMP};
+use crate::{ffi::objc_object, runtime::AnyClass};
 
 /// Specifies data used when sending messages to superclasses.
 #[repr(C)]
@@ -17,7 +17,7 @@ pub struct objc_super {
     /// The particular superclass of the instance to message.
     ///
     /// Named `class` in older Objective-C versions.
-    pub super_class: *const objc_class,
+    pub super_class: *const AnyClass,
 }
 
 // All message sending functions should use "C-unwind"!

@@ -156,9 +156,9 @@ impl<T> Log2Alignment for T {
 /// ```
 #[derive(Debug)]
 pub struct ClassBuilder {
-    // Note: Don't ever construct a &mut objc_class, since it is possible to
+    // Note: Don't ever construct a &mut AnyClass, since it is possible to
     // get this pointer using `AnyClass::classes`!
-    cls: NonNull<ffi::objc_class>,
+    cls: NonNull<AnyClass>,
 }
 
 // SAFETY: The stuff that touch global state does so using locks internally.
@@ -176,7 +176,7 @@ unsafe impl Send for ClassBuilder {}
 unsafe impl Sync for ClassBuilder {}
 
 impl ClassBuilder {
-    fn as_mut_ptr(&mut self) -> *mut ffi::objc_class {
+    fn as_mut_ptr(&mut self) -> *mut AnyClass {
         self.cls.as_ptr()
     }
 
@@ -298,8 +298,8 @@ impl ClassBuilder {
         assert!(success.as_bool(), "failed to add method {sel}");
     }
 
-    fn metaclass_mut(&mut self) -> *mut ffi::objc_class {
-        unsafe { ffi::object_getClass(self.as_mut_ptr().cast()) as *mut ffi::objc_class }
+    fn metaclass_mut(&mut self) -> *mut AnyClass {
+        unsafe { ffi::object_getClass(self.as_mut_ptr().cast()) as *mut AnyClass }
     }
 
     /// Adds a class method with the given name and implementation.
@@ -438,7 +438,7 @@ impl ClassBuilder {
         // Forget self, otherwise the class will be disposed in drop
         let mut this = ManuallyDrop::new(self);
         unsafe { ffi::objc_registerClassPair(this.as_mut_ptr()) };
-        unsafe { this.cls.cast::<AnyClass>().as_ref() }
+        unsafe { this.cls.as_ref() }
     }
 }
 
