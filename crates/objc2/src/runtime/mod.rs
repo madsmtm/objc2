@@ -151,6 +151,7 @@ type InnerImp = unsafe extern "C-unwind" fn();
 ///
 /// Also note that this is non-null! If you require an Imp that can be null,
 /// use `Option<Imp>`.
+#[doc(alias = "IMP")]
 pub type Imp = InnerImp;
 
 /// A method selector.
@@ -653,7 +654,7 @@ impl Method {
     pub unsafe fn set_implementation(&self, imp: Imp) -> Imp {
         // SAFETY: The new impl is not NULL, and the rest is upheld by the
         // caller.
-        unsafe { ffi::method_setImplementation(self.as_mut_ptr(), Some(imp)).expect("null IMP") }
+        unsafe { ffi::method_setImplementation(self.as_mut_ptr(), imp).expect("null IMP") }
     }
 
     /// Exchange the implementation of two methods.

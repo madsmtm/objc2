@@ -2,9 +2,10 @@ use std::os::raw::c_char;
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use std::os::raw::c_uint;
 
-#[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::ffi::IMP;
-use crate::ffi::{objc_selector, OpaqueData};
+use crate::{
+    ffi::{objc_selector, OpaqueData},
+    runtime::Imp,
+};
 
 /// A type that represents a method in a class definition.
 #[repr(C)]
@@ -42,7 +43,7 @@ extern_c! {
     #[cfg(any(doc, target_vendor = "apple"))]
     pub fn method_getDescription(m: *const objc_method) -> *const objc_method_description;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn method_getImplementation(method: *const objc_method) -> IMP;
+    pub fn method_getImplementation(method: *const objc_method) -> Option<Imp>;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn method_getName(method: *const objc_method) -> *const objc_selector;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
@@ -52,5 +53,5 @@ extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn method_getTypeEncoding(method: *const objc_method) -> *const c_char;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn method_setImplementation(method: *const objc_method, imp: IMP) -> IMP;
+    pub fn method_setImplementation(method: *const objc_method, imp: Imp) -> Option<Imp>;
 }

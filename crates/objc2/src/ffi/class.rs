@@ -3,8 +3,8 @@ use std::os::raw::{c_char, c_int, c_uint};
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use crate::ffi::{objc_ivar, objc_method, objc_property, objc_property_attribute_t};
-use crate::ffi::{objc_protocol, objc_selector, BOOL, IMP};
-use crate::runtime::AnyClass;
+use crate::ffi::{objc_protocol, objc_selector, BOOL};
+use crate::runtime::{AnyClass, Imp};
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 /// This is `c_char` in GNUStep's libobjc2 and `uint8_t` in Apple's objc4.
@@ -76,7 +76,7 @@ extern_c! {
     pub fn class_addMethod(
         cls: *mut AnyClass,
         name: *const objc_selector,
-        imp: IMP,
+        imp: Imp,
         types: *const c_char,
     ) -> BOOL;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
@@ -142,9 +142,9 @@ extern_c! {
     pub fn class_replaceMethod(
         cls: *mut AnyClass,
         name: *const objc_selector,
-        imp: IMP,
+        imp: Imp,
         types: *const c_char,
-    ) -> IMP;
+    ) -> Option<Imp>;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn class_replaceProperty(
         cls: *mut AnyClass,

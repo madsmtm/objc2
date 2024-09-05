@@ -21,10 +21,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Changed the return value of `ClassBuilder::add_protocol` to indicate whether
   the protocol was already present on the class or not.
 * Merged `objc-sys` into this crate's `ffi` module.
+* Changed the signature of various `ffi` functions to no longer accept nullable
+  function pointers.
 
 ### Deprecated
-* Merged `ffi::objc_class` and `runtime::AnyClass`, and deprecated the former.
-* Merged `ffi::objc_object` and `runtime::AnyObject`, and deprecated the former.
+* Merged and deprecated the following `ffi` types:
+  - `ffi::objc_class` is merged into `runtime::AnyClass`.
+  - `ffi::objc_object` is merged into `runtime::AnyObject`.
+  - `ffi::IMP` is merged into `runtime::Imp`.
 
 ### Fixed
 * Remove an incorrect assertion when adding protocols to classes in an unexpected

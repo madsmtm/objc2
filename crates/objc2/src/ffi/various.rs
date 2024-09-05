@@ -5,10 +5,10 @@ use std::os::raw::c_int;
 #[cfg(any(doc, target_vendor = "apple"))]
 use std::os::raw::c_uint;
 
-use crate::ffi::OpaqueData;
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use crate::ffi::{objc_AssociationPolicy, BOOL};
 use crate::runtime::AnyObject;
+use crate::{ffi::OpaqueData, runtime::Imp};
 
 /// An opaque type that represents an instance variable.
 #[repr(C)]
@@ -16,16 +16,6 @@ pub struct objc_ivar {
     _priv: [u8; 0],
     _p: OpaqueData,
 }
-
-#[cfg(not(feature = "unstable-c-unwind"))]
-type InnerImp = unsafe extern "C" fn();
-#[cfg(feature = "unstable-c-unwind")]
-type InnerImp = unsafe extern "C-unwind" fn();
-
-/// A nullable pointer to the start of a method implementation.
-///
-/// Not all APIs are guaranteed to take NULL values; read the docs!
-pub type IMP = Option<InnerImp>;
 
 // /// Remember that this is non-null!
 // #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
@@ -45,12 +35,12 @@ extern_c_unwind! {
 
 extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn imp_getBlock(imp: IMP) -> *mut AnyObject;
+    pub fn imp_getBlock(imp: Imp) -> *mut AnyObject;
     // See also <https://landonf.org/code/objc/imp_implementationWithBlock.20110413.html>
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn imp_implementationWithBlock(block: *mut AnyObject) -> IMP;
+    pub fn imp_implementationWithBlock(block: *mut AnyObject) -> Imp;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn imp_removeBlock(imp: IMP) -> BOOL;
+    pub fn imp_removeBlock(imp: Imp) -> BOOL;
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn ivar_getName(ivar: *const objc_ivar) -> *const c_char;
