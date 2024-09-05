@@ -3,8 +3,10 @@ use std::os::raw::c_char;
 use std::os::raw::c_uint;
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::{objc_method_description, objc_property, objc_property_attribute_t, objc_selector};
-use crate::{OpaqueData, BOOL};
+use crate::ffi::{
+    objc_method_description, objc_property, objc_property_attribute_t, objc_selector,
+};
+use crate::ffi::{OpaqueData, BOOL};
 
 /// Opaque type for Objective-C protocols.
 ///
@@ -23,7 +25,7 @@ extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn objc_getProtocol(name: *const c_char) -> *const objc_protocol;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    /// The returned array is deallocated with [`free`][crate::free].
+    /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn objc_copyProtocolList(out_len: *mut c_uint) -> *mut *const objc_protocol;
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
@@ -58,7 +60,7 @@ extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn protocol_addProtocol(proto: *mut objc_protocol, addition: *const objc_protocol);
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    /// The returned array is deallocated with [`free`][crate::free].
+    /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn protocol_copyMethodDescriptionList(
         proto: *const objc_protocol,
         is_required_method: BOOL,
@@ -66,13 +68,13 @@ extern_c! {
         out_len: *mut c_uint,
     ) -> *mut objc_method_description;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    /// The returned array is deallocated with [`free`][crate::free].
+    /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn protocol_copyPropertyList(
         proto: *const objc_protocol,
         out_len: *mut c_uint,
     ) -> *mut *const objc_property;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    /// The returned array is deallocated with [`free`][crate::free].
+    /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn protocol_copyProtocolList(
         proto: *const objc_protocol,
         out_len: *mut c_uint,

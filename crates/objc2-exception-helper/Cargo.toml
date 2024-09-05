@@ -1,6 +1,11 @@
 [package]
 name = "objc2-exception-helper"
-version = "0.1.0" # Remember to update html_root_url in lib.rs and the `links` key
+# Remember to update `html_root_url` in lib.rs, the `links` key, and the
+# exception function name.
+#
+# Also, beware of using pre-release versions here, since because of the
+# `links` key, two pre-releases requested with `=...` are incompatible.
+version = "0.1.0"
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 rust-version = "1.60"
@@ -12,6 +17,9 @@ repository = "https://github.com/madsmtm/objc2"
 license = "MIT"
 
 # Use the `links` key to ensure that only one of these symbols are compiled
+#
+# Downstream users can also customize this if need be, see:
+# https://doc.rust-lang.org/cargo/reference/build-scripts.html#overriding-build-scripts
 links = "objc2_exception_helper_0_1"
 build = "build.rs"
 

@@ -1,6 +1,6 @@
 use std::os::raw::c_char;
 
-use crate::{OpaqueData, BOOL};
+use crate::ffi::{OpaqueData, BOOL};
 
 /// An opaque type that represents a method selector.
 ///

@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Print backtrace when catching exceptions with the `"catch-all"` feature.
 * Changed the return value of `ClassBuilder::add_protocol` to indicate whether
   the protocol was already present on the class or not.
+* Merged `objc-sys` into this crate's `ffi` module.
 
 ### Fixed
 * Remove an incorrect assertion when adding protocols to classes in an unexpected
@@ -555,7 +556,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   );
 
   ```
-* Updated `ffi` module to `objc-sys v0.3.0`.
+* Updated `ffi` module to `objc-sys v0.3.0`. This includes:
+  * Added `free` method (same as `libc::free`).
+  * Moved documentation from `README.md` to `docs.rs`.
+  * Added `objc_terminate`, `object_isClass`, `objc_alloc` and
+    `objc_allocWithZone` now that Rust's macOS deployment target is 10.12.
+  * Slightly improved documentation.
+  * Internal optimizations.
+  * **BREAKING**: Changed `links` key from `objc_0_2` to `objc_0_3` (so
+    `DEP_OBJC_0_2_CC_ARGS` in build scripts becomes `DEP_OBJC_0_3_CC_ARGS`).
+  * **BREAKING**: Renamed `rust_objc_sys_0_2_try_catch_exception` to
+    `try_catch`.
+  * Deprecated the unstable function `try_catch`, it is exposed in
+    `objc2-exception-helper` instead.
 * **BREAKING**: Updated `encode` module to `objc2-encode v2.0.0-pre.4`.
 
 ### Fixed
@@ -623,7 +636,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Require implementors of `Message` to support weak references.
 * **BREAKING**: Moved `objc2::foundation` into `icrate::Foundation`.
 * **BREAKING**: Moved `objc2::ns_string` into `icrate::ns_string`.
-* Updated `ffi` module to `objc-sys v0.2.0-beta.3`.
+* Updated `ffi` module to `objc-sys v0.2.0-beta.3`. This includes:
+  * Fixed minimum deployment target on macOS Aarch64.
 * **BREAKING**: Updated `encode` module `objc2-encode v2.0.0-pre.3`.
 
 ### Fixed
@@ -715,7 +729,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
       msg_send_id![msg_send_id![class!(MyObject), alloc], init]
   };
   ```
-* Updated `ffi` module to `objc-sys v0.2.0-beta.2`.
+* Updated `ffi` module to `objc-sys v0.2.0-beta.2`. This includes:
+  * Fixed `docs.rs` setup.
 * **BREAKING**: Updated `encode` module `objc2-encode v2.0.0-pre.2`.
 
   In particular, `Encoding` no longer has a lifetime parameter:
@@ -837,7 +852,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   let init: extern "C" fn(_, _) -> _ = init;
   builder.add_method(sel!(init), init);
   ```
-* Updated `ffi` module to `objc-sys v0.2.0-beta.1`.
+* Updated `ffi` module to `objc-sys v0.2.0-beta.1`. This includes:
+  * Added `unstable-c-unwind` feature.
+  * Use `doc_auto_cfg` to improve documentation output.
 * **BREAKING**: Updated `encode` module `objc2-encode v2.0.0-pre.1`.
 
 ### Fixed
@@ -907,7 +924,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   in practice).
 * **BREAKING**: Sealed the `MethodImplementation` trait, and made its `imp`
   method privat.
-* **BREAKING**: Updated `ffi` module to `objc-sys v0.2.0-beta.0`.
+* **BREAKING**: Updated `ffi` module to `objc-sys v0.2.0-beta.0`. This includes:
+  * **BREAKING**: Changed `links` key from `objc` to `objc_0_2` for better
+    future compatibility, until we reach 1.0 (so `DEP_OBJC_CC_ARGS` in build
+    scripts becomes `DEP_OBJC_0_2_CC_ARGS`).
+  * **BREAKING**: Apple's runtime is now always the default.
+  * **BREAKING**: Removed type aliases `Class`, `Ivar`, `Method` and `Protocol`
+    since they could be mistaken for the `objc2::runtime` structs with the same
+    name.
+  * **BREAKING**: Removed `objc_property_t`.
+  * **BREAKING**: Removed `objc_hook_getClass` and `objc_hook_lazyClassNamer`
+    type aliases (for now).
+  * **BREAKING**: Removed `DEP_OBJC_RUNTIME` build script output.
 * **BREAKING**: Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
   `EncodeArguments`) to `v2.0.0-pre.0`.
 
@@ -933,7 +961,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Object::get_ivar` -> `Object::ivar`
   - `Object::get_mut_ivar` -> `Object::ivar_mut`
 * Vastly improved documentation.
-* **BREAKING**: Updated `ffi` module to `objc-sys v0.2.0-alpha.1`.
+* **BREAKING**: Updated `ffi` module to `objc-sys v0.2.0-alpha.1`. This includes:
+  * Added `objc_exception_try_enter` and `objc_exception_try_exit` on macOS x86.
+  * **BREAKING**: Correctly `cfg`-guarded the following types and methods to not
+    be available on macOS x86:
+    - `objc_exception_matcher`
+    - `objc_exception_preprocessor`
+    - `objc_uncaught_exception_handler`
+    - `objc_exception_handler`
+    - `objc_begin_catch`
+    - `objc_end_catch`
+    - `objc_exception_rethrow`
+    - `objc_setExceptionMatcher`
+    - `objc_setExceptionPreprocessor`
+    - `objc_setUncaughtExceptionHandler`
+    - `objc_addExceptionHandler`
+    - `objc_removeExceptionHandler`
+  * **BREAKING**: Removed`objc_set_apple_compatible_objcxx_exceptions` since it
+    is only available when `libobjc2` is compiled with the correct flags.
+  * **BREAKING**: Removed `object_setInstanceVariableWithStrongDefault` since it
+    is only available since macOS 10.12.
+  * **BREAKING**: Removed `objc_setHook_getClass` since it is only available
+    since macOS 10.14.4.
+  * **BREAKING**: Removed `objc_setHook_lazyClassNamer` since it is only
+    available since macOS 11.
+  * Fixed `docs.rs` configuration.
 * **BREAKING**: Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
   `EncodeArguments`) to `v2.0.0-beta.2`.
 
@@ -973,7 +1025,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Relaxed `Sized` bound on `rc::Id` and `rc::WeakId` to prepare for
   `extern type` support.
 * **BREAKING**: Relaxed `Sized` bound on `rc::SliceId` and `rc::DefaultId`.
-* **BREAKING**: Updated `objc-sys` to `v0.2.0-alpha.0`.
+* **BREAKING**: Updated `objc-sys` to `v0.2.0-alpha.0`. This includes:
+  * Added `NSInteger` and `NSUInteger` (type aliases of `isize`/`usize`).
+  * Added `NSIntegerMax`, `NSIntegerMin` and `NSUIntegerMax`.
+  * **BREAKING**: Changed `cfg`-guarded `class_getImageName` to only appear on
+    Apple platforms.
+  * **BREAKING**: Opaque types are now also `!UnwindSafe`.
 * Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
   `EncodeArguments`) to `v2.0.0-beta.1`.
 
@@ -1006,7 +1063,11 @@ Note: To use this version, specify `objc2-encode = "=2.0.0-beta.0"` in your
 * **BREAKING**: The `exception` feature now only enables the `exception`
   module, for general use. Use the new `catch_all` feature to wrap all message
   sends in a `@try/@catch`.
-* **BREAKING**: Updated `objc-sys` to `v0.1.0`.
+* **BREAKING**: Updated `objc-sys` to `v0.1.0`. This includes:
+  * **BREAKING**: Use feature flags `apple`, `gnustep-X-Y` or `winobjc` to
+    specify the runtime you're using, instead of the `RUNTIME_VERSION`
+    environment variable.
+  * **BREAKING**: `DEP_OBJC_RUNTIME` now returns `gnustep` on WinObjC.
 * **BREAKING**: Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
   `EncodeArguments`) to `v2.0.0-beta.0`.
 

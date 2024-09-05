@@ -28,8 +28,8 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                  ^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
   = help: within `NSArray<NSObject>`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `NSArray<NSObject>: Sync`
-note: required because it appears within the type `objc_sys::object::objc_object`
- --> $WORKSPACE/crates/objc-sys/src/object.rs
+note: required because it appears within the type `objc2::ffi::object::objc_object`
+ --> $WORKSPACE/crates/objc2/src/ffi/object.rs
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
@@ -95,8 +95,8 @@ note: required because it appears within the type `UnsafeCell<PhantomData<(*cons
   |
   | pub struct UnsafeCell<T: ?Sized> {
   |            ^^^^^^^^^^
-note: required because it appears within the type `objc_sys::object::objc_object`
- --> $WORKSPACE/crates/objc-sys/src/object.rs
+note: required because it appears within the type `objc2::ffi::object::objc_object`
+ --> $WORKSPACE/crates/objc2/src/ffi/object.rs
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
@@ -151,8 +151,8 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
   = help: within `NSMutableArray<NSObject>`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `NSMutableArray<NSObject>: Sync`
-note: required because it appears within the type `objc_sys::object::objc_object`
- --> $WORKSPACE/crates/objc-sys/src/object.rs
+note: required because it appears within the type `objc2::ffi::object::objc_object`
+ --> $WORKSPACE/crates/objc2/src/ffi/object.rs
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
@@ -223,8 +223,8 @@ note: required because it appears within the type `UnsafeCell<PhantomData<(*cons
   |
   | pub struct UnsafeCell<T: ?Sized> {
   |            ^^^^^^^^^^
-note: required because it appears within the type `objc_sys::object::objc_object`
- --> $WORKSPACE/crates/objc-sys/src/object.rs
+note: required because it appears within the type `objc2::ffi::object::objc_object`
+ --> $WORKSPACE/crates/objc2/src/ffi/object.rs
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^

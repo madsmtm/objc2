@@ -3,10 +3,10 @@ use core::ffi::c_void;
 use std::os::raw::c_char;
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::objc_ivar;
+use crate::ffi::objc_ivar;
 #[cfg(any(doc, target_vendor = "apple"))]
-use crate::BOOL;
-use crate::{objc_class, OpaqueData};
+use crate::ffi::BOOL;
+use crate::ffi::{objc_class, OpaqueData};
 
 /// An opaque type that represents an object / an instance of a class.
 #[repr(C)]

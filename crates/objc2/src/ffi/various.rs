@@ -6,8 +6,8 @@ use std::os::raw::c_int;
 use std::os::raw::c_uint;
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::{objc_AssociationPolicy, BOOL};
-use crate::{objc_object, OpaqueData};
+use crate::ffi::{objc_AssociationPolicy, BOOL};
+use crate::ffi::{objc_object, OpaqueData};
 
 /// An opaque type that represents an instance variable.
 #[repr(C)]
@@ -29,12 +29,12 @@ pub type IMP = Option<InnerImp>;
 // /// Remember that this is non-null!
 // #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
 // pub type objc_hook_getClass =
-//     unsafe extern "C" fn(name: *const c_char, out_cls: *mut *const crate::objc_class) -> BOOL;
+//     unsafe extern "C" fn(name: *const c_char, out_cls: *mut *const crate::ffi::objc_class) -> BOOL;
 //
 // /// Remember that this is non-null!
 // #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
 // pub type objc_hook_lazyClassNamer =
-//     unsafe extern "C" fn(cls: *const crate::objc_class) -> *const c_char;
+//     unsafe extern "C" fn(cls: *const crate::ffi::objc_class) -> *const c_char;
 
 extern_c_unwind! {
     // Instead of being able to change this, it's a weak symbol on GNUStep.
@@ -64,7 +64,7 @@ extern_c! {
         out_len: *mut c_uint,
     ) -> *mut *const c_char;
     #[cfg(any(doc, target_vendor = "apple"))]
-    /// The returned array is deallocated with [`free`][crate::free].
+    /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn objc_copyImageNames(out_len: *mut c_uint) -> *mut *const c_char;
 
     #[cfg(any(doc, target_vendor = "apple", feature = "unstable-objfw"))]

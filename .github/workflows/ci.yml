@@ -38,7 +38,6 @@ env:
   # This excludes `header-translator`, `test-assembly`, `tests` and `test-ui`.
   PUBLIC_CRATES: >-
     --package=block2
-    --package=objc-sys
     --package=objc2
     --package=objc2-encode
     --package=objc2-proc-macros
@@ -108,7 +107,7 @@ jobs:
           target: armv7s-apple-ios
           build-std: true
           # `cc` works poorly when cross-compiling, so let's ignore `objc2-exception-helper` for now.
-          args: --package=block2 --package=objc-sys --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_IOS_10 $INTERESTING_FEATURES -Zbuild-std
+          args: --package=block2 --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_IOS_10 $INTERESTING_FEATURES -Zbuild-std
         - name: GNUStep + exceptions
           target: x86_64-unknown-linux-gnu
           args: $PUBLIC_CRATES $FRAMEWORKS_GNUSTEP $INTERESTING_FEATURES --features=gnustep-1-9,catch-all
@@ -185,7 +184,7 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: cargo check
-      run: cargo check --package=block2 --package=objc-sys --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_MACOS_14 --features=all
+      run: cargo check --package=block2 --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_MACOS_14 --features=all
       env:
         RUSTFLAGS: "--codegen=debuginfo=0" # Removed --deny=warnings
 
@@ -602,7 +601,6 @@ jobs:
       # Exclude `objc2-exception-helper`, for some reason that can't be tested directly on GNUStep
       PUBLIC_CRATES: >-
         --package=block2
-        --package=objc-sys
         --package=objc2
         --package=objc2-encode
         --package=objc2-proc-macros

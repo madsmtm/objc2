@@ -1,12 +1,7 @@
-// TODO: Move this to `objc2` once we can detect simulator targets without a
-// build script.
-
-/// Note: While `objc2` relies on this, you can freely break this, since it is
-/// only used behind experimental features (`unstable-static-*`).
 #[repr(C)]
 #[doc(hidden)]
-#[allow(missing_copy_implementations)]
-pub struct __ImageInfo {
+#[derive(Debug, Clone, Copy)]
+pub struct ImageInfo {
     // These are not actually `unsigned int`, even though the docs say so
     /// The version of the image info struct.
     version: u32,
@@ -14,7 +9,7 @@ pub struct __ImageInfo {
 }
 
 #[allow(unused)]
-impl __ImageInfo {
+impl ImageInfo {
     /// Unused
     const FIX_AND_CONTINUE: u32 = 1 << 0;
     const SUPPORTS_GARBAGE_COLLECTED: u32 = 1 << 1;

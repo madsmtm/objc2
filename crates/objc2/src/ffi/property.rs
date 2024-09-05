@@ -2,7 +2,7 @@ use std::os::raw::c_char;
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use std::os::raw::c_uint;
 
-use crate::OpaqueData;
+use crate::ffi::OpaqueData;
 
 /// An opaque type that describes a property in a class.
 #[repr(C)]
@@ -25,7 +25,7 @@ pub struct objc_property_attribute_t {
 
 extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    /// The returned array is deallocated with [`free`][crate::free].
+    /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn property_copyAttributeList(
         property: *const objc_property,
         out_len: *mut c_uint,

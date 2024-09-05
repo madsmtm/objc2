@@ -78,7 +78,6 @@ Copy and fill out the following checklist into the release PR:
 - [ ] Version numbers are bumped in the following order:
     - `objc2-proc-macros`
     - `objc2-exception-helper`
-    - `objc-sys`
     - `objc2-encode`
     - `objc2`
     - `block2`

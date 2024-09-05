@@ -51,7 +51,7 @@ pub struct Class {
     /// Mark as `!Send + !Sync + !Unpin` and as mutable behind shared
     /// references (`!Freeze`).
     ///
-    /// Same as `objc_sys::OpaqueData`.
+    /// Same as `objc2::ffi::OpaqueData`.
     _opaque: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,
 }
 

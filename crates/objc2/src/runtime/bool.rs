@@ -5,8 +5,8 @@ use crate::ffi;
 
 /// The Objective-C `BOOL` type.
 ///
-/// This is a thin wrapper-type over [`objc_sys::BOOL`]. It is intended that
-/// you convert this into a Rust [`bool`] with the [`Bool::as_bool`] method as
+/// This is a thin wrapper-type over [`ffi::BOOL`]. It is intended that you
+/// convert this into a Rust [`bool`] with the [`Bool::as_bool`] method as
 /// soon as possible.
 ///
 /// This is FFI-safe and can be used directly with `msg_send!` and `extern`

@@ -363,7 +363,8 @@ macro_rules! __statics_image_info {
         )]
         #[export_name = $crate::__macro_helpers::concat!("\x01L_OBJC_IMAGE_INFO_", $hash)]
         #[used] // Make sure this reaches the linker
-        static _IMAGE_INFO: $crate::ffi::__ImageInfo = $crate::ffi::__ImageInfo::system();
+        static _IMAGE_INFO: $crate::__macro_helpers::ImageInfo =
+            $crate::__macro_helpers::ImageInfo::system();
     };
 }
 

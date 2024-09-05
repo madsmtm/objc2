@@ -1,8 +1,9 @@
+#![allow(non_camel_case_types)]
 use std::os::raw::{c_char, c_int, c_uint};
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::{objc_ivar, objc_method, objc_object, objc_property, objc_property_attribute_t};
-use crate::{objc_protocol, objc_selector, OpaqueData, BOOL, IMP};
+use crate::ffi::{objc_ivar, objc_method, objc_object, objc_property, objc_property_attribute_t};
+use crate::ffi::{objc_protocol, objc_selector, OpaqueData, BOOL, IMP};
 
 /// An opaque type that represents an Objective-C class.
 #[repr(C)]
@@ -53,7 +54,7 @@ extern_c! {
     pub fn objc_lookUpClass(name: *const c_char) -> *const objc_class;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn objc_getMetaClass(name: *const c_char) -> *const objc_class;
-    /// The returned array is deallocated with [`free`][crate::free].
+    /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn objc_copyClassList(out_len: *mut c_uint) -> *mut *const objc_class;
     pub fn objc_getClassList(buffer: *mut *const objc_class, buffer_len: c_int) -> c_int;
 
@@ -99,25 +100,25 @@ extern_c! {
         -> BOOL;
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))] // Available in newer versions
-    /// The return value is deallocated with [`free`][crate::free].
+    /// The return value is deallocated with [`free`][crate::ffi::free].
     pub fn class_copyIvarList(
         cls: *const objc_class,
         out_len: *mut c_uint,
     ) -> *mut *const objc_ivar;
     #[cfg(any(doc, not(feature = "unstable-objfw")))] // Available in newer versions
-    /// The returned array is deallocated with [`free`][crate::free].
+    /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn class_copyMethodList(
         cls: *const objc_class,
         out_len: *mut c_uint,
     ) -> *mut *const objc_method;
     #[cfg(any(doc, not(feature = "unstable-objfw")))] // Available in newer versions
-    /// The returned array is deallocated with [`free`][crate::free].
+    /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn class_copyPropertyList(
         cls: *const objc_class,
         out_len: *mut c_uint,
     ) -> *mut *const objc_property;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    /// The returned array is deallocated with [`free`][crate::free].
+    /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn class_copyProtocolList(
         cls: *const objc_class,
         out_len: *mut c_uint,

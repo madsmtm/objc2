@@ -3,9 +3,9 @@
 //! Most of these are `cfg`-gated, these configs are semver-stable.
 //!
 //! TODO: Some of these are only supported on _some_ GNUStep targets!
-use crate::{objc_class, objc_object};
+use crate::ffi::{objc_class, objc_object};
 #[cfg(any(doc, feature = "gnustep-1-7", feature = "unstable-objfw"))]
-use crate::{objc_selector, IMP};
+use crate::ffi::{objc_selector, IMP};
 
 /// Specifies data used when sending messages to superclasses.
 #[repr(C)]

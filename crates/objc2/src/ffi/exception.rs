@@ -2,6 +2,7 @@
 //! Apple: `objc-exception.h`
 //! GNUStep: `eh_personality.c`, which is a bit brittle to rely on, but I
 //!   think it's fine...
+#![allow(non_camel_case_types)]
 
 // A few things here are defined differently depending on the __OBJC2__
 // variable, which is set for all platforms except 32-bit macOS.
@@ -13,8 +14,8 @@
         not(all(target_os = "macos", target_arch = "x86"))
     )
 ))]
-use crate::objc_class;
-use crate::objc_object;
+use crate::ffi::objc_class;
+use crate::ffi::objc_object;
 
 /// Remember that this is non-null!
 #[cfg(any(
@@ -61,11 +62,6 @@ pub type objc_uncaught_exception_handler =
 ))]
 pub type objc_exception_handler =
     unsafe extern "C" fn(unused: *mut objc_object, context: *mut core::ffi::c_void);
-
-#[cfg(all(feature = "unstable-exception", not(feature = "unstable-c-unwind")))]
-type TryCatchClosure = extern "C" fn(*mut core::ffi::c_void);
-#[cfg(all(feature = "unstable-exception", feature = "unstable-c-unwind"))]
-type TryCatchClosure = extern "C-unwind" fn(*mut core::ffi::c_void);
 
 extern_c_unwind! {
     /// See [`objc-exception.h`].
@@ -125,14 +121,4 @@ extern_c! {
     #[cold]
     #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
     pub fn objc_terminate() -> !;
-}
-
-#[cfg(feature = "unstable-exception")]
-#[deprecated = "re-exported from `objc2-exception-helper`"]
-pub unsafe extern "C" fn try_catch(
-    f: TryCatchClosure,
-    context: *mut core::ffi::c_void,
-    error: *mut *mut objc_object,
-) -> std::os::raw::c_uchar {
-    unsafe { objc2_exception_helper::try_catch(std::mem::transmute(f), context, error.cast()) }
 }

@@ -1,6 +1,7 @@
 //! Objective-C type aliases.
+#![allow(non_camel_case_types)]
 
-use crate::{objc_object, objc_selector};
+use crate::ffi::{objc_object, objc_selector};
 
 /// The BOOL typedef for Apple's objc4.
 ///
@@ -76,14 +77,16 @@ mod inner {
 /// The Objective-C `BOOL` type.
 ///
 /// The type of this varies across platforms, so to convert an it into a Rust
-/// [`bool`], compare it with [`NO`][crate::NO].
+/// [`bool`], compare it with [`NO`][crate::ffi::NO].
 ///
-/// Note that this does _not_ implement `objc2::Encode` on all platforms! You
+/// Note that this does _not_ implement [`Encode`] on all platforms! You
 /// should only use this on FFI boundaries, otherwise prefer
-/// `objc2::runtime::Bool`.
+/// [`runtime::Bool`].
 ///
 /// See also the [corresponding documentation entry][docs].
 ///
+/// [`Encode`]: crate::encode::Encode
+/// [`runtime::Bool`]: crate::runtime::Bool
 /// [docs]: https://developer.apple.com/documentation/objectivec/bool?language=objc
 pub type BOOL = inner::BOOL;
 
@@ -142,8 +145,6 @@ pub type BOOL = inner::BOOL;
 ///
 /// ```
 /// use core::mem::size_of;
-/// # use objc_sys::NSInteger;
-/// # #[cfg(not_available)]
 /// use objc2::ffi::NSInteger;
 ///
 /// #[repr(isize)]
@@ -171,8 +172,6 @@ pub type NSInteger = isize;
 /// # Examples
 ///
 /// ```
-/// # use objc_sys::NSUInteger;
-/// # #[cfg(not_available)]
 /// use objc2::ffi::NSUInteger;
 ///
 /// extern "C" {
@@ -182,8 +181,6 @@ pub type NSInteger = isize;
 ///
 /// ```
 /// use core::mem::size_of;
-/// # use objc_sys::NSUInteger;
-/// # #[cfg(not_available)]
 /// use objc2::ffi::NSUInteger;
 ///
 /// #[repr(usize)]

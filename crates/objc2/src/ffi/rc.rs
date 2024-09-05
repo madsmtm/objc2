@@ -18,8 +18,8 @@ use core::ffi::c_void;
         not(all(target_os = "macos", target_arch = "x86"))
     )
 ))]
-use crate::objc_class;
-use crate::objc_object;
+use crate::ffi::objc_class;
+use crate::ffi::objc_object;
 
 // All of these very rarely unwind, but may if the user defined methods
 // `retain`, `release`, `autorelease` or `dealloc` do.

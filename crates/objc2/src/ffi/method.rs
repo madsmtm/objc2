@@ -3,8 +3,8 @@ use std::os::raw::c_char;
 use std::os::raw::c_uint;
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::IMP;
-use crate::{objc_selector, OpaqueData};
+use crate::ffi::IMP;
+use crate::ffi::{objc_selector, OpaqueData};
 
 /// A type that represents a method in a class definition.
 #[repr(C)]
@@ -25,10 +25,10 @@ pub struct objc_method_description {
 
 extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    /// The return value is deallocated with [`free`][crate::free].
+    /// The return value is deallocated with [`free`][crate::ffi::free].
     pub fn method_copyArgumentType(method: *const objc_method, index: c_uint) -> *mut c_char;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    /// The return value is deallocated with [`free`][crate::free].
+    /// The return value is deallocated with [`free`][crate::ffi::free].
     pub fn method_copyReturnType(method: *const objc_method) -> *mut c_char;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn method_exchangeImplementations(method1: *mut objc_method, method2: *mut objc_method);
