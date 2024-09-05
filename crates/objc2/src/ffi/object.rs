@@ -69,13 +69,13 @@ extern_c! {
     // Defined in objc-abi.h
     // pub fn objc_getProperty(
     //     obj: *const AnyObject,
-    //     sel: *const objc_selector,
+    //     sel: Sel,
     //     offset: isize,
     //     atomic: BOOL,
     // ) -> *mut c_void;
     // pub fn objc_setProperty(
     //     obj: *const AnyObject,
-    //     sel: *const objc_selector,
+    //     sel: Sel,
     //     offset: isize,
     //     newValue: *const c_void,
     //     atomic: BOOL,

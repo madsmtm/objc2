@@ -2,7 +2,7 @@ use core::ptr;
 use core::str;
 use core::sync::atomic::{AtomicPtr, Ordering};
 use std::ffi::CStr;
-use std::os::raw::c_char;
+use std::os::raw::{c_char, c_void};
 
 use crate::ffi;
 use crate::runtime::{AnyClass, Sel};
@@ -10,7 +10,7 @@ use crate::runtime::{AnyClass, Sel};
 /// Allows storing a [`Sel`] in a static and lazily loading it.
 #[derive(Debug)]
 pub struct CachedSel {
-    ptr: AtomicPtr<ffi::objc_selector>,
+    ptr: AtomicPtr<c_void>,
 }
 
 impl CachedSel {
@@ -33,8 +33,7 @@ impl CachedSel {
         //
         // We know this, because we construct it in `sel!` ourselves
         let sel = unsafe { Sel::register_unchecked(name) };
-        self.ptr
-            .store(sel.as_ptr() as *mut ffi::objc_selector, Ordering::Relaxed);
+        self.ptr.store(sel.as_ptr() as *mut _, Ordering::Relaxed);
         sel
     }
 

@@ -1,7 +1,7 @@
 //! Objective-C type aliases.
 #![allow(non_camel_case_types)]
 
-use crate::{ffi::objc_selector, runtime::AnyObject};
+use crate::runtime::AnyObject;
 
 /// The BOOL typedef for Apple's objc4.
 ///
@@ -202,12 +202,6 @@ pub const NSIntegerMin: NSInteger = NSInteger::MIN;
 
 /// The maximum value for a [`NSUInteger`].
 pub const NSUIntegerMax: NSUInteger = NSUInteger::MAX;
-
-/// An immutable pointer to a selector.
-///
-/// Type alias provided for convenience. See `objc2::runtime::Sel` for a
-/// higher level binding.
-pub type SEL = *const objc_selector;
 
 /// A mutable pointer to an object / instance.
 ///

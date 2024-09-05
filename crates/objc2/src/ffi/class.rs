@@ -1,8 +1,8 @@
 #![allow(non_camel_case_types)]
 use std::os::raw::{c_char, c_int, c_uint};
 
-use crate::ffi::{objc_protocol, objc_selector, BOOL};
-use crate::runtime::{AnyClass, Imp, Method};
+use crate::ffi::{objc_protocol, BOOL};
+use crate::runtime::{AnyClass, Imp, Method, Sel};
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use crate::{
     ffi::{objc_property, objc_property_attribute_t},
@@ -24,15 +24,15 @@ extern_c_unwind! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn class_getClassMethod(
         cls: *const AnyClass,
-        name: *const objc_selector,
+        name: Sel,
     ) -> *const Method;
     #[cfg(any(doc, not(feature = "unstable-objfw")))] // Available in newer versions
     pub fn class_getInstanceMethod(
         cls: *const AnyClass,
-        name: *const objc_selector,
+        name: Sel,
     ) -> *const Method;
 
-    pub fn class_respondsToSelector(cls: *const AnyClass, sel: *const objc_selector) -> BOOL;
+    pub fn class_respondsToSelector(cls: *const AnyClass, sel: Sel) -> BOOL;
 
     // #[deprecated = "use class_getMethodImplementation instead"]
     // #[cfg(any(doc, target_vendor = "apple"))]
@@ -78,7 +78,7 @@ extern_c! {
     ) -> BOOL;
     pub fn class_addMethod(
         cls: *mut AnyClass,
-        name: *const objc_selector,
+        name: Sel,
         imp: Imp,
         types: *const c_char,
     ) -> BOOL;
@@ -144,7 +144,7 @@ extern_c! {
     pub fn class_isMetaClass(cls: *const AnyClass) -> BOOL;
     pub fn class_replaceMethod(
         cls: *mut AnyClass,
-        name: *const objc_selector,
+        name: Sel,
         imp: Imp,
         types: *const c_char,
     ) -> Option<Imp>;

@@ -5,7 +5,7 @@
 //! TODO: Some of these are only supported on _some_ GNUStep targets!
 use crate::runtime::{AnyClass, AnyObject};
 #[cfg(any(doc, feature = "gnustep-1-7", feature = "unstable-objfw"))]
-use crate::{ffi::objc_selector, runtime::Imp};
+use crate::runtime::{Imp, Sel};
 
 /// Specifies data used when sending messages to superclasses.
 #[repr(C)]
@@ -27,13 +27,13 @@ pub struct objc_super {
 // to make those "C-unwind" as well!
 extern_c_unwind! {
     #[cfg(any(doc, feature = "gnustep-1-7", feature = "unstable-objfw"))]
-    pub fn objc_msg_lookup(receiver: *mut AnyObject, sel: *const objc_selector) -> Option<Imp>;
+    pub fn objc_msg_lookup(receiver: *mut AnyObject, sel: Sel) -> Option<Imp>;
     #[cfg(any(doc, feature = "unstable-objfw"))]
-    pub fn objc_msg_lookup_stret(receiver: *mut AnyObject, sel: *const objc_selector) -> Option<Imp>;
+    pub fn objc_msg_lookup_stret(receiver: *mut AnyObject, sel: Sel) -> Option<Imp>;
     #[cfg(any(doc, feature = "gnustep-1-7", feature = "unstable-objfw"))]
-    pub fn objc_msg_lookup_super(sup: *const objc_super, sel: *const objc_selector) -> Option<Imp>;
+    pub fn objc_msg_lookup_super(sup: *const objc_super, sel: Sel) -> Option<Imp>;
     #[cfg(any(doc, feature = "unstable-objfw"))]
-    pub fn objc_msg_lookup_super_stret(sup: *const objc_super, sel: *const objc_selector) -> Option<Imp>;
+    pub fn objc_msg_lookup_super_stret(sup: *const objc_super, sel: Sel) -> Option<Imp>;
     // #[cfg(any(doc, feature = "gnustep-1-7"))]
     // objc_msg_lookup_sender
     // objc_msgLookup family available in macOS >= 10.12

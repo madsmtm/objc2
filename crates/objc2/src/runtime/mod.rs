@@ -20,7 +20,7 @@ use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 use core::str;
-use std::ffi::{CStr, CString};
+use std::ffi::{c_void, CStr, CString};
 use std::os::raw::c_char;
 use std::os::raw::c_uint;
 
@@ -156,8 +156,8 @@ pub type Imp = InnerImp;
 
 /// A method selector.
 ///
-/// The Rust equivalent of Objective-C's `SEL` type. You can create this
-/// statically using the [`sel!`] macro.
+/// The Rust equivalent of Objective-C's `SEL _Nonnull` type. You can create
+/// this statically using the [`sel!`] macro.
 ///
 /// The main reason the Objective-C runtime uses a custom type for selectors,
 /// as opposed to a plain c-string, is to support efficient comparison - a
@@ -167,6 +167,8 @@ pub type Imp = InnerImp;
 /// This struct guarantees the null-pointer optimization, namely that
 /// `Option<Sel>` is the same size as `Sel`.
 ///
+/// Selectors are immutable.
+///
 /// [`sel!`]: crate::sel
 /// [interned string]: https://en.wikipedia.org/wiki/String_interning
 #[repr(transparent)]
@@ -174,7 +176,7 @@ pub type Imp = InnerImp;
 #[doc(alias = "SEL")]
 #[doc(alias = "objc_selector")]
 pub struct Sel {
-    ptr: NonNull<ffi::objc_selector>,
+    ptr: NonNull<c_void>,
 }
 
 // SAFETY: Sel is immutable (and can be retrieved from any thread using the
@@ -187,24 +189,21 @@ impl RefUnwindSafe for Sel {}
 impl Sel {
     #[inline]
     #[doc(hidden)]
-    pub const unsafe fn __internal_from_ptr(ptr: *const ffi::objc_selector) -> Self {
+    pub const unsafe fn __internal_from_ptr(ptr: *const u8) -> Self {
         // Used in static selectors.
         // SAFETY: Upheld by caller.
-        let ptr = unsafe { NonNull::new_unchecked(ptr as *mut ffi::objc_selector) };
+        let ptr = unsafe { NonNull::new_unchecked(ptr as *mut c_void) };
         Self { ptr }
     }
 
     #[inline]
-    pub(crate) unsafe fn from_ptr(ptr: *const ffi::objc_selector) -> Option<Self> {
+    pub(crate) unsafe fn from_ptr(ptr: *const c_void) -> Option<Self> {
         // SAFETY: Caller verifies that the pointer is valid.
-        NonNull::new(ptr as *mut ffi::objc_selector).map(|ptr| Self { ptr })
+        NonNull::new(ptr as *mut c_void).map(|ptr| Self { ptr })
     }
 
-    /// Get a pointer to the raw selector.
-    ///
-    /// Useful when working with raw FFI methods.
     #[inline]
-    pub const fn as_ptr(&self) -> *const ffi::objc_selector {
+    pub(crate) const fn as_ptr(&self) -> *const c_void {
         self.ptr.as_ptr()
     }
 
@@ -223,7 +222,7 @@ impl Sel {
         // I suspect this will be really uncommon in practice, since the
         // called selector is almost always going to be present in the binary
         // already; but alas, we'll handle it!
-        unsafe { Self::from_ptr(ptr).expect("failed allocating selector") }
+        ptr.expect("failed allocating selector")
     }
 
     /// Registers a selector with the Objective-C runtime.
@@ -251,10 +250,10 @@ impl Sel {
     ///
     /// Panics if the selector is not valid UTF-8 (however unlikely!)
     #[doc(alias = "sel_getName")]
-    pub fn name(&self) -> &str {
+    pub fn name(self) -> &'static str {
         // SAFETY: Input is non-null selector. Declares return type as
         // `const char * _Nonnull`, source code agrees.
-        let ptr = unsafe { ffi::sel_getName(self.as_ptr()) };
+        let ptr = unsafe { ffi::sel_getName(self) };
         // SAFETY: The string is a valid C-style NUL-terminated string, and
         // likely has static lifetime since the selector has static lifetime
         // (though we bind it to `&self` to be safe).
@@ -278,7 +277,7 @@ impl PartialEq for Sel {
             // GNUStep implements "typed" selectors, which means their pointer
             // values sometimes differ; so let's use the runtime-provided
             // `sel_isEqual`.
-            unsafe { Bool::from_raw(ffi::sel_isEqual(self.as_ptr(), other.as_ptr())).as_bool() }
+            unsafe { Bool::from_raw(ffi::sel_isEqual(*self, *other)).as_bool() }
         } else {
             // `ffi::sel_isEqual` uses pointer comparison on Apple (the
             // documentation explicitly notes this); so as an optimization,
@@ -517,8 +516,7 @@ pub(crate) struct MethodDescription {
 
 impl MethodDescription {
     pub(crate) unsafe fn from_raw(raw: ffi::objc_method_description) -> Option<Self> {
-        // SAFETY: Sel::from_ptr checks for NULL, rest is checked by caller.
-        let sel = unsafe { Sel::from_ptr(raw.name) }?;
+        let sel = raw.name?;
         if raw.types.is_null() {
             return None;
         }
@@ -558,7 +556,7 @@ impl Method {
     #[inline]
     #[doc(alias = "method_getName")]
     pub fn name(&self) -> Sel {
-        unsafe { Sel::from_ptr(ffi::method_getName(self)).unwrap() }
+        unsafe { ffi::method_getName(self).unwrap() }
     }
 
     /// Returns the `Encoding` of self's return type.
@@ -874,7 +872,7 @@ impl AnyClass {
     #[doc(alias = "class_getInstanceMethod")]
     pub fn instance_method(&self, sel: Sel) -> Option<&Method> {
         unsafe {
-            let method = ffi::class_getInstanceMethod(self, sel.as_ptr());
+            let method = ffi::class_getInstanceMethod(self, sel);
             method.as_ref()
         }
     }
@@ -888,7 +886,7 @@ impl AnyClass {
     #[doc(alias = "class_getClassMethod")]
     pub fn class_method(&self, sel: Sel) -> Option<&Method> {
         unsafe {
-            let method = ffi::class_getClassMethod(self, sel.as_ptr());
+            let method = ffi::class_getClassMethod(self, sel);
             method.as_ref()
         }
     }
@@ -971,7 +969,7 @@ impl AnyClass {
     pub fn responds_to(&self, sel: Sel) -> bool {
         // This may call `resolveInstanceMethod:` and `resolveClassMethod:`
         // SAFETY: The selector is guaranteed non-null.
-        let res = unsafe { ffi::class_respondsToSelector(self, sel.as_ptr()) };
+        let res = unsafe { ffi::class_respondsToSelector(self, sel) };
         Bool::from_raw(res).as_bool()
     }
 

@@ -239,7 +239,7 @@ mod msg_send_primitive {
             return unsafe { mem::zeroed() };
         }
 
-        let msg_send_fn = unsafe { ffi::objc_msg_lookup(receiver, sel.as_ptr()) };
+        let msg_send_fn = unsafe { ffi::objc_msg_lookup(receiver, sel) };
         let msg_send_fn = unwrap_msg_send_fn(msg_send_fn);
         unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
     }
@@ -260,7 +260,7 @@ mod msg_send_primitive {
             receiver,
             super_class,
         };
-        let msg_send_fn = unsafe { ffi::objc_msg_lookup_super(&sup, sel.as_ptr()) };
+        let msg_send_fn = unsafe { ffi::objc_msg_lookup_super(&sup, sel) };
         let msg_send_fn = unwrap_msg_send_fn(msg_send_fn);
         unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
     }

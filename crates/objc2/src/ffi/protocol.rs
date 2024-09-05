@@ -3,10 +3,11 @@ use std::os::raw::c_char;
 use std::os::raw::c_uint;
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::ffi::{
-    objc_method_description, objc_property, objc_property_attribute_t, objc_selector,
+use crate::ffi::{objc_method_description, objc_property, objc_property_attribute_t};
+use crate::{
+    ffi::{OpaqueData, BOOL},
+    runtime::Sel,
 };
-use crate::ffi::{OpaqueData, BOOL};
 
 /// Opaque type for Objective-C protocols.
 ///
@@ -43,7 +44,7 @@ extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn protocol_addMethodDescription(
         proto: *mut objc_protocol,
-        name: *const objc_selector,
+        name: Sel,
         types: *const c_char,
         is_required_method: BOOL,
         is_instance_method: BOOL,
@@ -82,7 +83,7 @@ extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn protocol_getMethodDescription(
         proto: *const objc_protocol,
-        sel: *const objc_selector,
+        sel: Sel,
         is_required_method: BOOL,
         is_instance_method: BOOL,
     ) -> objc_method_description;

@@ -293,7 +293,7 @@ impl ClassBuilder {
 
         let types = method_type_encoding(enc_ret, enc_args);
         let success = Bool::from_raw(unsafe {
-            ffi::class_addMethod(self.as_mut_ptr(), sel.as_ptr(), func, types.as_ptr())
+            ffi::class_addMethod(self.as_mut_ptr(), sel, func, types.as_ptr())
         });
         assert!(success.as_bool(), "failed to add method {sel}");
     }
@@ -357,7 +357,7 @@ impl ClassBuilder {
 
         let types = method_type_encoding(enc_ret, enc_args);
         let success = Bool::from_raw(unsafe {
-            ffi::class_addMethod(self.metaclass_mut(), sel.as_ptr(), func, types.as_ptr())
+            ffi::class_addMethod(self.metaclass_mut(), sel, func, types.as_ptr())
         });
         assert!(success.as_bool(), "failed to add class method {sel}");
     }
@@ -503,7 +503,7 @@ impl ProtocolBuilder {
         unsafe {
             ffi::protocol_addMethodDescription(
                 self.as_mut_ptr(),
-                sel.as_ptr(),
+                sel,
                 types.as_ptr(),
                 Bool::new(required).as_raw(),
                 Bool::new(instance_method).as_raw(),

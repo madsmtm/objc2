@@ -2,17 +2,14 @@ use std::os::raw::c_char;
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use std::os::raw::c_uint;
 
-use crate::{
-    ffi::objc_selector,
-    runtime::{Imp, Method},
-};
+use crate::runtime::{Imp, Method, Sel};
 
 /// Describes an Objective-C method.
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct objc_method_description {
     /// The name of the method.
-    pub name: *const objc_selector,
+    pub name: Option<Sel>,
     /// The types of the method arguments.
     pub types: *const c_char,
 }
@@ -38,7 +35,7 @@ extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn method_getImplementation(method: *const Method) -> Option<Imp>;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn method_getName(method: *const Method) -> *const objc_selector;
+    pub fn method_getName(method: *const Method) -> Option<Sel>;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn method_getNumberOfArguments(method: *const Method) -> c_uint;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
