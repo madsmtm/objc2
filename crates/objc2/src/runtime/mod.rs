@@ -332,12 +332,15 @@ impl fmt::Pointer for Sel {
     }
 }
 
-/// A type that represents an instance variable.
+/// An opaque type that represents an instance variable.
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/ivar?language=objc).
 #[repr(C)]
 #[doc(alias = "objc_ivar")]
-pub struct Ivar(ffi::objc_ivar);
+pub struct Ivar {
+    _priv: [u8; 0],
+    _p: ffi::OpaqueData,
+}
 
 // SAFETY: Ivar is immutable (and can be retrieved from AnyClass anyhow).
 unsafe impl Sync for Ivar {}
@@ -346,18 +349,12 @@ impl UnwindSafe for Ivar {}
 impl RefUnwindSafe for Ivar {}
 
 impl Ivar {
-    #[inline]
-    pub(crate) fn as_ptr(&self) -> *const ffi::objc_ivar {
-        let ptr: *const Self = self;
-        ptr.cast()
-    }
-
     /// Returns the instance variable's name.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/1418922-ivar_getname?language=objc).
     #[doc(alias = "ivar_getName")]
     pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(ffi::ivar_getName(self.as_ptr())) };
+        let name = unsafe { CStr::from_ptr(ffi::ivar_getName(self)) };
         str::from_utf8(name.to_bytes()).unwrap()
     }
 
@@ -367,7 +364,7 @@ impl Ivar {
     #[inline]
     #[doc(alias = "ivar_getOffset")]
     pub fn offset(&self) -> isize {
-        unsafe { ffi::ivar_getOffset(self.as_ptr()) }
+        unsafe { ffi::ivar_getOffset(self) }
     }
 
     /// Returns the instance variable's `@encode(type)` string.
@@ -375,7 +372,7 @@ impl Ivar {
     /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/1418569-ivar_gettypeencoding?language=objc).
     #[doc(alias = "ivar_getTypeEncoding")]
     pub fn type_encoding(&self) -> &str {
-        let encoding = unsafe { CStr::from_ptr(ffi::ivar_getTypeEncoding(self.as_ptr())) };
+        let encoding = unsafe { CStr::from_ptr(ffi::ivar_getTypeEncoding(self)) };
         str::from_utf8(encoding.to_bytes()).unwrap()
     }
 
@@ -909,7 +906,7 @@ impl AnyClass {
         let name = CString::new(name).unwrap();
         unsafe {
             let ivar = ffi::class_getInstanceVariable(self, name.as_ptr());
-            ivar.cast::<Ivar>().as_ref()
+            ivar.as_ref()
         }
     }
 
@@ -919,7 +916,7 @@ impl AnyClass {
         let name = CString::new(name).unwrap();
         let ivar = unsafe { ffi::class_getClassVariable(self, name.as_ptr()) };
         // SAFETY: TODO
-        unsafe { ivar.cast::<Ivar>().as_ref() }
+        unsafe { ivar.as_ref() }
     }
 
     /// Describes the instance methods implemented by self.

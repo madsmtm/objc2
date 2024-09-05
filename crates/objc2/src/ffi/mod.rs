@@ -285,6 +285,9 @@ pub type IMP = Option<crate::runtime::Imp>;
 #[deprecated = "merged with `runtime::Imp`"]
 pub type objc_method = crate::runtime::Method;
 
+#[deprecated = "merged with `runtime::Ivar`"]
+pub type objc_ivar = crate::runtime::Ivar;
+
 /// We don't know much about the actual structs, so better mark them `!Send`,
 /// `!Sync`, `!UnwindSafe`, `!RefUnwindSafe`, `!Unpin` and as mutable behind
 /// shared references.

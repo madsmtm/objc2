@@ -5,17 +5,13 @@ use std::os::raw::c_int;
 #[cfg(any(doc, target_vendor = "apple"))]
 use std::os::raw::c_uint;
 
-#[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::ffi::{objc_AssociationPolicy, BOOL};
 use crate::runtime::AnyObject;
-use crate::{ffi::OpaqueData, runtime::Imp};
-
-/// An opaque type that represents an instance variable.
-#[repr(C)]
-pub struct objc_ivar {
-    _priv: [u8; 0],
-    _p: OpaqueData,
-}
+use crate::runtime::Imp;
+#[cfg(any(doc, not(feature = "unstable-objfw")))]
+use crate::{
+    ffi::{objc_AssociationPolicy, BOOL},
+    runtime::Ivar,
+};
 
 // /// Remember that this is non-null!
 // #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
@@ -43,11 +39,11 @@ extern_c! {
     pub fn imp_removeBlock(imp: Imp) -> BOOL;
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn ivar_getName(ivar: *const objc_ivar) -> *const c_char;
+    pub fn ivar_getName(ivar: *const Ivar) -> *const c_char;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn ivar_getOffset(ivar: *const objc_ivar) -> isize;
+    pub fn ivar_getOffset(ivar: *const Ivar) -> isize;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn ivar_getTypeEncoding(ivar: *const objc_ivar) -> *const c_char;
+    pub fn ivar_getTypeEncoding(ivar: *const Ivar) -> *const c_char;
 
     #[cfg(any(doc, target_vendor = "apple"))]
     pub fn objc_copyClassNamesForImage(

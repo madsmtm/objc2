@@ -2,10 +2,10 @@
 use core::ffi::c_void;
 use std::os::raw::c_char;
 
-#[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::ffi::objc_ivar;
 #[cfg(any(doc, target_vendor = "apple"))]
 use crate::ffi::BOOL;
+#[cfg(any(doc, not(feature = "unstable-objfw")))]
+use crate::runtime::Ivar;
 use crate::runtime::{AnyClass, AnyObject};
 
 extern_c! {
@@ -18,9 +18,9 @@ extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn object_getIndexedIvars(obj: *const AnyObject) -> *const c_void;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn object_getIvar(obj: *const AnyObject, ivar: *const objc_ivar) -> *const AnyObject;
+    pub fn object_getIvar(obj: *const AnyObject, ivar: *const Ivar) -> *const AnyObject;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn object_setIvar(obj: *mut AnyObject, ivar: *const objc_ivar, value: *mut AnyObject);
+    pub fn object_setIvar(obj: *mut AnyObject, ivar: *const Ivar, value: *mut AnyObject);
 
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, target_vendor = "apple"))]
@@ -36,7 +36,7 @@ extern_c! {
         obj: *mut AnyObject,
         name: *const c_char,
         value: *mut c_void,
-    ) -> *const objc_ivar;
+    ) -> *const Ivar;
 
     // Available in macOS 10.12
     // #[deprecated = "Not needed since ARC"]
@@ -45,7 +45,7 @@ extern_c! {
     //     obj: *mut AnyObject,
     //     name: *const c_char,
     //     value: *mut c_void,
-    // ) -> *const objc_ivar;
+    // ) -> *const Ivar;
 
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
@@ -53,7 +53,7 @@ extern_c! {
         obj: *const AnyObject,
         name: *const c_char,
         out_value: *mut *const c_void,
-    ) -> *const objc_ivar;
+    ) -> *const Ivar;
 
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, target_vendor = "apple"))]

@@ -1,10 +1,13 @@
 #![allow(non_camel_case_types)]
 use std::os::raw::{c_char, c_int, c_uint};
 
-#[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::ffi::{objc_ivar, objc_property, objc_property_attribute_t};
 use crate::ffi::{objc_protocol, objc_selector, BOOL};
 use crate::runtime::{AnyClass, Imp, Method};
+#[cfg(any(doc, not(feature = "unstable-objfw")))]
+use crate::{
+    ffi::{objc_property, objc_property_attribute_t},
+    runtime::Ivar,
+};
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 /// This is `c_char` in GNUStep's libobjc2 and `uint8_t` in Apple's objc4.
@@ -96,7 +99,7 @@ extern_c! {
     pub fn class_copyIvarList(
         cls: *const AnyClass,
         out_len: *mut c_uint,
-    ) -> *mut *const objc_ivar;
+    ) -> *mut *const Ivar;
     #[cfg(any(doc, not(feature = "unstable-objfw")))] // Available in newer versions
     /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn class_copyMethodList(
@@ -119,7 +122,7 @@ extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn class_createInstance(cls: *const AnyClass, extra_bytes: usize) -> *mut crate::runtime::AnyObject;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn class_getClassVariable(cls: *const AnyClass, name: *const c_char) -> *const objc_ivar;
+    pub fn class_getClassVariable(cls: *const AnyClass, name: *const c_char) -> *const Ivar;
     #[cfg(any(doc, target_vendor = "apple"))]
     pub fn class_getImageName(cls: *const AnyClass) -> *const c_char;
     pub fn class_getInstanceSize(cls: *const AnyClass) -> usize;
@@ -127,7 +130,7 @@ extern_c! {
     pub fn class_getInstanceVariable(
         cls: *const AnyClass,
         name: *const c_char,
-    ) -> *const objc_ivar;
+    ) -> *const Ivar;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn class_getIvarLayout(cls: *const AnyClass) -> *const ivar_layout_type;
     pub fn class_getName(cls: *const AnyClass) -> *const c_char;
