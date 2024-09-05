@@ -4,8 +4,8 @@
 #[cfg(any(doc, target_vendor = "apple"))]
 use std::os::raw::c_int;
 
-use crate::ffi::{id, BOOL};
-use crate::runtime::AnyClass;
+use crate::ffi::BOOL;
+use crate::runtime::{AnyClass, AnyObject};
 
 /// The equivalent of `true` for Objective-C's [`BOOL`][`super::BOOL`] type.
 #[allow(clippy::unnecessary_cast)]
@@ -16,7 +16,7 @@ pub const YES: BOOL = true as BOOL; // true -> 1
 pub const NO: BOOL = false as BOOL; // false -> 0
 
 /// A quick alias for a [`null_mut`][`core::ptr::null_mut`] object / instance.
-pub const nil: id = 0 as *mut _;
+pub const nil: *mut AnyObject = 0 as *mut _;
 
 /// A quick alias for a [`null_mut`][`core::ptr::null_mut`] class.
 pub const Nil: *mut AnyClass = 0 as *mut _;

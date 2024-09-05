@@ -1,8 +1,6 @@
 //! Objective-C type aliases.
 #![allow(non_camel_case_types)]
 
-use crate::runtime::AnyObject;
-
 /// The BOOL typedef for Apple's objc4.
 ///
 /// Don't be fooled by the backup definition in `objc.h`; __OBJC_BOOL_IS_BOOL
@@ -202,12 +200,3 @@ pub const NSIntegerMin: NSInteger = NSInteger::MIN;
 
 /// The maximum value for a [`NSUInteger`].
 pub const NSUIntegerMax: NSUInteger = NSUInteger::MAX;
-
-/// A mutable pointer to an object / instance.
-///
-/// Type alias provided for convenience. You'll likely want to use one of:
-/// - `objc2_foundation::NS[...]` for when you know the class of the object
-///   you're dealing with.
-/// - `objc2::rc::Retained` for a proper way of doing memory management.
-/// - `objc2::runtime::AnyObject` for a bit safer representation of this.
-pub type id = *mut AnyObject;

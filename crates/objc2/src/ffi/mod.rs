@@ -288,6 +288,10 @@ pub type objc_method = crate::runtime::Method;
 #[deprecated = "merged with `runtime::Ivar`"]
 pub type objc_ivar = crate::runtime::Ivar;
 
+/// A mutable pointer to an object / instance.
+#[deprecated = "use `AnyObject` directly"]
+pub type id = *mut crate::runtime::AnyObject;
+
 /// We don't know much about the actual structs, so better mark them `!Send`,
 /// `!Sync`, `!UnwindSafe`, `!RefUnwindSafe`, `!Unpin` and as mutable behind
 /// shared references.

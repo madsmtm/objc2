@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `ffi::IMP` is merged into `runtime::Imp`.
   - `ffi::objc_method` is merged into `runtime::Method`.
   - `ffi::objc_ivar` is merged into `runtime::Ivar`.
+* Deprecated `ffi::id`. Use `AnyObject` instead.
 
 ### Removed
 * **BREAKING**: Removed the `ffi::SEL` and `ffi::objc_selector` types. Use
