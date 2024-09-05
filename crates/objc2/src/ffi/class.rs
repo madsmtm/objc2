@@ -2,9 +2,9 @@
 use std::os::raw::{c_char, c_int, c_uint};
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::ffi::{objc_ivar, objc_method, objc_property, objc_property_attribute_t};
+use crate::ffi::{objc_ivar, objc_property, objc_property_attribute_t};
 use crate::ffi::{objc_protocol, objc_selector, BOOL};
-use crate::runtime::{AnyClass, Imp};
+use crate::runtime::{AnyClass, Imp, Method};
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 /// This is `c_char` in GNUStep's libobjc2 and `uint8_t` in Apple's objc4.
@@ -22,12 +22,12 @@ extern_c_unwind! {
     pub fn class_getClassMethod(
         cls: *const AnyClass,
         name: *const objc_selector,
-    ) -> *const objc_method;
+    ) -> *const Method;
     #[cfg(any(doc, not(feature = "unstable-objfw")))] // Available in newer versions
     pub fn class_getInstanceMethod(
         cls: *const AnyClass,
         name: *const objc_selector,
-    ) -> *const objc_method;
+    ) -> *const Method;
 
     pub fn class_respondsToSelector(cls: *const AnyClass, sel: *const objc_selector) -> BOOL;
 
@@ -102,7 +102,7 @@ extern_c! {
     pub fn class_copyMethodList(
         cls: *const AnyClass,
         out_len: *mut c_uint,
-    ) -> *mut *const objc_method;
+    ) -> *mut *const Method;
     #[cfg(any(doc, not(feature = "unstable-objfw")))] // Available in newer versions
     /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn class_copyPropertyList(

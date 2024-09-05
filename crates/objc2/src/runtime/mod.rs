@@ -537,7 +537,10 @@ impl MethodDescription {
 /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/method?language=objc).
 #[repr(C)]
 #[doc(alias = "objc_method")]
-pub struct Method(ffi::objc_method);
+pub struct Method {
+    _priv: [u8; 0],
+    _p: ffi::OpaqueData,
+}
 
 // SAFETY: Method is immutable (and can be retrieved from AnyClass anyhow).
 unsafe impl Sync for Method {}
@@ -546,31 +549,26 @@ impl UnwindSafe for Method {}
 impl RefUnwindSafe for Method {}
 
 impl Method {
-    #[inline]
-    pub(crate) fn as_ptr(&self) -> *const ffi::objc_method {
-        let ptr: *const Self = self;
-        ptr.cast()
-    }
-
     // Note: We don't take `&mut` here, since the operations on methods work
     // atomically.
     #[inline]
-    pub(crate) fn as_mut_ptr(&self) -> *mut ffi::objc_method {
-        self.as_ptr() as _
+    fn as_mut_ptr(&self) -> *mut Self {
+        let ptr: *const Self = self;
+        ptr as _
     }
 
     /// Returns the name of self.
     #[inline]
     #[doc(alias = "method_getName")]
     pub fn name(&self) -> Sel {
-        unsafe { Sel::from_ptr(ffi::method_getName(self.as_ptr())).unwrap() }
+        unsafe { Sel::from_ptr(ffi::method_getName(self)).unwrap() }
     }
 
     /// Returns the `Encoding` of self's return type.
     #[doc(alias = "method_copyReturnType")]
     pub fn return_type(&self) -> MallocStr!() {
         unsafe {
-            let encoding = ffi::method_copyReturnType(self.as_ptr());
+            let encoding = ffi::method_copyReturnType(self);
             MallocStr::from_c_str(encoding).unwrap()
         }
     }
@@ -580,7 +578,7 @@ impl Method {
     #[doc(alias = "method_copyArgumentType")]
     pub fn argument_type(&self, index: usize) -> Option<MallocStr!()> {
         unsafe {
-            let encoding = ffi::method_copyArgumentType(self.as_ptr(), index as c_uint);
+            let encoding = ffi::method_copyArgumentType(self, index as c_uint);
             NonNull::new(encoding).map(|encoding| MallocStr::from_c_str(encoding.as_ptr()).unwrap())
         }
     }
@@ -600,7 +598,7 @@ impl Method {
     #[doc(alias = "method_getTypeEncoding")]
     pub(crate) fn types(&self) -> MethodEncodingIter<'_> {
         // SAFETY: The method pointer is valid and non-null
-        let cstr = unsafe { ffi::method_getTypeEncoding(self.as_ptr()) };
+        let cstr = unsafe { ffi::method_getTypeEncoding(self) };
         if cstr.is_null() {
             panic!("method type encoding was NULL");
         }
@@ -615,13 +613,13 @@ impl Method {
     #[inline]
     #[doc(alias = "method_getNumberOfArguments")]
     pub fn arguments_count(&self) -> usize {
-        unsafe { ffi::method_getNumberOfArguments(self.as_ptr()) as usize }
+        unsafe { ffi::method_getNumberOfArguments(self) as usize }
     }
 
     /// Returns the implementation of this method.
     #[doc(alias = "method_getImplementation")]
     pub fn implementation(&self) -> Imp {
-        unsafe { ffi::method_getImplementation(self.as_ptr()).expect("null IMP") }
+        unsafe { ffi::method_getImplementation(self).expect("null IMP") }
     }
 
     /// Set the implementation of this method.
@@ -880,7 +878,7 @@ impl AnyClass {
     pub fn instance_method(&self, sel: Sel) -> Option<&Method> {
         unsafe {
             let method = ffi::class_getInstanceMethod(self, sel.as_ptr());
-            method.cast::<Method>().as_ref()
+            method.as_ref()
         }
     }
 
@@ -894,7 +892,7 @@ impl AnyClass {
     pub fn class_method(&self, sel: Sel) -> Option<&Method> {
         unsafe {
             let method = ffi::class_getClassMethod(self, sel.as_ptr());
-            method.cast::<Method>().as_ref()
+            method.as_ref()
         }
     }
 

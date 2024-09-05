@@ -29,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `ffi::objc_class` is merged into `runtime::AnyClass`.
   - `ffi::objc_object` is merged into `runtime::AnyObject`.
   - `ffi::IMP` is merged into `runtime::Imp`.
+  - `ffi::objc_method` is merged into `runtime::Method`.
 
 ### Fixed
 * Remove an incorrect assertion when adding protocols to classes in an unexpected
