@@ -2,7 +2,7 @@
 use std::os::raw::{c_char, c_int, c_uint};
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::ffi::{objc_ivar, objc_method, objc_object, objc_property, objc_property_attribute_t};
+use crate::ffi::{objc_ivar, objc_method, objc_property, objc_property_attribute_t};
 use crate::ffi::{objc_protocol, objc_selector, BOOL, IMP};
 use crate::runtime::AnyClass;
 
@@ -117,7 +117,7 @@ extern_c! {
     ) -> *mut *const objc_protocol;
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn class_createInstance(cls: *const AnyClass, extra_bytes: usize) -> *mut objc_object;
+    pub fn class_createInstance(cls: *const AnyClass, extra_bytes: usize) -> *mut crate::runtime::AnyObject;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn class_getClassVariable(cls: *const AnyClass, name: *const c_char) -> *const objc_ivar;
     #[cfg(any(doc, target_vendor = "apple"))]

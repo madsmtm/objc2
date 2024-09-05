@@ -11,15 +11,7 @@
 //! [ARC]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#runtime-support
 use core::ffi::c_void;
 
-use crate::ffi::objc_object;
-#[cfg(any(
-    doc,
-    all(
-        target_vendor = "apple",
-        not(all(target_os = "macos", target_arch = "x86"))
-    )
-))]
-use crate::runtime::AnyClass;
+use crate::runtime::AnyObject;
 
 // All of these very rarely unwind, but may if the user defined methods
 // `retain`, `release`, `autorelease` or `dealloc` do.
@@ -34,39 +26,39 @@ extern_c_unwind! {
 
     // Autorelease
 
-    pub fn objc_autorelease(value: *mut objc_object) -> *mut objc_object;
-    pub fn objc_autoreleaseReturnValue(value: *mut objc_object) -> *mut objc_object;
+    pub fn objc_autorelease(value: *mut AnyObject) -> *mut AnyObject;
+    pub fn objc_autoreleaseReturnValue(value: *mut AnyObject) -> *mut AnyObject;
 
     // Weak pointers
 
-    pub fn objc_copyWeak(to: *mut *mut objc_object, from: *mut *mut objc_object);
-    pub fn objc_destroyWeak(addr: *mut *mut objc_object);
-    pub fn objc_initWeak(addr: *mut *mut objc_object, value: *mut objc_object) -> *mut objc_object;
+    pub fn objc_copyWeak(to: *mut *mut AnyObject, from: *mut *mut AnyObject);
+    pub fn objc_destroyWeak(addr: *mut *mut AnyObject);
+    pub fn objc_initWeak(addr: *mut *mut AnyObject, value: *mut AnyObject) -> *mut AnyObject;
     // Defined in runtime.h
-    pub fn objc_loadWeak(addr: *mut *mut objc_object) -> *mut objc_object;
-    pub fn objc_loadWeakRetained(addr: *mut *mut objc_object) -> *mut objc_object;
-    pub fn objc_moveWeak(to: *mut *mut objc_object, from: *mut *mut objc_object);
+    pub fn objc_loadWeak(addr: *mut *mut AnyObject) -> *mut AnyObject;
+    pub fn objc_loadWeakRetained(addr: *mut *mut AnyObject) -> *mut AnyObject;
+    pub fn objc_moveWeak(to: *mut *mut AnyObject, from: *mut *mut AnyObject);
 
     // Retain / release
 
-    pub fn objc_release(value: *mut objc_object);
-    pub fn objc_retain(value: *mut objc_object) -> *mut objc_object;
-    pub fn objc_retainAutorelease(value: *mut objc_object) -> *mut objc_object;
-    pub fn objc_retainAutoreleaseReturnValue(value: *mut objc_object) -> *mut objc_object;
-    pub fn objc_retainAutoreleasedReturnValue(value: *mut objc_object) -> *mut objc_object;
+    pub fn objc_release(value: *mut AnyObject);
+    pub fn objc_retain(value: *mut AnyObject) -> *mut AnyObject;
+    pub fn objc_retainAutorelease(value: *mut AnyObject) -> *mut AnyObject;
+    pub fn objc_retainAutoreleaseReturnValue(value: *mut AnyObject) -> *mut AnyObject;
+    pub fn objc_retainAutoreleasedReturnValue(value: *mut AnyObject) -> *mut AnyObject;
     // Defined in objc-abi.h
-    pub fn objc_retainBlock(value: *mut objc_object) -> *mut objc_object;
+    pub fn objc_retainBlock(value: *mut AnyObject) -> *mut AnyObject;
 
     // Storing values
 
-    pub fn objc_storeStrong(addr: *mut *mut objc_object, value: *mut objc_object);
+    pub fn objc_storeStrong(addr: *mut *mut AnyObject, value: *mut AnyObject);
     // Defined in runtime.h
-    pub fn objc_storeWeak(addr: *mut *mut objc_object, value: *mut objc_object)
-        -> *mut objc_object;
+    pub fn objc_storeWeak(addr: *mut *mut AnyObject, value: *mut AnyObject)
+        -> *mut AnyObject;
 
     // TODO: Decide about nonstandard extensions like these:
     // #[cfg(any(doc, feature = "gnustep-1-7"))]
-    // pub fn objc_delete_weak_refs(obj: *mut objc_object) -> BOOL;
+    // pub fn objc_delete_weak_refs(obj: *mut AnyObject) -> BOOL;
 
     // Fast paths for certain selectors.
     //
@@ -81,11 +73,11 @@ extern_c_unwind! {
 
     // Available since macOS 10.9.
     #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
-    pub fn objc_alloc(value: *const AnyClass) -> *mut objc_object;
+    pub fn objc_alloc(value: *const crate::runtime::AnyClass) -> *mut AnyObject;
 
     // Available since macOS 10.9.
     #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
-    pub fn objc_allocWithZone(value: *const AnyClass) -> *mut objc_object;
+    pub fn objc_allocWithZone(value: *const crate::runtime::AnyClass) -> *mut AnyObject;
 
     // TODO: objc_alloc_init once supported
 }

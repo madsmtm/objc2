@@ -15,10 +15,9 @@ use crate::ffi;
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nszone?language=objc).
 #[repr(C)]
 pub struct NSZone {
-    // Use `objc_object` to mark the types as !Send, !Sync and UnsafeCell.
-    //
-    // This works since `objc_object` is a ZST
-    _inner: ffi::objc_object,
+    _priv: [u8; 0],
+    // Use `OpaqueData` to mark the types as !Send, !Sync and UnsafeCell.
+    _inner: ffi::OpaqueData,
 }
 
 impl fmt::Debug for NSZone {

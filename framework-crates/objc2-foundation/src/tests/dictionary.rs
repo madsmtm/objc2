@@ -96,7 +96,7 @@ fn base_class_builder(name: &str) -> Option<ClassBuilder> {
     let mut builder = ClassBuilder::root(name, initialize as extern "C" fn(_, _))?;
 
     extern "C" fn new(cls: &AnyClass, _sel: Sel) -> *mut AnyObject {
-        unsafe { ffi::class_createInstance((cls as *const AnyClass).cast(), 0).cast() }
+        unsafe { ffi::class_createInstance(cls, 0) }
     }
     unsafe {
         builder.add_class_method(sel!(new), new as extern "C" fn(_, _) -> _);
@@ -140,14 +140,10 @@ fn test_from_base_class(cls: &AnyClass) {
     // Fake type-alias to an object that implements `NSCopying`
     type Base = NSString;
 
-    let obj1: Retained<Base> = unsafe {
-        Retained::from_raw(ffi::class_createInstance((cls as *const AnyClass).cast(), 0).cast())
-            .unwrap()
-    };
-    let obj2: Retained<Base> = unsafe {
-        Retained::from_raw(ffi::class_createInstance((cls as *const AnyClass).cast(), 0).cast())
-            .unwrap()
-    };
+    let obj1: Retained<Base> =
+        unsafe { Retained::from_raw(ffi::class_createInstance(cls, 0).cast()).unwrap() };
+    let obj2: Retained<Base> =
+        unsafe { Retained::from_raw(ffi::class_createInstance(cls, 0).cast()).unwrap() };
 
     let _dict =
         NSDictionary::from_retained_objects(&[&*obj1, &*obj2], &[NSObject::new(), NSObject::new()]);
@@ -195,7 +191,7 @@ fn no_is_equal_hash() {
         _sel: Sel,
         _zone: *mut crate::NSZone,
     ) -> *mut AnyObject {
-        unsafe { ffi::class_createInstance((obj.class() as *const AnyClass).cast(), 0).cast() }
+        unsafe { ffi::class_createInstance(obj.class(), 0) }
     }
     unsafe {
         builder.add_method(

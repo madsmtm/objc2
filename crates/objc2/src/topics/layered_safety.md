@@ -56,15 +56,16 @@ Doing the Rust equivalent of Objective-C's `NSUInteger hash_code = [obj hash];`.
 # // Fails with `unstable-c-unwind`, so disabled for now.
 use std::mem::transmute;
 use std::ffi::c_char;
-use objc2::ffi::{objc_object, objc_msgSend, sel_registerName, NSUInteger, SEL};
+use objc2::ffi::{objc_msgSend, sel_registerName, NSUInteger, SEL};
+use objc2::runtime::AnyObject;
 
-let obj: *const objc_object;
+let obj: *const AnyObject;
 # let obj = &*objc2::runtime::NSObject::new() as *const objc2::runtime::NSObject as *const _;
 let sel = unsafe { sel_registerName(b"hash\0".as_ptr() as *const c_char) };
 let msg_send_fn = unsafe {
     transmute::<
         unsafe extern "C" fn(),
-        unsafe extern "C" fn(*const objc_object, SEL) -> NSUInteger,
+        unsafe extern "C" fn(*const AnyObject, SEL) -> NSUInteger,
     >(objc_msgSend)
 };
 let hash_code = unsafe { msg_send_fn(obj, sel) };

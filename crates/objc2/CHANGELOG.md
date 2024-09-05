@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Deprecated
 * Merged `ffi::objc_class` and `runtime::AnyClass`, and deprecated the former.
+* Merged `ffi::objc_object` and `runtime::AnyObject`, and deprecated the former.
 
 ### Fixed
 * Remove an incorrect assertion when adding protocols to classes in an unexpected

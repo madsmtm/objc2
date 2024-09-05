@@ -1,7 +1,7 @@
 //! Objective-C type aliases.
 #![allow(non_camel_case_types)]
 
-use crate::ffi::{objc_object, objc_selector};
+use crate::{ffi::objc_selector, runtime::AnyObject};
 
 /// The BOOL typedef for Apple's objc4.
 ///
@@ -216,4 +216,4 @@ pub type SEL = *const objc_selector;
 ///   you're dealing with.
 /// - `objc2::rc::Retained` for a proper way of doing memory management.
 /// - `objc2::runtime::AnyObject` for a bit safer representation of this.
-pub type id = *mut objc_object;
+pub type id = *mut AnyObject;

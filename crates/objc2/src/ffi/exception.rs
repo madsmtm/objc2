@@ -7,7 +7,7 @@
 // A few things here are defined differently depending on the __OBJC2__
 // variable, which is set for all platforms except 32-bit macOS.
 
-use crate::ffi::objc_object;
+use crate::runtime::AnyObject;
 
 /// Remember that this is non-null!
 #[cfg(any(
@@ -19,7 +19,7 @@ use crate::ffi::objc_object;
 ))]
 pub type objc_exception_matcher = unsafe extern "C" fn(
     catch_type: *mut crate::runtime::AnyClass,
-    exception: *mut objc_object,
+    exception: *mut AnyObject,
 ) -> std::os::raw::c_int;
 
 /// Remember that this is non-null!
@@ -31,7 +31,7 @@ pub type objc_exception_matcher = unsafe extern "C" fn(
     )
 ))]
 pub type objc_exception_preprocessor =
-    unsafe extern "C" fn(exception: *mut objc_object) -> *mut objc_object;
+    unsafe extern "C" fn(exception: *mut AnyObject) -> *mut AnyObject;
 
 /// Remember that this is non-null!
 #[cfg(any(
@@ -41,11 +41,10 @@ pub type objc_exception_preprocessor =
         not(all(target_os = "macos", target_arch = "x86"))
     )
 ))]
-pub type objc_uncaught_exception_handler = unsafe extern "C" fn(exception: *mut objc_object);
+pub type objc_uncaught_exception_handler = unsafe extern "C" fn(exception: *mut AnyObject);
 
 #[cfg(feature = "unstable-objfw")]
-pub type objc_uncaught_exception_handler =
-    Option<unsafe extern "C" fn(exception: *mut objc_object)>;
+pub type objc_uncaught_exception_handler = Option<unsafe extern "C" fn(exception: *mut AnyObject)>;
 
 /// Remember that this is non-null!
 #[cfg(any(
@@ -53,14 +52,14 @@ pub type objc_uncaught_exception_handler =
     all(target_vendor = "apple", target_os = "macos", not(target_arch = "x86"))
 ))]
 pub type objc_exception_handler =
-    unsafe extern "C" fn(unused: *mut objc_object, context: *mut core::ffi::c_void);
+    unsafe extern "C" fn(unused: *mut AnyObject, context: *mut core::ffi::c_void);
 
 extern_c_unwind! {
     /// See [`objc-exception.h`].
     ///
     /// [`objc-exception.h`]: https://github.com/apple-oss-distributions/objc4/blob/objc4-818.2/runtime/objc-exception.h
     #[cold]
-    pub fn objc_exception_throw(exception: *mut objc_object) -> !;
+    pub fn objc_exception_throw(exception: *mut AnyObject) -> !;
 
     #[cfg(all(target_vendor = "apple", not(feature = "gnustep-1-7"), not(all(target_os = "macos", target_arch = "x86"))))]
     #[cold]
@@ -73,7 +72,7 @@ extern_c_unwind! {
 
 extern_c! {
     #[cfg(any(doc, feature = "gnustep-1-7", all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
-    pub fn objc_begin_catch(exc_buf: *mut core::ffi::c_void) -> *mut objc_object;
+    pub fn objc_begin_catch(exc_buf: *mut core::ffi::c_void) -> *mut AnyObject;
     #[cfg(any(doc, feature = "gnustep-1-7", all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
     pub fn objc_end_catch();
 

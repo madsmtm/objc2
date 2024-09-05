@@ -5,7 +5,7 @@
 //! TODO: Some of these are only supported on _some_ GNUStep targets!
 #[cfg(any(doc, feature = "gnustep-1-7", feature = "unstable-objfw"))]
 use crate::ffi::{objc_selector, IMP};
-use crate::{ffi::objc_object, runtime::AnyClass};
+use crate::runtime::{AnyClass, AnyObject};
 
 /// Specifies data used when sending messages to superclasses.
 #[repr(C)]
@@ -13,7 +13,7 @@ use crate::{ffi::objc_object, runtime::AnyClass};
 // TODO: Does this belong in this file or in types.rs?
 pub struct objc_super {
     /// The object / instance to send a message to.
-    pub receiver: *mut objc_object,
+    pub receiver: *mut AnyObject,
     /// The particular superclass of the instance to message.
     ///
     /// Named `class` in older Objective-C versions.
@@ -27,9 +27,9 @@ pub struct objc_super {
 // to make those "C-unwind" as well!
 extern_c_unwind! {
     #[cfg(any(doc, feature = "gnustep-1-7", feature = "unstable-objfw"))]
-    pub fn objc_msg_lookup(receiver: *mut objc_object, sel: *const objc_selector) -> IMP;
+    pub fn objc_msg_lookup(receiver: *mut AnyObject, sel: *const objc_selector) -> IMP;
     #[cfg(any(doc, feature = "unstable-objfw"))]
-    pub fn objc_msg_lookup_stret(receiver: *mut objc_object, sel: *const objc_selector) -> IMP;
+    pub fn objc_msg_lookup_stret(receiver: *mut AnyObject, sel: *const objc_selector) -> IMP;
     #[cfg(any(doc, feature = "gnustep-1-7", feature = "unstable-objfw"))]
     pub fn objc_msg_lookup_super(sup: *const objc_super, sel: *const objc_selector) -> IMP;
     #[cfg(any(doc, feature = "unstable-objfw"))]

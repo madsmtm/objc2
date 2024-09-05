@@ -5,9 +5,10 @@ use std::os::raw::c_int;
 #[cfg(any(doc, target_vendor = "apple"))]
 use std::os::raw::c_uint;
 
+use crate::ffi::OpaqueData;
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use crate::ffi::{objc_AssociationPolicy, BOOL};
-use crate::ffi::{objc_object, OpaqueData};
+use crate::runtime::AnyObject;
 
 /// An opaque type that represents an instance variable.
 #[repr(C)]
@@ -39,15 +40,15 @@ pub type IMP = Option<InnerImp>;
 extern_c_unwind! {
     // Instead of being able to change this, it's a weak symbol on GNUStep.
     #[cfg(any(doc, target_vendor = "apple", feature = "unstable-objfw"))]
-    pub fn objc_enumerationMutation(obj: *mut objc_object);
+    pub fn objc_enumerationMutation(obj: *mut AnyObject);
 }
 
 extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn imp_getBlock(imp: IMP) -> *mut objc_object;
+    pub fn imp_getBlock(imp: IMP) -> *mut AnyObject;
     // See also <https://landonf.org/code/objc/imp_implementationWithBlock.20110413.html>
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn imp_implementationWithBlock(block: *mut objc_object) -> IMP;
+    pub fn imp_implementationWithBlock(block: *mut AnyObject) -> IMP;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn imp_removeBlock(imp: IMP) -> BOOL;
 
@@ -69,23 +70,23 @@ extern_c! {
 
     #[cfg(any(doc, target_vendor = "apple", feature = "unstable-objfw"))]
     pub fn objc_setEnumerationMutationHandler(
-        handler: Option<unsafe extern "C" fn(obj: *mut objc_object)>,
+        handler: Option<unsafe extern "C" fn(obj: *mut AnyObject)>,
     );
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn objc_getAssociatedObject(
-        object: *const objc_object,
+        object: *const AnyObject,
         key: *const c_void,
-    ) -> *const objc_object;
+    ) -> *const AnyObject;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn objc_setAssociatedObject(
-        object: *mut objc_object,
+        object: *mut AnyObject,
         key: *const c_void,
-        value: *mut objc_object,
+        value: *mut AnyObject,
         policy: objc_AssociationPolicy,
     );
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn objc_removeAssociatedObjects(object: *mut objc_object);
+    pub fn objc_removeAssociatedObjects(object: *mut AnyObject);
 
     #[cfg(any(doc, target_vendor = "apple", feature = "unstable-objfw"))]
     pub fn objc_setForwardHandler(fwd: *mut c_void, fwd_stret: *mut c_void);
@@ -93,8 +94,8 @@ extern_c! {
     // - Apple: objc-sync.h
     // - GNUStep: dtable.h / associate.m
     // - ObjFW: ObjFW-RT.h
-    pub fn objc_sync_enter(obj: *mut objc_object) -> c_int;
-    pub fn objc_sync_exit(obj: *mut objc_object) -> c_int;
+    pub fn objc_sync_enter(obj: *mut AnyObject) -> c_int;
+    pub fn objc_sync_exit(obj: *mut AnyObject) -> c_int;
 
     // Available in macOS 10.14.4
     // /// Remember that this is non-null!

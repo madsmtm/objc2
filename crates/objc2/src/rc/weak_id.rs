@@ -7,6 +7,7 @@ use std::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::Retained;
 use crate::mutability::{IsIdCloneable, IsRetainable};
+use crate::runtime::AnyObject;
 use crate::{ffi, Message};
 
 /// A weak pointer to an Objective-C reference counted object.
@@ -42,7 +43,7 @@ pub struct Weak<T: ?Sized> {
     ///
     /// TODO: Verify the need for UnsafeCell?
     /// TODO: Investigate if we can avoid some allocations using `Pin`.
-    inner: Box<UnsafeCell<*mut ffi::objc_object>>,
+    inner: Box<UnsafeCell<*mut AnyObject>>,
     /// Weak inherits variance, dropck and various marker traits from
     /// `Retained<T>`.
     item: PhantomData<Retained<T>>,

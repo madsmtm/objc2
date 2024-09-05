@@ -273,8 +273,11 @@ pub use self::selector::*;
 pub use self::types::*;
 pub use self::various::*;
 
-#[deprecated = "merged in `runtime::AnyClass`"]
+#[deprecated = "merged with `runtime::AnyClass`"]
 pub type objc_class = crate::runtime::AnyClass;
+
+#[deprecated = "merged with `runtime::AnyObject`"]
+pub type objc_object = crate::runtime::AnyObject;
 
 /// We don't know much about the actual structs, so better mark them `!Send`,
 /// `!Sync`, `!UnwindSafe`, `!RefUnwindSafe`, `!Unpin` and as mutable behind
