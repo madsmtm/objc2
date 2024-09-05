@@ -17,7 +17,7 @@ use crate::runtime::AnyObject;
         not(all(target_os = "macos", target_arch = "x86"))
     )
 ))]
-pub type objc_exception_matcher = unsafe extern "C" fn(
+type objc_exception_matcher = unsafe extern "C" fn(
     catch_type: *mut crate::runtime::AnyClass,
     exception: *mut AnyObject,
 ) -> std::os::raw::c_int;
@@ -30,7 +30,7 @@ pub type objc_exception_matcher = unsafe extern "C" fn(
         not(all(target_os = "macos", target_arch = "x86"))
     )
 ))]
-pub type objc_exception_preprocessor =
+type objc_exception_preprocessor =
     unsafe extern "C" fn(exception: *mut AnyObject) -> *mut AnyObject;
 
 /// Remember that this is non-null!
@@ -41,17 +41,17 @@ pub type objc_exception_preprocessor =
         not(all(target_os = "macos", target_arch = "x86"))
     )
 ))]
-pub type objc_uncaught_exception_handler = unsafe extern "C" fn(exception: *mut AnyObject);
+type objc_uncaught_exception_handler = unsafe extern "C" fn(exception: *mut AnyObject);
 
 #[cfg(feature = "unstable-objfw")]
-pub type objc_uncaught_exception_handler = Option<unsafe extern "C" fn(exception: *mut AnyObject)>;
+type objc_uncaught_exception_handler = Option<unsafe extern "C" fn(exception: *mut AnyObject)>;
 
 /// Remember that this is non-null!
 #[cfg(any(
     doc,
     all(target_vendor = "apple", target_os = "macos", not(target_arch = "x86"))
 ))]
-pub type objc_exception_handler =
+type objc_exception_handler =
     unsafe extern "C" fn(unused: *mut AnyObject, context: *mut core::ffi::c_void);
 
 extern_c_unwind! {

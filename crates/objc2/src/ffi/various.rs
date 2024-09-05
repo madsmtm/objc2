@@ -15,12 +15,12 @@ use crate::{
 
 // /// Remember that this is non-null!
 // #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
-// pub type objc_hook_getClass =
+// type objc_hook_getClass =
 //     unsafe extern "C" fn(name: *const c_char, out_cls: *mut *const crate::runtime::AnyClass) -> BOOL;
 //
 // /// Remember that this is non-null!
 // #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
-// pub type objc_hook_lazyClassNamer =
+// type objc_hook_lazyClassNamer =
 //     unsafe extern "C" fn(cls: *const crate::runtime::AnyClass) -> *const c_char;
 
 extern_c_unwind! {
