@@ -292,6 +292,15 @@ pub type objc_ivar = crate::runtime::Ivar;
 #[deprecated = "use `AnyObject` directly"]
 pub type id = *mut crate::runtime::AnyObject;
 
+#[deprecated = "use `runtime::Bool`, or if using `msg_send!`, just bool directly"]
+pub type BOOL = crate::runtime::Bool;
+
+#[deprecated = "use `runtime::Bool::YES`"]
+pub const YES: crate::runtime::Bool = crate::runtime::Bool::YES;
+
+#[deprecated = "use `runtime::Bool::NO`"]
+pub const NO: crate::runtime::Bool = crate::runtime::Bool::NO;
+
 /// We don't know much about the actual structs, so better mark them `!Send`,
 /// `!Sync`, `!UnwindSafe`, `!RefUnwindSafe`, `!Unpin` and as mutable behind
 /// shared references.

@@ -9,14 +9,14 @@ use crate::runtime::AnyObject;
 use crate::runtime::Imp;
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use crate::{
-    ffi::{objc_AssociationPolicy, BOOL},
-    runtime::Ivar,
+    ffi::objc_AssociationPolicy,
+    runtime::{Bool, Ivar},
 };
 
 // /// Remember that this is non-null!
 // #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
 // type objc_hook_getClass =
-//     unsafe extern "C" fn(name: *const c_char, out_cls: *mut *const crate::runtime::AnyClass) -> BOOL;
+//     unsafe extern "C" fn(name: *const c_char, out_cls: *mut *const crate::runtime::AnyClass) -> Bool;
 //
 // /// Remember that this is non-null!
 // #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
@@ -36,7 +36,7 @@ extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn imp_implementationWithBlock(block: *mut AnyObject) -> Imp;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn imp_removeBlock(imp: Imp) -> BOOL;
+    pub fn imp_removeBlock(imp: Imp) -> Bool;
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn ivar_getName(ivar: *const Ivar) -> *const c_char;

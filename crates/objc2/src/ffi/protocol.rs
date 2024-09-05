@@ -4,10 +4,7 @@ use std::os::raw::c_uint;
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use crate::ffi::{objc_method_description, objc_property, objc_property_attribute_t};
-use crate::{
-    ffi::BOOL,
-    runtime::{AnyProtocol, Sel},
-};
+use crate::runtime::{AnyProtocol, Bool, Sel};
 
 extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
@@ -24,8 +21,8 @@ extern_c! {
     pub fn protocol_conformsToProtocol(
         proto: *const AnyProtocol,
         other: *const AnyProtocol,
-    ) -> BOOL;
-    pub fn protocol_isEqual(proto: *const AnyProtocol, other: *const AnyProtocol) -> BOOL;
+    ) -> Bool;
+    pub fn protocol_isEqual(proto: *const AnyProtocol, other: *const AnyProtocol) -> Bool;
     pub fn protocol_getName(proto: *const AnyProtocol) -> *const c_char;
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
@@ -33,8 +30,8 @@ extern_c! {
         proto: *mut AnyProtocol,
         name: Sel,
         types: *const c_char,
-        is_required_method: BOOL,
-        is_instance_method: BOOL,
+        is_required_method: Bool,
+        is_instance_method: Bool,
     );
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn protocol_addProperty(
@@ -42,8 +39,8 @@ extern_c! {
         name: *const c_char,
         attributes: *const objc_property_attribute_t,
         attributes_len: c_uint,
-        is_required_property: BOOL,
-        is_instance_property: BOOL,
+        is_required_property: Bool,
+        is_instance_property: Bool,
     );
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn protocol_addProtocol(proto: *mut AnyProtocol, addition: *const AnyProtocol);
@@ -51,8 +48,8 @@ extern_c! {
     /// The returned array is deallocated with [`free`][crate::ffi::free].
     pub fn protocol_copyMethodDescriptionList(
         proto: *const AnyProtocol,
-        is_required_method: BOOL,
-        is_instance_method: BOOL,
+        is_required_method: Bool,
+        is_instance_method: Bool,
         out_len: *mut c_uint,
     ) -> *mut objc_method_description;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
@@ -71,15 +68,15 @@ extern_c! {
     pub fn protocol_getMethodDescription(
         proto: *const AnyProtocol,
         sel: Sel,
-        is_required_method: BOOL,
-        is_instance_method: BOOL,
+        is_required_method: Bool,
+        is_instance_method: Bool,
     ) -> objc_method_description;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn protocol_getProperty(
         proto: *const AnyProtocol,
         name: *const c_char,
-        is_required_property: BOOL,
-        is_instance_property: BOOL,
+        is_required_property: Bool,
+        is_instance_property: Bool,
     ) -> *const objc_property;
 
     // #[cfg(any(doc, macos >= 10.12))]

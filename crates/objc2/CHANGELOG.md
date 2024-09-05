@@ -23,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Merged `objc-sys` into this crate's `ffi` module.
 * **BREAKING**: Changed the signature of various `ffi` functions to no longer
   accept nullable function pointers.
+* **BREAKING**: Changed the signature of various `ffi` functions to use the
+  proper `Bool` type instead of a typedef.
 
 ### Deprecated
 * Merged and deprecated the following `ffi` types:
@@ -32,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `ffi::IMP` is merged into `runtime::Imp`.
   - `ffi::objc_method` is merged into `runtime::Method`.
   - `ffi::objc_ivar` is merged into `runtime::Ivar`.
+  - `ffi::BOOL` and constants is merged into `runtime::Bool`.
 * Deprecated `ffi::id`. Use `AnyObject` instead.
 
 ### Removed

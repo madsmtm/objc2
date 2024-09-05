@@ -58,7 +58,7 @@ extern_c_unwind! {
 
     // TODO: Decide about nonstandard extensions like these:
     // #[cfg(any(doc, feature = "gnustep-1-7"))]
-    // pub fn objc_delete_weak_refs(obj: *mut AnyObject) -> BOOL;
+    // pub fn objc_delete_weak_refs(obj: *mut AnyObject) -> Bool;
 
     // Fast paths for certain selectors.
     //

@@ -292,9 +292,7 @@ impl ClassBuilder {
         }
 
         let types = method_type_encoding(enc_ret, enc_args);
-        let success = Bool::from_raw(unsafe {
-            ffi::class_addMethod(self.as_mut_ptr(), sel, func, types.as_ptr())
-        });
+        let success = unsafe { ffi::class_addMethod(self.as_mut_ptr(), sel, func, types.as_ptr()) };
         assert!(success.as_bool(), "failed to add method {sel}");
     }
 
@@ -356,9 +354,8 @@ impl ClassBuilder {
         }
 
         let types = method_type_encoding(enc_ret, enc_args);
-        let success = Bool::from_raw(unsafe {
-            ffi::class_addMethod(self.metaclass_mut(), sel, func, types.as_ptr())
-        });
+        let success =
+            unsafe { ffi::class_addMethod(self.metaclass_mut(), sel, func, types.as_ptr()) };
         assert!(success.as_bool(), "failed to add class method {sel}");
     }
 
@@ -397,7 +394,7 @@ impl ClassBuilder {
         // on subclasses as it has on superclasses.
         //
         // See <https://github.com/gnustep/libobjc2/issues/246>
-        let success = Bool::from_raw(unsafe {
+        let success = unsafe {
             ffi::class_addIvar(
                 self.as_mut_ptr(),
                 c_name.as_ptr(),
@@ -405,7 +402,7 @@ impl ClassBuilder {
                 align,
                 encoding.as_ptr(),
             )
-        });
+        };
         assert!(success.as_bool(), "failed to add ivar {name}");
     }
 
@@ -421,7 +418,7 @@ impl ClassBuilder {
     #[inline]
     pub fn add_protocol(&mut self, proto: &AnyProtocol) -> bool {
         let success = unsafe { ffi::class_addProtocol(self.as_mut_ptr(), proto) };
-        Bool::from_raw(success).as_bool()
+        success.as_bool()
     }
 
     // fn add_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
@@ -505,8 +502,8 @@ impl ProtocolBuilder {
                 self.as_mut_ptr(),
                 sel,
                 types.as_ptr(),
-                Bool::new(required).as_raw(),
-                Bool::new(instance_method).as_raw(),
+                Bool::new(required),
+                Bool::new(instance_method),
             );
         }
     }

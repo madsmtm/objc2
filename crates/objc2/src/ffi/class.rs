@@ -1,8 +1,7 @@
 #![allow(non_camel_case_types)]
 use std::os::raw::{c_char, c_int, c_uint};
 
-use crate::ffi::BOOL;
-use crate::runtime::{AnyClass, AnyProtocol, Imp, Method, Sel};
+use crate::runtime::{AnyClass, AnyProtocol, Bool, Imp, Method, Sel};
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use crate::{
     ffi::{objc_property, objc_property_attribute_t},
@@ -32,7 +31,7 @@ extern_c_unwind! {
         name: Sel,
     ) -> *const Method;
 
-    pub fn class_respondsToSelector(cls: *const AnyClass, sel: Sel) -> BOOL;
+    pub fn class_respondsToSelector(cls: *const AnyClass, sel: Sel) -> Bool;
 
     // #[deprecated = "use class_getMethodImplementation instead"]
     // #[cfg(any(doc, target_vendor = "apple"))]
@@ -75,24 +74,24 @@ extern_c! {
         size: usize,
         alignment: u8,
         types: *const c_char,
-    ) -> BOOL;
+    ) -> Bool;
     pub fn class_addMethod(
         cls: *mut AnyClass,
         name: Sel,
         imp: Imp,
         types: *const c_char,
-    ) -> BOOL;
+    ) -> Bool;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn class_addProperty(
         cls: *mut AnyClass,
         name: *const c_char,
         attributes: *const objc_property_attribute_t,
         attributes_count: c_uint,
-    ) -> BOOL;
+    ) -> Bool;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn class_addProtocol(cls: *mut AnyClass, protocol: *const AnyProtocol) -> BOOL;
+    pub fn class_addProtocol(cls: *mut AnyClass, protocol: *const AnyProtocol) -> Bool;
     pub fn class_conformsToProtocol(cls: *const AnyClass, protocol: *const AnyProtocol)
-        -> BOOL;
+        -> Bool;
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))] // Available in newer versions
     /// The return value is deallocated with [`free`][crate::ffi::free].
@@ -141,7 +140,7 @@ extern_c! {
     pub fn class_getVersion(cls: *const AnyClass) -> c_int;
     #[cfg(any(doc, target_vendor = "apple"))]
     pub fn class_getWeakIvarLayout(cls: *const AnyClass) -> *const ivar_layout_type;
-    pub fn class_isMetaClass(cls: *const AnyClass) -> BOOL;
+    pub fn class_isMetaClass(cls: *const AnyClass) -> Bool;
     pub fn class_replaceMethod(
         cls: *mut AnyClass,
         name: Sel,

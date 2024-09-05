@@ -61,6 +61,9 @@ pub use self::nszone::NSZone;
 pub use self::protocol_object::{ImplementedBy, ProtocolObject};
 pub use crate::verify::VerificationError;
 
+#[allow(deprecated)]
+pub use crate::ffi::{BOOL, NO, YES};
+
 #[cfg(not(feature = "malloc"))]
 use self::malloc::{MallocSlice, MallocStr};
 #[cfg(feature = "malloc")]
@@ -119,19 +122,6 @@ macro_rules! standard_pointer_impls {
         }
     };
 }
-
-/// Use [`Bool`] or [`ffi::BOOL`] instead.
-#[deprecated = "Use `Bool` or `ffi::BOOL` instead"]
-#[allow(non_upper_case_globals)]
-pub type BOOL = ffi::BOOL;
-
-/// Use [`Bool::YES`] or [`ffi::YES`] instead.
-#[deprecated = "Use `Bool::YES` or `ffi::YES` instead"]
-pub const YES: ffi::BOOL = ffi::YES;
-
-/// Use [`Bool::NO`] or [`ffi::NO`] instead.
-#[deprecated = "Use `Bool::NO` or `ffi::NO` instead"]
-pub const NO: ffi::BOOL = ffi::NO;
 
 #[cfg(not(feature = "unstable-c-unwind"))]
 type InnerImp = unsafe extern "C" fn();
@@ -277,7 +267,7 @@ impl PartialEq for Sel {
             // GNUStep implements "typed" selectors, which means their pointer
             // values sometimes differ; so let's use the runtime-provided
             // `sel_isEqual`.
-            unsafe { Bool::from_raw(ffi::sel_isEqual(*self, *other)).as_bool() }
+            unsafe { ffi::sel_isEqual(*self, *other).as_bool() }
         } else {
             // `ffi::sel_isEqual` uses pointer comparison on Apple (the
             // documentation explicitly notes this); so as an optimization,
@@ -855,7 +845,7 @@ impl AnyClass {
     #[inline]
     #[doc(alias = "class_isMetaClass")]
     pub fn is_metaclass(&self) -> bool {
-        unsafe { Bool::from_raw(ffi::class_isMetaClass(self)).as_bool() }
+        unsafe { ffi::class_isMetaClass(self).as_bool() }
     }
 
     /// Returns the size of instances of self.
@@ -931,7 +921,7 @@ impl AnyClass {
     #[inline]
     #[doc(alias = "class_conformsToProtocol")]
     pub fn conforms_to(&self, proto: &AnyProtocol) -> bool {
-        unsafe { Bool::from_raw(ffi::class_conformsToProtocol(self, proto)).as_bool() }
+        unsafe { ffi::class_conformsToProtocol(self, proto).as_bool() }
     }
 
     /// Get a list of the protocols to which this class conforms.
@@ -969,8 +959,7 @@ impl AnyClass {
     pub fn responds_to(&self, sel: Sel) -> bool {
         // This may call `resolveInstanceMethod:` and `resolveClassMethod:`
         // SAFETY: The selector is guaranteed non-null.
-        let res = unsafe { ffi::class_respondsToSelector(self, sel) };
-        Bool::from_raw(res).as_bool()
+        unsafe { ffi::class_respondsToSelector(self, sel).as_bool() }
     }
 
     // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html>
@@ -1097,7 +1086,7 @@ impl AnyProtocol {
     #[inline]
     #[doc(alias = "protocol_conformsToProtocol")]
     pub fn conforms_to(&self, proto: &AnyProtocol) -> bool {
-        unsafe { Bool::from_raw(ffi::protocol_conformsToProtocol(self, proto)).as_bool() }
+        unsafe { ffi::protocol_conformsToProtocol(self, proto).as_bool() }
     }
 
     /// Returns the name of self.
@@ -1112,8 +1101,8 @@ impl AnyProtocol {
         let descriptions = unsafe {
             ffi::protocol_copyMethodDescriptionList(
                 self,
-                Bool::new(required).as_raw(),
-                Bool::new(instance).as_raw(),
+                Bool::new(required),
+                Bool::new(instance),
                 &mut count,
             )
         };
@@ -1147,7 +1136,7 @@ impl PartialEq for AnyProtocol {
     #[inline]
     #[doc(alias = "protocol_isEqual")]
     fn eq(&self, other: &Self) -> bool {
-        unsafe { Bool::from_raw(ffi::protocol_isEqual(self, other)).as_bool() }
+        unsafe { ffi::protocol_isEqual(self, other).as_bool() }
     }
 }
 
