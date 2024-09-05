@@ -244,7 +244,7 @@ impl Alloc {
         ))]
         {
             // SAFETY: Checked by caller
-            let obj: *mut T = unsafe { crate::ffi::objc_alloc(cls.as_ptr()).cast() };
+            let obj: *mut T = unsafe { crate::ffi::objc_alloc(cls).cast() };
             // SAFETY: The object is newly allocated, so this has +1 retain count
             let obj = unsafe { Allocated::new(obj) };
             R::maybe_unwrap::<Alloc>(obj, ())

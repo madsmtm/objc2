@@ -236,7 +236,8 @@ impl RefUnwindSafe for Exception {}
 pub unsafe fn throw(exception: Retained<Exception>) -> ! {
     // We consume the exception object since we can't make any guarantees
     // about its mutability.
-    let ptr = exception.0.as_ptr() as *mut ffi::objc_object;
+    let ptr: *const AnyObject = &exception.0;
+    let ptr = ptr as *mut AnyObject;
     // SAFETY: The object is valid and non-null (nil exceptions are not valid
     // in the old runtime).
     unsafe { ffi::objc_exception_throw(ptr) }

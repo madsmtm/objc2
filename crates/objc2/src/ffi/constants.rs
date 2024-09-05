@@ -1,29 +1,22 @@
 //! Various common #defines and enum constants.
+#![allow(non_camel_case_types)]
 
 #[cfg(any(doc, target_vendor = "apple"))]
 use std::os::raw::c_int;
 
-use crate::{id, objc_class, BOOL};
-
-/// The equivalent of `true` for Objective-C's [`BOOL`][`super::BOOL`] type.
-#[allow(clippy::unnecessary_cast)]
-pub const YES: BOOL = true as BOOL; // true -> 1
-
-/// The equivalent of `false` for Objective-C's [`BOOL`][`super::BOOL`] type.
-#[allow(clippy::unnecessary_cast)]
-pub const NO: BOOL = false as BOOL; // false -> 0
+use crate::runtime::{AnyClass, AnyObject};
 
 /// A quick alias for a [`null_mut`][`core::ptr::null_mut`] object / instance.
-pub const nil: id = 0 as *mut _;
+pub const nil: *mut AnyObject = 0 as *mut _;
 
 /// A quick alias for a [`null_mut`][`core::ptr::null_mut`] class.
-pub const Nil: *mut objc_class = 0 as *mut _;
+pub const Nil: *mut AnyClass = 0 as *mut _;
 
 /// Policies related to associative references.
 ///
 /// These are options to [`objc_setAssociatedObject`].
 ///
-/// [`objc_setAssociatedObject`]: crate::objc_setAssociatedObject
+/// [`objc_setAssociatedObject`]: crate::ffi::objc_setAssociatedObject
 pub type objc_AssociationPolicy = usize;
 /// Specifies a weak reference to the associated object.
 ///

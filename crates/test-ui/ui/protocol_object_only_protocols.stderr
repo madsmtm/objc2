@@ -109,15 +109,10 @@ note: required because it appears within the type `UnsafeCell<PhantomData<(*cons
   |
   | pub struct UnsafeCell<T: ?Sized> {
   |            ^^^^^^^^^^
-note: required because it appears within the type `objc_object`
- --> $WORKSPACE/crates/objc-sys/src/object.rs
-  |
-  | pub struct objc_object {
-  |            ^^^^^^^^^^^
 note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct AnyObject(ffi::objc_object);
+  | pub struct AnyObject {
   |            ^^^^^^^^^
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
@@ -153,15 +148,10 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
             (dyn NSObjectProtocol + Send + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
           and $N others
-note: required because it appears within the type `objc_object`
- --> $WORKSPACE/crates/objc-sys/src/object.rs
-  |
-  | pub struct objc_object {
-  |            ^^^^^^^^^^^
 note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct AnyObject(ffi::objc_object);
+  | pub struct AnyObject {
   |            ^^^^^^^^^
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
@@ -197,15 +187,10 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
             (dyn NSObjectProtocol + Send + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
           and $N others
-note: required because it appears within the type `objc_object`
- --> $WORKSPACE/crates/objc-sys/src/object.rs
-  |
-  | pub struct objc_object {
-  |            ^^^^^^^^^^^
 note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct AnyObject(ffi::objc_object);
+  | pub struct AnyObject {
   |            ^^^^^^^^^
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
@@ -252,15 +237,10 @@ note: required because it appears within the type `UnsafeCell<PhantomData<(*cons
   |
   | pub struct UnsafeCell<T: ?Sized> {
   |            ^^^^^^^^^^
-note: required because it appears within the type `objc_object`
- --> $WORKSPACE/crates/objc-sys/src/object.rs
-  |
-  | pub struct objc_object {
-  |            ^^^^^^^^^^^
 note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct AnyObject(ffi::objc_object);
+  | pub struct AnyObject {
   |            ^^^^^^^^^
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs

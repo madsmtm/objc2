@@ -15,7 +15,9 @@ mod common_selectors;
 mod convert;
 mod declare_class;
 pub(crate) mod declared_ivars;
+mod image_info;
 mod method_family;
+mod module_info;
 mod msg_send;
 mod msg_send_id;
 mod writeback;
@@ -29,9 +31,11 @@ pub use self::declare_class::{
     ValidSubclassMutability,
 };
 pub use self::declared_ivars::DeclaredIvarsHelper;
+pub use self::image_info::ImageInfo;
 pub use self::method_family::{
     retain_semantics, Alloc, CopyOrMutCopy, Init, New, Other, RetainSemantics,
 };
+pub use self::module_info::ModuleInfo;
 pub use self::msg_send::MsgSend;
 pub use self::msg_send_id::{MaybeUnwrap, MsgSendId, MsgSendSuperId};
 
@@ -40,36 +44,6 @@ pub use self::msg_send_id::{MaybeUnwrap, MsgSendId, MsgSendSuperId};
 #[inline]
 pub fn disallow_in_static<T>(item: &'static T) -> &'static T {
     item
-}
-
-/// Helper struct for emitting the module info that macOS 32-bit requires.
-///
-/// <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCMac.cpp#L5211-L5234>
-#[repr(C)]
-#[derive(Debug)]
-pub struct ModuleInfo {
-    version: usize,
-    size: usize,
-    name: *const u8,
-    symtab: *const (),
-}
-
-// SAFETY: ModuleInfo is immutable.
-unsafe impl Sync for ModuleInfo {}
-
-impl ModuleInfo {
-    /// This is hardcoded in clang as 7.
-    const VERSION: usize = 7;
-
-    pub const fn new(name: *const u8) -> Self {
-        Self {
-            version: Self::VERSION,
-            size: core::mem::size_of::<Self>(),
-            name,
-            // We don't expose any symbols
-            symtab: core::ptr::null(),
-        }
-    }
 }
 
 #[cfg(test)]

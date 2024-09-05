@@ -133,7 +133,7 @@
 //!
 //! The bindings can be used on Linux or *BSD utilizing the
 //! [GNUstep Objective-C runtime](https://www.github.com/gnustep/libobjc2),
-//! see the [`objc-sys`][`objc_sys`] crate for how to configure this.
+//! see the [`ffi`] module for how to configure this.
 //!
 //!
 //! ## Other functionality
@@ -153,7 +153,8 @@
 )]
 // Note: `doc_notable_trait` doesn't really make sense for us, it's only shown
 // for functions returning a specific trait.
-#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg, doc_cfg_hide))]
+#![cfg_attr(docsrs, doc(cfg_hide(doc, feature = "unstable-c-unwind")))]
 #![warn(missing_docs)]
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]
@@ -168,9 +169,6 @@ compile_error!("The `std` feature currently must be enabled.");
 
 extern crate alloc;
 extern crate std;
-
-#[doc(no_inline)]
-pub use objc_sys as ffi;
 
 #[doc(no_inline)]
 pub use self::encode::{Encode, Encoding, RefEncode};
@@ -199,6 +197,7 @@ pub mod __framework_prelude;
 pub mod __macro_helpers;
 pub mod encode;
 pub mod exception;
+pub mod ffi;
 mod macros;
 mod main_thread_marker;
 pub mod mutability;
@@ -226,6 +225,32 @@ pub mod declare {
     #[deprecated = "Use `runtime::ProtocolBuilder` instead."]
     pub type ProtocolDecl = runtime::ProtocolBuilder;
 }
+
+#[cfg(not(feature = "std"))]
+compile_error!("The `std` feature currently must be enabled.");
+
+#[cfg(all(
+    not(docsrs),
+    not(any(
+        target_vendor = "apple",
+        feature = "unstable-compiler-rt",
+        feature = "gnustep-1-7",
+        feature = "unstable-objfw",
+    ))
+))]
+compile_error!("A runtime must be selected");
+
+#[cfg(all(feature = "gnustep-1-7", feature = "unstable-objfw"))]
+compile_error!("Only one runtime may be selected");
+
+#[cfg(feature = "unstable-objfw")]
+compile_error!("ObjFW is not yet supported");
+
+// Link to libobjc
+#[cfg_attr(not(feature = "unstable-objfw"), link(name = "objc", kind = "dylib"))]
+// Link to libobjfw-rt
+#[cfg_attr(feature = "unstable-objfw", link(name = "objfw-rt", kind = "dylib"))]
+extern "C" {}
 
 // Link to Foundation to make NSObject work
 #[cfg_attr(target_vendor = "apple", link(name = "Foundation", kind = "framework"))]

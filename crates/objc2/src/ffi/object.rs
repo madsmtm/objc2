@@ -3,95 +3,80 @@ use core::ffi::c_void;
 use std::os::raw::c_char;
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
-use crate::objc_ivar;
-#[cfg(any(doc, target_vendor = "apple"))]
-use crate::BOOL;
-use crate::{objc_class, OpaqueData};
-
-/// An opaque type that represents an object / an instance of a class.
-#[repr(C)]
-pub struct objc_object {
-    // `isa` field is deprecated, so we don't expose it here.
-    //
-    // Also, we need this to be a zero-sized, so that the compiler doesn't
-    // assume anything about the layout.
-    //
-    // Use `object_getClass` instead.
-    _priv: [u8; 0],
-    _p: OpaqueData,
-}
+use crate::runtime::Ivar;
+use crate::runtime::{AnyClass, AnyObject};
 
 extern_c! {
-    pub fn object_getClass(obj: *const objc_object) -> *const objc_class;
-    pub fn object_getClassName(obj: *const objc_object) -> *const c_char;
-    pub fn object_setClass(obj: *mut objc_object, cls: *const objc_class) -> *const objc_class;
+    pub fn object_getClass(obj: *const AnyObject) -> *const AnyClass;
+    pub fn object_getClassName(obj: *const AnyObject) -> *const c_char;
+    pub fn object_setClass(obj: *mut AnyObject, cls: *const AnyClass) -> *const AnyClass;
     #[cfg(any(doc, target_vendor = "apple"))]
-    pub fn object_isClass(obj: *const objc_object) -> BOOL;
+    pub fn object_isClass(obj: *const AnyObject) -> crate::runtime::Bool;
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn object_getIndexedIvars(obj: *const objc_object) -> *const c_void;
+    pub fn object_getIndexedIvars(obj: *const AnyObject) -> *const c_void;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn object_getIvar(obj: *const objc_object, ivar: *const objc_ivar) -> *const objc_object;
+    pub fn object_getIvar(obj: *const AnyObject, ivar: *const Ivar) -> *const AnyObject;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn object_setIvar(obj: *mut objc_object, ivar: *const objc_ivar, value: *mut objc_object);
+    pub fn object_setIvar(obj: *mut AnyObject, ivar: *const Ivar, value: *mut AnyObject);
 
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, target_vendor = "apple"))]
-    pub fn object_copy(obj: *const objc_object, size: usize) -> *mut objc_object;
+    pub fn object_copy(obj: *const AnyObject, size: usize) -> *mut AnyObject;
 
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
-    pub fn object_dispose(obj: *mut objc_object) -> *mut objc_object;
+    pub fn object_dispose(obj: *mut AnyObject) -> *mut AnyObject;
 
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn object_setInstanceVariable(
-        obj: *mut objc_object,
+        obj: *mut AnyObject,
         name: *const c_char,
         value: *mut c_void,
-    ) -> *const objc_ivar;
+    ) -> *const Ivar;
 
     // Available in macOS 10.12
     // #[deprecated = "Not needed since ARC"]
     // #[cfg(any(doc, target_vendor = "apple"))]
     // pub fn object_setInstanceVariableWithStrongDefault(
-    //     obj: *mut objc_object,
+    //     obj: *mut AnyObject,
     //     name: *const c_char,
     //     value: *mut c_void,
-    // ) -> *const objc_ivar;
+    // ) -> *const Ivar;
 
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn object_getInstanceVariable(
-        obj: *const objc_object,
+        obj: *const AnyObject,
         name: *const c_char,
         out_value: *mut *const c_void,
-    ) -> *const objc_ivar;
+    ) -> *const Ivar;
 
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, target_vendor = "apple"))]
-    pub fn objc_getFutureClass(name: *const c_char) -> *const objc_class;
+    pub fn objc_getFutureClass(name: *const c_char) -> *const AnyClass;
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, target_vendor = "apple"))]
-    pub fn objc_constructInstance(cls: *const objc_class, bytes: *mut c_void) -> *mut objc_object;
+    pub fn objc_constructInstance(cls: *const AnyClass, bytes: *mut c_void) -> *mut AnyObject;
     #[deprecated = "Not needed since ARC"]
     #[cfg(any(doc, target_vendor = "apple"))]
-    pub fn objc_destructInstance(obj: *mut objc_object) -> *mut c_void;
+    pub fn objc_destructInstance(obj: *mut AnyObject) -> *mut c_void;
 
     // TODO: Unsure if we should expose these; are they useful, and stable?
     // Defined in objc-abi.h
     // pub fn objc_getProperty(
-    //     obj: *const objc_object,
-    //     sel: *const objc_selector,
+    //     obj: *const AnyObject,
+    //     sel: Sel,
     //     offset: isize,
-    //     atomic: BOOL,
+    //     atomic: Bool,
     // ) -> *mut c_void;
     // pub fn objc_setProperty(
-    //     obj: *const objc_object,
-    //     sel: *const objc_selector,
+    //     obj: *const AnyObject,
+    //     sel: Sel,
     //     offset: isize,
     //     newValue: *const c_void,
-    //     atomic: BOOL,
+    //     atomic: Bool,
     //     shouldCopy: i8,
     // );
     // + the atomic versions
@@ -101,8 +86,8 @@ extern_c! {
     //     dest: *mut c_void,
     //     src: *const c_void,
     //     size: isize,
-    //     atomic: BOOL,
-    //     hasStrong: BOOL,
+    //     atomic: Bool,
+    //     hasStrong: Bool,
     // );
 
     // #[deprecated = "use object_copy instead"]

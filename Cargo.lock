@@ -367,13 +367,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "objc-sys"
-version = "0.3.5"
-dependencies = [
- "objc2-exception-helper",
-]
-
-[[package]]
 name = "objc2"
 version = "0.5.2"
 dependencies = [
@@ -382,7 +375,6 @@ dependencies = [
  "iai",
  "malloc_buf",
  "memoffset",
- "objc-sys",
  "objc2-encode",
  "objc2-exception-helper",
  "objc2-foundation",
@@ -1494,7 +1486,6 @@ version = "0.1.0"
 dependencies = [
  "block2",
  "cc",
- "objc-sys",
  "objc2",
  "objc2-foundation",
  "paste",

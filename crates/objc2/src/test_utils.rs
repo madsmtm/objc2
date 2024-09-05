@@ -87,7 +87,7 @@ pub(crate) fn custom_class() -> &'static AnyClass {
         unsafe extern "C" fn custom_obj_release(this: *mut AnyObject, _cmd: Sel) {
             unsafe {
                 #[allow(deprecated)]
-                ffi::object_dispose(this.cast());
+                ffi::object_dispose(this);
             }
         }
 
@@ -243,7 +243,7 @@ pub(crate) fn custom_subprotocol() -> &'static AnyProtocol {
 
 pub(crate) fn custom_object() -> Retained<CustomObject> {
     let ptr: *const AnyClass = custom_class();
-    unsafe { Retained::from_raw(ffi::class_createInstance(ptr.cast(), 0).cast()) }.unwrap()
+    unsafe { Retained::from_raw(ffi::class_createInstance(ptr, 0).cast()) }.unwrap()
 }
 
 pub(crate) fn custom_subclass() -> &'static AnyClass {
@@ -277,5 +277,5 @@ pub(crate) fn custom_subclass() -> &'static AnyClass {
 
 pub(crate) fn custom_subclass_object() -> Retained<CustomObject> {
     let ptr: *const AnyClass = custom_subclass();
-    unsafe { Retained::from_raw(ffi::class_createInstance(ptr.cast(), 0).cast()) }.unwrap()
+    unsafe { Retained::from_raw(ffi::class_createInstance(ptr, 0).cast()) }.unwrap()
 }

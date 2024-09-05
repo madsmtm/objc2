@@ -56,7 +56,7 @@
 //!
 //! [asm-reg-cls]: https://doc.rust-lang.org/nightly/reference/inline-assembly.html#register-operands
 //! [objc4-source]: https://github.com/apple-oss-distributions/objc4/blob/objc4-866.9/runtime/objc-abi.h#L442-L498
-use crate::ffi;
+use crate::runtime::AnyObject;
 
 /// A potentially faster version of `ffi::objc_retain`.
 ///
@@ -65,7 +65,7 @@ use crate::ffi;
 ///
 /// Same as `ffi::objc_retain`.
 #[inline]
-pub(crate) unsafe fn objc_retain_fast(obj: *mut ffi::objc_object) -> *mut ffi::objc_object {
+pub(crate) unsafe fn objc_retain_fast(obj: *mut AnyObject) -> *mut AnyObject {
     #[cfg(all(feature = "unstable-apple-new", target_arch = "aarch64"))]
     // SAFETY: See the file header.
     //
@@ -89,7 +89,7 @@ pub(crate) unsafe fn objc_retain_fast(obj: *mut ffi::objc_object) -> *mut ffi::o
     #[cfg(not(all(feature = "unstable-apple-new", target_arch = "aarch64")))]
     // SAFETY: Upheld by caller.
     unsafe {
-        ffi::objc_retain(obj)
+        crate::ffi::objc_retain(obj)
     }
 }
 
@@ -100,7 +100,7 @@ pub(crate) unsafe fn objc_retain_fast(obj: *mut ffi::objc_object) -> *mut ffi::o
 ///
 /// Same as `ffi::objc_release`.
 #[inline]
-pub(crate) unsafe fn objc_release_fast(obj: *mut ffi::objc_object) {
+pub(crate) unsafe fn objc_release_fast(obj: *mut AnyObject) {
     #[cfg(all(feature = "unstable-apple-new", target_arch = "aarch64"))]
     // SAFETY: See the file header.
     //
@@ -119,7 +119,7 @@ pub(crate) unsafe fn objc_release_fast(obj: *mut ffi::objc_object) {
     #[cfg(not(all(feature = "unstable-apple-new", target_arch = "aarch64")))]
     // SAFETY: Upheld by caller.
     unsafe {
-        ffi::objc_release(obj)
+        crate::ffi::objc_release(obj)
     }
 }
 

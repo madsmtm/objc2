@@ -2,19 +2,12 @@
 //! Apple: `objc-exception.h`
 //! GNUStep: `eh_personality.c`, which is a bit brittle to rely on, but I
 //!   think it's fine...
+#![allow(non_camel_case_types)]
 
 // A few things here are defined differently depending on the __OBJC2__
 // variable, which is set for all platforms except 32-bit macOS.
 
-#[cfg(any(
-    doc,
-    all(
-        target_vendor = "apple",
-        not(all(target_os = "macos", target_arch = "x86"))
-    )
-))]
-use crate::objc_class;
-use crate::objc_object;
+use crate::runtime::AnyObject;
 
 /// Remember that this is non-null!
 #[cfg(any(
@@ -24,9 +17,9 @@ use crate::objc_object;
         not(all(target_os = "macos", target_arch = "x86"))
     )
 ))]
-pub type objc_exception_matcher = unsafe extern "C" fn(
-    catch_type: *mut objc_class,
-    exception: *mut objc_object,
+type objc_exception_matcher = unsafe extern "C" fn(
+    catch_type: *mut crate::runtime::AnyClass,
+    exception: *mut AnyObject,
 ) -> std::os::raw::c_int;
 
 /// Remember that this is non-null!
@@ -37,8 +30,8 @@ pub type objc_exception_matcher = unsafe extern "C" fn(
         not(all(target_os = "macos", target_arch = "x86"))
     )
 ))]
-pub type objc_exception_preprocessor =
-    unsafe extern "C" fn(exception: *mut objc_object) -> *mut objc_object;
+type objc_exception_preprocessor =
+    unsafe extern "C" fn(exception: *mut AnyObject) -> *mut AnyObject;
 
 /// Remember that this is non-null!
 #[cfg(any(
@@ -48,31 +41,25 @@ pub type objc_exception_preprocessor =
         not(all(target_os = "macos", target_arch = "x86"))
     )
 ))]
-pub type objc_uncaught_exception_handler = unsafe extern "C" fn(exception: *mut objc_object);
+type objc_uncaught_exception_handler = unsafe extern "C" fn(exception: *mut AnyObject);
 
 #[cfg(feature = "unstable-objfw")]
-pub type objc_uncaught_exception_handler =
-    Option<unsafe extern "C" fn(exception: *mut objc_object)>;
+type objc_uncaught_exception_handler = Option<unsafe extern "C" fn(exception: *mut AnyObject)>;
 
 /// Remember that this is non-null!
 #[cfg(any(
     doc,
     all(target_vendor = "apple", target_os = "macos", not(target_arch = "x86"))
 ))]
-pub type objc_exception_handler =
-    unsafe extern "C" fn(unused: *mut objc_object, context: *mut core::ffi::c_void);
-
-#[cfg(all(feature = "unstable-exception", not(feature = "unstable-c-unwind")))]
-type TryCatchClosure = extern "C" fn(*mut core::ffi::c_void);
-#[cfg(all(feature = "unstable-exception", feature = "unstable-c-unwind"))]
-type TryCatchClosure = extern "C-unwind" fn(*mut core::ffi::c_void);
+type objc_exception_handler =
+    unsafe extern "C" fn(unused: *mut AnyObject, context: *mut core::ffi::c_void);
 
 extern_c_unwind! {
     /// See [`objc-exception.h`].
     ///
     /// [`objc-exception.h`]: https://github.com/apple-oss-distributions/objc4/blob/objc4-818.2/runtime/objc-exception.h
     #[cold]
-    pub fn objc_exception_throw(exception: *mut objc_object) -> !;
+    pub fn objc_exception_throw(exception: *mut AnyObject) -> !;
 
     #[cfg(all(target_vendor = "apple", not(feature = "gnustep-1-7"), not(all(target_os = "macos", target_arch = "x86"))))]
     #[cold]
@@ -85,7 +72,7 @@ extern_c_unwind! {
 
 extern_c! {
     #[cfg(any(doc, feature = "gnustep-1-7", all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
-    pub fn objc_begin_catch(exc_buf: *mut core::ffi::c_void) -> *mut objc_object;
+    pub fn objc_begin_catch(exc_buf: *mut core::ffi::c_void) -> *mut AnyObject;
     #[cfg(any(doc, feature = "gnustep-1-7", all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
     pub fn objc_end_catch();
 
@@ -125,14 +112,4 @@ extern_c! {
     #[cold]
     #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
     pub fn objc_terminate() -> !;
-}
-
-#[cfg(feature = "unstable-exception")]
-#[deprecated = "re-exported from `objc2-exception-helper`"]
-pub unsafe extern "C" fn try_catch(
-    f: TryCatchClosure,
-    context: *mut core::ffi::c_void,
-    error: *mut *mut objc_object,
-) -> std::os::raw::c_uchar {
-    unsafe { objc2_exception_helper::try_catch(std::mem::transmute(f), context, error.cast()) }
 }

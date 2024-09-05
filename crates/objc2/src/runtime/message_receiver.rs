@@ -177,14 +177,13 @@ mod msg_send_primitive {
     #[track_caller]
     pub(crate) unsafe fn send_super<A: EncodeArguments, R: EncodeReturn>(
         receiver: *mut AnyObject,
-        superclass: &AnyClass,
+        super_class: &AnyClass,
         sel: Sel,
         args: A,
     ) -> R {
-        let superclass: *const AnyClass = superclass;
         let mut sup = ffi::objc_super {
-            receiver: receiver.cast(),
-            super_class: superclass.cast(),
+            receiver,
+            super_class,
         };
         let receiver: *mut ffi::objc_super = &mut sup;
         let receiver = receiver.cast();
@@ -240,7 +239,7 @@ mod msg_send_primitive {
             return unsafe { mem::zeroed() };
         }
 
-        let msg_send_fn = unsafe { ffi::objc_msg_lookup(receiver.cast(), sel.as_ptr()) };
+        let msg_send_fn = unsafe { ffi::objc_msg_lookup(receiver, sel) };
         let msg_send_fn = unwrap_msg_send_fn(msg_send_fn);
         unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
     }
@@ -248,7 +247,7 @@ mod msg_send_primitive {
     #[track_caller]
     pub(crate) unsafe fn send_super<A: EncodeArguments, R: EncodeReturn>(
         receiver: *mut AnyObject,
-        superclass: &AnyClass,
+        super_class: &AnyClass,
         sel: Sel,
         args: A,
     ) -> R {
@@ -257,12 +256,11 @@ mod msg_send_primitive {
             return unsafe { mem::zeroed() };
         }
 
-        let superclass: *const AnyClass = superclass;
         let sup = ffi::objc_super {
-            receiver: receiver.cast(),
-            super_class: superclass.cast(),
+            receiver,
+            super_class,
         };
-        let msg_send_fn = unsafe { ffi::objc_msg_lookup_super(&sup, sel.as_ptr()) };
+        let msg_send_fn = unsafe { ffi::objc_msg_lookup_super(&sup, sel) };
         let msg_send_fn = unwrap_msg_send_fn(msg_send_fn);
         unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
     }

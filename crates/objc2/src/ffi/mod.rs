@@ -3,10 +3,11 @@
 //! These bindings contain almost no documentation, so it is highly
 //! recommended to read Apple's [documentation about the Objective-C
 //! runtime][runtime-guide], Apple's [runtime reference][apple], or to use
-//! `objc2::runtime` which provides a higher-level API.
+//! the [`runtime`] module which provides a higher-level API.
 //!
 //! [runtime-guide]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html
 //! [apple]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
+//! [`runtime`]: crate::runtime
 //!
 //!
 //! ## Runtime Support
@@ -94,19 +95,6 @@
 //! [gnustep-faq]: http://wiki.gnustep.org/index.php/Objective-C_Compiler_and_Runtime_FAQ
 //!
 //!
-//! ## Advanced linking configuration
-//!
-//! This crate defines the `links` key in `Cargo.toml` so it's possible to
-//! change the linking to `libobjc`, see [the relevant cargo
-//! docs][overriding].
-//!
-//! In the future, this crate may vendor the required source code to
-//! automatically build and link to the runtimes. Choosing static vs. dynamic
-//! linking here may also become an option.
-//!
-//! [overriding]: https://doc.rust-lang.org/cargo/reference/build-scripts.html#overriding-build-scripts
-//!
-//!
 //! ## Objective-C Compiler configuration
 //!
 //! Objective-C compilers like `clang` and `gcc` requires configuring the
@@ -116,10 +104,9 @@
 //! - `gcc` uses the [`-fgnu-runtime` or `-fnext-runtime`][gcc-flags] options.
 //!   Note that Modern Objective-C features are ill supported.
 //!
-//! This is relevant if you're building and linking to custom Objective-C
-//! sources in a build script. To assist in compiling Objective-C sources,
-//! this crate's  build script expose the `DEP_OBJC_0_3_CC_ARGS` environment
-//! variable to downstream build scripts.
+//! Furthermore, there are various flags that are expected in modern
+//! Objective-C, that are off by default. In particular you might want to
+//! enable the `-fobjc-exceptions` and `-fobjc-arc` flags.
 //!
 //! Example usage in your `build.rs` (using the `cc` crate) would be as
 //! follows:
@@ -130,9 +117,9 @@
 //!     builder.compiler("clang");
 //!     builder.file("my_objective_c_script.m");
 //!
-//!     for flag in std::env::var("DEP_OBJC_0_3_CC_ARGS").unwrap().split(' ') {
-//!         builder.flag(flag);
-//!     }
+//!     builder.flag("-fobjc-exceptions");
+//!     builder.flag("-fobjc-arc");
+//!     builder.flag("-fobjc-runtime=..."); // If not compiling for Apple
 //!
 //!     builder.compile("libmy_objective_c_script.a");
 //! }
@@ -145,7 +132,7 @@
 //!
 //! ## Design choices
 //!
-//! It is recognized that the most primary consumer of this library will be
+//! It is recognized that the most primary consumer of this module will be
 //! macOS and secondly iOS applications. Therefore it was chosen not to use
 //! `bindgen`[^1] in our build script to not add compilation cost to those
 //! targets.
@@ -161,31 +148,12 @@
 //! [^1]: That said, most of this is created with the help of `bindgen`'s
 //! commandline interface, so huge thanks to them!
 
-#![no_std]
-#![warn(clippy::missing_errors_doc)]
-#![warn(clippy::missing_panics_doc)]
 #![allow(clippy::upper_case_acronyms)]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
 #![allow(missing_debug_implementations)]
-#![doc(html_root_url = "https://docs.rs/objc-sys/0.3.5")]
-#![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide))]
-#![cfg_attr(docsrs, doc(cfg_hide(doc, feature = "unstable-c-unwind")))]
-
-// TODO: Remove this and add "no-std" category to Cargo.toml
-// Requires a better solution for C-types in `no_std` crates.
-// See https://github.com/japaric/cty/issues/14.
-extern crate std;
-
-#[cfg(not(feature = "std"))]
-compile_error!("The `std` feature currently must be enabled.");
-
-// Link to libobjc
-#[cfg_attr(not(feature = "unstable-objfw"), link(name = "objc", kind = "dylib"))]
-// Link to libobjfw-rt
-#[cfg_attr(feature = "unstable-objfw", link(name = "objfw-rt", kind = "dylib"))]
-extern "C" {}
+#![allow(missing_docs)]
 
 use core::cell::UnsafeCell;
 use core::marker::{PhantomData, PhantomPinned};
@@ -217,7 +185,7 @@ macro_rules! generate_linking_tests {
                 fn $name() {
                     // Get function pointer to make the linker require the
                     // symbol to be available.
-                    let f: unsafe extern $abi fn($($(#[$a_m])* $t),*) $(-> $r)? = crate::$name;
+                    let f: unsafe extern $abi fn($($(#[$a_m])* $t),*) $(-> $r)? = crate::ffi::$name;
                     // Execute side-effect to ensure it is not optimized away.
                     std::println!("{:p}", f);
                 }
@@ -280,7 +248,6 @@ macro_rules! extern_c_unwind {
 mod class;
 mod constants;
 mod exception;
-mod image_info;
 mod libc;
 mod message;
 mod method;
@@ -295,7 +262,6 @@ mod various;
 pub use self::class::*;
 pub use self::constants::*;
 pub use self::exception::*;
-pub use self::image_info::*;
 pub use self::libc::*;
 pub use self::message::*;
 pub use self::method::*;
@@ -307,6 +273,34 @@ pub use self::selector::*;
 pub use self::types::*;
 pub use self::various::*;
 
+#[deprecated = "merged with `runtime::AnyClass`"]
+pub type objc_class = crate::runtime::AnyClass;
+
+#[deprecated = "merged with `runtime::AnyObject`"]
+pub type objc_object = crate::runtime::AnyObject;
+
+#[deprecated = "merged with `runtime::Imp`, and made non-null"]
+pub type IMP = Option<crate::runtime::Imp>;
+
+#[deprecated = "merged with `runtime::Imp`"]
+pub type objc_method = crate::runtime::Method;
+
+#[deprecated = "merged with `runtime::Ivar`"]
+pub type objc_ivar = crate::runtime::Ivar;
+
+/// A mutable pointer to an object / instance.
+#[deprecated = "use `AnyObject` directly"]
+pub type id = *mut crate::runtime::AnyObject;
+
+#[deprecated = "use `runtime::Bool`, or if using `msg_send!`, just bool directly"]
+pub type BOOL = crate::runtime::Bool;
+
+#[deprecated = "use `runtime::Bool::YES`"]
+pub const YES: crate::runtime::Bool = crate::runtime::Bool::YES;
+
+#[deprecated = "use `runtime::Bool::NO`"]
+pub const NO: crate::runtime::Bool = crate::runtime::Bool::NO;
+
 /// We don't know much about the actual structs, so better mark them `!Send`,
 /// `!Sync`, `!UnwindSafe`, `!RefUnwindSafe`, `!Unpin` and as mutable behind
 /// shared references.
@@ -315,7 +309,7 @@ pub use self::various::*;
 /// (It's also less of a breaking change on our part if we re-add these).
 ///
 /// TODO: Replace this with `extern type` to also mark it as `!Sized`.
-type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;
+pub(crate) type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;
 
 #[cfg(test)]
 mod tests {
@@ -326,7 +320,7 @@ mod tests {
     fn smoke() {
         // Verify that this library links and works fine by itself
         let name = CStr::from_bytes_with_nul(b"abc:def:\0").unwrap();
-        let sel = unsafe { sel_registerName(name.as_ptr()) };
+        let sel = unsafe { sel_registerName(name.as_ptr()).unwrap() };
         let rtn = unsafe { CStr::from_ptr(sel_getName(sel)) };
         assert_eq!(name, rtn);
     }
