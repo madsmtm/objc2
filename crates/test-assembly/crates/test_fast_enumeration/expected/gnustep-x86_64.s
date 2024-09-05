@@ -334,7 +334,7 @@ iter_retained:
 	test	rcx, rcx
 	je	.LBB5_11
 	mov	rcx, qword ptr [rcx]
-	cmp	qword ptr [rsp], 0
+	test	byte ptr [rsp], 1
 	je	.LBB5_9
 	cmp	qword ptr [rsp + 8], rcx
 	je	.LBB5_11

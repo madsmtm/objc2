@@ -724,6 +724,7 @@ mod tests {
         assert_traits::<MainThreadOnly>();
 
         #[allow(unused)]
+        #[allow(clippy::needless_maybe_sized)]
         fn test_mutability_implies_sized<M: ?Sized + Mutability>() {
             fn assert_sized<T: Sized>() {}
             assert_sized::<M>();

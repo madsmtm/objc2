@@ -154,7 +154,7 @@ unsafe fn encountered_error<E: Message>(err: *mut E) -> Retained<E> {
         .expect("error parameter should be set if the method returns NO")
 }
 
-impl<T: ?Sized + MessageReceiver> MsgSend for T {
+impl<T: MessageReceiver> MsgSend for T {
     type Inner = T::__Inner;
 
     #[inline]

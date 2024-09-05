@@ -1,17 +1,16 @@
 error[E0382]: use of moved value: `obj`
- --> ui/msg_send_mutable.rs
-  |
-  |     let obj: &mut NSObject = unsafe { msg_send![cls, new] };
-  |         --- move occurs because `obj` has type `&mut NSObject`, which does not implement the `Copy` trait
-  |
-  |     let _: () = unsafe { msg_send![obj, selector] };
-  |                                    --- value moved here
-  |     // Could be solved with a reborrow
-  |     let _: () = unsafe { msg_send![obj, selector] };
-  |                                    ^^^ value used here after move
-  |
-help: consider cloning the value if the performance cost is acceptable
- --> $WORKSPACE/crates/objc2/src/macros/mod.rs
-  |
-  |         result = $crate::__macro_helpers::MsgSend::$fn::<_, _>($($fn_args)+, $crate::sel!($($selector)*), ($($argument,)*)).clone();
-  |                                                                                                                            ++++++++
+  --> ui/msg_send_mutable.rs
+   |
+   |     let obj: &mut NSObject = unsafe { msg_send![cls, new] };
+   |         --- move occurs because `obj` has type `&mut NSObject`, which does not implement the `Copy` trait
+   |
+   |     let _: () = unsafe { msg_send![obj, selector] };
+   |                                    --- value moved here
+   |     // Could be solved with a reborrow
+   |     let _: () = unsafe { msg_send![obj, selector] };
+   |                                    ^^^ value used here after move
+   |
+help: consider creating a fresh reborrow of `obj` here
+   |
+11 |     let _: () = unsafe { msg_send![&mut *obj, selector] };
+   |                                    ++++++

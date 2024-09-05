@@ -785,10 +785,7 @@ mod tests {
     #[should_panic = "tried to initialize ivars after they were already initialized"]
     #[cfg_attr(not(debug_assertions), ignore = "only checked with debug assertions")]
     #[cfg_attr(
-        all(
-            debug_assertions,
-            any(feature = "unstable-c-unwind", target_arch = "x86")
-        ),
+        debug_assertions,
         ignore = "panicking in `init` requires that we emit the function as `C-unwind`"
     )]
     fn test_super_init_not_initialized() {

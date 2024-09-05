@@ -161,6 +161,7 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
         Closure: IntoBlock<'f, A, R> + Clone,
     {
         let header = BlockHeader {
+            #[allow(unused_unsafe)]
             isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
             // TODO: Add signature.
             flags: BlockFlags::BLOCK_HAS_COPY_DISPOSE,
@@ -241,6 +242,7 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
         };
 
         let header = BlockHeader {
+            #[allow(unused_unsafe)]
             isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
             flags,
             reserved: MaybeUninit::new(0),

@@ -481,7 +481,7 @@ impl Method {
             result_type.try_fix_related_result_type();
         }
 
-        let fn_name = selector.trim_end_matches(|c| c == ':').replace(':', "_");
+        let fn_name = selector.trim_end_matches(':').replace(':', "_");
 
         let mainthreadonly = mainthreadonly_override(
             &result_type,

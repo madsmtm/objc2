@@ -180,6 +180,7 @@ impl Parser<'_> {
     /// Strip leading qualifiers, if any.
     pub(crate) fn strip_leading_qualifiers(&mut self) {
         // TODO: Add API for accessing and outputting qualifiers.
+        #[allow(clippy::byte_char_slices)]
         const QUALIFIERS: &[u8] = &[
             b'r', // const
             b'n', // in

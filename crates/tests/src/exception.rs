@@ -59,6 +59,7 @@ fn throw_catch_raise_catch() {
 #[test]
 #[cfg(feature = "catch-all")]
 #[should_panic = "uncaught exception <NSException: 0x"]
+#[cfg_attr(feature = "gnustep-2-1", ignore = "requires C-unwind")]
 fn raise_catch_all1() {
     let name = NSString::from_str("abc");
     let reason = NSString::from_str("def");
@@ -70,6 +71,7 @@ fn raise_catch_all1() {
 #[test]
 #[cfg(feature = "catch-all")]
 #[should_panic = "> 'abc' reason: def"]
+#[cfg_attr(feature = "gnustep-2-1", ignore = "requires C-unwind")]
 fn raise_catch_all2() {
     let name = NSString::from_str("abc");
     let reason = NSString::from_str("def");

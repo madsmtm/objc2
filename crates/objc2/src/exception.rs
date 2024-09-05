@@ -372,6 +372,7 @@ mod tests {
         all(target_vendor = "apple", target_os = "macos", target_arch = "x86"),
         ignore = "`NULL` exceptions are invalid on 32-bit / w. fragile runtime"
     )]
+    #[cfg_attr(feature = "gnustep-2-1", ignore = "requires C-unwind")]
     fn test_catch_null() {
         let s = "Hello".to_string();
         let result = unsafe {
@@ -407,6 +408,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(feature = "gnustep-2-1", ignore = "requires C-unwind")]
     fn test_throw_catch_object() {
         let obj = NSObject::new();
         // TODO: Investigate why this is required on GNUStep!

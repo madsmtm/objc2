@@ -5,6 +5,7 @@ use core::mem;
 use core::ptr::NonNull;
 use objc2::msg_send;
 
+#[cfg(feature = "NSObject")]
 use objc2::mutability::CounterpartOrSelf;
 use objc2::rc::Retained;
 #[cfg(feature = "NSObject")]

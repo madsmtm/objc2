@@ -1,4 +1,8 @@
-#![cfg(all(target_pointer_width = "64", not(feature = "catch-all")))]
+#![cfg(all(
+    target_pointer_width = "64",
+    feature = "unstable-c-unwind",
+    not(feature = "catch-all")
+))]
 #![allow(dead_code)]
 //! Test that our use of #[track_caller] is making the correct line number
 //! show up.

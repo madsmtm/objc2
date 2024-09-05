@@ -384,7 +384,7 @@ iter_retained:
 	test	ecx, ecx
 	je	.LBB5_12
 	mov	ecx, dword ptr [ecx]
-	cmp	dword ptr [esp + 8], 0
+	test	byte ptr [esp + 8], 1
 	je	.LBB5_8
 	cmp	dword ptr [esp + 12], ecx
 	je	.LBB5_12

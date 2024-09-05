@@ -9,7 +9,16 @@ error[E0277]: the trait bound `Retained<MyObject>: ConvertReturn` is not satisfi
   | | );
   | |_^ the trait `Encode` is not implemented for `Retained<MyObject>`, which is required by `Retained<MyObject>: ConvertReturn`
   |
-  = help: the trait `ConvertReturn` is implemented for `bool`
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `Retained<MyObject>` to implement `EncodeReturn`
   = note: required for `Retained<MyObject>` to implement `ConvertReturn`
 note: required by a bound in `MsgSend::send_message`
@@ -89,7 +98,16 @@ error[E0277]: the trait bound `Result<(), Retained<NSObject>>: ConvertReturn` is
   | | );
   | |_^ the trait `Encode` is not implemented for `Result<(), Retained<NSObject>>`, which is required by `Result<(), Retained<NSObject>>: ConvertReturn`
   |
-  = help: the trait `ConvertReturn` is implemented for `bool`
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `Result<(), Retained<NSObject>>` to implement `EncodeReturn`
   = note: required for `Result<(), Retained<NSObject>>` to implement `ConvertReturn`
 note: required by a bound in `MsgSend::send_message`
@@ -135,7 +153,16 @@ error[E0277]: the trait bound `MainThreadMarker: ConvertReturn` is not satisfied
   | | );
   | |_^ the trait `Encode` is not implemented for `MainThreadMarker`, which is required by `MainThreadMarker: ConvertReturn`
   |
-  = help: the trait `ConvertReturn` is implemented for `bool`
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `MainThreadMarker` to implement `EncodeReturn`
   = note: required for `MainThreadMarker` to implement `ConvertReturn`
 note: required by a bound in `MsgSend::send_message`

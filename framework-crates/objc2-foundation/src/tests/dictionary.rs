@@ -155,6 +155,7 @@ fn test_from_base_class(cls: &AnyClass) {
     feature = "gnustep-1-7",
     ignore = "GNUStep stack overflows here for some reason?"
 )]
+#[cfg_attr(not(feature = "gnustep-1-7"), ignore = "Requires C-unwind")]
 fn no_copy() {
     let mut builder = base_class_builder("NoCopy").unwrap();
 
@@ -183,6 +184,7 @@ fn no_copy() {
     feature = "gnustep-1-7",
     ignore = "GNUStep stack overflows here for some reason?"
 )]
+#[cfg_attr(not(feature = "gnustep-1-7"), ignore = "Requires C-unwind")]
 fn no_is_equal_hash() {
     let mut builder = base_class_builder("NoIsEqualHash").unwrap();
 
@@ -210,6 +212,7 @@ fn no_is_equal_hash() {
     feature = "gnustep-1-7",
     ignore = "GNUStep stack overflows here for some reason?"
 )]
+#[cfg_attr(not(feature = "gnustep-1-7"), ignore = "Requires C-unwind")]
 fn root_object() {
     let mut builder = base_class_builder("RootObject").unwrap();
 

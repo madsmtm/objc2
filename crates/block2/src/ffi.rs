@@ -195,6 +195,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(unused_unsafe)]
     fn test_linkable() {
         println!("{:?}", unsafe { ptr::addr_of!(_NSConcreteGlobalBlock) });
         println!("{:?}", unsafe { ptr::addr_of!(_NSConcreteStackBlock) });

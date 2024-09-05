@@ -93,6 +93,17 @@ unsafe impl ClassType for MyTestObject {
     type Mutability = mutability::Mutable;
     const NAME: &'static str = "MyTestObject";
 
+    #[cfg(all(target_vendor = "apple", target_arch = "aarch64"))]
+    fn class() -> &'static AnyClass {
+        extern "C" {
+            #[link_name = "OBJC_CLASS_$_MyTestObject"]
+            static CLASS: AnyClass;
+        }
+
+        unsafe { &CLASS }
+    }
+
+    #[cfg(not(all(target_vendor = "apple", target_arch = "aarch64")))]
     fn class() -> &'static AnyClass {
         class!(MyTestObject)
     }
@@ -217,6 +228,10 @@ macro_rules! assert_not_in {
 }
 
 #[test]
+#[cfg_attr(
+    all(target_vendor = "apple", not(target_arch = "aarch64")),
+    ignore = "has trouble linking"
+)]
 fn test_class() {
     let cls = MyTestObject::class();
     assert_eq!(MyTestObject::add_numbers(-3, 15), 12);
@@ -260,6 +275,10 @@ fn test_class() {
 }
 
 #[test]
+#[cfg_attr(
+    all(target_vendor = "apple", not(target_arch = "aarch64")),
+    ignore = "has trouble linking"
+)]
 fn test_object() {
     autoreleasepool(|pool| {
         let _obj = MyTestObject::new_autoreleased(pool);
@@ -304,6 +323,10 @@ fn test_object() {
 }
 
 #[test]
+#[cfg_attr(
+    all(target_vendor = "apple", not(target_arch = "aarch64")),
+    ignore = "has trouble linking"
+)]
 fn test_protocol() {
     let obj = MyTestObject::new();
     let proto: Retained<ProtocolObject<dyn MyTestProtocol>> = ProtocolObject::from_id(obj);

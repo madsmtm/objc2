@@ -291,8 +291,8 @@ LBB5_5:
 	ldr	x9, [sp, #176]
 	cbz	x9, LBB5_8
 	ldr	x9, [x9]
-	ldr	x10, [sp, #8]
-	cbz	x10, LBB5_10
+	ldr	w10, [sp, #8]
+	tbz	w10, #0, LBB5_9
 	ldr	x10, [sp, #16]
 	cmp	x10, x9
 	b.ne	LBB5_14
@@ -301,8 +301,16 @@ LBB5_8:
 	add	x10, x8, #1
 	str	x10, [sp, #224]
 	ldr	x0, [x9, x8, lsl #3]
-	cbz	x0, LBB5_12
+	cbnz	x0, LBB5_10
+	b	LBB5_12
 LBB5_9:
+	stp	x23, x9, [sp, #8]
+	ldr	x9, [sp, #168]
+	add	x10, x8, #1
+	str	x10, [sp, #224]
+	ldr	x0, [x9, x8, lsl #3]
+	cbz	x0, LBB5_12
+LBB5_10:
 	bl	_objc_retain
 	mov	x21, x0
 	bl	_use_obj
@@ -313,14 +321,6 @@ LBB5_9:
 	cmp	x8, x9
 	b.hs	LBB5_1
 	b	LBB5_5
-LBB5_10:
-	stp	x23, x9, [sp, #8]
-	ldr	x9, [sp, #168]
-	add	x10, x8, #1
-	str	x10, [sp, #224]
-	ldr	x0, [x9, x8, lsl #3]
-	cbnz	x0, LBB5_9
-	b	LBB5_12
 LBB5_11:
 	mov	x21, x0
 	mov	x0, x20

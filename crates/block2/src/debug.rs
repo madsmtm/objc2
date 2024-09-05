@@ -9,6 +9,7 @@ use crate::ffi;
 struct Isa(*const ffi::Class);
 
 impl Isa {
+    #[allow(unused_unsafe)]
     fn is_global(self) -> bool {
         ptr::eq(
             unsafe { ptr::addr_of!(ffi::_NSConcreteGlobalBlock) },
@@ -16,6 +17,7 @@ impl Isa {
         )
     }
 
+    #[allow(unused_unsafe)]
     fn is_stack(self) -> bool {
         ptr::eq(unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) }, self.0)
     }
@@ -115,6 +117,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(unused_unsafe)]
     fn test_isa() {
         let isa = Isa(unsafe { ptr::addr_of!(ffi::_NSConcreteGlobalBlock) });
         assert!(isa.is_global());

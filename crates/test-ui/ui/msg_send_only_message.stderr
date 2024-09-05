@@ -7,8 +7,12 @@ error[E0277]: the trait bound `{integer}: MsgSend` is not satisfied
   |              |         the trait `MessageReceiver` is not implemented for `{integer}`, which is required by `{integer}: MsgSend`
   |              required by a bound introduced by this call
   |
-  = help: the following other types implement trait `MsgSend`:
-            &'a Retained<T>
-            &'a mut Retained<T>
-            ManuallyDrop<Retained<T>>
+  = help: the following other types implement trait `MessageReceiver`:
+            &'a AnyClass
+            &'a T
+            &'a mut T
+            *const AnyClass
+            *const T
+            *mut T
+            NonNull<T>
   = note: required for `{integer}` to implement `MsgSend`

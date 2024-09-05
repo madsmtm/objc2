@@ -4,9 +4,9 @@ error[E0277]: the trait bound `CustomStruct: mutability::private_traits::Sealed`
   | unsafe impl mutability::IsIdCloneable for CustomStruct {}
   |                                           ^^^^^^^^^^^^ the trait `ClassType` is not implemented for `CustomStruct`, which is required by `CustomStruct: mutability::private_traits::Sealed`
   |
-  = help: the following other types implement trait `mutability::private_traits::Sealed`:
-            AnyObject
-            ProtocolObject<P>
+  = help: the following other types implement trait `ClassType`:
+            NSObject
+            __NSProxy
   = note: required for `CustomStruct` to implement `mutability::private_traits::Sealed`
 note: required by a bound in `IsIdCloneable`
  --> $WORKSPACE/crates/objc2/src/mutability.rs
@@ -15,8 +15,8 @@ note: required by a bound in `IsIdCloneable`
   |                                 ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `IsIdCloneable`
   = note: `IsIdCloneable` is a "sealed trait", because to implement it you also need to implement `objc2::mutability::private_traits::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
   = help: the following types implement the trait:
-            objc2::runtime::AnyObject
             objc2::runtime::ProtocolObject<P>
+            objc2::runtime::AnyObject
             T
 
 error[E0277]: the trait bound `CustomStruct: IsAllowedMutable` is not satisfied
@@ -25,9 +25,9 @@ error[E0277]: the trait bound `CustomStruct: IsAllowedMutable` is not satisfied
   | unsafe impl mutability::IsMutable for CustomStruct {}
   |                                       ^^^^^^^^^^^^ the trait `ClassType` is not implemented for `CustomStruct`, which is required by `CustomStruct: IsAllowedMutable`
   |
-  = help: the following other types implement trait `IsAllowedMutable`:
-            AnyObject
-            ProtocolObject<P>
+  = help: the following other types implement trait `ClassType`:
+            NSObject
+            __NSProxy
   = note: required for `CustomStruct` to implement `IsAllowedMutable`
 note: required by a bound in `IsMutable`
  --> $WORKSPACE/crates/objc2/src/mutability.rs

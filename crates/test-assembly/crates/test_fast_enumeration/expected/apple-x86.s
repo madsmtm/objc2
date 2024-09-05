@@ -344,7 +344,7 @@ LBB5_11:
 	test	ecx, ecx
 	je	LBB5_12
 	mov	ecx, dword ptr [ecx]
-	cmp	dword ptr [ebp - 132], 0
+	test	byte ptr [ebp - 132], 1
 	je	LBB5_8
 	cmp	dword ptr [ebp - 128], ecx
 	je	LBB5_12

@@ -423,10 +423,7 @@ extern_methods!(
 
 #[test]
 #[should_panic = "`&mut Retained<_>` is not supported in `declare_class!` yet"]
-#[cfg_attr(
-    not(all(target_pointer_width = "64", not(feature = "catch-all"))),
-    ignore = "unwinds through FFI boundary"
-)]
+#[ignore = "unwinds through FFI boundary, requires C-unwind"]
 fn out_param1() {
     let mut param = OutParam::new();
     OutParam::unsupported1(&mut param);
@@ -434,20 +431,14 @@ fn out_param1() {
 
 #[test]
 #[should_panic = "`Option<&mut Retained<_>>` is not supported in `declare_class!` yet"]
-#[cfg_attr(
-    not(all(target_pointer_width = "64", not(feature = "catch-all"))),
-    ignore = "unwinds through FFI boundary"
-)]
+#[ignore = "unwinds through FFI boundary, requires C-unwind"]
 fn out_param2() {
     OutParam::unsupported2(None);
 }
 
 #[test]
 #[should_panic = "`&mut Option<Retained<_>>` is not supported in `declare_class!` yet"]
-#[cfg_attr(
-    not(all(target_pointer_width = "64", not(feature = "catch-all"))),
-    ignore = "unwinds through FFI boundary"
-)]
+#[ignore = "unwinds through FFI boundary, requires C-unwind"]
 fn out_param3() {
     let mut param = Some(OutParam::new());
     OutParam::unsupported3(&mut param);
@@ -455,10 +446,7 @@ fn out_param3() {
 
 #[test]
 #[should_panic = "`Option<&mut Option<Retained<_>>>` is not supported in `declare_class!` yet"]
-#[cfg_attr(
-    not(all(target_pointer_width = "64", not(feature = "catch-all"))),
-    ignore = "unwinds through FFI boundary"
-)]
+#[ignore = "unwinds through FFI boundary, requires C-unwind"]
 fn out_param4() {
     OutParam::unsupported4(None);
 }

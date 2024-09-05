@@ -10,7 +10,16 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
   | | );
   | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`, which is required by `Retained<CustomObject>: __macro_helpers::convert::return_private::Sealed`
   |
-  = help: the trait `EncodeReturn` is implemented for `()`
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `Retained<CustomObject>` to implement `EncodeReturn`
   = note: required for `Retained<CustomObject>` to implement `__macro_helpers::convert::return_private::Sealed`
 note: required by a bound in `ConvertReturn`
@@ -36,7 +45,16 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
   | | );
   | |_^ the trait `Encode` is not implemented for `Vec<()>`, which is required by `Vec<()>: __macro_helpers::convert::return_private::Sealed`
   |
-  = help: the trait `EncodeReturn` is implemented for `()`
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `Vec<()>` to implement `EncodeReturn`
   = note: required for `Vec<()>` to implement `__macro_helpers::convert::return_private::Sealed`
 note: required by a bound in `ConvertReturn`
@@ -62,12 +80,16 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
   | | );
   | |_^ the trait `Encode` is not implemented for `Box<u32>`, which is required by `Box<u32>: __macro_helpers::convert::argument_private::Sealed`
   |
-  = help: the following other types implement trait `__macro_helpers::convert::argument_private::Sealed`:
-            &mut Option<Retained<T>>
-            &mut Retained<T>
-            Option<&mut Option<Retained<T>>>
-            Option<&mut Retained<T>>
-            bool
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `Box<u32>` to implement `EncodeArgument`
   = note: required for `Box<u32>` to implement `__macro_helpers::convert::argument_private::Sealed`
 note: required by a bound in `ConvertArgument`
@@ -77,11 +99,11 @@ note: required by a bound in `ConvertArgument`
   |                            ^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertArgument`
   = note: `ConvertArgument` is a "sealed trait", because to implement it you also need to implement `objc2::__macro_helpers::convert::argument_private::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
   = help: the following types implement the trait:
-            std::option::Option<&mut std::option::Option<objc2::rc::Retained<T>>>
-            std::option::Option<&mut objc2::rc::Retained<T>>
-            bool
-            &mut std::option::Option<objc2::rc::Retained<T>>
             &mut objc2::rc::Retained<T>
+            &mut std::option::Option<objc2::rc::Retained<T>>
+            std::option::Option<&mut objc2::rc::Retained<T>>
+            std::option::Option<&mut std::option::Option<objc2::rc::Retained<T>>>
+            bool
             T
   = note: this error originates in the macro `$crate::__declare_class_rewrite_params` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -97,12 +119,16 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
   | | );
   | |_^ the trait `Encode` is not implemented for `CustomObject`, which is required by `CustomObject: __macro_helpers::convert::argument_private::Sealed`
   |
-  = help: the following other types implement trait `__macro_helpers::convert::argument_private::Sealed`:
-            &mut Option<Retained<T>>
-            &mut Retained<T>
-            Option<&mut Option<Retained<T>>>
-            Option<&mut Retained<T>>
-            bool
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `CustomObject` to implement `EncodeArgument`
   = note: required for `CustomObject` to implement `__macro_helpers::convert::argument_private::Sealed`
 note: required by a bound in `ConvertArgument`
@@ -112,11 +138,11 @@ note: required by a bound in `ConvertArgument`
   |                            ^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertArgument`
   = note: `ConvertArgument` is a "sealed trait", because to implement it you also need to implement `objc2::__macro_helpers::convert::argument_private::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
   = help: the following types implement the trait:
-            std::option::Option<&mut std::option::Option<objc2::rc::Retained<T>>>
-            std::option::Option<&mut objc2::rc::Retained<T>>
-            bool
-            &mut std::option::Option<objc2::rc::Retained<T>>
             &mut objc2::rc::Retained<T>
+            &mut std::option::Option<objc2::rc::Retained<T>>
+            std::option::Option<&mut objc2::rc::Retained<T>>
+            std::option::Option<&mut std::option::Option<objc2::rc::Retained<T>>>
+            bool
             T
   = note: this error originates in the macro `$crate::__declare_class_rewrite_params` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -132,7 +158,16 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
   | | );
   | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`, which is required by `Retained<CustomObject>: ConvertReturn`
   |
-  = help: the trait `EncodeReturn` is implemented for `()`
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `Retained<CustomObject>` to implement `EncodeReturn`
   = note: required for `Retained<CustomObject>` to implement `ConvertReturn`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -186,7 +221,16 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
   | | );
   | |_^ the trait `Encode` is not implemented for `Vec<()>`, which is required by `Vec<()>: ConvertReturn`
   |
-  = help: the trait `EncodeReturn` is implemented for `()`
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `Vec<()>` to implement `EncodeReturn`
   = note: required for `Vec<()>` to implement `ConvertReturn`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -240,12 +284,16 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
   | | );
   | |_^ the trait `Encode` is not implemented for `Box<u32>`, which is required by `Box<u32>: ConvertArgument`
   |
-  = help: the following other types implement trait `ConvertArgument`:
-            &mut Option<Retained<T>>
-            &mut Retained<T>
-            Option<&mut Option<Retained<T>>>
-            Option<&mut Retained<T>>
-            bool
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `Box<u32>` to implement `EncodeArgument`
   = note: required for `Box<u32>` to implement `ConvertArgument`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -299,12 +347,16 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
   | | );
   | |_^ the trait `Encode` is not implemented for `CustomObject`, which is required by `CustomObject: ConvertArgument`
   |
-  = help: the following other types implement trait `ConvertArgument`:
-            &mut Option<Retained<T>>
-            &mut Retained<T>
-            Option<&mut Option<Retained<T>>>
-            Option<&mut Retained<T>>
-            bool
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `CustomObject` to implement `EncodeArgument`
   = note: required for `CustomObject` to implement `ConvertArgument`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -358,7 +410,16 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
   | | );
   | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`, which is required by `Retained<CustomObject>: ConvertReturn`
   |
-  = help: the trait `EncodeReturn` is implemented for `()`
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `Retained<CustomObject>` to implement `EncodeReturn`
   = note: required for `Retained<CustomObject>` to implement `ConvertReturn`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -375,7 +436,16 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
   | | );
   | |_^ the trait `Encode` is not implemented for `Vec<()>`, which is required by `Vec<()>: ConvertReturn`
   |
-  = help: the trait `EncodeReturn` is implemented for `()`
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `Vec<()>` to implement `EncodeReturn`
   = note: required for `Vec<()>` to implement `ConvertReturn`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -392,12 +462,16 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
   | | );
   | |_^ the trait `Encode` is not implemented for `Box<u32>`, which is required by `Box<u32>: ConvertArgument`
   |
-  = help: the following other types implement trait `ConvertArgument`:
-            &mut Option<Retained<T>>
-            &mut Retained<T>
-            Option<&mut Option<Retained<T>>>
-            Option<&mut Retained<T>>
-            bool
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `Box<u32>` to implement `EncodeArgument`
   = note: required for `Box<u32>` to implement `ConvertArgument`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -414,12 +488,16 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
   | | );
   | |_^ the trait `Encode` is not implemented for `CustomObject`, which is required by `CustomObject: ConvertArgument`
   |
-  = help: the following other types implement trait `ConvertArgument`:
-            &mut Option<Retained<T>>
-            &mut Retained<T>
-            Option<&mut Option<Retained<T>>>
-            Option<&mut Retained<T>>
-            bool
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
   = note: required for `CustomObject` to implement `EncodeArgument`
   = note: required for `CustomObject` to implement `ConvertArgument`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

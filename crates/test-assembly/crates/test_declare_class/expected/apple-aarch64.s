@@ -57,7 +57,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	ldr	x8, [x0]
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
-	cbz	w9, LBB1_7
+	tbz	w9, #0, LBB1_7
 Lloh7:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh8:
@@ -77,9 +77,9 @@ Lloh12:
 Lloh13:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_c1ccd9f2c8e68869@PAGEOFF]
 Lloh14:
-	adrp	x4, l_anon.[ID].18@PAGE
+	adrp	x4, l_anon.[ID].16@PAGE
 Lloh15:
-	add	x4, x4, l_anon.[ID].18@PAGEOFF
+	add	x4, x4, l_anon.[ID].16@PAGEOFF
 Lloh16:
 	adrp	x5, _get_class@PAGE
 Lloh17:
@@ -109,9 +109,9 @@ Lloh24:
 Lloh25:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_5d27bc76c3596041@PAGEOFF]
 Lloh26:
-	adrp	x19, l_anon.[ID].19@PAGE
+	adrp	x19, l_anon.[ID].17@PAGE
 Lloh27:
-	add	x19, x19, l_anon.[ID].19@PAGEOFF
+	add	x19, x19, l_anon.[ID].17@PAGEOFF
 Lloh28:
 	adrp	x5, _method_bool@PAGE
 Lloh29:
@@ -126,9 +126,9 @@ Lloh30:
 Lloh31:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_026f8b3b5bb3f00d@PAGEOFF]
 Lloh32:
-	adrp	x20, l_anon.[ID].20@PAGE
+	adrp	x20, l_anon.[ID].18@PAGE
 Lloh33:
-	add	x20, x20, l_anon.[ID].20@PAGEOFF
+	add	x20, x20, l_anon.[ID].18@PAGEOFF
 Lloh34:
 	adrp	x5, _method_id@PAGE
 Lloh35:
@@ -152,9 +152,9 @@ Lloh39:
 	mov	x4, x20
 	bl	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 Lloh40:
-	adrp	x0, l_anon.[ID].15@PAGE
+	adrp	x0, l_anon.[ID].19@PAGE
 Lloh41:
-	add	x0, x0, l_anon.[ID].15@PAGEOFF
+	add	x0, x0, l_anon.[ID].19@PAGEOFF
 	mov	w1, #8
 	bl	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
 	cbz	x0, LBB1_4
@@ -163,9 +163,9 @@ Lloh41:
 	bl	_class_addProtocol
 LBB1_4:
 Lloh42:
-	adrp	x0, l_anon.[ID].14@PAGE
+	adrp	x0, l_anon.[ID].20@PAGE
 Lloh43:
-	add	x0, x0, l_anon.[ID].14@PAGEOFF
+	add	x0, x0, l_anon.[ID].20@PAGEOFF
 	mov	w1, #9
 	bl	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
 	cbz	x0, LBB1_6
@@ -182,9 +182,9 @@ Lloh46:
 Lloh47:
 	add	x2, x2, l_anon.[ID].23@PAGEOFF
 Lloh48:
-	adrp	x4, l_anon.[ID].20@PAGE
+	adrp	x4, l_anon.[ID].18@PAGE
 Lloh49:
-	add	x4, x4, l_anon.[ID].20@PAGEOFF
+	add	x4, x4, l_anon.[ID].18@PAGEOFF
 Lloh50:
 	adrp	x5, _copyWithZone@PAGE
 Lloh51:
@@ -213,9 +213,9 @@ Lloh54:
 Lloh55:
 	add	x0, x0, l_anon.[ID].13@PAGEOFF
 Lloh56:
-	adrp	x2, l_anon.[ID].17@PAGE
+	adrp	x2, l_anon.[ID].15@PAGE
 Lloh57:
-	add	x2, x2, l_anon.[ID].17@PAGEOFF
+	add	x2, x2, l_anon.[ID].15@PAGEOFF
 	mov	w1, #7
 	bl	SYM(objc2::__macro_helpers::declare_class::failed_declaring_class::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh10, Lloh11
@@ -253,7 +253,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	ldr	x8, [x0]
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
-	cbz	w9, LBB2_5
+	tbz	w9, #0, LBB2_5
 Lloh58:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh59:
@@ -295,9 +295,9 @@ Lloh71:
 Lloh72:
 	ldr	x1, [x8]
 Lloh73:
-	adrp	x4, l_anon.[ID].20@PAGE
+	adrp	x4, l_anon.[ID].18@PAGE
 Lloh74:
-	add	x4, x4, l_anon.[ID].20@PAGEOFF
+	add	x4, x4, l_anon.[ID].18@PAGEOFF
 Lloh75:
 	adrp	x5, _init_drop_ivars@PAGE
 Lloh76:
@@ -421,7 +421,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	ldr	x8, [x0]
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
-	cbz	w9, LBB3_4
+	tbz	w9, #0, LBB3_4
 Lloh96:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh97:
@@ -443,9 +443,9 @@ Lloh102:
 Lloh103:
 	ldr	x1, [x8]
 Lloh104:
-	adrp	x4, l_anon.[ID].20@PAGE
+	adrp	x4, l_anon.[ID].18@PAGE
 Lloh105:
-	add	x4, x4, l_anon.[ID].20@PAGEOFF
+	add	x4, x4, l_anon.[ID].18@PAGEOFF
 Lloh106:
 	adrp	x5, _init_forgetable_ivars@PAGE
 Lloh107:
@@ -732,9 +732,9 @@ Lloh154:
 Lloh155:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
 Lloh156:
-	adrp	x4, l_anon.[ID].17@PAGE
+	adrp	x4, l_anon.[ID].15@PAGE
 Lloh157:
-	add	x4, x4, l_anon.[ID].17@PAGEOFF
+	add	x4, x4, l_anon.[ID].15@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
@@ -784,9 +784,9 @@ Lloh166:
 Lloh167:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
 Lloh168:
-	adrp	x4, l_anon.[ID].17@PAGE
+	adrp	x4, l_anon.[ID].15@PAGE
 Lloh169:
-	add	x4, x4, l_anon.[ID].17@PAGEOFF
+	add	x4, x4, l_anon.[ID].15@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
@@ -858,9 +858,9 @@ Lloh181:
 Lloh182:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
 Lloh183:
-	adrp	x4, l_anon.[ID].17@PAGE
+	adrp	x4, l_anon.[ID].15@PAGE
 Lloh184:
-	add	x4, x4, l_anon.[ID].17@PAGEOFF
+	add	x4, x4, l_anon.[ID].15@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
@@ -935,9 +935,9 @@ Lloh194:
 Lloh195:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
 Lloh196:
-	adrp	x4, l_anon.[ID].17@PAGE
+	adrp	x4, l_anon.[ID].15@PAGE
 Lloh197:
-	add	x4, x4, l_anon.[ID].17@PAGEOFF
+	add	x4, x4, l_anon.[ID].15@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
@@ -1210,48 +1210,48 @@ l_anon.[ID].11:
 	.p2align	3, 0x0
 l_anon.[ID].12:
 	.quad	l_anon.[ID].11
-	.asciz	"p\000\000\000\000\000\000\000\225\000\000\0002\000\000"
+	.asciz	"p\000\000\000\000\000\000\000\236\000\000\0002\000\000"
 
 	.section	__TEXT,__const
 l_anon.[ID].13:
 	.ascii	"NoIvars"
 
-l_anon.[ID].14:
-	.ascii	"NSCopying"
-
-	.section	__TEXT,__literal8,8byte_literals
-l_anon.[ID].15:
-	.ascii	"NSObject"
-
 	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2)
 .zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2),8,3
 	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 1)
 .zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 1),8,3
-	.section	__TEXT,__const
-l_anon.[ID].16:
+l_anon.[ID].14:
 	.ascii	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].17:
-	.quad	l_anon.[ID].16
+l_anon.[ID].15:
+	.quad	l_anon.[ID].14
 	.asciz	"5\000\000\000\000\000\000\000\016\000\000\000\001\000\000"
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].18:
+l_anon.[ID].16:
 	.byte	21
 	.space	39
 
 	.p2align	3, 0x0
-l_anon.[ID].19:
+l_anon.[ID].17:
 	.byte	16
 	.space	39
 
 	.p2align	3, 0x0
-l_anon.[ID].20:
+l_anon.[ID].18:
 	.byte	19
 	.space	39
+
+	.section	__TEXT,__literal8,8byte_literals
+l_anon.[ID].19:
+	.ascii	"NSObject"
+
+	.section	__TEXT,__const
+l_anon.[ID].20:
+	.ascii	"NSCopying"
 
 l_anon.[ID].21:
 	.ascii	"_NSZone"
@@ -1382,7 +1382,7 @@ L_OBJC_IMAGE_INFO_f2913b8ffb9882fe:
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].24:
-	.quad	l_anon.[ID].16
+	.quad	l_anon.[ID].14
 	.asciz	"5\000\000\000\000\000\000\000O\000\000\000\001\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
@@ -1409,7 +1409,7 @@ L_OBJC_IMAGE_INFO_dea6e68a0f2fe4ca:
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].25:
-	.quad	l_anon.[ID].16
+	.quad	l_anon.[ID].14
 	.asciz	"5\000\000\000\000\000\000\000x\000\000\000\001\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals

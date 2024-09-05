@@ -29,8 +29,8 @@ error[E0308]: mismatched types
   |     let _: Result<(), i32> = unsafe { msg_send![obj, c: _] };
   |                                       ^^^^^^^^^^^^^^^^^^^^ expected `Result<(), i32>`, found `Result<(), Retained<_>>`
   |
-  = note: expected enum `Result<_, i32>`
-             found enum `Result<_, Retained<_>>`
+  = note: expected enum `Result<(), i32>`
+             found enum `Result<(), Retained<_>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `i32: Message` is not satisfied

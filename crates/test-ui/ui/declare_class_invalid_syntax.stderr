@@ -103,10 +103,15 @@ error: expected identifier, found keyword `fn`
   |            ^^ expected identifier, found keyword
 
 error: missing parameters for function definition
- --> ui/declare_class_invalid_syntax.rs
-  |
-  |         fn fn test_fn_fn() {}
-  |              ^ help: add a parameter list
+  --> ui/declare_class_invalid_syntax.rs
+   |
+   |         fn fn test_fn_fn() {}
+   |              ^
+   |
+help: add a parameter list
+   |
+72 |         fn fn() test_fn_fn() {}
+   |              ++
 
 error: expected one of `->`, `<`, `where`, or `{`, found `test_fn_fn`
  --> ui/declare_class_invalid_syntax.rs
@@ -524,8 +529,8 @@ error[E0277]: the trait bound `RetainSemantics<2>: MessageRecieveId<&AnyClass, R
   | |_^ the trait `MessageRecieveId<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `RetainSemantics<2>`
   |
   = help: the following other types implement trait `MessageRecieveId<Receiver, Ret>`:
-            <RetainSemantics<1> as MessageRecieveId<Receiver, Ret>>
-            <RetainSemantics<3> as MessageRecieveId<Allocated<T>, Ret>>
-            <RetainSemantics<4> as MessageRecieveId<Receiver, Ret>>
-            <RetainSemantics<5> as MessageRecieveId<Receiver, Ret>>
+            `RetainSemantics<1>` implements `MessageRecieveId<Receiver, Ret>`
+            `RetainSemantics<3>` implements `MessageRecieveId<Allocated<T>, Ret>`
+            `RetainSemantics<4>` implements `MessageRecieveId<Receiver, Ret>`
+            `RetainSemantics<5>` implements `MessageRecieveId<Receiver, Ret>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

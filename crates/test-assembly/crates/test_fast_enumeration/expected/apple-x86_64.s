@@ -353,7 +353,7 @@ LBB5_7:
 	test	rcx, rcx
 	je	LBB5_11
 	mov	rcx, qword ptr [rcx]
-	cmp	qword ptr [rbp - 272], 0
+	test	byte ptr [rbp - 272], 1
 	je	LBB5_9
 	cmp	qword ptr [rbp - 264], rcx
 	je	LBB5_11
