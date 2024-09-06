@@ -1942,11 +1942,8 @@ impl Stmt {
                             // E.g. it does a retain count bump on the items, and
                             // hence does not require the inner type to implement
                             // `NSCopying`.
-                            //
-                            // The types does have to be cloneable, since generic
-                            // types effectively store an `Retained<T>` of the type.
-                            ("Foundation", "NSCopying") => ("?Sized + IsIdCloneable", None),
-                            ("Foundation", "NSMutableCopying") => ("?Sized + IsIdCloneable", None),
+                            ("Foundation", "NSCopying") => ("?Sized", None),
+                            ("Foundation", "NSMutableCopying") => ("?Sized", None),
                             // TODO: Do we need further tweaks to this?
                             ("Foundation", "NSFastEnumeration") => ("?Sized", None),
                             // AppKit/UIKit fixes. TODO: Should we add more bounds here?
@@ -2019,22 +2016,6 @@ impl Stmt {
                             write!(f, "+ ")?;
                         }
                         write!(f, "IsMainThreadOnly")?;
-                    }
-                    // HACK: Make all Metal protocols retainable (i.e. allow
-                    // using `.retain()` on `&ProtocolObject<dyn MTLDevice>`).
-                    //
-                    // This is a problem generally, but especially useful in
-                    // Metal, as most of the functionality is only exposed
-                    // through protocols (instead of concrete classes).
-                    //
-                    // This should become unnecessary after #563.
-                    if id.library_name() == "Metal" {
-                        if protocols.is_empty() {
-                            write!(f, ": ")?;
-                        } else {
-                            write!(f, "+ ")?;
-                        }
-                        write!(f, "IsRetainable")?;
                     }
                     writeln!(f, " {{")?;
 

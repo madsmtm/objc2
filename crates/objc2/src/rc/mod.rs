@@ -1,7 +1,7 @@
 //! # Reference counting utilities.
 //!
-//! The types in this module provide roughly the same benefits as ARC does to
-//! Objective-C.
+//! The types in this module provide roughly the same benefits as ARC
+//! (Automatic Reference Counting) does to Objective-C.
 //!
 //! Most importantly, a smart pointer [`Retained`] is provided to ensure that
 //! objects are correctly retained and released when created and dropped,

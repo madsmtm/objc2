@@ -6,7 +6,6 @@ use core::ptr;
 use std::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::Retained;
-use crate::mutability::{IsIdCloneable, IsRetainable};
 use crate::runtime::AnyObject;
 use crate::{ffi, Message};
 
@@ -56,11 +55,8 @@ impl<T: Message> Weak<T> {
     /// Construct a new weak pointer that references the given object.
     #[doc(alias = "objc_initWeak")]
     #[inline]
-    pub fn new(obj: &T) -> Self
-    where
-        T: IsRetainable,
-    {
-        // SAFETY: `obj` is retainable
+    pub fn new(obj: &T) -> Self {
+        // SAFETY: Pointer is valid since it came from a reference.
         unsafe { Self::new_inner(obj) }
     }
 
@@ -69,10 +65,7 @@ impl<T: Message> Weak<T> {
     /// Soft-deprecated alias of [`Weak::from_retained`].
     #[doc(alias = "objc_initWeak")]
     #[inline]
-    pub fn from_id(obj: &Retained<T>) -> Self
-    where
-        T: IsIdCloneable,
-    {
+    pub fn from_id(obj: &Retained<T>) -> Self {
         Self::from_retained(obj)
     }
 
@@ -81,11 +74,8 @@ impl<T: Message> Weak<T> {
     /// You should prefer [`Weak::new`] whenever the object is retainable.
     #[doc(alias = "objc_initWeak")]
     #[inline]
-    pub fn from_retained(obj: &Retained<T>) -> Self
-    where
-        T: IsIdCloneable,
-    {
-        // SAFETY: `obj` is cloneable, and is known to have come from `Retained`.
+    pub fn from_retained(obj: &Retained<T>) -> Self {
+        // SAFETY: Pointer is valid since it came from `Retained`.
         unsafe { Self::new_inner(Retained::as_ptr(obj)) }
     }
 
@@ -133,7 +123,7 @@ impl<T: ?Sized> Drop for Weak<T> {
 }
 
 // TODO: Add ?Sized
-impl<T: Message + IsRetainable> Clone for Weak<T> {
+impl<T: Message> Clone for Weak<T> {
     /// Make a clone of the weak pointer that points to the same object.
     #[doc(alias = "objc_copyWeak")]
     fn clone(&self) -> Self {
@@ -147,7 +137,7 @@ impl<T: Message + IsRetainable> Clone for Weak<T> {
 }
 
 // TODO: Add ?Sized
-impl<T: Message + IsRetainable> Default for Weak<T> {
+impl<T: Message> Default for Weak<T> {
     /// Constructs a new weak pointer that doesn't reference any object.
     ///
     /// Calling [`Self::load`] on the return value always gives [`None`].
@@ -167,36 +157,36 @@ impl<T: ?Sized> fmt::Debug for Weak<T> {
     }
 }
 
-// Same as `std::sync::Weak<T>`.
-unsafe impl<T: ?Sized + Sync + Send + IsIdCloneable> Sync for Weak<T> {}
+// SAFETY: Same as `std::sync::Weak<T>`.
+unsafe impl<T: ?Sized + Sync + Send> Sync for Weak<T> {}
 
-// Same as `std::sync::Weak<T>`.
-unsafe impl<T: ?Sized + Sync + Send + IsIdCloneable> Send for Weak<T> {}
+// SAFETY: Same as `std::sync::Weak<T>`.
+unsafe impl<T: ?Sized + Sync + Send> Send for Weak<T> {}
 
 // Same as `std::sync::Weak<T>`.
 impl<T: ?Sized> Unpin for Weak<T> {}
 
 // Same as `std::sync::Weak<T>`.
-impl<T: ?Sized + RefUnwindSafe + IsIdCloneable> RefUnwindSafe for Weak<T> {}
+impl<T: ?Sized + RefUnwindSafe> RefUnwindSafe for Weak<T> {}
 
 // Same as `std::sync::Weak<T>`.
-impl<T: ?Sized + RefUnwindSafe + IsIdCloneable> UnwindSafe for Weak<T> {}
+impl<T: ?Sized + RefUnwindSafe> UnwindSafe for Weak<T> {}
 
-impl<T: Message + IsRetainable> From<&T> for Weak<T> {
+impl<T: Message> From<&T> for Weak<T> {
     #[inline]
     fn from(obj: &T) -> Self {
         Weak::new(obj)
     }
 }
 
-impl<T: Message + IsIdCloneable> From<&Retained<T>> for Weak<T> {
+impl<T: Message> From<&Retained<T>> for Weak<T> {
     #[inline]
     fn from(obj: &Retained<T>) -> Self {
         Weak::from_retained(obj)
     }
 }
 
-impl<T: Message + IsIdCloneable> From<Retained<T>> for Weak<T> {
+impl<T: Message> From<Retained<T>> for Weak<T> {
     #[inline]
     fn from(obj: Retained<T>) -> Self {
         Weak::from_retained(&obj)

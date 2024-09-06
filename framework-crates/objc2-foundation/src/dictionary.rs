@@ -314,8 +314,8 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
         // dictionary isn't mutated while they are alive.
         let (keys, objects) = unsafe { self.to_vecs_unchecked() };
         (
-            keys.into_iter().map(util::retain).collect(),
-            objects.into_iter().map(util::retain).collect(),
+            keys.into_iter().map(K::retain).collect(),
+            objects.into_iter().map(V::retain).collect(),
         )
     }
 

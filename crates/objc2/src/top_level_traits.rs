@@ -2,7 +2,7 @@ use core::ptr::NonNull;
 
 use crate::__macro_helpers::declared_ivars::get_initialized_ivar_ptr;
 use crate::encode::RefEncode;
-use crate::mutability::{IsAllocableAnyThread, IsRetainable, Mutability};
+use crate::mutability::{IsAllocableAnyThread, Mutability};
 use crate::rc::{Allocated, Retained};
 use crate::runtime::{AnyClass, AnyProtocol};
 use crate::{msg_send_id, MainThreadMarker};
@@ -80,7 +80,38 @@ use crate::{msg_send_id, MainThreadMarker};
 /// //
 /// // And `Retained<MyObject>` can now be constructed.
 /// ```
-pub unsafe trait Message: RefEncode {}
+pub unsafe trait Message: RefEncode {
+    /// Increment the reference count of the receiver.
+    ///
+    /// This extends the duration in which the receiver is alive by detaching
+    /// it from the lifetime information carried by the reference.
+    ///
+    /// This is similar to using [`Clone` on `Retained<Self>`][clone-id], with
+    /// the addition that it can be used on a plain reference.
+    ///
+    /// If your type may have come from a mutable type like `NSMutableString`,
+    /// you should consider using `NSCopying::copy` instead to avoid carrying
+    /// around a mutable string when you did not intend to.
+    ///
+    /// [clone-id]: crate::rc::Retained#impl-Clone-for-Retained<T>
+    #[inline]
+    #[doc(alias = "objc_retain")]
+    fn retain(&self) -> Retained<Self>
+    where
+        Self: Sized, // Temporary
+    {
+        let ptr: *const Self = self;
+        let ptr: *mut Self = ptr as _;
+        // SAFETY:
+        // - The pointer is valid since it came from `&self`.
+        // - The lifetime of the pointer itself is extended, but any lifetime
+        //   that the object may carry is still kept within the type itself.
+        let obj = unsafe { Retained::retain(ptr) };
+        // SAFETY: The pointer came from `&self`, which is always non-null,
+        // and objc_retain always returns the same value.
+        unsafe { obj.unwrap_unchecked() }
+    }
+}
 
 /// Marks types that represent specific classes.
 ///
@@ -219,45 +250,6 @@ pub unsafe trait ClassType: Message {
     // Note: It'd be safe to provide a default impl using transmute here if
     // we wanted to!
     fn as_super(&self) -> &Self::Super;
-
-    /// Increment the reference count of the receiver.
-    ///
-    /// This extends the duration in which the receiver is alive by detaching
-    /// it from the lifetime information carried by the reference.
-    ///
-    /// This is similar to using [`Clone` on `Retained<Self>`][clone-id], with
-    /// the addition that it can be used on a plain reference. Note however
-    /// that this is not possible to use on types that may have come from
-    /// mutable types, as it would be unsound to erase the lifetime
-    /// information carried by such a reference.
-    ///
-    /// In cases like that, you should rather use `NSCopying::copy`.
-    ///
-    /// [clone-id]: crate::rc::Retained#impl-Clone-for-Retained<T>
-    //
-    // Note: We could have placed this on `mutability::IsRetainable`, but
-    // `ClassType` is more often already in scope, allowing easier access to
-    // `obj.retain()`.
-    #[inline]
-    #[doc(alias = "objc_retain")]
-    fn retain(&self) -> Retained<Self>
-    where
-        Self: IsRetainable,
-        Self: Sized, // Temporary
-    {
-        let ptr: *const Self = self;
-        let ptr: *mut Self = ptr as _;
-        // SAFETY:
-        // - The object is known to not be mutable (or have a mutable
-        //   subclass) due to the `IsRetainable` bound.
-        // - The pointer is valid since it came from `&self`.
-        // - The lifetime of the pointer itself is extended, but any lifetime
-        //   that the object may carry is still kept within the type itself.
-        let obj = unsafe { Retained::retain(ptr) };
-        // SAFETY: The pointer came from `&self`, which is always non-null
-        // (and objc_retain always returns the same value).
-        unsafe { obj.unwrap_unchecked() }
-    }
 
     /// Allocate a new instance of the class.
     ///

@@ -225,7 +225,7 @@ impl<T: Message> NSArray<T> {
         // to rule this out though, as that's basically never going to happen,
         // and will make a lot of other things unsound too.
         let vec = unsafe { self.to_vec_unchecked() };
-        vec.into_iter().map(util::retain).collect()
+        vec.into_iter().map(T::retain).collect()
     }
 
     /// Iterate over the array's elements.
@@ -263,7 +263,7 @@ impl<T: Message> NSArray<T> {
         unsafe { vec.set_len(range.length) };
         let vec = unsafe { mem::transmute::<Vec<NonNull<T>>, Vec<&T>>(vec) };
 
-        vec.into_iter().map(util::retain).collect()
+        vec.into_iter().map(T::retain).collect()
     }
 }
 

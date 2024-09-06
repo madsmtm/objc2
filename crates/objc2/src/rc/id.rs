@@ -6,7 +6,6 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
 use super::AutoreleasePool;
-use crate::mutability::IsIdCloneable;
 use crate::runtime::{objc_release_fast, objc_retain_fast};
 use crate::{ffi, ClassType, Message};
 
@@ -19,27 +18,30 @@ use crate::{ffi, ClassType, Message};
 /// The type `T` inside `Retained<T>` can be anything that implements
 /// [`Message`].
 ///
-/// `T`'s [`ClassType`] implementation (if any) determines whether it is
-/// mutable, and by extension whether `Retained<T>` is mutable.
+/// This can usually be gotten from one of the methods in [the framework
+/// crates], but can also be created manually with the [`msg_send_id!`] macro,
+/// or even more manually with the [`Retained::retain`],
+/// [`Retained::from_raw`] and [`Retained::retain_autoreleased`] methods.
 ///
-/// This can usually be gotten from one of the methods in the framework
-/// crates, but can be created manually with the [`msg_send_id!`] macro (or
-/// even more manually, with the [`Retained::retain`], [`Retained::from_raw`]
-/// or [`Retained::retain_autoreleased`] methods).
-///
+/// [the framework crates]: crate::topics::about_generated
 /// [`msg_send_id!`]: crate::msg_send_id
 ///
 ///
 /// # Comparison to `std` types
 ///
-/// `Retained<T>` is the Objective-C equivalent of [`Arc`], and allows cloning
-/// by bumping the reference count, and weak references using [`rc::Weak`].
+/// `Retained<T>` is the Objective-C equivalent of [`Arc`], that is, it is a
+/// thread-safe reference-counting pointer, and allows cloning by bumping the
+/// reference count, and weak references using [`rc::Weak`].
 ///
-/// Unlike `Arc`, objects can be retained directly from a `&T` (for `Arc` you
-/// need `&Arc<T>`), see [`ClassType::retain`].
+/// Unlike `Arc`, objects can be retained directly from a `&T` using
+/// [`Message::retain`] (for `Arc` you need `&Arc<T>`).
+///
+/// Even though most Objective-C types aren't thread safe, Objective-C has no
+/// concept of [`Rc`]. Retain/release operations are always atomic.
 ///
 /// [`Arc`]: alloc::sync::Arc
 /// [`rc::Weak`]: crate::rc::Weak
+/// [`Rc`]: std::rc::Rc
 ///
 ///
 /// # Forwarding implementations
@@ -339,21 +341,18 @@ impl<T: Message> Retained<T> {
     /// [`Retained::retain_autoreleased`] instead, as that is usually more
     /// performant.
     ///
-    /// See [`ClassType::retain`] for a safe alternative.
+    /// See also [`Message::retain`] for a safe alternative where you already
+    /// have a reference to the object.
     ///
     ///
     /// # Safety
     ///
-    /// If the object is mutable, the caller must ensure that there are no
-    /// other pointers or references to the object, such that the returned
-    /// `Retained` pointer is unique.
+    /// The pointer must be valid as a reference (aligned, dereferencable and
+    /// initialized, see the [`std::ptr`] module for more information), or
+    /// NULL.
     ///
-    /// Additionally, the pointer must be valid as a reference (aligned,
-    /// dereferencable and initialized, see the [`std::ptr`] module for more
-    /// information) or NULL.
-    ///
-    /// Finally, you must ensure that any data that `T` may reference lives
-    /// for at least as long as `T`.
+    /// You must ensure that any data that `T` may reference lives for at
+    /// least as long as `T`.
     ///
     /// [`std::ptr`]: core::ptr
     #[doc(alias = "objc_retain")]
@@ -643,27 +642,15 @@ where
 }
 
 // TODO: Add ?Sized bound
-impl<T: Message + IsIdCloneable> Clone for Retained<T> {
-    /// Makes a clone of the shared object.
+impl<T: Message> Clone for Retained<T> {
+    /// Retain the object, increasing its reference count.
     ///
-    /// This increases the object's reference count.
+    /// This is equivalent to [`Message::retain`].
     #[doc(alias = "objc_retain")]
     #[doc(alias = "retain")]
     #[inline]
     fn clone(&self) -> Self {
-        // SAFETY:
-        // - The object is known to not be mutable due to the `IsIdCloneable`
-        //   bound. Additionally, since the object is already a `Retained`,
-        //   types that have a mutable subclass are also allowed (since even
-        //   if the object is originally a `Retained<MyMutableObject>`, by
-        //   converting it into `Retained<NSObject>` or `Retained<MyObject>`,
-        //   that fact is wholly forgotten, and the object cannot ever be
-        //   mutated again).
-        // - The pointer is valid.
-        let obj = unsafe { Retained::retain(self.ptr.as_ptr()) };
-        // SAFETY: `objc_retain` always returns the same object pointer, and
-        // the pointer is guaranteed non-null.
-        unsafe { obj.unwrap_unchecked() }
+        self.retain()
     }
 }
 
@@ -713,103 +700,30 @@ impl<T: ?Sized> fmt::Pointer for Retained<T> {
     }
 }
 
-#[allow(missing_debug_implementations)]
-mod private {
-    use crate::runtime::AnyObject;
-    use crate::ClassType;
-    use core::panic::{RefUnwindSafe, UnwindSafe};
-
-    pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
-
-    pub struct ArcLikeStorage<T: ?Sized>(*const T);
-    // SAFETY: Same as `Arc`
-    unsafe impl<T: ?Sized + Sync + Send> Send for ArcLikeStorage<T> {}
-    // SAFETY: Same as `Arc`
-    unsafe impl<T: ?Sized + Sync + Send> Sync for ArcLikeStorage<T> {}
-    impl<T: ?Sized + RefUnwindSafe> RefUnwindSafe for ArcLikeStorage<T> {}
-    impl<T: ?Sized + RefUnwindSafe> UnwindSafe for ArcLikeStorage<T> {}
-    impl<T: ?Sized> Unpin for ArcLikeStorage<T> {}
-
-    use crate::mutability;
-
-    #[doc(hidden)]
-    pub trait SendSyncHelper<T: ?Sized>: mutability::Mutability {
-        // TODO: Move this to be a hidden type under `Mutability` once GATs
-        // are in our MSRV.
-        type EquivalentType: ?Sized;
-    }
-
-    impl<T: ?Sized> SendSyncHelper<T> for mutability::Root {
-        // To give us freedom in the future (no `Root` types implement any
-        // auto traits anyhow).
-        type EquivalentType = UnknownStorage<T>;
-    }
-
-    impl<T: ?Sized> SendSyncHelper<T> for mutability::InteriorMutable {
-        type EquivalentType = ArcLikeStorage<T>;
-    }
-
-    impl<T: ?Sized, S: ?Sized> SendSyncHelper<T> for mutability::InteriorMutableWithSubclass<S> {
-        type EquivalentType = ArcLikeStorage<T>;
-    }
-
-    impl<T: ?Sized, S: ?Sized> SendSyncHelper<T> for mutability::InteriorMutableWithSuperclass<S> {
-        type EquivalentType = ArcLikeStorage<T>;
-    }
-
-    impl<T: ?Sized> SendSyncHelper<T> for mutability::MainThreadOnly {
-        type EquivalentType = ArcLikeStorage<T>;
-    }
-
-    /// Helper struct for avoiding a gnarly ICE in `rustdoc` when generating
-    /// documentation for auto traits for `Retained<T>` where `T: !ClassType`.
-    ///
-    /// See related issues:
-    /// - <https://github.com/rust-lang/rust/issues/91380>
-    /// - <https://github.com/rust-lang/rust/issues/107715>
-    pub struct EquivalentType<T: ?Sized + ClassType>(
-        <T::Mutability as SendSyncHelper<T>>::EquivalentType,
-    )
-    where
-        T::Mutability: SendSyncHelper<T>;
-}
-
-// https://doc.rust-lang.org/nomicon/arc-mutex/arc-base.html#send-and-sync
-
-/// `Retained<T>` is always `Send` if `T` is `Send + Sync`.
-///
-/// Additionally, for mutable types, `T` doesn't have to be `Sync` (only
-/// requires `T: Send`), since it has unique access to the object.
+/// `Retained<T>` is `Send` if `T` is `Send + Sync`.
 //
 // SAFETY:
 // - `T: Send` is required because otherwise you could move the object to
 //   another thread and let `dealloc` get called there.
-// - If `T` is not mutable, `T: Sync` is required because otherwise you could
-//   clone `&Retained<T>`, send it to another thread, and drop the clone last,
-//   making `dealloc` get called on the other thread.
-unsafe impl<T: ?Sized + ClassType + Send> Send for Retained<T>
-where
-    T::Mutability: private::SendSyncHelper<T>,
-    private::EquivalentType<T>: Send,
-{
-}
+// - `T: Sync` is required because otherwise you could clone `&Retained<T>`,
+//   send it to another thread, and drop the clone last, making `dealloc` get
+//   called on the other thread.
+//
+// This is the same reasoning as for `Arc`.
+// https://doc.rust-lang.org/nomicon/arc-mutex/arc-base.html#send-and-sync
+unsafe impl<T: ?Sized + Sync + Send> Send for Retained<T> {}
 
-/// `Retained<T>` is always `Sync` if `T` is `Send + Sync`.
-///
-/// Additionally, for mutable types, `T` doesn't have to be `Send` (only
-/// requires `T: Sync`), since it has unique access to the object.
+/// `Retained<T>` is `Sync` if `T` is `Send + Sync`.
 //
 // SAFETY:
 // - `T: Sync` is required because `&Retained<T>` give access to `&T`.
-// - If `T` is not mutable, `T: Send` is required because otherwise you could
-//   clone `&Retained<T>` from another thread, and drop the clone last, making
-//   `dealloc` get called on the other thread.
-unsafe impl<T: ?Sized + ClassType + Sync> Sync for Retained<T>
-where
-    T::Mutability: private::SendSyncHelper<T>,
-    private::EquivalentType<T>: Sync,
-{
-}
+// -`T: Send` is required because otherwise you could clone `&Retained<T>`
+//   from another thread, and drop the clone last, making `dealloc` get called
+//   on the other thread.
+//
+// This is the same reasoning as for `Arc`.
+// https://doc.rust-lang.org/nomicon/arc-mutex/arc-base.html#send-and-sync
+unsafe impl<T: ?Sized + Sync + Send> Sync for Retained<T> {}
 
 // This is valid without `T: Unpin` because we don't implement any projection.
 //
@@ -817,16 +731,11 @@ where
 // and the `Arc` implementation.
 impl<T: ?Sized> Unpin for Retained<T> {}
 
+// Same as Arc
 impl<T: ?Sized + RefUnwindSafe> RefUnwindSafe for Retained<T> {}
 
-// TODO: Relax this bound
-impl<T: ?Sized + RefUnwindSafe + UnwindSafe> UnwindSafe for Retained<T> {}
-
-#[cfg(doc)]
-#[allow(unused)]
-struct TestDocWithNonClassType {
-    id: Retained<crate::runtime::AnyObject>,
-}
+// Same as Arc
+impl<T: ?Sized + RefUnwindSafe> UnwindSafe for Retained<T> {}
 
 #[cfg(test)]
 mod tests {

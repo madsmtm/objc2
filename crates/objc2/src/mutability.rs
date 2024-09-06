@@ -79,7 +79,6 @@ enum Never {}
 /// all others inherit from.
 ///
 /// Functionality that is provided with this:
-/// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Root {
@@ -92,8 +91,6 @@ pub struct Root {
 /// thread-safe operations.
 ///
 /// Functionality that is provided with this:
-/// - [`IsRetainable`] -> [`ClassType::retain`].
-/// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
 ///
 ///
@@ -120,8 +117,6 @@ pub struct InteriorMutable {
 /// returned by `NSMutableCopying::mutableCopy` is the mutable counterpart.
 ///
 /// Functionality that is provided with this:
-/// - [`IsRetainable`] -> [`ClassType::retain`].
-/// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
 ///
 ///
@@ -152,10 +147,8 @@ pub struct InteriorMutableWithSubclass<Subclass: ?Sized> {
 /// returned by `NSCopying::copy` is the immutable counterpart.
 ///
 /// Functionality that is provided with this:
-/// - [`IsRetainable`] -> [`ClassType::retain`].
-/// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
-
+///
 ///
 /// # Example
 ///
@@ -191,8 +184,6 @@ pub struct InteriorMutableWithSuperclass<Superclass: ?Sized> {
 /// mutability.
 ///
 /// Functionality that is provided with this:
-/// - [`IsRetainable`] -> [`ClassType::retain`].
-/// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
 /// - [`IsMainThreadOnly`] -> `IsMainThreadOnly::mtm`.
 //
 // While Xcode's Main Thread Checker doesn't report `alloc` and `dealloc` as
@@ -214,71 +205,6 @@ mod private_traits {
 impl<T: ?Sized + ClassType> private_traits::Sealed for T {}
 impl<P: ?Sized> private_traits::Sealed for ProtocolObject<P> {}
 impl private_traits::Sealed for AnyObject {}
-
-/// Marker trait for classes where [`Retained::clone`] / [`Id::clone`] is safe.
-///
-/// Since the `Foundation` collection types (`NSArray<T>`,
-/// `NSDictionary<K, V>`, ...) act as if they store [`Retained`]s, this also
-/// makes certain functionality on those types possible.
-///
-/// This is implemented for classes whose [`ClassType::Mutability`] is one of:
-/// - [`Root`].
-/// - [`InteriorMutable`].
-/// - [`MainThreadOnly`].
-///
-/// [`Retained`]: crate::rc::Retained
-/// [`Retained::clone`]: crate::rc::Retained#impl-Clone-for-Retained<T>
-/// [`Id::clone`]: crate::rc::Retained#impl-Clone-for-Retained<T>
-///
-///
-/// # Safety
-///
-/// This is a sealed trait, and should not need to be implemented. Open an
-/// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait IsIdCloneable: private_traits::Sealed {}
-
-trait MutabilityIsIdCloneable: Mutability {}
-impl MutabilityIsIdCloneable for Root {}
-impl MutabilityIsIdCloneable for InteriorMutable {}
-impl<S: ?Sized> MutabilityIsIdCloneable for InteriorMutableWithSubclass<S> {}
-impl<S: ?Sized> MutabilityIsIdCloneable for InteriorMutableWithSuperclass<S> {}
-impl MutabilityIsIdCloneable for MainThreadOnly {}
-
-unsafe impl<T: ?Sized + ClassType> IsIdCloneable for T where T::Mutability: MutabilityIsIdCloneable {}
-unsafe impl<P: ?Sized + IsIdCloneable> IsIdCloneable for ProtocolObject<P> {}
-// SAFETY: Same as for root classes.
-unsafe impl IsIdCloneable for AnyObject {}
-
-/// Marker trait for classes where the `retain` selector is always safe.
-///
-/// [`Retained::clone`] takes `&Retained<T>`, while [`ClassType::retain`] only
-/// takes `&T`; the difference between these two is that in the former case,
-/// you know that there are no live mutable subclasses.
-///
-/// This is implemented for classes whose [`ClassType::Mutability`] is one of:
-/// - [`InteriorMutable`].
-/// - [`MainThreadOnly`].
-///
-/// This trait inherits [`IsIdCloneable`], so if a function is bound by this,
-/// functionality given with that trait is available.
-///
-/// [`Retained::clone`]: crate::rc::Retained#impl-Clone-for-Retained<T>
-///
-///
-/// # Safety
-///
-/// This is a sealed trait, and should not need to be implemented. Open an
-/// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait IsRetainable: private_traits::Sealed + IsIdCloneable {}
-
-trait MutabilityIsRetainable: MutabilityIsIdCloneable {}
-impl MutabilityIsRetainable for InteriorMutable {}
-impl<S: ?Sized> MutabilityIsRetainable for InteriorMutableWithSubclass<S> {}
-impl<S: ?Sized> MutabilityIsRetainable for InteriorMutableWithSuperclass<S> {}
-impl MutabilityIsRetainable for MainThreadOnly {}
-
-unsafe impl<T: ?Sized + ClassType> IsRetainable for T where T::Mutability: MutabilityIsRetainable {}
-unsafe impl<P: ?Sized + IsRetainable> IsRetainable for ProtocolObject<P> {}
 
 /// Marker trait for classes that can be allocated from any thread.
 ///
@@ -510,8 +436,6 @@ mod tests {
 
     #[allow(unused, clippy::too_many_arguments)]
     fn object_safe(
-        _: &dyn IsIdCloneable,
-        _: &dyn IsRetainable,
         _: &dyn IsAllocableAnyThread,
         _: &dyn IsMainThreadOnly,
         _: &dyn CounterpartOrSelf<Immutable = (), Mutable = ()>,

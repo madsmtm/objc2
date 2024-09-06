@@ -406,18 +406,15 @@ macro_rules! __extern_class_impl_traits {
         // which instance we're holding, the Objective-C side will remember,
         // and will always dispatch to the correct method implementations.
         //
-        // Any lifetime information that the object may have been holding is
-        // safely kept in the returned reference.
+        // TODO: If the object has a lifetime, we must keep that lifetime
+        // information, since all objects can be retained using
+        // `Message::retain`, and that could possibly make it unsound to allow
+        // non-`'static` here.
         //
-        // Generics are discarded (for example in the case of `&NSArray<T>` to
-        // `&NSObject`), but if the generic contained a lifetime, that
-        // lifetime is still included in the returned reference, and is not
-        // erasable by e.g. `ClassType::retain` since `NSObject` does not
-        // allow that.
-        //
-        // Note that you can have two different variables pointing to the same
-        // object, `x: &T` and `y: &T::Target`, and this would be perfectly
-        // safe!
+        // `&NSMutableArray<T>` -> `&NSArray<T>` -> `Retained<NSArray<T>>` is
+        // fine, but `&UserClass<'a>` -> `&NSObject` -> `Retained<NSObject>`
+        // is not, and hence `&NSArray<UserClass<'a>>` -> `&NSObject` ->
+        // `Retained<NSObject>` isn't either.
         $(#[$impl_m])*
         impl<$($t)*> $crate::__macro_helpers::Deref for $for {
             type Target = $superclass;

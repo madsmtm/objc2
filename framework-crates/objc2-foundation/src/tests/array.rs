@@ -6,7 +6,6 @@ use alloc::vec::Vec;
 use core::ptr;
 
 use crate::{NSArray, NSNumber, NSObject};
-use objc2::mutability::IsRetainable;
 use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, ProtocolObject};
 use objc2::{extern_protocol, ProtocolType};
@@ -166,7 +165,7 @@ fn test_generic_ownership_traits() {
 fn test_trait_retainable() {
     extern_protocol!(
         #[allow(clippy::missing_safety_doc)]
-        unsafe trait TestProtocol: IsRetainable {}
+        unsafe trait TestProtocol {}
 
         unsafe impl ProtocolType for dyn TestProtocol {
             const NAME: &'static str = "NSObject";

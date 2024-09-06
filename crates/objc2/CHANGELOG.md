@@ -56,9 +56,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `extern_class!` and `declare_class!`.
 * **BREAKING**: Removed `mutability` options `Immutable`, `Mutable`,
   `ImmutableWithMutableSubclass` and `MutableWithImmutableSuperclass`, along
-  with the related `IsAllowedMutable` and `IsMutable` traits.
+  with the related `IsAllowedMutable`, `IsIdCloneable`, `IsRetainable` and
+  `IsMutable` traits.
 * **BREAKING**: Removed `DerefMut` implementation for `Retained<T>` when the
   `Retained` was mutable.
+* **BREAKING**: Moved `retain` from `ClassType` to `Message`.
 
 ### Fixed
 * Remove an incorrect assertion when adding protocols to classes in an unexpected

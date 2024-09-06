@@ -8,7 +8,6 @@ use objc2::runtime::ProtocolObject;
 use objc2::ClassType;
 use objc2::Message;
 
-use super::util;
 use crate::Foundation::{NSFastEnumeration, NSFastEnumerationState};
 
 /// Swift and Objective-C both have a stack buffer size of 16, so we do that
@@ -377,7 +376,7 @@ impl<'a, C: FastEnumerationHelper> Iterator for Iter<'a, C> {
                 Some(&mut self.mutations_state),
             )?
         };
-        Some(util::retain(unsafe { obj.cast::<C::Item>().as_ref() }))
+        Some(unsafe { obj.cast::<C::Item>().as_ref() }.retain())
     }
 
     #[inline]
@@ -562,7 +561,7 @@ where
             )?
         };
         // SAFETY: TODO
-        Some(util::retain(unsafe { obj.cast::<E::Item>().as_ref() }))
+        Some(unsafe { obj.cast::<E::Item>().as_ref() }.retain())
     }
 
     #[inline]
