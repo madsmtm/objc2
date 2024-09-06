@@ -82,10 +82,6 @@ unsafe impl<'a> ClassType for MyObject<'a> {
     fn as_super(&self) -> &Self::Super {
         &self.superclass
     }
-
-    fn as_super_mut(&mut self) -> &mut Self::Super {
-        &mut self.superclass
-    }
 }
 
 fn main() {

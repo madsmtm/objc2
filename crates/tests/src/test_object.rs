@@ -111,10 +111,6 @@ unsafe impl ClassType for MyTestObject {
     fn as_super(&self) -> &Self::Super {
         &self.inner
     }
-
-    fn as_super_mut(&mut self) -> &mut Self::Super {
-        &mut self.inner
-    }
 }
 
 unsafe impl NSObjectProtocol for MyTestObject {}

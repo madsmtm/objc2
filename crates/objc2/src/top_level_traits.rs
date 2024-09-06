@@ -220,15 +220,6 @@ pub unsafe trait ClassType: Message {
     // we wanted to!
     fn as_super(&self) -> &Self::Super;
 
-    /// Get a mutable reference to the superclass.
-    // Note: No `Self: IsMutable` bound required here, since there is no way
-    // to get `&mut self` in the first place.
-    //
-    // Or at least, if we have `&mut MyMutableObject`, we're allowed to get
-    // `&mut MyObject`, and from that it will also make sense to allow getting
-    // `&mut NSObject`.
-    fn as_super_mut(&mut self) -> &mut Self::Super;
-
     /// Increment the reference count of the receiver.
     ///
     /// This extends the duration in which the receiver is alive by detaching

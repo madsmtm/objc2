@@ -851,11 +851,6 @@ mod tests {
                 unimplemented!()
             }
 
-            #[inline]
-            fn as_super_mut(&mut self) -> &mut Self::Super {
-                unimplemented!()
-            }
-
             fn class() -> &'static AnyClass {
                 let superclass = NSObject::class();
                 let mut builder = ClassBuilder::new(Self::NAME, superclass).unwrap();

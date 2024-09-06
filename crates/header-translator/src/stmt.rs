@@ -1763,8 +1763,6 @@ impl Stmt {
                             f,
                             "        fn as_super(&self) -> &Self::Super {{ &self.__superclass }}"
                         )?;
-                        writeln!(f)?;
-                        writeln!(f, "        fn as_super_mut(&mut self) -> &mut Self::Super {{ &mut self.__superclass }}")?;
                     }
                     writeln!(f, "    }}")?;
                     writeln!(f, ");")?;

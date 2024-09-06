@@ -48,10 +48,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `DeclaredClass::ivars_mut`.
   - `ProtocolObject::from_mut`.
   - `AutoreleasePool::ptr_as_mut`.
+  - `ClassType::as_super_mut`.
 * **BREAKING**: Disallow `&mut` message receivers (except in the special case
   when the object is `AnyObject`, for better backwards compatibility with
   `objc`).
-* **BREAKING**: Removed `AsMut` and `BorrowMut` implementations in
+* **BREAKING**: Removed `AsMut`, `BorrowMut` and `DerefMut` implementations in
   `extern_class!` and `declare_class!`.
 * **BREAKING**: Removed `mutability` options `Immutable`, `Mutable`,
   `ImmutableWithMutableSubclass` and `MutableWithImmutableSuperclass`, along

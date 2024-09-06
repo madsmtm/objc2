@@ -3,7 +3,7 @@ pub use core::cell::UnsafeCell;
 pub use core::convert::AsRef;
 pub use core::marker::{PhantomData, Sized};
 pub use core::mem::{size_of, ManuallyDrop, MaybeUninit};
-pub use core::ops::{Deref, DerefMut};
+pub use core::ops::Deref;
 pub use core::option::Option::{self, None, Some};
 pub use core::primitive::{bool, isize, str, u8};
 pub use core::{compile_error, concat, panic, stringify};

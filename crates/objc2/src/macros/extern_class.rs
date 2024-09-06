@@ -22,7 +22,6 @@
 /// - [`Message`][crate::Message]
 /// - [`ClassType`][crate::ClassType]
 /// - [`Deref<Target = $superclass>`][core::ops::Deref]
-/// - [`DerefMut`][core::ops::DerefMut]
 /// - [`AsRef<$inheritance_chain>`][AsRef]
 /// - [`Borrow<$inheritance_chain>`][core::borrow::Borrow]
 ///
@@ -233,10 +232,6 @@ macro_rules! extern_class {
                     &self.__superclass
                 }
 
-                fn as_super_mut(&mut self) -> &mut Self::Super {
-                    &mut self.__superclass
-                }
-
                 $(const NAME: &'static str = $name_const;)?
             }
         );
@@ -317,7 +312,6 @@ macro_rules! __inner_extern_class {
             type Mutability = $mutability:ty;
 
             fn as_super(&$as_super_self:ident) -> &Self::Super $as_super:block
-            fn as_super_mut(&mut $as_super_mut_self:ident) -> &mut Self::Super $as_super_mut:block
 
             $(const NAME: &'static str = $name_const:expr;)?
         }
@@ -335,7 +329,6 @@ macro_rules! __inner_extern_class {
                 INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::AnyObject];
 
                 fn as_super(&$as_super_self) $as_super
-                fn as_super_mut(&mut $as_super_mut_self) $as_super_mut
             }
         }
 
@@ -357,9 +350,6 @@ macro_rules! __inner_extern_class {
 
             #[inline]
             fn as_super(&$as_super_self) -> &Self::Super $as_super
-
-            #[inline]
-            fn as_super_mut(&mut $as_super_mut_self) -> &mut Self::Super $as_super_mut
         }
     };
 }
@@ -373,7 +363,6 @@ macro_rules! __extern_class_impl_traits {
             INHERITS = [$superclass:ty $(, $inheritance_rest:ty)*];
 
             fn as_super(&$as_super_self:ident) $as_super:block
-            fn as_super_mut(&mut $as_super_mut_self:ident) $as_super_mut:block
         }
     ) => {
         // SAFETY:
@@ -435,24 +424,6 @@ macro_rules! __extern_class_impl_traits {
 
             #[inline]
             fn deref(&$as_super_self) -> &Self::Target $as_super
-        }
-
-        // SAFETY: Mutability does not change anything in the above
-        // consideration, the lifetime of `&mut Self::Target` is still tied to
-        // `&mut self`.
-        //
-        // Usually we don't want to allow `&mut` of immutable objects, because
-        // their `NSCopying` implementation returns the same object, and that
-        // would violate aliasing rules.
-        //
-        // But even then, `&mut MyMutableObject` -> `&mut MyObject` is still
-        // safe, as it's the `NSCopying` implementation of `MyMutableObject`
-        // that is used on the `&mut MyObject`, and that is guaranteed to
-        // return a different object.
-        $(#[$impl_m])*
-        impl<$($t)*> $crate::__macro_helpers::DerefMut for $for {
-            #[inline]
-            fn deref_mut(&mut $as_super_mut_self) -> &mut Self::Target $as_super_mut
         }
 
         $(#[$impl_m])*

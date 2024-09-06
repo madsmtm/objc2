@@ -23,10 +23,6 @@ crate::__extern_class_impl_traits! {
         fn as_super(&self) {
             &self.__inner
         }
-
-        fn as_super_mut(&mut self) {
-            &mut self.__inner
-        }
     }
 }
 
@@ -43,11 +39,6 @@ unsafe impl ClassType for NSProxy {
     #[inline]
     fn as_super(&self) -> &Self::Super {
         &self.__inner
-    }
-
-    #[inline]
-    fn as_super_mut(&mut self) -> &mut Self::Super {
-        &mut self.__inner
     }
 }
 

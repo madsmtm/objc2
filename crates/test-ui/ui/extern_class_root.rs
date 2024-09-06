@@ -1,4 +1,4 @@
-use core::ops::{Deref, DerefMut};
+use core::ops::Deref;
 
 use objc2::encode::{Encoding, RefEncode};
 use objc2::runtime::AnyObject;
@@ -18,12 +18,6 @@ impl Deref for MyObject {
 
     fn deref(&self) -> &AnyObject {
         &self.0
-    }
-}
-
-impl DerefMut for MyObject {
-    fn deref_mut(&mut self) -> &mut AnyObject {
-        &mut self.0
     }
 }
 

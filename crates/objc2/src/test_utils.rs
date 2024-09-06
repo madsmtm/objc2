@@ -31,10 +31,6 @@ unsafe impl ClassType for CustomObject {
     fn as_super(&self) -> &Self::Super {
         &self.0
     }
-
-    fn as_super_mut(&mut self) -> &mut Self::Super {
-        &mut self.0
-    }
 }
 
 impl Deref for CustomObject {
