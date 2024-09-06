@@ -254,7 +254,6 @@ pub struct Method {
     result_type: Ty,
     is_error: bool,
     safe: bool,
-    mutating: bool,
     is_pub: bool,
     // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
     non_isolated: bool,
@@ -354,7 +353,6 @@ impl Method {
     pub(crate) fn parse_method(
         entity: Entity<'_>,
         data: MethodData,
-        parent_is_mutable: bool,
         parent_is_mainthreadonly: bool,
         is_pub: bool,
         context: &Context<'_>,
@@ -504,10 +502,6 @@ impl Method {
                 result_type,
                 is_error,
                 safe: !data.unsafe_,
-                // Mutable if the parent is mutable is a reasonable default,
-                // since immutable methods are usually either declared on an
-                // immutable subclass, or as a property.
-                mutating: data.mutating.unwrap_or(parent_is_mutable),
                 is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
@@ -520,7 +514,6 @@ impl Method {
         property: PartialProperty<'_>,
         getter_data: MethodData,
         setter_data: Option<MethodData>,
-        parent_is_mutable: bool,
         parent_is_mainthreadonly: bool,
         is_pub: bool,
         context: &Context<'_>,
@@ -581,9 +574,6 @@ impl Method {
                 result_type: ty,
                 is_error: false,
                 safe: !getter_data.unsafe_,
-                // Getters are usually not mutable, even if the class itself
-                // is, so let's default to immutable.
-                mutating: getter_data.mutating.unwrap_or(false),
                 is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
@@ -626,8 +616,6 @@ impl Method {
                     result_type,
                     is_error: false,
                     safe: !setter_data.unsafe_,
-                    // Setters are usually mutable if the class itself is.
-                    mutating: setter_data.mutating.unwrap_or(parent_is_mutable),
                     is_pub,
                     non_isolated: modifiers.non_isolated,
                     mainthreadonly,
@@ -722,8 +710,6 @@ impl fmt::Display for Method {
             write!(f, "this: Allocated<Self>, ")?;
         } else if self.is_class {
             // Insert nothing; a class method is assumed
-        } else if self.mutating {
-            write!(f, "&mut self, ")?;
         } else {
             write!(f, "&self, ")?;
         }

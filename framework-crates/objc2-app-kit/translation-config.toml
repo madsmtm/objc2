@@ -199,7 +199,7 @@ class.NSView.mutability = "MainThreadOnly"
 # in that case, they can't be!
 class.NSWindow.mutability = "MainThreadOnly"
 
-# TODO: This should be one of MainThreadOnly or Immutable (+Send/Sync)
+# TODO: This should probably be MainThreadOnly, or maybe +Send/Sync?
 # class.NSAppearance.mutability = "MainThreadOnly"
 
 # Documented Thread-Unsafe, but:

@@ -245,7 +245,6 @@ pub struct MethodData {
     pub unsafe_: bool,
     #[serde(default = "skipped_default")]
     pub skipped: bool,
-    pub mutating: Option<bool>,
 }
 
 impl MethodData {
@@ -254,7 +253,6 @@ impl MethodData {
             // Only use `unsafe` from itself, never take if from the superclass
             unsafe_: self.unsafe_,
             skipped: self.skipped | superclass.skipped,
-            mutating: self.mutating.or(superclass.mutating),
         }
     }
 }
@@ -295,7 +293,6 @@ impl Default for MethodData {
         Self {
             unsafe_: unsafe_default(),
             skipped: skipped_default(),
-            mutating: None,
         }
     }
 }
@@ -348,24 +345,6 @@ impl<'de> Deserialize<'de> for Mutability {
             where
                 E: de::Error,
             {
-                if let Some(value) = value.strip_prefix("ImmutableWithMutableSubclass(") {
-                    let value = value
-                        .strip_suffix(')')
-                        .ok_or(de::Error::custom("end parenthesis"))?;
-                    let item =
-                        parse_itemidentifier(value).ok_or(de::Error::custom("requires ::"))?;
-                    return Ok(Mutability::ImmutableWithMutableSubclass(item));
-                }
-
-                if let Some(value) = value.strip_prefix("MutableWithImmutableSuperclass(") {
-                    let value = value
-                        .strip_suffix(')')
-                        .ok_or(de::Error::custom("end parenthesis"))?;
-                    let item =
-                        parse_itemidentifier(value).ok_or(de::Error::custom("requires ::"))?;
-                    return Ok(Mutability::MutableWithImmutableSuperclass(item));
-                }
-
                 if let Some(value) = value.strip_prefix("InteriorMutableWithSubclass(") {
                     let value = value
                         .strip_suffix(')')
@@ -385,8 +364,6 @@ impl<'de> Deserialize<'de> for Mutability {
                 }
 
                 match value {
-                    "Immutable" => Ok(Mutability::Immutable),
-                    "Mutable" => Ok(Mutability::Mutable),
                     "InteriorMutable" => Ok(Mutability::InteriorMutable),
                     "MainThreadOnly" => Ok(Mutability::MainThreadOnly),
                     value => Err(de::Error::custom(format!("unknown variant {value:?}"))),

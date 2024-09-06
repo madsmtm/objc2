@@ -62,11 +62,6 @@ class.CAEAGLLayer.skipped-protocols = ["EAGLDrawable"]
 ### Safety
 ###
 
-# We probably technically had the choice of making these classes mutating
-# methods require `&mut`, but as with so many things in Cocoa, that would
-# make it difficult to use in a larger context (e.g. even after assigning a
-# layer to a view you'd often still want to modify the layer).
-
 fn.CACurrentMediaTime.unsafe = false
 
 # SAFETY: Basic mathematical functions

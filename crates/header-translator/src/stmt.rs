@@ -217,7 +217,6 @@ pub(crate) fn method_or_property_entities<'tu>(
 fn parse_methods(
     entity: &Entity<'_>,
     get_data: impl Fn(&str) -> MethodData,
-    is_mutable: bool,
     thread_safety: &ThreadSafety,
     is_pub: bool,
     context: &Context<'_>,
@@ -235,7 +234,6 @@ fn parse_methods(
                 if let Some((designated_initializer, method)) = Method::parse_method(
                     entity,
                     data,
-                    is_mutable,
                     thread_safety.inferred_mainthreadonly(),
                     is_pub,
                     context,
@@ -262,7 +260,6 @@ fn parse_methods(
                     partial,
                     getter_data,
                     setter_data,
-                    is_mutable,
                     thread_safety.inferred_mainthreadonly(),
                     is_pub,
                     context,
@@ -298,10 +295,8 @@ pub(crate) fn items_required_by_decl(
             for (superclass, _, _) in parse_superclasses(entity, context) {
                 items.push(superclass);
             }
-            if let Some(
-                Mutability::ImmutableWithMutableSubclass(subclass)
-                | Mutability::InteriorMutableWithSubclass(subclass),
-            ) = data.map(|data| &data.mutability)
+            if let Some(Mutability::InteriorMutableWithSubclass(subclass)) =
+                data.map(|data| &data.mutability)
             {
                 items.push(subclass.clone());
             }
@@ -388,10 +383,6 @@ fn verify_objc_decl(entity: &Entity<'_>, _context: &Context<'_>) {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub enum Mutability {
-    Immutable,
-    Mutable,
-    ImmutableWithMutableSubclass(ItemIdentifier),
-    MutableWithImmutableSuperclass(ItemIdentifier),
     #[default]
     InteriorMutable,
     InteriorMutableWithSubclass(ItemIdentifier),
@@ -400,33 +391,8 @@ pub enum Mutability {
 }
 
 impl Mutability {
-    pub fn is_mutable(&self) -> bool {
-        matches!(
-            self,
-            Mutability::Mutable | Mutability::MutableWithImmutableSuperclass(_)
-        )
-    }
-
     fn display<'a>(&'a self, other_generics: impl Display + 'a) -> impl Display + 'a {
         FormatterFn(move |f| match self {
-            Self::Immutable => write!(f, "Immutable"),
-            Self::Mutable => write!(f, "Mutable"),
-            Self::ImmutableWithMutableSubclass(subclass) => {
-                write!(
-                    f,
-                    "ImmutableWithMutableSubclass<{}{}>",
-                    subclass.path(),
-                    other_generics
-                )
-            }
-            Self::MutableWithImmutableSuperclass(superclass) => {
-                write!(
-                    f,
-                    "MutableWithImmutableSuperclass<{}{}>",
-                    superclass.path(),
-                    other_generics
-                )
-            }
             Self::InteriorMutable => write!(f, "InteriorMutable"),
             Self::InteriorMutableWithSubclass(subclass) => {
                 write!(
@@ -679,8 +645,6 @@ impl Stmt {
                 let (methods, designated_initializers) = parse_methods(
                     entity,
                     |name| ClassData::get_method_data(data, name),
-                    data.map(|data| data.mutability.is_mutable())
-                        .unwrap_or(false),
                     &thread_safety,
                     true,
                     context,
@@ -724,9 +688,6 @@ impl Stmt {
                                     ClassData::get_method_data(superclass_data, name);
                                 data.merge_with_superclass(superclass_data)
                             },
-                            data.map(|data| data.mutability.is_mutable())
-                                .or(superclass_data.map(|data| data.mutability.is_mutable()))
-                                .unwrap_or(false),
                             &thread_safety,
                             true,
                             context,
@@ -876,8 +837,6 @@ impl Stmt {
                     let (methods, designated_initializers) = parse_methods(
                         entity,
                         |name| ClassData::get_method_data(data, name),
-                        data.map(|data| data.mutability.is_mutable())
-                            .unwrap_or(false),
                         &cls_thread_safety,
                         true,
                         context,
@@ -890,8 +849,7 @@ impl Stmt {
                         );
                     }
 
-                    let extra_methods = if let Mutability::ImmutableWithMutableSubclass(subclass)
-                    | Mutability::InteriorMutableWithSubclass(subclass) =
+                    let extra_methods = if let Mutability::InteriorMutableWithSubclass(subclass) =
                         data.map(|data| data.mutability.clone()).unwrap_or_default()
                     {
                         let subclass_data = context
@@ -907,9 +865,6 @@ impl Stmt {
                                 let subclass_data = ClassData::get_method_data(subclass_data, name);
                                 subclass_data.merge_with_superclass(data)
                             },
-                            data.map(|data| data.mutability.is_mutable())
-                                .or(subclass_data.map(|data| data.mutability.is_mutable()))
-                                .unwrap_or(false),
                             &cls_thread_safety,
                             true,
                             context,
@@ -982,7 +937,6 @@ impl Stmt {
                     let (methods, designated_initializers) = parse_methods(
                         entity,
                         |name| ClassData::get_method_data(data, name),
-                        false,
                         &cls_thread_safety,
                         false,
                         context,
@@ -1057,7 +1011,6 @@ impl Stmt {
                             .copied()
                             .unwrap_or_default()
                     },
-                    false,
                     &thread_safety,
                     false,
                     context,

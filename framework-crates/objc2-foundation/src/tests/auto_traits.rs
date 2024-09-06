@@ -30,19 +30,19 @@ fn assert_auto_traits<T: Send + Sync + UnwindSafe + RefUnwindSafe>() {
 }
 
 declare_class!(
-    struct ImmutableSendSyncObject;
+    struct SendSyncObject;
 
-    unsafe impl ClassType for ImmutableSendSyncObject {
+    unsafe impl ClassType for SendSyncObject {
         type Super = NSObject;
-        type Mutability = mutability::Immutable;
-        const NAME: &'static str = "ImmutableSendSyncObject";
+        type Mutability = mutability::InteriorMutable;
+        const NAME: &'static str = "SendSyncObject";
     }
 
-    impl DeclaredClass for ImmutableSendSyncObject {}
+    impl DeclaredClass for SendSyncObject {}
 );
 
-unsafe impl Send for ImmutableSendSyncObject {}
-unsafe impl Sync for ImmutableSendSyncObject {}
+unsafe impl Send for SendSyncObject {}
+unsafe impl Sync for SendSyncObject {}
 
 #[test]
 fn test_generic_auto_traits() {
@@ -60,9 +60,9 @@ fn test_generic_auto_traits() {
 
     // Collections are not Send + Sync, since they are interior mutable, i.e.
     // mutable from `&self`.
-    assert_not_impl_any!(NSArray<ImmutableSendSyncObject>: Send, Sync);
-    assert_not_impl_any!(NSMutableArray<ImmutableSendSyncObject>: Send, Sync);
-    assert_not_impl_any!(NSDictionary<ImmutableSendSyncObject, ImmutableSendSyncObject>: Send, Sync);
+    assert_not_impl_any!(NSArray<SendSyncObject>: Send, Sync);
+    assert_not_impl_any!(NSMutableArray<SendSyncObject>: Send, Sync);
+    assert_not_impl_any!(NSDictionary<SendSyncObject, SendSyncObject>: Send, Sync);
 
     // TODO: Make these UnwindSafe?
     assert_not_impl_any!(NSDictionary<NSProcessInfo, NSProcessInfo>: UnwindSafe, RefUnwindSafe);
