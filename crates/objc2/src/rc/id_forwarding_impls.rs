@@ -137,22 +137,8 @@ impl<T: ?Sized> borrow::Borrow<T> for Retained<T> {
     }
 }
 
-impl<T: ?Sized + IsMutable> borrow::BorrowMut<T> for Retained<T> {
-    fn borrow_mut(&mut self) -> &mut T {
-        // Auto-derefs
-        self
-    }
-}
-
 impl<T: ?Sized> AsRef<T> for Retained<T> {
     fn as_ref(&self) -> &T {
-        // Auto-derefs
-        self
-    }
-}
-
-impl<T: ?Sized + IsMutable> AsMut<T> for Retained<T> {
-    fn as_mut(&mut self) -> &mut T {
         // Auto-derefs
         self
     }

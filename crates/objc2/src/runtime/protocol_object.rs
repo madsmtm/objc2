@@ -203,17 +203,7 @@ where
     }
 }
 
-impl<P: ?Sized, T> AsMut<ProtocolObject<T>> for ProtocolObject<P>
-where
-    T: ?Sized + ImplementedBy<ProtocolObject<P>>,
-{
-    #[inline]
-    fn as_mut(&mut self) -> &mut ProtocolObject<T> {
-        ProtocolObject::from_mut(self)
-    }
-}
-
-// TODO: Maybe implement Borrow + BorrowMut?
+// TODO: Maybe implement Borrow?
 
 #[cfg(test)]
 #[allow(clippy::missing_safety_doc)]

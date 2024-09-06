@@ -24,9 +24,7 @@
 /// - [`Deref<Target = $superclass>`][core::ops::Deref]
 /// - [`DerefMut`][core::ops::DerefMut]
 /// - [`AsRef<$inheritance_chain>`][AsRef]
-/// - [`AsMut<$inheritance_chain>`][AsMut]
 /// - [`Borrow<$inheritance_chain>`][core::borrow::Borrow]
-/// - [`BorrowMut<$inheritance_chain>`][core::borrow::BorrowMut]
 ///
 /// The macro allows specifying zero-sized fields like [`PhantomData`] on the
 /// struct.
@@ -262,7 +260,6 @@ macro_rules! __impl_as_ref_borrow {
     {
         impl ($($t:tt)*) for $for:ty {
             fn as_ref($($self:tt)*) $ref:block
-            fn as_mut($($self_mut:tt)*) $mut:block
         }
 
         ()
@@ -270,7 +267,6 @@ macro_rules! __impl_as_ref_borrow {
     {
         impl ($($t:tt)*) for $for:ty {
             fn as_ref($($self:tt)*) $ref:block
-            fn as_mut($($self_mut:tt)*) $mut:block
         }
 
         ($item:ty, $($tail:ty,)*)
@@ -280,13 +276,8 @@ macro_rules! __impl_as_ref_borrow {
             fn as_ref($($self)*) -> &$item $ref
         }
 
-        impl<$($t)*> $crate::__macro_helpers::AsMut<$item> for $for {
-            #[inline]
-            fn as_mut($($self_mut)*) -> &mut $item $mut
-        }
-
-        // Borrow and BorrowMut are correct, since subclasses behaves
-        // identical to the class they inherit (message sending doesn't care).
+        // Borrow is correct, since subclasses behaves identical to the class
+        // they inherit (message sending doesn't care).
         //
         // In particular, `Eq`, `Ord` and `Hash` all give the same results
         // after borrow.
@@ -296,15 +287,9 @@ macro_rules! __impl_as_ref_borrow {
             fn borrow($($self)*) -> &$item $ref
         }
 
-        impl<$($t)*> $crate::__macro_helpers::BorrowMut<$item> for $for {
-            #[inline]
-            fn borrow_mut($($self_mut)*) -> &mut $item $mut
-        }
-
         $crate::__impl_as_ref_borrow! {
             impl ($($t)*) for $for {
                 fn as_ref($($self)*) $ref
-                fn as_mut($($self_mut)*) $mut
             }
 
             ($($tail,)*)
@@ -478,14 +463,6 @@ macro_rules! __extern_class_impl_traits {
             }
         }
 
-        $(#[$impl_m])*
-        impl<$($t)*> $crate::__macro_helpers::AsMut<Self> for $for {
-            #[inline]
-            fn as_mut(&mut self) -> &mut Self {
-                self
-            }
-        }
-
         // Assume the meta attributes are all `cfg` attributes
         $(#[$impl_m])*
         $crate::__impl_as_ref_borrow! {
@@ -493,10 +470,6 @@ macro_rules! __extern_class_impl_traits {
                 fn as_ref(&self) {
                     // Triggers Deref coercion depending on return type
                     &*self
-                }
-                fn as_mut(&mut self) {
-                    // Triggers Deref coercion depending on return type
-                    &mut *self
                 }
             }
 
