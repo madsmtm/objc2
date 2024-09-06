@@ -32,7 +32,7 @@ declare_class!(
 
     unsafe impl ClassType for MyTestObject {
         type Super = NSObject;
-        type Mutability = mutability::Mutable;
+        type Mutability = mutability::InteriorMutable;
 
         const NAME: &'static str = "MyTestObject";
     }

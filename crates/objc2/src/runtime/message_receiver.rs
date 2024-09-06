@@ -596,11 +596,9 @@ mod tests {
 
     #[test]
     fn test_send_message() {
-        let mut obj = test_utils::custom_object();
-        let result: u32 = unsafe {
-            let _: () = msg_send![&mut obj, setFoo: 4u32];
-            msg_send![&obj, foo]
-        };
+        let obj = test_utils::custom_object();
+        let _: () = unsafe { msg_send![&obj, setFoo: 4u32] };
+        let result: u32 = unsafe { msg_send![&obj, foo] };
         assert_eq!(result, 4);
     }
 
@@ -652,10 +650,10 @@ mod tests {
 
     #[test]
     fn test_send_message_super() {
-        let mut obj = test_utils::custom_subclass_object();
+        let obj = test_utils::custom_subclass_object();
         let superclass = test_utils::custom_class();
         unsafe {
-            let _: () = msg_send![&mut obj, setFoo: 4u32];
+            let _: () = msg_send![&obj, setFoo: 4u32];
             let foo: u32 = msg_send![super(&obj, superclass), foo];
             assert_eq!(foo, 4);
 

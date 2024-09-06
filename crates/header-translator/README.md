@@ -90,8 +90,6 @@ specific API!
     Invalid indexes will throw `NSRangeException`, which is _technically_ still
     unsafe, but everything in Objective-C can throw, so we won't really bother
     with that in our evaluation.
-4. Beware of `Mutable` classes; these usually need to be passed as `&mut T`, or
-    operate on `&mut self`.
 
 Note: It is _not_ considered a breaking change for a method to be marked safe,
 so such an improvement can be made in a minor version!

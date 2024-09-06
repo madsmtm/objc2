@@ -158,7 +158,7 @@ impl<T, U: RetainedFromIterator<T>> FromIterator<T> for Retained<U> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::mutability::Mutable;
+    use crate::mutability::InteriorMutable;
     use crate::runtime::NSObject;
     use crate::{declare_class, msg_send_id, ClassType, DeclaredClass};
 
@@ -168,7 +168,7 @@ mod tests {
 
         unsafe impl ClassType for Collection {
             type Super = NSObject;
-            type Mutability = Mutable;
+            type Mutability = InteriorMutable;
             const NAME: &'static str = "MyCustomCollection";
         }
 
@@ -198,27 +198,6 @@ mod tests {
 
         fn into_iter(self) -> Self::IntoIter {
             Iter { _inner: self }
-        }
-    }
-
-    struct IterMut<'a> {
-        _inner: &'a mut Collection,
-    }
-
-    impl<'a> Iterator for IterMut<'a> {
-        type Item = &'a mut NSObject;
-        fn next(&mut self) -> Option<Self::Item> {
-            None
-        }
-    }
-
-    impl<'a> IntoIterator for &'a mut Collection {
-        // Usually only valid if a mutable object is stored in the collection.
-        type Item = &'a mut NSObject;
-        type IntoIter = IterMut<'a>;
-
-        fn into_iter(self) -> Self::IntoIter {
-            IterMut { _inner: self }
         }
     }
 
@@ -257,13 +236,10 @@ mod tests {
 
     #[test]
     fn test_into_iter() {
-        let mut obj: Retained<Collection> = Default::default();
+        let obj: Retained<Collection> = Default::default();
 
         for _ in &*obj {}
         for _ in &obj {}
-
-        for _ in &mut *obj {}
-        for _ in &mut obj {}
 
         for _ in obj {}
     }

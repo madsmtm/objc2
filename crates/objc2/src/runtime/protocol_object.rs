@@ -225,7 +225,7 @@ mod tests {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 
     use super::*;
-    use crate::mutability::Mutable;
+    use crate::mutability::InteriorMutable;
     use crate::runtime::NSObject;
     use crate::{
         declare_class, extern_methods, extern_protocol, ClassType, DeclaredClass, ProtocolType,
@@ -285,7 +285,7 @@ mod tests {
 
         unsafe impl ClassType for DummyClass {
             type Super = NSObject;
-            type Mutability = Mutable;
+            type Mutability = InteriorMutable;
             const NAME: &'static str = "ProtocolTestsDummyClass";
         }
 
@@ -360,7 +360,7 @@ mod tests {
 
     #[test]
     fn convertible() {
-        let mut obj = DummyClass::new();
+        let obj = DummyClass::new();
         let foobar: &ProtocolObject<dyn FooBar> = ProtocolObject::from_ref(&*obj);
         let foobar: &ProtocolObject<dyn FooBar> = ProtocolObject::from_ref(foobar);
 
@@ -381,7 +381,6 @@ mod tests {
         let _: &ProtocolObject<dyn NSObjectProtocol + Send + Sync> =
             ProtocolObject::from_ref(&*obj);
 
-        let _foobar: &mut ProtocolObject<dyn FooBar> = ProtocolObject::from_mut(&mut *obj);
         let _foobar: Retained<ProtocolObject<dyn FooBar>> = ProtocolObject::from_retained(obj);
     }
 

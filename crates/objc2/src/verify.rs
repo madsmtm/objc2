@@ -250,8 +250,8 @@ mod tests {
 
     #[test]
     fn test_get_reference() {
-        let mut obj = test_utils::custom_object();
-        let _: () = unsafe { msg_send![&mut obj, setFoo: 42u32] };
+        let obj = test_utils::custom_object();
+        let _: () = unsafe { msg_send![&obj, setFoo: 42u32] };
 
         let res: &u32 = unsafe { msg_send![&obj, fooReference] };
         assert_eq!(*res, 42);
@@ -267,8 +267,8 @@ mod tests {
         should_panic = "invalid message send to -[CustomObject fooReference]: expected return to have type code '^I', but found '^v'"
     )]
     fn test_get_reference_void() {
-        let mut obj = test_utils::custom_object();
-        let _: () = unsafe { msg_send![&mut obj, setFoo: 42u32] };
+        let obj = test_utils::custom_object();
+        let _: () = unsafe { msg_send![&obj, setFoo: 42u32] };
 
         let res: *mut c_void = unsafe { msg_send![&obj, fooReference] };
         let res: *mut u32 = res.cast();

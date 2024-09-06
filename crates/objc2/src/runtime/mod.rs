@@ -1533,13 +1533,13 @@ mod tests {
 
     #[test]
     fn test_object() {
-        let mut obj = test_utils::custom_object();
+        let obj = test_utils::custom_object();
         let cls = test_utils::custom_class();
         assert_eq!(obj.class(), cls);
 
         let ivar = cls.instance_variable("_foo").unwrap();
 
-        unsafe { *ivar.load_mut::<u32>(&mut obj) = 4 };
+        unsafe { *ivar.load_ptr::<u32>(&obj) = 4 };
         let result = unsafe { *ivar.load::<u32>(&obj) };
         assert_eq!(result, 4);
     }

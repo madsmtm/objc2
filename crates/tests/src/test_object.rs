@@ -90,7 +90,7 @@ unsafe impl Message for MyTestObject {}
 
 unsafe impl ClassType for MyTestObject {
     type Super = NSObject;
-    type Mutability = mutability::Mutable;
+    type Mutability = mutability::InteriorMutable;
     const NAME: &'static str = "MyTestObject";
 
     #[cfg(all(target_vendor = "apple", target_arch = "aarch64"))]
@@ -152,12 +152,12 @@ impl MyTestObject {
         unsafe { ivar.load(&self.inner) }
     }
 
-    fn var1_ivar_mut(&mut self) -> &mut c_int {
+    fn var1_ivar_ptr(&self) -> *mut c_int {
         let ivar = Self::class().instance_variable("var1").unwrap();
-        unsafe { ivar.load_mut(&mut self.inner) }
+        unsafe { ivar.load_ptr(&self.inner) }
     }
 
-    fn add_to_ivar1(&mut self, number: c_int) {
+    fn add_to_ivar1(&self, number: c_int) {
         unsafe { msg_send![self, addToVar1: number] }
     }
 
@@ -170,16 +170,16 @@ impl MyTestObject {
         unsafe { ivar.load(&self.inner) }
     }
 
-    fn var2_ivar_mut(&mut self) -> &mut Bool {
+    fn var2_ivar_ptr(&self) -> *mut Bool {
         let ivar = Self::class().instance_variable("var2").unwrap();
-        unsafe { ivar.load_mut(&mut self.inner) }
+        unsafe { ivar.load_ptr(&self.inner) }
     }
 
     fn var3(&self) -> *mut AnyObject {
         unsafe { msg_send![self, var3] }
     }
 
-    fn set_var3(&mut self, obj: *mut AnyObject) {
+    fn set_var3(&self, obj: *mut AnyObject) {
         unsafe { msg_send![self, setVar3: obj] }
     }
 
@@ -188,9 +188,9 @@ impl MyTestObject {
         unsafe { ivar.load(&self.inner) }
     }
 
-    fn var3_ivar_mut(&mut self) -> &mut *mut AnyObject {
+    fn var3_ivar_ptr(&self) -> *mut *mut AnyObject {
         let ivar = Self::class().instance_variable("var3").unwrap();
-        unsafe { ivar.load_mut(&mut self.inner) }
+        unsafe { ivar.load_ptr(&self.inner) }
     }
 }
 
@@ -285,7 +285,7 @@ fn test_object() {
     });
     let _obj = MyTestObject::new_autoreleased_retained();
 
-    let mut obj = MyTestObject::new();
+    let obj = MyTestObject::new();
     assert_eq!((*obj.inner).class(), MyTestObject::class());
 
     assert_eq!(obj.var1(), 42);
@@ -295,14 +295,14 @@ fn test_object() {
     assert_eq!(obj.var1(), 45);
     assert_eq!(*obj.var1_ivar(), 45);
 
-    *obj.var1_ivar_mut() = 100;
+    unsafe { *obj.var1_ivar_ptr() = 100 };
     assert_eq!(obj.var1(), 100);
     assert_eq!(*obj.var1_ivar(), 100);
 
     assert!(obj.var2());
     assert!(obj.var2_ivar().is_true());
 
-    *obj.var2_ivar_mut() = Bool::NO;
+    unsafe { *obj.var2_ivar_ptr() = Bool::NO };
     assert!(!obj.var2());
     assert!(obj.var2_ivar().is_false());
 
@@ -315,7 +315,7 @@ fn test_object() {
     assert_eq!(*obj.var3_ivar(), obj2);
 
     let obj3 = Retained::as_ptr(&*ManuallyDrop::new(NSObject::new())) as _;
-    *obj.var3_ivar_mut() = obj3;
+    unsafe { *obj.var3_ivar_ptr() = obj3 };
     assert_ne!(obj.var3(), obj2);
     assert_ne!(*obj.var3_ivar(), obj2);
     assert_eq!(obj.var3(), obj3);

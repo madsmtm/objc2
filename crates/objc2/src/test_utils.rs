@@ -1,4 +1,4 @@
-use core::ops::{Deref, DerefMut};
+use core::ops::Deref;
 use std::os::raw::c_char;
 use std::sync::Once;
 
@@ -20,7 +20,7 @@ unsafe impl Message for CustomObject {}
 unsafe impl ClassType for CustomObject {
     type Super = AnyObject;
 
-    type Mutability = mutability::Mutable;
+    type Mutability = mutability::InteriorMutable;
 
     const NAME: &'static str = "CustomObject";
 
@@ -42,12 +42,6 @@ impl Deref for CustomObject {
 
     fn deref(&self) -> &AnyObject {
         &self.0
-    }
-}
-
-impl DerefMut for CustomObject {
-    fn deref_mut(&mut self) -> &mut AnyObject {
-        &mut self.0
     }
 }
 
@@ -91,9 +85,9 @@ pub(crate) fn custom_class() -> &'static AnyClass {
             }
         }
 
-        extern "C" fn custom_obj_set_foo(this: &mut AnyObject, _cmd: Sel, foo: u32) {
+        extern "C" fn custom_obj_set_foo(this: &AnyObject, _cmd: Sel, foo: u32) {
             let ivar = this.class().instance_variable("_foo").unwrap();
-            unsafe { *ivar.load_mut::<u32>(this) = foo }
+            unsafe { *ivar.load_ptr::<u32>(this) = foo }
         }
 
         extern "C" fn custom_obj_get_foo(this: &AnyObject, _cmd: Sel) -> u32 {
@@ -123,9 +117,9 @@ pub(crate) fn custom_class() -> &'static AnyClass {
             5
         }
 
-        extern "C" fn custom_obj_set_bar(this: &mut AnyObject, _cmd: Sel, bar: u32) {
+        extern "C" fn custom_obj_set_bar(this: &AnyObject, _cmd: Sel, bar: u32) {
             let ivar = this.class().instance_variable("_bar").unwrap();
-            unsafe { *ivar.load_mut::<u32>(this) = bar }
+            unsafe { *ivar.load_ptr::<u32>(this) = bar }
         }
 
         extern "C" fn custom_obj_add_number_to_number(
