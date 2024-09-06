@@ -7,3 +7,6 @@ ios = "10.0"
 tvos = "10.0"
 watchos = "3.0"
 visionos = "1.0"
+
+class.UNNotificationContent.counterpart = "MutableSubclass(UserNotifications::UNNotificationContent::UNMutableNotificationContent)"
+class.UNMutableNotificationContent.counterpart = "ImmutableSuperclass(UserNotifications::UNNotificationContent::UNNotificationContent)"

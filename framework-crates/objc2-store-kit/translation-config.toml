@@ -7,3 +7,7 @@ ios = "3.0"
 tvos = "9.0"
 watchos = "6.2"
 visionos = "1.0"
+
+# Set counterparts
+class.SKPayment.counterpart = "MutableSubclass(StoreKit::SKPayment::SKMutablePayment)"
+class.SKMutablePayment.counterpart = "ImmutableSuperclass(StoreKit::SKPayment::SKPayment)"

@@ -4,6 +4,12 @@ required-dependencies = ["objc2-foundation"]
 macos = "10.6"
 maccatalyst = "13.0"
 
+# Set counterparts
+class.CWConfiguration.counterpart = "MutableSubclass(CoreWLAN::CWConfiguration::CWMutableConfiguration)"
+class.CWMutableConfiguration.counterpart = "ImmutableSuperclass(CoreWLAN::CWConfiguration::CWConfiguration)"
+class.CWNetworkProfile.counterpart = "MutableSubclass(CoreWLAN::CWNetworkProfile::CWMutableNetworkProfile)"
+class.CWMutableNetworkProfile.counterpart = "ImmutableSuperclass(CoreWLAN::CWNetworkProfile::CWNetworkProfile)"
+
 # Uses types from CoreFoundation
 fn.CWKeychainCopyEAPUsernameAndPassword.skipped = true
 fn.CWKeychainCopyEAPIdentityList.skipped = true

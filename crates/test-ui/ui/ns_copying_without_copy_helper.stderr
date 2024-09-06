@@ -6,13 +6,13 @@ error[E0277]: the trait bound `MyObj: CopyingHelper` is not satisfied
   |
   = help: the following other types implement trait `CopyingHelper`:
             NSArray<ObjectType>
-            NSCountedSet<ObjectType>
             NSDictionary<KeyType, ObjectType>
             NSError
             NSMutableArray<ObjectType>
             NSMutableDictionary<KeyType, ObjectType>
             NSMutableSet<ObjectType>
             NSMutableString
+            NSNotification
           and $N others
 
 error[E0277]: the trait bound `MyObj: MutableCopyingHelper` is not satisfied
@@ -23,11 +23,11 @@ error[E0277]: the trait bound `MyObj: MutableCopyingHelper` is not satisfied
   |
   = help: the following other types implement trait `MutableCopyingHelper`:
             NSArray<ObjectType>
-            NSCountedSet<ObjectType>
             NSDictionary<KeyType, ObjectType>
             NSMutableArray<ObjectType>
             NSMutableDictionary<KeyType, ObjectType>
             NSMutableSet<ObjectType>
             NSMutableString
             NSSet<ObjectType>
-          and $N others
+            NSString
+            ProtocolObject<P>

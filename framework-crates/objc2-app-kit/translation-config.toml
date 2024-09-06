@@ -23,6 +23,12 @@ static.NSApp.skipped = true
 # These protocol impls would return the wrong types
 class.NSTextStorage.skipped-protocols = ["NSCopying", "NSMutableCopying"]
 
+# Set counterparts
+class.NSFontCollection.counterpart = "MutableSubclass(AppKit::NSFontCollection::NSMutableFontCollection)"
+class.NSMutableFontCollection.counterpart = "ImmutableSuperclass(AppKit::NSFontCollection::NSFontCollection)"
+class.NSParagraphStyle.counterpart = "MutableSubclass(AppKit::NSParagraphStyle::NSMutableParagraphStyle)"
+class.NSMutableParagraphStyle.counterpart = "ImmutableSuperclass(AppKit::NSParagraphStyle::NSParagraphStyle)"
+
 # Typedef that uses a generic from a class
 typedef.NSCollectionViewDiffableDataSourceItemProvider.skipped = true
 class.NSCollectionViewDiffableDataSource.methods."initWithCollectionView:itemProvider:".skipped = true

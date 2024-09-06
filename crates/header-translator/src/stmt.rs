@@ -289,14 +289,8 @@ pub(crate) fn items_required_by_decl(
 
     match entity.get_kind() {
         EntityKind::ObjCInterfaceDecl => {
-            let data = context.library(id.library_name()).class_data.get(&id.name);
-
             for (superclass, _, _) in parse_superclasses(entity, context) {
                 items.push(superclass);
-            }
-            if let Some(Counterpart::MutableSubclass(subclass)) = data.map(|data| &data.counterpart)
-            {
-                items.push(subclass.clone());
             }
         }
         EntityKind::ObjCProtocolDecl => {
@@ -1965,8 +1959,35 @@ impl Stmt {
                                 .map_name(|_| "MutableCopyingHelper".to_string())
                         };
 
+                        let mut required_items = self.required_items();
+
+                        // Assume counterparts have the same generics.
+                        let ty = match (cls_counterpart, &*protocol.name) {
+                            (Counterpart::ImmutableSuperclass(superclass), "NSCopying") => {
+                                required_items.push(superclass.clone());
+                                format!(
+                                    "{}{}",
+                                    superclass.path_in_relation_to(id),
+                                    GenericTyHelper(generics)
+                                )
+                            }
+                            (Counterpart::MutableSubclass(subclass), "NSMutableCopying") => {
+                                required_items.push(subclass.clone());
+                                format!(
+                                    "{}{}",
+                                    subclass.path_in_relation_to(id),
+                                    GenericTyHelper(generics)
+                                )
+                            }
+                            _ => "Self".into(),
+                        };
+
                         writeln!(f)?;
-                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        write!(
+                            f,
+                            "{}",
+                            cfg_gate_ln(required_items, [self.location()], config, self.location())
+                        )?;
                         writeln!(
                             f,
                             "unsafe impl{} {} for {}{} {{",
@@ -1976,22 +1997,21 @@ impl Stmt {
                             GenericTyHelper(generics),
                         )?;
 
-                        write!(f, "    type Result = ")?;
-                        // Assume counterparts have the same generics.
-                        match (cls_counterpart, &*protocol.name) {
-                            (Counterpart::ImmutableSuperclass(superclass), "NSCopying") => {
-                                write!(f, "{}", superclass.path_in_relation_to(id))?;
-                                write!(f, "{}", GenericTyHelper(generics))?;
-                            }
-                            (Counterpart::MutableSubclass(subclass), "NSMutableCopying") => {
-                                write!(f, "{}", subclass.path_in_relation_to(id))?;
-                                write!(f, "{}", GenericTyHelper(generics))?;
-                            }
-                            _ => write!(f, "Self")?,
-                        }
-                        writeln!(f, ";")?;
+                        writeln!(f, "    type Result = {ty};")?;
 
                         writeln!(f, "}}")?;
+                    }
+
+                    if protocol.name == "NSMutableCopying"
+                        && *cls_counterpart == Counterpart::NoCounterpart
+                    {
+                        error!(
+                            ?cls,
+                            "Class implements NSMutableCopying, \
+                                but does not have a counterpart. You should \
+                                define the counterpart for this class, or \
+                                ignore the NSMutableCopying implementation"
+                        );
                     }
                 }
                 Self::ProtocolDecl {

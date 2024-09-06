@@ -89,6 +89,7 @@ class.NSNumber.methods.new.skipped = true
 class.NSSimpleCString.skipped-protocols = ["NSCopying", "NSMutableCopying"]
 class.NSConstantString.skipped-protocols = ["NSCopying", "NSMutableCopying"]
 class.NSPurgeableData.skipped-protocols = ["NSCopying", "NSMutableCopying"]
+class.NSCountedSet.skipped-protocols = ["NSCopying", "NSMutableCopying"]
 
 # Custom implementation for now
 struct._NSRange.skipped = true

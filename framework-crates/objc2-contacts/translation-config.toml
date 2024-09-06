@@ -6,3 +6,11 @@ maccatalyst = "13.0"
 ios = "9.0"
 watchos = "2.0"
 visionos = "1.0"
+
+# Set counterparts
+class.CNContact.counterpart = "MutableSubclass(Contacts::CNMutableContact::CNMutableContact)"
+class.CNMutableContact.counterpart = "ImmutableSuperclass(Contacts::CNContact::CNContact)"
+class.CNGroup.counterpart = "MutableSubclass(Contacts::CNMutableGroup::CNMutableGroup)"
+class.CNMutableGroup.counterpart = "ImmutableSuperclass(Contacts::CNGroup::CNGroup)"
+class.CNPostalAddress.counterpart = "MutableSubclass(Contacts::CNMutablePostalAddress::CNMutablePostalAddress)"
+class.CNMutablePostalAddress.counterpart = "ImmutableSuperclass(Contacts::CNPostalAddress::CNPostalAddress)"
