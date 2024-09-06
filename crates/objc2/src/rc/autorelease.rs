@@ -48,22 +48,22 @@ impl Pool {
     /// > Not draining the pool during an unwind is apparently required by the
     /// > Objective-C exceptions implementation.
     ///
-    /// We _would_ really like to do this anyway whenever possible, since the
-    /// unwind is probably caused by Rust, and forgetting to pop the pool will
-    /// likely leak memory.
-    ///
     /// The above statement was true in the past, but since [revision `551.1`]
     /// of objc4 (ships with MacOS 10.9) the exception is now retained when
     /// `@throw` is encountered (on __OBJC2__, so e.g. not on macOS 32bit).
     ///
-    /// So in the future, once we drop support for older versions, we should
-    /// move this to `Drop`.
+    /// Since an unwind here is probably caused by Rust, and forgetting to pop
+    /// the pool will likely leak memory, we would really like to do drain in
+    /// `drop` when possible, so that is what we are going to do.
     ///
     /// [clang documentation]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#autoreleasepool
     /// [revision `551.1`]: https://github.com/apple-oss-distributions/objc4/blob/objc4-551.1/runtime/objc-exception.mm#L516
     #[inline]
     unsafe fn drain(self) {
-        unsafe { ffi::objc_autoreleasePoolPop(self.context) }
+        #[cfg(all(target_os = "macos", target_arch = "x86"))]
+        unsafe {
+            ffi::objc_autoreleasePoolPop(self.context);
+        }
     }
 }
 
@@ -78,6 +78,12 @@ impl Drop for Pool {
                 "popped pool that was not the innermost pool"
             );
         });
+
+        // See `drain`.
+        #[cfg(not(all(target_os = "macos", target_arch = "x86")))]
+        unsafe {
+            ffi::objc_autoreleasePoolPop(self.context);
+        }
     }
 }
 
@@ -522,11 +528,13 @@ where
 #[cfg(test)]
 mod tests {
     use core::mem;
-    use core::panic::{RefUnwindSafe, UnwindSafe};
+    use core::panic::{AssertUnwindSafe, RefUnwindSafe, UnwindSafe};
+    use std::panic::catch_unwind;
 
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 
-    use super::{AutoreleasePool, AutoreleaseSafe};
+    use super::{autoreleasepool, AutoreleasePool, AutoreleaseSafe};
+    use crate::rc::{RcTestObject, Retained, ThreadTestData};
     use crate::runtime::AnyObject;
 
     #[test]
@@ -563,5 +571,36 @@ mod tests {
     #[test]
     fn assert_zst() {
         assert_eq!(mem::size_of::<AutoreleasePool<'static>>(), 0);
+    }
+
+    #[test]
+    #[cfg_attr(
+        all(target_os = "macos", target_arch = "x86"),
+        ignore = "unwinding through an auto release pool on macOS 32 bit won't pop the pool"
+    )]
+    fn test_unwind_still_autoreleases() {
+        let obj = RcTestObject::new();
+        let mut expected = ThreadTestData::current();
+
+        catch_unwind({
+            let obj = AssertUnwindSafe(obj);
+            let expected = AssertUnwindSafe(&mut expected);
+            || {
+                let obj = obj;
+                let mut expected = expected;
+
+                autoreleasepool(|pool| {
+                    let _autoreleased = Retained::autorelease(obj.0, pool);
+                    expected.autorelease += 1;
+                    expected.assert_current();
+                    panic!("unwind");
+                });
+            }
+        })
+        .unwrap_err();
+
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
     }
 }
