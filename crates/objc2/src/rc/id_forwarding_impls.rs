@@ -19,7 +19,6 @@ use std::error::Error;
 use std::io;
 
 use super::Retained;
-use crate::mutability::IsMutable;
 
 #[allow(clippy::unconditional_recursion)]
 impl<T: PartialEq + ?Sized> PartialEq for Retained<T> {
@@ -73,48 +72,99 @@ impl<T: hash::Hash + ?Sized> hash::Hash for Retained<T> {
     }
 }
 
-impl<T: hash::Hasher + ?Sized + IsMutable> hash::Hasher for Retained<T> {
+impl<T: ?Sized> hash::Hasher for Retained<T>
+where
+    for<'a> &'a T: hash::Hasher,
+{
     fn finish(&self) -> u64 {
-        (**self).finish()
+        (&**self).finish()
     }
     fn write(&mut self, bytes: &[u8]) {
-        (**self).write(bytes);
+        (&**self).write(bytes);
     }
     fn write_u8(&mut self, i: u8) {
-        (**self).write_u8(i);
+        (&**self).write_u8(i);
     }
     fn write_u16(&mut self, i: u16) {
-        (**self).write_u16(i);
+        (&**self).write_u16(i);
     }
     fn write_u32(&mut self, i: u32) {
-        (**self).write_u32(i);
+        (&**self).write_u32(i);
     }
     fn write_u64(&mut self, i: u64) {
-        (**self).write_u64(i);
+        (&**self).write_u64(i);
     }
     fn write_u128(&mut self, i: u128) {
-        (**self).write_u128(i);
+        (&**self).write_u128(i);
     }
     fn write_usize(&mut self, i: usize) {
-        (**self).write_usize(i);
+        (&**self).write_usize(i);
     }
     fn write_i8(&mut self, i: i8) {
-        (**self).write_i8(i);
+        (&**self).write_i8(i);
     }
     fn write_i16(&mut self, i: i16) {
-        (**self).write_i16(i);
+        (&**self).write_i16(i);
     }
     fn write_i32(&mut self, i: i32) {
-        (**self).write_i32(i);
+        (&**self).write_i32(i);
     }
     fn write_i64(&mut self, i: i64) {
-        (**self).write_i64(i);
+        (&**self).write_i64(i);
     }
     fn write_i128(&mut self, i: i128) {
-        (**self).write_i128(i);
+        (&**self).write_i128(i);
     }
     fn write_isize(&mut self, i: isize) {
-        (**self).write_isize(i);
+        (&**self).write_isize(i);
+    }
+}
+
+impl<'a, T: ?Sized> hash::Hasher for &'a Retained<T>
+where
+    &'a T: hash::Hasher,
+{
+    fn finish(&self) -> u64 {
+        (&***self).finish()
+    }
+    fn write(&mut self, bytes: &[u8]) {
+        (&***self).write(bytes);
+    }
+    fn write_u8(&mut self, i: u8) {
+        (&***self).write_u8(i);
+    }
+    fn write_u16(&mut self, i: u16) {
+        (&***self).write_u16(i);
+    }
+    fn write_u32(&mut self, i: u32) {
+        (&***self).write_u32(i);
+    }
+    fn write_u64(&mut self, i: u64) {
+        (&***self).write_u64(i);
+    }
+    fn write_u128(&mut self, i: u128) {
+        (&***self).write_u128(i);
+    }
+    fn write_usize(&mut self, i: usize) {
+        (&***self).write_usize(i);
+    }
+    fn write_i8(&mut self, i: i8) {
+        (&***self).write_i8(i);
+    }
+    fn write_i16(&mut self, i: i16) {
+        (&***self).write_i16(i);
+    }
+    fn write_i32(&mut self, i: i32) {
+        (&***self).write_i32(i);
+    }
+    fn write_i64(&mut self, i: i64) {
+        (&***self).write_i64(i);
+    }
+    fn write_i128(&mut self, i: i128) {
+        (&***self).write_i128(i);
+    }
+    fn write_isize(&mut self, i: isize) {
+        (&***self).write_isize(i);
     }
 }
 
@@ -150,99 +200,164 @@ impl<T: Error + ?Sized> Error for Retained<T> {
     }
 }
 
-impl<T: io::Read + ?Sized + IsMutable> io::Read for Retained<T> {
+impl<T: ?Sized> io::Read for Retained<T>
+where
+    for<'a> &'a T: io::Read,
+{
     #[inline]
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-        (**self).read(buf)
+        (&**self).read(buf)
     }
 
     #[inline]
     fn read_vectored(&mut self, bufs: &mut [io::IoSliceMut<'_>]) -> io::Result<usize> {
-        (**self).read_vectored(bufs)
+        (&**self).read_vectored(bufs)
     }
 
     #[inline]
     fn read_to_end(&mut self, buf: &mut Vec<u8>) -> io::Result<usize> {
-        (**self).read_to_end(buf)
+        (&**self).read_to_end(buf)
     }
 
     #[inline]
     fn read_to_string(&mut self, buf: &mut String) -> io::Result<usize> {
-        (**self).read_to_string(buf)
+        (&**self).read_to_string(buf)
     }
 
     #[inline]
     fn read_exact(&mut self, buf: &mut [u8]) -> io::Result<()> {
-        (**self).read_exact(buf)
+        (&**self).read_exact(buf)
     }
 }
 
-impl<T: io::Write + ?Sized + IsMutable> io::Write for Retained<T> {
+impl<'a, T: ?Sized> io::Read for &'a Retained<T>
+where
+    &'a T: io::Read,
+{
+    #[inline]
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        (&***self).read(buf)
+    }
+
+    #[inline]
+    fn read_vectored(&mut self, bufs: &mut [io::IoSliceMut<'_>]) -> io::Result<usize> {
+        (&***self).read_vectored(bufs)
+    }
+
+    #[inline]
+    fn read_to_end(&mut self, buf: &mut Vec<u8>) -> io::Result<usize> {
+        (&***self).read_to_end(buf)
+    }
+
+    #[inline]
+    fn read_to_string(&mut self, buf: &mut String) -> io::Result<usize> {
+        (&***self).read_to_string(buf)
+    }
+
+    #[inline]
+    fn read_exact(&mut self, buf: &mut [u8]) -> io::Result<()> {
+        (&***self).read_exact(buf)
+    }
+}
+
+impl<T: ?Sized> io::Write for Retained<T>
+where
+    for<'a> &'a T: io::Write,
+{
     #[inline]
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-        (**self).write(buf)
+        (&**self).write(buf)
     }
 
     #[inline]
     fn write_vectored(&mut self, bufs: &[io::IoSlice<'_>]) -> io::Result<usize> {
-        (**self).write_vectored(bufs)
+        (&**self).write_vectored(bufs)
     }
 
     #[inline]
     fn flush(&mut self) -> io::Result<()> {
-        (**self).flush()
+        (&**self).flush()
     }
 
     #[inline]
     fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
-        (**self).write_all(buf)
+        (&**self).write_all(buf)
     }
 
     #[inline]
     fn write_fmt(&mut self, fmt: fmt::Arguments<'_>) -> io::Result<()> {
-        (**self).write_fmt(fmt)
+        (&**self).write_fmt(fmt)
     }
 }
 
-impl<T: io::Seek + ?Sized + IsMutable> io::Seek for Retained<T> {
+impl<'a, T: ?Sized> io::Write for &'a Retained<T>
+where
+    &'a T: io::Write,
+{
+    #[inline]
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        (&***self).write(buf)
+    }
+
+    #[inline]
+    fn write_vectored(&mut self, bufs: &[io::IoSlice<'_>]) -> io::Result<usize> {
+        (&***self).write_vectored(bufs)
+    }
+
+    #[inline]
+    fn flush(&mut self) -> io::Result<()> {
+        (&***self).flush()
+    }
+
+    #[inline]
+    fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
+        (&***self).write_all(buf)
+    }
+
+    #[inline]
+    fn write_fmt(&mut self, fmt: fmt::Arguments<'_>) -> io::Result<()> {
+        (&***self).write_fmt(fmt)
+    }
+}
+
+impl<T: ?Sized> io::Seek for Retained<T>
+where
+    for<'a> &'a T: io::Seek,
+{
     #[inline]
     fn seek(&mut self, pos: io::SeekFrom) -> io::Result<u64> {
-        (**self).seek(pos)
+        (&**self).seek(pos)
     }
 
     #[inline]
     fn stream_position(&mut self) -> io::Result<u64> {
-        (**self).stream_position()
+        (&**self).stream_position()
     }
 }
 
-impl<T: io::BufRead + ?Sized + IsMutable> io::BufRead for Retained<T> {
+impl<'a, T: ?Sized> io::Seek for &'a Retained<T>
+where
+    &'a T: io::Seek,
+{
     #[inline]
-    fn fill_buf(&mut self) -> io::Result<&[u8]> {
-        (**self).fill_buf()
+    fn seek(&mut self, pos: io::SeekFrom) -> io::Result<u64> {
+        (&***self).seek(pos)
     }
 
     #[inline]
-    fn consume(&mut self, amt: usize) {
-        (**self).consume(amt);
-    }
-
-    #[inline]
-    fn read_until(&mut self, byte: u8, buf: &mut Vec<u8>) -> io::Result<usize> {
-        (**self).read_until(byte, buf)
-    }
-
-    #[inline]
-    fn read_line(&mut self, buf: &mut String) -> io::Result<usize> {
-        (**self).read_line(buf)
+    fn stream_position(&mut self) -> io::Result<u64> {
+        (&***self).stream_position()
     }
 }
 
-impl<T: Future + Unpin + ?Sized + IsMutable> Future for Retained<T> {
-    type Output = T::Output;
+impl<'a, T: ?Sized> Future for &'a Retained<T>
+where
+    &'a T: Future,
+{
+    type Output = <&'a T as Future>::Output;
 
-    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-        T::poll(Pin::new(&mut *self), cx)
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        <&T>::poll(Pin::new(&mut &***self), cx)
     }
 }
 
