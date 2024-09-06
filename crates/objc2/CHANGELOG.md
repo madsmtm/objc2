@@ -42,7 +42,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `runtime::Sel` instead.
 * **BREAKING**: Removed `ffi` exception function pointer aliases.
 * **BREAKING**: Removed `mutability::HasStableHash`.
-* **BREAKING**: Removed `DeclaredClass::ivars_mut`.
+* **BREAKING**: Removed various `_mut` methods:
+  - `Retained::as_mut_ptr`.
+  - `Retained::autorelease_mut`.
+  - `DeclaredClass::ivars_mut`.
 * **BREAKING**: Disallow `&mut` message receivers (except in the special case
   when the object is `AnyObject`, for better backwards compatibility with
   `objc`).

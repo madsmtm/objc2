@@ -267,29 +267,9 @@ impl<T: ?Sized + Message> Retained<T> {
     ///
     /// The pointer is valid for at least as long as the `Retained` is held.
     ///
-    /// See [`Retained::as_mut_ptr`] for the mutable equivalent.
-    ///
     /// This is an associated method, and must be called as `Retained::as_ptr(obj)`.
     #[inline]
     pub fn as_ptr(this: &Self) -> *const T {
-        this.ptr.as_ptr()
-    }
-
-    /// Returns a raw mutable pointer to the object.
-    ///
-    /// The pointer is valid for at least as long as the `Retained` is held.
-    ///
-    /// See [`Retained::as_ptr`] for the immutable equivalent.
-    ///
-    /// This is an associated method, and must be called as
-    /// `Retained::as_mut_ptr(obj)`.
-    #[inline]
-    #[allow(unknown_lints)] // New lint below
-    #[allow(clippy::needless_pass_by_ref_mut)]
-    pub fn as_mut_ptr(this: &mut Self) -> *mut T
-    where
-        T: IsMutable,
-    {
         this.ptr.as_ptr()
     }
 
@@ -535,8 +515,8 @@ impl<T: Message> Retained<T> {
     /// parameter passed as `Option<&mut *mut NSError>`, and you want to
     /// create and autorelease an error before returning.
     ///
-    /// See [`Retained::autorelease`] and [`Retained::autorelease_mut`] for alternatives
-    /// that yield safe references.
+    /// See [`Retained::autorelease`] for an alternative that yields safe
+    /// references.
     ///
     /// This is an associated method, and must be called as
     /// `Retained::autorelease_ptr(obj)`.
@@ -560,8 +540,6 @@ impl<T: Message> Retained<T> {
     /// The object is not immediately released, but will be when the innermost
     /// / current autorelease pool (given as a parameter) is drained.
     ///
-    /// See [`Retained::autorelease_mut`] for the mutable alternative.
-    ///
     /// This is an associated method, and must be called as
     /// `Retained::autorelease(obj, pool)`.
     #[doc(alias = "objc_autorelease")]
@@ -572,32 +550,6 @@ impl<T: Message> Retained<T> {
         let ptr = Self::autorelease_ptr(this);
         // SAFETY: The pointer is valid as a reference
         unsafe { pool.ptr_as_ref(ptr) }
-    }
-
-    /// Autoreleases the [`Retained`], returning a mutable reference bound to the
-    /// pool.
-    ///
-    /// The object is not immediately released, but will be when the innermost
-    /// / current autorelease pool (given as a parameter) is drained.
-    ///
-    /// See [`Retained::autorelease`] for the immutable alternative.
-    ///
-    /// This is an associated method, and must be called as
-    /// `Retained::autorelease_mut(obj, pool)`.
-    #[doc(alias = "objc_autorelease")]
-    #[must_use = "if you don't intend to use the object any more, drop it as usual"]
-    #[inline]
-    #[allow(clippy::needless_lifetimes)]
-    pub fn autorelease_mut<'p>(this: Self, pool: AutoreleasePool<'p>) -> &'p mut T
-    where
-        T: IsMutable,
-    {
-        let ptr = Self::autorelease_ptr(this);
-        // SAFETY:
-        // - The pointer is valid as a reference.
-        // - The object is safe as mutable because of the `T: IsMutable`
-        //   bound + the consumption of unique access to the `Retained`.
-        unsafe { pool.ptr_as_mut(ptr) }
     }
 
     #[inline]
