@@ -111,11 +111,11 @@ fn write_same_string() {
     let mut expected = String::from("foo");
 
     for i in 0..3 {
-        write!(&mut &*string, "{string}").unwrap();
-        write!(&mut &*string, "{string:?}").unwrap();
+        write!(&string, "{string}").unwrap();
+        write!(&string, "{string:?}").unwrap();
         // Test `NSObject`'s Debug impl as well.
         let object: &NSObject = &string;
-        write!(&mut &*string, "{object:?}").unwrap();
+        write!(&string, "{object:?}").unwrap();
 
         let expected_clone = expected.clone();
         write!(&mut expected, "{expected_clone}").unwrap();

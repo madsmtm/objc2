@@ -1,8 +1,6 @@
 //! Trivial forwarding impls on `Retained`.
 //!
 //! Kept here to keep `id.rs` free from this boilerplate.
-//!
-//! `#[inline]` is used where the standard library `Box` uses it.
 
 #![forbid(unsafe_code)]
 
@@ -168,15 +166,44 @@ where
     }
 }
 
-impl<T: fmt::Display + ?Sized> fmt::Display for Retained<T> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        (**self).fmt(f)
-    }
+macro_rules! forward_fmt_impl {
+    ($trait:path) => {
+        impl<T: $trait + ?Sized> $trait for Retained<T> {
+            #[inline]
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                (**self).fmt(f)
+            }
+        }
+    };
 }
 
-impl<T: fmt::Debug + ?Sized> fmt::Debug for Retained<T> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        (**self).fmt(f)
+forward_fmt_impl!(fmt::Binary);
+forward_fmt_impl!(fmt::Debug);
+forward_fmt_impl!(fmt::Display);
+forward_fmt_impl!(fmt::LowerExp);
+forward_fmt_impl!(fmt::LowerHex);
+forward_fmt_impl!(fmt::Octal);
+// forward_fmt_impl!(fmt::Pointer);
+forward_fmt_impl!(fmt::UpperExp);
+forward_fmt_impl!(fmt::UpperHex);
+
+impl<'a, T: ?Sized> fmt::Write for &'a Retained<T>
+where
+    &'a T: fmt::Write,
+{
+    #[inline]
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        (&***self).write_str(s)
+    }
+
+    #[inline]
+    fn write_char(&mut self, c: char) -> fmt::Result {
+        (&***self).write_char(c)
+    }
+
+    #[inline]
+    fn write_fmt(&mut self, args: fmt::Arguments<'_>) -> fmt::Result {
+        (&***self).write_fmt(args)
     }
 }
 
@@ -358,6 +385,26 @@ where
 
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         <&T>::poll(Pin::new(&mut &***self), cx)
+    }
+}
+
+impl<A, T: ?Sized> Extend<A> for Retained<T>
+where
+    for<'a> &'a T: Extend<A>,
+{
+    #[inline]
+    fn extend<I: IntoIterator<Item = A>>(&mut self, iter: I) {
+        (&**self).extend(iter)
+    }
+}
+
+impl<'a, A, T: ?Sized> Extend<A> for &'a Retained<T>
+where
+    &'a T: Extend<A>,
+{
+    #[inline]
+    fn extend<I: IntoIterator<Item = A>>(&mut self, iter: I) {
+        (&***self).extend(iter)
     }
 }
 

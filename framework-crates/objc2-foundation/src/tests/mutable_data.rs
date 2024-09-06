@@ -65,9 +65,9 @@ fn test_with_capacity() {
 
 #[test]
 fn test_extend() {
-    let data = NSMutableData::with_bytes(&[1, 2]);
-    (&*data).extend(3..=5);
+    let mut data = NSMutableData::with_bytes(&[1, 2]);
+    data.extend(3..=5);
     assert_eq!(data.to_vec(), &[1, 2, 3, 4, 5]);
-    (&*data).extend(&*NSData::with_bytes(&[6, 7]));
+    (&data).extend(&*NSData::with_bytes(&[6, 7]));
     assert_eq!(data.to_vec(), &[1, 2, 3, 4, 5, 6, 7]);
 }

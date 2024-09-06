@@ -68,10 +68,10 @@ fn test_to_vec() {
 
 #[test]
 fn test_extend() {
-    let set = NSMutableSet::new();
+    let mut set = NSMutableSet::new();
     assert!(set.is_empty());
 
-    (&*set).extend([ns_string!("one"), ns_string!("two"), ns_string!("three")]);
+    set.extend([ns_string!("one"), ns_string!("two"), ns_string!("three")]);
     assert_eq!(set.len(), 3);
 }
 
