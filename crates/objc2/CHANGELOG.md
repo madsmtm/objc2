@@ -42,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `runtime::Sel` instead.
 * **BREAKING**: Removed `ffi` exception function pointer aliases.
 * **BREAKING**: Removed `mutability::HasStableHash`.
+* **BREAKING**: Removed `DeclaredClass::ivars_mut`.
 
 ### Fixed
 * Remove an incorrect assertion when adding protocols to classes in an unexpected

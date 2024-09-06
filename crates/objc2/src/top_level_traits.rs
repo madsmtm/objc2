@@ -376,25 +376,6 @@ pub trait DeclaredClass: ClassType {
         unsafe { ivars.as_ref() }
     }
 
-    /// Get a mutable reference to the instance variable data that this object
-    /// carries.
-    #[inline]
-    #[track_caller]
-    fn ivars_mut(&mut self) -> &mut Self::Ivars
-    where
-        Self: Sized, // Required because of MSRV
-    {
-        let ptr: NonNull<Self> = NonNull::from(self);
-        // SAFETY: The pointer is valid and initialized.
-        let mut ivars = unsafe { get_initialized_ivar_ptr(ptr) };
-        // SAFETY: The lifetime of the instance variable is tied to the object.
-        //
-        // Mutability is safe since the object itself is mutable. See
-        // `ClassType::as_super_mut` for why this is safe without
-        // `Self: IsMutable`.
-        unsafe { ivars.as_mut() }
-    }
-
     #[doc(hidden)]
     fn __ivars_offset() -> isize;
 

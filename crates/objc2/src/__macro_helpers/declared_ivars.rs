@@ -420,13 +420,13 @@ pub(crate) unsafe fn get_initialized_ivar_ptr<T: DeclaredClass>(
 
 #[cfg(test)]
 mod tests {
+    use alloc::vec::Vec;
+    use core::cell::Cell;
     use std::println;
     use std::sync::Mutex;
 
-    use alloc::vec::Vec;
-
     use super::*;
-    use crate::mutability::{InteriorMutable, Mutable};
+    use crate::mutability::InteriorMutable;
     use crate::rc::{Allocated, PartialInit, RcTestObject, Retained, ThreadTestData};
     use crate::runtime::NSObject;
     use crate::{declare_class, msg_send, msg_send_id};
@@ -644,7 +644,7 @@ mod tests {
 
     #[test]
     fn zst_ivar() {
-        #[derive(Default, Debug)]
+        #[derive(Default, Debug, Clone, Copy)]
         struct Ivar;
 
         declare_class!(
@@ -652,18 +652,18 @@ mod tests {
 
             unsafe impl ClassType for IvarZst {
                 type Super = NSObject;
-                type Mutability = Mutable;
+                type Mutability = InteriorMutable;
                 const NAME: &'static str = "IvarZst";
             }
 
             impl DeclaredClass for IvarZst {
-                type Ivars = Ivar;
+                type Ivars = Cell<Ivar>;
             }
 
             unsafe impl IvarZst {
                 #[method_id(init)]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-                    unsafe { msg_send_id![super(this.set_ivars(Ivar)), init] }
+                    unsafe { msg_send_id![super(this.set_ivars(Cell::new(Ivar))), init] }
                 }
             }
         );
@@ -679,9 +679,9 @@ mod tests {
         };
         assert!(IvarZst::class().instance_variable(ivar_name).is_none());
 
-        let mut obj = unsafe { init(IvarZst::alloc()) };
-        println!("{:?}", obj.ivars());
-        *obj.ivars_mut() = Ivar;
+        let obj = unsafe { init(IvarZst::alloc()) };
+        println!("{:?}", obj.ivars().get());
+        obj.ivars().set(Ivar);
     }
 
     #[test]
@@ -720,25 +720,24 @@ mod tests {
     }
 
     #[test]
-    #[allow(clippy::assigning_clones)]
     fn test_ivar_access() {
         declare_class!(
             struct RcIvar;
 
             unsafe impl ClassType for RcIvar {
                 type Super = NSObject;
-                type Mutability = Mutable;
+                type Mutability = InteriorMutable;
                 const NAME: &'static str = "RcIvar";
             }
 
             impl DeclaredClass for RcIvar {
-                type Ivars = Option<Retained<RcTestObject>>;
+                type Ivars = Cell<Option<Retained<RcTestObject>>>;
             }
 
             unsafe impl RcIvar {
                 #[method_id(init)]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-                    let this = this.set_ivars(Some(RcTestObject::new()));
+                    let this = this.set_ivars(Cell::new(Some(RcTestObject::new())));
                     unsafe { msg_send_id![super(this), init] }
                 }
             }
@@ -753,10 +752,10 @@ mod tests {
         expected.assert_current();
 
         // Ivar access is valid even if the class is not finalized.
-        let mut obj = unsafe { init_no_finalize(RcIvar::alloc()) };
+        let obj = unsafe { init_no_finalize(RcIvar::alloc()) };
         expected.assert_current();
 
-        *obj.ivars_mut() = Some(RcTestObject::new());
+        obj.ivars().set(Some(RcTestObject::new()));
         expected.alloc += 1;
         expected.init += 1;
         expected.assert_current();
@@ -766,12 +765,14 @@ mod tests {
         expected.drop += 1;
         expected.assert_current();
 
-        let mut obj = unsafe { init(RcIvar::alloc()) };
+        let obj = unsafe { init(RcIvar::alloc()) };
         expected.alloc += 1;
         expected.init += 1;
         expected.assert_current();
 
-        *obj.ivars_mut() = obj.ivars().clone();
+        // SAFETY: Cloned immediately after, so not accessed while borrowed
+        let ivar = unsafe { &*obj.ivars().as_ptr() }.clone();
+        obj.ivars().set(ivar);
         expected.retain += 1;
         expected.release += 1;
         expected.assert_current();
@@ -781,10 +782,10 @@ mod tests {
         expected.drop += 1;
         expected.assert_current();
 
-        #[derive(Default, Debug, PartialEq, Eq)]
+        #[derive(Default)]
         struct RcIvarSubclassIvars {
-            int: i32,
-            obj: Retained<RcTestObject>,
+            int: Cell<i32>,
+            obj: Cell<Retained<RcTestObject>>,
         }
 
         declare_class!(
@@ -792,7 +793,7 @@ mod tests {
 
             unsafe impl ClassType for RcIvarSubclass {
                 type Super = RcIvar;
-                type Mutability = Mutable;
+                type Mutability = InteriorMutable;
                 const NAME: &'static str = "RcIvarSubclass";
             }
 
@@ -804,30 +805,33 @@ mod tests {
                 #[method_id(init)]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     let this = this.set_ivars(RcIvarSubclassIvars {
-                        int: 42,
-                        obj: RcTestObject::new(),
+                        int: Cell::new(42),
+                        obj: Cell::new(RcTestObject::new()),
                     });
                     unsafe { msg_send_id![super(this), init] }
                 }
             }
         );
 
-        let mut obj = unsafe { init(RcIvarSubclass::alloc()) };
+        let obj = unsafe { init(RcIvarSubclass::alloc()) };
         expected.alloc += 2;
         expected.init += 2;
         expected.assert_current();
-        assert_eq!(obj.ivars().int, 42);
+        assert_eq!(obj.ivars().int.get(), 42);
 
-        obj.ivars_mut().int += 1;
-        assert_eq!(obj.ivars().int, 43);
+        obj.ivars().int.set(obj.ivars().int.get() + 1);
+        assert_eq!(obj.ivars().int.get(), 43);
 
-        obj.ivars_mut().obj = (**obj).ivars().clone().unwrap();
+        // SAFETY: Cloned immediately after, so not accessed while borrowed
+        let ivar = unsafe { &*(**obj).ivars().as_ptr() }.clone().unwrap();
+        obj.ivars().obj.set(ivar);
         expected.retain += 1;
         expected.release += 1;
         expected.drop += 1;
         expected.assert_current();
 
-        *(**obj).ivars_mut() = None;
+        // Change super ivars
+        (**obj).ivars().set(None);
         expected.release += 1;
         expected.assert_current();
 
@@ -842,7 +846,8 @@ mod tests {
         expected.assert_current();
 
         // Accessing superclass ivars is valid
-        println!("{:?}", (**obj).ivars());
+        // SAFETY: Cell not accessed while ivar is borrowed
+        println!("{:?}", unsafe { &*(**obj).ivars().as_ptr() });
 
         drop(obj);
         expected.release += 1;
