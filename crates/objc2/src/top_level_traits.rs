@@ -102,17 +102,12 @@ pub unsafe trait Message: RefEncode {}
 ///    represents any object, like [`AnyObject`][crate::runtime::AnyObject]).
 /// 3. [`Self::Mutability`] must be specified correctly.
 ///
-///    Note that very little Objective-C code follows Rust's usual ownership
-///    model. If you think your type's mutability should be [`Mutable`], think
-///    again, it _very_ rarely should!
-///
-///    If you're unsure of what to do, [`InteriorMutable`] + avoiding `&mut`
-///    is usually a good starting point.
+///    If you're unsure of what to do, [`InteriorMutable`] is usually a good
+///    starting point.
 /// 4. [`Self::NAME`] must be correct.
 /// 5. The class returned by [`Self::class`] must be the class that this type
 ///    represents.
 ///
-/// [`Mutable`]: crate::mutability::Mutable
 /// [`InteriorMutable`]: crate::mutability::InteriorMutable
 ///
 ///

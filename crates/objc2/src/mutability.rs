@@ -56,18 +56,6 @@ pub trait Mutability: private_mutability::Sealed + Sized {}
 impl private_mutability::Sealed for Root {}
 impl Mutability for Root {}
 
-impl private_mutability::Sealed for Immutable {}
-impl Mutability for Immutable {}
-
-impl private_mutability::Sealed for Mutable {}
-impl Mutability for Mutable {}
-
-impl<MS: ?Sized> private_mutability::Sealed for ImmutableWithMutableSubclass<MS> {}
-impl<MS: ?Sized> Mutability for ImmutableWithMutableSubclass<MS> {}
-
-impl<IS: ?Sized> private_mutability::Sealed for MutableWithImmutableSuperclass<IS> {}
-impl<IS: ?Sized> Mutability for MutableWithImmutableSuperclass<IS> {}
-
 impl private_mutability::Sealed for InteriorMutable {}
 impl Mutability for InteriorMutable {}
 
@@ -93,96 +81,9 @@ enum Never {}
 /// Functionality that is provided with this:
 /// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
-/// - [`IsAllowedMutable`].
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Root {
     inner: Never,
-}
-
-/// Marker type for immutable classes.
-///
-/// Note that immutable objects are often both [`Send`] and [`Sync`], though
-/// such implementations must be provided manually.
-///
-/// Functionality that is provided with this:
-/// - [`IsRetainable`] -> [`ClassType::retain`].
-/// - [`IsIdCloneable`] -> [`Retained::clone`][crate::rc::Retained#impl-Clone-for-Retained<T>].
-/// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
-/// - You are allowed to hand out pointers / references to an instance's
-///   internal data, since you know such data will never be mutated.
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-pub struct Immutable {
-    inner: Never,
-}
-
-/// Marker type for mutable classes.
-///
-/// Note that mutable objects are often both [`Send`] and [`Sync`], though
-/// such implementations must be provided manually (and are usually only safe
-/// if all mutation happens behind `&mut self`).
-///
-/// Functionality that is provided with this:
-/// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
-/// - [`IsAllowedMutable`].
-/// - [`IsMutable`] -> [`impl DerefMut for Retained`][crate::rc::Retained#impl-DerefMut-for-Retained<T>].
-/// - You are allowed to hand out pointers / references to an instance's
-///   internal data, since you know such data will never be mutated without
-///   the borrowchecker catching it.
-///
-///
-/// # Safety notice
-///
-/// - (Safe) methods that mutate the object (without synchronization) are
-///   required to use `&mut self`.
-/// - The `retain` selector is not generally safe to use on classes `T` that
-///   specify this, since `Retained<T>` allows having `&mut T` references,
-///   which Rust assume are unique.
-/// - As a special case of that, `-[NSCopying copy]` and
-///   `-[NSMutableCopying mutableCopy]`, if implemented, must return a new
-///   instance (e.g. cannot be implemented by just `retain`-ing the instance).
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-pub struct Mutable {
-    inner: Never,
-}
-
-/// Marker type for immutable classes that have a mutable counterpart.
-///
-/// This is effectively the same as [`Immutable`], except for the fact that
-/// classes that specify this does not implement [`IsRetainable`], meaning
-/// that [`ClassType::retain`] does not work (see that for details on why).
-///
-/// The mutable counterpart must be specified as the type parameter `MS` to
-/// allow `NSCopying` and `NSMutableCopying` to return the correct type.
-///
-/// Functionality that is provided with this:
-/// - [`IsIdCloneable`].
-/// - [`IsAllocableAnyThread`].
-/// - [`IsAllowedMutable`].
-/// - You are allowed to hand out pointers / references to an instance's
-///   internal data, since you know such data will never be mutated.
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-pub struct ImmutableWithMutableSubclass<MS: ?Sized> {
-    inner: Never,
-    mutable_subclass: PhantomData<MS>,
-}
-
-/// Marker type for mutable classes that have a immutable counterpart.
-///
-/// This is effectively the same as [`Mutable`], except for the immutable
-/// counterpart being be specified as the type parameter `IS` to allow
-/// `NSCopying` and `NSMutableCopying` to return the correct type.
-///
-/// Functionality that is provided with this:
-/// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
-/// - [`IsAllowedMutable`].
-/// - [`IsMutable`] -> [`impl DerefMut for Retained`][crate::rc::Retained#impl-DerefMut-for-Retained<T>].
-/// - You are allowed to hand out pointers / references to an instance's
-///   internal data, since you know such data will never be mutated without
-///   the borrowchecker catching it.
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-pub struct MutableWithImmutableSuperclass<IS: ?Sized> {
-    inner: Never,
-    immutable_superclass: PhantomData<IS>,
 }
 
 /// Marker type for classes that use interior mutability.
@@ -322,8 +223,6 @@ impl private_traits::Sealed for AnyObject {}
 ///
 /// This is implemented for classes whose [`ClassType::Mutability`] is one of:
 /// - [`Root`].
-/// - [`Immutable`].
-/// - [`ImmutableWithMutableSubclass`].
 /// - [`InteriorMutable`].
 /// - [`MainThreadOnly`].
 ///
@@ -340,8 +239,6 @@ pub unsafe trait IsIdCloneable: private_traits::Sealed {}
 
 trait MutabilityIsIdCloneable: Mutability {}
 impl MutabilityIsIdCloneable for Root {}
-impl MutabilityIsIdCloneable for Immutable {}
-impl<MS: ?Sized> MutabilityIsIdCloneable for ImmutableWithMutableSubclass<MS> {}
 impl MutabilityIsIdCloneable for InteriorMutable {}
 impl<S: ?Sized> MutabilityIsIdCloneable for InteriorMutableWithSubclass<S> {}
 impl<S: ?Sized> MutabilityIsIdCloneable for InteriorMutableWithSuperclass<S> {}
@@ -359,7 +256,6 @@ unsafe impl IsIdCloneable for AnyObject {}
 /// you know that there are no live mutable subclasses.
 ///
 /// This is implemented for classes whose [`ClassType::Mutability`] is one of:
-/// - [`Immutable`].
 /// - [`InteriorMutable`].
 /// - [`MainThreadOnly`].
 ///
@@ -376,7 +272,6 @@ unsafe impl IsIdCloneable for AnyObject {}
 pub unsafe trait IsRetainable: private_traits::Sealed + IsIdCloneable {}
 
 trait MutabilityIsRetainable: MutabilityIsIdCloneable {}
-impl MutabilityIsRetainable for Immutable {}
 impl MutabilityIsRetainable for InteriorMutable {}
 impl<S: ?Sized> MutabilityIsRetainable for InteriorMutableWithSubclass<S> {}
 impl<S: ?Sized> MutabilityIsRetainable for InteriorMutableWithSuperclass<S> {}
@@ -389,10 +284,6 @@ unsafe impl<P: ?Sized + IsRetainable> IsRetainable for ProtocolObject<P> {}
 ///
 /// This is implemented for classes whose [`ClassType::Mutability`] is one of:
 /// - [`Root`].
-/// - [`Immutable`].
-/// - [`Mutable`].
-/// - [`ImmutableWithMutableSubclass`].
-/// - [`MutableWithImmutableSuperclass`].
 /// - [`InteriorMutable`].
 ///
 ///
@@ -404,10 +295,6 @@ pub unsafe trait IsAllocableAnyThread: private_traits::Sealed {}
 
 trait MutabilityIsAllocableAnyThread: Mutability {}
 impl MutabilityIsAllocableAnyThread for Root {}
-impl MutabilityIsAllocableAnyThread for Immutable {}
-impl MutabilityIsAllocableAnyThread for Mutable {}
-impl<MS: ?Sized> MutabilityIsAllocableAnyThread for ImmutableWithMutableSubclass<MS> {}
-impl<IS: ?Sized> MutabilityIsAllocableAnyThread for MutableWithImmutableSuperclass<IS> {}
 impl MutabilityIsAllocableAnyThread for InteriorMutable {}
 impl<S: ?Sized> MutabilityIsAllocableAnyThread for InteriorMutableWithSubclass<S> {}
 impl<S: ?Sized> MutabilityIsAllocableAnyThread for InteriorMutableWithSuperclass<S> {}
@@ -417,66 +304,6 @@ unsafe impl<T: ?Sized + ClassType> IsAllocableAnyThread for T where
 {
 }
 unsafe impl<P: ?Sized + IsAllocableAnyThread> IsAllocableAnyThread for ProtocolObject<P> {}
-
-/// Marker trait for classes that may feasibly be used behind a mutable
-/// reference.
-///
-/// This trait exist mostly to disallow using `&mut self` when declaring
-/// classes, since that would be a huge footgun.
-///
-/// This is implemented for classes whose [`ClassType::Mutability`] is one of:
-/// - [`Root`]
-/// - [`Mutable`]
-/// - [`ImmutableWithMutableSubclass`]
-/// - [`MutableWithImmutableSuperclass`]
-///
-///
-/// # Safety
-///
-/// This is a sealed trait, and should not need to be implemented. Open an
-/// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait IsAllowedMutable: private_traits::Sealed {}
-
-trait MutabilityIsAllowedMutable: Mutability {}
-impl MutabilityIsAllowedMutable for Root {}
-impl MutabilityIsAllowedMutable for Mutable {}
-impl<MS: ?Sized> MutabilityIsAllowedMutable for ImmutableWithMutableSubclass<MS> {}
-impl<IS: ?Sized> MutabilityIsAllowedMutable for MutableWithImmutableSuperclass<IS> {}
-
-unsafe impl<T: ?Sized + ClassType> IsAllowedMutable for T where
-    T::Mutability: MutabilityIsAllowedMutable
-{
-}
-unsafe impl<P: ?Sized + IsAllowedMutable> IsAllowedMutable for ProtocolObject<P> {}
-// SAFETY: Same as for root classes.
-unsafe impl IsAllowedMutable for AnyObject {}
-
-/// Marker trait for classes that are only mutable through `&mut`.
-///
-/// This is implemented for classes whose [`ClassType::Mutability`] is one of:
-/// - [`Mutable`]
-/// - [`MutableWithImmutableSuperclass`]
-///
-/// Notably, [`InteriorMutable`] does not implement this (though it is
-/// technically mutable), since it is allowed to mutate through shared
-/// references.
-///
-/// This trait inherits [`IsAllowedMutable`], so if a function is bound by
-/// this, functionality given with that trait is available.
-///
-///
-/// # Safety
-///
-/// This is a sealed trait, and should not need to be implemented. Open an
-/// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait IsMutable: private_traits::Sealed + IsAllowedMutable {}
-
-trait MutabilityIsMutable: MutabilityIsAllowedMutable {}
-impl MutabilityIsMutable for Mutable {}
-impl<IS: ?Sized> MutabilityIsMutable for MutableWithImmutableSuperclass<IS> {}
-
-unsafe impl<T: ?Sized + ClassType> IsMutable for T where T::Mutability: MutabilityIsMutable {}
-unsafe impl<P: ?Sized + IsMutable> IsMutable for ProtocolObject<P> {}
 
 /// Marker trait for classes that are only available on the main thread.
 ///
@@ -578,30 +405,6 @@ mod private_counterpart {
         type Immutable = T;
         type Mutable = T;
     }
-    impl<T: ClassType<Mutability = Immutable>> MutabilityCounterpartOrSelf<T> for Immutable {
-        type Immutable = T;
-        type Mutable = T;
-    }
-    impl<T: ClassType<Mutability = Mutable>> MutabilityCounterpartOrSelf<T> for Mutable {
-        type Immutable = T;
-        type Mutable = T;
-    }
-    impl<T, MS> MutabilityCounterpartOrSelf<T> for ImmutableWithMutableSubclass<MS>
-    where
-        T: ClassType<Mutability = ImmutableWithMutableSubclass<MS>>,
-        MS: ClassType<Mutability = MutableWithImmutableSuperclass<T>>,
-    {
-        type Immutable = T;
-        type Mutable = MS;
-    }
-    impl<T, IS> MutabilityCounterpartOrSelf<T> for MutableWithImmutableSuperclass<IS>
-    where
-        T: ClassType<Mutability = MutableWithImmutableSuperclass<IS>>,
-        IS: ClassType<Mutability = ImmutableWithMutableSubclass<T>>,
-    {
-        type Immutable = IS;
-        type Mutable = T;
-    }
     impl<T: ClassType<Mutability = InteriorMutable>> MutabilityCounterpartOrSelf<T>
         for InteriorMutable
     {
@@ -641,7 +444,7 @@ where
 
 unsafe impl<P: ?Sized> CounterpartOrSelf for ProtocolObject<P> {
     // SAFETY: The only place where this would differ from `Self` is for
-    // classes with `MutableWithImmutableSuperclass<IS>`.
+    // classes with `InteriorMutableWithSuperclass<IS>`.
     //
     // Superclasses are not in general required to implement the same traits
     // as their subclasses, but we're not dealing with normal classes, we're
@@ -652,7 +455,7 @@ unsafe impl<P: ?Sized> CounterpartOrSelf for ProtocolObject<P> {
     // for now we relax the requirements of `CounterpartOrSelf`.
     type Immutable = Self;
     // SAFETY: The only place where this would differ from `Self` is for
-    // classes with `ImmutableWithMutableSubclass<MS>`.
+    // classes with `InteriorMutableWithSubclass<MS>`.
     //
     // But subclasses are required to always implement the same traits as
     // their superclasses, so a mutable subclass is required to implement the
@@ -680,10 +483,6 @@ mod tests {
         }
 
         assert_traits::<Root>();
-        assert_traits::<Immutable>();
-        assert_traits::<Mutable>();
-        assert_traits::<ImmutableWithMutableSubclass<()>>();
-        assert_traits::<MutableWithImmutableSuperclass<()>>();
         assert_traits::<InteriorMutable>();
         assert_traits::<InteriorMutableWithSubclass<()>>();
         assert_traits::<InteriorMutableWithSuperclass<()>>();
@@ -714,8 +513,6 @@ mod tests {
         _: &dyn IsIdCloneable,
         _: &dyn IsRetainable,
         _: &dyn IsAllocableAnyThread,
-        _: &dyn IsAllowedMutable,
-        _: &dyn IsMutable,
         _: &dyn IsMainThreadOnly,
         _: &dyn CounterpartOrSelf<Immutable = (), Mutable = ()>,
     ) {

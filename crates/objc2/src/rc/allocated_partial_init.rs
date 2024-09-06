@@ -113,9 +113,8 @@ impl<T: ?Sized + Message> Allocated<T> {
     #[allow(unknown_lints)] // New lint below
     #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn as_mut_ptr(this: &mut Self) -> *mut T {
-        // Note: Not bound by `T: IsMutable`, since mutable pointers _can_ be
-        // safe for non-mutable classes, especially right when they're being
-        // allocated / initialized.
+        // Note: Mutable pointers _can_ be safe for non-mutable classes,
+        // especially right when they're being allocated / initialized.
         this.ptr as *mut T
     }
 

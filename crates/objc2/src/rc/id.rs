@@ -1,12 +1,12 @@
 use core::fmt;
 use core::marker::PhantomData;
 use core::mem::ManuallyDrop;
-use core::ops::{Deref, DerefMut};
+use core::ops::Deref;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
 use super::AutoreleasePool;
-use crate::mutability::{IsIdCloneable, IsMutable};
+use crate::mutability::IsIdCloneable;
 use crate::runtime::{objc_release_fast, objc_retain_fast};
 use crate::{ffi, ClassType, Message};
 
@@ -32,23 +32,19 @@ use crate::{ffi, ClassType, Message};
 ///
 /// # Comparison to `std` types
 ///
-/// `Retained<T>` can be thought of as kind of a weird combination of [`Arc`]
-/// and [`Box`]:
+/// `Retained<T>` is the Objective-C equivalent of [`Arc`], and allows cloning
+/// by bumping the reference count, and weak references using [`rc::Weak`].
 ///
-/// If `T` implements [`IsMutable`], `Retained<T>` acts like `Box<T>`, and
-/// allows mutable / unique access to the type.
-///
-/// Otherwise, which is the most common case, `Retained<T>` acts like
-/// `Arc<T>`, and allows cloning by bumping the reference count.
+/// Unlike `Arc`, objects can be retained directly from a `&T` (for `Arc` you
+/// need `&Arc<T>`), see [`ClassType::retain`].
 ///
 /// [`Arc`]: alloc::sync::Arc
-/// [`Box`]: alloc::boxed::Box
+/// [`rc::Weak`]: crate::rc::Weak
 ///
 ///
 /// # Forwarding implementations
 ///
-/// Since `Retained<T>` is a smart pointer, it [`Deref`]s to `T`, and
-/// similarly implements [`DerefMut`] when mutable.
+/// Since `Retained<T>` is a smart pointer, it [`Deref`]s to `T`.
 ///
 /// It also forwards the implementation of a bunch of standard library traits
 /// such as [`PartialEq`], [`AsRef`], and so on, so that it becomes possible
@@ -711,17 +707,6 @@ impl<T: ?Sized> Deref for Retained<T> {
     }
 }
 
-impl<T: ?Sized + IsMutable> DerefMut for Retained<T> {
-    /// Obtain a mutable reference to the object.
-    #[inline]
-    fn deref_mut(&mut self) -> &mut T {
-        // SAFETY: The pointer's validity is verified when the type is
-        // created, and `Retained` is the unique owner of the object because of the
-        // `IsMutable` bound, so mutability is safe.
-        unsafe { self.ptr.as_mut() }
-    }
-}
-
 impl<T: ?Sized> fmt::Pointer for Retained<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Pointer::fmt(&self.ptr.as_ptr(), f)
@@ -745,8 +730,6 @@ mod private {
     impl<T: ?Sized + RefUnwindSafe> UnwindSafe for ArcLikeStorage<T> {}
     impl<T: ?Sized> Unpin for ArcLikeStorage<T> {}
 
-    pub struct BoxLikeStorage<T: ?Sized>(T);
-
     use crate::mutability;
 
     #[doc(hidden)]
@@ -760,22 +743,6 @@ mod private {
         // To give us freedom in the future (no `Root` types implement any
         // auto traits anyhow).
         type EquivalentType = UnknownStorage<T>;
-    }
-
-    impl<T: ?Sized> SendSyncHelper<T> for mutability::Immutable {
-        type EquivalentType = ArcLikeStorage<T>;
-    }
-
-    impl<T: ?Sized> SendSyncHelper<T> for mutability::Mutable {
-        type EquivalentType = BoxLikeStorage<T>;
-    }
-
-    impl<T: ?Sized, MS: ?Sized> SendSyncHelper<T> for mutability::ImmutableWithMutableSubclass<MS> {
-        type EquivalentType = ArcLikeStorage<T>;
-    }
-
-    impl<T: ?Sized, IS: ?Sized> SendSyncHelper<T> for mutability::MutableWithImmutableSuperclass<IS> {
-        type EquivalentType = BoxLikeStorage<T>;
     }
 
     impl<T: ?Sized> SendSyncHelper<T> for mutability::InteriorMutable {
@@ -868,7 +835,7 @@ mod tests {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 
     use super::*;
-    use crate::mutability::{Immutable, Mutable};
+    use crate::mutability::InteriorMutable;
     use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
     use crate::runtime::{AnyObject, NSObject, NSObjectProtocol};
     use crate::{declare_class, msg_send, DeclaredClass};
@@ -891,38 +858,22 @@ mod tests {
             };
         }
 
-        helper!(ImmutableObject, Immutable);
-        helper!(ImmutableSendObject, Immutable);
-        unsafe impl Send for ImmutableSendObject {}
-        helper!(ImmutableSyncObject, Immutable);
-        unsafe impl Sync for ImmutableSyncObject {}
-        helper!(ImmutableSendSyncObject, Immutable);
-        unsafe impl Send for ImmutableSendSyncObject {}
-        unsafe impl Sync for ImmutableSendSyncObject {}
-
-        helper!(MutableObject, Mutable);
-        helper!(MutableSendObject, Mutable);
-        unsafe impl Send for MutableSendObject {}
-        helper!(MutableSyncObject, Mutable);
-        unsafe impl Sync for MutableSyncObject {}
-        helper!(MutableSendSyncObject, Mutable);
-        unsafe impl Send for MutableSendSyncObject {}
-        unsafe impl Sync for MutableSendSyncObject {}
+        helper!(Object, InteriorMutable);
+        helper!(SendObject, InteriorMutable);
+        unsafe impl Send for SendObject {}
+        helper!(SyncObject, InteriorMutable);
+        unsafe impl Sync for SyncObject {}
+        helper!(SendSyncObject, InteriorMutable);
+        unsafe impl Send for SendSyncObject {}
+        unsafe impl Sync for SendSyncObject {}
 
         assert_impl_all!(Retained<AnyObject>: Unpin);
         assert_not_impl_any!(Retained<AnyObject>: Send, Sync, UnwindSafe, RefUnwindSafe);
 
-        assert_not_impl_any!(Retained<ImmutableObject>: Send, Sync);
-        assert_not_impl_any!(Retained<ImmutableSendObject>: Send, Sync);
-        assert_not_impl_any!(Retained<ImmutableSyncObject>: Send, Sync);
-        assert_impl_all!(Retained<ImmutableSendSyncObject>: Send, Sync);
-
-        assert_not_impl_any!(Retained<MutableObject>: Send, Sync);
-        assert_not_impl_any!(Retained<MutableSendObject>: Sync);
-        assert_impl_all!(Retained<MutableSendObject>: Send);
-        assert_not_impl_any!(Retained<MutableSyncObject>: Send);
-        assert_impl_all!(Retained<MutableSyncObject>: Sync);
-        assert_impl_all!(Retained<MutableSendSyncObject>: Send, Sync);
+        assert_not_impl_any!(Retained<Object>: Send, Sync);
+        assert_not_impl_any!(Retained<SendObject>: Send, Sync);
+        assert_not_impl_any!(Retained<SyncObject>: Send, Sync);
+        assert_impl_all!(Retained<SendSyncObject>: Send, Sync);
     }
 
     #[test]

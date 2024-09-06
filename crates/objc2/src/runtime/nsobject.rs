@@ -466,21 +466,21 @@ mod tests {
     use alloc::format;
 
     use crate::extern_class;
-    use crate::mutability::Mutable;
+    use crate::mutability::InteriorMutable;
     use crate::rc::RcTestObject;
 
     extern_class!(
         #[derive(Debug, PartialEq, Eq, Hash)]
-        struct NSObjectMutable;
+        struct FakeSubclass;
 
-        unsafe impl ClassType for NSObjectMutable {
+        unsafe impl ClassType for FakeSubclass {
             type Super = NSObject;
-            type Mutability = Mutable;
+            type Mutability = InteriorMutable;
             const NAME: &'static str = "NSObject";
         }
     );
 
-    impl NSObjectMutable {
+    impl FakeSubclass {
         fn new() -> Retained<Self> {
             unsafe { Retained::cast(NSObject::new()) }
         }
@@ -488,20 +488,10 @@ mod tests {
 
     #[test]
     fn test_deref() {
-        let obj: Retained<NSObject> = NSObject::new();
+        let obj: Retained<FakeSubclass> = FakeSubclass::new();
+        let _: &FakeSubclass = &obj;
         let _: &NSObject = &obj;
         let _: &AnyObject = &obj;
-    }
-
-    #[test]
-    fn test_deref_mut() {
-        let mut obj: Retained<NSObjectMutable> = NSObjectMutable::new();
-        let _: &NSObjectMutable = &obj;
-        let _: &mut NSObjectMutable = &mut obj;
-        let _: &NSObject = &obj;
-        let _: &mut NSObject = &mut obj;
-        let _: &AnyObject = &obj;
-        let _: &mut AnyObject = &mut obj;
     }
 
     #[test]
@@ -510,16 +500,14 @@ mod tests {
 
         fn impls_as_ref<T: AsRef<U> + Borrow<U> + ?Sized, U: ?Sized>(_: &T) {}
 
-        let obj = NSObjectMutable::new();
-        impls_as_ref::<Retained<NSObjectMutable>, NSObjectMutable>(&obj);
-        impls_as_ref::<NSObjectMutable, NSObjectMutable>(&obj);
+        let obj = FakeSubclass::new();
+        impls_as_ref::<Retained<FakeSubclass>, FakeSubclass>(&obj);
+        impls_as_ref::<FakeSubclass, FakeSubclass>(&obj);
         impls_as_ref::<NSObject, NSObject>(&obj);
         impls_as_ref::<NSObject, AnyObject>(&obj);
 
         let obj = NSObject::new();
         impls_as_ref::<Retained<NSObject>, NSObject>(&obj);
-        impls_as_ref::<NSObject, NSObject>(&obj);
-        impls_as_ref::<NSObject, AnyObject>(&obj);
     }
 
     #[test]

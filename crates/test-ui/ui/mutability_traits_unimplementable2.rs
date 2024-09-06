@@ -5,6 +5,6 @@ struct CustomStruct;
 
 unsafe impl mutability::IsIdCloneable for CustomStruct {}
 
-unsafe impl mutability::IsMutable for CustomStruct {}
+unsafe impl mutability::IsAllocableAnyThread for CustomStruct {}
 
 fn main() {}

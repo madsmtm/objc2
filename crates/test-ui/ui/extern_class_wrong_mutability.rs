@@ -24,7 +24,7 @@ extern_class!(
 
     unsafe impl ClassType for MyImmutableClass1 {
         type Super = NSObject;
-        type Mutability = mutability::ImmutableWithMutableSubclass<MyMutableClass1>;
+        type Mutability = mutability::InteriorMutableWithSubclass<MyMutableClass1>;
     }
 );
 
@@ -33,7 +33,7 @@ extern_class!(
 
     unsafe impl ClassType for MyMutableClass1 {
         type Super = MyImmutableClass1;
-        type Mutability = mutability::MutableWithImmutableSuperclass<NSObject>;
+        type Mutability = mutability::InteriorMutableWithSuperclass<NSObject>;
     }
 );
 
@@ -42,7 +42,7 @@ extern_class!(
 
     unsafe impl ClassType for MyImmutableClass2 {
         type Super = NSObject;
-        type Mutability = mutability::ImmutableWithMutableSubclass<NSObject>;
+        type Mutability = mutability::InteriorMutableWithSubclass<NSObject>;
     }
 );
 
@@ -51,7 +51,7 @@ extern_class!(
 
     unsafe impl ClassType for MyMutableClass2 {
         type Super = MyImmutableClass2;
-        type Mutability = mutability::MutableWithImmutableSuperclass<MyImmutableClass2>;
+        type Mutability = mutability::InteriorMutableWithSuperclass<MyImmutableClass2>;
     }
 );
 

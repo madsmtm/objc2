@@ -1,7 +1,6 @@
 //! Helper traits for Retained.
 
 use super::Retained;
-use crate::mutability::IsMutable;
 
 /// Helper trait to implement [`Default`] on [`Retained`].
 #[doc(alias = "DefaultId")]
@@ -109,19 +108,6 @@ where
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
         (&**self).into_iter()
-    }
-}
-
-impl<'a, T: ?Sized + IsMutable> IntoIterator for &'a mut Retained<T>
-where
-    &'a mut T: IntoIterator,
-{
-    type Item = <&'a mut T as IntoIterator>::Item;
-    type IntoIter = <&'a mut T as IntoIterator>::IntoIter;
-
-    #[inline]
-    fn into_iter(self) -> Self::IntoIter {
-        (&mut **self).into_iter()
     }
 }
 

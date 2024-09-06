@@ -139,15 +139,6 @@ impl<T: Message> MaybeOptionId for Option<Retained<T>> {
 pub trait ValidSubclassMutability<T: mutability::Mutability> {}
 
 // Root
-impl ValidSubclassMutability<mutability::Immutable> for mutability::Root {}
-impl ValidSubclassMutability<mutability::Mutable> for mutability::Root {}
-impl<MS, IS> ValidSubclassMutability<mutability::ImmutableWithMutableSubclass<MS>>
-    for mutability::Root
-where
-    MS: ?Sized + ClassType<Mutability = mutability::MutableWithImmutableSuperclass<IS>>,
-    IS: ?Sized + ClassType<Mutability = mutability::ImmutableWithMutableSubclass<MS>>,
-{
-}
 impl ValidSubclassMutability<mutability::InteriorMutable> for mutability::Root {}
 impl<MS, IS> ValidSubclassMutability<mutability::InteriorMutableWithSubclass<MS>>
     for mutability::Root
@@ -157,33 +148,6 @@ where
 {
 }
 impl ValidSubclassMutability<mutability::MainThreadOnly> for mutability::Root {}
-
-// Immutable
-impl ValidSubclassMutability<mutability::Immutable> for mutability::Immutable {}
-
-// Mutable
-impl ValidSubclassMutability<mutability::Mutable> for mutability::Mutable {}
-
-// ImmutableWithMutableSubclass
-impl<MS, IS> ValidSubclassMutability<mutability::MutableWithImmutableSuperclass<IS>>
-    for mutability::ImmutableWithMutableSubclass<MS>
-where
-    MS: ?Sized + ClassType<Mutability = mutability::MutableWithImmutableSuperclass<IS>>,
-    IS: ?Sized + ClassType<Mutability = mutability::ImmutableWithMutableSubclass<MS>>,
-{
-}
-// Only valid when `NSCopying`/`NSMutableCopying` is not implemented!
-impl<MS: ?Sized + ClassType> ValidSubclassMutability<mutability::Immutable>
-    for mutability::ImmutableWithMutableSubclass<MS>
-{
-}
-
-// MutableWithImmutableSuperclass
-// Only valid when `NSCopying`/`NSMutableCopying` is not implemented!
-impl<IS: ?Sized + ClassType> ValidSubclassMutability<mutability::Mutable>
-    for mutability::MutableWithImmutableSuperclass<IS>
-{
-}
 
 // InteriorMutable
 impl ValidSubclassMutability<mutability::InteriorMutable> for mutability::InteriorMutable {}

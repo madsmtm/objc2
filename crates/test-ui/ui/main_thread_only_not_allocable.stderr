@@ -5,13 +5,9 @@ error[E0277]: the trait bound `MainThreadOnly: mutability::MutabilityIsAllocable
   |             ^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::MutabilityIsAllocableAnyThread` is not implemented for `MainThreadOnly`, which is required by `MyMainThreadOnlyClass: IsAllocableAnyThread`
   |
   = help: the following other types implement trait `mutability::MutabilityIsAllocableAnyThread`:
-            Immutable
-            ImmutableWithMutableSubclass<MS>
             InteriorMutable
             InteriorMutableWithSubclass<S>
             InteriorMutableWithSuperclass<S>
-            Mutable
-            MutableWithImmutableSuperclass<IS>
             Root
   = note: required for `MyMainThreadOnlyClass` to implement `IsAllocableAnyThread`
 note: required by a bound in `objc2::ClassType::alloc`

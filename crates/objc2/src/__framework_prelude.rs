@@ -14,9 +14,8 @@ pub use std::os::raw::{
 pub use crate::encode::{Encode, Encoding, RefEncode};
 pub use crate::ffi::{NSInteger, NSIntegerMax, NSUInteger, NSUIntegerMax};
 pub use crate::mutability::{
-    Immutable, ImmutableWithMutableSubclass, InteriorMutable, InteriorMutableWithSubclass,
-    InteriorMutableWithSuperclass, IsIdCloneable, IsMainThreadOnly, IsRetainable, MainThreadOnly,
-    Mutable, MutableWithImmutableSuperclass,
+    InteriorMutable, InteriorMutableWithSubclass, InteriorMutableWithSuperclass, IsIdCloneable,
+    IsMainThreadOnly, IsRetainable, MainThreadOnly,
 };
 pub use crate::rc::{Allocated, DefaultId, DefaultRetained, Id, Retained};
 pub use crate::runtime::{

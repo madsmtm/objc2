@@ -7,13 +7,13 @@ declare_class!(
 
     unsafe impl ClassType for CustomObject {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
+        type Mutability = mutability::MainThreadOnly;
         const NAME: &'static str = "CustomObject";
     }
 
     impl DeclaredClass for CustomObject {}
 );
 
-unsafe impl mutability::IsMutable for CustomObject {}
+unsafe impl mutability::IsAllocableAnyThread for CustomObject {}
 
 fn main() {}
