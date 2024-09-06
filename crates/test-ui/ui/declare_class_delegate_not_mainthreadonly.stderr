@@ -1,16 +1,18 @@
-error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsMainThreadOnly` is not satisfied
+error[E0271]: type mismatch resolving `<CustomObject as ClassType>::ThreadKind == dyn MainThreadOnly`
  --> ui/declare_class_delegate_not_mainthreadonly.rs
   |
   |     unsafe impl NSApplicationDelegate for CustomObject {
-  |                                           ^^^^^^^^^^^^ the trait `mutability::MutabilityIsMainThreadOnly` is not implemented for `InteriorMutable`, which is required by `CustomObject: IsMainThreadOnly`
+  |                                           ^^^^^^^^^^^^ expected trait `MainThreadOnly`, found trait `AllocAnyThread`
   |
-  = help: the trait `mutability::MutabilityIsMainThreadOnly` is implemented for `MainThreadOnly`
-  = note: required for `CustomObject` to implement `IsMainThreadOnly`
+  = note: expected trait object `dyn MainThreadOnly`
+             found trait object `(dyn AllocAnyThread + 'static)`
+  = help: `(dyn AllocAnyThread + 'static)` implements `MainThreadOnly` so you could box the found value and coerce it to the trait object `Box<dyn MainThreadOnly>`, you will have to change the expected type as well
+  = note: required for `CustomObject` to implement `MainThreadOnly`
 note: required by a bound in `NSApplicationDelegate`
  --> ui/declare_class_delegate_not_mainthreadonly.rs
   |
   | / extern_protocol!(
-  | |     pub unsafe trait NSApplicationDelegate: NSObjectProtocol + IsMainThreadOnly {
+  | |     pub unsafe trait NSApplicationDelegate: NSObjectProtocol + MainThreadOnly {
   | |                      --------------------- required by a bound in this trait
   | |         #[optional]
   | |         #[method(applicationDidFinishLaunching:)]

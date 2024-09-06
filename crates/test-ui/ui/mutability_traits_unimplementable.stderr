@@ -1,9 +1,0 @@
-error[E0119]: conflicting implementations of trait `IsAllocableAnyThread` for type `CustomObject`
- --> ui/mutability_traits_unimplementable.rs
-  |
-  | unsafe impl mutability::IsAllocableAnyThread for CustomObject {}
-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  |
-  = note: conflicting implementation in crate `objc2`:
-          - impl<T> IsAllocableAnyThread for T
-            where T: ClassType, <T as ClassType>::Mutability: mutability::MutabilityIsAllocableAnyThread, T: ?Sized;

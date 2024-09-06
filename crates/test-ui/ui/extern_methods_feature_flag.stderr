@@ -5,7 +5,7 @@ error[E0599]: no function or associated item named `disabled` found for struct `
   | |     pub struct MyTest;
   | |
   | |     unsafe impl ClassType for MyTest {
-... |
+  | |         type Super = NSObject;
   | |     }
   | | );
   | |_- function or associated item `disabled` not found for this struct
@@ -20,7 +20,7 @@ error[E0599]: no function or associated item named `disabled_inner1` found for s
    | |     pub struct MyTest;
    | |
    | |     unsafe impl ClassType for MyTest {
-...  |
+   | |         type Super = NSObject;
    | |     }
    | | );
    | |_- function or associated item `disabled_inner1` not found for this struct
@@ -30,7 +30,7 @@ error[E0599]: no function or associated item named `disabled_inner1` found for s
    |
 help: there is an associated function `enabled_inner1` with a similar name
    |
-51 |     MyTest::enabled_inner1();
+50 |     MyTest::enabled_inner1();
    |             ~~~~~~~~~~~~~~
 
 error[E0599]: no function or associated item named `disabled_inner2` found for struct `MyTest` in the current scope
@@ -40,7 +40,7 @@ error[E0599]: no function or associated item named `disabled_inner2` found for s
    | |     pub struct MyTest;
    | |
    | |     unsafe impl ClassType for MyTest {
-...  |
+   | |         type Super = NSObject;
    | |     }
    | | );
    | |_- function or associated item `disabled_inner2` not found for this struct
@@ -50,5 +50,5 @@ error[E0599]: no function or associated item named `disabled_inner2` found for s
    |
 help: there is an associated function `enabled_inner2` with a similar name
    |
-52 |     MyTest::enabled_inner2();
+51 |     MyTest::enabled_inner2();
    |             ~~~~~~~~~~~~~~

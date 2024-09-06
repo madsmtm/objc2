@@ -93,8 +93,6 @@ use crate::{ffi, ClassType, Message};
 /// #
 /// #     unsafe impl ClassType for NSString {
 /// #         type Super = NSObject;
-/// #         // This is wrong, but let's do it for the example
-/// #         type Mutability = objc2::mutability::InteriorMutable;
 /// #     }
 /// # );
 ///
@@ -198,7 +196,7 @@ impl<T: ?Sized + Message> Retained<T> {
     /// ```
     /// use objc2::rc::Retained;
     /// use objc2::runtime::NSObject;
-    /// use objc2::{msg_send, msg_send_id, ClassType};
+    /// use objc2::{msg_send, msg_send_id, AllocAnyThread, ClassType};
     ///
     /// // Manually using `msg_send!` and `Retained::from_raw`
     /// let obj: *mut NSObject = unsafe { msg_send![NSObject::class(), alloc] };
@@ -744,7 +742,6 @@ mod tests {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 
     use super::*;
-    use crate::mutability::InteriorMutable;
     use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
     use crate::runtime::{AnyObject, NSObject, NSObjectProtocol};
     use crate::{declare_class, msg_send, DeclaredClass};
@@ -752,13 +749,12 @@ mod tests {
     #[test]
     fn auto_traits() {
         macro_rules! helper {
-            ($name:ident, $mutability:ty) => {
+            ($name:ident) => {
                 declare_class!(
                     struct $name;
 
                     unsafe impl ClassType for $name {
                         type Super = NSObject;
-                        type Mutability = $mutability;
                         const NAME: &'static str = concat!(stringify!($name), "Test");
                     }
 
@@ -767,12 +763,12 @@ mod tests {
             };
         }
 
-        helper!(Object, InteriorMutable);
-        helper!(SendObject, InteriorMutable);
+        helper!(Object);
+        helper!(SendObject);
         unsafe impl Send for SendObject {}
-        helper!(SyncObject, InteriorMutable);
+        helper!(SyncObject);
         unsafe impl Sync for SyncObject {}
-        helper!(SendSyncObject, InteriorMutable);
+        helper!(SendSyncObject);
         unsafe impl Send for SendSyncObject {}
         unsafe impl Sync for SendSyncObject {}
 

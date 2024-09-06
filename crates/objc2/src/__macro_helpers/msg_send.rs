@@ -184,9 +184,7 @@ impl<T: ?Sized + Message> MsgSend for ManuallyDrop<Retained<T>> {
 mod tests {
     use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
     use crate::runtime::NSObject;
-    use crate::{
-        declare_class, msg_send, msg_send_id, mutability, test_utils, ClassType, DeclaredClass,
-    };
+    use crate::{declare_class, msg_send, msg_send_id, test_utils, ClassType, DeclaredClass};
 
     use super::*;
 
@@ -238,7 +236,6 @@ mod tests {
         unsafe impl ClassType for RcTestObjectSubclass {
             #[inherits(NSObject)]
             type Super = RcTestObject;
-            type Mutability = mutability::InteriorMutable;
             const NAME: &'static str = "RcTestObjectSubclass";
         }
 

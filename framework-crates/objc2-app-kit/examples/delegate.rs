@@ -1,7 +1,9 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass, MainThreadMarker};
+use objc2::{
+    declare_class, msg_send_id, ClassType, DeclaredClass, MainThreadMarker, MainThreadOnly,
+};
 use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate};
 use objc2_foundation::{
     ns_string, NSCopying, NSNotification, NSObject, NSObjectProtocol, NSString,
@@ -23,11 +25,10 @@ declare_class!(
 
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
-    // - Main thread only mutability is correct, since this is an application delegate.
     // - `AppDelegate` does not implement `Drop`.
     unsafe impl ClassType for AppDelegate {
         type Super = NSObject;
-        type Mutability = mutability::MainThreadOnly;
+        type ThreadKind = dyn MainThreadOnly;
         const NAME: &'static str = "MyAppDelegate";
     }
 
@@ -54,7 +55,7 @@ declare_class!(
 
 impl AppDelegate {
     fn new(ivar: u8, another_ivar: bool, mtm: MainThreadMarker) -> Retained<Self> {
-        let this = Self::alloc_main_thread(mtm);
+        let this = Self::alloc(mtm);
         let this = this.set_ivars(Ivars {
             ivar,
             another_ivar,

@@ -206,7 +206,7 @@ The `NSData` example again.
 use objc2::ffi::NSUInteger;
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
-use objc2::{extern_class, extern_methods, mutability, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 
 extern_class!(
     #[derive(PartialEq, Eq, Hash)]
@@ -214,7 +214,6 @@ extern_class!(
 
     unsafe impl ClassType for NSData {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
     }
 );
 

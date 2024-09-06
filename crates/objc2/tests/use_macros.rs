@@ -1,4 +1,3 @@
-use objc2::mutability::InteriorMutable;
 use objc2::runtime::{AnyClass, NSObject};
 use objc2::{class, declare_class, msg_send, sel, ClassType, DeclaredClass};
 
@@ -7,7 +6,6 @@ declare_class!(
 
     unsafe impl ClassType for MyObject {
         type Super = NSObject;
-        type Mutability = InteriorMutable;
         const NAME: &'static str = "MyObject";
     }
 

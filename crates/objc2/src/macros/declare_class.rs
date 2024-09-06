@@ -168,7 +168,6 @@
 /// `unsafe impl ClassType for T` has the following safety requirements:
 /// - Any invariants that the superclass [`ClassType::Super`] may have must be
 ///   upheld.
-/// - [`ClassType::Mutability`] must be correct.
 /// - If your type implements `Drop`, the implementation must abide by the
 ///   following rules:
 ///   - It must not call any overridden methods.
@@ -189,7 +188,6 @@
 /// this definition has the same safety requirements as above.
 ///
 /// [`ClassType::Super`]: crate::ClassType::Super
-/// [`ClassType::Mutability`]: crate::ClassType::Mutability
 /// [Open an issue]: https://github.com/madsmtm/objc2/issues/new
 ///
 ///
@@ -206,8 +204,8 @@
 /// use objc2_foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
 /// use objc2::rc::{Allocated, Retained};
 /// use objc2::{
-///     declare_class, extern_protocol, msg_send, msg_send_id, mutability, ClassType,
-///     DeclaredClass, ProtocolType,
+///     declare_class, extern_protocol, msg_send, msg_send_id, AllocAnyThread,
+///     ClassType, DeclaredClass, ProtocolType,
 /// };
 ///
 /// #[derive(Clone)]
@@ -222,11 +220,12 @@
 ///
 ///     // SAFETY:
 ///     // - The superclass NSObject does not have any subclassing requirements.
-///     // - Interior mutability is a safe default.
 ///     // - `MyCustomObject` does not implement `Drop`.
 ///     unsafe impl ClassType for MyCustomObject {
 ///         type Super = NSObject;
-///         type Mutability = mutability::InteriorMutable;
+///         // If we were implementing delegate methods like `NSApplicationDelegate`,
+///         // we would specify the object to only be usable on the main thread:
+///         // type ThreadKind = dyn MainThreadOnly;
 ///         const NAME: &'static str = "MyCustomObject";
 ///     }
 ///
@@ -387,7 +386,7 @@ macro_rules! declare_class {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
-            type Mutability = $mutability:ty;
+            $(type ThreadKind = $thread_kind:ty;)?
 
             const NAME: &'static str = $name_const:expr;
         }
@@ -427,11 +426,14 @@ macro_rules! declare_class {
             // Creation
             unsafe impl ClassType for $for_class {
                 type Super = $superclass;
-                type Mutability = $mutability;
+
+                type ThreadKind = $crate::__select_thread_kind!($($thread_kind)?);
+
                 const NAME: &'static $crate::__macro_helpers::str = $name_const;
 
                 fn class() -> &'static $crate::runtime::AnyClass {
-                    $crate::__macro_helpers::assert_mutability_matches_superclass_mutability::<Self>();
+                    let _ = <Self as $crate::__macro_helpers::ValidThreadKind<Self::ThreadKind>>::check;
+                    let _ = <Self as $crate::__macro_helpers::MainThreadOnlyDoesNotImplSendSync<_>>::check;
 
                     // TODO: Use `std::sync::OnceLock`
                     static REGISTER_CLASS: $crate::__macro_helpers::Once = $crate::__macro_helpers::Once::new();
@@ -515,17 +517,6 @@ macro_rules! declare_class {
         $crate::__declare_class_output_impls! {
             $($impls)*
         }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __select_name {
-    ($_name:ident; $name_const:expr) => {
-        $name_const
-    };
-    ($name:ident;) => {
-        $crate::__macro_helpers::stringify!($name)
     };
 }
 

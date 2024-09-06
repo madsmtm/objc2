@@ -335,13 +335,13 @@ impl<'de> Deserialize<'de> for Counterpart {
             ))
         }
 
-        struct MutabilityVisitor;
+        struct CounterpartVisitor;
 
-        impl<'de> de::Visitor<'de> for MutabilityVisitor {
+        impl<'de> de::Visitor<'de> for CounterpartVisitor {
             type Value = Counterpart;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                formatter.write_str("mutability")
+                formatter.write_str("counterpart")
             }
 
             fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
@@ -370,6 +370,6 @@ impl<'de> Deserialize<'de> for Counterpart {
             }
         }
 
-        deserializer.deserialize_str(MutabilityVisitor)
+        deserializer.deserialize_str(CounterpartVisitor)
     }
 }

@@ -1,9 +1,8 @@
 use core::fmt;
 use core::marker::PhantomData;
 
-use crate::mutability::IsMainThreadOnly;
 use crate::rc::Allocated;
-use crate::ClassType;
+use crate::{msg_send_id, ClassType, MainThreadOnly};
 
 /// Whether the current thread is the main thread.
 #[inline]
@@ -152,21 +151,22 @@ impl MainThreadMarker {
 
     /// Allocate a new instance of the specified class on the main thread.
     ///
-    /// This is a soft-deprecated shorthand for
-    /// [`ClassType::alloc_main_thread`], it will be fully deprecated once
-    /// [arbitrary self types][tracking] become stable.
-    ///
-    /// [tracking]: https://github.com/rust-lang/rust/issues/44874
+    /// This can be useful in certain situations, such as generic contexts
+    /// where you don't know whether the class is main thread or not, but
+    /// usually you should prefer [`MainThreadOnly::alloc`].
     #[inline]
     pub fn alloc<T: ClassType>(self) -> Allocated<T> {
-        T::alloc_main_thread(self)
+        // SAFETY: We hold `MainThreadMarker`, and classes are either only
+        // safe to allocate on the main thread, or safe to allocate
+        // everywhere.
+        unsafe { msg_send_id![T::class(), alloc] }
     }
 }
 
 /// Get a [`MainThreadMarker`] from a main-thread-only object.
 ///
-/// This is a soft-deprecated shorthand for [`IsMainThreadOnly::mtm`].
-impl<T: ?Sized + IsMainThreadOnly> From<&T> for MainThreadMarker {
+/// This is a shorthand for [`MainThreadOnly::mtm`].
+impl<T: ?Sized + MainThreadOnly> From<&T> for MainThreadMarker {
     #[inline]
     fn from(obj: &T) -> Self {
         obj.mtm()

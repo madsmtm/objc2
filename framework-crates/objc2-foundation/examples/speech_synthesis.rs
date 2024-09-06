@@ -11,7 +11,6 @@
 use std::thread;
 use std::time::Duration;
 
-use objc2::mutability::InteriorMutable;
 use objc2::rc::Retained;
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 use objc2_foundation::{ns_string, NSObject, NSString};
@@ -32,7 +31,6 @@ mod implementation {
 
         unsafe impl ClassType for Synthesizer {
             type Super = NSObject;
-            type Mutability = InteriorMutable;
             const NAME: &'static str = "NSSpeechSynthesizer";
         }
     );
@@ -100,6 +98,7 @@ mod implementation {
 #[cfg(all(target_vendor = "apple", not(target_os = "macos")))]
 mod implementation {
     use super::*;
+    use objc2::AllocAnyThread;
 
     #[link(name = "AVFoundation", kind = "framework")]
     extern "C" {}
@@ -111,7 +110,6 @@ mod implementation {
 
         unsafe impl ClassType for Synthesizer {
             type Super = NSObject;
-            type Mutability = InteriorMutable;
             const NAME: &'static str = "AVSpeechSynthesizer";
         }
     );
@@ -137,7 +135,6 @@ mod implementation {
 
         unsafe impl ClassType for Utterance {
             type Super = NSObject;
-            type Mutability = InteriorMutable;
             const NAME: &'static str = "AVSpeechUtterance";
         }
     );

@@ -1,13 +1,12 @@
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
-use objc2::{declare_class, mutability, ClassType, DeclaredClass};
+use objc2::{declare_class, ClassType, DeclaredClass};
 
 declare_class!(
     struct InvalidMethodDeclarations;
 
     unsafe impl ClassType for InvalidMethodDeclarations {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "InvalidMethodDeclarations";
     }
 
@@ -137,20 +136,9 @@ declare_class!(
 
     unsafe impl ClassType for MissingName {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
     }
 
     impl DeclaredClass for MissingName {}
-);
-
-declare_class!(
-    struct MissingMutability;
-
-    unsafe impl ClassType for MissingMutability {
-        type Super = NSObject;
-    }
-
-    impl DeclaredClass for MissingMutability {}
 );
 
 declare_class!(
@@ -158,7 +146,6 @@ declare_class!(
 
     unsafe impl ClassType for MissingDeclaredClass {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "MissingDeclaredClass";
     }
 );

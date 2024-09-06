@@ -1,14 +1,13 @@
 use core::ffi::{c_char, c_float};
 
 use objc2::runtime::NSObject;
-use objc2::{extern_class, extern_methods, mutability, ClassType, Encode, Encoding};
+use objc2::{extern_class, extern_methods, ClassType, Encode, Encoding};
 
 extern_class!(
     struct TestSimdReturn;
 
     unsafe impl ClassType for TestSimdReturn {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
     }
 );
 

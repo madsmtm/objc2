@@ -12,7 +12,7 @@ use std::hint::black_box;
 use arbitrary::Arbitrary;
 use objc2::rc::{autoreleasepool, Id, Retained};
 use objc2::runtime::AnyObject;
-use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass, Message};
+use objc2::{declare_class, msg_send_id, AllocAnyThread, ClassType, DeclaredClass, Message};
 use objc2_foundation::{
     CopyingHelper, NSCopying, NSMutableDictionary, NSMutableSet, NSObject, NSObjectProtocol,
     NSUInteger, NSZone,
@@ -52,7 +52,6 @@ declare_class!(
 
     unsafe impl ClassType for Key {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "Key";
     }
 

@@ -70,7 +70,7 @@ However, that just pushes the burden onto you, the user, and then we're not
 much better off!
 
 As such, we'll try to be as safe and idiomatic as possible; using references
-instead of pointers to represent objects and their mutability, `Option`
+instead of pointers to represent objects and their (interior) mutability, `Option`
 instead of `null`, doing memory management automatically instead of manually,
 and so on (see again [these notes on "Layered Safety"][layered-safety]). These
 abstractions should ideally be zero-cost, but this is of course a balancing

@@ -2,11 +2,11 @@ use core::fmt;
 use core::hash;
 
 use crate::ffi::NSUInteger;
-use crate::mutability::Root;
 use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject, Sel};
-use crate::{extern_methods, msg_send, msg_send_id, Message};
-use crate::{ClassType, ProtocolType};
+use crate::{
+    extern_methods, msg_send, msg_send_id, AllocAnyThread, ClassType, Message, ProtocolType,
+};
 
 /// The root class of most Objective-C class hierarchies.
 ///
@@ -37,7 +37,7 @@ crate::__extern_class_impl_traits! {
 
 unsafe impl ClassType for NSObject {
     type Super = AnyObject;
-    type Mutability = Root;
+    type ThreadKind = dyn AllocAnyThread;
     const NAME: &'static str = "NSObject";
 
     #[inline]
@@ -363,8 +363,10 @@ extern_methods!(
     unsafe impl NSObject {
         /// Create a new empty `NSObject`.
         ///
-        /// This method is a shorthand for calling [`alloc`][ClassType::alloc]
-        /// and then [`init`][Self::init].
+        /// This method is a shorthand for calling [`alloc`] and then
+        /// [`init`][Self::init].
+        ///
+        /// [`alloc`]: AllocAnyThread::alloc
         #[method_id(new)]
         pub fn new() -> Retained<Self>;
 
@@ -379,7 +381,7 @@ extern_methods!(
         ///
         /// ```
         /// use objc2::runtime::NSObject;
-        /// use objc2::ClassType;
+        /// use objc2::AllocAnyThread;
         ///
         /// let obj = NSObject::init(NSObject::alloc());
         /// ```
@@ -457,7 +459,6 @@ mod tests {
     use alloc::format;
 
     use crate::extern_class;
-    use crate::mutability::InteriorMutable;
     use crate::rc::RcTestObject;
 
     extern_class!(
@@ -466,7 +467,6 @@ mod tests {
 
         unsafe impl ClassType for FakeSubclass {
             type Super = NSObject;
-            type Mutability = InteriorMutable;
             const NAME: &'static str = "NSObject";
         }
     );

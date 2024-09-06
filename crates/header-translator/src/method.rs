@@ -302,7 +302,7 @@ fn mainthreadonly_override<'a>(
     }
 
     if any_argument_provides_mainthreadmarker {
-        // MainThreadMarker can be retrieved via. `IsMainThreadOnly::mtm`
+        // MainThreadMarker can be retrieved via. `MainThreadOnly::mtm`
         // inside these methods, and hence passing it is redundant.
         false
     } else if result_type_requires_mainthreadmarker {

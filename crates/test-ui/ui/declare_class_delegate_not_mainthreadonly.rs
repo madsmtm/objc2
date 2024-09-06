@@ -1,16 +1,15 @@
 //! Test that implementing `NSApplicationDelegate` and similar requires
 //! a `MainThreadOnly` class.
-use objc2::mutability::IsMainThreadOnly;
 use objc2::rc::Retained;
 use objc2::{
-    declare_class, extern_methods, extern_protocol, mutability, ClassType, DeclaredClass,
-    ProtocolType,
+    declare_class, extern_methods, extern_protocol, AllocAnyThread, ClassType, DeclaredClass,
+    MainThreadOnly, ProtocolType,
 };
 use objc2_foundation::{MainThreadMarker, NSNotification, NSObject, NSObjectProtocol};
 
 // Use fake `NSApplicationDelegate` so that this works on iOS too.
 extern_protocol!(
-    pub unsafe trait NSApplicationDelegate: NSObjectProtocol + IsMainThreadOnly {
+    pub unsafe trait NSApplicationDelegate: NSObjectProtocol + MainThreadOnly {
         #[optional]
         #[method(applicationDidFinishLaunching:)]
         unsafe fn applicationDidFinishLaunching(&self, notification: &NSNotification);
@@ -26,7 +25,7 @@ declare_class!(
 
     unsafe impl ClassType for CustomObject {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable; // Not `MainThreadOnly`
+        type ThreadKind = dyn AllocAnyThread; // Not `MainThreadOnly`
         const NAME: &'static str = "CustomObject";
     }
 

@@ -6,7 +6,7 @@ use core::mem;
 use core::ptr::NonNull;
 
 use objc2::rc::{Retained, RetainedFromIterator};
-use objc2::{msg_send, ClassType, Message};
+use objc2::{msg_send, AllocAnyThread, Message};
 
 #[cfg(feature = "NSEnumerator")]
 use crate::iter;

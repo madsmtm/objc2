@@ -17,6 +17,62 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `IsMainThreadOnly::mtm`.
 
 ### Changed
+* **BREAKING**: Changed how you specify a class to only be available on the
+  main thread. It is now automatically inferred, and you only need to
+  overwrite it if your class is doing something different than its superclass.
+
+  ```rust
+  // Before
+  declare_class!(
+      struct MyObject;
+
+      unsafe impl ClassType for MyObject {
+          type Super = NSObject;
+          type Mutability = InteriorMutable;
+          const NAME: &'static str = "MyObject";
+      }
+
+      impl DeclaredClass for MyObject {
+          type Ivars = ...;
+      }
+
+      // ...
+  );
+
+  // After
+  declare_class!(
+      struct MyObject;
+
+      unsafe impl ClassType for MyObject {
+          type Super = NSObject;
+          // No need to specify mutability any more
+          //
+          // But if you need it (e.g. when implementing delegates), you can add:
+          // type ThreadKind = dyn MainThreadOnly;
+          const NAME: &'static str = "MyObject";
+      }
+
+      impl DeclaredClass for MyObject {
+          type Ivars = ...;
+      }
+
+      // ...
+  );
+  ```
+* **BREAKING**: Moved the common `retain` and `alloc` methods from `ClassType`
+  to `Message` and `AllocAnyThread`/`MainThreadOnly`, respectively.
+
+  ```rust
+  // Before
+  use objc2::ClassType;
+  let my_obj = MyObject::init(MyObject::alloc());
+  let retained = my_obj.retain();
+
+  // After
+  use objc2::{Message, AllocAnyThread}; // Need different trait imports
+  let my_obj = MyObject::init(MyObject::alloc());
+  let retained = my_obj.retain();
+  ```
 * Print backtrace when catching exceptions with the `"catch-all"` feature.
 * Changed the return value of `ClassBuilder::add_protocol` to indicate whether
   the protocol was already present on the class or not.
@@ -54,14 +110,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `objc`).
 * **BREAKING**: Removed `AsMut`, `BorrowMut` and `DerefMut` implementations in
   `extern_class!` and `declare_class!`.
-* **BREAKING**: Removed `mutability` options `Immutable`, `Mutable`,
-  `ImmutableWithMutableSubclass`, `MutableWithImmutableSuperclass`,
-  `InteriorMutableWithSubclass` and `InteriorMutableWithSuperclass`, along
-  with the related `IsAllowedMutable`, `CounterpartOrSelf`, `IsIdCloneable`,
-  `IsRetainable` and `IsMutable` traits.
+* **BREAKING**: Removed the `mutability` module, and everything within.
+  Classes now always use interior mutability.
 * **BREAKING**: Removed `DerefMut` implementation for `Retained<T>` when the
   `Retained` was mutable.
-* **BREAKING**: Moved `retain` from `ClassType` to `Message`.
 
 ### Fixed
 * Remove an incorrect assertion when adding protocols to classes in an unexpected

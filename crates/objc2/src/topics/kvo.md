@@ -21,7 +21,7 @@ use core::ptr;
 
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
-use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass};
+use objc2::{declare_class, msg_send_id, AllocAnyThread, ClassType, DeclaredClass};
 use objc2_foundation::{
     ns_string, NSCopying, NSDictionary, NSKeyValueChangeKey, NSKeyValueObservingOptions, NSObject,
     NSObjectNSKeyValueObserverRegistration, NSObjectProtocol, NSString,
@@ -39,13 +39,11 @@ declare_class!(
 
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
-    // - Interior mutability is a safe default.
     // - MyObserver implements `Drop` and ensures that:
     //   - It does not call an overridden method.
     //   - It does not `retain` itself.
     unsafe impl ClassType for MyObserver {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "MyObserver";
     }
 

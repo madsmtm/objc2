@@ -1,0 +1,17 @@
+error[E0271]: type mismatch resolving `<OnlyMain as ClassType>::ThreadKind == dyn AllocAnyThread`
+ --> ui/extern_class_thread_kind_main_to_any.rs
+  |
+  | / extern_class!(
+  | |     struct AnyThreadButSubclassesOnlyMain;
+  | |
+  | |     unsafe impl ClassType for AnyThreadButSubclassesOnlyMain {
+... |
+  | |     }
+  | | );
+  | |_^ expected trait `AllocAnyThread`, found trait `MainThreadOnly`
+  |
+  = note: expected trait object `dyn AllocAnyThread`
+             found trait object `(dyn MainThreadOnly + 'static)`
+  = help: `(dyn MainThreadOnly + 'static)` implements `AllocAnyThread` so you could box the found value and coerce it to the trait object `Box<dyn AllocAnyThread>`, you will have to change the expected type as well
+  = note: required for `AnyThreadButSubclassesOnlyMain` to implement `ValidThreadKind<(dyn AllocAnyThread + 'static)>`
+  = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

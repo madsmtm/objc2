@@ -1,9 +1,8 @@
 use core::fmt;
 use core::hash;
 
-use crate::mutability::Root;
 use crate::runtime::{AnyClass, AnyObject, NSObjectProtocol, ProtocolObject};
-use crate::ClassType;
+use crate::{AllocAnyThread, ClassType};
 
 /// An abstract superclass defining an API for objects that act as
 /// stand-ins for other objects or for objects that don’t exist yet.
@@ -28,7 +27,7 @@ crate::__extern_class_impl_traits! {
 
 unsafe impl ClassType for NSProxy {
     type Super = AnyObject;
-    type Mutability = Root;
+    type ThreadKind = dyn AllocAnyThread;
     const NAME: &'static str = "NSProxy";
 
     #[inline]

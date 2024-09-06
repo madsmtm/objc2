@@ -6,7 +6,6 @@ use std::marker::PhantomData;
 use std::sync::Once;
 
 use objc2::msg_send_id;
-use objc2::mutability::InteriorMutable;
 use objc2::rc::Retained;
 use objc2::runtime::{AnyClass, ClassBuilder, NSObject};
 use objc2::{ClassType, Encoding, Message, RefEncode};
@@ -60,7 +59,7 @@ impl<'a> MyObject<'a> {
 
 unsafe impl<'a> ClassType for MyObject<'a> {
     type Super = NSObject;
-    type Mutability = InteriorMutable;
+    type ThreadKind = <Self::Super as ClassType>::ThreadKind;
     const NAME: &'static str = "MyObject";
 
     fn class() -> &'static AnyClass {

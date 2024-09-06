@@ -2,7 +2,7 @@ use core::ops::Deref;
 
 use objc2::encode::{Encoding, RefEncode};
 use objc2::runtime::AnyObject;
-use objc2::{extern_class, mutability, ClassType, Message};
+use objc2::{extern_class, AllocAnyThread, ClassType, Message};
 
 #[repr(transparent)]
 struct MyObject(AnyObject);
@@ -26,7 +26,7 @@ extern_class!(
 
     unsafe impl ClassType for MyRootClass {
         type Super = MyObject;
-        type Mutability = mutability::InteriorMutable;
+        type ThreadKind = dyn AllocAnyThread;
     }
 );
 

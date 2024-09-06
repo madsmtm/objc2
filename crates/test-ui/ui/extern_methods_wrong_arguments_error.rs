@@ -1,6 +1,6 @@
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
-use objc2::{extern_class, extern_methods, mutability, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 use objc2_foundation::MainThreadMarker;
 
 extern_class!(
@@ -8,7 +8,6 @@ extern_class!(
 
     unsafe impl ClassType for MyObject {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
     }
 );
 

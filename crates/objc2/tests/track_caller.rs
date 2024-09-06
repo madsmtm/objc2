@@ -14,7 +14,7 @@ use std::sync::Mutex;
 use objc2::encode::Encode;
 use objc2::rc::{self, Allocated, Retained};
 use objc2::runtime::{self, NSObject};
-use objc2::{class, declare_class, msg_send, msg_send_id, mutability, ClassType, DeclaredClass};
+use objc2::{class, declare_class, msg_send, msg_send_id, ClassType, DeclaredClass};
 
 #[path = "../src/rc/test_object.rs"]
 #[allow(dead_code)]
@@ -208,7 +208,6 @@ declare_class!(
 
     unsafe impl ClassType for PanickingClass {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "PanickingClass";
     }
 

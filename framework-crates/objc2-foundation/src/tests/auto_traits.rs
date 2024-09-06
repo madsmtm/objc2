@@ -6,7 +6,7 @@ use static_assertions::assert_not_impl_any;
 use crate::*;
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
-use objc2::{declare_class, mutability, ClassType, DeclaredClass};
+use objc2::{declare_class, ClassType, DeclaredClass};
 
 // We expect most Foundation types to be UnwindSafe and RefUnwindSafe,
 // since they follow Rust's usual mutability rules (&T = immutable).
@@ -34,7 +34,6 @@ declare_class!(
 
     unsafe impl ClassType for SendSyncObject {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "SendSyncObject";
     }
 

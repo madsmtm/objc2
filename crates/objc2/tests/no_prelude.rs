@@ -95,7 +95,6 @@ new_objc2::declare_class!(
 
     unsafe impl ClassType for CustomObject {
         type Super = new_objc2::runtime::NSObject;
-        type Mutability = new_objc2::mutability::InteriorMutable;
         const NAME: &'static str = "CustomObject";
     }
 
@@ -134,7 +133,6 @@ new_objc2::extern_class!(
 
     unsafe impl ClassType for NSObject2 {
         type Super = new_objc2::runtime::NSObject;
-        type Mutability = new_objc2::mutability::InteriorMutable;
         const NAME: &'static str = "NSObject";
     }
 );

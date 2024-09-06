@@ -1,12 +1,12 @@
 use objc2::runtime::AnyObject;
-use objc2::{extern_class, mutability, ClassType};
+use objc2::{extern_class, AllocAnyThread, ClassType};
 
 extern_class!(
     pub struct MyRootClass;
 
     unsafe impl ClassType for MyRootClass {
         type Super = AnyObject;
-        type Mutability = mutability::InteriorMutable;
+        type ThreadKind = dyn AllocAnyThread;
     }
 );
 

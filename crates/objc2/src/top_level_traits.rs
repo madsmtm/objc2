@@ -2,9 +2,8 @@ use core::ptr::NonNull;
 
 use crate::__macro_helpers::declared_ivars::get_initialized_ivar_ptr;
 use crate::encode::RefEncode;
-use crate::mutability::{IsAllocableAnyThread, Mutability};
 use crate::rc::{Allocated, Retained};
-use crate::runtime::{AnyClass, AnyProtocol};
+use crate::runtime::{AnyClass, AnyProtocol, ProtocolObject};
 use crate::{msg_send_id, MainThreadMarker};
 
 /// Types that can be sent Objective-C messages.
@@ -131,15 +130,11 @@ pub unsafe trait Message: RefEncode {
 /// 1. The type must represent a specific class.
 /// 2. [`Self::Super`] must be a superclass of the class (or something that
 ///    represents any object, like [`AnyObject`][crate::runtime::AnyObject]).
-/// 3. [`Self::Mutability`] must be specified correctly.
-///
-///    If you're unsure of what to do, [`InteriorMutable`] is usually a good
-///    starting point.
-/// 4. [`Self::NAME`] must be correct.
+/// 3. [`Self::ThreadKind`] must be correct. It is safe to default to the
+///    super class' thread kind, `<Self::Super as ClassType>::ThreadKind`.
+/// 4. [`Self::NAME`] must be the name of the class that this type represents.
 /// 5. The class returned by [`Self::class`] must be the class that this type
 ///    represents.
-///
-/// [`InteriorMutable`]: crate::mutability::InteriorMutable
 ///
 ///
 /// # Examples
@@ -170,7 +165,7 @@ pub unsafe trait Message: RefEncode {
 /// Use the trait to allocate a new instance of an object.
 ///
 /// ```
-/// use objc2::{ClassType, msg_send_id};
+/// use objc2::{msg_send_id, AllocAnyThread};
 /// use objc2::rc::Retained;
 /// # use objc2::runtime::{NSObject as MyObject};
 ///
@@ -187,15 +182,15 @@ pub unsafe trait Message: RefEncode {
 ///
 /// ```
 /// use objc2::runtime::NSObject;
-/// use objc2::{extern_class, mutability, ClassType};
+/// use objc2::{extern_class, ClassType, AllocAnyThread};
 ///
 /// extern_class!(
 ///     struct MyClass;
 ///
-///     // SAFETY: The superclass and the mutability is correctly specified.
+///     // SAFETY: The superclass is correctly specified, and can be safely
+///     // used from any thread.
 ///     unsafe impl ClassType for MyClass {
 ///         type Super = NSObject;
-///         type Mutability = mutability::InteriorMutable;
 ///         # // For testing purposes
 ///         # const NAME: &'static str = "NSObject";
 ///     }
@@ -223,11 +218,17 @@ pub unsafe trait ClassType: Message {
     /// [`AnyObject`]: crate::runtime::AnyObject
     type Super: Message;
 
-    /// Whether the type is mutable or immutable.
+    /// Whether the type can be used from any thread, or from only the main
+    /// thread.
     ///
-    /// See the [`mutability`][crate::mutability] module for further details
-    /// about class mutability.
-    type Mutability: Mutability;
+    /// One of [`dyn AllocAnyThread`] or [`dyn MainThreadOnly`].
+    ///
+    /// Setting this makes `ClassType` provide an implementation of either
+    /// [`AllocAnyThread`] or [`MainThreadOnly`].
+    ///
+    /// [`dyn AllocAnyThread`]: AllocAnyThread
+    /// [`dyn MainThreadOnly`]: MainThreadOnly
+    type ThreadKind: ?Sized + ThreadKind;
 
     /// The name of the Objective-C class that this type represents.
     ///
@@ -250,76 +251,6 @@ pub unsafe trait ClassType: Message {
     // Note: It'd be safe to provide a default impl using transmute here if
     // we wanted to!
     fn as_super(&self) -> &Self::Super;
-
-    /// Allocate a new instance of the class.
-    ///
-    /// The return value can be used directly inside [`msg_send_id!`] to
-    /// initialize the object.
-    ///
-    /// For classes that are only usable on the main thread, you can use
-    /// `MainThreadMarker::alloc` instead.
-    ///
-    /// [`msg_send_id!`]: crate::msg_send_id
-    //
-    // Note: We could have placed this on `mutability::IsAllocableAnyThread`,
-    // but `ClassType` is more often already in scope, allowing easier access
-    // to `T::alloc()`.
-    #[inline]
-    fn alloc() -> Allocated<Self>
-    where
-        Self: IsAllocableAnyThread + Sized,
-    {
-        // SAFETY:
-        // - It is always safe to (attempt to) allocate an object.
-        // - The object is of the correct type, since we've used the class
-        //   from `Self::class`.
-        // - The object is safe to `dealloc` on the current thread (due to the
-        //   `IsAllocableAnyThread` bound which guarantees it is not
-        //   `MainThreadOnly`).
-        //
-        // See also `MainThreadMarker::alloc`.
-        unsafe { msg_send_id![Self::class(), alloc] }
-    }
-
-    /// Allocate a new instance of the class on the main thread.
-    ///
-    /// This is essentially the same as [`ClassType::alloc`], the difference
-    /// being that it is also callable with classes that can only be used on
-    /// the main thread.
-    ///
-    ///
-    /// # Example
-    ///
-    /// Create an object on the main thread.
-    ///
-    /// ```
-    /// # use objc2::runtime::NSObject as SomeClass;
-    /// # #[cfg(for_example)]
-    /// use objc2_app_kit::NSView as SomeClass; // An example class
-    /// use objc2::rc::Retained;
-    /// use objc2::{msg_send_id, ClassType, MainThreadMarker};
-    ///
-    /// # let mtm = unsafe { MainThreadMarker::new_unchecked() };
-    /// # #[cfg(doctests_not_always_run_on_main_thread)]
-    /// let mtm = MainThreadMarker::new().expect("must be on the main thread");
-    ///
-    /// // _All_ objects are safe to allocate on the main thread!
-    /// let obj = SomeClass::alloc_main_thread(mtm);
-    ///
-    /// // Though more knowledge is required for safe initialization
-    /// let obj: Retained<SomeClass> = unsafe { msg_send_id![obj, init] };
-    /// ```
-    #[inline]
-    fn alloc_main_thread(mtm: MainThreadMarker) -> Allocated<Self>
-    where
-        Self: Sized,
-    {
-        // SAFETY: Same as `ClassType::alloc`, with the addition that since we
-        // take `mtm: MainThreadMarker`, the `IsAllocableAnyThread` bound is
-        // not required.
-        let _ = mtm;
-        unsafe { msg_send_id![Self::class(), alloc] }
-    }
 }
 
 /// Marks types whose implementation is defined in Rust.
@@ -437,4 +368,206 @@ pub unsafe trait ProtocolType {
 
     #[doc(hidden)]
     const __INNER: ();
+}
+
+// Split into separate traits for better diagnostics
+mod private {
+    pub trait SealedAllocAnyThread {}
+    pub trait SealedMainThreadOnly {}
+    pub trait SealedThreadKind {}
+}
+
+/// Marker trait for classes (and protocols) that are usable from any thread,
+/// i.e. the opposite of [`MainThreadOnly`].
+///
+/// This is mostly an implementation detail to expose the [`alloc`] method
+/// with different signatures depending on whether a class is main thread only
+/// or not. You can safely assume that things are safe to use from any thread,
+/// _unless_ they implement [`MainThreadOnly`], not only if they implement
+/// this trait.
+///
+///
+/// # Safety
+///
+/// This is a sealed trait, and should not need to be implemented; it is
+/// implemented automatically when you implement [`ClassType`].
+//
+// NOTE: Ideally this would be an auto trait that had a negative impl for
+// `MainThreadOnly`, something like:
+//
+//     pub unsafe auto trait AnyThread {}
+//     pub unsafe trait MainThreadOnly {}
+//     impl<T: ?Sized + MainThreadOnly> !AnyThread for T {}
+//
+// This isn't possible in current Rust though, so we'll have to hack it.
+pub unsafe trait AllocAnyThread: private::SealedAllocAnyThread {
+    /// Allocate a new instance of the class.
+    ///
+    /// The return value can be used directly inside [`msg_send_id!`] to
+    /// initialize the object.
+    ///
+    /// [`msg_send_id!`]: crate::msg_send_id
+    #[inline]
+    fn alloc() -> Allocated<Self>
+    where
+        Self: Sized + ClassType,
+    {
+        // SAFETY:
+        // - It is always safe to (attempt to) allocate an object.
+        // - The object is of the correct type, since we've used the class
+        //   from `Self::class`.
+        // - The object is safe to `dealloc` on the current thread (due to the
+        //   `AnyThread` bound which guarantees it is not `MainThreadOnly`).
+        //
+        // While Xcode's Main Thread Checker doesn't report `alloc` and
+        // `dealloc` as unsafe from other threads, things like `NSView` and
+        // `NSWindow` still do a non-trivial amount of stuff on `dealloc`,
+        // even if the object is freshly `alloc`'d - which is why we disallow
+        // this.
+        //
+        // This also has the nice property that `Allocated<T>` is guaranteed
+        // to be allowed to `init` on the current thread.
+        //
+        // See also `MainThreadMarker::alloc`.
+        unsafe { msg_send_id![Self::class(), alloc] }
+    }
+}
+
+// The impl here is a bit bad for diagnostics, but required to prevent users
+// implementing the trait themselves.
+impl<'a, T: ?Sized + ClassType<ThreadKind = dyn AllocAnyThread + 'a>> private::SealedAllocAnyThread
+    for T
+{
+}
+unsafe impl<'a, T: ?Sized + ClassType<ThreadKind = dyn AllocAnyThread + 'a>> AllocAnyThread for T {}
+
+impl<P: ?Sized> private::SealedAllocAnyThread for ProtocolObject<P> {}
+unsafe impl<P: ?Sized + AllocAnyThread> AllocAnyThread for ProtocolObject<P> {}
+
+/// Marker trait for classes and protocols that are only safe to use on the
+/// main thread.
+///
+/// This is commonly used in GUI code like `AppKit` and `UIKit`, e.g.
+/// `UIWindow` is only usable from the application's main thread because it
+/// accesses global statics like the `UIApplication`.
+///
+/// See [`MainThreadMarker`] for a few more details on this.
+///
+///
+/// # Safety
+///
+/// It is unsound to implement [`Send`] or [`Sync`] together with this.
+///
+/// This is a sealed trait, and should not need to be implemented; it is
+/// implemented automatically when you implement [`ClassType`].
+#[doc(alias = "@MainActor")]
+pub unsafe trait MainThreadOnly: private::SealedMainThreadOnly {
+    /// Get a [`MainThreadMarker`] from the main-thread-only object.
+    ///
+    /// This function exists purely in the type-system, and will succeed at
+    /// runtime (with a safety check when debug assertions are enabled).
+    #[inline]
+    #[cfg_attr(debug_assertions, track_caller)]
+    fn mtm(&self) -> MainThreadMarker {
+        #[cfg(debug_assertions)]
+        assert!(
+            MainThreadMarker::new().is_some(),
+            "the main-thread-only object that we tried to fetch a MainThreadMarker from was somehow not on the main thread",
+        );
+
+        // SAFETY: Objects which are `MainThreadOnly` are guaranteed
+        // `!Send + !Sync` and are only constructible on the main thread.
+        //
+        // Since we hold `&self`, i.e. a reference to such an object, and we
+        // know it cannot possibly be on another thread than the main, we know
+        // that the current thread is the main thread.
+        unsafe { MainThreadMarker::new_unchecked() }
+    }
+
+    /// Allocate a new instance of the class on the main thread.
+    ///
+    ///
+    /// # Example
+    ///
+    /// Create a view on the main thread.
+    ///
+    /// ```
+    /// use objc2::{MainThreadOnly, MainThreadMarker};
+    /// # #[cfg(available_in_app_kit)]
+    /// use objc2_app_kit::NSView;
+    /// use objc2_foundation::CGRect;
+    /// #
+    /// # use objc2::ClassType;
+    /// # use objc2::rc::{Allocated, Retained};
+    /// #
+    /// # objc2::extern_class!(
+    /// #     struct NSView;
+    /// #
+    /// #     unsafe impl ClassType for NSView {
+    /// #         type Super = objc2::runtime::NSObject;
+    /// #         type ThreadKind = dyn MainThreadOnly;
+    /// #         const NAME: &'static str = "NSObject"; // For example
+    /// #     }
+    /// # );
+    /// #
+    /// # impl NSView {
+    /// #     fn initWithFrame(this: Allocated<Self>, _frame: CGRect) -> Retained<Self> {
+    /// #         // Don't use frame, this is NSObject
+    /// #         unsafe { objc2::msg_send_id![this, init] }
+    /// #     }
+    /// # }
+    ///
+    /// # #[cfg(doctests_not_always_run_on_main_thread)]
+    /// let mtm = MainThreadMarker::new().expect("must be on the main thread");
+    /// # let mtm = unsafe { MainThreadMarker::new_unchecked() };
+    ///
+    /// let frame = CGRect::default();
+    /// let view = NSView::initWithFrame(NSView::alloc(mtm), frame);
+    /// ```
+    #[inline]
+    fn alloc(mtm: MainThreadMarker) -> Allocated<Self>
+    where
+        Self: Sized + ClassType,
+    {
+        mtm.alloc()
+    }
+}
+
+impl<'a, T: ?Sized + ClassType<ThreadKind = dyn MainThreadOnly + 'a>> private::SealedMainThreadOnly
+    for T
+{
+}
+unsafe impl<'a, T: ?Sized + ClassType<ThreadKind = dyn MainThreadOnly + 'a>> MainThreadOnly for T {}
+
+impl<P: ?Sized> private::SealedMainThreadOnly for ProtocolObject<P> {}
+unsafe impl<P: ?Sized + MainThreadOnly> MainThreadOnly for ProtocolObject<P> {}
+
+/// The allowed values in [`ClassType::ThreadKind`].
+///
+/// One of [`dyn AllocAnyThread`] or [`dyn MainThreadOnly`].
+///
+/// [`dyn AllocAnyThread`]: AllocAnyThread
+/// [`dyn MainThreadOnly`]: MainThreadOnly
+pub trait ThreadKind: private::SealedThreadKind {
+    // To mark `ThreadKind` as not object safe for now.
+    #[doc(hidden)]
+    const __NOT_OBJECT_SAFE: ();
+}
+
+impl<'a> private::SealedThreadKind for dyn AllocAnyThread + 'a {}
+impl<'a> ThreadKind for dyn AllocAnyThread + 'a {
+    const __NOT_OBJECT_SAFE: () = ();
+}
+
+impl<'a> private::SealedThreadKind for dyn MainThreadOnly + 'a {}
+impl<'a> ThreadKind for dyn MainThreadOnly + 'a {
+    const __NOT_OBJECT_SAFE: () = ();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[allow(unused)]
+    fn object_safe(_: &dyn AllocAnyThread, _: &dyn MainThreadOnly) {}
 }

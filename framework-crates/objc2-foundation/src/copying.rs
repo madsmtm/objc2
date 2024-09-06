@@ -96,7 +96,7 @@ extern_protocol!(
     /// Implement `NSCopying` for an externally defined class.
     ///
     /// ```
-    /// use objc2::{ClassType, extern_class, mutability::InteriorMutable};
+    /// use objc2::{ClassType, extern_class};
     /// use objc2_foundation::{CopyingHelper, NSCopying, NSObject};
     ///
     /// extern_class!(
@@ -104,7 +104,6 @@ extern_protocol!(
     ///
     ///     unsafe impl ClassType for ExampleClass {
     ///         type Super = NSObject;
-    ///         type Mutability = InteriorMutable;
     ///         # const NAME: &'static str = "NSData";
     ///     }
     /// );
@@ -120,7 +119,7 @@ extern_protocol!(
     /// Implement `NSCopying` for a custom class.
     ///
     /// ```
-    /// use objc2::{declare_class, msg_send_id, mutability::InteriorMutable, ClassType, DeclaredClass};
+    /// use objc2::{declare_class, msg_send_id, AllocAnyThread, ClassType, DeclaredClass};
     /// use objc2::rc::Retained;
     /// use objc2::runtime::NSZone;
     /// use objc2_foundation::{CopyingHelper, NSCopying, NSObject};
@@ -130,7 +129,6 @@ extern_protocol!(
     ///
     ///     unsafe impl ClassType for CustomClass {
     ///         type Super = NSObject;
-    ///         type Mutability = InteriorMutable;
     ///         const NAME: &'static str = "CustomClass";
     ///     }
     ///

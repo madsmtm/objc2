@@ -16,7 +16,7 @@ impl NSError {
         code: objc2::ffi::NSInteger,
         domain: &crate::NSErrorDomain,
     ) -> objc2::rc::Retained<Self> {
-        use objc2::ClassType;
+        use objc2::AllocAnyThread;
         // SAFETY: `domain` and `user_info` are copied to the error object, so
         // even if the `&NSString` came from a `&mut NSMutableString`, we're
         // still good!

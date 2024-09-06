@@ -110,7 +110,7 @@ error: missing parameters for function definition
    |
 help: add a parameter list
    |
-72 |         fn fn() test_fn_fn() {}
+71 |         fn fn() test_fn_fn() {}
    |              ++
 
 error: expected one of `->`, `<`, `where`, or `{`, found `test_fn_fn`
@@ -461,18 +461,6 @@ note: while trying to match `const`
   |
   |             const NAME: &'static str = $name_const:expr;
   |             ^^^^^
-
-error: no rules expected the token `}`
- --> ui/declare_class_invalid_syntax.rs
-  |
-  |     }
-  |     ^ no rules expected this token in macro call
-  |
-note: while trying to match `type`
- --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
-  |
-  |             type Mutability = $mutability:ty;
-  |             ^^^^
 
 error: unexpected end of macro invocation
  --> ui/declare_class_invalid_syntax.rs

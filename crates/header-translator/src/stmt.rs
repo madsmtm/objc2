@@ -702,7 +702,7 @@ impl Stmt {
                     superclasses,
                     designated_initializers,
                     derives: data.map(|data| data.derives.clone()).unwrap_or_default(),
-                    main_thread_only: thread_safety.inferred_mainthreadonly(),
+                    main_thread_only: thread_safety.explicit_mainthreadonly(),
                     skipped: data.map(|data| data.definition_skipped).unwrap_or_default(),
                     // Ignore sendability on superclasses; since it's an auto
                     // trait, it's propagated to subclasses anyhow!
@@ -1724,9 +1724,7 @@ impl Stmt {
                         GenericTyHelper(superclass_generics),
                     )?;
                     if *main_thread_only {
-                        writeln!(f, "        type Mutability = MainThreadOnly;")?;
-                    } else {
-                        writeln!(f, "        type Mutability = InteriorMutable;")?;
+                        writeln!(f, "        type ThreadKind = dyn MainThreadOnly;")?;
                     }
                     if !generics.is_empty() {
                         writeln!(f)?;
@@ -2054,7 +2052,7 @@ impl Stmt {
                         } else {
                             write!(f, "+ ")?;
                         }
-                        write!(f, "IsMainThreadOnly")?;
+                        write!(f, "MainThreadOnly")?;
                     }
                     writeln!(f, " {{")?;
 

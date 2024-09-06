@@ -8,15 +8,17 @@ error[E0308]: mismatched types
                   found enum `Result<Retained<_>, Retained<_>>`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0308]: mismatched types
+error[E0599]: no function or associated item named `alloc` found for struct `NSObject` in the current scope
  --> ui/msg_send_id_invalid_error.rs
   |
   |         unsafe { msg_send_id![NSObject::alloc(), initWithError: _] };
-  |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Result<Retained<AnyObject>, ...>`, found `Result<Retained<NSObject>, ...>`
+  |                                         ^^^^^ function or associated item not found in `NSObject`
   |
-  = note: expected enum `Result<Retained<AnyObject>, Retained<NSObject>>`
-             found enum `Result<Retained<NSObject>, Retained<_>>`
-  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: items from traits can only be used if the trait is in scope
+help: trait `AllocAnyThread` which provides `alloc` is implemented but not in scope; perhaps you want to import it
+  |
+2  + use objc2::AllocAnyThread;
+   |
 
 error[E0271]: type mismatch resolving `<Option<Retained<_>> as MaybeUnwrap>::Input == Allocated<_>`
  --> ui/msg_send_id_invalid_error.rs

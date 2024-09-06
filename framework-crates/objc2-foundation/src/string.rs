@@ -12,7 +12,7 @@ use std::os::raw::c_void;
 use objc2::msg_send_id;
 use objc2::rc::{autoreleasepool_leaking, Allocated, AutoreleasePool, Retained};
 use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
-use objc2::{ClassType, Message};
+use objc2::{AllocAnyThread, Message};
 
 use crate::{NSMutableString, NSString};
 

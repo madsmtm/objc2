@@ -8,9 +8,7 @@ use objc2::runtime::{
     AnyClass, AnyObject, AnyProtocol, Bool, NSObject, NSObjectProtocol, ProtocolObject,
 };
 use objc2::sel;
-use objc2::{
-    class, extern_protocol, msg_send, msg_send_id, mutability, ClassType, Message, ProtocolType,
-};
+use objc2::{class, extern_protocol, msg_send, msg_send_id, ClassType, Message, ProtocolType};
 #[cfg(feature = "all")]
 use objc2_foundation::NSNumber;
 
@@ -90,7 +88,7 @@ unsafe impl Message for MyTestObject {}
 
 unsafe impl ClassType for MyTestObject {
     type Super = NSObject;
-    type Mutability = mutability::InteriorMutable;
+    type ThreadKind = <Self::Super as ClassType>::ThreadKind;
     const NAME: &'static str = "MyTestObject";
 
     #[cfg(all(target_vendor = "apple", target_arch = "aarch64"))]

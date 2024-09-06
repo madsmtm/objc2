@@ -47,7 +47,8 @@
 ///   would not give you the ability to convert via. `AsRef` to `NSObject`.
 ///   Therefore, you may optionally specify additional parts of the
 ///   inheritance chain using an `#[inherits(...)]` attribute.
-/// - The class' [`Mutability`].
+/// - Optionally, the class' [`ThreadKind`], if the object is only usable on
+///   the main thread.
 /// - Optionally, the class' [`NAME`] - if not specified, this will default to
 ///   the struct name.
 ///
@@ -56,7 +57,7 @@
 ///
 /// [`ClassType`]: crate::ClassType
 /// [`Super`]: crate::ClassType::Super
-/// [`Mutability`]: crate::ClassType::Mutability
+/// [`ThreadKind`]: crate::ClassType::ThreadKind
 /// [`NAME`]: crate::ClassType::NAME
 ///
 ///
@@ -69,15 +70,13 @@
 /// In particular, when writing `unsafe` on `impl ClassType`, you must ensure
 /// that:
 /// 1. [`ClassType::Super`] is correct.
-/// 2. [`ClassType::Mutability`] is correct.
-///
-///    See [`ClassType`'s safety section][ClassType#safety] for further
-///    details on what this entails.
+/// 2. [`ClassType::ThreadKind`] is correctly set to `MainThreadOnly` if the
+///    class can only be used from the main thread.
 ///
 /// [`RefEncode`]: crate::encode::RefEncode
 /// [`Message`]: crate::Message
 /// [`ClassType::Super`]: crate::ClassType::Super
-/// [`ClassType::Mutability`]: crate::ClassType::Mutability
+/// [`ClassType::ThreadKind`]: crate::ClassType::ThreadKind
 /// [ClassType#safety]: crate::ClassType#safety
 ///
 ///
@@ -92,7 +91,7 @@
 /// # use objc2::runtime::NSObjectProtocol;
 /// use objc2::rc::Retained;
 /// use objc2::runtime::NSObject;
-/// use objc2::{extern_class, msg_send_id, mutability, ClassType};
+/// use objc2::{extern_class, msg_send_id, ClassType};
 ///
 /// extern_class!(
 ///     /// An example description.
@@ -100,10 +99,13 @@
 ///     // Specify the class and struct name to be used
 ///     pub struct NSFormatter;
 ///
-///     // Specify the superclass, in this case `NSObject`
 ///     unsafe impl ClassType for NSFormatter {
+///         // Specify the superclass, in this case `NSObject`
 ///         type Super = NSObject;
-///         type Mutability = mutability::InteriorMutable;
+///
+///         // Optionally, specify that the class is only usable on the main thread.
+///         // type ThreadKind = dyn MainThreadOnly;
+///
 ///         // Optionally, specify the name of the class, if it differs from
 ///         // the struct name.
 ///         // const NAME: &'static str = "NSFormatter";
@@ -135,7 +137,7 @@
 /// use objc2_foundation::{NSCoding, NSCopying, NSObjectProtocol};
 /// # use objc2::runtime::NSObjectProtocol;
 /// use objc2::runtime::NSObject;
-/// use objc2::{extern_class, mutability, ClassType};
+/// use objc2::{extern_class, ClassType};
 /// #
 /// # extern_class!(
 /// #     #[derive(PartialEq, Eq, Hash)]
@@ -143,7 +145,6 @@
 /// #
 /// #     unsafe impl ClassType for NSFormatter {
 /// #         type Super = NSObject;
-/// #         type Mutability = mutability::InteriorMutable;
 /// #     }
 /// # );
 ///
@@ -155,7 +156,6 @@
 ///         // Specify the correct inheritance chain
 ///         #[inherits(NSObject)]
 ///         type Super = NSFormatter;
-///         type Mutability = mutability::InteriorMutable;
 ///     }
 /// );
 ///
@@ -180,8 +180,7 @@ macro_rules! extern_class {
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
-            type Mutability = $mutability:ty;
-
+            $(type ThreadKind = $thread_kind:ty;)?
             $(const NAME: &'static str = $name_const:expr;)?
         }
     ) => {
@@ -194,8 +193,7 @@ macro_rules! extern_class {
             unsafe impl ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
-                type Mutability = $mutability;
-
+                $(type ThreadKind = $thread_kind;)?
                 $(const NAME: &'static str = $name_const;)?
             }
         );
@@ -210,8 +208,7 @@ macro_rules! extern_class {
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
-            type Mutability = $mutability:ty;
-
+            $(type ThreadKind = $thread_kind:ty;)?
             $(const NAME: &'static str = $name_const:expr;)?
         }
     ) => {
@@ -222,17 +219,26 @@ macro_rules! extern_class {
                 $($field_vis $field: $field_ty,)*
             }
 
+            // SAFETY:
+            // 1. We define the type, and ensure that it represents a specific
+            //    class (for example with the check below that ensures it is
+            //    zero-sized).
+            // 2. Caller upholds that the superclass is correct.
+            // 3. [`Self::ThreadKind`] is ensured correct by `ValidThreadKind`
+            //    and `MainThreadOnlyDoesNotImplSendSync` in `class`.
+            // 4. While the user controls the name, they control it in a way
+            //    that...
+            // 5. [`class`] still returns the actual class.
             $(#[$impl_m])*
             unsafe impl<> ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
-                type Mutability = $mutability;
+                $(type ThreadKind = $thread_kind;)?
+                $(const NAME: &'static str = $name_const;)?
 
                 fn as_super(&self) -> &Self::Super {
                     &self.__superclass
                 }
-
-                $(const NAME: &'static str = $name_const;)?
             }
         );
 
@@ -309,11 +315,10 @@ macro_rules! __inner_extern_class {
         unsafe impl<$($t_for:ident $(: $(?$b_sized_for:ident +)? $b_for:ident)?),* $(,)?> ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+ $(,)?)])?
             type Super = $superclass:ty;
-            type Mutability = $mutability:ty;
+            $(type ThreadKind = $thread_kind:ty;)?
+            $(const NAME: &'static str = $name_const:expr;)?
 
             fn as_super(&$as_super_self:ident) -> &Self::Super $as_super:block
-
-            $(const NAME: &'static str = $name_const:expr;)?
         }
     ) => {
         $(#[$m])*
@@ -335,12 +340,13 @@ macro_rules! __inner_extern_class {
         $(#[$impl_m])*
         unsafe impl<$($t_for $(: $(?$b_sized_for +)? $b_for)?),*> ClassType for $for {
             type Super = $superclass;
-            type Mutability = $mutability;
+            type ThreadKind = $crate::__select_thread_kind!($($thread_kind)?);
             const NAME: &'static $crate::__macro_helpers::str = $crate::__select_name!($name; $($name_const)?);
 
             #[inline]
             fn class() -> &'static $crate::runtime::AnyClass {
-                $crate::__macro_helpers::assert_mutability_matches_superclass_mutability::<Self>();
+                let _ = <Self as $crate::__macro_helpers::ValidThreadKind<Self::ThreadKind>>::check;
+                let _ = <Self as $crate::__macro_helpers::MainThreadOnlyDoesNotImplSendSync<_>>::check;
 
                 $crate::__class_inner!(
                     $crate::__select_name!($name; $($name_const)?),
@@ -391,10 +397,9 @@ macro_rules! __extern_class_impl_traits {
         //
         // That the object must work with standard memory management is
         // properly upheld by the fact that the superclass is required by
-        // `assert_mutability_matches_superclass_mutability` to implement
-        // `ClassType`, and hence must be a subclass of one of `NSObject`,
-        // `NSProxy` or some other class that ensures this (e.g. the object
-        // itself is not a root class).
+        // `ValidThreadKind` to implement `ClassType`, and hence must also be
+        // a subclass of one of `NSObject`, `NSProxy` or some other class that
+        // ensures this (e.g. the object itself is not a root class).
         $(#[$impl_m])*
         unsafe impl<$($t)*> $crate::Message for $for {}
 
@@ -443,5 +448,28 @@ macro_rules! __extern_class_impl_traits {
 
             ($superclass, $($inheritance_rest,)*)
         }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __select_thread_kind {
+    () => {
+        // Default to the super class' thread kind
+        <Self::Super as $crate::ClassType>::ThreadKind
+    };
+    ($thread_kind:ty) => {
+        $thread_kind
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __select_name {
+    ($_name:ident; $name_const:expr) => {
+        $name_const
+    };
+    ($name:ident;) => {
+        $crate::__macro_helpers::stringify!($name)
     };
 }

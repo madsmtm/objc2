@@ -1,18 +1,15 @@
-error[E0277]: the trait bound `MainThreadOnly: mutability::MutabilityIsAllocableAnyThread` is not satisfied
- --> ui/main_thread_only_not_allocable.rs
-  |
-  |     let _ = MyMainThreadOnlyClass::alloc();
-  |             ^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::MutabilityIsAllocableAnyThread` is not implemented for `MainThreadOnly`, which is required by `MyMainThreadOnlyClass: IsAllocableAnyThread`
-  |
-  = help: the following other types implement trait `mutability::MutabilityIsAllocableAnyThread`:
-            InteriorMutable
-            Root
-  = note: required for `MyMainThreadOnlyClass` to implement `IsAllocableAnyThread`
-note: required by a bound in `objc2::ClassType::alloc`
- --> $WORKSPACE/crates/objc2/src/top_level_traits.rs
-  |
-  |     fn alloc() -> Allocated<Self>
-  |        ----- required by a bound in this associated function
-  |     where
-  |         Self: IsAllocableAnyThread + Sized,
-  |               ^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassType::alloc`
+error[E0061]: this function takes 1 argument but 0 arguments were supplied
+  --> ui/main_thread_only_not_allocable.rs
+   |
+   |     let _ = MyMainThreadOnlyClass::alloc();
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^-- argument #1 of type `MainThreadMarker` is missing
+   |
+note: associated function defined here
+  --> $WORKSPACE/crates/objc2/src/top_level_traits.rs
+   |
+   |     fn alloc(mtm: MainThreadMarker) -> Allocated<Self>
+   |        ^^^^^
+help: provide the argument
+   |
+19 |     let _ = MyMainThreadOnlyClass::alloc(/* MainThreadMarker */);
+   |                                         ~~~~~~~~~~~~~~~~~~~~~~~~

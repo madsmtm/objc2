@@ -144,7 +144,6 @@ impl<T, U: RetainedFromIterator<T>> FromIterator<T> for Retained<U> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::mutability::InteriorMutable;
     use crate::runtime::NSObject;
     use crate::{declare_class, msg_send_id, ClassType, DeclaredClass};
 
@@ -154,7 +153,6 @@ mod tests {
 
         unsafe impl ClassType for Collection {
             type Super = NSObject;
-            type Mutability = InteriorMutable;
             const NAME: &'static str = "MyCustomCollection";
         }
 

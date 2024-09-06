@@ -252,7 +252,7 @@ class.NSXPCCoder.methods."encodeXPCObject:forKey:".skipped = true
 class.NSXPCCoder.methods."decodeXPCObjectOfType:forKey:".skipped = true
 
 ###
-### Mutability
+### Counterparts
 ###
 
 class.NSArray.counterpart = "MutableSubclass(Foundation::NSArray::NSMutableArray)"
@@ -267,18 +267,18 @@ class.NSMutableAttributedString.counterpart = "ImmutableSuperclass(Foundation::N
 class.NSData.counterpart = "MutableSubclass(Foundation::NSData::NSMutableData)"
 class.NSMutableData.counterpart = "ImmutableSuperclass(Foundation::NSData::NSData)"
 
-# Auto traits and mutability can be deduced as if the dictionary was implemented as `(NSArray<KeyType>, NSArray<ObjectType>)`.
+# Auto traits can be deduced as if the dictionary was implemented as `(NSArray<KeyType>, NSArray<ObjectType>)`.
 class.NSDictionary.counterpart = "MutableSubclass(Foundation::NSDictionary::NSMutableDictionary)"
 class.NSMutableDictionary.counterpart = "ImmutableSuperclass(Foundation::NSDictionary::NSDictionary)"
 
-# Auto traits and mutability can be viewed as if the set was implemented with `NSArray`.
+# Auto traits can be viewed as if the set was implemented with `NSArray`.
 class.NSSet.counterpart = "MutableSubclass(Foundation::NSSet::NSMutableSet)"
 class.NSMutableSet.counterpart = "ImmutableSuperclass(Foundation::NSSet::NSSet)"
 
 class.NSCharacterSet.counterpart = "MutableSubclass(Foundation::NSCharacterSet::NSMutableCharacterSet)"
 class.NSMutableCharacterSet.counterpart = "ImmutableSuperclass(Foundation::NSCharacterSet::NSCharacterSet)"
 
-# Auto traits and mutability can be viewed as if the set was implemented with `NSArray`.
+# Auto traits can be viewed as if the set was implemented with `NSArray`.
 class.NSOrderedSet.counterpart = "MutableSubclass(Foundation::NSOrderedSet::NSMutableOrderedSet)"
 class.NSMutableOrderedSet.counterpart = "ImmutableSuperclass(Foundation::NSOrderedSet::NSOrderedSet)"
 

@@ -2,7 +2,6 @@
 use core::cell::RefCell;
 use core::ptr;
 
-use crate::mutability::InteriorMutable;
 use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{NSObject, NSZone};
 use crate::{declare_class, msg_send, msg_send_id, ClassType, DeclaredClass};
@@ -70,7 +69,6 @@ declare_class!(
 
     unsafe impl ClassType for RcTestObject {
         type Super = NSObject;
-        type Mutability = InteriorMutable;
         const NAME: &'static str = "__RcTestObject";
     }
 

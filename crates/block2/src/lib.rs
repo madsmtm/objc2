@@ -69,7 +69,6 @@
 //! #
 //! #     unsafe impl ClassType for MyClass {
 //! #         type Super = objc2::runtime::NSObject;
-//! #         type Mutability = objc2::mutability::InteriorMutable;
 //! #         const NAME: &'static str = "NSObject";
 //! #     }
 //! # );

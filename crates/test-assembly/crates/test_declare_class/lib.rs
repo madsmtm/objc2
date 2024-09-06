@@ -8,7 +8,7 @@ use core::ptr;
 
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::AnyClass;
-use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass};
+use objc2::{declare_class, msg_send_id, ClassType, DeclaredClass};
 use objc2_foundation::{CopyingHelper, NSCopying, NSObject, NSObjectProtocol, NSZone};
 
 declare_class!(
@@ -17,7 +17,6 @@ declare_class!(
 
     unsafe impl ClassType for NoIvars {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "NoIvars";
     }
 
@@ -86,7 +85,6 @@ declare_class!(
 
     unsafe impl ClassType for ForgetableIvars {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "ForgetableIvars";
     }
 
@@ -127,7 +125,6 @@ declare_class!(
 
     unsafe impl ClassType for DropIvars {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "DropIvars";
     }
 

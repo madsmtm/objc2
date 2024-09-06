@@ -65,7 +65,7 @@ Feel free to open a half-finished PR if you need assistance.
 
 The `translation-config.toml` file describes various tweaks that we need to do because our header translation is incomplete in some areas.
 
-However, even if our header translation was perfect, we still need a way to enrich the generated data, since C headers have no way to describe which methods are safe, or mutable, and which are not!
+However, even if our header translation was perfect, we still need a way to enrich the generated data, since C headers have no way to describe which methods are safe and which are not!
 
 
 ### What is required for a method to be safe?

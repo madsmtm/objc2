@@ -426,10 +426,9 @@ mod tests {
     use std::sync::Mutex;
 
     use super::*;
-    use crate::mutability::InteriorMutable;
     use crate::rc::{Allocated, PartialInit, RcTestObject, Retained, ThreadTestData};
     use crate::runtime::NSObject;
-    use crate::{declare_class, msg_send, msg_send_id};
+    use crate::{declare_class, msg_send, msg_send_id, AllocAnyThread};
 
     /// Initialize superclasses, but not own class.
     unsafe fn init_only_superclasses<T: DeclaredClass>(obj: Allocated<T>) -> Retained<T>
@@ -492,7 +491,6 @@ mod tests {
 
             unsafe impl ClassType for ImplsDrop {
                 type Super = NSObject;
-                type Mutability = InteriorMutable;
                 const NAME: &'static str = "ImplsDrop";
             }
 
@@ -533,7 +531,6 @@ mod tests {
 
             unsafe impl ClassType for IvarsImplDrop {
                 type Super = ImplsDrop;
-                type Mutability = InteriorMutable;
                 const NAME: &'static str = "IvarsImplDrop";
             }
 
@@ -568,7 +565,6 @@ mod tests {
 
             unsafe impl ClassType for BothIvarsAndTypeImplsDrop {
                 type Super = IvarsImplDrop;
-                type Mutability = InteriorMutable;
                 const NAME: &'static str = "BothIvarsAndTypeImplsDrop";
             }
 
@@ -625,7 +621,6 @@ mod tests {
 
             unsafe impl ClassType for IvarsNoDrop {
                 type Super = NSObject;
-                type Mutability = InteriorMutable;
                 const NAME: &'static str = "IvarsNoDrop";
             }
 
@@ -652,7 +647,6 @@ mod tests {
 
             unsafe impl ClassType for IvarZst {
                 type Super = NSObject;
-                type Mutability = InteriorMutable;
                 const NAME: &'static str = "IvarZst";
             }
 
@@ -695,7 +689,6 @@ mod tests {
 
             unsafe impl ClassType for HasIvarWithHighAlignment {
                 type Super = NSObject;
-                type Mutability = InteriorMutable;
                 const NAME: &'static str = "HasIvarWithHighAlignment";
             }
 
@@ -726,7 +719,6 @@ mod tests {
 
             unsafe impl ClassType for RcIvar {
                 type Super = NSObject;
-                type Mutability = InteriorMutable;
                 const NAME: &'static str = "RcIvar";
             }
 
@@ -793,7 +785,6 @@ mod tests {
 
             unsafe impl ClassType for RcIvarSubclass {
                 type Super = RcIvar;
-                type Mutability = InteriorMutable;
                 const NAME: &'static str = "RcIvarSubclass";
             }
 
@@ -864,7 +855,6 @@ mod tests {
 
             unsafe impl ClassType for InvalidAccess {
                 type Super = NSObject;
-                type Mutability = InteriorMutable;
                 const NAME: &'static str = "InvalidAccess";
             }
 
@@ -887,7 +877,6 @@ mod tests {
 
             unsafe impl ClassType for DropPanics {
                 type Super = NSObject;
-                type Mutability = InteriorMutable;
                 const NAME: &'static str = "DropPanics";
             }
 
@@ -922,7 +911,6 @@ mod tests {
 
             unsafe impl ClassType for IvarDropPanics {
                 type Super = NSObject;
-                type Mutability = InteriorMutable;
                 const NAME: &'static str = "IvarDropPanics";
             }
 

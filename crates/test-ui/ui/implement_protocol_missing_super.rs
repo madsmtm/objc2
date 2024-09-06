@@ -1,6 +1,6 @@
 //! Test that implementing certain traits like `NSURLSessionDelegate` requires
 //! super protocols like `NSObjectProtocol` to also be implemented.
-use objc2::{declare_class, mutability, ClassType, DeclaredClass};
+use objc2::{declare_class, ClassType, DeclaredClass, MainThreadOnly};
 use objc2_foundation::{NSObject, NSURLSessionDelegate};
 
 declare_class!(
@@ -8,7 +8,7 @@ declare_class!(
 
     unsafe impl ClassType for CustomObject {
         type Super = NSObject;
-        type Mutability = mutability::MainThreadOnly;
+        type ThreadKind = dyn MainThreadOnly;
         const NAME: &'static str = "CustomObject";
     }
 

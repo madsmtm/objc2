@@ -1,5 +1,5 @@
 use objc2::runtime::NSObject;
-use objc2::{extern_class, mutability, ClassType};
+use objc2::{extern_class, ClassType};
 
 extern_class!(
     #[cfg(not(test))]
@@ -8,7 +8,6 @@ extern_class!(
     #[cfg(not(test))]
     unsafe impl ClassType for MyTestEnabled {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
     }
 );
 
@@ -19,7 +18,6 @@ extern_class!(
     #[cfg(test)]
     unsafe impl ClassType for MyTestDisabled {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
     }
 );
 

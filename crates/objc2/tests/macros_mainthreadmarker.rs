@@ -1,8 +1,7 @@
 use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSObjectProtocol};
 use objc2::{
-    declare_class, extern_methods, extern_protocol, mutability, ClassType, DeclaredClass,
-    ProtocolType,
+    declare_class, extern_methods, extern_protocol, ClassType, DeclaredClass, ProtocolType,
 };
 
 extern_protocol!(
@@ -26,7 +25,6 @@ declare_class!(
 
     unsafe impl ClassType for Cls {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "MainThreadMarkerTest";
     }
 

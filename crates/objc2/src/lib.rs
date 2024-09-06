@@ -21,7 +21,7 @@
 //!
 //! This example illustrates major parts of the functionality in this crate:
 //!
-//! First, we allocate a new [`NSObject`] using [`ClassType::alloc`].
+//! First, we allocate a new [`NSObject`] using [`AllocAnyThread::alloc`].
 //! Next, we initialize this object. It is ensured to be deallocated using
 //! [`rc::Retained`].
 //! Now we're free to send messages to the object to our hearts desire using
@@ -31,7 +31,7 @@
 //! deallocated.
 //!
 //! ```
-//! use objc2::{msg_send, msg_send_id, ClassType};
+//! use objc2::{msg_send, msg_send_id, AllocAnyThread, ClassType};
 //! use objc2::ffi::NSUInteger;
 //! use objc2::rc::Retained;
 //! use objc2::runtime::{NSObject, NSObjectProtocol};
@@ -173,7 +173,9 @@ extern crate std;
 #[doc(no_inline)]
 pub use self::encode::{Encode, Encoding, RefEncode};
 pub use self::main_thread_marker::MainThreadMarker;
-pub use self::top_level_traits::{ClassType, DeclaredClass, Message, ProtocolType};
+pub use self::top_level_traits::{
+    AllocAnyThread, ClassType, DeclaredClass, MainThreadOnly, Message, ProtocolType, ThreadKind,
+};
 
 #[cfg(feature = "objc2-proc-macros")]
 #[doc(hidden)]
@@ -200,7 +202,6 @@ pub mod exception;
 pub mod ffi;
 mod macros;
 mod main_thread_marker;
-pub mod mutability;
 pub mod rc;
 pub mod runtime;
 #[cfg(test)]

@@ -1,7 +1,6 @@
 #![deny(deprecated, unreachable_code)]
 use core::ptr::{self, NonNull};
 
-use objc2::mutability::InteriorMutable;
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 use objc2::{declare_class, extern_methods, sel, ClassType, DeclaredClass};
@@ -13,7 +12,6 @@ declare_class!(
 
     unsafe impl ClassType for DeclareClassDepreactedMethod {
         type Super = NSObject;
-        type Mutability = InteriorMutable;
         const NAME: &'static str = "DeclareClassDepreactedMethod";
     }
 
@@ -46,7 +44,6 @@ declare_class!(
 
     unsafe impl ClassType for DeclareClassCfg {
         type Super = NSObject;
-        type Mutability = InteriorMutable;
         const NAME: &'static str = "DeclareClassCfg";
     }
 
@@ -190,7 +187,6 @@ declare_class!(
 
     unsafe impl ClassType for TestMultipleColonSelector {
         type Super = NSObject;
-        type Mutability = InteriorMutable;
         const NAME: &'static str = "TestMultipleColonSelector";
     }
 
@@ -265,7 +261,6 @@ declare_class!(
 
     unsafe impl ClassType for DeclareClassAllTheBool {
         type Super = NSObject;
-        type Mutability = InteriorMutable;
         const NAME: &'static str = "DeclareClassAllTheBool";
     }
 
@@ -330,7 +325,6 @@ declare_class!(
 
     unsafe impl ClassType for DeclareClassUnreachable {
         type Super = NSObject;
-        type Mutability = InteriorMutable;
         const NAME: &'static str = "DeclareClassUnreachable";
     }
 
@@ -381,7 +375,6 @@ declare_class!(
 
     unsafe impl ClassType for OutParam {
         type Super = NSObject;
-        type Mutability = InteriorMutable;
         const NAME: &'static str = "OutParam";
     }
 
@@ -459,7 +452,6 @@ fn test_pointer_receiver_allowed() {
 
         unsafe impl ClassType for PointerReceiver {
             type Super = NSObject;
-            type Mutability = InteriorMutable;
             const NAME: &'static str = "PointerReceiver";
         }
 

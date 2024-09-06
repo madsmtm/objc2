@@ -15,7 +15,6 @@ use crate::{ClassType, DeclaredClass, Message, ProtocolType};
 
 use super::declared_ivars::{register_with_ivars, setup_dealloc};
 use super::{CopyOrMutCopy, Init, MaybeUnwrap, New, Other};
-use crate::mutability;
 
 /// Helper type for implementing `MethodImplementation` with a receiver of
 /// `Allocated<T>`, without exposing that implementation to users.
@@ -132,37 +131,6 @@ impl<T: Message> MaybeOptionId for Option<Retained<T>> {
         let ptr: *mut T = Retained::autorelease_return_option(self);
         IdReturnValue(ptr.cast())
     }
-}
-
-/// Helper for ensuring that `ClassType::Mutability` is implemented correctly
-/// for subclasses.
-pub trait ValidSubclassMutability<T: mutability::Mutability> {}
-
-// Root
-impl ValidSubclassMutability<mutability::InteriorMutable> for mutability::Root {}
-impl ValidSubclassMutability<mutability::MainThreadOnly> for mutability::Root {}
-
-// InteriorMutable
-impl ValidSubclassMutability<mutability::InteriorMutable> for mutability::InteriorMutable {}
-impl ValidSubclassMutability<mutability::MainThreadOnly> for mutability::InteriorMutable {}
-
-// MainThreadOnly
-impl ValidSubclassMutability<mutability::MainThreadOnly> for mutability::MainThreadOnly {}
-
-/// Ensure that:
-/// 1. The type is not a root class (it's superclass implements `ClassType`,
-///    and it's mutability is not `Root`), and therefore also implements basic
-///    memory management methods, as required by `unsafe impl Message`.
-/// 2. The mutability is valid according to the superclass' mutability.
-#[inline]
-pub fn assert_mutability_matches_superclass_mutability<T>()
-where
-    T: ?Sized + ClassType,
-    T::Super: ClassType,
-    T::Mutability: mutability::Mutability,
-    <T::Super as ClassType>::Mutability: ValidSubclassMutability<T::Mutability>,
-{
-    // Noop
 }
 
 #[derive(Debug)]

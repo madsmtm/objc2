@@ -22,7 +22,7 @@ mod generated;
 pub use self::generated::*;
 
 use objc2::runtime::NSObject;
-use objc2::{extern_class, mutability, ClassType};
+use objc2::{extern_class, ClassType, MainThreadOnly};
 
 // TODO: UIViewController on iOS, NSViewController on macOS
 pub type ASViewController = NSObject;
@@ -43,7 +43,7 @@ extern_class!(
     #[cfg(feature = "ASCredentialProviderViewController")]
     unsafe impl ClassType for ASCredentialProviderViewController {
         type Super = ASViewController;
-        type Mutability = mutability::MainThreadOnly;
+        type ThreadKind = dyn MainThreadOnly;
     }
 );
 
@@ -55,7 +55,7 @@ extern_class!(
     #[cfg(feature = "ASAccountAuthenticationModificationViewController")]
     unsafe impl ClassType for ASAccountAuthenticationModificationViewController {
         type Super = ASViewController;
-        type Mutability = mutability::MainThreadOnly;
+        type ThreadKind = dyn MainThreadOnly;
     }
 );
 
@@ -67,6 +67,6 @@ extern_class!(
     #[cfg(feature = "ASAuthorizationAppleIDButton")]
     unsafe impl ClassType for ASAuthorizationAppleIDButton {
         type Super = ASControl;
-        type Mutability = mutability::MainThreadOnly;
+        type ThreadKind = dyn MainThreadOnly;
     }
 );

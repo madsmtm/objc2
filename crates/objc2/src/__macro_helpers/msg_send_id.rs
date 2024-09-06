@@ -524,7 +524,7 @@ mod tests {
 
     use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
     use crate::runtime::{NSObject, NSZone};
-    use crate::{class, msg_send_id};
+    use crate::{class, msg_send_id, AllocAnyThread};
 
     mod test_trait_disambugated {
         use super::*;

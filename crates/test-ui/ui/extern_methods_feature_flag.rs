@@ -1,12 +1,11 @@
 use objc2::runtime::NSObject;
-use objc2::{extern_class, extern_methods, mutability, ClassType};
+use objc2::{extern_class, extern_methods, ClassType};
 
 extern_class!(
     pub struct MyTest;
 
     unsafe impl ClassType for MyTest {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
     }
 );
 

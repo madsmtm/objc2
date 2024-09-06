@@ -2,7 +2,7 @@ use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::Retained;
-use objc2::ClassType;
+use objc2::AllocAnyThread;
 
 use crate::Foundation::*;
 

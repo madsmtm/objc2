@@ -11,6 +11,7 @@ pub use core::{compile_error, concat, panic, stringify};
 pub use std::sync::Once;
 
 mod cache;
+mod class;
 mod common_selectors;
 mod convert;
 mod declare_class;
@@ -23,12 +24,11 @@ mod msg_send_id;
 mod writeback;
 
 pub use self::cache::{CachedClass, CachedSel};
+pub use self::class::{MainThreadOnlyDoesNotImplSendSync, ValidThreadKind};
 pub use self::common_selectors::{alloc_sel, dealloc_sel, init_sel, new_sel};
 pub use self::convert::{ConvertArgument, ConvertArguments, ConvertReturn, TupleExtender};
 pub use self::declare_class::{
-    assert_mutability_matches_superclass_mutability, ClassBuilderHelper,
-    ClassProtocolMethodsBuilder, IdReturnValue, MaybeOptionId, MessageRecieveId,
-    ValidSubclassMutability,
+    ClassBuilderHelper, ClassProtocolMethodsBuilder, IdReturnValue, MaybeOptionId, MessageRecieveId,
 };
 pub use self::declared_ivars::DeclaredIvarsHelper;
 pub use self::image_info::ImageInfo;

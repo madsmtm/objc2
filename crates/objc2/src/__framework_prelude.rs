@@ -13,14 +13,13 @@ pub use std::os::raw::{
 
 pub use crate::encode::{Encode, Encoding, RefEncode};
 pub use crate::ffi::{NSInteger, NSIntegerMax, NSUInteger, NSUIntegerMax};
-pub use crate::mutability::{InteriorMutable, IsMainThreadOnly, MainThreadOnly};
 pub use crate::rc::{Allocated, DefaultId, DefaultRetained, Id, Retained};
 pub use crate::runtime::{
     AnyClass, AnyObject, Bool, NSObject, NSObjectProtocol, ProtocolObject, Sel,
 };
 pub use crate::{
-    __inner_extern_class, extern_category, extern_class, extern_methods, extern_protocol,
-    ClassType, MainThreadMarker, Message, ProtocolType,
+    MainThreadOnly, __inner_extern_class, extern_category, extern_class, extern_methods,
+    extern_protocol, ClassType, MainThreadMarker, Message, ProtocolType,
 };
 
 // TODO

@@ -1,4 +1,4 @@
-use objc2::{extern_class, mutability, ClassType};
+use objc2::{extern_class, ClassType};
 use objc2_foundation::{NSCopying, NSMutableCopying, NSObject};
 
 extern_class!(
@@ -6,7 +6,6 @@ extern_class!(
 
     unsafe impl ClassType for MyObj {
         type Super = NSObject;
-        type Mutability = mutability::InteriorMutable;
     }
 );
 
