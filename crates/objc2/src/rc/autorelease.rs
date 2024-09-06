@@ -141,10 +141,6 @@ pub struct AutoreleasePool<'pool> {
     ///     pub fn autorelease(self, s: String) -> &'pool str {
     ///         &*self.0.0.alloc(s)
     ///     }
-    ///
-    ///     pub fn autorelease_mut(self, s: String) -> &'pool mut str {
-    ///         &mut *self.0.0.alloc(s)
-    ///     }
     /// }
     ///
     /// pub fn autoreleasepool<F, R>(f: F) -> R
@@ -204,8 +200,6 @@ impl<'pool> AutoreleasePool<'pool> {
     /// objects, since it binds the lifetime of the reference to the pool, and
     /// does some extra checks when debug assertions are enabled.
     ///
-    /// For the mutable counterpart see [`ptr_as_mut`](#method.ptr_as_mut).
-    ///
     ///
     /// # Safety
     ///
@@ -216,26 +210,6 @@ impl<'pool> AutoreleasePool<'pool> {
         self.__verify_is_inner();
         // SAFETY: Checked by the caller
         unsafe { ptr.as_ref().unwrap_unchecked() }
-    }
-
-    /// Returns a unique reference to the given autoreleased pointer object.
-    ///
-    /// This is the preferred way to make mutable references from autoreleased
-    /// objects, since it binds the lifetime of the reference to the pool, and
-    /// does some extra checks when debug assertions are enabled.
-    ///
-    /// For the shared counterpart see [`ptr_as_ref`](#method.ptr_as_ref).
-    ///
-    ///
-    /// # Safety
-    ///
-    /// This is equivalent to `&mut *ptr`, and shares the unsafety of that,
-    /// except the lifetime is bound to the pool instead of being unbounded.
-    #[inline]
-    pub unsafe fn ptr_as_mut<T: ?Sized>(self, ptr: *mut T) -> &'pool mut T {
-        self.__verify_is_inner();
-        // SAFETY: Checked by the caller
-        unsafe { ptr.as_mut().unwrap_unchecked() }
     }
 }
 

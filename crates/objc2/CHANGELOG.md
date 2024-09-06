@@ -46,6 +46,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Retained::as_mut_ptr`.
   - `Retained::autorelease_mut`.
   - `DeclaredClass::ivars_mut`.
+  - `ProtocolObject::from_mut`.
+  - `AutoreleasePool::ptr_as_mut`.
 * **BREAKING**: Disallow `&mut` message receivers (except in the special case
   when the object is `AnyObject`, for better backwards compatibility with
   `objc`).

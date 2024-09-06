@@ -96,23 +96,6 @@ impl<P: ?Sized> ProtocolObject<P> {
         unsafe { ptr.as_ref() }
     }
 
-    /// Get a mutable type-erased reference from a type implementing a
-    /// protocol.
-    #[inline]
-    pub fn from_mut<T: ?Sized + Message>(obj: &mut T) -> &mut Self
-    where
-        P: ImplementedBy<T>,
-    {
-        let ptr: NonNull<T> = NonNull::from(obj);
-        let mut ptr: NonNull<Self> = ptr.cast();
-        // SAFETY: Same as `as_protocol`.
-        //
-        // Since the reference came from a mutable reference to start with,
-        // returning a mutable reference here is safe (the lifetime of the
-        // returned reference is bound to the input).
-        unsafe { ptr.as_mut() }
-    }
-
     /// Get a type-erased object from a type implementing a protocol.
     ///
     /// Soft-deprecated alias of [`ProtocolObject::from_retained`].
