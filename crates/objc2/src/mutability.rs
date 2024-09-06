@@ -525,40 +525,6 @@ unsafe impl<T: ?Sized + ClassType> IsMainThreadOnly for T where
 }
 unsafe impl<P: ?Sized + IsMainThreadOnly> IsMainThreadOnly for ProtocolObject<P> {}
 
-/// Marker trait for classes whose `hash` and `isEqual:` methods are stable.
-///
-/// This is useful for hashing collection types like `NSDictionary` and
-/// `NSSet` which require that their keys never change.
-///
-/// This is implemented for classes whose [`ClassType::Mutability`] is one of:
-/// - [`Immutable`].
-/// - [`Mutable`].
-/// - [`ImmutableWithMutableSubclass`].
-/// - [`MutableWithImmutableSuperclass`].
-///
-/// Since all of these do not use interior mutability, and since the `hash`
-/// and `isEqual:` methods are required to not use external sources like
-/// thread locals or randomness to determine their result, we can guarantee
-/// that the hash is stable for these types.
-///
-///
-/// # Safety
-///
-/// This is a sealed trait, and should not need to be implemented. Open an
-/// issue if you know a use-case where this restrition should be lifted!
-//
-// TODO: Exclude generic types like `NSArray<NSView>` from this!
-pub unsafe trait HasStableHash: private_traits::Sealed {}
-
-trait MutabilityHashIsStable: Mutability {}
-impl MutabilityHashIsStable for Immutable {}
-impl MutabilityHashIsStable for Mutable {}
-impl<MS: ?Sized> MutabilityHashIsStable for ImmutableWithMutableSubclass<MS> {}
-impl<IS: ?Sized> MutabilityHashIsStable for MutableWithImmutableSuperclass<IS> {}
-
-unsafe impl<T: ?Sized + ClassType> HasStableHash for T where T::Mutability: MutabilityHashIsStable {}
-unsafe impl<P: ?Sized + HasStableHash> HasStableHash for ProtocolObject<P> {}
-
 /// Retrieve the immutable/mutable counterpart class, and fall back to `Self`
 /// if not applicable.
 ///
@@ -751,7 +717,6 @@ mod tests {
         _: &dyn IsAllowedMutable,
         _: &dyn IsMutable,
         _: &dyn IsMainThreadOnly,
-        _: &dyn HasStableHash,
         _: &dyn CounterpartOrSelf<Immutable = (), Mutable = ()>,
     ) {
     }
