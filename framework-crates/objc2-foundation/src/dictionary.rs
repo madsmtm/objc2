@@ -5,8 +5,6 @@ use core::mem;
 use core::ptr::NonNull;
 use objc2::msg_send;
 
-#[cfg(feature = "NSObject")]
-use objc2::mutability::CounterpartOrSelf;
 use objc2::rc::Retained;
 #[cfg(feature = "NSObject")]
 use objc2::runtime::ProtocolObject;
@@ -16,9 +14,9 @@ use objc2::Message;
 
 #[cfg(feature = "NSEnumerator")]
 use crate::iter;
-#[cfg(feature = "NSObject")]
-use crate::NSCopying;
 use crate::{util, NSDictionary, NSMutableDictionary};
+#[cfg(feature = "NSObject")]
+use crate::{CopyingHelper, NSCopying};
 
 #[cfg(feature = "NSObject")]
 fn keys_to_ptr<Q>(keys: &[&Q]) -> *mut NonNull<ProtocolObject<dyn NSCopying>>
@@ -59,10 +57,10 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     pub fn from_slices<Q>(keys: &[&Q], objects: &[&V]) -> Retained<Self>
     where
         // The dictionary copies its keys, which is why we require `NSCopying`
-        // and use `CounterpartOrSelf` on all input data - we want to ensure
-        // that the type-system knows that it's not actually e.g.
-        // `NSMutableString` that is being stored, but instead `NSString`.
-        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
+        // and use `CopyingHelper` on all input data - we want to ensure that the
+        // type-system knows that it's not actually e.g. `NSMutableString`
+        // that is being stored, but instead `NSString`.
+        Q: Message + NSCopying + CopyingHelper<Result = K>,
     {
         // Ensure that we don't read too far into one of the buffers.
         assert_eq!(
@@ -99,7 +97,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     #[cfg(feature = "NSObject")]
     pub fn from_retained_objects<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
     where
-        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
+        Q: Message + NSCopying + CopyingHelper<Result = K>,
     {
         // Ensure that we don't read too far into one of the buffers.
         assert_eq!(
@@ -122,7 +120,7 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     #[cfg(feature = "NSObject")]
     pub fn from_slices<Q>(keys: &[&Q], objects: &[&V]) -> Retained<Self>
     where
-        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
+        Q: Message + NSCopying + CopyingHelper<Result = K>,
     {
         // Ensure that we don't read too far into one of the buffers.
         assert_eq!(
@@ -142,7 +140,7 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     #[cfg(feature = "NSObject")]
     pub fn from_retained_objects<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
     where
-        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
+        Q: Message + NSCopying + CopyingHelper<Result = K>,
     {
         // Ensure that we don't read too far into one of the buffers.
         assert_eq!(
@@ -374,7 +372,7 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     #[inline]
     pub fn insert<Q>(&self, key: &Q, object: &V)
     where
-        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
+        Q: Message + NSCopying + CopyingHelper<Result = K>,
     {
         let key = ProtocolObject::from_ref(key);
         // SAFETY: The key is copied, and then has the correct type `K`.

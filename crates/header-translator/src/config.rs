@@ -8,7 +8,7 @@ use heck::ToTrainCase;
 use semver::Version;
 use serde::{de, Deserialize, Deserializer};
 
-use crate::stmt::{Derives, Mutability};
+use crate::stmt::{Counterpart, Derives};
 use crate::ItemIdentifier;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -182,7 +182,10 @@ pub struct ClassData {
     #[serde(default)]
     pub derives: Derives,
     #[serde(default)]
-    pub mutability: Mutability,
+    pub counterpart: Counterpart,
+    #[serde(default)]
+    #[serde(rename = "main-thread-only")]
+    pub main_thread_only: bool,
     #[serde(rename = "skipped-protocols")]
     #[serde(default)]
     pub skipped_protocols: HashSet<String>,
@@ -318,7 +321,7 @@ impl LibraryConfig {
     }
 }
 
-impl<'de> Deserialize<'de> for Mutability {
+impl<'de> Deserialize<'de> for Counterpart {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
@@ -335,7 +338,7 @@ impl<'de> Deserialize<'de> for Mutability {
         struct MutabilityVisitor;
 
         impl<'de> de::Visitor<'de> for MutabilityVisitor {
-            type Value = Mutability;
+            type Value = Counterpart;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                 formatter.write_str("mutability")
@@ -345,29 +348,25 @@ impl<'de> Deserialize<'de> for Mutability {
             where
                 E: de::Error,
             {
-                if let Some(value) = value.strip_prefix("InteriorMutableWithSubclass(") {
+                if let Some(value) = value.strip_prefix("ImmutableSuperclass(") {
                     let value = value
                         .strip_suffix(')')
                         .ok_or(de::Error::custom("end parenthesis"))?;
                     let item =
                         parse_itemidentifier(value).ok_or(de::Error::custom("requires ::"))?;
-                    return Ok(Mutability::InteriorMutableWithSubclass(item));
+                    return Ok(Counterpart::ImmutableSuperclass(item));
                 }
 
-                if let Some(value) = value.strip_prefix("InteriorMutableWithSuperclass(") {
+                if let Some(value) = value.strip_prefix("MutableSubclass(") {
                     let value = value
                         .strip_suffix(')')
                         .ok_or(de::Error::custom("end parenthesis"))?;
                     let item =
                         parse_itemidentifier(value).ok_or(de::Error::custom("requires ::"))?;
-                    return Ok(Mutability::InteriorMutableWithSuperclass(item));
+                    return Ok(Counterpart::MutableSubclass(item));
                 }
 
-                match value {
-                    "InteriorMutable" => Ok(Mutability::InteriorMutable),
-                    "MainThreadOnly" => Ok(Mutability::MainThreadOnly),
-                    value => Err(de::Error::custom(format!("unknown variant {value:?}"))),
-                }
+                Err(de::Error::custom(format!("unknown variant {value:?}")))
             }
         }
 

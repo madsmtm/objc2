@@ -36,10 +36,8 @@
 //! It is considered a major change to change the [`ClassType::Mutability`] of
 //! an object, though it can be done as a minor change in some cases to fix a
 //! bug.
-use core::marker::PhantomData;
-
 use crate::runtime::{AnyObject, ProtocolObject};
-use crate::{ClassType, MainThreadMarker, Message};
+use crate::{ClassType, MainThreadMarker};
 
 mod private_mutability {
     pub trait Sealed {}
@@ -58,12 +56,6 @@ impl Mutability for Root {}
 
 impl private_mutability::Sealed for InteriorMutable {}
 impl Mutability for InteriorMutable {}
-
-impl<S: ?Sized> private_mutability::Sealed for InteriorMutableWithSubclass<S> {}
-impl<S: ?Sized> Mutability for InteriorMutableWithSubclass<S> {}
-
-impl<S: ?Sized> private_mutability::Sealed for InteriorMutableWithSuperclass<S> {}
-impl<S: ?Sized> Mutability for InteriorMutableWithSuperclass<S> {}
 
 impl private_mutability::Sealed for MainThreadOnly {}
 impl Mutability for MainThreadOnly {}
@@ -109,66 +101,6 @@ pub struct Root {
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct InteriorMutable {
     inner: Never,
-}
-
-/// Marker type for classes that have a mutable counterpart.
-///
-/// This is effectively the same as [`InteriorMutable`], except that the type
-/// returned by `NSMutableCopying::mutableCopy` is the mutable counterpart.
-///
-/// Functionality that is provided with this:
-/// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
-///
-///
-/// # Example
-///
-/// ```ignore
-/// unsafe impl ClassType for NSString {
-///     type Super = NSObject;
-///     type Mutability = InteriorMutableWithSubclass<NSMutableString>;
-///     // ...
-/// }
-///
-/// unsafe impl ClassType for NSMutableString {
-///     type Super = NSString;
-///     type Mutability = InteriorMutableWithSuperclass<NSString>;
-///     // ...
-/// }
-/// ```
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-pub struct InteriorMutableWithSubclass<Subclass: ?Sized> {
-    inner: Never,
-    subclass: PhantomData<Subclass>,
-}
-
-/// Marker type for classes that have an immutable counterpart.
-///
-/// This is effectively the same as [`InteriorMutable`], except that the type
-/// returned by `NSCopying::copy` is the immutable counterpart.
-///
-/// Functionality that is provided with this:
-/// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
-///
-///
-/// # Example
-///
-/// ```ignore
-/// unsafe impl ClassType for NSData {
-///     type Super = NSObject;
-///     type Mutability = InteriorMutableWithSubclass<NSMutableData>;
-///     // ...
-/// }
-///
-/// unsafe impl ClassType for NSMutableData {
-///     type Super = NSData;
-///     type Mutability = InteriorMutableWithSuperclass<NSData>;
-///     // ...
-/// }
-/// ```
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-pub struct InteriorMutableWithSuperclass<Superclass: ?Sized> {
-    inner: Never,
-    superclass: PhantomData<Superclass>,
 }
 
 /// Marker type for classes that are only safe to use from the main thread.
@@ -222,8 +154,6 @@ pub unsafe trait IsAllocableAnyThread: private_traits::Sealed {}
 trait MutabilityIsAllocableAnyThread: Mutability {}
 impl MutabilityIsAllocableAnyThread for Root {}
 impl MutabilityIsAllocableAnyThread for InteriorMutable {}
-impl<S: ?Sized> MutabilityIsAllocableAnyThread for InteriorMutableWithSubclass<S> {}
-impl<S: ?Sized> MutabilityIsAllocableAnyThread for InteriorMutableWithSuperclass<S> {}
 
 unsafe impl<T: ?Sized + ClassType> IsAllocableAnyThread for T where
     T::Mutability: MutabilityIsAllocableAnyThread
@@ -278,124 +208,10 @@ unsafe impl<T: ?Sized + ClassType> IsMainThreadOnly for T where
 }
 unsafe impl<P: ?Sized + IsMainThreadOnly> IsMainThreadOnly for ProtocolObject<P> {}
 
-/// Retrieve the immutable/mutable counterpart class, and fall back to `Self`
-/// if not applicable.
-///
-/// This is used for describing the return type of `NSCopying` and
-/// `NSMutableCopying`, since due to Rust trait limitations, those two can't
-/// have associated types themselves (since we want to use them in
-/// `ProtocolObject<dyn NSCopying>`).
-///
-///
-/// # Usage notes
-///
-/// You may not rely on this being implemented entirely correctly for protocol
-/// objects, since we have less type-information available there.
-///
-/// In particular, the immutable counterpart of a mutable object converted to
-/// `ProtocolObject<dyn AProtocol>` may not itself implement the protocol, and
-/// invalidly assuming it does is unsound.
-///
-/// All of this is to say: Do not use this trait in isolation, either require
-/// `NSCopying` or `ClassType` along with it.
-///
-///
-/// # Safety
-///
-/// This is a sealed trait, and should not need to be implemented. Open an
-/// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait CounterpartOrSelf: private_traits::Sealed {
-    /// The immutable counterpart of the type, or `Self` if the type has no
-    /// immutable counterpart.
-    ///
-    /// The implementation for `NSString` has itself (`NSString`) here, while
-    /// `NSMutableString` instead has `NSString`.
-    type Immutable: ?Sized + Message;
-
-    /// The mutable counterpart of the type, or `Self` if the type has no
-    /// mutable counterpart.
-    ///
-    /// The implementation for `NSString` has `NSMutableString` here, while
-    /// `NSMutableString` has itself (`NSMutableString`).
-    type Mutable: ?Sized + Message;
-}
-
-mod private_counterpart {
-    use super::*;
-
-    pub trait MutabilityCounterpartOrSelf<T: ?Sized>: Mutability {
-        type Immutable: ?Sized + Message;
-        type Mutable: ?Sized + Message;
-    }
-    impl<T: ClassType<Mutability = Root>> MutabilityCounterpartOrSelf<T> for Root {
-        type Immutable = T;
-        type Mutable = T;
-    }
-    impl<T: ClassType<Mutability = InteriorMutable>> MutabilityCounterpartOrSelf<T>
-        for InteriorMutable
-    {
-        type Immutable = T;
-        type Mutable = T;
-    }
-    impl<T, S> MutabilityCounterpartOrSelf<T> for InteriorMutableWithSubclass<S>
-    where
-        T: ClassType<Mutability = InteriorMutableWithSubclass<S>>,
-        S: ClassType<Mutability = InteriorMutableWithSuperclass<T>>,
-    {
-        type Immutable = T;
-        type Mutable = S;
-    }
-    impl<T, S> MutabilityCounterpartOrSelf<T> for InteriorMutableWithSuperclass<S>
-    where
-        T: ClassType<Mutability = InteriorMutableWithSuperclass<S>>,
-        S: ClassType<Mutability = InteriorMutableWithSubclass<T>>,
-    {
-        type Immutable = S;
-        type Mutable = T;
-    }
-    impl<T: ClassType<Mutability = MainThreadOnly>> MutabilityCounterpartOrSelf<T> for MainThreadOnly {
-        type Immutable = T;
-        type Mutable = T;
-    }
-}
-
-unsafe impl<T: ?Sized + ClassType> CounterpartOrSelf for T
-where
-    T::Mutability: private_counterpart::MutabilityCounterpartOrSelf<T>,
-{
-    type Immutable =
-        <T::Mutability as private_counterpart::MutabilityCounterpartOrSelf<T>>::Immutable;
-    type Mutable = <T::Mutability as private_counterpart::MutabilityCounterpartOrSelf<T>>::Mutable;
-}
-
-unsafe impl<P: ?Sized> CounterpartOrSelf for ProtocolObject<P> {
-    // SAFETY: The only place where this would differ from `Self` is for
-    // classes with `InteriorMutableWithSuperclass<IS>`.
-    //
-    // Superclasses are not in general required to implement the same traits
-    // as their subclasses, but we're not dealing with normal classes, we're
-    // dealing with with immutable/mutable class counterparts!
-    //
-    // We could probably get away with requiring that mutable classes
-    // only implement the same protocols as their immutable counterparts, but
-    // for now we relax the requirements of `CounterpartOrSelf`.
-    type Immutable = Self;
-    // SAFETY: The only place where this would differ from `Self` is for
-    // classes with `InteriorMutableWithSubclass<MS>`.
-    //
-    // But subclasses are required to always implement the same traits as
-    // their superclasses, so a mutable subclass is required to implement the
-    // same traits too.
-    type Mutable = Self;
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::runtime::NSObject;
-
     use super::*;
 
-    use core::any::TypeId;
     use core::fmt;
     use core::hash;
 
@@ -410,8 +226,6 @@ mod tests {
 
         assert_traits::<Root>();
         assert_traits::<InteriorMutable>();
-        assert_traits::<InteriorMutableWithSubclass<()>>();
-        assert_traits::<InteriorMutableWithSuperclass<()>>();
         assert_traits::<MainThreadOnly>();
 
         #[allow(unused)]
@@ -422,23 +236,6 @@ mod tests {
         }
     }
 
-    #[test]
-    fn counterpart_root() {
-        assert_eq!(
-            TypeId::of::<NSObject>(),
-            TypeId::of::<<NSObject as CounterpartOrSelf>::Immutable>(),
-        );
-        assert_eq!(
-            TypeId::of::<NSObject>(),
-            TypeId::of::<<NSObject as CounterpartOrSelf>::Mutable>(),
-        );
-    }
-
     #[allow(unused, clippy::too_many_arguments)]
-    fn object_safe(
-        _: &dyn IsAllocableAnyThread,
-        _: &dyn IsMainThreadOnly,
-        _: &dyn CounterpartOrSelf<Immutable = (), Mutable = ()>,
-    ) {
-    }
+    fn object_safe(_: &dyn IsAllocableAnyThread, _: &dyn IsMainThreadOnly) {}
 }

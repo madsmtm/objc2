@@ -55,9 +55,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed `AsMut`, `BorrowMut` and `DerefMut` implementations in
   `extern_class!` and `declare_class!`.
 * **BREAKING**: Removed `mutability` options `Immutable`, `Mutable`,
-  `ImmutableWithMutableSubclass` and `MutableWithImmutableSuperclass`, along
-  with the related `IsAllowedMutable`, `IsIdCloneable`, `IsRetainable` and
-  `IsMutable` traits.
+  `ImmutableWithMutableSubclass`, `MutableWithImmutableSuperclass`,
+  `InteriorMutableWithSubclass` and `InteriorMutableWithSuperclass`, along
+  with the related `IsAllowedMutable`, `CounterpartOrSelf`, `IsIdCloneable`,
+  `IsRetainable` and `IsMutable` traits.
 * **BREAKING**: Removed `DerefMut` implementation for `Retained<T>` when the
   `Retained` was mutable.
 * **BREAKING**: Moved `retain` from `ClassType` to `Message`.

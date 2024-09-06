@@ -5,8 +5,8 @@ use objc2::mutability::InteriorMutable;
 use objc2::rc::Retained;
 use objc2::{declare_class, extern_methods, ClassType, DeclaredClass};
 use objc2_foundation::{
-    NSArray, NSCopying, NSMutableArray, NSMutableCopying, NSMutableDictionary, NSMutableSet,
-    NSNumber, NSSet, NSValue,
+    CopyingHelper, NSArray, NSCopying, NSMutableArray, NSMutableCopying, NSMutableDictionary,
+    NSMutableSet, NSNumber, NSSet, NSValue,
 };
 
 use crate::rc_test_object::{RcTestObject, ThreadTestData};
@@ -366,6 +366,10 @@ declare_class!(
 
     unsafe impl NSCopying for NSCopyingRcTestObject {}
 );
+
+unsafe impl CopyingHelper for NSCopyingRcTestObject {
+    type Result = Self;
+}
 
 extern_methods!(
     unsafe impl NSCopyingRcTestObject {

@@ -14,7 +14,8 @@ use objc2::rc::{autoreleasepool, Id, Retained};
 use objc2::runtime::AnyObject;
 use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass, Message};
 use objc2_foundation::{
-    NSCopying, NSMutableDictionary, NSMutableSet, NSObject, NSObjectProtocol, NSUInteger, NSZone,
+    CopyingHelper, NSCopying, NSMutableDictionary, NSMutableSet, NSObject, NSObjectProtocol,
+    NSUInteger, NSZone,
 };
 
 /// Index into the global "keys" array.
@@ -84,6 +85,10 @@ declare_class!(
         }
     }
 );
+
+unsafe impl CopyingHelper for Key {
+    type Result = Self;
+}
 
 impl Key {
     fn new(index: KeyIndex) -> Retained<Self> {

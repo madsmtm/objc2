@@ -139,7 +139,7 @@ mod value;
 #[cfg(feature = "NSObjCRuntime")]
 pub use self::comparison_result::NSComparisonResult;
 #[cfg(feature = "NSObject")]
-pub use self::copying::{NSCopying, NSMutableCopying};
+pub use self::copying::{CopyingHelper, MutableCopyingHelper, NSCopying, NSMutableCopying};
 #[cfg(feature = "NSDecimal")]
 pub use self::decimal::NSDecimal;
 #[cfg(feature = "NSEnumerator")]

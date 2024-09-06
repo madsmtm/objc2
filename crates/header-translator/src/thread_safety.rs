@@ -1,11 +1,12 @@
 use clang::{Entity, EntityKind};
+use serde::Deserialize;
 
 use crate::{
     immediate_children,
     method::MethodModifiers,
     stmt::{method_or_property_entities, parse_direct_protocols, parse_superclasses},
     unexposed_attr::UnexposedAttr,
-    Context, ItemIdentifier, Mutability,
+    Context, ItemIdentifier,
 };
 
 fn parse(entity: &Entity<'_>, context: &Context<'_>) -> (Option<bool>, bool) {
@@ -34,7 +35,7 @@ fn parse(entity: &Entity<'_>, context: &Context<'_>) -> (Option<bool>, bool) {
     (sendable, mainthreadonly)
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
 pub(crate) enum ThreadSafetyAttr {
     /// The item is only accessible from the main thread.
     ///
@@ -79,9 +80,7 @@ impl ThreadSafetyAttr {
                 let id = ItemIdentifier::new(entity, context);
                 let data = context.library(id.library_name()).class_data.get(&id.name);
 
-                if data.map(|data| data.mutability.clone()).unwrap_or_default()
-                    == Mutability::MainThreadOnly
-                {
+                if data.map(|data| data.main_thread_only).unwrap_or_default() {
                     return Some(Self::MainThreadOnly);
                 }
             }

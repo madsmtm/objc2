@@ -153,22 +153,22 @@ class.NSItemProvider.methods."registerCloudKitShare:container:".skipped = true
 class.NSGlyphInfo.methods.glyphID.skipped = true
 
 ###
-### Mutability
+### Main Thread Overrides
 ###
 
 # Most things in AppKit is marked as MainThreadOnly automatically, but there are a few things we have to tweak
-class.NSColorPicker.mutability = "MainThreadOnly"
-class.NSController.mutability = "MainThreadOnly"
-class.NSObjectController.mutability = "MainThreadOnly"
-class.NSArrayController.mutability = "MainThreadOnly"
-class.NSDictionaryController.mutability = "MainThreadOnly"
-class.NSTreeController.mutability = "MainThreadOnly"
-class.NSUserDefaultsController.mutability = "MainThreadOnly"
-class.NSFontManager.mutability = "MainThreadOnly"
-class.NSMenu.mutability = "MainThreadOnly"
-class.NSMenuItem.mutability = "MainThreadOnly"
-class.NSWindowTabGroup.mutability = "MainThreadOnly"
-class.NSTextInputContext.mutability = "MainThreadOnly"
+class.NSColorPicker.main-thread-only = true
+class.NSController.main-thread-only = true
+class.NSObjectController.main-thread-only = true
+class.NSArrayController.main-thread-only = true
+class.NSDictionaryController.main-thread-only = true
+class.NSTreeController.main-thread-only = true
+class.NSUserDefaultsController.main-thread-only = true
+class.NSFontManager.main-thread-only = true
+class.NSMenu.main-thread-only = true
+class.NSMenuItem.main-thread-only = true
+class.NSWindowTabGroup.main-thread-only = true
+class.NSTextInputContext.main-thread-only = true
 
 # Most methods on these require MainThreadMarker anyhow
 protocol.NSDraggingInfo.requires-mainthreadonly = true
@@ -176,7 +176,7 @@ protocol.NSBrowserDelegate.requires-mainthreadonly = true
 protocol.NSSplitViewDelegate.requires-mainthreadonly = true
 
 # Accesses the shared application, and hence is main thread only (even though not marked so in Swift).
-class.NSScreen.mutability = "MainThreadOnly"
+class.NSScreen.main-thread-only = true
 
 # Documented as "Main Thread Only".
 # > generally thread safe, although operations on views such as creating,
@@ -186,7 +186,7 @@ class.NSScreen.mutability = "MainThreadOnly"
 # > If you want to use a thread to draw to a view, bracket all drawing code
 # > between the lockFocusIfCanDraw and unlockFocus methods of NSView.
 # <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Multithreading/ThreadSafetySummary/ThreadSafetySummary.html#//apple_ref/doc/uid/10000057i-CH12-123351-BBCFIIEB>
-class.NSView.mutability = "MainThreadOnly"
+class.NSView.main-thread-only = true
 
 # Documented as "Main Thread Only", but:
 # > Thread safe in that you can create and manage them on a secondary
@@ -197,10 +197,10 @@ class.NSView.mutability = "MainThreadOnly"
 # So could in theory be `Send`, and perhaps also `Sync` - but we would
 # like interior mutability on windows, since that's just much easier, and
 # in that case, they can't be!
-class.NSWindow.mutability = "MainThreadOnly"
+class.NSWindow.main-thread-only = true
 
 # TODO: This should probably be MainThreadOnly, or maybe +Send/Sync?
-# class.NSAppearance.mutability = "MainThreadOnly"
+# class.NSAppearance.main-thread-only = true
 
 # Documented Thread-Unsafe, but:
 # > One thread can create an NSImage object, draw to the image buffer,
@@ -209,13 +209,10 @@ class.NSWindow.mutability = "MainThreadOnly"
 # <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Multithreading/ThreadSafetySummary/ThreadSafetySummary.html#//apple_ref/doc/uid/10000057i-CH12-126728>
 #
 # So really only unsafe to mutate on several threads.
-#
-# Unsure yet if it would be beneficial to mark this as `Mutable`, or if
-# we should just keep it as interiormutable?
-# class.NSImage.mutability = "?"
+# class.NSImage.sendable = false
 
 # Documented as "Thread-Unsafe"
-# class.NSResponder.mutability = "InteriorMutable"
+# class.NSResponder.sendable = false
 
 ###
 ### Safety

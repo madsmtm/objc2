@@ -6,8 +6,6 @@ error[E0277]: the trait bound `MainThreadOnly: mutability::MutabilityIsAllocable
   |
   = help: the following other types implement trait `mutability::MutabilityIsAllocableAnyThread`:
             InteriorMutable
-            InteriorMutableWithSubclass<S>
-            InteriorMutableWithSuperclass<S>
             Root
   = note: required for `MyMainThreadOnlyClass` to implement `IsAllocableAnyThread`
 note: required by a bound in `objc2::ClassType::alloc`

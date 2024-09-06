@@ -33,7 +33,7 @@ pub use self::global_analysis::global_analysis;
 pub use self::id::{ItemIdentifier, Location};
 pub use self::library::Library;
 pub use self::module::Module;
-pub use self::stmt::{Mutability, Stmt};
+pub use self::stmt::{Counterpart, Stmt};
 
 pub fn run_cargo_fmt(packages: impl IntoIterator<Item = impl Display>) {
     let status = Command::new("cargo")

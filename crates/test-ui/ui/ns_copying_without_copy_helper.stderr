@@ -1,0 +1,33 @@
+error[E0277]: the trait bound `MyObj: CopyingHelper` is not satisfied
+ --> ui/ns_copying_without_copy_helper.rs
+  |
+  |     let _ = obj.copy();
+  |                 ^^^^ the trait `CopyingHelper` is not implemented for `MyObj`
+  |
+  = help: the following other types implement trait `CopyingHelper`:
+            NSArray<ObjectType>
+            NSCountedSet<ObjectType>
+            NSDictionary<KeyType, ObjectType>
+            NSError
+            NSMutableArray<ObjectType>
+            NSMutableDictionary<KeyType, ObjectType>
+            NSMutableSet<ObjectType>
+            NSMutableString
+          and $N others
+
+error[E0277]: the trait bound `MyObj: MutableCopyingHelper` is not satisfied
+ --> ui/ns_copying_without_copy_helper.rs
+  |
+  |     let _ = obj.mutableCopy();
+  |                 ^^^^^^^^^^^ the trait `MutableCopyingHelper` is not implemented for `MyObj`
+  |
+  = help: the following other types implement trait `MutableCopyingHelper`:
+            NSArray<ObjectType>
+            NSCountedSet<ObjectType>
+            NSDictionary<KeyType, ObjectType>
+            NSMutableArray<ObjectType>
+            NSMutableDictionary<KeyType, ObjectType>
+            NSMutableSet<ObjectType>
+            NSMutableString
+            NSSet<ObjectType>
+          and $N others

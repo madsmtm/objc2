@@ -9,7 +9,7 @@ use core::ptr;
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::AnyClass;
 use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass};
-use objc2_foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
+use objc2_foundation::{CopyingHelper, NSCopying, NSObject, NSObjectProtocol, NSZone};
 
 declare_class!(
     #[no_mangle]
@@ -70,6 +70,10 @@ declare_class!(
         }
     }
 );
+
+unsafe impl CopyingHelper for NoIvars {
+    type Result = Self;
+}
 
 pub struct ForgetableIvarsIvars {
     foo: u8,

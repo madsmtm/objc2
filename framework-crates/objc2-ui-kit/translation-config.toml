@@ -149,27 +149,27 @@ class.UIDocumentProperties.methods.metadata.skipped = true
 class.UIDocumentProperties.methods."setMetadata:".skipped = true
 
 # Protocols require that these are main thread only
-class.UIDocumentBrowserTransitionController.mutability = "MainThreadOnly"
-class.UIDocumentInteractionController.mutability = "MainThreadOnly"
-class.UIToolTipInteraction.mutability = "MainThreadOnly"
-class.UIWindowSceneActivationInteraction.mutability = "MainThreadOnly"
-class.UITraitUserInterfaceIdiom.mutability = "MainThreadOnly"
-class.UITraitUserInterfaceStyle.mutability = "MainThreadOnly"
-class.UITraitLayoutDirection.mutability = "MainThreadOnly"
-class.UITraitDisplayScale.mutability = "MainThreadOnly"
-class.UITraitHorizontalSizeClass.mutability = "MainThreadOnly"
-class.UITraitVerticalSizeClass.mutability = "MainThreadOnly"
-class.UITraitForceTouchCapability.mutability = "MainThreadOnly"
-class.UITraitPreferredContentSizeCategory.mutability = "MainThreadOnly"
-class.UITraitDisplayGamut.mutability = "MainThreadOnly"
-class.UITraitAccessibilityContrast.mutability = "MainThreadOnly"
-class.UITraitUserInterfaceLevel.mutability = "MainThreadOnly"
-class.UITraitLegibilityWeight.mutability = "MainThreadOnly"
-class.UITraitActiveAppearance.mutability = "MainThreadOnly"
-class.UITraitToolbarItemPresentationSize.mutability = "MainThreadOnly"
-class.UITraitImageDynamicRange.mutability = "MainThreadOnly"
-class.UITraitTypesettingLanguage.mutability = "MainThreadOnly"
-class.UITraitSceneCaptureState.mutability = "MainThreadOnly"
+class.UIDocumentBrowserTransitionController.main-thread-only = true
+class.UIDocumentInteractionController.main-thread-only = true
+class.UIToolTipInteraction.main-thread-only = true
+class.UIWindowSceneActivationInteraction.main-thread-only = true
+class.UITraitUserInterfaceIdiom.main-thread-only = true
+class.UITraitUserInterfaceStyle.main-thread-only = true
+class.UITraitLayoutDirection.main-thread-only = true
+class.UITraitDisplayScale.main-thread-only = true
+class.UITraitHorizontalSizeClass.main-thread-only = true
+class.UITraitVerticalSizeClass.main-thread-only = true
+class.UITraitForceTouchCapability.main-thread-only = true
+class.UITraitPreferredContentSizeCategory.main-thread-only = true
+class.UITraitDisplayGamut.main-thread-only = true
+class.UITraitAccessibilityContrast.main-thread-only = true
+class.UITraitUserInterfaceLevel.main-thread-only = true
+class.UITraitLegibilityWeight.main-thread-only = true
+class.UITraitActiveAppearance.main-thread-only = true
+class.UITraitToolbarItemPresentationSize.main-thread-only = true
+class.UITraitImageDynamicRange.main-thread-only = true
+class.UITraitTypesettingLanguage.main-thread-only = true
+class.UITraitSceneCaptureState.main-thread-only = true
 
 ###
 ### Safety

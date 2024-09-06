@@ -7,4 +7,4 @@ maccatalyst = "14.0"
 # error: translator assertion failure: invalid error nullability (left: Unspecified) (Right: Nullable)
 class.AMWorkspace.methods."runWorkflowAtPath:withInput:error:".skipped = true
 
-class.AMWorkflowController.mutability = "MainThreadOnly"
+class.AMWorkflowController.main-thread-only = true

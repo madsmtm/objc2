@@ -3,7 +3,6 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt;
-use std::fmt::Display;
 use std::iter;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
@@ -295,8 +294,7 @@ pub(crate) fn items_required_by_decl(
             for (superclass, _, _) in parse_superclasses(entity, context) {
                 items.push(superclass);
             }
-            if let Some(Mutability::InteriorMutableWithSubclass(subclass)) =
-                data.map(|data| &data.mutability)
+            if let Some(Counterpart::MutableSubclass(subclass)) = data.map(|data| &data.counterpart)
             {
                 items.push(subclass.clone());
             }
@@ -382,37 +380,11 @@ fn verify_objc_decl(entity: &Entity<'_>, _context: &Context<'_>) {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
-pub enum Mutability {
+pub enum Counterpart {
     #[default]
-    InteriorMutable,
-    InteriorMutableWithSubclass(ItemIdentifier),
-    InteriorMutableWithSuperclass(ItemIdentifier),
-    MainThreadOnly,
-}
-
-impl Mutability {
-    fn display<'a>(&'a self, other_generics: impl Display + 'a) -> impl Display + 'a {
-        FormatterFn(move |f| match self {
-            Self::InteriorMutable => write!(f, "InteriorMutable"),
-            Self::InteriorMutableWithSubclass(subclass) => {
-                write!(
-                    f,
-                    "InteriorMutableWithSubclass<{}{}>",
-                    subclass.path(),
-                    other_generics
-                )
-            }
-            Self::InteriorMutableWithSuperclass(superclass) => {
-                write!(
-                    f,
-                    "InteriorMutableWithSuperclass<{}{}>",
-                    superclass.path(),
-                    other_generics
-                )
-            }
-            Self::MainThreadOnly => write!(f, "MainThreadOnly"),
-        })
-    }
+    NoCounterpart,
+    ImmutableSuperclass(ItemIdentifier),
+    MutableSubclass(ItemIdentifier),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -428,7 +400,7 @@ pub enum Stmt {
         superclasses: Vec<(ItemIdentifier, Vec<String>)>,
         designated_initializers: Vec<String>,
         derives: Derives,
-        mutability: Mutability,
+        main_thread_only: bool,
         skipped: bool,
         sendable: bool,
     },
@@ -475,6 +447,7 @@ pub enum Stmt {
         location: Location,
         cls: ItemIdentifier,
         cls_required_items: Vec<ItemIdentifier>,
+        cls_counterpart: Counterpart,
         protocol: ItemIdentifier,
         protocol_required_items: Vec<ItemIdentifier>,
         generics: Vec<String>,
@@ -639,6 +612,9 @@ impl Stmt {
                 let thread_safety = ThreadSafety::from_decl(entity, context);
 
                 let required_items = items_required_by_decl(entity, context);
+                let counterpart = data
+                    .map(|data| data.counterpart.clone())
+                    .unwrap_or_default();
 
                 verify_objc_decl(entity, context);
                 let generics = parse_class_generics(entity, context);
@@ -732,11 +708,7 @@ impl Stmt {
                     superclasses,
                     designated_initializers,
                     derives: data.map(|data| data.derives.clone()).unwrap_or_default(),
-                    mutability: if thread_safety.inferred_mainthreadonly() {
-                        Mutability::MainThreadOnly
-                    } else {
-                        data.map(|data| data.mutability.clone()).unwrap_or_default()
-                    },
+                    main_thread_only: thread_safety.inferred_mainthreadonly(),
                     skipped: data.map(|data| data.definition_skipped).unwrap_or_default(),
                     // Ignore sendability on superclasses; since it's an auto
                     // trait, it's propagated to subclasses anyhow!
@@ -746,6 +718,7 @@ impl Stmt {
                     location: id.location().clone(),
                     cls: id.clone(),
                     cls_required_items: required_items.clone(),
+                    cls_counterpart: counterpart.clone(),
                     protocol: context.replace_protocol_name(p),
                     protocol_required_items: items_required_by_decl(&entity, context),
                     generics: generics.clone(),
@@ -800,6 +773,9 @@ impl Stmt {
 
                 let cls_thread_safety = ThreadSafety::from_decl(&cls_entity, context);
                 let cls_required_items = items_required_by_decl(&cls_entity, context);
+                let cls_counterpart = data
+                    .map(|data| data.counterpart.clone())
+                    .unwrap_or_default();
 
                 verify_objc_decl(entity, context);
                 let generics = parse_class_generics(entity, context);
@@ -818,6 +794,7 @@ impl Stmt {
                     location: category.location().clone(),
                     cls: cls.clone(),
                     cls_required_items: cls_required_items.clone(),
+                    cls_counterpart: cls_counterpart.clone(),
                     generics: generics.clone(),
                     availability: availability.clone(),
                     protocol: context.replace_protocol_name(p),
@@ -849,8 +826,9 @@ impl Stmt {
                         );
                     }
 
-                    let extra_methods = if let Mutability::InteriorMutableWithSubclass(subclass) =
-                        data.map(|data| data.mutability.clone()).unwrap_or_default()
+                    let extra_methods = if let Counterpart::MutableSubclass(subclass) = data
+                        .map(|data| data.counterpart.clone())
+                        .unwrap_or_default()
                     {
                         let subclass_data = context
                             .library(subclass.library_name())
@@ -1663,7 +1641,7 @@ impl Stmt {
                     superclasses,
                     designated_initializers: _,
                     derives,
-                    mutability,
+                    main_thread_only,
                     skipped,
                     sendable,
                 } => {
@@ -1751,12 +1729,11 @@ impl Stmt {
                         superclass.path_in_relation_to(id.location()),
                         GenericTyHelper(superclass_generics),
                     )?;
-                    writeln!(
-                        f,
-                        "        type Mutability = {};",
-                        // Counterpart classes are required to have the same generics.
-                        mutability.display(GenericTyHelper(generics)),
-                    )?;
+                    if *main_thread_only {
+                        writeln!(f, "        type Mutability = MainThreadOnly;")?;
+                    } else {
+                        writeln!(f, "        type Mutability = InteriorMutable;")?;
+                    }
                     if !generics.is_empty() {
                         writeln!(f)?;
                         writeln!(
@@ -1921,6 +1898,7 @@ impl Stmt {
                     location: id,
                     cls,
                     cls_required_items: _,
+                    cls_counterpart,
                     generics,
                     protocol,
                     protocol_required_items: _,
@@ -1974,6 +1952,47 @@ impl Stmt {
                         GenericTyHelper(generics),
                         WhereBoundHelper(generics, where_bound)
                     )?;
+
+                    // To make `NSCopying` and `NSMutableCopying` work, we
+                    // need to emit `CopyingHelper` impls to tell Rust which
+                    // return types they have.
+                    if matches!(&*protocol.name, "NSCopying" | "NSMutableCopying") {
+                        let copy_helper = if protocol.name == "NSCopying" {
+                            protocol.clone().map_name(|_| "CopyingHelper".to_string())
+                        } else {
+                            protocol
+                                .clone()
+                                .map_name(|_| "MutableCopyingHelper".to_string())
+                        };
+
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(
+                            f,
+                            "unsafe impl{} {} for {}{} {{",
+                            GenericParamsHelper(generics, "?Sized + Message"),
+                            copy_helper.path_in_relation_to(id),
+                            cls.path_in_relation_to(id),
+                            GenericTyHelper(generics),
+                        )?;
+
+                        write!(f, "    type Result = ")?;
+                        // Assume counterparts have the same generics.
+                        match (cls_counterpart, &*protocol.name) {
+                            (Counterpart::ImmutableSuperclass(superclass), "NSCopying") => {
+                                write!(f, "{}", superclass.path_in_relation_to(id))?;
+                                write!(f, "{}", GenericTyHelper(generics))?;
+                            }
+                            (Counterpart::MutableSubclass(subclass), "NSMutableCopying") => {
+                                write!(f, "{}", subclass.path_in_relation_to(id))?;
+                                write!(f, "{}", GenericTyHelper(generics))?;
+                            }
+                            _ => write!(f, "Self")?,
+                        }
+                        writeln!(f, ";")?;
+
+                        writeln!(f, "}}")?;
+                    }
                 }
                 Self::ProtocolDecl {
                     id,

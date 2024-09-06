@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `NSData::to_vec` and `NSData::iter` helper methods.
 * Added `Eq` implementation for `NSValue` and subclasses.
+* Added `CopyingHelper` and `MutableCopyingHelper`, which are used to specify
+  the types returned from `NSCopying` and `NSMutableCopying`.
 
 ### Changed
 * Allow using `MainThreadBound` without the `NSThread` feature flag.

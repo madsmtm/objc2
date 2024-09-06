@@ -1,8 +1,79 @@
-use objc2::mutability::CounterpartOrSelf;
 use objc2::rc::Retained;
-#[cfg(feature = "NSZone")]
 use objc2::runtime::NSZone;
+use objc2::runtime::ProtocolObject;
+use objc2::Message;
 use objc2::{extern_protocol, ProtocolType};
+
+/// A helper type for implementing [`NSCopying`].
+///
+/// `NSCopying` and `NSMutableCopying` do not in their signatures describe the
+/// result type from the copying operation. This is problematic, as it means
+/// that using them ends up falling back to [`AnyObject`], which makes copying
+/// much less useful and ergonomic.
+///
+/// To properly describe this, we need an associated type which describes the
+/// actual result type from a copy. The associated type can't be present
+/// directly on the protocol traits themselves, however, since we want to use
+/// them as e.g. `ProtocolObject<dyn NSCopying>`, so we introduce this helper
+/// trait instead. See [`MutableCopyingHelper`] for the mutable variant.
+///
+/// We might be able to get rid of this hack once [associated type defaults]
+/// are stabilized.
+///
+/// [`AnyObject`]: objc2::runtime::AnyObject
+/// [associated type defaults]: https://github.com/rust-lang/rust/issues/29661
+///
+///
+/// # Safety
+///
+/// The [`Result`] type must be correct.
+///
+/// [`Result`]: Self::Result
+pub unsafe trait CopyingHelper: Message {
+    /// The immutable counterpart of the type, or `Self` if the type has no
+    /// immutable counterpart.
+    ///
+    /// The implementation for `NSString` has itself (`NSString`) here, while
+    /// `NSMutableString` instead has `NSString`.
+    type Result: ?Sized + Message;
+}
+
+/// A helper type for implementing [`NSMutableCopying`].
+///
+/// See [`CopyingHelper`] for the immutable variant, and more details in
+/// general. These traits are split to allow implementing
+/// `MutableCopyingHelper` only when the mutable class is available.
+///
+///
+/// # Safety
+///
+/// The [`Result`] type must be correct.
+///
+/// [`Result`]: Self::Result
+pub unsafe trait MutableCopyingHelper: Message {
+    /// The mutable counterpart of the type, or `Self` if the type has no
+    /// mutable counterpart.
+    ///
+    /// The implementation for `NSString` has `NSMutableString` here, while
+    /// `NSMutableString` has itself (`NSMutableString`).
+    type Result: ?Sized + Message;
+}
+
+// SAFETY: Superclasses are not in general required to implement the same
+// traits as their subclasses, but we're not dealing with normal classes and
+// arbitary protocols, we're dealing with with immutable/mutable class
+// counterparts, and the `NSCopying`/`NSMutableCopying` protocols, which
+// _will_ be implemented on superclasses.
+unsafe impl<P: ?Sized> CopyingHelper for ProtocolObject<P> {
+    type Result = Self;
+}
+
+// SAFETY: Subclasses are required to always implement the same traits as
+// their superclasses, so a mutable subclass is required to implement the same
+// traits too.
+unsafe impl<P: ?Sized> MutableCopyingHelper for ProtocolObject<P> {
+    type Result = Self;
+}
 
 extern_protocol!(
     /// A protocol to provide functional copies of objects.
@@ -11,24 +82,90 @@ extern_protocol!(
     /// similarities to the [`std::borrow::ToOwned`] trait with regards to the
     /// output type.
     ///
-    /// See [Apple's documentation][apple-doc] for details.
+    /// To allow using this in a meaningful way in Rust, we have to "enrich"
+    /// the implementation by also specifying the resulting type, see
+    /// [`CopyingHelper`] for details.
+    ///
+    /// See also [Apple's documentation][apple-doc].
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/foundation/nscopying
+    ///
+    ///
+    /// # Examples
+    ///
+    /// Implement `NSCopying` for an externally defined class.
+    ///
+    /// ```
+    /// use objc2::{ClassType, extern_class, mutability::InteriorMutable};
+    /// use objc2_foundation::{CopyingHelper, NSCopying, NSObject};
+    ///
+    /// extern_class!(
+    ///     struct ExampleClass;
+    ///
+    ///     unsafe impl ClassType for ExampleClass {
+    ///         type Super = NSObject;
+    ///         type Mutability = InteriorMutable;
+    ///         # const NAME: &'static str = "NSData";
+    ///     }
+    /// );
+    ///
+    /// unsafe impl NSCopying for ExampleClass {}
+    ///
+    /// // Copying ExampleClass returns another ExampleClass.
+    /// unsafe impl CopyingHelper for ExampleClass {
+    ///     type Result = Self;
+    /// }
+    /// ```
+    ///
+    /// Implement `NSCopying` for a custom class.
+    ///
+    /// ```
+    /// use objc2::{declare_class, msg_send_id, mutability::InteriorMutable, ClassType, DeclaredClass};
+    /// use objc2::rc::Retained;
+    /// use objc2::runtime::NSZone;
+    /// use objc2_foundation::{CopyingHelper, NSCopying, NSObject};
+    ///
+    /// declare_class!(
+    ///     struct CustomClass;
+    ///
+    ///     unsafe impl ClassType for CustomClass {
+    ///         type Super = NSObject;
+    ///         type Mutability = InteriorMutable;
+    ///         const NAME: &'static str = "CustomClass";
+    ///     }
+    ///
+    ///     impl DeclaredClass for CustomClass {}
+    ///
+    ///     unsafe impl NSCopying for CustomClass {
+    ///         #[method_id(copyWithZone:)]
+    ///         fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
+    ///             // Create new class, and transfer ivars
+    ///             let new = Self::alloc().set_ivars(self.ivars().clone());
+    ///             unsafe { msg_send_id![super(new), init] }
+    ///         }
+    ///     }
+    /// );
+    ///
+    /// // Copying CustomClass returns another CustomClass.
+    /// unsafe impl CopyingHelper for CustomClass {
+    ///     type Result = Self;
+    /// }
+    /// ```
     #[allow(clippy::missing_safety_doc)]
     pub unsafe trait NSCopying {
         /// Returns a new instance that's a copy of the receiver.
         ///
-        /// The output type is the immutable counterpart of the object, which is
-        /// usually `Self`, but e.g. `NSMutableString` returns `NSString`.
+        /// The output type is the immutable counterpart of the object, which
+        /// is usually `Self`, but e.g. `NSMutableString` returns `NSString`.
         #[method_id(copy)]
         #[optional]
-        fn copy(&self) -> Retained<Self::Immutable>
+        fn copy(&self) -> Retained<Self::Result>
         where
-            Self: CounterpartOrSelf;
+            Self: CopyingHelper;
 
         /// Returns a new instance that's a copy of the receiver.
         ///
-        /// This is only used when implementing `NSCopying`, use
+        /// This is only used when implementing `NSCopying`, call
         /// [`copy`][NSCopying::copy] instead.
         ///
         ///
@@ -36,10 +173,9 @@ extern_protocol!(
         ///
         /// The zone pointer must be valid or NULL.
         #[method_id(copyWithZone:)]
-        #[cfg(feature = "NSZone")]
-        unsafe fn copyWithZone(&self, zone: *mut NSZone) -> Retained<Self::Immutable>
+        unsafe fn copyWithZone(&self, zone: *mut NSZone) -> Retained<Self::Result>
         where
-            Self: CounterpartOrSelf;
+            Self: CopyingHelper;
     }
 
     unsafe impl ProtocolType for dyn NSCopying {}
@@ -48,12 +184,43 @@ extern_protocol!(
 extern_protocol!(
     /// A protocol to provide mutable copies of objects.
     ///
-    /// Only classes that have an “immutable vs. mutable” distinction should adopt
-    /// this protocol.
+    /// Only classes that have an “immutable vs. mutable” distinction should
+    /// adopt this protocol. Use the [`MutableCopyingHelper`] trait to specify
+    /// the return type after copying.
     ///
     /// See [Apple's documentation][apple-doc] for details.
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutablecopying
+    ///
+    ///
+    /// # Example
+    ///
+    /// Implement [`NSCopying`] and [`NSMutableCopying`] for a class pair like
+    /// `NSString` and `NSMutableString`.
+    ///
+    /// ```ignore
+    /// // Immutable copies return NSString
+    ///
+    /// unsafe impl NSCopying for NSString {}
+    /// unsafe impl CopyingHelper for NSString {
+    ///     type Result = NSString;
+    /// }
+    /// unsafe impl NSCopying for NSMutableString {}
+    /// unsafe impl CopyingHelper for NSMutableString {
+    ///     type Result = NSString;
+    /// }
+    ///
+    /// // Mutable copies return NSMutableString
+    ///
+    /// unsafe impl NSMutableCopying for NSString {}
+    /// unsafe impl MutableCopyingHelper for NSString {
+    ///     type Result = NSMutableString;
+    /// }
+    /// unsafe impl NSMutableCopying for NSMutableString {}
+    /// unsafe impl MutableCopyingHelper for NSMutableString {
+    ///     type Result = NSMutableString;
+    /// }
+    /// ```
     #[allow(clippy::missing_safety_doc)]
     pub unsafe trait NSMutableCopying {
         /// Returns a new instance that's a mutable copy of the receiver.
@@ -62,13 +229,13 @@ extern_protocol!(
         /// `NSString` and `NSMutableString` return `NSMutableString`.
         #[method_id(mutableCopy)]
         #[optional]
-        fn mutableCopy(&self) -> Retained<Self::Mutable>
+        fn mutableCopy(&self) -> Retained<Self::Result>
         where
-            Self: CounterpartOrSelf;
+            Self: MutableCopyingHelper;
 
         /// Returns a new instance that's a mutable copy of the receiver.
         ///
-        /// This is only used when implementing `NSMutableCopying`, use
+        /// This is only used when implementing `NSMutableCopying`, call
         /// [`mutableCopy`][NSMutableCopying::mutableCopy] instead.
         ///
         ///
@@ -76,10 +243,9 @@ extern_protocol!(
         ///
         /// The zone pointer must be valid or NULL.
         #[method_id(mutableCopyWithZone:)]
-        #[cfg(feature = "NSZone")]
-        unsafe fn mutableCopyWithZone(&self, zone: *mut NSZone) -> Retained<Self::Mutable>
+        unsafe fn mutableCopyWithZone(&self, zone: *mut NSZone) -> Retained<Self::Result>
         where
-            Self: CounterpartOrSelf;
+            Self: MutableCopyingHelper;
     }
 
     unsafe impl ProtocolType for dyn NSMutableCopying {}

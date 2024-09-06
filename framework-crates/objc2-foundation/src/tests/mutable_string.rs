@@ -5,9 +5,8 @@ use core::any::TypeId;
 use core::fmt::Write;
 use objc2::runtime::NSObject;
 
-use objc2::mutability::CounterpartOrSelf;
-
 use crate::Foundation::{NSMutableString, NSString};
+use crate::{CopyingHelper, MutableCopyingHelper};
 
 #[test]
 fn display_debug() {
@@ -67,20 +66,20 @@ fn test_copy() {
 #[test]
 fn counterpart() {
     assert_eq!(
-        TypeId::of::<<NSString as CounterpartOrSelf>::Immutable>(),
+        TypeId::of::<<NSString as CopyingHelper>::Result>(),
         TypeId::of::<NSString>(),
     );
     assert_eq!(
-        TypeId::of::<<NSString as CounterpartOrSelf>::Mutable>(),
+        TypeId::of::<<NSString as MutableCopyingHelper>::Result>(),
         TypeId::of::<NSMutableString>(),
     );
 
     assert_eq!(
-        TypeId::of::<<NSMutableString as CounterpartOrSelf>::Immutable>(),
+        TypeId::of::<<NSMutableString as CopyingHelper>::Result>(),
         TypeId::of::<NSString>(),
     );
     assert_eq!(
-        TypeId::of::<<NSMutableString as CounterpartOrSelf>::Mutable>(),
+        TypeId::of::<<NSMutableString as MutableCopyingHelper>::Result>(),
         TypeId::of::<NSMutableString>(),
     );
 }

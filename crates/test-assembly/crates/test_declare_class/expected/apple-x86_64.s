@@ -61,7 +61,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	test	rax, rax
 	je	LBB1_8
 	mov	qword ptr [rbp - 32], rax
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_c1ccd9f2c8e68869]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_5fb5787f6f0227be]
 	lea	r8, [rip + l_anon.[ID].16]
 	lea	r9, [rip + _get_class]
 	lea	rbx, [rbp - 32]
@@ -69,14 +69,14 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rdi, rbx
 	xor	ecx, ecx
 	call	SYM(objc2::runtime::declare::ClassBuilder::add_class_method_inner::GENERATED_ID, 0)
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_654faaf1a88864b3]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_37797af088d7ed2c]
 	lea	r8, [rip + l_anon.[ID].3]
 	lea	r9, [rip + _method_simple]
 	mov	edx, 8
 	mov	rdi, rbx
 	xor	ecx, ecx
 	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_5d27bc76c3596041]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_6707d96371f346cd]
 	lea	r14, [rip + l_anon.[ID].17]
 	lea	r9, [rip + _method_bool]
 	mov	ecx, 1
@@ -84,7 +84,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rdx, r14
 	mov	r8, r14
 	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_026f8b3b5bb3f00d]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_d1f0a69271fa8a42]
 	lea	r15, [rip + l_anon.[ID].18]
 	lea	r9, [rip + _method_id]
 	mov	edx, 8
@@ -92,7 +92,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	xor	ecx, ecx
 	mov	r8, r15
 	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_50b1cacde7465981]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_6b5f093807011d2d]
 	lea	r9, [rip + _method_id_with_param]
 	mov	ecx, 1
 	mov	rdi, rbx
@@ -117,7 +117,7 @@ LBB1_4:
 	mov	rsi, rax
 	call	_class_addProtocol
 LBB1_6:
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_f2913b8ffb9882fe]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_011234c2c0a83075]
 	lea	rdx, [rip + l_anon.[ID].23]
 	lea	r8, [rip + l_anon.[ID].18]
 	lea	r9, [rip + _copyWithZone]
@@ -629,7 +629,7 @@ LBB20_2:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_dea6e68a0f2fe4ca]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_23e38d84f82d44df]
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rax, qword ptr [rax]
 	mov	qword ptr [rbp - 16], rdi
@@ -694,7 +694,7 @@ LBB22_1:
 	mov	rdi, r15
 	call	_objc_release
 LBB22_3:
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_46e92b66c48ba6b7]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_37e98596ca019dd1]
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rax, qword ptr [rax]
 	mov	qword ptr [rbp - 40], rbx
@@ -838,105 +838,105 @@ l_anon.[ID].23:
 	.space	24
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_c1ccd9f2c8e68869
-L_OBJC_METH_VAR_NAME_c1ccd9f2c8e68869:
+	.globl	L_OBJC_METH_VAR_NAME_5fb5787f6f0227be
+L_OBJC_METH_VAR_NAME_5fb5787f6f0227be:
 	.asciz	"classMethod"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_c1ccd9f2c8e68869
+	.globl	L_OBJC_SELECTOR_REFERENCES_5fb5787f6f0227be
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_c1ccd9f2c8e68869:
-	.quad	L_OBJC_METH_VAR_NAME_c1ccd9f2c8e68869
+L_OBJC_SELECTOR_REFERENCES_5fb5787f6f0227be:
+	.quad	L_OBJC_METH_VAR_NAME_5fb5787f6f0227be
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_c1ccd9f2c8e68869
+	.globl	L_OBJC_IMAGE_INFO_5fb5787f6f0227be
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_c1ccd9f2c8e68869:
+L_OBJC_IMAGE_INFO_5fb5787f6f0227be:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_654faaf1a88864b3
-L_OBJC_METH_VAR_NAME_654faaf1a88864b3:
+	.globl	L_OBJC_METH_VAR_NAME_37797af088d7ed2c
+L_OBJC_METH_VAR_NAME_37797af088d7ed2c:
 	.asciz	"method"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_654faaf1a88864b3
+	.globl	L_OBJC_SELECTOR_REFERENCES_37797af088d7ed2c
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_654faaf1a88864b3:
-	.quad	L_OBJC_METH_VAR_NAME_654faaf1a88864b3
+L_OBJC_SELECTOR_REFERENCES_37797af088d7ed2c:
+	.quad	L_OBJC_METH_VAR_NAME_37797af088d7ed2c
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_654faaf1a88864b3
+	.globl	L_OBJC_IMAGE_INFO_37797af088d7ed2c
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_654faaf1a88864b3:
+L_OBJC_IMAGE_INFO_37797af088d7ed2c:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_5d27bc76c3596041
-L_OBJC_METH_VAR_NAME_5d27bc76c3596041:
+	.globl	L_OBJC_METH_VAR_NAME_6707d96371f346cd
+L_OBJC_METH_VAR_NAME_6707d96371f346cd:
 	.asciz	"methodBool:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_5d27bc76c3596041
+	.globl	L_OBJC_SELECTOR_REFERENCES_6707d96371f346cd
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_5d27bc76c3596041:
-	.quad	L_OBJC_METH_VAR_NAME_5d27bc76c3596041
+L_OBJC_SELECTOR_REFERENCES_6707d96371f346cd:
+	.quad	L_OBJC_METH_VAR_NAME_6707d96371f346cd
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_5d27bc76c3596041
+	.globl	L_OBJC_IMAGE_INFO_6707d96371f346cd
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_5d27bc76c3596041:
+L_OBJC_IMAGE_INFO_6707d96371f346cd:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_026f8b3b5bb3f00d
-L_OBJC_METH_VAR_NAME_026f8b3b5bb3f00d:
+	.globl	L_OBJC_METH_VAR_NAME_d1f0a69271fa8a42
+L_OBJC_METH_VAR_NAME_d1f0a69271fa8a42:
 	.asciz	"methodId"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_026f8b3b5bb3f00d
+	.globl	L_OBJC_SELECTOR_REFERENCES_d1f0a69271fa8a42
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_026f8b3b5bb3f00d:
-	.quad	L_OBJC_METH_VAR_NAME_026f8b3b5bb3f00d
+L_OBJC_SELECTOR_REFERENCES_d1f0a69271fa8a42:
+	.quad	L_OBJC_METH_VAR_NAME_d1f0a69271fa8a42
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_026f8b3b5bb3f00d
+	.globl	L_OBJC_IMAGE_INFO_d1f0a69271fa8a42
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_026f8b3b5bb3f00d:
+L_OBJC_IMAGE_INFO_d1f0a69271fa8a42:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_50b1cacde7465981
-L_OBJC_METH_VAR_NAME_50b1cacde7465981:
+	.globl	L_OBJC_METH_VAR_NAME_6b5f093807011d2d
+L_OBJC_METH_VAR_NAME_6b5f093807011d2d:
 	.asciz	"methodIdWithParam:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_50b1cacde7465981
+	.globl	L_OBJC_SELECTOR_REFERENCES_6b5f093807011d2d
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_50b1cacde7465981:
-	.quad	L_OBJC_METH_VAR_NAME_50b1cacde7465981
+L_OBJC_SELECTOR_REFERENCES_6b5f093807011d2d:
+	.quad	L_OBJC_METH_VAR_NAME_6b5f093807011d2d
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_50b1cacde7465981
+	.globl	L_OBJC_IMAGE_INFO_6b5f093807011d2d
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_50b1cacde7465981:
+L_OBJC_IMAGE_INFO_6b5f093807011d2d:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_f2913b8ffb9882fe
-L_OBJC_METH_VAR_NAME_f2913b8ffb9882fe:
+	.globl	L_OBJC_METH_VAR_NAME_011234c2c0a83075
+L_OBJC_METH_VAR_NAME_011234c2c0a83075:
 	.asciz	"copyWithZone:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_f2913b8ffb9882fe
+	.globl	L_OBJC_SELECTOR_REFERENCES_011234c2c0a83075
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_f2913b8ffb9882fe:
-	.quad	L_OBJC_METH_VAR_NAME_f2913b8ffb9882fe
+L_OBJC_SELECTOR_REFERENCES_011234c2c0a83075:
+	.quad	L_OBJC_METH_VAR_NAME_011234c2c0a83075
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_f2913b8ffb9882fe
+	.globl	L_OBJC_IMAGE_INFO_011234c2c0a83075
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_f2913b8ffb9882fe:
+L_OBJC_IMAGE_INFO_011234c2c0a83075:
 	.asciz	"\000\000\000\000@\000\000"
 
 .zerofill __DATA,__bss,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_CLASS, 2).0,8,3
@@ -948,24 +948,24 @@ L_OBJC_IMAGE_INFO_f2913b8ffb9882fe:
 	.p2align	3, 0x0
 l_anon.[ID].24:
 	.quad	l_anon.[ID].14
-	.asciz	"5\000\000\000\000\000\000\000O\000\000\000\001\000\000"
+	.asciz	"5\000\000\000\000\000\000\000S\000\000\000\001\000\000"
 
 .zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),8,3
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_dea6e68a0f2fe4ca
-L_OBJC_METH_VAR_NAME_dea6e68a0f2fe4ca:
+	.globl	L_OBJC_METH_VAR_NAME_23e38d84f82d44df
+L_OBJC_METH_VAR_NAME_23e38d84f82d44df:
 	.asciz	"init"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_dea6e68a0f2fe4ca
+	.globl	L_OBJC_SELECTOR_REFERENCES_23e38d84f82d44df
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_dea6e68a0f2fe4ca:
-	.quad	L_OBJC_METH_VAR_NAME_dea6e68a0f2fe4ca
+L_OBJC_SELECTOR_REFERENCES_23e38d84f82d44df:
+	.quad	L_OBJC_METH_VAR_NAME_23e38d84f82d44df
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_dea6e68a0f2fe4ca
+	.globl	L_OBJC_IMAGE_INFO_23e38d84f82d44df
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_dea6e68a0f2fe4ca:
+L_OBJC_IMAGE_INFO_23e38d84f82d44df:
 	.asciz	"\000\000\000\000@\000\000"
 
 .zerofill __DATA,__bss,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_CLASS, 1).0,8,3
@@ -977,24 +977,24 @@ L_OBJC_IMAGE_INFO_dea6e68a0f2fe4ca:
 	.p2align	3, 0x0
 l_anon.[ID].25:
 	.quad	l_anon.[ID].14
-	.asciz	"5\000\000\000\000\000\000\000x\000\000\000\001\000\000"
+	.asciz	"5\000\000\000\000\000\000\000|\000\000\000\001\000\000"
 
 .zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),8,3
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_46e92b66c48ba6b7
-L_OBJC_METH_VAR_NAME_46e92b66c48ba6b7:
+	.globl	L_OBJC_METH_VAR_NAME_37e98596ca019dd1
+L_OBJC_METH_VAR_NAME_37e98596ca019dd1:
 	.asciz	"init"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_46e92b66c48ba6b7
+	.globl	L_OBJC_SELECTOR_REFERENCES_37e98596ca019dd1
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_46e92b66c48ba6b7:
-	.quad	L_OBJC_METH_VAR_NAME_46e92b66c48ba6b7
+L_OBJC_SELECTOR_REFERENCES_37e98596ca019dd1:
+	.quad	L_OBJC_METH_VAR_NAME_37e98596ca019dd1
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_46e92b66c48ba6b7
+	.globl	L_OBJC_IMAGE_INFO_37e98596ca019dd1
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_46e92b66c48ba6b7:
+L_OBJC_IMAGE_INFO_37e98596ca019dd1:
 	.asciz	"\000\000\000\000@\000\000"
 
 .subsections_via_symbols

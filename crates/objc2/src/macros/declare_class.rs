@@ -282,6 +282,11 @@
 ///     }
 /// );
 ///
+/// # #[cfg(available_in_foundation)]
+/// unsafe impl CopyingHelper for MyCustomObject {
+///     type Result = Self;
+/// }
+///
 /// impl MyCustomObject {
 ///     pub fn new(foo: u8) -> Retained<Self> {
 ///         unsafe { msg_send_id![Self::alloc(), initWithFoo: foo] }
