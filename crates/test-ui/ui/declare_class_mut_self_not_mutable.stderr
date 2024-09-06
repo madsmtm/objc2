@@ -1,4 +1,4 @@
-error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
+error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
  --> ui/declare_class_mut_self_not_mutable.rs
   |
   | / declare_class!(
@@ -10,16 +10,19 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   | | );
   | | ^
   | | |
-  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `&mut CustomObject: MessageReceiver`
+  | |_the trait `MessageReceiver` is not implemented for `&mut CustomObject`, which is required by `extern "C" fn(&mut CustomObject, objc2::runtime::Sel) -> &mut CustomObject: MethodImplementation`
   |   required by a bound introduced by this call
   |
-  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
-            ImmutableWithMutableSubclass<MS>
-            Mutable
-            MutableWithImmutableSuperclass<IS>
-            Root
-  = note: required for `CustomObject` to implement `IsAllowedMutable`
-  = note: required for `&mut CustomObject` to implement `MessageReceiver`
+  = help: the following other types implement trait `MessageReceiver`:
+            &'a AnyClass
+            &'a T
+            &'a mut AnyObject
+            *const AnyClass
+            *const T
+            *mut T
+            NonNull<T>
+  = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
+  = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel) -> &mut CustomObject` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
@@ -27,10 +30,10 @@ note: required by a bound in `ClassBuilderHelper::<T>::add_method`
   |                   ---------- required by a bound in this associated function
   |     where
   |         F: MethodImplementation<Callee = T>,
-  |                                 ^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
+error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
  --> ui/declare_class_mut_self_not_mutable.rs
   |
   | / declare_class!(
@@ -42,16 +45,19 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   | | );
   | | ^
   | | |
-  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `&mut CustomObject: MessageReceiver`
+  | |_the trait `MessageReceiver` is not implemented for `&mut CustomObject`, which is required by `extern "C" fn(&mut CustomObject, objc2::runtime::Sel): MethodImplementation`
   |   required by a bound introduced by this call
   |
-  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
-            ImmutableWithMutableSubclass<MS>
-            Mutable
-            MutableWithImmutableSuperclass<IS>
-            Root
-  = note: required for `CustomObject` to implement `IsAllowedMutable`
-  = note: required for `&mut CustomObject` to implement `MessageReceiver`
+  = help: the following other types implement trait `MessageReceiver`:
+            &'a AnyClass
+            &'a T
+            &'a mut AnyObject
+            *const AnyClass
+            *const T
+            *mut T
+            NonNull<T>
+  = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
+  = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel)` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
@@ -59,10 +65,10 @@ note: required by a bound in `ClassBuilderHelper::<T>::add_method`
   |                   ---------- required by a bound in this associated function
   |     where
   |         F: MethodImplementation<Callee = T>,
-  |                                 ^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
+error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
  --> ui/declare_class_mut_self_not_mutable.rs
   |
   | / declare_class!(
@@ -74,16 +80,19 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   | | );
   | | ^
   | | |
-  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `&mut CustomObject: MessageReceiver`
+  | |_the trait `MessageReceiver` is not implemented for `&mut CustomObject`, which is required by `extern "C" fn(&mut CustomObject, objc2::runtime::Sel) -> IdReturnValue: MethodImplementation`
   |   required by a bound introduced by this call
   |
-  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
-            ImmutableWithMutableSubclass<MS>
-            Mutable
-            MutableWithImmutableSuperclass<IS>
-            Root
-  = note: required for `CustomObject` to implement `IsAllowedMutable`
-  = note: required for `&mut CustomObject` to implement `MessageReceiver`
+  = help: the following other types implement trait `MessageReceiver`:
+            &'a AnyClass
+            &'a T
+            &'a mut AnyObject
+            *const AnyClass
+            *const T
+            *mut T
+            NonNull<T>
+  = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
+  = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
@@ -91,10 +100,10 @@ note: required by a bound in `ClassBuilderHelper::<T>::add_method`
   |                   ---------- required by a bound in this associated function
   |     where
   |         F: MethodImplementation<Callee = T>,
-  |                                 ^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
+error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
  --> ui/declare_class_mut_self_not_mutable.rs
   |
   | / declare_class!(
@@ -104,14 +113,16 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
 ... |
   | |     }
   | | );
-  | |_^ the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `RetainSemantics<5>: MessageRecieveId<&mut CustomObject, Retained<CustomObject>>`
+  | |_^ the trait `MessageReceiver` is not implemented for `&mut CustomObject`, which is required by `RetainSemantics<5>: MessageRecieveId<&mut CustomObject, Retained<CustomObject>>`
   |
-  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
-            ImmutableWithMutableSubclass<MS>
-            Mutable
-            MutableWithImmutableSuperclass<IS>
-            Root
-  = note: required for `CustomObject` to implement `IsAllowedMutable`
-  = note: required for `&mut CustomObject` to implement `MessageReceiver`
+  = help: the following other types implement trait `MessageReceiver`:
+            &'a AnyClass
+            &'a T
+            &'a mut AnyObject
+            *const AnyClass
+            *const T
+            *mut T
+            NonNull<T>
+  = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<&mut CustomObject, Retained<CustomObject>>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

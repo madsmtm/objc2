@@ -2,7 +2,6 @@ use core::mem::ManuallyDrop;
 use core::ptr;
 
 use crate::encode::RefEncode;
-use crate::mutability::IsMutable;
 use crate::rc::Retained;
 use crate::runtime::{AnyClass, AnyObject, MessageReceiver, Sel};
 use crate::{ClassType, Encode, Message};
@@ -169,15 +168,6 @@ impl<'a, T: ?Sized + Message> MsgSend for &'a Retained<T> {
     #[inline]
     fn into_raw_receiver(self) -> *mut AnyObject {
         (Retained::as_ptr(self) as *mut T).cast()
-    }
-}
-
-impl<'a, T: ?Sized + Message + IsMutable> MsgSend for &'a mut Retained<T> {
-    type Inner = T;
-
-    #[inline]
-    fn into_raw_receiver(self) -> *mut AnyObject {
-        Retained::as_mut_ptr(self).cast()
     }
 }
 

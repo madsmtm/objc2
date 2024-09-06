@@ -1,7 +1,6 @@
 use core::ptr::NonNull;
 
 use crate::encode::{EncodeArguments, EncodeReturn, RefEncode};
-use crate::mutability::IsAllowedMutable;
 use crate::runtime::{AnyClass, AnyObject, Sel};
 use crate::Message;
 
@@ -521,14 +520,18 @@ unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a T {
     }
 }
 
-impl<'a, T: ?Sized + Message + IsAllowedMutable> private::Sealed for &'a mut T {}
-unsafe impl<'a, T: ?Sized + Message + IsAllowedMutable> MessageReceiver for &'a mut T {
-    type __Inner = T;
+impl<'a> private::Sealed for &'a mut AnyObject {}
+/// `&mut AnyObject` is allowed as mutable, for easier transition from `objc`,
+/// even though it's basically always incorrect to hold `&mut AnyObject`.
+///
+/// Use `*mut AnyObject` instead if you know for certain you need mutability,
+/// and cannot make do with interior mutability.
+unsafe impl<'a> MessageReceiver for &'a mut AnyObject {
+    type __Inner = AnyObject;
 
     #[inline]
     fn __as_raw_receiver(self) -> *mut AnyObject {
-        let ptr: *mut T = self;
-        ptr.cast()
+        self
     }
 }
 
@@ -558,37 +561,30 @@ mod tests {
     use core::ptr;
 
     use super::*;
-    use crate::mutability;
     use crate::rc::{Allocated, Retained};
     use crate::runtime::NSObject;
     use crate::test_utils;
-    use crate::{declare_class, msg_send, msg_send_id, ClassType, DeclaredClass};
-
-    declare_class!(
-        struct MutableObject;
-
-        unsafe impl ClassType for MutableObject {
-            type Super = NSObject;
-            type Mutability = mutability::Mutable;
-            const NAME: &'static str = "TestMutableObject";
-        }
-
-        impl DeclaredClass for MutableObject {}
-    );
+    use crate::{msg_send, msg_send_id};
 
     #[allow(unused)]
-    fn test_different_receivers(mut obj: Retained<MutableObject>) {
+    fn test_different_receivers(obj: &mut AnyObject) {
         unsafe {
-            let x = &mut obj;
+            let x = &mut *obj;
             let _: () = msg_send![x, mutable1];
+            // `x` is consumed by the above, so this won't work:
             // let _: () = msg_send![x, mutable2];
+
+            // It is only possible if we reborrow:
             let _: () = msg_send![&mut *obj, mutable1];
             let _: () = msg_send![&mut *obj, mutable2];
-            #[allow(clippy::needless_borrow)]
-            let obj: NonNull<MutableObject> = (&mut *obj).into();
+
+            // Test NonNull
+            let obj = NonNull::from(obj);
             let _: () = msg_send![obj, mutable1];
             let _: () = msg_send![obj, mutable2];
-            let obj: *mut MutableObject = obj.as_ptr();
+
+            // And test raw pointers
+            let obj: *mut AnyObject = obj.as_ptr();
             let _: () = msg_send![obj, mutable1];
             let _: () = msg_send![obj, mutable2];
         }

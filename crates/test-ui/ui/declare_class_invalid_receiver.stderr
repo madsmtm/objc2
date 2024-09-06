@@ -16,7 +16,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   = help: the following other types implement trait `MessageReceiver`:
             &'a AnyClass
             &'a T
-            &'a mut T
+            &'a mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -50,7 +50,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
   = help: the following other types implement trait `MessageReceiver`:
             &'a AnyClass
             &'a T
-            &'a mut T
+            &'a mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -84,7 +84,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   = help: the following other types implement trait `MessageReceiver`:
             &'a AnyClass
             &'a T
-            &'a mut T
+            &'a mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -168,7 +168,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   = help: the following other types implement trait `MessageReceiver`:
             &'a AnyClass
             &'a T
-            &'a mut T
+            &'a mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -202,7 +202,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
   = help: the following other types implement trait `MessageReceiver`:
             &'a AnyClass
             &'a T
-            &'a mut T
+            &'a mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -236,7 +236,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   = help: the following other types implement trait `MessageReceiver`:
             &'a AnyClass
             &'a T
-            &'a mut T
+            &'a mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -267,7 +267,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   = help: the following other types implement trait `MessageReceiver`:
             &'a AnyClass
             &'a T
-            &'a mut T
+            &'a mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -290,7 +290,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
   = help: the following other types implement trait `MessageReceiver`:
             &'a AnyClass
             &'a T
-            &'a mut T
+            &'a mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -313,7 +313,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   = help: the following other types implement trait `MessageReceiver`:
             &'a AnyClass
             &'a T
-            &'a mut T
+            &'a mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -336,7 +336,7 @@ error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not 
   = help: the following other types implement trait `MessageReceiver`:
             &'a AnyClass
             &'a T
-            &'a mut T
+            &'a mut AnyObject
             *const AnyClass
             *const T
             *mut T

@@ -1,4 +1,4 @@
-error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
+error[E0277]: the trait bound `&mut MyObject: MsgSend` is not satisfied
  --> ui/extern_methods_not_allowed_mutable.rs
   |
   | / extern_methods!(
@@ -9,20 +9,22 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   | | );
   | | ^
   | | |
-  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `&mut MyObject: MsgSend`
+  | |_the trait `MessageReceiver` is not implemented for `&mut MyObject`, which is required by `&mut MyObject: MsgSend`
   |   required by a bound introduced by this call
   |
-  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
-            ImmutableWithMutableSubclass<MS>
-            Mutable
-            MutableWithImmutableSuperclass<IS>
-            Root
-  = note: required for `MyObject` to implement `IsAllowedMutable`
-  = note: required for `&mut MyObject` to implement `MessageReceiver`
+  = help: the following other types implement trait `MessageReceiver`:
+            &'a AnyClass
+            &'a T
+            &'a mut AnyObject
+            *const AnyClass
+            *const T
+            *mut T
+            NonNull<T>
+  = note: `MessageReceiver` is implemented for `&MyObject`, but not for `&mut MyObject`
   = note: required for `&mut MyObject` to implement `MsgSend`
   = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
+error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
  --> ui/extern_methods_not_allowed_mutable.rs
   |
   | / extern_methods!(
@@ -31,15 +33,17 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   | |         fn test_id(&mut self) -> Retained<Self>;
   | |     }
   | | );
-  | |_^ the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `RetainSemantics<5>: MsgSendId<_, _>`
+  | |_^ the trait `MessageReceiver` is not implemented for `&mut MyObject`, which is required by `RetainSemantics<5>: MsgSendId<_, _>`
   |
-  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
-            ImmutableWithMutableSubclass<MS>
-            Mutable
-            MutableWithImmutableSuperclass<IS>
-            Root
-  = note: required for `MyObject` to implement `IsAllowedMutable`
-  = note: required for `&mut MyObject` to implement `MessageReceiver`
+  = help: the following other types implement trait `MessageReceiver`:
+            &'a AnyClass
+            &'a T
+            &'a mut AnyObject
+            *const AnyClass
+            *const T
+            *mut T
+            NonNull<T>
+  = note: `MessageReceiver` is implemented for `&MyObject`, but not for `&mut MyObject`
   = note: required for `&mut MyObject` to implement `MsgSend`
   = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut MyObject, Option<Retained<_>>>`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -10,7 +10,7 @@ error[E0277]: the trait bound `{integer}: MsgSend` is not satisfied
   = help: the following other types implement trait `MessageReceiver`:
             &'a AnyClass
             &'a T
-            &'a mut T
+            &'a mut AnyObject
             *const AnyClass
             *const T
             *mut T
