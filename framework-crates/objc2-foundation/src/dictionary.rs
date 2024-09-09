@@ -14,9 +14,9 @@ use objc2::Message;
 
 #[cfg(feature = "NSEnumerator")]
 use crate::iter;
-use crate::{util, NSDictionary, NSMutableDictionary};
 #[cfg(feature = "NSObject")]
-use crate::{CopyingHelper, NSCopying};
+use crate::{util, CopyingHelper, NSCopying};
+use crate::{NSDictionary, NSMutableDictionary};
 
 #[cfg(feature = "NSObject")]
 fn keys_to_ptr<Q>(keys: &[&Q]) -> *mut NonNull<ProtocolObject<dyn NSCopying>>
