@@ -76,11 +76,17 @@
 /// intended way to specify the data your class stores. If you don't specify
 /// any ivars, the macro will default to [`()`][unit].
 ///
+/// It is recommended that you wrap your instance variables in [`Cell`],
+/// [`RefCell`], atomics or other similar interior mutability abstractions to
+/// allow mutating your instance variables.
+///
 /// Beware that if you want to use the class' inherited initializers (such as
 /// `init`), you must override the subclass' designated initializers, and
 /// initialize your ivars properly in there.
 ///
 /// [`Ivars`]: crate::DeclaredClass::Ivars
+/// [`Cell`]: core::cell::Cell
+/// [`RefCell`]: core::cell::RefCell
 ///
 ///
 /// ## Inherent method definitions
