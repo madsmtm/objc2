@@ -11,7 +11,7 @@
 //!
 //! [apple-doc]: https://developer.apple.com/documentation/xcode/validating-your-apps-metal-api-usage/.
 //!
-//! Note: To use `MTLCreateSystemDefaultDevice` you need to link to
+//! Note: To use [`MTLCreateSystemDefaultDevice()`] you need to link to
 //! `CoreGraphics`, this can be done by using `objc2-app-kit`, or by doing:
 //! ```rust
 //! #[link(name = "CoreGraphics", kind = "framework")]
@@ -64,6 +64,8 @@ mod texture;
 
 #[cfg(feature = "MTLCounters")]
 pub use self::counters::*;
+#[cfg(feature = "MTLDevice")]
+pub use self::device::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 #[cfg(feature = "MTLAccelerationStructureTypes")]
@@ -72,6 +74,7 @@ pub use self::packed::MTLPackedFloat3;
 pub use self::private::MTLDevicePrivate;
 #[cfg(feature = "MTLResource")]
 pub use self::resource::*;
+// TODO: CFG is already internal, use *?
 #[cfg(all(feature = "MTLRenderCommandEncoder", feature = "MTLCommandEncoder"))]
 pub use self::slice::MTLRenderCommandEncoderSliceExt;
 #[cfg(feature = "MTLTexture")]
