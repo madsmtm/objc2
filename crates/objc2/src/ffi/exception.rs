@@ -20,7 +20,7 @@ use crate::runtime::AnyObject;
 type objc_exception_matcher = unsafe extern "C" fn(
     catch_type: *mut crate::runtime::AnyClass,
     exception: *mut AnyObject,
-) -> std::os::raw::c_int;
+) -> core::ffi::c_int;
 
 /// Remember that this is non-null!
 #[cfg(any(
@@ -107,7 +107,7 @@ extern_c! {
     // present when building libobjc2.
     //
     // #[cfg(any(doc, feature = "gnustep-1-7"))]
-    // pub fn objc_set_apple_compatible_objcxx_exceptions(newValue: std::os::raw::c_int) -> std::os::raw::c_int;
+    // pub fn objc_set_apple_compatible_objcxx_exceptions(newValue: core::ffi::c_int) -> core::ffi::c_int;
 
     #[cold]
     #[cfg(any(doc, all(target_vendor = "apple", not(all(target_os = "macos", target_arch = "x86")))))]

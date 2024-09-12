@@ -32,4 +32,4 @@ pub use self::input_names::*;
 // TODO: GCKeyCode = CFIndex
 // NOTE: CFIndex is c_long_long on __LLP64__ / Windows 64-bit (doesn't matter for us)
 #[cfg(feature = "GCKeyCodes")]
-pub type GCKeyCode = std::os::raw::c_long;
+pub type GCKeyCode = core::ffi::c_long;

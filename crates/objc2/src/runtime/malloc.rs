@@ -1,12 +1,12 @@
 //! A minimal alternative to crates like `malloc_buf`, `mbox` and `malloced`.
+use core::ffi::c_char;
+use core::ffi::CStr;
 use core::fmt;
 use core::marker::PhantomData;
 use core::ops::Deref;
 use core::ptr::{self, NonNull};
 use core::str;
 use core::str::Utf8Error;
-use std::ffi::CStr;
-use std::os::raw::c_char;
 
 use crate::ffi;
 

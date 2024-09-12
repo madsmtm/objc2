@@ -1,5 +1,5 @@
 #![allow(non_snake_case)]
-use std::os::raw::c_float;
+use core::ffi::c_float;
 
 use objc2::encode::{Encode, Encoding, RefEncode};
 use objc2::runtime::Bool;

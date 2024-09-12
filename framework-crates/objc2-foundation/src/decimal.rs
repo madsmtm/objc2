@@ -1,4 +1,4 @@
-use std::os::raw::c_ushort;
+use core::ffi::c_ushort;
 
 use objc2::encode::{Encode, Encoding, RefEncode};
 

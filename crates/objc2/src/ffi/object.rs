@@ -1,6 +1,6 @@
+use core::ffi::c_char;
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use core::ffi::c_void;
-use std::os::raw::c_char;
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use crate::runtime::Ivar;

@@ -40,4 +40,4 @@ pub use self::text::*;
 // Used by UIKeyConstants
 // NOTE: CFIndex is c_long_long on __LLP64__ / Windows 64-bit (doesn't matter for us)
 #[allow(unused)]
-pub(crate) type CFIndex = std::os::raw::c_long;
+pub(crate) type CFIndex = core::ffi::c_long;

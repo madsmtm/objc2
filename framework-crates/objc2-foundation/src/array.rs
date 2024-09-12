@@ -296,7 +296,7 @@ impl<T: Message> NSMutableArray<T> {
         unsafe extern "C" fn compare_with_closure<T, F: FnMut(&T, &T) -> core::cmp::Ordering>(
             obj1: core::ptr::NonNull<T>,
             obj2: core::ptr::NonNull<T>,
-            context: *mut std::os::raw::c_void,
+            context: *mut core::ffi::c_void,
         ) -> isize {
             let context: *mut F = context.cast();
             // Bring back a reference to the closure.

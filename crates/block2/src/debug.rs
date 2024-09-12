@@ -1,6 +1,6 @@
+use core::ffi::CStr;
 use core::fmt::{Debug, DebugStruct, Error, Formatter};
 use core::ptr;
-use std::ffi::CStr;
 
 use crate::abi::{BlockDescriptorPtr, BlockFlags, BlockHeader};
 use crate::ffi;

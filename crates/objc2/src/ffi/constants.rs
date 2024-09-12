@@ -2,7 +2,7 @@
 #![allow(non_camel_case_types)]
 
 #[cfg(any(doc, target_vendor = "apple"))]
-use std::os::raw::c_int;
+use core::ffi::c_int;
 
 use crate::runtime::{AnyClass, AnyObject};
 

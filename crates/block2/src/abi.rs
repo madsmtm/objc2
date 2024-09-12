@@ -5,9 +5,9 @@
 //! [ABI]: https://clang.llvm.org/docs/Block-ABI-Apple.html
 #![allow(unused)]
 
+use core::ffi::{c_char, c_int, c_ulong, c_void};
 use core::fmt;
-use core::{ffi::c_void, mem::MaybeUninit};
-use std::os::raw::{c_char, c_int, c_ulong};
+use core::mem::MaybeUninit;
 
 use alloc::format;
 

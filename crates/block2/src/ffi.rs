@@ -1,9 +1,9 @@
 //! # Raw bindings to `Block.h`
 
 use core::cell::UnsafeCell;
+use core::ffi::c_int;
 use core::ffi::c_void;
 use core::marker::{PhantomData, PhantomPinned};
-use std::os::raw::c_int;
 
 #[cfg(not(feature = "unstable-c-unwind"))]
 #[doc(hidden)]
@@ -122,9 +122,9 @@ extern_c_unwind! {
 pub mod private {
     use super::*;
     #[cfg(any(doc, target_vendor = "apple", feature = "gnustep-1-7"))]
-    use std::os::raw::c_char;
+    use core::ffi::c_char;
     #[cfg(any(doc, target_vendor = "apple", feature = "compiler-rt"))]
-    use std::os::raw::c_ulong;
+    use core::ffi::c_ulong;
 
     extern_c_unwind! {
         pub static _NSConcreteMallocBlock: Class;
@@ -186,7 +186,6 @@ pub mod private {
 mod tests {
     use super::*;
     use core::ptr;
-    use std::println;
 
     #[test]
     fn smoke() {
@@ -196,7 +195,9 @@ mod tests {
 
     #[test]
     #[allow(unused_unsafe)]
+    #[cfg(feature = "std")]
     fn test_linkable() {
+        use std::println;
         println!("{:?}", unsafe { ptr::addr_of!(_NSConcreteGlobalBlock) });
         println!("{:?}", unsafe { ptr::addr_of!(_NSConcreteStackBlock) });
         println!("{:?}", unsafe {

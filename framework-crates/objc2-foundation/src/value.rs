@@ -1,10 +1,11 @@
+use alloc::ffi::CString;
 use alloc::string::ToString;
+use core::ffi::CStr;
 use core::fmt;
 use core::hash;
 use core::mem::MaybeUninit;
 use core::ptr::NonNull;
 use core::str;
-use std::ffi::{CStr, CString};
 
 use objc2::encode::Encode;
 use objc2::rc::Retained;

@@ -1,5 +1,6 @@
 #[cfg(feature = "NSObjCRuntime")]
 use core::cmp;
+use core::ffi::c_void;
 use core::fmt;
 use core::ops::AddAssign;
 use core::panic::RefUnwindSafe;
@@ -7,7 +8,6 @@ use core::panic::UnwindSafe;
 #[cfg(target_vendor = "apple")]
 use core::slice;
 use core::str;
-use std::os::raw::c_void;
 
 use objc2::msg_send_id;
 use objc2::rc::{autoreleasepool_leaking, Allocated, AutoreleasePool, Retained};
@@ -65,8 +65,8 @@ impl NSString {
     // TODO: Can this be used on NSStrings that are not internally CFString?
     // (i.e. custom subclasses of NSString)?
     unsafe fn as_str_wip(&self) -> Option<&str> {
+        use core::ffi::c_char;
         use core::ptr::NonNull;
-        use std::os::raw::c_char;
 
         type CFStringEncoding = u32;
         #[allow(non_upper_case_globals)]

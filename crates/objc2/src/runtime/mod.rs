@@ -14,15 +14,16 @@
 //! ```
 #![allow(clippy::missing_panics_doc)]
 
+use alloc::ffi::CString;
 use alloc::vec::Vec;
+use core::ffi::c_char;
+use core::ffi::c_uint;
+use core::ffi::{c_void, CStr};
 use core::fmt;
 use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 use core::str;
-use std::ffi::{c_void, CStr, CString};
-use std::os::raw::c_char;
-use std::os::raw::c_uint;
 
 // Note: While this is not public, it is still a breaking change to remove,
 // since `objc2-foundation` relies on it.

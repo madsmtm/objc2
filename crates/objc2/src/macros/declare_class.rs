@@ -203,7 +203,7 @@
 /// instance variables and methods, and implements the `NSCopying` protocol.
 ///
 /// ```
-/// use std::os::raw::c_int;
+/// use std::ffi::c_int;
 ///
 /// # use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
 /// # #[cfg(available_in_foundation)]

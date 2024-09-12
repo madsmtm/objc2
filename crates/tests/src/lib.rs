@@ -7,7 +7,7 @@
     feature(repr_simd)
 )]
 
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 use block2::Block;
 extern crate alloc;

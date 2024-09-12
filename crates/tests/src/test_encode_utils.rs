@@ -1,12 +1,12 @@
 #![allow(non_snake_case)]
+use core::ffi::CStr;
+use core::ffi::*;
 use core::fmt::Display;
 use core::sync::atomic::{AtomicI32, AtomicPtr};
 use objc2::ffi::{NSInteger, NSUInteger};
 use objc2::runtime::{AnyClass, AnyObject, Bool, Sel};
 use objc2::{Encode, Encoding};
 use paste::paste;
-use std::ffi::CStr;
-use std::os::raw::*;
 use std::string::ToString;
 
 use super::*;

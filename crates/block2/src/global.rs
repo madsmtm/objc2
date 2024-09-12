@@ -1,10 +1,10 @@
+use core::ffi::c_ulong;
 use core::fmt;
 use core::marker::PhantomData;
 use core::mem;
 use core::mem::MaybeUninit;
 use core::ops::Deref;
 use core::ptr::{self, NonNull};
-use std::os::raw::c_ulong;
 
 use crate::abi::{BlockDescriptor, BlockDescriptorPtr, BlockFlags, BlockHeader};
 use crate::debug::debug_block_header;

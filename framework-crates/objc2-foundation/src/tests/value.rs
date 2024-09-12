@@ -1,9 +1,9 @@
 #![cfg(feature = "NSValue")]
 use alloc::format;
+use core::ffi::c_char;
+use core::ffi::CStr;
 use core::slice;
 use core::str;
-use std::ffi::CStr;
-use std::os::raw::c_char;
 
 use crate::Foundation::NSValue;
 

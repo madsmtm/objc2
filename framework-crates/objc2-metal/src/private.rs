@@ -5,7 +5,7 @@
 //! [metal-rs]: https://github.com/gfx-rs/metal-rs
 #![allow(clippy::missing_safety_doc)]
 #![allow(unused_imports)]
-use std::ffi::c_void;
+use core::ffi::c_void;
 
 use crate::*;
 

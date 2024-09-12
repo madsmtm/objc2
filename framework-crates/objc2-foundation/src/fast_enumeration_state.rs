@@ -1,4 +1,4 @@
-use std::os::raw::c_ulong;
+use core::ffi::c_ulong;
 
 use objc2::encode::{Encode, Encoding, RefEncode};
 use objc2::runtime::AnyObject;

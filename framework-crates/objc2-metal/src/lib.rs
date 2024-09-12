@@ -79,4 +79,4 @@ pub use self::texture::*;
 
 // CoreFoundation
 #[allow(dead_code)]
-pub(crate) type CFTimeInterval = std::os::raw::c_double;
+pub(crate) type CFTimeInterval = core::ffi::c_double;

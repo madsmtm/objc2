@@ -1,6 +1,6 @@
-use std::os::raw::c_char;
+use core::ffi::c_char;
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
-use std::os::raw::c_uint;
+use core::ffi::c_uint;
 
 use crate::ffi::OpaqueData;
 

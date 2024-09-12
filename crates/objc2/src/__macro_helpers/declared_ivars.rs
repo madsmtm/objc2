@@ -422,8 +422,6 @@ pub(crate) unsafe fn get_initialized_ivar_ptr<T: DeclaredClass>(
 mod tests {
     use alloc::vec::Vec;
     use core::cell::Cell;
-    use std::println;
-    use std::sync::Mutex;
 
     use super::*;
     use crate::rc::{Allocated, PartialInit, RcTestObject, Retained, ThreadTestData};
@@ -459,7 +457,10 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "std")]
     fn test_dealloc_and_dealloc_subclasses() {
+        use std::sync::Mutex;
+
         #[derive(Debug, PartialEq)]
         enum Operation {
             DropIvar,
@@ -674,7 +675,8 @@ mod tests {
         assert!(IvarZst::class().instance_variable(ivar_name).is_none());
 
         let obj = unsafe { init(IvarZst::alloc()) };
-        println!("{:?}", obj.ivars().get());
+        #[cfg(feature = "std")]
+        std::println!("{:?}", obj.ivars().get());
         obj.ivars().set(Ivar);
     }
 
@@ -838,7 +840,8 @@ mod tests {
 
         // Accessing superclass ivars is valid
         // SAFETY: Cell not accessed while ivar is borrowed
-        println!("{:?}", unsafe { &*(**obj).ivars().as_ptr() });
+        #[cfg(feature = "std")]
+        std::println!("{:?}", unsafe { &*(**obj).ivars().as_ptr() });
 
         drop(obj);
         expected.release += 1;
@@ -865,7 +868,8 @@ mod tests {
         );
 
         let obj = unsafe { init_only_superclasses(InvalidAccess::alloc()) };
-        println!("{:?}", obj.ivars());
+        #[cfg(feature = "std")]
+        std::println!("{:?}", obj.ivars());
     }
 
     #[test]

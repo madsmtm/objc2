@@ -702,7 +702,7 @@ macro_rules! __class_inner {
 /// The recommended way of using this macro is by defining a wrapper function:
 ///
 /// ```
-/// # use std::os::raw::{c_int, c_char};
+/// # use std::ffi::{c_int, c_char};
 /// # use objc2::msg_send;
 /// # use objc2::runtime::NSObject;
 /// unsafe fn do_something(obj: &NSObject, arg: c_int) -> *const c_char {

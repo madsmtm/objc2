@@ -1,11 +1,11 @@
 //! # Dynamically creating classes and protocols.
+use alloc::ffi::CString;
 use alloc::format;
 use alloc::string::ToString;
 use core::mem;
 use core::mem::ManuallyDrop;
 use core::ptr;
 use core::ptr::NonNull;
-use std::ffi::CString;
 
 use crate::encode::{Encode, EncodeArguments, EncodeReturn, Encoding};
 use crate::ffi;

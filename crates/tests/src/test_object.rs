@@ -1,6 +1,6 @@
 #![allow(clippy::missing_safety_doc)]
+use core::ffi::c_int;
 use core::mem::{size_of, ManuallyDrop};
-use std::os::raw::c_int;
 
 use objc2::encode::{Encoding, RefEncode};
 use objc2::rc::{autoreleasepool, AutoreleasePool, Retained};

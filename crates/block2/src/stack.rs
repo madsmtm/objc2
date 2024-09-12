@@ -1,3 +1,4 @@
+use core::ffi::c_ulong;
 use core::ffi::c_void;
 use core::fmt;
 use core::marker::PhantomData;
@@ -5,7 +6,6 @@ use core::mem::{self, MaybeUninit};
 use core::ops::Deref;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
-use std::os::raw::c_ulong;
 
 use objc2::encode::{EncodeArguments, EncodeReturn, Encoding, RefEncode};
 

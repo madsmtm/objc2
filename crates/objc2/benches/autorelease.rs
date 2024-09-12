@@ -1,5 +1,5 @@
 use core::ffi::c_void;
-use std::mem::ManuallyDrop;
+use core::mem::ManuallyDrop;
 
 use objc2::rc::{autoreleasepool, Retained};
 use objc2::runtime::{AnyClass, NSObject, Sel};

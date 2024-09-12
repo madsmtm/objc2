@@ -1,9 +1,9 @@
-use core::ffi::c_void;
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
-use std::os::raw::c_char;
-use std::os::raw::c_int;
+use core::ffi::c_char;
+use core::ffi::c_int;
 #[cfg(any(doc, target_vendor = "apple"))]
-use std::os::raw::c_uint;
+use core::ffi::c_uint;
+use core::ffi::c_void;
 
 use crate::runtime::AnyObject;
 use crate::runtime::Imp;

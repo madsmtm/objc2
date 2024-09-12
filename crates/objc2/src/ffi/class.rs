@@ -1,5 +1,5 @@
 #![allow(non_camel_case_types)]
-use std::os::raw::{c_char, c_int, c_uint};
+use core::ffi::{c_char, c_int, c_uint};
 
 use crate::runtime::{AnyClass, AnyProtocol, Bool, Imp, Method, Sel};
 #[cfg(any(doc, not(feature = "unstable-objfw")))]

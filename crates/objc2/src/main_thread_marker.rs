@@ -20,7 +20,7 @@ fn is_main_thread() -> bool {
         // crate.
         #[cfg_attr(not(feature = "std"), link(name = "c", kind = "dylib"))]
         extern "C" {
-            fn pthread_main_np() -> std::os::raw::c_int;
+            fn pthread_main_np() -> core::ffi::c_int;
         }
 
         // SAFETY: Can be called from any thread.

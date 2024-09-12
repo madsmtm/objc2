@@ -1,5 +1,5 @@
+use core::ffi::c_char;
 use core::ops::Deref;
-use std::os::raw::c_char;
 use std::sync::Once;
 
 use crate::encode::{Encode, Encoding, RefEncode};

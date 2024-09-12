@@ -1,6 +1,6 @@
+use core::ffi::c_char;
 use core::slice;
 use core::str;
-use std::os::raw::c_char;
 
 use crate::ffi::NSUInteger;
 use crate::msg_send;

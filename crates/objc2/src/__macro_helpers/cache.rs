@@ -1,8 +1,7 @@
+use core::ffi::{c_char, c_void, CStr};
 use core::ptr;
 use core::str;
 use core::sync::atomic::{AtomicPtr, Ordering};
-use std::ffi::CStr;
-use std::os::raw::{c_char, c_void};
 
 use crate::ffi;
 use crate::runtime::{AnyClass, Sel};

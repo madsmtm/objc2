@@ -1,6 +1,6 @@
 #![allow(dead_code)]
+use core::ffi::c_ulong;
 use core::ptr::{self, NonNull};
-use std::os::raw::c_ulong;
 
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;

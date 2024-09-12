@@ -3,13 +3,12 @@
 // Note: While this is not public, it is still a breaking change to remove
 // entries in here, since framework crates rely on it.
 
-pub use core::ffi::c_void;
+pub use core::ffi::{
+    c_char, c_double, c_float, c_int, c_long, c_longlong, c_schar, c_short, c_uchar, c_uint,
+    c_ulong, c_ulonglong, c_ushort, c_void,
+};
 pub use core::marker::PhantomData;
 pub use core::ptr::NonNull;
-pub use std::os::raw::{
-    c_char, c_double, c_float, c_int, c_long, c_longlong, c_schar, c_short, c_uchar, c_uint,
-    c_ulong, c_ulonglong, c_ushort,
-};
 
 pub use crate::encode::{Encode, Encoding, RefEncode};
 pub use crate::ffi::{NSInteger, NSIntegerMax, NSUInteger, NSUIntegerMax};

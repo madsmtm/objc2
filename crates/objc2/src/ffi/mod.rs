@@ -314,7 +314,7 @@ pub(crate) type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, Phan
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::ffi::CStr;
+    use core::ffi::CStr;
 
     #[test]
     fn smoke() {
