@@ -48,8 +48,8 @@ impl NSString {
     /// done efficiently.
     ///
     /// Returns [`None`] if the internal storage does not allow this to be
-    /// done efficiently. Use [`NSString::as_str`] or `NSString::to_string`
-    /// if performance is not an issue.
+    /// done efficiently. Use `NSString::to_string` if performance is not an
+    /// issue.
     ///
     ///
     /// # Safety
