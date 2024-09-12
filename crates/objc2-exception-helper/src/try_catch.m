@@ -10,7 +10,7 @@ id objc_retain(id value);
 /// crate is present, so we make sure to version this symbol.
 ///
 /// Return `unsigned char` since it is guaranteed to be `u8` on all platforms.
-unsigned char objc2_exception_helper_0_2_try_catch_exception(void (*f)(void *), void *context, id *error) {
+unsigned char objc2_exception_helper_0_1_try_catch(void (*f)(void *), void *context, id *error) {
     @try {
         f(context);
         return 0;

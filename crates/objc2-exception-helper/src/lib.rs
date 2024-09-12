@@ -40,7 +40,7 @@ extern "C" {
     /// (using mechanisms like core::intrinsics::r#try) is not an option!
     ///
     /// [manual-asm]: https://gitlab.com/objrs/objrs/-/blob/b4f6598696b3fa622e6fddce7aff281770b0a8c2/src/exception.rs
-    #[link_name = "objc2_exception_helper_0_2_try_catch_exception"]
+    #[link_name = "objc2_exception_helper_0_1_try_catch"]
     pub fn try_catch(f: TryCatchClosure, context: *mut c_void, error: *mut *mut c_void) -> u8;
 }
 
