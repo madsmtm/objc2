@@ -419,11 +419,6 @@ macro_rules! encode_args_impl {
                 //
                 // SAFETY: We're transmuting an `unsafe` function pointer to
                 // another `unsafe` function pointer.
-                #[cfg(not(feature = "unstable-c-unwind"))]
-                let msg_send_fn: unsafe extern "C" fn(*mut AnyObject, Sel $(, $T)*) -> R = unsafe {
-                    mem::transmute(msg_send_fn)
-                };
-                #[cfg(feature = "unstable-c-unwind")]
                 let msg_send_fn: unsafe extern "C-unwind" fn(*mut AnyObject, Sel $(, $T)*) -> R = unsafe {
                     mem::transmute(msg_send_fn)
                 };
@@ -866,7 +861,6 @@ macro_rules! encode_fn_pointer_impl {
     };
     ($($Arg: ident),*) => {
         encode_fn_pointer_impl!(# "C"; $($Arg),*);
-        #[cfg(feature = "unstable-c-unwind")]
         encode_fn_pointer_impl!(# "C-unwind"; $($Arg),*);
     };
 }
@@ -988,7 +982,6 @@ mod tests {
             <Option<unsafe extern "C" fn()>>::ENCODING,
             Encoding::Pointer(&Encoding::Unknown)
         );
-        #[cfg(feature = "unstable-c-unwind")]
         assert_eq!(
             <extern "C-unwind" fn()>::ENCODING,
             Encoding::Pointer(&Encoding::Unknown)

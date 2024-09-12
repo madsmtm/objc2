@@ -141,7 +141,7 @@ where
 {
     // Add dealloc if the class or the ivars need dropping.
     if mem::needs_drop::<T>() || mem::needs_drop::<T::Ivars>() {
-        let func: unsafe extern "C" fn(_, _) = dealloc::<T>;
+        let func: unsafe extern "C-unwind" fn(_, _) = dealloc::<T>;
         // SAFETY: The function signature is correct, and method contract is
         // upheld inside `dealloc`.
         unsafe { builder.add_method(sel!(dealloc), func) };
@@ -156,9 +156,7 @@ where
 /// - <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#dealloc>
 /// - <https://developer.apple.com/documentation/objectivec/nsobject/1571947-dealloc>
 /// - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html#//apple_ref/doc/uid/20000994-SW2>
-///
-/// TODO: Change this to `extern "C-unwind"`, unwinding in dealloc is allowed.
-unsafe extern "C" fn dealloc<T: DeclaredClass>(this: NonNull<T>, cmd: Sel)
+unsafe extern "C-unwind" fn dealloc<T: DeclaredClass>(this: NonNull<T>, cmd: Sel)
 where
     T::Super: ClassType,
 {

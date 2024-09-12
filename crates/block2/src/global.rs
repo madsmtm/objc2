@@ -187,17 +187,17 @@ macro_rules! global_block {
             let mut header = $crate::GlobalBlock::<dyn Fn($($t),*) $(-> $r)? + 'static>::__DEFAULT_HEADER;
             header.isa = ::core::ptr::addr_of!($crate::ffi::_NSConcreteGlobalBlock);
             header.invoke = ::core::option::Option::Some({
-                $crate::__c_unwind!(unsafe extern "C" fn inner(
+                unsafe extern "C-unwind" fn inner(
                     _: *mut $crate::GlobalBlock<dyn Fn($($t),*) $(-> $r)? + 'static>,
                     $($a: $t),*
                 ) $(-> $r)? {
                     $body
-                });
+                }
 
                 // TODO: SAFETY
                 ::core::mem::transmute::<
-                    $crate::__c_unwind!(unsafe extern "C" fn(*mut $crate::GlobalBlock<dyn Fn($($t),*) $(-> $r)? + 'static>, $($a: $t),*) $(-> $r)?),
-                    $crate::__c_unwind!(unsafe extern "C" fn()),
+                    unsafe extern "C-unwind" fn(*mut $crate::GlobalBlock<dyn Fn($($t),*) $(-> $r)? + 'static>, $($a: $t),*) $(-> $r)?,
+                    unsafe extern "C-unwind" fn(),
                 >(inner)
             });
             $crate::GlobalBlock::from_header(header)

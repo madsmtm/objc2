@@ -1,4 +1,4 @@
-extern "C" {
+extern "C-unwind" {
     #[cfg(feature = "NSMapTable")]
     pub fn NSFreeMapTable(table: *mut crate::NSMapTable);
 }

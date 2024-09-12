@@ -225,16 +225,6 @@ macro_rules! extern_c_unwind {
             ) $(-> $r:ty)?;
         )+
     } => {
-        #[cfg(not(feature = "unstable-c-unwind"))]
-        generate_linking_tests! {
-            extern "C" {$(
-                $(#[$m])*
-                $v fn $name($($(#[$a_m])* $a: $t),*) $(-> $r)?;
-            )+}
-            mod test_linkable_unwind;
-        }
-
-        #[cfg(feature = "unstable-c-unwind")]
         generate_linking_tests! {
             extern "C-unwind" {$(
                 $(#[$m])*

@@ -54,15 +54,14 @@ _error_bool:
 	mov	x8, x0
 	mov	x0, #0
 	tbz	w8, #0, LBB2_2
+LBB2_1:
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
 LBB2_2:
 	ldr	x0, [sp, #8]
 	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
-	ret
+	b	LBB2_1
 
 	.globl	_error_new
 	.p2align	2
@@ -73,13 +72,14 @@ _error_new:
 	str	xzr, [sp, #8]
 	add	x2, sp, #8
 	bl	_objc_msgSend
-	cbz	x0, LBB3_2
+	cbz	x0, LBB3_3
 	mov	x1, x0
 	mov	x0, #0
+LBB3_2:
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
-LBB3_2:
+LBB3_3:
 	ldr	x0, [sp, #8]
 Lloh6:
 	adrp	x1, l_anon.[ID].4@PAGE
@@ -88,9 +88,7 @@ Lloh7:
 	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	x1, x0
 	mov	w0, #1
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
-	ret
+	b	LBB3_2
 	.loh AdrpAdd	Lloh6, Lloh7
 
 	.globl	_error_init
@@ -102,13 +100,14 @@ _error_init:
 	str	xzr, [sp, #8]
 	add	x2, sp, #8
 	bl	_objc_msgSend
-	cbz	x0, LBB4_2
+	cbz	x0, LBB4_3
 	mov	x1, x0
 	mov	x0, #0
+LBB4_2:
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
-LBB4_2:
+LBB4_3:
 	ldr	x0, [sp, #8]
 Lloh8:
 	adrp	x1, l_anon.[ID].5@PAGE
@@ -117,9 +116,7 @@ Lloh9:
 	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	x1, x0
 	mov	w0, #1
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
-	ret
+	b	LBB4_2
 	.loh AdrpAdd	Lloh8, Lloh9
 
 	.globl	_error_copy
@@ -131,13 +128,14 @@ _error_copy:
 	str	xzr, [sp, #8]
 	add	x2, sp, #8
 	bl	_objc_msgSend
-	cbz	x0, LBB5_2
+	cbz	x0, LBB5_3
 	mov	x1, x0
 	mov	x0, #0
+LBB5_2:
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
-LBB5_2:
+LBB5_3:
 	ldr	x0, [sp, #8]
 Lloh10:
 	adrp	x1, l_anon.[ID].6@PAGE
@@ -146,9 +144,7 @@ Lloh11:
 	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	x1, x0
 	mov	w0, #1
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
-	ret
+	b	LBB5_2
 	.loh AdrpAdd	Lloh10, Lloh11
 
 	.globl	_error_autoreleased
@@ -164,13 +160,14 @@ _error_autoreleased:
 	mov	x29, x29
 	; InlineAsm End
 	bl	_objc_retainAutoreleasedReturnValue
-	cbz	x0, LBB6_2
+	cbz	x0, LBB6_3
 	mov	x1, x0
 	mov	x0, #0
+LBB6_2:
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
-LBB6_2:
+LBB6_3:
 	ldr	x0, [sp, #8]
 Lloh12:
 	adrp	x1, l_anon.[ID].7@PAGE
@@ -179,9 +176,7 @@ Lloh13:
 	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	x1, x0
 	mov	w0, #1
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
-	ret
+	b	LBB6_2
 	.loh AdrpAdd	Lloh12, Lloh13
 
 	.section	__TEXT,__const

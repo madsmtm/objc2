@@ -969,7 +969,7 @@ macro_rules! __declare_class_method_out_inner {
     } => {
         $($m_checked)*
         #[allow(clippy::diverging_sub_expression)]
-        $($qualifiers)* extern "C" fn $name(
+        $($qualifiers)* extern "C-unwind" fn $name(
             $($params_prefix)*
             $($params_converted)*
         ) $(-> <$ret as $crate::__macro_helpers::ConvertReturn>::__Inner)? {
@@ -1002,7 +1002,7 @@ macro_rules! __declare_class_method_out_inner {
     } => {
         $($m_checked)*
         #[allow(clippy::diverging_sub_expression)]
-        $($qualifiers)* extern "C" fn $name(
+        $($qualifiers)* extern "C-unwind" fn $name(
             $($params_prefix)*
             $($params_converted)*
         ) -> $crate::__macro_helpers::IdReturnValue {
@@ -1047,7 +1047,7 @@ macro_rules! __declare_class_method_out_inner {
         ($($body_prefix:tt)*)
     } => {
         $($m_checked)*
-        $($qualifiers)* extern "C" fn $name() {
+        $($qualifiers)* extern "C-unwind" fn $name() {
             $crate::__macro_helpers::compile_error!("`#[method_id(...)]` must have a return type")
         }
     };
@@ -1165,7 +1165,7 @@ macro_rules! __fn_ptr {
         ($($output:tt)*)
         $(,)?
     ) => {
-        $($qualifiers)* extern "C" fn($($output)*) -> _
+        $($qualifiers)* extern "C-unwind" fn($($output)*) -> _
     };
     (
         ($($qualifiers:tt)*)

@@ -2370,7 +2370,9 @@ impl Stmt {
                     body: None,
                     safe: false,
                 } => {
-                    writeln!(f, "extern \"C\" {{")?;
+                    // Functions are always C-unwind, since we don't know
+                    // anything about them.
+                    writeln!(f, "extern \"C-unwind\" {{")?;
 
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
                     write!(f, "    {availability}")?;
@@ -2395,14 +2397,14 @@ impl Stmt {
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     writeln!(f, "#[inline]")?;
-                    write!(f, "pub extern \"C\" fn {}(", id.name)?;
+                    write!(f, "pub extern \"C-unwind\" fn {}(", id.name)?;
                     for (param, arg_ty) in arguments {
                         let param = handle_reserved(&crate::to_snake_case(param));
                         write!(f, "{param}: {},", arg_ty.fn_argument())?;
                     }
                     writeln!(f, "){} {{", result_type.fn_return())?;
 
-                    writeln!(f, "    extern \"C\" {{")?;
+                    writeln!(f, "    extern \"C-unwind\" {{")?;
 
                     write!(f, "        fn {}(", id.name)?;
                     for (param, arg_ty) in arguments {

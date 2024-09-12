@@ -92,45 +92,45 @@ fn new_different_lengths() {
 }
 
 fn base_class_builder(name: &str) -> Option<ClassBuilder> {
-    extern "C" fn initialize(_cls: &AnyClass, _sel: Sel) {}
-    let mut builder = ClassBuilder::root(name, initialize as extern "C" fn(_, _))?;
+    extern "C-unwind" fn initialize(_cls: &AnyClass, _sel: Sel) {}
+    let mut builder = ClassBuilder::root(name, initialize as extern "C-unwind" fn(_, _))?;
 
-    extern "C" fn new(cls: &AnyClass, _sel: Sel) -> *mut AnyObject {
+    extern "C-unwind" fn new(cls: &AnyClass, _sel: Sel) -> *mut AnyObject {
         unsafe { ffi::class_createInstance(cls, 0) }
     }
     unsafe {
-        builder.add_class_method(sel!(new), new as extern "C" fn(_, _) -> _);
+        builder.add_class_method(sel!(new), new as extern "C-unwind" fn(_, _) -> _);
     }
 
-    extern "C" fn does_not_recognize_selector(obj: &AnyObject, _sel: Sel, sel: Sel) {
+    extern "C-unwind" fn does_not_recognize_selector(obj: &AnyObject, _sel: Sel, sel: Sel) {
         panic!("does not recognize: -[{} {sel}]", obj.class());
     }
     unsafe {
         builder.add_method(
             sel!(doesNotRecognizeSelector:),
-            does_not_recognize_selector as extern "C" fn(_, _, _),
+            does_not_recognize_selector as extern "C-unwind" fn(_, _, _),
         );
     }
 
-    extern "C" fn forward_invocation(obj: &AnyObject, _sel: Sel, invocation: &AnyObject) {
+    extern "C-unwind" fn forward_invocation(obj: &AnyObject, _sel: Sel, invocation: &AnyObject) {
         let sel: Sel = unsafe { msg_send![invocation, selector] };
         panic!("does not recognize: -[{} {sel}]", obj.class());
     }
     unsafe {
         builder.add_method(
             sel!(forwardInvocation:),
-            forward_invocation as extern "C" fn(_, _, _),
+            forward_invocation as extern "C-unwind" fn(_, _, _),
         );
     }
 
-    extern "C" fn release(obj: *mut AnyObject, _sel: Sel) {
+    extern "C-unwind" fn release(obj: *mut AnyObject, _sel: Sel) {
         #[allow(deprecated)]
         unsafe {
             ffi::object_dispose(obj.cast());
         }
     }
     unsafe {
-        builder.add_method(sel!(release), release as extern "C" fn(_, _));
+        builder.add_method(sel!(release), release as extern "C-unwind" fn(_, _));
     }
 
     Some(builder)
@@ -155,22 +155,24 @@ fn test_from_base_class(cls: &AnyClass) {
     feature = "gnustep-1-7",
     ignore = "GNUStep stack overflows here for some reason?"
 )]
-#[cfg_attr(not(feature = "gnustep-1-7"), ignore = "Requires C-unwind")]
 fn no_copy() {
     let mut builder = base_class_builder("NoCopy").unwrap();
 
-    extern "C" fn hash(obj: &AnyObject, _sel: Sel) -> NSUInteger {
+    extern "C-unwind" fn hash(obj: &AnyObject, _sel: Sel) -> NSUInteger {
         obj as *const AnyObject as NSUInteger
     }
     unsafe {
-        builder.add_method(sel!(hash), hash as extern "C" fn(_, _) -> _);
+        builder.add_method(sel!(hash), hash as extern "C-unwind" fn(_, _) -> _);
     }
 
-    extern "C" fn is_equal(obj: &AnyObject, _sel: Sel, other: &AnyObject) -> Bool {
+    extern "C-unwind" fn is_equal(obj: &AnyObject, _sel: Sel, other: &AnyObject) -> Bool {
         ptr::eq(obj, other).into()
     }
     unsafe {
-        builder.add_method(sel!(isEqual:), is_equal as extern "C" fn(_, _, _) -> _);
+        builder.add_method(
+            sel!(isEqual:),
+            is_equal as extern "C-unwind" fn(_, _, _) -> _,
+        );
     }
 
     let cls = builder.register();
@@ -184,11 +186,10 @@ fn no_copy() {
     feature = "gnustep-1-7",
     ignore = "GNUStep stack overflows here for some reason?"
 )]
-#[cfg_attr(not(feature = "gnustep-1-7"), ignore = "Requires C-unwind")]
 fn no_is_equal_hash() {
     let mut builder = base_class_builder("NoIsEqualHash").unwrap();
 
-    extern "C" fn copy_with_zone(
+    extern "C-unwind" fn copy_with_zone(
         obj: &AnyObject,
         _sel: Sel,
         _zone: *mut crate::NSZone,
@@ -198,7 +199,7 @@ fn no_is_equal_hash() {
     unsafe {
         builder.add_method(
             sel!(copyWithZone:),
-            copy_with_zone as extern "C" fn(_, _, _) -> _,
+            copy_with_zone as extern "C-unwind" fn(_, _, _) -> _,
         );
     }
 
@@ -212,11 +213,10 @@ fn no_is_equal_hash() {
     feature = "gnustep-1-7",
     ignore = "GNUStep stack overflows here for some reason?"
 )]
-#[cfg_attr(not(feature = "gnustep-1-7"), ignore = "Requires C-unwind")]
 fn root_object() {
     let mut builder = base_class_builder("RootObject").unwrap();
 
-    extern "C" fn copy_with_zone(
+    extern "C-unwind" fn copy_with_zone(
         obj: &AnyObject,
         _sel: Sel,
         _zone: *mut crate::NSZone,
@@ -226,22 +226,25 @@ fn root_object() {
     unsafe {
         builder.add_method(
             sel!(copyWithZone:),
-            copy_with_zone as extern "C" fn(_, _, _) -> _,
+            copy_with_zone as extern "C-unwind" fn(_, _, _) -> _,
         );
     }
 
-    extern "C" fn hash(obj: &AnyObject, _sel: Sel) -> NSUInteger {
+    extern "C-unwind" fn hash(obj: &AnyObject, _sel: Sel) -> NSUInteger {
         obj as *const AnyObject as NSUInteger
     }
     unsafe {
-        builder.add_method(sel!(hash), hash as extern "C" fn(_, _) -> _);
+        builder.add_method(sel!(hash), hash as extern "C-unwind" fn(_, _) -> _);
     }
 
-    extern "C" fn is_equal(obj: &AnyObject, _sel: Sel, other: &AnyObject) -> Bool {
+    extern "C-unwind" fn is_equal(obj: &AnyObject, _sel: Sel, other: &AnyObject) -> Bool {
         ptr::eq(obj, other).into()
     }
     unsafe {
-        builder.add_method(sel!(isEqual:), is_equal as extern "C" fn(_, _, _) -> _);
+        builder.add_method(
+            sel!(isEqual:),
+            is_equal as extern "C-unwind" fn(_, _, _) -> _,
+        );
     }
 
     let cls = builder.register();

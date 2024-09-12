@@ -124,11 +124,6 @@ macro_rules! standard_pointer_impls {
     };
 }
 
-#[cfg(not(feature = "unstable-c-unwind"))]
-type InnerImp = unsafe extern "C" fn();
-#[cfg(feature = "unstable-c-unwind")]
-type InnerImp = unsafe extern "C-unwind" fn();
-
 /// A pointer to the start of a method implementation.
 ///
 /// The first argument is a pointer to the receiver, the second argument is
@@ -143,7 +138,7 @@ type InnerImp = unsafe extern "C-unwind" fn();
 /// Also note that this is non-null! If you require an Imp that can be null,
 /// use `Option<Imp>`.
 #[doc(alias = "IMP")]
-pub type Imp = InnerImp;
+pub type Imp = unsafe extern "C-unwind" fn();
 
 /// A method selector.
 ///

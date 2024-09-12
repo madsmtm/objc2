@@ -1279,7 +1279,11 @@ impl Ty {
                         if *nullability != Nullability::NonNull {
                             write!(f, "Option<")?;
                         }
-                        write!(f, "unsafe extern \"C\" fn(")?;
+                        // Allow pointers that the user provides to unwind.
+                        //
+                        // This is not _necessarily_ safe, though in practice
+                        // it will be for all of Apple's frameworks.
+                        write!(f, "unsafe extern \"C-unwind\" fn(")?;
                         for arg in arguments {
                             write!(f, "{},", arg.plain())?;
                         }

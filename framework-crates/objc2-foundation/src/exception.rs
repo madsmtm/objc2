@@ -53,12 +53,7 @@ impl NSException {
     /// exception handler.
     ///
     /// This is equivalent to using `objc2::exception::throw`.
-    ///
-    ///
-    /// # Safety
-    ///
-    /// Same as `objc2::exception::throw`.
-    pub unsafe fn raise(&self) -> ! {
+    pub fn raise(&self) -> ! {
         // SAFETY: `NSException` is immutable, so it is safe to give to
         // the place where `@catch` receives it.
         unsafe { self.raise_raw() };

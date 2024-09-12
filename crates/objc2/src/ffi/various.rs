@@ -56,7 +56,7 @@ extern_c! {
 
     #[cfg(any(doc, target_vendor = "apple", feature = "unstable-objfw"))]
     pub fn objc_setEnumerationMutationHandler(
-        handler: Option<unsafe extern "C" fn(obj: *mut AnyObject)>,
+        handler: Option<unsafe extern "C-unwind" fn(obj: *mut AnyObject)>,
     );
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))]

@@ -18,6 +18,8 @@ fn is_main_thread() -> bool {
         // `pthread_main_np` is included via. `libSystem` when `libstd` is
         // linked. All of this is done to avoid a dependency on the `libc`
         // crate.
+        //
+        // `extern "C"` is safe because this will never unwind.
         #[cfg_attr(not(feature = "std"), link(name = "c", kind = "dylib"))]
         extern "C" {
             fn pthread_main_np() -> core::ffi::c_int;

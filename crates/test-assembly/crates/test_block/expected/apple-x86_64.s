@@ -146,7 +146,7 @@ _stack_block_to_rc:
 	mov	qword ptr [rbp - 24], 33554432
 	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0)]
 	mov	qword ptr [rbp - 16], rax
-	lea	rax, [rip + l_anon.[ID].2]
+	lea	rax, [rip + l_anon.[ID].0]
 	mov	qword ptr [rbp - 8], rax
 	lea	rdi, [rbp - 32]
 	call	__Block_copy
@@ -169,7 +169,7 @@ _rc_block:
 	mov	qword ptr [rbp - 24], 0
 	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0)]
 	mov	qword ptr [rbp - 16], rax
-	lea	rax, [rip + L_anon.[ID].1]
+	lea	rax, [rip + L_anon.[ID].4]
 	mov	qword ptr [rbp - 8], rax
 	lea	rdi, [rbp - 32]
 	call	__Block_copy
@@ -192,7 +192,7 @@ _rc_block_drop:
 	mov	qword ptr [rbp - 32], 33554432
 	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0)]
 	mov	qword ptr [rbp - 24], rax
-	lea	rax, [rip + l_anon.[ID].0]
+	lea	rax, [rip + l_anon.[ID].3]
 	mov	qword ptr [rbp - 16], rax
 	mov	qword ptr [rbp - 8], rdi
 	lea	rdi, [rbp - 40]
@@ -216,7 +216,7 @@ _create_and_use_stack_block:
 	mov	qword ptr [rbp - 24], 33554432
 	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0)]
 	mov	qword ptr [rbp - 16], rax
-	lea	rax, [rip + l_anon.[ID].3]
+	lea	rax, [rip + l_anon.[ID].1]
 	mov	qword ptr [rbp - 8], rax
 	lea	rdi, [rbp - 32]
 	call	_needs_block
@@ -237,7 +237,7 @@ _create_and_use_stack_block_drop:
 	mov	qword ptr [rbp - 40], 33554432
 	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0)]
 	mov	qword ptr [rbp - 32], rax
-	lea	rax, [rip + l_anon.[ID].4]
+	lea	rax, [rip + l_anon.[ID].2]
 	mov	qword ptr [rbp - 24], rax
 	mov	qword ptr [rbp - 16], rdi
 	lea	rdi, [rbp - 48]
@@ -263,7 +263,7 @@ _create_and_use_rc_block:
 	mov	qword ptr [rbp - 32], 0
 	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0)]
 	mov	qword ptr [rbp - 24], rax
-	lea	rax, [rip + L_anon.[ID].1]
+	lea	rax, [rip + L_anon.[ID].4]
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rbp - 40]
 	call	__Block_copy
@@ -284,32 +284,31 @@ LBB19_2:
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].0:
+	.asciz	"\000\000\000\000\000\000\000\000 \000\000\000\000\000\000"
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>>::clone_closure, 0)
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>>::drop_closure, 0)
+
+	.p2align	3, 0x0
+l_anon.[ID].1:
+	.asciz	"\000\000\000\000\000\000\000\000 \000\000\000\000\000\000"
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>>::clone_closure, 0)
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>>::drop_closure, 0)
+
+	.p2align	3, 0x0
+l_anon.[ID].2:
+	.asciz	"\000\000\000\000\000\000\000\000(\000\000\000\000\000\000"
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>>::clone_closure, 0)
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>>::drop_closure, 0)
+
+	.p2align	3, 0x0
+l_anon.[ID].3:
 	.asciz	"\000\000\000\000\000\000\000\000(\000\000\000\000\000\000"
 	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>>::empty_clone_closure, 0)
 	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>>::drop_closure, 0)
 
 	.section	__TEXT,__literal16,16byte_literals
 	.p2align	3, 0x0
-L_anon.[ID].1:
+L_anon.[ID].4:
 	.asciz	"\000\000\000\000\000\000\000\000 \000\000\000\000\000\000"
-
-	.section	__DATA,__const
-	.p2align	3, 0x0
-l_anon.[ID].2:
-	.asciz	"\000\000\000\000\000\000\000\000 \000\000\000\000\000\000"
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>>::clone_closure, 0)
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>>::drop_closure, 0)
-
-	.p2align	3, 0x0
-l_anon.[ID].3:
-	.asciz	"\000\000\000\000\000\000\000\000 \000\000\000\000\000\000"
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>>::clone_closure, 0)
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>>::drop_closure, 0)
-
-	.p2align	3, 0x0
-l_anon.[ID].4:
-	.asciz	"\000\000\000\000\000\000\000\000(\000\000\000\000\000\000"
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>>::clone_closure, 0)
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>>::drop_closure, 0)
 
 .subsections_via_symbols

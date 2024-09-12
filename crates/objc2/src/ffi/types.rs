@@ -85,7 +85,7 @@ pub type NSInteger = isize;
 /// ```
 /// use objc2::ffi::NSUInteger;
 ///
-/// extern "C" {
+/// extern "C-unwind" {
 ///     fn some_external_function() -> NSUInteger;
 /// }
 /// ```

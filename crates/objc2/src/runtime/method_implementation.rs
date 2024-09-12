@@ -90,9 +90,7 @@ macro_rules! method_impl {
     ($($t:ident),*) => {
         method_impl_inner!((unsafe) "C"; $($t),*);
         method_impl_inner!("C"; $($t),*);
-        #[cfg(feature = "unstable-c-unwind")]
         method_impl_inner!((unsafe) "C-unwind"; $($t),*);
-        #[cfg(feature = "unstable-c-unwind")]
         method_impl_inner!("C-unwind"; $($t),*);
     };
 }

@@ -36,7 +36,7 @@ fn throw_catch_raise_catch() {
         let inner = || {
             autoreleasepool(|pool| {
                 let exc = unsafe { Retained::autorelease(exc, pool) };
-                unsafe { exc.raise() }
+                exc.raise()
             })
         };
 
@@ -59,25 +59,23 @@ fn throw_catch_raise_catch() {
 #[test]
 #[cfg(feature = "catch-all")]
 #[should_panic = "uncaught exception <NSException: 0x"]
-#[cfg_attr(feature = "gnustep-1-7", ignore = "requires C-unwind")]
 fn raise_catch_all1() {
     let name = NSString::from_str("abc");
     let reason = NSString::from_str("def");
 
     let exc = NSException::new(&name, Some(&reason), None).unwrap();
-    unsafe { exc.raise() };
+    exc.raise();
 }
 
 #[test]
 #[cfg(feature = "catch-all")]
 #[should_panic = "> 'abc' reason: def"]
-#[cfg_attr(feature = "gnustep-1-7", ignore = "requires C-unwind")]
 fn raise_catch_all2() {
     let name = NSString::from_str("abc");
     let reason = NSString::from_str("def");
 
     let exc = NSException::new(&name, Some(&reason), None).unwrap();
-    unsafe { exc.raise() };
+    exc.raise();
 }
 
 #[test]
@@ -96,7 +94,7 @@ fn raise_catch() {
         let exc = unsafe { Retained::autorelease(exc, pool) };
         let inner = || {
             if exc.name() == name {
-                unsafe { exc.raise() };
+                exc.raise();
             } else {
                 42
             }

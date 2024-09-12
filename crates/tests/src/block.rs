@@ -35,7 +35,7 @@ unsafe impl Encode for LargeStruct {
 
 type Add12 = Block<dyn Fn(i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32) -> i32>;
 
-extern "C" {
+extern "C-unwind" {
     /// Returns a pointer to a global block that returns 7.
     fn get_int_block() -> *mut Block<dyn Fn() -> i32>;
     /// Returns a pointer to a copied block that returns `i`.

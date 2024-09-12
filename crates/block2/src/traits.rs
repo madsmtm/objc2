@@ -34,7 +34,7 @@ pub unsafe trait BlockFn: private::Sealed<Self::Args, Self::Output> {
     /// Calls the given invoke function with the block and arguments.
     #[doc(hidden)]
     unsafe fn __call_block(
-        invoke: crate::__c_unwind!(unsafe extern "C" fn()),
+        invoke: unsafe extern "C-unwind" fn(),
         block: *mut Block<Self>,
         args: Self::Args,
     ) -> Self::Output;
@@ -60,7 +60,7 @@ where
     type Dyn: ?Sized + BlockFn<Args = A, Output = R>;
 
     #[doc(hidden)]
-    fn __get_invoke_stack_block() -> crate::__c_unwind!(unsafe extern "C" fn());
+    fn __get_invoke_stack_block() -> unsafe extern "C-unwind" fn();
 }
 
 macro_rules! impl_traits {
@@ -77,12 +77,12 @@ macro_rules! impl_traits {
 
             #[inline]
             unsafe fn __call_block(
-                invoke: crate::__c_unwind!(unsafe extern "C" fn()),
+                invoke: unsafe extern "C-unwind" fn(),
                 block: *mut Block<Self>,
                 ($($a,)*): Self::Args,
             ) -> Self::Output {
                 // Very similar to `MessageArguments::__invoke`
-                let invoke: unsafe extern "C" fn(*mut Block<Self> $(, $t)*) -> R = unsafe {
+                let invoke: unsafe extern "C-unwind" fn(*mut Block<Self> $(, $t)*) -> R = unsafe {
                     mem::transmute(invoke)
                 };
 
@@ -99,8 +99,8 @@ macro_rules! impl_traits {
             type Dyn = dyn Fn($($t),*) -> R + 'f;
 
             #[inline]
-            fn __get_invoke_stack_block() -> crate::__c_unwind!(unsafe extern "C" fn()) {
-                crate::__c_unwind!(unsafe extern "C" fn invoke<'f, $($t,)* R, Closure>(
+            fn __get_invoke_stack_block() -> unsafe extern "C-unwind" fn() {
+                unsafe extern "C-unwind" fn invoke<'f, $($t,)* R, Closure>(
                     block: *mut StackBlock<'f, ($($t,)*), R, Closure>,
                     $($a: $t,)*
                 ) -> R
@@ -109,12 +109,12 @@ macro_rules! impl_traits {
                 {
                     let closure = unsafe { &*ptr::addr_of!((*block).closure) };
                     (closure)($($a),*)
-                });
+                }
 
                 unsafe {
                     mem::transmute::<
-                        crate::__c_unwind!(unsafe extern "C" fn(*mut StackBlock<'f, ($($t,)*), R, Closure>, $($t,)*) -> R),
-                        crate::__c_unwind!(unsafe extern "C" fn()),
+                        unsafe extern "C-unwind" fn(*mut StackBlock<'f, ($($t,)*), R, Closure>, $($t,)*) -> R,
+                        unsafe extern "C-unwind" fn(),
                     >(invoke)
                 }
             }

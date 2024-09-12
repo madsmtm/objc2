@@ -274,6 +274,7 @@ iter_noop:
 	.p2align	4, 0x90
 	.type	iter_retained,@function
 iter_retained:
+.Lfunc_begin0:
 	push	rbp
 	push	r15
 	push	r14
@@ -325,9 +326,9 @@ iter_retained:
 	mov	qword ptr [rsp + 224], rax
 	mov	qword ptr [rsp + 216], 0
 	test	rax, rax
-	je	.LBB5_15
+	je	.LBB5_19
 	cmp	qword ptr [rsp + 160], 0
-	je	.LBB5_13
+	je	.LBB5_17
 	xor	eax, eax
 .LBB5_7:
 	mov	rcx, qword ptr [rsp + 168]
@@ -338,7 +339,7 @@ iter_retained:
 	je	.LBB5_9
 	cmp	qword ptr [rsp + 8], rcx
 	je	.LBB5_11
-	jmp	.LBB5_14
+	jmp	.LBB5_18
 	.p2align	4, 0x90
 .LBB5_9:
 	mov	qword ptr [rsp], 1
@@ -349,11 +350,13 @@ iter_retained:
 	mov	qword ptr [rsp + 216], rdx
 	mov	rdi, qword ptr [rcx + 8*rax]
 	test	rdi, rdi
-	je	.LBB5_15
+	je	.LBB5_19
 	call	r12
 	mov	r13, rax
+.Ltmp0:
 	mov	rdi, rax
 	call	rbx
+.Ltmp1:
 	mov	rdi, r13
 	call	r14
 	mov	r13, qword ptr [rsp + 16]
@@ -368,7 +371,7 @@ iter_retained:
 	call	qword ptr [rip + SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@GOTPCREL]
 	mov	rbp, rax
 	jmp	.LBB5_4
-.LBB5_15:
+.LBB5_19:
 	add	rsp, 232
 	pop	rbx
 	pop	r12
@@ -377,12 +380,62 @@ iter_retained:
 	pop	r15
 	pop	rbp
 	ret
-.LBB5_13:
+.LBB5_17:
 	call	qword ptr [rip + SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)@GOTPCREL]
-.LBB5_14:
+.LBB5_18:
 	call	qword ptr [rip + SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)@GOTPCREL]
+.LBB5_15:
+.Ltmp2:
+	mov	rbx, rax
+.Ltmp3:
+	mov	rdi, r13
+	call	qword ptr [rip + objc_release@GOTPCREL]
+.Ltmp4:
+	mov	rdi, rbx
+	call	_Unwind_Resume@PLT
+.LBB5_14:
+.Ltmp5:
+	call	qword ptr [rip + SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end5:
 	.size	iter_retained, .Lfunc_end5-iter_retained
+	.section	.gcc_except_table.iter_retained,"a",@progbits
+	.p2align	2, 0x0
+GCC_except_table5:
+.Lexception0:
+	.byte	255
+	.byte	155
+	.uleb128 .Lttbase0-.Lttbaseref0
+.Lttbaseref0:
+	.byte	1
+	.uleb128 .Lcst_end0-.Lcst_begin0
+.Lcst_begin0:
+	.uleb128 .Lfunc_begin0-.Lfunc_begin0
+	.uleb128 .Ltmp0-.Lfunc_begin0
+	.byte	0
+	.byte	0
+	.uleb128 .Ltmp0-.Lfunc_begin0
+	.uleb128 .Ltmp1-.Ltmp0
+	.uleb128 .Ltmp2-.Lfunc_begin0
+	.byte	0
+	.uleb128 .Ltmp1-.Lfunc_begin0
+	.uleb128 .Ltmp3-.Ltmp1
+	.byte	0
+	.byte	0
+	.uleb128 .Ltmp3-.Lfunc_begin0
+	.uleb128 .Ltmp4-.Ltmp3
+	.uleb128 .Ltmp5-.Lfunc_begin0
+	.byte	1
+	.uleb128 .Ltmp4-.Lfunc_begin0
+	.uleb128 .Lfunc_end5-.Ltmp4
+	.byte	0
+	.byte	0
+.Lcst_end0:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+.Lttbase0:
+	.byte	0
+	.p2align	2, 0x0
 
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
@@ -390,4 +443,12 @@ iter_retained:
 	.asciz	"countByEnumeratingWithState:objects:count:"
 	.size	.Lanon.[ID].0, 43
 
+	.hidden	DW.ref.rust_eh_personality
+	.weak	DW.ref.rust_eh_personality
+	.section	.data.DW.ref.rust_eh_personality,"awG",@progbits,DW.ref.rust_eh_personality,comdat
+	.p2align	3, 0x0
+	.type	DW.ref.rust_eh_personality,@object
+	.size	DW.ref.rust_eh_personality, 8
+DW.ref.rust_eh_personality:
+	.quad	rust_eh_personality
 	.section	".note.GNU-stack","",@progbits

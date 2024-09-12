@@ -73,6 +73,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Fixed `GlobalBlock` not having the correct variance. This may
   break if you were using lifetimes in your parameters, as those are now a bit
   too restrictive.
+* **BREAKING**: Converted function signatures into using `extern "C-unwind"`.
+  This allows unwinding through blocks.
 
 
 ## 0.4.0 - 2023-12-03

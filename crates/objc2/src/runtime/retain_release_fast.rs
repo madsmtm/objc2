@@ -72,6 +72,8 @@ pub(crate) unsafe fn objc_retain_fast(obj: *mut AnyObject) -> *mut AnyObject {
     // As per the ARM64 calling convention, the return value is put in `x0`.
     //
     // That the function itself is safe to call is upheld by the caller.
+    //
+    // TODO: Unwinding.
     unsafe {
         let result;
         core::arch::asm!(
@@ -105,6 +107,8 @@ pub(crate) unsafe fn objc_release_fast(obj: *mut AnyObject) {
     // SAFETY: See the file header.
     //
     // That the function itself is safe to call is upheld by the caller.
+    //
+    // TODO: Unwinding.
     unsafe {
         core::arch::asm!(
             "bl _objc_release_{obj:x}",

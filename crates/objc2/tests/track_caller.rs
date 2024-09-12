@@ -1,8 +1,4 @@
-#![cfg(all(
-    target_pointer_width = "64",
-    feature = "unstable-c-unwind",
-    not(feature = "catch-all")
-))]
+#![cfg(all(target_pointer_width = "64", not(feature = "catch-all")))]
 #![allow(dead_code)]
 //! Test that our use of #[track_caller] is making the correct line number
 //! show up.
@@ -14,7 +10,9 @@ use std::sync::Mutex;
 use objc2::encode::Encode;
 use objc2::rc::{self, Allocated, Retained};
 use objc2::runtime::{self, NSObject};
-use objc2::{class, declare_class, msg_send, msg_send_id, ClassType, DeclaredClass};
+use objc2::{
+    class, declare_class, msg_send, msg_send_id, AllocAnyThread, ClassType, DeclaredClass,
+};
 
 #[path = "../src/rc/test_object.rs"]
 #[allow(dead_code)]

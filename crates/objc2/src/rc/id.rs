@@ -486,7 +486,7 @@ impl<T: Message> Retained<T> {
             //     "call {}",
             //     sym objc2::ffi::objc_retainAutoreleasedReturnValue,
             //     inout("rax") obj,
-            //     clobber_abi("C"),
+            //     clobber_abi("C-unwind"),
             // );
         }
 
@@ -604,7 +604,7 @@ impl<T: Message> Retained<T> {
     ///
     /// let mut builder = ClassBuilder::new("ExampleObject", class!(NSObject)).unwrap();
     ///
-    /// extern "C" fn get(cls: &AnyClass, _cmd: Sel) -> *mut AnyObject {
+    /// extern "C-unwind" fn get(cls: &AnyClass, _cmd: Sel) -> *mut AnyObject {
     ///     let obj: Retained<AnyObject> = unsafe { msg_send_id![cls, new] };
     ///     Retained::autorelease_return(obj)
     /// }
@@ -612,7 +612,7 @@ impl<T: Message> Retained<T> {
     /// unsafe {
     ///     builder.add_class_method(
     ///         sel!(get),
-    ///         get as extern "C" fn(_, _) -> _,
+    ///         get as extern "C-unwind" fn(_, _) -> _,
     ///     );
     /// }
     ///

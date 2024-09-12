@@ -287,6 +287,7 @@ LBB4_7:
 	.globl	_iter_retained
 	.p2align	4, 0x90
 _iter_retained:
+Lfunc_begin0:
 	push	rbp
 	mov	rbp, rsp
 	push	r15
@@ -344,9 +345,9 @@ LBB5_4:
 	mov	qword ptr [rbp - 48], rax
 	mov	qword ptr [rbp - 56], 0
 	test	rax, rax
-	je	LBB5_15
+	je	LBB5_19
 	cmp	qword ptr [rbp - 112], 0
-	je	LBB5_13
+	je	LBB5_17
 	xor	eax, eax
 LBB5_7:
 	mov	rcx, qword ptr [rbp - 104]
@@ -357,7 +358,7 @@ LBB5_7:
 	je	LBB5_9
 	cmp	qword ptr [rbp - 264], rcx
 	je	LBB5_11
-	jmp	LBB5_14
+	jmp	LBB5_18
 	.p2align	4, 0x90
 LBB5_9:
 	mov	qword ptr [rbp - 272], 1
@@ -368,11 +369,13 @@ LBB5_11:
 	mov	qword ptr [rbp - 56], rdx
 	mov	rdi, qword ptr [rcx + 8*rax]
 	test	rdi, rdi
-	je	LBB5_15
+	je	LBB5_19
 	call	_objc_retain
 	mov	r13, rax
+Ltmp0:
 	mov	rdi, rax
 	call	_use_obj
+Ltmp1:
 	mov	rdi, r13
 	call	_objc_release
 	mov	rdi, qword ptr [rbp - 256]
@@ -389,7 +392,7 @@ LBB5_3:
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB5_4
-LBB5_15:
+LBB5_19:
 	add	rsp, 232
 	pop	rbx
 	pop	r12
@@ -398,10 +401,61 @@ LBB5_15:
 	pop	r15
 	pop	rbp
 	ret
-LBB5_13:
+LBB5_17:
 	call	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)
-LBB5_14:
+LBB5_18:
 	call	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)
+LBB5_15:
+Ltmp2:
+	mov	rbx, rax
+Ltmp3:
+	mov	rdi, r13
+	call	_objc_release
+Ltmp4:
+	mov	rdi, rbx
+	call	__Unwind_Resume
+LBB5_14:
+Ltmp5:
+	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+Lfunc_end0:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table5:
+Lexception0:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase0-Lttbaseref0
+Lttbaseref0:
+	.byte	1
+	.uleb128 Lcst_end0-Lcst_begin0
+Lcst_begin0:
+	.uleb128 Lfunc_begin0-Lfunc_begin0
+	.uleb128 Ltmp0-Lfunc_begin0
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp0-Lfunc_begin0
+	.uleb128 Ltmp1-Ltmp0
+	.uleb128 Ltmp2-Lfunc_begin0
+	.byte	0
+	.uleb128 Ltmp1-Lfunc_begin0
+	.uleb128 Ltmp3-Ltmp1
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp3-Lfunc_begin0
+	.uleb128 Ltmp4-Ltmp3
+	.uleb128 Ltmp5-Lfunc_begin0
+	.byte	1
+	.uleb128 Ltmp4-Lfunc_begin0
+	.uleb128 Lfunc_end0-Ltmp4
+	.byte	0
+	.byte	0
+Lcst_end0:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase0:
+	.byte	0
+	.p2align	2, 0x0
 
 	.section	__TEXT,__const
 l_anon.[ID].0:

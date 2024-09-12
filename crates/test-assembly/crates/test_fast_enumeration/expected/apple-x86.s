@@ -280,12 +280,13 @@ LBB4_7:
 	.globl	_iter_retained
 	.p2align	4, 0x90
 _iter_retained:
+Lfunc_begin0:
 	push	ebp
 	mov	ebp, esp
 	push	ebx
 	push	edi
 	push	esi
-	sub	esp, 124
+	sub	esp, 140
 	call	L5$pb
 L5$pb:
 	pop	eax
@@ -323,19 +324,17 @@ LBB5_2:
 	test	eax, eax
 	je	LBB5_3
 LBB5_4:
-	sub	esp, 12
-	push	16
 	lea	ecx, [ebp - 120]
-	push	ecx
-	push	ebx
-	push	eax
-	push	esi
+	mov	dword ptr [esp + 12], ecx
+	mov	dword ptr [esp + 8], ebx
+	mov	dword ptr [esp + 4], eax
+	mov	dword ptr [esp], esi
+	mov	dword ptr [esp + 16], 16
 	call	_objc_msgSend
-	add	esp, 32
 	mov	dword ptr [ebp - 20], eax
 	mov	dword ptr [ebp - 24], 0
 	test	eax, eax
-	je	LBB5_13
+	je	LBB5_18
 	xor	eax, eax
 	cmp	dword ptr [ebp - 52], 0
 	je	LBB5_6
@@ -359,19 +358,16 @@ LBB5_12:
 	mov	dword ptr [ebp - 24], edx
 	mov	eax, dword ptr [ecx + 4*eax]
 	test	eax, eax
-	je	LBB5_13
-	sub	esp, 12
-	push	eax
+	je	LBB5_18
+	mov	dword ptr [esp], eax
 	call	_objc_retain
-	add	esp, 16
 	mov	esi, eax
-	sub	esp, 12
-	push	eax
+Ltmp0:
+	mov	dword ptr [esp], eax
 	call	_use_obj
-	add	esp, 4
-	push	esi
+Ltmp1:
+	mov	dword ptr [esp], esi
 	call	_objc_release
-	add	esp, 16
 	mov	esi, dword ptr [ebp - 124]
 	mov	eax, dword ptr [ebp - 24]
 	mov	ecx, dword ptr [ebp - 20]
@@ -379,14 +375,13 @@ LBB5_12:
 	jae	LBB5_2
 	jmp	LBB5_11
 LBB5_3:
-	sub	esp, 8
-	push	dword ptr [ebp - 16]
-	push	edi
+	mov	eax, dword ptr [ebp - 16]
+	mov	dword ptr [esp + 4], eax
+	mov	dword ptr [esp], edi
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	add	esp, 16
 	jmp	LBB5_4
-LBB5_13:
-	add	esp, 124
+LBB5_18:
+	add	esp, 140
 	pop	esi
 	pop	edi
 	pop	ebx
@@ -396,6 +391,57 @@ LBB5_6:
 	call	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)
 LBB5_10:
 	call	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)
+LBB5_16:
+Ltmp2:
+	mov	edi, eax
+Ltmp3:
+	mov	dword ptr [esp], esi
+	call	_objc_release
+Ltmp4:
+	mov	dword ptr [esp], edi
+	call	__Unwind_Resume
+LBB5_15:
+Ltmp5:
+	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+Lfunc_end0:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table5:
+Lexception0:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase0-Lttbaseref0
+Lttbaseref0:
+	.byte	1
+	.uleb128 Lcst_end0-Lcst_begin0
+Lcst_begin0:
+	.uleb128 Lfunc_begin0-Lfunc_begin0
+	.uleb128 Ltmp0-Lfunc_begin0
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp0-Lfunc_begin0
+	.uleb128 Ltmp1-Ltmp0
+	.uleb128 Ltmp2-Lfunc_begin0
+	.byte	0
+	.uleb128 Ltmp1-Lfunc_begin0
+	.uleb128 Ltmp3-Ltmp1
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp3-Lfunc_begin0
+	.uleb128 Ltmp4-Ltmp3
+	.uleb128 Ltmp5-Lfunc_begin0
+	.byte	1
+	.uleb128 Ltmp4-Lfunc_begin0
+	.uleb128 Lfunc_end0-Ltmp4
+	.byte	0
+	.byte	0
+Lcst_end0:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase0:
+	.byte	0
+	.p2align	2, 0x0
 
 	.section	__TEXT,__const
 l_anon.[ID].0:
@@ -404,6 +450,9 @@ l_anon.[ID].0:
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
 LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
 	.indirect_symbol	SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)
+	.long	0
+L_rust_eh_personality$non_lazy_ptr:
+	.indirect_symbol	_rust_eh_personality
 	.long	0
 
 .subsections_via_symbols

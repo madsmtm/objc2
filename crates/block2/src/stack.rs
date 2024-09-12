@@ -77,7 +77,7 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
     const SIZE: c_ulong = mem::size_of::<Self>() as _;
 
     // Drop the closure that this block contains.
-    crate::__c_unwind! {unsafe extern "C" fn drop_closure(block: *mut c_void) {
+    unsafe extern "C-unwind" fn drop_closure(block: *mut c_void) {
         let block: *mut Self = block.cast();
         // When this function is called, the block no longer lives on the
         // stack, it has been moved to the heap as part of some `_Block_copy`
@@ -97,7 +97,7 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
         // part of some `_Block_copy` operation, and as such it is valid to
         // drop here.
         unsafe { ptr::drop_in_place(closure) };
-    }}
+    }
 
     const DESCRIPTOR_BASIC: BlockDescriptor = BlockDescriptor {
         reserved: 0,
@@ -108,7 +108,7 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
 // `StackBlock::new`
 impl<'f, A, R, Closure: Clone> StackBlock<'f, A, R, Closure> {
     // Clone the closure from one block to another.
-    crate::__c_unwind! {unsafe extern "C" fn clone_closure(dst: *mut c_void, src: *const c_void) {
+    unsafe extern "C-unwind" fn clone_closure(dst: *mut c_void, src: *const c_void) {
         let dst: *mut Self = dst.cast();
         let src: *const Self = src.cast();
         // When this function is called as part of some `_Block_copy`
@@ -132,7 +132,7 @@ impl<'f, A, R, Closure: Clone> StackBlock<'f, A, R, Closure> {
         // already `memmove`d data once more, which is unnecessary for closure
         // captures that implement `Copy`.
         unsafe { ptr::write(dst_closure, src_closure.clone()) };
-    }}
+    }
 
     const DESCRIPTOR_WITH_CLONE: BlockDescriptorCopyDispose = BlockDescriptorCopyDispose {
         reserved: 0,
@@ -198,10 +198,10 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
 
 // `RcBlock::new`
 impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
-    crate::__c_unwind! {unsafe extern "C" fn empty_clone_closure(_dst: *mut c_void, _src: *const c_void) {
+    unsafe extern "C-unwind" fn empty_clone_closure(_dst: *mut c_void, _src: *const c_void) {
         // We do nothing, the closure has been `memmove`'d already, and
         // ownership will be passed in `RcBlock::new`.
-    }}
+    }
 
     const DESCRIPTOR_WITH_DROP: BlockDescriptorCopyDispose = BlockDescriptorCopyDispose {
         reserved: 0,

@@ -154,7 +154,7 @@
 // Note: `doc_notable_trait` doesn't really make sense for us, it's only shown
 // for functions returning a specific trait.
 #![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg, doc_cfg_hide))]
-#![cfg_attr(docsrs, doc(cfg_hide(doc, feature = "unstable-c-unwind")))]
+#![cfg_attr(docsrs, doc(cfg_hide(doc)))]
 #![warn(missing_docs)]
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]

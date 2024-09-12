@@ -75,16 +75,6 @@ unstable-static-class-inlined = ["unstable-static-class"]
 # Uses nightly features to make autorelease pools fully sound
 unstable-autoreleasesafe = []
 
-# Uses `extern "C-unwind"` to make method calls that throw safe.
-#
-# This raises MSRV to `1.71`.
-#
-# You must manually enable `objc2-exception-helper/unstable-c-unwind` to use this.
-#
-# Warning: Enabling this is a breaking change for consumer crates, as it
-# changes the signature of functions.
-unstable-c-unwind = []
-
 # Enable some new features available on ARM64 on:
 # - macOS 13.0
 # - iOS 16.0
@@ -154,7 +144,7 @@ harness = false
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["unstable-c-unwind", "exception"]
+features = ["exception"]
 targets = [
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",

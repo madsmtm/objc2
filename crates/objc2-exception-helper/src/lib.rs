@@ -18,9 +18,6 @@ extern crate std;
 
 use core::ffi::c_void;
 
-#[cfg(not(feature = "unstable-c-unwind"))]
-type TryCatchClosure = extern "C" fn(*mut c_void);
-#[cfg(feature = "unstable-c-unwind")]
 type TryCatchClosure = extern "C-unwind" fn(*mut c_void);
 
 // `try_catch` is deliberately `extern "C"`, we just prevented the unwind.
@@ -59,11 +56,6 @@ mod tests {
 
         static VALUE: SyncPtr = SyncPtr(&VALUE.0 as *const *mut c_void as *mut c_void);
 
-        #[cfg(not(feature = "unstable-c-unwind"))]
-        extern "C" fn check_value(value: *mut c_void) {
-            assert_eq!(VALUE.0, value);
-        }
-        #[cfg(feature = "unstable-c-unwind")]
         extern "C-unwind" fn check_value(value: *mut c_void) {
             assert_eq!(VALUE.0, value);
         }

@@ -219,21 +219,14 @@ impl RefUnwindSafe for Exception {}
 ///
 /// This is the Objective-C equivalent of Rust's [`panic!`].
 ///
-///
-/// # Safety
-///
-/// This unwinds from Objective-C, and the exception must be caught using an
-/// Objective-C exception handler like [`catch`] (and specifically not
-/// [`catch_unwind`]).
-///
-/// This also invokes undefined behaviour unless `C-unwind` is used, which it
-/// only is if the `unstable-c-unwind` feature flag is enabled (raises MSRV to
-/// 1.71).
+/// This unwinds from Objective-C, and the exception should be caught using an
+/// Objective-C exception handler like [`catch`]. It _may_ be caught by
+/// [`catch_unwind`], though the error message is unlikely to be great.
 ///
 /// [`catch_unwind`]: std::panic::catch_unwind
 #[inline]
 #[cfg(feature = "exception")] // For consistency, not strictly required
-pub unsafe fn throw(exception: Retained<Exception>) -> ! {
+pub fn throw(exception: Retained<Exception>) -> ! {
     // We consume the exception object since we can't make any guarantees
     // about its mutability.
     let ptr: *const AnyObject = &exception.0;
@@ -245,23 +238,6 @@ pub unsafe fn throw(exception: Retained<Exception>) -> ! {
 
 #[cfg(feature = "exception")]
 unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exception>>> {
-    #[cfg(not(feature = "unstable-c-unwind"))]
-    let f = {
-        extern "C" fn try_objc_execute_closure<F>(closure: &mut Option<F>)
-        where
-            F: FnOnce(),
-        {
-            // This is always passed Some, so it's safe to unwrap
-            let closure = closure.take().unwrap();
-            closure();
-        }
-
-        let f: extern "C" fn(&mut Option<F>) = try_objc_execute_closure;
-        let f: extern "C" fn(*mut c_void) = unsafe { mem::transmute(f) };
-        f
-    };
-
-    #[cfg(feature = "unstable-c-unwind")]
     let f = {
         extern "C-unwind" fn try_objc_execute_closure<F>(closure: &mut Option<F>)
         where
@@ -327,10 +303,6 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exce
 ///
 /// The given closure must not panic (e.g. normal Rust unwinding into this
 /// causes undefined behaviour).
-///
-/// This also invokes undefined behaviour unless `C-unwind` is used, which it
-/// only is if the `unstable-c-unwind` feature flag is enabled (raises MSRV to
-/// 1.71).
 #[cfg(feature = "exception")]
 pub unsafe fn catch<R>(
     closure: impl FnOnce() -> R + UnwindSafe,
@@ -351,6 +323,7 @@ mod tests {
     use alloc::format;
     use alloc::string::ToString;
     use core::panic::AssertUnwindSafe;
+    use std::panic::catch_unwind;
 
     use super::*;
     use crate::msg_send_id;
@@ -372,7 +345,6 @@ mod tests {
         all(target_vendor = "apple", target_os = "macos", target_arch = "x86"),
         ignore = "`NULL` exceptions are invalid on 32-bit / w. fragile runtime"
     )]
-    #[cfg_attr(feature = "gnustep-1-7", ignore = "requires C-unwind")]
     fn test_catch_null() {
         let s = "Hello".to_string();
         let result = unsafe {
@@ -408,7 +380,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(feature = "gnustep-1-7", ignore = "requires C-unwind")]
     fn test_throw_catch_object() {
         let obj = NSObject::new();
         // TODO: Investigate why this is required on GNUStep!
@@ -422,5 +393,15 @@ mod tests {
         assert_eq!(format!("{obj:?}"), format!("exception <NSObject: {ptr:p}>"));
 
         assert!(ptr::eq(&*obj, ptr));
+    }
+
+    #[test]
+    #[ignore = "currently aborts"]
+    fn throw_catch_unwind() {
+        let obj = NSObject::new();
+        let obj: Retained<Exception> = unsafe { Retained::cast(obj) };
+
+        let result = catch_unwind(|| throw(obj));
+        let _ = result.unwrap_err();
     }
 }

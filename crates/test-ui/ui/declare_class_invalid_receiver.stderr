@@ -10,7 +10,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `Box<CustomObject>`, which is required by `extern "C" fn(Box<CustomObject>, objc2::runtime::Sel): MethodImplementation`
+  | |_the trait `MessageReceiver` is not implemented for `Box<CustomObject>`, which is required by `extern "C-unwind" fn(Box<CustomObject>, objc2::runtime::Sel): MethodImplementation`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
@@ -21,7 +21,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C" fn(Box<CustomObject>, objc2::runtime::Sel)` to implement `MethodImplementation`
+  = note: required for `extern "C-unwind" fn(Box<CustomObject>, objc2::runtime::Sel)` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
@@ -44,7 +44,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `Retained<CustomObject>`, which is required by `extern "C" fn(Retained<CustomObject>, objc2::runtime::Sel): MethodImplementation`
+  | |_the trait `MessageReceiver` is not implemented for `Retained<CustomObject>`, which is required by `extern "C-unwind" fn(Retained<CustomObject>, objc2::runtime::Sel): MethodImplementation`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
@@ -55,7 +55,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C" fn(Retained<CustomObject>, objc2::runtime::Sel)` to implement `MethodImplementation`
+  = note: required for `extern "C-unwind" fn(Retained<CustomObject>, objc2::runtime::Sel)` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
@@ -78,7 +78,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `CustomObject`, which is required by `extern "C" fn(CustomObject, objc2::runtime::Sel): MethodImplementation`
+  | |_the trait `MessageReceiver` is not implemented for `CustomObject`, which is required by `extern "C-unwind" fn(CustomObject, objc2::runtime::Sel): MethodImplementation`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
@@ -89,7 +89,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C" fn(CustomObject, objc2::runtime::Sel)` to implement `MethodImplementation`
+  = note: required for `extern "C-unwind" fn(CustomObject, objc2::runtime::Sel)` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
@@ -100,7 +100,7 @@ note: required by a bound in `ClassBuilderHelper::<T>::add_method`
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0271]: type mismatch resolving `<extern "C" fn(&AnyClass, Sel) as MethodImplementation>::Callee == CustomObject`
+error[E0271]: type mismatch resolving `<extern "C-unwind" fn(&AnyClass, Sel) as MethodImplementation>::Callee == CustomObject`
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
@@ -125,7 +125,7 @@ note: required by a bound in `ClassBuilderHelper::<T>::add_method`
   |                                 ^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0271]: type mismatch resolving `<extern "C" fn(&NSObject, Sel) as MethodImplementation>::Callee == CustomObject`
+error[E0271]: type mismatch resolving `<extern "C-unwind" fn(&NSObject, Sel) as MethodImplementation>::Callee == CustomObject`
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
@@ -162,7 +162,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `Box<CustomObject>`, which is required by `extern "C" fn(Box<CustomObject>, objc2::runtime::Sel) -> IdReturnValue: MethodImplementation`
+  | |_the trait `MessageReceiver` is not implemented for `Box<CustomObject>`, which is required by `extern "C-unwind" fn(Box<CustomObject>, objc2::runtime::Sel) -> IdReturnValue: MethodImplementation`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
@@ -173,7 +173,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C" fn(Box<CustomObject>, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
+  = note: required for `extern "C-unwind" fn(Box<CustomObject>, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
@@ -196,7 +196,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `Retained<CustomObject>`, which is required by `extern "C" fn(Retained<CustomObject>, objc2::runtime::Sel) -> IdReturnValue: MethodImplementation`
+  | |_the trait `MessageReceiver` is not implemented for `Retained<CustomObject>`, which is required by `extern "C-unwind" fn(Retained<CustomObject>, objc2::runtime::Sel) -> IdReturnValue: MethodImplementation`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
@@ -207,7 +207,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C" fn(Retained<CustomObject>, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
+  = note: required for `extern "C-unwind" fn(Retained<CustomObject>, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
@@ -230,7 +230,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `CustomObject`, which is required by `extern "C" fn(CustomObject, objc2::runtime::Sel) -> IdReturnValue: MethodImplementation`
+  | |_the trait `MessageReceiver` is not implemented for `CustomObject`, which is required by `extern "C-unwind" fn(CustomObject, objc2::runtime::Sel) -> IdReturnValue: MethodImplementation`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
@@ -241,7 +241,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C" fn(CustomObject, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
+  = note: required for `extern "C-unwind" fn(CustomObject, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |

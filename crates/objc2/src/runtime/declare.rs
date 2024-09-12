@@ -73,7 +73,7 @@ impl<T> Log2Alignment for T {
 ///     // We "cheat" a bit here, and use `AnyObject` instead of `NSObject`,
 ///     // since only the former is allowed to be a mutable receiver (which is
 ///     // always safe in `init` methods, but not in others).
-///     unsafe extern "C" fn init_with_number(
+///     unsafe extern "C-unwind" fn init_with_number(
 ///         this: &mut AnyObject,
 ///         _cmd: Sel,
 ///         number: u32,
@@ -89,12 +89,12 @@ impl<T> Log2Alignment for T {
 ///     unsafe {
 ///         builder.add_method(
 ///             sel!(initWithNumber:),
-///             init_with_number as unsafe extern "C" fn(_, _, _) -> _,
+///             init_with_number as unsafe extern "C-unwind" fn(_, _, _) -> _,
 ///         );
 ///     }
 ///
 ///     // Add convenience method for getting a new instance with the number
-///     extern "C" fn with_number(
+///     extern "C-unwind" fn with_number(
 ///         cls: &AnyClass,
 ///         _cmd: Sel,
 ///         number: u32,
@@ -110,28 +110,28 @@ impl<T> Log2Alignment for T {
 ///     unsafe {
 ///         builder.add_class_method(
 ///             sel!(withNumber:),
-///             with_number as extern "C" fn(_, _, _) -> _,
+///             with_number as extern "C-unwind" fn(_, _, _) -> _,
 ///         );
 ///     }
 ///
 ///     // Add an Objective-C method for setting the number
-///     extern "C" fn my_number_set(this: &NSObject, _cmd: Sel, number: u32) {
+///     extern "C-unwind" fn my_number_set(this: &NSObject, _cmd: Sel, number: u32) {
 ///         let ivar = AnyClass::get("MyNumber").unwrap().instance_variable("_number").unwrap();
 ///         // SAFETY: The ivar is added with the same type above
 ///         unsafe { ivar.load::<Cell<u32>>(this) }.set(number);
 ///     }
 ///     unsafe {
-///         builder.add_method(sel!(setNumber:), my_number_set as extern "C" fn(_, _, _));
+///         builder.add_method(sel!(setNumber:), my_number_set as extern "C-unwind" fn(_, _, _));
 ///     }
 ///
 ///     // Add an Objective-C method for getting the number
-///     extern "C" fn my_number_get(this: &NSObject, _cmd: Sel) -> u32 {
+///     extern "C-unwind" fn my_number_get(this: &NSObject, _cmd: Sel) -> u32 {
 ///         let ivar = AnyClass::get("MyNumber").unwrap().instance_variable("_number").unwrap();
 ///         // SAFETY: The ivar is added with the same type above
 ///         unsafe { ivar.load::<Cell<u32>>(this) }.get()
 ///     }
 ///     unsafe {
-///         builder.add_method(sel!(number), my_number_get as extern "C" fn(_, _) -> _);
+///         builder.add_method(sel!(number), my_number_get as extern "C-unwind" fn(_, _) -> _);
 ///     }
 ///
 ///     builder.register()

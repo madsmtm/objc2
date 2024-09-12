@@ -292,8 +292,10 @@ impl<T: Message> NSMutableArray<T> {
     #[cfg(feature = "NSObjCRuntime")]
     #[doc(alias = "sortUsingFunction:context:")]
     pub fn sort_by<F: FnMut(&T, &T) -> core::cmp::Ordering>(&self, compare: F) {
-        // TODO: "C-unwind"
-        unsafe extern "C" fn compare_with_closure<T, F: FnMut(&T, &T) -> core::cmp::Ordering>(
+        unsafe extern "C-unwind" fn compare_with_closure<
+            T,
+            F: FnMut(&T, &T) -> core::cmp::Ordering,
+        >(
             obj1: core::ptr::NonNull<T>,
             obj2: core::ptr::NonNull<T>,
             context: *mut core::ffi::c_void,
@@ -311,7 +313,7 @@ impl<T: Message> NSMutableArray<T> {
         }
 
         // Create function pointer
-        let f: unsafe extern "C" fn(_, _, _) -> _ = compare_with_closure::<T, F>;
+        let f: unsafe extern "C-unwind" fn(_, _, _) -> _ = compare_with_closure::<T, F>;
 
         // Grab a type-erased pointer to the closure (a pointer to stack).
         let mut closure = compare;

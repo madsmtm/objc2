@@ -228,12 +228,8 @@ Lloh69:
 	add	x2, x2, l_anon.[ID].9@PAGEOFF
 	mov	x22, x8
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	stp	x19, x20, [x22]
-	stp	x21, x0, [x22, #16]
-	ldp	x29, x30, [sp, #32]
-	ldp	x20, x19, [sp, #16]
-	ldp	x22, x21, [sp], #48
-	ret
+	mov	x8, x22
+	b	LBB4_4
 	.loh AdrpLdr	Lloh32, Lloh33
 	.loh AdrpLdr	Lloh34, Lloh35
 	.loh AdrpLdr	Lloh36, Lloh37
@@ -304,10 +300,8 @@ Lloh81:
 	add	x2, x2, l_anon.[ID].2@PAGEOFF
 	mov	x20, x8
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	stp	x19, x0, [x20]
-	ldp	x29, x30, [sp, #16]
-	ldp	x20, x19, [sp], #32
-	ret
+	mov	x8, x20
+	b	LBB5_2
 	.loh AdrpAdd	Lloh74, Lloh75
 	.loh AdrpAdd	Lloh72, Lloh73
 	.loh AdrpAdd	Lloh70, Lloh71

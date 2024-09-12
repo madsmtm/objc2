@@ -416,7 +416,10 @@ extern_methods!(
 
 #[test]
 #[should_panic = "`&mut Retained<_>` is not supported in `declare_class!` yet"]
-#[ignore = "unwinds through FFI boundary, requires C-unwind"]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "unwinding seems to not work properly here"
+)]
 fn out_param1() {
     let mut param = OutParam::new();
     OutParam::unsupported1(&mut param);
@@ -424,14 +427,20 @@ fn out_param1() {
 
 #[test]
 #[should_panic = "`Option<&mut Retained<_>>` is not supported in `declare_class!` yet"]
-#[ignore = "unwinds through FFI boundary, requires C-unwind"]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "unwinding seems to not work properly here"
+)]
 fn out_param2() {
     OutParam::unsupported2(None);
 }
 
 #[test]
 #[should_panic = "`&mut Option<Retained<_>>` is not supported in `declare_class!` yet"]
-#[ignore = "unwinds through FFI boundary, requires C-unwind"]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "unwinding seems to not work properly here"
+)]
 fn out_param3() {
     let mut param = Some(OutParam::new());
     OutParam::unsupported3(&mut param);
@@ -439,7 +448,10 @@ fn out_param3() {
 
 #[test]
 #[should_panic = "`Option<&mut Option<Retained<_>>>` is not supported in `declare_class!` yet"]
-#[ignore = "unwinds through FFI boundary, requires C-unwind"]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "unwinding seems to not work properly here"
+)]
 fn out_param4() {
     OutParam::unsupported4(None);
 }

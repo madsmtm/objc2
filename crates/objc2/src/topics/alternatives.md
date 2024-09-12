@@ -47,7 +47,7 @@ And then exposed to Rust like this:
 use libc::free;
 use std::ffi::{c_char, c_void, CStr, CString};
 
-extern "C" {
+extern "C-unwind" {
     fn copy_current_locale_identifier() -> *const c_char;
 }
 

@@ -31,7 +31,7 @@ mod test_object;
 mod test_simd_return;
 
 #[no_mangle]
-extern "C" fn debug_block(block: *mut c_void) {
+extern "C-unwind" fn debug_block(block: *mut c_void) {
     let block: &Block<dyn Fn()> = unsafe { &*(block as *const Block<dyn Fn()>) };
     std::println!("{block:#?}");
 }
