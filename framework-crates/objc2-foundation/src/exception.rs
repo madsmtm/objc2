@@ -8,7 +8,7 @@ use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSObjectProtocol};
 use objc2::{extern_methods, sel};
 
-use crate::Foundation::NSException;
+use crate::NSException;
 
 // SAFETY: Exception objects are immutable data containers, and documented as
 // thread safe.
@@ -33,9 +33,9 @@ impl NSException {
     #[cfg(all(feature = "NSObjCRuntime", feature = "NSString"))]
     #[cfg(feature = "NSDictionary")]
     pub fn new(
-        name: &crate::Foundation::NSExceptionName,
-        reason: Option<&crate::Foundation::NSString>,
-        user_info: Option<&crate::Foundation::NSDictionary>,
+        name: &crate::NSExceptionName,
+        reason: Option<&crate::NSString>,
+        user_info: Option<&crate::NSDictionary>,
     ) -> Option<Retained<Self>> {
         use objc2::AllocAnyThread;
 

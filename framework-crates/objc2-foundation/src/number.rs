@@ -24,7 +24,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::encode::Encoding;
 use objc2::rc::Retained;
 
-use crate::Foundation::NSNumber;
+use crate::NSNumber;
 
 impl UnwindSafe for NSNumber {}
 impl RefUnwindSafe for NSNumber {}
@@ -61,7 +61,7 @@ impl NSNumber {
 
     #[inline]
     #[cfg(feature = "NSGeometry")]
-    pub fn new_cgfloat(val: crate::Foundation::CGFloat) -> Retained<Self> {
+    pub fn new_cgfloat(val: crate::CGFloat) -> Retained<Self> {
         #[cfg(target_pointer_width = "64")]
         {
             Self::new_f64(val)
@@ -105,7 +105,7 @@ impl NSNumber {
 
     #[inline]
     #[cfg(feature = "NSGeometry")]
-    pub fn as_cgfloat(&self) -> crate::Foundation::CGFloat {
+    pub fn as_cgfloat(&self) -> crate::CGFloat {
         #[cfg(target_pointer_width = "64")]
         {
             self.as_f64()

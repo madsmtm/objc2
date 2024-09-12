@@ -4,7 +4,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::rc::Retained;
 use objc2::AllocAnyThread;
 
-use crate::Foundation::*;
+use crate::*;
 
 // Same reasoning as `NSString`.
 impl UnwindSafe for NSAttributedString {}

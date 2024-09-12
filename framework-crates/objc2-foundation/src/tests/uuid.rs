@@ -1,7 +1,7 @@
 #![cfg(feature = "NSUUID")]
 use alloc::format;
 
-use crate::Foundation::NSUUID;
+use crate::NSUUID;
 use objc2::rc::Retained;
 
 #[test]

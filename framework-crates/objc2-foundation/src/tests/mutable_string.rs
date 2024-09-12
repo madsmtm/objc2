@@ -5,8 +5,8 @@ use core::any::TypeId;
 use core::fmt::Write;
 use objc2::runtime::NSObject;
 
-use crate::Foundation::{NSMutableString, NSString};
 use crate::{CopyingHelper, MutableCopyingHelper};
+use crate::{NSMutableString, NSString};
 
 #[test]
 fn display_debug() {
@@ -50,7 +50,7 @@ fn test_with_capacity() {
 #[test]
 #[cfg(feature = "NSObject")]
 fn test_copy() {
-    use crate::Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
+    use crate::{NSCopying, NSMutableCopying, NSObjectProtocol};
     use objc2::rc::Retained;
 
     let s1 = NSMutableString::from_str("abc");
@@ -87,7 +87,7 @@ fn counterpart() {
 #[test]
 #[cfg(all(feature = "NSObject", feature = "NSZone"))]
 fn test_copy_with_zone() {
-    use crate::Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
+    use crate::{NSCopying, NSMutableCopying, NSObjectProtocol};
     use objc2::rc::Retained;
 
     let s1 = NSString::from_str("abc");

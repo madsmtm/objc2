@@ -8,7 +8,7 @@ use objc2::runtime::ProtocolObject;
 use objc2::ClassType;
 use objc2::Message;
 
-use crate::Foundation::{NSFastEnumeration, NSFastEnumerationState};
+use crate::{NSFastEnumeration, NSFastEnumerationState};
 
 /// Swift and Objective-C both have a stack buffer size of 16, so we do that
 /// as well.
@@ -654,11 +654,10 @@ macro_rules! __impl_into_iter {
 #[cfg(feature = "NSValue")]
 mod tests {
     use alloc::vec::Vec;
-
-    use super::*;
     use core::mem::size_of;
 
-    use crate::Foundation::{NSArray, NSNumber};
+    use super::*;
+    use crate::{NSArray, NSNumber};
 
     #[test]
     #[cfg_attr(

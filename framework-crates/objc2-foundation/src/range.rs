@@ -2,7 +2,7 @@ use core::ops::Range;
 
 use objc2::encode::{Encode, Encoding, RefEncode};
 
-use crate::Foundation::NSUInteger;
+use crate::NSUInteger;
 
 /// TODO.
 ///

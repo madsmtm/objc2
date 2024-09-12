@@ -170,7 +170,7 @@ impl NSString {
     ///
     /// Prefer using the [`ns_string!`] macro when possible.
     ///
-    /// [`ns_string!`]: crate::Foundation::ns_string
+    /// [`ns_string!`]: crate::ns_string
     #[doc(alias = "initWithBytes")]
     #[doc(alias = "initWithBytes:length:encoding:")]
     #[allow(clippy::should_implement_trait)] // Not really sure of a better name

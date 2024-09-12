@@ -15,7 +15,7 @@
 //! `utf16_lit`, `windows`, `const_utf16`, `wide-literals`, ...
 use core::ffi::c_void;
 
-use crate::Foundation::NSString;
+use crate::NSString;
 use objc2::runtime::AnyClass;
 
 // This is defined in CoreFoundation, but we don't emit a link attribute

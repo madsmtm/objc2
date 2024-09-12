@@ -422,7 +422,7 @@ mod tests {
     ))]
     #[cfg(feature = "NSGeometry")]
     fn test_partial_eq() {
-        use crate::Foundation::{NSEqualPoints, NSEqualRects, NSEqualSizes};
+        use crate::{NSEqualPoints, NSEqualRects, NSEqualSizes};
 
         // We assume that comparisons handle e.g. `x` and `y` in the same way,
         // therefore we set the coordinates / dimensions to the same.

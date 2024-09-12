@@ -2,7 +2,7 @@
 ///
 /// Equivalent to the [boxed C-strings] `@"string"` syntax in Objective-C.
 ///
-/// [`NSString`]: crate::Foundation::NSString
+/// [`NSString`]: crate::NSString
 /// [boxed C-strings]: https://clang.llvm.org/docs/ObjectiveCLiterals.html#boxed-c-strings
 ///
 ///

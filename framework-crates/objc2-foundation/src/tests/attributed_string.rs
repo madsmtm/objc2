@@ -6,7 +6,7 @@ use alloc::string::ToString;
 use objc2::rc::{autoreleasepool, Retained};
 use objc2::runtime::AnyObject;
 
-use crate::Foundation::{self, ns_string, NSAttributedString, NSObject, NSString};
+use crate::{ns_string, NSAttributedString, NSMutableAttributedString, NSObject, NSString};
 
 #[test]
 fn test_new() {
@@ -32,7 +32,7 @@ fn test_from_nsstring() {
 
 #[test]
 fn test_copy() {
-    use Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
+    use crate::{NSCopying, NSMutableCopying, NSObjectProtocol};
 
     let s1 = NSAttributedString::from_nsstring(ns_string!("abc"));
     let s2 = s1.copy();
@@ -43,7 +43,7 @@ fn test_copy() {
 
     let s3 = s1.mutableCopy();
     assert_ne!(Retained::as_ptr(&s1), Retained::as_ptr(&s3).cast());
-    assert!(s3.is_kind_of::<Foundation::NSMutableAttributedString>());
+    assert!(s3.is_kind_of::<NSMutableAttributedString>());
 }
 
 #[test]
@@ -62,7 +62,7 @@ fn test_debug() {
     let s = unsafe {
         NSAttributedString::new_with_attributes(
             ns_string!("abc"),
-            &Foundation::NSDictionary::from_retained_objects(&[ns_string!("test")], &[obj]),
+            &crate::NSDictionary::from_retained_objects(&[ns_string!("test")], &[obj]),
         )
     };
     let expected = if cfg!(feature = "gnustep-1-7") {
@@ -75,7 +75,7 @@ fn test_debug() {
 
 #[test]
 fn test_new_mutable() {
-    let s = Foundation::NSMutableAttributedString::new();
+    let s = NSMutableAttributedString::new();
     assert_eq!(&s.string().to_string(), "");
 }
 
@@ -85,14 +85,14 @@ fn test_new_mutable() {
     ignore = "thread safety issues regarding initialization"
 )]
 fn test_copy_mutable() {
-    use Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
+    use crate::{NSCopying, NSMutableCopying, NSObjectProtocol};
 
-    let s1 = Foundation::NSMutableAttributedString::from_nsstring(ns_string!("abc"));
+    let s1 = NSMutableAttributedString::from_nsstring(ns_string!("abc"));
     let s2 = s1.copy();
     assert_ne!(Retained::as_ptr(&s1).cast(), Retained::as_ptr(&s2));
     assert!(s2.is_kind_of::<NSAttributedString>());
 
     let s3 = s1.mutableCopy();
     assert_ne!(Retained::as_ptr(&s1), Retained::as_ptr(&s3));
-    assert!(s3.is_kind_of::<Foundation::NSMutableAttributedString>());
+    assert!(s3.is_kind_of::<NSMutableAttributedString>());
 }

@@ -1,7 +1,7 @@
 #![cfg(feature = "NSValue")]
 use alloc::format;
 
-use crate::Foundation::NSNumber;
+use crate::NSNumber;
 
 #[test]
 fn basic() {

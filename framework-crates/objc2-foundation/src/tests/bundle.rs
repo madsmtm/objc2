@@ -1,7 +1,7 @@
 #![cfg(feature = "NSBundle")]
 use alloc::format;
 
-use crate::Foundation::NSBundle;
+use crate::NSBundle;
 
 #[test]
 #[cfg(feature = "NSString")]

@@ -2,7 +2,7 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use crate::Foundation::NSProcessInfo;
+use crate::NSProcessInfo;
 
 // SAFETY: The documentation explicitly states:
 // > NSProcessInfo is thread-safe in macOS 10.7 and later.

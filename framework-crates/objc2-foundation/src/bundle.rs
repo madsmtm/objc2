@@ -1,7 +1,7 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use crate::Foundation::NSBundle;
+use crate::NSBundle;
 
 impl UnwindSafe for NSBundle {}
 impl RefUnwindSafe for NSBundle {}
@@ -9,8 +9,8 @@ impl RefUnwindSafe for NSBundle {}
 impl NSBundle {
     #[cfg(feature = "NSString")]
     #[cfg(feature = "NSDictionary")]
-    pub fn name(&self) -> Option<objc2::rc::Retained<crate::Foundation::NSString>> {
-        use crate::{ns_string, Foundation::NSString};
+    pub fn name(&self) -> Option<objc2::rc::Retained<crate::NSString>> {
+        use crate::{ns_string, NSString};
         use objc2::rc::Retained;
 
         let info = self.infoDictionary()?;

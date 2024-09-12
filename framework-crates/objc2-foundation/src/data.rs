@@ -13,7 +13,7 @@ use objc2::rc::Retained;
 use objc2::rc::RetainedFromIterator;
 use objc2::{extern_methods, AllocAnyThread};
 
-use crate::Foundation::{NSData, NSMutableData};
+use crate::{NSData, NSMutableData};
 
 impl UnwindSafe for NSData {}
 impl RefUnwindSafe for NSData {}

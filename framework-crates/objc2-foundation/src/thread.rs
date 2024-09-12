@@ -1,7 +1,7 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use crate::Foundation::NSThread;
+use crate::NSThread;
 
 use objc2::MainThreadMarker;
 
@@ -14,7 +14,7 @@ impl RefUnwindSafe for NSThread {}
 impl fmt::Debug for NSThread {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Use -[NSThread description] since that includes the thread number
-        let obj: &crate::Foundation::NSObject = self;
+        let obj: &crate::NSObject = self;
         fmt::Debug::fmt(obj, f)
     }
 }

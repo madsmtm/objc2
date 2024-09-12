@@ -184,9 +184,3 @@ pub(crate) type FourCharCode = u32;
 pub type OSType = FourCharCode;
 #[allow(unused)]
 pub(crate) type UTF32Char = u32; // Or maybe Rust's char?
-
-// Temporary
-#[allow(non_snake_case, unused, unreachable_pub)]
-mod Foundation {
-    pub use crate::*;
-}

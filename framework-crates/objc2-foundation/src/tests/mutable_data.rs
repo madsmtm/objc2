@@ -1,6 +1,6 @@
 #![cfg(feature = "NSData")]
 
-use crate::Foundation::{NSData, NSMutableData};
+use crate::{NSData, NSMutableData};
 
 #[test]
 fn test_bytes_mut() {

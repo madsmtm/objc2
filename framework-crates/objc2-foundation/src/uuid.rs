@@ -6,7 +6,7 @@ use objc2::encode::{Encode, Encoding, RefEncode};
 use objc2::rc::{Allocated, Retained};
 use objc2::{extern_methods, AllocAnyThread};
 
-use crate::Foundation::NSUUID;
+use crate::NSUUID;
 
 impl UnwindSafe for NSUUID {}
 impl RefUnwindSafe for NSUUID {}

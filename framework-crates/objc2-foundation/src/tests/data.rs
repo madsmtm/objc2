@@ -1,7 +1,7 @@
 #![cfg(feature = "NSData")]
 use alloc::{format, vec};
 
-use crate::Foundation::NSData;
+use crate::NSData;
 
 #[test]
 fn test_bytes() {

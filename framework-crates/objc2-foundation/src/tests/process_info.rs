@@ -2,7 +2,7 @@
 #![cfg(feature = "NSProcessInfo")]
 use alloc::format;
 
-use crate::Foundation::NSProcessInfo;
+use crate::NSProcessInfo;
 
 #[test]
 fn debug() {

@@ -2,7 +2,7 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use crate::Foundation::NSError;
+use crate::NSError;
 
 impl UnwindSafe for NSError {}
 impl RefUnwindSafe for NSError {}

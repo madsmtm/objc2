@@ -4,10 +4,10 @@ use alloc::borrow::ToOwned;
 use objc2::rc::Retained;
 use objc2::Message;
 
-use crate::Foundation::{self, NSCopying, NSMutableCopying};
+use crate::{NSCopying, NSMutableCopying};
 
 #[cfg(feature = "NSArray")]
-impl<T: Message> ToOwned for Foundation::NSArray<T> {
+impl<T: Message> ToOwned for crate::NSArray<T> {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
@@ -15,7 +15,7 @@ impl<T: Message> ToOwned for Foundation::NSArray<T> {
 }
 
 #[cfg(feature = "NSArray")]
-impl<T: Message> ToOwned for Foundation::NSMutableArray<T> {
+impl<T: Message> ToOwned for crate::NSMutableArray<T> {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.mutableCopy()
@@ -23,7 +23,7 @@ impl<T: Message> ToOwned for Foundation::NSMutableArray<T> {
 }
 
 #[cfg(feature = "NSData")]
-impl ToOwned for Foundation::NSData {
+impl ToOwned for crate::NSData {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
@@ -31,7 +31,7 @@ impl ToOwned for Foundation::NSData {
 }
 
 #[cfg(feature = "NSData")]
-impl ToOwned for Foundation::NSMutableData {
+impl ToOwned for crate::NSMutableData {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.mutableCopy()
@@ -39,7 +39,7 @@ impl ToOwned for Foundation::NSMutableData {
 }
 
 #[cfg(feature = "NSException")]
-impl ToOwned for Foundation::NSException {
+impl ToOwned for crate::NSException {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
@@ -47,7 +47,7 @@ impl ToOwned for Foundation::NSException {
 }
 
 #[cfg(feature = "NSSet")]
-impl<T: Message> ToOwned for Foundation::NSSet<T> {
+impl<T: Message> ToOwned for crate::NSSet<T> {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
@@ -55,7 +55,7 @@ impl<T: Message> ToOwned for Foundation::NSSet<T> {
 }
 
 #[cfg(feature = "NSSet")]
-impl<T: Message> ToOwned for Foundation::NSMutableSet<T> {
+impl<T: Message> ToOwned for crate::NSMutableSet<T> {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.mutableCopy()
@@ -63,7 +63,7 @@ impl<T: Message> ToOwned for Foundation::NSMutableSet<T> {
 }
 
 #[cfg(feature = "NSString")]
-impl ToOwned for Foundation::NSString {
+impl ToOwned for crate::NSString {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
@@ -71,7 +71,7 @@ impl ToOwned for Foundation::NSString {
 }
 
 #[cfg(feature = "NSString")]
-impl ToOwned for Foundation::NSMutableString {
+impl ToOwned for crate::NSMutableString {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.mutableCopy()
@@ -79,7 +79,7 @@ impl ToOwned for Foundation::NSMutableString {
 }
 
 #[cfg(feature = "NSAttributedString")]
-impl ToOwned for Foundation::NSAttributedString {
+impl ToOwned for crate::NSAttributedString {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
@@ -87,7 +87,7 @@ impl ToOwned for Foundation::NSAttributedString {
 }
 
 #[cfg(feature = "NSAttributedString")]
-impl ToOwned for Foundation::NSMutableAttributedString {
+impl ToOwned for crate::NSMutableAttributedString {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.mutableCopy()
@@ -95,7 +95,7 @@ impl ToOwned for Foundation::NSMutableAttributedString {
 }
 
 #[cfg(feature = "NSUUID")]
-impl ToOwned for Foundation::NSUUID {
+impl ToOwned for crate::NSUUID {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
@@ -103,7 +103,7 @@ impl ToOwned for Foundation::NSUUID {
 }
 
 #[cfg(feature = "NSValue")]
-impl ToOwned for Foundation::NSValue {
+impl ToOwned for crate::NSValue {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
@@ -111,7 +111,7 @@ impl ToOwned for Foundation::NSValue {
 }
 
 #[cfg(feature = "NSValue")]
-impl ToOwned for Foundation::NSNumber {
+impl ToOwned for crate::NSNumber {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()

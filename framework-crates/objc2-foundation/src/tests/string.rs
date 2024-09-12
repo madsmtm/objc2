@@ -4,7 +4,7 @@ use alloc::string::ToString;
 
 use objc2::rc::autoreleasepool;
 
-use crate::Foundation::{ns_string, NSString};
+use crate::{ns_string, NSString};
 
 #[test]
 fn test_equality() {
@@ -79,7 +79,7 @@ fn test_interior_nul() {
 #[test]
 #[cfg(feature = "NSObject")]
 fn test_copy() {
-    use crate::Foundation::{NSCopying, NSMutableCopying, NSMutableString, NSObjectProtocol};
+    use crate::{NSCopying, NSMutableCopying, NSMutableString, NSObjectProtocol};
     use objc2::rc::Retained;
 
     let s1 = NSString::from_str("abc");
@@ -96,7 +96,7 @@ fn test_copy() {
 #[test]
 #[cfg(feature = "NSObject")]
 fn test_copy_nsstring_is_same() {
-    use crate::Foundation::NSCopying;
+    use crate::NSCopying;
 
     let string1 = NSString::from_str("Hello, world!");
     let string2 = string1.copy();

@@ -2,7 +2,7 @@
 #![cfg(feature = "NSString")]
 use alloc::format;
 
-use crate::Foundation::{ns_string, NSCocoaErrorDomain, NSError};
+use crate::{ns_string, NSCocoaErrorDomain, NSError};
 
 #[test]
 fn basic() {
