@@ -1,3 +1,6 @@
+[package]
+license = "MIT" # https://github.com/madsmtm/objc2/issues/23
+
 [dependencies]
 dispatch = { version = "0.2.0", optional = true }
 

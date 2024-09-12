@@ -1,11 +1,8 @@
 [package]
 name = "tests"
 version = "0.1.0"
-edition = "2021"
+edition.workspace = true
 publish = false
-
-repository = "https://github.com/madsmtm/objc2"
-license = "MIT"
 
 build = "build.rs"
 

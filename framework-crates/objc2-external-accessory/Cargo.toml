@@ -3,19 +3,14 @@
 
 [package]
 name = "objc2-external-accessory"
-version = "0.2.2" # Remember to update html_root_url in lib.rs
+version.workspace = true
 description = "Bindings to the ExternalAccessory framework"
-edition = "2021"
-rust-version = "1.60"
+edition.workspace = true
+rust-version.workspace = true
 keywords = ["cocoa", "apple", "framework", "macos", "ios"]
-categories = [
-    "api-bindings",
-    "development-tools::ffi",
-    "external-ffi-bindings",
-    "os::macos-apis",
-]
-repository = "https://github.com/madsmtm/objc2"
-license = "MIT"
+categories.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [lints]
 workspace = true

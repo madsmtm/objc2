@@ -1,11 +1,6 @@
 [package]
 name = "objc2-encode"
-# Remember to update html_root_url in lib.rs
-version = "4.0.3"
-authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
-edition = "2021"
-rust-version = "1.60"
-
+version = "4.0.3" # Remember to update html_root_url in lib.rs
 description = "Objective-C type-encoding representation and parsing"
 keywords = ["objective-c", "macos", "ios", "encode"]
 categories = [
@@ -14,10 +9,11 @@ categories = [
     "no-std",
     "os::macos-apis",
 ]
-readme = "README.md"
-repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/objc2-encode/"
-license = "MIT"
+license = "MIT" # https://github.com/madsmtm/objc2/issues/23
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
 
 [lints]
 workspace = true

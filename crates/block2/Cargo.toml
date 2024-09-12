@@ -1,11 +1,6 @@
 [package]
 name = "block2"
-# Remember to update html_root_url in lib.rs
-version = "0.5.1"
-authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
-edition = "2021"
-rust-version = "1.60"
-
+version = "0.5.1" # Remember to update html_root_url in lib.rs
 description = "Apple's C language extension of blocks"
 keywords = ["objective-c", "macos", "ios", "blocks"]
 categories = [
@@ -14,10 +9,11 @@ categories = [
     "os::macos-apis",
     "external-ffi-bindings",
 ]
-readme = "README.md"
-repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/block2/"
-license = "MIT"
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license = "MIT" # https://github.com/madsmtm/objc2/issues/23
 
 [features]
 default = ["std"]

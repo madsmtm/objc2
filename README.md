@@ -89,7 +89,7 @@ functionality as safe (which we [need your help with][header-data]).
 
 ## Minimum Supported Rust Version (MSRV)
 
-The _currently_ minimum supported Rust version is `1.60`; this is _not_
+The _currently_ minimum supported Rust version is `1.71`; this is _not_
 defined by policy, though, so it may change in at any time in a patch release.
 
 Help us define a policy over in [#203].

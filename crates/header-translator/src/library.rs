@@ -8,7 +8,7 @@ use std::io::Write;
 use std::path::Path;
 
 use toml_edit::InlineTable;
-use toml_edit::{value, Array, DocumentMut, Formatted, Item, Table, Value};
+use toml_edit::{value, Array, DocumentMut, Item, Table, Value};
 
 use crate::cfgs::PlatformCfg;
 use crate::config::LibraryConfig;
@@ -189,15 +189,6 @@ see that for related crates.", self.data.krate, self.link_name)?;
             .expect("invalid default toml");
 
         cargo_toml["package"]["name"] = value(&self.data.krate);
-        match cargo_toml["package"]["version"].as_value_mut().unwrap() {
-            // Preserve comment behind `version`
-            Value::String(s) => {
-                let decor = s.decor().clone();
-                *s = Formatted::new(VERSION.to_string());
-                *s.decor_mut() = decor;
-            }
-            _ => unreachable!(),
-        }
         cargo_toml["package"]["description"] =
             value(format!("Bindings to the {} framework", self.link_name));
         let keywords = cargo_toml["package"]["keywords"].as_array_mut().unwrap();
@@ -502,7 +493,10 @@ fn merge_toml_table(original: &mut Table, addition: Table) {
                 (Item::ArrayOfTables(original), Item::ArrayOfTables(addition)) => {
                     *original = addition;
                 }
-                (original, addition) => panic!("cannot merge items {original:?} and {addition:?}"),
+                (original, addition) => {
+                    // Overwrite
+                    *original = addition;
+                }
             },
             toml_edit::Entry::Vacant(original) => {
                 match &mut addition {

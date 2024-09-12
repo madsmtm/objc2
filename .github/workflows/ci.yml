@@ -171,8 +171,8 @@ jobs:
 
     - name: Use MSRV toolchain
       run: |
-        rustup toolchain install 1.60 --profile=minimal --no-self-update
-        rustup override set 1.60
+        rustup toolchain install 1.71 --profile=minimal --no-self-update
+        rustup override set 1.71
 
     - name: Install target
       run: rustup target add x86_64-apple-darwin

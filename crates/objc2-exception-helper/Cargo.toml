@@ -6,15 +6,14 @@ name = "objc2-exception-helper"
 # Also, beware of using pre-release versions here, since because of the
 # `links` key, two pre-releases requested with `=...` are incompatible.
 version = "0.1.0"
-authors = ["Mads Marquart <mads@marquart.dk>"]
-edition = "2021"
-rust-version = "1.60"
-
 description = "External helper function for catching Objective-C exceptions"
 keywords = ["objective-c", "macos", "ios", "exception"]
 categories = ["no-std", "no-std::no-alloc", "os::macos-apis"]
-repository = "https://github.com/madsmtm/objc2"
-license = "MIT"
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license = "Zlib OR Apache-2.0 OR MIT"
 
 # Use the `links` key to ensure that only one of these symbols are compiled
 #
