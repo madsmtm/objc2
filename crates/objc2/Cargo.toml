@@ -128,11 +128,26 @@ static_assertions = "1.1.0"
 memoffset = "0.9.0"
 block2 = { path = "../block2", default-features = false }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = [
+    "NSDate",
     "NSDictionary",
     "NSGeometry",
     "NSKeyValueObserving",
+    "NSNotification",
     "NSObject",
+    "NSRunLoop",
     "NSString",
+] }
+libc = "0.2.158"
+
+[target.'cfg(target_os = "macos")'.dev-dependencies]
+objc2-app-kit = { path = "../../framework-crates/objc2-app-kit", default-features = false, features = [
+    "NSApplication",
+    "NSResponder",
+] }
+
+[target.'cfg(all(target_vendor = "apple", not(target_os = "macos")))'.dev-dependencies]
+objc2-ui-kit = { path = "../../framework-crates/objc2-ui-kit", default-features = false, features = [
+    "UIApplication",
 ] }
 
 [target.'cfg(target_vendor = "apple")'.dev-dependencies]

@@ -16,6 +16,9 @@ pub mod layered_safety {}
 pub mod mvc {}
 #[doc = include_str!("interior_mutability.md")]
 pub mod interior_mutability {}
+#[cfg(not(feature = "gnustep-1-7"))]
+#[doc = include_str!("run_loop.md")]
+pub mod run_loop {}
 
 #[cfg(not(doctest))]
 #[doc = include_str!("../../CHANGELOG.md")]

@@ -373,12 +373,15 @@ dependencies = [
  "block2",
  "core-foundation",
  "iai",
+ "libc",
  "malloc_buf",
  "memoffset",
+ "objc2-app-kit",
  "objc2-encode",
  "objc2-exception-helper",
  "objc2-foundation",
  "objc2-proc-macros",
+ "objc2-ui-kit",
  "static_assertions",
 ]
 
