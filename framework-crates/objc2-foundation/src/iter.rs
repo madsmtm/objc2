@@ -638,7 +638,7 @@ macro_rules! __impl_into_iter {
             type IntoIter = $into_iter<T>;
 
             #[inline]
-            fn id_into_iter(this: Retained<Self>) -> Self::IntoIter {
+            fn retained_into_iter(this: Retained<Self>) -> Self::IntoIter {
                 $into_iter($crate::iter::IntoIter::$new_fn(this))
             }
         }

@@ -12,7 +12,7 @@ pub use core::ptr::NonNull;
 
 pub use crate::encode::{Encode, Encoding, RefEncode};
 pub use crate::ffi::{NSInteger, NSIntegerMax, NSUInteger, NSUIntegerMax};
-pub use crate::rc::{Allocated, DefaultId, DefaultRetained, Id, Retained};
+pub use crate::rc::{Allocated, DefaultRetained, Retained};
 pub use crate::runtime::{
     AnyClass, AnyObject, Bool, NSObject, NSObjectProtocol, ProtocolObject, Sel,
 };

@@ -314,7 +314,7 @@ impl std::io::Write for &NSMutableData {
 
 #[cfg(feature = "block2")]
 impl RetainedFromIterator<u8> for NSData {
-    fn id_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Retained<Self> {
+    fn retained_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
     }
@@ -322,7 +322,7 @@ impl RetainedFromIterator<u8> for NSData {
 
 #[cfg(feature = "block2")]
 impl RetainedFromIterator<u8> for NSMutableData {
-    fn id_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Retained<Self> {
+    fn retained_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
     }

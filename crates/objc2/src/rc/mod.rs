@@ -67,9 +67,3 @@ pub use self::retained_traits::{DefaultRetained, RetainedFromIterator, RetainedI
 #[cfg(test)]
 pub(crate) use self::test_object::{RcTestObject, ThreadTestData};
 pub use self::weak::{Weak, WeakId};
-
-// Soft-deprecated aliases
-pub use self::retained_traits::{
-    DefaultRetained as DefaultId, RetainedFromIterator as IdFromIterator,
-    RetainedIntoIterator as IdIntoIterator,
-};

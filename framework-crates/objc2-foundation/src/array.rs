@@ -429,21 +429,21 @@ impl<'a, T: Message> Extend<&'a T> for &NSMutableArray<T> {
 }
 
 impl<'a, T: Message + 'a> RetainedFromIterator<&'a T> for NSArray<T> {
-    fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
+    fn retained_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
 impl<T: Message> RetainedFromIterator<Retained<T>> for NSArray<T> {
-    fn id_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
+    fn retained_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_retained_slice(&vec)
     }
 }
 
 impl<'a, T: Message + 'a> RetainedFromIterator<&'a T> for NSMutableArray<T> {
-    fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
+    fn retained_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
         // TODO: Is this, or is using `initWithCapacity` the most optimal?
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
@@ -451,7 +451,7 @@ impl<'a, T: Message + 'a> RetainedFromIterator<&'a T> for NSMutableArray<T> {
 }
 
 impl<T: Message> RetainedFromIterator<Retained<T>> for NSMutableArray<T> {
-    fn id_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
+    fn retained_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
         // TODO: Is this, or is using `initWithCapacity` the most optimal?
         let vec = Vec::from_iter(iter);
         Self::from_retained_slice(&vec)

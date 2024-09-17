@@ -448,7 +448,7 @@ impl fmt::Debug for NSObject {
 
 impl DefaultRetained for NSObject {
     #[inline]
-    fn default_id() -> Retained<Self> {
+    fn default_retained() -> Retained<Self> {
         Self::new()
     }
 }

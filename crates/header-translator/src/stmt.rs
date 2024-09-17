@@ -1815,7 +1815,7 @@ impl Stmt {
                             GenericTyHelper(cls_generics),
                         )?;
                         writeln!(f, "    #[inline]")?;
-                        writeln!(f, "    fn default_id() -> Retained<Self> {{")?;
+                        writeln!(f, "    fn default_retained() -> Retained<Self> {{")?;
                         writeln!(f, "        Self::{}()", method.fn_name)?;
                         writeln!(f, "    }}")?;
                         writeln!(f, "}}")?;

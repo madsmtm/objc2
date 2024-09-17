@@ -296,7 +296,7 @@ impl Drop for RcTestObject {
 }
 
 impl DefaultRetained for RcTestObject {
-    fn default_id() -> Retained<Self> {
+    fn default_retained() -> Retained<Self> {
         Self::new()
     }
 }

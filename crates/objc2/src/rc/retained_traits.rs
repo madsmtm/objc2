@@ -7,17 +7,9 @@ use super::Retained;
 pub trait DefaultRetained {
     /// The default [`Retained`] for a type.
     ///
-    /// Soft-deprecated alias of [`DefaultRetained::default_retained`].
-    fn default_id() -> Retained<Self>;
-
-    /// The default [`Retained`] for a type.
-    ///
     /// On most objects the implementation would be sending a message to the
     /// `new` selector.
-    #[inline]
-    fn default_retained() -> Retained<Self> {
-        Self::default_id()
-    }
+    fn default_retained() -> Retained<Self>;
 }
 
 impl<T: ?Sized + DefaultRetained> Default for Retained<T> {
@@ -47,17 +39,9 @@ pub trait RetainedIntoIterator {
 
     /// Creates an iterator from an [`Retained`].
     ///
-    /// Soft-deprecated alias of [`RetainedIntoIterator::retained_into_iter`].
-    fn id_into_iter(this: Retained<Self>) -> Self::IntoIter;
-
-    /// Creates an iterator from an [`Retained`].
-    ///
     /// You would normally not call this function directly; instead, you'd
     /// call [`into_iter`](IntoIterator::into_iter) on an [`Retained`].
-    #[inline]
-    fn retained_into_iter(this: Retained<Self>) -> Self::IntoIter {
-        Self::id_into_iter(this)
-    }
+    fn retained_into_iter(this: Retained<Self>) -> Self::IntoIter;
 }
 
 // Note: These `IntoIterator` implementations conflict with an `Iterator`
@@ -118,20 +102,9 @@ where
 #[doc(alias = "IdFromIterator")]
 pub trait RetainedFromIterator<T>: Sized {
     /// Creates an `Retained` from an iterator.
-    ///
-    /// Soft-deprecated alias of [`RetainedFromIterator::retained_from_iter`].
-    fn id_from_iter<I>(iter: I) -> Retained<Self>
-    where
-        I: IntoIterator<Item = T>;
-
-    /// Creates an `Retained` from an iterator.
-    #[inline]
     fn retained_from_iter<I>(iter: I) -> Retained<Self>
     where
-        I: IntoIterator<Item = T>,
-    {
-        Self::id_from_iter(iter)
-    }
+        I: IntoIterator<Item = T>;
 }
 
 impl<T, U: RetainedFromIterator<T>> FromIterator<T> for Retained<U> {
@@ -160,7 +133,7 @@ mod tests {
     );
 
     impl DefaultRetained for Collection {
-        fn default_id() -> Retained<Self> {
+        fn default_retained() -> Retained<Self> {
             unsafe { msg_send_id![Collection::class(), new] }
         }
     }
@@ -200,13 +173,15 @@ mod tests {
         type Item = Retained<NSObject>;
         type IntoIter = IntoIter;
 
-        fn id_into_iter(this: Retained<Self>) -> Self::IntoIter {
+        fn retained_into_iter(this: Retained<Self>) -> Self::IntoIter {
             IntoIter { _inner: this }
         }
     }
 
     impl RetainedFromIterator<Retained<NSObject>> for Collection {
-        fn id_from_iter<I: IntoIterator<Item = Retained<NSObject>>>(_iter: I) -> Retained<Self> {
+        fn retained_from_iter<I: IntoIterator<Item = Retained<NSObject>>>(
+            _iter: I,
+        ) -> Retained<Self> {
             Collection::default_retained()
         }
     }
