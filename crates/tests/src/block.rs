@@ -139,14 +139,8 @@ fn test_int_block() {
     );
     invoke_assert(&StackBlock::new(|| 10), 10);
     invoke_assert(&RcBlock::new(|| 6), 6);
-    invoke_assert(
-        unsafe { &StackBlock::with_encoding::<VoidToInt>(|| 10) },
-        10,
-    );
-    invoke_assert(
-        unsafe { &RcBlock::with_encoding::<_, _, _, VoidToInt>(|| 6) },
-        6,
-    );
+    invoke_assert(&StackBlock::with_encoding::<VoidToInt>(|| 10), 10);
+    invoke_assert(&RcBlock::with_encoding::<_, _, _, VoidToInt>(|| 6), 6);
     invoke_assert(&GLOBAL_BLOCK, 42);
 }
 
@@ -171,12 +165,9 @@ fn test_add_block() {
     );
     invoke_assert(&StackBlock::new(|a: i32| a + 6), 11);
     invoke_assert(&RcBlock::new(|a: i32| a + 6), 11);
+    invoke_assert(&StackBlock::with_encoding::<IntToInt>(|a: i32| a + 6), 11);
     invoke_assert(
-        unsafe { &StackBlock::with_encoding::<IntToInt>(|a: i32| a + 6) },
-        11,
-    );
-    invoke_assert(
-        unsafe { &RcBlock::with_encoding::<_, _, _, IntToInt>(|a: i32| a + 6) },
+        &RcBlock::with_encoding::<_, _, _, IntToInt>(|a: i32| a + 6),
         11,
     );
     invoke_assert(&GLOBAL_BLOCK, 47);
@@ -223,11 +214,8 @@ fn test_add_12() {
     };
     invoke_assert(&StackBlock::new(closure), 78);
     invoke_assert(&RcBlock::new(closure), 78);
-    invoke_assert(unsafe { &StackBlock::with_encoding::<Enc>(closure) }, 78);
-    invoke_assert(
-        unsafe { &RcBlock::with_encoding::<_, _, _, Enc>(closure) },
-        78,
-    );
+    invoke_assert(&StackBlock::with_encoding::<Enc>(closure), 78);
+    invoke_assert(&RcBlock::with_encoding::<_, _, _, Enc>(closure), 78);
     invoke_assert(&GLOBAL_BLOCK, 120);
 }
 
@@ -279,12 +267,10 @@ fn test_large_struct_block() {
     let block = block.copy();
     assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
 
-    let block = unsafe {
-        StackBlock::with_encoding::<Enc>(|mut x: LargeStruct| {
-            x.mutate();
-            x
-        })
-    };
+    let block = StackBlock::with_encoding::<Enc>(|mut x: LargeStruct| {
+        x.mutate();
+        x
+    });
     assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
     let block = block.copy();
     assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
@@ -296,9 +282,10 @@ fn test_block_copy() {
     let expected_len = s.len() as i32;
     let closure = move || s.len() as i32;
 
-    for block in [StackBlock::new(closure.clone()), unsafe {
-        StackBlock::with_encoding::<VoidToInt>(closure)
-    }] {
+    for block in [
+        StackBlock::new(closure.clone()),
+        StackBlock::with_encoding::<VoidToInt>(closure),
+    ] {
         assert_eq!(unsafe { invoke_int_block(&block) }, expected_len);
         let copied = block.copy();
         assert_eq!(unsafe { invoke_int_block(&copied) }, expected_len);
@@ -313,7 +300,7 @@ fn test_block_stack_move() {
     }
     fn make_block_with_encoding() -> StackBlock<'static, (), i32, impl Fn() -> i32> {
         let x = 7;
-        unsafe { StackBlock::with_encoding::<VoidToInt>(move || x) }
+        StackBlock::with_encoding::<VoidToInt>(move || x)
     }
 
     for block in [
@@ -599,9 +586,10 @@ fn capture_id() {
         };
     }
 
-    for stack_block in [StackBlock::new(closure.clone()), unsafe {
-        StackBlock::with_encoding::<Enc>(closure)
-    }] {
+    for stack_block in [
+        StackBlock::new(closure.clone()),
+        StackBlock::with_encoding::<Enc>(closure),
+    ] {
         let rc_block = stack_block.copy();
         assert!(rc_block.call(()).is_false());
     }

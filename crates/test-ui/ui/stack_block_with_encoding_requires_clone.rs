@@ -12,9 +12,7 @@ fn main() {
     }
 
     let foo = Foo;
-    let _ = unsafe {
-        StackBlock::with_encoding::<FooBlockEncoding>(move || {
-            let _ = &foo;
-        })
-    };
+    let _ = StackBlock::with_encoding::<FooBlockEncoding>(move || {
+        let _ = &foo;
+    });
 }

@@ -158,6 +158,8 @@ impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8:
 ///    is put to the forefront for them;
 ///  * reading a block encoding string is tough when not initiated, so these
 ///    also serve as self-documentation;
+///  * the safety validation can be moved to the trait implementation, so that
+///    the use can be marked safe.
 ///
 /// [`RcBlock::with_encoding`]: crate::RcBlock::with_encoding
 ///
@@ -256,6 +258,8 @@ where
     _r: PhantomData<R>,
 }
 
+// SAFETY: The encoding here is incorrect, but it will never be used because
+// we specify `IS_NONE = true` in `ManualBlockEncodingExt`.
 unsafe impl<A, R> ManualBlockEncoding for NoBlockEncoding<A, R>
 where
     A: EncodeArguments,

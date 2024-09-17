@@ -162,8 +162,7 @@ where
     /// [`RcBlock::new`]: crate::RcBlock::new
     #[inline]
     pub fn new(closure: Closure) -> Self {
-        // SAFETY: no encoding is given.
-        unsafe { Self::maybe_encoded::<NoBlockEncoding<A, R>>(closure) }
+        Self::maybe_encoded::<NoBlockEncoding<A, R>>(closure)
     }
 
     /// Constructs a new [`StackBlock`] with the given function and encoding
@@ -190,6 +189,9 @@ where
     /// encoding information string themselves, thus obtaining a block
     /// containing it and working with these APIs.
     ///
+    /// You provide the encoding through the `E` type parameter, which shoul
+    /// implement [`ManualBlockEncoding`].
+    ///
     /// The same requirements as [`Self::new`] apply here as well.
     ///
     /// [`FileProvider`]: https://developer.apple.com/documentation/fileprovider?language=objc
@@ -200,12 +202,6 @@ where
     /// [`NEFilterDataProvider`]: https://developer.apple.com/documentation/networkextension/nefilterdataprovider?language=objc
     /// [`applySettings:completionHandler`]: https://developer.apple.com/documentation/networkextension/nefilterdataprovider/3181998-applysettings?language=objc
     ///
-    /// # Safety
-    ///
-    /// The raw encoding string given through `E` must be correct with respect
-    /// to the given closure's argument and return types: see
-    /// [`ManualBlockEncoding`].
-    ///
     /// # Example
     ///
     /// ```
@@ -214,30 +210,32 @@ where
     /// # use objc2_foundation::NSError;
     /// #
     /// struct MyBlockEncoding;
+    /// // SAFETY: The encoding is correct.
     /// unsafe impl ManualBlockEncoding for MyBlockEncoding {
     ///     type Arguments = (*mut NSError,);
     ///     type Return = i32;
-    ///     const ENCODING_CSTR: &'static CStr = cr#"i16@?0@"NSError"8"#;
+    ///     const ENCODING_CSTR: &'static CStr = if cfg!(target_pointer_width = "64") {
+    ///         cr#"i16@?0@"NSError"8"#
+    ///     } else {
+    ///         cr#"i8@?0@"NSError"4"#
+    ///     };
     /// }
     ///
-    /// let my_block = unsafe {
-    ///     StackBlock::with_encoding::<MyBlockEncoding>(|_err: *mut NSError| {
-    ///         42i32
-    ///     })
-    /// };
+    /// let my_block = StackBlock::with_encoding::<MyBlockEncoding>(|_err: *mut NSError| {
+    ///     42i32
+    /// });
     /// assert_eq!(my_block.call((std::ptr::null_mut(),)), 42);
     /// ```
     #[inline]
-    pub unsafe fn with_encoding<E>(closure: Closure) -> Self
+    pub fn with_encoding<E>(closure: Closure) -> Self
     where
         E: ManualBlockEncoding<Arguments = A, Return = R>,
     {
-        // SAFETY: supposed to be upheld by the caller.
-        unsafe { Self::maybe_encoded::<UserSpecified<E>>(closure) }
+        Self::maybe_encoded::<UserSpecified<E>>(closure)
     }
 
     #[inline]
-    unsafe fn maybe_encoded<E>(closure: Closure) -> Self
+    fn maybe_encoded<E>(closure: Closure) -> Self
     where
         E: ManualBlockEncodingExt<Arguments = A, Return = R>,
     {
@@ -310,9 +308,7 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
 
     /// # Safety
     ///
-    ///  * `_Block_copy` must be called on the resulting stack block only once.
-    ///  * Encoding must be correct with respect to the given function's input
-    ///    and output types: see [`ManualBlockEncoding`].
+    ///  `_Block_copy` must be called on the resulting stack block only once.
     #[inline]
     pub(crate) unsafe fn new_no_clone<E>(closure: Closure) -> Self
     where
@@ -335,13 +331,20 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
         };
         // See discussion in `new` above with regards to the safety of the
         // pointer to the descriptor.
-        let descriptor = if mem::needs_drop::<Self>() {
-            if E::IS_NONE {
+        let descriptor = match (mem::needs_drop::<Self>(), E::IS_NONE) {
+            (true, true) => {
                 // SAFETY: see above.
                 BlockDescriptorPtr {
                     with_copy_dispose: &Self::DESCRIPTOR_WITH_DROP,
                 }
-            } else {
+            }
+            (false, true) => {
+                // SAFETY: see above.
+                BlockDescriptorPtr {
+                    basic: &Self::DESCRIPTOR_BASIC,
+                }
+            }
+            (true, false) => {
                 // SAFETY: see above; the value is already a similar constant,
                 // so promotion can be guaranteed as well here.
                 BlockDescriptorPtr {
@@ -352,19 +355,16 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
                         &<Self as EncodedDescriptors<E>>::DESCRIPTOR_WITH_DROP_AND_ENCODING,
                 }
             }
-        } else if E::IS_NONE {
-            // SAFETY: see above.
-            BlockDescriptorPtr {
-                basic: &Self::DESCRIPTOR_BASIC,
-            }
-        } else {
-            // SAFETY: see above; the value is already a similar constant,
-            // so promotion can be guaranteed as well here.
-            BlockDescriptorPtr {
-                // TODO: move to a `const fn` defined next to the partially-
-                // copied constant and called here in an inline `const` when
-                // the MSRV is at least 1.79.
-                with_signature: &<Self as EncodedDescriptors<E>>::DESCRIPTOR_BASIC_WITH_ENCODING,
+            (false, false) => {
+                // SAFETY: see above; the value is already a similar constant,
+                // so promotion can be guaranteed as well here.
+                BlockDescriptorPtr {
+                    // TODO: move to a `const fn` defined next to the partially-
+                    // copied constant and called here in an inline `const` when
+                    // the MSRV is at least 1.79.
+                    with_signature:
+                        &<Self as EncodedDescriptors<E>>::DESCRIPTOR_BASIC_WITH_ENCODING,
+                }
             }
         };
 

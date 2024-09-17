@@ -101,8 +101,7 @@ impl<F: ?Sized> RcBlock<F> {
         R: EncodeReturn,
         Closure: IntoBlock<'f, A, R, Dyn = F>,
     {
-        // SAFETY: no encoding is given.
-        unsafe { Self::maybe_encoded::<_, _, _, NoBlockEncoding<A, R>>(closure) }
+        Self::maybe_encoded::<_, _, _, NoBlockEncoding<A, R>>(closure)
     }
 
     /// Constructs a new [`RcBlock`] with the given function and encoding
@@ -110,12 +109,6 @@ impl<F: ?Sized> RcBlock<F> {
     ///
     /// See [`StackBlock::with_encoding`] as to why and how this could be
     /// useful. The same requirements as [`Self::new`] apply here as well.
-    ///
-    /// # Safety
-    ///
-    /// The raw encoding string given through `E` must be correct with respect
-    /// to the given closure's argument and return types: see
-    /// [`ManualBlockEncoding`].
     ///
     /// # Example
     ///
@@ -125,32 +118,34 @@ impl<F: ?Sized> RcBlock<F> {
     /// # use objc2_foundation::NSError;
     /// #
     /// struct MyBlockEncoding;
+    /// // SAFETY: The encoding is correct.
     /// unsafe impl ManualBlockEncoding for MyBlockEncoding {
     ///     type Arguments = (*mut NSError,);
     ///     type Return = i32;
-    ///     const ENCODING_CSTR: &'static CStr = cr#"i16@?0@"NSError"8"#;
+    ///     const ENCODING_CSTR: &'static CStr = if cfg!(target_pointer_width = "64") {
+    ///         cr#"i16@?0@"NSError"8"#
+    ///     } else {
+    ///         cr#"i8@?0@"NSError"4"#
+    ///     };
     /// }
     ///
-    /// let my_block = unsafe {
-    ///     RcBlock::with_encoding::<_, _, _, MyBlockEncoding>(|_err: *mut NSError| {
-    ///         42i32
-    ///     })
-    /// };
+    /// let my_block = RcBlock::with_encoding::<_, _, _, MyBlockEncoding>(|_err: *mut NSError| {
+    ///     42i32
+    /// });
     /// assert_eq!(my_block.call((std::ptr::null_mut(),)), 42);
     /// ```
     #[inline]
-    pub unsafe fn with_encoding<'f, A, R, Closure, E>(closure: Closure) -> Self
+    pub fn with_encoding<'f, A, R, Closure, E>(closure: Closure) -> Self
     where
         A: EncodeArguments,
         R: EncodeReturn,
         Closure: IntoBlock<'f, A, R, Dyn = F>,
         E: ManualBlockEncoding<Arguments = A, Return = R>,
     {
-        // SAFETY: supposed to be upheld by the caller.
-        unsafe { Self::maybe_encoded::<_, _, _, UserSpecified<E>>(closure) }
+        Self::maybe_encoded::<_, _, _, UserSpecified<E>>(closure)
     }
 
-    unsafe fn maybe_encoded<'f, A, R, Closure, E>(closure: Closure) -> Self
+    fn maybe_encoded<'f, A, R, Closure, E>(closure: Closure) -> Self
     where
         A: EncodeArguments,
         R: EncodeReturn,
@@ -165,8 +160,6 @@ impl<F: ?Sized> RcBlock<F> {
         //
         // Clang doesn't do this optimization either.
         // <https://github.com/llvm/llvm-project/blob/llvmorg-17.0.6/clang/lib/CodeGen/CGBlocks.cpp#L281-L284>
-        //
-        // Encoding safety is supposed to be upheld by the caller.
         let block = unsafe { StackBlock::new_no_clone::<E>(closure) };
 
         // Transfer ownership from the stack to the heap.

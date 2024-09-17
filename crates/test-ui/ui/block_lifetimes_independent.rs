@@ -34,7 +34,7 @@ fn args_with_encoding<'a, 'b>(
         type Return = ();
         const ENCODING_CSTR: &'static CStr = c"v24@?0^i8^i16";
     }
-    unsafe { RcBlock::with_encoding::<_, _, _, Enc<'a, 'b>>(f) }
+    RcBlock::with_encoding::<_, _, _, Enc<'a, 'b>>(f)
 }
 
 fn args_return_with_encoding<'a, 'b>(
@@ -46,7 +46,7 @@ fn args_return_with_encoding<'a, 'b>(
         type Return = &'b i32;
         const ENCODING_CSTR: &'static CStr = c"^i816@?0^i8";
     }
-    unsafe { RcBlock::with_encoding::<_, _, _, Enc<'a, 'b>>(f) }
+    RcBlock::with_encoding::<_, _, _, Enc<'a, 'b>>(f)
 }
 
 fn args_entire_with_encoding<'a, 'b>(f: impl Fn(&'a i32) + 'b) -> RcBlock<dyn Fn(&'b i32) + 'a> {
@@ -56,7 +56,7 @@ fn args_entire_with_encoding<'a, 'b>(f: impl Fn(&'a i32) + 'b) -> RcBlock<dyn Fn
         type Return = ();
         const ENCODING_CSTR: &'static CStr = c"v16@?0^i8";
     }
-    unsafe { RcBlock::with_encoding::<_, _, _, Enc<'a>>(f) }
+    RcBlock::with_encoding::<_, _, _, Enc<'a>>(f)
 }
 
 fn return_entire_with_encoding<'a, 'b>(
@@ -68,7 +68,7 @@ fn return_entire_with_encoding<'a, 'b>(
         type Return = &'a i32;
         const ENCODING_CSTR: &'static CStr = c"^i8@?0";
     }
-    unsafe { RcBlock::with_encoding::<_, _, _, Enc<'a>>(f) }
+    RcBlock::with_encoding::<_, _, _, Enc<'a>>(f)
 }
 
 fn main() {}
