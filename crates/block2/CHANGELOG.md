@@ -7,11 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
-* Added `unstable-c-unwind` feature flag.
 * Added `StackBlock::with_encoding` and `RcBlock::with_encoding` for creating
   blocks with an encoding specified by `ManualBlockEncoding`.
 
   This is useful for certain APIs that require blocks to have an encoding.
+
+### Fixed
+* **BREAKING**: Converted function signatures into using `extern "C-unwind"`.
+  This allows unwinding through blocks.
 
 
 ## 0.5.1 - 2024-05-21
@@ -77,8 +80,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Fixed `GlobalBlock` not having the correct variance. This may
   break if you were using lifetimes in your parameters, as those are now a bit
   too restrictive.
-* **BREAKING**: Converted function signatures into using `extern "C-unwind"`.
-  This allows unwinding through blocks.
 
 
 ## 0.4.0 - 2023-12-03
