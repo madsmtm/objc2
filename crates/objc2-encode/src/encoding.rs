@@ -251,8 +251,10 @@ impl Encoding {
 
     /// Computes the theoretical size in bytes of the represented value type.
     ///
-    /// Everything is considered packed, i.e. no alignment is computed. Also,
-    /// the result is only valid for the current build target.
+    /// The size is only valid for the current target.
+    ///
+    /// This does not currently consider alignment, i.e. everything is
+    /// considered packed, but that may change in the future.
     pub fn size(&self) -> Option<usize> {
         Helper::new(self).size(NestingLevel::new())
     }
