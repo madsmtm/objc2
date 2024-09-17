@@ -131,8 +131,13 @@ mod tests {
                 ],
                 &Encoding::String,
                 // Probably unaligned.
-                #[cfg(any(target_arch = "x86_64", target_arch = "aarch64",))]
+                #[cfg(any(
+                    target_arch = "x86_64",
+                    all(target_arch = "aarch64", not(target_vendor = "apple"))
+                ))]
                 "*53@?0(ThisOrThat=Si)8{ThisAndThat=QjDAB}12",
+                #[cfg(all(target_arch = "aarch64", target_vendor = "apple"))]
+                "*37@?0(ThisOrThat=Si)8{ThisAndThat=QjDAB}12",
                 #[cfg(all(target_arch = "x86", target_vendor = "apple"))]
                 "*45@?0(ThisOrThat=Si)4{ThisAndThat=QjDAB}8",
                 #[cfg(all(target_arch = "x86", not(target_vendor = "apple")))]
