@@ -31,7 +31,6 @@ use core::str;
 pub mod __nsstring;
 mod bool;
 mod declare;
-#[cfg(not(feature = "malloc"))]
 mod malloc;
 mod message_receiver;
 mod method_encoding_iter;
@@ -65,41 +64,22 @@ pub use crate::verify::VerificationError;
 #[allow(deprecated)]
 pub use crate::ffi::{BOOL, NO, YES};
 
-#[cfg(not(feature = "malloc"))]
 use self::malloc::{MallocSlice, MallocStr};
-#[cfg(feature = "malloc")]
-use malloc_buf::{Malloc as MallocSlice, Malloc as MallocStr};
 
 /// We do not want to expose `MallocSlice` to end users, because in the
 /// future, we want to be able to change it to `Box<[T], MallocAllocator>`.
 ///
 /// So instead we use an unnameable type.
-#[cfg(not(feature = "malloc"))]
 macro_rules! MallocSlice {
     ($t:ty) => {
         impl std::ops::Deref<Target = [$t]> + AsRef<[$t]> + std::fmt::Debug
     };
 }
 
-#[cfg(feature = "malloc")]
-macro_rules! MallocSlice {
-    ($t:ty) => {
-        malloc_buf::Malloc<[$t]>
-    };
-}
-
 /// Same as `MallocSlice!`.
-#[cfg(not(feature = "malloc"))]
 macro_rules! MallocStr {
     () => {
         impl std::ops::Deref<Target = str> + AsRef<str> + std::fmt::Debug + std::fmt::Display
-    };
-}
-
-#[cfg(feature = "malloc")]
-macro_rules! MallocStr {
-    () => {
-        malloc_buf::Malloc<str>
     };
 }
 
@@ -1547,10 +1527,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(
-        feature = "malloc",
-        ignore = "The `malloc_buf` crate calls `from_raw_parts` unsoundly"
-    )]
     fn test_no_ivars() {
         let cls = ClassBuilder::new("NoIvarObject", NSObject::class())
             .unwrap()
@@ -1665,25 +1641,5 @@ mod tests {
         assert!(get_ivar_layout(class!(NSException)).is_null());
         assert!(get_ivar_layout(class!(NSNumber)).is_null());
         assert!(get_ivar_layout(class!(NSString)).is_null());
-    }
-
-    // Required for backwards compat
-    #[test]
-    #[cfg(feature = "malloc")]
-    fn test_still_has_malloc_buf_type() {
-        let _: malloc_buf::Malloc<[&AnyClass]> = AnyClass::classes();
-    }
-
-    #[cfg(feature = "malloc")]
-    #[allow(dead_code)]
-    fn assert_malloc_buf_compatible_with_anonymous_type(
-    ) -> (MallocSlice!(&'static AnyClass), MallocStr!()) {
-        (
-            AnyClass::classes(),
-            NSObject::class()
-                .instance_method(sel!(description))
-                .unwrap()
-                .return_type(),
-        )
     }
 }

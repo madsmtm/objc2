@@ -18,7 +18,6 @@ pub(crate) struct MallocSlice<T> {
 }
 
 impl<T> MallocSlice<T> {
-    // Currently has to have the same API as `malloc_buf::Malloc`
     pub(crate) unsafe fn from_array(mut ptr: *mut T, len: usize) -> Self {
         // If the length is 0, the pointer is usually NULL, and as such we
         // need to conjure some other pointer (slices are always non-null).
@@ -84,14 +83,13 @@ impl<T> AsRef<[T]> for MallocSlice<T> {
     }
 }
 
-// TODO: Change this to `MallocCStr` once we get rid of `malloc_buf` support.
+// TODO: Change this to `MallocCStr`
 #[repr(transparent)]
 pub(crate) struct MallocStr {
     ptr: NonNull<str>,
 }
 
 impl MallocStr {
-    // Currently has to have the same API as `malloc_buf::Malloc`
     pub(crate) unsafe fn from_c_str(ptr: *mut c_char) -> Result<Self, Utf8Error> {
         if ptr.is_null() {
             panic!("tried to construct MallocStr from a NULL pointer");

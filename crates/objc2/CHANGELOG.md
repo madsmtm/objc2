@@ -116,6 +116,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `Retained` was mutable.
 * **BREAKING**: Mark `Retained::autorelease` as `unsafe`, since we cannot
   ensure that the given pool is actually the innermost pool.
+* **BREAKING**: Removed the deprecated `malloc` feature and `malloc_buf` dependency.
 
 ### Fixed
 * Remove an incorrect assertion when adding protocols to classes in an unexpected
