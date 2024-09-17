@@ -8,6 +8,7 @@
 use core::ffi::{c_char, c_int, c_ulong, c_void};
 use core::fmt;
 use core::mem::MaybeUninit;
+use core::ops::{BitAnd, BitOr};
 
 use alloc::format;
 
@@ -81,6 +82,45 @@ impl BlockFlags {
 
     /// Note: Not public ABI.
     const BLOCK_HAS_EXTENDED_LAYOUT: Self = Self(1 << 31);
+
+    /// `const` version of [`PartialEq`].
+    pub(crate) const fn equals(self, other: Self) -> bool {
+        self.0 == other.0
+    }
+
+    /// `const` version of [`BitOr`]: adds the flags together.
+    pub(crate) const fn union(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+
+    /// `const` version of [`BitAnd`]: only keeps the common flags.
+    pub(crate) const fn intersect(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
+
+    /// Returns `true` if and only if all the flags from `other` are enabled,
+    /// i.e. `self & other == other`.
+    pub(crate) const fn has(self, other: Self) -> bool {
+        self.intersect(other).equals(other)
+    }
+}
+
+/// See [`BlockFlags::union`].
+impl BitOr for BlockFlags {
+    type Output = Self;
+
+    fn bitor(self, other: Self) -> Self {
+        self.union(other)
+    }
+}
+
+/// See [`BlockFlags::intersect`].
+impl BitAnd for BlockFlags {
+    type Output = Self;
+
+    fn bitand(self, other: Self) -> Self {
+        self.intersect(other)
+    }
 }
 
 impl fmt::Debug for BlockFlags {
@@ -94,7 +134,7 @@ impl fmt::Debug for BlockFlags {
                 $name:ident: $flag:ident
             );* $(;)?} => ($(
                 $(#[$m])?
-                f.field(stringify!($name), &(self.0 & Self::$flag.0 != 0));
+                f.field(stringify!($name), &self.has(Self::$flag));
             )*)
         }
         test_flags! {
@@ -119,13 +159,10 @@ impl fmt::Debug for BlockFlags {
             has_extended_layout: BLOCK_HAS_EXTENDED_LAYOUT;
         }
 
-        f.field(
-            "over_referenced",
-            &(self.0 & Self::BLOCK_REFCOUNT_MASK.0 == Self::BLOCK_REFCOUNT_MASK.0),
-        );
+        f.field("over_referenced", &self.has(Self::BLOCK_REFCOUNT_MASK));
         f.field(
             "reference_count",
-            &((self.0 & Self::BLOCK_REFCOUNT_MASK.0) >> 1),
+            &((*self & Self::BLOCK_REFCOUNT_MASK).0 >> 1),
         );
 
         f.finish_non_exhaustive()

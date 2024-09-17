@@ -47,6 +47,11 @@ unstable-private = []
 [dependencies]
 objc2 = { path = "../objc2", version = "0.5.2", default-features = false }
 
+[dev-dependencies.objc2-foundation]
+path = "../../framework-crates/objc2-foundation"
+default-features = false
+features = ["NSError"]
+
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
 features = ["unstable-private"]

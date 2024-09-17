@@ -248,6 +248,16 @@ impl Encoding {
     pub fn equivalent_to_box(&self, other: &EncodingBox) -> bool {
         compare_encodings(self, other, NestingLevel::new(), false)
     }
+
+    /// Computes the theoretical size in bytes of the represented value type.
+    ///
+    /// The size is only valid for the current target.
+    ///
+    /// This does not currently consider alignment, i.e. everything is
+    /// considered packed, but that may change in the future.
+    pub fn size(&self) -> Option<usize> {
+        Helper::new(self).size(NestingLevel::new())
+    }
 }
 
 /// Formats this [`Encoding`] in a similar way that the `@encode` directive

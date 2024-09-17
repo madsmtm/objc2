@@ -99,3 +99,107 @@ error: lifetime may not live long enough
   |     ^^^^^^^^^^^^^^^ function was supposed to return data with lifetime `'a` but it is returning data with lifetime `'b`
   |
   = help: consider adding the following bound: `'b: 'a`
+
+error: lifetime may not live long enough
+ --> ui/block_lifetimes_independent.rs
+  |
+  | fn args_with_encoding<'a, 'b>(
+  |                       --  -- lifetime `'b` defined here
+  |                       |
+  |                       lifetime `'a` defined here
+...
+  |     RcBlock::with_encoding::<_, _, _, Enc<'a, 'b>>(f)
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ function was supposed to return data with lifetime `'b` but it is returning data with lifetime `'a`
+  |
+  = help: consider adding the following bound: `'a: 'b`
+
+error: lifetime may not live long enough
+ --> ui/block_lifetimes_independent.rs
+  |
+  | fn args_with_encoding<'a, 'b>(
+  |                       --  -- lifetime `'b` defined here
+  |                       |
+  |                       lifetime `'a` defined here
+...
+  |     RcBlock::with_encoding::<_, _, _, Enc<'a, 'b>>(f)
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ function was supposed to return data with lifetime `'a` but it is returning data with lifetime `'b`
+  |
+  = help: consider adding the following bound: `'b: 'a`
+
+error: lifetime may not live long enough
+ --> ui/block_lifetimes_independent.rs
+  |
+  | fn args_return_with_encoding<'a, 'b>(
+  |                              --  -- lifetime `'b` defined here
+  |                              |
+  |                              lifetime `'a` defined here
+...
+  |     RcBlock::with_encoding::<_, _, _, Enc<'a, 'b>>(f)
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ function was supposed to return data with lifetime `'b` but it is returning data with lifetime `'a`
+  |
+  = help: consider adding the following bound: `'a: 'b`
+
+error: lifetime may not live long enough
+ --> ui/block_lifetimes_independent.rs
+  |
+  | fn args_return_with_encoding<'a, 'b>(
+  |                              --  -- lifetime `'b` defined here
+  |                              |
+  |                              lifetime `'a` defined here
+...
+  |     RcBlock::with_encoding::<_, _, _, Enc<'a, 'b>>(f)
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ function was supposed to return data with lifetime `'a` but it is returning data with lifetime `'b`
+  |
+  = help: consider adding the following bound: `'b: 'a`
+
+error: lifetime may not live long enough
+ --> ui/block_lifetimes_independent.rs
+  |
+  | fn args_entire_with_encoding<'a, 'b>(f: impl Fn(&'a i32) + 'b) -> RcBlock<dyn Fn(&'b i32) + 'a> {
+  |                              --  -- lifetime `'b` defined here
+  |                              |
+  |                              lifetime `'a` defined here
+...
+  |     RcBlock::with_encoding::<_, _, _, Enc<'a>>(f)
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ function was supposed to return data with lifetime `'b` but it is returning data with lifetime `'a`
+  |
+  = help: consider adding the following bound: `'a: 'b`
+
+error: lifetime may not live long enough
+ --> ui/block_lifetimes_independent.rs
+  |
+  | fn args_entire_with_encoding<'a, 'b>(f: impl Fn(&'a i32) + 'b) -> RcBlock<dyn Fn(&'b i32) + 'a> {
+  |                              --  -- lifetime `'b` defined here
+  |                              |
+  |                              lifetime `'a` defined here
+...
+  |     RcBlock::with_encoding::<_, _, _, Enc<'a>>(f)
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ function was supposed to return data with lifetime `'a` but it is returning data with lifetime `'b`
+  |
+  = help: consider adding the following bound: `'b: 'a`
+
+error: lifetime may not live long enough
+ --> ui/block_lifetimes_independent.rs
+  |
+  | fn return_entire_with_encoding<'a, 'b>(
+  |                                --  -- lifetime `'b` defined here
+  |                                |
+  |                                lifetime `'a` defined here
+...
+  |     RcBlock::with_encoding::<_, _, _, Enc<'a>>(f)
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ function was supposed to return data with lifetime `'b` but it is returning data with lifetime `'a`
+  |
+  = help: consider adding the following bound: `'a: 'b`
+
+error: lifetime may not live long enough
+ --> ui/block_lifetimes_independent.rs
+  |
+  | fn return_entire_with_encoding<'a, 'b>(
+  |                                --  -- lifetime `'b` defined here
+  |                                |
+  |                                lifetime `'a` defined here
+...
+  |     RcBlock::with_encoding::<_, _, _, Enc<'a>>(f)
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ function was supposed to return data with lifetime `'a` but it is returning data with lifetime `'b`
+  |
+  = help: consider adding the following bound: `'b: 'a`

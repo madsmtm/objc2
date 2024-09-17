@@ -368,6 +368,7 @@ extern crate objc2 as _;
 mod abi;
 mod block;
 mod debug;
+mod encoding;
 pub mod ffi;
 mod global;
 mod rc_block;
@@ -378,7 +379,7 @@ pub use self::block::Block;
 pub use self::global::GlobalBlock;
 pub use self::rc_block::RcBlock;
 pub use self::stack::StackBlock;
-pub use self::traits::{BlockFn, IntoBlock};
+pub use self::traits::{BlockFn, IntoBlock, ManualBlockEncoding};
 
 /// Deprecated alias for a `'static` `StackBlock`.
 #[deprecated = "renamed to `StackBlock`"]

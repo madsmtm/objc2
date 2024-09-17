@@ -44,8 +44,7 @@ unsafe impl<F: ?Sized + BlockFn> Send for GlobalBlock<F> {}
 // triggers an error.
 impl<F: ?Sized> GlobalBlock<F> {
     // TODO: Use new ABI with BLOCK_HAS_SIGNATURE
-    const FLAGS: BlockFlags =
-        BlockFlags(BlockFlags::BLOCK_IS_GLOBAL.0 | BlockFlags::BLOCK_USE_STRET.0);
+    const FLAGS: BlockFlags = BlockFlags::BLOCK_IS_GLOBAL.union(BlockFlags::BLOCK_USE_STRET);
 
     #[doc(hidden)]
     #[allow(clippy::declare_interior_mutable_const)]

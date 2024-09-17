@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Added `unstable-c-unwind` feature flag.
+* Added `StackBlock::with_encoding` and `RcBlock::with_encoding` for creating
+  blocks with an encoding specified by `ManualBlockEncoding`.
+
+  This is useful for certain APIs that require blocks to have an encoding.
 
 
 ## 0.5.1 - 2024-05-21

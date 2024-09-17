@@ -1,4 +1,6 @@
+use core::ffi;
 use core::fmt;
+use core::mem;
 use core::write;
 
 use crate::parse::verify_name;
@@ -171,6 +173,56 @@ impl Primitive {
             Unknown => "?",
         }
     }
+
+    pub(crate) const fn size(self) -> Option<usize> {
+        match self {
+            // Under all the considered targets, `_Bool` is sized and aligned
+            // to a single byte. See:
+            // https://github.com/search?q=repo%3Allvm%2Fllvm-project+path%3Aclang%2Flib%2FBasic%2FTargets+BoolWidth&type=code
+            // Obj-C's `BOOL` is `signed char`, i.e. `c`, so will fall in the
+            // below case. See: https://developer.apple.com/documentation/objectivec/bool?language=objc
+            Self::Bool => Some(1),
+            // Numbers.
+            Self::Char => Some(mem::size_of::<ffi::c_char>()),
+            Self::UChar => Some(mem::size_of::<ffi::c_uchar>()),
+            Self::Short => Some(mem::size_of::<ffi::c_short>()),
+            Self::UShort => Some(mem::size_of::<ffi::c_ushort>()),
+            Self::Int => Some(mem::size_of::<ffi::c_int>()),
+            Self::UInt => Some(mem::size_of::<ffi::c_uint>()),
+            Self::Long => Some(mem::size_of::<ffi::c_long>()),
+            Self::ULong => Some(mem::size_of::<ffi::c_ulong>()),
+            Self::LongLong => Some(mem::size_of::<ffi::c_longlong>()),
+            Self::ULongLong => Some(mem::size_of::<ffi::c_ulonglong>()),
+            Self::Float => Some(mem::size_of::<ffi::c_float>()),
+            Self::Double => Some(mem::size_of::<ffi::c_double>()),
+            // https://github.com/search?q=repo%3Allvm%2Fllvm-project+path%3Aclang%2Flib%2FBasic%2FTargets+LongDoubleWidth&type=code
+            #[cfg(any(
+                target_arch = "x86_64",
+                all(target_arch = "x86", target_vendor = "apple"),
+                all(target_arch = "aarch64", not(target_vendor = "apple")),
+            ))]
+            Self::LongDouble => Some(16),
+            #[cfg(all(target_arch = "x86", not(target_vendor = "apple")))]
+            Self::LongDouble => Some(12),
+            #[cfg(any(
+                target_arch = "arm",
+                all(target_arch = "aarch64", target_vendor = "apple"),
+            ))]
+            Self::LongDouble => Some(8),
+            Self::FloatComplex => Some(mem::size_of::<ffi::c_float>() * 2),
+            Self::DoubleComplex => Some(mem::size_of::<ffi::c_double>() * 2),
+            Self::LongDoubleComplex => match Self::LongDouble.size() {
+                Some(size) => Some(size * 2),
+                None => None,
+            },
+            // Pointers.
+            Self::String | Self::Object | Self::Block | Self::Class | Self::Sel => {
+                Some(mem::size_of::<*const ()>())
+            }
+            // Nothing.
+            Self::Void | Self::Unknown => None,
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -284,6 +336,43 @@ impl<E: EncodingType> Helper<'_, E> {
             Self::NoneInvalid => {}
         }
         Ok(())
+    }
+
+    pub(crate) fn size(&self, level: NestingLevel) -> Option<usize> {
+        // TODO: alignment?
+        match self {
+            Self::NoneInvalid => None,
+            Self::Primitive(prim) => prim.size(),
+            Self::BitField(size_bits, off_typ) => Some(
+                (usize::from(*size_bits).next_power_of_two().max(8) / 8).max(
+                    off_typ
+                        .and_then(|(_, typ)| typ.helper().size(level.bitfield()))
+                        .unwrap_or_default(),
+                ),
+            ),
+            Self::Indirection(kind, typ) => match kind {
+                IndirectionKind::Pointer => Some(mem::size_of::<*const ()>()),
+                IndirectionKind::Atomic => typ.helper().size(level.indirection(*kind)),
+            },
+            Self::Array(len, typ) => typ
+                .helper()
+                .size(level.array())
+                .map(|typ_size| *len as usize * typ_size),
+            Self::Container(kind, _, fields) => {
+                level
+                    .container_include_fields()
+                    .and_then(|level| match kind {
+                        ContainerKind::Struct => {
+                            fields.iter().map(|field| field.helper().size(level)).sum()
+                        }
+                        ContainerKind::Union => fields
+                            .iter()
+                            .map(|field| field.helper().size(level))
+                            .max()
+                            .flatten(),
+                    })
+            }
+        }
     }
 }
 
