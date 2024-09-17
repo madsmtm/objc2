@@ -586,12 +586,17 @@ fn capture_id() {
         type Arguments = ();
         type Return = Bool;
 
-        #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
-        const ENCODING_CSTR: &'static CStr = c"c8@?0";
-        #[cfg(all(target_os = "linux", target_pointer_width = "64"))]
-        const ENCODING_CSTR: &'static CStr = c"C8@?0";
-        #[cfg(all(target_os = "linux", target_pointer_width = "32"))]
-        const ENCODING_CSTR: &'static CStr = c"C4@?0";
+        const ENCODING_CSTR: &'static CStr = {
+            match (Bool::ENCODING, cfg!(target_pointer_width = "64")) {
+                (Encoding::Char, true) => c"c8@?0",
+                (Encoding::UChar, true) => c"C8@?0",
+                (Encoding::Bool, true) => c"b8@?0",
+                (Encoding::Char, false) => c"c4@?0",
+                (Encoding::UChar, false) => c"C4@?0",
+                (Encoding::Bool, false) => c"b4@?0",
+                _ => panic!("invalid Bool encoding"),
+            }
+        };
     }
 
     for stack_block in [StackBlock::new(closure.clone()), unsafe {
