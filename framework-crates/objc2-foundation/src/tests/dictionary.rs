@@ -4,6 +4,7 @@
 use alloc::format;
 use alloc::string::ToString;
 use core::ptr;
+use std::ffi::CString;
 
 use objc2::{
     ffi, msg_send,
@@ -93,7 +94,10 @@ fn new_different_lengths() {
 
 fn base_class_builder(name: &str) -> Option<ClassBuilder> {
     extern "C-unwind" fn initialize(_cls: &AnyClass, _sel: Sel) {}
-    let mut builder = ClassBuilder::root(name, initialize as extern "C-unwind" fn(_, _))?;
+    let mut builder = ClassBuilder::root(
+        &CString::new(name).unwrap(),
+        initialize as extern "C-unwind" fn(_, _),
+    )?;
 
     extern "C-unwind" fn new(cls: &AnyClass, _sel: Sel) -> *mut AnyObject {
         unsafe { ffi::class_createInstance(cls, 0) }

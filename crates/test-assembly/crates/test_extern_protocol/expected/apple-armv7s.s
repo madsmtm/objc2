@@ -9,7 +9,7 @@ _get_protocol:
 LPC0_0:
 	add	r0, pc, r0
 	mov	r1, #10
-	b	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
+	b	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
 
 	.globl	_dyn_call
 	.p2align	2

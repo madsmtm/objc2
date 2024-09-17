@@ -13,7 +13,7 @@ L0$pb:
 	lea	eax, [eax + l_anon.[ID].0-L0$pb]
 	push	10
 	push	eax
-	call	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
+	call	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
 	add	esp, 24
 	pop	ebp
 	ret

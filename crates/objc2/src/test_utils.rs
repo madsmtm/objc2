@@ -1,3 +1,4 @@
+use alloc::ffi::CString;
 use core::ffi::c_char;
 use core::ops::Deref;
 use std::sync::Once;
@@ -55,6 +56,11 @@ unsafe impl Encode for CustomStruct {
     );
 }
 
+// TODO: Remove once c"" strings are in MSRV
+fn c(s: &str) -> CString {
+    CString::new(s).unwrap()
+}
+
 pub(crate) fn custom_class() -> &'static AnyClass {
     static REGISTER_CUSTOM_CLASS: Once = Once::new();
 
@@ -63,14 +69,14 @@ pub(crate) fn custom_class() -> &'static AnyClass {
         extern "C-unwind" fn custom_obj_class_initialize(_this: &AnyClass, _cmd: Sel) {}
 
         let mut builder = ClassBuilder::root(
-            "CustomObject",
+            &c("CustomObject"),
             custom_obj_class_initialize as extern "C-unwind" fn(_, _),
         )
         .unwrap();
         let proto = custom_protocol();
 
         builder.add_protocol(proto);
-        builder.add_ivar::<u32>("_foo");
+        builder.add_ivar::<u32>(&c("_foo"));
 
         unsafe extern "C-unwind" fn custom_obj_release(this: *mut AnyObject, _cmd: Sel) {
             unsafe {
@@ -80,17 +86,17 @@ pub(crate) fn custom_class() -> &'static AnyClass {
         }
 
         extern "C-unwind" fn custom_obj_set_foo(this: &AnyObject, _cmd: Sel, foo: u32) {
-            let ivar = this.class().instance_variable("_foo").unwrap();
+            let ivar = this.class().instance_variable(&c("_foo")).unwrap();
             unsafe { *ivar.load_ptr::<u32>(this) = foo }
         }
 
         extern "C-unwind" fn custom_obj_get_foo(this: &AnyObject, _cmd: Sel) -> u32 {
-            let ivar = this.class().instance_variable("_foo").unwrap();
+            let ivar = this.class().instance_variable(&c("_foo")).unwrap();
             unsafe { *ivar.load::<u32>(this) }
         }
 
         extern "C-unwind" fn custom_obj_get_foo_reference(this: &AnyObject, _cmd: Sel) -> &u32 {
-            let ivar = this.class().instance_variable("_foo").unwrap();
+            let ivar = this.class().instance_variable(&c("_foo")).unwrap();
             unsafe { ivar.load::<u32>(this) }
         }
 
@@ -112,7 +118,7 @@ pub(crate) fn custom_class() -> &'static AnyClass {
         }
 
         extern "C-unwind" fn custom_obj_set_bar(this: &AnyObject, _cmd: Sel, bar: u32) {
-            let ivar = this.class().instance_variable("_bar").unwrap();
+            let ivar = this.class().instance_variable(&c("_bar")).unwrap();
             unsafe { *ivar.load_ptr::<u32>(this) = bar }
         }
 
@@ -194,14 +200,14 @@ pub(crate) fn custom_class() -> &'static AnyClass {
     });
 
     // Can't use `class!` here since `CustomObject` is dynamically created.
-    AnyClass::get("CustomObject").unwrap()
+    AnyClass::get(&c("CustomObject")).unwrap()
 }
 
 pub(crate) fn custom_protocol() -> &'static AnyProtocol {
     static REGISTER_CUSTOM_PROTOCOL: Once = Once::new();
 
     REGISTER_CUSTOM_PROTOCOL.call_once(|| {
-        let mut builder = ProtocolBuilder::new("CustomProtocol").unwrap();
+        let mut builder = ProtocolBuilder::new(&c("CustomProtocol")).unwrap();
 
         builder.add_method_description::<(i32,), ()>(sel!(setBar:), true);
         builder.add_method_description::<(), *const c_char>(sel!(getName), false);
@@ -210,7 +216,7 @@ pub(crate) fn custom_protocol() -> &'static AnyProtocol {
         builder.register();
     });
 
-    AnyProtocol::get("CustomProtocol").unwrap()
+    AnyProtocol::get(&c("CustomProtocol")).unwrap()
 }
 
 pub(crate) fn custom_subprotocol() -> &'static AnyProtocol {
@@ -218,7 +224,7 @@ pub(crate) fn custom_subprotocol() -> &'static AnyProtocol {
 
     REGISTER_CUSTOM_SUBPROTOCOL.call_once(|| {
         let super_proto = custom_protocol();
-        let mut builder = ProtocolBuilder::new("CustomSubProtocol").unwrap();
+        let mut builder = ProtocolBuilder::new(&c("CustomSubProtocol")).unwrap();
 
         builder.add_protocol(super_proto);
         builder.add_method_description::<(u32,), u32>(sel!(calculateFoo:), true);
@@ -226,7 +232,7 @@ pub(crate) fn custom_subprotocol() -> &'static AnyProtocol {
         builder.register();
     });
 
-    AnyProtocol::get("CustomSubProtocol").unwrap()
+    AnyProtocol::get(&c("CustomSubProtocol")).unwrap()
 }
 
 pub(crate) fn custom_object() -> Retained<CustomObject> {
@@ -239,7 +245,7 @@ pub(crate) fn custom_subclass() -> &'static AnyClass {
 
     REGISTER_CUSTOM_SUBCLASS.call_once(|| {
         let superclass = custom_class();
-        let mut builder = ClassBuilder::new("CustomSubclassObject", superclass).unwrap();
+        let mut builder = ClassBuilder::new(&c("CustomSubclassObject"), superclass).unwrap();
 
         extern "C-unwind" fn custom_subclass_get_foo(this: &AnyObject, _cmd: Sel) -> u32 {
             let foo: u32 = unsafe { msg_send![super(this, custom_class()), foo] };
@@ -260,7 +266,7 @@ pub(crate) fn custom_subclass() -> &'static AnyClass {
         builder.register();
     });
 
-    AnyClass::get("CustomSubclassObject").unwrap()
+    AnyClass::get(&c("CustomSubclassObject")).unwrap()
 }
 
 pub(crate) fn custom_subclass_object() -> Retained<CustomObject> {

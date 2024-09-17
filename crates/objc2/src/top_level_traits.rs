@@ -1,3 +1,4 @@
+use alloc::ffi::CString;
 use core::ptr::NonNull;
 
 use crate::__macro_helpers::declared_ivars::get_initialized_ivar_ptr;
@@ -152,7 +153,7 @@ pub unsafe trait Message: RefEncode {
 /// let cls = MyObject::class();
 ///
 /// // We can now access properties of the class.
-/// assert_eq!(cls.name(), MyObject::NAME);
+/// assert_eq!(cls.name().to_str().unwrap(), MyObject::NAME);
 ///
 /// // And we can send messages to the class.
 /// //
@@ -233,6 +234,10 @@ pub unsafe trait ClassType: Message {
     /// The name of the Objective-C class that this type represents.
     ///
     /// `T::NAME` is the `const` version of `T::class().name()`.
+    ///
+    /// This must not contain any NUL bytes.
+    //
+    // TODO: Convert this to CStr next time we do big changes to ClassType.
     const NAME: &'static str;
 
     /// Get a reference to the Objective-C class that this type represents.
@@ -324,7 +329,7 @@ pub trait DeclaredClass: ClassType {
 /// use objc2::runtime::NSObjectProtocol;
 /// // Get a protocol object representing the `NSObject` protocol
 /// let protocol = <dyn NSObjectProtocol>::protocol().expect("NSObject to have a protocol");
-/// assert_eq!(<dyn NSObjectProtocol>::NAME, protocol.name());
+/// assert_eq!(<dyn NSObjectProtocol>::NAME, protocol.name().to_str().unwrap());
 /// # // Ensure Foundation links on GNUStep
 /// # let _cls = objc2::class!(NSObject);
 /// ```
@@ -343,6 +348,10 @@ pub trait DeclaredClass: ClassType {
 /// ```
 pub unsafe trait ProtocolType {
     /// The name of the Objective-C protocol that this type represents.
+    ///
+    /// This must not contain any NUL bytes.
+    //
+    // TODO: Convert this to CStr next time we do big changes to ProtocolType.
     const NAME: &'static str;
 
     /// Get a reference to the Objective-C protocol object that this type
@@ -363,11 +372,17 @@ pub unsafe trait ProtocolType {
     /// protocol, e.g. if the program is not properly linked to the framework
     /// that defines the protocol.
     fn protocol() -> Option<&'static AnyProtocol> {
-        AnyProtocol::get(Self::NAME)
+        get_protocol(Self::NAME)
     }
 
     #[doc(hidden)]
     const __INNER: ();
+}
+
+// Outlined to reduce code size
+fn get_protocol(name: &str) -> Option<&'static AnyProtocol> {
+    let name = CString::new(name).expect("protocol name must be UTF-8");
+    AnyProtocol::get(&name)
 }
 
 // Split into separate traits for better diagnostics

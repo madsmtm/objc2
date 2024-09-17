@@ -76,6 +76,7 @@ fn cxx_destruct_sel() -> Sel {
 
 #[cfg(test)]
 mod tests {
+    use alloc::ffi::CString;
     use core::sync::atomic::{AtomicBool, Ordering};
 
     use crate::rc::Retained;
@@ -90,7 +91,8 @@ mod tests {
     fn test_destruct_dynamic() {
         static HAS_RUN: AtomicBool = AtomicBool::new(false);
 
-        let mut builder = ClassBuilder::new("TestCxxDestruct", NSObject::class()).unwrap();
+        let name = CString::new("TestCxxDestruct").unwrap();
+        let mut builder = ClassBuilder::new(&name, NSObject::class()).unwrap();
 
         unsafe extern "C" fn destruct(_: *mut NSObject, _: Sel) {
             HAS_RUN.store(true, Ordering::Relaxed);

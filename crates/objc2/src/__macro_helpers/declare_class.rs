@@ -1,3 +1,4 @@
+use alloc::ffi::CString;
 #[cfg(debug_assertions)]
 use alloc::vec::Vec;
 use core::marker::PhantomData;
@@ -139,9 +140,16 @@ pub struct ClassBuilderHelper<T: ?Sized> {
     p: PhantomData<T>,
 }
 
+// Outlined for code size
 #[track_caller]
-fn failed_declaring_class(name: &str) -> ! {
-    panic!("could not create new class {name}. Perhaps a class with that name already exists?")
+fn create_builder(name: &str, superclass: &AnyClass) -> ClassBuilder {
+    let c_name = CString::new(name).expect("class name must be UTF-8");
+    match ClassBuilder::new(&c_name, superclass) {
+        Some(builder) => builder,
+        None => panic!(
+            "could not create new class {name}. Perhaps a class with that name already exists?"
+        ),
+    }
 }
 
 impl<T: DeclaredClass> ClassBuilderHelper<T> {
@@ -152,10 +160,7 @@ impl<T: DeclaredClass> ClassBuilderHelper<T> {
     where
         T::Super: ClassType,
     {
-        let mut builder = match ClassBuilder::new(T::NAME, <T::Super as ClassType>::class()) {
-            Some(builder) => builder,
-            None => failed_declaring_class(T::NAME),
-        };
+        let mut builder = create_builder(T::NAME, <T::Super as ClassType>::class());
 
         setup_dealloc::<T>(&mut builder);
 

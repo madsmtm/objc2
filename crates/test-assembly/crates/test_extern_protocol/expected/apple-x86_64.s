@@ -8,7 +8,7 @@ _get_protocol:
 	lea	rdi, [rip + l_anon.[ID].0]
 	mov	esi, 10
 	pop	rbp
-	jmp	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
+	jmp	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
 
 	.globl	_dyn_call
 	.p2align	4, 0x90

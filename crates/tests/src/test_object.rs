@@ -1,6 +1,7 @@
 #![allow(clippy::missing_safety_doc)]
 use core::ffi::c_int;
 use core::mem::{size_of, ManuallyDrop};
+use std::ffi::CString;
 
 use objc2::encode::{Encoding, RefEncode};
 use objc2::rc::{autoreleasepool, AutoreleasePool, Retained};
@@ -11,6 +12,11 @@ use objc2::sel;
 use objc2::{class, extern_protocol, msg_send, msg_send_id, ClassType, Message, ProtocolType};
 #[cfg(feature = "all")]
 use objc2_foundation::NSNumber;
+
+// TODO: Remove once c"" strings are in MSRV
+fn c(s: &str) -> CString {
+    CString::new(s).unwrap()
+}
 
 extern_protocol!(
     unsafe trait MyTestProtocol: NSObjectProtocol {
@@ -142,12 +148,12 @@ impl MyTestObject {
     }
 
     fn var1_ivar(&self) -> &c_int {
-        let ivar = Self::class().instance_variable("var1").unwrap();
+        let ivar = Self::class().instance_variable(&c("var1")).unwrap();
         unsafe { ivar.load(&self.inner) }
     }
 
     fn var1_ivar_ptr(&self) -> *mut c_int {
-        let ivar = Self::class().instance_variable("var1").unwrap();
+        let ivar = Self::class().instance_variable(&c("var1")).unwrap();
         unsafe { ivar.load_ptr(&self.inner) }
     }
 
@@ -160,12 +166,12 @@ impl MyTestObject {
     }
 
     fn var2_ivar(&self) -> &Bool {
-        let ivar = Self::class().instance_variable("var2").unwrap();
+        let ivar = Self::class().instance_variable(&c("var2")).unwrap();
         unsafe { ivar.load(&self.inner) }
     }
 
     fn var2_ivar_ptr(&self) -> *mut Bool {
-        let ivar = Self::class().instance_variable("var2").unwrap();
+        let ivar = Self::class().instance_variable(&c("var2")).unwrap();
         unsafe { ivar.load_ptr(&self.inner) }
     }
 
@@ -178,12 +184,12 @@ impl MyTestObject {
     }
 
     fn var3_ivar(&self) -> &*mut AnyObject {
-        let ivar = Self::class().instance_variable("var3").unwrap();
+        let ivar = Self::class().instance_variable(&c("var3")).unwrap();
         unsafe { ivar.load(&self.inner) }
     }
 
     fn var3_ivar_ptr(&self) -> *mut *mut AnyObject {
-        let ivar = Self::class().instance_variable("var3").unwrap();
+        let ivar = Self::class().instance_variable(&c("var3")).unwrap();
         unsafe { ivar.load_ptr(&self.inner) }
     }
 }
@@ -235,11 +241,11 @@ fn test_class() {
     assert_in!(cls, classes);
 
     // Test objc2::runtime functionality
-    assert_eq!(AnyClass::get("MyTestObject"), Some(cls));
+    assert_eq!(AnyClass::get(&c("MyTestObject")), Some(cls));
     assert_ne!(cls, class!(NSObject));
-    assert_eq!(cls.name(), "MyTestObject");
+    assert_eq!(cls.name(), &*c("MyTestObject"));
     assert_eq!(cls.superclass(), Some(class!(NSObject)));
-    assert_eq!(cls.metaclass().name(), "MyTestObject");
+    assert_eq!(cls.metaclass().name(), &*c("MyTestObject"));
     assert_ne!(cls.metaclass(), cls);
     assert_eq!(cls.instance_size(), {
         #[repr(C)]
@@ -252,19 +258,19 @@ fn test_class() {
         size_of::<MyTestObjectLayout>()
     });
 
-    let protocol = AnyProtocol::get("NSObject").unwrap();
+    let protocol = AnyProtocol::get(&c("NSObject")).unwrap();
     assert!(cls.conforms_to(protocol));
-    assert!(!cls.conforms_to(AnyProtocol::get("NSCopying").unwrap()));
+    assert!(!cls.conforms_to(AnyProtocol::get(&c("NSCopying")).unwrap()));
     assert_not_in!(protocol, cls.adopted_protocols());
     assert_in!(
-        AnyProtocol::get("MyTestProtocol").unwrap(),
+        AnyProtocol::get(&c("MyTestProtocol")).unwrap(),
         cls.adopted_protocols()
     );
 
     let method = cls.instance_method(sel!(addToVar1:)).unwrap();
     assert_in!(method, cls.instance_methods());
 
-    let ivar = cls.instance_variable("var1").unwrap();
+    let ivar = cls.instance_variable(&c("var1")).unwrap();
     assert_in!(ivar, cls.instance_variables());
 }
 

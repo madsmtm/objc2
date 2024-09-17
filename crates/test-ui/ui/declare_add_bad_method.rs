@@ -4,7 +4,7 @@ use objc2::runtime::{NSObject, Sel};
 use objc2::{sel, ClassType};
 
 fn main() {
-    let builder = ClassBuilder::new("DeclareClassTest", NSObject::class()).unwrap();
+    let builder = ClassBuilder::new(c"DeclareClassTest", NSObject::class()).unwrap();
 
     // Test receiver
     unsafe {

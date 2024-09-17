@@ -21,6 +21,7 @@
 
 #[cfg(feature = "exception")]
 use core::ffi::c_void;
+use core::ffi::CStr;
 use core::fmt;
 #[cfg(feature = "exception")]
 use core::mem;
@@ -82,7 +83,8 @@ impl Exception {
             let obj: *const Exception = self;
             let obj = unsafe { obj.cast::<NSObject>().as_ref().unwrap() };
             // Get class dynamically instead of with `class!` macro
-            Some(obj.isKindOfClass(AnyClass::get("NSException")?))
+            let name = CStr::from_bytes_with_nul(b"NSException\0").unwrap();
+            Some(obj.isKindOfClass(AnyClass::get(name)?))
         } else {
             Some(false)
         }

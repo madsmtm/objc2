@@ -23,7 +23,6 @@ use core::fmt;
 use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
-use core::str;
 
 // Note: While this is not public, it is still a breaking change to remove,
 // since `objc2-foundation` relies on it.
@@ -64,7 +63,7 @@ pub use crate::verify::VerificationError;
 #[allow(deprecated)]
 pub use crate::ffi::{BOOL, NO, YES};
 
-use self::malloc::{MallocSlice, MallocStr};
+use self::malloc::{MallocCStr, MallocSlice};
 
 /// We do not want to expose `MallocSlice` to end users, because in the
 /// future, we want to be able to change it to `Box<[T], MallocAllocator>`.
@@ -77,9 +76,9 @@ macro_rules! MallocSlice {
 }
 
 /// Same as `MallocSlice!`.
-macro_rules! MallocStr {
+macro_rules! MallocCStr {
     () => {
-        impl std::ops::Deref<Target = str> + AsRef<str> + std::fmt::Debug + std::fmt::Display
+        impl std::ops::Deref<Target = CStr> + AsRef<CStr> + std::fmt::Debug
     };
 }
 
@@ -201,35 +200,29 @@ impl Sel {
     ///
     /// # Panics
     ///
-    /// Panics if `name` contains an internal NUL byte, or if the runtime
-    /// failed allocating space for the selector.
+    /// Panics if the runtime failed allocating space for the selector.
+    #[inline]
     #[doc(alias = "sel_registerName")]
-    pub fn register(name: &str) -> Self {
-        let name = CString::new(name).unwrap();
+    pub fn register(name: &CStr) -> Self {
         // SAFETY: Input is a non-null, NUL-terminated C-string pointer.
         unsafe { Self::register_unchecked(name.as_ptr()) }
     }
 
     /// Returns the string representation of the selector.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the selector is not valid UTF-8 (however unlikely!)
+    #[inline]
     #[doc(alias = "sel_getName")]
-    pub fn name(self) -> &'static str {
+    pub fn name(self) -> &'static CStr {
         // SAFETY: Input is non-null selector. Declares return type as
         // `const char * _Nonnull`, source code agrees.
         let ptr = unsafe { ffi::sel_getName(self) };
         // SAFETY: The string is a valid C-style NUL-terminated string, and
-        // likely has static lifetime since the selector has static lifetime
-        // (though we bind it to `&self` to be safe).
-        let name = unsafe { CStr::from_ptr(ptr) };
-        str::from_utf8(name.to_bytes()).unwrap()
+        // has static lifetime since the selector has static lifetime.
+        unsafe { CStr::from_ptr(ptr) }
     }
 
     pub(crate) fn number_of_arguments(self) -> usize {
         self.name()
-            .as_bytes()
+            .to_bytes()
             .iter()
             .filter(|&&b| b == b':')
             .count()
@@ -281,7 +274,9 @@ unsafe impl OptionEncode for Sel {}
 
 impl fmt::Display for Sel {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(self.name(), f)
+        // Selectors are basically always UTF-8, so it's _fine_ to do a lossy
+        // conversion here.
+        fmt::Display::fmt(&self.name().to_string_lossy(), f)
     }
 }
 
@@ -317,10 +312,10 @@ impl Ivar {
     /// Returns the instance variable's name.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/1418922-ivar_getname?language=objc).
+    #[inline]
     #[doc(alias = "ivar_getName")]
-    pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(ffi::ivar_getName(self)) };
-        str::from_utf8(name.to_bytes()).unwrap()
+    pub fn name(&self) -> &CStr {
+        unsafe { CStr::from_ptr(ffi::ivar_getName(self)) }
     }
 
     /// Returns the instance variable's offset from the object base.
@@ -335,10 +330,10 @@ impl Ivar {
     /// Returns the instance variable's `@encode(type)` string.
     ///
     /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/1418569-ivar_gettypeencoding?language=objc).
+    #[inline]
     #[doc(alias = "ivar_getTypeEncoding")]
-    pub fn type_encoding(&self) -> &str {
-        let encoding = unsafe { CStr::from_ptr(ffi::ivar_getTypeEncoding(self)) };
-        str::from_utf8(encoding.to_bytes()).unwrap()
+    pub fn type_encoding(&self) -> &CStr {
+        unsafe { CStr::from_ptr(ffi::ivar_getTypeEncoding(self)) }
     }
 
     #[inline]
@@ -346,6 +341,7 @@ impl Ivar {
         #[cfg(debug_assertions)]
         {
             let encoding = self.type_encoding();
+            let encoding = encoding.to_str().expect("encoding must be UTF-8");
             assert!(
                 _expected.equivalent_to_str(encoding),
                 "wrong encoding. Tried to retrieve ivar with encoding {encoding}, but the encoding of the given type was {_expected}",
@@ -477,7 +473,7 @@ impl fmt::Debug for Ivar {
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub(crate) struct MethodDescription {
     pub(crate) sel: Sel,
-    pub(crate) types: &'static str,
+    pub(crate) types: &'static CStr,
 }
 
 impl MethodDescription {
@@ -488,7 +484,7 @@ impl MethodDescription {
         }
         // SAFETY: We've checked that the pointer is not NULL, rest is checked
         // by caller.
-        let types = unsafe { CStr::from_ptr(raw.types) }.to_str().unwrap();
+        let types = unsafe { CStr::from_ptr(raw.types) };
         Some(Self { sel, types })
     }
 }
@@ -527,20 +523,20 @@ impl Method {
 
     /// Returns the `Encoding` of self's return type.
     #[doc(alias = "method_copyReturnType")]
-    pub fn return_type(&self) -> MallocStr!() {
+    pub fn return_type(&self) -> MallocCStr!() {
         unsafe {
             let encoding = ffi::method_copyReturnType(self);
-            MallocStr::from_c_str(encoding).unwrap()
+            MallocCStr::from_c_str(encoding)
         }
     }
 
     /// Returns the `Encoding` of a single parameter type of self, or
     /// [`None`] if self has no parameter at the given index.
     #[doc(alias = "method_copyArgumentType")]
-    pub fn argument_type(&self, index: usize) -> Option<MallocStr!()> {
+    pub fn argument_type(&self, index: usize) -> Option<MallocCStr!()> {
         unsafe {
             let encoding = ffi::method_copyArgumentType(self, index as c_uint);
-            NonNull::new(encoding).map(|encoding| MallocStr::from_c_str(encoding.as_ptr()).unwrap())
+            NonNull::new(encoding).map(|encoding| MallocCStr::from_c_str(encoding.as_ptr()))
         }
     }
 
@@ -566,7 +562,9 @@ impl Method {
         // SAFETY: `method_getTypeEncoding` returns a C-string, and we just
         // checked that it is non-null.
         let encoding = unsafe { CStr::from_ptr(cstr) };
-        let s = str::from_utf8(encoding.to_bytes()).expect("method type encoding to be UTF-8");
+        let s = encoding
+            .to_str()
+            .expect("method type encoding must be UTF-8");
         MethodEncodingIter::new(s)
     }
 
@@ -706,15 +704,15 @@ impl RefUnwindSafe for AnyClass {}
 impl AnyClass {
     /// Returns the class definition of a specified class, or [`None`] if the
     /// class is not registered with the Objective-C runtime.
+    #[inline]
     #[doc(alias = "objc_getClass")]
-    pub fn get(name: &str) -> Option<&'static Self> {
-        let name = CString::new(name).unwrap();
+    pub fn get(name: &CStr) -> Option<&'static Self> {
         let cls = unsafe { ffi::objc_getClass(name.as_ptr()) };
         unsafe { cls.as_ref() }
     }
 
     // Same as `get`, but ...
-    // fn lookup(name: &str) -> Option<&'static Self>;
+    // fn lookup(name: &CStr) -> Option<&'static Self>;
 
     /// Obtains the list of registered class definitions.
     #[doc(alias = "objc_copyClassList")]
@@ -737,7 +735,7 @@ impl AnyClass {
     ///
     /// 1. The class pointer must be valid.
     /// 2. The string is unbounded, so the caller must bound it.
-    pub(crate) unsafe fn name_raw<'a>(ptr: *const Self) -> &'a str {
+    pub(crate) unsafe fn name_raw<'a>(ptr: *const Self) -> &'a CStr {
         // SAFETY: Caller ensures that the pointer is valid
         let name = unsafe { ffi::class_getName(ptr) };
         if name.is_null() {
@@ -747,13 +745,13 @@ impl AnyClass {
         // `class_getName` is guaranteed to return a valid C-string.
         //
         // That the result is properly bounded is checked by the caller.
-        let name = unsafe { CStr::from_ptr(name) };
-        str::from_utf8(name.to_bytes()).unwrap()
+        unsafe { CStr::from_ptr(name) }
     }
 
     /// Returns the name of the class.
+    #[inline]
     #[doc(alias = "class_getName")]
-    pub fn name(&self) -> &str {
+    pub fn name(&self) -> &CStr {
         // SAFETY: The pointer is valid, and the return is properly bounded
         unsafe { Self::name_raw(self) }
     }
@@ -792,7 +790,7 @@ impl AnyClass {
     /// let cls = NSObject::class();
     /// let metacls = cls.metaclass();
     ///
-    /// assert_eq!(metacls.name(), "NSObject");
+    /// assert_eq!(metacls.name(), c"NSObject");
     /// ```
     #[inline]
     #[doc(alias = "object_getClass")]
@@ -865,9 +863,9 @@ impl AnyClass {
     ///
     /// Attempting to access or modify instance variables of a class that you
     /// do no control may invoke undefined behaviour.
+    #[inline]
     #[doc(alias = "class_getInstanceVariable")]
-    pub fn instance_variable(&self, name: &str) -> Option<&Ivar> {
-        let name = CString::new(name).unwrap();
+    pub fn instance_variable(&self, name: &CStr) -> Option<&Ivar> {
         unsafe {
             let ivar = ffi::class_getInstanceVariable(self, name.as_ptr());
             ivar.as_ref()
@@ -875,9 +873,9 @@ impl AnyClass {
     }
 
     #[allow(unused)]
+    #[inline]
     #[doc(alias = "class_getClassVariable")]
-    fn class_variable(&self, name: &str) -> Option<&Ivar> {
-        let name = CString::new(name).unwrap();
+    fn class_variable(&self, name: &CStr) -> Option<&Ivar> {
         let ivar = unsafe { ffi::class_getClassVariable(self, name.as_ptr()) };
         // SAFETY: TODO
         unsafe { ivar.as_ref() }
@@ -939,10 +937,10 @@ impl AnyClass {
     }
 
     // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html>
-    // fn property(&self, name: &str) -> Option<&Property>;
+    // fn property(&self, name: &CStr) -> Option<&Property>;
     // fn properties(&self) -> MallocSlice!(&Property);
-    // unsafe fn replace_method(&self, name: Sel, imp: Imp, types: &str) -> Imp;
-    // unsafe fn replace_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
+    // unsafe fn replace_method(&self, name: Sel, imp: Imp, types: &CStr) -> Imp;
+    // unsafe fn replace_property(&self, name: &CStr, attributes: &[ffi::objc_property_attribute_t]);
     // fn method_imp(&self, name: Sel) -> Imp; // + _stret
 
     // fn get_version(&self) -> u32;
@@ -996,7 +994,9 @@ impl fmt::Debug for AnyClass {
 
 impl fmt::Display for AnyClass {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(self.name(), f)
+        // Classes are usually UTF-8, so it's probably fine to do a lossy
+        // conversion here.
+        fmt::Display::fmt(&self.name().to_string_lossy(), f)
     }
 }
 
@@ -1028,9 +1028,9 @@ impl RefUnwindSafe for AnyProtocol {}
 impl AnyProtocol {
     /// Returns the protocol definition of a specified protocol, or [`None`]
     /// if the protocol is not registered with the Objective-C runtime.
+    #[inline]
     #[doc(alias = "objc_getProtocol")]
-    pub fn get(name: &str) -> Option<&'static Self> {
-        let name = CString::new(name).unwrap();
+    pub fn get(name: &CStr) -> Option<&'static Self> {
         unsafe {
             let proto = ffi::objc_getProtocol(name.as_ptr());
             proto.cast::<Self>().as_ref()
@@ -1066,10 +1066,10 @@ impl AnyProtocol {
     }
 
     /// Returns the name of self.
+    #[inline]
     #[doc(alias = "protocol_getName")]
-    pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(ffi::protocol_getName(self)) };
-        str::from_utf8(name.to_bytes()).unwrap()
+    pub fn name(&self) -> &CStr {
+        unsafe { CStr::from_ptr(ffi::protocol_getName(self)) }
     }
 
     fn method_descriptions_inner(&self, required: bool, instance: bool) -> Vec<MethodDescription> {
@@ -1135,7 +1135,9 @@ impl fmt::Debug for AnyProtocol {
 
 impl fmt::Display for AnyProtocol {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(self.name(), f)
+        // Protocols are usually UTF-8, so it's probably fine to do a lossy
+        // conversion here.
+        fmt::Display::fmt(&self.name().to_string_lossy(), f)
     }
 }
 
@@ -1276,9 +1278,10 @@ impl AnyObject {
     }
 
     pub(crate) fn lookup_instance_variable_dynamically(&self, name: &str) -> &'static Ivar {
+        let name = CString::new(name).unwrap();
         let cls = self.class();
-        cls.instance_variable(name)
-            .unwrap_or_else(|| panic!("ivar {name} not found on class {cls}"))
+        cls.instance_variable(&name)
+            .unwrap_or_else(|| panic!("ivar {name:?} not found on class {cls}"))
     }
 
     /// Use [`Ivar::load`] instead.
@@ -1321,12 +1324,13 @@ impl AnyObject {
 impl fmt::Debug for AnyObject {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let ptr: *const Self = self;
-        write!(f, "<{}: {:p}>", self.class().name(), ptr)
+        write!(f, "<{}: {:p}>", self.class(), ptr)
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use alloc::ffi::CString;
     use alloc::format;
     use alloc::string::ToString;
     use core::mem::size_of;
@@ -1335,14 +1339,19 @@ mod tests {
     use crate::test_utils;
     use crate::{class, msg_send, sel, ClassType};
 
+    // TODO: Remove once c"" strings are in MSRV
+    fn c(s: &str) -> CString {
+        CString::new(s).unwrap()
+    }
+
     #[test]
     fn test_selector() {
         macro_rules! test_sel {
             ($s:literal, $($tt:tt)+) => {{
                 let sel = sel!($($tt)*);
-                let expected = Sel::register($s);
+                let expected = Sel::register(&c($s));
                 assert_eq!(sel, expected);
-                assert_eq!(sel.name(), $s);
+                assert_eq!(sel.name().to_str(), Ok($s));
             }}
         }
         test_sel!("abc", abc);
@@ -1361,26 +1370,23 @@ mod tests {
 
     #[test]
     fn test_empty_selector() {
-        let sel = Sel::register("");
-        assert_eq!(sel.name(), "");
-        let sel = Sel::register(":");
-        assert_eq!(sel.name(), ":");
-        let sel = Sel::register("::");
-        assert_eq!(sel.name(), "::");
-    }
-
-    #[test]
-    #[should_panic = "NulError"]
-    fn test_sel_register_null() {
-        let _ = Sel::register("\0");
+        let s = c("");
+        let sel = Sel::register(&s);
+        assert_eq!(sel.name(), &*s);
+        let s = c(":");
+        let sel = Sel::register(&s);
+        assert_eq!(sel.name(), &*s);
+        let s = c("::");
+        let sel = Sel::register(&s);
+        assert_eq!(sel.name(), &*s);
     }
 
     #[test]
     fn test_ivar() {
         let cls = test_utils::custom_class();
-        let ivar = cls.instance_variable("_foo").unwrap();
-        assert_eq!(ivar.name(), "_foo");
-        assert!(<u32>::ENCODING.equivalent_to_str(ivar.type_encoding()));
+        let ivar = cls.instance_variable(&c("_foo")).unwrap();
+        assert_eq!(ivar.name(), &*c("_foo"));
+        assert!(<u32>::ENCODING.equivalent_to_str(ivar.type_encoding().to_str().unwrap()));
         assert!(ivar.offset() > 0);
         assert!(cls.instance_variables().len() > 0);
     }
@@ -1388,13 +1394,13 @@ mod tests {
     #[test]
     fn test_instance_method() {
         let cls = test_utils::custom_class();
-        let sel = Sel::register("foo");
+        let sel = Sel::register(&c("foo"));
         let method = cls.instance_method(sel).unwrap();
-        assert_eq!(method.name().name(), "foo");
+        assert_eq!(method.name().name(), &*c("foo"));
         assert_eq!(method.arguments_count(), 2);
 
-        assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
-        assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
+        assert!(<u32>::ENCODING.equivalent_to_str(method.return_type().to_str().unwrap()));
+        assert!(Sel::ENCODING.equivalent_to_str(method.argument_type(1).unwrap().to_str().unwrap()));
 
         assert!(cls.instance_methods().iter().any(|m| *m == method));
     }
@@ -1403,11 +1409,11 @@ mod tests {
     fn test_class_method() {
         let cls = test_utils::custom_class();
         let method = cls.class_method(sel!(classFoo)).unwrap();
-        assert_eq!(method.name().name(), "classFoo");
+        assert_eq!(method.name().name(), &*c("classFoo"));
         assert_eq!(method.arguments_count(), 2);
 
-        assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
-        assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
+        assert!(<u32>::ENCODING.equivalent_to_str(method.return_type().to_str().unwrap()));
+        assert!(Sel::ENCODING.equivalent_to_str(method.argument_type(1).unwrap().to_str().unwrap()));
 
         assert!(cls
             .metaclass()
@@ -1419,7 +1425,7 @@ mod tests {
     #[test]
     fn test_class() {
         let cls = test_utils::custom_class();
-        assert_eq!(cls.name(), "CustomObject");
+        assert_eq!(cls.name(), &*c("CustomObject"));
         assert!(cls.instance_size() > 0);
         assert!(cls.superclass().is_none());
 
@@ -1457,7 +1463,7 @@ mod tests {
     #[test]
     fn test_protocol() {
         let proto = test_utils::custom_protocol();
-        assert_eq!(proto.name(), "CustomProtocol");
+        assert_eq!(proto.name(), &*c("CustomProtocol"));
         let class = test_utils::custom_class();
         assert!(class.conforms_to(proto));
 
@@ -1465,17 +1471,17 @@ mod tests {
         if cfg!(any(not(feature = "gnustep-1-7"), feature = "gnustep-2-0")) {
             let desc = MethodDescription {
                 sel: sel!(setBar:),
-                types: "v@:i",
+                types: CStr::from_bytes_with_nul(b"v@:i\0").unwrap(),
             };
             assert_eq!(&proto.method_descriptions(true), &[desc]);
             let desc = MethodDescription {
                 sel: sel!(getName),
-                types: "*@:",
+                types: CStr::from_bytes_with_nul(b"*@:\0").unwrap(),
             };
             assert_eq!(&proto.method_descriptions(false), &[desc]);
             let desc = MethodDescription {
                 sel: sel!(addNumber:toNumber:),
-                types: "i@:ii",
+                types: CStr::from_bytes_with_nul(b"i@:ii\0").unwrap(),
             };
             assert_eq!(&proto.class_method_descriptions(true), &[desc]);
         }
@@ -1513,7 +1519,7 @@ mod tests {
         let cls = test_utils::custom_class();
         assert_eq!(obj.class(), cls);
 
-        let ivar = cls.instance_variable("_foo").unwrap();
+        let ivar = cls.instance_variable(&c("_foo")).unwrap();
 
         unsafe { *ivar.load_ptr::<u32>(&obj) = 4 };
         let result = unsafe { *ivar.load::<u32>(&obj) };
@@ -1523,12 +1529,12 @@ mod tests {
     #[test]
     fn test_object_ivar_unknown() {
         let cls = test_utils::custom_class();
-        assert_eq!(cls.instance_variable("unknown"), None);
+        assert_eq!(cls.instance_variable(&c("unknown")), None);
     }
 
     #[test]
     fn test_no_ivars() {
-        let cls = ClassBuilder::new("NoIvarObject", NSObject::class())
+        let cls = ClassBuilder::new(&c("NoIvarObject"), NSObject::class())
             .unwrap()
             .register();
         assert_eq!(cls.instance_variables().len(), 0);
@@ -1542,7 +1548,7 @@ mod tests {
     fn test_object_ivar_wrong_type() {
         let obj = test_utils::custom_object();
         let cls = test_utils::custom_class();
-        let ivar = cls.instance_variable("_foo").unwrap();
+        let ivar = cls.instance_variable(&c("_foo")).unwrap();
         let _ = unsafe { *ivar.load::<u8>(&obj) };
     }
 
@@ -1641,5 +1647,22 @@ mod tests {
         assert!(get_ivar_layout(class!(NSException)).is_null());
         assert!(get_ivar_layout(class!(NSNumber)).is_null());
         assert!(get_ivar_layout(class!(NSString)).is_null());
+    }
+
+    #[test]
+    fn test_non_utf8_roundtrip() {
+        // Some invalid UTF-8 character
+        let s = CStr::from_bytes_with_nul(b"\x9F\0").unwrap();
+
+        let sel = Sel::register(s);
+        assert_eq!(sel.name(), s);
+        assert_eq!(sel.to_string(), char::REPLACEMENT_CHARACTER.to_string());
+
+        let cls = ClassBuilder::new(s, NSObject::class()).unwrap().register();
+        assert_eq!(cls.name(), s);
+        assert_eq!(cls.to_string(), char::REPLACEMENT_CHARACTER.to_string());
+
+        let cls_runtime = AnyClass::get(s).unwrap();
+        assert_eq!(cls, cls_runtime);
     }
 }

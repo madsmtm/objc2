@@ -3,7 +3,6 @@
 //! TODO: Move this to `objc2-encode` when more stable.
 use core::fmt;
 use core::num::ParseIntError;
-use core::str;
 use std::error::Error;
 
 use crate::encode::{Encoding, EncodingBox, ParseError};

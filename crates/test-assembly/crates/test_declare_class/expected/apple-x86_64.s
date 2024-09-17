@@ -109,14 +109,13 @@ Lfunc_begin1:
 	mov	rax, qword ptr [rdi]
 	cmp	byte ptr [rax], 0
 	mov	byte ptr [rax], 0
-	je	LBB1_18
+	je	LBB1_14
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
 	lea	rdi, [rip + l_anon.[ID].13]
+	lea	rcx, [rip + l_anon.[ID].15]
 	mov	esi, 7
-	call	SYM(objc2::runtime::declare::ClassBuilder::new::GENERATED_ID, 0)
-	test	rax, rax
-	je	LBB1_19
+	call	SYM(objc2::__macro_helpers::declare_class::create_builder::GENERATED_ID, 0)
 	mov	qword ptr [rbp - 16], rax
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_518803e84ea38a73]
 Ltmp6:
@@ -166,25 +165,25 @@ Ltmp15:
 Ltmp16:
 	lea	rdi, [rip + L_anon.[ID].19]
 	mov	esi, 8
-	call	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
+	call	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
 Ltmp17:
 	test	rax, rax
-	je	LBB1_10
+	je	LBB1_9
 	mov	rdi, qword ptr [rbp - 16]
 	mov	rsi, rax
 	call	_class_addProtocol
-LBB1_10:
+LBB1_9:
 Ltmp18:
 	lea	rdi, [rip + l_anon.[ID].20]
 	mov	esi, 9
-	call	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
+	call	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
 Ltmp19:
 	test	rax, rax
-	je	LBB1_13
+	je	LBB1_12
 	mov	rdi, qword ptr [rbp - 16]
 	mov	rsi, rax
 	call	_class_addProtocol
-LBB1_13:
+LBB1_12:
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_f4e71677dafa88a8]
 Ltmp20:
 	lea	rdx, [rip + l_anon.[ID].23]
@@ -202,35 +201,23 @@ Ltmp21:
 	pop	rbx
 	pop	rbp
 	ret
-LBB1_18:
+LBB1_14:
 	lea	rdi, [rip + l_anon.[ID].12]
 	call	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
-LBB1_19:
-	lea	rdi, [rip + l_anon.[ID].13]
-	lea	rdx, [rip + l_anon.[ID].15]
-	mov	esi, 7
-	call	SYM(objc2::__macro_helpers::declare_class::failed_declaring_class::GENERATED_ID, 0)
 LBB1_15:
 Ltmp22:
 	mov	rbx, rax
-Ltmp23:
-	lea	rdi, [rbp - 16]
-	call	SYM(<objc2::runtime::declare::ClassBuilder as core::ops::drop::Drop>::drop::GENERATED_ID, 0)
-Ltmp24:
+	mov	rdi, qword ptr [rbp - 16]
+	call	_objc_disposeClassPair
 	mov	rdi, rbx
 	call	__Unwind_Resume
-LBB1_17:
-Ltmp25:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
 Lfunc_end1:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
 GCC_except_table1:
 Lexception1:
 	.byte	255
-	.byte	155
-	.uleb128 Lttbase1-Lttbaseref1
-Lttbaseref1:
+	.byte	255
 	.byte	1
 	.uleb128 Lcst_end1-Lcst_begin1
 Lcst_begin1:
@@ -243,23 +230,10 @@ Lcst_begin1:
 	.uleb128 Ltmp22-Lfunc_begin1
 	.byte	0
 	.uleb128 Ltmp21-Lfunc_begin1
-	.uleb128 Ltmp23-Ltmp21
-	.byte	0
-	.byte	0
-	.uleb128 Ltmp23-Lfunc_begin1
-	.uleb128 Ltmp24-Ltmp23
-	.uleb128 Ltmp25-Lfunc_begin1
-	.byte	1
-	.uleb128 Ltmp24-Lfunc_begin1
-	.uleb128 Lfunc_end1-Ltmp24
+	.uleb128 Lfunc_end1-Ltmp21
 	.byte	0
 	.byte	0
 Lcst_end1:
-	.byte	127
-	.byte	0
-	.p2align	2, 0x0
-Lttbase1:
-	.byte	0
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
@@ -274,79 +248,79 @@ Lfunc_begin2:
 	mov	rax, qword ptr [rdi]
 	cmp	byte ptr [rax], 0
 	mov	byte ptr [rax], 0
-	je	LBB2_17
+	je	LBB2_14
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
 	lea	rdi, [rip + l_anon.[ID].10]
+	lea	rcx, [rip + l_anon.[ID].25]
 	mov	esi, 9
-	call	SYM(objc2::runtime::declare::ClassBuilder::new::GENERATED_ID, 0)
-	test	rax, rax
-	je	LBB2_18
+	call	SYM(objc2::__macro_helpers::declare_class::create_builder::GENERATED_ID, 0)
 	mov	qword ptr [rbp - 72], rax
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_dealloc@GOTPCREL]
 	mov	rsi, qword ptr [rax]
-Ltmp26:
+Ltmp23:
 	lea	r8, [rip + l_anon.[ID].3]
 	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macro_helpers::declared_ivars::dealloc::<test_declare_class[CRATE_ID]::DropIvars>, 0)]
-	lea	rdi, [rbp - 72]
+	lea	rbx, [rbp - 72]
 	mov	edx, 8
+	mov	rdi, rbx
 	xor	ecx, ecx
 	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-Ltmp27:
+Ltmp24:
 	mov	rax, qword ptr [rbp - 72]
 	mov	qword ptr [rbp - 32], rax
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
-Ltmp32:
+Ltmp26:
 	lea	r8, [rip + l_anon.[ID].18]
 	lea	r9, [rip + _init_drop_ivars]
-	lea	rdi, [rbp - 32]
+	lea	rbx, [rbp - 32]
 	mov	edx, 8
+	mov	rdi, rbx
 	xor	ecx, ecx
 	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-Ltmp33:
+Ltmp27:
 	mov	rax, qword ptr [rbp - 32]
 	mov	qword ptr [rbp - 24], rax
 	mov	qword ptr [rbp - 64], 16
 	lea	rax, [rip + l_anon.[ID].8]
 	mov	qword ptr [rbp - 56], rax
 	mov	byte ptr [rbp - 72], 27
-Ltmp38:
+Ltmp29:
 	lea	rsi, [rip + l_anon.[ID].4]
-	lea	rdi, [rbp - 24]
+	lea	rbx, [rbp - 24]
 	lea	r9, [rbp - 72]
-	mov	edx, 5
+	mov	edx, 6
 	mov	ecx, 16
+	mov	rdi, rbx
 	mov	r8d, 3
 	call	SYM(objc2::runtime::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
-Ltmp39:
-Ltmp40:
+Ltmp30:
+Ltmp31:
 	lea	rsi, [rip + l_anon.[ID].5]
 	lea	r9, [rip + l_anon.[ID].6]
 	lea	rdi, [rbp - 24]
-	mov	edx, 9
+	mov	edx, 10
 	mov	ecx, 1
 	xor	r8d, r8d
 	call	SYM(objc2::runtime::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
-Ltmp41:
+Ltmp32:
 	mov	rbx, qword ptr [rbp - 24]
 	mov	rdi, rbx
 	call	_objc_registerClassPair
 	lea	rsi, [rip + l_anon.[ID].4]
-	mov	edx, 5
 	mov	rdi, rbx
-	call	SYM(objc2::runtime::AnyClass::instance_variable::GENERATED_ID, 0)
+	call	_class_getInstanceVariable
 	test	rax, rax
-	je	LBB2_7
+	je	LBB2_6
 	mov	rdi, rax
 	call	_ivar_getOffset
 	mov	r14, rax
 	lea	rsi, [rip + l_anon.[ID].5]
-	mov	edx, 9
 	mov	rdi, rbx
-	call	SYM(objc2::runtime::AnyClass::instance_variable::GENERATED_ID, 0)
+	call	_class_getInstanceVariable
 	test	rax, rax
-	je	LBB2_11
+	je	LBB2_10
 	mov	rdi, rax
 	call	_ivar_getOffset
 	mov	qword ptr [rip + SYM(test_declare_class[CRATE_ID]::_::__OBJC2_CLASS, 1).0], rbx
@@ -357,107 +331,58 @@ Ltmp41:
 	pop	r14
 	pop	rbp
 	ret
-LBB2_17:
+LBB2_14:
 	lea	rdi, [rip + l_anon.[ID].12]
 	call	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
-LBB2_18:
-	lea	rdi, [rip + l_anon.[ID].10]
-	lea	rdx, [rip + l_anon.[ID].25]
-	mov	esi, 9
-	call	SYM(objc2::__macro_helpers::declare_class::failed_declaring_class::GENERATED_ID, 0)
-LBB2_7:
+LBB2_6:
 	call	SYM(objc2::__macro_helpers::declared_ivars::register_with_ivars::get_ivar_failed::GENERATED_ID, 0)
-LBB2_11:
+LBB2_10:
 	call	SYM(objc2::__macro_helpers::declared_ivars::register_with_ivars::get_drop_flag_failed::GENERATED_ID, 0)
-LBB2_14:
-Ltmp34:
-	mov	rbx, rax
-Ltmp35:
-	lea	rdi, [rbp - 32]
-	call	SYM(<objc2::runtime::declare::ClassBuilder as core::ops::drop::Drop>::drop::GENERATED_ID, 0)
-Ltmp36:
-	jmp	LBB2_9
-LBB2_15:
-Ltmp37:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
-LBB2_8:
-Ltmp28:
-	mov	rbx, rax
-Ltmp29:
-	lea	rdi, [rbp - 72]
-	call	SYM(<objc2::runtime::declare::ClassBuilder as core::ops::drop::Drop>::drop::GENERATED_ID, 0)
-Ltmp30:
-	jmp	LBB2_9
-LBB2_19:
-Ltmp31:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
-LBB2_13:
-Ltmp42:
-	mov	rbx, rax
-Ltmp43:
-	lea	rdi, [rbp - 24]
-	call	SYM(<objc2::runtime::declare::ClassBuilder as core::ops::drop::Drop>::drop::GENERATED_ID, 0)
-Ltmp44:
-LBB2_9:
-	mov	rdi, rbx
-	call	__Unwind_Resume
 LBB2_12:
-Ltmp45:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+Ltmp28:
+	jmp	LBB2_8
+LBB2_7:
+Ltmp25:
+	jmp	LBB2_8
+LBB2_11:
+Ltmp33:
+LBB2_8:
+	mov	r14, rax
+	mov	rdi, qword ptr [rbx]
+	call	_objc_disposeClassPair
+	mov	rdi, r14
+	call	__Unwind_Resume
 Lfunc_end2:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
 GCC_except_table2:
 Lexception2:
 	.byte	255
-	.byte	155
-	.uleb128 Lttbase2-Lttbaseref2
-Lttbaseref2:
+	.byte	255
 	.byte	1
 	.uleb128 Lcst_end2-Lcst_begin2
 Lcst_begin2:
 	.uleb128 Lfunc_begin2-Lfunc_begin2
-	.uleb128 Ltmp26-Lfunc_begin2
+	.uleb128 Ltmp23-Lfunc_begin2
 	.byte	0
+	.byte	0
+	.uleb128 Ltmp23-Lfunc_begin2
+	.uleb128 Ltmp24-Ltmp23
+	.uleb128 Ltmp25-Lfunc_begin2
 	.byte	0
 	.uleb128 Ltmp26-Lfunc_begin2
 	.uleb128 Ltmp27-Ltmp26
 	.uleb128 Ltmp28-Lfunc_begin2
 	.byte	0
-	.uleb128 Ltmp32-Lfunc_begin2
-	.uleb128 Ltmp33-Ltmp32
-	.uleb128 Ltmp34-Lfunc_begin2
-	.byte	0
-	.uleb128 Ltmp38-Lfunc_begin2
-	.uleb128 Ltmp41-Ltmp38
-	.uleb128 Ltmp42-Lfunc_begin2
-	.byte	0
-	.uleb128 Ltmp41-Lfunc_begin2
-	.uleb128 Ltmp35-Ltmp41
-	.byte	0
-	.byte	0
-	.uleb128 Ltmp35-Lfunc_begin2
-	.uleb128 Ltmp36-Ltmp35
-	.uleb128 Ltmp37-Lfunc_begin2
-	.byte	1
 	.uleb128 Ltmp29-Lfunc_begin2
-	.uleb128 Ltmp30-Ltmp29
-	.uleb128 Ltmp31-Lfunc_begin2
-	.byte	1
-	.uleb128 Ltmp43-Lfunc_begin2
-	.uleb128 Ltmp44-Ltmp43
-	.uleb128 Ltmp45-Lfunc_begin2
-	.byte	1
-	.uleb128 Ltmp44-Lfunc_begin2
-	.uleb128 Lfunc_end2-Ltmp44
+	.uleb128 Ltmp32-Ltmp29
+	.uleb128 Ltmp33-Lfunc_begin2
+	.byte	0
+	.uleb128 Ltmp32-Lfunc_begin2
+	.uleb128 Lfunc_end2-Ltmp32
 	.byte	0
 	.byte	0
 Lcst_end2:
-	.byte	127
-	.byte	0
-	.p2align	2, 0x0
-Lttbase2:
-	.byte	0
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
@@ -466,142 +391,107 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 Lfunc_begin3:
 	push	rbp
 	mov	rbp, rsp
+	push	r14
 	push	rbx
-	sub	rsp, 56
+	sub	rsp, 64
 	mov	rax, qword ptr [rdi]
 	cmp	byte ptr [rax], 0
 	mov	byte ptr [rax], 0
-	je	LBB3_12
+	je	LBB3_9
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
 	lea	rdi, [rip + l_anon.[ID].9]
+	lea	rcx, [rip + l_anon.[ID].24]
 	mov	esi, 15
-	call	SYM(objc2::runtime::declare::ClassBuilder::new::GENERATED_ID, 0)
-	test	rax, rax
-	je	LBB3_13
-	mov	qword ptr [rbp - 16], rax
+	call	SYM(objc2::__macro_helpers::declare_class::create_builder::GENERATED_ID, 0)
+	mov	qword ptr [rbp - 24], rax
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
-Ltmp46:
+Ltmp34:
 	lea	r8, [rip + l_anon.[ID].18]
 	lea	r9, [rip + _init_forgetable_ivars]
-	lea	rdi, [rbp - 16]
+	lea	rbx, [rbp - 24]
 	mov	edx, 8
+	mov	rdi, rbx
 	xor	ecx, ecx
 	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-Ltmp47:
-	mov	rax, qword ptr [rbp - 16]
-	mov	qword ptr [rbp - 24], rax
-	mov	qword ptr [rbp - 56], 8
+Ltmp35:
+	mov	rax, qword ptr [rbp - 24]
+	mov	qword ptr [rbp - 32], rax
+	mov	qword ptr [rbp - 64], 8
 	lea	rax, [rip + l_anon.[ID].7]
-	mov	qword ptr [rbp - 48], rax
-	mov	byte ptr [rbp - 64], 27
-Ltmp52:
+	mov	qword ptr [rbp - 56], rax
+	mov	byte ptr [rbp - 72], 27
+Ltmp37:
 	lea	rsi, [rip + l_anon.[ID].4]
-	lea	rdi, [rbp - 24]
-	lea	r9, [rbp - 64]
-	mov	edx, 5
+	lea	rbx, [rbp - 32]
+	lea	r9, [rbp - 72]
+	mov	edx, 6
 	mov	ecx, 8
+	mov	rdi, rbx
 	mov	r8d, 2
 	call	SYM(objc2::runtime::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
-Ltmp53:
-	mov	rbx, qword ptr [rbp - 24]
+Ltmp38:
+	mov	rbx, qword ptr [rbp - 32]
 	mov	rdi, rbx
 	call	_objc_registerClassPair
 	lea	rsi, [rip + l_anon.[ID].4]
-	mov	edx, 5
 	mov	rdi, rbx
-	call	SYM(objc2::runtime::AnyClass::instance_variable::GENERATED_ID, 0)
+	call	_class_getInstanceVariable
 	test	rax, rax
-	je	LBB3_5
+	je	LBB3_4
 	mov	rdi, rax
 	call	_ivar_getOffset
 	mov	qword ptr [rip + SYM(test_declare_class[CRATE_ID]::_::__OBJC2_CLASS, 2).0], rbx
 	mov	qword ptr [rip + SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1)], rax
-	add	rsp, 56
+	add	rsp, 64
 	pop	rbx
+	pop	r14
 	pop	rbp
 	ret
-LBB3_12:
+LBB3_9:
 	lea	rdi, [rip + l_anon.[ID].12]
 	call	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
-LBB3_13:
-	lea	rdi, [rip + l_anon.[ID].9]
-	lea	rdx, [rip + l_anon.[ID].24]
-	mov	esi, 15
-	call	SYM(objc2::__macro_helpers::declare_class::failed_declaring_class::GENERATED_ID, 0)
-LBB3_5:
+LBB3_4:
 	call	SYM(objc2::__macro_helpers::declared_ivars::register_with_ivars::get_ivar_failed::GENERATED_ID, 0)
+LBB3_5:
+Ltmp39:
+	jmp	LBB3_6
 LBB3_7:
-Ltmp54:
-	mov	rbx, rax
-Ltmp55:
-	lea	rdi, [rbp - 24]
-	call	SYM(<objc2::runtime::declare::ClassBuilder as core::ops::drop::Drop>::drop::GENERATED_ID, 0)
-Ltmp56:
-	jmp	LBB3_8
+Ltmp36:
 LBB3_6:
-Ltmp57:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
-LBB3_9:
-Ltmp48:
-	mov	rbx, rax
-Ltmp49:
-	lea	rdi, [rbp - 16]
-	call	SYM(<objc2::runtime::declare::ClassBuilder as core::ops::drop::Drop>::drop::GENERATED_ID, 0)
-Ltmp50:
-LBB3_8:
-	mov	rdi, rbx
+	mov	r14, rax
+	mov	rdi, qword ptr [rbx]
+	call	_objc_disposeClassPair
+	mov	rdi, r14
 	call	__Unwind_Resume
-LBB3_10:
-Ltmp51:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
 Lfunc_end3:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
 GCC_except_table3:
 Lexception3:
 	.byte	255
-	.byte	155
-	.uleb128 Lttbase3-Lttbaseref3
-Lttbaseref3:
+	.byte	255
 	.byte	1
 	.uleb128 Lcst_end3-Lcst_begin3
 Lcst_begin3:
 	.uleb128 Lfunc_begin3-Lfunc_begin3
-	.uleb128 Ltmp46-Lfunc_begin3
+	.uleb128 Ltmp34-Lfunc_begin3
 	.byte	0
 	.byte	0
-	.uleb128 Ltmp46-Lfunc_begin3
-	.uleb128 Ltmp47-Ltmp46
-	.uleb128 Ltmp48-Lfunc_begin3
+	.uleb128 Ltmp34-Lfunc_begin3
+	.uleb128 Ltmp35-Ltmp34
+	.uleb128 Ltmp36-Lfunc_begin3
 	.byte	0
-	.uleb128 Ltmp52-Lfunc_begin3
-	.uleb128 Ltmp53-Ltmp52
-	.uleb128 Ltmp54-Lfunc_begin3
+	.uleb128 Ltmp37-Lfunc_begin3
+	.uleb128 Ltmp38-Ltmp37
+	.uleb128 Ltmp39-Lfunc_begin3
 	.byte	0
-	.uleb128 Ltmp53-Lfunc_begin3
-	.uleb128 Ltmp55-Ltmp53
-	.byte	0
-	.byte	0
-	.uleb128 Ltmp55-Lfunc_begin3
-	.uleb128 Ltmp56-Ltmp55
-	.uleb128 Ltmp57-Lfunc_begin3
-	.byte	1
-	.uleb128 Ltmp49-Lfunc_begin3
-	.uleb128 Ltmp50-Ltmp49
-	.uleb128 Ltmp51-Lfunc_begin3
-	.byte	1
-	.uleb128 Ltmp50-Lfunc_begin3
-	.uleb128 Lfunc_end3-Ltmp50
+	.uleb128 Ltmp38-Lfunc_begin3
+	.uleb128 Lfunc_end3-Ltmp38
 	.byte	0
 	.byte	0
 Lcst_end3:
-	.byte	127
-	.byte	0
-	.p2align	2, 0x0
-Lttbase3:
-	.byte	0
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
@@ -843,9 +733,9 @@ Lfunc_begin4:
 	mov	rbx, rax
 	test	r14b, r14b
 	je	LBB17_3
-Ltmp58:
+Ltmp40:
 	call	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
-Ltmp59:
+Ltmp41:
 	mov	r14, rax
 	mov	rdi, rbx
 	call	_objc_release
@@ -857,16 +747,16 @@ LBB17_3:
 	pop	rbp
 	jmp	_objc_autoreleaseReturnValue
 LBB17_5:
-Ltmp60:
+Ltmp42:
 	mov	r14, rax
-Ltmp61:
+Ltmp43:
 	mov	rdi, rbx
 	call	_objc_release
-Ltmp62:
+Ltmp44:
 	mov	rdi, r14
 	call	__Unwind_Resume
 LBB17_4:
-Ltmp63:
+Ltmp45:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
 Lfunc_end4:
 	.section	__TEXT,__gcc_except_tab
@@ -875,36 +765,36 @@ GCC_except_table17:
 Lexception4:
 	.byte	255
 	.byte	155
-	.uleb128 Lttbase4-Lttbaseref4
-Lttbaseref4:
+	.uleb128 Lttbase1-Lttbaseref1
+Lttbaseref1:
 	.byte	1
 	.uleb128 Lcst_end4-Lcst_begin4
 Lcst_begin4:
 	.uleb128 Lfunc_begin4-Lfunc_begin4
-	.uleb128 Ltmp58-Lfunc_begin4
+	.uleb128 Ltmp40-Lfunc_begin4
 	.byte	0
 	.byte	0
-	.uleb128 Ltmp58-Lfunc_begin4
-	.uleb128 Ltmp59-Ltmp58
-	.uleb128 Ltmp60-Lfunc_begin4
+	.uleb128 Ltmp40-Lfunc_begin4
+	.uleb128 Ltmp41-Ltmp40
+	.uleb128 Ltmp42-Lfunc_begin4
 	.byte	0
-	.uleb128 Ltmp59-Lfunc_begin4
-	.uleb128 Ltmp61-Ltmp59
+	.uleb128 Ltmp41-Lfunc_begin4
+	.uleb128 Ltmp43-Ltmp41
 	.byte	0
 	.byte	0
-	.uleb128 Ltmp61-Lfunc_begin4
-	.uleb128 Ltmp62-Ltmp61
-	.uleb128 Ltmp63-Lfunc_begin4
+	.uleb128 Ltmp43-Lfunc_begin4
+	.uleb128 Ltmp44-Ltmp43
+	.uleb128 Ltmp45-Lfunc_begin4
 	.byte	1
-	.uleb128 Ltmp62-Lfunc_begin4
-	.uleb128 Lfunc_end4-Ltmp62
+	.uleb128 Ltmp44-Lfunc_begin4
+	.uleb128 Lfunc_end4-Ltmp44
 	.byte	0
 	.byte	0
 Lcst_end4:
 	.byte	127
 	.byte	0
 	.p2align	2, 0x0
-Lttbase4:
+Lttbase1:
 	.byte	0
 	.p2align	2, 0x0
 
@@ -1025,13 +915,13 @@ Lfunc_begin5:
 	push	rbx
 	sub	rsp, 16
 	mov	rbx, rdi
-Ltmp64:
+Ltmp46:
 	call	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
-Ltmp65:
-Ltmp67:
+Ltmp47:
+Ltmp49:
 	mov	r15, rax
 	call	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
-Ltmp68:
+Ltmp50:
 	mov	r12, rax
 	test	rbx, rbx
 	je	LBB22_3
@@ -1042,10 +932,10 @@ Ltmp68:
 	mov	byte ptr [rbx + rax], 15
 	jmp	LBB22_9
 LBB22_3:
-Ltmp75:
+Ltmp57:
 	mov	rdi, r15
 	call	_objc_release
-Ltmp76:
+Ltmp58:
 	mov	rdi, r12
 	call	_objc_release
 LBB22_9:
@@ -1069,37 +959,37 @@ LBB22_11:
 	pop	rbp
 	ret
 LBB22_6:
-Ltmp77:
+Ltmp59:
 	mov	r14, rax
-Ltmp78:
+Ltmp60:
 	mov	rdi, r12
 	call	_objc_release
-Ltmp79:
+Ltmp61:
 	jmp	LBB22_15
 LBB22_7:
-Ltmp80:
+Ltmp62:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
 LBB22_5:
-Ltmp69:
+Ltmp51:
 	mov	r14, rax
-Ltmp70:
+Ltmp52:
 	mov	rdi, r15
 	call	_objc_release
-Ltmp71:
+Ltmp53:
 	jmp	LBB22_14
 LBB22_13:
-Ltmp66:
+Ltmp48:
 	mov	r14, rax
 LBB22_14:
-Ltmp72:
+Ltmp54:
 	mov	rdi, rbx
 	call	_objc_release
-Ltmp73:
+Ltmp55:
 LBB22_15:
 	mov	rdi, r14
 	call	__Unwind_Resume
 LBB22_12:
-Ltmp74:
+Ltmp56:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
 Lfunc_end5:
 	.section	__TEXT,__gcc_except_tab
@@ -1108,44 +998,44 @@ GCC_except_table22:
 Lexception5:
 	.byte	255
 	.byte	155
-	.uleb128 Lttbase5-Lttbaseref5
-Lttbaseref5:
+	.uleb128 Lttbase2-Lttbaseref2
+Lttbaseref2:
 	.byte	1
 	.uleb128 Lcst_end5-Lcst_begin5
 Lcst_begin5:
-	.uleb128 Ltmp64-Lfunc_begin5
-	.uleb128 Ltmp65-Ltmp64
-	.uleb128 Ltmp66-Lfunc_begin5
+	.uleb128 Ltmp46-Lfunc_begin5
+	.uleb128 Ltmp47-Ltmp46
+	.uleb128 Ltmp48-Lfunc_begin5
 	.byte	0
-	.uleb128 Ltmp67-Lfunc_begin5
-	.uleb128 Ltmp68-Ltmp67
-	.uleb128 Ltmp69-Lfunc_begin5
+	.uleb128 Ltmp49-Lfunc_begin5
+	.uleb128 Ltmp50-Ltmp49
+	.uleb128 Ltmp51-Lfunc_begin5
 	.byte	0
-	.uleb128 Ltmp75-Lfunc_begin5
-	.uleb128 Ltmp76-Ltmp75
-	.uleb128 Ltmp77-Lfunc_begin5
+	.uleb128 Ltmp57-Lfunc_begin5
+	.uleb128 Ltmp58-Ltmp57
+	.uleb128 Ltmp59-Lfunc_begin5
 	.byte	0
-	.uleb128 Ltmp76-Lfunc_begin5
-	.uleb128 Ltmp78-Ltmp76
+	.uleb128 Ltmp58-Lfunc_begin5
+	.uleb128 Ltmp60-Ltmp58
 	.byte	0
 	.byte	0
-	.uleb128 Ltmp78-Lfunc_begin5
-	.uleb128 Ltmp79-Ltmp78
-	.uleb128 Ltmp80-Lfunc_begin5
+	.uleb128 Ltmp60-Lfunc_begin5
+	.uleb128 Ltmp61-Ltmp60
+	.uleb128 Ltmp62-Lfunc_begin5
 	.byte	1
-	.uleb128 Ltmp70-Lfunc_begin5
-	.uleb128 Ltmp73-Ltmp70
-	.uleb128 Ltmp74-Lfunc_begin5
+	.uleb128 Ltmp52-Lfunc_begin5
+	.uleb128 Ltmp55-Ltmp52
+	.uleb128 Ltmp56-Lfunc_begin5
 	.byte	1
-	.uleb128 Ltmp73-Lfunc_begin5
-	.uleb128 Lfunc_end5-Ltmp73
+	.uleb128 Ltmp55-Lfunc_begin5
+	.uleb128 Lfunc_end5-Ltmp55
 	.byte	0
 	.byte	0
 Lcst_end5:
 	.byte	127
 	.byte	0
 	.p2align	2, 0x0
-Lttbase5:
+Lttbase2:
 	.byte	0
 	.p2align	2, 0x0
 
@@ -1175,10 +1065,10 @@ l_anon.[ID].3:
 	.space	39
 
 l_anon.[ID].4:
-	.ascii	"ivars"
+	.asciz	"ivars"
 
 l_anon.[ID].5:
-	.ascii	"drop_flag"
+	.asciz	"drop_flag"
 
 	.p2align	3, 0x0
 l_anon.[ID].6:

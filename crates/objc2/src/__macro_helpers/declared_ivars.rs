@@ -46,7 +46,9 @@
 //! [unsound-read-padding]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=ea068e8d9e55801aa9520ea914eb2822
 
 use alloc::borrow::Cow;
+use alloc::ffi::CString;
 use alloc::format;
+use core::ffi::CStr;
 use core::mem;
 use core::ptr::{self, NonNull};
 
@@ -239,17 +241,27 @@ where
 pub(crate) fn register_with_ivars<T: DeclaredClass>(
     mut builder: ClassBuilder,
 ) -> (&'static AnyClass, isize, isize) {
-    let (ivar_name, drop_flag_name): (Cow<'static, str>, Cow<'static, str>) = {
+    let (ivar_name, drop_flag_name): (Cow<'static, CStr>, Cow<'static, CStr>) = {
         if cfg!(feature = "gnustep-1-7") {
             // GNUStep does not support a subclass having an ivar with the
             // same name as a superclass, so let's use the class name as the
             // ivar name to ensure uniqueness.
             (
-                format!("{}_ivars", T::NAME).into(),
-                format!("{}_drop_flag", T::NAME).into(),
+                CString::new(format!("{}_ivars", T::NAME)).unwrap().into(),
+                CString::new(format!("{}_drop_flag", T::NAME))
+                    .unwrap()
+                    .into(),
             )
         } else {
-            ("ivars".into(), "drop_flag".into())
+            // SAFETY: The byte slices are NUL-terminated, and do not contain
+            // interior NUL bytes.
+            // TODO: Use `c"my_str"` syntax once in MSRV
+            unsafe {
+                (
+                    CStr::from_bytes_with_nul_unchecked(b"ivars\0").into(),
+                    CStr::from_bytes_with_nul_unchecked(b"drop_flag\0").into(),
+                )
+            }
         }
     };
 
@@ -670,7 +682,8 @@ mod tests {
         } else {
             "ivars"
         };
-        assert!(IvarZst::class().instance_variable(ivar_name).is_none());
+        let ivar_name = CString::new(ivar_name).unwrap();
+        assert!(IvarZst::class().instance_variable(&ivar_name).is_none());
 
         let obj = unsafe { init(IvarZst::alloc()) };
         #[cfg(feature = "std")]
@@ -706,8 +719,9 @@ mod tests {
         } else {
             "ivars"
         };
+        let ivar_name = CString::new(ivar_name).unwrap();
         let ivar = HasIvarWithHighAlignment::class()
-            .instance_variable(ivar_name)
+            .instance_variable(&ivar_name)
             .unwrap();
         assert_eq!(ivar.offset(), 16);
     }

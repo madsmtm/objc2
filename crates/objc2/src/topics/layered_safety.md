@@ -97,7 +97,7 @@ use objc2::runtime::{MessageReceiver, NSObject, Sel};
 
 let obj: &NSObject;
 # let obj = &*objc2::runtime::NSObject::new();
-let sel = Sel::register("hash");
+let sel = Sel::register(c"hash");
 let hash_code: NSUInteger = unsafe {
     MessageReceiver::send_message(obj, sel, ())
 };

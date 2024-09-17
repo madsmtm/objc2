@@ -12,7 +12,7 @@ use objc2::{class, sel};
 extern "C" fn my_fn(_this: &NSObject, _cmd: Sel, _x: &NSObject) {}
 
 fn main() {
-    let mut builder = ClassBuilder::new("SomeTestClass", class!(NSObject)).unwrap();
+    let mut builder = ClassBuilder::new(c"SomeTestClass", class!(NSObject)).unwrap();
     unsafe {
         // Works
         builder.add_method(sel!(none:), my_fn as extern "C" fn(_, _, _));

@@ -193,14 +193,16 @@ where
 #[allow(dead_code)]
 mod tests {
     use alloc::format;
+    use core::ffi::CStr;
     use core::mem::ManuallyDrop;
 
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 
     use super::*;
-    use crate::runtime::NSObject;
+    use crate::runtime::{ClassBuilder, NSObject};
     use crate::{
-        declare_class, extern_methods, extern_protocol, ClassType, DeclaredClass, ProtocolType,
+        declare_class, extern_methods, extern_protocol, msg_send_id, ClassType, DeclaredClass,
+        ProtocolType,
     };
 
     extern_protocol!(
@@ -401,5 +403,21 @@ mod tests {
         if false {
             let _protocol = <dyn CfgTest>::protocol();
         }
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "gnustep-1-7",
+        ignore = "depends on the platform's NSString unicode handling"
+    )]
+    fn debug_non_utf8_classname() {
+        // Some class with invalid UTF-8 character inside
+        let s = CStr::from_bytes_with_nul(b"My\xF0\x90\x80Class\0").unwrap();
+
+        let cls = ClassBuilder::new(s, NSObject::class()).unwrap().register();
+        let obj: Retained<NSObject> = unsafe { msg_send_id![cls, new] };
+
+        let expected = format!("<My\u{f8ff}êÄClass: {:p}>", &*obj);
+        assert_eq!(format!("{obj:?}"), expected);
     }
 }

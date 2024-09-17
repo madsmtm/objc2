@@ -123,6 +123,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   order.
 * **BREAKING**: Converted function signatures into using `extern "C-unwind"`
   where applicable. This allows Rust and Objective-C unwinding to interoperate.
+* **BREAKING**: Use `CStr` in methods in the `runtime` module, since it's both
+  more performant, and more correct. Use the new `c"my_str"` syntax to migrate.
+
+  Specifically, this includes:
+  - `ClassBuilder::new`.
+  - `ClassBuilder::root`.
+  - `ClassBuilder::add_ivar`.
+  - `ProtocolBuilder::new`.
+  - `Sel::register`.
+  - `Sel::name`.
+  - `Ivar::name`.
+  - `Ivar::type_encoding`.
+  - `Method::return_type`.
+  - `Method::argument_type`.
+  - `AnyClass::get`.
+  - `AnyClass::name`.
+  - `AnyClass::instance_variable`.
+  - `AnyProtocol::get`.
+  - `AnyProtocol::name`.
 
 
 ## 0.5.2 - 2024-05-21

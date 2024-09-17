@@ -5,8 +5,6 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::ops::Deref;
 use core::ptr::{self, NonNull};
-use core::str;
-use core::str::Utf8Error;
 
 use crate::ffi;
 
@@ -83,14 +81,13 @@ impl<T> AsRef<[T]> for MallocSlice<T> {
     }
 }
 
-// TODO: Change this to `MallocCStr`
 #[repr(transparent)]
-pub(crate) struct MallocStr {
-    ptr: NonNull<str>,
+pub(crate) struct MallocCStr {
+    ptr: NonNull<CStr>,
 }
 
-impl MallocStr {
-    pub(crate) unsafe fn from_c_str(ptr: *mut c_char) -> Result<Self, Utf8Error> {
+impl MallocCStr {
+    pub(crate) unsafe fn from_c_str(ptr: *mut c_char) -> Self {
         if ptr.is_null() {
             panic!("tried to construct MallocStr from a NULL pointer");
         }
@@ -104,12 +101,12 @@ impl MallocStr {
         // This means that we're (probably) no longer allowed to mutate the
         // value, if that is desired for `MallocStr` in the future, then we'll
         // have to implement this method a bit differently.
-        let ptr = NonNull::from(cstr.to_str()?);
-        Ok(Self { ptr })
+        let ptr = NonNull::from(cstr);
+        Self { ptr }
     }
 }
 
-impl Drop for MallocStr {
+impl Drop for MallocCStr {
     #[inline]
     fn drop(&mut self) {
         // SAFETY: We take ownership in `from_c_str`.
@@ -117,33 +114,26 @@ impl Drop for MallocStr {
     }
 }
 
-impl Deref for MallocStr {
-    type Target = str;
+impl Deref for MallocCStr {
+    type Target = CStr;
 
     #[inline]
-    fn deref(&self) -> &str {
+    fn deref(&self) -> &CStr {
         // SAFETY: Same as `MallocSlice::deref`
         unsafe { self.ptr.as_ref() }
     }
 }
 
-impl fmt::Debug for MallocStr {
+impl fmt::Debug for MallocCStr {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
     }
 }
 
-impl fmt::Display for MallocStr {
+impl AsRef<CStr> for MallocCStr {
     #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&**self, f)
-    }
-}
-
-impl AsRef<str> for MallocStr {
-    #[inline]
-    fn as_ref(&self) -> &str {
+    fn as_ref(&self) -> &CStr {
         self
     }
 }

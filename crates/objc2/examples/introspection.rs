@@ -22,14 +22,14 @@ fn main() {
     // Note: You should not rely on the `isa` ivar being available,
     // this is only for demonstration.
     let ivar = cls
-        .instance_variable("isa")
+        .instance_variable(c"isa")
         .expect("no ivar with name 'isa' found on NSObject");
     println!(
-        "Instance variable {} has type encoding {:?}",
+        "Instance variable {:?} has type encoding {:?}",
         ivar.name(),
         ivar.type_encoding()
     );
-    assert!(<*const AnyClass>::ENCODING.equivalent_to_str(ivar.type_encoding()));
+    assert!(<*const AnyClass>::ENCODING.equivalent_to_str(ivar.type_encoding().to_str().unwrap()));
 
     // Inspect a method of the class
     let method = cls.instance_method(sel!(hash)).unwrap();
@@ -39,7 +39,7 @@ fn main() {
     );
     let hash_return = method.return_type();
     println!("-[NSObject hash] return type: {hash_return:?}");
-    assert!(usize::ENCODING.equivalent_to_str(&hash_return));
+    assert!(usize::ENCODING.equivalent_to_str(hash_return.to_str().unwrap()));
 
     // Create an instance
     let obj = NSObject::new();

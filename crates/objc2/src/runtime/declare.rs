@@ -2,6 +2,7 @@
 use alloc::ffi::CString;
 use alloc::format;
 use alloc::string::ToString;
+use core::ffi::CStr;
 use core::mem;
 use core::mem::ManuallyDrop;
 use core::ptr;
@@ -62,11 +63,11 @@ impl<T> Log2Alignment for T {
 ///
 /// fn register_class() -> &'static AnyClass {
 ///     // Inherit from NSObject
-///     let mut builder = ClassBuilder::new("MyNumber", NSObject::class())
+///     let mut builder = ClassBuilder::new(c"MyNumber", NSObject::class())
 ///         .expect("a class with the name MyNumber likely already exists");
 ///
 ///     // Add an instance variable of type `Cell<u32>`
-///     builder.add_ivar::<Cell<u32>>("_number");
+///     builder.add_ivar::<Cell<u32>>(c"_number");
 ///
 ///     // Add an Objective-C method for initializing an instance with a number
 ///     //
@@ -80,7 +81,7 @@ impl<T> Log2Alignment for T {
 ///     ) -> Option<&mut AnyObject> {
 ///         let this: Option<&mut AnyObject> = msg_send![super(this, NSObject::class()), init];
 ///         this.map(|this| {
-///             let ivar = AnyClass::get("MyNumber").unwrap().instance_variable("_number").unwrap();
+///             let ivar = AnyClass::get(c"MyNumber").unwrap().instance_variable(c"_number").unwrap();
 ///             // SAFETY: The ivar is added with the same type above
 ///             *ivar.load_mut::<Cell<u32>>(this) = Cell::new(number);
 ///             this
@@ -116,7 +117,7 @@ impl<T> Log2Alignment for T {
 ///
 ///     // Add an Objective-C method for setting the number
 ///     extern "C-unwind" fn my_number_set(this: &NSObject, _cmd: Sel, number: u32) {
-///         let ivar = AnyClass::get("MyNumber").unwrap().instance_variable("_number").unwrap();
+///         let ivar = AnyClass::get(c"MyNumber").unwrap().instance_variable(c"_number").unwrap();
 ///         // SAFETY: The ivar is added with the same type above
 ///         unsafe { ivar.load::<Cell<u32>>(this) }.set(number);
 ///     }
@@ -126,7 +127,7 @@ impl<T> Log2Alignment for T {
 ///
 ///     // Add an Objective-C method for getting the number
 ///     extern "C-unwind" fn my_number_get(this: &NSObject, _cmd: Sel) -> u32 {
-///         let ivar = AnyClass::get("MyNumber").unwrap().instance_variable("_number").unwrap();
+///         let ivar = AnyClass::get(c"MyNumber").unwrap().instance_variable(c"_number").unwrap();
 ///         // SAFETY: The ivar is added with the same type above
 ///         unsafe { ivar.load::<Cell<u32>>(this) }.get()
 ///     }
@@ -188,13 +189,13 @@ impl ClassBuilder {
     }
 
     #[allow(unused)]
-    fn name(&self) -> &str {
+    fn name(&self) -> &CStr {
         // SAFETY: Same as `superclass`
         unsafe { AnyClass::name_raw(self.cls.as_ptr()) }
     }
 
-    fn with_superclass(name: &str, superclass: Option<&AnyClass>) -> Option<Self> {
-        let name = CString::new(name).unwrap();
+    #[inline]
+    fn with_superclass(name: &CStr, superclass: Option<&AnyClass>) -> Option<Self> {
         let super_ptr = superclass.map_or(ptr::null(), |c| c).cast();
         let cls = unsafe { ffi::objc_allocateClassPair(super_ptr, name.as_ptr(), 0) };
         NonNull::new(cls).map(|cls| Self { cls })
@@ -204,7 +205,8 @@ impl ClassBuilder {
     ///
     /// Returns [`None`] if the class couldn't be allocated, or a class with
     /// that name already exist.
-    pub fn new(name: &str, superclass: &AnyClass) -> Option<Self> {
+    #[inline]
+    pub fn new(name: &CStr, superclass: &AnyClass) -> Option<Self> {
         Self::with_superclass(name, Some(superclass))
     }
 
@@ -222,7 +224,7 @@ impl ClassBuilder {
     /// the entire `NSObject` protocol is implemented.
     /// Functionality it expects, like implementations of `-retain` and
     /// `-release` used by ARC, will not be present otherwise.
-    pub fn root<F>(name: &str, intitialize_fn: F) -> Option<Self>
+    pub fn root<F>(name: &CStr, intitialize_fn: F) -> Option<Self>
     where
         F: MethodImplementation<Callee = AnyClass, Arguments = (), Return = ()>,
     {
@@ -286,7 +288,10 @@ impl ClassBuilder {
             if let Some(method) = superclass.instance_method(sel) {
                 if let Err(err) = crate::verify::verify_method_signature(method, enc_args, enc_ret)
                 {
-                    panic!("declared invalid method -[{} {sel}]: {err}", self.name())
+                    panic!(
+                        "declared invalid method -[{} {sel}]: {err}",
+                        self.name().to_string_lossy()
+                    )
                 }
             }
         }
@@ -348,7 +353,10 @@ impl ClassBuilder {
             if let Some(method) = superclass.class_method(sel) {
                 if let Err(err) = crate::verify::verify_method_signature(method, enc_args, enc_ret)
                 {
-                    panic!("declared invalid method +[{} {sel}]: {err}", self.name())
+                    panic!(
+                        "declared invalid method +[{} {sel}]: {err}",
+                        self.name().to_string_lossy()
+                    )
                 }
             }
         }
@@ -366,24 +374,23 @@ impl ClassBuilder {
     ///
     /// If the ivar wasn't successfully added for some reason - this usually
     /// happens if there already was an ivar with that name.
-    pub fn add_ivar<T: Encode>(&mut self, name: &str) {
+    pub fn add_ivar<T: Encode>(&mut self, name: &CStr) {
         // SAFETY: The encoding is correct
         unsafe { self.add_ivar_inner::<T>(name, &T::ENCODING) }
     }
 
-    pub(crate) unsafe fn add_ivar_inner<T>(&mut self, name: &str, encoding: &Encoding) {
+    pub(crate) unsafe fn add_ivar_inner<T>(&mut self, name: &CStr, encoding: &Encoding) {
         unsafe { self.add_ivar_inner_mono(name, mem::size_of::<T>(), T::LOG2_ALIGNMENT, encoding) }
     }
 
     // Monomorphized version
     unsafe fn add_ivar_inner_mono(
         &mut self,
-        name: &str,
+        name: &CStr,
         size: usize,
         align: u8,
         encoding: &Encoding,
     ) {
-        let c_name = CString::new(name).unwrap();
         let encoding = CString::new(encoding.to_string()).unwrap();
 
         // Note: The Objective-C runtime contains functionality to do stuff
@@ -397,13 +404,13 @@ impl ClassBuilder {
         let success = unsafe {
             ffi::class_addIvar(
                 self.as_mut_ptr(),
-                c_name.as_ptr(),
+                name.as_ptr(),
                 size,
                 align,
                 encoding.as_ptr(),
             )
         };
-        assert!(success.as_bool(), "failed to add ivar {name}");
+        assert!(success.as_bool(), "failed to add ivar {name:?}");
     }
 
     /// Makes the class conform to the given protocol.
@@ -421,7 +428,7 @@ impl ClassBuilder {
         success.as_bool()
     }
 
-    // fn add_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
+    // fn add_property(&self, name: &CStr, attributes: &[ffi::objc_property_attribute_t]);
 
     /// Registers the [`ClassBuilder`], consuming it, and returns a reference
     /// to the newly registered [`AnyClass`].
@@ -435,6 +442,7 @@ impl ClassBuilder {
 }
 
 impl Drop for ClassBuilder {
+    #[inline]
     fn drop(&mut self) {
         // Disposing un-registered classes doesn't work properly on GNUStep,
         // so we register the class before disposing it.
@@ -475,9 +483,9 @@ impl ProtocolBuilder {
     /// # Panics
     ///
     /// Panics if the name contains an internal NULL byte.
-    pub fn new(name: &str) -> Option<Self> {
-        let c_name = CString::new(name).unwrap();
-        let proto = unsafe { ffi::objc_allocateProtocol(c_name.as_ptr()) };
+    #[inline]
+    pub fn new(name: &CStr) -> Option<Self> {
+        let proto = unsafe { ffi::objc_allocateProtocol(name.as_ptr()) };
         NonNull::new(proto.cast()).map(|proto| Self { proto })
     }
 
@@ -554,6 +562,7 @@ impl ProtocolBuilder {
 }
 
 impl Drop for ProtocolBuilder {
+    #[inline]
     fn drop(&mut self) {
         // We implement Drop to communicate to the type-system that this type
         // may drop in the future (once Apple add some way of disposing
@@ -577,6 +586,11 @@ mod tests {
         declare_class, extern_methods, msg_send, msg_send_id, test_utils, ClassType, DeclaredClass,
         ProtocolType,
     };
+
+    // TODO: Remove once c"" strings are in MSRV
+    fn c(s: &str) -> CString {
+        CString::new(s).unwrap()
+    }
 
     #[test]
     fn test_alignment() {
@@ -623,28 +637,28 @@ mod tests {
     #[test]
     fn test_classbuilder_duplicate() {
         let cls = test_utils::custom_class();
-        let builder = ClassBuilder::new("TestClassBuilderDuplicate", cls).unwrap();
+        let builder = ClassBuilder::new(&c("TestClassBuilderDuplicate"), cls).unwrap();
         let _ = builder.register();
 
-        assert!(ClassBuilder::new("TestClassBuilderDuplicate", cls).is_none());
+        assert!(ClassBuilder::new(&c("TestClassBuilderDuplicate"), cls).is_none());
     }
 
     #[test]
-    #[should_panic = "failed to add ivar xyz"]
+    #[should_panic = "failed to add ivar \"xyz\""]
     fn duplicate_ivar() {
         let cls = test_utils::custom_class();
-        let mut builder = ClassBuilder::new("TestClassBuilderDuplicateIvar", cls).unwrap();
+        let mut builder = ClassBuilder::new(&c("TestClassBuilderDuplicateIvar"), cls).unwrap();
 
-        builder.add_ivar::<i32>("xyz");
+        builder.add_ivar::<i32>(&c("xyz"));
         // Should panic:
-        builder.add_ivar::<i32>("xyz");
+        builder.add_ivar::<i32>(&c("xyz"));
     }
 
     #[test]
     #[should_panic = "failed to add method xyz"]
     fn duplicate_method() {
         let cls = test_utils::custom_class();
-        let mut builder = ClassBuilder::new("TestClassBuilderDuplicateMethod", cls).unwrap();
+        let mut builder = ClassBuilder::new(&c("TestClassBuilderDuplicateMethod"), cls).unwrap();
 
         extern "C" fn xyz(_this: &NSObject, _cmd: Sel) {}
 
@@ -659,7 +673,7 @@ mod tests {
     #[should_panic = "selector xyz: accepts 1 arguments, but function accepts 0"]
     fn wrong_arguments() {
         let cls = test_utils::custom_class();
-        let mut builder = ClassBuilder::new("TestClassBuilderWrongArguments", cls).unwrap();
+        let mut builder = ClassBuilder::new(&c("TestClassBuilderWrongArguments"), cls).unwrap();
 
         extern "C" fn xyz(_this: &NSObject, _cmd: Sel) {}
 
@@ -676,7 +690,7 @@ mod tests {
     )]
     fn invalid_method() {
         let cls = test_utils::custom_class();
-        let mut builder = ClassBuilder::new("TestClassBuilderInvalidMethod", cls).unwrap();
+        let mut builder = ClassBuilder::new(&c("TestClassBuilderInvalidMethod"), cls).unwrap();
 
         extern "C" fn foo(_this: &NSObject, _cmd: Sel) -> i16 {
             0
@@ -694,7 +708,7 @@ mod tests {
     )]
     fn invalid_class_method() {
         let cls = test_utils::custom_class();
-        let mut builder = ClassBuilder::new("TestClassBuilderInvalidClassMethod", cls).unwrap();
+        let mut builder = ClassBuilder::new(&c("TestClassBuilderInvalidClassMethod"), cls).unwrap();
 
         extern "C" fn class_foo(_cls: &AnyClass, _cmd: Sel) -> i32 {
             0
@@ -708,7 +722,7 @@ mod tests {
     #[test]
     fn inheriting_does_not_implement_protocols() {
         let builder = ClassBuilder::new(
-            "TestClassBuilderInheritingDoesNotImplementProtocols",
+            &c("TestClassBuilderInheritingDoesNotImplementProtocols"),
             NSObject::class(),
         )
         .unwrap();
@@ -726,7 +740,7 @@ mod tests {
     #[test]
     fn inherit_nsobject_add_protocol() {
         let mut builder = ClassBuilder::new(
-            "TestClassBuilderInheritNSObjectAddProtocol",
+            &c("TestClassBuilderInheritNSObjectAddProtocol"),
             NSObject::class(),
         )
         .unwrap();
@@ -748,9 +762,9 @@ mod tests {
     #[test]
     fn duplicate_protocol() {
         let cls = test_utils::custom_class();
-        let mut builder = ClassBuilder::new("TestClassBuilderDuplicateProtocol", cls).unwrap();
+        let mut builder = ClassBuilder::new(&c("TestClassBuilderDuplicateProtocol"), cls).unwrap();
 
-        let protocol = ProtocolBuilder::new("TestClassBuilderDuplicateProtocol")
+        let protocol = ProtocolBuilder::new(&c("TestClassBuilderDuplicateProtocol"))
             .unwrap()
             .register();
 
@@ -762,19 +776,21 @@ mod tests {
     fn add_protocol_subprotocol_ordering() {
         // The value returned by `class_addProtocol` is inherently dependent
         // on the order in which you add the super- and subprotocols.
-        let builder = ProtocolBuilder::new("Superprotocol").unwrap();
+        let builder = ProtocolBuilder::new(&c("Superprotocol")).unwrap();
         let superprotocol = builder.register();
 
-        let mut builder = ProtocolBuilder::new("Subprotocol").unwrap();
+        let mut builder = ProtocolBuilder::new(&c("Subprotocol")).unwrap();
         builder.add_protocol(superprotocol);
         let subprotocol = builder.register();
 
-        let mut builder = ClassBuilder::new("AddProtocolSuperThenSub", NSObject::class()).unwrap();
+        let mut builder =
+            ClassBuilder::new(&c("AddProtocolSuperThenSub"), NSObject::class()).unwrap();
         assert!(builder.add_protocol(superprotocol));
         assert!(builder.add_protocol(subprotocol));
         let _cls = builder.register();
 
-        let mut builder = ClassBuilder::new("AddProtocolSubThenSuper", NSObject::class()).unwrap();
+        let mut builder =
+            ClassBuilder::new(&c("AddProtocolSubThenSuper"), NSObject::class()).unwrap();
         assert!(builder.add_protocol(subprotocol));
         assert!(!builder.add_protocol(superprotocol));
         let _cls = builder.register();
@@ -783,10 +799,10 @@ mod tests {
     #[test]
     fn test_classbuilder_drop() {
         let cls = test_utils::custom_class();
-        let builder = ClassBuilder::new("TestClassBuilderDrop", cls).unwrap();
+        let builder = ClassBuilder::new(&c("TestClassBuilderDrop"), cls).unwrap();
         drop(builder);
         // After we dropped the class, we can create a new one with the same name:
-        let _builder = ClassBuilder::new("TestClassBuilderDrop", cls).unwrap();
+        let _builder = ClassBuilder::new(&c("TestClassBuilderDrop"), cls).unwrap();
     }
 
     #[test]
@@ -806,7 +822,7 @@ mod tests {
         }
 
         let superclass = test_utils::custom_class();
-        let builder = ClassBuilder::new("TestFetchWhileCreatingClass", superclass).unwrap();
+        let builder = ClassBuilder::new(&c("TestFetchWhileCreatingClass"), superclass).unwrap();
 
         if cfg!(all(
             target_vendor = "apple",
@@ -852,7 +868,7 @@ mod tests {
 
             fn class() -> &'static AnyClass {
                 let superclass = NSObject::class();
-                let mut builder = ClassBuilder::new(Self::NAME, superclass).unwrap();
+                let mut builder = ClassBuilder::new(&c(Self::NAME), superclass).unwrap();
 
                 unsafe {
                     builder.add_method(
@@ -940,20 +956,21 @@ mod tests {
         }
 
         let mut superclass =
-            ClassBuilder::new("DeclareClassDuplicateIvarSuperclass", NSObject::class()).unwrap();
-        superclass.add_ivar::<u8>("ivar1");
-        superclass.add_ivar::<U128align16>("ivar2");
-        superclass.add_ivar::<u8>("ivar3");
-        superclass.add_ivar::<[u8; 0]>("ivar4");
+            ClassBuilder::new(&c("DeclareClassDuplicateIvarSuperclass"), NSObject::class())
+                .unwrap();
+        superclass.add_ivar::<u8>(&c("ivar1"));
+        superclass.add_ivar::<U128align16>(&c("ivar2"));
+        superclass.add_ivar::<u8>(&c("ivar3"));
+        superclass.add_ivar::<[u8; 0]>(&c("ivar4"));
         let superclass = superclass.register();
 
         let mut subclass =
-            ClassBuilder::new("DeclareClassDuplicateIvarSubclass", superclass).unwrap();
+            ClassBuilder::new(&c("DeclareClassDuplicateIvarSubclass"), superclass).unwrap();
         // Try to overwrite instance variables
-        subclass.add_ivar::<i16>("ivar1");
-        subclass.add_ivar::<usize>("ivar2");
-        subclass.add_ivar::<*const AnyObject>("ivar3");
-        subclass.add_ivar::<usize>("ivar4");
+        subclass.add_ivar::<i16>(&c("ivar1"));
+        subclass.add_ivar::<usize>(&c("ivar2"));
+        subclass.add_ivar::<*const AnyObject>(&c("ivar3"));
+        subclass.add_ivar::<usize>(&c("ivar4"));
         let subclass = subclass.register();
 
         // Test that ivar layout matches that of C
@@ -1006,14 +1023,14 @@ mod tests {
         }
         assert_eq!(subclass.instance_size(), mem::size_of::<SubLayout>());
 
-        let superclass_ivar1 = superclass.instance_variable("ivar1").unwrap();
-        let superclass_ivar2 = superclass.instance_variable("ivar2").unwrap();
-        let superclass_ivar3 = superclass.instance_variable("ivar3").unwrap();
-        let superclass_ivar4 = superclass.instance_variable("ivar4").unwrap();
-        let subclass_ivar1 = subclass.instance_variable("ivar1").unwrap();
-        let subclass_ivar2 = subclass.instance_variable("ivar2").unwrap();
-        let subclass_ivar3 = subclass.instance_variable("ivar3").unwrap();
-        let subclass_ivar4 = subclass.instance_variable("ivar4").unwrap();
+        let superclass_ivar1 = superclass.instance_variable(&c("ivar1")).unwrap();
+        let superclass_ivar2 = superclass.instance_variable(&c("ivar2")).unwrap();
+        let superclass_ivar3 = superclass.instance_variable(&c("ivar3")).unwrap();
+        let superclass_ivar4 = superclass.instance_variable(&c("ivar4")).unwrap();
+        let subclass_ivar1 = subclass.instance_variable(&c("ivar1")).unwrap();
+        let subclass_ivar2 = subclass.instance_variable(&c("ivar2")).unwrap();
+        let subclass_ivar3 = subclass.instance_variable(&c("ivar3")).unwrap();
+        let subclass_ivar4 = subclass.instance_variable(&c("ivar4")).unwrap();
 
         // Ensure that duplicate names do not conflict
         assert_ne!(superclass_ivar1, subclass_ivar1);

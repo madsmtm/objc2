@@ -37,7 +37,7 @@ impl<'a> MyObject<'a> {
         // interior mutability instead.
         let number = Cell::from_mut(number);
 
-        let ivar = Self::class().instance_variable("number").unwrap();
+        let ivar = Self::class().instance_variable(c"number").unwrap();
         // SAFETY: The ivar is added with the same type below, and the
         // lifetime of the reference is properly bound to the class.
         unsafe { ivar.load_ptr::<Ivar<'_>>(&this.superclass).write(number) };
@@ -45,13 +45,13 @@ impl<'a> MyObject<'a> {
     }
 
     fn get(&self) -> u8 {
-        let ivar = Self::class().instance_variable("number").unwrap();
+        let ivar = Self::class().instance_variable(c"number").unwrap();
         // SAFETY: The ivar is added with the same type below, and is initialized in `new`
         unsafe { ivar.load::<Ivar<'_>>(&self.superclass).get() }
     }
 
     fn set(&self, number: u8) {
-        let ivar = Self::class().instance_variable("number").unwrap();
+        let ivar = Self::class().instance_variable(c"number").unwrap();
         // SAFETY: The ivar is added with the same type below, and is initialized in `new`
         unsafe { ivar.load::<Ivar<'_>>(&self.superclass).set(number) };
     }
@@ -63,19 +63,19 @@ unsafe impl<'a> ClassType for MyObject<'a> {
     const NAME: &'static str = "MyObject";
 
     fn class() -> &'static AnyClass {
-        // TODO: Use std::lazy::LazyCell
+        // NOTE: Use std::lazy::LazyCell if in MSRV
         static REGISTER_CLASS: Once = Once::new();
 
         REGISTER_CLASS.call_once(|| {
             let superclass = NSObject::class();
-            let mut builder = ClassBuilder::new(Self::NAME, superclass).unwrap();
+            let mut builder = ClassBuilder::new(c"MyObject", superclass).unwrap();
 
-            builder.add_ivar::<Ivar<'_>>("number");
+            builder.add_ivar::<Ivar<'_>>(c"number");
 
             let _cls = builder.register();
         });
 
-        AnyClass::get(Self::NAME).unwrap()
+        AnyClass::get(c"MyObject").unwrap()
     }
 
     fn as_super(&self) -> &Self::Super {

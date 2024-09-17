@@ -602,7 +602,7 @@ impl<T: Message> Retained<T> {
     /// use objc2::rc::Retained;
     /// use objc2::runtime::{AnyClass, AnyObject, Sel};
     ///
-    /// let mut builder = ClassBuilder::new("ExampleObject", class!(NSObject)).unwrap();
+    /// let mut builder = ClassBuilder::new(c"ExampleObject", class!(NSObject)).unwrap();
     ///
     /// extern "C-unwind" fn get(cls: &AnyClass, _cmd: Sel) -> *mut AnyObject {
     ///     let obj: Retained<AnyObject> = unsafe { msg_send_id![cls, new] };

@@ -1,5 +1,5 @@
 #![cfg(feature = "NSData")]
-use alloc::{format, vec};
+use alloc::format;
 
 use crate::NSData;
 
@@ -20,7 +20,7 @@ fn test_no_bytes() {
 #[cfg(feature = "block2")]
 #[test]
 fn test_from_vec() {
-    let bytes = vec![3, 7, 16];
+    let bytes = alloc::vec![3, 7, 16];
     let bytes_ptr = bytes.as_ptr();
 
     let data = NSData::from_vec(bytes);
