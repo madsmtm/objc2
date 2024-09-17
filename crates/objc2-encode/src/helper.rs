@@ -175,14 +175,6 @@ impl Primitive {
     }
 
     pub(crate) const fn size(self) -> Option<usize> {
-        macro_rules! opt_double {
-            ($e:expr) => {
-                match $e {
-                    Some(x) => Some(2 * x),
-                    None => None,
-                }
-            };
-        }
         match self {
             // Under all the considered targets, `_Bool` is sized and aligned
             // to a single byte. See:
@@ -217,9 +209,12 @@ impl Primitive {
                 all(target_arch = "aarch64", target_vendor = "apple"),
             ))]
             Self::LongDouble => Some(8),
-            Self::FloatComplex => opt_double!(Self::Float.size()),
-            Self::DoubleComplex => opt_double!(Self::Double.size()),
-            Self::LongDoubleComplex => opt_double!(Self::LongDouble.size()),
+            Self::FloatComplex => Some(mem::size_of::<ffi::c_float>() * 2),
+            Self::DoubleComplex => Some(mem::size_of::<ffi::c_double>() * 2),
+            Self::LongDoubleComplex => match Self::LongDouble.size() {
+                Some(size) => Some(size * 2),
+                None => None,
+            },
             // Pointers.
             Self::String | Self::Object | Self::Block | Self::Class | Self::Sel => {
                 Some(mem::size_of::<*const ()>())
