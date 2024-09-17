@@ -1,5 +1,5 @@
 error[E0271]: type mismatch resolving `<Retained<AnyObject> as MaybeUnwrap>::Input == Option<Retained<NSObject>>`
- --> ui/msg_send_id_alloc_init_different.rs
+ --> ui/msg_send_alloc_init_different.rs
   |
   |     let _: Retained<AnyObject> = unsafe { msg_send_id![obj, init] };
   |                                           ^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<Retained<NSObject>>`, found `Option<Retained<AnyObject>>`
@@ -7,7 +7,7 @@ error[E0271]: type mismatch resolving `<Retained<AnyObject> as MaybeUnwrap>::Inp
   = note: expected enum `Option<Retained<NSObject>>`
              found enum `Option<Retained<AnyObject>>`
 note: required by a bound in `send_message_id`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
   |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |                                                                   ^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`

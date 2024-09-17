@@ -1,5 +1,5 @@
 error[E0282]: type annotations needed
- --> ui/msg_send_id_unwrap.rs
+ --> ui/msg_send_unwrap.rs
   |
   |     let _: Retained<NSObject> = unsafe { msg_send_id![cls, new].unwrap() };
   |                                          ^^^^^^^^^^^^^^^^^^^^^^ cannot infer type

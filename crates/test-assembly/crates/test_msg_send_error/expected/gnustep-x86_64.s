@@ -1,9 +1,9 @@
 	.text
 	.intel_syntax noprefix
-	.section	.text.unlikely.SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
+	.section	.text.unlikely.SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
 	.p2align	4, 0x90
-	.type	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),@function
-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
+	.type	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),@function
+SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	rbx
 	mov	rbx, rsi
 	call	qword ptr [rip + objc_retain@GOTPCREL]
@@ -17,7 +17,7 @@ SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRA
 	mov	rdx, rbx
 	call	qword ptr [rip + SYM(core::option::expect_failed::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end0:
-	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end0-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end0-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 
 	.section	.text.unlikely.SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
 	.p2align	4, 0x90
@@ -99,7 +99,7 @@ error_new:
 .LBB3_2:
 	mov	rdi, qword ptr [rsp]
 	lea	rsi, [rip + .Lanon.[ID].4]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8
@@ -142,7 +142,7 @@ error_init:
 	mov	rdi, qword ptr [rsp]
 .LBB4_5:
 	lea	rsi, [rip + .Lanon.[ID].5]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8
@@ -179,7 +179,7 @@ error_copy:
 .LBB5_2:
 	mov	rdi, qword ptr [rsp]
 	lea	rsi, [rip + .Lanon.[ID].6]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8
@@ -218,7 +218,7 @@ error_autoreleased:
 .LBB6_2:
 	mov	rdi, qword ptr [rsp]
 	lea	rsi, [rip + .Lanon.[ID].7]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8

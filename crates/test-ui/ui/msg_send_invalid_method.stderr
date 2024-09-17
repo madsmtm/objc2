@@ -1,5 +1,5 @@
 error: msg_send_id![obj, retain] is not supported. Use `Retained::retain` instead
- --> ui/msg_send_id_invalid_method.rs
+ --> ui/msg_send_invalid_method.rs
   |
   |     unsafe { msg_send_id![object, retain] };
   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -7,7 +7,7 @@ error: msg_send_id![obj, retain] is not supported. Use `Retained::retain` instea
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: msg_send_id![obj, release] is not supported. Drop an `Retained` instead
- --> ui/msg_send_id_invalid_method.rs
+ --> ui/msg_send_invalid_method.rs
   |
   |     unsafe { msg_send_id![object, release] };
   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -15,7 +15,7 @@ error: msg_send_id![obj, release] is not supported. Drop an `Retained` instead
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: msg_send_id![obj, autorelease] is not supported. Use `Retained::autorelease`
- --> ui/msg_send_id_invalid_method.rs
+ --> ui/msg_send_invalid_method.rs
   |
   |     unsafe { msg_send_id![object, autorelease] };
   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -23,7 +23,7 @@ error: msg_send_id![obj, autorelease] is not supported. Use `Retained::autorelea
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: msg_send_id![obj, dealloc] is not supported. Drop an `Retained` instead
- --> ui/msg_send_id_invalid_method.rs
+ --> ui/msg_send_invalid_method.rs
   |
   |     unsafe { msg_send_id![object, dealloc] };
   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,5 +1,5 @@
 error[E0308]: mismatched types
- --> ui/msg_send_id_invalid_receiver.rs
+ --> ui/msg_send_invalid_receiver.rs
   |
   |     let _: Allocated<NSObject> = unsafe { msg_send_id![obj, alloc] };
   |                                           -------------^^^--------
@@ -10,13 +10,13 @@ error[E0308]: mismatched types
   = note: expected reference `&AnyClass`
              found reference `&NSObject`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
   |     pub unsafe fn send_message_id_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
   |                   ^^^^^^^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
- --> ui/msg_send_id_invalid_receiver.rs
+ --> ui/msg_send_invalid_receiver.rs
   |
   |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, init] };
   |                                          -------------^^^-------
@@ -27,13 +27,13 @@ error[E0308]: mismatched types
   = note: expected struct `Allocated<_>`
           found reference `&NSObject`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
   |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
- --> ui/msg_send_id_invalid_receiver.rs
+ --> ui/msg_send_invalid_receiver.rs
   |
   |     let _: Retained<NSObject> = unsafe { msg_send_id![cls, init] };
   |                                          -------------^^^-------
@@ -44,13 +44,13 @@ error[E0308]: mismatched types
   = note: expected struct `Allocated<_>`
           found reference `&AnyClass`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
   |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
- --> ui/msg_send_id_invalid_receiver.rs
+ --> ui/msg_send_invalid_receiver.rs
   |
   |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, init] };
   |                                          -------------^^^-------
@@ -61,13 +61,13 @@ error[E0308]: mismatched types
   = note: expected struct `Allocated<_>`
              found struct `Retained<NSObject>`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
   |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
- --> ui/msg_send_id_invalid_receiver.rs
+ --> ui/msg_send_invalid_receiver.rs
   |
   |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, init] };
   |                                          -------------^^^-------
@@ -78,13 +78,13 @@ error[E0308]: mismatched types
   = note: expected struct `Allocated<_>`
                found enum `Option<Retained<NSObject>>`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
   |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
 
 error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satisfied
- --> ui/msg_send_id_invalid_receiver.rs
+ --> ui/msg_send_invalid_receiver.rs
   |
   |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, new] };
   |                                          ^^^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Retained<NSObject>`, which is required by `RetainSemantics<1>: MsgSendId<_, _>`
@@ -102,7 +102,7 @@ error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satis
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satisfied
- --> ui/msg_send_id_invalid_receiver.rs
+ --> ui/msg_send_invalid_receiver.rs
   |
   |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, copy] };
   |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Retained<NSObject>`, which is required by `RetainSemantics<4>: MsgSendId<_, _>`

@@ -67,7 +67,7 @@ handle_new_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 .Lfunc_end1:
 	.size	handle_new_fallible, .Lfunc_end1-handle_new_fallible
 
@@ -179,7 +179,7 @@ handle_init_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 .Lfunc_end4:
 	.size	handle_init_fallible, .Lfunc_end4-handle_init_fallible
 
@@ -370,7 +370,7 @@ handle_copy_fallible:
 .LBB9_2:
 	lea	eax, [ebx + .Lanon.[ID].3@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 .Lfunc_end9:
 	.size	handle_copy_fallible, .Lfunc_end9-handle_copy_fallible
 
@@ -484,7 +484,7 @@ handle_autoreleased_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 .Lfunc_end12:
 	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
 
@@ -536,14 +536,14 @@ handle_with_out_param:
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
 .Lanon.[ID].0:
 	.ascii	"crates/$DIR/lib.rs"
-	.size	.Lanon.[ID].0, 51
+	.size	.Lanon.[ID].0, 57
 
 	.type	.Lanon.[ID].1,@object
 	.section	.data.rel.ro..Lanon.[ID].1,"aw",@progbits
 	.p2align	2, 0x0
 .Lanon.[ID].1:
 	.long	.Lanon.[ID].0
-	.asciz	"3\000\000\000\r\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\r\000\000\000\005\000\000"
 	.size	.Lanon.[ID].1, 16
 
 	.type	.Lanon.[ID].2,@object
@@ -551,7 +551,7 @@ handle_with_out_param:
 	.p2align	2, 0x0
 .Lanon.[ID].2:
 	.long	.Lanon.[ID].0
-	.asciz	"3\000\000\000\034\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\034\000\000\000\005\000\000"
 	.size	.Lanon.[ID].2, 16
 
 	.type	.Lanon.[ID].3,@object
@@ -559,7 +559,7 @@ handle_with_out_param:
 	.p2align	2, 0x0
 .Lanon.[ID].3:
 	.long	.Lanon.[ID].0
-	.asciz	"3\000\000\0008\000\000\000\005\000\000"
+	.asciz	"9\000\000\0008\000\000\000\005\000\000"
 	.size	.Lanon.[ID].3, 16
 
 	.type	.Lanon.[ID].4,@object
@@ -567,7 +567,7 @@ handle_with_out_param:
 	.p2align	2, 0x0
 .Lanon.[ID].4:
 	.long	.Lanon.[ID].0
-	.asciz	"3\000\000\000L\000\000\000\005\000\000"
+	.asciz	"9\000\000\000L\000\000\000\005\000\000"
 	.size	.Lanon.[ID].4, 16
 
 	.section	".note.GNU-stack","",@progbits

@@ -1,9 +1,9 @@
 	.text
 	.intel_syntax noprefix
-	.section	.text.unlikely.SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
+	.section	.text.unlikely.SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
 	.p2align	4, 0x90
-	.type	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),@function
-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
+	.type	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),@function
+SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	ebx
 	push	esi
 	push	eax
@@ -31,7 +31,7 @@ SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRA
 	push	eax
 	call	SYM(core::option::expect_failed::GENERATED_ID, 0)@PLT
 .Lfunc_end0:
-	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end0-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end0-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 
 	.section	.text.unlikely.SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
 	.p2align	4, 0x90
@@ -154,7 +154,7 @@ error_new:
 .LBB3_2:
 	mov	ecx, dword ptr [esp + 12]
 	lea	edx, [ebx + .Lanon.[ID].4@GOTOFF]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	edx, eax
 	mov	eax, 1
 	jmp	.LBB3_3
@@ -208,7 +208,7 @@ error_init:
 	mov	ecx, dword ptr [esp + 12]
 .LBB4_5:
 	lea	edx, [ebx + .Lanon.[ID].5@GOTOFF]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	edx, eax
 	mov	eax, 1
 	jmp	.LBB4_6
@@ -256,7 +256,7 @@ error_copy:
 .LBB5_2:
 	mov	ecx, dword ptr [esp + 12]
 	lea	edx, [ebx + .Lanon.[ID].6@GOTOFF]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	edx, eax
 	mov	eax, 1
 	jmp	.LBB5_3
@@ -307,7 +307,7 @@ error_autoreleased:
 .LBB6_2:
 	mov	ecx, dword ptr [esp + 12]
 	lea	edx, [ebx + .Lanon.[ID].7@GOTOFF]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	edx, eax
 	mov	eax, 1
 	jmp	.LBB6_3

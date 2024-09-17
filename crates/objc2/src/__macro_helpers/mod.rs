@@ -20,7 +20,7 @@ mod image_info;
 mod method_family;
 mod module_info;
 mod msg_send;
-mod msg_send_id;
+mod msg_send_retained;
 mod writeback;
 
 pub use self::cache::{CachedClass, CachedSel};
@@ -37,7 +37,7 @@ pub use self::method_family::{
 };
 pub use self::module_info::ModuleInfo;
 pub use self::msg_send::MsgSend;
-pub use self::msg_send_id::{MaybeUnwrap, MsgSendId, MsgSendSuperId};
+pub use self::msg_send_retained::{MaybeUnwrap, MsgSendId, MsgSendSuperId};
 
 /// Disallow using this passed in value in const and statics for forwards
 /// compatibility (this function is not a `const` function).

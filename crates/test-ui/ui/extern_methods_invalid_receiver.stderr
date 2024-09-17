@@ -15,7 +15,7 @@ error[E0308]: mismatched types
   = note:         expected struct `Allocated<_>`
           found mutable reference `&mut MyObject`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
   |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
@@ -38,7 +38,7 @@ error[E0308]: mismatched types
   = note: expected struct `Allocated<_>`
                found enum `Option<Allocated<MyObject>>`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
   |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^

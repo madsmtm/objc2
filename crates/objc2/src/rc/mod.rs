@@ -51,25 +51,25 @@
 
 mod allocated_partial_init;
 mod autorelease;
-mod id;
-mod id_forwarding_impls;
-mod id_traits;
+mod retained;
+mod retained_forwarding_impls;
+mod retained_traits;
 #[cfg(test)]
 mod test_object;
-mod weak_id;
+mod weak;
 
 pub use self::allocated_partial_init::{Allocated, PartialInit};
 pub use self::autorelease::{
     autoreleasepool, autoreleasepool_leaking, AutoreleasePool, AutoreleaseSafe,
 };
-pub use self::id::{Id, Retained};
-pub use self::id_traits::{DefaultRetained, RetainedFromIterator, RetainedIntoIterator};
+pub use self::retained::{Id, Retained};
+pub use self::retained_traits::{DefaultRetained, RetainedFromIterator, RetainedIntoIterator};
 #[cfg(test)]
 pub(crate) use self::test_object::{RcTestObject, ThreadTestData};
-pub use self::weak_id::{Weak, WeakId};
+pub use self::weak::{Weak, WeakId};
 
 // Soft-deprecated aliases
-pub use self::id_traits::{
+pub use self::retained_traits::{
     DefaultRetained as DefaultId, RetainedFromIterator as IdFromIterator,
     RetainedIntoIterator as IdIntoIterator,
 };

@@ -28,7 +28,7 @@ LBB1_2:
 	lea	rdx, [rip + l_anon.[ID].1]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc
 	.p2align	4, 0x90
@@ -66,7 +66,7 @@ LBB4_2:
 	lea	rdx, [rip + l_anon.[ID].2]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc_init
 	.p2align	4, 0x90
@@ -132,7 +132,7 @@ _handle_copy_fallible:
 	ret
 LBB9_2:
 	lea	rdi, [rip + l_anon.[ID].3]
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_autoreleased
 	.p2align	4, 0x90
@@ -194,7 +194,7 @@ LBB12_2:
 	lea	rdx, [rip + l_anon.[ID].4]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_with_out_param
 	.p2align	4, 0x90
@@ -235,21 +235,21 @@ l_anon.[ID].0:
 	.p2align	3, 0x0
 l_anon.[ID].1:
 	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000\r\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\000\000\000\000\r\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].2:
 	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000\034\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\000\000\000\000\034\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].3:
 	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\0008\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\000\000\000\0008\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000L\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\000\000\000\000L\000\000\000\005\000\000"
 
 .subsections_via_symbols
