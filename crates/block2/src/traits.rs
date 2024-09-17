@@ -179,8 +179,7 @@ impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8:
 /// Another possibility is to help yourself with [`Encoding::to_string`][enc2s]
 /// in order to get the various components of the signature string separately
 /// and then concatenate them manually with the required numbers described
-/// below inserted at their correct place. `encoding::block_signature_string`
-/// can help automate this particular process, still not at compile time though.
+/// below inserted at their correct place.
 ///
 /// Yet another possibility is to compile a small Objective-C program, with GCC
 /// and GNUstep for example, that simply displays the result of
