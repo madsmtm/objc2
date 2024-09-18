@@ -51,16 +51,16 @@ fn test_with_capacity() {
 #[cfg(feature = "NSObject")]
 fn test_copy() {
     use crate::{NSCopying, NSMutableCopying, NSObjectProtocol};
-    use objc2::rc::Retained;
+    use objc2::{rc::Retained, ClassType};
 
     let s1 = NSMutableString::from_str("abc");
     let s2 = s1.copy();
     assert_ne!(Retained::as_ptr(&s1), Retained::as_ptr(&s2).cast());
-    assert!(s2.is_kind_of::<NSString>());
+    assert!(s2.isKindOfClass(NSString::class()));
 
     let s3 = s1.mutableCopy();
     assert_ne!(Retained::as_ptr(&s1), Retained::as_ptr(&s3));
-    assert!(s3.is_kind_of::<NSMutableString>());
+    assert!(s3.isKindOfClass(NSMutableString::class()));
 }
 
 #[test]
@@ -88,19 +88,19 @@ fn counterpart() {
 #[cfg(all(feature = "NSObject", feature = "NSZone"))]
 fn test_copy_with_zone() {
     use crate::{NSCopying, NSMutableCopying, NSObjectProtocol};
-    use objc2::rc::Retained;
+    use objc2::{rc::Retained, ClassType};
 
     let s1 = NSString::from_str("abc");
     let s2 = unsafe { s1.copyWithZone(core::ptr::null_mut()) };
     assert_eq!(Retained::as_ptr(&s1), Retained::as_ptr(&s2));
-    assert!(s2.is_kind_of::<NSString>());
+    assert!(s2.isKindOfClass(NSString::class()));
 
     let s3 = unsafe { s1.mutableCopyWithZone(core::ptr::null_mut()) };
     assert_ne!(
         Retained::as_ptr(&s1).cast::<NSMutableString>(),
         Retained::as_ptr(&s3)
     );
-    assert!(s3.is_kind_of::<NSMutableString>());
+    assert!(s3.isKindOfClass(NSMutableString::class()));
 }
 
 /// Test that writing a NSMutableString to itself works (i.e. ensure that

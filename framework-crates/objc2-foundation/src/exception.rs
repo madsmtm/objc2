@@ -6,7 +6,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::exception::Exception;
 use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSObjectProtocol};
-use objc2::{extern_methods, sel};
+use objc2::{extern_methods, sel, ClassType};
 
 use crate::NSException;
 
@@ -73,7 +73,7 @@ impl NSException {
             // SAFETY: We only use `isKindOfClass:` on NSObject
             let obj: *const Exception = obj;
             let obj = unsafe { obj.cast::<NSObject>().as_ref().unwrap() };
-            obj.is_kind_of::<Self>()
+            obj.isKindOfClass(Self::class())
         } else {
             false
         }

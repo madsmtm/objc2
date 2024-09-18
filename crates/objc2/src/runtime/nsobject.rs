@@ -131,9 +131,7 @@ pub unsafe trait NSObjectProtocol {
     /// subclasses.
     ///
     /// See [`isKindOfClass`][Self::isKindOfClass] for details.
-    #[doc(alias = "isKindOfClass")]
-    #[doc(alias = "isKindOfClass:")]
-    // TODO: Consider deprecating this
+    #[deprecated = "use `isKindOfClass` directly, or cast your objects with `AnyObject::downcast`"]
     fn is_kind_of<T: ClassType>(&self) -> bool
     where
         Self: Sized + Message,
@@ -536,12 +534,12 @@ mod tests {
     #[test]
     fn test_is_kind_of() {
         let obj = NSObject::new();
-        assert!(obj.is_kind_of::<NSObject>());
-        assert!(!obj.is_kind_of::<RcTestObject>());
+        assert!(obj.isKindOfClass(NSObject::class()));
+        assert!(!obj.isKindOfClass(RcTestObject::class()));
 
         let obj = RcTestObject::new();
-        assert!(obj.is_kind_of::<NSObject>());
-        assert!(obj.is_kind_of::<RcTestObject>());
+        assert!(obj.isKindOfClass(NSObject::class()));
+        assert!(obj.isKindOfClass(RcTestObject::class()));
     }
 
     #[test]

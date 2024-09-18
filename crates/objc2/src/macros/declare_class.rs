@@ -314,14 +314,14 @@
 ///     let obj = MyCustomObject::new(3);
 ///     assert_eq!(obj.ivars().foo, 3);
 ///     assert_eq!(obj.ivars().bar, 42);
-///     assert!(obj.ivars().object.is_kind_of::<NSObject>());
+///     assert!(obj.ivars().object.isKindOfClass(NSObject::class()));
 ///
 /// #   let obj: Retained<MyCustomObject> = unsafe { msg_send_id![&obj, copy] };
 /// #   #[cfg(available_in_foundation)]
 ///     let obj = obj.copy();
 ///
 ///     assert_eq!(obj.get_foo(), 3);
-///     assert!(obj.get_object().is_kind_of::<NSObject>());
+///     assert!(obj.get_object().isKindOfClass(NSObject::class()));
 ///
 ///     assert!(MyCustomObject::my_class_method());
 /// }
