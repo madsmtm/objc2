@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     the main thread.
 * Added `ClassType::alloc_main_thread`.
 * Added `IsMainThreadOnly::mtm`.
+* Added `DowncastTarget` and `AnyObject::downcast` to allow safely casting
+  between Objective-C objects.
 
 ### Changed
 * **BREAKING**: Changed how you specify a class to only be available on the
