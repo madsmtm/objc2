@@ -1356,8 +1356,10 @@ impl AnyObject {
     /// string yourself, or the API explicitly documents the string to be
     /// mutable.
     ///
-    /// See [Apple's documentation on mutability][apple-mut] for more details.
+    /// See Apple's [documentation on mutability][apple-mut] and [on
+    /// `isKindOfClass:`][iskindof-doc] for more details.
     ///
+    /// [iskindof-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass?language=objc
     /// [apple-mut]: https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html
     ///
     ///

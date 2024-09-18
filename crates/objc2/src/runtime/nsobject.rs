@@ -115,8 +115,10 @@ pub unsafe trait NSObjectProtocol {
     /// Check if the object is an instance of the class, or one of its
     /// subclasses.
     ///
-    /// See [Apple's documentation][apple-doc] for more details on what you
-    /// may (and what you may not) do with this information.
+    /// See [`AnyObject::downcast`] if your intention is to use this to cast
+    /// an object to another, and see [Apple's documentation][apple-doc] for
+    /// more details on what you may (and what you may not) do with this
+    /// information in general.
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass?language=objc
     #[doc(alias = "isKindOfClass:")]
