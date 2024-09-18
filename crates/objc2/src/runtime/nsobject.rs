@@ -73,10 +73,6 @@ unsafe impl DowncastTarget for NSObject {}
 ///
 /// Like with [other protocols](ProtocolType), the type must represent a class
 /// that implements the `NSObject` protocol.
-//
-// Note: Most of the methods on this must remain `unsafe` to override,
-// including `isEqual` and `hash`, since hashing collections like
-// `NSDictionary` and `NSSet` rely on it being stable.
 #[allow(non_snake_case)] // Follow the naming scheme in framework crates
 pub unsafe trait NSObjectProtocol {
     /// Check whether the object is equal to an arbitrary other object.
