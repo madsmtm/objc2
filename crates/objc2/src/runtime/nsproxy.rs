@@ -2,6 +2,7 @@ use core::fmt;
 use core::hash;
 
 use crate::runtime::{AnyClass, AnyObject, NSObjectProtocol, ProtocolObject};
+use crate::DowncastTarget;
 use crate::{AllocAnyThread, ClassType};
 
 /// An abstract superclass defining an API for objects that act as
@@ -40,6 +41,8 @@ unsafe impl ClassType for NSProxy {
         &self.__inner
     }
 }
+
+unsafe impl DowncastTarget for NSProxy {}
 
 unsafe impl NSObjectProtocol for NSProxy {}
 
