@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Implemented `AsRef` in a forwarding fashion on `Retained`.
 * Implemented `PartialEq` and `PartialOrd` on `Retained` in a slightly more
   generic way.
+* Allow using `Into` to convert to retained objects.
 
 ### Changed
 * **BREAKING**: Changed how you specify a class to only be available on the

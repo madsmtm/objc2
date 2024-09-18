@@ -766,6 +766,36 @@ impl<T: ?Sized> fmt::Pointer for Retained<T> {
     }
 }
 
+// Sadly, it is not possible to implement general conversions between
+// `Retained`, as it conflicts with the generic `impl From<T> for T`.
+//
+// impl<T: Upcast, U> From<Retained<U>> for Retained<T> {
+//     fn from(obj: &Retained<T>) -> Self {
+//         obj.as_super().retain()
+//     }
+// }
+//
+// But we _can_ do the following implementations:
+
+impl<T: ?Sized + AsRef<U>, U: Message> From<&T> for Retained<U> {
+    /// Cast the object to its superclass, and retain it.
+    #[inline]
+    fn from(obj: &T) -> Self {
+        obj.as_ref().retain()
+    }
+}
+
+// Bounded by `T: ClassType` to prevent overlapping impls
+// (`AnyObject` implements `Message`).
+impl<T: ClassType + 'static> From<Retained<T>> for Retained<AnyObject> {
+    /// Convert the object to `AnyObject`.
+    #[inline]
+    fn from(obj: Retained<T>) -> Self {
+        // SAFETY: All 'static objects can be converted to `AnyObject`.
+        unsafe { Retained::cast_unchecked(obj) }
+    }
+}
+
 /// `Retained<T>` is `Send` if `T` is `Send + Sync`.
 //
 // SAFETY:
@@ -972,5 +1002,20 @@ mod tests {
 
         assert_eq!(size_of::<Retained<NSObject>>(), ptr_size);
         assert_eq!(size_of::<Option<Retained<NSObject>>>(), ptr_size);
+    }
+
+    #[test]
+    fn test_into() {
+        let obj = NSObject::new();
+        let obj: Retained<NSObject> = Into::into(obj);
+        let _: Retained<AnyObject> = Into::into(obj);
+
+        let obj_ref = &*NSObject::new();
+        let _: Retained<NSObject> = Into::into(obj_ref);
+        let _: Retained<AnyObject> = Into::into(obj_ref);
+
+        let obj_retained_ref = &NSObject::new();
+        let _: Retained<NSObject> = Into::into(obj_retained_ref);
+        let _: Retained<AnyObject> = Into::into(obj_retained_ref);
     }
 }
