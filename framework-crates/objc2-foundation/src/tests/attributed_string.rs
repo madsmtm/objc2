@@ -5,6 +5,7 @@ use alloc::string::ToString;
 
 use objc2::rc::{autoreleasepool, Retained};
 use objc2::runtime::AnyObject;
+use objc2::ClassType;
 
 use crate::{ns_string, NSAttributedString, NSMutableAttributedString, NSObject, NSString};
 
@@ -39,11 +40,11 @@ fn test_copy() {
     // NSAttributedString performs this optimization in GNUStep's runtime,
     // but not in Apple's; so we don't test for it!
     // assert_eq!(Retained::as_ptr(&s1), Retained::as_ptr(&s2));
-    assert!(s2.is_kind_of::<NSAttributedString>());
+    assert!(s2.isKindOfClass(NSAttributedString::class()));
 
     let s3 = s1.mutableCopy();
     assert_ne!(Retained::as_ptr(&s1), Retained::as_ptr(&s3).cast());
-    assert!(s3.is_kind_of::<NSMutableAttributedString>());
+    assert!(s3.isKindOfClass(NSMutableAttributedString::class()));
 }
 
 #[test]
@@ -90,9 +91,9 @@ fn test_copy_mutable() {
     let s1 = NSMutableAttributedString::from_nsstring(ns_string!("abc"));
     let s2 = s1.copy();
     assert_ne!(Retained::as_ptr(&s1).cast(), Retained::as_ptr(&s2));
-    assert!(s2.is_kind_of::<NSAttributedString>());
+    assert!(s2.isKindOfClass(NSAttributedString::class()));
 
     let s3 = s1.mutableCopy();
     assert_ne!(Retained::as_ptr(&s1), Retained::as_ptr(&s3));
-    assert!(s3.is_kind_of::<NSMutableAttributedString>());
+    assert!(s3.isKindOfClass(NSMutableAttributedString::class()));
 }

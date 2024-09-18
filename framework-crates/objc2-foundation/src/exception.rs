@@ -6,7 +6,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::exception::Exception;
 use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSObjectProtocol};
-use objc2::{extern_methods, sel};
+use objc2::{extern_methods, sel, ClassType};
 
 use crate::NSException;
 
@@ -65,7 +65,7 @@ impl NSException {
     /// Convert this into an [`Exception`] object.
     pub fn into_exception(this: Retained<Self>) -> Retained<Exception> {
         // SAFETY: Downcasting to "subclass"
-        unsafe { Retained::cast(this) }
+        unsafe { Retained::cast_unchecked(this) }
     }
 
     fn is_nsexception(obj: &Exception) -> bool {
@@ -73,7 +73,7 @@ impl NSException {
             // SAFETY: We only use `isKindOfClass:` on NSObject
             let obj: *const Exception = obj;
             let obj = unsafe { obj.cast::<NSObject>().as_ref().unwrap() };
-            obj.is_kind_of::<Self>()
+            obj.isKindOfClass(Self::class())
         } else {
             false
         }
@@ -86,7 +86,7 @@ impl NSException {
     pub fn from_exception(obj: Retained<Exception>) -> Result<Retained<Self>, Retained<Exception>> {
         if Self::is_nsexception(&obj) {
             // SAFETY: Just checked the object is an NSException
-            Ok(unsafe { Retained::cast::<Self>(obj) })
+            Ok(unsafe { Retained::cast_unchecked::<Self>(obj) })
         } else {
             Err(obj)
         }

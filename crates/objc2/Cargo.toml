@@ -125,6 +125,7 @@ block2 = { path = "../block2", default-features = false }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = [
     "NSDate",
     "NSDictionary",
+    "NSEnumerator",
     "NSGeometry",
     "NSKeyValueObserving",
     "NSNotification",

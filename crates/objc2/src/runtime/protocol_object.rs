@@ -119,7 +119,7 @@ impl<P: ?Sized> ProtocolObject<P> {
         // - The type can be represented as the casted-to type.
         // - Both types are `'static` (this could maybe be relaxed a bit, but
         //   let's be on the safe side)!
-        unsafe { Retained::cast::<Self>(obj) }
+        unsafe { Retained::cast_unchecked::<Self>(obj) }
     }
 }
 

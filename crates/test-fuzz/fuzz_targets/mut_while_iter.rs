@@ -3,7 +3,10 @@
 use std::mem::replace;
 
 use arbitrary::Arbitrary;
-use objc2::rc::{autoreleasepool, Id};
+use objc2::{
+    rc::{autoreleasepool, Id},
+    ClassType,
+};
 use objc2_foundation::{NSMutableArray, NSNull, NSObject, NSObjectProtocol};
 
 /// The operations that the fuzzer can do on an array and the array's iterator.
@@ -143,7 +146,7 @@ fn run(ops: Vec<Operation>) {
                 let arr_item = autoreleasepool(|_| arr_iter.next());
                 let vec_item = vec_iter.next(&vec).map(|s| &**s);
                 match (arr_item, vec_item) {
-                    (Some(arr_s), _) if arr_s.is_kind_of::<NSNull>() => {
+                    (Some(arr_s), _) if arr_s.isKindOfClass(NSNull::class()) => {
                         assert!(vec_iter.invalid, "mutation while iterator was valid");
                     }
                     (Some(arr_s), Some(vec_s)) => {

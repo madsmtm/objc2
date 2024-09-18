@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     the main thread.
 * Added `ClassType::alloc_main_thread`.
 * Added `IsMainThreadOnly::mtm`.
+* Added `DowncastTarget`, `AnyObject::downcast_ref` and `Retained::downcast`
+  to allow safely casting between Objective-C objects.
 
 ### Changed
 * **BREAKING**: Changed how you specify a class to only be available on the
@@ -92,6 +94,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `ffi::objc_ivar` is merged into `runtime::Ivar`.
   - `ffi::BOOL` and constants is merged into `runtime::Bool`.
 * Deprecated `ffi::id`. Use `AnyObject` instead.
+* Deprecated `NSObjectProtocol::is_kind_of`, use `isKindOfClass` or the new
+  `AnyObject::downcast_ref` method instead.
+* Deprecated `Retained::cast`, this has been renamed to `Retained::cast_unchecked`.
 
 ### Removed
 * **BREAKING**: Removed the `ffi::SEL` and `ffi::objc_selector` types. Use

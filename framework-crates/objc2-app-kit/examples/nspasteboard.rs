@@ -31,11 +31,9 @@ pub fn get_text_2(pasteboard: &NSPasteboard) -> Option<Retained<NSString>> {
     let objects = unsafe { pasteboard.readObjectsForClasses_options(&class_array, None) };
 
     let obj = objects?.firstObject()?;
-    // And this part is weird as well, since we now have to convert the object
-    // into an NSString, which we know it to be since that's what we told
-    // `readObjectsForClasses:options:`.
-    let obj: Retained<NSString> = unsafe { Retained::cast(obj) };
-    Some(obj)
+    // We now have to convert the object into an NSString, which we know it to
+    // be since that's what we told `readObjectsForClasses:options:` we wanted.
+    Some(obj.downcast::<NSString>().unwrap())
 }
 
 pub fn set_text(pasteboard: &NSPasteboard, text: &NSString) {

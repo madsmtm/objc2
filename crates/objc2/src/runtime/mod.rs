@@ -43,8 +43,9 @@ mod retain_release_fast;
 pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
 pub(crate) use self::retain_release_fast::{objc_release_fast, objc_retain_fast};
 use crate::encode::{Encode, EncodeArguments, EncodeReturn, Encoding, OptionEncode, RefEncode};
+use crate::msg_send;
 use crate::verify::{verify_method_signature, Inner};
-use crate::{ffi, Message};
+use crate::{ffi, DowncastTarget, Message};
 
 // Note: While this is not public, it is still a breaking change to remove,
 // since `objc2-foundation` relies on it.
@@ -1314,6 +1315,135 @@ impl AnyObject {
         let ivar = self.lookup_instance_variable_dynamically(name);
         // SAFETY: Upheld by caller
         unsafe { ivar.load_mut::<T>(self) }
+    }
+
+    pub(crate) fn is_kind_of_class(&self, cls: &AnyClass) -> Bool {
+        // SAFETY: The signature is declared correctly.
+        //
+        // Note that `isKindOfClass:` is not available on every object, but it
+        // is still safe to _use_, since the runtime will simply crash if the
+        // selector isn't implemented. This is of course not _ideal_, but it
+        // works for all of Apple's Objective-C classes, and it's what Swift
+        // does.
+        //
+        // In theory, someone could have made a root object, and overwritten
+        // `isKindOfClass:` to do something bogus - but that would conflict
+        // with normal Objective-C code as well, so we will consider such a
+        // thing unsound by construction.
+        unsafe { msg_send![self, isKindOfClass: cls] }
+    }
+
+    /// Attempt to downcast the object to a class of type `T`.
+    ///
+    /// This is the reference-variant. Use [`Retained::downcast`] if you want
+    /// to convert a retained object to another type.
+    ///
+    /// [`Retained::downcast`]: crate::rc::Retained::downcast
+    ///
+    ///
+    /// # Mutable classes
+    ///
+    /// Some classes have immutable and mutable variants, such as `NSString`
+    /// and `NSMutableString`.
+    ///
+    /// When some Objective-C API signature says it gives you an immutable
+    /// class, it generally expects you to not mutate that, even though it may
+    /// technically be mutable "under the hood".
+    ///
+    /// So using this method to convert a `NSString` to a `NSMutableString`,
+    /// while not unsound, is generally frowned upon unless you created the
+    /// string yourself, or the API explicitly documents the string to be
+    /// mutable.
+    ///
+    /// See Apple's [documentation on mutability][apple-mut] and [on
+    /// `isKindOfClass:`][iskindof-doc] for more details.
+    ///
+    /// [iskindof-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass?language=objc
+    /// [apple-mut]: https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html
+    ///
+    ///
+    /// # Generic classes
+    ///
+    /// Objective-C generics are called "lightweight generics", and that's
+    /// because they aren't exposed in the runtime. This makes it impossible
+    /// to safely downcast to generic collections, so this is disallowed by
+    /// this method.
+    ///
+    /// You can, however, safely downcast to generic collections where all the
+    /// type-parameters are [`AnyObject`].
+    ///
+    ///
+    /// # Panics
+    ///
+    /// This works internally by calling `isKindOfClass:`. That means that the
+    /// object must have the instance method of that name, and an exception
+    /// will be thrown (if CoreFoundation is linked) or the process will abort
+    /// if that is not the case. In the vast majority of cases, you don't need
+    /// to worry about this, since both root objects [`NSObject`] and
+    /// `NSProxy` implement this method.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// Cast an `NSString` back and forth from `NSObject`.
+    ///
+    /// ```
+    /// use objc2::rc::Retained;
+    /// use objc2_foundation::{NSObject, NSString};
+    ///
+    /// let obj: Retained<NSObject> = Retained::into_super(NSString::new());
+    /// let string = obj.downcast_ref::<NSString>().unwrap();
+    /// // Or with `downcast`, if we do not need the object afterwards
+    /// let string = obj.downcast::<NSString>().unwrap();
+    /// ```
+    ///
+    /// Try (and fail) to cast an `NSObject` to an `NSString`.
+    ///
+    /// ```
+    /// use objc2_foundation::{NSObject, NSString};
+    ///
+    /// let obj = NSObject::new();
+    /// assert!(obj.downcast_ref::<NSString>().is_none());
+    /// ```
+    ///
+    /// Try to cast to an array of strings.
+    ///
+    /// ```compile_fail,E0277
+    /// use objc2_foundation::{NSArray, NSObject, NSString};
+    ///
+    /// let arr = NSArray::from_retained_slice(&[NSObject::new()]);
+    /// // This is invalid and doesn't type check.
+    /// let arr = arr.downcast_ref::<NSArray<NSString>>();
+    /// ```
+    ///
+    /// This fails to compile, since it would require enumerating over the
+    /// array to ensure that each element is of the desired type, which is a
+    /// performance pitfall.
+    ///
+    /// Downcast when processing each element instead.
+    ///
+    /// ```
+    /// use objc2_foundation::{NSArray, NSObject, NSString};
+    ///
+    /// let arr = NSArray::from_retained_slice(&[NSObject::new()]);
+    ///
+    /// for elem in arr {
+    ///     if let Some(data) = elem.downcast_ref::<NSString>() {
+    ///         // handle `data`
+    ///     }
+    /// }
+    /// ```
+    #[inline]
+    pub fn downcast_ref<T: DowncastTarget>(&self) -> Option<&T> {
+        if self.is_kind_of_class(T::class()).as_bool() {
+            // SAFETY: Just checked that the object is a class of type `T`.
+            //
+            // Generic `T` like `NSArray<NSString>` are ruled out by
+            // `T: DowncastTarget`.
+            Some(unsafe { &*(self as *const Self).cast::<T>() })
+        } else {
+            None
+        }
     }
 
     // objc_setAssociatedObject

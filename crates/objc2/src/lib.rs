@@ -170,6 +170,7 @@ compile_error!("The `std` feature currently must be enabled.");
 extern crate alloc;
 extern crate std;
 
+pub use self::downcast::DowncastTarget;
 #[doc(no_inline)]
 pub use self::encode::{Encode, Encoding, RefEncode};
 pub use self::main_thread_marker::MainThreadMarker;
@@ -197,6 +198,7 @@ macro_rules! __hash_idents {
 pub mod __framework_prelude;
 #[doc(hidden)]
 pub mod __macro_helpers;
+mod downcast;
 pub mod encode;
 pub mod exception;
 pub mod ffi;

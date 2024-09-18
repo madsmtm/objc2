@@ -4,6 +4,7 @@ use core::hash;
 use crate::ffi::NSUInteger;
 use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject, Sel};
+use crate::DowncastTarget;
 use crate::{
     extern_methods, msg_send, msg_send_id, AllocAnyThread, ClassType, Message, ProtocolType,
 };
@@ -50,6 +51,8 @@ unsafe impl ClassType for NSObject {
         &self.__inner
     }
 }
+
+unsafe impl DowncastTarget for NSObject {}
 
 /// The methods that are fundamental to most Objective-C objects.
 ///
@@ -112,8 +115,10 @@ pub unsafe trait NSObjectProtocol {
     /// Check if the object is an instance of the class, or one of its
     /// subclasses.
     ///
-    /// See [Apple's documentation][apple-doc] for more details on what you
-    /// may (and what you may not) do with this information.
+    /// See [`AnyObject::downcast_ref`] or [`Retained::downcast`] if your
+    /// intention is to use this to cast an object to another, and see
+    /// [Apple's documentation][apple-doc] for more details on what you may
+    /// (and what you may not) do with this information in general.
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass?language=objc
     #[doc(alias = "isKindOfClass:")]
@@ -128,24 +133,13 @@ pub unsafe trait NSObjectProtocol {
     /// subclasses.
     ///
     /// See [`isKindOfClass`][Self::isKindOfClass] for details.
-    #[doc(alias = "isKindOfClass")]
-    #[doc(alias = "isKindOfClass:")]
-    // TODO: Consider deprecating this
+    #[deprecated = "use `isKindOfClass` directly, or cast your objects with `AnyObject::downcast_ref`"]
     fn is_kind_of<T: ClassType>(&self) -> bool
     where
         Self: Sized + Message,
     {
         self.isKindOfClass(T::class())
     }
-
-    // Note: We don't provide a method to convert `NSObject` to `T` based on
-    // `is_kind_of`, since that is not possible to do in general!
-    //
-    // For example, something may have a return type of `NSString`, while
-    // behind the scenes they really return `NSMutableString` and expect it to
-    // not be modified, see [Apple's doc][apple-mut].
-    //
-    // [apple-mut]: https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html
 
     /// Check if the object is an instance of a specific class, without
     /// checking subclasses.
@@ -242,7 +236,7 @@ pub unsafe trait NSObjectProtocol {
     ///
     /// # let obj = NSObject::new();
     /// // SAFETY: Descriptions are always `NSString`.
-    /// let desc: Retained<NSString> = unsafe { Retained::cast(obj.description()) };
+    /// let desc: Retained<NSString> = unsafe { Retained::cast_unchecked(obj.description()) };
     /// println!("{desc:?}");
     /// ```
     fn description(&self) -> Retained<NSObject>
@@ -473,7 +467,7 @@ mod tests {
 
     impl FakeSubclass {
         fn new() -> Retained<Self> {
-            unsafe { Retained::cast(NSObject::new()) }
+            Retained::downcast(NSObject::new()).unwrap()
         }
     }
 
@@ -542,12 +536,12 @@ mod tests {
     #[test]
     fn test_is_kind_of() {
         let obj = NSObject::new();
-        assert!(obj.is_kind_of::<NSObject>());
-        assert!(!obj.is_kind_of::<RcTestObject>());
+        assert!(obj.isKindOfClass(NSObject::class()));
+        assert!(!obj.isKindOfClass(RcTestObject::class()));
 
         let obj = RcTestObject::new();
-        assert!(obj.is_kind_of::<NSObject>());
-        assert!(obj.is_kind_of::<RcTestObject>());
+        assert!(obj.isKindOfClass(NSObject::class()));
+        assert!(obj.isKindOfClass(RcTestObject::class()));
     }
 
     #[test]

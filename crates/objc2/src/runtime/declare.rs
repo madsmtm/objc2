@@ -935,9 +935,9 @@ mod tests {
         assert_ne!(hashstate1.finish(), hashstate2.finish());
 
         // isKindOfClass:
-        assert!(obj1.is_kind_of::<NSObject>());
-        assert!(obj1.is_kind_of::<Custom>());
-        assert!(obj1.is_kind_of::<Custom>());
+        assert!(obj1.isKindOfClass(NSObject::class()));
+        assert!(obj1.isKindOfClass(Custom::class()));
+        assert!((**obj1).isKindOfClass(Custom::class()));
     }
 
     #[test]

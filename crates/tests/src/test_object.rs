@@ -11,7 +11,7 @@ use objc2::runtime::{
 use objc2::sel;
 use objc2::{class, extern_protocol, msg_send, msg_send_id, ClassType, Message, ProtocolType};
 #[cfg(feature = "all")]
-use objc2_foundation::NSNumber;
+use objc2_foundation::{NSArray, NSException, NSMutableString, NSNumber, NSString};
 
 // TODO: Remove once c"" strings are in MSRV
 fn c(s: &str) -> CString {
@@ -345,4 +345,45 @@ fn test_protocol() {
 
     // Check that transforming to `NSObjectProtocol` works
     let _obj: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(&*proto);
+}
+
+#[test]
+#[cfg(feature = "all")]
+fn downcast_basics() {
+    let obj = NSString::new();
+    assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
+
+    let obj = Retained::into_super(obj);
+    assert!(matches!(obj.downcast_ref::<NSNumber>(), None));
+    assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
+
+    let obj = NSMutableString::new();
+    assert!(matches!(obj.downcast_ref::<NSMutableString>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSObject>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSException>(), None));
+
+    let obj = Retained::into_super(Retained::into_super(obj));
+    assert!(matches!(obj.downcast_ref::<NSMutableString>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSObject>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSException>(), None));
+
+    let obj: Retained<NSArray<NSString>> = NSArray::new();
+    assert!(matches!(obj.downcast_ref::<NSString>(), None));
+    assert!(matches!(obj.downcast_ref::<NSArray<AnyObject>>(), Some(_)));
+}
+
+#[test]
+#[cfg(feature = "all")]
+fn test_downcast_class() {
+    // Ensure that downcasting `AnyClass` doesn't cause unsoundness.
+    let cls = NSString::class();
+    let obj = unsafe { &*(cls as *const AnyClass as *const AnyObject) };
+
+    // AnyClass is an NSObject internally.
+    assert!(obj.downcast_ref::<NSObject>().is_some());
+
+    // But it is _not_ NSString, even though that's the class itself.
+    assert!(obj.downcast_ref::<NSString>().is_none());
 }
