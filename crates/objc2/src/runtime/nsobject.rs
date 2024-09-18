@@ -236,7 +236,7 @@ pub unsafe trait NSObjectProtocol {
     ///
     /// # let obj = NSObject::new();
     /// // SAFETY: Descriptions are always `NSString`.
-    /// let desc: Retained<NSString> = unsafe { Retained::cast(obj.description()) };
+    /// let desc: Retained<NSString> = unsafe { Retained::cast_unchecked(obj.description()) };
     /// println!("{desc:?}");
     /// ```
     fn description(&self) -> Retained<NSObject>
@@ -467,7 +467,7 @@ mod tests {
 
     impl FakeSubclass {
         fn new() -> Retained<Self> {
-            unsafe { Retained::cast(NSObject::new()) }
+            Retained::downcast(NSObject::new()).unwrap()
         }
     }
 

@@ -328,11 +328,12 @@ impl<T: Message> Retained<T> {
         let obj: &AnyObject = unsafe { &*ptr };
 
         if obj.is_kind_of_class(U::class()).as_bool() {
-            // SAFETY: Just checked that the object is a class of type `U`.
+            // SAFETY: Just checked that the object is a class of type `U`,
+            // and `T` is `'static`.
             //
             // Generic `U` like `NSArray<NSString>` are ruled out by
             // `U: DowncastTarget`.
-            Ok(unsafe { Self::cast::<U>(self) })
+            Ok(unsafe { Self::cast_unchecked::<U>(self) })
         } else {
             Err(self)
         }
@@ -342,18 +343,21 @@ impl<T: Message> Retained<T> {
     ///
     /// This is equivalent to a `cast` between two pointers.
     ///
-    /// See [`Retained::into_super`] and [`ProtocolObject::from_retained`] for
-    /// safe alternatives.
+    /// See [`Retained::into_super`], [`ProtocolObject::from_retained`] and
+    /// [`Retained::downcast`] for safe alternatives.
     ///
     /// This is common to do when you know that an object is a subclass of
     /// a specific class (e.g. casting an instance of `NSString` to `NSObject`
-    /// is safe because `NSString` is a subclass of `NSObject`).
+    /// is safe because `NSString` is a subclass of `NSObject`), but do not
+    /// want to pay the (very slight) performance price of dynamically
+    /// checking that precondition with a [`downcast`].
     ///
     /// All `'static` objects can safely be cast to [`AnyObject`], since that
     /// assumes no specific class.
     ///
     /// [`AnyObject`]: crate::runtime::AnyObject
     /// [`ProtocolObject::from_retained`]: crate::runtime::ProtocolObject::from_retained
+    /// [`downcast`]: Self::downcast
     ///
     ///
     /// # Safety
@@ -366,22 +370,24 @@ impl<T: Message> Retained<T> {
     ///
     /// Additionally, you must ensure that any safety invariants that the new
     /// type has are upheld.
-    ///
-    /// Note that it is generally discouraged to cast e.g. `NSString` to
-    /// `NSMutableString`, even if you've checked at runtime that the object
-    /// is an instance of `NSMutableString`! This is because APIs are
-    /// generally allowed to return mutable objects internally, but still
-    /// assume that no-one mutates those objects if the API declares the
-    /// object as immutable, see [Apple's documentation on this][recv-mut].
-    ///
-    /// [recv-mut]: https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html#//apple_ref/doc/uid/TP40010810-CH5-SW66
     #[inline]
-    pub unsafe fn cast<U: Message>(this: Self) -> Retained<U> {
+    pub unsafe fn cast_unchecked<U: Message>(this: Self) -> Retained<U> {
         let ptr = ManuallyDrop::new(this).ptr.cast();
         // SAFETY: The object is forgotten, so we have +1 retain count.
         //
         // Caller verifies that the returned object is of the correct type.
         unsafe { Retained::new_nonnull(ptr) }
+    }
+
+    /// Deprecated alias of [`Retained::cast_unchecked`].
+    ///
+    /// # Safety
+    ///
+    /// See [`Retained::cast_unchecked`].
+    #[inline]
+    #[deprecated = "Use `downcast`, or `cast_unchecked` instead"]
+    pub unsafe fn cast<U: Message>(this: Self) -> Retained<U> {
+        unsafe { Self::cast_unchecked(this) }
     }
 
     /// Retain the pointer and construct an [`Retained`] from it.
@@ -697,7 +703,7 @@ where
         // - Both types are `'static`, so no lifetime information is lost
         //   (this could maybe be relaxed a bit, but let's be on the safe side
         //   for now).
-        unsafe { Self::cast::<T::Super>(this) }
+        unsafe { Self::cast_unchecked::<T::Super>(this) }
     }
 }
 
@@ -941,11 +947,10 @@ mod tests {
         let expected = ThreadTestData::current();
 
         // SAFETY: Any object can be cast to `AnyObject`
-        let obj: Retained<AnyObject> = unsafe { Retained::cast(obj) };
+        let obj: Retained<AnyObject> = unsafe { Retained::cast_unchecked(obj) };
         expected.assert_current();
 
-        // SAFETY: The object was originally `__RcTestObject`
-        let _obj: Retained<RcTestObject> = unsafe { Retained::cast(obj) };
+        let _obj: Retained<RcTestObject> = Retained::downcast(obj).unwrap();
         expected.assert_current();
     }
 

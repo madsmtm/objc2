@@ -65,7 +65,7 @@ impl NSException {
     /// Convert this into an [`Exception`] object.
     pub fn into_exception(this: Retained<Self>) -> Retained<Exception> {
         // SAFETY: Downcasting to "subclass"
-        unsafe { Retained::cast(this) }
+        unsafe { Retained::cast_unchecked(this) }
     }
 
     fn is_nsexception(obj: &Exception) -> bool {
@@ -86,7 +86,7 @@ impl NSException {
     pub fn from_exception(obj: Retained<Exception>) -> Result<Retained<Self>, Retained<Exception>> {
         if Self::is_nsexception(&obj) {
             // SAFETY: Just checked the object is an NSException
-            Ok(unsafe { Retained::cast::<Self>(obj) })
+            Ok(unsafe { Retained::cast_unchecked::<Self>(obj) })
         } else {
             Err(obj)
         }

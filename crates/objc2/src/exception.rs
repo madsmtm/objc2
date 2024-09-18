@@ -386,7 +386,7 @@ mod tests {
         let obj = NSObject::new();
         // TODO: Investigate why this is required on GNUStep!
         let _obj2 = obj.clone();
-        let obj: Retained<Exception> = unsafe { Retained::cast(obj) };
+        let obj: Retained<Exception> = unsafe { Retained::cast_unchecked(obj) };
         let ptr: *const Exception = &*obj;
 
         let result = unsafe { catch(|| throw(obj)) };
@@ -401,7 +401,7 @@ mod tests {
     #[ignore = "currently aborts"]
     fn throw_catch_unwind() {
         let obj = NSObject::new();
-        let obj: Retained<Exception> = unsafe { Retained::cast(obj) };
+        let obj: Retained<Exception> = unsafe { Retained::cast_unchecked(obj) };
 
         let result = catch_unwind(|| throw(obj));
         let _ = result.unwrap_err();

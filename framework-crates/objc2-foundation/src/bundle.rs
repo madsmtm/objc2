@@ -10,13 +10,9 @@ impl NSBundle {
     #[cfg(feature = "NSString")]
     #[cfg(feature = "NSDictionary")]
     pub fn name(&self) -> Option<objc2::rc::Retained<crate::NSString>> {
-        use crate::{ns_string, NSString};
-        use objc2::rc::Retained;
-
         let info = self.infoDictionary()?;
-        let name = info.objectForKey(ns_string!("CFBundleName"))?;
-        let name: Retained<NSString> = unsafe { Retained::cast(name) };
-        Some(name)
+        let name = info.objectForKey(crate::ns_string!("CFBundleName"))?;
+        Some(name.downcast().expect("CFBundleName to be NSString"))
     }
 }
 

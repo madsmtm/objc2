@@ -423,7 +423,7 @@ impl<C: ?Sized + FastEnumerationHelper> IntoIter<C> {
             // SAFETY: Same as `Retained::into_super`, except we avoid the
             // `'static` bounds, which aren't needed because the superclass
             // carries the same generics.
-            collection: unsafe { Retained::cast(collection) },
+            collection: unsafe { Retained::cast_unchecked(collection) },
             mutations_state: None,
         }
     }

@@ -96,6 +96,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Deprecated `ffi::id`. Use `AnyObject` instead.
 * Deprecated `NSObjectProtocol::is_kind_of`, use `isKindOfClass` or the new
   `AnyObject::downcast_ref` method instead.
+* Deprecated `Retained::cast`, this has been renamed to `Retained::cast_unchecked`.
 
 ### Removed
 * **BREAKING**: Removed the `ffi::SEL` and `ffi::objc_selector` types. Use
