@@ -43,8 +43,9 @@ mod retain_release_fast;
 pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
 pub(crate) use self::retain_release_fast::{objc_release_fast, objc_retain_fast};
 use crate::encode::{Encode, EncodeArguments, EncodeReturn, Encoding, OptionEncode, RefEncode};
+use crate::sel;
 use crate::verify::{verify_method_signature, Inner};
-use crate::{ffi, Message};
+use crate::{ffi, DowncastTarget, Message};
 
 // Note: While this is not public, it is still a breaking change to remove,
 // since `objc2-foundation` relies on it.
@@ -1314,6 +1315,40 @@ impl AnyObject {
         let ivar = self.lookup_instance_variable_dynamically(name);
         // SAFETY: Upheld by caller
         unsafe { ivar.load_mut::<T>(self) }
+    }
+
+    /// Attempts to downcast self to class type `T` (which must be a valid
+    /// [downcast target](crate::DowncastTarget)).
+    ///
+    /// # Notes
+    ///
+    /// This works by calling `[self isKindOfClass:class]`. That also means that the receiver object
+    /// must have the instance method `isKindOfClass:`. This is usually the case for any object
+    /// that uses `NSObject` as the root. Downcasting will fail with `None` when `isKindOfClass:`
+    /// is not available or in general when `isKindOfClass:` returns false.
+    pub fn downcast<T>(&self) -> Option<&T>
+    where
+        Self: 'static,
+        T: DowncastTarget + 'static,
+    {
+        let is_kind_of_class = sel!(isKindOfClass:);
+
+        self.class()
+            .verify_sel::<(&AnyClass,), Bool>(is_kind_of_class)
+            .ok()?;
+
+        if unsafe {
+            MessageReceiver::send_message::<(&AnyClass,), Bool>(
+                self,
+                is_kind_of_class,
+                (T::class(),),
+            )
+            .as_bool()
+        } {
+            Some(unsafe { &*(self as *const Self).cast::<T>() })
+        } else {
+            None
+        }
     }
 
     // objc_setAssociatedObject

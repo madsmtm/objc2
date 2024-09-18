@@ -523,6 +523,14 @@ macro_rules! declare_class {
         $crate::__declare_class_output_impls! {
             $($impls)*
         }
+
+        // SAFETY: This macro only allows non-generic classes and non-generic classes are always
+        // valid downcast targets.
+        unsafe impl $crate::DowncastTarget for $name
+        where
+            Self: 'static,
+        {
+        }
     };
 }
 

@@ -4,6 +4,7 @@ use core::hash;
 use crate::ffi::NSUInteger;
 use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject, Sel};
+use crate::DowncastTarget;
 use crate::{
     extern_methods, msg_send, msg_send_id, AllocAnyThread, ClassType, Message, ProtocolType,
 };
@@ -50,6 +51,8 @@ unsafe impl ClassType for NSObject {
         &self.__inner
     }
 }
+
+unsafe impl DowncastTarget for NSObject {}
 
 /// The methods that are fundamental to most Objective-C objects.
 ///
