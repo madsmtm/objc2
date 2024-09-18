@@ -383,7 +383,7 @@ impl Ivar {
     /// getting a class dynamically using e.g. [`AnyObject::class`], and using
     /// an instance variable from that here is _not_ sound in general.
     ///
-    /// No thread syncronization is done on accesses to the variable, so you
+    /// No thread synchronization is done on accesses to the variable, so you
     /// must ensure that any access to the returned pointer do not cause data
     /// races, and that Rust's mutability rules are not otherwise violated.
     #[inline]
@@ -414,7 +414,7 @@ impl Ivar {
     /// The object must have the given instance variable on it, and it must be
     /// of type `T`.
     ///
-    /// No thread syncronization is done, so you must ensure that no other
+    /// No thread synchronization is done, so you must ensure that no other
     /// thread is concurrently mutating the variable. This requirement can be
     /// considered upheld if all mutation happens through [`Ivar::load_mut`]
     /// (since that takes the object mutably).
@@ -1144,7 +1144,7 @@ impl fmt::Display for AnyProtocol {
 /// An Objective-C object.
 ///
 /// This is slightly different from [`NSObject`] in that it may represent an
-/// instance of an _arbitary_ Objective-C class (e.g. it does not have to be
+/// instance of an _arbitrary_ Objective-C class (e.g. it does not have to be
 /// a subclass of `NSObject`, so it can represent other root classes like
 /// `NSProxy`).
 ///
@@ -1232,7 +1232,7 @@ impl AnyObject {
     /// 3. Any overridden methods on the new class must be fully compatible
     ///    with the old ones.
     ///
-    /// Note that in the general case, where arbitary parts of the program
+    /// Note that in the general case, where arbitrary parts of the program
     /// may be trying to modify the class of the object concurrently, these
     /// requirements are not actually possible to uphold.
     ///

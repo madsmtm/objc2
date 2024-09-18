@@ -653,7 +653,7 @@ mod tests {
             let foo: u32 = msg_send![super(&obj, superclass), foo];
             assert_eq!(foo, 4);
 
-            // The subclass is overriden to return foo + 2
+            // The subclass is overridden to return foo + 2
             let foo: u32 = msg_send![&obj, foo];
             assert_eq!(foo, 6);
         }
@@ -671,7 +671,7 @@ mod tests {
             let foo: u32 = msg_send![super(cls, superclass.metaclass()), classFoo];
             assert_eq!(foo, 7);
 
-            // The subclass is overriden to return + 2
+            // The subclass is overridden to return + 2
             let foo: u32 = msg_send![cls, classFoo];
             assert_eq!(foo, 9);
         }

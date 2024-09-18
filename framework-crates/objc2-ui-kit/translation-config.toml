@@ -73,7 +73,7 @@ enum.anonymous.constants.NSControlCharacterLineBreakAction.skipped = true
 enum.anonymous.constants.NSControlCharacterParagraphBreakAction.skipped = true
 enum.anonymous.constants.NSControlCharacterContainerBreakAction.skipped = true
 
-# Typedef to an enum, which our valus handle wrong
+# Typedef to an enum, which our values handle wrong
 typedef.UITextWritingDirection.skipped = true
 static.UITextWritingDirectionNatural.skipped = true
 static.UITextWritingDirectionLeftToRight.skipped = true

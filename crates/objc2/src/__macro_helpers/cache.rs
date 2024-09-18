@@ -104,9 +104,9 @@ impl CachedClass {
 #[cfg(test)]
 mod tests {
     #[test]
-    #[should_panic = "class NonExistantClass could not be found"]
+    #[should_panic = "class NonExistentClass could not be found"]
     #[cfg(not(feature = "unstable-static-class"))]
     fn test_not_found() {
-        let _ = crate::class!(NonExistantClass);
+        let _ = crate::class!(NonExistentClass);
     }
 }

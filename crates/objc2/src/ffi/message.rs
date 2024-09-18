@@ -1,4 +1,4 @@
-//! The `objc_msgSend` familiy of functions.
+//! The `objc_msgSend` family of functions.
 //!
 //! Most of these are `cfg`-gated, these configs are semver-stable.
 //!

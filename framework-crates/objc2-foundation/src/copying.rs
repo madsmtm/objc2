@@ -61,7 +61,7 @@ pub unsafe trait MutableCopyingHelper: Message {
 
 // SAFETY: Superclasses are not in general required to implement the same
 // traits as their subclasses, but we're not dealing with normal classes and
-// arbitary protocols, we're dealing with with immutable/mutable class
+// arbitrary protocols, we're dealing with with immutable/mutable class
 // counterparts, and the `NSCopying`/`NSMutableCopying` protocols, which
 // _will_ be implemented on superclasses.
 unsafe impl<P: ?Sized> CopyingHelper for ProtocolObject<P> {

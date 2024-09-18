@@ -58,7 +58,7 @@
 /// # Safety
 ///
 /// The following are required for using the macro itself:
-/// - The specified name must be an exisiting Objective-C protocol.
+/// - The specified name must be an existing Objective-C protocol.
 /// - The protocol must actually inherit/conform to the protocols specified
 ///   as supertraits.
 /// - The protocol's methods must be correctly specified.

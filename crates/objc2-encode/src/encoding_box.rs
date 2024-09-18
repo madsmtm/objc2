@@ -107,7 +107,7 @@ impl EncodingBox {
         _ => unreachable!(),
     };
 
-    /// Parse and comsume an encoding from the start of a string.
+    /// Parse and consume an encoding from the start of a string.
     ///
     /// This is can be used to parse concatenated encodings, such as those
     /// returned by `method_getTypeEncoding`.

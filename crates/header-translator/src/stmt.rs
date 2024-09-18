@@ -188,14 +188,14 @@ pub(crate) fn method_or_property_entities<'tu>(
             if !get_data(&partial.getter_sel).skipped
                 && !properties.insert((partial.is_class, partial.getter_sel.clone()))
             {
-                error!(?partial, ?entity, "already exisiting getter property");
+                error!(?partial, ?entity, "already existing getter property");
             }
 
             if let Some(setter_sel) = &partial.setter_sel {
                 if !get_data(setter_sel).skipped
                     && !properties.insert((partial.is_class, setter_sel.clone()))
                 {
-                    error!(?partial, ?entity, "already exisiting setter property");
+                    error!(?partial, ?entity, "already existing setter property");
                 }
             }
         }

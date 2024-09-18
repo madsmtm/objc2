@@ -267,7 +267,7 @@ pub(crate) unsafe trait FastEnumerationHelper: Message + NSFastEnumeration {
 // # `ExactSizeIterator`
 //
 // This could probably be implemented correctly for the concrete class
-// `NSArray`, but not for arbitary `NSArray` subclasses, which are always be
+// `NSArray`, but not for arbitrary `NSArray` subclasses, which are always be
 // valid to convert to `NSArray`.
 //
 //

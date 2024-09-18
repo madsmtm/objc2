@@ -500,7 +500,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   for the above.
 * Preliminary support for specifying `where` bounds on methods inside
   `extern_protocol!` and `extern_methods!`.
-* Allow arbitary expressions in `const NAME` in `extern_class!`,
+* Allow arbitrary expressions in `const NAME` in `extern_class!`,
   `extern_protocol!` and `declare_class!`.
 * Added `rc::IdIntoIterator` helper trait and forwarding `IntoIterator`
   implementations for `rc::Id`.
@@ -739,13 +739,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   of the `new` family.
 * **BREAKING**: Changed the `Allocated` struct to be used as `Allocated<T>`
   instead of `Id<Allocated<T>, O>`.
-* Verify the message signature of overriden methods when declaring classes if
+* Verify the message signature of overridden methods when declaring classes if
   the `verify` feature is enabled.
 * Verify in `declare_class!` that protocols are implemented correctly.
 * **BREAKING**: Changed the name of the attribute macro in `extern_methods`
   from `#[sel(...)]` to `#[method(...)]`.
 * **BREAKING**: Changed `extern_methods!` and `declare_class!` such that
-  associated functions whoose first parameter is called `this`, is treated as
+  associated functions whose first parameter is called `this`, is treated as
   instance methods instead of class methods.
 * **BREAKING**: Message verification is now enabled by default. Your message
   sends might panic with `debug_assertions` enabled if they are detected to
@@ -888,7 +888,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ```
 
 ### Deprecated
-* Depreacted `msg_send_bool!` in favour of new functionality on `msg_send!`
+* Deprecated `msg_send_bool!` in favour of new functionality on `msg_send!`
   that allows seamlessly handling `bool`.
 
 

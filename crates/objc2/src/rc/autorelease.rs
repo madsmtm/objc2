@@ -262,7 +262,7 @@ auto_trait! {
     ///
     /// # Safety
     ///
-    /// Must not be implemented for types that interract with the autorelease
+    /// Must not be implemented for types that interact with the autorelease
     /// pool. So if you reimplement the [`AutoreleasePool`] struct or
     /// likewise, this should be negatively implemented for that.
     ///

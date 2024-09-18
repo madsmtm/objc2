@@ -14,7 +14,7 @@ use objc2::AllocAnyThread;
 use crate::NSValue;
 
 // We can't implement any auto traits for NSValue, since it can contain an
-// arbitary object!
+// arbitrary object!
 
 /// Creation methods.
 impl NSValue {
@@ -168,7 +168,7 @@ impl hash::Hash for NSValue {
 impl PartialEq for NSValue {
     #[doc(alias = "isEqualToValue:")]
     fn eq(&self, other: &Self) -> bool {
-        // Use isEqualToValue: instaed of isEqual: since it is faster
+        // Use isEqualToValue: instead of isEqual: since it is faster
         self.isEqualToValue(other)
     }
 }

@@ -8,7 +8,7 @@
 Objective-C interface and runtime bindings in Rust.
 
 Most of the core libraries and frameworks that are in use on Apple systems are
-written in Objective-C; this crate enables you to interract with those.
+written in Objective-C; this crate enables you to interact with those.
 
 This README is kept intentionally small in an effort to consolidate the
 documentation, see [the Rust docs](https://docs.rs/objc2/) for more details.

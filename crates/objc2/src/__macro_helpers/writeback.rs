@@ -3,7 +3,7 @@
 //! See clang's documentation:
 //! <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#passing-to-an-out-parameter-by-writeback>
 //!
-//! Note: We differ from that in that we do not create a temporary, whoose
+//! Note: We differ from that in that we do not create a temporary, whose
 //! address we then work on; instead, we directly reuse the pointer that the
 //! user provides (since, if it's a mutable pointer, we know that it's not
 //! shared elsewhere in the program, and hence it is safe to modify directly).
@@ -65,7 +65,7 @@ impl<T: Message + 'static> ConvertArgument for &mut Retained<T> {
         // }
         // ```
         //
-        // Which is definitly valid under stacked borrows! See also this
+        // Which is definitely valid under stacked borrows! See also this
         // playground link for testing something equivalent in Miri:
         // <https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=ef8ecfb54a11b9a59ae17cc7edfbef3d>
         //

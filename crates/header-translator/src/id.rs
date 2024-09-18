@@ -409,7 +409,7 @@ impl<N> AsRef<Location> for ItemIdentifier<N> {
 /// Helper to emit a `#[cfg(feature = "...")]`-gate based on the required
 /// items and the implied features.
 ///
-/// Only the library of the emmision location matters.
+/// Only the library of the emission location matters.
 pub fn cfg_gate_ln<'a, R: AsRef<Location> + 'a, I: AsRef<Location> + 'a>(
     required_features: impl IntoIterator<Item = R> + 'a,
     implied_features: impl IntoIterator<Item = I> + 'a,

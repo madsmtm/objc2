@@ -12,7 +12,7 @@
 //!
 //! It has since been superseded by Swift, but most of the core libraries and
 //! frameworks that are in use on Apple systems are still written in
-//! Objective-C, and hence we would like the ability to interract with these
+//! Objective-C, and hence we would like the ability to interact with these
 //! using Rust. This crate enables you to do that, in as safe a manner as
 //! possible.
 //!

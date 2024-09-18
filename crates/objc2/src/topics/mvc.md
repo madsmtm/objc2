@@ -1,6 +1,6 @@
 # The Model-View-Controller design pattern
 
-The [Model-View-Controller (MVC) design pattern][mvc-doc] is quite prominent in Cocoa application development, and you may end up needing to incoporate parts of it in your application. You can use the following as a rough guideline for how to do so.
+The [Model-View-Controller (MVC) design pattern][mvc-doc] is quite prominent in Cocoa application development, and you may end up needing to incorporate parts of it in your application. You can use the following as a rough guideline for how to do so.
 
 **Model**: Use plain Rust structures inside [`Cell<T>`] or [`RefCell<T>`] so that you can mutate them behind shared references (or possibly `Rc<RefCell<T>>`, depending on if you need to share data between multiple controllers).
 

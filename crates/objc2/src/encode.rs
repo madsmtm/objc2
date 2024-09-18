@@ -150,7 +150,7 @@ pub unsafe trait Encode {
     const ENCODING: Encoding;
 }
 
-/// Types whoose references has an Objective-C type-encoding.
+/// Types whose references has an Objective-C type-encoding.
 ///
 /// Implementing this for `T` provides [`Encode`] implementations for:
 /// - `*const T`
@@ -822,7 +822,7 @@ unsafe impl<'a, T: RefEncode + ?Sized> OptionEncode for &'a mut T {}
 unsafe impl<T: RefEncode + ?Sized> OptionEncode for NonNull<T> {}
 
 /// Helper for implementing [`Encode`]/[`RefEncode`] for function pointers
-/// whoose arguments implement [`Encode`].
+/// whose arguments implement [`Encode`].
 ///
 /// Ideally we'd implement it for all function pointers, but due to coherence
 /// issues, see <https://github.com/rust-lang/rust/issues/56105>, function

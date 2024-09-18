@@ -48,7 +48,7 @@ use crate::{msg_send, msg_send_id};
 ///
 /// While highly recommended that any exceptions you intend to throw are
 /// subclasses of `NSException`, this is not required by the runtime (similar
-/// to how Rust can panic with arbitary payloads using [`panic_any`]).
+/// to how Rust can panic with arbitrary payloads using [`panic_any`]).
 ///
 /// [`panic_any`]: std::panic::panic_any
 #[repr(transparent)]

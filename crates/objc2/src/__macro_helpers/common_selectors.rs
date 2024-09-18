@@ -30,7 +30,7 @@ pub fn dealloc_sel() -> Sel {
 }
 
 /// An undocumented selector called by the Objective-C runtime when
-/// initalizing instance variables.
+/// initializing instance variables.
 #[inline]
 #[allow(dead_code)] // May be useful in the future
 fn cxx_construct_sel() -> Sel {

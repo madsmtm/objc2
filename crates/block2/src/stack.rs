@@ -41,7 +41,7 @@ use crate::{ffi, Block, IntoBlock};
 ///
 /// The memory layout of this type is _not_ guaranteed.
 ///
-/// That said, it will always be safe to reintepret pointers to this as a
+/// That said, it will always be safe to reinterpret pointers to this as a
 /// pointer to a [`Block`] with the corresponding `dyn Fn` type.
 #[repr(C)]
 pub struct StackBlock<'f, A, R, Closure> {
@@ -59,7 +59,7 @@ pub struct StackBlock<'f, A, R, Closure> {
     pub(crate) closure: Closure,
 }
 
-// SAFETY: Pointers to the stack block is always safe to reintepret as an
+// SAFETY: Pointers to the stack block is always safe to reinterpret as an
 // ordinary block pointer.
 unsafe impl<'f, A, R, Closure> RefEncode for StackBlock<'f, A, R, Closure>
 where
@@ -189,7 +189,7 @@ where
     /// encoding information string themselves, thus obtaining a block
     /// containing it and working with these APIs.
     ///
-    /// You provide the encoding through the `E` type parameter, which shoul
+    /// You provide the encoding through the `E` type parameter, which should
     /// implement [`ManualBlockEncoding`].
     ///
     /// The same requirements as [`Self::new`] apply here as well.

@@ -224,12 +224,12 @@ impl ClassBuilder {
     /// the entire `NSObject` protocol is implemented.
     /// Functionality it expects, like implementations of `-retain` and
     /// `-release` used by ARC, will not be present otherwise.
-    pub fn root<F>(name: &CStr, intitialize_fn: F) -> Option<Self>
+    pub fn root<F>(name: &CStr, initialize_fn: F) -> Option<Self>
     where
         F: MethodImplementation<Callee = AnyClass, Arguments = (), Return = ()>,
     {
         Self::with_superclass(name, None).map(|mut this| {
-            unsafe { this.add_class_method(sel!(initialize), intitialize_fn) };
+            unsafe { this.add_class_method(sel!(initialize), initialize_fn) };
             this
         })
     }
@@ -239,7 +239,7 @@ impl ClassBuilder {
     ///
     /// # Panics
     ///
-    /// Panics if the method wasn't sucessfully added (e.g. a method with that
+    /// Panics if the method wasn't successfully added (e.g. a method with that
     /// name already exists).
     ///
     /// May also panic if the method was detected to be invalid in some way;
@@ -1079,7 +1079,7 @@ mod tests {
 
         // Illustration of what goes wrong with the naive approach of loading
         // the Ivar dynamically; in short, we can't be sure of which instance
-        // variable we're refering to here.
+        // variable we're referring to here.
         //
         // let ivar = *obj.get_ivar::<u8>("ivar3");
     }

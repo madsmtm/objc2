@@ -7,7 +7,7 @@
 
 Apple's C language extension of blocks in Rust.
 
-This crate provides functionality for interracting with C blocks, which is the
+This crate provides functionality for interacting with C blocks, which is the
 C-equivalent of Rust's closures.
 
 They are _technically_ not limited to only being used in Objective-C, though

@@ -66,7 +66,7 @@ mod extern_protocol;
 #[cfg_attr(feature = "unstable-static-class", doc = "```ignore")]
 /// use objc2::class;
 ///
-/// let _ = class!(NonExistantClass);
+/// let _ = class!(NonExistentClass);
 /// ```
 #[macro_export]
 macro_rules! class {

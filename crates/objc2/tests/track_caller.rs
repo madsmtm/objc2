@@ -232,8 +232,8 @@ fn test_unwind(checker: &PanicChecker) {
 
 #[cfg(not(feature = "unstable-static-class"))]
 fn test_unknown_class(checker: &PanicChecker) {
-    let msg = "class NonExistantClass could not be found";
+    let msg = "class NonExistentClass could not be found";
     checker.assert_panics(msg, line!() + 1, || {
-        let _ = class!(NonExistantClass);
+        let _ = class!(NonExistentClass);
     });
 }

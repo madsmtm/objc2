@@ -115,7 +115,7 @@ macro_rules! __rewrite_self_param_inner {
     };
 
     // `this: Type` or `_this: Type` instance method
-    // Workaround for arbitary self types being unstable
+    // Workaround for arbitrary self types being unstable
     // https://doc.rust-lang.org/nightly/unstable-book/language-features/arbitrary-self-types.html
     {
         (mut this: $__self_ty:ty $(, $($__params_rest:tt)*)?)

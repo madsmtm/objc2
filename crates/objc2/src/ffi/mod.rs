@@ -137,7 +137,7 @@
 //! `bindgen`[^1] in our build script to not add compilation cost to those
 //! targets.
 //!
-//! Deprecated functions are also not included for future compability, since
+//! Deprecated functions are also not included for future compatibility, since
 //! they could be removed in any macOS release, and then our code would break.
 //! If you have a need for these, please open an issue and we can discuss it!
 //!

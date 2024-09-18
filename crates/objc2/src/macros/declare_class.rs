@@ -159,7 +159,7 @@
 /// The implemented `ClassType::class` method may panic in a few cases, such
 /// as if:
 /// - A class with the specified name already exists.
-/// - Debug assertions are enabled, and an overriden method's signature is not
+/// - Debug assertions are enabled, and an overridden method's signature is not
 ///   equal to the one on the superclass.
 /// - Debug assertions are enabled, and the protocol's required methods are not
 ///   implemented.

@@ -220,7 +220,7 @@ impl hash::Hash for NSNumber {
 impl PartialEq for NSNumber {
     #[doc(alias = "isEqualToNumber:")]
     fn eq(&self, other: &Self) -> bool {
-        // Use isEqualToNumber: instaed of isEqual: since it is faster
+        // Use isEqualToNumber: instead of isEqual: since it is faster
         self.isEqualToNumber(other)
     }
 }

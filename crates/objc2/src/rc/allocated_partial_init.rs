@@ -11,7 +11,7 @@ use crate::{DeclaredClass, Message};
 ///
 /// Objective-C splits the allocation and initialization steps up into two, so
 /// we need to track it in the type-system whether something has been
-/// intialized or not.
+/// initialized or not.
 ///
 /// Note that allocation in Objective-C can fail, e.g. in Out Of Memory
 /// situations! This is handled by `objc2` automatically, but if you really
@@ -45,7 +45,7 @@ pub struct Allocated<T: ?Sized> {
     /// have fine control over NULL-ness.
     ///
     /// Covariance is correct, same as `Retained`.
-    ptr: *const T, // Intentially not `NonNull`!
+    ptr: *const T, // Intentionally not `NonNull`!
     /// Necessary for dropck, as with `Retained`.
     p: PhantomData<T>,
     /// Necessary for restricting auto traits.
@@ -162,8 +162,8 @@ impl<T: ?Sized + Message> Allocated<T> {
 
             // SAFETY:
             // - The pointer came from a `ManuallyDrop<Allocated<T>>`, which means
-            //   that we've now transfered ownership over +1 retain count.
-            // - The instance variables for this class have been intialized above.
+            //   that we've now transferred ownership over +1 retain count.
+            // - The instance variables for this class have been initialized above.
             unsafe { PartialInit::new(ptr.as_ptr()) }
         } else if cfg!(debug_assertions) {
             panic!("tried to initialize instance variables on a NULL allocated object")

@@ -8,22 +8,22 @@ use objc2::{declare_class, extern_methods, sel, ClassType, DeclaredClass};
 // Test that adding the `deprecated` attribute does not mean that warnings
 // when using the method internally are output.
 declare_class!(
-    struct DeclareClassDepreactedMethod;
+    struct DeclareClassDeprecatedMethod;
 
-    unsafe impl ClassType for DeclareClassDepreactedMethod {
+    unsafe impl ClassType for DeclareClassDeprecatedMethod {
         type Super = NSObject;
-        const NAME: &'static str = "DeclareClassDepreactedMethod";
+        const NAME: &'static str = "DeclareClassDeprecatedMethod";
     }
 
-    impl DeclaredClass for DeclareClassDepreactedMethod {}
+    impl DeclaredClass for DeclareClassDeprecatedMethod {}
 
     #[deprecated]
-    unsafe impl DeclareClassDepreactedMethod {
+    unsafe impl DeclareClassDeprecatedMethod {
         #[method(deprecatedOnImpl)]
         fn deprecated_on_impl() {}
     }
 
-    unsafe impl DeclareClassDepreactedMethod {
+    unsafe impl DeclareClassDeprecatedMethod {
         #[deprecated]
         #[method(deprecatedOnMethod)]
         fn deprecated_on_method() {}
@@ -32,7 +32,7 @@ declare_class!(
 
 #[test]
 fn test_deprecated() {
-    let _cls = DeclareClassDepreactedMethod::class();
+    let _cls = DeclareClassDeprecatedMethod::class();
 }
 
 // Test that `cfg` works properly.

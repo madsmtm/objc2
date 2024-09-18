@@ -205,7 +205,7 @@ impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8:
 ///
 /// See also the [GCC method signatures] section. It is mostly valid for blocks
 /// as well, since they are basically functions with captured environment --
-/// i.e. closures, except that no selector is implicitely sent, only the block
+/// i.e. closures, except that no selector is implicitly sent, only the block
 /// object is. In short, the "signature" is a null-terminated string, composed
 /// of the following, in order:
 ///

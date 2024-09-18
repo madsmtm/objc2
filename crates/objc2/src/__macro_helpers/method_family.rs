@@ -75,7 +75,7 @@ const fn in_selector_family(mut selector: &[u8], mut family: &[u8]) -> bool {
             ([], []) => {
                 return true;
             }
-            // Selector can't be part of familiy if smaller than it
+            // Selector can't be part of family if smaller than it
             ([], _) => {
                 return false;
             }

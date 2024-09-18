@@ -22,7 +22,7 @@
 /// If the experimental `"unstable-static-nsstring"` feature is enabled, this
 /// will emit statics placed in special sections that will be replaced by dyld
 /// when the program starts up - which will in turn will cause the runtime
-/// cost of this macro to be completely non-existant!
+/// cost of this macro to be completely non-existent!
 ///
 /// However, it is known to not be completely reliable yet, see [#258] for
 /// details.

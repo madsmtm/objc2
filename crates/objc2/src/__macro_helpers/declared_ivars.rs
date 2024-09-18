@@ -148,7 +148,7 @@ where
         // upheld inside `dealloc`.
         unsafe { builder.add_method(sel!(dealloc), func) };
     } else {
-        // Users should not rely on this ommision, it is only an optimization.
+        // Users should not rely on this omission, it is only an optimization.
     }
 }
 

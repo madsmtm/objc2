@@ -76,7 +76,7 @@ impl<T: Message> NSMutableSet<T> {
 ///
 /// [collections-own]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmPractical.html#//apple_ref/doc/uid/TP40004447-SW12
 impl<T: Message> NSSet<T> {
-    /// A direct reference to an arbitary object in the set.
+    /// A direct reference to an arbitrary object in the set.
     ///
     /// Consider using the [`anyObject`](Self::anyObject) method instead,
     /// unless you're seeing performance issues from the retaining.
@@ -104,7 +104,7 @@ impl<T: Message> NSSet<T> {
         unsafe { msg_send![self, member: object] }
     }
 
-    /// Iterate over the set in an arbitary order without retaining the
+    /// Iterate over the set in an arbitrary order without retaining the
     /// elements.
     ///
     /// Consider using the [`iter`](Self::iter) method instead, unless you're

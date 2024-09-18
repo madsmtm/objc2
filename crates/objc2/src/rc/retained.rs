@@ -345,7 +345,7 @@ impl<T: Message> Retained<T> {
     ///
     /// # Safety
     ///
-    /// The pointer must be valid as a reference (aligned, dereferencable and
+    /// The pointer must be valid as a reference (aligned, dereferenceable and
     /// initialized, see the [`std::ptr`] module for more information), or
     /// NULL.
     ///

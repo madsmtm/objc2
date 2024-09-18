@@ -198,7 +198,7 @@ impl fmt::Debug for NSMutableData {
 //
 // TODO: The implementation of this currently copies the `NSData` and iterates
 // using `Vec`. We should consider optimizing this by using a stack buffer
-// that we continously copy into using `CFDataGetBytes`, or perhaps by getting
+// that we continuously copy into using `CFDataGetBytes`, or perhaps by getting
 // the pointer from `bytes` (or `CFDataGetBytePtr`) and copying directly from
 // that.
 #[derive(Debug, Clone)]

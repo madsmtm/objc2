@@ -258,7 +258,7 @@ pub unsafe trait NSObjectProtocol {
     /// is always `NSString`.
     ///
     /// LLVM's po command uses this property to create a textual
-    /// representation of the object. The default implemention returns the
+    /// representation of the object. The default implementation returns the
     /// same value as `description`. Override either to provide custom object
     /// descriptions.
     // optional, introduced in macOS 10.8

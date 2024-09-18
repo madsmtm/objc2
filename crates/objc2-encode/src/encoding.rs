@@ -264,7 +264,7 @@ impl Encoding {
 /// would ordinarily do.
 ///
 /// You should not rely on the output of this to be stable across versions. It
-/// may change if found to be required to be compatible with exisiting
+/// may change if found to be required to be compatible with existing
 /// Objective-C compilers.
 impl fmt::Display for Encoding {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

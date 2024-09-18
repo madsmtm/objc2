@@ -27,7 +27,7 @@ use crate::{BlockFn, RcBlock};
 ///
 /// # Memory layout
 ///
-/// This is intented to be an `extern type`, and as such the memory layout of
+/// This is intended to be an `extern type`, and as such the memory layout of
 /// this type is _not_ guaranteed. That said, **pointers** to this type are
 /// always thin, and match that of Objective-C blocks. So the layout of e.g.
 /// `&Block<dyn Fn(...) -> ... + '_>` is defined, and guaranteed to be
@@ -81,7 +81,7 @@ impl<F: ?Sized> Block<F> {
     /// reference-count (just as-if you'd `Clone`'d the `RcBlock`), in the
     /// latter case it will construct a new `RcBlock` from the `StackBlock`.
     ///
-    /// This distiction should not matter, except for micro-optimizations.
+    /// This distinction should not matter, except for micro-optimizations.
     ///
     /// [`StackBlock`]: crate::StackBlock
     #[doc(alias = "Block_copy")]

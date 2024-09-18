@@ -52,11 +52,11 @@
 /// # Safety
 ///
 /// You must ensure that any methods you declare with the `#[method(...)]`
-/// attribute upholds the safety guarantees decribed in the [`msg_send!`]
+/// attribute upholds the safety guarantees described in the [`msg_send!`]
 /// macro, _or_ are marked `unsafe`.
 ///
 /// Likewise, you must ensure that any methods you declare with the
-/// `#[method_id(...)]` attribute upholds the safety guarantees decribed in
+/// `#[method_id(...)]` attribute upholds the safety guarantees described in
 /// the [`msg_send_id!`] macro, _or_ are marked `unsafe`.
 ///
 ///
@@ -99,7 +99,7 @@
 ///         pub fn new() -> Retained<Self>;
 ///
 ///         #[method_id(initWithVal:)]
-///         // Arbitary self types are not stable, but we can work around it
+///         // arbitrary self types are not stable, but we can work around it
 ///         // with the special name `this`.
 ///         pub fn init(this: Allocated<Self>, val: usize) -> Retained<Self>;
 ///     }

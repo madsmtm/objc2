@@ -237,7 +237,7 @@ impl<T: DeclaredClass> ClassBuilderHelper<T> {
 }
 
 /// Helper for ensuring that:
-/// - Only methods on the protocol are overriden.
+/// - Only methods on the protocol are overridden.
 /// - TODO: The methods have the correct signature.
 /// - All required methods are overridden.
 #[derive(Debug)]

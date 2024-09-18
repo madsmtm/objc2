@@ -57,13 +57,13 @@ impl Availability {
 
                 // TODO: Unsure how we would handle these if they exist
                 if availability.obsoleted.is_some() {
-                    error!("availability attribute containd `obsoleted`");
+                    error!("availability attribute contained `obsoleted`");
                 }
 
                 if let Some(m) = availability.message {
                     if let Some(message) = message.as_deref() {
                         if m != message {
-                            error!(m, message, "message avalability attributes were not equal");
+                            error!(m, message, "message availability attributes were not equal");
                         }
                     }
                     message = Some(m);
