@@ -1335,12 +1335,6 @@ impl AnyObject {
 
     /// Attempt to downcast the object to a class of type `T`.
     ///
-    /// This works by calling `isKindOfClass:`. That means that the object
-    /// must have the instance method of that name, and the process will abort
-    /// if that is not the case. In the vast majority of cases, this will be
-    /// the case, since both root objects [`NSObject`] and `NSProxy` implement
-    /// this method.
-    ///
     /// This is the reference-variant. Use [`Retained::downcast`] if you want
     /// to convert a retained object to another type.
     ///
@@ -1377,6 +1371,16 @@ impl AnyObject {
     ///
     /// You can, however, safely downcast to generic collections where all the
     /// type-parameters are [`AnyObject`].
+    ///
+    ///
+    /// # Panics
+    ///
+    /// This works internally by calling `isKindOfClass:`. That means that the
+    /// object must have the instance method of that name, and an exception
+    /// will be thrown (if CoreFoundation is linked) or the process will abort
+    /// if that is not the case. In the vast majority of cases, you don't need
+    /// to worry about this, since both root objects [`NSObject`] and
+    /// `NSProxy` implement this method.
     ///
     ///
     /// # Examples
