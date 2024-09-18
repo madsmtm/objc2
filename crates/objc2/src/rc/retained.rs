@@ -318,9 +318,13 @@ impl<T: Message> Retained<T> {
     // NOTE: This is _not_ an associated method, since we want it to be easy
     // to call, and it does not conflict with `AnyObject::downcast_ref`.
     #[inline]
-    pub fn downcast<U: DowncastTarget>(self) -> Result<Retained<U>, Retained<T>> {
+    pub fn downcast<U: DowncastTarget>(self) -> Result<Retained<U>, Retained<T>>
+    where
+        Self: 'static,
+    {
         let ptr: *const AnyObject = Self::as_ptr(&self).cast();
-        // SAFETY: All objects are valid to re-interpret as `AnyObject`.
+        // SAFETY: All objects are valid to re-interpret as `AnyObject`, even
+        // if the object has a lifetime (which it does not in our case).
         let obj: &AnyObject = unsafe { &*ptr };
 
         if obj.is_kind_of_class(U::class()).as_bool() {
