@@ -46,8 +46,8 @@ fn test_allowed_mutation_while_iterating() {
         s.appendString(&to_add);
     }
 
-    assert_eq!(&*array.objectAtIndex(0), &*to_add);
-    assert_eq!(&*array.objectAtIndex(1), &*to_add);
+    assert_eq!(array.objectAtIndex(0), to_add);
+    assert_eq!(array.objectAtIndex(1), to_add);
 }
 
 #[test]

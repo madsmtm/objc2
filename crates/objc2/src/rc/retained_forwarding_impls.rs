@@ -18,41 +18,40 @@ use std::io;
 
 use super::Retained;
 
-#[allow(clippy::unconditional_recursion)]
-impl<T: PartialEq + ?Sized> PartialEq for Retained<T> {
+impl<T: ?Sized + PartialEq<U>, U: ?Sized> PartialEq<Retained<U>> for Retained<T> {
     #[inline]
-    fn eq(&self, other: &Self) -> bool {
+    fn eq(&self, other: &Retained<U>) -> bool {
         (**self).eq(&**other)
     }
 
     #[inline]
     #[allow(clippy::partialeq_ne_impl)]
-    fn ne(&self, other: &Self) -> bool {
+    fn ne(&self, other: &Retained<U>) -> bool {
         (**self).ne(&**other)
     }
 }
 
 impl<T: Eq + ?Sized> Eq for Retained<T> {}
 
-impl<T: PartialOrd + ?Sized> PartialOrd for Retained<T> {
+impl<T: ?Sized + PartialOrd<U>, U: ?Sized> PartialOrd<Retained<U>> for Retained<T> {
     #[inline]
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    fn partial_cmp(&self, other: &Retained<U>) -> Option<Ordering> {
         (**self).partial_cmp(&**other)
     }
     #[inline]
-    fn lt(&self, other: &Self) -> bool {
+    fn lt(&self, other: &Retained<U>) -> bool {
         (**self).lt(&**other)
     }
     #[inline]
-    fn le(&self, other: &Self) -> bool {
+    fn le(&self, other: &Retained<U>) -> bool {
         (**self).le(&**other)
     }
     #[inline]
-    fn ge(&self, other: &Self) -> bool {
+    fn ge(&self, other: &Retained<U>) -> bool {
         (**self).ge(&**other)
     }
     #[inline]
-    fn gt(&self, other: &Self) -> bool {
+    fn gt(&self, other: &Retained<U>) -> bool {
         (**self).gt(&**other)
     }
 }
