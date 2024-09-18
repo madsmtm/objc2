@@ -43,7 +43,7 @@ mod retain_release_fast;
 pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
 pub(crate) use self::retain_release_fast::{objc_release_fast, objc_retain_fast};
 use crate::encode::{Encode, EncodeArguments, EncodeReturn, Encoding, OptionEncode, RefEncode};
-use crate::sel;
+use crate::msg_send;
 use crate::verify::{verify_method_signature, Inner};
 use crate::{ffi, DowncastTarget, Message};
 
@@ -1317,41 +1317,116 @@ impl AnyObject {
         unsafe { ivar.load_mut::<T>(self) }
     }
 
+    fn is_kind_of_class(&self, cls: &AnyClass) -> Bool {
+        // SAFETY: The signature is declared correctly.
+        //
+        // Note that `isKindOfClass:` is not available on every object, but it
+        // is still safe to _use_, since the runtime will simply crash if the
+        // selector isn't implemented. This is of course not _ideal_, but it
+        // works for all of Apple's Objective-C classes, and it's what Swift
+        // does.
+        //
+        // In theory, someone could have made a root object, and overwritten
+        // `isKindOfClass:` to do something bogus - but that would conflict
+        // with normal Objective-C code as well, so we will consider such a
+        // thing unsound by construction.
+        unsafe { msg_send![self, isKindOfClass: cls] }
+    }
+
     /// Attempt to downcast the object to a class of type `T`.
     ///
-    /// This works by calling `[self isKindOfClass:class]`. That also means that the receiver object
-    /// must have the instance method `isKindOfClass:`. This is usually the case for any object
-    /// that uses `NSObject` as the root. Downcasting will fail with `None` when `isKindOfClass:`
-    /// is not available or in general when `isKindOfClass:` returns false.
+    /// This works by calling `isKindOfClass:`. That means that the object
+    /// must have the instance method of that name, and the process will abort
+    /// if that is not the case. In the vast majority of cases, this will be
+    /// the case, since both root objects [`NSObject`] and `NSProxy` implement
+    /// this method.
+    ///
+    ///
+    /// # Mutable classes
+    ///
+    /// Some classes have immutable and mutable variants, such as `NSString`
+    /// and `NSMutableString`.
+    ///
+    /// When some Objective-C API signature says it gives you an immutable
+    /// class, it generally expects you to not mutate that, even though it may
+    /// technically be mutable "under the hood".
+    ///
+    /// So using this method to convert a `NSString` to a `NSMutableString`,
+    /// while not unsound, is generally frowned upon unless you created the
+    /// string yourself, or the API explicitly documents the string to be
+    /// mutable.
+    ///
+    /// See [Apple's documentation on mutability][apple-mut] for more details.
+    ///
+    /// [apple-mut]: https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html
+    ///
+    ///
+    /// # Generic classes
+    ///
+    /// Objective-C generics are called "lightweight generics", and that's
+    /// because they aren't exposed in the runtime. This makes it impossible
+    /// to safely downcast to generic collections, so this is disallowed by
+    /// this method.
+    ///
+    /// You can, however, safely downcast to generic collections where all the
+    /// type-parameters are [`AnyObject`].
+    ///
     ///
     /// # Examples
     ///
-    /// ```ignore
-    /// let obj: Id<NSObject> = Id::into_super(NSString::new());
-    /// // This works and is safe.
-    /// let obj: &NSString = obj.downcast::<NSString>().unwrap();
+    /// Cast an `NSString` back and forth from `NSObject`.
+    ///
+    /// ```
+    /// use objc2::rc::Retained;
+    /// use objc2_foundation::{NSObject, NSString};
+    ///
+    /// let string: Retained<NSObject> = Retained::into_super(NSString::new());
+    /// let string = string.downcast::<NSString>().unwrap();
     /// ```
     ///
-    /// ```ignore
-    /// let obj: Id<NSArray<NSString>> = NSArray::new();
-    /// // This is invalid and doesn't type check.
-    /// let obj = obj.downcast::<NSArray<NSData>>();
+    /// Try (and fail) to cast an `NSObject` to an `NSString`.
+    ///
     /// ```
+    /// use objc2_foundation::{NSObject, NSString};
+    ///
+    /// let obj = NSObject::new();
+    /// assert!(obj.downcast::<NSString>().is_none());
+    /// ```
+    ///
+    /// Try to cast to an array of strings.
+    ///
+    /// ```compile_fail,E0277
+    /// use objc2_foundation::{NSArray, NSObject, NSString};
+    ///
+    /// let arr = NSArray::from_retained_slice(&[NSObject::new()]);
+    /// // This is invalid and doesn't type check.
+    /// let arr = arr.downcast::<NSArray<NSString>>();
+    /// ```
+    ///
+    /// This fails to compile, since it would require enumerating over the
+    /// array to ensure that each element is of the desired type, which is a
+    /// performance pitfall.
+    ///
+    /// Downcast when processing each element instead.
+    ///
+    /// ```
+    /// use objc2_foundation::{NSArray, NSObject, NSString};
+    ///
+    /// let arr = NSArray::from_retained_slice(&[NSObject::new()]);
+    ///
+    /// for elem in arr {
+    ///     if let Some(data) = elem.downcast::<NSString>() {
+    ///         // handle `data`
+    ///     }
+    /// }
+    /// ```
+    #[inline]
     pub fn downcast<T: DowncastTarget>(&self) -> Option<&T> {
-        let is_kind_of_class = sel!(isKindOfClass:);
-
-        self.class()
-            .verify_sel::<(&AnyClass,), Bool>(is_kind_of_class)
-            .ok()?;
-
-        if unsafe {
-            MessageReceiver::send_message::<(&AnyClass,), Bool>(
-                self,
-                is_kind_of_class,
-                (T::class(),),
-            )
-            .as_bool()
-        } {
+        if self.is_kind_of_class(T::class()).as_bool() {
+            // SAFETY: Just checked that the object is a class of type `T`.
+            //
+            // Generic `T` like `NSArray<NSString>` are ruled out by
+            // `T: DowncastTarget`.
             Some(unsafe { &*(self as *const Self).cast::<T>() })
         } else {
             None

@@ -141,15 +141,6 @@ pub unsafe trait NSObjectProtocol {
         self.isKindOfClass(T::class())
     }
 
-    // Note: We don't provide a method to convert `NSObject` to `T` based on
-    // `is_kind_of`, since that is not possible to do in general!
-    //
-    // For example, something may have a return type of `NSString`, while
-    // behind the scenes they really return `NSMutableString` and expect it to
-    // not be modified, see [Apple's doc][apple-mut].
-    //
-    // [apple-mut]: https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html
-
     /// Check if the object is an instance of a specific class, without
     /// checking subclasses.
     ///
