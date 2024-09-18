@@ -1317,20 +1317,27 @@ impl AnyObject {
         unsafe { ivar.load_mut::<T>(self) }
     }
 
-    /// Attempts to downcast self to class type `T` (which must be a valid
-    /// [downcast target](crate::DowncastTarget)).
-    ///
-    /// # Notes
+    /// Attempt to downcast the object to a class of type `T`.
     ///
     /// This works by calling `[self isKindOfClass:class]`. That also means that the receiver object
     /// must have the instance method `isKindOfClass:`. This is usually the case for any object
     /// that uses `NSObject` as the root. Downcasting will fail with `None` when `isKindOfClass:`
     /// is not available or in general when `isKindOfClass:` returns false.
-    pub fn downcast<T>(&self) -> Option<&T>
-    where
-        Self: 'static,
-        T: DowncastTarget + 'static,
-    {
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// let obj: Id<NSObject> = Id::into_super(NSString::new());
+    /// // This works and is safe.
+    /// let obj: &NSString = obj.downcast::<NSString>().unwrap();
+    /// ```
+    ///
+    /// ```ignore
+    /// let obj: Id<NSArray<NSString>> = NSArray::new();
+    /// // This is invalid and doesn't type check.
+    /// let obj = obj.downcast::<NSArray<NSData>>();
+    /// ```
+    pub fn downcast<T: DowncastTarget>(&self) -> Option<&T> {
         let is_kind_of_class = sel!(isKindOfClass:);
 
         self.class()

@@ -337,17 +337,12 @@ macro_rules! __inner_extern_class {
             }
         }
 
-        // SAFETY: This maps SomeClass<T, ...> to a single SomeClass<AnyObject, ...> type and
+        // SAFETY: This maps `SomeClass<T, ...>` to a single `SomeClass<AnyObject, ...>` type and
         // implements `DowncastTarget` on that type. This is safe because the "base container" class
         // is the same and each generic argument is replaced with `AnyObject`, which can represent
-        // any ObjC class instance.
+        // any Objective-C class instance.
         $(#[$impl_m])*
-        unsafe impl $crate::DowncastTarget
-            for $name<$($crate::__extern_class_map_anyobject!($t_for)),*>
-        where
-            Self: 'static,
-        {
-        }
+        unsafe impl $crate::DowncastTarget for $name<$($crate::__extern_class_map_anyobject!($t_for)),*> {}
 
         $(#[$impl_m])*
         unsafe impl<$($t_for $(: $(?$b_sized_for +)? $b_for)?),*> ClassType for $for {
@@ -375,7 +370,6 @@ macro_rules! __inner_extern_class {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extern_class_map_anyobject {
-    () => {};
     ($t:ident) => {
         $crate::runtime::AnyObject
     };
