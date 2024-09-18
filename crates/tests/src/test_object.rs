@@ -373,3 +373,17 @@ fn downcast_basics() {
     assert!(matches!(obj.downcast::<NSString>(), None));
     assert!(matches!(obj.downcast::<NSArray<AnyObject>>(), Some(_)));
 }
+
+#[test]
+#[cfg(feature = "all")]
+fn test_downcast_class() {
+    // Ensure that downcasting `AnyClass` doesn't cause unsoundness.
+    let cls = NSString::class();
+    let obj = unsafe { &*(cls as *const AnyClass as *const AnyObject) };
+
+    // AnyClass is an NSObject internally.
+    assert!(obj.downcast::<NSObject>().is_some());
+
+    // But it is _not_ NSString, even though that's the class itself.
+    assert!(obj.downcast::<NSString>().is_none());
+}
