@@ -214,14 +214,20 @@ impl<T: ?Sized> borrow::Borrow<T> for Retained<T> {
     }
 }
 
-impl<T: ?Sized> AsRef<T> for Retained<T> {
-    fn as_ref(&self) -> &T {
-        // Auto-derefs
-        self
+// Forward to inner type's `AsRef`.
+//
+// This is different from what `Box` does, but is desirable in our case, as it
+// allows going directly to superclasses.
+//
+// See also discussion in:
+// <https://internals.rust-lang.org/t/semantics-of-asref/17016>
+impl<T: ?Sized + AsRef<U>, U: ?Sized> AsRef<U> for Retained<T> {
+    fn as_ref(&self) -> &U {
+        (**self).as_ref()
     }
 }
 
-impl<T: Error + ?Sized> Error for Retained<T> {
+impl<T: ?Sized + Error> Error for Retained<T> {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         (**self).source()
     }

@@ -479,16 +479,23 @@ mod tests {
     fn test_as_ref_borrow() {
         use core::borrow::Borrow;
 
-        fn impls_as_ref<T: AsRef<U> + Borrow<U> + ?Sized, U: ?Sized>(_: &T) {}
+        fn impls_as_ref_borrow<T: AsRef<U> + Borrow<U> + ?Sized, U: ?Sized>(_: &T) {}
+
+        let obj = FakeSubclass::new();
+        impls_as_ref_borrow::<Retained<FakeSubclass>, FakeSubclass>(&obj);
+        impls_as_ref_borrow::<FakeSubclass, FakeSubclass>(&obj);
+        impls_as_ref_borrow::<NSObject, NSObject>(&obj);
+        impls_as_ref_borrow::<NSObject, AnyObject>(&obj);
+
+        let obj = NSObject::new();
+        impls_as_ref_borrow::<Retained<NSObject>, NSObject>(&obj);
+
+        fn impls_as_ref<T: AsRef<U> + ?Sized, U: ?Sized>(_: &T) {}
 
         let obj = FakeSubclass::new();
         impls_as_ref::<Retained<FakeSubclass>, FakeSubclass>(&obj);
-        impls_as_ref::<FakeSubclass, FakeSubclass>(&obj);
-        impls_as_ref::<NSObject, NSObject>(&obj);
-        impls_as_ref::<NSObject, AnyObject>(&obj);
-
-        let obj = NSObject::new();
-        impls_as_ref::<Retained<NSObject>, NSObject>(&obj);
+        impls_as_ref::<Retained<FakeSubclass>, NSObject>(&obj);
+        impls_as_ref::<Retained<FakeSubclass>, AnyObject>(&obj);
     }
 
     #[test]

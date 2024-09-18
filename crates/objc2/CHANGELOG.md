@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   to allow safely casting between Objective-C objects.
 * Implemented more `fmt` traits on `Retained`.
 * Implemented `Extend` trait on `Retained`.
+* Implemented `AsRef` in a forwarding fashion on `Retained`.
 
 ### Changed
 * **BREAKING**: Changed how you specify a class to only be available on the
