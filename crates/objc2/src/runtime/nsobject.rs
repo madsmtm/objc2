@@ -115,10 +115,10 @@ pub unsafe trait NSObjectProtocol {
     /// Check if the object is an instance of the class, or one of its
     /// subclasses.
     ///
-    /// See [`AnyObject::downcast`] if your intention is to use this to cast
-    /// an object to another, and see [Apple's documentation][apple-doc] for
-    /// more details on what you may (and what you may not) do with this
-    /// information in general.
+    /// See [`AnyObject::downcast_ref`] or [`Retained::downcast`] if your
+    /// intention is to use this to cast an object to another, and see
+    /// [Apple's documentation][apple-doc] for more details on what you may
+    /// (and what you may not) do with this information in general.
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass?language=objc
     #[doc(alias = "isKindOfClass:")]
@@ -133,7 +133,7 @@ pub unsafe trait NSObjectProtocol {
     /// subclasses.
     ///
     /// See [`isKindOfClass`][Self::isKindOfClass] for details.
-    #[deprecated = "use `isKindOfClass` directly, or cast your objects with `AnyObject::downcast`"]
+    #[deprecated = "use `isKindOfClass` directly, or cast your objects with `AnyObject::downcast_ref`"]
     fn is_kind_of<T: ClassType>(&self) -> bool
     where
         Self: Sized + Message,

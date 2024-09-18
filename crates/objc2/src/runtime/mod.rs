@@ -1317,7 +1317,7 @@ impl AnyObject {
         unsafe { ivar.load_mut::<T>(self) }
     }
 
-    fn is_kind_of_class(&self, cls: &AnyClass) -> Bool {
+    pub(crate) fn is_kind_of_class(&self, cls: &AnyClass) -> Bool {
         // SAFETY: The signature is declared correctly.
         //
         // Note that `isKindOfClass:` is not available on every object, but it
@@ -1340,6 +1340,11 @@ impl AnyObject {
     /// if that is not the case. In the vast majority of cases, this will be
     /// the case, since both root objects [`NSObject`] and `NSProxy` implement
     /// this method.
+    ///
+    /// This is the reference-variant. Use [`Retained::downcast`] if you want
+    /// to convert a retained object to another type.
+    ///
+    /// [`Retained::downcast`]: crate::rc::Retained::downcast
     ///
     ///
     /// # Mutable classes
@@ -1382,8 +1387,10 @@ impl AnyObject {
     /// use objc2::rc::Retained;
     /// use objc2_foundation::{NSObject, NSString};
     ///
-    /// let string: Retained<NSObject> = Retained::into_super(NSString::new());
-    /// let string = string.downcast::<NSString>().unwrap();
+    /// let obj: Retained<NSObject> = Retained::into_super(NSString::new());
+    /// let string = obj.downcast_ref::<NSString>().unwrap();
+    /// // Or with `downcast`, if we do not need the object afterwards
+    /// let string = obj.downcast::<NSString>().unwrap();
     /// ```
     ///
     /// Try (and fail) to cast an `NSObject` to an `NSString`.
@@ -1392,7 +1399,7 @@ impl AnyObject {
     /// use objc2_foundation::{NSObject, NSString};
     ///
     /// let obj = NSObject::new();
-    /// assert!(obj.downcast::<NSString>().is_none());
+    /// assert!(obj.downcast_ref::<NSString>().is_none());
     /// ```
     ///
     /// Try to cast to an array of strings.
@@ -1402,7 +1409,7 @@ impl AnyObject {
     ///
     /// let arr = NSArray::from_retained_slice(&[NSObject::new()]);
     /// // This is invalid and doesn't type check.
-    /// let arr = arr.downcast::<NSArray<NSString>>();
+    /// let arr = arr.downcast_ref::<NSArray<NSString>>();
     /// ```
     ///
     /// This fails to compile, since it would require enumerating over the
@@ -1417,13 +1424,13 @@ impl AnyObject {
     /// let arr = NSArray::from_retained_slice(&[NSObject::new()]);
     ///
     /// for elem in arr {
-    ///     if let Some(data) = elem.downcast::<NSString>() {
+    ///     if let Some(data) = elem.downcast_ref::<NSString>() {
     ///         // handle `data`
     ///     }
     /// }
     /// ```
     #[inline]
-    pub fn downcast<T: DowncastTarget>(&self) -> Option<&T> {
+    pub fn downcast_ref<T: DowncastTarget>(&self) -> Option<&T> {
         if self.is_kind_of_class(T::class()).as_bool() {
             // SAFETY: Just checked that the object is a class of type `T`.
             //

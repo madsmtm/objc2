@@ -351,27 +351,27 @@ fn test_protocol() {
 #[cfg(feature = "all")]
 fn downcast_basics() {
     let obj = NSString::new();
-    assert!(matches!(obj.downcast::<NSString>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
 
     let obj = Retained::into_super(obj);
-    assert!(matches!(obj.downcast::<NSNumber>(), None));
-    assert!(matches!(obj.downcast::<NSString>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSNumber>(), None));
+    assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
 
     let obj = NSMutableString::new();
-    assert!(matches!(obj.downcast::<NSMutableString>(), Some(_)));
-    assert!(matches!(obj.downcast::<NSString>(), Some(_)));
-    assert!(matches!(obj.downcast::<NSObject>(), Some(_)));
-    assert!(matches!(obj.downcast::<NSException>(), None));
+    assert!(matches!(obj.downcast_ref::<NSMutableString>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSObject>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSException>(), None));
 
     let obj = Retained::into_super(Retained::into_super(obj));
-    assert!(matches!(obj.downcast::<NSMutableString>(), Some(_)));
-    assert!(matches!(obj.downcast::<NSString>(), Some(_)));
-    assert!(matches!(obj.downcast::<NSObject>(), Some(_)));
-    assert!(matches!(obj.downcast::<NSException>(), None));
+    assert!(matches!(obj.downcast_ref::<NSMutableString>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSObject>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSException>(), None));
 
     let obj: Retained<NSArray<NSString>> = NSArray::new();
-    assert!(matches!(obj.downcast::<NSString>(), None));
-    assert!(matches!(obj.downcast::<NSArray<AnyObject>>(), Some(_)));
+    assert!(matches!(obj.downcast_ref::<NSString>(), None));
+    assert!(matches!(obj.downcast_ref::<NSArray<AnyObject>>(), Some(_)));
 }
 
 #[test]
@@ -382,8 +382,8 @@ fn test_downcast_class() {
     let obj = unsafe { &*(cls as *const AnyClass as *const AnyObject) };
 
     // AnyClass is an NSObject internally.
-    assert!(obj.downcast::<NSObject>().is_some());
+    assert!(obj.downcast_ref::<NSObject>().is_some());
 
     // But it is _not_ NSString, even though that's the class itself.
-    assert!(obj.downcast::<NSString>().is_none());
+    assert!(obj.downcast_ref::<NSString>().is_none());
 }

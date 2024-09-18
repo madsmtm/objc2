@@ -6,8 +6,8 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
 use super::AutoreleasePool;
-use crate::runtime::{objc_release_fast, objc_retain_fast};
-use crate::{ffi, ClassType, Message};
+use crate::runtime::{objc_release_fast, objc_retain_fast, AnyObject};
+use crate::{ffi, ClassType, DowncastTarget, Message};
 
 /// A reference counted pointer type for Objective-C objects.
 ///
@@ -281,6 +281,59 @@ impl<T: ?Sized + Message> Retained<T> {
 
 // TODO: Add ?Sized bound
 impl<T: Message> Retained<T> {
+    /// Attempt to downcast the object to a class of type `U`.
+    ///
+    /// See [`AnyObject::downcast_ref`] for more details.
+    ///
+    /// # Errors
+    ///
+    /// If casting failed, this will return the object back as the [`Err`]
+    /// type. If you do not care about this, and just want an [`Option`], use
+    /// `.downcast().ok()`.
+    ///
+    /// # Example
+    ///
+    /// Cast a string to an object, and back again.
+    ///
+    /// ```
+    /// use objc2_foundation::{NSString, NSObject};
+    ///
+    /// let string = NSString::new();
+    /// // The string is an object
+    /// let obj = string.downcast::<NSObject>().unwrap();
+    /// // And it is also a string
+    /// let string = obj.downcast::<NSString>().unwrap();
+    /// ```
+    ///
+    /// Try to cast an object to a string, which will fail and return the
+    /// object in [`Err`].
+    ///
+    /// ```
+    /// use objc2_foundation::{NSString, NSObject};
+    ///
+    /// let obj = NSObject::new();
+    /// let obj = obj.downcast::<NSString>().unwrap_err();
+    /// ```
+    //
+    // NOTE: This is _not_ an associated method, since we want it to be easy
+    // to call, and it does not conflict with `AnyObject::downcast_ref`.
+    #[inline]
+    pub fn downcast<U: DowncastTarget>(self) -> Result<Retained<U>, Retained<T>> {
+        let ptr: *const AnyObject = Self::as_ptr(&self).cast();
+        // SAFETY: All objects are valid to re-interpret as `AnyObject`.
+        let obj: &AnyObject = unsafe { &*ptr };
+
+        if obj.is_kind_of_class(U::class()).as_bool() {
+            // SAFETY: Just checked that the object is a class of type `U`.
+            //
+            // Generic `U` like `NSArray<NSString>` are ruled out by
+            // `U: DowncastTarget`.
+            Ok(unsafe { Self::cast::<U>(self) })
+        } else {
+            Err(self)
+        }
+    }
+
     /// Convert the type of the given object to another.
     ///
     /// This is equivalent to a `cast` between two pointers.
