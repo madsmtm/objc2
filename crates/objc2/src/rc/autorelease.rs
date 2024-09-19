@@ -285,7 +285,7 @@ auto_trait! {
     /// But [`AutoreleasePool`] isn't (if the `"unstable-autoreleasesafe"`
     /// feature is enabled).
     ///
-    #[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail")]
+    #[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail,E0277")]
     #[cfg_attr(not(feature = "unstable-autoreleasesafe"), doc = "```")]
     /// use objc2::rc::AutoreleasePool;
     /// # use objc2::rc::AutoreleaseSafe;
@@ -296,7 +296,7 @@ auto_trait! {
     /// This also means that trait objects aren't (since they may contain an
     /// [`AutoreleasePool`] internally):
     ///
-    #[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail")]
+    #[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail,E0277")]
     #[cfg_attr(not(feature = "unstable-autoreleasesafe"), doc = "```")]
     /// # use objc2::rc::AutoreleaseSafe;
     /// # fn requires_autoreleasesafe<T: AutoreleaseSafe>() {}
@@ -399,7 +399,7 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 /// panics with debug assertions enabled, because we tried to pass an outer
 /// pool to an inner pool:
 ///
-#[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail")]
+#[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail,E0277")]
 #[cfg_attr(not(feature = "unstable-autoreleasesafe"), doc = "```should_panic")]
 /// use objc2::rc::{autoreleasepool, Retained};
 /// use objc2::runtime::NSObject;
@@ -419,7 +419,7 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 ///
 /// It is impossible to extend the lifetime of the pool.
 ///
-/// ```compile_fail
+/// ```compile_fail,E0521
 /// use std::cell::RefCell;
 /// use objc2::rc::{autoreleasepool, AutoreleasePool};
 ///
@@ -502,7 +502,7 @@ where
 /// While you can pass an outer pool into this, you still can't pass the pool
 /// from this into [`autoreleasepool`]:
 ///
-#[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail")]
+#[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail,E0277")]
 #[cfg_attr(not(feature = "unstable-autoreleasesafe"), doc = "```should_panic")]
 /// use objc2::rc::{autoreleasepool, autoreleasepool_leaking, Retained};
 /// use objc2::runtime::NSObject;

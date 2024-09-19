@@ -130,7 +130,7 @@ impl<F: ?Sized> fmt::Debug for GlobalBlock<F> {
 ///
 /// The following does not compile because [`Box`] is not [`EncodeReturn`]:
 ///
-/// ```compile_fail
+/// ```compile_fail,E0277
 /// use block2::global_block;
 /// global_block! {
 ///     pub static BLOCK = |b: Box<i32>| {};
