@@ -1391,7 +1391,7 @@ impl AnyObject {
     /// use objc2::rc::Retained;
     /// use objc2_foundation::{NSObject, NSString};
     ///
-    /// let obj: Retained<NSObject> = Retained::into_super(NSString::new());
+    /// let obj: Retained<NSObject> = NSString::new().into_super();
     /// let string = obj.downcast_ref::<NSString>().unwrap();
     /// // Or with `downcast`, if we do not need the object afterwards
     /// let string = obj.downcast::<NSString>().unwrap();

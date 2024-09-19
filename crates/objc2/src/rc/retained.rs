@@ -112,7 +112,7 @@ use crate::{ffi, ClassType, DowncastTarget, Message};
 /// let another_ref: Retained<NSString> = string.clone();
 ///
 /// // Convert one of the references to a reference to `NSObject` instead
-/// let obj: Retained<NSObject> = Retained::into_super(string);
+/// let obj: Retained<NSObject> = string.into_super();
 ///
 /// // And use the `Debug` impl from that
 /// assert_eq!(format!("{obj:?}"), "");
@@ -354,6 +354,9 @@ impl<T: Message> Retained<T> {
     ///
     /// All `'static` objects can safely be cast to [`AnyObject`], since that
     /// assumes no specific class.
+    ///
+    /// This is an associated method, and must be called as
+    /// `Retained::cast_unchecked(obj)`.
     ///
     /// [`AnyObject`]: crate::runtime::AnyObject
     /// [`ProtocolObject::from_retained`]: crate::runtime::ProtocolObject::from_retained
@@ -696,14 +699,18 @@ where
     T::Super: 'static,
 {
     /// Convert the object into its superclass.
+    //
+    // NOTE: This is _not_ an associated method, since we want it to be easy
+    // to call, and it it unlikely to conflict with anything (the reference
+    // version is called `ClassType::as_super`).
     #[inline]
-    pub fn into_super(this: Self) -> Retained<T::Super> {
+    pub fn into_super(self) -> Retained<T::Super> {
         // SAFETY:
         // - The casted-to type is a superclass of the type.
         // - Both types are `'static`, so no lifetime information is lost
         //   (this could maybe be relaxed a bit, but let's be on the safe side
         //   for now).
-        unsafe { Self::cast_unchecked::<T::Super>(this) }
+        unsafe { Self::cast_unchecked::<T::Super>(self) }
     }
 }
 
@@ -935,7 +942,7 @@ mod tests {
         assert_eq!(cloned.retainCount(), 2);
         assert_eq!(obj.retainCount(), 2);
 
-        let obj = Retained::into_super(Retained::into_super(obj));
+        let obj = obj.into_super().into_super();
         let cloned_and_type_erased = obj.clone();
         expected.retain += 1;
         expected.assert_current();

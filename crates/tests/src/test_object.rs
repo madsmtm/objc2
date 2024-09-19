@@ -353,7 +353,7 @@ fn downcast_basics() {
     let obj = NSString::new();
     assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
 
-    let obj = Retained::into_super(obj);
+    let obj = obj.into_super();
     assert!(matches!(obj.downcast_ref::<NSNumber>(), None));
     assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
 
@@ -363,7 +363,7 @@ fn downcast_basics() {
     assert!(matches!(obj.downcast_ref::<NSObject>(), Some(_)));
     assert!(matches!(obj.downcast_ref::<NSException>(), None));
 
-    let obj = Retained::into_super(Retained::into_super(obj));
+    let obj = obj.into_super().into_super();
     assert!(matches!(obj.downcast_ref::<NSMutableString>(), Some(_)));
     assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
     assert!(matches!(obj.downcast_ref::<NSObject>(), Some(_)));

@@ -182,7 +182,7 @@ fn test_trait_retainable() {
 
 #[test]
 fn test_access_anyobject() {
-    let obj: Retained<AnyObject> = Retained::into_super(NSObject::new());
+    let obj: Retained<AnyObject> = NSObject::new().into_super();
     let array = NSArray::from_retained_slice(&[obj.clone(), obj.clone()]);
     assert!(ptr::eq(&*array.objectAtIndex(0), &*obj));
     assert!(ptr::eq(unsafe { array.objectAtIndex_unchecked(0) }, &*obj));

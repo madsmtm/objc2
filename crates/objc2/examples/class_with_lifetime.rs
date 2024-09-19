@@ -102,7 +102,7 @@ fn main() {
     // It is not possible to convert to `Retained<NSObject>`, since that would
     // loose the lifetime information that `MyObject` stores.
     //
-    // let obj = Retained::into_super(obj);
+    // let obj = obj.into_super();
     //
     // Neither is it not possible to access `number` any more, since `obj`
     // holds a mutable reference to it.

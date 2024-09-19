@@ -58,7 +58,7 @@ fn test_debug() {
     };
     assert_eq!(format!("{s:?}"), expected);
 
-    let obj = Retained::into_super(NSObject::new());
+    let obj = NSObject::new().into_super();
     let ptr: *const AnyObject = &*obj;
     let s = unsafe {
         NSAttributedString::new_with_attributes(

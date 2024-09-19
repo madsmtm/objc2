@@ -23,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Implemented `PartialEq` and `PartialOrd` on `Retained` in a slightly more
   generic way.
 * Allow using `Into` to convert to retained objects.
+* Make `Retained::into_super` an inherent method instead of an associated
+  method. This means that you can now use it as `.into_super()`.
 
 ### Changed
 * **BREAKING**: Changed how you specify a class to only be available on the
