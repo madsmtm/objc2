@@ -103,6 +103,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CKModifyBadgeOperation::modifyBadgeCompletionBlock`
   - `CKModifyBadgeOperation::initWithBadgeValue`
 * **BREAKING**: Removed `SCStreamDelegate::userDidStopStream`.
+- **BREAKING**: Removed `BGContinuedProcessingTaskRequest`.
 
 ### Fixed
 * **BREAKING**: Converted function signatures into using `extern "C-unwind"`.
@@ -110,6 +111,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Removed incorrectly declared `BGTask::new` method.
 * **BREAKING**: Marked the following classes and protocols as `MainThreadOnly`:
   - `ASAuthorizationControllerPresentationContextProviding`,
+  - `ASAuthorizationProviderExtensionAuthorizationRequestHandler`
   - `ASAccountAuthenticationModificationControllerPresentationContextProviding`
   - `ASWebAuthenticationPresentationContextProviding`
   - `EXHostViewControllerDelegate`
@@ -118,6 +120,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `UIToolTipConfiguration`
   - `UIToolTipInteractionDelegate`
   - `UITraitListEnvironment`
+  - `NSOutlineViewDelegate`
+  - `MEComposeSessionHandler`
+  - `MEExtension`
+  - `MEMessageSecurityHandler`
+  - A bunch of things in `WebKit`.
 
 
 ## 0.2.2 - 2024-05-21

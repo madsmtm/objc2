@@ -75,7 +75,7 @@ impl UnexposedAttr {
             }
             "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" => Some(Self::Sendable),
             "NS_SWIFT_NONSENDABLE" => Some(Self::NonSendable),
-            "NS_SWIFT_UI_ACTOR" => Some(Self::UIActor),
+            "NS_SWIFT_UI_ACTOR" | "WK_SWIFT_UI_ACTOR" => Some(Self::UIActor),
             "NS_SWIFT_NONISOLATED" | "UIKIT_SWIFT_ACTOR_INDEPENDENT" => Some(Self::NonIsolated),
             // TODO
             "NS_FORMAT_FUNCTION" | "NS_FORMAT_ARGUMENT" => {
