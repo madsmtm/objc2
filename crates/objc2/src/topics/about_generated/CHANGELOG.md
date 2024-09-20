@@ -125,6 +125,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `MEComposeSessionHandler`
   - `MEExtension`
   - `MEMessageSecurityHandler`
+  - `PHContentEditingController`
+  - `PHLivePhotoViewDelegate`
   - A bunch of things in `WebKit`.
 * **BREAKING**: Marked methods on the `NSObjectUIAccessibility` category as
   `MainThreadOnly`.

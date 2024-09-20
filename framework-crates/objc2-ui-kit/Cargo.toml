@@ -1446,6 +1446,10 @@ UISceneSessionActivationRequest = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSUserActivity",
 ]
+UISceneSystemProtectionManager = [
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
+]
 UISceneWindowingBehaviors = []
 UIScene_AVAudioSession = []
 UIScreen = [
@@ -2273,6 +2277,7 @@ all = [
     "UISceneOptions",
     "UISceneSession",
     "UISceneSessionActivationRequest",
+    "UISceneSystemProtectionManager",
     "UISceneWindowingBehaviors",
     "UIScene_AVAudioSession",
     "UIScreen",

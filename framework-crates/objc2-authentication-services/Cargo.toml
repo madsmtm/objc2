@@ -216,7 +216,7 @@ ASAuthorizationPublicKeyCredentialPRFAssertionInput = [
 ]
 ASAuthorizationPublicKeyCredentialPRFAssertionOutput = ["objc2-foundation/NSData"]
 ASAuthorizationPublicKeyCredentialPRFRegistrationInput = []
-ASAuthorizationPublicKeyCredentialPRFRegistrationOutput = []
+ASAuthorizationPublicKeyCredentialPRFRegistrationOutput = ["objc2-foundation/NSData"]
 ASAuthorizationPublicKeyCredentialParameters = ["objc2-foundation/NSObject"]
 ASAuthorizationPublicKeyCredentialRegistration = [
     "objc2-foundation/NSData",
