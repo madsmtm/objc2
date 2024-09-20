@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use std::fmt;
 
 use clang::token::TokenKind;
@@ -6,7 +6,8 @@ use clang::{Entity, EntityKind, EntityVisitResult, EvaluationResult};
 
 use crate::rust_type::Ty;
 use crate::stmt::{enum_constant_name, new_enum_id};
-use crate::{Context, ItemIdentifier};
+use crate::unexposed_attr::UnexposedAttr;
+use crate::{immediate_children, Context, ItemIdentifier};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Token {
@@ -27,7 +28,7 @@ pub enum Expr {
     Enum {
         id: ItemIdentifier,
         variant: String,
-        // TODO: Type
+        attrs: HashSet<UnexposedAttr>,
     },
     Const(ItemIdentifier), // TODO: Type
     Var {
@@ -180,9 +181,18 @@ impl Expr {
                 let parent_id = new_enum_id(&parent, context);
                 let name = entity.get_name().expect("EnumConstantDecl name");
                 if parent_id.name.is_some() {
+                    let mut attrs = HashSet::new();
+                    immediate_children(&parent, |entity, _span| {
+                        if let EntityKind::UnexposedAttr = entity.get_kind() {
+                            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                                attrs.insert(attr);
+                            }
+                        }
+                    });
                     Self::Enum {
                         id: parent_id.map_name(|name| name.unwrap()),
                         variant: name,
+                        attrs,
                     }
                 } else {
                     Self::Const(parent_id.map_name(|_| name))
@@ -256,17 +266,25 @@ impl fmt::Display for Expr {
                     write!(f, "{}", id.path())
                 }
             }
-            Self::Enum { id, variant } => {
+            Self::Enum { id, variant, attrs } => {
                 let pretty_name = enum_constant_name(&id.name, variant);
-                // Note: Even if we had the enum kind available here, we would
-                // not be able to avoid the `.0` here, as the expression must
-                // be `const`.
-                write!(f, "{}::{pretty_name}.0", id.name)
+                if attrs.contains(&UnexposedAttr::ClosedEnum) {
+                    // Close enums are actual Rust `enum`s, so to get their
+                    // value, we use an `as` cast.
+                    // Using `usize` here is a hack, we should be using the
+                    // actual enum type.
+                    write!(f, "{}::{pretty_name} as usize", id.name)
+                } else {
+                    // Note: Even though we have the enum kind available here,
+                    // we cannot avoid the `.0` here, as the expression must
+                    // be `const`.
+                    write!(f, "{}::{pretty_name}.0", id.name)
+                }
             }
             Self::Const(id) => write!(f, "{}", id.name),
             Self::Var { id, ty } => {
                 if ty.is_enum_through_typedef() {
-                    write!(f, "{}.0", id.name)
+                    write!(f, "{}.xxx", id.name)
                 } else {
                     write!(f, "{}", id.name)
                 }

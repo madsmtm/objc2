@@ -453,7 +453,12 @@ impl Ty {
             }
 
             match attr {
-                Some(UnexposedAttr::NonIsolated | UnexposedAttr::UIActor) => {
+                Some(
+                    UnexposedAttr::NonIsolated
+                    | UnexposedAttr::UIActor
+                    | UnexposedAttr::Sendable
+                    | UnexposedAttr::NonSendable,
+                ) => {
                     // Ignored for now; these are usually also emitted on the method/property,
                     // which is where they will be useful in any case.
                 }
@@ -476,13 +481,21 @@ impl Ty {
 
         let _span = debug_span!("ty3", ?ty).entered();
 
+        while let TypeKind::Attributed = ty.get_kind() {
+            ty = ty
+                .get_modified_type()
+                .expect("attributed type to have modified type");
+        }
+
+        let _span = debug_span!("ty4", ?ty).entered();
+
         let elaborated_ty = ty;
 
         if let Some(true) = ty.is_elaborated() {
             ty = ty.get_elaborated_type().expect("elaborated");
         }
 
-        let _span = debug_span!("ty4", ?ty).entered();
+        let _span = debug_span!("ty5", ?ty).entered();
 
         let get_is_const = |new: bool| {
             if new {

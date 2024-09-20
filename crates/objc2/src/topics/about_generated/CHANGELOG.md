@@ -50,6 +50,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Renamed `from_id_slice` to `from_retained_slice`.
 * **BREAKING**: Renamed `NSString::as_str` to `to_str`, and made it `unsafe`,
   since we cannot ensure that the given pool is actually the innermost pool.
+* Updated SDK from Xcode 15.4 to 16.0.
+
+  View the release notes to learn more details:
+  - [16.0](https://developer.apple.com/documentation/xcode-release-notes/xcode-16-release-notes)
+
+  Breaking changes are noted elsewhere in this changelog entry.
+* **BREAKING**: `NSWindowSharingReadWrite` was deprecated, and moved from
+  `NSWindowSharingType` to a separate static.
+* **BREAKING**: Moved a few methods on AppKit `NSAttributedString` categories.
+  - `NSAttributedStringKitAdditions` moved to
+    `NSAttributedStringAppKitAdditions`.
+  - `NSMutableAttributedStringKitAdditions` moved to
+    `NSMutableAttributedStringAppKitAdditions`.
+  - `NSAttributedStringDocumentFormats` moved to
+    `NSAttributedStringAppKitDocumentFormats`.
+  - `NSAttributedStringAppKitAttributeFixing` moved to
+* **BREAKING**: Make `"MTLResource"` a sub-protocol of the new `MTLAllocation`.
+  This makes a bunch of things cfg-gated behind `"MTLAllocation"`.
+* **BREAKING**: Cfg-gated `LABiometryType` behind `"LABiometryType"` instead
+  of `"LAContext"`.
+* **BREAKING**: Cfg-gated `HKAudiogramSensitivityPoint` behind
+  `"HKAudiogramSensitivityPoint"` instead of `"HKAudiogramSample"`.
 
 ### Deprecated
 * Moved `MainThreadMarker` from `objc2-foundation` to `objc2`.
@@ -66,10 +88,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `UIDocumentProperties::initWithMetadata`
   - `UIDocumentProperties::metadata`
   - `UIDocumentProperties::setMetadata`
+* **BREAKING**: Removed a bunch of deprecated methods in CloudKit:
+  - `CKFetchNotificationChangesOperation::initWithPreviousServerChangeToken`
+  - `CKFetchNotificationChangesOperation::previousServerChangeToken`
+  - `CKFetchNotificationChangesOperation::resultsLimit`
+  - `CKFetchNotificationChangesOperation::moreComing`
+  - `CKFetchNotificationChangesOperation::notificationChangedBlock`
+  - `CKMarkNotificationsReadOperation::initWithNotificationIDsToMarkRead`
+  - `CKMarkNotificationsReadOperation::notificationIDs`
+  - `CKMarkNotificationsReadOperation::markNotificationsReadCompletionBlock`
+  - `CKModifyBadgeOperation::initWithBadgeValue`
+  - `CKModifyBadgeOperation::initWithBadgeValue`
+  - `CKModifyBadgeOperation::badgeValue`
+  - `CKModifyBadgeOperation::modifyBadgeCompletionBlock`
+  - `CKModifyBadgeOperation::initWithBadgeValue`
+* **BREAKING**: Removed `SCStreamDelegate::userDidStopStream`.
 
 ### Fixed
 * **BREAKING**: Converted function signatures into using `extern "C-unwind"`.
   This allows Rust and Objective-C unwinding to interoperate.
+* Removed incorrectly declared `BGTask::new` method.
+* **BREAKING**: Marked the following classes and protocols as `MainThreadOnly`:
+  - `ASAuthorizationControllerPresentationContextProviding`,
+  - `ASAccountAuthenticationModificationControllerPresentationContextProviding`
+  - `ASWebAuthenticationPresentationContextProviding`
+  - `EXHostViewControllerDelegate`
+  - `MKMapViewDelegate`
+  - `MTKViewDelegate`
+  - `UIToolTipConfiguration`
+  - `UIToolTipInteractionDelegate`
+  - `UITraitListEnvironment`
 
 
 ## 0.2.2 - 2024-05-21

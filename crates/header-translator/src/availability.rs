@@ -63,7 +63,9 @@ impl Availability {
                 if let Some(m) = availability.message {
                     if let Some(message) = message.as_deref() {
                         if m != message {
-                            error!(m, message, "message availability attributes were not equal");
+                            // TODO: Either use `cfg_attr` on the `deprecated`
+                            // attributes, or merge it into a single string.
+                            warn!(m, message, "message availability attributes were not equal");
                         }
                     }
                     message = Some(m);

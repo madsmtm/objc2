@@ -83,9 +83,12 @@ HKAudiogramSample = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+]
+HKAudiogramSensitivityPoint = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
 ]
 HKCDADocumentSample = [
     "objc2-foundation/NSData",
@@ -194,6 +197,14 @@ HKFHIRVersion = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+HKGAD7Assessment = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
+]
 HKGlassesLensSpecification = ["objc2-foundation/NSObject"]
 HKGlassesPrescription = [
     "objc2-foundation/NSDate",
@@ -249,6 +260,14 @@ HKObserverQuery = [
     "objc2-foundation/NSPredicate",
     "objc2-foundation/NSSet",
 ]
+HKPHQ9Assessment = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
+]
 HKQuantity = [
     "objc2-foundation/NSObjCRuntime",
     "objc2-foundation/NSObject",
@@ -303,6 +322,7 @@ HKSampleQuery = [
     "objc2-foundation/NSPredicate",
     "objc2-foundation/NSSortDescriptor",
 ]
+HKScoredAssessment = ["objc2-foundation/NSObject"]
 HKSeriesBuilder = []
 HKSeriesSample = ["objc2-foundation/NSObject"]
 HKSource = [
@@ -318,6 +338,14 @@ HKSourceRevision = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSProcessInfo",
     "objc2-foundation/NSString",
+]
+HKStateOfMind = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
 HKStatistics = [
     "bitflags",
@@ -396,6 +424,12 @@ HKWorkoutBuilder = [
     "objc2-foundation/NSUUID",
 ]
 HKWorkoutConfiguration = ["objc2-foundation/NSObject"]
+HKWorkoutEffortRelationshipQuery = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPredicate",
+]
 HKWorkoutRoute = ["objc2-foundation/NSObject"]
 HKWorkoutRouteBuilder = [
     "objc2-core-location?/CLLocation",
@@ -427,6 +461,7 @@ all = [
     "HKAttachment",
     "HKAttachmentStore",
     "HKAudiogramSample",
+    "HKAudiogramSensitivityPoint",
     "HKCDADocumentSample",
     "HKCategorySample",
     "HKCategoryValues",
@@ -451,6 +486,7 @@ all = [
     "HKFHIRRelease",
     "HKFHIRResource",
     "HKFHIRVersion",
+    "HKGAD7Assessment",
     "HKGlassesLensSpecification",
     "HKGlassesPrescription",
     "HKHealthStore",
@@ -464,6 +500,7 @@ all = [
     "HKObject",
     "HKObjectType",
     "HKObserverQuery",
+    "HKPHQ9Assessment",
     "HKQuantity",
     "HKQuantityAggregationStyle",
     "HKQuantitySample",
@@ -474,11 +511,13 @@ all = [
     "HKQueryDescriptor",
     "HKSample",
     "HKSampleQuery",
+    "HKScoredAssessment",
     "HKSeriesBuilder",
     "HKSeriesSample",
     "HKSource",
     "HKSourceQuery",
     "HKSourceRevision",
+    "HKStateOfMind",
     "HKStatistics",
     "HKStatisticsCollectionQuery",
     "HKStatisticsQuery",
@@ -493,6 +532,7 @@ all = [
     "HKWorkoutActivity",
     "HKWorkoutBuilder",
     "HKWorkoutConfiguration",
+    "HKWorkoutEffortRelationshipQuery",
     "HKWorkoutRoute",
     "HKWorkoutRouteBuilder",
     "HKWorkoutRouteQuery",

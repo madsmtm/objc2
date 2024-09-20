@@ -69,6 +69,7 @@ UNNotificationAttachment = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
+UNNotificationAttributedMessageContext = []
 UNNotificationCategory = [
     "bitflags",
     "objc2-foundation/NSArray",
@@ -117,6 +118,7 @@ all = [
     "UNNotificationAction",
     "UNNotificationActionIcon",
     "UNNotificationAttachment",
+    "UNNotificationAttributedMessageContext",
     "UNNotificationCategory",
     "UNNotificationContent",
     "UNNotificationRequest",

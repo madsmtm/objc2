@@ -1019,7 +1019,8 @@ impl Stmt {
                             }
                             match attr {
                                 // TODO
-                                UnexposedAttr::Sendable => warn!("sendable on typedef"),
+                                UnexposedAttr::Sendable => warn!("sendable typedef"),
+                                UnexposedAttr::UIActor => warn!("main-thread-only typedef"),
                                 _ => kind = Some(attr),
                             }
                         }
@@ -1290,7 +1291,15 @@ impl Stmt {
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                            error!(?attr, "unknown attribute");
+                            match attr {
+                                // Swift makes some statics associated with a
+                                // certain type, which means it needs this to
+                                // allow accessing them from any thread. We
+                                // don't generally restrict statics in this
+                                // fashion, so it shouldn't matter for us.
+                                UnexposedAttr::NonIsolated => {}
+                                attr => error!(?attr, "unknown attribute"),
+                            }
                         }
                     }
                     EntityKind::VisibilityAttr => {}
@@ -2443,12 +2452,14 @@ impl Stmt {
                             write!(f, "{}", self.cfg_gate_ln(config))?;
                             writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
                         }
-                        None | Some(UnexposedAttr::BridgedTypedef) => {
+                        kind => {
+                            if !matches!(kind, None | Some(UnexposedAttr::BridgedTypedef)) {
+                                error!("invalid alias kind {kind:?} for {ty:?}");
+                            }
                             // "bridged" typedefs should use a normal type alias.
                             write!(f, "{}", self.cfg_gate_ln(config))?;
                             writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
                         }
-                        kind => panic!("invalid alias kind {kind:?} for {ty:?}"),
                     }
                 }
             };

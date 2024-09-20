@@ -56,6 +56,7 @@ MTLAccelerationStructureCommandEncoder = [
     "objc2-foundation/NSObject",
 ]
 MTLAccelerationStructureTypes = []
+MTLAllocation = []
 MTLArgument = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
@@ -98,7 +99,10 @@ MTLCommandEncoder = [
     "bitflags",
     "objc2-foundation/NSString",
 ]
-MTLCommandQueue = ["objc2-foundation/NSString"]
+MTLCommandQueue = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 MTLComputeCommandEncoder = ["objc2-foundation/NSRange"]
 MTLComputePass = ["objc2-foundation/NSObject"]
 MTLComputePipeline = [
@@ -129,6 +133,11 @@ MTLDevice = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
+MTLDeviceCertification = [
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSProcessInfo",
+    "objc2-foundation/NSString",
+]
 MTLDrawable = []
 MTLDynamicLibrary = [
     "objc2-foundation/NSError",
@@ -158,6 +167,7 @@ MTLFunctionLog = [
     "objc2-foundation/NSURL",
 ]
 MTLFunctionStitching = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -200,6 +210,11 @@ MTLLinkedFunctions = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+MTLLogState = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 MTLParallelRenderCommandEncoder = []
 MTLPipeline = ["objc2-foundation/NSObject"]
 MTLPixelFormat = []
@@ -220,6 +235,11 @@ MTLRenderPipeline = [
     "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MTLResidencySet = [
+    "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -250,6 +270,7 @@ all = [
     "MTLAccelerationStructure",
     "MTLAccelerationStructureCommandEncoder",
     "MTLAccelerationStructureTypes",
+    "MTLAllocation",
     "MTLArgument",
     "MTLArgumentEncoder",
     "MTLBinaryArchive",
@@ -268,6 +289,7 @@ all = [
     "MTLDefines",
     "MTLDepthStencil",
     "MTLDevice",
+    "MTLDeviceCertification",
     "MTLDrawable",
     "MTLDynamicLibrary",
     "MTLEvent",
@@ -286,6 +308,7 @@ all = [
     "MTLIntersectionFunctionTable",
     "MTLLibrary",
     "MTLLinkedFunctions",
+    "MTLLogState",
     "MTLParallelRenderCommandEncoder",
     "MTLPipeline",
     "MTLPixelFormat",
@@ -293,6 +316,7 @@ all = [
     "MTLRenderCommandEncoder",
     "MTLRenderPass",
     "MTLRenderPipeline",
+    "MTLResidencySet",
     "MTLResource",
     "MTLResourceStateCommandEncoder",
     "MTLResourceStatePass",
@@ -321,6 +345,7 @@ required-features = [
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSThread",
     "objc2-foundation/NSGeometry",
+    "MTLAllocation",
     "MTLAccelerationStructureTypes",
     "MTLLibrary",
     "MTLRenderPipeline",

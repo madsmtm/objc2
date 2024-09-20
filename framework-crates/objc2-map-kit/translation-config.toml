@@ -41,3 +41,8 @@ class.MKOverlayPathRenderer.methods."applyFillPropertiesToContext:atZoomScale:".
 # Needs `CGPathRef` and `CGContextRef`
 class.MKOverlayPathRenderer.methods."strokePath:inContext:".skipped = true
 class.MKOverlayPathRenderer.methods."fillPath:inContext:".skipped = true
+
+# Needs proper support for iOS
+class.MKMapItemRequest.methods."initWithMapFeatureAnnotation:".skipped = true
+class.MKMapItemRequest.methods.mapFeatureAnnotation.skipped = true
+class.MKMapItemRequest.methods.featureAnnotation.skipped = true

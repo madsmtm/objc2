@@ -180,6 +180,13 @@ class.UITraitToolbarItemPresentationSize.main-thread-only = true
 class.UITraitImageDynamicRange.main-thread-only = true
 class.UITraitTypesettingLanguage.main-thread-only = true
 class.UITraitSceneCaptureState.main-thread-only = true
+class.UITraitListEnvironment.main-thread-only = true
+
+# Needs CoreText
+class.NSAdaptiveImageGlyph.skipped-protocols = ["CTAdaptiveImageProviding"]
+
+# Needs `INPerson`
+protocol.UIActivityItemSource.methods."activityViewControllerShareRecipients:".skipped = true
 
 ###
 ### Safety

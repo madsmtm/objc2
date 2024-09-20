@@ -25,9 +25,13 @@ class.ASAuthorizationAppleIDButton.definition-skipped = true
 # Needs `SecKeyRef`, `SecCertificateRef` and `SecIdentityRef` from Security
 class.ASAuthorizationProviderExtensionLoginConfiguration.methods.loginRequestEncryptionPublicKey.skipped = true
 class.ASAuthorizationProviderExtensionLoginConfiguration.methods."setLoginRequestEncryptionPublicKey:".skipped = true
+class.ASAuthorizationProviderExtensionLoginConfiguration.methods.hpkeAuthPublicKey.skipped = true
+class.ASAuthorizationProviderExtensionLoginConfiguration.methods."setHpkeAuthPublicKey:".skipped = true
 class.ASAuthorizationProviderExtensionLoginManager.methods."saveCertificate:keyType:".skipped = true
 class.ASAuthorizationProviderExtensionLoginManager.methods."copyKeyForKeyType:".skipped = true
 class.ASAuthorizationProviderExtensionLoginManager.methods."copyIdentityForKeyType:".skipped = true
+class.ASAuthorizationProviderExtensionLoginManager.methods."beginKeyRotationForKeyType:".skipped = true
+protocol.ASAuthorizationProviderExtensionRegistrationHandler.methods."keyWillRotateForKeyType:newKey:loginManager:completion:".skipped = true
 
 # Uses LocalAuthentication framework
 protocol.ASAuthorizationWebBrowserExternallyAuthenticatableRequest.methods.authenticatedContext.skipped = true
