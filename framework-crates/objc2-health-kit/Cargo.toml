@@ -60,6 +60,7 @@ HKAnchoredObjectQuery = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSPredicate",
 ]
+HKAppleSleepingBreathingDisturbancesClassification = ["objc2-foundation/NSValue"]
 HKAppleWalkingSteadinessClassification = ["objc2-foundation/NSError"]
 HKAttachment = [
     "objc2-foundation/NSDate",
@@ -457,6 +458,7 @@ all = [
     "HKActivitySummary",
     "HKActivitySummaryQuery",
     "HKAnchoredObjectQuery",
+    "HKAppleSleepingBreathingDisturbancesClassification",
     "HKAppleWalkingSteadinessClassification",
     "HKAttachment",
     "HKAttachmentStore",
