@@ -1353,7 +1353,13 @@ impl Stmt {
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                            error!(?attr, "unknown attribute");
+                            match attr {
+                                // TODO
+                                UnexposedAttr::UIActor => {
+                                    warn!("unhandled UIActor on function declaration")
+                                }
+                                _ => error!(?attr, "unknown attribute"),
+                            }
                         }
                     }
                     EntityKind::ObjCClassRef

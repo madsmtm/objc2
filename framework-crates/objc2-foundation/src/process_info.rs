@@ -4,11 +4,6 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use crate::NSProcessInfo;
 
-// SAFETY: The documentation explicitly states:
-// > NSProcessInfo is thread-safe in macOS 10.7 and later.
-unsafe impl Send for NSProcessInfo {}
-unsafe impl Sync for NSProcessInfo {}
-
 impl UnwindSafe for NSProcessInfo {}
 impl RefUnwindSafe for NSProcessInfo {}
 

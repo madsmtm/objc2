@@ -424,22 +424,29 @@ pub enum Ty {
 
 impl Ty {
     fn parse(attributed_ty: Type<'_>, mut lifetime: Lifetime, context: &Context<'_>) -> Self {
-        let _span = debug_span!("ty", ?attributed_ty, ?lifetime).entered();
-
         let mut ty = attributed_ty;
-        while let TypeKind::Attributed = ty.get_kind() {
-            ty = ty
-                .get_modified_type()
-                .expect("attributed type to have modified type");
-        }
-
-        let _span = debug_span!("ty2", ?ty).entered();
+        let _span = debug_span!("ty", ?ty, ?lifetime).entered();
 
         let mut attributed_name = attributed_ty.get_display_name();
         let mut name = ty.get_display_name();
+        let mut unexposed_nullability = None;
 
-        let unexposed_nullability = if let TypeKind::Unexposed = ty.get_kind() {
-            let nullability = ty.get_nullability();
+        while let TypeKind::Unexposed | TypeKind::Attributed = ty.get_kind() {
+            if let TypeKind::Attributed = ty.get_kind() {
+                ty = ty
+                    .get_modified_type()
+                    .expect("attributed type to have modified type");
+                name = ty.get_display_name();
+                continue;
+            }
+
+            if let Some(nullability) = ty.get_nullability() {
+                if unexposed_nullability.is_some() {
+                    error!("unexposed nullability already set");
+                }
+                unexposed_nullability = Some(nullability);
+            }
+
             let (new_attributed_name, attributed_attr) = parse_unexposed_tokens(&attributed_name);
             // Also parse the expected name to ensure that the formatting that
             // TokenStream does is the same on both.
@@ -472,22 +479,11 @@ impl Ty {
             if let Some(modified) = ty.get_modified_type() {
                 ty = modified;
             } else {
-                error!("expected unexposed type to have modified type");
+                error!("expected unexposed / attributed type to have modified type");
             }
-            nullability
-        } else {
-            None
-        };
-
-        let _span = debug_span!("ty3", ?ty).entered();
-
-        while let TypeKind::Attributed = ty.get_kind() {
-            ty = ty
-                .get_modified_type()
-                .expect("attributed type to have modified type");
         }
 
-        let _span = debug_span!("ty4", ?ty).entered();
+        let _span = debug_span!("ty after unexposed/attributed", ?ty).entered();
 
         let elaborated_ty = ty;
 
@@ -495,7 +491,7 @@ impl Ty {
             ty = ty.get_elaborated_type().expect("elaborated");
         }
 
-        let _span = debug_span!("ty5", ?ty).entered();
+        let _span = debug_span!("ty after elaborated", ?ty).entered();
 
         let get_is_const = |new: bool| {
             if new {
@@ -735,10 +731,11 @@ impl Ty {
 
                 let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
+                let nullability = parser.nullability(ParsePosition::Suffix);
                 let nullability = if let Some(nullability) = unexposed_nullability {
                     nullability
                 } else {
-                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
+                    check_nullability(&attributed_ty, nullability)
                 };
 
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");

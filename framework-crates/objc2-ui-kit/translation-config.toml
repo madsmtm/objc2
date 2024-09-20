@@ -63,7 +63,10 @@ class.NSAttributedString.skipped-protocols = ["NSItemProviderReading", "NSItemPr
 class.NSUserActivity.skipped-protocols = ["NSItemProviderReading", "NSItemProviderWriting"]
 
 # Requires MainThreadOnly, which I'm not sure UIImage is?
-class.UIImage.skipped-protocols = ["UIItemProviderPresentationSizeProviding"]
+class.UIImage.skipped-protocols = ["UIItemProviderPresentationSizeProviding", "UIAccessibilityIdentification"]
+
+# Requires MainThreadOnly, which I'm not sure NSTextAttachment is?
+class.NSTextAttachment.skipped-protocols = ["UIAccessibilityContentSizeCategoryImageAdjusting"]
 
 # Type defaults to `c_int`, but value is `NSInteger`
 enum.anonymous.constants.NSControlCharacterZeroAdvancementAction.skipped = true

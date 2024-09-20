@@ -592,7 +592,6 @@ WKWebView = [
 ]
 WKWebViewConfiguration = [
     "bitflags",
-    "objc2-app-kit?/NSTextCheckingClient",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
