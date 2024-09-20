@@ -111,6 +111,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Removed incorrectly declared `BGTask::new` method.
 * **BREAKING**: Marked the following classes and protocols as `MainThreadOnly`:
   - `ASAuthorizationControllerPresentationContextProviding`,
+  - `ASAuthorizationControllerDelegate`
   - `ASAuthorizationProviderExtensionAuthorizationRequestHandler`
   - `ASAccountAuthenticationModificationControllerPresentationContextProviding`
   - `ASWebAuthenticationPresentationContextProviding`
