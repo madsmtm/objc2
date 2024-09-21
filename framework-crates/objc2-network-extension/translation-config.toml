@@ -17,9 +17,26 @@ static.NEFilterProviderRemediationMapRemediationButtonTexts.skipped = true
 class.NEAppProxyFlow.methods."setMetadata:".skipped = true
 class.NEAppProxyFlow.methods.networkInterface.skipped = true
 class.NEAppProxyFlow.methods."setNetworkInterface:".skipped = true
+class.NEAppProxyFlow.methods."openWithLocalFlowEndpoint:completionHandler:".skipped = true
+class.NEAppProxyProvider.methods."handleNewUDPFlow:initialRemoteFlowEndpoint:".skipped = true
+class.NEAppProxyTCPFlow.methods.remoteFlowEndpoint.skipped = true
+typedef.NWEndpointArray.skipped = true
+class.NEAppProxyUDPFlow.methods.localFlowEndpoint.skipped = true
+class.NEAppProxyUDPFlow.methods."readDatagramsAndFlowEndpointsWithCompletionHandler:".skipped = true
+class.NEAppProxyUDPFlow.methods."writeDatagrams:sentByFlowEndpoints:completionHandler:".skipped = true
+class.NEDNSProxyProvider.methods."handleNewUDPFlow:initialRemoteFlowEndpoint:".skipped = true
 typedef.NEFilterPacketHandler.skipped = true
 class.NEFilterPacketProvider.methods.packetHandler.skipped = true
 class.NEFilterPacketProvider.methods."setPacketHandler:".skipped = true
+class.NEFilterSocketFlow.methods.remoteFlowEndpoint.skipped = true
+class.NEFilterSocketFlow.methods.localFlowEndpoint.skipped = true
+class.NEHotspotHelperCommand.methods.interface.skipped = true
+class.NENetworkRule.methods."initWithDestinationNetworkEndpoint:prefix:protocol:".skipped = true
+class.NENetworkRule.methods."initWithDestinationHostEndpoint:protocol:".skipped = true
+class.NENetworkRule.methods."initWithRemoteNetworkEndpoint:remotePrefix:localNetworkEndpoint:localPrefix:protocol:direction:".skipped = true
+class.NENetworkRule.methods.matchRemoteHostOrNetworkEndpoint.skipped = true
+class.NENetworkRule.methods.matchLocalNetworkEndpoint.skipped = true
+class.NEPacketTunnelProvider.methods.virtualInterface.skipped = true
 
 # Needs `dispatch_queue_t` from libdispatch
 class.NEHotspotHelper.methods."registerWithOptions:queue:handler:".skipped = true
@@ -29,3 +46,7 @@ class.NEHotspotEAPSettings.methods."setIdentity:".skipped = true
 class.NEVPNManager.methods."setAuthorization:".skipped = true
 protocol.NWTCPConnectionAuthenticationDelegate.methods."provideIdentityForConnection:completionHandler:".skipped = true
 protocol.NWTCPConnectionAuthenticationDelegate.methods."evaluateTrustForConnection:peerCertificateChain:completionHandler:".skipped = true
+
+# Needs `ASAccessory` from AccessorySetupKit
+class.NEHotspotConfigurationManager.methods."joinAccessoryHotspot:passphrase:completionHandler:".skipped = true
+class.NEHotspotConfigurationManager.methods."joinAccessoryHotspotWithoutSecurity:completionHandler:".skipped = true

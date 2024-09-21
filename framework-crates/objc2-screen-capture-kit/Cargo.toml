@@ -48,6 +48,10 @@ SCContentSharingPicker = [
     "objc2-foundation/NSValue",
 ]
 SCError = ["objc2-foundation/NSString"]
+SCRecordingOutput = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSURL",
+]
 SCScreenshotManager = []
 SCShareableContent = [
     "objc2-foundation/NSArray",
@@ -64,6 +68,7 @@ SCStream = [
 all = [
     "SCContentSharingPicker",
     "SCError",
+    "SCRecordingOutput",
     "SCScreenshotManager",
     "SCShareableContent",
     "SCStream",

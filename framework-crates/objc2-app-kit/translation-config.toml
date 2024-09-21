@@ -158,6 +158,9 @@ class.NSItemProvider.methods."registerCloudKitShareWithPreparationHandler:".skip
 class.NSItemProvider.methods."registerCloudKitShare:container:".skipped = true
 class.NSGlyphInfo.methods.glyphID.skipped = true
 
+# Needs CoreText
+class.NSAdaptiveImageGlyph.skipped-protocols = ["CTAdaptiveImageProviding"]
+
 ###
 ### Main Thread Overrides
 ###

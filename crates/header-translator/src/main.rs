@@ -301,13 +301,19 @@ fn parse_sdk(
         if let Some(location) = context.get_location(&entity) {
             let library_name = location.library_name();
             if library_span.as_ref().map(|(_, s)| &**s) != Some(library_name) {
+                // Drop old entered spans
+                library_span.take();
+                file_span.take();
+                // Enter new span
                 library_span = Some((
                     debug_span!("library", name = library_name).entered(),
                     library_name.to_string(),
                 ));
-                file_span.take();
             }
             if file_span.as_ref().map(|(_, l)| l) != Some(&location) {
+                // Drop old entered span
+                file_span.take();
+                // Enter new span
                 file_span = Some((debug_span!("file", ?location).entered(), location.clone()));
             }
 

@@ -75,7 +75,7 @@ impl UnexposedAttr {
             }
             "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" => Some(Self::Sendable),
             "NS_SWIFT_NONSENDABLE" => Some(Self::NonSendable),
-            "NS_SWIFT_UI_ACTOR" => Some(Self::UIActor),
+            "NS_SWIFT_UI_ACTOR" | "WK_SWIFT_UI_ACTOR" => Some(Self::UIActor),
             "NS_SWIFT_NONISOLATED" | "UIKIT_SWIFT_ACTOR_INDEPENDENT" => Some(Self::NonIsolated),
             // TODO
             "NS_FORMAT_FUNCTION" | "NS_FORMAT_ARGUMENT" => {
@@ -125,11 +125,13 @@ impl UnexposedAttr {
             | "CI_GL_DEPRECATED_MAC"
             | "CIKL_DEPRECATED"
             | "CK_UNAVAILABLE"
+            | "CK_NEWLY_UNAVAILABLE"
             | "FPUI_AVAILABLE"
             | "MLCOMPUTE_AVAILABLE_STARTING"
             | "MLCOMPUTE_AVAILABLE_STARTING_BUT_DEPRECATED_MACOS14"
             | "MLCOMPUTE_CLASS_AVAILABLE_STARTING"
             | "MLCOMPUTE_ENUM_AVAILABLE_STARTING"
+            | "MODELCOLLECTION_SUNSET"
             | "MP_API"
             | "MP_DEPRECATED"
             | "MP_DEPRECATED_WITH_REPLACEMENT"

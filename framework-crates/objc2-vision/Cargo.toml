@@ -43,6 +43,11 @@ block2 = ["dep:block2", "objc2-core-image?/block2", "objc2-core-ml?/block2", "ob
 objc2-core-image = ["dep:objc2-core-image"]
 objc2-core-ml = ["dep:objc2-core-ml"]
 
+VNCalculateImageAestheticsScoresRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+]
 VNClassifyImageRequest = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
@@ -192,6 +197,7 @@ VNGeneratePersonSegmentationRequest = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSValue",
 ]
 VNGeometry = [
     "objc2-foundation/NSArray",
@@ -321,6 +327,7 @@ VNVideoProcessor = [
     "objc2-foundation/NSURL",
 ]
 all = [
+    "VNCalculateImageAestheticsScoresRequest",
     "VNClassifyImageRequest",
     "VNCoreMLRequest",
     "VNDefines",

@@ -61,7 +61,10 @@ SFSpeechRecognitionResult = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
 ]
-SFSpeechRecognitionTask = ["objc2-foundation/NSError"]
+SFSpeechRecognitionTask = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+]
 SFSpeechRecognitionTaskHint = []
 SFSpeechRecognizer = [
     "objc2-foundation/NSError",
