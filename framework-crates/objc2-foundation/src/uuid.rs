@@ -1,12 +1,12 @@
-#[cfg(feature = "NSString")]
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::encode::{Encode, Encoding, RefEncode};
 use objc2::rc::{Allocated, Retained};
-use objc2::{extern_methods, AllocAnyThread};
+use objc2::runtime::NSObject;
+use objc2::{extern_methods, msg_send_id, AllocAnyThread};
 
-use crate::NSUUID;
+use crate::{util, NSUUID};
 
 impl UnwindSafe for NSUUID {}
 impl RefUnwindSafe for NSUUID {}
@@ -77,18 +77,21 @@ impl NSUUID {
     }
 }
 
-#[cfg(feature = "NSString")]
 impl fmt::Display for NSUUID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&self.UUIDString(), f)
+        let string: Retained<NSObject> = unsafe { msg_send_id![self, UUIDString] };
+        // SAFETY: `UUIDString` returns `NSString`.
+        unsafe { util::display_string(&string, f) }
     }
 }
 
-#[cfg(feature = "NSString")]
 impl fmt::Debug for NSUUID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // The `uuid` crate does `Debug` and `Display` equally, and so do we
-        fmt::Display::fmt(&self.UUIDString(), f)
+        // The `uuid` crate does `Debug` and `Display` equally, and so do we.
+
+        let string: Retained<NSObject> = unsafe { msg_send_id![self, UUIDString] };
+        // SAFETY: `UUIDString` returns `NSString`.
+        unsafe { util::display_string(&string, f) }
     }
 }
 

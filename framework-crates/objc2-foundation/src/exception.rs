@@ -1,14 +1,13 @@
-#[cfg(all(feature = "NSObjCRuntime", feature = "NSString"))]
 use core::fmt;
 use core::hint::unreachable_unchecked;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::exception::Exception;
 use objc2::rc::Retained;
-use objc2::runtime::{NSObject, NSObjectProtocol};
-use objc2::{extern_methods, sel, ClassType};
+use objc2::runtime::{AnyObject, NSObject, NSObjectProtocol};
+use objc2::{extern_methods, msg_send_id, sel, ClassType};
 
-use crate::NSException;
+use crate::{util, NSException};
 
 // SAFETY: Exception objects are immutable data containers, and documented as
 // thread safe.
@@ -93,15 +92,24 @@ impl NSException {
     }
 }
 
-#[cfg(all(feature = "NSObjCRuntime", feature = "NSString"))]
 impl fmt::Debug for NSException {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let obj: &objc2::runtime::AnyObject = self.as_ref();
-        write!(f, "{obj:?} '{}'", self.name())?;
-        if let Some(reason) = self.reason() {
-            write!(f, " reason: {reason}")?;
+        let obj: &AnyObject = self.as_ref();
+        write!(f, "{obj:?}")?;
+
+        write!(f, " '")?;
+        let name: Retained<NSObject> = unsafe { msg_send_id![self, name] };
+        // SAFETY: `name` returns `NSExceptionName`, which is `NSString`.
+        unsafe { util::display_string(&name, f)? };
+        write!(f, "'")?;
+
+        write!(f, " reason: ")?;
+        let reason: Option<Retained<NSObject>> = unsafe { msg_send_id![self, reason] };
+        if let Some(reason) = reason {
+            // SAFETY: `reason` returns `NSString`.
+            unsafe { util::display_string(&reason, f)? };
         } else {
-            write!(f, " reason: (NULL)")?;
+            write!(f, "(NULL)")?;
         }
         Ok(())
     }

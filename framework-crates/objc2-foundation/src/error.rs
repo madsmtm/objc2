@@ -1,8 +1,10 @@
-#[cfg(feature = "NSString")]
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
+use objc2::msg_send_id;
+use objc2::rc::Retained;
+use objc2::runtime::NSObject;
 
-use crate::NSError;
+use crate::{util, NSError};
 
 impl UnwindSafe for NSError {}
 impl RefUnwindSafe for NSError {}
@@ -32,25 +34,27 @@ impl NSError {
     }
 }
 
-#[cfg(feature = "NSString")]
-#[cfg(feature = "NSDictionary")]
 impl std::error::Error for NSError {}
 
-#[cfg(feature = "NSString")]
-#[cfg(feature = "NSDictionary")]
 impl fmt::Debug for NSError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("NSError")
-            .field("domain", &self.domain())
-            .field("code", &self.code())
-            .field("user_info", &self.userInfo())
-            .finish()
+        let mut debug = f.debug_struct("NSError");
+        debug.field("code", &self.code());
+
+        #[cfg(feature = "NSString")]
+        debug.field("domain", &self.domain());
+
+        #[cfg(all(feature = "NSDictionary", feature = "NSString"))]
+        debug.field("userInfo", &self.userInfo());
+
+        debug.finish_non_exhaustive()
     }
 }
 
-#[cfg(feature = "NSString")]
 impl fmt::Display for NSError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.localizedDescription())
+        let desc: Retained<NSObject> = unsafe { msg_send_id![self, localizedDescription] };
+        // SAFETY: `localizedDescription` returns `NSString`.
+        unsafe { util::display_string(&desc, f) }
     }
 }

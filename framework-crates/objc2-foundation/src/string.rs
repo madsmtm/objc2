@@ -14,6 +14,7 @@ use objc2::rc::{autoreleasepool_leaking, Allocated, AutoreleasePool, Retained};
 use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
 use objc2::{AllocAnyThread, Message};
 
+use crate::util;
 use crate::{NSMutableString, NSString};
 
 // Even if an exception occurs inside a string method, the state of the string
@@ -282,25 +283,17 @@ impl AddAssign<&NSString> for &NSMutableString {
 
 impl fmt::Display for NSString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // SAFETY:
-        // - The object is an instance of `NSString`.
-        // - We control the scope in which the string is alive, so we know
-        //   it is not moved outside the current autorelease pool.
-        //
-        // TODO: Use more performant APIs, maybe by copying bytes into a
-        // temporary stack buffer so that we avoid allocating?
-        //
-        // Beware though that the string may be mutable internally, and that
-        // mutation may happen on every call to the formatter `f` (so
-        // `CFStringGetCharactersPtr` is probably out of the question, unless
-        // we somehow check that the string is immutable?).
-        autoreleasepool_leaking(|pool| fmt::Display::fmt(unsafe { nsstring_to_str(self, pool) }, f))
+        // SAFETY: The object is an instance of `NSString`.
+        unsafe { util::display_string(self, f) }
     }
 }
 
 impl fmt::Debug for NSString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // SAFETY: Same as for `Display` above.
+        // SAFETY: Same as for `display_string`:
+        // - The object is an instance of `NSString`.
+        // - We control the scope in which the string is alive, so we know
+        //   it is not moved outside the current autorelease pool.
         autoreleasepool_leaking(|pool| fmt::Debug::fmt(unsafe { nsstring_to_str(self, pool) }, f))
     }
 }

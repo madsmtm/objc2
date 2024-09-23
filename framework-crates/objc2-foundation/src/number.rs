@@ -22,8 +22,11 @@ use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::encode::Encoding;
+use objc2::msg_send_id;
 use objc2::rc::Retained;
+use objc2::runtime::NSObject;
 
+use crate::util;
 use crate::NSNumber;
 
 impl UnwindSafe for NSNumber {}
@@ -257,10 +260,11 @@ impl Ord for NSNumber {
     }
 }
 
-#[cfg(feature = "NSString")]
 impl fmt::Display for NSNumber {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&self.stringValue(), f)
+        let string: Retained<NSObject> = unsafe { msg_send_id![self, stringValue] };
+        // SAFETY: `stringValue` returns `NSString`.
+        unsafe { util::display_string(&string, f) }
     }
 }
 
