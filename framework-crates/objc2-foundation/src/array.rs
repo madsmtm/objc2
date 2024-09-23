@@ -13,7 +13,7 @@ use crate::iter;
 use crate::{util, NSArray, NSMutableArray};
 
 /// Convenience creation methods.
-impl<T: Message> NSArray<T> {
+impl<ObjectType: Message> NSArray<ObjectType> {
     /// Create a new array from a slice of objects.
     ///
     /// This is a safe interface to `initWithObjects:count:`.
@@ -30,12 +30,12 @@ impl<T: Message> NSArray<T> {
     /// ]);
     /// ```
     #[doc(alias = "initWithObjects:count:")]
-    pub fn from_slice(slice: &[&T]) -> Retained<Self> {
+    pub fn from_slice(slice: &[&ObjectType]) -> Retained<Self> {
         let len = slice.len();
         let ptr = util::ref_ptr_cast_const(slice.as_ptr());
         // SAFETY:
-        // - All `T: Message` use interior mutability, and the array extends
-        //   the lifetime of them internally by retaining them.
+        // - All `ObjectType: Message` use interior mutability, and the array
+        //   extends the lifetime of them internally by retaining them.
         // - The pointer and length are valid until the method has finished
         //   executing, at which point the array will have created its own
         //   internal storage for holding the pointers.
@@ -58,7 +58,7 @@ impl<T: Message> NSArray<T> {
     /// ]);
     /// ```
     #[doc(alias = "initWithObjects:count:")]
-    pub fn from_retained_slice(slice: &[Retained<T>]) -> Retained<Self> {
+    pub fn from_retained_slice(slice: &[Retained<ObjectType>]) -> Retained<Self> {
         let len = slice.len();
         let ptr = util::retained_ptr_cast_const(slice.as_ptr());
         // SAFETY: Same as `from_slice`, this is just a faster version to
@@ -71,9 +71,9 @@ impl<T: Message> NSArray<T> {
 }
 
 /// Convenience creation methods.
-impl<T: Message> NSMutableArray<T> {
+impl<ObjectType: Message> NSMutableArray<ObjectType> {
     #[doc(alias = "initWithObjects:count:")]
-    pub fn from_slice(slice: &[&T]) -> Retained<Self> {
+    pub fn from_slice(slice: &[&ObjectType]) -> Retained<Self> {
         let len = slice.len();
         let ptr = util::ref_ptr_cast_const(slice.as_ptr());
         // SAFETY: Same as `NSArray::from_slice`.
@@ -81,7 +81,7 @@ impl<T: Message> NSMutableArray<T> {
     }
 
     #[doc(alias = "initWithObjects:count:")]
-    pub fn from_retained_slice(slice: &[Retained<T>]) -> Retained<Self> {
+    pub fn from_retained_slice(slice: &[Retained<ObjectType>]) -> Retained<Self> {
         let len = slice.len();
         let ptr = util::retained_ptr_cast_const(slice.as_ptr());
         // SAFETY: Same as `NSArray::from_retained_slice`
@@ -100,7 +100,7 @@ impl<T: Message> NSMutableArray<T> {
 /// doing so - otherwise, we might end up accessing a deallocated object.
 ///
 /// [collections-own]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmPractical.html#//apple_ref/doc/uid/TP40004447-SW12
-impl<T: Message> NSArray<T> {
+impl<ObjectType: Message> NSArray<ObjectType> {
     /// Get a direct reference to one of the array's objects.
     ///
     /// Throws an error if the object was not found.
@@ -113,7 +113,7 @@ impl<T: Message> NSArray<T> {
     /// The array must not be mutated while the reference is live.
     #[doc(alias = "objectAtIndex:")]
     #[inline]
-    pub unsafe fn objectAtIndex_unchecked(&self, index: usize) -> &T {
+    pub unsafe fn objectAtIndex_unchecked(&self, index: usize) -> &ObjectType {
         // SAFETY: Upheld by caller.
         unsafe { msg_send![self, objectAtIndex: index] }
     }
@@ -128,7 +128,7 @@ impl<T: Message> NSArray<T> {
     /// The array must not be mutated while the reference is live.
     #[doc(alias = "firstObject")]
     #[inline]
-    pub unsafe fn firstObject_unchecked(&self) -> Option<&T> {
+    pub unsafe fn firstObject_unchecked(&self) -> Option<&ObjectType> {
         // SAFETY: Upheld by caller.
         unsafe { msg_send![self, firstObject] }
     }
@@ -143,7 +143,7 @@ impl<T: Message> NSArray<T> {
     /// The array must not be mutated while the reference is live.
     #[doc(alias = "lastObject")]
     #[inline]
-    pub unsafe fn lastObject_unchecked(&self) -> Option<&T> {
+    pub unsafe fn lastObject_unchecked(&self) -> Option<&ObjectType> {
         // SAFETY: Upheld by caller.
         unsafe { msg_send![self, lastObject] }
     }
@@ -157,10 +157,10 @@ impl<T: Message> NSArray<T> {
     ///
     /// The array must not be mutated while the returned references are alive.
     #[doc(alias = "getObjects:")]
-    pub unsafe fn to_vec_unchecked(&self) -> Vec<&T> {
+    pub unsafe fn to_vec_unchecked(&self) -> Vec<&ObjectType> {
         let len = self.count();
-        let mut vec: Vec<NonNull<T>> = Vec::with_capacity(len);
-        let ptr: NonNull<NonNull<T>> = NonNull::new(vec.as_mut_ptr()).unwrap();
+        let mut vec: Vec<NonNull<ObjectType>> = Vec::with_capacity(len);
+        let ptr: NonNull<NonNull<ObjectType>> = NonNull::new(vec.as_mut_ptr()).unwrap();
 
         // SAFETY: The buffer is at least the size of the array, as guaranteed
         // by `Vec::with_capacity`.
@@ -176,10 +176,10 @@ impl<T: Message> NSArray<T> {
         // uninitialized elements.
         unsafe { vec.set_len(len) };
 
-        // SAFETY: `NonNull<T>` has the same layout as `&T`, and the lifetime
-        // is bound to the array, and caller upholds that the array isn't
-        // mutated.
-        unsafe { mem::transmute::<Vec<NonNull<T>>, Vec<&T>>(vec) }
+        // SAFETY: `NonNull<ObjectType>` has the same layout as `&ObjectType`,
+        // and the lifetime is bound to the array, and caller upholds that the
+        // array isn't mutated.
+        unsafe { mem::transmute::<Vec<NonNull<ObjectType>>, Vec<&ObjectType>>(vec) }
     }
 
     /// Iterate over the array without retaining the elements.
@@ -194,13 +194,13 @@ impl<T: Message> NSArray<T> {
     #[cfg(feature = "NSEnumerator")]
     #[doc(alias = "objectEnumerator")]
     #[inline]
-    pub unsafe fn iter_unchecked(&self) -> IterUnchecked<'_, T> {
+    pub unsafe fn iter_unchecked(&self) -> IterUnchecked<'_, ObjectType> {
         IterUnchecked(iter::IterUnchecked::new(self))
     }
 }
 
 /// Various accessor methods.
-impl<T: Message> NSArray<T> {
+impl<ObjectType: Message> NSArray<ObjectType> {
     /// The amount of elements in the array.
     #[doc(alias = "count")]
     #[inline]
@@ -216,7 +216,7 @@ impl<T: Message> NSArray<T> {
 
     /// Convert the array to a `Vec` of the array's objects.
     #[doc(alias = "getObjects:")]
-    pub fn to_vec(&self) -> Vec<Retained<T>> {
+    pub fn to_vec(&self) -> Vec<Retained<ObjectType>> {
         // SAFETY: We retain the elements below, so we know that the array
         // isn't mutated while the references are alive.
         //
@@ -225,14 +225,14 @@ impl<T: Message> NSArray<T> {
         // to rule this out though, as that's basically never going to happen,
         // and will make a lot of other things unsound too.
         let vec = unsafe { self.to_vec_unchecked() };
-        vec.into_iter().map(T::retain).collect()
+        vec.into_iter().map(ObjectType::retain).collect()
     }
 
     /// Iterate over the array's elements.
     #[cfg(feature = "NSEnumerator")]
     #[doc(alias = "objectEnumerator")]
     #[inline]
-    pub fn iter(&self) -> Iter<'_, T> {
+    pub fn iter(&self) -> Iter<'_, ObjectType> {
         Iter(iter::Iter::new(self))
     }
 
@@ -243,7 +243,7 @@ impl<T: Message> NSArray<T> {
     /// Panics if the range was out of bounds.
     #[doc(alias = "getObjects:range:")]
     #[cfg(feature = "NSRange")]
-    pub fn objects_in_range(&self, range: core::ops::Range<usize>) -> Vec<Retained<T>> {
+    pub fn objects_in_range(&self, range: core::ops::Range<usize>) -> Vec<Retained<ObjectType>> {
         let count = self.count();
 
         // TODO: Replace this check with catching the thrown NSRangeException
@@ -255,27 +255,27 @@ impl<T: Message> NSArray<T> {
         }
 
         let range = crate::NSRange::from(range);
-        let mut vec: Vec<NonNull<T>> = Vec::with_capacity(range.length);
-        let ptr: NonNull<NonNull<T>> = NonNull::new(vec.as_mut_ptr()).unwrap();
+        let mut vec: Vec<NonNull<ObjectType>> = Vec::with_capacity(range.length);
+        let ptr: NonNull<NonNull<ObjectType>> = NonNull::new(vec.as_mut_ptr()).unwrap();
 
         // SAFETY: Mostly the same as in `to_vec_unchecked`.
         unsafe { self.getObjects_range(ptr, range) };
         unsafe { vec.set_len(range.length) };
-        let vec = unsafe { mem::transmute::<Vec<NonNull<T>>, Vec<&T>>(vec) };
+        let vec = unsafe { mem::transmute::<Vec<NonNull<ObjectType>>, Vec<&ObjectType>>(vec) };
 
-        vec.into_iter().map(T::retain).collect()
+        vec.into_iter().map(ObjectType::retain).collect()
     }
 }
 
 /// Convenience mutation methods.
-impl<T: Message> NSMutableArray<T> {
+impl<ObjectType: Message> NSMutableArray<ObjectType> {
     /// Insert an object into the array at the given index.
     ///
     /// # Panics
     ///
     /// Panics if the index is out of bounds.
     #[doc(alias = "insertObject:atIndex:")]
-    pub fn insert(&self, index: usize, obj: &T) {
+    pub fn insert(&self, index: usize, obj: &ObjectType) {
         // TODO: Replace this check with catching the thrown NSRangeException
         let len = self.len();
         if index < len {
@@ -291,13 +291,13 @@ impl<T: Message> NSMutableArray<T> {
     /// Sort the array by the given comparison closure.
     #[cfg(feature = "NSObjCRuntime")]
     #[doc(alias = "sortUsingFunction:context:")]
-    pub fn sort_by<F: FnMut(&T, &T) -> core::cmp::Ordering>(&self, compare: F) {
+    pub fn sort_by<F: FnMut(&ObjectType, &ObjectType) -> core::cmp::Ordering>(&self, compare: F) {
         unsafe extern "C-unwind" fn compare_with_closure<
-            T,
-            F: FnMut(&T, &T) -> core::cmp::Ordering,
+            ObjectType,
+            F: FnMut(&ObjectType, &ObjectType) -> core::cmp::Ordering,
         >(
-            obj1: core::ptr::NonNull<T>,
-            obj2: core::ptr::NonNull<T>,
+            obj1: core::ptr::NonNull<ObjectType>,
+            obj2: core::ptr::NonNull<ObjectType>,
             context: *mut core::ffi::c_void,
         ) -> isize {
             let context: *mut F = context.cast();
@@ -313,7 +313,7 @@ impl<T: Message> NSMutableArray<T> {
         }
 
         // Create function pointer
-        let f: unsafe extern "C-unwind" fn(_, _, _) -> _ = compare_with_closure::<T, F>;
+        let f: unsafe extern "C-unwind" fn(_, _, _) -> _ = compare_with_closure::<ObjectType, F>;
 
         // Grab a type-erased pointer to the closure (a pointer to stack).
         let mut closure = compare;
@@ -326,8 +326,8 @@ impl<T: Message> NSMutableArray<T> {
 }
 
 #[cfg(feature = "NSEnumerator")]
-unsafe impl<T: Message> iter::FastEnumerationHelper for NSArray<T> {
-    type Item = T;
+unsafe impl<ObjectType: Message> iter::FastEnumerationHelper for NSArray<ObjectType> {
+    type Item = ObjectType;
 
     #[inline]
     fn maybe_len(&self) -> Option<usize> {
@@ -336,8 +336,8 @@ unsafe impl<T: Message> iter::FastEnumerationHelper for NSArray<T> {
 }
 
 #[cfg(feature = "NSEnumerator")]
-unsafe impl<T: Message> iter::FastEnumerationHelper for NSMutableArray<T> {
-    type Item = T;
+unsafe impl<ObjectType: Message> iter::FastEnumerationHelper for NSMutableArray<ObjectType> {
+    type Item = ObjectType;
 
     #[inline]
     fn maybe_len(&self) -> Option<usize> {
@@ -348,11 +348,11 @@ unsafe impl<T: Message> iter::FastEnumerationHelper for NSMutableArray<T> {
 /// An iterator over the items of an array.
 #[derive(Debug)]
 #[cfg(feature = "NSEnumerator")]
-pub struct Iter<'a, T: Message>(iter::Iter<'a, NSArray<T>>);
+pub struct Iter<'a, ObjectType: Message>(iter::Iter<'a, NSArray<ObjectType>>);
 
 #[cfg(feature = "NSEnumerator")]
 __impl_iter! {
-    impl<'a, T: Message> Iterator<Item = Retained<T>> for Iter<'a, T> { ... }
+    impl<'a, ObjectType: Message> Iterator<Item = Retained<ObjectType>> for Iter<'a, ObjectType> { ... }
 }
 
 /// An iterator over unretained items of an array.
@@ -362,46 +362,46 @@ __impl_iter! {
 /// The array must not be mutated while this is alive.
 #[derive(Debug)]
 #[cfg(feature = "NSEnumerator")]
-pub struct IterUnchecked<'a, T: Message>(iter::IterUnchecked<'a, NSArray<T>>);
+pub struct IterUnchecked<'a, ObjectType: Message>(iter::IterUnchecked<'a, NSArray<ObjectType>>);
 
 #[cfg(feature = "NSEnumerator")]
 __impl_iter! {
-    impl<'a, T: Message> Iterator<Item = &'a T> for IterUnchecked<'a, T> { ... }
+    impl<'a, ObjectType: Message> Iterator<Item = &'a ObjectType> for IterUnchecked<'a, ObjectType> { ... }
 }
 
 /// A retained iterator over the items of an array.
 #[derive(Debug)]
 #[cfg(feature = "NSEnumerator")]
-pub struct IntoIter<T: Message>(iter::IntoIter<NSArray<T>>);
+pub struct IntoIter<ObjectType: Message>(iter::IntoIter<NSArray<ObjectType>>);
 
 #[cfg(feature = "NSEnumerator")]
 __impl_iter! {
-    impl<T: Message> Iterator<Item = Retained<T>> for IntoIter<T> { ... }
+    impl<ObjectType: Message> Iterator<Item = Retained<ObjectType>> for IntoIter<ObjectType> { ... }
 }
 
 #[cfg(feature = "NSEnumerator")]
 __impl_into_iter! {
-    impl<T: Message> IntoIterator for &NSArray<T> {
-        type IntoIter = Iter<'_, T>;
+    impl<ObjectType: Message> IntoIterator for &NSArray<ObjectType> {
+        type IntoIter = Iter<'_, ObjectType>;
     }
 
-    impl<T: Message> IntoIterator for &NSMutableArray<T> {
-        type IntoIter = Iter<'_, T>;
+    impl<ObjectType: Message> IntoIterator for &NSMutableArray<ObjectType> {
+        type IntoIter = Iter<'_, ObjectType>;
     }
 
-    impl<T: Message> IntoIterator for Retained<NSArray<T>> {
+    impl<ObjectType: Message> IntoIterator for Retained<NSArray<ObjectType>> {
         #[uses(new)]
-        type IntoIter = IntoIter<T>;
+        type IntoIter = IntoIter<ObjectType>;
     }
 
-    impl<T: Message> IntoIterator for Retained<NSMutableArray<T>> {
+    impl<ObjectType: Message> IntoIterator for Retained<NSMutableArray<ObjectType>> {
         #[uses(new_mutable)]
-        type IntoIter = IntoIter<T>;
+        type IntoIter = IntoIter<ObjectType>;
     }
 }
 
 #[cfg(feature = "NSEnumerator")]
-impl<T: fmt::Debug + Message> fmt::Debug for NSArray<T> {
+impl<ObjectType: fmt::Debug + Message> fmt::Debug for NSArray<ObjectType> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_list().entries(self).finish()
@@ -409,49 +409,53 @@ impl<T: fmt::Debug + Message> fmt::Debug for NSArray<T> {
 }
 
 #[cfg(feature = "NSEnumerator")]
-impl<T: fmt::Debug + Message> fmt::Debug for NSMutableArray<T> {
+impl<ObjectType: fmt::Debug + Message> fmt::Debug for NSMutableArray<ObjectType> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
     }
 }
 
-impl<T: Message> Extend<Retained<T>> for &NSMutableArray<T> {
-    fn extend<I: IntoIterator<Item = Retained<T>>>(&mut self, iter: I) {
+impl<ObjectType: Message> Extend<Retained<ObjectType>> for &NSMutableArray<ObjectType> {
+    fn extend<I: IntoIterator<Item = Retained<ObjectType>>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| self.addObject(&item));
     }
 }
 
-impl<'a, T: Message> Extend<&'a T> for &NSMutableArray<T> {
-    fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
+impl<'a, ObjectType: Message> Extend<&'a ObjectType> for &NSMutableArray<ObjectType> {
+    fn extend<I: IntoIterator<Item = &'a ObjectType>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| self.addObject(item));
     }
 }
 
-impl<'a, T: Message + 'a> RetainedFromIterator<&'a T> for NSArray<T> {
-    fn retained_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
+impl<'a, ObjectType: Message + 'a> RetainedFromIterator<&'a ObjectType> for NSArray<ObjectType> {
+    fn retained_from_iter<I: IntoIterator<Item = &'a ObjectType>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
-impl<T: Message> RetainedFromIterator<Retained<T>> for NSArray<T> {
-    fn retained_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
+impl<ObjectType: Message> RetainedFromIterator<Retained<ObjectType>> for NSArray<ObjectType> {
+    fn retained_from_iter<I: IntoIterator<Item = Retained<ObjectType>>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_retained_slice(&vec)
     }
 }
 
-impl<'a, T: Message + 'a> RetainedFromIterator<&'a T> for NSMutableArray<T> {
-    fn retained_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
+impl<'a, ObjectType: Message + 'a> RetainedFromIterator<&'a ObjectType>
+    for NSMutableArray<ObjectType>
+{
+    fn retained_from_iter<I: IntoIterator<Item = &'a ObjectType>>(iter: I) -> Retained<Self> {
         // TODO: Is this, or is using `initWithCapacity` the most optimal?
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
-impl<T: Message> RetainedFromIterator<Retained<T>> for NSMutableArray<T> {
-    fn retained_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
+impl<ObjectType: Message> RetainedFromIterator<Retained<ObjectType>>
+    for NSMutableArray<ObjectType>
+{
+    fn retained_from_iter<I: IntoIterator<Item = Retained<ObjectType>>>(iter: I) -> Retained<Self> {
         // TODO: Is this, or is using `initWithCapacity` the most optimal?
         let vec = Vec::from_iter(iter);
         Self::from_retained_slice(&vec)

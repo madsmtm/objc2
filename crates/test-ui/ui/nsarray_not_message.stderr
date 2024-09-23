@@ -46,11 +46,11 @@ error[E0277]: the trait bound `Retained<NSObject>: Message` is not satisfied
             NSEnumerator<ObjectType>
             NSError
           and $N others
-note: required by a bound in `objc2_foundation::array::<impl NSArray<T>>::from_slice`
+note: required by a bound in `objc2_foundation::array::<impl NSArray<ObjectType>>::from_slice`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/array.rs
   |
-  | impl<T: Message> NSArray<T> {
-  |         ^^^^^^^ required by this bound in `objc2_foundation::array::<impl NSArray<T>>::from_slice`
+  | impl<ObjectType: Message> NSArray<ObjectType> {
+  |                  ^^^^^^^ required by this bound in `objc2_foundation::array::<impl NSArray<ObjectType>>::from_slice`
 ...
-  |     pub fn from_slice(slice: &[&T]) -> Retained<Self> {
+  |     pub fn from_slice(slice: &[&ObjectType]) -> Retained<Self> {
   |            ---------- required by a bound in this associated function

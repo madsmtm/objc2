@@ -6,19 +6,19 @@ use crate::{iter, NSEnumerator};
 
 // TODO: Measure whether iterating through `nextObject` or fast enumeration is
 // fastest.
-// impl<T: Message> Iterator for NSEnumerator<T> {
-//     type Item = Retained<T>;
+// impl<ObjectType: Message> Iterator for NSEnumerator<ObjectType> {
+//     type Item = Retained<ObjectType>;
 //
 //     #[inline]
-//     fn next(&mut self) -> Option<Retained<T>> {
+//     fn next(&mut self) -> Option<Retained<ObjectType>> {
 //         self.nextObject()
 //     }
 // }
 
-impl<T: Message> NSEnumerator<T> {
+impl<ObjectType: Message> NSEnumerator<ObjectType> {
     /// Iterate over the enumerator's elements.
     #[inline]
-    pub fn iter(&self) -> Iter<'_, T> {
+    pub fn iter(&self) -> Iter<'_, ObjectType> {
         Iter(iter::Iter::new(self))
     }
 
@@ -32,13 +32,13 @@ impl<T: Message> NSEnumerator<T> {
     /// The enumerator and the underlying collection must not be mutated while
     /// the iterator is alive.
     #[inline]
-    pub unsafe fn iter_unchecked(&self) -> IterUnchecked<'_, T> {
+    pub unsafe fn iter_unchecked(&self) -> IterUnchecked<'_, ObjectType> {
         IterUnchecked(iter::IterUnchecked::new(self))
     }
 }
 
-unsafe impl<T: Message> iter::FastEnumerationHelper for NSEnumerator<T> {
-    type Item = T;
+unsafe impl<ObjectType: Message> iter::FastEnumerationHelper for NSEnumerator<ObjectType> {
+    type Item = ObjectType;
 
     #[inline]
     fn maybe_len(&self) -> Option<usize> {
@@ -48,10 +48,10 @@ unsafe impl<T: Message> iter::FastEnumerationHelper for NSEnumerator<T> {
 
 /// An iterator over the items in an enumerator.
 #[derive(Debug)]
-pub struct Iter<'a, T: Message>(iter::Iter<'a, NSEnumerator<T>>);
+pub struct Iter<'a, ObjectType: Message>(iter::Iter<'a, NSEnumerator<ObjectType>>);
 
 __impl_iter! {
-    impl<'a, T: Message> Iterator<Item = Retained<T>> for Iter<'a, T> { ... }
+    impl<'a, ObjectType: Message> Iterator<Item = Retained<ObjectType>> for Iter<'a, ObjectType> { ... }
 }
 
 /// An iterator over unretained items in an enumerator.
@@ -61,28 +61,30 @@ __impl_iter! {
 /// The enumerator and the underlying collection must not be mutated while
 /// this is alive.
 #[derive(Debug)]
-pub struct IterUnchecked<'a, T: Message + 'a>(iter::IterUnchecked<'a, NSEnumerator<T>>);
+pub struct IterUnchecked<'a, ObjectType: Message + 'a>(
+    iter::IterUnchecked<'a, NSEnumerator<ObjectType>>,
+);
 
 __impl_iter! {
-    impl<'a, T: Message> Iterator<Item = &'a T> for IterUnchecked<'a, T> { ... }
+    impl<'a, ObjectType: Message> Iterator<Item = &'a ObjectType> for IterUnchecked<'a, ObjectType> { ... }
 }
 
 /// A consuming iterator over the items in an enumerator.
 #[derive(Debug)]
-pub struct IntoIter<T: Message>(iter::IntoIter<NSEnumerator<T>>);
+pub struct IntoIter<ObjectType: Message>(iter::IntoIter<NSEnumerator<ObjectType>>);
 
 __impl_iter! {
-    impl<T: Message> Iterator<Item = Retained<T>> for IntoIter<T> { ... }
+    impl<ObjectType: Message> Iterator<Item = Retained<ObjectType>> for IntoIter<ObjectType> { ... }
 }
 
 __impl_into_iter! {
-    impl<T: Message> IntoIterator for &NSEnumerator<T> {
-        type IntoIter = Iter<'_, T>;
+    impl<ObjectType: Message> IntoIterator for &NSEnumerator<ObjectType> {
+        type IntoIter = Iter<'_, ObjectType>;
     }
 
-    impl<T: Message> IntoIterator for Retained<NSEnumerator<T>> {
+    impl<ObjectType: Message> IntoIterator for Retained<NSEnumerator<ObjectType>> {
         #[uses(new)]
-        type IntoIter = IntoIter<T>;
+        type IntoIter = IntoIter<ObjectType>;
     }
 }
 

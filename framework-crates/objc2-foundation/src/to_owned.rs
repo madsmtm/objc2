@@ -7,7 +7,7 @@ use objc2::Message;
 use crate::{NSCopying, NSMutableCopying};
 
 #[cfg(feature = "NSArray")]
-impl<T: Message> ToOwned for crate::NSArray<T> {
+impl<ObjectType: Message> ToOwned for crate::NSArray<ObjectType> {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
@@ -15,7 +15,7 @@ impl<T: Message> ToOwned for crate::NSArray<T> {
 }
 
 #[cfg(feature = "NSArray")]
-impl<T: Message> ToOwned for crate::NSMutableArray<T> {
+impl<ObjectType: Message> ToOwned for crate::NSMutableArray<ObjectType> {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.mutableCopy()
@@ -47,7 +47,7 @@ impl ToOwned for crate::NSException {
 }
 
 #[cfg(feature = "NSSet")]
-impl<T: Message> ToOwned for crate::NSSet<T> {
+impl<ObjectType: Message> ToOwned for crate::NSSet<ObjectType> {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
@@ -55,7 +55,7 @@ impl<T: Message> ToOwned for crate::NSSet<T> {
 }
 
 #[cfg(feature = "NSSet")]
-impl<T: Message> ToOwned for crate::NSMutableSet<T> {
+impl<ObjectType: Message> ToOwned for crate::NSMutableSet<ObjectType> {
     type Owned = Retained<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.mutableCopy()

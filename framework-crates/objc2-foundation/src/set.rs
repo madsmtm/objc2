@@ -11,7 +11,7 @@ use crate::iter;
 use crate::{util, NSMutableSet, NSSet};
 
 /// Convenience creation methods.
-impl<T: Message> NSSet<T> {
+impl<ObjectType: Message> NSSet<ObjectType> {
     /// Creates an [`NSSet`] from a slice of `Retained`s.
     ///
     /// # Examples
@@ -22,14 +22,14 @@ impl<T: Message> NSSet<T> {
     /// let strs = ["one", "two", "three"].map(NSString::from_str);
     /// let set = NSSet::from_retained_slice(&strs);
     /// ```
-    pub fn from_retained_slice(slice: &[Retained<T>]) -> Retained<Self> {
+    pub fn from_retained_slice(slice: &[Retained<ObjectType>]) -> Retained<Self> {
         let len = slice.len();
         let ptr = util::retained_ptr_cast_const(slice.as_ptr());
         // SAFETY: Same as `NSArray::from_retained_slice`
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
     }
 
-    pub fn from_slice(slice: &[&T]) -> Retained<Self> {
+    pub fn from_slice(slice: &[&ObjectType]) -> Retained<Self> {
         let len = slice.len();
         let ptr = util::ref_ptr_cast_const(slice.as_ptr());
         // SAFETY: Same as `NSArray::from_slice`.
@@ -38,7 +38,7 @@ impl<T: Message> NSSet<T> {
 }
 
 /// Convenience creation methods.
-impl<T: Message> NSMutableSet<T> {
+impl<ObjectType: Message> NSMutableSet<ObjectType> {
     /// Creates an [`NSMutableSet`] from a slice of `Retained`s.
     ///
     /// # Examples
@@ -49,14 +49,14 @@ impl<T: Message> NSMutableSet<T> {
     /// let strs = ["one", "two", "three"].map(NSString::from_str);
     /// let set = NSMutableSet::from_retained_slice(&strs);
     /// ```
-    pub fn from_retained_slice(slice: &[Retained<T>]) -> Retained<Self> {
+    pub fn from_retained_slice(slice: &[Retained<ObjectType>]) -> Retained<Self> {
         let len = slice.len();
         let ptr = util::retained_ptr_cast_const(slice.as_ptr());
         // SAFETY: Same as `NSArray::from_retained_slice`
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
     }
 
-    pub fn from_slice(slice: &[&T]) -> Retained<Self> {
+    pub fn from_slice(slice: &[&ObjectType]) -> Retained<Self> {
         let len = slice.len();
         let ptr = util::ref_ptr_cast_const(slice.as_ptr());
         // SAFETY: Same as `NSArray::from_slice`.
@@ -75,7 +75,7 @@ impl<T: Message> NSMutableSet<T> {
 /// doing so - otherwise, we might end up accessing a deallocated object.
 ///
 /// [collections-own]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmPractical.html#//apple_ref/doc/uid/TP40004447-SW12
-impl<T: Message> NSSet<T> {
+impl<ObjectType: Message> NSSet<ObjectType> {
     /// A direct reference to an arbitrary object in the set.
     ///
     /// Consider using the [`anyObject`](Self::anyObject) method instead,
@@ -85,7 +85,7 @@ impl<T: Message> NSSet<T> {
     ///
     /// The set must not be mutated while the reference is live.
     #[doc(alias = "anyObject")]
-    pub unsafe fn anyObject_unchecked(&self) -> Option<&T> {
+    pub unsafe fn anyObject_unchecked(&self) -> Option<&ObjectType> {
         // SAFETY: Upheld by caller.
         unsafe { msg_send![self, anyObject] }
     }
@@ -99,7 +99,7 @@ impl<T: Message> NSSet<T> {
     ///
     /// The set must not be mutated while the returned reference is live.
     #[doc(alias = "member:")]
-    pub unsafe fn member_unchecked(&self, object: &T) -> Option<&T> {
+    pub unsafe fn member_unchecked(&self, object: &ObjectType) -> Option<&ObjectType> {
         // SAFETY: Upheld by caller.
         unsafe { msg_send![self, member: object] }
     }
@@ -117,13 +117,13 @@ impl<T: Message> NSSet<T> {
     #[cfg(feature = "NSEnumerator")]
     #[doc(alias = "objectEnumerator")]
     #[inline]
-    pub unsafe fn iter_unchecked(&self) -> IterUnchecked<'_, T> {
+    pub unsafe fn iter_unchecked(&self) -> IterUnchecked<'_, ObjectType> {
         IterUnchecked(super::iter::IterUnchecked::new(self))
     }
 }
 
 /// Various accessor methods.
-impl<T: Message> NSSet<T> {
+impl<ObjectType: Message> NSSet<ObjectType> {
     /// Returns the number of elements in the set.
     ///
     /// # Examples
@@ -169,7 +169,7 @@ impl<T: Message> NSSet<T> {
     #[cfg(feature = "NSEnumerator")]
     #[doc(alias = "objectEnumerator")]
     #[inline]
-    pub fn iter(&self) -> Iter<'_, T> {
+    pub fn iter(&self) -> Iter<'_, ObjectType> {
         Iter(super::iter::Iter::new(self))
     }
 
@@ -190,14 +190,14 @@ impl<T: Message> NSSet<T> {
     /// assert_eq!(vec.len(), 3);
     /// ```
     #[cfg(feature = "NSEnumerator")]
-    pub fn to_vec(&self) -> Vec<Retained<T>> {
+    pub fn to_vec(&self) -> Vec<Retained<ObjectType>> {
         self.iter().collect()
     }
 }
 
 #[cfg(feature = "NSEnumerator")]
-unsafe impl<T: Message> iter::FastEnumerationHelper for NSSet<T> {
-    type Item = T;
+unsafe impl<ObjectType: Message> iter::FastEnumerationHelper for NSSet<ObjectType> {
+    type Item = ObjectType;
 
     #[inline]
     fn maybe_len(&self) -> Option<usize> {
@@ -206,8 +206,8 @@ unsafe impl<T: Message> iter::FastEnumerationHelper for NSSet<T> {
 }
 
 #[cfg(feature = "NSEnumerator")]
-unsafe impl<T: Message> iter::FastEnumerationHelper for NSMutableSet<T> {
-    type Item = T;
+unsafe impl<ObjectType: Message> iter::FastEnumerationHelper for NSMutableSet<ObjectType> {
+    type Item = ObjectType;
 
     #[inline]
     fn maybe_len(&self) -> Option<usize> {
@@ -218,21 +218,21 @@ unsafe impl<T: Message> iter::FastEnumerationHelper for NSMutableSet<T> {
 /// An iterator over the items of a set.
 #[derive(Debug)]
 #[cfg(feature = "NSEnumerator")]
-pub struct Iter<'a, T: Message>(iter::Iter<'a, NSSet<T>>);
+pub struct Iter<'a, ObjectType: Message>(iter::Iter<'a, NSSet<ObjectType>>);
 
 #[cfg(feature = "NSEnumerator")]
 __impl_iter! {
-    impl<'a, T: Message> Iterator<Item = Retained<T>> for Iter<'a, T> { ... }
+    impl<'a, ObjectType: Message> Iterator<Item = Retained<ObjectType>> for Iter<'a, ObjectType> { ... }
 }
 
 /// An unchecked iterator over the items of a set.
 #[derive(Debug)]
 #[cfg(feature = "NSEnumerator")]
-pub struct IterUnchecked<'a, T: Message>(iter::IterUnchecked<'a, NSSet<T>>);
+pub struct IterUnchecked<'a, ObjectType: Message>(iter::IterUnchecked<'a, NSSet<ObjectType>>);
 
 #[cfg(feature = "NSEnumerator")]
 __impl_iter! {
-    impl<'a, T: Message> Iterator<Item = &'a T> for IterUnchecked<'a, T> { ... }
+    impl<'a, ObjectType: Message> Iterator<Item = &'a ObjectType> for IterUnchecked<'a, ObjectType> { ... }
 }
 
 /// An iterator over unretained items of a set.
@@ -242,36 +242,36 @@ __impl_iter! {
 /// The set must not be mutated while this is alive.
 #[derive(Debug)]
 #[cfg(feature = "NSEnumerator")]
-pub struct IntoIter<T: Message>(iter::IntoIter<NSSet<T>>);
+pub struct IntoIter<ObjectType: Message>(iter::IntoIter<NSSet<ObjectType>>);
 
 #[cfg(feature = "NSEnumerator")]
 __impl_iter! {
-    impl<'a, T: Message> Iterator<Item = Retained<T>> for IntoIter<T> { ... }
+    impl<'a, ObjectType: Message> Iterator<Item = Retained<ObjectType>> for IntoIter<ObjectType> { ... }
 }
 
 #[cfg(feature = "NSEnumerator")]
 __impl_into_iter! {
-    impl<T: Message> IntoIterator for &NSSet<T> {
-        type IntoIter = Iter<'_, T>;
+    impl<ObjectType: Message> IntoIterator for &NSSet<ObjectType> {
+        type IntoIter = Iter<'_, ObjectType>;
     }
 
-    impl<T: Message> IntoIterator for &NSMutableSet<T> {
-        type IntoIter = Iter<'_, T>;
+    impl<ObjectType: Message> IntoIterator for &NSMutableSet<ObjectType> {
+        type IntoIter = Iter<'_, ObjectType>;
     }
 
-    impl<T: Message> IntoIterator for Retained<NSSet<T>> {
+    impl<ObjectType: Message> IntoIterator for Retained<NSSet<ObjectType>> {
         #[uses(new)]
-        type IntoIter = IntoIter<T>;
+        type IntoIter = IntoIter<ObjectType>;
     }
 
-    impl<T: Message> IntoIterator for Retained<NSMutableSet<T>> {
+    impl<ObjectType: Message> IntoIterator for Retained<NSMutableSet<ObjectType>> {
         #[uses(new_mutable)]
-        type IntoIter = IntoIter<T>;
+        type IntoIter = IntoIter<ObjectType>;
     }
 }
 
 #[cfg(feature = "NSEnumerator")]
-impl<T: fmt::Debug + Message> fmt::Debug for NSSet<T> {
+impl<ObjectType: fmt::Debug + Message> fmt::Debug for NSSet<ObjectType> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_set().entries(self).finish()
@@ -279,7 +279,7 @@ impl<T: fmt::Debug + Message> fmt::Debug for NSSet<T> {
 }
 
 #[cfg(feature = "NSEnumerator")]
-impl<T: fmt::Debug + Message> fmt::Debug for NSMutableSet<T> {
+impl<ObjectType: fmt::Debug + Message> fmt::Debug for NSMutableSet<ObjectType> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
@@ -287,53 +287,55 @@ impl<T: fmt::Debug + Message> fmt::Debug for NSMutableSet<T> {
 }
 
 #[cfg(feature = "NSEnumerator")]
-impl<T: fmt::Debug + Message> fmt::Debug for crate::NSCountedSet<T> {
+impl<ObjectType: fmt::Debug + Message> fmt::Debug for crate::NSCountedSet<ObjectType> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
     }
 }
 
-impl<T: Message> Extend<Retained<T>> for &NSMutableSet<T> {
-    fn extend<I: IntoIterator<Item = Retained<T>>>(&mut self, iter: I) {
+impl<ObjectType: Message> Extend<Retained<ObjectType>> for &NSMutableSet<ObjectType> {
+    fn extend<I: IntoIterator<Item = Retained<ObjectType>>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
             self.addObject(&item);
         });
     }
 }
 
-impl<'a, T: Message> Extend<&'a T> for &NSMutableSet<T> {
-    fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
+impl<'a, ObjectType: Message> Extend<&'a ObjectType> for &NSMutableSet<ObjectType> {
+    fn extend<I: IntoIterator<Item = &'a ObjectType>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
             self.addObject(item);
         });
     }
 }
 
-impl<'a, T: Message + 'a> RetainedFromIterator<&'a T> for NSSet<T> {
-    fn retained_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
+impl<'a, ObjectType: Message + 'a> RetainedFromIterator<&'a ObjectType> for NSSet<ObjectType> {
+    fn retained_from_iter<I: IntoIterator<Item = &'a ObjectType>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
-impl<T: Message> RetainedFromIterator<Retained<T>> for NSSet<T> {
-    fn retained_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
+impl<ObjectType: Message> RetainedFromIterator<Retained<ObjectType>> for NSSet<ObjectType> {
+    fn retained_from_iter<I: IntoIterator<Item = Retained<ObjectType>>>(iter: I) -> Retained<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_retained_slice(&vec)
     }
 }
 
-impl<'a, T: Message + 'a> RetainedFromIterator<&'a T> for NSMutableSet<T> {
-    fn retained_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Retained<Self> {
+impl<'a, ObjectType: Message + 'a> RetainedFromIterator<&'a ObjectType>
+    for NSMutableSet<ObjectType>
+{
+    fn retained_from_iter<I: IntoIterator<Item = &'a ObjectType>>(iter: I) -> Retained<Self> {
         // TODO: Is this, or is using `initWithCapacity` the most optimal?
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
-impl<T: Message> RetainedFromIterator<Retained<T>> for NSMutableSet<T> {
-    fn retained_from_iter<I: IntoIterator<Item = Retained<T>>>(iter: I) -> Retained<Self> {
+impl<ObjectType: Message> RetainedFromIterator<Retained<ObjectType>> for NSMutableSet<ObjectType> {
+    fn retained_from_iter<I: IntoIterator<Item = Retained<ObjectType>>>(iter: I) -> Retained<Self> {
         // TODO: Is this, or is using `initWithCapacity` the most optimal?
         let vec = Vec::from_iter(iter);
         Self::from_retained_slice(&vec)

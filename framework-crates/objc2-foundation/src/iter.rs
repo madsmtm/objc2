@@ -602,16 +602,16 @@ macro_rules! __impl_into_iter {
     () => {};
     (
         $(#[$m:meta])*
-        impl<T: Message> IntoIterator for &$ty:ident<T> {
-            type IntoIter = $iter:ident<'_, T>;
+        impl<$param:ident: Message> IntoIterator for &$ty:ident<$param2:ident> {
+            type IntoIter = $iter:ident<'_, $param3:ident>;
         }
 
         $($rest:tt)*
     ) => {
         $(#[$m])*
-        impl<'a, T: Message> IntoIterator for &'a $ty<T> {
-            type Item = Retained<T>;
-            type IntoIter = $iter<'a, T>;
+        impl<'a, $param: Message> IntoIterator for &'a $ty<$param2> {
+            type Item = Retained<$param3>;
+            type IntoIter = $iter<'a, $param3>;
 
             #[inline]
             fn into_iter(self) -> Self::IntoIter {
@@ -625,17 +625,17 @@ macro_rules! __impl_into_iter {
     };
     (
         $(#[$m:meta])*
-        impl<T: Message> IntoIterator for Retained<$ty:ident<T>> {
+        impl<$param:ident: Message> IntoIterator for Retained<$ty:ident<$param2:ident>> {
             #[uses($new_fn:ident)]
-            type IntoIter = $into_iter:ident<T>;
+            type IntoIter = $into_iter:ident<$param3:ident>;
         }
 
         $($rest:tt)*
     ) => {
         $(#[$m])*
-        impl<T: Message> objc2::rc::RetainedIntoIterator for $ty<T> {
-            type Item = Retained<T>;
-            type IntoIter = $into_iter<T>;
+        impl<$param: Message> objc2::rc::RetainedIntoIterator for $ty<$param2> {
+            type Item = Retained<$param3>;
+            type IntoIter = $into_iter<$param3>;
 
             #[inline]
             fn retained_into_iter(this: Retained<Self>) -> Self::IntoIter {

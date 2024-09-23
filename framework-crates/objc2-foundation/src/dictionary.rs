@@ -19,19 +19,19 @@ use crate::{util, CopyingHelper, NSCopying};
 use crate::{NSDictionary, NSMutableDictionary};
 
 #[cfg(feature = "NSObject")]
-fn keys_to_ptr<Q>(keys: &[&Q]) -> *mut NonNull<ProtocolObject<dyn NSCopying>>
+fn keys_to_ptr<CopiedKey>(keys: &[&CopiedKey]) -> *mut NonNull<ProtocolObject<dyn NSCopying>>
 where
-    Q: Message + NSCopying,
+    CopiedKey: Message + NSCopying,
 {
-    let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
-    // SAFETY: `Q` is `Message + NSCopying`, and is therefore safe to cast to
+    let keys: *mut NonNull<CopiedKey> = util::ref_ptr_cast_const(keys.as_ptr());
+    // SAFETY: `CopiedKey` is `Message + NSCopying`, and is therefore safe to cast to
     // `ProtocolObject<dyn NSCopying>`.
     let keys: *mut NonNull<ProtocolObject<dyn NSCopying>> = keys.cast();
     keys
 }
 
 /// Convenience creation methods.
-impl<K: Message, V: Message> NSDictionary<K, V> {
+impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     /// Create a new dictionary from a slice of keys, and a slice of objects.
     ///
     /// This is a safe interface to `initWithObjects:forKeys:count:`.
@@ -54,13 +54,13 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     /// assert_eq!(&*dict.objectForKey(ns_string!("key2")).unwrap(), ns_string!("value2"));
     /// ```
     #[cfg(feature = "NSObject")]
-    pub fn from_slices<Q>(keys: &[&Q], objects: &[&V]) -> Retained<Self>
+    pub fn from_slices<CopiedKey>(keys: &[&CopiedKey], objects: &[&ObjectType]) -> Retained<Self>
     where
         // The dictionary copies its keys, which is why we require `NSCopying`
-        // and use `CopyingHelper` on all input data - we want to ensure that the
-        // type-system knows that it's not actually e.g. `NSMutableString`
+        // and use `CopyingHelper` on all input data - we want to ensure that
+        // the type-system knows that it's not actually e.g. `NSMutableString`
         // that is being stored, but instead `NSString`.
-        Q: Message + NSCopying + CopyingHelper<Result = K>,
+        CopiedKey: Message + NSCopying + CopyingHelper<Result = KeyType>,
     {
         // Ensure that we don't read too far into one of the buffers.
         assert_eq!(
@@ -74,8 +74,9 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
         let objects = util::ref_ptr_cast_const(objects.as_ptr());
 
         // SAFETY:
-        // - All `T: Message` use interior mutability, and the dictionary
-        //   extends the lifetime of them internally by retaining them.
+        // - All types that are `Message` use interior mutability, and the
+        //   dictionary extends the lifetime of them internally by retaining
+        //   them.
         //
         // - The pointers are valid until the method has finished executing,
         //   at which point the dictionary will have created its own internal
@@ -95,9 +96,12 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     }
 
     #[cfg(feature = "NSObject")]
-    pub fn from_retained_objects<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
+    pub fn from_retained_objects<CopiedKey>(
+        keys: &[&CopiedKey],
+        objects: &[Retained<ObjectType>],
+    ) -> Retained<Self>
     where
-        Q: Message + NSCopying + CopyingHelper<Result = K>,
+        CopiedKey: Message + NSCopying + CopyingHelper<Result = KeyType>,
     {
         // Ensure that we don't read too far into one of the buffers.
         assert_eq!(
@@ -116,11 +120,11 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
 }
 
 /// Convenience creation methods.
-impl<K: Message, V: Message> NSMutableDictionary<K, V> {
+impl<KeyType: Message, ObjectType: Message> NSMutableDictionary<KeyType, ObjectType> {
     #[cfg(feature = "NSObject")]
-    pub fn from_slices<Q>(keys: &[&Q], objects: &[&V]) -> Retained<Self>
+    pub fn from_slices<CopiedKey>(keys: &[&CopiedKey], objects: &[&ObjectType]) -> Retained<Self>
     where
-        Q: Message + NSCopying + CopyingHelper<Result = K>,
+        CopiedKey: Message + NSCopying + CopyingHelper<Result = KeyType>,
     {
         // Ensure that we don't read too far into one of the buffers.
         assert_eq!(
@@ -138,9 +142,12 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     }
 
     #[cfg(feature = "NSObject")]
-    pub fn from_retained_objects<Q>(keys: &[&Q], objects: &[Retained<V>]) -> Retained<Self>
+    pub fn from_retained_objects<CopiedKey>(
+        keys: &[&CopiedKey],
+        objects: &[Retained<ObjectType>],
+    ) -> Retained<Self>
     where
-        Q: Message + NSCopying + CopyingHelper<Result = K>,
+        CopiedKey: Message + NSCopying + CopyingHelper<Result = KeyType>,
     {
         // Ensure that we don't read too far into one of the buffers.
         assert_eq!(
@@ -158,15 +165,15 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     }
 }
 
-// Note: We'd like to make getter methods take `K: Borrow<Q>` like
-// `std::collections::HashMap`, so that e.g. `NSDictionary<NSString, ...>`
+// Note: We'd like to make getter methods take `KeyType: Borrow<KeyType>`
+// like `std::collections::HashMap`, so that e.g. `NSDictionary<NSString, V>`
 // could take a `&NSObject` as input, and still make that work since
 // `NSString` borrows to `NSObject`.
 //
 // But we can't really, at least not with extra `unsafe` / an extra trait,
 // since we don't control how the comparisons happen.
 //
-// The most useful alternative would probably be to take `impl AsRef<K>`, but
+// The most useful alternative would probably be to take `impl AsRef<KeyType>`, but
 // objc2 classes deref to their superclass anyhow, so let's just use a simple,
 // normal reference.
 
@@ -182,7 +189,7 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
 /// accessing a deallocated object.
 ///
 /// [collections-own]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmPractical.html#//apple_ref/doc/uid/TP40004447-SW12
-impl<K: Message, V: Message> NSDictionary<K, V> {
+impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     /// Get a direct reference to the object corresponding to the key.
     ///
     /// Consider using the [`objectForKey`](Self::objectForKey) method
@@ -193,7 +200,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     /// The dictionary must not be mutated while the reference is live.
     #[doc(alias = "objectForKey:")]
     #[inline]
-    pub unsafe fn objectForKey_unchecked(&self, key: &K) -> Option<&V> {
+    pub unsafe fn objectForKey_unchecked(&self, key: &KeyType) -> Option<&ObjectType> {
         unsafe { msg_send![self, objectForKey: key] }
     }
 
@@ -208,7 +215,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     /// The dictionary must not be mutated while the returned references are
     /// alive.
     #[doc(alias = "getObjects:andKeys:")]
-    pub unsafe fn to_vecs_unchecked(&self) -> (Vec<&K>, Vec<&V>) {
+    pub unsafe fn to_vecs_unchecked(&self) -> (Vec<&KeyType>, Vec<&ObjectType>) {
         let len = self.len();
         let mut keys = Vec::with_capacity(len);
         let mut objs = Vec::with_capacity(len);
@@ -231,8 +238,8 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
         // lifetime is upheld by the caller.
         unsafe {
             (
-                mem::transmute::<Vec<NonNull<K>>, Vec<&K>>(keys),
-                mem::transmute::<Vec<NonNull<V>>, Vec<&V>>(objs),
+                mem::transmute::<Vec<NonNull<KeyType>>, Vec<&KeyType>>(keys),
+                mem::transmute::<Vec<NonNull<ObjectType>>, Vec<&ObjectType>>(objs),
             )
         }
     }
@@ -249,7 +256,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     #[cfg(feature = "NSEnumerator")]
     #[doc(alias = "keyEnumerator")]
     #[inline]
-    pub unsafe fn keys_unchecked(&self) -> KeysUnchecked<'_, K, V> {
+    pub unsafe fn keys_unchecked(&self) -> KeysUnchecked<'_, KeyType, ObjectType> {
         KeysUnchecked(iter::IterUnchecked::new(self))
     }
 
@@ -265,7 +272,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     #[cfg(feature = "NSEnumerator")]
     #[doc(alias = "objectEnumerator")]
     #[inline]
-    pub unsafe fn objects_unchecked(&self) -> ObjectsUnchecked<'_, K, V> {
+    pub unsafe fn objects_unchecked(&self) -> ObjectsUnchecked<'_, KeyType, ObjectType> {
         // SAFETY: Avoiding mutation is upheld by caller.
         let enumerator = unsafe { self.objectEnumerator() };
         // SAFETY: The enumerator came from the dictionary.
@@ -274,7 +281,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
 }
 
 /// Various accessor methods.
-impl<K: Message, V: Message> NSDictionary<K, V> {
+impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     /// The amount of elements in the dictionary.
     #[doc(alias = "count")]
     #[inline]
@@ -307,13 +314,13 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     /// }
     /// ```
     #[doc(alias = "getObjects:")]
-    pub fn to_vecs(&self) -> (Vec<Retained<K>>, Vec<Retained<V>>) {
+    pub fn to_vecs(&self) -> (Vec<Retained<KeyType>>, Vec<Retained<ObjectType>>) {
         // SAFETY: We retain the elements below, so that we know that the
         // dictionary isn't mutated while they are alive.
         let (keys, objects) = unsafe { self.to_vecs_unchecked() };
         (
-            keys.into_iter().map(K::retain).collect(),
-            objects.into_iter().map(V::retain).collect(),
+            keys.into_iter().map(KeyType::retain).collect(),
+            objects.into_iter().map(ObjectType::retain).collect(),
         )
     }
 
@@ -321,7 +328,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     #[cfg(feature = "NSEnumerator")]
     #[doc(alias = "keyEnumerator")]
     #[inline]
-    pub fn keys(&self) -> Keys<'_, K, V> {
+    pub fn keys(&self) -> Keys<'_, KeyType, ObjectType> {
         Keys(iter::Iter::new(self))
     }
 
@@ -343,7 +350,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     #[cfg(feature = "NSEnumerator")]
     #[doc(alias = "objectEnumerator")]
     #[inline]
-    pub fn objects(&self) -> Objects<'_, K, V> {
+    pub fn objects(&self) -> Objects<'_, KeyType, ObjectType> {
         // SAFETY: The iterator checks for mutation while enumerating.
         let enumerator = unsafe { self.objectEnumerator() };
         // SAFETY: The enumerator came from the dictionary.
@@ -352,7 +359,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
 }
 
 /// Convenience mutation methods.
-impl<K: Message, V: Message> NSMutableDictionary<K, V> {
+impl<KeyType: Message, ObjectType: Message> NSMutableDictionary<KeyType, ObjectType> {
     /// Inserts a key-value pair into the dictionary.
     ///
     /// If the dictionary did not have this key present, the value is
@@ -370,20 +377,22 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     #[cfg(feature = "NSObject")]
     #[doc(alias = "setObject:forKey:")]
     #[inline]
-    pub fn insert<Q>(&self, key: &Q, object: &V)
+    pub fn insert<CopiedKey>(&self, key: &CopiedKey, object: &ObjectType)
     where
-        Q: Message + NSCopying + CopyingHelper<Result = K>,
+        CopiedKey: Message + NSCopying + CopyingHelper<Result = KeyType>,
     {
         let key = ProtocolObject::from_ref(key);
-        // SAFETY: The key is copied, and then has the correct type `K`.
+        // SAFETY: The key is copied, and then has the correct type `KeyType`.
         unsafe { self.setObject_forKey(object, key) };
     }
 }
 
 #[cfg(feature = "NSEnumerator")]
-unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSDictionary<K, V> {
+unsafe impl<KeyType: Message, ObjectType: Message> iter::FastEnumerationHelper
+    for NSDictionary<KeyType, ObjectType>
+{
     // Fast enumeration for dictionaries returns the keys.
-    type Item = K;
+    type Item = KeyType;
 
     #[inline]
     fn maybe_len(&self) -> Option<usize> {
@@ -392,9 +401,11 @@ unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSDictionary
 }
 
 #[cfg(feature = "NSEnumerator")]
-unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSMutableDictionary<K, V> {
+unsafe impl<KeyType: Message, ObjectType: Message> iter::FastEnumerationHelper
+    for NSMutableDictionary<KeyType, ObjectType>
+{
     // The same goes for mutable dictionaries.
-    type Item = K;
+    type Item = KeyType;
 
     #[inline]
     fn maybe_len(&self) -> Option<usize> {
@@ -405,11 +416,13 @@ unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSMutableDic
 /// An iterator over the keys of a dictionary.
 #[derive(Debug)]
 #[cfg(feature = "NSEnumerator")]
-pub struct Keys<'a, K: Message, V: Message>(iter::Iter<'a, NSDictionary<K, V>>);
+pub struct Keys<'a, KeyType: Message, ObjectType: Message>(
+    iter::Iter<'a, NSDictionary<KeyType, ObjectType>>,
+);
 
 #[cfg(feature = "NSEnumerator")]
 __impl_iter! {
-    impl<'a, K: Message, V: Message> Iterator<Item = Retained<K>> for Keys<'a, K, V> { ... }
+    impl<'a, KeyType: Message, ObjectType: Message> Iterator<Item = Retained<KeyType>> for Keys<'a, KeyType, ObjectType> { ... }
 }
 
 /// An iterator over unretained keys of a dictionary.
@@ -419,23 +432,29 @@ __impl_iter! {
 /// The dictionary must not be mutated while this is alive.
 #[derive(Debug)]
 #[cfg(feature = "NSEnumerator")]
-pub struct KeysUnchecked<'a, K: Message, V: Message>(iter::IterUnchecked<'a, NSDictionary<K, V>>);
+pub struct KeysUnchecked<'a, KeyType: Message, ObjectType: Message>(
+    iter::IterUnchecked<'a, NSDictionary<KeyType, ObjectType>>,
+);
 
 #[cfg(feature = "NSEnumerator")]
 __impl_iter! {
-    impl<'a, K: Message, V: Message> Iterator<Item = &'a K> for KeysUnchecked<'a, K, V> { ... }
+    impl<'a, KeyType: Message, ObjectType: Message> Iterator<Item = &'a KeyType> for KeysUnchecked<'a, KeyType, ObjectType> { ... }
 }
 
 /// An iterator over the objects / values in a dictionary.
 #[derive(Debug)]
 #[cfg(feature = "NSEnumerator")]
-pub struct Objects<'a, K: Message, V: Message>(
-    iter::IterWithBackingEnum<'a, NSDictionary<K, V>, crate::NSEnumerator<V>>,
+pub struct Objects<'a, KeyType: Message, ObjectType: Message>(
+    iter::IterWithBackingEnum<
+        'a,
+        NSDictionary<KeyType, ObjectType>,
+        crate::NSEnumerator<ObjectType>,
+    >,
 );
 
 #[cfg(feature = "NSEnumerator")]
 __impl_iter! {
-    impl<'a, K: Message, V: Message> Iterator<Item = Retained<V>> for Objects<'a, K, V> { ... }
+    impl<'a, KeyType: Message, ObjectType: Message> Iterator<Item = Retained<ObjectType>> for Objects<'a, KeyType, ObjectType> { ... }
 }
 
 /// An iterator over unretained objects / values of a dictionary.
@@ -445,16 +464,22 @@ __impl_iter! {
 /// The dictionary must not be mutated while this is alive.
 #[derive(Debug)]
 #[cfg(feature = "NSEnumerator")]
-pub struct ObjectsUnchecked<'a, K: Message, V: Message + 'a>(
-    iter::IterUncheckedWithBackingEnum<'a, NSDictionary<K, V>, crate::NSEnumerator<V>>,
+pub struct ObjectsUnchecked<'a, KeyType: Message, ObjectType: Message + 'a>(
+    iter::IterUncheckedWithBackingEnum<
+        'a,
+        NSDictionary<KeyType, ObjectType>,
+        crate::NSEnumerator<ObjectType>,
+    >,
 );
 
 #[cfg(feature = "NSEnumerator")]
 __impl_iter! {
-    impl<'a, K: Message, V: Message> Iterator<Item = &'a V> for ObjectsUnchecked<'a, K, V> { ... }
+    impl<'a, KeyType: Message, ObjectType: Message> Iterator<Item = &'a ObjectType> for ObjectsUnchecked<'a, KeyType, ObjectType> { ... }
 }
 
-impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSDictionary<K, V> {
+impl<KeyType: fmt::Debug + Message, ObjectType: fmt::Debug + Message> fmt::Debug
+    for NSDictionary<KeyType, ObjectType>
+{
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // SAFETY: Unsound, use `to_vecs` instead when that doesn't have extra bounds
@@ -464,7 +489,9 @@ impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSDictiona
     }
 }
 
-impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSMutableDictionary<K, V> {
+impl<KeyType: fmt::Debug + Message, ObjectType: fmt::Debug + Message> fmt::Debug
+    for NSMutableDictionary<KeyType, ObjectType>
+{
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
