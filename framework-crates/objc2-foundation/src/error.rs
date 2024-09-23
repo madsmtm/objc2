@@ -34,6 +34,7 @@ impl NSError {
     }
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for NSError {}
 
 impl fmt::Debug for NSError {
