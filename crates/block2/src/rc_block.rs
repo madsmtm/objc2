@@ -29,6 +29,7 @@ use crate::{ffi, Block, IntoBlock, StackBlock};
 /// Additionally, it participates in the null-pointer optimization, that is,
 /// `Option<RcBlock<A, R>>` is guaranteed to have the same size as
 /// `RcBlock<A, R>`.
+#[repr(transparent)]
 #[doc(alias = "MallocBlock")]
 pub struct RcBlock<F: ?Sized> {
     // Covariant
