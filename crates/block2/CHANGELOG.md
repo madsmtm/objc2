@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   blocks with an encoding specified by `ManualBlockEncoding`.
 
   This is useful for certain APIs that require blocks to have an encoding.
+* Added `RcBlock::as_ptr`.
+* Added `RcBlock::into_raw`.
 
 ### Fixed
 * **BREAKING**: Converted function signatures into using `extern "C-unwind"`.

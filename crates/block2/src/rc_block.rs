@@ -37,6 +37,46 @@ pub struct RcBlock<F: ?Sized> {
 }
 
 impl<F: ?Sized> RcBlock<F> {
+    /// A raw pointer to the underlying block.
+    ///
+    /// The pointer is valid for at least as long as the `RcBlock` is alive.
+    ///
+    /// This is an associated method, and must be called as
+    /// `RcBlock::as_ptr(&block)`.
+    #[inline]
+    pub fn as_ptr(this: &Self) -> *mut Block<F> {
+        this.ptr.as_ptr()
+    }
+
+    /// Consumes the `RcBlock`, passing ownership of the retain count to the
+    /// caller.
+    ///
+    /// After calling this function, the caller is responsible for releasing
+    /// the memory with [`ffi::_Block_release`] or similar.
+    ///
+    /// This is an associated method, and must be called as
+    /// `RcBlock::into_raw(block)`.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// Converting a `RcBlock` to a pointer and back.
+    ///
+    /// ```
+    /// use block2::RcBlock;
+    ///
+    /// let add2 = RcBlock::new(|x: i32| -> i32 {
+    ///     x + 2
+    /// });
+    /// let ptr = RcBlock::into_raw(add2);
+    /// // SAFETY: The pointer is valid, and ownership from above.
+    /// let add2 = unsafe { RcBlock::from_raw(ptr) }.unwrap();
+    /// ```
+    pub fn into_raw(this: Self) -> *mut Block<F> {
+        let this = ManuallyDrop::new(this);
+        this.ptr.as_ptr()
+    }
+
     /// Construct an `RcBlock` from the given block pointer by taking
     /// ownership.
     ///
