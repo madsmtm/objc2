@@ -258,6 +258,7 @@ pub struct Method {
     // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
     non_isolated: bool,
     mainthreadonly: bool,
+    weak_property: bool,
 }
 
 #[derive(Debug)]
@@ -505,6 +506,7 @@ impl Method {
                 is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
+                weak_property: false,
             },
         ))
     }
@@ -577,6 +579,8 @@ impl Method {
                 is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
+                // Don't show `weak`-ness on getters
+                weak_property: false,
             })
         } else {
             None
@@ -619,6 +623,7 @@ impl Method {
                     is_pub,
                     non_isolated: modifiers.non_isolated,
                     mainthreadonly,
+                    weak_property: attributes.map(|a| a.weak).unwrap_or(false),
                 })
             } else {
                 None
@@ -665,6 +670,13 @@ impl fmt::Display for Method {
         // if self.non_isolated {
         //     writeln!(f, "// non_isolated")?;
         // }
+
+        if self.weak_property {
+            writeln!(
+                f,
+                "        /// This is a [weak property][objc2::topics::weak_property]."
+            )?;
+        }
 
         //
         // Attributes

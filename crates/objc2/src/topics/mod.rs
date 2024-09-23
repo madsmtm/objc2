@@ -16,6 +16,8 @@ pub mod layered_safety {}
 pub mod mvc {}
 #[doc = include_str!("interior_mutability.md")]
 pub mod interior_mutability {}
+#[doc = include_str!("weak_property.md")]
+pub mod weak_property {} // Referenced by header-translator
 #[cfg(not(feature = "gnustep-1-7"))]
 #[doc = include_str!("run_loop.md")]
 pub mod run_loop {}
