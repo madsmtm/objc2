@@ -476,6 +476,8 @@ macro_rules! declare_class {
                 fn as_super(&self) -> &Self::Super {
                     &*self.__superclass
                 }
+
+                const __INNER: () = ();
             }
 
             impl DeclaredClass for $for_declared {

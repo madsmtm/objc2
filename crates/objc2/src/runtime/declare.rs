@@ -879,6 +879,8 @@ mod tests {
 
                 builder.register()
             }
+
+            const __INNER: () = ();
         }
 
         impl<T> GenericDeclareClass<T> {

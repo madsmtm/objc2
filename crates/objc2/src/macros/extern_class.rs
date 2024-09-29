@@ -363,6 +363,8 @@ macro_rules! __inner_extern_class {
 
             #[inline]
             fn as_super(&$as_super_self) -> &Self::Super $as_super
+
+            const __INNER: () = ();
         }
     };
 }

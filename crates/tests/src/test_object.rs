@@ -3,13 +3,14 @@ use core::ffi::c_int;
 use core::mem::{size_of, ManuallyDrop};
 use std::ffi::CString;
 
-use objc2::encode::{Encoding, RefEncode};
 use objc2::rc::{autoreleasepool, AutoreleasePool, Retained};
 use objc2::runtime::{
     AnyClass, AnyObject, AnyProtocol, Bool, NSObject, NSObjectProtocol, ProtocolObject,
 };
-use objc2::sel;
-use objc2::{class, extern_protocol, msg_send, msg_send_id, ClassType, Message, ProtocolType};
+use objc2::{
+    class, extern_protocol, msg_send, msg_send_id, AllocAnyThread, ClassType, ProtocolType,
+};
+use objc2::{extern_class, sel};
 #[cfg(feature = "all")]
 use objc2_foundation::{NSArray, NSException, NSMutableString, NSNumber, NSString};
 
@@ -81,44 +82,28 @@ extern_protocol!(
     unsafe impl ProtocolType for dyn MyTestProtocol4 {}
 );
 
-#[repr(C)]
-struct MyTestObject {
-    inner: NSObject,
-}
+extern_class!(
+    struct MyTestObject;
 
-unsafe impl RefEncode for MyTestObject {
-    const ENCODING_REF: Encoding = Encoding::Object;
-}
-
-unsafe impl Message for MyTestObject {}
-
-unsafe impl ClassType for MyTestObject {
-    type Super = NSObject;
-    type ThreadKind = <Self::Super as ClassType>::ThreadKind;
-    const NAME: &'static str = "MyTestObject";
-
-    #[cfg(all(target_vendor = "apple", target_arch = "aarch64"))]
-    fn class() -> &'static AnyClass {
-        extern "C" {
-            #[link_name = "OBJC_CLASS_$_MyTestObject"]
-            static CLASS: AnyClass;
-        }
-
-        unsafe { &CLASS }
+    unsafe impl ClassType for MyTestObject {
+        type Super = NSObject;
+        type ThreadKind = dyn AllocAnyThread;
     }
-
-    #[cfg(not(all(target_vendor = "apple", target_arch = "aarch64")))]
-    fn class() -> &'static AnyClass {
-        class!(MyTestObject)
-    }
-
-    fn as_super(&self) -> &Self::Super {
-        &self.inner
-    }
-}
+);
 
 unsafe impl NSObjectProtocol for MyTestObject {}
 unsafe impl MyTestProtocol for MyTestObject {}
+
+#[cfg(all(target_vendor = "apple", target_arch = "aarch64"))]
+#[used]
+static FIX_LINKING: &'static AnyClass = {
+    extern "C" {
+        #[link_name = "OBJC_CLASS_$_MyTestObject"]
+        static CLASS: AnyClass;
+    }
+
+    unsafe { &CLASS }
+};
 
 impl MyTestObject {
     fn new() -> Retained<Self> {
@@ -149,12 +134,12 @@ impl MyTestObject {
 
     fn var1_ivar(&self) -> &c_int {
         let ivar = Self::class().instance_variable(&c("var1")).unwrap();
-        unsafe { ivar.load(&self.inner) }
+        unsafe { ivar.load(&self) }
     }
 
     fn var1_ivar_ptr(&self) -> *mut c_int {
         let ivar = Self::class().instance_variable(&c("var1")).unwrap();
-        unsafe { ivar.load_ptr(&self.inner) }
+        unsafe { ivar.load_ptr(&self) }
     }
 
     fn add_to_ivar1(&self, number: c_int) {
@@ -167,12 +152,12 @@ impl MyTestObject {
 
     fn var2_ivar(&self) -> &Bool {
         let ivar = Self::class().instance_variable(&c("var2")).unwrap();
-        unsafe { ivar.load(&self.inner) }
+        unsafe { ivar.load(&self) }
     }
 
     fn var2_ivar_ptr(&self) -> *mut Bool {
         let ivar = Self::class().instance_variable(&c("var2")).unwrap();
-        unsafe { ivar.load_ptr(&self.inner) }
+        unsafe { ivar.load_ptr(&self) }
     }
 
     fn var3(&self) -> *mut AnyObject {
@@ -185,12 +170,12 @@ impl MyTestObject {
 
     fn var3_ivar(&self) -> &*mut AnyObject {
         let ivar = Self::class().instance_variable(&c("var3")).unwrap();
-        unsafe { ivar.load(&self.inner) }
+        unsafe { ivar.load(&self) }
     }
 
     fn var3_ivar_ptr(&self) -> *mut *mut AnyObject {
         let ivar = Self::class().instance_variable(&c("var3")).unwrap();
-        unsafe { ivar.load_ptr(&self.inner) }
+        unsafe { ivar.load_ptr(&self) }
     }
 }
 
@@ -286,7 +271,7 @@ fn test_object() {
     let _obj = MyTestObject::new_autoreleased_retained();
 
     let obj = MyTestObject::new();
-    assert_eq!((*obj.inner).class(), MyTestObject::class());
+    assert_eq!((**obj).class(), MyTestObject::class());
 
     assert_eq!(obj.var1(), 42);
     assert_eq!(*obj.var1_ivar(), 42);

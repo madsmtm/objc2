@@ -127,21 +127,15 @@ pub unsafe trait Message: RefEncode {
 /// Objective-C class - this trait allows you to communicate that, as well as
 /// a few properties of the class to the rest of the type-system.
 ///
-/// This is implemented automatically for your type by the
+/// This is implemented for your type by the
 /// [`declare_class!`][crate::declare_class] and
 /// [`extern_class!`][crate::extern_class] macros.
 ///
 ///
 /// # Safety
 ///
-/// 1. The type must represent a specific class.
-/// 2. [`Self::Super`] must be a superclass of the class (or something that
-///    represents any object, like [`AnyObject`][crate::runtime::AnyObject]).
-/// 3. [`Self::ThreadKind`] must be correct. It is safe to default to the
-///    super class' thread kind, `<Self::Super as ClassType>::ThreadKind`.
-/// 4. [`Self::NAME`] must be the name of the class that this type represents.
-/// 5. The class returned by [`Self::class`] must be the class that this type
-///    represents.
+/// This is meant to be a sealed trait, and should not be implemented outside
+/// of the aforementioned macros. See those for safety preconditions.
 ///
 ///
 /// # Examples
@@ -206,6 +200,17 @@ pub unsafe trait Message: RefEncode {
 /// let cls = MyClass::class();
 /// let obj = MyClass::alloc();
 /// ```
+//
+// Actual safety preconditions:
+//
+// 1. The type must represent a specific class.
+// 2. [`Self::Super`] must be a superclass of the class (or something that
+//    represents any object, like [`AnyObject`][crate::runtime::AnyObject]).
+// 3. [`Self::ThreadKind`] must be correct. It is safe to default to the
+//    super class' thread kind, `<Self::Super as ClassType>::ThreadKind`.
+// 4. [`Self::NAME`] must be the name of the class that this type represents.
+// 5. The class returned by [`Self::class`] must be the class that this type
+//    represents.
 pub unsafe trait ClassType: Message {
     /// The superclass of this class.
     ///
@@ -256,6 +261,9 @@ pub unsafe trait ClassType: Message {
     // Note: It'd be safe to provide a default impl using transmute here if
     // we wanted to!
     fn as_super(&self) -> &Self::Super;
+
+    #[doc(hidden)]
+    const __INNER: ();
 }
 
 /// Marks types whose implementation is defined in Rust.

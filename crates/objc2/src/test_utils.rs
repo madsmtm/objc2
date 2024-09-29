@@ -6,7 +6,7 @@ use std::sync::Once;
 use crate::encode::{Encode, Encoding, RefEncode};
 use crate::rc::Retained;
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ClassBuilder, ProtocolBuilder, Sel};
-use crate::{ffi, msg_send, sel, AllocAnyThread, ClassType, Message};
+use crate::{ffi, msg_send, sel, Message};
 
 #[derive(Debug)]
 #[repr(C)]
@@ -17,20 +17,6 @@ unsafe impl RefEncode for CustomObject {
 }
 
 unsafe impl Message for CustomObject {}
-
-unsafe impl ClassType for CustomObject {
-    type Super = AnyObject;
-    type ThreadKind = dyn AllocAnyThread;
-    const NAME: &'static str = "CustomObject";
-
-    fn class() -> &'static AnyClass {
-        custom_class()
-    }
-
-    fn as_super(&self) -> &Self::Super {
-        &self.0
-    }
-}
 
 impl Deref for CustomObject {
     type Target = AnyObject;

@@ -50,6 +50,8 @@ unsafe impl ClassType for NSObject {
     fn as_super(&self) -> &Self::Super {
         &self.__inner
     }
+
+    const __INNER: () = ();
 }
 
 unsafe impl DowncastTarget for NSObject {}

@@ -1,3 +1,5 @@
+//! Defined here instead of in `objc2-foundation` since it's a root object,
+//! and the `extern_class!` macro doesn't support those (yet).
 use core::fmt;
 use core::hash;
 
@@ -40,6 +42,8 @@ unsafe impl ClassType for NSProxy {
     fn as_super(&self) -> &Self::Super {
         &self.__inner
     }
+
+    const __INNER: () = ();
 }
 
 unsafe impl DowncastTarget for NSProxy {}

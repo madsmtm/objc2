@@ -13,8 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     in `const`. This is useful for creating main-thread only statics.
   * `MainThreadMarker::from` now debug-asserts that it is actually running on
     the main thread.
-* Added `ClassType::alloc_main_thread`.
-* Added `IsMainThreadOnly::mtm`.
+* Added `MainThreadOnly::mtm`.
 * Added `DowncastTarget`, `AnyObject::downcast_ref` and `Retained::downcast`
   to allow safely casting between Objective-C objects.
 * Implemented more `fmt` traits on `Retained`.
@@ -132,6 +131,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed the deprecated `malloc` feature and `malloc_buf` dependency.
 * **BREAKING**: Removed aliases `DefaultId`, `IdFromIterator` and
   `IdIntoIterator`, as well as their methods. Use the renamed traits instead.
+* **BREAKING**: Removed the ability to implement `ClassType` manually, to make
+  it easier to evolve the API going forwards.
 
 ### Fixed
 * Remove an incorrect assertion when adding protocols to classes in an unexpected
