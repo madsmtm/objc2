@@ -80,6 +80,12 @@ use crate::{msg_send_id, MainThreadMarker};
 /// //
 /// // And `Retained<MyObject>` can now be constructed.
 /// ```
+///
+/// Implement the trait manually for a class with a lifetime parameter.
+///
+/// ```
+#[doc = include_str!("../examples/class_with_lifetime.rs")]
+/// ```
 pub unsafe trait Message: RefEncode {
     /// Increment the reference count of the receiver.
     ///
@@ -199,12 +205,6 @@ pub unsafe trait Message: RefEncode {
 ///
 /// let cls = MyClass::class();
 /// let obj = MyClass::alloc();
-/// ```
-///
-/// Implement the trait manually for a class with a lifetime parameter.
-///
-/// ```
-#[doc = include_str!("../examples/class_with_lifetime.rs")]
 /// ```
 pub unsafe trait ClassType: Message {
     /// The superclass of this class.

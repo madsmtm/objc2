@@ -983,8 +983,7 @@ mod tests {
         let obj: Retained<RcTestObject> = RcTestObject::new();
         let expected = ThreadTestData::current();
 
-        // SAFETY: Any object can be cast to `AnyObject`
-        let obj: Retained<AnyObject> = unsafe { Retained::cast_unchecked(obj) };
+        let obj: Retained<AnyObject> = obj.into();
         expected.assert_current();
 
         let _obj: Retained<RcTestObject> = Retained::downcast(obj).unwrap();
