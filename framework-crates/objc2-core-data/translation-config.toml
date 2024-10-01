@@ -21,7 +21,7 @@ static.NSRollbackMergePolicy.skipped = true
 # Uses `NSDiffableDataSourceSnapshot`, which is defined in AppKit
 protocol.NSFetchedResultsControllerDelegate.methods."controller:didChangeContentWithSnapshot:".skipped = true
 
-# Needs stuff from CloudKit
+# Needs stuff from CloudKit, which I'm unsure might create a dependency cycle?
 class.NSPersistentCloudKitContainerOptions.methods.databaseScope.skipped = true
 class.NSPersistentCloudKitContainerOptions.methods."setDatabaseScope:".skipped = true
 class.NSPersistentCloudKitContainer.methods."recordForManagedObjectID:".skipped = true

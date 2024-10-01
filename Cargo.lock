@@ -419,6 +419,7 @@ dependencies = [
  "block2",
  "libc",
  "objc2",
+ "objc2-cloud-kit",
  "objc2-core-data",
  "objc2-core-image",
  "objc2-foundation",
@@ -918,6 +919,7 @@ dependencies = [
  "bitflags",
  "block2",
  "objc2",
+ "objc2-core-ml",
  "objc2-foundation",
 ]
 
@@ -1038,6 +1040,7 @@ version = "0.2.2"
 dependencies = [
  "block2",
  "objc2",
+ "objc2-core-ml",
  "objc2-foundation",
 ]
 

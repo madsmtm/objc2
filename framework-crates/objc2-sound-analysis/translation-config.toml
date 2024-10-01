@@ -20,6 +20,3 @@ class.SNClassificationResult.methods.timeRange.skipped = true
 # Needs `AVFAudio` framework
 class.SNAudioStreamAnalyzer.methods."initWithFormat:".skipped = true
 class.SNAudioStreamAnalyzer.methods."analyzeAudioBuffer:atAudioFramePosition:".skipped = true
-
-# Needs `MLModel` from the `CoreML` framework
-class.SNClassifySoundRequest.methods."initWithMLModel:error:".skipped = true
