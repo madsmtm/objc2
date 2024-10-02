@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Eq` implementation for `NSValue` and subclasses.
 * Added `CopyingHelper` and `MutableCopyingHelper`, which are used to specify
   the types returned from `NSCopying` and `NSMutableCopying`.
+* Added `MTLResourceID::from_raw` and `MTLResourceID::as_raw` to allow
+  querying the underlying data.
 
 ### Changed
 * Allow using `MainThreadBound` without the `NSThread` feature flag.

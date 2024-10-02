@@ -61,6 +61,8 @@ mod resource;
 mod slice;
 #[cfg(feature = "MTLTexture")]
 mod texture;
+#[cfg(feature = "MTLTypes")]
+mod types;
 
 #[cfg(feature = "MTLCounters")]
 pub use self::counters::*;
