@@ -2117,7 +2117,9 @@ impl Stmt {
                     writeln!(f, "pub struct {} {{", id.name)?;
                     for (name, ty) in fields {
                         write!(f, "    ")?;
-                        if !name.starts_with('_') {
+                        if name.starts_with('_') {
+                            write!(f, "pub(crate) ")?;
+                        } else {
                             write!(f, "pub ")?;
                         }
                         let name = handle_reserved(name);
