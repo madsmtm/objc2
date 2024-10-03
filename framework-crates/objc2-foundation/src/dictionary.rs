@@ -89,7 +89,7 @@ impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
         //   mutated, it'll "just" corrupt the collection's invariants (but
         //   won't cause undefined behaviour).
         //
-        //   This is tested via. fuzzing in `collection_interior_mut.rs`.
+        //   This is tested via fuzzing in `collection_interior_mut.rs`.
         //
         //   <https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html#//apple_ref/doc/uid/TP40010810-CH5-SW69>
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
@@ -184,7 +184,7 @@ impl<KeyType: Message, ObjectType: Message> NSMutableDictionary<KeyType, ObjectT
 /// first, see [the docs][collections-own].
 ///
 /// This means that we can more efficiently access the dictionary's keys and
-/// objects, but _only_ if the dictionary isn't mutated via. e.g.
+/// objects, but _only_ if the dictionary isn't mutated via e.g.
 /// `NSMutableDictionary` methods while doing so - otherwise, we might end up
 /// accessing a deallocated object.
 ///

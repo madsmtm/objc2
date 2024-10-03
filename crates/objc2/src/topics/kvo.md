@@ -2,7 +2,7 @@
 
 Key-Value Observing (KVO) is a mechanism that allows an object to be notified of changes to properties of another object.
 
-This is exposed via. the `NSKeyValueCoding` and `NSKeyValueObserving` categories / informal protocols on `NSObject`.
+This is exposed via the `NSKeyValueCoding` and `NSKeyValueObserving` categories / informal protocols on `NSObject`.
 
 See Apple's documentation on [Key-Value Coding][kvc-doc], [Key-Value Observing][kvo-doc] and [Swift's documentation on KVO][swift-kvo] for more information.
 

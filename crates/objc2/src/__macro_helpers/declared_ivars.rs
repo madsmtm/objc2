@@ -302,7 +302,7 @@ pub(crate) fn register_with_ivars<T: DeclaredClass>(
     } else {
         // Fallback to an offset of zero.
         //
-        // This is fine, since any reads here will only be via. zero-sized
+        // This is fine, since any reads here will only be via zero-sized
         // ivars, where the actual pointer doesn't matter.
         0
     };

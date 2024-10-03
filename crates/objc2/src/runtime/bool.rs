@@ -7,7 +7,7 @@ use crate::encode::{Encode, Encoding, RefEncode};
 //
 // Don't be fooled by the backup definition in `objc.h`; __OBJC_BOOL_IS_BOOL
 // is always defined by `clang` when compiling Objective-C sources. The below
-// cfgs are determined experimentally via. cross compiling.
+// cfgs are determined experimentally via cross compiling.
 //
 // See also <https://www.jviotti.com/2024/01/05/is-objective-c-bool-a-boolean-type-it-depends.html>.
 #[cfg(all(not(feature = "gnustep-1-7"), not(feature = "unstable-objfw")))]

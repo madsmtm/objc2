@@ -303,7 +303,7 @@ fn mainthreadonly_override<'a>(
     }
 
     if any_argument_provides_mainthreadmarker {
-        // MainThreadMarker can be retrieved via. `MainThreadOnly::mtm`
+        // MainThreadMarker can be retrieved via `MainThreadOnly::mtm`
         // inside these methods, and hence passing it is redundant.
         false
     } else if result_type_requires_mainthreadmarker {
@@ -373,11 +373,11 @@ impl Method {
 
         // Don't emit memory-management methods
         match &*selector {
-            // Available via. `ClassType`
+            // Available via `ClassType`
             "alloc" | "allocWithZone:" if is_class => {
                 return None;
             }
-            // Available via. `Retained` (and disallowed by ARC).
+            // Available via `Retained` (and disallowed by ARC).
             "retain" | "release" | "autorelease" | "dealloc" if !is_class => {
                 return None;
             }

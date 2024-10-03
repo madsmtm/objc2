@@ -25,7 +25,7 @@ fn main() {
     // this is probably going to fail anyways, since we're using newer
     // runtimes than GCC supports.
     //
-    // TODO: ObjFW via. `-fobjc-runtime=objfw-VERSION`. Clang defaults to 0.8
+    // TODO: ObjFW via `-fobjc-runtime=objfw-VERSION`. Clang defaults to 0.8
     if env::var_os("CARGO_FEATURE_GNUSTEP_2_1").is_some() {
         builder.flag("-fobjc-runtime=gnustep-2.1");
     } else if env::var_os("CARGO_FEATURE_GNUSTEP_2_0").is_some() {

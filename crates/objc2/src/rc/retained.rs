@@ -104,7 +104,7 @@ use crate::{ffi, ClassType, DowncastTarget, Message};
 /// // Or:
 /// // let string = NSString::new();
 ///
-/// // Methods on `NSString` is usable via. `Deref`
+/// // Methods on `NSString` is usable via `Deref`
 /// # #[cfg(available_in_foundation)]
 /// assert_eq!(string.length(), 0);
 ///

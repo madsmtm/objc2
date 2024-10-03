@@ -1,8 +1,7 @@
 use crate::MTLResourceID;
 
 impl MTLResourceID {
-    /// Construct a `MTLResourceID` from an ID previously gotten via.
-    /// `to_raw`.
+    /// Construct a `MTLResourceID` from an ID previously gotten via `to_raw`.
     ///
     /// # Safety
     ///

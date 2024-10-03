@@ -15,7 +15,7 @@ fn is_main_thread() -> bool {
 
         // SAFETY: The signature in here is the exact same as in `libc`.
         //
-        // `pthread_main_np` is included via. `libSystem` when `libstd` is
+        // `pthread_main_np` is included via `libSystem` when `libstd` is
         // linked. All of this is done to avoid a dependency on the `libc`
         // crate.
         //

@@ -67,7 +67,7 @@ pub struct MainThreadBound<T>(ManuallyDrop<T>);
 // Finally, the value is dropped on the main thread in `Drop`.
 unsafe impl<T> Send for MainThreadBound<T> {}
 
-// SAFETY: We only provide access to the inner value via. `get` and `get_mut`.
+// SAFETY: We only provide access to the inner value via `get` and `get_mut`.
 //
 // Both of these take [`MainThreadMarker`], which guarantees that the access
 // is done from the main thread.

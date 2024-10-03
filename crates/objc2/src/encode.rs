@@ -108,7 +108,7 @@ use crate::runtime::{AnyObject, Imp, Sel};
 /// in Objective-C with the type in question.
 ///
 /// You should also beware of having [`Drop`] types implement this, since when
-/// passed to Objective-C via. `objc2::msg_send!` their destructor will not be
+/// passed to Objective-C via `objc2::msg_send!` their destructor will not be
 /// called!
 ///
 ///

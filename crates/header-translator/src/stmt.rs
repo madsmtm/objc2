@@ -1367,7 +1367,7 @@ impl Stmt {
                     | EntityKind::ObjCProtocolRef => {}
                     EntityKind::ParmDecl => {
                         parse_fn_param_children(&entity, context);
-                        // Could also be retrieved via. `get_arguments`
+                        // Could also be retrieved via `get_arguments`
                         let name = entity.get_name().unwrap_or_else(|| "_".into());
                         let ty = entity.get_type().expect("function argument type");
                         let ty = Ty::parse_function_argument(ty, context);

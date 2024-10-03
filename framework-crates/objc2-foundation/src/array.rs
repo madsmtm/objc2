@@ -96,7 +96,7 @@ impl<ObjectType: Message> NSMutableArray<ObjectType> {
 /// first, see [the docs][collections-own].
 ///
 /// This means that we can more efficiently access the array's objects, but
-/// _only_ if the array isn't mutated via. e.g. `NSMutableArray` methods while
+/// _only_ if the array isn't mutated via e.g. `NSMutableArray` methods while
 /// doing so - otherwise, we might end up accessing a deallocated object.
 ///
 /// [collections-own]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmPractical.html#//apple_ref/doc/uid/TP40004447-SW12

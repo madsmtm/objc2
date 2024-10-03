@@ -1153,7 +1153,7 @@ impl fmt::Display for AnyProtocol {
 ///
 /// This is an opaque type that contains [`UnsafeCell`], and is similar to
 /// that in that one can safely access and perform interior mutability on this
-/// (both via. [`msg_send!`] and through ivars), so long as Rust's mutability
+/// (both via [`msg_send!`] and through ivars), so long as Rust's mutability
 /// rules are upheld, and that data races are avoided.
 ///
 /// Note: This is intentionally neither [`Sync`], [`Send`], [`UnwindSafe`],
@@ -1212,7 +1212,7 @@ impl AnyObject {
         let ptr = unsafe { ffi::object_getClass(self) };
         // SAFETY: The class is not NULL because the object is not NULL, and
         // it is safe as `'static` since classes are static, and it could be
-        // retrieved via. `AnyClass::get(self.class().name())` anyhow.
+        // retrieved via `AnyClass::get(self.class().name())` anyhow.
         unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 

@@ -44,7 +44,7 @@
 /// - The [`Super`] class.
 ///
 ///   Due to Rust trait limitations, specifying e.g. the superclass `NSData`
-///   would not give you the ability to convert via. `AsRef` to `NSObject`.
+///   would not give you the ability to convert via `AsRef` to `NSObject`.
 ///   Therefore, you may optionally specify additional parts of the
 ///   inheritance chain using an `#[inherits(...)]` attribute.
 /// - Optionally, the class' [`ThreadKind`], if the object is only usable on

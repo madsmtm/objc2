@@ -254,7 +254,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   # After
   # Moved to `objc2-foundation` and `objc2-app-kit` crates.
   [dependencies]
-  # Removed `Foundation_NSMutableArray`, it is included via. `NSArray`.
+  # Removed `Foundation_NSMutableArray`, it is included via `NSArray`.
   # Added `NSObject` as the `NSCopying` protocol comes from there.
   objc2-foundation = { version = "0.2", features = ["NSNotification", "NSString", "NSThread", "NSObject", "NSArray"] }
   # Added `NSResponder` as it's required by `NSApplication`.
