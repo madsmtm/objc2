@@ -150,6 +150,20 @@ impl OSVersion {
         let (major, minor, patch) = (self.major as u32, self.minor as u32, self.patch as u32);
         (major << 16) | (minor << 8) | patch
     }
+
+    /// Construct the version from a `u32`.
+    #[inline]
+    pub const fn from_u32(version: u32) -> Self {
+        // See comments in `OSVersion`, this should compile down to nothing.
+        let major = (version >> 16) as u16;
+        let minor = (version >> 8) as u8;
+        let patch = version as u8;
+        Self {
+            major,
+            minor,
+            patch,
+        }
+    }
 }
 
 impl PartialEq for OSVersion {
@@ -401,5 +415,15 @@ mod tests {
             // Available everywhere, except low tvOS versions
             assert!(available!(tvos = 1.2, ..));
         }
+    }
+
+    #[test]
+    fn test_u32_roundtrip() {
+        let version = OSVersion {
+            major: 1000,
+            minor: 100,
+            patch: 200,
+        };
+        assert_eq!(version, OSVersion::from_u32(version.to_u32()));
     }
 }
