@@ -1,8 +1,9 @@
 use core::ffi::{c_char, c_uint, c_void};
+use core::num::NonZeroU32;
 use core::ptr;
+use core::sync::atomic::{AtomicU32, Ordering};
 use std::os::unix::ffi::OsStrExt;
 use std::path::PathBuf;
-use std::sync::OnceLock;
 
 use super::OSVersion;
 use crate::rc::{autoreleasepool, Allocated, Retained};
@@ -97,14 +98,25 @@ pub(crate) const DEPLOYMENT_TARGET: OSVersion = {
 pub(crate) fn current_version() -> OSVersion {
     // Cache the lookup for performance.
     //
-    // TODO: Maybe just use atomics, a `Once` seems like overkill, it doesn't
-    // matter if two threads end up racing to read the version?
-    static CURRENT_VERSION: OnceLock<OSVersion> = OnceLock::new();
+    // We assume that 0.0.0 is never gonna be a valid version,
+    // and use that as our sentinel value.
+    static CURRENT_VERSION: AtomicU32 = AtomicU32::new(0);
 
-    *CURRENT_VERSION.get_or_init(lookup_version)
+    // We use relaxed atomics, it doesn't matter if two threads end up racing
+    // to read or write the version.
+    let version = CURRENT_VERSION.load(Ordering::Relaxed);
+    OSVersion::from_u32(if version == 0 {
+        // TODO: Consider using `std::panic::abort_unwind` here for code-size?
+        let version = lookup_version().get();
+        CURRENT_VERSION.store(version, Ordering::Relaxed);
+        version
+    } else {
+        version
+    })
 }
 
-fn lookup_version() -> OSVersion {
+#[cold]
+fn lookup_version() -> NonZeroU32 {
     // Since macOS 10.15, libSystem has provided the undocumented
     // `_availability_version_check` via `libxpc` for doing this version
     // lookup, though it's usage may be a bit dangerous, see:
@@ -114,7 +126,10 @@ fn lookup_version() -> OSVersion {
     // So instead, we use the safer approach of reading from `sysctl`, and
     // if that fails, we fall back to the property list (this is what
     // `_availability_version_check` does internally).
-    version_from_sysctl().unwrap_or_else(version_from_plist)
+    let version = version_from_sysctl().unwrap_or_else(version_from_plist);
+    // Use `NonZeroU32` to try to make it clearer to the optimizer that this
+    // will never return 0.
+    NonZeroU32::new(version.to_u32()).expect("version cannot be 0.0.0")
 }
 
 /// Read the version from `kern.osproductversion` or `kern.iossupportversion`.
