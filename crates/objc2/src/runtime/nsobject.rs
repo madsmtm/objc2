@@ -163,34 +163,12 @@ pub unsafe trait NSObjectProtocol {
     ///
     /// See [Apple's documentation][apple-doc] for more details.
     ///
+    /// If using this for availability checking, you might want to consider
+    /// using the [`available!`] macro instead, as it is often more
+    /// performant than this runtime check.
+    ///
     /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418583-respondstoselector?language=objc
-    ///
-    ///
-    /// # Example
-    ///
-    /// Check whether `NSApplication` has the [`effectiveAppearance`] method
-    /// before calling it, to support systems older than macOS 10.14 where the
-    /// method was added.
-    ///
-    /// ```
-    /// # #[cfg(available_in_frameworks)]
-    /// use objc2_app_kit::{NSApplication, NSAppearance, NSAppearanceNameAqua};
-    /// use objc2::runtime::NSObjectProtocol;
-    /// use objc2::sel;
-    ///
-    /// # let obj = objc2::runtime::NSObject::new();
-    /// # assert!(!obj.respondsToSelector(sel!(effectiveAppearance)));
-    /// #
-    /// # #[cfg(available_in_frameworks)] {
-    /// let appearance = if obj.respondsToSelector(sel!(effectiveAppearance)) {
-    ///     NSApplication::sharedApplication(mtm).effectiveAppearance()
-    /// } else {
-    ///     unsafe { NSAppearance::appearanceNamed(NSAppearanceNameAqua).unwrap() }
-    /// };
-    /// # }
-    /// ```
-    ///
-    /// [`effectiveAppearance`]: https://developer.apple.com/documentation/appkit/nsapplication/2967171-effectiveappearance?language=objc
+    /// [`available!`]: crate::available
     #[doc(alias = "respondsToSelector:")]
     fn respondsToSelector(&self, aSelector: Sel) -> bool
     where
