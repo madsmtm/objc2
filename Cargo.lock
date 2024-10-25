@@ -1006,6 +1006,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-screen-saver"
+version = "0.2.2"
+dependencies = [
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-sensitive-content-analysis"
 version = "0.2.2"
 dependencies = [

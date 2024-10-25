@@ -1,0 +1,4 @@
+framework = "ScreenSaver"
+crate = "objc2-screen-saver"
+required-dependencies = ["objc2-foundation"]
+macos = "10.0"
