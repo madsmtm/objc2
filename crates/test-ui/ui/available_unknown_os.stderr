@@ -1,0 +1,7 @@
+error[E0560]: struct `AvailableVersion` has no field named `unknown`
+ --> ui/available_unknown_os.rs
+  |
+  |     available!(unknown = 1.2);
+  |                ^^^^^^^ `AvailableVersion` does not have this field
+  |
+  = note: all struct fields are already assigned

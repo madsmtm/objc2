@@ -255,7 +255,7 @@ compile_error!("ObjFW is not yet supported");
 #[cfg_attr(feature = "unstable-objfw", link(name = "objfw-rt", kind = "dylib"))]
 extern "C" {}
 
-// Link to Foundation to make NSObject work
+// Link to Foundation to make NSObject and OS version lookup work.
 #[cfg_attr(target_vendor = "apple", link(name = "Foundation", kind = "framework"))]
 #[cfg_attr(
     all(feature = "gnustep-1-7", not(feature = "unstable-compiler-rt")),

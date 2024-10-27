@@ -1,0 +1,8 @@
+error[E0062]: field `macos` specified more than once
+ --> ui/available_same_os.rs
+  |
+  |     available!(macos = 1.2, macos = 1.2);
+  |     ------------------------^^^^^-------
+  |     |                       |
+  |     |                       used more than once
+  |     first use of `macos`

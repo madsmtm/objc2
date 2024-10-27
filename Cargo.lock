@@ -1388,6 +1388,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "test_available"
+version = "0.1.0"
+dependencies = [
+ "objc2",
+]
+
+[[package]]
 name = "test_block"
 version = "0.1.0"
 dependencies = [
