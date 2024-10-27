@@ -32,21 +32,6 @@
 //! This is used by default, and has the highest support priority (all of
 //! `objc2` will work with this runtime).
 //!
-//! The supported runtime version (higher versions lets the compiler enable
-//! newer optimizations, at the cost of not supporting older operating
-//! systems) can be chosen using the standard `X_DEPLOYMENT_TARGET`
-//! environment variables:
-//!
-//! - macOS: `MACOSX_DEPLOYMENT_TARGET`, default `10.12`, `11.0` on Aarch64.
-//! - iOS / iPadOS: `IPHONEOS_DEPLOYMENT_TARGET`, default `10.0`.
-//! - tvOS: `TVOS_DEPLOYMENT_TARGET`, default `10.0`.
-//! - watchOS: `WATCHOS_DEPLOYMENT_TARGET`, default `5.0`.
-//!
-//! The default (and minimum) versions are the [same as those Rust itself
-//! has][rust-apple-spec].
-//!
-//! [rust-apple-spec]: https://github.com/rust-lang/rust/blob/1.74.0/compiler/rustc_target/src/spec/apple_base.rs
-//!
 //!
 //! ### GNUStep's [`libobjc2`](https://github.com/gnustep/libobjc2)
 //!

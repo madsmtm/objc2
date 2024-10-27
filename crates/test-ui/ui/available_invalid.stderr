@@ -1,0 +1,50 @@
+error: no rules expected the token `1`
+ --> ui/available_invalid.rs
+  |
+  |     available!(macos = 1 1);
+  |                          ^ no rules expected this token in macro call
+  |
+  = note: while trying to match sequence start
+
+error: no rules expected the token `ABCD`
+ --> ui/available_invalid.rs
+  |
+  |     available!(macos = ABCD);
+  |                        ^^^^ no rules expected this token in macro call
+  |
+note: while trying to match meta-variable `$major:literal`
+ --> $WORKSPACE/crates/objc2/src/macros/available.rs
+  |
+  |             $os:ident $(= $major:literal $(. $minor:literal $(. $patch:literal)?)?)?
+  |                           ^^^^^^^^^^^^^^
+
+error: unexpected end of macro invocation
+ --> ui/available_invalid.rs
+  |
+  |     available!(macos = );
+  |                       ^ missing tokens in macro arguments
+  |
+note: while trying to match meta-variable `$major:literal`
+ --> $WORKSPACE/crates/objc2/src/macros/available.rs
+  |
+  |             $os:ident $(= $major:literal $(. $minor:literal $(. $patch:literal)?)?)?
+  |                           ^^^^^^^^^^^^^^
+
+error: no rules expected the token `:`
+ --> ui/available_invalid.rs
+  |
+  |     available!(macos: 1.2);
+  |                     ^ no rules expected this token in macro call
+  |
+  = note: while trying to match sequence start
+
+error: expected expression, found `,`
+ --> ui/available_invalid.rs
+  |
+  |     available!(macos);
+  |     ^^^^^^^^^^^^^^^^^
+  |     |
+  |     expected expression
+  |     while parsing this struct
+  |
+  = note: this error originates in the macro `available` (in Nightly builds, run with -Z macro-backtrace for more info)

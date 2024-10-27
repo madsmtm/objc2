@@ -1,6 +1,7 @@
 pub use core::borrow::Borrow;
 pub use core::cell::UnsafeCell;
 pub use core::convert::AsRef;
+pub use core::default::Default;
 pub use core::marker::{PhantomData, Sized};
 pub use core::mem::{size_of, ManuallyDrop, MaybeUninit};
 pub use core::ops::Deref;
@@ -21,6 +22,7 @@ mod method_family;
 mod module_info;
 mod msg_send;
 mod msg_send_retained;
+mod os_version;
 mod writeback;
 
 pub use self::cache::{CachedClass, CachedSel};
@@ -38,6 +40,7 @@ pub use self::method_family::{
 pub use self::module_info::ModuleInfo;
 pub use self::msg_send::MsgSend;
 pub use self::msg_send_retained::{MaybeUnwrap, MsgSendId, MsgSendSuperId};
+pub use self::os_version::{is_available, AvailableVersion, OSVersion};
 
 /// Disallow using this passed in value in const and statics for forwards
 /// compatibility (this function is not a `const` function).
