@@ -92,6 +92,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   accept nullable function pointers.
 * **BREAKING**: Changed the signature of various `ffi` functions to use the
   proper `Bool` type instead of a typedef.
+* Made `exception::catch` safe.
 
 ### Deprecated
 * Merged and deprecated the following `ffi` types:
@@ -160,6 +161,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `AnyClass::instance_variable`.
   - `AnyProtocol::get`.
   - `AnyProtocol::name`.
+* Clarified that `exception::catch` does not catch Rust panics.
 
 
 ## 0.5.2 - 2024-05-21

@@ -22,7 +22,7 @@ fn throw_catch_raise_catch() {
 
     let exc = autoreleasepool(|_| {
         let exc = NSException::into_exception(exc);
-        let res = unsafe { catch(|| throw(exc)) };
+        let res = catch(|| throw(exc));
         let exc = res.unwrap_err().unwrap();
         let exc = NSException::from_exception(exc).unwrap();
 
@@ -33,14 +33,13 @@ fn throw_catch_raise_catch() {
     assert_eq!(exc.retainCount(), 1);
 
     let exc = autoreleasepool(|_| {
-        let inner = || {
+        let res = catch(|| {
             autoreleasepool(|pool| {
                 let exc = unsafe { Retained::autorelease(exc, pool) };
                 exc.raise()
             })
-        };
+        });
 
-        let res = unsafe { catch(inner) };
         let exc = NSException::from_exception(res.unwrap_err().unwrap()).unwrap();
 
         // Undesired: The inner pool _should_ have been drained on unwind, but
@@ -92,14 +91,15 @@ fn raise_catch() {
 
     let exc = autoreleasepool(|pool| {
         let exc = unsafe { Retained::autorelease(exc, pool) };
-        let inner = || {
+        let res = catch(|| {
             if exc.name() == name {
                 exc.raise();
             } else {
                 42
             }
-        };
-        let res = unsafe { catch(inner) }.unwrap_err().unwrap();
+        })
+        .unwrap_err()
+        .unwrap();
         assert_eq!(exc.retainCount(), 2);
         res
     });
@@ -120,12 +120,10 @@ fn raise_catch() {
     ignore = "Panics inside `catch` when catch-all is enabled"
 )]
 fn catch_actual() {
-    let res = unsafe {
-        catch(|| {
-            let arr: Retained<NSArray<NSObject>> = NSArray::new();
-            let _obj: *mut NSObject = msg_send![&arr, objectAtIndex: 0usize];
-        })
-    };
+    let res = catch(|| {
+        let arr: Retained<NSArray<NSObject>> = NSArray::new();
+        let _obj: *mut NSObject = unsafe { msg_send![&arr, objectAtIndex: 0usize] };
+    });
     let exc = res.unwrap_err().unwrap();
 
     let name = "NSRangeException";

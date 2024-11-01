@@ -239,7 +239,7 @@ pub fn throw(exception: Retained<Exception>) -> ! {
 }
 
 #[cfg(feature = "exception")]
-unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exception>>> {
+fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exception>>> {
     let f = {
         extern "C-unwind" fn try_objc_execute_closure<F>(closure: &mut Option<F>)
         where
@@ -291,8 +291,9 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exce
 /// if one is thrown.
 ///
 /// This is the Objective-C equivalent of Rust's [`catch_unwind`].
-/// Accordingly, if your Rust code is compiled with `panic=abort` this cannot
-/// catch the exception.
+/// Accordingly, if your Rust code is compiled with `panic=abort`, or your
+/// Objective-C code with `-fno-objc-exceptions`, this cannot catch the
+/// exception.
 ///
 /// [`catch_unwind`]: std::panic::catch_unwind
 ///
@@ -309,12 +310,18 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exce
 /// situations.
 ///
 ///
-/// # Safety
+/// # Panics
 ///
-/// The given closure must not panic (e.g. normal Rust unwinding into this
-/// causes undefined behaviour).
+/// This panics if the given closure panics.
+///
+/// That is, it completely ignores Rust unwinding and simply lets that pass
+/// through unchanged.
+///
+/// It may also not catch all Objective-C exceptions (such as exceptions
+/// thrown when handling the memory management of the exception). These are
+/// mostly theoretical, and should only happen in utmost exceptional cases.
 #[cfg(feature = "exception")]
-pub unsafe fn catch<R>(
+pub fn catch<R>(
     closure: impl FnOnce() -> R + UnwindSafe,
 ) -> Result<R, Option<Retained<Exception>>> {
     let mut value = None;
@@ -322,7 +329,7 @@ pub unsafe fn catch<R>(
     let closure = move || {
         *value_ref = Some(closure());
     };
-    let result = unsafe { try_no_ret(closure) };
+    let result = try_no_ret(closure);
     // If the try succeeded, value was set so it's safe to unwrap
     result.map(|()| value.unwrap_or_else(|| unreachable!()))
 }
@@ -341,12 +348,10 @@ mod tests {
     #[test]
     fn test_catch() {
         let mut s = "Hello".to_string();
-        let result = unsafe {
-            catch(move || {
-                s.push_str(", World!");
-                s
-            })
-        };
+        let result = catch(move || {
+            s.push_str(", World!");
+            s
+        });
         assert_eq!(result.unwrap(), "Hello, World!");
     }
 
@@ -357,14 +362,12 @@ mod tests {
     )]
     fn test_catch_null() {
         let s = "Hello".to_string();
-        let result = unsafe {
-            catch(move || {
-                if !s.is_empty() {
-                    ffi::objc_exception_throw(ptr::null_mut())
-                }
-                s.len()
-            })
-        };
+        let result = catch(move || {
+            if !s.is_empty() {
+                unsafe { ffi::objc_exception_throw(ptr::null_mut()) }
+            }
+            s.len()
+        });
         assert!(result.unwrap_err().is_none());
     }
 
@@ -376,11 +379,9 @@ mod tests {
     fn test_catch_unknown_selector() {
         let obj = AssertUnwindSafe(NSObject::new());
         let ptr = Retained::as_ptr(&obj);
-        let result = unsafe {
-            catch(|| {
-                let _: Retained<NSObject> = msg_send_id![&*obj, copy];
-            })
-        };
+        let result = catch(|| {
+            let _: Retained<NSObject> = unsafe { msg_send_id![&*obj, copy] };
+        });
         let err = result.unwrap_err().unwrap();
 
         assert_eq!(
@@ -397,7 +398,7 @@ mod tests {
         let obj: Retained<Exception> = unsafe { Retained::cast_unchecked(obj) };
         let ptr: *const Exception = &*obj;
 
-        let result = unsafe { catch(|| throw(obj)) };
+        let result = catch(|| throw(obj));
         let obj = result.unwrap_err().unwrap();
 
         assert_eq!(format!("{obj:?}"), format!("exception <NSObject: {ptr:p}>"));
@@ -422,6 +423,6 @@ mod tests {
         ignore = "panic won't start on 32-bit / w. fragile runtime, it'll just abort, since the runtime uses setjmp/longjump unwinding"
     )]
     fn does_not_catch_panic() {
-        let _ = unsafe { catch(|| panic!("test")) };
+        let _ = catch(|| panic!("test"));
     }
 }
