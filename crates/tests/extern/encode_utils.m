@@ -77,8 +77,8 @@ struct with_arrays {
 ENCODING(STRUCT_WITH_ARRAYS, struct with_arrays);
 
 struct with_block {
-    void (^a)(void);
-    id b;
+    void __unsafe_unretained (^a)(void);
+    __unsafe_unretained id b;
     void (*c)(void);
 };
 ENCODING_NO_ATOMIC(STRUCT_WITH_BLOCK, struct with_block); \
