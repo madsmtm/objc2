@@ -261,6 +261,18 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exce
     let context = context.cast();
 
     let mut exception = ptr::null_mut();
+    // SAFETY: The function pointer and context are valid.
+    //
+    // The exception catching itself is sound on the Rust side, because we
+    // correctly use `extern "C-unwind"`. Objective-C does not completely
+    // specify how foreign unwinds are handled, though they do have the
+    // `@catch (...)` construct intended for catching C++ exceptions, so it is
+    // likely that they intend to support Rust panics (and it works in
+    // practice).
+    //
+    // See also:
+    // https://github.com/rust-lang/rust/pull/128321
+    // https://github.com/rust-lang/reference/pull/1226
     let success = unsafe { objc2_exception_helper::try_catch(f, context, &mut exception) };
 
     if success == 0 {
@@ -269,12 +281,8 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exce
         // SAFETY:
         // The exception is always a valid object or NULL.
         //
-        // Since we do a retain inside `extern/exception.m`, the object has
-        // +1 retain count.
-        //
-        // Code throwing an exception know that they don't hold sole access to
-        // that object any more, so even if the type was originally mutable,
-        // it is okay to create a new `Retained` to it here.
+        // Since we do a retain in `objc2_exception_helper/src/try_catch.m`,
+        // the object has +1 retain count.
         Err(unsafe { Retained::from_raw(exception.cast()) })
     }
 }
@@ -405,5 +413,15 @@ mod tests {
 
         let result = catch_unwind(|| throw(obj));
         let _ = result.unwrap_err();
+    }
+
+    #[test]
+    #[should_panic = "test"]
+    #[cfg_attr(
+        all(target_os = "macos", target_arch = "x86", panic = "unwind"),
+        ignore = "panic won't start on 32-bit / w. fragile runtime, it'll just abort, since the runtime uses setjmp/longjump unwinding"
+    )]
+    fn does_not_catch_panic() {
+        let _ = unsafe { catch(|| panic!("test")) };
     }
 }
