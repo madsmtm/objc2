@@ -427,9 +427,6 @@ macro_rules! __statics_sel {
         /// Clang does this by marking `REF` with LLVM's
         /// `externally_initialized`.
         ///
-        /// `static mut` is used so that we don't need to wrap the
-        /// `UnsafeCell` in something that implements `Sync`.
-        ///
         ///
         /// # Safety
         ///
@@ -452,8 +449,8 @@ macro_rules! __statics_sel {
             link_section = "__OBJC,__message_refs,literal_pointers,no_dead_strip",
         )]
         #[export_name = $crate::__macro_helpers::concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $hash)]
-        static mut REF: $crate::__macro_helpers::UnsafeCell<$crate::runtime::Sel> = unsafe {
-            $crate::__macro_helpers::UnsafeCell::new($crate::runtime::Sel::__internal_from_ptr(NAME_DATA.as_ptr()))
+        static REF: $crate::__macro_helpers::SyncUnsafeCell<$crate::runtime::Sel> = unsafe {
+            $crate::__macro_helpers::SyncUnsafeCell::new($crate::runtime::Sel::__internal_from_ptr(NAME_DATA.as_ptr()))
         };
 
         $crate::__statics_image_info!($hash);
@@ -512,8 +509,8 @@ macro_rules! __statics_class {
             "\x01L_OBJC_CLASSLIST_REFERENCES_$_",
             $hash,
         )]
-        static mut REF: $crate::__macro_helpers::UnsafeCell<&$crate::runtime::AnyClass> = unsafe {
-            $crate::__macro_helpers::UnsafeCell::new(&CLASS)
+        static REF: $crate::__macro_helpers::SyncUnsafeCell<&$crate::runtime::AnyClass> = unsafe {
+            $crate::__macro_helpers::SyncUnsafeCell::new(&CLASS)
         };
 
         $crate::__statics_image_info!($hash);
@@ -544,9 +541,9 @@ macro_rules! __statics_class {
             "\x01L_OBJC_CLASS_REFERENCES_",
             $hash,
         )]
-        static mut REF: $crate::__macro_helpers::UnsafeCell<&$crate::runtime::AnyClass> = unsafe {
+        static REF: $crate::__macro_helpers::SyncUnsafeCell<&$crate::runtime::AnyClass> = unsafe {
             let ptr: *const $crate::runtime::AnyClass = NAME_DATA.as_ptr().cast();
-            $crate::__macro_helpers::UnsafeCell::new(&*ptr)
+            $crate::__macro_helpers::SyncUnsafeCell::new(&*ptr)
         };
 
         $crate::__statics_image_info!($hash);

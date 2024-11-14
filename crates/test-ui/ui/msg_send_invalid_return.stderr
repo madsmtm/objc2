@@ -19,7 +19,7 @@ error[E0277]: the trait bound `AnyClass: Message` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
   |     let _: Retained<AnyClass> = unsafe { msg_send_id![cls, new] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `AnyClass`, which is required by `RetainSemantics<1>: MsgSendId<_, _>`
+  |                                          ^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `AnyClass`
   |
   = help: the following other types implement trait `Message`:
             AnyObject
@@ -34,7 +34,7 @@ error[E0277]: the trait bound `AnyClass: Message` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
   |     let _: Option<Retained<AnyClass>> = unsafe { msg_send_id![cls, new] };
-  |                                                  ^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `AnyClass`, which is required by `RetainSemantics<1>: MsgSendId<_, _>`
+  |                                                  ^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `AnyClass`
   |
   = help: the following other types implement trait `Message`:
             AnyObject

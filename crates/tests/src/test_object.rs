@@ -96,7 +96,7 @@ unsafe impl MyTestProtocol for MyTestObject {}
 
 #[cfg(all(target_vendor = "apple", target_arch = "aarch64"))]
 #[used]
-static FIX_LINKING: &'static AnyClass = {
+static FIX_LINKING: &AnyClass = {
     extern "C" {
         #[link_name = "OBJC_CLASS_$_MyTestObject"]
         static CLASS: AnyClass;
@@ -134,12 +134,12 @@ impl MyTestObject {
 
     fn var1_ivar(&self) -> &c_int {
         let ivar = Self::class().instance_variable(&c("var1")).unwrap();
-        unsafe { ivar.load(&self) }
+        unsafe { ivar.load(self) }
     }
 
     fn var1_ivar_ptr(&self) -> *mut c_int {
         let ivar = Self::class().instance_variable(&c("var1")).unwrap();
-        unsafe { ivar.load_ptr(&self) }
+        unsafe { ivar.load_ptr(self) }
     }
 
     fn add_to_ivar1(&self, number: c_int) {
@@ -152,12 +152,12 @@ impl MyTestObject {
 
     fn var2_ivar(&self) -> &Bool {
         let ivar = Self::class().instance_variable(&c("var2")).unwrap();
-        unsafe { ivar.load(&self) }
+        unsafe { ivar.load(self) }
     }
 
     fn var2_ivar_ptr(&self) -> *mut Bool {
         let ivar = Self::class().instance_variable(&c("var2")).unwrap();
-        unsafe { ivar.load_ptr(&self) }
+        unsafe { ivar.load_ptr(self) }
     }
 
     fn var3(&self) -> *mut AnyObject {
@@ -170,12 +170,12 @@ impl MyTestObject {
 
     fn var3_ivar(&self) -> &*mut AnyObject {
         let ivar = Self::class().instance_variable(&c("var3")).unwrap();
-        unsafe { ivar.load(&self) }
+        unsafe { ivar.load(self) }
     }
 
     fn var3_ivar_ptr(&self) -> *mut *mut AnyObject {
         let ivar = Self::class().instance_variable(&c("var3")).unwrap();
-        unsafe { ivar.load_ptr(&self) }
+        unsafe { ivar.load_ptr(self) }
     }
 }
 
@@ -336,27 +336,27 @@ fn test_protocol() {
 #[cfg(feature = "all")]
 fn downcast_basics() {
     let obj = NSString::new();
-    assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
+    assert!(obj.downcast_ref::<NSString>().is_some());
 
     let obj = obj.into_super();
-    assert!(matches!(obj.downcast_ref::<NSNumber>(), None));
-    assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
+    assert!(obj.downcast_ref::<NSNumber>().is_none());
+    assert!(obj.downcast_ref::<NSString>().is_some());
 
     let obj = NSMutableString::new();
-    assert!(matches!(obj.downcast_ref::<NSMutableString>(), Some(_)));
-    assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
-    assert!(matches!(obj.downcast_ref::<NSObject>(), Some(_)));
-    assert!(matches!(obj.downcast_ref::<NSException>(), None));
+    assert!(obj.downcast_ref::<NSMutableString>().is_some());
+    assert!(obj.downcast_ref::<NSString>().is_some());
+    assert!(obj.downcast_ref::<NSObject>().is_some());
+    assert!(obj.downcast_ref::<NSException>().is_none());
 
     let obj = obj.into_super().into_super();
-    assert!(matches!(obj.downcast_ref::<NSMutableString>(), Some(_)));
-    assert!(matches!(obj.downcast_ref::<NSString>(), Some(_)));
-    assert!(matches!(obj.downcast_ref::<NSObject>(), Some(_)));
-    assert!(matches!(obj.downcast_ref::<NSException>(), None));
+    assert!(obj.downcast_ref::<NSMutableString>().is_some());
+    assert!(obj.downcast_ref::<NSString>().is_some());
+    assert!(obj.downcast_ref::<NSObject>().is_some());
+    assert!(obj.downcast_ref::<NSException>().is_none());
 
     let obj: Retained<NSArray<NSString>> = NSArray::new();
-    assert!(matches!(obj.downcast_ref::<NSString>(), None));
-    assert!(matches!(obj.downcast_ref::<NSArray<AnyObject>>(), Some(_)));
+    assert!(obj.downcast_ref::<NSString>().is_none());
+    assert!(obj.downcast_ref::<NSArray<AnyObject>>().is_some());
 }
 
 #[test]
@@ -364,7 +364,7 @@ fn downcast_basics() {
 fn test_downcast_class() {
     // Ensure that downcasting `AnyClass` doesn't cause unsoundness.
     let cls = NSString::class();
-    let obj = unsafe { &*(cls as *const AnyClass as *const AnyObject) };
+    let obj = unsafe { &*(cls as *const AnyClass).cast::<AnyObject>() };
 
     // AnyClass is an NSObject internally.
     assert!(obj.downcast_ref::<NSObject>().is_some());

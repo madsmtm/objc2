@@ -337,7 +337,7 @@ impl<'de> Deserialize<'de> for Counterpart {
 
         struct CounterpartVisitor;
 
-        impl<'de> de::Visitor<'de> for CounterpartVisitor {
+        impl de::Visitor<'_> for CounterpartVisitor {
             type Value = Counterpart;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {

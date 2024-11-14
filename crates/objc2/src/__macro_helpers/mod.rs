@@ -23,6 +23,7 @@ mod module_info;
 mod msg_send;
 mod msg_send_retained;
 mod os_version;
+mod sync_unsafe_cell;
 mod writeback;
 
 pub use self::cache::{CachedClass, CachedSel};
@@ -41,6 +42,7 @@ pub use self::module_info::ModuleInfo;
 pub use self::msg_send::MsgSend;
 pub use self::msg_send_retained::{MaybeUnwrap, MsgSendId, MsgSendSuperId};
 pub use self::os_version::{is_available, AvailableVersion, OSVersion};
+pub use self::sync_unsafe_cell::SyncUnsafeCell;
 
 /// Disallow using this passed in value in const and statics for forwards
 /// compatibility (this function is not a `const` function).

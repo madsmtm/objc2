@@ -382,7 +382,7 @@ fn dictionary_insert_key_copies() {
     let key1 = NSCopyingRcTestObject::new();
     let mut expected = ThreadTestData::current();
 
-    let _ = dict.insert(&*key1, &*NSNumber::new_i32(1));
+    dict.insert(&*key1, &*NSNumber::new_i32(1));
     // Create copy
     expected.copy += 1;
     expected.alloc += 1;
@@ -400,7 +400,7 @@ fn dictionary_insert_key_copies() {
 fn dictionary_get_key_copies() {
     let dict = NSMutableDictionary::new();
     let key1 = NSCopyingRcTestObject::new();
-    let _ = dict.insert(&*key1, &*NSNumber::new_i32(1));
+    dict.insert(&*key1, &*NSNumber::new_i32(1));
     let expected = ThreadTestData::current();
 
     let _ = dict.objectForKey(&key1);

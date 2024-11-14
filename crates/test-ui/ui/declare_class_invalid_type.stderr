@@ -8,7 +8,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`, which is required by `Retained<CustomObject>: __macro_helpers::convert::return_private::Sealed`
+  | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -43,7 +43,7 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Vec<()>`, which is required by `Vec<()>: __macro_helpers::convert::return_private::Sealed`
+  | |_^ the trait `Encode` is not implemented for `Vec<()>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -78,7 +78,7 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Box<u32>`, which is required by `Box<u32>: __macro_helpers::convert::argument_private::Sealed`
+  | |_^ the trait `Encode` is not implemented for `Box<u32>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -117,7 +117,7 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `CustomObject`, which is required by `CustomObject: __macro_helpers::convert::argument_private::Sealed`
+  | |_^ the trait `Encode` is not implemented for `CustomObject`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -156,7 +156,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`, which is required by `Retained<CustomObject>: ConvertReturn`
+  | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -184,7 +184,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: Encode` is not satisfied
   | | );
   | | ^
   | | |
-  | |_the trait `Encode` is not implemented for `Retained<CustomObject>`, which is required by `extern "C-unwind" fn(&AnyClass, objc2::runtime::Sel) -> Retained<CustomObject>: MethodImplementation`
+  | |_the trait `Encode` is not implemented for `Retained<CustomObject>`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `Encode`:
@@ -219,7 +219,7 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Vec<()>`, which is required by `Vec<()>: ConvertReturn`
+  | |_^ the trait `Encode` is not implemented for `Vec<()>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -247,7 +247,7 @@ error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
   | | );
   | | ^
   | | |
-  | |_the trait `Encode` is not implemented for `Vec<()>`, which is required by `extern "C-unwind" fn(&AnyClass, objc2::runtime::Sel) -> Vec<()>: MethodImplementation`
+  | |_the trait `Encode` is not implemented for `Vec<()>`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `Encode`:
@@ -282,7 +282,7 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Box<u32>`, which is required by `Box<u32>: ConvertArgument`
+  | |_^ the trait `Encode` is not implemented for `Box<u32>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -310,7 +310,7 @@ error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
   | | );
   | | ^
   | | |
-  | |_the trait `Encode` is not implemented for `Box<u32>`, which is required by `extern "C-unwind" fn(&CustomObject, objc2::runtime::Sel, Box<u32>): MethodImplementation`
+  | |_the trait `Encode` is not implemented for `Box<u32>`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `Encode`:
@@ -345,7 +345,7 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `CustomObject`, which is required by `CustomObject: ConvertArgument`
+  | |_^ the trait `Encode` is not implemented for `CustomObject`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -373,7 +373,7 @@ error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
   | | );
   | | ^
   | | |
-  | |_the trait `Encode` is not implemented for `CustomObject`, which is required by `extern "C-unwind" fn(&CustomObject, objc2::runtime::Sel, CustomObject): MethodImplementation`
+  | |_the trait `Encode` is not implemented for `CustomObject`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `Encode`:
@@ -408,7 +408,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`, which is required by `Retained<CustomObject>: ConvertReturn`
+  | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -434,7 +434,7 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Vec<()>`, which is required by `Vec<()>: ConvertReturn`
+  | |_^ the trait `Encode` is not implemented for `Vec<()>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -460,7 +460,7 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Box<u32>`, which is required by `Box<u32>: ConvertArgument`
+  | |_^ the trait `Encode` is not implemented for `Box<u32>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -486,7 +486,7 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `CustomObject`, which is required by `CustomObject: ConvertArgument`
+  | |_^ the trait `Encode` is not implemented for `CustomObject`
   |
   = help: the following other types implement trait `Encode`:
             &'a T

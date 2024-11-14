@@ -46,7 +46,7 @@ error: expected expression, found `}`
   |         }
   |         ^ expected expression
 
-error: no rules expected the token `(`
+error: no rules expected `(`
  --> ui/declare_class_invalid_syntax.rs
   |
   |         fn test_pattern((a, b): (u32, i32)) {
@@ -66,7 +66,7 @@ note: while trying to match `:`
   |         $param:ident : $param_ty:ty $(, $($rest:tt)*)?
   |                      ^
 
-error: no rules expected the token `(`
+error: no rules expected `(`
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
@@ -81,7 +81,7 @@ error: no rules expected the token `(`
   = note: while trying to match end of macro
   = note: this error originates in the macro `$crate::__declare_class_register_methods` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: no rules expected the token `(`
+error: no rules expected `(`
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
@@ -295,19 +295,19 @@ error: `#[method_id(...)]` must have a return type
   |
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: no rules expected the token `(`
+error: no rules expected `(`
  --> ui/declare_class_invalid_syntax.rs
   |
   |         fn test_pattern((a, b): (u32, i32)) {
   |                         ^ no rules expected this token in macro call
   |
-note: while trying to match `_`
+note: while trying to match reserved identifier `_`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
   |         (_ : $param_ty:ty $(, $($params_rest:tt)*)?)
   |          ^
 
-error: no rules expected the token `)`
+error: no rules expected `)`
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
@@ -326,55 +326,55 @@ note: while trying to match `:`
   |                       ^
   = note: this error originates in the macro `$crate::__declare_class_method_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: no rules expected the token `pub`
+error: no rules expected keyword `pub`
  --> ui/declare_class_invalid_syntax.rs
   |
   |         pub fn test_pub() {}
   |         ^^^ no rules expected this token in macro call
   |
-note: while trying to match `unsafe`
+note: while trying to match keyword `unsafe`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
   |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
 
-error: no rules expected the token `const`
+error: no rules expected keyword `const`
  --> ui/declare_class_invalid_syntax.rs
   |
   |         const fn test_const() {}
   |         ^^^^^ no rules expected this token in macro call
   |
-note: while trying to match `unsafe`
+note: while trying to match keyword `unsafe`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
   |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
 
-error: no rules expected the token `async`
+error: no rules expected keyword `async`
  --> ui/declare_class_invalid_syntax.rs
   |
   |         async fn test_async() {}
   |         ^^^^^ no rules expected this token in macro call
   |
-note: while trying to match `unsafe`
+note: while trying to match keyword `unsafe`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
   |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
 
-error: no rules expected the token `extern`
+error: no rules expected keyword `extern`
  --> ui/declare_class_invalid_syntax.rs
   |
   |         extern "C" fn test_extern() {}
   |         ^^^^^^ no rules expected this token in macro call
   |
-note: while trying to match `unsafe`
+note: while trying to match keyword `unsafe`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
   |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
 
-error: no rules expected the token `test_fn_fn`
+error: no rules expected `test_fn_fn`
  --> ui/declare_class_invalid_syntax.rs
   |
   |         fn fn test_fn_fn() {}
@@ -386,7 +386,7 @@ note: while trying to match `(`
   |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |                       ^
 
-error: no rules expected the token `<`
+error: no rules expected `<`
  --> ui/declare_class_invalid_syntax.rs
   |
   |         fn test_generic<T>() {}
@@ -398,7 +398,7 @@ note: while trying to match `(`
   |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |                       ^
 
-error: no rules expected the token `;`
+error: no rules expected `;`
  --> ui/declare_class_invalid_syntax.rs
   |
   |         fn test_no_body(&self);
@@ -422,7 +422,7 @@ note: while trying to match meta-variable `$body:block`
   |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |                                                       ^^^^^^^^^^^
 
-error: no rules expected the token `!`
+error: no rules expected `!`
  --> ui/declare_class_invalid_syntax.rs
   |
   |         #![doc = "inner_attribute"]
@@ -434,7 +434,7 @@ note: while trying to match `[`
   |         $(#[$($m:tt)*])*
   |            ^
 
-error: no rules expected the token `type`
+error: no rules expected keyword `type`
  --> ui/declare_class_invalid_syntax.rs
   |
   |         type TypeAlias = Self;
@@ -442,7 +442,7 @@ error: no rules expected the token `type`
   |
   = note: while trying to match end of macro
 
-error: no rules expected the token `const`
+error: no rules expected keyword `const`
  --> ui/declare_class_invalid_syntax.rs
   |
   |         const CONSTANT: () = ();
@@ -450,13 +450,13 @@ error: no rules expected the token `const`
   |
   = note: while trying to match end of macro
 
-error: no rules expected the token `}`
+error: no rules expected `}`
  --> ui/declare_class_invalid_syntax.rs
   |
   |     }
   |     ^ no rules expected this token in macro call
   |
-note: while trying to match `const`
+note: while trying to match keyword `const`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
   |             const NAME: &'static str = $name_const:expr;
@@ -468,7 +468,7 @@ error: unexpected end of macro invocation
   |     }
   |      ^ missing tokens in macro arguments
   |
-note: while trying to match `impl`
+note: while trying to match keyword `impl`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
   |         impl DeclaredClass for $for_declared:ty {

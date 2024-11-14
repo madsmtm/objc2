@@ -364,7 +364,7 @@ impl<'a, C: ?Sized + FastEnumerationHelper> Iter<'a, C> {
     }
 }
 
-impl<'a, C: FastEnumerationHelper> Iterator for Iter<'a, C> {
+impl<C: FastEnumerationHelper> Iterator for Iter<'_, C> {
     type Item = Retained<C::Item>;
 
     #[inline]
@@ -543,7 +543,7 @@ where
     }
 }
 
-impl<'a, C, E> Iterator for IterWithBackingEnum<'a, C, E>
+impl<C, E> Iterator for IterWithBackingEnum<'_, C, E>
 where
     C: ?Sized + FastEnumerationHelper,
     E: FastEnumerationHelper,

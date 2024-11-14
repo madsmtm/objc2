@@ -87,12 +87,12 @@ error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satis
  --> ui/msg_send_invalid_receiver.rs
   |
   |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, new] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Retained<NSObject>`, which is required by `RetainSemantics<1>: MsgSendId<_, _>`
+  |                                          ^^^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Retained<NSObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a AnyClass
-            &'a T
-            &'a mut AnyObject
+            &AnyClass
+            &T
+            &mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -105,12 +105,12 @@ error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satis
  --> ui/msg_send_invalid_receiver.rs
   |
   |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, copy] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Retained<NSObject>`, which is required by `RetainSemantics<4>: MsgSendId<_, _>`
+  |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Retained<NSObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a AnyClass
-            &'a T
-            &'a mut AnyObject
+            &AnyClass
+            &T
+            &mut AnyObject
             *const AnyClass
             *const T
             *mut T

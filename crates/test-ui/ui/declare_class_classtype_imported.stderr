@@ -1,4 +1,4 @@
-error: no rules expected the token `objc2`
+error: no rules expected `objc2`
  --> ui/declare_class_classtype_imported.rs
   |
   |     unsafe impl objc2::ClassType for CustomObject {

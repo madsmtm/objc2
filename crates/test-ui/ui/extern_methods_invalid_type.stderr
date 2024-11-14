@@ -7,7 +7,7 @@ error[E0277]: the trait bound `Retained<MyObject>: ConvertReturn` is not satisfi
   | |         fn a(&self) -> Retained<Self>;
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Retained<MyObject>`, which is required by `Retained<MyObject>: ConvertReturn`
+  | |_^ the trait `Encode` is not implemented for `Retained<MyObject>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -62,7 +62,7 @@ error[E0277]: the trait bound `Box<i32>: Encode` is not satisfied
   | |         fn c(&self, arg: Box<i32>);
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Box<i32>`, which is required by `(Box<i32>,): ConvertArguments`
+  | |_^ the trait `Encode` is not implemented for `Box<i32>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -96,7 +96,7 @@ error[E0277]: the trait bound `Result<(), Retained<NSObject>>: ConvertReturn` is
   | |         fn error(arg: i32) -> Result<(), Retained<NSObject>>;
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Result<(), Retained<NSObject>>`, which is required by `Result<(), Retained<NSObject>>: ConvertReturn`
+  | |_^ the trait `Encode` is not implemented for `Result<(), Retained<NSObject>>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -151,7 +151,7 @@ error[E0277]: the trait bound `MainThreadMarker: ConvertReturn` is not satisfied
   | |         fn main_thread_marker_as_return() -> MainThreadMarker;
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `MainThreadMarker`, which is required by `MainThreadMarker: ConvertReturn`
+  | |_^ the trait `Encode` is not implemented for `MainThreadMarker`
   |
   = help: the following other types implement trait `Encode`:
             &'a T

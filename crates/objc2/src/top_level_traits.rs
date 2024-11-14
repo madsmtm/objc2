@@ -572,19 +572,19 @@ unsafe impl<P: ?Sized + MainThreadOnly> MainThreadOnly for ProtocolObject<P> {}
 /// [`dyn AllocAnyThread`]: AllocAnyThread
 /// [`dyn MainThreadOnly`]: MainThreadOnly
 pub trait ThreadKind: private::SealedThreadKind {
-    // To mark `ThreadKind` as not object safe for now.
+    // To mark `ThreadKind` as dyn-incompatible for now.
     #[doc(hidden)]
-    const __NOT_OBJECT_SAFE: ();
+    const __DYN_INCOMPATIBLE: ();
 }
 
-impl<'a> private::SealedThreadKind for dyn AllocAnyThread + 'a {}
-impl<'a> ThreadKind for dyn AllocAnyThread + 'a {
-    const __NOT_OBJECT_SAFE: () = ();
+impl private::SealedThreadKind for dyn AllocAnyThread + '_ {}
+impl ThreadKind for dyn AllocAnyThread + '_ {
+    const __DYN_INCOMPATIBLE: () = ();
 }
 
-impl<'a> private::SealedThreadKind for dyn MainThreadOnly + 'a {}
-impl<'a> ThreadKind for dyn MainThreadOnly + 'a {
-    const __NOT_OBJECT_SAFE: () = ();
+impl private::SealedThreadKind for dyn MainThreadOnly + '_ {}
+impl ThreadKind for dyn MainThreadOnly + '_ {
+    const __DYN_INCOMPATIBLE: () = ();
 }
 
 #[cfg(test)]
@@ -592,5 +592,5 @@ mod tests {
     use super::*;
 
     #[allow(unused)]
-    fn object_safe(_: &dyn AllocAnyThread, _: &dyn MainThreadOnly) {}
+    fn dyn_compatible(_: &dyn AllocAnyThread, _: &dyn MainThreadOnly) {}
 }

@@ -4,7 +4,7 @@ error[E0277]: `*mut c_void` cannot be shared between threads safely
   |     needs_sync::<AutoreleasePool<'_>>();
   |                  ^^^^^^^^^^^^^^^^^^^ `*mut c_void` cannot be shared between threads safely
   |
-  = help: within `AutoreleasePool<'_>`, the trait `Sync` is not implemented for `*mut c_void`, which is required by `AutoreleasePool<'_>: Sync`
+  = help: within `AutoreleasePool<'_>`, the trait `Sync` is not implemented for `*mut c_void`
 note: required because it appears within the type `objc2::rc::autorelease::Pool`
  --> $WORKSPACE/crates/objc2/src/rc/autorelease.rs
   |
@@ -33,7 +33,7 @@ error[E0277]: `*mut c_void` cannot be shared between threads safely
   |     needs_send::<AutoreleasePool<'_>>();
   |                  ^^^^^^^^^^^^^^^^^^^ `*mut c_void` cannot be shared between threads safely
   |
-  = help: within `objc2::rc::autorelease::Pool`, the trait `Sync` is not implemented for `*mut c_void`, which is required by `AutoreleasePool<'_>: Send`
+  = help: within `objc2::rc::autorelease::Pool`, the trait `Sync` is not implemented for `*mut c_void`
 note: required because it appears within the type `objc2::rc::autorelease::Pool`
  --> $WORKSPACE/crates/objc2/src/rc/autorelease.rs
   |

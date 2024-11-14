@@ -9,8 +9,9 @@ error[E0277]: the trait bound `Foo: Clone` is not satisfied in `{closure@$DIR/ui
   | |             required by a bound introduced by this call
   | |         let _ = &foo;
   | |     });
-  | |_____^ within `{closure@$DIR/ui/stack_block_with_encoding_requires_clone.rs:15:59: 15:66}`, the trait `Clone` is not implemented for `Foo`, which is required by `{closure@$DIR/ui/stack_block_with_encoding_requires_clone.rs:15:59: 15:66}: Clone`
+  | |_____^ unsatisfied trait bound
   |
+  = help: within `{closure@$DIR/ui/stack_block_with_encoding_requires_clone.rs:15:59: 15:66}`, the trait `Clone` is not implemented for `Foo`
 note: required because it's used within this closure
  --> ui/stack_block_with_encoding_requires_clone.rs
   |

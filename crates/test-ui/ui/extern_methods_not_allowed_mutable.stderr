@@ -9,13 +9,13 @@ error[E0277]: the trait bound `&mut MyObject: MsgSend` is not satisfied
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `&mut MyObject`, which is required by `&mut MyObject: MsgSend`
+  | |_the trait `MessageReceiver` is not implemented for `&mut MyObject`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a AnyClass
-            &'a T
-            &'a mut AnyObject
+            &AnyClass
+            &T
+            &mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -33,12 +33,12 @@ error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
   | |         fn test_id(&mut self) -> Retained<Self>;
   | |     }
   | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `&mut MyObject`, which is required by `RetainSemantics<5>: MsgSendId<_, _>`
+  | |_^ the trait `MessageReceiver` is not implemented for `&mut MyObject`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a AnyClass
-            &'a T
-            &'a mut AnyObject
+            &AnyClass
+            &T
+            &mut AnyObject
             *const AnyClass
             *const T
             *mut T

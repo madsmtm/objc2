@@ -817,8 +817,8 @@ encode_pointer_impls!(
 );
 
 // SAFETY: References and `NonNull` have a NULL niche
-unsafe impl<'a, T: RefEncode + ?Sized> OptionEncode for &'a T {}
-unsafe impl<'a, T: RefEncode + ?Sized> OptionEncode for &'a mut T {}
+unsafe impl<T: RefEncode + ?Sized> OptionEncode for &T {}
+unsafe impl<T: RefEncode + ?Sized> OptionEncode for &mut T {}
 unsafe impl<T: RefEncode + ?Sized> OptionEncode for NonNull<T> {}
 
 /// Helper for implementing [`Encode`]/[`RefEncode`] for function pointers

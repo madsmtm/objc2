@@ -509,8 +509,8 @@ unsafe impl<T: ?Sized + Message> MessageReceiver for NonNull<T> {
     }
 }
 
-impl<'a, T: ?Sized + Message> private::Sealed for &'a T {}
-unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a T {
+impl<T: ?Sized + Message> private::Sealed for &T {}
+unsafe impl<T: ?Sized + Message> MessageReceiver for &T {
     type __Inner = T;
 
     #[inline]
@@ -520,13 +520,13 @@ unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a T {
     }
 }
 
-impl<'a> private::Sealed for &'a mut AnyObject {}
+impl private::Sealed for &mut AnyObject {}
 /// `&mut AnyObject` is allowed as mutable, for easier transition from `objc`,
 /// even though it's basically always incorrect to hold `&mut AnyObject`.
 ///
 /// Use `*mut AnyObject` instead if you know for certain you need mutability,
 /// and cannot make do with interior mutability.
-unsafe impl<'a> MessageReceiver for &'a mut AnyObject {
+unsafe impl MessageReceiver for &mut AnyObject {
     type __Inner = AnyObject;
 
     #[inline]
@@ -545,8 +545,8 @@ unsafe impl MessageReceiver for *const AnyClass {
     }
 }
 
-impl<'a> private::Sealed for &'a AnyClass {}
-unsafe impl<'a> MessageReceiver for &'a AnyClass {
+impl private::Sealed for &AnyClass {}
+unsafe impl MessageReceiver for &AnyClass {
     type __Inner = AnyClass;
 
     #[inline]

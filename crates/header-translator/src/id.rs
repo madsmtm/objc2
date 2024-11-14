@@ -59,7 +59,7 @@ pub enum LocationLibrary<'location, 'config> {
     },
 }
 
-impl<'location, 'config> LocationLibrary<'location, 'config> {
+impl<'config> LocationLibrary<'_, 'config> {
     pub fn krate(&self) -> Option<(&'config str, bool)> {
         match self {
             Self::System => None,

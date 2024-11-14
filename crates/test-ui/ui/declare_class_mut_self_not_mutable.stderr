@@ -10,13 +10,13 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `&mut CustomObject`, which is required by `extern "C-unwind" fn(&mut CustomObject, objc2::runtime::Sel) -> &mut CustomObject: MethodImplementation`
+  | |_the trait `MessageReceiver` is not implemented for `&mut CustomObject`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a AnyClass
-            &'a T
-            &'a mut AnyObject
+            &AnyClass
+            &T
+            &mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -45,13 +45,13 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `&mut CustomObject`, which is required by `extern "C-unwind" fn(&mut CustomObject, objc2::runtime::Sel): MethodImplementation`
+  | |_the trait `MessageReceiver` is not implemented for `&mut CustomObject`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a AnyClass
-            &'a T
-            &'a mut AnyObject
+            &AnyClass
+            &T
+            &mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -80,13 +80,13 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `&mut CustomObject`, which is required by `extern "C-unwind" fn(&mut CustomObject, objc2::runtime::Sel) -> IdReturnValue: MethodImplementation`
+  | |_the trait `MessageReceiver` is not implemented for `&mut CustomObject`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a AnyClass
-            &'a T
-            &'a mut AnyObject
+            &AnyClass
+            &T
+            &mut AnyObject
             *const AnyClass
             *const T
             *mut T
@@ -113,12 +113,12 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
 ... |
   | |     }
   | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `&mut CustomObject`, which is required by `RetainSemantics<5>: MessageRecieveId<&mut CustomObject, Retained<CustomObject>>`
+  | |_^ the trait `MessageReceiver` is not implemented for `&mut CustomObject`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a AnyClass
-            &'a T
-            &'a mut AnyObject
+            &AnyClass
+            &T
+            &mut AnyObject
             *const AnyClass
             *const T
             *mut T

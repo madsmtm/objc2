@@ -425,9 +425,15 @@ macro_rules! declare_class {
 
         // Anonymous block to hide the shared statics
         const _: () = {
-            static mut __OBJC2_CLASS: $crate::__macro_helpers::MaybeUninit<&'static $crate::runtime::AnyClass> = $crate::__macro_helpers::MaybeUninit::uninit();
-            static mut __OBJC2_IVAR_OFFSET: $crate::__macro_helpers::MaybeUninit<$crate::__macro_helpers::isize> = $crate::__macro_helpers::MaybeUninit::uninit();
-            static mut __OBJC2_DROP_FLAG_OFFSET: $crate::__macro_helpers::MaybeUninit<$crate::__macro_helpers::isize> = $crate::__macro_helpers::MaybeUninit::uninit();
+            static __OBJC2_CLASS: $crate::__macro_helpers::SyncUnsafeCell<
+                $crate::__macro_helpers::MaybeUninit<&'static $crate::runtime::AnyClass>
+            > = $crate::__macro_helpers::SyncUnsafeCell::new($crate::__macro_helpers::MaybeUninit::uninit());
+            static __OBJC2_IVAR_OFFSET: $crate::__macro_helpers::SyncUnsafeCell<
+                $crate::__macro_helpers::MaybeUninit<$crate::__macro_helpers::isize>
+            > = $crate::__macro_helpers::SyncUnsafeCell::new($crate::__macro_helpers::MaybeUninit::uninit());
+            static __OBJC2_DROP_FLAG_OFFSET: $crate::__macro_helpers::SyncUnsafeCell<
+                $crate::__macro_helpers::MaybeUninit<$crate::__macro_helpers::isize>
+            > = $crate::__macro_helpers::SyncUnsafeCell::new($crate::__macro_helpers::MaybeUninit::uninit());
 
             // Creation
             unsafe impl ClassType for $for_class {
@@ -458,18 +464,18 @@ macro_rules! declare_class {
                         // SAFETY: Modification is ensured by `Once` to happen
                         // before any access to the variables.
                         unsafe {
-                            __OBJC2_CLASS.write(__objc2_cls);
+                            __OBJC2_CLASS.get().write($crate::__macro_helpers::MaybeUninit::new(__objc2_cls));
                             if <Self as $crate::__macro_helpers::DeclaredIvarsHelper>::HAS_IVARS {
-                                __OBJC2_IVAR_OFFSET.write(__objc2_ivar_offset);
+                                __OBJC2_IVAR_OFFSET.get().write($crate::__macro_helpers::MaybeUninit::new(__objc2_ivar_offset));
                             }
                             if <Self as $crate::__macro_helpers::DeclaredIvarsHelper>::HAS_DROP_FLAG {
-                                __OBJC2_DROP_FLAG_OFFSET.write(__objc2_drop_flag_offset);
+                                __OBJC2_DROP_FLAG_OFFSET.get().write($crate::__macro_helpers::MaybeUninit::new(__objc2_drop_flag_offset));
                             }
                         }
                     });
 
                     // SAFETY: We just registered the class, so is now available
-                    unsafe { __OBJC2_CLASS.assume_init() }
+                    unsafe { __OBJC2_CLASS.get().read().assume_init() }
                 }
 
                 #[inline]
@@ -492,7 +498,7 @@ macro_rules! declare_class {
                     if <Self as $crate::__macro_helpers::DeclaredIvarsHelper>::HAS_IVARS {
                         // SAFETY: Accessing the offset is guaranteed to only be
                         // done after the class has been initialized.
-                        unsafe { __OBJC2_IVAR_OFFSET.assume_init() }
+                        unsafe { __OBJC2_IVAR_OFFSET.get().read().assume_init() }
                     } else {
                         // Fall back to an offset of zero.
                         //
@@ -506,7 +512,7 @@ macro_rules! declare_class {
                 fn __drop_flag_offset() -> $crate::__macro_helpers::isize {
                     if <Self as $crate::__macro_helpers::DeclaredIvarsHelper>::HAS_DROP_FLAG {
                         // SAFETY: Same as above.
-                        unsafe { __OBJC2_DROP_FLAG_OFFSET.assume_init() }
+                        unsafe { __OBJC2_DROP_FLAG_OFFSET.get().read().assume_init() }
                     } else {
                         // Fall back to an offset of zero.
                         //

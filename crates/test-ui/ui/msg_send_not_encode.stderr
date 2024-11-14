@@ -2,7 +2,7 @@ error[E0277]: the trait bound `Vec<u8>: ConvertReturn` is not satisfied
  --> ui/msg_send_not_encode.rs
   |
   |         let _: Vec<u8> = msg_send![cls, new];
-  |                          ^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Vec<u8>`, which is required by `Vec<u8>: ConvertReturn`
+  |                          ^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Vec<u8>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -30,7 +30,7 @@ error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
  --> ui/msg_send_not_encode.rs
   |
   |         let _: () = msg_send![cls, newWith: x];
-  |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Vec<u8>`, which is required by `(Vec<u8>,): ConvertArguments`
+  |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Vec<u8>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -59,7 +59,7 @@ error[E0277]: the trait bound `(): Encode` is not satisfied
  --> ui/msg_send_not_encode.rs
   |
   |         let _: () = msg_send![cls, unitAsArgument: ()];
-  |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `()`, which is required by `((),): ConvertArguments`
+  |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `()`
   |
   = help: the following other types implement trait `Encode`:
             &'a T

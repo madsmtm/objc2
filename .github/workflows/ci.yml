@@ -55,7 +55,7 @@ env:
   # END AUTOMATICALLY GENERATED
 
   # The current nightly Rust version. Keep this synced with `rust-toolchain.toml`
-  CURRENT_NIGHTLY: nightly-2024-09-05
+  CURRENT_NIGHTLY: nightly-2024-11-14
   # Various features that we'd usually want to test with
   #
   # Note: The `exception` feature is not enabled here, since it requires

@@ -1,4 +1,4 @@
-error: no rules expected the token `1`
+error: no rules expected `1`
  --> ui/available_invalid.rs
   |
   |     available!(macos = 1 1);
@@ -6,7 +6,7 @@ error: no rules expected the token `1`
   |
   = note: while trying to match sequence start
 
-error: no rules expected the token `ABCD`
+error: no rules expected `ABCD`
  --> ui/available_invalid.rs
   |
   |     available!(macos = ABCD);
@@ -30,7 +30,7 @@ note: while trying to match meta-variable `$major:literal`
   |             $os:ident $(= $major:literal $(. $minor:literal $(. $patch:literal)?)?)?
   |                           ^^^^^^^^^^^^^^
 
-error: no rules expected the token `:`
+error: no rules expected `:`
  --> ui/available_invalid.rs
   |
   |     available!(macos: 1.2);

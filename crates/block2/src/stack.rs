@@ -71,7 +71,7 @@ where
 }
 
 // Basic constants and helpers.
-impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
+impl<A, R, Closure> StackBlock<'_, A, R, Closure> {
     /// The size of the block header and the trailing closure.
     ///
     /// This ensures that the closure that the block contains is also moved to
@@ -108,7 +108,7 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
 }
 
 // `StackBlock::new`
-impl<'f, A, R, Closure: Clone> StackBlock<'f, A, R, Closure> {
+impl<A, R, Closure: Clone> StackBlock<'_, A, R, Closure> {
     // Clone the closure from one block to another.
     unsafe extern "C-unwind" fn clone_closure(dst: *mut c_void, src: *const c_void) {
         let dst: *mut Self = dst.cast();
@@ -446,7 +446,7 @@ where
         };
 }
 
-impl<'f, A, R, Closure: Clone> Clone for StackBlock<'f, A, R, Closure> {
+impl<A, R, Closure: Clone> Clone for StackBlock<'_, A, R, Closure> {
     #[inline]
     fn clone(&self) -> Self {
         Self {
@@ -457,7 +457,7 @@ impl<'f, A, R, Closure: Clone> Clone for StackBlock<'f, A, R, Closure> {
     }
 }
 
-impl<'f, A, R, Closure: Copy> Copy for StackBlock<'f, A, R, Closure> {}
+impl<A, R, Closure: Copy> Copy for StackBlock<'_, A, R, Closure> {}
 
 impl<'f, A, R, Closure> Deref for StackBlock<'f, A, R, Closure>
 where
@@ -481,7 +481,7 @@ where
     }
 }
 
-impl<'f, A, R, Closure> fmt::Debug for StackBlock<'f, A, R, Closure> {
+impl<A, R, Closure> fmt::Debug for StackBlock<'_, A, R, Closure> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("StackBlock");
         debug_block_header(&self.header, &mut f);

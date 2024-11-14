@@ -54,7 +54,7 @@ impl<'a> MethodEncodingIter<'a> {
     }
 }
 
-impl<'a> Iterator for MethodEncodingIter<'a> {
+impl Iterator for MethodEncodingIter<'_> {
     type Item = Result<(EncodingBox, Option<isize>), EncodingParseError>;
 
     fn next(&mut self) -> Option<Self::Item> {

@@ -464,7 +464,7 @@ impl<'a> MsgSendIdFailed<'a> for New {
     }
 }
 
-impl<'a> MsgSendIdFailed<'a> for Alloc {
+impl MsgSendIdFailed<'_> for Alloc {
     type Args = ();
 
     #[cold]

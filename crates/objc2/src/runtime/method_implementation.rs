@@ -15,7 +15,7 @@ mod private {
 /// This is a sealed trait that is implemented for a lot of `extern "C"`
 /// function pointer types.
 //
-// Note: `Sized` is intentionally added to make the trait not object safe.
+// Note: `Sized` is intentionally added to make the trait dyn-incompatible.
 pub trait MethodImplementation: private::Sealed + Sized {
     /// The callee type of the method.
     type Callee: ?Sized + RefEncode;

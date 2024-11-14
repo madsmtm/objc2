@@ -162,7 +162,7 @@ impl<T: MessageReceiver> MsgSend for T {
     }
 }
 
-impl<'a, T: ?Sized + Message> MsgSend for &'a Retained<T> {
+impl<T: ?Sized + Message> MsgSend for &Retained<T> {
     type Inner = T;
 
     #[inline]
