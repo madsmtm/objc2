@@ -123,6 +123,7 @@ static_assertions = "1.1.0"
 memoffset = "0.9.0"
 block2 = { path = "../block2", default-features = false }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = [
+    "NSArray",
     "NSDate",
     "NSDictionary",
     "NSEnumerator",

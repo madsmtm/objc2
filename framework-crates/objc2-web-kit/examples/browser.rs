@@ -1,5 +1,6 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 #![allow(clippy::incompatible_msrv)]
+#![cfg_attr(not(target_os = "macos"), allow(dead_code, unused))]
 use core::cell::OnceCell;
 
 use objc2::{
@@ -9,6 +10,7 @@ use objc2::{
     sel, ClassType, DeclaredClass, MainThreadMarker, MainThreadOnly,
 };
 #[allow(deprecated)]
+#[cfg(target_os = "macos")]
 use objc2_app_kit::{
     NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSBackingStoreType,
     NSBezelStyle, NSButton, NSColor, NSControl, NSControlTextEditingDelegate, NSLayoutAttribute,
@@ -19,6 +21,7 @@ use objc2_foundation::{
     ns_string, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize, NSURLRequest,
     NSURL,
 };
+#[cfg(target_os = "macos")]
 use objc2_web_kit::{WKNavigation, WKNavigationDelegate, WKWebView};
 
 macro_rules! idcell {
@@ -41,8 +44,11 @@ macro_rules! idcell {
 
 #[derive(Default)]
 struct Ivars {
+    #[cfg(target_os = "macos")]
     nav_url: OnceCell<Retained<NSTextField>>,
+    #[cfg(target_os = "macos")]
     web_view: OnceCell<Retained<WKWebView>>,
+    #[cfg(target_os = "macos")]
     window: OnceCell<Retained<NSWindow>>,
 }
 
@@ -65,6 +71,7 @@ declare_class!(
 
     unsafe impl NSObjectProtocol for Delegate {}
 
+    #[cfg(target_os = "macos")]
     unsafe impl NSApplicationDelegate for Delegate {
         #[method(applicationDidFinishLaunching:)]
         #[allow(non_snake_case)]
@@ -245,6 +252,7 @@ declare_class!(
         }
     }
 
+    #[cfg(target_os = "macos")]
     unsafe impl NSControlTextEditingDelegate for Delegate {
         #[method(control:textView:doCommandBySelector:)]
         #[allow(non_snake_case)]
@@ -265,8 +273,10 @@ declare_class!(
         }
     }
 
+    #[cfg(target_os = "macos")]
     unsafe impl NSTextFieldDelegate for Delegate {}
 
+    #[cfg(target_os = "macos")] // TODO: Enable this on iOS
     unsafe impl WKNavigationDelegate for Delegate {
         #[method(webView:didFinishNavigation:)]
         #[allow(non_snake_case)]
@@ -293,6 +303,7 @@ impl Delegate {
     }
 }
 
+#[cfg(target_os = "macos")]
 fn main() {
     let mtm = MainThreadMarker::new().unwrap();
     let app = NSApplication::sharedApplication(mtm);
@@ -305,4 +316,9 @@ fn main() {
 
     // run the app
     app.run();
+}
+
+#[cfg(not(target_os = "macos"))]
+fn main() {
+    panic!("This example is currently only supported on macOS");
 }

@@ -73,7 +73,7 @@ If you're confused about this, don't worry too much about it, if you enable
 Copy and fill out the following checklist into the release PR:
 
 ```markdown
-- [ ] The branch is named `new-versions`, such that the full CI will run.
+- [ ] The branch is named `ci-full`, such that the full CI will run.
 - [ ] Changelogs have only been modified under the `Unreleased` header.
 - [ ] Version numbers are bumped in the following order:
     - `objc2-proc-macros`

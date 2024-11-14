@@ -490,7 +490,7 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
             .is_some_and(|v| VersionReq::parse("<=10.12").unwrap().matches(v))
             // HACK: These depend on `objc2-uniform-type-identifiers`, which
             // is not available on macOS 10.12, but will be enabled by `"all"`
-            && !["objc2-file-provider", "objc2-health-kit", "objc2-photos"].contains(&&*lib.krate)
+            && !["objc2-app-kit", "objc2-file-provider", "objc2-health-kit", "objc2-photos"].contains(&&*lib.krate)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_MACOS_10_13", |lib| {
         lib.macos
@@ -498,7 +498,7 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
             .is_some_and(|v| VersionReq::parse("<=10.13").unwrap().matches(v))
             // HACK: These depend on `objc2-uniform-type-identifiers`, which
             // is not available on macOS 10.13, but will be enabled by `"all"`
-            && !["objc2-file-provider", "objc2-health-kit", "objc2-photos"].contains(&&*lib.krate)
+            && !["objc2-app-kit", "objc2-file-provider", "objc2-health-kit", "objc2-photos"].contains(&&*lib.krate)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_MACOS_11", |lib| {
         lib.macos
@@ -520,8 +520,40 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
             .as_ref()
             .is_some_and(|v| VersionReq::parse("<=14.0").unwrap().matches(v))
     })?;
+    writer(&mut ci, config, "FRAMEWORKS_MACOS_15", |lib| {
+        lib.macos
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=15.0").unwrap().matches(v))
+    })?;
     writer(&mut ci, config, "FRAMEWORKS_IOS_10", |lib| {
         lib.ios
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=10.0").unwrap().matches(v))
+    })?;
+    writer(&mut ci, config, "FRAMEWORKS_IOS_17", |lib| {
+        lib.ios
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=17.0").unwrap().matches(v))
+            // HACK: MLCompute and MetalFX are only available on Aarch64
+            && !["objc2-ml-compute", "objc2-metal-fx"].contains(&&*lib.krate)
+    })?;
+    writer(&mut ci, config, "FRAMEWORKS_TVOS_17", |lib| {
+        lib.tvos
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=17.0").unwrap().matches(v))
+    })?;
+    writer(&mut ci, config, "FRAMEWORKS_MAC_CATALYST_17", |lib| {
+        lib.maccatalyst
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=17.0").unwrap().matches(v))
+    })?;
+    writer(&mut ci, config, "FRAMEWORKS_VISIONOS_1", |lib| {
+        lib.visionos
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=1.0").unwrap().matches(v))
+    })?;
+    writer(&mut ci, config, "FRAMEWORKS_WATCHOS_10", |lib| {
+        lib.watchos
             .as_ref()
             .is_some_and(|v| VersionReq::parse("<=10.0").unwrap().matches(v))
     })?;

@@ -1,5 +1,6 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 #![allow(clippy::incompatible_msrv)]
+#![cfg_attr(not(target_os = "macos"), allow(dead_code, unused))]
 
 use core::{cell::OnceCell, ptr::NonNull};
 
@@ -8,6 +9,7 @@ use objc2::runtime::ProtocolObject;
 use objc2::{
     declare_class, msg_send_id, ClassType, DeclaredClass, MainThreadMarker, MainThreadOnly,
 };
+#[cfg(target_os = "macos")]
 use objc2_app_kit::{
     NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSBackingStoreType,
     NSWindow, NSWindowStyleMask,
@@ -20,6 +22,7 @@ use objc2_metal::{
     MTLLibrary, MTLPackedFloat3, MTLPrimitiveType, MTLRenderCommandEncoder,
     MTLRenderPipelineDescriptor, MTLRenderPipelineState,
 };
+#[cfg(target_os = "macos")]
 use objc2_metal_kit::{MTKView, MTKViewDelegate};
 
 #[derive(Copy, Clone)]
@@ -58,6 +61,7 @@ struct Ivars {
     start_date: Retained<NSDate>,
     command_queue: OnceCell<Retained<ProtocolObject<dyn MTLCommandQueue>>>,
     pipeline_state: OnceCell<Retained<ProtocolObject<dyn MTLRenderPipelineState>>>,
+    #[cfg(target_os = "macos")]
     window: OnceCell<Retained<NSWindow>>,
 }
 
@@ -82,6 +86,7 @@ declare_class!(
     unsafe impl NSObjectProtocol for Delegate {}
 
     // define the delegate methods for the `NSApplicationDelegate` protocol
+    #[cfg(target_os = "macos")]
     unsafe impl NSApplicationDelegate for Delegate {
         #[method(applicationDidFinishLaunching:)]
         #[allow(non_snake_case)]
@@ -176,6 +181,7 @@ declare_class!(
     }
 
     // define the delegate methods for the `MTKViewDelegate` protocol
+    #[cfg(target_os = "macos")] // TODO: Support iOS
     unsafe impl MTKViewDelegate for Delegate {
         #[method(drawInMTKView:)]
         #[allow(non_snake_case)]
@@ -288,12 +294,14 @@ impl Delegate {
             start_date: unsafe { NSDate::now() },
             command_queue: OnceCell::default(),
             pipeline_state: OnceCell::default(),
+            #[cfg(target_os = "macos")]
             window: OnceCell::default(),
         });
         unsafe { msg_send_id![super(this), init] }
     }
 }
 
+#[cfg(target_os = "macos")]
 fn main() {
     let mtm = MainThreadMarker::new().unwrap();
     // configure the app
@@ -307,4 +315,9 @@ fn main() {
 
     // run the app
     app.run();
+}
+
+#[cfg(not(target_os = "macos"))]
+fn main() {
+    panic!("This example is currently only supported on macOS");
 }
