@@ -19,15 +19,13 @@ workspace = true
 bitflags = { version = "2.5.0", default-features = false, optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+objc2-core-image = { path = "../objc2-core-image", version = "0.2.2", default-features = false, optional = true }
 objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", version = "0.2.2", default-features = false, optional = true }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true }
-
-[target.'cfg(not(target_os = "watchos"))'.dependencies]
-objc2-core-image = { path = "../objc2-core-image", version = "0.2.2", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -37,7 +35,6 @@ targets = [
     "x86_64-apple-darwin",
     "aarch64-apple-ios",
     "aarch64-apple-tvos",
-    "aarch64-apple-watchos",
     "aarch64-apple-ios-macabi",
 ]
 
