@@ -190,7 +190,7 @@ jobs:
 
   ui:
     name: Compiler UI
-    runs-on: macos-13
+    runs-on: ubuntu-latest
     needs:
     - fmt
     - lint
@@ -218,7 +218,7 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Run UI tests
-      run: cargo run --features=run --bin=test-ui
+      run: cargo run --features=run,gnustep-1-7 --bin=test-ui
 
     - name: Check diff
       if: ${{ always() }}

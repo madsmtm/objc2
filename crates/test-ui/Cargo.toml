@@ -41,6 +41,12 @@ block2 = { path = "../block2" }
 objc2 = { path = "../objc2" }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation" }
 
+# To make CI work
+[target.'cfg(not(target_vendor = "apple"))'.dependencies]
+block2 = { path = "../block2", features = ["gnustep-1-7"] }
+objc2 = { path = "../objc2", features = ["gnustep-1-7"] }
+objc2-foundation = { path = "../../framework-crates/objc2-foundation", features = ["gnustep-1-7"] }
+
 [[bin]]
 name = "test-ui"
 required-features = ["run"]
