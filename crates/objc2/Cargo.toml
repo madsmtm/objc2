@@ -147,7 +147,7 @@ objc2-ui-kit = { path = "../../framework-crates/objc2-ui-kit", default-features 
 ] }
 
 [target.'cfg(target_vendor = "apple")'.dev-dependencies]
-core-foundation = "0.9.3"
+core-foundation = "0.10.0"
 
 [[bench]]
 name = "autorelease"
