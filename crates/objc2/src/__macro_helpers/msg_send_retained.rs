@@ -319,7 +319,7 @@ mod tests {
     use super::*;
 
     use crate::rc::{autoreleasepool, Allocated, PartialInit, RcTestObject, ThreadTestData};
-    use crate::runtime::{AnyObject, NSObject, NSZone};
+    use crate::runtime::{AnyObject, NSObject, NSObjectProtocol, NSZone};
     use crate::{class, define_class, extern_methods, msg_send, test_utils, AllocAnyThread};
 
     #[test]
@@ -787,34 +787,29 @@ mod tests {
         let _obj: Retained<AnyObject> = unsafe { msg_send![obj, description] };
     }
 
-    // This is imperfect, but will do for now.
-    // See also `tests/id_retain_autoreleased.rs`.
-    //
-    // Work around https://github.com/rust-lang/rust-clippy/issues/9737:
-    #[allow(clippy::if_same_then_else)]
-    const IF_AUTORELEASE_NOT_SKIPPED: usize = if cfg!(feature = "gnustep-1-7") {
-        1
-    } else if cfg!(target_arch = "x86") {
-        // x86 autorelease_return is not currently tail-called, so the
-        // optimization doesn't work on define_class! functions.
-        2
-    } else if cfg!(target_arch = "aarch64") {
-        // Currently doesn't work
-        2
-    } else if cfg!(any(debug_assertions, feature = "catch-all")) {
-        2
-    } else {
-        1
-    } - 1;
-
-    // 32-bit ARM unwinding sometimes interferes with the optimization
-    const IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK: usize = {
-        if cfg!(all(target_arch = "arm", panic = "unwind")) {
-            1
+    /// This is imperfect, but will do for now.
+    const fn autorelease_skipped(self_declared: bool) -> bool {
+        if cfg!(feature = "gnustep-1-7") {
+            // GNUStep does the optimization a different way, so it isn't
+            // optimization-dependent.
+            true
+        } else if cfg!(all(target_arch = "arm", panic = "unwind")) {
+            // 32-bit ARM unwinding sometimes interferes with the optimization
+            false
+        } else if self_declared {
+            // FIXME: Autorelease_return is not currently tail-called, so the
+            // optimization doesn't work on define_class! functions.
+            false
+        } else if cfg!(feature = "catch-all") {
+            // FIXME: `catch-all` is inserted before we get a chance to retain.
+            false
+        } else if cfg!(debug_assertions) {
+            // `debug_assertions` ~proxy for if optimizations are off.
+            false
         } else {
-            IF_AUTORELEASE_NOT_SKIPPED
+            true
         }
-    };
+    }
 
     macro_rules! test_error_retained {
         ($expected:expr, $if_autorelease_not_skipped:expr, $sel:ident, $($obj:tt)*) => {
@@ -868,7 +863,7 @@ mod tests {
         let cls = RcTestObject::class();
         test_error_retained!(
             expected,
-            IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK,
+            if autorelease_skipped(true) { 0 } else { 1 },
             idAndShouldError,
             cls
         );
@@ -879,7 +874,7 @@ mod tests {
         expected.init += 1;
         test_error_retained!(
             expected,
-            IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK,
+            if autorelease_skipped(true) { 0 } else { 1 },
             idAndShouldError,
             &obj
         );
@@ -913,13 +908,47 @@ mod tests {
             assert!(res.is_some());
             expected.alloc += 1;
             expected.init += 1;
-            expected.autorelease += IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK;
-            expected.retain += IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK;
+            expected.autorelease += if autorelease_skipped(true) { 0 } else { 1 };
+            expected.retain += if autorelease_skipped(true) { 0 } else { 1 };
             expected.assert_current();
             res
         });
-        expected.release += IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK;
+        expected.release += if autorelease_skipped(true) { 0 } else { 1 };
         expected.assert_current();
+    }
+
+    fn create_obj() -> Retained<NSObject> {
+        let obj = ManuallyDrop::new(NSObject::new());
+        unsafe {
+            let obj: *mut NSObject = msg_send![&*obj, autorelease];
+            // All code between the `msg_send!` and the `retain_autoreleased`
+            // must be able to be optimized away for this to work.
+            Retained::retain_autoreleased(obj).unwrap()
+        }
+    }
+
+    #[test]
+    fn test_retain_autoreleased() {
+        autoreleasepool(|_| {
+            // Run once to allow DYLD to resolve the symbol stubs.
+            // Required for making `retain_autoreleased` work on x86_64.
+            let _data = create_obj();
+
+            // When compiled in release mode / with optimizations enabled,
+            // subsequent usage of `retain_autoreleased` will succeed in
+            // retaining the autoreleased value!
+            let expected = if autorelease_skipped(false) { 1 } else { 2 };
+
+            let data = create_obj();
+            assert_eq!(data.retainCount(), expected);
+
+            let data = create_obj();
+            assert_eq!(data.retainCount(), expected);
+
+            // Here we manually clean up the autorelease, so it will always be 1.
+            let data = autoreleasepool(|_| create_obj());
+            assert_eq!(data.retainCount(), 1);
+        });
     }
 
     #[test]

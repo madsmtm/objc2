@@ -57,7 +57,7 @@ impl Pool {
     /// `drop` when possible, so that is what we are going to do.
     ///
     /// [clang documentation]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#autoreleasepool
-    /// [revision `551.1`]: https://github.com/apple-oss-distributions/objc4/blob/objc4-551.1/runtime/objc-exception.mm#L516
+    /// [revision `551.1`]: https://github.com/apple-oss-distributions/objc4/blob/objc4-551.1/runtime/objc-exception.mm#L540
     #[inline]
     unsafe fn drain(self) {
         #[cfg(all(target_os = "macos", target_arch = "x86"))]
@@ -582,8 +582,9 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(panic = "abort", ignore = "requires `catch_unwind`")]
     #[cfg_attr(
-        all(target_os = "macos", target_arch = "x86"),
+        all(target_os = "macos", target_arch = "x86", not(panic = "abort")),
         ignore = "unwinding through an auto release pool on macOS 32 bit won't pop the pool"
     )]
     fn test_unwind_still_autoreleases() {

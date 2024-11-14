@@ -1886,8 +1886,15 @@ mod tests {
         assert_eq!(&*retained, protocol);
 
         // Protocols don't implement isKindOfClass: on GNUStep.
-        if !cfg!(feature = "gnustep-1-7") {
-            // Protocols are NSObject subclasses.
+        if cfg!(feature = "gnustep-1-7") {
+            return;
+        }
+
+        // In the old runtime, NSObjectProtocol are not NSObject subclasses.
+        if cfg!(all(target_os = "macos", target_arch = "x86")) {
+            let _ = retained.downcast::<NSObject>().unwrap_err();
+        } else {
+            // But elsewhere they are.
             let obj = retained.downcast::<NSObject>().unwrap();
             // Test that we can call NSObject methods on protocols.
             assert_eq!(obj, obj);
