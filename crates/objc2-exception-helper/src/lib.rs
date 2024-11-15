@@ -20,8 +20,9 @@ use core::ffi::c_void;
 
 type TryCatchClosure = extern "C-unwind" fn(*mut c_void);
 
-// `try_catch` is deliberately `extern "C"`, we just prevented the unwind.
-extern "C" {
+// `try_catch` is `extern "C-unwind"`, since it does not use `@catch (...)`,
+// but instead let unhandled exceptions pass through.
+extern "C-unwind" {
     /// Call the given function inside an Objective-C `@try/@catch` block.
     ///
     /// Defined in `src/try_catch.m` and compiled in `build.rs`.
@@ -37,6 +38,12 @@ extern "C" {
     /// (using mechanisms like core::intrinsics::r#try) is not an option!
     ///
     /// [manual-asm]: https://gitlab.com/objrs/objrs/-/blob/b4f6598696b3fa622e6fddce7aff281770b0a8c2/src/exception.rs
+    ///
+    ///
+    /// # Panics
+    ///
+    /// This panics / continues unwinding if the unwind is not triggered by an
+    /// Objective-C exception (i.e. it was triggered by Rust/C++/...).
     #[link_name = "objc2_exception_helper_0_1_try_catch"]
     pub fn try_catch(f: TryCatchClosure, context: *mut c_void, error: *mut *mut c_void) -> u8;
 }

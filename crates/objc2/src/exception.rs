@@ -1,10 +1,14 @@
 //! # `@throw` and `@try/@catch` exceptions.
 //!
-//! By default, if the [`msg_send!`] macro causes an exception to be thrown,
-//! this will unwind into Rust, resulting in undefined behavior. However, this
-//! crate has an `"catch-all"` feature which, when enabled, wraps each
-//! [`msg_send!`] in a `@catch` and panics if an exception is caught,
-//! preventing Objective-C from unwinding into Rust.
+//! By default, if a message send (such as those generated with the
+//! [`msg_send!`] and [`extern_methods!`] macros) causes an exception to be
+//! thrown, `objc2` will simply let it unwind into Rust.
+//!
+//! While not UB, it will likely end up aborting the process, since Rust
+//! cannot catch foreign exceptions like Objective-C's. However, `objc2` has
+//! the `"catch-all"` Cargo feature, which, when enabled, wraps each message
+//! send in a `@catch` and instead panics if an exception is caught, which
+//! might lead to slightly better error messages.
 //!
 //! Most of the functionality in this module is only available when the
 //! `"exception"` feature is enabled.
@@ -239,7 +243,7 @@ pub fn throw(exception: Retained<Exception>) -> ! {
 }
 
 #[cfg(feature = "exception")]
-unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exception>>> {
+fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exception>>> {
     let f = {
         extern "C-unwind" fn try_objc_execute_closure<F>(closure: &mut Option<F>)
         where
@@ -261,6 +265,18 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exce
     let context = context.cast();
 
     let mut exception = ptr::null_mut();
+    // SAFETY: The function pointer and context are valid.
+    //
+    // The exception catching itself is sound on the Rust side, because we
+    // correctly use `extern "C-unwind"`. Objective-C does not completely
+    // specify how foreign unwinds are handled, though they do have the
+    // `@catch (...)` construct intended for catching C++ exceptions, so it is
+    // likely that they intend to support Rust panics (and it works in
+    // practice).
+    //
+    // See also:
+    // https://github.com/rust-lang/rust/pull/128321
+    // https://github.com/rust-lang/reference/pull/1226
     let success = unsafe { objc2_exception_helper::try_catch(f, context, &mut exception) };
 
     if success == 0 {
@@ -269,12 +285,8 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exce
         // SAFETY:
         // The exception is always a valid object or NULL.
         //
-        // Since we do a retain inside `extern/exception.m`, the object has
-        // +1 retain count.
-        //
-        // Code throwing an exception know that they don't hold sole access to
-        // that object any more, so even if the type was originally mutable,
-        // it is okay to create a new `Retained` to it here.
+        // Since we do a retain in `objc2_exception_helper/src/try_catch.m`,
+        // the object has +1 retain count.
         Err(unsafe { Retained::from_raw(exception.cast()) })
     }
 }
@@ -283,8 +295,9 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exce
 /// if one is thrown.
 ///
 /// This is the Objective-C equivalent of Rust's [`catch_unwind`].
-/// Accordingly, if your Rust code is compiled with `panic=abort` this cannot
-/// catch the exception.
+/// Accordingly, if your Rust code is compiled with `panic=abort`, or your
+/// Objective-C code with `-fno-objc-exceptions`, this cannot catch the
+/// exception.
 ///
 /// [`catch_unwind`]: std::panic::catch_unwind
 ///
@@ -301,12 +314,18 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Retained<Exce
 /// situations.
 ///
 ///
-/// # Safety
+/// # Panics
 ///
-/// The given closure must not panic (e.g. normal Rust unwinding into this
-/// causes undefined behaviour).
+/// This panics if the given closure panics.
+///
+/// That is, it completely ignores Rust unwinding and simply lets that pass
+/// through unchanged.
+///
+/// It may also not catch all Objective-C exceptions (such as exceptions
+/// thrown when handling the memory management of the exception). These are
+/// mostly theoretical, and should only happen in utmost exceptional cases.
 #[cfg(feature = "exception")]
-pub unsafe fn catch<R>(
+pub fn catch<R>(
     closure: impl FnOnce() -> R + UnwindSafe,
 ) -> Result<R, Option<Retained<Exception>>> {
     let mut value = None;
@@ -314,7 +333,7 @@ pub unsafe fn catch<R>(
     let closure = move || {
         *value_ref = Some(closure());
     };
-    let result = unsafe { try_no_ret(closure) };
+    let result = try_no_ret(closure);
     // If the try succeeded, value was set so it's safe to unwrap
     result.map(|()| value.unwrap_or_else(|| unreachable!()))
 }
@@ -333,12 +352,10 @@ mod tests {
     #[test]
     fn test_catch() {
         let mut s = "Hello".to_string();
-        let result = unsafe {
-            catch(move || {
-                s.push_str(", World!");
-                s
-            })
-        };
+        let result = catch(move || {
+            s.push_str(", World!");
+            s
+        });
         assert_eq!(result.unwrap(), "Hello, World!");
     }
 
@@ -349,14 +366,12 @@ mod tests {
     )]
     fn test_catch_null() {
         let s = "Hello".to_string();
-        let result = unsafe {
-            catch(move || {
-                if !s.is_empty() {
-                    ffi::objc_exception_throw(ptr::null_mut())
-                }
-                s.len()
-            })
-        };
+        let result = catch(move || {
+            if !s.is_empty() {
+                unsafe { ffi::objc_exception_throw(ptr::null_mut()) }
+            }
+            s.len()
+        });
         assert!(result.unwrap_err().is_none());
     }
 
@@ -368,11 +383,9 @@ mod tests {
     fn test_catch_unknown_selector() {
         let obj = AssertUnwindSafe(NSObject::new());
         let ptr = Retained::as_ptr(&obj);
-        let result = unsafe {
-            catch(|| {
-                let _: Retained<NSObject> = msg_send_id![&*obj, copy];
-            })
-        };
+        let result = catch(|| {
+            let _: Retained<NSObject> = unsafe { msg_send_id![&*obj, copy] };
+        });
         let err = result.unwrap_err().unwrap();
 
         assert_eq!(
@@ -389,7 +402,7 @@ mod tests {
         let obj: Retained<Exception> = unsafe { Retained::cast_unchecked(obj) };
         let ptr: *const Exception = &*obj;
 
-        let result = unsafe { catch(|| throw(obj)) };
+        let result = catch(|| throw(obj));
         let obj = result.unwrap_err().unwrap();
 
         assert_eq!(format!("{obj:?}"), format!("exception <NSObject: {ptr:p}>"));
@@ -405,5 +418,15 @@ mod tests {
 
         let result = catch_unwind(|| throw(obj));
         let _ = result.unwrap_err();
+    }
+
+    #[test]
+    #[should_panic = "test"]
+    #[cfg_attr(
+        all(target_os = "macos", target_arch = "x86", panic = "unwind"),
+        ignore = "panic won't start on 32-bit / w. fragile runtime, it'll just abort, since the runtime uses setjmp/longjump unwinding"
+    )]
+    fn does_not_catch_panic() {
+        let _ = catch(|| panic!("test"));
     }
 }

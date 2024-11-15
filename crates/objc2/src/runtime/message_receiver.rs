@@ -424,10 +424,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         }
 
         // SAFETY: Upheld by caller
-        //
-        // The @catch is safe since message sending primitives are guaranteed
-        // to do Objective-C compatible unwinding.
-        unsafe { conditional_try!(|| msg_send_primitive::send(receiver, sel, args)) }
+        conditional_try!(|| unsafe { msg_send_primitive::send(receiver, sel, args) })
     }
 
     /// Sends a message to a specific superclass with the given selector and
@@ -469,10 +466,10 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
             msg_send_check_class(superclass, sel, A::ENCODINGS, &R::ENCODING_RETURN);
         }
 
-        // SAFETY: Same as in `send_message`
-        unsafe {
-            conditional_try!(|| msg_send_primitive::send_super(receiver, superclass, sel, args))
-        }
+        // SAFETY: Upheld by caller
+        conditional_try!(|| unsafe {
+            msg_send_primitive::send_super(receiver, superclass, sel, args)
+        })
     }
 }
 
