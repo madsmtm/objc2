@@ -1,10 +1,14 @@
 //! # `@throw` and `@try/@catch` exceptions.
 //!
-//! By default, if the [`msg_send!`] macro causes an exception to be thrown,
-//! this will unwind into Rust, resulting in undefined behavior. However, this
-//! crate has an `"catch-all"` feature which, when enabled, wraps each
-//! [`msg_send!`] in a `@catch` and panics if an exception is caught,
-//! preventing Objective-C from unwinding into Rust.
+//! By default, if a message send (such as those generated with the
+//! [`msg_send!`] and [`extern_methods!`] macros) causes an exception to be
+//! thrown, `objc2` will simply let it unwind into Rust.
+//!
+//! While not UB, it will likely end up aborting the process, since Rust
+//! cannot catch foreign exceptions like Objective-C's. However, `objc2` has
+//! the `"catch-all"` Cargo feature, which, when enabled, wraps each message
+//! send in a `@catch` and instead panics if an exception is caught, which
+//! might lead to slightly better error messages.
 //!
 //! Most of the functionality in this module is only available when the
 //! `"exception"` feature is enabled.
