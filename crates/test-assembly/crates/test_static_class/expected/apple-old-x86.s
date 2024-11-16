@@ -96,7 +96,7 @@ _use_in_loop:
 L_OBJC_CLASS_NAME_7443a74fb2d1e4c6:
 	.ascii	"NSObject"
 
-	.section	__OBJC,__cls_refs,literal_pointers,no_dead_strip
+	.section	__OBJC,__cls_refs,literal_pointers
 	.globl	L_OBJC_CLASS_REFERENCES_7443a74fb2d1e4c6
 	.p2align	2, 0x0
 L_OBJC_CLASS_REFERENCES_7443a74fb2d1e4c6:
@@ -126,7 +126,7 @@ L_OBJC_MODULES_7443a74fb2d1e4c6:
 L_OBJC_CLASS_NAME_8f52a951012bf702:
 	.ascii	"NSObject"
 
-	.section	__OBJC,__cls_refs,literal_pointers,no_dead_strip
+	.section	__OBJC,__cls_refs,literal_pointers
 	.globl	L_OBJC_CLASS_REFERENCES_8f52a951012bf702
 	.p2align	2, 0x0
 L_OBJC_CLASS_REFERENCES_8f52a951012bf702:
@@ -156,7 +156,7 @@ L_OBJC_MODULES_8f52a951012bf702:
 L_OBJC_CLASS_NAME_4882212c6ef400ba:
 	.ascii	"NSString"
 
-	.section	__OBJC,__cls_refs,literal_pointers,no_dead_strip
+	.section	__OBJC,__cls_refs,literal_pointers
 	.globl	L_OBJC_CLASS_REFERENCES_4882212c6ef400ba
 	.p2align	2, 0x0
 L_OBJC_CLASS_REFERENCES_4882212c6ef400ba:
@@ -186,7 +186,7 @@ L_OBJC_MODULES_4882212c6ef400ba:
 L_OBJC_CLASS_NAME_9c6ceff32d4e4b8b:
 	.ascii	"NSData"
 
-	.section	__OBJC,__cls_refs,literal_pointers,no_dead_strip
+	.section	__OBJC,__cls_refs,literal_pointers
 	.globl	L_OBJC_CLASS_REFERENCES_9c6ceff32d4e4b8b
 	.p2align	2, 0x0
 L_OBJC_CLASS_REFERENCES_9c6ceff32d4e4b8b:
@@ -216,7 +216,7 @@ L_OBJC_MODULES_9c6ceff32d4e4b8b:
 L_OBJC_CLASS_NAME_5ca3eecf631727de:
 	.ascii	"NSException"
 
-	.section	__OBJC,__cls_refs,literal_pointers,no_dead_strip
+	.section	__OBJC,__cls_refs,literal_pointers
 	.globl	L_OBJC_CLASS_REFERENCES_5ca3eecf631727de
 	.p2align	2, 0x0
 L_OBJC_CLASS_REFERENCES_5ca3eecf631727de:
@@ -246,7 +246,7 @@ L_OBJC_MODULES_5ca3eecf631727de:
 L_OBJC_CLASS_NAME_76a360f1704b1e39:
 	.ascii	"NSLock"
 
-	.section	__OBJC,__cls_refs,literal_pointers,no_dead_strip
+	.section	__OBJC,__cls_refs,literal_pointers
 	.globl	L_OBJC_CLASS_REFERENCES_76a360f1704b1e39
 	.p2align	2, 0x0
 L_OBJC_CLASS_REFERENCES_76a360f1704b1e39:

@@ -77,7 +77,7 @@ Lloh15:
 _use_in_loop:
 	ret
 
-	.section	__DATA,__objc_classrefs,regular,no_dead_strip
+	.section	__DATA,__objc_classrefs
 	.globl	L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6
 	.p2align	3, 0x0
 L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6:
@@ -89,7 +89,7 @@ L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6:
 L_OBJC_IMAGE_INFO_7443a74fb2d1e4c6:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__DATA,__objc_classrefs,regular,no_dead_strip
+	.section	__DATA,__objc_classrefs
 	.globl	L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702
 	.p2align	3, 0x0
 L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702:
@@ -101,7 +101,7 @@ L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702:
 L_OBJC_IMAGE_INFO_8f52a951012bf702:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__DATA,__objc_classrefs,regular,no_dead_strip
+	.section	__DATA,__objc_classrefs
 	.globl	L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba
 	.p2align	3, 0x0
 L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba:
@@ -113,7 +113,7 @@ L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba:
 L_OBJC_IMAGE_INFO_4882212c6ef400ba:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__DATA,__objc_classrefs,regular,no_dead_strip
+	.section	__DATA,__objc_classrefs
 	.globl	L_OBJC_CLASSLIST_REFERENCES_$_9c6ceff32d4e4b8b
 	.p2align	3, 0x0
 L_OBJC_CLASSLIST_REFERENCES_$_9c6ceff32d4e4b8b:
@@ -125,7 +125,7 @@ L_OBJC_CLASSLIST_REFERENCES_$_9c6ceff32d4e4b8b:
 L_OBJC_IMAGE_INFO_9c6ceff32d4e4b8b:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__DATA,__objc_classrefs,regular,no_dead_strip
+	.section	__DATA,__objc_classrefs
 	.globl	L_OBJC_CLASSLIST_REFERENCES_$_5ca3eecf631727de
 	.p2align	3, 0x0
 L_OBJC_CLASSLIST_REFERENCES_$_5ca3eecf631727de:
@@ -137,7 +137,7 @@ L_OBJC_CLASSLIST_REFERENCES_$_5ca3eecf631727de:
 L_OBJC_IMAGE_INFO_5ca3eecf631727de:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__DATA,__objc_classrefs,regular,no_dead_strip
+	.section	__DATA,__objc_classrefs
 	.globl	L_OBJC_CLASSLIST_REFERENCES_$_76a360f1704b1e39
 	.p2align	3, 0x0
 L_OBJC_CLASSLIST_REFERENCES_$_76a360f1704b1e39:
