@@ -439,9 +439,10 @@ macro_rules! __statics_sel {
         /// info on "life before main".
         #[cfg_attr(
             not(all(target_os = "macos", target_arch = "x86")),
-            // Clang uses `no_dead_strip` in the link section for some reason,
-            // which other tools (notably some LLVM tools) now assume is
-            // present, so we have to add it as well.
+            // Clang uses `no_dead_strip` in the link section for some unknown reason,
+            // but it makes LTO fail to trim the unused symbols.
+            // https://github.com/madsmtm/objc2/issues/667
+            // https://github.com/llvm/llvm-project/issues/114111
             link_section = "__DATA,__objc_selrefs,literal_pointers",
         )]
         #[cfg_attr(
