@@ -442,11 +442,11 @@ macro_rules! __statics_sel {
             // Clang uses `no_dead_strip` in the link section for some reason,
             // which other tools (notably some LLVM tools) now assume is
             // present, so we have to add it as well.
-            link_section = "__DATA,__objc_selrefs,literal_pointers,no_dead_strip",
+            link_section = "__DATA,__objc_selrefs,literal_pointers",
         )]
         #[cfg_attr(
             all(target_os = "macos", target_arch = "x86"),
-            link_section = "__OBJC,__message_refs,literal_pointers,no_dead_strip",
+            link_section = "__OBJC,__message_refs,literal_pointers",
         )]
         #[export_name = $crate::__macro_helpers::concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $hash)]
         static REF: $crate::__macro_helpers::SyncUnsafeCell<$crate::runtime::Sel> = unsafe {
@@ -504,7 +504,7 @@ macro_rules! __statics_class {
         }
 
         /// SAFETY: Same as `REF` above in `__statics_sel!`.
-        #[link_section = "__DATA,__objc_classrefs,regular,no_dead_strip"]
+        #[link_section = "__DATA,__objc_classrefs,regular"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASSLIST_REFERENCES_$_",
             $hash,
@@ -536,7 +536,7 @@ macro_rules! __statics_class {
         static NAME_DATA: [$crate::__macro_helpers::u8; X.len()] = $crate::__statics_string_to_known_length_bytes!(X);
 
         /// SAFETY: Same as `REF` above in `__statics_sel!`.
-        #[link_section = "__OBJC,__cls_refs,literal_pointers,no_dead_strip"]
+        #[link_section = "__OBJC,__cls_refs,literal_pointers"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASS_REFERENCES_",
             $hash,

@@ -1168,7 +1168,7 @@ l_anon.[ID].23:
 L_OBJC_METH_VAR_NAME_518803e84ea38a73:
 	.asciz	"classMethod"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_518803e84ea38a73
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_518803e84ea38a73:
@@ -1185,7 +1185,7 @@ L_OBJC_IMAGE_INFO_518803e84ea38a73:
 L_OBJC_METH_VAR_NAME_05fa1b2ffc15d267:
 	.asciz	"method"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_05fa1b2ffc15d267
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_05fa1b2ffc15d267:
@@ -1202,7 +1202,7 @@ L_OBJC_IMAGE_INFO_05fa1b2ffc15d267:
 L_OBJC_METH_VAR_NAME_58736195c9ca7c7f:
 	.asciz	"methodBool:"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_58736195c9ca7c7f
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_58736195c9ca7c7f:
@@ -1219,7 +1219,7 @@ L_OBJC_IMAGE_INFO_58736195c9ca7c7f:
 L_OBJC_METH_VAR_NAME_61b74dbf9c375668:
 	.asciz	"methodId"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_61b74dbf9c375668
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_61b74dbf9c375668:
@@ -1236,7 +1236,7 @@ L_OBJC_IMAGE_INFO_61b74dbf9c375668:
 L_OBJC_METH_VAR_NAME_96586542870e42e5:
 	.asciz	"methodIdWithParam:"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_96586542870e42e5
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_96586542870e42e5:
@@ -1253,7 +1253,7 @@ L_OBJC_IMAGE_INFO_96586542870e42e5:
 L_OBJC_METH_VAR_NAME_f4e71677dafa88a8:
 	.asciz	"copyWithZone:"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_f4e71677dafa88a8
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_f4e71677dafa88a8:
@@ -1282,7 +1282,7 @@ l_anon.[ID].24:
 L_OBJC_METH_VAR_NAME_7f51a873b0d59f00:
 	.asciz	"init"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_7f51a873b0d59f00
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_7f51a873b0d59f00:
@@ -1311,7 +1311,7 @@ l_anon.[ID].25:
 L_OBJC_METH_VAR_NAME_802cb9c5fa0b19dd:
 	.asciz	"init"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_802cb9c5fa0b19dd
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_802cb9c5fa0b19dd:

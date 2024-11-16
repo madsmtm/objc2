@@ -61,7 +61,7 @@ l_anon.[ID].0:
 L_OBJC_METH_VAR_NAME_b79c3c5185d5ed67:
 	.asciz	"aMethod"
 
-	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
+	.section	__OBJC,__message_refs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67:

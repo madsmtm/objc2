@@ -106,7 +106,7 @@ l_anon.[ID].1:
 L_OBJC_METH_VAR_NAME_664c1e40eb8cd76e:
 	.asciz	"someSelector"
 
-	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
+	.section	__OBJC,__message_refs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_664c1e40eb8cd76e
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_664c1e40eb8cd76e:
@@ -123,7 +123,7 @@ L_OBJC_IMAGE_INFO_664c1e40eb8cd76e:
 L_OBJC_METH_VAR_NAME_80036160fc60677b:
 	.asciz	"generic:selector:"
 
-	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
+	.section	__OBJC,__message_refs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_80036160fc60677b
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_80036160fc60677b:
@@ -140,7 +140,7 @@ L_OBJC_IMAGE_INFO_80036160fc60677b:
 L_OBJC_METH_VAR_NAME_e4e4edcd2d17efb8:
 	.asciz	"performSelector:"
 
-	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
+	.section	__OBJC,__message_refs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_e4e4edcd2d17efb8
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_e4e4edcd2d17efb8:
@@ -157,7 +157,7 @@ L_OBJC_IMAGE_INFO_e4e4edcd2d17efb8:
 L_OBJC_METH_VAR_NAME_bf9373a91792acd9:
 	.asciz	"performSelector:"
 
-	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
+	.section	__OBJC,__message_refs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_bf9373a91792acd9
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_bf9373a91792acd9:
@@ -174,7 +174,7 @@ L_OBJC_IMAGE_INFO_bf9373a91792acd9:
 L_OBJC_METH_VAR_NAME_65f663aa0a6ddc1d:
 	.asciz	"performSelector:"
 
-	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
+	.section	__OBJC,__message_refs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_65f663aa0a6ddc1d
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_65f663aa0a6ddc1d:

@@ -94,7 +94,7 @@ _use_in_loop:
 L_OBJC_METH_VAR_NAME_caedaca3f40015a7:
 	.asciz	"simple"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_caedaca3f40015a7
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_caedaca3f40015a7:
@@ -111,7 +111,7 @@ L_OBJC_IMAGE_INFO_caedaca3f40015a7:
 L_OBJC_METH_VAR_NAME_a7c7f3067f40b513:
 	.asciz	"simple"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_a7c7f3067f40b513
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_a7c7f3067f40b513:
@@ -128,7 +128,7 @@ L_OBJC_IMAGE_INFO_a7c7f3067f40b513:
 L_OBJC_METH_VAR_NAME_bae8570d40d73864:
 	.asciz	"i:am:different:"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_bae8570d40d73864
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_bae8570d40d73864:
@@ -145,7 +145,7 @@ L_OBJC_IMAGE_INFO_bae8570d40d73864:
 L_OBJC_METH_VAR_NAME_9c1b77e8cf40622d:
 	.asciz	"unused"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_9c1b77e8cf40622d
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_9c1b77e8cf40622d:
@@ -162,7 +162,7 @@ L_OBJC_IMAGE_INFO_9c1b77e8cf40622d:
 L_OBJC_METH_VAR_NAME_408f5be8f4fd2627:
 	.asciz	"fourthSel"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_408f5be8f4fd2627
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_408f5be8f4fd2627:
@@ -179,7 +179,7 @@ L_OBJC_IMAGE_INFO_408f5be8f4fd2627:
 L_OBJC_METH_VAR_NAME_82483a8131827890:
 	.asciz	"loopedSelector"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_82483a8131827890
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_82483a8131827890:
