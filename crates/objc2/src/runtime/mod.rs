@@ -1445,10 +1445,6 @@ impl AnyObject {
             None
         }
     }
-
-    // objc_setAssociatedObject
-    // objc_getAssociatedObject
-    // objc_removeAssociatedObjects
 }
 
 impl fmt::Debug for AnyObject {
