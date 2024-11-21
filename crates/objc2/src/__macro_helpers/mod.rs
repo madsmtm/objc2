@@ -31,7 +31,8 @@ pub use self::class::{MainThreadOnlyDoesNotImplSendSync, ValidThreadKind};
 pub use self::common_selectors::{alloc_sel, dealloc_sel, init_sel, new_sel};
 pub use self::convert::{ConvertArgument, ConvertArguments, ConvertReturn, TupleExtender};
 pub use self::declare_class::{
-    ClassBuilderHelper, ClassProtocolMethodsBuilder, IdReturnValue, MaybeOptionId, MessageRecieveId,
+    ClassBuilderHelper, ClassProtocolMethodsBuilder, MaybeOptionId, MessageRecieveId,
+    RetainedReturnValue,
 };
 pub use self::declared_ivars::DeclaredIvarsHelper;
 pub use self::image_info::ImageInfo;

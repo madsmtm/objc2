@@ -25,10 +25,10 @@ use super::{CopyOrMutCopy, Init, MaybeUnwrap, New, Other};
 #[repr(transparent)]
 #[derive(Debug)]
 #[allow(dead_code)]
-pub struct IdReturnValue(pub(crate) *mut AnyObject);
+pub struct RetainedReturnValue(pub(crate) *mut AnyObject);
 
-// SAFETY: `IdReturnValue` is `#[repr(transparent)]`
-unsafe impl Encode for IdReturnValue {
+// SAFETY: `RetainedReturnValue` is `#[repr(transparent)]`
+unsafe impl Encode for RetainedReturnValue {
     const ENCODING: Encoding = <*mut AnyObject>::ENCODING;
 }
 
@@ -40,7 +40,7 @@ unsafe impl Encode for IdReturnValue {
 // See `MsgSendId` and `RetainSemantics` for details on the retain semantics
 // we're following here.
 pub trait MessageRecieveId<Receiver, Ret> {
-    fn into_return(obj: Ret) -> IdReturnValue;
+    fn into_return(obj: Ret) -> RetainedReturnValue;
 }
 
 // Receiver and return type have no correlation
@@ -50,7 +50,7 @@ where
     Ret: MaybeOptionId,
 {
     #[inline]
-    fn into_return(obj: Ret) -> IdReturnValue {
+    fn into_return(obj: Ret) -> RetainedReturnValue {
         obj.consumed_return()
     }
 }
@@ -69,7 +69,7 @@ where
     Ret: MaybeOptionId<Input = Option<Retained<T>>>,
 {
     #[inline]
-    fn into_return(obj: Ret) -> IdReturnValue {
+    fn into_return(obj: Ret) -> RetainedReturnValue {
         obj.consumed_return()
     }
 }
@@ -81,7 +81,7 @@ where
     Ret: MaybeOptionId,
 {
     #[inline]
-    fn into_return(obj: Ret) -> IdReturnValue {
+    fn into_return(obj: Ret) -> RetainedReturnValue {
         obj.consumed_return()
     }
 }
@@ -93,7 +93,7 @@ where
     Ret: MaybeOptionId,
 {
     #[inline]
-    fn into_return(obj: Ret) -> IdReturnValue {
+    fn into_return(obj: Ret) -> RetainedReturnValue {
         obj.autorelease_return()
     }
 }
@@ -102,35 +102,35 @@ where
 ///
 /// (Both of those are valid return types from declare_class! `#[method_id]`).
 pub trait MaybeOptionId: MaybeUnwrap {
-    fn consumed_return(self) -> IdReturnValue;
-    fn autorelease_return(self) -> IdReturnValue;
+    fn consumed_return(self) -> RetainedReturnValue;
+    fn autorelease_return(self) -> RetainedReturnValue;
 }
 
 impl<T: Message> MaybeOptionId for Retained<T> {
     #[inline]
-    fn consumed_return(self) -> IdReturnValue {
+    fn consumed_return(self) -> RetainedReturnValue {
         let ptr: *mut T = Retained::into_raw(self);
-        IdReturnValue(ptr.cast())
+        RetainedReturnValue(ptr.cast())
     }
 
     #[inline]
-    fn autorelease_return(self) -> IdReturnValue {
+    fn autorelease_return(self) -> RetainedReturnValue {
         let ptr: *mut T = Retained::autorelease_return(self);
-        IdReturnValue(ptr.cast())
+        RetainedReturnValue(ptr.cast())
     }
 }
 
 impl<T: Message> MaybeOptionId for Option<Retained<T>> {
     #[inline]
-    fn consumed_return(self) -> IdReturnValue {
+    fn consumed_return(self) -> RetainedReturnValue {
         let ptr: *mut T = Retained::consume_as_ptr_option(self);
-        IdReturnValue(ptr.cast())
+        RetainedReturnValue(ptr.cast())
     }
 
     #[inline]
-    fn autorelease_return(self) -> IdReturnValue {
+    fn autorelease_return(self) -> RetainedReturnValue {
         let ptr: *mut T = Retained::autorelease_return_option(self);
-        IdReturnValue(ptr.cast())
+        RetainedReturnValue(ptr.cast())
     }
 }
 
