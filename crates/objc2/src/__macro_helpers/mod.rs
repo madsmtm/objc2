@@ -31,7 +31,8 @@ pub use self::class::{MainThreadOnlyDoesNotImplSendSync, ValidThreadKind};
 pub use self::common_selectors::{alloc_sel, dealloc_sel, init_sel, new_sel};
 pub use self::convert::{ConvertArgument, ConvertArguments, ConvertReturn, TupleExtender};
 pub use self::declare_class::{
-    ClassBuilderHelper, ClassProtocolMethodsBuilder, IdReturnValue, MaybeOptionId, MessageRecieveId,
+    ClassBuilderHelper, ClassProtocolMethodsBuilder, MaybeOptionRetained, MessageReceiveRetained,
+    RetainedReturnValue,
 };
 pub use self::declared_ivars::DeclaredIvarsHelper;
 pub use self::image_info::ImageInfo;
@@ -40,7 +41,7 @@ pub use self::method_family::{
 };
 pub use self::module_info::ModuleInfo;
 pub use self::msg_send::MsgSend;
-pub use self::msg_send_retained::{MaybeUnwrap, MsgSendId, MsgSendSuperId};
+pub use self::msg_send_retained::{MaybeUnwrap, MsgSendRetained, MsgSendSuperRetained};
 pub use self::os_version::{is_available, AvailableVersion, OSVersion};
 pub use self::sync_unsafe_cell::SyncUnsafeCell;
 

@@ -24,7 +24,7 @@ Lloh1:
 	add	x2, x2, l_anon.[ID].1@PAGEOFF
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh0, Lloh1
 
 	.globl	_handle_alloc
@@ -57,7 +57,7 @@ Lloh3:
 	add	x2, x2, l_anon.[ID].2@PAGEOFF
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh2, Lloh3
 
 	.globl	_handle_alloc_init
@@ -115,7 +115,7 @@ Lloh4:
 	adrp	x0, l_anon.[ID].3@PAGE
 Lloh5:
 	add	x0, x0, l_anon.[ID].3@PAGEOFF
-	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh4, Lloh5
 
 	.globl	_handle_autoreleased
@@ -167,7 +167,7 @@ Lloh7:
 	add	x2, x2, l_anon.[ID].4@PAGEOFF
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh6, Lloh7
 
 	.globl	_handle_with_out_param

@@ -7,12 +7,12 @@ use objc2::Message;
 
 /// Allows storing an `Retained` in a static and lazily loading it.
 #[derive(Debug)]
-pub struct CachedId<T> {
+pub struct CachedRetained<T> {
     ptr: AtomicPtr<T>,
 }
 
-impl<T> CachedId<T> {
-    /// Constructs a new [`CachedId`].
+impl<T> CachedRetained<T> {
+    /// Constructs a new [`CachedRetained`].
     #[allow(clippy::new_without_default)]
     pub const fn new() -> Self {
         Self {
@@ -21,7 +21,7 @@ impl<T> CachedId<T> {
     }
 }
 
-impl<T: Message> CachedId<T> {
+impl<T: Message> CachedRetained<T> {
     /// Returns the cached object. If no object is yet cached, creates one
     /// from the given closure and stores it.
     #[inline]

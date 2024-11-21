@@ -172,11 +172,11 @@ macro_rules! __comma_between_args {
     };
     // msg_send_id!
     (
-        (send_super_message_id_static)
+        (send_super_message_retained_static)
         ($($args:tt)*)
         ($obj:expr)
         ()
-        (MsgSendSuperId)
+        (MsgSendSuperRetained)
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send_id")
@@ -184,11 +184,11 @@ macro_rules! __comma_between_args {
         }
     };
     (
-        (send_super_message_id)
+        (send_super_message_retained)
         ($($args:tt)*)
         ($obj:expr, $superclass:expr)
         ()
-        (MsgSendSuperId)
+        (MsgSendSuperRetained)
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send_id")
@@ -196,11 +196,11 @@ macro_rules! __comma_between_args {
         }
     };
     (
-        (send_message_id)
+        (send_message_retained)
         ($($args:tt)*)
         ($obj:expr)
         ()
-        (MsgSendId)
+        (MsgSendRetained)
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send_id")

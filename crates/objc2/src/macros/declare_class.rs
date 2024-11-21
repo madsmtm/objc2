@@ -1017,7 +1017,7 @@ macro_rules! __declare_class_method_out_inner {
         $($qualifiers)* extern "C-unwind" fn $name(
             $($params_prefix)*
             $($params_converted)*
-        ) -> $crate::__macro_helpers::IdReturnValue {
+        ) -> $crate::__macro_helpers::RetainedReturnValue {
             // TODO: Somehow tell the compiler that `this: Allocated<Self>` is non-null.
 
             $($body_prefix)*
@@ -1032,7 +1032,7 @@ macro_rules! __declare_class_method_out_inner {
                         $($sel)*
                     }
                 )
-            }> as $crate::__macro_helpers::MessageRecieveId<
+            }> as $crate::__macro_helpers::MessageReceiveRetained<
                 $receiver_ty,
                 $ret,
             >>::into_return(__objc2_result)

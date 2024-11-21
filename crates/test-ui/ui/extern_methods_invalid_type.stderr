@@ -46,11 +46,11 @@ error[E0277]: the trait bound `i32: MaybeUnwrap` is not satisfied
             Allocated<T>
             Option<Retained<T>>
             Retained<T>
-note: required by a bound in `send_message_id`
+note: required by a bound in `send_message_retained`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
+  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                             ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Box<i32>: Encode` is not satisfied
@@ -135,11 +135,11 @@ error[E0277]: the trait bound `Result<Retained<MyObject>, Retained<NSObject>>: M
             Allocated<T>
             Option<Retained<T>>
             Retained<T>
-note: required by a bound in `send_message_id`
+note: required by a bound in `send_message_retained`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
+  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                             ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `MainThreadMarker: ConvertReturn` is not satisfied

@@ -8,19 +8,23 @@ use crate::{sel, ClassType, DeclaredClass, Message};
 use super::declared_ivars::set_finalized;
 use super::{Alloc, ConvertArguments, CopyOrMutCopy, Init, MsgSend, New, Other, TupleExtender};
 
-pub trait MsgSendId<T, U> {
+pub trait MsgSendRetained<T, U> {
     #[track_caller]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+    unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
         obj: T,
         sel: Sel,
         args: A,
     ) -> R;
 
     /// Add an extra error argument to the argument list, call
-    /// `send_message_id` with that, and return an error if one occurred.
+    /// `send_message_retained` with that, and return an error if one occurred.
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id_error<A, E, R>(obj: T, sel: Sel, args: A) -> Result<R, Retained<E>>
+    unsafe fn send_message_retained_error<A, E, R>(
+        obj: T,
+        sel: Sel,
+        args: A,
+    ) -> Result<R, Retained<E>>
     where
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
@@ -30,7 +34,7 @@ pub trait MsgSendId<T, U> {
     {
         let mut err: *mut E = ptr::null_mut();
         let args = args.add_argument(&mut err);
-        let res: Option<R> = unsafe { Self::send_message_id(obj, sel, args) };
+        let res: Option<R> = unsafe { Self::send_message_retained(obj, sel, args) };
         // As per the Cocoa documentation:
         // > Success or failure is indicated by the return value of the
         // > method. Although Cocoa methods that indirectly return error
@@ -64,10 +68,10 @@ pub trait MsgSendId<T, U> {
 /// copy/mutableCopy: T -> Option<Retained<U>>
 /// others: T -> Option<Retained<U>>
 #[doc(hidden)]
-pub trait MsgSendSuperId<T, U> {
+pub trait MsgSendSuperRetained<T, U> {
     type Inner: ?Sized + RefEncode;
 
-    unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+    unsafe fn send_super_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
         obj: T,
         superclass: &AnyClass,
         sel: Sel,
@@ -76,7 +80,7 @@ pub trait MsgSendSuperId<T, U> {
 
     #[inline]
     #[track_caller]
-    unsafe fn send_super_message_id_static<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+    unsafe fn send_super_message_retained_static<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -86,13 +90,18 @@ pub trait MsgSendSuperId<T, U> {
         <Self::Inner as ClassType>::Super: ClassType,
     {
         unsafe {
-            Self::send_super_message_id(obj, <Self::Inner as ClassType>::Super::class(), sel, args)
+            Self::send_super_message_retained(
+                obj,
+                <Self::Inner as ClassType>::Super::class(),
+                sel,
+                args,
+            )
         }
     }
 
     #[inline]
     #[track_caller]
-    unsafe fn send_super_message_id_error<A, E, R>(
+    unsafe fn send_super_message_retained_error<A, E, R>(
         obj: T,
         superclass: &AnyClass,
         sel: Sel,
@@ -107,19 +116,20 @@ pub trait MsgSendSuperId<T, U> {
     {
         let mut err: *mut E = ptr::null_mut();
         let args = args.add_argument(&mut err);
-        // SAFETY: See `send_message_id_error`
-        let res: Option<R> = unsafe { Self::send_super_message_id(obj, superclass, sel, args) };
+        // SAFETY: See `send_message_retained_error`
+        let res: Option<R> =
+            unsafe { Self::send_super_message_retained(obj, superclass, sel, args) };
         if let Some(res) = res {
             Ok(res)
         } else {
-            // SAFETY: See `send_message_id_error`
+            // SAFETY: See `send_message_retained_error`
             Err(unsafe { encountered_error(err) })
         }
     }
 
     #[inline]
     #[track_caller]
-    unsafe fn send_super_message_id_static_error<A, E, R>(
+    unsafe fn send_super_message_retained_static_error<A, E, R>(
         obj: T,
         sel: Sel,
         args: A,
@@ -135,12 +145,12 @@ pub trait MsgSendSuperId<T, U> {
     {
         let mut err: *mut E = ptr::null_mut();
         let args = args.add_argument(&mut err);
-        // SAFETY: See `send_message_id_error`
-        let res: Option<R> = unsafe { Self::send_super_message_id_static(obj, sel, args) };
+        // SAFETY: See `send_message_retained_error`
+        let res: Option<R> = unsafe { Self::send_super_message_retained_static(obj, sel, args) };
         if let Some(res) = res {
             Ok(res)
         } else {
-            // SAFETY: See `send_message_id_error`
+            // SAFETY: See `send_message_retained_error`
             Err(unsafe { encountered_error(err) })
         }
     }
@@ -156,9 +166,12 @@ unsafe fn encountered_error<E: Message>(err: *mut E) -> Retained<E> {
         .expect("error parameter should be set if the method returns NULL")
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Retained<U>>> for New {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for New {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Retained<U>>>>(
+    unsafe fn send_message_retained<
+        A: ConvertArguments,
+        R: MaybeUnwrap<Input = Option<Retained<U>>>,
+    >(
         obj: T,
         sel: Sel,
         args: A,
@@ -175,11 +188,11 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Retained<U>>> for New 
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Retained<U>>> for New {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>> for New {
     type Inner = T::Inner;
 
     #[inline]
-    unsafe fn send_super_message_id<
+    unsafe fn send_super_message_retained<
         A: ConvertArguments,
         R: MaybeUnwrap<Input = Option<Retained<U>>>,
     >(
@@ -189,18 +202,18 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Retained<U>>> for
         args: A,
     ) -> R {
         let ptr = obj.into_raw_receiver();
-        // SAFETY: Same as in `send_message_id`
+        // SAFETY: Same as in `send_message_retained`
         let obj = unsafe { MsgSend::send_super_message(ptr, superclass, sel, args) };
-        // SAFETY: Same as in `send_message_id`
+        // SAFETY: Same as in `send_message_retained`
         let obj = unsafe { Retained::from_raw(obj) };
-        // SAFETY: Same as in `send_message_id`
+        // SAFETY: Same as in `send_message_retained`
         R::maybe_unwrap::<Self>(obj, (unsafe { ptr.as_ref() }, sel))
     }
 }
 
-impl<T: Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
+impl<T: Message> MsgSendRetained<&'_ AnyClass, Allocated<T>> for Alloc {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
+    unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
         cls: &AnyClass,
         sel: Sel,
         args: A,
@@ -213,19 +226,22 @@ impl<T: Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
     }
 }
 
-impl<T: ?Sized + Message> MsgSendSuperId<&'_ AnyClass, Allocated<T>> for Alloc {
+impl<T: ?Sized + Message> MsgSendSuperRetained<&'_ AnyClass, Allocated<T>> for Alloc {
     type Inner = AnyClass;
 
     #[inline]
-    unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
+    unsafe fn send_super_message_retained<
+        A: ConvertArguments,
+        R: MaybeUnwrap<Input = Allocated<T>>,
+    >(
         cls: &AnyClass,
         superclass: &AnyClass,
         sel: Sel,
         args: A,
     ) -> R {
-        // SAFETY: Same as in `send_message_id`
+        // SAFETY: Same as in `send_message_retained`
         let obj = unsafe { MsgSend::send_super_message(cls, superclass, sel, args) };
-        // SAFETY: Same as in `send_message_id`
+        // SAFETY: Same as in `send_message_retained`
         let obj = unsafe { Allocated::new(obj) };
         R::maybe_unwrap::<Self>(obj, ())
     }
@@ -234,7 +250,7 @@ impl<T: ?Sized + Message> MsgSendSuperId<&'_ AnyClass, Allocated<T>> for Alloc {
 impl Alloc {
     /// Fast path optimization for `msg_send_id![cls, alloc]`.
     #[inline]
-    pub unsafe fn send_message_id_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
+    pub unsafe fn send_message_retained_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
         cls: &AnyClass,
     ) -> R {
         // Available on non-fragile Apple runtimes.
@@ -255,14 +271,17 @@ impl Alloc {
         )))]
         {
             // SAFETY: Checked by caller
-            unsafe { Alloc::send_message_id(cls, sel!(alloc), ()) }
+            unsafe { Alloc::send_message_retained(cls, sel!(alloc), ()) }
         }
     }
 }
 
-impl<T: ?Sized + Message> MsgSendId<Allocated<T>, Option<Retained<T>>> for Init {
+impl<T: ?Sized + Message> MsgSendRetained<Allocated<T>, Option<Retained<T>>> for Init {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Retained<T>>>>(
+    unsafe fn send_message_retained<
+        A: ConvertArguments,
+        R: MaybeUnwrap<Input = Option<Retained<T>>>,
+    >(
         obj: Allocated<T>,
         sel: Sel,
         args: A,
@@ -281,11 +300,11 @@ impl<T: ?Sized + Message> MsgSendId<Allocated<T>, Option<Retained<T>>> for Init 
     }
 }
 
-impl<T: DeclaredClass> MsgSendSuperId<PartialInit<T>, Option<Retained<T>>> for Init {
+impl<T: DeclaredClass> MsgSendSuperRetained<PartialInit<T>, Option<Retained<T>>> for Init {
     type Inner = T;
 
     #[inline]
-    unsafe fn send_super_message_id<
+    unsafe fn send_super_message_retained<
         A: ConvertArguments,
         R: MaybeUnwrap<Input = Option<Retained<T>>>,
     >(
@@ -295,7 +314,7 @@ impl<T: DeclaredClass> MsgSendSuperId<PartialInit<T>, Option<Retained<T>>> for I
         args: A,
     ) -> R {
         let ptr = PartialInit::into_ptr(obj);
-        // SAFETY: Same as `send_message_id`.
+        // SAFETY: Same as `send_message_retained`.
         let ptr = unsafe { MsgSend::send_super_message(ptr, superclass, sel, args) };
         // SAFETY: The returned pointer is the same as the one we passed in.
         //
@@ -304,15 +323,18 @@ impl<T: DeclaredClass> MsgSendSuperId<PartialInit<T>, Option<Retained<T>>> for I
         if let Some(ptr) = NonNull::new(ptr) {
             unsafe { set_finalized(ptr) };
         }
-        // SAFETY: Same as `send_message_id`
+        // SAFETY: Same as `send_message_retained`
         let obj = unsafe { Retained::from_raw(ptr) };
         R::maybe_unwrap::<Self>(obj, (ptr.cast(), sel))
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Retained<U>>> for CopyOrMutCopy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for CopyOrMutCopy {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Retained<U>>>>(
+    unsafe fn send_message_retained<
+        A: ConvertArguments,
+        R: MaybeUnwrap<Input = Option<Retained<U>>>,
+    >(
         obj: T,
         sel: Sel,
         args: A,
@@ -326,11 +348,13 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Retained<U>>> for Copy
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Retained<U>>> for CopyOrMutCopy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>>
+    for CopyOrMutCopy
+{
     type Inner = T::Inner;
 
     #[inline]
-    unsafe fn send_super_message_id<
+    unsafe fn send_super_message_retained<
         A: ConvertArguments,
         R: MaybeUnwrap<Input = Option<Retained<U>>>,
     >(
@@ -339,17 +363,20 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Retained<U>>> for
         sel: Sel,
         args: A,
     ) -> R {
-        // SAFETY: Same as in `send_message_id`
+        // SAFETY: Same as in `send_message_retained`
         let obj = unsafe { MsgSend::send_super_message(obj, superclass, sel, args) };
-        // SAFETY: Same as in `send_message_id`
+        // SAFETY: Same as in `send_message_retained`
         let obj = unsafe { Retained::from_raw(obj) };
         R::maybe_unwrap::<Self>(obj, ())
     }
 }
 
-impl<T: MsgSend, U: Message> MsgSendId<T, Option<Retained<U>>> for Other {
+impl<T: MsgSend, U: Message> MsgSendRetained<T, Option<Retained<U>>> for Other {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Retained<U>>>>(
+    unsafe fn send_message_retained<
+        A: ConvertArguments,
+        R: MaybeUnwrap<Input = Option<Retained<U>>>,
+    >(
         obj: T,
         sel: Sel,
         args: A,
@@ -370,11 +397,11 @@ impl<T: MsgSend, U: Message> MsgSendId<T, Option<Retained<U>>> for Other {
     }
 }
 
-impl<T: MsgSend, U: Message> MsgSendSuperId<T, Option<Retained<U>>> for Other {
+impl<T: MsgSend, U: Message> MsgSendSuperRetained<T, Option<Retained<U>>> for Other {
     type Inner = T::Inner;
 
     #[inline]
-    unsafe fn send_super_message_id<
+    unsafe fn send_super_message_retained<
         A: ConvertArguments,
         R: MaybeUnwrap<Input = Option<Retained<U>>>,
     >(
@@ -384,11 +411,11 @@ impl<T: MsgSend, U: Message> MsgSendSuperId<T, Option<Retained<U>>> for Other {
         args: A,
     ) -> R {
         let ptr = obj.into_raw_receiver();
-        // SAFETY: Same as `send_message_id`
+        // SAFETY: Same as `send_message_retained`
         let obj = unsafe { MsgSend::send_super_message(ptr, superclass, sel, args) };
-        // SAFETY: Same as `send_message_id`
+        // SAFETY: Same as `send_message_retained`
         let obj = unsafe { Retained::retain_autoreleased(obj) };
-        // SAFETY: Same as `send_message_id`
+        // SAFETY: Same as `send_message_retained`
         R::maybe_unwrap::<Self>(obj, (unsafe { ptr.as_ref() }, sel))
     }
 }
@@ -396,14 +423,17 @@ impl<T: MsgSend, U: Message> MsgSendSuperId<T, Option<Retained<U>>> for Other {
 pub trait MaybeUnwrap {
     type Input;
     #[track_caller]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Self::Input, args: F::Args) -> Self;
+    fn maybe_unwrap<'a, F: MsgSendRetainedFailed<'a>>(obj: Self::Input, args: F::Args) -> Self;
 }
 
 impl<T: ?Sized> MaybeUnwrap for Option<Retained<T>> {
     type Input = Option<Retained<T>>;
 
     #[inline]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Retained<T>>, _args: F::Args) -> Self {
+    fn maybe_unwrap<'a, F: MsgSendRetainedFailed<'a>>(
+        obj: Option<Retained<T>>,
+        _args: F::Args,
+    ) -> Self {
         obj
     }
 }
@@ -412,7 +442,10 @@ impl<T: ?Sized> MaybeUnwrap for Retained<T> {
     type Input = Option<Retained<T>>;
 
     #[inline]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Retained<T>>, args: F::Args) -> Self {
+    fn maybe_unwrap<'a, F: MsgSendRetainedFailed<'a>>(
+        obj: Option<Retained<T>>,
+        args: F::Args,
+    ) -> Self {
         match obj {
             Some(obj) => obj,
             None => F::failed(args),
@@ -424,7 +457,7 @@ impl<T: ?Sized> MaybeUnwrap for Allocated<T> {
     type Input = Allocated<T>;
 
     #[inline]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Allocated<T>, _args: F::Args) -> Self {
+    fn maybe_unwrap<'a, F: MsgSendRetainedFailed<'a>>(obj: Allocated<T>, _args: F::Args) -> Self {
         obj
     }
 }
@@ -435,14 +468,14 @@ impl<T: ?Sized> MaybeUnwrap for Allocated<T> {
 // Also note: This behavior (that #[method_id(...)] always unwraps instead of
 // using `unwrap_unchecked`) is relied upon by `header-translator` for
 // soundness, see e.g. `parse_property_return`.
-pub trait MsgSendIdFailed<'a> {
+pub trait MsgSendRetainedFailed<'a> {
     type Args;
 
     #[track_caller]
     fn failed(args: Self::Args) -> !;
 }
 
-impl<'a> MsgSendIdFailed<'a> for New {
+impl<'a> MsgSendRetainedFailed<'a> for New {
     type Args = (Option<&'a AnyObject>, Sel);
 
     #[cold]
@@ -464,7 +497,7 @@ impl<'a> MsgSendIdFailed<'a> for New {
     }
 }
 
-impl MsgSendIdFailed<'_> for Alloc {
+impl MsgSendRetainedFailed<'_> for Alloc {
     type Args = ();
 
     #[cold]
@@ -473,7 +506,7 @@ impl MsgSendIdFailed<'_> for Alloc {
     }
 }
 
-impl MsgSendIdFailed<'_> for Init {
+impl MsgSendRetainedFailed<'_> for Init {
     type Args = (*mut AnyObject, Sel);
 
     #[cold]
@@ -492,7 +525,7 @@ impl MsgSendIdFailed<'_> for Init {
     }
 }
 
-impl MsgSendIdFailed<'_> for CopyOrMutCopy {
+impl MsgSendRetainedFailed<'_> for CopyOrMutCopy {
     type Args = ();
 
     #[cold]
@@ -501,7 +534,7 @@ impl MsgSendIdFailed<'_> for CopyOrMutCopy {
     }
 }
 
-impl<'a> MsgSendIdFailed<'a> for Other {
+impl<'a> MsgSendRetainedFailed<'a> for Other {
     type Args = (Option<&'a AnyObject>, Sel);
 
     #[cold]
@@ -531,7 +564,7 @@ mod tests {
 
         #[allow(dead_code)]
         trait Abc {
-            fn send_message_id(&self) {}
+            fn send_message_retained(&self) {}
         }
 
         impl<T> Abc for T {}

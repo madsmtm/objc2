@@ -63,7 +63,5 @@ files.extend-exclude = [
 ]
 # Comes from the `clang` crate
 default.extend-identifiers.ParmDecl = "ParmDecl"
-# To be done as a larger rename
-default.extend-identifiers.MessageRecieveId = "MessageRecieveId"
 # Used in Metal, LOD = level of detail
 default.extend-words.lod = "lod"

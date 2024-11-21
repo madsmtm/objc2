@@ -12,10 +12,10 @@ error[E0271]: type mismatch resolving `<Retained<NSObject> as MaybeUnwrap>::Inpu
   |
   = note: expected enum `Option<Retained<CustomObject>>`
              found enum `Option<Retained<NSObject>>`
-  = note: required for `RetainSemantics<3>` to implement `MessageRecieveId<Allocated<CustomObject>, Retained<NSObject>>`
+  = note: required for `RetainSemantics<3>` to implement `MessageReceiveRetained<Allocated<CustomObject>, Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `i32: MaybeOptionId` is not satisfied
+error[E0277]: the trait bound `i32: MaybeOptionRetained` is not satisfied
  --> ui/declare_class_invalid_type2.rs
   |
   | / declare_class!(
@@ -25,10 +25,10 @@ error[E0277]: the trait bound `i32: MaybeOptionId` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `MaybeOptionId` is not implemented for `i32`
+  | |_^ the trait `MaybeOptionRetained` is not implemented for `i32`
   |
-  = help: the following other types implement trait `MaybeOptionId`:
+  = help: the following other types implement trait `MaybeOptionRetained`:
             Option<Retained<T>>
             Retained<T>
-  = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<&CustomObject, i32>`
+  = note: required for `RetainSemantics<5>` to implement `MessageReceiveRetained<&CustomObject, i32>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

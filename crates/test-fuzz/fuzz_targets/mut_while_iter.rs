@@ -4,7 +4,7 @@ use std::mem::replace;
 
 use arbitrary::Arbitrary;
 use objc2::{
-    rc::{autoreleasepool, Id},
+    rc::{autoreleasepool, Retained},
     ClassType,
 };
 use objc2_foundation::{NSMutableArray, NSNull, NSObject, NSObjectProtocol};
@@ -68,8 +68,8 @@ fn retain_count(obj: &NSObject) -> usize {
 }
 
 fn run(ops: Vec<Operation>) {
-    let arr: Id<NSMutableArray<NSObject>> = NSMutableArray::new();
-    let mut vec: Vec<Id<NSObject>> = Vec::new();
+    let arr: Retained<NSMutableArray<NSObject>> = NSMutableArray::new();
+    let mut vec: Vec<Retained<NSObject>> = Vec::new();
 
     let mut arr_iter = arr.iter();
     let mut vec_iter = VecIter::new();

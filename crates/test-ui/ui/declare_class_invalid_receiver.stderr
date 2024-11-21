@@ -173,7 +173,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C-unwind" fn(Box<CustomObject>, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
+  = note: required for `extern "C-unwind" fn(Box<CustomObject>, objc2::runtime::Sel) -> RetainedReturnValue` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
@@ -207,7 +207,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C-unwind" fn(Retained<CustomObject>, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
+  = note: required for `extern "C-unwind" fn(Retained<CustomObject>, objc2::runtime::Sel) -> RetainedReturnValue` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
@@ -241,7 +241,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C-unwind" fn(CustomObject, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
+  = note: required for `extern "C-unwind" fn(CustomObject, objc2::runtime::Sel) -> RetainedReturnValue` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
@@ -272,7 +272,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
             *const T
             *mut T
             NonNull<T>
-  = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Box<CustomObject>, Retained<CustomObject>>`
+  = note: required for `RetainSemantics<5>` to implement `MessageReceiveRetained<Box<CustomObject>, Retained<CustomObject>>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not satisfied
@@ -295,7 +295,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
             *const T
             *mut T
             NonNull<T>
-  = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Retained<CustomObject>, Retained<CustomObject>>`
+  = note: required for `RetainSemantics<5>` to implement `MessageReceiveRetained<Retained<CustomObject>, Retained<CustomObject>>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
@@ -318,7 +318,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
             *const T
             *mut T
             NonNull<T>
-  = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<CustomObject, Retained<CustomObject>>`
+  = note: required for `RetainSemantics<5>` to implement `MessageReceiveRetained<CustomObject, Retained<CustomObject>>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not satisfied
@@ -341,10 +341,10 @@ error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not 
             *const T
             *mut T
             NonNull<T>
-  = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Allocated<CustomObject>, Retained<CustomObject>>`
+  = note: required for `RetainSemantics<5>` to implement `MessageReceiveRetained<Allocated<CustomObject>, Retained<CustomObject>>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `RetainSemantics<3>: MessageRecieveId<&CustomObject, Retained<CustomObject>>` is not satisfied
+error[E0277]: the trait bound `RetainSemantics<3>: MessageReceiveRetained<&CustomObject, Retained<CustomObject>>` is not satisfied
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
@@ -354,9 +354,9 @@ error[E0277]: the trait bound `RetainSemantics<3>: MessageRecieveId<&CustomObjec
 ... |
   | |     }
   | | );
-  | |_^ the trait `MessageRecieveId<&CustomObject, Retained<CustomObject>>` is not implemented for `RetainSemantics<3>`
+  | |_^ the trait `MessageReceiveRetained<&CustomObject, Retained<CustomObject>>` is not implemented for `RetainSemantics<3>`
   |
-  = help: the trait `MessageRecieveId<&CustomObject, Retained<CustomObject>>` is not implemented for `RetainSemantics<3>`
-          but trait `MessageRecieveId<Allocated<CustomObject>, Retained<CustomObject>>` is implemented for it
+  = help: the trait `MessageReceiveRetained<&CustomObject, Retained<CustomObject>>` is not implemented for `RetainSemantics<3>`
+          but trait `MessageReceiveRetained<Allocated<CustomObject>, Retained<CustomObject>>` is implemented for it
   = help: for that trait implementation, expected `Allocated<CustomObject>`, found `&CustomObject`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

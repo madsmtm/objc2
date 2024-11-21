@@ -10,7 +10,7 @@ use std::cell::Cell;
 use std::hint::black_box;
 
 use arbitrary::Arbitrary;
-use objc2::rc::{autoreleasepool, Id, Retained};
+use objc2::rc::{autoreleasepool, Retained};
 use objc2::runtime::AnyObject;
 use objc2::{declare_class, msg_send_id, AllocAnyThread, ClassType, DeclaredClass, Message};
 use objc2_foundation::{
@@ -109,8 +109,8 @@ fn run(ops: Vec<Operation>) {
     let keys: Vec<_> = (0..=KeyIndex::MAX).map(Key::new).collect();
     let key = |idx: KeyIndex| -> &Key { &keys[idx as usize] };
 
-    let set: Id<NSMutableSet<Key>> = NSMutableSet::new();
-    let dict: Id<NSMutableDictionary<Key, NSObject>> = NSMutableDictionary::new();
+    let set: Retained<NSMutableSet<Key>> = NSMutableSet::new();
+    let dict: Retained<NSMutableDictionary<Key, NSObject>> = NSMutableDictionary::new();
 
     for op in ops {
         autoreleasepool(|_| match op {

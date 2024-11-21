@@ -184,8 +184,8 @@ macro_rules! __ns_string_static {
 #[macro_export]
 macro_rules! __ns_string_inner {
     ($inp:ident) => {{
-        static CACHED_NSSTRING: $crate::__macro_helpers::CachedId<$crate::NSString> =
-            $crate::__macro_helpers::CachedId::new();
+        static CACHED_NSSTRING: $crate::__macro_helpers::CachedRetained<$crate::NSString> =
+            $crate::__macro_helpers::CachedRetained::new();
         CACHED_NSSTRING.get(|| $crate::NSString::from_str($inp))
     }};
 }

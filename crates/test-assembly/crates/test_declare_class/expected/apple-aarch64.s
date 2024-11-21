@@ -188,27 +188,27 @@ Lloh31:
 	bl	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 Ltmp11:
 Lloh32:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_61b74dbf9c375668@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_b9a1f6fcaebf5833@PAGE
 Lloh33:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_61b74dbf9c375668@PAGEOFF]
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_b9a1f6fcaebf5833@PAGEOFF]
 Ltmp12:
 Lloh34:
 	adrp	x4, l_anon.[ID].18@PAGE
 Lloh35:
 	add	x4, x4, l_anon.[ID].18@PAGEOFF
 Lloh36:
-	adrp	x5, _method_id@PAGE
+	adrp	x5, _method_retained@PAGE
 Lloh37:
-	add	x5, x5, _method_id@PAGEOFF
+	add	x5, x5, _method_retained@PAGEOFF
 	add	x0, sp, #8
 	mov	w2, #8
 	mov	x3, #0
 	bl	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 Ltmp13:
 Lloh38:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_96586542870e42e5@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_1fadc39d02a2e48d@PAGE
 Lloh39:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_96586542870e42e5@PAGEOFF]
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_1fadc39d02a2e48d@PAGEOFF]
 Ltmp14:
 Lloh40:
 	adrp	x2, l_anon.[ID].17@PAGE
@@ -219,9 +219,9 @@ Lloh42:
 Lloh43:
 	add	x4, x4, l_anon.[ID].18@PAGEOFF
 Lloh44:
-	adrp	x5, _method_id_with_param@PAGE
+	adrp	x5, _method_retained_with_param@PAGE
 Lloh45:
-	add	x5, x5, _method_id_with_param@PAGEOFF
+	add	x5, x5, _method_retained_with_param@PAGEOFF
 	add	x0, sp, #8
 	mov	w3, #1
 	bl	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
@@ -253,9 +253,9 @@ Ltmp19:
 	bl	_class_addProtocol
 LBB1_12:
 Lloh50:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_f4e71677dafa88a8@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_60b34e8bfc36c853@PAGE
 Lloh51:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_f4e71677dafa88a8@PAGEOFF]
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_60b34e8bfc36c853@PAGEOFF]
 Ltmp20:
 Lloh52:
 	adrp	x2, l_anon.[ID].23@PAGE
@@ -1019,9 +1019,9 @@ _method_bool:
 	eor	w0, w2, #0x1
 	ret
 
-	.globl	_method_id
+	.globl	_method_retained
 	.p2align	2
-_method_id:
+_method_retained:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -1077,9 +1077,9 @@ Lloh186:
 	.loh AdrpAdd	Lloh183, Lloh184
 	.loh AdrpAdd	Lloh181, Lloh182
 
-	.globl	_method_id_with_param
+	.globl	_method_retained_with_param
 	.p2align	2
-_method_id_with_param:
+_method_retained_with_param:
 Lfunc_begin4:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
@@ -1280,9 +1280,9 @@ LBB20_2:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 Lloh214:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_7f51a873b0d59f00@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_26cc7dbee28ec24f@PAGE
 Lloh215:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_7f51a873b0d59f00@PAGEOFF]
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_26cc7dbee28ec24f@PAGEOFF]
 Lloh216:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh217:
@@ -1391,9 +1391,9 @@ Ltmp58:
 	bl	_objc_release
 LBB22_6:
 Lloh233:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_802cb9c5fa0b19dd@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_40d8a45ff5c074fb@PAGE
 Lloh234:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_802cb9c5fa0b19dd@PAGEOFF]
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_40d8a45ff5c074fb@PAGEOFF]
 Lloh235:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh236:
@@ -1673,54 +1673,54 @@ L_OBJC_IMAGE_INFO_58736195c9ca7c7f:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_61b74dbf9c375668
-L_OBJC_METH_VAR_NAME_61b74dbf9c375668:
-	.asciz	"methodId"
+	.globl	L_OBJC_METH_VAR_NAME_b9a1f6fcaebf5833
+L_OBJC_METH_VAR_NAME_b9a1f6fcaebf5833:
+	.asciz	"methodRetained"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_61b74dbf9c375668
+	.globl	L_OBJC_SELECTOR_REFERENCES_b9a1f6fcaebf5833
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_61b74dbf9c375668:
-	.quad	L_OBJC_METH_VAR_NAME_61b74dbf9c375668
+L_OBJC_SELECTOR_REFERENCES_b9a1f6fcaebf5833:
+	.quad	L_OBJC_METH_VAR_NAME_b9a1f6fcaebf5833
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_61b74dbf9c375668
+	.globl	L_OBJC_IMAGE_INFO_b9a1f6fcaebf5833
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_61b74dbf9c375668:
+L_OBJC_IMAGE_INFO_b9a1f6fcaebf5833:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_96586542870e42e5
-L_OBJC_METH_VAR_NAME_96586542870e42e5:
-	.asciz	"methodIdWithParam:"
+	.globl	L_OBJC_METH_VAR_NAME_1fadc39d02a2e48d
+L_OBJC_METH_VAR_NAME_1fadc39d02a2e48d:
+	.asciz	"methodRetainedWithParam:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_96586542870e42e5
+	.globl	L_OBJC_SELECTOR_REFERENCES_1fadc39d02a2e48d
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_96586542870e42e5:
-	.quad	L_OBJC_METH_VAR_NAME_96586542870e42e5
+L_OBJC_SELECTOR_REFERENCES_1fadc39d02a2e48d:
+	.quad	L_OBJC_METH_VAR_NAME_1fadc39d02a2e48d
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_96586542870e42e5
+	.globl	L_OBJC_IMAGE_INFO_1fadc39d02a2e48d
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_96586542870e42e5:
+L_OBJC_IMAGE_INFO_1fadc39d02a2e48d:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_f4e71677dafa88a8
-L_OBJC_METH_VAR_NAME_f4e71677dafa88a8:
+	.globl	L_OBJC_METH_VAR_NAME_60b34e8bfc36c853
+L_OBJC_METH_VAR_NAME_60b34e8bfc36c853:
 	.asciz	"copyWithZone:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_f4e71677dafa88a8
+	.globl	L_OBJC_SELECTOR_REFERENCES_60b34e8bfc36c853
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_f4e71677dafa88a8:
-	.quad	L_OBJC_METH_VAR_NAME_f4e71677dafa88a8
+L_OBJC_SELECTOR_REFERENCES_60b34e8bfc36c853:
+	.quad	L_OBJC_METH_VAR_NAME_60b34e8bfc36c853
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_f4e71677dafa88a8
+	.globl	L_OBJC_IMAGE_INFO_60b34e8bfc36c853
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_f4e71677dafa88a8:
+L_OBJC_IMAGE_INFO_60b34e8bfc36c853:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1)
@@ -1734,20 +1734,20 @@ l_anon.[ID].24:
 	.asciz	"5\000\000\000\000\000\000\000R\000\000\000\001\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_7f51a873b0d59f00
-L_OBJC_METH_VAR_NAME_7f51a873b0d59f00:
+	.globl	L_OBJC_METH_VAR_NAME_26cc7dbee28ec24f
+L_OBJC_METH_VAR_NAME_26cc7dbee28ec24f:
 	.asciz	"init"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_7f51a873b0d59f00
+	.globl	L_OBJC_SELECTOR_REFERENCES_26cc7dbee28ec24f
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_7f51a873b0d59f00:
-	.quad	L_OBJC_METH_VAR_NAME_7f51a873b0d59f00
+L_OBJC_SELECTOR_REFERENCES_26cc7dbee28ec24f:
+	.quad	L_OBJC_METH_VAR_NAME_26cc7dbee28ec24f
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_7f51a873b0d59f00
+	.globl	L_OBJC_IMAGE_INFO_26cc7dbee28ec24f
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_7f51a873b0d59f00:
+L_OBJC_IMAGE_INFO_26cc7dbee28ec24f:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)
@@ -1761,20 +1761,20 @@ l_anon.[ID].25:
 	.asciz	"5\000\000\000\000\000\000\000z\000\000\000\001\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_802cb9c5fa0b19dd
-L_OBJC_METH_VAR_NAME_802cb9c5fa0b19dd:
+	.globl	L_OBJC_METH_VAR_NAME_40d8a45ff5c074fb
+L_OBJC_METH_VAR_NAME_40d8a45ff5c074fb:
 	.asciz	"init"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_802cb9c5fa0b19dd
+	.globl	L_OBJC_SELECTOR_REFERENCES_40d8a45ff5c074fb
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_802cb9c5fa0b19dd:
-	.quad	L_OBJC_METH_VAR_NAME_802cb9c5fa0b19dd
+L_OBJC_SELECTOR_REFERENCES_40d8a45ff5c074fb:
+	.quad	L_OBJC_METH_VAR_NAME_40d8a45ff5c074fb
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_802cb9c5fa0b19dd
+	.globl	L_OBJC_IMAGE_INFO_40d8a45ff5c074fb
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_802cb9c5fa0b19dd:
+L_OBJC_IMAGE_INFO_40d8a45ff5c074fb:
 	.asciz	"\000\000\000\000@\000\000"
 
 .zerofill __DATA,__bss,__MergedGlobals,48,3
