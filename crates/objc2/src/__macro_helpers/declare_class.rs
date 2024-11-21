@@ -39,12 +39,12 @@ unsafe impl Encode for RetainedReturnValue {
 //
 // See `MsgSendRetained` and `RetainSemantics` for details on the retain semantics
 // we're following here.
-pub trait MessageRecieveId<Receiver, Ret> {
+pub trait MessageReceiveRetained<Receiver, Ret> {
     fn into_return(obj: Ret) -> RetainedReturnValue;
 }
 
 // Receiver and return type have no correlation
-impl<Receiver, Ret> MessageRecieveId<Receiver, Ret> for New
+impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for New
 where
     Receiver: MessageReceiver,
     Ret: MaybeOptionId,
@@ -56,14 +56,14 @@ where
 }
 
 // Explicitly left unimplemented for now!
-// impl MessageRecieveId<impl MessageReceiver, Allocated<T>> for Alloc {}
+// impl MessageReceiveRetained<impl MessageReceiver, Allocated<T>> for Alloc {}
 
 // Note: `MethodImplementation` allows for `Allocated` as the receiver, so we
 // restrict it here to only be when the selector is `init`.
 //
 // Additionally, the receiver and return type must have the same generic
 // parameter `T`.
-impl<Ret, T> MessageRecieveId<Allocated<T>, Ret> for Init
+impl<Ret, T> MessageReceiveRetained<Allocated<T>, Ret> for Init
 where
     T: Message,
     Ret: MaybeOptionId<Input = Option<Retained<T>>>,
@@ -75,7 +75,7 @@ where
 }
 
 // Receiver and return type have no correlation
-impl<Receiver, Ret> MessageRecieveId<Receiver, Ret> for CopyOrMutCopy
+impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for CopyOrMutCopy
 where
     Receiver: MessageReceiver,
     Ret: MaybeOptionId,
@@ -87,7 +87,7 @@ where
 }
 
 // Receiver and return type have no correlation
-impl<Receiver, Ret> MessageRecieveId<Receiver, Ret> for Other
+impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for Other
 where
     Receiver: MessageReceiver,
     Ret: MaybeOptionId,

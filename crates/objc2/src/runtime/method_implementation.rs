@@ -79,7 +79,7 @@ macro_rules! method_impl_inner {
                 // `RetainedReturnValue` in the type, since that type is private
                 // and hence only internal macros like `#[method_id]` will be
                 // able to produce it (and that, in turn, only allows it if
-                // the selector is `init` as checked by `MessageRecieveId`).
+                // the selector is `init` as checked by `MessageReceiveRetained`).
                 unsafe { mem::transmute(self) }
             }
         }

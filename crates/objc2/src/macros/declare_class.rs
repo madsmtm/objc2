@@ -1032,7 +1032,7 @@ macro_rules! __declare_class_method_out_inner {
                         $($sel)*
                     }
                 )
-            }> as $crate::__macro_helpers::MessageRecieveId<
+            }> as $crate::__macro_helpers::MessageReceiveRetained<
                 $receiver_ty,
                 $ret,
             >>::into_return(__objc2_result)
