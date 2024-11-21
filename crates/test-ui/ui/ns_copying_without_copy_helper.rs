@@ -1,12 +1,9 @@
-use objc2::{extern_class, ClassType};
+use objc2::extern_class;
 use objc2_foundation::{NSCopying, NSMutableCopying, NSObject};
 
 extern_class!(
+    #[unsafe(super(NSObject))]
     struct MyObj;
-
-    unsafe impl ClassType for MyObj {
-        type Super = NSObject;
-    }
 );
 
 unsafe impl NSCopying for MyObj {}

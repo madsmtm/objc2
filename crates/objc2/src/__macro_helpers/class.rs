@@ -54,54 +54,39 @@ mod tests {
     use crate::runtime::NSObject;
 
     extern_class!(
+        #[unsafe(super(NSObject))]
+        #[thread_kind = AllocAnyThread]
+        #[name = "NSObject"]
         struct SetAnyThread;
-
-        unsafe impl ClassType for SetAnyThread {
-            type Super = NSObject;
-            type ThreadKind = dyn AllocAnyThread;
-            const NAME: &'static str = "NSObject";
-        }
     );
 
     extern_class!(
+        #[unsafe(super(NSObject))]
+        #[thread_kind = AllocAnyThread]
+        #[name = "NSObject"]
         struct SendSync;
-
-        unsafe impl ClassType for SendSync {
-            type Super = NSObject;
-            type ThreadKind = dyn AllocAnyThread;
-            const NAME: &'static str = "NSObject";
-        }
     );
 
     unsafe impl Send for SendSync {}
     unsafe impl Sync for SendSync {}
 
     extern_class!(
+        #[unsafe(super(NSObject))]
+        #[thread_kind = MainThreadOnly]
+        #[name = "NSObject"]
         struct OnlyMain;
-
-        unsafe impl ClassType for OnlyMain {
-            type Super = NSObject;
-            type ThreadKind = dyn MainThreadOnly;
-            const NAME: &'static str = "NSObject";
-        }
     );
 
     extern_class!(
+        #[unsafe(super(OnlyMain))]
+        #[name = "NSObject"]
         struct OnlyMainSubDefault;
-
-        unsafe impl ClassType for OnlyMainSubDefault {
-            type Super = OnlyMain;
-            const NAME: &'static str = "NSObject";
-        }
     );
 
     extern_class!(
+        #[unsafe(super(OnlyMain))]
+        #[thread_kind = MainThreadOnly]
+        #[name = "NSObject"]
         struct OnlyMainSubExplicit;
-
-        unsafe impl ClassType for OnlyMainSubExplicit {
-            type Super = OnlyMain;
-            type ThreadKind = dyn MainThreadOnly;
-            const NAME: &'static str = "NSObject";
-        }
     );
 }

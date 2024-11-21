@@ -413,14 +413,11 @@ macro_rules! declare_class {
         }
 
         $crate::__extern_class_impl_traits! {
+            ()
             // SAFETY: Upheld by caller
-            unsafe impl () for $for_class {
-                INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::AnyObject];
-
-                fn as_super(&self) {
-                    &*self.__superclass
-                }
-            }
+            (unsafe impl)
+            ($for_class)
+            ($superclass, $($($inheritance_rest,)+)? $crate::runtime::AnyObject)
         }
 
         // Anonymous block to hide the shared statics
@@ -439,7 +436,11 @@ macro_rules! declare_class {
             unsafe impl ClassType for $for_class {
                 type Super = $superclass;
 
-                type ThreadKind = $crate::__select_thread_kind!($($thread_kind)?);
+                type ThreadKind = $crate::__fallback_if_not_set! {
+                    ($($thread_kind)?)
+                    // Default to the super class' thread kind
+                    (<$superclass as $crate::ClassType>::ThreadKind)
+                };
 
                 const NAME: &'static $crate::__macro_helpers::str = $name_const;
 

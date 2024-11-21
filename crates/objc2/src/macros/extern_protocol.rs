@@ -172,7 +172,10 @@ macro_rules! extern_protocol {
             ($(#[$impl_m])*)
             ($name)
             (dyn $for)
-            ($crate::__select_name!($name; $($name_const)?))
+            ($crate::__fallback_if_not_set! {
+                ($($name_const)?)
+                ($crate::__macro_helpers::stringify!($name))
+            })
         );
     };
 }

@@ -1,0 +1,11 @@
+error: #[ivars] is not supported in extern_class!
+ --> ui/extern_class_ivars.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[ivars = i32]
+  | |     struct IvarsEqual;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_class_check_no_ivars` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -1,7 +1,10 @@
 pub use core::borrow::Borrow;
 pub use core::cell::UnsafeCell;
+pub use core::cmp::{Eq, PartialEq};
 pub use core::convert::AsRef;
 pub use core::default::Default;
+pub use core::fmt;
+pub use core::hash::{Hash, Hasher};
 pub use core::marker::{PhantomData, Sized};
 pub use core::mem::{size_of, ManuallyDrop, MaybeUninit};
 pub use core::ops::Deref;

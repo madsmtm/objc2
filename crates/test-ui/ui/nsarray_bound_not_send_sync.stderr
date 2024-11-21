@@ -13,7 +13,7 @@ note: required because it appears within the type `PhantomData<*mut NSObject>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
-  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject>;
   |                ^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -41,7 +41,7 @@ note: required because it appears within the type `NSObject`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
-  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject>;
   |                ^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -64,7 +64,7 @@ note: required because it appears within the type `PhantomData<*mut NSObject>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
-  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject>;
   |                ^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -103,7 +103,7 @@ note: required because it appears within the type `NSObject`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
-  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject>;
   |                ^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -126,7 +126,7 @@ note: required because it appears within the type `PhantomData<*mut NSObject>`
 note: required because it appears within the type `NSMutableArray<NSObject>`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
-  |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
+  |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject>;
   |                ^^^^^^^^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -154,12 +154,12 @@ note: required because it appears within the type `NSObject`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
-  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject>;
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
-  |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
+  |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject>;
   |                ^^^^^^^^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -182,7 +182,7 @@ note: required because it appears within the type `PhantomData<*mut NSObject>`
 note: required because it appears within the type `NSMutableArray<NSObject>`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
-  |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
+  |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject>;
   |                ^^^^^^^^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -221,12 +221,12 @@ note: required because it appears within the type `NSObject`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
-  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject>;
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
-  |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
+  |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject>;
   |                ^^^^^^^^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/nsarray_bound_not_send_sync.rs

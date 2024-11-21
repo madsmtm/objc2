@@ -23,17 +23,14 @@ use crate::{
 /// [cls]: https://developer.apple.com/documentation/objectivec/nsobject?language=objc
 #[repr(C)]
 pub struct NSObject {
-    __inner: AnyObject,
+    __superclass: AnyObject,
 }
 
 crate::__extern_class_impl_traits! {
-    unsafe impl () for NSObject {
-        INHERITS = [AnyObject];
-
-        fn as_super(&self) {
-            &self.__inner
-        }
-    }
+    ()
+    (unsafe impl)
+    (NSObject)
+    (AnyObject)
 }
 
 unsafe impl ClassType for NSObject {
@@ -48,7 +45,7 @@ unsafe impl ClassType for NSObject {
 
     #[inline]
     fn as_super(&self) -> &Self::Super {
-        &self.__inner
+        &self.__superclass
     }
 
     const __INNER: () = ();
@@ -432,13 +429,10 @@ mod tests {
     use crate::rc::RcTestObject;
 
     extern_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "NSObject"]
         #[derive(Debug, PartialEq, Eq, Hash)]
         struct FakeSubclass;
-
-        unsafe impl ClassType for FakeSubclass {
-            type Super = NSObject;
-            const NAME: &'static str = "NSObject";
-        }
     );
 
     impl FakeSubclass {

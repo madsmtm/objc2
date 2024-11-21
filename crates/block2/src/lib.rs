@@ -65,12 +65,9 @@
 //! #
 //! # use objc2::ClassType;
 //! # objc2::extern_class!(
+//! #     #[unsafe(super(objc2::runtime::NSObject))]
+//! #     #[name = "NSObject"]
 //! #     struct MyClass;
-//! #
-//! #     unsafe impl ClassType for MyClass {
-//! #         type Super = objc2::runtime::NSObject;
-//! #         const NAME: &'static str = "NSObject";
-//! #     }
 //! # );
 //!
 //! extern_methods!(

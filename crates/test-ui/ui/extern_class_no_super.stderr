@@ -1,0 +1,11 @@
+error: must specify the superclass with #[unsafe(super(...))]
+ --> ui/extern_class_no_super.rs
+  |
+  | / extern_class!(
+  | |     #[thread_kind = MainThreadOnly]
+  | |     #[name = "NSObject"]
+  | |     struct NoSuper;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_class_check_super_unsafe` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

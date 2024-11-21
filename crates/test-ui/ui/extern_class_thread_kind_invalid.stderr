@@ -1,38 +1,10 @@
 error[E0038]: the trait `ThreadKind` cannot be made into an object
  --> ui/extern_class_thread_kind_invalid.rs
   |
-  |         type ThreadKind = dyn ThreadKind;
-  |                           ^^^^^^^^^^^^^^ `ThreadKind` cannot be made into an object
-  |
-note: for a trait to be "dyn-compatible" it needs to allow building a vtable to allow the call to be resolvable dynamically; for more information visit <https://doc.rust-lang.org/reference/items/traits.html#object-safety>
- --> $WORKSPACE/crates/objc2/src/top_level_traits.rs
-  |
-  |     const __DYN_INCOMPATIBLE: ();
-  |           ^^^^^^^^^^^^^^^^^^ the trait cannot be made into an object because it contains this associated `const`
-
-error[E0277]: the trait bound `BogusThreadKind: ValidThreadKind<(dyn ThreadKind + 'static)>` is not satisfied
- --> ui/extern_class_thread_kind_invalid.rs
-  |
   | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[thread_kind = ThreadKind]
   | |     struct BogusThreadKind;
-  | |
-  | |     unsafe impl ClassType for BogusThreadKind {
-... |
-  | |     }
-  | | );
-  | |_^ the trait `ValidThreadKind<(dyn ThreadKind + 'static)>` is not implemented for `BogusThreadKind`
-  |
-  = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0038]: the trait `ThreadKind` cannot be made into an object
- --> ui/extern_class_thread_kind_invalid.rs
-  |
-  | / extern_class!(
-  | |     struct BogusThreadKind;
-  | |
-  | |     unsafe impl ClassType for BogusThreadKind {
-... |
-  | |     }
   | | );
   | |_^ `ThreadKind` cannot be made into an object
   |
@@ -41,4 +13,33 @@ note: for a trait to be "dyn-compatible" it needs to allow building a vtable to 
   |
   |     const __DYN_INCOMPATIBLE: ();
   |           ^^^^^^^^^^^^^^^^^^ the trait cannot be made into an object because it contains this associated `const`
-  = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `BogusThreadKind: ValidThreadKind<(dyn ThreadKind + 'static)>` is not satisfied
+ --> ui/extern_class_thread_kind_invalid.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[thread_kind = ThreadKind]
+  | |     struct BogusThreadKind;
+  | | );
+  | |_^ the trait `ValidThreadKind<(dyn ThreadKind + 'static)>` is not implemented for `BogusThreadKind`
+  |
+  = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0038]: the trait `ThreadKind` cannot be made into an object
+ --> ui/extern_class_thread_kind_invalid.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[thread_kind = ThreadKind]
+  | |     struct BogusThreadKind;
+  | | );
+  | |_^ `ThreadKind` cannot be made into an object
+  |
+note: for a trait to be "dyn-compatible" it needs to allow building a vtable to allow the call to be resolvable dynamically; for more information visit <https://doc.rust-lang.org/reference/items/traits.html#object-safety>
+ --> $WORKSPACE/crates/objc2/src/top_level_traits.rs
+  |
+  |     const __DYN_INCOMPATIBLE: ();
+  |           ^^^^^^^^^^^^^^^^^^ the trait cannot be made into an object because it contains this associated `const`
+  = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

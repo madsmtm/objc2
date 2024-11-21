@@ -15,17 +15,14 @@ use crate::{AllocAnyThread, ClassType};
 /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsproxy?language=objc
 #[repr(C)]
 pub struct NSProxy {
-    __inner: AnyObject,
+    __superclass: AnyObject,
 }
 
 crate::__extern_class_impl_traits! {
-    unsafe impl () for NSProxy {
-        INHERITS = [AnyObject];
-
-        fn as_super(&self) {
-            &self.__inner
-        }
-    }
+    ()
+    (unsafe impl)
+    (NSProxy)
+    (AnyObject)
 }
 
 unsafe impl ClassType for NSProxy {
@@ -40,7 +37,7 @@ unsafe impl ClassType for NSProxy {
 
     #[inline]
     fn as_super(&self) -> &Self::Super {
-        &self.__inner
+        &self.__superclass
     }
 
     const __INNER: () = ();

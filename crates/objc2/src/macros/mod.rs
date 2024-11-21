@@ -1,4 +1,5 @@
 mod __attribute_helpers;
+mod __fallback;
 mod __method_msg_send;
 mod __msg_send_parse;
 mod __rewrite_self_param;

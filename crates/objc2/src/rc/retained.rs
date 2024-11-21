@@ -89,11 +89,8 @@ use crate::{ffi, ClassType, DowncastTarget, Message};
 /// use objc2::{ClassType, msg_send_id};
 /// #
 /// # objc2::extern_class!(
+/// #     #[unsafe(super(NSObject))]
 /// #     pub struct NSString;
-/// #
-/// #     unsafe impl ClassType for NSString {
-/// #         type Super = NSObject;
-/// #     }
 /// # );
 ///
 /// // Use `msg_send_id!` to create an `Retained` with correct memory management

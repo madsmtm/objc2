@@ -36,37 +36,25 @@ pub type ASImage = NSObject;
 type ASControl = NSObject;
 
 extern_class!(
+    #[unsafe(super(ASViewController))]
+    #[thread_kind = MainThreadOnly]
     #[derive(Debug, PartialEq, Eq, Hash)]
     #[cfg(feature = "ASCredentialProviderViewController")]
     pub struct ASCredentialProviderViewController;
-
-    #[cfg(feature = "ASCredentialProviderViewController")]
-    unsafe impl ClassType for ASCredentialProviderViewController {
-        type Super = ASViewController;
-        type ThreadKind = dyn MainThreadOnly;
-    }
 );
 
 extern_class!(
+    #[unsafe(super(ASViewController))]
+    #[thread_kind = MainThreadOnly]
     #[derive(Debug, PartialEq, Eq, Hash)]
     #[cfg(feature = "ASAccountAuthenticationModificationViewController")]
     pub struct ASAccountAuthenticationModificationViewController;
-
-    #[cfg(feature = "ASAccountAuthenticationModificationViewController")]
-    unsafe impl ClassType for ASAccountAuthenticationModificationViewController {
-        type Super = ASViewController;
-        type ThreadKind = dyn MainThreadOnly;
-    }
 );
 
 extern_class!(
+    #[unsafe(super(ASControl))]
+    #[thread_kind = MainThreadOnly]
     #[derive(Debug, PartialEq, Eq, Hash)]
     #[cfg(feature = "ASAuthorizationAppleIDButton")]
     pub struct ASAuthorizationAppleIDButton;
-
-    #[cfg(feature = "ASAuthorizationAppleIDButton")]
-    unsafe impl ClassType for ASAuthorizationAppleIDButton {
-        type Super = ASControl;
-        type ThreadKind = dyn MainThreadOnly;
-    }
 );

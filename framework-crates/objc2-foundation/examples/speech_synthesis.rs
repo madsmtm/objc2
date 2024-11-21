@@ -27,12 +27,9 @@ mod implementation {
 
     extern_class!(
         /// <https://developer.apple.com/documentation/appkit/nsspeechsynthesizer?language=objc>
+        #[unsafe(super(NSObject))]
+        #[name = "NSSpeechSynthesizer"]
         pub(crate) struct Synthesizer;
-
-        unsafe impl ClassType for Synthesizer {
-            type Super = NSObject;
-            const NAME: &'static str = "NSSpeechSynthesizer";
-        }
     );
 
     impl Synthesizer {
@@ -105,13 +102,10 @@ mod implementation {
 
     extern_class!(
         /// <https://developer.apple.com/documentation/avfaudio/avspeechsynthesizer?language=objc>
+        #[unsafe(super(NSObject))]
+        #[name = "AVSpeechSynthesizer"]
         #[derive(Debug)]
         pub(crate) struct Synthesizer;
-
-        unsafe impl ClassType for Synthesizer {
-            type Super = NSObject;
-            const NAME: &'static str = "AVSpeechSynthesizer";
-        }
     );
 
     impl Synthesizer {
@@ -130,13 +124,10 @@ mod implementation {
 
     extern_class!(
         /// <https://developer.apple.com/documentation/avfaudio/avspeechutterance?language=objc>
+        #[unsafe(super(NSObject))]
+        #[name = "AVSpeechUtterance"]
         #[derive(Debug)]
         pub struct Utterance;
-
-        unsafe impl ClassType for Utterance {
-            type Super = NSObject;
-            const NAME: &'static str = "AVSpeechUtterance";
-        }
     );
 
     impl Utterance {

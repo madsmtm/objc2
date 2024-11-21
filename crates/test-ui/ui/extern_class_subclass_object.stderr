@@ -2,45 +2,39 @@ error[E0119]: conflicting implementations of trait `AsRef<AnyObject>` for type `
  --> ui/extern_class_subclass_object.rs
   |
   | / extern_class!(
+  | |     #[unsafe(super(AnyObject))]
+  | |     #[thread_kind = AllocAnyThread]
   | |     pub struct MyRootClass;
-  | |
-  | |     unsafe impl ClassType for MyRootClass {
-... |
-  | |     }
   | | );
   | | ^
   | | |
   | |_first implementation here
   |   conflicting implementation for `MyRootClass`
   |
-  = note: this error originates in the macro `$crate::__impl_as_ref_borrow` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extern_class_impl_as_ref_borrow` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0119]: conflicting implementations of trait `Borrow<AnyObject>` for type `MyRootClass`
  --> ui/extern_class_subclass_object.rs
   |
   | / extern_class!(
+  | |     #[unsafe(super(AnyObject))]
+  | |     #[thread_kind = AllocAnyThread]
   | |     pub struct MyRootClass;
-  | |
-  | |     unsafe impl ClassType for MyRootClass {
-... |
-  | |     }
   | | );
   | | ^
   | | |
   | |_first implementation here
   |   conflicting implementation for `MyRootClass`
   |
-  = note: this error originates in the macro `$crate::__impl_as_ref_borrow` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extern_class_impl_as_ref_borrow` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
  --> ui/extern_class_subclass_object.rs
   |
   | / extern_class!(
+  | |     #[unsafe(super(AnyObject))]
+  | |     #[thread_kind = AllocAnyThread]
   | |     pub struct MyRootClass;
-  | |
-  | |     unsafe impl ClassType for MyRootClass {
-... |
-  | |     }
   | | );
   | |_^ the trait `ClassType` is not implemented for `AnyObject`
   |
@@ -56,4 +50,4 @@ note: required by a bound in `ValidThreadKind::check`
 ...
   |     fn check() {}
   |        ----- required by a bound in this associated function
-  = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -1,24 +1,18 @@
 use objc2::runtime::NSObject;
-use objc2::{extern_class, ClassType, MainThreadOnly};
+use objc2::{extern_class, MainThreadOnly};
 
 extern_class!(
+    #[unsafe(super(NSObject))]
+    #[thread_kind = MainThreadOnly]
     struct SendAndOnlyMain;
-
-    unsafe impl ClassType for SendAndOnlyMain {
-        type Super = NSObject;
-        type ThreadKind = dyn MainThreadOnly;
-    }
 );
 
 unsafe impl Send for SendAndOnlyMain {}
 
 extern_class!(
+    #[unsafe(super(NSObject))]
+    #[thread_kind = MainThreadOnly]
     struct SyncAndOnlyMain;
-
-    unsafe impl ClassType for SyncAndOnlyMain {
-        type Super = NSObject;
-        type ThreadKind = dyn MainThreadOnly;
-    }
 );
 
 unsafe impl Sync for SyncAndOnlyMain {}

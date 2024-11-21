@@ -305,13 +305,6 @@ impl fmt::Display for NSMutableString {
     }
 }
 
-impl fmt::Debug for NSMutableString {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, f)
-    }
-}
-
 impl fmt::Write for &NSMutableString {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         let nsstring = NSString::from_str(s);

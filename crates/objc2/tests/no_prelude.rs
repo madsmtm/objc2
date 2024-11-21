@@ -129,12 +129,9 @@ mod test_extern_methods {
 }
 
 new_objc2::extern_class!(
+    #[unsafe(super(new_objc2::runtime::NSObject))]
+    #[name = "NSObject"]
     struct NSObject2;
-
-    unsafe impl ClassType for NSObject2 {
-        type Super = new_objc2::runtime::NSObject;
-        const NAME: &'static str = "NSObject";
-    }
 );
 
 new_objc2::extern_protocol!(

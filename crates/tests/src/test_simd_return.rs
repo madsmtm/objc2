@@ -4,11 +4,8 @@ use objc2::runtime::NSObject;
 use objc2::{extern_class, extern_methods, ClassType, Encode, Encoding};
 
 extern_class!(
+    #[unsafe(super(NSObject))]
     struct TestSimdReturn;
-
-    unsafe impl ClassType for TestSimdReturn {
-        type Super = NSObject;
-    }
 );
 
 macro_rules! methods {

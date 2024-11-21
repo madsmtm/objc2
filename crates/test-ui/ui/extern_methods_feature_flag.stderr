@@ -2,11 +2,8 @@ error[E0599]: no function or associated item named `disabled` found for struct `
  --> ui/extern_methods_feature_flag.rs
   |
   | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
   | |     pub struct MyTest;
-  | |
-  | |     unsafe impl ClassType for MyTest {
-  | |         type Super = NSObject;
-  | |     }
   | | );
   | |_- function or associated item `disabled` not found for this struct
 ...
@@ -17,11 +14,8 @@ error[E0599]: no function or associated item named `disabled_inner1` found for s
   --> ui/extern_methods_feature_flag.rs
    |
    | / extern_class!(
+   | |     #[unsafe(super(NSObject))]
    | |     pub struct MyTest;
-   | |
-   | |     unsafe impl ClassType for MyTest {
-   | |         type Super = NSObject;
-   | |     }
    | | );
    | |_- function or associated item `disabled_inner1` not found for this struct
 ...
@@ -30,18 +24,15 @@ error[E0599]: no function or associated item named `disabled_inner1` found for s
    |
 help: there is an associated function `enabled_inner1` with a similar name
    |
-50 |     MyTest::enabled_inner1();
+47 |     MyTest::enabled_inner1();
    |             ~~~~~~~~~~~~~~
 
 error[E0599]: no function or associated item named `disabled_inner2` found for struct `MyTest` in the current scope
   --> ui/extern_methods_feature_flag.rs
    |
    | / extern_class!(
+   | |     #[unsafe(super(NSObject))]
    | |     pub struct MyTest;
-   | |
-   | |     unsafe impl ClassType for MyTest {
-   | |         type Super = NSObject;
-   | |     }
    | | );
    | |_- function or associated item `disabled_inner2` not found for this struct
 ...
@@ -50,5 +41,5 @@ error[E0599]: no function or associated item named `disabled_inner2` found for s
    |
 help: there is an associated function `enabled_inner2` with a similar name
    |
-51 |     MyTest::enabled_inner2();
+48 |     MyTest::enabled_inner2();
    |             ~~~~~~~~~~~~~~

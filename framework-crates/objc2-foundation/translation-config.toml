@@ -51,14 +51,6 @@ struct.NSDecimal.skipped = true
 # Uses `c_ulong` which means we need to specify the encoding manually.
 struct.NSFastEnumerationState.skipped = true
 
-# Overridden fmt::Debug because we're missing https://github.com/madsmtm/objc2/issues/267
-class.NSAttributedString.derives = "PartialEq, Eq, Hash"
-class.NSBundle.derives = "PartialEq, Eq, Hash"
-class.NSThread.derives = "PartialEq, Eq, Hash"
-class.NSMutableData.derives = "PartialEq, Eq, Hash"
-class.NSMutableAttributedString.derives = "PartialEq, Eq, Hash"
-class.NSMutableString.derives = "PartialEq, Eq, Hash"
-
 # Overridden fmt::Debug because it's prettier
 class.NSData.derives = "PartialEq, Eq, Hash"
 class.NSError.derives = "PartialEq, Eq, Hash"

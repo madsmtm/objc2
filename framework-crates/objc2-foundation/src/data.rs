@@ -182,13 +182,6 @@ impl fmt::Debug for NSData {
     }
 }
 
-impl fmt::Debug for NSMutableData {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, f)
-    }
-}
-
 /// An iterator over the bytes in an `NSData`.
 ///
 ///

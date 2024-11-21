@@ -3,11 +3,8 @@ use objc2::runtime::NSObject;
 use objc2::{declare_class, extern_class, extern_methods, ClassType, DeclaredClass};
 
 extern_class!(
+    #[unsafe(super(NSObject))]
     pub struct MyObject;
-
-    unsafe impl ClassType for MyObject {
-        type Super = NSObject;
-    }
 );
 
 extern_methods!(

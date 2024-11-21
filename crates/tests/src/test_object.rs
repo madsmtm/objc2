@@ -83,12 +83,9 @@ extern_protocol!(
 );
 
 extern_class!(
+    #[unsafe(super(NSObject))]
+    #[thread_kind = AllocAnyThread]
     struct MyTestObject;
-
-    unsafe impl ClassType for MyTestObject {
-        type Super = NSObject;
-        type ThreadKind = dyn AllocAnyThread;
-    }
 );
 
 unsafe impl NSObjectProtocol for MyTestObject {}

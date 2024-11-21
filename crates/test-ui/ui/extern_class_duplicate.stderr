@@ -1,0 +1,37 @@
+error: cannot specify the `super` attribute twice
+ --> ui/extern_class_duplicate.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[unsafe(super(NSObject))]
+  | |     struct DuplicateSuper;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: cannot specify the `name` attribute twice
+ --> ui/extern_class_duplicate.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "Abc"]
+  | |     #[name = "Abc"]
+  | |     struct DuplicateName;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: cannot specify the `thread_kind` attribute twice
+ --> ui/extern_class_duplicate.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[thread_kind = MainThreadOnly]
+  | |     #[thread_kind = MainThreadOnly]
+  | |     struct DuplicateThreadKind;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -186,15 +186,12 @@ pub unsafe trait Message: RefEncode {
 /// use objc2::{extern_class, ClassType, AllocAnyThread};
 ///
 /// extern_class!(
+///     // SAFETY: The superclass is correctly specified, and the class can be
+///     // safely used from any thread.
+///     #[unsafe(super(NSObject))]
+///     # // For testing purposes
+///     # #[name = "NSObject"]
 ///     struct MyClass;
-///
-///     // SAFETY: The superclass is correctly specified, and can be safely
-///     // used from any thread.
-///     unsafe impl ClassType for MyClass {
-///         type Super = NSObject;
-///         # // For testing purposes
-///         # const NAME: &'static str = "NSObject";
-///     }
 /// );
 ///
 /// let cls = MyClass::class();
@@ -520,17 +517,13 @@ pub unsafe trait MainThreadOnly: private::SealedMainThreadOnly {
     /// use objc2_app_kit::NSView;
     /// use objc2_foundation::CGRect;
     /// #
-    /// # use objc2::ClassType;
     /// # use objc2::rc::{Allocated, Retained};
     /// #
     /// # objc2::extern_class!(
+    /// #     #[unsafe(super(objc2::runtime::NSObject))]
+    /// #     #[thread_kind = MainThreadOnly]
+    /// #     #[name = "NSObject"] // For example
     /// #     struct NSView;
-    /// #
-    /// #     unsafe impl ClassType for NSView {
-    /// #         type Super = objc2::runtime::NSObject;
-    /// #         type ThreadKind = dyn MainThreadOnly;
-    /// #         const NAME: &'static str = "NSObject"; // For example
-    /// #     }
     /// # );
     /// #
     /// # impl NSView {

@@ -3,22 +3,14 @@ use objc2::{extern_class, ClassType};
 
 extern_class!(
     #[cfg(not(test))]
+    #[unsafe(super(NSObject))]
     pub struct MyTestEnabled;
-
-    #[cfg(not(test))]
-    unsafe impl ClassType for MyTestEnabled {
-        type Super = NSObject;
-    }
 );
 
 extern_class!(
     #[cfg(test)]
+    #[unsafe(super(NSObject))]
     pub struct MyTestDisabled;
-
-    #[cfg(test)]
-    unsafe impl ClassType for MyTestDisabled {
-        type Super = NSObject;
-    }
 );
 
 fn main() {

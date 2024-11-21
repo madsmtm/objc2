@@ -1,4 +1,3 @@
-use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::Retained;
@@ -49,19 +48,5 @@ impl NSMutableAttributedString {
     #[doc(alias = "initWithAttributedString:")]
     pub fn from_attributed_nsstring(attributed_string: &NSAttributedString) -> Retained<Self> {
         Self::initWithAttributedString(Self::alloc(), attributed_string)
-    }
-}
-
-impl fmt::Debug for NSAttributedString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // Use -[NSAttributedString description] since it is pretty good
-        let obj: &NSObject = self;
-        fmt::Debug::fmt(obj, f)
-    }
-}
-
-impl fmt::Debug for NSMutableAttributedString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, f)
     }
 }

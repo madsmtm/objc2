@@ -1658,18 +1658,23 @@ impl Stmt {
                         return Ok(());
                     }
 
-                    let macro_name = if generics.is_empty() {
-                        "extern_class"
-                    } else {
-                        "__inner_extern_class"
-                    };
-
-                    let (superclass, superclasses_rest) = superclasses.split_at(1);
-                    let (superclass, superclass_generics) = superclass
-                        .first()
-                        .expect("must have a least one superclass");
-
-                    writeln!(f, "{macro_name}!(")?;
+                    writeln!(f, "extern_class!(")?;
+                    write!(f, "    #[unsafe(super(")?;
+                    for (i, (superclass, generics)) in superclasses.iter().enumerate() {
+                        if 0 < i {
+                            write!(f, ", ")?;
+                        }
+                        write!(
+                            f,
+                            "{}{}",
+                            superclass.path_in_relation_to(id.location()),
+                            GenericTyHelper(generics)
+                        )?;
+                    }
+                    writeln!(f, "))]")?;
+                    if *main_thread_only {
+                        writeln!(f, "    #[thread_kind = MainThreadOnly]")?;
+                    }
                     writeln!(f, "    {derives}")?;
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
                     write!(f, "    {availability}")?;
@@ -1681,74 +1686,7 @@ impl Stmt {
                         }
                         write!(f, ">")?;
                     };
-                    if generics.is_empty() {
-                        writeln!(f, ";")?;
-                    } else {
-                        writeln!(f, " {{")?;
-                        writeln!(
-                            f,
-                            "__superclass: {}{},",
-                            superclass.path_in_relation_to(id.location()),
-                            GenericTyHelper(superclass_generics),
-                        )?;
-                        for (i, generic) in generics.iter().enumerate() {
-                            // Invariant over the generic by default
-                            writeln!(f, "_inner{i}: PhantomData<*mut {generic}>,")?;
-                        }
-                        writeln!(f, "notunwindsafe: PhantomData<&'static mut ()>,")?;
-                        writeln!(f, "}}")?;
-                    }
-
-                    writeln!(f)?;
-
-                    write!(f, "    {}", self.cfg_gate_ln(config))?;
-                    writeln!(
-                        f,
-                        "    unsafe impl{} ClassType for {}{} {{",
-                        GenericParamsHelper(generics, "?Sized + Message"),
-                        id.name,
-                        GenericTyHelper(generics),
-                    )?;
-                    if !superclasses_rest.is_empty() {
-                        write!(f, "        #[inherits(")?;
-                        let mut iter = superclasses_rest.iter();
-                        // Using generics in here is not technically correct, but
-                        // should work for our use-cases.
-                        if let Some((superclass, generics)) = iter.next() {
-                            write!(
-                                f,
-                                "{}{}",
-                                superclass.path_in_relation_to(id.location()),
-                                GenericTyHelper(generics)
-                            )?;
-                        }
-                        for (superclass, generics) in iter {
-                            write!(
-                                f,
-                                ", {}{}",
-                                superclass.path_in_relation_to(id.location()),
-                                GenericTyHelper(generics)
-                            )?;
-                        }
-                        writeln!(f, ")]")?;
-                    }
-                    writeln!(
-                        f,
-                        "        type Super = {}{};",
-                        superclass.path_in_relation_to(id.location()),
-                        GenericTyHelper(superclass_generics),
-                    )?;
-                    if *main_thread_only {
-                        writeln!(f, "        type ThreadKind = dyn MainThreadOnly;")?;
-                    }
-                    if !generics.is_empty() {
-                        writeln!(f)?;
-                        writeln!(
-                            f,
-                            "        fn as_super(&self) -> &Self::Super {{ &self.__superclass }}"
-                        )?;
-                    }
-                    writeln!(f, "    }}")?;
+                    writeln!(f, ";")?;
                     writeln!(f, ");")?;
 
                     if *sendable && generics.is_empty() {

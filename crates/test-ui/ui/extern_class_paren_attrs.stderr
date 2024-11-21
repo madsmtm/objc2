@@ -1,0 +1,17 @@
+error: cannot find attribute `thread_kind` in this scope
+ --> ui/extern_class_paren_attrs.rs
+  |
+  |     #[thread_kind(i32)]
+  |       ^^^^^^^^^^^
+
+error: cannot find attribute `name` in this scope
+ --> ui/extern_class_paren_attrs.rs
+  |
+  |     #[name(i32)]
+  |       ^^^^
+
+error: cannot find attribute `ivars` in this scope
+ --> ui/extern_class_paren_attrs.rs
+  |
+  |     #[ivars(i32)]
+  |       ^^^^^

@@ -1,0 +1,11 @@
+error: no rules expected `{`
+ --> ui/extern_class_with_fields.rs
+  |
+  |     pub struct NSNumber {
+  |                         ^ no rules expected this token in macro call
+  |
+note: while trying to match `;`
+ --> $WORKSPACE/crates/objc2/src/macros/extern_class.rs
+  |
+  |         $v:vis struct $class:ident;
+  |                                   ^

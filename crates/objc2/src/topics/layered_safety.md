@@ -208,12 +208,9 @@ use objc2::runtime::NSObject;
 use objc2::{extern_class, extern_methods, ClassType};
 
 extern_class!(
+    #[unsafe(super(NSObject))]
     #[derive(PartialEq, Eq, Hash)]
     pub struct NSData;
-
-    unsafe impl ClassType for NSData {
-        type Super = NSObject;
-    }
 );
 
 extern_methods!(

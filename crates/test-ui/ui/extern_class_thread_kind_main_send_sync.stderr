@@ -2,11 +2,9 @@ error[E0283]: type annotations needed
  --> ui/extern_class_thread_kind_main_send_sync.rs
   |
   | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[thread_kind = MainThreadOnly]
   | |     struct SendAndOnlyMain;
-  | |
-  | |     unsafe impl ClassType for SendAndOnlyMain {
-... |
-  | |     }
   | | );
   | |_^ cannot infer type
   |
@@ -15,17 +13,15 @@ error[E0283]: type annotations needed
             where Cls: ?Sized;
           - impl<Cls> MainThreadOnlyDoesNotImplSendSync<__macro_helpers::class::ImplsSend> for Cls
             where Cls: MainThreadOnly, Cls: Send, Cls: ?Sized;
-  = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0283]: type annotations needed
  --> ui/extern_class_thread_kind_main_send_sync.rs
   |
   | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[thread_kind = MainThreadOnly]
   | |     struct SyncAndOnlyMain;
-  | |
-  | |     unsafe impl ClassType for SyncAndOnlyMain {
-... |
-  | |     }
   | | );
   | |_^ cannot infer type
   |
@@ -34,4 +30,4 @@ error[E0283]: type annotations needed
             where Cls: ?Sized;
           - impl<Cls> MainThreadOnlyDoesNotImplSendSync<__macro_helpers::class::ImplsSync> for Cls
             where Cls: MainThreadOnly, Cls: Sync, Cls: ?Sized;
-  = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

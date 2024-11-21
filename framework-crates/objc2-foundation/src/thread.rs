@@ -1,4 +1,3 @@
-use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use crate::NSThread;
@@ -10,14 +9,6 @@ unsafe impl Sync for NSThread {}
 
 impl UnwindSafe for NSThread {}
 impl RefUnwindSafe for NSThread {}
-
-impl fmt::Debug for NSThread {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // Use -[NSThread description] since that includes the thread number
-        let obj: &crate::NSObject = self;
-        fmt::Debug::fmt(obj, f)
-    }
-}
 
 /// Whether the application is multithreaded according to Cocoa.
 pub fn is_multi_threaded() -> bool {

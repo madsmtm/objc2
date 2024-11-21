@@ -96,16 +96,13 @@ extern_protocol!(
     /// Implement `NSCopying` for an externally defined class.
     ///
     /// ```
-    /// use objc2::{ClassType, extern_class};
+    /// use objc2::extern_class;
     /// use objc2_foundation::{CopyingHelper, NSCopying, NSObject};
     ///
     /// extern_class!(
+    ///     #[unsafe(super(NSObject))]
+    ///     # #[name = "NSData"]
     ///     struct ExampleClass;
-    ///
-    ///     unsafe impl ClassType for ExampleClass {
-    ///         type Super = NSObject;
-    ///         # const NAME: &'static str = "NSData";
-    ///     }
     /// );
     ///
     /// unsafe impl NSCopying for ExampleClass {}
