@@ -168,7 +168,7 @@ macro_rules! __method_msg_send_id {
             ($receiver)
             ($($retain_semantics)?)
             (MsgSendRetained)
-            (send_message_id)
+            (send_message_retained)
             ($sel)
             ()
         }
@@ -257,7 +257,7 @@ macro_rules! __method_msg_send_id {
             ($receiver)
             ($($retain_semantics)?)
             (MsgSendRetained)
-            (send_message_id)
+            (send_message_retained)
             ($($sel_parsed)*)
             ($($arg_parsed)*)
         }
@@ -279,7 +279,7 @@ macro_rules! __method_msg_send_id {
             ($($retain_semantics)?)
             (MsgSendRetained)
             // Use error method
-            (send_message_id_error)
+            (send_message_retained_error)
             ($($sel_parsed)* $sel :)
             ($($arg_parsed)*)
         }

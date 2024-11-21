@@ -12,22 +12,22 @@ unsafe fn error_bool(obj: &AnyObject, sel: Sel, param: u32) -> Result<()> {
 
 #[no_mangle]
 unsafe fn error_new(cls: &AnyClass, sel: Sel) -> Result<Retained<AnyObject>> {
-    New::send_message_id_error(cls, sel, ())
+    New::send_message_retained_error(cls, sel, ())
 }
 
 // Note: Erroring allocation methods are intentionally not supported
 
 #[no_mangle]
 unsafe fn error_init(obj: Allocated<AnyObject>, sel: Sel) -> Result<Retained<AnyObject>> {
-    Init::send_message_id_error(obj, sel, ())
+    Init::send_message_retained_error(obj, sel, ())
 }
 
 #[no_mangle]
 unsafe fn error_copy(obj: &AnyObject, sel: Sel) -> Result<Retained<AnyObject>> {
-    CopyOrMutCopy::send_message_id_error(obj, sel, ())
+    CopyOrMutCopy::send_message_retained_error(obj, sel, ())
 }
 
 #[no_mangle]
 unsafe fn error_autoreleased(obj: &AnyObject, sel: Sel) -> Result<Retained<AnyObject>> {
-    Other::send_message_id_error(obj, sel, ())
+    Other::send_message_retained_error(obj, sel, ())
 }

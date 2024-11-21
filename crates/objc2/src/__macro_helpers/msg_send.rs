@@ -70,7 +70,7 @@ pub trait MsgSend: Sized {
         unsafe { self.send_super_message(<Self::Inner as ClassType>::Super::class(), sel, args) }
     }
 
-    // Error functions below. See MsgSendRetained::send_message_id_error for further
+    // Error functions below. See MsgSendRetained::send_message_retained_error for further
     // details.
     //
     // Some of this could be abstracted away using closures, but that would

@@ -1227,11 +1227,11 @@ macro_rules! msg_send_bool {
 macro_rules! msg_send_id {
     [super($obj:expr), $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            (send_super_message_id_static_error)
+            (send_super_message_retained_static_error)
             ()
             ()
             ($($selector_and_arguments)+)
-            (send_super_message_id_static)
+            (send_super_message_retained_static)
 
             ($crate::__msg_send_id_helper)
             ($obj)
@@ -1241,11 +1241,11 @@ macro_rules! msg_send_id {
     };
     [super($obj:expr, $superclass:expr), $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            (send_super_message_id_error)
+            (send_super_message_retained_error)
             ()
             ()
             ($($selector_and_arguments)+)
-            (send_super_message_id)
+            (send_super_message_retained)
 
             ($crate::__msg_send_id_helper)
             ($obj, $superclass)
@@ -1255,7 +1255,7 @@ macro_rules! msg_send_id {
     };
     [$obj:expr, new $(,)?] => ({
         let result;
-        result = <$crate::__macro_helpers::New as $crate::__macro_helpers::MsgSendRetained<_, _>>::send_message_id(
+        result = <$crate::__macro_helpers::New as $crate::__macro_helpers::MsgSendRetained<_, _>>::send_message_retained(
             $obj,
             $crate::sel!(new),
             (),
@@ -1264,12 +1264,12 @@ macro_rules! msg_send_id {
     });
     [$obj:expr, alloc $(,)?] => ({
         let result;
-        result = $crate::__macro_helpers::Alloc::send_message_id_alloc($obj);
+        result = $crate::__macro_helpers::Alloc::send_message_retained_alloc($obj);
         result
     });
     [$obj:expr, init $(,)?] => ({
         let result;
-        result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendRetained<_, _>>::send_message_id(
+        result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendRetained<_, _>>::send_message_retained(
             $obj,
             $crate::sel!(init),
             (),
@@ -1278,11 +1278,11 @@ macro_rules! msg_send_id {
     });
     [$obj:expr, $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            (send_message_id_error)
+            (send_message_retained_error)
             ()
             ()
             ($($selector_and_arguments)+)
-            (send_message_id)
+            (send_message_retained)
 
             ($crate::__msg_send_id_helper)
             ($obj)

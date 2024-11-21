@@ -132,14 +132,14 @@ error[E0271]: type mismatch resolving `<Option<Retained<_>> as MaybeUnwrap>::Inp
   |
   = note: expected struct `Allocated<_>`
                found enum `Option<Retained<_>>`
-note: required by a bound in `send_message_id_error`
+note: required by a bound in `send_message_retained_error`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message_id_error<A, E, R>(obj: T, sel: Sel, args: A) -> Result<R, Retained<E>>
-  |               --------------------- required by a bound in this associated function
+  |     unsafe fn send_message_retained_error<A, E, R>(
+  |               --------------------------- required by a bound in this associated function
 ...
   |         Option<R>: MaybeUnwrap<Input = U>,
-  |                                ^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_id_error`
+  |                                ^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained_error`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0308]: mismatched types

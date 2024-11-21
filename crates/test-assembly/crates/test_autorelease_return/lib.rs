@@ -11,6 +11,6 @@ fn simple(obj: Retained<AnyObject>) -> *mut AnyObject {
 
 #[no_mangle]
 unsafe fn with_body(cls: &AnyClass, sel: Sel) -> *mut AnyObject {
-    let obj: Option<Retained<AnyObject>> = New::send_message_id(cls, sel, ());
+    let obj: Option<Retained<AnyObject>> = New::send_message_retained(cls, sel, ());
     Retained::autorelease_return(obj.unwrap_unchecked())
 }

@@ -12,8 +12,8 @@ error[E0308]: mismatched types
 note: associated function defined here
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     pub unsafe fn send_message_id_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
-  |                   ^^^^^^^^^^^^^^^^^^^^^
+  |     pub unsafe fn send_message_retained_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
+  |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
  --> ui/msg_send_invalid_receiver.rs
@@ -29,8 +29,8 @@ error[E0308]: mismatched types
 note: associated function defined here
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |               ^^^^^^^^^^^^^^^
+  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+  |               ^^^^^^^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
  --> ui/msg_send_invalid_receiver.rs
@@ -46,8 +46,8 @@ error[E0308]: mismatched types
 note: associated function defined here
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |               ^^^^^^^^^^^^^^^
+  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+  |               ^^^^^^^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
  --> ui/msg_send_invalid_receiver.rs
@@ -63,8 +63,8 @@ error[E0308]: mismatched types
 note: associated function defined here
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |               ^^^^^^^^^^^^^^^
+  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+  |               ^^^^^^^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
  --> ui/msg_send_invalid_receiver.rs
@@ -80,8 +80,8 @@ error[E0308]: mismatched types
 note: associated function defined here
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |               ^^^^^^^^^^^^^^^
+  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+  |               ^^^^^^^^^^^^^^^^^^^^^
 
 error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satisfied
  --> ui/msg_send_invalid_receiver.rs

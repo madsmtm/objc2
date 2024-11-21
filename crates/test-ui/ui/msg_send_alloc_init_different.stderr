@@ -6,9 +6,9 @@ error[E0271]: type mismatch resolving `<Retained<AnyObject> as MaybeUnwrap>::Inp
   |
   = note: expected enum `Option<Retained<NSObject>>`
              found enum `Option<Retained<AnyObject>>`
-note: required by a bound in `send_message_id`
+note: required by a bound in `send_message_retained`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |                                                                   ^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_id`
+  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                                         ^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained`
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
