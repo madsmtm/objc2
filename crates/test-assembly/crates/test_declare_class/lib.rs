@@ -40,15 +40,15 @@ declare_class!(
         }
 
         #[no_mangle]
-        #[method_id(methodId)]
-        fn method_id(&self) -> Option<Retained<NSObject>> {
+        #[method_id(methodRetained)]
+        fn method_retained(&self) -> Option<Retained<NSObject>> {
             unsafe { msg_send_id![Self::class(), new] }
         }
 
         // Test that `objc_autoreleaseReturnValue` is tail-called
         #[no_mangle]
-        #[method_id(methodIdWithParam:)]
-        fn method_id_with_param(&self, param: bool) -> Option<Retained<NSObject>> {
+        #[method_id(methodRetainedWithParam:)]
+        fn method_retained_with_param(&self, param: bool) -> Option<Retained<NSObject>> {
             // Intentionally create this outside condition
             let obj = NSObject::new();
             if param {
