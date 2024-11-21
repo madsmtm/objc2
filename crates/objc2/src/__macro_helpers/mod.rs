@@ -41,7 +41,7 @@ pub use self::method_family::{
 };
 pub use self::module_info::ModuleInfo;
 pub use self::msg_send::MsgSend;
-pub use self::msg_send_retained::{MaybeUnwrap, MsgSendId, MsgSendSuperId};
+pub use self::msg_send_retained::{MaybeUnwrap, MsgSendRetained, MsgSendSuperId};
 pub use self::os_version::{is_available, AvailableVersion, OSVersion};
 pub use self::sync_unsafe_cell::SyncUnsafeCell;
 

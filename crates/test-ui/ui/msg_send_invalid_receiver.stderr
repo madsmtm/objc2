@@ -98,7 +98,7 @@ error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satis
             *mut T
             NonNull<T>
   = note: required for `Retained<NSObject>` to implement `MsgSend`
-  = note: required for `RetainSemantics<1>` to implement `MsgSendId<Retained<NSObject>, Option<Retained<_>>>`
+  = note: required for `RetainSemantics<1>` to implement `MsgSendRetained<Retained<NSObject>, Option<Retained<_>>>`
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satisfied
@@ -116,5 +116,5 @@ error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satis
             *mut T
             NonNull<T>
   = note: required for `Retained<NSObject>` to implement `MsgSend`
-  = note: required for `RetainSemantics<4>` to implement `MsgSendId<Retained<NSObject>, Option<Retained<_>>>`
+  = note: required for `RetainSemantics<4>` to implement `MsgSendRetained<Retained<NSObject>, Option<Retained<_>>>`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

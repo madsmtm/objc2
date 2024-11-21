@@ -36,7 +36,7 @@ Lloh6:
 	add	x2, x2, l_anon.[ID].1@PAGEOFF
 	mov	x0, x19
 	mov	x1, x20
-	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
 	.loh AdrpLdrGotLdr	Lloh2, Lloh3, Lloh4
 	.loh AdrpAdd	Lloh5, Lloh6
 

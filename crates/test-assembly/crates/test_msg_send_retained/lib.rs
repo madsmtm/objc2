@@ -1,5 +1,5 @@
 //! Test assembly output of `msg_send_id!` internals.
-use objc2::__macro_helpers::{Alloc, CopyOrMutCopy, Init, MsgSendId, New, Other};
+use objc2::__macro_helpers::{Alloc, CopyOrMutCopy, Init, MsgSendRetained, New, Other};
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::{AnyClass, AnyObject, Sel};
 

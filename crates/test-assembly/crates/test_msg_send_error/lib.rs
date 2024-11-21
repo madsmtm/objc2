@@ -1,5 +1,5 @@
 //! Test that error parameters are handled correctly.
-use objc2::__macro_helpers::{CopyOrMutCopy, Init, MsgSend, MsgSendId, New, Other};
+use objc2::__macro_helpers::{CopyOrMutCopy, Init, MsgSend, MsgSendRetained, New, Other};
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::{AnyClass, AnyObject, Sel};
 

@@ -1255,7 +1255,7 @@ macro_rules! msg_send_id {
     };
     [$obj:expr, new $(,)?] => ({
         let result;
-        result = <$crate::__macro_helpers::New as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id(
+        result = <$crate::__macro_helpers::New as $crate::__macro_helpers::MsgSendRetained<_, _>>::send_message_id(
             $obj,
             $crate::sel!(new),
             (),
@@ -1269,7 +1269,7 @@ macro_rules! msg_send_id {
     });
     [$obj:expr, init $(,)?] => ({
         let result;
-        result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id(
+        result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendRetained<_, _>>::send_message_id(
             $obj,
             $crate::sel!(init),
             (),
@@ -1287,7 +1287,7 @@ macro_rules! msg_send_id {
             ($crate::__msg_send_id_helper)
             ($obj)
             () // No retain semantics
-            (MsgSendId)
+            (MsgSendRetained)
         }
     };
 }

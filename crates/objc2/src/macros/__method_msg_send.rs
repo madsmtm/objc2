@@ -167,7 +167,7 @@ macro_rules! __method_msg_send_id {
         $crate::__msg_send_id_helper! {
             ($receiver)
             ($($retain_semantics)?)
-            (MsgSendId)
+            (MsgSendRetained)
             (send_message_id)
             ($sel)
             ()
@@ -256,7 +256,7 @@ macro_rules! __method_msg_send_id {
         $crate::__msg_send_id_helper! {
             ($receiver)
             ($($retain_semantics)?)
-            (MsgSendId)
+            (MsgSendRetained)
             (send_message_id)
             ($($sel_parsed)*)
             ($($arg_parsed)*)
@@ -277,7 +277,7 @@ macro_rules! __method_msg_send_id {
         $crate::__msg_send_id_helper! {
             ($receiver)
             ($($retain_semantics)?)
-            (MsgSendId)
+            (MsgSendRetained)
             // Use error method
             (send_message_id_error)
             ($($sel_parsed)* $sel :)

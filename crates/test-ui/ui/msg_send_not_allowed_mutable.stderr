@@ -34,5 +34,5 @@ error[E0277]: the trait bound `&mut NSObject: MessageReceiver` is not satisfied
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&NSObject`, but not for `&mut NSObject`
   = note: required for `&mut NSObject` to implement `MsgSend`
-  = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut NSObject, Option<Retained<_>>>`
+  = note: required for `RetainSemantics<5>` to implement `MsgSendRetained<&mut NSObject, Option<Retained<_>>>`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

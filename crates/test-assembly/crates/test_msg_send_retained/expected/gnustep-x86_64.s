@@ -44,7 +44,7 @@ handle_new_fallible:
 	lea	rdx, [rip + .Lanon.[ID].1]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end1:
 	.size	handle_new_fallible, .Lfunc_end1-handle_new_fallible
 
@@ -121,7 +121,7 @@ handle_init_fallible:
 	lea	rdx, [rip + .Lanon.[ID].2]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end4:
 	.size	handle_init_fallible, .Lfunc_end4-handle_init_fallible
 
@@ -260,7 +260,7 @@ handle_copy_fallible:
 	ret
 .LBB9_2:
 	lea	rdi, [rip + .Lanon.[ID].3]
-	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end9:
 	.size	handle_copy_fallible, .Lfunc_end9-handle_copy_fallible
 
@@ -336,7 +336,7 @@ handle_autoreleased_fallible:
 	lea	rdx, [rip + .Lanon.[ID].4]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end12:
 	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
 

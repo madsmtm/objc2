@@ -200,7 +200,7 @@ macro_rules! __comma_between_args {
         ($($args:tt)*)
         ($obj:expr)
         ()
-        (MsgSendId)
+        (MsgSendRetained)
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send_id")

@@ -8,7 +8,7 @@ use crate::{sel, ClassType, DeclaredClass, Message};
 use super::declared_ivars::set_finalized;
 use super::{Alloc, ConvertArguments, CopyOrMutCopy, Init, MsgSend, New, Other, TupleExtender};
 
-pub trait MsgSendId<T, U> {
+pub trait MsgSendRetained<T, U> {
     #[track_caller]
     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
         obj: T,
@@ -156,7 +156,7 @@ unsafe fn encountered_error<E: Message>(err: *mut E) -> Retained<E> {
         .expect("error parameter should be set if the method returns NULL")
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Retained<U>>> for New {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for New {
     #[inline]
     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Retained<U>>>>(
         obj: T,
@@ -198,7 +198,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Retained<U>>> for
     }
 }
 
-impl<T: Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
+impl<T: Message> MsgSendRetained<&'_ AnyClass, Allocated<T>> for Alloc {
     #[inline]
     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
         cls: &AnyClass,
@@ -260,7 +260,7 @@ impl Alloc {
     }
 }
 
-impl<T: ?Sized + Message> MsgSendId<Allocated<T>, Option<Retained<T>>> for Init {
+impl<T: ?Sized + Message> MsgSendRetained<Allocated<T>, Option<Retained<T>>> for Init {
     #[inline]
     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Retained<T>>>>(
         obj: Allocated<T>,
@@ -310,7 +310,7 @@ impl<T: DeclaredClass> MsgSendSuperId<PartialInit<T>, Option<Retained<T>>> for I
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Retained<U>>> for CopyOrMutCopy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for CopyOrMutCopy {
     #[inline]
     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Retained<U>>>>(
         obj: T,
@@ -347,7 +347,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Retained<U>>> for
     }
 }
 
-impl<T: MsgSend, U: Message> MsgSendId<T, Option<Retained<U>>> for Other {
+impl<T: MsgSend, U: Message> MsgSendRetained<T, Option<Retained<U>>> for Other {
     #[inline]
     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Retained<U>>>>(
         obj: T,
@@ -396,14 +396,17 @@ impl<T: MsgSend, U: Message> MsgSendSuperId<T, Option<Retained<U>>> for Other {
 pub trait MaybeUnwrap {
     type Input;
     #[track_caller]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Self::Input, args: F::Args) -> Self;
+    fn maybe_unwrap<'a, F: MsgSendRetainedFailed<'a>>(obj: Self::Input, args: F::Args) -> Self;
 }
 
 impl<T: ?Sized> MaybeUnwrap for Option<Retained<T>> {
     type Input = Option<Retained<T>>;
 
     #[inline]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Retained<T>>, _args: F::Args) -> Self {
+    fn maybe_unwrap<'a, F: MsgSendRetainedFailed<'a>>(
+        obj: Option<Retained<T>>,
+        _args: F::Args,
+    ) -> Self {
         obj
     }
 }
@@ -412,7 +415,10 @@ impl<T: ?Sized> MaybeUnwrap for Retained<T> {
     type Input = Option<Retained<T>>;
 
     #[inline]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Retained<T>>, args: F::Args) -> Self {
+    fn maybe_unwrap<'a, F: MsgSendRetainedFailed<'a>>(
+        obj: Option<Retained<T>>,
+        args: F::Args,
+    ) -> Self {
         match obj {
             Some(obj) => obj,
             None => F::failed(args),
@@ -424,7 +430,7 @@ impl<T: ?Sized> MaybeUnwrap for Allocated<T> {
     type Input = Allocated<T>;
 
     #[inline]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Allocated<T>, _args: F::Args) -> Self {
+    fn maybe_unwrap<'a, F: MsgSendRetainedFailed<'a>>(obj: Allocated<T>, _args: F::Args) -> Self {
         obj
     }
 }
@@ -435,14 +441,14 @@ impl<T: ?Sized> MaybeUnwrap for Allocated<T> {
 // Also note: This behavior (that #[method_id(...)] always unwraps instead of
 // using `unwrap_unchecked`) is relied upon by `header-translator` for
 // soundness, see e.g. `parse_property_return`.
-pub trait MsgSendIdFailed<'a> {
+pub trait MsgSendRetainedFailed<'a> {
     type Args;
 
     #[track_caller]
     fn failed(args: Self::Args) -> !;
 }
 
-impl<'a> MsgSendIdFailed<'a> for New {
+impl<'a> MsgSendRetainedFailed<'a> for New {
     type Args = (Option<&'a AnyObject>, Sel);
 
     #[cold]
@@ -464,7 +470,7 @@ impl<'a> MsgSendIdFailed<'a> for New {
     }
 }
 
-impl MsgSendIdFailed<'_> for Alloc {
+impl MsgSendRetainedFailed<'_> for Alloc {
     type Args = ();
 
     #[cold]
@@ -473,7 +479,7 @@ impl MsgSendIdFailed<'_> for Alloc {
     }
 }
 
-impl MsgSendIdFailed<'_> for Init {
+impl MsgSendRetainedFailed<'_> for Init {
     type Args = (*mut AnyObject, Sel);
 
     #[cold]
@@ -492,7 +498,7 @@ impl MsgSendIdFailed<'_> for Init {
     }
 }
 
-impl MsgSendIdFailed<'_> for CopyOrMutCopy {
+impl MsgSendRetainedFailed<'_> for CopyOrMutCopy {
     type Args = ();
 
     #[cold]
@@ -501,7 +507,7 @@ impl MsgSendIdFailed<'_> for CopyOrMutCopy {
     }
 }
 
-impl<'a> MsgSendIdFailed<'a> for Other {
+impl<'a> MsgSendRetainedFailed<'a> for Other {
     type Args = (Option<&'a AnyObject>, Sel);
 
     #[cold]
