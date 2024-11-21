@@ -47,7 +47,7 @@ pub trait MessageReceiveRetained<Receiver, Ret> {
 impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for New
 where
     Receiver: MessageReceiver,
-    Ret: MaybeOptionId,
+    Ret: MaybeOptionRetained,
 {
     #[inline]
     fn into_return(obj: Ret) -> RetainedReturnValue {
@@ -66,7 +66,7 @@ where
 impl<Ret, T> MessageReceiveRetained<Allocated<T>, Ret> for Init
 where
     T: Message,
-    Ret: MaybeOptionId<Input = Option<Retained<T>>>,
+    Ret: MaybeOptionRetained<Input = Option<Retained<T>>>,
 {
     #[inline]
     fn into_return(obj: Ret) -> RetainedReturnValue {
@@ -78,7 +78,7 @@ where
 impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for CopyOrMutCopy
 where
     Receiver: MessageReceiver,
-    Ret: MaybeOptionId,
+    Ret: MaybeOptionRetained,
 {
     #[inline]
     fn into_return(obj: Ret) -> RetainedReturnValue {
@@ -90,7 +90,7 @@ where
 impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for Other
 where
     Receiver: MessageReceiver,
-    Ret: MaybeOptionId,
+    Ret: MaybeOptionRetained,
 {
     #[inline]
     fn into_return(obj: Ret) -> RetainedReturnValue {
@@ -101,12 +101,12 @@ where
 /// Helper trait for specifying an `Retained<T>` or an `Option<Retained<T>>`.
 ///
 /// (Both of those are valid return types from declare_class! `#[method_id]`).
-pub trait MaybeOptionId: MaybeUnwrap {
+pub trait MaybeOptionRetained: MaybeUnwrap {
     fn consumed_return(self) -> RetainedReturnValue;
     fn autorelease_return(self) -> RetainedReturnValue;
 }
 
-impl<T: Message> MaybeOptionId for Retained<T> {
+impl<T: Message> MaybeOptionRetained for Retained<T> {
     #[inline]
     fn consumed_return(self) -> RetainedReturnValue {
         let ptr: *mut T = Retained::into_raw(self);
@@ -120,7 +120,7 @@ impl<T: Message> MaybeOptionId for Retained<T> {
     }
 }
 
-impl<T: Message> MaybeOptionId for Option<Retained<T>> {
+impl<T: Message> MaybeOptionRetained for Option<Retained<T>> {
     #[inline]
     fn consumed_return(self) -> RetainedReturnValue {
         let ptr: *mut T = Retained::consume_as_ptr_option(self);
