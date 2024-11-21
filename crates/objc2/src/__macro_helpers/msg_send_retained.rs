@@ -64,7 +64,7 @@ pub trait MsgSendRetained<T, U> {
 /// copy/mutableCopy: T -> Option<Retained<U>>
 /// others: T -> Option<Retained<U>>
 #[doc(hidden)]
-pub trait MsgSendSuperId<T, U> {
+pub trait MsgSendSuperRetained<T, U> {
     type Inner: ?Sized + RefEncode;
 
     unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
@@ -175,7 +175,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> fo
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Retained<U>>> for New {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>> for New {
     type Inner = T::Inner;
 
     #[inline]
@@ -213,7 +213,7 @@ impl<T: Message> MsgSendRetained<&'_ AnyClass, Allocated<T>> for Alloc {
     }
 }
 
-impl<T: ?Sized + Message> MsgSendSuperId<&'_ AnyClass, Allocated<T>> for Alloc {
+impl<T: ?Sized + Message> MsgSendSuperRetained<&'_ AnyClass, Allocated<T>> for Alloc {
     type Inner = AnyClass;
 
     #[inline]
@@ -281,7 +281,7 @@ impl<T: ?Sized + Message> MsgSendRetained<Allocated<T>, Option<Retained<T>>> for
     }
 }
 
-impl<T: DeclaredClass> MsgSendSuperId<PartialInit<T>, Option<Retained<T>>> for Init {
+impl<T: DeclaredClass> MsgSendSuperRetained<PartialInit<T>, Option<Retained<T>>> for Init {
     type Inner = T;
 
     #[inline]
@@ -326,7 +326,9 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> fo
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Retained<U>>> for CopyOrMutCopy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>>
+    for CopyOrMutCopy
+{
     type Inner = T::Inner;
 
     #[inline]
@@ -370,7 +372,7 @@ impl<T: MsgSend, U: Message> MsgSendRetained<T, Option<Retained<U>>> for Other {
     }
 }
 
-impl<T: MsgSend, U: Message> MsgSendSuperId<T, Option<Retained<U>>> for Other {
+impl<T: MsgSend, U: Message> MsgSendSuperRetained<T, Option<Retained<U>>> for Other {
     type Inner = T::Inner;
 
     #[inline]

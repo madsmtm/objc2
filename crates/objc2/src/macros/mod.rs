@@ -1236,7 +1236,7 @@ macro_rules! msg_send_id {
             ($crate::__msg_send_id_helper)
             ($obj)
             () // No retain semantics
-            (MsgSendSuperId)
+            (MsgSendSuperRetained)
         }
     };
     [super($obj:expr, $superclass:expr), $($selector_and_arguments:tt)+] => {
@@ -1250,7 +1250,7 @@ macro_rules! msg_send_id {
             ($crate::__msg_send_id_helper)
             ($obj, $superclass)
             () // No retain semantics
-            (MsgSendSuperId)
+            (MsgSendSuperRetained)
         }
     };
     [$obj:expr, new $(,)?] => ({

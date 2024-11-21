@@ -176,7 +176,7 @@ macro_rules! __comma_between_args {
         ($($args:tt)*)
         ($obj:expr)
         ()
-        (MsgSendSuperId)
+        (MsgSendSuperRetained)
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send_id")
@@ -188,7 +188,7 @@ macro_rules! __comma_between_args {
         ($($args:tt)*)
         ($obj:expr, $superclass:expr)
         ()
-        (MsgSendSuperId)
+        (MsgSendSuperRetained)
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send_id")
