@@ -190,8 +190,6 @@ where
         }
     }
 
-    // TODO: Debug assertions that the retain count is still 1 here.
-
     // Note: This should be done inside `.cxx_destruct`, since if a superclass
     // calls an overwritten method in its `dealloc`, it can access
     // deinitialized instance variables; but we can't do that without
@@ -432,11 +430,12 @@ pub(crate) unsafe fn get_initialized_ivar_ptr<T: DeclaredClass>(
 mod tests {
     use alloc::vec::Vec;
     use core::cell::Cell;
+    use std::sync::OnceLock;
 
     use super::*;
     use crate::rc::{Allocated, PartialInit, RcTestObject, Retained, ThreadTestData};
     use crate::runtime::NSObject;
-    use crate::{declare_class, msg_send, msg_send_id, AllocAnyThread};
+    use crate::{declare_class, msg_send, msg_send_id, AllocAnyThread, Message};
 
     /// Initialize superclasses, but not own class.
     unsafe fn init_only_superclasses<T: DeclaredClass>(obj: Allocated<T>) -> Retained<T>
@@ -938,5 +937,50 @@ mod tests {
         let obj = IvarDropPanics::alloc().set_ivars(DropPanics);
         let obj: Retained<IvarDropPanics> = unsafe { msg_send_id![super(obj), init] };
         drop(obj);
+    }
+
+    // We cannot really guard against this, so dealloc must be unsafe!
+    //
+    // At least not by checking `retainCount`, since that gets set to `0` when
+    // dropping. I guess we _could_ override `retain` and check `retainCount`
+    // before we do anything, but that seems brittle, and it would hurt
+    // performance.
+    #[test]
+    fn test_retain_leak_in_drop() {
+        declare_class!(
+            #[derive(Debug)]
+            struct DropRetainsAndLeaksSelf;
+
+            // SAFETY: Intentionally broken!
+            unsafe impl ClassType for DropRetainsAndLeaksSelf {
+                type Super = NSObject;
+                const NAME: &'static str = "DropRetainsAndLeaksSelf";
+            }
+
+            impl DeclaredClass for DropRetainsAndLeaksSelf {}
+        );
+
+        unsafe impl Send for DropRetainsAndLeaksSelf {}
+        unsafe impl Sync for DropRetainsAndLeaksSelf {}
+
+        static OBJ: OnceLock<Retained<DropRetainsAndLeaksSelf>> = OnceLock::new();
+
+        impl Drop for DropRetainsAndLeaksSelf {
+            fn drop(&mut self) {
+                fn inner(this: &DropRetainsAndLeaksSelf) {
+                    // Smuggle a reference out of this context.
+                    OBJ.set(this.retain()).unwrap();
+                }
+
+                inner(self)
+            }
+        }
+
+        let obj = DropRetainsAndLeaksSelf::alloc().set_ivars(());
+        let obj: Retained<DropRetainsAndLeaksSelf> = unsafe { msg_send_id![super(obj), init] };
+        drop(obj);
+
+        // Suddenly, the object is alive again!
+        let _ = OBJ.get().unwrap();
     }
 }
