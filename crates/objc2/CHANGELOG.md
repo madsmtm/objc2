@@ -70,6 +70,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
       // ...
   );
   ```
+* **BREAKING**: Changed the syntax of `extern_class!` to be more succinct:
+  ```rust
+  // Before
+  extern_class!(
+      #[derive(PartialEq, Eq, Hash, Debug)]
+      struct MyClass;
+
+      unsafe impl ClassType for MyClass {
+          type Super = NSObject;
+          type ThreadKind = dyn MainThreadOnly;
+          const NAME: &'static str = "MyClass";
+      }
+  );
+
+  // After
+  extern_class!(
+      #[unsafe(super(NSObject))]
+      #[thread_kind = MainThreadOnly]
+      #[name = "MyClass"]
+      #[derive(PartialEq, Eq, Hash, Debug)]
+      struct MyClass;
+  );
+  ```
 * **BREAKING**: Moved the common `retain` and `alloc` methods from `ClassType`
   to `Message` and `AllocAnyThread`/`MainThreadOnly`, respectively.
 
@@ -162,6 +185,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `AnyProtocol::get`.
   - `AnyProtocol::name`.
 * Clarified that `exception::catch` does not catch Rust panics.
+* Improved the `Debug` impl when deriving via `extern_class!`.
+* Generic objects now always implement common traits `PartialEq`, `Eq` and
+  `Hash`, instead of guarding them behind `T: Message`.
 
 
 ## 0.5.2 - 2024-05-21
