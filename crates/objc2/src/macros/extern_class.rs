@@ -300,6 +300,7 @@ macro_rules! __extern_class_inner {
             fn class() -> &'static $crate::runtime::AnyClass {
                 let _ = <Self as $crate::__macro_helpers::ValidThreadKind<<Self as $crate::ClassType>::ThreadKind>>::check;
                 let _ = <Self as $crate::__macro_helpers::MainThreadOnlyDoesNotImplSendSync<_>>::check;
+                let _ = <Self as $crate::__macro_helpers::DoesNotImplDrop<_>>::check;
 
                 $crate::__class_inner!($crate::__fallback_if_not_set! {
                     ($($name)*)

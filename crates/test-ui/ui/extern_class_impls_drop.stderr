@@ -1,0 +1,15 @@
+error[E0283]: type annotations needed
+ --> ui/extern_class_impls_drop.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct MyClass;
+  | | );
+  | |_^ cannot infer type
+  |
+  = note: multiple `impl`s satisfying `MyClass: DoesNotImplDrop<_>` found in the `objc2` crate:
+          - impl<Cls> DoesNotImplDrop<()> for Cls
+            where Cls: ?Sized;
+          - impl<Cls> DoesNotImplDrop<__macro_helpers::class::ImplsDrop> for Cls
+            where Cls: Drop, Cls: ?Sized;
+  = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

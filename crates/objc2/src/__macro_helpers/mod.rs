@@ -30,7 +30,7 @@ mod sync_unsafe_cell;
 mod writeback;
 
 pub use self::cache::{CachedClass, CachedSel};
-pub use self::class::{MainThreadOnlyDoesNotImplSendSync, ValidThreadKind};
+pub use self::class::{DoesNotImplDrop, MainThreadOnlyDoesNotImplSendSync, ValidThreadKind};
 pub use self::common_selectors::{alloc_sel, dealloc_sel, init_sel, new_sel};
 pub use self::convert::{ConvertArgument, ConvertArguments, ConvertReturn, TupleExtender};
 pub use self::declare_class::{

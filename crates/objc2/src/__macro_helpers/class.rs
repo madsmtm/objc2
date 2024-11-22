@@ -47,6 +47,26 @@ impl<Cls: ?Sized + MainThreadOnly + Send> MainThreadOnlyDoesNotImplSendSync<Impl
 struct ImplsSync;
 impl<Cls: ?Sized + MainThreadOnly + Sync> MainThreadOnlyDoesNotImplSendSync<ImplsSync> for Cls {}
 
+/// Check that class does not implement `Drop`.
+///
+/// This is not needed for soundness, it's just a nice footgun to avoid (since
+/// it wouldn't ever get called).
+///
+/// Check implemented using type inference:
+/// let _ = <MyType as DoesNotImplDrop<_>>::check
+pub trait DoesNotImplDrop<Inferred> {
+    // Required to reference the trait.
+    fn check() {}
+}
+
+// Type inference will find this blanket impl...
+impl<Cls: ?Sized> DoesNotImplDrop<()> for Cls {}
+
+// ... unless this impl also applies, then type inference fails.
+struct ImplsDrop;
+#[allow(drop_bounds)] // We're intentionally using `Drop` as a bound.
+impl<Cls: ?Sized + Drop> DoesNotImplDrop<ImplsDrop> for Cls {}
+
 #[cfg(test)]
 mod tests {
     use super::*;
