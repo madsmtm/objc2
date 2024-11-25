@@ -1416,14 +1416,18 @@ impl Ty {
             Self::GenericParam { name } => write!(f, "{name}"),
             Self::AnyObject { protocols } => match &**protocols {
                 [] => write!(f, "AnyObject"),
-                [decl] => write!(f, "ProtocolObject<dyn {}>", decl.id.path()),
-                // TODO: Handle this better
-                [first, rest @ ..] => {
-                    write!(f, "AnyObject /* {}", first.id.path())?;
-                    for protocol in rest {
-                        write!(f, "+ {}", protocol.id.path())?;
+                protocols => {
+                    write!(f, "ProtocolObject<dyn ")?;
+
+                    let mut iter = protocols.iter();
+                    let protocol = iter.next().unwrap();
+                    write!(f, "{}", protocol.path())?;
+
+                    for protocol in iter {
+                        write!(f, " + {}", protocol.path())?;
                     }
-                    write!(f, " */")?;
+
+                    write!(f, ">")?;
                     Ok(())
                 }
             },
@@ -1631,6 +1635,26 @@ impl Ty {
 
     pub(crate) fn fn_argument(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
+            Inner::Id {
+                ty: IdType::AnyObject { protocols },
+                is_const: false,
+                lifetime: Lifetime::Unspecified | Lifetime::Strong,
+                nullability,
+            } if self.kind == TyKind::MethodArgument && !protocols.is_empty() => {
+                if *nullability != Nullability::NonNull {
+                    write!(f, "Option<")?;
+                }
+                write!(f, "&")?;
+                write!(f, "(impl ")?;
+                for protocol in protocols {
+                    write!(f, "{} + ", protocol.path())?;
+                }
+                write!(f, "Message)")?;
+                if *nullability != Nullability::NonNull {
+                    write!(f, ">")?;
+                }
+                Ok(())
+            }
             Self::Pointer {
                 nullability,
                 is_const: _,

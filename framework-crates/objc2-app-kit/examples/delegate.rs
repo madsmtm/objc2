@@ -76,8 +76,7 @@ fn main() {
 
     // configure the application delegate
     let delegate = AppDelegate::new(42, true, mtm);
-    let object = ProtocolObject::from_ref(&*delegate);
-    app.setDelegate(Some(object));
+    app.setDelegate(Some(&*delegate));
 
     // run the app
     app.run();
