@@ -20,6 +20,3 @@ pub use crate::{
     extern_category, extern_class, extern_methods, extern_protocol, ClassType, MainThreadMarker,
     MainThreadOnly, Message, ProtocolType,
 };
-
-pub type TodoFunction = *const c_void;
-pub type TodoProtocols = AnyObject;

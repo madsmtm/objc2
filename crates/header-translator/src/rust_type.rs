@@ -1419,7 +1419,14 @@ impl Ty {
                 [decl] if decl.id.is_nsobject() => write!(f, "NSObject"),
                 [decl] => write!(f, "ProtocolObject<dyn {}>", decl.id.path()),
                 // TODO: Handle this better
-                _ => write!(f, "TodoProtocols"),
+                [first, rest @ ..] => {
+                    write!(f, "AnyObject /* {}", first.id.path())?;
+                    for protocol in rest {
+                        write!(f, "+ {}", protocol.id.path())?;
+                    }
+                    write!(f, " */")?;
+                    Ok(())
+                }
             },
             Self::AnyProtocol => write!(f, "AnyProtocol"),
             Self::AnyClass { protocols } => match &**protocols {
@@ -1431,7 +1438,8 @@ impl Ty {
             Self::TypeDef { id, .. } => {
                 write!(f, "{}", id.path())
             }
-            Self::Fn { .. } => write!(f, "TodoFunction"),
+            // TODO: Handle this better.
+            Self::Fn { .. } => write!(f, "core::ffi::c_void /* TODO: Should be a function. */"),
             Self::Block {
                 sendable: _,
                 no_escape,
