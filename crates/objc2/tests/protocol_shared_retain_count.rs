@@ -7,6 +7,10 @@ use objc2::runtime::{AnyObject, NSObject, NSObjectProtocol};
 use objc2::{Message, ProtocolType};
 
 #[test]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "Protocols don't implement isKindOfClass: on GNUStep"
+)]
 fn protocol_has_shared_retain_count() {
     let obj: &AnyObject = <dyn NSObjectProtocol>::protocol().unwrap().as_ref();
     let obj = obj.downcast_ref::<NSObject>().unwrap();

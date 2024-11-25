@@ -1857,11 +1857,17 @@ mod tests {
         let obj: &AnyObject = NSObject::class().as_ref();
         let obj = obj.downcast_ref::<NSObject>().unwrap();
 
-        assert_eq!(obj.retainCount(), usize::MAX);
+        let large_retain = if cfg!(feature = "gnustep-1-7") {
+            u32::MAX as usize
+        } else {
+            usize::MAX
+        };
+
+        assert_eq!(obj.retainCount(), large_retain);
         let obj2 = obj.retain();
-        assert_eq!(obj.retainCount(), usize::MAX);
+        assert_eq!(obj.retainCount(), large_retain);
         drop(obj2);
-        assert_eq!(obj.retainCount(), usize::MAX);
+        assert_eq!(obj.retainCount(), large_retain);
     }
 
     #[test]
@@ -1870,10 +1876,13 @@ mod tests {
         let retained = protocol.retain();
         assert_eq!(&*retained, protocol);
 
-        // Protocols are NSObject subclasses.
-        let obj = retained.downcast::<NSObject>().unwrap();
-        // Test that we can call NSObject methods on protocols.
-        assert_eq!(obj, obj);
-        let _ = obj.retainCount();
+        // Protocols don't implement isKindOfClass: on GNUStep.
+        if !cfg!(feature = "gnustep-1-7") {
+            // Protocols are NSObject subclasses.
+            let obj = retained.downcast::<NSObject>().unwrap();
+            // Test that we can call NSObject methods on protocols.
+            assert_eq!(obj, obj);
+            let _ = obj.retainCount();
+        }
     }
 }
