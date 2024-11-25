@@ -881,6 +881,8 @@ mod tests {
             }
 
             const __INNER: () = ();
+
+            type __SubclassingType = Self;
         }
 
         impl<T> GenericDeclareClass<T> {
@@ -920,7 +922,7 @@ mod tests {
 
         // description
         let expected =
-            format!("Custom {{ __superclass: ManuallyDrop {{ value: <TestInheritedNSObjectMethodsWork: {obj1:p}> }}, __ivars: PhantomData<()> }}");
+            format!("Custom {{ __superclass: ManuallyDrop {{ value: <TestInheritedNSObjectMethodsWork: {obj1:p}> }}, __phantom: PhantomData<((), objc2::__macro_helpers::declare_class::ThreadKindAutoTraits<dyn objc2::top_level_traits::AllocAnyThread>)> }}");
         assert_eq!(format!("{obj1:?}"), expected);
 
         // hash

@@ -11,7 +11,9 @@ declare_class!(
         const NAME: &'static str = "Normal";
     }
 
-    impl DeclaredClass for Normal {}
+    impl DeclaredClass for Normal {
+        type Ivars = *mut ();
+    }
 );
 
 unsafe impl MainThreadOnly for Normal {}

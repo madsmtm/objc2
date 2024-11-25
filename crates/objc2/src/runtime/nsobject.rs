@@ -1,5 +1,7 @@
 use core::fmt;
 use core::hash;
+use core::ops::Deref;
+use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use crate::ffi::NSUInteger;
 use crate::rc::{Allocated, DefaultRetained, Retained};
@@ -33,6 +35,48 @@ crate::__extern_class_impl_traits! {
     (AnyObject)
 }
 
+// We do not want to expose this type publicly, even though it's exposed in
+// the trait impl.
+mod private {
+    #[derive(PartialEq, Eq, Hash)] // Delegate to NSObject
+    pub struct ForDefinedSubclasses(pub(super) super::NSObject);
+}
+
+impl fmt::Debug for private::ForDefinedSubclasses {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Delegate to NSObject
+        fmt::Debug::fmt(&**self, f)
+    }
+}
+
+impl Deref for private::ForDefinedSubclasses {
+    type Target = NSObject;
+
+    #[inline]
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+// SAFETY: `NSObject` is thread safe by itself, the only reason why it
+// isn't marked `Send` is because its subclasses may not be thread safe.
+//
+// But any subclass of NSObject that the user creates is thread safe, provided
+// that their ivars are thread safe too, and the class is not configured as
+// `MainThreadOnly`.
+//
+// This special casing of NSObject is similar to what Swift does:
+// https://developer.apple.com/documentation/swift/sendable#Sendable-Classes
+unsafe impl Send for private::ForDefinedSubclasses {}
+// SAFETY: Same as above.
+unsafe impl Sync for private::ForDefinedSubclasses {}
+
+// NSObject itself is also unwind safe, and so subclasses should be too,
+// unless they use e.g. interior mutability in their ivars.
+impl UnwindSafe for private::ForDefinedSubclasses {}
+impl RefUnwindSafe for private::ForDefinedSubclasses {}
+
 unsafe impl ClassType for NSObject {
     type Super = AnyObject;
     type ThreadKind = dyn AllocAnyThread;
@@ -49,6 +93,9 @@ unsafe impl ClassType for NSObject {
     }
 
     const __INNER: () = ();
+
+    // Defined subclasses can assume more lenient auto traits.
+    type __SubclassingType = private::ForDefinedSubclasses;
 }
 
 unsafe impl DowncastTarget for NSObject {}

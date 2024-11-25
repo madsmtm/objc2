@@ -41,6 +41,10 @@ unsafe impl ClassType for NSProxy {
     }
 
     const __INNER: () = ();
+
+    // We don't know anything about NSProxy's thread safety, so we don't do
+    // the same workaround for that as we do for NSObject.
+    type __SubclassingType = Self;
 }
 
 unsafe impl DowncastTarget for NSProxy {}

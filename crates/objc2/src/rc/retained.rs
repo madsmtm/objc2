@@ -860,7 +860,10 @@ mod tests {
                         const NAME: &'static str = concat!(stringify!($name), "Test");
                     }
 
-                    impl DeclaredClass for $name {}
+                    impl DeclaredClass for $name {
+                        // Make the type not thread safe by default.
+                        type Ivars = *const ();
+                    }
                 );
             };
         }

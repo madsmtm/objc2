@@ -301,9 +301,6 @@ impl DefaultRetained for RcTestObject {
     }
 }
 
-unsafe impl Send for RcTestObject {}
-unsafe impl Sync for RcTestObject {}
-
 impl RcTestObject {
     #[doc(hidden)]
     pub(crate) fn new() -> Retained<Self> {

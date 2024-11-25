@@ -197,6 +197,25 @@
 /// [Open an issue]: https://github.com/madsmtm/objc2/issues/new
 ///
 ///
+/// # Thread safety
+///
+/// The Objective-C runtime is thread-safe, so any classes you create yourself
+/// will automatically be [`Send`] and [`Sync`] (via auto traits) provided
+/// that:
+/// 1. The superclass is thread-safe, or is [`NSObject`].
+/// 2. The ivars are thread-safe.
+/// 3. The thread kind is not [`MainThreadOnly`].
+///
+/// Note though that in many cases, [the frameworks] you will be interacting
+/// with will not be thread-safe, and so in many cases it will make sense to
+/// [use interior mutability] in your custom classes.
+///
+/// [`NSObject`]: crate::runtime::NSObject
+/// [`MainThreadOnly`]: crate::MainThreadOnly
+/// [the frameworks]: crate::topics::about_generated
+/// [use interior mutability]: crate::topics::interior_mutability
+///
+///
 /// # Examples
 ///
 /// Declare a class `MyCustomObject` that inherits `NSObject`, has a few
@@ -407,9 +426,16 @@ macro_rules! declare_class {
         #[repr(C)]
         $v struct $name {
             // Superclasses are deallocated by calling `[super dealloc]`.
-            __superclass: $crate::__macro_helpers::ManuallyDrop<$superclass>,
-            // Include ivars for proper auto traits.
-            __ivars: $crate::__macro_helpers::PhantomData<<Self as $crate::DeclaredClass>::Ivars>,
+            //
+            // Auto traits are taken from `__SubclassingType` (which is
+            // usually the super class).
+            __superclass: $crate::__macro_helpers::ManuallyDrop<<$superclass as $crate::ClassType>::__SubclassingType>,
+            __phantom: $crate::__macro_helpers::PhantomData<(
+                // Include ivars for auto traits.
+                <Self as $crate::DeclaredClass>::Ivars,
+                // Translate thread kind to appropriate auto traits.
+                $crate::__macro_helpers::ThreadKindAutoTraits<<Self as $crate::ClassType>::ThreadKind>,
+            )>,
         }
 
         $crate::__extern_class_impl_traits! {
@@ -485,6 +511,8 @@ macro_rules! declare_class {
                 }
 
                 const __INNER: () = ();
+
+                type __SubclassingType = Self;
             }
 
             impl DeclaredClass for $for_declared {

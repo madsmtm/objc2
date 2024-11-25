@@ -40,9 +40,6 @@ declare_class!(
     impl DeclaredClass for SendSyncObject {}
 );
 
-unsafe impl Send for SendSyncObject {}
-unsafe impl Sync for SendSyncObject {}
-
 #[test]
 fn test_generic_auto_traits() {
     // assert_unwindsafe::<NSArray<NSProcessInfo>>();

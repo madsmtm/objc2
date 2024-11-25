@@ -2,6 +2,7 @@ use alloc::ffi::CString;
 #[cfg(debug_assertions)]
 use alloc::vec::Vec;
 use core::marker::PhantomData;
+use core::panic::{RefUnwindSafe, UnwindSafe};
 #[cfg(debug_assertions)]
 use std::collections::HashSet;
 
@@ -12,10 +13,36 @@ use crate::runtime::{
 };
 #[cfg(debug_assertions)]
 use crate::runtime::{AnyProtocol, MethodDescription};
-use crate::{ClassType, DeclaredClass, Message, ProtocolType};
+use crate::{AllocAnyThread, ClassType, DeclaredClass, Message, ProtocolType};
 
 use super::declared_ivars::{register_with_ivars, setup_dealloc};
 use super::{Copy, Init, MaybeUnwrap, MutableCopy, New, Other};
+
+/// Helper for determining auto traits of declared classes.
+///
+/// This will contain either `dyn AllocAnyThread` or `dyn MainThreadOnly`, so
+/// it will have no auto traits by default.
+#[derive(Debug)]
+pub struct ThreadKindAutoTraits<T: ?Sized>(T);
+
+// SAFETY: `AllocAnyThread` does not place restrictions on thread safety.
+unsafe impl Send for ThreadKindAutoTraits<dyn AllocAnyThread> {}
+// SAFETY: Same as above.
+unsafe impl Sync for ThreadKindAutoTraits<dyn AllocAnyThread> {}
+
+// NOTE: A similar implementation for `dyn MainThreadOnly` is explicitly not
+// allowed, as that would enable users to pass something that is tied to the
+// main thread to other threads. Remember that we can view `MainThreadOnly`
+// classes as containing a `MainThreadMarker` (which is always accessible
+// using `MainThreadOnly::mtm`).
+//
+// impl !Send for ThreadKindAutoTraits<dyn MainThreadOnly> {}
+// impl !Sync for ThreadKindAutoTraits<dyn MainThreadOnly> {}
+
+// Thread kind does not affect pinning or unwind safety
+impl<T: ?Sized> Unpin for ThreadKindAutoTraits<T> {}
+impl<T: ?Sized> UnwindSafe for ThreadKindAutoTraits<T> {}
+impl<T: ?Sized> RefUnwindSafe for ThreadKindAutoTraits<T> {}
 
 /// Helper type for implementing `MethodImplementation` with a receiver of
 /// `Allocated<T>`, without exposing that implementation to users.

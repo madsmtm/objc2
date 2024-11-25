@@ -272,9 +272,6 @@ mod tests {
     unsafe impl FooBar for DummyClass {}
     // unsafe impl FooFooBar for DummyClass {}
 
-    unsafe impl Send for DummyClass {}
-    unsafe impl Sync for DummyClass {}
-
     extern_methods!(
         unsafe impl DummyClass {
             #[method_id(new)]
@@ -372,7 +369,7 @@ mod tests {
         assert_eq!(
             format!("{obj:?}"),
             format!(
-                "DummyClass {{ __superclass: {:?}, __ivars: PhantomData<()> }}",
+                "DummyClass {{ __superclass: {:?}, __phantom: PhantomData<((), objc2::__macro_helpers::declare_class::ThreadKindAutoTraits<dyn objc2::top_level_traits::AllocAnyThread>)> }}",
                 ManuallyDrop::new(foobar)
             ),
         );

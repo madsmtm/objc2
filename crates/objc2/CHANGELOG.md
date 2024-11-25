@@ -29,6 +29,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Implement `Message` for `AnyClass` and `AnyProtocol`.
 * Allow `AnyClass` and `AnyProtocol` to be converted to `AnyObject` (both of
   these can act as objects).
+* Classes created using `declare_class!` now implement `Send` and `Sync` when
+  subclassing `NSObject`.
 
 ### Changed
 * **BREAKING**: Changed how you specify a class to only be available on the
@@ -191,6 +193,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Improved the `Debug` impl when deriving via `extern_class!`.
 * Generic objects now always implement common traits `PartialEq`, `Eq` and
   `Hash`, instead of guarding them behind `T: Message`.
+* Prevented main thread only classes created using `declare_class!` from
+  automatically implementing the auto traits `Send` and `Sync`.
 
 
 ## 0.5.2 - 2024-05-21

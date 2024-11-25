@@ -261,6 +261,13 @@ pub unsafe trait ClassType: Message {
 
     #[doc(hidden)]
     const __INNER: ();
+
+    /// Inner type to use when subclassing with `declare_class!`.
+    ///
+    /// This is used by NSObject to control which auto traits are set for
+    /// defined subclasses. Set to `= Self` in all other cases.
+    #[doc(hidden)]
+    type __SubclassingType: ?Sized;
 }
 
 /// Marks types whose implementation is defined in Rust.

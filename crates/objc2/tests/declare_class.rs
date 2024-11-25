@@ -1,9 +1,15 @@
 #![deny(deprecated, unreachable_code)]
 use core::ptr::{self, NonNull};
+use std::cell::UnsafeCell;
+use std::marker::PhantomData;
+use std::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
-use objc2::{declare_class, extern_methods, sel, ClassType, DeclaredClass};
+use objc2::{
+    declare_class, extern_methods, sel, AllocAnyThread, ClassType, DeclaredClass, MainThreadOnly,
+};
+use static_assertions::{assert_impl_all, assert_not_impl_any};
 
 // Test that adding the `deprecated` attribute does not mean that warnings
 // when using the method internally are output.
@@ -482,4 +488,106 @@ fn test_pointer_receiver_allowed() {
     );
 
     let _ = PointerReceiver::class();
+}
+
+#[test]
+fn test_auto_traits() {
+    struct NotSend(PhantomData<*mut usize>);
+    unsafe impl Sync for NotSend {}
+    assert_impl_all!(NotSend: Sync, UnwindSafe, RefUnwindSafe, Unpin);
+    assert_not_impl_any!(NotSend: Send);
+
+    struct NotSync(PhantomData<*mut usize>);
+    unsafe impl Send for NotSync {}
+    assert_impl_all!(NotSync: Send, UnwindSafe, RefUnwindSafe, Unpin);
+    assert_not_impl_any!(NotSync: Sync);
+
+    struct NotUnwindSafe(PhantomData<*mut UnsafeCell<usize>>);
+    unsafe impl Send for NotUnwindSafe {}
+    unsafe impl Sync for NotUnwindSafe {}
+    assert_impl_all!(NotUnwindSafe: Send, Sync, Unpin);
+    assert_not_impl_any!(NotUnwindSafe: UnwindSafe, RefUnwindSafe);
+
+    macro_rules! create {
+        (
+            #[thread_kind = $thread_kind:path]
+            #[ivars = $ivars:ty]
+            struct $name:ident: $superclass:ty;
+        ) => {
+            declare_class!(
+                #[derive(Debug)]
+                struct $name;
+
+                unsafe impl ClassType for $name {
+                    type Super = $superclass;
+                    type ThreadKind = dyn $thread_kind;
+                    const NAME: &'static str = stringify!($name);
+                }
+
+                impl DeclaredClass for $name {
+                    type Ivars = $ivars;
+                }
+            );
+
+            let _ = $name::class();
+        };
+    }
+
+    // Superclass propagates.
+
+    create! {
+        #[thread_kind = AllocAnyThread]
+        #[ivars = (NotSend, NotSync, NotUnwindSafe)]
+        struct NonThreadSafeHelper: NSObject;
+    }
+    create! {
+        #[thread_kind = AllocAnyThread]
+        #[ivars = ()]
+        struct InheritsCustomWithNonSendIvar: NonThreadSafeHelper;
+    }
+    assert_not_impl_any!(InheritsCustomWithNonSendIvar: Unpin, Send, Sync, UnwindSafe, RefUnwindSafe);
+
+    // Main thread only. Not Send + Sync.
+
+    create! {
+        #[thread_kind = MainThreadOnly]
+        #[ivars = ()]
+        struct InheritsNSObjectMainThreadOnly: NSObject;
+    }
+    assert_impl_all!(InheritsNSObjectMainThreadOnly: UnwindSafe, RefUnwindSafe);
+    assert_not_impl_any!(InheritsNSObjectMainThreadOnly: Unpin, Send, Sync);
+
+    // NSObject is special.
+
+    create! {
+        #[thread_kind = AllocAnyThread]
+        #[ivars = ()]
+        struct InheritsNSObject: NSObject;
+    }
+    assert_impl_all!(InheritsNSObject: Send, Sync, UnwindSafe, RefUnwindSafe);
+    assert_not_impl_any!(InheritsNSObject: Unpin);
+
+    create! {
+        #[thread_kind = AllocAnyThread]
+        #[ivars = NotSend]
+        struct InheritsNSObjectWithNonSendIvar: NSObject;
+    }
+    assert_impl_all!(InheritsNSObjectWithNonSendIvar: Sync, UnwindSafe, RefUnwindSafe);
+    assert_not_impl_any!(InheritsNSObjectWithNonSendIvar: Unpin, Send);
+
+    create! {
+        #[thread_kind = AllocAnyThread]
+        #[ivars = NotSync]
+        struct InheritsNSObjectWithNonSyncIvar: NSObject;
+    }
+    assert_impl_all!(InheritsNSObjectWithNonSyncIvar: Send, UnwindSafe, RefUnwindSafe);
+    assert_not_impl_any!(InheritsNSObjectWithNonSyncIvar: Unpin, Sync);
+
+    create! {
+        #[thread_kind = AllocAnyThread]
+        #[ivars = NotUnwindSafe]
+        struct InheritsNSObjectWithNonUnwindSafeIvar: NSObject;
+    }
+    assert_impl_all!(InheritsNSObjectWithNonUnwindSafeIvar: Send, Sync);
+    assert_not_impl_any!(InheritsNSObjectWithNonUnwindSafeIvar: Unpin, UnwindSafe, RefUnwindSafe);
 }

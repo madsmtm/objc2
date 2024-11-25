@@ -314,6 +314,8 @@ macro_rules! __extern_class_inner {
             }
 
             const __INNER: () = ();
+
+            type __SubclassingType = Self;
         }
 
         $($attr_impl)*
