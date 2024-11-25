@@ -1454,54 +1454,34 @@ impl Ty {
     }
 
     pub(crate) fn method_return(&self) -> impl fmt::Display + '_ {
-        FormatterFn(move |f| {
-            if let Self::Primitive(Primitive::Void) = self {
-                // Don't output anything
-                return Ok(());
+        FormatterFn(move |f| match self {
+            Self::Pointer {
+                nullability,
+                lifetime: Lifetime::Unspecified,
+                pointee,
+                ..
+            } if pointee.is_object_like() && !pointee.is_static_object() => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, " -> Retained<{}>", pointee.behind_pointer())
+                } else {
+                    write!(f, " -> Option<Retained<{}>>", pointee.behind_pointer())
+                }
             }
-
-            write!(f, " -> ")?;
-
-            match self {
-                Self::Pointer {
-                    nullability,
-                    pointee,
-                    ..
-                } if pointee.is_static_object() => {
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "&'static {}", pointee.behind_pointer())
-                    } else {
-                        write!(f, "Option<&'static {}>", pointee.behind_pointer())
-                    }
+            Self::TypeDef {
+                id, nullability, ..
+            } if self.is_object_like() && !self.is_static_object() => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, " -> Retained<{}>", id.path())
+                } else {
+                    write!(f, " -> Option<Retained<{}>>", id.path())
                 }
-                Self::Pointer {
-                    nullability,
-                    lifetime: Lifetime::Unspecified,
-                    pointee,
-                    ..
-                } if pointee.is_object_like() => {
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "Retained<{}>", pointee.behind_pointer())
-                    } else {
-                        write!(f, "Option<Retained<{}>>", pointee.behind_pointer())
-                    }
-                }
-                Self::TypeDef {
-                    id, nullability, ..
-                } if self.is_object_like() => {
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "Retained<{}>", id.path())
-                    } else {
-                        write!(f, "Option<Retained<{}>>", id.path())
-                    }
-                }
-                Self::Primitive(Primitive::C99Bool) => {
-                    warn!("C99's bool as Objective-C method return is ill supported");
-                    write!(f, "bool")
-                }
-                Self::Primitive(Primitive::ObjcBool) => write!(f, "bool"),
-                _ => write!(f, "{}", self.plain()),
             }
+            Self::Primitive(Primitive::C99Bool) => {
+                warn!("C99's bool as Objective-C method return is ill supported");
+                write!(f, " -> bool")
+            }
+            Self::Primitive(Primitive::ObjcBool) => write!(f, " -> bool"),
+            _ => write!(f, "{}", self.fn_return()),
         })
     }
 
@@ -1573,7 +1553,20 @@ impl Ty {
                 return Ok(());
             }
 
-            write!(f, " -> {}", self.plain())
+            match self {
+                Self::Pointer {
+                    nullability,
+                    pointee,
+                    ..
+                } if pointee.is_static_object() => {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, " -> &'static {}", pointee.behind_pointer())
+                    } else {
+                        write!(f, " -> Option<&'static {}>", pointee.behind_pointer())
+                    }
+                }
+                _ => write!(f, " -> {}", self.plain()),
+            }
         })
     }
 
