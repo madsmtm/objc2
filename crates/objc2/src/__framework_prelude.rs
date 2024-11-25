@@ -14,7 +14,7 @@ pub use crate::encode::{Encode, Encoding, RefEncode};
 pub use crate::ffi::{NSInteger, NSIntegerMax, NSUInteger, NSUIntegerMax};
 pub use crate::rc::{Allocated, DefaultRetained, Retained};
 pub use crate::runtime::{
-    AnyClass, AnyObject, AnyProtocol, Bool, NSObject, NSObjectProtocol, ProtocolObject, Sel,
+    AnyClass, AnyObject, AnyProtocol, Bool, Imp, NSObject, NSObjectProtocol, ProtocolObject, Sel,
 };
 pub use crate::{
     extern_category, extern_class, extern_methods, extern_protocol, ClassType, MainThreadMarker,
@@ -23,4 +23,3 @@ pub use crate::{
 
 pub type TodoFunction = *const c_void;
 pub type TodoProtocols = AnyObject;
-pub type IMP = Option<crate::runtime::Imp>;

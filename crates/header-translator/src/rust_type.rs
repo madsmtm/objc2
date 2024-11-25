@@ -254,16 +254,18 @@ pub enum Primitive {
     ObjcBool,
     NSInteger,
     NSUInteger,
+    Imp,
 }
 
 impl Primitive {
     fn required_items(&self) -> Vec<ItemIdentifier> {
-        let s = self.as_str();
         match self {
             Self::ObjcBool => vec![ItemIdentifier::objc2("Bool")],
             Self::NSInteger => vec![ItemIdentifier::objc2("NSInteger")],
             Self::NSUInteger => vec![ItemIdentifier::objc2("NSUInteger")],
+            Self::Imp => vec![ItemIdentifier::objc2("Imp")],
             _ => {
+                let s = self.as_str();
                 if s.starts_with("c_") {
                     // Temporary, until we can import these by themselves
                     vec![ItemIdentifier::objc2(s)]
@@ -311,6 +313,8 @@ impl Primitive {
             Self::ObjcBool => "Bool",
             Self::NSInteger => "NSInteger",
             Self::NSUInteger => "NSUInteger",
+            // Assume nullable for now
+            Self::Imp => "Option<Imp>",
         }
     }
 }
@@ -886,6 +890,7 @@ impl Ty {
 
                 match &*typedef_name {
                     "BOOL" => return Self::Primitive(Primitive::ObjcBool),
+                    "IMP" => return Self::Primitive(Primitive::Imp),
 
                     "int8_t" => return Self::Primitive(Primitive::I8),
                     "__int8_t" => return Self::Primitive(Primitive::I8),
