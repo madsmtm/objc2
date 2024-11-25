@@ -6,8 +6,6 @@ use objc2::runtime::{AnyClass, AnyObject, NSObject};
 fn main() {
     let cls: &AnyClass;
     let _: &AnyObject = unsafe { msg_send_id![cls, new] };
-    let _: Retained<AnyClass> = unsafe { msg_send_id![cls, new] };
-    let _: Option<Retained<AnyClass>> = unsafe { msg_send_id![cls, new] };
 
     let _: &AnyObject = unsafe { msg_send_id![cls, alloc] };
     let _: Allocated<AnyClass> = unsafe { msg_send_id![cls, alloc] };

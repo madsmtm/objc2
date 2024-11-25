@@ -4,7 +4,7 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 
 use objc2::rc::Retained;
-use objc2::runtime::{AnyClass, AnyObject, ProtocolObject};
+use objc2::runtime::ProtocolObject;
 use objc2::ClassType;
 use objc2_app_kit::{NSPasteboard, NSPasteboardTypeString};
 use objc2_foundation::{NSArray, NSString};
@@ -15,19 +15,9 @@ pub fn get_text_1(pasteboard: &NSPasteboard) -> Option<Retained<NSString>> {
 }
 
 /// More complex implementation using `readObjectsForClasses:options:`,
-/// intended to show how some patterns might require more knowledge of
-/// nitty-gritty details.
+/// intended to show how some patterns might require more work.
 pub fn get_text_2(pasteboard: &NSPasteboard) -> Option<Retained<NSString>> {
-    // The NSPasteboard API is a bit weird, it requires you to pass classes as
-    // objects, which `objc2_foundation::NSArray` was not really made for - so
-    // we convert the class to an `AnyObject` type instead.
-    //
-    // TODO: Investigate and find a better way to express this in `objc2`.
-    let cls: *const AnyClass = NSString::class();
-    let cls: *const AnyObject = cls.cast();
-    let string_class = unsafe { &*cls };
-
-    let class_array = NSArray::from_slice(&[string_class]);
+    let class_array = NSArray::from_slice(&[NSString::class()]);
     let objects = unsafe { pasteboard.readObjectsForClasses_options(&class_array, None) };
 
     let obj = objects?.firstObject()?;

@@ -1133,4 +1133,16 @@ mod tests {
         expected.release += IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK;
         expected.assert_current();
     }
+
+    #[test]
+    fn msg_send_class() {
+        let cls = NSObject::class();
+
+        let retained: Retained<AnyClass> = unsafe { msg_send_id![cls, self] };
+        assert_eq!(&*retained, cls);
+
+        let retained: Option<Retained<AnyClass>> = unsafe { msg_send_id![cls, self] };
+        let retained = retained.unwrap();
+        assert_eq!(&*retained, cls);
+    }
 }

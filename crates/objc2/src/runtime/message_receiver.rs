@@ -532,27 +532,6 @@ unsafe impl MessageReceiver for &mut AnyObject {
     }
 }
 
-impl private::Sealed for *const AnyClass {}
-unsafe impl MessageReceiver for *const AnyClass {
-    type __Inner = AnyClass;
-
-    #[inline]
-    fn __as_raw_receiver(self) -> *mut AnyObject {
-        (self as *mut AnyClass).cast()
-    }
-}
-
-impl private::Sealed for &AnyClass {}
-unsafe impl MessageReceiver for &AnyClass {
-    type __Inner = AnyClass;
-
-    #[inline]
-    fn __as_raw_receiver(self) -> *mut AnyObject {
-        let ptr: *const AnyClass = self;
-        (ptr as *mut AnyClass).cast()
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use core::ptr;

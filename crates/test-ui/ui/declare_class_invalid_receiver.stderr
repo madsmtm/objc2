@@ -14,10 +14,8 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>
@@ -48,10 +46,8 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>
@@ -82,10 +78,8 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>
@@ -166,10 +160,8 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>
@@ -200,10 +192,8 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>
@@ -234,10 +224,8 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>
@@ -265,10 +253,8 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   | |_^ the trait `MessageReceiver` is not implemented for `Box<CustomObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>
@@ -288,10 +274,8 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
   | |_^ the trait `MessageReceiver` is not implemented for `Retained<CustomObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>
@@ -311,10 +295,8 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   | |_^ the trait `MessageReceiver` is not implemented for `CustomObject`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>
@@ -334,10 +316,8 @@ error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not 
   | |_^ the trait `MessageReceiver` is not implemented for `Allocated<CustomObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>

@@ -1242,10 +1242,25 @@ impl Ty {
             | Self::GenericParam { .. }
             | Self::AnyObject { .. }
             | Self::AnyProtocol
+            | Self::AnyClass { .. }
             | Self::Self_ => true,
             // FIXME: This recurses badly and too deeply
             Self::Pointer { pointee, .. } => pointee.inner_typedef_is_object_life(),
             Self::TypeDef { to, .. } => to.inner_typedef_is_object_life(),
+            _ => false,
+        }
+    }
+
+    /// AnyClass is safe to return as `&'static T`, since the runtime will it
+    /// alive forever (and it has infinite retain count).
+    ///
+    /// AnyProtocol is not, though, since there's a single global object that
+    /// the runtime is keeping track of, so forgetting to `release` those
+    /// would leak resources.
+    fn is_static_object(&self) -> bool {
+        match self {
+            Self::AnyClass { .. } => true,
+            Self::TypeDef { to, .. } => to.is_static_object(),
             _ => false,
         }
     }
@@ -1256,6 +1271,7 @@ impl Ty {
             | Self::GenericParam { .. }
             | Self::AnyObject { .. }
             | Self::AnyProtocol
+            | Self::AnyClass { .. }
             | Self::Self_ => true,
             Self::TypeDef { to, .. } => to.inner_typedef_is_object_life(),
             _ => false,
@@ -1382,11 +1398,6 @@ impl Ty {
                             Self::TypeDef { id, .. } if generic.is_object_like() => {
                                 write!(f, "{},", id.path())?
                             }
-                            Self::Pointer { pointee, .. }
-                                if matches!(**pointee, Self::AnyClass { .. }) =>
-                            {
-                                write!(f, "TodoClass,")?
-                            }
                             generic => {
                                 error!(?generic, ?self, "unknown generic");
                                 write!(f, "{},", generic.behind_pointer())?
@@ -1454,6 +1465,17 @@ impl Ty {
             match self {
                 Self::Pointer {
                     nullability,
+                    pointee,
+                    ..
+                } if pointee.is_static_object() => {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "&'static {}", pointee.behind_pointer())
+                    } else {
+                        write!(f, "Option<&'static {}>", pointee.behind_pointer())
+                    }
+                }
+                Self::Pointer {
+                    nullability,
                     lifetime: Lifetime::Unspecified,
                     pointee,
                     ..
@@ -1473,17 +1495,6 @@ impl Ty {
                         write!(f, "Option<Retained<{}>>", id.path())
                     }
                 }
-                Self::Pointer {
-                    nullability,
-                    pointee,
-                    ..
-                } if matches!(**pointee, Self::AnyClass { .. }) => {
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "&'static {}", pointee.behind_pointer())
-                    } else {
-                        write!(f, "Option<&'static {}>", pointee.behind_pointer())
-                    }
-                }
                 Self::Primitive(Primitive::C99Bool) => {
                     warn!("C99's bool as Objective-C method return is ill supported");
                     write!(f, "bool")
@@ -1497,6 +1508,20 @@ impl Ty {
     pub(crate) fn method_return_with_error(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| {
             match self {
+                Self::Pointer {
+                    nullability: Nullability::Nullable,
+                    lifetime: Lifetime::Unspecified,
+                    is_const: false,
+                    pointee,
+                } if pointee.is_static_object() => {
+                    // NULL -> error
+                    write!(
+                        f,
+                        " -> Result<&'static {}, Retained<{}>>",
+                        pointee.behind_pointer(),
+                        ItemIdentifier::nserror().path(),
+                    )
+                }
                 Self::Pointer {
                     nullability: Nullability::Nullable,
                     lifetime: Lifetime::Unspecified,
@@ -1926,8 +1951,12 @@ impl Ty {
 
     pub(crate) fn is_retainable(&self) -> bool {
         match self {
-            Self::Pointer { pointee, .. } if pointee.is_object_like() => true,
-            Self::TypeDef { .. } if self.is_object_like() => true,
+            Self::Pointer { pointee, .. }
+                if pointee.is_object_like() && !pointee.is_static_object() =>
+            {
+                true
+            }
+            Self::TypeDef { .. } if self.is_object_like() && !self.is_static_object() => true,
             _ => false,
         }
     }

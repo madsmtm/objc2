@@ -15,36 +15,6 @@ note: required by a bound in `send_message_retained`
   |                                                             ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained`
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `AnyClass: Message` is not satisfied
- --> ui/msg_send_invalid_return.rs
-  |
-  |     let _: Retained<AnyClass> = unsafe { msg_send_id![cls, new] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `AnyClass`
-  |
-  = help: the following other types implement trait `Message`:
-            AnyObject
-            Exception
-            NSObject
-            ProtocolObject<P>
-            __NSProxy
-  = note: required for `RetainSemantics<1>` to implement `MsgSendRetained<&AnyClass, Option<Retained<AnyClass>>>`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `AnyClass: Message` is not satisfied
- --> ui/msg_send_invalid_return.rs
-  |
-  |     let _: Option<Retained<AnyClass>> = unsafe { msg_send_id![cls, new] };
-  |                                                  ^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `AnyClass`
-  |
-  = help: the following other types implement trait `Message`:
-            AnyObject
-            Exception
-            NSObject
-            ProtocolObject<P>
-            __NSProxy
-  = note: required for `RetainSemantics<1>` to implement `MsgSendRetained<&AnyClass, Option<Retained<AnyClass>>>`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
-
 error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
@@ -60,25 +30,6 @@ note: required by a bound in `__macro_helpers::msg_send_retained::<impl RetainSe
   |
   |     pub unsafe fn send_message_retained_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
   |                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `__macro_helpers::msg_send_retained::<impl RetainSemantics<2>>::send_message_retained_alloc`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `AnyClass: Message` is not satisfied
- --> ui/msg_send_invalid_return.rs
-  |
-  |     let _: Allocated<AnyClass> = unsafe { msg_send_id![cls, alloc] };
-  |                                           ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `AnyClass`
-  |
-  = help: the following other types implement trait `Message`:
-            AnyObject
-            Exception
-            NSObject
-            ProtocolObject<P>
-            __NSProxy
-note: required by a bound in `__macro_helpers::msg_send_retained::<impl RetainSemantics<2>>::send_message_retained_alloc`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     pub unsafe fn send_message_retained_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
-  |                                                  ^^^^^^^ required by this bound in `__macro_helpers::msg_send_retained::<impl RetainSemantics<2>>::send_message_retained_alloc`
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0271]: type mismatch resolving `<Retained<AnyObject> as MaybeUnwrap>::Input == Allocated<_>`

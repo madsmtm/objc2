@@ -14,10 +14,8 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>
@@ -49,10 +47,8 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>
@@ -84,10 +80,8 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>
@@ -116,10 +110,8 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   | |_^ the trait `MessageReceiver` is not implemented for `&mut CustomObject`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &AnyClass
             &T
             &mut AnyObject
-            *const AnyClass
             *const T
             *mut T
             NonNull<T>

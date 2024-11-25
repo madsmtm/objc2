@@ -686,8 +686,7 @@ impl fmt::Debug for Method {
 pub struct AnyClass {
     // `isa` field is deprecated and not available on GNUStep, so we don't
     // expose it here. Use `class_getSuperclass` instead.
-    _priv: [u8; 0],
-    _p: ffi::OpaqueData,
+    inner: AnyObject,
 }
 
 /// Use [`AnyClass`] instead.
@@ -985,6 +984,9 @@ unsafe impl RefEncode for AnyClass {
     const ENCODING_REF: Encoding = Encoding::Class;
 }
 
+// SAFETY: Classes act as objects, and can be sent messages.
+unsafe impl Message for AnyClass {}
+
 impl fmt::Debug for AnyClass {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("AnyClass")
@@ -1001,18 +1003,29 @@ impl fmt::Display for AnyClass {
     }
 }
 
-/// An opaque type that represents an Objective-C protocol.
+impl AsRef<Self> for AnyClass {
+    fn as_ref(&self) -> &Self {
+        self
+    }
+}
+
+// This is the same as what Swift allows (`AnyClass` coerces to `AnyObject`).
+impl AsRef<AnyObject> for AnyClass {
+    fn as_ref(&self) -> &AnyObject {
+        &self.inner
+    }
+}
+
+/// An opaque type that represents a protocol in the Objective-C runtime.
 ///
-/// Note that, although protocols are objects, sending messages to them is
-/// deprecated and may not work in the future.
+/// See [`ProtocolObject`] for objects that implement a specific protocol.
 //
 // The naming of this follows GNUStep; this struct does not exist in Apple's
 // runtime, there `Protocol` is a type alias of `objc_object`.
 #[repr(C)]
 #[doc(alias = "objc_protocol")]
 pub struct AnyProtocol {
-    _priv: [u8; 0],
-    _p: ffi::OpaqueData,
+    inner: AnyObject,
 }
 
 /// Use [`AnyProtocol`] instead.
@@ -1126,6 +1139,13 @@ unsafe impl RefEncode for AnyProtocol {
     const ENCODING_REF: Encoding = Encoding::Object;
 }
 
+/// Note that protocols are objects, though sending messages to them is
+/// officially deprecated.
+//
+// SAFETY: Protocols are objects internally, and are returned as `Retained` in
+// various places in Foundation.
+unsafe impl Message for AnyProtocol {}
+
 impl fmt::Debug for AnyProtocol {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("AnyProtocol")
@@ -1139,6 +1159,18 @@ impl fmt::Display for AnyProtocol {
         // Protocols are usually UTF-8, so it's probably fine to do a lossy
         // conversion here.
         fmt::Display::fmt(&self.name().to_string_lossy(), f)
+    }
+}
+
+impl AsRef<Self> for AnyProtocol {
+    fn as_ref(&self) -> &Self {
+        self
+    }
+}
+
+impl AsRef<AnyObject> for AnyProtocol {
+    fn as_ref(&self) -> &AnyObject {
+        &self.inner
     }
 }
 
@@ -1467,7 +1499,7 @@ mod tests {
 
     use super::*;
     use crate::test_utils;
-    use crate::{class, msg_send, sel, ClassType};
+    use crate::{class, msg_send, sel, ClassType, ProtocolType};
 
     // TODO: Remove once c"" strings are in MSRV
     fn c(s: &str) -> CString {
@@ -1801,5 +1833,47 @@ mod tests {
 
         let cls_runtime = AnyClass::get(s).unwrap();
         assert_eq!(cls, cls_runtime);
+    }
+
+    #[test]
+    fn class_is_object() {
+        let cls = NSObject::class();
+        let retained = cls.retain();
+        assert_eq!(&*retained, cls);
+
+        let obj: &AnyObject = cls.as_ref();
+        let superclass = obj.class();
+        assert!(superclass.conforms_to(<dyn NSObjectProtocol>::protocol().unwrap()));
+
+        // Classes are NSObject subclasses in the current runtime.
+        let ns_obj = retained.downcast::<NSObject>().unwrap();
+        // Test that we can call NSObject methods on classes.
+        assert_eq!(ns_obj, ns_obj);
+        let _ = ns_obj.retainCount();
+    }
+
+    #[test]
+    fn class_has_infinite_retain_count() {
+        let obj: &AnyObject = NSObject::class().as_ref();
+        let obj = obj.downcast_ref::<NSObject>().unwrap();
+
+        assert_eq!(obj.retainCount(), usize::MAX);
+        let obj2 = obj.retain();
+        assert_eq!(obj.retainCount(), usize::MAX);
+        drop(obj2);
+        assert_eq!(obj.retainCount(), usize::MAX);
+    }
+
+    #[test]
+    fn protocol_is_object() {
+        let protocol = <dyn NSObjectProtocol>::protocol().unwrap();
+        let retained = protocol.retain();
+        assert_eq!(&*retained, protocol);
+
+        // Protocols are NSObject subclasses.
+        let obj = retained.downcast::<NSObject>().unwrap();
+        // Test that we can call NSObject methods on protocols.
+        assert_eq!(obj, obj);
+        let _ = obj.retainCount();
     }
 }

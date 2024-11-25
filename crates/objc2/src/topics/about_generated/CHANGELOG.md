@@ -134,6 +134,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - A bunch of things in `WebKit`.
 * **BREAKING**: Marked methods on the `NSObjectUIAccessibility` category as
   `MainThreadOnly`.
+* Fixed `AnyClass` and `AnyProtocol` mapping. For example
+  `NSStringFromProtocol` now takes `&AnyProtocol`,
+  `NSPasteboard::readObjectsForClasses_options` now takes
+  `&NSArray<AnyClass>`, and `UITrait` is now exposed more correctly.
 
 
 ## 0.2.2 - 2024-05-21

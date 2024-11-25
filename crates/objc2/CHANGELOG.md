@@ -26,6 +26,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   method. This means that you can now use it as `.into_super()`.
 * Added the `available!()` macro for determining whether code is running on
   a given operating system.
+* Implement `Message` for `AnyClass` and `AnyProtocol`.
+* Allow `AnyClass` and `AnyProtocol` to be converted to `AnyObject` (both of
+  these can act as objects).
 
 ### Changed
 * **BREAKING**: Changed how you specify a class to only be available on the
