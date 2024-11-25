@@ -1659,6 +1659,7 @@ impl Stmt {
                     }
 
                     writeln!(f, "extern_class!(")?;
+                    writeln!(f, "    /// {}", id.doc_link())?;
                     write!(f, "    #[unsafe(super(")?;
                     for (i, (superclass, generics)) in superclasses.iter().enumerate() {
                         if 0 < i {
@@ -1977,6 +1978,7 @@ impl Stmt {
                 } => {
                     writeln!(f, "extern_protocol!(")?;
 
+                    writeln!(f, "    /// {}", id.doc_link())?;
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
                     write!(f, "    {availability}")?;
                     write!(f, "    pub unsafe trait {}", id.name)?;
@@ -2048,6 +2050,7 @@ impl Stmt {
                     fields,
                     sendable,
                 } => {
+                    writeln!(f, "/// {}", id.doc_link())?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     write!(f, "#[repr(C)]")?;
@@ -2103,6 +2106,8 @@ impl Stmt {
                     variants,
                     sendable,
                 } => {
+                    writeln!(f, "/// {}", id.doc_link())?;
+
                     match kind {
                     // TODO: Once Rust gains support for more precisely
                     // specifying niches, use that to convert this into a
@@ -2265,6 +2270,7 @@ impl Stmt {
                     value,
                     is_last,
                 } => {
+                    writeln!(f, "/// {}", id.doc_link())?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     write!(f, "pub const {}: {} = {value};", id.name, ty.enum_())?;
@@ -2279,8 +2285,9 @@ impl Stmt {
                     value: None,
                 } => {
                     writeln!(f, "extern \"C\" {{")?;
+                    writeln!(f, "    /// {}", id.doc_link())?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
-                    writeln!(f, "pub static {}: {};", id.name, ty.var())?;
+                    writeln!(f, "    pub static {}: {};", id.name, ty.var())?;
                     writeln!(f, "}}")?;
                 }
                 Self::VarDecl {
@@ -2289,6 +2296,7 @@ impl Stmt {
                     ty,
                     value: Some(expr),
                 } => {
+                    writeln!(f, "/// {}", id.doc_link())?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "pub static {}: {} = ", id.name, ty.var())?;
 
@@ -2385,6 +2393,7 @@ impl Stmt {
                     ty,
                     kind,
                 } => {
+                    writeln!(f, "/// {}", id.doc_link())?;
                     match kind {
                         Some(UnexposedAttr::TypedEnum) => {
                             // TODO: Handle this differently

@@ -18,10 +18,10 @@ note: required by a bound in `NSURLSessionDelegate`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSURLSession.rs
   |
   | / extern_protocol!(
+  | |     /// [Apple's documentation](https://developer.apple.com/documentation/foundation/nsurlsessiondelegate?language=objc)
   | |     pub unsafe trait NSURLSessionDelegate: NSObjectProtocol {
   | |                      -------------------- required by a bound in this trait
   | |         #[cfg(feature = "NSError")]
-  | |         #[optional]
 ... |
   | |     unsafe impl ProtocolType for dyn NSURLSessionDelegate {}
   | | );

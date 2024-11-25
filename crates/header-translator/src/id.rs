@@ -375,6 +375,22 @@ impl ItemIdentifier {
 
         ItemIdentifierPathInRelationTo(self, other)
     }
+
+    /// Generate a markdown link to Apple's documentation.
+    ///
+    /// This is best effort only, and doesn't work for functions and methods,
+    /// and possibly some renamed classes and traits. Additionally, the link
+    /// may redirect.
+    pub(crate) fn doc_link(&self) -> impl fmt::Display + '_ {
+        FormatterFn(|f| {
+            write!(
+                f,
+                "[Apple's documentation](https://developer.apple.com/documentation/{}/{}?language=objc)",
+                self.library_name().to_lowercase(),
+                self.name.to_lowercase()
+            )
+        })
+    }
 }
 
 impl ItemIdentifier<Option<String>> {
