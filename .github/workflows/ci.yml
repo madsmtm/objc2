@@ -381,9 +381,9 @@ jobs:
       matrix:
         include:
         # Reasonably varied set of macOS targets.
-        - name: macOS 12 x86_64
+        - name: macOS 13 x86_64
           target: x86_64-apple-darwin
-          os: macos-12 # x86_64
+          os: macos-13 # x86_64
           frameworks: MACOS_13
           test: true
         - name: macOS 15 AArch64
