@@ -1,7 +1,7 @@
 use core::ffi::{c_char, c_float};
 
 use objc2::runtime::NSObject;
-use objc2::{extern_class, extern_methods, ClassType, Encode, Encoding};
+use objc2::{extern_class, extern_methods, Encode, Encoding};
 
 extern_class!(
     #[unsafe(super(NSObject))]
