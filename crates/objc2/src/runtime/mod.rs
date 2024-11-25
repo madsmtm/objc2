@@ -1628,6 +1628,13 @@ mod tests {
     }
 
     #[test]
+    fn class_self() {
+        let cls = NSObject::class();
+        let result: &'static AnyClass = unsafe { msg_send![cls, self] };
+        assert_eq!(cls, result);
+    }
+
+    #[test]
     fn test_subprotocols() {
         let sub_proto = test_utils::custom_subprotocol();
         let super_proto = test_utils::custom_protocol();

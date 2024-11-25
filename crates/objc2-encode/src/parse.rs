@@ -238,11 +238,16 @@ impl Parser<'_> {
         }
     }
 
-    fn expect_str(&mut self, s: &str) -> Option<()> {
-        for b in s.as_bytes() {
-            self.expect_byte(*b)?;
+    fn expect_one_of_str<'a>(&mut self, strings: impl IntoIterator<Item = &'a str>) -> Option<()> {
+        for s in strings {
+            if self.remaining().starts_with(s) {
+                for b in s.as_bytes() {
+                    self.expect_byte(*b).unwrap();
+                }
+                return Some(());
+            }
         }
-        Some(())
+        None
     }
 
     fn expect_u64(&mut self, int: u64) -> Option<()> {
@@ -264,7 +269,7 @@ impl Parser<'_> {
     pub(crate) fn expect_encoding(&mut self, enc: &Encoding, level: NestingLevel) -> Option<()> {
         match enc.helper() {
             Helper::Primitive(primitive) => {
-                self.expect_str(primitive.to_str())?;
+                self.expect_one_of_str(primitive.equivalents().iter().map(|p| p.to_str()))?;
 
                 if primitive == Primitive::Object && self.try_peek() == Some(b'"') {
                     self.advance();
@@ -295,7 +300,7 @@ impl Parser<'_> {
             }
             Helper::Container(kind, name, items) => {
                 self.expect_byte(kind.start_byte())?;
-                self.expect_str(name)?;
+                self.expect_one_of_str([name])?;
                 if let Some(level) = level.container_include_fields() {
                     self.expect_byte(b'=')?;
                     // Parse as equal if the container is empty

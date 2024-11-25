@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Encoding::size`, which computes the size of the encoded type for the
   current target.
 
+### Changed
+* Equivalence comparisons now consider `Encoding::Class`, `Encoding::Object`
+  and `Encoding::Block` as equivalent.
+
 
 ## 4.0.3 - 2024-05-21
 

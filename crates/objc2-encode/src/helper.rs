@@ -1,6 +1,7 @@
 use core::ffi;
 use core::fmt;
 use core::mem;
+use core::slice;
 use core::write;
 
 use crate::parse::verify_name;
@@ -71,7 +72,7 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
     };
 
     match (enc1.helper(), enc2.helper()) {
-        (Primitive(p1), Primitive(p2)) => p1 == p2,
+        (Primitive(p1), Primitive(p2)) => p1.equivalents().contains(&p2),
         (BitField(size1, Some((offset1, type1))), BitField(size2, Some((offset2, type2)))) => {
             size1 == size2
                 && offset1 == offset2
@@ -171,6 +172,17 @@ impl Primitive {
             Class => "#",
             Sel => ":",
             Unknown => "?",
+        }
+    }
+
+    /// Classes, blocks and objects can all be used in places where `id` is
+    /// expected (i.e. where the encoding is for objects).
+    ///
+    /// So to support those use-cases, we compare them as equivalent.
+    pub(crate) fn equivalents(&self) -> &[Self] {
+        match self {
+            Self::Block | Self::Object | Self::Class => &[Self::Block, Self::Object, Self::Class],
+            _ => slice::from_ref(self),
         }
     }
 

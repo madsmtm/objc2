@@ -212,6 +212,7 @@ impl Encoding {
     /// - Structs or unions with no fields/members are considered to represent
     ///   "opqaue" types, and will therefore be equivalent to all other
     ///   structs / unions.
+    /// - [`Object`], [`Block`] and [`Class`] compare as equivalent.
     ///
     /// The comparison may be changed in the future to e.g. ignore struct
     /// names or similar changes that may be required because of limitations
@@ -219,6 +220,10 @@ impl Encoding {
     ///
     /// For example, you should not rely on two equivalent encodings to have
     /// the same size or ABI - that is provided on a best-effort basis.
+    ///
+    /// [`Object`]: Self::Object
+    /// [`Block`]: Self::Block
+    /// [`Class`]: Self::Class
     pub fn equivalent_to(&self, other: &Self) -> bool {
         compare_encodings(self, other, NestingLevel::new(), false)
     }
@@ -395,18 +400,24 @@ mod tests {
 
         fn block() {
             Encoding::Block;
+            ~Encoding::Class;
+            ~Encoding::Object;
+            !Encoding::Unknown;
             "@?";
         }
 
         fn object() {
             Encoding::Object;
-            !Encoding::Block;
+            ~Encoding::Block;
+            ~Encoding::Class;
+            !Encoding::Sel;
             "@";
             ~"@\"AnyClassName\"";
             ~"@\"\""; // Empty class name
+            ~"@?";
+            ~"#";
             !"@\"MyClassName";
             !"@MyClassName\"";
-            !"@?";
         }
 
         fn unknown() {
@@ -644,6 +655,17 @@ mod tests {
         fn none_in_pointer_in_array() {
             Encoding::Array(42, &Encoding::Pointer(&Encoding::None));
             "[42^]";
+        }
+
+        fn class() {
+            Encoding::Class;
+            ~Encoding::Object;
+            ~Encoding::Block;
+            !Encoding::Sel;
+            "#";
+            ~"@?";
+            ~"@";
+            !"a";
         }
     }
 
