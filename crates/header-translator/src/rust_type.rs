@@ -1416,7 +1416,6 @@ impl Ty {
             Self::GenericParam { name } => write!(f, "{name}"),
             Self::AnyObject { protocols } => match &**protocols {
                 [] => write!(f, "AnyObject"),
-                [decl] if decl.id.is_nsobject() => write!(f, "NSObject"),
                 [decl] => write!(f, "ProtocolObject<dyn {}>", decl.id.path()),
                 // TODO: Handle this better
                 [first, rest @ ..] => {

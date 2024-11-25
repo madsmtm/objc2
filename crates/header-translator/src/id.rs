@@ -288,11 +288,6 @@ impl ItemIdentifier {
         self.map_name(Some)
     }
 
-    pub fn is_nsobject(&self) -> bool {
-        self.library_name() == "objc2"
-            && (self.name == "NSObject" || self.name == "NSObjectProtocol")
-    }
-
     pub fn is_nserror(&self) -> bool {
         self.library_name() == "Foundation" && self.name == "NSError"
     }

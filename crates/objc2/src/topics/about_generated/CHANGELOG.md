@@ -76,6 +76,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   of `"LAContext"`.
 * **BREAKING**: Cfg-gated `HKAudiogramSensitivityPoint` behind
   `"HKAudiogramSensitivityPoint"` instead of `"HKAudiogramSample"`.
+* **BREAKING**: No longer special-case `NSObjectProtocol` objects. Certain
+  methods that previously used `&NSObject` for convenience now use the more
+  correct `&ProtocolObject<dyn NSObjectProtocol>`.
 
 ### Deprecated
 * Moved `MainThreadMarker` from `objc2-foundation` to `objc2`.
