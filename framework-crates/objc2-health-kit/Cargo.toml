@@ -88,6 +88,16 @@ HKAudiogramSample = [
     "objc2-foundation/NSString",
 ]
 HKAudiogramSensitivityPoint = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+]
+HKAudiogramSensitivityPointClampingRange = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSValue",
+]
+HKAudiogramSensitivityTest = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
 ]
@@ -464,6 +474,8 @@ all = [
     "HKAttachmentStore",
     "HKAudiogramSample",
     "HKAudiogramSensitivityPoint",
+    "HKAudiogramSensitivityPointClampingRange",
+    "HKAudiogramSensitivityTest",
     "HKCDADocumentSample",
     "HKCategorySample",
     "HKCategoryValues",

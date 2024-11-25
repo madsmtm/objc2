@@ -54,10 +54,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Renamed `from_id_slice` to `from_retained_slice`.
 * **BREAKING**: Renamed `NSString::as_str` to `to_str`, and made it `unsafe`,
   since we cannot ensure that the given pool is actually the innermost pool.
-* Updated SDK from Xcode 15.4 to 16.0.
+* Updated SDK from Xcode 15.4 to 16.1.
 
   View the release notes to learn more details:
   - [16.0](https://developer.apple.com/documentation/xcode-release-notes/xcode-16-release-notes)
+  - [16.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-16_1-release-notes)
 
   Breaking changes are noted elsewhere in this changelog entry.
 * **BREAKING**: `NSWindowSharingReadWrite` was deprecated, and moved from
@@ -134,6 +135,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `MEMessageSecurityHandler`
   - `PHContentEditingController`
   - `PHLivePhotoViewDelegate`
+  - `NSCollectionView*` classes
+  - `NSCollectionLayout*` classes and protocols
+  - `NSTableColumn`
   - A bunch of things in `WebKit`.
 * **BREAKING**: Marked methods on the `NSObjectUIAccessibility` category as
   `MainThreadOnly`.

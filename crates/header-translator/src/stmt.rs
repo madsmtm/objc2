@@ -1854,7 +1854,7 @@ impl Stmt {
                             // The object inherits from `NSObject` or `NSProxy` no
                             // matter what the generic type is, so this must be
                             // safe.
-                            ("Foundation", "NSObjectProtocol") => ("?Sized", None),
+                            ("objc2", "NSObjectProtocol") => ("?Sized", None),
                             // Encoding and decoding requires that the inner types
                             // are codable as well.
                             ("Foundation", "NSCoding") => ("?Sized + NSCoding", None),
