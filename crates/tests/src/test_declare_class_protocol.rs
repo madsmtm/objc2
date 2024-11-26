@@ -1,32 +1,22 @@
 #![cfg(feature = "all")]
 use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSZone};
-use objc2::{declare_class, ClassType, DeclaredClass, ProtocolType};
+use objc2::{declare_class, ClassType, ProtocolType};
 use objc2_foundation::NSCopying;
 
 #[test]
 #[should_panic = "could not create new class TestDeclareClassDuplicate. Perhaps a class with that name already exists?"]
 fn test_declare_class_duplicate() {
     declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "TestDeclareClassDuplicate"]
         struct Custom1;
-
-        unsafe impl ClassType for Custom1 {
-            type Super = NSObject;
-            const NAME: &'static str = "TestDeclareClassDuplicate";
-        }
-
-        impl DeclaredClass for Custom1 {}
     );
 
     declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "TestDeclareClassDuplicate"]
         struct Custom2;
-
-        unsafe impl ClassType for Custom2 {
-            type Super = NSObject;
-            const NAME: &'static str = "TestDeclareClassDuplicate";
-        }
-
-        impl DeclaredClass for Custom2 {}
     );
 
     let _cls = Custom1::class();
@@ -37,14 +27,9 @@ fn test_declare_class_duplicate() {
 #[test]
 fn test_declare_class_protocol() {
     declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "TestDeclareClassProtocolNotFound"]
         struct Custom;
-
-        unsafe impl ClassType for Custom {
-            type Super = NSObject;
-            const NAME: &'static str = "TestDeclareClassProtocolNotFound";
-        }
-
-        impl DeclaredClass for Custom {}
 
         unsafe impl NSCopying for Custom {
             #[method_id(copyWithZone:)]
@@ -65,14 +50,9 @@ fn test_declare_class_protocol() {
 )]
 fn test_declare_class_invalid_method() {
     declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "TestDeclareClassInvalidMethod"]
         struct Custom;
-
-        unsafe impl ClassType for Custom {
-            type Super = NSObject;
-            const NAME: &'static str = "TestDeclareClassInvalidMethod";
-        }
-
-        impl DeclaredClass for Custom {}
 
         unsafe impl Custom {
             // Override `description` with a bad return type
@@ -91,14 +71,9 @@ fn test_declare_class_invalid_method() {
 )]
 fn test_declare_class_missing_protocol_method() {
     declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "TestDeclareClassMissingProtocolMethod"]
         struct Custom;
-
-        unsafe impl ClassType for Custom {
-            type Super = NSObject;
-            const NAME: &'static str = "TestDeclareClassMissingProtocolMethod";
-        }
-
-        impl DeclaredClass for Custom {}
 
         unsafe impl NSCopying for Custom {
             // Missing required method
@@ -112,14 +87,9 @@ fn test_declare_class_missing_protocol_method() {
 // #[cfg_attr(debug_assertions, should_panic = "...")]
 fn test_declare_class_invalid_protocol_method() {
     declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "TestDeclareClassInvalidProtocolMethod"]
         struct Custom;
-
-        unsafe impl ClassType for Custom {
-            type Super = NSObject;
-            const NAME: &'static str = "TestDeclareClassInvalidProtocolMethod";
-        }
-
-        impl DeclaredClass for Custom {}
 
         unsafe impl NSCopying for Custom {
             // Override with a bad return type
@@ -140,14 +110,9 @@ fn test_declare_class_invalid_protocol_method() {
 )]
 fn test_declare_class_extra_protocol_method() {
     declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "TestDeclareClassExtraProtocolMethod"]
         struct Custom;
-
-        unsafe impl ClassType for Custom {
-            type Super = NSObject;
-            const NAME: &'static str = "TestDeclareClassExtraProtocolMethod";
-        }
-
-        impl DeclaredClass for Custom {}
 
         unsafe impl NSCopying for Custom {
             #[method_id(copyWithZone:)]

@@ -3,7 +3,7 @@
 //! do it in a context where `Self` works.
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::NSObject;
-use objc2::{declare_class, ClassType, DeclaredClass};
+use objc2::{declare_class, ClassType};
 
 trait GetSameType {
     type SameType: ?Sized;
@@ -28,14 +28,9 @@ macro_rules! get_self {
 }
 
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "MyTestObject"]
     struct MyTestObject;
-
-    unsafe impl ClassType for MyTestObject {
-        type Super = NSObject;
-        const NAME: &'static str = "MyTestObject";
-    }
-
-    impl DeclaredClass for MyTestObject {}
 
     unsafe impl MyTestObject {
         #[method_id(initWith:)]

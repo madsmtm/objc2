@@ -907,18 +907,10 @@ macro_rules! __class_inner {
 /// ```no_run
 /// use objc2::msg_send;
 /// #
-/// # use objc2::runtime::NSObject;
-/// # use objc2::{declare_class, ClassType, DeclaredClass};
-/// #
-/// # declare_class!(
+/// # objc2::declare_class!(
+/// #     #[unsafe(super(objc2::runtime::NSObject))]
+/// #     #[name = "MyObject"]
 /// #     struct MyObject;
-/// #
-/// #     unsafe impl ClassType for MyObject {
-/// #         type Super = NSObject;
-/// #         const NAME: &'static str = "MyObject";
-/// #     }
-/// #
-/// #     impl DeclaredClass for MyObject {}
 /// # );
 ///
 /// let obj: &MyObject; // Some object that implements ClassType

@@ -24,8 +24,8 @@ Let's take an example: We define a class that contains an [`i32`] and a [`Vec`].
 
 ```rust
 use std::cell::{Cell, RefCell};
+use objc2::{declare_class, DeclaredClass};
 use objc2::runtime::NSObject;
-use objc2::{declare_class, ClassType, DeclaredClass};
 
 // Usually, you would just do:
 
@@ -51,16 +51,10 @@ struct Ivars {
 }
 
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "MyClass"]
+    #[ivars = Ivars]
     struct MyClass;
-
-    unsafe impl ClassType for MyClass {
-        type Super = NSObject;
-        const NAME: &'static str = "MyClass";
-    }
-
-    impl DeclaredClass for MyClass {
-        type Ivars = Ivars;
-    }
 
     unsafe impl MyClass {
         #[method(myMethod)]

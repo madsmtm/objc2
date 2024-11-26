@@ -9,7 +9,7 @@
 
 extern crate objc2 as new_objc2;
 
-use new_objc2::{ClassType, DeclaredClass, ProtocolType};
+use new_objc2::ProtocolType;
 
 mod core {}
 mod std {}
@@ -91,16 +91,10 @@ struct MyCustomIvars {
 }
 
 new_objc2::declare_class!(
+    #[unsafe(super(new_objc2::runtime::NSObject))]
+    #[name = "CustomObject"]
+    #[ivars = MyCustomIvars]
     struct CustomObject;
-
-    unsafe impl ClassType for CustomObject {
-        type Super = new_objc2::runtime::NSObject;
-        const NAME: &'static str = "CustomObject";
-    }
-
-    impl DeclaredClass for CustomObject {
-        type Ivars = MyCustomIvars;
-    }
 
     unsafe impl CustomObject {
         #[method(a)]

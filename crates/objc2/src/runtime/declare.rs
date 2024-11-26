@@ -583,8 +583,7 @@ mod tests {
     use crate::rc::Retained;
     use crate::runtime::{NSObject, NSObjectProtocol};
     use crate::{
-        declare_class, extern_methods, msg_send, msg_send_id, test_utils, ClassType, DeclaredClass,
-        ProtocolType,
+        declare_class, extern_methods, msg_send, msg_send_id, test_utils, ClassType, ProtocolType,
     };
 
     // TODO: Remove once c"" strings are in MSRV
@@ -895,15 +894,10 @@ mod tests {
     #[test]
     fn test_inherited_nsobject_methods_work() {
         declare_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "TestInheritedNSObjectMethodsWork"]
             #[derive(Debug, PartialEq, Eq, Hash)]
             struct Custom;
-
-            unsafe impl ClassType for Custom {
-                type Super = NSObject;
-                const NAME: &'static str = "TestInheritedNSObjectMethodsWork";
-            }
-
-            impl DeclaredClass for Custom {}
         );
 
         extern_methods!(
@@ -922,7 +916,7 @@ mod tests {
 
         // description
         let expected =
-            format!("Custom {{ __superclass: ManuallyDrop {{ value: <TestInheritedNSObjectMethodsWork: {obj1:p}> }}, __phantom: PhantomData<((), objc2::__macro_helpers::declare_class::ThreadKindAutoTraits<dyn objc2::top_level_traits::AllocAnyThread>)> }}");
+            format!("Custom {{ super: <TestInheritedNSObjectMethodsWork: {obj1:p}>, ivars: () }}");
         assert_eq!(format!("{obj1:?}"), expected);
 
         // hash

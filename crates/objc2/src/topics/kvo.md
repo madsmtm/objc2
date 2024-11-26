@@ -34,22 +34,15 @@ struct Ivars {
 }
 
 declare_class!(
-    #[derive(Debug)]
-    struct MyObserver;
-
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
     // - MyObserver implements `Drop` and ensures that:
     //   - It does not call an overridden method.
     //   - It does not `retain` itself.
-    unsafe impl ClassType for MyObserver {
-        type Super = NSObject;
-        const NAME: &'static str = "MyObserver";
-    }
-
-    impl DeclaredClass for MyObserver {
-        type Ivars = Ivars;
-    }
+    #[unsafe(super(NSObject))]
+    #[name = "MyObserver"]
+    #[ivars = Ivars]
+    struct MyObserver;
 
     unsafe impl MyObserver {
         #[method(observeValueForKeyPath:ofObject:change:context:)]

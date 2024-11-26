@@ -11,5 +11,5 @@ note: associated function defined here
    |        ^^^^^
 help: provide the argument
    |
-19 |     let _ = MyMainThreadOnlyClass::alloc(/* MainThreadMarker */);
+14 |     let _ = MyMainThreadOnlyClass::alloc(/* MainThreadMarker */);
    |                                         ~~~~~~~~~~~~~~~~~~~~~~~~

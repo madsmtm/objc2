@@ -4,7 +4,7 @@ use core::ptr;
 
 use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{NSObject, NSZone};
-use crate::{declare_class, msg_send, msg_send_id, ClassType, DeclaredClass};
+use crate::{declare_class, msg_send, msg_send_id, ClassType};
 
 // TODO: Put tests that use this in another crate
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -65,14 +65,9 @@ declare_class!(
     /// primitives are called.
     #[derive(Debug, PartialEq, Eq, Hash)]
     #[doc(hidden)]
+    #[unsafe(super(NSObject))]
+    #[name = "__RcTestObject"]
     pub(crate) struct RcTestObject;
-
-    unsafe impl ClassType for RcTestObject {
-        type Super = NSObject;
-        const NAME: &'static str = "__RcTestObject";
-    }
-
-    impl DeclaredClass for RcTestObject {}
 
     unsafe impl RcTestObject {
         #[method_id(newReturningNull)]

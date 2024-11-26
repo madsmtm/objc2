@@ -2,7 +2,7 @@
 use std::ptr;
 
 use objc2::rc::Retained;
-use objc2::{declare_class, extern_methods, ClassType, DeclaredClass};
+use objc2::{declare_class, extern_methods};
 use objc2_foundation::{
     CopyingHelper, NSArray, NSCopying, NSMutableArray, NSMutableCopying, NSMutableDictionary,
     NSMutableSet, NSNumber, NSSet, NSValue,
@@ -352,15 +352,10 @@ fn value_does_not_retain() {
 }
 
 declare_class!(
+    #[unsafe(super(RcTestObject))]
+    #[name = "NSCopyingRcTestObject"]
     #[derive(Debug, PartialEq, Eq, Hash)]
     struct NSCopyingRcTestObject;
-
-    unsafe impl ClassType for NSCopyingRcTestObject {
-        type Super = RcTestObject;
-        const NAME: &'static str = "NSCopyingRcTestObject";
-    }
-
-    impl DeclaredClass for NSCopyingRcTestObject {}
 
     unsafe impl NSCopying for NSCopyingRcTestObject {}
 );

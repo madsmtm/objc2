@@ -30,9 +30,9 @@ error: `#[optional]` is only supported in `extern_protocol!`
  --> ui/wrong_optional.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject1"]
   | |     struct CustomObject1;
-  | |
-  | |     unsafe impl ClassType for CustomObject1 {
 ... |
   | |     }
   | | );
@@ -44,9 +44,9 @@ error: `#[optional]` is only supported in `extern_protocol!`
  --> ui/wrong_optional.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject2"]
   | |     struct CustomObject2;
-  | |
-  | |     unsafe impl ClassType for CustomObject2 {
 ... |
   | |     }
   | | );

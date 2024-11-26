@@ -2,8 +2,7 @@
 //! a `MainThreadOnly` class.
 use objc2::rc::Retained;
 use objc2::{
-    declare_class, extern_methods, extern_protocol, AllocAnyThread, ClassType, DeclaredClass,
-    MainThreadOnly, ProtocolType,
+    declare_class, extern_methods, extern_protocol, AllocAnyThread, MainThreadOnly, ProtocolType,
 };
 use objc2_foundation::{MainThreadMarker, NSNotification, NSObject, NSObjectProtocol};
 
@@ -21,15 +20,10 @@ extern_protocol!(
 );
 
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[thread_kind = AllocAnyThread] // Not `MainThreadOnly`
+    #[name = "CustomObject"]
     struct CustomObject;
-
-    unsafe impl ClassType for CustomObject {
-        type Super = NSObject;
-        type ThreadKind = dyn AllocAnyThread; // Not `MainThreadOnly`
-        const NAME: &'static str = "CustomObject";
-    }
-
-    impl DeclaredClass for CustomObject {}
 
     unsafe impl NSObjectProtocol for CustomObject {}
 

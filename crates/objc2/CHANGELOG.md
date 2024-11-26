@@ -33,9 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   subclassing `NSObject`.
 
 ### Changed
-* **BREAKING**: Changed how you specify a class to only be available on the
-  main thread. It is now automatically inferred, and you only need to
-  overwrite it if your class is doing something different than its superclass.
+* **BREAKING**: Changed the syntax of `declare_class!` to be more succinct:
 
   ```rust
   // Before
@@ -49,32 +47,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
       }
 
       impl DeclaredClass for MyObject {
-          type Ivars = ...;
+          type Ivars = MyIvars;
       }
 
-      // ...
+      // unsafe impl ...
   );
 
   // After
   declare_class!(
+      #[unsafe(super(NSObject))]
+      #[name = "MyObject"]
+      #[ivars = MyIvars]
       struct MyObject;
 
-      unsafe impl ClassType for MyObject {
-          type Super = NSObject;
-          // No need to specify mutability any more
-          //
-          // But if you need it (e.g. when implementing delegates), you can add:
-          // type ThreadKind = dyn MainThreadOnly;
-          const NAME: &'static str = "MyObject";
-      }
-
-      impl DeclaredClass for MyObject {
-          type Ivars = ...;
-      }
-
-      // ...
+      // unsafe impl ...
   );
   ```
+* Whether classes are only available on the main thread is now automatically
+  inferred, and you only need to overwrite it if your class is doing something
+  different than its superclass.
 * **BREAKING**: Changed the syntax of `extern_class!` to be more succinct:
   ```rust
   // Before

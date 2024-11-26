@@ -1,16 +1,11 @@
+use objc2::declare_class;
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
-use objc2::{declare_class, ClassType, DeclaredClass};
 
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "InvalidMethodDeclarations"]
     struct InvalidMethodDeclarations;
-
-    unsafe impl ClassType for InvalidMethodDeclarations {
-        type Super = NSObject;
-        const NAME: &'static str = "InvalidMethodDeclarations";
-    }
-
-    impl DeclaredClass for InvalidMethodDeclarations {}
 
     unsafe impl InvalidMethodDeclarations {
         fn test_no_attribute() {
@@ -132,22 +127,30 @@ declare_class!(
 );
 
 declare_class!(
+    #[unsafe(super(NSObject))]
     struct MissingName;
-
-    unsafe impl ClassType for MissingName {
-        type Super = NSObject;
-    }
-
-    impl DeclaredClass for MissingName {}
 );
 
 declare_class!(
-    struct MissingDeclaredClass;
+    #[name = "MissingSuper"]
+    struct MissingSuper;
+);
 
-    unsafe impl ClassType for MissingDeclaredClass {
-        type Super = NSObject;
-        const NAME: &'static str = "MissingDeclaredClass";
-    }
+declare_class!(
+    #[super(NSObject)]
+    #[name = "SafeSuper"]
+    struct SafeSuper;
+);
+
+declare_class!(
+    struct MissingBoth;
+);
+
+declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "HasRepr"]
+    #[repr(transparent)]
+    struct HasRepr;
 );
 
 fn main() {}

@@ -2,9 +2,9 @@ error: must specify the desired selector using `#[method(...)]` or `#[method_id(
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -16,9 +16,9 @@ error: cannot specify the `method`/`method_id` attribute twice
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -30,9 +30,9 @@ error: cannot specify the `method`/`method_id` attribute twice
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -70,9 +70,9 @@ error: no rules expected `(`
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -85,9 +85,9 @@ error: no rules expected `(`
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -110,7 +110,7 @@ error: missing parameters for function definition
    |
 help: add a parameter list
    |
-71 |         fn fn() test_fn_fn() {}
+66 |         fn fn() test_fn_fn() {}
    |              ++
 
 error: expected one of `->`, `<`, `where`, or `{`, found `test_fn_fn`
@@ -139,9 +139,9 @@ error: `#[method_id(alloc)]` is not supported. Use `#[method(alloc)]` and do the
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -153,9 +153,9 @@ error: `#[method_id(retain)]` is not supported. Use `#[method(retain)]` and do t
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -167,9 +167,9 @@ error: `#[method_id(release)]` is not supported. Use `#[method(release)]` and do
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -181,9 +181,9 @@ error: `#[method_id(autorelease)]` is not supported. Use `#[method(autorelease)]
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -195,9 +195,9 @@ error: `#[method_id(dealloc)]` is not supported. Implement `Drop` for the type i
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -209,9 +209,9 @@ error: `#[method(dealloc)]` is not supported. Implement `Drop` for the type inst
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -243,9 +243,9 @@ error: must specify the desired selector using `#[method(...)]` or `#[method_id(
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -257,9 +257,9 @@ error: cannot specify the `method`/`method_id` attribute twice
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -271,9 +271,9 @@ error: cannot specify the `method`/`method_id` attribute twice
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -285,9 +285,9 @@ error: `#[method_id(...)]` must have a return type
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -311,9 +311,9 @@ error: no rules expected `)`
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -450,37 +450,81 @@ error: no rules expected keyword `const`
   |
   = note: while trying to match end of macro
 
-error: no rules expected `}`
+error: must set name of class with #[name = ...]
  --> ui/declare_class_invalid_syntax.rs
   |
-  |     }
-  |     ^ no rules expected this token in macro call
+  | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct MissingName;
+  | | );
+  | |_^
   |
-note: while trying to match keyword `const`
- --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
-  |
-  |             const NAME: &'static str = $name_const:expr;
-  |             ^^^^^
+  = note: this error originates in the macro `$crate::__declare_class_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: unexpected end of macro invocation
+error: must specify the superclass with #[unsafe(super(...))]
  --> ui/declare_class_invalid_syntax.rs
   |
-  |     }
-  |      ^ missing tokens in macro arguments
+  | / declare_class!(
+  | |     #[name = "MissingSuper"]
+  | |     struct MissingSuper;
+  | | );
+  | |_^
   |
-note: while trying to match keyword `impl`
- --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  = note: this error originates in the macro `$crate::__extern_class_check_super_unsafe` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: #[super(...)] must be wrapped in `unsafe`, as in #[unsafe(super(...))]
+ --> ui/declare_class_invalid_syntax.rs
   |
-  |         impl DeclaredClass for $for_declared:ty {
-  |         ^^^^
+  | / declare_class!(
+  | |     #[super(NSObject)]
+  | |     #[name = "SafeSuper"]
+  | |     struct SafeSuper;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_class_check_super_unsafe` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: must set name of class with #[name = ...]
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct MissingBoth;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__declare_class_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: must specify the superclass with #[unsafe(super(...))]
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct MissingBoth;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_class_check_super_unsafe` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0692]: transparent struct cannot have other repr hints
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "HasRepr"]
+  | |     #[repr(transparent)]
+  | |            ^^^^^^^^^^^
+  | |     struct HasRepr;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__declare_class_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0599]: no function or associated item named `test_pattern` found for struct `InvalidMethodDeclarations` in the current scope
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |         fn test_pattern((a, b): (u32, i32)) {
   | |            ^^^^^^^^^^^^ function or associated item not found in `InvalidMethodDeclarations`
@@ -493,9 +537,9 @@ error[E0599]: no function or associated item named `test_self` found for struct 
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |         fn test_self(self) {
   | |            ^^^^^^^^^ function or associated item not found in `InvalidMethodDeclarations`
@@ -508,9 +552,9 @@ error[E0277]: the trait bound `RetainSemantics<2>: MessageReceiveRetained<&AnyCl
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
-  | |
-  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );

@@ -846,24 +846,18 @@ mod tests {
     use super::*;
     use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
     use crate::runtime::{AnyObject, NSObject, NSObjectProtocol};
-    use crate::{declare_class, msg_send, DeclaredClass};
+    use crate::{declare_class, msg_send};
 
     #[test]
     fn auto_traits() {
         macro_rules! helper {
             ($name:ident) => {
                 declare_class!(
+                    #[unsafe(super(NSObject))]
+                    #[name = concat!(stringify!($name), "Test")]
+                    // Make the type not thread safe by default.
+                    #[ivars = *const ()]
                     struct $name;
-
-                    unsafe impl ClassType for $name {
-                        type Super = NSObject;
-                        const NAME: &'static str = concat!(stringify!($name), "Test");
-                    }
-
-                    impl DeclaredClass for $name {
-                        // Make the type not thread safe by default.
-                        type Ivars = *const ();
-                    }
                 );
             };
         }

@@ -1,5 +1,5 @@
 error: #[super(...)] must be wrapped in `unsafe`, as in #[unsafe(super(...))]
- --> ui/extren_class_safe_super.rs
+ --> ui/extern_class_safe_super.rs
   |
   | / extern_class!(
   | |     #[super(NSObject)]

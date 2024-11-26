@@ -69,23 +69,18 @@
 /// use objc2::ffi::NSUInteger;
 /// use objc2::rc::{Allocated, Retained};
 /// use objc2::runtime::NSObject;
-/// use objc2::{declare_class, extern_methods, ClassType, DeclaredClass};
+/// use objc2::{declare_class, extern_methods};
 ///
 /// // Shim
 /// type NSError = NSObject;
 ///
 /// declare_class!(
-///     pub struct MyObject;
-///
 ///     // SAFETY:
 ///     // - The superclass NSObject does not have any subclassing requirements.
 ///     // - `MyObject` does not implement `Drop`.
-///     unsafe impl ClassType for MyObject {
-///         type Super = NSObject;
-///         const NAME: &'static str = "MyObject";
-///     }
-///
-///     impl DeclaredClass for MyObject {}
+///     #[unsafe(super(NSObject))]
+///     #[name = "MyObject"]
+///     pub struct MyObject;
 ///
 ///     unsafe impl MyObject {
 ///         // ... Assume we've implemented all the methods used below
@@ -127,20 +122,15 @@
 /// # use objc2::ffi::NSUInteger;
 /// # use objc2::rc::{Allocated, Retained};
 /// # use objc2::runtime::NSObject;
-/// # use objc2::{declare_class, extern_methods, ClassType, DeclaredClass};
+/// # use objc2::{declare_class, extern_methods, ClassType};
 /// #
 /// # // Shim
 /// # type NSError = NSObject;
 /// #
 /// # declare_class!(
+/// #     #[unsafe(super(NSObject))]
+/// #     #[name = "MyObject2"]
 /// #     pub struct MyObject;
-/// #
-/// #     unsafe impl ClassType for MyObject {
-/// #         type Super = NSObject;
-/// #         const NAME: &'static str = "MyObject2";
-/// #     }
-/// #
-/// #     impl DeclaredClass for MyObject {}
 /// #
 /// #     unsafe impl MyObject {
 /// #         // ... Assume we've implemented all the methods used below

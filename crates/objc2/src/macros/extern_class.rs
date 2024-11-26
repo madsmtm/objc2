@@ -68,8 +68,8 @@
 ///
 /// ### `#[derive(...)]`
 ///
-/// `#[derive]` is overridden, and only works with [`PartialEq`], [`Eq`],
-/// [`Hash`] and [`Debug`].
+/// This is overridden, and only works with [`PartialEq`], [`Eq`], [`Hash`]
+/// and [`Debug`].
 ///
 /// [`Hash`]: std::hash::Hash
 /// [`Debug`]: std::fmt::Debug
@@ -77,9 +77,14 @@
 ///
 /// ### `#[cfg_attr(..., ...)]`
 ///
-/// `#[cfg_attr]` is only supported for attributes that apply to the struct
-/// itself (i.e. not supported for attributes that apply to implementations,
-/// or any of the custom attributes).
+/// This is only supported for attributes that apply to the struct itself
+/// (i.e. not supported for attributes that apply to implementations, or any
+/// of the custom attributes).
+///
+///
+/// ### `#[repr(...)]`
+///
+/// Not allowed (the macro uses this attribute internally).
 ///
 ///
 /// # Safety

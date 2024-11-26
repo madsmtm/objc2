@@ -2,9 +2,9 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -34,9 +34,9 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -66,9 +66,9 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -98,9 +98,9 @@ error[E0271]: type mismatch resolving `<extern "C-unwind" fn(&AnyClass, Sel) as 
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -123,9 +123,9 @@ error[E0271]: type mismatch resolving `<extern "C-unwind" fn(&NSObject, Sel) as 
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -148,9 +148,9 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -180,9 +180,9 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -212,9 +212,9 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -244,9 +244,9 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -265,9 +265,9 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -286,9 +286,9 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -307,9 +307,9 @@ error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not 
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -328,9 +328,9 @@ error[E0277]: the trait bound `RetainSemantics<3>: MessageReceiveRetained<&Custo
  --> ui/declare_class_invalid_receiver.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );

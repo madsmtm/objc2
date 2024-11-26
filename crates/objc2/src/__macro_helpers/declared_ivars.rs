@@ -497,16 +497,10 @@ mod tests {
         // First class
 
         declare_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "ImplsDrop"]
+            #[ivars = ()]
             struct ImplsDrop;
-
-            unsafe impl ClassType for ImplsDrop {
-                type Super = NSObject;
-                const NAME: &'static str = "ImplsDrop";
-            }
-
-            impl DeclaredClass for ImplsDrop {
-                type Ivars = ();
-            }
 
             unsafe impl ImplsDrop {
                 #[method_id(init)]
@@ -537,16 +531,10 @@ mod tests {
         // Subclass
 
         declare_class!(
+            #[unsafe(super(ImplsDrop))]
+            #[name = "IvarsImplDrop"]
+            #[ivars = IvarThatImplsDrop]
             struct IvarsImplDrop;
-
-            unsafe impl ClassType for IvarsImplDrop {
-                type Super = ImplsDrop;
-                const NAME: &'static str = "IvarsImplDrop";
-            }
-
-            impl DeclaredClass for IvarsImplDrop {
-                type Ivars = IvarThatImplsDrop;
-            }
 
             unsafe impl IvarsImplDrop {
                 #[method_id(init)]
@@ -571,16 +559,10 @@ mod tests {
         // Further subclass
 
         declare_class!(
+            #[unsafe(super(IvarsImplDrop))]
+            #[name = "BothIvarsAndTypeImplsDrop"]
+            #[ivars = IvarThatImplsDrop]
             struct BothIvarsAndTypeImplsDrop;
-
-            unsafe impl ClassType for BothIvarsAndTypeImplsDrop {
-                type Super = IvarsImplDrop;
-                const NAME: &'static str = "BothIvarsAndTypeImplsDrop";
-            }
-
-            impl DeclaredClass for BothIvarsAndTypeImplsDrop {
-                type Ivars = IvarThatImplsDrop;
-            }
 
             unsafe impl BothIvarsAndTypeImplsDrop {
                 #[method_id(init)]
@@ -627,16 +609,10 @@ mod tests {
         }
 
         declare_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "IvarsNoDrop"]
+            #[ivars = Ivar]
             struct IvarsNoDrop;
-
-            unsafe impl ClassType for IvarsNoDrop {
-                type Super = NSObject;
-                const NAME: &'static str = "IvarsNoDrop";
-            }
-
-            impl DeclaredClass for IvarsNoDrop {
-                type Ivars = Ivar;
-            }
         );
 
         assert!(!mem::needs_drop::<IvarsNoDrop>());
@@ -653,16 +629,10 @@ mod tests {
         struct Ivar;
 
         declare_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "IvarZst"]
+            #[ivars = Cell<Ivar>]
             struct IvarZst;
-
-            unsafe impl ClassType for IvarZst {
-                type Super = NSObject;
-                const NAME: &'static str = "IvarZst";
-            }
-
-            impl DeclaredClass for IvarZst {
-                type Ivars = Cell<Ivar>;
-            }
 
             unsafe impl IvarZst {
                 #[method_id(init)]
@@ -697,16 +667,10 @@ mod tests {
         struct HighAlignment;
 
         declare_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "HasIvarWithHighAlignment"]
+            #[ivars = HighAlignment]
             struct HasIvarWithHighAlignment;
-
-            unsafe impl ClassType for HasIvarWithHighAlignment {
-                type Super = NSObject;
-                const NAME: &'static str = "HasIvarWithHighAlignment";
-            }
-
-            impl DeclaredClass for HasIvarWithHighAlignment {
-                type Ivars = HighAlignment;
-            }
         );
 
         // Have to allocate up to the desired alignment, but no need to go
@@ -728,16 +692,10 @@ mod tests {
     #[test]
     fn test_ivar_access() {
         declare_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "RcIvar"]
+            #[ivars = Cell<Option<Retained<RcTestObject>>>]
             struct RcIvar;
-
-            unsafe impl ClassType for RcIvar {
-                type Super = NSObject;
-                const NAME: &'static str = "RcIvar";
-            }
-
-            impl DeclaredClass for RcIvar {
-                type Ivars = Cell<Option<Retained<RcTestObject>>>;
-            }
 
             unsafe impl RcIvar {
                 #[method_id(init)]
@@ -794,16 +752,10 @@ mod tests {
         }
 
         declare_class!(
+            #[unsafe(super(RcIvar))]
+            #[name = "RcIvarSubclass"]
+            #[ivars = RcIvarSubclassIvars]
             struct RcIvarSubclass;
-
-            unsafe impl ClassType for RcIvarSubclass {
-                type Super = RcIvar;
-                const NAME: &'static str = "RcIvarSubclass";
-            }
-
-            impl DeclaredClass for RcIvarSubclass {
-                type Ivars = RcIvarSubclassIvars;
-            }
 
             unsafe impl RcIvarSubclass {
                 #[method_id(init)]
@@ -865,17 +817,11 @@ mod tests {
     #[should_panic = "tried to access uninitialized instance variable"]
     fn access_invalid() {
         declare_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "InvalidAccess"]
+            // Type has to have a drop flag to detect invalid access
+            #[ivars = Retained<NSObject>]
             struct InvalidAccess;
-
-            unsafe impl ClassType for InvalidAccess {
-                type Super = NSObject;
-                const NAME: &'static str = "InvalidAccess";
-            }
-
-            impl DeclaredClass for InvalidAccess {
-                // Type has to have a drop flag to detect invalid access
-                type Ivars = Retained<NSObject>;
-            }
         );
 
         let obj = unsafe { init_only_superclasses(InvalidAccess::alloc()) };
@@ -888,14 +834,9 @@ mod tests {
     #[ignore = "panicking in Drop requires that we actually implement `dealloc` as `C-unwind`"]
     fn test_panic_in_drop() {
         declare_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "DropPanics"]
             struct DropPanics;
-
-            unsafe impl ClassType for DropPanics {
-                type Super = NSObject;
-                const NAME: &'static str = "DropPanics";
-            }
-
-            impl DeclaredClass for DropPanics {}
         );
 
         impl Drop for DropPanics {
@@ -922,16 +863,10 @@ mod tests {
         }
 
         declare_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "IvarDropPanics"]
+            #[ivars = DropPanics]
             struct IvarDropPanics;
-
-            unsafe impl ClassType for IvarDropPanics {
-                type Super = NSObject;
-                const NAME: &'static str = "IvarDropPanics";
-            }
-
-            impl DeclaredClass for IvarDropPanics {
-                type Ivars = DropPanics;
-            }
         );
 
         let obj = IvarDropPanics::alloc().set_ivars(DropPanics);
@@ -948,16 +883,11 @@ mod tests {
     #[test]
     fn test_retain_leak_in_drop() {
         declare_class!(
+            // SAFETY: Intentionally broken!
+            #[unsafe(super(NSObject))]
+            #[name = "DropRetainsAndLeaksSelf"]
             #[derive(Debug)]
             struct DropRetainsAndLeaksSelf;
-
-            // SAFETY: Intentionally broken!
-            unsafe impl ClassType for DropRetainsAndLeaksSelf {
-                type Super = NSObject;
-                const NAME: &'static str = "DropRetainsAndLeaksSelf";
-            }
-
-            impl DeclaredClass for DropRetainsAndLeaksSelf {}
         );
 
         unsafe impl Send for DropRetainsAndLeaksSelf {}

@@ -11,82 +11,116 @@
 /// though, since it contains a lot of extra debug assertions and niceties
 /// that help ensure the soundness of your code.
 ///
+/// The class is guaranteed to have been created and registered with the
+/// Objective-C runtime after the [`ClassType::class`] function has been
+/// called.
+///
 /// [`declare`]: crate::declare
+/// [`ClassType::class`]: crate::ClassType::class
 ///
 ///
 /// # Specification
 ///
-/// This macro consists of the following parts (the first three are required):
-/// - The type declaration.
-/// - The [`ClassType`] implementation.
-/// - The [`DeclaredClass`] implementation.
+/// This macro consists of the following parts:
+/// - The type declaration with special attributes.
 /// - Any number of inherent implementations.
 /// - Any number of protocol implementations.
 ///
 /// With the syntax generally resembling a combination of that in
 /// [`extern_class!`] and [`extern_methods!`].
 ///
-/// [`ClassType`]: crate::ClassType
-/// [`DeclaredClass`]: crate::DeclaredClass
-/// [`extern_class!`]: crate::extern_class
-/// [`extern_methods!`]: crate::extern_methods
-///
-///
-/// ## Type declaration
-///
-/// The type declaration works a lot like in [`extern_class!`], an opaque
-/// struct is created and a lot of traits is implemented for that struct.
-///
-/// You are allowed to add most common attributes to the declaration,
-/// including `#[cfg(...)]` and doc comments. ABI-modifying attributes like
-/// `#[repr(...)]` are not allowed.
-///
-/// `#[derive(...)]` attributes are allowed, but heavily discouraged, as they
-/// are likely to not work as you'd expect them to. This is being worked on in
-/// [#267].
+/// This macro creates an opaque struct with implementations in [a similar
+/// manner as the `extern_class!` macro][ec_spec]. Additionally, it implements
+/// the [`DeclaredClass`] trait, as well as any protocols specified in the
+/// protocol implementations.
 ///
 /// If the type implements [`Drop`], the macro will generate a `dealloc`
 /// method for you, which will call `drop` automatically.
 ///
-/// [#267]: https://github.com/madsmtm/objc2/issues/267
+/// The macro does not support generic types.
+///
+/// [`extern_class!`]: crate::extern_class
+/// [`extern_methods!`]: crate::extern_methods
+/// [ec_spec]: crate::extern_class#specification
+/// [`DeclaredClass`]: crate::DeclaredClass
 ///
 ///
-/// ## `ClassType` implementation
+/// ## Attributes
 ///
-/// This also resembles the syntax in [`extern_class!`], except that
-/// [`ClassType::NAME`] must be specified, and it must be unique across the
-/// entire application.
+/// You can add most normal attributes to the class, including `#[cfg(...)]`,
+/// `#[allow(...)]` and doc comments.
+///
+/// Exceptions and special attributes are noted below.
+///
+///
+/// ### `#[unsafe(super(...))]` (required)
+///
+/// Same [as in `extern_class!`](crate::extern_class#unsafesuper-required).
+///
+///
+/// ### `#[thread_kind = ...]` (optional)
+///
+/// Same [as in `extern_class!`](crate::extern_class#thread_kind---optional).
+///
+///
+/// ### `#[name = "..."]` (required)
+///
+/// This is required, and must be unique across the entire application.
 ///
 /// If you're developing a library, good practice here would be to include
 /// your crate name in the prefix (something like `"MyLibrary_MyClass"`).
 ///
-/// The class is guaranteed to have been created and registered with the
-/// Objective-C runtime after the [`ClassType::class`] function has been
-/// called.
 ///
-/// [`ClassType::NAME`]: crate::ClassType::NAME
-/// [`ClassType::class`]: crate::ClassType::class
+/// ### `#[ivars = ...]` (optional)
 ///
-///
-/// ## `DeclaredClass` implementation
-///
-/// The syntax here is as if you were implementing the trait yourself.
-///
-/// You may optionally specify the associated type [`Ivars`]; this is the
-/// intended way to specify the data your class stores. If you don't specify
-/// any ivars, the macro will default to [`()`][unit].
+/// Controls [the instance variables] of the class; this is the intended way
+/// to specify the data your class stores. If you don't set this attribute,
+/// the macro will default to [`()`][unit].
 ///
 /// It is recommended that you wrap your instance variables in [`Cell`],
 /// [`RefCell`], atomics or other similar interior mutability abstractions to
-/// allow mutating your instance variables.
+/// allow mutating your instance variables. See [the docs on interior
+/// mutability][interior_mutability] for further details.
 ///
 /// Beware that if you want to use the class' inherited initializers (such as
 /// `init`), you must override the subclass' designated initializers, and
 /// initialize your ivars properly in there.
 ///
-/// [`Ivars`]: crate::DeclaredClass::Ivars
+/// [the instance variables]: crate::DeclaredClass::Ivars
 /// [`Cell`]: core::cell::Cell
 /// [`RefCell`]: core::cell::RefCell
+/// [interior_mutability]: crate::topics::interior_mutability
+///
+///
+/// ### `#[derive(...)]`
+///
+/// This is overridden, and only works with [`PartialEq`], [`Eq`], [`Hash`]
+/// and [`Debug`].
+///
+/// The implementations delegate to the superclass' implementation, so if you
+/// want to change how they work, you should override the [`isEqual:`] and
+/// [`hash`] methods instead.
+///
+/// The `Debug` implementation currently also debug print your ivars, but that
+/// may change in the future. Prefer to override [`description`] (and
+/// potentially [`debugDescription`]) instead.
+///
+/// [`Hash`]: std::hash::Hash
+/// [`Debug`]: std::fmt::Debug
+/// [`isEqual:`]: crate::runtime::NSObjectProtocol::isEqual
+/// [`hash`]: crate::runtime::NSObjectProtocol::hash
+/// [`description`]: crate::runtime::NSObjectProtocol::description
+/// [`debugDescription`]: crate::runtime::NSObjectProtocol::debugDescription
+///
+///
+/// ### `#[cfg_attr(..., ...)]`
+///
+/// Same [as in `extern_class!`](crate::extern_class#cfg_attr-).
+///
+///
+/// ### `#[repr(...)]`
+///
+/// Same [as in `extern_class!`](crate::extern_class#repr).
 ///
 ///
 /// ## Inherent method definitions
@@ -171,7 +205,7 @@
 ///
 /// Using this macro requires writing a few `unsafe` markers:
 ///
-/// `unsafe impl ClassType for T` has the following safety requirements:
+/// When writing `#[unsafe(super(...))]`, you must ensure that:
 /// - Any invariants that the superclass [`ClassType::Super`] may have must be
 ///   upheld.
 /// - If your type implements `Drop`, the implementation must abide by the
@@ -241,22 +275,16 @@
 /// }
 ///
 /// declare_class!(
-///     struct MyCustomObject;
-///
 ///     // SAFETY:
 ///     // - The superclass NSObject does not have any subclassing requirements.
 ///     // - `MyCustomObject` does not implement `Drop`.
-///     unsafe impl ClassType for MyCustomObject {
-///         type Super = NSObject;
-///         // If we were implementing delegate methods like `NSApplicationDelegate`,
-///         // we would specify the object to only be usable on the main thread:
-///         // type ThreadKind = dyn MainThreadOnly;
-///         const NAME: &'static str = "MyCustomObject";
-///     }
-///
-///     impl DeclaredClass for MyCustomObject {
-///         type Ivars = Ivars;
-///     }
+///     #[unsafe(super(NSObject))]
+///     // If we were implementing delegate methods like `NSApplicationDelegate`,
+///     // we would specify the object to only be usable on the main thread:
+///     // #[thread_kind = MainThreadOnly]
+///     #[name = "MyCustomObject"]
+///     #[ivars = Ivars]
+///     struct MyCustomObject;
 ///
 ///     unsafe impl MyCustomObject {
 ///         #[method_id(initWithFoo:)]
@@ -404,32 +432,66 @@
 #[macro_export]
 macro_rules! declare_class {
     {
-        $(#[$m:meta])*
-        $v:vis struct $name:ident;
+        // The following special attributes are supported:
+        // - #[unsafe(super($($superclasses:path),*))]
+        // - #[unsafe(super = $superclass:path)]
+        // - #[thread_kind = $thread_kind:path]
+        // - #[name = $name:literal]
+        // - #[ivars = $ivars:path]
+        $(#[$($attrs:tt)*])*
+        $v:vis struct $class:ident;
 
-        unsafe impl ClassType for $for_class:ty {
-            $(#[inherits($($inheritance_rest:ty),+)])?
-            type Super = $superclass:ty;
-
-            $(type ThreadKind = $thread_kind:ty;)?
-
-            const NAME: &'static str = $name_const:expr;
-        }
-
-        impl DeclaredClass for $for_declared:ty {
-            $(type Ivars = $ivars:ty;)?
-        }
-
+        // unsafe impl Protocol for $class { ... }
+        // unsafe impl $class { ... }
         $($impls:tt)*
     } => {
-        $(#[$m])*
+        // Struct and various impls.
+        $crate::__extract_struct_attributes! {
+            ($(#[$($attrs)*])*)
+
+            ($crate::__declare_class_inner)
+            ($v)
+            ($class)
+            ($($impls)*)
+        }
+
+        // Methods.
+        $crate::__declare_class_output_impls! {
+            $($impls)*
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_inner {
+    (
+        ($v:vis)
+        ($class:ident)
+        ($($impls:tt)*)
+
+        ($($safety:tt $superclass:path $(, $superclasses:path)* $(,)?)?)
+        ($($($thread_kind:tt)+)?)
+        ($($name:tt)*)
+        ($($ivars:tt)*)
+        ($($derives:tt)*)
+        ($($attr_struct:tt)*)
+        ($($attr_impl:tt)*)
+    ) => {
+        // Ensure that the type has the same layout as the superclass.
+        // #[repr(transparent)] doesn't work because the superclass is a ZST.
         #[repr(C)]
-        $v struct $name {
+        $($attr_struct)*
+        $v struct $class {
             // Superclasses are deallocated by calling `[super dealloc]`.
             //
             // Auto traits are taken from `__SubclassingType` (which is
             // usually the super class).
-            __superclass: $crate::__macro_helpers::ManuallyDrop<<$superclass as $crate::ClassType>::__SubclassingType>,
+            __superclass: $crate::__macro_helpers::ManuallyDrop<$crate::__fallback_if_not_set! {
+                ($(<$superclass as $crate::ClassType>::__SubclassingType)?)
+                // For better diagnostics, see also __extern_class_inner!
+                ($crate::runtime::NSObject)
+            }>,
             __phantom: $crate::__macro_helpers::PhantomData<(
                 // Include ivars for auto traits.
                 <Self as $crate::DeclaredClass>::Ivars,
@@ -439,14 +501,20 @@ macro_rules! declare_class {
         }
 
         $crate::__extern_class_impl_traits! {
-            ()
-            // SAFETY: Upheld by caller
+            ($($attr_impl)*)
             (unsafe impl)
-            ($for_class)
-            ($superclass, $($($inheritance_rest,)+)? $crate::runtime::AnyObject)
+            ($class)
+            ($($superclass, $($superclasses,)*)? $crate::runtime::AnyObject)
+        }
+
+        $crate::__declare_class_derives! {
+            ($($attr_impl)*)
+            ($class)
+            ($($derives)*)
         }
 
         // Anonymous block to hide the shared statics
+        $($attr_impl)*
         const _: () = {
             static __OBJC2_CLASS: $crate::__macro_helpers::SyncUnsafeCell<
                 $crate::__macro_helpers::MaybeUninit<&'static $crate::runtime::AnyClass>
@@ -459,16 +527,23 @@ macro_rules! declare_class {
             > = $crate::__macro_helpers::SyncUnsafeCell::new($crate::__macro_helpers::MaybeUninit::uninit());
 
             // Creation
-            unsafe impl ClassType for $for_class {
-                type Super = $superclass;
-
-                type ThreadKind = $crate::__fallback_if_not_set! {
-                    ($($thread_kind)?)
-                    // Default to the super class' thread kind
-                    (<$superclass as $crate::ClassType>::ThreadKind)
+            unsafe impl $crate::ClassType for $class {
+                type Super = $crate::__fallback_if_not_set! {
+                    ($($superclass)?)
+                    // For better diagnostics, see also __extern_class_inner!
+                    ($crate::runtime::NSObject)
                 };
 
-                const NAME: &'static $crate::__macro_helpers::str = $name_const;
+                type ThreadKind = $crate::__fallback_if_not_set! {
+                    ($(dyn ($($thread_kind)+))?)
+                    // Default to the super class' thread kind
+                    (<<Self as $crate::ClassType>::Super as $crate::ClassType>::ThreadKind)
+                };
+
+                const NAME: &'static $crate::__macro_helpers::str = $crate::__fallback_if_not_set! {
+                    ($($name)*)
+                    ($crate::__macro_helpers::compile_error!("must set name of class with #[name = ...]"))
+                };
 
                 fn class() -> &'static $crate::runtime::AnyClass {
                     let _ = <Self as $crate::__macro_helpers::ValidThreadKind<Self::ThreadKind>>::check;
@@ -515,7 +590,7 @@ macro_rules! declare_class {
                 type __SubclassingType = Self;
             }
 
-            impl DeclaredClass for $for_declared {
+            impl $crate::DeclaredClass for $class {
                 type Ivars = $crate::__select_ivars!($($ivars)?);
 
                 #[inline]
@@ -556,14 +631,154 @@ macro_rules! declare_class {
             }
         };
 
-        // Methods
-        $crate::__declare_class_output_impls! {
-            $($impls)*
-        }
-
         // SAFETY: This macro only allows non-generic classes and non-generic
         // classes are always valid downcast targets.
-        unsafe impl $crate::DowncastTarget for $name {}
+        $($attr_impl)*
+        unsafe impl $crate::DowncastTarget for $class {}
+
+        $($attr_impl)*
+        $crate::__extern_class_check_super_unsafe!($($safety $superclass)?);
+    };
+}
+
+/// Mirror of [`crate::__extern_class_derives`].
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_derives {
+    // Base case
+    (
+        ($($attr_impl:tt)*)
+        ($for:path)
+        ($(,)*)
+    ) => {};
+
+    // Debug
+    (
+        ($($attr_impl:tt)*)
+        ($for:path)
+        (
+            $(,)*
+            Debug
+            $($rest:tt)*
+        )
+    ) => {
+        $($attr_impl)*
+        #[automatically_derived]
+        impl $crate::__macro_helpers::fmt::Debug for $for {
+            fn fmt(&self, f: &mut $crate::__macro_helpers::fmt::Formatter<'_>) -> $crate::__macro_helpers::fmt::Result {
+                f.debug_struct($crate::__macro_helpers::stringify!($for))
+                    .field("super", &**self.__superclass)
+                    .field("ivars", <Self as $crate::DeclaredClass>::ivars(self))
+                    .finish()
+            }
+        }
+
+        $crate::__declare_class_derives! {
+            ($($attr_impl)*)
+            ($for)
+            ($($rest)*)
+        }
+    };
+
+    // PartialEq
+    (
+        ($($attr_impl:tt)*)
+        ($for:path)
+        (
+            $(,)*
+            PartialEq
+            $($rest:tt)*
+        )
+    ) => {
+        $($attr_impl)*
+        #[automatically_derived]
+        impl $crate::__macro_helpers::PartialEq for $for {
+            #[inline]
+            fn eq(&self, other: &Self) -> $crate::__macro_helpers::bool {
+                // Delegate to the superclass (referential equality)
+                $crate::__macro_helpers::PartialEq::eq(&self.__superclass, &other.__superclass)
+            }
+        }
+
+        $crate::__declare_class_derives! {
+            ($($attr_impl)*)
+            ($for)
+            ($($rest)*)
+        }
+    };
+
+    // Eq
+    (
+        ($($attr_impl:tt)*)
+        ($for:path)
+        (
+            $(,)*
+            Eq
+            $($rest:tt)*
+        )
+    ) => {
+        $($attr_impl)*
+        #[automatically_derived]
+        impl $crate::__macro_helpers::Eq for $for {}
+
+        $crate::__declare_class_derives! {
+            ($($attr_impl)*)
+            ($for)
+            ($($rest)*)
+        }
+    };
+
+    // Hash
+    (
+        ($($attr_impl:tt)*)
+        ($for:path)
+        (
+            $(,)*
+            Hash
+            $($rest:tt)*
+        )
+    ) => {
+        $($attr_impl)*
+        #[automatically_derived]
+        impl $crate::__macro_helpers::Hash for $for {
+            #[inline]
+            fn hash<H: $crate::__macro_helpers::Hasher>(&self, state: &mut H) {
+                // Delegate to the superclass (which hashes the reference)
+                $crate::__macro_helpers::Hash::hash(&self.__superclass, state)
+            }
+        }
+
+        $crate::__declare_class_derives! {
+            ($($attr_impl)*)
+            ($for)
+            ($($rest)*)
+        }
+    };
+
+    // Unhandled derive
+    (
+        ($($attr_impl:tt)*)
+        ($for:path)
+        (
+            $(,)*
+            $derive:path
+            $(, $($rest:tt)*)?
+        )
+    ) => {
+        const _: () = {
+            // For better diagnostics.
+            #[derive($derive)]
+            struct Derive;
+        };
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::stringify!(
+            #[derive($derive)] is not supported in declare_class!
+        ));
+
+        $crate::__declare_class_derives! {
+            ($($attr_impl)*)
+            ($for)
+            ($($($rest)*)?)
+        }
     };
 }
 

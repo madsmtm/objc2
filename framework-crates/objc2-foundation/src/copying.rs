@@ -116,20 +116,15 @@ extern_protocol!(
     /// Implement `NSCopying` for a custom class.
     ///
     /// ```
-    /// use objc2::{declare_class, msg_send_id, AllocAnyThread, ClassType, DeclaredClass};
+    /// use objc2::{declare_class, msg_send_id, AllocAnyThread, DeclaredClass};
     /// use objc2::rc::Retained;
     /// use objc2::runtime::NSZone;
     /// use objc2_foundation::{CopyingHelper, NSCopying, NSObject};
     ///
     /// declare_class!(
+    ///     #[unsafe(super(NSObject))]
+    ///     #[name = "CustomClass"]
     ///     struct CustomClass;
-    ///
-    ///     unsafe impl ClassType for CustomClass {
-    ///         type Super = NSObject;
-    ///         const NAME: &'static str = "CustomClass";
-    ///     }
-    ///
-    ///     impl DeclaredClass for CustomClass {}
     ///
     ///     unsafe impl NSCopying for CustomClass {
     ///         #[method_id(copyWithZone:)]

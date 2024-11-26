@@ -6,9 +6,7 @@ use core::{cell::OnceCell, ptr::NonNull};
 
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2::{
-    declare_class, msg_send_id, ClassType, DeclaredClass, MainThreadMarker, MainThreadOnly,
-};
+use objc2::{declare_class, msg_send_id, DeclaredClass, MainThreadMarker, MainThreadOnly};
 #[cfg(target_os = "macos")]
 use objc2_app_kit::{
     NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSBackingStoreType,
@@ -67,21 +65,15 @@ struct Ivars {
 
 // declare the Objective-C class machinery
 declare_class!(
-    struct Delegate;
-
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
     // - `MainThreadOnly` is correct, since this is an application delegate.
     // - `Delegate` does not implement `Drop`.
-    unsafe impl ClassType for Delegate {
-        type Super = NSObject;
-        type ThreadKind = dyn MainThreadOnly;
-        const NAME: &'static str = "Delegate";
-    }
-
-    impl DeclaredClass for Delegate {
-        type Ivars = Ivars;
-    }
+    #[unsafe(super(NSObject))]
+    #[thread_kind = MainThreadOnly]
+    #[name = "Delegate"]
+    #[ivars = Ivars]
+    struct Delegate;
 
     unsafe impl NSObjectProtocol for Delegate {}
 

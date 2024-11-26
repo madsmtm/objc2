@@ -2,9 +2,9 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -37,9 +37,9 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -72,9 +72,9 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -111,9 +111,9 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -150,9 +150,9 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -176,9 +176,9 @@ error[E0277]: the trait bound `Retained<CustomObject>: Encode` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -213,9 +213,9 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -239,9 +239,9 @@ error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -276,9 +276,9 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -302,9 +302,9 @@ error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -339,9 +339,9 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -365,9 +365,9 @@ error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -402,9 +402,9 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -428,9 +428,9 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -454,9 +454,9 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -480,9 +480,9 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );

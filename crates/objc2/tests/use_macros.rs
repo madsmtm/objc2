@@ -1,15 +1,10 @@
 use objc2::runtime::{AnyClass, NSObject};
-use objc2::{class, declare_class, msg_send, sel, ClassType, DeclaredClass};
+use objc2::{class, declare_class, msg_send, sel};
 
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "MyObject"]
     pub struct MyObject;
-
-    unsafe impl ClassType for MyObject {
-        type Super = NSObject;
-        const NAME: &'static str = "MyObject";
-    }
-
-    impl DeclaredClass for MyObject {}
 );
 
 #[test]

@@ -194,15 +194,13 @@ where
 mod tests {
     use alloc::format;
     use core::ffi::CStr;
-    use core::mem::ManuallyDrop;
 
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 
     use super::*;
     use crate::runtime::{ClassBuilder, NSObject};
     use crate::{
-        declare_class, extern_methods, extern_protocol, msg_send_id, ClassType, DeclaredClass,
-        ProtocolType,
+        declare_class, extern_methods, extern_protocol, msg_send_id, ClassType, ProtocolType,
     };
 
     extern_protocol!(
@@ -254,15 +252,10 @@ mod tests {
     );
 
     declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "ProtocolTestsDummyClass"]
         #[derive(Debug, PartialEq, Eq, Hash)]
         struct DummyClass;
-
-        unsafe impl ClassType for DummyClass {
-            type Super = NSObject;
-            const NAME: &'static str = "ProtocolTestsDummyClass";
-        }
-
-        impl DeclaredClass for DummyClass {}
 
         unsafe impl NSObjectProtocol for DummyClass {}
     );
@@ -368,10 +361,7 @@ mod tests {
 
         assert_eq!(
             format!("{obj:?}"),
-            format!(
-                "DummyClass {{ __superclass: {:?}, __phantom: PhantomData<((), objc2::__macro_helpers::declare_class::ThreadKindAutoTraits<dyn objc2::top_level_traits::AllocAnyThread>)> }}",
-                ManuallyDrop::new(foobar)
-            ),
+            format!("DummyClass {{ super: {foobar:?}, ivars: () }}"),
         );
         assert_eq!(obj == obj2, foobar == foobar2);
 

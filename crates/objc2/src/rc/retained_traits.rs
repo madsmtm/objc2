@@ -118,18 +118,13 @@ impl<T, U: RetainedFromIterator<T>> FromIterator<T> for Retained<U> {
 mod tests {
     use super::*;
     use crate::runtime::NSObject;
-    use crate::{declare_class, msg_send_id, ClassType, DeclaredClass};
+    use crate::{declare_class, msg_send_id, ClassType};
 
     declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "MyCustomCollection"]
         #[derive(PartialEq, Eq, Hash, Debug)]
         struct Collection;
-
-        unsafe impl ClassType for Collection {
-            type Super = NSObject;
-            const NAME: &'static str = "MyCustomCollection";
-        }
-
-        impl DeclaredClass for Collection {}
     );
 
     impl DefaultRetained for Collection {

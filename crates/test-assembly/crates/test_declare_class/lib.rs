@@ -13,14 +13,9 @@ use objc2_foundation::{CopyingHelper, NSCopying, NSObject, NSObjectProtocol, NSZ
 
 declare_class!(
     #[no_mangle]
+    #[unsafe(super(NSObject))]
+    #[name = "NoIvars"]
     pub struct NoIvars;
-
-    unsafe impl ClassType for NoIvars {
-        type Super = NSObject;
-        const NAME: &'static str = "NoIvars";
-    }
-
-    impl DeclaredClass for NoIvars {}
 
     unsafe impl NoIvars {
         #[no_mangle]
@@ -81,16 +76,10 @@ pub struct ForgetableIvarsIvars {
 
 declare_class!(
     #[no_mangle]
+    #[unsafe(super(NSObject))]
+    #[name = "ForgetableIvars"]
+    #[ivars = ForgetableIvarsIvars]
     pub struct ForgetableIvars;
-
-    unsafe impl ClassType for ForgetableIvars {
-        type Super = NSObject;
-        const NAME: &'static str = "ForgetableIvars";
-    }
-
-    impl DeclaredClass for ForgetableIvars {
-        type Ivars = ForgetableIvarsIvars;
-    }
 
     unsafe impl ForgetableIvars {
         #[no_mangle]
@@ -121,16 +110,10 @@ pub struct DropIvarsIvars {
 
 declare_class!(
     #[no_mangle]
+    #[unsafe(super(NSObject))]
+    #[name = "DropIvars"]
+    #[ivars = DropIvarsIvars]
     pub struct DropIvars;
-
-    unsafe impl ClassType for DropIvars {
-        type Super = NSObject;
-        const NAME: &'static str = "DropIvars";
-    }
-
-    impl DeclaredClass for DropIvars {
-        type Ivars = DropIvarsIvars;
-    }
 
     unsafe impl DropIvars {
         #[no_mangle]

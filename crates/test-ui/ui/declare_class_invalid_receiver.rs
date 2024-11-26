@@ -1,17 +1,12 @@
 #![allow(unused_variables)]
+use objc2::declare_class;
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::{AnyClass, NSObject};
-use objc2::{declare_class, ClassType, DeclaredClass};
 
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "CustomObject"]
     struct CustomObject;
-
-    unsafe impl ClassType for CustomObject {
-        type Super = NSObject;
-        const NAME: &'static str = "CustomObject";
-    }
-
-    impl DeclaredClass for CustomObject {}
 
     unsafe impl CustomObject {
         #[method(testBox)]

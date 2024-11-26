@@ -4,9 +4,9 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use static_assertions::assert_not_impl_any;
 
 use crate::*;
+use objc2::declare_class;
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
-use objc2::{declare_class, ClassType, DeclaredClass};
 
 // We expect most Foundation types to be UnwindSafe and RefUnwindSafe,
 // since they follow Rust's usual mutability rules (&T = immutable).
@@ -30,14 +30,9 @@ fn assert_auto_traits<T: Send + Sync + UnwindSafe + RefUnwindSafe>() {
 }
 
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "SendSyncObject"]
     struct SendSyncObject;
-
-    unsafe impl ClassType for SendSyncObject {
-        type Super = NSObject;
-        const NAME: &'static str = "SendSyncObject";
-    }
-
-    impl DeclaredClass for SendSyncObject {}
 );
 
 #[test]

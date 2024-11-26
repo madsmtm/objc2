@@ -1,9 +1,7 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2::{
-    declare_class, msg_send_id, ClassType, DeclaredClass, MainThreadMarker, MainThreadOnly,
-};
+use objc2::{declare_class, msg_send_id, DeclaredClass, MainThreadMarker, MainThreadOnly};
 use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate};
 use objc2_foundation::{
     ns_string, NSCopying, NSNotification, NSObject, NSObjectProtocol, NSString,
@@ -21,20 +19,14 @@ struct Ivars {
 }
 
 declare_class!(
-    struct AppDelegate;
-
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
     // - `AppDelegate` does not implement `Drop`.
-    unsafe impl ClassType for AppDelegate {
-        type Super = NSObject;
-        type ThreadKind = dyn MainThreadOnly;
-        const NAME: &'static str = "MyAppDelegate";
-    }
-
-    impl DeclaredClass for AppDelegate {
-        type Ivars = Ivars;
-    }
+    #[unsafe(super(NSObject))]
+    #[thread_kind = MainThreadOnly]
+    #[name = "MyAppDelegate"]
+    #[ivars = Ivars]
+    struct AppDelegate;
 
     unsafe impl NSObjectProtocol for AppDelegate {}
 
@@ -44,6 +36,8 @@ declare_class!(
             println!("Did finish launching!");
             // Do something with the notification
             dbg!(notification);
+            // Access instance variables
+            dbg!(self.ivars());
         }
 
         #[method(applicationWillTerminate:)]

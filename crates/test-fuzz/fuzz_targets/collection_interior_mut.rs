@@ -48,16 +48,10 @@ struct KeyIvars {
 }
 
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "Key"]
+    #[ivars = KeyIvars]
     struct Key;
-
-    unsafe impl ClassType for Key {
-        type Super = NSObject;
-        const NAME: &'static str = "Key";
-    }
-
-    impl DeclaredClass for Key {
-        type Ivars = KeyIvars;
-    }
 
     unsafe impl NSObjectProtocol for Key {
         #[method(isEqual:)]

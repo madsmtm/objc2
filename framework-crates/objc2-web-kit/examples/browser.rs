@@ -7,7 +7,7 @@ use objc2::{
     declare_class, msg_send_id,
     rc::Retained,
     runtime::{AnyObject, ProtocolObject, Sel},
-    sel, ClassType, DeclaredClass, MainThreadMarker, MainThreadOnly,
+    sel, DeclaredClass, MainThreadMarker, MainThreadOnly,
 };
 #[allow(deprecated)]
 #[cfg(target_os = "macos")]
@@ -53,21 +53,15 @@ struct Ivars {
 }
 
 declare_class!(
-    struct Delegate;
-
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
     // - `MainThreadOnly` is correct, since this is an application delegate.
     // - `Delegate` does not implement `Drop`.
-    unsafe impl ClassType for Delegate {
-        type Super = NSObject;
-        type ThreadKind = dyn MainThreadOnly;
-        const NAME: &'static str = "Delegate";
-    }
-
-    impl DeclaredClass for Delegate {
-        type Ivars = Ivars;
-    }
+    #[unsafe(super(NSObject))]
+    #[thread_kind = MainThreadOnly]
+    #[name = "Delegate"]
+    #[ivars = Ivars]
+    struct Delegate;
 
     unsafe impl NSObjectProtocol for Delegate {}
 
@@ -105,7 +99,8 @@ declare_class!(
             // create the nav bar view
             let nav_bar = {
                 let frame_rect = NSRect::ZERO;
-                let this = unsafe { NSStackView::initWithFrame(NSStackView::alloc(mtm), frame_rect) };
+                let this =
+                    unsafe { NSStackView::initWithFrame(NSStackView::alloc(mtm), frame_rect) };
                 unsafe {
                     this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
                     this.setAlignment(NSLayoutAttribute::Height);
@@ -118,7 +113,8 @@ declare_class!(
             // create the nav buttons view
             let nav_buttons = {
                 let frame_rect = NSRect::ZERO;
-                let this = unsafe { NSStackView::initWithFrame(NSStackView::alloc(mtm), frame_rect) };
+                let this =
+                    unsafe { NSStackView::initWithFrame(NSStackView::alloc(mtm), frame_rect) };
                 unsafe {
                     this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
                     this.setAlignment(NSLayoutAttribute::Height);
@@ -166,7 +162,8 @@ declare_class!(
             // create the url text field
             let nav_url = {
                 let frame_rect = NSRect::ZERO;
-                let this = unsafe { NSTextField::initWithFrame(NSTextField::alloc(mtm), frame_rect) };
+                let this =
+                    unsafe { NSTextField::initWithFrame(NSTextField::alloc(mtm), frame_rect) };
                 unsafe {
                     this.setDrawsBackground(true);
                     this.setBackgroundColor(Some(&NSColor::lightGrayColor()));
@@ -183,7 +180,8 @@ declare_class!(
             // create the window content view
             let content_view = {
                 let frame_rect = window.frame();
-                let this = unsafe { NSStackView::initWithFrame(NSStackView::alloc(mtm), frame_rect) };
+                let this =
+                    unsafe { NSStackView::initWithFrame(NSStackView::alloc(mtm), frame_rect) };
                 unsafe {
                     this.setOrientation(NSUserInterfaceLayoutOrientation::Vertical);
                     this.setAlignment(NSLayoutAttribute::Width);

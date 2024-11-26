@@ -2,9 +2,9 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
  --> ui/declare_class_mut_self_not_mutable.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -35,9 +35,9 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
  --> ui/declare_class_mut_self_not_mutable.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -68,9 +68,9 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
  --> ui/declare_class_mut_self_not_mutable.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -101,9 +101,9 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
  --> ui/declare_class_mut_self_not_mutable.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );

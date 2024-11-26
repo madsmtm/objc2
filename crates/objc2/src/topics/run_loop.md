@@ -53,20 +53,14 @@ struct AppState {
 }
 
 declare_class!(
-    struct AppDelegate;
-
     // SAFETY:
     // - NSObject does not have any subclassing requirements.
     // - `AppDelegate` does not implement `Drop`.
-    unsafe impl ClassType for AppDelegate {
-        type Super = NSObject;
-        type ThreadKind = dyn MainThreadOnly;
-        const NAME: &'static str = "AppDelegate";
-    }
-
-    impl DeclaredClass for AppDelegate {
-        type Ivars = AppState;
-    }
+    #[unsafe(super(NSObject))]
+    #[thread_kind = MainThreadOnly]
+    #[name = "AppDelegate"]
+    #[ivars = AppState]
+    struct AppDelegate;
 
     unsafe impl AppDelegate {
         // Called by `NSApplicationMain`, `UIApplicationMain`

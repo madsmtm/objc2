@@ -2,9 +2,9 @@ error[E0271]: type mismatch resolving `<Retained<NSObject> as MaybeUnwrap>::Inpu
  --> ui/declare_class_invalid_type2.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );
@@ -19,9 +19,9 @@ error[E0277]: the trait bound `i32: MaybeOptionRetained` is not satisfied
  --> ui/declare_class_invalid_type2.rs
   |
   | / declare_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
 ... |
   | |     }
   | | );

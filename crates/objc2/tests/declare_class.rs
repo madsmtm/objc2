@@ -6,22 +6,38 @@ use std::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
-use objc2::{
-    declare_class, extern_methods, sel, AllocAnyThread, ClassType, DeclaredClass, MainThreadOnly,
-};
+use objc2::{declare_class, extern_methods, sel, ClassType, MainThreadOnly};
 use static_assertions::{assert_impl_all, assert_not_impl_any};
 
 // Test that adding the `deprecated` attribute does not mean that warnings
 // when using the method internally are output.
+#[test]
+fn allow_deprecated() {
+    #![deny(deprecated)]
+
+    // Test allow propagates to impls
+    declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "AllowDeprecated"]
+        #[deprecated]
+        #[allow(deprecated)]
+        struct AllowDeprecated;
+
+        #[expect(deprecated)]
+        unsafe impl AllowDeprecated {
+            #[method(someMethod)]
+            fn some_method() {}
+        }
+    );
+
+    #[expect(deprecated)]
+    let _ = AllowDeprecated::class();
+}
+
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "DeclareClassDeprecatedMethod"]
     struct DeclareClassDeprecatedMethod;
-
-    unsafe impl ClassType for DeclareClassDeprecatedMethod {
-        type Super = NSObject;
-        const NAME: &'static str = "DeclareClassDeprecatedMethod";
-    }
-
-    impl DeclaredClass for DeclareClassDeprecatedMethod {}
 
     #[deprecated]
     unsafe impl DeclareClassDeprecatedMethod {
@@ -41,19 +57,37 @@ fn test_deprecated() {
     let _cls = DeclareClassDeprecatedMethod::class();
 }
 
-// Test that `cfg` works properly.
-//
-// We use `debug_assertions` here because it's something that we know our CI
-// already tests.
+#[test]
+fn cfg() {
+    // Test `cfg`. We use `debug_assertions` here because it's something that we
+    // know our CI already tests.
+
+    declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "OnlyOnDebugAssertions"]
+        #[cfg(debug_assertions)]
+        struct OnlyOnDebugAssertions;
+    );
+
+    #[cfg(debug_assertions)]
+    let _ = OnlyOnDebugAssertions::class();
+
+    declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "NeverOnDebugAssertions"]
+        #[cfg(not(debug_assertions))]
+        struct NeverOnDebugAssertions;
+    );
+
+    #[cfg(not(debug_assertions))]
+    let _ = NeverOnDebugAssertions::class();
+}
+
+// Test that `cfg` in methods.
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "DeclareClassCfg"]
     struct DeclareClassCfg;
-
-    unsafe impl ClassType for DeclareClassCfg {
-        type Super = NSObject;
-        const NAME: &'static str = "DeclareClassCfg";
-    }
-
-    impl DeclaredClass for DeclareClassCfg {}
 
     unsafe impl DeclareClassCfg {
         #[cfg(debug_assertions)]
@@ -189,14 +223,9 @@ fn test_method_that_is_never_available() {
 }
 
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "TestMultipleColonSelector"]
     struct TestMultipleColonSelector;
-
-    unsafe impl ClassType for TestMultipleColonSelector {
-        type Super = NSObject;
-        const NAME: &'static str = "TestMultipleColonSelector";
-    }
-
-    impl DeclaredClass for TestMultipleColonSelector {}
 
     unsafe impl TestMultipleColonSelector {
         #[method(test::arg3:)]
@@ -263,14 +292,9 @@ fn test_multiple_colon_selector() {
 }
 
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "DeclareClassAllTheBool"]
     struct DeclareClassAllTheBool;
-
-    unsafe impl ClassType for DeclareClassAllTheBool {
-        type Super = NSObject;
-        const NAME: &'static str = "DeclareClassAllTheBool";
-    }
-
-    impl DeclaredClass for DeclareClassAllTheBool {}
 
     unsafe impl DeclareClassAllTheBool {
         #[method(returnsBool)]
@@ -327,14 +351,9 @@ fn test_all_the_bool() {
 }
 
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "DeclareClassUnreachable"]
     struct DeclareClassUnreachable;
-
-    unsafe impl ClassType for DeclareClassUnreachable {
-        type Super = NSObject;
-        const NAME: &'static str = "DeclareClassUnreachable";
-    }
-
-    impl DeclaredClass for DeclareClassUnreachable {}
 
     // Ensure none of these warn
     unsafe impl DeclareClassUnreachable {
@@ -376,15 +395,10 @@ fn test_unreachable() {
 }
 
 declare_class!(
+    #[unsafe(super(NSObject))]
+    #[name = "OutParam"]
     #[derive(Debug)]
     struct OutParam;
-
-    unsafe impl ClassType for OutParam {
-        type Super = NSObject;
-        const NAME: &'static str = "OutParam";
-    }
-
-    impl DeclaredClass for OutParam {}
 
     unsafe impl OutParam {
         #[method(unsupported1:)]
@@ -465,15 +479,10 @@ fn out_param4() {
 #[test]
 fn test_pointer_receiver_allowed() {
     declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "PointerReceiver"]
         #[derive(Debug)]
         struct PointerReceiver;
-
-        unsafe impl ClassType for PointerReceiver {
-            type Super = NSObject;
-            const NAME: &'static str = "PointerReceiver";
-        }
-
-        impl DeclaredClass for PointerReceiver {}
 
         unsafe impl PointerReceiver {
             #[method(constPtr)]
@@ -508,86 +517,75 @@ fn test_auto_traits() {
     assert_impl_all!(NotUnwindSafe: Send, Sync, Unpin);
     assert_not_impl_any!(NotUnwindSafe: UnwindSafe, RefUnwindSafe);
 
-    macro_rules! create {
-        (
-            #[thread_kind = $thread_kind:path]
-            #[ivars = $ivars:ty]
-            struct $name:ident: $superclass:ty;
-        ) => {
-            declare_class!(
-                #[derive(Debug)]
-                struct $name;
-
-                unsafe impl ClassType for $name {
-                    type Super = $superclass;
-                    type ThreadKind = dyn $thread_kind;
-                    const NAME: &'static str = stringify!($name);
-                }
-
-                impl DeclaredClass for $name {
-                    type Ivars = $ivars;
-                }
-            );
-
-            let _ = $name::class();
-        };
-    }
-
     // Superclass propagates.
 
-    create! {
-        #[thread_kind = AllocAnyThread]
+    declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "NonThreadSafeHelper"]
         #[ivars = (NotSend, NotSync, NotUnwindSafe)]
-        struct NonThreadSafeHelper: NSObject;
-    }
-    create! {
-        #[thread_kind = AllocAnyThread]
+        struct NonThreadSafeHelper;
+    );
+    declare_class!(
+        #[unsafe(super(NonThreadSafeHelper))]
+        #[name = "InheritsCustomWithNonSendIvar"]
         #[ivars = ()]
-        struct InheritsCustomWithNonSendIvar: NonThreadSafeHelper;
-    }
+        struct InheritsCustomWithNonSendIvar;
+    );
+    let _ = InheritsCustomWithNonSendIvar::class();
     assert_not_impl_any!(InheritsCustomWithNonSendIvar: Unpin, Send, Sync, UnwindSafe, RefUnwindSafe);
 
     // Main thread only. Not Send + Sync.
 
-    create! {
+    declare_class!(
+        #[unsafe(super(NSObject))]
         #[thread_kind = MainThreadOnly]
+        #[name = "InheritsNSObjectMainThreadOnly"]
         #[ivars = ()]
-        struct InheritsNSObjectMainThreadOnly: NSObject;
-    }
+        struct InheritsNSObjectMainThreadOnly;
+    );
+    let _ = InheritsNSObjectMainThreadOnly::class();
     assert_impl_all!(InheritsNSObjectMainThreadOnly: UnwindSafe, RefUnwindSafe);
     assert_not_impl_any!(InheritsNSObjectMainThreadOnly: Unpin, Send, Sync);
 
     // NSObject is special.
 
-    create! {
-        #[thread_kind = AllocAnyThread]
+    declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "InheritsNSObject"]
         #[ivars = ()]
-        struct InheritsNSObject: NSObject;
-    }
+        struct InheritsNSObject;
+    );
+    let _ = InheritsNSObject::class();
     assert_impl_all!(InheritsNSObject: Send, Sync, UnwindSafe, RefUnwindSafe);
     assert_not_impl_any!(InheritsNSObject: Unpin);
 
-    create! {
-        #[thread_kind = AllocAnyThread]
+    declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "InheritsNSObjectWithNonSendIvar"]
         #[ivars = NotSend]
-        struct InheritsNSObjectWithNonSendIvar: NSObject;
-    }
+        struct InheritsNSObjectWithNonSendIvar;
+    );
+    let _ = InheritsNSObjectWithNonSendIvar::class();
     assert_impl_all!(InheritsNSObjectWithNonSendIvar: Sync, UnwindSafe, RefUnwindSafe);
     assert_not_impl_any!(InheritsNSObjectWithNonSendIvar: Unpin, Send);
 
-    create! {
-        #[thread_kind = AllocAnyThread]
+    declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "InheritsNSObjectWithNonSyncIvar"]
         #[ivars = NotSync]
-        struct InheritsNSObjectWithNonSyncIvar: NSObject;
-    }
+        struct InheritsNSObjectWithNonSyncIvar;
+    );
+    let _ = InheritsNSObjectWithNonSyncIvar::class();
     assert_impl_all!(InheritsNSObjectWithNonSyncIvar: Send, UnwindSafe, RefUnwindSafe);
     assert_not_impl_any!(InheritsNSObjectWithNonSyncIvar: Unpin, Sync);
 
-    create! {
-        #[thread_kind = AllocAnyThread]
+    declare_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "InheritsNSObjectWithNonUnwindSafeIvar"]
         #[ivars = NotUnwindSafe]
-        struct InheritsNSObjectWithNonUnwindSafeIvar: NSObject;
-    }
+        struct InheritsNSObjectWithNonUnwindSafeIvar;
+    );
+    let _ = InheritsNSObjectWithNonUnwindSafeIvar::class();
     assert_impl_all!(InheritsNSObjectWithNonUnwindSafeIvar: Send, Sync);
     assert_not_impl_any!(InheritsNSObjectWithNonUnwindSafeIvar: Unpin, UnwindSafe, RefUnwindSafe);
 }
