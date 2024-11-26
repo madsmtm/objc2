@@ -44,6 +44,10 @@ impl<T: ?Sized> Unpin for ThreadKindAutoTraits<T> {}
 impl<T: ?Sized> UnwindSafe for ThreadKindAutoTraits<T> {}
 impl<T: ?Sized> RefUnwindSafe for ThreadKindAutoTraits<T> {}
 
+// Thread kind does not affect autorelease safety.
+#[cfg(feature = "unstable-autoreleasesafe")]
+unsafe impl<T: ?Sized> crate::rc::AutoreleaseSafe for ThreadKindAutoTraits<T> {}
+
 /// Helper type for implementing `MethodImplementation` with a receiver of
 /// `Allocated<T>`, without exposing that implementation to users.
 //
