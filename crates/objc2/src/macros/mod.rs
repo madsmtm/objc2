@@ -352,6 +352,11 @@ macro_rules! __statics_image_info {
         /// - End up in the same codegen unit as the other statics below.
         /// - End up in the final binary so it can be read by dyld.
         ///
+        /// If it's not present in the codegen unit, then `ld64` won't set
+        /// `hasObjC` for that specific object file, and in turn it might
+        /// disable processing of the special Objective-C sections (currently
+        /// a category merging pass, in the future who knows what).
+        ///
         /// Unfortunately however, this leads to duplicated tags - the linker
         /// reports `__DATA/__objc_imageinfo has unexpectedly large size XXX`,
         /// but things still seems to work.
