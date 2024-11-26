@@ -6,7 +6,7 @@ use std::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
-use objc2::{declare_class, extern_methods, sel, ClassType, MainThreadOnly};
+use objc2::{define_class, extern_methods, sel, ClassType, MainThreadOnly};
 use static_assertions::{assert_impl_all, assert_not_impl_any};
 
 // Test that adding the `deprecated` attribute does not mean that warnings
@@ -16,7 +16,7 @@ fn allow_deprecated() {
     #![deny(deprecated)]
 
     // Test allow propagates to impls
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
         #[name = "AllowDeprecated"]
         #[deprecated]
@@ -34,18 +34,18 @@ fn allow_deprecated() {
     let _ = AllowDeprecated::class();
 }
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "DeclareClassDeprecatedMethod"]
-    struct DeclareClassDeprecatedMethod;
+    #[name = "DefineClassDeprecatedMethod"]
+    struct DefineClassDeprecatedMethod;
 
     #[deprecated]
-    unsafe impl DeclareClassDeprecatedMethod {
+    unsafe impl DefineClassDeprecatedMethod {
         #[method(deprecatedOnImpl)]
         fn deprecated_on_impl() {}
     }
 
-    unsafe impl DeclareClassDeprecatedMethod {
+    unsafe impl DefineClassDeprecatedMethod {
         #[deprecated]
         #[method(deprecatedOnMethod)]
         fn deprecated_on_method() {}
@@ -54,7 +54,7 @@ declare_class!(
 
 #[test]
 fn test_deprecated() {
-    let _cls = DeclareClassDeprecatedMethod::class();
+    let _cls = DefineClassDeprecatedMethod::class();
 }
 
 #[test]
@@ -62,7 +62,7 @@ fn cfg() {
     // Test `cfg`. We use `debug_assertions` here because it's something that we
     // know our CI already tests.
 
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
         #[name = "OnlyOnDebugAssertions"]
         #[cfg(debug_assertions)]
@@ -72,7 +72,7 @@ fn cfg() {
     #[cfg(debug_assertions)]
     let _ = OnlyOnDebugAssertions::class();
 
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
         #[name = "NeverOnDebugAssertions"]
         #[cfg(not(debug_assertions))]
@@ -84,12 +84,12 @@ fn cfg() {
 }
 
 // Test that `cfg` in methods.
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "DeclareClassCfg"]
-    struct DeclareClassCfg;
+    #[name = "DefineClassCfg"]
+    struct DefineClassCfg;
 
-    unsafe impl DeclareClassCfg {
+    unsafe impl DefineClassCfg {
         #[cfg(debug_assertions)]
         #[method(changesOnCfg1)]
         fn _changes_on_cfg1() -> i32 {
@@ -112,7 +112,7 @@ declare_class!(
     }
 
     #[cfg(debug_assertions)]
-    unsafe impl DeclareClassCfg {
+    unsafe impl DefineClassCfg {
         #[method(changesOnCfg2)]
         fn _changes_on_cfg2(&self) -> i32 {
             1
@@ -123,7 +123,7 @@ declare_class!(
     }
 
     #[cfg(not(debug_assertions))]
-    unsafe impl DeclareClassCfg {
+    unsafe impl DefineClassCfg {
         #[method(changesOnCfg2)]
         fn _changes_on_cfg2(&self) -> i32 {
             2
@@ -134,7 +134,7 @@ declare_class!(
     }
 
     #[cfg(debug_assertions)]
-    unsafe impl DeclareClassCfg {
+    unsafe impl DefineClassCfg {
         #[cfg(not(debug_assertions))]
         #[method(never)]
         fn _never(&self) {}
@@ -146,12 +146,12 @@ declare_class!(
 );
 
 extern_methods!(
-    unsafe impl DeclareClassCfg {
+    unsafe impl DefineClassCfg {
         #[method_id(new)]
         fn new() -> Retained<Self>;
     }
 
-    unsafe impl DeclareClassCfg {
+    unsafe impl DefineClassCfg {
         #[method(changesOnCfg1)]
         fn changes_on_cfg1() -> i32;
 
@@ -168,13 +168,13 @@ extern_methods!(
     }
 
     #[cfg(debug_assertions)]
-    unsafe impl DeclareClassCfg {
+    unsafe impl DefineClassCfg {
         #[method(onlyWhenEnabled2)]
         fn only_when_enabled2();
     }
 
     #[cfg(not(debug_assertions))]
-    unsafe impl DeclareClassCfg {
+    unsafe impl DefineClassCfg {
         #[method(onlyWhenDisabled2)]
         fn only_when_disabled2();
     }
@@ -183,18 +183,18 @@ extern_methods!(
 #[test]
 fn test_method_that_changes_based_on_cfg() {
     let expected = if cfg!(debug_assertions) { 1 } else { 2 };
-    let actual = DeclareClassCfg::changes_on_cfg1();
+    let actual = DefineClassCfg::changes_on_cfg1();
     assert_eq!(expected, actual, "changes_on_cfg1");
 
-    let actual = DeclareClassCfg::new().changes_on_cfg2();
+    let actual = DefineClassCfg::new().changes_on_cfg2();
     assert_eq!(expected, actual, "changes_on_cfg2");
 }
 
 #[test]
 fn test_method_that_is_only_available_based_on_cfg() {
-    let cls = DeclareClassCfg::class();
+    let cls = DefineClassCfg::class();
     let metacls = cls.metaclass();
-    let obj = DeclareClassCfg::new();
+    let obj = DefineClassCfg::new();
 
     #[cfg(debug_assertions)]
     {
@@ -202,7 +202,7 @@ fn test_method_that_is_only_available_based_on_cfg() {
         assert!(!metacls.responds_to(sel!(onlyWhenDisabled2)));
 
         obj.only_when_enabled1();
-        DeclareClassCfg::only_when_enabled2();
+        DefineClassCfg::only_when_enabled2();
     }
     #[cfg(not(debug_assertions))]
     {
@@ -210,19 +210,19 @@ fn test_method_that_is_only_available_based_on_cfg() {
         assert!(!metacls.responds_to(sel!(onlyWhenEnabled2)));
 
         obj.only_when_disabled1();
-        DeclareClassCfg::only_when_disabled2();
+        DefineClassCfg::only_when_disabled2();
     }
 }
 
 #[test]
 fn test_method_that_is_never_available() {
-    let cls = DeclareClassCfg::class();
+    let cls = DefineClassCfg::class();
     let metacls = cls.metaclass();
     assert!(!cls.responds_to(sel!(never)));
     assert!(!metacls.responds_to(sel!(never)));
 }
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "TestMultipleColonSelector"]
     struct TestMultipleColonSelector;
@@ -291,12 +291,12 @@ fn test_multiple_colon_selector() {
     assert!(obj.test_object(1, 2, 3, ptr::null()).is_none());
 }
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "DeclareClassAllTheBool"]
-    struct DeclareClassAllTheBool;
+    #[name = "DefineClassAllTheBool"]
+    struct DefineClassAllTheBool;
 
-    unsafe impl DeclareClassAllTheBool {
+    unsafe impl DefineClassAllTheBool {
         #[method(returnsBool)]
         fn returns_bool() -> bool {
             true
@@ -347,16 +347,16 @@ declare_class!(
 
 #[test]
 fn test_all_the_bool() {
-    let _ = DeclareClassAllTheBool::class();
+    let _ = DefineClassAllTheBool::class();
 }
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "DeclareClassUnreachable"]
-    struct DeclareClassUnreachable;
+    #[name = "DefineClassUnreachable"]
+    struct DefineClassUnreachable;
 
     // Ensure none of these warn
-    unsafe impl DeclareClassUnreachable {
+    unsafe impl DefineClassUnreachable {
         #[method(unreachable)]
         fn unreachable(&self) -> bool {
             unreachable!()
@@ -391,10 +391,10 @@ declare_class!(
 
 #[test]
 fn test_unreachable() {
-    let _ = DeclareClassUnreachable::class();
+    let _ = DefineClassUnreachable::class();
 }
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "OutParam"]
     #[derive(Debug)]
@@ -435,7 +435,7 @@ extern_methods!(
 );
 
 #[test]
-#[should_panic = "`&mut Retained<_>` is not supported in `declare_class!` yet"]
+#[should_panic = "`&mut Retained<_>` is not supported in `define_class!` yet"]
 #[cfg_attr(
     feature = "gnustep-1-7",
     ignore = "unwinding seems to not work properly here"
@@ -446,7 +446,7 @@ fn out_param1() {
 }
 
 #[test]
-#[should_panic = "`Option<&mut Retained<_>>` is not supported in `declare_class!` yet"]
+#[should_panic = "`Option<&mut Retained<_>>` is not supported in `define_class!` yet"]
 #[cfg_attr(
     feature = "gnustep-1-7",
     ignore = "unwinding seems to not work properly here"
@@ -456,7 +456,7 @@ fn out_param2() {
 }
 
 #[test]
-#[should_panic = "`&mut Option<Retained<_>>` is not supported in `declare_class!` yet"]
+#[should_panic = "`&mut Option<Retained<_>>` is not supported in `define_class!` yet"]
 #[cfg_attr(
     feature = "gnustep-1-7",
     ignore = "unwinding seems to not work properly here"
@@ -467,7 +467,7 @@ fn out_param3() {
 }
 
 #[test]
-#[should_panic = "`Option<&mut Option<Retained<_>>>` is not supported in `declare_class!` yet"]
+#[should_panic = "`Option<&mut Option<Retained<_>>>` is not supported in `define_class!` yet"]
 #[cfg_attr(
     feature = "gnustep-1-7",
     ignore = "unwinding seems to not work properly here"
@@ -478,7 +478,7 @@ fn out_param4() {
 
 #[test]
 fn test_pointer_receiver_allowed() {
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
         #[name = "PointerReceiver"]
         #[derive(Debug)]
@@ -519,13 +519,13 @@ fn test_auto_traits() {
 
     // Superclass propagates.
 
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
         #[name = "NonThreadSafeHelper"]
         #[ivars = (NotSend, NotSync, NotUnwindSafe)]
         struct NonThreadSafeHelper;
     );
-    declare_class!(
+    define_class!(
         #[unsafe(super(NonThreadSafeHelper))]
         #[name = "InheritsCustomWithNonSendIvar"]
         #[ivars = ()]
@@ -536,7 +536,7 @@ fn test_auto_traits() {
 
     // Main thread only. Not Send + Sync.
 
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
         #[thread_kind = MainThreadOnly]
         #[name = "InheritsNSObjectMainThreadOnly"]
@@ -549,7 +549,7 @@ fn test_auto_traits() {
 
     // NSObject is special.
 
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
         #[name = "InheritsNSObject"]
         #[ivars = ()]
@@ -559,7 +559,7 @@ fn test_auto_traits() {
     assert_impl_all!(InheritsNSObject: Send, Sync, UnwindSafe, RefUnwindSafe);
     assert_not_impl_any!(InheritsNSObject: Unpin);
 
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
         #[name = "InheritsNSObjectWithNonSendIvar"]
         #[ivars = NotSend]
@@ -569,7 +569,7 @@ fn test_auto_traits() {
     assert_impl_all!(InheritsNSObjectWithNonSendIvar: Sync, UnwindSafe, RefUnwindSafe);
     assert_not_impl_any!(InheritsNSObjectWithNonSendIvar: Unpin, Send);
 
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
         #[name = "InheritsNSObjectWithNonSyncIvar"]
         #[ivars = NotSync]
@@ -579,7 +579,7 @@ fn test_auto_traits() {
     assert_impl_all!(InheritsNSObjectWithNonSyncIvar: Send, UnwindSafe, RefUnwindSafe);
     assert_not_impl_any!(InheritsNSObjectWithNonSyncIvar: Unpin, Sync);
 
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
         #[name = "InheritsNSObjectWithNonUnwindSafeIvar"]
         #[ivars = NotUnwindSafe]

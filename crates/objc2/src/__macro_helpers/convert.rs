@@ -25,7 +25,7 @@ pub trait ConvertArgument: argument_private::Sealed {
     type __StoredBeforeMessage: Sized;
 
     #[doc(hidden)]
-    fn __from_declared_param(inner: Self::__Inner) -> Self;
+    fn __from_defined_param(inner: Self::__Inner) -> Self;
 
     #[doc(hidden)]
     fn __into_argument(self) -> (Self::__Inner, Self::__StoredBeforeMessage);
@@ -48,7 +48,7 @@ impl<T: EncodeArgument> ConvertArgument for T {
     type __StoredBeforeMessage = ();
 
     #[inline]
-    fn __from_declared_param(inner: Self::__Inner) -> Self {
+    fn __from_defined_param(inner: Self::__Inner) -> Self {
         inner
     }
 
@@ -65,7 +65,7 @@ impl ConvertArgument for bool {
     type __StoredBeforeMessage = ();
 
     #[inline]
-    fn __from_declared_param(inner: Self::__Inner) -> Self {
+    fn __from_defined_param(inner: Self::__Inner) -> Self {
         inner.as_bool()
     }
 
@@ -86,7 +86,7 @@ pub trait ConvertReturn: return_private::Sealed {
     type __Inner: EncodeReturn;
 
     #[doc(hidden)]
-    fn __into_declared_return(self) -> Self::__Inner;
+    fn __into_defined_return(self) -> Self::__Inner;
 
     #[doc(hidden)]
     fn __from_return(inner: Self::__Inner) -> Self;
@@ -97,7 +97,7 @@ impl<T: EncodeReturn> ConvertReturn for T {
     type __Inner = Self;
 
     #[inline]
-    fn __into_declared_return(self) -> Self::__Inner {
+    fn __into_defined_return(self) -> Self::__Inner {
         self
     }
 
@@ -112,7 +112,7 @@ impl ConvertReturn for bool {
     type __Inner = Bool;
 
     #[inline]
-    fn __into_declared_return(self) -> Self::__Inner {
+    fn __into_defined_return(self) -> Self::__Inner {
         Bool::new(self)
     }
 
@@ -295,7 +295,7 @@ mod tests {
             TypeId::of::<<i32 as ConvertArgument>::__Inner>(),
             TypeId::of::<i32>()
         );
-        assert_eq!(<i32 as ConvertArgument>::__from_declared_param(42), 42);
+        assert_eq!(<i32 as ConvertArgument>::__from_defined_param(42), 42);
         assert_eq!(ConvertArgument::__into_argument(42i32).0, 42);
     }
 
@@ -305,21 +305,21 @@ mod tests {
             TypeId::of::<<i8 as ConvertArgument>::__Inner>(),
             TypeId::of::<i8>()
         );
-        assert_eq!(<i8 as ConvertArgument>::__from_declared_param(-3), -3);
+        assert_eq!(<i8 as ConvertArgument>::__from_defined_param(-3), -3);
         assert_eq!(ConvertArgument::__into_argument(-3i32).0, -3);
     }
 
     #[test]
     fn convert_bool() {
-        assert!(!<bool as ConvertArgument>::__from_declared_param(Bool::NO));
-        assert!(<bool as ConvertArgument>::__from_declared_param(Bool::YES));
+        assert!(!<bool as ConvertArgument>::__from_defined_param(Bool::NO));
+        assert!(<bool as ConvertArgument>::__from_defined_param(Bool::YES));
         assert!(!<bool as ConvertReturn>::__from_return(Bool::NO));
         assert!(<bool as ConvertReturn>::__from_return(Bool::YES));
 
         assert!(!ConvertArgument::__into_argument(false).0.as_bool());
         assert!(ConvertArgument::__into_argument(true).0.as_bool());
-        assert!(!ConvertReturn::__into_declared_return(false).as_bool());
-        assert!(ConvertReturn::__into_declared_return(true).as_bool());
+        assert!(!ConvertReturn::__into_defined_return(false).as_bool());
+        assert!(ConvertReturn::__into_defined_return(true).as_bool());
 
         #[cfg(all(target_vendor = "apple", target_os = "macos", target_arch = "x86_64"))]
         assert_eq!(

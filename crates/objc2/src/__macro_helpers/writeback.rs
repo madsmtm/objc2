@@ -34,8 +34,8 @@ impl<T: Message + 'static> ConvertArgument for &mut Retained<T> {
     );
 
     #[inline]
-    fn __from_declared_param(_inner: Self::__Inner) -> Self {
-        todo!("`&mut Retained<_>` is not supported in `declare_class!` yet")
+    fn __from_defined_param(_inner: Self::__Inner) -> Self {
+        todo!("`&mut Retained<_>` is not supported in `define_class!` yet")
     }
 
     #[inline]
@@ -115,8 +115,8 @@ impl<T: Message + 'static> ConvertArgument for &mut Option<Retained<T>> {
     type __StoredBeforeMessage = (Self::__Inner, *mut T);
 
     #[inline]
-    fn __from_declared_param(_inner: Self::__Inner) -> Self {
-        todo!("`&mut Option<Retained<_>>` is not supported in `declare_class!` yet")
+    fn __from_defined_param(_inner: Self::__Inner) -> Self {
+        todo!("`&mut Option<Retained<_>>` is not supported in `define_class!` yet")
     }
 
     #[inline]
@@ -162,8 +162,8 @@ impl<T: Message + 'static> ConvertArgument for Option<&mut Retained<T>> {
     type __StoredBeforeMessage = Option<(NonNull<*mut T>, NonNull<T>)>;
 
     #[inline]
-    fn __from_declared_param(_inner: Self::__Inner) -> Self {
-        todo!("`Option<&mut Retained<_>>` is not supported in `declare_class!` yet")
+    fn __from_defined_param(_inner: Self::__Inner) -> Self {
+        todo!("`Option<&mut Retained<_>>` is not supported in `define_class!` yet")
     }
 
     #[inline]
@@ -191,8 +191,8 @@ impl<T: Message + 'static> ConvertArgument for Option<&mut Option<Retained<T>>> 
     type __StoredBeforeMessage = Option<(NonNull<*mut T>, *mut T)>;
 
     #[inline]
-    fn __from_declared_param(_inner: Self::__Inner) -> Self {
-        todo!("`Option<&mut Option<Retained<_>>>` is not supported in `declare_class!` yet")
+    fn __from_defined_param(_inner: Self::__Inner) -> Self {
+        todo!("`Option<&mut Option<Retained<_>>>` is not supported in `define_class!` yet")
     }
 
     #[inline]

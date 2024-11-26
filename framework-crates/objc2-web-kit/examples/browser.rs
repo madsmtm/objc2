@@ -4,10 +4,10 @@
 use core::cell::OnceCell;
 
 use objc2::{
-    declare_class, msg_send_id,
+    define_class, msg_send_id,
     rc::Retained,
     runtime::{AnyObject, ProtocolObject, Sel},
-    sel, DeclaredClass, MainThreadMarker, MainThreadOnly,
+    sel, DefinedClass, MainThreadMarker, MainThreadOnly,
 };
 #[allow(deprecated)]
 #[cfg(target_os = "macos")]
@@ -52,7 +52,7 @@ struct Ivars {
     window: OnceCell<Retained<NSWindow>>,
 }
 
-declare_class!(
+define_class!(
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
     // - `MainThreadOnly` is correct, since this is an application delegate.

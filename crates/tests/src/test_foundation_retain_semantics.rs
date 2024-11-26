@@ -2,7 +2,7 @@
 use std::ptr;
 
 use objc2::rc::Retained;
-use objc2::{declare_class, extern_methods};
+use objc2::{define_class, extern_methods};
 use objc2_foundation::{
     CopyingHelper, NSArray, NSCopying, NSMutableArray, NSMutableCopying, NSMutableDictionary,
     NSMutableSet, NSNumber, NSSet, NSValue,
@@ -351,7 +351,7 @@ fn value_does_not_retain() {
     expected.assert_current();
 }
 
-declare_class!(
+define_class!(
     #[unsafe(super(RcTestObject))]
     #[name = "NSCopyingRcTestObject"]
     #[derive(Debug, PartialEq, Eq, Hash)]

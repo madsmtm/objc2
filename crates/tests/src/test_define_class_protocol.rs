@@ -1,21 +1,21 @@
 #![cfg(feature = "all")]
 use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSZone};
-use objc2::{declare_class, ClassType, ProtocolType};
+use objc2::{define_class, ClassType, ProtocolType};
 use objc2_foundation::NSCopying;
 
 #[test]
-#[should_panic = "could not create new class TestDeclareClassDuplicate. Perhaps a class with that name already exists?"]
-fn test_declare_class_duplicate() {
-    declare_class!(
+#[should_panic = "could not create new class TestDefineClassDuplicate. Perhaps a class with that name already exists?"]
+fn test_define_class_duplicate() {
+    define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "TestDeclareClassDuplicate"]
+        #[name = "TestDefineClassDuplicate"]
         struct Custom1;
     );
 
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "TestDeclareClassDuplicate"]
+        #[name = "TestDefineClassDuplicate"]
         struct Custom2;
     );
 
@@ -25,10 +25,10 @@ fn test_declare_class_duplicate() {
 }
 
 #[test]
-fn test_declare_class_protocol() {
-    declare_class!(
+fn test_define_class_protocol() {
+    define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "TestDeclareClassProtocolNotFound"]
+        #[name = "TestDefineClassProtocolNotFound"]
         struct Custom;
 
         unsafe impl NSCopying for Custom {
@@ -46,12 +46,12 @@ fn test_declare_class_protocol() {
 #[test]
 #[cfg_attr(
     debug_assertions,
-    should_panic = "declared invalid method -[TestDeclareClassInvalidMethod description]: expected return to have type code '@', but found 'v'"
+    should_panic = "defined invalid method -[TestDefineClassInvalidMethod description]: expected return to have type code '@', but found 'v'"
 )]
-fn test_declare_class_invalid_method() {
-    declare_class!(
+fn test_define_class_invalid_method() {
+    define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "TestDeclareClassInvalidMethod"]
+        #[name = "TestDefineClassInvalidMethod"]
         struct Custom;
 
         unsafe impl Custom {
@@ -69,10 +69,10 @@ fn test_declare_class_invalid_method() {
     debug_assertions,
     should_panic = "must implement required protocol method -[NSCopying copyWithZone:]"
 )]
-fn test_declare_class_missing_protocol_method() {
-    declare_class!(
+fn test_define_class_missing_protocol_method() {
+    define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "TestDeclareClassMissingProtocolMethod"]
+        #[name = "TestDefineClassMissingProtocolMethod"]
         struct Custom;
 
         unsafe impl NSCopying for Custom {
@@ -85,10 +85,10 @@ fn test_declare_class_missing_protocol_method() {
 
 #[test]
 // #[cfg_attr(debug_assertions, should_panic = "...")]
-fn test_declare_class_invalid_protocol_method() {
-    declare_class!(
+fn test_define_class_invalid_protocol_method() {
+    define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "TestDeclareClassInvalidProtocolMethod"]
+        #[name = "TestDefineClassInvalidProtocolMethod"]
         struct Custom;
 
         unsafe impl NSCopying for Custom {
@@ -108,10 +108,10 @@ fn test_declare_class_invalid_protocol_method() {
     debug_assertions,
     should_panic = "failed overriding protocol method -[NSCopying someOtherMethod]: method not found"
 )]
-fn test_declare_class_extra_protocol_method() {
-    declare_class!(
+fn test_define_class_extra_protocol_method() {
+    define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "TestDeclareClassExtraProtocolMethod"]
+        #[name = "TestDefineClassExtraProtocolMethod"]
         struct Custom;
 
         unsafe impl NSCopying for Custom {

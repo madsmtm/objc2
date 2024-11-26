@@ -19,7 +19,7 @@ mod block;
 mod exception;
 mod rc_test_object;
 #[cfg(test)]
-mod test_declare_class_protocol;
+mod test_define_class_protocol;
 #[cfg(test)]
 mod test_encode_utils;
 #[cfg(test)]

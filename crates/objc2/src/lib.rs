@@ -138,13 +138,11 @@
 //!
 //! ## Other functionality
 //!
-//! That was a quick introduction, this library also has [support for handling
-//! exceptions][exc], [the ability to declare Objective-C
-//! classes][declare_class!], [advanced reference-counting utilities][rc], and more -
-//! peruse the documentation at will!
-//!
-//! [exc]: crate::exception
-//! [rc]: crate::rc
+//! That was a quick introduction, this library also has
+//! [support for handling exceptions][crate::exception],
+//! [the ability to create Objective-C classes][crate::define_class],
+//! [advanced reference-counting utilities][crate::rc],
+//! and more - peruse the documentation at will!
 
 #![no_std]
 #![cfg_attr(
@@ -179,7 +177,7 @@ pub use self::downcast::DowncastTarget;
 pub use self::encode::{Encode, Encoding, RefEncode};
 pub use self::main_thread_marker::MainThreadMarker;
 pub use self::top_level_traits::{
-    AllocAnyThread, ClassType, DeclaredClass, MainThreadOnly, Message, ProtocolType, ThreadKind,
+    AllocAnyThread, ClassType, DefinedClass, MainThreadOnly, Message, ProtocolType, ThreadKind,
 };
 
 #[cfg(feature = "objc2-proc-macros")]
@@ -221,8 +219,8 @@ mod verify;
 /// module.
 #[deprecated = "Moved to the `runtime` module"]
 pub mod declare {
+    use super::runtime;
     pub use super::runtime::{ClassBuilder, ProtocolBuilder};
-    use super::*;
 
     /// Use [`runtime::ClassBuilder`] instead.
     #[deprecated = "Use `runtime::ClassBuilder` instead."]
@@ -232,6 +230,10 @@ pub mod declare {
     #[deprecated = "Use `runtime::ProtocolBuilder` instead."]
     pub type ProtocolDecl = runtime::ProtocolBuilder;
 }
+
+/// Deprecated alias of [`DefinedClass`].
+#[deprecated = "renamed to DefinedClass"]
+pub use DefinedClass as DeclaredClass;
 
 #[cfg(not(feature = "std"))]
 compile_error!("The `std` feature currently must be enabled.");

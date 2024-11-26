@@ -1,6 +1,6 @@
 use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSObjectProtocol};
-use objc2::{declare_class, extern_methods, extern_protocol, ProtocolType};
+use objc2::{define_class, extern_methods, extern_protocol, ProtocolType};
 
 extern_protocol!(
     #[allow(clippy::missing_safety_doc)]
@@ -17,7 +17,7 @@ extern_protocol!(
     }
 );
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "MainThreadMarkerTest"]
     #[derive(PartialEq, Eq, Hash, Debug)]

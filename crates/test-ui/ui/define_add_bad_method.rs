@@ -1,10 +1,9 @@
-use objc2::declare::ClassBuilder;
 use objc2::rc::{Allocated, Retained};
-use objc2::runtime::{NSObject, Sel};
+use objc2::runtime::{ClassBuilder, NSObject, Sel};
 use objc2::{sel, ClassType};
 
 fn main() {
-    let builder = ClassBuilder::new(c"DeclareClassTest", NSObject::class()).unwrap();
+    let builder = ClassBuilder::new(c"DefineClassTest", NSObject::class()).unwrap();
 
     // Test receiver
     unsafe {

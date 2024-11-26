@@ -4,7 +4,7 @@ use core::ptr;
 
 use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{NSObject, NSZone};
-use crate::{declare_class, msg_send, msg_send_id, ClassType};
+use crate::{define_class, msg_send, msg_send_id, ClassType};
 
 // TODO: Put tests that use this in another crate
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -60,7 +60,7 @@ std::thread_local! {
     static TEST_DATA: RefCell<ThreadTestData> = RefCell::default();
 }
 
-declare_class!(
+define_class!(
     /// A helper object that counts how many times various reference-counting
     /// primitives are called.
     #[derive(Debug, PartialEq, Eq, Hash)]

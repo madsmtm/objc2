@@ -1,9 +1,9 @@
-//! To remind myself that `Self` needs to work in methods in `declare_class!`,
+//! To remind myself that `Self` needs to work in methods in `define_class!`,
 //! and hence whenever we name any of the types involved in this, we need to
 //! do it in a context where `Self` works.
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::NSObject;
-use objc2::{declare_class, ClassType};
+use objc2::{define_class, ClassType};
 
 trait GetSameType {
     type SameType: ?Sized;
@@ -27,7 +27,7 @@ macro_rules! get_self {
     };
 }
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "MyTestObject"]
     struct MyTestObject;

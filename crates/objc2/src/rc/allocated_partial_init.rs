@@ -3,9 +3,9 @@ use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
 use core::{fmt, ptr};
 
-use crate::__macro_helpers::declared_ivars::initialize_ivars;
+use crate::__macro_helpers::defined_ivars::initialize_ivars;
 use crate::runtime::{objc_release_fast, AnyObject};
-use crate::{DeclaredClass, Message};
+use crate::{DefinedClass, Message};
 
 /// An Objective-C object that has been allocated, but not initialized.
 ///
@@ -161,7 +161,7 @@ impl<T: ?Sized + Message> Allocated<T> {
     #[track_caller]
     pub fn set_ivars(self, ivars: T::Ivars) -> PartialInit<T>
     where
-        T: DeclaredClass + Sized,
+        T: DefinedClass + Sized,
     {
         if let Some(ptr) = NonNull::new(ManuallyDrop::new(self).ptr as *mut T) {
             // SAFETY: The pointer came from `self`, so it is valid.

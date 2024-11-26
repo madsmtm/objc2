@@ -10,7 +10,7 @@ use std::sync::Mutex;
 use objc2::encode::Encode;
 use objc2::rc::{self, Allocated, Retained};
 use objc2::runtime::{self, NSObject};
-use objc2::{class, declare_class, msg_send, msg_send_id, AllocAnyThread, ClassType};
+use objc2::{class, define_class, msg_send, msg_send_id, AllocAnyThread, ClassType};
 
 #[path = "../src/rc/test_object.rs"]
 #[allow(dead_code)]
@@ -199,7 +199,7 @@ fn test_catch_all(checker: &PanicChecker) {
     });
 }
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "PanickingClass"]
     struct PanickingClass;

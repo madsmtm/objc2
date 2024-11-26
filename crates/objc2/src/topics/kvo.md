@@ -21,7 +21,7 @@ use core::ptr;
 
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
-use objc2::{declare_class, msg_send_id, AllocAnyThread, ClassType, DeclaredClass};
+use objc2::{define_class, msg_send_id, AllocAnyThread, ClassType, DefinedClass};
 use objc2_foundation::{
     ns_string, NSCopying, NSDictionary, NSKeyValueChangeKey, NSKeyValueObservingOptions, NSObject,
     NSObjectNSKeyValueObserverRegistration, NSObjectProtocol, NSString,
@@ -33,7 +33,7 @@ struct Ivars {
     handler: Box<dyn Fn(&NSDictionary<NSKeyValueChangeKey, AnyObject>) + 'static>,
 }
 
-declare_class!(
+define_class!(
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
     // - MyObserver implements `Drop` and ensures that:

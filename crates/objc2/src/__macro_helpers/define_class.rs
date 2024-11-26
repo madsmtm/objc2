@@ -13,12 +13,12 @@ use crate::runtime::{
 };
 #[cfg(debug_assertions)]
 use crate::runtime::{AnyProtocol, MethodDescription};
-use crate::{AllocAnyThread, ClassType, DeclaredClass, Message, ProtocolType};
+use crate::{AllocAnyThread, ClassType, DefinedClass, Message, ProtocolType};
 
-use super::declared_ivars::{register_with_ivars, setup_dealloc};
+use super::defined_ivars::{register_with_ivars, setup_dealloc};
 use super::{Copy, Init, MaybeUnwrap, MutableCopy, New, Other};
 
-/// Helper for determining auto traits of declared classes.
+/// Helper for determining auto traits of defined classes.
 ///
 /// This will contain either `dyn AllocAnyThread` or `dyn MainThreadOnly`, so
 /// it will have no auto traits by default.
@@ -64,7 +64,7 @@ unsafe impl Encode for RetainedReturnValue {
 }
 
 // One could imagine a different design where we had a method like
-// `fn convert_receiver()`, but that won't work in `declare_class!` since we
+// `fn convert_receiver()`, but that won't work in `define_class!` since we
 // can't actually modify the `self` argument (e.g. `let self = foo(self)` is
 // not allowed).
 //
@@ -143,7 +143,7 @@ where
 
 /// Helper trait for specifying an `Retained<T>` or an `Option<Retained<T>>`.
 ///
-/// (Both of those are valid return types from declare_class! `#[method_id]`).
+/// (Both of those are valid return types from define_class! `#[method_id]`).
 pub trait MaybeOptionRetained: MaybeUnwrap {
     fn consumed_return(self) -> RetainedReturnValue;
     fn autorelease_return(self) -> RetainedReturnValue;
@@ -195,7 +195,7 @@ fn create_builder(name: &str, superclass: &AnyClass) -> ClassBuilder {
     }
 }
 
-impl<T: DeclaredClass> ClassBuilderHelper<T> {
+impl<T: DefinedClass> ClassBuilderHelper<T> {
     #[inline]
     #[track_caller]
     #[allow(clippy::new_without_default)]
@@ -302,7 +302,7 @@ pub struct ClassProtocolMethodsBuilder<'a, T: ?Sized> {
     registered_class_methods: HashSet<Sel>,
 }
 
-impl<T: DeclaredClass> ClassProtocolMethodsBuilder<'_, T> {
+impl<T: DefinedClass> ClassProtocolMethodsBuilder<'_, T> {
     // Addition: This restricts to callee `T`
     #[inline]
     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)

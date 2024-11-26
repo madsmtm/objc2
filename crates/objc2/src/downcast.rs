@@ -12,10 +12,10 @@ use crate::ClassType;
 /// is unknown.
 ///
 /// This trait is implemented automatically by the [`extern_class!`] and
-/// [`declare_class!`] macros.
+/// [`define_class!`] macros.
 ///
 /// [`extern_class!`]: crate::extern_class
-/// [`declare_class!`]: crate::declare_class
+/// [`define_class!`]: crate::define_class
 ///
 ///
 /// # Safety

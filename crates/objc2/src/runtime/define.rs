@@ -40,25 +40,24 @@ impl<T> Log2Alignment for T {
     };
 }
 
-/// A type for declaring a new class and adding new methods and ivars to it
+/// A type for creating a new class and adding new methods and ivars to it
 /// before registering it.
 ///
 /// **Note**: You likely don't need the dynamicism that this provides!
-/// Consider using the [`declare_class!`][crate::declare_class] macro instead.
+/// Consider using the [`define_class!`][crate::define_class] macro instead.
 ///
 ///
 /// # Example
 ///
-/// Declare a class named `MyNumber` that has one ivar, a `u32` named `_number`
+/// Create a class named `MyNumber` that has one ivar, a `u32` named `_number`
 /// and a few constructor  methods and methods for interfacing with the number
 /// (using interior mutability, as is common for Objective-C objects).
 ///
 /// ```
 /// use core::cell::Cell;
 ///
-/// use objc2::declare::ClassBuilder;
 /// use objc2::rc::Retained;
-/// use objc2::runtime::{AnyClass, AnyObject, NSObject, Sel};
+/// use objc2::runtime::{AnyClass, AnyObject, ClassBuilder, NSObject, Sel};
 /// use objc2::{sel, msg_send, msg_send_id, ClassType};
 ///
 /// fn register_class() -> &'static AnyClass {
@@ -210,8 +209,8 @@ impl ClassBuilder {
         Self::with_superclass(name, Some(superclass))
     }
 
-    /// Constructs a [`ClassBuilder`] declaring a new root class with the
-    /// given name.
+    /// Constructs a [`ClassBuilder`] that will construct a new root class
+    /// with the given name.
     ///
     /// Returns [`None`] if the class couldn't be allocated.
     ///
@@ -289,7 +288,7 @@ impl ClassBuilder {
                 if let Err(err) = crate::verify::verify_method_signature(method, enc_args, enc_ret)
                 {
                     panic!(
-                        "declared invalid method -[{} {sel}]: {err}",
+                        "defined invalid method -[{} {sel}]: {err}",
                         self.name().to_string_lossy()
                     )
                 }
@@ -354,7 +353,7 @@ impl ClassBuilder {
                 if let Err(err) = crate::verify::verify_method_signature(method, enc_args, enc_ret)
                 {
                     panic!(
-                        "declared invalid method +[{} {sel}]: {err}",
+                        "defined invalid method +[{} {sel}]: {err}",
                         self.name().to_string_lossy()
                     )
                 }
@@ -459,7 +458,7 @@ impl Drop for ClassBuilder {
     }
 }
 
-/// A type for declaring a new protocol and adding new methods to it
+/// A type for creating a new protocol and adding new methods to it
 /// before registering it.
 #[derive(Debug)]
 pub struct ProtocolBuilder {
@@ -516,7 +515,7 @@ impl ProtocolBuilder {
         }
     }
 
-    /// Adds an instance method declaration with a given description.
+    /// Add an instance method with a given description.
     pub fn add_method_description<Args, Ret>(&mut self, sel: Sel, required: bool)
     where
         Args: EncodeArguments,
@@ -531,7 +530,7 @@ impl ProtocolBuilder {
         );
     }
 
-    /// Adds a class method declaration with a given description.
+    /// Add a class method with a given description.
     pub fn add_class_method_description<Args, Ret>(&mut self, sel: Sel, required: bool)
     where
         Args: EncodeArguments,
@@ -583,7 +582,7 @@ mod tests {
     use crate::rc::Retained;
     use crate::runtime::{NSObject, NSObjectProtocol};
     use crate::{
-        declare_class, extern_methods, msg_send, msg_send_id, test_utils, ClassType, ProtocolType,
+        define_class, extern_methods, msg_send, msg_send_id, test_utils, ClassType, ProtocolType,
     };
 
     // TODO: Remove once c"" strings are in MSRV
@@ -685,7 +684,7 @@ mod tests {
     #[test]
     #[cfg_attr(
         debug_assertions,
-        should_panic = "declared invalid method -[TestClassBuilderInvalidMethod foo]: expected return to have type code 'I', but found 's'"
+        should_panic = "defined invalid method -[TestClassBuilderInvalidMethod foo]: expected return to have type code 'I', but found 's'"
     )]
     fn invalid_method() {
         let cls = test_utils::custom_class();
@@ -703,7 +702,7 @@ mod tests {
     #[test]
     #[cfg_attr(
         all(debug_assertions, not(feature = "relax-sign-encoding")),
-        should_panic = "declared invalid method +[TestClassBuilderInvalidClassMethod classFoo]: expected return to have type code 'I', but found 'i'"
+        should_panic = "defined invalid method +[TestClassBuilderInvalidClassMethod classFoo]: expected return to have type code 'I', but found 'i'"
     )]
     fn invalid_class_method() {
         let cls = test_utils::custom_class();
@@ -844,21 +843,21 @@ mod tests {
         assert_eq!(result, 7);
     }
 
-    // Proof-of-concept how we could make declare_class! accept generic types.
+    // Proof-of-concept how we could make define_class! accept generic types.
     #[test]
     fn test_generic() {
-        struct GenericDeclareClass<T>(T);
+        struct GenericDefineClass<T>(T);
 
-        unsafe impl<T> RefEncode for GenericDeclareClass<T> {
+        unsafe impl<T> RefEncode for GenericDefineClass<T> {
             const ENCODING_REF: Encoding = Encoding::Object;
         }
 
-        unsafe impl<T> Message for GenericDeclareClass<T> {}
+        unsafe impl<T> Message for GenericDefineClass<T> {}
 
-        unsafe impl<T> ClassType for GenericDeclareClass<T> {
+        unsafe impl<T> ClassType for GenericDefineClass<T> {
             type Super = NSObject;
             type ThreadKind = <Self::Super as ClassType>::ThreadKind;
-            const NAME: &'static str = "GenericDeclareClass";
+            const NAME: &'static str = "GenericDefineClass";
 
             #[inline]
             fn as_super(&self) -> &Self::Super {
@@ -872,7 +871,7 @@ mod tests {
                 unsafe {
                     builder.add_method(
                         sel!(generic),
-                        <GenericDeclareClass<T>>::generic as unsafe extern "C" fn(_, _),
+                        <GenericDefineClass<T>>::generic as unsafe extern "C" fn(_, _),
                     );
                 }
 
@@ -884,16 +883,16 @@ mod tests {
             type __SubclassingType = Self;
         }
 
-        impl<T> GenericDeclareClass<T> {
+        impl<T> GenericDefineClass<T> {
             extern "C" fn generic(&self, _cmd: Sel) {}
         }
 
-        let _ = GenericDeclareClass::<()>::class();
+        let _ = GenericDefineClass::<()>::class();
     }
 
     #[test]
     fn test_inherited_nsobject_methods_work() {
-        declare_class!(
+        define_class!(
             #[unsafe(super(NSObject))]
             #[name = "TestInheritedNSObjectMethodsWork"]
             #[derive(Debug, PartialEq, Eq, Hash)]
@@ -954,8 +953,7 @@ mod tests {
         }
 
         let mut superclass =
-            ClassBuilder::new(&c("DeclareClassDuplicateIvarSuperclass"), NSObject::class())
-                .unwrap();
+            ClassBuilder::new(&c("DefineClassDuplicateIvarSuperclass"), NSObject::class()).unwrap();
         superclass.add_ivar::<u8>(&c("ivar1"));
         superclass.add_ivar::<U128align16>(&c("ivar2"));
         superclass.add_ivar::<u8>(&c("ivar3"));
@@ -963,7 +961,7 @@ mod tests {
         let superclass = superclass.register();
 
         let mut subclass =
-            ClassBuilder::new(&c("DeclareClassDuplicateIvarSubclass"), superclass).unwrap();
+            ClassBuilder::new(&c("DefineClassDuplicateIvarSubclass"), superclass).unwrap();
         // Try to overwrite instance variables
         subclass.add_ivar::<i16>(&c("ivar1"));
         subclass.add_ivar::<usize>(&c("ivar2"));

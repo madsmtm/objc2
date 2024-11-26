@@ -3,9 +3,9 @@ use core::ptr::{self, NonNull};
 use crate::encode::{Encode, RefEncode};
 use crate::rc::{Allocated, PartialInit, Retained};
 use crate::runtime::{AnyClass, AnyObject, Sel};
-use crate::{sel, ClassType, DeclaredClass, Message};
+use crate::{sel, ClassType, DefinedClass, Message};
 
-use super::declared_ivars::set_finalized;
+use super::defined_ivars::set_finalized;
 use super::{Alloc, ConvertArguments, Copy, Init, MsgSend, MutableCopy, New, Other, TupleExtender};
 
 pub trait MsgSendRetained<T, U> {
@@ -300,7 +300,7 @@ impl<T: ?Sized + Message> MsgSendRetained<Allocated<T>, Option<Retained<T>>> for
     }
 }
 
-impl<T: DeclaredClass> MsgSendSuperRetained<PartialInit<T>, Option<Retained<T>>> for Init {
+impl<T: DefinedClass> MsgSendSuperRetained<PartialInit<T>, Option<Retained<T>>> for Init {
     type Inner = T;
 
     #[inline]
@@ -1008,7 +1008,7 @@ mod tests {
         1
     } else if cfg!(target_arch = "x86") {
         // x86 autorelease_return is not currently tail-called, so the
-        // optimization doesn't work on declare_class! functions.
+        // optimization doesn't work on define_class! functions.
         2
     } else if cfg!(target_arch = "aarch64") {
         // Currently doesn't work

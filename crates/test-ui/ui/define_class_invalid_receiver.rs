@@ -1,9 +1,9 @@
 #![allow(unused_variables)]
-use objc2::declare_class;
+use objc2::define_class;
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::{AnyClass, NSObject};
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "CustomObject"]
     struct CustomObject;

@@ -350,7 +350,7 @@ mod argument_private {
 //
 // You might be tempted to think that `bool` could work in this, but that
 // would be a mistake (even ignoring that its size is different on certain
-// targets) because it cannot be safely used in declared methods.
+// targets) because it cannot be safely used in custom defined methods.
 pub unsafe trait EncodeArgument: argument_private::Sealed {
     /// The Objective-C type-encoding for this type.
     const ENCODING_ARGUMENT: Encoding;

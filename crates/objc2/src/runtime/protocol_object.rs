@@ -200,7 +200,7 @@ mod tests {
     use super::*;
     use crate::runtime::{ClassBuilder, NSObject};
     use crate::{
-        declare_class, extern_methods, extern_protocol, msg_send_id, ClassType, ProtocolType,
+        define_class, extern_methods, extern_protocol, msg_send_id, ClassType, ProtocolType,
     };
 
     extern_protocol!(
@@ -251,7 +251,7 @@ mod tests {
         unsafe impl ProtocolType for dyn FooFooBar {}
     );
 
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
         #[name = "ProtocolTestsDummyClass"]
         #[derive(Debug, PartialEq, Eq, Hash)]

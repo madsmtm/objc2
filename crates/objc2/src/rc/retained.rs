@@ -637,9 +637,9 @@ impl<T: Message> Retained<T> {
     /// The object is not immediately released, but will be when the innermost
     /// autorelease pool is drained.
     ///
-    /// This is useful when [declaring your own methods][declare] where you
-    /// will often find yourself in need of returning autoreleased objects to
-    /// properly follow [Cocoa's Memory Management Policy][mmRules].
+    /// This is useful when [defining your own methods][classbuilder] where
+    /// you will often find yourself in need of returning autoreleased objects
+    /// to properly follow [Cocoa's Memory Management Policy][mmRules].
     ///
     /// To that end, you could also use [`Retained::autorelease_ptr`], but
     /// this is more efficient than a normal `autorelease`, since it makes a
@@ -650,20 +650,19 @@ impl<T: Message> Retained<T> {
     /// This optimization relies heavily on this function being tail called,
     /// so make sure you only call this function at the end of your method.
     ///
-    /// [declare]: crate::declare
+    /// [classbuilder]: crate::runtime::ClassBuilder
     /// [mmRules]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html
     ///
     ///
     /// # Example
     ///
-    /// Returning an `Retained` from a declared method (note: the [`declare_class!`]
-    /// macro supports doing this for you automatically).
+    /// Returning an `Retained` from a custom method (note: the
+    /// [`define_class!`] macro supports doing this for you automatically).
     ///
     /// ```
     /// use objc2::{class, msg_send_id, sel};
-    /// use objc2::declare::ClassBuilder;
     /// use objc2::rc::Retained;
-    /// use objc2::runtime::{AnyClass, AnyObject, Sel};
+    /// use objc2::runtime::{AnyClass, AnyObject, ClassBuilder, Sel};
     ///
     /// let mut builder = ClassBuilder::new(c"ExampleObject", class!(NSObject)).unwrap();
     ///
@@ -682,7 +681,7 @@ impl<T: Message> Retained<T> {
     /// let cls = builder.register();
     /// ```
     ///
-    /// [`declare_class!`]: crate::declare_class
+    /// [`define_class!`]: crate::define_class
     #[doc(alias = "objc_autoreleaseReturnValue")]
     #[must_use = "if you don't intend to use the object any more, drop it as usual"]
     #[inline]
@@ -736,7 +735,7 @@ impl<T: ?Sized> Drop for Retained<T> {
     ///
     /// The contained object's destructor (`Drop` impl, if it has one) is
     /// never run - override the `dealloc` method instead (which
-    /// `declare_class!` does for you).
+    /// `define_class!` does for you).
     #[doc(alias = "objc_release")]
     #[doc(alias = "release")]
     #[inline]
@@ -846,13 +845,13 @@ mod tests {
     use super::*;
     use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
     use crate::runtime::{AnyObject, NSObject, NSObjectProtocol};
-    use crate::{declare_class, msg_send};
+    use crate::{define_class, msg_send};
 
     #[test]
     fn auto_traits() {
         macro_rules! helper {
             ($name:ident) => {
-                declare_class!(
+                define_class!(
                     #[unsafe(super(NSObject))]
                     #[name = concat!(stringify!($name), "Test")]
                     // Make the type not thread safe by default.

@@ -1,8 +1,8 @@
-use objc2::declare_class;
+use objc2::define_class;
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "InvalidMethodDeclarations"]
     struct InvalidMethodDeclarations;
@@ -126,27 +126,27 @@ declare_class!(
     }
 );
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     struct MissingName;
 );
 
-declare_class!(
+define_class!(
     #[name = "MissingSuper"]
     struct MissingSuper;
 );
 
-declare_class!(
+define_class!(
     #[super(NSObject)]
     #[name = "SafeSuper"]
     struct SafeSuper;
 );
 
-declare_class!(
+define_class!(
     struct MissingBoth;
 );
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "HasRepr"]
     #[repr(transparent)]

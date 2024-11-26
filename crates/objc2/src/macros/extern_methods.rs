@@ -69,12 +69,12 @@
 /// use objc2::ffi::NSUInteger;
 /// use objc2::rc::{Allocated, Retained};
 /// use objc2::runtime::NSObject;
-/// use objc2::{declare_class, extern_methods};
+/// use objc2::{define_class, extern_methods};
 ///
 /// // Shim
 /// type NSError = NSObject;
 ///
-/// declare_class!(
+/// define_class!(
 ///     // SAFETY:
 ///     // - The superclass NSObject does not have any subclassing requirements.
 ///     // - `MyObject` does not implement `Drop`.
@@ -122,12 +122,12 @@
 /// # use objc2::ffi::NSUInteger;
 /// # use objc2::rc::{Allocated, Retained};
 /// # use objc2::runtime::NSObject;
-/// # use objc2::{declare_class, extern_methods, ClassType};
+/// # use objc2::{define_class, extern_methods, ClassType};
 /// #
 /// # // Shim
 /// # type NSError = NSObject;
 /// #
-/// # declare_class!(
+/// # define_class!(
 /// #     #[unsafe(super(NSObject))]
 /// #     #[name = "MyObject2"]
 /// #     pub struct MyObject;

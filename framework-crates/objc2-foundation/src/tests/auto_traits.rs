@@ -4,7 +4,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use static_assertions::assert_not_impl_any;
 
 use crate::*;
-use objc2::declare_class;
+use objc2::define_class;
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
 
@@ -29,7 +29,7 @@ fn assert_auto_traits<T: Send + Sync + UnwindSafe + RefUnwindSafe>() {
     assert_unwindsafe::<T>();
 }
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "SendSyncObject"]
     struct SendSyncObject;

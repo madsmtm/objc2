@@ -1,6 +1,6 @@
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
-use objc2::{declare_class, extern_class, extern_methods};
+use objc2::{define_class, extern_class, extern_methods};
 
 extern_class!(
     #[unsafe(super(NSObject))]
@@ -25,7 +25,7 @@ extern_methods!(
     }
 );
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "CustomObject1"]
     struct CustomObject1;
@@ -38,7 +38,7 @@ declare_class!(
     }
 );
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "CustomObject2"]
     struct CustomObject2;

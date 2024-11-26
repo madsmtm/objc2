@@ -1,7 +1,7 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2::{declare_class, msg_send_id, DeclaredClass, MainThreadMarker, MainThreadOnly};
+use objc2::{define_class, msg_send_id, DefinedClass, MainThreadMarker, MainThreadOnly};
 use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate};
 use objc2_foundation::{
     ns_string, NSCopying, NSNotification, NSObject, NSObjectProtocol, NSString,
@@ -18,7 +18,7 @@ struct Ivars {
     maybe_id_ivar: Option<Retained<NSString>>,
 }
 
-declare_class!(
+define_class!(
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
     // - `AppDelegate` does not implement `Drop`.

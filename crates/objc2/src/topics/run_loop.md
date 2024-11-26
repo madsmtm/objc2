@@ -37,7 +37,7 @@ In graphical applications, the main run loop needs to be managed by the applicat
 
 ```rust, no_run
 use objc2::rc::{Allocated, Retained};
-use objc2::{declare_class, msg_send_id, ClassType, DeclaredClass, MainThreadOnly};
+use objc2::{define_class, msg_send_id, ClassType, DefinedClass, MainThreadOnly};
 use objc2_foundation::{NSNotification, NSObject, NSObjectProtocol};
 
 // Application delegate protocols happens to share a few methods,
@@ -52,7 +52,7 @@ struct AppState {
     // Whatever state you want to store in your delegate.
 }
 
-declare_class!(
+define_class!(
     // SAFETY:
     // - NSObject does not have any subclassing requirements.
     // - `AppDelegate` does not implement `Drop`.
@@ -109,7 +109,7 @@ fn main() {
 fn main() {
     // Initialize the class so that the storyboard can see it.
     //
-    // The name specified in `declare_class!`, i.e. "AppDelegate", must
+    // The name specified in `define_class!`, i.e. "AppDelegate", must
     // match what's specified in the storyboard.
     let _cls = AppDelegate::class();
     unsafe {

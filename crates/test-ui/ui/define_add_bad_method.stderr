@@ -1,5 +1,5 @@
 error[E0277]: the trait bound `fn(_, _): MethodImplementation` is not satisfied
- --> ui/declare_add_bad_method.rs
+ --> ui/define_add_bad_method.rs
   |
   |         builder.add_method(sel!(foo), foo as fn(_, _));
   |                 ----------            ^^^^^^^^^^^^^^^ the trait `MethodImplementation` is not implemented for `fn(_, _)`
@@ -17,7 +17,7 @@ error[E0277]: the trait bound `fn(_, _): MethodImplementation` is not satisfied
             extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F, G) -> RetainedReturnValue
           and $N others
 note: required by a bound in `ClassBuilder::add_method`
- --> $WORKSPACE/crates/objc2/src/runtime/declare.rs
+ --> $WORKSPACE/crates/objc2/src/runtime/define.rs
   |
   |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
   |                   ---------- required by a bound in this associated function
@@ -26,7 +26,7 @@ note: required by a bound in `ClassBuilder::add_method`
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
 
 error[E0277]: the trait bound `fn(_, _): MethodImplementation` is not satisfied
- --> ui/declare_add_bad_method.rs
+ --> ui/define_add_bad_method.rs
   |
   |         builder.add_method(sel!(foo), foo as fn(_, _));
   |                 ----------            ^^^^^^^^^^^^^^^ the trait `MethodImplementation` is not implemented for `fn(_, _)`
@@ -44,7 +44,7 @@ error[E0277]: the trait bound `fn(_, _): MethodImplementation` is not satisfied
             extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F, G) -> RetainedReturnValue
           and $N others
 note: required by a bound in `ClassBuilder::add_method`
- --> $WORKSPACE/crates/objc2/src/runtime/declare.rs
+ --> $WORKSPACE/crates/objc2/src/runtime/define.rs
   |
   |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
   |                   ---------- required by a bound in this associated function
@@ -53,7 +53,7 @@ note: required by a bound in `ClassBuilder::add_method`
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
 
 error[E0277]: the trait bound `fn(_, _) -> _: MethodImplementation` is not satisfied
- --> ui/declare_add_bad_method.rs
+ --> ui/define_add_bad_method.rs
   |
   |         builder.add_method(sel!(foo), foo as fn(_, _) -> _);
   |                 ----------            ^^^^^^^^^^^^^^^^^^^^ the trait `MethodImplementation` is not implemented for `fn(_, _) -> _`
@@ -71,7 +71,7 @@ error[E0277]: the trait bound `fn(_, _) -> _: MethodImplementation` is not satis
             extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F, G) -> RetainedReturnValue
           and $N others
 note: required by a bound in `ClassBuilder::add_method`
- --> $WORKSPACE/crates/objc2/src/runtime/declare.rs
+ --> $WORKSPACE/crates/objc2/src/runtime/define.rs
   |
   |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
   |                   ---------- required by a bound in this associated function
@@ -80,7 +80,7 @@ note: required by a bound in `ClassBuilder::add_method`
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
 
 error[E0277]: the trait bound `fn(_, _) -> _: MethodImplementation` is not satisfied
- --> ui/declare_add_bad_method.rs
+ --> ui/define_add_bad_method.rs
   |
   |         builder.add_method(sel!(foo), foo as fn(_, _) -> _);
   |                 ----------            ^^^^^^^^^^^^^^^^^^^^ the trait `MethodImplementation` is not implemented for `fn(_, _) -> _`
@@ -98,7 +98,7 @@ error[E0277]: the trait bound `fn(_, _) -> _: MethodImplementation` is not satis
             extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F, G) -> RetainedReturnValue
           and $N others
 note: required by a bound in `ClassBuilder::add_method`
- --> $WORKSPACE/crates/objc2/src/runtime/declare.rs
+ --> $WORKSPACE/crates/objc2/src/runtime/define.rs
   |
   |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
   |                   ---------- required by a bound in this associated function
@@ -107,7 +107,7 @@ note: required by a bound in `ClassBuilder::add_method`
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
 
 error[E0277]: the trait bound `fn(_, _, _): MethodImplementation` is not satisfied
- --> ui/declare_add_bad_method.rs
+ --> ui/define_add_bad_method.rs
   |
   |         builder.add_method(sel!(foo:), foo as fn(_, _, _));
   |                 ----------             ^^^^^^^^^^^^^^^^^^ the trait `MethodImplementation` is not implemented for `fn(_, _, _)`
@@ -125,7 +125,7 @@ error[E0277]: the trait bound `fn(_, _, _): MethodImplementation` is not satisfi
             extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F, G) -> RetainedReturnValue
           and $N others
 note: required by a bound in `ClassBuilder::add_method`
- --> $WORKSPACE/crates/objc2/src/runtime/declare.rs
+ --> $WORKSPACE/crates/objc2/src/runtime/define.rs
   |
   |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
   |                   ---------- required by a bound in this associated function

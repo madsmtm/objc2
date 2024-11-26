@@ -1,4 +1,4 @@
-//! # Supporting code for instance variables on declared classes.
+//! # Supporting code for instance variables on defined classes.
 //!
 //! Adding instance variables to Objective-C classes is fairly simple, it can
 //! be done using `ClassBuilder::add_ivar`.
@@ -14,7 +14,7 @@
 //! following tagged enum:
 //! ```
 //! #[repr(u8)]
-//! enum ActualIvar<T: objc2::DeclaredClass> {
+//! enum ActualIvar<T: objc2::DefinedClass> {
 //!     Allocated = 0,
 //!     PartialInit(T::Ivars),
 //!     Finalized(T::Ivars),
@@ -54,7 +54,7 @@ use core::ptr::{self, NonNull};
 
 use crate::encode::{Encode, Encoding};
 use crate::runtime::{AnyClass, AnyObject, ClassBuilder, MessageReceiver, Sel};
-use crate::{sel, ClassType, DeclaredClass};
+use crate::{sel, ClassType, DefinedClass};
 
 /// A type representing the drop flags that may be set for a type.
 #[repr(u8)]
@@ -82,12 +82,12 @@ unsafe impl Encode for DropFlag {
     const ENCODING: Encoding = u8::ENCODING;
 }
 
-pub trait DeclaredIvarsHelper {
+pub trait DefinedIvarsHelper {
     const HAS_IVARS: bool;
     const HAS_DROP_FLAG: bool;
 }
 
-impl<T: DeclaredClass> DeclaredIvarsHelper for T {
+impl<T: DefinedClass> DefinedIvarsHelper for T {
     /// Only add ivar if we need the runtime to allocate memory for it.
     ///
     /// We can avoid doing so if the type is a zero-sized type (ZST), and the
@@ -112,7 +112,7 @@ impl<T: DeclaredClass> DeclaredIvarsHelper for T {
 /// The pointer must be valid, and the instance variable offset (if it has
 /// any) must have been initialized.
 #[inline]
-unsafe fn ptr_to_ivar<T: ?Sized + DeclaredClass>(ptr: NonNull<T>) -> NonNull<T::Ivars> {
+unsafe fn ptr_to_ivar<T: ?Sized + DefinedClass>(ptr: NonNull<T>) -> NonNull<T::Ivars> {
     // This is called even when there is no ivars, but that's fine, since in
     // that case the ivar is zero-sized, and the offset will be zero, so we
     // can still compute a valid pointer to the ivar.
@@ -120,7 +120,7 @@ unsafe fn ptr_to_ivar<T: ?Sized + DeclaredClass>(ptr: NonNull<T>) -> NonNull<T::
     // debug_assert!(T::HAS_IVARS);
 
     // SAFETY: That an instance variable with the given type exists at the
-    // specified offset is ensured by `DeclaredClass` trait implementor.
+    // specified offset is ensured by `DefinedClass` trait implementor.
     unsafe { AnyObject::ivar_at_offset::<T::Ivars>(ptr.cast(), T::__ivars_offset()) }
 }
 
@@ -130,14 +130,14 @@ unsafe fn ptr_to_ivar<T: ?Sized + DeclaredClass>(ptr: NonNull<T>) -> NonNull<T::
 ///
 /// The pointer must be valid and have an initialized drop flag.
 #[inline]
-unsafe fn ptr_to_drop_flag<T: DeclaredClass>(ptr: NonNull<T>) -> *mut DropFlag {
+unsafe fn ptr_to_drop_flag<T: DefinedClass>(ptr: NonNull<T>) -> *mut DropFlag {
     debug_assert!(T::HAS_DROP_FLAG, "type did not have drop flag");
     // SAFETY: That a drop flag exists at the specified offset is ensured
     // by caller.
     unsafe { AnyObject::ivar_at_offset::<DropFlag>(ptr.cast(), T::__drop_flag_offset()).as_ptr() }
 }
 
-pub(crate) fn setup_dealloc<T: DeclaredClass>(builder: &mut ClassBuilder)
+pub(crate) fn setup_dealloc<T: DefinedClass>(builder: &mut ClassBuilder)
 where
     T::Super: ClassType,
 {
@@ -158,7 +158,7 @@ where
 /// - <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#dealloc>
 /// - <https://developer.apple.com/documentation/objectivec/nsobject/1571947-dealloc>
 /// - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html#//apple_ref/doc/uid/20000994-SW2>
-unsafe extern "C-unwind" fn dealloc<T: DeclaredClass>(this: NonNull<T>, cmd: Sel)
+unsafe extern "C-unwind" fn dealloc<T: DefinedClass>(this: NonNull<T>, cmd: Sel)
 where
     T::Super: ClassType,
 {
@@ -236,7 +236,7 @@ where
 
 /// Register the class, and get the ivar offsets.
 #[inline]
-pub(crate) fn register_with_ivars<T: DeclaredClass>(
+pub(crate) fn register_with_ivars<T: DefinedClass>(
     mut builder: ClassBuilder,
 ) -> (&'static AnyClass, isize, isize) {
     let (ivar_name, drop_flag_name): (Cow<'static, CStr>, Cow<'static, CStr>) = {
@@ -281,7 +281,7 @@ pub(crate) fn register_with_ivars<T: DeclaredClass>(
 
     if T::HAS_DROP_FLAG {
         // TODO: Maybe we can reuse the drop flag when subclassing an already
-        // declared class?
+        // defined class?
         builder.add_ivar::<DropFlag>(&drop_flag_name);
     }
 
@@ -291,7 +291,7 @@ pub(crate) fn register_with_ivars<T: DeclaredClass>(
         // Monomorphized error handling
         // Intentionally not #[track_caller], we expect this error to never occur
         fn get_ivar_failed() -> ! {
-            unreachable!("failed retrieving instance variable on newly declared class")
+            unreachable!("failed retrieving instance variable on newly defined class")
         }
 
         cls.instance_variable(&ivar_name)
@@ -309,7 +309,7 @@ pub(crate) fn register_with_ivars<T: DeclaredClass>(
         // Monomorphized error handling
         // Intentionally not #[track_caller], we expect this error to never occur
         fn get_drop_flag_failed() -> ! {
-            unreachable!("failed retrieving drop flag instance variable on newly declared class")
+            unreachable!("failed retrieving drop flag instance variable on newly defined class")
         }
 
         cls.instance_variable(&drop_flag_name)
@@ -331,7 +331,7 @@ pub(crate) fn register_with_ivars<T: DeclaredClass>(
 /// The pointer must be a valid, newly allocated instance.
 #[inline]
 #[track_caller]
-pub(crate) unsafe fn initialize_ivars<T: DeclaredClass>(ptr: NonNull<T>, val: T::Ivars) {
+pub(crate) unsafe fn initialize_ivars<T: DefinedClass>(ptr: NonNull<T>, val: T::Ivars) {
     // Debug assert the state of the drop flag
     if T::HAS_DROP_FLAG && cfg!(debug_assertions) {
         // SAFETY: Just checked that the drop flag is available.
@@ -371,7 +371,7 @@ pub(crate) unsafe fn initialize_ivars<T: DeclaredClass>(ptr: NonNull<T>, val: T:
 /// have been run).
 #[inline]
 #[track_caller]
-pub(crate) unsafe fn set_finalized<T: DeclaredClass>(ptr: NonNull<T>) {
+pub(crate) unsafe fn set_finalized<T: DefinedClass>(ptr: NonNull<T>) {
     // Debug assert the state of the drop flag
     if T::HAS_DROP_FLAG && cfg!(debug_assertions) {
         // SAFETY: Just checked that the drop flag is available.
@@ -400,7 +400,7 @@ pub(crate) unsafe fn set_finalized<T: DeclaredClass>(ptr: NonNull<T>) {
 /// The pointer must be valid and the instance variables must be initialized.
 #[inline]
 #[track_caller]
-pub(crate) unsafe fn get_initialized_ivar_ptr<T: DeclaredClass>(
+pub(crate) unsafe fn get_initialized_ivar_ptr<T: DefinedClass>(
     ptr: NonNull<T>,
 ) -> NonNull<T::Ivars> {
     // Debug assert the state of the drop flag
@@ -435,10 +435,10 @@ mod tests {
     use super::*;
     use crate::rc::{Allocated, PartialInit, RcTestObject, Retained, ThreadTestData};
     use crate::runtime::NSObject;
-    use crate::{declare_class, msg_send, msg_send_id, AllocAnyThread, Message};
+    use crate::{define_class, msg_send, msg_send_id, AllocAnyThread, Message};
 
     /// Initialize superclasses, but not own class.
-    unsafe fn init_only_superclasses<T: DeclaredClass>(obj: Allocated<T>) -> Retained<T>
+    unsafe fn init_only_superclasses<T: DefinedClass>(obj: Allocated<T>) -> Retained<T>
     where
         T::Super: ClassType,
     {
@@ -446,7 +446,7 @@ mod tests {
     }
 
     /// Initialize, but fail to finalize (which is only done by `msg_send_id!`).
-    unsafe fn init_no_finalize<T: DeclaredClass>(obj: Allocated<T>) -> Retained<T>
+    unsafe fn init_no_finalize<T: DefinedClass>(obj: Allocated<T>) -> Retained<T>
     where
         T::Super: ClassType,
         T::Ivars: Default,
@@ -456,7 +456,7 @@ mod tests {
     }
 
     /// Initialize properly.
-    unsafe fn init<T: DeclaredClass>(obj: Allocated<T>) -> Retained<T> {
+    unsafe fn init<T: DefinedClass>(obj: Allocated<T>) -> Retained<T> {
         unsafe { msg_send_id![obj, init] }
     }
 
@@ -496,7 +496,7 @@ mod tests {
 
         // First class
 
-        declare_class!(
+        define_class!(
             #[unsafe(super(NSObject))]
             #[name = "ImplsDrop"]
             #[ivars = ()]
@@ -530,7 +530,7 @@ mod tests {
 
         // Subclass
 
-        declare_class!(
+        define_class!(
             #[unsafe(super(ImplsDrop))]
             #[name = "IvarsImplDrop"]
             #[ivars = IvarThatImplsDrop]
@@ -558,7 +558,7 @@ mod tests {
 
         // Further subclass
 
-        declare_class!(
+        define_class!(
             #[unsafe(super(IvarsImplDrop))]
             #[name = "BothIvarsAndTypeImplsDrop"]
             #[ivars = IvarThatImplsDrop]
@@ -608,7 +608,7 @@ mod tests {
             field2: bool,
         }
 
-        declare_class!(
+        define_class!(
             #[unsafe(super(NSObject))]
             #[name = "IvarsNoDrop"]
             #[ivars = Ivar]
@@ -628,7 +628,7 @@ mod tests {
         #[derive(Default, Debug, Clone, Copy)]
         struct Ivar;
 
-        declare_class!(
+        define_class!(
             #[unsafe(super(NSObject))]
             #[name = "IvarZst"]
             #[ivars = Cell<Ivar>]
@@ -666,7 +666,7 @@ mod tests {
         #[repr(align(16))]
         struct HighAlignment;
 
-        declare_class!(
+        define_class!(
             #[unsafe(super(NSObject))]
             #[name = "HasIvarWithHighAlignment"]
             #[ivars = HighAlignment]
@@ -691,7 +691,7 @@ mod tests {
 
     #[test]
     fn test_ivar_access() {
-        declare_class!(
+        define_class!(
             #[unsafe(super(NSObject))]
             #[name = "RcIvar"]
             #[ivars = Cell<Option<Retained<RcTestObject>>>]
@@ -751,7 +751,7 @@ mod tests {
             obj: Cell<Retained<RcTestObject>>,
         }
 
-        declare_class!(
+        define_class!(
             #[unsafe(super(RcIvar))]
             #[name = "RcIvarSubclass"]
             #[ivars = RcIvarSubclassIvars]
@@ -816,7 +816,7 @@ mod tests {
     #[cfg_attr(not(debug_assertions), ignore = "only panics with debug assertions")]
     #[should_panic = "tried to access uninitialized instance variable"]
     fn access_invalid() {
-        declare_class!(
+        define_class!(
             #[unsafe(super(NSObject))]
             #[name = "InvalidAccess"]
             // Type has to have a drop flag to detect invalid access
@@ -833,7 +833,7 @@ mod tests {
     #[should_panic = "panic in drop"]
     #[ignore = "panicking in Drop requires that we actually implement `dealloc` as `C-unwind`"]
     fn test_panic_in_drop() {
-        declare_class!(
+        define_class!(
             #[unsafe(super(NSObject))]
             #[name = "DropPanics"]
             struct DropPanics;
@@ -862,7 +862,7 @@ mod tests {
             }
         }
 
-        declare_class!(
+        define_class!(
             #[unsafe(super(NSObject))]
             #[name = "IvarDropPanics"]
             #[ivars = DropPanics]
@@ -882,7 +882,7 @@ mod tests {
     // performance.
     #[test]
     fn test_retain_leak_in_drop() {
-        declare_class!(
+        define_class!(
             // SAFETY: Intentionally broken!
             #[unsafe(super(NSObject))]
             #[name = "DropRetainsAndLeaksSelf"]

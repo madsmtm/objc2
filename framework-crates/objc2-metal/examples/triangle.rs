@@ -6,7 +6,7 @@ use core::{cell::OnceCell, ptr::NonNull};
 
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2::{declare_class, msg_send_id, DeclaredClass, MainThreadMarker, MainThreadOnly};
+use objc2::{define_class, msg_send_id, DefinedClass, MainThreadMarker, MainThreadOnly};
 #[cfg(target_os = "macos")]
 use objc2_app_kit::{
     NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSBackingStoreType,
@@ -54,7 +54,7 @@ macro_rules! idcell {
     };
 }
 
-// declare the desired instance variables
+// The state of our application.
 struct Ivars {
     start_date: Retained<NSDate>,
     command_queue: OnceCell<Retained<ProtocolObject<dyn MTLCommandQueue>>>,
@@ -63,8 +63,7 @@ struct Ivars {
     window: OnceCell<Retained<NSWindow>>,
 }
 
-// declare the Objective-C class machinery
-declare_class!(
+define_class!(
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
     // - `MainThreadOnly` is correct, since this is an application delegate.

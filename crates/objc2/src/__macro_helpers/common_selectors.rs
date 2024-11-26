@@ -44,10 +44,10 @@ fn cxx_construct_sel() -> Sel {
 /// undocumented in clang - but since the selector is emitted into the final
 /// binary, it is fine to rely on it being used.
 ///
-/// Unfortunately though, this only works if the class has been declared
+/// Unfortunately though, this only works if the class has been defined
 /// statically, since in that case a flag is set to inform the runtime that it
 /// needs to run destructors. So unfortunately we can't use this on
-/// dynamically declared classes.
+/// dynamically defined classes.
 ///
 ///
 /// # ABI

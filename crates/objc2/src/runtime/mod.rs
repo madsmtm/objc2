@@ -29,7 +29,7 @@ use core::ptr::{self, NonNull};
 #[doc(hidden)]
 pub mod __nsstring;
 mod bool;
-mod declare;
+mod define;
 mod malloc;
 mod message_receiver;
 mod method_encoding_iter;
@@ -53,7 +53,7 @@ use crate::{ffi, DowncastTarget, Message};
 pub use self::nsproxy::NSProxy as __NSProxy;
 
 pub use self::bool::Bool;
-pub use self::declare::{ClassBuilder, ProtocolBuilder};
+pub use self::define::{ClassBuilder, ProtocolBuilder};
 pub use self::message_receiver::MessageReceiver;
 pub use self::method_implementation::MethodImplementation;
 pub use self::nsobject::{NSObject, NSObjectProtocol};
@@ -363,7 +363,7 @@ impl Ivar {
     /// interface to the ivar.
     ///
     /// [`UnsafeCell::get`]: core::cell::UnsafeCell::get
-    /// [`ClassBuilder::add_ivar`]: crate::declare::ClassBuilder::add_ivar
+    /// [`ClassBuilder::add_ivar`]: crate::runtime::ClassBuilder::add_ivar
     ///
     ///
     /// # Panics
@@ -908,7 +908,7 @@ impl AnyClass {
         }
     }
 
-    /// Describes the instance variables declared by self.
+    /// Get a list of instance variables on the class.
     #[doc(alias = "class_copyIvarList")]
     pub fn instance_variables(&self) -> MallocSlice!(&Ivar) {
         unsafe {
@@ -1350,7 +1350,7 @@ impl AnyObject {
     }
 
     pub(crate) fn is_kind_of_class(&self, cls: &AnyClass) -> Bool {
-        // SAFETY: The signature is declared correctly.
+        // SAFETY: The signature is correct.
         //
         // Note that `isKindOfClass:` is not available on every object, but it
         // is still safe to _use_, since the runtime will simply crash if the

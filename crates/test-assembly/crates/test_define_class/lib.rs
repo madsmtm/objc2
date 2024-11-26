@@ -1,4 +1,4 @@
-//! Test assembly output of `declare_class!`.
+//! Test assembly output of `define_class!`.
 #![deny(unsafe_op_in_unsafe_fn)]
 // Limit to Apple targets only, since we don't particularly care about GNUStep code-size for now.
 #![cfg(target_vendor = "apple")]
@@ -8,10 +8,10 @@ use core::ptr;
 
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::AnyClass;
-use objc2::{declare_class, msg_send_id, ClassType, DeclaredClass};
+use objc2::{define_class, msg_send_id, ClassType, DefinedClass};
 use objc2_foundation::{CopyingHelper, NSCopying, NSObject, NSObjectProtocol, NSZone};
 
-declare_class!(
+define_class!(
     #[no_mangle]
     #[unsafe(super(NSObject))]
     #[name = "NoIvars"]
@@ -74,7 +74,7 @@ pub struct ForgetableIvarsIvars {
     bar: u32,
 }
 
-declare_class!(
+define_class!(
     #[no_mangle]
     #[unsafe(super(NSObject))]
     #[name = "ForgetableIvars"]
@@ -108,7 +108,7 @@ pub struct DropIvarsIvars {
     obj_option: Option<Retained<NSObject>>,
 }
 
-declare_class!(
+define_class!(
     #[no_mangle]
     #[unsafe(super(NSObject))]
     #[name = "DropIvars"]

@@ -335,7 +335,7 @@ macro_rules! __extract_custom_attributes_inner {
 
 /// Extract struct attributes, and send them to another macro.
 ///
-/// Used by `declare_class!` and `extern_class!`.
+/// Used by `define_class!` and `extern_class!`.
 ///
 /// This will ensure that there is only one of our custom attributes present.
 ///

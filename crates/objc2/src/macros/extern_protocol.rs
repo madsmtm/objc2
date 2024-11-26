@@ -12,7 +12,7 @@
 /// to the functionality exposed by the protocol.
 ///
 /// Note that that conforming to a protocol in a custom object requires
-/// putting the implementation inside the [`declare_class!`] invocation.
+/// putting the implementation inside the [`define_class!`] invocation.
 ///
 /// Objective-C has a smart feature where you can write `id<MyProtocol>`, and
 /// then work with the protocol as-if it was an object; this is very similar
@@ -43,14 +43,14 @@
 ///
 /// Finally, you can use the `#[optional]` attribute to mark optional methods.
 /// This currently doesn't have any effect, but probably will have one in the
-/// future when implementing protocols in [`declare_class!`].
+/// future when implementing protocols in [`define_class!`].
 ///
 /// This macro otherwise shares similarities with [`extern_class!`] and
 /// [`extern_methods!`].
 ///
 /// [`ProtocolObject<dyn T>`]: crate::runtime::ProtocolObject
 /// [`ProtocolType`]: crate::ProtocolType
-/// [`declare_class!`]: crate::declare_class
+/// [`define_class!`]: crate::define_class
 /// [`extern_class!`]: crate::extern_class
 /// [`extern_methods!`]: crate::extern_methods
 ///
@@ -107,7 +107,7 @@
 ///             -> Retained<NSArray<NSString>>;
 ///
 ///         // The rest of these are optional, which means that a user of
-///         // `declare_class!` would not need to implement them.
+///         // `define_class!` would not need to implement them.
 ///
 ///         #[optional]
 ///         #[method_id(writableTypeIdentifiersForItemProvider)]

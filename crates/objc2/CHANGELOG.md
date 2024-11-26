@@ -29,14 +29,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Implement `Message` for `AnyClass` and `AnyProtocol`.
 * Allow `AnyClass` and `AnyProtocol` to be converted to `AnyObject` (both of
   these can act as objects).
-* Classes created using `declare_class!` now implement `Send` and `Sync` when
+* Classes created using `define_class!` now implement `Send` and `Sync` when
   subclassing `NSObject`.
 
 ### Changed
-* **BREAKING**: Changed the syntax of `declare_class!` to be more succinct:
+* **BREAKING**: Renamed `declare_class!` to `define_class!`, and changed the
+  syntax to be more succinct:
 
   ```rust
   // Before
+  use objc2::mutability::InteriorMutable;
+  use objc2::runtime::NSObject;
+  use objc2::{declare_class, ClassType, DeclaredClass};
+
+  struct MyIvars;
+
   declare_class!(
       struct MyObject;
 
@@ -54,7 +61,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   );
 
   // After
-  declare_class!(
+  use objc2::runtime::NSObject;
+  use objc2::define_class;
+
+  struct MyIvars;
+
+  define_class!(
       #[unsafe(super(NSObject))]
       #[name = "MyObject"]
       #[ivars = MyIvars]
@@ -69,6 +81,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Changed the syntax of `extern_class!` to be more succinct:
   ```rust
   // Before
+  use objc2::mutability::MainThreadOnly;
+  use objc2::runtime::NSObject;
+  use objc2::{extern_class, ClassType};
+
   extern_class!(
       #[derive(PartialEq, Eq, Hash, Debug)]
       struct MyClass;
@@ -81,6 +97,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   );
 
   // After
+  use objc2::runtime::NSObject;
+  use objc2::{extern_class, MainThreadOnly};
+
   extern_class!(
       #[unsafe(super(NSObject))]
       #[thread_kind = MainThreadOnly]
@@ -126,6 +145,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Deprecated `NSObjectProtocol::is_kind_of`, use `isKindOfClass` or the new
   `AnyObject::downcast_ref` method instead.
 * Deprecated `Retained::cast`, this has been renamed to `Retained::cast_unchecked`.
+* Renamed `DeclaredClass` to `DefinedClass`.
 
 ### Removed
 * **BREAKING**: Removed the `ffi::SEL` and `ffi::objc_selector` types. Use

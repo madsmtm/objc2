@@ -4,7 +4,7 @@ mod __method_msg_send;
 mod __msg_send_parse;
 mod __rewrite_self_param;
 mod available;
-mod declare_class;
+mod define_class;
 mod extern_category;
 mod extern_class;
 mod extern_methods;
@@ -38,7 +38,7 @@ mod extern_protocol;
 /// Errors that were previously runtime panics may now turn into linker errors
 /// if you try to use a class which is not available. Additionally, you may
 /// have to call `msg_send![cls, class]` on the result if you want to use it
-/// in a dynamic context (e.g. dynamically declaring classes).
+/// in a dynamic context (e.g. when dynamically creating classes).
 ///
 /// See the [corresponding section][sel#features] in the [`sel!`] macro for
 /// more details on the limitations of this. The
@@ -907,7 +907,7 @@ macro_rules! __class_inner {
 /// ```no_run
 /// use objc2::msg_send;
 /// #
-/// # objc2::declare_class!(
+/// # objc2::define_class!(
 /// #     #[unsafe(super(objc2::runtime::NSObject))]
 /// #     #[name = "MyObject"]
 /// #     struct MyObject;

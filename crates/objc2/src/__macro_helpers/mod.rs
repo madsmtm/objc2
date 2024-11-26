@@ -18,8 +18,8 @@ mod cache;
 mod class;
 mod common_selectors;
 mod convert;
-mod declare_class;
-pub(crate) mod declared_ivars;
+mod define_class;
+pub(crate) mod defined_ivars;
 mod image_info;
 mod method_family;
 mod module_info;
@@ -33,11 +33,11 @@ pub use self::cache::{CachedClass, CachedSel};
 pub use self::class::{DoesNotImplDrop, MainThreadOnlyDoesNotImplSendSync, ValidThreadKind};
 pub use self::common_selectors::{alloc_sel, dealloc_sel, init_sel, new_sel};
 pub use self::convert::{ConvertArgument, ConvertArguments, ConvertReturn, TupleExtender};
-pub use self::declare_class::{
+pub use self::define_class::{
     ClassBuilderHelper, ClassProtocolMethodsBuilder, MaybeOptionRetained, MessageReceiveRetained,
     RetainedReturnValue, ThreadKindAutoTraits,
 };
-pub use self::declared_ivars::DeclaredIvarsHelper;
+pub use self::defined_ivars::DefinedIvarsHelper;
 pub use self::image_info::ImageInfo;
 pub use self::method_family::{
     retain_semantics, Alloc, Copy, Init, MutableCopy, New, Other, RetainSemantics,

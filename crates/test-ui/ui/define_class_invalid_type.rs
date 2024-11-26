@@ -1,8 +1,8 @@
-use objc2::declare_class;
+use objc2::define_class;
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "CustomObject"]
     struct CustomObject;

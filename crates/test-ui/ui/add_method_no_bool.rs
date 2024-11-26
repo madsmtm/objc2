@@ -1,8 +1,7 @@
 //! Ensure that methods taking/returning `bool` are not allowed.
 //!
 //! This is not sound without a conversion step.
-use objc2::declare::ClassBuilder;
-use objc2::runtime::{NSObject, Sel};
+use objc2::runtime::{ClassBuilder, NSObject, Sel};
 use objc2::sel;
 
 extern "C" fn my_bool_taking_method(_obj: &NSObject, _sel: Sel, _arg: bool) {}

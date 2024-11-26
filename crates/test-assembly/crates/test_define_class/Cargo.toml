@@ -1,5 +1,5 @@
 [package]
-name = "test_declare_class"
+name = "test_define_class"
 version = "0.1.0"
 edition.workspace = true
 publish = false

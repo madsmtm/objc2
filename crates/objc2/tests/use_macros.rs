@@ -1,7 +1,7 @@
 use objc2::runtime::{AnyClass, NSObject};
-use objc2::{class, declare_class, msg_send, sel};
+use objc2::{class, define_class, msg_send, sel};
 
-declare_class!(
+define_class!(
     #[unsafe(super(NSObject))]
     #[name = "MyObject"]
     pub struct MyObject;

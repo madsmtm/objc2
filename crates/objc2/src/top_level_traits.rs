@@ -1,7 +1,7 @@
 use alloc::ffi::CString;
 use core::ptr::NonNull;
 
-use crate::__macro_helpers::declared_ivars::get_initialized_ivar_ptr;
+use crate::__macro_helpers::defined_ivars::get_initialized_ivar_ptr;
 use crate::encode::RefEncode;
 use crate::rc::{Allocated, Retained};
 use crate::runtime::{AnyClass, AnyProtocol, ProtocolObject};
@@ -34,10 +34,10 @@ use crate::{msg_send_id, MainThreadMarker};
 /// runtime will do so. If you need to run some code when the object is
 /// destroyed, implement the `dealloc` method instead.
 ///
-/// The [`declare_class!`] macro does this for you, but the [`extern_class!`]
+/// The [`define_class!`] macro does this for you, but the [`extern_class!`]
 /// macro fundamentally cannot.
 ///
-/// [`declare_class!`]: crate::declare_class
+/// [`define_class!`]: crate::define_class
 /// [`extern_class!`]: crate::extern_class
 ///
 ///
@@ -128,7 +128,7 @@ pub unsafe trait Message: RefEncode {
 /// a few properties of the class to the rest of the type-system.
 ///
 /// This is implemented for your type by the
-/// [`declare_class!`][crate::declare_class] and
+/// [`define_class!`][crate::define_class] and
 /// [`extern_class!`][crate::extern_class] macros.
 ///
 ///
@@ -249,7 +249,7 @@ pub unsafe trait ClassType: Message {
     ///
     /// # Panics
     ///
-    /// This may panic if something went wrong with getting or declaring the
+    /// This may panic if something went wrong with getting or creating the
     /// class, e.g. if the program is not properly linked to the framework
     /// that defines the class.
     fn class() -> &'static AnyClass;
@@ -262,7 +262,7 @@ pub unsafe trait ClassType: Message {
     #[doc(hidden)]
     const __INNER: ();
 
-    /// Inner type to use when subclassing with `declare_class!`.
+    /// Inner type to use when subclassing with `define_class!`.
     ///
     /// This is used by NSObject to control which auto traits are set for
     /// defined subclasses. Set to `= Self` in all other cases.
@@ -270,18 +270,18 @@ pub unsafe trait ClassType: Message {
     type __SubclassingType: ?Sized;
 }
 
-/// Marks types whose implementation is defined in Rust.
+/// Marks class types whose implementation is defined in Rust.
 ///
-/// This is used in [`declare_class!`], and allows access to the instance
+/// This is used in [`define_class!`], and allows access to the instance
 /// variables that a given type declares, see that macro for details.
 ///
-/// [`declare_class!`]: crate::declare_class
+/// [`define_class!`]: crate::define_class
 //
 // Note: We mark this trait as not `unsafe` for better documentation, since
-// implementing it inside `declare_class!` is not `unsafe`.
+// implementing it inside `define_class!` is not `unsafe`.
 //
 // Safety is ensured by `__UNSAFE_OFFSETS_CORRECT`.
-pub trait DeclaredClass: ClassType {
+pub trait DefinedClass: ClassType {
     /// A type representing the instance variables that this class carries.
     type Ivars: Sized;
 
@@ -380,7 +380,7 @@ pub unsafe trait ProtocolType {
     ///
     /// # Panics
     ///
-    /// This may panic if something went wrong with getting or declaring the
+    /// This may panic if something went wrong with getting or creating the
     /// protocol, e.g. if the program is not properly linked to the framework
     /// that defines the protocol.
     fn protocol() -> Option<&'static AnyProtocol> {

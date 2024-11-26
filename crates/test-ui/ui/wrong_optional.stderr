@@ -29,7 +29,7 @@ error: `#[optional]` is only supported in `extern_protocol!`
 error: `#[optional]` is only supported in `extern_protocol!`
  --> ui/wrong_optional.rs
   |
-  | / declare_class!(
+  | / define_class!(
   | |     #[unsafe(super(NSObject))]
   | |     #[name = "CustomObject1"]
   | |     struct CustomObject1;
@@ -38,12 +38,12 @@ error: `#[optional]` is only supported in `extern_protocol!`
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__extern_methods_no_optional` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extern_methods_no_optional` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: `#[optional]` is only supported in `extern_protocol!`
  --> ui/wrong_optional.rs
   |
-  | / declare_class!(
+  | / define_class!(
   | |     #[unsafe(super(NSObject))]
   | |     #[name = "CustomObject2"]
   | |     struct CustomObject2;
@@ -52,4 +52,4 @@ error: `#[optional]` is only supported in `extern_protocol!`
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__extern_methods_no_optional` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extern_methods_no_optional` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

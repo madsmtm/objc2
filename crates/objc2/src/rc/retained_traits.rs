@@ -118,9 +118,9 @@ impl<T, U: RetainedFromIterator<T>> FromIterator<T> for Retained<U> {
 mod tests {
     use super::*;
     use crate::runtime::NSObject;
-    use crate::{declare_class, msg_send_id, ClassType};
+    use crate::{define_class, msg_send_id, ClassType};
 
-    declare_class!(
+    define_class!(
         #[unsafe(super(NSObject))]
         #[name = "MyCustomCollection"]
         #[derive(PartialEq, Eq, Hash, Debug)]
