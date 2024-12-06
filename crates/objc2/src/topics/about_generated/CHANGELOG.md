@@ -116,6 +116,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `UICalendarViewDelegate`
   - `UIEditMenuInteractionDelegate`
   - `UITabBarControllerSidebarDelegate`
+* Added `CFURL` and `NSURL` path conversion methods `from_file_path`,
+  `from_directory_path` and `to_file_path`.
+* Added `CFURL` string conversion methods `from_string`, `from_str_unchecked`
+  and `to_string`.
 
 ### Changed
 * Updated SDK from Xcode 16.2 to 16.3.

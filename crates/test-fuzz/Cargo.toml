@@ -40,6 +40,8 @@ fuzz-all = [
     "objc2-foundation/NSZone",
     "objc2-foundation/unstable-mutation-return-null",
     "objc2-core-foundation/CFString",
+    "objc2-core-foundation/CFURL",
+    "objc2-core-foundation/std",
 ]
 
 [[bin]]
@@ -50,6 +52,28 @@ doc = false
 bench = false
 required-features = [
     "objc2-core-foundation/CFString",
+]
+
+[[bin]]
+name = "cfurl"
+path = "fuzz_targets/cfurl.rs"
+test = false
+doc = false
+bench = false
+required-features = [
+    "objc2-core-foundation/CFString",
+    "objc2-core-foundation/CFURL",
+    "objc2-core-foundation/std",
+]
+
+[[bin]]
+name = "cfurl_path"
+path = "fuzz_targets/cfurl_path.rs"
+test = false
+doc = false
+bench = false
+required-features = [
+    "objc2-core-foundation/CFURL",
 ]
 
 [[bin]]

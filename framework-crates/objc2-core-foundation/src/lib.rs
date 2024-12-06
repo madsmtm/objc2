@@ -47,6 +47,8 @@ mod thread_safety;
 #[cfg(feature = "CFTimeZone")]
 mod timezone;
 mod type_traits;
+#[cfg(feature = "CFURL")]
+mod url;
 #[cfg(feature = "CFUserNotification")]
 mod user_notification;
 #[cfg(feature = "CFUUID")]

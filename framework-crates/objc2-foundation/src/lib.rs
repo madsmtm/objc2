@@ -130,6 +130,8 @@ mod tests;
 mod thread;
 #[cfg(feature = "NSObject")]
 mod to_owned;
+#[cfg(feature = "NSURL")]
+mod url;
 mod util;
 #[cfg(feature = "NSUUID")]
 mod uuid;
