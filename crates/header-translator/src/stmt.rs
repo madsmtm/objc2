@@ -539,7 +539,12 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
     immediate_children(entity, |entity, _span| match entity.get_kind() {
         EntityKind::UnexposedAttr => {
             if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                error!(?attr, "unknown attribute on fn param");
+                match attr {
+                    UnexposedAttr::NoEscape => {
+                        // TODO: Use this if mapping `fn + context ptr` to closure.
+                    }
+                    _ => error!(?attr, "unknown attribute on fn param"),
+                }
             }
         }
         EntityKind::ObjCClassRef

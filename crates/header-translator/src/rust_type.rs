@@ -1725,7 +1725,8 @@ impl Ty {
         FormatterFn(move |f| match self {
             Self::Primitive(Primitive::NSInteger) => write!(f, "#[repr(isize)] // NSInteger"),
             Self::Primitive(Primitive::NSUInteger) => write!(f, "#[repr(usize)] // NSUInteger"),
-            _ => panic!("invalid closed enum repr"),
+            Self::Primitive(Primitive::U32) => write!(f, "#[repr(u32)]"),
+            _ => panic!("invalid closed enum repr: {self:?}"),
         })
     }
 

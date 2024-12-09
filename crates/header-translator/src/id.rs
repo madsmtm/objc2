@@ -186,7 +186,11 @@ impl Location {
     }
 
     pub fn assert_file(&self, file_name: &str) {
-        assert_eq!(self.file_name(), Some(file_name));
+        assert_eq!(
+            self.file_name(),
+            Some(file_name),
+            "expected {self:?} to be in {file_name:?}"
+        );
     }
 }
 
