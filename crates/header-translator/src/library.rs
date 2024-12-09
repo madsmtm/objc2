@@ -449,23 +449,25 @@ see that for related crates.", self.data.krate, self.link_name)?;
 
             writeln!(f)?;
 
-            // Link to the correct framework.
-            if self.data.gnustep {
-                // Allow for different linking on GNUStep
-                writeln!(
+            if self.data.link {
+                // Link to the correct framework.
+                if self.data.gnustep {
+                    // Allow for different linking on GNUStep
+                    writeln!(
                     f,
                     "#[cfg_attr(target_vendor = \"apple\", link(name = \"{}\", kind = \"framework\"))]",
                     self.link_name
                 )?;
-            } else {
-                writeln!(
-                    f,
-                    "#[link(name = \"{}\", kind = \"framework\")]",
-                    self.link_name
-                )?;
+                } else {
+                    writeln!(
+                        f,
+                        "#[link(name = \"{}\", kind = \"framework\")]",
+                        self.link_name
+                    )?;
+                }
+                writeln!(f, "extern \"C\" {{}}")?;
+                writeln!(f)?;
             }
-            writeln!(f, "extern \"C\" {{}}")?;
-            writeln!(f)?;
 
             if !self.module.submodules.is_empty() {
                 write!(f, "{}", self.module.modules(config))?;

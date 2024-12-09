@@ -134,6 +134,9 @@ pub struct LibraryConfig {
     #[serde(default)]
     pub gnustep: bool,
 
+    #[serde(default = "link_default")]
+    pub link: bool,
+
     #[serde(rename = "class")]
     #[serde(default)]
     pub class_data: HashMap<String, ClassData>,
@@ -287,6 +290,10 @@ fn unsafe_default() -> bool {
 
 fn skipped_default() -> bool {
     false
+}
+
+fn link_default() -> bool {
+    true
 }
 
 impl Default for MethodData {
