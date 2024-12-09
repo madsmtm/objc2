@@ -62,8 +62,5 @@ protocol.GCDevice.methods."setHandlerQueue:".skipped = true
 protocol.GCDevicePhysicalInput.methods.queue.skipped = true
 protocol.GCDevicePhysicalInput.methods."setQueue:".skipped = true
 
-# Needs `CFIndex` (fixed locally for now)
-typedef.GCKeyCode.skipped = true
-
 # Needs `IOHIDDeviceRef` from IOKit
 class.GCController.methods."supportsHIDDevice:".skipped = true

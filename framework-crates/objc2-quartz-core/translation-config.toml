@@ -9,7 +9,7 @@ ios = "2.0"
 tvos = "9.0"
 visionos = "1.0"
 
-# Uses stuff from CoreFoundation and CoreGraphics
+# Uses stuff from CoreGraphics
 class.CAKeyframeAnimation.methods.path.skipped = true
 class.CAKeyframeAnimation.methods."setPath:".skipped = true
 class.CAShapeLayer.methods.path.skipped = true
@@ -20,8 +20,6 @@ class.CAShapeLayer.methods.strokeColor.skipped = true
 class.CAShapeLayer.methods."setStrokeColor:".skipped = true
 class.CAEmitterCell.methods.color.skipped = true
 class.CAEmitterCell.methods."setColor:".skipped = true
-class.CALayer.methods.affineTransform.skipped = true
-class.CALayer.methods."setAffineTransform:".skipped = true
 class.CALayer.methods."drawInContext:".skipped = true
 class.CALayer.methods."renderInContext:".skipped = true
 class.CALayer.methods.backgroundColor.skipped = true

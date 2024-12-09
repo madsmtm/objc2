@@ -1457,6 +1457,7 @@ UISceneWindowingBehaviors = []
 UIScene_AVAudioSession = []
 UIScreen = [
     "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-foundation?/CFDate",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",

@@ -322,6 +322,7 @@ VNTrackingRequest = [
 VNTypes = ["objc2-foundation/NSString"]
 VNUtils = ["objc2-core-foundation?/CFCGTypes"]
 VNVideoProcessor = [
+    "objc2-core-foundation?/CFDate",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",

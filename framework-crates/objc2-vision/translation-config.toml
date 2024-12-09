@@ -40,10 +40,6 @@ class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:options:com
 class.VNVideoProcessor.methods."analyzeTimeRange:error:".skipped = true
 class.VNVideoProcessor.methods."analyzeWithTimeRange:error:".skipped = true
 
-# Needs `CFTimeInterval` from CoreFoundation
-class.VNVideoProcessorTimeIntervalCadence.methods."initWithTimeInterval:".skipped = true
-class.VNVideoProcessorTimeIntervalCadence.methods.timeInterval.skipped = true
-
 # Needs CoreVideo
 class.VNTargetedImageRequest.methods."initWithTargetedCVPixelBuffer:options:".skipped = true
 class.VNTargetedImageRequest.methods."initWithTargetedCVPixelBuffer:options:completionHandler:".skipped = true

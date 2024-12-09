@@ -132,9 +132,6 @@ class.UIImage.methods."drawInRect:blendMode:alpha:".skipped = true
 fn.UIRectFillUsingBlendMode.skipped = true
 fn.UIRectFrameUsingBlendMode.skipped = true
 
-# Needs `CFTimeInterval`
-class.UIScreen.methods.calibratedLatency.skipped = true
-
 # Needs `CGGlyph`
 class.NSLayoutManager.methods."CGGlyphAtIndex:isValidIndex:".skipped = true
 class.NSLayoutManager.methods."CGGlyphAtIndex:".skipped = true

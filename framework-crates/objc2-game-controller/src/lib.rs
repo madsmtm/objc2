@@ -28,8 +28,3 @@ pub use self::extended_gamepad_snapshot::GCExtendedGamepadSnapshotData;
 pub use self::generated::*;
 #[cfg(feature = "GCInputNames")]
 pub use self::input_names::*;
-
-// TODO: GCKeyCode = CFIndex
-// NOTE: CFIndex is c_long_long on __LLP64__ / Windows 64-bit (doesn't matter for us)
-#[cfg(feature = "GCKeyCodes")]
-pub type GCKeyCode = core::ffi::c_long;

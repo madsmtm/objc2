@@ -12,6 +12,7 @@ gnustep = true
 
 # ns_consumed / NS_RELEASES_ARGUMENT / cf_consumed / CF_CONSUMED
 fn.CFBridgingRelease.skipped = true
+fn.CFBridgingRetain.skipped = true
 fn.NSMakeCollectable.skipped = true
 fn.NSFreeMapTable.skipped = true
 protocol.NSKeyedUnarchiverDelegate.methods."unarchiver:didDecodeObject:".skipped = true
@@ -173,10 +174,6 @@ class.NSDictionary.methods."dictionaryWithContentsOfURL:error:".skipped = true
 # This duplicates the method and protocol. The added type information is not
 # enough to make it safe anyhow, we need to do manual work here anyhow.
 class.NSDictionary.categories.NSGenericFastEnumeration.skipped = true
-
-# Needs CoreFoundation
-fn.CFBridgingRetain.skipped = true
-class.NSRunLoop.methods.getCFRunLoop.skipped = true
 
 # Uses constants from CoreFoundation or similar frameworks
 enum.NSAppleEventSendOptions.use-value = true
