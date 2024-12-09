@@ -155,8 +155,6 @@ impl Location {
             "block2" => LocationLibrary::Block2,
             "libc" => LocationLibrary::Libc,
             "objc2" => LocationLibrary::Objc2,
-            // Temporary
-            "CoreFoundation" => LocationLibrary::System,
             library => {
                 if let Some(krate) = config.libraries.get(library).map(|lib| &*lib.krate) {
                     if library == emission_library {
@@ -242,18 +240,10 @@ impl<N: ToOptionString> ItemIdentifier<N> {
     }
 
     pub fn with_name(name: N, entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let mut location = context.get_location(entity).unwrap_or_else(|| {
+        let location = context.get_location(entity).unwrap_or_else(|| {
             warn!(?entity, "ItemIdentifier from unknown header");
             Location::from_components(vec!["__Unknown__".into()])
         });
-
-        // TODO: Get rid of these hacks
-        if let Some("CGFloat" | "CGPoint" | "CGRect" | "CGSize") = name.to_option() {
-            location = Location::from_components(vec!["Foundation".into(), "NSGeometry".into()]);
-        }
-        if let Some("CFTimeInterval") = name.to_option() {
-            location = Location::from_components(vec!["System".into()]);
-        }
 
         Self { name, location }
     }

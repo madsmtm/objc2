@@ -114,7 +114,7 @@ impl NSValue {
         }
     }
 
-    #[cfg(feature = "NSGeometry")]
+    #[cfg(all(feature = "NSGeometry", feature = "objc2-core-foundation"))]
     pub fn get_point(&self) -> Option<crate::NSPoint> {
         if self.contains_encoding::<crate::NSPoint>() {
             // SAFETY: We just checked that this contains an NSPoint
@@ -128,7 +128,7 @@ impl NSValue {
         }
     }
 
-    #[cfg(feature = "NSGeometry")]
+    #[cfg(all(feature = "NSGeometry", feature = "objc2-core-foundation"))]
     pub fn get_size(&self) -> Option<crate::NSSize> {
         if self.contains_encoding::<crate::NSSize>() {
             // SAFETY: We just checked that this contains an NSSize
@@ -138,7 +138,7 @@ impl NSValue {
         }
     }
 
-    #[cfg(feature = "NSGeometry")]
+    #[cfg(all(feature = "NSGeometry", feature = "objc2-core-foundation"))]
     pub fn get_rect(&self) -> Option<crate::NSRect> {
         if self.contains_encoding::<crate::NSRect>() {
             // SAFETY: We just checked that this contains an NSRect

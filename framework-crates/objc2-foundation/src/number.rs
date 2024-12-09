@@ -63,8 +63,8 @@ impl NSNumber {
     }
 
     #[inline]
-    #[cfg(feature = "NSGeometry")]
-    pub fn new_cgfloat(val: crate::CGFloat) -> Retained<Self> {
+    #[cfg(feature = "objc2-core-foundation")]
+    pub fn new_cgfloat(val: objc2_core_foundation::CGFloat) -> Retained<Self> {
         #[cfg(target_pointer_width = "64")]
         {
             Self::new_f64(val)
@@ -107,8 +107,8 @@ impl NSNumber {
     }
 
     #[inline]
-    #[cfg(feature = "NSGeometry")]
-    pub fn as_cgfloat(&self) -> crate::CGFloat {
+    #[cfg(feature = "objc2-core-foundation")]
+    pub fn as_cgfloat(&self) -> objc2_core_foundation::CGFloat {
         #[cfg(target_pointer_width = "64")]
         {
             self.as_f64()

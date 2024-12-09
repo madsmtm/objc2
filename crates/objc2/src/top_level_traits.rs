@@ -522,7 +522,7 @@ pub unsafe trait MainThreadOnly: private::SealedMainThreadOnly {
     /// use objc2::{MainThreadOnly, MainThreadMarker};
     /// # #[cfg(available_in_app_kit)]
     /// use objc2_app_kit::NSView;
-    /// use objc2_foundation::CGRect;
+    /// use objc2_core_foundation::CGRect;
     /// #
     /// # use objc2::rc::{Allocated, Retained};
     /// #

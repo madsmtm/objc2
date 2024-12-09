@@ -18,7 +18,6 @@ class.NSObject.methods.release.skipped = true
 
 # TODO: Move these
 # `ns_consumed`, `cf_consumed` and `os_consumed`
-fn.CFAutorelease.skipped = true
 fn.IOServiceGetMatchingService.skipped = true
 fn.IOServiceGetMatchingServices.skipped = true
 fn.IOServiceAddMatchingNotification.skipped = true

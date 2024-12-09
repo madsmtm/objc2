@@ -1,10 +1,8 @@
-# Interop with `core-foundation`-like crates
+# Interop with other crates
 
-The `objc2` project does not [yet](https://github.com/madsmtm/objc2/issues/556) provide bindings to CoreFoundation and similar frameworks.
+The `objc2` project may not provide bindings for all frameworks, so in certain cases you may need to use existing crates like [`core-foundation`], [`core-graphics`], [`security-framework`], [`system-configuration`] and so on to interact with a given framework.
 
-To interact with these, you will have to use existing crates like [`core-foundation`], [`core-graphics`], [`security-framework`], [`system-configuration`] and so on.
-
-This can, however, pose a bit of an issue, since `objc2` and [`block2`] impose certain requirements on the types involved.
+This can pose a bit of an issue, since `objc2` and [`block2`] impose certain requirements on the types involved.
 
 [`core-foundation`]: https://crates.io/crates/core-foundation
 [`core-graphics`]: https://crates.io/crates/core-graphics

@@ -147,7 +147,9 @@ pub use self::fast_enumeration_state::NSFastEnumerationState;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 #[cfg(feature = "NSGeometry")]
-pub use self::geometry::{CGFloat, CGPoint, CGRect, CGSize, NSPoint, NSRect, NSRectEdge, NSSize};
+pub use self::geometry::NSRectEdge;
+#[cfg(all(feature = "NSGeometry", feature = "objc2-core-foundation"))]
+pub use self::geometry::{NSPoint, NSRect, NSSize};
 #[cfg(feature = "dispatch")]
 pub use self::main_thread_bound::*;
 #[cfg(feature = "NSMapTable")]

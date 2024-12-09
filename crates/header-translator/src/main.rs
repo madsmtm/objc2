@@ -557,7 +557,10 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
             .as_ref()
             .is_some_and(|v| VersionReq::parse("<=10.0").unwrap().matches(v))
     })?;
-    writer(&mut ci, config, "FRAMEWORKS_GNUSTEP", |lib| lib.gnustep)?;
+    writer(&mut ci, config, "FRAMEWORKS_GNUSTEP", |lib| {
+        // HACK: CoreFoundation uses mach types that GNUStep doesn't support
+        lib.gnustep && lib.krate != "objc2-core-foundation"
+    })?;
 
     write!(&mut ci, "  # END AUTOMATICALLY GENERATED{after}")?;
 

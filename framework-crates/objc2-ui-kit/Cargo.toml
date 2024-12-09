@@ -21,6 +21,7 @@ block2 = { path = "../../crates/block2", version = "0.5.1", default-features = f
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
 objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.2.2", default-features = false, optional = true }
 objc2-core-data = { path = "../objc2-core-data", version = "0.2.2", default-features = false, optional = true }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
 objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 objc2-symbols = { path = "../objc2-symbols", version = "0.2.2", default-features = false, optional = true }
@@ -46,12 +47,13 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-cloud-kit?/std", "objc2-core-data?/std", "objc2-core-image?/std", "objc2-core-location?/std", "objc2-foundation/std", "objc2-quartz-core?/std", "objc2-symbols?/std", "objc2-uniform-type-identifiers?/std", "objc2-user-notifications?/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-cloud-kit?/alloc", "objc2-core-data?/alloc", "objc2-core-image?/alloc", "objc2-core-location?/alloc", "objc2-foundation/alloc", "objc2-quartz-core?/alloc", "objc2-symbols?/alloc", "objc2-uniform-type-identifiers?/alloc", "objc2-user-notifications?/alloc"]
-bitflags = ["dep:bitflags", "objc2-cloud-kit?/bitflags", "objc2-core-data?/bitflags", "objc2-foundation/bitflags", "objc2-quartz-core?/bitflags", "objc2-user-notifications?/bitflags"]
-block2 = ["dep:block2", "objc2-cloud-kit?/block2", "objc2-core-data?/block2", "objc2-core-image?/block2", "objc2-core-location?/block2", "objc2-foundation/block2", "objc2-quartz-core?/block2", "objc2-uniform-type-identifiers?/block2", "objc2-user-notifications?/block2"]
+std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-cloud-kit?/std", "objc2-core-data?/std", "objc2-core-foundation?/std", "objc2-core-image?/std", "objc2-core-location?/std", "objc2-foundation/std", "objc2-quartz-core?/std", "objc2-symbols?/std", "objc2-uniform-type-identifiers?/std", "objc2-user-notifications?/std"]
+alloc = ["block2?/alloc", "objc2/alloc", "objc2-cloud-kit?/alloc", "objc2-core-data?/alloc", "objc2-core-foundation?/alloc", "objc2-core-image?/alloc", "objc2-core-location?/alloc", "objc2-foundation/alloc", "objc2-quartz-core?/alloc", "objc2-symbols?/alloc", "objc2-uniform-type-identifiers?/alloc", "objc2-user-notifications?/alloc"]
+bitflags = ["dep:bitflags", "objc2-cloud-kit?/bitflags", "objc2-core-data?/bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation/bitflags", "objc2-quartz-core?/bitflags", "objc2-user-notifications?/bitflags"]
+block2 = ["dep:block2", "objc2-cloud-kit?/block2", "objc2-core-data?/block2", "objc2-core-foundation?/block2", "objc2-core-image?/block2", "objc2-core-location?/block2", "objc2-foundation/block2", "objc2-quartz-core?/block2", "objc2-uniform-type-identifiers?/block2", "objc2-user-notifications?/block2"]
 objc2-cloud-kit = ["dep:objc2-cloud-kit"]
 objc2-core-data = ["dep:objc2-core-data"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-image?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-quartz-core?/objc2-core-foundation"]
 objc2-core-image = ["dep:objc2-core-image"]
 objc2-core-location = ["dep:objc2-core-location", "objc2-cloud-kit?/objc2-core-location", "objc2-user-notifications?/objc2-core-location"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
@@ -94,71 +96,71 @@ NSDiffableDataSourceSectionSnapshot = [
 NSFileProviderExtension = []
 NSIndexPath_UIKitAdditions = ["objc2-foundation/NSIndexPath"]
 NSItemProvider_UIKitAdditions = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSString",
 ]
 NSLayoutAnchor = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 NSLayoutConstraint = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
 ]
 NSLayoutManager = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
 ]
 NSParagraphStyle = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCharacterSet",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSLocale",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 NSShadow = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
 NSStringDrawing = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
 ]
 NSText = []
 NSTextAttachment = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSFileWrapper",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 NSTextContainer = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
 NSTextContentManager = [
@@ -178,28 +180,28 @@ NSTextElement = [
 ]
 NSTextLayoutFragment = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSOperation",
 ]
 NSTextLayoutManager = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSOperation",
     "objc2-foundation/NSString",
 ]
 NSTextLineFragment = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
@@ -218,18 +220,18 @@ NSTextListElement = [
 ]
 NSTextRange = ["objc2-foundation/NSObjCRuntime"]
 NSTextSelection = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 NSTextSelectionNavigation = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
 ]
 NSTextStorage = [
@@ -241,7 +243,7 @@ NSTextStorage = [
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
 ]
-NSTextViewportLayoutController = ["objc2-foundation/NSGeometry"]
+NSTextViewportLayoutController = ["objc2-core-foundation?/CFCGTypes"]
 NSToolbar_UIKitAdditions = []
 NSTouchBar_UIKitAdditions = []
 NSUserActivity_NSItemProvider = []
@@ -250,9 +252,9 @@ ShareSheet = []
 UIAccelerometer = ["objc2-foundation/NSDate"]
 UIAccessibility = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
@@ -283,24 +285,24 @@ UIAccessibilityCustomRotor = [
     "objc2-foundation/NSString",
 ]
 UIAccessibilityElement = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSString",
 ]
 UIAccessibilityIdentification = ["objc2-foundation/NSString"]
 UIAccessibilityLocationDescriptor = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
 ]
-UIAccessibilityZoom = ["objc2-foundation/NSGeometry"]
+UIAccessibilityZoom = ["objc2-core-foundation?/CFCGTypes"]
 UIAction = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 UIActionSheet = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
@@ -315,25 +317,25 @@ UIActivityCollaborationModeRestriction = [
     "objc2-foundation/NSURL",
 ]
 UIActivityIndicatorView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
 UIActivityItemProvider = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSOperation",
     "objc2-foundation/NSString",
 ]
 UIActivityItemsConfiguration = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSString",
 ]
 UIActivityItemsConfigurationReading = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSString",
 ]
@@ -356,8 +358,8 @@ UIAlertController = [
     "objc2-foundation/NSString",
 ]
 UIAlertView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
@@ -366,13 +368,13 @@ UIAppearance = ["objc2-foundation/NSArray"]
 UIApplication = [
     "bitflags",
     "objc2-cloud-kit?/CKShareMetadata",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSObjCRuntime",
     "objc2-foundation/NSSet",
@@ -386,31 +388,31 @@ UIApplicationShortcutItem = [
     "objc2-foundation/NSString",
 ]
 UIAttachmentBehavior = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
 ]
 UIBackgroundConfiguration = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
-UIBandSelectionInteraction = ["objc2-foundation/NSGeometry"]
+UIBandSelectionInteraction = ["objc2-core-foundation?/CFCGTypes"]
 UIBarAppearance = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
 UIBarButtonItem = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
     "objc2-symbols?/NSSymbolEffect",
 ]
 UIBarButtonItemAppearance = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -422,32 +424,32 @@ UIBarButtonItemGroup = [
 ]
 UIBarCommon = []
 UIBarItem = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 UIBehavioralStyle = []
 UIBezierPath = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
 UIBlurEffect = ["objc2-foundation/NSObject"]
 UIButton = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
 ]
 UIButtonConfiguration = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -459,11 +461,11 @@ UICalendarSelectionMultiDate = [
 UICalendarSelectionSingleDate = ["objc2-foundation/NSCalendar"]
 UICalendarSelectionWeekOfYear = ["objc2-foundation/NSCalendar"]
 UICalendarView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCalendar",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDateInterval",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSLocale",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -471,11 +473,11 @@ UICalendarView = [
     "objc2-quartz-core?/CALayer",
 ]
 UICalendarViewDecoration = []
-UICanvasFeedbackGenerator = ["objc2-foundation/NSGeometry"]
+UICanvasFeedbackGenerator = ["objc2-core-foundation?/CFCGTypes"]
 UICellAccessory = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -497,15 +499,15 @@ UICloudSharingController = [
 ]
 UICollectionLayoutList = [
     "bitflags",
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSIndexPath",
     "objc2-foundation/NSObject",
 ]
 UICollectionView = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSIndexPath",
     "objc2-foundation/NSIndexSet",
     "objc2-foundation/NSObject",
@@ -514,16 +516,16 @@ UICollectionView = [
     "objc2-quartz-core?/CALayer",
 ]
 UICollectionViewCell = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
 ]
 UICollectionViewCompositionalLayout = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSIndexPath",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -536,8 +538,8 @@ UICollectionViewController = [
     "objc2-foundation/NSString",
 ]
 UICollectionViewFlowLayout = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSIndexPath",
     "objc2-foundation/NSObject",
 ]
@@ -546,39 +548,39 @@ UICollectionViewItemRegistration = [
     "objc2-foundation/NSString",
 ]
 UICollectionViewLayout = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSIndexPath",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CATransform3D",
 ]
 UICollectionViewListCell = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
 UICollectionViewTransitionLayout = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 UICollectionViewUpdateItem = ["objc2-foundation/NSIndexPath"]
 UICollisionBehavior = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
 UIColor = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-core-image?/CIColor",
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -590,8 +592,8 @@ UIColorPickerViewController = [
     "objc2-foundation/NSString",
 ]
 UIColorWell = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
@@ -617,8 +619,8 @@ UIContentSizeCategory = [
 UIContentSizeCategoryAdjusting = []
 UIContentUnavailableButtonProperties = ["objc2-foundation/NSObject"]
 UIContentUnavailableConfiguration = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -628,16 +630,16 @@ UIContentUnavailableConfigurationState = [
     "objc2-foundation/NSString",
 ]
 UIContentUnavailableImageProperties = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UIContentUnavailableTextProperties = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UIContentUnavailableView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
@@ -647,15 +649,15 @@ UIContextMenuConfiguration = [
     "objc2-foundation/NSSet",
 ]
 UIContextMenuInteraction = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UIContextualAction = ["objc2-foundation/NSString"]
 UIControl = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
@@ -664,10 +666,10 @@ UIControl = [
 UIDataDetectors = ["bitflags"]
 UIDataSourceTranslating = ["objc2-foundation/NSIndexPath"]
 UIDatePicker = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCalendar",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSLocale",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSTimeZone",
@@ -710,11 +712,11 @@ UIDocumentBrowserAction = [
     "objc2-foundation/NSURL",
 ]
 UIDocumentBrowserViewController = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSProgress",
     "objc2-foundation/NSString",
@@ -722,8 +724,8 @@ UIDocumentBrowserViewController = [
     "objc2-uniform-type-identifiers?/UTType",
 ]
 UIDocumentInteractionController = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
@@ -764,8 +766,8 @@ UIDocumentViewController = [
 ]
 UIDocumentViewControllerLaunchOptions = ["objc2-foundation/NSString"]
 UIDragInteraction = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
 ]
 UIDragItem = ["objc2-foundation/NSItemProvider"]
 UIDragPreview = ["objc2-foundation/NSObject"]
@@ -775,8 +777,8 @@ UIDragPreviewParameters = [
     "objc2-foundation/NSValue",
 ]
 UIDragSession = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSProgress",
     "objc2-foundation/NSString",
@@ -786,23 +788,23 @@ UIDropInteraction = [
     "objc2-foundation/NSProgress",
 ]
 UIDynamicAnimator = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSIndexPath",
     "objc2-foundation/NSString",
 ]
 UIDynamicBehavior = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
 ]
 UIDynamicItemBehavior = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
 ]
 UIEditMenuInteraction = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
 UIEvent = [
@@ -817,16 +819,16 @@ UIEventAttribution = [
     "objc2-foundation/NSURL",
 ]
 UIEventAttributionView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
 UIFeedbackGenerator = []
 UIFieldBehavior = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
 ]
 UIFindInteraction = [
     "objc2-foundation/NSArray",
@@ -835,15 +837,15 @@ UIFindInteraction = [
 UIFindSession = ["objc2-foundation/NSString"]
 UIFocus = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
 ]
 UIFocusAnimationCoordinator = ["objc2-foundation/NSDate"]
 UIFocusDebugger = []
 UIFocusEffect = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
@@ -853,7 +855,7 @@ UIFocusGuide = [
     "objc2-foundation/NSObject",
 ]
 UIFocusMovementHint = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CATransform3D",
 ]
@@ -862,23 +864,23 @@ UIFocusSystem = [
     "objc2-foundation/NSURL",
 ]
 UIFont = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 UIFontDescriptor = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
 UIFontMetrics = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSString",
 ]
 UIFontPickerViewController = [
@@ -896,48 +898,48 @@ UIFontPickerViewControllerConfiguration = [
 UIFoundation = []
 UIGeometry = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
 ]
 UIGestureRecognizer = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
 ]
 UIGestureRecognizerSubclass = ["objc2-foundation/NSSet"]
 UIGraphics = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
 UIGraphicsImageRenderer = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSData",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
 UIGraphicsPDFRenderer = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
 UIGraphicsRenderer = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UIGraphicsRendererSubclass = ["objc2-foundation/NSError"]
 UIGravityBehavior = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
 ]
 UIGuidedAccess = [
     "bitflags",
@@ -953,18 +955,18 @@ UIHoverEffectLayer = [
     "objc2-quartz-core?/CAMediaTiming",
 ]
 UIHoverGestureRecognizer = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
 ]
 UIHoverStyle = ["objc2-foundation/NSObject"]
 UIImage = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-core-image?/CIImage",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -978,47 +980,47 @@ UIImageConfiguration = [
     "objc2-foundation/NSObject",
 ]
 UIImagePickerController = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
 ]
 UIImageReader = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSData",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSURL",
 ]
 UIImageSymbolConfiguration = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSLocale",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 UIImageView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
     "objc2-symbols?/NSSymbolEffect",
 ]
-UIImpactFeedbackGenerator = ["objc2-foundation/NSGeometry"]
+UIImpactFeedbackGenerator = ["objc2-core-foundation?/CFCGTypes"]
 UIIndirectScribbleInteraction = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
 UIInputView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
@@ -1031,8 +1033,9 @@ UIInputViewController = [
     "objc2-foundation/NSUUID",
 ]
 UIInteraction = ["objc2-foundation/NSArray"]
-UIInterface = ["objc2-foundation/NSGeometry"]
+UIInterface = ["objc2-core-foundation?/CFCGTypes"]
 UIKey = [
+    "objc2-core-foundation?/CFBase",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -1042,28 +1045,28 @@ UIKeyCommand = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-UIKeyConstants = []
+UIKeyConstants = ["objc2-core-foundation?/CFBase"]
 UIKeyboardLayoutGuide = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UIKitCore = []
 UIKitDefines = []
 UILabel = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
 ]
 UILargeContentViewer = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
 ]
 UILayoutGuide = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -1074,23 +1077,23 @@ UILexicon = [
     "objc2-foundation/NSString",
 ]
 UIListContentConfiguration = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
 ]
 UIListContentImageProperties = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UIListContentTextProperties = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UIListSeparatorConfiguration = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UILocalNotification = [
@@ -1108,9 +1111,9 @@ UILocalizedIndexedCollation = [
     "objc2-foundation/NSString",
 ]
 UILongPressGestureRecognizer = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
 ]
 UIManagedDocument = [
     "objc2-core-data?/NSManagedObjectContext",
@@ -1134,8 +1137,8 @@ UIMenuBuilder = [
     "objc2-foundation/NSString",
 ]
 UIMenuController = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
 ]
@@ -1149,36 +1152,36 @@ UIMenuElement = [
 UIMenuLeaf = ["objc2-foundation/NSString"]
 UIMenuSystem = []
 UIMotionEffect = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 UINavigationBar = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
 ]
 UINavigationBarAppearance = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 UINavigationController = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -1198,12 +1201,12 @@ UINib = [
 ]
 UINibDeclarations = []
 UINibLoading = ["objc2-foundation/NSString"]
-UINotificationFeedbackGenerator = ["objc2-foundation/NSGeometry"]
+UINotificationFeedbackGenerator = ["objc2-core-foundation?/CFCGTypes"]
 UIOpenURLContext = ["objc2-foundation/NSURL"]
 UIOrientation = ["bitflags"]
 UIPageControl = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
@@ -1218,8 +1221,8 @@ UIPageViewController = [
 ]
 UIPanGestureRecognizer = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
 ]
 UIPasteConfiguration = [
     "objc2-foundation/NSArray",
@@ -1232,8 +1235,8 @@ UIPasteConfigurationSupporting = [
     "objc2-foundation/NSItemProvider",
 ]
 UIPasteControl = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
@@ -1251,66 +1254,66 @@ UIPasteboard = [
     "objc2-foundation/NSURL",
 ]
 UIPencilInteraction = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
 ]
 UIPickerView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
 ]
 UIPinchGestureRecognizer = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
 ]
 UIPointerAccessory = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
-UIPointerInteraction = ["objc2-foundation/NSGeometry"]
+UIPointerInteraction = ["objc2-core-foundation?/CFCGTypes"]
 UIPointerLockState = [
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
 ]
 UIPointerRegion = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UIPointerStyle = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
 UIPopoverBackgroundView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
 UIPopoverController = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
 ]
 UIPopoverPresentationController = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
 ]
-UIPopoverPresentationControllerSourceItem = ["objc2-foundation/NSGeometry"]
+UIPopoverPresentationControllerSourceItem = ["objc2-core-foundation?/CFCGTypes"]
 UIPopoverSupport = [
     "bitflags",
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
 ]
-UIPresentationController = ["objc2-foundation/NSGeometry"]
+UIPresentationController = ["objc2-core-foundation?/CFCGTypes"]
 UIPress = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
 ]
 UIPressesEvent = ["objc2-foundation/NSSet"]
-UIPreviewInteraction = ["objc2-foundation/NSGeometry"]
+UIPreviewInteraction = ["objc2-core-foundation?/CFCGTypes"]
 UIPreviewParameters = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
@@ -1321,8 +1324,8 @@ UIPrintError = [
     "objc2-foundation/NSString",
 ]
 UIPrintFormatter = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -1333,22 +1336,22 @@ UIPrintInfo = [
     "objc2-foundation/NSString",
 ]
 UIPrintInteractionController = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
 UIPrintPageRenderer = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSRange",
 ]
 UIPrintPaper = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
 ]
 UIPrintServiceExtension = [
     "objc2-foundation/NSArray",
@@ -1363,19 +1366,19 @@ UIPrinter = [
     "objc2-foundation/NSURL",
 ]
 UIPrinterPickerController = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSError",
-    "objc2-foundation/NSGeometry",
 ]
 UIProgressView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSProgress",
     "objc2-quartz-core?/CALayer",
 ]
 UIPushBehavior = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
 ]
 UIReferenceLibraryViewController = [
     "objc2-foundation/NSBundle",
@@ -1384,14 +1387,14 @@ UIReferenceLibraryViewController = [
     "objc2-foundation/NSString",
 ]
 UIRefreshControl = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
 UIRegion = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UIResponder = [
@@ -1405,8 +1408,8 @@ UIResponder = [
 ]
 UIResponder_UIActivityItemsConfiguration = []
 UIRotationGestureRecognizer = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
 ]
 UIScene = [
     "objc2-foundation/NSError",
@@ -1453,32 +1456,32 @@ UISceneSystemProtectionManager = [
 UISceneWindowingBehaviors = []
 UIScene_AVAudioSession = []
 UIScreen = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CADisplayLink",
 ]
 UIScreenEdgePanGestureRecognizer = ["objc2-foundation/NSCoder"]
-UIScreenMode = ["objc2-foundation/NSGeometry"]
+UIScreenMode = ["objc2-core-foundation?/CFCGTypes"]
 UIScreenshotService = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSData",
-    "objc2-foundation/NSGeometry",
 ]
-UIScribbleInteraction = ["objc2-foundation/NSGeometry"]
+UIScribbleInteraction = ["objc2-core-foundation?/CFCGTypes"]
 UIScrollView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
     "objc2-quartz-core?/CALayer",
 ]
 UISearchBar = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
@@ -1504,65 +1507,65 @@ UISearchSuggestion = [
 ]
 UISearchTab = ["objc2-foundation/NSString"]
 UISearchTextField = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
 ]
 UISegmentedControl = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
 ]
-UISelectionFeedbackGenerator = ["objc2-foundation/NSGeometry"]
+UISelectionFeedbackGenerator = ["objc2-core-foundation?/CFCGTypes"]
 UIShadowProperties = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UIShape = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UISheetPresentationController = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
 ]
 UISlider = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
-UISnapBehavior = ["objc2-foundation/NSGeometry"]
+UISnapBehavior = ["objc2-core-foundation?/CFCGTypes"]
 UISplitViewController = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-UISpringLoadedInteraction = ["objc2-foundation/NSGeometry"]
+UISpringLoadedInteraction = ["objc2-core-foundation?/CFCGTypes"]
 UISpringLoadedInteractionSupporting = []
 UIStackView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
 UIStandardTextCursorView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
@@ -1572,10 +1575,10 @@ UIStateRestoration = [
     "objc2-foundation/NSIndexPath",
     "objc2-foundation/NSString",
 ]
-UIStatusBarManager = ["objc2-foundation/NSGeometry"]
+UIStatusBarManager = ["objc2-core-foundation?/CFCGTypes"]
 UIStepper = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
@@ -1593,8 +1596,8 @@ UISwipeGestureRecognizer = [
     "objc2-foundation/NSCoder",
 ]
 UISwitch = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
@@ -1602,17 +1605,17 @@ UISwitch = [
 UISymbolEffectCompletion = ["objc2-symbols?/NSSymbolEffect"]
 UITab = ["objc2-foundation/NSString"]
 UITabBar = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
 UITabBarAppearance = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -1626,10 +1629,10 @@ UITabBarController = [
 ]
 UITabBarControllerSidebar = ["objc2-foundation/NSObject"]
 UITabBarItem = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -1643,9 +1646,9 @@ UITabSidebarItem = [
 ]
 UITableView = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSIndexPath",
     "objc2-foundation/NSIndexSet",
     "objc2-foundation/NSNotification",
@@ -1656,8 +1659,8 @@ UITableView = [
 ]
 UITableViewCell = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
@@ -1669,19 +1672,19 @@ UITableViewController = [
     "objc2-foundation/NSString",
 ]
 UITableViewHeaderFooterView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
 ]
 UITapGestureRecognizer = ["objc2-foundation/NSCoder"]
 UITargetedDragPreview = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UITargetedPreview = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UITextChecker = [
@@ -1692,7 +1695,7 @@ UITextChecker = [
 UITextCursorDropPositionAnimator = []
 UITextCursorView = []
 UITextDragPreviewRenderer = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSRange",
 ]
 UITextDragURLPreviews = [
@@ -1706,11 +1709,11 @@ UITextDragging = [
 UITextDropProposal = ["objc2-foundation/NSObject"]
 UITextDropping = ["objc2-foundation/NSProgress"]
 UITextField = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
@@ -1743,10 +1746,10 @@ UITextFormattingViewControllerConfiguration = [
     "objc2-foundation/NSObject",
 ]
 UITextFormattingViewControllerFormattingDescriptor = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSSet",
@@ -1759,10 +1762,10 @@ UITextFormattingViewControllerFormattingStyle = [
     "objc2-foundation/NSString",
 ]
 UITextInput = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSObjCRuntime",
     "objc2-foundation/NSObject",
@@ -1776,8 +1779,8 @@ UITextInputTraits = [
     "objc2-foundation/NSString",
 ]
 UITextInteraction = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSGeometry",
 ]
 UITextItem = [
     "objc2-foundation/NSAttributedString",
@@ -1786,7 +1789,7 @@ UITextItem = [
     "objc2-foundation/NSURL",
 ]
 UITextItemInteraction = []
-UITextLoupeSession = ["objc2-foundation/NSGeometry"]
+UITextLoupeSession = ["objc2-core-foundation?/CFCGTypes"]
 UITextPasteConfigurationSupporting = []
 UITextPasteDelegate = [
     "objc2-foundation/NSArray",
@@ -1802,14 +1805,14 @@ UITextSearching = [
     "objc2-foundation/NSString",
 ]
 UITextSelectionDisplayInteraction = ["objc2-foundation/NSArray"]
-UITextSelectionHandleView = ["objc2-foundation/NSGeometry"]
+UITextSelectionHandleView = ["objc2-core-foundation?/CFCGTypes"]
 UITextSelectionHighlightView = ["objc2-foundation/NSArray"]
 UITextView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
@@ -1820,19 +1823,19 @@ UITextView = [
 ]
 UITimingCurveProvider = ["objc2-foundation/NSObject"]
 UITimingParameters = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
 UIToolTipInteraction = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSString",
 ]
 UIToolbar = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
@@ -1842,9 +1845,9 @@ UIToolbarAppearance = [
 ]
 UITouch = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSValue",
 ]
 UITrackingLayoutGuide = [
@@ -1852,13 +1855,13 @@ UITrackingLayoutGuide = [
     "objc2-foundation/NSObject",
 ]
 UITrait = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSString",
 ]
 UITraitCollection = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -1887,18 +1890,18 @@ UIVideoEditorController = [
 ]
 UIView = [
     "bitflags",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
     "objc2-quartz-core?/CATransform3D",
 ]
 UIViewAnimating = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
 UIViewConfigurationState = [
@@ -1906,13 +1909,13 @@ UIViewConfigurationState = [
     "objc2-foundation/NSObject",
 ]
 UIViewController = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSExtensionContext",
     "objc2-foundation/NSExtensionRequestHandling",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSObjCRuntime",
     "objc2-foundation/NSObject",
@@ -1920,33 +1923,33 @@ UIViewController = [
 ]
 UIViewControllerTransition = []
 UIViewControllerTransitionCoordinator = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
 ]
 UIViewControllerTransitioning = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 UIViewPropertyAnimator = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSDate",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
 UIVisualEffect = ["objc2-foundation/NSObject"]
 UIVisualEffectView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-quartz-core?/CALayer",
 ]
 UIWebView = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
@@ -1954,8 +1957,8 @@ UIWebView = [
     "objc2-quartz-core?/CALayer",
 ]
 UIWindow = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -1963,9 +1966,9 @@ UIWindow = [
 ]
 UIWindowScene = [
     "objc2-cloud-kit?/CKShareMetadata",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
 ]
 UIWindowSceneActivationAction = [
@@ -1975,26 +1978,26 @@ UIWindowSceneActivationAction = [
 ]
 UIWindowSceneActivationConfiguration = ["objc2-foundation/NSUserActivity"]
 UIWindowSceneActivationInteraction = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSError",
-    "objc2-foundation/NSGeometry",
 ]
 UIWindowSceneActivationRequestOptions = []
 UIWindowSceneDragInteraction = []
 UIWindowSceneGeometry = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UIWindowSceneGeometryPreferences = []
 UIWindowSceneGeometryPreferencesIOS = []
-UIWindowSceneGeometryPreferencesMac = ["objc2-foundation/NSGeometry"]
-UIWindowSceneGeometryPreferencesVision = ["objc2-foundation/NSGeometry"]
+UIWindowSceneGeometryPreferencesMac = ["objc2-core-foundation?/CFCGTypes"]
+UIWindowSceneGeometryPreferencesVision = ["objc2-core-foundation?/CFCGTypes"]
 UIWindowScenePlacement = ["objc2-foundation/NSObject"]
 UIWindowSceneProminentPlacement = ["objc2-foundation/NSObject"]
 UIWindowScenePushPlacement = ["objc2-foundation/NSObject"]
 UIWindowSceneReplacePlacement = ["objc2-foundation/NSObject"]
 UIWindowSceneStandardPlacement = ["objc2-foundation/NSObject"]
 UIZoomTransitionOptions = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 UNNotificationResponse_UIKitAdditions = ["objc2-user-notifications?/UNNotificationResponse"]
@@ -2412,6 +2415,7 @@ all = [
     "block2",
     "objc2-cloud-kit",
     "objc2-core-data",
+    "objc2-core-foundation",
     "objc2-core-image",
     "objc2-core-location",
     "objc2-quartz-core",

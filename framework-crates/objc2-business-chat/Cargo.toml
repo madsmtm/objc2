@@ -17,6 +17,7 @@ workspace = true
 
 [dependencies]
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 
 [target.'cfg(target_os = "macos")'.dependencies]
@@ -36,8 +37,9 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2/std", "objc2-app-kit/std", "objc2-foundation/std"]
-alloc = ["objc2/alloc", "objc2-app-kit/alloc", "objc2-foundation/alloc"]
+std = ["alloc", "objc2/std", "objc2-app-kit/std", "objc2-core-foundation?/std", "objc2-foundation/std"]
+alloc = ["objc2/alloc", "objc2-app-kit/alloc", "objc2-core-foundation?/alloc", "objc2-foundation/alloc"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
 
 BCChatAction = [
     "objc2-foundation/NSDictionary",
@@ -52,6 +54,7 @@ BCChatButton = [
     "objc2-app-kit/NSResponder",
     "objc2-app-kit/NSUserInterfaceItemIdentification",
     "objc2-app-kit/NSView",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
@@ -59,4 +62,5 @@ BCChatButton = [
 all = [
     "BCChatAction",
     "BCChatButton",
+    "objc2-core-foundation",
 ]

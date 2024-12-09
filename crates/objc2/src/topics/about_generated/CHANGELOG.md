@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   querying the underlying data.
 * Added new framework crates:
   - `ScreenSaver` / `objc2-screen-saver`.
+  - `CoreFoundation` / `objc2-core-foundation`.
 
 ### Changed
 * Allow using `MainThreadBound` without the `NSThread` feature flag.
@@ -80,6 +81,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: No longer special-case `NSObjectProtocol` objects. Certain
   methods that previously used `&NSObject` for convenience now use the more
   correct `&ProtocolObject<dyn NSObjectProtocol>`.
+* **BREAKING**: Moved `CGFloat`, `CGPoint`, `CGSize` and `CGRect` from
+  `objc2-foundation` to `objc2-core-foundation`.
 
 ### Deprecated
 * Moved `MainThreadMarker` from `objc2-foundation` to `objc2`.
