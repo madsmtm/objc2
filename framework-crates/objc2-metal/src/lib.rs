@@ -78,7 +78,3 @@ pub use self::resource::*;
 pub use self::slice::MTLRenderCommandEncoderSliceExt;
 #[cfg(feature = "MTLTexture")]
 pub use self::texture::*;
-
-// CoreFoundation
-#[allow(dead_code)]
-pub(crate) type CFTimeInterval = core::ffi::c_double;

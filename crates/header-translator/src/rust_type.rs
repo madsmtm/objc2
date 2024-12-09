@@ -473,7 +473,7 @@ impl Ty {
                     // Ignored for now; these are usually also emitted on the method/property,
                     // which is where they will be useful in any case.
                 }
-                Some(attr) => error!(?attr, "unknown attribute"),
+                Some(attr) => error!(?attr, "unknown attribute on type"),
                 None => {}
             }
 
@@ -1725,7 +1725,8 @@ impl Ty {
         FormatterFn(move |f| match self {
             Self::Primitive(Primitive::NSInteger) => write!(f, "#[repr(isize)] // NSInteger"),
             Self::Primitive(Primitive::NSUInteger) => write!(f, "#[repr(usize)] // NSUInteger"),
-            _ => panic!("invalid closed enum repr"),
+            Self::Primitive(Primitive::U32) => write!(f, "#[repr(u32)]"),
+            _ => panic!("invalid closed enum repr: {self:?}"),
         })
     }
 

@@ -10,6 +10,7 @@ required-features = [
     "objc2-app-kit/NSApplication",
     "objc2-app-kit/NSRunningApplication",
     "objc2-app-kit/NSView",
+    "objc2-core-foundation",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
     "objc2-foundation/NSDate",

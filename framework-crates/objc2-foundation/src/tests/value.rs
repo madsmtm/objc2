@@ -52,7 +52,7 @@ fn nsrange() {
     let range = NSRange::from(1..2);
     let val = NSValue::new(range);
     assert_eq!(val.get_range(), Some(range));
-    #[cfg(feature = "NSGeometry")]
+    #[cfg(feature = "objc2-core-foundation")]
     {
         assert_eq!(val.get_point(), None);
         assert_eq!(val.get_size(), None);
@@ -64,7 +64,7 @@ fn nsrange() {
 }
 
 #[test]
-#[cfg(feature = "NSGeometry")]
+#[cfg(all(feature = "NSGeometry", feature = "objc2-core-foundation"))]
 fn nspoint() {
     use crate::NSPoint;
     let point = NSPoint::new(1.0, 2.0);
@@ -75,7 +75,7 @@ fn nspoint() {
 }
 
 #[test]
-#[cfg(feature = "NSGeometry")]
+#[cfg(all(feature = "NSGeometry", feature = "objc2-core-foundation"))]
 fn nssize() {
     use crate::NSSize;
     let point = NSSize::new(1.0, 2.0);
@@ -86,7 +86,7 @@ fn nssize() {
 }
 
 #[test]
-#[cfg(feature = "NSGeometry")]
+#[cfg(all(feature = "NSGeometry", feature = "objc2-core-foundation"))]
 fn nsrect() {
     use crate::{NSPoint, NSRect, NSSize};
     let rect = NSRect::new(NSPoint::new(1.0, 2.0), NSSize::new(3.0, 4.0));

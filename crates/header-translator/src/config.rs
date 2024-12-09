@@ -18,12 +18,10 @@ pub struct Config {
 }
 
 fn uses_system_config(library_name: &str) -> bool {
-    match library_name {
-        "System" | "bitflags" | "block2" | "libc" | "objc2" => true,
-        // Temporary
-        "CoreFoundation" => true,
-        _ => false,
-    }
+    matches!(
+        library_name,
+        "System" | "bitflags" | "block2" | "libc" | "objc2"
+    )
 }
 
 impl Config {

@@ -19,6 +19,7 @@ workspace = true
 bitflags = { version = "2.5.0", default-features = false, optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 
 [target.'cfg(target_os = "macos")'.dependencies]
@@ -38,11 +39,12 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-app-kit?/std", "objc2-foundation/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-app-kit?/alloc", "objc2-foundation/alloc"]
-bitflags = ["dep:bitflags", "objc2-app-kit?/bitflags", "objc2-foundation/bitflags"]
-block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-foundation/block2"]
+std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-app-kit?/std", "objc2-core-foundation?/std", "objc2-foundation/std"]
+alloc = ["block2?/alloc", "objc2/alloc", "objc2-app-kit?/alloc", "objc2-core-foundation?/alloc", "objc2-foundation/alloc"]
+bitflags = ["dep:bitflags", "objc2-app-kit?/bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation/bitflags"]
+block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-core-foundation?/block2", "objc2-foundation/block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
 
 DOM = []
 DOMAbstractView = ["objc2-foundation/NSObject"]
@@ -139,6 +141,7 @@ DOMEvents = []
 DOMException = ["objc2-foundation/NSString"]
 DOMExtensions = [
     "objc2-app-kit?/NSImage",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
@@ -514,11 +517,11 @@ WKNavigationDelegate = [
 WKNavigationResponse = ["objc2-foundation/NSURLResponse"]
 WKOpenPanelParameters = []
 WKPDFConfiguration = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 WKPreferences = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
 ]
 WKPreviewActionItem = []
@@ -534,7 +537,7 @@ WKScriptMessageHandler = []
 WKScriptMessageHandlerWithReply = ["objc2-foundation/NSString"]
 WKSecurityOrigin = ["objc2-foundation/NSString"]
 WKSnapshotConfiguration = [
-    "objc2-foundation/NSGeometry",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSValue",
 ]
@@ -578,6 +581,7 @@ WKWebView = [
     "objc2-app-kit?/NSUserInterfaceItemIdentification",
     "objc2-app-kit?/NSUserInterfaceValidation",
     "objc2-app-kit?/NSView",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSData",
@@ -681,6 +685,7 @@ WebFrameView = [
     "objc2-app-kit?/NSResponder",
     "objc2-app-kit?/NSUserInterfaceItemIdentification",
     "objc2-app-kit?/NSView",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
@@ -756,6 +761,7 @@ WebUIDelegate = [
     "objc2-app-kit?/NSResponder",
     "objc2-app-kit?/NSUserInterfaceValidation",
     "objc2-app-kit?/NSView",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSGeometry",
@@ -775,6 +781,7 @@ WebView = [
     "objc2-app-kit?/NSUserInterfaceValidation",
     "objc2-app-kit?/NSView",
     "objc2-app-kit?/NSWindow",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
@@ -987,6 +994,7 @@ all = [
     "bitflags",
     "block2",
     "objc2-app-kit",
+    "objc2-core-foundation",
 ]
 
 [[example]]
@@ -1011,6 +1019,7 @@ required-features = [
     "objc2-app-kit/NSGraphics",
     "objc2-app-kit/NSLayoutConstraint",
     "objc2-app-kit/NSUserInterfaceLayout",
+    "objc2-core-foundation",
     "objc2-foundation/NSString",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",

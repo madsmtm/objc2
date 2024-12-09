@@ -18,6 +18,7 @@ workspace = true
 [dependencies]
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false }
 objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true, features = ["objc2-metal"] }
@@ -40,10 +41,11 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "block2?/std", "objc2/std", "objc2-app-kit?/std", "objc2-foundation/std", "objc2-metal/std", "objc2-quartz-core?/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-app-kit?/alloc", "objc2-foundation/alloc", "objc2-metal/alloc", "objc2-quartz-core?/alloc"]
-block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-foundation/block2", "objc2-metal/block2", "objc2-quartz-core?/block2"]
+std = ["alloc", "block2?/std", "objc2/std", "objc2-app-kit?/std", "objc2-core-foundation?/std", "objc2-foundation/std", "objc2-metal/std", "objc2-quartz-core?/std"]
+alloc = ["block2?/alloc", "objc2/alloc", "objc2-app-kit?/alloc", "objc2-core-foundation?/alloc", "objc2-foundation/alloc", "objc2-metal/alloc", "objc2-quartz-core?/alloc"]
+block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-core-foundation?/block2", "objc2-foundation/block2", "objc2-metal/block2", "objc2-quartz-core?/block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-metal/objc2-core-foundation", "objc2-quartz-core?/objc2-core-foundation"]
 objc2-quartz-core = ["dep:objc2-quartz-core", "objc2-app-kit?/objc2-quartz-core"]
 
 MTKDefines = []
@@ -60,12 +62,12 @@ MTKModel = [
 ]
 MTKTextureLoader = [
     "objc2-app-kit?/NSGraphics",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
-    "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
     "objc2-metal/MTLAllocation",
@@ -81,6 +83,7 @@ MTKView = [
     "objc2-app-kit?/NSResponder",
     "objc2-app-kit?/NSUserInterfaceItemIdentification",
     "objc2-app-kit?/NSView",
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
@@ -101,5 +104,6 @@ all = [
     "MTKView",
     "block2",
     "objc2-app-kit",
+    "objc2-core-foundation",
     "objc2-quartz-core",
 ]

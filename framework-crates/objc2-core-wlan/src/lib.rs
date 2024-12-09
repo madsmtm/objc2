@@ -18,3 +18,6 @@ extern crate std;
 mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+
+#[allow(dead_code)]
+pub(crate) type OSStatus = i32;

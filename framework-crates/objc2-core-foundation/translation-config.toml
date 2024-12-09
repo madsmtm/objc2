@@ -1,0 +1,49 @@
+framework = "CoreFoundation"
+crate = "objc2-core-foundation"
+required-dependencies = []
+custom-lib-rs = true
+macos = "10.0"
+maccatalyst = "13.0"
+ios = "2.0"
+tvos = "9.0"
+watchos = "2.0"
+visionos = "1.0"
+gnustep = true
+
+# Uses variadics
+fn.CFStringCreateWithFormatAndArguments.skipped = true
+fn.CFStringCreateStringWithValidatedFormatAndArguments.skipped = true
+fn.CFStringAppendFormatAndArguments.skipped = true
+
+# Name clash with containing module
+enum.__CFByteOrder.skipped = true
+
+# Needs dispatch_queue_t
+fn.CFMessagePortSetDispatchQueue.skipped = true
+fn.CFReadStreamSetDispatchQueue.skipped = true
+fn.CFWriteStreamSetDispatchQueue.skipped = true
+fn.CFReadStreamCopyDispatchQueue.skipped = true
+fn.CFWriteStreamCopyDispatchQueue.skipped = true
+
+# Needs FSRef from CoreServices
+fn.CFURLCreateFromFSRef.skipped = true
+fn.CFURLGetFSRef.skipped = true
+
+# Needs acl_t, which is not exposed by libc
+fn.CFFileSecurityCopyAccessControlList.skipped = true
+fn.CFFileSecuritySetAccessControlList.skipped = true
+
+# Different definition depending on pointer width
+typedef.CGFloat.skipped = true
+
+# Custom definitions for slightly better docs now
+struct.CGPoint.skipped = true
+struct.CGSize.skipped = true
+struct.CGRect.skipped = true
+
+# CF_RELEASES_ARGUMENT (`cf_consumed`), requires manual handling
+fn.CFAutorelease.skipped = true
+
+# Implementation details
+fn.__CFRangeMake.skipped = true
+fn.__CFStringMakeConstantString.skipped = true

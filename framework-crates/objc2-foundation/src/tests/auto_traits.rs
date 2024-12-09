@@ -74,7 +74,6 @@ fn send_sync_unwindsafe() {
     // assert_auto_traits::<NSFastEnumerator2<NSArray<NSProcessInfo>>>();
     assert_auto_traits::<NSError>();
     assert_auto_traits::<NSException>();
-    assert_auto_traits::<CGFloat>();
     assert_auto_traits::<NSPoint>();
     assert_auto_traits::<NSRect>();
     assert_auto_traits::<NSSize>();

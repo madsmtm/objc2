@@ -22,7 +22,3 @@ extern crate std;
 mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
-
-// CoreFoundation
-#[allow(dead_code)]
-pub(crate) type CFTimeInterval = core::ffi::c_double;

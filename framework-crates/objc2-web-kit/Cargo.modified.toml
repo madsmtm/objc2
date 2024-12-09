@@ -20,6 +20,7 @@ required-features = [
     "objc2-app-kit/NSGraphics",
     "objc2-app-kit/NSLayoutConstraint",
     "objc2-app-kit/NSUserInterfaceLayout",
+    "objc2-core-foundation",
     "objc2-foundation/NSString",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",

@@ -67,6 +67,14 @@ impl<'a> Context<'a> {
                     if path.starts_with("sys") {
                         return Some(Location::from_components(vec!["libc".into()]));
                     }
+                    if path.starts_with("mach") {
+                        // Will be moved to the `mach` crate in `libc` v1.0
+                        return Some(Location::from_components(vec!["libc".into()]));
+                    }
+                    if path.starts_with("arm") {
+                        // Temporary
+                        return Some(Location::from_components(vec!["System".into()]));
+                    }
                 }
             }
         }
