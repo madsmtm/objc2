@@ -83,13 +83,6 @@ specific API!
 
     Note: This is the hardest part; determining for sure if a given method is
     safe or not!
-3. If the method can throw an exception if provided with invalid inputs, it is
-    not safe. Consider declaring a helper method that checks the preconditions
-    first!
-
-    Invalid indexes will throw `NSRangeException`, which is _technically_ still
-    unsafe, but everything in Objective-C can throw, so we won't really bother
-    with that in our evaluation.
 
 Note: It is _not_ considered a breaking change for a method to be marked safe,
 so such an improvement can be made in a minor version!
