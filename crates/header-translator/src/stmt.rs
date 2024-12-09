@@ -539,7 +539,7 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
     immediate_children(entity, |entity, _span| match entity.get_kind() {
         EntityKind::UnexposedAttr => {
             if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                error!(?attr, "unknown attribute");
+                error!(?attr, "unknown attribute on fn param");
             }
         }
         EntityKind::ObjCClassRef
@@ -1097,7 +1097,7 @@ impl Stmt {
                             match attr {
                                 UnexposedAttr::Sendable => sendable = Some(true),
                                 UnexposedAttr::NonSendable => sendable = Some(false),
-                                attr => error!(?attr, "unknown attribute"),
+                                attr => error!(?attr, "unknown attribute on struct"),
                             }
                         }
                     }
@@ -1191,7 +1191,7 @@ impl Stmt {
                             immediate_children(&entity, |entity, _span| match entity.get_kind() {
                                 EntityKind::UnexposedAttr => {
                                     if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                                        error!(?attr, "unknown attribute");
+                                        error!(?attr, "unknown attribute on enum constant");
                                     }
                                 }
                                 EntityKind::VisibilityAttr => {}
@@ -1298,7 +1298,7 @@ impl Stmt {
                                 // don't generally restrict statics in this
                                 // fashion, so it shouldn't matter for us.
                                 UnexposedAttr::NonIsolated => {}
-                                attr => error!(?attr, "unknown attribute"),
+                                attr => error!(?attr, "unknown attribute on var"),
                             }
                         }
                     }
@@ -1361,7 +1361,7 @@ impl Stmt {
                                 UnexposedAttr::ReturnsRetained => {
                                     // TODO: Ignore for now, but at some point handle in a similar way to in methods
                                 }
-                                _ => error!(?attr, "unknown attribute"),
+                                _ => error!(?attr, "unknown attribute on function"),
                             }
                         }
                     }

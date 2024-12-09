@@ -81,7 +81,7 @@ impl MethodModifiers {
                         UnexposedAttr::UIActor => {
                             this.mainthreadonly = true;
                         }
-                        attr => error!(?attr, "unknown attribute"),
+                        attr => error!(?attr, "unknown attribute on method"),
                     }
                 }
             }
@@ -429,7 +429,7 @@ impl Method {
                                 UnexposedAttr::Sendable => sendable = Some(true),
                                 UnexposedAttr::NonSendable => sendable = Some(false),
                                 UnexposedAttr::NoEscape => no_escape = true,
-                                attr => error!(?attr, "unknown attribute"),
+                                attr => error!(?attr, "unknown attribute on method argument"),
                             }
                         }
                     }
