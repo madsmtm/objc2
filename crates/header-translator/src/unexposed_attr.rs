@@ -65,7 +65,10 @@ impl UnexposedAttr {
             "NS_SWIFT_BRIDGED_TYPEDEF" | "CF_SWIFT_BRIDGED_TYPEDEF" => Some(Self::BridgedTypedef),
             "CF_BRIDGED_TYPE" => Some(Self::Bridged),
             "CF_BRIDGED_MUTABLE_TYPE" => Some(Self::BridgedMutable),
-            "NS_RETURNS_RETAINED" | "CF_RETURNS_RETAINED" => Some(Self::ReturnsRetained),
+            "NS_RETURNS_RETAINED"
+            | "CF_RETURNS_RETAINED"
+            | "CV_RETURNS_RETAINED"
+            | "CV_RETURNS_RETAINED_PARAMETER" => Some(Self::ReturnsRetained),
             "NS_RETURNS_NOT_RETAINED" | "CF_RETURNS_NOT_RETAINED" => Some(Self::ReturnsNotRetained),
             "NS_RETURNS_INNER_POINTER" => None,
             // This has two arguments: `sendability` and `nullability`.
@@ -76,8 +79,8 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
-            "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" => Some(Self::Sendable),
-            "NS_SWIFT_NONSENDABLE" => Some(Self::NonSendable),
+            "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" | "CV_SWIFT_SENDABLE" => Some(Self::Sendable),
+            "NS_SWIFT_NONSENDABLE" | "CV_SWIFT_NONSENDABLE" => Some(Self::NonSendable),
             "NS_SWIFT_UI_ACTOR" | "WK_SWIFT_UI_ACTOR" => Some(Self::UIActor),
             "NS_SWIFT_NONISOLATED" | "UIKIT_SWIFT_ACTOR_INDEPENDENT" => Some(Self::NonIsolated),
             // TODO
@@ -106,6 +109,7 @@ impl UnexposedAttr {
             | "__IOS_AVAILABLE"
             | "__IOS_DEPRECATED"
             | "__OSX_AVAILABLE"
+            | "__OSX_AVAILABLE_BUT_DEPRECATED"
             | "__OSX_AVAILABLE_STARTING"
             | "__OSX_DEPRECATED"
             | "__TVOS_AVAILABLE"
@@ -132,6 +136,7 @@ impl UnexposedAttr {
             | "CIKL_DEPRECATED"
             | "CK_UNAVAILABLE"
             | "CK_NEWLY_UNAVAILABLE"
+            | "COREVIDEO_GL_DEPRECATED"
             | "FPUI_AVAILABLE"
             | "MLCOMPUTE_AVAILABLE_STARTING"
             | "MLCOMPUTE_AVAILABLE_STARTING_BUT_DEPRECATED_MACOS14"
@@ -190,7 +195,6 @@ impl UnexposedAttr {
             "AS_API_AVAILABLE" | "AS_HEADER_AUDIT_BEGIN" => None,
             "__IOS_PROHIBITED"
             | "__IOS_UNAVAILABLE"
-            | "__OSX_AVAILABLE_BUT_DEPRECATED"
             | "__OSX_UNAVAILABLE"
             | "__TVOS_PROHIBITED"
             | "__TVOS_UNAVAILABLE"
@@ -231,6 +235,14 @@ impl UnexposedAttr {
             | "NS_REFINED_FOR_SWIFT"
             | "NS_SWIFT_DISABLE_ASYNC"
             | "NS_SWIFT_NOTHROW" => None,
+            "CF_CONSUMED"
+            | "CF_RELEASES_ARGUMENT"
+            | "NS_RELEASES_ARGUMENT"
+            | "CM_RELEASES_ARGUMENT"
+            | "CV_RELEASES_ARGUMENT" => {
+                error!(?s, "attribute that requires manual handling. Mark it as skipped in translation-config.toml");
+                None
+            }
             _ => return Err(()),
         })
     }

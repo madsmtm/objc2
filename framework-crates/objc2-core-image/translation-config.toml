@@ -107,20 +107,3 @@ class.CIRenderDestination.methods."setColorSpace:".skipped = true
 class.CIVector.methods."vectorWithCGAffineTransform:".skipped = true
 class.CIVector.methods."initWithCGAffineTransform:".skipped = true
 class.CIVector.methods.CGAffineTransformValue.skipped = true
-
-# Needs CoreVideo
-class.CIContext.methods."render:toCVPixelBuffer:".skipped = true
-class.CIImage.methods."imageWithCVImageBuffer:".skipped = true
-class.CIImage.methods."imageWithCVImageBuffer:options:".skipped = true
-class.CIImage.methods."imageWithCVPixelBuffer:".skipped = true
-class.CIImage.methods."imageWithCVPixelBuffer:options:".skipped = true
-class.CIImage.methods."initWithCVImageBuffer:".skipped = true
-class.CIImage.methods."initWithCVImageBuffer:options:".skipped = true
-class.CIImage.methods."initWithCVPixelBuffer:".skipped = true
-class.CIImage.methods."initWithCVPixelBuffer:options:".skipped = true
-class.CIImage.methods.pixelBuffer.skipped = true
-protocol.CIImageProcessorInput.methods.pixelBuffer.skipped = true
-protocol.CIImageProcessorOutput.methods.pixelBuffer.skipped = true
-class.CIFilter.methods."filterWithCVPixelBuffer:properties:options:".skipped = true
-class.CIRAWFilter.methods."filterWithCVPixelBuffer:properties:".skipped = true
-class.CIRenderDestination.methods."initWithPixelBuffer:".skipped = true

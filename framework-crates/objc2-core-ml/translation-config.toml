@@ -8,12 +8,6 @@ tvos = "11.0"
 watchos = "4.0"
 visionos = "1.0"
 
-# Needs CoreVideo
-class.MLFeatureValue.methods.imageBufferValue.skipped = true
-class.MLFeatureValue.methods."featureValueWithPixelBuffer:".skipped = true
-class.MLMultiArray.methods.pixelBuffer.skipped = true
-class.MLMultiArray.methods."initWithPixelBuffer:shape:".skipped = true
-
 # Needs CoreGraphics
 class.MLFeatureValue.methods."featureValueWithCGImage:pixelsWide:pixelsHigh:pixelFormatType:options:error:".skipped = true
 class.MLFeatureValue.methods."featureValueWithCGImage:constraint:options:error:".skipped = true

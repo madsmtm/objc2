@@ -535,16 +535,16 @@ pub enum Stmt {
     },
 }
 
-fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
-    immediate_children(entity, |entity, _span| match entity.get_kind() {
+fn parse_fn_param_children(parent: &Entity<'_>, context: &Context<'_>) -> Option<UnexposedAttr> {
+    let mut ret = None;
+
+    immediate_children(parent, |entity, _span| match entity.get_kind() {
         EntityKind::UnexposedAttr => {
             if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                match attr {
-                    UnexposedAttr::NoEscape => {
-                        // TODO: Use this if mapping `fn + context ptr` to closure.
-                    }
-                    _ => error!(?attr, "unknown attribute on fn param"),
+                if ret.is_some() {
+                    error!("found multiple attributes {ret:?} and {attr:?} on fn param");
                 }
+                ret = Some(attr);
             }
         }
         EntityKind::ObjCClassRef
@@ -554,8 +554,10 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
         EntityKind::NSConsumed => {
             error!("found NSConsumed, which requires manual handling");
         }
-        kind => error!(?kind, "unknown"),
+        kind => error!(?parent, ?kind, "unknown"),
     });
+
+    ret
 }
 
 pub(crate) fn new_enum_id(
@@ -1025,6 +1027,7 @@ impl Stmt {
                             match attr {
                                 // TODO
                                 UnexposedAttr::Sendable => warn!("sendable typedef"),
+                                UnexposedAttr::NonSendable => warn!("non-sendable typedef"),
                                 UnexposedAttr::UIActor => warn!("main-thread-only typedef"),
                                 _ => kind = Some(attr),
                             }
@@ -1363,7 +1366,8 @@ impl Stmt {
                                 UnexposedAttr::UIActor => {
                                     warn!("unhandled UIActor on function declaration")
                                 }
-                                UnexposedAttr::ReturnsRetained => {
+                                UnexposedAttr::ReturnsRetained
+                                | UnexposedAttr::ReturnsNotRetained => {
                                     // TODO: Ignore for now, but at some point handle in a similar way to in methods
                                 }
                                 _ => error!(?attr, "unknown attribute on function"),
@@ -1374,11 +1378,11 @@ impl Stmt {
                     | EntityKind::TypeRef
                     | EntityKind::ObjCProtocolRef => {}
                     EntityKind::ParmDecl => {
-                        parse_fn_param_children(&entity, context);
+                        let attr = parse_fn_param_children(&entity, context);
                         // Could also be retrieved via `get_arguments`
                         let name = entity.get_name().unwrap_or_else(|| "_".into());
                         let ty = entity.get_type().expect("function argument type");
-                        let ty = Ty::parse_function_argument(ty, context);
+                        let ty = Ty::parse_function_argument(ty, attr, context);
                         arguments.push((name, ty))
                     }
                     EntityKind::VisibilityAttr => {

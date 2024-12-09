@@ -1,0 +1,52 @@
+framework = "CoreVideo"
+crate = "objc2-core-video"
+required-dependencies = []
+custom-lib-rs = true
+macos = "10.4"
+maccatalyst = "13.0"
+ios = "4.0"
+tvos = "9.0"
+watchos = "4.0"
+visionos = "1.0"
+
+# `cf_consumed`, requires manual handling
+fn.CVOpenGLBufferRelease.skipped = true
+fn.CVDisplayLinkRelease.skipped = true
+fn.CVOpenGLBufferPoolRelease.skipped = true
+fn.CVOpenGLTextureRelease.skipped = true
+fn.CVPixelBufferPoolRelease.skipped = true
+fn.CVPixelBufferRelease.skipped = true
+fn.CVOpenGLTextureCacheRelease.skipped = true
+fn.CVBufferRelease.skipped = true
+
+# Needs CGLContextObj, CGLPixelFormatObj etc. from OpenGL
+fn.CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext.skipped = true
+fn.CVOpenGLBufferAttach.skipped = true
+fn.CVOpenGLTextureCacheCreate.skipped = true
+fn.CVOpenGLTextureGetTarget.skipped = true
+fn.CVOpenGLTextureGetName.skipped = true
+
+# Needs OpenGLES
+typedef.CVEAGLContext.skipped = true
+fn.CVOpenGLESTextureCacheCreate.skipped = true
+fn.CVOpenGLESTextureCacheCreateTextureFromImage.skipped = true
+fn.CVOpenGLESTextureGetTarget.skipped = true
+fn.CVOpenGLESTextureGetName.skipped = true
+
+# Needs CoreGraphics
+fn.CVDisplayLinkCreateWithOpenGLDisplayMask.skipped = true
+fn.CVDisplayLinkCreateWithCGDisplays.skipped = true
+fn.CVDisplayLinkCreateWithCGDisplay.skipped = true
+fn.CVDisplayLinkSetCurrentCGDisplay.skipped = true
+fn.CVDisplayLinkGetCurrentCGDisplay.skipped = true
+fn.CVImageBufferGetColorSpace.skipped = true
+fn.CVImageBufferCreateColorSpaceFromAttachments.skipped = true
+
+# Needs IOSurfaceRef from IOSurface
+fn.CVPixelBufferGetIOSurface.skipped = true
+fn.CVPixelBufferCreateWithIOSurface.skipped = true
+
+# Unknown how to handle the calling convention here?
+fn.CVMetalTextureGetCleanTexCoords.skipped = true
+fn.CVOpenGLTextureGetCleanTexCoords.skipped = true
+fn.CVOpenGLESTextureGetCleanTexCoords.skipped = true

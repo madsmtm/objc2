@@ -473,6 +473,12 @@ impl Ty {
                     // Ignored for now; these are usually also emitted on the method/property,
                     // which is where they will be useful in any case.
                 }
+                Some(UnexposedAttr::ReturnsRetained) => {
+                    lifetime = Lifetime::Strong;
+                }
+                Some(UnexposedAttr::ReturnsNotRetained) => {
+                    lifetime = Lifetime::Autoreleasing;
+                }
                 Some(attr) => error!(?attr, "unknown attribute on type"),
                 None => {}
             }
@@ -1804,7 +1810,23 @@ impl Ty {
         ty
     }
 
-    pub(crate) fn parse_function_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
+    pub(crate) fn parse_function_argument(
+        ty: Type<'_>,
+        attr: Option<UnexposedAttr>,
+        context: &Context<'_>,
+    ) -> Self {
+        match attr {
+            Some(UnexposedAttr::NoEscape) => {
+                // TODO: Use this if mapping `fn + context ptr` to closure.
+            }
+            Some(UnexposedAttr::ReturnsRetained) => {
+                // TODO: Massage this into a lifetime
+            }
+            Some(attr) => {
+                error!(?attr, "unknown attribute in function argument");
+            }
+            None => {}
+        }
         Self::parse_method_argument(ty, None, None, false, context)
     }
 

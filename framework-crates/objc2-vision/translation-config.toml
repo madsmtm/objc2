@@ -40,16 +40,10 @@ class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:options:com
 class.VNVideoProcessor.methods."analyzeTimeRange:error:".skipped = true
 class.VNVideoProcessor.methods."analyzeWithTimeRange:error:".skipped = true
 
-# Needs CoreVideo
-class.VNTargetedImageRequest.methods."initWithTargetedCVPixelBuffer:options:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCVPixelBuffer:options:completionHandler:".skipped = true
-class.VNPixelBufferObservation.methods.pixelBuffer.skipped = true
-class.VNInstanceMaskObservation.methods.instanceMask.skipped = true
+# Needs CoreVideo to have proper retain semantics
 class.VNInstanceMaskObservation.methods."generateMaskForInstances:error:".skipped = true
 class.VNInstanceMaskObservation.methods."generateMaskedImageOfInstances:fromRequestHandler:croppedToInstancesExtent:error:".skipped = true
 class.VNInstanceMaskObservation.methods."generateScaledMaskForImageForInstances:fromRequestHandler:error:".skipped = true
-class.VNImageRequestHandler.methods."initWithCVPixelBuffer:options:".skipped = true
-class.VNSequenceRequestHandler.methods."performRequests:onCVPixelBuffer:error:".skipped = true
 
 # Needs CoreGraphics
 class.VNContour.methods.normalizedPath.skipped = true
