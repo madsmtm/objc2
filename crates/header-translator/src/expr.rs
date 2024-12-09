@@ -77,6 +77,7 @@ impl Expr {
             // Remove unnecessary cast
             (EntityKind::CStyleCastExpr, [_type, child]) => Self::parse(child, context),
             (EntityKind::UnexposedExpr, _) => Self::parse_from_tokens(entity, context),
+            (EntityKind::CharacterLiteral, []) => Self::parse_from_tokens(entity, context),
             (_, children) => panic!("unknown expr: {entity:?}, {children:#?}"),
         }
     }
@@ -136,11 +137,25 @@ impl Expr {
                         .trim_end_matches('U');
                     let lit = lit.replace("0X", "0x");
                     if let Some(lit) = lit.strip_prefix('\'') {
-                        // Byte-character literal
-                        let char = lit
+                        let chars = lit
                             .strip_suffix('\'')
                             .expect("start quote to have end quote");
-                        Token::Literal(format!("b'{char}' as _"))
+
+                        match chars.len() {
+                            // Byte-character literal
+                            1 => Token::Literal(format!("b'{chars}' as _")),
+                            // Four character codes
+                            4 => {
+                                let fcc = four_char_code::FourCharCode::from_str(chars)
+                                    .expect("invalid four character code");
+
+                                Token::Literal(format!("{:#010x}", fcc.as_u32()))
+                            }
+                            _ => {
+                                error!(?chars, "unknown length of single-quoted string");
+                                Token::Literal("UNSUPPORTED".into())
+                            }
+                        }
                     } else {
                         Token::Literal(lit)
                     }

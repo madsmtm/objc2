@@ -187,6 +187,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 
 [[package]]
+name = "four-char-code"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c661315fd366b2a1f970df7b7cb1a28d2678d49ef4872f7dcc19b4a83150f20b"
+
+[[package]]
 name = "glob"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -206,6 +212,7 @@ dependencies = [
  "basic-toml",
  "clang",
  "clang-sys",
+ "four-char-code",
  "heck",
  "lenient_semver_parser",
  "proc-macro2",
