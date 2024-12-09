@@ -91,3 +91,30 @@ class.VNTargetedImageRequest.methods."initWithTargetedImageData:orientation:opti
 class.VNTargetedImageRequest.methods."initWithTargetedImageData:orientation:options:completionHandler:".skipped = true
 class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:orientation:options:".skipped = true
 class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:orientation:options:completionHandler:".skipped = true
+
+
+###
+### Safety
+###
+
+class.VNImageRequestHandler.methods."initWithData:options:".unsafe = false
+class.VNImageRequestHandler.methods."performRequests:error:".unsafe = false
+
+class.VNRecognizedText.methods.string.unsafe = false
+class.VNRecognizedText.methods.confidence.unsafe = false
+
+class.VNRecognizedTextObservation.methods."topCandidates:".unsafe = false
+
+class.VNRecognizeTextRequest.methods.new.unsafe = false
+class.VNRecognizeTextRequest.methods.results.unsafe = false
+class.VNRecognizeTextRequest.methods."setRecognitionLanguages:".unsafe = false
+class.VNRecognizeTextRequest.methods.usesLanguageCorrection.unsafe = false
+class.VNRecognizeTextRequest.methods.customWords.unsafe = false
+class.VNRecognizeTextRequest.methods."setCustomWords:".unsafe = false
+class.VNRecognizeTextRequest.methods.recognitionLevel.unsafe = false
+class.VNRecognizeTextRequest.methods."setRecognitionLevel:".unsafe = false
+class.VNRecognizeTextRequest.methods."setUsesLanguageCorrection:".unsafe = false
+class.VNRecognizeTextRequest.methods.automaticallyDetectsLanguage.unsafe = false
+class.VNRecognizeTextRequest.methods."setAutomaticallyDetectsLanguage:".unsafe = false
+class.VNRecognizeTextRequest.methods.minimumTextHeight.unsafe = false
+class.VNRecognizeTextRequest.methods."setMinimumTextHeight:".unsafe = false
