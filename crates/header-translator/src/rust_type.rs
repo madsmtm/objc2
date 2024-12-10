@@ -8,8 +8,8 @@ use proc_macro2::{TokenStream, TokenTree};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::id::ItemIdentifier;
-use crate::stmt::is_bridged;
 use crate::stmt::items_required_by_decl;
+use crate::stmt::{anonymous_record_name, is_bridged};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
 
@@ -326,7 +326,7 @@ impl Primitive {
         Some(match self {
             Self::Char => return None, // Target-specific
             Self::SChar | Self::Short | Self::Int | Self::Long | Self::LongLong => true,
-            Self::UChar | Self::UShort | Self::UInt | Self::ULong | Self::ULongLong => true,
+            Self::UChar | Self::UShort | Self::UInt | Self::ULong | Self::ULongLong => false,
             Self::Float | Self::Double | Self::F32 | Self::F64 => true, // Unsure
             Self::I8 | Self::I16 | Self::I32 | Self::I64 | Self::ISize => true,
             Self::U8 | Self::U16 | Self::U32 | Self::U64 | Self::USize => false,
@@ -487,7 +487,7 @@ pub enum Ty {
         is_bridged: bool,
     },
     Union {
-        id: ItemIdentifier<Option<String>>,
+        id: ItemIdentifier,
         /// FIXME: This does not work for recursive structs.
         fields: Vec<Ty>,
     },
@@ -632,7 +632,10 @@ impl Ty {
                 let fields = if matches!(
                     id.name.as_deref(),
                     Some(
-                        "MIDISysexSendRequest" | "MIDISysexSendRequestUMP" | "MIDIDriverInterface"
+                        "MIDISysexSendRequest"
+                            | "MIDISysexSendRequestUMP"
+                            | "MIDIDriverInterface"
+                            | "cssm_list_element"
                     )
                 ) {
                     // Fake fields, we'll have to define it ourselves
@@ -653,11 +656,20 @@ impl Ty {
 
                 match declaration.get_kind() {
                     EntityKind::StructDecl => Self::Struct {
-                        id: id.map_name(|name| name.unwrap_or_else(|| "UnknownStruct".into())),
+                        id: id.map_name(|name| {
+                            name.or_else(|| anonymous_record_name(&declaration, context))
+                                .unwrap_or_else(|| "UnknownStruct".into())
+                        }),
                         fields,
                         is_bridged: is_bridged(&declaration, context),
                     },
-                    EntityKind::UnionDecl => Self::Union { id, fields },
+                    EntityKind::UnionDecl => Self::Union {
+                        id: id.map_name(|name| {
+                            name.or_else(|| anonymous_record_name(&declaration, context))
+                                .unwrap_or_else(|| "UnknownUnion".into())
+                        }),
+                        fields,
+                    },
                     _ => {
                         error!(?declaration, "unknown record type decl");
                         Self::GenericParam {
@@ -1030,6 +1042,15 @@ impl Ty {
                     "intptr_t" => return Self::Primitive(Primitive::ISize),
                     "uintptr_t" => return Self::Primitive(Primitive::USize),
 
+                    // include/sys/_types/_XXX.h
+                    "u_char" => return Self::Primitive(Primitive::UChar),
+                    "u_short" => return Self::Primitive(Primitive::UShort),
+                    "u_int" => return Self::Primitive(Primitive::UInt),
+                    "u_int8_t" => return Self::Primitive(Primitive::U8),
+                    "u_int16_t" => return Self::Primitive(Primitive::U16),
+                    "u_int32_t" => return Self::Primitive(Primitive::U32),
+                    "u_int64_t" => return Self::Primitive(Primitive::U64),
+
                     // Varargs, still unsupported by Rust.
                     "__builtin_va_list" => return Self::Primitive(Primitive::VaList),
 
@@ -1246,22 +1267,12 @@ impl Ty {
                 items.push(id.clone());
                 items
             }
-            Self::Struct { id, fields, .. } => {
+            Self::Struct { id, fields, .. } | Self::Union { id, fields, .. } => {
                 let mut items = Vec::new();
                 for field in fields {
                     items.extend(field.required_items());
                 }
                 items.push(id.clone());
-                items
-            }
-            Self::Union { id, fields, .. } => {
-                let mut items = Vec::new();
-                for field in fields {
-                    items.extend(field.required_items());
-                }
-                if let Some(id) = id.clone().to_option() {
-                    items.push(id);
-                }
                 items
             }
             Self::Fn {
@@ -1604,12 +1615,7 @@ impl Ty {
                     write!(f, "{}", id.path())
                 }
                 Self::Union { id, .. } => {
-                    if let Some(id) = id.clone().to_option() {
-                        write!(f, "{}", id.path())
-                    } else {
-                        // TODO
-                        write!(f, "UnknownUnion")
-                    }
+                    write!(f, "{}", id.path())
                 }
                 Self::Enum { id, .. } => {
                     write!(f, "{}", id.path())
@@ -2155,11 +2161,13 @@ impl Ty {
         })
     }
 
+    // FIXME: See https://github.com/rust-lang/rfcs/pull/3659
     pub(crate) fn closed_enum_repr(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Primitive(Primitive::NSInteger) => write!(f, "#[repr(isize)] // NSInteger"),
             Self::Primitive(Primitive::NSUInteger) => write!(f, "#[repr(usize)] // NSUInteger"),
             Self::Primitive(Primitive::U32) => write!(f, "#[repr(u32)]"),
+            Self::Primitive(Primitive::Int) => write!(f, "#[repr(i32)] // c_int"),
             _ => panic!("invalid closed enum repr: {self:?}"),
         })
     }
@@ -2436,11 +2444,7 @@ impl Ty {
     }
 
     pub(crate) fn is_record(&self, s: &str) -> bool {
-        match self {
-            Self::Struct { id, .. } if id.name == s => true,
-            Self::Union { id, .. } if id.name.as_deref() == Some(s) => true,
-            _ => false,
-        }
+        matches!(self, Self::Struct { id, .. } | Self::Union { id, .. } if id.name == s)
     }
 
     pub(crate) fn is_enum_through_typedef(&self) -> bool {

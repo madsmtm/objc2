@@ -42,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `MetalPerformanceShadersGraph` / `objc2-metal-performance-shaders-graph`.
   - `OpenDirectory` / `objc2-open-directory`.
   - `ScreenSaver` / `objc2-screen-saver`.
+  - `Security` / `objc2-security`.
   - `SystemConfiguration` / `objc2-system-configuration`.
   - `VideoToolbox` / `objc2-video-toolbox`.
   - `WatchConnectivity` / `objc2-watch-connectivity`.

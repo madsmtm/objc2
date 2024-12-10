@@ -865,6 +865,7 @@ macro_rules! encode_fn_pointer_impl {
     };
 }
 
+// Up to 16 arguments
 encode_fn_pointer_impl!();
 encode_fn_pointer_impl!(A);
 encode_fn_pointer_impl!(A, B);
@@ -878,6 +879,10 @@ encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I);
 encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J);
 encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K);
 encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
+encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M);
+encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N);
+encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O);
+encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P);
 
 #[cfg(test)]
 mod tests {

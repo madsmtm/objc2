@@ -146,6 +146,17 @@ impl Module {
 
                 for stmt in &module.stmts {
                     if let Some(item) = stmt.provided_item() {
+                        let visibility = if item.name.starts_with("__") {
+                            // Item name may conflict with module name, don't
+                            // expose at all.
+                            continue;
+                        } else if item.name.starts_with('_') {
+                            // Try to expose, but only to the rest of the crate.
+                            "pub(crate)"
+                        } else {
+                            "pub"
+                        };
+
                         item.location().assert_file(module_name);
 
                         let mut items = stmt.required_items();
@@ -156,11 +167,6 @@ impl Module {
                             cfg_gate_ln(items, &[] as &[Location], config, item.location())
                         )?;
 
-                        let visibility = if item.name.starts_with('_') {
-                            "pub(crate)"
-                        } else {
-                            "pub"
-                        };
                         writeln!(
                             f,
                             "{visibility} use self::__{}::{};",

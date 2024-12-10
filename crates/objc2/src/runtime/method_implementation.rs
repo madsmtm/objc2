@@ -95,6 +95,7 @@ macro_rules! method_impl {
     };
 }
 
+// Up to 16 arguments.
 method_impl!();
 method_impl!(A);
 method_impl!(A, B);

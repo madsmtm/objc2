@@ -178,6 +178,8 @@ test-frameworks = [
     "objc2-screen-capture-kit/all",
     "dep:objc2-screen-saver",
     "objc2-screen-saver/all",
+    "dep:objc2-security",
+    "objc2-security/all",
     "dep:objc2-sensitive-content-analysis",
     "objc2-sensitive-content-analysis/all",
     "dep:objc2-service-management",
@@ -247,6 +249,7 @@ objc2-media-player = { path = "../../framework-crates/objc2-media-player", optio
 objc2-natural-language = { path = "../../framework-crates/objc2-natural-language", optional = true }
 objc2-network-extension = { path = "../../framework-crates/objc2-network-extension", optional = true }
 objc2-photos-ui = { path = "../../framework-crates/objc2-photos-ui", optional = true }
+objc2-security = { path = "../../framework-crates/objc2-security", optional = true }
 objc2-sound-analysis = { path = "../../framework-crates/objc2-sound-analysis", optional = true }
 objc2-store-kit = { path = "../../framework-crates/objc2-store-kit", optional = true }
 objc2-symbols = { path = "../../framework-crates/objc2-symbols", optional = true }

@@ -1,0 +1,148 @@
+framework = "Security"
+crate = "objc2-security"
+required-crates = ["objc2-core-foundation"]
+custom-lib-rs = true
+macos = "10.0"
+maccatalyst = "13.0"
+ios = "2.0"
+tvos = "9.0"
+watchos = "2.0"
+visionos = "1.0"
+
+# Self-referential, which header-translator doesn't handle yet.
+struct.cssm_list_element.skipped = true
+
+# Typedefs to the inner struct of a CF type, currently doesn't really work
+# (and these are soft-deprecated anyhow).
+typedef.OpaqueSecCertificateRef.skipped = true
+typedef.OpaqueSecIdentityRef.skipped = true
+typedef.OpaqueSecKeyRef.skipped = true
+typedef.OpaqueSecAccessRef.skipped = true
+
+# Unsure how to handle ABI of arrays?
+typedef.SecAFPServerSignature.skipped = true
+typedef.SecPublicKeyHash.skipped = true
+typedef.CSSM_STRING.skipped = true
+
+# Needs audit_token_t which is not exposed by libc
+fn.SecTaskCreateWithAuditToken.skipped = true
+
+# Needs libdispatch
+fn.SecKeyGeneratePairAsync.skipped = true
+fn.sec_protocol_metadata_copy_peer_public_key.skipped = true
+fn.sec_protocol_metadata_access_ocsp_response.skipped = true
+fn.sec_protocol_metadata_access_distinguished_names.skipped = true
+fn.sec_protocol_metadata_access_pre_shared_keys.skipped = true
+fn.sec_protocol_metadata_create_secret.skipped = true
+fn.sec_protocol_metadata_create_secret_with_context.skipped = true
+fn.sec_protocol_options_set_tls_diffie_hellman_parameters.skipped = true
+fn.sec_protocol_options_add_pre_shared_key.skipped = true
+fn.sec_protocol_options_set_tls_pre_shared_key_identity_hint.skipped = true
+typedef.sec_protocol_pre_shared_key_selection_complete_t.skipped = true
+typedef.sec_protocol_pre_shared_key_selection_t.skipped = true
+fn.sec_protocol_options_set_pre_shared_key_selection_block.skipped = true
+fn.sec_protocol_options_set_key_update_block.skipped = true
+fn.sec_protocol_options_set_challenge_block.skipped = true
+fn.sec_protocol_options_set_verify_block.skipped = true
+fn.SecTransformExecuteAsync.skipped = true
+fn.SecTrustEvaluateAsync.skipped = true
+fn.SecTrustEvaluateAsyncWithError.skipped = true
+
+# Needs xpc_object_t from XPC
+fn.SecCodeCreateWithXPCMessage.skipped = true
+
+# Needs DERItem from libDER, and are very old anyhow
+static.oidAdCAIssuer.skipped = true
+static.oidAdOCSP.skipped = true
+static.oidAnsip384r1.skipped = true
+static.oidAnsip521r1.skipped = true
+static.oidAnyExtendedKeyUsage.skipped = true
+static.oidAnyPolicy.skipped = true
+static.oidAuthorityInfoAccess.skipped = true
+static.oidAuthorityKeyIdentifier.skipped = true
+static.oidBasicConstraints.skipped = true
+static.oidCertificatePolicies.skipped = true
+static.oidCommonName.skipped = true
+static.oidCountryName.skipped = true
+static.oidCrlDistributionPoints.skipped = true
+static.oidDescription.skipped = true
+static.oidEcPrime192v1.skipped = true
+static.oidEcPrime256v1.skipped = true
+static.oidEcPubKey.skipped = true
+static.oidEmailAddress.skipped = true
+static.oidEntrustVersInfo.skipped = true
+static.oidExtendedKeyUsage.skipped = true
+static.oidExtendedKeyUsageClientAuth.skipped = true
+static.oidExtendedKeyUsageCodeSigning.skipped = true
+static.oidExtendedKeyUsageEmailProtection.skipped = true
+static.oidExtendedKeyUsageIPSec.skipped = true
+static.oidExtendedKeyUsageMicrosoftSGC.skipped = true
+static.oidExtendedKeyUsageNetscapeSGC.skipped = true
+static.oidExtendedKeyUsageOCSPSigning.skipped = true
+static.oidExtendedKeyUsageServerAuth.skipped = true
+static.oidExtendedKeyUsageTimeStamping.skipped = true
+static.oidFee.skipped = true
+static.oidFriendlyName.skipped = true
+static.oidGoogleEmbeddedSignedCertificateTimestamp.skipped = true
+static.oidGoogleOCSPSignedCertificateTimestamp.skipped = true
+static.oidInhibitAnyPolicy.skipped = true
+static.oidIssuerAltName.skipped = true
+static.oidKeyUsage.skipped = true
+static.oidLocalKeyId.skipped = true
+static.oidLocalityName.skipped = true
+static.oidMSNTPrincipalName.skipped = true
+static.oidMd2.skipped = true
+static.oidMd2Rsa.skipped = true
+static.oidMd4.skipped = true
+static.oidMd4Rsa.skipped = true
+static.oidMd5.skipped = true
+static.oidMd5Fee.skipped = true
+static.oidMd5Rsa.skipped = true
+static.oidNameConstraints.skipped = true
+static.oidNetscapeCertType.skipped = true
+static.oidOrganizationName.skipped = true
+static.oidOrganizationalUnitName.skipped = true
+static.oidPolicyConstraints.skipped = true
+static.oidPolicyMappings.skipped = true
+static.oidPrivateKeyUsagePeriod.skipped = true
+static.oidQtCps.skipped = true
+static.oidQtUNotice.skipped = true
+static.oidRsa.skipped = true
+static.oidSha1.skipped = true
+static.oidSha1Dsa.skipped = true
+static.oidSha1DsaCommonOIW.skipped = true
+static.oidSha1DsaOIW.skipped = true
+static.oidSha1Ecdsa.skipped = true
+static.oidSha1Fee.skipped = true
+static.oidSha1Rsa.skipped = true
+static.oidSha1RsaOIW.skipped = true
+static.oidSha224.skipped = true
+static.oidSha224Ecdsa.skipped = true
+static.oidSha224Rsa.skipped = true
+static.oidSha256.skipped = true
+static.oidSha256Ecdsa.skipped = true
+static.oidSha256Rsa.skipped = true
+static.oidSha384.skipped = true
+static.oidSha384Ecdsa.skipped = true
+static.oidSha384Rsa.skipped = true
+static.oidSha512.skipped = true
+static.oidSha512Ecdsa.skipped = true
+static.oidSha512Rsa.skipped = true
+static.oidStateOrProvinceName.skipped = true
+static.oidSubjectAltName.skipped = true
+static.oidSubjectInfoAccess.skipped = true
+static.oidSubjectKeyIdentifier.skipped = true
+
+# `AUTH_TYPE_FIX_` macro in definition
+enum.SecAuthenticationType.use-value = true
+enum.anonymous.constants.CSSM_EVIDENCE_FORM_APPLE_HEADER.use-value = true
+enum.anonymous.constants.CSSM_EVIDENCE_FORM_APPLE_CERTGROUP.use-value = true
+enum.anonymous.constants.CSSM_EVIDENCE_FORM_APPLE_CERT_INFO.use-value = true
+
+# References parent enum SecuritySessionId, which is hard to handle
+enum.anonymous.constants.callerSecuritySession.use-value = true
+
+# There's a bunch of constants in cssmtype that need casts (e.g.
+# CSSM_WORDID_VENDOR_START from i32 to CSSM_WORDID_KEYCHAIN_PROMPT which is
+# u32). So let's just emit all constants directly for now.
+enum.anonymous.use-value = true

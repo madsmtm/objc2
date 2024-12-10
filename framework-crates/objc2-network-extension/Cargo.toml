@@ -20,6 +20,7 @@ block2 = { path = "../../crates/block2", version = "0.5.1", default-features = f
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["NSArray", "NSData", "NSDate", "NSDictionary", "NSError", "NSObject", "NSSet", "NSString", "NSURL", "NSURLRequest", "NSURLResponse", "NSUUID", "NSValue", "alloc"] }
+objc2-security = { path = "../objc2-security", version = "0.2.2", default-features = false, optional = true, features = ["Authorization", "SecBase", "SecTrust", "objc2"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -38,10 +39,12 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-block2 = ["dep:block2", "objc2-foundation/block2"]
-libc = ["dep:libc", "objc2-foundation/libc"]
+block2 = ["dep:block2", "objc2-foundation/block2", "objc2-security?/block2"]
+libc = ["dep:libc", "objc2-foundation/libc", "objc2-security?/libc"]
+objc2-security = ["dep:objc2-security"]
 
 all = [
     "block2",
     "libc",
+    "objc2-security",
 ]

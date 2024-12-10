@@ -13,9 +13,6 @@ class.DOMMutationEvent.methods.newValue.skipped = true
 # Not marked as nullable but should be; manually defined in additions
 class.WKNavigationAction.methods.sourceFrame.skipped = true
 
-# uses `SecTrustRef` from Security.framework (not yet translated)
-class.WKWebView.methods.serverTrust.skipped = true
-
 # Needs `nw_proxy_config_t`
 class.WKWebsiteDataStore.methods.proxyConfigurations.skipped = true
 class.WKWebsiteDataStore.methods."setProxyConfigurations:".skipped = true

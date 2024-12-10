@@ -400,6 +400,45 @@ pub(crate) fn is_bridged(entity: &Entity<'_>, context: &Context<'_>) -> bool {
     is_bridged
 }
 
+pub(crate) fn anonymous_record_name(entity: &Entity<'_>, context: &Context<'_>) -> Option<String> {
+    let parent = entity.get_semantic_parent()?;
+
+    if !matches!(
+        parent.get_kind(),
+        EntityKind::StructDecl | EntityKind::UnionDecl
+    ) {
+        return None;
+    }
+
+    let parent_id = ItemIdentifier::new_optional(&parent, context)
+        .map_name(|name| name.or_else(|| anonymous_record_name(&parent, context)))
+        .to_option()?;
+
+    // Find the field name for this.
+    //
+    // UnionDecl/StructDecl comes first, then the matching FieldDecl.
+    let mut just_found_record = false;
+    let mut field_name = None;
+    immediate_children(&parent, |searched, _span| match searched.get_kind() {
+        EntityKind::FieldDecl => {
+            if just_found_record {
+                field_name = Some(searched.get_name().expect("field name"));
+                just_found_record = false;
+            }
+        }
+        EntityKind::UnionDecl | EntityKind::StructDecl => {
+            if searched == *entity {
+                just_found_record = true;
+            }
+        }
+        _ => {}
+    });
+
+    let field_name = field_name?;
+
+    Some(format!("{}_{}", parent_id.name, field_name))
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub enum Counterpart {
     #[default]
@@ -1105,7 +1144,8 @@ impl Stmt {
                     | EntityKind::ObjCProtocolRef
                     | EntityKind::ParmDecl
                     | EntityKind::EnumDecl
-                    | EntityKind::IntegerLiteral => {}
+                    | EntityKind::IntegerLiteral
+                    | EntityKind::BinaryOperator => {}
                     EntityKind::ObjCIndependentClass => {
                         // TODO: Might be interesting?
                     }
@@ -1197,7 +1237,10 @@ impl Stmt {
             }
             EntityKind::StructDecl | EntityKind::UnionDecl => {
                 let is_union = entity.get_kind() == EntityKind::UnionDecl;
-                let Some(id) = ItemIdentifier::new_optional(entity, context).to_option() else {
+                let id = ItemIdentifier::new_optional(entity, context)
+                    .map_name(|name| name.or_else(|| anonymous_record_name(entity, context)))
+                    .to_option();
+                let Some(id) = id else {
                     warn!(?entity, "skipped anonymous union/struct");
                     return vec![];
                 };
@@ -2421,11 +2464,11 @@ impl Stmt {
                         } else {
                             write!(f, "Encoding::Struct")?;
                         }
-                        write!(f, "({:?}, &[", encoding_name.as_deref().unwrap_or(&id.name),)?;
+                        writeln!(f, "({:?}, &[", encoding_name.as_deref().unwrap_or(&id.name),)?;
                         for (_, _, ty) in fields {
-                            write!(f, "{},", ty.record_encoding())?;
+                            writeln!(f, "        {},", ty.record_encoding())?;
                         }
-                        write!(f, "])")?;
+                        write!(f, "    ])")?;
                         Ok(())
                     });
 

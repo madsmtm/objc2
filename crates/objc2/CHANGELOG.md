@@ -31,6 +31,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   these can act as objects).
 * Classes created using `define_class!` now implement `Send` and `Sync` when
   subclassing `NSObject`.
+* Added 16-fold `Encode` and `RefEncode` impls for function pointers
+  (previously only implemented for up to 12 arguments, which turned out to be
+  insufficient).
 
 ### Changed
 * **BREAKING**: Renamed `declare_class!` to `define_class!`, and changed the

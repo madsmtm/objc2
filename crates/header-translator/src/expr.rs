@@ -131,15 +131,17 @@ impl Expr {
                 (TokenKind::Identifier, ident) => {
                     Token::Expr(if let Some(expr) = declaration_references.get(&ident) {
                         expr.clone()
-                    } else {
-                        let macro_invocation = context
-                            .macro_invocations
-                            .get(&MacroLocation::from_location(&token.get_location()))
-                            .expect("expr macro invocation");
+                    } else if let Some(macro_invocation) = context
+                        .macro_invocations
+                        .get(&MacroLocation::from_location(&token.get_location()))
+                    {
                         Expr::MacroInvocation {
                             id: macro_invocation.id.clone(),
                             evaluated: None,
                         }
+                    } else {
+                        error!(?entity, ?token, "missing macro invocation in expr");
+                        return Self::from_evaluated(entity);
                     })
                 }
                 (TokenKind::Literal, lit) => {

@@ -42,7 +42,7 @@ std = ["alloc"]
 alloc = []
 block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-core-foundation?/block2", "objc2-foundation/block2", "objc2-local-authentication/block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-local-authentication/objc2-core-foundation"]
 
 LAAuthenticationView = [
     "objc2-app-kit?/NSAccessibilityProtocols",

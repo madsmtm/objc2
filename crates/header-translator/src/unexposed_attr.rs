@@ -151,6 +151,7 @@ impl UnexposedAttr {
             | "CF_AVAILABLE_MAC"
             | "CF_DEPRECATED"
             | "CF_ENUM_AVAILABLE"
+            | "CF_ENUM_DEPRECATED"
             | "CF_SWIFT_UNAVAILABLE"
             | "CG_AVAILABLE_BUT_DEPRECATED"
             | "CG_AVAILABLE_STARTING"
@@ -242,6 +243,7 @@ impl UnexposedAttr {
             | "__IOS_PROHIBITED"
             | "__IOS_UNAVAILABLE"
             | "__OSX_UNAVAILABLE"
+            | "__SECURETRANSPORT_API_DEPRECATED"
             | "__SWIFT_UNAVAILABLE"
             | "__TVOS_PROHIBITED"
             | "__TVOS_UNAVAILABLE"
@@ -254,6 +256,7 @@ impl UnexposedAttr {
             | "CF_AUTOMATED_REFCOUNT_UNAVAILABLE"
             | "CG_OBSOLETE"
             | "CS_UNAVAILABLE_EMBEDDED"
+            | "CSSM_DEPRECATED"
             | "deprecated"
             | "DEPRECATED_ATTRIBUTE"
             | "DISPATCH_UNAVAILABLE"
@@ -274,7 +277,9 @@ impl UnexposedAttr {
             | "NS_UNAVAILABLE"
             | "UNAVAILABLE_ATTRIBUTE"
             | "UT_AVAILABLE_BEGIN"
-            | "MP_DEPRECATED_BEGIN" => None,
+            | "MP_DEPRECATED_BEGIN"
+            | "SEC_ASN1_API_DEPRECATED"
+            | "SECUREDOWNLOAD_API_DEPRECATED" => None,
             s if s.starts_with("AVAILABLE_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("DEPRECATED_IN_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("FILEPROVIDER_API_AVAILABILITY_") => None,

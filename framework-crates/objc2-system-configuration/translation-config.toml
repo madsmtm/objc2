@@ -8,9 +8,6 @@ ios = "2.0"
 tvos = "9.0"
 visionos = "1.0"
 
-# Needs AuthorizationRef from Security framework
-fn.SCPreferencesCreateWithAuthorization.skipped = true
-
 # Needs dispatch_queue_t from libdispatch
 fn.SCDynamicStoreSetDispatchQueue.skipped = true
 fn.SCNetworkConnectionSetDispatchQueue.skipped = true

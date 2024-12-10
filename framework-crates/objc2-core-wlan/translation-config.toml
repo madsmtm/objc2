@@ -11,12 +11,5 @@ class.CWMutableConfiguration.counterpart = "ImmutableSuperclass(CoreWLAN.CWConfi
 class.CWNetworkProfile.counterpart = "MutableSubclass(CoreWLAN.CWNetworkProfile.CWMutableNetworkProfile)"
 class.CWMutableNetworkProfile.counterpart = "ImmutableSuperclass(CoreWLAN.CWNetworkProfile.CWNetworkProfile)"
 
-# Needs SecIdentityRef from Security
-fn.CWKeychainCopyWiFiEAPIdentity.skipped = true
-fn.CWKeychainSetWiFiEAPIdentity.skipped = true
-fn.CWKeychainCopyEAPIdentity.skipped = true
-fn.CWKeychainSetEAPIdentity.skipped = true
-class.CWInterface.methods."associateToEnterpriseNetwork:identity:username:password:error:".skipped = true
-
 # Needs `SFAuthorization` from the `SecurityFoundation` framework
 class.CWInterface.methods."commitConfiguration:authorization:error:".skipped = true

@@ -42,12 +42,6 @@ class.NEPacketTunnelProvider.methods.virtualInterface.skipped = true
 # Needs `dispatch_queue_t` from libdispatch
 class.NEHotspotHelper.methods."registerWithOptions:queue:handler:".skipped = true
 
-# Needs Security
-class.NEHotspotEAPSettings.methods."setIdentity:".skipped = true
-class.NEVPNManager.methods."setAuthorization:".skipped = true
-protocol.NWTCPConnectionAuthenticationDelegate.methods."provideIdentityForConnection:completionHandler:".skipped = true
-protocol.NWTCPConnectionAuthenticationDelegate.methods."evaluateTrustForConnection:peerCertificateChain:completionHandler:".skipped = true
-
 # Needs `ASAccessory` from AccessorySetupKit
 class.NEHotspotConfigurationManager.methods."joinAccessoryHotspot:passphrase:completionHandler:".skipped = true
 class.NEHotspotConfigurationManager.methods."joinAccessoryHotspotWithoutSecurity:completionHandler:".skipped = true

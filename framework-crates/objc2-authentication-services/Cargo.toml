@@ -21,9 +21,13 @@ block2 = { path = "../../crates/block2", version = "0.5.1", default-features = f
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
+objc2-security = { path = "../objc2-security", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false }
+
+[target.'cfg(not(target_os = "tvos"))'.dependencies]
+objc2-local-authentication = { path = "../objc2-local-authentication", version = "0.2.2", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -42,9 +46,11 @@ targets = [
 default = ["std"]
 std = ["alloc", "bitflags?/std"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-app-kit/bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation/bitflags"]
-block2 = ["dep:block2", "objc2-app-kit/block2", "objc2-core-foundation?/block2", "objc2-foundation/block2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
+bitflags = ["dep:bitflags", "objc2-app-kit/bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation/bitflags", "objc2-security?/bitflags"]
+block2 = ["dep:block2", "objc2-app-kit/block2", "objc2-core-foundation?/block2", "objc2-foundation/block2", "objc2-local-authentication?/block2", "objc2-security?/block2"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-local-authentication?/objc2-core-foundation"]
+objc2-local-authentication = ["dep:objc2-local-authentication"]
+objc2-security = ["dep:objc2-security", "objc2-local-authentication?/objc2-security"]
 
 ASAccountAuthenticationModificationController = [
     "objc2-app-kit/NSResponder",
@@ -176,17 +182,20 @@ ASAuthorizationProviderExtensionLoginConfiguration = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
     "objc2-foundation/NSValue",
+    "objc2-security?/SecBase",
 ]
 ASAuthorizationProviderExtensionLoginManager = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
+    "objc2-security?/SecBase",
 ]
 ASAuthorizationProviderExtensionRegistrationHandler = [
     "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
+    "objc2-security?/SecBase",
 ]
 ASAuthorizationProviderExtensionUserLoginConfiguration = [
     "objc2-foundation/NSDictionary",
@@ -269,7 +278,7 @@ ASAuthorizationSingleSignOnRequest = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSURL",
 ]
-ASAuthorizationWebBrowserExternallyAuthenticatableRequest = []
+ASAuthorizationWebBrowserExternallyAuthenticatableRequest = ["objc2-local-authentication?/LAContext"]
 ASAuthorizationWebBrowserPlatformPublicKeyCredential = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSString",
@@ -511,4 +520,6 @@ all = [
     "bitflags",
     "block2",
     "objc2-core-foundation",
+    "objc2-local-authentication",
+    "objc2-security",
 ]

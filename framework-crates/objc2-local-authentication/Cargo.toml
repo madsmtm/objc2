@@ -18,7 +18,9 @@ workspace = true
 [dependencies]
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
+objc2-security = { path = "../objc2-security", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -36,7 +38,9 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-block2 = ["dep:block2", "objc2-foundation/block2"]
+block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-foundation/block2", "objc2-security?/block2"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
+objc2-security = ["dep:objc2-security"]
 
 LABase = []
 LABiometryType = []
@@ -47,6 +51,7 @@ LAContext = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
+    "objc2-security?/SecBase",
 ]
 LADomainState = [
     "objc2-foundation/NSData",
@@ -64,11 +69,19 @@ LAEnvironmentState = [
 ]
 LAError = ["objc2-foundation/NSString"]
 LAPersistedRight = []
-LAPrivateKey = []
+LAPrivateKey = [
+    "objc2-core-foundation?/CFBase",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-security?/SecKey",
+]
 LAPublicDefines = []
 LAPublicKey = [
+    "objc2-core-foundation?/CFBase",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
+    "objc2-security?/SecKey",
 ]
 LARequirement = []
 LARight = [
@@ -106,4 +119,6 @@ all = [
     "LARightStore",
     "LASecret",
     "block2",
+    "objc2-core-foundation",
+    "objc2-security",
 ]
