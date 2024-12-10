@@ -31,10 +31,6 @@ class.MTLSharedEventListener.methods."initWithDispatchQueue:".skipped = true
 class.MTLSharedEventListener.methods.dispatchQueue.skipped = true
 protocol.MTLDevice.methods."newLibraryWithData:error:".skipped = true
 
-# Needs IOSurfaceRef
-protocol.MTLDevice.methods."newTextureWithDescriptor:iosurface:plane:".skipped = true
-protocol.MTLTexture.methods.iosurface.skipped = true
-
 # Needs mach / kernel types
 protocol.MTLResource.methods."setOwnerWithIdentity:".skipped = true
 

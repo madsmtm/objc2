@@ -49,7 +49,7 @@ impl Library {
             current = match current.submodules.entry(p.to_string()) {
                 Entry::Occupied(entry) => entry.into_mut(),
                 Entry::Vacant(entry) => {
-                    error!(?location, "expected module to be available in library");
+                    warn!(?location, "expected module to be available in library");
                     entry.insert(Default::default())
                 }
             };

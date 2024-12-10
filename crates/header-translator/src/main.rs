@@ -134,6 +134,9 @@ fn main() -> Result<(), BoxError> {
         let includes = tempdir.join(platform_header);
 
         let mut includes_file = fs::File::create(&includes).unwrap();
+        // Make sure that we pick the IOSurfaceRef that IOSurface defines,
+        // instead of the one that CoreGraphics defines.
+        writeln!(&mut includes_file, "#import <IOSurface/IOSurface.h>")?;
         for lib in config.libraries.values() {
             if !platform_config_filter(lib) {
                 continue;

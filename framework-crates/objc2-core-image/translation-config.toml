@@ -29,17 +29,6 @@ class.CIImage.categories.AVDepthData.skipped = true
 class.CIImage.categories.AVPortraitEffectsMatte.skipped = true
 class.CIImage.categories.AVSemanticSegmentationMatte.skipped = true
 
-# Needs `IOSurfaceRef` from IOKit
-class.CIRenderDestination.methods."initWithIOSurface:".skipped = true
-protocol.CIImageProcessorInput.methods.surface.skipped = true
-protocol.CIImageProcessorOutput.methods.surface.skipped = true
-class.CIContext.methods."render:toIOSurface:bounds:colorSpace:".skipped = true
-class.CIImage.methods."imageWithIOSurface:".skipped = true
-class.CIImage.methods."imageWithIOSurface:options:".skipped = true
-class.CIImage.methods."initWithIOSurface:".skipped = true
-class.CIImage.methods."initWithIOSurface:options:".skipped = true
-class.CIImage.methods."initWithIOSurface:plane:format:options:".skipped = true
-
 # Needs `EAGLContext`
 class.CIContext.methods."contextWithEAGLContext:".skipped = true
 class.CIContext.methods."contextWithEAGLContext:options:".skipped = true

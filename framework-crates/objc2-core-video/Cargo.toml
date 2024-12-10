@@ -23,6 +23,7 @@ objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", 
 objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
+objc2-io-surface = { path = "../objc2-io-surface", version = "0.2.2", default-features = false, optional = true }
 objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
@@ -41,12 +42,13 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-core-foundation?/std", "objc2-core-graphics?/std", "objc2-metal?/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-core-foundation?/alloc", "objc2-core-graphics?/alloc", "objc2-metal?/alloc"]
-bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags", "objc2-core-graphics?/bitflags", "objc2-metal?/bitflags"]
+std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-core-foundation?/std", "objc2-core-graphics?/std", "objc2-io-surface?/std", "objc2-metal?/std"]
+alloc = ["block2?/alloc", "objc2/alloc", "objc2-core-foundation?/alloc", "objc2-core-graphics?/alloc", "objc2-io-surface?/alloc", "objc2-metal?/alloc"]
+bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags", "objc2-core-graphics?/bitflags", "objc2-io-surface?/bitflags", "objc2-metal?/bitflags"]
 block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-metal?/block2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-graphics?/objc2-core-foundation", "objc2-metal?/objc2-core-foundation"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-graphics?/objc2-core-foundation", "objc2-io-surface?/objc2-core-foundation", "objc2-metal?/objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
+objc2-io-surface = ["dep:objc2-io-surface", "objc2-core-graphics?/objc2-io-surface", "objc2-metal?/objc2-io-surface"]
 objc2-metal = ["dep:objc2-metal", "objc2-core-graphics?/objc2-metal"]
 
 CVBase = ["bitflags"]
@@ -107,7 +109,11 @@ CVPixelBuffer = [
     "objc2-core-foundation?/CFBase",
     "objc2-core-foundation?/CFDictionary",
 ]
-CVPixelBufferIOSurface = ["objc2-core-foundation?/CFBase"]
+CVPixelBufferIOSurface = [
+    "objc2-core-foundation?/CFBase",
+    "objc2-core-foundation?/CFDictionary",
+    "objc2-io-surface?/IOSurfaceRef",
+]
 CVPixelBufferPool = [
     "bitflags",
     "objc2-core-foundation?/CFBase",
@@ -142,5 +148,6 @@ all = [
     "block2",
     "objc2-core-foundation",
     "objc2-core-graphics",
+    "objc2-io-surface",
     "objc2-metal",
 ]

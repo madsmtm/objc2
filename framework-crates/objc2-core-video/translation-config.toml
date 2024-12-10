@@ -33,10 +33,6 @@ fn.CVOpenGLESTextureCacheCreateTextureFromImage.skipped = true
 fn.CVOpenGLESTextureGetTarget.skipped = true
 fn.CVOpenGLESTextureGetName.skipped = true
 
-# Needs IOSurfaceRef from IOSurface
-fn.CVPixelBufferGetIOSurface.skipped = true
-fn.CVPixelBufferCreateWithIOSurface.skipped = true
-
 # Unknown how to handle the calling convention here?
 fn.CVMetalTextureGetCleanTexCoords.skipped = true
 fn.CVOpenGLTextureGetCleanTexCoords.skipped = true

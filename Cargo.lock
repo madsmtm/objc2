@@ -615,6 +615,7 @@ dependencies = [
  "libc",
  "objc2",
  "objc2-core-foundation",
+ "objc2-io-surface",
  "objc2-metal",
 ]
 
@@ -628,6 +629,7 @@ dependencies = [
  "objc2-core-graphics",
  "objc2-core-video",
  "objc2-foundation",
+ "objc2-io-surface",
  "objc2-metal",
 ]
 
@@ -686,6 +688,7 @@ dependencies = [
  "objc2",
  "objc2-core-foundation",
  "objc2-core-graphics",
+ "objc2-io-surface",
  "objc2-metal",
 ]
 
@@ -869,6 +872,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-io-surface"
+version = "0.2.2"
+dependencies = [
+ "bitflags",
+ "libc",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-link-presentation"
 version = "0.2.2"
 dependencies = [
@@ -947,6 +961,7 @@ dependencies = [
  "objc2-app-kit",
  "objc2-core-foundation",
  "objc2-foundation",
+ "objc2-io-surface",
  "objc2-metal-kit",
  "objc2-quartz-core",
 ]
