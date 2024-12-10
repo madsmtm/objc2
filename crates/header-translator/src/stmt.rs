@@ -2088,7 +2088,7 @@ impl Stmt {
                             encoding_name.as_deref().unwrap_or(&id.name),
                         )?;
                         for (_, ty) in fields {
-                            write!(f, "<{}>::ENCODING,", ty.struct_())?;
+                            write!(f, "{},", ty.struct_encoding())?;
                         }
                         write!(f, "])")?;
                         Ok(())
@@ -2260,8 +2260,7 @@ impl Stmt {
                     // over the type, or a `#[repr(REPR)]`, where REPR is a valid
                     // repr with the same size and alignment as the type.
                     write!(f, "{}", self.cfg_gate_ln(config))?;
-                    let encoding = format!("{}::ENCODING", ty.enum_());
-                    writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
+                    writeln!(f, "{}", unsafe_impl_encode(&id.name, ty.enum_encoding()))?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
 

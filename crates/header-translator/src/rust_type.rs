@@ -1723,8 +1723,26 @@ impl Ty {
         })
     }
 
+    pub(crate) fn struct_encoding(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Primitive(Primitive::C99Bool) => write!(f, "Encoding::Bool"),
+            Self::Primitive(Primitive::Long) => write!(f, "Encoding::C_LONG"),
+            Self::Primitive(Primitive::ULong) => write!(f, "Encoding::C_ULONG"),
+            _ => write!(f, "<{}>::ENCODING", self.struct_()),
+        })
+    }
+
     pub(crate) fn enum_(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| write!(f, "{}", self.plain()))
+    }
+
+    pub(crate) fn enum_encoding(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Primitive(Primitive::C99Bool) => write!(f, "Encoding::Bool"),
+            Self::Primitive(Primitive::Long) => write!(f, "Encoding::C_LONG"),
+            Self::Primitive(Primitive::ULong) => write!(f, "Encoding::C_ULONG"),
+            _ => write!(f, "{}::ENCODING", self.enum_()),
+        })
     }
 
     pub(crate) fn closed_enum_repr(&self) -> impl fmt::Display + '_ {
