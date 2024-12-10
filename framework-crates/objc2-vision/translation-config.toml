@@ -1,6 +1,7 @@
 framework = "Vision"
 crate = "objc2-vision"
 required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "10.13"
 maccatalyst = "13.0"
 ios = "11.0"

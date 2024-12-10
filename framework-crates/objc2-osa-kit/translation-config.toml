@@ -1,6 +1,7 @@
 framework = "OSAKit"
 crate = "objc2-osa-kit"
 required-dependencies = ["objc2-app-kit", "objc2-foundation"]
+custom-lib-rs = true
 macos = "10.4"
 
 # Needs `Component` from Core Services / Carbon Core / Component Manager

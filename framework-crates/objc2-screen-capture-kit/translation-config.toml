@@ -1,6 +1,7 @@
 framework = "ScreenCaptureKit"
 crate = "objc2-screen-capture-kit"
 required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "12.3"
 
 # Needs `dispatch_queue_t`

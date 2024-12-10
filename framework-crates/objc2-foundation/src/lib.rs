@@ -183,6 +183,6 @@ pub(crate) type Boolean = u8; // unsigned char
 #[allow(unused)]
 pub(crate) type FourCharCode = u32;
 #[allow(unused)]
-pub type OSType = FourCharCode;
+pub(crate) type OSType = FourCharCode;
 #[allow(unused)]
 pub(crate) type UTF32Char = u32; // Or maybe Rust's char?
