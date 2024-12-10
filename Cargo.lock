@@ -666,6 +666,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-core-text"
+version = "0.2.2"
+dependencies = [
+ "bitflags",
+ "block2",
+ "libc",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-core-graphics",
+]
+
+[[package]]
 name = "objc2-core-video"
 version = "0.2.2"
 dependencies = [

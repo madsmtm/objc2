@@ -1,0 +1,47 @@
+framework = "CoreText"
+crate = "objc2-core-text"
+required-dependencies = []
+custom-lib-rs = true
+macos = "10.8"
+maccatalyst = "13.0"
+ios = "3.2"
+tvos = "9.0"
+watchos = "2.0"
+visionos = "1.0"
+
+# Typedef'd to a union
+typedef.SFNTLookupFormatSpecificHeader.skipped = true # Manually defined
+typedef.MortSpecificSubtable.skipped = true
+typedef.MorxSpecificSubtable.skipped = true
+typedef.KernFormatSpecificHeader.skipped = true
+typedef.KerxFormatSpecificHeader.skipped = true
+typedef.BslnFormatUnion.skipped = true
+
+# Uses the above unions
+struct.MortSubtable.skipped = true
+struct.MorxSubtable.skipped = true
+struct.KernVersion0SubtableHeader.skipped = true
+struct.KernSubtableHeader.skipped = true
+typedef.KernSubtableHeaderPtr.skipped = true
+struct.KerxSubtableHeader.skipped = true
+typedef.KerxSubtableHeaderPtr.skipped = true
+struct.BslnTable.skipped = true
+typedef.BslnTablePtr.skipped = true
+
+# Unknown calling convention / ABI
+fn.CTRubyAnnotationCreate.skipped = true
+typedef.BslnBaselineRecord.skipped = true
+
+# Needs ATSFontRef from ATS framework
+fn.CTFontGetPlatformFont.skipped = true
+fn.CTFontCreateWithPlatformFont.skipped = true
+
+# Emits -1 on an unsigned type, manually defined
+enum.CTFontUIFontType.constants.kCTFontUIFontNone.skipped = true
+enum.CTRubyAlignment.constants.kCTRubyAlignmentInvalid.skipped = true
+enum.CTRubyOverhang.constants.kCTRubyOverhangInvalid.skipped = true
+
+# Emits 0x80000000 on an int, manually defined
+enum.anonymous.constants.kMORTLigLastAction.skipped = true
+enum.anonymous.constants.kMORXCoverVertical.skipped = true
+enum.anonymous.constants.kKERXVertical.skipped = true

@@ -74,8 +74,9 @@ impl Expr {
             (EntityKind::BinaryOperator, [_, _]) => Self::parse_from_tokens(entity, context),
             (EntityKind::IntegerLiteral, []) => Self::parse_from_tokens(entity, context),
             (EntityKind::FloatingLiteral, []) => Self::parse_from_tokens(entity, context),
-            // Remove unnecessary cast
+            // Remove unnecessary casts
             (EntityKind::CStyleCastExpr, [_type, child]) => Self::parse(child, context),
+            (EntityKind::CStyleCastExpr, [child]) => Self::parse_from_tokens(child, context),
             (EntityKind::UnexposedExpr, _) => Self::parse_from_tokens(entity, context),
             (EntityKind::CharacterLiteral, []) => Self::parse_from_tokens(entity, context),
             (_, children) => panic!("unknown expr: {entity:?}, {children:#?}"),

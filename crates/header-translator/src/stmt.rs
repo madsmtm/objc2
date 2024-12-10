@@ -1018,6 +1018,17 @@ impl Stmt {
             EntityKind::TypedefDecl => {
                 let id = ItemIdentifier::new(entity, context);
                 let availability = Availability::parse(entity, context);
+
+                if context
+                    .library(id.library_name())
+                    .typedef_data
+                    .get(&id.name)
+                    .map(|data| data.skipped)
+                    .unwrap_or_default()
+                {
+                    return vec![];
+                }
+
                 let mut kind = None;
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
@@ -1040,19 +1051,10 @@ impl Stmt {
                     | EntityKind::ObjCProtocolRef
                     | EntityKind::TypeRef
                     | EntityKind::ParmDecl
-                    | EntityKind::EnumDecl => {}
+                    | EntityKind::EnumDecl
+                    | EntityKind::IntegerLiteral => {}
                     _ => error!("unknown"),
                 });
-
-                if context
-                    .library(id.library_name())
-                    .typedef_data
-                    .get(&id.name)
-                    .map(|data| data.skipped)
-                    .unwrap_or_default()
-                {
-                    return vec![];
-                }
 
                 let ty = entity
                     .get_typedef_underlying_type()
@@ -1417,11 +1419,11 @@ impl Stmt {
             }
             EntityKind::UnionDecl => {
                 let id = ItemIdentifier::new_optional(entity, context);
-                error!(
+                warn!(
                     ?id,
                     has_attributes = ?entity.has_attributes(),
                     children = ?entity.get_children(),
-                    "union",
+                    "skipping union",
                 );
                 vec![]
             }
