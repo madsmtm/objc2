@@ -24,14 +24,6 @@ class.MTKMeshBuffer.methods.type.skipped = true
 fn.MTKModelIOVertexFormatFromMetal.skipped = true
 fn.MTKMetalVertexFormatFromModelIO.skipped = true
 
-# Needs `CGImageRef`
-class.MTKTextureLoader.methods."newTextureWithCGImage:options:completionHandler:".skipped = true
-class.MTKTextureLoader.methods."newTextureWithCGImage:options:error:".skipped = true
-
-# Needs `CGColorSpaceRef`
-class.MTKView.methods.colorspace.skipped = true
-class.MTKView.methods."setColorspace:".skipped = true
-
 # Needs `ModelIO` framework
 class.MTKMesh.methods."initWithMesh:device:error:".skipped = true
 class.MTKMesh.methods."newMeshesFromAsset:device:sourceMeshes:error:".skipped = true

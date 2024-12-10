@@ -55,9 +55,9 @@ impl Availability {
                 *introduced = availability.introduced;
                 *deprecated = availability.deprecated;
 
-                // TODO: Unsure how we would handle these if they exist
                 if availability.obsoleted.is_some() {
-                    error!("availability attribute contained `obsoleted`");
+                    // TODO: Handle obsoletions somehow, maybe by cfg-ing
+                    // obsoleted things out?
                 }
 
                 if let Some(m) = availability.message {

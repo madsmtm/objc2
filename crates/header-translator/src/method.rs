@@ -237,7 +237,7 @@ impl MemoryManagement {
         {
             Self::Normal
         } else {
-            error!(?modifiers, "invalid MemoryManagement attributes");
+            warn!(?modifiers, "invalid MemoryManagement attributes");
             Self::Normal
         }
     }

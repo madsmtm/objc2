@@ -554,6 +554,8 @@ fn parse_fn_param_children(parent: &Entity<'_>, context: &Context<'_>) -> Option
         EntityKind::NSConsumed => {
             error!("found NSConsumed, which requires manual handling");
         }
+        // For some reason we recurse into array types
+        EntityKind::IntegerLiteral => {}
         kind => error!(?parent, ?kind, "unknown"),
     });
 
@@ -1384,6 +1386,13 @@ impl Stmt {
                         let ty = entity.get_type().expect("function argument type");
                         let ty = Ty::parse_function_argument(ty, attr, context);
                         arguments.push((name, ty))
+                    }
+                    EntityKind::WarnUnusedResultAttr => {
+                        // TODO: Emit `#[must_use]` on this
+                    }
+                    EntityKind::PureAttr => {
+                        // Ignore, we currently have no way of marking
+                        // external functions as pure in Rust.
                     }
                     EntityKind::VisibilityAttr => {
                         // CG_EXTERN or UIKIT_EXTERN

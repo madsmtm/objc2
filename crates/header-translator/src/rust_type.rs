@@ -1723,11 +1723,29 @@ impl Ty {
         })
     }
 
+    fn fn_contains_bool_argument(&self) -> bool {
+        if let Self::Pointer { pointee, .. } = self {
+            if let Self::Fn { arguments, .. } = &**pointee {
+                if arguments
+                    .iter()
+                    .any(|arg| matches!(arg, Self::Primitive(Primitive::C99Bool)))
+                {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
     pub(crate) fn struct_encoding(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Primitive(Primitive::C99Bool) => write!(f, "Encoding::Bool"),
             Self::Primitive(Primitive::Long) => write!(f, "Encoding::C_LONG"),
             Self::Primitive(Primitive::ULong) => write!(f, "Encoding::C_ULONG"),
+            // TODO: Make all function pointers be encode, regardless of arguments
+            Self::TypeDef { to, .. } if to.fn_contains_bool_argument() => {
+                write!(f, "Encoding::Pointer(&Encoding::Unknown)")
+            }
             _ => write!(f, "<{}>::ENCODING", self.struct_()),
         })
     }

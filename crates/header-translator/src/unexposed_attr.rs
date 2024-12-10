@@ -176,6 +176,7 @@ impl UnexposedAttr {
             | "OBJC_SWIFT_UNAVAILABLE"
             | "OPENGL_DEPRECATED"
             | "OPENGLES_DEPRECATED"
+            | "SCREEN_CAPTURE_OBSOLETE"
             | "SOCIAL_CLASS_AVAILABLE"
             | "SOCIAL_CLASS_AVAILABLE_IOS"
             | "SOCIAL_CLASS_AVAILABLE_MAC"
@@ -193,7 +194,9 @@ impl UnexposedAttr {
             // For some reason we don't need to extract the arguments for
             // these, perhaps because they simply delegate to other macros.
             "AS_API_AVAILABLE" | "AS_HEADER_AUDIT_BEGIN" => None,
-            "__IOS_PROHIBITED"
+            "__CG_DEPRECATED_ENUMERATOR"
+            | "__CG_DEPRECATED"
+            | "__IOS_PROHIBITED"
             | "__IOS_UNAVAILABLE"
             | "__OSX_UNAVAILABLE"
             | "__TVOS_PROHIBITED"
@@ -206,6 +209,7 @@ impl UnexposedAttr {
             | "CB_CM_API_AVAILABLE"
             | "MP_INIT_UNAVAILABLE"
             | "CF_AUTOMATED_REFCOUNT_UNAVAILABLE"
+            | "CG_OBSOLETE"
             | "NS_AUTOMATED_REFCOUNT_UNAVAILABLE"
             | "NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE"
             | "NS_UNAVAILABLE"

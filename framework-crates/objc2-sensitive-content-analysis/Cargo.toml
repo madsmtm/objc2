@@ -18,6 +18,7 @@ workspace = true
 [dependencies]
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 
 [package.metadata.docs.rs]
@@ -34,11 +35,13 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "block2?/std", "objc2/std", "objc2-foundation/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-foundation/alloc"]
-block2 = ["dep:block2", "objc2-foundation/block2"]
+std = ["alloc", "block2?/std", "objc2/std", "objc2-core-graphics?/std", "objc2-foundation/std"]
+alloc = ["block2?/alloc", "objc2/alloc", "objc2-core-graphics?/alloc", "objc2-foundation/alloc"]
+block2 = ["dep:block2", "objc2-core-graphics?/block2", "objc2-foundation/block2"]
+objc2-core-graphics = ["dep:objc2-core-graphics"]
 
 SCSensitivityAnalyzer = [
+    "objc2-core-graphics?/CGImage",
     "objc2-foundation/NSError",
     "objc2-foundation/NSProgress",
     "objc2-foundation/NSURL",
@@ -46,4 +49,5 @@ SCSensitivityAnalyzer = [
 all = [
     "SCSensitivityAnalyzer",
     "block2",
+    "objc2-core-graphics",
 ]

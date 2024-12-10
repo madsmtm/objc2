@@ -82,18 +82,6 @@ static.UITextWritingDirectionNatural.skipped = true
 static.UITextWritingDirectionLeftToRight.skipped = true
 static.UITextWritingDirectionRightToLeft.skipped = true
 
-# Needs `CGColorRef`
-class.UIColor.methods."colorWithCGColor:".skipped = true
-class.UIColor.methods."initWithCGColor:".skipped = true
-class.UIColor.methods.CGColor.skipped = true
-
-# Needs `CGImageRef`
-class.UIImage.methods."imageWithCGImage:".skipped = true
-class.UIImage.methods."imageWithCGImage:scale:orientation:".skipped = true
-class.UIImage.methods."initWithCGImage:".skipped = true
-class.UIImage.methods."initWithCGImage:scale:orientation:".skipped = true
-class.UIImage.methods.CGImage.skipped = true
-
 # Needs `AVAudioSession`
 class.UIScene.methods."getDefaultAudioSessionWithCompletionHandler:".skipped = true
 
@@ -104,53 +92,6 @@ protocol.UIApplicationDelegate.methods."application:handleIntent:completionHandl
 # Needs `CTTextAlignment`
 fn.NSTextAlignmentToCTTextAlignment.skipped = true
 fn.NSTextAlignmentFromCTTextAlignment.skipped = true
-
-# Needs `CGAffineTransform`
-class.UIView.methods.transform = { skipped = true }
-class.UIView.methods."setTransform:" = { skipped = true }
-
-# Needs `CGPathRef`
-class.UIBezierPath.methods."bezierPathWithCGPath:".skipped = true
-class.UIBezierPath.methods.CGPath.skipped = true
-class.UIBezierPath.methods."setCGPath:".skipped = true
-
-# Needs `CGLineCap`
-class.UIBezierPath.methods.lineCapStyle.skipped = true
-class.UIBezierPath.methods."setLineCapStyle:".skipped = true
-
-# Needs `CGLineJoin`
-class.UIBezierPath.methods.lineJoinStyle.skipped = true
-class.UIBezierPath.methods."setLineJoinStyle:".skipped = true
-
-# Needs `CGBlendMode`
-class.UIBezierPath.methods."fillWithBlendMode:alpha:".skipped = true
-class.UIBezierPath.methods."strokeWithBlendMode:alpha:".skipped = true
-class.UIGraphicsRendererContext.methods."fillRect:blendMode:".skipped = true
-class.UIGraphicsRendererContext.methods."strokeRect:blendMode:".skipped = true
-class.UIImage.methods."drawAtPoint:blendMode:alpha:".skipped = true
-class.UIImage.methods."drawInRect:blendMode:alpha:".skipped = true
-fn.UIRectFillUsingBlendMode.skipped = true
-fn.UIRectFrameUsingBlendMode.skipped = true
-
-# Needs `CGGlyph`
-class.NSLayoutManager.methods."CGGlyphAtIndex:isValidIndex:".skipped = true
-class.NSLayoutManager.methods."CGGlyphAtIndex:".skipped = true
-class.NSLayoutManager.methods."glyphAtIndex:isValidIndex:".skipped = true
-class.NSLayoutManager.methods."glyphAtIndex:".skipped = true
-class.NSLayoutManager.methods."showCGGlyphs:positions:count:font:textMatrix:attributes:inContext:".skipped = true
-class.NSLayoutManager.methods."showCGGlyphs:positions:count:font:matrix:attributes:inContext:".skipped = true
-class.NSLayoutManager.methods."setGlyphs:properties:characterIndexes:font:forGlyphRange:".skipped = true
-class.NSLayoutManager.methods."getGlyphsInRange:glyphs:properties:characterIndexes:bidiLevels:".skipped = true
-class.NSLayoutManager.methods."glyphIndexForPoint:inTextContainer:fractionOfDistanceThroughGlyph:".skipped = true
-class.NSLayoutManagerDelegate.methods."layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:".skipped = true
-protocol.NSLayoutManagerDelegate.methods."layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:".skipped = true
-
-# Needs `CGContextRef`
-class.NSTextLayoutFragment.methods."drawAtPoint:inContext:".skipped = true
-class.NSTextLineFragment.methods."drawAtPoint:inContext:".skipped = true
-fn.UIGraphicsPushContext.skipped = true
-class.UIGraphicsRendererContext.methods.CGContext.skipped = true
-class.UIGraphicsRenderer.methods."prepareCGContext:withRendererContext:".skipped = true
 
 # Needs LinkPresentation, which itself depends on UIKit
 protocol.UIActivityItemSource.methods."activityViewControllerLinkMetadata:".skipped = true

@@ -22,6 +22,7 @@ objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = fal
 objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.2.2", default-features = false, optional = true }
 objc2-core-data = { path = "../objc2-core-data", version = "0.2.2", default-features = false, optional = true }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true }
 objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 objc2-symbols = { path = "../objc2-symbols", version = "0.2.2", default-features = false, optional = true }
@@ -47,13 +48,14 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-cloud-kit?/std", "objc2-core-data?/std", "objc2-core-foundation?/std", "objc2-core-image?/std", "objc2-core-location?/std", "objc2-foundation/std", "objc2-quartz-core?/std", "objc2-symbols?/std", "objc2-uniform-type-identifiers?/std", "objc2-user-notifications?/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-cloud-kit?/alloc", "objc2-core-data?/alloc", "objc2-core-foundation?/alloc", "objc2-core-image?/alloc", "objc2-core-location?/alloc", "objc2-foundation/alloc", "objc2-quartz-core?/alloc", "objc2-symbols?/alloc", "objc2-uniform-type-identifiers?/alloc", "objc2-user-notifications?/alloc"]
-bitflags = ["dep:bitflags", "objc2-cloud-kit?/bitflags", "objc2-core-data?/bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation/bitflags", "objc2-quartz-core?/bitflags", "objc2-user-notifications?/bitflags"]
-block2 = ["dep:block2", "objc2-cloud-kit?/block2", "objc2-core-data?/block2", "objc2-core-foundation?/block2", "objc2-core-image?/block2", "objc2-core-location?/block2", "objc2-foundation/block2", "objc2-quartz-core?/block2", "objc2-uniform-type-identifiers?/block2", "objc2-user-notifications?/block2"]
+std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-cloud-kit?/std", "objc2-core-data?/std", "objc2-core-foundation?/std", "objc2-core-graphics?/std", "objc2-core-image?/std", "objc2-core-location?/std", "objc2-foundation/std", "objc2-quartz-core?/std", "objc2-symbols?/std", "objc2-uniform-type-identifiers?/std", "objc2-user-notifications?/std"]
+alloc = ["block2?/alloc", "objc2/alloc", "objc2-cloud-kit?/alloc", "objc2-core-data?/alloc", "objc2-core-foundation?/alloc", "objc2-core-graphics?/alloc", "objc2-core-image?/alloc", "objc2-core-location?/alloc", "objc2-foundation/alloc", "objc2-quartz-core?/alloc", "objc2-symbols?/alloc", "objc2-uniform-type-identifiers?/alloc", "objc2-user-notifications?/alloc"]
+bitflags = ["dep:bitflags", "objc2-cloud-kit?/bitflags", "objc2-core-data?/bitflags", "objc2-core-foundation?/bitflags", "objc2-core-graphics?/bitflags", "objc2-foundation/bitflags", "objc2-quartz-core?/bitflags", "objc2-user-notifications?/bitflags"]
+block2 = ["dep:block2", "objc2-cloud-kit?/block2", "objc2-core-data?/block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-core-image?/block2", "objc2-core-location?/block2", "objc2-foundation/block2", "objc2-quartz-core?/block2", "objc2-uniform-type-identifiers?/block2", "objc2-user-notifications?/block2"]
 objc2-cloud-kit = ["dep:objc2-cloud-kit"]
 objc2-core-data = ["dep:objc2-core-data"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-image?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-quartz-core?/objc2-core-foundation"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-graphics?/objc2-core-foundation", "objc2-core-image?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-quartz-core?/objc2-core-foundation"]
+objc2-core-graphics = ["dep:objc2-core-graphics", "objc2-core-image?/objc2-core-graphics", "objc2-quartz-core?/objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
 objc2-core-location = ["dep:objc2-core-location", "objc2-cloud-kit?/objc2-core-location", "objc2-user-notifications?/objc2-core-location"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
@@ -119,11 +121,15 @@ NSLayoutConstraint = [
 NSLayoutManager = [
     "bitflags",
     "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-graphics?/CGContext",
+    "objc2-core-graphics?/CGFont",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
 ]
 NSParagraphStyle = [
     "bitflags",
@@ -181,6 +187,7 @@ NSTextElement = [
 NSTextLayoutFragment = [
     "bitflags",
     "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-graphics?/CGContext",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
@@ -199,6 +206,7 @@ NSTextLayoutManager = [
 ]
 NSTextLineFragment = [
     "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-graphics?/CGContext",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
@@ -434,6 +442,8 @@ UIBarItem = [
 UIBehavioralStyle = []
 UIBezierPath = [
     "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-graphics?/CGContext",
+    "objc2-core-graphics?/CGPath",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
@@ -579,6 +589,7 @@ UICollisionBehavior = [
 ]
 UIColor = [
     "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-graphics?/CGColor",
     "objc2-core-image?/CIColor",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSItemProvider",
@@ -913,6 +924,7 @@ UIGestureRecognizer = [
 UIGestureRecognizerSubclass = ["objc2-foundation/NSSet"]
 UIGraphics = [
     "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-graphics?/CGContext",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSString",
@@ -934,9 +946,13 @@ UIGraphicsPDFRenderer = [
 ]
 UIGraphicsRenderer = [
     "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-graphics?/CGContext",
     "objc2-foundation/NSObject",
 ]
-UIGraphicsRendererSubclass = ["objc2-foundation/NSError"]
+UIGraphicsRendererSubclass = [
+    "objc2-core-graphics?/CGContext",
+    "objc2-foundation/NSError",
+]
 UIGravityBehavior = [
     "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
@@ -961,6 +977,8 @@ UIHoverGestureRecognizer = [
 UIHoverStyle = ["objc2-foundation/NSObject"]
 UIImage = [
     "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-graphics?/CGContext",
+    "objc2-core-graphics?/CGImage",
     "objc2-core-image?/CIImage",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
@@ -2417,6 +2435,7 @@ all = [
     "objc2-cloud-kit",
     "objc2-core-data",
     "objc2-core-foundation",
+    "objc2-core-graphics",
     "objc2-core-image",
     "objc2-core-location",
     "objc2-quartz-core",

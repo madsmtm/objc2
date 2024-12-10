@@ -9,46 +9,13 @@ ios = "2.0"
 tvos = "9.0"
 visionos = "1.0"
 
-# Uses stuff from CoreGraphics
-class.CAKeyframeAnimation.methods.path.skipped = true
-class.CAKeyframeAnimation.methods."setPath:".skipped = true
-class.CAShapeLayer.methods.path.skipped = true
-class.CAShapeLayer.methods."setPath:".skipped = true
-class.CAShapeLayer.methods.fillColor.skipped = true
-class.CAShapeLayer.methods."setFillColor:".skipped = true
-class.CAShapeLayer.methods.strokeColor.skipped = true
-class.CAShapeLayer.methods."setStrokeColor:".skipped = true
-class.CAEmitterCell.methods.color.skipped = true
-class.CAEmitterCell.methods."setColor:".skipped = true
-class.CALayer.methods."drawInContext:".skipped = true
-class.CALayer.methods."renderInContext:".skipped = true
-class.CALayer.methods.backgroundColor.skipped = true
-class.CALayer.methods."setBackgroundColor:".skipped = true
-class.CALayer.methods.borderColor.skipped = true
-class.CALayer.methods."setBorderColor:".skipped = true
-class.CALayer.methods.shadowColor.skipped = true
-class.CALayer.methods."setShadowColor:".skipped = true
-class.CALayer.methods.shadowPath.skipped = true
-class.CALayer.methods."setShadowPath:".skipped = true
-protocol.CALayerDelegate.methods."drawLayer:inContext:".skipped = true
-
-# Needs `CGColorSpaceRef`
-class.CAMetalLayer.methods.colorspace.skipped = true
-class.CAMetalLayer.methods."setColorspace:".skipped = true
-class.CAOpenGLLayer.skipped = true
-class.CARenderer.methods."rendererWithMTLTexture:options:".skipped = true
-class.CARenderer.methods."setDestination:".skipped = true
-class.CARenderer.methods."beginFrameAtTime:timeStamp:".skipped = true
-class.CARemoteLayerClient.methods."initWithServerPort:".skipped = true
-class.CARemoteLayerServer.methods.serverPort.skipped = true
-class.CAReplicatorLayer.methods.instanceColor.skipped = true
-class.CAReplicatorLayer.methods."setInstanceColor:".skipped = true
-class.CATextLayer.methods.font.skipped = true
-class.CATextLayer.methods."setFont:".skipped = true
-class.CATextLayer.methods.foregroundColor.skipped = true
-class.CATextLayer.methods."setForegroundColor:".skipped = true
-fn.CATransform3DMakeAffineTransform.skipped = true
-fn.CATransform3DGetAffineTransform.skipped = true
+# Needs CGLContextObj from OpenGL
+class.CAOpenGLLayer.methods."canDrawInCGLContext:pixelFormat:forLayerTime:displayTime:".skipped = true
+class.CAOpenGLLayer.methods."drawInCGLContext:pixelFormat:forLayerTime:displayTime:".skipped = true
+class.CAOpenGLLayer.methods."copyCGLPixelFormatForDisplayMask:".skipped = true
+class.CAOpenGLLayer.methods."releaseCGLPixelFormat:".skipped = true
+class.CAOpenGLLayer.methods."copyCGLContextForPixelFormat:".skipped = true
+class.CAOpenGLLayer.methods."releaseCGLContext:".skipped = true
 
 # I'm unsure of the ABI of the array this takes
 class.CAMediaTimingFunction.methods."getControlPointAtIndex:values:".skipped = true

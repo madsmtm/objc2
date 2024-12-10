@@ -33,15 +33,6 @@ fn.CVOpenGLESTextureCacheCreateTextureFromImage.skipped = true
 fn.CVOpenGLESTextureGetTarget.skipped = true
 fn.CVOpenGLESTextureGetName.skipped = true
 
-# Needs CoreGraphics
-fn.CVDisplayLinkCreateWithOpenGLDisplayMask.skipped = true
-fn.CVDisplayLinkCreateWithCGDisplays.skipped = true
-fn.CVDisplayLinkCreateWithCGDisplay.skipped = true
-fn.CVDisplayLinkSetCurrentCGDisplay.skipped = true
-fn.CVDisplayLinkGetCurrentCGDisplay.skipped = true
-fn.CVImageBufferGetColorSpace.skipped = true
-fn.CVImageBufferCreateColorSpaceFromAttachments.skipped = true
-
 # Needs IOSurfaceRef from IOSurface
 fn.CVPixelBufferGetIOSurface.skipped = true
 fn.CVPixelBufferCreateWithIOSurface.skipped = true

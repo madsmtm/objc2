@@ -75,42 +75,8 @@ class.NSGestureRecognizer.methods.state.skipped = true
 # Needs `Symbols` framework
 class.NSImageView.categories.NSSymbolEffect.skipped = true
 
-# Needs CoreGraphics
-class.NSColor.methods.CGColor.skipped = true
-class.NSColor.methods."colorWithCGColor:".skipped = true
-class.NSColorSpace.methods."initWithCGColorSpace:".skipped = true
-class.NSColorSpace.methods.CGColorSpace.skipped = true
-class.NSLayoutManager.methods."CGGlyphAtIndex:isValidIndex:".skipped = true
-class.NSLayoutManager.methods."CGGlyphAtIndex:".skipped = true
-class.NSLayoutManager.methods."showCGGlyphs:positions:count:font:textMatrix:attributes:inContext:".skipped = true
-class.NSLayoutManager.methods."showCGGlyphs:positions:count:font:matrix:attributes:inContext:".skipped = true
-class.NSImage.methods."initWithCGImage:size:".skipped = true
-class.NSImage.methods."CGImageForProposedRect:context:hints:".skipped = true
+# Needs IconRef from HIServices / Carbon
 class.NSImage.methods."initWithIconRef:".skipped = true
-class.NSImageRep.methods."CGImageForProposedRect:context:hints:".skipped = true
-class.NSBitmapImageRep.methods."initWithCGImage:".skipped = true
-class.NSBitmapImageRep.methods.CGImage.skipped = true
-class.NSEvent.methods.CGEvent.skipped = true
-class.NSEvent.methods."eventWithCGEvent:".skipped = true
-class.NSBezierPath.methods."appendBezierPathWithCGGlyph:inFont:".skipped = true
-class.NSBezierPath.methods."appendBezierPathWithCGGlyphs:count:inFont:".skipped = true
-class.NSBezierPath.methods."bezierPathWithCGPath:".skipped = true
-class.NSBezierPath.methods.CGPath.skipped = true
-class.NSBezierPath.methods."setCGPath:".skipped = true
-class.NSFont.methods."boundingRectForCGGlyph:".skipped = true
-class.NSFont.methods."advancementForCGGlyph:".skipped = true
-class.NSFont.methods."getBoundingRects:forCGGlyphs:count:".skipped = true
-class.NSFont.methods."getAdvancements:forCGGlyphs:count:".skipped = true
-class.NSGlyphInfo.methods."glyphInfoWithCGGlyph:forFont:baseString:".skipped = true
-class.NSGraphicsContext.methods."graphicsContextWithCGContext:flipped:".skipped = true
-class.NSGraphicsContext.methods.CGContext.skipped = true
-class.NSLayoutManager.methods."setGlyphs:properties:characterIndexes:font:forGlyphRange:".skipped = true
-class.NSLayoutManager.methods."getGlyphsInRange:glyphs:properties:characterIndexes:bidiLevels:".skipped = true
-class.NSLayoutManager.methods."glyphIndexForPoint:inTextContainer:fractionOfDistanceThroughGlyph:".skipped = true
-protocol.NSLayoutManagerDelegate.methods."layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:".skipped = true
-class.NSTextLayoutFragment.methods."drawAtPoint:inContext:".skipped = true
-class.NSTextLineFragment.methods."drawAtPoint:inContext:".skipped = true
-class.NSGlyphInfo.methods.glyphID.skipped = true
 
 # OpenGL
 class.NSOpenGLContext.skipped = true

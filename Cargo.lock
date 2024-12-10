@@ -391,6 +391,7 @@ dependencies = [
  "block2",
  "objc2",
  "objc2-core-foundation",
+ "objc2-core-graphics",
  "objc2-foundation",
 ]
 
@@ -430,6 +431,7 @@ dependencies = [
  "objc2-cloud-kit",
  "objc2-core-data",
  "objc2-core-foundation",
+ "objc2-core-graphics",
  "objc2-core-image",
  "objc2-foundation",
  "objc2-quartz-core",
@@ -531,6 +533,7 @@ version = "0.2.2"
 dependencies = [
  "block2",
  "objc2",
+ "objc2-core-graphics",
  "objc2-foundation",
 ]
 
@@ -604,12 +607,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-core-graphics"
+version = "0.2.2"
+dependencies = [
+ "bitflags",
+ "block2",
+ "libc",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-metal",
+]
+
+[[package]]
 name = "objc2-core-image"
 version = "0.2.2"
 dependencies = [
  "block2",
  "objc2",
  "objc2-core-foundation",
+ "objc2-core-graphics",
  "objc2-core-video",
  "objc2-foundation",
  "objc2-metal",
@@ -632,6 +648,7 @@ dependencies = [
  "bitflags",
  "block2",
  "objc2",
+ "objc2-core-graphics",
  "objc2-core-video",
  "objc2-foundation",
  "objc2-metal",
@@ -656,6 +673,7 @@ dependencies = [
  "block2",
  "objc2",
  "objc2-core-foundation",
+ "objc2-core-graphics",
  "objc2-metal",
 ]
 
@@ -698,6 +716,7 @@ dependencies = [
  "block2",
  "objc2",
  "objc2-app-kit",
+ "objc2-core-graphics",
  "objc2-core-location",
  "objc2-foundation",
  "objc2-map-kit",
@@ -889,6 +908,7 @@ dependencies = [
  "objc2-app-kit",
  "objc2-contacts",
  "objc2-core-foundation",
+ "objc2-core-graphics",
  "objc2-core-location",
  "objc2-foundation",
 ]
@@ -936,6 +956,7 @@ dependencies = [
  "objc2",
  "objc2-app-kit",
  "objc2-core-foundation",
+ "objc2-core-graphics",
  "objc2-foundation",
  "objc2-metal",
  "objc2-quartz-core",
@@ -1051,8 +1072,11 @@ version = "0.2.2"
 dependencies = [
  "bitflags",
  "block2",
+ "libc",
  "objc2",
  "objc2-core-foundation",
+ "objc2-core-graphics",
+ "objc2-core-video",
  "objc2-foundation",
  "objc2-metal",
 ]
@@ -1066,6 +1090,7 @@ dependencies = [
  "libc",
  "objc2",
  "objc2-core-foundation",
+ "objc2-core-graphics",
  "objc2-foundation",
 ]
 
@@ -1085,6 +1110,7 @@ version = "0.2.2"
 dependencies = [
  "block2",
  "objc2",
+ "objc2-core-graphics",
  "objc2-foundation",
 ]
 
@@ -1165,6 +1191,7 @@ dependencies = [
  "objc2-cloud-kit",
  "objc2-core-data",
  "objc2-core-foundation",
+ "objc2-core-graphics",
  "objc2-core-image",
  "objc2-core-location",
  "objc2-foundation",
@@ -1213,6 +1240,7 @@ dependencies = [
  "block2",
  "objc2",
  "objc2-core-foundation",
+ "objc2-core-graphics",
  "objc2-core-image",
  "objc2-core-ml",
  "objc2-core-video",

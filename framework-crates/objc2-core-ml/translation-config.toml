@@ -8,9 +8,7 @@ tvos = "11.0"
 watchos = "4.0"
 visionos = "1.0"
 
-# Needs CoreGraphics
-class.MLFeatureValue.methods."featureValueWithCGImage:pixelsWide:pixelsHigh:pixelFormatType:options:error:".skipped = true
-class.MLFeatureValue.methods."featureValueWithCGImage:constraint:options:error:".skipped = true
+# Needs CGImagePropertyOrientation from ImageIO
 class.MLFeatureValue.methods."featureValueWithCGImage:orientation:pixelsWide:pixelsHigh:pixelFormatType:options:error:".skipped = true
 class.MLFeatureValue.methods."featureValueWithCGImage:orientation:constraint:options:error:".skipped = true
 class.MLFeatureValue.methods."featureValueWithImageAtURL:orientation:pixelsWide:pixelsHigh:pixelFormatType:options:error:".skipped = true

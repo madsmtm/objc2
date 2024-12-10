@@ -241,7 +241,7 @@ impl<N: ToOptionString> ItemIdentifier<N> {
 
     pub fn with_name(name: N, entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let location = context.get_location(entity).unwrap_or_else(|| {
-            warn!(?entity, "ItemIdentifier from unknown header");
+            error!(?entity, "ItemIdentifier from unknown header");
             Location::from_components(vec!["__Unknown__".into()])
         });
 

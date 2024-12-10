@@ -44,66 +44,21 @@ class.CIImage.methods."initWithIOSurface:plane:format:options:".skipped = true
 class.CIContext.methods."contextWithEAGLContext:".skipped = true
 class.CIContext.methods."contextWithEAGLContext:options:".skipped = true
 
-# Needs CoreGraphics
-class.CIColor.methods."colorWithCGColor:".skipped = true
-class.CIColor.methods."colorWithRed:green:blue:alpha:colorSpace:".skipped = true
-class.CIColor.methods."colorWithRed:green:blue:colorSpace:".skipped = true
-class.CIColor.methods."initWithCGColor:".skipped = true
-class.CIColor.methods."initWithRed:green:blue:alpha:colorSpace:".skipped = true
-class.CIColor.methods."initWithRed:green:blue:colorSpace:".skipped = true
-class.CIContext.methods."contextWithCGLContext:pixelFormat:colorSpace:options:".skipped = true
-class.CIContext.methods."contextWithCGLContext:pixelFormat:options:".skipped = true
-class.CIContext.methods."contextWithCGContext:options:".skipped = true
-class.CIContext.methods.workingColorSpace.skipped = true
-class.CIContext.methods."render:toBitmap:rowBytes:bounds:format:colorSpace:".skipped = true
-class.CIContext.methods."render:toCVPixelBuffer:bounds:colorSpace:".skipped = true
-class.CIContext.methods."render:toMTLTexture:commandBuffer:bounds:colorSpace:".skipped = true
-class.CIContext.methods."contextForOfflineGPUAtIndex:colorSpace:options:sharedContext:".skipped = true
-class.CIContext.methods."TIFFRepresentationOfImage:format:colorSpace:options:".skipped = true
-class.CIContext.methods."JPEGRepresentationOfImage:colorSpace:options:".skipped = true
-class.CIContext.methods."HEIFRepresentationOfImage:format:colorSpace:options:".skipped = true
-class.CIContext.methods."HEIF10RepresentationOfImage:colorSpace:options:error:".skipped = true
-class.CIContext.methods."PNGRepresentationOfImage:format:colorSpace:options:".skipped = true
-class.CIContext.methods."writeTIFFRepresentationOfImage:toURL:format:colorSpace:options:error:".skipped = true
-class.CIContext.methods."writePNGRepresentationOfImage:toURL:format:colorSpace:options:error:".skipped = true
-class.CIContext.methods."writeJPEGRepresentationOfImage:toURL:colorSpace:options:error:".skipped = true
-class.CIContext.methods."writeHEIFRepresentationOfImage:toURL:format:colorSpace:options:error:".skipped = true
-class.CIContext.methods."writeHEIF10RepresentationOfImage:toURL:colorSpace:options:error:".skipped = true
+# Needs CGImagePropertyOrientation from ImageIO
 class.CIContext.methods."depthBlurEffectFilterForImage:disparityImage:portraitEffectsMatte:orientation:options:".skipped = true
 class.CIContext.methods."depthBlurEffectFilterForImage:disparityImage:portraitEffectsMatte:hairSemanticSegmentation:orientation:options:".skipped = true
 class.CIContext.methods."depthBlurEffectFilterForImage:disparityImage:portraitEffectsMatte:hairSemanticSegmentation:glassesMatte:gainMap:orientation:options:".skipped = true
-class.CIFilterShape.methods."transformBy:interior:".skipped = true
-class.CIImage.methods."imageWithCGImage:".skipped = true
-class.CIImage.methods."imageWithCGImage:options:".skipped = true
-class.CIImage.methods."imageWithCGImageSource:index:options:".skipped = true
-class.CIImage.methods."imageWithCGLayer:".skipped = true
-class.CIImage.methods."imageWithCGLayer:options:".skipped = true
-class.CIImage.methods."imageWithBitmapData:bytesPerRow:size:format:colorSpace:".skipped = true
-class.CIImage.methods."imageWithTexture:size:flipped:colorSpace:".skipped = true
-class.CIImage.methods."initWithCGImage:".skipped = true
-class.CIImage.methods."initWithCGImage:options:".skipped = true
-class.CIImage.methods."initWithCGImageSource:index:options:".skipped = true
-class.CIImage.methods."initWithCGLayer:".skipped = true
-class.CIImage.methods."initWithCGLayer:options:".skipped = true
-class.CIImage.methods."initWithBitmapData:bytesPerRow:size:format:colorSpace:".skipped = true
-class.CIImage.methods."initWithTexture:size:flipped:colorSpace:".skipped = true
-class.CIImage.methods."imageByApplyingTransform:".skipped = true
-class.CIImage.methods."imageByApplyingTransform:highQualityDownsample:".skipped = true
 class.CIImage.methods."imageTransformForOrientation:".skipped = true
 class.CIImage.methods."imageByApplyingCGOrientation:".skipped = true
 class.CIImage.methods."imageTransformForCGOrientation:".skipped = true
-class.CIImage.methods."imageByColorMatchingColorSpaceToWorkingSpace:".skipped = true
-class.CIImage.methods."imageByColorMatchingWorkingSpaceToColorSpace:".skipped = true
-class.CIImage.methods.CGImage.skipped = true
-class.CIImageAccumulator.methods."imageAccumulatorWithExtent:format:colorSpace:".skipped = true
-class.CIImageAccumulator.methods."initWithExtent:format:colorSpace:".skipped = true
-class.CIImage.methods."imageWithImageProvider:size::format:colorSpace:options:".skipped = true
-class.CIImage.methods."initWithImageProvider:size::format:colorSpace:options:".skipped = true
-class.CIBlendKernel.methods."applyWithForeground:background:colorSpace:".skipped = true
 class.CIRAWFilter.methods.orientation.skipped = true
 class.CIRAWFilter.methods."setOrientation:".skipped = true
-class.CIRenderDestination.methods.colorSpace.skipped = true
-class.CIRenderDestination.methods."setColorSpace:".skipped = true
-class.CIVector.methods."vectorWithCGAffineTransform:".skipped = true
-class.CIVector.methods."initWithCGAffineTransform:".skipped = true
-class.CIVector.methods.CGAffineTransformValue.skipped = true
+
+# Needs CGImageSourceRef from ImageIO
+class.CIImage.methods."imageWithCGImageSource:index:options:".skipped = true
+class.CIImage.methods."initWithCGImageSource:index:options:".skipped = true
+
+# Needs CGLContextObj from OpenGL
+class.CIContext.methods."contextWithCGLContext:pixelFormat:colorSpace:options:".skipped = true
+class.CIContext.methods."contextWithCGLContext:pixelFormat:options:".skipped = true
+class.CIContext.methods."contextForOfflineGPUAtIndex:colorSpace:options:sharedContext:".skipped = true
