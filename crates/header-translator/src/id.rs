@@ -4,6 +4,7 @@ use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeSet;
 
+use clang::source::Module;
 use clang::Entity;
 
 use crate::cfgs::PlatformCfg;
@@ -122,6 +123,35 @@ impl<'config> LocationLibrary<'_, 'config> {
 }
 
 impl Location {
+    fn from_module(module: Module<'_>) -> Self {
+        let full_name = module.get_full_name();
+
+        Location::from_components(match &*full_name {
+            // Objective-C
+            name if name.starts_with("ObjectiveC") => vec!["objc2".into()],
+
+            // Redefined in the framework crate itself.
+            "Darwin.MacTypes" => vec!["System".into()],
+
+            // Built-in
+            "DarwinFoundation.types.machine_types" => vec!["System".into()],
+
+            // Libc
+            name if name.starts_with("sys_types") => vec!["libc".into()],
+            "DarwinFoundation.types.sys_types" => vec!["libc".into()],
+            name if name.starts_with("Darwin.POSIX") => vec!["libc".into()],
+
+            // Will be moved to the `mach2` crate in `libc` v1.0
+            name if name.starts_with("Darwin.Mach") => vec!["libc".into()],
+            "_mach_port_t" => vec!["libc".into()],
+
+            full_name => full_name
+                .split('.')
+                .map(|component| Cow::Owned(component.to_string()))
+                .collect(),
+        })
+    }
+
     pub(crate) fn from_components(path_components: Vec<Cow<'static, str>>) -> Self {
         Self { path_components }
     }
@@ -237,13 +267,23 @@ impl<N: ToOptionString> ItemIdentifier<N> {
         }
     }
 
-    pub fn with_name(name: N, entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let mut location = context.get_location(entity).unwrap_or_else(|| {
-            error!(?entity, "ItemIdentifier from unknown header");
-            Location::from_components(vec!["__Unknown__".into()])
-        });
+    pub fn with_name(name: N, entity: &Entity<'_>, _context: &Context<'_>) -> Self {
+        let file = entity
+            .get_location()
+            .expect("entity location")
+            .get_expansion_location()
+            .file
+            .expect("expanded location file");
 
-        if let Some("IOSurfaceRef") = name.to_option() {
+        let mut location = if let Some(module) = file.get_module() {
+            Location::from_module(module)
+        } else {
+            // If file module is not available, the item is likely a built-in macro.
+            Location::from_components(vec!["System".into()])
+        };
+
+        // Defined in multiple places for some reason.
+        if let Some("IOSurfaceRef" | "__IOSurface") = name.to_option() {
             location = Location::from_components(vec!["IOSurface".into(), "IOSurfaceRef".into()]);
         }
 

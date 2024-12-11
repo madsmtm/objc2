@@ -8,6 +8,10 @@ tvos = "9.0"
 watchos = "9.0"
 visionos = "1.0"
 
+# Has no declaration elsewhere, unknown where these actually come from
+external.AVGroupExperienceCoordinator.module = "AVKit.AVPlayerViewController"
+external.AVContentProposal.module = "AVKit.AVPlayerViewController"
+
 # Needs AVFoundation
 class.AVCaptureView.methods.session.skipped = true
 class.AVCaptureView.methods."setSession:showVideoPreview:showAudioPreview:".skipped = true

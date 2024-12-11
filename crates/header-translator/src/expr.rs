@@ -4,6 +4,7 @@ use std::fmt;
 use clang::token::TokenKind;
 use clang::{Entity, EntityKind, EntityVisitResult, EvaluationResult};
 
+use crate::context::MacroLocation;
 use crate::rust_type::Ty;
 use crate::stmt::{enum_constant_name, new_enum_id};
 use crate::unexposed_attr::UnexposedAttr;
@@ -101,10 +102,10 @@ impl Expr {
             let location = entity.get_location().expect("expr location");
             if let Some(macro_invocation) = context
                 .macro_invocations
-                .get(&location.get_spelling_location())
+                .get(&MacroLocation::from_location(&location))
             {
                 return Expr::MacroInvocation {
-                    id: ItemIdentifier::new(macro_invocation, context),
+                    id: macro_invocation.id.clone(),
                     evaluated: Some(Box::new(Self::from_evaluated(entity))),
                 };
             } else {
@@ -122,10 +123,10 @@ impl Expr {
                     } else {
                         let macro_invocation = context
                             .macro_invocations
-                            .get(&token.get_location().get_spelling_location())
+                            .get(&MacroLocation::from_location(&token.get_location()))
                             .expect("expr macro invocation");
                         Expr::MacroInvocation {
-                            id: ItemIdentifier::new(macro_invocation, context),
+                            id: macro_invocation.id.clone(),
                             evaluated: None,
                         }
                     })

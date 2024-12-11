@@ -6,7 +6,7 @@ use std::{fs, io};
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, EntityKind, EntityVisitResult, Index, TranslationUnit};
 use semver::VersionReq;
-use tracing::{debug_span, error, info, info_span, trace, trace_span};
+use tracing::{debug_span, error, info, info_span, trace_span};
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::layer::{Layer, SubscriberExt};
 use tracing_subscriber::registry::Registry;
@@ -14,7 +14,8 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
-    global_analysis, run_cargo_fmt, Config, Context, Library, LibraryConfig, Stmt,
+    global_analysis, run_cargo_fmt, Config, Context, Library, LibraryConfig, MacroEntity,
+    MacroLocation, Stmt,
 };
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -91,30 +92,18 @@ fn main() -> Result<(), BoxError> {
     // TODO: Compare between SDKs
     for sdk in sdks {
         // These are found using the `get_llvm_targets.fish` helper script
-        let (llvm_targets, platform_header, platform_config_filter): (
-            &[_],
-            _,
-            fn(&LibraryConfig) -> bool,
-        ) = match &sdk.platform {
-            Platform::MacOsX => (
-                &[
-                    // "x86_64-apple-macosx10.12.0",
-                    "arm64-apple-macosx11.0.0",
-                    // "i686-apple-macosx10.12.0",
-                ],
-                "macos.h",
-                |config| config.macos.is_some(),
-            ),
-            Platform::IPhoneOs => (
-                &[
-                    "arm64-apple-ios10.0.0",
-                    // "armv7s-apple-ios10.0.0",
-                    // "arm64-apple-ios14.0-macabi",
-                    // "x86_64-apple-ios13.0-macabi",
-                ],
-                "ios.h",
-                |config| config.ios.is_some(),
-            ),
+        let llvm_targets: &[_] = match &sdk.platform {
+            Platform::MacOsX => &[
+                // "x86_64-apple-macosx10.12.0",
+                "arm64-apple-macosx11.0.0",
+                // "i686-apple-macosx10.12.0",
+            ],
+            Platform::IPhoneOs => &[
+                "arm64-apple-ios10.0.0",
+                // "armv7s-apple-ios10.0.0",
+                // "arm64-apple-ios14.0-macabi",
+                // "x86_64-apple-ios13.0-macabi",
+            ],
             // Platform::IPhoneSimulator => &[
             //     "arm64-apple-ios10.0.0-simulator",
             //     "x86_64-apple-ios10.0.0-simulator",
@@ -131,42 +120,10 @@ fn main() -> Result<(), BoxError> {
 
         let mut result: Option<BTreeMap<String, Library>> = None;
 
-        let includes = tempdir.join(platform_header);
-
-        let mut includes_file = fs::File::create(&includes).unwrap();
-        // Make sure that we pick the IOSurfaceRef that IOSurface defines,
-        // instead of the one that CoreGraphics defines.
-        if platform_config_filter(&config.libraries["IOSurface"]) {
-            writeln!(&mut includes_file, "#include <IOSurface/IOSurfaceRef.h>")?;
-            writeln!(&mut includes_file, "#include <IOSurface/IOSurfaceObjC.h>")?;
-        }
-        // Part of .modulemap
-        writeln!(&mut includes_file, "#import <CoreFoundation/CFPluginCOM.h>")?;
-        for lib in config.libraries.values() {
-            if !platform_config_filter(lib) {
-                continue;
-            }
-            if let Some(umbrella_header) = &lib.umbrella_header {
-                writeln!(
-                    &mut includes_file,
-                    "#import <{}/{}>",
-                    lib.framework, umbrella_header
-                )?;
-            } else {
-                writeln!(
-                    &mut includes_file,
-                    "#import <{}/{}.h>",
-                    lib.framework, lib.framework,
-                )?;
-            }
-        }
-        includes_file.flush().unwrap();
-        drop(includes_file);
-
         for llvm_target in llvm_targets {
             let _span = info_span!("parsing", platform = ?sdk.platform, llvm_target).entered();
 
-            let curr_result = parse_sdk(&index, &sdk, llvm_target, &config, &includes);
+            let curr_result = parse_sdk(&index, &config, &sdk, llvm_target, &tempdir);
 
             if let Some(prev_result) = &result {
                 // Ensure that each target produces the same result.
@@ -285,114 +242,138 @@ fn load_config(workspace_dir: &Path) -> Result<Config, BoxError> {
 
 fn parse_sdk(
     index: &Index<'_>,
+    config: &Config,
     sdk: &SdkPath,
     llvm_target: &str,
-    config: &Config,
-    includes: &Path,
+    tempdir: &Path,
 ) -> BTreeMap<String, Library> {
-    let tu = get_translation_unit(index, sdk, llvm_target, includes);
+    let mut context = Context::new(config);
 
-    let mut preprocessing = true;
-    let mut libraries: BTreeMap<String, Library> = config
+    config
         .libraries
         .iter()
-        .map(|(name, data)| (name.into(), Library::new(name, data)))
-        .collect();
-
-    let mut library_span: Option<(_, String)> = None;
-    let mut file_span: Option<(_, _)> = None;
-
-    let mut context = Context::new(config, sdk);
-
-    tu.get_entity().visit_children(|entity, _parent| {
-        let _span = trace_span!("entity", ?entity).entered();
-        if let Some(location) = context.get_location(&entity) {
-            let library_name = location.library_name();
-            if library_span.as_ref().map(|(_, s)| &**s) != Some(library_name) {
-                // Drop old entered spans
-                library_span.take();
-                file_span.take();
-                // Enter new span
-                library_span = Some((
-                    debug_span!("library", name = library_name).entered(),
-                    library_name.to_string(),
-                ));
-            }
-            if file_span.as_ref().map(|(_, l)| l) != Some(&location) {
-                // Drop old entered span
-                file_span.take();
-                // Enter new span
-                file_span = Some((debug_span!("file", ?location).entered(), location.clone()));
-            }
-
-            if let Some(library) = libraries.get_mut(library_name) {
-                match entity.get_kind() {
-                    EntityKind::InclusionDirective if preprocessing => {
-                        let name = entity.get_name().expect("inclusion name");
-                        let mut iter = name.split('/');
-                        let framework = iter.next().expect("inclusion name has framework");
-                        if framework == library_name {
-                            let included = iter
-                                .next()
-                                .expect("inclusion name has file")
-                                .strip_suffix(".h")
-                                .expect("inclusion name file is header")
-                                .to_string();
-                            if iter.count() != 0 {
-                                panic!("invalid inclusion of {name:?}");
-                            }
-
-                            // If inclusion is not umbrella header
-                            if included != *library_name {
-                                // The file is often included twice, even
-                                // within the same file, so insertion can fail
-                                library.add_module(vec![included])
-                            }
-                        }
-                    }
-                    EntityKind::MacroExpansion if preprocessing => {
-                        let clang_location = entity.get_location().expect("macro location");
-                        context
-                            .macro_invocations
-                            .insert(clang_location.get_spelling_location(), entity);
-                    }
-                    EntityKind::MacroDefinition if preprocessing => {
-                        // let name = entity.get_name().expect("macro def name");
-                        // entity.is_function_like_macro();
-                        // trace!("macrodef", name);
-                    }
-                    _ => {
-                        if preprocessing {
-                            info!("done preprocessing");
-                        }
-                        preprocessing = false;
-                        // No more includes / macro expansions after this line
-                        for stmt in Stmt::parse(&entity, &context) {
-                            let module = library.module_mut(&location);
-                            module.add_stmt(stmt);
-                        }
-                    }
-                }
-            } else {
-                trace!("library not found");
-            }
-        }
-        EntityVisitResult::Continue
-    });
-
-    libraries
+        .filter(|(_, data)| match &sdk.platform {
+            // TODO: Mac Catalyst
+            Platform::MacOsX => data.macos.is_some(),
+            Platform::IPhoneOs | Platform::IPhoneSimulator => data.ios.is_some(),
+            Platform::AppleTvOs | Platform::AppleTvSimulator => data.tvos.is_some(),
+            Platform::WatchOs | Platform::WatchSimulator => data.watchos.is_some(),
+            Platform::XrOs | Platform::XrOsSimulator => data.visionos.is_some(),
+            _ => unimplemented!("unsupported sdk {sdk:?}"),
+        })
+        .map(|(name, data)| {
+            let _span = info_span!("framework", ?name).entered();
+            let mut library = Library::new(name, data);
+            let tu =
+                get_translation_unit(index, sdk, llvm_target, &library.data.framework, tempdir);
+            parse_framework(tu, &mut context, &mut library);
+            (name.into(), library)
+        })
+        .collect()
 }
 
-fn get_translation_unit<'i: 'tu, 'tu>(
-    index: &'i Index<'tu>,
+fn parse_framework(tu: TranslationUnit<'_>, context: &mut Context<'_>, library: &mut Library) {
+    let mut preprocessing = true;
+    let mut file_span: Option<(_, _)> = None;
+
+    tu.get_entity().visit_children(|entity, _parent| {
+        let location = entity.get_location().expect("entity location");
+
+        let file = location.get_expansion_location().file;
+        if file_span.as_ref().map(|(_, l)| l) != Some(&file) {
+            // Drop old span
+            file_span.take();
+
+            // Enter new span
+            let span = if let Some(file) = file {
+                if let Some(module) = file.get_module() {
+                    debug_span!("module", full_name = module.get_full_name())
+                } else {
+                    debug_span!("file", path = ?file.get_path())
+                }
+            } else {
+                // System-defined entities (like built-in macros, or
+                // inclusion directives generated from the modulemap).
+                debug_span!("Clang-defined")
+            };
+            file_span = Some((span.entered(), file));
+        }
+
+        let _span = trace_span!("entity", ?entity).entered();
+
+        match entity.get_kind() {
+            EntityKind::InclusionDirective if preprocessing => {
+                let file = entity.get_file().expect("inclusion directive has file");
+                if let Some(mut module) = file.get_module() {
+                    let mut components = vec![];
+                    while let Some(parent) = module.get_parent() {
+                        components.insert(0, module.get_name());
+                        module = parent;
+                    }
+                    if module.get_name() == library.data.framework {
+                        library.add_module(components);
+                    }
+                }
+            }
+            EntityKind::MacroExpansion if preprocessing => {
+                let entity = MacroEntity::from_entity(&entity, context);
+                context
+                    .macro_invocations
+                    .insert(MacroLocation::from_location(&location), entity);
+            }
+            EntityKind::MacroDefinition if preprocessing => {
+                // let name = entity.get_name().expect("macro def name");
+                // entity.is_function_like_macro();
+                // trace!("macrodef", name);
+            }
+            _ => {
+                if preprocessing {
+                    info!("done preprocessing");
+                }
+                preprocessing = false;
+                // No more includes / macro expansions after this line
+
+                let file = location
+                    .get_expansion_location()
+                    .file
+                    .expect("expanded location file");
+
+                let module = library.module_mut(file.get_module().expect("file module"));
+                for stmt in Stmt::parse(&entity, context) {
+                    module.add_stmt(stmt);
+                }
+            }
+        }
+
+        EntityVisitResult::Continue
+    });
+}
+
+fn get_translation_unit<'i: 'c, 'c>(
+    index: &'i Index<'c>,
     sdk: &SdkPath,
     llvm_target: &str,
-    includes: &Path,
-) -> TranslationUnit<'tu> {
+    framework: &str,
+    tempdir: &Path,
+) -> TranslationUnit<'c> {
     let _span = info_span!("initializing translation unit").entered();
 
+    // "usr/include/TargetConditionals.modulemap"
+    // "System/Library/Frameworks/CoreFoundation.framework/Modules/module.modulemap"
+    // "usr/include/ObjectiveC.modulemap"
+    let path = sdk.path.join(format!(
+        "System/Library/Frameworks/{framework}.framework/Modules/module.modulemap"
+    ));
+    let modulemap = fs::read_to_string(&path).expect("read module map");
+    let re = regex::Regex::new(r"(?m)^framework +module +(\w*)").unwrap();
+
+    // Find the top-level framework
+    let mut captures = re.captures_iter(&modulemap);
+    let module = &captures.next().expect("module name in module map")[1];
+    assert_eq!(captures.count(), 0);
+
     let tu = index
-        .parser(includes)
+        .parser(path.to_str().unwrap())
         .detailed_preprocessing_record(true)
         .incomplete(true)
         .skip_function_bodies(true)
@@ -414,17 +395,39 @@ fn get_translation_unit<'i: 'tu, 'tu>(
             "-fobjc-abi-version=2", // 3??
             // "-fparse-all-comments",
             // TODO: "-fretain-comments-from-system-headers"
-            "-fapinotes",
             "-isysroot",
             sdk.path.to_str().unwrap(),
             // See ClangImporter.cpp and Foundation/NSObjCRuntime.h
             "-D",
             "__SWIFT_ATTR_SUPPORTS_SENDABLE_DECLS=1",
+            // Enable modules. We do this by parsing the `.modulemap` instead
+            // of a combined file containing includes, as the Clang AST from
+            // dependent modules does not seem possible to access otherwise.
+            //
+            // The magic here is passing `-emit-module` to the frontend.
+            //
+            // See:
+            // https://clang.llvm.org/docs/Modules.html
+            // https://clang.llvm.org/docs/PCHInternals.html
+            "-fmodules",
+            "-fimplicit-module-maps",
+            // "-Xclang",
+            // "-fmodule-format=raw",
+            &format!("-fmodules-cache-path={}", tempdir.to_str().unwrap()),
+            // "-fsystem-module",
+            "-Xclang",
+            "-emit-module",
+            &format!("-fmodule-name={module}"),
+            // Explicitly enable API notes (implicitly enabled by -fmodules).
+            "-fapinotes",
+            "-fapinotes-modules",
+            // "-fapi-notes-swift-version=6.0",
         ])
         .parse()
         .unwrap();
 
     // dbg!(&tu);
+    // dbg!(tu.get_entity().get_children());
     // dbg!(tu.get_target());
     // dbg!(tu.get_memory_usage());
     // dbg!(tu.get_diagnostics());

@@ -1,11 +1,14 @@
 framework = "CoreImage"
 crate = "objc2-core-image"
 required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "10.11"
 maccatalyst = "13.0"
 ios = "5.0"
 tvos = "9.0"
 visionos = "1.0"
+
+external.MLModel.module = "CoreML.MLModel"
 
 # CF_RETURNS_NOT_RETAINED
 class.CIColor.methods.colorSpace.skipped = true

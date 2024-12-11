@@ -7,6 +7,9 @@ ios = "4.0"
 watchos = "2.0"
 visionos = "1.0"
 
+external.NSColor.module = "AppKit.NSColor"
+external.MKMapItem.module = "MapKit.MKMapItem"
+
 # CF_RETURNS_NOT_RETAINED
 class.EKParticipant.methods."ABRecordWithAddressBook:".skipped = true
 

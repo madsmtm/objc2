@@ -94,6 +94,18 @@ fn get_version<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Option<Vers
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+pub struct ExternalData {
+    pub module: String,
+    #[serde(rename = "thread-safety")]
+    #[serde(default)]
+    pub thread_safety: Option<String>,
+    #[serde(rename = "required-items")]
+    #[serde(default)]
+    pub required_items: Vec<String>,
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct LibraryConfig {
     pub framework: String,
     #[serde(rename = "crate")]
@@ -136,6 +148,12 @@ pub struct LibraryConfig {
 
     #[serde(default = "link_default")]
     pub link: bool,
+
+    /// Data about an external class or protocol whose header isn't imported.
+    ///
+    /// I.e. a bare `@protocol X;` or `@class X;`.
+    #[serde(default)]
+    pub external: BTreeMap<String, ExternalData>,
 
     #[serde(rename = "class")]
     #[serde(default)]

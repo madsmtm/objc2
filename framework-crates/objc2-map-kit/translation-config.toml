@@ -9,6 +9,8 @@ tvos = "9.2"
 watchos = "2.0"
 visionos = "1.0"
 
+external.CNPostalAddress.module = "Contacts.CNPostalAddress"
+
 # Needs `dispatch_queue_t`
 class.MKMapSnapshotter.methods."startWithQueue:completionHandler:".skipped = true
 

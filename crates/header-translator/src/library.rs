@@ -15,7 +15,6 @@ use crate::config::LibraryConfig;
 use crate::display_helper::FormatterFn;
 use crate::module::Module;
 use crate::Config;
-use crate::Location;
 use crate::VERSION;
 
 #[derive(Debug, PartialEq)]
@@ -36,20 +35,26 @@ impl Library {
         }
     }
 
-    pub fn add_module(&mut self, path: Vec<String>) {
+    pub fn add_module(&mut self, components: Vec<String>) {
         let mut current = &mut self.module;
-        for p in path {
-            current = current.submodules.entry(p.clone()).or_default();
+        for component in components {
+            current = current.submodules.entry(component).or_default();
         }
     }
 
-    pub fn module_mut(&mut self, location: &Location) -> &mut Module {
+    pub fn module_mut(&mut self, mut module: clang::source::Module<'_>) -> &mut Module {
+        let mut components = vec![];
+        while let Some(parent) = module.get_parent() {
+            components.insert(0, module.get_name());
+            module = parent;
+        }
+
         let mut current = &mut self.module;
-        for p in location.modules() {
-            current = match current.submodules.entry(p.to_string()) {
+        for component in components {
+            current = match current.submodules.entry(component) {
                 Entry::Occupied(entry) => entry.into_mut(),
                 Entry::Vacant(entry) => {
-                    warn!(?location, "expected module to be available in library");
+                    error!(?module, "expected module to be available in library");
                     entry.insert(Default::default())
                 }
             };

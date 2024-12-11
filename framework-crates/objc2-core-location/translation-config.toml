@@ -9,6 +9,8 @@ tvos = "9.0"
 watchos = "2.0"
 visionos = "1.0"
 
+external.CNPostalAddress.module = "Contacts.CNPostalAddress"
+
 # error: translator assertion failure: (left `"CLLocation"`) (right `"const CLLocation"`)
 class.CLLocation.methods."getDistanceFrom:".skipped = true
 class.CLLocation.methods."distanceFromLocation:".skipped = true

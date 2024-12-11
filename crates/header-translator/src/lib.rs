@@ -28,7 +28,7 @@ mod thread_safety;
 mod unexposed_attr;
 
 pub use self::config::{Config, LibraryConfig};
-pub use self::context::Context;
+pub use self::context::{Context, MacroEntity, MacroLocation};
 pub use self::global_analysis::global_analysis;
 pub use self::id::{ItemIdentifier, Location};
 pub use self::library::Library;

@@ -6,3 +6,5 @@ maccatalyst = "13.0"
 ios = "8.0"
 watchos = "2.0"
 visionos = "1.0"
+
+external.CLLocation.module = "CoreLocation.CLLocation"

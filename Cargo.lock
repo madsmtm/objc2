@@ -216,6 +216,7 @@ dependencies = [
  "heck",
  "lenient_semver_parser",
  "proc-macro2",
+ "regex",
  "semver",
  "serde",
  "syn",
@@ -593,6 +594,7 @@ dependencies = [
  "bitflags",
  "block2",
  "objc2",
+ "objc2-cloud-kit",
  "objc2-foundation",
 ]
 
@@ -627,6 +629,7 @@ dependencies = [
  "objc2",
  "objc2-core-foundation",
  "objc2-core-graphics",
+ "objc2-core-ml",
  "objc2-core-video",
  "objc2-foundation",
  "objc2-io-surface",

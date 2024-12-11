@@ -8,6 +8,15 @@ tvos = "9.0"
 watchos = "2.0"
 visionos = "1.0"
 
+external.UTType.module = "UniformTypeIdentifiers.UTType"
+external.CKContainer.module = "CloudKit.CKContainer"
+external.CKShare.module = "CloudKit.CKShare"
+external.CKShare.required-items = ["CloudKit.CKRecord.CKRecord"]
+external.CKShareMetadata.module = "CloudKit.CKShareMetadata"
+external.NSManagedObjectContext.module = "CoreData.NSManagedObjectContext"
+external.NSManagedObjectModel.module = "CoreData.NSManagedObjectModel"
+external.CLRegion.module = "CoreLocation.CLRegion"
+
 # CF_RETURNS_NOT_RETAINED
 fn.UIGraphicsGetCurrentContext.skipped = true
 class.UIGraphicsRenderer.methods."contextWithFormat:".skipped = true

@@ -207,8 +207,6 @@ CAValueFunction = [
     "objc2-foundation/NSString",
 ]
 CoreAnimation = []
-CoreImage = []
-CoreVideo = []
 all = [
     "CAAnimation",
     "CABase",
@@ -238,8 +236,6 @@ all = [
     "CATransformLayer",
     "CAValueFunction",
     "CoreAnimation",
-    "CoreImage",
-    "CoreVideo",
     "bitflags",
     "block2",
     "libc",

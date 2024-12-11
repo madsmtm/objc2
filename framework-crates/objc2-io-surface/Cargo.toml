@@ -44,25 +44,27 @@ libc = ["dep:libc", "objc2-core-foundation?/libc", "objc2-foundation?/libc"]
 objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation?/objc2-core-foundation"]
 objc2-foundation = ["dep:objc2-foundation"]
 
+IOSurface = []
 IOSurfaceAPI = []
 IOSurfaceBase = []
-IOSurfaceObjC = [
-    "objc2-foundation?/NSDictionary",
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSString",
-]
 IOSurfaceRef = [
     "bitflags",
     "objc2-core-foundation?/CFBase",
     "objc2-core-foundation?/CFDictionary",
 ]
 IOSurfaceTypes = ["bitflags"]
+ObjC = [
+    "objc2-foundation?/NSDictionary",
+    "objc2-foundation?/NSObject",
+    "objc2-foundation?/NSString",
+]
 all = [
+    "IOSurface",
     "IOSurfaceAPI",
     "IOSurfaceBase",
-    "IOSurfaceObjC",
     "IOSurfaceRef",
     "IOSurfaceTypes",
+    "ObjC",
     "bitflags",
     "libc",
     "objc2-core-foundation",

@@ -10,6 +10,10 @@ watchos = "2.0"
 visionos = "1.0"
 gnustep = true
 
+# FIXME: Avoid the need for this
+external.NSImage.module = "AppKit.NSImage"
+external.NSPortMessage.module = "Foundation.NSPortMessage"
+
 # ns_consumed / NS_RELEASES_ARGUMENT / cf_consumed / CF_CONSUMED
 fn.CFBridgingRelease.skipped = true
 fn.CFBridgingRetain.skipped = true

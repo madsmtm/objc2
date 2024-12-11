@@ -8,6 +8,9 @@ ios = "8.0"
 tvos = "10.0"
 visionos = "1.0"
 
+external.NSImage.module = "AppKit.NSImage"
+external.UIImage.module = "UIKit.UIImage"
+
 # Needs `CGImagePropertyOrientation` from `ImageIO`
 class.PHLivePhotoEditingContext.methods.orientation.skipped = true
 class.PHImageManager.methods."requestImageDataAndOrientationForAsset:options:resultHandler:".skipped = true

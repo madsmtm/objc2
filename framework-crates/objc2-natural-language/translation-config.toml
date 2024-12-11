@@ -7,3 +7,5 @@ ios = "12.0"
 tvos = "12.0"
 watchos = "5.0"
 visionos = "1.0"
+
+external.MLModel.module = "CoreML.MLModel"

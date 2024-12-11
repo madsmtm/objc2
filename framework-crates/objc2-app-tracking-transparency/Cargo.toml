@@ -38,8 +38,4 @@ std = ["alloc", "block2?/std", "objc2/std"]
 alloc = ["block2?/alloc", "objc2/alloc"]
 block2 = ["dep:block2"]
 
-ATTrackingManager = []
-all = [
-    "ATTrackingManager",
-    "block2",
-]
+all = ["block2"]

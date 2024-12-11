@@ -156,6 +156,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NSPasteboard::readObjectsForClasses_options` now takes
   `&NSArray<AnyClass>`, and `UITrait` is now exposed more correctly.
 * **BREAKING**: Fixed the return type of `NSClassFromString`.
+* Use Clang `-fmodules` for more correct header translation.
 
 
 ## 0.2.2 - 2024-05-21
