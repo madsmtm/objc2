@@ -71,6 +71,7 @@ CFNotificationCenter = []
 CFNumber = []
 CFNumberFormatter = ["bitflags"]
 CFPlugIn = []
+CFPluginCOM = []
 CFPreferences = []
 CFPropertyList = ["bitflags"]
 CFRunLoop = ["bitflags"]
@@ -117,6 +118,7 @@ all = [
     "CFNumber",
     "CFNumberFormatter",
     "CFPlugIn",
+    "CFPluginCOM",
     "CFPreferences",
     "CFPropertyList",
     "CFRunLoop",

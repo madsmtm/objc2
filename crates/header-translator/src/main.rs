@@ -137,6 +137,8 @@ fn main() -> Result<(), BoxError> {
         // Make sure that we pick the IOSurfaceRef that IOSurface defines,
         // instead of the one that CoreGraphics defines.
         writeln!(&mut includes_file, "#import <IOSurface/IOSurface.h>")?;
+        // Part of .modulemap
+        writeln!(&mut includes_file, "#import <CoreFoundation/CFPluginCOM.h>")?;
         for lib in config.libraries.values() {
             if !platform_config_filter(lib) {
                 continue;
