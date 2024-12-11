@@ -20,11 +20,6 @@ visionos = "1.0"
 class.AVAudioEngine.methods."connectMIDI:to:format:eventListBlock:".skipped = true
 class.AVAudioEngine.methods."connectMIDI:toNodes:format:eventListBlock:".skipped = true
 
-# Needs MIDIEndpointRef and MIDIEventList from CoreMIDI
-class.AVMusicTrack.methods.destinationMIDIEndpoint.skipped = true
-class.AVMusicTrack.methods."setDestinationMIDIEndpoint:".skipped = true
-class.AVAudioUnitMIDIInstrument.methods."sendMIDIEventList:".skipped = true
-
 # Both the NSObject superclass and the AVAudioSessionDeprecated category defines this
 class.AVAudioSession.methods.init.skipped = true
 class.AVAudioSession.methods.new.skipped = true # Use sharedInstance

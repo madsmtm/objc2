@@ -75,25 +75,6 @@ fn.GetNameFromSoundBank.skipped = true
 fn.MusicSequenceLoadSMFWithFlags.skipped = true
 fn.MusicSequenceSaveMIDIFile.skipped = true
 
-# Needs CoreMIDI
-fn.CAClockParseMIDI.skipped = true
-typedef.AUMIDIOutputCallback.skipped = true
-struct.AUMIDIOutputCallbackStruct.skipped = true
-typedef.AUMIDIOutputCallbackStruct.skipped = true
-class.AUAudioUnit.methods."profileStateForCable:channel:".skipped = true
-class.AUAudioUnit.methods."enableProfile:cable:onChannel:error:".skipped = true
-class.AUAudioUnit.methods."disableProfile:cable:onChannel:error:".skipped = true
-typedef.AUMIDICIProfileChangedBlock.skipped = true
-class.AUAudioUnit.methods.profileChangedBlock.skipped = true
-class.AUAudioUnit.methods."setProfileChangedBlock:".skipped = true
-class.AUAudioUnit.methods.AudioUnitMIDIProtocol.skipped = true
-class.AUAudioUnit.methods.hostMIDIProtocol.skipped = true
-class.AUAudioUnit.methods."setHostMIDIProtocol:".skipped = true
-fn.MusicSequenceSetMIDIEndpoint.skipped = true
-fn.MusicTrackSetDestMIDIEndpoint.skipped = true
-fn.MusicTrackGetDestMIDIEndpoint.skipped = true
-fn.MusicDeviceMIDIEventList.skipped = true
-
 # Needs dispatch_queue_t from libdispatch
 fn.AudioQueueNewOutputWithDispatchQueue.skipped = true
 fn.AudioQueueNewInputWithDispatchQueue.skipped = true

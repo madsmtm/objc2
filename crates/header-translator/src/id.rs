@@ -532,11 +532,13 @@ impl ItemIdentifier<Option<String>> {
         let mut id = Self::with_name(entity.get_name(), entity, context);
 
         // union (unnamed at /Applications/Xcode.app/...)
+        // union (anonymous at /Applications/Xcode.app/...)
         // enum (unnamed at /Applications/Xcode.app/...)
+        // struct (unnamed at /Applications/Xcode.app/...)
         if id
             .name
             .as_deref()
-            .map(|name| name.contains(" (unnamed at"))
+            .map(|name| name.contains(" (unnamed at") || name.contains(" (anonymous at"))
             .unwrap_or(false)
         {
             id.name = None;

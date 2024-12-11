@@ -213,7 +213,7 @@ impl Availability {
                 "swift" => {
                     _swift = Some(availability);
                 }
-                "driverkit" => {
+                "driverkit" | "bridgeos" => {
                     // Ignore
                 }
                 platform if platform.ends_with("_app_extension") => {

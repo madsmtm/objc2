@@ -626,30 +626,38 @@ impl Ty {
             TypeKind::Double => Self::Primitive(Primitive::Double),
             TypeKind::Record => {
                 let declaration = ty.get_declaration().expect("record declaration");
+                let id = ItemIdentifier::new_optional(&declaration, context);
 
-                let fields = ty
-                    .get_fields()
-                    .expect("struct fields")
-                    .into_iter()
-                    .map(|field| {
-                        Self::parse(
-                            field.get_type().expect("struct field type"),
-                            Lifetime::Unspecified,
-                            context,
-                        )
-                    })
-                    .collect();
+                // Override for self-referential types
+                let fields = if matches!(
+                    id.name.as_deref(),
+                    Some(
+                        "MIDISysexSendRequest" | "MIDISysexSendRequestUMP" | "MIDIDriverInterface"
+                    )
+                ) {
+                    // Fake fields, we'll have to define it ourselves
+                    vec![Self::Self_]
+                } else {
+                    ty.get_fields()
+                        .expect("struct fields")
+                        .into_iter()
+                        .map(|field| {
+                            Self::parse(
+                                field.get_type().expect("struct field type"),
+                                Lifetime::Unspecified,
+                                context,
+                            )
+                        })
+                        .collect()
+                };
 
                 match declaration.get_kind() {
                     EntityKind::StructDecl => Self::Struct {
-                        id: ItemIdentifier::new(&declaration, context),
+                        id: id.map_name(|name| name.unwrap_or_else(|| "UnknownStruct".into())),
                         fields,
                         is_bridged: is_bridged(&declaration, context),
                     },
-                    EntityKind::UnionDecl => Self::Union {
-                        id: ItemIdentifier::new_optional(&declaration, context),
-                        fields,
-                    },
+                    EntityKind::UnionDecl => Self::Union { id, fields },
                     _ => {
                         error!(?declaration, "unknown record type decl");
                         Self::GenericParam {

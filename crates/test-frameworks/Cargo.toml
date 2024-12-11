@@ -68,6 +68,8 @@ test-frameworks = [
     "objc2-core-image/all",
     "dep:objc2-core-location",
     "objc2-core-location/all",
+    "dep:objc2-core-midi",
+    "objc2-core-midi/all",
     "dep:objc2-core-ml",
     "objc2-core-ml/all",
     "dep:objc2-core-media",
@@ -212,6 +214,7 @@ objc2-core-data = { path = "../../framework-crates/objc2-core-data", optional = 
 objc2-core-foundation = { path = "../../framework-crates/objc2-core-foundation", optional = true }
 objc2-core-graphics = { path = "../../framework-crates/objc2-core-graphics", optional = true }
 objc2-core-location = { path = "../../framework-crates/objc2-core-location", optional = true }
+objc2-core-midi = { path = "../../framework-crates/objc2-core-midi", optional = true }
 objc2-core-ml = { path = "../../framework-crates/objc2-core-ml", optional = true }
 objc2-core-media = { path = "../../framework-crates/objc2-core-media", optional = true }
 objc2-core-text = { path = "../../framework-crates/objc2-core-text", optional = true }

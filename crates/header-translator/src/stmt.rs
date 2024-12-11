@@ -1198,7 +1198,7 @@ impl Stmt {
             EntityKind::StructDecl | EntityKind::UnionDecl => {
                 let is_union = entity.get_kind() == EntityKind::UnionDecl;
                 let Some(id) = ItemIdentifier::new_optional(entity, context).to_option() else {
-                    warn!(?entity, "skipped anonymous union");
+                    warn!(?entity, "skipped anonymous union/struct");
                     return vec![];
                 };
                 let availability = Availability::parse(entity, context);
@@ -2377,18 +2377,18 @@ impl Stmt {
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     if *packed {
-                        write!(f, "#[repr(C, packed)]")?;
+                        writeln!(f, "#[repr(C, packed)]")?;
                     } else {
-                        write!(f, "#[repr(C)]")?;
+                        writeln!(f, "#[repr(C)]")?;
                     }
                     if *is_union || fields.iter().any(|(_, _, field)| field.contains_union()) {
-                        write!(f, "#[derive(Clone, Copy)]")?;
+                        writeln!(f, "#[derive(Clone, Copy)]")?;
                     } else {
                         // HACK to make Bool in structs work.
                         if fields.iter().any(|(_, _, field)| field.is_objc_bool()) {
-                            write!(f, "#[derive(Clone, Copy, Debug)]")?;
+                            writeln!(f, "#[derive(Clone, Copy, Debug)]")?;
                         } else {
-                            write!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
+                            writeln!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
                         }
                     }
                     if *is_union {

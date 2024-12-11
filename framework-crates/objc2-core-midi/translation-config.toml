@@ -1,0 +1,16 @@
+framework = "CoreMIDI"
+crate = "objc2-core-midi"
+# Neither objc2-foundation nor objc2-core-foundation,
+# CoreMIDI is split in two parts that each use one.
+required-crates = []
+custom-lib-rs = true
+macos = "10.0"
+maccatalyst = "13.0"
+ios = "4.2"
+tvos = "15.0"
+watchos = "8.0"
+visionos = "1.0"
+
+# Wrongly renamed (Swift's renaming algorithm is insufficient)
+enum.MIDIProtocolID.constants.kMIDIProtocol_1_0.skipped = true
+enum.MIDIProtocolID.constants.kMIDIProtocol_2_0.skipped = true
