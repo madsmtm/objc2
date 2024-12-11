@@ -761,7 +761,11 @@ pub(crate) fn handle_reserved(name: &str) -> String {
         ident.to_string()
     }
     // translate whatever remains unchanged (needed for, e.g., `_`)
-    else {
+    else if name == "self" {
+        "self_".into()
+    } else if name == "super" {
+        "super_".into()
+    } else {
         name.into()
     }
 }

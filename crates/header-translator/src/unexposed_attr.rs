@@ -230,6 +230,7 @@ impl UnexposedAttr {
             "CF_SWIFT_NAME"
             | "CF_SWIFT_UNAVAILABLE_FROM_ASYNC"
             | "DISPATCH_SWIFT_NAME"
+            | "IOSFC_SWIFT_NAME"
             | "NS_REFINED_FOR_SWIFT_ASYNC"
             | "NS_SWIFT_ASYNC_NAME"
             | "NS_SWIFT_ASYNC_THROWS_ON_FALSE"

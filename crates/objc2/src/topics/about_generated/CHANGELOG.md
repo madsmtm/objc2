@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreFoundation` / `objc2-core-foundation`.
   - `CoreText` / `objc2-core-text`.
   - `CoreVideo` / `objc2-core-video`.
+  - `IOSurface` / `objc2-io-surface`.
   - `ScreenSaver` / `objc2-screen-saver`.
 
 ### Changed
