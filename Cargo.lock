@@ -738,6 +738,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-event-kit-ui"
+version = "0.2.2"
+dependencies = [
+ "objc2",
+ "objc2-event-kit",
+ "objc2-foundation",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-exception-handling"
 version = "0.2.2"
 dependencies = [

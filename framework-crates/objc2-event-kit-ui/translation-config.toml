@@ -1,0 +1,6 @@
+framework = "EventKitUI"
+crate = "objc2-event-kit-ui"
+required-dependencies = ["objc2-foundation"]
+maccatalyst = "13.0"
+ios = "4.0"
+visionos = "1.0"

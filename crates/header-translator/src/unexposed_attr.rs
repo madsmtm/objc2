@@ -144,6 +144,7 @@ impl UnexposedAttr {
             | "CT_ENUM_UNAVAILABLE"
             | "CT_UNAVAILABLE"
             | "COREVIDEO_GL_DEPRECATED"
+            | "EVENTKITUI_CLASS_AVAILABLE"
             | "FPUI_AVAILABLE"
             | "MLCOMPUTE_AVAILABLE_STARTING"
             | "MLCOMPUTE_AVAILABLE_STARTING_BUT_DEPRECATED_MACOS14"
