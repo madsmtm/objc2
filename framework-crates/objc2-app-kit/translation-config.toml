@@ -6,6 +6,8 @@ macos = "10.0"
 maccatalyst = "13.0"
 gnustep = true
 
+external.UTType.module = "UniformTypeIdentifiers.UTType"
+
 # `objc_ownership` in .apinotes
 class.NSBundle.methods."loadNibNamed:owner:topLevelObjects:".skipped = true
 class.NSNib.methods."instantiateWithOwner:topLevelObjects:".skipped = true

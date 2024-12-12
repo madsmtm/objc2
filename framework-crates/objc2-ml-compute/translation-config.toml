@@ -5,3 +5,5 @@ macos = "11.0"
 maccatalyst = "14.0"
 ios = "14.0"
 tvos = "14.0"
+
+external.MLModel.module = "CoreML.MLModel"

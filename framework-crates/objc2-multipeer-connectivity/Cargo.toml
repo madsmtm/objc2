@@ -87,6 +87,7 @@ MCSession = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
+MultipeerConnectivity = []
 all = [
     "MCAdvertiserAssistant",
     "MCBrowserViewController",
@@ -95,6 +96,7 @@ all = [
     "MCNearbyServiceBrowser",
     "MCPeerID",
     "MCSession",
+    "MultipeerConnectivity",
     "block2",
     "objc2-app-kit",
 ]

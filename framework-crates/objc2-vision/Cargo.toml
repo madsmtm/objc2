@@ -46,7 +46,7 @@ block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/b
 objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-graphics?/objc2-core-foundation", "objc2-core-image?/objc2-core-foundation", "objc2-core-video?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics", "objc2-core-image?/objc2-core-graphics", "objc2-core-ml?/objc2-core-graphics", "objc2-core-video?/objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
-objc2-core-ml = ["dep:objc2-core-ml"]
+objc2-core-ml = ["dep:objc2-core-ml", "objc2-core-image?/objc2-core-ml"]
 objc2-core-video = ["dep:objc2-core-video", "objc2-core-image?/objc2-core-video", "objc2-core-ml?/objc2-core-video"]
 
 VNCalculateImageAestheticsScoresRequest = [
@@ -255,7 +255,6 @@ VNObservation = [
     "objc2-foundation/NSIndexPath",
     "objc2-foundation/NSIndexSet",
     "objc2-foundation/NSObject",
-    "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",
     "objc2-foundation/NSValue",

@@ -190,11 +190,23 @@ pub(crate) struct ThreadSafety {
 }
 
 impl ThreadSafety {
-    #[cfg(test)]
     pub(crate) fn dummy() -> Self {
         Self {
             explicit: None,
             inferred: ThreadSafetyAttr::NotSendable,
+        }
+    }
+
+    pub(crate) fn from_string(s: &str) -> Self {
+        let attr = match s {
+            "MainThreadOnly" => ThreadSafetyAttr::MainThreadOnly,
+            "Sendable" => ThreadSafetyAttr::Sendable,
+            "NotSendable" => ThreadSafetyAttr::NotSendable,
+            _ => panic!("invalid thread safety: {s:?}"),
+        };
+        Self {
+            explicit: Some(attr),
+            inferred: attr,
         }
     }
 

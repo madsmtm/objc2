@@ -8,6 +8,8 @@ tvos = "9.0"
 watchos = "5.0"
 visionos = "1.0"
 
+external.NSImage.module = "AppKit.NSImage"
+
 # Needs `AVFoundation` framework
 class.AVMediaSelectionOption.categories.MPNowPlayingInfoLanguageOptionAdditions.skipped = true
 class.AVMediaSelectionGroup.categories.MPNowPlayingInfoLanguageOptionAdditions.skipped = true

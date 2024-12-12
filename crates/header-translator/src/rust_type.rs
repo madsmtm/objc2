@@ -1,5 +1,6 @@
-use std::fmt;
+use std::borrow::Cow;
 use std::str::FromStr;
+use std::{fmt, iter};
 
 use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
@@ -339,10 +340,62 @@ impl ItemRef {
     }
 
     fn new(entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        Self {
-            id: ItemIdentifier::new(entity, context),
-            thread_safety: ThreadSafety::from_decl(entity, context),
-            required_items: items_required_by_decl(entity, context),
+        let entity = entity
+            .get_location()
+            .expect("itemref location")
+            .get_entity()
+            .expect("itemref entity");
+
+        let id = ItemIdentifier::new(&entity, context);
+
+        if let Some(external) = context.library(id.library_name()).external.get(&id.name) {
+            let id = ItemIdentifier::from_raw(
+                id.name,
+                external
+                    .module
+                    .split('.')
+                    .map(|x| x.to_string().into())
+                    .collect(),
+            );
+            let thread_safety = external
+                .thread_safety
+                .as_deref()
+                .map(ThreadSafety::from_string)
+                .unwrap_or(ThreadSafety::dummy());
+            let required_items = external
+                .required_items
+                .iter()
+                .map(|s| {
+                    let mut components: Vec<Cow<'_, _>> =
+                        s.split('.').map(|x| x.to_string().into()).collect();
+                    let name = components
+                        .pop()
+                        .expect("required items component at least one");
+                    ItemIdentifier::from_raw(name.to_string(), components)
+                })
+                .chain(iter::once(id.clone()))
+                .collect();
+            Self {
+                id,
+                thread_safety,
+                required_items,
+            }
+        } else if matches!(
+            entity.get_kind(),
+            EntityKind::ObjCInterfaceDecl | EntityKind::ObjCProtocolDecl
+        ) {
+            Self {
+                id,
+                thread_safety: ThreadSafety::from_decl(&entity, context),
+                required_items: items_required_by_decl(&entity, context),
+            }
+        } else {
+            error!(?entity, "could not get declaration. Add appropriate external.{}.module = \"...\" to translation-config.toml", id.name);
+            Self {
+                id,
+                thread_safety: ThreadSafety::dummy(),
+                required_items: vec![],
+            }
         }
     }
 }
@@ -603,11 +656,10 @@ impl Ty {
             TypeKind::ObjCClass => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
                 let lifetime = parser.lifetime(ParsePosition::Suffix);
-                let nullability = if let Some(nullability) = unexposed_nullability {
-                    nullability
-                } else {
-                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
-                };
+                let nullability = unexposed_nullability
+                    .or(parser.nullability(ParsePosition::Suffix))
+                    .or(ty.get_nullability())
+                    .unwrap_or(Nullability::Unspecified);
 
                 Self::Pointer {
                     nullability,
@@ -665,10 +717,9 @@ impl Ty {
                     .get_objc_protocol_declarations()
                     .into_iter()
                     .map(|entity| {
-                        let definition = entity
-                            .get_definition()
-                            .expect("objc protocol declaration definition");
-                        let mut decl = ItemRef::new(&definition, context);
+                        // ItemRef::new will fall back if we can't find it here.
+                        let maybe_definition = entity.get_definition().unwrap_or(entity);
+                        let mut decl = ItemRef::new(&maybe_definition, context);
                         decl.id = context.replace_protocol_name(decl.id);
                         decl
                     })
@@ -1677,8 +1728,8 @@ impl Ty {
     pub(crate) fn method_argument(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Primitive(Primitive::C99Bool) => {
-                error!("C99's bool as Objective-C method argument is unsupported");
-                write!(f, "C99Bool")
+                warn!("C99's bool as Objective-C method argument is ill supported");
+                write!(f, "bool")
             }
             Self::Primitive(Primitive::ObjcBool) => {
                 write!(f, "bool")
@@ -1964,7 +2015,9 @@ impl Ty {
 
     pub(crate) fn argument_is_error_out(&self) -> bool {
         if let Self::Pointer {
-            nullability,
+            // We always pass a place to write the error information,
+            // so doesn't matter whether it's optional or not.
+            nullability: Nullability::Nullable | Nullability::NonNull,
             is_const,
             lifetime: Lifetime::Unspecified,
             pointee,
@@ -1986,11 +2039,6 @@ impl Ty {
                     if !decl.id.is_nserror() {
                         return false;
                     }
-                    assert_eq!(
-                        *nullability,
-                        Nullability::Nullable,
-                        "invalid error nullability {self:?}"
-                    );
                     assert!(!is_const, "expected error not const {self:?}");
                     assert_eq!(
                         *inner_nullability,

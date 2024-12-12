@@ -16,9 +16,9 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["NSDictionary", "NSError", "NSObject", "NSString"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -34,38 +34,7 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags?/std", "objc2/std", "objc2-foundation/std"]
+std = ["alloc", "bitflags/std", "objc2/std", "objc2-foundation/std"]
 alloc = ["objc2/alloc", "objc2-foundation/alloc"]
-bitflags = ["dep:bitflags", "objc2-foundation/bitflags"]
 
-AEAssessmentApplication = [
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
-]
-AEAssessmentConfiguration = [
-    "bitflags",
-    "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSObject",
-]
-AEAssessmentParticipantConfiguration = [
-    "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
-]
-AEAssessmentSession = []
-AEAssessmentSessionDelegate = ["objc2-foundation/NSError"]
-AEErrors = [
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSString",
-]
-AEVisibility = []
-all = [
-    "AEAssessmentApplication",
-    "AEAssessmentConfiguration",
-    "AEAssessmentParticipantConfiguration",
-    "AEAssessmentSession",
-    "AEAssessmentSessionDelegate",
-    "AEErrors",
-    "AEVisibility",
-    "bitflags",
-]
+all = []

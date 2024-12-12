@@ -1,84 +1,62 @@
-use std::borrow::Cow;
 use std::collections::HashMap;
 use std::ops;
-use std::path::{Path, PathBuf};
 
-use apple_sdk::SdkPath;
 use clang::Entity;
 
 use crate::config::Config;
-use crate::id::Location;
+use crate::ItemIdentifier;
 
-pub struct Context<'a> {
-    config: &'a Config,
-    pub macro_invocations: HashMap<clang::source::Location<'a>, Entity<'a>>,
-    framework_dir: PathBuf,
-    include_dir: PathBuf,
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MacroLocation {
+    file_id: Option<(u64, u64, u64)>,
+    line: u32,
+    column: u32,
+    offset: u32,
 }
 
-impl<'a> Context<'a> {
-    pub fn new(config: &'a Config, sdk: &SdkPath) -> Self {
+impl MacroLocation {
+    pub fn from_location(location: &clang::source::SourceLocation<'_>) -> Self {
+        let clang::source::Location {
+            file,
+            line,
+            column,
+            offset,
+        } = location.get_expansion_location();
+        Self {
+            file_id: file.map(|f| f.get_id()),
+            line,
+            column,
+            offset,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MacroEntity {
+    pub(crate) id: ItemIdentifier,
+    pub(crate) is_function_like: bool,
+}
+
+impl MacroEntity {
+    pub fn from_entity(entity: &Entity<'_>, context: &Context<'_>) -> Self {
+        Self {
+            id: ItemIdentifier::new(entity, context),
+            is_function_like: entity.is_function_like_macro(),
+        }
+    }
+}
+
+pub struct Context<'config> {
+    config: &'config Config,
+    pub macro_invocations: HashMap<MacroLocation, MacroEntity>,
+}
+
+impl<'config> Context<'config> {
+    pub fn new(config: &'config Config) -> Self {
         Self {
             config,
             macro_invocations: Default::default(),
-            framework_dir: sdk.path.join("System/Library/Frameworks"),
-            include_dir: sdk.path.join("usr/include"),
         }
-    }
-
-    pub fn get_location(&self, entity: &Entity<'_>) -> Option<Location> {
-        if let Some(location) = entity.get_location() {
-            if let Some(file) = location.get_file_location().file {
-                let path = file.get_path();
-                if let Ok(path) = path.strip_prefix(&self.framework_dir) {
-                    let mut components: Vec<Cow<'_, str>> = path
-                        .components()
-                        .filter(|component| {
-                            component.as_os_str() != "Headers"
-                                && component.as_os_str() != "Frameworks"
-                        })
-                        .map(|component| component.as_os_str().to_str().expect("component to_str"))
-                        .map(|component| component.strip_suffix(".framework").unwrap_or(component))
-                        .map(|component| component.strip_suffix(".h").unwrap_or(component))
-                        .map(|s| s.to_string().into())
-                        .collect();
-
-                    // Put items in umbrella header in `mod.rs`
-                    if let [.., innermost_framework_name, file_name] = &*components {
-                        let umbrella_header = self
-                            .libraries
-                            .get(&**innermost_framework_name)
-                            .and_then(|lib| lib.umbrella_header.as_deref())
-                            .unwrap_or(innermost_framework_name);
-
-                        if file_name == umbrella_header {
-                            let _ = components.pop();
-                        }
-                    }
-
-                    return Some(Location::from_components(components));
-                } else if let Ok(path) = path.strip_prefix(&self.include_dir) {
-                    if path.starts_with("objc") {
-                        return Some(Location::from_components(vec!["objc2".into()]));
-                    }
-                    if path == Path::new("MacTypes.h") {
-                        return Some(Location::from_components(vec!["System".into()]));
-                    }
-                    if path.starts_with("sys") {
-                        return Some(Location::from_components(vec!["libc".into()]));
-                    }
-                    if path.starts_with("mach") {
-                        // Will be moved to the `mach` crate in `libc` v1.0
-                        return Some(Location::from_components(vec!["libc".into()]));
-                    }
-                    if path.starts_with("arm") {
-                        // Temporary
-                        return Some(Location::from_components(vec!["System".into()]));
-                    }
-                }
-            }
-        }
-        None
     }
 }
 

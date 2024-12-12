@@ -9,6 +9,8 @@ tvos = "9.0"
 watchos = "2.0"
 visionos = "1.0"
 
+external.MTLDevice.module = "Metal.MTLDevice"
+
 # Needs dispatch_queue_t from libdispatch
 fn.CGDisplayStreamCreateWithDispatchQueue.skipped = true
 

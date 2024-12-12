@@ -86,6 +86,7 @@ NSDateComponentsFormatter = ["bitflags"]
 NSDateFormatter = []
 NSDateInterval = []
 NSDateIntervalFormatter = []
+NSDebug = []
 NSDecimal = []
 NSDecimalNumber = []
 NSDictionary = []
@@ -259,6 +260,7 @@ all = [
     "NSDateFormatter",
     "NSDateInterval",
     "NSDateIntervalFormatter",
+    "NSDebug",
     "NSDecimal",
     "NSDecimalNumber",
     "NSDictionary",
