@@ -48,7 +48,8 @@ pub struct Weak<T: ?Sized> {
     item: PhantomData<Retained<T>>,
 }
 
-/// Soft-deprecated type-alias to [`Weak`].
+/// Fully-deprecated type-alias to [`Weak`].
+#[deprecated(since = "0.6.0", note = "Renamed to `Weak`.")]
 pub type WeakId<T> = Weak<T>;
 
 impl<T: Message> Weak<T> {
