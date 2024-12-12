@@ -146,11 +146,8 @@ pub struct Retained<T: ?Sized> {
 
 /// Short type-alias to [`Retained`].
 ///
-/// This type is soft-deprecated, and will be fully deprecated in `v0.6.0`,
-/// see [#617].
-///
-/// [`Retained<T>`]: Retained
-/// [#617]: https://github.com/madsmtm/objc2/issues/617
+/// This is fully deprecated since `v0.6.0`, use [`Retained`] instead.
+#[deprecated(since = "0.6.0", note = "Renamed to `Retained`.")]
 pub type Id<T> = Retained<T>;
 
 impl<T: ?Sized> Retained<T> {

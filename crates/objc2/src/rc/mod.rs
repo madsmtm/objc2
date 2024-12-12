@@ -62,8 +62,14 @@ pub use self::allocated_partial_init::{Allocated, PartialInit};
 pub use self::autorelease::{
     autoreleasepool, autoreleasepool_leaking, AutoreleasePool, AutoreleaseSafe,
 };
-pub use self::retained::{Id, Retained};
+// Re-export `Id` for backwards compatibility, but still mark it as deprecated.
+#[allow(deprecated)]
+pub use self::retained::Id;
+pub use self::retained::Retained;
 pub use self::retained_traits::{DefaultRetained, RetainedFromIterator, RetainedIntoIterator};
 #[cfg(test)]
 pub(crate) use self::test_object::{RcTestObject, ThreadTestData};
-pub use self::weak::{Weak, WeakId};
+pub use self::weak::Weak;
+// Same as above.
+#[allow(deprecated)]
+pub use self::weak::WeakId;
