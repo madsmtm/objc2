@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `EventKitUI` / `objc2-event-kit-ui`.
   - `IOSurface` / `objc2-io-surface`.
   - `ScreenSaver` / `objc2-screen-saver`.
+* Added `#[must_use]` attributes where the C headers have them.
 
 ### Changed
 * Allow using `MainThreadBound` without the `NSThread` feature flag.

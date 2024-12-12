@@ -525,6 +525,7 @@ pub enum Stmt {
         // Some -> inline function.
         body: Option<()>,
         safe: bool,
+        must_use: bool,
     },
     /// typedef Type TypedefName;
     AliasDecl {
@@ -1357,6 +1358,7 @@ impl Stmt {
                 let result_type = entity.get_result_type().expect("function result type");
                 let result_type = Ty::parse_function_return(result_type, context);
                 let mut arguments = Vec::new();
+                let mut must_use = false;
 
                 if entity.is_static_method() {
                     warn!("unexpected static method");
@@ -1390,7 +1392,7 @@ impl Stmt {
                         arguments.push((name, ty))
                     }
                     EntityKind::WarnUnusedResultAttr => {
-                        // TODO: Emit `#[must_use]` on this
+                        must_use = true;
                     }
                     EntityKind::PureAttr => {
                         // Ignore, we currently have no way of marking
@@ -1415,6 +1417,7 @@ impl Stmt {
                     result_type,
                     body,
                     safe: !data.unsafe_,
+                    must_use,
                 }]
             }
             EntityKind::UnionDecl => {
@@ -2338,6 +2341,7 @@ impl Stmt {
                     result_type,
                     body: Some(_),
                     safe: _,
+                    must_use: _,
                 } => {
                     write!(f, "// TODO: ")?;
                     write!(f, "pub fn {}(", id.name)?;
@@ -2354,6 +2358,7 @@ impl Stmt {
                     result_type,
                     body: None,
                     safe: false,
+                    must_use,
                 } => {
                     // Functions are always C-unwind, since we don't know
                     // anything about them.
@@ -2361,6 +2366,9 @@ impl Stmt {
 
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
                     write!(f, "    {availability}")?;
+                    if *must_use {
+                        writeln!(f, "    #[must_use]")?;
+                    }
                     write!(f, "    pub fn {}(", id.name)?;
                     for (param, arg_ty) in arguments {
                         let param = handle_reserved(&crate::to_snake_case(param));
@@ -2378,9 +2386,13 @@ impl Stmt {
                     result_type,
                     body: None,
                     safe: true,
+                    must_use,
                 } => {
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
+                    if *must_use {
+                        writeln!(f, "#[must_use]")?;
+                    }
                     writeln!(f, "#[inline]")?;
                     write!(f, "pub extern \"C-unwind\" fn {}(", id.name)?;
                     for (param, arg_ty) in arguments {

@@ -53,6 +53,7 @@ pub(crate) struct MethodModifiers {
     non_isolated: bool,
     sendable: Option<bool>,
     pub(crate) mainthreadonly: bool,
+    must_use: bool,
 }
 
 impl MethodModifiers {
@@ -108,7 +109,7 @@ impl MethodModifiers {
                 // <https://clang.llvm.org/docs/AttributeReference.html#objc-requires-super>
             }
             EntityKind::WarnUnusedResultAttr => {
-                // TODO: Emit `#[must_use]` on this
+                this.must_use = true;
             }
             EntityKind::ObjCClassRef
             | EntityKind::ObjCProtocolRef
@@ -261,6 +262,7 @@ pub struct Method {
     non_isolated: bool,
     mainthreadonly: bool,
     weak_property: bool,
+    must_use: bool,
 }
 
 #[derive(Debug)]
@@ -509,6 +511,7 @@ impl Method {
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
                 weak_property: false,
+                must_use: modifiers.must_use,
             },
         ))
     }
@@ -583,6 +586,7 @@ impl Method {
                 mainthreadonly,
                 // Don't show `weak`-ness on getters
                 weak_property: false,
+                must_use: modifiers.must_use,
             })
         } else {
             None
@@ -626,6 +630,7 @@ impl Method {
                     non_isolated: modifiers.non_isolated,
                     mainthreadonly,
                     weak_property: attributes.map(|a| a.weak).unwrap_or(false),
+                    must_use: modifiers.must_use,
                 })
             } else {
                 None
@@ -685,6 +690,10 @@ impl fmt::Display for Method {
         //
 
         write!(f, "{}", self.availability)?;
+
+        if self.must_use {
+            writeln!(f, "        #[must_use]")?;
+        }
 
         if self.is_optional {
             writeln!(f, "        #[optional]")?;
