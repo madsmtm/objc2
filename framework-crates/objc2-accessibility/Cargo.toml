@@ -69,6 +69,7 @@ AXCustomContent = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+AXFeatureOverrideSessionManager = []
 AXFoundation = []
 AXHearingUtilities = [
     "bitflags",
@@ -76,6 +77,10 @@ AXHearingUtilities = [
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",
+]
+AXMathExpression = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
 AXRequest = [
     "objc2-foundation/NSObject",
@@ -92,8 +97,10 @@ all = [
     "AXBrailleMap",
     "AXColorUtilities",
     "AXCustomContent",
+    "AXFeatureOverrideSessionManager",
     "AXFoundation",
     "AXHearingUtilities",
+    "AXMathExpression",
     "AXRequest",
     "AXSettings",
     "AXTechnology",
