@@ -112,6 +112,7 @@ CGDisplayStream = [
     "objc2-core-foundation?/CFRunLoop",
     "objc2-io-surface?/IOSurfaceRef",
 ]
+CGEXRToneMappingGamma = ["objc2-core-foundation?/CFBase"]
 CGError = []
 CGEvent = [
     "objc2-core-foundation?/CFBase",
@@ -145,6 +146,7 @@ CGGradient = [
     "objc2-core-foundation?/CFBase",
     "objc2-core-foundation?/CFCGTypes",
 ]
+CGITUToneMapping = ["objc2-core-foundation?/CFBase"]
 CGImage = [
     "bitflags",
     "objc2-core-foundation?/CFBase",
@@ -208,7 +210,7 @@ CGShading = [
     "objc2-core-foundation?/CFBase",
     "objc2-core-foundation?/CFCGTypes",
 ]
-CGToneMapping = ["objc2-core-foundation?/CFBase"]
+CGToneMapping = []
 CGWindow = [
     "bitflags",
     "objc2-core-foundation?/CFArray",
@@ -233,6 +235,7 @@ all = [
     "CGDisplayConfiguration",
     "CGDisplayFade",
     "CGDisplayStream",
+    "CGEXRToneMappingGamma",
     "CGError",
     "CGEvent",
     "CGEventSource",
@@ -241,6 +244,7 @@ all = [
     "CGFunction",
     "CGGeometry",
     "CGGradient",
+    "CGITUToneMapping",
     "CGImage",
     "CGLayer",
     "CGPDFArray",

@@ -62,11 +62,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Renamed `from_id_slice` to `from_retained_slice`.
 * **BREAKING**: Renamed `NSString::as_str` to `to_str`, and made it `unsafe`,
   since we cannot ensure that the given pool is actually the innermost pool.
-* Updated SDK from Xcode 15.4 to 16.1.
+* Updated SDK from Xcode 15.4 to 16.2.
 
   View the release notes to learn more details:
   - [16.0](https://developer.apple.com/documentation/xcode-release-notes/xcode-16-release-notes)
   - [16.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-16_1-release-notes)
+  - [16.2](https://developer.apple.com/documentation/xcode-release-notes/xcode-16_2-release-notes)
 
   Breaking changes are noted elsewhere in this changelog entry.
 * **BREAKING**: `NSWindowSharingReadWrite` was deprecated, and moved from
@@ -90,6 +91,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   correct `&ProtocolObject<dyn NSObjectProtocol>`.
 * **BREAKING**: Moved `CGFloat`, `CGPoint`, `CGSize` and `CGRect` from
   `objc2-foundation` to `objc2-core-foundation`.
+* **BREAKING**: The feature flag guarding `SCSensitivityAnalysis` changed.
+* **BREAKING**: `-[NSSavePanel beginSheetForDirectory:file:modalForWindow:modalDelegate:didEndSelector:contextInfo:]`
+  now takes an optional value as the file path.
 
 ### Deprecated
 * Moved `MainThreadMarker` from `objc2-foundation` to `objc2`.

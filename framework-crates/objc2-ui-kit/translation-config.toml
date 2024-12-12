@@ -108,6 +108,9 @@ class.UIDocumentProperties.methods."initWithMetadata:".skipped = true
 class.UIDocumentProperties.methods.metadata.skipped = true
 class.UIDocumentProperties.methods."setMetadata:".skipped = true
 
+# Unclear how error handling is done for methods returning integers
+class.UIApplication.methods."defaultStatusForCategory:error:".skipped = true
+
 # Protocols require that these are main thread only
 class.UIDocumentBrowserTransitionController.main-thread-only = true
 class.UIDocumentInteractionController.main-thread-only = true

@@ -40,6 +40,7 @@ alloc = ["block2?/alloc", "objc2/alloc", "objc2-core-graphics?/alloc", "objc2-fo
 block2 = ["dep:block2", "objc2-core-graphics?/block2", "objc2-foundation/block2"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 
+SCSensitivityAnalysis = []
 SCSensitivityAnalyzer = [
     "objc2-core-graphics?/CGImage",
     "objc2-foundation/NSError",
@@ -47,6 +48,7 @@ SCSensitivityAnalyzer = [
     "objc2-foundation/NSURL",
 ]
 all = [
+    "SCSensitivityAnalysis",
     "SCSensitivityAnalyzer",
     "block2",
     "objc2-core-graphics",

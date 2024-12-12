@@ -2015,6 +2015,21 @@ UIWindowSceneProminentPlacement = ["objc2-foundation/NSObject"]
 UIWindowScenePushPlacement = ["objc2-foundation/NSObject"]
 UIWindowSceneReplacePlacement = ["objc2-foundation/NSObject"]
 UIWindowSceneStandardPlacement = ["objc2-foundation/NSObject"]
+UIWritingToolsCoordinator = [
+    "objc2-core-foundation?/CFCGTypes",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
+    "objc2-foundation/NSValue",
+]
+UIWritingToolsCoordinatorAnimationParameters = ["objc2-core-foundation?/CFCGTypes"]
+UIWritingToolsCoordinatorContext = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSUUID",
+]
 UIZoomTransitionOptions = [
     "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
@@ -2428,6 +2443,9 @@ all = [
     "UIWindowScenePushPlacement",
     "UIWindowSceneReplacePlacement",
     "UIWindowSceneStandardPlacement",
+    "UIWritingToolsCoordinator",
+    "UIWritingToolsCoordinatorAnimationParameters",
+    "UIWritingToolsCoordinatorContext",
     "UIZoomTransitionOptions",
     "UNNotificationResponse_UIKitAdditions",
     "bitflags",

@@ -898,6 +898,7 @@ NSMenu = [
     "objc2-foundation/NSZone",
 ]
 NSMenuItem = [
+    "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
@@ -2030,6 +2031,22 @@ NSWorkspace = [
     "objc2-foundation/NSValue",
     "objc2-uniform-type-identifiers?/UTType",
 ]
+NSWritingToolsCoordinator = [
+    "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-graphics?/CGImage",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSUUID",
+    "objc2-foundation/NSValue",
+]
+NSWritingToolsCoordinatorAnimationParameters = ["objc2-core-foundation?/CFCGTypes"]
+NSWritingToolsCoordinatorContext = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSUUID",
+]
 all = [
     "AppKitDefines",
     "AppKitErrors",
@@ -2315,6 +2332,9 @@ all = [
     "NSWindowTab",
     "NSWindowTabGroup",
     "NSWorkspace",
+    "NSWritingToolsCoordinator",
+    "NSWritingToolsCoordinatorAnimationParameters",
+    "NSWritingToolsCoordinatorContext",
     "bitflags",
     "block2",
     "libc",

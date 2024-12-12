@@ -57,6 +57,7 @@ SCRecordingOutput = [
     "objc2-foundation/NSURL",
 ]
 SCScreenshotManager = [
+    "objc2-core-foundation?/CFCGTypes",
     "objc2-core-graphics?/CGImage",
     "objc2-foundation/NSError",
 ]
