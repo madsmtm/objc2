@@ -1078,6 +1078,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-metal-performance-shaders-graph"
+version = "0.2.2"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-foundation",
+ "objc2-metal",
+ "objc2-metal-performance-shaders",
+]
+
+[[package]]
 name = "objc2-metric-kit"
 version = "0.2.2"
 dependencies = [

@@ -41,6 +41,7 @@ default = ["std"]
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "bitflags/std", "block2?/std", "objc2/std", "objc2-core-foundation?/std", "objc2-core-graphics?/std", "objc2-foundation/std", "objc2-metal/std"]
 alloc = ["block2?/alloc", "objc2/alloc", "objc2-core-foundation?/alloc", "objc2-core-graphics?/alloc", "objc2-foundation/alloc", "objc2-metal/alloc"]
+MPSImage = ["objc2-foundation/NSArray"]
 block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-foundation/block2", "objc2-metal/block2"]
 objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-graphics?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-metal/objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
@@ -203,7 +204,6 @@ MPSCoreTypes = [
     "objc2-metal/MTLTypes",
 ]
 MPSFunctionConstantIndices = []
-MPSImage = []
 MPSImageConversion = [
     "objc2-core-foundation?/CFCGTypes",
     "objc2-core-graphics?/CGColorConversionInfo",

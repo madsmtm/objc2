@@ -24,5 +24,5 @@ pub use self::generated::*;
 pub use self::packed::MPSPackedFloat3;
 
 /// [Apple's documentation](https://developer.apple.com/documentation/metalperformanceshaders/mpsimagebatch?language=objc)
-#[cfg(feature = "MPSImage")]
+#[cfg(all(feature = "MPSImage", feature = "MPSCore"))]
 pub type MPSImageBatch = objc2_foundation::NSArray<MPSImage>;

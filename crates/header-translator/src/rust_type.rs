@@ -777,7 +777,9 @@ impl Ty {
             TypeKind::Pointer => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
                 let pointee = ty.get_pointee_type().expect("pointer to have pointee");
-                if let TypeKind::FunctionPrototype = pointee.get_kind() {
+                if let TypeKind::FunctionPrototype | TypeKind::FunctionNoPrototype =
+                    pointee.get_kind()
+                {
                     parser.set_fn_ptr();
                 }
 
@@ -1026,7 +1028,8 @@ impl Ty {
                     to: Box::new(Self::parse(to, Lifetime::Unspecified, context)),
                 }
             }
-            TypeKind::FunctionPrototype => {
+            // Assume that functions without a prototype simply have 0 arguments.
+            TypeKind::FunctionPrototype | TypeKind::FunctionNoPrototype => {
                 let call_conv = ty.get_calling_convention().expect("fn calling convention");
                 assert_eq!(
                     call_conv,
@@ -1045,7 +1048,7 @@ impl Ty {
                 let result_type = Self::parse(result_type, Lifetime::Unspecified, context);
 
                 Self::Fn {
-                    is_variadic: ty.is_variadic(),
+                    is_variadic: ty.get_kind() == TypeKind::FunctionPrototype && ty.is_variadic(),
                     no_escape,
                     arguments,
                     result_type: Box::new(result_type),

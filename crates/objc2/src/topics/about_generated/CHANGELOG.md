@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `EventKitUI` / `objc2-event-kit-ui`.
   - `IOSurface` / `objc2-io-surface`.
   - `MetalPerformanceShaders` / `objc2-metal-performance-shaders`.
+  - `MetalPerformanceShadersGraph` / `objc2-metal-performance-shaders-graph`.
   - `OpenDirectory` / `objc2-open-directory`.
   - `ScreenSaver` / `objc2-screen-saver`.
 * Added `#[must_use]` attributes where the C headers have them.

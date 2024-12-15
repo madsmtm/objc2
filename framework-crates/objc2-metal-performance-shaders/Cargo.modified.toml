@@ -1,0 +1,3 @@
+# Workaround for MPSImageBatch, see translation-config.toml
+[features]
+MPSImage = ["objc2-foundation/NSArray"]

@@ -406,7 +406,9 @@ see that for related crates.", self.data.krate, self.link_name)?;
                 array.set_trailing("\n");
                 array.set_trailing_comma(true);
             }
-            cargo_toml["features"][feature] = value(array);
+            if cargo_toml["features"].get(&feature).is_none() {
+                cargo_toml["features"][feature] = value(array);
+            }
         }
 
         fs::write(crate_dir.join("Cargo.toml"), cargo_toml.to_string())?;

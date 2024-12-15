@@ -102,6 +102,8 @@ impl<'config> LocationLibrary<'_, 'config> {
         }
     }
 
+    // FIXME: This is currently wrong for nested umbrella frameworks
+    // (specifically MetalPerformanceShaders).
     fn feature(&self) -> Option<String> {
         match self {
             Self::Block2 => Some("block2".to_string()),
