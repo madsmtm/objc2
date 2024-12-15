@@ -1,0 +1,61 @@
+framework = "MetalPerformanceShaders"
+crate = "objc2-metal-performance-shaders"
+required-dependencies = ["objc2-foundation", "objc2-metal"]
+custom-lib-rs = true
+macos = "10.13"
+maccatalyst = "13.0"
+ios = "9.0"
+tvos = "9.0"
+visionos = "1.0"
+
+# Defined in both MPSCore.MPSImage and MPSCore.MPSNDArray
+typedef.MPSImageBatch.skipped = true
+
+# Needs SIMD types, which we cannot yet describe the ABI of in Rust
+struct.MPSCustomKernelSourceInfo.skipped = true
+typedef.MPSCustomKernelSourceInfo.skipped = true
+struct.MPSCustomKernelInfo.skipped = true
+typedef.MPSCustomKernelInfo.skipped = true
+class.MPSNDArrayDescriptor.methods.dimensionOrder.skipped = true
+struct.MPSImageHistogramInfo.skipped = true
+typedef.MPSImageHistogramInfo.skipped = true
+class.MPSImageHistogram.methods.minPixelThresholdValue.skipped = true
+class.MPSImageHistogram.methods."setMinPixelThresholdValue:".skipped = true
+class.MPSImageHistogram.methods.histogramInfo.skipped = true
+class.MPSImageHistogram.methods."initWithDevice:histogramInfo:".skipped = true
+class.MPSImageNormalizedHistogram.methods.histogramInfo.skipped = true
+class.MPSImageNormalizedHistogram.methods."initWithDevice:histogramInfo:".skipped = true
+class.MPSImageHistogramEqualization.methods.histogramInfo.skipped = true
+class.MPSImageHistogramEqualization.methods."initWithDevice:histogramInfo:".skipped = true
+class.MPSImageHistogramSpecification.methods.histogramInfo.skipped = true
+class.MPSImageHistogramSpecification.methods."initWithDevice:histogramInfo:".skipped = true
+struct.MPSImageKeypointData.skipped = true
+typedef.MPSImageKeypointData.skipped = true
+protocol.MPSCNNConvolutionDataSource.methods.rangesForUInt8Kernel.skipped = true
+struct._MPSAxisAlignedBoundingBox.skipped = true
+typedef.MPSAxisAlignedBoundingBox.skipped = true
+class.MPSAccelerationStructure.methods.boundingBox.skipped = true
+struct.MPSRayOriginDirection.skipped = true
+typedef.MPSRayOriginDirection.skipped = true
+struct.MPSIntersectionDistancePrimitiveIndexCoordinates.skipped = true
+typedef.MPSIntersectionDistancePrimitiveIndexCoordinates.skipped = true
+struct.MPSIntersectionDistancePrimitiveIndexBufferIndexCoordinates.skipped = true
+typedef.MPSIntersectionDistancePrimitiveIndexBufferIndexCoordinates.skipped = true
+struct.MPSIntersectionDistancePrimitiveIndexInstanceIndexCoordinates.skipped = true
+typedef.MPSIntersectionDistancePrimitiveIndexInstanceIndexCoordinates.skipped = true
+struct.MPSIntersectionDistancePrimitiveIndexBufferIndexInstanceIndexCoordinates.skipped = true
+typedef.MPSIntersectionDistancePrimitiveIndexBufferIndexInstanceIndexCoordinates.skipped = true
+
+# tries to derive with `PartialEq` which fails because of `Bool` fields
+# struct.MPSImageHistogramInfo.skipped = true
+
+# Uses unions internally
+struct._MPSPackedFloat3.skipped = true
+typedef.MPSPackedFloat3.skipped = true
+
+# Array in static is unimplemented
+static.MPSFunctionConstantNoneArray.skipped = true
+
+# Unclear how to handle these (non-null return error methods).
+class.MPSKeyedUnarchiver.methods."initForReadingFromData:error:".skipped = true
+class.MPSKeyedUnarchiver.methods."initForReadingFromData:device:error:".skipped = true

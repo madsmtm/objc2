@@ -14,7 +14,7 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
-    global_analysis, run_cargo_fmt, Config, Context, Library, LibraryConfig, MacroEntity,
+    global_analysis, run_cargo_fmt, Config, Context, Library, LibraryConfig, Location, MacroEntity,
     MacroLocation, Stmt,
 };
 
@@ -304,15 +304,9 @@ fn parse_framework(tu: TranslationUnit<'_>, context: &mut Context<'_>, library: 
         match entity.get_kind() {
             EntityKind::InclusionDirective if preprocessing => {
                 let file = entity.get_file().expect("inclusion directive has file");
-                if let Some(mut module) = file.get_module() {
-                    let mut components = vec![];
-                    while let Some(parent) = module.get_parent() {
-                        components.insert(0, module.get_name());
-                        module = parent;
-                    }
-                    if module.get_name() == library.data.framework {
-                        library.add_module(components);
-                    }
+                let location = Location::from_file(file);
+                if location.library_name() == library.data.framework {
+                    library.add_module(location);
                 }
             }
             EntityKind::MacroExpansion if preprocessing => {
@@ -337,8 +331,9 @@ fn parse_framework(tu: TranslationUnit<'_>, context: &mut Context<'_>, library: 
                     .get_expansion_location()
                     .file
                     .expect("expanded location file");
+                let location = Location::from_file(file);
 
-                let module = library.module_mut(file.get_module().expect("file module"));
+                let module = library.module_mut(location);
                 for stmt in Stmt::parse(&entity, context) {
                     module.add_stmt(stmt);
                 }

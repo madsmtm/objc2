@@ -543,6 +543,9 @@ impl Ty {
                 ty = modified;
             } else {
                 error!("expected unexposed / attributed type to have modified type");
+                ty = ty.get_canonical_type();
+                name = ty.get_display_name();
+                break;
             }
         }
 
@@ -691,7 +694,7 @@ impl Ty {
                     Self::AnyProtocol
                 } else {
                     let decl = ItemRef::new(&declaration, context);
-                    if decl.id.name != name {
+                    if decl.id.name != name.strip_prefix("const ").unwrap_or(&name) {
                         error!(?name, "invalid interface name");
                     }
                     Self::Class {

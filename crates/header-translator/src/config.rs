@@ -110,8 +110,6 @@ pub struct LibraryConfig {
     pub framework: String,
     #[serde(rename = "crate")]
     pub krate: String,
-    #[serde(rename = "umbrella-header")]
-    pub umbrella_header: Option<String>,
     /// Dependencies are optional by default, this can be used to make a
     /// dependency required.
     ///

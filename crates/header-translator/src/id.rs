@@ -4,7 +4,7 @@ use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeSet;
 
-use clang::source::Module;
+use clang::source::{File, Module};
 use clang::Entity;
 
 use crate::cfgs::PlatformCfg;
@@ -152,6 +152,49 @@ impl Location {
         })
     }
 
+    pub fn from_file(file: File<'_>) -> Self {
+        // Get from module first if available
+        if let Some(module) = file.get_module() {
+            return Location::from_module(module);
+        }
+
+        let path = file.get_path();
+
+        if !path.to_string_lossy().contains("System/Library/Frameworks") {
+            // Likely a built-in macro from stddef.h, stdarg.h or assert.h.
+            return Location::from_components(vec!["System".into()]);
+        }
+
+        // The item likely comes from a private sub-framework, so let's try
+        // to parse framework names from the sub-framework here.
+        let mut components: Vec<Cow<'_, str>> = path
+            .components()
+            .map(|component| component.as_os_str())
+            .skip_while(|s| !s.as_encoded_bytes().ends_with(b".sdk"))
+            .skip(1)
+            .map(|s| s.to_str().expect("component to_str"))
+            .filter(|s| !matches!(*s, "System" | "Library" | "Frameworks" | "Headers"))
+            .map(|component| component.strip_suffix(".framework").unwrap_or(component))
+            .map(|component| component.strip_suffix(".h").unwrap_or(component))
+            .map(|s| s.to_string().into())
+            .collect();
+
+        if let [.., second_last, last] = &*components {
+            if second_last == last {
+                // Remove umbrella header
+                components.pop();
+            }
+        }
+
+        Self::from_components(components)
+    }
+
+    pub(crate) fn components(
+        &self,
+    ) -> impl DoubleEndedIterator<Item = &str> + ExactSizeIterator + '_ {
+        self.path_components.iter().map(|c| &**c)
+    }
+
     pub(crate) fn from_components(path_components: Vec<Cow<'static, str>>) -> Self {
         Self { path_components }
     }
@@ -195,7 +238,10 @@ impl Location {
                         }
                     } else {
                         let file_name = self.file_name();
-                        let required = config.libraries[emission_library]
+                        let required = config
+                            .libraries
+                            .get(emission_library)
+                            .unwrap_or_else(|| panic!("{emission_library} not found in libraries"))
                             .required_dependencies
                             .contains(krate);
                         LocationLibrary::InExternalLibrary {
@@ -275,12 +321,7 @@ impl<N: ToOptionString> ItemIdentifier<N> {
             .file
             .expect("expanded location file");
 
-        let mut location = if let Some(module) = file.get_module() {
-            Location::from_module(module)
-        } else {
-            // If file module is not available, the item is likely a built-in macro.
-            Location::from_components(vec!["System".into()])
-        };
+        let mut location = Location::from_file(file);
 
         // Defined in multiple places for some reason.
         if let Some("IOSurfaceRef" | "__IOSurface") = name.to_option() {

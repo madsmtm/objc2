@@ -15,6 +15,7 @@ use crate::config::LibraryConfig;
 use crate::display_helper::FormatterFn;
 use crate::module::Module;
 use crate::Config;
+use crate::Location;
 use crate::VERSION;
 
 #[derive(Debug, PartialEq)]
@@ -24,7 +25,7 @@ pub struct Library {
     pub data: LibraryConfig,
 }
 
-type Dependencies<'c> = BTreeMap<&'c str, (bool, String, BTreeSet<String>)>;
+pub(crate) type Dependencies<'c> = BTreeMap<&'c str, (bool, String, BTreeSet<String>)>;
 
 impl Library {
     pub fn new(name: &str, data: &LibraryConfig) -> Self {
@@ -35,26 +36,20 @@ impl Library {
         }
     }
 
-    pub fn add_module(&mut self, components: Vec<String>) {
+    pub fn add_module(&mut self, location: Location) {
         let mut current = &mut self.module;
-        for component in components {
-            current = current.submodules.entry(component).or_default();
+        for component in location.components().skip(1) {
+            current = current.submodules.entry(component.into()).or_default();
         }
     }
 
-    pub fn module_mut(&mut self, mut module: clang::source::Module<'_>) -> &mut Module {
-        let mut components = vec![];
-        while let Some(parent) = module.get_parent() {
-            components.insert(0, module.get_name());
-            module = parent;
-        }
-
+    pub fn module_mut(&mut self, location: Location) -> &mut Module {
         let mut current = &mut self.module;
-        for component in components {
-            current = match current.submodules.entry(component) {
+        for component in location.components().skip(1) {
+            current = match current.submodules.entry(component.into()) {
                 Entry::Occupied(entry) => entry.into_mut(),
                 Entry::Vacant(entry) => {
-                    error!(?module, "expected module to be available in library");
+                    error!(?location, "expected module to be available in library");
                     entry.insert(Default::default())
                 }
             };
@@ -382,9 +377,11 @@ see that for related crates.", self.data.krate, self.link_name)?;
         add_newline_at_end(&mut cargo_toml["features"]);
 
         // Own features
-        let mut generated_features = self
-            .module
-            .required_cargo_features_inner(config, &self.link_name);
+        let mut generated_features = self.module.required_cargo_features_inner(
+            config,
+            &self.link_name,
+            &dependency_map[&*self.link_name],
+        );
 
         let _ = generated_features.insert(
             "all".to_string(),

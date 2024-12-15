@@ -6,6 +6,7 @@ use std::{fmt, fs};
 use crate::cfgs::PlatformCfg;
 use crate::display_helper::FormatterFn;
 use crate::id::{cfg_gate_ln, Location};
+use crate::library::Dependencies;
 use crate::stmt::Stmt;
 use crate::{Config, ItemIdentifier};
 
@@ -45,6 +46,7 @@ impl Module {
         &self,
         config: &Config,
         emission_library: &str,
+        dependencies: &Dependencies<'_>,
     ) -> BTreeMap<String, BTreeSet<String>> {
         let mut required_features: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
 
@@ -59,6 +61,11 @@ impl Module {
                         .library(config, emission_library)
                         .cargo_toml_feature()
                     {
+                        if feature == "bitflags" {
+                            if let Some((true, _, _)) = dependencies.get("bitflags") {
+                                continue;
+                            }
+                        }
                         // Feature names are based on the file name, not the
                         // whole path to the feature.
                         features.insert(feature);
@@ -66,8 +73,11 @@ impl Module {
                 }
             }
             required_features.insert(clean_name(file_name), features);
-            required_features
-                .extend(module.required_cargo_features_inner(config, emission_library));
+            required_features.extend(module.required_cargo_features_inner(
+                config,
+                emission_library,
+                dependencies,
+            ));
         }
 
         required_features
@@ -120,22 +130,27 @@ impl Module {
         FormatterFn(move |f| {
             for (name, module) in &self.submodules {
                 let name = clean_name(name);
+                write!(f, "#[cfg(feature = \"{name}\")]")?;
                 if module.submodules.is_empty() {
-                    write!(f, "#[cfg(feature = \"{name}\")]")?;
                     writeln!(f, "#[path = \"{name}.rs\"]")?;
-                    writeln!(f, "mod __{name};")?;
                 } else {
-                    write!(f, "#[cfg(feature = \"{name}\")]")?;
-                    writeln!(f, "mod {name};")?;
+                    writeln!(f, "#[path = \"{name}/mod.rs\"]")?;
                 }
+                writeln!(f, "mod __{name};")?;
             }
 
             writeln!(f)?;
 
-            for (file_name, file) in &self.submodules {
-                for stmt in &file.stmts {
+            for (module_name, module) in &self.submodules {
+                if !module.submodules.is_empty() {
+                    write!(f, "#[cfg(feature = \"{module_name}\")]")?;
+                    write!(f, "pub use self::__{}::*;", clean_name(module_name))?;
+                    continue;
+                }
+
+                for stmt in &module.stmts {
                     if let Some(item) = stmt.provided_item() {
-                        item.location().assert_file(file_name);
+                        item.location().assert_file(module_name);
 
                         let mut items = stmt.required_items();
                         items.push(item.clone());
@@ -153,7 +168,7 @@ impl Module {
                         write!(
                             f,
                             "{visibility} use self::__{}::{{{}}};",
-                            clean_name(file_name),
+                            clean_name(module_name),
                             item.name,
                         )?;
                     }
