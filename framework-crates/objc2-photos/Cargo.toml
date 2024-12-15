@@ -22,6 +22,7 @@ objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = fal
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
 objc2-core-image = { path = "../objc2-core-image", version = "0.2.2", default-features = false, optional = true }
 objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true }
+objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", version = "0.2.2", default-features = false, optional = true }
 
@@ -43,14 +44,15 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-app-kit?/std", "objc2-core-foundation?/std", "objc2-core-image?/std", "objc2-core-location?/std", "objc2-foundation/std", "objc2-uniform-type-identifiers?/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-app-kit?/alloc", "objc2-core-foundation?/alloc", "objc2-core-image?/alloc", "objc2-core-location?/alloc", "objc2-foundation/alloc", "objc2-uniform-type-identifiers?/alloc"]
-bitflags = ["dep:bitflags", "objc2-app-kit?/bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation/bitflags"]
-block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-core-foundation?/block2", "objc2-core-image?/block2", "objc2-core-location?/block2", "objc2-foundation/block2", "objc2-uniform-type-identifiers?/block2"]
+std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-app-kit?/std", "objc2-core-foundation?/std", "objc2-core-image?/std", "objc2-core-location?/std", "objc2-core-media?/std", "objc2-foundation/std", "objc2-uniform-type-identifiers?/std"]
+alloc = ["block2?/alloc", "objc2/alloc", "objc2-app-kit?/alloc", "objc2-core-foundation?/alloc", "objc2-core-image?/alloc", "objc2-core-location?/alloc", "objc2-core-media?/alloc", "objc2-foundation/alloc", "objc2-uniform-type-identifiers?/alloc"]
+bitflags = ["dep:bitflags", "objc2-app-kit?/bitflags", "objc2-core-foundation?/bitflags", "objc2-core-media?/bitflags", "objc2-foundation/bitflags"]
+block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-core-foundation?/block2", "objc2-core-image?/block2", "objc2-core-location?/block2", "objc2-core-media?/block2", "objc2-foundation/block2", "objc2-uniform-type-identifiers?/block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-core-image?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-core-image?/objc2-core-foundation", "objc2-core-media?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
 objc2-core-image = ["dep:objc2-core-image", "objc2-app-kit?/objc2-core-image"]
 objc2-core-location = ["dep:objc2-core-location"]
+objc2-core-media = ["dep:objc2-core-media"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers", "objc2-app-kit?/objc2-uniform-type-identifiers"]
 
 PHAdjustmentData = [
@@ -176,6 +178,7 @@ PHLivePhoto = [
 PHLivePhotoEditingContext = [
     "objc2-core-foundation?/CFCGTypes",
     "objc2-core-image?/CIImage",
+    "objc2-core-media?/CMTime",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
@@ -239,5 +242,6 @@ all = [
     "objc2-core-foundation",
     "objc2-core-image",
     "objc2-core-location",
+    "objc2-core-media",
     "objc2-uniform-type-identifiers",
 ]

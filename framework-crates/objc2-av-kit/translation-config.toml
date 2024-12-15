@@ -40,8 +40,3 @@ class.AVPlayerItem.categories.AVKitAdditions.skipped = true
 class.AVPlayerViewController.methods.player.skipped = true
 class.AVPlayerViewController.methods."setPlayer:".skipped = true
 protocol.AVPlayerViewControllerDelegate.methods."playerViewController:didSelectMediaSelectionOption:inMediaSelectionGroup:".skipped = true
-
-# Needs CoreMedia
-protocol.AVPictureInPictureSampleBufferPlaybackDelegate.methods."pictureInPictureControllerTimeRangeForPlayback:".skipped = true
-protocol.AVPictureInPictureSampleBufferPlaybackDelegate.methods."pictureInPictureController:didTransitionToRenderSize:".skipped = true
-protocol.AVPictureInPictureSampleBufferPlaybackDelegate.methods."pictureInPictureController:skipByInterval:completionHandler:".skipped = true

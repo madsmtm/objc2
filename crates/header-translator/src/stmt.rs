@@ -1035,15 +1035,17 @@ impl Stmt {
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                            if kind.is_some() {
-                                panic!("got multiple unexposed attributes {kind:?}, {attr:?}");
-                            }
                             match attr {
                                 // TODO
                                 UnexposedAttr::Sendable => warn!("sendable typedef"),
                                 UnexposedAttr::NonSendable => warn!("non-sendable typedef"),
                                 UnexposedAttr::UIActor => warn!("main-thread-only typedef"),
-                                _ => kind = Some(attr),
+                                _ => {
+                                    if kind.is_some() {
+                                        warn!(?kind, ?attr, "got multiple unexposed attributes");
+                                    }
+                                    kind = Some(attr);
+                                }
                             }
                         }
                     }

@@ -21,6 +21,7 @@ objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = fal
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
 objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true }
 objc2-core-image = { path = "../objc2-core-image", version = "0.2.2", default-features = false, optional = true }
+objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true }
 objc2-core-ml = { path = "../objc2-core-ml", version = "0.2.2", default-features = false, optional = true }
 objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
@@ -40,14 +41,15 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "block2?/std", "objc2/std", "objc2-core-foundation?/std", "objc2-core-graphics?/std", "objc2-core-image?/std", "objc2-core-ml?/std", "objc2-core-video?/std", "objc2-foundation/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-core-foundation?/alloc", "objc2-core-graphics?/alloc", "objc2-core-image?/alloc", "objc2-core-ml?/alloc", "objc2-core-video?/alloc", "objc2-foundation/alloc"]
-block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-core-image?/block2", "objc2-core-ml?/block2", "objc2-core-video?/block2", "objc2-foundation/block2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-graphics?/objc2-core-foundation", "objc2-core-image?/objc2-core-foundation", "objc2-core-video?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
+std = ["alloc", "block2?/std", "objc2/std", "objc2-core-foundation?/std", "objc2-core-graphics?/std", "objc2-core-image?/std", "objc2-core-media?/std", "objc2-core-ml?/std", "objc2-core-video?/std", "objc2-foundation/std"]
+alloc = ["block2?/alloc", "objc2/alloc", "objc2-core-foundation?/alloc", "objc2-core-graphics?/alloc", "objc2-core-image?/alloc", "objc2-core-media?/alloc", "objc2-core-ml?/alloc", "objc2-core-video?/alloc", "objc2-foundation/alloc"]
+block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-core-image?/block2", "objc2-core-media?/block2", "objc2-core-ml?/block2", "objc2-core-video?/block2", "objc2-foundation/block2"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-graphics?/objc2-core-foundation", "objc2-core-image?/objc2-core-foundation", "objc2-core-media?/objc2-core-foundation", "objc2-core-video?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics", "objc2-core-image?/objc2-core-graphics", "objc2-core-ml?/objc2-core-graphics", "objc2-core-video?/objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
+objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-ml = ["dep:objc2-core-ml", "objc2-core-image?/objc2-core-ml"]
-objc2-core-video = ["dep:objc2-core-video", "objc2-core-image?/objc2-core-video", "objc2-core-ml?/objc2-core-video"]
+objc2-core-video = ["dep:objc2-core-video", "objc2-core-image?/objc2-core-video", "objc2-core-media?/objc2-core-video", "objc2-core-ml?/objc2-core-video"]
 
 VNCalculateImageAestheticsScoresRequest = [
     "objc2-foundation/NSArray",
@@ -112,6 +114,7 @@ VNDetectHorizonRequest = [
     "objc2-foundation/NSObject",
 ]
 VNDetectHumanBodyPose3DRequest = [
+    "objc2-core-media?/CMTime",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -147,6 +150,7 @@ VNDetectTextRectanglesRequest = [
     "objc2-foundation/NSObject",
 ]
 VNDetectTrajectoriesRequest = [
+    "objc2-core-media?/CMTime",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -187,6 +191,7 @@ VNGenerateObjectnessBasedSaliencyImageRequest = [
 VNGenerateOpticalFlowRequest = [
     "objc2-core-graphics?/CGImage",
     "objc2-core-image?/CIImage",
+    "objc2-core-media?/CMSampleBuffer",
     "objc2-core-video?/CVBuffer",
     "objc2-core-video?/CVImageBuffer",
     "objc2-core-video?/CVPixelBuffer",
@@ -204,6 +209,7 @@ VNGeneratePersonInstanceMaskRequest = [
     "objc2-foundation/NSObject",
 ]
 VNGeneratePersonSegmentationRequest = [
+    "objc2-core-media?/CMTime",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -228,6 +234,7 @@ VNHumanBodyRecognizedPoint3D = [
 VNImageRegistrationRequest = [
     "objc2-core-graphics?/CGImage",
     "objc2-core-image?/CIImage",
+    "objc2-core-media?/CMSampleBuffer",
     "objc2-core-video?/CVBuffer",
     "objc2-core-video?/CVImageBuffer",
     "objc2-core-video?/CVPixelBuffer",
@@ -243,6 +250,8 @@ VNObservation = [
     "objc2-core-foundation?/CFCGTypes",
     "objc2-core-graphics?/CGPath",
     "objc2-core-image?/CIBarcodeDescriptor",
+    "objc2-core-media?/CMTime",
+    "objc2-core-media?/CMTimeRange",
     "objc2-core-ml?/MLFeatureValue",
     "objc2-core-ml?/MLMultiArray",
     "objc2-core-video?/CVBuffer",
@@ -288,6 +297,7 @@ VNRequest = [
 VNRequestHandler = [
     "objc2-core-graphics?/CGImage",
     "objc2-core-image?/CIImage",
+    "objc2-core-media?/CMSampleBuffer",
     "objc2-core-video?/CVBuffer",
     "objc2-core-video?/CVImageBuffer",
     "objc2-core-video?/CVPixelBuffer",
@@ -300,12 +310,14 @@ VNRequestHandler = [
 ]
 VNRequestRevisionProviding = []
 VNStatefulRequest = [
+    "objc2-core-media?/CMTime",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
 ]
 VNTargetedImageRequest = [
     "objc2-core-graphics?/CGImage",
     "objc2-core-image?/CIImage",
+    "objc2-core-media?/CMSampleBuffer",
     "objc2-core-video?/CVBuffer",
     "objc2-core-video?/CVImageBuffer",
     "objc2-core-video?/CVPixelBuffer",
@@ -317,6 +329,7 @@ VNTargetedImageRequest = [
     "objc2-foundation/NSURL",
 ]
 VNTrackHomographicImageRegistrationRequest = [
+    "objc2-core-media?/CMTime",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -326,6 +339,7 @@ VNTrackObjectRequest = [
     "objc2-foundation/NSObject",
 ]
 VNTrackOpticalFlowRequest = [
+    "objc2-core-media?/CMTime",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -335,6 +349,7 @@ VNTrackRectangleRequest = [
     "objc2-foundation/NSObject",
 ]
 VNTrackTranslationalImageRegistrationRequest = [
+    "objc2-core-media?/CMTime",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -347,6 +362,8 @@ VNTypes = ["objc2-foundation/NSString"]
 VNUtils = ["objc2-core-foundation?/CFCGTypes"]
 VNVideoProcessor = [
     "objc2-core-foundation?/CFDate",
+    "objc2-core-media?/CMTime",
+    "objc2-core-media?/CMTimeRange",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -410,6 +427,7 @@ all = [
     "objc2-core-foundation",
     "objc2-core-graphics",
     "objc2-core-image",
+    "objc2-core-media",
     "objc2-core-ml",
     "objc2-core-video",
 ]

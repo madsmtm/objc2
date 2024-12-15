@@ -487,6 +487,7 @@ impl Ty {
         let mut attributed_name = attributed_ty.get_display_name();
         let mut name = ty.get_display_name();
         let mut unexposed_nullability = None;
+        let mut no_escape = false;
 
         while let TypeKind::Unexposed | TypeKind::Attributed = ty.get_kind() {
             if let TypeKind::Attributed = ty.get_kind() {
@@ -531,6 +532,10 @@ impl Ty {
                 }
                 Some(UnexposedAttr::ReturnsNotRetained) => {
                     lifetime = Lifetime::Autoreleasing;
+                }
+                Some(UnexposedAttr::NoEscape) => {
+                    // TODO: Use this on Pointer and BlockPointer
+                    no_escape = true;
                 }
                 Some(attr) => error!(?attr, "unknown attribute on type"),
                 None => {}
@@ -971,6 +976,9 @@ impl Ty {
                     "ssize_t" => return Self::Primitive(Primitive::ISize),
                     "size_t" => return Self::Primitive(Primitive::USize),
                     "ptrdiff_t" => return Self::Primitive(Primitive::PtrDiff),
+                    // https://github.com/rust-lang/rust/issues/65473
+                    "intptr_t" => return Self::Primitive(Primitive::ISize),
+                    "uintptr_t" => return Self::Primitive(Primitive::USize),
 
                     // MacTypes.h
                     "UInt8" => return Self::Primitive(Primitive::U8),
@@ -1036,7 +1044,7 @@ impl Ty {
 
                 Self::Fn {
                     is_variadic: ty.is_variadic(),
-                    no_escape: false,
+                    no_escape,
                     arguments,
                     result_type: Box::new(result_type),
                 }
@@ -1909,7 +1917,7 @@ impl Ty {
             Some(UnexposedAttr::NoEscape) => {
                 // TODO: Use this if mapping `fn + context ptr` to closure.
             }
-            Some(UnexposedAttr::ReturnsRetained) => {
+            Some(UnexposedAttr::ReturnsRetained | UnexposedAttr::ReturnsNotRetained) => {
                 // TODO: Massage this into a lifetime
             }
             Some(attr) => {

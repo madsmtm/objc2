@@ -162,6 +162,7 @@ This project also draws inspiration from:
 - [`rust-macios`](https://github.com/a-isaiahharvey/rust-macios)
 - [`uikit-sys`](https://github.com/simlay/uikit-sys) and `@simlay`'s [Objective-C work on `bindgen`](https://rust-lang.github.io/rust-bindgen/objc.html)
 - [`cidre`](https://github.com/yury/cidre)
+- [the `apple-media` project](https://github.com/rust-media/apple-media-rs)
 
 Finally, this is by far not the only project that ever tried to interoperate with Objective-C; other languages have done so as well (to varying degrees of success):
 - Swift: Built from the beginning for Objective-C interop, and is what `objc2` aspires to have feature-parity with (though will probably never reach). Truly beautifully designed language!

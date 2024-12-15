@@ -26,6 +26,7 @@
 | `CoreImage` | [![`objc2-core-image`](https://badgen.net/crates/v/objc2-core-image)](https://crates.io/crates/objc2-core-image) | [![docs.rs](https://docs.rs/objc2-core-image/badge.svg)](https://docs.rs/objc2-core-image/) |
 | `CoreLocation` | [![`objc2-core-location`](https://badgen.net/crates/v/objc2-core-location)](https://crates.io/crates/objc2-core-location) | [![docs.rs](https://docs.rs/objc2-core-location/badge.svg)](https://docs.rs/objc2-core-location/) |
 | `CoreML` | [![`objc2-core-ml`](https://badgen.net/crates/v/objc2-core-ml)](https://crates.io/crates/objc2-core-ml) | [![docs.rs](https://docs.rs/objc2-core-ml/badge.svg)](https://docs.rs/objc2-core-ml/) |
+| `CoreMedia` | [![`objc2-core-media`](https://badgen.net/crates/v/objc2-core-media)](https://crates.io/crates/objc2-core-media) | [![docs.rs](https://docs.rs/objc2-core-media/badge.svg)](https://docs.rs/objc2-core-media/) |
 | `CoreMotion` | [![`objc2-core-motion`](https://badgen.net/crates/v/objc2-core-motion)](https://crates.io/crates/objc2-core-motion) | [![docs.rs](https://docs.rs/objc2-core-motion/badge.svg)](https://docs.rs/objc2-core-motion/) |
 | `CoreText` | [![`objc2-core-text`](https://badgen.net/crates/v/objc2-core-text)](https://crates.io/crates/objc2-core-text) | [![docs.rs](https://docs.rs/objc2-core-text/badge.svg)](https://docs.rs/objc2-core-text/) |
 | `CoreVideo` | [![`objc2-core-video`](https://badgen.net/crates/v/objc2-core-video)](https://crates.io/crates/objc2-core-video) | [![docs.rs](https://docs.rs/objc2-core-video/badge.svg)](https://docs.rs/objc2-core-video/) |

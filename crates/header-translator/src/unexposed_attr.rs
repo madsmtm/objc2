@@ -63,13 +63,18 @@ impl UnexposedAttr {
             | "NS_EXTENSIBLE_STRING_ENUM"
             | "CF_EXTENSIBLE_STRING_ENUM" => Some(Self::TypedExtensibleEnum),
             "NS_SWIFT_BRIDGED_TYPEDEF" | "CF_SWIFT_BRIDGED_TYPEDEF" => Some(Self::BridgedTypedef),
-            "CF_BRIDGED_TYPE" => Some(Self::Bridged),
+            "CF_BRIDGED_TYPE" | "CM_BRIDGED_TYPE" => Some(Self::Bridged),
             "CF_BRIDGED_MUTABLE_TYPE" => Some(Self::BridgedMutable),
             "NS_RETURNS_RETAINED"
             | "CF_RETURNS_RETAINED"
+            | "CM_RETURNS_RETAINED"
+            | "CM_RETURNS_RETAINED_BLOCK"
+            | "CM_RETURNS_RETAINED_PARAMETER"
             | "CV_RETURNS_RETAINED"
             | "CV_RETURNS_RETAINED_PARAMETER" => Some(Self::ReturnsRetained),
-            "NS_RETURNS_NOT_RETAINED" | "CF_RETURNS_NOT_RETAINED" => Some(Self::ReturnsNotRetained),
+            "NS_RETURNS_NOT_RETAINED"
+            | "CF_RETURNS_NOT_RETAINED"
+            | "CM_RETURNS_NOT_RETAINED_PARAMETER" => Some(Self::ReturnsNotRetained),
             "NS_RETURNS_INNER_POINTER" => None,
             // This has two arguments: `sendability` and `nullability`.
             // `nullability` is already exposed, so we won't bother with that.
@@ -79,8 +84,11 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
-            "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" | "CV_SWIFT_SENDABLE" => Some(Self::Sendable),
-            "NS_SWIFT_NONSENDABLE" | "CV_SWIFT_NONSENDABLE" => Some(Self::NonSendable),
+            "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" | "CM_SWIFT_SENDABLE"
+            | "CV_SWIFT_SENDABLE" => Some(Self::Sendable),
+            "NS_SWIFT_NONSENDABLE" | "CM_SWIFT_NONSENDABLE" | "CV_SWIFT_NONSENDABLE" => {
+                Some(Self::NonSendable)
+            }
             "NS_SWIFT_UI_ACTOR" | "WK_SWIFT_UI_ACTOR" => Some(Self::UIActor),
             "NS_SWIFT_NONISOLATED" | "UIKIT_SWIFT_ACTOR_INDEPENDENT" => Some(Self::NonIsolated),
             // TODO

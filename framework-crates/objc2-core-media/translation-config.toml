@@ -1,0 +1,24 @@
+framework = "CoreMedia"
+crate = "objc2-core-media"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
+macos = "10.7"
+maccatalyst = "13.1"
+ios = "4.0"
+tvos = "9.0"
+watchos = "6.0"
+visionos = "1.0"
+
+# Needs `dispatch_source_t`
+fn.CMTimebaseAddTimerDispatchSource.skipped = true
+fn.CMTimebaseRemoveTimerDispatchSource.skipped = true
+fn.CMTimebaseSetTimerDispatchSourceNextFireTime.skipped = true
+fn.CMTimebaseSetTimerDispatchSourceToFireImmediately.skipped = true
+
+# Needs AudioDeviceID from CoreAudio
+fn.CMAudioDeviceClockCreateFromAudioDeviceID.skipped = true
+fn.CMAudioDeviceClockSetAudioDeviceID.skipped = true
+fn.CMAudioDeviceClockGetAudioDevice.skipped = true
+
+# Unknown how to handle the calling convention for arrays
+fn.CMTextFormatDescriptionGetDefaultStyle.skipped = true

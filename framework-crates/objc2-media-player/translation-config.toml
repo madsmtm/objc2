@@ -18,8 +18,3 @@ class.MPNowPlayingSession.methods."initWithPlayers:".skipped = true
 class.MPNowPlayingSession.methods.players.skipped = true
 class.MPNowPlayingSession.methods."addPlayer:".skipped = true
 class.MPNowPlayingSession.methods."removePlayer:".skipped = true
-
-# Needs `CMTimeRange` from `CoreMedia`
-class.MPAdTimeRange.methods."initWithTimeRange:".skipped = true
-class.MPAdTimeRange.methods.timeRange.skipped = true
-class.MPAdTimeRange.methods."setTimeRange:".skipped = true

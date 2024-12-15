@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreAudioTypes` / `objc2-core-audio-types`.
   - `CoreGraphics` / `objc2-core-graphics`.
   - `CoreFoundation` / `objc2-core-foundation`.
+  - `CoreMedia` / `objc2-core-media`.
   - `CoreText` / `objc2-core-text`.
   - `CoreVideo` / `objc2-core-video`.
   - `EventKitUI` / `objc2-event-kit-ui`.

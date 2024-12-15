@@ -30,28 +30,6 @@ class.VNTrackingRequest.methods."supportedNumberOfTrackersAndReturnError:".skipp
 # apinotes are being weird here
 class.VNRecognizedText.methods."boundingBoxForRange:error:".skipped = true
 
-# Needs CoreMedia
-class.VNDetectHumanBodyPose3DRequest.methods."initWithFrameAnalysisSpacing:completionHandler:".skipped = true
-class.VNDetectTrajectoriesRequest.methods."initWithFrameAnalysisSpacing:completionHandler:".skipped = true
-class.VNDetectTrajectoriesRequest.methods."initWithFrameAnalysisSpacing:trajectoryLength:completionHandler:".skipped = true
-class.VNDetectTrajectoriesRequest.methods.targetFrameTime.skipped = true
-class.VNDetectTrajectoriesRequest.methods."setTargetFrameTime:".skipped = true
-class.VNGeneratePersonSegmentationRequest.methods."initWithFrameAnalysisSpacing:completionHandler:".skipped = true
-class.VNObservation.methods.timeRange.skipped = true
-class.VNImageRequestHandler.methods."initWithCMSampleBuffer:options:".skipped = true
-class.VNSequenceRequestHandler.methods."performRequests:onCMSampleBuffer:error:".skipped = true
-class.VNStatefulRequest.methods."initWithFrameAnalysisSpacing:completionHandler:".skipped = true
-class.VNStatefulRequest.methods.frameAnalysisSpacing.skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:options:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:options:completionHandler:".skipped = true
-class.VNVideoProcessor.methods."analyzeTimeRange:error:".skipped = true
-class.VNVideoProcessor.methods."analyzeWithTimeRange:error:".skipped = true
-class.VNImageRequestHandler.methods."initWithCMSampleBuffer:orientation:options:".skipped = true
-class.VNImageRequestHandler.methods."initWithCMSampleBuffer:depthData:orientation:options:".skipped = true
-class.VNSequenceRequestHandler.methods."performRequests:onCMSampleBuffer:orientation:error:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:orientation:options:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:orientation:options:completionHandler:".skipped = true
-
 # Needs CoreVideo to have proper retain semantics
 class.VNInstanceMaskObservation.methods."generateMaskForInstances:error:".skipped = true
 class.VNInstanceMaskObservation.methods."generateMaskedImageOfInstances:fromRequestHandler:croppedToInstancesExtent:error:".skipped = true
@@ -79,6 +57,12 @@ class.VNTargetedImageRequest.methods."initWithTargetedImageURL:orientation:optio
 class.VNTargetedImageRequest.methods."initWithTargetedImageURL:orientation:options:completionHandler:".skipped = true
 class.VNTargetedImageRequest.methods."initWithTargetedImageData:orientation:options:".skipped = true
 class.VNTargetedImageRequest.methods."initWithTargetedImageData:orientation:options:completionHandler:".skipped = true
+class.VNImageRequestHandler.methods."initWithCMSampleBuffer:orientation:options:".skipped = true
+class.VNImageRequestHandler.methods."initWithCMSampleBuffer:depthData:orientation:options:".skipped = true
+class.VNSequenceRequestHandler.methods."performRequests:onCMSampleBuffer:orientation:error:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:orientation:options:".skipped = true
+class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:orientation:options:completionHandler:".skipped = true
+
 
 
 ###

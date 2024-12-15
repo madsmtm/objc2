@@ -14,11 +14,3 @@ class.SCRecordingOutputConfiguration.methods.outputFileType.skipped = true
 class.SCRecordingOutputConfiguration.methods."setOutputFileType:".skipped = true
 class.SCRecordingOutputConfiguration.methods.availableVideoCodecTypes.skipped = true
 class.SCRecordingOutputConfiguration.methods.availableOutputFileTypes.skipped = true
-
-# Needs CoreMedia
-class.SCRecordingOutput.methods.recordedDuration.skipped = true
-class.SCScreenshotManager.methods."captureSampleBufferWithFilter:configuration:completionHandler:".skipped = true
-class.SCStreamConfiguration.methods.minimumFrameInterval.skipped = true
-class.SCStreamConfiguration.methods."setMinimumFrameInterval:".skipped = true
-class.SCStream.methods.synchronizationClock.skipped = true
-protocol.SCStreamOutput.methods."stream:didOutputSampleBuffer:ofType:".skipped = true
