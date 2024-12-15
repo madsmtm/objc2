@@ -15,7 +15,11 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[cfg(feature = "CMBase")]
+mod base;
 mod generated;
+#[cfg(feature = "CMBase")]
+pub use self::base::{CMBaseClassVersion, CMStructVersion};
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 

@@ -22,3 +22,7 @@ fn.CMAudioDeviceClockGetAudioDevice.skipped = true
 
 # Unknown how to handle the calling convention for arrays
 fn.CMTextFormatDescriptionGetDefaultStyle.skipped = true
+
+# Differing definitions depending on architecture
+typedef.CMBaseClassVersion.skipped = true
+typedef.CMStructVersion.skipped = true
