@@ -467,6 +467,7 @@ pub enum Stmt {
         boxable: bool,
         fields: Vec<(String, Ty)>,
         sendable: Option<bool>,
+        packed: bool,
     },
     /// typedef NS_OPTIONS(type, name) {
     ///     variants*
@@ -1105,6 +1106,7 @@ impl Stmt {
                 let mut boxable = false;
                 let mut fields = Vec::new();
                 let mut sendable = None;
+                let mut packed = false;
 
                 immediate_children(entity, |entity, span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
@@ -1134,7 +1136,8 @@ impl Stmt {
                         boxable = true;
                     }
                     EntityKind::UnionDecl => error!("can't handle unions in structs yet"),
-                    _ => error!("unknown"),
+                    EntityKind::PackedAttr => packed = true,
+                    kind => error!(?kind, "unknown struct child"),
                 });
 
                 vec![Self::StructDecl {
@@ -1144,6 +1147,7 @@ impl Stmt {
                     boxable,
                     fields,
                     sendable,
+                    packed,
                 }]
             }
             EntityKind::EnumDecl => {
@@ -2077,11 +2081,16 @@ impl Stmt {
                     boxable: _,
                     fields,
                     sendable,
+                    packed,
                 } => {
                     writeln!(f, "/// {}", id.doc_link())?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
-                    write!(f, "#[repr(C)]")?;
+                    if *packed {
+                        write!(f, "#[repr(C, packed)]")?;
+                    } else {
+                        write!(f, "#[repr(C)]")?;
+                    }
                     write!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
                     writeln!(f, "pub struct {} {{", id.name)?;
                     for (name, ty) in fields {

@@ -417,6 +417,8 @@ fn get_translation_unit<'i: 'c, 'c>(
             "-fapinotes",
             "-fapinotes-modules",
             // "-fapi-notes-swift-version=6.0",
+            // Make AudioToolbox less dependent on CoreServices
+            "-DAUDIOCOMPONENT_NOCARBONINSTANCES=1",
         ])
         .parse()
         .unwrap();

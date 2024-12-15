@@ -748,7 +748,9 @@ impl Ty {
                             .get_declaration()
                             .expect("ObjCObject -> ObjCInterface declaration");
                         let decl = ItemRef::new(&declaration, context);
-                        assert_eq!(decl.id.name, name);
+                        if decl.id.name != name {
+                            error!(?name, "ObjCObject -> ObjCInterface invalid name");
+                        }
 
                         if !generics.is_empty() && !protocols.is_empty() {
                             panic!("got object with both protocols and generics: {name:?}, {protocols:?}, {generics:?}");

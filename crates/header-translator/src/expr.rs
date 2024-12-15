@@ -176,8 +176,15 @@ impl Expr {
         }
 
         // Trim unnecessary parentheses
-        if res.first() == Some(&Token::Punctuation("(".to_string()))
-            && res.last() == Some(&Token::Punctuation(")".to_string()))
+        let is_left_paren = |token: &Token| matches!(token, Token::Punctuation(p) if p == "(");
+        let is_right_paren = |token: &Token| matches!(token, Token::Punctuation(p) if p == ")");
+        if res.first().map(is_left_paren).unwrap_or(false)
+            && res.last().map(is_right_paren).unwrap_or(false)
+            && res
+                .iter()
+                .filter(|token| is_left_paren(token) || is_right_paren(token))
+                .count()
+                == 2
         {
             res.remove(0);
             res.pop();

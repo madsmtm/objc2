@@ -140,6 +140,7 @@ impl Location {
             name if name.starts_with("sys_types") => vec!["libc".into()],
             "DarwinFoundation.types.sys_types" => vec!["libc".into()],
             name if name.starts_with("Darwin.POSIX") => vec!["libc".into()],
+            "_stdio" => vec!["libc".into()],
 
             // Will be moved to the `mach2` crate in `libc` v1.0
             name if name.starts_with("Darwin.Mach") => vec!["libc".into()],
