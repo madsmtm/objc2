@@ -387,7 +387,10 @@ fn get_translation_unit<'i: 'c, 'c>(
             "-Wextra",
             "-fobjc-arc",
             "-fobjc-arc-exceptions",
+            "-fexceptions",
+            "-fobjc-exceptions",
             "-fobjc-abi-version=2", // 3??
+            "-fblocks",
             // "-fparse-all-comments",
             // TODO: "-fretain-comments-from-system-headers"
             "-isysroot",
@@ -395,6 +398,10 @@ fn get_translation_unit<'i: 'c, 'c>(
             // See ClangImporter.cpp and Foundation/NSObjCRuntime.h
             "-D",
             "__SWIFT_ATTR_SUPPORTS_SENDABLE_DECLS=1",
+            "-D",
+            "__SWIFT_ATTR_SUPPORTS_SENDING=1",
+            // "-D",
+            // "__swift__=51000",
             // Enable modules. We do this by parsing the `.modulemap` instead
             // of a combined file containing includes, as the Clang AST from
             // dependent modules does not seem possible to access otherwise.
@@ -409,10 +416,19 @@ fn get_translation_unit<'i: 'c, 'c>(
             // "-Xclang",
             // "-fmodule-format=raw",
             &format!("-fmodules-cache-path={}", tempdir.to_str().unwrap()),
-            // "-fsystem-module",
             "-Xclang",
             "-emit-module",
             &format!("-fmodule-name={module}"),
+            "-fsystem-module",
+            // "-fmodules-validate-system-headers",
+            // "-fmodules-search-all",
+            "-Xclang",
+            "-fno-modules-prune-non-affecting-module-map-files",
+            // "-Xclang",
+            // "-fmodule-feature",
+            // "-Xclang",
+            // "swift",
+            "-disable-objc-default-synthesize-properties",
             // Explicitly enable API notes (implicitly enabled by -fmodules).
             "-fapinotes",
             "-fapinotes-modules",
