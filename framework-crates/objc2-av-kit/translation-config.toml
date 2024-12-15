@@ -12,31 +12,6 @@ visionos = "1.0"
 external.AVGroupExperienceCoordinator.module = "AVKit.AVPlayerViewController"
 external.AVContentProposal.module = "AVKit.AVPlayerViewController"
 
-# Needs AVFoundation
-class.AVCaptureView.methods.session.skipped = true
-class.AVCaptureView.methods."setSession:showVideoPreview:showAudioPreview:".skipped = true
-class.AVCaptureView.methods.videoGravity.skipped = true
-class.AVCaptureView.methods."setVideoGravity:".skipped = true
-class.AVCaptureView.methods.fileOutput.skipped = true
-protocol.AVCaptureViewDelegate.methods."captureView:startRecordingToFileOutput:".skipped = true
-class.AVPictureInPictureController.methods."initWithPlayerLayer:".skipped = true
-class.AVPictureInPictureController.methods.playerLayer.skipped = true
-class.AVPictureInPictureControllerContentSource.methods."initWithPlayerLayer:".skipped = true
-class.AVPictureInPictureControllerContentSource.methods.playerLayer.skipped = true
-class.AVPictureInPictureControllerContentSource.methods."initWithSampleBufferDisplayLayer:playbackDelegate:".skipped = true
-class.AVPictureInPictureControllerContentSource.methods.sampleBufferDisplayLayer.skipped = true
-class.AVPlayerView.methods.player.skipped = true
-class.AVPlayerView.methods."setPlayer:".skipped = true
-class.AVPlayerView.methods.videoGravity.skipped = true
-class.AVPlayerView.methods."setVideoGravity:".skipped = true
-class.AVRoutePickerView.methods.player.skipped = true
-class.AVRoutePickerView.methods."setPlayer:".skipped = true
+# Needs AVCustomRoutingController from AVRouting
 class.AVRoutePickerView.methods.customRoutingController.skipped = true
 class.AVRoutePickerView.methods."setCustomRoutingController:".skipped = true
-
-# Needs AVFoundation (iOS)
-class.AVAudioSession.categories.AVPlaybackRouteSelecting.skipped = true
-class.AVPlayerItem.categories.AVKitAdditions.skipped = true
-class.AVPlayerViewController.methods.player.skipped = true
-class.AVPlayerViewController.methods."setPlayer:".skipped = true
-protocol.AVPlayerViewControllerDelegate.methods."playerViewController:didSelectMediaSelectionOption:inMediaSelectionGroup:".skipped = true

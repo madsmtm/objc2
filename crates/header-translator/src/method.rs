@@ -114,7 +114,8 @@ impl MethodModifiers {
             EntityKind::ObjCClassRef
             | EntityKind::ObjCProtocolRef
             | EntityKind::TypeRef
-            | EntityKind::ParmDecl => {
+            | EntityKind::ParmDecl
+            | EntityKind::ObjCNSObject => {
                 // Ignore
             }
             EntityKind::IbActionAttr | EntityKind::IbOutletAttr => {
@@ -129,7 +130,7 @@ impl MethodModifiers {
             EntityKind::AnnotateAttr => {
                 // TODO: `UI_APPEARANCE_SELECTOR`
             }
-            _ => error!("unknown"),
+            kind => error!(?kind, "unknown property child"),
         });
 
         this

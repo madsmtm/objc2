@@ -1,0 +1,120 @@
+framework = "AVFoundation"
+crate = "objc2-av-foundation"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
+macos = "10.7"
+maccatalyst = "13.1"
+ios = "2.2"
+tvos = "9.0"
+watchos = "3.0"
+visionos = "1.0"
+
+external.CIImage.module = "CoreImage.CIImage"
+external.CIContext.module = "CoreImage.CIContext"
+external.CIBarcodeDescriptor.module = "CoreImage.CIBarcodeDescriptor"
+
+# Only available on iOS
+class.AVAsset.methods.preferredDisplayCriteria.skipped = true
+
+# CG*Ref as error return is not yet supported
+class.AVAssetImageGenerator.methods."copyCGImageAtTime:actualTime:error:".skipped = true
+protocol.AVCapturePhotoCaptureDelegate.methods."captureOutput:didFinishProcessingPhotoSampleBuffer:previewPhotoSampleBuffer:resolvedSettings:bracketSettings:error:".skipped = true
+protocol.AVCapturePhotoCaptureDelegate.methods."captureOutput:didFinishProcessingRawPhotoSampleBuffer:previewPhotoSampleBuffer:resolvedSettings:bracketSettings:error:".skipped = true
+class.AVSampleBufferGenerator.methods."createSampleBufferForRequest:error:".skipped = true
+class.AVSampleBufferGenerator.methods."createSampleBufferForRequest:addingToBatch:error:".skipped = true
+
+# Unclear error return
+protocol.AVAsynchronousKeyValueLoading.methods."statusOfValueForKey:error:".skipped = true
+class.AVMetadataItem.methods."statusOfValueForKey:error:".skipped = true
+
+# Needs libdispatch
+class.AVAssetResourceLoader.methods."setDelegate:queue:".skipped = true
+class.AVAssetResourceLoader.methods.delegateQueue.skipped = true
+class.AVAssetWriterInput.methods."requestMediaDataWhenReadyOnQueue:usingBlock:".skipped = true
+class.AVAssetWriterInput.methods."respondToEachPassDescriptionOnQueue:usingBlock:".skipped = true
+class.AVCaptureAudioDataOutput.methods."setSampleBufferDelegate:queue:".skipped = true
+class.AVCaptureAudioDataOutput.methods.sampleBufferCallbackQueue.skipped = true
+class.AVCaptureDataOutputSynchronizer.methods."setDelegate:queue:".skipped = true
+class.AVCaptureDataOutputSynchronizer.methods.delegateCallbackQueue.skipped = true
+class.AVCaptureDepthDataOutput.methods."setDelegate:callbackQueue:".skipped = true
+class.AVCaptureDepthDataOutput.methods.delegateCallbackQueue.skipped = true
+class.AVCaptureIndexPicker.methods."setActionQueue:action:".skipped = true
+class.AVCaptureMetadataOutput.methods."setMetadataObjectsDelegate:queue:".skipped = true
+class.AVCaptureMetadataOutput.methods.metadataObjectsCallbackQueue.skipped = true
+class.AVCaptureSession.methods."setControlsDelegate:queue:".skipped = true
+class.AVCaptureSession.methods.controlsDelegateCallbackQueue.skipped = true
+class.AVCaptureSlider.methods."setActionQueue:action:".skipped = true
+class.AVCaptureVideoDataOutput.methods."setSampleBufferDelegate:queue:".skipped = true
+class.AVCaptureVideoDataOutput.methods.sampleBufferCallbackQueue.skipped = true
+class.AVContentKeySession.methods."setDelegate:queue:".skipped = true
+class.AVContentKeySession.methods.delegateQueue.skipped = true
+class.AVMetricEventStream.methods."setSubscriber:queue:".skipped = true
+class.AVPlayer.methods."addPeriodicTimeObserverForInterval:queue:usingBlock:".skipped = true
+class.AVPlayer.methods."addBoundaryTimeObserverForTimes:queue:usingBlock:".skipped = true
+class.AVPlayerItemIntegratedTimeline.methods."addPeriodicTimeObserverForInterval:queue:usingBlock:".skipped = true
+class.AVPlayerItemIntegratedTimeline.methods."addBoundaryTimeObserverForSegment:offsetsIntoSegment:queue:usingBlock:".skipped = true
+class.AVPlayerItemMetadataCollector.methods."setDelegate:queue:".skipped = true
+class.AVPlayerItemMetadataCollector.methods.delegateQueue.skipped = true
+class.AVPlayerItemVideoOutput.methods."setDelegate:queue:".skipped = true
+class.AVPlayerItemVideoOutput.methods.delegateQueue.skipped = true
+class.AVPlayerItemLegibleOutput.methods."setDelegate:queue:".skipped = true
+class.AVPlayerItemLegibleOutput.methods.delegateQueue.skipped = true
+class.AVPlayerItemMetadataOutput.methods."setDelegate:queue:".skipped = true
+class.AVPlayerItemMetadataOutput.methods.delegateQueue.skipped = true
+class.AVPlayerItemRenderedLegibleOutput.methods."setDelegate:queue:".skipped = true
+class.AVPlayerItemRenderedLegibleOutput.methods.delegateQueue.skipped = true
+protocol.AVQueuedSampleBufferRendering.methods."requestMediaDataWhenReadyOnQueue:usingBlock:".skipped = true
+class.AVSampleBufferDisplayLayer.methods."requestMediaDataWhenReadyOnQueue:usingBlock:".skipped = true
+class.AVSampleBufferRenderSynchronizer.methods."addPeriodicTimeObserverForInterval:queue:usingBlock:".skipped = true
+class.AVSampleBufferRenderSynchronizer.methods."addBoundaryTimeObserverForTimes:queue:usingBlock:".skipped = true
+
+# Needs MTAudioProcessingTap from MediaToolbox
+class.AVAudioMixInputParameters.methods.audioTapProcessor.skipped = true
+class.AVMutableAudioMixInputParameters.methods.audioTapProcessor.skipped = true
+class.AVMutableAudioMixInputParameters.methods."setAudioTapProcessor:".skipped = true
+
+# SIMD is unsupported in FII
+class.AVCameraCalibrationData.methods.intrinsicMatrix.skipped = true
+class.AVCameraCalibrationData.methods.extrinsicMatrix.skipped = true
+
+# Needs CGImagePropertyOrientation from ImageIO
+class.AVDepthData.methods."depthDataByApplyingExifOrientation:".skipped = true
+class.AVPortraitEffectsMatte.methods."portraitEffectsMatteByApplyingExifOrientation:".skipped = true
+class.AVSemanticSegmentationMatte.methods."semanticSegmentationMatteByApplyingExifOrientation:".skipped = true
+
+# Counterparts
+class.AVAssetDownloadStorageManagementPolicy.counterpart = "MutableSubclass(AVFoundation::AVAssetDownloadStorageManager::AVMutableAssetDownloadStorageManagementPolicy)"
+class.AVMutableAssetDownloadStorageManagementPolicy.counterpart = "ImmutableSuperclass(AVFoundation::AVAssetDownloadStorageManager::AVAssetDownloadStorageManagementPolicy)"
+class.AVAudioMix.counterpart = "MutableSubclass(AVFoundation::AVAudioMix::AVMutableAudioMix)"
+class.AVMutableAudioMix.counterpart = "ImmutableSuperclass(AVFoundation::AVAudioMix::AVAudioMix)"
+class.AVAudioMixInputParameters.counterpart = "MutableSubclass(AVFoundation::AVAudioMix::AVMutableAudioMixInputParameters)"
+class.AVMutableAudioMixInputParameters.counterpart = "ImmutableSuperclass(AVFoundation::AVAudioMix::AVAudioMixInputParameters)"
+class.AVMediaSelection.counterpart = "MutableSubclass(AVFoundation::AVMediaSelection::AVMutableMediaSelection)"
+class.AVMutableMediaSelection.counterpart = "ImmutableSuperclass(AVFoundation::AVMediaSelection::AVMediaSelection)"
+class.AVMetadataItem.counterpart = "MutableSubclass(AVFoundation::AVMetadataItem::AVMutableMetadataItem)"
+class.AVMutableMetadataItem.counterpart = "ImmutableSuperclass(AVFoundation::AVMetadataItem::AVMetadataItem)"
+class.AVMovie.counterpart = "MutableSubclass(AVFoundation::AVMovie::AVMutableMovie)"
+class.AVMutableMovie.counterpart = "ImmutableSuperclass(AVFoundation::AVMovie::AVMovie)"
+class.AVFragmentedMovie.skipped-protocols = ["NSCopying", "NSMutableCopying"] # Unclear what type these return
+class.AVTimedMetadataGroup.counterpart = "MutableSubclass(AVFoundation::AVTimedMetadataGroup::AVMutableTimedMetadataGroup)"
+class.AVMutableTimedMetadataGroup.counterpart = "ImmutableSuperclass(AVFoundation::AVTimedMetadataGroup::AVTimedMetadataGroup)"
+class.AVDateRangeMetadataGroup.counterpart = "MutableSubclass(AVFoundation::AVTimedMetadataGroup::AVMutableDateRangeMetadataGroup)"
+class.AVMutableDateRangeMetadataGroup.counterpart = "ImmutableSuperclass(AVFoundation::AVTimedMetadataGroup::AVDateRangeMetadataGroup)"
+class.AVVideoComposition.counterpart = "MutableSubclass(AVFoundation::AVVideoComposition::AVMutableVideoComposition)"
+class.AVMutableVideoComposition.counterpart = "ImmutableSuperclass(AVFoundation::AVVideoComposition::AVVideoComposition)"
+class.AVVideoCompositionInstruction.counterpart = "MutableSubclass(AVFoundation::AVVideoComposition::AVMutableVideoCompositionInstruction)"
+class.AVMutableVideoCompositionInstruction.counterpart = "ImmutableSuperclass(AVFoundation::AVVideoComposition::AVVideoCompositionInstruction)"
+class.AVVideoCompositionLayerInstruction.counterpart = "MutableSubclass(AVFoundation::AVVideoComposition::AVMutableVideoCompositionLayerInstruction)"
+class.AVMutableVideoCompositionLayerInstruction.counterpart = "ImmutableSuperclass(AVFoundation::AVVideoComposition::AVVideoCompositionInstruction)"
+class.AVCaption.counterpart = "MutableSubclass(AVFoundation::AVCaption::AVMutableCaption)"
+class.AVMutableCaption.counterpart = "ImmutableSuperclass(AVFoundation::AVCaption::AVCaption)"
+class.AVCaptionRegion.counterpart = "MutableSubclass(AVFoundation::AVCaption::AVMutableCaptionRegion)"
+class.AVMutableCaptionRegion.counterpart = "ImmutableSuperclass(AVFoundation::AVCaption::AVCaptionRegion)"
+class.AVComposition.counterpart = "MutableSubclass(AVFoundation::AVComposition::AVMutableComposition)"
+class.AVMutableComposition.counterpart = "ImmutableSuperclass(AVFoundation::AVComposition::AVComposition)"
+
+# Both protocols and classes
+protocol.AVVideoCompositionInstruction.renamed = "AVVideoCompositionInstructionProtocol"
+
+# Property declared twice in MutableEvents
+class.AVPlayerInterstitialEvent.categories.MutableEvents.skipped = true

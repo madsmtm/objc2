@@ -288,6 +288,8 @@ impl UnexposedAttr {
                 None
             }
             "objc_non_runtime_protocol" => None,
+            // Emits unavailability attributes on `new` and `init` methods
+            "AV_INIT_UNAVAILABLE" => None,
             _ => return Err(()),
         })
     }

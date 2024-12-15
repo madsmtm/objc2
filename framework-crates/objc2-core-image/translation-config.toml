@@ -27,7 +27,7 @@ class.CIFilter.methods."filterArrayFromSerializedXMP:inputImageExtent:error:".sk
 # Both a protocol and a class, so we use Swift's naming scheme
 protocol.CIFilter.renamed = "CIFilterProtocol"
 
-# Needs AVFoundation
+# Needs AVFoundation (cyclical)
 class.CIImage.categories.AVDepthData.skipped = true
 class.CIImage.categories.AVPortraitEffectsMatte.skipped = true
 class.CIImage.categories.AVSemanticSegmentationMatte.skipped = true

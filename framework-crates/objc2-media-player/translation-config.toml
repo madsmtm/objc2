@@ -9,12 +9,3 @@ watchos = "5.0"
 visionos = "1.0"
 
 external.NSImage.module = "AppKit.NSImage"
-
-# Needs `AVFoundation` framework
-class.AVMediaSelectionOption.categories.MPNowPlayingInfoLanguageOptionAdditions.skipped = true
-class.AVMediaSelectionGroup.categories.MPNowPlayingInfoLanguageOptionAdditions.skipped = true
-class.AVPlayerItem.categories.MPAdditions.skipped = true
-class.MPNowPlayingSession.methods."initWithPlayers:".skipped = true
-class.MPNowPlayingSession.methods.players.skipped = true
-class.MPNowPlayingSession.methods."addPlayer:".skipped = true
-class.MPNowPlayingSession.methods."removePlayer:".skipped = true

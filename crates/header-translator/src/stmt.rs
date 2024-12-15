@@ -2091,7 +2091,12 @@ impl Stmt {
                     } else {
                         write!(f, "#[repr(C)]")?;
                     }
-                    write!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
+                    // HACK to make Bool in structs work.
+                    if fields.iter().any(|(_, field)| field.is_objc_bool()) {
+                        write!(f, "#[derive(Clone, Copy, Debug)]")?;
+                    } else {
+                        write!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
+                    }
                     writeln!(f, "pub struct {} {{", id.name)?;
                     for (name, ty) in fields {
                         write!(f, "    ")?;

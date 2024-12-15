@@ -108,7 +108,7 @@ typedef.AURenderContextObserver.skipped = true
 class.AUAudioUnit.methods.renderContextObserver.skipped = true
 fn.AudioWorkIntervalCreate.skipped = true
 
-# Needs AVAudioFormat from AVFoundation
+# Needs AVAudioFormat from AVFoundation (cyclic dependency)
 class.AUAudioUnitBus.methods.format.skipped = true
 class.AUAudioUnitBus.methods."setFormat:error:".skipped = true
 class.AUAudioUnit.methods."shouldChangeToFormat:forBus:".skipped = true

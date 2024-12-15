@@ -20,10 +20,3 @@ class.PHImageManager.methods."requestImageDataForAsset:options:resultHandler:".s
 # Needs `dispatch_block_t`
 class.PHPhotoLibrary.methods."performChanges:completionHandler:".skipped = true
 class.PHPhotoLibrary.methods."performChangesAndWait:error:".skipped = true
-
-# Needs `AVFoundation` framework
-class.PHContentEditingInput.methods.avAsset.skipped = true
-class.PHContentEditingInput.methods.audiovisualAsset.skipped = true
-class.PHImageManager.methods."requestPlayerItemForVideo:options:resultHandler:".skipped = true
-class.PHImageManager.methods."requestExportSessionForVideo:options:exportPreset:resultHandler:".skipped = true
-class.PHImageManager.methods."requestAVAssetForVideo:options:resultHandler:".skipped = true

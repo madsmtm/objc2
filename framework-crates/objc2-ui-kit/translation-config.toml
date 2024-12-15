@@ -91,7 +91,7 @@ static.UITextWritingDirectionNatural.skipped = true
 static.UITextWritingDirectionLeftToRight.skipped = true
 static.UITextWritingDirectionRightToLeft.skipped = true
 
-# Needs `AVAudioSession`
+# Needs `AVAudioSession` (undesired dependency)
 class.UIScene.methods."getDefaultAudioSessionWithCompletionHandler:".skipped = true
 
 # Needs `INIntent`

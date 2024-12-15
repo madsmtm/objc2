@@ -1353,6 +1353,10 @@ impl Ty {
         }
     }
 
+    pub(crate) fn is_objc_bool(&self) -> bool {
+        matches!(self, Self::Primitive(Primitive::ObjcBool))
+    }
+
     fn plain(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| {
             match self {

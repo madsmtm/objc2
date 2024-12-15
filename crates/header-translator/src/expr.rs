@@ -190,6 +190,11 @@ impl Expr {
             res.pop();
         }
 
+        // Trim leading `+`
+        if matches!(res.first(), Some(Token::Punctuation(p)) if p == "+") {
+            res.remove(0);
+        }
+
         Self::Tokens(res)
     }
 
