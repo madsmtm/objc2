@@ -1,0 +1,20 @@
+framework = "OpenDirectory"
+crate = "objc2-open-directory"
+required-dependencies = ["objc2-foundation"]
+macos = "10.6"
+maccatalyst = "13.0"
+
+# Needs `SFAuthorization` from the `SecurityFoundation` framework
+class.ODConfiguration.methods."saveUsingAuthorization:error:".skipped = true
+class.ODSession.methods."configurationAuthorizationAllowingUserInteraction:error:".skipped = true
+class.ODSession.methods."addConfiguration:authorization:error:".skipped = true
+class.ODSession.methods."deleteConfiguration:authorization:error:".skipped = true
+class.ODSession.methods."deleteConfigurationWithNodename:authorization:error:".skipped = true
+
+# Needs `dispatch_queue_t`
+fn.ODQuerySetDispatchQueue.skipped = true
+
+# Old compatibility aliases
+typedef._ODRecordType.skipped = true
+typedef._ODAttributeType.skipped = true
+typedef._ODAuthenticationType.skipped = true

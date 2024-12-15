@@ -1075,6 +1075,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-open-directory"
+version = "0.2.2"
+dependencies = [
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-osa-kit"
 version = "0.2.2"
 dependencies = [

@@ -110,6 +110,7 @@ impl UnexposedAttr {
             | "__IOS_DEPRECATED"
             | "__OSX_AVAILABLE"
             | "__OSX_AVAILABLE_BUT_DEPRECATED"
+            | "__OSX_AVAILABLE_BUT_DEPRECATED_MSG"
             | "__OSX_AVAILABLE_STARTING"
             | "__OSX_DEPRECATED"
             | "__TVOS_AVAILABLE"
