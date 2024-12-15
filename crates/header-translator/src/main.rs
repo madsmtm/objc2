@@ -84,83 +84,17 @@ fn main() -> Result<(), BoxError> {
         error!("should have one of each platform: {sdks:?}");
     }
 
-    let mut libraries = BTreeMap::new();
-
     let tempdir = workspace_dir.join("target").join("header-translator");
     fs::create_dir_all(&tempdir)?;
 
-    // TODO: Compare between SDKs
-    for sdk in sdks {
-        // These are found using the `get_llvm_targets.fish` helper script
-        let llvm_targets: &[_] = match &sdk.platform {
-            Platform::MacOsX => &[
-                // "x86_64-apple-macosx10.12.0",
-                "arm64-apple-macosx11.0.0",
-                // "i686-apple-macosx10.12.0",
-            ],
-            Platform::IPhoneOs => &[
-                "arm64-apple-ios10.0.0",
-                // "armv7s-apple-ios10.0.0",
-                // "arm64-apple-ios14.0-macabi",
-                // "x86_64-apple-ios13.0-macabi",
-            ],
-            // Platform::IPhoneSimulator => &[
-            //     "arm64-apple-ios10.0.0-simulator",
-            //     "x86_64-apple-ios10.0.0-simulator",
-            //     "i386-apple-ios10.0.0-simulator",
-            // ],
-            // Platform::AppleTvOs => &["arm64-apple-tvos", "x86_64-apple-tvos"],
-            // Platform::WatchOs => &["arm64_32-apple-watchos", "armv7k-apple-watchos"],
-            // Platform::WatchSimulator => &[
-            //     "arm64-apple-watchos5.0.0-simulator",
-            //     "x86_64-apple-watchos5.0.0-simulator",
-            // ],
-            _ => continue,
-        };
-
-        let mut result: Option<BTreeMap<String, Library>> = None;
-
-        for llvm_target in llvm_targets {
-            let _span = info_span!("parsing", platform = ?sdk.platform, llvm_target).entered();
-
-            let curr_result = parse_sdk(&index, &config, &sdk, llvm_target, &tempdir);
-
-            if let Some(prev_result) = &result {
-                // Ensure that each target produces the same result.
-                assert_eq!(*prev_result, curr_result);
-            } else {
-                result = Some(curr_result);
-            }
-        }
-
-        let result = result.unwrap();
-
-        // Hacky way to support UIKit
-        match sdk.platform {
-            Platform::MacOsX => {
-                for (name, library) in result {
-                    if library.data.macos.is_some() {
-                        libraries.insert(name, library);
-                    }
-                }
-            }
-            Platform::IPhoneOs => {
-                for (name, library) in result {
-                    if library.data.macos.is_none() {
-                        libraries.insert(name, library);
-                    }
-                }
-            }
-            _ => {}
-        }
-    }
-
-    let span = info_span!("analyzing").entered();
-    for (name, library) in &mut libraries {
-        let _span = debug_span!("library", name).entered();
-        global_analysis(library);
-    }
-    drop(span);
+    let libraries: BTreeMap<_, _> = config
+        .libraries
+        .keys()
+        .map(|name| {
+            let library = parse_framework(&index, &config, name, &sdks, &tempdir);
+            (name.to_string(), library)
+        })
+        .collect();
 
     let dependency_map: BTreeMap<_, _> = libraries
         .iter()
@@ -240,39 +174,91 @@ fn load_config(workspace_dir: &Path) -> Result<Config, BoxError> {
     Ok(Config { libraries, system })
 }
 
-fn parse_sdk(
+fn parse_framework(
     index: &Index<'_>,
     config: &Config,
-    sdk: &SdkPath,
-    llvm_target: &str,
+    name: &str,
+    sdks: &[SdkPath],
     tempdir: &Path,
-) -> BTreeMap<String, Library> {
-    let mut context = Context::new(config);
+) -> Library {
+    let _span = info_span!("framework", name).entered();
+    let mut result = None;
 
-    config
-        .libraries
-        .iter()
-        .filter(|(_, data)| match &sdk.platform {
-            // TODO: Mac Catalyst
-            Platform::MacOsX => data.macos.is_some(),
-            Platform::IPhoneOs | Platform::IPhoneSimulator => data.ios.is_some(),
-            Platform::AppleTvOs | Platform::AppleTvSimulator => data.tvos.is_some(),
-            Platform::WatchOs | Platform::WatchSimulator => data.watchos.is_some(),
-            Platform::XrOs | Platform::XrOsSimulator => data.visionos.is_some(),
-            _ => unimplemented!("unsupported sdk {sdk:?}"),
-        })
-        .map(|(name, data)| {
-            let _span = info_span!("framework", ?name).entered();
-            let mut library = Library::new(name, data);
-            let tu =
-                get_translation_unit(index, sdk, llvm_target, &library.data.framework, tempdir);
-            parse_framework(tu, &mut context, &mut library);
-            (name.into(), library)
-        })
-        .collect()
+    let data = config.library(name);
+
+    // Find preferred SDK, to hackily support UIKit. For speed, we currently
+    // only parse each module once in total (though in the future we'll have
+    // to parse it multiple times, and compare the result).
+    let sdk = sdks.iter().find(|&sdk| {
+        let platform = &sdk.platform;
+        // Order of preference
+        if data.macos.is_some() {
+            *platform == Platform::MacOsX
+        } else if data.ios.is_some() {
+            *platform == Platform::IPhoneOs
+        } else if data.maccatalyst.is_some() {
+            *platform == Platform::MacOsX
+        } else if data.tvos.is_some() {
+            *platform == Platform::AppleTvOs
+        } else if data.watchos.is_some() {
+            *platform == Platform::WatchOs
+        } else if data.visionos.is_some() {
+            *platform == Platform::XrOs
+        } else {
+            panic!("no supported SDK: {sdk:?}")
+        }
+    });
+    let sdk = sdk.expect("find SDK");
+
+    let llvm_targets: &[_] = match &sdk.platform {
+        Platform::MacOsX => &[
+            // "x86_64-apple-macosx10.12.0",
+            "arm64-apple-macosx11.0.0",
+            // "i686-apple-macosx10.12.0",
+        ],
+        Platform::IPhoneOs => &[
+            "arm64-apple-ios10.0.0",
+            // "armv7s-apple-ios10.0.0",
+        ],
+        Platform::AppleTvOs => &[
+            "arm64-apple-tvos",
+            // "x86_64-apple-tvos",
+        ],
+        Platform::WatchOs => &[
+            "arm64-apple-watchos",
+            // "arm64_32-apple-watchos",
+            // "armv7k-apple-watchos",
+        ],
+        Platform::XrOs => &["arm64-apple-xros"],
+        _ => unimplemented!("SDK platform {sdk:?}"),
+    };
+
+    for llvm_target in llvm_targets {
+        let _span = info_span!("target", platform = ?sdk.platform, llvm_target).entered();
+
+        let mut context = Context::new(config);
+        let mut library = Library::new(name, data);
+        let tu = get_translation_unit(index, sdk, llvm_target, &data.framework, tempdir);
+        parse_translation_unit(tu, &mut context, &mut library);
+        global_analysis(&mut library);
+
+        if let Some(prev_result) = &result {
+            // Ensure that each target produces the same result.
+            assert_eq!(*prev_result, library);
+        } else {
+            result = Some(library);
+        }
+    }
+
+    result.unwrap()
 }
 
-fn parse_framework(tu: TranslationUnit<'_>, context: &mut Context<'_>, library: &mut Library) {
+fn parse_translation_unit(
+    tu: TranslationUnit<'_>,
+    context: &mut Context<'_>,
+    library: &mut Library,
+) {
+    let _span = info_span!("parsing").entered();
     let mut preprocessing = true;
     let mut file_span: Option<(_, _)> = None;
 

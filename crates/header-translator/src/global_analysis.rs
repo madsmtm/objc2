@@ -10,6 +10,7 @@ use crate::stmt::Stmt;
 use crate::Library;
 
 pub fn global_analysis(library: &mut Library) {
+    let _span = info_span!("analyzing").entered();
     update_module(&mut library.module);
 }
 
