@@ -8,11 +8,9 @@ ios = "10.0"
 watchos = "9.0"
 visionos = "1.0"
 
+external.AVAudioSession.module = "AVFAudio.AVAudioSession"
+
 # Needs `dispatch_queue_t`
 class.CXCallController.methods."initWithQueue:".skipped = true
 class.CXCallObserver.methods."setDelegate:queue:".skipped = true
 class.CXProvider.methods."setDelegate:queue:".skipped = true
-
-# Needs `AVFAudio` framework
-protocol.CXProviderDelegate.methods."provider:didActivateAudioSession:".skipped = true
-protocol.CXProviderDelegate.methods."provider:didDeactivateAudioSession:".skipped = true

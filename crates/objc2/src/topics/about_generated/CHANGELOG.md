@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   querying the underlying data.
 * Added new framework crates:
   - `AudioToolbox` / `objc2-audio-toolbox`.
+  - `AVFAudio` / `objc2-avf-audio`.
   - `CoreAudioTypes` / `objc2-core-audio-types`.
   - `CoreGraphics` / `objc2-core-graphics`.
   - `CoreFoundation` / `objc2-core-foundation`.

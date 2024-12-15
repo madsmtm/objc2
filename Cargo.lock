@@ -506,6 +506,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-avf-audio"
+version = "0.2.2"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-audio-toolbox",
+ "objc2-core-audio-types",
+ "objc2-core-media",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-background-assets"
 version = "0.2.2"
 dependencies = [
@@ -539,6 +552,7 @@ version = "0.2.2"
 dependencies = [
  "block2",
  "objc2",
+ "objc2-avf-audio",
  "objc2-foundation",
 ]
 
@@ -1231,6 +1245,7 @@ version = "0.2.2"
 dependencies = [
  "block2",
  "objc2",
+ "objc2-avf-audio",
  "objc2-core-media",
  "objc2-core-ml",
  "objc2-foundation",
@@ -1242,6 +1257,7 @@ version = "0.2.2"
 dependencies = [
  "block2",
  "objc2",
+ "objc2-avf-audio",
  "objc2-core-media",
  "objc2-foundation",
 ]

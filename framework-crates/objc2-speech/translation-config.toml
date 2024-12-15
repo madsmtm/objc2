@@ -5,7 +5,3 @@ macos = "10.15"
 maccatalyst = "13.0"
 ios = "10.0"
 visionos = "1.0"
-
-# Needs `AVFAudio` framework
-class.SFSpeechAudioBufferRecognitionRequest.methods.nativeAudioFormat.skipped = true
-class.SFSpeechAudioBufferRecognitionRequest.methods."appendAudioPCMBuffer:".skipped = true

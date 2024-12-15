@@ -1,0 +1,51 @@
+framework = "AVFAudio"
+crate = "objc2-avf-audio"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
+# The documentation says something newer here, but since AVFAudio was
+# originally available as part of AVFoundation, the linker is able to figure
+# out that it actually needs to link AVFoundation because of the $ld$previous$
+# directives in AVFAudio.tdb.
+#
+# FIXME: We won't be able to use an old SDK though, so this is temporarily
+# kept high for CI.
+macos = "11.3" # 10.7
+maccatalyst = "14.5" # 13.1
+ios = "14.5" # 2.2
+tvos = "14.5" # 9.0
+watchos = "9.0" # 3.0
+visionos = "1.0"
+
+# AUMIDIEventListBlock not currently exported by AudioToolbox
+class.AVAudioEngine.methods."connectMIDI:to:format:eventListBlock:".skipped = true
+class.AVAudioEngine.methods."connectMIDI:toNodes:format:eventListBlock:".skipped = true
+
+# Needs MIDIEndpointRef and MIDIEventList from CoreMIDI
+class.AVMusicTrack.methods.destinationMIDIEndpoint.skipped = true
+class.AVMusicTrack.methods."setDestinationMIDIEndpoint:".skipped = true
+class.AVAudioUnitMIDIInstrument.methods."sendMIDIEventList:".skipped = true
+
+# Both the NSObject superclass and the AVAudioSessionDeprecated category defines this
+class.AVAudioSession.methods.init.skipped = true
+class.AVAudioSession.methods.new.skipped = true # Use sharedInstance
+
+# Integer return type in error method, unclear how to handle yet
+class.AVAudioSequencer.methods."hostTimeForBeats:error:".skipped = true
+class.AVAudioSequencer.methods."beatsForHostTime:error:".skipped = true
+class.AVAudioEngine.methods."renderOffline:toBuffer:error:".skipped = true
+
+# Non-null error return
+class.AVAudioSequencer.methods."dataWithSMPTEResolution:error:".skipped = true
+
+# tries to derive with `PartialEq` which fails because of `Bool` fields
+struct.AVAudioVoiceProcessingOtherAudioDuckingConfiguration.skipped = true
+typedef.AVAudioVoiceProcessingOtherAudioDuckingConfiguration.skipped = true
+class.AVAudioInputNode.methods.voiceProcessingOtherAudioDuckingConfiguration.skipped = true
+class.AVAudioInputNode.methods."setVoiceProcessingOtherAudioDuckingConfiguration:".skipped = true
+
+# Needs AppKit or UIKit
+class.AVAudioUnitComponent.methods.icon.skipped = true
+
+class.AVAudioBuffer.skipped-protocols = ["NSMutableCopying"]
+class.AVAudioPCMBuffer.skipped-protocols = ["NSMutableCopying"]
+class.AVAudioCompressedBuffer.skipped-protocols = ["NSMutableCopying"]

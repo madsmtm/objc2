@@ -1,5 +1,6 @@
 | Framework | Crate | Documentation |
 | --- | --- | --- |
+| `AVFAudio` | [![`objc2-avf-audio`](https://badgen.net/crates/v/objc2-avf-audio)](https://crates.io/crates/objc2-avf-audio) | [![docs.rs](https://docs.rs/objc2-avf-audio/badge.svg)](https://docs.rs/objc2-avf-audio/) |
 | `AVKit` | [![`objc2-av-kit`](https://badgen.net/crates/v/objc2-av-kit)](https://crates.io/crates/objc2-av-kit) | [![docs.rs](https://docs.rs/objc2-av-kit/badge.svg)](https://docs.rs/objc2-av-kit/) |
 | `Accessibility` | [![`objc2-accessibility`](https://badgen.net/crates/v/objc2-accessibility)](https://crates.io/crates/objc2-accessibility) | [![docs.rs](https://docs.rs/objc2-accessibility/badge.svg)](https://docs.rs/objc2-accessibility/) |
 | `Accounts` | [![`objc2-accounts`](https://badgen.net/crates/v/objc2-accounts)](https://crates.io/crates/objc2-accounts) | [![docs.rs](https://docs.rs/objc2-accounts/badge.svg)](https://docs.rs/objc2-accounts/) |
