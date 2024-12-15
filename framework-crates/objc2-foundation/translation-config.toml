@@ -95,11 +95,11 @@ enum.NSComparisonResult.skipped = true
 
 # Different definitions on 32-bit
 typedef.NSPoint.skipped = true
-struct.NSPoint.skipped = true
+struct._NSPoint.skipped = true
 typedef.NSSize.skipped = true
-struct.NSSize.skipped = true
+struct._NSSize.skipped = true
 typedef.NSRect.skipped = true
-struct.NSRect.skipped = true
+struct._NSRect.skipped = true
 
 # References CGRectEdge
 enum.NSRectEdge.skipped = true

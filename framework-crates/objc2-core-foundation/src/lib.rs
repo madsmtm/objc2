@@ -15,10 +15,14 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[cfg(feature = "CFBundle")]
+mod bundle;
 mod generated;
 #[cfg(feature = "CFCGTypes")]
 mod geometry;
 
+#[cfg(feature = "CFBundle")]
+pub use self::bundle::CFBundleRefNum;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 #[cfg(feature = "CFCGTypes")]

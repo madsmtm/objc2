@@ -12,3 +12,7 @@ link = false # This framework only contains types
 
 # Requires a cast
 enum.anonymous.constants.AVAudioSessionErrorInsufficientPriority.skipped = true
+
+# Differs based on architecture
+typedef.AVAudioInteger.skipped = true
+typedef.AVAudioUInteger.skipped = true

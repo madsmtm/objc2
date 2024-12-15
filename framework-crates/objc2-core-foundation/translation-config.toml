@@ -47,3 +47,6 @@ fn.CFAutorelease.skipped = true
 # Implementation details
 fn.__CFRangeMake.skipped = true
 fn.__CFStringMakeConstantString.skipped = true
+
+# Differs based on architecture
+typedef.CFBundleRefNum.skipped = true

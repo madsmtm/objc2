@@ -17,8 +17,13 @@ extern crate std;
 
 #[allow(clippy::eq_op)]
 mod generated;
+#[cfg(feature = "AudioSessionTypes")]
+mod session;
+
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+#[cfg(feature = "AudioSessionTypes")]
+pub use self::session::{AVAudioInteger, AVAudioUInteger};
 
 // MacTypes.h
 #[allow(dead_code)]

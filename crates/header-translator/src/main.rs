@@ -216,7 +216,7 @@ fn parse_framework(
                 &[
                     "arm64-apple-macosx10.12.0",
                     // "arm64-apple-macosx11.0.0",
-                    // "i686-apple-macosx10.12.0",
+                    // "i386-apple-macosx10.12.0",
                 ]
             } else {
                 &["arm64-apple-ios13.1.0-macabi"]
