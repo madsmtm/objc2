@@ -211,11 +211,17 @@ fn parse_framework(
     let sdk = sdk.expect("find SDK");
 
     let llvm_targets: &[_] = match &sdk.platform {
-        Platform::MacOsX => &[
-            // "x86_64-apple-macosx10.12.0",
-            "arm64-apple-macosx11.0.0",
-            // "i686-apple-macosx10.12.0",
-        ],
+        Platform::MacOsX => {
+            if data.macos.is_some() {
+                &[
+                    "arm64-apple-macosx10.12.0",
+                    // "arm64-apple-macosx11.0.0",
+                    // "i686-apple-macosx10.12.0",
+                ]
+            } else {
+                &["arm64-apple-ios13.1.0-macabi"]
+            }
+        }
         Platform::IPhoneOs => &[
             "arm64-apple-ios10.0.0",
             // "armv7s-apple-ios10.0.0",
@@ -342,9 +348,16 @@ fn get_translation_unit<'i: 'c, 'c>(
     // "usr/include/TargetConditionals.modulemap"
     // "System/Library/Frameworks/CoreFoundation.framework/Modules/module.modulemap"
     // "usr/include/ObjectiveC.modulemap"
-    let path = sdk.path.join(format!(
-        "System/Library/Frameworks/{framework}.framework/Modules/module.modulemap"
-    ));
+    let modulemap =
+        format!("System/Library/Frameworks/{framework}.framework/Modules/module.modulemap");
+    // On Mac Catalyst, we need to try to load from System/iOSSupport first.
+    let mut path = sdk.path.join(&modulemap);
+    if llvm_target.contains("macabi") {
+        let ios_path = sdk.path.join("System/iOSSupport").join(&modulemap);
+        if ios_path.exists() {
+            path = ios_path;
+        }
+    }
     let modulemap = fs::read_to_string(&path).expect("read module map");
     let re = regex::Regex::new(r"(?m)^framework +module +(\w*)").unwrap();
 
@@ -352,6 +365,79 @@ fn get_translation_unit<'i: 'c, 'c>(
     let mut captures = re.captures_iter(&modulemap);
     let module = &captures.next().expect("module name in module map")[1];
     assert_eq!(captures.count(), 0);
+
+    let cache_path = format!("-fmodules-cache-path={}", tempdir.to_str().unwrap());
+    let module_name = format!("-fmodule-name={module}");
+    let mut arguments = vec![
+        "-x",
+        "objective-c",
+        "-target",
+        llvm_target,
+        "-Wall",
+        "-Wextra",
+        "-fobjc-arc",
+        "-fobjc-arc-exceptions",
+        "-fexceptions",
+        "-fobjc-exceptions",
+        "-fobjc-abi-version=2", // 3??
+        "-fblocks",
+        // "-fparse-all-comments",
+        // TODO: "-fretain-comments-from-system-headers"
+        "-isysroot",
+        sdk.path.to_str().unwrap(),
+        // See ClangImporter.cpp and Foundation/NSObjCRuntime.h
+        "-D",
+        "__SWIFT_ATTR_SUPPORTS_SENDABLE_DECLS=1",
+        "-D",
+        "__SWIFT_ATTR_SUPPORTS_SENDING=1",
+        // "-D",
+        // "__swift__=51000",
+        // Enable modules. We do this by parsing the `.modulemap` instead
+        // of a combined file containing includes, as the Clang AST from
+        // dependent modules does not seem possible to access otherwise.
+        //
+        // The magic here is passing `-emit-module` to the frontend.
+        //
+        // See:
+        // https://clang.llvm.org/docs/Modules.html
+        // https://clang.llvm.org/docs/PCHInternals.html
+        "-fmodules",
+        "-fimplicit-module-maps",
+        // "-Xclang",
+        // "-fmodule-format=raw",
+        &cache_path,
+        "-Xclang",
+        "-emit-module",
+        &module_name,
+        "-fsystem-module",
+        // "-fmodules-validate-system-headers",
+        // "-fmodules-search-all",
+        "-Xclang",
+        "-fno-modules-prune-non-affecting-module-map-files",
+        // "-Xclang",
+        // "-fmodule-feature",
+        // "-Xclang",
+        // "swift",
+        "-disable-objc-default-synthesize-properties",
+        // Explicitly enable API notes (implicitly enabled by -fmodules).
+        "-fapinotes",
+        "-fapinotes-modules",
+        // "-fapi-notes-swift-version=6.0",
+        // Make AudioToolbox less dependent on CoreServices
+        "-DAUDIOCOMPONENT_NOCARBONINSTANCES=1",
+    ];
+
+    // Add include paths for Mac Catalyst
+    let ios_include = sdk.path.join("System/iOSSupport/usr/include");
+    let ios_frameworks = sdk.path.join("System/iOSSupport/System/Library/Frameworks");
+    if llvm_target.contains("macabi") {
+        arguments.extend(&[
+            "-isystem",
+            ios_include.to_str().unwrap(),
+            "-iframework",
+            ios_frameworks.to_str().unwrap(),
+        ]);
+    }
 
     let tu = index
         .parser(path.to_str().unwrap())
@@ -364,64 +450,7 @@ fn get_translation_unit<'i: 'c, 'c>(
         .visit_implicit_attributes(true)
         // .ignore_non_errors_from_included_files(true)
         .retain_excluded_conditional_blocks(true)
-        .arguments(&[
-            "-x",
-            "objective-c",
-            "-target",
-            llvm_target,
-            "-Wall",
-            "-Wextra",
-            "-fobjc-arc",
-            "-fobjc-arc-exceptions",
-            "-fexceptions",
-            "-fobjc-exceptions",
-            "-fobjc-abi-version=2", // 3??
-            "-fblocks",
-            // "-fparse-all-comments",
-            // TODO: "-fretain-comments-from-system-headers"
-            "-isysroot",
-            sdk.path.to_str().unwrap(),
-            // See ClangImporter.cpp and Foundation/NSObjCRuntime.h
-            "-D",
-            "__SWIFT_ATTR_SUPPORTS_SENDABLE_DECLS=1",
-            "-D",
-            "__SWIFT_ATTR_SUPPORTS_SENDING=1",
-            // "-D",
-            // "__swift__=51000",
-            // Enable modules. We do this by parsing the `.modulemap` instead
-            // of a combined file containing includes, as the Clang AST from
-            // dependent modules does not seem possible to access otherwise.
-            //
-            // The magic here is passing `-emit-module` to the frontend.
-            //
-            // See:
-            // https://clang.llvm.org/docs/Modules.html
-            // https://clang.llvm.org/docs/PCHInternals.html
-            "-fmodules",
-            "-fimplicit-module-maps",
-            // "-Xclang",
-            // "-fmodule-format=raw",
-            &format!("-fmodules-cache-path={}", tempdir.to_str().unwrap()),
-            "-Xclang",
-            "-emit-module",
-            &format!("-fmodule-name={module}"),
-            "-fsystem-module",
-            // "-fmodules-validate-system-headers",
-            // "-fmodules-search-all",
-            "-Xclang",
-            "-fno-modules-prune-non-affecting-module-map-files",
-            // "-Xclang",
-            // "-fmodule-feature",
-            // "-Xclang",
-            // "swift",
-            "-disable-objc-default-synthesize-properties",
-            // Explicitly enable API notes (implicitly enabled by -fmodules).
-            "-fapinotes",
-            "-fapinotes-modules",
-            // "-fapi-notes-swift-version=6.0",
-            // Make AudioToolbox less dependent on CoreServices
-            "-DAUDIOCOMPONENT_NOCARBONINSTANCES=1",
-        ])
+        .arguments(&arguments)
         .parse()
         .unwrap();
 

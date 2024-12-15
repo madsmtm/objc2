@@ -176,7 +176,12 @@ impl Location {
             .skip_while(|s| !s.as_encoded_bytes().ends_with(b".sdk"))
             .skip(1)
             .map(|s| s.to_str().expect("component to_str"))
-            .filter(|s| !matches!(*s, "System" | "Library" | "Frameworks" | "Headers"))
+            .filter(|s| {
+                !matches!(
+                    *s,
+                    "System" | "Library" | "Frameworks" | "Headers" | "iOSSupport"
+                )
+            })
             .map(|component| component.strip_suffix(".framework").unwrap_or(component))
             .map(|component| component.strip_suffix(".h").unwrap_or(component))
             .map(|s| s.to_string().into())
