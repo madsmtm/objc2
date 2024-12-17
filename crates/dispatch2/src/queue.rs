@@ -1,23 +1,12 @@
 //! Dispatch queue definition.
 
-use alloc::boxed::Box;
-use alloc::ffi::CString;
-use core::borrow::{Borrow, BorrowMut};
-use core::ops::{Deref, DerefMut};
-use core::ptr::NonNull;
-use core::time::Duration;
+use alloc::{boxed::Box, ffi::CString};
+use core::{mem::ManuallyDrop, ptr::NonNull, time::Duration};
 
-use super::object::{DispatchObject, QualityOfServiceClassFloorError, TargetQueueError};
-use super::utils::function_wrapper;
-use super::{ffi::*, QualityOfServiceClass};
-
-/// Error returned by [Queue::after].
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-#[non_exhaustive]
-pub enum QueueAfterError {
-    /// The given timeout value will result in an overflow when converting to dispatch time.
-    TimeOverflow,
-}
+use super::{
+    ffi::*, function_wrapper, rc::Retained, AsRawDispatchObject, QualityOfServiceClass,
+    QualityOfServiceClassFloorError, TryFromDurationError,
+};
 
 /// Queue type attribute.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -90,40 +79,17 @@ impl GlobalQueueIdentifier {
     }
 }
 
-/// Auto release frequency for [WorkloopQueue::set_autorelease_frequency].
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-#[non_exhaustive]
-pub enum DispatchAutoReleaseFrequency {
-    /// Inherit autorelease frequency from the target [Queue].
-    Inherit,
-    /// Configure an autorelease pool before the execution of a function and releases the objects in that pool after the function finishes executing.
-    WorkItem,
-    /// Never setup an autorelease pool.
-    Never,
-}
-
-impl From<DispatchAutoReleaseFrequency> for dispatch_autorelease_frequency_t {
-    fn from(value: DispatchAutoReleaseFrequency) -> Self {
-        match value {
-            DispatchAutoReleaseFrequency::Inherit => {
-                dispatch_autorelease_frequency_t::DISPATCH_AUTORELEASE_FREQUENCY_INHERIT
-            }
-            DispatchAutoReleaseFrequency::WorkItem => {
-                dispatch_autorelease_frequency_t::DISPATCH_AUTORELEASE_FREQUENCY_WORK_ITEM
-            }
-            DispatchAutoReleaseFrequency::Never => {
-                dispatch_autorelease_frequency_t::DISPATCH_AUTORELEASE_FREQUENCY_NEVER
-            }
-            _ => panic!("Unknown DispatchAutoReleaseFrequency value: {:?}", value),
-        }
+impl Default for GlobalQueueIdentifier {
+    fn default() -> Self {
+        Self::QualityOfService(QualityOfServiceClass::default())
     }
 }
 
 /// Dispatch queue.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Queue {
-    dispatch_object: DispatchObject<dispatch_queue_s>,
-    is_workloop: bool,
+    inner: ManuallyDrop<Retained<dispatch_queue_s>>,
+    is_global_queue: bool,
 }
 
 impl Queue {
@@ -136,14 +102,13 @@ impl Queue {
             dispatch_queue_create(label.as_ptr(), dispatch_queue_attr_t::from(queue_attribute))
         };
 
-        assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
-
         // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
+        let inner =
+            unsafe { Retained::from_raw(object).expect("dispatch_queue_create shouldn't fail!") };
 
         Queue {
-            dispatch_object,
-            is_workloop: false,
+            inner: ManuallyDrop::new(inner),
+            is_global_queue: false,
         }
     }
 
@@ -156,20 +121,19 @@ impl Queue {
             dispatch_queue_create_with_target(
                 label.as_ptr(),
                 dispatch_queue_attr_t::from(queue_attribute),
-                target.dispatch_object.as_raw(),
+                target.as_raw(),
             )
         };
 
-        assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
-
         // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
+        let inner =
+            unsafe { Retained::from_raw(object).expect("dispatch_queue_create shouldn't fail!") };
 
         // NOTE: dispatch_queue_create_with_target is in charge of retaining the target Queue.
 
         Queue {
-            dispatch_object,
-            is_workloop: false,
+            inner: ManuallyDrop::new(inner),
+            is_global_queue: false,
         }
     }
 
@@ -180,33 +144,27 @@ impl Queue {
         // Safety: raw_identifier cannot be invalid, flags is reserved.
         let object = unsafe { dispatch_get_global_queue(raw_identifier, 0) };
 
-        assert!(
-            !object.is_null(),
-            "dispatch_get_global_queue shouldn't fail!"
-        );
-
         // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_shared(object.cast()) };
+        let inner = unsafe {
+            Retained::from_raw(object.cast()).expect("dispatch_get_global_queue shouldn't fail!")
+        };
 
         Queue {
-            dispatch_object,
-            is_workloop: false,
+            inner: ManuallyDrop::new(inner),
+            is_global_queue: true,
         }
     }
 
     /// Return the main queue.
     pub fn main() -> Self {
-        // Safety: raw_identifier cannot be invalid, flags is reserved.
-        let object = dispatch_get_main_queue();
-
-        assert!(!object.is_null(), "dispatch_get_main_queue shouldn't fail!");
-
         // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_shared(object.cast()) };
-
+        let inner = unsafe {
+            Retained::from_raw(dispatch_get_main_queue().cast())
+                .expect("dispatch_get_main_queue shouldn't fail!")
+        };
         Queue {
-            dispatch_object,
-            is_workloop: false,
+            inner: ManuallyDrop::new(inner),
+            is_global_queue: true,
         }
     }
 
@@ -215,8 +173,6 @@ impl Queue {
     where
         F: Send + FnOnce(),
     {
-        assert!(!self.is_workloop, "exec_sync is invalid for WorkloopQueue");
-
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
@@ -235,12 +191,11 @@ impl Queue {
     }
 
     /// Enqueue a function for execution at the specified time on the [Queue].
-    pub fn after<F>(&self, wait_time: Duration, work: F) -> Result<(), QueueAfterError>
+    pub fn after<F>(&self, wait_time: Duration, work: F) -> Result<(), TryFromDurationError>
     where
         F: Send + FnOnce(),
     {
-        let when =
-            dispatch_time_t::try_from(wait_time).map_err(|_| QueueAfterError::TimeOverflow)?;
+        let when = dispatch_time_t::try_from(wait_time)?;
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
@@ -308,46 +263,26 @@ impl Queue {
         }
     }
 
-    /// Set the finalizer function for the [Queue].
-    pub fn set_finalizer<F>(&mut self, destructor: F)
-    where
-        F: Send + FnOnce(),
-    {
-        self.dispatch_object.set_finalizer(destructor);
-    }
-
-    /// Set the target [Queue] of this [Queue].
-    pub fn set_target_queue(&self, queue: &Queue) -> Result<(), TargetQueueError> {
-        // Safety: We are in Queue instance.
-        unsafe { self.dispatch_object.set_target_queue(queue) }
-    }
-
     /// Set the QOS class floor of the [Queue].
     pub fn set_qos_class_floor(
         &self,
         qos_class: QualityOfServiceClass,
         relative_priority: i32,
     ) -> Result<(), QualityOfServiceClassFloorError> {
-        // Safety: We are in Queue instance.
-        unsafe {
-            self.dispatch_object
-                .set_qos_class_floor(qos_class, relative_priority)
+        if !(QOS_MIN_RELATIVE_PRIORITY..=0).contains(&relative_priority) {
+            return Err(QualityOfServiceClassFloorError::InvalidRelativePriority);
         }
-    }
 
-    /// Activate the [Queue].
-    pub fn activate(&mut self) {
-        self.dispatch_object.activate();
-    }
+        // SAFETY: Safe as relative_priority can only be valid.
+        unsafe {
+            dispatch_set_qos_class_floor(
+                self.as_raw_object(),
+                dispatch_qos_class_t::from(qos_class),
+                relative_priority,
+            );
+        }
 
-    /// Suspend the invocation of functions on the [Queue].
-    pub fn suspend(&self) {
-        self.dispatch_object.suspend();
-    }
-
-    /// Resume the invocation of functions on the [Queue].
-    pub fn resume(&self) {
-        self.dispatch_object.resume();
+        Ok(())
     }
 
     /// Get the raw [dispatch_queue_t] value.
@@ -355,107 +290,119 @@ impl Queue {
     /// # Safety
     ///
     /// - Object shouldn't be released manually.
-    pub const unsafe fn as_raw(&self) -> dispatch_queue_t {
-        // SAFETY: Upheld by caller.
-        unsafe { self.dispatch_object.as_raw() }
+    pub fn as_raw(&self) -> dispatch_queue_t {
+        Retained::as_ptr(&self.inner).cast_mut()
     }
 }
 
-/// Dispatch workloop queue.
-#[derive(Debug, Clone)]
-pub struct WorkloopQueue {
-    queue: Queue,
+impl Drop for Queue {
+    fn drop(&mut self) {
+        if !self.is_global_queue {
+            // Safety: do not release global queues as they are singletons.
+            let _ = unsafe { ManuallyDrop::take(&mut self.inner) };
+        }
+    }
 }
 
-impl WorkloopQueue {
-    /// Create a new [WorkloopQueue].
-    pub fn new(label: &str, inactive: bool) -> Self {
-        let label = CString::new(label).expect("Invalid label!");
-
-        // Safety: label can only be valid.
-        let object = unsafe {
-            if inactive {
-                dispatch_workloop_create_inactive(label.as_ptr())
-            } else {
-                dispatch_workloop_create(label.as_ptr())
-            }
-        };
-
-        assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
-
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
-
-        WorkloopQueue {
-            queue: Queue {
-                dispatch_object,
-                is_workloop: true,
+impl Clone for Queue {
+    fn clone(&self) -> Self {
+        Self {
+            // Safety: pointer must be valid.
+            inner: unsafe {
+                ManuallyDrop::new(
+                    Retained::retain(self.as_raw()).expect("failed to retain dispatch_queue"),
+                )
             },
+            is_global_queue: self.is_global_queue,
+        }
+    }
+}
+
+impl AsRawDispatchObject for Queue {
+    fn as_raw_object(&self) -> dispatch_object_t {
+        self.as_raw().cast()
+    }
+}
+
+// Safety: it's safe to move queue between threads.
+unsafe impl Send for Queue {}
+
+// Safety: it's safe to share queue between threads.
+unsafe impl Sync for Queue {}
+
+#[cfg(test)]
+mod tests {
+    use std::sync::mpsc;
+
+    use super::*;
+
+    #[test]
+    fn test_create_main_queue() {
+        let _ = Queue::main();
+    }
+
+    #[test]
+    fn test_serial_queue() {
+        let queue = Queue::new("com.github.madsmtm.objc2", QueueAttribute::Serial);
+        let (tx, rx) = mpsc::channel();
+        queue.exec_async(|| {
+            tx.send(()).unwrap();
+        });
+        rx.recv().unwrap();
+    }
+
+    #[test]
+    fn test_concurrent_queue() {
+        let queue = Queue::new("com.github.madsmtm.objc2", QueueAttribute::Concurrent);
+        let (tx, rx) = mpsc::channel();
+        queue.exec_async(|| {
+            tx.send(()).unwrap();
+        });
+        queue.exec_async(|| {
+            tx.send(()).unwrap();
+        });
+        for _ in 0..2 {
+            rx.recv().unwrap();
         }
     }
 
-    /// Configure how the [WorkloopQueue] manage the autorelease pools for the functions it executes.
-    pub fn set_autorelease_frequency(&self, frequency: DispatchAutoReleaseFrequency) {
-        // Safety: object and frequency can only be valid.
-        unsafe {
-            dispatch_workloop_set_autorelease_frequency(
-                self.as_raw(),
-                dispatch_autorelease_frequency_t::from(frequency),
-            );
+    #[test]
+    fn test_global_default_queue() {
+        let queue = Queue::global_queue(GlobalQueueIdentifier::default());
+        let (tx, rx) = mpsc::channel();
+        queue.exec_async(|| {
+            tx.send(()).unwrap();
+        });
+        rx.recv().unwrap();
+    }
+
+    #[test]
+    fn test_share_queue_across_threads() {
+        let queue = Queue::new("com.github.madsmtm.objc2", QueueAttribute::Serial);
+        let (tx, rx) = mpsc::channel();
+        queue.exec_async(|| {
+            queue.exec_async(|| {
+                tx.send(()).unwrap();
+            });
+        });
+        queue.exec_async(|| {
+            tx.send(()).unwrap();
+        });
+        for _ in 0..2 {
+            rx.recv().unwrap();
         }
     }
 
-    /// Get the raw [dispatch_workloop_t] value.
-    ///
-    /// # Safety
-    ///
-    /// - Object shouldn't be released manually.
-    pub const unsafe fn as_raw(&self) -> dispatch_workloop_t {
-        // SAFETY: Upheld by caller.
-        unsafe { self.queue.as_raw() as dispatch_workloop_t }
-    }
-}
-
-impl Deref for WorkloopQueue {
-    type Target = Queue;
-
-    #[inline]
-    fn deref(&self) -> &Self::Target {
-        &self.queue
-    }
-}
-
-impl DerefMut for WorkloopQueue {
-    #[inline]
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.queue
-    }
-}
-
-impl AsRef<Queue> for WorkloopQueue {
-    #[inline]
-    fn as_ref(&self) -> &Queue {
-        self
-    }
-}
-
-impl AsMut<Queue> for WorkloopQueue {
-    #[inline]
-    fn as_mut(&mut self) -> &mut Queue {
-        &mut *self
-    }
-}
-
-impl Borrow<Queue> for WorkloopQueue {
-    #[inline]
-    fn borrow(&self) -> &Queue {
-        self
-    }
-}
-
-impl BorrowMut<Queue> for WorkloopQueue {
-    #[inline]
-    fn borrow_mut(&mut self) -> &mut Queue {
-        &mut *self
+    #[test]
+    fn test_move_queue_between_threads() {
+        let queue = Queue::new("com.github.madsmtm.objc2", QueueAttribute::Serial);
+        let (tx, rx) = mpsc::channel();
+        std::thread::spawn(move || {
+            // This has to use move semantics otherwise tx is dropped before the closure can execute causing panic?!
+            queue.exec_async(move || {
+                tx.send(()).unwrap();
+            });
+        });
+        rx.recv().unwrap();
     }
 }

@@ -2,14 +2,12 @@
 
 use core::time::Duration;
 
-use super::ffi::*;
-use super::object::DispatchObject;
-use super::WaitError;
+use super::{ffi::*, rc::Retained, AsRawDispatchObject, WaitError};
 
 /// Dispatch semaphore.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Semaphore {
-    dispatch_object: DispatchObject<dispatch_semaphore_s>,
+    inner: Retained<dispatch_semaphore_s>,
 }
 
 impl Semaphore {
@@ -25,14 +23,12 @@ impl Semaphore {
         // Safety: value is valid
         let object = unsafe { dispatch_semaphore_create(value) };
 
-        if object.is_null() {
-            return None;
-        }
+        // Safety: retained accepts null pointer.
+        let dispatch_object = unsafe { Retained::from_raw(object)? };
 
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
-
-        Some(Semaphore { dispatch_object })
+        Some(Semaphore {
+            inner: dispatch_object,
+        })
     }
 
     /// Attempt to acquire the [Semaphore] and return a [SemaphoreGuard].
@@ -58,24 +54,38 @@ impl Semaphore {
         }
     }
 
-    /// Set the finalizer function for the object.
-    pub fn set_finalizer<F>(&mut self, destructor: F)
-    where
-        F: Send + FnOnce(),
-    {
-        self.dispatch_object.set_finalizer(destructor);
-    }
-
     /// Get the raw [dispatch_semaphore_t] value.
     ///
     /// # Safety
     ///
     /// - Object shouldn't be released manually.
-    pub const unsafe fn as_raw(&self) -> dispatch_semaphore_t {
-        // SAFETY: Upheld by caller.
-        unsafe { self.dispatch_object.as_raw() }
+    pub fn as_raw(&self) -> dispatch_semaphore_t {
+        Retained::as_ptr(&self.inner).cast_mut()
     }
 }
+
+impl Clone for Semaphore {
+    fn clone(&self) -> Self {
+        Self {
+            // Safety: pointer must be valid.
+            inner: unsafe {
+                Retained::retain(self.as_raw()).expect("failed to retain dispatch_semaphore_t")
+            },
+        }
+    }
+}
+
+impl AsRawDispatchObject for Semaphore {
+    fn as_raw_object(&self) -> dispatch_object_t {
+        self.as_raw().cast()
+    }
+}
+
+// Safety: semaphore is inherently safe to move between threads.
+unsafe impl Send for Semaphore {}
+
+// Safety: semaphore is inherently safe to share between threads.
+unsafe impl Sync for Semaphore {}
 
 /// Dispatch semaphore guard.
 #[derive(Debug)]

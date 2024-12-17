@@ -1,23 +1,15 @@
 //! Dispatch group definition.
 
 use alloc::boxed::Box;
-use core::ffi::c_void;
-use core::time::Duration;
+use core::{ffi::c_void, time::Duration};
 
-use super::object::DispatchObject;
-use super::queue::Queue;
-use super::utils::function_wrapper;
-use super::{ffi::*, WaitError};
+use super::{ffi::*, function_wrapper, queue::Queue, rc::Retained, AsRawDispatchObject, WaitError};
 
 /// Dispatch group.
-#[derive(Debug, Clone)]
-pub struct Group {
-    dispatch_object: DispatchObject<dispatch_group_s>,
-}
-
-/// Dispatch group guard.
 #[derive(Debug)]
-pub struct GroupGuard(Group, bool);
+pub struct Group {
+    inner: Retained<dispatch_group_s>,
+}
 
 impl Group {
     /// Creates a new [Group].
@@ -25,14 +17,10 @@ impl Group {
         // Safety: valid to call.
         let object = unsafe { dispatch_group_create() };
 
-        if object.is_null() {
-            return None;
-        }
+        // Safety: retained accepts null pointer.
+        let inner = unsafe { Retained::from_raw(object)? };
 
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
-
-        Some(Group { dispatch_object })
+        Some(Group { inner })
     }
 
     /// Submit a function to a [Queue] and associates it with the [Group].
@@ -104,24 +92,43 @@ impl Group {
         GroupGuard(self.clone(), false)
     }
 
-    /// Set the finalizer function for the object.
-    pub fn set_finalizer<F>(&mut self, destructor: F)
-    where
-        F: Send + FnOnce(),
-    {
-        self.dispatch_object.set_finalizer(destructor);
-    }
-
     /// Get the raw [dispatch_group_t] value.
     ///
     /// # Safety
     ///
     /// - Object shouldn't be released manually.
-    pub const unsafe fn as_raw(&self) -> dispatch_group_t {
-        // SAFETY: Upheld by caller
-        unsafe { self.dispatch_object.as_raw() }
+    pub fn as_raw(&self) -> dispatch_group_t {
+        // Safety: Upheld by caller
+        Retained::as_ptr(&self.inner).cast_mut()
     }
 }
+
+impl Clone for Group {
+    fn clone(&self) -> Self {
+        Self {
+            // Safety: pointer must be valid.
+            inner: unsafe {
+                Retained::retain(self.as_raw()).expect("failed to retain dispatch_group")
+            },
+        }
+    }
+}
+
+impl AsRawDispatchObject for Group {
+    fn as_raw_object(&self) -> dispatch_object_t {
+        self.as_raw().cast()
+    }
+}
+
+// Safety: group is inherently safe to move between threads.
+unsafe impl Send for Group {}
+
+// Safety: group is inherently safe to share between threads.
+unsafe impl Sync for Group {}
+
+/// Dispatch group guard.
+#[derive(Debug)]
+pub struct GroupGuard(Group, bool);
 
 impl GroupGuard {
     /// Explicitly indicates that the function in the [Group] finished executing.

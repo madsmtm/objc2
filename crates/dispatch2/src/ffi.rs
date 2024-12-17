@@ -2,11 +2,16 @@
 
 #![allow(missing_docs, non_camel_case_types)]
 
-use core::ffi::{c_long, c_uint, c_ulong, c_void};
-use core::ptr::addr_of;
+use core::{
+    ffi::{c_long, c_uint, c_ulong, c_void},
+    ptr::addr_of,
+};
 
 #[cfg(feature = "objc2")]
-use objc2::encode::{Encode, Encoding, RefEncode};
+use objc2::{
+    encode::{Encode, Encoding, RefEncode},
+    Message,
+};
 
 // Try to generate as much as possible.
 pub use crate::generated::*;
@@ -29,6 +34,10 @@ macro_rules! create_opaque_type {
         unsafe impl RefEncode for $type_name {
             const ENCODING_REF: Encoding = Encoding::Object;
         }
+
+        #[cfg(feature = "objc2")]
+        // SAFETY: Dispatch types respond to objc messages.
+        unsafe impl Message for $type_name {}
     };
 }
 
@@ -108,10 +117,11 @@ create_opaque_type!(dispatch_io_s, dispatch_io_t);
 
 /// A dispatch queue that executes blocks serially in FIFO order.
 pub const DISPATCH_QUEUE_SERIAL: dispatch_queue_attr_t = core::ptr::null_mut();
+
 /// A dispatch queue that executes blocks concurrently.
-pub static DISPATCH_QUEUE_CONCURRENT: &dispatch_queue_attr_s = {
+pub const DISPATCH_QUEUE_CONCURRENT: dispatch_queue_attr_t = {
     // Safety: immutable external definition
-    unsafe { &_dispatch_queue_attr_concurrent }
+    unsafe { &_dispatch_queue_attr_concurrent as *const _ as dispatch_queue_attr_t }
 };
 
 pub const DISPATCH_APPLY_AUTO: dispatch_queue_t = core::ptr::null_mut();
