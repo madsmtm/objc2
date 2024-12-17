@@ -38,14 +38,14 @@ impl Library {
 
     pub fn add_module(&mut self, location: Location) {
         let mut current = &mut self.module;
-        for component in location.components().skip(1) {
+        for component in location.modules() {
             current = current.submodules.entry(component.into()).or_default();
         }
     }
 
     pub fn module_mut(&mut self, location: Location) -> &mut Module {
         let mut current = &mut self.module;
-        for component in location.components().skip(1) {
+        for component in location.modules() {
             current = match current.submodules.entry(component.into()) {
                 Entry::Occupied(entry) => entry.into_mut(),
                 Entry::Vacant(entry) => {

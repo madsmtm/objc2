@@ -248,38 +248,38 @@ class.NSXPCCoder.methods."decodeXPCObjectOfType:forKey:".skipped = true
 ### Counterparts
 ###
 
-class.NSArray.counterpart = "MutableSubclass(Foundation::NSArray::NSMutableArray)"
-class.NSMutableArray.counterpart = "ImmutableSuperclass(Foundation::NSArray::NSArray)"
+class.NSArray.counterpart = "MutableSubclass(Foundation.NSArray.NSMutableArray)"
+class.NSMutableArray.counterpart = "ImmutableSuperclass(Foundation.NSArray.NSArray)"
 
-class.NSString.counterpart = "MutableSubclass(Foundation::NSString::NSMutableString)"
-class.NSMutableString.counterpart = "ImmutableSuperclass(Foundation::NSString::NSString)"
+class.NSString.counterpart = "MutableSubclass(Foundation.NSString.NSMutableString)"
+class.NSMutableString.counterpart = "ImmutableSuperclass(Foundation.NSString.NSString)"
 
-class.NSAttributedString.counterpart = "MutableSubclass(Foundation::NSAttributedString::NSMutableAttributedString)"
-class.NSMutableAttributedString.counterpart = "ImmutableSuperclass(Foundation::NSAttributedString::NSAttributedString)"
+class.NSAttributedString.counterpart = "MutableSubclass(Foundation.NSAttributedString.NSMutableAttributedString)"
+class.NSMutableAttributedString.counterpart = "ImmutableSuperclass(Foundation.NSAttributedString.NSAttributedString)"
 
-class.NSData.counterpart = "MutableSubclass(Foundation::NSData::NSMutableData)"
-class.NSMutableData.counterpart = "ImmutableSuperclass(Foundation::NSData::NSData)"
+class.NSData.counterpart = "MutableSubclass(Foundation.NSData.NSMutableData)"
+class.NSMutableData.counterpart = "ImmutableSuperclass(Foundation.NSData.NSData)"
 
 # Auto traits can be deduced as if the dictionary was implemented as `(NSArray<KeyType>, NSArray<ObjectType>)`.
-class.NSDictionary.counterpart = "MutableSubclass(Foundation::NSDictionary::NSMutableDictionary)"
-class.NSMutableDictionary.counterpart = "ImmutableSuperclass(Foundation::NSDictionary::NSDictionary)"
+class.NSDictionary.counterpart = "MutableSubclass(Foundation.NSDictionary.NSMutableDictionary)"
+class.NSMutableDictionary.counterpart = "ImmutableSuperclass(Foundation.NSDictionary.NSDictionary)"
 
 # Auto traits can be viewed as if the set was implemented with `NSArray`.
-class.NSSet.counterpart = "MutableSubclass(Foundation::NSSet::NSMutableSet)"
-class.NSMutableSet.counterpart = "ImmutableSuperclass(Foundation::NSSet::NSSet)"
+class.NSSet.counterpart = "MutableSubclass(Foundation.NSSet.NSMutableSet)"
+class.NSMutableSet.counterpart = "ImmutableSuperclass(Foundation.NSSet.NSSet)"
 
-class.NSCharacterSet.counterpart = "MutableSubclass(Foundation::NSCharacterSet::NSMutableCharacterSet)"
-class.NSMutableCharacterSet.counterpart = "ImmutableSuperclass(Foundation::NSCharacterSet::NSCharacterSet)"
+class.NSCharacterSet.counterpart = "MutableSubclass(Foundation.NSCharacterSet.NSMutableCharacterSet)"
+class.NSMutableCharacterSet.counterpart = "ImmutableSuperclass(Foundation.NSCharacterSet.NSCharacterSet)"
 
 # Auto traits can be viewed as if the set was implemented with `NSArray`.
-class.NSOrderedSet.counterpart = "MutableSubclass(Foundation::NSOrderedSet::NSMutableOrderedSet)"
-class.NSMutableOrderedSet.counterpart = "ImmutableSuperclass(Foundation::NSOrderedSet::NSOrderedSet)"
+class.NSOrderedSet.counterpart = "MutableSubclass(Foundation.NSOrderedSet.NSMutableOrderedSet)"
+class.NSMutableOrderedSet.counterpart = "ImmutableSuperclass(Foundation.NSOrderedSet.NSOrderedSet)"
 
-class.NSIndexSet.counterpart = "MutableSubclass(Foundation::NSIndexSet::NSMutableIndexSet)"
-class.NSMutableIndexSet.counterpart = "ImmutableSuperclass(Foundation::NSIndexSet::NSIndexSet)"
+class.NSIndexSet.counterpart = "MutableSubclass(Foundation.NSIndexSet.NSMutableIndexSet)"
+class.NSMutableIndexSet.counterpart = "ImmutableSuperclass(Foundation.NSIndexSet.NSIndexSet)"
 
-class.NSURLRequest.counterpart = "MutableSubclass(Foundation::NSURLRequest::NSMutableURLRequest)"
-class.NSMutableURLRequest.counterpart = "ImmutableSuperclass(Foundation::NSURLRequest::NSURLRequest)"
+class.NSURLRequest.counterpart = "MutableSubclass(Foundation.NSURLRequest.NSMutableURLRequest)"
+class.NSMutableURLRequest.counterpart = "ImmutableSuperclass(Foundation.NSURLRequest.NSURLRequest)"
 
 # NOTE: `NSEnumerator` and subclasses should be interior mutable because
 # regardless of what kind the items it contains are, the enumerator itself is.

@@ -3,13 +3,14 @@ use std::error::Error;
 use std::fmt;
 use std::fs;
 use std::path::Path;
+use std::str::FromStr;
 
 use heck::ToTrainCase;
 use semver::Version;
 use serde::{de, Deserialize, Deserializer};
 
 use crate::stmt::{Counterpart, Derives};
-use crate::ItemIdentifier;
+use crate::{ItemIdentifier, Location};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Config {
@@ -92,16 +93,16 @@ fn get_version<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Option<Vers
     deserializer.deserialize_str(VersionVisitor)
 }
 
-#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ExternalData {
-    pub module: String,
+    pub module: Location,
     #[serde(rename = "thread-safety")]
     #[serde(default)]
     pub thread_safety: Option<String>,
     #[serde(rename = "required-items")]
     #[serde(default)]
-    pub required_items: Vec<String>,
+    pub required_items: Vec<ItemIdentifier>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
@@ -342,27 +343,18 @@ impl LibraryConfig {
     }
 }
 
-impl<'de> Deserialize<'de> for Counterpart {
+impl<'de> de::Deserialize<'de> for Counterpart {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: Deserializer<'de>,
+        D: de::Deserializer<'de>,
     {
-        fn parse_itemidentifier(value: &str) -> Option<ItemIdentifier> {
-            let (library, rest) = value.split_once("::")?;
-            let (file_name, name) = rest.split_once("::")?;
-            Some(ItemIdentifier::from_raw(
-                name.into(),
-                vec![library.to_string().into(), file_name.to_string().into()],
-            ))
-        }
-
         struct CounterpartVisitor;
 
         impl de::Visitor<'_> for CounterpartVisitor {
             type Value = Counterpart;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                formatter.write_str("counterpart")
+                formatter.write_str("item identifier")
             }
 
             fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
@@ -372,18 +364,16 @@ impl<'de> Deserialize<'de> for Counterpart {
                 if let Some(value) = value.strip_prefix("ImmutableSuperclass(") {
                     let value = value
                         .strip_suffix(')')
-                        .ok_or(de::Error::custom("end parenthesis"))?;
-                    let item =
-                        parse_itemidentifier(value).ok_or(de::Error::custom("requires ::"))?;
+                        .ok_or_else(|| de::Error::custom("end parenthesis"))?;
+                    let item = ItemIdentifier::from_str(value).map_err(de::Error::custom)?;
                     return Ok(Counterpart::ImmutableSuperclass(item));
                 }
 
                 if let Some(value) = value.strip_prefix("MutableSubclass(") {
                     let value = value
                         .strip_suffix(')')
-                        .ok_or(de::Error::custom("end parenthesis"))?;
-                    let item =
-                        parse_itemidentifier(value).ok_or(de::Error::custom("requires ::"))?;
+                        .ok_or_else(|| de::Error::custom("end parenthesis"))?;
+                    let item = ItemIdentifier::from_str(value).map_err(de::Error::custom)?;
                     return Ok(Counterpart::MutableSubclass(item));
                 }
 

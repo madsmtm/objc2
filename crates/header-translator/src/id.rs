@@ -1,10 +1,13 @@
 use core::fmt;
 use core::hash;
+use serde::de;
 use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeSet;
+use std::error::Error;
+use std::str::FromStr;
 
-use clang::source::{File, Module};
+use clang::source::File;
 use clang::Entity;
 
 use crate::cfgs::PlatformCfg;
@@ -37,7 +40,8 @@ impl ToOptionString for () {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Location {
-    path_components: Vec<Cow<'static, str>>,
+    // A Swift/Clang module path (dot-separated).
+    module_path: Box<str>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -125,50 +129,51 @@ impl<'config> LocationLibrary<'_, 'config> {
 }
 
 impl Location {
-    fn from_module(module: Module<'_>) -> Self {
-        let full_name = module.get_full_name();
+    fn new(module_path: impl Into<Box<str>>) -> Self {
+        let module_path = module_path.into();
+        let module_path = match &*module_path {
+            // blocks
+            "block" => "block2".into(),
 
-        Location::from_components(match &*full_name {
             // Objective-C
-            name if name.starts_with("ObjectiveC") => vec!["objc2".into()],
+            name if name.starts_with("ObjectiveC") => "objc2".into(),
 
             // Redefined in the framework crate itself.
-            "Darwin.MacTypes" => vec!["System".into()],
+            "Darwin.MacTypes" => "System".into(),
 
             // Built-ins
-            "DarwinFoundation.types.machine_types" => vec!["System".into()],
-            "_Builtin_stdarg.va_list" => vec!["System".into()],
+            "DarwinFoundation.types.machine_types" => "System".into(),
+            "_Builtin_stdarg.va_list" => "System".into(),
 
             // Libc
-            name if name.starts_with("sys_types") => vec!["libc".into()],
-            "DarwinFoundation.types.sys_types" => vec!["libc".into()],
-            "DarwinFoundation.qos" => vec!["libc".into()],
-            name if name.starts_with("Darwin.POSIX") => vec!["libc".into()],
-            "_stdio" => vec!["libc".into()],
-            "_time.timespec" => vec!["libc".into()],
+            name if name.starts_with("sys_types") => "libc".into(),
+            "DarwinFoundation.types.sys_types" => "libc".into(),
+            "DarwinFoundation.qos" => "libc".into(),
+            name if name.starts_with("Darwin.POSIX") => "libc".into(),
+            "_stdio" => "libc".into(),
+            "_time.timespec" => "libc".into(),
 
             // Will be moved to the `mach2` crate in `libc` v1.0
-            name if name.starts_with("Darwin.Mach") => vec!["libc".into()],
-            "_mach_port_t" => vec!["libc".into()],
+            name if name.starts_with("Darwin.Mach") => "libc".into(),
+            "_mach_port_t" => "libc".into(),
 
-            full_name => full_name
-                .split('.')
-                .map(|component| Cow::Owned(component.to_string()))
-                .collect(),
-        })
+            _ => module_path,
+        };
+
+        Self { module_path }
     }
 
     pub fn from_file(file: File<'_>) -> Self {
         // Get from module first if available
         if let Some(module) = file.get_module() {
-            return Location::from_module(module);
+            return Self::new(module.get_full_name());
         }
 
         let path = file.get_path();
 
         if !path.to_string_lossy().contains("System/Library/Frameworks") {
             // Likely a built-in macro from stddef.h, stdarg.h or assert.h.
-            return Location::from_components(vec!["System".into()]);
+            return Self::new("System");
         }
 
         // The item likely comes from a private sub-framework, so let's try
@@ -197,35 +202,35 @@ impl Location {
             }
         }
 
-        Self::from_components(components)
-    }
-
-    pub(crate) fn components(
-        &self,
-    ) -> impl DoubleEndedIterator<Item = &str> + ExactSizeIterator + '_ {
-        self.path_components.iter().map(|c| &**c)
-    }
-
-    pub(crate) fn from_components(path_components: Vec<Cow<'static, str>>) -> Self {
-        Self { path_components }
+        Self {
+            module_path: components.join(".").into_boxed_str(),
+        }
     }
 
     pub fn library_name(&self) -> &str {
-        self.path_components
-            .first()
-            .expect("location to have at least one component")
+        if let Some((library, _rest)) = self.module_path.split_once('.') {
+            library
+        } else {
+            // Top-level
+            &self.module_path
+        }
     }
 
     fn file_name(&self) -> Option<&str> {
-        match &*self.path_components {
-            [_, .., file_name] => Some(&**file_name),
+        if let Some((_umbrella, rest)) = self.module_path.split_once('.') {
+            if let Some((_rest, file_name)) = rest.rsplit_once('.') {
+                Some(file_name)
+            } else {
+                Some(rest)
+            }
+        } else {
             // Umbrella header
-            [_] | [] => None,
+            None
         }
     }
 
     pub fn modules(&self) -> impl IntoIterator<Item = &'_ str> + '_ {
-        self.path_components.iter().skip(1).map(|s| &**s)
+        self.module_path.split('.').skip(1)
     }
 
     pub fn library<'location, 'config>(
@@ -317,11 +322,8 @@ impl<N: ToOptionString> ItemIdentifier<N> {
         self.location.library_name()
     }
 
-    pub fn from_raw(name: N, path_components: Vec<Cow<'static, str>>) -> Self {
-        Self {
-            name,
-            location: Location { path_components },
-        }
+    pub fn from_raw(name: N, location: Location) -> Self {
+        Self { name, location }
     }
 
     pub fn with_name(name: N, entity: &Entity<'_>, _context: &Context<'_>) -> Self {
@@ -336,7 +338,7 @@ impl<N: ToOptionString> ItemIdentifier<N> {
 
         // Defined in multiple places for some reason.
         if let Some("IOSurfaceRef" | "__IOSurface") = name.to_option() {
-            location = Location::from_components(vec!["IOSurface".into(), "IOSurfaceRef".into()]);
+            location = Location::new("IOSurface.IOSurfaceRef");
         }
 
         Self { name, location }
@@ -383,35 +385,35 @@ impl ItemIdentifier {
     pub fn nserror() -> Self {
         Self {
             name: "NSError".into(),
-            location: Location::from_components(vec!["Foundation".into(), "NSError".into()]),
+            location: Location::new("Foundation.NSError"),
         }
     }
 
     pub fn block() -> Self {
         Self {
             name: "Block".into(),
-            location: Location::from_components(vec!["block2".into()]),
+            location: Location::new("block"),
         }
     }
 
     pub fn bitflags() -> Self {
         Self {
             name: "bitflags".into(),
-            location: Location::from_components(vec!["bitflags".into()]),
+            location: Location::new("bitflags"),
         }
     }
 
     pub fn objc2(name: impl Into<String>) -> Self {
         Self {
             name: name.into(),
-            location: Location::from_components(vec!["objc2".into()]),
+            location: Location::new("ObjectiveC"),
         }
     }
 
     pub fn main_thread_marker() -> Self {
         Self {
             name: "MainThreadMarker".into(),
-            location: Location::from_components(vec!["objc2".into()]),
+            location: Location::new("ObjectiveC"),
         }
     }
 
@@ -419,7 +421,7 @@ impl ItemIdentifier {
     pub fn dummy() -> Self {
         Self {
             name: "DUMMY".into(),
-            location: Location::from_components(vec!["System".into()]),
+            location: Location::new("System"),
         }
     }
 
@@ -567,4 +569,90 @@ pub fn cfg_gate_ln<'a, R: AsRef<Location> + 'a, I: AsRef<Location> + 'a>(
 
         Ok(())
     })
+}
+
+impl FromStr for Location {
+    type Err = Box<dyn Error>;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.contains("::") {
+            return Err(Box::new(std::io::Error::other("requires ., not ::")));
+        }
+
+        Ok(Location {
+            module_path: s.into(),
+        })
+    }
+}
+
+impl<'de> de::Deserialize<'de> for Location {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: de::Deserializer<'de>,
+    {
+        struct LocationVisitor;
+
+        impl de::Visitor<'_> for LocationVisitor {
+            type Value = Location;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("location")
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                Location::from_str(value).map_err(de::Error::custom)
+            }
+        }
+
+        deserializer.deserialize_str(LocationVisitor)
+    }
+}
+
+impl FromStr for ItemIdentifier {
+    type Err = Box<dyn Error>;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.contains("::") {
+            return Err(Box::new(std::io::Error::other("requires ., not ::")));
+        }
+
+        let (module_path, name) = s
+            .rsplit_once('.')
+            .ok_or_else(|| std::io::Error::other("requires at least one ."))?;
+
+        Ok(Self {
+            name: name.into(),
+            location: Location {
+                module_path: module_path.into(),
+            },
+        })
+    }
+}
+
+impl<'de> de::Deserialize<'de> for ItemIdentifier {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: de::Deserializer<'de>,
+    {
+        struct ItemIdentifierVisitor;
+
+        impl de::Visitor<'_> for ItemIdentifierVisitor {
+            type Value = ItemIdentifier;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("item identifier")
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                ItemIdentifier::from_str(value).map_err(de::Error::custom)
+            }
+        }
+
+        deserializer.deserialize_str(ItemIdentifierVisitor)
+    }
 }

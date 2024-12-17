@@ -6,10 +6,10 @@ macos = "10.6"
 maccatalyst = "13.0"
 
 # Set counterparts
-class.CWConfiguration.counterpart = "MutableSubclass(CoreWLAN::CWConfiguration::CWMutableConfiguration)"
-class.CWMutableConfiguration.counterpart = "ImmutableSuperclass(CoreWLAN::CWConfiguration::CWConfiguration)"
-class.CWNetworkProfile.counterpart = "MutableSubclass(CoreWLAN::CWNetworkProfile::CWMutableNetworkProfile)"
-class.CWMutableNetworkProfile.counterpart = "ImmutableSuperclass(CoreWLAN::CWNetworkProfile::CWNetworkProfile)"
+class.CWConfiguration.counterpart = "MutableSubclass(CoreWLAN.CWConfiguration.CWMutableConfiguration)"
+class.CWMutableConfiguration.counterpart = "ImmutableSuperclass(CoreWLAN.CWConfiguration.CWConfiguration)"
+class.CWNetworkProfile.counterpart = "MutableSubclass(CoreWLAN.CWNetworkProfile.CWMutableNetworkProfile)"
+class.CWMutableNetworkProfile.counterpart = "ImmutableSuperclass(CoreWLAN.CWNetworkProfile.CWNetworkProfile)"
 
 # Needs SecIdentityRef from Security
 fn.CWKeychainCopyWiFiEAPIdentity.skipped = true

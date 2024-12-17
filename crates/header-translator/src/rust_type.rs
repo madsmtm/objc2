@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use std::str::FromStr;
 use std::{fmt, iter};
 
@@ -351,14 +350,7 @@ impl ItemRef {
         let mut id = ItemIdentifier::new(&entity, context);
 
         if let Some(external) = context.library(id.library_name()).external.get(&id.name) {
-            let id = ItemIdentifier::from_raw(
-                id.name,
-                external
-                    .module
-                    .split('.')
-                    .map(|x| x.to_string().into())
-                    .collect(),
-            );
+            let id = ItemIdentifier::from_raw(id.name, external.module.clone());
             let thread_safety = external
                 .thread_safety
                 .as_deref()
@@ -367,14 +359,7 @@ impl ItemRef {
             let required_items = external
                 .required_items
                 .iter()
-                .map(|s| {
-                    let mut components: Vec<Cow<'_, _>> =
-                        s.split('.').map(|x| x.to_string().into()).collect();
-                    let name = components
-                        .pop()
-                        .expect("required items component at least one");
-                    ItemIdentifier::from_raw(name.to_string(), components)
-                })
+                .cloned()
                 .chain(iter::once(id.clone()))
                 .collect();
             return Self {

@@ -31,14 +31,14 @@ static.UIKeyInputF1.skipped = true
 class.NSTextStorage.skipped-protocols = ["NSCopying", "NSMutableCopying"]
 
 # Set counterparts
-class.NSParagraphStyle.counterpart = "MutableSubclass(UIKit::NSParagraphStyle::NSMutableParagraphStyle)"
-class.NSMutableParagraphStyle.counterpart = "ImmutableSuperclass(UIKit::NSParagraphStyle::NSParagraphStyle)"
-class.UIApplicationShortcutItem.counterpart = "MutableSubclass(UIKit::UIApplicationShortcutItem::UIMutableApplicationShortcutItem)"
-class.UIMutableApplicationShortcutItem.counterpart = "ImmutableSuperclass(UIKit::UIApplicationShortcutItem::UIApplicationShortcutItem)"
-class.UIUserNotificationCategory.counterpart = "MutableSubclass(UIKit::UIUserNotificationSettings::UIMutableUserNotificationCategory)"
-class.UIMutableUserNotificationCategory.counterpart = "ImmutableSuperclass(UIKit::UIUserNotificationSettings::UIUserNotificationCategory)"
-class.UIUserNotificationAction.counterpart = "MutableSubclass(UIKit::UIUserNotificationSettings::UIMutableUserNotificationAction)"
-class.UIMutableUserNotificationAction.counterpart = "ImmutableSuperclass(UIKit::UIUserNotificationSettings::UIUserNotificationAction)"
+class.NSParagraphStyle.counterpart = "MutableSubclass(UIKit.NSParagraphStyle.NSMutableParagraphStyle)"
+class.NSMutableParagraphStyle.counterpart = "ImmutableSuperclass(UIKit.NSParagraphStyle.NSParagraphStyle)"
+class.UIApplicationShortcutItem.counterpart = "MutableSubclass(UIKit.UIApplicationShortcutItem.UIMutableApplicationShortcutItem)"
+class.UIMutableApplicationShortcutItem.counterpart = "ImmutableSuperclass(UIKit.UIApplicationShortcutItem.UIApplicationShortcutItem)"
+class.UIUserNotificationCategory.counterpart = "MutableSubclass(UIKit.UIUserNotificationSettings.UIMutableUserNotificationCategory)"
+class.UIMutableUserNotificationCategory.counterpart = "ImmutableSuperclass(UIKit.UIUserNotificationSettings.UIUserNotificationCategory)"
+class.UIUserNotificationAction.counterpart = "MutableSubclass(UIKit.UIUserNotificationSettings.UIMutableUserNotificationAction)"
+class.UIMutableUserNotificationAction.counterpart = "ImmutableSuperclass(UIKit.UIUserNotificationSettings.UIUserNotificationAction)"
 
 # These subclass a generic struct, and hence the type parameter defaults to
 # `AnyObject`, which is not PartialEq, Eq nor Hash.
