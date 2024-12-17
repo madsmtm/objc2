@@ -11,10 +11,12 @@ The crates you're interested in is probably:
   it, we [aim to have it](https://github.com/madsmtm/objc2/issues/393)).
 - [`block2`], which provides bindings for Apple's C blocks, the
   C-equivalent of a Rust closure.
+- [`dispatch2`], which provides bindings for Apple's Grand Central Dispatch.
 
 [`objc2`]: ./crates/objc2
 [`objc2-*`]: ./framework-crates
 [`block2`]: ./crates/block2
+[`dispatch2`]: ./crates/dispatch2
 
 
 ## Contact Us
@@ -151,6 +153,8 @@ fork [here](https://github.com/SSheldon/rust-objc/issues/101):
 These were created almost solely by [@SSheldon](https://github.com/SSheldon),
 so a huge thanks for their fantastic work on these crates!
 
+Additionally, the `dispatch2` crate originally lived [here](https://github.com/marysaka/dispatch2).
+
 This project also draws inspiration from:
 - [`apple-sys`](https://github.com/youknowone/apple-sys)
 - [`cacao`](https://github.com/ryanmcgrath/cacao)
@@ -163,6 +167,7 @@ This project also draws inspiration from:
 - [`uikit-sys`](https://github.com/simlay/uikit-sys) and `@simlay`'s [Objective-C work on `bindgen`](https://rust-lang.github.io/rust-bindgen/objc.html)
 - [`cidre`](https://github.com/yury/cidre)
 - [the `apple-media` project](https://github.com/rust-media/apple-media-rs)
+- [`dispatch`](https://github.com/SSheldon/rust-dispatch)
 
 Finally, this is by far not the only project that ever tried to interoperate with Objective-C; other languages have done so as well (to varying degrees of success):
 - Swift: Built from the beginning for Objective-C interop, and is what `objc2` aspires to have feature-parity with (though will probably never reach). Truly beautifully designed language!

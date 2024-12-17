@@ -25,7 +25,7 @@ where
     F: FnOnce(),
 {
     // Safety: we reconstruct from a Box.
-    let work = unsafe { Box::from_raw(work_boxed as *mut F) };
+    let work = unsafe { Box::from_raw(work_boxed.cast::<F>()) };
 
     (*work)();
 }

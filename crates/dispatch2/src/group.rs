@@ -30,7 +30,7 @@ impl Group {
         }
 
         // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object as *mut _) };
+        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
 
         Some(Group { dispatch_object })
     }
@@ -40,7 +40,7 @@ impl Group {
     where
         F: Send + FnOnce(),
     {
-        let work_boxed = Box::leak(Box::new(work)) as *mut _ as *mut c_void;
+        let work_boxed = Box::into_raw(Box::new(work)).cast::<c_void>();
 
         // Safety: All parameters cannot be null.
         unsafe {
@@ -81,7 +81,7 @@ impl Group {
     where
         F: Send + FnOnce(),
     {
-        let work_boxed = Box::leak(Box::new(work)) as *mut _ as *mut c_void;
+        let work_boxed = Box::into_raw(Box::new(work)).cast::<c_void>();
 
         // Safety: All parameters cannot be null.
         unsafe {
@@ -118,7 +118,8 @@ impl Group {
     ///
     /// - Object shouldn't be released manually.
     pub const unsafe fn as_raw(&self) -> dispatch_group_t {
-        self.dispatch_object.as_raw()
+        // SAFETY: Upheld by caller
+        unsafe { self.dispatch_object.as_raw() }
     }
 }
 

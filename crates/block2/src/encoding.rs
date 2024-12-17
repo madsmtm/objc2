@@ -18,7 +18,7 @@ use objc2::encode::{EncodeArguments, EncodeReturn, Encoding};
 /// assert_eq!(block_signature_string::<(i32, f32), u8>(), "C16@?0i8f12");
 /// ```
 #[allow(unused)]
-pub fn block_signature_string<A, R>() -> CString
+pub(crate) fn block_signature_string<A, R>() -> CString
 where
     A: EncodeArguments,
     R: EncodeReturn,

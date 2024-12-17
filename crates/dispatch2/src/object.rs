@@ -52,7 +52,7 @@ impl<T> DispatchObject<T> {
 
         // Safety: We own a reference to the object.
         unsafe {
-            dispatch_retain(result.object as *mut _);
+            dispatch_retain(result.object.cast());
         }
 
         result
@@ -63,14 +63,14 @@ impl<T> DispatchObject<T> {
     where
         F: Send + FnOnce(),
     {
-        let destructor_boxed = Box::leak(Box::new(destructor)) as *mut F as *mut _;
+        let destructor_boxed = Box::into_raw(Box::new(destructor)).cast();
 
         // Safety: As this use the dispatch object's context, and because we need some way to wrap the Rust function, we set the context.
         //         Once the finalizer is executed, the context will be dangling.
         //         This isn't an issue as the context shall not be accessed after the dispatch object is destroyed.
         unsafe {
-            dispatch_set_context(self.object as *mut _, destructor_boxed);
-            dispatch_set_finalizer_f(self.object as *mut _, function_wrapper::<F>)
+            dispatch_set_context(self.object.cast(), destructor_boxed);
+            dispatch_set_finalizer_f(self.object.cast(), function_wrapper::<F>)
         }
     }
 
@@ -84,9 +84,9 @@ impl<T> DispatchObject<T> {
             return Err(TargetQueueError::ObjectAlreadyActive);
         }
 
-        // Safety: object and queue cannot be null.
+        // SAFETY: object and queue cannot be null.
         unsafe {
-            dispatch_set_target_queue(self.as_raw() as *mut _, queue.as_raw());
+            dispatch_set_target_queue(self.as_raw().cast(), queue.as_raw());
         }
 
         Ok(())
@@ -106,10 +106,10 @@ impl<T> DispatchObject<T> {
             return Err(QualityOfServiceClassFloorError::InvalidRelativePriority);
         }
 
-        // Safety: Safe as relative_priority can only be valid.
+        // SAFETY: Safe as relative_priority can only be valid.
         unsafe {
             dispatch_set_qos_class_floor(
-                self.as_raw() as *mut _,
+                self.as_raw().cast(),
                 dispatch_qos_class_t::from(qos_class),
                 relative_priority,
             );
@@ -122,7 +122,7 @@ impl<T> DispatchObject<T> {
     pub fn activate(&mut self) {
         // Safety: object cannot be null.
         unsafe {
-            dispatch_activate(self.as_raw() as *mut _);
+            dispatch_activate(self.as_raw().cast());
         }
 
         self.is_activated = true;
@@ -132,7 +132,7 @@ impl<T> DispatchObject<T> {
     pub fn suspend(&self) {
         // Safety: object cannot be null.
         unsafe {
-            dispatch_suspend(self.as_raw() as *mut _);
+            dispatch_suspend(self.as_raw().cast());
         }
     }
 
@@ -140,7 +140,7 @@ impl<T> DispatchObject<T> {
     pub fn resume(&self) {
         // Safety: object cannot be null.
         unsafe {
-            dispatch_resume(self.as_raw() as *mut _);
+            dispatch_resume(self.as_raw().cast());
         }
     }
 
@@ -165,7 +165,7 @@ impl<T> Drop for DispatchObject<T> {
     fn drop(&mut self) {
         // Safety: We own a reference to the object.
         unsafe {
-            dispatch_release(self.object as *mut _);
+            dispatch_release(self.object.cast());
         }
     }
 }

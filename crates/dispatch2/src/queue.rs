@@ -137,7 +137,7 @@ impl Queue {
         assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
 
         // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object as *mut _) };
+        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
 
         Queue {
             dispatch_object,
@@ -161,7 +161,7 @@ impl Queue {
         assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
 
         // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object as *mut _) };
+        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
 
         // NOTE: dispatch_queue_create_with_target is in charge of retaining the target Queue.
 
@@ -171,7 +171,7 @@ impl Queue {
         }
     }
 
-    /// Return a system-defined global concurrent [Queue] with the priority derivated from [GlobalQueueIdentifier].
+    /// Return a system-defined global concurrent [Queue] with the priority derived from [GlobalQueueIdentifier].
     pub fn global_queue(identifier: GlobalQueueIdentifier) -> Self {
         let raw_identifier = identifier.to_identifier();
 
@@ -184,7 +184,7 @@ impl Queue {
         );
 
         // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_shared(object as *mut _) };
+        let dispatch_object = unsafe { DispatchObject::new_shared(object.cast()) };
 
         Queue {
             dispatch_object,
@@ -199,7 +199,7 @@ impl Queue {
     {
         assert!(!self.is_workloop, "exec_sync is invalid for WorkloopQueue");
 
-        let work_boxed = Box::leak(Box::new(work)) as *mut F as *mut _;
+        let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe { dispatch_sync_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
@@ -210,7 +210,7 @@ impl Queue {
     where
         F: Send + FnOnce(),
     {
-        let work_boxed = Box::leak(Box::new(work)) as *mut F as *mut _;
+        let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe { dispatch_async_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
@@ -223,7 +223,7 @@ impl Queue {
     {
         let when =
             dispatch_time_t::try_from(wait_time).map_err(|_| QueueAfterError::TimeOverflow)?;
-        let work_boxed = Box::leak(Box::new(work)) as *mut F as *mut _;
+        let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe {
@@ -238,7 +238,7 @@ impl Queue {
     where
         F: Send + FnOnce(),
     {
-        let work_boxed = Box::leak(Box::new(work)) as *mut F as *mut _;
+        let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe { dispatch_barrier_async_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
@@ -249,7 +249,7 @@ impl Queue {
     where
         F: Send + FnOnce(),
     {
-        let work_boxed = Box::leak(Box::new(work)) as *mut F as *mut _;
+        let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe { dispatch_barrier_sync_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
@@ -260,7 +260,7 @@ impl Queue {
     where
         F: Send + FnOnce(),
     {
-        let work_boxed = Box::leak(Box::new(work)) as *mut F as *mut _;
+        let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe {
@@ -273,7 +273,7 @@ impl Queue {
     where
         F: Send + FnOnce(),
     {
-        let destructor_boxed = Box::leak(Box::new(destructor)) as *mut F as *mut _;
+        let destructor_boxed = Box::into_raw(Box::new(destructor)).cast();
 
         // Safety: object cannot be null and destructor is wrapped to avoid ABI incompatibility.
         unsafe {
@@ -334,7 +334,8 @@ impl Queue {
     ///
     /// - Object shouldn't be released manually.
     pub const unsafe fn as_raw(&self) -> dispatch_queue_t {
-        self.dispatch_object.as_raw()
+        // SAFETY: Upheld by caller.
+        unsafe { self.dispatch_object.as_raw() }
     }
 }
 
@@ -361,7 +362,7 @@ impl WorkloopQueue {
         assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
 
         // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object as *mut _) };
+        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
 
         WorkloopQueue {
             queue: Queue {
@@ -388,7 +389,8 @@ impl WorkloopQueue {
     ///
     /// - Object shouldn't be released manually.
     pub const unsafe fn as_raw(&self) -> dispatch_workloop_t {
-        self.queue.as_raw() as dispatch_workloop_t
+        // SAFETY: Upheld by caller.
+        unsafe { self.queue.as_raw() as dispatch_workloop_t }
     }
 }
 

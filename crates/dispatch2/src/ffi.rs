@@ -8,7 +8,7 @@ use core::ffi::{c_char, c_int, c_long, c_uint, c_ulong, c_void};
 macro_rules! create_opaque_type {
     ($type_name: ident, $typedef_name: ident) => {
         #[repr(C)]
-        #[derive(Debug)]
+        #[derive(Copy, Clone, Debug)]
         #[allow(missing_docs)]
         pub struct $type_name {
             /// opaque value
@@ -32,7 +32,7 @@ macro_rules! enum_with_val {
         }
 
         impl ::core::fmt::Debug for $ident {
-            fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+            fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                 match self {
                     $(&$ident::$variant => write!(f, "{}::{}", stringify!($ident), stringify!($variant)),)*
                     &$ident(v) => write!(f, "UNKNOWN({})", v),
@@ -191,14 +191,8 @@ enum_with_val! {
     }
 }
 
-#[cfg_attr(
-    any(target_os = "macos", target_os = "ios", target_os = "tvos"),
-    link(name = "System", kind = "dylib")
-)]
-#[cfg_attr(
-    not(any(target_os = "macos", target_os = "ios", target_os = "tvos")),
-    link(name = "dispatch", kind = "dylib")
-)]
+#[cfg_attr(target_vendor = "apple", link(name = "System", kind = "dylib"))]
+#[cfg_attr(not(target_vendor = "apple"), link(name = "dispatch", kind = "dylib"))]
 extern "C" {
     /// Increments the reference count (the retain count) of a dispatch object.
     pub fn dispatch_retain(object: dispatch_object_t);
@@ -391,7 +385,7 @@ extern "C" {
     ) -> dispatch_queue_attr_t;
     /// Creates a new dispatch queue to which you can submit blocks.
     #[cfg_attr(
-        any(target_os = "macos", target_os = "ios", target_os = "tvos"),
+        target_vendor = "apple",
         link_name = "dispatch_queue_create_with_target$V2"
     )]
     pub fn dispatch_queue_create_with_target(
@@ -459,18 +453,12 @@ extern "C" {
     pub fn dispatch_queue_get_specific(queue: dispatch_queue_t, key: *const c_void) -> *mut c_void;
     /// Returns the value for the key associated with the current dispatch queue.
     pub fn dispatch_get_specific(key: *const c_void) -> *mut c_void;
-    #[cfg_attr(
-        any(target_os = "macos", target_os = "ios", target_os = "tvos"),
-        link_name = "dispatch_assert_queue$V2"
-    )]
+    #[cfg_attr(target_vendor = "apple", link_name = "dispatch_assert_queue$V2")]
     /// Generates an assertion if the current block is not running on the specified dispatch queue.
     pub fn dispatch_assert_queue(queue: dispatch_queue_t);
     /// Generates an assertion if the current block is not running as a barrier on the specified dispatch queue.
     pub fn dispatch_assert_queue_barrier(queue: dispatch_queue_t);
-    #[cfg_attr(
-        any(target_os = "macos", target_os = "ios", target_os = "tvos"),
-        link_name = "dispatch_assert_queue_not$V2"
-    )]
+    #[cfg_attr(target_vendor = "apple", link_name = "dispatch_assert_queue_not$V2")]
     /// Generates an assertion if the current block is executing on the specified dispatch queue.
     pub fn dispatch_assert_queue_not(queue: dispatch_queue_t);
 
@@ -486,11 +474,11 @@ extern "C" {
     pub static _dispatch_source_type_data_replace: dispatch_source_type_s;
     pub static _dispatch_source_type_mach_send: dispatch_source_type_s;
     pub static _dispatch_source_type_memorypressure: dispatch_source_type_s;
-    #[cfg(any(target_os = "macos", target_os = "ios", target_os = "tvos"))]
+    #[cfg(target_vendor = "apple")]
     pub static _dispatch_source_type_proc: dispatch_source_type_s;
     pub static _dispatch_source_type_read: dispatch_source_type_s;
     pub static _dispatch_source_type_timer: dispatch_source_type_s;
-    #[cfg(any(target_os = "macos", target_os = "ios", target_os = "tvos"))]
+    #[cfg(target_vendor = "apple")]
     pub static _dispatch_source_type_vnode: dispatch_source_type_s;
     pub static _dispatch_source_type_write: dispatch_source_type_s;
     /// Creates a new dispatch source to monitor low-level system events.

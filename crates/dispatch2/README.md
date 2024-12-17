@@ -1,31 +1,17 @@
-# dispatch2
+# `dispatch2`
 
-Allows interaction with the [Apple Dispatch](https://developer.apple.com/documentation/dispatch) library in a safe and unsafe way.
+[![Latest version](https://badgen.net/crates/v/dispatch2)](https://crates.io/crates/dispatch2)
+[![License](https://badgen.net/static/license/MIT%20OR%20Apache%202.0/blue)](https://github.com/madsmtm/objc2/blob/master/LICENSE.txt)
+[![Documentation](https://docs.rs/dispatch2/badge.svg)](https://docs.rs/dispatch2/)
+[![CI](https://github.com/madsmtm/objc2/actions/workflows/ci.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/ci.yml)
 
-## Usage
+Apple's Grand Central Dispatch interface in Rust.
 
-To use `dispatch2`, add this to your `Cargo.toml`:
+This crate provides a safe and sound interface to Apple's Grand Central
+dispatch, as well as the ability to drop into lower-level bindings.
 
-```toml
-[dependencies]
-dispatch2 = "0.1.0"
-```
+This README is kept intentionally small in an effort to consolidate the
+documentation, see [the Rust docs](https://docs.rs/dispatch2/) for more details.
 
-## Example
-
-```rust
-use dispatch2::{Queue, QueueAttribute};
-
-fn main() {
-    let queue = Queue::new("example_queue", QueueAttribute::Serial);
-    queue.exec_async(|| println!("Hello"));
-    queue.exec_sync(|| println!("World"));
-}
-```
-
-## License
-
-dispatch2 is distributed under the terms of either the MIT license or the Apache
-License (Version 2.0), at the user's choice.
-
-See [LICENSE-APACHE](LICENSE-APACHE) and [LICENSE-MIT](LICENSE-MIT).
+This crate is part of the [`objc2` project](https://github.com/madsmtm/objc2),
+see that for related crates.

@@ -30,12 +30,12 @@ impl Semaphore {
         }
 
         // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object as *mut _) };
+        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
 
         Some(Semaphore { dispatch_object })
     }
 
-    /// Attempt to aquire the [Semaphore] and return a [SemaphoreGuard].
+    /// Attempt to acquire the [Semaphore] and return a [SemaphoreGuard].
     ///
     /// # Errors
     ///
@@ -72,7 +72,8 @@ impl Semaphore {
     ///
     /// - Object shouldn't be released manually.
     pub const unsafe fn as_raw(&self) -> dispatch_semaphore_t {
-        self.dispatch_object.as_raw()
+        // SAFETY: Upheld by caller.
+        unsafe { self.dispatch_object.as_raw() }
     }
 }
 

@@ -1,18 +1,42 @@
 [package]
 name = "dispatch2"
-version = "0.1.0"
-authors = ["Mary <mary@mary.zone>"]
-license = "Apache-2.0 OR MIT"
-repository = "https://www.github.com/marysaka/dispatch2.git"
-homepage = "https://www.github.com/marysaka/dispatch2"
-description = "Bindings and wrappers for the Grand Central Dispatch (GCD)"
-keywords = ["gcd", "macOS", "iOS", "watchOS", "ipadOS"]
-categories = ["api-bindings", "development-tools::ffi", "os::macos-apis"]
-edition = "2021"
-
-exclude = [
-    ".github"
+version = "0.1.0" # Remember to update html_root_url in lib.rs
+description = "Bindings and wrappers for Apple's Grand Central Dispatch (GCD)"
+keywords = ["gcd", "macos", "ios", "dispatch", "libdispatch"]
+categories = [
+    "api-bindings",
+    "development-tools::ffi",
+    "os::macos-apis",
+    "external-ffi-bindings",
 ]
+authors = ["Mads Marquart <mads@marquart.dk>", "Mary <mary@mary.zone>"]
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license = "Apache-2.0 OR MIT"
+
+[lints]
+workspace = true
 
 [dependencies]
 libc = "0.2"
+
+[package.metadata.docs.rs]
+default-target = "aarch64-apple-darwin"
+features = []
+targets = [
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin",
+    "aarch64-apple-ios",
+    "x86_64-apple-ios",
+    "aarch64-apple-tvos",
+    "aarch64-apple-watchos",
+    "aarch64-apple-ios-macabi",
+    "x86_64-unknown-linux-gnu",
+    "i686-unknown-linux-gnu",
+]
+
+[package.metadata.release]
+shared-version = false
+tag-prefix = "dispatch"
+enable-features = []

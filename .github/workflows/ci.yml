@@ -38,6 +38,7 @@ env:
   #
   # This excludes `header-translator`, `test-assembly`, `tests` and `test-ui`.
   PUBLIC_CRATES: >-
+    --package=dispatch2
     --package=block2
     --package=objc2
     --package=objc2-encode
@@ -113,12 +114,12 @@ jobs:
           target: armv7s-apple-ios
           build-std: true
           # `cc` works poorly when cross-compiling, so let's ignore `objc2-exception-helper` for now.
-          args: --package=block2 --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_IOS_17 $INTERESTING_FEATURES -Zbuild-std
+          args: --package=dispatch2 --package=block2 --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_IOS_17 $INTERESTING_FEATURES -Zbuild-std
         - name: visionOS Aarch64 simulator
           target: aarch64-apple-visionos-sim
           build-std: true
           # `cc` works poorly when cross-compiling, so let's ignore `objc2-exception-helper` for now.
-          args: --package=block2 --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_VISIONOS_1 $INTERESTING_FEATURES -Zbuild-std
+          args: --package=dispatch2 --package=block2 --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_VISIONOS_1 $INTERESTING_FEATURES -Zbuild-std
 
         - name: GNUStep + exceptions
           target: x86_64-unknown-linux-gnu
@@ -198,7 +199,7 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: cargo check
-      run: cargo check --package=block2 --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_MACOS_14 --features=all
+      run: cargo check --package=dispatch2 --package=block2 --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_MACOS_14 --features=all
       env:
         RUSTFLAGS: "--codegen=debuginfo=0" # Removed --deny=warnings
 
@@ -657,6 +658,7 @@ jobs:
       RUNTIME_VERSION: gnustep-${{ matrix.libobjc2 }}
       # Exclude `objc2-exception-helper`, for some reason that can't be tested directly on GNUStep
       PUBLIC_CRATES: >-
+        --package=dispatch2
         --package=block2
         --package=objc2
         --package=objc2-encode
@@ -688,7 +690,7 @@ jobs:
           ~/extern/lib
           ~/extern/include
         # Change this key if we start caching more things
-        key: extern-${{ github.job }}-${{ matrix.name }}-v1
+        key: extern-${{ github.job }}-${{ matrix.name }}-v2
 
     - name: Setup environment
       # These add to PATH-like variables, so they can always be set
@@ -720,6 +722,19 @@ jobs:
     - name: Install Make and Cmake
       if: steps.extern-cache.outputs.cache-hit != 'true'
       run: sudo apt-get -y install make cmake
+
+    - name: Install libdispatch
+      if: steps.extern-cache.outputs.cache-hit != 'true'
+      run: |
+        wget https://github.com/swiftlang/swift-corelibs-libdispatch/archive/refs/tags/swift-6.0.3-RELEASE.tar.gz
+        tar -xzf swift-6.0.3-RELEASE.tar.gz
+        cd swift-corelibs-libdispatch-swift-6.0.3-RELEASE
+
+        mkdir build
+        cd build
+        cmake -Wno-dev -DCMAKE_INSTALL_PREFIX=$HOME/extern ..
+        make install
+        ls -al $HOME/extern/*
 
     - name: Install GNUStep libobjc2
       if: steps.extern-cache.outputs.cache-hit != 'true'
