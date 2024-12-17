@@ -308,6 +308,18 @@ jobs:
     - name: Verify that no files changed
       run: git diff --exit-code --submodule=diff
 
+    - name: Run auto-generated framework tests
+      if: ${{ github.ref_name == 'ci-full' }}
+      run: cargo test -ptest-frameworks --features=test-frameworks --no-fail-fast
+
+    - name: Install Mac Catalyst
+      if: ${{ github.ref_name == 'ci-full' }}
+      run: rustup target add aarch64-apple-ios-macabi
+
+    - name: Run auto-generated framework tests on Mac Catalyst
+      if: ${{ github.ref_name == 'ci-full' }}
+      run: cargo test -ptest-frameworks --features=test-frameworks --no-fail-fast --target=aarch64-apple-ios-macabi
+
   check-framework-features:
     # This will take ~40 minutes
     if: ${{ github.ref_name == 'ci-full' }}

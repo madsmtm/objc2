@@ -3,11 +3,13 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt;
+use std::fmt::Display;
 use std::iter;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::availability::Availability;
+use crate::cfgs::PlatformCfg;
 use crate::config::{ClassData, MethodData};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
@@ -682,7 +684,7 @@ impl Stmt {
                         } else {
                             Some(Self::ExternMethods {
                                 location: id.location().clone(),
-                                availability: Availability::parse(entity, context),
+                                availability: availability.clone(),
                                 cls: id.clone(),
                                 cls_required_items: required_items.clone(),
                                 source_superclass: Some(superclass_id.clone()),
@@ -2473,5 +2475,99 @@ impl Stmt {
             };
             Ok(())
         })
+    }
+
+    pub(crate) fn encoding_test<'a>(&'a self, config: &'a Config) -> Option<impl Display + 'a> {
+        let simple_platform_gate =
+            |data, required_items: &[ItemIdentifier], implied_items: &[ItemIdentifier]| {
+                let mut platform_cfg = PlatformCfg::from_config(data);
+
+                for item in required_items {
+                    platform_cfg.dependency(config.library(item.library_name()));
+                }
+
+                for item in implied_items {
+                    platform_cfg.implied(config.library(item.library_name()));
+                }
+
+                FormatterFn(move |f| {
+                    if let Some(cfg) = platform_cfg.cfgs() {
+                        writeln!(f, "#[cfg({cfg})]")?;
+                    }
+
+                    Ok(())
+                })
+            };
+
+        let (data, availability, cls, cls_required_items, cls_generics, methods) = match self {
+            Stmt::ExternMethods {
+                location,
+                availability,
+                cls,
+                cls_required_items,
+                cls_generics,
+                methods,
+                ..
+            } => (
+                config.library(location.library_name()),
+                availability,
+                cls,
+                cls_required_items,
+                &**cls_generics,
+                methods,
+            ),
+            Stmt::ExternCategory {
+                id,
+                availability,
+                cls,
+                cls_required_items,
+                methods,
+                ..
+            } => (
+                config.library(id.library_name()),
+                availability,
+                cls,
+                cls_required_items,
+                &[] as &[_],
+                methods,
+            ),
+            // TODO: Test protocols too
+            _ => return None,
+        };
+
+        Some(FormatterFn(move |f| {
+            write!(
+                f,
+                "{}",
+                simple_platform_gate(data, cls_required_items, &[],)
+            )?;
+            if let Some(check) = availability.check_is_available() {
+                writeln!(f, "    if {check} ")?;
+            }
+            writeln!(f, "    {{")?;
+            for generic in cls_generics {
+                writeln!(f, "        type {generic} = AnyObject;")?;
+            }
+            write!(f, "        type This = {}<", cls.path())?;
+            for generic in cls_generics {
+                write!(f, "{generic}, ")?;
+            }
+            writeln!(f, ">;")?;
+            writeln!(f, "        let cls = This::class();")?;
+            writeln!(f, "        let metaclass = cls.metaclass();")?;
+
+            for method in methods {
+                write!(
+                    f,
+                    "{}",
+                    simple_platform_gate(data, &method.required_items(), cls_required_items,)
+                )?;
+                write!(f, "{}", method.encoding_test(false))?;
+            }
+
+            writeln!(f, "    }}")?;
+
+            Ok(())
+        }))
     }
 }

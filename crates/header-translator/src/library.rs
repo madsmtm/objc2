@@ -111,17 +111,20 @@ impl Library {
     pub fn output(
         &self,
         crate_dir: &Path,
+        test_crate_dir: &Path,
         config: &Config,
         dependency_map: &BTreeMap<&str, Dependencies<'_>>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
         let generated_dir = crate_dir.join("src").join("generated");
+        let test_path = test_crate_dir.join("tests").join(&self.data.framework);
 
         // Output `src/generated/*`.
         self.module.output(
             &generated_dir,
+            &test_path,
             config,
             &self.link_name,
-            self.contents(config),
+            self.top_level_prefix(),
             true,
         )?;
 
@@ -279,37 +282,16 @@ see that for related crates.", self.data.krate, self.link_name)?;
                     .position()
                     .unwrap();
 
-                let target = cargo_toml
-                    .entry("target")
-                    .or_insert({
-                        let mut table = Table::new();
-                        table.set_implicit(true);
-                        Item::Table(table)
-                    })
-                    .as_table_mut()
-                    .unwrap();
+                let target = cargo_toml.entry("target").implicit_table();
 
                 target.set_position(dep_position);
 
                 let key = format!("'cfg({cfgs})'").parse().unwrap();
-                let cfg = target
+                target
                     .entry_format(&key)
-                    .or_insert({
-                        let mut table = Table::new();
-                        table.set_implicit(true);
-                        Item::Table(table)
-                    })
-                    .as_table_mut()
-                    .unwrap();
-
-                cfg.entry("dependencies")
-                    .or_insert({
-                        let mut table = Table::new();
-                        table.set_implicit(true);
-                        Item::Table(table)
-                    })
-                    .as_table_mut()
-                    .unwrap()
+                    .implicit_table()
+                    .entry("dependencies")
+                    .implicit_table()
             } else {
                 cargo_toml["dependencies"].as_table_mut().unwrap()
             };
@@ -416,7 +398,7 @@ see that for related crates.", self.data.krate, self.link_name)?;
         Ok(())
     }
 
-    pub fn contents<'a>(&'a self, config: &'a Config) -> impl fmt::Display + 'a {
+    fn top_level_prefix(&self) -> impl fmt::Display + '_ {
         FormatterFn(|f| {
             writeln!(
                 f,
@@ -471,14 +453,6 @@ see that for related crates.", self.data.krate, self.link_name)?;
                 }
                 writeln!(f, "extern \"C\" {{}}")?;
                 writeln!(f)?;
-            }
-
-            if !self.module.submodules.is_empty() {
-                write!(f, "{}", self.module.modules(config))?;
-            }
-
-            if !self.module.stmts.is_empty() {
-                write!(f, "{}", self.module.stmts(config, &self.link_name))?;
             }
 
             Ok(())
@@ -537,4 +511,20 @@ fn add_newline_at_end(item: &mut Item) {
         .unwrap()
         .decor_mut()
         .set_suffix("\n");
+}
+
+pub trait EntryExt<'a> {
+    fn implicit_table(self) -> &'a mut Table;
+}
+
+impl<'a> EntryExt<'a> for toml_edit::Entry<'a> {
+    fn implicit_table(self) -> &'a mut Table {
+        self.or_insert({
+            let mut table = Table::new();
+            table.set_implicit(true);
+            Item::Table(table)
+        })
+        .as_table_mut()
+        .unwrap()
+    }
 }

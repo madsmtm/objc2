@@ -1,8 +1,11 @@
-use std::fmt;
+use std::{
+    cmp::Ordering,
+    fmt::{self, Display},
+};
 
 use clang::{Entity, PlatformAvailability, Version};
 
-use crate::context::Context;
+use crate::{context::Context, display_helper::FormatterFn};
 
 #[derive(Debug, Clone, PartialEq, Default)]
 struct Unavailable {
@@ -24,6 +27,77 @@ pub struct Versions {
     pub(crate) visionos: Option<Version>,
 }
 
+impl Versions {
+    const NONE: Self = Self {
+        macos: None,
+        maccatalyst: None,
+        ios: None,
+        tvos: None,
+        watchos: None,
+        visionos: None,
+    };
+
+    const RUST_OS_MIN: Self = Self {
+        macos: Some(Version {
+            x: 10,
+            y: Some(12),
+            z: None,
+        }),
+        maccatalyst: Some(Version {
+            x: 13,
+            y: Some(1),
+            z: None,
+        }),
+        ios: Some(Version {
+            x: 10,
+            y: Some(0),
+            z: None,
+        }),
+        tvos: Some(Version {
+            x: 10,
+            y: Some(0),
+            z: None,
+        }),
+        watchos: Some(Version {
+            x: 5,
+            y: Some(0),
+            z: None,
+        }),
+        visionos: Some(Version {
+            x: 1,
+            y: Some(0),
+            z: None,
+        }),
+    };
+
+    fn emit_if(&self, bound: &Self, condition: impl Fn(Version, Version) -> bool) -> Self {
+        let filter = |this, bound| {
+            if let Some(this) = this {
+                if let Some(bound) = bound {
+                    if (condition)(this, bound) {
+                        Some(this)
+                    } else {
+                        None
+                    }
+                } else {
+                    Some(this)
+                }
+            } else {
+                None
+            }
+        };
+
+        Self {
+            macos: filter(self.macos, bound.macos),
+            maccatalyst: filter(self.maccatalyst, bound.maccatalyst),
+            ios: filter(self.ios, bound.ios),
+            tvos: filter(self.tvos, bound.tvos),
+            watchos: filter(self.watchos, bound.watchos),
+            visionos: filter(self.visionos, bound.visionos),
+        }
+    }
+}
+
 /// <https://docs.swift.org/swift-book/ReferenceManual/Attributes.html#ID583>
 #[derive(Debug, Clone, PartialEq)]
 pub struct Availability {
@@ -32,6 +106,32 @@ pub struct Availability {
     deprecated: Versions,
     message: Option<String>,
     _swift: Option<PlatformAvailability>,
+}
+
+fn format_version(version: Version) -> impl Display {
+    FormatterFn(move |f| {
+        write!(f, "{}", version.x)?;
+
+        if let Some(y) = version.y {
+            write!(f, ".{}", y)?;
+
+            if let Some(z) = version.z {
+                write!(f, ".{}", z)?;
+            }
+        } else if let Some(z) = version.z {
+            // Probably never gonna happen, but just to make sure
+            write!(f, ".0.{}", z)?;
+        }
+
+        Ok(())
+    })
+}
+
+fn version_cmp(left: Version, right: Version) -> Ordering {
+    left.x
+        .cmp(&right.x)
+        .then_with(|| left.y.unwrap_or(0).cmp(&right.y.unwrap_or(0)))
+        .then_with(|| left.z.unwrap_or(0).cmp(&right.z.unwrap_or(0)))
 }
 
 impl Availability {
@@ -141,6 +241,68 @@ impl Availability {
                 visionos: None,
             }
         )
+    }
+
+    pub fn check_is_available(&self) -> Option<impl Display + '_> {
+        let mut introduced = self.introduced.emit_if(&Versions::RUST_OS_MIN, |v, rust| {
+            version_cmp(v, rust).is_gt()
+        });
+
+        let unavailable = &self.unavailable;
+
+        let max = Some(Version {
+            x: 9999,
+            y: None,
+            z: None,
+        });
+        if unavailable.macos {
+            introduced.macos = max;
+        }
+        if unavailable.maccatalyst {
+            introduced.maccatalyst = max;
+        }
+        if unavailable.ios {
+            introduced.ios = max;
+        }
+        if unavailable.tvos {
+            introduced.tvos = max;
+        }
+        if unavailable.watchos {
+            introduced.watchos = max;
+        }
+        if unavailable.visionos {
+            introduced.visionos = max;
+        }
+
+        if introduced == Versions::NONE {
+            return None;
+        }
+
+        Some(FormatterFn(move |f| {
+            write!(f, "available!(")?;
+
+            if let Some(version) = introduced.macos {
+                write!(f, "macos = {}, ", format_version(version))?;
+            }
+            if let Some(version) = introduced.ios {
+                write!(f, "ios = {}, ", format_version(version))?;
+            }
+            if let Some(version) = introduced.tvos {
+                write!(f, "tvos = {}, ", format_version(version))?;
+            }
+            if let Some(version) = introduced.watchos {
+                write!(f, "watchos = {}, ", format_version(version))?;
+            }
+            if let Some(version) = introduced.visionos {
+                write!(f, "visionos = {}, ", format_version(version))?;
+            }
+
+            write!(f, "..)")?;
+
+            // TODO: Add cfg!(not(...)) based on self.unavailable
+
+            Ok(())
+        }))
     }
 }
 

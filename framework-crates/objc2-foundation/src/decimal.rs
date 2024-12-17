@@ -10,12 +10,22 @@ pub struct NSDecimal {
     // unsigned int _isNegative:1;
     // unsigned int _isCompact:1;
     // unsigned int _reserved:18;
-    _inner: i32,
-    _mantissa: [c_ushort; 8],
+    pub(crate) _inner: i32,
+    pub(crate) _mantissa: [c_ushort; 8],
 }
 
 unsafe impl Encode for NSDecimal {
-    const ENCODING: Encoding = Encoding::Struct("NSDecimal", &[]);
+    const ENCODING: Encoding = Encoding::Struct(
+        "?",
+        &[
+            Encoding::BitField(8, None),
+            Encoding::BitField(4, None),
+            Encoding::BitField(1, None),
+            Encoding::BitField(1, None),
+            Encoding::BitField(18, None),
+            Encoding::Array(8, &Encoding::UShort),
+        ],
+    );
 }
 
 unsafe impl RefEncode for NSDecimal {

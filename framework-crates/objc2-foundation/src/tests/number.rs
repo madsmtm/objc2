@@ -1,6 +1,4 @@
 #![cfg(feature = "NSValue")]
-use alloc::format;
-
 use crate::NSNumber;
 
 #[test]
@@ -115,7 +113,7 @@ fn float_int_equality() {
 #[test]
 #[cfg(feature = "NSString")]
 fn display_debug() {
-    use std::fmt;
+    use std::{fmt, format};
 
     fn assert_display_debug<T: fmt::Debug + fmt::Display>(val: T, expected: &str) {
         // The two impls for these happen to be the same

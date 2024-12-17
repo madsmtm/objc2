@@ -3,8 +3,9 @@ use alloc::format;
 use alloc::string::ToString;
 
 use objc2::rc::autoreleasepool;
+use objc2::{msg_send, sel, ClassType};
 
-use crate::{ns_string, NSString};
+use crate::{ns_string, NSObjectProtocol, NSString};
 
 #[test]
 fn test_equality() {
@@ -264,4 +265,22 @@ fn test_macro_in_unsafe() {
         &*s
     };
     assert_eq!(s.to_string(), "abc");
+}
+
+#[test]
+#[cfg_attr(not(target_vendor = "apple"), ignore = "only on Apple")]
+fn class_cluster_and_init_method() {
+    // This method happens to only be available on allocated objects.
+    let sel = sel!(initWithBytes:length:encoding:);
+
+    let method = NSString::class().instance_method(sel);
+    assert!(method.is_none(), "class does not have method");
+
+    let s = NSString::from_str("foo");
+    assert!(!s.respondsToSelector(sel), "object does not have method");
+
+    let allocated_object: *mut NSString = unsafe { msg_send![NSString::class(), alloc] };
+    let has_method: bool = unsafe { msg_send![allocated_object, respondsToSelector: sel] };
+    let _: () = unsafe { msg_send![allocated_object, release] };
+    assert!(has_method, "Allocated (but uninitialized) has method");
 }

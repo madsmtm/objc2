@@ -22,6 +22,14 @@ impl CfgState {
         }
     }
 
+    fn explicit(should_gate: bool) -> Self {
+        if should_gate {
+            Self::ShouldGate
+        } else {
+            Self::Omit
+        }
+    }
+
     fn dependency(&mut self, dependency: bool) {
         *self = match (*self, dependency) {
             (Self::ShouldGate, true) => Self::ShouldGate,
@@ -72,6 +80,20 @@ impl PlatformCfg {
             watchos: CfgState::new(lib.watchos.is_some()),
             visionos: CfgState::new(lib.visionos.is_some()),
             gnustep: CfgState::new(lib.gnustep),
+        }
+    }
+
+    pub fn from_config_explicit(lib: &LibraryConfig) -> Self {
+        Self {
+            macos: CfgState::explicit(lib.macos.is_some()),
+            // FIXME: Temporarily disable Mac Catalyst, see above
+            maccatalyst: CfgState::AlreadyGated,
+            ios: CfgState::explicit(lib.ios.is_some()),
+            tvos: CfgState::explicit(lib.tvos.is_some()),
+            watchos: CfgState::explicit(lib.watchos.is_some()),
+            visionos: CfgState::explicit(lib.visionos.is_some()),
+            // FIXME: Support this better?
+            gnustep: CfgState::new(false),
         }
     }
 

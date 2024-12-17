@@ -1,11 +1,9 @@
 #![cfg(feature = "NSString")]
 use alloc::format;
 use alloc::string::{String, ToString};
-use core::any::TypeId;
 use core::fmt::Write;
 use objc2::runtime::NSObject;
 
-use crate::{CopyingHelper, MutableCopyingHelper};
 use crate::{NSMutableString, NSString};
 
 #[test]
@@ -64,7 +62,10 @@ fn test_copy() {
 }
 
 #[test]
+#[cfg(feature = "NSObject")]
 fn counterpart() {
+    use crate::{CopyingHelper, MutableCopyingHelper};
+    use core::any::TypeId;
     assert_eq!(
         TypeId::of::<<NSString as CopyingHelper>::Result>(),
         TypeId::of::<NSString>(),

@@ -1,0 +1,308 @@
+[package]
+name = "test-frameworks"
+version = "0.0.0"
+edition.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[package.metadata.release]
+release = false
+
+[features]
+test-frameworks = [
+    "dep:objc2-avf-audio",
+    "objc2-avf-audio/all",
+    "dep:objc2-av-foundation",
+    "objc2-av-foundation/all",
+    "dep:objc2-av-kit",
+    "objc2-av-kit/all",
+    "dep:objc2-accessibility",
+    "objc2-accessibility/all",
+    "dep:objc2-accounts",
+    "objc2-accounts/all",
+    "dep:objc2-ad-services",
+    "objc2-ad-services/all",
+    "dep:objc2-ad-support",
+    "objc2-ad-support/all",
+    "dep:objc2-app-kit",
+    "objc2-app-kit/all",
+    "dep:objc2-app-tracking-transparency",
+    "objc2-app-tracking-transparency/all",
+    "dep:objc2-audio-toolbox",
+    "objc2-audio-toolbox/all",
+    "dep:objc2-authentication-services",
+    "objc2-authentication-services/all",
+    "dep:objc2-automatic-assessment-configuration",
+    "objc2-automatic-assessment-configuration/all",
+    "dep:objc2-automator",
+    "objc2-automator/all",
+    "dep:objc2-background-assets",
+    "objc2-background-assets/all",
+    "dep:objc2-background-tasks",
+    "objc2-background-tasks/all",
+    "dep:objc2-business-chat",
+    "objc2-business-chat/all",
+    "dep:objc2-call-kit",
+    "objc2-call-kit/all",
+    "dep:objc2-class-kit",
+    "objc2-class-kit/all",
+    "dep:objc2-cloud-kit",
+    "objc2-cloud-kit/all",
+    "dep:objc2-contacts",
+    "objc2-contacts/all",
+    "dep:objc2-contacts-ui",
+    "objc2-contacts-ui/all",
+    "dep:objc2-core-audio-types",
+    "objc2-core-audio-types/all",
+    "dep:objc2-core-bluetooth",
+    "objc2-core-bluetooth/all",
+    "dep:objc2-core-data",
+    "objc2-core-data/all",
+    "dep:objc2-core-foundation",
+    "objc2-core-foundation/all",
+    "dep:objc2-core-graphics",
+    "objc2-core-graphics/all",
+    "dep:objc2-core-image",
+    "objc2-core-image/all",
+    "dep:objc2-core-location",
+    "objc2-core-location/all",
+    "dep:objc2-core-ml",
+    "objc2-core-ml/all",
+    "dep:objc2-core-media",
+    "objc2-core-media/all",
+    "dep:objc2-core-motion",
+    "objc2-core-motion/all",
+    "dep:objc2-core-text",
+    "objc2-core-text/all",
+    "dep:objc2-core-video",
+    "objc2-core-video/all",
+    "dep:objc2-core-wlan",
+    "objc2-core-wlan/all",
+    "dep:objc2-data-detection",
+    "objc2-data-detection/all",
+    "dep:objc2-device-check",
+    "objc2-device-check/all",
+    "dep:objc2-event-kit",
+    "objc2-event-kit/all",
+    "dep:objc2-event-kit-ui",
+    "objc2-event-kit-ui/all",
+    "dep:objc2-exception-handling",
+    "objc2-exception-handling/all",
+    "dep:objc2-extension-kit",
+    "objc2-extension-kit/all",
+    "dep:objc2-external-accessory",
+    "objc2-external-accessory/all",
+    "dep:objc2-file-provider",
+    "objc2-file-provider/all",
+    "dep:objc2-file-provider-ui",
+    "objc2-file-provider-ui/all",
+    "dep:objc2-finder-sync",
+    "objc2-finder-sync/all",
+    "dep:objc2-foundation",
+    "objc2-foundation/all",
+    "dep:objc2-game-controller",
+    "objc2-game-controller/all",
+    "dep:objc2-game-kit",
+    "objc2-game-kit/all",
+    "dep:objc2-health-kit",
+    "objc2-health-kit/all",
+    "dep:objc2-io-surface",
+    "objc2-io-surface/all",
+    "dep:objc2-identity-lookup",
+    "objc2-identity-lookup/all",
+    "dep:objc2-input-method-kit",
+    "objc2-input-method-kit/all",
+    "dep:objc2-link-presentation",
+    "objc2-link-presentation/all",
+    "dep:objc2-local-authentication",
+    "objc2-local-authentication/all",
+    "dep:objc2-local-authentication-embedded-ui",
+    "objc2-local-authentication-embedded-ui/all",
+    "dep:objc2-ml-compute",
+    "objc2-ml-compute/all",
+    "dep:objc2-mail-kit",
+    "objc2-mail-kit/all",
+    "dep:objc2-map-kit",
+    "objc2-map-kit/all",
+    "dep:objc2-media-player",
+    "objc2-media-player/all",
+    "dep:objc2-metal",
+    "objc2-metal/all",
+    "dep:objc2-metal-fx",
+    "objc2-metal-fx/all",
+    "dep:objc2-metal-kit",
+    "objc2-metal-kit/all",
+    "dep:objc2-metal-performance-shaders",
+    "objc2-metal-performance-shaders/all",
+    "dep:objc2-metal-performance-shaders-graph",
+    "objc2-metal-performance-shaders-graph/all",
+    "dep:objc2-metric-kit",
+    "objc2-metric-kit/all",
+    "dep:objc2-multipeer-connectivity",
+    "objc2-multipeer-connectivity/all",
+    "dep:objc2-natural-language",
+    "objc2-natural-language/all",
+    "dep:objc2-nearby-interaction",
+    "objc2-nearby-interaction/all",
+    "dep:objc2-network-extension",
+    "objc2-network-extension/all",
+    "dep:objc2-osa-kit",
+    "objc2-osa-kit/all",
+    "dep:objc2-open-directory",
+    "objc2-open-directory/all",
+    "dep:objc2-photos",
+    "objc2-photos/all",
+    "dep:objc2-photos-ui",
+    "objc2-photos-ui/all",
+    "dep:objc2-quartz-core",
+    "objc2-quartz-core/all",
+    "dep:objc2-screen-capture-kit",
+    "objc2-screen-capture-kit/all",
+    "dep:objc2-screen-saver",
+    "objc2-screen-saver/all",
+    "dep:objc2-sensitive-content-analysis",
+    "objc2-sensitive-content-analysis/all",
+    "dep:objc2-service-management",
+    "objc2-service-management/all",
+    "dep:objc2-social",
+    "objc2-social/all",
+    "dep:objc2-sound-analysis",
+    "objc2-sound-analysis/all",
+    "dep:objc2-speech",
+    "objc2-speech/all",
+    "dep:objc2-store-kit",
+    "objc2-store-kit/all",
+    "dep:objc2-symbols",
+    "objc2-symbols/all",
+    "dep:objc2-system-extensions",
+    "objc2-system-extensions/all",
+    "dep:objc2-ui-kit",
+    "objc2-ui-kit/all",
+    "dep:objc2-uniform-type-identifiers",
+    "objc2-uniform-type-identifiers/all",
+    "dep:objc2-user-notifications",
+    "objc2-user-notifications/all",
+    "dep:objc2-virtualization",
+    "objc2-virtualization/all",
+    "dep:objc2-vision",
+    "objc2-vision/all",
+    "dep:objc2-web-kit",
+    "objc2-web-kit/all",
+]
+
+[dependencies]
+block2 = { path = "../block2" }
+objc2 = { path = "../objc2", features = ["relax-void-encoding", "relax-sign-encoding"] }
+libc = "0.2.80"
+dispatch = "0.2.0"
+objc2-avf-audio = { path = "../../framework-crates/objc2-avf-audio", optional = true }
+objc2-av-foundation = { path = "../../framework-crates/objc2-av-foundation", optional = true }
+objc2-av-kit = { path = "../../framework-crates/objc2-av-kit", optional = true }
+objc2-accessibility = { path = "../../framework-crates/objc2-accessibility", optional = true }
+objc2-authentication-services = { path = "../../framework-crates/objc2-authentication-services", optional = true }
+objc2-cloud-kit = { path = "../../framework-crates/objc2-cloud-kit", optional = true }
+objc2-core-audio-types = { path = "../../framework-crates/objc2-core-audio-types", optional = true }
+objc2-core-bluetooth = { path = "../../framework-crates/objc2-core-bluetooth", optional = true }
+objc2-core-data = { path = "../../framework-crates/objc2-core-data", optional = true }
+objc2-core-foundation = { path = "../../framework-crates/objc2-core-foundation", optional = true }
+objc2-core-graphics = { path = "../../framework-crates/objc2-core-graphics", optional = true }
+objc2-core-location = { path = "../../framework-crates/objc2-core-location", optional = true }
+objc2-core-ml = { path = "../../framework-crates/objc2-core-ml", optional = true }
+objc2-core-media = { path = "../../framework-crates/objc2-core-media", optional = true }
+objc2-core-text = { path = "../../framework-crates/objc2-core-text", optional = true }
+objc2-core-video = { path = "../../framework-crates/objc2-core-video", optional = true }
+objc2-data-detection = { path = "../../framework-crates/objc2-data-detection", optional = true }
+objc2-device-check = { path = "../../framework-crates/objc2-device-check", optional = true }
+objc2-extension-kit = { path = "../../framework-crates/objc2-extension-kit", optional = true }
+objc2-foundation = { path = "../../framework-crates/objc2-foundation", optional = true }
+objc2-game-kit = { path = "../../framework-crates/objc2-game-kit", optional = true }
+objc2-map-kit = { path = "../../framework-crates/objc2-map-kit", optional = true }
+objc2-media-player = { path = "../../framework-crates/objc2-media-player", optional = true }
+objc2-natural-language = { path = "../../framework-crates/objc2-natural-language", optional = true }
+objc2-network-extension = { path = "../../framework-crates/objc2-network-extension", optional = true }
+objc2-photos-ui = { path = "../../framework-crates/objc2-photos-ui", optional = true }
+objc2-sound-analysis = { path = "../../framework-crates/objc2-sound-analysis", optional = true }
+objc2-store-kit = { path = "../../framework-crates/objc2-store-kit", optional = true }
+objc2-symbols = { path = "../../framework-crates/objc2-symbols", optional = true }
+objc2-uniform-type-identifiers = { path = "../../framework-crates/objc2-uniform-type-identifiers", optional = true }
+objc2-user-notifications = { path = "../../framework-crates/objc2-user-notifications", optional = true }
+
+[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
+objc2-accounts = { path = "../../framework-crates/objc2-accounts", optional = true }
+objc2-business-chat = { path = "../../framework-crates/objc2-business-chat", optional = true }
+objc2-sensitive-content-analysis = { path = "../../framework-crates/objc2-sensitive-content-analysis", optional = true }
+objc2-social = { path = "../../framework-crates/objc2-social", optional = true }
+
+[target.'cfg(not(any(target_os = "tvos", target_os = "watchos")))'.dependencies]
+objc2-ad-services = { path = "../../framework-crates/objc2-ad-services", optional = true }
+objc2-automatic-assessment-configuration = { path = "../../framework-crates/objc2-automatic-assessment-configuration", optional = true }
+objc2-background-assets = { path = "../../framework-crates/objc2-background-assets", optional = true }
+objc2-class-kit = { path = "../../framework-crates/objc2-class-kit", optional = true }
+objc2-contacts-ui = { path = "../../framework-crates/objc2-contacts-ui", optional = true }
+objc2-file-provider = { path = "../../framework-crates/objc2-file-provider", optional = true }
+objc2-file-provider-ui = { path = "../../framework-crates/objc2-file-provider-ui", optional = true }
+objc2-identity-lookup = { path = "../../framework-crates/objc2-identity-lookup", optional = true }
+objc2-local-authentication-embedded-ui = { path = "../../framework-crates/objc2-local-authentication-embedded-ui", optional = true }
+objc2-metal-fx = { path = "../../framework-crates/objc2-metal-fx", optional = true }
+objc2-metric-kit = { path = "../../framework-crates/objc2-metric-kit", optional = true }
+objc2-speech = { path = "../../framework-crates/objc2-speech", optional = true }
+objc2-web-kit = { path = "../../framework-crates/objc2-web-kit", optional = true }
+
+[target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "tvos"))'.dependencies]
+objc2-ad-support = { path = "../../framework-crates/objc2-ad-support", optional = true }
+objc2-ml-compute = { path = "../../framework-crates/objc2-ml-compute", optional = true }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2-app-kit = { path = "../../framework-crates/objc2-app-kit", optional = true }
+objc2-automator = { path = "../../framework-crates/objc2-automator", optional = true }
+objc2-core-wlan = { path = "../../framework-crates/objc2-core-wlan", optional = true }
+objc2-exception-handling = { path = "../../framework-crates/objc2-exception-handling", optional = true }
+objc2-finder-sync = { path = "../../framework-crates/objc2-finder-sync", optional = true }
+objc2-input-method-kit = { path = "../../framework-crates/objc2-input-method-kit", optional = true }
+objc2-mail-kit = { path = "../../framework-crates/objc2-mail-kit", optional = true }
+objc2-osa-kit = { path = "../../framework-crates/objc2-osa-kit", optional = true }
+objc2-open-directory = { path = "../../framework-crates/objc2-open-directory", optional = true }
+objc2-screen-capture-kit = { path = "../../framework-crates/objc2-screen-capture-kit", optional = true }
+objc2-screen-saver = { path = "../../framework-crates/objc2-screen-saver", optional = true }
+objc2-service-management = { path = "../../framework-crates/objc2-service-management", optional = true }
+objc2-system-extensions = { path = "../../framework-crates/objc2-system-extensions", optional = true }
+objc2-virtualization = { path = "../../framework-crates/objc2-virtualization", optional = true }
+
+[target.'cfg(not(target_os = "watchos"))'.dependencies]
+objc2-app-tracking-transparency = { path = "../../framework-crates/objc2-app-tracking-transparency", optional = true }
+objc2-audio-toolbox = { path = "../../framework-crates/objc2-audio-toolbox", optional = true }
+objc2-core-image = { path = "../../framework-crates/objc2-core-image", optional = true }
+objc2-external-accessory = { path = "../../framework-crates/objc2-external-accessory", optional = true }
+objc2-game-controller = { path = "../../framework-crates/objc2-game-controller", optional = true }
+objc2-io-surface = { path = "../../framework-crates/objc2-io-surface", optional = true }
+objc2-link-presentation = { path = "../../framework-crates/objc2-link-presentation", optional = true }
+objc2-metal = { path = "../../framework-crates/objc2-metal", optional = true }
+objc2-metal-kit = { path = "../../framework-crates/objc2-metal-kit", optional = true }
+objc2-metal-performance-shaders = { path = "../../framework-crates/objc2-metal-performance-shaders", optional = true }
+objc2-metal-performance-shaders-graph = { path = "../../framework-crates/objc2-metal-performance-shaders-graph", optional = true }
+objc2-multipeer-connectivity = { path = "../../framework-crates/objc2-multipeer-connectivity", optional = true }
+objc2-photos = { path = "../../framework-crates/objc2-photos", optional = true }
+objc2-quartz-core = { path = "../../framework-crates/objc2-quartz-core", optional = true }
+objc2-vision = { path = "../../framework-crates/objc2-vision", optional = true }
+
+[target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "visionos"))'.dependencies]
+objc2-background-tasks = { path = "../../framework-crates/objc2-background-tasks", optional = true }
+
+[target.'cfg(not(target_os = "tvos"))'.dependencies]
+objc2-call-kit = { path = "../../framework-crates/objc2-call-kit", optional = true }
+objc2-contacts = { path = "../../framework-crates/objc2-contacts", optional = true }
+objc2-core-motion = { path = "../../framework-crates/objc2-core-motion", optional = true }
+objc2-event-kit = { path = "../../framework-crates/objc2-event-kit", optional = true }
+objc2-health-kit = { path = "../../framework-crates/objc2-health-kit", optional = true }
+objc2-local-authentication = { path = "../../framework-crates/objc2-local-authentication", optional = true }
+
+[target.'cfg(any(target_os = "ios", target_os = "visionos"))'.dependencies]
+objc2-event-kit-ui = { path = "../../framework-crates/objc2-event-kit-ui", optional = true }
+
+[target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "watchos"))'.dependencies]
+objc2-nearby-interaction = { path = "../../framework-crates/objc2-nearby-interaction", optional = true }
+
+[target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos"))'.dependencies]
+objc2-ui-kit = { path = "../../framework-crates/objc2-ui-kit", optional = true }

@@ -1,0 +1,5 @@
+# Test files here are not kept in Git, since the difference
+# between / evolution of them are not really important.
+tests/*
+src/imports.rs
+!.gitkeep

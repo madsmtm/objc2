@@ -27,11 +27,12 @@ mod stmt;
 mod thread_safety;
 mod unexposed_attr;
 
+pub use self::cfgs::PlatformCfg;
 pub use self::config::{Config, LibraryConfig};
 pub use self::context::{Context, MacroEntity, MacroLocation};
 pub use self::global_analysis::global_analysis;
 pub use self::id::{ItemIdentifier, Location};
-pub use self::library::Library;
+pub use self::library::{EntryExt, Library};
 pub use self::module::Module;
 pub use self::stmt::{Counterpart, Stmt};
 
@@ -39,6 +40,7 @@ pub fn run_cargo_fmt(packages: impl IntoIterator<Item = impl Display>) {
     let status = Command::new("cargo")
         .arg("fmt")
         .args(packages.into_iter().map(|package| format!("-p{package}")))
+        .arg("-ptest-frameworks")
         .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap())
         .status()
         .expect("failed running cargo fmt");

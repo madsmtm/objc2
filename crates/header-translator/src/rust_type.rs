@@ -1635,6 +1635,15 @@ impl Ty {
         })
     }
 
+    pub(crate) fn method_return_encoding_type(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Primitive(Primitive::Void) => write!(f, "()"),
+            Self::Primitive(Primitive::C99Bool) => write!(f, "Bool"),
+            Self::Pointer { pointee, .. } if **pointee == Self::Self_ => write!(f, "*mut This"),
+            _ => write!(f, "{}", self.plain()),
+        })
+    }
+
     pub(crate) fn fn_return(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| {
             if let Self::Primitive(Primitive::Void) = self {
@@ -1781,6 +1790,13 @@ impl Ty {
                 _ => write!(f, "{}", self.fn_argument()),
             },
             _ => write!(f, "{}", self.fn_argument()),
+        })
+    }
+
+    pub(crate) fn method_argument_encoding_type(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Primitive(Primitive::C99Bool) => write!(f, "Bool"),
+            _ => write!(f, "{}", self.plain()),
         })
     }
 

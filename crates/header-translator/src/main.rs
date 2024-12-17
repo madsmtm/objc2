@@ -1,4 +1,5 @@
 use std::collections::{BTreeMap, BTreeSet};
+use std::fmt::Write as _;
 use std::io::{ErrorKind, Read, Seek, Write};
 use std::path::{Path, PathBuf};
 use std::{fs, io};
@@ -14,8 +15,8 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
-    global_analysis, run_cargo_fmt, Config, Context, Library, LibraryConfig, Location, MacroEntity,
-    MacroLocation, Stmt,
+    global_analysis, run_cargo_fmt, Config, Context, EntryExt, Library, LibraryConfig, Location,
+    MacroEntity, MacroLocation, PlatformCfg, Stmt,
 };
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -101,6 +102,8 @@ fn main() -> Result<(), BoxError> {
         .map(|(library_name, library)| (&**library_name, library.dependencies(&config)))
         .collect();
 
+    let test_crate_dir = workspace_dir.join("crates").join("test-frameworks");
+
     for (library_name, library) in &libraries {
         let _span = info_span!("writing", library_name).entered();
 
@@ -134,8 +137,10 @@ fn main() -> Result<(), BoxError> {
             Err(err) => Err(err)?,
         }
 
-        library.output(&crate_dir, &config, &dependency_map)?;
+        library.output(&crate_dir, &test_crate_dir, &config, &dependency_map)?;
     }
+
+    update_test_metadata(&test_crate_dir, config.libraries.values());
 
     let span = info_span!("formatting").entered();
     run_cargo_fmt(libraries.values().map(|library| &library.data.krate));
@@ -625,4 +630,117 @@ fn update_list(workspace_dir: &Path, config: &Config) -> io::Result<()> {
     }
 
     Ok(())
+}
+
+fn update_test_metadata<'a>(
+    test_crate_dir: &Path,
+    libraries: impl IntoIterator<Item = &'a LibraryConfig> + Clone,
+) {
+    let _span = info_span!("updating test-frameworks metadata").entered();
+
+    // Write imports
+    let mut s = String::new();
+    for lib in libraries.clone() {
+        let platform_cfg = PlatformCfg::from_config_explicit(lib);
+        if let Some(cfgs) = platform_cfg.cfgs() {
+            writeln!(&mut s, "#[cfg({cfgs})]",).unwrap();
+        }
+        writeln!(&mut s, "pub use {}::*;", lib.krate.replace('-', "_")).unwrap();
+    }
+    fs::write(test_crate_dir.join("src").join("imports.rs"), s).unwrap();
+
+    // Make library be imported by test crate
+    let mut f = std::fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(test_crate_dir.join("Cargo.toml"))
+        .unwrap();
+    let mut cargo_toml: toml_edit::DocumentMut = io::read_to_string(&f)
+        .unwrap()
+        .parse()
+        .expect("invalid test toml");
+
+    let mut features = toml_edit::Array::new();
+    for lib in libraries.clone() {
+        features.push(format!("dep:{}", lib.krate));
+        features.push(format!("{}/all", lib.krate));
+        // Inserting into array removes decor, so set it afterwards
+        features
+            .get_mut(features.len() - 2)
+            .unwrap()
+            .decor_mut()
+            .set_prefix("\n    ");
+        features
+            .get_mut(features.len() - 1)
+            .unwrap()
+            .decor_mut()
+            .set_prefix("\n    ");
+    }
+    features.set_trailing("\n");
+    features.set_trailing_comma(true);
+    cargo_toml["features"]["test-frameworks"] = features.into();
+
+    // Reset dependencies
+    cargo_toml["dependencies"] = toml_edit::Item::Table(toml_edit::Table::from_iter([
+        (
+            "block2",
+            toml_edit::Value::InlineTable(toml_edit::InlineTable::from_iter([(
+                "path",
+                "../block2",
+            )])),
+        ),
+        (
+            "objc2",
+            toml_edit::Value::InlineTable(toml_edit::InlineTable::from_iter([
+                ("path", toml_edit::Value::from("../objc2")),
+                // FIXME: Make these not required for tests
+                (
+                    "features",
+                    toml_edit::Value::Array(toml_edit::Array::from_iter([
+                        "relax-void-encoding",
+                        "relax-sign-encoding",
+                    ])),
+                ),
+            ])),
+        ),
+        ("libc", "0.2.80".into()),
+        ("dispatch", "0.2.0".into()),
+    ]));
+    let _ = cargo_toml.remove("target");
+
+    for lib in libraries.clone() {
+        let platform_cfg = PlatformCfg::from_config_explicit(lib);
+
+        let dependencies = if let Some(cfgs) = platform_cfg.cfgs() {
+            let key = format!("'cfg({cfgs})'").parse().unwrap();
+            cargo_toml
+                .entry("target")
+                .implicit_table()
+                .entry_format(&key)
+                .implicit_table()
+                .entry("dependencies")
+                .implicit_table()
+        } else {
+            cargo_toml["dependencies"].as_table_mut().unwrap()
+        };
+
+        dependencies[&lib.krate] = toml_edit::InlineTable::from_iter([
+            (
+                "path",
+                toml_edit::Value::String(toml_edit::Formatted::new(format!(
+                    "../../framework-crates/{}",
+                    lib.krate
+                ))),
+            ),
+            (
+                "optional",
+                toml_edit::Value::Boolean(toml_edit::Formatted::new(true)),
+            ),
+        ])
+        .into();
+    }
+
+    f.set_len(0).unwrap();
+    f.seek(io::SeekFrom::Start(0)).unwrap();
+    f.write_all(cargo_toml.to_string().as_bytes()).unwrap();
 }

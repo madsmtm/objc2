@@ -5,6 +5,7 @@ use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
 use crate::availability::Availability;
 use crate::config::MethodData;
 use crate::context::Context;
+use crate::display_helper::FormatterFn;
 use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
@@ -264,6 +265,7 @@ pub struct Method {
     mainthreadonly: bool,
     weak_property: bool,
     must_use: bool,
+    encoding: String,
 }
 
 #[derive(Debug)]
@@ -495,6 +497,10 @@ impl Method {
             modifiers.mainthreadonly,
         );
 
+        let encoding = entity
+            .get_objc_type_encoding()
+            .expect("method to have encoding");
+
         Some((
             modifiers.designated_initializer,
             Method {
@@ -513,6 +519,7 @@ impl Method {
                 mainthreadonly,
                 weak_property: false,
                 must_use: modifiers.must_use,
+                encoding,
             },
         ))
     }
@@ -553,6 +560,10 @@ impl Method {
             error!(?qualifiers, "properties do not support qualifiers");
         }
 
+        let encoding = entity
+            .get_objc_type_encoding()
+            .expect("method to have encoding");
+
         let getter = if !getter_data.skipped {
             let ty = Ty::parse_property_return(
                 entity.get_type().expect("property type"),
@@ -588,6 +599,7 @@ impl Method {
                 // Don't show `weak`-ness on getters
                 weak_property: false,
                 must_use: modifiers.must_use,
+                encoding: encoding.clone(),
             })
         } else {
             None
@@ -632,6 +644,7 @@ impl Method {
                     mainthreadonly,
                     weak_property: attributes.map(|a| a.weak).unwrap_or(false),
                     must_use: modifiers.must_use,
+                    encoding,
                 })
             } else {
                 None
@@ -667,6 +680,41 @@ impl Method {
             items.push(ItemIdentifier::main_thread_marker());
         }
         items
+    }
+
+    pub(crate) fn encoding_test(&self, is_protocol: bool) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| {
+            let check = self.availability.check_is_available();
+
+            if let Some(check) = &check {
+                writeln!(f, "if {check} {{")?;
+            }
+
+            if is_protocol {
+                writeln!(f, "assert!(true); // TODO")?;
+            } else {
+                write!(f, "check_method::<(")?;
+                for (_, arg_ty) in &self.arguments {
+                    write!(f, "{},", arg_ty.method_argument_encoding_type())?;
+                }
+                if self.is_error {
+                    write!(f, "*mut *mut NSError,")?;
+                }
+                write!(f, "), {}>(", self.result_type.method_return_encoding_type())?;
+                if self.is_class {
+                    write!(f, "metaclass")?;
+                } else {
+                    write!(f, "cls")?;
+                }
+                writeln!(f, ", sel!({}), {:?});", self.selector, self.encoding)?;
+            }
+
+            if check.is_some() {
+                writeln!(f, "}}")?;
+            }
+
+            Ok(())
+        })
     }
 }
 
