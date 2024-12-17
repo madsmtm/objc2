@@ -529,6 +529,7 @@ pub enum Stmt {
         body: Option<()>,
         safe: bool,
         must_use: bool,
+        link_name: Option<String>,
     },
     /// typedef Type TypedefName;
     AliasDecl {
@@ -1059,7 +1060,10 @@ impl Stmt {
                     | EntityKind::ParmDecl
                     | EntityKind::EnumDecl
                     | EntityKind::IntegerLiteral => {}
-                    _ => error!("unknown"),
+                    EntityKind::ObjCIndependentClass => {
+                        // TODO: Might be interesting?
+                    }
+                    _ => error!("unknown typedef child"),
                 });
 
                 let ty = entity
@@ -1212,7 +1216,19 @@ impl Stmt {
                             immediate_children(&entity, |entity, _span| match entity.get_kind() {
                                 EntityKind::UnexposedAttr => {
                                     if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                                        error!(?attr, "unknown attribute on enum constant");
+                                        match attr {
+                                            UnexposedAttr::Enum
+                                            | UnexposedAttr::Options
+                                            | UnexposedAttr::ClosedEnum
+                                            | UnexposedAttr::ErrorEnum => {
+                                                if kind.as_ref() != Some(&attr) {
+                                                    error!(?kind, ?attr, "enum child had attribute that parent did not");
+                                                }
+                                            }
+                                            attr => {
+                                                error!(?attr, "unknown attribute on enum constant")
+                                            }
+                                        }
                                     }
                                 }
                                 EntityKind::VisibilityAttr => {}
@@ -1367,6 +1383,7 @@ impl Stmt {
                 let result_type = Ty::parse_function_return(result_type, context);
                 let mut arguments = Vec::new();
                 let mut must_use = false;
+                let mut link_name = None;
 
                 if entity.is_static_method() {
                     warn!("unexpected static method");
@@ -1402,9 +1419,19 @@ impl Stmt {
                     EntityKind::WarnUnusedResultAttr => {
                         must_use = true;
                     }
-                    EntityKind::PureAttr => {
+                    EntityKind::PureAttr | EntityKind::ConstAttr => {
                         // Ignore, we currently have no way of marking
                         // external functions as pure in Rust.
+                    }
+                    EntityKind::AsmLabelAttr => {
+                        let name = entity.get_name().expect("asm label to have name");
+                        let name = if let Some(name) = name.strip_prefix('_') {
+                            name.to_string()
+                        } else {
+                            error!(?name, "symbol did not start with _");
+                            name
+                        };
+                        link_name = Some(name);
                     }
                     EntityKind::VisibilityAttr => {
                         // CG_EXTERN or UIKIT_EXTERN
@@ -1426,6 +1453,7 @@ impl Stmt {
                     body,
                     safe: !data.unsafe_,
                     must_use,
+                    link_name,
                 }]
             }
             EntityKind::UnionDecl => {
@@ -2360,6 +2388,7 @@ impl Stmt {
                     body: Some(_),
                     safe: _,
                     must_use: _,
+                    link_name: _,
                 } => {
                     write!(f, "// TODO: ")?;
                     write!(f, "pub fn {}(", id.name)?;
@@ -2377,6 +2406,7 @@ impl Stmt {
                     body: None,
                     safe: false,
                     must_use,
+                    link_name,
                 } => {
                     // Functions are always C-unwind, since we don't know
                     // anything about them.
@@ -2386,6 +2416,9 @@ impl Stmt {
                     write!(f, "    {availability}")?;
                     if *must_use {
                         writeln!(f, "    #[must_use]")?;
+                    }
+                    if let Some(link_name) = link_name {
+                        writeln!(f, "    #[link_name = {link_name:?}]")?;
                     }
                     write!(f, "    pub fn {}(", id.name)?;
                     for (param, arg_ty) in arguments {
@@ -2405,6 +2438,7 @@ impl Stmt {
                     body: None,
                     safe: true,
                     must_use,
+                    link_name,
                 } => {
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
@@ -2421,6 +2455,9 @@ impl Stmt {
 
                     writeln!(f, "    extern \"C-unwind\" {{")?;
 
+                    if let Some(link_name) = link_name {
+                        writeln!(f, "        #[link_name = {link_name:?}]")?;
+                    }
                     write!(f, "        fn {}(", id.name)?;
                     for (param, arg_ty) in arguments {
                         let param = handle_reserved(&crate::to_snake_case(param));

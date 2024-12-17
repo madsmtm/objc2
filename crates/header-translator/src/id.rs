@@ -135,14 +135,17 @@ impl Location {
             // Redefined in the framework crate itself.
             "Darwin.MacTypes" => vec!["System".into()],
 
-            // Built-in
+            // Built-ins
             "DarwinFoundation.types.machine_types" => vec!["System".into()],
+            "_Builtin_stdarg.va_list" => vec!["System".into()],
 
             // Libc
             name if name.starts_with("sys_types") => vec!["libc".into()],
             "DarwinFoundation.types.sys_types" => vec!["libc".into()],
+            "DarwinFoundation.qos" => vec!["libc".into()],
             name if name.starts_with("Darwin.POSIX") => vec!["libc".into()],
             "_stdio" => vec!["libc".into()],
+            "_time.timespec" => vec!["libc".into()],
 
             // Will be moved to the `mach2` crate in `libc` v1.0
             name if name.starts_with("Darwin.Mach") => vec!["libc".into()],
@@ -324,7 +327,7 @@ impl<N: ToOptionString> ItemIdentifier<N> {
     pub fn with_name(name: N, entity: &Entity<'_>, _context: &Context<'_>) -> Self {
         let file = entity
             .get_location()
-            .expect("entity location")
+            .unwrap_or_else(|| panic!("no entity location: {entity:?}"))
             .get_expansion_location()
             .file
             .expect("expanded location file");

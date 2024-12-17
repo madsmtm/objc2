@@ -213,6 +213,9 @@ impl Availability {
                 "swift" => {
                     _swift = Some(availability);
                 }
+                "driverkit" => {
+                    // Ignore
+                }
                 platform if platform.ends_with("_app_extension") => {
                     // Ignore availability attributes for app extensions
                 }

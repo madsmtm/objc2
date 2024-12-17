@@ -251,6 +251,7 @@ pub enum Primitive {
     ISize,
     USize,
     PtrDiff,
+    VaList,
     // Objective-C
     ObjcBool,
     NSInteger,
@@ -309,6 +310,7 @@ impl Primitive {
             Self::ISize => "isize",
             // TODO: Use core::ffi::c_size_t
             Self::USize => "usize",
+            Self::VaList => "VaList",
             // TODO: Use core::ffi::c_ptr_diff_t
             Self::PtrDiff => "isize",
             Self::ObjcBool => "Bool",
@@ -339,14 +341,14 @@ impl ItemRef {
         self.required_items.clone()
     }
 
-    fn new(entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let entity = entity
+    fn new(entity_ref: &Entity<'_>, context: &Context<'_>) -> Self {
+        let entity = entity_ref
             .get_location()
             .expect("itemref location")
             .get_entity()
             .expect("itemref entity");
 
-        let id = ItemIdentifier::new(&entity, context);
+        let mut id = ItemIdentifier::new(&entity, context);
 
         if let Some(external) = context.library(id.library_name()).external.get(&id.name) {
             let id = ItemIdentifier::from_raw(
@@ -375,26 +377,39 @@ impl ItemRef {
                 })
                 .chain(iter::once(id.clone()))
                 .collect();
-            Self {
+            return Self {
                 id,
                 thread_safety,
                 required_items,
-            }
-        } else if matches!(
-            entity.get_kind(),
-            EntityKind::ObjCInterfaceDecl | EntityKind::ObjCProtocolDecl
-        ) {
-            Self {
+            };
+        }
+
+        match entity.get_kind() {
+            EntityKind::ObjCInterfaceDecl | EntityKind::ObjCProtocolDecl => Self {
                 id,
                 thread_safety: ThreadSafety::from_decl(&entity, context),
                 required_items: items_required_by_decl(&entity, context),
+            },
+            EntityKind::MacroExpansion => {
+                id.name = entity_ref.get_name().unwrap_or_else(|| {
+                    error!(?entity_ref, ?entity, "macro ref did not have name");
+                    id.name
+                });
+                Self {
+                    id: id.clone(),
+                    // We cannot get thread safety from macro expansions
+                    thread_safety: ThreadSafety::dummy(),
+                    // Similarly, we cannot get for required items
+                    required_items: vec![id],
+                }
             }
-        } else {
-            error!(?entity, "could not get declaration. Add appropriate external.{}.module = \"...\" to translation-config.toml", id.name);
-            Self {
-                id,
-                thread_safety: ThreadSafety::dummy(),
-                required_items: vec![],
+            _ => {
+                error!(?entity, "could not get declaration. Add appropriate external.{}.module = \"...\" to translation-config.toml", id.name);
+                Self {
+                    id: id.clone(),
+                    thread_safety: ThreadSafety::dummy(),
+                    required_items: vec![id],
+                }
             }
         }
     }
@@ -983,6 +998,9 @@ impl Ty {
                     // https://github.com/rust-lang/rust/issues/65473
                     "intptr_t" => return Self::Primitive(Primitive::ISize),
                     "uintptr_t" => return Self::Primitive(Primitive::USize),
+
+                    // Varargs, still unsupported by Rust.
+                    "__builtin_va_list" => return Self::Primitive(Primitive::VaList),
 
                     // MacTypes.h
                     "UInt8" => return Self::Primitive(Primitive::U8),

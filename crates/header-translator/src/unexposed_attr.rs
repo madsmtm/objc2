@@ -37,11 +37,11 @@ impl UnexposedAttr {
         get_arguments: impl FnOnce() -> T,
     ) -> Result<Option<Self>, ()> {
         Ok(match s {
-            "NS_ENUM" | "CF_ENUM" => {
+            "CF_ENUM" | "DISPATCH_ENUM" | "NS_ENUM" => {
                 let _ = get_arguments();
                 Some(Self::Enum)
             }
-            "NS_OPTIONS" | "CF_OPTIONS" => {
+            "CF_OPTIONS" | "DISPATCH_OPTIONS" | "NS_OPTIONS" => {
                 let _ = get_arguments();
                 Some(Self::Options)
             }
@@ -84,6 +84,8 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
+            // Nullability attributes
+            s if s.starts_with("DISPATCH_NONNULL") => None,
             "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" | "CM_SWIFT_SENDABLE"
             | "CV_SWIFT_SENDABLE" => Some(Self::Sendable),
             "NS_SWIFT_NONSENDABLE" | "CM_SWIFT_NONSENDABLE" | "CV_SWIFT_NONSENDABLE" => {
@@ -97,14 +99,14 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
-            "CF_NOESCAPE" | "NS_NOESCAPE" => Some(Self::NoEscape),
+            "CF_NOESCAPE" | "DISPATCH_NOESCAPE" | "NS_NOESCAPE" => Some(Self::NoEscape),
             // TODO: We could potentially automatically elide this argument
             // from the method call, though it's rare enough that it's
             // probably not really worth the effort.
             "__unused" => None,
             // We assume that a function is inline if it has a body, so not
             // interesting.
-            "CF_INLINE" | "NS_INLINE" => None,
+            "CF_INLINE" | "DISPATCH_ALWAYS_INLINE" | "NS_INLINE" => None,
             // We don't synthethize properties, so irrelevant for us.
             "NS_REQUIRES_PROPERTY_DEFINITIONS" => None,
             // Weak specifiers - would be interesting if Rust supported weak statics
@@ -159,6 +161,8 @@ impl UnexposedAttr {
             | "CT_ENUM_UNAVAILABLE"
             | "CT_UNAVAILABLE"
             | "COREVIDEO_GL_DEPRECATED"
+            | "DISPATCH_SWIFT_UNAVAILABLE"
+            | "DISPATCH_ENUM_API_AVAILABLE"
             | "EVENTKITUI_CLASS_AVAILABLE"
             | "FPUI_AVAILABLE"
             | "MLCOMPUTE_AVAILABLE_STARTING"
@@ -239,6 +243,7 @@ impl UnexposedAttr {
             | "CB_CM_API_AVAILABLE"
             | "deprecated"
             | "DEPRECATED_ATTRIBUTE"
+            | "DISPATCH_UNAVAILABLE"
             | "INTERAPP_AUDIO_DEPRECATED"
             | "MIDICI1_0"
             | "MIDICI1_1"
@@ -279,9 +284,14 @@ impl UnexposedAttr {
             }
             "CF_IMPLICIT_BRIDGING_ENABLED"
             | "CF_REFINED_FOR_SWIFT"
+            | "DISPATCH_REFINED_FOR_SWIFT"
             | "NS_REFINED_FOR_SWIFT"
             | "NS_SWIFT_DISABLE_ASYNC"
+            | "DISPATCH_NOTHROW"
             | "NS_SWIFT_NOTHROW" => None,
+            // Possibly interesting?
+            "DISPATCH_COLD" => None,
+            "DISPATCH_MALLOC" => None,
             "CF_CONSUMED"
             | "CF_RELEASES_ARGUMENT"
             | "NS_RELEASES_ARGUMENT"

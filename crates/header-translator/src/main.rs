@@ -353,6 +353,7 @@ fn get_translation_unit<'i: 'c, 'c>(
     // "usr/include/TargetConditionals.modulemap"
     // "System/Library/Frameworks/CoreFoundation.framework/Modules/module.modulemap"
     // "usr/include/ObjectiveC.modulemap"
+    // "usr/include/dispatch.modulemap"
     let modulemap =
         format!("System/Library/Frameworks/{framework}.framework/Modules/module.modulemap");
     // On Mac Catalyst, we need to try to load from System/iOSSupport first.
