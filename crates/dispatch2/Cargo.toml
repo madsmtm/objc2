@@ -1,0 +1,18 @@
+[package]
+name = "dispatch2"
+version = "0.1.0"
+authors = ["Mary <mary@mary.zone>"]
+license = "Apache-2.0 OR MIT"
+repository = "https://www.github.com/marysaka/dispatch2.git"
+homepage = "https://www.github.com/marysaka/dispatch2"
+description = "Bindings and wrappers for the Grand Central Dispatch (GCD)"
+keywords = ["gcd", "macOS", "iOS", "watchOS", "ipadOS"]
+categories = ["api-bindings", "development-tools::ffi", "os::macos-apis"]
+edition = "2021"
+
+exclude = [
+    ".github"
+]
+
+[dependencies]
+libc = "0.2"
