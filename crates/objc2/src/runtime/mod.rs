@@ -1142,8 +1142,10 @@ unsafe impl RefEncode for AnyProtocol {
 /// Note that protocols are objects, though sending messages to them is
 /// officially deprecated.
 //
-// SAFETY: Protocols are objects internally, and are returned as `Retained` in
-// various places in Foundation.
+// SAFETY: Protocols are NSObjects internally (and somewhat publicly, see e.g.
+// `objc/Protocol.h`), and are returned as `Retained` in various places in
+// Foundation. But that's considered deprecated, so we don't implement
+// ClassType for them (even though the "Protocol" class exists).
 unsafe impl Message for AnyProtocol {}
 
 impl fmt::Debug for AnyProtocol {
@@ -1221,6 +1223,10 @@ unsafe impl RefEncode for AnyObject {
 // SAFETY: This is technically slightly wrong, not all objects implement the
 // standard memory management methods. But not having this impl would be too
 // restrictive, so we'll live with it.
+//
+// NOTE: AnyObject actually resolves to the class "Object" internally, but we
+// don't want to expose that publicly, so we only implement Message here, not
+// ClassType.
 unsafe impl Message for AnyObject {}
 
 impl AnyObject {

@@ -127,7 +127,7 @@ impl<P: ?Sized + NSObjectProtocol> PartialEq for ProtocolObject<P> {
     #[inline]
     #[doc(alias = "isEqual:")]
     fn eq(&self, other: &Self) -> bool {
-        self.isEqual(&other.inner)
+        self.isEqual(Some(&other.inner))
     }
 }
 

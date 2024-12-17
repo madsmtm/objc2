@@ -55,7 +55,7 @@ impl PartialEq for NSProxy {
     #[inline]
     #[doc(alias = "isEqual:")]
     fn eq(&self, other: &Self) -> bool {
-        self.isEqual(other)
+        self.isEqual(Some(other))
     }
 }
 

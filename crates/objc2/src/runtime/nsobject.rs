@@ -16,11 +16,9 @@ use crate::{
 /// This represents the [`NSObject` class][cls]. The name "NSObject" also
 /// refers to a protocol, see [`NSObjectProtocol`] for that.
 ///
-/// Since this class is only available with the `Foundation` framework,
-/// `objc2` links to it for you.
-///
-/// This is exported under `objc2_foundation::NSObject`, you probably
-/// want to use that path instead.
+/// This class has been defined in `objc` since macOS 10.8, but is also
+/// re-exported under `objc2_foundation::NSObject`, you might want to use that
+/// path instead.
 ///
 /// [cls]: https://developer.apple.com/documentation/objectivec/nsobject?language=objc
 #[repr(C)]
@@ -131,7 +129,7 @@ pub unsafe trait NSObjectProtocol {
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418795-isequal?language=objc
     #[doc(alias = "isEqual:")]
-    fn isEqual(&self, other: &AnyObject) -> bool
+    fn isEqual(&self, other: Option<&AnyObject>) -> bool
     where
         Self: Sized + Message,
     {
@@ -259,6 +257,8 @@ pub unsafe trait NSObjectProtocol {
     /// let desc: Retained<NSString> = unsafe { Retained::cast_unchecked(obj.description()) };
     /// println!("{desc:?}");
     /// ```
+    //
+    // Only safe to override if the user-provided return type is NSString.
     fn description(&self) -> Retained<NSObject>
     where
         Self: Sized + Message,
@@ -276,6 +276,8 @@ pub unsafe trait NSObjectProtocol {
     /// same value as `description`. Override either to provide custom object
     /// descriptions.
     // optional, introduced in macOS 10.8
+    //
+    // Only safe to override if the user-provided return type is NSString.
     fn debugDescription(&self) -> Retained<NSObject>
     where
         Self: Sized + Message,
@@ -334,6 +336,8 @@ pub unsafe trait NSObjectProtocol {
     {
         unsafe { msg_send![self, retainCount] }
     }
+
+    // retain, release and autorelease below to this protocol.
 }
 
 crate::__inner_extern_protocol!(
@@ -416,6 +420,9 @@ extern_methods!(
         }
 
         // TODO: `methodForSelector:`, but deprecated, showing how you should do without?
+
+        // Don't expose load, initialize and dealloc, since these should never
+        // be called by the user.
     }
 );
 
@@ -430,7 +437,7 @@ impl PartialEq for NSObject {
     #[inline]
     #[doc(alias = "isEqual:")]
     fn eq(&self, other: &Self) -> bool {
-        self.isEqual(other)
+        self.isEqual(Some(other))
     }
 }
 

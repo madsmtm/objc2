@@ -206,6 +206,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `Hash`, instead of guarding them behind `T: Message`.
 * Prevented main thread only classes created using `declare_class!` from
   automatically implementing the auto traits `Send` and `Sync`.
+* **BREAKING**: Fixed the signature of `NSObjectProtocol::isEqual` to take a
+  nullable argument.
 
 
 ## 0.5.2 - 2024-05-21
