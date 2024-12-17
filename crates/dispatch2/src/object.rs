@@ -1,5 +1,10 @@
 //! Dispatch object definition.
 
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc,
+};
+
 use super::{ffi::*, queue::Queue, utils::function_wrapper, QualityOfServiceClass};
 
 /// Error returned by [DispatchObject::set_target_queue].
@@ -23,7 +28,7 @@ pub enum QualityOfServiceClassFloorError {
 #[derive(Debug)]
 pub struct DispatchObject<T> {
     object: *mut T,
-    is_activated: bool,
+    is_activated: Arc<AtomicBool>,
 }
 
 impl<T> DispatchObject<T> {
@@ -35,7 +40,7 @@ impl<T> DispatchObject<T> {
     pub unsafe fn new_owned(object: *mut T) -> Self {
         Self {
             object,
-            is_activated: false,
+            is_activated: Arc::new(AtomicBool::new(false)),
         }
     }
 
@@ -47,7 +52,7 @@ impl<T> DispatchObject<T> {
     pub unsafe fn new_shared(object: *mut T) -> Self {
         let result = Self {
             object,
-            is_activated: false,
+            is_activated: Arc::new(AtomicBool::new(false)),
         };
 
         // Safety: We own a reference to the object.
@@ -80,7 +85,7 @@ impl<T> DispatchObject<T> {
     ///
     /// - DispatchObject should be a queue or queue source.
     pub unsafe fn set_target_queue(&self, queue: &Queue) -> Result<(), TargetQueueError> {
-        if self.is_activated {
+        if self.is_activated.load(Ordering::SeqCst) {
             return Err(TargetQueueError::ObjectAlreadyActive);
         }
 
@@ -120,12 +125,16 @@ impl<T> DispatchObject<T> {
 
     /// Activate the object.
     pub fn activate(&mut self) {
-        // Safety: object cannot be null.
-        unsafe {
-            dispatch_activate(self.as_raw().cast());
+        if self
+            .is_activated
+            .compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst)
+            .is_ok()
+        {
+            // Safety: object cannot be null.
+            unsafe {
+                dispatch_activate(self.as_raw().cast());
+            }
         }
-
-        self.is_activated = true;
     }
 
     /// Suspend the invocation of functions on the object.
@@ -169,3 +178,9 @@ impl<T> Drop for DispatchObject<T> {
         }
     }
 }
+
+// Safety: dispatch object can be safely moved between threads.
+unsafe impl<T> Send for DispatchObject<T> {}
+
+// Safety: dispatch object can be safely shared between threads.
+unsafe impl<T> Sync for DispatchObject<T> {}
