@@ -18,7 +18,7 @@ workspace = true
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true }
 libc = { version = "0.2.80", default-features = false, optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, optional = true }
 
@@ -37,10 +37,11 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags?/std", "libc?/std", "objc2/std", "objc2-core-foundation?/std", "objc2-foundation?/std"]
-alloc = ["objc2/alloc", "objc2-core-foundation?/alloc", "objc2-foundation?/alloc"]
+std = ["alloc", "bitflags?/std", "libc?/std", "objc2?/std", "objc2-core-foundation?/std", "objc2-foundation?/std"]
+alloc = ["objc2?/alloc", "objc2-core-foundation?/alloc", "objc2-foundation?/alloc"]
 bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation?/bitflags"]
 libc = ["dep:libc", "objc2-core-foundation?/libc", "objc2-foundation?/libc"]
+objc2 = ["dep:objc2", "objc2-core-foundation?/objc2"]
 objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation?/objc2-core-foundation"]
 objc2-foundation = ["dep:objc2-foundation"]
 
@@ -67,6 +68,7 @@ all = [
     "ObjC",
     "bitflags",
     "libc",
+    "objc2",
     "objc2-core-foundation",
     "objc2-foundation",
 ]

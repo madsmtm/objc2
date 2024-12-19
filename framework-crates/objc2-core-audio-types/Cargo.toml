@@ -17,7 +17,7 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -35,9 +35,10 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags?/std", "objc2/std"]
-alloc = ["objc2/alloc"]
+std = ["alloc", "bitflags?/std", "objc2?/std"]
+alloc = ["objc2?/alloc"]
 bitflags = ["dep:bitflags"]
+objc2 = ["dep:objc2"]
 
 AudioSessionTypes = []
 CoreAudioBaseTypes = ["bitflags"]
@@ -45,4 +46,5 @@ all = [
     "AudioSessionTypes",
     "CoreAudioBaseTypes",
     "bitflags",
+    "objc2",
 ]

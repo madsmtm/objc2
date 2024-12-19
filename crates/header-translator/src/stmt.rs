@@ -1544,15 +1544,10 @@ impl Stmt {
                 for (_, field_ty) in fields {
                     items.extend(field_ty.required_items());
                 }
-                items.push(ItemIdentifier::objc("Encoding"));
                 items
             }
             // Variants manage required items themselves
-            Self::EnumDecl { ty, .. } => {
-                let mut items = ty.required_items();
-                items.push(ItemIdentifier::objc("Encoding"));
-                items
-            }
+            Self::EnumDecl { ty, .. } => ty.required_items(),
             Self::ConstDecl { ty, value, .. } => {
                 let mut items = ty.required_items();
                 items.extend(value.required_items());
@@ -1600,6 +1595,7 @@ impl Stmt {
                 .iter()
                 .flat_map(|method| method.required_items())
                 .collect(),
+            Self::StructDecl { .. } => vec![ItemIdentifier::objc("Encoding")],
             Self::EnumDecl { kind, variants, .. } => {
                 let mut items: Vec<_> = variants
                     .iter()
@@ -1608,6 +1604,7 @@ impl Stmt {
                 if let Some(UnexposedAttr::Options) = kind {
                     items.push(ItemIdentifier::bitflags());
                 }
+                items.push(ItemIdentifier::objc("Encoding"));
                 items
             }
             _ => vec![],
@@ -1720,6 +1717,13 @@ impl Stmt {
                         return Ok(());
                     }
 
+                    let cfg = cfg_gate_ln(
+                        [ItemIdentifier::objc("extern_class")],
+                        [self.location()],
+                        config,
+                        self.location(),
+                    );
+                    write!(f, "{cfg}")?;
                     writeln!(f, "extern_class!(")?;
                     writeln!(f, "    /// {}", id.doc_link())?;
                     write!(f, "    #[unsafe(super(")?;
@@ -1772,6 +1776,13 @@ impl Stmt {
                     category_name,
                     methods,
                 } => {
+                    let cfg = cfg_gate_ln(
+                        [ItemIdentifier::objc("extern_methods")],
+                        [self.location()],
+                        config,
+                        self.location(),
+                    );
+                    write!(f, "{cfg}")?;
                     writeln!(f, "extern_methods!(")?;
                     if let Some(source_superclass) = source_superclass {
                         writeln!(
@@ -1845,6 +1856,13 @@ impl Stmt {
                     cls_required_items,
                     methods,
                 } => {
+                    let cfg = cfg_gate_ln(
+                        [ItemIdentifier::objc("extern_category")],
+                        [self.location()],
+                        config,
+                        self.location(),
+                    );
+                    write!(f, "{cfg}")?;
                     writeln!(f, "extern_category!(")?;
 
                     if let Some(actual_name) = actual_name {
@@ -2038,6 +2056,13 @@ impl Stmt {
                     required_sendable: _,
                     required_mainthreadonly,
                 } => {
+                    let cfg = cfg_gate_ln(
+                        [ItemIdentifier::objc("extern_protocol")],
+                        [self.location()],
+                        config,
+                        self.location(),
+                    );
+                    write!(f, "{cfg}")?;
                     writeln!(f, "extern_protocol!(")?;
 
                     writeln!(f, "    /// {}", id.doc_link())?;
@@ -2141,6 +2166,11 @@ impl Stmt {
                     writeln!(f, "}}")?;
                     writeln!(f)?;
 
+                    let mut required_items = self.required_items();
+                    required_items.push(ItemIdentifier::objc("Encoding"));
+                    let cfg_encoding =
+                        cfg_gate_ln(required_items, [self.location()], config, self.location());
+
                     let encoding = FormatterFn(|f| {
                         write!(
                             f,
@@ -2155,9 +2185,9 @@ impl Stmt {
                     });
 
                     // SAFETY: The struct is marked `#[repr(C)]`.
-                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{cfg_encoding}")?;
                     writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
-                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{cfg_encoding}")?;
                     writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
 
                     if let Some(true) = sendable {
@@ -2316,12 +2346,17 @@ impl Stmt {
                     _ => panic!("invalid enum kind"),
                 }
 
+                    let mut required_items = self.required_items();
+                    required_items.push(ItemIdentifier::objc("Encoding"));
+                    let cfg_encoding =
+                        cfg_gate_ln(required_items, [self.location()], config, self.location());
+
                     // SAFETY: The enum is either a `#[repr(transparent)]` newtype
                     // over the type, or a `#[repr(REPR)]`, where REPR is a valid
                     // repr with the same size and alignment as the type.
-                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{cfg_encoding}")?;
                     writeln!(f, "{}", unsafe_impl_encode(&id.name, ty.enum_encoding()))?;
-                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{cfg_encoding}")?;
                     writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
 
                     if let Some(true) = sendable {

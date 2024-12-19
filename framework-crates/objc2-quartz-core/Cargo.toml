@@ -20,9 +20,9 @@ bitflags = { version = "2.5.0", default-features = false, optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true }
-objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true }
 

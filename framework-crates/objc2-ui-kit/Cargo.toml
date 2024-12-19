@@ -21,8 +21,8 @@ block2 = { path = "../../crates/block2", version = "0.5.1", default-features = f
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
 objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.2.2", default-features = false, optional = true }
 objc2-core-data = { path = "../objc2-core-data", version = "0.2.2", default-features = false, optional = true }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 objc2-symbols = { path = "../objc2-symbols", version = "0.2.2", default-features = false, optional = true }

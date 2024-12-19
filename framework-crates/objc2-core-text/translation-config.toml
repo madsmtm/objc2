@@ -1,6 +1,6 @@
 framework = "CoreText"
 crate = "objc2-core-text"
-required-crates = ["objc2"] # Temporary
+required-crates = []
 custom-lib-rs = true
 macos = "10.8"
 maccatalyst = "13.0"

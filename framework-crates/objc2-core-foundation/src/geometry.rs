@@ -1,3 +1,4 @@
+#[cfg(feature = "objc2")]
 use objc2::encode::{Encode, Encoding, RefEncode};
 
 use crate::{CGAffineTransform, CGVector};
@@ -25,6 +26,7 @@ pub type CGFloat = InnerFloat;
     not(target_vendor = "apple"),
     all(target_os = "macos", target_pointer_width = "32")
 )))]
+#[cfg(feature = "objc2")]
 mod names {
     pub(super) const POINT: &str = "CGPoint";
     pub(super) const SIZE: &str = "CGSize";
@@ -35,6 +37,7 @@ mod names {
     not(target_vendor = "apple"),
     all(target_os = "macos", target_pointer_width = "32")
 ))]
+#[cfg(feature = "objc2")]
 mod names {
     pub(super) const POINT: &str = "_NSPoint";
     pub(super) const SIZE: &str = "_NSSize";
@@ -53,11 +56,13 @@ pub struct CGPoint {
     pub y: CGFloat,
 }
 
+#[cfg(feature = "objc2")]
 unsafe impl Encode for CGPoint {
     const ENCODING: Encoding =
         Encoding::Struct(names::POINT, &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
 
+#[cfg(feature = "objc2")]
 unsafe impl RefEncode for CGPoint {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
@@ -111,11 +116,13 @@ pub struct CGSize {
     pub height: CGFloat,
 }
 
+#[cfg(feature = "objc2")]
 unsafe impl Encode for CGSize {
     const ENCODING: Encoding =
         Encoding::Struct(names::SIZE, &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
 
+#[cfg(feature = "objc2")]
 unsafe impl RefEncode for CGSize {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
@@ -203,11 +210,13 @@ pub struct CGRect {
     pub size: CGSize,
 }
 
+#[cfg(feature = "objc2")]
 unsafe impl Encode for CGRect {
     const ENCODING: Encoding =
         Encoding::Struct(names::RECT, &[CGPoint::ENCODING, CGSize::ENCODING]);
 }
 
+#[cfg(feature = "objc2")]
 unsafe impl RefEncode for CGRect {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }

@@ -19,7 +19,7 @@ workspace = true
 bitflags = { version = "2.5.0", default-features = false, optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
 libc = { version = "0.2.80", default-features = false, optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -39,11 +39,12 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags?/std", "block2?/std", "libc?/std", "objc2/std"]
-alloc = ["block2?/alloc", "objc2/alloc"]
+std = ["alloc", "bitflags?/std", "block2?/std", "libc?/std", "objc2?/std"]
+alloc = ["block2?/alloc", "objc2?/alloc"]
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 libc = ["dep:libc"]
+objc2 = ["dep:objc2"]
 
 CFArray = []
 CFAttributedString = []
@@ -141,4 +142,5 @@ all = [
     "bitflags",
     "block2",
     "libc",
+    "objc2",
 ]

@@ -33,14 +33,18 @@ impl MacroLocation {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MacroEntity {
+    /// The name and location of the macro definition.
     pub(crate) id: ItemIdentifier,
     pub(crate) is_function_like: bool,
 }
 
 impl MacroEntity {
     pub fn from_entity(entity: &Entity<'_>, context: &Context<'_>) -> Self {
+        let definition = entity.get_definition();
         Self {
-            id: ItemIdentifier::new(entity, context),
+            // Try to get location from the definition itself, but if that
+            // doesn't exist, let's just get it from the entity.
+            id: ItemIdentifier::new(definition.as_ref().unwrap_or(entity), context),
             is_function_like: entity.is_function_like_macro(),
         }
     }

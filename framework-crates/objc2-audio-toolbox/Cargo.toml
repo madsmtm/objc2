@@ -20,8 +20,8 @@ bitflags = { version = "2.5.0", default-features = false, optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
-objc2-core-audio-types = { path = "../objc2-core-audio-types", version = "0.2.2", default-features = false, optional = true, features = ["CoreAudioBaseTypes"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["CFArray", "CFBase", "CFURL"] }
+objc2-core-audio-types = { path = "../objc2-core-audio-types", version = "0.2.2", default-features = false, optional = true, features = ["CoreAudioBaseTypes", "objc2"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["CFArray", "CFBase", "CFURL", "objc2"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 
 [package.metadata.docs.rs]

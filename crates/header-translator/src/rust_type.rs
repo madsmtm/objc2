@@ -1159,7 +1159,7 @@ impl Ty {
             } => {
                 let mut items = pointee.required_items();
                 if *nullability == Nullability::NonNull {
-                    items.push(ItemIdentifier::core_ptr("NonNull"));
+                    items.push(ItemIdentifier::core_ptr_nonnull());
                 }
                 items
             }
@@ -1172,7 +1172,7 @@ impl Ty {
                 let mut items = to.required_items();
                 items.push(id.clone());
                 if *nullability == Nullability::NonNull {
-                    items.push(ItemIdentifier::core_ptr("NonNull"));
+                    items.push(ItemIdentifier::core_ptr_nonnull());
                 }
                 items
             }

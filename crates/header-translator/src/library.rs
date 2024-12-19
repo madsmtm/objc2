@@ -106,6 +106,16 @@ impl Library {
             }
         }
 
+        // Encode need the inner encode impl to be available.
+        if self.data.required_crates.contains("objc2") {
+            for (krate, (_, _, krate_features)) in &mut dependencies {
+                let data = config.library_from_crate(krate);
+                if !data.required_crates.contains("objc2") && !data.skipped {
+                    krate_features.insert("objc2".into());
+                }
+            }
+        }
+
         dependencies
     }
 

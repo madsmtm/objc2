@@ -80,25 +80,29 @@ impl Module {
                 .iter()
                 .flat_map(|stmt| stmt.required_items_inner())
                 .filter_map(|item| {
-                    item.location()
-                        .import(config, emission_library)
-                        .map(|import_data| (item.library_name().to_string(), import_data))
+                    item.import(config, emission_library).map(|import| {
+                        (
+                            import,
+                            (
+                                item.location().cfg_feature(config, emission_library),
+                                item.library_name().to_string(),
+                            ),
+                        )
+                    })
                 })
                 .collect();
 
             let emission_config = &config.library(emission_library);
-            for (library_name, import) in imports {
-                let krate = &config.library(&library_name).krate;
-                let required = emission_config.required_crates.contains(krate);
-                if !required {
-                    writeln!(f, "#[cfg(feature = {krate:?})]")?;
+            for (import, (cfg_feature, library_name)) in imports {
+                if let Some(cfg_feature) = cfg_feature {
+                    writeln!(f, "#[cfg(feature = {cfg_feature:?})]")?;
                 }
                 let mut platform_cfg = PlatformCfg::from_config(emission_config);
                 platform_cfg.dependency(config.library(&library_name));
                 if let Some(cfg) = platform_cfg.cfgs() {
                     writeln!(f, "#[cfg({cfg})]")?;
                 }
-                writeln!(f, "use {import}::*;")?;
+                writeln!(f, "use {import};")?;
             }
             writeln!(f)?;
             writeln!(f, "use crate::*;")?;

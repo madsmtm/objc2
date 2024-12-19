@@ -1,6 +1,6 @@
 framework = "CoreAudioTypes"
 crate = "objc2-core-audio-types"
-required-crates = ["objc2"] # Temporary
+required-crates = []
 link = false # This framework only contains types
 custom-lib-rs = true
 macos = "10.15"

@@ -20,13 +20,13 @@ bitflags = { version = "2.5.0", default-features = false, optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 
 [target.'cfg(target_vendor = "apple")'.dependencies]
 objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.2.2", default-features = false, optional = true }
 objc2-core-data = { path = "../objc2-core-data", version = "0.2.2", default-features = false, optional = true }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true }
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-core-image = { path = "../objc2-core-image", version = "0.2.2", default-features = false, optional = true }
 objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true }
 objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", version = "0.2.2", default-features = false, optional = true }

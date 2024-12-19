@@ -60,12 +60,18 @@ impl Location {
             // These types are redefined in the framework crate itself.
             "Darwin.MacTypes" => "__builtin__".into(),
 
+            // int8_t, int16_t etc., translated to i8, i16 etc.
+            "_stdint" => "__builtin__".into(),
+            // Implementation of the above
+            "DarwinFoundation.types.machine_types" => "__builtin__".into(),
+
             // `core::ffi` types
-            "DarwinFoundation.types.machine_types" => "__core__.ffi".into(),
             "_Builtin_stdarg.va_list" => {
-                error!("va_list is not yet supported");
+                warn!("va_list is not yet supported");
                 "__core__.ffi".into()
             }
+            // c_float and c_double
+            "_float" | "_Builtin_float" => "__core__.ffi".into(),
 
             // `libc`
             name if name.starts_with("sys_types") => "__libc__".into(),
@@ -169,26 +175,6 @@ impl Location {
         }
     }
 
-    /// The place from where a given item exists.
-    pub fn import(&self, config: &Config, emission_library: &str) -> Option<Cow<'static, str>> {
-        match self.library_name() {
-            "__builtin__" => None,
-            // TODO: Use `core::xyz` here.
-            "__core__" => None,
-            // Rare enough that it's written directly instead of
-            // glob-imported, see `ItemIdentifier::path`.
-            "__bitflags__" | "__libc__" | "block" => None,
-            "ObjectiveC" => Some("objc2::__framework_prelude".into()),
-            // Not currently needed, but might be useful to emit
-            // `Some("crate")` here in the future.
-            library if library == emission_library => None,
-            library => {
-                let krate = &config.library(library).krate;
-                Some(krate.replace('-', "_").into())
-            }
-        }
-    }
-
     // Feature names are based on the file name, not the whole path to the feature.
     pub fn cargo_toml_feature(&self, config: &Config, emission_library: &str) -> Option<String> {
         match self.library_name() {
@@ -240,7 +226,11 @@ impl Location {
 
     // FIXME: This is currently wrong for nested umbrella frameworks
     // (specifically MetalPerformanceShaders).
-    fn cfg_feature<'a>(&self, config: &'a Config, emission_library: &str) -> Option<Cow<'a, str>> {
+    pub fn cfg_feature<'a>(
+        &self,
+        config: &'a Config,
+        emission_library: &str,
+    ) -> Option<Cow<'a, str>> {
         match self.library_name() {
             "__builtin__" | "__core__" => None,
             library if library == emission_library => {
@@ -317,10 +307,14 @@ impl<N: ToOptionString> ItemIdentifier<N> {
             .get_location()
             .unwrap_or_else(|| panic!("no entity location: {entity:?}"))
             .get_expansion_location()
-            .file
-            .expect("expanded location file");
+            .file;
 
-        let mut location = Location::from_file(file);
+        let mut location = if let Some(file) = file {
+            Location::from_file(file)
+        } else {
+            // Assume item to be a built-in macro like __nonnull if no file.
+            Location::new("__builtin__")
+        };
 
         // Defined in multiple places for some reason.
         if let Some("IOSurfaceRef" | "__IOSurface") = name.to_option() {
@@ -399,14 +393,14 @@ impl ItemIdentifier {
     pub fn core_ffi(name: &str) -> Self {
         Self {
             name: name.into(),
-            location: Location::new("ObjectiveC"), // Temporary
+            location: Location::new("__core__.ffi"),
         }
     }
 
-    pub fn core_ptr(name: &str) -> Self {
+    pub fn core_ptr_nonnull() -> Self {
         Self {
-            name: name.into(),
-            location: Location::new("ObjectiveC"), // Temporary
+            name: "NonNull".into(),
+            location: Location::new("__core__.ptr"),
         }
     }
 
@@ -431,6 +425,32 @@ impl ItemIdentifier {
 
     pub fn is_nscomparator(&self) -> bool {
         self.location.library_name() == "Foundation" && self.name == "NSComparator"
+    }
+
+    /// The import needed for a given item to exist.
+    pub fn import(&self, config: &Config, emission_library: &str) -> Option<Cow<'static, str>> {
+        match self.library_name() {
+            "__builtin__" => None,
+            "__core__" => match &*self.location().module_path {
+                "__core__.ffi" => Some("core::ffi::*".into()),
+                "__core__.ptr" if self.name == "NonNull" => Some("core::ptr::NonNull".into()),
+                _ => {
+                    error!("unknown __core__: {self:?}");
+                    None
+                }
+            },
+            // Rare enough that it's written directly instead of
+            // glob-imported, see `ItemIdentifier::path` below.
+            "__bitflags__" | "__libc__" | "block" => None,
+            "ObjectiveC" => Some("objc2::__framework_prelude::*".into()),
+            // Not currently needed, but might be useful to emit
+            // `Some("crate")` here in the future.
+            library if library == emission_library => None,
+            library => {
+                let krate = &config.library(library).krate;
+                Some(format!("{}::*", krate.replace('-', "_")).into())
+            }
+        }
     }
 
     pub fn path(&self) -> impl fmt::Display + '_ {

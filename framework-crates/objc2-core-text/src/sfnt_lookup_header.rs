@@ -1,5 +1,6 @@
 use core::{fmt, ptr};
 
+#[cfg(feature = "objc2")]
 use objc2::encode::{Encode, Encoding};
 
 use crate::{
@@ -32,6 +33,7 @@ impl PartialEq for SFNTLookupFormatSpecificHeader {
     }
 }
 
+#[cfg(feature = "objc2")]
 unsafe impl Encode for SFNTLookupFormatSpecificHeader {
     const ENCODING: Encoding = Encoding::Union(
         "SFNTLookupFormatSpecificHeader",
