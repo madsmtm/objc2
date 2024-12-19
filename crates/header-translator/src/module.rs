@@ -7,7 +7,6 @@ use std::{fmt, fs};
 use crate::cfgs::PlatformCfg;
 use crate::display_helper::FormatterFn;
 use crate::id::{cfg_gate_ln, Location};
-use crate::library::Dependencies;
 use crate::stmt::Stmt;
 use crate::{Config, ItemIdentifier};
 
@@ -47,7 +46,6 @@ impl Module {
         &self,
         config: &Config,
         emission_library: &str,
-        dependencies: &Dependencies<'_>,
     ) -> BTreeMap<String, BTreeSet<String>> {
         let mut required_features: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
 
@@ -58,27 +56,14 @@ impl Module {
             for stmt in &module.stmts {
                 for required_item in stmt.required_items_inner() {
                     let location = required_item.location();
-                    if let Some(feature) = location
-                        .library(config, emission_library)
-                        .cargo_toml_feature()
-                    {
-                        if feature == "bitflags" {
-                            if let Some((true, _, _)) = dependencies.get("bitflags") {
-                                continue;
-                            }
-                        }
-                        // Feature names are based on the file name, not the
-                        // whole path to the feature.
+                    if let Some(feature) = location.cargo_toml_feature(config, emission_library) {
                         features.insert(feature);
                     }
                 }
             }
             required_features.insert(clean_name(file_name), features);
-            required_features.extend(module.required_cargo_features_inner(
-                config,
-                emission_library,
-                dependencies,
-            ));
+            required_features
+                .extend(module.required_cargo_features_inner(config, emission_library));
         }
 
         required_features
@@ -96,23 +81,24 @@ impl Module {
                 .flat_map(|stmt| stmt.required_items_inner())
                 .filter_map(|item| {
                     item.location()
-                        .library(config, emission_library)
-                        .import()
+                        .import(config, emission_library)
                         .map(|import_data| (item.library_name().to_string(), import_data))
                 })
                 .collect();
 
             let emission_config = &config.library(emission_library);
-            for (library_name, (krate, required)) in imports {
+            for (library_name, import) in imports {
+                let krate = &config.library(&library_name).krate;
+                let required = emission_config.required_crates.contains(krate);
                 if !required {
-                    writeln!(f, "#[cfg(feature = {:?})]", krate)?;
+                    writeln!(f, "#[cfg(feature = {krate:?})]")?;
                 }
                 let mut platform_cfg = PlatformCfg::from_config(emission_config);
                 platform_cfg.dependency(config.library(&library_name));
                 if let Some(cfg) = platform_cfg.cfgs() {
                     writeln!(f, "#[cfg({cfg})]")?;
                 }
-                writeln!(f, "use {}::*;", krate.replace('-', "_"))?;
+                writeln!(f, "use {import}::*;")?;
             }
             writeln!(f)?;
             writeln!(f, "use crate::*;")?;

@@ -1,0 +1,14 @@
+framework = "__core__"
+crate = "core"
+required-crates = []
+link = false
+skipped = true
+
+# Available everywhere
+macos = "10.0"
+maccatalyst = "13.0"
+ios = "2.0"
+tvos = "9.0"
+watchos = "2.0"
+visionos = "1.0"
+gnustep = true

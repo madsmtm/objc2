@@ -41,121 +41,43 @@ impl ToOptionString for () {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Location {
     // A Swift/Clang module path (dot-separated).
+    //
+    // Special modules:
+    // __bitflags__
+    // __builtin__
+    // __core__
+    // __libc__
     module_path: Box<str>,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum LocationLibrary<'location, 'config> {
-    System,
-    Bitflags,
-    Block2,
-    Libc,
-    Objc2,
-    InSameLibrary {
-        library: &'location str,
-        file_name: Option<&'location str>,
-        krate: &'config str,
-    },
-    InExternalLibrary {
-        library: &'location str,
-        file_name: Option<&'location str>,
-        krate: &'config str,
-        required: bool,
-    },
-}
-
-impl<'config> LocationLibrary<'_, 'config> {
-    pub fn krate(&self) -> Option<(&'config str, bool)> {
-        match self {
-            Self::System => None,
-            Self::Bitflags => Some(("bitflags", false)),
-            Self::Block2 => Some(("block2", false)),
-            Self::Libc => Some(("libc", false)),
-            Self::Objc2 => Some(("objc2", true)),
-            Self::InSameLibrary { .. } => None,
-            Self::InExternalLibrary {
-                krate, required, ..
-            } => Some((krate, *required)),
-        }
-    }
-
-    pub fn import(&self) -> Option<(&'config str, bool)> {
-        match self {
-            Self::Objc2 => Some(("objc2::__framework_prelude", true)),
-            Self::InExternalLibrary {
-                krate, required, ..
-            } => Some((krate, *required)),
-            _ => None,
-        }
-    }
-
-    pub fn cargo_toml_feature(&self) -> Option<String> {
-        match self {
-            Self::Bitflags => Some("bitflags".to_string()),
-            Self::InExternalLibrary {
-                file_name: Some(file_name),
-                krate,
-                required,
-                ..
-            } => Some(format!(
-                "{krate}{}/{}",
-                if *required { "" } else { "?" },
-                clean_name(file_name),
-            )),
-            _ => None,
-        }
-    }
-
-    // FIXME: This is currently wrong for nested umbrella frameworks
-    // (specifically MetalPerformanceShaders).
-    fn feature(&self) -> Option<String> {
-        match self {
-            Self::Block2 => Some("block2".to_string()),
-            Self::Libc => Some("libc".to_string()),
-            // Always enabled in the current file
-            Self::Bitflags | Self::Objc2 => None,
-            Self::InSameLibrary {
-                file_name: Some(file_name),
-                ..
-            } => Some(clean_name(file_name)),
-            Self::InExternalLibrary {
-                krate,
-                required: false,
-                ..
-            } => Some(krate.to_string()),
-            _ => None,
-        }
-    }
 }
 
 impl Location {
     fn new(module_path: impl Into<Box<str>>) -> Self {
         let module_path = module_path.into();
         let module_path = match &*module_path {
-            // blocks
-            "block" => "block2".into(),
+            // Normalize Objective-C (remove submodules)
+            name if name.starts_with("ObjectiveC") => "ObjectiveC".into(),
 
-            // Objective-C
-            name if name.starts_with("ObjectiveC") => "objc2".into(),
+            // These types are redefined in the framework crate itself.
+            "Darwin.MacTypes" => "__builtin__".into(),
 
-            // Redefined in the framework crate itself.
-            "Darwin.MacTypes" => "System".into(),
+            // `core::ffi` types
+            "DarwinFoundation.types.machine_types" => "__core__.ffi".into(),
+            "_Builtin_stdarg.va_list" => {
+                error!("va_list is not yet supported");
+                "__core__.ffi".into()
+            }
 
-            // Built-ins
-            "DarwinFoundation.types.machine_types" => "System".into(),
-            "_Builtin_stdarg.va_list" => "System".into(),
-
-            // Libc
-            name if name.starts_with("sys_types") => "libc".into(),
-            "DarwinFoundation.types.sys_types" => "libc".into(),
-            "DarwinFoundation.qos" => "libc".into(),
-            name if name.starts_with("Darwin.POSIX") => "libc".into(),
-            "_stdio" => "libc".into(),
-            "_time.timespec" => "libc".into(),
+            // `libc`
+            name if name.starts_with("sys_types") => "__libc__".into(),
+            "DarwinFoundation.types.sys_types" => "__libc__".into(),
+            "DarwinFoundation.qos" => "__libc__".into(),
+            name if name.starts_with("Darwin.POSIX") => "__libc__".into(),
+            "_stdio" => "__libc__".into(),
+            "_time.timespec" => "__libc__".into(),
 
             // Will be moved to the `mach2` crate in `libc` v1.0
-            name if name.starts_with("Darwin.Mach") => "libc".into(),
-            "_mach_port_t" => "libc".into(),
+            name if name.starts_with("Darwin.Mach") => "__libc__".into(),
+            "_mach_port_t" => "__libc__".into(),
 
             _ => module_path,
         };
@@ -172,8 +94,10 @@ impl Location {
         let path = file.get_path();
 
         if !path.to_string_lossy().contains("System/Library/Frameworks") {
-            // Likely a built-in macro from stddef.h, stdarg.h or assert.h.
-            return Self::new("System");
+            // If it doesn't have a module, and doesn't come from a framework,
+            // then it is probably a built-in macro from stddef.h, stdarg.h or
+            // likewise.
+            return Self::new("__builtin__");
         }
 
         // The item likely comes from a private sub-framework, so let's try
@@ -233,43 +157,105 @@ impl Location {
         self.module_path.split('.').skip(1)
     }
 
-    pub fn library<'location, 'config>(
-        &'location self,
+    pub fn crate_dependency<'config>(
+        &self,
         config: &'config Config,
         emission_library: &str,
-    ) -> LocationLibrary<'location, 'config> {
+    ) -> Option<&'config str> {
         match self.library_name() {
-            "System" => LocationLibrary::System,
-            "bitflags" => LocationLibrary::Bitflags,
-            "block2" => LocationLibrary::Block2,
-            "libc" => LocationLibrary::Libc,
-            "objc2" => LocationLibrary::Objc2,
+            "__builtin__" | "__core__" => None,
+            library if library == emission_library => None,
+            library => Some(&config.library(library).krate),
+        }
+    }
+
+    /// The place from where a given item exists.
+    pub fn import(&self, config: &Config, emission_library: &str) -> Option<Cow<'static, str>> {
+        match self.library_name() {
+            "__builtin__" => None,
+            // TODO: Use `core::xyz` here.
+            "__core__" => None,
+            // Rare enough that it's written directly instead of
+            // glob-imported, see `ItemIdentifier::path`.
+            "__bitflags__" | "__libc__" | "block" => None,
+            "ObjectiveC" => Some("objc2::__framework_prelude".into()),
+            // Not currently needed, but might be useful to emit
+            // `Some("crate")` here in the future.
+            library if library == emission_library => None,
             library => {
-                if let Some(krate) = config.libraries.get(library).map(|lib| &*lib.krate) {
-                    if library == emission_library {
-                        LocationLibrary::InSameLibrary {
-                            library,
-                            file_name: self.file_name(),
-                            krate,
-                        }
-                    } else {
-                        let file_name = self.file_name();
-                        let required = config
-                            .libraries
-                            .get(emission_library)
-                            .unwrap_or_else(|| panic!("{emission_library} not found in libraries"))
-                            .required_dependencies
-                            .contains(krate);
-                        LocationLibrary::InExternalLibrary {
-                            library,
-                            file_name,
-                            krate,
-                            required,
-                        }
-                    }
+                let krate = &config.library(library).krate;
+                Some(krate.replace('-', "_").into())
+            }
+        }
+    }
+
+    // Feature names are based on the file name, not the whole path to the feature.
+    pub fn cargo_toml_feature(&self, config: &Config, emission_library: &str) -> Option<String> {
+        match self.library_name() {
+            "__builtin__" | "__core__" => None,
+            "__bitflags__" => {
+                let required = config
+                    .library(emission_library)
+                    .required_crates
+                    .contains("bitflags");
+
+                // We want the bitflags feature to be enabled automatically
+                // when a file with bitflags are imported.
+                if !required {
+                    Some("bitflags".into())
                 } else {
-                    error!(location = ?self, "failed getting crate name");
-                    LocationLibrary::System
+                    None
+                }
+            }
+            // Don't emit dependency for local features (we want files to be
+            // independently activated).
+            library if library == emission_library => None,
+            // Matches e.g. objc2-foundation/NSArray, but not objc2 or
+            // libc (since that is configured in the source itself).
+            library => {
+                let krate = &config.library(library).krate;
+                let required = config
+                    .library(emission_library)
+                    .required_crates
+                    .contains(krate);
+
+                self.file_name().map(|file_name| {
+                    format!(
+                        "{krate}{}/{}",
+                        if required { "" } else { "?" },
+                        clean_name(file_name),
+                    )
+                })
+            }
+        }
+    }
+
+    pub fn cargo_toml_feature_on_top_level(&self, emission_library: &str) -> Option<String> {
+        match self.library_name() {
+            "__builtin__" | "__core__" => None,
+            library if library == emission_library => None,
+            _ => self.file_name().map(clean_name),
+        }
+    }
+
+    // FIXME: This is currently wrong for nested umbrella frameworks
+    // (specifically MetalPerformanceShaders).
+    fn cfg_feature<'a>(&self, config: &'a Config, emission_library: &str) -> Option<Cow<'a, str>> {
+        match self.library_name() {
+            "__builtin__" | "__core__" => None,
+            library if library == emission_library => {
+                self.file_name().map(clean_name).map(Cow::Owned)
+            }
+            library => {
+                let krate = &config.library(library).krate;
+                let required = config
+                    .library(emission_library)
+                    .required_crates
+                    .contains(krate);
+                if !required {
+                    Some(Cow::Borrowed(krate))
+                } else {
+                    None
                 }
             }
         }
@@ -399,14 +385,28 @@ impl ItemIdentifier {
     pub fn bitflags() -> Self {
         Self {
             name: "bitflags".into(),
-            location: Location::new("bitflags"),
+            location: Location::new("__bitflags__"),
         }
     }
 
-    pub fn objc2(name: impl Into<String>) -> Self {
+    pub fn objc(name: impl Into<String>) -> Self {
         Self {
             name: name.into(),
             location: Location::new("ObjectiveC"),
+        }
+    }
+
+    pub fn core_ffi(name: &str) -> Self {
+        Self {
+            name: name.into(),
+            location: Location::new("ObjectiveC"), // Temporary
+        }
+    }
+
+    pub fn core_ptr(name: &str) -> Self {
+        Self {
+            name: name.into(),
+            location: Location::new("ObjectiveC"), // Temporary
         }
     }
 
@@ -421,7 +421,7 @@ impl ItemIdentifier {
     pub fn dummy() -> Self {
         Self {
             name: "DUMMY".into(),
-            location: Location::new("System"),
+            location: Location::new("__builtin__"),
         }
     }
 
@@ -439,9 +439,9 @@ impl ItemIdentifier {
         impl fmt::Display for ItemIdentifierPath<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 match self.0.location.library_name() {
-                    "bitflags" => write!(f, "bitflags::{}", self.0.name),
-                    "block2" => write!(f, "block2::{}", self.0.name),
-                    "libc" => write!(f, "libc::{}", self.0.name),
+                    "__bitflags__" => write!(f, "bitflags::{}", self.0.name),
+                    "__libc__" => write!(f, "libc::{}", self.0.name),
+                    "block" => write!(f, "block2::{}", self.0.name),
                     _ => write!(f, "{}", self.0.name),
                 }
             }
@@ -525,7 +525,7 @@ pub fn cfg_gate_ln<'a, R: AsRef<Location> + 'a, I: AsRef<Location> + 'a>(
 
     for location in required_features {
         let location: &Location = location.as_ref();
-        if let Some(feature_name) = location.library(config, emission_library).feature() {
+        if let Some(feature_name) = location.cfg_feature(config, emission_library) {
             feature_names.insert(feature_name);
         }
 
@@ -534,7 +534,7 @@ pub fn cfg_gate_ln<'a, R: AsRef<Location> + 'a, I: AsRef<Location> + 'a>(
 
     for location in implied_features {
         let location: &Location = location.as_ref();
-        if let Some(feature_name) = location.library(config, emission_library).feature() {
+        if let Some(feature_name) = location.cfg_feature(config, emission_library) {
             feature_names.remove(&feature_name);
         }
 

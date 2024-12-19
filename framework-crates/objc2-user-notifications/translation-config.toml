@@ -1,6 +1,6 @@
 framework = "UserNotifications"
 crate = "objc2-user-notifications"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.14"
 maccatalyst = "13.0"
 ios = "10.0"

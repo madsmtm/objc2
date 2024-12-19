@@ -1,6 +1,6 @@
 framework = "SystemExtensions"
 crate = "objc2-system-extensions"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.15"
 
 # Needs `dispatch_queue_t` from libdispatch

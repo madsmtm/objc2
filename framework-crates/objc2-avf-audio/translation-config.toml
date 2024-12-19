@@ -1,6 +1,6 @@
 framework = "AVFAudio"
 crate = "objc2-avf-audio"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 custom-lib-rs = true
 # The documentation says something newer here, but since AVFAudio was
 # originally available as part of AVFoundation, the linker is able to figure

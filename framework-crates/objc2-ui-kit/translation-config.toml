@@ -1,6 +1,6 @@
 framework = "UIKit"
 crate = "objc2-ui-kit"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 custom-lib-rs = true
 maccatalyst = "13.0"
 ios = "2.0"

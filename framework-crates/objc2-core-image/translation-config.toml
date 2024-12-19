@@ -1,6 +1,6 @@
 framework = "CoreImage"
 crate = "objc2-core-image"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 custom-lib-rs = true
 macos = "10.11"
 maccatalyst = "13.0"

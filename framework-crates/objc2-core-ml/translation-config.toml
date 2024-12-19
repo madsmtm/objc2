@@ -1,6 +1,6 @@
 framework = "CoreML"
 crate = "objc2-core-ml"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 custom-lib-rs = true
 macos = "10.13"
 maccatalyst = "10.13"

@@ -1,6 +1,6 @@
 framework = "SoundAnalysis"
 crate = "objc2-sound-analysis"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "13.0"

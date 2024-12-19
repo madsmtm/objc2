@@ -1,6 +1,6 @@
 framework = "AppKit"
 crate = "objc2-app-kit"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 custom-lib-rs = true
 macos = "10.0"
 maccatalyst = "13.0"

@@ -14,41 +14,45 @@ use crate::{ItemIdentifier, Location};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Config {
-    pub libraries: BTreeMap<String, LibraryConfig>,
-    pub system: LibraryConfig,
-}
-
-fn uses_system_config(library_name: &str) -> bool {
-    matches!(
-        library_name,
-        "System" | "bitflags" | "block2" | "libc" | "objc2"
-    )
+    libraries: BTreeMap<String, LibraryConfig>,
 }
 
 impl Config {
-    pub fn library(&self, library_name: &str) -> &LibraryConfig {
-        if uses_system_config(library_name) {
-            &self.system
-        } else {
-            self.libraries.get(library_name).unwrap_or_else(|| {
-                error!("tried to get library config from {library_name:?}");
-                &self.system
-            })
+    pub fn new(
+        mut libraries: BTreeMap<String, LibraryConfig>,
+    ) -> Result<Self, Box<dyn Error + Send + Sync>> {
+        let configs_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("configs");
+
+        let builtin_files = ["bitflags.toml", "builtin.toml", "core.toml", "libc.toml"];
+
+        for builtin_file in builtin_files {
+            let path = configs_dir.join(builtin_file);
+            let config: LibraryConfig = basic_toml::from_str(&fs::read_to_string(path)?)?;
+            libraries.insert(config.framework.clone(), config);
         }
+
+        Ok(Self { libraries })
+    }
+
+    pub fn library(&self, library_name: &str) -> &LibraryConfig {
+        self.libraries.get(library_name).unwrap_or_else(|| {
+            error!("tried to get library config from {library_name:?}");
+            self.libraries
+                .get("__builtin__")
+                .expect("could not find builtin library")
+        })
     }
 
     pub fn library_from_crate(&self, krate: &str) -> &LibraryConfig {
-        if uses_system_config(krate) {
-            &self.system
-        } else {
-            self.libraries
-                .values()
-                .find(|lib| lib.krate == krate)
-                .unwrap_or_else(|| {
-                    error!("tried to get library config from krate {krate:?}");
-                    &self.system
-                })
-        }
+        self.libraries
+            .values()
+            .find(|lib| lib.krate == krate)
+            .unwrap_or_else(|| {
+                error!("tried to get library config from krate {krate:?}");
+                self.libraries
+                    .get("__builtin__")
+                    .expect("could not find builtin library")
+            })
     }
 
     pub fn replace_protocol_name(&self, id: ItemIdentifier) -> ItemIdentifier {
@@ -60,6 +64,13 @@ impl Config {
                 .and_then(|data| data.renamed.clone())
                 .unwrap_or(name)
         })
+    }
+
+    pub fn to_parse(&self) -> impl Iterator<Item = (&str, &LibraryConfig)> + Clone {
+        self.libraries
+            .iter()
+            .filter(|(_, data)| !data.skipped)
+            .map(|(name, data)| (&**name, data))
     }
 }
 
@@ -118,11 +129,18 @@ pub struct LibraryConfig {
     /// want a feature for something as fundamental as `NSString`.
     /// Additionally, it is used for things like `MetalKit` always wanting
     /// `Metal` enabled.
-    #[serde(rename = "required-dependencies")]
-    pub required_dependencies: HashSet<String>,
+    #[serde(rename = "required-crates")]
+    pub required_crates: HashSet<String>,
     #[serde(rename = "custom-lib-rs")]
     #[serde(default)]
     pub custom_lib_rs: bool,
+
+    #[serde(default = "link_default")]
+    pub link: bool,
+    /// Whether we will attempt to parse and emit the library
+    /// (used for built-in modules).
+    #[serde(default)]
+    pub skipped: bool,
 
     #[serde(default)]
     #[serde(deserialize_with = "get_version")]
@@ -144,9 +162,6 @@ pub struct LibraryConfig {
     pub visionos: Option<Version>,
     #[serde(default)]
     pub gnustep: bool,
-
-    #[serde(default = "link_default")]
-    pub link: bool,
 
     /// Data about an external class or protocol whose header isn't imported.
     ///

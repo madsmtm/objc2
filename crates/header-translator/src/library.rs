@@ -25,7 +25,7 @@ pub struct Library {
     pub data: LibraryConfig,
 }
 
-pub(crate) type Dependencies<'c> = BTreeMap<&'c str, (bool, String, BTreeSet<String>)>;
+type Dependencies<'c> = BTreeMap<&'c str, (bool, String, BTreeSet<String>)>;
 
 impl Library {
     pub fn new(name: &str, data: &LibraryConfig) -> Self {
@@ -58,48 +58,49 @@ impl Library {
     }
 
     pub fn dependencies<'c>(&self, config: &'c Config) -> Dependencies<'c> {
-        let mut dependencies: BTreeMap<_, _> = self
+        let mut dependencies: BTreeMap<&'c str, _> = self
             .module
             .all_items()
             .into_iter()
             .flat_map(|item| {
                 let location = item.location();
                 location
-                    .library(config, &self.link_name)
-                    .krate()
-                    .map(|(krate, required)| {
+                    .crate_dependency(config, &self.link_name)
+                    .map(|krate| {
                         (
                             krate,
-                            (
-                                required,
-                                location.library_name().to_string(),
-                                BTreeSet::new(),
-                            ),
+                            (false, location.library_name().to_string(), BTreeSet::new()),
                         )
                     })
             })
+            .chain(
+                config
+                    .library(&self.link_name)
+                    .required_crates
+                    .iter()
+                    .map(|krate| {
+                        (
+                            &**krate,
+                            (
+                                true,
+                                config.library_from_crate(krate).framework.clone(),
+                                BTreeSet::new(),
+                            ),
+                        )
+                    }),
+            )
             .collect();
 
         // Process top-level statements
         for stmt in &self.module.stmts {
             for required_item in stmt.required_items_inner() {
                 let location = required_item.location();
-                if let Some(feature) = location
-                    .library(config, &self.link_name)
-                    .cargo_toml_feature()
-                {
-                    if feature == "bitflags" {
-                        if let Some((bitflags_required, _, _)) = dependencies.get_mut("bitflags") {
-                            *bitflags_required = true;
-                        }
+                if let Some(feature) = location.cargo_toml_feature_on_top_level(&self.link_name) {
+                    let krate = &config.library(location.library_name()).krate;
+                    if let Some((_, _, krate_features)) = dependencies.get_mut(&**krate) {
+                        krate_features.insert(feature.to_string());
                     } else {
-                        let (krate, feature) = feature.split_once('/').unwrap();
-                        let krate = krate.strip_suffix('?').unwrap_or(krate);
-                        if let Some((_, _, krate_features)) = dependencies.get_mut(krate) {
-                            krate_features.insert(feature.to_string());
-                        } else {
-                            error!(?location, ?feature, "tried to set krate dependency feature");
-                        }
+                        error!(?location, ?feature, "tried to set krate dependency feature");
                     }
                 }
             }
@@ -359,11 +360,9 @@ see that for related crates.", self.data.krate, self.link_name)?;
         add_newline_at_end(&mut cargo_toml["features"]);
 
         // Own features
-        let mut generated_features = self.module.required_cargo_features_inner(
-            config,
-            &self.link_name,
-            &dependency_map[&*self.link_name],
-        );
+        let mut generated_features = self
+            .module
+            .required_cargo_features_inner(config, &self.link_name);
 
         let _ = generated_features.insert(
             "all".to_string(),

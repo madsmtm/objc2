@@ -1,6 +1,6 @@
 framework = "Automator"
 crate = "objc2-automator"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.4"
 maccatalyst = "14.0"
 

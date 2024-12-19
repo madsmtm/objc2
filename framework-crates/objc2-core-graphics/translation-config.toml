@@ -1,6 +1,6 @@
 framework = "CoreGraphics"
 crate = "objc2-core-graphics"
-required-dependencies = []
+required-crates = ["objc2"] # Temporary
 custom-lib-rs = true
 macos = "10.8"
 maccatalyst = "13.0"

@@ -1,6 +1,6 @@
 framework = "OpenDirectory"
 crate = "objc2-open-directory"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.6"
 maccatalyst = "13.0"
 

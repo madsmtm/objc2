@@ -1,6 +1,6 @@
 framework = "CoreFoundation"
 crate = "objc2-core-foundation"
-required-dependencies = []
+required-crates = ["objc2"] # Temporary
 custom-lib-rs = true
 macos = "10.0"
 maccatalyst = "13.0"

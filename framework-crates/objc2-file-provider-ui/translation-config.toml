@@ -1,6 +1,6 @@
 framework = "FileProviderUI"
 crate = "objc2-file-provider-ui"
-required-dependencies = ["objc2-file-provider", "objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation", "objc2-file-provider"]
 macos = "10.15"
 maccatalyst = "15.0"
 ios = "11.0"

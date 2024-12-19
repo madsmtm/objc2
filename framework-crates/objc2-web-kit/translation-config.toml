@@ -1,6 +1,6 @@
 framework = "WebKit"
 crate = "objc2-web-kit"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 custom-lib-rs = true
 macos = "10.2"
 maccatalyst = "13.0"

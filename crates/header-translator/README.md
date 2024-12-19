@@ -45,7 +45,7 @@ To add a new framework crate, create a new empty crate in [`framework-crates`](.
 ```toml
 framework = "XXX"
 crate = "objc2-xxx"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "XXX"
 maccatalyst = "XXX"
 ios = "XXX"

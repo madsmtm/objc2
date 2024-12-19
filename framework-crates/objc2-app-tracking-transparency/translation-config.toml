@@ -1,6 +1,6 @@
 framework = "AppTrackingTransparency"
 crate = "objc2-app-tracking-transparency"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2"]
 macos = "11.0"
 maccatalyst = "14.0"
 ios = "14.0"

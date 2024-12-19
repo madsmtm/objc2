@@ -1,6 +1,6 @@
 framework = "LocalAuthenticationEmbeddedUI"
 crate = "objc2-local-authentication-embedded-ui"
-required-dependencies = ["objc2-foundation", "objc2-local-authentication"]
+required-crates = ["objc2", "objc2-foundation", "objc2-local-authentication"]
 macos = "12.0"
 maccatalyst = "16.0"
 ios = "16.0"

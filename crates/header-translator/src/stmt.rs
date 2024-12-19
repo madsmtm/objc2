@@ -287,7 +287,7 @@ pub(crate) fn items_required_by_decl(
 ) -> Vec<ItemIdentifier> {
     let id = ItemIdentifier::new(entity, context);
 
-    let mut items = vec![ItemIdentifier::objc2("__macros__")];
+    let mut items = vec![ItemIdentifier::objc("__macros__")];
 
     match entity.get_kind() {
         EntityKind::ObjCInterfaceDecl => {
@@ -1527,7 +1527,7 @@ impl Stmt {
             } => cls_required_items.clone(),
             // Intentionally doesn't require anything, the impl itself is
             // cfg-gated
-            Self::ExternCategory { .. } => vec![ItemIdentifier::objc2("__macros__")],
+            Self::ExternCategory { .. } => vec![ItemIdentifier::objc("__macros__")],
             Self::ProtocolDecl { required_items, .. } => required_items.clone(),
             Self::ProtocolImpl {
                 cls_required_items,
@@ -1544,13 +1544,13 @@ impl Stmt {
                 for (_, field_ty) in fields {
                     items.extend(field_ty.required_items());
                 }
-                items.push(ItemIdentifier::objc2("Encoding"));
+                items.push(ItemIdentifier::objc("Encoding"));
                 items
             }
             // Variants manage required items themselves
             Self::EnumDecl { ty, .. } => {
                 let mut items = ty.required_items();
-                items.push(ItemIdentifier::objc2("Encoding"));
+                items.push(ItemIdentifier::objc("Encoding"));
                 items
             }
             Self::ConstDecl { ty, value, .. } => {
@@ -1917,7 +1917,7 @@ impl Stmt {
                             // The object inherits from `NSObject` or `NSProxy` no
                             // matter what the generic type is, so this must be
                             // safe.
-                            ("objc2", "NSObjectProtocol") => ("?Sized", None),
+                            ("ObjectiveC", "NSObjectProtocol") => ("?Sized", None),
                             // Encoding and decoding requires that the inner types
                             // are codable as well.
                             ("Foundation", "NSCoding") => ("?Sized + NSCoding", None),

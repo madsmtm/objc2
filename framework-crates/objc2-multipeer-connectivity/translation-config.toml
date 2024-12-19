@@ -1,6 +1,6 @@
 framework = "MultipeerConnectivity"
 crate = "objc2-multipeer-connectivity"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.10"
 maccatalyst = "13.0"
 ios = "7.0"

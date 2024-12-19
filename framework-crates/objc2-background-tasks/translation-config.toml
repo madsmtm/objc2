@@ -1,6 +1,6 @@
 framework = "BackgroundTasks"
 crate = "objc2-background-tasks"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 maccatalyst = "13.0"
 ios = "13.0"
 tvos = "13.0"

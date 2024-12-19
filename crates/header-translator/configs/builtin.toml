@@ -1,7 +1,10 @@
-# Fake data
-framework = "System"
-crate = "objc2-system"
-required-dependencies = []
+framework = "__builtin__"
+crate = "__builtin__"
+required-crates = []
+link = false
+skipped = true
+
+# Available everywhere
 macos = "10.0"
 maccatalyst = "13.0"
 ios = "2.0"
@@ -10,13 +13,8 @@ watchos = "2.0"
 visionos = "1.0"
 gnustep = true
 
-# Both a protocol and a class, so we use Swift's naming scheme
-protocol.NSObject.renamed = "NSObjectProtocol"
-
-# Return type `oneway void`
-class.NSObject.methods.release.skipped = true
-
 # TODO: Move these
+
 # `ns_consumed`, `cf_consumed` and `os_consumed`
 fn.IOServiceGetMatchingService.skipped = true
 fn.IOServiceGetMatchingServices.skipped = true

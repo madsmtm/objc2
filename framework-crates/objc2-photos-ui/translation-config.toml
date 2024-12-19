@@ -1,6 +1,6 @@
 framework = "PhotosUI"
 crate = "objc2-photos-ui"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.11"
 maccatalyst = "13.0"
 ios = "8.0"

@@ -1,6 +1,6 @@
 framework = "MediaPlayer"
 crate = "objc2-media-player"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.12.1"
 maccatalyst = "13.0"
 ios = "2.0"

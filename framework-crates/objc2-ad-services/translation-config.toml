@@ -1,6 +1,6 @@
 framework = "AdServices"
 crate = "objc2-ad-services"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "11.1"
 maccatalyst = "14.3"
 ios = "14.3"

@@ -1,6 +1,6 @@
 framework = "StoreKit"
 crate = "objc2-store-kit"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.7"
 maccatalyst = "13.0"
 ios = "3.0"

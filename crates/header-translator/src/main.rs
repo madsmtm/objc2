@@ -89,10 +89,9 @@ fn main() -> Result<(), BoxError> {
     fs::create_dir_all(&tempdir)?;
 
     let libraries: BTreeMap<_, _> = config
-        .libraries
-        .keys()
-        .map(|name| {
-            let library = parse_framework(&index, &config, name, &sdks, &tempdir);
+        .to_parse()
+        .map(|(name, data)| {
+            let library = parse_framework(&index, &config, data, name, &sdks, &tempdir);
             (name.to_string(), library)
         })
         .collect();
@@ -140,7 +139,7 @@ fn main() -> Result<(), BoxError> {
         library.output(&crate_dir, &test_crate_dir, &config, &dependency_map)?;
     }
 
-    update_test_metadata(&test_crate_dir, config.libraries.values());
+    update_test_metadata(&test_crate_dir, config.to_parse().map(|(_, data)| data));
 
     let span = info_span!("formatting").entered();
     run_cargo_fmt(libraries.values().map(|library| &library.data.krate));
@@ -172,24 +171,31 @@ fn load_config(workspace_dir: &Path) -> Result<Config, BoxError> {
 
     let path = workspace_dir
         .join("crates")
-        .join("header-translator")
-        .join("system-config.toml");
-    let system = LibraryConfig::from_file(&path).expect("read system config");
+        .join("block2")
+        .join("translation-config.toml");
+    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
+    libraries.insert("block".to_string(), objc);
 
-    Ok(Config { libraries, system })
+    let path = workspace_dir
+        .join("crates")
+        .join("objc2")
+        .join("translation-config.toml");
+    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
+    libraries.insert("ObjectiveC".to_string(), objc);
+
+    Config::new(libraries)
 }
 
 fn parse_framework(
     index: &Index<'_>,
     config: &Config,
+    data: &LibraryConfig,
     name: &str,
     sdks: &[SdkPath],
     tempdir: &Path,
 ) -> Library {
     let _span = info_span!("framework", name).entered();
     let mut result = None;
-
-    let data = config.library(name);
 
     // Find preferred SDK, to hackily support UIKit. For speed, we currently
     // only parse each module once in total (though in the future we'll have
@@ -515,7 +521,7 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
     ) -> io::Result<()> {
         // Use a BTreeSet to sort the libraries
         let mut frameworks = BTreeSet::new();
-        for library in config.libraries.values() {
+        for (_, library) in config.to_parse() {
             if check(library) {
                 frameworks.insert(&*library.krate);
             }
@@ -622,7 +628,7 @@ fn update_list(workspace_dir: &Path, config: &Config) -> io::Result<()> {
     writeln!(f, "| Framework | Crate | Documentation |")?;
     writeln!(f, "| --- | --- | --- |")?;
 
-    for (name, library) in &config.libraries {
+    for (name, library) in config.to_parse() {
         let package = &library.krate;
         writeln!(
             f,

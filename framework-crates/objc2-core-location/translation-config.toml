@@ -1,6 +1,6 @@
 framework = "CoreLocation"
 crate = "objc2-core-location"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 # macos = "10.6"
 macos = "10.11"      # Temporarily raised since `CoreLocation` imports `Contacts`
 maccatalyst = "13.0"

@@ -1,6 +1,6 @@
 framework = "NaturalLanguage"
 crate = "objc2-natural-language"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.14"
 maccatalyst = "13.0"
 ios = "12.0"

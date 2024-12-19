@@ -1,6 +1,6 @@
 framework = "FinderSync"
 crate = "objc2-finder-sync"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.10"
 
 # Both a protocol and a class, so we use Swift's naming scheme

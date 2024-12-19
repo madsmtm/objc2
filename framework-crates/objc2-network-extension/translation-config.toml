@@ -1,6 +1,6 @@
 framework = "NetworkExtension"
 crate = "objc2-network-extension"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.10"
 maccatalyst = "13.0"
 ios = "8.0"

@@ -1,6 +1,6 @@
 framework = "DataDetection"
 crate = "objc2-data-detection"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "12.0"
 maccatalyst = "15.0"
 ios = "15.0"

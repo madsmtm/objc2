@@ -261,15 +261,15 @@ pub enum Primitive {
 impl Primitive {
     fn required_items(&self) -> Vec<ItemIdentifier> {
         match self {
-            Self::ObjcBool => vec![ItemIdentifier::objc2("Bool")],
-            Self::NSInteger => vec![ItemIdentifier::objc2("NSInteger")],
-            Self::NSUInteger => vec![ItemIdentifier::objc2("NSUInteger")],
-            Self::Imp => vec![ItemIdentifier::objc2("Imp")],
+            Self::ObjcBool => vec![ItemIdentifier::objc("Bool")],
+            Self::NSInteger => vec![ItemIdentifier::objc("NSInteger")],
+            Self::NSUInteger => vec![ItemIdentifier::objc("NSUInteger")],
+            Self::Imp => vec![ItemIdentifier::objc("Imp")],
+            Self::VaList => vec![ItemIdentifier::core_ffi("VaList")],
             _ => {
                 let s = self.as_str();
                 if s.starts_with("c_") {
-                    // Temporary, until we can import these by themselves
-                    vec![ItemIdentifier::objc2(s)]
+                    vec![ItemIdentifier::core_ffi(s)]
                 } else {
                     vec![]
                 }
@@ -1128,15 +1128,15 @@ impl Ty {
             }
             Self::GenericParam { .. } => Vec::new(),
             Self::AnyObject { protocols } => {
-                let mut items = vec![ItemIdentifier::objc2("AnyObject")];
+                let mut items = vec![ItemIdentifier::objc("AnyObject")];
                 for protocol in protocols {
                     items.extend(protocol.required_items());
                 }
                 items
             }
-            Self::AnyProtocol => vec![ItemIdentifier::objc2("AnyProtocol")],
+            Self::AnyProtocol => vec![ItemIdentifier::objc("AnyProtocol")],
             Self::AnyClass { protocols } => {
-                let mut items = vec![ItemIdentifier::objc2("AnyClass")];
+                let mut items = vec![ItemIdentifier::objc("AnyClass")];
                 for protocol in protocols {
                     items.extend(protocol.required_items());
                 }
@@ -1146,7 +1146,7 @@ impl Ty {
             // `Self` is always available there, and don't required additional
             // imports, cfgs or other such things.
             Self::Self_ => Vec::new(),
-            Self::Sel { .. } => vec![ItemIdentifier::objc2("Sel")],
+            Self::Sel { .. } => vec![ItemIdentifier::objc("Sel")],
             Self::Pointer {
                 pointee,
                 nullability,
@@ -1158,9 +1158,8 @@ impl Ty {
                 ..
             } => {
                 let mut items = pointee.required_items();
-                // Temporary
                 if *nullability == Nullability::NonNull {
-                    items.push(ItemIdentifier::objc2("NonNull"));
+                    items.push(ItemIdentifier::core_ptr("NonNull"));
                 }
                 items
             }
@@ -1172,9 +1171,8 @@ impl Ty {
             } => {
                 let mut items = to.required_items();
                 items.push(id.clone());
-                // Temporary
                 if *nullability == Nullability::NonNull {
-                    items.push(ItemIdentifier::objc2("NonNull"));
+                    items.push(ItemIdentifier::core_ptr("NonNull"));
                 }
                 items
             }

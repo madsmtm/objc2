@@ -1,6 +1,6 @@
 framework = "CoreData"
 crate = "objc2-core-data"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.4"
 maccatalyst = "13.0"
 ios = "3.0"

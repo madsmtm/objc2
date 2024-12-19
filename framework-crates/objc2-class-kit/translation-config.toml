@@ -1,6 +1,6 @@
 framework = "ClassKit"
 crate = "objc2-class-kit"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "11.0"
 maccatalyst = "14.0"
 ios = "11.4"

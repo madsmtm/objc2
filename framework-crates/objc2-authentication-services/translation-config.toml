@@ -1,6 +1,6 @@
 framework = "AuthenticationServices"
 crate = "objc2-authentication-services"
-required-dependencies = ["objc2-app-kit", "objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation", "objc2-app-kit"]
 custom-lib-rs = true
 macos = "10.15"
 maccatalyst = "13.0"

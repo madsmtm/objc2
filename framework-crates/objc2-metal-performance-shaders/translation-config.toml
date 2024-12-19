@@ -1,6 +1,6 @@
 framework = "MetalPerformanceShaders"
 crate = "objc2-metal-performance-shaders"
-required-dependencies = ["objc2-foundation", "objc2-metal"]
+required-crates = ["bitflags", "objc2", "objc2-foundation", "objc2-metal"]
 custom-lib-rs = true
 macos = "10.13"
 maccatalyst = "13.0"

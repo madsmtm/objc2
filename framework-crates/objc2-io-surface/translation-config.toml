@@ -1,6 +1,6 @@
 framework = "IOSurface"
 crate = "objc2-io-surface"
-required-dependencies = []
+required-crates = ["objc2"] # Temporary
 custom-lib-rs = true
 macos = "10.6"
 maccatalyst = "13.0"

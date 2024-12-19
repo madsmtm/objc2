@@ -1,6 +1,6 @@
 framework = "EventKit"
 crate = "objc2-event-kit"
-required-dependencies = ["objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation"]
 macos = "10.8"
 maccatalyst = "13.0"
 ios = "4.0"
