@@ -66,6 +66,17 @@ impl Config {
         })
     }
 
+    pub fn replace_typedef_name(&self, id: ItemIdentifier) -> ItemIdentifier {
+        let library_config = self.library(id.library_name());
+        id.map_name(|name| {
+            library_config
+                .typedef_data
+                .get(&name)
+                .and_then(|data| data.renamed.clone())
+                .unwrap_or(name)
+        })
+    }
+
     pub fn to_parse(&self) -> impl Iterator<Item = (&str, &LibraryConfig)> + Clone {
         self.libraries
             .iter()
@@ -244,9 +255,9 @@ pub struct CategoryData {
 #[serde(deny_unknown_fields)]
 pub struct ProtocolData {
     #[serde(default)]
-    pub renamed: Option<String>,
-    #[serde(default)]
     pub skipped: bool,
+    #[serde(default)]
+    pub renamed: Option<String>,
     #[serde(default)]
     #[serde(rename = "requires-mainthreadonly")]
     pub requires_mainthreadonly: Option<bool>,
@@ -271,6 +282,22 @@ pub struct EnumData {
     pub use_value: bool,
     #[serde(default)]
     pub constants: HashMap<String, StructData>,
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct StaticData {
+    #[serde(default)]
+    pub skipped: bool,
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct TypedefData {
+    #[serde(default)]
+    pub skipped: bool,
+    #[serde(default)]
+    pub renamed: Option<String>,
 }
 
 #[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
@@ -311,10 +338,6 @@ impl Default for FnData {
         }
     }
 }
-
-// TODO
-pub type StaticData = StructData;
-pub type TypedefData = StructData;
 
 fn unsafe_default() -> bool {
     true

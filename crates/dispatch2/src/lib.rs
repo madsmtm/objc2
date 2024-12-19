@@ -1,6 +1,11 @@
 //! # Apple's Dispatch (Grand Central Dispatch)
 //!
-//! This crate allows interaction with the [Apple Dispatch](https://developer.apple.com/documentation/dispatch) library in a safe (``dispatch2`` module) and unsafe (``ffi`` module) way.
+//! This crate allows interaction with the Apple's Grand Central Dispatch
+//! library in a safe (``dispatch2`` module) and unsafe (``ffi`` module) way.
+//!
+//! See [Apple's documentation](https://developer.apple.com/documentation/dispatch)
+//! and [the source code for libdispatch](https://github.com/swiftlang/swift-corelibs-libdispatch)
+//! for more details.
 //!
 //! ## Example
 //!

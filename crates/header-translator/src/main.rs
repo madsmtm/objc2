@@ -183,6 +183,13 @@ fn load_config(workspace_dir: &Path) -> Result<Config, BoxError> {
     let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
     libraries.insert("ObjectiveC".to_string(), objc);
 
+    let path = workspace_dir
+        .join("crates")
+        .join("dispatch2")
+        .join("translation-config.toml");
+    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
+    libraries.insert("Dispatch".to_string(), objc);
+
     Config::new(libraries)
 }
 

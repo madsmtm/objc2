@@ -1,0 +1,20 @@
+framework = "Dispatch"
+crate = "dispatch2"
+required-crates = []
+link = false
+skipped = true
+custom-lib-rs = true
+
+macos = "10.0"
+maccatalyst = "13.0"
+ios = "8.0"
+tvos = "9.0"
+watchos = "2.0"
+visionos = "1.0"
+gnustep = true
+
+typedef.dispatch_object_t.renamed = "DispatchObject"
+typedef.dispatch_queue_t.renamed = "Queue"
+typedef.dispatch_data_t.renamed = "Data"
+typedef.dispatch_group_t.renamed = "Group"
+typedef.dispatch_semaphore_t.renamed = "Semaphore"

@@ -1022,15 +1022,17 @@ impl Stmt {
             }
             EntityKind::TypedefDecl => {
                 let id = ItemIdentifier::new(entity, context);
+                let id = context.replace_typedef_name(id);
                 let availability = Availability::parse(entity, context);
 
-                if context
+                let data = context
                     .library(id.library_name())
                     .typedef_data
                     .get(&id.name)
-                    .map(|data| data.skipped)
-                    .unwrap_or_default()
-                {
+                    .cloned()
+                    .unwrap_or_default();
+
+                if data.skipped {
                     return vec![];
                 }
 
@@ -1983,13 +1985,7 @@ impl Stmt {
                     // need to emit `CopyingHelper` impls to tell Rust which
                     // return types they have.
                     if matches!(&*protocol.name, "NSCopying" | "NSMutableCopying") {
-                        let copy_helper = if protocol.name == "NSCopying" {
-                            protocol.clone().map_name(|_| "CopyingHelper".to_string())
-                        } else {
-                            protocol
-                                .clone()
-                                .map_name(|_| "MutableCopyingHelper".to_string())
-                        };
+                        let copy_helper = ItemIdentifier::copyhelper(protocol.name != "NSCopying");
 
                         let mut required_items = self.required_items();
 

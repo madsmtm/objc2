@@ -600,12 +600,8 @@ impl Ty {
             TypeKind::Double => Self::Primitive(Primitive::Double),
             TypeKind::Record => {
                 let declaration = ty.get_declaration().expect("record declaration");
-                let name = ty
-                    .get_display_name()
-                    .trim_start_matches("struct ")
-                    .to_string();
                 Self::Struct {
-                    id: ItemIdentifier::with_name(name, &declaration, context),
+                    id: ItemIdentifier::new(&declaration, context),
                     fields: ty
                         .get_fields()
                         .expect("struct fields")
@@ -622,12 +618,8 @@ impl Ty {
             }
             TypeKind::Enum => {
                 let declaration = ty.get_declaration().expect("enum declaration");
-                let name = ty
-                    .get_display_name()
-                    .trim_start_matches("enum ")
-                    .to_string();
                 Self::Enum {
-                    id: ItemIdentifier::with_name(name, &declaration, context),
+                    id: ItemIdentifier::new(&declaration, context),
                     ty: Box::new(Ty::parse(
                         declaration
                             .get_enum_underlying_type()
@@ -912,6 +904,10 @@ impl Ty {
             TypeKind::Typedef => {
                 let typedef_name = ty.get_typedef_name().expect("typedef has name");
                 let declaration = ty.get_declaration().expect("typedef declaration");
+                assert_eq!(
+                    typedef_name,
+                    declaration.get_name().expect("typedef declaration name")
+                );
                 let to = declaration
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
@@ -1024,8 +1020,11 @@ impl Ty {
                     };
                 }
 
+                let id = ItemIdentifier::new(&declaration, context);
+                let id = context.replace_typedef_name(id);
+
                 Self::TypeDef {
-                    id: ItemIdentifier::with_name(typedef_name, &declaration, context),
+                    id,
                     nullability,
                     lifetime,
                     to: Box::new(Self::parse(to, Lifetime::Unspecified, context)),

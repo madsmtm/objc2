@@ -369,6 +369,18 @@ impl ItemIdentifier {
         }
     }
 
+    pub fn copyhelper(mutable: bool) -> Self {
+        let name = if mutable {
+            "MutableCopyingHelper"
+        } else {
+            "CopyingHelper"
+        };
+        Self {
+            name: name.into(),
+            location: Location::new("Foundation.NSObject"),
+        }
+    }
+
     pub fn block() -> Self {
         Self {
             name: "Block".into(),
