@@ -172,6 +172,7 @@ impl CGSize {
     /// assert_eq!(CGSize::new(-1.0, 1.0).abs(), CGSize::new(1.0, 1.0));
     /// ```
     #[inline]
+    #[cfg(feature = "std")] // Only available in core since Rust 1.85
     pub fn abs(self) -> Self {
         Self::new(self.width.abs(), self.height.abs())
     }

@@ -27,6 +27,7 @@
 use self::ffi::dispatch_qos_class_t;
 
 pub mod ffi;
+#[allow(clippy::undocumented_unsafe_blocks)]
 mod generated;
 pub mod group;
 pub mod object;

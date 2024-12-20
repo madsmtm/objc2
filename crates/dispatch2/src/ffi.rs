@@ -24,8 +24,8 @@ macro_rules! create_opaque_type {
         #[allow(missing_docs)]
         pub type $typedef_name = *mut $type_name;
 
-        // SAFETY: Dispatch types are internally objects.
         #[cfg(feature = "objc2")]
+        // SAFETY: Dispatch types are internally objects.
         unsafe impl RefEncode for $type_name {
             const ENCODING_REF: Encoding = Encoding::Object;
         }
@@ -52,13 +52,14 @@ macro_rules! enum_with_val {
             }
         }
 
-        // SAFETY: Marked with `#[repr(transparent)]` above.
         #[cfg(feature = "objc2")]
+        // SAFETY: Marked with `#[repr(transparent)]` above.
         unsafe impl Encode for $ident {
             const ENCODING: Encoding = <$ty>::ENCODING;
         }
 
         #[cfg(feature = "objc2")]
+        // SAFETY: Same as above.
         unsafe impl RefEncode for $ident {
             const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
         }
@@ -81,13 +82,14 @@ pub type dispatch_function_t = extern "C" fn(*mut c_void);
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub struct dispatch_time_t(pub u64);
 
-// SAFETY: `dispatch_time_t` is `#[repr(transparent)]`
 #[cfg(feature = "objc2")]
+// SAFETY: `dispatch_time_t` is `#[repr(transparent)]`.
 unsafe impl Encode for dispatch_time_t {
     const ENCODING: Encoding = u64::ENCODING;
 }
 
 #[cfg(feature = "objc2")]
+// SAFETY: Same as above.
 unsafe impl RefEncode for dispatch_time_t {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
@@ -233,7 +235,9 @@ extern "C-unwind" {
     pub fn dispatch_main() -> !;
 }
 
-pub const extern "C" fn dispatch_get_main_queue() -> dispatch_queue_main_t {
-    // Inline function in the header
-    addr_of!(_dispatch_main_q) as dispatch_queue_main_t
+// Inline function in the header
+#[allow(unused_unsafe)] // MSRV. Also, we'd like to mark this as `const`
+pub extern "C" fn dispatch_get_main_queue() -> dispatch_queue_main_t {
+    // SAFETY: Always safe to get pointer from static, only needed for MSRV.
+    unsafe { addr_of!(_dispatch_main_q) as dispatch_queue_main_t }
 }
