@@ -163,7 +163,7 @@ impl NSMutableData {
     pub fn replace_range(&self, range: Range<usize>, bytes: &[u8]) {
         // No need to verify the length of the range here,
         // `replaceBytesInRange:` zero-fills if out of bounds.
-        let ptr = bytes.as_ptr() as *mut c_void;
+        let ptr = bytes.as_ptr().cast();
         unsafe { self.replaceBytesInRange_withBytes_length(range.into(), ptr, bytes.len()) }
     }
 

@@ -775,7 +775,7 @@ impl Ty {
                     parser.set_fn_ptr();
                 }
 
-                let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
+                let is_const = ty.is_const_qualified() || pointee.is_const_qualified();
                 let nullability = if let Some(nullability) = unexposed_nullability {
                     nullability
                 } else {
@@ -828,7 +828,7 @@ impl Ty {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
                 let is_kindof = parser.is_kindof(ParsePosition::Prefix);
 
-                let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
+                let is_const = parser.is_const(ParsePosition::Suffix) || ty.is_const_qualified();
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
 
                 // TODO: Use _Nullable_result
@@ -2045,10 +2045,18 @@ impl Ty {
         Self::parse(ty, Lifetime::Unspecified, context)
     }
 
+    fn is_primitive(&self) -> bool {
+        match self {
+            Self::Primitive(_) => true,
+            Self::TypeDef { to, .. } => to.is_primitive(),
+            _ => false,
+        }
+    }
+
     pub(crate) fn parse_enum(ty: Type<'_>, context: &Context<'_>) -> Self {
         let ty = Self::parse(ty, Lifetime::Unspecified, context);
 
-        if !matches!(ty, Self::Primitive(_)) {
+        if !ty.is_primitive() {
             warn!(?ty, "enum type not a primitive");
         }
 

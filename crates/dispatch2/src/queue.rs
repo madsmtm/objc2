@@ -132,10 +132,7 @@ impl Queue {
 
         // Safety: label and queue_attribute can only be valid.
         let object = unsafe {
-            dispatch_queue_create(
-                label.as_ptr() as *mut _,
-                dispatch_queue_attr_t::from(queue_attribute),
-            )
+            dispatch_queue_create(label.as_ptr(), dispatch_queue_attr_t::from(queue_attribute))
         };
 
         assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
@@ -156,7 +153,7 @@ impl Queue {
         // Safety: label, queue_attribute and target can only be valid.
         let object = unsafe {
             dispatch_queue_create_with_target(
-                label.as_ptr() as *mut _,
+                label.as_ptr(),
                 dispatch_queue_attr_t::from(queue_attribute),
                 target.dispatch_object.as_raw(),
             )
@@ -361,9 +358,9 @@ impl WorkloopQueue {
         // Safety: label can only be valid.
         let object = unsafe {
             if inactive {
-                dispatch_workloop_create_inactive(label.as_ptr() as *mut _)
+                dispatch_workloop_create_inactive(label.as_ptr())
             } else {
-                dispatch_workloop_create(label.as_ptr() as *mut _)
+                dispatch_workloop_create(label.as_ptr())
             }
         };
 
