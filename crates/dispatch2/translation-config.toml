@@ -2,8 +2,7 @@ framework = "Dispatch"
 crate = "dispatch2"
 required-crates = ["bitflags"]
 link = false
-# TODO: Moved to usr/include/dispatch.modulemap in Xcode 16.2
-modulemap = "usr/include/dispatch/module.modulemap"
+modulemap = "usr/include/dispatch.modulemap"
 is-library = true
 custom-lib-rs = true
 
