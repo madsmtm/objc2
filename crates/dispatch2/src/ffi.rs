@@ -2,33 +2,33 @@
 
 #![allow(missing_docs, non_camel_case_types)]
 
-use core::ffi::{c_long, c_uint, c_ulong, c_void};
-use std::ptr::addr_of;
+use std::{
+    ffi::{c_long, c_uint, c_ulong, c_void},
+    ptr::addr_of,
+};
 
 #[cfg(feature = "objc2")]
 use objc2::encode::{Encode, Encoding, RefEncode};
+use objc2::runtime::{NSObjectProtocol, ProtocolObject};
 
 // Try to generate as much as possible.
 pub use crate::generated::*;
 
 macro_rules! create_opaque_type {
     ($type_name: ident, $typedef_name: ident) => {
-        #[repr(C)]
-        #[derive(Copy, Clone, Debug)]
         #[allow(missing_docs)]
-        pub struct $type_name {
-            /// opaque value
-            _inner: [u8; 0],
-        }
+        pub type $type_name = ProtocolObject<dyn NSObjectProtocol>;
 
         #[allow(missing_docs)]
         pub type $typedef_name = *mut $type_name;
 
+        /*
         #[cfg(feature = "objc2")]
         // SAFETY: Dispatch types are internally objects.
         unsafe impl RefEncode for $type_name {
             const ENCODING_REF: Encoding = Encoding::Object;
         }
+        */
     };
 }
 
@@ -108,10 +108,11 @@ create_opaque_type!(dispatch_io_s, dispatch_io_t);
 
 /// A dispatch queue that executes blocks serially in FIFO order.
 pub const DISPATCH_QUEUE_SERIAL: dispatch_queue_attr_t = core::ptr::null_mut();
+
 /// A dispatch queue that executes blocks concurrently.
-pub static DISPATCH_QUEUE_CONCURRENT: &dispatch_queue_attr_s = {
+pub const DISPATCH_QUEUE_CONCURRENT: dispatch_queue_attr_t = {
     // Safety: immutable external definition
-    unsafe { &_dispatch_queue_attr_concurrent }
+    unsafe { &_dispatch_queue_attr_concurrent as *const _ as dispatch_queue_attr_t }
 };
 
 pub const DISPATCH_APPLY_AUTO: dispatch_queue_t = core::ptr::null_mut();

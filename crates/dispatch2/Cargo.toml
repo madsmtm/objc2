@@ -37,7 +37,7 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = ["std", "objc2"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "bitflags/std", "block2?/std", "libc?/std", "objc2?/std"]
