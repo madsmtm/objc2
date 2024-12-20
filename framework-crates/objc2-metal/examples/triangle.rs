@@ -16,8 +16,8 @@ use objc2_foundation::{
     ns_string, NSDate, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize,
 };
 use objc2_metal::{
-    MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLCreateSystemDefaultDevice, MTLDevice,
-    MTLLibrary, MTLPackedFloat3, MTLPrimitiveType, MTLRenderCommandEncoder,
+    MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLCreateSystemDefaultDevice,
+    MTLDevice as _, MTLLibrary, MTLPackedFloat3, MTLPrimitiveType, MTLRenderCommandEncoder,
     MTLRenderPipelineDescriptor, MTLRenderPipelineState,
 };
 #[cfg(target_os = "macos")]
@@ -103,10 +103,8 @@ define_class!(
             };
 
             // get the default device
-            let device = {
-                let ptr = unsafe { MTLCreateSystemDefaultDevice() };
-                unsafe { Retained::retain(ptr) }.expect("Failed to get default system device.")
-            };
+            let device =
+                MTLCreateSystemDefaultDevice().expect("failed to get default system device");
 
             // create the command queue
             let command_queue = device

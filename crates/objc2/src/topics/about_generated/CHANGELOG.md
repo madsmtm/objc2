@@ -36,6 +36,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `OpenDirectory` / `objc2-open-directory`.
   - `ScreenSaver` / `objc2-screen-saver`.
 * Added `#[must_use]` attributes where the C headers have them.
+* Added automatic conversion of `Bool` in external function argument and
+  return types (similar to what's done on methods).
+* Added automatic conversion to `Retained` in external function return types
+  (similar to what's done on methods).
 
 ### Changed
 * Allow using `MainThreadBound` without the `NSThread` feature flag.

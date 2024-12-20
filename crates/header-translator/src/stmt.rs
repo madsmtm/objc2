@@ -14,6 +14,7 @@ use crate::config::{ClassData, MethodData};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::expr::Expr;
+use crate::fn_utils::follows_create_rule;
 use crate::id::cfg_gate_ln;
 use crate::id::ItemIdentifier;
 use crate::id::Location;
@@ -531,6 +532,7 @@ pub enum Stmt {
         must_use: bool,
         can_unwind: bool,
         link_name: Option<String>,
+        returns_retained: bool,
     },
     /// typedef Type TypedefName;
     AliasDecl {
@@ -1395,6 +1397,8 @@ impl Stmt {
                     warn!("unexpected static method");
                 }
 
+                let mut returns_retained = follows_create_rule(&id.name);
+
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
@@ -1403,9 +1407,13 @@ impl Stmt {
                                 UnexposedAttr::UIActor => {
                                     warn!("unhandled UIActor on function declaration")
                                 }
-                                UnexposedAttr::ReturnsRetained
-                                | UnexposedAttr::ReturnsNotRetained => {
-                                    // TODO: Ignore for now, but at some point handle in a similar way to in methods
+                                UnexposedAttr::ReturnsRetained => {
+                                    // Override the inferred value.
+                                    returns_retained = true;
+                                }
+                                UnexposedAttr::ReturnsNotRetained => {
+                                    // Override the inferred value.
+                                    returns_retained = false;
                                 }
                                 UnexposedAttr::NoThrow => {
                                     can_unwind = false;
@@ -1464,6 +1472,7 @@ impl Stmt {
                     must_use,
                     can_unwind,
                     link_name,
+                    returns_retained,
                 }]
             }
             EntityKind::UnionDecl => {
@@ -2421,14 +2430,10 @@ impl Stmt {
                 }
                 Self::FnDecl {
                     id,
-                    availability: _,
                     arguments,
                     result_type,
                     body: Some(_),
-                    safe: _,
-                    must_use: _,
-                    can_unwind: _,
-                    link_name: _,
+                    ..
                 } => {
                     write!(f, "// TODO: ")?;
                     write!(f, "pub fn {}(", id.name)?;
@@ -2444,83 +2449,107 @@ impl Stmt {
                     arguments,
                     result_type,
                     body: None,
-                    safe: false,
+                    safe,
                     must_use,
                     can_unwind,
                     link_name,
+                    returns_retained,
                 } => {
                     let abi = if *can_unwind { "C-unwind" } else { "C" };
-                    writeln!(f, "extern {abi:?} {{")?;
 
-                    write!(f, "    {}", self.cfg_gate_ln(config))?;
-                    write!(f, "    {availability}")?;
-                    if *must_use {
-                        writeln!(f, "    #[must_use]")?;
-                    }
-                    if let Some(link_name) = link_name {
-                        // NOTE: Currently only used on Apple targets.
-                        writeln!(
-                            f,
-                            "    #[cfg_attr(target_vendor = \"apple\", link_name = {link_name:?})]"
-                        )?;
-                    }
-                    write!(f, "    pub fn {}(", id.name)?;
-                    for (param, arg_ty) in arguments {
-                        let param = handle_reserved(&crate::to_snake_case(param));
-                        write!(f, "{param}: {},", arg_ty.fn_argument())?;
-                    }
-                    write!(f, "){}", result_type.fn_return())?;
-                    writeln!(f, ";")?;
+                    let return_converter = result_type.fn_return_converter(*returns_retained);
 
-                    writeln!(f, "}}")?;
-                }
-                Self::FnDecl {
-                    id,
-                    availability,
-                    arguments,
-                    result_type,
-                    body: None,
-                    safe: true,
-                    must_use,
-                    can_unwind,
-                    link_name,
-                } => {
-                    let abi = if *can_unwind { "C-unwind" } else { "C" };
-                    write!(f, "{}", self.cfg_gate_ln(config))?;
-                    write!(f, "{availability}")?;
-                    if *must_use {
-                        writeln!(f, "#[must_use]")?;
-                    }
-                    writeln!(f, "#[inline]")?;
-                    write!(f, "pub extern {abi:?} fn {}(", id.name)?;
-                    for (param, arg_ty) in arguments {
-                        let param = handle_reserved(&crate::to_snake_case(param));
-                        write!(f, "{param}: {},", arg_ty.fn_argument())?;
-                    }
-                    writeln!(f, "){} {{", result_type.fn_return())?;
+                    let needs_wrapper = *safe
+                        || return_converter.is_some()
+                        || arguments
+                            .iter()
+                            .any(|(_, arg)| arg.fn_argument_converter().is_some());
 
-                    writeln!(f, "    extern {abi:?} {{")?;
+                    let raw_fn_decl = |f: &mut fmt::Formatter<'_>, vis| {
+                        if let Some(link_name) = link_name {
+                            // NOTE: Currently only used on Apple targets.
+                            writeln!(
+                                f,
+                                "#[cfg_attr(target_vendor = \"apple\", link_name = {link_name:?})]"
+                            )?;
+                        }
+                        write!(f, "{vis}fn {}(", id.name)?;
+                        for (param, arg_ty) in arguments {
+                            let param = handle_reserved(&crate::to_snake_case(param));
+                            write!(f, "{param}: {},", arg_ty.fn_argument())?;
+                        }
+                        writeln!(f, "){};", result_type.fn_return())?;
 
-                    if let Some(link_name) = link_name {
-                        writeln!(f, "        #[link_name = {link_name:?}]")?;
+                        Ok(())
+                    };
+
+                    if needs_wrapper {
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        write!(f, "{availability}")?;
+                        if *must_use {
+                            writeln!(f, "#[must_use]")?;
+                        }
+                        writeln!(f, "#[inline]")?;
+                        let unsafe_ = if *safe { "" } else { "unsafe " };
+                        write!(f, "pub {unsafe_}extern {abi:?} fn {}(", id.name)?;
+                        for (param, arg_ty) in arguments {
+                            let param = handle_reserved(&crate::to_snake_case(param));
+                            write!(f, "{param}: ")?;
+                            if let Some((converted_ty, _)) = arg_ty.fn_argument_converter() {
+                                write!(f, "{converted_ty}")?;
+                            } else {
+                                write!(f, "{}", arg_ty.fn_argument())?;
+                            }
+                            write!(f, ",")?;
+                        }
+                        write!(f, ")")?;
+                        if let Some((ty, _, _)) = &return_converter {
+                            write!(f, "{ty}")?;
+                        } else {
+                            write!(f, "{}", result_type.fn_return())?;
+                        }
+                        writeln!(f, " {{")?;
+
+                        // Emit raw
+                        writeln!(f, "    extern {abi:?} {{")?;
+                        raw_fn_decl(f, "")?;
+                        writeln!(f, "    }}")?;
+
+                        // Call raw
+                        write!(f, "    ")?;
+                        if let Some((_, converter_start, _)) = &return_converter {
+                            write!(f, "{converter_start}")?;
+                        }
+                        write!(f, "unsafe {{ {}(", id.name)?;
+                        for (param, ty) in arguments {
+                            let param = handle_reserved(&crate::to_snake_case(param));
+                            if let Some((_, converter)) = ty.fn_argument_converter() {
+                                write!(f, "{converter}({param})")?;
+                            } else {
+                                write!(f, "{param}")?;
+                            }
+                            write!(f, ",")?;
+                        }
+                        write!(f, ") }}")?;
+                        if let Some((_, _, converter_end)) = &return_converter {
+                            write!(f, "{converter_end}")?;
+                        }
+                        writeln!(f)?;
+
+                        writeln!(f, "}}")?;
+                    } else {
+                        writeln!(f, "extern {abi:?} {{")?;
+
+                        write!(f, "    {}", self.cfg_gate_ln(config))?;
+                        write!(f, "    {availability}")?;
+                        if *must_use {
+                            writeln!(f, "    #[must_use]")?;
+                        }
+
+                        raw_fn_decl(f, "pub ")?;
+
+                        writeln!(f, "}}")?;
                     }
-                    write!(f, "        fn {}(", id.name)?;
-                    for (param, arg_ty) in arguments {
-                        let param = handle_reserved(&crate::to_snake_case(param));
-                        write!(f, "{param}: {},", arg_ty.fn_argument())?;
-                    }
-                    writeln!(f, "){};", result_type.fn_return())?;
-
-                    writeln!(f, "    }}")?;
-
-                    write!(f, "    unsafe {{ {}(", id.name)?;
-                    for (param, _) in arguments {
-                        let param = handle_reserved(&crate::to_snake_case(param));
-                        write!(f, "{param},")?;
-                    }
-                    writeln!(f, ") }}")?;
-
-                    writeln!(f, "}}")?;
                 }
                 Self::AliasDecl {
                     id,

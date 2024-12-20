@@ -45,9 +45,8 @@ fn.MTLPackedFloat3Make.skipped = true
 
 # TODO: Verify that index out-of-bounds is sound for various arrays.
 
-# TODO:
-# fn.MTLCreateSystemDefaultDevice.unsafe = false
-# fn.MTLCopyAllDevices.unsafe = false
+fn.MTLCreateSystemDefaultDevice.unsafe = false
+fn.MTLCopyAllDevices.unsafe = false
 
 class.MTLPrimitiveAccelerationStructureDescriptor.methods.descriptor.unsafe = false
 class.MTLPrimitiveAccelerationStructureDescriptor.methods."setGeometryDescriptors:".unsafe = false

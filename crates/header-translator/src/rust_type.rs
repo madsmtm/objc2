@@ -1367,7 +1367,11 @@ impl Ty {
     }
 
     pub(crate) fn is_objc_bool(&self) -> bool {
-        matches!(self, Self::Primitive(Primitive::ObjcBool))
+        match self {
+            Self::Primitive(Primitive::ObjcBool) => true,
+            Self::TypeDef { to, .. } => to.is_objc_bool(),
+            _ => false,
+        }
     }
 
     fn plain(&self) -> impl fmt::Display + '_ {
@@ -1678,6 +1682,59 @@ impl Ty {
         })
     }
 
+    pub(crate) fn fn_return_converter(
+        &self,
+        returns_retained: bool,
+    ) -> Option<(
+        impl fmt::Display + '_,
+        impl fmt::Display + '_,
+        impl fmt::Display + '_,
+    )> {
+        let start = "let ret = ";
+        // SAFETY: The function is marked with the correct retain semantics,
+        // otherwise it'd be invalid to use from Obj-C with ARC and Swift too.
+        let end = |nullability| {
+            match (nullability, returns_retained) {
+            (Nullability::NonNull, true) => {
+                ";\nunsafe { Retained::from_raw(ret.as_ptr()) }.expect(\"function was marked as returning non-null, but actually returned NULL\")"
+            }
+            (Nullability::NonNull, false) => {
+                ";\nunsafe { Retained::retain_autoreleased(ret.as_ptr()) }.expect(\"function was marked as returning non-null, but actually returned NULL\")"
+            }
+            (_, true) => ";\nunsafe { Retained::from_raw(ret) }",
+            (_, false) => ";\nunsafe { Retained::retain_autoreleased(ret) }",
+        }
+        };
+
+        match self {
+            _ if self.is_objc_bool() => Some((" -> bool".to_string(), "", ".as_bool()")),
+            Self::Pointer {
+                nullability,
+                lifetime: Lifetime::Unspecified,
+                pointee,
+                ..
+            } if pointee.is_object_like() && !pointee.is_static_object() => {
+                let res = if *nullability == Nullability::NonNull {
+                    format!(" -> Retained<{}>", pointee.behind_pointer())
+                } else {
+                    format!(" -> Option<Retained<{}>>", pointee.behind_pointer())
+                };
+                Some((res, start, end(*nullability)))
+            }
+            Self::TypeDef {
+                id, nullability, ..
+            } if self.is_object_like() && !self.is_static_object() => {
+                let res = if *nullability == Nullability::NonNull {
+                    format!(" -> Retained<{}>", id.path())
+                } else {
+                    format!(" -> Option<Retained<{}>>", id.path())
+                };
+                Some((res, start, end(*nullability)))
+            }
+            _ => None,
+        }
+    }
+
     pub(crate) fn var(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Pointer {
@@ -1762,6 +1819,17 @@ impl Ty {
             }
             _ => write!(f, "{}", self.plain()),
         })
+    }
+
+    pub(crate) fn fn_argument_converter(
+        &self,
+    ) -> Option<(impl fmt::Display + '_, impl fmt::Display + '_)> {
+        if self.is_objc_bool() {
+            Some(("bool", "Bool::new"))
+        } else {
+            // TODO: Support out / autoreleasing pointers?
+            None
+        }
     }
 
     pub(crate) fn method_argument(&self) -> impl fmt::Display + '_ {

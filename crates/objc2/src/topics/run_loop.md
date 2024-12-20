@@ -123,13 +123,13 @@ fn main() {
 // UIKit (iOS/tvOS/watchOS/visionOS).
 #[cfg(not(target_os = "macos"))]
 fn main() {
-    let delegate_class = unsafe { objc2_foundation::NSStringFromClass(AppDelegate::class()).as_ref() };
+    let delegate_class = unsafe { objc2_foundation::NSStringFromClass(AppDelegate::class()) };
     unsafe {
         objc2_ui_kit::UIApplicationMain(
             *libc::_NSGetArgc(),
             std::ptr::NonNull::new(*libc::_NSGetArgv()).unwrap(),
             None,
-            Some(delegate_class),
+            Some(&delegate_class),
         );
     }
 }

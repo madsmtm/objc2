@@ -50,8 +50,6 @@ extern crate std;
 mod capture;
 #[cfg(feature = "MTLCounters")]
 mod counters;
-#[cfg(feature = "MTLDevice")]
-mod device;
 mod generated;
 #[cfg(feature = "MTLAccelerationStructureTypes")]
 mod packed;
