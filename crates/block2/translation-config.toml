@@ -3,6 +3,7 @@ crate = "block2"
 required-crates = []
 link = false
 skipped = true
+is-library = true
 
 macos = "10.6"
 maccatalyst = "13.0"

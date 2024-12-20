@@ -84,6 +84,8 @@ test-frameworks = [
     "objc2-data-detection/all",
     "dep:objc2-device-check",
     "objc2-device-check/all",
+    "dep:dispatch2",
+    "dispatch2/all",
     "dep:objc2-event-kit",
     "objc2-event-kit/all",
     "dep:objc2-event-kit-ui",
@@ -215,6 +217,7 @@ objc2-core-text = { path = "../../framework-crates/objc2-core-text", optional = 
 objc2-core-video = { path = "../../framework-crates/objc2-core-video", optional = true }
 objc2-data-detection = { path = "../../framework-crates/objc2-data-detection", optional = true }
 objc2-device-check = { path = "../../framework-crates/objc2-device-check", optional = true }
+dispatch2 = { path = "../dispatch2", optional = true }
 objc2-extension-kit = { path = "../../framework-crates/objc2-extension-kit", optional = true }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation", optional = true }
 objc2-game-kit = { path = "../../framework-crates/objc2-game-kit", optional = true }

@@ -184,7 +184,10 @@ checksum = "bd0c93bb4b0c6d9b77f4435b0ae98c24d17f1c45b2ff844c6151a07256ca923b"
 name = "dispatch2"
 version = "0.1.0"
 dependencies = [
+ "bitflags",
+ "block2",
  "libc",
+ "objc2",
 ]
 
 [[package]]
@@ -1621,6 +1624,7 @@ version = "0.0.0"
 dependencies = [
  "block2",
  "dispatch",
+ "dispatch2",
  "libc",
  "objc2",
  "objc2-accessibility",

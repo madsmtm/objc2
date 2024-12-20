@@ -997,6 +997,16 @@ impl Ty {
                     "Float80" => panic!("can't handle 80 bit MacOS float"),
                     "Float96" => panic!("can't handle 96 bit 68881 float"),
 
+                    // Workaround for this otherwise requiring libc.
+                    "dispatch_qos_class_t" => {
+                        return Self::TypeDef {
+                            id: ItemIdentifier::new(&declaration, context),
+                            nullability,
+                            lifetime,
+                            to: Box::new(Self::Primitive(Primitive::Int)),
+                        }
+                    }
+
                     "NSInteger" => return Self::Primitive(Primitive::NSInteger),
                     "NSUInteger" => return Self::Primitive(Primitive::NSUInteger),
 

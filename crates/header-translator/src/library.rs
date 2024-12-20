@@ -182,20 +182,28 @@ impl Library {
 
         // Output `README.md`.
         let mut readme = fs::File::create(crate_dir.join("README.md"))?;
+        let (framework_or_lib, license) = if self.data.krate == "dispatch2" {
+            (
+                "Grand Central Dispatch".to_string(),
+                "MIT%20OR%20Apache%202.0",
+            )
+        } else {
+            (format!("framework {}", self.link_name), "MIT")
+        };
         writeln!(readme, "# `{0}`
 
 [![Latest version](https://badgen.net/crates/v/{0})](https://crates.io/crates/{0})
-[![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
+[![License](https://badgen.net/badge/license/{license}/blue)](../LICENSE.txt)
 [![Documentation](https://docs.rs/{0}/badge.svg)](https://docs.rs/{0}/)
 [![CI](https://github.com/madsmtm/objc2/actions/workflows/ci.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/ci.yml)
 
-Rust bindings to Apple's framework {1}.
+Rust bindings to Apple's {framework_or_lib}.
 
 This README is kept intentionally small to consolidate the documentation, see
 [the Rust docs](https://docs.rs/{0}/) for more details on this crate.
 
 This crate is part of the [`objc2` project](https://github.com/madsmtm/objc2),
-see that for related crates.", self.data.krate, self.link_name)?;
+see that for related crates.", self.data.krate)?;
         readme.flush()?;
 
         let mut cargo_toml: DocumentMut = include_str!("default_cargo.toml")
@@ -257,21 +265,28 @@ see that for related crates.", self.data.krate, self.link_name)?;
             value(default_target.unwrap());
 
         for (krate, (required, _, required_features)) in &dependency_map[&*self.link_name] {
+            let library = config.library_from_crate(krate);
+            let path = match (library.is_library, self.data.is_library) {
+                (true, true) => format!("../{krate}"),
+                (true, false) => format!("../../crates/{krate}"),
+                (false, true) => format!("../../framework-crates/{krate}"),
+                (false, false) => format!("../{krate}"),
+            };
             let mut table = match *krate {
                 "objc2" => InlineTable::from_iter([
-                    ("path", Value::from("../../crates/objc2".to_string())),
+                    ("path", Value::from(path)),
                     ("version", Value::from("0.5.2")),
                 ]),
                 "block2" => InlineTable::from_iter([
-                    ("path", Value::from("../../crates/block2".to_string())),
+                    ("path", Value::from(path)),
                     ("version", Value::from("0.5.1")),
                 ]),
                 // Use a reasonably new version of libc
                 "libc" => InlineTable::from_iter([("version", Value::from("0.2.80"))]),
                 // Use a version of bitflags that supports `impl`
                 "bitflags" => InlineTable::from_iter([("version", Value::from("2.5.0"))]),
-                krate => InlineTable::from_iter([
-                    ("path", Value::from(format!("../{krate}"))),
+                _ => InlineTable::from_iter([
+                    ("path", Value::from(path)),
                     ("version", Value::from(VERSION)),
                 ]),
             };

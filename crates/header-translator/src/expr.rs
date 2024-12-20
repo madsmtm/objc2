@@ -132,8 +132,9 @@ impl Expr {
                     })
                 }
                 (TokenKind::Literal, lit) => {
+                    // UL, ull, etc.
                     let lit = lit
-                        .trim_end_matches("UL")
+                        .trim_end_matches('l')
                         .trim_end_matches('L')
                         .trim_end_matches('u')
                         .trim_end_matches('U');

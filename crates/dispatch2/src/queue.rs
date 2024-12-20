@@ -3,6 +3,7 @@
 use std::borrow::{Borrow, BorrowMut};
 use std::ffi::CString;
 use std::ops::{Deref, DerefMut};
+use std::ptr::NonNull;
 use std::time::Duration;
 
 use super::object::{DispatchObject, QualityOfServiceClassFloorError, TargetQueueError};
@@ -76,13 +77,13 @@ pub enum GlobalQueueIdentifier {
 
 impl GlobalQueueIdentifier {
     /// Convert and consume [GlobalQueueIdentifier] into its raw value.
-    pub fn to_identifier(self) -> usize {
+    pub fn to_identifier(self) -> isize {
         match self {
             GlobalQueueIdentifier::Priority(queue_priority) => {
-                dispatch_queue_priority_t::from(queue_priority).0 as usize
+                dispatch_queue_priority_t::from(queue_priority).0 as isize
             }
             GlobalQueueIdentifier::QualityOfService(qos_class) => {
-                dispatch_qos_class_t::from(qos_class).0 as usize
+                dispatch_qos_class_t::from(qos_class).0 as isize
             }
         }
     }
@@ -131,7 +132,10 @@ impl Queue {
 
         // Safety: label and queue_attribute can only be valid.
         let object = unsafe {
-            dispatch_queue_create(label.as_ptr(), dispatch_queue_attr_t::from(queue_attribute))
+            dispatch_queue_create(
+                label.as_ptr() as *mut _,
+                dispatch_queue_attr_t::from(queue_attribute),
+            )
         };
 
         assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
@@ -152,7 +156,7 @@ impl Queue {
         // Safety: label, queue_attribute and target can only be valid.
         let object = unsafe {
             dispatch_queue_create_with_target(
-                label.as_ptr(),
+                label.as_ptr() as *mut _,
                 dispatch_queue_attr_t::from(queue_attribute),
                 target.dispatch_object.as_raw(),
             )
@@ -269,17 +273,21 @@ impl Queue {
     }
 
     /// Sets a function at the given key that will be executed at [Queue] destruction.
-    pub fn set_specific<F>(&mut self, key: usize, destructor: F)
+    pub fn set_specific<F>(&mut self, key: NonNull<()>, destructor: F)
     where
         F: Send + FnOnce(),
     {
         let destructor_boxed = Box::into_raw(Box::new(destructor)).cast();
 
-        // Safety: object cannot be null and destructor is wrapped to avoid ABI incompatibility.
+        // SAFETY: object cannot be null and destructor is wrapped to avoid
+        // ABI incompatibility.
+        //
+        // The key is never dereferenced, so passing _any_ pointer here is
+        // safe and allowed.
         unsafe {
             dispatch_queue_set_specific(
                 self.as_raw(),
-                key as *const _,
+                key.cast(),
                 destructor_boxed,
                 function_wrapper::<F>,
             )
@@ -353,9 +361,9 @@ impl WorkloopQueue {
         // Safety: label can only be valid.
         let object = unsafe {
             if inactive {
-                dispatch_workloop_create_inactive(label.as_ptr())
+                dispatch_workloop_create_inactive(label.as_ptr() as *mut _)
             } else {
-                dispatch_workloop_create(label.as_ptr())
+                dispatch_workloop_create(label.as_ptr() as *mut _)
             }
         };
 

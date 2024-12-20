@@ -91,7 +91,7 @@ fn main() -> Result<(), BoxError> {
     let libraries: BTreeMap<_, _> = config
         .to_parse()
         .map(|(name, data)| {
-            let library = parse_framework(&index, &config, data, name, &sdks, &tempdir);
+            let library = parse_library(&index, &config, data, name, &sdks, &tempdir);
             (name.to_string(), library)
         })
         .collect();
@@ -106,9 +106,12 @@ fn main() -> Result<(), BoxError> {
     for (library_name, library) in &libraries {
         let _span = info_span!("writing", library_name).entered();
 
-        let crate_dir = workspace_dir
-            .join("framework-crates")
-            .join(&library.data.krate);
+        let crate_dir = if library.data.is_library {
+            workspace_dir.join("crates")
+        } else {
+            workspace_dir.join("framework-crates")
+        }
+        .join(&library.data.krate);
 
         // Ensure directories exist
         let generated_dir = workspace_dir.join("generated").join(library_name);
@@ -193,7 +196,7 @@ fn load_config(workspace_dir: &Path) -> Result<Config, BoxError> {
     Config::new(libraries)
 }
 
-fn parse_framework(
+fn parse_library(
     index: &Index<'_>,
     config: &Config,
     data: &LibraryConfig,
@@ -262,7 +265,7 @@ fn parse_framework(
 
         let mut context = Context::new(config);
         let mut library = Library::new(name, data);
-        let tu = get_translation_unit(index, sdk, llvm_target, &data.framework, tempdir);
+        let tu = get_translation_unit(index, sdk, llvm_target, data, tempdir);
         parse_translation_unit(tu, &mut context, &mut library);
         global_analysis(&mut library);
 
@@ -358,17 +361,23 @@ fn get_translation_unit<'i: 'c, 'c>(
     index: &'i Index<'c>,
     sdk: &SdkPath,
     llvm_target: &str,
-    framework: &str,
+    data: &LibraryConfig,
     tempdir: &Path,
 ) -> TranslationUnit<'c> {
     let _span = info_span!("initializing translation unit").entered();
 
+    // Example values:
     // "usr/include/TargetConditionals.modulemap"
     // "System/Library/Frameworks/CoreFoundation.framework/Modules/module.modulemap"
     // "usr/include/ObjectiveC.modulemap"
     // "usr/include/dispatch.modulemap"
-    let modulemap =
-        format!("System/Library/Frameworks/{framework}.framework/Modules/module.modulemap");
+    let modulemap = data.modulemap.clone().unwrap_or_else(|| {
+        format!(
+            "System/Library/Frameworks/{}.framework/Modules/module.modulemap",
+            data.framework
+        )
+    });
+
     // On Mac Catalyst, we need to try to load from System/iOSSupport first.
     let mut path = sdk.path.join(&modulemap);
     if llvm_target.contains("macabi") {
@@ -377,13 +386,20 @@ fn get_translation_unit<'i: 'c, 'c>(
             path = ios_path;
         }
     }
-    let modulemap = fs::read_to_string(&path).expect("read module map");
-    let re = regex::Regex::new(r"(?m)^framework +module +(\w*)").unwrap();
 
-    // Find the top-level framework
-    let mut captures = re.captures_iter(&modulemap);
-    let module = &captures.next().expect("module name in module map")[1];
-    assert_eq!(captures.count(), 0);
+    // Find the framework module name
+    let module = if data.modulemap.is_none() {
+        let re = regex::Regex::new(r"(?m)^framework +module +(\w*)").unwrap();
+        let contents = fs::read_to_string(&path).expect("read module map");
+        let mut captures = re.captures_iter(&contents);
+        let module = &captures.next().expect("module name in module map")[1];
+        assert_eq!(captures.count(), 0);
+        module.to_string()
+    } else {
+        // Assume the name is the same as the "framework" name.
+        // (dispatch.modulemap has both Dispatch and DispatchIntrospection).
+        data.framework.clone()
+    };
 
     let cache_path = format!("-fmodules-cache-path={}", tempdir.to_str().unwrap());
     let module_name = format!("-fmodule-name={module}");
@@ -444,6 +460,11 @@ fn get_translation_unit<'i: 'c, 'c>(
         // "-fapi-notes-swift-version=6.0",
         // Make AudioToolbox less dependent on CoreServices
         "-DAUDIOCOMPONENT_NOCARBONINSTANCES=1",
+        // Allow dispatch2 to not depend on objc2 for core types.
+        //
+        // See os/object.h for details.
+        "-D",
+        "OS_OBJECT_USE_OBJC=0",
     ];
 
     // Add include paths for Mac Catalyst
@@ -529,6 +550,9 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
         // Use a BTreeSet to sort the libraries
         let mut frameworks = BTreeSet::new();
         for (_, library) in config.to_parse() {
+            if library.is_library {
+                continue; // Skip non-framework crates for now
+            }
             if check(library) {
                 frameworks.insert(&*library.krate);
             }
@@ -636,6 +660,9 @@ fn update_list(workspace_dir: &Path, config: &Config) -> io::Result<()> {
     writeln!(f, "| --- | --- | --- |")?;
 
     for (name, library) in config.to_parse() {
+        if library.is_library {
+            continue; // Skip non-framework crates for now
+        }
         let package = &library.krate;
         writeln!(
             f,
@@ -738,13 +765,16 @@ fn update_test_metadata<'a>(
             cargo_toml["dependencies"].as_table_mut().unwrap()
         };
 
+        let path = if lib.is_library {
+            format!("../{}", lib.krate)
+        } else {
+            format!("../../framework-crates/{}", lib.krate)
+        };
+
         dependencies[&lib.krate] = toml_edit::InlineTable::from_iter([
             (
                 "path",
-                toml_edit::Value::String(toml_edit::Formatted::new(format!(
-                    "../../framework-crates/{}",
-                    lib.krate
-                ))),
+                toml_edit::Value::String(toml_edit::Formatted::new(path)),
             ),
             (
                 "optional",

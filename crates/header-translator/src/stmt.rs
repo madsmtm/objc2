@@ -529,6 +529,7 @@ pub enum Stmt {
         body: Option<()>,
         safe: bool,
         must_use: bool,
+        can_unwind: bool,
         link_name: Option<String>,
     },
     /// typedef Type TypedefName;
@@ -1056,6 +1057,7 @@ impl Stmt {
                         }
                     }
                     EntityKind::StructDecl
+                    | EntityKind::UnionDecl
                     | EntityKind::ObjCClassRef
                     | EntityKind::ObjCProtocolRef
                     | EntityKind::TypeRef
@@ -1065,7 +1067,7 @@ impl Stmt {
                     EntityKind::ObjCIndependentClass => {
                         // TODO: Might be interesting?
                     }
-                    _ => error!("unknown typedef child"),
+                    _ => error!(?entity, "unknown typedef child"),
                 });
 
                 let ty = entity
@@ -1385,6 +1387,8 @@ impl Stmt {
                 let result_type = Ty::parse_function_return(result_type, context);
                 let mut arguments = Vec::new();
                 let mut must_use = false;
+                // Assume by default that functions can unwind.
+                let mut can_unwind = true;
                 let mut link_name = None;
 
                 if entity.is_static_method() {
@@ -1402,6 +1406,9 @@ impl Stmt {
                                 UnexposedAttr::ReturnsRetained
                                 | UnexposedAttr::ReturnsNotRetained => {
                                     // TODO: Ignore for now, but at some point handle in a similar way to in methods
+                                }
+                                UnexposedAttr::NoThrow => {
+                                    can_unwind = false;
                                 }
                                 _ => error!(?attr, "unknown attribute on function"),
                             }
@@ -1455,6 +1462,7 @@ impl Stmt {
                     body,
                     safe: !data.unsafe_,
                     must_use,
+                    can_unwind,
                     link_name,
                 }]
             }
@@ -2419,6 +2427,7 @@ impl Stmt {
                     body: Some(_),
                     safe: _,
                     must_use: _,
+                    can_unwind: _,
                     link_name: _,
                 } => {
                     write!(f, "// TODO: ")?;
@@ -2437,11 +2446,11 @@ impl Stmt {
                     body: None,
                     safe: false,
                     must_use,
+                    can_unwind,
                     link_name,
                 } => {
-                    // Functions are always C-unwind, since we don't know
-                    // anything about them.
-                    writeln!(f, "extern \"C-unwind\" {{")?;
+                    let abi = if *can_unwind { "C-unwind" } else { "C" };
+                    writeln!(f, "extern {abi:?} {{")?;
 
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
                     write!(f, "    {availability}")?;
@@ -2449,7 +2458,11 @@ impl Stmt {
                         writeln!(f, "    #[must_use]")?;
                     }
                     if let Some(link_name) = link_name {
-                        writeln!(f, "    #[link_name = {link_name:?}]")?;
+                        // NOTE: Currently only used on Apple targets.
+                        writeln!(
+                            f,
+                            "    #[cfg_attr(target_vendor = \"apple\", link_name = {link_name:?})]"
+                        )?;
                     }
                     write!(f, "    pub fn {}(", id.name)?;
                     for (param, arg_ty) in arguments {
@@ -2469,22 +2482,24 @@ impl Stmt {
                     body: None,
                     safe: true,
                     must_use,
+                    can_unwind,
                     link_name,
                 } => {
+                    let abi = if *can_unwind { "C-unwind" } else { "C" };
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     if *must_use {
                         writeln!(f, "#[must_use]")?;
                     }
                     writeln!(f, "#[inline]")?;
-                    write!(f, "pub extern \"C-unwind\" fn {}(", id.name)?;
+                    write!(f, "pub extern {abi:?} fn {}(", id.name)?;
                     for (param, arg_ty) in arguments {
                         let param = handle_reserved(&crate::to_snake_case(param));
                         write!(f, "{param}: {},", arg_ty.fn_argument())?;
                     }
                     writeln!(f, "){} {{", result_type.fn_return())?;
 
-                    writeln!(f, "    extern \"C-unwind\" {{")?;
+                    writeln!(f, "    extern {abi:?} {{")?;
 
                     if let Some(link_name) = link_name {
                         writeln!(f, "        #[link_name = {link_name:?}]")?;

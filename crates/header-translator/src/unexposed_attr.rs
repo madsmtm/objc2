@@ -29,6 +29,7 @@ pub enum UnexposedAttr {
     NonIsolated,
 
     NoEscape,
+    NoThrow,
 }
 
 impl UnexposedAttr {
@@ -100,6 +101,7 @@ impl UnexposedAttr {
                 None
             }
             "CF_NOESCAPE" | "DISPATCH_NOESCAPE" | "NS_NOESCAPE" => Some(Self::NoEscape),
+            "DISPATCH_NOTHROW" | "NS_SWIFT_NOTHROW" => Some(Self::NoThrow),
             // TODO: We could potentially automatically elide this argument
             // from the method call, though it's rare enough that it's
             // probably not really worth the effort.
@@ -286,9 +288,7 @@ impl UnexposedAttr {
             | "CF_REFINED_FOR_SWIFT"
             | "DISPATCH_REFINED_FOR_SWIFT"
             | "NS_REFINED_FOR_SWIFT"
-            | "NS_SWIFT_DISABLE_ASYNC"
-            | "DISPATCH_NOTHROW"
-            | "NS_SWIFT_NOTHROW" => None,
+            | "NS_SWIFT_DISABLE_ASYNC" => None,
             // Possibly interesting?
             "DISPATCH_COLD" => None,
             "DISPATCH_MALLOC" => None,

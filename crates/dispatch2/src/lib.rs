@@ -1,7 +1,8 @@
 //! # Apple's Dispatch (Grand Central Dispatch)
 //!
-//! This crate allows interaction with the Apple's Grand Central Dispatch
-//! library in a safe (``dispatch2`` module) and unsafe (``ffi`` module) way.
+//! This crate provides a safe and sound interface to Apple's Grand Central
+//! dispatch, as well as the ability to drop into lower-level bindings
+//! ([`ffi`] module).
 //!
 //! See [Apple's documentation](https://developer.apple.com/documentation/dispatch)
 //! and [the source code for libdispatch](https://github.com/swiftlang/swift-corelibs-libdispatch)
@@ -26,6 +27,7 @@
 use self::ffi::dispatch_qos_class_t;
 
 pub mod ffi;
+mod generated;
 pub mod group;
 pub mod object;
 pub mod queue;

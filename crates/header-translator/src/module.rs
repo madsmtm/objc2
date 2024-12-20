@@ -105,7 +105,12 @@ impl Module {
                 writeln!(f, "use {import};")?;
             }
             writeln!(f)?;
-            writeln!(f, "use crate::*;")?;
+
+            if emission_config.is_library {
+                writeln!(f, "use crate::ffi::*;")?;
+            } else {
+                writeln!(f, "use crate::*;")?;
+            }
 
             writeln!(f)?;
 

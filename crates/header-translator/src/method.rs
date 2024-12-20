@@ -83,6 +83,9 @@ impl MethodModifiers {
                         UnexposedAttr::UIActor => {
                             this.mainthreadonly = true;
                         }
+                        UnexposedAttr::NoThrow => {
+                            // TODO: Use this somehow?
+                        }
                         attr => error!(?attr, "unknown attribute on method"),
                     }
                 }

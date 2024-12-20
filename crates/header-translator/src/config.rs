@@ -145,6 +145,11 @@ pub struct LibraryConfig {
     #[serde(rename = "custom-lib-rs")]
     #[serde(default)]
     pub custom_lib_rs: bool,
+    #[serde(default)]
+    pub modulemap: Option<String>,
+    #[serde(rename = "is-library")]
+    #[serde(default)]
+    pub is_library: bool,
 
     #[serde(default = "link_default")]
     pub link: bool,

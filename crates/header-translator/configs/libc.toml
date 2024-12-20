@@ -3,6 +3,7 @@ crate = "libc"
 required-crates = []
 link = false
 skipped = true
+is-library = true
 
 # Available everywhere
 macos = "10.0"

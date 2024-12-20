@@ -1,8 +1,10 @@
 framework = "Dispatch"
 crate = "dispatch2"
-required-crates = []
+required-crates = ["bitflags"]
 link = false
-skipped = true
+# TODO: Moved to usr/include/dispatch.modulemap in Xcode 16.2
+modulemap = "usr/include/dispatch/module.modulemap"
+is-library = true
 custom-lib-rs = true
 
 macos = "10.0"
@@ -13,8 +15,57 @@ watchos = "2.0"
 visionos = "1.0"
 gnustep = true
 
-typedef.dispatch_object_t.renamed = "DispatchObject"
-typedef.dispatch_queue_t.renamed = "Queue"
-typedef.dispatch_data_t.renamed = "Data"
-typedef.dispatch_group_t.renamed = "Group"
-typedef.dispatch_semaphore_t.renamed = "Semaphore"
+# Needs os_workgroup_t
+fn.dispatch_workloop_set_os_workgroup.skipped = true
+
+# Needs va_list, and deprecated anyhow.
+fn.dispatch_debugv.skipped = true
+
+# Actually enums
+# FIXME: Update the source to make these enums too.
+typedef.dispatch_queue_priority_t.skipped = true
+typedef.dispatch_source_mach_send_flags_t.skipped = true
+typedef.dispatch_source_mach_recv_flags_t.skipped = true
+typedef.dispatch_source_memorypressure_flags_t.skipped = true
+typedef.dispatch_source_proc_flags_t.skipped = true
+typedef.dispatch_source_vnode_flags_t.skipped = true
+typedef.dispatch_source_timer_flags_t.skipped = true
+typedef.dispatch_io_type_t.skipped = true
+typedef.dispatch_io_close_flags_t.skipped = true
+typedef.dispatch_io_interval_flags_t.skipped = true
+# Lonely enum constant that we want to tie to dispatch_time_t
+enum.anonymous.constants.DISPATCH_WALLTIME_NOW.skipped = true
+
+# We want to implement TryFrom on this
+typedef.dispatch_time_t.skipped = true
+
+# Marked as noreturn, but header-translator doesn't handle that yet.
+fn.dispatch_main.skipped = true
+
+# Nullability is not yet properly tracked on uses of this.
+#
+# Furthermore, it should be `extern "C"` to get better error messages
+# on unwinding.
+typedef.dispatch_function_t.skipped = true
+
+# The libc definition is unsound (?)
+typedef.dispatch_qos_class_t.skipped = true
+
+# We need the inner struct to be available
+typedef.dispatch_queue_t.skipped = true
+typedef.dispatch_queue_global_t.skipped = true
+typedef.dispatch_queue_serial_executor_t.skipped = true
+typedef.dispatch_queue_serial_t.skipped = true
+typedef.dispatch_queue_main_t.skipped = true
+typedef.dispatch_queue_concurrent_t.skipped = true
+typedef.dispatch_queue_attr_t.skipped = true
+typedef.dispatch_source_t.skipped = true
+typedef.dispatch_source_type_t.skipped = true
+typedef.dispatch_group_t.skipped = true
+typedef.dispatch_semaphore_t.skipped = true
+typedef.dispatch_data_t.skipped = true
+typedef.dispatch_io_t.skipped = true
+typedef.dispatch_workloop_t.skipped = true
+
+# Inline, defined manually for now
+fn.dispatch_get_main_queue.skipped = true
