@@ -248,8 +248,6 @@ impl CGRect {
 
     /// Returns a rectangle with a positive width and height.
     ///
-    /// This is often useful
-    ///
     ///
     /// # Examples
     ///
@@ -262,6 +260,7 @@ impl CGRect {
     /// ```
     #[inline]
     #[doc(alias = "CGRectStandardize")]
+    #[cfg(feature = "std")] // `abs` only available in core since Rust 1.85
     pub fn standardize(self) -> Self {
         Self::new(self.origin, self.size.abs())
     }
