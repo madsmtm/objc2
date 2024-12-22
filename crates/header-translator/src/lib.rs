@@ -15,6 +15,7 @@ mod cfgs;
 mod config;
 mod context;
 mod display_helper;
+pub mod documentation;
 mod expr;
 mod fn_utils;
 mod global_analysis;

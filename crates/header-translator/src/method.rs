@@ -6,6 +6,7 @@ use crate::availability::Availability;
 use crate::config::MethodData;
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
+use crate::documentation::Documentation;
 use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
@@ -269,6 +270,7 @@ pub struct Method {
     weak_property: bool,
     must_use: bool,
     encoding: String,
+    documentation: Documentation,
 }
 
 #[derive(Debug)]
@@ -523,6 +525,7 @@ impl Method {
                 weak_property: false,
                 must_use: modifiers.must_use,
                 encoding,
+                documentation: Documentation::from_entity(&entity),
             },
         ))
     }
@@ -587,7 +590,7 @@ impl Method {
 
             Some(Method {
                 selector: getter_sel.clone(),
-                fn_name: getter_sel,
+                fn_name: getter_sel.clone(),
                 availability: availability.clone(),
                 is_class,
                 is_optional: entity.is_objc_optional(),
@@ -603,6 +606,7 @@ impl Method {
                 weak_property: false,
                 must_use: modifiers.must_use,
                 encoding: encoding.clone(),
+                documentation: Documentation::from_entity(&entity),
             })
         } else {
             None
@@ -648,6 +652,7 @@ impl Method {
                     weak_property: attributes.map(|a| a.weak).unwrap_or(false),
                     must_use: modifiers.must_use,
                     encoding,
+                    documentation: Documentation::property_setter(&getter_sel),
                 })
             } else {
                 None
@@ -741,6 +746,7 @@ impl fmt::Display for Method {
         // Attributes
         //
 
+        write!(f, "{}", self.documentation.fmt(None))?;
         write!(f, "{}", self.availability)?;
 
         if self.must_use {

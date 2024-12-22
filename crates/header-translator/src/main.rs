@@ -416,8 +416,14 @@ fn get_translation_unit<'i: 'c, 'c>(
         "-fobjc-exceptions",
         "-fobjc-abi-version=2", // 3??
         "-fblocks",
+        // We're parsing system headers, but still want comments from there.
+        //
+        // See: https://clang.llvm.org/docs/UsersManual.html#comment-parsing-options
+        "-fretain-comments-from-system-headers",
+        // Tell Clang to parse non-doc comments too.
         // "-fparse-all-comments",
-        // TODO: "-fretain-comments-from-system-headers"
+        // Explicitly pass the sysroot (we aren't invoked through
+        // `/usr/bin/clang` which is what usually passes it).
         "-isysroot",
         sdk.path.to_str().unwrap(),
         // See ClangImporter.cpp and Foundation/NSObjCRuntime.h

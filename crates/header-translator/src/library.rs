@@ -457,6 +457,13 @@ see that for related crates.", self.data.krate)?;
             // We don't have the manpower to document the safety of methods.
             writeln!(f, "#![allow(clippy::missing_safety_doc)]")?;
 
+            // Our auto-generated rustdoc is kinda bad.
+            writeln!(f, "#![allow(clippy::doc_lazy_continuation)]")?;
+            writeln!(f, "#![allow(rustdoc::broken_intra_doc_links)]")?;
+            writeln!(f, "#![allow(rustdoc::bare_urls)]")?;
+            writeln!(f, "#![allow(rustdoc::unportable_markdown)]")?;
+            writeln!(f, "#![allow(rustdoc::invalid_html_tags)]")?;
+
             writeln!(f)?;
 
             if self.data.link {

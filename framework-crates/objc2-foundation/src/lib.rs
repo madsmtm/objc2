@@ -70,7 +70,7 @@
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-foundation/0.2.2")]
 #![allow(non_snake_case)]
-#![recursion_limit = "256"]
+#![recursion_limit = "512"]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;

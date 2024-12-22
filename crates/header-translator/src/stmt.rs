@@ -13,6 +13,7 @@ use crate::cfgs::PlatformCfg;
 use crate::config::{ClassData, MethodData};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
+use crate::documentation::Documentation;
 use crate::expr::Expr;
 use crate::fn_utils::follows_create_rule;
 use crate::id::cfg_gate_ln;
@@ -400,6 +401,7 @@ pub enum Stmt {
         main_thread_only: bool,
         skipped: bool,
         sendable: bool,
+        documentation: Documentation,
     },
     /// @interface class_name (category_name) <protocols*>
     /// ->
@@ -413,6 +415,7 @@ pub enum Stmt {
         cls_generics: Vec<String>,
         category_name: Option<String>,
         methods: Vec<Method>,
+        documentation: Option<Documentation>,
     },
     /// @interface class_name (category_name) <protocols*>
     /// ->
@@ -424,6 +427,7 @@ pub enum Stmt {
         cls: ItemIdentifier,
         cls_required_items: Vec<ItemIdentifier>,
         methods: Vec<Method>,
+        documentation: Documentation,
     },
     /// @protocol name <protocols*>
     /// ->
@@ -437,6 +441,7 @@ pub enum Stmt {
         methods: Vec<Method>,
         required_sendable: bool,
         required_mainthreadonly: bool,
+        documentation: Documentation,
     },
     /// @interface ty: _ <protocols*>
     /// @interface ty (_) <protocols*>
@@ -468,9 +473,10 @@ pub enum Stmt {
         encoding_name: Option<String>,
         availability: Availability,
         boxable: bool,
-        fields: Vec<(String, Ty)>,
+        fields: Vec<(String, Documentation, Ty)>,
         sendable: Option<bool>,
         packed: bool,
+        documentation: Documentation,
     },
     /// typedef NS_OPTIONS(type, name) {
     ///     variants*
@@ -492,8 +498,9 @@ pub enum Stmt {
         availability: Availability,
         ty: Ty,
         kind: Option<UnexposedAttr>,
-        variants: Vec<(String, Availability, Expr)>,
+        variants: Vec<(String, Documentation, Availability, Expr)>,
         sendable: Option<bool>,
+        documentation: Documentation,
     },
     /// Anonymous enum variants are emitted as free constants.
     ///
@@ -507,6 +514,7 @@ pub enum Stmt {
         value: Expr,
         // Hack to get prettier output
         is_last: bool,
+        documentation: Documentation,
     },
     /// static const ty name = expr;
     /// extern const ty name;
@@ -515,6 +523,7 @@ pub enum Stmt {
         availability: Availability,
         ty: Ty,
         value: Option<Expr>,
+        documentation: Documentation,
     },
     /// extern ret name(args*);
     ///
@@ -533,6 +542,7 @@ pub enum Stmt {
         can_unwind: bool,
         link_name: Option<String>,
         returns_retained: bool,
+        documentation: Documentation,
     },
     /// typedef Type TypedefName;
     AliasDecl {
@@ -540,6 +550,7 @@ pub enum Stmt {
         availability: Availability,
         ty: Ty,
         kind: Option<UnexposedAttr>,
+        documentation: Documentation,
     },
 }
 
@@ -695,6 +706,7 @@ impl Stmt {
                                 cls_generics: generics.clone(),
                                 category_name: None,
                                 methods,
+                                documentation: None,
                             })
                         }
                     })
@@ -709,6 +721,7 @@ impl Stmt {
                     cls_generics: generics.clone(),
                     category_name: None,
                     methods,
+                    documentation: None,
                 };
 
                 iter::once(Self::ClassDecl {
@@ -724,6 +737,7 @@ impl Stmt {
                     // Ignore sendability on superclasses; since it's an auto
                     // trait, it's propagated to subclasses anyhow!
                     sendable: thread_safety.explicit_sendable(),
+                    documentation: Documentation::from_entity(entity),
                 })
                 .chain(protocols.into_iter().map(|(p, entity)| Self::ProtocolImpl {
                     location: id.location().clone(),
@@ -875,6 +889,7 @@ impl Stmt {
                                 cls_generics: generics.clone(),
                                 category_name: category.name.clone(),
                                 methods,
+                                documentation: Some(Documentation::from_entity(entity)),
                             })
                         }
                     } else {
@@ -890,6 +905,7 @@ impl Stmt {
                         cls_generics: generics.clone(),
                         category_name: category.name.clone(),
                         methods,
+                        documentation: Some(Documentation::from_entity(entity)),
                     })
                     .chain(extra_methods)
                     .chain(protocol_impls)
@@ -959,6 +975,7 @@ impl Stmt {
                             cls: cls.clone(),
                             cls_required_items: cls_required_items.clone(),
                             methods,
+                            documentation: Documentation::from_entity(entity),
                         })
                     }
                     .into_iter()
@@ -1021,6 +1038,7 @@ impl Stmt {
                     methods,
                     required_sendable: thread_safety.explicit_sendable(),
                     required_mainthreadonly: thread_safety.explicit_mainthreadonly(),
+                    documentation: Documentation::from_entity(entity),
                 }]
             }
             EntityKind::TypedefDecl => {
@@ -1081,6 +1099,7 @@ impl Stmt {
                         availability,
                         ty,
                         kind,
+                        documentation: Documentation::from_entity(entity),
                     }]
                 } else {
                     vec![]
@@ -1142,7 +1161,8 @@ impl Stmt {
                             error!("unsound struct bitfield");
                         }
 
-                        fields.push((name, ty))
+                        let documentation = Documentation::from_entity(&entity);
+                        fields.push((name, documentation, ty))
                     }
                     EntityKind::ObjCBoxable => {
                         boxable = true;
@@ -1160,6 +1180,7 @@ impl Stmt {
                     fields,
                     sendable,
                     packed,
+                    documentation: Documentation::from_entity(entity),
                 }]
             }
             EntityKind::EnumDecl => {
@@ -1247,7 +1268,9 @@ impl Stmt {
                             });
                         };
 
-                        variants.push((name, availability, expr));
+                        let documentation = Documentation::from_entity(&entity);
+
+                        variants.push((name, documentation, availability, expr));
                     }
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
@@ -1294,13 +1317,16 @@ impl Stmt {
                     variants
                         .into_iter()
                         .enumerate()
-                        .map(|(i, (name, availability, value))| Self::ConstDecl {
-                            id: id.clone().map_name(|_| name),
-                            availability,
-                            ty: ty.clone(),
-                            value,
-                            is_last: i == variants_len - 1,
-                        })
+                        .map(
+                            |(i, (name, documentation, availability, value))| Self::ConstDecl {
+                                id: id.clone().map_name(|_| name),
+                                availability,
+                                ty: ty.clone(),
+                                value,
+                                is_last: i == variants_len - 1,
+                                documentation,
+                            },
+                        )
                         .collect()
                 } else {
                     vec![Self::EnumDecl {
@@ -1310,6 +1336,7 @@ impl Stmt {
                         kind,
                         variants,
                         sendable,
+                        documentation: Documentation::from_entity(entity),
                     }]
                 }
             }
@@ -1363,6 +1390,7 @@ impl Stmt {
                     availability,
                     ty,
                     value,
+                    documentation: Documentation::from_entity(entity),
                 }]
             }
             EntityKind::FunctionDecl => {
@@ -1473,6 +1501,7 @@ impl Stmt {
                     can_unwind,
                     link_name,
                     returns_retained,
+                    documentation: Documentation::from_entity(entity),
                 }]
             }
             EntityKind::UnionDecl => {
@@ -1481,6 +1510,7 @@ impl Stmt {
                     ?id,
                     has_attributes = ?entity.has_attributes(),
                     children = ?entity.get_children(),
+                    documentation = ?entity.get_comment(),
                     "skipping union",
                 );
                 vec![]
@@ -1560,7 +1590,7 @@ impl Stmt {
             }
             Self::StructDecl { fields, .. } => {
                 let mut items = Vec::new();
-                for (_, field_ty) in fields {
+                for (_, _, field_ty) in fields {
                     items.extend(field_ty.required_items());
                 }
                 items
@@ -1618,7 +1648,7 @@ impl Stmt {
             Self::EnumDecl { kind, variants, .. } => {
                 let mut items: Vec<_> = variants
                     .iter()
-                    .flat_map(|(_, _, expr)| expr.required_items())
+                    .flat_map(|(_, _, _, expr)| expr.required_items())
                     .collect();
                 if let Some(UnexposedAttr::Options) = kind {
                     items.push(ItemIdentifier::bitflags());
@@ -1731,6 +1761,7 @@ impl Stmt {
                     main_thread_only,
                     skipped,
                     sendable,
+                    documentation,
                 } => {
                     if *skipped {
                         return Ok(());
@@ -1744,7 +1775,7 @@ impl Stmt {
                     );
                     write!(f, "{cfg}")?;
                     writeln!(f, "extern_class!(")?;
-                    writeln!(f, "    /// {}", id.doc_link())?;
+                    write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "    #[unsafe(super(")?;
                     for (i, (superclass, generics)) in superclasses.iter().enumerate() {
                         if 0 < i {
@@ -1794,6 +1825,7 @@ impl Stmt {
                     cls_generics,
                     category_name,
                     methods,
+                    documentation,
                 } => {
                     let cfg = cfg_gate_ln(
                         [ItemIdentifier::objc("extern_methods")],
@@ -1815,6 +1847,10 @@ impl Stmt {
                         }
                     } else if let Some(category_name) = category_name {
                         writeln!(f, "    /// {category_name}")?;
+                    }
+                    // FIXME: Merge with `source_superclass`/`category_name`
+                    if let Some(documentation) = documentation {
+                        write!(f, "{}", documentation.fmt(None))?;
                     }
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
                     // TODO: Add ?Sized here once `extern_methods!` supports it.
@@ -1874,6 +1910,7 @@ impl Stmt {
                     cls,
                     cls_required_items,
                     methods,
+                    documentation,
                 } => {
                     let cfg = cfg_gate_ln(
                         [ItemIdentifier::objc("extern_category")],
@@ -1894,6 +1931,7 @@ impl Stmt {
                     } else {
                         writeln!(f, "    /// Category on [`{}`].", cls.name)?;
                     }
+                    write!(f, "{}", documentation.fmt(None))?;
 
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
                     write!(f, "    {availability}")?;
@@ -2068,6 +2106,7 @@ impl Stmt {
                     methods,
                     required_sendable: _,
                     required_mainthreadonly,
+                    documentation,
                 } => {
                     let cfg = cfg_gate_ln(
                         [ItemIdentifier::objc("extern_protocol")],
@@ -2078,7 +2117,7 @@ impl Stmt {
                     write!(f, "{cfg}")?;
                     writeln!(f, "extern_protocol!(")?;
 
-                    writeln!(f, "    /// {}", id.doc_link())?;
+                    write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
                     write!(f, "    {availability}")?;
                     write!(f, "    pub unsafe trait {}", id.name)?;
@@ -2150,8 +2189,9 @@ impl Stmt {
                     fields,
                     sendable,
                     packed,
+                    documentation,
                 } => {
-                    writeln!(f, "/// {}", id.doc_link())?;
+                    write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     if *packed {
@@ -2160,13 +2200,14 @@ impl Stmt {
                         write!(f, "#[repr(C)]")?;
                     }
                     // HACK to make Bool in structs work.
-                    if fields.iter().any(|(_, field)| field.is_objc_bool()) {
+                    if fields.iter().any(|(_, _, field)| field.is_objc_bool()) {
                         write!(f, "#[derive(Clone, Copy, Debug)]")?;
                     } else {
                         write!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
                     }
                     writeln!(f, "pub struct {} {{", id.name)?;
-                    for (name, ty) in fields {
+                    for (name, documentation, ty) in fields {
+                        write!(f, "{}", documentation.fmt(None))?;
                         write!(f, "    ")?;
                         if name.starts_with('_') {
                             write!(f, "pub(crate) ")?;
@@ -2190,7 +2231,7 @@ impl Stmt {
                             "Encoding::Struct({:?}, &[",
                             encoding_name.as_deref().unwrap_or(&id.name),
                         )?;
-                        for (_, ty) in fields {
+                        for (_, _, ty) in fields {
                             write!(f, "{},", ty.struct_encoding())?;
                         }
                         write!(f, "])")?;
@@ -2220,8 +2261,9 @@ impl Stmt {
                     kind,
                     variants,
                     sendable,
+                    documentation,
                 } => {
-                    writeln!(f, "/// {}", id.doc_link())?;
+                    write!(f, "{}", documentation.fmt(Some(id)))?;
 
                     match kind {
                     // TODO: Once Rust gains support for more precisely
@@ -2272,7 +2314,8 @@ impl Stmt {
                         writeln!(f, "impl {} {{", id.name)?;
 
                         let required_items = self.required_items();
-                        for (name, availability, expr) in variants {
+                        for (name, documentation, availability, expr) in variants {
+                            write!(f, "{}", documentation.fmt(None))?;
                             let implied_features = required_items
                                 .iter()
                                 .map(|item| item.location())
@@ -2307,7 +2350,8 @@ impl Stmt {
                         writeln!(f, "    impl {}: {} {{", id.name, ty.enum_())?;
 
                         let required_items = self.required_items();
-                        for (name, availability, expr) in variants {
+                        for (name, documentation, availability, expr) in variants {
+                            write!(f, "{}", documentation.fmt(None))?;
                             let implied_features = required_items
                                 .iter()
                                 .map(|item| item.location())
@@ -2340,7 +2384,8 @@ impl Stmt {
                         writeln!(f, "pub enum {} {{", id.name)?;
 
                         let required_items = self.required_items();
-                        for (name, availability, expr) in variants {
+                        for (name, documentation, availability, expr) in variants {
+                            write!(f, "{}", documentation.fmt(None))?;
                             let implied_features = required_items
                                 .iter()
                                 .map(|item| item.location())
@@ -2388,8 +2433,9 @@ impl Stmt {
                     ty,
                     value,
                     is_last,
+                    documentation,
                 } => {
-                    writeln!(f, "/// {}", id.doc_link())?;
+                    write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     write!(f, "pub const {}: {} = {value};", id.name, ty.enum_())?;
@@ -2402,9 +2448,10 @@ impl Stmt {
                     availability: _,
                     ty,
                     value: None,
+                    documentation,
                 } => {
                     writeln!(f, "extern \"C\" {{")?;
-                    writeln!(f, "    /// {}", id.doc_link())?;
+                    write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     writeln!(f, "    pub static {}: {};", id.name, ty.var())?;
                     writeln!(f, "}}")?;
@@ -2414,8 +2461,9 @@ impl Stmt {
                     availability: _,
                     ty,
                     value: Some(expr),
+                    documentation,
                 } => {
-                    writeln!(f, "/// {}", id.doc_link())?;
+                    write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "pub static {}: {} = ", id.name, ty.var())?;
 
@@ -2454,6 +2502,7 @@ impl Stmt {
                     can_unwind,
                     link_name,
                     returns_retained,
+                    documentation,
                 } => {
                     let abi = if *can_unwind { "C-unwind" } else { "C" };
 
@@ -2484,6 +2533,7 @@ impl Stmt {
                     };
 
                     if needs_wrapper {
+                        write!(f, "{}", documentation.fmt(None))?;
                         write!(f, "{}", self.cfg_gate_ln(config))?;
                         write!(f, "{availability}")?;
                         if *must_use {
@@ -2540,6 +2590,7 @@ impl Stmt {
                     } else {
                         writeln!(f, "extern {abi:?} {{")?;
 
+                        write!(f, "{}", documentation.fmt(None))?;
                         write!(f, "    {}", self.cfg_gate_ln(config))?;
                         write!(f, "    {availability}")?;
                         if *must_use {
@@ -2556,8 +2607,9 @@ impl Stmt {
                     availability: _,
                     ty,
                     kind,
+                    documentation,
                 } => {
-                    writeln!(f, "/// {}", id.doc_link())?;
+                    write!(f, "{}", documentation.fmt(Some(id)))?;
                     match kind {
                         Some(UnexposedAttr::TypedEnum) => {
                             // TODO: Handle this differently
