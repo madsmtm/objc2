@@ -11,13 +11,18 @@
 //!
 //! [apple-doc]: https://developer.apple.com/documentation/xcode/validating-your-apps-metal-api-usage/.
 //!
-//! NOTE: To use `MTLCreateSystemDefaultDevice` you need to link to
+//! NOTE: To use [`MTLCreateSystemDefaultDevice`] you need to link to
 //! `CoreGraphics`, this can be done by using `objc2-core-graphics`, or by
 //! doing:
 //! ```rust
 //! #[link(name = "CoreGraphics", kind = "framework")]
 //! extern "C" {}
 //! ```
+//!
+#![cfg_attr(
+    not(feature = "MTLDevice"),
+    doc = "[`MTLCreateSystemDefaultDevice`]: #needs-MTLDevice-feature"
+)]
 //!
 //!
 //! ## Example
