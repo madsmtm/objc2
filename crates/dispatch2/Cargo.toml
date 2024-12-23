@@ -56,3 +56,6 @@ all = [
 shared-version = false
 tag-prefix = "dispatch"
 enable-features = []
+
+[dev-dependencies]
+static_assertions = "1.1.0"

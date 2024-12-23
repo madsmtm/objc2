@@ -3,6 +3,8 @@ use core::mem::{self, ManuallyDrop};
 
 use objc2::MainThreadMarker;
 
+use crate::Queue;
+
 /// Submit the given closure to the runloop on the main thread.
 ///
 /// If the current thread is the main thread, this runs the closure.
@@ -19,7 +21,7 @@ use objc2::MainThreadMarker;
 /// # Example
 ///
 /// ```no_run
-/// use objc2_foundation::run_on_main;
+/// use dispatch2::run_on_main;
 /// run_on_main(|mtm| {
 ///     // Do something on the main thread with the given marker
 /// });
@@ -32,12 +34,14 @@ where
     if let Some(mtm) = MainThreadMarker::new() {
         f(mtm)
     } else {
-        dispatch::Queue::main().exec_sync(|| {
+        let mut ret = None;
+        Queue::main().exec_sync(|| {
             // SAFETY: The outer closure is submitted to run on the main
             // thread, so now, when the closure actually runs, it's
             // guaranteed to be on the main thread.
-            f(unsafe { MainThreadMarker::new_unchecked() })
-        })
+            ret = Some(f(unsafe { MainThreadMarker::new_unchecked() }))
+        });
+        ret.unwrap()
     }
 }
 
@@ -100,7 +104,7 @@ impl<T> MainThreadBound<T> {
     /// # Example
     ///
     /// ```
-    /// use objc2_foundation::MainThreadBound;
+    /// use dispatch2::MainThreadBound;
     /// use objc2::MainThreadMarker;
     ///
     /// let foo;
@@ -117,7 +121,7 @@ impl<T> MainThreadBound<T> {
     ///
     /// ```
     /// use std::cell::Cell;
-    /// use objc2_foundation::MainThreadBound;
+    /// use dispatch2::MainThreadBound;
     /// use objc2::MainThreadMarker;
     ///
     /// // Note: The destructor for this will never be run.

@@ -42,7 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (similar to what's done on methods).
 
 ### Changed
-* Allow using `MainThreadBound` without the `NSThread` feature flag.
+* Moved `MainThreadBound` and `run_on_main` to the `dispatch2` crate.
 * Removed `HasStableHash` requirement on `NSDictionary` and `NSSet` creation
   methods. This was added in an abundance of caution, but prevents real-world
   usage of these types, and isn't actually needed for soundness (the

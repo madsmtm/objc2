@@ -198,7 +198,6 @@ test-frameworks = [
 block2 = { path = "../block2" }
 objc2 = { path = "../objc2", features = ["relax-void-encoding", "relax-sign-encoding"] }
 libc = "0.2.80"
-dispatch = "0.2.0"
 objc2-avf-audio = { path = "../../framework-crates/objc2-avf-audio", optional = true }
 objc2-av-foundation = { path = "../../framework-crates/objc2-av-foundation", optional = true }
 objc2-av-kit = { path = "../../framework-crates/objc2-av-kit", optional = true }

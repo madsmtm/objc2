@@ -273,7 +273,7 @@ mod tests {
     #[track_caller]
     fn check(children: &[CommentChild], expected: &str) {
         let actual = Documentation {
-            children: children.iter().cloned().collect(),
+            children: children.to_vec(),
         }
         .fmt(None)
         .to_string();

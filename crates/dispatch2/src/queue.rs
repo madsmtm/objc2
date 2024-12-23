@@ -193,6 +193,22 @@ impl Queue {
         }
     }
 
+    /// Return the main queue.
+    pub fn main() -> Self {
+        // Safety: raw_identifier cannot be invalid, flags is reserved.
+        let object = dispatch_get_main_queue();
+
+        assert!(!object.is_null(), "dispatch_get_main_queue shouldn't fail!");
+
+        // Safety: object cannot be null.
+        let dispatch_object = unsafe { DispatchObject::new_shared(object.cast()) };
+
+        Queue {
+            dispatch_object,
+            is_workloop: false,
+        }
+    }
+
     /// Submit a function for synchronous execution on the [Queue].
     pub fn exec_sync<F>(&self, work: F)
     where

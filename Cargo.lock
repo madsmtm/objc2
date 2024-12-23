@@ -175,12 +175,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dispatch"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bd0c93bb4b0c6d9b77f4435b0ae98c24d17f1c45b2ff844c6151a07256ca923b"
-
-[[package]]
 name = "dispatch2"
 version = "0.1.0"
 dependencies = [
@@ -188,6 +182,7 @@ dependencies = [
  "block2",
  "libc",
  "objc2",
+ "static_assertions",
 ]
 
 [[package]]
@@ -893,7 +888,6 @@ version = "0.2.2"
 dependencies = [
  "bitflags",
  "block2",
- "dispatch",
  "libc",
  "objc2",
  "objc2-core-foundation",
@@ -1623,7 +1617,6 @@ name = "test-frameworks"
 version = "0.0.0"
 dependencies = [
  "block2",
- "dispatch",
  "dispatch2",
  "libc",
  "objc2",

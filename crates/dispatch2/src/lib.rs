@@ -30,6 +30,8 @@ pub mod ffi;
 #[allow(clippy::undocumented_unsafe_blocks)]
 mod generated;
 pub mod group;
+#[cfg(feature = "objc2")]
+mod main_thread_bound;
 pub mod object;
 pub mod queue;
 pub mod semaphore;
@@ -79,7 +81,9 @@ impl From<QualityOfServiceClass> for dispatch_qos_class_t {
     }
 }
 
-pub use group::*;
-pub use object::*;
-pub use queue::*;
-pub use semaphore::*;
+pub use self::group::*;
+#[cfg(feature = "objc2")]
+pub use self::main_thread_bound::{run_on_main, MainThreadBound};
+pub use self::object::*;
+pub use self::queue::*;
+pub use self::semaphore::*;

@@ -20,7 +20,6 @@ pub use core::ffi::{
     c_ulong, c_ulonglong, c_ushort, c_void,
 };
 pub use core::ptr::NonNull;
-pub use dispatch;
 pub use libc;
 pub use objc2::ffi::{NSInteger, NSUInteger};
 pub use objc2::rc::{Allocated, Retained};

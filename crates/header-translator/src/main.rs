@@ -751,7 +751,6 @@ fn update_test_metadata<'a>(
             ])),
         ),
         ("libc", "0.2.80".into()),
-        ("dispatch", "0.2.0".into()),
     ]));
     let _ = cargo_toml.remove("target");
 

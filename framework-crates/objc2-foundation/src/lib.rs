@@ -111,8 +111,6 @@ mod generated;
 #[cfg(feature = "NSGeometry")]
 mod geometry;
 mod macros;
-#[cfg(feature = "dispatch")]
-mod main_thread_bound;
 mod ns_consumed;
 #[cfg(feature = "NSValue")]
 mod number;
@@ -150,8 +148,6 @@ pub use self::generated::*;
 pub use self::geometry::NSRectEdge;
 #[cfg(all(feature = "NSGeometry", feature = "objc2-core-foundation"))]
 pub use self::geometry::{NSPoint, NSRect, NSSize};
-#[cfg(feature = "dispatch")]
-pub use self::main_thread_bound::*;
 #[cfg(feature = "NSMapTable")]
 pub use self::ns_consumed::NSFreeMapTable;
 #[cfg(feature = "NSRange")]
