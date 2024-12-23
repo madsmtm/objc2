@@ -27,6 +27,7 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
 features = ["all"]
+rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",

@@ -36,6 +36,7 @@ objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
 features = ["all"]
+rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-ios",
     "x86_64-apple-ios",

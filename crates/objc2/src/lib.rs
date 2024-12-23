@@ -211,7 +211,7 @@ pub mod runtime;
 #[cfg(test)]
 mod test_utils;
 mod top_level_traits;
-#[cfg(any(doc, doctest, test))]
+#[cfg(any(docsrs, doc, doctest, test))]
 pub mod topics;
 mod verify;
 

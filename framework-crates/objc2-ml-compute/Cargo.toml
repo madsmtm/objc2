@@ -25,6 +25,7 @@ objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = f
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
 features = ["all"]
+rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",
