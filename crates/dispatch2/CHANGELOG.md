@@ -46,7 +46,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `dispatch_write`.
 - Added `#[must_use]` in bindings where the source uses it.
 - Added `Queue::main` for fetching the main queue.
-- Moved `run_on_main` and `MainThreadBound` from `objc2-foundation` to this crate.
+- Moved `run_on_main` and `MainThreadBound` from `objc2-foundation` to this
+  crate.
+- Added `Once`, a wrapper over `dispatch_once_f` which works similarly to
+  `std::sync::Once`.
 
 ### Changed
 - Moved to the `objc2` project.

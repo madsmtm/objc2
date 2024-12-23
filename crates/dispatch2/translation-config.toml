@@ -68,3 +68,7 @@ typedef.dispatch_workloop_t.skipped = true
 
 # Inline, defined manually for now
 fn.dispatch_get_main_queue.skipped = true
+
+# Fast paths for dispatch_once, done manually
+fn._dispatch_once.skipped = true
+fn._dispatch_once_f.skipped = true

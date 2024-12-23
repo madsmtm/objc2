@@ -33,6 +33,7 @@ pub mod group;
 #[cfg(feature = "objc2")]
 mod main_thread_bound;
 pub mod object;
+mod once;
 pub mod queue;
 pub mod semaphore;
 mod utils;
@@ -85,5 +86,6 @@ pub use self::group::*;
 #[cfg(feature = "objc2")]
 pub use self::main_thread_bound::{run_on_main, MainThreadBound};
 pub use self::object::*;
+pub use self::once::*;
 pub use self::queue::*;
 pub use self::semaphore::*;
