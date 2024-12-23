@@ -232,6 +232,7 @@ mod tests {
             once.call_once(|| call_count += 1);
         }
 
+        #[allow(clippy::redundant_locals)]
         let once = once;
         for _ in 0..10 {
             once.call_once(|| call_count += 1);
