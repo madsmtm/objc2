@@ -66,11 +66,10 @@ impl Documentation {
                 write!(&mut s, "{}", format_child(child))?;
             }
 
-            let s = s
+            let s = fix_code_blocks(&s)
                 .trim()
                 .replace("\n", "\n/// ")
                 .replace("/// \n", "///\n")
-                .replace("\n\n```\n", "\n\n```objc\n")
                 .replace("\t", "    ");
 
             if !s.is_empty() {
@@ -101,6 +100,24 @@ impl Documentation {
             Ok(())
         })
     }
+}
+
+fn fix_code_blocks(s: &str) -> String {
+    let mut ret = String::with_capacity(s.len());
+    let mut last_end = 0;
+    for (i, (start, part)) in s.match_indices("```").enumerate() {
+        if i % 2 == 1 {
+            continue;
+        }
+        if &s[start..start + 4] != "```\n" {
+            continue;
+        }
+        ret.push_str(&s[last_end..start]);
+        ret.push_str("```text");
+        last_end = start + part.len();
+    }
+    ret.push_str(&s[last_end..s.len()]);
+    ret
 }
 
 fn format_child(child: &CommentChild) -> impl fmt::Display + '_ {
