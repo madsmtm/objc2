@@ -9,14 +9,15 @@ use super::{
 };
 
 /// Dispatch workloop queue.
-#[derive(Debug)]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
 pub struct WorkloopQueue {
-    inner: Retained<dispatch_workloop_s>,
+    _inner: [u8; 0],
 }
 
 impl WorkloopQueue {
     /// Create a new [WorkloopQueue].
-    pub fn new(label: &str, inactive: bool) -> Self {
+    pub fn new(label: &str, inactive: bool) -> Retained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
         // Safety: label can only be valid.
@@ -28,11 +29,8 @@ impl WorkloopQueue {
             }
         };
 
-        // Safety: object cannot be null.
-        let inner =
-            unsafe { Retained::from_raw(object).expect("failed to create dispatch_workloop") };
-
-        WorkloopQueue { inner }
+        // Safety: object must be valid.
+        unsafe { Retained::from_raw(object.cast()) }.expect("dispatch_queue_create failed")
     }
 
     /// Configure how the [WorkloopQueue] manage the autorelease pools for the functions it executes.
@@ -178,24 +176,13 @@ impl WorkloopQueue {
     ///
     /// - Object shouldn't be released manually.
     pub fn as_raw(&self) -> dispatch_workloop_t {
-        Retained::as_ptr(&self.inner).cast_mut()
+        self as *const Self as _
     }
 }
 
 impl AsRawDispatchObject for WorkloopQueue {
     fn as_raw_object(&self) -> dispatch_object_t {
         self.as_raw().cast()
-    }
-}
-
-impl Clone for WorkloopQueue {
-    fn clone(&self) -> Self {
-        Self {
-            // Safety: pointer must be valid.
-            inner: unsafe {
-                Retained::retain(self.as_raw()).expect("failed to retain dispatch_workloop")
-            },
-        }
     }
 }
 

@@ -42,7 +42,7 @@ mod main_thread_bound;
 pub mod object;
 mod once;
 pub mod queue;
-mod rc;
+pub mod rc;
 pub mod semaphore;
 pub mod workloop;
 

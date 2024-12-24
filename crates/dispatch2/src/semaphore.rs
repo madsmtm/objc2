@@ -5,16 +5,17 @@ use core::time::Duration;
 use super::{ffi::*, rc::Retained, AsRawDispatchObject, WaitError};
 
 /// Dispatch semaphore.
-#[derive(Debug)]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
 pub struct Semaphore {
-    inner: Retained<dispatch_semaphore_s>,
+    _inner: [u8; 0],
 }
 
 impl Semaphore {
     /// Creates a new [Semaphore] with an initial value.
     ///
     /// Returns None if value is negative or if creation failed.
-    pub fn new(value: isize) -> Option<Self> {
+    pub fn new(value: isize) -> Option<Retained<Self>> {
         // Per documentation creating a semaphore with a negative size isn't allowed.
         if value < 0 {
             return None;
@@ -24,11 +25,7 @@ impl Semaphore {
         let object = unsafe { dispatch_semaphore_create(value) };
 
         // Safety: retained accepts null pointer.
-        let dispatch_object = unsafe { Retained::from_raw(object)? };
-
-        Some(Semaphore {
-            inner: dispatch_object,
-        })
+        unsafe { Retained::from_raw(object.cast()) }
     }
 
     /// Attempt to acquire the [Semaphore] and return a [SemaphoreGuard].
@@ -48,8 +45,12 @@ impl Semaphore {
         // Safety: Semaphore cannot be null.
         let result = unsafe { dispatch_semaphore_wait(self.as_raw(), timeout) };
 
+        let sema =
+            // Safety: semaphore cannot be null.
+            unsafe { Retained::retain(self.as_raw().cast()) }.expect("failed to retain semaphore");
+
         match result {
-            0 => Ok(SemaphoreGuard(self.clone(), false)),
+            0 => Ok(SemaphoreGuard(sema, false)),
             _ => Err(WaitError::Timeout),
         }
     }
@@ -60,18 +61,7 @@ impl Semaphore {
     ///
     /// - Object shouldn't be released manually.
     pub fn as_raw(&self) -> dispatch_semaphore_t {
-        Retained::as_ptr(&self.inner).cast_mut()
-    }
-}
-
-impl Clone for Semaphore {
-    fn clone(&self) -> Self {
-        Self {
-            // Safety: pointer must be valid.
-            inner: unsafe {
-                Retained::retain(self.as_raw()).expect("failed to retain dispatch_semaphore_t")
-            },
-        }
+        self as *const Self as _
     }
 }
 
@@ -89,7 +79,7 @@ unsafe impl Sync for Semaphore {}
 
 /// Dispatch semaphore guard.
 #[derive(Debug)]
-pub struct SemaphoreGuard(Semaphore, bool);
+pub struct SemaphoreGuard(Retained<Semaphore>, bool);
 
 impl SemaphoreGuard {
     /// Release the [Semaphore].

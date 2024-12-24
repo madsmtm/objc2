@@ -6,21 +6,20 @@ use core::{ffi::c_void, time::Duration};
 use super::{ffi::*, function_wrapper, queue::Queue, rc::Retained, AsRawDispatchObject, WaitError};
 
 /// Dispatch group.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Group {
-    inner: Retained<dispatch_group_s>,
+    _inner: [u8; 0],
 }
 
 impl Group {
     /// Creates a new [Group].
-    pub fn new() -> Option<Self> {
+    pub fn new() -> Option<Retained<Self>> {
         // Safety: valid to call.
         let object = unsafe { dispatch_group_create() };
+        assert!(!object.is_null());
 
-        // Safety: retained accepts null pointer.
-        let inner = unsafe { Retained::from_raw(object)? };
-
-        Some(Group { inner })
+        // Safety: object must be valid.
+        unsafe { Retained::from_raw(object.cast()) }
     }
 
     /// Submit a function to a [Queue] and associates it with the [Group].
@@ -89,7 +88,11 @@ impl Group {
             dispatch_group_enter(self.as_raw());
         }
 
-        GroupGuard(self.clone(), false)
+        let group =
+            // Safety: group cannot be null.
+            unsafe { Retained::retain(self.as_raw().cast()) }.expect("failed to retain semaphore");
+
+        GroupGuard(group, false)
     }
 
     /// Get the raw [dispatch_group_t] value.
@@ -98,19 +101,7 @@ impl Group {
     ///
     /// - Object shouldn't be released manually.
     pub fn as_raw(&self) -> dispatch_group_t {
-        // Safety: Upheld by caller
-        Retained::as_ptr(&self.inner).cast_mut()
-    }
-}
-
-impl Clone for Group {
-    fn clone(&self) -> Self {
-        Self {
-            // Safety: pointer must be valid.
-            inner: unsafe {
-                Retained::retain(self.as_raw()).expect("failed to retain dispatch_group")
-            },
-        }
+        self as *const Self as _
     }
 }
 
@@ -128,7 +119,7 @@ unsafe impl Sync for Group {}
 
 /// Dispatch group guard.
 #[derive(Debug)]
-pub struct GroupGuard(Group, bool);
+pub struct GroupGuard(Retained<Group>, bool);
 
 impl GroupGuard {
     /// Explicitly indicates that the function in the [Group] finished executing.

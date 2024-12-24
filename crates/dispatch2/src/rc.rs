@@ -6,21 +6,27 @@ use super::ffi::*;
 
 /// Smart pointer based on libdispatch reference counting system.
 #[repr(transparent)]
-pub(crate) struct Retained<T: ?Sized> {
+pub struct Retained<T: ?Sized> {
     ptr: NonNull<T>,
 }
 
 impl<T> Retained<T> {
     /// Create new smart pointer assuming the ownership over the object.
     /// The retain count will stay the same.
-    pub(crate) unsafe fn from_raw(ptr: *mut T) -> Option<Self> {
+    ///
+    /// # Safety
+    /// Must be a valid pointer to the dispatch object having a retain count of +1.
+    pub unsafe fn from_raw(ptr: *mut T) -> Option<Self> {
         NonNull::new(ptr).map(|ptr| Self { ptr })
     }
 
     /// Create new smart pointer with shared ownership.
     /// Increments reference counter by 1.
+    ///
+    /// # Safety
+    /// Must be a valid pointer to the dispatch object.
     #[allow(unused)]
-    pub(crate) unsafe fn retain(ptr: *mut T) -> Option<Self> {
+    pub unsafe fn retain(ptr: *mut T) -> Option<Self> {
         NonNull::new(ptr).map(|ptr| {
             // Safety: upheld by the caller
             unsafe { dispatch_retain(ptr.as_ptr().cast()) };
@@ -28,8 +34,9 @@ impl<T> Retained<T> {
         })
     }
 
+    /// Returns the pointer to retained object.
     #[inline]
-    pub(crate) fn as_ptr(this: &Self) -> *const T {
+    pub fn as_ptr(this: &Self) -> *const T {
         this.ptr.as_ptr()
     }
 }

@@ -1,7 +1,7 @@
 //! Dispatch queue definition.
 
 use alloc::{boxed::Box, ffi::CString};
-use core::{mem::ManuallyDrop, ptr::NonNull, time::Duration};
+use core::{ptr::NonNull, time::Duration};
 
 use super::{
     ffi::*, function_wrapper, rc::Retained, AsRawDispatchObject, QualityOfServiceClass,
@@ -86,15 +86,15 @@ impl Default for GlobalQueueIdentifier {
 }
 
 /// Dispatch queue.
-#[derive(Debug)]
+#[repr(transparent)]
+#[derive(Debug, Copy, Clone)]
 pub struct Queue {
-    inner: ManuallyDrop<Retained<dispatch_queue_s>>,
-    is_global_queue: bool,
+    _inner: [u8; 0],
 }
 
 impl Queue {
     /// Create a new [Queue].
-    pub fn new(label: &str, queue_attribute: QueueAttribute) -> Self {
+    pub fn new(label: &str, queue_attribute: QueueAttribute) -> Retained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
         // Safety: label and queue_attribute can only be valid.
@@ -102,18 +102,16 @@ impl Queue {
             dispatch_queue_create(label.as_ptr(), dispatch_queue_attr_t::from(queue_attribute))
         };
 
-        // Safety: object cannot be null.
-        let inner =
-            unsafe { Retained::from_raw(object).expect("dispatch_queue_create shouldn't fail!") };
-
-        Queue {
-            inner: ManuallyDrop::new(inner),
-            is_global_queue: false,
-        }
+        // Safety: object must be valid.
+        unsafe { Retained::from_raw(object.cast()) }.expect("dispatch_queue_create failed")
     }
 
     /// Create a new [Queue] with a given target [Queue].
-    pub fn new_with_target(label: &str, queue_attribute: QueueAttribute, target: &Queue) -> Self {
+    pub fn new_with_target(
+        label: &str,
+        queue_attribute: QueueAttribute,
+        target: &Queue,
+    ) -> Retained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
         // Safety: label, queue_attribute and target can only be valid.
@@ -125,47 +123,31 @@ impl Queue {
             )
         };
 
-        // Safety: object cannot be null.
-        let inner =
-            unsafe { Retained::from_raw(object).expect("dispatch_queue_create shouldn't fail!") };
+        assert!(!object.is_null());
 
         // NOTE: dispatch_queue_create_with_target is in charge of retaining the target Queue.
 
-        Queue {
-            inner: ManuallyDrop::new(inner),
-            is_global_queue: false,
-        }
+        // Safety: object must be valid.
+        unsafe { Retained::from_raw(object.cast()) }.expect("dispatch_queue_create failed")
     }
 
     /// Return a system-defined global concurrent [Queue] with the priority derived from [GlobalQueueIdentifier].
-    pub fn global_queue(identifier: GlobalQueueIdentifier) -> Self {
-        let raw_identifier = identifier.to_identifier();
-
+    pub fn global_queue(identifier: GlobalQueueIdentifier) -> Retained<Self> {
         // Safety: raw_identifier cannot be invalid, flags is reserved.
-        let object = unsafe { dispatch_get_global_queue(raw_identifier, 0) };
+        let object = unsafe { dispatch_get_global_queue(identifier.to_identifier(), 0) };
+        assert!(!object.is_null());
 
-        // Safety: object cannot be null.
-        let inner = unsafe {
-            Retained::from_raw(object.cast()).expect("dispatch_get_global_queue shouldn't fail!")
-        };
-
-        Queue {
-            inner: ManuallyDrop::new(inner),
-            is_global_queue: true,
-        }
+        // Safety: object must be valid.
+        unsafe { Retained::from_raw(object.cast()) }.expect("dispatch_get_global_queue failed")
     }
 
     /// Return the main queue.
-    pub fn main() -> Self {
-        // Safety: object cannot be null.
-        let inner = unsafe {
-            Retained::from_raw(dispatch_get_main_queue().cast())
-                .expect("dispatch_get_main_queue shouldn't fail!")
-        };
-        Queue {
-            inner: ManuallyDrop::new(inner),
-            is_global_queue: true,
-        }
+    pub fn main() -> Retained<Self> {
+        let object = dispatch_get_main_queue();
+        assert!(!object.is_null());
+
+        // Safety: object must be valid.
+        unsafe { Retained::from_raw(object.cast()) }.expect("dispatch_get_main_queue failed")
     }
 
     /// Submit a function for synchronous execution on the [Queue].
@@ -291,30 +273,7 @@ impl Queue {
     ///
     /// - Object shouldn't be released manually.
     pub fn as_raw(&self) -> dispatch_queue_t {
-        Retained::as_ptr(&self.inner).cast_mut()
-    }
-}
-
-impl Drop for Queue {
-    fn drop(&mut self) {
-        if !self.is_global_queue {
-            // Safety: do not release global queues as they are singletons.
-            let _ = unsafe { ManuallyDrop::take(&mut self.inner) };
-        }
-    }
-}
-
-impl Clone for Queue {
-    fn clone(&self) -> Self {
-        Self {
-            // Safety: pointer must be valid.
-            inner: unsafe {
-                ManuallyDrop::new(
-                    Retained::retain(self.as_raw()).expect("failed to retain dispatch_queue"),
-                )
-            },
-            is_global_queue: self.is_global_queue,
-        }
+        self as *const Self as _
     }
 }
 
