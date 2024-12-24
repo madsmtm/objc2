@@ -41,6 +41,16 @@ impl<T: ?Sized> Drop for Retained<T> {
     }
 }
 
+impl<T: ?Sized> Clone for Retained<T> {
+    /// Retain the object, increasing its reference count.
+    #[inline]
+    fn clone(&self) -> Self {
+        // Safety: upheld by the caller.
+        unsafe { dispatch_retain(self.ptr.as_ptr().cast()) };
+        Self { ptr: self.ptr }
+    }
+}
+
 impl<T: ?Sized> fmt::Pointer for Retained<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Pointer::fmt(&self.ptr.as_ptr(), f)
@@ -65,6 +75,9 @@ impl<T: ?Sized> fmt::Debug for Retained<T> {
         self.ptr.as_ptr().fmt(f)
     }
 }
+
+// Safety: inherently safe to move between threads.
+unsafe impl<T> Send for Retained<T> {}
 
 #[cfg(feature = "objc2")]
 impl<T> From<Retained<T>> for objc2::rc::Retained<T>
