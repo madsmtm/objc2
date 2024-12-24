@@ -2,11 +2,16 @@
 
 #![allow(missing_docs, non_camel_case_types)]
 
-use core::ffi::{c_long, c_uint, c_ulong, c_void};
-use std::ptr::addr_of;
+use std::{
+    ffi::{c_long, c_uint, c_ulong, c_void},
+    ptr::addr_of,
+};
 
 #[cfg(feature = "objc2")]
-use objc2::encode::{Encode, Encoding, RefEncode};
+use objc2::{
+    encode::{Encode, Encoding, RefEncode},
+    Message,
+};
 
 // Try to generate as much as possible.
 pub use crate::generated::*;
@@ -29,6 +34,10 @@ macro_rules! create_opaque_type {
         unsafe impl RefEncode for $type_name {
             const ENCODING_REF: Encoding = Encoding::Object;
         }
+
+        #[cfg(feature = "objc2")]
+        // SAFETY: Dispatch types respond to objc messages.
+        unsafe impl Message for $type_name {}
     };
 }
 
@@ -108,10 +117,13 @@ create_opaque_type!(dispatch_io_s, dispatch_io_t);
 
 /// A dispatch queue that executes blocks serially in FIFO order.
 pub const DISPATCH_QUEUE_SERIAL: dispatch_queue_attr_t = core::ptr::null_mut();
+
 /// A dispatch queue that executes blocks concurrently.
-pub static DISPATCH_QUEUE_CONCURRENT: &dispatch_queue_attr_s = {
+pub static DISPATCH_QUEUE_CONCURRENT: ImmutableStatic<dispatch_queue_attr_t> = {
     // Safety: immutable external definition
-    unsafe { &_dispatch_queue_attr_concurrent }
+    ImmutableStatic(unsafe {
+        &_dispatch_queue_attr_concurrent as *const _ as dispatch_queue_attr_t
+    })
 };
 
 pub const DISPATCH_APPLY_AUTO: dispatch_queue_t = core::ptr::null_mut();
@@ -241,3 +253,13 @@ pub extern "C" fn dispatch_get_main_queue() -> dispatch_queue_main_t {
     // SAFETY: Always safe to get pointer from static, only needed for MSRV.
     unsafe { addr_of!(_dispatch_main_q) as dispatch_queue_main_t }
 }
+
+/// Wrapper type for immutable static variables exported from C,
+/// that are documented to be safe for sharing and passing between threads.
+#[repr(transparent)]
+#[derive(Debug)]
+pub struct ImmutableStatic<T>(pub T);
+// Safety: safety is guaranteed by the external type.
+unsafe impl<T> Sync for ImmutableStatic<T> {}
+// Safety: safety is guaranteed by the external type.
+unsafe impl<T> Send for ImmutableStatic<T> {}

@@ -2,21 +2,20 @@
 
 use std::time::Duration;
 
-use super::ffi::*;
-use super::object::DispatchObject;
-use super::WaitError;
+use super::{ffi::*, rc::Retained, AsRawDispatchObject, WaitError};
 
 /// Dispatch semaphore.
-#[derive(Debug, Clone)]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
 pub struct Semaphore {
-    dispatch_object: DispatchObject<dispatch_semaphore_s>,
+    _inner: [u8; 0],
 }
 
 impl Semaphore {
     /// Creates a new [Semaphore] with an initial value.
     ///
     /// Returns None if value is negative or if creation failed.
-    pub fn new(value: isize) -> Option<Self> {
+    pub fn new(value: isize) -> Option<Retained<Self>> {
         // Per documentation creating a semaphore with a negative size isn't allowed.
         if value < 0 {
             return None;
@@ -25,14 +24,8 @@ impl Semaphore {
         // Safety: value is valid
         let object = unsafe { dispatch_semaphore_create(value) };
 
-        if object.is_null() {
-            return None;
-        }
-
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
-
-        Some(Semaphore { dispatch_object })
+        // Safety: retained accepts null pointer.
+        unsafe { Retained::from_raw(object.cast()) }
     }
 
     /// Attempt to acquire the [Semaphore] and return a [SemaphoreGuard].
@@ -52,18 +45,14 @@ impl Semaphore {
         // Safety: Semaphore cannot be null.
         let result = unsafe { dispatch_semaphore_wait(self.as_raw(), timeout) };
 
+        let sema =
+            // Safety: semaphore cannot be null.
+            unsafe { Retained::retain(self.as_raw().cast()) }.expect("failed to retain semaphore");
+
         match result {
-            0 => Ok(SemaphoreGuard(self.clone(), false)),
+            0 => Ok(SemaphoreGuard(sema, false)),
             _ => Err(WaitError::Timeout),
         }
-    }
-
-    /// Set the finalizer function for the object.
-    pub fn set_finalizer<F>(&mut self, destructor: F)
-    where
-        F: Send + FnOnce(),
-    {
-        self.dispatch_object.set_finalizer(destructor);
     }
 
     /// Get the raw [dispatch_semaphore_t] value.
@@ -71,15 +60,26 @@ impl Semaphore {
     /// # Safety
     ///
     /// - Object shouldn't be released manually.
-    pub const unsafe fn as_raw(&self) -> dispatch_semaphore_t {
-        // SAFETY: Upheld by caller.
-        unsafe { self.dispatch_object.as_raw() }
+    pub fn as_raw(&self) -> dispatch_semaphore_t {
+        self as *const Self as _
     }
 }
 
+impl AsRawDispatchObject for Semaphore {
+    fn as_raw_object(&self) -> dispatch_object_t {
+        self.as_raw().cast()
+    }
+}
+
+// Safety: semaphore is inherently safe to move between threads.
+unsafe impl Send for Semaphore {}
+
+// Safety: semaphore is inherently safe to share between threads.
+unsafe impl Sync for Semaphore {}
+
 /// Dispatch semaphore guard.
 #[derive(Debug)]
-pub struct SemaphoreGuard(Semaphore, bool);
+pub struct SemaphoreGuard(Retained<Semaphore>, bool);
 
 impl SemaphoreGuard {
     /// Release the [Semaphore].
