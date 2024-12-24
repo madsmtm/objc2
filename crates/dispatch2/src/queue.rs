@@ -22,7 +22,7 @@ impl From<QueueAttribute> for dispatch_queue_attr_t {
     fn from(value: QueueAttribute) -> Self {
         match value {
             QueueAttribute::Serial => DISPATCH_QUEUE_SERIAL,
-            QueueAttribute::Concurrent => DISPATCH_QUEUE_CONCURRENT as *const _ as *mut _,
+            QueueAttribute::Concurrent => DISPATCH_QUEUE_CONCURRENT.0 as *const _ as *mut _,
             _ => panic!("Unknown QueueAttribute value: {:?}", value),
         }
     }
