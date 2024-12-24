@@ -59,7 +59,7 @@ impl WorkloopQueue {
     /// Submit a function for asynchronous execution on the [WorkloopQueue].
     pub fn exec_async<F>(&self, work: F)
     where
-        F: Send + FnOnce(),
+        F: Send + FnOnce() + 'static,
     {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
@@ -70,7 +70,7 @@ impl WorkloopQueue {
     /// Enqueue a function for execution at the specified time on the [WorkloopQueue].
     pub fn after<F>(&self, wait_time: Duration, work: F) -> Result<(), TryFromDurationError>
     where
-        F: Send + FnOnce(),
+        F: Send + FnOnce() + 'static,
     {
         let when = dispatch_time_t::try_from(wait_time)?;
         let work_boxed = Box::into_raw(Box::new(work)).cast();
@@ -91,7 +91,7 @@ impl WorkloopQueue {
     /// Enqueue a barrier function for asynchronous execution on the [WorkloopQueue] and return immediately.
     pub fn barrier_async<F>(&self, work: F)
     where
-        F: Send + FnOnce(),
+        F: Send + FnOnce() + 'static,
     {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
