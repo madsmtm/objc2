@@ -182,7 +182,7 @@ impl Queue {
     /// Submit a function for asynchronous execution on the [Queue].
     pub fn exec_async<F>(&self, work: F)
     where
-        F: Send + FnOnce(),
+        F: Send + FnOnce() + 'static,
     {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
@@ -193,7 +193,7 @@ impl Queue {
     /// Enqueue a function for execution at the specified time on the [Queue].
     pub fn after<F>(&self, wait_time: Duration, work: F) -> Result<(), TryFromDurationError>
     where
-        F: Send + FnOnce(),
+        F: Send + FnOnce() + 'static,
     {
         let when = dispatch_time_t::try_from(wait_time)?;
         let work_boxed = Box::into_raw(Box::new(work)).cast();
@@ -209,7 +209,7 @@ impl Queue {
     /// Enqueue a barrier function for asynchronous execution on the [Queue] and return immediately.
     pub fn barrier_async<F>(&self, work: F)
     where
-        F: Send + FnOnce(),
+        F: Send + FnOnce() + 'static,
     {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
@@ -345,7 +345,7 @@ mod tests {
     fn test_serial_queue() {
         let queue = Queue::new("com.github.madsmtm.objc2", QueueAttribute::Serial);
         let (tx, rx) = mpsc::channel();
-        queue.exec_async(|| {
+        queue.exec_async(move || {
             tx.send(()).unwrap();
         });
         rx.recv().unwrap();
@@ -355,11 +355,12 @@ mod tests {
     fn test_concurrent_queue() {
         let queue = Queue::new("com.github.madsmtm.objc2", QueueAttribute::Concurrent);
         let (tx, rx) = mpsc::channel();
-        queue.exec_async(|| {
+        let cloned_tx = tx.clone();
+        queue.exec_async(move || {
             tx.send(()).unwrap();
         });
-        queue.exec_async(|| {
-            tx.send(()).unwrap();
+        queue.exec_async(move || {
+            cloned_tx.send(()).unwrap();
         });
         for _ in 0..2 {
             rx.recv().unwrap();
@@ -370,7 +371,7 @@ mod tests {
     fn test_global_default_queue() {
         let queue = Queue::global_queue(GlobalQueueIdentifier::default());
         let (tx, rx) = mpsc::channel();
-        queue.exec_async(|| {
+        queue.exec_async(move || {
             tx.send(()).unwrap();
         });
         rx.recv().unwrap();
@@ -380,12 +381,14 @@ mod tests {
     fn test_share_queue_across_threads() {
         let queue = Queue::new("com.github.madsmtm.objc2", QueueAttribute::Serial);
         let (tx, rx) = mpsc::channel();
-        queue.exec_async(|| {
-            queue.exec_async(|| {
-                tx.send(()).unwrap();
+        let cloned_tx = tx.clone();
+        let cloned_queue = queue.clone();
+        queue.exec_async(move || {
+            cloned_queue.exec_async(move || {
+                cloned_tx.send(()).unwrap();
             });
         });
-        queue.exec_async(|| {
+        queue.exec_async(move || {
             tx.send(()).unwrap();
         });
         for _ in 0..2 {
@@ -398,7 +401,6 @@ mod tests {
         let queue = Queue::new("com.github.madsmtm.objc2", QueueAttribute::Serial);
         let (tx, rx) = mpsc::channel();
         std::thread::spawn(move || {
-            // This has to use move semantics otherwise tx is dropped before the closure can execute causing panic?!
             queue.exec_async(move || {
                 tx.send(()).unwrap();
             });
