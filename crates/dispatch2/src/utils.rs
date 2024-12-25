@@ -1,6 +1,6 @@
-use std::time::Duration;
-
+use alloc::boxed::Box;
 use core::ffi::c_void;
+use core::time::Duration;
 
 use super::ffi::{dispatch_time, dispatch_time_t, DISPATCH_TIME_NOW};
 

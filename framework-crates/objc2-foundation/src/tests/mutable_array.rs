@@ -69,6 +69,7 @@ fn test_iter_mutation_detection() {
     feature = "gnustep-1-7",
     ignore = "thread safety issues regarding initialization"
 )]
+#[cfg(feature = "std")]
 fn test_threaded() {
     std::thread::scope(|s| {
         s.spawn(|| {

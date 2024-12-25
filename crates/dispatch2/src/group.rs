@@ -1,8 +1,8 @@
 //! Dispatch group definition.
 
-use std::time::Duration;
-
+use alloc::boxed::Box;
 use core::ffi::c_void;
+use core::time::Duration;
 
 use super::object::DispatchObject;
 use super::queue::Queue;

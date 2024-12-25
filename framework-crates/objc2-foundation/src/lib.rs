@@ -72,7 +72,9 @@
 #![allow(non_snake_case)]
 #![recursion_limit = "512"]
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "alloc"))]
+compile_error!("The `alloc` feature currently must be enabled.");
+
 extern crate alloc;
 
 #[cfg(feature = "std")]

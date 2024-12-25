@@ -113,7 +113,8 @@ fn float_int_equality() {
 #[test]
 #[cfg(feature = "NSString")]
 fn display_debug() {
-    use std::{fmt, format};
+    use alloc::format;
+    use core::fmt;
 
     fn assert_display_debug<T: fmt::Debug + fmt::Display>(val: T, expected: &str) {
         // The two impls for these happen to be the same

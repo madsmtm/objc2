@@ -1,10 +1,9 @@
+use core::cell::UnsafeCell;
 use core::ffi::c_void;
 use core::fmt;
+use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
-use std::cell::UnsafeCell;
-use std::panic::{RefUnwindSafe, UnwindSafe};
-use std::sync::atomic::AtomicIsize;
-use std::sync::atomic::Ordering;
+use core::sync::atomic::{AtomicIsize, Ordering};
 
 use crate::ffi;
 
@@ -166,13 +165,13 @@ impl Once {
                 invoke_dispatch_once(predicate, work);
             }
 
-            // NOTE: Unlike in C, we cannot use `std::hint::assert_unchecked`,
+            // NOTE: Unlike in C, we cannot use `core::hint::assert_unchecked`,
             // since that would actually be lying from a language perspective;
             // the value seems to only settle on being !0 after some time
             // (something about the _COMM_PAGE_CPU_QUIESCENT_COUNTER?)
             //
             // TODO: Investigate this further!
-            // std::hint::assert_unchecked(atomic_predicate.load(Ordering::Acquire) == !0);
+            // core::hint::assert_unchecked(atomic_predicate.load(Ordering::Acquire) == !0);
         } else {
             invoke_dispatch_once(predicate, work);
         }
@@ -196,9 +195,8 @@ impl fmt::Debug for Once {
 
 #[cfg(test)]
 mod tests {
-    use std::cell::Cell;
-    use std::mem::ManuallyDrop;
-    use std::thread;
+    use core::cell::Cell;
+    use core::mem::ManuallyDrop;
 
     use super::*;
 
@@ -249,12 +247,13 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "std")]
     fn test_threaded() {
         let once = Once::new();
 
         let num = AtomicIsize::new(0);
 
-        thread::scope(|scope| {
+        std::thread::scope(|scope| {
             scope.spawn(|| {
                 once.call_once(|| {
                     num.fetch_add(1, Ordering::Relaxed);
@@ -329,9 +328,7 @@ mod tests {
         let once = Once::new();
 
         once.call_once(|| {
-            once.call_once(|| {
-                println!("foo");
-            });
+            once.call_once(|| {});
         });
     }
 }

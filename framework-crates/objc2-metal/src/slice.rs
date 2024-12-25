@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 #![allow(clippy::missing_safety_doc)]
-use std::ptr::NonNull;
+use core::ptr::NonNull;
 
 use crate::*;
 

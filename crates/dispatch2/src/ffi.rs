@@ -3,7 +3,7 @@
 #![allow(missing_docs, non_camel_case_types)]
 
 use core::ffi::{c_long, c_uint, c_ulong, c_void};
-use std::ptr::addr_of;
+use core::ptr::addr_of;
 
 #[cfg(feature = "objc2")]
 use objc2::encode::{Encode, Encoding, RefEncode};

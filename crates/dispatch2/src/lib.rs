@@ -17,12 +17,21 @@
 //! queue.exec_async(|| println!("Hello"));
 //! queue.exec_sync(|| println!("World"));
 //! ```
+#![no_std]
 #![allow(unreachable_patterns)]
 #![warn(missing_docs)]
 #![warn(clippy::undocumented_unsafe_blocks)]
 #![warn(clippy::missing_safety_doc)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/dispatch2/0.1.0")]
+
+#[cfg(not(feature = "alloc"))]
+compile_error!("The `alloc` feature currently must be enabled.");
+
+extern crate alloc;
+
+#[cfg(feature = "std")]
+extern crate std;
 
 use self::ffi::dispatch_qos_class_t;
 

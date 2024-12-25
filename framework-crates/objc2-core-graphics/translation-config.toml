@@ -24,7 +24,7 @@ struct.__IOSurface.skipped = true
 # Needs io_service_t from the kernel
 fn.CGDisplayIOServicePort.skipped = true
 
-# Needs std::ffi::VaList, currently unstable
+# Needs core::ffi::VaList, currently unstable
 fn.CGColorConversionInfoCreateFromListWithArguments.skipped = true
 
 # Unknown how to handle the calling convention here?

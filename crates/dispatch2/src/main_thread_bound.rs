@@ -120,7 +120,7 @@ impl<T> MainThreadBound<T> {
     /// Create a shared static that is only available from the main thread.
     ///
     /// ```
-    /// use std::cell::Cell;
+    /// use core::cell::Cell;
     /// use dispatch2::MainThreadBound;
     /// use objc2::MainThreadMarker;
     ///

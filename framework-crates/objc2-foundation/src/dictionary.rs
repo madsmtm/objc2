@@ -1,4 +1,5 @@
 //! Utilities for the `NSDictionary` and `NSMutableDictionary` classes.
+#[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 use core::fmt;
 use core::mem;
@@ -215,6 +216,7 @@ impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     /// The dictionary must not be mutated while the returned references are
     /// alive.
     #[doc(alias = "getObjects:andKeys:")]
+    #[cfg(feature = "alloc")]
     pub unsafe fn to_vecs_unchecked(&self) -> (Vec<&KeyType>, Vec<&ObjectType>) {
         let len = self.len();
         let mut keys = Vec::with_capacity(len);
@@ -314,6 +316,7 @@ impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
     /// }
     /// ```
     #[doc(alias = "getObjects:")]
+    #[cfg(feature = "alloc")]
     pub fn to_vecs(&self) -> (Vec<Retained<KeyType>>, Vec<Retained<ObjectType>>) {
         // SAFETY: We retain the elements below, so that we know that the
         // dictionary isn't mutated while they are alive.

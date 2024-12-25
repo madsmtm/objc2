@@ -1,10 +1,11 @@
 //! Dispatch queue definition.
 
-use std::borrow::{Borrow, BorrowMut};
-use std::ffi::CString;
-use std::ops::{Deref, DerefMut};
-use std::ptr::NonNull;
-use std::time::Duration;
+use alloc::boxed::Box;
+use alloc::ffi::CString;
+use core::borrow::{Borrow, BorrowMut};
+use core::ops::{Deref, DerefMut};
+use core::ptr::NonNull;
+use core::time::Duration;
 
 use super::object::{DispatchObject, QualityOfServiceClassFloorError, TargetQueueError};
 use super::utils::function_wrapper;

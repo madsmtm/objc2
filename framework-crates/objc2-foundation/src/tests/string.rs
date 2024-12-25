@@ -136,10 +136,11 @@ fn test_strips_first_leading_zero_width_no_break_space() {
 }
 
 #[test]
+#[cfg(feature = "std")]
 fn test_hash() {
+    use core::hash::Hash;
     use core::hash::Hasher;
     use std::collections::hash_map::DefaultHasher;
-    use std::hash::Hash;
 
     let s1 = NSString::from_str("example string goes here");
     let s2 = NSString::from_str("example string goes here");

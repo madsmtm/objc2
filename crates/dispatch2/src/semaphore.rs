@@ -1,6 +1,6 @@
 //! Dispatch semaphore definition.
 
-use std::time::Duration;
+use core::time::Duration;
 
 use super::ffi::*;
 use super::object::DispatchObject;

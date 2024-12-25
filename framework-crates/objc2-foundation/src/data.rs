@@ -39,6 +39,7 @@ impl NSData {
     }
 
     #[cfg(feature = "block2")]
+    #[cfg(feature = "alloc")]
     pub fn from_vec(bytes: Vec<u8>) -> Retained<Self> {
         // GNUStep's NSData `initWithBytesNoCopy:length:deallocator:` has a
         // bug; it forgets to assign the input buffer and length to the
@@ -201,7 +202,7 @@ pub struct Iter<'a> {
     data: &'a NSData,
     #[cfg(debug_assertions)]
     length: usize,
-    bytes: std::vec::IntoIter<u8>,
+    bytes: alloc::vec::IntoIter<u8>,
 }
 
 impl<'a> Iter<'a> {
@@ -289,6 +290,7 @@ impl<'a> Extend<&'a u8> for &NSMutableData {
     }
 }
 
+#[cfg(feature = "std")]
 impl std::io::Write for &NSMutableData {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         self.extend_from_slice(buf);
@@ -322,6 +324,7 @@ impl RetainedFromIterator<u8> for NSMutableData {
 }
 
 #[cfg(feature = "block2")]
+#[cfg(feature = "alloc")]
 unsafe fn with_vec<T: objc2::Message>(obj: objc2::rc::Allocated<T>, bytes: Vec<u8>) -> Retained<T> {
     use core::mem::ManuallyDrop;
 

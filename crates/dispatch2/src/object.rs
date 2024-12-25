@@ -1,5 +1,7 @@
 //! Dispatch object definition.
 
+use alloc::boxed::Box;
+
 use super::{ffi::*, queue::Queue, utils::function_wrapper, QualityOfServiceClass};
 
 /// Error returned by [DispatchObject::set_target_queue].

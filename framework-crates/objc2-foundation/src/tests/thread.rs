@@ -25,6 +25,7 @@ fn test_main_thread() {
 }
 
 #[test]
+#[cfg(feature = "std")]
 fn test_not_main_thread() {
     let res = std::thread::spawn(|| NSThread::currentThread().isMainThread())
         .join()

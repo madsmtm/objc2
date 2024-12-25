@@ -1,10 +1,10 @@
 #![cfg(feature = "NSDictionary")]
 #![cfg(feature = "NSString")]
 #![cfg(feature = "NSObject")]
+use alloc::ffi::CString;
 use alloc::format;
 use alloc::string::ToString;
 use core::ptr;
-use std::ffi::CString;
 
 use objc2::{
     ffi, msg_send,
