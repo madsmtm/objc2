@@ -4,7 +4,8 @@ use serde::Deserialize;
 use crate::{
     immediate_children,
     method::MethodModifiers,
-    stmt::{method_or_property_entities, parse_direct_protocols, parse_superclasses},
+    protocol::parse_direct_protocols,
+    stmt::{method_or_property_entities, parse_superclasses},
     unexposed_attr::UnexposedAttr,
     Context, ItemIdentifier,
 };
@@ -182,7 +183,7 @@ impl ThreadSafetyAttr {
 
 /// Information about thread-safety properties of a type.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub(crate) struct ThreadSafety {
+pub struct ThreadSafety {
     /// What the attribute was explicitly declared as.
     explicit: Option<ThreadSafetyAttr>,
     /// What the attribute was inferred to be.

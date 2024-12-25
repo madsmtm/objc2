@@ -1,6 +1,6 @@
+use std::fmt;
 use std::str::FromStr;
 use std::sync::LazyLock;
-use std::{fmt, iter};
 
 use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
@@ -8,7 +8,8 @@ use proc_macro2::{TokenStream, TokenTree};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::id::ItemIdentifier;
-use crate::stmt::items_required_by_decl;
+use crate::protocol::ProtocolRef;
+use crate::stmt::parse_superclasses;
 use crate::stmt::{anonymous_record_name, is_bridged};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -352,75 +353,107 @@ impl fmt::Display for Primitive {
     }
 }
 
-/// A reference to a class or a protocol declaration.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct ItemRef {
-    id: ItemIdentifier,
-    thread_safety: ThreadSafety,
-    required_items: Vec<ItemIdentifier>,
-}
+fn get_class_data(
+    entity_ref: &Entity<'_>,
+    context: &Context<'_>,
+) -> (ItemIdentifier, ThreadSafety, Vec<ItemIdentifier>) {
+    // @class produces a ObjCInterfaceDecl if we didn't load the actual
+    // declaration, but we don't actually want that, since it'll point to the
+    // wrong place.
+    let entity = entity_ref
+        .get_location()
+        .expect("class location")
+        .get_entity()
+        .expect("class entity");
 
-impl ItemRef {
-    fn required_items(&self) -> Vec<ItemIdentifier> {
-        self.required_items.clone()
+    let mut id = ItemIdentifier::new(&entity, context);
+
+    if let Some(external) = context.library(id.library_name()).external.get(&id.name) {
+        let id = ItemIdentifier::from_raw(id.name, external.module.clone());
+        let thread_safety = external
+            .thread_safety
+            .as_deref()
+            .map(ThreadSafety::from_string)
+            .unwrap_or(ThreadSafety::dummy());
+        return (id, thread_safety, external.super_items.clone());
     }
 
-    fn new(entity_ref: &Entity<'_>, context: &Context<'_>) -> Self {
-        let entity = entity_ref
-            .get_location()
-            .expect("itemref location")
-            .get_entity()
-            .expect("itemref entity");
-
-        let mut id = ItemIdentifier::new(&entity, context);
-
-        if let Some(external) = context.library(id.library_name()).external.get(&id.name) {
-            let id = ItemIdentifier::from_raw(id.name, external.module.clone());
-            let thread_safety = external
-                .thread_safety
-                .as_deref()
-                .map(ThreadSafety::from_string)
-                .unwrap_or(ThreadSafety::dummy());
-            let required_items = external
-                .required_items
-                .iter()
-                .cloned()
-                .chain(iter::once(id.clone()))
+    match entity.get_kind() {
+        EntityKind::ObjCInterfaceDecl => {
+            let thread_safety = ThreadSafety::from_decl(&entity, context);
+            let superclasses = parse_superclasses(&entity, context)
+                .into_iter()
+                .map(|(id, _, _)| id)
                 .collect();
-            return Self {
-                id,
-                thread_safety,
-                required_items,
-            };
-        }
 
-        match entity.get_kind() {
-            EntityKind::ObjCInterfaceDecl | EntityKind::ObjCProtocolDecl => Self {
+            (id, thread_safety, superclasses)
+        }
+        EntityKind::MacroExpansion => {
+            id.name = entity_ref.get_name().unwrap_or_else(|| {
+                error!(?entity_ref, ?entity, "macro ref did not have name");
+                id.name
+            });
+            // We cannot get thread safety from macro expansions
+            let thread_safety = ThreadSafety::dummy();
+            // Similarly, we cannot get for required items
+            let superclasses = vec![];
+            (id, thread_safety, superclasses)
+        }
+        _ => {
+            error!(?entity, "could not get declaration. Add appropriate external.{}.module = \"...\" to translation-config.toml", id.name);
+            (id, ThreadSafety::dummy(), vec![])
+        }
+    }
+}
+
+fn parse_protocol(entity: Entity<'_>, context: &Context<'_>) -> (ProtocolRef, ThreadSafety) {
+    let entity = entity.get_definition().unwrap_or(entity);
+    // @protocol produces a ObjCProtocolDecl if we didn't
+    // load the actual declaration, but we don't actually
+    // want that, since it'll point to the wrong place.
+    let entity = entity
+        .get_location()
+        .expect("itemref location")
+        .get_entity()
+        .expect("itemref entity");
+
+    let id = ItemIdentifier::new(&entity, context);
+
+    if let Some(external) = context.library(id.library_name()).external.get(&id.name) {
+        let id = ItemIdentifier::from_raw(id.name, external.module.clone());
+        let thread_safety = external
+            .thread_safety
+            .as_deref()
+            .map(ThreadSafety::from_string)
+            .unwrap_or(ThreadSafety::dummy());
+        let protocol = ProtocolRef {
+            id,
+            super_protocols: external
+                .super_items
+                .iter()
+                .map(|item| ProtocolRef {
+                    id: item.clone(),
+                    // TODO: Populate this somehow?
+                    super_protocols: vec![],
+                })
+                .collect(),
+        };
+        return (protocol, thread_safety);
+    }
+
+    match entity.get_kind() {
+        EntityKind::ObjCProtocolDecl => {
+            let protocol = ProtocolRef::from_entity(&entity, context);
+            let thread_safety = ThreadSafety::from_decl(&entity, context);
+            (protocol, thread_safety)
+        }
+        _ => {
+            error!(?entity, "could not get declaration. Add appropriate external.{}.module = \"...\" to translation-config.toml", id.name);
+            let protocol = ProtocolRef {
                 id,
-                thread_safety: ThreadSafety::from_decl(&entity, context),
-                required_items: items_required_by_decl(&entity, context),
-            },
-            EntityKind::MacroExpansion => {
-                id.name = entity_ref.get_name().unwrap_or_else(|| {
-                    error!(?entity_ref, ?entity, "macro ref did not have name");
-                    id.name
-                });
-                Self {
-                    id: id.clone(),
-                    // We cannot get thread safety from macro expansions
-                    thread_safety: ThreadSafety::dummy(),
-                    // Similarly, we cannot get for required items
-                    required_items: vec![id],
-                }
-            }
-            _ => {
-                error!(?entity, "could not get declaration. Add appropriate external.{}.module = \"...\" to translation-config.toml", id.name);
-                Self {
-                    id: id.clone(),
-                    thread_safety: ThreadSafety::dummy(),
-                    required_items: vec![id],
-                }
-            }
+                super_protocols: vec![],
+            };
+            (protocol, ThreadSafety::dummy())
         }
     }
 }
@@ -434,19 +467,21 @@ pub enum Ty {
         size: u8,
     },
     Class {
-        decl: ItemRef,
+        id: ItemIdentifier,
+        thread_safety: ThreadSafety,
+        superclasses: Vec<ItemIdentifier>,
         generics: Vec<Self>,
-        protocols: Vec<ItemRef>,
+        protocols: Vec<(ProtocolRef, ThreadSafety)>,
     },
     GenericParam {
         name: String,
     },
     AnyObject {
-        protocols: Vec<ItemRef>,
+        protocols: Vec<(ProtocolRef, ThreadSafety)>,
     },
     AnyProtocol,
     AnyClass {
-        protocols: Vec<ItemRef>,
+        protocols: Vec<(ProtocolRef, ThreadSafety)>,
     },
     Self_,
     Sel {
@@ -765,12 +800,14 @@ impl Ty {
                 if name == "Protocol" {
                     Self::AnyProtocol
                 } else {
-                    let decl = ItemRef::new(&declaration, context);
-                    if decl.id.name != name.strip_prefix("const ").unwrap_or(&name) {
+                    let (id, thread_safety, superclasses) = get_class_data(&declaration, context);
+                    if id.name != name.strip_prefix("const ").unwrap_or(&name) {
                         error!(?name, "invalid interface name");
                     }
                     Self::Class {
-                        decl,
+                        id,
+                        thread_safety,
+                        superclasses,
                         protocols: vec![],
                         generics: vec![],
                     }
@@ -791,13 +828,7 @@ impl Ty {
                 let protocols: Vec<_> = ty
                     .get_objc_protocol_declarations()
                     .into_iter()
-                    .map(|entity| {
-                        // ItemRef::new will fall back if we can't find it here.
-                        let maybe_definition = entity.get_definition().unwrap_or(entity);
-                        let mut decl = ItemRef::new(&maybe_definition, context);
-                        decl.id = context.replace_protocol_name(decl.id);
-                        decl
-                    })
+                    .map(|entity| parse_protocol(entity, context))
                     .collect();
 
                 match base_ty.get_kind() {
@@ -814,8 +845,9 @@ impl Ty {
                         let declaration = base_ty
                             .get_declaration()
                             .expect("ObjCObject -> ObjCInterface declaration");
-                        let decl = ItemRef::new(&declaration, context);
-                        if decl.id.name != name {
+                        let (id, thread_safety, superclasses) =
+                            get_class_data(&declaration, context);
+                        if id.name != name {
                             error!(?name, "ObjCObject -> ObjCInterface invalid name");
                         }
 
@@ -828,7 +860,9 @@ impl Ty {
                         }
 
                         Self::Class {
-                            decl,
+                            id,
+                            thread_safety,
+                            superclasses,
                             generics,
                             protocols,
                         }
@@ -1268,15 +1302,18 @@ impl Ty {
                 items
             }
             Self::Class {
-                decl,
+                id,
+                thread_safety: _,
+                superclasses,
                 generics,
                 protocols,
             } => {
-                let mut items = decl.required_items();
+                let mut items = vec![id.clone()];
+                items.extend(superclasses.iter().cloned());
                 for generic in generics {
                     items.extend(generic.required_items());
                 }
-                for protocol in protocols {
+                for (protocol, _) in protocols {
                     items.extend(protocol.required_items());
                 }
                 items
@@ -1284,7 +1321,7 @@ impl Ty {
             Self::GenericParam { .. } => Vec::new(),
             Self::AnyObject { protocols } => {
                 let mut items = vec![ItemIdentifier::objc("AnyObject")];
-                for protocol in protocols {
+                for (protocol, _) in protocols {
                     items.extend(protocol.required_items());
                 }
                 items
@@ -1292,7 +1329,7 @@ impl Ty {
             Self::AnyProtocol => vec![ItemIdentifier::objc("AnyProtocol")],
             Self::AnyClass { protocols } => {
                 let mut items = vec![ItemIdentifier::objc("AnyClass")];
-                for protocol in protocols {
+                for (protocol, _) in protocols {
                     items.extend(protocol.required_items());
                 }
                 items
@@ -1380,26 +1417,28 @@ impl Ty {
             Self::Primitive(_) => false,
             Self::Simd { .. } => false,
             Self::Class {
-                decl,
+                id: _,
+                thread_safety,
+                superclasses: _,
                 generics,
                 protocols,
             } => {
-                decl.thread_safety.inferred_mainthreadonly()
+                thread_safety.inferred_mainthreadonly()
                     || generics
                         .iter()
                         .any(|generic| generic.requires_mainthreadmarker(self_requires))
                     || protocols
                         .iter()
-                        .any(|protocol| protocol.thread_safety.inferred_mainthreadonly())
+                        .any(|(_, thread_safety)| thread_safety.inferred_mainthreadonly())
             }
             Self::GenericParam { .. } => false,
             Self::AnyObject { protocols } => protocols
                 .iter()
-                .any(|protocol| protocol.thread_safety.inferred_mainthreadonly()),
+                .any(|(_, thread_safety)| thread_safety.inferred_mainthreadonly()),
             Self::AnyProtocol => false,
             Self::AnyClass { protocols } => protocols
                 .iter()
-                .any(|protocol| protocol.thread_safety.inferred_mainthreadonly()),
+                .any(|(_, thread_safety)| thread_safety.inferred_mainthreadonly()),
             Self::Self_ => self_requires,
             Self::Sel { .. } => false,
             Self::Pointer { pointee, .. } => pointee.requires_mainthreadmarker(self_requires),
@@ -1441,11 +1480,11 @@ impl Ty {
         // Important: We mostly visit the top-level types, to not include
         // optional things like `Option<&NSView>` or `&NSArray<NSView>`.
         match self {
-            Self::Class { decl, .. } => decl.thread_safety.inferred_mainthreadonly(),
+            Self::Class { thread_safety, .. } => thread_safety.inferred_mainthreadonly(),
             Self::AnyObject { protocols } => {
                 match &**protocols {
                     [] => false,
-                    [decl] => decl.thread_safety.inferred_mainthreadonly(),
+                    [(_, thread_safety)] => thread_safety.inferred_mainthreadonly(),
                     // TODO: Handle this better
                     _ => false,
                 }
@@ -1703,11 +1742,13 @@ impl Ty {
     fn behind_pointer(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Class {
-                decl,
+                id,
+                thread_safety: _,
+                superclasses: _,
                 generics,
                 protocols: _,
             } => {
-                write!(f, "{}", decl.id.path())?;
+                write!(f, "{}", id.path())?;
                 if !generics.is_empty() {
                     write!(f, "<")?;
                     for generic in generics {
@@ -1733,11 +1774,11 @@ impl Ty {
             Self::GenericParam { name } => write!(f, "{name}"),
             Self::AnyObject { protocols } => match &**protocols {
                 [] => write!(f, "AnyObject"),
-                [decl] => write!(f, "ProtocolObject<dyn {}>", decl.id.path()),
+                [(protocol, _)] => write!(f, "ProtocolObject<dyn {}>", protocol.id.path()),
                 // TODO: Handle this better
-                [first, rest @ ..] => {
+                [(first, _), rest @ ..] => {
                     write!(f, "AnyObject /* {}", first.id.path())?;
-                    for protocol in rest {
+                    for (protocol, _) in rest {
                         write!(f, "+ {}", protocol.id.path())?;
                     }
                     write!(f, " */")?;
@@ -2462,12 +2503,13 @@ impl Ty {
             } = &**pointee
             {
                 if let Self::Class {
-                    decl,
+                    id,
                     generics,
                     protocols,
+                    ..
                 } = &**pointee
                 {
-                    if !decl.id.is_nserror() {
+                    if !id.is_nserror() {
                         return false;
                     }
                     assert!(!is_const, "expected error not const {self:?}");
@@ -2695,11 +2737,9 @@ mod tests {
                     is_const: false,
                     lifetime: Lifetime::Unspecified,
                     pointee: Box::new(Ty::Class {
-                        decl: ItemRef {
-                            id: ItemIdentifier::dummy(),
-                            thread_safety: ThreadSafety::dummy(),
-                            required_items: vec![],
-                        },
+                        id: ItemIdentifier::dummy(),
+                        thread_safety: ThreadSafety::dummy(),
+                        superclasses: vec![],
                         generics: vec![],
                         protocols: vec![],
                     }),

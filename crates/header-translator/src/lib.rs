@@ -25,6 +25,7 @@ mod method;
 mod module;
 mod name_translation;
 mod objc2_utils;
+mod protocol;
 mod rust_type;
 mod stmt;
 mod thread_safety;

@@ -149,9 +149,9 @@ pub struct ExternalData {
     #[serde(rename = "thread-safety")]
     #[serde(default)]
     pub thread_safety: Option<String>,
-    #[serde(rename = "required-items")]
+    #[serde(rename = "super-items")]
     #[serde(default)]
-    pub required_items: Vec<ItemIdentifier>,
+    pub super_items: Vec<ItemIdentifier>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

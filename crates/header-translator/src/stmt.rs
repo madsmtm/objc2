@@ -23,6 +23,8 @@ use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
 use crate::name_translation::enum_prefix;
 use crate::name_translation::split_words;
+use crate::protocol::parse_direct_protocols;
+use crate::protocol::ProtocolRef;
 use crate::rust_type::Ty;
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -72,31 +74,6 @@ fn parse_protocols<'tu>(
         }
         _ => {}
     });
-}
-
-/// Parse the directly referenced protocols of a declaration.
-pub(crate) fn parse_direct_protocols<'clang>(
-    entity: &Entity<'clang>,
-    _context: &Context<'_>,
-) -> Vec<Entity<'clang>> {
-    let mut protocols = Vec::new();
-
-    #[allow(clippy::single_match)]
-    immediate_children(entity, |child, _span| match child.get_kind() {
-        EntityKind::ObjCProtocolRef => {
-            let child = child
-                .get_reference()
-                .expect("ObjCProtocolRef to reference entity");
-            if child == *entity {
-                error!(?entity, "recursive protocol");
-            } else {
-                protocols.push(child);
-            }
-        }
-        _ => {}
-    });
-
-    protocols
 }
 
 pub(crate) fn parse_superclasses<'ty>(
@@ -282,35 +259,6 @@ fn parse_methods(
     (methods, designated_initializers)
 }
 
-/// Get the items required for a given interface or protocol declaration to be
-/// enabled.
-pub(crate) fn items_required_by_decl(
-    entity: &Entity<'_>,
-    context: &Context<'_>,
-) -> Vec<ItemIdentifier> {
-    let id = ItemIdentifier::new(entity, context);
-
-    let mut items = vec![ItemIdentifier::objc("__macros__")];
-
-    match entity.get_kind() {
-        EntityKind::ObjCInterfaceDecl => {
-            for (superclass, _, _) in parse_superclasses(entity, context) {
-                items.push(superclass);
-            }
-        }
-        EntityKind::ObjCProtocolDecl => {
-            for entity in parse_direct_protocols(entity, context) {
-                items.extend(items_required_by_decl(&entity, context));
-            }
-        }
-        _ => panic!("invalid required_by_decl kind {entity:?}"),
-    }
-
-    items.push(id);
-
-    items
-}
-
 /// Takes one of:
 /// - `EntityKind::ObjCInterfaceDecl`
 /// - `EntityKind::ObjCProtocolDecl`
@@ -454,7 +402,6 @@ pub enum Stmt {
     /// extern_class!
     ClassDecl {
         id: ItemIdentifier,
-        required_items: Vec<ItemIdentifier>,
         generics: Vec<String>,
         availability: Availability,
         superclasses: Vec<(ItemIdentifier, Vec<String>)>,
@@ -472,7 +419,7 @@ pub enum Stmt {
         location: Location,
         availability: Availability,
         cls: ItemIdentifier,
-        cls_required_items: Vec<ItemIdentifier>,
+        cls_superclasses: Vec<ItemIdentifier>,
         source_superclass: Option<ItemIdentifier>,
         cls_generics: Vec<String>,
         category_name: Option<String>,
@@ -487,7 +434,7 @@ pub enum Stmt {
         actual_name: Option<String>,
         availability: Availability,
         cls: ItemIdentifier,
-        cls_required_items: Vec<ItemIdentifier>,
+        cls_superclasses: Vec<ItemIdentifier>,
         methods: Vec<Method>,
         documentation: Documentation,
     },
@@ -496,10 +443,9 @@ pub enum Stmt {
     /// extern_protocol!
     ProtocolDecl {
         id: ItemIdentifier,
-        required_items: Vec<ItemIdentifier>,
         actual_name: Option<String>,
         availability: Availability,
-        protocols: Vec<ItemIdentifier>,
+        super_protocols: Vec<ProtocolRef>,
         methods: Vec<Method>,
         required_sendable: bool,
         required_mainthreadonly: bool,
@@ -510,10 +456,10 @@ pub enum Stmt {
     ProtocolImpl {
         location: Location,
         cls: ItemIdentifier,
-        cls_required_items: Vec<ItemIdentifier>,
+        cls_superclasses: Vec<ItemIdentifier>,
         cls_counterpart: Counterpart,
         protocol: ItemIdentifier,
-        protocol_required_items: Vec<ItemIdentifier>,
+        protocol_super_protocols: Vec<ProtocolRef>,
         generics: Vec<String>,
         availability: Availability,
     },
@@ -690,7 +636,6 @@ impl Stmt {
                 let availability = Availability::parse(entity, context);
                 let thread_safety = ThreadSafety::from_decl(entity, context);
 
-                let required_items = items_required_by_decl(entity, context);
                 let counterpart = data
                     .map(|data| data.counterpart.clone())
                     .unwrap_or_default();
@@ -717,6 +662,10 @@ impl Stmt {
                 let superclasses: Vec<_> = superclasses_full
                     .iter()
                     .map(|(id, generics, _)| (id.clone(), generics.clone()))
+                    .collect();
+                let cls_superclasses: Vec<_> = superclasses_full
+                    .iter()
+                    .map(|(id, _, _)| id.clone())
                     .collect();
 
                 // Used for duplicate checking (sometimes the subclass
@@ -758,7 +707,7 @@ impl Stmt {
                                 location: id.location().clone(),
                                 availability: availability.clone(),
                                 cls: id.clone(),
-                                cls_required_items: required_items.clone(),
+                                cls_superclasses: cls_superclasses.clone(),
                                 source_superclass: Some(superclass_id.clone()),
                                 cls_generics: generics.clone(),
                                 category_name: None,
@@ -773,7 +722,7 @@ impl Stmt {
                     location: id.location().clone(),
                     availability: availability.clone(),
                     cls: id.clone(),
-                    cls_required_items: required_items.clone(),
+                    cls_superclasses: cls_superclasses.clone(),
                     source_superclass: None,
                     cls_generics: generics.clone(),
                     category_name: None,
@@ -783,7 +732,6 @@ impl Stmt {
 
                 iter::once(Self::ClassDecl {
                     id: id.clone(),
-                    required_items: required_items.clone(),
                     generics: generics.clone(),
                     availability: availability.clone(),
                     superclasses,
@@ -799,10 +747,10 @@ impl Stmt {
                 .chain(protocols.into_iter().map(|(p, entity)| Self::ProtocolImpl {
                     location: id.location().clone(),
                     cls: id.clone(),
-                    cls_required_items: required_items.clone(),
+                    cls_superclasses: cls_superclasses.clone(),
                     cls_counterpart: counterpart.clone(),
                     protocol: context.replace_protocol_name(p),
-                    protocol_required_items: items_required_by_decl(&entity, context),
+                    protocol_super_protocols: ProtocolRef::super_protocols(&entity, context),
                     generics: generics.clone(),
                     availability: availability.clone(),
                 }))
@@ -854,7 +802,10 @@ impl Stmt {
                 }
 
                 let cls_thread_safety = ThreadSafety::from_decl(&cls_entity, context);
-                let cls_required_items = items_required_by_decl(&cls_entity, context);
+                let cls_superclasses: Vec<_> = parse_superclasses(&cls_entity, context)
+                    .into_iter()
+                    .map(|(id, _, _)| id)
+                    .collect();
                 let cls_counterpart = data
                     .map(|data| data.counterpart.clone())
                     .unwrap_or_default();
@@ -875,12 +826,12 @@ impl Stmt {
                 let protocol_impls = protocols.into_iter().map(|(p, entity)| Self::ProtocolImpl {
                     location: category.location().clone(),
                     cls: cls.clone(),
-                    cls_required_items: cls_required_items.clone(),
+                    cls_superclasses: cls_superclasses.clone(),
                     cls_counterpart: cls_counterpart.clone(),
                     generics: generics.clone(),
                     availability: availability.clone(),
                     protocol: context.replace_protocol_name(p),
-                    protocol_required_items: items_required_by_decl(&entity, context),
+                    protocol_super_protocols: ProtocolRef::super_protocols(&entity, context),
                 });
 
                 // For ease-of-use, if the category is defined in the same
@@ -941,7 +892,7 @@ impl Stmt {
                                 availability: availability.clone(),
                                 cls: subclass,
                                 // ... the same required items ...
-                                cls_required_items: cls_required_items.clone(),
+                                cls_superclasses: cls_superclasses.clone(),
                                 // ... and that they have the same amount of generics.
                                 cls_generics: generics.clone(),
                                 category_name: category.name.clone(),
@@ -957,7 +908,7 @@ impl Stmt {
                         location: category.location().clone(),
                         availability: availability.clone(),
                         cls: cls.clone(),
-                        cls_required_items: cls_required_items.clone(),
+                        cls_superclasses: cls_superclasses.clone(),
                         source_superclass: None,
                         cls_generics: generics.clone(),
                         category_name: category.name.clone(),
@@ -1030,7 +981,7 @@ impl Stmt {
                             actual_name: category.name.clone(),
                             availability: availability.clone(),
                             cls: cls.clone(),
-                            cls_required_items: cls_required_items.clone(),
+                            cls_superclasses: cls_superclasses.clone(),
                             methods,
                             documentation: Documentation::from_entity(entity),
                         })
@@ -1061,12 +1012,6 @@ impl Stmt {
                 let thread_safety = ThreadSafety::from_decl(entity, context);
 
                 verify_objc_decl(entity, context);
-                let protocols = parse_direct_protocols(entity, context);
-                let protocols: Vec<_> = protocols
-                    .into_iter()
-                    .map(|protocol| ItemIdentifier::new(&protocol, context))
-                    .map(|protocol| context.replace_protocol_name(protocol))
-                    .collect();
                 let (methods, designated_initializers) = parse_methods(
                     entity,
                     |name| {
@@ -1088,10 +1033,9 @@ impl Stmt {
 
                 vec![Self::ProtocolDecl {
                     id,
-                    required_items: items_required_by_decl(entity, context),
                     actual_name,
                     availability,
-                    protocols,
+                    super_protocols: ProtocolRef::super_protocols(entity, context),
                     methods,
                     required_sendable: thread_safety.explicit_sendable(),
                     required_mainthreadonly: thread_safety.explicit_mainthreadonly(),
@@ -1802,22 +1746,48 @@ impl Stmt {
     /// Items required by the statement at the top-level.
     pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
         match self {
-            Self::ClassDecl { required_items, .. } => required_items.clone(),
+            Self::ClassDecl { superclasses, .. } => {
+                let mut items = vec![ItemIdentifier::objc("__macros__")];
+                items.extend(
+                    superclasses
+                        .iter()
+                        .map(|(superclass, _)| superclass.clone()),
+                );
+                items
+            }
             Self::ExternMethods {
-                cls_required_items, ..
-            } => cls_required_items.clone(),
+                cls,
+                cls_superclasses,
+                ..
+            } => {
+                let mut items = vec![cls.clone(), ItemIdentifier::objc("__macros__")];
+                items.extend(cls_superclasses.clone());
+                items
+            }
             // Intentionally doesn't require anything, the impl itself is
             // cfg-gated
             Self::ExternCategory { .. } => vec![ItemIdentifier::objc("__macros__")],
-            Self::ProtocolDecl { required_items, .. } => required_items.clone(),
+            Self::ProtocolDecl {
+                super_protocols, ..
+            } => {
+                let mut items = vec![ItemIdentifier::objc("__macros__")];
+                for super_protocol in super_protocols {
+                    items.extend(super_protocol.required_items());
+                }
+                items
+            }
             Self::ProtocolImpl {
-                cls_required_items,
-                protocol_required_items,
+                cls,
+                cls_superclasses,
+                protocol,
+                protocol_super_protocols,
                 ..
             } => {
-                let mut items = Vec::new();
-                items.extend(cls_required_items.clone());
-                items.extend(protocol_required_items.clone());
+                let mut items = vec![cls.clone(), protocol.clone()];
+                items.extend(cls_superclasses.clone());
+                for super_protocol in protocol_super_protocols {
+                    items.extend(super_protocol.required_items());
+                }
                 items
             }
             Self::RecordDecl { fields, .. } => {
@@ -1878,13 +1848,15 @@ impl Stmt {
     pub(crate) fn required_items_inner(&self) -> Vec<ItemIdentifier> {
         let required_by_inner: Vec<_> = match self {
             Self::ExternCategory {
-                cls_required_items,
+                cls,
+                cls_superclasses,
                 methods,
                 ..
             } => methods
                 .iter()
                 .flat_map(|method| method.required_items())
-                .chain(cls_required_items.clone())
+                .chain(iter::once(cls.clone()))
+                .chain(cls_superclasses.clone())
                 .collect(),
             Self::ExternMethods { methods, .. } | Self::ProtocolDecl { methods, .. } => methods
                 .iter()
@@ -2005,7 +1977,6 @@ impl Stmt {
             match self {
                 Self::ClassDecl {
                     id,
-                    required_items: _,
                     generics,
                     availability,
                     superclasses,
@@ -2073,7 +2044,7 @@ impl Stmt {
                     location: _,
                     availability: _,
                     cls,
-                    cls_required_items: _,
+                    cls_superclasses: _,
                     source_superclass,
                     cls_generics,
                     category_name,
@@ -2161,7 +2132,7 @@ impl Stmt {
                     actual_name,
                     availability,
                     cls,
-                    cls_required_items,
+                    cls_superclasses,
                     methods,
                     documentation,
                 } => {
@@ -2215,7 +2186,7 @@ impl Stmt {
                         f,
                         "    {}",
                         cfg_gate_ln(
-                            cls_required_items,
+                            iter::once(cls).chain(cls_superclasses),
                             [self.location()],
                             config,
                             self.location()
@@ -2233,11 +2204,11 @@ impl Stmt {
                 Self::ProtocolImpl {
                     location: id,
                     cls,
-                    cls_required_items: _,
+                    cls_superclasses: _,
                     cls_counterpart,
                     generics,
                     protocol,
-                    protocol_required_items: _,
+                    protocol_super_protocols: _,
                     availability: _,
                 } => {
                     let (generic_bound, where_bound) = if !generics.is_empty() {
@@ -2352,10 +2323,9 @@ impl Stmt {
                 }
                 Self::ProtocolDecl {
                     id,
-                    required_items: _,
                     actual_name,
                     availability,
-                    protocols,
+                    super_protocols,
                     methods,
                     required_sendable: _,
                     required_mainthreadonly,
@@ -2377,14 +2347,14 @@ impl Stmt {
                         writeln!(f, "    #[name = {actual_name:?}]")?;
                     }
                     write!(f, "    pub unsafe trait {}", id.name)?;
-                    if !protocols.is_empty() {
-                        for (i, protocol) in protocols.iter().enumerate() {
+                    if !super_protocols.is_empty() {
+                        for (i, protocol) in super_protocols.iter().enumerate() {
                             if i == 0 {
                                 write!(f, ": ")?;
                             } else {
                                 write!(f, "+ ")?;
                             }
-                            write!(f, "{}", protocol.path())?;
+                            write!(f, "{}", protocol.id.path())?;
                         }
                     }
                     // TODO
@@ -2397,7 +2367,7 @@ impl Stmt {
                     //     write!(f, "Send + Sync")?;
                     // }
                     if *required_mainthreadonly {
-                        if protocols.is_empty() {
+                        if super_protocols.is_empty() {
                             write!(f, ": ")?;
                         } else {
                             write!(f, "+ ")?;
@@ -3012,12 +2982,11 @@ impl Stmt {
     }
 
     pub(crate) fn encoding_test<'a>(&'a self, config: &'a Config) -> Option<impl Display + 'a> {
-        let (data, availability, cls, cls_required_items, cls_generics, methods) = match self {
+        let (data, availability, cls, cls_generics, methods) = match self {
             Stmt::ExternMethods {
                 location,
                 availability,
                 cls,
-                cls_required_items,
                 cls_generics,
                 methods,
                 ..
@@ -3025,7 +2994,6 @@ impl Stmt {
                 config.library(location.library_name()),
                 availability,
                 cls,
-                cls_required_items,
                 &**cls_generics,
                 methods,
             ),
@@ -3033,14 +3001,12 @@ impl Stmt {
                 id,
                 availability,
                 cls,
-                cls_required_items,
                 methods,
                 ..
             } => (
                 config.library(id.library_name()),
                 availability,
                 cls,
-                cls_required_items,
                 &[] as &[_],
                 methods,
             ),
@@ -3052,7 +3018,7 @@ impl Stmt {
             write!(
                 f,
                 "{}",
-                simple_platform_gate(data, cls_required_items, &[], config)
+                simple_platform_gate(data, &self.required_items(), &[], config)
             )?;
             if let Some(check) = availability.check_is_available() {
                 writeln!(f, "    if {check} ")?;
@@ -3076,7 +3042,7 @@ impl Stmt {
                     simple_platform_gate(
                         data,
                         &method.required_items(),
-                        cls_required_items,
+                        &self.required_items(),
                         config
                     )
                 )?;
@@ -3107,7 +3073,7 @@ impl Stmt {
                         "{}",
                         simple_platform_gate(
                             config.library(id.library_name()),
-                            &ty.required_items(),
+                            &self.required_items(),
                             &[],
                             config,
                         )
