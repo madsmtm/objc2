@@ -25,8 +25,8 @@ workspace = true
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2-encode/std", "block2/std", "objc2-foundation/std", "objc2-exception-helper?/std"]
-alloc = ["objc2-encode/alloc", "block2/alloc", "objc2-foundation/alloc", "objc2-exception-helper?/alloc"]
+std = ["alloc", "objc2-encode/std"]
+alloc = ["objc2-encode/alloc"]
 
 # Enables `objc2::exception::throw` and `objc2::exception::catch`
 exception = ["dep:objc2-exception-helper"]
@@ -125,11 +125,12 @@ objc2-exception-helper = { path = "../objc2-exception-helper", version = "0.1.0"
 iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callgrind" }
 static_assertions = "1.1.0"
 memoffset = "0.9.0"
-block2 = { path = "../block2", default-features = false }
+block2 = { path = "../block2" }
 objc2-core-foundation = { path = "../../framework-crates/objc2-core-foundation", default-features = false, features = [
     "CFCGTypes",
 ] }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = [
+    "std",
     "NSArray",
     "NSDate",
     "NSDictionary",

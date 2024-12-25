@@ -17,14 +17,14 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true }
-block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
+objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
 objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.2.2", default-features = false, optional = true }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", version = "0.2.2", default-features = false, optional = true }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
@@ -46,10 +46,8 @@ targets = [
 
 [features]
 default = ["std"]
-
-# Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-avf-audio?/std", "objc2-core-foundation?/std", "objc2-core-graphics?/std", "objc2-core-image?/std", "objc2-core-media?/std", "objc2-core-video?/std", "objc2-foundation/std", "objc2-quartz-core?/std", "objc2-uniform-type-identifiers?/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-avf-audio?/alloc", "objc2-core-foundation?/alloc", "objc2-core-graphics?/alloc", "objc2-core-image?/alloc", "objc2-core-media?/alloc", "objc2-core-video?/alloc", "objc2-foundation/alloc", "objc2-quartz-core?/alloc", "objc2-uniform-type-identifiers?/alloc"]
+std = ["alloc", "bitflags?/std"]
+alloc = []
 bitflags = ["dep:bitflags", "objc2-avf-audio?/bitflags", "objc2-core-foundation?/bitflags", "objc2-core-graphics?/bitflags", "objc2-core-media?/bitflags", "objc2-core-video?/bitflags", "objc2-foundation/bitflags", "objc2-quartz-core?/bitflags"]
 block2 = ["dep:block2", "objc2-avf-audio?/block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-core-image?/block2", "objc2-core-media?/block2", "objc2-core-video?/block2", "objc2-foundation/block2", "objc2-quartz-core?/block2", "objc2-uniform-type-identifiers?/block2"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]

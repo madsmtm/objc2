@@ -50,6 +50,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   crate.
 - Added `Once`, a wrapper over `dispatch_once_f` which works similarly to
   `std::sync::Once`.
+- Added `#![no_std]` support
 
 ### Changed
 - Moved to the `objc2` project.

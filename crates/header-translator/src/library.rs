@@ -116,6 +116,17 @@ impl Library {
             }
         }
 
+        for (krate, (_, _, krate_features)) in &mut dependencies {
+            // std is currently required for objc2
+            if *krate == "objc2" {
+                krate_features.insert("std".into());
+            }
+            // alloc is currently required for these crates
+            if matches!(*krate, "block2" | "dispatch2" | "objc2-foundation") {
+                krate_features.insert("alloc".into());
+            }
+        }
+
         dependencies
     }
 
@@ -273,6 +284,10 @@ see that for related crates.", self.data.krate)?;
                 (false, false) => format!("../{krate}"),
             };
             let mut table = match *krate {
+                "dispatch2" => InlineTable::from_iter([
+                    ("path", Value::from(path)),
+                    ("version", Value::from("0.1.0")),
+                ]),
                 "objc2" => InlineTable::from_iter([
                     ("path", Value::from(path)),
                     ("version", Value::from("0.5.2")),
@@ -327,19 +342,15 @@ see that for related crates.", self.data.krate)?;
                 .entry(krate)
                 .or_insert(Item::Value(Value::InlineTable(table)));
 
-            cargo_toml["features"]["std"]
-                .as_array_mut()
-                .unwrap()
-                .push(Value::from(format!(
-                    "{krate}{}/std",
-                    if *required { "" } else { "?" },
-                )));
-            if *krate != "bitflags" && *krate != "libc" {
-                cargo_toml["features"]["alloc"]
+            // Bitflags is more of an "internal" dependency, just like
+            // objc2-encode is mostly an internal dependency to objc2, so it's
+            // fine to special-case std for that here.
+            if *krate == "bitflags" {
+                cargo_toml["features"]["std"]
                     .as_array_mut()
                     .unwrap()
                     .push(Value::from(format!(
-                        "{krate}{}/alloc",
+                        "{krate}{}/std",
                         if *required { "" } else { "?" },
                     )));
             }

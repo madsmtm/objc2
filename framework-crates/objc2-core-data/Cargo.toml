@@ -17,10 +17,10 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true }
-block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
+objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
 objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.2.2", default-features = false, optional = true }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -37,10 +37,8 @@ targets = [
 
 [features]
 default = ["std"]
-
-# Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-cloud-kit?/std", "objc2-foundation/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-cloud-kit?/alloc", "objc2-foundation/alloc"]
+std = ["alloc", "bitflags?/std"]
+alloc = []
 apple = []
 gnustep-1-7 = []
 gnustep-1-8 = []

@@ -45,11 +45,9 @@
 #[cfg(not(feature = "alloc"))]
 compile_error!("the `alloc` feature currently must be enabled");
 
+extern crate alloc;
 #[cfg(any(feature = "std", doc))]
 extern crate std;
-
-#[cfg(any(feature = "alloc", test))]
-extern crate alloc;
 
 mod encoding;
 mod encoding_box;

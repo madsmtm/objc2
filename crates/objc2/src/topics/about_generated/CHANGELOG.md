@@ -105,6 +105,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: The feature flag guarding `SCSensitivityAnalysis` changed.
 * **BREAKING**: `-[NSSavePanel beginSheetForDirectory:file:modalForWindow:modalDelegate:didEndSelector:contextInfo:]`
   now takes an optional value as the file path.
+* **BREAKING**: No longer automatically enable `std` and `alloc` features of
+  dependencies. If you want a certain framework crate to use `std` or `alloc`
+  features, you cannot rely on a higher-level crate to enable that for you.
 
 ### Deprecated
 * Moved `MainThreadMarker` from `objc2-foundation` to `objc2`.

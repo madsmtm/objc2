@@ -26,7 +26,5 @@ targets = [
 
 [features]
 default = ["std"]
-
-# Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc"]
 alloc = []

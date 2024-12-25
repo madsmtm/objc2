@@ -304,11 +304,12 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide))]
 #![cfg_attr(docsrs, doc(cfg_hide(doc)))]
 
-extern crate alloc;
-extern crate std;
+#[cfg(not(feature = "alloc"))]
+compile_error!("The `alloc` feature currently must be enabled.");
 
-#[cfg(not(feature = "std"))]
-compile_error!("The `std` feature currently must be enabled.");
+extern crate alloc;
+#[cfg(feature = "std")]
+extern crate std;
 
 #[cfg(all(
     not(docsrs),

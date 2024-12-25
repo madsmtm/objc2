@@ -16,15 +16,15 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
+objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-core-image = { path = "../objc2-core-image", version = "0.2.2", default-features = false, optional = true }
 objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-core-ml = { path = "../objc2-core-ml", version = "0.2.2", default-features = false, optional = true }
 objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -40,10 +40,8 @@ targets = [
 
 [features]
 default = ["std"]
-
-# Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "block2?/std", "objc2/std", "objc2-core-foundation?/std", "objc2-core-graphics?/std", "objc2-core-image?/std", "objc2-core-media?/std", "objc2-core-ml?/std", "objc2-core-video?/std", "objc2-foundation/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-core-foundation?/alloc", "objc2-core-graphics?/alloc", "objc2-core-image?/alloc", "objc2-core-media?/alloc", "objc2-core-ml?/alloc", "objc2-core-video?/alloc", "objc2-foundation/alloc"]
+std = ["alloc"]
+alloc = []
 block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-core-image?/block2", "objc2-core-media?/block2", "objc2-core-ml?/block2", "objc2-core-video?/block2", "objc2-foundation/block2"]
 objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-graphics?/objc2-core-foundation", "objc2-core-image?/objc2-core-foundation", "objc2-core-media?/objc2-core-foundation", "objc2-core-video?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics", "objc2-core-image?/objc2-core-graphics", "objc2-core-ml?/objc2-core-graphics", "objc2-core-video?/objc2-core-graphics"]

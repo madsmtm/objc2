@@ -17,10 +17,10 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true }
-block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
+objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 objc2-io-surface = { path = "../objc2-io-surface", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 
 [package.metadata.docs.rs]
@@ -37,10 +37,8 @@ targets = [
 
 [features]
 default = ["std"]
-
-# Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-core-foundation?/std", "objc2-foundation/std", "objc2-io-surface?/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-core-foundation?/alloc", "objc2-foundation/alloc", "objc2-io-surface?/alloc"]
+std = ["alloc", "bitflags?/std"]
+alloc = []
 unstable-private = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSError",

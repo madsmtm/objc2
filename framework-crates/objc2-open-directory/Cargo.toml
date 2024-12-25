@@ -16,9 +16,9 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["NSString"] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["NSString", "alloc"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -32,10 +32,8 @@ targets = [
 
 [features]
 default = ["std"]
-
-# Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2/std", "objc2-core-foundation?/std", "objc2-foundation/std"]
-alloc = ["objc2/alloc", "objc2-core-foundation?/alloc", "objc2-foundation/alloc"]
+std = ["alloc"]
+alloc = []
 objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
 
 CFODContext = ["objc2-core-foundation?/CFBase"]

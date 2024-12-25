@@ -36,6 +36,7 @@ unsafe impl RefEncode for MTLPackedFloat3 {
 }
 
 #[cfg(test)]
+#[cfg(feature = "alloc")]
 mod tests {
     use alloc::string::ToString;
     use objc2::encode::Encode;

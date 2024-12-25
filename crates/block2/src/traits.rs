@@ -1,8 +1,7 @@
+use core::ffi::CStr;
 use core::marker::PhantomData;
 use core::mem;
 use core::ptr;
-// TODO: use `core` when the MSRV is at least 1.64.
-use std::ffi::CStr;
 
 use objc2::encode::EncodeArguments;
 use objc2::encode::{EncodeArgument, EncodeReturn};
@@ -347,7 +346,7 @@ mod tests {
                 unsafe { CStr::from_bytes_with_nul_unchecked(b"C12@?0i4f8\0") };
         }
         // HACK: use `identity` in order to circumvent a Clippy warning.
-        assert!(!std::convert::identity(UserSpecified::<Enc1>::IS_NONE));
+        assert!(!core::convert::identity(UserSpecified::<Enc1>::IS_NONE));
 
         // No input + no output case.
         struct Enc2;
@@ -361,7 +360,7 @@ mod tests {
             const ENCODING_CSTR: &'static CStr =
                 unsafe { CStr::from_bytes_with_nul_unchecked(b"v4@?0\0") };
         }
-        assert!(!std::convert::identity(UserSpecified::<Enc2>::IS_NONE));
+        assert!(!core::convert::identity(UserSpecified::<Enc2>::IS_NONE));
 
         // Ensure we don't rely on the encoding string's emptiness.
         struct Enc3;
@@ -371,14 +370,14 @@ mod tests {
             const ENCODING_CSTR: &'static CStr =
                 unsafe { CStr::from_bytes_with_nul_unchecked(b"\0") };
         }
-        assert!(!std::convert::identity(UserSpecified::<Enc3>::IS_NONE));
+        assert!(!core::convert::identity(UserSpecified::<Enc3>::IS_NONE));
 
         // Only `NoBlockEncoding` should be `IS_NONE`.
-        assert!(std::convert::identity(NoBlockEncoding::<(), ()>::IS_NONE));
-        assert!(std::convert::identity(
+        assert!(core::convert::identity(NoBlockEncoding::<(), ()>::IS_NONE));
+        assert!(core::convert::identity(
             NoBlockEncoding::<(i32, f32), u8>::IS_NONE
         ));
-        assert!(std::convert::identity(
+        assert!(core::convert::identity(
             NoBlockEncoding::<(*const u8,), *const c_char>::IS_NONE
         ));
     }

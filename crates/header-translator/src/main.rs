@@ -576,9 +576,10 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
         lib.macos
             .as_ref()
             .is_some_and(|v| VersionReq::parse("<=10.12").unwrap().matches(v))
-            // HACK: These depend on `objc2-uniform-type-identifiers`, which
-            // is not available on macOS 10.12, but will be enabled by `"all"`
-            && !["objc2-app-kit", "objc2-file-provider", "objc2-health-kit", "objc2-photos"].contains(&&*lib.krate)
+            // HACK: These depend on `objc2-uniform-type-identifiers` or
+            // `objc2-core-ml`, which is not available on macOS 10.12, but
+            // will be enabled by `"all"`.
+            && !["objc2-app-kit", "objc2-file-provider", "objc2-health-kit", "objc2-photos", "objc2-core-image"].contains(&&*lib.krate)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_MACOS_10_13", |lib| {
         lib.macos

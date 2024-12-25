@@ -16,9 +16,9 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
+block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
+objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false }
 objc2-metal-performance-shaders = { path = "../objc2-metal-performance-shaders", version = "0.2.2", default-features = false, optional = true }
 
@@ -36,10 +36,8 @@ targets = [
 
 [features]
 default = ["std"]
-
-# Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "block2?/std", "objc2/std", "objc2-foundation/std", "objc2-metal/std", "objc2-metal-performance-shaders?/std"]
-alloc = ["block2?/alloc", "objc2/alloc", "objc2-foundation/alloc", "objc2-metal/alloc", "objc2-metal-performance-shaders?/alloc"]
+std = ["alloc"]
+alloc = []
 block2 = ["dep:block2", "objc2-foundation/block2", "objc2-metal/block2", "objc2-metal-performance-shaders?/block2"]
 objc2-metal-performance-shaders = ["dep:objc2-metal-performance-shaders"]
 

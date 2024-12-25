@@ -18,9 +18,9 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false }
-block2 = { path = "../block2", version = "0.5.1", default-features = false, optional = true }
+block2 = { path = "../block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
-objc2 = { path = "../objc2", version = "0.5.2", default-features = false, optional = true }
+objc2 = { path = "../objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -39,10 +39,8 @@ targets = [
 
 [features]
 default = ["std"]
-
-# Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "bitflags/std", "block2?/std", "libc?/std", "objc2?/std"]
-alloc = ["block2?/alloc", "objc2?/alloc"]
+std = ["alloc", "bitflags/std"]
+alloc = []
 block2 = ["dep:block2"]
 libc = ["dep:libc"]
 objc2 = ["dep:objc2"]

@@ -38,7 +38,7 @@ unstable-objfw = ["block2/unstable-objfw", "objc2/unstable-objfw"]
 [dependencies]
 block2 = { path = "../block2" }
 objc2 = { path = "../objc2" }
-objc2-foundation = { path = "../../framework-crates/objc2-foundation" }
+objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = ["std"] }
 
 [build-dependencies]
 cc = "1.0"

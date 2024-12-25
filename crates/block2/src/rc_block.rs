@@ -154,7 +154,7 @@ impl<F: ?Sized> RcBlock<F> {
     /// # Example
     ///
     /// ```
-    /// # use std::ffi::CStr;
+    /// # use core::ffi::CStr;
     /// # use block2::{Block, ManualBlockEncoding, RcBlock};
     /// # use objc2_foundation::NSError;
     /// #
@@ -173,7 +173,7 @@ impl<F: ?Sized> RcBlock<F> {
     /// let my_block = RcBlock::with_encoding::<_, _, _, MyBlockEncoding>(|_err: *mut NSError| {
     ///     42i32
     /// });
-    /// assert_eq!(my_block.call((std::ptr::null_mut(),)), 42);
+    /// assert_eq!(my_block.call((core::ptr::null_mut(),)), 42);
     /// ```
     #[inline]
     pub fn with_encoding<'f, A, R, Closure, E>(closure: Closure) -> Self

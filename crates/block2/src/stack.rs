@@ -205,7 +205,7 @@ where
     /// # Example
     ///
     /// ```
-    /// # use std::ffi::CStr;
+    /// # use core::ffi::CStr;
     /// # use block2::{Block, ManualBlockEncoding, StackBlock};
     /// # use objc2_foundation::NSError;
     /// #
@@ -224,7 +224,7 @@ where
     /// let my_block = StackBlock::with_encoding::<MyBlockEncoding>(|_err: *mut NSError| {
     ///     42i32
     /// });
-    /// assert_eq!(my_block.call((std::ptr::null_mut(),)), 42);
+    /// assert_eq!(my_block.call((core::ptr::null_mut(),)), 42);
     /// ```
     #[inline]
     pub fn with_encoding<E>(closure: Closure) -> Self

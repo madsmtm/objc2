@@ -22,8 +22,8 @@ workspace = true
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2/std"]
-alloc = ["objc2/alloc"]
+std = ["alloc"]
+alloc = []
 
 # Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
 apple = []
@@ -48,12 +48,12 @@ unstable-objfw = []
 unstable-private = []
 
 [dependencies]
-objc2 = { path = "../objc2", version = "0.5.2", default-features = false }
+objc2 = { path = "../objc2", version = "0.5.2", default-features = false, features = ["std"] }
 
 [dev-dependencies.objc2-foundation]
 path = "../../framework-crates/objc2-foundation"
 default-features = false
-features = ["NSError"]
+features = ["std", "NSError"]
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

@@ -16,6 +16,7 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[allow(unreachable_pub)]
 mod generated;
 #[cfg(feature = "MPSRayIntersectorTypes")]
 mod packed;
