@@ -215,16 +215,12 @@ macro_rules! __inner_extern_protocol {
         // TODO: Should we also implement `ImplementedBy` for `Send + Sync`
         // types, as is done for `NSObjectProtocol`?
 
-        $($attr_impl)*
         $crate::__extern_protocol_check_no_super!($($superclasses)*);
 
-        $($attr_impl)*
         $crate::__extern_protocol_check_no_thread_kind!($($thread_kind)*);
 
-        $($attr_impl)*
         $crate::__extern_protocol_check_no_ivars!($($ivars)*);
 
-        $($attr_impl)*
         $crate::__extern_protocol_check_no_derives!($($derives)*);
     };
 }
@@ -484,6 +480,7 @@ mod tests {
     #[test]
     fn explicit_name() {
         extern_protocol!(
+            #[allow(clippy::missing_safety_doc)]
             #[name = "NSObject"]
             unsafe trait Foo {}
         );
