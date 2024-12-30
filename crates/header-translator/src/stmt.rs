@@ -2120,6 +2120,9 @@ impl Stmt {
                     write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
                     write!(f, "    {availability}")?;
+                    if let Some(actual_name) = actual_name {
+                        writeln!(f, "    #[name = {actual_name:?}]")?;
+                    }
                     write!(f, "    pub unsafe trait {}", id.name)?;
                     if !protocols.is_empty() {
                         for (i, protocol) in protocols.iter().enumerate() {
@@ -2170,15 +2173,6 @@ impl Stmt {
                     }
                     writeln!(f, "    }}")?;
                     writeln!(f)?;
-
-                    write!(f, "    {}", self.cfg_gate_ln(config))?;
-                    writeln!(f, "    unsafe impl ProtocolType for dyn {} {{", id.name)?;
-                    if let Some(actual_name) = actual_name {
-                        writeln!(f)?;
-                        writeln!(f, "        const NAME: &'static str = {actual_name:?};")?;
-                        write!(f, "    ")?;
-                    }
-                    writeln!(f, "}}")?;
                     writeln!(f, ");")?;
                 }
                 Self::StructDecl {

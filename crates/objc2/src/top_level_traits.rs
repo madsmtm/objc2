@@ -346,14 +346,13 @@ pub trait DefinedClass: ClassType {
 /// # let _cls = objc2::class!(NSObject);
 /// ```
 ///
-/// Use the [`extern_protocol!`] macro to implement this trait for a type.
+/// Use the [`extern_protocol!`] macro to implement and use this trait.
 ///
 /// ```no_run
 /// use objc2::{extern_protocol, ProtocolType};
 ///
 /// extern_protocol!(
 ///     unsafe trait MyProtocol {}
-///     unsafe impl ProtocolType for dyn MyProtocol {}
 /// );
 ///
 /// let protocol = <dyn MyProtocol>::protocol();

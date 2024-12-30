@@ -1026,8 +1026,6 @@ mod tests {
 
         extern_protocol!(
             unsafe trait ExampleProtocol: NSObjectProtocol {}
-
-            unsafe impl ProtocolType for dyn ExampleProtocol {}
         );
 
         unsafe impl ExampleProtocol for RcTestObject {}

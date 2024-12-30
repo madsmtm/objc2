@@ -108,6 +108,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
       struct MyClass;
   );
   ```
+* **BREAKING**: Changed the syntax of `extern_protocol!` to be more succinct:
+  ```rust
+  // Before
+  extern_protocol!(
+      unsafe trait MyProtocol {
+          #[method(myMethod)]
+          fn myMethod(&self);
+      }
+
+      // The line below is now unnecessary
+      unsafe impl ProtocolType for dyn MyProtocol {}
+  );
+
+  // After
+  extern_protocol!(
+      unsafe trait MyProtocol {
+          #[method(myMethod)]
+          fn myMethod(&self);
+      }
+  );
+  ```
 * **BREAKING**: Moved the common `retain` and `alloc` methods from `ClassType`
   to `Message` and `AllocAnyThread`/`MainThreadOnly`, respectively.
 

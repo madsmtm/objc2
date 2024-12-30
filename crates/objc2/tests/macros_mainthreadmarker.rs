@@ -1,19 +1,16 @@
 use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSObjectProtocol};
-use objc2::{define_class, extern_methods, extern_protocol, ProtocolType};
+use objc2::{define_class, extern_methods, extern_protocol};
 
 extern_protocol!(
     #[allow(clippy::missing_safety_doc)]
+    #[name = "MainThreadMarkerTestProtocol"]
     unsafe trait Proto: NSObjectProtocol {
         #[method(myMethod:)]
         fn protocol_method(mtm: MainThreadMarker, arg: i32) -> i32;
 
         #[method_id(myMethodId:)]
         fn protocol_method_id(mtm: MainThreadMarker, arg: &Self) -> Retained<Self>;
-    }
-
-    unsafe impl ProtocolType for dyn Proto {
-        const NAME: &'static str = "MainThreadMarkerTestProtocol";
     }
 );
 

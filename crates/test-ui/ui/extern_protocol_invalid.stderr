@@ -1,0 +1,78 @@
+error: no rules expected keyword `trait`
+ --> ui/extern_protocol_invalid.rs
+  |
+  |     trait IsSafe {}
+  |     ^^^^^ no rules expected this token in macro call
+  |
+note: while trying to match keyword `unsafe`
+ --> $WORKSPACE/crates/objc2/src/macros/extern_protocol.rs
+  |
+  |         $v:vis unsafe trait $protocol:ident $(: $conforms_to:ident $(+ $conforms_to_rest:ident)*)? {
+  |                ^^^^^^
+
+error: #[super] is not supported in extern_protocol!
+ --> ui/extern_protocol_invalid.rs
+  |
+  | / extern_protocol!(
+  | |     #[super = objc2::runtime::NSObject]
+  | |     unsafe trait HasSuper {}
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_protocol_check_no_super` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: #[super] is not supported in extern_protocol!
+ --> ui/extern_protocol_invalid.rs
+  |
+  | / extern_protocol!(
+  | |     #[unsafe(super(objc2::runtime::NSObject))]
+  | |     unsafe trait HasUnsafeSuper {}
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_protocol_check_no_super` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: cannot specify the `name` attribute twice
+ --> ui/extern_protocol_invalid.rs
+  |
+  | / extern_protocol!(
+  | |     #[name = "A"]
+  | |     #[name = "B"]
+  | |     unsafe trait DuplicateName {}
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: #[ivars] is not supported in extern_protocol!
+ --> ui/extern_protocol_invalid.rs
+  |
+  | / extern_protocol!(
+  | |     #[ivars = i32]
+  | |     unsafe trait HasIvars {}
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_protocol_check_no_ivars` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: #[thread_kind = ...] is not supported in extern_protocol!. Add MainThreadOnly or AllocAnyThread bound instead
+ --> ui/extern_protocol_invalid.rs
+  |
+  | / extern_protocol!(
+  | |     #[thread_kind = MainThreadOnly]
+  | |     unsafe trait HasThreadKind {}
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_protocol_check_no_thread_kind` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: #[derive(...)] is not supported in extern_protocol!
+ --> ui/extern_protocol_invalid.rs
+  |
+  | / extern_protocol!(
+  | |     #[derive(Debug, PartialEq, Eq, Hash)]
+  | |     unsafe trait HasDerive {}
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_protocol_check_no_derives` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)

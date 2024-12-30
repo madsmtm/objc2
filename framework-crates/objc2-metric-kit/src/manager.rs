@@ -5,7 +5,6 @@ pub type MXLaunchTaskID = objc2_foundation::NSString;
 
 // extern_protocol!(
 //     pub unsafe trait OS_os_log: NSObjectProtocol {}
-//     unsafe impl ProtocolType for dyn OS_os_log {}
 // );
 
 objc2::extern_methods!(

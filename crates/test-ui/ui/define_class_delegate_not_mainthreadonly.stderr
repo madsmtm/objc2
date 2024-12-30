@@ -17,7 +17,6 @@ note: required by a bound in `NSApplicationDelegate`
   | |         #[optional]
   | |         #[method(applicationDidFinishLaunching:)]
 ... |
-  | |     unsafe impl ProtocolType for dyn NSApplicationDelegate {}
   | | );
   | |_^ required by this bound in `NSApplicationDelegate`
   = note: this error originates in the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)

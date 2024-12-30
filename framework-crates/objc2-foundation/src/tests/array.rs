@@ -165,11 +165,8 @@ fn test_generic_ownership_traits() {
 fn test_trait_retainable() {
     extern_protocol!(
         #[allow(clippy::missing_safety_doc)]
+        #[name = "NSObject"]
         unsafe trait TestProtocol {}
-
-        unsafe impl ProtocolType for dyn TestProtocol {
-            const NAME: &'static str = "NSObject";
-        }
     );
 
     unsafe impl TestProtocol for NSNumber {}

@@ -1,8 +1,8 @@
+use objc2::extern_protocol;
 use objc2::rc::Retained;
 use objc2::runtime::NSZone;
 use objc2::runtime::ProtocolObject;
 use objc2::Message;
-use objc2::{extern_protocol, ProtocolType};
 
 /// A helper type for implementing [`NSCopying`].
 ///
@@ -167,8 +167,6 @@ extern_protocol!(
         where
             Self: CopyingHelper;
     }
-
-    unsafe impl ProtocolType for dyn NSCopying {}
 );
 
 extern_protocol!(
@@ -237,6 +235,4 @@ extern_protocol!(
         where
             Self: MutableCopyingHelper;
     }
-
-    unsafe impl ProtocolType for dyn NSMutableCopying {}
 );

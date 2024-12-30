@@ -177,6 +177,7 @@ pub unsafe trait NSObjectProtocol {
     ///
     /// See [`isKindOfClass`][Self::isKindOfClass] for details.
     #[deprecated = "use `isKindOfClass` directly, or cast your objects with `AnyObject::downcast_ref`"]
+    // TODO: Use extern_protocol! once we get rid of this
     fn is_kind_of<T: ClassType>(&self) -> bool
     where
         Self: Sized + Message,
@@ -343,12 +344,20 @@ pub unsafe trait NSObjectProtocol {
     // retain, release and autorelease below to this protocol.
 }
 
-crate::__inner_extern_protocol!(
-    ()
-    (NSObjectProtocol)
-    (dyn NSObjectProtocol)
-    ("NSObject")
-);
+// SAFETY: Same as in extern_protocol!
+unsafe impl<T> NSObjectProtocol for ProtocolObject<T> where T: ?Sized + NSObjectProtocol {}
+// SAFETY: Same as in extern_protocol!
+unsafe impl ProtocolType for dyn NSObjectProtocol {
+    const NAME: &'static str = "NSObject";
+    const __INNER: () = ();
+}
+// SAFETY: Same as in extern_protocol!
+unsafe impl<T> ImplementedBy<T> for dyn NSObjectProtocol
+where
+    T: ?Sized + Message + NSObjectProtocol,
+{
+    const __INNER: () = ();
+}
 
 // SAFETY: Anything that implements `NSObjectProtocol` and is `Send` is valid
 // to convert to `ProtocolObject<dyn NSObjectProtocol + Send>`.

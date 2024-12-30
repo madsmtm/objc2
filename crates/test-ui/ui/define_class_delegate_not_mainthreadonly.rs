@@ -1,9 +1,7 @@
 //! Test that implementing `NSApplicationDelegate` and similar requires
 //! a `MainThreadOnly` class.
 use objc2::rc::Retained;
-use objc2::{
-    define_class, extern_methods, extern_protocol, AllocAnyThread, MainThreadOnly, ProtocolType,
-};
+use objc2::{define_class, extern_methods, extern_protocol, AllocAnyThread, MainThreadOnly};
 use objc2_foundation::{MainThreadMarker, NSNotification, NSObject, NSObjectProtocol};
 
 // Use fake `NSApplicationDelegate` so that this works on iOS too.
@@ -15,8 +13,6 @@ extern_protocol!(
 
         // snip
     }
-
-    unsafe impl ProtocolType for dyn NSApplicationDelegate {}
 );
 
 define_class!(

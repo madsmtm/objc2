@@ -9,8 +9,6 @@
 
 extern crate objc2 as new_objc2;
 
-use new_objc2::ProtocolType;
-
 mod core {}
 mod std {}
 mod libc {}
@@ -134,8 +132,6 @@ new_objc2::extern_protocol!(
         #[method(c)]
         fn c(&self);
     }
-
-    unsafe impl ProtocolType for dyn CustomProtocol {}
 );
 
 #[test]

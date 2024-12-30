@@ -20,6 +20,7 @@ fn c(s: &str) -> CString {
 }
 
 extern_protocol!(
+    #[name = "MyTestProtocol"]
     unsafe trait MyTestProtocol: NSObjectProtocol {
         #[method(a)]
         fn a(&self) -> c_int;
@@ -53,33 +54,24 @@ extern_protocol!(
         #[method_id(h)]
         fn h() -> Retained<NSNumber>;
     }
-
-    unsafe impl ProtocolType for dyn MyTestProtocol {
-        const NAME: &'static str = "MyTestProtocol";
-    }
 );
 
 extern_protocol!(
+    #[name = "MyTestProtocol2"]
     unsafe trait MyTestProtocol2 {}
-
-    unsafe impl ProtocolType for dyn MyTestProtocol2 {
-        const NAME: &'static str = "MyTestProtocol2";
-    }
 );
 
 extern_protocol!(
+    #[name = "MyTestProtocol3"]
     unsafe trait MyTestProtocol3: MyTestProtocol + NSObjectProtocol {}
-
-    unsafe impl ProtocolType for dyn MyTestProtocol3 {}
 );
 
 extern_protocol!(
+    #[name = "MyTestProtocol4"]
     unsafe trait MyTestProtocol4:
         MyTestProtocol + MyTestProtocol3 + MyTestProtocol2 + NSObjectProtocol
     {
     }
-
-    unsafe impl ProtocolType for dyn MyTestProtocol4 {}
 );
 
 extern_class!(

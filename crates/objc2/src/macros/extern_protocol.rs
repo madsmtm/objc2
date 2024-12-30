@@ -89,6 +89,15 @@
 ///
 /// extern_protocol!(
 ///     /// This comment will appear on the trait as expected.
+///     //
+///     // We could have named the trait something else on the Rust-side, and
+///     // then used this to keep it correct from Objective-C.
+///     // #[name = "NSItemProviderWriting"]
+///     //
+///     // SAFETY:
+///     // - The name is correct.
+///     // - The protocol does inherit from `NSObjectProtocol`.
+///     // - The methods are correctly specified.
 ///     pub unsafe trait NSItemProviderWriting: NSObjectProtocol {
 ///         //                                  ^^^^^^^^^^^^^^^^
 ///         // This protocol inherits from the `NSObject` protocol
@@ -127,19 +136,6 @@
 ///             type_identifier: &NSString,
 ///         ) -> NSItemProviderRepresentationVisibility;
 ///     }
-///
-///     // SAFETY:
-///     // - The name is correct
-///     // - The protocol does inherit `NSObject`
-///     // - The methods are correctly specified
-///     unsafe impl ProtocolType for dyn NSItemProviderWriting {
-///         //                       ^^^ - Remember to add this `dyn`.
-///
-///         // We could have named the trait something else on the Rust-side,
-///         // and then used this to keep it correct from Objective-C.
-///         //
-///         // const NAME: &'static str = "NSItemProviderWriting";
-///     }
 /// );
 ///
 /// // Types can now implement `NSItemProviderWriting`, and use the methods
@@ -151,32 +147,23 @@
 #[macro_export]
 macro_rules! extern_protocol {
     (
-        $(#[$m:meta])*
-        $v:vis unsafe trait $name:ident $(: $conforms_to:ident $(+ $conforms_to_rest:ident)*)? {
+        // The special #[name = $name:literal] attribute is supported here.
+        $(#[$($attrs:tt)*])*
+        $v:vis unsafe trait $protocol:ident $(: $conforms_to:ident $(+ $conforms_to_rest:ident)*)? {
             $($methods:tt)*
         }
-
-        $(#[$impl_m:meta])*
-        unsafe impl ProtocolType for dyn $for:ident {
-            $(const NAME: &'static str = $name_const:expr;)?
-        }
     ) => {
-        $(#[$m])*
-        $v unsafe trait $name $(: $conforms_to $(+ $conforms_to_rest)*)? {
-            $crate::__extern_protocol_rewrite_methods! {
-                $($methods)*
-            }
-        }
+        $crate::__extract_struct_attributes! {
+            ($(#[$($attrs)*])*)
 
-        $crate::__inner_extern_protocol!(
-            ($(#[$impl_m])*)
-            ($name)
-            (dyn $for)
-            ($crate::__fallback_if_not_set! {
-                ($($name_const)?)
-                ($crate::__macro_helpers::stringify!($name))
+            ($crate::__inner_extern_protocol)
+            ($protocol)
+            ($v unsafe trait $protocol $(: $conforms_to $(+ $conforms_to_rest)*)? {
+                $crate::__extern_protocol_rewrite_methods! {
+                    $($methods)*
+                }
             })
-        );
+        }
     };
 }
 
@@ -184,37 +171,101 @@ macro_rules! extern_protocol {
 #[macro_export]
 macro_rules! __inner_extern_protocol {
     (
-        ($(#[$impl_m:meta])*)
-        ($name:ident)
-        (dyn $for:ident)
-        ($name_str:expr)
+        ($protocol:ident)
+        ($protocol_definition:item)
+
+        ($($superclasses:tt)*)
+        ($($thread_kind:tt)*)
+        ($($name:tt)*)
+        ($($ivars:tt)*)
+        ($($derives:tt)*)
+        ($($attr_protocol:tt)*)
+        ($($attr_impl:tt)*)
     ) => {
-        $(#[$impl_m])*
-        unsafe impl<T> $name for $crate::runtime::ProtocolObject<T>
+        $($attr_protocol)*
+        $protocol_definition
+
+        $($attr_impl)*
+        unsafe impl<T> $protocol for $crate::runtime::ProtocolObject<T>
         where
-            T: ?$crate::__macro_helpers::Sized + $name
+            T: ?$crate::__macro_helpers::Sized + $protocol
         {}
 
         // SAFETY: The specified name is ensured by caller to be a protocol,
         // and is correctly defined.
-        $(#[$impl_m])*
-        unsafe impl ProtocolType for dyn $for {
-            const NAME: &'static $crate::__macro_helpers::str = $name_str;
+        $($attr_impl)*
+        unsafe impl $crate::ProtocolType for dyn $protocol {
+            const NAME: &'static $crate::__macro_helpers::str = $crate::__fallback_if_not_set! {
+                ($($name)*)
+                ($crate::__macro_helpers::stringify!($protocol))
+            };
             const __INNER: () = ();
         }
 
         // SAFETY: Anything that implements the protocol is valid to convert
         // to `ProtocolObject<dyn [PROTO]>`.
-        $(#[$impl_m])*
-        unsafe impl<T> $crate::runtime::ImplementedBy<T> for dyn $for
+        $($attr_impl)*
+        unsafe impl<T> $crate::runtime::ImplementedBy<T> for dyn $protocol
         where
-            T: ?$crate::__macro_helpers::Sized + $crate::Message + $name
+            T: ?$crate::__macro_helpers::Sized + $crate::Message + $protocol
         {
             const __INNER: () = ();
         }
 
         // TODO: Should we also implement `ImplementedBy` for `Send + Sync`
         // types, as is done for `NSObjectProtocol`?
+
+        $($attr_impl)*
+        $crate::__extern_protocol_check_no_super!($($superclasses)*);
+
+        $($attr_impl)*
+        $crate::__extern_protocol_check_no_thread_kind!($($thread_kind)*);
+
+        $($attr_impl)*
+        $crate::__extern_protocol_check_no_ivars!($($ivars)*);
+
+        $($attr_impl)*
+        $crate::__extern_protocol_check_no_derives!($($derives)*);
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_protocol_check_no_super {
+    () => {};
+    ($($ivars:tt)*) => {
+        $crate::__macro_helpers::compile_error!("#[super] is not supported in extern_protocol!");
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_protocol_check_no_thread_kind {
+    () => {};
+    ($($ivars:tt)*) => {
+        $crate::__macro_helpers::compile_error!(
+            "#[thread_kind = ...] is not supported in extern_protocol!. Add MainThreadOnly or AllocAnyThread bound instead"
+        );
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_protocol_check_no_ivars {
+    () => {};
+    ($($ivars:tt)*) => {
+        $crate::__macro_helpers::compile_error!("#[ivars] is not supported in extern_protocol!");
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_protocol_check_no_derives {
+    () => {};
+    ($($ivars:tt)*) => {
+        $crate::__macro_helpers::compile_error!(
+            "#[derive(...)] is not supported in extern_protocol!"
+        );
     };
 }
 
@@ -424,4 +475,21 @@ macro_rules! __extern_protocol_method_out {
             }
         }
     };
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{extern_protocol, ProtocolType};
+
+    #[test]
+    fn explicit_name() {
+        extern_protocol!(
+            #[name = "NSObject"]
+            unsafe trait Foo {}
+        );
+
+        let proto = <dyn Foo>::protocol().unwrap();
+        assert_eq!(proto.name(), c"NSObject");
+        assert_eq!(<dyn Foo>::NAME, "NSObject");
+    }
 }

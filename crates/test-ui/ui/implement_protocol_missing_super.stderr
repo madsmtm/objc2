@@ -23,7 +23,6 @@ note: required by a bound in `NSURLSessionDelegate`
   | |                      -------------------- required by a bound in this trait
   | |         #[cfg(feature = "NSError")]
 ... |
-  | |     unsafe impl ProtocolType for dyn NSURLSessionDelegate {}
   | | );
   | |_^ required by this bound in `NSURLSessionDelegate`
   = note: this error originates in the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)

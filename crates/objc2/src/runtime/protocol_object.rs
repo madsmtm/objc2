@@ -211,8 +211,6 @@ mod tests {
             #[method(foo)]
             fn foo_instance(&self);
         }
-
-        unsafe impl ProtocolType for dyn Foo {}
     );
 
     extern_protocol!(
@@ -223,8 +221,6 @@ mod tests {
             #[method(bar)]
             fn bar_instance(&self);
         }
-
-        unsafe impl ProtocolType for dyn Bar {}
     );
 
     extern_protocol!(
@@ -235,8 +231,6 @@ mod tests {
             #[method(foobar)]
             fn foobar_instance(&self);
         }
-
-        unsafe impl ProtocolType for dyn FooBar {}
     );
 
     extern_protocol!(
@@ -247,8 +241,6 @@ mod tests {
             #[method(foofoobar)]
             fn foofoobar_instance(&self);
         }
-
-        unsafe impl ProtocolType for dyn FooFooBar {}
     );
 
     define_class!(
@@ -379,9 +371,6 @@ mod tests {
     extern_protocol!(
         #[cfg(debug_assertions)]
         unsafe trait CfgTest {}
-
-        #[cfg(debug_assertions)]
-        unsafe impl ProtocolType for dyn CfgTest {}
     );
 
     #[test]

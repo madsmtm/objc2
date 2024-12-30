@@ -13,8 +13,6 @@ extern_protocol!(
         #[method(aMethod)]
         fn aMethod(&self);
     }
-
-    unsafe impl ProtocolType for dyn MyProtocol {}
 );
 
 #[no_mangle]
