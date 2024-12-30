@@ -227,22 +227,24 @@ _use_in_loop:
 	push	r14
 	push	rbx
 	push	rax
-	mov	rbx, rdi
-	lea	r14, [rip + SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)]
-	lea	r15, [rip + l_anon.[ID].5]
-	jmp	LBB7_2
+	lea	rbx, [rip + SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)]
+	lea	r14, [rip + l_anon.[ID].5]
 	.p2align	4, 0x90
-LBB7_4:
-	dec	rbx
-	je	LBB7_5
 LBB7_2:
 	mov	rax, qword ptr [rip + SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)]
 	test	rax, rax
-	jne	LBB7_4
-	mov	rdi, r14
-	mov	rsi, r15
+	je	LBB7_3
+	dec	rdi
+	jne	LBB7_2
+	jmp	LBB7_5
+LBB7_3:
+	mov	r15, rdi
+	mov	rdi, rbx
+	mov	rsi, r14
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	jmp	LBB7_4
+	mov	rdi, r15
+	dec	rdi
+	jne	LBB7_2
 LBB7_5:
 	add	rsp, 8
 	pop	rbx

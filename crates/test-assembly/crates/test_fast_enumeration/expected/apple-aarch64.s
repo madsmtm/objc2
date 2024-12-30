@@ -22,9 +22,10 @@ _iter_create:
 	.globl	_iter_once
 	.p2align	2
 _iter_once:
-	stp	x20, x19, [sp, #-32]!
-	stp	x29, x30, [sp, #16]
-	add	x29, sp, #16
+	sub	sp, sp, #48
+	stp	x20, x19, [sp, #16]
+	stp	x29, x30, [sp, #32]
+	add	x29, sp, #32
 	mov	x19, x0
 	ldp	x8, x9, [x0, #200]
 	cmp	x8, x9
@@ -50,19 +51,20 @@ LBB1_3:
 	str	x10, [x19, #200]
 	ldr	x0, [x9, x8, lsl #3]
 LBB1_4:
-	ldp	x29, x30, [sp, #16]
-	ldp	x20, x19, [sp], #32
+	ldp	x29, x30, [sp, #32]
+	ldp	x20, x19, [sp, #16]
+	add	sp, sp, #48
 	ret
 LBB1_5:
 Lloh2:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh3:
 	add	x1, x1, l_anon.[ID].0@PAGEOFF
-	mov	x20, x0
+	str	x0, [sp, #8]
 	mov	x0, x8
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	x1, x0
-	mov	x0, x20
+	ldr	x0, [sp, #8]
 	b	LBB1_2
 	.loh AdrpLdrGot	Lloh0, Lloh1
 	.loh AdrpAdd	Lloh2, Lloh3

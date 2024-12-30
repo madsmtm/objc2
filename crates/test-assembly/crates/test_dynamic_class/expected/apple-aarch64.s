@@ -318,32 +318,33 @@ _use_in_loop:
 	stp	x20, x19, [sp, #32]
 	stp	x29, x30, [sp, #48]
 	add	x29, sp, #48
-	mov	x19, x0
-	adrp	x23, SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)@PAGE
+	adrp	x22, SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)@PAGE
 Lloh82:
-	adrp	x20, SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)@PAGE
+	adrp	x19, SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)@PAGE
 Lloh83:
-	add	x20, x20, SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)@PAGEOFF
+	add	x19, x19, SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)@PAGEOFF
 Lloh84:
-	adrp	x21, l_anon.[ID].10@PAGE
+	adrp	x20, l_anon.[ID].10@PAGE
 Lloh85:
-	add	x21, x21, l_anon.[ID].10@PAGEOFF
+	add	x20, x20, l_anon.[ID].10@PAGEOFF
 Lloh86:
-	adrp	x22, l_anon.[ID].11@PAGE
+	adrp	x21, l_anon.[ID].11@PAGE
 Lloh87:
-	add	x22, x22, l_anon.[ID].11@PAGEOFF
-	b	LBB6_3
+	add	x21, x21, l_anon.[ID].11@PAGEOFF
 LBB6_2:
-	subs	x19, x19, #1
-	b.eq	LBB6_5
-LBB6_3:
-	ldr	x8, [x23, SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)@PAGEOFF]
-	cbnz	x8, LBB6_2
-	mov	x0, x20
-	mov	x1, x21
-	mov	x2, x22
+	ldr	x8, [x22, SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)@PAGEOFF]
+	cbz	x8, LBB6_4
+	subs	x0, x0, #1
+	b.ne	LBB6_2
+	b	LBB6_5
+LBB6_4:
+	mov	x23, x0
+	mov	x0, x19
+	mov	x1, x20
+	mov	x2, x21
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	b	LBB6_2
+	subs	x0, x23, #1
+	b.ne	LBB6_2
 LBB6_5:
 	ldp	x29, x30, [sp, #48]
 	ldp	x20, x19, [sp, #32]

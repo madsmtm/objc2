@@ -60,7 +60,7 @@ pub struct Allocated<T: ?Sized> {
 // We do want to implement `Receiver` though, to allow the user to type
 // `self: Allocated<Self>`.
 #[cfg(feature = "unstable-arbitrary-self-types")]
-impl<T> core::ops::Receiver for Allocated<T> {
+impl<T: ?Sized> core::ops::Receiver for Allocated<T> {
     type Target = T;
 }
 

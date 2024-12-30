@@ -6,7 +6,6 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -39,7 +38,6 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -72,7 +70,6 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -105,7 +102,6 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `MessageReceiver` is not implemented for `&mut CustomObject`
   |

@@ -6,7 +6,6 @@ error: `#[optional]` is only supported in `extern_protocol!`
   | |         #[method(a)]
   | |         /// Doc comment
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -20,7 +19,6 @@ error: `#[optional]` is only supported in `extern_protocol!`
   | |         /// Doc comment
   | |         #[optional]
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -34,7 +32,6 @@ error: `#[optional]` is only supported in `extern_protocol!`
   | |     #[name = "CustomObject1"]
   | |     struct CustomObject1;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -48,7 +45,6 @@ error: `#[optional]` is only supported in `extern_protocol!`
   | |     #[name = "CustomObject2"]
   | |     struct CustomObject2;
 ... |
-  | |     }
   | | );
   | |_^
   |

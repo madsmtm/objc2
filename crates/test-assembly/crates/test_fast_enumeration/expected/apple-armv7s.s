@@ -120,25 +120,25 @@ _iter:
 	str	r1, [sp, #80]
 	str	r1, [sp, #84]
 	str	r1, [sp, #108]
-	movw	r6, :lower16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
-	movt	r6, :upper16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
+	movw	r10, :lower16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
+	movt	r10, :upper16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
 LPC3_0:
-	ldr	r6, [pc, r6]
+	ldr	r10, [pc, r10]
 	movw	r8, :lower16:(l_anon.[ID].0-(LPC3_1+8))
 	movt	r8, :upper16:(l_anon.[ID].0-(LPC3_1+8))
 LPC3_1:
 	add	r8, pc, r8
 	str	r1, [sp, #112]
-	mov	r10, #16
+	mov	r6, #16
 	mov	r2, #0
 	cmp	r2, r1
 	blo	LBB3_3
 LBB3_1:
-	ldr	r1, [r6]
+	ldr	r1, [r10]
 	cmp	r1, #0
 	beq	LBB3_5
 LBB3_2:
-	str	r10, [sp]
+	str	r6, [sp]
 	mov	r2, r5
 	mov	r3, r4
 	bl	_objc_msgSend
@@ -162,7 +162,7 @@ LBB3_3:
 	b	LBB3_3
 LBB3_5:
 	mov	r11, r0
-	mov	r0, r6
+	mov	r0, r10
 	mov	r1, r8
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0
@@ -200,15 +200,15 @@ _iter_noop:
 	str	r1, [sp, #84]
 	str	r1, [sp, #108]
 	str	r1, [sp, #112]
-	movw	r6, :lower16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
-	movt	r6, :upper16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
+	movw	r10, :lower16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
+	movt	r10, :upper16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
 LPC4_0:
-	ldr	r6, [pc, r6]
+	ldr	r10, [pc, r10]
 	movw	r8, :lower16:(l_anon.[ID].0-(LPC4_1+8))
 	movt	r8, :upper16:(l_anon.[ID].0-(LPC4_1+8))
 LPC4_1:
 	add	r8, pc, r8
-	mov	r10, #16
+	mov	r6, #16
 	mov	r0, #0
 	mov	r2, #0
 	b	LBB4_2
@@ -223,11 +223,11 @@ LBB4_2:
 	cmp	r2, r0
 	blo	LBB4_1
 	ldr	r0, [sp, #8]
-	ldr	r1, [r6]
+	ldr	r1, [r10]
 	cmp	r1, #0
 	beq	LBB4_6
 LBB4_4:
-	str	r10, [sp]
+	str	r6, [sp]
 	mov	r2, r5
 	mov	r3, r4
 	bl	_objc_msgSend
@@ -239,7 +239,7 @@ LBB4_4:
 	b	LBB4_1
 LBB4_6:
 	mov	r11, r0
-	mov	r0, r6
+	mov	r0, r10
 	mov	r1, r8
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0

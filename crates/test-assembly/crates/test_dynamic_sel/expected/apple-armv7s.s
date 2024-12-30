@@ -279,27 +279,29 @@ _use_in_loop:
 LBB7_1:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
-	mov	r4, r0
-	movw	r5, :lower16:(SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)-(LPC7_0+8))
-	movt	r5, :upper16:(SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)-(LPC7_0+8))
+	movw	r4, :lower16:(SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)-(LPC7_0+8))
+	movt	r4, :upper16:(SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)-(LPC7_0+8))
 LPC7_0:
-	add	r5, pc, r5
-	movw	r6, :lower16:(l_anon.[ID].5-(LPC7_1+8))
-	movt	r6, :upper16:(l_anon.[ID].5-(LPC7_1+8))
+	add	r4, pc, r4
+	movw	r5, :lower16:(l_anon.[ID].5-(LPC7_1+8))
+	movt	r5, :upper16:(l_anon.[ID].5-(LPC7_1+8))
 LPC7_1:
-	add	r6, pc, r6
-	b	LBB7_3
+	add	r5, pc, r5
 LBB7_2:
-	subs	r4, r4, #1
-	beq	LBB7_5
-LBB7_3:
-	ldr	r0, [r5]
-	cmp	r0, #0
+	ldr	r1, [r4]
+	cmp	r1, #0
+	beq	LBB7_4
+	subs	r0, r0, #1
 	bne	LBB7_2
-	mov	r0, r5
-	mov	r1, r6
+	b	LBB7_5
+LBB7_4:
+	mov	r6, r0
+	mov	r0, r4
+	mov	r1, r5
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	b	LBB7_2
+	mov	r0, r6
+	subs	r0, r0, #1
+	bne	LBB7_2
 LBB7_5:
 	pop	{r4, r5, r6, r7, lr}
 	bx	lr

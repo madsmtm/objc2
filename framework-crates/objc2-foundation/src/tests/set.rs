@@ -172,6 +172,7 @@ fn test_copy() {
 }
 
 #[test]
+#[allow(clippy::literal_string_with_formatting_args)] // Intentional "{}"
 fn test_debug() {
     let set = NSSet::<NSObject>::new();
     assert_eq!(format!("{set:?}"), "{}");
@@ -179,7 +180,7 @@ fn test_debug() {
     let set = NSSet::from_slice(&[ns_string!("one"), ns_string!("two")]);
     assert!(matches!(
         &*format!("{set:?}"),
-        "{\"one\", \"two\"}" | "{\"two\", \"one\"}"
+        r#"{"one", "two"}"# | r#"{"two", "one"}"#,
     ));
 }
 

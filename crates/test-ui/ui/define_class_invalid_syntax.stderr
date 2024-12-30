@@ -6,7 +6,6 @@ error: must specify the desired selector using `#[method(...)]` or `#[method_id(
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -20,7 +19,6 @@ error: cannot specify the `method`/`method_id` attribute twice
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -34,7 +32,6 @@ error: cannot specify the `method`/`method_id` attribute twice
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -74,7 +71,6 @@ error: no rules expected `(`
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^ no rules expected this token in macro call
   |
@@ -89,7 +85,6 @@ error: no rules expected `(`
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^ no rules expected this token in macro call
   |
@@ -143,7 +138,6 @@ error: `#[method_id(alloc)]` is not supported. Use `#[method(alloc)]` and do the
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -157,7 +151,6 @@ error: `#[method_id(retain)]` is not supported. Use `#[method(retain)]` and do t
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -171,7 +164,6 @@ error: `#[method_id(release)]` is not supported. Use `#[method(release)]` and do
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -185,7 +177,6 @@ error: `#[method_id(autorelease)]` is not supported. Use `#[method(autorelease)]
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -199,7 +190,6 @@ error: `#[method_id(dealloc)]` is not supported. Implement `Drop` for the type i
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -213,7 +203,6 @@ error: `#[method(dealloc)]` is not supported. Implement `Drop` for the type inst
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -247,7 +236,6 @@ error: must specify the desired selector using `#[method(...)]` or `#[method_id(
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -261,7 +249,6 @@ error: cannot specify the `method`/`method_id` attribute twice
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -275,7 +262,6 @@ error: cannot specify the `method`/`method_id` attribute twice
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -289,7 +275,6 @@ error: `#[method_id(...)]` must have a return type
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^
   |
@@ -315,7 +300,6 @@ error: no rules expected `)`
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^ no rules expected this token in macro call
   |
@@ -529,7 +513,6 @@ error[E0599]: no function or associated item named `test_pattern` found for stru
   | |         fn test_pattern((a, b): (u32, i32)) {
   | |            ^^^^^^^^^^^^ function or associated item not found in `InvalidMethodDeclarations`
 ... |
-  | |     }
   | | );
   | |_- function or associated item `test_pattern` not found for this struct
 
@@ -544,7 +527,6 @@ error[E0599]: no function or associated item named `test_self` found for struct 
   | |         fn test_self(self) {
   | |            ^^^^^^^^^ function or associated item not found in `InvalidMethodDeclarations`
 ... |
-  | |     }
   | | );
   | |_- function or associated item `test_self` not found for this struct
 
@@ -556,7 +538,6 @@ error[E0277]: the trait bound `RetainSemantics<2>: MessageReceiveRetained<&AnyCl
   | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
-  | |     }
   | | );
   | |_^ the trait `MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `RetainSemantics<2>`
   |

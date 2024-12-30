@@ -199,24 +199,26 @@ _use_in_loop:
 	push	r14
 	push	r12
 	push	rbx
-	mov	rbx, rdi
-	lea	r14, [rip + SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)]
-	lea	r15, [rip + l_anon.[ID].10]
-	lea	r12, [rip + l_anon.[ID].11]
-	jmp	LBB6_2
+	lea	rbx, [rip + SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)]
+	lea	r14, [rip + l_anon.[ID].10]
+	lea	r15, [rip + l_anon.[ID].11]
 	.p2align	4, 0x90
-LBB6_4:
-	dec	rbx
-	je	LBB6_5
 LBB6_2:
 	mov	rax, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)]
 	test	rax, rax
-	jne	LBB6_4
-	mov	rdi, r14
-	mov	rsi, r15
-	mov	rdx, r12
+	je	LBB6_3
+	dec	rdi
+	jne	LBB6_2
+	jmp	LBB6_5
+LBB6_3:
+	mov	r12, rdi
+	mov	rdi, rbx
+	mov	rsi, r14
+	mov	rdx, r15
 	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	jmp	LBB6_4
+	mov	rdi, r12
+	dec	rdi
+	jne	LBB6_2
 LBB6_5:
 	pop	rbx
 	pop	r12

@@ -276,7 +276,7 @@ mod tests {
             "GlobalBlock {{
     isa: _NSConcreteGlobalBlock,
     flags: {DEBUG_BLOCKFLAGS},
-    reserved: core::mem::maybe_uninit::MaybeUninit<i32>,
+    reserved: MaybeUninit<i32>,
     invoke: Some(
         {invoke:#?},
     ),

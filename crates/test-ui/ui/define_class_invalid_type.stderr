@@ -6,7 +6,6 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`
   |
@@ -41,7 +40,6 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `Encode` is not implemented for `Vec<()>`
   |
@@ -76,7 +74,6 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `Encode` is not implemented for `Box<u32>`
   |
@@ -115,7 +112,6 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `Encode` is not implemented for `CustomObject`
   |
@@ -154,7 +150,6 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`
   |
@@ -180,7 +175,6 @@ error[E0277]: the trait bound `Retained<CustomObject>: Encode` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -217,7 +211,6 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `Encode` is not implemented for `Vec<()>`
   |
@@ -243,7 +236,6 @@ error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -280,7 +272,6 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `Encode` is not implemented for `Box<u32>`
   |
@@ -306,7 +297,6 @@ error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -343,7 +333,6 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `Encode` is not implemented for `CustomObject`
   |
@@ -369,7 +358,6 @@ error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -406,7 +394,6 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`
   |
@@ -432,7 +419,6 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `Encode` is not implemented for `Vec<()>`
   |
@@ -458,7 +444,6 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `Encode` is not implemented for `Box<u32>`
   |
@@ -484,7 +469,6 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `Encode` is not implemented for `CustomObject`
   |

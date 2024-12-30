@@ -5,8 +5,7 @@ error: cannot specify the `method`/`method_id` attribute twice
   | |     unsafe impl MyObject {
   | |         #[method(a)]
   | |         #[method(a)]
-  | |         fn a();
-  | |     }
+... |
   | | );
   | |_^
   |
@@ -19,8 +18,7 @@ error: cannot specify the `method`/`method_id` attribute twice
   | |     unsafe impl MyObject {
   | |         #[method_id(b)]
   | |         #[method_id(b)]
-  | |         fn b();
-  | |     }
+... |
   | | );
   | |_^
   |
@@ -33,8 +31,7 @@ error: cannot specify the `method`/`method_id` attribute twice
   | |     unsafe impl MyObject {
   | |         #[method(c)]
   | |         #[method_id(c)]
-  | |         fn c();
-  | |     }
+... |
   | | );
   | |_^
   |
@@ -47,8 +44,7 @@ error: cannot specify the `method`/`method_id` attribute twice
   | |     unsafe impl MyObject {
   | |         #[method_id(d)]
   | |         #[method(d)]
-  | |         fn d();
-  | |     }
+... |
   | | );
   | |_^
   |

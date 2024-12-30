@@ -6,7 +6,6 @@ error[E0271]: type mismatch resolving `<Retained<NSObject> as MaybeUnwrap>::Inpu
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ expected `Option<Retained<CustomObject>>`, found `Option<Retained<NSObject>>`
   |
@@ -23,7 +22,6 @@ error[E0277]: the trait bound `i32: MaybeOptionRetained` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `MaybeOptionRetained` is not implemented for `i32`
   |

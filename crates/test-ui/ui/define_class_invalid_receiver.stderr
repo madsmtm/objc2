@@ -6,7 +6,6 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -38,7 +37,6 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -70,7 +68,6 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -102,7 +99,6 @@ error[E0271]: type mismatch resolving `<extern "C-unwind" fn(&AnyClass, Sel) as 
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -127,7 +123,6 @@ error[E0271]: type mismatch resolving `<extern "C-unwind" fn(&NSObject, Sel) as 
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -152,7 +147,6 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -184,7 +178,6 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -216,7 +209,6 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | | ^
   | | |
@@ -248,7 +240,6 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `MessageReceiver` is not implemented for `Box<CustomObject>`
   |
@@ -269,7 +260,6 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `MessageReceiver` is not implemented for `Retained<CustomObject>`
   |
@@ -290,7 +280,6 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `MessageReceiver` is not implemented for `CustomObject`
   |
@@ -311,7 +300,6 @@ error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not 
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `MessageReceiver` is not implemented for `Allocated<CustomObject>`
   |
@@ -332,7 +320,6 @@ error[E0277]: the trait bound `RetainSemantics<3>: MessageReceiveRetained<&Custo
   | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
-  | |     }
   | | );
   | |_^ the trait `MessageReceiveRetained<&CustomObject, Retained<CustomObject>>` is not implemented for `RetainSemantics<3>`
   |

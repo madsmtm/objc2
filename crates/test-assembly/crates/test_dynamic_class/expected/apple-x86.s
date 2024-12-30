@@ -289,25 +289,28 @@ L6$pb:
 	mov	edi, dword ptr [ebp + 8]
 	test	edi, edi
 	je	LBB6_5
+	lea	ecx, [esi + l_anon.[ID].11-L6$pb]
+	lea	edx, [esi + l_anon.[ID].10-L6$pb]
 	lea	ebx, [esi + SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-L6$pb]
-	jmp	LBB6_2
 	.p2align	4, 0x90
-LBB6_4:
-	dec	edi
-	je	LBB6_5
 LBB6_2:
 	mov	eax, dword ptr [esi + SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-L6$pb]
 	test	eax, eax
-	jne	LBB6_4
+	je	LBB6_3
+	dec	edi
+	jne	LBB6_2
+	jmp	LBB6_5
+LBB6_3:
 	sub	esp, 4
-	lea	eax, [esi + l_anon.[ID].11-L6$pb]
-	push	eax
-	lea	eax, [esi + l_anon.[ID].10-L6$pb]
-	push	eax
+	push	ecx
+	push	edx
 	push	ebx
 	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	lea	edx, [esi + l_anon.[ID].10-L6$pb]
+	lea	ecx, [esi + l_anon.[ID].11-L6$pb]
 	add	esp, 16
-	jmp	LBB6_4
+	dec	edi
+	jne	LBB6_2
 LBB6_5:
 	add	esp, 12
 	pop	esi

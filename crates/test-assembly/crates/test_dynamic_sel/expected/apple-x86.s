@@ -316,23 +316,25 @@ L7$pb:
 	mov	edi, dword ptr [ebp + 8]
 	test	edi, edi
 	je	LBB7_5
+	lea	ecx, [esi + l_anon.[ID].5-L7$pb]
 	lea	ebx, [esi + SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)-L7$pb]
-	jmp	LBB7_2
 	.p2align	4, 0x90
-LBB7_4:
-	dec	edi
-	je	LBB7_5
 LBB7_2:
 	mov	eax, dword ptr [esi + SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)-L7$pb]
 	test	eax, eax
-	jne	LBB7_4
+	je	LBB7_3
+	dec	edi
+	jne	LBB7_2
+	jmp	LBB7_5
+LBB7_3:
 	sub	esp, 8
-	lea	eax, [esi + l_anon.[ID].5-L7$pb]
-	push	eax
+	push	ecx
 	push	ebx
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	lea	ecx, [esi + l_anon.[ID].5-L7$pb]
 	add	esp, 16
-	jmp	LBB7_4
+	dec	edi
+	jne	LBB7_2
 LBB7_5:
 	add	esp, 12
 	pop	esi

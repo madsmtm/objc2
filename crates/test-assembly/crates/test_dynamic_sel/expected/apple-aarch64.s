@@ -318,27 +318,28 @@ _use_in_loop:
 	stp	x20, x19, [sp, #16]
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
-	mov	x19, x0
-	adrp	x22, SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)@PAGE
+	adrp	x21, SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)@PAGE
 Lloh72:
-	adrp	x20, SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)@PAGE
+	adrp	x19, SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)@PAGE
 Lloh73:
-	add	x20, x20, SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)@PAGEOFF
+	add	x19, x19, SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)@PAGEOFF
 Lloh74:
-	adrp	x21, l_anon.[ID].5@PAGE
+	adrp	x20, l_anon.[ID].5@PAGE
 Lloh75:
-	add	x21, x21, l_anon.[ID].5@PAGEOFF
-	b	LBB7_3
+	add	x20, x20, l_anon.[ID].5@PAGEOFF
 LBB7_2:
-	subs	x19, x19, #1
-	b.eq	LBB7_5
-LBB7_3:
-	ldr	x8, [x22, SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)@PAGEOFF]
-	cbnz	x8, LBB7_2
-	mov	x0, x20
-	mov	x1, x21
+	ldr	x8, [x21, SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)@PAGEOFF]
+	cbz	x8, LBB7_4
+	subs	x0, x0, #1
+	b.ne	LBB7_2
+	b	LBB7_5
+LBB7_4:
+	mov	x22, x0
+	mov	x0, x19
+	mov	x1, x20
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	b	LBB7_2
+	subs	x0, x22, #1
+	b.ne	LBB7_2
 LBB7_5:
 	ldp	x29, x30, [sp, #32]
 	ldp	x20, x19, [sp, #16]

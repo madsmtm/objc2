@@ -276,32 +276,34 @@ LBB6_1:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
 	push	{r8}
-	mov	r4, r0
-	movw	r5, :lower16:(SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-(LPC6_0+8))
-	movt	r5, :upper16:(SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-(LPC6_0+8))
+	movw	r4, :lower16:(SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-(LPC6_0+8))
+	movt	r4, :upper16:(SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-(LPC6_0+8))
 LPC6_0:
-	add	r5, pc, r5
-	movw	r8, :lower16:(l_anon.[ID].10-(LPC6_1+8))
-	movt	r8, :upper16:(l_anon.[ID].10-(LPC6_1+8))
+	add	r4, pc, r4
+	movw	r5, :lower16:(l_anon.[ID].10-(LPC6_1+8))
+	movt	r5, :upper16:(l_anon.[ID].10-(LPC6_1+8))
 LPC6_1:
-	add	r8, pc, r8
+	add	r5, pc, r5
 	movw	r6, :lower16:(l_anon.[ID].11-(LPC6_2+8))
 	movt	r6, :upper16:(l_anon.[ID].11-(LPC6_2+8))
 LPC6_2:
 	add	r6, pc, r6
-	b	LBB6_3
 LBB6_2:
-	subs	r4, r4, #1
-	beq	LBB6_5
-LBB6_3:
-	ldr	r0, [r5]
-	cmp	r0, #0
+	ldr	r1, [r4]
+	cmp	r1, #0
+	beq	LBB6_4
+	subs	r0, r0, #1
 	bne	LBB6_2
-	mov	r0, r5
-	mov	r1, r8
+	b	LBB6_5
+LBB6_4:
+	mov	r8, r0
+	mov	r0, r4
+	mov	r1, r5
 	mov	r2, r6
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	b	LBB6_2
+	mov	r0, r8
+	subs	r0, r0, #1
+	bne	LBB6_2
 LBB6_5:
 	pop	{r8}
 	pop	{r4, r5, r6, r7, lr}
