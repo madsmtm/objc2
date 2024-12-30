@@ -1022,7 +1022,7 @@ mod tests {
     #[test]
     #[cfg(feature = "unstable-coerce-pointee")]
     fn test_coercion() {
-        use crate::{extern_protocol, ProtocolType};
+        use crate::extern_protocol;
 
         extern_protocol!(
             unsafe trait ExampleProtocol: NSObjectProtocol {}

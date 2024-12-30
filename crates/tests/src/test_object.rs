@@ -7,9 +7,7 @@ use objc2::rc::{autoreleasepool, AutoreleasePool, Retained};
 use objc2::runtime::{
     AnyClass, AnyObject, AnyProtocol, Bool, NSObject, NSObjectProtocol, ProtocolObject,
 };
-use objc2::{
-    class, extern_protocol, msg_send, msg_send_id, AllocAnyThread, ClassType, ProtocolType,
-};
+use objc2::{class, extern_protocol, msg_send, msg_send_id, AllocAnyThread, ClassType};
 use objc2::{extern_class, sel};
 #[cfg(feature = "all")]
 use objc2_foundation::{NSArray, NSException, NSMutableString, NSNumber, NSString};

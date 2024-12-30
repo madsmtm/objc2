@@ -6,9 +6,9 @@ use alloc::vec::Vec;
 use core::ptr;
 
 use crate::{NSArray, NSNumber, NSObject};
+use objc2::extern_protocol;
 use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, ProtocolObject};
-use objc2::{extern_protocol, ProtocolType};
 
 fn sample_array(len: usize) -> Retained<NSArray<NSObject>> {
     let mut vec = Vec::with_capacity(len);

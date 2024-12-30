@@ -79,7 +79,7 @@
 /// use objc2::ffi::NSInteger;
 /// use objc2::rc::Retained;
 /// use objc2::runtime::{NSObject, NSObjectProtocol};
-/// use objc2::{extern_protocol, ProtocolType};
+/// use objc2::extern_protocol;
 /// # type NSArray<T> = T;
 /// # type NSString = NSObject;
 /// # type NSProgress = NSObject;
@@ -489,7 +489,7 @@ mod tests {
         );
 
         let proto = <dyn Foo>::protocol().unwrap();
-        assert_eq!(proto.name(), c"NSObject");
+        assert_eq!(proto.name().to_str().unwrap(), "NSObject");
         assert_eq!(<dyn Foo>::NAME, "NSObject");
     }
 }
