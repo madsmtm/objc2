@@ -272,11 +272,12 @@ mod tests {
     fn test_debug() {
         let invoke = NOOP_BLOCK.header.invoke.unwrap();
         let size = mem::size_of::<BlockHeader>();
+        let maybeuninit = <MaybeUninit<i32>>::uninit();
         let expected = format!(
             "GlobalBlock {{
     isa: _NSConcreteGlobalBlock,
     flags: {DEBUG_BLOCKFLAGS},
-    reserved: MaybeUninit<i32>,
+    reserved: {maybeuninit:?},
     invoke: Some(
         {invoke:#?},
     ),
