@@ -47,6 +47,9 @@ unstable-objfw = []
 # Expose private ffi functions and statics.
 unstable-private = []
 
+# Uses the nightly derive_coerce_pointee feature to make conversions more ergonomic.
+unstable-coerce-pointee = []
+
 [dependencies]
 objc2 = { path = "../objc2", version = "0.5.2", default-features = false, features = ["std"] }
 

@@ -35,6 +35,10 @@ use crate::{DefinedClass, Message};
 /// object, `*const T`. The pointer may be NULL.
 #[repr(transparent)]
 #[derive(Debug)]
+#[cfg_attr(
+    feature = "unstable-coerce-pointee",
+    derive(std::marker::CoercePointee)
+)]
 pub struct Allocated<T: ?Sized> {
     /// The yet-to-be initialized object.
     ///

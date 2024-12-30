@@ -303,6 +303,7 @@
 #![doc(html_root_url = "https://docs.rs/block2/0.5.1")]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide))]
 #![cfg_attr(docsrs, doc(cfg_hide(doc)))]
+#![cfg_attr(feature = "unstable-coerce-pointee", feature(derive_coerce_pointee))]
 
 #[cfg(not(feature = "alloc"))]
 compile_error!("The `alloc` feature currently must be enabled.");

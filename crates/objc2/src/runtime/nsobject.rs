@@ -26,6 +26,9 @@ pub struct NSObject {
     __superclass: AnyObject,
 }
 
+// Would be _super_ nice to have this kind of impl, but that isn't possible.
+// impl Unsize<AnyObject> for NSObject {}
+
 crate::__extern_class_impl_traits! {
     ()
     (unsafe impl)

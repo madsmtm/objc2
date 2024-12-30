@@ -89,6 +89,9 @@ unstable-apple-new = []
 # ergonomic.
 unstable-arbitrary-self-types = []
 
+# Uses the nightly derive_coerce_pointee feature to make conversions more ergonomic.
+unstable-coerce-pointee = []
+
 # Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
 apple = []
 

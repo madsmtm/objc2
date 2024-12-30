@@ -29,6 +29,7 @@ use crate::{ffi, Message};
 /// [`sync::Arc`]: std::sync::Arc
 #[repr(transparent)] // This is not a public guarantee
 #[doc(alias = "WeakId")]
+// TODO: Add derive(CoercePointee) once this doesn't Box internally.
 pub struct Weak<T: ?Sized> {
     /// We give the runtime the address to this box, so that it can modify it
     /// even if the `Weak` is moved.

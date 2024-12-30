@@ -31,6 +31,10 @@ use crate::{ffi, Block, IntoBlock, StackBlock};
 /// `RcBlock<A, R>`.
 #[repr(transparent)]
 #[doc(alias = "MallocBlock")]
+#[cfg_attr(
+    feature = "unstable-coerce-pointee",
+    derive(std::marker::CoercePointee)
+)]
 pub struct RcBlock<F: ?Sized> {
     // Covariant
     ptr: NonNull<Block<F>>,

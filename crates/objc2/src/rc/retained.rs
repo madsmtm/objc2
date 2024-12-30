@@ -121,6 +121,10 @@ use crate::{ffi, ClassType, DowncastTarget, Message};
 #[doc(alias = "id")]
 #[doc(alias = "Id")]
 #[doc(alias = "StrongPtr")]
+#[cfg_attr(
+    feature = "unstable-coerce-pointee",
+    derive(std::marker::CoercePointee)
+)]
 // TODO: Add `ptr::Thin` bound on `T` to allow for only extern types
 pub struct Retained<T: ?Sized> {
     /// A pointer to the contained object. The pointer is always retained.
@@ -1013,5 +1017,36 @@ mod tests {
         let obj_retained_ref = &NSObject::new();
         let _: Retained<NSObject> = Into::into(obj_retained_ref);
         let _: Retained<AnyObject> = Into::into(obj_retained_ref);
+    }
+
+    #[test]
+    #[cfg(feature = "unstable-coerce-pointee")]
+    fn test_coercion() {
+        use crate::{extern_protocol, ProtocolType};
+
+        extern_protocol!(
+            unsafe trait ExampleProtocol: NSObjectProtocol {}
+
+            unsafe impl ProtocolType for dyn ExampleProtocol {}
+        );
+
+        unsafe impl ExampleProtocol for RcTestObject {}
+
+        let obj = RcTestObject::new();
+        let mut expected = ThreadTestData::current();
+
+        let obj: Retained<dyn ExampleProtocol> = obj;
+        expected.assert_current();
+
+        let obj: Retained<dyn NSObjectProtocol> = obj;
+        expected.assert_current();
+
+        // TODO: Allow calling methods on trait objects like this.
+        // let _ = obj.hash();
+
+        drop(obj);
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
     }
 }

@@ -3,7 +3,7 @@ use core::cell::RefCell;
 use core::ptr;
 
 use crate::rc::{Allocated, DefaultRetained, Retained};
-use crate::runtime::{NSObject, NSZone};
+use crate::runtime::{NSObject, NSObjectProtocol, NSZone};
 use crate::{define_class, msg_send, msg_send_id, ClassType};
 
 // TODO: Put tests that use this in another crate
@@ -282,6 +282,8 @@ define_class!(
             }
         }
     }
+
+    unsafe impl NSObjectProtocol for RcTestObject {}
 );
 
 impl Drop for RcTestObject {

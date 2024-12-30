@@ -153,6 +153,10 @@
     feature = "unstable-arbitrary-self-types",
     feature(arbitrary_self_types)
 )]
+#![cfg_attr(
+    feature = "unstable-coerce-pointee",
+    feature(derive_coerce_pointee, trait_upcasting)
+)]
 // Note: `doc_notable_trait` doesn't really make sense for us, it's only shown
 // for functions returning a specific trait.
 #![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg, doc_cfg_hide))]
