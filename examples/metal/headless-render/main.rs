@@ -15,8 +15,8 @@ const VIEW_WIDTH: u64 = 512;
 const VIEW_HEIGHT: u64 = 512;
 const TOTAL_BYTES: usize = (VIEW_WIDTH * VIEW_HEIGHT * 4) as usize;
 
-const VERTEX_SHADER: &'static str = "triangle_vertex";
-const FRAGMENT_SHADER: &'static str = "triangle_fragment";
+const VERTEX_SHADER: &str = "triangle_vertex";
+const FRAGMENT_SHADER: &str = "triangle_fragment";
 
 // [2 bytes position, 3 bytes color] * 3
 #[rustfmt::skip]
@@ -53,10 +53,10 @@ fn main() {
     let vertex_buffer = create_vertex_buffer(&device);
 
     let render_pass_descriptor = RenderPassDescriptor::new();
-    initialize_color_attachment(&render_pass_descriptor, &texture);
+    initialize_color_attachment(render_pass_descriptor, &texture);
 
     let command_buffer = command_queue.new_command_buffer();
-    let rc_encoder = command_buffer.new_render_command_encoder(&render_pass_descriptor);
+    let rc_encoder = command_buffer.new_render_command_encoder(render_pass_descriptor);
     rc_encoder.set_render_pipeline_state(&pipeline_state);
     rc_encoder.set_vertex_buffer(0, Some(&vertex_buffer), 0);
     rc_encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 3);
@@ -99,7 +99,7 @@ fn save_image(texture: &TextureRef) {
     let out_file =
         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("examples/headless-render/out.png");
     let file = File::create(&out_file).unwrap();
-    let ref mut w = BufWriter::new(file);
+    let w = &mut BufWriter::new(file);
 
     let mut encoder = png::Encoder::new(w, VIEW_WIDTH as u32, VIEW_HEIGHT as u32);
     encoder.set_color(ColorType::Rgba);

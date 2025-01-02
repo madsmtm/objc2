@@ -137,7 +137,7 @@ impl Renderer {
             geometry_descriptor.set_intersection_function_table_offset(i as NSUInteger);
             let geometry_descriptors = Array::from_owned_slice(&[geometry_descriptor]);
             let accel_descriptor = PrimitiveAccelerationStructureDescriptor::descriptor();
-            accel_descriptor.set_geometry_descriptors(&geometry_descriptors);
+            accel_descriptor.set_geometry_descriptors(geometry_descriptors);
             let accel_descriptor: AccelerationStructureDescriptor = From::from(accel_descriptor);
             primitive_acceleration_structures.push(
                 Self::new_acceleration_structure_with_descriptor(
@@ -164,7 +164,7 @@ impl Renderer {
                     MTLAccelerationStructureInstanceOptions::None
                 };
             instance_descriptors[instance_index].intersection_function_table_offset = 0;
-            instance_descriptors[instance_index].mask = instance.mask as u32;
+            instance_descriptors[instance_index].mask = instance.mask;
             for column in 0..4 {
                 for row in 0..3 {
                     instance_descriptors[instance_index].transformation_matrix[column][row] =
@@ -182,7 +182,7 @@ impl Renderer {
         instance_buffer.did_modify_range(NSRange::new(0, instance_buffer.length()));
 
         let accel_descriptor = InstanceAccelerationStructureDescriptor::descriptor();
-        accel_descriptor.set_instanced_acceleration_structures(&Array::from_owned_slice(
+        accel_descriptor.set_instanced_acceleration_structures(Array::from_owned_slice(
             &primitive_acceleration_structures,
         ));
         accel_descriptor.set_instance_count(scene.geometry_instances.len() as NSUInteger);
@@ -372,8 +372,8 @@ impl Renderer {
         let height = self.size.height as NSUInteger;
         let threads_per_thread_group = MTLSize::new(8, 8, 1);
         let thread_groups = MTLSize::new(
-            (width + threads_per_thread_group.width - 1) / threads_per_thread_group.width,
-            (height + threads_per_thread_group.height - 1) / threads_per_thread_group.height,
+            width.div_ceil(threads_per_thread_group.width),
+            height.div_ceil(threads_per_thread_group.height),
             1,
         );
         let compute_encoder = command_buffer.new_compute_command_encoder();
@@ -415,7 +415,7 @@ impl Renderer {
             render_encoder.set_fragment_texture(0, Some(&self.accumulation_targets[0]));
             render_encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 6);
             render_encoder.end_encoding();
-            command_buffer.present_drawable(&drawable);
+            command_buffer.present_drawable(drawable);
         }
         command_buffer.commit();
     }
@@ -440,7 +440,7 @@ impl Renderer {
         );
         command_encoder.build_acceleration_structure(
             &acceleration_structure,
-            &descriptor,
+            descriptor,
             &scratch_buffer,
             0,
         );

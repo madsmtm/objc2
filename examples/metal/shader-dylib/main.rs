@@ -132,12 +132,12 @@ impl App {
         {
             let encoder = command_buffer.new_compute_command_encoder();
             encoder.set_compute_pipeline_state(&self.image_fill_cps);
-            encoder.set_texture(0, Some(&drawable.texture()));
+            encoder.set_texture(0, Some(drawable.texture()));
             encoder.dispatch_threads(threads_per_grid, threads_per_threadgroup);
             encoder.end_encoding();
         }
 
-        command_buffer.present_drawable(&drawable);
+        command_buffer.present_drawable(drawable);
         command_buffer.commit();
     }
 }

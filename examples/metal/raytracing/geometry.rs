@@ -41,7 +41,7 @@ pub trait Geometry {
 pub fn compute_triangle_normal(v0: &Vec3, v1: &Vec3, v2: &Vec3) -> Vec3 {
     let e1 = Vec3::normalize(*v1 - *v0);
     let e2 = Vec3::normalize(*v2 - *v0);
-    return Vec3::cross(e1, e2);
+    Vec3::cross(e1, e2)
 }
 
 #[derive(Default)]
@@ -52,7 +52,7 @@ pub struct Triangle {
 }
 
 pub fn get_managed_buffer_storage_mode() -> MTLResourceOptions {
-    return MTLResourceOptions::StorageModeManaged;
+    MTLResourceOptions::StorageModeManaged
 }
 
 pub struct TriangleGeometry {
@@ -109,10 +109,10 @@ impl TriangleGeometry {
         let first_index = self.indices.len();
         let base_index = self.vertices.len() as u16;
 
-        self.indices.push(base_index + 0);
+        self.indices.push(base_index);
         self.indices.push(base_index + 1);
         self.indices.push(base_index + 2);
-        self.indices.push(base_index + 0);
+        self.indices.push(base_index);
         self.indices.push(base_index + 2);
         self.indices.push(base_index + 3);
 
@@ -413,14 +413,14 @@ impl Geometry for SphereGeometry {
         let descriptor = AccelerationStructureBoundingBoxGeometryDescriptor::descriptor();
         descriptor.set_bounding_box_buffer(Some(self.bounding_box_buffer.as_ref().unwrap()));
         descriptor.set_bounding_box_count(self.spheres.len() as NSUInteger);
-        descriptor.set_primitive_data_buffer(Some(&self.sphere_buffer.as_ref().unwrap()));
+        descriptor.set_primitive_data_buffer(Some(self.sphere_buffer.as_ref().unwrap()));
         descriptor.set_primitive_data_stride(size_of::<Sphere>() as NSUInteger);
         descriptor.set_primitive_data_element_size(size_of::<Sphere>() as NSUInteger);
         From::from(descriptor)
     }
 
     fn get_resources(&self) -> Vec<Resource> {
-        return vec![From::from(self.sphere_buffer.as_ref().unwrap().clone())];
+        vec![From::from(self.sphere_buffer.as_ref().unwrap().clone())]
     }
 
     fn get_intersection_function_name(&self) -> Option<&str> {
