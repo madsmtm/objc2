@@ -40,8 +40,8 @@ fn main() {
 
     let vertex_data = vertices();
     let vertex_buffer = device.new_buffer_with_data(
-        vertex_data.as_ptr() as *const _,
-        (vertex_data.len() * size_of::<TexturedVertex>()) as u64,
+        vertex_data.as_ptr().cast(),
+        size_of_val(&vertex_data) as u64,
         MTLResourceOptions::CPUCacheModeDefaultCache | MTLResourceOptions::StorageModeManaged,
     );
 
@@ -225,7 +225,7 @@ fn prepare_pipeline_state(device: &Device, library: &Library) -> RenderPipelineS
 fn update_viewport_size_buffer(viewport_size_buffer: &Buffer, size: (u32, u32)) {
     let contents = viewport_size_buffer.contents();
     let viewport_size: [u32; 2] = [size.0, size.1];
-    let byte_count = (viewport_size.len() * size_of::<u32>()) as usize;
+    let byte_count = size_of_val(&viewport_size);
 
     unsafe {
         std::ptr::copy(viewport_size.as_ptr(), contents as *mut u32, byte_count);

@@ -18,4 +18,3 @@ winit = "0.29"
 
 [dependencies.objc]
 version = "0.2.4"
-features = ["objc_exception"]

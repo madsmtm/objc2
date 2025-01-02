@@ -1,4 +1,3 @@
-use core_graphics_types::{base::CGFloat, geometry::CGSize};
 use std::{
     collections::BTreeMap,
     ffi::c_void,
@@ -7,10 +6,10 @@ use std::{
     sync::{Arc, Condvar, Mutex},
 };
 
+use core_graphics_types::{base::CGFloat, geometry::CGSize};
 use glam::{Vec3, Vec4, Vec4Swizzles};
-use rand::{thread_rng, RngCore};
-
 use metal::{foreign_types::ForeignType, *};
+use rand::{thread_rng, RngCore};
 
 use crate::{camera::Camera, geometry::get_managed_buffer_storage_mode, scene::Scene};
 
@@ -107,15 +106,15 @@ impl Renderer {
             let resource_buffer_begin_index = resources_stride * geometry_index;
             let resources = geometry.get_resources();
 
-            for argument_index in 0..resources.len() {
+            for (argument_index, resource) in resources.iter().enumerate() {
                 let resource_buffer_index = resource_buffer_begin_index + argument_index;
-                let resource = resources[argument_index].clone();
+                let resource = resource.clone();
                 resource_buffer_data[resource_buffer_index] =
                     if resource.conforms_to_protocol::<MTLBuffer>().unwrap() {
-                        let buffer = unsafe { Buffer::from_ptr(transmute(resource.into_ptr())) };
+                        let buffer = unsafe { Buffer::from_ptr(resource.into_ptr().cast()) };
                         buffer.gpu_address()
                     } else if resource.conforms_to_protocol::<MTLTexture>().unwrap() {
-                        let texture = unsafe { Texture::from_ptr(transmute(resource.into_ptr())) };
+                        let texture = unsafe { Texture::from_ptr(resource.into_ptr().cast()) };
                         texture.gpu_resource_id()._impl
                     } else {
                         panic!("Unexpected resource!")
@@ -123,8 +122,8 @@ impl Renderer {
             }
         }
         let resource_buffer = device.new_buffer_with_data(
-            resource_buffer_data.as_ptr() as *const c_void,
-            (resource_buffer_data.len() * size_of::<u64>()) as NSUInteger,
+            resource_buffer_data.as_ptr().cast(),
+            size_of_val(resource_buffer_data.as_slice()) as NSUInteger,
             get_managed_buffer_storage_mode(),
         );
         resource_buffer.set_label("resource buffer");
@@ -152,8 +151,7 @@ impl Renderer {
             MTLAccelerationStructureInstanceDescriptor::default();
             scene.geometry_instances.len()
         ];
-        for instance_index in 0..scene.geometry_instances.len() {
-            let instance = scene.geometry_instances[instance_index].as_ref();
+        for (instance_index, instance) in scene.geometry_instances.iter().enumerate() {
             let geometry_index = instance.index_in_scene;
             instance_descriptors[instance_index].acceleration_structure_index =
                 geometry_index as u32;
@@ -174,8 +172,7 @@ impl Renderer {
         }
         let instance_buffer = device.new_buffer_with_data(
             instance_descriptors.as_ptr() as *const c_void,
-            (size_of::<MTLAccelerationStructureInstanceDescriptor>()
-                * scene.geometry_instances.len()) as NSUInteger,
+            size_of_val(instance_descriptors.as_slice()) as NSUInteger,
             get_managed_buffer_storage_mode(),
         );
         instance_buffer.set_label("instance buffer");

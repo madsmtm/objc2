@@ -1,4 +1,4 @@
-use std::{mem::transmute, sync::Arc};
+use std::sync::Arc;
 
 use glam::{
     f32::{Mat4, Vec3, Vec4},
@@ -92,10 +92,7 @@ impl TriangleGeometry {
         &mut self,
         cube_vertices: &[Vec3],
         colour: Vec3,
-        i0: u16,
-        i1: u16,
-        i2: u16,
-        i3: u16,
+        [i0, i1, i2, i3]: [u16; 4],
         inward_normals: bool,
     ) {
         let v0 = cube_vertices[i0 as usize];
@@ -161,10 +158,10 @@ impl TriangleGeometry {
             Vec3::new(0.5, 0.5, 0.5),
         ];
 
-        for i in 0..8 {
-            let transformed_vertex = Vec4::from((cube_vertices[i], 1.0));
+        for v in &mut cube_vertices {
+            let transformed_vertex = v.extend(1.0);
             let transformed_vertex = transform * transformed_vertex;
-            cube_vertices[i] = transformed_vertex.xyz();
+            *v = transformed_vertex.xyz();
         }
 
         const CUBE_INDICES: [[u16; 4]; 6] = [
@@ -176,15 +173,12 @@ impl TriangleGeometry {
             [4, 5, 7, 6],
         ];
 
-        for face in 0..6 {
+        for (face, indices) in CUBE_INDICES.into_iter().enumerate() {
             if face_mask & (1 << face) != 0 {
                 self.add_cube_face_with_cube_vertices(
                     &cube_vertices,
                     colour,
-                    CUBE_INDICES[face][0],
-                    CUBE_INDICES[face][1],
-                    CUBE_INDICES[face][2],
-                    CUBE_INDICES[face][3],
+                    indices,
                     inward_normals,
                 );
             }
@@ -194,41 +188,31 @@ impl TriangleGeometry {
 
 impl Geometry for TriangleGeometry {
     fn upload_to_buffers(&mut self) {
-        self.index_buffer = Some(unsafe {
-            self.device.new_buffer_with_data(
-                transmute(self.indices.as_ptr()),
-                (self.indices.len() * size_of::<u16>()) as NSUInteger,
-                get_managed_buffer_storage_mode(),
-            )
-        });
-        self.vertex_position_buffer = Some(unsafe {
-            self.device.new_buffer_with_data(
-                transmute(self.vertices.as_ptr()),
-                (self.vertices.len() * size_of::<Vec4>()) as NSUInteger,
-                get_managed_buffer_storage_mode(),
-            )
-        });
-        self.vertex_normal_buffer = Some(unsafe {
-            self.device.new_buffer_with_data(
-                transmute(self.normals.as_ptr()),
-                (self.normals.len() * size_of::<Vec4>()) as NSUInteger,
-                get_managed_buffer_storage_mode(),
-            )
-        });
-        self.vertex_colour_buffer = Some(unsafe {
-            self.device.new_buffer_with_data(
-                transmute(self.colours.as_ptr()),
-                (self.colours.len() * size_of::<Vec4>()) as NSUInteger,
-                get_managed_buffer_storage_mode(),
-            )
-        });
-        self.per_primitive_data_buffer = Some(unsafe {
-            self.device.new_buffer_with_data(
-                transmute(self.triangles.as_ptr()),
-                (self.triangles.len() * size_of::<Triangle>()) as NSUInteger,
-                get_managed_buffer_storage_mode(),
-            )
-        });
+        self.index_buffer = Some(self.device.new_buffer_with_data(
+            self.indices.as_ptr().cast(),
+            size_of_val(self.indices.as_slice()) as NSUInteger,
+            get_managed_buffer_storage_mode(),
+        ));
+        self.vertex_position_buffer = Some(self.device.new_buffer_with_data(
+            self.vertices.as_ptr().cast(),
+            size_of_val(self.vertices.as_slice()) as NSUInteger,
+            get_managed_buffer_storage_mode(),
+        ));
+        self.vertex_normal_buffer = Some(self.device.new_buffer_with_data(
+            self.normals.as_ptr().cast(),
+            size_of_val(self.normals.as_slice()) as NSUInteger,
+            get_managed_buffer_storage_mode(),
+        ));
+        self.vertex_colour_buffer = Some(self.device.new_buffer_with_data(
+            self.colours.as_ptr().cast(),
+            size_of_val(self.colours.as_slice()) as NSUInteger,
+            get_managed_buffer_storage_mode(),
+        ));
+        self.per_primitive_data_buffer = Some(self.device.new_buffer_with_data(
+            self.triangles.as_ptr().cast(),
+            size_of_val(self.triangles.as_slice()) as NSUInteger,
+            get_managed_buffer_storage_mode(),
+        ));
         self.index_buffer
             .as_ref()
             .unwrap()
@@ -360,31 +344,28 @@ impl SphereGeometry {
 
 impl Geometry for SphereGeometry {
     fn upload_to_buffers(&mut self) {
-        self.sphere_buffer = Some(unsafe {
-            self.device.new_buffer_with_data(
-                transmute(self.spheres.as_ptr()),
-                (self.spheres.len() * size_of::<Sphere>()) as NSUInteger,
-                get_managed_buffer_storage_mode(),
-            )
-        });
+        self.sphere_buffer = Some(self.device.new_buffer_with_data(
+            self.spheres.as_ptr().cast(),
+            size_of_val(self.spheres.as_slice()) as NSUInteger,
+            get_managed_buffer_storage_mode(),
+        ));
         self.sphere_buffer
             .as_ref()
             .unwrap()
             .set_label("sphere buffer");
-        let mut bounding_boxes = Vec::new();
-        for sphere in &self.spheres {
-            bounding_boxes.push(BoundingBox {
+        let bounding_boxes = self
+            .spheres
+            .iter()
+            .map(|sphere| BoundingBox {
                 min: sphere.origin_radius_squared.xyz() - sphere.colour_radius.w,
                 max: sphere.origin_radius_squared.xyz() + sphere.colour_radius.w,
-            });
-        }
-        self.bounding_box_buffer = Some(unsafe {
-            self.device.new_buffer_with_data(
-                transmute(bounding_boxes.as_ptr()),
-                (bounding_boxes.len() * size_of::<BoundingBox>()) as NSUInteger,
-                get_managed_buffer_storage_mode(),
-            )
-        });
+            })
+            .collect::<Vec<_>>();
+        self.bounding_box_buffer = Some(self.device.new_buffer_with_data(
+            bounding_boxes.as_ptr().cast(),
+            size_of_val(bounding_boxes.as_slice()) as NSUInteger,
+            get_managed_buffer_storage_mode(),
+        ));
         self.bounding_box_buffer
             .as_ref()
             .unwrap()

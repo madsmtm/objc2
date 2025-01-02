@@ -5,7 +5,6 @@ use core_graphics_types::geometry::CGSize;
 
 use metal::*;
 use objc::{rc::autoreleasepool, runtime::YES};
-use std::mem;
 
 use winit::{
     event::{Event, WindowEvent},
@@ -34,7 +33,7 @@ fn main() {
 
     let device = Device::system_default().expect("no device found");
 
-    let layer = MetalLayer::new();
+    let mut layer = MetalLayer::new();
     layer.set_device(&device);
     layer.set_pixel_format(MTLPixelFormat::BGRA8Unorm);
     layer.set_presents_with_transaction(false);
@@ -43,7 +42,7 @@ fn main() {
         if let Ok(RawWindowHandle::AppKit(rw)) = window.window_handle().map(|wh| wh.as_raw()) {
             let view = rw.ns_view.as_ptr() as cocoa_id;
             view.setWantsLayer(YES);
-            view.setLayer(mem::transmute(layer.as_ref()));
+            view.setLayer(<*mut _>::cast(layer.as_mut()));
         }
     }
 

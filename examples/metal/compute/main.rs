@@ -1,6 +1,7 @@
+use std::path::PathBuf;
+
 use metal::*;
 use objc::rc::autoreleasepool;
-use std::path::PathBuf;
 
 const NUM_SAMPLES: u64 = 2;
 
@@ -117,9 +118,9 @@ fn resolve_samples_into_buffer(
     let blit_encoder = command_buffer.new_blit_command_encoder();
     blit_encoder.resolve_counters(
         counter_sample_buffer,
-        crate::NSRange::new(0_u64, NUM_SAMPLES),
+        crate::NSRange::new(0u64, NUM_SAMPLES),
         destination_buffer,
-        0_u64,
+        0u64,
     );
     blit_encoder.end_encoding();
 }
@@ -170,16 +171,16 @@ fn create_input_and_output_buffers(
     let data = vec![1u32; num_elements as usize];
 
     let buffer = device.new_buffer_with_data(
-        unsafe { std::mem::transmute(data.as_ptr()) },
-        (data.len() * size_of::<u32>()) as u64,
+        data.as_ptr().cast(),
+        size_of_val(data.as_slice()) as u64,
         MTLResourceOptions::CPUCacheModeDefaultCache,
     );
 
     let sum = {
         let data = [0u32];
         device.new_buffer_with_data(
-            unsafe { std::mem::transmute(data.as_ptr()) },
-            (data.len() * size_of::<u32>()) as u64,
+            data.as_ptr().cast(),
+            size_of_val(&data) as u64,
             MTLResourceOptions::CPUCacheModeDefaultCache,
         )
     };

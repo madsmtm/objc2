@@ -26,7 +26,7 @@ fn main() {
 
     // Simple vertex/index buffer data
 
-    let vertices: [Vertex; 3] = [
+    let vertices = [
         Vertex {
             xyz: [0.25, 0.25, 0.0],
         },
@@ -40,7 +40,7 @@ fn main() {
 
     let vertex_stride = size_of::<Vertex>();
 
-    let indices: [u32; 3] = [0, 1, 2];
+    let indices = [0, 1, 2];
 
     // Vertex data should be stored in private or managed buffers on discrete GPU systems (AMD, NVIDIA).
     // Private buffers are stored entirely in GPU memory and cannot be accessed by the CPU. Managed
@@ -55,7 +55,7 @@ fn main() {
 
     let index_buffer = device.new_buffer_with_data(
         indices.as_ptr() as *const c_void,
-        (size_of::<u32>() * indices.len()) as u64,
+        size_of_val(&indices) as u64,
         buffer_opts,
     );
 
