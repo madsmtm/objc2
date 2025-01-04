@@ -2203,6 +2203,10 @@ impl Ty {
         matches!(self, Self::TypeDef { id, .. } if id.name == s)
     }
 
+    pub(crate) fn is_struct(&self, s: &str) -> bool {
+        matches!(self, Self::Struct { id, .. } if id.name == s)
+    }
+
     pub(crate) fn is_enum_through_typedef(&self) -> bool {
         match self {
             Self::Enum { .. } => true,

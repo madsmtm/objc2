@@ -126,7 +126,7 @@ impl Module {
         FormatterFn(move |f| {
             for (name, module) in &self.submodules {
                 let name = clean_name(name);
-                write!(f, "#[cfg(feature = \"{name}\")]")?;
+                writeln!(f, "#[cfg(feature = \"{name}\")]")?;
                 if module.submodules.is_empty() {
                     writeln!(f, "#[path = \"{name}.rs\"]")?;
                 } else {
@@ -139,8 +139,8 @@ impl Module {
 
             for (module_name, module) in &self.submodules {
                 if !module.submodules.is_empty() {
-                    write!(f, "#[cfg(feature = \"{module_name}\")]")?;
-                    write!(f, "pub use self::__{}::*;", clean_name(module_name))?;
+                    writeln!(f, "#[cfg(feature = \"{module_name}\")]")?;
+                    writeln!(f, "pub use self::__{}::*;", clean_name(module_name))?;
                     continue;
                 }
 
@@ -161,9 +161,9 @@ impl Module {
                         } else {
                             "pub"
                         };
-                        write!(
+                        writeln!(
                             f,
-                            "{visibility} use self::__{}::{{{}}};",
+                            "{visibility} use self::__{}::{};",
                             clean_name(module_name),
                             item.name,
                         )?;

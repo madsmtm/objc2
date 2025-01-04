@@ -56,9 +56,9 @@ fn update_module(module: &mut Module) {
         }
     }
 
-    // Fix up a few typedef + enum declarations
     let mut iter = mem::take(&mut module.stmts).into_iter().peekable();
-    while let Some(stmt) = iter.next() {
+    while let Some(mut stmt) = iter.next() {
+        // Fix up a few typedef + enum declarations
         if let Stmt::AliasDecl {
             id, ty, kind: None, ..
         } = &stmt
@@ -77,6 +77,35 @@ fn update_module(module: &mut Module) {
                 }
             }
         }
+
+        // Fix up a few struct + typedef declarations. Example:
+        //
+        // typedef struct _AVBeatRange {
+        //     AVMusicTimeStamp start;
+        //     AVMusicTimeStamp length;
+        // } AVBeatRange;
+        if let Stmt::StructDecl {
+            id, encoding_name, ..
+        } = &mut stmt
+        {
+            if let Some(Stmt::AliasDecl {
+                id: typedef_id,
+                ty,
+                kind: None,
+                ..
+            }) = iter.peek()
+            {
+                if ty.is_struct(&id.name) && typedef_id.name == id.name.trim_start_matches("_") {
+                    if encoding_name.is_none() {
+                        *encoding_name = Some(id.name.clone());
+                    }
+                    *id = typedef_id.clone();
+                    // Skip adding the now-redundant alias to the list of statements
+                    let _ = iter.next();
+                }
+            }
+        }
+
         module.stmts.push(stmt);
     }
 

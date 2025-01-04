@@ -59,6 +59,7 @@ typedef.dispatch_queue_main_t.skipped = true
 typedef.dispatch_queue_concurrent_t.skipped = true
 typedef.dispatch_queue_attr_t.skipped = true
 typedef.dispatch_source_t.skipped = true
+struct.dispatch_source_type_s.skipped = true
 typedef.dispatch_source_type_t.skipped = true
 typedef.dispatch_group_t.skipped = true
 typedef.dispatch_semaphore_t.skipped = true

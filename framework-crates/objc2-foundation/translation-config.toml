@@ -48,6 +48,7 @@ class.NSBundle.methods."localizedAttributedStringForKey:value:table:".skipped = 
 class.NSProxy.skipped = true
 
 # Defined in `objc2` instead
+struct._NSZone.skipped = true
 typedef.NSZone.skipped = true
 
 # Contains bitfields

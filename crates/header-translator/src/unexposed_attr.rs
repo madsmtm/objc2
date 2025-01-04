@@ -64,8 +64,11 @@ impl UnexposedAttr {
             | "NS_EXTENSIBLE_STRING_ENUM"
             | "CF_EXTENSIBLE_STRING_ENUM" => Some(Self::TypedExtensibleEnum),
             "NS_SWIFT_BRIDGED_TYPEDEF" | "CF_SWIFT_BRIDGED_TYPEDEF" => Some(Self::BridgedTypedef),
-            "CF_BRIDGED_TYPE" | "CM_BRIDGED_TYPE" => Some(Self::Bridged),
+            "CF_BRIDGED_TYPE" | "CV_BRIDGED_TYPE" | "CM_BRIDGED_TYPE" => Some(Self::Bridged),
             "CF_BRIDGED_MUTABLE_TYPE" => Some(Self::BridgedMutable),
+            // Note: This is only used for CTParagraphStyle and CTTextTab, so
+            // probably not really worth it trying to generalize.
+            "CF_RELATED_TYPE" => None,
             "NS_RETURNS_RETAINED"
             | "CF_RETURNS_RETAINED"
             | "CM_RETURNS_RETAINED"
@@ -88,7 +91,7 @@ impl UnexposedAttr {
             // Nullability attributes
             s if s.starts_with("DISPATCH_NONNULL") => None,
             "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" | "CM_SWIFT_SENDABLE"
-            | "CV_SWIFT_SENDABLE" => Some(Self::Sendable),
+            | "CT_SWIFT_SENDABLE" | "CV_SWIFT_SENDABLE" => Some(Self::Sendable),
             "NS_SWIFT_NONSENDABLE" | "CM_SWIFT_NONSENDABLE" | "CV_SWIFT_NONSENDABLE" => {
                 Some(Self::NonSendable)
             }
