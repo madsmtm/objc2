@@ -2,17 +2,20 @@
 
 #[cfg(feature = "CTFont")]
 impl crate::CTFontUIFontType {
-    pub const kCTFontUIFontNone: Self = Self(u32::MAX);
+    #[doc(alias = "kCTFontUIFontNone")]
+    pub const None: Self = Self(u32::MAX);
 }
 
 #[cfg(feature = "CTRubyAnnotation")]
 impl crate::CTRubyAlignment {
-    pub const kCTRubyAlignmentInvalid: Self = Self(u8::MAX);
+    #[doc(alias = "kCTRubyAlignmentInvalid")]
+    pub const Invalid: Self = Self(u8::MAX);
 }
 
 #[cfg(feature = "CTRubyAnnotation")]
 impl crate::CTRubyOverhang {
-    pub const kCTRubyOverhangInvalid: Self = Self(u8::MAX);
+    #[doc(alias = "kCTRubyOverhangInvalid")]
+    pub const Invalid: Self = Self(u8::MAX);
 }
 
 #[cfg(feature = "SFNTLayoutTypes")]

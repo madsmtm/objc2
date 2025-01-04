@@ -117,8 +117,7 @@ fn main() {
     let _observer = MyObserver::new(
         obj,
         ns_string!("myKeyPath"),
-        NSKeyValueObservingOptions::NSKeyValueObservingOptionNew
-            | NSKeyValueObservingOptions::NSKeyValueObservingOptionOld,
+        NSKeyValueObservingOptions::New | NSKeyValueObservingOptions::Old,
         |change| {
             println!("object changed: {:?}", change);
         },

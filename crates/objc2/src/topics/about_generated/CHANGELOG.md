@@ -177,6 +177,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Use Clang `-fmodules` for more correct header translation.
 * Fixed the encoding of `NSDecimal`.
 * Fixed pointer `const`-ness.
+* **BREAKING**: Fixed `enum` prefix stripping. Enumerators like
+  `NSWindowSharingType`, `MTLFeatureSet` etc. now have correctly stripped
+  variant names (`NSWindowSharingType::None` instead of
+  `NSWindowSharingType::NSWindowSharingNone`).
 
 
 ## 0.2.2 - 2024-05-21

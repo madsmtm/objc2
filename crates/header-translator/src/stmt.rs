@@ -21,6 +21,7 @@ use crate::id::ItemIdentifier;
 use crate::id::Location;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
+use crate::name_translation::enum_prefix;
 use crate::rust_type::Ty;
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -598,15 +599,6 @@ pub(crate) fn new_enum_id(
     }
 
     id
-}
-
-/// Quick n' dirty logic for minimizing the enum constant name.
-pub(crate) fn enum_constant_name<'a>(enum_name: &str, constant_name: &'a str) -> &'a str {
-    let res = constant_name.trim_start_matches(enum_name);
-    if res.starts_with(|c: char| c.is_numeric()) {
-        return constant_name;
-    }
-    res
 }
 
 impl Stmt {
@@ -2259,6 +2251,19 @@ impl Stmt {
                 } => {
                     write!(f, "{}", documentation.fmt(Some(id)))?;
 
+                    let mut relevant_enum_cases = variants
+                        .iter()
+                        .filter(|(_, _, availability, _)| {
+                            availability.is_available_non_deprecated()
+                        })
+                        .map(|(name, _, _, _)| &**name)
+                        .peekable();
+                    let prefix = if relevant_enum_cases.peek().is_some() {
+                        enum_prefix(&id.name, relevant_enum_cases)
+                    } else {
+                        enum_prefix(&id.name, variants.iter().map(|(name, _, _, _)| &**name))
+                    };
+
                     match kind {
                     // TODO: Once Rust gains support for more precisely
                     // specifying niches, use that to convert this into a
@@ -2316,7 +2321,7 @@ impl Stmt {
                                 .chain(iter::once(self.location()));
                             write!(f, "    {}", cfg_gate_ln(expr.required_items(), implied_features, config, self.location()))?;
                             write!(f, "    {availability}")?;
-                            let pretty_name = enum_constant_name(&id.name, name);
+                            let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
                                 writeln!(f, "    #[doc(alias = \"{name}\")]")?;
                             }
@@ -2352,7 +2357,7 @@ impl Stmt {
                                 .chain(iter::once(self.location()));
                             write!(f, "{}", cfg_gate_ln(expr.required_items(), implied_features, config, self.location()))?;
                             write!(f, "{availability}")?;
-                            let pretty_name = enum_constant_name(&id.name, name);
+                            let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
                                 writeln!(f, "        #[doc(alias = \"{name}\")]")?;
                             }
@@ -2386,7 +2391,7 @@ impl Stmt {
                                 .chain(iter::once(self.location()));
                             write!(f, "    {}", cfg_gate_ln(expr.required_items(), implied_features, config, self.location()))?;
                             write!(f, "    {availability}")?;
-                            let pretty_name = enum_constant_name(&id.name, name);
+                            let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
                                 writeln!(f, "    #[doc(alias = \"{name}\")]")?;
                             }

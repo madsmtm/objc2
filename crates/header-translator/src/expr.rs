@@ -4,9 +4,11 @@ use std::fmt;
 use clang::token::TokenKind;
 use clang::{Entity, EntityKind, EntityVisitResult, EvaluationResult};
 
+use crate::availability::Availability;
 use crate::context::MacroLocation;
+use crate::name_translation::enum_prefix;
 use crate::rust_type::Ty;
-use crate::stmt::{enum_constant_name, new_enum_id};
+use crate::stmt::new_enum_id;
 use crate::unexposed_attr::UnexposedAttr;
 use crate::{immediate_children, Context, ItemIdentifier};
 
@@ -208,24 +210,47 @@ impl Expr {
                 let parent = definition
                     .get_semantic_parent()
                     .expect("EnumConstantDecl parent");
+                assert_eq!(parent.get_kind(), EntityKind::EnumDecl);
                 let parent_id = new_enum_id(&parent, context);
-                let name = entity.get_name().expect("EnumConstantDecl name");
+                let variant = entity.get_name().expect("EnumConstantDecl name");
                 if parent_id.name.is_some() {
+                    let parent_id = parent_id.map_name(|name| name.unwrap());
+
                     let mut attrs = HashSet::new();
-                    immediate_children(&parent, |entity, _span| {
-                        if let EntityKind::UnexposedAttr = entity.get_kind() {
+                    let mut variants = vec![];
+                    immediate_children(&parent, |entity, _span| match entity.get_kind() {
+                        EntityKind::UnexposedAttr => {
                             if let Some(attr) = UnexposedAttr::parse(&entity, context) {
                                 attrs.insert(attr);
                             }
                         }
+                        EntityKind::EnumConstantDecl => {
+                            let name = entity.get_name().expect("enum constant name");
+                            let availability = Availability::parse(&entity, context);
+                            variants.push((name, availability));
+                        }
+                        _ => {}
                     });
+
+                    let mut relevant_enum_cases = variants
+                        .iter()
+                        .filter(|(_, availability)| availability.is_available_non_deprecated())
+                        .map(|(name, _)| &**name)
+                        .peekable();
+                    let prefix = if relevant_enum_cases.peek().is_some() {
+                        enum_prefix(&parent_id.name, relevant_enum_cases)
+                    } else {
+                        enum_prefix(&parent_id.name, variants.iter().map(|(name, _)| &**name))
+                    };
+                    let variant = variant.strip_prefix(prefix).unwrap_or(&variant).to_string();
+
                     Self::Enum {
-                        id: parent_id.map_name(|name| name.unwrap()),
-                        variant: name,
+                        id: parent_id,
+                        variant,
                         attrs,
                     }
                 } else {
-                    Self::Const(parent_id.map_name(|_| name))
+                    Self::Const(parent_id.map_name(|_| variant))
                 }
             }
             EntityKind::VarDecl => Self::Var {
@@ -297,18 +322,17 @@ impl fmt::Display for Expr {
                 }
             }
             Self::Enum { id, variant, attrs } => {
-                let pretty_name = enum_constant_name(&id.name, variant);
                 if attrs.contains(&UnexposedAttr::ClosedEnum) {
                     // Close enums are actual Rust `enum`s, so to get their
                     // value, we use an `as` cast.
                     // Using `usize` here is a hack, we should be using the
                     // actual enum type.
-                    write!(f, "{}::{pretty_name} as usize", id.name)
+                    write!(f, "{}::{variant} as usize", id.name)
                 } else {
                     // Note: Even though we have the enum kind available here,
                     // we cannot avoid the `.0` here, as the expression must
                     // be `const`.
-                    write!(f, "{}::{pretty_name}.0", id.name)
+                    write!(f, "{}::{variant}.0", id.name)
                 }
             }
             Self::Const(id) => write!(f, "{}", id.name),

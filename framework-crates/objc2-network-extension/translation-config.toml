@@ -1,6 +1,7 @@
 framework = "NetworkExtension"
 crate = "objc2-network-extension"
 required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
 macos = "10.10"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -50,3 +51,7 @@ protocol.NWTCPConnectionAuthenticationDelegate.methods."evaluateTrustForConnecti
 # Needs `ASAccessory` from AccessorySetupKit
 class.NEHotspotConfigurationManager.methods."joinAccessoryHotspot:passphrase:completionHandler:".skipped = true
 class.NEHotspotConfigurationManager.methods."joinAccessoryHotspotWithoutSecurity:completionHandler:".skipped = true
+
+# Wrongly renamed (Swift's renaming algorithm is insufficient)
+enum.NEHotspotConfigurationEAPTLSVersion.skipped = true
+enum.NEVPNIKEv2EncryptionAlgorithm.skipped = true

@@ -23,6 +23,7 @@ mod id;
 mod library;
 mod method;
 mod module;
+mod name_translation;
 mod objc2_utils;
 mod rust_type;
 mod stmt;

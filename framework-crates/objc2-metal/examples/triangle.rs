@@ -89,7 +89,7 @@ define_class!(
                 let style = NSWindowStyleMask::Closable
                     | NSWindowStyleMask::Resizable
                     | NSWindowStyleMask::Titled;
-                let backing_store_type = NSBackingStoreType::NSBackingStoreBuffered;
+                let backing_store_type = NSBackingStoreType::Buffered;
                 let flag = false;
                 unsafe {
                     NSWindow::initWithContentRect_styleMask_backing_defer(

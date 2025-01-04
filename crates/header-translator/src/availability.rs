@@ -232,6 +232,21 @@ impl Availability {
         }
     }
 
+    /// Available and non-deprecated enum cases.
+    pub fn is_available_non_deprecated(&self) -> bool {
+        !matches!(
+            self.unavailable,
+            Unavailable {
+                ios: true,
+                macos: true,
+                maccatalyst: true,
+                watchos: true,
+                tvos: true,
+                visionos: true,
+            }
+        ) && !self.is_deprecated()
+    }
+
     pub fn is_deprecated(&self) -> bool {
         !matches!(
             self.deprecated,
