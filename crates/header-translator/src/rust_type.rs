@@ -1,4 +1,5 @@
 use std::str::FromStr;
+use std::sync::LazyLock;
 use std::{fmt, iter};
 
 use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
@@ -7,6 +8,7 @@ use proc_macro2::{TokenStream, TokenTree};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::id::ItemIdentifier;
+use crate::stmt::is_bridged;
 use crate::stmt::items_required_by_decl;
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -444,6 +446,8 @@ pub enum Ty {
         nullability: Nullability,
         lifetime: Lifetime,
         to: Box<Self>,
+        /// Whether the typedef's declaration has a bridge attribute.
+        is_bridged: bool,
     },
     IncompleteArray {
         nullability: Nullability,
@@ -464,6 +468,8 @@ pub enum Ty {
         id: ItemIdentifier,
         /// FIXME: This does not work for recursive structs.
         fields: Vec<Ty>,
+        /// Whether the struct's declaration has a bridge attribute.
+        is_bridged: bool,
     },
     Fn {
         is_variadic: bool,
@@ -614,6 +620,7 @@ impl Ty {
                             )
                         })
                         .collect(),
+                    is_bridged: is_bridged(&declaration, context),
                 }
             }
             TypeKind::Enum => {
@@ -1004,6 +1011,7 @@ impl Ty {
                             nullability,
                             lifetime,
                             to: Box::new(Self::Primitive(Primitive::Int)),
+                            is_bridged: is_bridged(&declaration, context),
                         }
                     }
 
@@ -1038,6 +1046,7 @@ impl Ty {
                     nullability,
                     lifetime,
                     to: Box::new(Self::parse(to, Lifetime::Unspecified, context)),
+                    is_bridged: is_bridged(&declaration, context),
                 }
             }
             // Assume that functions without a prototype simply have 0 arguments.
@@ -1191,7 +1200,7 @@ impl Ty {
                 items.push(id.clone());
                 items
             }
-            Self::Struct { id, fields } => {
+            Self::Struct { id, fields, .. } => {
                 let mut items = Vec::new();
                 for field in fields {
                     items.extend(field.required_items());
@@ -1324,7 +1333,7 @@ impl Ty {
         }
     }
 
-    fn inner_typedef_is_object_life(&self) -> bool {
+    fn inner_typedef_is_object_like(&self, in_pointer: bool) -> bool {
         match self {
             Self::Class { .. }
             | Self::GenericParam { .. }
@@ -1332,9 +1341,10 @@ impl Ty {
             | Self::AnyProtocol
             | Self::AnyClass { .. }
             | Self::Self_ => true,
-            // FIXME: This recurses badly and too deeply
-            Self::Pointer { pointee, .. } => pointee.inner_typedef_is_object_life(),
-            Self::TypeDef { to, .. } => to.inner_typedef_is_object_life(),
+            Self::Pointer { pointee, .. } if !in_pointer => {
+                pointee.inner_typedef_is_object_like(true)
+            }
+            Self::TypeDef { to, .. } => to.inner_typedef_is_object_like(in_pointer),
             _ => false,
         }
     }
@@ -1361,8 +1371,60 @@ impl Ty {
             | Self::AnyProtocol
             | Self::AnyClass { .. }
             | Self::Self_ => true,
-            Self::TypeDef { to, .. } => to.inner_typedef_is_object_life(),
+            Self::TypeDef { to, .. } => to.inner_typedef_is_object_like(false),
             _ => false,
+        }
+    }
+
+    pub(crate) fn is_inner_cf_type(&self, typedef_name: &str, typedef_is_bridged: bool) -> bool {
+        // Pre-defined list of known CF types.
+        // Taken from the Swift project (i.e. this is also what they do).
+        static KNOWN_CF_TYPES: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
+            let database = include_str!("CFDatabase.def");
+            let mut res = vec![];
+            for item in database.split("\nCF_TYPE(").skip(1) {
+                let (typename, _) = item.split_once(")").unwrap();
+                res.push(typename);
+            }
+            res
+        });
+
+        // TODO: Figure out when to do the isCFObjectRef check that Clang does:
+        // <https://github.com/llvm/llvm-project/blob/llvmorg-19.1.6/clang/lib/Analysis/CocoaConventions.cpp#L57>
+        match self {
+            // Recurse
+            Self::TypeDef { .. } => self.is_cf_type(),
+            Self::Pointer { pointee, .. } => match &**pointee {
+                // Typedefs to structs are CF types if bridged, or in
+                // pre-defined list.
+                Self::Struct { is_bridged, .. } => {
+                    *is_bridged || KNOWN_CF_TYPES.contains(&typedef_name)
+                }
+                // Typedefs to void* are CF types if the typedef is
+                // bridged, or in pre-defined list.
+                Self::Primitive(Primitive::Void) => {
+                    // TODO
+                    let enabled = false;
+                    enabled && (typedef_is_bridged || KNOWN_CF_TYPES.contains(&typedef_name))
+                }
+                _ => false,
+            },
+            _ => false,
+        }
+    }
+
+    /// Determine whether the typedef is a CF-like type.
+    ///
+    /// Similar to what's done in Swift's implementation:
+    /// <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/lib/ClangImporter/CFTypeInfo.cpp#L53>
+    fn is_cf_type(&self) -> bool {
+        if let Self::TypeDef {
+            id, to, is_bridged, ..
+        } = self
+        {
+            to.is_inner_cf_type(&id.name, *is_bridged)
+        } else {
+            false
         }
     }
 
@@ -1431,7 +1493,7 @@ impl Ty {
                 },
                 Self::TypeDef {
                     id, nullability, ..
-                } if self.is_object_like() => {
+                } if self.is_object_like() || self.is_cf_type() => {
                     if *nullability == Nullability::NonNull {
                         write!(f, "NonNull<{}>", id.path())
                     } else {
@@ -1491,7 +1553,9 @@ impl Ty {
                             Self::Pointer { pointee, .. } if pointee.is_object_like() => {
                                 write!(f, "{},", pointee.behind_pointer())?
                             }
-                            Self::TypeDef { id, .. } if generic.is_object_like() => {
+                            Self::TypeDef { id, .. }
+                                if generic.is_object_like() || generic.is_cf_type() =>
+                            {
                                 write!(f, "{},", id.path())?
                             }
                             generic => {
@@ -1572,7 +1636,9 @@ impl Ty {
             }
             Self::TypeDef {
                 id, nullability, ..
-            } if self.is_object_like() && !self.is_static_object() => {
+            } if (self.is_object_like() || self.is_cf_type()) && !self.is_static_object() => {
+                // NOTE: We return CF types as `Retained` for now, since we
+                // don't have support for the CF wrapper in msg_send! yet.
                 if *nullability == Nullability::NonNull {
                     write!(f, " -> Retained<{}>", id.path())
                 } else {
@@ -1624,7 +1690,8 @@ impl Ty {
                     nullability: Nullability::Nullable,
                     lifetime: Lifetime::Unspecified,
                     to: _,
-                } if self.is_object_like() => {
+                    ..
+                } if self.is_object_like() || self.is_cf_type() => {
                     // NULL -> error
                     write!(
                         f,
@@ -1731,6 +1798,8 @@ impl Ty {
                 };
                 Some((res, start, end(*nullability)))
             }
+            // TODO: Use custom CF type to do retain/release management here.
+            Self::TypeDef { .. } if self.is_cf_type() && !self.is_static_object() => None,
             _ => None,
         }
     }
@@ -1753,7 +1822,7 @@ impl Ty {
             }
             Self::TypeDef {
                 id, nullability, ..
-            } if self.is_object_like() => {
+            } if self.is_object_like() || self.is_cf_type() => {
                 if *nullability == Nullability::NonNull {
                     write!(f, "&'static {}", id.path())
                 } else {
@@ -1774,9 +1843,10 @@ impl Ty {
             } if pointee.is_object_like() => {
                 write!(f, "{}", pointee.behind_pointer())
             }
-            Self::TypeDef { id, .. } if self.is_object_like() => {
+            Self::TypeDef { id, .. } if self.is_object_like() || self.is_cf_type() => {
                 write!(f, "{}", id.path())
             }
+            Self::IncompleteArray { .. } => unimplemented!("incomplete array in typedef"),
             // Notice: We mark `typedefs` as-if behind a pointer
             _ => write!(f, "{}", self.behind_pointer()),
         })
@@ -1798,7 +1868,7 @@ impl Ty {
             }
             Self::TypeDef {
                 id, nullability, ..
-            } if self.is_object_like() => {
+            } if self.is_object_like() || self.is_cf_type() => {
                 if *nullability == Nullability::NonNull {
                     write!(f, "&{}", id.path())
                 } else {
@@ -2035,30 +2105,37 @@ impl Ty {
         Self::parse_method_return(ty, false, context)
     }
 
-    pub(crate) fn parse_typedef(
-        ty: Type<'_>,
-        typedef_name: &str,
-        context: &Context<'_>,
-    ) -> Option<Self> {
-        let mut ty = Self::parse(ty, Lifetime::Unspecified, context);
+    pub(crate) fn parse_typedef(ty: Type<'_>, context: &Context<'_>) -> Self {
+        Self::parse(ty, Lifetime::Unspecified, context)
+    }
 
-        match &mut ty {
-            // Handled by Stmt::EnumDecl
-            Self::Enum { .. } => None,
-            // No need to output a typedef if it'll just point to the same thing.
-            //
-            // TODO: We're discarding a slight bit of availability data this way.
-            Self::Struct { id, .. } if id.name == typedef_name => None,
-            // Opaque structs
-            Self::Pointer { pointee, .. } if matches!(&**pointee, Self::Struct { .. }) => {
-                **pointee = Self::Primitive(Primitive::Void);
-                Some(ty)
+    pub(crate) fn is_enum(&self) -> bool {
+        matches!(self, Self::Enum { .. })
+    }
+
+    pub(crate) fn pointer_to_opaque_struct(&self) -> Option<&str> {
+        if let Self::Pointer {
+            pointee,
+            is_const: _, // const-ness doesn't matter when defining the type
+            nullability,
+            lifetime,
+        } = self
+        {
+            if let Self::Struct { id, fields, .. } = &**pointee {
+                if fields.is_empty() {
+                    // Extra checks to ensure we don't loose information
+                    if *nullability != Nullability::Unspecified {
+                        error!(?id, ?nullability, "opaque pointer had nullability");
+                    }
+                    if *lifetime != Lifetime::Unspecified {
+                        error!(?id, ?lifetime, "opaque pointer had lifetime");
+                    }
+
+                    return Some(&id.name);
+                }
             }
-            Self::IncompleteArray { .. } => {
-                unimplemented!("incomplete array in struct")
-            }
-            _ => Some(ty),
         }
+        None
     }
 
     pub(crate) fn parse_property(
@@ -2190,7 +2267,11 @@ impl Ty {
             {
                 true
             }
-            Self::TypeDef { .. } if self.is_object_like() && !self.is_static_object() => true,
+            Self::TypeDef { .. }
+                if self.is_object_like() || self.is_cf_type() && !self.is_static_object() =>
+            {
+                true
+            }
             _ => false,
         }
     }
@@ -2344,7 +2425,9 @@ mod tests {
                         protocols: vec![],
                     }),
                 }),
+                is_bridged: false,
             }),
+            is_bridged: false,
         };
 
         assert!(ty.is_object_like());

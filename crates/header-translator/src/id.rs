@@ -402,6 +402,13 @@ impl ItemIdentifier {
         }
     }
 
+    pub fn cf(name: impl Into<String>) -> Self {
+        Self {
+            name: name.into(),
+            location: Location::new("CoreFoundation"),
+        }
+    }
+
     pub fn core_ffi(name: &str) -> Self {
         Self {
             name: name.into(),
@@ -413,6 +420,20 @@ impl ItemIdentifier {
         Self {
             name: "NonNull".into(),
             location: Location::new("__core__.ptr"),
+        }
+    }
+
+    pub fn unsafecell() -> Self {
+        Self {
+            name: "UnsafeCell".into(),
+            location: Location::new("__core__.cell"),
+        }
+    }
+
+    pub fn phantoms() -> Self {
+        Self {
+            name: "__phantoms__".into(),
+            location: Location::new("__core__.marker"),
         }
     }
 
@@ -445,7 +466,12 @@ impl ItemIdentifier {
             "__builtin__" => None,
             "__core__" => match &*self.location().module_path {
                 "__core__.ffi" => Some("core::ffi::*".into()),
+                // HACKs
                 "__core__.ptr" if self.name == "NonNull" => Some("core::ptr::NonNull".into()),
+                "__core__.cell" if self.name == "UnsafeCell" => {
+                    Some("core::cell::UnsafeCell".into())
+                }
+                "__core__.marker" => Some("core::marker::{PhantomData, PhantomPinned}".into()),
                 _ => {
                     error!("unknown __core__: {self:?}");
                     None

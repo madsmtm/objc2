@@ -22,6 +22,7 @@ use crate::id::Location;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
 use crate::name_translation::enum_prefix;
+use crate::name_translation::split_words;
 use crate::rust_type::Ty;
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -378,6 +379,28 @@ fn verify_objc_decl(entity: &Entity<'_>, _context: &Context<'_>) {
     });
 }
 
+/// Whether the entity contains a bridging modifier.
+pub(crate) fn is_bridged(entity: &Entity<'_>, context: &Context<'_>) -> bool {
+    let mut is_bridged = false;
+    immediate_children(entity, |entity, _span| {
+        if let EntityKind::UnexposedAttr = entity.get_kind() {
+            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                if matches!(
+                    attr,
+                    UnexposedAttr::Bridged
+                        | UnexposedAttr::BridgedMutable
+                        | UnexposedAttr::BridgedRelated
+                        | UnexposedAttr::BridgedTypedef
+                        | UnexposedAttr::BridgedImplicit
+                ) {
+                    is_bridged = true;
+                }
+            }
+        }
+    });
+    is_bridged
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub enum Counterpart {
     #[default]
@@ -552,6 +575,15 @@ pub enum Stmt {
         ty: Ty,
         kind: Option<UnexposedAttr>,
         documentation: Documentation,
+    },
+    /// typedef struct CF_BRIDGED_TYPE(id) CGColorSpace *CGColorSpaceRef;
+    OpaqueDecl {
+        id: ItemIdentifier,
+        encoding_name: String,
+        availability: Availability,
+        documentation: Documentation,
+        is_cf: bool,
+        superclass: Option<ItemIdentifier>,
     },
 }
 
@@ -1037,6 +1069,7 @@ impl Stmt {
                 let id = ItemIdentifier::new(entity, context);
                 let id = context.replace_typedef_name(id);
                 let availability = Availability::parse(entity, context);
+                let documentation = Documentation::from_entity(entity);
 
                 let data = context
                     .library(id.library_name())
@@ -1050,6 +1083,7 @@ impl Stmt {
                 }
 
                 let mut kind = None;
+                let mut inner_struct = None;
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
@@ -1068,11 +1102,14 @@ impl Stmt {
                             }
                         }
                     }
+                    EntityKind::TypeRef => {
+                        inner_struct =
+                            Some(entity.get_reference().expect("typeref to have reference"));
+                    }
                     EntityKind::StructDecl
                     | EntityKind::UnionDecl
                     | EntityKind::ObjCClassRef
                     | EntityKind::ObjCProtocolRef
-                    | EntityKind::TypeRef
                     | EntityKind::ParmDecl
                     | EntityKind::EnumDecl
                     | EntityKind::IntegerLiteral => {}
@@ -1085,17 +1122,85 @@ impl Stmt {
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                if let Some(ty) = Ty::parse_typedef(ty, &id.name, context) {
-                    vec![Self::AliasDecl {
-                        id,
-                        availability,
-                        ty,
-                        kind,
-                        documentation: Documentation::from_entity(entity),
-                    }]
-                } else {
-                    vec![]
+                let ty = Ty::parse_typedef(ty, context);
+
+                // Handled by Stmt::EnumDecl
+                if ty.is_enum() {
+                    return vec![];
                 }
+
+                // No need to output a typedef if it'll just point to the same thing.
+                //
+                // TODO: We're discarding a slight bit of availability data this way.
+                if ty.is_struct(&id.name) {
+                    return vec![];
+                }
+
+                if let Some(encoding_name) = ty.pointer_to_opaque_struct() {
+                    if kind.is_some() {
+                        error!(?kind, "unknown kind on opaque struct");
+                    }
+
+                    let entity = inner_struct.unwrap();
+                    assert_eq!(entity.get_name().unwrap(), encoding_name);
+
+                    // TODO: Remove `Ref` on these:
+                    // <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/docs/CToSwiftNameTranslation.md#cf-types>
+                    let is_cf = ty.is_inner_cf_type(&id.name, is_bridged(&entity, context));
+
+                    return if is_cf {
+                        // If the class name contains the word "Mutable"
+                        // exactly once per the usual word-boundary rules, a
+                        // corresponding class name without the word "Mutable"
+                        // will be used as the superclass if present.
+                        // Otherwise, the CF type is taken to be a root object.
+                        let is_mutable = split_words(&id.name)
+                            .filter(|word| *word == "Mutable")
+                            .count()
+                            == 1;
+                        let superclass = if is_mutable {
+                            // Assume that class pairs are declared in the same file.
+                            Some(id.clone().map_name(|name| name.replace("Mutable", "")))
+                        } else {
+                            None
+                        };
+
+                        vec![Self::OpaqueDecl {
+                            id,
+                            encoding_name: encoding_name.to_string(),
+                            availability,
+                            documentation,
+                            is_cf,
+                            superclass,
+                        }]
+                    } else {
+                        vec![
+                            Self::OpaqueDecl {
+                                id: ItemIdentifier::new(&entity, context),
+                                encoding_name: encoding_name.to_string(),
+                                availability: Availability::parse(&entity, context),
+                                documentation: Documentation::from_entity(&entity),
+                                is_cf,
+                                superclass: None,
+                            },
+                            Self::AliasDecl {
+                                id,
+                                availability,
+                                ty,
+                                kind,
+                                documentation,
+                            },
+                        ]
+                    };
+                }
+
+                vec![Self::AliasDecl {
+                    id,
+                    availability,
+                    ty,
+                    kind,
+                    documentation,
+                }]
             }
             EntityKind::StructDecl => {
                 let id = ItemIdentifier::new(entity, context);
@@ -1427,6 +1532,7 @@ impl Stmt {
                                 UnexposedAttr::UIActor => {
                                     warn!("unhandled UIActor on function declaration")
                                 }
+                                UnexposedAttr::BridgedImplicit => {}
                                 UnexposedAttr::ReturnsRetained => {
                                     // Override the inferred value.
                                     returns_retained = true;
@@ -1540,6 +1646,7 @@ impl Stmt {
             // TODO
             Self::FnDecl { body: Some(_), .. } => None,
             Self::AliasDecl { id, .. } => Some(id.clone()),
+            Self::OpaqueDecl { id, .. } => Some(id.clone()),
         }
     }
 
@@ -1556,6 +1663,7 @@ impl Stmt {
             Self::VarDecl { id, .. } => id.location(),
             Self::FnDecl { id, .. } => id.location(),
             Self::AliasDecl { id, .. } => id.location(),
+            Self::OpaqueDecl { id, .. } => id.location(),
         }
     }
 
@@ -1617,6 +1725,13 @@ impl Stmt {
             // TODO
             Self::FnDecl { body: Some(_), .. } => Vec::new(),
             Self::AliasDecl { ty, .. } => ty.required_items(),
+            Self::OpaqueDecl { superclass, .. } => {
+                let mut items = vec![ItemIdentifier::unsafecell(), ItemIdentifier::phantoms()];
+                if let Some(superclass) = superclass {
+                    items.push(superclass.clone());
+                }
+                items
+            }
         }
     }
 
@@ -1647,6 +1762,13 @@ impl Stmt {
                 }
                 items.push(ItemIdentifier::objc("Encoding"));
                 items
+            }
+            Self::OpaqueDecl { is_cf, .. } => {
+                if *is_cf {
+                    vec![ItemIdentifier::cf("cf_type")]
+                } else {
+                    vec![ItemIdentifier::objc("Encoding")]
+                }
             }
             _ => vec![],
         };
@@ -2633,6 +2755,68 @@ impl Stmt {
                             write!(f, "{}", self.cfg_gate_ln(config))?;
                             writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
                         }
+                    }
+                }
+                Self::OpaqueDecl {
+                    id,
+                    encoding_name,
+                    availability,
+                    documentation,
+                    is_cf,
+                    superclass,
+                } => {
+                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{availability}")?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "#[repr(C)]")?;
+                    if !*is_cf {
+                        // To avoid warnings, though mostly useless.
+                        writeln!(f, "#[derive(Debug)]")?;
+                    }
+                    writeln!(f, "pub struct {} {{", id.name)?;
+                    // Make the type be considered FFI-safe.
+                    writeln!(f, "    inner: [u8; 0],")?;
+                    // Same as objc2::ffi::OpaqueData, almost equivalent to using `extern type`.
+                    writeln!(
+                        f,
+                        "    _p: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,"
+                    )?;
+                    writeln!(f, "}}")?;
+
+                    writeln!(f)?;
+
+                    // Similar to the output of extern_class!
+                    if *is_cf {
+                        let mut required_items = self.required_items();
+                        required_items.push(ItemIdentifier::cf("cf_type"));
+                        let cfg_cf =
+                            cfg_gate_ln(required_items, [self.location()], config, self.location());
+                        write!(f, "{cfg_cf}")?;
+                        // SAFETY: The type is a CoreFoundation type, and
+                        // correctly declared as a #[repr(C)] ZST.
+                        writeln!(f, "cf_type!(")?;
+                        writeln!(f, "    #[encoding_name = {encoding_name:?}]")?;
+
+                        if let Some(superclass) = superclass {
+                            writeln!(f, "    unsafe impl {}: {} {{}}", id.name, superclass.name)?;
+                        } else {
+                            writeln!(f, "    unsafe impl {} {{}}", id.name)?;
+                        }
+                        writeln!(f, ");")?;
+                    } else {
+                        let mut required_items = self.required_items();
+                        required_items.push(ItemIdentifier::objc("Encoding"));
+                        let cfg_encoding =
+                            cfg_gate_ln(required_items, [self.location()], config, self.location());
+                        // SAFETY: The struct is a ZST type marked `#[repr(C)]`.
+                        write!(f, "{cfg_encoding}")?;
+                        writeln!(f, "unsafe impl RefEncode for {} {{", id.name)?;
+                        write!(f, "    const ENCODING_REF: Encoding = ")?;
+                        writeln!(f, "Encoding::Pointer(&Encoding::Struct(")?;
+                        writeln!(f, "        {encoding_name:?},")?;
+                        writeln!(f, "        &[],")?;
+                        writeln!(f, "    ));")?;
+                        writeln!(f, "}}")?;
                     }
                 }
             };

@@ -17,3 +17,4 @@ fn.IOSurfaceSetOwnershipIdentity.skipped = true
 
 # Defined in other crates too, so needs manual definition
 typedef.IOSurfaceRef.skipped = true
+struct.__IOSurface.skipped = true

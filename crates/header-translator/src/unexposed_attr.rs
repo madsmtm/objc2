@@ -15,8 +15,10 @@ pub enum UnexposedAttr {
     TypedExtensibleEnum,
 
     BridgedTypedef,
+    BridgedImplicit,
     Bridged,
     BridgedMutable,
+    BridgedRelated,
 
     /// `ns_returns_retained` / `cf_returns_retained` / `os_returns_retained`
     ReturnsRetained,
@@ -64,11 +66,12 @@ impl UnexposedAttr {
             | "NS_EXTENSIBLE_STRING_ENUM"
             | "CF_EXTENSIBLE_STRING_ENUM" => Some(Self::TypedExtensibleEnum),
             "NS_SWIFT_BRIDGED_TYPEDEF" | "CF_SWIFT_BRIDGED_TYPEDEF" => Some(Self::BridgedTypedef),
-            "CF_BRIDGED_TYPE" | "CV_BRIDGED_TYPE" | "CM_BRIDGED_TYPE" => Some(Self::Bridged),
+            "CF_IMPLICIT_BRIDGING_ENABLED" => Some(Self::BridgedImplicit),
+            "CF_BRIDGED_TYPE" | "CV_BRIDGED_TYPE" | "CM_BRIDGED_TYPE" | "OPENGL_BRIDGED_TYPE" => {
+                Some(Self::Bridged)
+            }
             "CF_BRIDGED_MUTABLE_TYPE" => Some(Self::BridgedMutable),
-            // Note: This is only used for CTParagraphStyle and CTTextTab, so
-            // probably not really worth it trying to generalize.
-            "CF_RELATED_TYPE" => None,
+            "CF_RELATED_TYPE" => Some(Self::BridgedRelated),
             "NS_RETURNS_RETAINED"
             | "CF_RETURNS_RETAINED"
             | "CM_RETURNS_RETAINED"
@@ -271,7 +274,8 @@ impl UnexposedAttr {
             s if s.starts_with("DEPRECATED_IN_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("FILEPROVIDER_API_AVAILABILITY_") => None,
             // Might be interesting in the future
-            "CF_SWIFT_NAME"
+            "swift_name"
+            | "CF_SWIFT_NAME"
             | "CF_SWIFT_UNAVAILABLE_FROM_ASYNC"
             | "DISPATCH_SWIFT_NAME"
             | "IOSFC_SWIFT_NAME"
@@ -287,8 +291,7 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
-            "CF_IMPLICIT_BRIDGING_ENABLED"
-            | "CF_REFINED_FOR_SWIFT"
+            "CF_REFINED_FOR_SWIFT"
             | "DISPATCH_REFINED_FOR_SWIFT"
             | "NS_REFINED_FOR_SWIFT"
             | "NS_SWIFT_DISABLE_ASYNC" => None,
@@ -306,6 +309,8 @@ impl UnexposedAttr {
             "objc_non_runtime_protocol" => None,
             // Emits unavailability attributes on `new` and `init` methods
             "AV_INIT_UNAVAILABLE" => None,
+            // Irrelevant, we don't emit dispatch_object_t anyhow.
+            "DISPATCH_TRANSPARENT_UNION" => None,
             _ => return Err(()),
         })
     }

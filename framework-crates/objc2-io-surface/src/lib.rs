@@ -16,15 +16,16 @@ extern crate alloc;
 extern crate std;
 
 mod generated;
+#[cfg(feature = "IOSurfaceRef")]
+mod io_surface;
+
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+#[cfg(feature = "IOSurfaceRef")]
+pub use self::io_surface::IOSurfaceRef;
 
 // MacTypes.h
 #[allow(dead_code)]
 pub(crate) type Boolean = u8;
 #[allow(dead_code)]
 pub(crate) type OSType = u32;
-
-/// [Apple's documentation](https://developer.apple.com/documentation/iosurface/iosurfaceref?language=objc)
-#[cfg(feature = "IOSurfaceRef")]
-pub type IOSurfaceRef = *mut core::ffi::c_void;

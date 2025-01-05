@@ -196,7 +196,7 @@ test-frameworks = [
 
 [dependencies]
 block2 = { path = "../block2" }
-objc2 = { path = "../objc2", features = ["relax-void-encoding", "relax-sign-encoding"] }
+objc2 = { path = "../objc2", features = ["relax-sign-encoding"] }
 libc = "0.2.80"
 objc2-avf-audio = { path = "../../framework-crates/objc2-avf-audio", optional = true }
 objc2-av-foundation = { path = "../../framework-crates/objc2-av-foundation", optional = true }

@@ -744,10 +744,7 @@ fn update_test_metadata<'a>(
                 // FIXME: Make these not required for tests
                 (
                     "features",
-                    toml_edit::Value::Array(toml_edit::Array::from_iter([
-                        "relax-void-encoding",
-                        "relax-sign-encoding",
-                    ])),
+                    toml_edit::Value::Array(toml_edit::Array::from_iter(["relax-sign-encoding"])),
                 ),
             ])),
         ),
