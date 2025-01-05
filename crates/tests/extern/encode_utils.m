@@ -1,7 +1,6 @@
 #include <objc/objc.h>
 #include <stdint.h>
 #include <stddef.h>
-#include <uuid/uuid.h>
 #include <Foundation/NSObject.h> // For NSInteger / NSUInteger. Linking is not required.
 
 #define ENCODING_INNER(name, type) char* ENCODING_ ## name = @encode(type);
@@ -200,7 +199,10 @@ ENCODING(PTRDIFF_T, ptrdiff_t);
 
 // uuid.h
 
+#ifdef TARGET_OS_MAC
+#include <uuid/uuid.h>
 ENCODING_NO_ATOMIC(UUID_T, uuid_t);
+#endif
 
 // simd
 

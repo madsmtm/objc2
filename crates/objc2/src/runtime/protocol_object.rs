@@ -199,9 +199,7 @@ mod tests {
 
     use super::*;
     use crate::runtime::{ClassBuilder, NSObject};
-    use crate::{
-        define_class, extern_methods, extern_protocol, msg_send_id, ClassType, ProtocolType,
-    };
+    use crate::{define_class, extern_methods, extern_protocol, msg_send_id, ClassType};
 
     extern_protocol!(
         unsafe trait Foo {
@@ -377,7 +375,7 @@ mod tests {
     #[cfg(debug_assertions)]
     fn test_meta() {
         if false {
-            let _protocol = <dyn CfgTest>::protocol();
+            let _protocol = <dyn CfgTest as crate::ProtocolType>::protocol();
         }
     }
 

@@ -294,6 +294,7 @@ assert_types! {
 
     // uuid.h
 
+    #[cfg(target_vendor = "apple")]
     UUID_T no_atomic => enc Encoding::Array(16, &u8::ENCODING),
 
     // simd
