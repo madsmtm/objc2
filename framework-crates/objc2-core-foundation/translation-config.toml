@@ -50,3 +50,7 @@ fn.__CFStringMakeConstantString.skipped = true
 
 # Differs based on architecture
 typedef.CFBundleRefNum.skipped = true
+typedef.CFTypeID.skipped = true
+typedef.CFOptionFlags.skipped = true
+typedef.CFHashCode.skipped = true
+typedef.CFIndex.skipped = true
