@@ -8,7 +8,9 @@ license = "Zlib OR Apache-2.0 OR MIT"
 
 [dependencies]
 # https://github.com/KyleMayes/clang-rs/pull/58
-clang = { git = "https://github.com/madsmtm/clang-rs.git", branch = "fix-ub-tokenize", features = ["runtime", "clang_10_0"] }
+# https://github.com/KyleMayes/clang-rs/pull/60
+# https://github.com/KyleMayes/clang-rs/pull/62
+clang = { git = "https://github.com/madsmtm/clang-rs.git", branch = "objc2", features = ["runtime", "clang_10_0"] }
 clang-sys = { version = "1.4.0" }
 toml_edit = "0.22.9"
 basic-toml = "0.1.2"

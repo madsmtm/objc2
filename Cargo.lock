@@ -130,7 +130,7 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 [[package]]
 name = "clang"
 version = "2.0.0"
-source = "git+https://github.com/madsmtm/clang-rs.git?branch=fix-ub-tokenize#825e933e203cd9c7ee59c9b260ad0fb41f19fb38"
+source = "git+https://github.com/madsmtm/clang-rs.git?branch=objc2#a4c9913a714541c53e3dba59220c14362bf7ad80"
 dependencies = [
  "clang-sys",
  "libc",

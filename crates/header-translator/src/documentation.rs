@@ -16,35 +16,20 @@ pub struct Documentation {
 
 impl Documentation {
     pub fn from_entity(entity: &Entity<'_>) -> Self {
-        // This can fail when the comment is non-UTF-8, so we have to
-        // potentially handle that case.
-        //
-        // TODO: Fix this in the `clang` crate.
-        let comment = std::panic::catch_unwind(|| {
-            if let Some(comment) = entity.get_comment() {
-                if let Some(parsed) = entity.get_parsed_comment() {
-                    Some(parsed)
-                } else {
-                    error!(?entity, comment, "had comment, but not parsed comment");
-                    None
+        if let Some(comment) = entity.get_comment() {
+            if let Some(parsed) = entity.get_parsed_comment() {
+                Self {
+                    children: parsed.get_children(),
                 }
             } else {
-                None
-            }
-        });
-
-        match comment {
-            Ok(Some(parsed)) => Self {
-                children: parsed.get_children(),
-            },
-            Ok(None) => Self {
-                children: Vec::new(),
-            },
-            Err(_err) => {
-                warn!(?entity, "failed fetching comment");
+                error!(?entity, comment, "had comment, but not parsed comment");
                 Self {
                     children: Vec::new(),
                 }
+            }
+        } else {
+            Self {
+                children: Vec::new(),
             }
         }
     }
