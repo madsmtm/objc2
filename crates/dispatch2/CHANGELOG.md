@@ -59,6 +59,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - **BREAKING**: Use `extern "C-unwind"` instead of `extern "C"` in certain functions that required that.
 - **BREAKING**: Use `isize` instead of `usize` in certain functions where that is more correct.
+- **BREAKING**: An `F: 'static` bound was added to the following methods to make
+                sure any referenced values passed to them are borrowed for long
+                enough since they perform their `work` asynchronously (#689):
+  - `Group::exec_async`
+  - `Queue::exec_async`
+  - `Queue::barrier_async`
+  - `Queue::barrier_async_and_wait`
 
 
 ## 0.1.0 - 2022-10-02

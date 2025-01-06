@@ -226,7 +226,9 @@ impl Queue {
     /// Submit a function for asynchronous execution on the [Queue].
     pub fn exec_async<F>(&self, work: F)
     where
-        F: Send + FnOnce(),
+        // We need `'static` to make sure any referenced values are borrowed for
+        // long enough since `work` will be performed asynchronously.
+        F: Send + FnOnce() + 'static,
     {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
@@ -254,7 +256,9 @@ impl Queue {
     /// Enqueue a barrier function for asynchronous execution on the [Queue] and return immediately.
     pub fn barrier_async<F>(&self, work: F)
     where
-        F: Send + FnOnce(),
+        // We need `'static` to make sure any referenced values are borrowed for
+        // long enough since `work` will be performed asynchronously.
+        F: Send + FnOnce() + 'static,
     {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
@@ -276,7 +280,9 @@ impl Queue {
     /// Submit a function for synchronous execution and mark the function as a barrier for subsequent concurrent tasks.
     pub fn barrier_async_and_wait<F>(&self, work: F)
     where
-        F: Send + FnOnce(),
+        // We need `'static` to make sure any referenced values are borrowed for
+        // long enough since `work` will be performed asynchronously.
+        F: Send + FnOnce() + 'static,
     {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
