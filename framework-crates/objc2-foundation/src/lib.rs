@@ -81,7 +81,7 @@ extern crate alloc;
 extern crate std;
 
 #[doc(hidden)]
-pub mod __macro_helpers;
+pub mod __ns_macro_helpers;
 #[cfg(feature = "NSEnumerator")]
 #[macro_use]
 mod iter;

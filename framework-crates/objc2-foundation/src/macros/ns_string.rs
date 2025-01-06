@@ -120,7 +120,7 @@ macro_rules! __ns_string_static {
         // The full UTF-16 contents along with the written length.
         const UTF16_FULL: (&[u16; $inp.len()], usize) = {
             let mut out = [0u16; $inp.len()];
-            let mut iter = $crate::__macro_helpers::EncodeUtf16Iter::new($inp);
+            let mut iter = $crate::__ns_macro_helpers::EncodeUtf16Iter::new($inp);
             let mut written = 0;
 
             while let Some((state, chars)) = iter.next() {
@@ -161,17 +161,17 @@ macro_rules! __ns_string_static {
         // The section is the same as what clang sets, see:
         // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5243
         #[link_section = "__DATA,__cfstring"]
-        static CFSTRING: $crate::__macro_helpers::CFConstString = unsafe {
-            if $crate::__macro_helpers::is_ascii_no_nul($inp) {
+        static CFSTRING: $crate::__ns_macro_helpers::CFConstString = unsafe {
+            if $crate::__ns_macro_helpers::is_ascii_no_nul($inp) {
                 // This is technically an optimization (UTF-16 strings are
                 // always valid), but it's a fairly important one!
-                $crate::__macro_helpers::CFConstString::new_ascii(
-                    &$crate::__macro_helpers::__CFConstantStringClassReference,
+                $crate::__ns_macro_helpers::CFConstString::new_ascii(
+                    &$crate::__ns_macro_helpers::__CFConstantStringClassReference,
                     &ASCII,
                 )
             } else {
-                $crate::__macro_helpers::CFConstString::new_utf16(
-                    &$crate::__macro_helpers::__CFConstantStringClassReference,
+                $crate::__ns_macro_helpers::CFConstString::new_utf16(
+                    &$crate::__ns_macro_helpers::__CFConstantStringClassReference,
                     &UTF16,
                 )
             }
@@ -184,8 +184,8 @@ macro_rules! __ns_string_static {
 #[macro_export]
 macro_rules! __ns_string_inner {
     ($inp:ident) => {{
-        static CACHED_NSSTRING: $crate::__macro_helpers::CachedRetained<$crate::NSString> =
-            $crate::__macro_helpers::CachedRetained::new();
+        static CACHED_NSSTRING: $crate::__ns_macro_helpers::CachedRetained<$crate::NSString> =
+            $crate::__ns_macro_helpers::CachedRetained::new();
         CACHED_NSSTRING.get(|| $crate::NSString::from_str($inp))
     }};
 }
