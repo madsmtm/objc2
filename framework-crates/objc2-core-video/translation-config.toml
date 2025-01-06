@@ -1,6 +1,6 @@
 framework = "CoreVideo"
 crate = "objc2-core-video"
-required-crates = []
+required-crates = ["objc2-core-foundation"]
 custom-lib-rs = true
 macos = "10.4"
 maccatalyst = "13.0"

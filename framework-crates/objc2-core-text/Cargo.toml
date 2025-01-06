@@ -20,7 +20,7 @@ bitflags = { version = "2.5.0", default-features = false, optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false }
 objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
@@ -40,116 +40,115 @@ targets = [
 default = ["std"]
 std = ["alloc", "bitflags?/std"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags", "objc2-core-graphics?/bitflags"]
-block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2"]
-libc = ["dep:libc", "objc2-core-foundation?/libc", "objc2-core-graphics?/libc"]
-objc2 = ["dep:objc2", "objc2-core-foundation?/objc2", "objc2-core-graphics?/objc2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-graphics?/objc2-core-foundation"]
+bitflags = ["dep:bitflags", "objc2-core-foundation/bitflags", "objc2-core-graphics?/bitflags"]
+block2 = ["dep:block2", "objc2-core-foundation/block2", "objc2-core-graphics?/block2"]
+libc = ["dep:libc", "objc2-core-foundation/libc", "objc2-core-graphics?/libc"]
+objc2 = ["dep:objc2", "objc2-core-foundation/objc2", "objc2-core-graphics?/objc2"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 
 CTDefines = []
 CTFont = [
     "bitflags",
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFCharacterSet",
-    "objc2-core-foundation?/CFData",
-    "objc2-core-foundation?/CFDictionary",
-    "objc2-core-foundation?/CFString",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFCharacterSet",
+    "objc2-core-foundation/CFData",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-graphics?/CGContext",
     "objc2-core-graphics?/CGFont",
     "objc2-core-graphics?/CGPath",
 ]
 CTFontCollection = [
     "bitflags",
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
-    "objc2-core-foundation?/CFSet",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFSet",
 ]
 CTFontDescriptor = [
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
-    "objc2-core-foundation?/CFNumber",
-    "objc2-core-foundation?/CFSet",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFNumber",
+    "objc2-core-foundation/CFSet",
 ]
 CTFontManager = [
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFBundle",
-    "objc2-core-foundation?/CFData",
-    "objc2-core-foundation?/CFDictionary",
-    "objc2-core-foundation?/CFError",
-    "objc2-core-foundation?/CFRunLoop",
-    "objc2-core-foundation?/CFURL",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFBundle",
+    "objc2-core-foundation/CFData",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFError",
+    "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFURL",
     "objc2-core-graphics?/CGFont",
 ]
-CTFontManagerErrors = ["objc2-core-foundation?/CFBase"]
+CTFontManagerErrors = ["objc2-core-foundation/CFBase"]
 CTFontTraits = [
     "bitflags",
-    "objc2-core-foundation?/CFBase",
+    "objc2-core-foundation/CFBase",
 ]
 CTFrame = [
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
     "objc2-core-graphics?/CGContext",
     "objc2-core-graphics?/CGPath",
 ]
 CTFramesetter = [
-    "objc2-core-foundation?/CFAttributedString",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFAttributedString",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
     "objc2-core-graphics?/CGPath",
 ]
 CTGlyphInfo = [
-    "objc2-core-foundation?/CFBase",
+    "objc2-core-foundation/CFBase",
     "objc2-core-graphics?/CGFont",
 ]
 CTLine = [
     "bitflags",
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFAttributedString",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFAttributedString",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
     "objc2-core-graphics?/CGContext",
 ]
-CTParagraphStyle = ["objc2-core-foundation?/CFBase"]
+CTParagraphStyle = ["objc2-core-foundation/CFBase"]
 CTRubyAnnotation = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
 ]
 CTRun = [
     "bitflags",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
     "objc2-core-graphics?/CGContext",
     "objc2-core-graphics?/CGFont",
 ]
 CTRunDelegate = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
     "objc2-core-graphics?/CGImage",
 ]
 CTStringAttributes = [
     "bitflags",
-    "objc2-core-foundation?/CFBase",
+    "objc2-core-foundation/CFBase",
 ]
 CTTextTab = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
 ]
 CTTypesetter = [
-    "objc2-core-foundation?/CFAttributedString",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFAttributedString",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
 ]
 SFNTLayoutTypes = []
 SFNTTypes = []
@@ -178,6 +177,5 @@ all = [
     "block2",
     "libc",
     "objc2",
-    "objc2-core-foundation",
     "objc2-core-graphics",
 ]

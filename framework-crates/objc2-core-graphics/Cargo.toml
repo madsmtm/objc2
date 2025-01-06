@@ -20,7 +20,7 @@ bitflags = { version = "2.5.0", default-features = false, optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
 objc2-io-surface = { path = "../objc2-io-surface", version = "0.2.2", default-features = false, optional = true }
@@ -43,179 +43,178 @@ targets = [
 default = ["std"]
 std = ["alloc", "bitflags?/std"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags", "objc2-io-surface?/bitflags", "objc2-metal?/bitflags"]
-block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-metal?/block2"]
-libc = ["dep:libc", "objc2-core-foundation?/libc", "objc2-io-surface?/libc"]
-objc2 = ["dep:objc2", "objc2-core-foundation?/objc2", "objc2-io-surface?/objc2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-io-surface?/objc2-core-foundation", "objc2-metal?/objc2-core-foundation"]
+bitflags = ["dep:bitflags", "objc2-core-foundation/bitflags", "objc2-io-surface?/bitflags", "objc2-metal?/bitflags"]
+block2 = ["dep:block2", "objc2-core-foundation/block2", "objc2-metal?/block2"]
+libc = ["dep:libc", "objc2-core-foundation/libc", "objc2-io-surface?/libc"]
+objc2 = ["dep:objc2", "objc2-core-foundation/objc2", "objc2-io-surface?/objc2"]
 objc2-io-surface = ["dep:objc2-io-surface", "objc2-metal?/objc2-io-surface"]
 objc2-metal = ["dep:objc2-metal"]
 
-CGAffineTransform = ["objc2-core-foundation?/CFCGTypes"]
+CGAffineTransform = ["objc2-core-foundation/CFCGTypes"]
 CGBase = []
 CGBitmapContext = []
 CGColor = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
 ]
 CGColorConversionInfo = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
-    "objc2-core-foundation?/CFError",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFError",
 ]
 CGColorSpace = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFData",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFData",
+    "objc2-core-foundation/CFDictionary",
 ]
 CGContext = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
 ]
 CGConvertColorDataWithFormat = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
 ]
 CGDataConsumer = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFData",
-    "objc2-core-foundation?/CFURL",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFData",
+    "objc2-core-foundation/CFURL",
 ]
 CGDataProvider = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFData",
-    "objc2-core-foundation?/CFURL",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFData",
+    "objc2-core-foundation/CFURL",
 ]
 CGDirectDisplay = [
     "bitflags",
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
 ]
 CGDirectDisplayMetal = ["objc2-metal?/MTLDevice"]
 CGDirectPalette = []
 CGDisplayConfiguration = [
     "bitflags",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
 ]
 CGDisplayFade = []
 CGDisplayStream = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
-    "objc2-core-foundation?/CFRunLoop",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFRunLoop",
     "objc2-io-surface?/IOSurfaceRef",
 ]
-CGEXRToneMappingGamma = ["objc2-core-foundation?/CFBase"]
+CGEXRToneMappingGamma = ["objc2-core-foundation/CFBase"]
 CGError = []
 CGEvent = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFData",
-    "objc2-core-foundation?/CFMachPort",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFData",
+    "objc2-core-foundation/CFMachPort",
 ]
 CGEventSource = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDate",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDate",
 ]
 CGEventTypes = ["bitflags"]
 CGFont = [
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFData",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFData",
+    "objc2-core-foundation/CFDictionary",
 ]
 CGFunction = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
 ]
 CGGeometry = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
 ]
 CGGradient = [
     "bitflags",
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
 ]
-CGITUToneMapping = ["objc2-core-foundation?/CFBase"]
+CGITUToneMapping = ["objc2-core-foundation/CFBase"]
 CGImage = [
     "bitflags",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
 ]
 CGLayer = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
 ]
-CGPDFArray = ["objc2-core-foundation?/CFCGTypes"]
-CGPDFContentStream = ["objc2-core-foundation?/CFArray"]
+CGPDFArray = ["objc2-core-foundation/CFCGTypes"]
+CGPDFContentStream = ["objc2-core-foundation/CFArray"]
 CGPDFContext = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFData",
-    "objc2-core-foundation?/CFDictionary",
-    "objc2-core-foundation?/CFURL",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFData",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFURL",
 ]
-CGPDFDictionary = ["objc2-core-foundation?/CFCGTypes"]
+CGPDFDictionary = ["objc2-core-foundation/CFCGTypes"]
 CGPDFDocument = [
     "bitflags",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
-    "objc2-core-foundation?/CFURL",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFURL",
 ]
-CGPDFObject = ["objc2-core-foundation?/CFCGTypes"]
+CGPDFObject = ["objc2-core-foundation/CFCGTypes"]
 CGPDFOperatorTable = []
 CGPDFPage = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
 ]
-CGPDFScanner = ["objc2-core-foundation?/CFCGTypes"]
-CGPDFStream = ["objc2-core-foundation?/CFData"]
+CGPDFScanner = ["objc2-core-foundation/CFCGTypes"]
+CGPDFStream = ["objc2-core-foundation/CFData"]
 CGPDFString = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDate",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDate",
 ]
 CGPSConverter = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
 ]
 CGPath = [
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
 ]
 CGPattern = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
 ]
 CGRemoteOperation = [
     "bitflags",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDate",
-    "objc2-core-foundation?/CFMachPort",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDate",
+    "objc2-core-foundation/CFMachPort",
 ]
-CGSession = ["objc2-core-foundation?/CFDictionary"]
+CGSession = ["objc2-core-foundation/CFDictionary"]
 CGShading = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
 ]
 CGToneMapping = []
 CGWindow = [
     "bitflags",
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
 ]
 CGWindowLevel = []
 all = [
@@ -271,7 +270,6 @@ all = [
     "block2",
     "libc",
     "objc2",
-    "objc2-core-foundation",
     "objc2-io-surface",
     "objc2-metal",
 ]

@@ -19,7 +19,7 @@ workspace = true
 bitflags = { version = "2.5.0", default-features = false, optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false }
 objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
@@ -43,86 +43,85 @@ targets = [
 default = ["std"]
 std = ["alloc", "bitflags?/std"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags", "objc2-core-graphics?/bitflags", "objc2-io-surface?/bitflags", "objc2-metal?/bitflags"]
-block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-metal?/block2"]
-objc2 = ["dep:objc2", "objc2-core-foundation?/objc2", "objc2-core-graphics?/objc2", "objc2-io-surface?/objc2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-graphics?/objc2-core-foundation", "objc2-io-surface?/objc2-core-foundation", "objc2-metal?/objc2-core-foundation"]
+bitflags = ["dep:bitflags", "objc2-core-foundation/bitflags", "objc2-core-graphics?/bitflags", "objc2-io-surface?/bitflags", "objc2-metal?/bitflags"]
+block2 = ["dep:block2", "objc2-core-foundation/block2", "objc2-core-graphics?/block2", "objc2-metal?/block2"]
+objc2 = ["dep:objc2", "objc2-core-foundation/objc2", "objc2-core-graphics?/objc2", "objc2-io-surface?/objc2"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-io-surface = ["dep:objc2-io-surface", "objc2-core-graphics?/objc2-io-surface", "objc2-metal?/objc2-io-surface"]
 objc2-metal = ["dep:objc2-metal", "objc2-core-graphics?/objc2-metal"]
 
 CVBase = ["bitflags"]
 CVBuffer = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
 ]
 CVDisplayLink = [
-    "objc2-core-foundation?/CFBase",
+    "objc2-core-foundation/CFBase",
     "objc2-core-graphics?/CGDirectDisplay",
 ]
 CVHostTime = []
 CVImageBuffer = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
     "objc2-core-graphics?/CGColorSpace",
 ]
 CVMetalBuffer = [
-    "objc2-core-foundation?/CFBase",
+    "objc2-core-foundation/CFBase",
     "objc2-metal?/MTLAllocation",
     "objc2-metal?/MTLBuffer",
     "objc2-metal?/MTLResource",
 ]
 CVMetalBufferCache = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
     "objc2-metal?/MTLDevice",
 ]
 CVMetalTexture = [
-    "objc2-core-foundation?/CFBase",
+    "objc2-core-foundation/CFBase",
     "objc2-metal?/MTLAllocation",
     "objc2-metal?/MTLResource",
     "objc2-metal?/MTLTexture",
 ]
 CVMetalTextureCache = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
     "objc2-metal?/MTLDevice",
     "objc2-metal?/MTLPixelFormat",
 ]
 CVOpenGLBuffer = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
 ]
 CVOpenGLBufferPool = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
 ]
-CVOpenGLTexture = ["objc2-core-foundation?/CFBase"]
+CVOpenGLTexture = ["objc2-core-foundation/CFBase"]
 CVOpenGLTextureCache = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
 ]
 CVPixelBuffer = [
     "bitflags",
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
 ]
 CVPixelBufferIOSurface = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
     "objc2-io-surface?/IOSurfaceRef",
 ]
 CVPixelBufferPool = [
     "bitflags",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
 ]
 CVPixelFormatDescription = [
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
 ]
 CVReturn = []
 all = [
@@ -147,7 +146,6 @@ all = [
     "bitflags",
     "block2",
     "objc2",
-    "objc2-core-foundation",
     "objc2-core-graphics",
     "objc2-io-surface",
     "objc2-metal",

@@ -42,7 +42,7 @@ std = ["alloc", "bitflags/std"]
 alloc = []
 MPSImage = ["objc2-foundation/NSArray"]
 block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-foundation/block2", "objc2-metal/block2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-core-graphics?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-metal/objc2-core-foundation"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-metal/objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 
 MPSAccelerationStructure = [

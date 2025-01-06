@@ -51,7 +51,7 @@ bitflags = ["dep:bitflags", "objc2-app-kit?/bitflags", "objc2-core-foundation?/b
 block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-contacts?/block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-core-location?/block2", "objc2-foundation/block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-contacts = ["dep:objc2-contacts", "objc2-core-location?/objc2-contacts"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-core-graphics?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics", "objc2-app-kit?/objc2-core-graphics"]
 objc2-core-location = ["dep:objc2-core-location"]
 

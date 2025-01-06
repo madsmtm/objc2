@@ -1,6 +1,6 @@
 framework = "CoreMedia"
 crate = "objc2-core-media"
-required-crates = []
+required-crates = ["objc2-core-foundation"]
 custom-lib-rs = true
 macos = "10.7"
 maccatalyst = "13.1"

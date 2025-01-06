@@ -51,7 +51,7 @@ bitflags = ["dep:bitflags", "objc2-app-kit?/bitflags", "objc2-av-foundation?/bit
 block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-av-foundation?/block2", "objc2-core-foundation?/block2", "objc2-core-media?/block2", "objc2-foundation/block2", "objc2-quartz-core?/block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-av-foundation?/objc2-core-foundation", "objc2-core-media?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-quartz-core?/objc2-core-foundation"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-av-foundation?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-quartz-core?/objc2-core-foundation"]
 objc2-core-media = ["dep:objc2-core-media", "objc2-av-foundation?/objc2-core-media"]
 objc2-quartz-core = ["dep:objc2-quartz-core", "objc2-app-kit?/objc2-quartz-core", "objc2-av-foundation?/objc2-quartz-core"]
 
