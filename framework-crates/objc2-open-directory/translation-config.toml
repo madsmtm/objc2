@@ -18,3 +18,11 @@ fn.ODQuerySetDispatchQueue.skipped = true
 typedef._ODRecordType.skipped = true
 typedef._ODAttributeType.skipped = true
 typedef._ODAuthenticationType.skipped = true
+
+# These exist both in Objective-C and CF.
+# TODO: Make these somehow be the same type.
+typedef.ODContextRef.renamed = "ODContextRef"
+typedef.ODNodeRef.renamed = "ODNodeRef"
+typedef.ODQueryRef.renamed = "ODQueryRef"
+typedef.ODRecordRef.renamed = "ODRecordRef"
+typedef.ODSessionRef.renamed = "ODSessionRef"

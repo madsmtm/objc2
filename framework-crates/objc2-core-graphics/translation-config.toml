@@ -18,6 +18,7 @@ fn.CGDisplayStreamCreateWithDispatchQueue.skipped = true
 fn.CGColorSpaceRelease.skipped = true
 
 # CoreGraphics defines this for some reason?
+typedef.IOSurfaceRef.renamed = "IOSurfaceRef"
 typedef.IOSurfaceRef.skipped = true
 struct.__IOSurface.skipped = true
 

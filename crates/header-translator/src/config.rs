@@ -66,14 +66,37 @@ impl Config {
         })
     }
 
-    pub fn replace_typedef_name(&self, id: ItemIdentifier) -> ItemIdentifier {
+    pub fn replace_typedef_name(&self, id: ItemIdentifier, is_cf: bool) -> ItemIdentifier {
         let library_config = self.library(id.library_name());
         id.map_name(|name| {
             library_config
                 .typedef_data
                 .get(&name)
                 .and_then(|data| data.renamed.clone())
-                .unwrap_or(name)
+                .unwrap_or_else(|| {
+                    // If a typedef's underlying type is itself a "CF pointer"
+                    // typedef, the "alias" typedef will be imported as a
+                    // regular typealias, with the suffix "Ref" still dropped
+                    // from its name (if present).
+                    //
+                    // <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/docs/CToSwiftNameTranslation.md#cf-types>
+                    //
+                    // NOTE: There's an extra clause that we don't support:
+                    // > unless doing so would conflict with another
+                    // > declaration in the same module as the typedef.
+                    //
+                    // We'll have to manually keep the name of those in
+                    // translation-config.toml.
+                    if is_cf {
+                        if let Some(name) = name.strip_suffix("Ref") {
+                            name.to_string()
+                        } else {
+                            name
+                        }
+                    } else {
+                        name
+                    }
+                })
         })
     }
 

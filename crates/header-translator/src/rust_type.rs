@@ -446,8 +446,8 @@ pub enum Ty {
         nullability: Nullability,
         lifetime: Lifetime,
         to: Box<Self>,
-        /// Whether the typedef's declaration has a bridge attribute.
-        is_bridged: bool,
+        /// Whether the typedef's declaration is a CF-like type.
+        is_cf: bool,
     },
     IncompleteArray {
         nullability: Nullability,
@@ -1011,7 +1011,7 @@ impl Ty {
                             nullability,
                             lifetime,
                             to: Box::new(Self::Primitive(Primitive::Int)),
-                            is_bridged: is_bridged(&declaration, context),
+                            is_cf: false,
                         }
                     }
 
@@ -1038,15 +1038,18 @@ impl Ty {
                     };
                 }
 
+                let to = Self::parse(to, Lifetime::Unspecified, context);
+
                 let id = ItemIdentifier::new(&declaration, context);
-                let id = context.replace_typedef_name(id);
+                let is_cf = to.is_inner_cf_type(&id.name, is_bridged(&declaration, context));
+                let id = context.replace_typedef_name(id, is_cf);
 
                 Self::TypeDef {
                     id,
                     nullability,
                     lifetime,
-                    to: Box::new(Self::parse(to, Lifetime::Unspecified, context)),
-                    is_bridged: is_bridged(&declaration, context),
+                    to: Box::new(to),
+                    is_cf,
                 }
             }
             // Assume that functions without a prototype simply have 0 arguments.
@@ -1376,6 +1379,10 @@ impl Ty {
         }
     }
 
+    /// Determine whether the inner type of a TypeDef is a CF-like type.
+    ///
+    /// Similar to what's done in Swift's implementation:
+    /// <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/lib/ClangImporter/CFTypeInfo.cpp#L53>
     pub(crate) fn is_inner_cf_type(&self, typedef_name: &str, typedef_is_bridged: bool) -> bool {
         // Pre-defined list of known CF types.
         // Taken from the Swift project (i.e. this is also what they do).
@@ -1393,7 +1400,7 @@ impl Ty {
         // <https://github.com/llvm/llvm-project/blob/llvmorg-19.1.6/clang/lib/Analysis/CocoaConventions.cpp#L57>
         match self {
             // Recurse
-            Self::TypeDef { .. } => self.is_cf_type(),
+            Self::TypeDef { is_cf, .. } => *is_cf,
             Self::Pointer { pointee, .. } => match &**pointee {
                 // Typedefs to structs are CF types if bridged, or in
                 // pre-defined list.
@@ -1410,21 +1417,6 @@ impl Ty {
                 _ => false,
             },
             _ => false,
-        }
-    }
-
-    /// Determine whether the typedef is a CF-like type.
-    ///
-    /// Similar to what's done in Swift's implementation:
-    /// <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/lib/ClangImporter/CFTypeInfo.cpp#L53>
-    fn is_cf_type(&self) -> bool {
-        if let Self::TypeDef {
-            id, to, is_bridged, ..
-        } = self
-        {
-            to.is_inner_cf_type(&id.name, *is_bridged)
-        } else {
-            false
         }
     }
 
@@ -1492,8 +1484,11 @@ impl Ty {
                     }
                 },
                 Self::TypeDef {
-                    id, nullability, ..
-                } if self.is_object_like() || self.is_cf_type() => {
+                    id,
+                    nullability,
+                    is_cf,
+                    ..
+                } if self.is_object_like() || *is_cf => {
                     if *nullability == Nullability::NonNull {
                         write!(f, "NonNull<{}>", id.path())
                     } else {
@@ -1553,8 +1548,8 @@ impl Ty {
                             Self::Pointer { pointee, .. } if pointee.is_object_like() => {
                                 write!(f, "{},", pointee.behind_pointer())?
                             }
-                            Self::TypeDef { id, .. }
-                                if generic.is_object_like() || generic.is_cf_type() =>
+                            Self::TypeDef { id, is_cf, .. }
+                                if generic.is_object_like() || *is_cf =>
                             {
                                 write!(f, "{},", id.path())?
                             }
@@ -1635,8 +1630,11 @@ impl Ty {
                 }
             }
             Self::TypeDef {
-                id, nullability, ..
-            } if (self.is_object_like() || self.is_cf_type()) && !self.is_static_object() => {
+                id,
+                nullability,
+                is_cf,
+                ..
+            } if (self.is_object_like() || *is_cf) && !self.is_static_object() => {
                 // NOTE: We return CF types as `Retained` for now, since we
                 // don't have support for the CF wrapper in msg_send! yet.
                 if *nullability == Nullability::NonNull {
@@ -1690,8 +1688,8 @@ impl Ty {
                     nullability: Nullability::Nullable,
                     lifetime: Lifetime::Unspecified,
                     to: _,
-                    ..
-                } if self.is_object_like() || self.is_cf_type() => {
+                    is_cf,
+                } if self.is_object_like() || *is_cf => {
                     // NULL -> error
                     write!(
                         f,
@@ -1799,7 +1797,7 @@ impl Ty {
                 Some((res, start, end(*nullability)))
             }
             // TODO: Use custom CF type to do retain/release management here.
-            Self::TypeDef { .. } if self.is_cf_type() && !self.is_static_object() => None,
+            Self::TypeDef { is_cf, .. } if *is_cf && !self.is_static_object() => None,
             _ => None,
         }
     }
@@ -1821,8 +1819,11 @@ impl Ty {
                 }
             }
             Self::TypeDef {
-                id, nullability, ..
-            } if self.is_object_like() || self.is_cf_type() => {
+                id,
+                nullability,
+                is_cf,
+                ..
+            } if self.is_object_like() || *is_cf => {
                 if *nullability == Nullability::NonNull {
                     write!(f, "&'static {}", id.path())
                 } else {
@@ -1843,7 +1844,7 @@ impl Ty {
             } if pointee.is_object_like() => {
                 write!(f, "{}", pointee.behind_pointer())
             }
-            Self::TypeDef { id, .. } if self.is_object_like() || self.is_cf_type() => {
+            Self::TypeDef { id, is_cf, .. } if self.is_object_like() || *is_cf => {
                 write!(f, "{}", id.path())
             }
             Self::IncompleteArray { .. } => unimplemented!("incomplete array in typedef"),
@@ -1867,8 +1868,11 @@ impl Ty {
                 }
             }
             Self::TypeDef {
-                id, nullability, ..
-            } if self.is_object_like() || self.is_cf_type() => {
+                id,
+                nullability,
+                is_cf,
+                ..
+            } if self.is_object_like() || *is_cf => {
                 if *nullability == Nullability::NonNull {
                     write!(f, "&{}", id.path())
                 } else {
@@ -2267,8 +2271,8 @@ impl Ty {
             {
                 true
             }
-            Self::TypeDef { .. }
-                if self.is_object_like() || self.is_cf_type() && !self.is_static_object() =>
+            Self::TypeDef { is_cf, .. }
+                if (self.is_object_like() || *is_cf) && !self.is_static_object() =>
             {
                 true
             }
@@ -2425,9 +2429,9 @@ mod tests {
                         protocols: vec![],
                     }),
                 }),
-                is_bridged: false,
+                is_cf: false,
             }),
-            is_bridged: false,
+            is_cf: false,
         };
 
         assert!(ty.is_object_like());

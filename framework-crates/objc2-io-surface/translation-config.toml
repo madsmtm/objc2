@@ -16,5 +16,6 @@ fn.IOSurfaceLookupFromXPCObject.skipped = true
 fn.IOSurfaceSetOwnershipIdentity.skipped = true
 
 # Defined in other crates too, so needs manual definition
+typedef.IOSurfaceRef.renamed = "IOSurfaceRef" # TODO: Merge IOSurface and IOSurfaceRef somehow
 typedef.IOSurfaceRef.skipped = true
 struct.__IOSurface.skipped = true

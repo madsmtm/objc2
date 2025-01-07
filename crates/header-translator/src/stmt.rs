@@ -1067,7 +1067,6 @@ impl Stmt {
             }
             EntityKind::TypedefDecl => {
                 let id = ItemIdentifier::new(entity, context);
-                let id = context.replace_typedef_name(id);
                 let availability = Availability::parse(entity, context);
                 let documentation = Documentation::from_entity(entity);
 
@@ -1136,6 +1135,9 @@ impl Stmt {
                     return vec![];
                 }
 
+                let is_cf = ty.is_inner_cf_type(&id.name, is_bridged(entity, context));
+                let id = context.replace_typedef_name(id, is_cf);
+
                 if let Some(encoding_name) = ty.pointer_to_opaque_struct() {
                     if kind.is_some() {
                         error!(?kind, "unknown kind on opaque struct");
@@ -1143,10 +1145,6 @@ impl Stmt {
 
                     let entity = inner_struct.unwrap();
                     assert_eq!(entity.get_name().unwrap(), encoding_name);
-
-                    // TODO: Remove `Ref` on these:
-                    // <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/docs/CToSwiftNameTranslation.md#cf-types>
-                    let is_cf = ty.is_inner_cf_type(&id.name, is_bridged(&entity, context));
 
                     return if is_cf {
                         // If the class name contains the word "Mutable"
