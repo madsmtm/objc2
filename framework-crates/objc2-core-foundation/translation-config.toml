@@ -41,6 +41,9 @@ struct.CGPoint.skipped = true
 struct.CGSize.skipped = true
 struct.CGRect.skipped = true
 
+# Custom definition because it's special
+typedef.CFTypeRef.skipped = true
+
 # CF_RELEASES_ARGUMENT (`cf_consumed`), requires manual handling
 fn.CFAutorelease.skipped = true
 

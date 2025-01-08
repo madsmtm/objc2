@@ -579,7 +579,7 @@ pub enum Stmt {
     /// typedef struct CF_BRIDGED_TYPE(id) CGColorSpace *CGColorSpaceRef;
     OpaqueDecl {
         id: ItemIdentifier,
-        encoding_name: Option<String>,
+        encoding_name: String,
         availability: Availability,
         documentation: Documentation,
         is_cf: bool,
@@ -1146,7 +1146,8 @@ impl Stmt {
                     assert_eq!(
                         inner_struct
                             .as_ref()
-                            .map(|entity| entity.get_name().unwrap()),
+                            .map(|entity| entity.get_name().unwrap())
+                            .as_deref(),
                         encoding_name,
                         "inner struct must be the same that `pointer_to_opaque_struct_or_void` found",
                     );
@@ -1170,7 +1171,7 @@ impl Stmt {
 
                         return vec![Self::OpaqueDecl {
                             id,
-                            encoding_name,
+                            encoding_name: encoding_name.unwrap().to_string(),
                             availability,
                             documentation,
                             is_cf,
@@ -1180,7 +1181,7 @@ impl Stmt {
                         return vec![
                             Self::OpaqueDecl {
                                 id: ItemIdentifier::new(&entity, context),
-                                encoding_name,
+                                encoding_name: encoding_name.unwrap().to_string(),
                                 availability: Availability::parse(&entity, context),
                                 documentation: Documentation::from_entity(&entity),
                                 is_cf,
@@ -2798,11 +2799,7 @@ impl Stmt {
                         // SAFETY: The type is a CoreFoundation type, and
                         // correctly declared as a #[repr(C)] ZST.
                         writeln!(f, "cf_type!(")?;
-                        if let Some(encoding_name) = &encoding_name {
-                            writeln!(f, "    #[encoding_name = {encoding_name:?}]")?;
-                        } else {
-                            writeln!(f, "    #[encoding_void]")?;
-                        }
+                        writeln!(f, "    #[encoding_name = {encoding_name:?}]")?;
 
                         if let Some(superclass) = superclass {
                             writeln!(f, "    unsafe impl {}: {} {{}}", id.name, superclass.name)?;
@@ -2819,14 +2816,10 @@ impl Stmt {
                         write!(f, "{cfg_encoding}")?;
                         writeln!(f, "unsafe impl RefEncode for {} {{", id.name)?;
                         write!(f, "    const ENCODING_REF: Encoding = ")?;
-                        if let Some(encoding_name) = &encoding_name {
-                            writeln!(f, "Encoding::Pointer(&Encoding::Struct(")?;
-                            writeln!(f, "        {encoding_name:?},")?;
-                            writeln!(f, "        &[],")?;
-                            writeln!(f, "    ));")?;
-                        } else {
-                            writeln!(f, "Encoding::Pointer(&Encoding::Void);")?;
-                        }
+                        writeln!(f, "Encoding::Pointer(&Encoding::Struct(")?;
+                        writeln!(f, "        {encoding_name:?},")?;
+                        writeln!(f, "        &[],")?;
+                        writeln!(f, "    ));")?;
                         writeln!(f, "}}")?;
                     }
                 }

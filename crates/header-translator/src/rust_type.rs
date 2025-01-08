@@ -2127,7 +2127,7 @@ impl Ty {
         matches!(self, Self::Enum { .. })
     }
 
-    pub(crate) fn pointer_to_opaque_struct_or_void(&self) -> Option<Option<String>> {
+    pub(crate) fn pointer_to_opaque_struct_or_void(&self) -> Option<Option<&str>> {
         if let Self::Pointer {
             pointee,
             is_const: _, // const-ness doesn't matter when defining the type
@@ -2145,7 +2145,7 @@ impl Ty {
                         error!(?id, ?lifetime, "opaque pointer had lifetime");
                     }
 
-                    return Some(Some(id.name.to_string()));
+                    return Some(Some(&id.name));
                 }
             }
             if let Self::Primitive(Primitive::Void) = &**pointee {

@@ -38,6 +38,9 @@
 //
 // That means we can use `isize`/`usize`, which is more ergonomic.
 
+use core::cell::UnsafeCell;
+use core::marker::{PhantomData, PhantomPinned};
+
 /// [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cftypeid?language=objc)
 pub type CFTypeID = usize;
 
@@ -49,3 +52,15 @@ pub type CFHashCode = usize;
 
 /// [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cfindex?language=objc)
 pub type CFIndex = isize;
+
+// Manually define CFType
+
+/// [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cftype?language=objc)
+#[repr(C)]
+pub struct CFType {
+    inner: [u8; 0],
+    _p: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,
+}
+
+crate::__cf_type_common!(CFType);
+crate::__cf_type_objc2!(CFType, crate::__cf_macro_helpers::Encoding::Void);

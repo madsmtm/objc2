@@ -41,16 +41,6 @@ macro_rules! cf_type {
             $crate::__cf_macro_helpers::Encoding::Struct($encoding_name, &[])
         );
     };
-    (
-        #[encoding_void]
-        unsafe impl $ty:ident $(: $superclass:ty)? {}
-    ) => {
-        $crate::__cf_type_common!($ty);
-        $crate::__cf_type_superclass!($ty $(: $superclass)?);
-
-        // Objective-C interop
-        $crate::__cf_type_objc2!($ty, $crate::__cf_macro_helpers::Encoding::Void);
-    };
 }
 
 #[doc(hidden)]
