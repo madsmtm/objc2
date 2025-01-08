@@ -1,38 +1,25 @@
 //! Dispatch group definition.
 
 use alloc::boxed::Box;
-use core::ffi::c_void;
-use core::time::Duration;
+use core::{ffi::c_void, time::Duration};
 
-use super::object::DispatchObject;
-use super::queue::Queue;
-use super::utils::function_wrapper;
-use super::{ffi::*, WaitError};
+use super::{ffi::*, function_wrapper, queue::Queue, rc::Retained, AsRawDispatchObject, WaitError};
 
 /// Dispatch group.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Group {
-    dispatch_object: DispatchObject<dispatch_group_s>,
+    _inner: [u8; 0],
 }
-
-/// Dispatch group guard.
-#[derive(Debug)]
-pub struct GroupGuard(Group, bool);
 
 impl Group {
     /// Creates a new [Group].
-    pub fn new() -> Option<Self> {
+    pub fn new() -> Option<Retained<Self>> {
         // Safety: valid to call.
         let object = unsafe { dispatch_group_create() };
+        assert!(!object.is_null());
 
-        if object.is_null() {
-            return None;
-        }
-
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
-
-        Some(Group { dispatch_object })
+        // Safety: object must be valid.
+        unsafe { Retained::from_raw(object.cast()) }
     }
 
     /// Submit a function to a [Queue] and associates it with the [Group].
@@ -101,15 +88,11 @@ impl Group {
             dispatch_group_enter(self.as_raw());
         }
 
-        GroupGuard(self.clone(), false)
-    }
+        let group =
+            // Safety: group cannot be null.
+            unsafe { Retained::retain(self.as_raw().cast()) }.expect("failed to retain semaphore");
 
-    /// Set the finalizer function for the object.
-    pub fn set_finalizer<F>(&mut self, destructor: F)
-    where
-        F: Send + FnOnce(),
-    {
-        self.dispatch_object.set_finalizer(destructor);
+        GroupGuard(group, false)
     }
 
     /// Get the raw [dispatch_group_t] value.
@@ -117,11 +100,26 @@ impl Group {
     /// # Safety
     ///
     /// - Object shouldn't be released manually.
-    pub const unsafe fn as_raw(&self) -> dispatch_group_t {
-        // SAFETY: Upheld by caller
-        unsafe { self.dispatch_object.as_raw() }
+    pub fn as_raw(&self) -> dispatch_group_t {
+        self as *const Self as _
     }
 }
+
+impl AsRawDispatchObject for Group {
+    fn as_raw_object(&self) -> dispatch_object_t {
+        self.as_raw().cast()
+    }
+}
+
+// Safety: group is inherently safe to move between threads.
+unsafe impl Send for Group {}
+
+// Safety: group is inherently safe to share between threads.
+unsafe impl Sync for Group {}
+
+/// Dispatch group guard.
+#[derive(Debug)]
+pub struct GroupGuard(Retained<Group>, bool);
 
 impl GroupGuard {
     /// Explicitly indicates that the function in the [Group] finished executing.
