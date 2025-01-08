@@ -32,6 +32,31 @@ macro_rules! cf_type {
         #[encoding_name = $encoding_name:expr]
         unsafe impl $ty:ident $(: $superclass:ty)? {}
     ) => {
+        $crate::__cf_type_common!($ty);
+        $crate::__cf_type_superclass!($ty $(: $superclass)?);
+
+        // Objective-C interop
+        $crate::__cf_type_objc2!(
+            $ty,
+            $crate::__cf_macro_helpers::Encoding::Struct($encoding_name, &[])
+        );
+    };
+    (
+        #[encoding_void]
+        unsafe impl $ty:ident $(: $superclass:ty)? {}
+    ) => {
+        $crate::__cf_type_common!($ty);
+        $crate::__cf_type_superclass!($ty $(: $superclass)?);
+
+        // Objective-C interop
+        $crate::__cf_type_objc2!($ty, $crate::__cf_macro_helpers::Encoding::Void);
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __cf_type_common {
+    ($ty:ident) => {
         // Reflexive AsRef impl.
         impl $crate::__cf_macro_helpers::AsRef<Self> for $ty {
             #[inline]
@@ -40,52 +65,59 @@ macro_rules! cf_type {
             }
         }
 
-        // If has superclass.
-        $(
-            // Similar to `objc2::extern_class!`, we implement Deref for the
-            // type to allow easy conversion to the super class.
-            impl $crate::__cf_macro_helpers::Deref for $ty {
-                type Target = $superclass;
-
-                #[inline]
-                fn deref(&self) -> &Self::Target {
-                    // SAFETY: It is valid to re-interpret a type as its superclass.
-                    unsafe { core::mem::transmute(self) }
-                }
-            }
-
-            // Allow converting to superclasses.
-            // Similar to `objc2::__extern_class_impl_as_ref_borrow!`.
-
-            impl $crate::__cf_macro_helpers::AsRef<$superclass> for $ty {
-                #[inline]
-                fn as_ref(&self) -> &$superclass {
-                    self // Through Deref
-                }
-            }
-
-            impl $crate::__cf_macro_helpers::Borrow<$superclass> for $ty {
-                #[inline]
-                fn borrow(&self) -> &$superclass {
-                    self // Through Deref
-                }
-            }
-        )?
-
         impl $crate::__cf_macro_helpers::fmt::Debug for $ty {
-            fn fmt(&self, f: &mut $crate::__cf_macro_helpers::fmt::Formatter<'_>) -> $crate::__cf_macro_helpers::fmt::Result {
-                f.debug_struct($crate::__cf_macro_helpers::stringify!($ty)).finish_non_exhaustive()
+            fn fmt(
+                &self,
+                f: &mut $crate::__cf_macro_helpers::fmt::Formatter<'_>,
+            ) -> $crate::__cf_macro_helpers::fmt::Result {
+                f.debug_struct($crate::__cf_macro_helpers::stringify!($ty))
+                    .finish_non_exhaustive()
             }
         }
+    };
+}
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __cf_type_superclass {
+    // No superclass
+    ($ty:ident) => {
         // NOTE: We intentionally don't implement `Deref` with
         // `Target = AnyObject` when there isn't a superclass, as we want
         // conversions to Objective-C types to be explicit.
         //
         // TODO: Maybe implement `Deref<Target = CFTypeRef>`?
+    };
+    // If has superclass.
+    ($ty:ident: $superclass:ty) => {
+        // Similar to `objc2::extern_class!`, we implement Deref for the
+        // type to allow easy conversion to the super class.
+        impl $crate::__cf_macro_helpers::Deref for $ty {
+            type Target = $superclass;
 
-        // Objective-C interop
-        $crate::__cf_type_objc2!($ty, $encoding_name);
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                // SAFETY: It is valid to re-interpret a type as its superclass.
+                unsafe { core::mem::transmute(self) }
+            }
+        }
+
+        // Allow converting to superclasses.
+        // Similar to `objc2::__extern_class_impl_as_ref_borrow!`.
+
+        impl $crate::__cf_macro_helpers::AsRef<$superclass> for $ty {
+            #[inline]
+            fn as_ref(&self) -> &$superclass {
+                self // Through Deref
+            }
+        }
+
+        impl $crate::__cf_macro_helpers::Borrow<$superclass> for $ty {
+            #[inline]
+            fn borrow(&self) -> &$superclass {
+                self // Through Deref
+            }
+        }
     };
 }
 
@@ -93,14 +125,12 @@ macro_rules! cf_type {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __cf_type_objc2 {
-    ($ty:ty, $encoding_name:expr) => {
+    ($ty:ty, $encoding:expr) => {
         // SAFETY: Caller upholds that the struct is a ZST type, and
         // represents a C struct with the given encoding.
         unsafe impl $crate::__cf_macro_helpers::RefEncode for $ty {
             const ENCODING_REF: $crate::__cf_macro_helpers::Encoding =
-                $crate::__cf_macro_helpers::Encoding::Pointer(
-                    &$crate::__cf_macro_helpers::Encoding::Struct($encoding_name, &[]),
-                );
+                $crate::__cf_macro_helpers::Encoding::Pointer(&$encoding);
         }
 
         // SAFETY: CF types are message-able in the Objective-C runtime.

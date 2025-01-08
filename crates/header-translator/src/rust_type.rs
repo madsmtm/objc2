@@ -1410,9 +1410,7 @@ impl Ty {
                 // Typedefs to void* are CF types if the typedef is
                 // bridged, or in pre-defined list.
                 Self::Primitive(Primitive::Void) => {
-                    // TODO
-                    let enabled = false;
-                    enabled && (typedef_is_bridged || KNOWN_CF_TYPES.contains(&typedef_name))
+                    typedef_is_bridged || KNOWN_CF_TYPES.contains(&typedef_name)
                 }
                 _ => false,
             },
@@ -2117,7 +2115,7 @@ impl Ty {
         matches!(self, Self::Enum { .. })
     }
 
-    pub(crate) fn pointer_to_opaque_struct(&self) -> Option<&str> {
+    pub(crate) fn pointer_to_opaque_struct_or_void(&self) -> Option<Option<String>> {
         if let Self::Pointer {
             pointee,
             is_const: _, // const-ness doesn't matter when defining the type
@@ -2135,8 +2133,11 @@ impl Ty {
                         error!(?id, ?lifetime, "opaque pointer had lifetime");
                     }
 
-                    return Some(&id.name);
+                    return Some(Some(id.name.to_string()));
                 }
+            }
+            if let Self::Primitive(Primitive::Void) = &**pointee {
+                return Some(None);
             }
         }
         None

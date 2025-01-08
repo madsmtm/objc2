@@ -579,7 +579,7 @@ pub enum Stmt {
     /// typedef struct CF_BRIDGED_TYPE(id) CGColorSpace *CGColorSpaceRef;
     OpaqueDecl {
         id: ItemIdentifier,
-        encoding_name: String,
+        encoding_name: Option<String>,
         availability: Availability,
         documentation: Documentation,
         is_cf: bool,
@@ -1138,15 +1138,20 @@ impl Stmt {
                 let is_cf = ty.is_inner_cf_type(&id.name, is_bridged(entity, context));
                 let id = context.replace_typedef_name(id, is_cf);
 
-                if let Some(encoding_name) = ty.pointer_to_opaque_struct() {
+                if let Some(encoding_name) = ty.pointer_to_opaque_struct_or_void() {
                     if kind.is_some() {
-                        error!(?kind, "unknown kind on opaque struct");
+                        error!(?kind, "unknown kind on opaque type");
                     }
 
-                    let entity = inner_struct.unwrap();
-                    assert_eq!(entity.get_name().unwrap(), encoding_name);
+                    assert_eq!(
+                        inner_struct
+                            .as_ref()
+                            .map(|entity| entity.get_name().unwrap()),
+                        encoding_name,
+                        "inner struct must be the same that `pointer_to_opaque_struct_or_void` found",
+                    );
 
-                    return if is_cf {
+                    if is_cf {
                         // If the class name contains the word "Mutable"
                         // exactly once per the usual word-boundary rules, a
                         // corresponding class name without the word "Mutable"
@@ -1163,19 +1168,19 @@ impl Stmt {
                             None
                         };
 
-                        vec![Self::OpaqueDecl {
+                        return vec![Self::OpaqueDecl {
                             id,
-                            encoding_name: encoding_name.to_string(),
+                            encoding_name,
                             availability,
                             documentation,
                             is_cf,
                             superclass,
-                        }]
-                    } else {
-                        vec![
+                        }];
+                    } else if let Some(entity) = inner_struct {
+                        return vec![
                             Self::OpaqueDecl {
                                 id: ItemIdentifier::new(&entity, context),
-                                encoding_name: encoding_name.to_string(),
+                                encoding_name,
                                 availability: Availability::parse(&entity, context),
                                 documentation: Documentation::from_entity(&entity),
                                 is_cf,
@@ -1188,8 +1193,8 @@ impl Stmt {
                                 kind,
                                 documentation,
                             },
-                        ]
-                    };
+                        ];
+                    }
                 }
 
                 vec![Self::AliasDecl {
@@ -2793,7 +2798,11 @@ impl Stmt {
                         // SAFETY: The type is a CoreFoundation type, and
                         // correctly declared as a #[repr(C)] ZST.
                         writeln!(f, "cf_type!(")?;
-                        writeln!(f, "    #[encoding_name = {encoding_name:?}]")?;
+                        if let Some(encoding_name) = &encoding_name {
+                            writeln!(f, "    #[encoding_name = {encoding_name:?}]")?;
+                        } else {
+                            writeln!(f, "    #[encoding_void]")?;
+                        }
 
                         if let Some(superclass) = superclass {
                             writeln!(f, "    unsafe impl {}: {} {{}}", id.name, superclass.name)?;
@@ -2810,10 +2819,14 @@ impl Stmt {
                         write!(f, "{cfg_encoding}")?;
                         writeln!(f, "unsafe impl RefEncode for {} {{", id.name)?;
                         write!(f, "    const ENCODING_REF: Encoding = ")?;
-                        writeln!(f, "Encoding::Pointer(&Encoding::Struct(")?;
-                        writeln!(f, "        {encoding_name:?},")?;
-                        writeln!(f, "        &[],")?;
-                        writeln!(f, "    ));")?;
+                        if let Some(encoding_name) = &encoding_name {
+                            writeln!(f, "Encoding::Pointer(&Encoding::Struct(")?;
+                            writeln!(f, "        {encoding_name:?},")?;
+                            writeln!(f, "        &[],")?;
+                            writeln!(f, "    ));")?;
+                        } else {
+                            writeln!(f, "Encoding::Pointer(&Encoding::Void);")?;
+                        }
                         writeln!(f, "}}")?;
                     }
                 }
