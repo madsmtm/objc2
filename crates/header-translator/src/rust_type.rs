@@ -1582,6 +1582,18 @@ impl Ty {
                 _ => write!(f, "AnyClass"),
             },
             Self::Self_ => write!(f, "Self"),
+            Self::TypeDef {
+                id,
+                nullability,
+                is_cf,
+                ..
+            } if *is_cf => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, "NonNull<{}>", id.path())
+                } else {
+                    write!(f, "*mut {}", id.path())
+                }
+            }
             Self::TypeDef { id, .. } => {
                 write!(f, "{}", id.path())
             }
