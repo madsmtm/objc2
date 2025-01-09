@@ -57,3 +57,10 @@ typedef.CFTypeID.skipped = true
 typedef.CFOptionFlags.skipped = true
 typedef.CFHashCode.skipped = true
 typedef.CFIndex.skipped = true
+
+fn.CFGetTypeID.unsafe = false
+fn.CFCopyTypeIDDescription.unsafe = false
+fn.CFGetRetainCount.unsafe = false
+fn.CFEqual.unsafe = false
+fn.CFHash.unsafe = false
+fn.CFCopyDescription.unsafe = false

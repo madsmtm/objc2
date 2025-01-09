@@ -39,7 +39,12 @@
 // That means we can use `isize`/`usize`, which is more ergonomic.
 
 use core::cell::UnsafeCell;
+use core::convert::AsRef;
+use core::fmt;
+use core::hash;
 use core::marker::{PhantomData, PhantomPinned};
+
+use crate::{CFEqual, CFHash};
 
 /// [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cftypeid?language=objc)
 pub type CFTypeID = usize;
@@ -62,5 +67,51 @@ pub struct CFType {
     _p: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,
 }
 
-crate::__cf_type_common!(CFType);
+// Reflexive AsRef impl.
+impl AsRef<Self> for CFType {
+    #[inline]
+    fn as_ref(&self) -> &Self {
+        self
+    }
+}
+
+impl fmt::Debug for CFType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // TODO: Use `CFCopyDescription` here
+        f.debug_struct("CFType").finish_non_exhaustive()
+    }
+}
+
+// Equality in CF has approximately the same semantics as Rust equality.
+//
+// From the docs:
+// > Equality is something specific to each Core Foundation opaque type. For
+// > example, two CFNumber objects are equal if the numeric values they
+// > represent are equal. Two CFString objects are equal if they represent
+// > identical sequences of characters, regardless of encoding.
+impl PartialEq for CFType {
+    #[inline]
+    #[doc(alias = "CFEqual")]
+    fn eq(&self, other: &Self) -> bool {
+        CFEqual(Some(self), Some(other)) != 0
+    }
+}
+
+// Similar to NSObject, most types' equality is reflexive.
+impl Eq for CFType {}
+
+// From the documentation for CFHash:
+// > Two objects that are equal (as determined by the `CFEqual` function) have
+// > the same hashing value. However, the converse is not true: two objects
+// > with the same hashing value might not be equal. That is, hashing values
+// > are not necessarily unique.
+//
+// I.e. the same semantics as Rust's `Hash`.
+impl hash::Hash for CFType {
+    #[doc(alias = "CFHash")]
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        CFHash(Some(self)).hash(state);
+    }
+}
+
 crate::__cf_type_objc2!(CFType, crate::__cf_macro_helpers::Encoding::Void);

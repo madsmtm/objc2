@@ -64,22 +64,50 @@ macro_rules! __cf_type_common {
                     .finish_non_exhaustive()
             }
         }
+
+        $crate::__cf_type_convert_cf_type!($ty);
     };
+}
+
+#[cfg(feature = "CFBase")]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __cf_type_convert_cf_type {
+    ($ty:ty) => {
+        // Allow converting to CFType.
+
+        impl $crate::__cf_macro_helpers::AsRef<$crate::CFType> for $ty {
+            #[inline]
+            fn as_ref(&self) -> &$crate::CFType {
+                self // Through Deref of self or superclass
+            }
+        }
+
+        impl $crate::__cf_macro_helpers::Borrow<$crate::CFType> for $ty {
+            #[inline]
+            fn borrow(&self) -> &$crate::CFType {
+                self // Through Deref of self or superclass
+            }
+        }
+    };
+}
+
+#[cfg(not(feature = "CFBase"))]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __cf_type_convert_cf_type {
+    ($ty:ty) => {};
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __cf_type_superclass {
     // No superclass
-    ($ty:ident) => {
-        // NOTE: We intentionally don't implement `Deref` with
-        // `Target = AnyObject` when there isn't a superclass, as we want
-        // conversions to Objective-C types to be explicit.
-        //
-        // TODO: Maybe implement `Deref<Target = CFTypeRef>`?
+    ($ty:ty) => {
+        $crate::__cf_type_no_superclass!($ty);
     };
     // If has superclass.
-    ($ty:ident: $superclass:ty) => {
+    ($ty:ty: $superclass:ty) => {
         // Similar to `objc2::extern_class!`, we implement Deref for the
         // type to allow easy conversion to the super class.
         impl $crate::__cf_macro_helpers::Deref for $ty {
@@ -109,6 +137,35 @@ macro_rules! __cf_type_superclass {
             }
         }
     };
+}
+
+#[cfg(feature = "CFBase")]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __cf_type_no_superclass {
+    ($ty:ty) => {
+        // NOTE: We intentionally don't implement `Deref` with
+        // `Target = AnyObject` when there isn't a superclass, as we want
+        // conversions to Objective-C types to be explicit.
+        //
+        // Instead, we prefer a `Deref` impl to `CFType`.
+        impl $crate::__cf_macro_helpers::Deref for $ty {
+            type Target = $crate::CFType;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                // SAFETY: It is valid to re-interpret a type as CFType.
+                unsafe { core::mem::transmute(self) }
+            }
+        }
+    };
+}
+
+#[cfg(not(feature = "CFBase"))]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __cf_type_no_superclass {
+    ($ty:ty) => {};
 }
 
 #[cfg(feature = "objc2")]
