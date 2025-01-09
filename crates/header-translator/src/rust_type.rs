@@ -1765,6 +1765,28 @@ impl Ty {
         })
     }
 
+    pub(crate) fn fn_return_required_items(&self) -> Vec<ItemIdentifier> {
+        let mut items = self.required_items();
+        match self {
+            Self::Pointer {
+                lifetime: Lifetime::Unspecified,
+                pointee,
+                ..
+            } if pointee.is_object_like() && !pointee.is_static_object() => {
+                items.push(ItemIdentifier::objc("Retained"));
+            }
+            Self::TypeDef { .. } if self.is_object_like() && !self.is_static_object() => {
+                items.push(ItemIdentifier::objc("Retained"));
+            }
+            Self::TypeDef { is_cf, .. } if *is_cf => {
+                items.push(ItemIdentifier::cf("CFRetained"));
+                items.push(ItemIdentifier::core_ptr_nonnull());
+            }
+            _ => {}
+        }
+        items
+    }
+
     pub(crate) fn fn_return_converter(
         &self,
         returns_retained: bool,
@@ -1776,17 +1798,27 @@ impl Ty {
         let start = "let ret = ";
         // SAFETY: The function is marked with the correct retain semantics,
         // otherwise it'd be invalid to use from Obj-C with ARC and Swift too.
-        let end = |nullability| {
+        let end_objc = |nullability| {
             match (nullability, returns_retained) {
-            (Nullability::NonNull, true) => {
-                ";\nunsafe { Retained::from_raw(ret.as_ptr()) }.expect(\"function was marked as returning non-null, but actually returned NULL\")"
+                (Nullability::NonNull, true) => {
+                    ";\nunsafe { Retained::from_raw(ret.as_ptr()) }.expect(\"function was marked as returning non-null, but actually returned NULL\")"
+                }
+                (Nullability::NonNull, false) => {
+                    ";\nunsafe { Retained::retain_autoreleased(ret.as_ptr()) }.expect(\"function was marked as returning non-null, but actually returned NULL\")"
+                }
+                (_, true) => ";\nunsafe { Retained::from_raw(ret) }",
+                (_, false) => ";\nunsafe { Retained::retain_autoreleased(ret) }",
             }
-            (Nullability::NonNull, false) => {
-                ";\nunsafe { Retained::retain_autoreleased(ret.as_ptr()) }.expect(\"function was marked as returning non-null, but actually returned NULL\")"
-            }
-            (_, true) => ";\nunsafe { Retained::from_raw(ret) }",
-            (_, false) => ";\nunsafe { Retained::retain_autoreleased(ret) }",
-        }
+        };
+        let end_cf = |nullability| match (nullability, returns_retained) {
+            (Nullability::NonNull, true) => ";\nunsafe { CFRetained::from_raw(ret) }",
+            (Nullability::NonNull, false) => ";\nunsafe { CFRetained::retain(ret) }",
+            // CFRetain aborts on NULL pointers, so there's not really a more
+            // efficient way to do this (except if we were to use e.g.
+            // `CGColorRetain`/`CVOpenGLBufferRetain`/..., but that's a huge
+            // hassle).
+            (_, true) => ";\nNonNull::new(ret).map(|ret| unsafe { CFRetained::from_raw(ret) })",
+            (_, false) => ";\nNonNull::new(ret).map(|ret| unsafe { CFRetained::retain(ret) })",
         };
 
         match self {
@@ -1802,7 +1834,7 @@ impl Ty {
                 } else {
                     format!(" -> Option<Retained<{}>>", pointee.behind_pointer())
                 };
-                Some((res, start, end(*nullability)))
+                Some((res, start, end_objc(*nullability)))
             }
             Self::TypeDef {
                 id, nullability, ..
@@ -1812,10 +1844,21 @@ impl Ty {
                 } else {
                     format!(" -> Option<Retained<{}>>", id.path())
                 };
-                Some((res, start, end(*nullability)))
+                Some((res, start, end_objc(*nullability)))
             }
-            // TODO: Use custom CF type to do retain/release management here.
-            Self::TypeDef { is_cf, .. } if *is_cf && !self.is_static_object() => None,
+            Self::TypeDef {
+                id,
+                nullability,
+                is_cf,
+                ..
+            } if *is_cf => {
+                let res = if *nullability == Nullability::NonNull {
+                    format!(" -> CFRetained<{}>", id.path())
+                } else {
+                    format!(" -> Option<CFRetained<{}>>", id.path())
+                };
+                Some((res, start, end_cf(*nullability)))
+            }
             _ => None,
         }
     }

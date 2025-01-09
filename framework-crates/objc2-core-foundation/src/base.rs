@@ -44,7 +44,7 @@ use core::fmt;
 use core::hash;
 use core::marker::{PhantomData, PhantomPinned};
 
-use crate::{CFEqual, CFHash};
+use crate::{CFEqual, CFHash, Type};
 
 /// [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cftypeid?language=objc)
 pub type CFTypeID = usize;
@@ -74,6 +74,10 @@ impl AsRef<Self> for CFType {
         self
     }
 }
+
+// SAFETY: CFType represents a CoreFoundation-like type (even though it isn't
+// a real type itself).
+unsafe impl Type for CFType {}
 
 impl fmt::Debug for CFType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

@@ -832,6 +832,10 @@ pub(crate) fn handle_reserved(name: &str) -> String {
         "self_".into()
     } else if name == "super" {
         "super_".into()
+    } else if name == "_" {
+        // Hack: Assumes that there are not other fields / parameters with the
+        // name `_`.
+        "param1".into()
     } else {
         name.into()
     }

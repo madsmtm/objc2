@@ -1748,7 +1748,7 @@ impl Stmt {
                 for (_, arg_ty) in arguments {
                     items.extend(arg_ty.required_items());
                 }
-                items.extend(result_type.required_items());
+                items.extend(result_type.fn_return_required_items());
                 items
             }
             // TODO
