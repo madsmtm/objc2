@@ -1426,6 +1426,10 @@ impl Ty {
         }
     }
 
+    pub(crate) fn is_cf_type_id(&self) -> bool {
+        matches!(self, Self::TypeDef { id, .. } if id.name == "CFTypeID")
+    }
+
     pub(crate) fn is_objc_bool(&self) -> bool {
         match self {
             Self::Primitive(Primitive::ObjcBool) => true,

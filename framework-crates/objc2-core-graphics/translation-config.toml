@@ -21,6 +21,7 @@ fn.CGColorSpaceRelease.skipped = true
 typedef.IOSurfaceRef.renamed = "IOSurfaceRef"
 typedef.IOSurfaceRef.skipped = true
 struct.__IOSurface.skipped = true
+external.IOSurfaceRef.module = "IOSurface.IOSurfaceRef"
 
 # Needs io_service_t from the kernel
 fn.CGDisplayIOServicePort.skipped = true

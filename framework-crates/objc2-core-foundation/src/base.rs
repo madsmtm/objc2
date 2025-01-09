@@ -44,6 +44,7 @@ use core::fmt;
 use core::hash;
 use core::marker::{PhantomData, PhantomPinned};
 
+use crate::ConcreteType;
 use crate::{CFEqual, CFHash, Type};
 
 /// [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cftypeid?language=objc)
@@ -65,6 +66,39 @@ pub type CFIndex = isize;
 pub struct CFType {
     inner: [u8; 0],
     _p: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,
+}
+
+impl CFType {
+    /// Attempt to downcast the type to that of type `T`.
+    ///
+    /// This is the reference-variant. Use [`CFRetained::downcast`] if you
+    /// want to convert a retained type. See also [`ConcreteType`] for more
+    /// details on which types support being converted to.
+    ///
+    /// [`CFRetained::downcast`]: crate::CFRetained::downcast
+    //
+    // Not #[inline], we call two functions here.
+    #[doc(alias = "CFGetTypeID")]
+    pub fn downcast_ref<T: ConcreteType>(&self) -> Option<&T> {
+        extern "C-unwind" {
+            fn CFGetTypeID(cf: Option<&CFType>) -> CFTypeID;
+        }
+
+        // SAFETY: The pointer is valid.
+        if unsafe { CFGetTypeID(Some(self)) } == T::type_id() {
+            let ptr: *const Self = self;
+            let ptr: *const T = ptr.cast();
+            // SAFETY: Just checked that the object is a class of type `T`.
+            // Additionally, `ConcreteType::type_id` is guaranteed to uniquely
+            // identify the class (including ruling out mutable subclasses),
+            // so we know for _sure_ that the class is actually of that type
+            // here.
+            let this: &T = unsafe { &*ptr };
+            Some(this)
+        } else {
+            None
+        }
+    }
 }
 
 // Reflexive AsRef impl.

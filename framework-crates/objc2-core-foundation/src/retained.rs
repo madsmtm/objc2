@@ -6,7 +6,7 @@ use core::ops::Deref;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
 
-use crate::Type;
+use crate::{ConcreteType, Type};
 
 // Symlinked to `objc2/src/rc/retained_forwarding_impls.rs`, Cargo will make
 // a copy when publishing.
@@ -183,6 +183,57 @@ impl<T: ?Sized + Type> CFRetained<T> {
 
 // TODO: Add ?Sized bound
 impl<T: Type> CFRetained<T> {
+    /// Attempt to downcast the type to that of type `U`.
+    ///
+    /// This is the owned variant. Use [`CFType::downcast_ref`] if you want to
+    /// convert a reference type. See also [`ConcreteType`] for more details
+    /// on which types support being converted to.
+    ///
+    /// See [`CFType::downcast_ref`] for more details.
+    ///
+    #[cfg_attr(
+        feature = "CFBase",
+        doc = "[`CFType::downcast_ref`]: crate::CFType::downcast_ref"
+    )]
+    #[cfg_attr(
+        not(feature = "CFBase"),
+        doc = "[`CFType::downcast_ref`]: #CFType-not-available"
+    )]
+    ///
+    /// # Errors
+    ///
+    /// If casting failed, this will return the original back as the [`Err`]
+    /// variant. If you do not care about this, and just want an [`Option`],
+    /// use `.downcast().ok()`.
+    //
+    // NOTE: This is _not_ an associated method, since we want it to be easy
+    // to call, and it does not conflict with `CFType::downcast_ref`.
+    #[doc(alias = "CFGetTypeID")]
+    pub fn downcast<U: ConcreteType>(self) -> Result<CFRetained<U>, Self>
+    where
+        T: 'static,
+    {
+        extern "C-unwind" {
+            // `*const c_void` and `Option<&CFType>` are ABI compatible.
+            #[allow(clashing_extern_declarations)]
+            fn CFGetTypeID(cf: *const c_void) -> crate::__cf_macro_helpers::CFTypeID;
+        }
+
+        let ptr: *const c_void = self.ptr.as_ptr().cast();
+
+        // SAFETY: The pointer is valid.
+        if unsafe { CFGetTypeID(ptr) } == U::type_id() {
+            // SAFETY: Just checked that the object is a class of type `U`,
+            // and `T` is `'static`. Additionally, `ConcreteType::type_id` is
+            // guaranteed to uniquely identify the class (including ruling out
+            // mutable subclasses), so we know for _sure_ that the class is
+            // actually of that type here.
+            Ok(unsafe { Self::cast_unchecked::<U>(self) })
+        } else {
+            Err(self)
+        }
+    }
+
     /// Retain the pointer and construct a [`CFRetained`] from it.
     ///
     /// This is useful when you have been given a pointer to a type from some
@@ -318,7 +369,17 @@ impl<T: ?Sized + AsRef<U>, U: Type> From<&T> for CFRetained<U> {
     }
 }
 
-// TODO: impl<T: 'static> From<CFRetained<T>> for CFRetained<CFType>
+// Use `ConcreteType` to avoid the reflexive impl (as CFType does not implement that).
+#[cfg(feature = "CFBase")]
+impl<T: ?Sized + ConcreteType + 'static> From<CFRetained<T>> for CFRetained<crate::CFType> {
+    /// Convert to [`CFType`][crate::CFType].
+    #[inline]
+    fn from(obj: CFRetained<T>) -> Self {
+        // SAFETY: All `'static` types can be converted to `CFType` without
+        // loss of information.
+        unsafe { CFRetained::cast_unchecked(obj) }
+    }
+}
 
 #[cfg(feature = "objc2")]
 impl<T: ?Sized + Type + objc2::Message> From<objc2::rc::Retained<T>> for CFRetained<T> {

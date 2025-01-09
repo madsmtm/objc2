@@ -76,6 +76,21 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut success = true;
 
+    println!("Testing all CoreFoundation features");
+    let features = get_features(
+        &workspace_dir
+            .join("framework-crates")
+            .join("objc2-core-foundation")
+            .join("Cargo.toml"),
+    )?;
+    let feature_sets = features.iter().map(|feature| vec![&**feature]);
+    test_feature_sets(
+        &mut success,
+        workspace_dir,
+        feature_sets,
+        "objc2-core-foundation",
+    )?;
+
     println!("Testing all Foundation features");
     let features = get_features(
         &workspace_dir

@@ -19,3 +19,4 @@ fn.IOSurfaceSetOwnershipIdentity.skipped = true
 typedef.IOSurfaceRef.renamed = "IOSurfaceRef" # TODO: Merge IOSurface and IOSurfaceRef somehow
 typedef.IOSurfaceRef.skipped = true
 struct.__IOSurface.skipped = true
+external.IOSurfaceRef.module = "IOSurface.IOSurfaceRef"

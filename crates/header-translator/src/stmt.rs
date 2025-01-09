@@ -568,6 +568,15 @@ pub enum Stmt {
         returns_retained: bool,
         documentation: Documentation,
     },
+    /// CFTypeID CGColorGetTypeID(void)
+    FnGetTypeId {
+        id: ItemIdentifier,
+        cf_id: ItemIdentifier,
+        result_type: Ty,
+        availability: Availability,
+        can_unwind: bool,
+        documentation: Documentation,
+    },
     /// typedef Type TypedefName;
     AliasDecl {
         id: ItemIdentifier,
@@ -1514,6 +1523,7 @@ impl Stmt {
                 }
 
                 let availability = Availability::parse(entity, context);
+                let documentation = Documentation::from_entity(entity);
                 let result_type = entity.get_result_type().expect("function result type");
                 let result_type = Ty::parse_function_return(result_type, context);
                 let mut arguments = Vec::new();
@@ -1617,6 +1627,29 @@ impl Stmt {
                     None
                 };
 
+                if id.name.ends_with("GetTypeID") && id.name != "CFGetTypeID" {
+                    assert!(arguments.is_empty(), "{id:?} must have no arguments");
+                    assert!(result_type.is_cf_type_id(), "{id:?} must return CFTypeID");
+                    assert!(body.is_none(), "{id:?} must not be inline");
+                    assert!(
+                        data.unsafe_,
+                        "{id:?} must not have manually modified safety"
+                    );
+                    assert!(!must_use, "{id:?} must not have must_use");
+                    assert!(link_name.is_none(), "{id:?} must not have link_name");
+                    assert!(!returns_retained, "{id:?} must not have returns_retained");
+
+                    return vec![Self::FnGetTypeId {
+                        id,
+                        // Will get replaced in global_analysis with the actual id.
+                        cf_id: ItemIdentifier::dummy(),
+                        result_type,
+                        availability,
+                        can_unwind,
+                        documentation,
+                    }];
+                }
+
                 vec![Self::FnDecl {
                     id,
                     availability,
@@ -1628,7 +1661,7 @@ impl Stmt {
                     can_unwind,
                     link_name,
                     returns_retained,
-                    documentation: Documentation::from_entity(entity),
+                    documentation,
                 }]
             }
             EntityKind::UnionDecl => {
@@ -1674,6 +1707,7 @@ impl Stmt {
             Self::FnDecl { id, body: None, .. } => Some(id.clone()),
             // TODO
             Self::FnDecl { body: Some(_), .. } => None,
+            Self::FnGetTypeId { .. } => None, // Emits a trait impl
             Self::AliasDecl { id, .. } => Some(id.clone()),
             Self::OpaqueDecl { id, .. } => Some(id.clone()),
         }
@@ -1691,6 +1725,7 @@ impl Stmt {
             Self::ConstDecl { id, .. } => id.location(),
             Self::VarDecl { id, .. } => id.location(),
             Self::FnDecl { id, .. } => id.location(),
+            Self::FnGetTypeId { id, .. } => id.location(),
             Self::AliasDecl { id, .. } => id.location(),
             Self::OpaqueDecl { id, .. } => id.location(),
         }
@@ -1753,6 +1788,13 @@ impl Stmt {
             }
             // TODO
             Self::FnDecl { body: Some(_), .. } => Vec::new(),
+            Self::FnGetTypeId {
+                cf_id, result_type, ..
+            } => {
+                let mut items = vec![cf_id.clone(), ItemIdentifier::cf("ConcreteType")];
+                items.extend(result_type.fn_return_required_items());
+                items
+            }
             Self::AliasDecl { ty, .. } => ty.required_items(),
             Self::OpaqueDecl { superclass, .. } => {
                 let mut items = vec![ItemIdentifier::unsafecell(), ItemIdentifier::phantoms()];
@@ -2751,6 +2793,42 @@ impl Stmt {
 
                         writeln!(f, "}}")?;
                     }
+                }
+                Self::FnGetTypeId {
+                    id,
+                    cf_id,
+                    result_type,
+                    availability: _, // #[deprecated] is useless on traits.
+                    can_unwind,
+                    documentation,
+                } => {
+                    let abi = if *can_unwind { "C-unwind" } else { "C" };
+
+                    // Only emit for base types, not for mutable subclasses,
+                    // as it's unclear whether it's safe to downcast to
+                    // mutable subclasses.
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "unsafe impl ConcreteType for {} {{", cf_id.path())?;
+
+                    write!(f, "{}", documentation.fmt(None))?;
+                    writeln!(f, "    #[doc(alias = {:?})]", id.name)?;
+                    writeln!(f, "    #[inline]")?;
+                    writeln!(f, "    fn type_id(){} {{", result_type.fn_return())?;
+
+                    writeln!(f, "        extern {abi:?} {{")?;
+                    writeln!(
+                        f,
+                        "            fn {}(){};",
+                        id.name,
+                        result_type.fn_return()
+                    )?;
+                    writeln!(f, "        }}")?;
+
+                    writeln!(f, "        unsafe {{ {}() }}", id.name)?;
+
+                    writeln!(f, "    }}")?;
+                    writeln!(f, "}}")?;
+                    return Ok(());
                 }
                 Self::AliasDecl {
                     id,

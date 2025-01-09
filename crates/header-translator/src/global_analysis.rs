@@ -7,14 +7,72 @@ use std::mem;
 use crate::method::Method;
 use crate::module::Module;
 use crate::stmt::Stmt;
-use crate::Library;
+use crate::{ItemIdentifier, Library};
 
 pub fn global_analysis(library: &mut Library) {
     let _span = info_span!("analyzing").entered();
-    update_module(&mut library.module);
+    let mut cf_type_id_mapping = find_cf_type_id_mapping(&library.module);
+    for (external_name, external_data) in &library.data.external {
+        if let Some(maybe_type_id_base) = external_name.strip_suffix("Ref") {
+            cf_type_id_mapping.insert(
+                format!("{maybe_type_id_base}GetTypeID"),
+                ItemIdentifier::from_raw(external_name.clone(), external_data.module.clone()),
+            );
+        }
+    }
+    update_module(&mut library.module, &cf_type_id_mapping);
 }
 
-fn update_module(module: &mut Module) {
+fn find_cf_type_id_mapping(module: &Module) -> BTreeMap<String, ItemIdentifier> {
+    let mut types = BTreeMap::new();
+    for stmt in &module.stmts {
+        if let Stmt::OpaqueDecl {
+            id, is_cf: true, ..
+        } = stmt
+        {
+            let type_id_base = id.name.strip_suffix("Ref").unwrap_or(&id.name);
+            types.insert(format!("{type_id_base}GetTypeID"), id.clone());
+        }
+    }
+    for submodule in module.submodules.values() {
+        types.extend(find_cf_type_id_mapping(submodule));
+    }
+    types
+}
+
+fn update_module(module: &mut Module, cf_type_id_mapping: &BTreeMap<String, ItemIdentifier>) {
+    // Fix location for GetTypeId functions
+    for stmt in module.stmts.iter_mut() {
+        if let Stmt::FnGetTypeId {
+            id,
+            cf_id,
+            availability,
+            result_type,
+            can_unwind,
+            documentation,
+        } = stmt
+        {
+            if let Some(actual_cf_id) = cf_type_id_mapping.get(&id.name) {
+                *cf_id = actual_cf_id.clone();
+            } else {
+                warn!(?id, ?cf_id, "could not find GetTypeId CF typedef");
+                *stmt = Stmt::FnDecl {
+                    id: id.clone(),
+                    availability: availability.clone(),
+                    arguments: vec![],
+                    result_type: result_type.clone(),
+                    body: None,
+                    safe: true,
+                    must_use: false,
+                    can_unwind: *can_unwind,
+                    link_name: None,
+                    returns_retained: false,
+                    documentation: documentation.clone(),
+                };
+            }
+        }
+    }
+
     // disambiguate duplicate names
     // NOTE: this only works within single files
     let mut names = BTreeMap::<(String, String), &mut Method>::new();
@@ -112,6 +170,6 @@ fn update_module(module: &mut Module) {
     // Recurse for submodules
     for (name, module) in &mut module.submodules {
         let _span = debug_span!("file", name).entered();
-        update_module(module);
+        update_module(module, cf_type_id_mapping);
     }
 }

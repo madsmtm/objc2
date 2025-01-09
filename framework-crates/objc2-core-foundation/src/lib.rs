@@ -38,7 +38,7 @@ pub use self::generated::*;
 #[cfg(feature = "CFCGTypes")]
 pub use self::geometry::*;
 pub use self::retained::CFRetained;
-pub use self::type_traits::Type;
+pub use self::type_traits::{ConcreteType, Type};
 
 // MacTypes.h
 #[allow(dead_code)]

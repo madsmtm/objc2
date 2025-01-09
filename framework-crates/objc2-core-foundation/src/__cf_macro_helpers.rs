@@ -10,3 +10,8 @@ pub use objc2::encode::{Encode, Encoding, RefEncode};
 pub use objc2::runtime::AnyObject;
 #[cfg(feature = "objc2")]
 pub use objc2::Message;
+
+#[cfg(feature = "CFBase")]
+pub use crate::CFTypeID;
+#[cfg(not(feature = "CFBase"))]
+pub use core::primitive::usize as CFTypeID;

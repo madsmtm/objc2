@@ -444,11 +444,10 @@ impl ItemIdentifier {
         }
     }
 
-    #[cfg(test)]
     pub fn dummy() -> Self {
         Self {
             name: "DUMMY".into(),
-            location: Location::new("__builtin__"),
+            location: Location::new("__dummy__"),
         }
     }
 

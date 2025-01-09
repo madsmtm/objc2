@@ -40,3 +40,40 @@ pub unsafe trait Type {
         unsafe { CFRetained::retain(ptr) }
     }
 }
+
+/// A concrete CoreFoundation type.
+///
+/// This trait is implemented for CoreFoundation types which have a
+/// `CFTypeID`, which should be most types except for mutable variants, as
+/// well as the root `CFType`.
+///
+///
+/// # Mutable types
+///
+/// Some types have immutable and mutable variants, the prime example being
+/// `CFString` and `CFMutableString`. Internally, these are very complex class
+/// clusters, but in the simplest case they're sometimes the same type, the
+/// only difference being that the mutable variant has a boolean flag set.
+/// This means that they also share the same type ID, and thus we cannot
+/// (stably) differentiate between them at runtime.
+///
+/// Therefore, this trait is only implemented for the immutable variant, to
+/// prevent it from accidentally being misused (it is unclear whether it would
+/// be unsound or not). If you're looking to convert to a mutable type, you'll
+/// have to either construct a new one with APIs like
+/// `CFStringCreateMutableCopy`, or use an unchecked cast.
+///
+///
+/// # Safety
+///
+/// - The type must not be mutable.
+/// - The [`type_id`][Self::type_id] must be implemented correctly, and must
+///   uniquely identify the type.
+pub unsafe trait ConcreteType: Type {
+    /// Get the unique `CFTypeID` identifier for the type.
+    ///
+    /// For example, this corresponds to `CFStringGetTypeID` for `CFString`
+    /// and `CGColorGetTypeID` for `CGColor`.
+    #[doc(alias = "GetTypeID")]
+    fn type_id() -> crate::__cf_macro_helpers::CFTypeID;
+}
