@@ -44,9 +44,6 @@ struct.CGRect.skipped = true
 # Custom definition because it's special
 typedef.CFTypeRef.skipped = true
 
-# CF_RELEASES_ARGUMENT (`cf_consumed`), requires manual handling
-fn.CFAutorelease.skipped = true
-
 # Implementation details
 fn.__CFRangeMake.skipped = true
 fn.__CFStringMakeConstantString.skipped = true
@@ -57,6 +54,13 @@ typedef.CFTypeID.skipped = true
 typedef.CFOptionFlags.skipped = true
 typedef.CFHashCode.skipped = true
 typedef.CFIndex.skipped = true
+
+# Custom-defined since they require manual handling.
+# Use `CFRetained` to access these.
+fn.CFAutorelease.skipped = true
+fn.CFRetain.skipped = true
+fn.CFRelease.skipped = true
+fn.CFMakeCollectable.skipped = true
 
 fn.CFGetTypeID.unsafe = false
 fn.CFCopyTypeIDDescription.unsafe = false

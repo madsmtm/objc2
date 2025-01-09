@@ -1586,6 +1586,29 @@ impl Stmt {
                     _ => error!("unknown"),
                 });
 
+                // Don't map `CFRetain`, `CFRelease`, `CFAutorelease`, as well
+                // as custom ones like as `CGColorRelease`.
+                //
+                // Same as what Swift does:
+                // <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/lib/ClangImporter/ImportDecl.cpp#L8435-L8452>
+                //
+                // Users can achieve (almost) the same by using `CFRetained`
+                // and `ManuallyDrop`, and this is clearer and safer.
+                //
+                // Besides, these do not have the necessary memory management
+                // attributes (cf_consumed/cf_returns_retained), and as such
+                // cannot be mapped correctly without extra hacks.
+                if id.name.ends_with("Retain")
+                    || id.name.ends_with("Release")
+                    || id.name.ends_with("Autorelease")
+                {
+                    if let Some((_, first_arg_ty)) = arguments.first() {
+                        if first_arg_ty.is_cf_type() {
+                            return vec![];
+                        }
+                    }
+                }
+
                 let body = if entity.is_inline_function() {
                     Some(())
                 } else {

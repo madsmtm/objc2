@@ -40,6 +40,7 @@ targets = [
 default = ["std"]
 std = ["alloc", "bitflags?/std"]
 alloc = []
+unstable-coerce-pointee = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 libc = ["dep:libc"]

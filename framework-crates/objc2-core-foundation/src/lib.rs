@@ -5,6 +5,7 @@
 //! [apple-doc]: https://developer.apple.com/documentation/corefoundation/
 //! [framework-crates]: https://docs.rs/objc2/latest/objc2/topics/about_generated/index.html
 #![no_std]
+#![cfg_attr(feature = "unstable-coerce-pointee", feature(derive_coerce_pointee))]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-core-foundation/0.2.2")]
@@ -25,6 +26,8 @@ mod cf_type;
 mod generated;
 #[cfg(feature = "CFCGTypes")]
 mod geometry;
+mod retained;
+mod type_traits;
 
 #[cfg(feature = "CFBase")]
 pub use self::base::*;
@@ -34,6 +37,8 @@ pub use self::bundle::CFBundleRefNum;
 pub use self::generated::*;
 #[cfg(feature = "CFCGTypes")]
 pub use self::geometry::*;
+pub use self::retained::CFRetained;
+pub use self::type_traits::Type;
 
 // MacTypes.h
 #[allow(dead_code)]

@@ -1,19 +1,20 @@
-//! Trivial forwarding impls on `Retained`.
+//! Trivial forwarding impls on `Retained`-like types.
 //!
-//! Kept here to keep `id.rs` free from this boilerplate.
+//! Kept here to keep `retained.rs` free from this boilerplate, and to allow
+//! re-use in `objc2-core-foundation` (this file is symlinked there as well).
 
 #![forbid(unsafe_code)]
 
-use alloc::borrow;
-use alloc::string::String;
-use alloc::vec::Vec;
+use core::borrow::Borrow;
 use core::cmp::Ordering;
 use core::fmt;
 use core::future::Future;
 use core::hash;
 use core::pin::Pin;
 use core::task::{Context, Poll};
+#[cfg(feature = "std")] // TODO: Use core::error::Error once 1.81 is in MSRV
 use std::error::Error;
+#[cfg(feature = "std")]
 use std::io;
 
 use super::Retained;
@@ -206,7 +207,7 @@ where
     }
 }
 
-impl<T: ?Sized> borrow::Borrow<T> for Retained<T> {
+impl<T: ?Sized> Borrow<T> for Retained<T> {
     fn borrow(&self) -> &T {
         // Auto-derefs
         self
@@ -226,12 +227,14 @@ impl<T: ?Sized + AsRef<U>, U: ?Sized> AsRef<U> for Retained<T> {
     }
 }
 
+#[cfg(feature = "std")]
 impl<T: ?Sized + Error> Error for Retained<T> {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         (**self).source()
     }
 }
 
+#[cfg(feature = "std")]
 impl<T: ?Sized> io::Read for Retained<T>
 where
     for<'a> &'a T: io::Read,
@@ -247,12 +250,12 @@ where
     }
 
     #[inline]
-    fn read_to_end(&mut self, buf: &mut Vec<u8>) -> io::Result<usize> {
+    fn read_to_end(&mut self, buf: &mut std::vec::Vec<u8>) -> io::Result<usize> {
         (&**self).read_to_end(buf)
     }
 
     #[inline]
-    fn read_to_string(&mut self, buf: &mut String) -> io::Result<usize> {
+    fn read_to_string(&mut self, buf: &mut std::string::String) -> io::Result<usize> {
         (&**self).read_to_string(buf)
     }
 
@@ -262,6 +265,7 @@ where
     }
 }
 
+#[cfg(feature = "std")]
 impl<'a, T: ?Sized> io::Read for &'a Retained<T>
 where
     &'a T: io::Read,
@@ -277,12 +281,12 @@ where
     }
 
     #[inline]
-    fn read_to_end(&mut self, buf: &mut Vec<u8>) -> io::Result<usize> {
+    fn read_to_end(&mut self, buf: &mut std::vec::Vec<u8>) -> io::Result<usize> {
         (&***self).read_to_end(buf)
     }
 
     #[inline]
-    fn read_to_string(&mut self, buf: &mut String) -> io::Result<usize> {
+    fn read_to_string(&mut self, buf: &mut std::string::String) -> io::Result<usize> {
         (&***self).read_to_string(buf)
     }
 
@@ -292,6 +296,7 @@ where
     }
 }
 
+#[cfg(feature = "std")]
 impl<T: ?Sized> io::Write for Retained<T>
 where
     for<'a> &'a T: io::Write,
@@ -322,6 +327,7 @@ where
     }
 }
 
+#[cfg(feature = "std")]
 impl<'a, T: ?Sized> io::Write for &'a Retained<T>
 where
     &'a T: io::Write,
@@ -352,6 +358,7 @@ where
     }
 }
 
+#[cfg(feature = "std")]
 impl<T: ?Sized> io::Seek for Retained<T>
 where
     for<'a> &'a T: io::Seek,
@@ -367,6 +374,7 @@ where
     }
 }
 
+#[cfg(feature = "std")]
 impl<'a, T: ?Sized> io::Seek for &'a Retained<T>
 where
     &'a T: io::Seek,

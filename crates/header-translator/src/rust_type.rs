@@ -1418,6 +1418,14 @@ impl Ty {
         }
     }
 
+    pub(crate) fn is_cf_type(&self) -> bool {
+        if let Self::TypeDef { is_cf, .. } = self {
+            *is_cf
+        } else {
+            false
+        }
+    }
+
     pub(crate) fn is_objc_bool(&self) -> bool {
         match self {
             Self::Primitive(Primitive::ObjcBool) => true,
