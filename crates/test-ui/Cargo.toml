@@ -25,6 +25,8 @@ default = [
     "objc2-foundation/NSURLSession",
     "objc2-foundation/NSEnumerator",
     "objc2-foundation/NSDictionary",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFString",
     "objc2/unstable-msg-send-always-comma",
 ]
 run = ["trybuild"]
@@ -40,6 +42,7 @@ trybuild = { version = "1.0.72", optional = true }
 block2 = { path = "../block2" }
 objc2 = { path = "../objc2" }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = ["std"] }
+objc2-core-foundation = { path = "../../framework-crates/objc2-core-foundation", default-features = false, features = ["std"] }
 
 # To make CI work
 [target.'cfg(not(target_vendor = "apple"))'.dependencies]

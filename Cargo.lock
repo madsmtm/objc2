@@ -1719,6 +1719,7 @@ dependencies = [
  "arbitrary",
  "libfuzzer-sys",
  "objc2",
+ "objc2-core-foundation",
  "objc2-foundation",
 ]
 
@@ -1728,6 +1729,7 @@ version = "0.1.0"
 dependencies = [
  "block2",
  "objc2",
+ "objc2-core-foundation",
  "objc2-foundation",
  "trybuild",
 ]

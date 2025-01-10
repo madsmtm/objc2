@@ -5,8 +5,6 @@ use core::fmt;
 use core::ops::AddAssign;
 use core::panic::RefUnwindSafe;
 use core::panic::UnwindSafe;
-#[cfg(target_vendor = "apple")]
-use core::slice;
 use core::str;
 
 use objc2::msg_send_id;
@@ -43,69 +41,6 @@ impl NSString {
         // TODO: lengthOfBytesUsingEncoding: might sometimes return 0 for
         // other reasons, so this is not really correct!
         self.len() == 0
-    }
-
-    /// Get the [`str`](`prim@str`) representation of this string if it can be
-    /// done efficiently.
-    ///
-    /// Returns [`None`] if the internal storage does not allow this to be
-    /// done efficiently. Use `NSString::to_string` if performance is not an
-    /// issue.
-    ///
-    ///
-    /// # Safety
-    ///
-    /// The `NSString` must not be mutated for the lifetime of the returned
-    /// string.
-    ///
-    /// Warning: This is very difficult to ensure in generic contexts.
-    #[doc(alias = "CFStringGetCStringPtr")]
-    #[allow(unused)]
-    #[cfg(target_vendor = "apple")]
-    // TODO: Finish this
-    // TODO: Can this be used on NSStrings that are not internally CFString?
-    // (i.e. custom subclasses of NSString)?
-    unsafe fn as_str_wip(&self) -> Option<&str> {
-        use core::ffi::c_char;
-        use core::ptr::NonNull;
-
-        type CFStringEncoding = u32;
-        #[allow(non_upper_case_globals)]
-        // https://developer.apple.com/documentation/corefoundation/cfstringbuiltinencodings/kcfstringencodingutf8?language=objc
-        const kCFStringEncodingUTF8: CFStringEncoding = 0x08000100;
-        extern "C" {
-            // https://developer.apple.com/documentation/corefoundation/1542133-cfstringgetcstringptr?language=objc
-            fn CFStringGetCStringPtr(s: &NSString, encoding: CFStringEncoding) -> *const c_char;
-        }
-        let bytes = unsafe { CFStringGetCStringPtr(self, kCFStringEncodingUTF8) };
-        NonNull::new(bytes as *mut u8).map(|bytes| {
-            let len = self.len();
-            let bytes: &[u8] = unsafe { slice::from_raw_parts(bytes.as_ptr(), len) };
-            str::from_utf8(bytes).unwrap()
-        })
-    }
-
-    /// Get an [UTF-16] string slice if it can be done efficiently.
-    ///
-    /// Returns [`None`] if the internal storage of `self` does not allow this
-    /// to be returned efficiently.
-    ///
-    /// See [`to_str`](Self::to_str) for the UTF-8 equivalent.
-    ///
-    /// [UTF-16]: https://en.wikipedia.org/wiki/UTF-16
-    #[allow(unused)]
-    #[cfg(target_vendor = "apple")]
-    // TODO: Finish this
-    unsafe fn as_utf16(&self) -> Option<&[u16]> {
-        use core::ptr::NonNull;
-
-        extern "C" {
-            // https://developer.apple.com/documentation/corefoundation/1542939-cfstringgetcharactersptr?language=objc
-            fn CFStringGetCharactersPtr(s: &NSString) -> *const u16;
-        }
-        let ptr = unsafe { CFStringGetCharactersPtr(self) };
-        NonNull::new(ptr as *mut u16)
-            .map(|ptr| unsafe { slice::from_raw_parts(ptr.as_ptr(), self.len_utf16()) })
     }
 
     /// Convert the string into a [string slice](`prim@str`).
@@ -179,11 +114,7 @@ impl NSString {
         unsafe { init_with_str(Self::alloc(), string) }
     }
 
-    // TODO: initWithBytesNoCopy:, maybe add lifetime parameter to NSString?
-    // See https://github.com/nvzqz/fruity/blob/320efcf715c2c5fbd2f3084f671f2be2e03a6f2b/src/foundation/ns_string/mod.rs#L350-L381
-    // Might be quite difficult, as Objective-C code might assume the NSString
-    // is always alive?
-    // See https://github.com/drewcrawford/foundationr/blob/b27683417a35510e8e5d78a821f081905b803de6/src/nsstring.rs
+    // TODO: `initWithBytesNoCopy:length:encoding:` from `&'static str`.
 }
 
 impl NSMutableString {

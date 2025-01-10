@@ -14,6 +14,7 @@ cargo-fuzz = true
 libfuzzer-sys = "0.4"
 objc2 = { path = "../objc2" }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation" }
+objc2-core-foundation = { path = "../../framework-crates/objc2-core-foundation" }
 arbitrary = { version = "1", features = ["derive"] }
 afl = { version = "0.15", optional = true }
 
@@ -38,6 +39,19 @@ fuzz-all = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSZone",
     "objc2-foundation/unstable-mutation-return-null",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFString",
+]
+
+[[bin]]
+name = "cfstring"
+path = "fuzz_targets/cfstring.rs"
+test = false
+doc = false
+bench = false
+required-features = [
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFString",
 ]
 
 [[bin]]

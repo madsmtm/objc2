@@ -1,0 +1,11 @@
+error[E0502]: cannot borrow `*s` as mutable because it is also borrowed as immutable
+ --> ui/cfstring_from_static_str.rs
+  |
+  |     let cf = CFString::from_static_str(s);
+  |              ----------------------------
+  |              |                         |
+  |              |                         immutable borrow occurs here
+  |              argument requires that `*s` is borrowed for `'static`
+...
+  |     s.make_ascii_uppercase();
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^ mutable borrow occurs here

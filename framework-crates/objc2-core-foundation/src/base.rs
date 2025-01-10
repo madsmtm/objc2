@@ -115,8 +115,16 @@ unsafe impl Type for CFType {}
 
 impl fmt::Debug for CFType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // TODO: Use `CFCopyDescription` here
-        f.debug_struct("CFType").finish_non_exhaustive()
+        #[cfg(feature = "CFString")]
+        {
+            let desc = crate::CFCopyDescription(Some(self)).expect("must have description");
+            write!(f, "{desc}")
+        }
+        #[cfg(not(feature = "CFString"))]
+        {
+            f.debug_struct("<CoreFoundation type>")
+                .finish_non_exhaustive()
+        }
     }
 }
 
