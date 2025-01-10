@@ -2394,6 +2394,26 @@ impl Ty {
             panic!("tried to fix related result type on non-id type")
         }
     }
+
+    pub(crate) fn fix_fn_first_argument_cf_nullability(&mut self, fn_name: &str) {
+        if let Self::TypeDef {
+            id,
+            nullability: nullability @ Nullability::Unspecified,
+            is_cf: true,
+            ..
+        } = self
+        {
+            let type_name = id.name.strip_suffix("Ref").unwrap_or(&id.name);
+            // We don't ever want to mark these as non-NULL, as they have NULL
+            // statics (`kCFAllocatorDefault` and `kODSessionDefault`).
+            if fn_name.contains(type_name) && !matches!(type_name, "ODSession" | "CFAllocator") {
+                // Is likely a getter, so let's mark it as non-null (CF will
+                // usually crash if given an unexpected NULL pointer, but
+                // we're not entirely sure it will always do so).
+                *nullability = Nullability::NonNull;
+            }
+        }
+    }
 }
 
 /// Strip macros from unexposed types.

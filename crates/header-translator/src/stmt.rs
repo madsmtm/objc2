@@ -1595,6 +1595,10 @@ impl Stmt {
                     _ => error!("unknown"),
                 });
 
+                if let Some((_, first_ty)) = arguments.first_mut() {
+                    first_ty.fix_fn_first_argument_cf_nullability(&id.name);
+                }
+
                 // Don't map `CFRetain`, `CFRelease`, `CFAutorelease`, as well
                 // as custom ones like as `CGColorRelease`, but not things
                 // like `CMBufferQueueDequeueAndRetain`.
