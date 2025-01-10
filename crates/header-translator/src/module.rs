@@ -306,17 +306,38 @@ impl Module {
                 .filter_map(|stmt| stmt.encoding_test(config))
                 .collect();
 
-            if !encoding_tests.is_empty() {
+            let static_tests: Vec<_> = self
+                .stmts
+                .iter()
+                .filter_map(|stmt| stmt.static_test(config))
+                .collect();
+
+            if !encoding_tests.is_empty() || !static_tests.is_empty() {
                 writeln!(f)?;
 
                 writeln!(f, "use test_frameworks::*;")?;
+            }
 
+            if !encoding_tests.is_empty() {
                 writeln!(f)?;
 
                 writeln!(f, "#[test]")?;
                 writeln!(f, "fn test_encoding() {{")?;
 
                 for test in encoding_tests {
+                    write!(f, "{test}")?;
+                }
+
+                writeln!(f, "}}")?;
+            }
+
+            if !static_tests.is_empty() {
+                writeln!(f)?;
+
+                writeln!(f, "#[test]")?;
+                writeln!(f, "fn test_statics() {{")?;
+
+                for test in static_tests {
                     write!(f, "{test}")?;
                 }
 

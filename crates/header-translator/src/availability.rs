@@ -322,6 +322,27 @@ impl Availability {
             Ok(())
         }))
     }
+
+    // Used when testing
+    pub fn is_available_host(&self) -> bool {
+        if self.unavailable.macos {
+            return false;
+        }
+        if let Some(macos) = self.introduced.macos {
+            // Disable test if introduced later than my current OS.
+            // TODO: Use `available!` macro here.
+            if 14 < macos.x {
+                return false;
+            }
+        }
+        // Disable test if deprecated.
+        // Fixes `MLModelCollectionDidChangeNotification` not linking (it is
+        // only marked as unavailable if the deployment target is macOS 15.0).
+        if self.deprecated.macos.is_some() {
+            return false;
+        }
+        true
+    }
 }
 
 impl fmt::Display for Availability {

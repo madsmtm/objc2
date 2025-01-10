@@ -10,7 +10,7 @@ use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::availability::Availability;
 use crate::cfgs::PlatformCfg;
-use crate::config::{ClassData, MethodData};
+use crate::config::{ClassData, Config, LibraryConfig, MethodData};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
@@ -26,7 +26,6 @@ use crate::name_translation::split_words;
 use crate::rust_type::Ty;
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
-use crate::Config;
 
 #[derive(serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Derives(Cow<'static, str>);
@@ -2932,27 +2931,6 @@ impl Stmt {
     }
 
     pub(crate) fn encoding_test<'a>(&'a self, config: &'a Config) -> Option<impl Display + 'a> {
-        let simple_platform_gate =
-            |data, required_items: &[ItemIdentifier], implied_items: &[ItemIdentifier]| {
-                let mut platform_cfg = PlatformCfg::from_config(data);
-
-                for item in required_items {
-                    platform_cfg.dependency(config.library(item.library_name()));
-                }
-
-                for item in implied_items {
-                    platform_cfg.implied(config.library(item.library_name()));
-                }
-
-                FormatterFn(move |f| {
-                    if let Some(cfg) = platform_cfg.cfgs() {
-                        writeln!(f, "#[cfg({cfg})]")?;
-                    }
-
-                    Ok(())
-                })
-            };
-
         let (data, availability, cls, cls_required_items, cls_generics, methods) = match self {
             Stmt::ExternMethods {
                 location,
@@ -2993,7 +2971,7 @@ impl Stmt {
             write!(
                 f,
                 "{}",
-                simple_platform_gate(data, cls_required_items, &[],)
+                simple_platform_gate(data, cls_required_items, &[], config)
             )?;
             if let Some(check) = availability.check_is_available() {
                 writeln!(f, "    if {check} ")?;
@@ -3014,7 +2992,12 @@ impl Stmt {
                 write!(
                     f,
                     "{}",
-                    simple_platform_gate(data, &method.required_items(), cls_required_items,)
+                    simple_platform_gate(
+                        data,
+                        &method.required_items(),
+                        cls_required_items,
+                        config
+                    )
                 )?;
                 write!(f, "{}", method.encoding_test(false))?;
             }
@@ -3024,4 +3007,66 @@ impl Stmt {
             Ok(())
         }))
     }
+
+    pub(crate) fn static_test<'a>(&'a self, config: &'a Config) -> Option<impl Display + 'a> {
+        match self {
+            Self::VarDecl {
+                id,
+                availability,
+                ty,
+                value: None,
+                ..
+            } => {
+                if !availability.is_available_host() {
+                    return None;
+                }
+                Some(FormatterFn(|f| {
+                    write!(
+                        f,
+                        "{}",
+                        simple_platform_gate(
+                            config.library(id.library_name()),
+                            &ty.required_items(),
+                            &[],
+                            config,
+                        )
+                    )?;
+                    let ty = ty.var().to_string();
+                    if ty.starts_with("&'static") {
+                        writeln!(f, "    check_static_nonnull(unsafe {{ {} }});", id.path())?;
+                    } else {
+                        writeln!(f, "    let _ = unsafe {{ {} }};", id.path())?;
+                    }
+
+                    Ok(())
+                }))
+            }
+            _ => None,
+        }
+    }
+}
+
+fn simple_platform_gate(
+    data: &LibraryConfig,
+    required_items: &[ItemIdentifier],
+    implied_items: &[ItemIdentifier],
+    config: &Config,
+) -> impl Display {
+    let mut platform_cfg = PlatformCfg::from_config(data);
+
+    for item in required_items {
+        platform_cfg.dependency(config.library(item.library_name()));
+    }
+
+    for item in implied_items {
+        platform_cfg.implied(config.library(item.library_name()));
+    }
+
+    FormatterFn(move |f| {
+        if let Some(cfg) = platform_cfg.cfgs() {
+            writeln!(f, "#[cfg({cfg})]")?;
+        }
+
+        Ok(())
+    })
 }

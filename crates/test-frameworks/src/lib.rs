@@ -20,6 +20,8 @@ pub use core::ffi::{
     c_ulong, c_ulonglong, c_ushort, c_void,
 };
 pub use core::ptr::NonNull;
+#[cfg(feature = "test-frameworks")]
+pub use dispatch2::ffi::*;
 pub use libc;
 pub use objc2::ffi::{NSInteger, NSUInteger};
 pub use objc2::rc::{Allocated, Retained};
@@ -27,6 +29,10 @@ pub use objc2::runtime::{
     AnyClass, AnyObject, AnyProtocol, Bool, Imp, NSObject, NSObjectProtocol, ProtocolObject, Sel,
 };
 pub use objc2::{available, sel, ClassType, MainThreadMarker};
+
+// Fix kODAuthenticationTypeClearTextReadOnly linking
+#[link(name = "odmodule", kind = "dylib")]
+extern "C" {}
 
 // MacTypes.h
 pub type OSStatus = i32;
@@ -71,6 +77,14 @@ pub fn check_method<Arguments: EncodeArguments, Return: EncodeReturn>(
     //     actual_encoding, expected_encoding,
     //     "method encoding in header did not match implementation for {sel}",
     // );
+}
+
+#[track_caller]
+pub fn check_static_nonnull<T: ?Sized>(var: &T) {
+    let ptr: *const T = var;
+    if ptr.is_null() {
+        panic!("static was marked as NonNull, so it must not be NULL");
+    }
 }
 
 #[test]
