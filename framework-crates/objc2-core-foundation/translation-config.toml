@@ -62,6 +62,29 @@ fn.CFRetain.skipped = true
 fn.CFRelease.skipped = true
 fn.CFMakeCollectable.skipped = true
 
+# Dependent on target endianness
+fn.CFByteOrderGetCurrent.skipped = true
+fn.CFSwapInt16BigToHost.skipped = true
+fn.CFSwapInt32BigToHost.skipped = true
+fn.CFSwapInt64BigToHost.skipped = true
+fn.CFSwapInt16HostToBig.skipped = true
+fn.CFSwapInt32HostToBig.skipped = true
+fn.CFSwapInt64HostToBig.skipped = true
+fn.CFSwapInt16LittleToHost.skipped = true
+fn.CFSwapInt32LittleToHost.skipped = true
+fn.CFSwapInt64LittleToHost.skipped = true
+fn.CFSwapInt16HostToLittle.skipped = true
+fn.CFSwapInt32HostToLittle.skipped = true
+fn.CFSwapInt64HostToLittle.skipped = true
+fn.CFConvertFloat32HostToSwapped.skipped = true
+fn.CFConvertFloat32SwappedToHost.skipped = true
+fn.CFConvertFloat64HostToSwapped.skipped = true
+fn.CFConvertFloat64SwappedToHost.skipped = true
+fn.CFConvertFloatHostToSwapped.skipped = true
+fn.CFConvertFloatSwappedToHost.skipped = true
+fn.CFConvertDoubleHostToSwapped.skipped = true
+fn.CFConvertDoubleSwappedToHost.skipped = true
+
 fn.CFGetTypeID.unsafe = false
 fn.CFCopyTypeIDDescription.unsafe = false
 fn.CFGetRetainCount.unsafe = false

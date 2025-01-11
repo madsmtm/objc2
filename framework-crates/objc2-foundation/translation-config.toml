@@ -245,6 +245,16 @@ class.NSXPCInterface.methods."XPCTypeForSelector:argumentIndex:ofReply:".skipped
 class.NSXPCCoder.methods."encodeXPCObject:forKey:".skipped = true
 class.NSXPCCoder.methods."decodeXPCObjectOfType:forKey:".skipped = true
 
+# Dependent on target endianness
+fn.NSSwapBigDoubleToHost.skipped = true
+fn.NSSwapBigFloatToHost.skipped = true
+fn.NSSwapHostDoubleToBig.skipped = true
+fn.NSSwapHostFloatToBig.skipped = true
+fn.NSSwapLittleDoubleToHost.skipped = true
+fn.NSSwapLittleFloatToHost.skipped = true
+fn.NSSwapHostDoubleToLittle.skipped = true
+fn.NSSwapHostFloatToLittle.skipped = true
+
 ###
 ### Counterparts
 ###

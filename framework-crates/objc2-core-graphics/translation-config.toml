@@ -39,3 +39,7 @@ fn.CGFontCreatePostScriptEncoding.skipped = true
 # Calculation of these constants overflow, so we must use a larger type.
 static.kCGFontIndexMax.skipped = true
 static.kCGFontIndexInvalid.skipped = true
+
+# Dependent on target endianness
+static.kCGBitmapByteOrder16Host.skipped = true
+static.kCGBitmapByteOrder32Host.skipped = true
