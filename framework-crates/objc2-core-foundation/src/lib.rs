@@ -25,6 +25,8 @@ mod base;
 #[cfg(feature = "CFBundle")]
 mod bundle;
 mod cf_type;
+#[cfg(feature = "CFData")]
+mod data;
 #[cfg(feature = "CFDate")]
 mod date;
 mod generated;

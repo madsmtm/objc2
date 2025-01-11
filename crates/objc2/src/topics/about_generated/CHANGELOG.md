@@ -64,7 +64,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   no longer need to use `mut` to mutate them, but it also means that they are
   no longer `Send + Sync`.
 * **BREAKING**: Renamed the `bytes[_mut]` methods on `NSData` to
-  `as[_mut]_slice_unchecked`, and made them `unsafe`, since the data can no
+  `as[_mut]_bytes_unchecked`, and made them `unsafe`, since the data can no
   longer ensure that it is not mutated while the bytes are in use.
 * No longer require `Eq + Hash` for `NSDictionary` keys and `NSSet` values,
   since it was overly restrictive.

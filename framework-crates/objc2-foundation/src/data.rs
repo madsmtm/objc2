@@ -33,6 +33,7 @@ extern_methods!(
 );
 
 impl NSData {
+    // TODO: Rename to `from_bytes` to match `CFData::from_bytes`.
     pub fn with_bytes(bytes: &[u8]) -> Retained<Self> {
         let bytes_ptr = bytes.as_ptr() as *mut c_void;
         unsafe { Self::initWithBytes_length(Self::alloc(), bytes_ptr, bytes.len()) }
@@ -77,7 +78,7 @@ impl NSData {
     /// difficult to uphold.
     ///
     /// [`to_vec`]: Self::to_vec
-    pub unsafe fn as_slice_unchecked(&self) -> &[u8] {
+    pub unsafe fn as_bytes_unchecked(&self) -> &[u8] {
         let ptr = self.bytes_raw();
         if !ptr.is_null() {
             let ptr: *const u8 = ptr.cast();
@@ -103,8 +104,15 @@ impl NSData {
 
     /// Copy the contents of the data into a new [`Vec`].
     pub fn to_vec(&self) -> Vec<u8> {
-        // SAFETY: The bytes are immediately copied to a new `Vec`.
-        unsafe { self.as_slice_unchecked() }.to_vec()
+        // NOTE: We don't do `Vec::from`, as that will call the allocator
+        // while the buffer is active, and we don't know if that allocator
+        // uses a CFMutableData under the hood (though very theoretical).
+
+        let mut vec = Vec::with_capacity(self.len());
+        // SAFETY: We've pre-allocated the Vec, so it won't call the allocator
+        // while the byte slice is alive (and hence it won't ).
+        vec.extend_from_slice(unsafe { self.as_bytes_unchecked() });
+        vec
     }
 
     /// Iterate over the bytes of the data.
@@ -122,7 +130,7 @@ impl NSMutableData {
     /// slice is alive.
     #[doc(alias = "mutableBytes")]
     #[allow(clippy::mut_from_ref)]
-    pub unsafe fn as_mut_slice_unchecked(&self) -> &mut [u8] {
+    pub unsafe fn as_mut_bytes_unchecked(&self) -> &mut [u8] {
         let ptr = self.mutable_bytes_raw();
         // &Cell<[u8]> is safe because the slice length is not actually in the
         // cell

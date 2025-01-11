@@ -91,7 +91,7 @@ impl CFString {
     // NOTE: This is NOT public, since it's completely broken for differently
     // encoded strings, see the `as_str_broken` test below.
     #[allow(dead_code)]
-    unsafe fn as_str(&self) -> Option<&str> {
+    unsafe fn as_str_unchecked(&self) -> Option<&str> {
         let bytes = unsafe { CFStringGetCStringPtr(self, CFStringEncoding::UTF8) };
         NonNull::new(bytes as *mut c_char).map(|bytes| {
             // SAFETY: The pointer is valid for as long as the CFString is not
@@ -314,7 +314,7 @@ mod tests {
 
         // But `CFStringGetCStringPtr` completely ignores the UTF-8 conversion
         // we asked it to do, i.e. a huge correctness footgun!
-        assert_eq!(unsafe { s.as_str() }, Some("e&"));
+        assert_eq!(unsafe { s.as_str_unchecked() }, Some("e&"));
     }
 
     #[test]

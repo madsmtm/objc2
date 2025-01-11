@@ -24,7 +24,7 @@ fn test_from_vec() {
     let bytes_ptr = bytes.as_ptr();
 
     let data = NSData::from_vec(bytes);
-    assert_eq!(unsafe { data.as_slice_unchecked() }.as_ptr(), bytes_ptr);
+    assert_eq!(unsafe { data.as_bytes_unchecked() }.as_ptr(), bytes_ptr);
 }
 
 #[test]
