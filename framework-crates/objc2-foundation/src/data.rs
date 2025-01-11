@@ -41,19 +41,7 @@ impl NSData {
     #[cfg(feature = "block2")]
     #[cfg(feature = "alloc")]
     pub fn from_vec(bytes: Vec<u8>) -> Retained<Self> {
-        // GNUStep's NSData `initWithBytesNoCopy:length:deallocator:` has a
-        // bug; it forgets to assign the input buffer and length to the
-        // instance before it swizzles to NSDataWithDeallocatorBlock.
-        // See https://github.com/gnustep/libs-base/pull/213
-        // So instead we use NSDataWithDeallocatorBlock directly.
-        //
-        // NSMutableData does not have this problem.
-        #[cfg(feature = "gnustep-1-7")]
-        let obj = unsafe { objc2::msg_send_id![objc2::class!(NSDataWithDeallocatorBlock), alloc] };
-        #[cfg(not(feature = "gnustep-1-7"))]
-        let obj = Self::alloc();
-
-        unsafe { with_vec(obj, bytes) }
+        unsafe { with_vec(Self::alloc(), bytes) }
     }
 }
 

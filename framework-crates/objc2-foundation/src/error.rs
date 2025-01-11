@@ -54,7 +54,25 @@ impl fmt::Debug for NSError {
 
 impl fmt::Display for NSError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let desc: Retained<NSObject> = unsafe { msg_send_id![self, localizedDescription] };
+        let desc: Retained<NSObject> = if cfg!(feature = "gnustep-1-7") {
+            // Can return NULL:
+            // https://github.com/gnustep/libs-base/issues/486
+            let desc: Option<Retained<NSObject>> =
+                unsafe { msg_send_id![self, localizedDescription] };
+            if let Some(desc) = desc {
+                desc
+            } else {
+                let domain: Retained<NSObject> = unsafe { msg_send_id![self, domain] };
+                // SAFETY: `domain` returns `NSErrorDomain`, which is `NSString`.
+                unsafe { util::display_string(&domain, f)? };
+                write!(f, " {}", self.code())?;
+
+                return Ok(());
+            }
+        } else {
+            unsafe { msg_send_id![self, localizedDescription] }
+        };
+
         // SAFETY: `localizedDescription` returns `NSString`.
         unsafe { util::display_string(&desc, f) }
     }

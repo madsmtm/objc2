@@ -52,11 +52,6 @@ impl NSValue {
 impl NSValue {
     /// Retrieve the data contained in the `NSValue`.
     ///
-    /// Note that this is broken on GNUStep for some types, see
-    /// [gnustep/libs-base#216].
-    ///
-    /// [gnustep/libs-base#216]: https://github.com/gnustep/libs-base/pull/216
-    ///
     ///
     /// # Safety
     ///

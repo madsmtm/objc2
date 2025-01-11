@@ -690,7 +690,7 @@ jobs:
           ~/extern/lib
           ~/extern/include
         # Change this key if we start caching more things
-        key: extern-${{ github.job }}-${{ matrix.name }}-v2
+        key: extern-${{ github.job }}-${{ matrix.name }}-v3
 
     - name: Setup environment
       # These add to PATH-like variables, so they can always be set
@@ -705,10 +705,10 @@ jobs:
         # Debug print these
         ls -al $HOME/extern/*
 
-    - name: Install Clang + Valgrind
+    - name: Install Clang + Valgrind + TIFF
       run: |
         sudo apt-get update
-        sudo apt-get -y install clang valgrind
+        sudo apt-get -y install clang valgrind libtiff-dev
 
     - name: Install cross compilation tools
       if: matrix.target == 'i686-unknown-linux-gnu'
@@ -761,19 +761,19 @@ jobs:
     - name: Install GNUStep make
       if: steps.extern-cache.outputs.cache-hit != 'true'
       run: |
-        wget https://github.com/gnustep/tools-make/archive/refs/tags/make-2_9_0.tar.gz
-        tar -xzf make-2_9_0.tar.gz
-        mkdir -p tools-make-make-2_9_0/build
-        cd tools-make-make-2_9_0/build
+        wget https://github.com/gnustep/tools-make/archive/refs/tags/make-2_9_2.tar.gz
+        tar -xzf make-2_9_2.tar.gz
+        mkdir -p tools-make-make-2_9_2/build
+        cd tools-make-make-2_9_2/build
         ../configure --prefix=$HOME/extern --with-library-combo=ng-gnu-gnu
         make install
 
     - name: Install GNUStep base library
       if: steps.extern-cache.outputs.cache-hit != 'true'
       run: |
-        wget https://github.com/gnustep/libs-base/archive/refs/tags/base-1_28_0.tar.gz
-        tar -xzf base-1_28_0.tar.gz
-        cd libs-base-base-1_28_0
+        wget https://github.com/gnustep/libs-base/archive/refs/tags/base-1_30_0.tar.gz
+        tar -xzf base-1_30_0.tar.gz
+        cd libs-base-base-1_30_0
         ./configure --prefix=$HOME/extern --disable-tls --disable-xslt ${{ matrix.configureflags }}
         make install
         ls -al $HOME/extern/*
@@ -781,9 +781,9 @@ jobs:
     - name: Install GNUStep GUI
       if: matrix.target == 'x86_64-unknown-linux-gnu' && steps.extern-cache.outputs.cache-hit != 'true'
       run: |
-        wget https://github.com/gnustep/libs-gui/archive/refs/tags/gui-0_29_0.tar.gz
-        tar -xzf gui-0_29_0.tar.gz
-        cd libs-gui-gui-0_29_0
+        wget https://github.com/gnustep/libs-gui/archive/refs/tags/gui-0_31_1.tar.gz
+        tar -xzf gui-0_31_1.tar.gz
+        cd libs-gui-gui-0_31_1
         ./configure --prefix=$HOME/extern --disable-jpeg ${{ matrix.configureflags }}
         make install
         ls -al $HOME/extern/*
