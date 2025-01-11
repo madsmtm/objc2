@@ -29,6 +29,8 @@ mod cf_type;
 mod data;
 #[cfg(feature = "CFDate")]
 mod date;
+#[cfg(feature = "CFError")]
+mod error;
 mod generated;
 #[cfg(feature = "CFCGTypes")]
 mod geometry;
