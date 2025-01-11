@@ -26,6 +26,8 @@ mod cf_type;
 mod generated;
 #[cfg(feature = "CFCGTypes")]
 mod geometry;
+#[cfg(feature = "CFNumber")]
+mod number;
 mod retained;
 #[cfg(all(feature = "CFBase", feature = "CFString"))]
 mod string;
