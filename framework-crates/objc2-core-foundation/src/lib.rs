@@ -39,6 +39,8 @@ mod number;
 mod retained;
 #[cfg(feature = "CFString")]
 mod string;
+#[cfg(feature = "CFTimeZone")]
+mod timezone;
 mod type_traits;
 #[cfg(feature = "CFUUID")]
 mod uuid;
