@@ -23,13 +23,15 @@ mod base;
 #[cfg(feature = "CFBundle")]
 mod bundle;
 mod cf_type;
+#[cfg(feature = "CFDate")]
+mod date;
 mod generated;
 #[cfg(feature = "CFCGTypes")]
 mod geometry;
 #[cfg(feature = "CFNumber")]
 mod number;
 mod retained;
-#[cfg(all(feature = "CFBase", feature = "CFString"))]
+#[cfg(feature = "CFString")]
 mod string;
 mod type_traits;
 

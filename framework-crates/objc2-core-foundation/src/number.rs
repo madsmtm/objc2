@@ -1,7 +1,10 @@
 #![cfg(feature = "CFBase")]
+use core::cmp::Ordering;
+use core::ptr;
+
 use crate::{
-    kCFBooleanFalse, kCFBooleanTrue, CFBoolean, CFBooleanGetValue, CFNumber, CFNumberCreate,
-    CFNumberGetValue, CFNumberType, CFRetained,
+    kCFBooleanFalse, kCFBooleanTrue, CFBoolean, CFBooleanGetValue, CFNumber, CFNumberCompare,
+    CFNumberCreate, CFNumberGetValue, CFNumberType, CFRetained,
 };
 
 impl CFBoolean {
@@ -104,6 +107,24 @@ impl CFNumber {
     }
 }
 
+impl PartialOrd for CFNumber {
+    #[inline]
+    #[doc(alias = "CFNumberCompare")]
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for CFNumber {
+    #[inline]
+    #[doc(alias = "CFNumberCompare")]
+    fn cmp(&self, other: &Self) -> Ordering {
+        // Documented that one should pass NULL here.
+        let context = ptr::null_mut();
+        unsafe { CFNumberCompare(self, Some(other), context) }.into()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -128,5 +149,12 @@ mod tests {
         assert_eq!(n.as_i64(), Some(442));
         assert_eq!(n.as_f32(), Some(442.0));
         assert_eq!(n.as_f64(), Some(442.0));
+    }
+
+    #[test]
+    fn cmp_number() {
+        assert!(CFNumber::new_i32(2) < CFNumber::new_i32(3));
+        assert!(CFNumber::new_i32(3) == CFNumber::new_i32(3));
+        assert!(CFNumber::new_i32(4) > CFNumber::new_i32(3));
     }
 }

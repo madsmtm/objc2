@@ -1,12 +1,14 @@
+#![cfg(feature = "CFBase")]
+use core::cmp::Ordering;
 use core::ffi::{c_char, CStr};
 use core::fmt::Write;
 use core::ptr::NonNull;
 use core::{fmt, str};
 
 use crate::{
-    kCFAllocatorNull, Boolean, CFRange, CFRetained, CFString, CFStringCreateWithBytes,
-    CFStringCreateWithBytesNoCopy, CFStringEncoding, CFStringGetBytes, CFStringGetCStringPtr,
-    CFStringGetLength,
+    kCFAllocatorNull, Boolean, CFRange, CFRetained, CFString, CFStringCompare,
+    CFStringCompareFlags, CFStringCreateWithBytes, CFStringCreateWithBytesNoCopy, CFStringEncoding,
+    CFStringGetBytes, CFStringGetCStringPtr, CFStringGetLength,
 };
 
 #[track_caller]
@@ -169,6 +171,24 @@ impl fmt::Display for CFString {
         }
 
         Ok(())
+    }
+}
+
+impl PartialOrd for CFString {
+    #[inline]
+    #[doc(alias = "CFStringCompare")]
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for CFString {
+    #[inline]
+    #[doc(alias = "CFStringCompare")]
+    fn cmp(&self, other: &Self) -> Ordering {
+        // Request standard lexiographical ordering.
+        let flags = CFStringCompareFlags::empty();
+        unsafe { CFStringCompare(self, Some(other), flags) }.into()
     }
 }
 

@@ -39,11 +39,13 @@
 // That means we can use `isize`/`usize`, which is more ergonomic.
 
 use core::cell::UnsafeCell;
+use core::cmp::Ordering;
 use core::convert::AsRef;
 use core::fmt;
 use core::hash;
 use core::marker::{PhantomData, PhantomPinned};
 
+use crate::CFComparisonResult;
 use crate::ConcreteType;
 use crate::{CFEqual, CFHash, Type};
 
@@ -164,3 +166,32 @@ crate::__cf_type_objc2!(CFType, crate::__cf_macro_helpers::Encoding::Void);
 
 // NOTE: impl AsRef<CFType> for AnyObject would probably not be valid, since
 // not all Objective-C objects can be used as CoreFoundation objects (?)
+
+impl Default for CFComparisonResult {
+    #[inline]
+    fn default() -> Self {
+        Self::CompareEqualTo
+    }
+}
+
+impl From<Ordering> for CFComparisonResult {
+    #[inline]
+    fn from(order: Ordering) -> Self {
+        match order {
+            Ordering::Less => Self::CompareLessThan,
+            Ordering::Equal => Self::CompareEqualTo,
+            Ordering::Greater => Self::CompareGreaterThan,
+        }
+    }
+}
+
+impl From<CFComparisonResult> for Ordering {
+    #[inline]
+    fn from(comparison_result: CFComparisonResult) -> Self {
+        match comparison_result.0 {
+            ..=-1 => Self::Less,  // ..=CFComparisonResult::CompareLessThan
+            0 => Self::Equal,     // CFComparisonResult::CompareEqualTo
+            1.. => Self::Greater, // CFComparisonResult::CompareGreaterThan..
+        }
+    }
+}
