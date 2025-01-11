@@ -122,7 +122,7 @@ impl fmt::Debug for CFType {
         }
         #[cfg(not(feature = "CFString"))]
         {
-            f.debug_struct("<CoreFoundation type>")
+            f.debug_struct("<CoreFoundation type (enable CFString feature for more info)>")
                 .finish_non_exhaustive()
         }
     }

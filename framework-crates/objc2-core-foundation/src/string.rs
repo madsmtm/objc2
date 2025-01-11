@@ -303,5 +303,16 @@ mod tests {
         assert_eq!(cf.to_string(), "xyz");
     }
 
+    #[test]
+    fn eq() {
+        assert_eq!(CFString::from_str("abc"), CFString::from_str("abc"));
+        assert_ne!(CFString::from_str("abc"), CFString::from_str("xyz"));
+        // Cross-type comparison
+        assert_ne!(
+            **CFString::from_str("abc"),
+            **unsafe { kCFAllocatorNull }.unwrap()
+        );
+    }
+
     // TODO: Test mutation while formatting.
 }

@@ -40,20 +40,10 @@ macro_rules! cf_type {
             }
         }
 
-        impl $crate::__cf_macro_helpers::fmt::Debug for $ty {
-            fn fmt(
-                &self,
-                f: &mut $crate::__cf_macro_helpers::fmt::Formatter<'_>,
-            ) -> $crate::__cf_macro_helpers::fmt::Result {
-                f.debug_struct($crate::__cf_macro_helpers::stringify!($ty))
-                    .finish_non_exhaustive()
-            }
-        }
-
         // SAFETY: The type is a CoreFoundation-like type.
         unsafe impl $crate::Type for $ty {}
 
-        $crate::__cf_type_convert_cf_type!($ty);
+        $crate::__cf_type_needs_cf_base!($ty);
 
         $crate::__cf_type_superclass!($ty $(: $superclass)?);
 
@@ -68,7 +58,7 @@ macro_rules! cf_type {
 #[cfg(feature = "CFBase")]
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __cf_type_convert_cf_type {
+macro_rules! __cf_type_needs_cf_base {
     ($ty:ty) => {
         // Allow converting to CFType.
 
@@ -85,13 +75,42 @@ macro_rules! __cf_type_convert_cf_type {
                 self // Through Deref of self or superclass
             }
         }
+
+        impl $crate::__cf_macro_helpers::PartialEq for $ty {
+            #[inline]
+            fn eq(&self, other: &Self) -> $crate::__cf_macro_helpers::bool {
+                let this: &$crate::CFType = self; // Through Deref
+                let other: &$crate::CFType = other; // Through Deref
+                $crate::__cf_macro_helpers::PartialEq::eq(this, other)
+            }
+        }
+
+        impl $crate::__cf_macro_helpers::Eq for $ty {}
+
+        impl $crate::__cf_macro_helpers::Hash for $ty {
+            #[inline]
+            fn hash<H: $crate::__cf_macro_helpers::Hasher>(&self, state: &mut H) {
+                let this: &$crate::CFType = self; // Through Deref
+                $crate::__cf_macro_helpers::Hash::hash(this, state);
+            }
+        }
+
+        impl $crate::__cf_macro_helpers::fmt::Debug for $ty {
+            fn fmt(
+                &self,
+                f: &mut $crate::__cf_macro_helpers::fmt::Formatter<'_>,
+            ) -> $crate::__cf_macro_helpers::fmt::Result {
+                let this: &$crate::CFType = self; // Through Deref
+                $crate::__cf_macro_helpers::fmt::Debug::fmt(this, f)
+            }
+        }
     };
 }
 
 #[cfg(not(feature = "CFBase"))]
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __cf_type_convert_cf_type {
+macro_rules! __cf_type_needs_cf_base {
     ($ty:ty) => {};
 }
 
