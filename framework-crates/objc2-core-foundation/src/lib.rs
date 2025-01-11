@@ -38,6 +38,8 @@ mod retained;
 #[cfg(feature = "CFString")]
 mod string;
 mod type_traits;
+#[cfg(feature = "CFUUID")]
+mod uuid;
 
 #[cfg(feature = "CFBase")]
 pub use self::base::*;
