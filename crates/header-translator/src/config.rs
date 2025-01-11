@@ -34,8 +34,12 @@ impl Config {
         Ok(Self { libraries })
     }
 
+    pub fn try_library(&self, library_name: &str) -> Option<&LibraryConfig> {
+        self.libraries.get(library_name)
+    }
+
     pub fn library(&self, library_name: &str) -> &LibraryConfig {
-        self.libraries.get(library_name).unwrap_or_else(|| {
+        self.try_library(library_name).unwrap_or_else(|| {
             error!("tried to get library config from {library_name:?}");
             self.libraries
                 .get("__builtin__")

@@ -1321,6 +1321,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-system-configuration"
+version = "0.2.2"
+dependencies = [
+ "bitflags",
+ "libc",
+ "objc2",
+ "objc2-core-foundation",
+]
+
+[[package]]
 name = "objc2-system-extensions"
 version = "0.2.2"
 dependencies = [
@@ -1702,6 +1712,7 @@ dependencies = [
  "objc2-speech",
  "objc2-store-kit",
  "objc2-symbols",
+ "objc2-system-configuration",
  "objc2-system-extensions",
  "objc2-ui-kit",
  "objc2-uniform-type-identifiers",

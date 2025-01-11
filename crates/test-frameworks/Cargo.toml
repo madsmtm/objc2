@@ -178,6 +178,8 @@ test-frameworks = [
     "objc2-store-kit/all",
     "dep:objc2-symbols",
     "objc2-symbols/all",
+    "dep:objc2-system-configuration",
+    "objc2-system-configuration/all",
     "dep:objc2-system-extensions",
     "objc2-system-extensions/all",
     "dep:objc2-ui-kit",
@@ -287,6 +289,7 @@ objc2-metal-performance-shaders-graph = { path = "../../framework-crates/objc2-m
 objc2-multipeer-connectivity = { path = "../../framework-crates/objc2-multipeer-connectivity", optional = true }
 objc2-photos = { path = "../../framework-crates/objc2-photos", optional = true }
 objc2-quartz-core = { path = "../../framework-crates/objc2-quartz-core", optional = true }
+objc2-system-configuration = { path = "../../framework-crates/objc2-system-configuration", optional = true }
 objc2-vision = { path = "../../framework-crates/objc2-vision", optional = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "visionos"))'.dependencies]

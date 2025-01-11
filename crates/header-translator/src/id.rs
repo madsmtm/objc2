@@ -171,7 +171,7 @@ impl Location {
         match self.library_name() {
             "__builtin__" | "__core__" => None,
             library if library == emission_library => None,
-            library => Some(&config.library(library).krate),
+            library => Some(&config.try_library(library)?.krate),
         }
     }
 
@@ -199,7 +199,7 @@ impl Location {
             // Matches e.g. objc2-foundation/NSArray, but not objc2 or
             // libc (since that is configured in the source itself).
             library => {
-                let krate = &config.library(library).krate;
+                let krate = &config.try_library(library)?.krate;
                 let required = config
                     .library(emission_library)
                     .required_crates
