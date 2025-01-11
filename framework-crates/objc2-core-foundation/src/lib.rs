@@ -9,6 +9,8 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-core-foundation/0.2.2")]
+// Debug won't be implemented if `CFBase` feature is disabled.
+#![allow(missing_debug_implementations)]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;

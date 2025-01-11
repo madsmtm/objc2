@@ -192,6 +192,8 @@ impl From<CFComparisonResult> for Ordering {
             ..=-1 => Self::Less,  // ..=CFComparisonResult::CompareLessThan
             0 => Self::Equal,     // CFComparisonResult::CompareEqualTo
             1.. => Self::Greater, // CFComparisonResult::CompareGreaterThan..
+            #[allow(unreachable_patterns)] // MSRV between 1.73 and 1.76
+            _ => Self::Equal,
         }
     }
 }
