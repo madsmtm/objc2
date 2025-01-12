@@ -62,6 +62,21 @@ class.NSLayoutDimension.derives = "Debug"
 enum.NSImageResizingMode.skipped = true
 enum.NSTextAlignment.skipped = true
 
+# Uses constants from IOKit
+enum.NSPointingDeviceType.use-value = true
+enum.NSEventButtonMask.use-value = true
+enum.NSEventSubtype.use-value = true
+static.NSNormalWindowLevel.use-value = true
+static.NSFloatingWindowLevel.use-value = true
+static.NSSubmenuWindowLevel.use-value = true
+static.NSTornOffMenuWindowLevel.use-value = true
+static.NSMainMenuWindowLevel.use-value = true
+static.NSStatusWindowLevel.use-value = true
+static.NSModalPanelWindowLevel.use-value = true
+static.NSPopUpMenuWindowLevel.use-value = true
+static.NSScreenSaverWindowLevel.use-value = true
+static.NSDockWindowLevel.use-value = true
+
 # I'm unsure of the ABI of the array this takes
 fn.NSDrawBitmap.skipped = true
 class.NSView.methods."getRectsExposedDuringLiveResize:count:".skipped = true

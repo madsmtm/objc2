@@ -321,6 +321,21 @@ impl Primitive {
             Self::Imp => "Option<Imp>",
         }
     }
+
+    fn is_signed(&self) -> Option<bool> {
+        Some(match self {
+            Self::Char => return None, // Target-specific
+            Self::SChar | Self::Short | Self::Int | Self::Long | Self::LongLong => true,
+            Self::UChar | Self::UShort | Self::UInt | Self::ULong | Self::ULongLong => true,
+            Self::Float | Self::Double | Self::F32 | Self::F64 => true, // Unsure
+            Self::I8 | Self::I16 | Self::I32 | Self::I64 | Self::ISize => true,
+            Self::U8 | Self::U16 | Self::U32 | Self::U64 | Self::USize => false,
+            Self::PtrDiff => true,
+            Self::NSInteger => true,
+            Self::NSUInteger => false,
+            _ => return None,
+        })
+    }
 }
 
 impl fmt::Display for Primitive {
@@ -2262,22 +2277,17 @@ impl Ty {
         Self::parse(ty, Lifetime::Unspecified, context)
     }
 
-    fn is_primitive(&self) -> bool {
+    pub fn is_signed(&self) -> Option<bool> {
         match self {
-            Self::Primitive(_) => true,
-            Self::TypeDef { to, .. } => to.is_primitive(),
-            _ => false,
+            Self::Primitive(prim) => prim.is_signed(),
+            Self::Enum { ty, .. } => ty.is_signed(),
+            Self::TypeDef { to, .. } => to.is_signed(),
+            _ => None,
         }
     }
 
     pub(crate) fn parse_enum(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = Self::parse(ty, Lifetime::Unspecified, context);
-
-        if !ty.is_primitive() {
-            warn!(?ty, "enum type not a primitive");
-        }
-
-        ty
+        Self::parse(ty, Lifetime::Unspecified, context)
     }
 
     pub(crate) fn parse_static(ty: Type<'_>, context: &Context<'_>) -> Self {

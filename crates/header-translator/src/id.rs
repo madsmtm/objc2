@@ -64,6 +64,9 @@ impl Location {
             "_stdint" => "__builtin__".into(),
             // Implementation of the above
             "DarwinFoundation.types.machine_types" => "__builtin__".into(),
+            // UINT_MAX, FLT_MIN, DBL_MAX, etc.
+            // Handled manually in `expr.rs`.
+            "_Builtin_limits" => "__builtin__".into(),
 
             // `core::ffi` types
             "_Builtin_stdarg.va_list" => {

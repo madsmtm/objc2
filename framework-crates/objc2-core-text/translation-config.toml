@@ -36,12 +36,12 @@ typedef.BslnBaselineRecord.skipped = true
 fn.CTFontGetPlatformFont.skipped = true
 fn.CTFontCreateWithPlatformFont.skipped = true
 
-# Emits -1 on an unsigned type, manually defined
-enum.CTFontUIFontType.constants.kCTFontUIFontNone.skipped = true
-enum.CTRubyAlignment.constants.kCTRubyAlignmentInvalid.skipped = true
-enum.CTRubyOverhang.constants.kCTRubyOverhangInvalid.skipped = true
+# Emits -1 on an unsigned type
+enum.CTFontUIFontType.constants.kCTFontUIFontNone.use-value = true
+enum.CTRubyAlignment.constants.kCTRubyAlignmentInvalid.use-value = true
+enum.CTRubyOverhang.constants.kCTRubyOverhangInvalid.use-value = true
 
-# Emits 0x80000000 on an int, manually defined
-enum.anonymous.constants.kMORTLigLastAction.skipped = true
-enum.anonymous.constants.kMORXCoverVertical.skipped = true
-enum.anonymous.constants.kKERXVertical.skipped = true
+# Emits 0x80000000 on an int
+enum.anonymous.constants.kMORTLigLastAction.use-value = true
+enum.anonymous.constants.kMORXCoverVertical.use-value = true
+enum.anonymous.constants.kKERXVertical.use-value = true

@@ -21,16 +21,6 @@ mod image;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 
-/// [Apple's documentation](https://developer.apple.com/documentation/coregraphics/kcgfontindexmax?language=objc)
-#[allow(non_upper_case_globals)]
-#[cfg(feature = "CGFont")]
-pub static kCGFontIndexMax: CGFontIndex = ((1u32 << 16) - 2) as CGFontIndex;
-
-/// [Apple's documentation](https://developer.apple.com/documentation/coregraphics/kcgfontindexinvalid?language=objc)
-#[allow(non_upper_case_globals)]
-#[cfg(feature = "CGFont")]
-pub static kCGFontIndexInvalid: CGFontIndex = ((1u32 << 16) - 1) as CGFontIndex;
-
 #[allow(dead_code)]
 pub(crate) type UniCharCount = core::ffi::c_ulong;
 #[allow(dead_code)]

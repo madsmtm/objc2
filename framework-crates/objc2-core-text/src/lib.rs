@@ -16,14 +16,11 @@ extern crate alloc;
 extern crate std;
 
 mod generated;
-mod invalid;
 #[cfg(feature = "SFNTLayoutTypes")]
 mod sfnt_lookup_header;
 
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
-#[cfg(feature = "SFNTLayoutTypes")]
-pub use self::invalid::{kKERXVertical, kMORTLigLastAction, kMORXCoverVertical};
 #[cfg(feature = "SFNTLayoutTypes")]
 pub use self::sfnt_lookup_header::SFNTLookupFormatSpecificHeader;
 

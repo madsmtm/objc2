@@ -1314,8 +1314,11 @@ impl Stmt {
                 let availability = Availability::parse(entity, context);
 
                 let ty = entity.get_enum_underlying_type().expect("enum type");
-                let is_signed = ty.is_signed_integer();
                 let ty = Ty::parse_enum(ty, context);
+                let is_signed = ty.is_signed().unwrap_or_else(|| {
+                    error!(?ty, "cannot determine signed-ness of enum");
+                    false
+                });
                 let mut kind = None;
                 let mut variants = Vec::new();
                 let mut sendable = None;
@@ -1325,12 +1328,9 @@ impl Stmt {
                         let name = entity.get_name().expect("enum constant name");
                         let availability = Availability::parse(&entity, context);
 
-                        if data
-                            .constants
-                            .get(&name)
-                            .map(|data| data.skipped)
-                            .unwrap_or_default()
-                        {
+                        let const_data = data.constants.get(&name).cloned().unwrap_or_default();
+
+                        if const_data.skipped {
                             return;
                         }
 
@@ -1344,7 +1344,7 @@ impl Stmt {
                             Expr::Unsigned(value.1)
                         };
 
-                        if !data.use_value {
+                        if !(const_data.use_value.or(data.use_value).unwrap_or(false)) {
                             // Some enums constants don't declare a value, but
                             // let it be inferred from the position in the
                             // enum instead; in those cases, we use the value
@@ -1452,13 +1452,14 @@ impl Stmt {
             EntityKind::VarDecl => {
                 let id = ItemIdentifier::new(entity, context);
 
-                if context
+                let data = context
                     .library(id.library_name())
                     .statics
                     .get(&id.name)
-                    .map(|data| data.skipped)
-                    .unwrap_or_default()
-                {
+                    .cloned()
+                    .unwrap_or_default();
+
+                if data.skipped {
                     return vec![];
                 }
 
@@ -1486,7 +1487,11 @@ impl Stmt {
                     EntityKind::TypeRef => {}
                     _ if entity.is_expression() => {
                         if value.is_none() {
-                            value = Some(Expr::parse_var(&entity, context));
+                            if data.use_value {
+                                value = Some(Expr::from_evaluated(&entity));
+                            } else {
+                                value = Some(Expr::parse_var(&entity, context));
+                            }
                         } else {
                             error!(?value, ?entity, "got variable value twice");
                         }

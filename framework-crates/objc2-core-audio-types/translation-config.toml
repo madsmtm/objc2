@@ -10,7 +10,7 @@ tvos = "13.0"
 watchos = "6.0"
 visionos = "1.0"
 
-# Requires a cast
+# Requires a cast, and deprecated anyhow
 enum.anonymous.constants.AVAudioSessionErrorInsufficientPriority.skipped = true
 
 # Differs based on architecture

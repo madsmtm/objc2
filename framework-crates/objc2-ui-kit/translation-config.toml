@@ -78,12 +78,12 @@ class.UIImage.skipped-protocols = ["UIItemProviderPresentationSizeProviding", "U
 class.NSTextAttachment.skipped-protocols = ["UIAccessibilityContentSizeCategoryImageAdjusting"]
 
 # Type defaults to `c_int`, but value is `NSInteger`
-enum.anonymous.constants.NSControlCharacterZeroAdvancementAction.skipped = true
-enum.anonymous.constants.NSControlCharacterWhitespaceAction.skipped = true
-enum.anonymous.constants.NSControlCharacterHorizontalTabAction.skipped = true
-enum.anonymous.constants.NSControlCharacterLineBreakAction.skipped = true
-enum.anonymous.constants.NSControlCharacterParagraphBreakAction.skipped = true
-enum.anonymous.constants.NSControlCharacterContainerBreakAction.skipped = true
+enum.anonymous.constants.NSControlCharacterZeroAdvancementAction.use-value = true
+enum.anonymous.constants.NSControlCharacterWhitespaceAction.use-value = true
+enum.anonymous.constants.NSControlCharacterHorizontalTabAction.use-value = true
+enum.anonymous.constants.NSControlCharacterLineBreakAction.use-value = true
+enum.anonymous.constants.NSControlCharacterParagraphBreakAction.use-value = true
+enum.anonymous.constants.NSControlCharacterContainerBreakAction.use-value = true
 
 # Typedef to an enum, which our values handle wrong
 typedef.UITextWritingDirection.skipped = true

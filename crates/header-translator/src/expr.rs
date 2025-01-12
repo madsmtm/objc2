@@ -1,6 +1,7 @@
 use std::collections::{BTreeMap, HashSet};
 use std::fmt;
 
+use clang::source::SourceRange;
 use clang::token::TokenKind;
 use clang::{Entity, EntityKind, EntityVisitResult, EvaluationResult};
 
@@ -42,7 +43,7 @@ pub enum Expr {
 }
 
 impl Expr {
-    fn from_evaluated(entity: &Entity<'_>) -> Self {
+    pub fn from_evaluated(entity: &Entity<'_>) -> Self {
         let res = entity
             .evaluate()
             .expect("must be able to evaluate result of macro in expression");
@@ -97,11 +98,20 @@ impl Expr {
             EntityVisitResult::Recurse
         });
 
+        // Get actual source range
+        let location = entity.get_location().expect("expr location");
+        let file = location
+            .get_file_location()
+            .file
+            .expect("expr location file");
         let range = entity.get_range().expect("expr range");
+        let start = file.get_offset_location(range.get_start().get_file_location().offset);
+        let end = file.get_offset_location(range.get_end().get_file_location().offset);
+        let range = SourceRange::new(start, end);
+
         let tokens = range.tokenize();
 
         if tokens.is_empty() {
-            let location = entity.get_location().expect("expr location");
             if let Some(macro_invocation) = context
                 .macro_invocations
                 .get(&MacroLocation::from_location(&location))
@@ -171,6 +181,8 @@ impl Expr {
                         "(" | ")" | "<<" | "-" | "+" | "|" | "&" | "^" => Token::Punctuation(punct),
                         // Bitwise not
                         "~" => Token::Punctuation("!".to_string()),
+                        // Binary/boolean not
+                        "!" => Token::Punctuation("!".to_string()),
                         punct => panic!("unknown expr punctuation {punct}"),
                     }
                 }
@@ -311,6 +323,10 @@ impl fmt::Display for Expr {
                     write!(f, "NSIntegerMax as _")
                 } else if id.name == "NSUIntegerMax" {
                     write!(f, "NSUIntegerMax as _")
+                } else if id.name == "UINT_MAX" {
+                    write!(f, "c_uint::MAX as _")
+                } else if id.name == "FLT_MIN" {
+                    write!(f, "c_float::MIN")
                 } else if id.name == "FLT_MAX" {
                     write!(f, "c_float::MAX")
                 } else if id.name == "DBL_MAX" {

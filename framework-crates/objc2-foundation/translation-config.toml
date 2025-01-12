@@ -103,15 +103,10 @@ typedef.NSRect.skipped = true
 struct._NSRect.skipped = true
 
 # References CGRectEdge
+enum.NSRectEdge.use-value = true
+
+# Needs us to consider Swift availability for variant naming algorithm to work properly
 enum.NSRectEdge.skipped = true
-enum.anonymous.constants.NSRectEdgeMinX.skipped = true
-enum.anonymous.constants.NSRectEdgeMinY.skipped = true
-enum.anonymous.constants.NSRectEdgeMaxX.skipped = true
-enum.anonymous.constants.NSRectEdgeMaxY.skipped = true
-enum.anonymous.constants.NSMinXEdge.skipped = true
-enum.anonymous.constants.NSMinYEdge.skipped = true
-enum.anonymous.constants.NSMaxXEdge.skipped = true
-enum.anonymous.constants.NSMaxYEdge.skipped = true
 
 # We do a custom implementation of these
 protocol.NSCopying.skipped = true

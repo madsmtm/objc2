@@ -20,3 +20,11 @@ class.LAPublicKey.methods."canEncryptUsingSecKeyAlgorithm:".skipped = true
 class.LAPublicKey.methods."canVerifyUsingSecKeyAlgorithm:".skipped = true
 class.LAPublicKey.methods."encryptData:secKeyAlgorithm:completion:".skipped = true
 class.LAPublicKey.methods."verifyData:signature:secKeyAlgorithm:completion:".skipped = true
+
+# Uses defines
+enum.LABiometryType.use-value = true
+enum.LABiometryType.constants.LABiometryNone.use-value = false
+enum.LACompanionType.use-value = true
+enum.LAPolicy.use-value = true
+enum.LACredentialType.use-value = true
+enum.LAError.use-value = true

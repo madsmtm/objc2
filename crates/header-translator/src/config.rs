@@ -306,14 +306,24 @@ pub struct StructData {
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+pub struct EnumVariantData {
+    #[serde(default)]
+    pub skipped: bool,
+    #[serde(rename = "use-value")]
+    #[serde(default)]
+    pub use_value: Option<bool>,
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct EnumData {
     #[serde(default)]
     pub skipped: bool,
     #[serde(rename = "use-value")]
     #[serde(default)]
-    pub use_value: bool,
+    pub use_value: Option<bool>,
     #[serde(default)]
-    pub constants: HashMap<String, StructData>,
+    pub constants: HashMap<String, EnumVariantData>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
@@ -321,6 +331,9 @@ pub struct EnumData {
 pub struct StaticData {
     #[serde(default)]
     pub skipped: bool,
+    #[serde(rename = "use-value")]
+    #[serde(default)]
+    pub use_value: bool,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

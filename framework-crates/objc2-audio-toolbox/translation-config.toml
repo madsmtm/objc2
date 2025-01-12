@@ -142,4 +142,4 @@ fn.AudioOutputUnitGetHostIcon.skipped = true
 protocol.AUCocoaUIBase.methods."uiViewForAudioUnit:withSize:".skipped = true
 
 # Value too large
-enum.anonymous.constants.AUEventSampleTimeImmediate.skipped = true
+enum.anonymous.constants.AUEventSampleTimeImmediate.use-value = true
