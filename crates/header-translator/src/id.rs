@@ -529,7 +529,28 @@ impl ItemIdentifier {
 
 impl ItemIdentifier<Option<String>> {
     pub fn new_optional(entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        Self::with_name(entity.get_name(), entity, context)
+        let mut id = Self::with_name(entity.get_name(), entity, context);
+
+        // union (unnamed at /Applications/Xcode.app/...)
+        // enum (unnamed at /Applications/Xcode.app/...)
+        if id
+            .name
+            .as_deref()
+            .map(|name| name.contains(" (unnamed at"))
+            .unwrap_or(false)
+        {
+            id.name = None;
+        }
+
+        id
+    }
+
+    pub fn to_option(self) -> Option<ItemIdentifier> {
+        if let Some(name) = self.name {
+            Some(ItemIdentifier::from_raw(name, self.location))
+        } else {
+            None
+        }
     }
 }
 

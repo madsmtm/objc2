@@ -16,13 +16,9 @@ extern crate alloc;
 extern crate std;
 
 mod generated;
-#[cfg(feature = "SFNTLayoutTypes")]
-mod sfnt_lookup_header;
 
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
-#[cfg(feature = "SFNTLayoutTypes")]
-pub use self::sfnt_lookup_header::SFNTLookupFormatSpecificHeader;
 
 #[allow(dead_code)]
 pub(crate) type Fixed = i32;

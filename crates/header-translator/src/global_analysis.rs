@@ -116,33 +116,36 @@ fn update_module(module: &mut Module, cf_type_id_mapping: &BTreeMap<String, Item
 
     let mut iter = mem::take(&mut module.stmts).into_iter().peekable();
     while let Some(mut stmt) = iter.next() {
-        // Fix up a few typedef + enum declarations
-        if let Stmt::AliasDecl {
-            id, ty, kind: None, ..
-        } = &stmt
-        {
-            if let Some(Stmt::EnumDecl {
-                id: enum_id,
-                ty: enum_ty,
+        // Fix up a few enum + typedef declarations. Example:
+        //
+        // typedef enum _SecureDownloadTrustCallbackResult {
+        //     kSecureDownloadDoNotEvaluateSigner = 0,
+        //     kSecureDownloadEvaluateSigner = 1,
+        //     kSecureDownloadFailEvaluation = 2
+        // } SecureDownloadTrustCallbackResult;
+        if let Stmt::EnumDecl { id, .. } = &mut stmt {
+            if let Some(Stmt::AliasDecl {
+                id: typedef_id,
+                ty,
+                kind: None,
                 ..
-            }) = iter.peek_mut()
+            }) = iter.peek()
             {
-                if enum_ty.is_typedef_to(&id.name) {
-                    *enum_id = id.clone();
-                    *enum_ty = ty.clone();
+                if ty.is_enum(&id.name) && typedef_id.name == id.name.trim_start_matches("_") {
+                    *id = typedef_id.clone();
                     // Skip adding the now-redundant alias to the list of statements
-                    continue;
+                    let _ = iter.next();
                 }
             }
         }
 
-        // Fix up a few struct + typedef declarations. Example:
+        // Fix up a few struct/union + typedef declarations. Example:
         //
         // typedef struct _AVBeatRange {
         //     AVMusicTimeStamp start;
         //     AVMusicTimeStamp length;
         // } AVBeatRange;
-        if let Stmt::StructDecl {
+        if let Stmt::RecordDecl {
             id, encoding_name, ..
         } = &mut stmt
         {
@@ -153,7 +156,7 @@ fn update_module(module: &mut Module, cf_type_id_mapping: &BTreeMap<String, Item
                 ..
             }) = iter.peek()
             {
-                if ty.is_struct(&id.name) && typedef_id.name == id.name.trim_start_matches("_") {
+                if ty.is_record(&id.name) && typedef_id.name == id.name.trim_start_matches("_") {
                     if encoding_name.is_none() {
                         *encoding_name = Some(id.name.clone());
                     }

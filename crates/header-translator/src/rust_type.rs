@@ -486,6 +486,11 @@ pub enum Ty {
         /// Whether the struct's declaration has a bridge attribute.
         is_bridged: bool,
     },
+    Union {
+        id: ItemIdentifier<Option<String>>,
+        /// FIXME: This does not work for recursive structs.
+        fields: Vec<Ty>,
+    },
     Fn {
         is_variadic: bool,
         no_escape: bool,
@@ -621,21 +626,36 @@ impl Ty {
             TypeKind::Double => Self::Primitive(Primitive::Double),
             TypeKind::Record => {
                 let declaration = ty.get_declaration().expect("record declaration");
-                Self::Struct {
-                    id: ItemIdentifier::new(&declaration, context),
-                    fields: ty
-                        .get_fields()
-                        .expect("struct fields")
-                        .into_iter()
-                        .map(|field| {
-                            Self::parse(
-                                field.get_type().expect("struct field type"),
-                                Lifetime::Unspecified,
-                                context,
-                            )
-                        })
-                        .collect(),
-                    is_bridged: is_bridged(&declaration, context),
+
+                let fields = ty
+                    .get_fields()
+                    .expect("struct fields")
+                    .into_iter()
+                    .map(|field| {
+                        Self::parse(
+                            field.get_type().expect("struct field type"),
+                            Lifetime::Unspecified,
+                            context,
+                        )
+                    })
+                    .collect();
+
+                match declaration.get_kind() {
+                    EntityKind::StructDecl => Self::Struct {
+                        id: ItemIdentifier::new(&declaration, context),
+                        fields,
+                        is_bridged: is_bridged(&declaration, context),
+                    },
+                    EntityKind::UnionDecl => Self::Union {
+                        id: ItemIdentifier::new_optional(&declaration, context),
+                        fields,
+                    },
+                    _ => {
+                        error!(?declaration, "unknown record type decl");
+                        Self::GenericParam {
+                            name: "UnknownRecord".into(),
+                        }
+                    }
                 }
             }
             TypeKind::Enum => {
@@ -1226,6 +1246,16 @@ impl Ty {
                 items.push(id.clone());
                 items
             }
+            Self::Union { id, fields, .. } => {
+                let mut items = Vec::new();
+                for field in fields {
+                    items.extend(field.required_items());
+                }
+                if let Some(id) = id.clone().to_option() {
+                    items.push(id);
+                }
+                items
+            }
             Self::Fn {
                 is_variadic: _,
                 no_escape: _,
@@ -1291,7 +1321,7 @@ impl Ty {
                 element_type.requires_mainthreadmarker(self_requires)
             }
             Self::Enum { ty, .. } => ty.requires_mainthreadmarker(self_requires),
-            Self::Struct { fields, .. } => fields
+            Self::Struct { fields, .. } | Self::Union { fields, .. } => fields
                 .iter()
                 .any(|field| field.requires_mainthreadmarker(self_requires)),
             Self::Fn {
@@ -1347,6 +1377,9 @@ impl Ty {
             Self::Struct { fields, .. } => fields
                 .iter()
                 .any(|field| field.provides_mainthreadmarker(self_provides)),
+            Self::Union { fields, .. } => fields
+                .iter()
+                .all(|field| field.provides_mainthreadmarker(self_provides)),
             _ => false,
         }
     }
@@ -1443,6 +1476,21 @@ impl Ty {
 
     pub(crate) fn is_cf_type_id(&self) -> bool {
         matches!(self, Self::TypeDef { id, .. } if id.name == "CFTypeID")
+    }
+
+    pub(crate) fn contains_union(&self) -> bool {
+        match self {
+            Self::Union { .. } => true,
+            Self::TypeDef { id, .. }
+                if matches!(&*id.name, "MPSPackedFloat3" | "MTLPackedFloat3") =>
+            {
+                // These are custom-defined to not contain the internal union.
+                false
+            }
+            Self::TypeDef { to, .. } => to.contains_union(),
+            Self::Struct { fields, .. } => fields.iter().any(|field| field.contains_union()),
+            _ => false,
+        }
     }
 
     pub(crate) fn is_objc_bool(&self) -> bool {
@@ -1546,6 +1594,14 @@ impl Ty {
                 ),
                 Self::Struct { id, .. } => {
                     write!(f, "{}", id.path())
+                }
+                Self::Union { id, .. } => {
+                    if let Some(id) = id.clone().to_option() {
+                        write!(f, "{}", id.path())
+                    } else {
+                        // TODO
+                        write!(f, "UnknownUnion")
+                    }
                 }
                 Self::Enum { id, .. } => {
                     write!(f, "{}", id.path())
@@ -2032,7 +2088,7 @@ impl Ty {
         })
     }
 
-    pub(crate) fn struct_(&self) -> impl fmt::Display + '_ {
+    pub(crate) fn record(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Array {
                 element_type,
@@ -2056,7 +2112,7 @@ impl Ty {
         false
     }
 
-    pub(crate) fn struct_encoding(&self) -> impl fmt::Display + '_ {
+    pub(crate) fn record_encoding(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Primitive(Primitive::C99Bool) => write!(f, "Encoding::Bool"),
             Self::Primitive(Primitive::Long) => write!(f, "Encoding::C_LONG"),
@@ -2065,7 +2121,7 @@ impl Ty {
             Self::TypeDef { to, .. } if to.fn_contains_bool_argument() => {
                 write!(f, "Encoding::Pointer(&Encoding::Unknown)")
             }
-            _ => write!(f, "<{}>::ENCODING", self.struct_()),
+            _ => write!(f, "<{}>::ENCODING", self.record()),
         })
     }
 
@@ -2193,10 +2249,6 @@ impl Ty {
         Self::parse(ty, Lifetime::Unspecified, context)
     }
 
-    pub(crate) fn is_enum(&self) -> bool {
-        matches!(self, Self::Enum { .. })
-    }
-
     pub(crate) fn pointer_to_opaque_struct_or_void(&self) -> Option<Option<&str>> {
         if let Self::Pointer {
             pointee,
@@ -2273,7 +2325,7 @@ impl Ty {
         ty
     }
 
-    pub(crate) fn parse_struct_field(ty: Type<'_>, context: &Context<'_>) -> Self {
+    pub(crate) fn parse_record_field(ty: Type<'_>, context: &Context<'_>) -> Self {
         Self::parse(ty, Lifetime::Unspecified, context)
     }
 
@@ -2362,12 +2414,16 @@ impl Ty {
         matches!(self, Self::Pointer { pointee, .. } if **pointee == Self::Self_)
     }
 
-    pub(crate) fn is_typedef_to(&self, s: &str) -> bool {
-        matches!(self, Self::TypeDef { id, .. } if id.name == s)
+    pub(crate) fn is_enum(&self, s: &str) -> bool {
+        matches!(self, Self::Enum { id, .. } if id.name == s)
     }
 
-    pub(crate) fn is_struct(&self, s: &str) -> bool {
-        matches!(self, Self::Struct { id, .. } if id.name == s)
+    pub(crate) fn is_record(&self, s: &str) -> bool {
+        match self {
+            Self::Struct { id, .. } if id.name == s => true,
+            Self::Union { id, .. } if id.name.as_deref() == Some(s) => true,
+            _ => false,
+        }
     }
 
     pub(crate) fn is_enum_through_typedef(&self) -> bool {

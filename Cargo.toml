@@ -28,7 +28,6 @@ categories = [
 [workspace.lints.rust]
 elided_lifetimes_in_paths = "warn"
 missing_copy_implementations = "warn"
-missing_debug_implementations = "warn"
 non_ascii_idents = "deny"
 unreachable_pub = "warn"
 unsafe_op_in_unsafe_fn = "deny"

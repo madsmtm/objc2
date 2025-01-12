@@ -49,7 +49,7 @@ typedef.MPSIntersectionDistancePrimitiveIndexBufferIndexInstanceIndexCoordinates
 # tries to derive with `PartialEq` which fails because of `Bool` fields
 # struct.MPSImageHistogramInfo.skipped = true
 
-# Uses unions internally
+# Has a union field, but we'd rather have it as just a struct
 struct._MPSPackedFloat3.skipped = true
 typedef.MPSPackedFloat3.skipped = true
 

@@ -6,8 +6,8 @@ use core::ptr::NonNull;
 use core::{fmt, str};
 
 use crate::{
-    kCFAllocatorNull, Boolean, CFRange, CFRetained, CFString, CFStringCompare,
-    CFStringCompareFlags, CFStringCreateWithBytes, CFStringCreateWithBytesNoCopy, CFStringEncoding,
+    kCFAllocatorNull, Boolean, CFRange, CFRetained, CFString, CFStringBuiltInEncodings,
+    CFStringCompare, CFStringCompareFlags, CFStringCreateWithBytes, CFStringCreateWithBytesNoCopy,
     CFStringGetBytes, CFStringGetCStringPtr, CFStringGetLength,
 };
 
@@ -37,7 +37,7 @@ impl CFString {
                 None,
                 string.as_ptr(),
                 len,
-                CFStringEncoding::UTF8,
+                CFStringBuiltInEncodings::EncodingUTF8.0,
                 false as Boolean,
             )
         };
@@ -63,7 +63,7 @@ impl CFString {
                 None,
                 string.as_ptr(),
                 len,
-                CFStringEncoding::UTF8,
+                CFStringBuiltInEncodings::EncodingUTF8.0,
                 false as Boolean,
                 kCFAllocatorNull,
             )
@@ -92,7 +92,8 @@ impl CFString {
     // encoded strings, see the `as_str_broken` test below.
     #[allow(dead_code)]
     unsafe fn as_str_unchecked(&self) -> Option<&str> {
-        let bytes = unsafe { CFStringGetCStringPtr(self, CFStringEncoding::UTF8) };
+        let bytes =
+            unsafe { CFStringGetCStringPtr(self, CFStringBuiltInEncodings::EncodingUTF8.0) };
         NonNull::new(bytes as *mut c_char).map(|bytes| {
             // SAFETY: The pointer is valid for as long as the CFString is not
             // mutated (which the caller ensures it isn't for the lifetime of
@@ -139,7 +140,7 @@ impl fmt::Display for CFString {
                         location: location_utf16,
                         length: len_utf16 - location_utf16,
                     },
-                    CFStringEncoding::UTF8,
+                    CFStringBuiltInEncodings::EncodingUTF8.0,
                     0, // No conversion character
                     false as Boolean,
                     buf.as_mut_ptr(),
@@ -212,15 +213,23 @@ mod tests {
         let table = [
             (
                 b"abc\xf8xyz\0" as &[u8],
-                CFStringEncoding::ISOLatin1,
+                CFStringBuiltInEncodings::EncodingISOLatin1,
                 "abcøxyz",
             ),
-            (b"\x26\x65\0", CFStringEncoding::UTF16BE, "♥"),
-            (b"\x65\x26\0", CFStringEncoding::UTF16LE, "♥"),
+            (
+                b"\x26\x65\0",
+                CFStringBuiltInEncodings::EncodingUTF16BE,
+                "♥",
+            ),
+            (
+                b"\x65\x26\0",
+                CFStringBuiltInEncodings::EncodingUTF16LE,
+                "♥",
+            ),
         ];
         for (cstr, encoding, expected) in table {
             let cstr = CStr::from_bytes_with_nul(cstr).unwrap();
-            let s = unsafe { CFStringCreateWithCString(None, cstr.as_ptr(), encoding) }.unwrap();
+            let s = unsafe { CFStringCreateWithCString(None, cstr.as_ptr(), encoding.0) }.unwrap();
             assert_eq!(s.to_string(), expected);
         }
     }
@@ -232,7 +241,7 @@ mod tests {
                 None,
                 b"\xd8\x3d\xde".as_ptr(),
                 3,
-                CFStringEncoding::UTF16BE,
+                CFStringBuiltInEncodings::EncodingUTF16BE.0,
                 0,
             )
             .unwrap()
@@ -255,7 +264,7 @@ mod tests {
                     &s,
                     buf.as_mut_ptr().cast(),
                     buf.len() as _,
-                    CFStringEncoding::UTF8,
+                    CFStringBuiltInEncodings::EncodingUTF8.0,
                 )
             },
             false as _,
@@ -288,7 +297,7 @@ mod tests {
             CFStringCreateWithCString(
                 None,
                 b"\x65\x26\0".as_ptr().cast(),
-                CFStringEncoding::Unicode,
+                CFStringBuiltInEncodings::EncodingUnicode.0,
             )
         }
         .unwrap();
@@ -304,7 +313,7 @@ mod tests {
                     &s,
                     buf.as_mut_ptr().cast(),
                     buf.len() as _,
-                    CFStringEncoding::UTF8,
+                    CFStringBuiltInEncodings::EncodingUTF8.0,
                 )
             },
             false as _,

@@ -34,7 +34,7 @@ protocol.MTLDevice.methods."newLibraryWithData:error:".skipped = true
 # Needs mach / kernel types
 protocol.MTLResource.methods."setOwnerWithIdentity:".skipped = true
 
-# Uses unions internally
+# Has a union field, but we'd rather have it as just a struct
 struct._MTLPackedFloat3.skipped = true
 typedef.MTLPackedFloat3.skipped = true
 fn.MTLPackedFloat3Make.skipped = true

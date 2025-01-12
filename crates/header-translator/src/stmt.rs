@@ -489,7 +489,11 @@ pub enum Stmt {
     /// typedef struct _name {
     ///     fields*
     /// } name;
-    StructDecl {
+    ///
+    /// union name {
+    ///     fields*
+    /// };
+    RecordDecl {
         id: ItemIdentifier,
         // internal objc struct name (before typedef). shows up in encoding
         // and is used in message verification.
@@ -500,6 +504,7 @@ pub enum Stmt {
         sendable: Option<bool>,
         packed: bool,
         documentation: Documentation,
+        is_union: bool,
     },
     /// typedef NS_OPTIONS(type, name) {
     ///     variants*
@@ -620,25 +625,6 @@ fn parse_fn_param_children(parent: &Entity<'_>, context: &Context<'_>) -> Option
     });
 
     ret
-}
-
-pub(crate) fn new_enum_id(
-    entity: &Entity<'_>,
-    context: &Context<'_>,
-) -> ItemIdentifier<Option<String>> {
-    assert_eq!(entity.get_kind(), EntityKind::EnumDecl);
-    let mut id = ItemIdentifier::new_optional(entity, context);
-
-    if id
-        .name
-        .as_deref()
-        .map(|name| name.starts_with("enum (unnamed at"))
-        .unwrap_or(false)
-    {
-        id.name = None;
-    }
-
-    id
 }
 
 impl Stmt {
@@ -1131,15 +1117,10 @@ impl Stmt {
                     .expect("typedef underlying type");
                 let ty = Ty::parse_typedef(ty, context);
 
-                // Handled by Stmt::EnumDecl
-                if ty.is_enum() {
-                    return vec![];
-                }
-
                 // No need to output a typedef if it'll just point to the same thing.
                 //
                 // TODO: We're discarding a slight bit of availability data this way.
-                if ty.is_struct(&id.name) {
+                if ty.is_enum(&id.name) || ty.is_record(&id.name) {
                     return vec![];
                 }
 
@@ -1214,18 +1195,25 @@ impl Stmt {
                     documentation,
                 }]
             }
-            EntityKind::StructDecl => {
-                let id = ItemIdentifier::new(entity, context);
-
+            EntityKind::StructDecl | EntityKind::UnionDecl => {
+                let is_union = entity.get_kind() == EntityKind::UnionDecl;
+                let Some(id) = ItemIdentifier::new_optional(entity, context).to_option() else {
+                    warn!(?entity, "skipped anonymous union");
+                    return vec![];
+                };
                 let availability = Availability::parse(entity, context);
 
-                if context
-                    .library(id.library_name())
-                    .struct_data
-                    .get(&id.name)
-                    .map(|data| data.skipped)
-                    .unwrap_or_default()
-                {
+                let library = context.library(id.library_name());
+                let data = if is_union {
+                    &library.union_data
+                } else {
+                    &library.struct_data
+                }
+                .get(&id.name)
+                .cloned()
+                .unwrap_or_default();
+
+                if data.skipped {
                     return vec![];
                 }
 
@@ -1235,8 +1223,16 @@ impl Stmt {
                 }
 
                 let ty = entity.get_type().unwrap();
-                let enc = ty.get_objc_encoding().unwrap();
-                let encoding_name = enc.strip_prefix('{').unwrap().split_once('=').unwrap().0;
+                let enc = ty.get_objc_encoding().expect("record has encoding");
+                let encoding_name = enc
+                    .strip_prefix('{')
+                    .unwrap_or_else(|| {
+                        enc.strip_prefix('(')
+                            .expect("record has { or ( in encoding")
+                    })
+                    .split_once('=')
+                    .unwrap()
+                    .0;
                 let encoding_name = if encoding_name == id.name {
                     None
                 } else {
@@ -1248,26 +1244,28 @@ impl Stmt {
                 let mut sendable = None;
                 let mut packed = false;
 
+                let mut res = vec![];
+
                 immediate_children(entity, |entity, span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
                             match attr {
                                 UnexposedAttr::Sendable => sendable = Some(true),
                                 UnexposedAttr::NonSendable => sendable = Some(false),
-                                attr => error!(?attr, "unknown attribute on struct"),
+                                attr => error!(?attr, "unknown attribute on struct/union"),
                             }
                         }
                     }
                     EntityKind::FieldDecl => {
                         drop(span);
-                        let name = entity.get_name().expect("struct field name");
+                        let name = entity.get_name().expect("struct/union field name");
                         let _span = debug_span!("field", name).entered();
 
-                        let ty = entity.get_type().expect("struct field type");
-                        let ty = Ty::parse_struct_field(ty, context);
+                        let ty = entity.get_type().expect("struct/union field type");
+                        let ty = Ty::parse_record_field(ty, context);
 
                         if entity.is_bit_field() {
-                            error!("unsound struct bitfield");
+                            error!("unsound struct/union bitfield");
                         }
 
                         let documentation = Documentation::from_entity(&entity);
@@ -1276,12 +1274,16 @@ impl Stmt {
                     EntityKind::ObjCBoxable => {
                         boxable = true;
                     }
-                    EntityKind::UnionDecl => error!("can't handle unions in structs yet"),
+                    EntityKind::UnionDecl | EntityKind::StructDecl => {
+                        // Recursively parse inner unions and structs, but
+                        // emit them at the top-level.
+                        res.extend(Self::parse(&entity, context));
+                    }
                     EntityKind::PackedAttr => packed = true,
-                    kind => error!(?kind, "unknown struct child"),
+                    _ => error!(?entity, "unknown struct/union child"),
                 });
 
-                vec![Self::StructDecl {
+                res.push(Self::RecordDecl {
                     id,
                     encoding_name,
                     availability,
@@ -1290,7 +1292,10 @@ impl Stmt {
                     sendable,
                     packed,
                     documentation: Documentation::from_entity(entity),
-                }]
+                    is_union,
+                });
+
+                res
             }
             EntityKind::EnumDecl => {
                 // Enum declarations show up twice for some reason, but
@@ -1299,7 +1304,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                let id = new_enum_id(entity, context);
+                let id = ItemIdentifier::new_optional(entity, context);
 
                 let data = context
                     .library(id.library_name())
@@ -1672,17 +1677,6 @@ impl Stmt {
                     documentation,
                 }]
             }
-            EntityKind::UnionDecl => {
-                let id = ItemIdentifier::new_optional(entity, context);
-                warn!(
-                    ?id,
-                    has_attributes = ?entity.has_attributes(),
-                    children = ?entity.get_children(),
-                    documentation = ?entity.get_comment(),
-                    "skipping union",
-                );
-                vec![]
-            }
             EntityKind::UnexposedDecl => {
                 // `@compatibility_alias`, can be ignored (since we don't
                 // need to support older SDK versions).
@@ -1708,7 +1702,7 @@ impl Stmt {
             Self::ExternCategory { id, .. } => Some(id.clone()),
             Self::ProtocolDecl { id, .. } => Some(id.clone()),
             Self::ProtocolImpl { .. } => None,
-            Self::StructDecl { id, .. } => Some(id.clone()),
+            Self::RecordDecl { id, .. } => Some(id.clone()),
             Self::EnumDecl { id, .. } => Some(id.clone()),
             Self::ConstDecl { id, .. } => Some(id.clone()),
             Self::VarDecl { id, .. } => Some(id.clone()),
@@ -1728,7 +1722,7 @@ impl Stmt {
             Self::ExternCategory { id, .. } => id.location(),
             Self::ProtocolDecl { id, .. } => id.location(),
             Self::ProtocolImpl { location, .. } => location,
-            Self::StructDecl { id, .. } => id.location(),
+            Self::RecordDecl { id, .. } => id.location(),
             Self::EnumDecl { id, .. } => id.location(),
             Self::ConstDecl { id, .. } => id.location(),
             Self::VarDecl { id, .. } => id.location(),
@@ -1760,7 +1754,7 @@ impl Stmt {
                 items.extend(protocol_required_items.clone());
                 items
             }
-            Self::StructDecl { fields, .. } => {
+            Self::RecordDecl { fields, .. } => {
                 let mut items = Vec::new();
                 for (_, _, field_ty) in fields {
                     items.extend(field_ty.required_items());
@@ -1830,7 +1824,7 @@ impl Stmt {
                 .iter()
                 .flat_map(|method| method.required_items())
                 .collect(),
-            Self::StructDecl { .. } => vec![ItemIdentifier::objc("Encoding")],
+            Self::RecordDecl { .. } => vec![ItemIdentifier::objc("Encoding")],
             Self::EnumDecl { kind, variants, .. } => {
                 let mut items: Vec<_> = variants
                     .iter()
@@ -2368,7 +2362,7 @@ impl Stmt {
                     writeln!(f)?;
                     writeln!(f, ");")?;
                 }
-                Self::StructDecl {
+                Self::RecordDecl {
                     id,
                     encoding_name,
                     availability,
@@ -2377,6 +2371,7 @@ impl Stmt {
                     sendable,
                     packed,
                     documentation,
+                    is_union,
                 } => {
                     write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
@@ -2386,13 +2381,21 @@ impl Stmt {
                     } else {
                         write!(f, "#[repr(C)]")?;
                     }
-                    // HACK to make Bool in structs work.
-                    if fields.iter().any(|(_, _, field)| field.is_objc_bool()) {
-                        write!(f, "#[derive(Clone, Copy, Debug)]")?;
+                    if *is_union || fields.iter().any(|(_, _, field)| field.contains_union()) {
+                        write!(f, "#[derive(Clone, Copy)]")?;
                     } else {
-                        write!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
+                        // HACK to make Bool in structs work.
+                        if fields.iter().any(|(_, _, field)| field.is_objc_bool()) {
+                            write!(f, "#[derive(Clone, Copy, Debug)]")?;
+                        } else {
+                            write!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
+                        }
                     }
-                    writeln!(f, "pub struct {} {{", id.name)?;
+                    if *is_union {
+                        writeln!(f, "pub union {} {{", id.name)?;
+                    } else {
+                        writeln!(f, "pub struct {} {{", id.name)?;
+                    }
                     for (name, documentation, ty) in fields {
                         write!(f, "{}", documentation.fmt(None))?;
                         write!(f, "    ")?;
@@ -2402,7 +2405,7 @@ impl Stmt {
                             write!(f, "pub ")?;
                         }
                         let name = handle_reserved(name);
-                        writeln!(f, "{name}: {},", ty.struct_())?;
+                        writeln!(f, "{name}: {},", ty.record())?;
                     }
                     writeln!(f, "}}")?;
                     writeln!(f)?;
@@ -2413,19 +2416,20 @@ impl Stmt {
                         cfg_gate_ln(required_items, [self.location()], config, self.location());
 
                     let encoding = FormatterFn(|f| {
-                        write!(
-                            f,
-                            "Encoding::Struct({:?}, &[",
-                            encoding_name.as_deref().unwrap_or(&id.name),
-                        )?;
+                        if *is_union {
+                            write!(f, "Encoding::Union")?;
+                        } else {
+                            write!(f, "Encoding::Struct")?;
+                        }
+                        write!(f, "({:?}, &[", encoding_name.as_deref().unwrap_or(&id.name),)?;
                         for (_, _, ty) in fields {
-                            write!(f, "{},", ty.struct_encoding())?;
+                            write!(f, "{},", ty.record_encoding())?;
                         }
                         write!(f, "])")?;
                         Ok(())
                     });
 
-                    // SAFETY: The struct is marked `#[repr(C)]`.
+                    // SAFETY: The struct/union is marked `#[repr(C)]`.
                     write!(f, "{cfg_encoding}")?;
                     writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
                     write!(f, "{cfg_encoding}")?;

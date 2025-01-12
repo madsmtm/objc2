@@ -9,7 +9,6 @@ use crate::availability::Availability;
 use crate::context::MacroLocation;
 use crate::name_translation::enum_prefix;
 use crate::rust_type::Ty;
-use crate::stmt::new_enum_id;
 use crate::unexposed_attr::UnexposedAttr;
 use crate::{immediate_children, Context, ItemIdentifier};
 
@@ -223,7 +222,7 @@ impl Expr {
                     .get_semantic_parent()
                     .expect("EnumConstantDecl parent");
                 assert_eq!(parent.get_kind(), EntityKind::EnumDecl);
-                let parent_id = new_enum_id(&parent, context);
+                let parent_id = ItemIdentifier::new_optional(&parent, context);
                 let variant = entity.get_name().expect("EnumConstantDecl name");
                 if parent_id.name.is_some() {
                     let parent_id = parent_id.map_name(|name| name.unwrap());

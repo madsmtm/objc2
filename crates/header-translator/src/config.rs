@@ -220,7 +220,10 @@ pub struct LibraryConfig {
     pub protocol_data: HashMap<String, ProtocolData>,
     #[serde(rename = "struct")]
     #[serde(default)]
-    pub struct_data: HashMap<String, StructData>,
+    pub struct_data: HashMap<String, RecordData>,
+    #[serde(rename = "union")]
+    #[serde(default)]
+    pub union_data: HashMap<String, RecordData>,
     #[serde(rename = "enum")]
     #[serde(default)]
     pub enum_data: HashMap<String, EnumData>,
@@ -299,7 +302,7 @@ pub struct ProtocolData {
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct StructData {
+pub struct RecordData {
     #[serde(default)]
     pub skipped: bool,
 }

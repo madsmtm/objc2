@@ -9,25 +9,6 @@ tvos = "9.0"
 watchos = "2.0"
 visionos = "1.0"
 
-# Typedef'd to a union
-typedef.SFNTLookupFormatSpecificHeader.skipped = true # Manually defined
-typedef.MortSpecificSubtable.skipped = true
-typedef.MorxSpecificSubtable.skipped = true
-typedef.KernFormatSpecificHeader.skipped = true
-typedef.KerxFormatSpecificHeader.skipped = true
-typedef.BslnFormatUnion.skipped = true
-
-# Uses the above unions
-struct.MortSubtable.skipped = true
-struct.MorxSubtable.skipped = true
-struct.KernVersion0SubtableHeader.skipped = true
-struct.KernSubtableHeader.skipped = true
-typedef.KernSubtableHeaderPtr.skipped = true
-struct.KerxSubtableHeader.skipped = true
-typedef.KerxSubtableHeaderPtr.skipped = true
-struct.BslnTable.skipped = true
-typedef.BslnTablePtr.skipped = true
-
 # Unknown calling convention / ABI
 fn.CTRubyAnnotationCreate.skipped = true
 typedef.BslnBaselineRecord.skipped = true

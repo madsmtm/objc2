@@ -35,6 +35,11 @@ typedef.dispatch_io_interval_flags_t.skipped = true
 # Lonely enum constant that we want to tie to dispatch_time_t
 enum.anonymous.constants.DISPATCH_WALLTIME_NOW.skipped = true
 
+# `dispatch_object_t` is a special union that declares all the different kinds
+# of dispatch objects, but that won't work in Rust.
+union.dispatch_object_t.skipped = true
+typedef.dispatch_object_t.skipped = true
+
 # We want to implement TryFrom on this
 typedef.dispatch_time_t.skipped = true
 

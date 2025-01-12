@@ -297,6 +297,7 @@
 
 #![no_std]
 #![warn(missing_docs)]
+#![warn(missing_debug_implementations)]
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.
