@@ -2749,7 +2749,7 @@ impl Stmt {
                         for (param, arg_ty) in arguments {
                             let param = handle_reserved(&crate::to_snake_case(param));
                             write!(f, "{param}: ")?;
-                            if let Some((converted_ty, _)) = arg_ty.fn_argument_converter() {
+                            if let Some((converted_ty, _, _)) = arg_ty.fn_argument_converter() {
                                 write!(f, "{converted_ty}")?;
                             } else {
                                 write!(f, "{}", arg_ty.fn_argument())?;
@@ -2777,8 +2777,10 @@ impl Stmt {
                         write!(f, "unsafe {{ {}(", id.name)?;
                         for (param, ty) in arguments {
                             let param = handle_reserved(&crate::to_snake_case(param));
-                            if let Some((_, converter)) = ty.fn_argument_converter() {
-                                write!(f, "{converter}({param})")?;
+                            if let Some((_, converter_start, converter_end)) =
+                                ty.fn_argument_converter()
+                            {
+                                write!(f, "{converter_start}{param}{converter_end}")?;
                             } else {
                                 write!(f, "{param}")?;
                             }

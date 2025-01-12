@@ -1898,6 +1898,9 @@ impl Ty {
 
         match self {
             _ if self.is_objc_bool() => Some((" -> bool".to_string(), "", ".as_bool()")),
+            Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
+                Some((" -> bool".to_string(), start, ";\nret != 0"))
+            }
             Self::Pointer {
                 nullability,
                 lifetime: Lifetime::Unspecified,
@@ -2033,12 +2036,18 @@ impl Ty {
 
     pub(crate) fn fn_argument_converter(
         &self,
-    ) -> Option<(impl fmt::Display + '_, impl fmt::Display + '_)> {
-        if self.is_objc_bool() {
-            Some(("bool", "Bool::new"))
-        } else {
+    ) -> Option<(
+        impl fmt::Display + '_,
+        impl fmt::Display + '_,
+        impl fmt::Display + '_,
+    )> {
+        match self {
+            _ if self.is_objc_bool() => Some(("bool", "Bool::new(", ")")),
+            Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
+                Some(("bool", "", " as _"))
+            }
             // TODO: Support out / autoreleasing pointers?
-            None
+            _ => None,
         }
     }
 

@@ -17,7 +17,7 @@ impl CFBoolean {
     }
 
     pub fn as_bool(&self) -> bool {
-        unsafe { CFBooleanGetValue(self) != 0 }
+        unsafe { CFBooleanGetValue(self) }
     }
 }
 
@@ -70,9 +70,9 @@ macro_rules! def_get_fn {
         #[inline]
         pub fn $fn_name(&self) -> Option<$fn_ret> {
             let mut value: $fn_ret = <$fn_ret>::default();
-            let ptr: *mut$fn_ret = &mut value;
+            let ptr: *mut $fn_ret = &mut value;
             let ret = unsafe { CFNumberGetValue(self, CFNumberType::$type, ptr.cast()) };
-            if ret != 0 {
+            if ret {
                 Some(value)
             } else {
                 None

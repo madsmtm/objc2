@@ -141,7 +141,7 @@ impl PartialEq for CFType {
     #[inline]
     #[doc(alias = "CFEqual")]
     fn eq(&self, other: &Self) -> bool {
-        CFEqual(Some(self), Some(other)) != 0
+        CFEqual(Some(self), Some(other))
     }
 }
 

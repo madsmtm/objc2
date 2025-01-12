@@ -6,9 +6,9 @@ use core::ptr::NonNull;
 use core::{fmt, str};
 
 use crate::{
-    kCFAllocatorNull, Boolean, CFRange, CFRetained, CFString, CFStringBuiltInEncodings,
-    CFStringCompare, CFStringCompareFlags, CFStringCreateWithBytes, CFStringCreateWithBytesNoCopy,
-    CFStringGetBytes, CFStringGetCStringPtr, CFStringGetLength,
+    kCFAllocatorNull, CFRange, CFRetained, CFString, CFStringBuiltInEncodings, CFStringCompare,
+    CFStringCompareFlags, CFStringCreateWithBytes, CFStringCreateWithBytesNoCopy, CFStringGetBytes,
+    CFStringGetCStringPtr, CFStringGetLength,
 };
 
 #[track_caller]
@@ -38,7 +38,7 @@ impl CFString {
                 string.as_ptr(),
                 len,
                 CFStringBuiltInEncodings::EncodingUTF8.0,
-                false as Boolean,
+                false,
             )
         };
         // Should only fail if the string is not UTF-u (which we know it is)
@@ -64,7 +64,7 @@ impl CFString {
                 string.as_ptr(),
                 len,
                 CFStringBuiltInEncodings::EncodingUTF8.0,
-                false as Boolean,
+                false,
                 kCFAllocatorNull,
             )
         };
@@ -142,7 +142,7 @@ impl fmt::Display for CFString {
                     },
                     CFStringBuiltInEncodings::EncodingUTF8.0,
                     0, // No conversion character
-                    false as Boolean,
+                    false,
                     buf.as_mut_ptr(),
                     buf.len() as _,
                     &mut read_utf8,
@@ -242,7 +242,7 @@ mod tests {
                 b"\xd8\x3d\xde".as_ptr(),
                 3,
                 CFStringBuiltInEncodings::EncodingUTF16BE.0,
-                0,
+                false,
             )
             .unwrap()
         };
@@ -258,17 +258,14 @@ mod tests {
 
         // Test `CFStringGetCString`.
         let mut buf = [0u8; 10];
-        assert_ne!(
-            unsafe {
-                CFStringGetCString(
-                    &s,
-                    buf.as_mut_ptr().cast(),
-                    buf.len() as _,
-                    CFStringBuiltInEncodings::EncodingUTF8.0,
-                )
-            },
-            false as _,
-        );
+        assert!(unsafe {
+            CFStringGetCString(
+                &s,
+                buf.as_mut_ptr().cast(),
+                buf.len() as _,
+                CFStringBuiltInEncodings::EncodingUTF8.0,
+            )
+        });
         // All the data is copied to the buffer.
         assert_eq!(&buf[0..10], b"a\0b\0c\0d\0\0\0");
 
@@ -307,17 +304,14 @@ mod tests {
 
         // So does `CFStringGetCString`.
         let mut buf = [0u8; 20];
-        assert_ne!(
-            unsafe {
-                CFStringGetCString(
-                    &s,
-                    buf.as_mut_ptr().cast(),
-                    buf.len() as _,
-                    CFStringBuiltInEncodings::EncodingUTF8.0,
-                )
-            },
-            false as _,
-        );
+        assert!(unsafe {
+            CFStringGetCString(
+                &s,
+                buf.as_mut_ptr().cast(),
+                buf.len() as _,
+                CFStringBuiltInEncodings::EncodingUTF8.0,
+            )
+        });
         let cstr = CStr::from_bytes_until_nul(&buf).unwrap();
         assert_eq!(cstr.to_bytes(), "♥".as_bytes());
 
