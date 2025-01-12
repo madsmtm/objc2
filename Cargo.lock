@@ -1070,6 +1070,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-message-ui"
+version = "0.2.2"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-foundation",
+ "objc2-messages",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-messages"
 version = "0.2.2"
 dependencies = [
@@ -1764,6 +1775,7 @@ dependencies = [
  "objc2-mail-kit",
  "objc2-map-kit",
  "objc2-media-player",
+ "objc2-message-ui",
  "objc2-messages",
  "objc2-metal",
  "objc2-metal-fx",

@@ -1,0 +1,8 @@
+framework = "MessageUI"
+crate = "objc2-message-ui"
+required-crates = ["objc2", "objc2-foundation"]
+maccatalyst = "13.0"
+ios = "3.0"
+visionos = "1.0"
+
+external.MSMessage.module = "Messages.MSMessage"
