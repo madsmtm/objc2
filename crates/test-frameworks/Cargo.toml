@@ -198,6 +198,8 @@ test-frameworks = [
     "objc2-virtualization/all",
     "dep:objc2-vision",
     "objc2-vision/all",
+    "dep:objc2-watch-connectivity",
+    "objc2-watch-connectivity/all",
     "dep:objc2-web-kit",
     "objc2-web-kit/all",
 ]
@@ -320,3 +322,6 @@ objc2-nearby-interaction = { path = "../../framework-crates/objc2-nearby-interac
 
 [target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos"))'.dependencies]
 objc2-ui-kit = { path = "../../framework-crates/objc2-ui-kit", optional = true }
+
+[target.'cfg(any(target_os = "ios", target_os = "watchos", target_os = "visionos"))'.dependencies]
+objc2-watch-connectivity = { path = "../../framework-crates/objc2-watch-connectivity", optional = true }

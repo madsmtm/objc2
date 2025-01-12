@@ -1,0 +1,7 @@
+framework = "WatchConnectivity"
+crate = "objc2-watch-connectivity"
+required-crates = ["objc2", "objc2-foundation"]
+maccatalyst = "13.0"
+ios = "9.0"
+watchos = "2.0"
+visionos = "1.0"
