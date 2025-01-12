@@ -22,6 +22,7 @@ objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", 
 objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false }
+objc2-model-io = { path = "../objc2-model-io", version = "0.2.2", default-features = false, optional = true }
 objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true, features = ["objc2-metal"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
@@ -44,15 +45,17 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-foundation/block2", "objc2-metal/block2", "objc2-quartz-core?/block2"]
+block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-foundation/block2", "objc2-metal/block2", "objc2-model-io?/block2", "objc2-quartz-core?/block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-metal/objc2-core-foundation", "objc2-quartz-core?/objc2-core-foundation"]
-objc2-core-graphics = ["dep:objc2-core-graphics", "objc2-app-kit?/objc2-core-graphics", "objc2-quartz-core?/objc2-core-graphics"]
+objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-metal/objc2-core-foundation", "objc2-model-io?/objc2-core-foundation", "objc2-quartz-core?/objc2-core-foundation"]
+objc2-core-graphics = ["dep:objc2-core-graphics", "objc2-app-kit?/objc2-core-graphics", "objc2-model-io?/objc2-core-graphics", "objc2-quartz-core?/objc2-core-graphics"]
+objc2-model-io = ["dep:objc2-model-io"]
 objc2-quartz-core = ["dep:objc2-quartz-core", "objc2-app-kit?/objc2-quartz-core"]
 
 MTKDefines = []
 MTKModel = [
     "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-metal/MTLAllocation",
@@ -61,6 +64,12 @@ MTKModel = [
     "objc2-metal/MTLRenderCommandEncoder",
     "objc2-metal/MTLResource",
     "objc2-metal/MTLStageInputOutputDescriptor",
+    "objc2-metal/MTLVertexDescriptor",
+    "objc2-model-io?/MDLAsset",
+    "objc2-model-io?/MDLMesh",
+    "objc2-model-io?/MDLMeshBuffer",
+    "objc2-model-io?/MDLObject",
+    "objc2-model-io?/MDLVertexDescriptor",
 ]
 MTKTextureLoader = [
     "objc2-app-kit?/NSGraphics",
@@ -77,6 +86,7 @@ MTKTextureLoader = [
     "objc2-metal/MTLDevice",
     "objc2-metal/MTLResource",
     "objc2-metal/MTLTexture",
+    "objc2-model-io?/MDLTexture",
 ]
 MTKView = [
     "objc2-app-kit?/NSAccessibilityProtocols",
@@ -110,5 +120,6 @@ all = [
     "objc2-app-kit",
     "objc2-core-foundation",
     "objc2-core-graphics",
+    "objc2-model-io",
     "objc2-quartz-core",
 ]

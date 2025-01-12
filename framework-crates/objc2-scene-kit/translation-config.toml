@@ -24,22 +24,6 @@ protocol.SCNSceneRenderer.methods."setOverlaySKScene:".skipped = true
 # Needs JavaScriptCore
 fn.SCNExportJavaScriptModule.skipped = true
 
-# Needs ModelIO
-class.SCNScene.methods."sceneWithMDLAsset:".skipped = true
-class.MDLAsset.categories.SCNModelIO.skipped = true
-class.SCNNode.methods."nodeWithMDLObject:".skipped = true
-class.MDLObject.categories.SCNModelIO.skipped = true
-class.SCNGeometry.methods."geometryWithMDLMesh:".skipped = true
-class.MDLMesh.categories.SCNModelIO.skipped = true
-class.SCNGeometryElement.methods."geometryElementWithMDLSubmesh:".skipped = true
-class.MDLSubmesh.categories.SCNModelIO.skipped = true
-class.SCNMaterial.methods."materialWithMDLMaterial:".skipped = true
-class.MDLMaterial.categories.SCNModelIO.skipped = true
-class.SCNLight.methods."lightWithMDLLight:".skipped = true
-class.MDLLight.categories.SCNModelIO.skipped = true
-class.SCNCamera.methods."cameraWithMDLCamera:".skipped = true
-class.MDLCamera.categories.SCNModelIO.skipped = true
-
 # Needs GLKVector3, GLKVector4 and GLKMatrix4 from GLKit
 fn.SCNMatrix4ToGLKMatrix4.skipped = true
 fn.SCNMatrix4FromGLKMatrix4.skipped = true

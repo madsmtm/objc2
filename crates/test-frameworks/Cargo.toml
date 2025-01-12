@@ -160,6 +160,8 @@ test-frameworks = [
     "objc2-metal-performance-shaders-graph/all",
     "dep:objc2-metric-kit",
     "objc2-metric-kit/all",
+    "dep:objc2-model-io",
+    "objc2-model-io/all",
     "dep:objc2-multipeer-connectivity",
     "objc2-multipeer-connectivity/all",
     "dep:objc2-natural-language",
@@ -327,6 +329,7 @@ objc2-metal = { path = "../../framework-crates/objc2-metal", optional = true }
 objc2-metal-kit = { path = "../../framework-crates/objc2-metal-kit", optional = true }
 objc2-metal-performance-shaders = { path = "../../framework-crates/objc2-metal-performance-shaders", optional = true }
 objc2-metal-performance-shaders-graph = { path = "../../framework-crates/objc2-metal-performance-shaders-graph", optional = true }
+objc2-model-io = { path = "../../framework-crates/objc2-model-io", optional = true }
 objc2-multipeer-connectivity = { path = "../../framework-crates/objc2-multipeer-connectivity", optional = true }
 objc2-photos = { path = "../../framework-crates/objc2-photos", optional = true }
 objc2-quartz-core = { path = "../../framework-crates/objc2-quartz-core", optional = true }

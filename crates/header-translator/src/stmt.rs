@@ -1328,6 +1328,7 @@ impl Stmt {
                         res.extend(Self::parse(&entity, context));
                     }
                     EntityKind::PackedAttr => packed = true,
+                    EntityKind::VisibilityAttr => {}
                     _ => error!(?entity, "unknown struct/union child"),
                 });
 

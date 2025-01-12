@@ -1181,6 +1181,7 @@ dependencies = [
  "objc2-core-graphics",
  "objc2-foundation",
  "objc2-metal",
+ "objc2-model-io",
  "objc2-quartz-core",
 ]
 
@@ -1226,6 +1227,17 @@ dependencies = [
  "objc2",
  "objc2-foundation",
  "objc2-metal",
+]
+
+[[package]]
+name = "objc2-model-io"
+version = "0.2.2"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-core-graphics",
+ "objc2-foundation",
 ]
 
 [[package]]
@@ -1354,6 +1366,7 @@ dependencies = [
  "objc2-core-image",
  "objc2-foundation",
  "objc2-metal",
+ "objc2-model-io",
  "objc2-quartz-core",
 ]
 
@@ -1890,6 +1903,7 @@ dependencies = [
  "objc2-metal-performance-shaders-graph",
  "objc2-metric-kit",
  "objc2-ml-compute",
+ "objc2-model-io",
  "objc2-multipeer-connectivity",
  "objc2-natural-language",
  "objc2-nearby-interaction",
