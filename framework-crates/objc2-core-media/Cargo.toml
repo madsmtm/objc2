@@ -19,6 +19,7 @@ workspace = true
 bitflags = { version = "2.5.0", default-features = false, optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
+objc2-core-audio = { path = "../objc2-core-audio", version = "0.2.2", default-features = false, optional = true }
 objc2-core-audio-types = { path = "../objc2-core-audio-types", version = "0.2.2", default-features = false, optional = true }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false }
 objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true }
@@ -41,9 +42,10 @@ default = ["std"]
 std = ["alloc", "bitflags?/std"]
 alloc = []
 bitflags = ["dep:bitflags", "objc2-core-audio-types?/bitflags", "objc2-core-foundation/bitflags", "objc2-core-video?/bitflags"]
-block2 = ["dep:block2", "objc2-core-foundation/block2", "objc2-core-video?/block2"]
-objc2 = ["dep:objc2", "objc2-core-audio-types?/objc2", "objc2-core-foundation/objc2", "objc2-core-video?/objc2"]
-objc2-core-audio-types = ["dep:objc2-core-audio-types"]
+block2 = ["dep:block2", "objc2-core-audio?/block2", "objc2-core-foundation/block2", "objc2-core-video?/block2"]
+objc2 = ["dep:objc2", "objc2-core-audio?/objc2", "objc2-core-audio-types?/objc2", "objc2-core-foundation/objc2", "objc2-core-video?/objc2"]
+objc2-core-audio = ["dep:objc2-core-audio"]
+objc2-core-audio-types = ["dep:objc2-core-audio-types", "objc2-core-audio?/objc2-core-audio-types"]
 objc2-core-video = ["dep:objc2-core-video"]
 
 CMAttachment = [
@@ -51,7 +53,11 @@ CMAttachment = [
     "objc2-core-foundation/CFDictionary",
 ]
 CMAudioClock = ["objc2-core-foundation/CFBase"]
-CMAudioDeviceClock = ["objc2-core-foundation/CFBase"]
+CMAudioDeviceClock = [
+    "objc2-core-audio?/AudioHardware",
+    "objc2-core-audio?/AudioHardwareDeprecated",
+    "objc2-core-foundation/CFBase",
+]
 CMBase = ["objc2-core-foundation/CFBase"]
 CMBlockBuffer = ["objc2-core-foundation/CFBase"]
 CMBufferQueue = ["objc2-core-foundation/CFBase"]
@@ -139,6 +145,7 @@ all = [
     "bitflags",
     "block2",
     "objc2",
+    "objc2-core-audio",
     "objc2-core-audio-types",
     "objc2-core-video",
 ]

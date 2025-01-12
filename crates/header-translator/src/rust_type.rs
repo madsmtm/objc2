@@ -628,7 +628,7 @@ impl Ty {
                 let declaration = ty.get_declaration().expect("record declaration");
                 let id = ItemIdentifier::new_optional(&declaration, context);
 
-                // Override for self-referential types
+                // Override for self-referential / recursive types
                 let fields = if matches!(
                     id.name.as_deref(),
                     Some(

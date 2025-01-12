@@ -58,6 +58,8 @@ test-frameworks = [
     "objc2-contacts/all",
     "dep:objc2-contacts-ui",
     "objc2-contacts-ui/all",
+    "dep:objc2-core-audio",
+    "objc2-core-audio/all",
     "dep:objc2-core-audio-types",
     "objc2-core-audio-types/all",
     "dep:objc2-core-bluetooth",
@@ -227,6 +229,7 @@ objc2-accessibility = { path = "../../framework-crates/objc2-accessibility", opt
 objc2-authentication-services = { path = "../../framework-crates/objc2-authentication-services", optional = true }
 objc2-cloud-kit = { path = "../../framework-crates/objc2-cloud-kit", optional = true }
 objc2-color-sync = { path = "../../framework-crates/objc2-color-sync", optional = true }
+objc2-core-audio = { path = "../../framework-crates/objc2-core-audio", optional = true }
 objc2-core-audio-types = { path = "../../framework-crates/objc2-core-audio-types", optional = true }
 objc2-core-bluetooth = { path = "../../framework-crates/objc2-core-bluetooth", optional = true }
 objc2-core-data = { path = "../../framework-crates/objc2-core-data", optional = true }

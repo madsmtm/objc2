@@ -95,20 +95,6 @@ class.AUAudioUnitBus.methods."setFormat:error:".skipped = true
 class.AUAudioUnit.methods."shouldChangeToFormat:forBus:".skipped = true
 class.AUAudioUnitBus.methods."initWithFormat:error:".skipped = true
 
-# Needs CoreAudio
-fn.AudioHardwareServiceHasProperty.skipped = true
-fn.AudioHardwareServiceIsPropertySettable.skipped = true
-fn.AudioHardwareServiceGetPropertyDataSize.skipped = true
-fn.AudioHardwareServiceGetPropertyData.skipped = true
-fn.AudioHardwareServiceSetPropertyData.skipped = true
-fn.AudioHardwareServiceAddPropertyListener.skipped = true
-fn.AudioHardwareServiceRemovePropertyListener.skipped = true
-enum.anonymous.constants.kAudioHardwareServiceProperty_ServiceRestarted.skipped = true
-enum.anonymous.constants.kAudioHardwareServiceDeviceProperty_VirtualMainVolume.skipped = true
-enum.anonymous.constants.kAudioHardwareServiceDeviceProperty_VirtualMasterVolume.skipped = true
-enum.anonymous.constants.kAudioHardwareServiceDeviceProperty_VirtualMainBalance.skipped = true
-enum.anonymous.constants.kAudioHardwareServiceDeviceProperty_VirtualMasterBalance.skipped = true
-
 # Needs ComponentDescription from CoreServices
 fn.AUGraphNewNode.skipped = true
 fn.AUGraphGetNodeInfo.skipped = true
