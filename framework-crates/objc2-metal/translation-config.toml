@@ -24,7 +24,6 @@ protocol.MTLDevice.methods."newRenderPipelineStateWithMeshDescriptor:options:ref
 
 # Duplicated property
 class.MTLRasterizationRateLayerDescriptor.methods.sampleCount.skipped = true
-class.MTLRasterizationRateLayerDescriptor.methods."setSampleCount:".skipped = true
 
 # Needs dispatch
 class.MTLSharedEventListener.methods."initWithDispatchQueue:".skipped = true

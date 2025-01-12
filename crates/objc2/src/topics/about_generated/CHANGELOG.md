@@ -192,6 +192,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NSWindowSharingType`, `MTLFeatureSet` etc. now have correctly stripped
   variant names (`NSWindowSharingType::None` instead of
   `NSWindowSharingType::NSWindowSharingNone`).
+* Added the missing mapping for the `sampleCount` property on
+  `MTLRasterizationRateLayerDescriptor`.
 
 
 ## 0.2.2 - 2024-05-21

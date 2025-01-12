@@ -60,6 +60,8 @@ mod generated;
 mod packed;
 #[cfg(feature = "unstable-private")]
 mod private;
+#[cfg(feature = "MTLRasterizationRate")]
+mod rasterization_rate;
 #[cfg(feature = "MTLResource")]
 mod resource;
 mod slice;
