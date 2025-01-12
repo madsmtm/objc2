@@ -1,0 +1,12 @@
+framework = "VideoToolbox"
+crate = "objc2-video-toolbox"
+required-crates = ["objc2-core-foundation"]
+custom-lib-rs = true
+macos = "10.8"
+maccatalyst = "13.0"
+ios = "6.0"
+tvos = "10.2"
+visionos = "1.0"
+
+# Wrongly renamed (Swift's renaming algorithm is insufficient)
+enum.VTDecodeFrameFlags.skipped = true

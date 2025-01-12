@@ -192,6 +192,8 @@ test-frameworks = [
     "objc2-uniform-type-identifiers/all",
     "dep:objc2-user-notifications",
     "objc2-user-notifications/all",
+    "dep:objc2-video-toolbox",
+    "objc2-video-toolbox/all",
     "dep:objc2-virtualization",
     "objc2-virtualization/all",
     "dep:objc2-vision",
@@ -296,6 +298,7 @@ objc2-multipeer-connectivity = { path = "../../framework-crates/objc2-multipeer-
 objc2-photos = { path = "../../framework-crates/objc2-photos", optional = true }
 objc2-quartz-core = { path = "../../framework-crates/objc2-quartz-core", optional = true }
 objc2-system-configuration = { path = "../../framework-crates/objc2-system-configuration", optional = true }
+objc2-video-toolbox = { path = "../../framework-crates/objc2-video-toolbox", optional = true }
 objc2-vision = { path = "../../framework-crates/objc2-vision", optional = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "visionos"))'.dependencies]

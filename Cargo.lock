@@ -1400,6 +1400,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-video-toolbox"
+version = "0.2.2"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-core-graphics",
+ "objc2-core-media",
+ "objc2-core-video",
+]
+
+[[package]]
 name = "objc2-virtualization"
 version = "0.2.2"
 dependencies = [
@@ -1740,6 +1753,7 @@ dependencies = [
  "objc2-ui-kit",
  "objc2-uniform-type-identifiers",
  "objc2-user-notifications",
+ "objc2-video-toolbox",
  "objc2-virtualization",
  "objc2-vision",
  "objc2-web-kit",
