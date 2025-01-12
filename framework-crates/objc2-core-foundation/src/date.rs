@@ -1,7 +1,7 @@
 #![cfg(feature = "CFBase")]
 use core::{cmp::Ordering, ptr};
 
-use crate::{kCFAbsoluteTimeIntervalSince1970, CFDate, CFDateCompare};
+use crate::{CFDate, CFDateCompare};
 
 impl CFDate {
     /// Create a `CFDate` from a [`SystemTime`].
@@ -16,7 +16,7 @@ impl CFDate {
             Err(err) => -err.duration().as_secs_f64(),
         } as core::ffi::c_double;
 
-        let since_2001 = since_1970 - unsafe { kCFAbsoluteTimeIntervalSince1970 };
+        let since_2001 = since_1970 - unsafe { crate::kCFAbsoluteTimeIntervalSince1970 };
         unsafe { crate::CFDateCreate(None, since_2001).expect("failed creating CFDate") }
     }
 
@@ -31,7 +31,7 @@ impl CFDate {
     #[cfg(feature = "std")]
     pub fn to_system_time(&self) -> Option<std::time::SystemTime> {
         let since_2001 = unsafe { crate::CFDateGetAbsoluteTime(self) };
-        let since_1970 = (since_2001 + unsafe { kCFAbsoluteTimeIntervalSince1970 }) as f64;
+        let since_1970 = (since_2001 + unsafe { crate::kCFAbsoluteTimeIntervalSince1970 }) as f64;
 
         std::time::UNIX_EPOCH.checked_add(std::time::Duration::try_from_secs_f64(since_1970).ok()?)
     }
