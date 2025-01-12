@@ -50,6 +50,8 @@ test-frameworks = [
     "objc2-class-kit/all",
     "dep:objc2-cloud-kit",
     "objc2-cloud-kit/all",
+    "dep:objc2-color-sync",
+    "objc2-color-sync/all",
     "dep:objc2-contacts",
     "objc2-contacts/all",
     "dep:objc2-contacts-ui",
@@ -208,6 +210,7 @@ objc2-av-kit = { path = "../../framework-crates/objc2-av-kit", optional = true }
 objc2-accessibility = { path = "../../framework-crates/objc2-accessibility", optional = true }
 objc2-authentication-services = { path = "../../framework-crates/objc2-authentication-services", optional = true }
 objc2-cloud-kit = { path = "../../framework-crates/objc2-cloud-kit", optional = true }
+objc2-color-sync = { path = "../../framework-crates/objc2-color-sync", optional = true }
 objc2-core-audio-types = { path = "../../framework-crates/objc2-core-audio-types", optional = true }
 objc2-core-bluetooth = { path = "../../framework-crates/objc2-core-bluetooth", optional = true }
 objc2-core-data = { path = "../../framework-crates/objc2-core-data", optional = true }

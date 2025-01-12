@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `AVFAudio` / `objc2-avf-audio`.
   - `AVFoundation` / `objc2-av-foundation`.
   - `CoreAudioTypes` / `objc2-core-audio-types`.
+  - `ColorSync` / `objc2-color-sync`.
   - `CoreGraphics` / `objc2-core-graphics`.
   - `CoreFoundation` / `objc2-core-foundation`.
   - `CoreMedia` / `objc2-core-media`.

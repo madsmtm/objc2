@@ -605,6 +605,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-color-sync"
+version = "0.2.2"
+dependencies = [
+ "objc2",
+ "objc2-core-foundation",
+]
+
+[[package]]
 name = "objc2-contacts"
 version = "0.2.2"
 dependencies = [
@@ -1662,6 +1670,7 @@ dependencies = [
  "objc2-call-kit",
  "objc2-class-kit",
  "objc2-cloud-kit",
+ "objc2-color-sync",
  "objc2-contacts",
  "objc2-contacts-ui",
  "objc2-core-audio-types",

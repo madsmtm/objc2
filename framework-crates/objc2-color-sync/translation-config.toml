@@ -1,0 +1,9 @@
+framework = "ColorSync"
+crate = "objc2-color-sync"
+required-crates = ["objc2-core-foundation"]
+macos = "10.13"
+maccatalyst = "13.0"
+ios = "16.0"
+tvos = "16.0"
+watchos = "9.0"
+visionos = "1.0"
