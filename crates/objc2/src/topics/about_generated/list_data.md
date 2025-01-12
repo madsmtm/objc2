@@ -3,6 +3,7 @@
 | `AVFAudio` | [![`objc2-avf-audio`](https://badgen.net/crates/v/objc2-avf-audio)](https://crates.io/crates/objc2-avf-audio) | [![docs.rs](https://docs.rs/objc2-avf-audio/badge.svg)](https://docs.rs/objc2-avf-audio/) |
 | `AVFoundation` | [![`objc2-av-foundation`](https://badgen.net/crates/v/objc2-av-foundation)](https://crates.io/crates/objc2-av-foundation) | [![docs.rs](https://docs.rs/objc2-av-foundation/badge.svg)](https://docs.rs/objc2-av-foundation/) |
 | `AVKit` | [![`objc2-av-kit`](https://badgen.net/crates/v/objc2-av-kit)](https://crates.io/crates/objc2-av-kit) | [![docs.rs](https://docs.rs/objc2-av-kit/badge.svg)](https://docs.rs/objc2-av-kit/) |
+| `AVRouting` | [![`objc2-av-routing`](https://badgen.net/crates/v/objc2-av-routing)](https://crates.io/crates/objc2-av-routing) | [![docs.rs](https://docs.rs/objc2-av-routing/badge.svg)](https://docs.rs/objc2-av-routing/) |
 | `Accessibility` | [![`objc2-accessibility`](https://badgen.net/crates/v/objc2-accessibility)](https://crates.io/crates/objc2-accessibility) | [![docs.rs](https://docs.rs/objc2-accessibility/badge.svg)](https://docs.rs/objc2-accessibility/) |
 | `Accounts` | [![`objc2-accounts`](https://badgen.net/crates/v/objc2-accounts)](https://crates.io/crates/objc2-accounts) | [![docs.rs](https://docs.rs/objc2-accounts/badge.svg)](https://docs.rs/objc2-accounts/) |
 | `AdServices` | [![`objc2-ad-services`](https://badgen.net/crates/v/objc2-ad-services)](https://crates.io/crates/objc2-ad-services) | [![docs.rs](https://docs.rs/objc2-ad-services/badge.svg)](https://docs.rs/objc2-ad-services/) |

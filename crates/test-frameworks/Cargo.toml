@@ -18,6 +18,8 @@ test-frameworks = [
     "objc2-av-foundation/all",
     "dep:objc2-av-kit",
     "objc2-av-kit/all",
+    "dep:objc2-av-routing",
+    "objc2-av-routing/all",
     "dep:objc2-accessibility",
     "objc2-accessibility/all",
     "dep:objc2-accounts",
@@ -245,13 +247,8 @@ objc2-symbols = { path = "../../framework-crates/objc2-symbols", optional = true
 objc2-uniform-type-identifiers = { path = "../../framework-crates/objc2-uniform-type-identifiers", optional = true }
 objc2-user-notifications = { path = "../../framework-crates/objc2-user-notifications", optional = true }
 
-[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
-objc2-accounts = { path = "../../framework-crates/objc2-accounts", optional = true }
-objc2-business-chat = { path = "../../framework-crates/objc2-business-chat", optional = true }
-objc2-sensitive-content-analysis = { path = "../../framework-crates/objc2-sensitive-content-analysis", optional = true }
-objc2-social = { path = "../../framework-crates/objc2-social", optional = true }
-
 [target.'cfg(not(any(target_os = "tvos", target_os = "watchos")))'.dependencies]
+objc2-av-routing = { path = "../../framework-crates/objc2-av-routing", optional = true }
 objc2-ad-services = { path = "../../framework-crates/objc2-ad-services", optional = true }
 objc2-automatic-assessment-configuration = { path = "../../framework-crates/objc2-automatic-assessment-configuration", optional = true }
 objc2-background-assets = { path = "../../framework-crates/objc2-background-assets", optional = true }
@@ -265,6 +262,12 @@ objc2-metal-fx = { path = "../../framework-crates/objc2-metal-fx", optional = tr
 objc2-metric-kit = { path = "../../framework-crates/objc2-metric-kit", optional = true }
 objc2-speech = { path = "../../framework-crates/objc2-speech", optional = true }
 objc2-web-kit = { path = "../../framework-crates/objc2-web-kit", optional = true }
+
+[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
+objc2-accounts = { path = "../../framework-crates/objc2-accounts", optional = true }
+objc2-business-chat = { path = "../../framework-crates/objc2-business-chat", optional = true }
+objc2-sensitive-content-analysis = { path = "../../framework-crates/objc2-sensitive-content-analysis", optional = true }
+objc2-social = { path = "../../framework-crates/objc2-social", optional = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "tvos"))'.dependencies]
 objc2-ad-support = { path = "../../framework-crates/objc2-ad-support", optional = true }
