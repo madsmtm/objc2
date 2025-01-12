@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `DiskArbitration` / `objc2-disk-arbitration`.
   - `EventKitUI` / `objc2-event-kit-ui`.
   - `IOSurface` / `objc2-io-surface`.
+  - `Messages` / `objc2-messages`.
   - `MetalPerformanceShaders` / `objc2-metal-performance-shaders`.
   - `MetalPerformanceShadersGraph` / `objc2-metal-performance-shaders-graph`.
   - `OpenDirectory` / `objc2-open-directory`.

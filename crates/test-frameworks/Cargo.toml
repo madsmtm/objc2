@@ -138,6 +138,8 @@ test-frameworks = [
     "objc2-map-kit/all",
     "dep:objc2-media-player",
     "objc2-media-player/all",
+    "dep:objc2-messages",
+    "objc2-messages/all",
     "dep:objc2-metal",
     "objc2-metal/all",
     "dep:objc2-metal-fx",
@@ -322,6 +324,9 @@ objc2-local-authentication = { path = "../../framework-crates/objc2-local-authen
 
 [target.'cfg(any(target_os = "ios", target_os = "visionos"))'.dependencies]
 objc2-event-kit-ui = { path = "../../framework-crates/objc2-event-kit-ui", optional = true }
+
+[target.'cfg(target_os = "ios")'.dependencies]
+objc2-messages = { path = "../../framework-crates/objc2-messages", optional = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "watchos"))'.dependencies]
 objc2-nearby-interaction = { path = "../../framework-crates/objc2-nearby-interaction", optional = true }
