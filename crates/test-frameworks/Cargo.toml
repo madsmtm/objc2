@@ -118,6 +118,8 @@ test-frameworks = [
     "objc2-game-kit/all",
     "dep:objc2-health-kit",
     "objc2-health-kit/all",
+    "dep:objc2-home-kit",
+    "objc2-home-kit/all",
     "dep:objc2-io-surface",
     "objc2-io-surface/all",
     "dep:objc2-identity-lookup",
@@ -328,14 +330,15 @@ objc2-local-authentication = { path = "../../framework-crates/objc2-local-authen
 objc2-event-kit-ui = { path = "../../framework-crates/objc2-event-kit-ui", optional = true }
 objc2-message-ui = { path = "../../framework-crates/objc2-message-ui", optional = true }
 
+[target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos"))'.dependencies]
+objc2-home-kit = { path = "../../framework-crates/objc2-home-kit", optional = true }
+objc2-ui-kit = { path = "../../framework-crates/objc2-ui-kit", optional = true }
+
 [target.'cfg(target_os = "ios")'.dependencies]
 objc2-messages = { path = "../../framework-crates/objc2-messages", optional = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "watchos"))'.dependencies]
 objc2-nearby-interaction = { path = "../../framework-crates/objc2-nearby-interaction", optional = true }
-
-[target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos"))'.dependencies]
-objc2-ui-kit = { path = "../../framework-crates/objc2-ui-kit", optional = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "watchos", target_os = "visionos"))'.dependencies]
 objc2-watch-connectivity = { path = "../../framework-crates/objc2-watch-connectivity", optional = true }

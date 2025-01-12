@@ -1,0 +1,31 @@
+framework = "HomeKit"
+crate = "objc2-home-kit"
+required-crates = ["objc2", "objc2-foundation"]
+maccatalyst = "14.0"
+ios = "8.0"
+tvos = "10.0"
+watchos = "2.0"
+visionos = "1.0"
+
+external.CLRegion.module = "CoreLocation.CLRegion"
+external.MTRSetupPayload.module = "Matter.MTRSetupPayload"
+
+# Set counterparts
+class.HMCalendarEvent.counterpart = "MutableSubclass(HomeKit.HMCalendarEvent.HMMutableCalendarEvent)"
+class.HMMutableCalendarEvent.counterpart = "ImmutableSuperclass(HomeKit.HMCalendarEvent.HMCalendarEvent)"
+class.HMCharacteristicEvent.counterpart = "MutableSubclass(HomeKit.HMCharacteristicEvent.HMMutableCharacteristicEvent)"
+class.HMMutableCharacteristicEvent.counterpart = "ImmutableSuperclass(HomeKit.HMCharacteristicEvent.HMCharacteristicEvent)"
+class.HMCharacteristicThresholdRangeEvent.counterpart = "MutableSubclass(HomeKit.HMCharacteristicThresholdRangeEvent.HMMutableCharacteristicThresholdRangeEvent)"
+class.HMMutableCharacteristicThresholdRangeEvent.counterpart = "ImmutableSuperclass(HomeKit.HMCharacteristicThresholdRangeEvent.HMCharacteristicThresholdRangeEvent)"
+class.HMLocationEvent.counterpart = "MutableSubclass(HomeKit.HMLocationEvent.HMMutableLocationEvent)"
+class.HMMutableLocationEvent.counterpart = "ImmutableSuperclass(HomeKit.HMLocationEvent.HMLocationEvent)"
+class.HMPresenceEvent.counterpart = "MutableSubclass(HomeKit.HMPresenceEvent.HMMutablePresenceEvent)"
+class.HMMutablePresenceEvent.counterpart = "ImmutableSuperclass(HomeKit.HMPresenceEvent.HMPresenceEvent)"
+class.HMSignificantTimeEvent.counterpart = "MutableSubclass(HomeKit.HMSignificantTimeEvent.HMMutableSignificantTimeEvent)"
+class.HMMutableSignificantTimeEvent.counterpart = "ImmutableSuperclass(HomeKit.HMSignificantTimeEvent.HMSignificantTimeEvent)"
+class.HMDurationEvent.counterpart = "MutableSubclass(HomeKit.HMDurationEvent.HMMutableDurationEvent)"
+class.HMMutableDurationEvent.counterpart = "ImmutableSuperclass(HomeKit.HMDurationEvent.HMDurationEvent)"
+
+# Needs MTRSetupPayload from the Matter framework.
+class.HMAccessorySetupRequest.methods.matterPayload.skipped = true
+class.HMAccessorySetupRequest.methods."setMatterPayload:".skipped = true

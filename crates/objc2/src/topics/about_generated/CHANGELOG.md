@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreVideo` / `objc2-core-video`.
   - `DiskArbitration` / `objc2-disk-arbitration`.
   - `EventKitUI` / `objc2-event-kit-ui`.
+  - `HomeKit` / `objc2-home-kit`.
   - `IOSurface` / `objc2-io-surface`.
   - `Messages` / `objc2-messages`.
   - `MessageUI` / `objc2-message-ui`.

@@ -969,6 +969,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-home-kit"
+version = "0.2.2"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-core-location",
+ "objc2-foundation",
+ "objc2-quartz-core",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-identity-lookup"
 version = "0.2.2"
 dependencies = [
@@ -1766,6 +1780,7 @@ dependencies = [
  "objc2-game-controller",
  "objc2-game-kit",
  "objc2-health-kit",
+ "objc2-home-kit",
  "objc2-identity-lookup",
  "objc2-input-method-kit",
  "objc2-io-surface",
