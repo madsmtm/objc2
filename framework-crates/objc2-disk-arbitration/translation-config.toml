@@ -1,0 +1,28 @@
+framework = "DiskArbitration"
+crate = "objc2-disk-arbitration"
+required-crates = ["objc2-core-foundation"]
+custom-lib-rs = true
+macos = "10.4"
+maccatalyst = "13.0"
+
+# Needs io_service_t from IOKit
+fn.DADiskCreateFromIOMedia.skipped = true
+fn.DADiskCopyIOMedia.skipped = true
+
+# Uses `err_local` and `err_local_diskarbitration`, which
+# are not exposed by the `libc` crate.
+enum.anonymous.constants.kDAReturnError.use-value = true
+enum.anonymous.constants.kDAReturnBusy.use-value = true
+enum.anonymous.constants.kDAReturnBadArgument.use-value = true
+enum.anonymous.constants.kDAReturnExclusiveAccess.use-value = true
+enum.anonymous.constants.kDAReturnNoResources.use-value = true
+enum.anonymous.constants.kDAReturnNotFound.use-value = true
+enum.anonymous.constants.kDAReturnNotMounted.use-value = true
+enum.anonymous.constants.kDAReturnNotPermitted.use-value = true
+enum.anonymous.constants.kDAReturnNotPrivileged.use-value = true
+enum.anonymous.constants.kDAReturnNotReady.use-value = true
+enum.anonymous.constants.kDAReturnNotWritable.use-value = true
+enum.anonymous.constants.kDAReturnUnsupported.use-value = true
+
+# Needs dispatch_queue_t from libdispatch
+fn.DASessionSetDispatchQueue.skipped = true

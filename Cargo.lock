@@ -809,6 +809,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-disk-arbitration"
+version = "0.2.2"
+dependencies = [
+ "libc",
+ "objc2-core-foundation",
+]
+
+[[package]]
 name = "objc2-encode"
 version = "4.0.3"
 
@@ -1711,6 +1719,7 @@ dependencies = [
  "objc2-core-wlan",
  "objc2-data-detection",
  "objc2-device-check",
+ "objc2-disk-arbitration",
  "objc2-event-kit",
  "objc2-event-kit-ui",
  "objc2-exception-handling",

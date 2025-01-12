@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreMIDI` / `objc2-core-midi`.
   - `CoreText` / `objc2-core-text`.
   - `CoreVideo` / `objc2-core-video`.
+  - `DiskArbitration` / `objc2-disk-arbitration`.
   - `EventKitUI` / `objc2-event-kit-ui`.
   - `IOSurface` / `objc2-io-surface`.
   - `MetalPerformanceShaders` / `objc2-metal-performance-shaders`.

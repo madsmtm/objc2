@@ -88,6 +88,8 @@ test-frameworks = [
     "objc2-data-detection/all",
     "dep:objc2-device-check",
     "objc2-device-check/all",
+    "dep:objc2-disk-arbitration",
+    "objc2-disk-arbitration/all",
     "dep:dispatch2",
     "dispatch2/all",
     "dep:objc2-event-kit",
@@ -272,6 +274,7 @@ objc2-ml-compute = { path = "../../framework-crates/objc2-ml-compute", optional 
 objc2-app-kit = { path = "../../framework-crates/objc2-app-kit", optional = true }
 objc2-automator = { path = "../../framework-crates/objc2-automator", optional = true }
 objc2-core-wlan = { path = "../../framework-crates/objc2-core-wlan", optional = true }
+objc2-disk-arbitration = { path = "../../framework-crates/objc2-disk-arbitration", optional = true }
 objc2-exception-handling = { path = "../../framework-crates/objc2-exception-handling", optional = true }
 objc2-finder-sync = { path = "../../framework-crates/objc2-finder-sync", optional = true }
 objc2-input-method-kit = { path = "../../framework-crates/objc2-input-method-kit", optional = true }
