@@ -220,6 +220,8 @@ impl UnexposedAttr {
             | "OBJC_SWIFT_UNAVAILABLE"
             | "OPENGL_DEPRECATED"
             | "OPENGLES_DEPRECATED"
+            | "SCN_GL_DEPRECATED_IOS"
+            | "SCN_GL_DEPRECATED_MAC"
             | "SCREEN_CAPTURE_OBSOLETE"
             | "SOCIAL_CLASS_AVAILABLE"
             | "SOCIAL_CLASS_AVAILABLE_IOS"
