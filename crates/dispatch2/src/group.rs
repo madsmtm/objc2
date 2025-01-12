@@ -38,7 +38,9 @@ impl Group {
     /// Submit a function to a [Queue] and associates it with the [Group].
     pub fn exec_async<F>(&self, queue: &Queue, work: F)
     where
-        F: Send + FnOnce(),
+        // We need `'static` to make sure any referenced values are borrowed for
+        // long enough since `work` will be performed asynchronously.
+        F: Send + FnOnce() + 'static,
     {
         let work_boxed = Box::into_raw(Box::new(work)).cast::<c_void>();
 
