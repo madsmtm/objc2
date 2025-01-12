@@ -41,6 +41,7 @@ targets = [
     "aarch64-apple-tvos",
     "aarch64-apple-watchos",
     "aarch64-apple-ios-macabi",
+    "aarch64-apple-visionos",
 ]
 
 [features]

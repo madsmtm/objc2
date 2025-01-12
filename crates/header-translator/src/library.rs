@@ -263,11 +263,26 @@ see that for related crates.", self.data.krate)?;
             default_target.get_or_insert("aarch64-apple-ios-macabi");
             targets.push("aarch64-apple-ios-macabi");
         }
+        if self.data.visionos.is_some() {
+            default_target.get_or_insert("aarch64-apple-visionos");
+            targets.push("aarch64-apple-visionos");
+            if self.data.macos.is_none() && self.data.ios.is_none() {
+                targets.push("aarch64-apple-visionos-sim");
+            }
+        }
         if self.data.gnustep {
             default_target.get_or_insert("x86_64-unknown-linux-gnu");
             targets.push("x86_64-unknown-linux-gnu");
             targets.push("i686-unknown-linux-gnu");
         }
+
+        // Default max number of build targets is 10.
+        if 10 < targets.len() {
+            panic!(
+                "won't be able to document this crate on docs.rs, too many targets:\n{targets:#?}"
+            );
+        }
+
         for item in targets.iter_mut() {
             item.decor_mut().set_prefix("\n    ");
         }
