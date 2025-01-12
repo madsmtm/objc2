@@ -352,6 +352,9 @@ fn parse_translation_unit(
             EntityKind::InclusionDirective if preprocessing => {
                 let file = entity.get_file().expect("inclusion directive has file");
                 let location = Location::from_file(file);
+                if context.module_configs(&location).any(|c| c.skipped) {
+                    return EntityVisitResult::Continue;
+                }
                 if location.library_name() == library.data.framework {
                     library.add_module(location);
                 }
@@ -379,6 +382,11 @@ fn parse_translation_unit(
                     .file
                     .expect("expanded location file");
                 let location = Location::from_file(file);
+
+                // Don't try to parse if the entire module, or supermodule, is skipped.
+                if context.module_configs(&location).any(|c| c.skipped) {
+                    return EntityVisitResult::Continue;
+                }
 
                 let module = library.module_mut(location);
                 for stmt in Stmt::parse(&entity, context) {

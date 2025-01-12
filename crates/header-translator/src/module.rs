@@ -150,6 +150,8 @@ impl Module {
 
             writeln!(f)?;
 
+            let module_names: Vec<_> = self.submodules.keys().map(|name| &**name).collect();
+
             for (name, module) in &self.submodules {
                 let location = emission_location.add_module(name);
                 if !module.submodules.is_empty() {
@@ -164,11 +166,14 @@ impl Module {
 
                 for stmt in &module.stmts {
                     if let Some(item) = stmt.provided_item() {
-                        let visibility = if item.name.starts_with("__") {
-                            // Item name may conflict with module name, don't
-                            // expose at all.
-                            continue;
-                        } else if item.name.starts_with('_') {
+                        let visibility = if item.name.starts_with('_') {
+                            if let Some(name) = item.name.strip_prefix("__") {
+                                if module_names.contains(&name) {
+                                    // Item name conflicts with module name, don't
+                                    // expose at all.
+                                    continue;
+                                }
+                            }
                             // Try to expose, but only to the rest of the crate.
                             "pub(crate)"
                         } else {
@@ -282,7 +287,11 @@ impl Module {
                     continue;
                 }
                 error!("removing previous file {:?}", file.path());
-                fs::remove_file(file.path())?;
+                if file.path().is_dir() {
+                    fs::remove_dir_all(file.path())?;
+                } else {
+                    fs::remove_file(file.path())?;
+                }
             }
 
             if emission_location.is_top_level() {

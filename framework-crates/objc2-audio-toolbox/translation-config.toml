@@ -66,7 +66,7 @@ fn.CAClockSetCurrentTempo.skipped = true
 struct.AUDistanceAttenuationData.skipped = true
 typedef.AUDistanceAttenuationData.skipped = true
 
-# Needs FSRef from CoreServices
+# Needs FSRef from CoreServices.CarbonCore
 fn.AudioFileCreate.skipped = true
 fn.AudioFileInitialize.skipped = true
 fn.AudioFileOpen.skipped = true
@@ -99,7 +99,7 @@ class.AUAudioUnitBus.methods."setFormat:error:".skipped = true
 class.AUAudioUnit.methods."shouldChangeToFormat:forBus:".skipped = true
 class.AUAudioUnitBus.methods."initWithFormat:error:".skipped = true
 
-# Needs ComponentDescription from CoreServices
+# Needs ComponentDescription from CoreServices.CarbonCore
 fn.AUGraphNewNode.skipped = true
 fn.AUGraphGetNodeInfo.skipped = true
 

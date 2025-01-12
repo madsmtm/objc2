@@ -56,22 +56,48 @@ impl Location {
     fn new(module_path: impl Into<Box<str>>) -> Self {
         let module_path = module_path.into();
         let module_path = match &*module_path {
-            // Normalize Objective-C (remove submodules)
+            // Remove submodules for Objective-C.
             name if name.starts_with("ObjectiveC") => "ObjectiveC".into(),
+
+            // Remove "Darwin" prefix for Darwin.block and Darwin.os.
+            "Darwin.block" => "block".into(),
+            name if name.starts_with("Darwin.os") => name.strip_prefix("Darwin.").unwrap().into(),
+
+            // Move os_object to os
+            "os_object" => "os.object".into(),
+
+            // Various macros
+            name if name.starts_with("os_availability") => "__builtin__".into(),
+            "DarwinFoundation.cdefs" => "__builtin__".into(),
+            "Darwin.libkern.OSByteOrder" => "__builtin__".into(),
+            "TargetConditionals" => "__builtin__".into(),
+            "Darwin.AssertMacros" => "__builtin__".into(),
+            "Darwin.ConditionalMacros" => "__builtin__".into(),
+            "AvailabilityMacros" => "__builtin__".into(),
+            name if name.starts_with("_assert") => "__builtin__".into(),
 
             // These types are redefined in the framework crate itself.
             "Darwin.MacTypes" => "__builtin__".into(),
 
+            // We don't emit the `hfs`, so let's act as-if CoreServices is the
+            // one that defines the types in there (such as HFSUniStr255).
+            name if name.starts_with("Darwin.hfs") => "CoreServices.Files".into(),
+
             // int8_t, int16_t etc., translated to i8, i16 etc.
-            "_stdint" => "__builtin__".into(),
+            "_Builtin_stdint" | "_stdint" => "__builtin__".into(),
+            name if name.starts_with("_Builtin_stddef") => "__builtin__".into(),
             // Implementation of the above
             "DarwinFoundation.types.machine_types" => "__builtin__".into(),
             // UINT_MAX, FLT_MIN, DBL_MAX, etc.
             // Handled manually in `expr.rs`.
             "_Builtin_limits" => "__builtin__".into(),
+            // C99 bool
+            "_Builtin_stdbool" => "__builtin__".into(),
+            // float_t and double_t
+            "_math" => "__builtin__".into(),
 
             // `core::ffi` types
-            "_Builtin_stdarg.va_list" => {
+            name if name.starts_with("_Builtin_stdarg") => {
                 warn!("va_list is not yet supported");
                 "__core__.ffi".into()
             }
@@ -83,11 +109,24 @@ impl Location {
 
             // `libc`
             name if name.starts_with("sys_types") => "__libc__".into(),
+            name if name.starts_with("Darwin.POSIX") => "__libc__".into(),
+            name if name.starts_with("_signal") => "__libc__".into(),
             "DarwinFoundation.types.sys_types" => "__libc__".into(),
             "DarwinFoundation.qos" => "__libc__".into(),
-            name if name.starts_with("Darwin.POSIX") => "__libc__".into(),
             "_stdio" => "__libc__".into(),
             "_time.timespec" => "__libc__".into(),
+            "_fenv" => "__libc__".into(),
+            "Darwin.sys.acl" => "__libc__".into(),
+            "_ctype" => "__libc__".into(),
+            "_errno" => "__libc__".into(),
+            "_locale.locale" => "__libc__".into(),
+            "_setjmp" => "__libc__".into(),
+            "_stdlib" => "__libc__".into(),
+            "_string" => "__libc__".into(),
+            "_time" => "__libc__".into(),
+            "ptrauth" => "__libc__".into(),
+            "Darwin.uuid" => "__libc__".into(),
+            "unistd" => "__libc__".into(),
 
             // Will be moved to the `mach2` crate in `libc` v1.0
             name if name.starts_with("Darwin.Mach") => "__libc__".into(),

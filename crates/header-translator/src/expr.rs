@@ -179,16 +179,24 @@ impl Expr {
                 }
                 (TokenKind::Punctuation, punct) => {
                     match &*punct {
-                        // These have the same semantics in C and Rust
-                        "(" | ")" | "<<" | "-" | "+" | "|" | "&" | "^" => Token::Punctuation(punct),
+                        // These have the same semantics in C and Rust (bar overflow)
+                        "(" | ")" | "<<" | "-" | "+" | "|" | "&" | "^" | "*" => {
+                            Token::Punctuation(punct)
+                        }
                         // Bitwise not
                         "~" => Token::Punctuation("!".to_string()),
                         // Binary/boolean not
                         "!" => Token::Punctuation("!".to_string()),
-                        punct => panic!("unknown expr punctuation {punct}"),
+                        punct => {
+                            error!("unknown expr punctuation {punct}");
+                            Token::Punctuation(punct.to_string())
+                        }
                     }
                 }
-                (kind, spelling) => panic!("unknown expr token {kind:?}/{spelling}"),
+                (kind, spelling) => {
+                    error!("unknown expr token {kind:?}/{spelling}");
+                    Token::Literal(spelling.to_string())
+                }
             });
         }
 

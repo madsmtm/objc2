@@ -1023,6 +1023,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-core-services"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "libc",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-security",
+]
+
+[[package]]
 name = "objc2-core-spotlight"
 version = "0.3.0"
 dependencies = [
@@ -1216,6 +1228,7 @@ dependencies = [
  "libc",
  "objc2",
  "objc2-core-foundation",
+ "objc2-core-services",
  "static_assertions",
 ]
 
@@ -2371,6 +2384,7 @@ dependencies = [
  "objc2-core-midi",
  "objc2-core-ml",
  "objc2-core-motion",
+ "objc2-core-services",
  "objc2-core-spotlight",
  "objc2-core-telephony",
  "objc2-core-text",

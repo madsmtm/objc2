@@ -111,6 +111,26 @@ impl Config {
             .filter(|(_, data)| !data.skipped)
             .map(|(name, data)| (&**name, data))
     }
+
+    pub fn module_configs<'l>(
+        &'l self,
+        location: &'l Location,
+    ) -> impl Iterator<Item = &'l ModuleConfig> + 'l {
+        self.try_library(location.library_name())
+            .map(|library| {
+                let mut current = &library.module;
+                location.modules().map_while(move |component| {
+                    if let Some(module_config) = current.get(component) {
+                        current = &module_config.module;
+                        Some(module_config)
+                    } else {
+                        None
+                    }
+                })
+            })
+            .into_iter()
+            .flatten()
+    }
 }
 
 fn get_version<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Option<Version>, D::Error> {
@@ -241,6 +261,18 @@ pub struct LibraryConfig {
     #[serde(rename = "typedef")]
     #[serde(default)]
     pub typedef_data: HashMap<String, TypedefData>,
+
+    #[serde(default)]
+    pub module: HashMap<String, ModuleConfig>,
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ModuleConfig {
+    #[serde(default)]
+    pub skipped: bool,
+    #[serde(default)]
+    pub module: HashMap<String, ModuleConfig>,
 }
 
 impl LibraryConfig {

@@ -839,6 +839,13 @@ impl Ty {
             TypeKind::ULongLong => Self::Primitive(Primitive::ULongLong),
             TypeKind::Float => Self::Primitive(Primitive::Float),
             TypeKind::Double => Self::Primitive(Primitive::Double),
+            TypeKind::LongDouble => {
+                // https://github.com/rust-lang/rust/issues/116909
+                error!("long double is not yet supported in Rust");
+                Self::Pointee(PointeeTy::GenericParam {
+                    name: "UnknownLongDouble".to_string(),
+                })
+            }
             TypeKind::Record => {
                 let declaration = ty.get_declaration().expect("record declaration");
                 let mut id = ItemIdentifier::new_optional(&declaration, context);
@@ -854,7 +861,10 @@ impl Ty {
                 let fields = if matches!(
                     id.name.as_deref(),
                     Some(
-                        "MIDISysexSendRequest"
+                        "QElem"
+                            | "TMTask"
+                            | "SleepQRec"
+                            | "MIDISysexSendRequest"
                             | "MIDISysexSendRequestUMP"
                             | "MIDIDriverInterface"
                             | "cssm_list_element"
@@ -1270,6 +1280,10 @@ impl Ty {
                     "u_int32_t" => return Self::Primitive(Primitive::U32),
                     "u_int64_t" => return Self::Primitive(Primitive::U64),
 
+                    // math.h
+                    "float_t" => return Self::Primitive(Primitive::Float),
+                    "double_t" => return Self::Primitive(Primitive::Double),
+
                     // Varargs, still unsupported by Rust.
                     "__builtin_va_list" => return Self::Primitive(Primitive::VaList),
 
@@ -1284,8 +1298,6 @@ impl Ty {
                     "SInt64" => return Self::Primitive(Primitive::I64),
                     "Float32" => return Self::Primitive(Primitive::F32),
                     "Float64" => return Self::Primitive(Primitive::F64),
-                    "Float80" => panic!("can't handle 80 bit MacOS float"),
-                    "Float96" => panic!("can't handle 96 bit 68881 float"),
 
                     simd if simd.starts_with("simd_")
                         | simd.starts_with("vector_")

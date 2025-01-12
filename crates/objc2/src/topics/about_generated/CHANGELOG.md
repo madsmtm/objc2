@@ -75,6 +75,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreFoundation` / `objc2-core-foundation`.
   - `CoreMedia` / `objc2-core-media`.
   - `CoreMIDI` / `objc2-core-midi`.
+  - `CoreServices` / `objc2-core-services`.
   - `CoreText` / `objc2-core-text`.
   - `CoreVideo` / `objc2-core-video`.
   - `DiskArbitration` / `objc2-disk-arbitration`.

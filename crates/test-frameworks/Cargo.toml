@@ -54,6 +54,7 @@ test-frameworks = [
     "objc2-core-media",
     "objc2-core-media-io",
     "objc2-core-motion",
+    "objc2-core-services",
     "objc2-core-spotlight",
     "objc2-core-telephony",
     "objc2-core-text",
@@ -200,7 +201,7 @@ objc2-external-accessory = ["dep:objc2-external-accessory"]
 objc2-file-provider = ["dep:objc2-file-provider", "objc2-file-provider?/objc2-uniform-type-identifiers"]
 objc2-file-provider-ui = ["dep:objc2-file-provider-ui"]
 objc2-finder-sync = ["dep:objc2-finder-sync"]
-objc2-foundation = ["dep:objc2-foundation"]
+objc2-foundation = ["dep:objc2-foundation", "objc2-foundation?/objc2-core-services"]
 objc2-game-controller = ["dep:objc2-game-controller"]
 objc2-game-kit = ["dep:objc2-game-kit"]
 objc2-health-kit = ["dep:objc2-health-kit", "objc2-health-kit?/objc2-uniform-type-identifiers"]
@@ -283,6 +284,7 @@ objc2-security-interface = ["dep:objc2-security-interface"]
 objc2-preference-panes = ["dep:objc2-preference-panes"]
 objc2-safari-services = ["dep:objc2-safari-services"]
 objc2-accessory-setup-kit = ["dep:objc2-accessory-setup-kit"]
+objc2-core-services = ["dep:objc2-core-services"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -305,6 +307,7 @@ objc2-core-location = { path = "../../framework-crates/objc2-core-location", opt
 objc2-core-midi = { path = "../../framework-crates/objc2-core-midi", optional = true }
 objc2-core-ml = { path = "../../framework-crates/objc2-core-ml", optional = true }
 objc2-core-media = { path = "../../framework-crates/objc2-core-media", optional = true }
+objc2-core-services = { path = "../../framework-crates/objc2-core-services", optional = true }
 objc2-core-text = { path = "../../framework-crates/objc2-core-text", optional = true }
 objc2-core-video = { path = "../../framework-crates/objc2-core-video", optional = true }
 objc2-data-detection = { path = "../../framework-crates/objc2-data-detection", optional = true }

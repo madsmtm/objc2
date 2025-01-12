@@ -25,6 +25,3 @@ fn.IOServiceAddMatchingNotification.skipped = true
 # `objc_method_family`
 # TODO: Move this
 class.ABNewPersonViewController.methods.newPersonViewDelegate.skipped = true
-
-# Dependent on target endianness
-typedef.WideChar.skipped = true # union+typedef in CoreServices
