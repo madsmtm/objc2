@@ -1615,6 +1615,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-watch-kit"
+version = "0.2.2"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-cloud-kit",
+ "objc2-core-foundation",
+ "objc2-core-location",
+ "objc2-foundation",
+ "objc2-health-kit",
+ "objc2-home-kit",
+ "objc2-map-kit",
+ "objc2-scene-kit",
+ "objc2-ui-kit",
+ "objc2-user-notifications",
+]
+
+[[package]]
 name = "objc2-web-kit"
 version = "0.2.2"
 dependencies = [
@@ -1945,6 +1964,7 @@ dependencies = [
  "objc2-virtualization",
  "objc2-vision",
  "objc2-watch-connectivity",
+ "objc2-watch-kit",
  "objc2-web-kit",
 ]
 

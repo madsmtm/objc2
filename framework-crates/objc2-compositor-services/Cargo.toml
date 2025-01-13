@@ -17,8 +17,8 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
+objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
@@ -35,7 +35,6 @@ default = ["std"]
 std = ["alloc", "bitflags?/std"]
 alloc = []
 bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags", "objc2-metal?/bitflags"]
-objc2 = ["dep:objc2", "objc2-core-foundation?/objc2"]
 objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-metal?/objc2-core-foundation"]
 objc2-metal = ["dep:objc2-metal"]
 
@@ -52,7 +51,6 @@ all = [
     "layer_renderer_configuration",
     "layer_renderer_layout",
     "layer_renderer_properties",
-    "objc2",
     "objc2-core-foundation",
     "objc2-metal",
     "view",

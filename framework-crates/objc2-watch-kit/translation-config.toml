@@ -1,0 +1,31 @@
+framework = "WatchKit"
+crate = "objc2-watch-kit"
+required-crates = ["objc2", "objc2-foundation"]
+watchos = "2.0"
+
+external.PKPass.module = "PassKit.PKPass"
+external.UNNotificationAction.module = "UserNotifications.UNNotificationAction"
+external.UNNotification.module = "UserNotifications.UNNotification"
+external.HKWorkoutConfiguration.module = "HealthKit.HKWorkoutConfiguration"
+external.HKActivitySummary.module = "HealthKit.HKActivitySummary"
+external.INIntent.module = "Intents.INIntent"
+external.INIntentResponse.module = "Intents.INIntentResponse"
+external.CKShareMetadata.module = "CloudKit.CKShareMetadata"
+external.SKScene.module = "SpriteKit.SKScene"
+external.SKTransition.module = "SpriteKit.SKTransition"
+external.SKNode.module = "SpriteKit.SKNode"
+external.SKTexture.module = "SpriteKit.SKTexture"
+
+# Needs PKPass from PassKit
+class.WKInterfaceController.methods."presentAddPassesControllerWithPasses:completion:".skipped = true
+
+# Needs Intents
+protocol.WKApplicationDelegate.methods."handleIntent:completionHandler:".skipped = true
+protocol.WKExtensionDelegate.methods."handleIntent:completionHandler:".skipped = true
+
+# Needs SKScene/SKNode to be configured for watchOS/UIKit
+class.WKInterfaceSKScene.methods."presentScene:".skipped = true
+class.WKInterfaceSKScene.methods."presentScene:transition:".skipped = true
+class.WKInterfaceSKScene.methods.scene.skipped = true
+class.WKInterfaceSKScene.methods."textureFromNode:".skipped = true
+class.WKInterfaceSKScene.methods."textureFromNode:crop:".skipped = true

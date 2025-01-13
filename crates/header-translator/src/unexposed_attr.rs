@@ -233,7 +233,10 @@ impl UnexposedAttr {
             | "WEBKIT_AVAILABLE_MAC"
             | "WEBKIT_CLASS_DEPRECATED_MAC"
             | "WEBKIT_DEPRECATED_MAC"
-            | "WEBKIT_ENUM_DEPRECATED_MAC" => {
+            | "WEBKIT_ENUM_DEPRECATED_MAC"
+            | "WK_AVAILABLE_WATCHOS_ONLY"
+            | "WK_DEPRECATED_WATCHOS"
+            | "WK_DEPRECATED_WITH_REPLACEMENT" => {
                 let _ = get_arguments();
                 None
             }

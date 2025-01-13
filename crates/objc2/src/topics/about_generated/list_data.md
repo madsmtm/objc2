@@ -105,4 +105,5 @@
 | `Virtualization` | [![`objc2-virtualization`](https://badgen.net/crates/v/objc2-virtualization)](https://crates.io/crates/objc2-virtualization) | [![docs.rs](https://docs.rs/objc2-virtualization/badge.svg)](https://docs.rs/objc2-virtualization/) |
 | `Vision` | [![`objc2-vision`](https://badgen.net/crates/v/objc2-vision)](https://crates.io/crates/objc2-vision) | [![docs.rs](https://docs.rs/objc2-vision/badge.svg)](https://docs.rs/objc2-vision/) |
 | `WatchConnectivity` | [![`objc2-watch-connectivity`](https://badgen.net/crates/v/objc2-watch-connectivity)](https://crates.io/crates/objc2-watch-connectivity) | [![docs.rs](https://docs.rs/objc2-watch-connectivity/badge.svg)](https://docs.rs/objc2-watch-connectivity/) |
+| `WatchKit` | [![`objc2-watch-kit`](https://badgen.net/crates/v/objc2-watch-kit)](https://crates.io/crates/objc2-watch-kit) | [![docs.rs](https://docs.rs/objc2-watch-kit/badge.svg)](https://docs.rs/objc2-watch-kit/) |
 | `WebKit` | [![`objc2-web-kit`](https://badgen.net/crates/v/objc2-web-kit)](https://crates.io/crates/objc2-web-kit) | [![docs.rs](https://docs.rs/objc2-web-kit/badge.svg)](https://docs.rs/objc2-web-kit/) |
