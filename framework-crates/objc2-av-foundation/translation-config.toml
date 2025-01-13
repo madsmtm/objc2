@@ -73,10 +73,6 @@ class.AVAudioMixInputParameters.methods.audioTapProcessor.skipped = true
 class.AVMutableAudioMixInputParameters.methods.audioTapProcessor.skipped = true
 class.AVMutableAudioMixInputParameters.methods."setAudioTapProcessor:".skipped = true
 
-# SIMD is unsupported in FII
-class.AVCameraCalibrationData.methods.intrinsicMatrix.skipped = true
-class.AVCameraCalibrationData.methods.extrinsicMatrix.skipped = true
-
 # Needs CGImagePropertyOrientation from ImageIO
 class.AVDepthData.methods."depthDataByApplyingExifOrientation:".skipped = true
 class.AVPortraitEffectsMatte.methods."portraitEffectsMatteByApplyingExifOrientation:".skipped = true

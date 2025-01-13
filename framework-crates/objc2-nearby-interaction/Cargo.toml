@@ -19,6 +19,9 @@ workspace = true
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
+[target.'cfg(target_os = "ios")'.dependencies]
+objc2-ar-kit = { path = "../objc2-ar-kit", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
 features = ["all"]
@@ -35,6 +38,7 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
+objc2-ar-kit = ["dep:objc2-ar-kit"]
 
 NIAlgorithmConvergenceStatusReason = ["objc2-foundation/NSString"]
 NIConfiguration = [
@@ -51,6 +55,7 @@ NIError = [
 NIExport = []
 NINearbyObject = ["objc2-foundation/NSObject"]
 NISession = [
+    "objc2-ar-kit?/ARSession",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
@@ -65,4 +70,5 @@ all = [
     "NIExport",
     "NINearbyObject",
     "NISession",
+    "objc2-ar-kit",
 ]

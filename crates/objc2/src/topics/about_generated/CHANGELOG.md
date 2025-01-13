@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `MTLResourceID::from_raw` and `MTLResourceID::as_raw` to allow
   querying the underlying data.
 * Added new framework crates:
+  - `ARKit` / `objc2-ar-kit`.
   - `AudioToolbox` / `objc2-audio-toolbox`.
   - `AVFAudio` / `objc2-avf-audio`.
   - `AVFoundation` / `objc2-av-foundation`.

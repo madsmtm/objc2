@@ -22,7 +22,7 @@ impl Documentation {
                     children: parsed.get_children(),
                 }
             } else {
-                error!(?entity, comment, "had comment, but not parsed comment");
+                warn!(?entity, comment, "had comment, but not parsed comment");
                 Self {
                     children: Vec::new(),
                 }

@@ -478,6 +478,11 @@ impl Method {
         let default_nonnull = (selector == "init" && !is_class) || (selector == "new" && is_class);
         let mut result_type = Ty::parse_method_return(result_type, default_nonnull, context);
 
+        if result_type.needs_simd() || arguments.iter().any(|(_, arg_ty)| arg_ty.needs_simd()) {
+            debug!("simd types are not yet possible in methods");
+            return None;
+        }
+
         let memory_management = MemoryManagement::new(is_class, &selector, &result_type, modifiers);
 
         // Related result types.
@@ -577,6 +582,11 @@ impl Method {
                 modifiers.sendable,
                 context,
             );
+
+            if ty.needs_simd() {
+                debug!("simd types are not yet possible in properties");
+                return (None, None);
+            }
 
             let memory_management = MemoryManagement::new(is_class, &getter_sel, &ty, modifiers);
 

@@ -76,6 +76,9 @@ impl Location {
             // c_float and c_double
             "_float" | "_Builtin_float" => "__core__.ffi".into(),
 
+            // Unstable in FFI.
+            name if name.starts_with("simd") => "__core__.simd".into(),
+
             // `libc`
             name if name.starts_with("sys_types") => "__libc__".into(),
             "DarwinFoundation.types.sys_types" => "__libc__".into(),
@@ -426,6 +429,13 @@ impl ItemIdentifier {
         }
     }
 
+    pub fn core_simd_simd() -> Self {
+        Self {
+            name: "Simd".into(),
+            location: Location::new("__core__.simd"),
+        }
+    }
+
     pub fn unsafecell() -> Self {
         Self {
             name: "UnsafeCell".into(),
@@ -470,6 +480,7 @@ impl ItemIdentifier {
                 "__core__.ffi" => Some("core::ffi::*".into()),
                 // HACKs
                 "__core__.ptr" if self.name == "NonNull" => Some("core::ptr::NonNull".into()),
+                "__core__.simd" if self.name == "Simd" => Some("core::simd::*".into()),
                 "__core__.cell" if self.name == "UnsafeCell" => {
                     Some("core::cell::UnsafeCell".into())
                 }

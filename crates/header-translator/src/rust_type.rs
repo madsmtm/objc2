@@ -239,8 +239,14 @@ pub enum Primitive {
     ULongLong,
     Float,
     Double,
+    /// Not yet supported by `rustc`
+    /// https://github.com/rust-lang/rust/issues/116909
+    F16,
     F32,
     F64,
+    /// Not yet supported by `rustc`
+    /// https://github.com/rust-lang/rust/issues/116909
+    F128,
     I8,
     U8,
     I16,
@@ -297,8 +303,10 @@ impl Primitive {
             Self::ULongLong => "c_ulonglong",
             Self::Float => "c_float",
             Self::Double => "c_double",
+            Self::F16 => "f16",
             Self::F32 => "f32",
             Self::F64 => "f64",
+            Self::F128 => "f128",
             Self::I8 => "i8",
             Self::U8 => "u8",
             Self::I16 => "i16",
@@ -327,7 +335,7 @@ impl Primitive {
             Self::Char => return None, // Target-specific
             Self::SChar | Self::Short | Self::Int | Self::Long | Self::LongLong => true,
             Self::UChar | Self::UShort | Self::UInt | Self::ULong | Self::ULongLong => false,
-            Self::Float | Self::Double | Self::F32 | Self::F64 => true, // Unsure
+            Self::Float | Self::Double | Self::F16 | Self::F32 | Self::F64 | Self::F128 => true, // Unsure
             Self::I8 | Self::I16 | Self::I32 | Self::I64 | Self::ISize => true,
             Self::U8 | Self::U16 | Self::U32 | Self::U64 | Self::USize => false,
             Self::PtrDiff => true,
@@ -420,6 +428,11 @@ impl ItemRef {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Ty {
     Primitive(Primitive),
+    /// Only handle vectors specially, matrixes are "just" structs on top.
+    Simd {
+        ty: Primitive,
+        size: u8,
+    },
     Class {
         decl: ItemRef,
         generics: Vec<Self>,
@@ -1068,6 +1081,58 @@ impl Ty {
                     "Float80" => panic!("can't handle 80 bit MacOS float"),
                     "Float96" => panic!("can't handle 96 bit 68881 float"),
 
+                    simd if simd.starts_with("simd_")
+                        | simd.starts_with("vector_")
+                        | simd.starts_with("matrix_") =>
+                    {
+                        let rest = simd
+                            .strip_prefix("simd_")
+                            .or_else(|| simd.strip_prefix("vector_"))
+                            .or_else(|| simd.strip_prefix("matrix_"))
+                            .unwrap();
+
+                        if let Some(idx) = rest.find(|c: char| c.is_numeric()) {
+                            let (ty_name, rest) = rest.split_at(idx);
+                            // SIMD types are explicitly documented with their
+                            // width in bytes (so it's safe for us to).
+                            let ty = match ty_name {
+                                "char" => Primitive::I8,
+                                "uchar" => Primitive::U8,
+                                "short" => Primitive::I16,
+                                "ushort" => Primitive::U16,
+                                "half" => Primitive::F16,
+                                "int" => Primitive::I32,
+                                "uint" => Primitive::U32,
+                                "float" => Primitive::F32,
+                                // long on 64-bit, long long otherwise
+                                "long" => Primitive::ISize,
+                                "ulong" => Primitive::USize,
+                                "double" => Primitive::F64,
+                                _ => {
+                                    error!(typedef_name, ty_name, "unknown simd type");
+                                    Primitive::Void
+                                }
+                            };
+                            if !rest.contains('x') {
+                                match rest.parse::<u8>() {
+                                    Ok(size) => {
+                                        return Self::Simd { ty, size };
+                                    }
+                                    Err(err) => {
+                                        error!(typedef_name, ?err, "could not parse simd size");
+                                    }
+                                }
+                            } else {
+                                // Ignore if contains `x`, this is a simd
+                                // matrix (which is just a struct).
+                            }
+                        } else if matches!(rest, "quath" | "quatf" | "quatd") {
+                            // Ignore, a typedef to a normal struct.
+                        } else {
+                            error!(typedef_name, "could not parse simd type");
+                        }
+                    }
+
                     // Workaround for this otherwise requiring libc.
                     "dispatch_qos_class_t" => {
                         return Self::TypeDef {
@@ -1197,6 +1262,11 @@ impl Ty {
     pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
         match self {
             Self::Primitive(prim) => prim.required_items(),
+            Self::Simd { ty, .. } => {
+                let mut items = ty.required_items();
+                items.push(ItemIdentifier::core_simd_simd());
+                items
+            }
             Self::Class {
                 decl,
                 generics,
@@ -1308,6 +1378,7 @@ impl Ty {
     pub(crate) fn requires_mainthreadmarker(&self, self_requires: bool) -> bool {
         match self {
             Self::Primitive(_) => false,
+            Self::Simd { .. } => false,
             Self::Class {
                 decl,
                 generics,
@@ -1524,6 +1595,7 @@ impl Ty {
         FormatterFn(move |f| {
             match self {
                 Self::Primitive(prim) => write!(f, "{prim}"),
+                Self::Simd { ty, size } => write!(f, "Simd<{ty}, {size}>"),
                 Self::Sel { nullability } => {
                     if *nullability == Nullability::NonNull {
                         write!(f, "Sel")
@@ -2357,6 +2429,7 @@ impl Ty {
     pub fn is_signed(&self) -> Option<bool> {
         match self {
             Self::Primitive(prim) => prim.is_signed(),
+            Self::Simd { ty, .. } => ty.is_signed(),
             Self::Enum { ty, .. } => ty.is_signed(),
             Self::TypeDef { to, .. } => to.is_signed(),
             _ => None,
@@ -2461,6 +2534,33 @@ impl Ty {
                 Primitive::F32 | Primitive::F64 | Primitive::Float | Primitive::Double,
             ) => true,
             Self::TypeDef { to, .. } => to.is_floating_through_typedef(),
+            _ => false,
+        }
+    }
+
+    /// SIMD is not yet possible in FFI, see:
+    /// https://github.com/rust-lang/rust/issues/63068
+    pub(crate) fn needs_simd(&self) -> bool {
+        match self {
+            Self::Simd { .. } => true,
+            Self::Pointer { pointee, .. } | Self::IncompleteArray { pointee, .. } => {
+                pointee.needs_simd()
+            }
+            Self::TypeDef { to, .. } => to.needs_simd(),
+            Self::Array { element_type, .. } => element_type.needs_simd(),
+            Self::Struct { fields, .. } | Self::Union { fields, .. } => {
+                fields.iter().any(|field| field.needs_simd())
+            }
+            Self::Fn {
+                result_type,
+                arguments,
+                ..
+            }
+            | Self::Block {
+                result_type,
+                arguments,
+                ..
+            } => result_type.needs_simd() || arguments.iter().any(|arg| arg.needs_simd()),
             _ => false,
         }
     }

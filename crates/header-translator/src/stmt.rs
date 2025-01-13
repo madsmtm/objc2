@@ -1157,6 +1157,11 @@ impl Stmt {
                     .expect("typedef underlying type");
                 let ty = Ty::parse_typedef(ty, context);
 
+                if ty.needs_simd() {
+                    debug!("simd types are not yet possible in typedefs");
+                    return vec![];
+                }
+
                 // No need to output a typedef if it'll just point to the same thing.
                 //
                 // TODO: We're discarding a slight bit of availability data this way.
@@ -1325,6 +1330,11 @@ impl Stmt {
                     EntityKind::PackedAttr => packed = true,
                     _ => error!(?entity, "unknown struct/union child"),
                 });
+
+                if fields.iter().any(|(_, _, field_ty)| field_ty.needs_simd()) {
+                    debug!("simd types are not yet possible in struct/union");
+                    return res;
+                }
 
                 res.push(Self::RecordDecl {
                     id,
@@ -1516,6 +1526,11 @@ impl Stmt {
                 let ty = Ty::parse_static(ty, context);
                 let mut value = None;
 
+                if ty.needs_simd() {
+                    debug!("simd types are not yet possible in statics");
+                    return vec![];
+                }
+
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
@@ -1647,6 +1662,13 @@ impl Stmt {
                     }
                     _ => error!("unknown"),
                 });
+
+                if result_type.needs_simd()
+                    || arguments.iter().any(|(_, arg_ty)| arg_ty.needs_simd())
+                {
+                    debug!("simd types are not yet possible in functions");
+                    return vec![];
+                }
 
                 if let Some((_, first_ty)) = arguments.first_mut() {
                     first_ty.fix_fn_first_argument_cf_nullability(&id.name);

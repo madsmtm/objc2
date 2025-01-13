@@ -11,19 +11,6 @@ visionos = "1.0"
 external.CIBarcodeDescriptor.module = "CoreImage.CIBarcodeDescriptor"
 external.CIImage.module = "CoreImage.CIImage"
 
-# Needs SIMD types, which we cannot yet describe the ABI of in Rust
-fn.VNNormalizedFaceBoundingBoxPointForLandmarkPoint.skipped = true
-fn.VNImagePointForFaceLandmarkPoint.skipped = true
-class.VNPoint3D.methods."initWithPosition:".skipped = true
-class.VNPoint3D.methods.position.skipped = true
-class.VNContour.methods.normalizedPoints.skipped = true
-class.VNGeometryUtils.methods."boundingCircleForSIMDPoints:pointCount:error:".skipped = true
-class.VNHumanBodyRecognizedPoint3D.methods.localPosition.skipped = true
-class.VNTrajectoryObservation.methods.equationCoefficients.skipped = true
-class.VNImageHomographicAlignmentObservation.methods.warpTransform.skipped = true
-class.VNHumanBodyPose3DObservation.methods.cameraOriginMatrix.skipped = true
-class.VNHumanBodyPose3DObservation.methods."getCameraRelativePosition:forJointName:error:".skipped = true
-
 # error: unknown error result type
 class.VNTrackingRequest.methods."supportedNumberOfTrackersAndReturnError:".skipped = true
 

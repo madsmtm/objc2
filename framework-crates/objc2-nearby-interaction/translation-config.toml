@@ -6,15 +6,8 @@ maccatalyst = "14.0"
 ios = "14.0"
 watchos = "8.0"
 
-# Needs SIMD types, which we cannot yet describe the ABI of in Rust
-static.NINearbyObjectWorldTransformNotAvailable.skipped = true
-static.NINearbyObjectDirectionNotAvailable.skipped = true
-class.NINearbyObject.methods.direction.skipped = true
-class.NISession.methods."worldTransformForObject:".skipped = true
+external.ARSession.module = "ARKit.ARSession"
 
 # Needs `dispatch_queue_t`
 class.NISession.methods.delegateQueue.skipped = true
 class.NISession.methods."setDelegateQueue:".skipped = true
-
-# Needs `ARSession` from ARKit
-class.NISession.methods."setARSession:".skipped = true

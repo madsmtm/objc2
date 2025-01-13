@@ -453,6 +453,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-ar-kit"
+version = "0.2.2"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-av-foundation",
+ "objc2-core-foundation",
+ "objc2-core-location",
+ "objc2-core-media",
+ "objc2-core-video",
+ "objc2-foundation",
+ "objc2-metal",
+ "objc2-quartz-core",
+ "objc2-scene-kit",
+ "objc2-sprite-kit",
+ "objc2-ui-kit",
+ "objc2-vision",
+]
+
+[[package]]
 name = "objc2-audio-toolbox"
 version = "0.2.2"
 dependencies = [
@@ -1233,6 +1254,7 @@ name = "objc2-nearby-interaction"
 version = "0.2.2"
 dependencies = [
  "objc2",
+ "objc2-ar-kit",
  "objc2-foundation",
 ]
 
@@ -1801,6 +1823,7 @@ dependencies = [
  "objc2-ad-support",
  "objc2-app-kit",
  "objc2-app-tracking-transparency",
+ "objc2-ar-kit",
  "objc2-audio-toolbox",
  "objc2-authentication-services",
  "objc2-automatic-assessment-configuration",

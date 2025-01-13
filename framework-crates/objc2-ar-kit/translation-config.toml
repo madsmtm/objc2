@@ -1,0 +1,28 @@
+framework = "ARKit"
+crate = "objc2-ar-kit"
+required-crates = []
+maccatalyst = "14.0"
+ios = "11.0"
+visionos = "1.0"
+
+# Needs CGImagePropertyOrientation from ImageIO
+class.ARReferenceImage.methods."initWithCGImage:orientation:physicalWidth:".skipped = true
+class.ARReferenceImage.methods."initWithPixelBuffer:orientation:physicalWidth:".skipped = true
+
+# Needs dispatch_queue_t from libdispatch
+class.ARSession.methods.delegateQueue.skipped = true
+class.ARSession.methods."setDelegateQueue:".skipped = true
+
+# Needs QLPreviewItem from QuickLook
+class.ARQuickLookPreviewItem.skipped-protocols = ["QLPreviewItem"]
+
+# Needs SCNView/SKView/SKNode to be gated for iOS/UIKit, which it isn't
+class.ARSCNView.skipped = true
+class.ARSKView.skipped = true
+protocol.ARSKViewDelegate.methods."view:nodeForAnchor:".skipped = true
+protocol.ARSKViewDelegate.methods."view:didAddNode:forAnchor:".skipped = true
+protocol.ARSKViewDelegate.methods."view:willUpdateNode:forAnchor:".skipped = true
+protocol.ARSKViewDelegate.methods."view:didUpdateNode:forAnchor:".skipped = true
+protocol.ARSKViewDelegate.methods."view:didRemoveNode:forAnchor:".skipped = true
+class.ARSKView.methods."anchorForNode:".skipped = true
+class.ARSKView.methods."nodeForAnchor:".skipped = true
