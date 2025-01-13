@@ -647,6 +647,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-compositor-services"
+version = "0.2.2"
+dependencies = [
+ "bitflags",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-metal",
+]
+
+[[package]]
 name = "objc2-contacts"
 version = "0.2.2"
 dependencies = [
@@ -1852,6 +1862,7 @@ dependencies = [
  "objc2-class-kit",
  "objc2-cloud-kit",
  "objc2-color-sync",
+ "objc2-compositor-services",
  "objc2-contacts",
  "objc2-contacts-ui",
  "objc2-core-audio",

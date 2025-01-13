@@ -1,0 +1,9 @@
+framework = "CompositorServices"
+crate = "objc2-compositor-services"
+required-crates = ["objc2"] # Currently
+visionos = "1.0"
+
+# ARKit is generated for iOS, and does not include
+# the visionOS module required here.
+fn.cp_drawable_set_device_anchor.skipped = true
+fn.cp_drawable_get_device_anchor.skipped = true

@@ -52,7 +52,7 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 Some(Self::ClosedEnum)
             }
-            "NS_ERROR_ENUM" => {
+            "NS_ERROR_ENUM" | "CF_ERROR_ENUM" => {
                 let _ = get_arguments();
                 // TODO: Add error domain here
                 Some(Self::ErrorEnum)
@@ -306,6 +306,7 @@ impl UnexposedAttr {
             "CF_REFINED_FOR_SWIFT"
             | "DISPATCH_REFINED_FOR_SWIFT"
             | "NS_REFINED_FOR_SWIFT"
+            | "AR_REFINED_FOR_SWIFT"
             | "NS_SWIFT_DISABLE_ASYNC" => None,
             // Possibly interesting?
             "DISPATCH_COLD" => None,
@@ -321,6 +322,11 @@ impl UnexposedAttr {
             "objc_non_runtime_protocol" => None,
             // Emits unavailability attributes on `new` and `init` methods
             "AV_INIT_UNAVAILABLE" => None,
+            // Helper used to easy declare @interface in CompositorServices.
+            "CP_OBJECT_DECL" => {
+                let _ = get_arguments();
+                None
+            }
             // Irrelevant, we don't emit dispatch_object_t anyhow.
             "DISPATCH_TRANSPARENT_UNION" => None,
             _ => return Err(()),

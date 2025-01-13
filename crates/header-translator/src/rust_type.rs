@@ -240,12 +240,12 @@ pub enum Primitive {
     Float,
     Double,
     /// Not yet supported by `rustc`
-    /// https://github.com/rust-lang/rust/issues/116909
+    /// <https://github.com/rust-lang/rust/issues/116909>
     F16,
     F32,
     F64,
     /// Not yet supported by `rustc`
-    /// https://github.com/rust-lang/rust/issues/116909
+    /// <https://github.com/rust-lang/rust/issues/116909>
     F128,
     I8,
     U8,
