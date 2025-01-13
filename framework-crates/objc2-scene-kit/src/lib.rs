@@ -16,6 +16,8 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[cfg(not(doctest))] // Some documentation is interpreted as a doctest
 mod generated;
+#[cfg(not(doctest))]
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
