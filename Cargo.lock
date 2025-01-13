@@ -1425,6 +1425,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-sprite-kit"
+version = "0.2.2"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-av-foundation",
+ "objc2-avf-audio",
+ "objc2-core-foundation",
+ "objc2-core-graphics",
+ "objc2-core-image",
+ "objc2-foundation",
+ "objc2-metal",
+]
+
+[[package]]
 name = "objc2-store-kit"
 version = "0.2.2"
 dependencies = [
@@ -1868,6 +1885,7 @@ dependencies = [
  "objc2-social",
  "objc2-sound-analysis",
  "objc2-speech",
+ "objc2-sprite-kit",
  "objc2-store-kit",
  "objc2-symbols",
  "objc2-system-configuration",

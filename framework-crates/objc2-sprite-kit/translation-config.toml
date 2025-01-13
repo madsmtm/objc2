@@ -1,0 +1,107 @@
+framework = "SpriteKit"
+crate = "objc2-sprite-kit"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.9"
+maccatalyst = "13.0"
+ios = "7.0"
+tvos = "9.0"
+watchos = "10.0"
+visionos = "1.0"
+
+external.AVPlayer.module = "AVFoundation.AVPlayer"
+external.AVAudioNode.module = "AVFAudio.AVAudioNode"
+external.AVAudioEngine.module = "AVFAudio.AVAudioEngine"
+
+# Needs SceneKit (potential recursion, unsure which framework should depend on which)
+class.SK3DNode.methods.scnScene.skipped = true
+class.SK3DNode.methods."setScnScene:".skipped = true
+class.SK3DNode.methods."hitTest:options:".skipped = true
+class.SK3DNode.methods.pointOfView.skipped = true
+class.SK3DNode.methods."setPointOfView:".skipped = true
+
+# Needs simd
+typedef.vector_float3.skipped = true
+class.SK3DNode.methods."projectPoint:".skipped = true
+class.SK3DNode.methods."unprojectPoint:".skipped = true
+class.SKAttributeValue.methods."valueWithVectorFloat2:".skipped = true
+class.SKAttributeValue.methods."valueWithVectorFloat3:".skipped = true
+class.SKAttributeValue.methods."valueWithVectorFloat4:".skipped = true
+class.SKAttributeValue.methods.vectorFloat2Value.skipped = true
+class.SKAttributeValue.methods."setVectorFloat2Value:".skipped = true
+class.SKAttributeValue.methods.vectorFloat3Value.skipped = true
+class.SKAttributeValue.methods."setVectorFloat3Value:".skipped = true
+class.SKAttributeValue.methods.vectorFloat4Value.skipped = true
+class.SKAttributeValue.methods."setVectorFloat4Value:".skipped = true
+typedef.SKFieldForceEvaluator.skipped = true
+class.SKFieldNode.methods.direction.skipped = true
+class.SKFieldNode.methods."setDirection:".skipped = true
+class.SKFieldNode.methods."linearGravityFieldWithVector:".skipped = true
+class.SKFieldNode.methods."velocityFieldWithVector:".skipped = true
+class.SKFieldNode.methods."customFieldWithEvaluationBlock:".skipped = true
+class.SKPhysicsWorld.methods."sampleFieldsAt:".skipped = true
+class.SKTransformNode.methods.eulerAngles.skipped = true
+class.SKTransformNode.methods."setEulerAngles:".skipped = true
+class.SKTransformNode.methods.rotationMatrix.skipped = true
+class.SKTransformNode.methods."setRotationMatrix:".skipped = true
+class.SKTransformNode.methods.quaternion.skipped = true
+class.SKTransformNode.methods."setQuaternion:".skipped = true
+class.SKUniform.methods."uniformWithName:vectorFloat2:".skipped = true
+class.SKUniform.methods."uniformWithName:vectorFloat3:".skipped = true
+class.SKUniform.methods."uniformWithName:vectorFloat4:".skipped = true
+class.SKUniform.methods."uniformWithName:matrixFloat2x2:".skipped = true
+class.SKUniform.methods."uniformWithName:matrixFloat3x3:".skipped = true
+class.SKUniform.methods."uniformWithName:matrixFloat4x4:".skipped = true
+class.SKUniform.methods.vectorFloat2Value.skipped = true
+class.SKUniform.methods."setVectorFloat2Value:".skipped = true
+class.SKUniform.methods.vectorFloat3Value.skipped = true
+class.SKUniform.methods."setVectorFloat3Value:".skipped = true
+class.SKUniform.methods.vectorFloat4Value.skipped = true
+class.SKUniform.methods."setVectorFloat4Value:".skipped = true
+class.SKUniform.methods.matrixFloat2x2Value.skipped = true
+class.SKUniform.methods."setMatrixFloat2x2Value:".skipped = true
+class.SKUniform.methods.matrixFloat3x3Value.skipped = true
+class.SKUniform.methods."setMatrixFloat3x3Value:".skipped = true
+class.SKUniform.methods.matrixFloat4x4Value.skipped = true
+class.SKUniform.methods."setMatrixFloat4x4Value:".skipped = true
+class.SKUniform.methods."initWithName:vectorFloat2:".skipped = true
+class.SKUniform.methods."initWithName:vectorFloat3:".skipped = true
+class.SKUniform.methods."initWithName:vectorFloat4:".skipped = true
+class.SKUniform.methods."initWithName:matrixFloat2x2:".skipped = true
+class.SKUniform.methods."initWithName:matrixFloat3x3:".skipped = true
+class.SKUniform.methods."initWithName:matrixFloat4x4:".skipped = true
+class.SKWarpGeometryGrid.methods."gridWithColumns:rows:sourcePositions:destPositions:".skipped = true
+class.SKWarpGeometryGrid.methods."initWithColumns:rows:sourcePositions:destPositions:".skipped = true
+class.SKWarpGeometryGrid.methods."sourcePositionAtIndex:".skipped = true
+class.SKWarpGeometryGrid.methods."destPositionAtIndex:".skipped = true
+class.SKWarpGeometryGrid.methods."gridByReplacingSourcePositions:".skipped = true
+class.SKWarpGeometryGrid.methods."gridByReplacingDestPositions:".skipped = true
+
+# Needs GLKVector*/GLKMatrix* from GLKit
+class.SKUniform.methods.floatVector2Value.skipped = true
+class.SKUniform.methods."setFloatVector2Value:".skipped = true
+class.SKUniform.methods.floatVector3Value.skipped = true
+class.SKUniform.methods."setFloatVector3Value:".skipped = true
+class.SKUniform.methods.floatVector4Value.skipped = true
+class.SKUniform.methods."setFloatVector4Value:".skipped = true
+class.SKUniform.methods.floatMatrix2Value.skipped = true
+class.SKUniform.methods."setFloatMatrix2Value:".skipped = true
+class.SKUniform.methods.floatMatrix3Value.skipped = true
+class.SKUniform.methods."setFloatMatrix3Value:".skipped = true
+class.SKUniform.methods.floatMatrix4Value.skipped = true
+class.SKUniform.methods."setFloatMatrix4Value:".skipped = true
+class.SKUniform.methods."uniformWithName:floatVector2:".skipped = true
+class.SKUniform.methods."uniformWithName:floatVector3:".skipped = true
+class.SKUniform.methods."uniformWithName:floatVector4:".skipped = true
+class.SKUniform.methods."uniformWithName:floatMatrix2:".skipped = true
+class.SKUniform.methods."uniformWithName:floatMatrix3:".skipped = true
+class.SKUniform.methods."uniformWithName:floatMatrix4:".skipped = true
+class.SKUniform.methods."initWithName:floatVector2:".skipped = true
+class.SKUniform.methods."initWithName:floatVector3:".skipped = true
+class.SKUniform.methods."initWithName:floatVector4:".skipped = true
+class.SKUniform.methods."initWithName:floatMatrix2:".skipped = true
+class.SKUniform.methods."initWithName:floatMatrix3:".skipped = true
+class.SKUniform.methods."initWithName:floatMatrix4:".skipped = true
+
+# Needs dispatch_block_t and dispatch_queue_t from libdispatch
+class.SKAction.methods."runBlock:".skipped = true
+class.SKAction.methods."runBlock:queue:".skipped = true

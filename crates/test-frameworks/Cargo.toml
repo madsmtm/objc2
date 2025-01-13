@@ -194,6 +194,8 @@ test-frameworks = [
     "objc2-sound-analysis/all",
     "dep:objc2-speech",
     "objc2-speech/all",
+    "dep:objc2-sprite-kit",
+    "objc2-sprite-kit/all",
     "dep:objc2-store-kit",
     "objc2-store-kit/all",
     "dep:objc2-symbols",
@@ -257,6 +259,7 @@ objc2-photos-ui = { path = "../../framework-crates/objc2-photos-ui", optional = 
 objc2-scene-kit = { path = "../../framework-crates/objc2-scene-kit", optional = true }
 objc2-security = { path = "../../framework-crates/objc2-security", optional = true }
 objc2-sound-analysis = { path = "../../framework-crates/objc2-sound-analysis", optional = true }
+objc2-sprite-kit = { path = "../../framework-crates/objc2-sprite-kit", optional = true }
 objc2-store-kit = { path = "../../framework-crates/objc2-store-kit", optional = true }
 objc2-symbols = { path = "../../framework-crates/objc2-symbols", optional = true }
 objc2-uniform-type-identifiers = { path = "../../framework-crates/objc2-uniform-type-identifiers", optional = true }

@@ -16,7 +16,7 @@ external.AVAudioNode.module = "AVFAudio.AVAudioNode"
 # Both protocol and class
 protocol.SCNAnimation.renamed = "SCNAnimationProtocol"
 
-# Needs SpriteKit
+# Needs SpriteKit (potential recursion, unsure which framework should depend on which)
 protocol.SCNSceneRenderer.methods."presentScene:withTransition:incomingPointOfView:completionHandler:".skipped = true
 protocol.SCNSceneRenderer.methods."overlaySKScene".skipped = true
 protocol.SCNSceneRenderer.methods."setOverlaySKScene:".skipped = true
