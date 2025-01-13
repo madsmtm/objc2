@@ -499,7 +499,7 @@ pub enum Stmt {
         required_items: Vec<ItemIdentifier>,
         actual_name: Option<String>,
         availability: Availability,
-        protocols: BTreeSet<ItemIdentifier>,
+        protocols: Vec<ItemIdentifier>,
         methods: Vec<Method>,
         required_sendable: bool,
         required_mainthreadonly: bool,
@@ -1062,7 +1062,7 @@ impl Stmt {
 
                 verify_objc_decl(entity, context);
                 let protocols = parse_direct_protocols(entity, context);
-                let protocols: BTreeSet<_> = protocols
+                let protocols: Vec<_> = protocols
                     .into_iter()
                     .map(|protocol| ItemIdentifier::new(&protocol, context))
                     .map(|protocol| context.replace_protocol_name(protocol))

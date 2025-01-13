@@ -2539,7 +2539,7 @@ impl Ty {
     }
 
     /// SIMD is not yet possible in FFI, see:
-    /// https://github.com/rust-lang/rust/issues/63068
+    /// <https://github.com/rust-lang/rust/issues/63068>
     pub(crate) fn needs_simd(&self) -> bool {
         match self {
             Self::Simd { .. } => true,
