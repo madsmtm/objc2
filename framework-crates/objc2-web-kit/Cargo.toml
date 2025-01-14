@@ -16,15 +16,41 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFCGTypes",
+    "objc2",
+] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
-objc2-security = { path = "../objc2-security", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-security = { path = "../objc2-security", version = "0.2.2", default-features = false, optional = true, features = [
+    "SecTrust",
+    "objc2",
+] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true }
+objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "NSAccessibilityProtocols",
+    "NSAnimation",
+    "NSAppearance",
+    "NSAttributedString",
+    "NSColor",
+    "NSDragging",
+    "NSEvent",
+    "NSImage",
+    "NSPasteboard",
+    "NSPrintInfo",
+    "NSPrintOperation",
+    "NSResponder",
+    "NSTextCheckingClient",
+    "NSTextFinder",
+    "NSTextView",
+    "NSUserInterfaceItemIdentification",
+    "NSUserInterfaceValidation",
+    "NSView",
+    "NSWindow",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -40,12 +66,12 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-app-kit?/bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation/bitflags", "objc2-security?/bitflags"]
-block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-core-foundation?/block2", "objc2-foundation/block2", "objc2-security?/block2"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-security = ["dep:objc2-security"]
 
 DOM = []
@@ -142,12 +168,11 @@ DOMEventTarget = [
 DOMEvents = []
 DOMException = ["objc2-foundation/NSString"]
 DOMExtensions = [
-    "objc2-app-kit?/NSImage",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
+    "objc2-foundation/objc2-core-foundation",
 ]
 DOMFile = [
     "objc2-foundation/NSObject",
@@ -409,10 +434,7 @@ DOMProcessingInstruction = [
     "objc2-foundation/NSString",
 ]
 DOMProgressEvent = ["objc2-foundation/NSObject"]
-DOMRGBColor = [
-    "objc2-app-kit?/NSColor",
-    "objc2-foundation/NSObject",
-]
+DOMRGBColor = ["objc2-foundation/NSObject"]
 DOMRange = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -447,7 +469,6 @@ DOMXPathResult = [
     "objc2-foundation/NSString",
 ]
 NSAttributedString = [
-    "objc2-app-kit?/NSAttributedString",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
@@ -472,8 +493,6 @@ WKContentWorld = ["objc2-foundation/NSString"]
 WKContextMenuElementInfo = []
 WKDataDetectorTypes = []
 WKDownload = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSView",
     "objc2-foundation/NSData",
     "objc2-foundation/NSProgress",
     "objc2-foundation/NSURLRequest",
@@ -494,8 +513,6 @@ WKFindConfiguration = ["objc2-foundation/NSObject"]
 WKFindResult = ["objc2-foundation/NSObject"]
 WKFoundation = []
 WKFrameInfo = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSView",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSURLRequest",
 ]
@@ -504,13 +521,8 @@ WKHTTPCookieStore = [
     "objc2-foundation/NSHTTPCookie",
 ]
 WKNavigation = []
-WKNavigationAction = [
-    "objc2-app-kit?/NSEvent",
-    "objc2-foundation/NSURLRequest",
-]
+WKNavigationAction = ["objc2-foundation/NSURLRequest"]
 WKNavigationDelegate = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSView",
     "objc2-foundation/NSError",
     "objc2-foundation/NSURLAuthenticationChallenge",
     "objc2-foundation/NSURLCredential",
@@ -518,42 +530,26 @@ WKNavigationDelegate = [
 ]
 WKNavigationResponse = ["objc2-foundation/NSURLResponse"]
 WKOpenPanelParameters = []
-WKPDFConfiguration = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation/NSObject",
-]
-WKPreferences = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation/NSObject",
-]
+WKPDFConfiguration = ["objc2-foundation/NSObject"]
+WKPreferences = ["objc2-foundation/NSObject"]
 WKPreviewActionItem = []
 WKPreviewActionItemIdentifiers = []
 WKPreviewElementInfo = []
 WKProcessPool = ["objc2-foundation/NSObject"]
-WKScriptMessage = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSView",
-    "objc2-foundation/NSString",
-]
+WKScriptMessage = ["objc2-foundation/NSString"]
 WKScriptMessageHandler = []
 WKScriptMessageHandlerWithReply = ["objc2-foundation/NSString"]
 WKSecurityOrigin = ["objc2-foundation/NSString"]
 WKSnapshotConfiguration = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSValue",
 ]
 WKUIDelegate = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSView",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
-WKURLSchemeHandler = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSView",
-]
+WKURLSchemeHandler = []
 WKURLSchemeTask = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
@@ -570,20 +566,6 @@ WKUserScript = [
     "objc2-foundation/NSString",
 ]
 WKWebView = [
-    "objc2-app-kit?/NSAccessibilityProtocols",
-    "objc2-app-kit?/NSAnimation",
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSColor",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSImage",
-    "objc2-app-kit?/NSPrintInfo",
-    "objc2-app-kit?/NSPrintOperation",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSTextFinder",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSUserInterfaceValidation",
-    "objc2-app-kit?/NSView",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSData",
@@ -595,11 +577,10 @@ WKWebView = [
     "objc2-foundation/NSURL",
     "objc2-foundation/NSURLRequest",
     "objc2-foundation/NSURLResponse",
-    "objc2-security?/SecTrust",
+    "objc2-foundation/objc2-core-foundation",
 ]
 WKWebViewConfiguration = [
     "bitflags",
-    "objc2-app-kit?/NSTextCheckingClient",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -638,32 +619,23 @@ WebDataSource = [
     "objc2-foundation/NSURLResponse",
 ]
 WebDocument = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSWindow",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
 WebDownload = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSWindow",
     "objc2-foundation/NSData",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURLDownload",
     "objc2-foundation/NSURLRequest",
 ]
 WebEditingDelegate = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSTextView",
-    "objc2-app-kit?/NSView",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
     "objc2-foundation/NSUndoManager",
 ]
 WebFrame = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSView",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSString",
@@ -671,28 +643,16 @@ WebFrame = [
     "objc2-foundation/NSURLRequest",
 ]
 WebFrameLoadDelegate = [
-    "objc2-app-kit?/NSImage",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSView",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
 WebFrameView = [
-    "objc2-app-kit?/NSAccessibilityProtocols",
-    "objc2-app-kit?/NSAnimation",
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSPrintInfo",
-    "objc2-app-kit?/NSPrintOperation",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSView",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
+    "objc2-foundation/objc2-core-foundation",
 ]
 WebHistory = [
     "objc2-foundation/NSArray",
@@ -702,7 +662,6 @@ WebHistory = [
     "objc2-foundation/NSURL",
 ]
 WebHistoryItem = [
-    "objc2-app-kit?/NSImage",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -716,19 +675,14 @@ WebPlugin = [
     "objc2-foundation/NSURLResponse",
 ]
 WebPluginContainer = [
-    "objc2-app-kit?/NSColor",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURLRequest",
 ]
 WebPluginViewFactory = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSView",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSString",
 ]
 WebPolicyDelegate = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSView",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
@@ -746,8 +700,6 @@ WebResource = [
     "objc2-foundation/NSURL",
 ]
 WebResourceLoadDelegate = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSView",
     "objc2-foundation/NSError",
     "objc2-foundation/NSURLAuthenticationChallenge",
     "objc2-foundation/NSURLRequest",
@@ -760,32 +712,14 @@ WebScriptObject = [
 ]
 WebUIDelegate = [
     "bitflags",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSPasteboard",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSUserInterfaceValidation",
-    "objc2-app-kit?/NSView",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURLRequest",
+    "objc2-foundation/objc2-core-foundation",
 ]
 WebView = [
-    "objc2-app-kit?/NSAccessibilityProtocols",
-    "objc2-app-kit?/NSAnimation",
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSImage",
-    "objc2-app-kit?/NSPasteboard",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSTextView",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSUserInterfaceValidation",
-    "objc2-app-kit?/NSView",
-    "objc2-app-kit?/NSWindow",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
@@ -795,6 +729,7 @@ WebView = [
     "objc2-foundation/NSURL",
     "objc2-foundation/NSURLDownload",
     "objc2-foundation/NSUndoManager",
+    "objc2-foundation/objc2-core-foundation",
 ]
 all = [
     "DOM",

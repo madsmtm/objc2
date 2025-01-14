@@ -36,7 +36,7 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-libc = ["dep:libc", "objc2-foundation/libc"]
+libc = ["dep:libc"]
 
 MXAnimationMetric = [
     "objc2-foundation/NSMeasurement",

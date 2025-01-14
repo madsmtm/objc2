@@ -20,7 +20,14 @@ block2 = { path = "../../crates/block2", version = "0.5.1", default-features = f
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false }
-objc2-metal-performance-shaders = { path = "../objc2-metal-performance-shaders", version = "0.2.2", default-features = false, optional = true }
+objc2-metal-performance-shaders = { path = "../objc2-metal-performance-shaders", version = "0.2.2", default-features = false, optional = true, features = [
+    "MPSCommandBuffer",
+    "MPSCore",
+    "MPSCoreTypes",
+    "MPSImage",
+    "MPSMatrix",
+    "MPSNDArray",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -39,7 +46,7 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-block2 = ["dep:block2", "objc2-foundation/block2", "objc2-metal/block2", "objc2-metal-performance-shaders?/block2"]
+block2 = ["dep:block2"]
 objc2-metal-performance-shaders = ["dep:objc2-metal-performance-shaders"]
 
 MPSGraph = [
@@ -48,7 +55,6 @@ MPSGraph = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-metal-performance-shaders?/MPSCommandBuffer",
     "objc2-metal/MTLCommandQueue",
     "objc2-metal/MTLEvent",
 ]
@@ -68,31 +74,17 @@ MPSGraphControlFlowOps = [
     "objc2-foundation/NSString",
 ]
 MPSGraphConvolutionOps = [
-    "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
 ]
-MPSGraphConvolutionTransposeOps = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSString",
-    "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
-]
-MPSGraphCore = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
-]
+MPSGraphConvolutionTransposeOps = ["objc2-foundation/NSString"]
+MPSGraphCore = ["objc2-foundation/NSObject"]
 MPSGraphCumulativeOps = ["objc2-foundation/NSString"]
 MPSGraphDepthwiseConvolutionOps = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
 ]
 MPSGraphDevice = ["objc2-metal/MTLDevice"]
 MPSGraphExecutable = [
@@ -101,7 +93,6 @@ MPSGraphExecutable = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
-    "objc2-metal-performance-shaders?/MPSCommandBuffer",
     "objc2-metal/MTLCommandQueue",
     "objc2-metal/MTLEvent",
 ]
@@ -113,26 +104,17 @@ MPSGraphFourierTransformOps = [
 ]
 MPSGraphGatherOps = ["objc2-foundation/NSString"]
 MPSGraphImToColOps = [
-    "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
 ]
 MPSGraphLinearAlgebraOps = ["objc2-foundation/NSString"]
 MPSGraphLossOps = ["objc2-foundation/NSString"]
 MPSGraphMatrixInverseOps = ["objc2-foundation/NSString"]
-MPSGraphMatrixMultiplicationOps = [
-    "objc2-foundation/NSString",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
-]
+MPSGraphMatrixMultiplicationOps = ["objc2-foundation/NSString"]
 MPSGraphMemoryOps = [
-    "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
 ]
 MPSGraphNonMaximumSuppressionOps = ["objc2-foundation/NSString"]
 MPSGraphNonZeroOps = ["objc2-foundation/NSString"]
@@ -141,10 +123,7 @@ MPSGraphNormalizationOps = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
 ]
-MPSGraphOneHotOps = [
-    "objc2-foundation/NSString",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
-]
+MPSGraphOneHotOps = ["objc2-foundation/NSString"]
 MPSGraphOperation = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
@@ -159,12 +138,8 @@ MPSGraphPoolingOps = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
 ]
-MPSGraphQuantizationOps = [
-    "objc2-foundation/NSString",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
-]
+MPSGraphQuantizationOps = ["objc2-foundation/NSString"]
 MPSGraphRNNOps = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
@@ -174,56 +149,28 @@ MPSGraphRandomOps = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
 ]
 MPSGraphReductionOps = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
 ]
-MPSGraphResizeOps = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSString",
-    "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
-]
+MPSGraphResizeOps = ["objc2-foundation/NSString"]
 MPSGraphSampleGridOps = ["objc2-foundation/NSString"]
-MPSGraphScatterNDOps = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSString",
-    "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
-]
+MPSGraphScatterNDOps = ["objc2-foundation/NSString"]
 MPSGraphSortOps = ["objc2-foundation/NSString"]
 MPSGraphSparseOps = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
 ]
 MPSGraphStencilOps = [
-    "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
 ]
-MPSGraphTensor = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
-]
+MPSGraphTensor = ["objc2-foundation/NSObject"]
 MPSGraphTensorData = [
-    "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
-    "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
-    "objc2-metal-performance-shaders?/MPSImage",
-    "objc2-metal-performance-shaders?/MPSMatrix",
-    "objc2-metal-performance-shaders?/MPSNDArray",
     "objc2-metal/MTLAllocation",
     "objc2-metal/MTLBuffer",
     "objc2-metal/MTLResource",
@@ -232,7 +179,6 @@ MPSGraphTensorShapeOps = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
-    "objc2-metal-performance-shaders?/MPSCoreTypes",
 ]
 MPSGraphTopKOps = [
     "objc2-foundation/NSArray",

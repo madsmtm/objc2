@@ -17,7 +17,12 @@ workspace = true
 
 [dependencies]
 libc = { version = "0.2.80", default-features = false, optional = true }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, features = ["CFArray", "CFBase", "CFDictionary", "CFURL"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, features = [
+    "CFArray",
+    "CFBase",
+    "CFDictionary",
+    "CFURL",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -33,7 +38,7 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-libc = ["dep:libc", "objc2-core-foundation/libc"]
+libc = ["dep:libc"]
 
 DADisk = [
     "objc2-core-foundation/CFBase",

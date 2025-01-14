@@ -7,7 +7,7 @@ use crate::config::MethodData;
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
-use crate::id::ItemIdentifier;
+use crate::id::ItemTree;
 use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{MethodArgumentQualifier, Ty};
@@ -685,19 +685,19 @@ impl Method {
         }
     }
 
-    pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
+    pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
         let mut items = Vec::new();
         for (_, arg_ty) in &self.arguments {
             items.extend(arg_ty.required_items());
         }
         items.extend(self.result_type.required_items());
         if self.is_error {
-            items.push(ItemIdentifier::nserror());
+            items.push(ItemTree::nserror());
         }
         if self.mainthreadonly {
-            items.push(ItemIdentifier::main_thread_marker());
+            items.push(ItemTree::main_thread_marker());
         }
-        items
+        items.into_iter()
     }
 
     pub(crate) fn encoding_test(&self, is_protocol: bool) -> impl fmt::Display + '_ {

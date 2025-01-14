@@ -16,19 +16,42 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.2.2", default-features = false, optional = true }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true }
+objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.2.2", default-features = false, optional = true, features = ["CKShareMetadata"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFCGTypes",
+    "CFDate",
+    "objc2",
+] }
+objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true, features = ["CLLocation"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
-objc2-health-kit = { path = "../objc2-health-kit", version = "0.2.2", default-features = false, optional = true }
-objc2-home-kit = { path = "../objc2-home-kit", version = "0.2.2", default-features = false, optional = true }
-objc2-map-kit = { path = "../objc2-map-kit", version = "0.2.2", default-features = false, optional = true }
-objc2-scene-kit = { path = "../objc2-scene-kit", version = "0.2.2", default-features = false, optional = true }
-objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features = false, optional = true }
-objc2-user-notifications = { path = "../objc2-user-notifications", version = "0.2.2", default-features = false, optional = true }
+objc2-health-kit = { path = "../objc2-health-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "HKActivitySummary",
+    "HKWorkoutConfiguration",
+] }
+objc2-home-kit = { path = "../objc2-home-kit", version = "0.2.2", default-features = false, optional = true, features = ["HMCameraSource"] }
+objc2-map-kit = { path = "../objc2-map-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "MKGeometry",
+    "objc2-core-location",
+] }
+objc2-scene-kit = { path = "../objc2-scene-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "SCNScene",
+    "SCNSceneRenderer",
+] }
+objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "UIAccessibilityConstants",
+    "UIColor",
+    "UIGeometry",
+    "UIImage",
+    "UILocalNotification",
+    "objc2-core-foundation",
+] }
+objc2-user-notifications = { path = "../objc2-user-notifications", version = "0.2.2", default-features = false, optional = true, features = [
+    "UNNotification",
+    "UNNotificationAction",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-watchos"
@@ -40,32 +63,29 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-cloud-kit?/bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation/bitflags", "objc2-health-kit?/bitflags", "objc2-home-kit?/bitflags", "objc2-map-kit?/bitflags", "objc2-scene-kit?/bitflags", "objc2-ui-kit?/bitflags", "objc2-user-notifications?/bitflags"]
-block2 = ["dep:block2", "objc2-cloud-kit?/block2", "objc2-core-foundation?/block2", "objc2-core-location?/block2", "objc2-foundation/block2", "objc2-health-kit?/block2", "objc2-home-kit?/block2", "objc2-map-kit?/block2", "objc2-scene-kit?/block2", "objc2-ui-kit?/block2", "objc2-user-notifications?/block2"]
-objc2-cloud-kit = ["dep:objc2-cloud-kit", "objc2-ui-kit?/objc2-cloud-kit"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-home-kit?/objc2-core-foundation", "objc2-map-kit?/objc2-core-foundation", "objc2-scene-kit?/objc2-core-foundation", "objc2-ui-kit?/objc2-core-foundation"]
-objc2-core-location = ["dep:objc2-core-location", "objc2-cloud-kit?/objc2-core-location", "objc2-health-kit?/objc2-core-location", "objc2-home-kit?/objc2-core-location", "objc2-map-kit?/objc2-core-location", "objc2-ui-kit?/objc2-core-location", "objc2-user-notifications?/objc2-core-location"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
+objc2-cloud-kit = ["dep:objc2-cloud-kit"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-core-location = ["dep:objc2-core-location"]
 objc2-health-kit = ["dep:objc2-health-kit"]
 objc2-home-kit = ["dep:objc2-home-kit"]
 objc2-map-kit = ["dep:objc2-map-kit"]
 objc2-scene-kit = ["dep:objc2-scene-kit"]
-objc2-ui-kit = ["dep:objc2-ui-kit", "objc2-home-kit?/objc2-ui-kit"]
-objc2-user-notifications = ["dep:objc2-user-notifications", "objc2-ui-kit?/objc2-user-notifications"]
+objc2-ui-kit = ["dep:objc2-ui-kit"]
+objc2-user-notifications = ["dep:objc2-user-notifications"]
 
 WKAccessibility = ["objc2-foundation/NSString"]
 WKAlertAction = ["objc2-foundation/NSString"]
 WKApplication = [
-    "objc2-cloud-kit?/CKShareMetadata",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSURL",
     "objc2-foundation/NSUserActivity",
-    "objc2-health-kit?/HKWorkoutConfiguration",
-    "objc2-ui-kit?/UIColor",
 ]
 WKApplicationMain = ["objc2-foundation/NSString"]
 WKAudioFileAsset = [
@@ -98,7 +118,6 @@ WKExtendedRuntimeSession = [
     "objc2-foundation/NSString",
 ]
 WKExtension = [
-    "objc2-cloud-kit?/CKShareMetadata",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -107,32 +126,21 @@ WKExtension = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
     "objc2-foundation/NSUserActivity",
-    "objc2-health-kit?/HKWorkoutConfiguration",
-    "objc2-ui-kit?/UIColor",
-    "objc2-ui-kit?/UILocalNotification",
 ]
-WKGestureRecognizer = [
-    "bitflags",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-foundation?/CFDate",
-]
+WKGestureRecognizer = ["bitflags"]
 WKImage = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIImage",
 ]
-WKInterfaceActivityRing = ["objc2-health-kit?/HKActivitySummary"]
+WKInterfaceActivityRing = []
 WKInterfaceAuthorizationAppleIDButton = []
 WKInterfaceButton = [
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSData",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIColor",
-    "objc2-ui-kit?/UIImage",
 ]
 WKInterfaceController = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
@@ -140,57 +148,36 @@ WKInterfaceController = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
     "objc2-foundation/NSUserActivity",
-    "objc2-ui-kit?/UIGeometry",
-    "objc2-ui-kit?/UIImage",
-    "objc2-user-notifications?/UNNotification",
-    "objc2-user-notifications?/UNNotificationAction",
 ]
 WKInterfaceDate = [
     "objc2-foundation/NSCalendar",
     "objc2-foundation/NSTimeZone",
-    "objc2-ui-kit?/UIColor",
 ]
 WKInterfaceDevice = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",
 ]
 WKInterfaceGroup = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSData",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIColor",
-    "objc2-ui-kit?/UIGeometry",
-    "objc2-ui-kit?/UIImage",
 ]
-WKInterfaceHMCamera = ["objc2-home-kit?/HMCameraSource"]
+WKInterfaceHMCamera = []
 WKInterfaceImage = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIColor",
-    "objc2-ui-kit?/UIImage",
 ]
 WKInterfaceInlineMovie = ["objc2-foundation/NSURL"]
 WKInterfaceLabel = [
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIColor",
 ]
-WKInterfaceMap = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation/NSString",
-    "objc2-map-kit?/MKGeometry",
-    "objc2-ui-kit?/UIImage",
-]
+WKInterfaceMap = ["objc2-foundation/NSString"]
 WKInterfaceMovie = ["objc2-foundation/NSURL"]
 WKInterfaceObject = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIAccessibilityConstants",
 ]
 WKInterfacePaymentButton = []
 WKInterfacePicker = [
@@ -198,18 +185,13 @@ WKInterfacePicker = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-WKInterfaceSCNScene = [
-    "objc2-scene-kit?/SCNScene",
-    "objc2-scene-kit?/SCNSceneRenderer",
-    "objc2-ui-kit?/UIImage",
-]
+WKInterfaceSCNScene = []
 WKInterfaceSKScene = []
-WKInterfaceSeparator = ["objc2-ui-kit?/UIColor"]
-WKInterfaceSlider = ["objc2-ui-kit?/UIColor"]
+WKInterfaceSeparator = []
+WKInterfaceSlider = []
 WKInterfaceSwitch = [
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIColor",
 ]
 WKInterfaceTable = [
     "objc2-foundation/NSArray",
@@ -219,13 +201,9 @@ WKInterfaceTable = [
 WKInterfaceTextField = [
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIColor",
 ]
-WKInterfaceTimer = [
-    "objc2-foundation/NSDate",
-    "objc2-ui-kit?/UIColor",
-]
-WKInterfaceVolumeControl = ["objc2-ui-kit?/UIColor"]
+WKInterfaceTimer = ["objc2-foundation/NSDate"]
+WKInterfaceVolumeControl = []
 all = [
     "WKAccessibility",
     "WKAlertAction",

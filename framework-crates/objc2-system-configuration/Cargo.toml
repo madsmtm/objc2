@@ -16,11 +16,14 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, features = ["CFBase", "CFError"] }
-objc2-security = { path = "../objc2-security", version = "0.2.2", default-features = false, optional = true }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, features = [
+    "CFBase",
+    "CFError",
+] }
+objc2-security = { path = "../objc2-security", version = "0.2.2", default-features = false, optional = true, features = ["Authorization"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -37,11 +40,11 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-core-foundation/bitflags", "objc2-security?/bitflags"]
-libc = ["dep:libc", "objc2-core-foundation/libc", "objc2-security?/libc"]
-objc2 = ["dep:objc2", "objc2-core-foundation/objc2", "objc2-security?/objc2"]
+bitflags = ["dep:bitflags"]
+libc = ["dep:libc"]
+objc2 = ["dep:objc2"]
 objc2-security = ["dep:objc2-security"]
 
 CaptiveNetwork = [
@@ -91,7 +94,6 @@ SCPreferences = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFRunLoop",
-    "objc2-security?/Authorization",
 ]
 SCPreferencesPath = [
     "objc2-core-foundation/CFBase",

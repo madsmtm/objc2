@@ -16,16 +16,26 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFCGTypes",
+    "objc2",
+] }
+objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true, features = ["CLRegion"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
-objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features = false, optional = true }
+objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "UIAppearance",
+    "UIDynamicBehavior",
+    "UIFocus",
+    "UIResponder",
+    "UITraitCollection",
+    "UIView",
+] }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
-objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true }
+objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true, features = ["CALayer"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
@@ -42,13 +52,13 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation/bitflags", "objc2-quartz-core?/bitflags", "objc2-ui-kit?/bitflags"]
-block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-core-location?/block2", "objc2-foundation/block2", "objc2-quartz-core?/block2", "objc2-ui-kit?/block2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-quartz-core?/objc2-core-foundation", "objc2-ui-kit?/objc2-core-foundation"]
-objc2-core-location = ["dep:objc2-core-location", "objc2-ui-kit?/objc2-core-location"]
-objc2-quartz-core = ["dep:objc2-quartz-core", "objc2-ui-kit?/objc2-quartz-core"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-core-location = ["dep:objc2-core-location"]
+objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 
 HMAccessControl = []
@@ -109,16 +119,8 @@ HMCameraSource = []
 HMCameraStream = ["objc2-foundation/NSError"]
 HMCameraStreamControl = ["objc2-foundation/NSError"]
 HMCameraView = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
-    "objc2-quartz-core?/CALayer",
-    "objc2-ui-kit?/UIAppearance",
-    "objc2-ui-kit?/UIDynamicBehavior",
-    "objc2-ui-kit?/UIFocus",
-    "objc2-ui-kit?/UIResponder",
-    "objc2-ui-kit?/UITraitCollection",
-    "objc2-ui-kit?/UIView",
 ]
 HMCharacteristic = [
     "objc2-foundation/NSArray",
@@ -171,7 +173,6 @@ HMHomeManager = [
     "objc2-foundation/NSString",
 ]
 HMLocationEvent = [
-    "objc2-core-location?/CLRegion",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
 ]

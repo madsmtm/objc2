@@ -16,16 +16,27 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.2.2", default-features = false, optional = true }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "AVMediaSelectionGroup",
+    "AVPlayer",
+    "AVPlayerItem",
+] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFCGTypes",
+    "objc2",
+] }
+objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true, features = [
+    "CMTime",
+    "CMTimeRange",
+    "objc2",
+] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true }
+objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true, features = ["NSImage"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -43,18 +54,17 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-app-kit?/bitflags", "objc2-av-foundation?/bitflags", "objc2-core-foundation?/bitflags", "objc2-core-media?/bitflags", "objc2-foundation/bitflags"]
-block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-av-foundation?/block2", "objc2-core-foundation?/block2", "objc2-core-media?/block2", "objc2-foundation/block2"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-av-foundation?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
-objc2-core-media = ["dep:objc2-core-media", "objc2-av-foundation?/objc2-core-media"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-core-media = ["dep:objc2-core-media"]
 
-AVFoundation_MPNowPlayingInfoLanguageOptionAdditions = ["objc2-av-foundation?/AVMediaSelectionGroup"]
+AVFoundation_MPNowPlayingInfoLanguageOptionAdditions = []
 AVPlayerItem_MediaPlayerAdditions = [
-    "objc2-av-foundation?/AVPlayerItem",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSString",
 ]
@@ -67,8 +77,6 @@ MPMediaEntity = [
 ]
 MPMediaItem = [
     "bitflags",
-    "objc2-app-kit?/NSImage",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -137,9 +145,6 @@ MPNowPlayingInfoLanguageOption = [
     "objc2-foundation/NSString",
 ]
 MPNowPlayingSession = [
-    "objc2-av-foundation?/AVPlayer",
-    "objc2-core-media?/CMTime",
-    "objc2-core-media?/CMTimeRange",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
 ]

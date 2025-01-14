@@ -16,7 +16,7 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
 
 [package.metadata.docs.rs]
@@ -35,7 +35,7 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 objc2 = ["dep:objc2"]

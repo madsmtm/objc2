@@ -16,11 +16,30 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, optional = true, features = ["alloc"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFArray",
+    "CFBase",
+    "CFData",
+    "CFDictionary",
+    "CFPlugInCOM",
+    "CFRunLoop",
+    "CFUUID",
+] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "NSArray",
+    "NSData",
+    "NSError",
+    "NSNetServices",
+    "NSNotification",
+    "NSObject",
+    "NSSet",
+    "NSString",
+    "NSValue",
+    "alloc",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -38,80 +57,31 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation?/bitflags"]
-block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-foundation?/block2"]
-objc2 = ["dep:objc2", "objc2-core-foundation?/objc2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation?/objc2-core-foundation"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
+objc2 = ["dep:objc2"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-foundation = ["dep:objc2-foundation"]
 
-MIDIBluetoothConnection = ["objc2-core-foundation?/CFBase"]
-MIDICIDevice = ["objc2-foundation?/NSArray"]
-MIDICIDeviceManager = [
-    "objc2-foundation?/NSArray",
-    "objc2-foundation?/NSNotification",
-    "objc2-foundation?/NSString",
-]
-MIDICapabilityInquiry = [
-    "objc2-foundation?/NSArray",
-    "objc2-foundation?/NSData",
-    "objc2-foundation?/NSError",
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSString",
-    "objc2-foundation?/NSValue",
-]
-MIDIDriver = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFPlugInCOM",
-    "objc2-core-foundation?/CFRunLoop",
-    "objc2-core-foundation?/CFUUID",
-]
+MIDIBluetoothConnection = []
+MIDICIDevice = []
+MIDICIDeviceManager = []
+MIDICapabilityInquiry = []
+MIDIDriver = []
 MIDIMessages = ["bitflags"]
-MIDINetworkSession = [
-    "objc2-foundation?/NSNetServices",
-    "objc2-foundation?/NSSet",
-    "objc2-foundation?/NSString",
-]
-MIDIServices = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFData",
-    "objc2-core-foundation?/CFDictionary",
-]
-MIDISetup = [
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFData",
-]
-MIDIThruConnection = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFData",
-]
+MIDINetworkSession = []
+MIDIServices = []
+MIDISetup = []
+MIDIThruConnection = []
 MIDIUMPCI = ["bitflags"]
-MIDIUMPCIProfile = [
-    "objc2-foundation?/NSError",
-    "objc2-foundation?/NSString",
-]
-MIDIUMPEndpoint = [
-    "bitflags",
-    "objc2-foundation?/NSArray",
-    "objc2-foundation?/NSString",
-]
-MIDIUMPEndpointManager = [
-    "objc2-foundation?/NSArray",
-    "objc2-foundation?/NSNotification",
-    "objc2-foundation?/NSString",
-]
-MIDIUMPFunctionBlock = ["objc2-foundation?/NSString"]
-MIDIUMPMutableEndpoint = [
-    "objc2-foundation?/NSArray",
-    "objc2-foundation?/NSError",
-    "objc2-foundation?/NSString",
-]
-MIDIUMPMutableFunctionBlock = [
-    "objc2-foundation?/NSError",
-    "objc2-foundation?/NSString",
-]
+MIDIUMPCIProfile = []
+MIDIUMPEndpoint = ["bitflags"]
+MIDIUMPEndpointManager = []
+MIDIUMPFunctionBlock = []
+MIDIUMPMutableEndpoint = []
+MIDIUMPMutableFunctionBlock = []
 all = [
     "MIDIBluetoothConnection",
     "MIDICIDevice",

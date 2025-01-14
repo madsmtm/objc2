@@ -18,13 +18,40 @@ workspace = true
 [dependencies]
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-core-ml = { path = "../objc2-core-ml", version = "0.2.2", default-features = false, optional = true }
-objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFCGTypes",
+    "objc2",
+] }
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = [
+    "CGColor",
+    "CGColorSpace",
+    "CGContext",
+    "CGImage",
+    "CGLayer",
+    "objc2",
+] }
+objc2-core-ml = { path = "../objc2-core-ml", version = "0.2.2", default-features = false, optional = true, features = ["MLModel"] }
+objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true, features = [
+    "CVBuffer",
+    "CVImageBuffer",
+    "CVPixelBuffer",
+    "objc2",
+] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
-objc2-io-surface = { path = "../objc2-io-surface", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true }
+objc2-io-surface = { path = "../objc2-io-surface", version = "0.2.2", default-features = false, optional = true, features = [
+    "IOSurfaceRef",
+    "ObjC",
+    "objc2",
+] }
+objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true, features = [
+    "MTLAllocation",
+    "MTLCommandBuffer",
+    "MTLCommandQueue",
+    "MTLDevice",
+    "MTLPixelFormat",
+    "MTLResource",
+    "MTLTexture",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -49,13 +76,13 @@ gnustep-1-8 = ["gnustep-1-7", "objc2/gnustep-1-8", "block2?/gnustep-1-8", "objc2
 gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9", "block2?/gnustep-1-9", "objc2-foundation/gnustep-1-9"]
 gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0", "block2?/gnustep-2-0", "objc2-foundation/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1", "objc2-foundation/gnustep-2-1"]
-block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-core-ml?/block2", "objc2-core-video?/block2", "objc2-foundation/block2", "objc2-metal?/block2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-io-surface?/objc2-core-foundation", "objc2-metal?/objc2-core-foundation"]
-objc2-core-graphics = ["dep:objc2-core-graphics", "objc2-core-ml?/objc2-core-graphics", "objc2-core-video?/objc2-core-graphics"]
+block2 = ["dep:block2"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-ml = ["dep:objc2-core-ml"]
-objc2-core-video = ["dep:objc2-core-video", "objc2-core-ml?/objc2-core-video"]
-objc2-io-surface = ["dep:objc2-io-surface", "objc2-core-graphics?/objc2-io-surface", "objc2-core-video?/objc2-io-surface", "objc2-metal?/objc2-io-surface"]
-objc2-metal = ["dep:objc2-metal", "objc2-core-graphics?/objc2-metal", "objc2-core-ml?/objc2-metal", "objc2-core-video?/objc2-metal"]
+objc2-core-video = ["dep:objc2-core-video"]
+objc2-io-surface = ["dep:objc2-io-surface"]
+objc2-metal = ["dep:objc2-metal"]
 
 CIBarcodeDescriptor = [
     "objc2-foundation/NSData",
@@ -63,31 +90,15 @@ CIBarcodeDescriptor = [
     "objc2-foundation/NSUserActivity",
 ]
 CIColor = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGColor",
-    "objc2-core-graphics?/CGColorSpace",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 CIContext = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGColorSpace",
-    "objc2-core-graphics?/CGContext",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
-    "objc2-io-surface?/IOSurfaceRef",
-    "objc2-metal?/MTLAllocation",
-    "objc2-metal?/MTLCommandBuffer",
-    "objc2-metal?/MTLCommandQueue",
-    "objc2-metal?/MTLDevice",
-    "objc2-metal?/MTLResource",
-    "objc2-metal?/MTLTexture",
 ]
 CIDetector = [
     "objc2-foundation/NSArray",
@@ -95,13 +106,11 @@ CIDetector = [
     "objc2-foundation/NSString",
 ]
 CIFeature = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 CIFilter = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
@@ -110,9 +119,6 @@ CIFilter = [
     "objc2-foundation/NSURL",
 ]
 CIFilterBuiltins = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGColorSpace",
-    "objc2-core-ml?/MLModel",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSData",
@@ -125,56 +131,27 @@ CIFilterGenerator = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
-CIFilterShape = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation/NSObject",
-]
+CIFilterShape = ["objc2-foundation/NSObject"]
 CIImage = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGColorSpace",
-    "objc2-core-graphics?/CGImage",
-    "objc2-core-graphics?/CGLayer",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
-    "objc2-io-surface?/IOSurfaceRef",
-    "objc2-metal?/MTLAllocation",
-    "objc2-metal?/MTLResource",
-    "objc2-metal?/MTLTexture",
 ]
-CIImageAccumulator = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGColorSpace",
-]
+CIImageAccumulator = []
 CIImageProcessor = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
-    "objc2-io-surface?/IOSurfaceRef",
-    "objc2-metal?/MTLAllocation",
-    "objc2-metal?/MTLCommandBuffer",
-    "objc2-metal?/MTLResource",
-    "objc2-metal?/MTLTexture",
 ]
 CIImageProvider = [
-    "objc2-core-graphics?/CGColorSpace",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSString",
 ]
 CIKernel = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGColorSpace",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
@@ -184,10 +161,6 @@ CIKernelMetalLib = []
 CIPlugIn = ["objc2-foundation/NSURL"]
 CIPlugInInterface = []
 CIRAWFilter = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
@@ -196,9 +169,6 @@ CIRAWFilter = [
     "objc2-foundation/NSURL",
 ]
 CIRAWFilter_Deprecated = [
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
@@ -206,28 +176,15 @@ CIRAWFilter_Deprecated = [
     "objc2-foundation/NSURL",
 ]
 CIRenderDestination = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGColorSpace",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
-    "objc2-io-surface?/ObjC",
-    "objc2-metal?/MTLAllocation",
-    "objc2-metal?/MTLCommandBuffer",
-    "objc2-metal?/MTLPixelFormat",
-    "objc2-metal?/MTLResource",
-    "objc2-metal?/MTLTexture",
 ]
 CISampler = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 CIVector = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]

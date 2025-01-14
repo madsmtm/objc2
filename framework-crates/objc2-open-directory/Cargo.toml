@@ -17,8 +17,19 @@ workspace = true
 
 [dependencies]
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["NSString", "alloc"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFArray",
+    "CFBase",
+    "CFData",
+    "CFDictionary",
+    "CFError",
+    "CFRunLoop",
+    "objc2",
+] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = [
+    "NSString",
+    "alloc",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -34,42 +45,15 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
 
-CFODContext = ["objc2-core-foundation?/CFBase"]
-CFODNode = [
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFData",
-    "objc2-core-foundation?/CFDictionary",
-    "objc2-core-foundation?/CFError",
-    "objc2-foundation/NSString",
-]
-CFODQuery = [
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFError",
-    "objc2-core-foundation?/CFRunLoop",
-    "objc2-foundation/NSString",
-]
-CFODRecord = [
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
-    "objc2-core-foundation?/CFError",
-    "objc2-foundation/NSString",
-]
-CFODSession = [
-    "objc2-core-foundation?/CFArray",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
-    "objc2-core-foundation?/CFError",
-]
-CFOpenDirectory = ["objc2-core-foundation?/CFBase"]
-CFOpenDirectoryConstants = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-foundation/NSString",
-]
+CFODContext = []
+CFODNode = ["objc2-foundation/NSString"]
+CFODQuery = ["objc2-foundation/NSString"]
+CFODRecord = ["objc2-foundation/NSString"]
+CFODSession = []
+CFOpenDirectory = []
+CFOpenDirectoryConstants = ["objc2-foundation/NSString"]
 ODAttributeMap = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",

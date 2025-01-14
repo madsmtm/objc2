@@ -16,15 +16,25 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true }
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = [
+    "CGColorSpace",
+    "CGDirectDisplay",
+] }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
-objc2-io-surface = { path = "../objc2-io-surface", version = "0.2.2", default-features = false, optional = true }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true }
+objc2-io-surface = { path = "../objc2-io-surface", version = "0.2.2", default-features = false, optional = true, features = ["IOSurfaceRef"] }
+objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true, features = [
+    "MTLAllocation",
+    "MTLBuffer",
+    "MTLDevice",
+    "MTLPixelFormat",
+    "MTLResource",
+    "MTLTexture",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -42,53 +52,36 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-core-foundation/bitflags", "objc2-core-graphics?/bitflags", "objc2-io-surface?/bitflags", "objc2-metal?/bitflags"]
-block2 = ["dep:block2", "objc2-core-foundation/block2", "objc2-core-graphics?/block2", "objc2-metal?/block2"]
-objc2 = ["dep:objc2", "objc2-core-foundation/objc2", "objc2-core-graphics?/objc2", "objc2-io-surface?/objc2"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
+objc2 = ["dep:objc2"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
-objc2-io-surface = ["dep:objc2-io-surface", "objc2-core-graphics?/objc2-io-surface", "objc2-metal?/objc2-io-surface"]
-objc2-metal = ["dep:objc2-metal", "objc2-core-graphics?/objc2-metal"]
+objc2-io-surface = ["dep:objc2-io-surface"]
+objc2-metal = ["dep:objc2-metal"]
 
 CVBase = ["bitflags"]
 CVBuffer = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
 ]
-CVDisplayLink = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-graphics?/CGDirectDisplay",
-]
+CVDisplayLink = ["objc2-core-foundation/CFBase"]
 CVHostTime = []
 CVImageBuffer = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
-    "objc2-core-graphics?/CGColorSpace",
 ]
-CVMetalBuffer = [
-    "objc2-core-foundation/CFBase",
-    "objc2-metal?/MTLAllocation",
-    "objc2-metal?/MTLBuffer",
-    "objc2-metal?/MTLResource",
-]
+CVMetalBuffer = ["objc2-core-foundation/CFBase"]
 CVMetalBufferCache = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
-    "objc2-metal?/MTLDevice",
 ]
-CVMetalTexture = [
-    "objc2-core-foundation/CFBase",
-    "objc2-metal?/MTLAllocation",
-    "objc2-metal?/MTLResource",
-    "objc2-metal?/MTLTexture",
-]
+CVMetalTexture = ["objc2-core-foundation/CFBase"]
 CVMetalTextureCache = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
-    "objc2-metal?/MTLDevice",
-    "objc2-metal?/MTLPixelFormat",
 ]
 CVOpenGLBuffer = [
     "objc2-core-foundation/CFBase",
@@ -112,7 +105,6 @@ CVPixelBuffer = [
 CVPixelBufferIOSurface = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
-    "objc2-io-surface?/IOSurfaceRef",
 ]
 CVPixelBufferPool = [
     "bitflags",

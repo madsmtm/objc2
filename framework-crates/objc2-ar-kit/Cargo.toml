@@ -16,21 +16,67 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
-objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.2.2", default-features = false, optional = true }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
-objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true }
-objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true }
-objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, optional = true, features = ["alloc"] }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true }
-objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true }
-objc2-scene-kit = { path = "../objc2-scene-kit", version = "0.2.2", default-features = false, optional = true }
-objc2-sprite-kit = { path = "../objc2-sprite-kit", version = "0.2.2", default-features = false, optional = true }
-objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features = false, optional = true }
-objc2-vision = { path = "../objc2-vision", version = "0.2.2", default-features = false, optional = true }
+objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "AVCaptureDevice",
+    "AVDepthData",
+] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["CFCGTypes"] }
+objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true, features = ["CLLocation"] }
+objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true, features = ["CMSampleBuffer"] }
+objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true, features = [
+    "CVBuffer",
+    "CVImageBuffer",
+    "CVPixelBuffer",
+] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "NSArray",
+    "NSBundle",
+    "NSCoder",
+    "NSData",
+    "NSDate",
+    "NSDictionary",
+    "NSError",
+    "NSObject",
+    "NSSet",
+    "NSString",
+    "NSURL",
+    "NSUUID",
+    "NSValue",
+    "alloc",
+] }
+objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true, features = [
+    "MTLAllocation",
+    "MTLBuffer",
+    "MTLCommandBuffer",
+    "MTLDevice",
+    "MTLResource",
+    "MTLTexture",
+    "MTLVertexDescriptor",
+] }
+objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true, features = ["CALayer"] }
+objc2-scene-kit = { path = "../objc2-scene-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "SCNAnimation",
+    "SCNBoundingVolume",
+    "SCNGeometry",
+    "SCNNode",
+    "SCNSceneRenderer",
+    "SCNShadable",
+] }
+objc2-sprite-kit = { path = "../objc2-sprite-kit", version = "0.2.2", default-features = false, optional = true, features = ["SKView"] }
+objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "UIAppearance",
+    "UIDynamicBehavior",
+    "UIFocus",
+    "UIImage",
+    "UIOrientation",
+    "UIResponder",
+    "UITraitCollection",
+    "UIView",
+] }
+objc2-vision = { path = "../objc2-vision", version = "0.2.2", default-features = false, optional = true, features = ["VNTypes"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
@@ -45,219 +91,71 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-av-foundation?/bitflags", "objc2-core-foundation?/bitflags", "objc2-core-media?/bitflags", "objc2-core-video?/bitflags", "objc2-foundation?/bitflags", "objc2-metal?/bitflags", "objc2-quartz-core?/bitflags", "objc2-scene-kit?/bitflags", "objc2-sprite-kit?/bitflags", "objc2-ui-kit?/bitflags"]
-block2 = ["dep:block2", "objc2-av-foundation?/block2", "objc2-core-foundation?/block2", "objc2-core-location?/block2", "objc2-core-media?/block2", "objc2-core-video?/block2", "objc2-foundation?/block2", "objc2-metal?/block2", "objc2-quartz-core?/block2", "objc2-scene-kit?/block2", "objc2-sprite-kit?/block2", "objc2-ui-kit?/block2", "objc2-vision?/block2"]
-objc2 = ["dep:objc2", "objc2-core-foundation?/objc2", "objc2-core-media?/objc2", "objc2-core-video?/objc2"]
-objc2-av-foundation = ["dep:objc2-av-foundation", "objc2-sprite-kit?/objc2-av-foundation"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-av-foundation?/objc2-core-foundation", "objc2-foundation?/objc2-core-foundation", "objc2-metal?/objc2-core-foundation", "objc2-quartz-core?/objc2-core-foundation", "objc2-scene-kit?/objc2-core-foundation", "objc2-sprite-kit?/objc2-core-foundation", "objc2-ui-kit?/objc2-core-foundation", "objc2-vision?/objc2-core-foundation"]
-objc2-core-location = ["dep:objc2-core-location", "objc2-ui-kit?/objc2-core-location"]
-objc2-core-media = ["dep:objc2-core-media", "objc2-av-foundation?/objc2-core-media", "objc2-vision?/objc2-core-media"]
-objc2-core-video = ["dep:objc2-core-video", "objc2-av-foundation?/objc2-core-video", "objc2-core-media?/objc2-core-video", "objc2-quartz-core?/objc2-core-video", "objc2-vision?/objc2-core-video"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
+objc2 = ["dep:objc2"]
+objc2-av-foundation = ["dep:objc2-av-foundation"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-core-location = ["dep:objc2-core-location"]
+objc2-core-media = ["dep:objc2-core-media"]
+objc2-core-video = ["dep:objc2-core-video"]
 objc2-foundation = ["dep:objc2-foundation"]
-objc2-metal = ["dep:objc2-metal", "objc2-core-video?/objc2-metal", "objc2-quartz-core?/objc2-metal", "objc2-scene-kit?/objc2-metal", "objc2-sprite-kit?/objc2-metal"]
-objc2-quartz-core = ["dep:objc2-quartz-core", "objc2-av-foundation?/objc2-quartz-core", "objc2-scene-kit?/objc2-quartz-core", "objc2-ui-kit?/objc2-quartz-core"]
+objc2-metal = ["dep:objc2-metal"]
+objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-scene-kit = ["dep:objc2-scene-kit"]
 objc2-sprite-kit = ["dep:objc2-sprite-kit"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 objc2-vision = ["dep:objc2-vision"]
 
-ARAnchor = [
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSString",
-    "objc2-foundation?/NSUUID",
-]
-ARAppClipCodeAnchor = [
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSURL",
-]
+ARAnchor = []
+ARAppClipCodeAnchor = []
 ARBody2D = []
-ARBodyAnchor = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation?/NSObject",
-]
-ARCamera = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation?/NSDate",
-    "objc2-foundation?/NSObject",
-]
-ARCoachingOverlayView = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation?/NSCoder",
-    "objc2-foundation?/NSObject",
-    "objc2-quartz-core?/CALayer",
-    "objc2-ui-kit?/UIAppearance",
-    "objc2-ui-kit?/UIDynamicBehavior",
-    "objc2-ui-kit?/UIFocus",
-    "objc2-ui-kit?/UIResponder",
-    "objc2-ui-kit?/UITraitCollection",
-    "objc2-ui-kit?/UIView",
-]
-ARCollaborationData = ["objc2-foundation?/NSObject"]
-ARConfiguration = [
-    "bitflags",
-    "objc2-av-foundation?/AVCaptureDevice",
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation?/NSArray",
-    "objc2-foundation?/NSError",
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSSet",
-]
-ARDepthData = [
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
-]
-AREnvironmentProbeAnchor = [
-    "objc2-foundation?/NSObject",
-    "objc2-metal?/MTLAllocation",
-    "objc2-metal?/MTLResource",
-    "objc2-metal?/MTLTexture",
-]
-ARError = ["objc2-foundation?/NSString"]
-ARFaceAnchor = [
-    "objc2-foundation?/NSDictionary",
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSString",
-    "objc2-foundation?/NSValue",
-]
-ARFaceGeometry = [
-    "objc2-foundation?/NSDictionary",
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSString",
-    "objc2-foundation?/NSValue",
-]
-ARFrame = [
-    "objc2-av-foundation?/AVDepthData",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
-    "objc2-foundation?/NSArray",
-    "objc2-foundation?/NSDate",
-    "objc2-foundation?/NSDictionary",
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSString",
-    "objc2-metal?/MTLAllocation",
-    "objc2-metal?/MTLResource",
-    "objc2-metal?/MTLTexture",
-    "objc2-ui-kit?/UIOrientation",
-]
-ARGeoAnchor = [
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSString",
-]
-ARGeoTrackingTypes = ["objc2-foundation?/NSObject"]
-ARHitTestResult = [
-    "bitflags",
-    "objc2-core-foundation?/CFCGTypes",
-]
-ARImageAnchor = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation?/NSObject",
-]
+ARBodyAnchor = []
+ARCamera = []
+ARCoachingOverlayView = []
+ARCollaborationData = []
+ARConfiguration = ["bitflags"]
+ARDepthData = []
+AREnvironmentProbeAnchor = []
+ARError = []
+ARFaceAnchor = []
+ARFaceGeometry = []
+ARFrame = []
+ARGeoAnchor = []
+ARGeoTrackingTypes = []
+ARHitTestResult = ["bitflags"]
+ARImageAnchor = []
 ARKitCore = []
 ARKitFoundation = []
 ARKitUI = []
-ARLightEstimate = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation?/NSData",
-]
-ARMatteGenerator = [
-    "objc2-metal?/MTLAllocation",
-    "objc2-metal?/MTLCommandBuffer",
-    "objc2-metal?/MTLDevice",
-    "objc2-metal?/MTLResource",
-    "objc2-metal?/MTLTexture",
-]
-ARMeshAnchor = ["objc2-foundation?/NSObject"]
-ARMeshGeometry = [
-    "objc2-foundation?/NSObject",
-    "objc2-metal?/MTLAllocation",
-    "objc2-metal?/MTLBuffer",
-    "objc2-metal?/MTLResource",
-    "objc2-metal?/MTLVertexDescriptor",
-]
-ARObjectAnchor = ["objc2-foundation?/NSObject"]
-ARParticipantAnchor = ["objc2-foundation?/NSObject"]
-ARPlaneAnchor = ["objc2-foundation?/NSObject"]
+ARLightEstimate = []
+ARMatteGenerator = []
+ARMeshAnchor = []
+ARMeshGeometry = []
+ARObjectAnchor = []
+ARParticipantAnchor = []
+ARPlaneAnchor = []
 ARPlaneDetectionTypes = ["bitflags"]
-ARPlaneGeometry = ["objc2-foundation?/NSObject"]
-ARPointCloud = ["objc2-foundation?/NSObject"]
-ARQuickLookPreviewItem = ["objc2-foundation?/NSURL"]
+ARPlaneGeometry = []
+ARPointCloud = []
+ARQuickLookPreviewItem = []
 ARRaycastQuery = []
 ARRaycastResult = []
-ARReferenceImage = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation?/NSBundle",
-    "objc2-foundation?/NSError",
-    "objc2-foundation?/NSSet",
-    "objc2-foundation?/NSString",
-]
-ARReferenceObject = [
-    "objc2-foundation?/NSBundle",
-    "objc2-foundation?/NSError",
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSSet",
-    "objc2-foundation?/NSString",
-    "objc2-foundation?/NSURL",
-    "objc2-ui-kit?/UIImage",
-]
-ARSCNFaceGeometry = [
-    "objc2-foundation?/NSArray",
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSValue",
-    "objc2-metal?/MTLDevice",
-    "objc2-scene-kit?/SCNAnimation",
-    "objc2-scene-kit?/SCNBoundingVolume",
-    "objc2-scene-kit?/SCNGeometry",
-    "objc2-scene-kit?/SCNShadable",
-]
-ARSCNPlaneGeometry = [
-    "objc2-foundation?/NSArray",
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSValue",
-    "objc2-metal?/MTLDevice",
-    "objc2-scene-kit?/SCNAnimation",
-    "objc2-scene-kit?/SCNBoundingVolume",
-    "objc2-scene-kit?/SCNGeometry",
-    "objc2-scene-kit?/SCNShadable",
-]
-ARSCNView = [
-    "objc2-scene-kit?/SCNNode",
-    "objc2-scene-kit?/SCNSceneRenderer",
-]
-ARSKView = ["objc2-sprite-kit?/SKView"]
-ARSession = [
-    "bitflags",
-    "objc2-core-media?/CMSampleBuffer",
-    "objc2-foundation?/NSArray",
-    "objc2-foundation?/NSError",
-    "objc2-foundation?/NSUUID",
-]
-ARSkeleton = [
-    "objc2-foundation?/NSString",
-    "objc2-vision?/VNTypes",
-]
-ARSkeletonDefinition = [
-    "objc2-foundation?/NSArray",
-    "objc2-foundation?/NSString",
-    "objc2-foundation?/NSValue",
-]
+ARReferenceImage = []
+ARReferenceObject = []
+ARSCNFaceGeometry = []
+ARSCNPlaneGeometry = []
+ARSCNView = []
+ARSKView = []
+ARSession = ["bitflags"]
+ARSkeleton = []
+ARSkeletonDefinition = []
 ARTrackedRaycast = []
 ARTrackingStatusTypes = []
-ARVideoFormat = [
-    "objc2-av-foundation?/AVCaptureDevice",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSString",
-]
-ARWorldMap = [
-    "objc2-foundation?/NSArray",
-    "objc2-foundation?/NSObject",
-]
+ARVideoFormat = []
+ARWorldMap = []
 all = [
     "ARAnchor",
     "ARAppClipCodeAnchor",

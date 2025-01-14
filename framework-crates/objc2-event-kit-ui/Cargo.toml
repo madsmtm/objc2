@@ -17,9 +17,23 @@ workspace = true
 
 [dependencies]
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-event-kit = { path = "../objc2-event-kit", version = "0.2.2", default-features = false, optional = true }
+objc2-event-kit = { path = "../objc2-event-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "EKCalendar",
+    "EKCalendarItem",
+    "EKEvent",
+    "EKEventStore",
+    "EKObject",
+    "EKTypes",
+] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
-objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features = false, optional = true }
+objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "UIAppearance",
+    "UIFocus",
+    "UINavigationController",
+    "UIResponder",
+    "UITraitCollection",
+    "UIViewController",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
@@ -40,51 +54,23 @@ objc2-event-kit = ["dep:objc2-event-kit"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 
 EKCalendarChooser = [
-    "objc2-event-kit?/EKCalendar",
-    "objc2-event-kit?/EKEventStore",
-    "objc2-event-kit?/EKObject",
-    "objc2-event-kit?/EKTypes",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIAppearance",
-    "objc2-ui-kit?/UIFocus",
-    "objc2-ui-kit?/UIResponder",
-    "objc2-ui-kit?/UITraitCollection",
-    "objc2-ui-kit?/UIViewController",
 ]
 EKEventEditViewController = [
-    "objc2-event-kit?/EKCalendar",
-    "objc2-event-kit?/EKCalendarItem",
-    "objc2-event-kit?/EKEvent",
-    "objc2-event-kit?/EKEventStore",
-    "objc2-event-kit?/EKObject",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIAppearance",
-    "objc2-ui-kit?/UIFocus",
-    "objc2-ui-kit?/UINavigationController",
-    "objc2-ui-kit?/UIResponder",
-    "objc2-ui-kit?/UITraitCollection",
-    "objc2-ui-kit?/UIViewController",
 ]
 EKEventViewController = [
-    "objc2-event-kit?/EKCalendarItem",
-    "objc2-event-kit?/EKEvent",
-    "objc2-event-kit?/EKObject",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIAppearance",
-    "objc2-ui-kit?/UIFocus",
-    "objc2-ui-kit?/UIResponder",
-    "objc2-ui-kit?/UITraitCollection",
-    "objc2-ui-kit?/UIViewController",
 ]
 EventKitUIBundle = ["objc2-foundation/NSBundle"]
 EventKitUIDefines = []

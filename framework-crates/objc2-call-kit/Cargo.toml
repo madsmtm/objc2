@@ -18,7 +18,7 @@ workspace = true
 [dependencies]
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.2.2", default-features = false, optional = true }
+objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.2.2", default-features = false, optional = true, features = ["AVAudioSession"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [package.metadata.docs.rs]
@@ -38,7 +38,7 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-block2 = ["dep:block2", "objc2-avf-audio?/block2", "objc2-foundation/block2"]
+block2 = ["dep:block2"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]
 
 CXAction = [
@@ -105,7 +105,6 @@ CXPlayDTMFCallAction = [
     "objc2-foundation/NSUUID",
 ]
 CXProvider = [
-    "objc2-avf-audio?/AVAudioSession",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",

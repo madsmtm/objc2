@@ -18,11 +18,19 @@ workspace = true
 [dependencies]
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true }
+objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "NSImage",
+    "NSKeyValueBinding",
+    "NSNib",
+    "NSResponder",
+    "NSStoryboardSegue",
+    "NSUserInterfaceItemIdentification",
+    "NSViewController",
+    "NSWindow",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -42,16 +50,13 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-core-foundation?/block2", "objc2-foundation/block2"]
+block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
 
 GKAccessPoint = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSWindow",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
+    "objc2-foundation/objc2-core-foundation",
 ]
 GKAchievement = [
     "objc2-foundation/NSArray",
@@ -61,7 +66,6 @@ GKAchievement = [
     "objc2-foundation/NSString",
 ]
 GKAchievementDescription = [
-    "objc2-app-kit?/NSImage",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -69,21 +73,12 @@ GKAchievementDescription = [
     "objc2-foundation/NSValue",
 ]
 GKAchievementViewController = [
-    "objc2-app-kit?/NSKeyValueBinding",
-    "objc2-app-kit?/NSNib",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSStoryboardSegue",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSViewController",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
 ]
 GKBasePlayer = ["objc2-foundation/NSString"]
 GKChallenge = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSViewController",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
@@ -92,16 +87,9 @@ GKChallenge = [
 ]
 GKChallengeEventHandler = []
 GKChallengesViewController = [
-    "objc2-app-kit?/NSKeyValueBinding",
-    "objc2-app-kit?/NSNib",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSStoryboardSegue",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSViewController",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
 ]
 GKCloudPlayer = [
     "objc2-foundation/NSError",
@@ -112,21 +100,12 @@ GKDefines = [
     "objc2-foundation/NSString",
 ]
 GKDialogController = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSViewController",
-    "objc2-app-kit?/NSWindow",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
 GKError = ["objc2-foundation/NSString"]
 GKEventListener = []
 GKFriendRequestComposeViewController = [
-    "objc2-app-kit?/NSKeyValueBinding",
-    "objc2-app-kit?/NSNib",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSStoryboardSegue",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSViewController",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
@@ -134,12 +113,6 @@ GKFriendRequestComposeViewController = [
     "objc2-foundation/NSString",
 ]
 GKGameCenterViewController = [
-    "objc2-app-kit?/NSKeyValueBinding",
-    "objc2-app-kit?/NSNib",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSStoryboardSegue",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSViewController",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
@@ -160,7 +133,6 @@ GKGameSessionEventListener = [
 ]
 GKGameSessionSharingViewController = []
 GKLeaderboard = [
-    "objc2-app-kit?/NSImage",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
@@ -173,28 +145,18 @@ GKLeaderboardEntry = [
 ]
 GKLeaderboardScore = ["objc2-foundation/NSString"]
 GKLeaderboardSet = [
-    "objc2-app-kit?/NSImage",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 GKLeaderboardViewController = [
-    "objc2-app-kit?/NSKeyValueBinding",
-    "objc2-app-kit?/NSNib",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSStoryboardSegue",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSViewController",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 GKLocalPlayer = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSViewController",
-    "objc2-app-kit?/NSWindow",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
@@ -216,12 +178,6 @@ GKMatchmaker = [
     "objc2-foundation/NSString",
 ]
 GKMatchmakerViewController = [
-    "objc2-app-kit?/NSKeyValueBinding",
-    "objc2-app-kit?/NSNib",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSStoryboardSegue",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSViewController",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
@@ -236,7 +192,6 @@ GKNotificationBanner = [
 ]
 GKPeerPickerController = []
 GKPlayer = [
-    "objc2-app-kit?/NSImage",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSNotification",
@@ -278,17 +233,10 @@ GKTurnBasedMatch = [
     "objc2-foundation/NSString",
 ]
 GKTurnBasedMatchmakerViewController = [
-    "objc2-app-kit?/NSKeyValueBinding",
-    "objc2-app-kit?/NSNib",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSStoryboardSegue",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSViewController",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
 ]
 GKVoiceChat = [
     "objc2-foundation/NSArray",
@@ -343,5 +291,4 @@ all = [
     "GKVoiceChatService",
     "block2",
     "objc2-app-kit",
-    "objc2-core-foundation",
 ]

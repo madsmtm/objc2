@@ -96,11 +96,6 @@ fn main() -> Result<(), BoxError> {
         })
         .collect();
 
-    let dependency_map: BTreeMap<_, _> = libraries
-        .iter()
-        .map(|(library_name, library)| (&**library_name, library.dependencies(&config)))
-        .collect();
-
     let test_crate_dir = workspace_dir.join("crates").join("test-frameworks");
 
     for (library_name, library) in &libraries {
@@ -139,7 +134,7 @@ fn main() -> Result<(), BoxError> {
             Err(err) => Err(err)?,
         }
 
-        library.output(&crate_dir, &test_crate_dir, &config, &dependency_map)?;
+        library.output(&crate_dir, &test_crate_dir, &config)?;
     }
 
     update_test_metadata(&test_crate_dir, config.to_parse().map(|(_, data)| data));

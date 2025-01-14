@@ -16,9 +16,13 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFDate",
+    "CFUUID",
+    "objc2",
+] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [package.metadata.docs.rs]
@@ -37,10 +41,10 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation/bitflags"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
+bitflags = ["dep:bitflags"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
 
 CBATTRequest = ["objc2-foundation/NSData"]
 CBAdvertisementData = ["objc2-foundation/NSString"]
@@ -48,7 +52,6 @@ CBAttribute = []
 CBCentral = ["objc2-foundation/NSObject"]
 CBCentralManager = [
     "bitflags",
-    "objc2-core-foundation?/CFDate",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -89,7 +92,6 @@ CBPeripheralManager = [
 CBPeripheralManagerConstants = ["objc2-foundation/NSString"]
 CBService = ["objc2-foundation/NSArray"]
 CBUUID = [
-    "objc2-core-foundation?/CFUUID",
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",

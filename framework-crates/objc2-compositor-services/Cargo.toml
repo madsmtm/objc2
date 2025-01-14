@@ -16,10 +16,24 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFBase",
+    "CFDate",
+    "CFError",
+    "objc2",
+] }
+objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true, features = [
+    "MTLAllocation",
+    "MTLCommandBuffer",
+    "MTLDevice",
+    "MTLPixelFormat",
+    "MTLRasterizationRate",
+    "MTLRenderCommandEncoder",
+    "MTLResource",
+    "MTLTexture",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-visionos"
@@ -32,10 +46,10 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags", "objc2-metal?/bitflags"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-metal?/objc2-core-foundation"]
+bitflags = ["dep:bitflags"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-metal = ["dep:objc2-metal"]
 
 all = [
@@ -56,32 +70,14 @@ all = [
     "view",
 ]
 cp_base = []
-cp_error = [
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFError",
-]
-cp_types = ["objc2-core-foundation?/CFDate"]
-drawable = [
-    "objc2-metal?/MTLAllocation",
-    "objc2-metal?/MTLCommandBuffer",
-    "objc2-metal?/MTLRasterizationRate",
-    "objc2-metal?/MTLResource",
-    "objc2-metal?/MTLTexture",
-]
+cp_error = []
+cp_types = []
+drawable = []
 frame = []
 frame_timing = []
-layer_renderer = ["objc2-metal?/MTLDevice"]
-layer_renderer_capabilities = [
-    "bitflags",
-    "objc2-metal?/MTLPixelFormat",
-]
-layer_renderer_configuration = [
-    "objc2-metal?/MTLPixelFormat",
-    "objc2-metal?/MTLTexture",
-]
+layer_renderer = []
+layer_renderer_capabilities = ["bitflags"]
+layer_renderer_configuration = []
 layer_renderer_layout = []
-layer_renderer_properties = [
-    "objc2-core-foundation?/CFError",
-    "objc2-metal?/MTLTexture",
-]
-view = ["objc2-metal?/MTLRenderCommandEncoder"]
+layer_renderer_properties = []
+view = []

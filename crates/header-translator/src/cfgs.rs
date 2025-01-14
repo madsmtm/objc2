@@ -212,6 +212,38 @@ impl PlatformCfg {
     }
 }
 
+pub(crate) fn cfg_features_ln<'a, I, F>(feature_names: I) -> impl Display + 'a
+where
+    I: IntoIterator<Item = F> + Clone + 'a,
+    F: AsRef<str>,
+{
+    FormatterFn(move |f| {
+        let mut iter = feature_names.clone().into_iter().peekable();
+
+        if let Some(first) = iter.next() {
+            if iter.peek().is_none() {
+                // One feature.
+                writeln!(f, "#[cfg(feature = {:?})]", first.as_ref())?;
+            } else {
+                write!(f, "#[cfg(all(")?;
+
+                write!(f, "feature = {:?}", first.as_ref())?;
+
+                for feature in iter {
+                    write!(f, ", feature = {:?}", feature.as_ref())?;
+                }
+
+                write!(f, "))]")?;
+                writeln!(f)?;
+            }
+        } else {
+            // No features, no output.
+        }
+
+        Ok(())
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

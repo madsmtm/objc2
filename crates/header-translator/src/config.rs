@@ -48,15 +48,16 @@ impl Config {
     }
 
     pub fn library_from_crate(&self, krate: &str) -> &LibraryConfig {
-        self.libraries
-            .values()
-            .find(|lib| lib.krate == krate)
-            .unwrap_or_else(|| {
-                error!("tried to get library config from krate {krate:?}");
-                self.libraries
-                    .get("__builtin__")
-                    .expect("could not find builtin library")
-            })
+        self.try_library_from_crate(krate).unwrap_or_else(|| {
+            error!("tried to get library config from krate {krate:?}");
+            self.libraries
+                .get("__builtin__")
+                .expect("could not find builtin library")
+        })
+    }
+
+    pub fn try_library_from_crate(&self, krate: &str) -> Option<&LibraryConfig> {
+        self.libraries.values().find(|lib| lib.krate == krate)
     }
 
     pub fn replace_protocol_name(&self, id: ItemIdentifier) -> ItemIdentifier {

@@ -6,9 +6,9 @@ use std::{fmt, fs};
 
 use crate::cfgs::PlatformCfg;
 use crate::display_helper::FormatterFn;
-use crate::id::{cfg_gate_ln, Location};
+use crate::id::{cfg_gate_ln, ItemTree};
 use crate::stmt::Stmt;
-use crate::{Config, ItemIdentifier};
+use crate::{Config, Location};
 
 #[derive(Default, Debug, PartialEq)]
 pub struct Module {
@@ -30,83 +30,87 @@ impl Module {
         self.stmts.push(stmt);
     }
 
-    pub fn all_items(&self) -> BTreeSet<ItemIdentifier> {
+    // TODO: Merge the functions below using some sort of visitor pattern?
+
+    pub fn used_crates<'c>(
+        &self,
+        config: &'c Config,
+        emission_location: &Location,
+    ) -> BTreeSet<&'c str> {
         self.stmts
             .iter()
             .flat_map(|stmt| stmt.required_items_inner())
-            .chain(
-                self.submodules
-                    .values()
-                    .flat_map(|module| module.all_items()),
-            )
+            .flat_map(|item| item.used_crates(config, emission_location))
+            .chain(self.submodules.iter().flat_map(|(name, module)| {
+                module.used_crates(config, &emission_location.add_module(name))
+            }))
             .collect()
     }
 
-    pub fn required_cargo_features_inner(
+    pub fn all_features(&self, emission_location: &Location) -> impl Iterator<Item = String> {
+        emission_location
+            .feature_names()
+            .last()
+            .into_iter()
+            .chain(self.submodules.iter().flat_map(|(name, submodule)| {
+                submodule.all_features(&emission_location.add_module(name))
+            }))
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+    }
+
+    pub fn enabled_features(
         &self,
         config: &Config,
-        emission_library: &str,
-    ) -> BTreeMap<String, BTreeSet<String>> {
-        let mut required_features: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+        emission_location: &Location,
+    ) -> impl Iterator<Item = (String, String)> {
+        self.stmts
+            .iter()
+            .flat_map(|stmt| stmt.required_items_inner())
+            .flat_map(|item| item.enabled_features(config, emission_location))
+            .chain(self.submodules.iter().flat_map(|(name, module)| {
+                module.enabled_features(config, &emission_location.add_module(name))
+            }))
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+    }
 
-        // Deliberately skipping own stmts
-
-        for (file_name, module) in &self.submodules {
-            let mut features = BTreeSet::new();
-            for stmt in &module.stmts {
-                for required_item in stmt.required_items_inner() {
-                    let location = required_item.location();
-                    if let Some(feature) = location.cargo_toml_feature(config, emission_library) {
-                        features.insert(feature);
-                    }
-                }
-            }
-            required_features.insert(clean_name(file_name), features);
-            required_features
-                .extend(module.required_cargo_features_inner(config, emission_library));
-        }
-
-        required_features
+    pub fn required_crate_features<'config>(
+        &self,
+        config: &'config Config,
+        emission_location: &Location,
+    ) -> impl Iterator<Item = (&'config str, String)> {
+        self.stmts
+            .iter()
+            .flat_map(|stmt| stmt.required_items_inner())
+            .flat_map(|item| item.required_crate_features(config, emission_location))
+            .chain(self.submodules.iter().flat_map(|(name, module)| {
+                module.required_crate_features(config, &emission_location.add_module(name))
+            }))
+            .collect::<BTreeSet<_>>()
+            .into_iter()
     }
 
     pub(crate) fn stmts<'a>(
         &'a self,
         config: &'a Config,
-        emission_library: &'a str,
+        emission_location: &'a Location,
     ) -> impl fmt::Display + 'a {
         FormatterFn(move |f| {
             let imports: BTreeMap<_, _> = self
                 .stmts
                 .iter()
                 .flat_map(|stmt| stmt.required_items_inner())
-                .filter_map(|item| {
-                    item.import(config, emission_library).map(|import| {
-                        (
-                            import,
-                            (
-                                item.location().cfg_feature(config, emission_library),
-                                item.library_name().to_string(),
-                            ),
-                        )
-                    })
-                })
+                .flat_map(|item| item.imports(config, emission_location))
                 .collect();
 
-            let emission_config = &config.library(emission_library);
-            for (import, (cfg_feature, library_name)) in imports {
-                if let Some(cfg_feature) = cfg_feature {
-                    writeln!(f, "#[cfg(feature = {cfg_feature:?})]")?;
-                }
-                let mut platform_cfg = PlatformCfg::from_config(emission_config);
-                platform_cfg.dependency(config.library(&library_name));
-                if let Some(cfg) = platform_cfg.cfgs() {
-                    writeln!(f, "#[cfg({cfg})]")?;
-                }
+            for (import, cfg_gate_ln) in imports {
+                write!(f, "{cfg_gate_ln}")?;
                 writeln!(f, "use {import};")?;
             }
             writeln!(f)?;
 
-            if emission_config.is_library {
+            if config.library(emission_location.library_name()).is_library {
                 writeln!(f, "use crate::ffi::*;")?;
             } else {
                 writeln!(f, "use crate::*;")?;
@@ -122,11 +126,20 @@ impl Module {
         })
     }
 
-    pub(crate) fn modules<'a>(&'a self, config: &'a Config) -> impl fmt::Display + 'a {
+    pub(crate) fn modules<'a>(
+        &'a self,
+        config: &'a Config,
+        emission_location: &'a Location,
+    ) -> impl fmt::Display + 'a {
         FormatterFn(move |f| {
             for (name, module) in &self.submodules {
+                let location = emission_location.add_module(name);
                 let name = clean_name(name);
-                writeln!(f, "#[cfg(feature = \"{name}\")]")?;
+                write!(
+                    f,
+                    "#[cfg(feature = {:?})]",
+                    location.feature_names().last().unwrap()
+                )?;
                 if module.submodules.is_empty() {
                     writeln!(f, "#[path = \"{name}.rs\"]")?;
                 } else {
@@ -137,10 +150,15 @@ impl Module {
 
             writeln!(f)?;
 
-            for (module_name, module) in &self.submodules {
+            for (name, module) in &self.submodules {
+                let location = emission_location.add_module(name);
                 if !module.submodules.is_empty() {
-                    writeln!(f, "#[cfg(feature = \"{module_name}\")]")?;
-                    writeln!(f, "pub use self::__{}::*;", clean_name(module_name))?;
+                    write!(
+                        f,
+                        "#[cfg(feature = {:?})]",
+                        location.feature_names().last().unwrap()
+                    )?;
+                    writeln!(f, "pub use self::__{}::*;", clean_name(name))?;
                     continue;
                 }
 
@@ -157,20 +175,23 @@ impl Module {
                             "pub"
                         };
 
-                        item.location().assert_file(module_name);
+                        item.location().assert_file(name);
 
-                        let mut items = stmt.required_items();
-                        items.push(item.clone());
                         write!(
                             f,
                             "{}",
-                            cfg_gate_ln(items, &[] as &[Location], config, item.location())
+                            cfg_gate_ln(
+                                [ItemTree::new(item.clone(), stmt.required_items())],
+                                &[] as &[ItemTree],
+                                config,
+                                emission_location,
+                            )
                         )?;
 
                         writeln!(
                             f,
                             "{visibility} use self::__{}::{};",
-                            clean_name(module_name),
+                            clean_name(name),
                             item.name,
                         )?;
                     }
@@ -184,18 +205,18 @@ impl Module {
     fn contents<'a>(
         &'a self,
         config: &'a Config,
-        emission_library: &'a str,
+        emission_location: &'a Location,
         prefix: impl fmt::Display + 'a,
     ) -> impl fmt::Display + 'a {
         FormatterFn(move |f| {
             write!(f, "{prefix}")?;
 
             if !self.submodules.is_empty() {
-                write!(f, "{}", self.modules(config))?;
+                write!(f, "{}", self.modules(config, emission_location))?;
             }
 
             if !self.stmts.is_empty() {
-                write!(f, "{}", self.stmts(config, emission_library))?;
+                write!(f, "{}", self.stmts(config, emission_location))?;
             }
 
             Ok(())
@@ -207,15 +228,14 @@ impl Module {
         path: &Path,
         test_path: &Path,
         config: &Config,
-        emission_library: &str,
+        emission_location: &Location,
         top_level_prefix: impl fmt::Display,
-        is_top_level: bool,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
-        if self.submodules.is_empty() && !is_top_level {
+        if self.submodules.is_empty() && !emission_location.is_top_level() {
             // Only output a single file
             fs::write(
                 path.with_extension("rs"),
-                self.contents(config, emission_library, top_level_prefix)
+                self.contents(config, emission_location, top_level_prefix)
                     .to_string(),
             )?;
             fs::write(
@@ -237,9 +257,8 @@ impl Module {
                     &path.join(&name),
                     &test_path.join(&name),
                     config,
-                    emission_library,
+                    &emission_location.add_module(&name),
                     "//! This file has been automatically generated by `objc2`'s `header-translator`.\n//! DO NOT EDIT\n",
-                    false,
                 )?;
                 if module.submodules.is_empty() {
                     expected_files.push(format!("{name}.rs").into());
@@ -250,7 +269,7 @@ impl Module {
 
             fs::write(
                 path.join("mod.rs"),
-                self.contents(config, emission_library, top_level_prefix)
+                self.contents(config, emission_location, top_level_prefix)
                     .to_string(),
             )?;
             fs::write(test_path.join("mod.rs"), self.tests(config).to_string())?;
@@ -266,8 +285,8 @@ impl Module {
                 fs::remove_file(file.path())?;
             }
 
-            if is_top_level {
-                let data = config.library(emission_library);
+            if emission_location.is_top_level() {
+                let data = config.library(emission_location.library_name());
                 let mut s = String::new();
                 writeln!(&mut s, "#![cfg(feature = \"test-frameworks\")]")?;
                 let platform_cfg = PlatformCfg::from_config_explicit(data);

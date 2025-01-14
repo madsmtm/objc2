@@ -18,7 +18,10 @@ workspace = true
 [dependencies]
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = [
+    "CGImage",
+    "objc2",
+] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [package.metadata.docs.rs]
@@ -37,7 +40,7 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-block2 = ["dep:block2", "objc2-core-graphics?/block2", "objc2-foundation/block2"]
+block2 = ["dep:block2"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 
 CLSActivity = [
@@ -54,7 +57,6 @@ CLSBinaryItem = [
     "objc2-foundation/NSString",
 ]
 CLSContext = [
-    "objc2-core-graphics?/CGImage",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",

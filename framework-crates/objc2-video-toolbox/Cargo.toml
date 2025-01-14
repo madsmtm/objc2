@@ -16,13 +16,25 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true }
-objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true }
-objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true }
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = ["CGImage"] }
+objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true, features = [
+    "CMBase",
+    "CMFormatDescription",
+    "CMSampleBuffer",
+    "CMTaggedBufferGroup",
+    "CMTime",
+    "CMTimeRange",
+] }
+objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true, features = [
+    "CVBuffer",
+    "CVImageBuffer",
+    "CVPixelBuffer",
+    "CVPixelBufferPool",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -39,14 +51,14 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-core-foundation/bitflags", "objc2-core-graphics?/bitflags", "objc2-core-media?/bitflags", "objc2-core-video?/bitflags"]
-block2 = ["dep:block2", "objc2-core-foundation/block2", "objc2-core-graphics?/block2", "objc2-core-media?/block2", "objc2-core-video?/block2"]
-objc2 = ["dep:objc2", "objc2-core-foundation/objc2", "objc2-core-graphics?/objc2", "objc2-core-media?/objc2", "objc2-core-video?/objc2"]
-objc2-core-graphics = ["dep:objc2-core-graphics", "objc2-core-video?/objc2-core-graphics"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
+objc2 = ["dep:objc2"]
+objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-media = ["dep:objc2-core-media"]
-objc2-core-video = ["dep:objc2-core-video", "objc2-core-media?/objc2-core-video"]
+objc2-core-video = ["dep:objc2-core-video"]
 
 VTBase = []
 VTCompressionProperties = ["objc2-core-foundation/CFBase"]
@@ -54,76 +66,37 @@ VTCompressionSession = [
     "bitflags",
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
-    "objc2-core-media?/CMBase",
-    "objc2-core-media?/CMFormatDescription",
-    "objc2-core-media?/CMSampleBuffer",
-    "objc2-core-media?/CMTaggedBufferGroup",
-    "objc2-core-media?/CMTime",
-    "objc2-core-media?/CMTimeRange",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBufferPool",
 ]
 VTDecompressionProperties = ["objc2-core-foundation/CFBase"]
 VTDecompressionSession = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
-    "objc2-core-media?/CMFormatDescription",
-    "objc2-core-media?/CMSampleBuffer",
-    "objc2-core-media?/CMTaggedBufferGroup",
-    "objc2-core-media?/CMTime",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
 ]
 VTErrors = ["bitflags"]
 VTFrameSilo = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
-    "objc2-core-media?/CMBase",
-    "objc2-core-media?/CMSampleBuffer",
-    "objc2-core-media?/CMTime",
-    "objc2-core-media?/CMTimeRange",
 ]
 VTHDRPerFrameMetadataGenerationSession = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
 ]
 VTMultiPassStorage = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
-    "objc2-core-media?/CMTime",
-    "objc2-core-media?/CMTimeRange",
 ]
 VTPixelRotationProperties = ["objc2-core-foundation/CFBase"]
-VTPixelRotationSession = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
-]
+VTPixelRotationSession = ["objc2-core-foundation/CFBase"]
 VTPixelTransferProperties = ["objc2-core-foundation/CFBase"]
-VTPixelTransferSession = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
-]
+VTPixelTransferSession = ["objc2-core-foundation/CFBase"]
 VTProfessionalVideoWorkflow = []
 VTRAWProcessingProperties = ["objc2-core-foundation/CFBase"]
 VTRAWProcessingSession = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
-    "objc2-core-media?/CMFormatDescription",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
 ]
 VTSession = [
     "objc2-core-foundation/CFBase",
@@ -132,17 +105,11 @@ VTSession = [
 VTUtilities = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
-    "objc2-core-graphics?/CGImage",
-    "objc2-core-media?/CMFormatDescription",
-    "objc2-core-video?/CVBuffer",
-    "objc2-core-video?/CVImageBuffer",
-    "objc2-core-video?/CVPixelBuffer",
 ]
 VTVideoEncoderList = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
-    "objc2-core-media?/CMFormatDescription",
 ]
 all = [
     "VTBase",

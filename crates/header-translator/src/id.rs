@@ -5,11 +5,13 @@ use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeSet;
 use std::error::Error;
+use std::iter;
 use std::str::FromStr;
 
 use clang::source::File;
 use clang::Entity;
 
+use crate::cfgs::cfg_features_ln;
 use crate::cfgs::PlatformCfg;
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
@@ -143,6 +145,23 @@ impl Location {
         }
     }
 
+    pub fn from_library(library_name: &str) -> Self {
+        Self {
+            module_path: library_name.into(),
+        }
+    }
+
+    pub fn add_module(&self, module_name: &str) -> Self {
+        Self {
+            module_path: format!("{}.{}", self.module_path, module_name).into(),
+        }
+    }
+
+    /// Inside umbrella header / top-level module.
+    pub fn is_top_level(&self) -> bool {
+        !self.module_path.contains('.')
+    }
+
     pub fn library_name(&self) -> &str {
         if let Some((library, _rest)) = self.module_path.split_once('.') {
             library
@@ -152,113 +171,31 @@ impl Location {
         }
     }
 
-    fn file_name(&self) -> Option<&str> {
-        if let Some((_umbrella, rest)) = self.module_path.split_once('.') {
-            if let Some((_rest, file_name)) = rest.rsplit_once('.') {
-                Some(file_name)
-            } else {
-                Some(rest)
-            }
-        } else {
-            // Umbrella header
-            None
-        }
+    /// Feature names are based on the file name, not the whole path to the feature.
+    pub fn feature_names(&self) -> impl Iterator<Item = String> + Clone + '_ {
+        // NOTE: We _could_ choose to prefix each module name here (e.g.
+        // "$module_$submodule"), but that'd be pretty redundant, as module
+        // names are usually prefixed internally (e.g.
+        // `MetalPerformanceShaders.MPSImage.MPSImageConversion` or
+        // `OpenDirectory.CFOpenDirectory.CFODContext`).
+        //
+        // This does lead to some feature overlap, like
+        // `MetalPerformanceShaders.MPSCore.MPSImage` and
+        // `MetalPerformanceShaders.MPSImage`, but that's probably desirable
+        // anyhow.
+        //
+        // NOTE: We have no way of knowing whether a module is considered
+        // private or not by the modulemap, so for now we just always assume
+        // it's public.
+        self.modules().map(clean_name)
     }
 
-    pub fn modules(&self) -> impl IntoIterator<Item = &'_ str> + '_ {
+    pub fn modules(&self) -> impl Iterator<Item = &'_ str> + Clone + '_ {
         self.module_path.split('.').skip(1)
     }
 
-    pub fn crate_dependency<'config>(
-        &self,
-        config: &'config Config,
-        emission_library: &str,
-    ) -> Option<&'config str> {
-        match self.library_name() {
-            "__builtin__" | "__core__" => None,
-            library if library == emission_library => None,
-            library => Some(&config.try_library(library)?.krate),
-        }
-    }
-
-    // Feature names are based on the file name, not the whole path to the feature.
-    pub fn cargo_toml_feature(&self, config: &Config, emission_library: &str) -> Option<String> {
-        match self.library_name() {
-            "__builtin__" | "__core__" => None,
-            "__bitflags__" => {
-                let required = config
-                    .library(emission_library)
-                    .required_crates
-                    .contains("bitflags");
-
-                // We want the bitflags feature to be enabled automatically
-                // when a file with bitflags are imported.
-                if !required {
-                    Some("bitflags".into())
-                } else {
-                    None
-                }
-            }
-            // Don't emit dependency for local features (we want files to be
-            // independently activated).
-            library if library == emission_library => None,
-            // Matches e.g. objc2-foundation/NSArray, but not objc2 or
-            // libc (since that is configured in the source itself).
-            library => {
-                let krate = &config.try_library(library)?.krate;
-                let required = config
-                    .library(emission_library)
-                    .required_crates
-                    .contains(krate);
-
-                self.file_name().map(|file_name| {
-                    format!(
-                        "{krate}{}/{}",
-                        if required { "" } else { "?" },
-                        clean_name(file_name),
-                    )
-                })
-            }
-        }
-    }
-
-    pub fn cargo_toml_feature_on_top_level(&self, emission_library: &str) -> Option<String> {
-        match self.library_name() {
-            "__builtin__" | "__core__" => None,
-            library if library == emission_library => None,
-            _ => self.file_name().map(clean_name),
-        }
-    }
-
-    // FIXME: This is currently wrong for nested umbrella frameworks
-    // (specifically MetalPerformanceShaders).
-    pub fn cfg_feature<'a>(
-        &self,
-        config: &'a Config,
-        emission_library: &str,
-    ) -> Option<Cow<'a, str>> {
-        match self.library_name() {
-            "__builtin__" | "__core__" => None,
-            library if library == emission_library => {
-                self.file_name().map(clean_name).map(Cow::Owned)
-            }
-            library => {
-                let krate = &config.library(library).krate;
-                let required = config
-                    .library(emission_library)
-                    .required_crates
-                    .contains(krate);
-                if !required {
-                    Some(Cow::Borrowed(krate))
-                } else {
-                    None
-                }
-            }
-        }
-    }
-
     pub fn assert_file(&self, file_name: &str) {
-        if self.file_name() != Some(file_name) {
+        if self.modules().last() != Some(file_name) {
             error!(?self, ?file_name, "expected to be in file");
         }
     }
@@ -284,7 +221,9 @@ impl<N: ToOptionString + PartialEq> PartialEq for ItemIdentifier<N> {
 impl<N: ToOptionString + Eq> Eq for ItemIdentifier<N> {}
 
 impl<N: ToOptionString + hash::Hash> hash::Hash for ItemIdentifier<N> {
-    fn hash<H: hash::Hasher>(&self, _state: &mut H) {}
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        self.name.hash(state);
+    }
 }
 
 impl<N: ToOptionString + PartialOrd> PartialOrd for ItemIdentifier<N> {
@@ -387,79 +326,9 @@ impl ItemIdentifier {
         }
     }
 
-    pub fn block() -> Self {
+    pub fn dummy(n: usize) -> Self {
         Self {
-            name: "Block".into(),
-            location: Location::new("block"),
-        }
-    }
-
-    pub fn bitflags() -> Self {
-        Self {
-            name: "bitflags".into(),
-            location: Location::new("__bitflags__"),
-        }
-    }
-
-    pub fn objc(name: impl Into<String>) -> Self {
-        Self {
-            name: name.into(),
-            location: Location::new("ObjectiveC"),
-        }
-    }
-
-    pub fn cf(name: impl Into<String>) -> Self {
-        Self {
-            name: name.into(),
-            location: Location::new("CoreFoundation"),
-        }
-    }
-
-    pub fn core_ffi(name: &str) -> Self {
-        Self {
-            name: name.into(),
-            location: Location::new("__core__.ffi"),
-        }
-    }
-
-    pub fn core_ptr_nonnull() -> Self {
-        Self {
-            name: "NonNull".into(),
-            location: Location::new("__core__.ptr"),
-        }
-    }
-
-    pub fn core_simd_simd() -> Self {
-        Self {
-            name: "Simd".into(),
-            location: Location::new("__core__.simd"),
-        }
-    }
-
-    pub fn unsafecell() -> Self {
-        Self {
-            name: "UnsafeCell".into(),
-            location: Location::new("__core__.cell"),
-        }
-    }
-
-    pub fn phantoms() -> Self {
-        Self {
-            name: "__phantoms__".into(),
-            location: Location::new("__core__.marker"),
-        }
-    }
-
-    pub fn main_thread_marker() -> Self {
-        Self {
-            name: "MainThreadMarker".into(),
-            location: Location::new("ObjectiveC"),
-        }
-    }
-
-    pub fn dummy() -> Self {
-        Self {
-            name: "DUMMY".into(),
+            name: format!("DUMMY{n}"),
             location: Location::new("__dummy__"),
         }
     }
@@ -470,38 +339,6 @@ impl ItemIdentifier {
 
     pub fn is_nscomparator(&self) -> bool {
         self.location.library_name() == "Foundation" && self.name == "NSComparator"
-    }
-
-    /// The import needed for a given item to exist.
-    pub fn import(&self, config: &Config, emission_library: &str) -> Option<Cow<'static, str>> {
-        match self.library_name() {
-            "__builtin__" => None,
-            "__core__" => match &*self.location().module_path {
-                "__core__.ffi" => Some("core::ffi::*".into()),
-                // HACKs
-                "__core__.ptr" if self.name == "NonNull" => Some("core::ptr::NonNull".into()),
-                "__core__.simd" if self.name == "Simd" => Some("core::simd::*".into()),
-                "__core__.cell" if self.name == "UnsafeCell" => {
-                    Some("core::cell::UnsafeCell".into())
-                }
-                "__core__.marker" => Some("core::marker::{PhantomData, PhantomPinned}".into()),
-                _ => {
-                    error!("unknown __core__: {self:?}");
-                    None
-                }
-            },
-            // Rare enough that it's written directly instead of
-            // glob-imported, see `ItemIdentifier::path` below.
-            "__bitflags__" | "__libc__" | "block" => None,
-            "ObjectiveC" => Some("objc2::__framework_prelude::*".into()),
-            // Not currently needed, but might be useful to emit
-            // `Some("crate")` here in the future.
-            library if library == emission_library => None,
-            library => {
-                let krate = &config.library(library).krate;
-                Some(format!("{}::*", krate.replace('-', "_")).into())
-            }
-        }
     }
 
     pub fn path(&self) -> impl fmt::Display + '_ {
@@ -526,7 +363,7 @@ impl ItemIdentifier {
 
         impl fmt::Display for ItemIdentifierPathInRelationTo<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if self.1.file_name() == self.0.location.file_name() {
+                if self.0.location == *self.1 {
                     write!(f, "{}", self.0.name)
                 } else {
                     write!(f, "{}", self.0.path())
@@ -588,58 +425,47 @@ impl<N> AsRef<Location> for ItemIdentifier<N> {
 /// Helper to emit a `#[cfg(feature = "...")]`-gate based on the required
 /// items and the implied features.
 ///
-/// Only the library of the emission location matters.
-pub fn cfg_gate_ln<'a, R: AsRef<Location> + 'a, I: AsRef<Location> + 'a>(
-    required_features: impl IntoIterator<Item = R> + 'a,
-    implied_features: impl IntoIterator<Item = I> + 'a,
+/// The emission location is also considered an "implied" item.
+pub fn cfg_gate_ln<'a, R: AsRef<ItemTree> + 'a, I: AsRef<ItemTree> + 'a>(
+    required: impl IntoIterator<Item = R> + 'a,
+    implied: impl IntoIterator<Item = I> + 'a,
     config: &'a Config,
     emission_location: &'a Location,
 ) -> impl fmt::Display + 'a {
-    let emission_library = emission_location.library_name();
     // Use a set to deduplicate features, and to have them in
     // a consistent order.
     let mut feature_names = BTreeSet::new();
-    let mut platform_cfg = PlatformCfg::from_config(config.library(emission_library));
+    let mut platform_cfg =
+        PlatformCfg::from_config(config.library(emission_location.library_name()));
 
-    for location in required_features {
-        let location: &Location = location.as_ref();
-        if let Some(feature_name) = location.cfg_feature(config, emission_library) {
-            feature_names.insert(feature_name);
-        }
+    for item in required {
+        let item: &ItemTree = item.as_ref();
+        feature_names.extend(item.cfg_features(config, emission_location));
 
-        platform_cfg.dependency(config.library(location.library_name()));
+        item.visit(emission_location, |id, _| {
+            platform_cfg.dependency(config.library(id.library_name()));
+        });
     }
 
-    for location in implied_features {
-        let location: &Location = location.as_ref();
-        if let Some(feature_name) = location.cfg_feature(config, emission_library) {
+    for item in implied {
+        let item: &ItemTree = item.as_ref();
+        for feature_name in item.cfg_features(config, emission_location) {
             feature_names.remove(&feature_name);
         }
 
-        platform_cfg.implied(config.library(location.library_name()));
+        item.visit(emission_location, |id, _| {
+            platform_cfg.implied(config.library(id.library_name()));
+        });
     }
 
+    // Treat emission location as implied
+    for feature_name in ItemTree::cfg_features_inner(emission_location, config, emission_location) {
+        feature_names.remove(&feature_name);
+    }
+    platform_cfg.implied(config.library(emission_location.library_name()));
+
     FormatterFn(move |f| {
-        match feature_names.len() {
-            0 => {}
-            1 => {
-                let feature = feature_names.first().unwrap();
-                writeln!(f, "#[cfg(feature = \"{feature}\")]")?;
-            }
-            _ => {
-                write!(f, "#[cfg(all(")?;
-
-                for (i, feature) in feature_names.iter().enumerate() {
-                    if i != 0 {
-                        write!(f, ", ")?;
-                    }
-                    write!(f, "feature = \"{feature}\"")?;
-                }
-
-                write!(f, "))]")?;
-                writeln!(f)?;
-            }
-        }
+        write!(f, "{}", cfg_features_ln(&feature_names))?;
 
         if let Some(cfg) = platform_cfg.cfgs() {
             writeln!(f, "#[cfg({cfg})]")?;
@@ -732,5 +558,518 @@ impl<'de> de::Deserialize<'de> for ItemIdentifier {
         }
 
         deserializer.deserialize_str(ItemIdentifierVisitor)
+    }
+}
+
+/// Items relative to their "super" item, forming a DAG, potentially spanning
+/// many different libraries/frameworks.
+///
+/// Allows us to emit e.g.:
+/// XYZ = ["objc2-foundation/NSGeometry", "objc2-foundation/objc2-core-foundation"]
+///
+/// Instead of:
+/// XYZ = ["objc2-foundation/NSGeometry", "objc2-core-foundation"]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct ItemTree {
+    id: ItemIdentifier,
+    children: BTreeSet<ItemTree>,
+}
+
+impl ItemTree {
+    pub fn new(id: ItemIdentifier, children: impl IntoIterator<Item = ItemTree>) -> Self {
+        Self {
+            id,
+            children: children.into_iter().collect(),
+        }
+    }
+
+    // Use of this might be a sign that we need more information to emit correctly.
+    pub fn from_id(id: ItemIdentifier) -> Self {
+        Self {
+            id,
+            children: BTreeSet::new(),
+        }
+    }
+
+    fn visit_inner(&self, libraries: &[&str], f: &mut impl FnMut(&ItemIdentifier, &[&str])) {
+        let current = *libraries.last().expect("at least one location");
+        if matches!(self.id.location.library_name(), "__builtin__" | "__core__") {
+            // TODO: Should we visit here?
+        } else if current == self.id.location.library_name() {
+            f(&self.id, &libraries[1..libraries.len()]);
+            for item in &self.children {
+                item.visit_inner(libraries, f);
+            }
+        } else {
+            let libraries: Vec<&str> = libraries
+                .iter()
+                .copied()
+                .chain(iter::once(self.id.location.library_name()))
+                .collect();
+            f(&self.id, &libraries[1..libraries.len()]);
+            for item in &self.children {
+                item.visit_inner(&libraries, f);
+            }
+        }
+    }
+
+    fn visit(&self, emission_location: &Location, mut f: impl FnMut(&ItemIdentifier, &[&str])) {
+        self.visit_inner(&[emission_location.library_name()], &mut f);
+    }
+
+    pub fn library_name(&self) -> &str {
+        self.id.library_name()
+    }
+
+    pub fn nserror() -> Self {
+        Self::from_id(ItemIdentifier::nserror())
+    }
+
+    pub fn block() -> Self {
+        Self::from_id(ItemIdentifier {
+            name: "Block".into(),
+            location: Location::new("block"),
+        })
+    }
+
+    pub fn bitflags() -> Self {
+        Self::from_id(ItemIdentifier {
+            name: "bitflags".into(),
+            location: Location::new("__bitflags__"),
+        })
+    }
+
+    pub fn objc(name: impl Into<String>) -> Self {
+        Self::from_id(ItemIdentifier {
+            name: name.into(),
+            location: Location::new("ObjectiveC"),
+        })
+    }
+
+    pub fn cf(name: impl Into<String>) -> Self {
+        Self::from_id(ItemIdentifier {
+            name: name.into(),
+            location: Location::new("CoreFoundation"),
+        })
+    }
+
+    pub fn core_ffi(name: &str) -> Self {
+        Self::from_id(ItemIdentifier {
+            name: name.into(),
+            location: Location::new("__core__.ffi"),
+        })
+    }
+
+    pub fn core_ptr_nonnull() -> Self {
+        Self::from_id(ItemIdentifier {
+            name: "NonNull".into(),
+            location: Location::new("__core__.ptr"),
+        })
+    }
+
+    pub fn core_simd_simd() -> Self {
+        Self::from_id(ItemIdentifier {
+            name: "Simd".into(),
+            location: Location::new("__core__.simd"),
+        })
+    }
+
+    pub fn unsafecell() -> Self {
+        Self::from_id(ItemIdentifier {
+            name: "UnsafeCell".into(),
+            location: Location::new("__core__.cell"),
+        })
+    }
+
+    pub fn phantoms() -> Self {
+        Self::from_id(ItemIdentifier {
+            name: "__phantoms__".into(),
+            location: Location::new("__core__.marker"),
+        })
+    }
+
+    pub fn main_thread_marker() -> Self {
+        Self::from_id(ItemIdentifier {
+            name: "MainThreadMarker".into(),
+            location: Location::new("ObjectiveC"),
+        })
+    }
+
+    /// The crates used directly by this item.
+    pub fn used_crates<'config>(
+        &self,
+        config: &'config Config,
+        emission_location: &Location,
+    ) -> impl Iterator<Item = &'config str> {
+        match self.library_name() {
+            "__builtin__" | "__core__" => None,
+            library if library == emission_location.library_name() => None,
+            library => config.try_library(library).map(|data| &*data.krate),
+        }
+        .into_iter()
+    }
+
+    /// Required Cargo.toml features in [dependencies] table.
+    ///
+    /// Returns (crate, required_feature) pairs.
+    pub fn required_crate_features<'config>(
+        &self,
+        config: &'config Config,
+        emission_location: &Location,
+    ) -> impl Iterator<Item = (&'config str, String)> {
+        let mut crate_features = vec![];
+        self.visit(emission_location, |id, libraries| match libraries {
+            [] => {}
+            [library] => {
+                let Some(data) = config.try_library(library) else {
+                    error!(library, "unknown library");
+                    return;
+                };
+
+                let krate = &*data.krate;
+                let required = config
+                    .library(emission_location.library_name())
+                    .required_crates
+                    .contains(krate);
+
+                if !required || emission_location.is_top_level() {
+                    crate_features.extend(
+                        id.location
+                            .feature_names()
+                            .map(|feature_name| (krate, feature_name)),
+                    );
+                }
+            }
+            [library, dependent_library] => {
+                let Some(data) = config.try_library(library) else {
+                    error!(library, dependent_library, "unknown library");
+                    return;
+                };
+                let krate = &*data.krate;
+                let required = config
+                    .library(emission_location.library_name())
+                    .required_crates
+                    .contains(krate);
+
+                let Some(dependent_data) = config.try_library(dependent_library) else {
+                    error!(library, dependent_library, "unknown dependent library");
+                    return;
+                };
+                let dependent_krate = &*dependent_data.krate;
+                let dependent_required = data.required_crates.contains(dependent_krate);
+
+                if (!required || emission_location.is_top_level()) && !dependent_required {
+                    crate_features.push((krate, dependent_krate.to_string()));
+                }
+            }
+            _ => {
+                // Assume that the library handles this itself internally.
+                debug!(
+                    ?libraries,
+                    ?self,
+                    "nested required_crate_features enablement"
+                );
+            }
+        });
+        crate_features.into_iter()
+    }
+
+    /// The Cargo.toml features that will be enabled in [features] table.
+    ///
+    /// Returns (feature, enabled_feature) pairs.
+    pub fn enabled_features(
+        &self,
+        config: &Config,
+        emission_location: &Location,
+    ) -> impl Iterator<Item = (String, String)> {
+        let mut enabled_features = vec![];
+        self.visit(emission_location, |id, libraries| match libraries {
+            // Don't emit dependency for local features (we want files to be
+            // independently activated).
+            [] => {}
+            ["__bitflags__"] => {
+                let required = config
+                    .library(emission_location.library_name())
+                    .required_crates
+                    .contains("bitflags");
+
+                // We want the bitflags feature to be enabled automatically
+                // when a file with bitflags are imported.
+                if !required {
+                    if let Some(feature_name) = emission_location.feature_names().last() {
+                        enabled_features.push((feature_name, "bitflags".into()));
+                    }
+                }
+            }
+            // Matches e.g. objc2-foundation/NSArray, but not objc2 or libc
+            // (since that is configured in the source itself).
+            [library] => {
+                if let Some(data) = config.try_library(library) {
+                    let krate = &*data.krate;
+
+                    let required = config
+                        .library(emission_location.library_name())
+                        .required_crates
+                        .contains(krate);
+
+                    // We don't use optional `crate?/feature`, since that
+                    // currently works poorly in Cargo, and hence users would
+                    // end up downloading more crates than they actually use:
+                    // https://github.com/rust-lang/cargo/issues/10801
+                    //
+                    // Instead, we prefer to compile more of the dependent
+                    // crate. This is unfortunate, but probably the best we
+                    // can do atm.
+                    if required {
+                        if let Some(emission_feature_name) =
+                            emission_location.feature_names().last()
+                        {
+                            enabled_features.extend(id.location.feature_names().map(
+                                |feature_name| {
+                                    (
+                                        emission_feature_name.clone(),
+                                        format!("{krate}/{feature_name}"),
+                                    )
+                                },
+                            ));
+                        }
+                    }
+                }
+            }
+            [library, dependent_library] => {
+                let Some(data) = config.try_library(library) else {
+                    error!(library, dependent_library, "unknown library");
+                    return;
+                };
+                let krate = &*data.krate;
+                let required = config
+                    .library(emission_location.library_name())
+                    .required_crates
+                    .contains(krate);
+
+                let Some(dependent_data) = config.try_library(dependent_library) else {
+                    error!(library, dependent_library, "unknown dependent library");
+                    return;
+                };
+                let dependent_krate = &*dependent_data.krate;
+                let dependent_required = data.required_crates.contains(dependent_krate);
+
+                if required && !dependent_required {
+                    if let Some(emission_feature_name) = emission_location.feature_names().last() {
+                        enabled_features
+                            .push((emission_feature_name, format!("{krate}/{dependent_krate}")));
+                    }
+                }
+            }
+            _ => {
+                // Assume that the library handles this itself internally.
+                debug!(?libraries, ?self, "nested enabled_features enablement");
+            }
+        });
+        enabled_features.into_iter()
+    }
+
+    fn cfg_features_inner<'a>(
+        location: &Location,
+        config: &'a Config,
+        emission_location: &Location,
+    ) -> impl Iterator<Item = Cow<'a, str>> {
+        match location.library_name() {
+            "__builtin__" | "__core__" => vec![],
+            library if library == emission_location.library_name() => {
+                location.feature_names().map(Cow::Owned).collect()
+            }
+            library => {
+                let krate = &*config.library(library).krate;
+                let required = config
+                    .library(emission_location.library_name())
+                    .required_crates
+                    .contains(krate);
+                if !required {
+                    vec![Cow::Borrowed(krate)]
+                } else {
+                    vec![]
+                }
+            }
+        }
+        .into_iter()
+    }
+
+    pub fn cfg_features<'config>(
+        &self,
+        config: &'config Config,
+        emission_location: &Location,
+    ) -> impl Iterator<Item = Cow<'config, str>> {
+        let mut feature_names = vec![];
+        self.visit(emission_location, |id, libraries| match libraries {
+            [] => {
+                feature_names.extend(Self::cfg_features_inner(
+                    &id.location,
+                    config,
+                    emission_location,
+                ));
+            }
+            [_] => {
+                feature_names.extend(Self::cfg_features_inner(
+                    &id.location,
+                    config,
+                    emission_location,
+                ));
+            }
+            _ => {
+                // Assume that the library handles this itself internally.
+                debug!(?libraries, ?self, "nested cfg_features enablement");
+            }
+        });
+        feature_names.into_iter()
+    }
+
+    /// The import data needed for a given item to exist.
+    ///
+    /// This is intentionally an `Option`, and doesn't inspect the children,
+    /// because that's not required when determining imports.
+    pub fn imports<'config>(
+        &self,
+        config: &'config Config,
+        emission_location: &Location,
+    ) -> Option<(Cow<'static, str>, impl fmt::Display + 'config)> {
+        let import = match self.library_name() {
+            "__builtin__" => None,
+            "__core__" => match &*self.id.location().module_path {
+                "__core__.ffi" => Some("core::ffi::*".into()),
+                // HACKs
+                "__core__.ptr" if self.id.name == "NonNull" => Some("core::ptr::NonNull".into()),
+                "__core__.simd" if self.id.name == "Simd" => Some("core::simd::*".into()),
+                "__core__.cell" if self.id.name == "UnsafeCell" => {
+                    Some("core::cell::UnsafeCell".into())
+                }
+                "__core__.marker" => Some("core::marker::{PhantomData, PhantomPinned}".into()),
+                _ => {
+                    error!("unknown __core__: {self:?}");
+                    None
+                }
+            },
+            // Rare enough that it's written directly instead of
+            // glob-imported, see `ItemIdentifier::path`.
+            "__bitflags__" | "__libc__" | "block" => None,
+            "ObjectiveC" => Some("objc2::__framework_prelude::*".into()),
+            // Not currently needed, but might be useful to emit
+            // `Some("crate")` here in the future.
+            library if library == emission_location.library_name() => None,
+            library => {
+                let krate = &config.library(library).krate;
+                Some(format!("{}::*", krate.replace('-', "_")).into())
+            }
+        };
+        import.map(|import: Cow<'static, str>| {
+            let feature_names: Vec<_> =
+                Self::cfg_features_inner(&self.id.location, config, emission_location).collect();
+            let mut platform_cfg =
+                PlatformCfg::from_config(config.library(emission_location.library_name()));
+            platform_cfg.dependency(config.library(self.library_name()));
+            (
+                import,
+                FormatterFn(move |f| {
+                    write!(f, "{}", cfg_features_ln(&feature_names))?;
+                    if let Some(cfg) = platform_cfg.cfgs() {
+                        writeln!(f, "#[cfg({cfg})]")?;
+                    }
+                    Ok(())
+                }),
+            )
+        })
+    }
+}
+
+impl AsRef<Self> for ItemTree {
+    fn as_ref(&self) -> &Self {
+        self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_visit() {
+        let tree = ItemTree::new(
+            ItemIdentifier::from_str("foo.a").unwrap(),
+            [
+                ItemTree::new(
+                    ItemIdentifier::from_str("foo.b").unwrap(),
+                    [ItemTree::new(
+                        ItemIdentifier::from_str("bar.x").unwrap(),
+                        [],
+                    )],
+                ),
+                ItemTree::new(
+                    ItemIdentifier::from_str("foo.c").unwrap(),
+                    [ItemTree::new(
+                        ItemIdentifier::from_str("foo.d").unwrap(),
+                        [
+                            ItemTree::new(
+                                ItemIdentifier::from_str("bar.y").unwrap(),
+                                [
+                                    ItemTree::new(
+                                        ItemIdentifier::from_str("foobar.dy").unwrap(),
+                                        [],
+                                    ),
+                                    ItemTree::new(ItemIdentifier::from_str("bar.z").unwrap(), []),
+                                ],
+                            ),
+                            ItemTree::new(
+                                ItemIdentifier::from_str("bar.w").unwrap(),
+                                [ItemTree::new(
+                                    ItemIdentifier::from_str("__builtin__.xyz").unwrap(),
+                                    [],
+                                )],
+                            ),
+                        ],
+                    )],
+                ),
+            ],
+        );
+        let mut expected = [
+            (ItemIdentifier::from_str("foo.a").unwrap(), vec![]),
+            (ItemIdentifier::from_str("foo.b").unwrap(), vec![]),
+            (
+                ItemIdentifier::from_str("bar.x").unwrap(),
+                vec!["bar".to_string()],
+            ),
+            (ItemIdentifier::from_str("foo.c").unwrap(), vec![]),
+            (ItemIdentifier::from_str("foo.d").unwrap(), vec![]),
+            (
+                ItemIdentifier::from_str("bar.y").unwrap(),
+                vec!["bar".to_string()],
+            ),
+            (
+                ItemIdentifier::from_str("foobar.dy").unwrap(),
+                vec!["bar".to_string(), "foobar".to_string()],
+            ),
+            (
+                ItemIdentifier::from_str("bar.z").unwrap(),
+                vec!["bar".to_string()],
+            ),
+            (
+                ItemIdentifier::from_str("bar.w").unwrap(),
+                vec!["bar".to_string()],
+            ),
+            // (
+            //     ItemIdentifier::from_str("__builtin__.xyz").unwrap(),
+            //     vec!["bar".to_string()],
+            // ),
+        ];
+        let mut actual = vec![];
+        tree.visit_inner(&["foo"], &mut |id, libraries| {
+            actual.push((
+                id.clone(),
+                libraries.iter().map(|l| l.to_string()).collect::<Vec<_>>(),
+            ));
+        });
+
+        expected.sort();
+        actual.sort();
+        assert_eq!(&expected, &*actual, "\n\n{expected:#?}\n\n{actual:#?}");
     }
 }

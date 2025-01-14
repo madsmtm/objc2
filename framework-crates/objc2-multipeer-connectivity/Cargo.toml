@@ -21,7 +21,14 @@ objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = fal
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true }
+objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "NSKeyValueBinding",
+    "NSNib",
+    "NSResponder",
+    "NSStoryboardSegue",
+    "NSUserInterfaceItemIdentification",
+    "NSViewController",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -40,7 +47,7 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-foundation/block2"]
+block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
 MCAdvertiserAssistant = [
@@ -48,12 +55,6 @@ MCAdvertiserAssistant = [
     "objc2-foundation/NSString",
 ]
 MCBrowserViewController = [
-    "objc2-app-kit?/NSKeyValueBinding",
-    "objc2-app-kit?/NSNib",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSStoryboardSegue",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSViewController",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",

@@ -552,7 +552,6 @@ dependencies = [
  "objc2-core-foundation",
  "objc2-core-media",
  "objc2-foundation",
- "objc2-quartz-core",
 ]
 
 [[package]]
@@ -603,7 +602,6 @@ version = "0.2.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
- "objc2-core-foundation",
  "objc2-foundation",
 ]
 
@@ -672,7 +670,6 @@ dependencies = [
  "objc2",
  "objc2-app-kit",
  "objc2-contacts",
- "objc2-core-foundation",
  "objc2-foundation",
 ]
 
@@ -1000,7 +997,6 @@ dependencies = [
  "block2",
  "objc2",
  "objc2-app-kit",
- "objc2-core-foundation",
  "objc2-foundation",
 ]
 
@@ -1045,7 +1041,6 @@ version = "0.2.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
- "objc2-core-foundation",
  "objc2-foundation",
 ]
 
@@ -1067,7 +1062,6 @@ dependencies = [
  "block2",
  "objc2",
  "objc2-app-kit",
- "objc2-core-foundation",
  "objc2-foundation",
 ]
 
@@ -1077,7 +1071,6 @@ version = "0.2.2"
 dependencies = [
  "block2",
  "objc2",
- "objc2-core-foundation",
  "objc2-foundation",
  "objc2-security",
 ]
@@ -1089,7 +1082,6 @@ dependencies = [
  "block2",
  "objc2",
  "objc2-app-kit",
- "objc2-core-foundation",
  "objc2-foundation",
  "objc2-local-authentication",
 ]
@@ -1307,7 +1299,6 @@ dependencies = [
  "bitflags",
  "objc2",
  "objc2-app-kit",
- "objc2-core-foundation",
  "objc2-foundation",
 ]
 
@@ -1401,7 +1392,6 @@ version = "0.2.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
- "objc2-core-foundation",
  "objc2-foundation",
 ]
 

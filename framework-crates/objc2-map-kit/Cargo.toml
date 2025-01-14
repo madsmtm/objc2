@@ -16,19 +16,44 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFCGTypes",
+    "objc2",
+] }
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = [
+    "CGContext",
+    "CGPath",
+    "objc2",
+] }
+objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true, features = [
+    "CLHeading",
+    "CLLocation",
+    "CLPlacemark",
+] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true }
+objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "NSAccessibilityProtocols",
+    "NSAnimation",
+    "NSAppearance",
+    "NSColor",
+    "NSDragging",
+    "NSImage",
+    "NSKeyValueBinding",
+    "NSNib",
+    "NSResponder",
+    "NSStoryboardSegue",
+    "NSUserInterfaceItemIdentification",
+    "NSView",
+    "NSViewController",
+] }
 
 [target.'cfg(not(target_os = "tvos"))'.dependencies]
-objc2-contacts = { path = "../objc2-contacts", version = "0.2.2", default-features = false, optional = true }
+objc2-contacts = { path = "../objc2-contacts", version = "0.2.2", default-features = false, optional = true, features = ["CNPostalAddress"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -46,57 +71,39 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-app-kit?/bitflags", "objc2-core-foundation?/bitflags", "objc2-core-graphics?/bitflags", "objc2-foundation/bitflags"]
-block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-contacts?/block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-core-location?/block2", "objc2-foundation/block2"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
-objc2-contacts = ["dep:objc2-contacts", "objc2-core-location?/objc2-contacts"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
-objc2-core-graphics = ["dep:objc2-core-graphics", "objc2-app-kit?/objc2-core-graphics"]
+objc2-contacts = ["dep:objc2-contacts"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-location = ["dep:objc2-core-location"]
 
 MKAddressFilter = [
     "bitflags",
     "objc2-foundation/NSObject",
 ]
-MKAnnotation = [
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation/NSString",
-]
+MKAnnotation = ["objc2-foundation/NSString"]
 MKAnnotationView = [
-    "objc2-app-kit?/NSAccessibilityProtocols",
-    "objc2-app-kit?/NSAnimation",
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSImage",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSView",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+    "objc2-foundation/objc2-core-foundation",
 ]
-MKCircle = ["objc2-core-location?/CLLocation"]
-MKCircleRenderer = ["objc2-core-foundation?/CFCGTypes"]
+MKCircle = []
+MKCircleRenderer = []
 MKClusterAnnotation = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
 ]
 MKCompassButton = [
-    "objc2-app-kit?/NSAccessibilityProtocols",
-    "objc2-app-kit?/NSAnimation",
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSView",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
+    "objc2-foundation/objc2-core-foundation",
 ]
 MKDirections = ["objc2-foundation/NSError"]
 MKDirectionsRequest = [
@@ -104,14 +111,12 @@ MKDirectionsRequest = [
     "objc2-foundation/NSURL",
 ]
 MKDirectionsResponse = [
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSString",
 ]
 MKDirectionsTypes = ["bitflags"]
 MKDistanceFormatter = [
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSFormatter",
     "objc2-foundation/NSLocale",
     "objc2-foundation/NSObject",
@@ -124,27 +129,18 @@ MKGeoJSONSerialization = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
-MKGeodesicPolyline = ["objc2-core-location?/CLLocation"]
-MKGeometry = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation/NSValue",
-]
+MKGeodesicPolyline = []
+MKGeometry = ["objc2-foundation/NSValue"]
 MKGradientPolylineRenderer = [
-    "objc2-app-kit?/NSColor",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSValue",
 ]
 MKHybridMapConfiguration = ["objc2-foundation/NSObject"]
 MKImageryMapConfiguration = ["objc2-foundation/NSObject"]
-MKLocalPointsOfInterestRequest = [
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation/NSObject",
-]
+MKLocalPointsOfInterestRequest = ["objc2-foundation/NSObject"]
 MKLocalSearch = ["objc2-foundation/NSError"]
 MKLocalSearchCompleter = [
     "bitflags",
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
@@ -152,50 +148,29 @@ MKLocalSearchCompleter = [
 ]
 MKLocalSearchRequest = [
     "bitflags",
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-MKLocalSearchResponse = [
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation/NSArray",
-]
+MKLocalSearchResponse = ["objc2-foundation/NSArray"]
 MKLookAroundScene = ["objc2-foundation/NSObject"]
-MKLookAroundSceneRequest = [
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation/NSError",
-]
-MKLookAroundSnapshot = ["objc2-app-kit?/NSImage"]
-MKLookAroundSnapshotOptions = ["objc2-core-foundation?/CFCGTypes"]
+MKLookAroundSceneRequest = ["objc2-foundation/NSError"]
+MKLookAroundSnapshot = []
+MKLookAroundSnapshotOptions = []
 MKLookAroundSnapshotter = ["objc2-foundation/NSError"]
 MKLookAroundViewController = [
-    "objc2-app-kit?/NSKeyValueBinding",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSStoryboardSegue",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSViewController",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-MKMapCamera = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation/NSObject",
-]
+MKMapCamera = ["objc2-foundation/NSObject"]
 MKMapCameraBoundary = [
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
-MKMapCameraZoomRange = [
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation/NSObject",
-]
+MKMapCameraZoomRange = ["objc2-foundation/NSObject"]
 MKMapConfiguration = ["objc2-foundation/NSObject"]
 MKMapItem = [
-    "objc2-core-location?/CLPlacemark",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
@@ -206,16 +181,9 @@ MKMapItem = [
 ]
 MKMapItemAnnotation = []
 MKMapItemDetailViewController = [
-    "objc2-app-kit?/NSKeyValueBinding",
-    "objc2-app-kit?/NSNib",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSStoryboardSegue",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSViewController",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
 ]
 MKMapItemIdentifier = [
     "objc2-foundation/NSObject",
@@ -223,30 +191,16 @@ MKMapItemIdentifier = [
 ]
 MKMapItemRequest = ["objc2-foundation/NSError"]
 MKMapSnapshot = [
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSImage",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSGeometry",
+    "objc2-foundation/objc2-core-foundation",
 ]
 MKMapSnapshotOptions = [
-    "objc2-app-kit?/NSAppearance",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
+    "objc2-foundation/objc2-core-foundation",
 ]
 MKMapSnapshotter = ["objc2-foundation/NSError"]
 MKMapView = [
-    "objc2-app-kit?/NSAccessibilityProtocols",
-    "objc2-app-kit?/NSAnimation",
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSView",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
@@ -254,26 +208,16 @@ MKMapView = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
+    "objc2-foundation/objc2-core-foundation",
 ]
 MKMarkerAnnotationView = [
-    "objc2-app-kit?/NSAccessibilityProtocols",
-    "objc2-app-kit?/NSAnimation",
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSColor",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSImage",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSView",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+    "objc2-foundation/objc2-core-foundation",
 ]
 MKMultiPoint = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSIndexSet",
     "objc2-foundation/NSRange",
@@ -283,80 +227,45 @@ MKMultiPolygon = ["objc2-foundation/NSArray"]
 MKMultiPolygonRenderer = []
 MKMultiPolyline = ["objc2-foundation/NSArray"]
 MKMultiPolylineRenderer = []
-MKOverlay = ["objc2-core-location?/CLLocation"]
+MKOverlay = []
 MKOverlayPathRenderer = [
-    "objc2-app-kit?/NSColor",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGContext",
-    "objc2-core-graphics?/CGPath",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSValue",
 ]
-MKOverlayRenderer = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGContext",
-]
+MKOverlayRenderer = []
 MKPinAnnotationView = [
-    "objc2-app-kit?/NSAccessibilityProtocols",
-    "objc2-app-kit?/NSAnimation",
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSColor",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSView",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+    "objc2-foundation/objc2-core-foundation",
 ]
 MKPitchControl = [
-    "objc2-app-kit?/NSAccessibilityProtocols",
-    "objc2-app-kit?/NSAnimation",
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSView",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
+    "objc2-foundation/objc2-core-foundation",
 ]
 MKPlacemark = [
-    "objc2-contacts?/CNPostalAddress",
-    "objc2-core-location?/CLLocation",
-    "objc2-core-location?/CLPlacemark",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-MKPointAnnotation = [
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation/NSString",
-]
+MKPointAnnotation = ["objc2-foundation/NSString"]
 MKPointOfInterestCategory = ["objc2-foundation/NSString"]
 MKPointOfInterestFilter = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-MKPolygon = [
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation/NSArray",
-]
-MKPolygonRenderer = ["objc2-core-foundation?/CFCGTypes"]
-MKPolyline = ["objc2-core-location?/CLLocation"]
-MKPolylineRenderer = ["objc2-core-foundation?/CFCGTypes"]
-MKSelectionAccessory = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSViewController",
-]
+MKPolygon = ["objc2-foundation/NSArray"]
+MKPolygonRenderer = []
+MKPolyline = []
+MKPolylineRenderer = []
+MKSelectionAccessory = []
 MKShape = ["objc2-foundation/NSString"]
 MKStandardMapConfiguration = ["objc2-foundation/NSObject"]
 MKTileOverlay = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
@@ -364,37 +273,19 @@ MKTileOverlay = [
 ]
 MKTileOverlayRenderer = []
 MKTypes = ["objc2-foundation/NSString"]
-MKUserLocation = [
-    "objc2-core-location?/CLHeading",
-    "objc2-core-location?/CLLocation",
-    "objc2-foundation/NSString",
-]
+MKUserLocation = ["objc2-foundation/NSString"]
 MKUserLocationView = [
-    "objc2-app-kit?/NSAccessibilityProtocols",
-    "objc2-app-kit?/NSAnimation",
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSView",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+    "objc2-foundation/objc2-core-foundation",
 ]
 MKZoomControl = [
-    "objc2-app-kit?/NSAccessibilityProtocols",
-    "objc2-app-kit?/NSAnimation",
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSView",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
+    "objc2-foundation/objc2-core-foundation",
 ]
 NSUserActivity_MKMapItem = ["objc2-foundation/NSUserActivity"]
 all = [

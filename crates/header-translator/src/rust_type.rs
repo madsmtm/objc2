@@ -1,16 +1,16 @@
-use std::fmt;
 use std::str::FromStr;
 use std::sync::LazyLock;
+use std::{fmt, iter};
 
 use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
 
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
-use crate::id::ItemIdentifier;
+use crate::id::{ItemIdentifier, ItemTree};
 use crate::protocol::ProtocolRef;
-use crate::stmt::parse_superclasses;
 use crate::stmt::{anonymous_record_name, is_bridged};
+use crate::stmt::{parse_superclasses, superclasses_required_items};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
 
@@ -268,22 +268,23 @@ pub enum Primitive {
 }
 
 impl Primitive {
-    fn required_items(&self) -> Vec<ItemIdentifier> {
+    fn required_items(&self) -> impl Iterator<Item = ItemTree> {
         match self {
-            Self::ObjcBool => vec![ItemIdentifier::objc("Bool")],
-            Self::NSInteger => vec![ItemIdentifier::objc("NSInteger")],
-            Self::NSUInteger => vec![ItemIdentifier::objc("NSUInteger")],
-            Self::Imp => vec![ItemIdentifier::objc("Imp")],
-            Self::VaList => vec![ItemIdentifier::core_ffi("VaList")],
+            Self::ObjcBool => Some(ItemTree::objc("Bool")),
+            Self::NSInteger => Some(ItemTree::objc("NSInteger")),
+            Self::NSUInteger => Some(ItemTree::objc("NSUInteger")),
+            Self::Imp => Some(ItemTree::objc("Imp")),
+            Self::VaList => Some(ItemTree::core_ffi("VaList")),
             _ => {
                 let s = self.as_str();
                 if s.starts_with("c_") {
-                    vec![ItemIdentifier::core_ffi(s)]
+                    Some(ItemTree::core_ffi(s))
                 } else {
-                    vec![]
+                    None
                 }
             }
         }
+        .into_iter()
     }
 
     const fn as_str(&self) -> &'static str {
@@ -1293,14 +1294,13 @@ impl Ty {
         }
     }
 
-    pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
-        match self {
-            Self::Primitive(prim) => prim.required_items(),
-            Self::Simd { ty, .. } => {
-                let mut items = ty.required_items();
-                items.push(ItemIdentifier::core_simd_simd());
-                items
-            }
+    pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
+        let items: Vec<ItemTree> = match self {
+            Self::Primitive(prim) => prim.required_items().collect(),
+            Self::Simd { ty, .. } => ty
+                .required_items()
+                .chain(iter::once(ItemTree::core_simd_simd()))
+                .collect(),
             Self::Class {
                 id,
                 thread_safety: _,
@@ -1308,37 +1308,38 @@ impl Ty {
                 generics,
                 protocols,
             } => {
-                let mut items = vec![id.clone()];
-                items.extend(superclasses.iter().cloned());
-                for generic in generics {
-                    items.extend(generic.required_items());
-                }
-                for (protocol, _) in protocols {
-                    items.extend(protocol.required_items());
-                }
-                items
+                let superclasses = superclasses_required_items(superclasses.iter().cloned());
+                let protocols = protocols
+                    .iter()
+                    .flat_map(|(protocol, _)| protocol.required_items());
+                iter::once(ItemTree::new(id.clone(), superclasses))
+                    .chain(protocols)
+                    .chain(generics.iter().flat_map(|generic| generic.required_items()))
+                    .collect()
             }
-            Self::GenericParam { .. } => Vec::new(),
+            Self::GenericParam { .. } => vec![],
             Self::AnyObject { protocols } => {
-                let mut items = vec![ItemIdentifier::objc("AnyObject")];
-                for (protocol, _) in protocols {
-                    items.extend(protocol.required_items());
-                }
-                items
+                let protocols = protocols
+                    .iter()
+                    .flat_map(|(protocol, _)| protocol.required_items());
+                iter::once(ItemTree::objc("AnyObject"))
+                    .chain(protocols)
+                    .collect()
             }
-            Self::AnyProtocol => vec![ItemIdentifier::objc("AnyProtocol")],
+            Self::AnyProtocol => vec![ItemTree::objc("AnyProtocol")],
             Self::AnyClass { protocols } => {
-                let mut items = vec![ItemIdentifier::objc("AnyClass")];
-                for (protocol, _) in protocols {
-                    items.extend(protocol.required_items());
-                }
-                items
+                let protocols = protocols
+                    .iter()
+                    .flat_map(|(protocol, _)| protocol.required_items());
+                iter::once(ItemTree::objc("AnyClass"))
+                    .chain(protocols)
+                    .collect()
             }
             // Methods are always emitted on an `impl`, which means that
             // `Self` is always available there, and don't required additional
             // imports, cfgs or other such things.
-            Self::Self_ => Vec::new(),
-            Self::Sel { .. } => vec![ItemIdentifier::objc("Sel")],
+            Self::Self_ => vec![],
+            Self::Sel { .. } => vec![ItemTree::objc("Sel")],
             Self::Pointer {
                 pointee,
                 nullability,
@@ -1348,67 +1349,50 @@ impl Ty {
                 pointee,
                 nullability,
                 ..
-            } => {
-                let mut items = pointee.required_items();
-                if *nullability == Nullability::NonNull {
-                    items.push(ItemIdentifier::core_ptr_nonnull());
-                }
-                items
-            }
+            } => pointee
+                .required_items()
+                .chain((*nullability == Nullability::NonNull).then(ItemTree::core_ptr_nonnull))
+                .collect(),
             Self::TypeDef {
                 id,
                 to,
                 nullability,
                 ..
             } => {
-                let mut items = to.required_items();
-                items.push(id.clone());
+                let mut items = vec![ItemTree::new(id.clone(), to.required_items())];
                 if *nullability == Nullability::NonNull {
-                    items.push(ItemIdentifier::core_ptr_nonnull());
+                    items.push(ItemTree::core_ptr_nonnull());
                 }
                 items
             }
-            Self::Array { element_type, .. } => element_type.required_items(),
+            Self::Array { element_type, .. } => element_type.required_items().collect(),
             Self::Enum { id, ty } => {
-                let mut items = ty.required_items();
-                items.push(id.clone());
-                items
+                vec![ItemTree::new(id.clone(), ty.required_items())]
             }
             Self::Struct { id, fields, .. } | Self::Union { id, fields, .. } => {
-                let mut items = Vec::new();
-                for field in fields {
-                    items.extend(field.required_items());
-                }
-                items.push(id.clone());
-                items
+                let fields = fields.iter().flat_map(|field| field.required_items());
+                vec![ItemTree::new(id.clone(), fields)]
             }
             Self::Fn {
                 is_variadic: _,
                 no_escape: _,
                 arguments,
                 result_type,
-            } => {
-                let mut items = vec![];
-                for arg in arguments {
-                    items.extend(arg.required_items());
-                }
-                items.extend(result_type.required_items());
-                items
-            }
+            } => result_type
+                .required_items()
+                .chain(arguments.iter().flat_map(|arg| arg.required_items()))
+                .collect(),
             Self::Block {
                 sendable: _,
                 no_escape: _,
                 arguments,
                 result_type,
-            } => {
-                let mut items = vec![ItemIdentifier::block()];
-                for arg in arguments {
-                    items.extend(arg.required_items());
-                }
-                items.extend(result_type.required_items());
-                items
-            }
-        }
+            } => iter::once(ItemTree::block())
+                .chain(result_type.required_items())
+                .chain(arguments.iter().flat_map(|arg| arg.required_items()))
+                .collect(),
+        };
+        items.into_iter()
     }
 
     /// Whether this type requires MainThreadMarker to construct.
@@ -1967,26 +1951,26 @@ impl Ty {
         })
     }
 
-    pub(crate) fn fn_return_required_items(&self) -> Vec<ItemIdentifier> {
-        let mut items = self.required_items();
+    pub(crate) fn fn_return_required_items(&self) -> impl Iterator<Item = ItemTree> {
+        let mut items: Vec<_> = self.required_items().collect();
         match self {
             Self::Pointer {
                 lifetime: Lifetime::Unspecified,
                 pointee,
                 ..
             } if pointee.is_object_like() && !pointee.is_static_object() => {
-                items.push(ItemIdentifier::objc("Retained"));
+                items.push(ItemTree::objc("Retained"));
             }
             Self::TypeDef { .. } if self.is_object_like() && !self.is_static_object() => {
-                items.push(ItemIdentifier::objc("Retained"));
+                items.push(ItemTree::objc("Retained"));
             }
             Self::TypeDef { is_cf, .. } if *is_cf => {
-                items.push(ItemIdentifier::cf("CFRetained"));
-                items.push(ItemIdentifier::core_ptr_nonnull());
+                items.push(ItemTree::cf("CFRetained"));
+                items.push(ItemTree::core_ptr_nonnull());
             }
             _ => {}
         }
-        items
+        items.into_iter()
     }
 
     pub(crate) fn fn_return_converter(
@@ -2725,11 +2709,11 @@ mod tests {
     #[test]
     fn test_nested_typedef_is_object_like() {
         let ty = Ty::TypeDef {
-            id: ItemIdentifier::dummy(),
+            id: ItemIdentifier::dummy(0),
             nullability: Nullability::Unspecified,
             lifetime: Lifetime::Unspecified,
             to: Box::new(Ty::TypeDef {
-                id: ItemIdentifier::dummy(),
+                id: ItemIdentifier::dummy(1),
                 nullability: Nullability::Unspecified,
                 lifetime: Lifetime::Unspecified,
                 to: Box::new(Ty::Pointer {
@@ -2737,7 +2721,7 @@ mod tests {
                     is_const: false,
                     lifetime: Lifetime::Unspecified,
                     pointee: Box::new(Ty::Class {
-                        id: ItemIdentifier::dummy(),
+                        id: ItemIdentifier::dummy(2),
                         thread_safety: ThreadSafety::dummy(),
                         superclasses: vec![],
                         generics: vec![],
@@ -2750,5 +2734,29 @@ mod tests {
         };
 
         assert!(ty.is_object_like());
+    }
+
+    #[test]
+    fn test_required_items_tree() {
+        let ty = Ty::TypeDef {
+            id: ItemIdentifier::dummy(0),
+            nullability: Nullability::Unspecified,
+            lifetime: Lifetime::Unspecified,
+            to: Box::new(Ty::Struct {
+                id: ItemIdentifier::dummy(1),
+                fields: vec![Ty::Primitive(Primitive::Char)],
+                is_bridged: false,
+            }),
+            is_cf: false,
+        };
+        let required_items = [ItemTree::new(
+            ItemIdentifier::dummy(0),
+            [ItemTree::new(
+                ItemIdentifier::dummy(1),
+                Primitive::Char.required_items(),
+            )],
+        )];
+
+        assert_eq!(ty.required_items().collect::<Vec<_>>(), required_items);
     }
 }

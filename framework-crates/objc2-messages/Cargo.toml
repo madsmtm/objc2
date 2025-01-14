@@ -18,10 +18,24 @@ workspace = true
 [dependencies]
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFCGTypes",
+    "objc2",
+] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
-objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true }
-objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features = false, optional = true }
+objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true, features = ["CALayer"] }
+objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "UIAppearance",
+    "UIDynamicBehavior",
+    "UIFocus",
+    "UIGeometry",
+    "UIImage",
+    "UIResponder",
+    "UITraitCollection",
+    "UIView",
+    "UIViewController",
+    "objc2-core-foundation",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
@@ -37,9 +51,9 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-foundation/block2", "objc2-quartz-core?/block2", "objc2-ui-kit?/block2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-quartz-core?/objc2-core-foundation", "objc2-ui-kit?/objc2-core-foundation"]
-objc2-quartz-core = ["dep:objc2-quartz-core", "objc2-ui-kit?/objc2-quartz-core"]
+block2 = ["dep:block2"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 
 MSConversation = [
@@ -63,19 +77,12 @@ MSMessageTemplateLayout = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
-    "objc2-ui-kit?/UIImage",
 ]
 MSMessagesAppViewController = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIAppearance",
-    "objc2-ui-kit?/UIFocus",
-    "objc2-ui-kit?/UIResponder",
-    "objc2-ui-kit?/UITraitCollection",
-    "objc2-ui-kit?/UIViewController",
 ]
 MSSession = ["objc2-foundation/NSObject"]
 MSSticker = [
@@ -84,46 +91,20 @@ MSSticker = [
     "objc2-foundation/NSURL",
 ]
 MSStickerBrowserView = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
-    "objc2-quartz-core?/CALayer",
-    "objc2-ui-kit?/UIAppearance",
-    "objc2-ui-kit?/UIDynamicBehavior",
-    "objc2-ui-kit?/UIFocus",
-    "objc2-ui-kit?/UIGeometry",
-    "objc2-ui-kit?/UIResponder",
-    "objc2-ui-kit?/UITraitCollection",
-    "objc2-ui-kit?/UIView",
 ]
 MSStickerBrowserViewController = [
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-ui-kit?/UIAppearance",
-    "objc2-ui-kit?/UIFocus",
-    "objc2-ui-kit?/UIResponder",
-    "objc2-ui-kit?/UITraitCollection",
-    "objc2-ui-kit?/UIView",
-    "objc2-ui-kit?/UIViewController",
 ]
-MSStickerBrowserViewDataSource = [
-    "objc2-ui-kit?/UIResponder",
-    "objc2-ui-kit?/UIView",
-]
+MSStickerBrowserViewDataSource = []
 MSStickerView = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
-    "objc2-quartz-core?/CALayer",
-    "objc2-ui-kit?/UIAppearance",
-    "objc2-ui-kit?/UIDynamicBehavior",
-    "objc2-ui-kit?/UIFocus",
-    "objc2-ui-kit?/UIResponder",
-    "objc2-ui-kit?/UITraitCollection",
-    "objc2-ui-kit?/UIView",
 ]
 MessagesDefines = []
 all = [

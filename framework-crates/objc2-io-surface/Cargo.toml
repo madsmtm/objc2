@@ -16,11 +16,19 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, optional = true, features = ["alloc"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFBase",
+    "CFDictionary",
+] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "NSDictionary",
+    "NSObject",
+    "NSString",
+    "alloc",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -37,28 +45,20 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation?/bitflags"]
-libc = ["dep:libc", "objc2-core-foundation?/libc", "objc2-foundation?/libc"]
-objc2 = ["dep:objc2", "objc2-core-foundation?/objc2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation?/objc2-core-foundation"]
+bitflags = ["dep:bitflags"]
+libc = ["dep:libc"]
+objc2 = ["dep:objc2"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-foundation = ["dep:objc2-foundation"]
 
 IOSurface = []
 IOSurfaceAPI = []
 IOSurfaceBase = []
-IOSurfaceRef = [
-    "bitflags",
-    "objc2-core-foundation?/CFBase",
-    "objc2-core-foundation?/CFDictionary",
-]
+IOSurfaceRef = ["bitflags"]
 IOSurfaceTypes = ["bitflags"]
-ObjC = [
-    "objc2-foundation?/NSDictionary",
-    "objc2-foundation?/NSObject",
-    "objc2-foundation?/NSString",
-]
+ObjC = []
 all = [
     "IOSurface",
     "IOSurfaceAPI",

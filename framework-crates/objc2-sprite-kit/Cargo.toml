@@ -16,21 +16,50 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.2.2", default-features = false, optional = true }
-objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.2.2", default-features = false, optional = true }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.2.2", default-features = false, optional = true, features = ["AVPlayer"] }
+objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.2.2", default-features = false, optional = true, features = [
+    "AVAudioEngine",
+    "AVAudioNode",
+] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFCGTypes",
+    "objc2",
+] }
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = [
+    "CGImage",
+    "CGPath",
+    "objc2",
+] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true }
+objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true, features = [
+    "NSAccessibilityProtocols",
+    "NSAnimation",
+    "NSAppearance",
+    "NSColor",
+    "NSDragging",
+    "NSEvent",
+    "NSImage",
+    "NSParagraphStyle",
+    "NSResponder",
+    "NSUserInterfaceItemIdentification",
+    "NSView",
+] }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
-objc2-core-image = { path = "../objc2-core-image", version = "0.2.2", default-features = false, optional = true }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true }
+objc2-core-image = { path = "../objc2-core-image", version = "0.2.2", default-features = false, optional = true, features = ["CIFilter"] }
+objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true, features = [
+    "MTLCommandBuffer",
+    "MTLCommandEncoder",
+    "MTLCommandQueue",
+    "MTLDevice",
+    "MTLRenderCommandEncoder",
+    "MTLRenderPass",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -48,21 +77,19 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-app-kit?/bitflags", "objc2-av-foundation?/bitflags", "objc2-avf-audio?/bitflags", "objc2-core-foundation?/bitflags", "objc2-core-graphics?/bitflags", "objc2-foundation/bitflags", "objc2-metal?/bitflags"]
-block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-av-foundation?/block2", "objc2-avf-audio?/block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-core-image?/block2", "objc2-foundation/block2", "objc2-metal?/block2"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
-objc2-avf-audio = ["dep:objc2-avf-audio", "objc2-av-foundation?/objc2-avf-audio"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-av-foundation?/objc2-core-foundation", "objc2-core-image?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-metal?/objc2-core-foundation"]
-objc2-core-graphics = ["dep:objc2-core-graphics", "objc2-app-kit?/objc2-core-graphics", "objc2-av-foundation?/objc2-core-graphics", "objc2-core-image?/objc2-core-graphics"]
-objc2-core-image = ["dep:objc2-core-image", "objc2-app-kit?/objc2-core-image", "objc2-av-foundation?/objc2-core-image"]
-objc2-metal = ["dep:objc2-metal", "objc2-core-graphics?/objc2-metal", "objc2-core-image?/objc2-metal"]
+objc2-avf-audio = ["dep:objc2-avf-audio"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-core-graphics = ["dep:objc2-core-graphics"]
+objc2-core-image = ["dep:objc2-core-image"]
+objc2-metal = ["dep:objc2-metal"]
 
 SK3DNode = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
@@ -71,10 +98,6 @@ SK3DNode = [
     "objc2-foundation/NSString",
 ]
 SKAction = [
-    "objc2-app-kit?/NSColor",
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGPath",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
@@ -86,8 +109,6 @@ SKAttribute = [
     "objc2-foundation/NSString",
 ]
 SKAudioNode = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-avf-audio?/AVAudioNode",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
@@ -97,20 +118,14 @@ SKAudioNode = [
     "objc2-foundation/NSURL",
 ]
 SKCameraNode = [
-    "objc2-app-kit?/NSResponder",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
-SKConstraint = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation/NSObject",
-]
+SKConstraint = ["objc2-foundation/NSObject"]
 SKCropNode = [
-    "objc2-app-kit?/NSResponder",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -118,8 +133,6 @@ SKCropNode = [
     "objc2-foundation/NSString",
 ]
 SKEffectNode = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-image?/CIFilter",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -128,9 +141,6 @@ SKEffectNode = [
     "objc2-foundation/NSString",
 ]
 SKEmitterNode = [
-    "objc2-app-kit?/NSColor",
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
@@ -140,8 +150,6 @@ SKEmitterNode = [
     "objc2-foundation/NSString",
 ]
 SKFieldNode = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -149,17 +157,12 @@ SKFieldNode = [
     "objc2-foundation/NSString",
 ]
 SKKeyframeSequence = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSValue",
 ]
 SKLabelNode = [
-    "objc2-app-kit?/NSColor",
-    "objc2-app-kit?/NSParagraphStyle",
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
@@ -168,9 +171,6 @@ SKLabelNode = [
     "objc2-foundation/NSString",
 ]
 SKLightNode = [
-    "objc2-app-kit?/NSColor",
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -178,17 +178,11 @@ SKLightNode = [
     "objc2-foundation/NSString",
 ]
 SKMutableTexture = [
-    "objc2-app-kit?/NSImage",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGImage",
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 SKNode = [
-    "objc2-app-kit?/NSEvent",
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
@@ -198,33 +192,18 @@ SKNode = [
     "objc2-foundation/NSString",
 ]
 SKNode_NSAccessibility = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
 ]
 SKPhysicsBody = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGPath",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
 ]
-SKPhysicsContact = ["objc2-core-foundation?/CFCGTypes"]
-SKPhysicsJoint = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation/NSObject",
-]
-SKPhysicsWorld = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation/NSObject",
-]
-SKReachConstraints = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation/NSObject",
-]
+SKPhysicsContact = []
+SKPhysicsJoint = ["objc2-foundation/NSObject"]
+SKPhysicsWorld = ["objc2-foundation/NSObject"]
+SKReachConstraints = ["objc2-foundation/NSObject"]
 SKReferenceNode = [
-    "objc2-app-kit?/NSResponder",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -232,28 +211,9 @@ SKReferenceNode = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
-SKRegion = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGPath",
-    "objc2-foundation/NSObject",
-]
-SKRenderer = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-foundation/NSDate",
-    "objc2-metal?/MTLCommandBuffer",
-    "objc2-metal?/MTLCommandEncoder",
-    "objc2-metal?/MTLCommandQueue",
-    "objc2-metal?/MTLDevice",
-    "objc2-metal?/MTLRenderCommandEncoder",
-    "objc2-metal?/MTLRenderPass",
-]
+SKRegion = ["objc2-foundation/NSObject"]
+SKRenderer = ["objc2-foundation/NSDate"]
 SKScene = [
-    "objc2-app-kit?/NSColor",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSView",
-    "objc2-avf-audio?/AVAudioEngine",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
@@ -267,10 +227,6 @@ SKShader = [
     "objc2-foundation/NSString",
 ]
 SKShapeNode = [
-    "objc2-app-kit?/NSColor",
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGPath",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -279,9 +235,6 @@ SKShapeNode = [
     "objc2-foundation/NSString",
 ]
 SKSpriteNode = [
-    "objc2-app-kit?/NSColor",
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -290,10 +243,6 @@ SKSpriteNode = [
     "objc2-foundation/NSString",
 ]
 SKTexture = [
-    "objc2-app-kit?/NSImage",
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGImage",
-    "objc2-core-image?/CIFilter",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
@@ -307,16 +256,12 @@ SKTextureAtlas = [
     "objc2-foundation/NSString",
 ]
 SKTileDefinition = [
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 SKTileMapNode = [
-    "objc2-app-kit?/NSColor",
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
@@ -327,15 +272,12 @@ SKTileMapNode = [
 ]
 SKTileSet = [
     "bitflags",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
 SKTransformNode = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -343,8 +285,6 @@ SKTransformNode = [
     "objc2-foundation/NSString",
 ]
 SKTransition = [
-    "objc2-app-kit?/NSColor",
-    "objc2-core-image?/CIFilter",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
 ]
@@ -354,9 +294,6 @@ SKUniform = [
 ]
 SKVersion = []
 SKVideoNode = [
-    "objc2-app-kit?/NSResponder",
-    "objc2-av-foundation?/AVPlayer",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -365,18 +302,11 @@ SKVideoNode = [
     "objc2-foundation/NSURL",
 ]
 SKView = [
-    "objc2-app-kit?/NSAccessibilityProtocols",
-    "objc2-app-kit?/NSAnimation",
-    "objc2-app-kit?/NSAppearance",
-    "objc2-app-kit?/NSDragging",
-    "objc2-app-kit?/NSResponder",
-    "objc2-app-kit?/NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/NSView",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
+    "objc2-foundation/objc2-core-foundation",
 ]
 SKWarpGeometry = [
     "objc2-foundation/NSArray",

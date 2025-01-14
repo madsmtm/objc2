@@ -16,10 +16,10 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true }
+objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true, features = ["CLLocation"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [package.metadata.docs.rs]
@@ -38,10 +38,10 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-foundation/bitflags"]
-block2 = ["dep:block2", "objc2-core-location?/block2", "objc2-foundation/block2"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
 objc2-core-location = ["dep:objc2-core-location"]
 
 CKAcceptSharesOperation = [
@@ -139,12 +139,12 @@ CKFetchWebAuthTokenOperation = [
     "objc2-foundation/NSString",
 ]
 CKLocationSortDescriptor = [
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObjCRuntime",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSortDescriptor",
     "objc2-foundation/NSString",
+    "objc2-foundation/block2",
 ]
 CKMarkNotificationsReadOperation = ["objc2-foundation/NSOperation"]
 CKModifyBadgeOperation = ["objc2-foundation/NSOperation"]
@@ -199,7 +199,6 @@ CKQueryOperation = [
     "objc2-foundation/NSString",
 ]
 CKRecord = [
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSData",

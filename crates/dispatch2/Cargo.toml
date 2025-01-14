@@ -17,7 +17,7 @@ authors = ["Mads Marquart <mads@marquart.dk>", "Mary <mary@mary.zone>"]
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false }
+bitflags = { version = "2.5.0", default-features = false, features = ["std"] }
 block2 = { path = "../block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
@@ -40,7 +40,7 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags/std"]
+std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 libc = ["dep:libc"]

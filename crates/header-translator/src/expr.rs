@@ -7,6 +7,7 @@ use clang::{Entity, EntityKind, EntityVisitResult, EvaluationResult};
 
 use crate::availability::Availability;
 use crate::context::MacroLocation;
+use crate::id::ItemTree;
 use crate::name_translation::enum_prefix;
 use crate::rust_type::Ty;
 use crate::unexposed_attr::UnexposedAttr;
@@ -274,7 +275,7 @@ impl Expr {
         }
     }
 
-    pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
+    pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
         let mut items = Vec::new();
 
         match self {
@@ -283,18 +284,17 @@ impl Expr {
             Self::Float(_) => {}
             Self::MacroInvocation { evaluated, id } => {
                 if evaluated.is_none() {
-                    items.push(id.clone());
+                    items.push(ItemTree::from_id(id.clone()));
                 }
             }
             Self::Enum { id, .. } => {
-                items.push(id.clone());
+                items.push(ItemTree::from_id(id.clone()));
             }
             Self::Const(id) => {
-                items.push(id.clone());
+                items.push(ItemTree::from_id(id.clone()));
             }
             Self::Var { id, ty } => {
-                items.push(id.clone());
-                items.extend(ty.required_items());
+                items.push(ItemTree::new(id.clone(), ty.required_items()));
             }
             Self::Tokens(tokens) => {
                 for token in tokens {
@@ -309,7 +309,7 @@ impl Expr {
             }
         }
 
-        items
+        items.into_iter()
     }
 }
 

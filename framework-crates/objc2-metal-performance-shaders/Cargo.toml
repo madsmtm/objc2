@@ -16,13 +16,22 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false }
+bitflags = { version = "2.5.0", default-features = false, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFCGTypes",
+    "objc2",
+] }
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = [
+    "CGColorConversionInfo",
+    "objc2",
+] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, features = ["MTLCommandBuffer", "MTLDevice"] }
+objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, features = [
+    "MTLCommandBuffer",
+    "MTLDevice",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -39,11 +48,11 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags/std"]
+std = ["alloc"]
 alloc = []
 MPSImage = ["objc2-foundation/NSArray"]
-block2 = ["dep:block2", "objc2-core-foundation?/block2", "objc2-core-graphics?/block2", "objc2-foundation/block2", "objc2-metal/block2"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-foundation/objc2-core-foundation", "objc2-metal/objc2-core-foundation"]
+block2 = ["dep:block2"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 
 MPSAccelerationStructure = [
@@ -205,8 +214,6 @@ MPSCoreTypes = [
 ]
 MPSFunctionConstantIndices = []
 MPSImageConversion = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-graphics?/CGColorConversionInfo",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-metal/MTLDevice",
@@ -357,7 +364,14 @@ MPSKeyedUnarchiver = [
     "objc2-foundation/NSString",
     "objc2-metal/MTLDevice",
 ]
-MPSMatrix = []
+MPSMatrix = [
+    "objc2-foundation/NSArray",
+    "objc2-metal/MTLAllocation",
+    "objc2-metal/MTLBuffer",
+    "objc2-metal/MTLCommandBuffer",
+    "objc2-metal/MTLDevice",
+    "objc2-metal/MTLResource",
+]
 MPSMatrixBatchNormalization = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
@@ -444,7 +458,17 @@ MPSMatrixTypes = [
     "objc2-metal/MTLDevice",
     "objc2-metal/MTLTypes",
 ]
-MPSNDArray = []
+MPSNDArray = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
+    "objc2-metal/MTLAllocation",
+    "objc2-metal/MTLBuffer",
+    "objc2-metal/MTLCommandBuffer",
+    "objc2-metal/MTLDevice",
+    "objc2-metal/MTLResource",
+]
 MPSNDArrayGather = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",

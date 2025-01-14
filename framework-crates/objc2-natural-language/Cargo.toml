@@ -16,10 +16,10 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-ml = { path = "../objc2-core-ml", version = "0.2.2", default-features = false, optional = true }
+objc2-core-ml = { path = "../objc2-core-ml", version = "0.2.2", default-features = false, optional = true, features = ["MLModel"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [package.metadata.docs.rs]
@@ -38,10 +38,10 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-core-ml?/bitflags", "objc2-foundation/bitflags"]
-block2 = ["dep:block2", "objc2-core-ml?/block2", "objc2-foundation/block2"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
 objc2-core-ml = ["dep:objc2-core-ml"]
 
 NLContextualEmbedding = [
@@ -77,7 +77,6 @@ NLLanguageRecognizer = [
     "objc2-foundation/NSValue",
 ]
 NLModel = [
-    "objc2-core-ml?/MLModel",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",

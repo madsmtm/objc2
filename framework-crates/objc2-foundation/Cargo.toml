@@ -16,11 +16,15 @@ license = "MIT" # https://github.com/madsmtm/objc2/issues/23
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFCGTypes",
+    "CFRunLoop",
+    "objc2",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -40,7 +44,7 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
 apple = []
 gnustep-1-7 = ["objc2/gnustep-1-7", "block2?/gnustep-1-7"]
@@ -50,14 +54,14 @@ gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0", "block2?/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1"]
 unstable-static-nsstring = []
 unstable-mutation-return-null = ["NSNull"]
-bitflags = ["dep:bitflags", "objc2-core-foundation?/bitflags"]
-block2 = ["dep:block2", "objc2-core-foundation?/block2"]
-libc = ["dep:libc", "objc2-core-foundation?/libc"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
+libc = ["dep:libc"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 
 FoundationErrors = []
 FoundationLegacySwiftCompatibility = []
-NSAffineTransform = ["objc2-core-foundation?/CFCGTypes"]
+NSAffineTransform = []
 NSAppleEventDescriptor = ["bitflags"]
 NSAppleEventManager = []
 NSAppleScript = []
@@ -107,10 +111,7 @@ NSFileVersion = ["bitflags"]
 NSFileWrapper = ["bitflags"]
 NSFormatter = []
 NSGarbageCollector = []
-NSGeometry = [
-    "bitflags",
-    "objc2-core-foundation?/CFCGTypes",
-]
+NSGeometry = ["bitflags"]
 NSHFSFileTypes = []
 NSHTTPCookie = []
 NSHTTPCookieStorage = []
@@ -172,7 +173,7 @@ NSProxy = []
 NSRange = []
 NSRegularExpression = ["bitflags"]
 NSRelativeDateTimeFormatter = []
-NSRunLoop = ["objc2-core-foundation?/CFRunLoop"]
+NSRunLoop = []
 NSScanner = []
 NSScriptClassDescription = []
 NSScriptCoercionHandler = []

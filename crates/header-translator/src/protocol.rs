@@ -1,8 +1,6 @@
-use std::iter;
-
 use clang::{Entity, EntityKind};
 
-use crate::{immediate_children, Context, ItemIdentifier};
+use crate::{id::ItemTree, immediate_children, Context, ItemIdentifier};
 
 /// Parse the directly referenced protocols of a declaration.
 pub(crate) fn parse_direct_protocols<'clang>(
@@ -54,17 +52,20 @@ impl ProtocolRef {
         }
 
         Self {
-            id: context.replace_protocol_name(ItemIdentifier::new(&entity, context)),
+            id: context.replace_protocol_name(ItemIdentifier::new(entity, context)),
             super_protocols,
         }
     }
 
-    pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
-        self.super_protocols
-            .iter()
-            .flat_map(|super_protocol| super_protocol.required_items())
-            .chain(iter::once(self.id.clone()))
-            .chain(iter::once(ItemIdentifier::objc("__macros__")))
-            .collect()
+    pub(crate) fn required_items(&self) -> impl IntoIterator<Item = ItemTree> {
+        [
+            ItemTree::new(
+                self.id.clone(),
+                self.super_protocols
+                    .iter()
+                    .flat_map(|super_protocol| super_protocol.required_items()),
+            ),
+            ItemTree::objc("__macros__"),
+        ]
     }
 }

@@ -16,10 +16,9 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
 objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
 
 [package.metadata.docs.rs]
@@ -33,10 +32,9 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-app-kit/bitflags", "objc2-core-foundation?/bitflags", "objc2-foundation/bitflags"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
+bitflags = ["dep:bitflags"]
 
 OSALanguage = [
     "bitflags",
@@ -89,11 +87,11 @@ OSAScriptView = [
     "objc2-app-kit/NSUserInterfaceItemIdentification",
     "objc2-app-kit/NSUserInterfaceValidation",
     "objc2-app-kit/NSView",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+    "objc2-foundation/objc2-core-foundation",
 ]
 all = [
     "OSALanguage",
@@ -102,5 +100,4 @@ all = [
     "OSAScriptController",
     "OSAScriptView",
     "bitflags",
-    "objc2-core-foundation",
 ]

@@ -16,19 +16,30 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.2.2", default-features = false, optional = true }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
-objc2-core-image = { path = "../objc2-core-image", version = "0.2.2", default-features = false, optional = true }
-objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true }
-objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true, features = ["objc2"] }
+objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "AVAsset",
+    "AVAssetExportSession",
+    "AVAudioMix",
+    "AVPlayerItem",
+] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+    "CFCGTypes",
+    "objc2",
+] }
+objc2-core-image = { path = "../objc2-core-image", version = "0.2.2", default-features = false, optional = true, features = ["CIImage"] }
+objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true, features = ["CLLocation"] }
+objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true, features = [
+    "CMTime",
+    "objc2",
+] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
-objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", version = "0.2.2", default-features = false, optional = true }
+objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", version = "0.2.2", default-features = false, optional = true, features = ["UTType"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true }
+objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true, features = ["NSImage"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -45,24 +56,23 @@ targets = [
 
 [features]
 default = ["std"]
-std = ["alloc", "bitflags?/std"]
+std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags", "objc2-app-kit?/bitflags", "objc2-av-foundation?/bitflags", "objc2-core-foundation?/bitflags", "objc2-core-media?/bitflags", "objc2-foundation/bitflags"]
-block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-av-foundation?/block2", "objc2-core-foundation?/block2", "objc2-core-image?/block2", "objc2-core-location?/block2", "objc2-core-media?/block2", "objc2-foundation/block2", "objc2-uniform-type-identifiers?/block2"]
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
-objc2-core-foundation = ["dep:objc2-core-foundation", "objc2-app-kit?/objc2-core-foundation", "objc2-av-foundation?/objc2-core-foundation", "objc2-core-image?/objc2-core-foundation", "objc2-foundation/objc2-core-foundation"]
-objc2-core-image = ["dep:objc2-core-image", "objc2-app-kit?/objc2-core-image", "objc2-av-foundation?/objc2-core-image"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-core-image = ["dep:objc2-core-image"]
 objc2-core-location = ["dep:objc2-core-location"]
-objc2-core-media = ["dep:objc2-core-media", "objc2-av-foundation?/objc2-core-media"]
-objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers", "objc2-app-kit?/objc2-uniform-type-identifiers", "objc2-av-foundation?/objc2-uniform-type-identifiers"]
+objc2-core-media = ["dep:objc2-core-media"]
+objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 
 PHAdjustmentData = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSString",
 ]
 PHAsset = [
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
@@ -70,8 +80,6 @@ PHAsset = [
     "objc2-foundation/NSURL",
 ]
 PHAssetChangeRequest = [
-    "objc2-app-kit?/NSImage",
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSEnumerator",
@@ -84,7 +92,6 @@ PHAssetCollectionChangeRequest = [
     "objc2-foundation/NSString",
 ]
 PHAssetCreationRequest = [
-    "objc2-app-kit?/NSImage",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
@@ -115,7 +122,6 @@ PHCloudIdentifier = [
     "objc2-foundation/NSString",
 ]
 PHCollection = [
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
@@ -128,9 +134,6 @@ PHCollectionListChangeRequest = [
     "objc2-foundation/NSString",
 ]
 PHContentEditingInput = [
-    "objc2-app-kit?/NSImage",
-    "objc2-av-foundation?/AVAsset",
-    "objc2-core-location?/CLLocation",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
@@ -139,7 +142,6 @@ PHContentEditingOutput = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSURL",
-    "objc2-uniform-type-identifiers?/UTType",
 ]
 PHError = [
     "objc2-foundation/NSError",
@@ -160,12 +162,6 @@ PHFetchResult = [
     "objc2-foundation/NSRange",
 ]
 PHImageManager = [
-    "objc2-app-kit?/NSImage",
-    "objc2-av-foundation?/AVAsset",
-    "objc2-av-foundation?/AVAssetExportSession",
-    "objc2-av-foundation?/AVAudioMix",
-    "objc2-av-foundation?/AVPlayerItem",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -173,8 +169,6 @@ PHImageManager = [
     "objc2-foundation/NSString",
 ]
 PHLivePhoto = [
-    "objc2-app-kit?/NSImage",
-    "objc2-core-foundation?/CFCGTypes",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSItemProvider",
@@ -183,9 +177,6 @@ PHLivePhoto = [
     "objc2-foundation/NSURL",
 ]
 PHLivePhotoEditingContext = [
-    "objc2-core-foundation?/CFCGTypes",
-    "objc2-core-image?/CIImage",
-    "objc2-core-media?/CMTime",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
@@ -207,7 +198,6 @@ PHProject = [
     "objc2-foundation/NSObject",
 ]
 PHProjectChangeRequest = [
-    "objc2-app-kit?/NSImage",
     "objc2-foundation/NSData",
     "objc2-foundation/NSEnumerator",
     "objc2-foundation/NSString",

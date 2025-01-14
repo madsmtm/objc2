@@ -132,10 +132,20 @@ fn main() -> Result<(), Box<dyn Error>> {
     for dir in workspace_dir.join("framework-crates").read_dir().unwrap() {
         let dir = dir.unwrap();
         if dir.file_type().unwrap().is_dir() {
+            let feature_sets = [vec!["all"]];
+            // println!("Testing all {dir:?} features");
+            // let features = get_features(&dir.path().join("Cargo.toml"))?;
+            // let feature_sets = features.iter().map(|feature| {
+            //     let mut set = vec![&**feature];
+            //     if features.contains(&"objc2".to_string()) {
+            //         set.push("objc2");
+            //     }
+            //     set
+            // });
             test_feature_sets(
                 &mut success,
                 workspace_dir,
-                [vec!["all"]],
+                feature_sets,
                 dir.file_name().to_str().unwrap(),
             )?;
         }

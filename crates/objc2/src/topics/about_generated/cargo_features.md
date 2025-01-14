@@ -8,6 +8,10 @@ This is quite important for compilation speed, but if you don't want to bother
 with it, such as when just starting a new project and experimenting or when
 running an example, use the `"all"` feature.
 
+A complication is that ...
+- Rust can't do automatic linking yet, so we don't get the benefits from the linker removing libraries that aren't needed.
+  - Which means that every dependency/framework should ideally be explicitly requested by the user.
+  - Otherwise, e.g. UniformTypeIdentifiers might get linked, which is only available on newer OSes, and hence would fail at runtime on older OSes.
 
 ## File features
 

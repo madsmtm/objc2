@@ -18,6 +18,7 @@ use crate::expr::Expr;
 use crate::fn_utils::follows_create_rule;
 use crate::id::cfg_gate_ln;
 use crate::id::ItemIdentifier;
+use crate::id::ItemTree;
 use crate::id::Location;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
@@ -387,6 +388,25 @@ pub(crate) fn anonymous_record_name(entity: &Entity<'_>, context: &Context<'_>) 
     Some(format!("{}_{}", parent_id.name, field_name))
 }
 
+pub(crate) fn superclasses_required_items<'a, I>(
+    superclasses: I,
+) -> impl Iterator<Item = ItemTree> + 'a
+where
+    I: IntoIterator<Item = ItemIdentifier> + 'a,
+    <I as IntoIterator>::IntoIter: Clone,
+{
+    let iter = superclasses.into_iter();
+    iter.clone()
+        .enumerate()
+        .map(move |(i, superclass)| {
+            ItemTree::new(
+                superclass,
+                superclasses_required_items(iter.clone().skip(i + 1).collect::<Vec<_>>()),
+            )
+        })
+        .chain(iter::once(ItemTree::objc("__macros__")))
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub enum Counterpart {
     #[default]
@@ -404,6 +424,7 @@ pub enum Stmt {
         id: ItemIdentifier,
         generics: Vec<String>,
         availability: Availability,
+        /// Superclass + generics
         superclasses: Vec<(ItemIdentifier, Vec<String>)>,
         designated_initializers: Vec<String>,
         derives: Derives,
@@ -1665,7 +1686,7 @@ impl Stmt {
                     return vec![Self::FnGetTypeId {
                         id,
                         // Will get replaced in global_analysis with the actual id.
-                        cf_id: ItemIdentifier::dummy(),
+                        cf_id: ItemIdentifier::dummy(0),
                         result_type,
                         availability,
                         can_unwind,
@@ -1744,73 +1765,65 @@ impl Stmt {
     }
 
     /// Items required by the statement at the top-level.
-    pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
-        match self {
-            Self::ClassDecl { superclasses, .. } => {
-                let mut items = vec![ItemIdentifier::objc("__macros__")];
-                items.extend(
-                    superclasses
-                        .iter()
-                        .map(|(superclass, _)| superclass.clone()),
-                );
-                items
-            }
+    pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
+        let items: Vec<ItemTree> = match self {
+            Self::ClassDecl { superclasses, .. } => iter::once(ItemTree::objc("__macros__"))
+                .chain(superclasses_required_items(
+                    superclasses.iter().map(|(s, _)| s.clone()),
+                ))
+                .collect(),
             Self::ExternMethods {
                 cls,
                 cls_superclasses,
                 ..
-            } => {
-                let mut items = vec![cls.clone(), ItemIdentifier::objc("__macros__")];
-                items.extend(cls_superclasses.clone());
-                items
-            }
+            } => vec![
+                ItemTree::objc("__macros__"),
+                ItemTree::new(
+                    cls.clone(),
+                    superclasses_required_items(cls_superclasses.iter().cloned()),
+                ),
+            ],
             // Intentionally doesn't require anything, the impl itself is
             // cfg-gated
-            Self::ExternCategory { .. } => vec![ItemIdentifier::objc("__macros__")],
+            Self::ExternCategory { .. } => {
+                vec![ItemTree::objc("__macros__")]
+            }
             Self::ProtocolDecl {
                 super_protocols, ..
-            } => {
-                let mut items = vec![ItemIdentifier::objc("__macros__")];
-                for super_protocol in super_protocols {
-                    items.extend(super_protocol.required_items());
-                }
-                items
-            }
+            } => iter::once(ItemTree::objc("__macros__"))
+                .chain(super_protocols.iter().flat_map(|p| p.required_items()))
+                .collect(),
             Self::ProtocolImpl {
                 cls,
                 cls_superclasses,
                 protocol,
                 protocol_super_protocols,
                 ..
-            } => {
-                let mut items = vec![cls.clone(), protocol.clone()];
-                items.extend(cls_superclasses.clone());
-                for super_protocol in protocol_super_protocols {
-                    items.extend(super_protocol.required_items());
-                }
-                items
-            }
-            Self::RecordDecl { fields, .. } => {
-                let mut items = Vec::new();
-                for (_, _, field_ty) in fields {
-                    items.extend(field_ty.required_items());
-                }
-                items
-            }
+            } => vec![
+                ItemTree::new(
+                    cls.clone(),
+                    superclasses_required_items(cls_superclasses.iter().cloned()),
+                ),
+                ItemTree::new(
+                    protocol.clone(),
+                    protocol_super_protocols
+                        .iter()
+                        .flat_map(|p| p.required_items()),
+                ),
+            ],
+            Self::RecordDecl { fields, .. } => fields
+                .iter()
+                .flat_map(|(_, _, field_ty)| field_ty.required_items())
+                .collect(),
             // Variants manage required items themselves
-            Self::EnumDecl { ty, .. } => ty.required_items(),
+            Self::EnumDecl { ty, .. } => ty.required_items().collect(),
             Self::ConstDecl { ty, value, .. } => {
-                let mut items = ty.required_items();
-                items.extend(value.required_items());
-                items
+                ty.required_items().chain(value.required_items()).collect()
             }
-            Self::VarDecl { ty, value, .. } => {
-                let mut items = ty.required_items();
-                if let Some(value) = value {
-                    items.extend(value.required_items());
-                }
-                items
-            }
+            Self::VarDecl { ty, value, .. } => ty
+                .required_items()
+                .chain(value.iter().flat_map(|value| value.required_items()))
+                .collect(),
             Self::FnDecl {
                 arguments,
                 result_type,
@@ -1829,70 +1842,88 @@ impl Stmt {
             Self::FnGetTypeId {
                 cf_id, result_type, ..
             } => {
-                let mut items = vec![cf_id.clone(), ItemIdentifier::cf("ConcreteType")];
+                let mut items = vec![
+                    ItemTree::from_id(cf_id.clone()),
+                    ItemTree::cf("ConcreteType"),
+                ];
                 items.extend(result_type.fn_return_required_items());
                 items
             }
-            Self::AliasDecl { ty, .. } => ty.required_items(),
+            Self::AliasDecl { ty, .. } => ty.required_items().collect(),
             Self::OpaqueDecl { superclass, .. } => {
-                let mut items = vec![ItemIdentifier::unsafecell(), ItemIdentifier::phantoms()];
+                let mut items = vec![ItemTree::unsafecell(), ItemTree::phantoms()];
                 if let Some(superclass) = superclass {
-                    items.push(superclass.clone());
+                    items.push(ItemTree::new(superclass.clone(), items.clone()));
                 }
                 items
             }
-        }
+        };
+
+        items.into_iter()
     }
 
     /// Items required for any part of the statement.
-    pub(crate) fn required_items_inner(&self) -> Vec<ItemIdentifier> {
-        let required_by_inner: Vec<_> = match self {
+    pub(crate) fn required_items_inner(&self) -> impl Iterator<Item = ItemTree> {
+        let required_by_inner: Vec<ItemTree> = match self {
             Self::ExternCategory {
                 cls,
                 cls_superclasses,
                 methods,
                 ..
-            } => methods
-                .iter()
-                .flat_map(|method| method.required_items())
-                .chain(iter::once(cls.clone()))
-                .chain(cls_superclasses.clone())
-                .collect(),
+            } => iter::once(ItemTree::new(
+                cls.clone(),
+                superclasses_required_items(cls_superclasses.iter().cloned()),
+            ))
+            .chain(methods.iter().flat_map(|method| method.required_items()))
+            .collect(),
             Self::ExternMethods { methods, .. } | Self::ProtocolDecl { methods, .. } => methods
                 .iter()
                 .flat_map(|method| method.required_items())
                 .collect(),
-            Self::RecordDecl { .. } => vec![ItemIdentifier::objc("Encoding")],
+            Self::RecordDecl { .. } => vec![ItemTree::objc("Encoding")],
             Self::EnumDecl { kind, variants, .. } => {
                 let mut items: Vec<_> = variants
                     .iter()
                     .flat_map(|(_, _, _, expr)| expr.required_items())
                     .collect();
                 if let Some(UnexposedAttr::Options) = kind {
-                    items.push(ItemIdentifier::bitflags());
+                    items.push(ItemTree::bitflags());
                 }
-                items.push(ItemIdentifier::objc("Encoding"));
+                items.push(ItemTree::objc("Encoding"));
                 items
             }
             Self::OpaqueDecl { is_cf, .. } => {
                 if *is_cf {
-                    vec![ItemIdentifier::cf("cf_type")]
+                    vec![ItemTree::cf("cf_type")]
                 } else {
-                    vec![ItemIdentifier::objc("Encoding")]
+                    vec![ItemTree::objc("Encoding")]
                 }
             }
             _ => vec![],
         };
-        self.required_items()
-            .into_iter()
-            .chain(required_by_inner)
-            .collect()
+        self.required_items().chain(required_by_inner)
     }
 
     fn cfg_gate_ln<'a>(&'a self, config: &'a Config) -> impl fmt::Display + 'a {
+        self.cfg_gate_ln_for(self.required_items(), config)
+    }
+
+    fn cfg_gate_ln_for<'a>(
+        &'a self,
+        required_items: impl IntoIterator<Item = ItemTree> + 'a,
+        config: &'a Config,
+    ) -> impl fmt::Display + 'a {
+        cfg_gate_ln(required_items, [] as [ItemTree; 0], config, self.location())
+    }
+
+    fn cfg_gate_ln_inner<'a>(
+        &'a self,
+        required_items: impl IntoIterator<Item = ItemTree> + 'a,
+        config: &'a Config,
+    ) -> impl fmt::Display + 'a {
         cfg_gate_ln(
+            required_items,
             self.required_items(),
-            [self.location()],
             config,
             self.location(),
         )
@@ -1991,12 +2022,7 @@ impl Stmt {
                         return Ok(());
                     }
 
-                    let cfg = cfg_gate_ln(
-                        [ItemIdentifier::objc("extern_class")],
-                        [self.location()],
-                        config,
-                        self.location(),
-                    );
+                    let cfg = self.cfg_gate_ln_for([ItemTree::objc("extern_class")], config);
                     write!(f, "{cfg}")?;
                     writeln!(f, "extern_class!(")?;
                     write!(f, "{}", documentation.fmt(Some(id)))?;
@@ -2051,12 +2077,7 @@ impl Stmt {
                     methods,
                     documentation,
                 } => {
-                    let cfg = cfg_gate_ln(
-                        [ItemIdentifier::objc("extern_methods")],
-                        [self.location()],
-                        config,
-                        self.location(),
-                    );
+                    let cfg = self.cfg_gate_ln_for([ItemTree::objc("extern_methods")], config);
                     write!(f, "{cfg}")?;
                     writeln!(f, "extern_methods!(")?;
                     if let Some(source_superclass) = source_superclass {
@@ -2085,21 +2106,11 @@ impl Stmt {
                         cls.path(),
                         GenericTyHelper(cls_generics),
                     )?;
-                    let required_items = self.required_items();
                     for method in methods {
-                        let implied_features = required_items
-                            .iter()
-                            .map(|item| item.location())
-                            .chain(iter::once(self.location()));
                         write!(
                             f,
                             "{}",
-                            cfg_gate_ln(
-                                method.required_items(),
-                                implied_features,
-                                config,
-                                self.location()
-                            )
+                            self.cfg_gate_ln_inner(method.required_items(), config)
                         )?;
                         writeln!(f, "{method}")?;
                     }
@@ -2136,12 +2147,7 @@ impl Stmt {
                     methods,
                     documentation,
                 } => {
-                    let cfg = cfg_gate_ln(
-                        [ItemIdentifier::objc("extern_category")],
-                        [self.location()],
-                        config,
-                        self.location(),
-                    );
+                    let cfg = self.cfg_gate_ln_for([ItemTree::objc("extern_category")], config);
                     write!(f, "{cfg}")?;
                     writeln!(f, "extern_category!(")?;
 
@@ -2160,21 +2166,11 @@ impl Stmt {
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
                     write!(f, "    {availability}")?;
                     writeln!(f, "    pub unsafe trait {} {{", id.name)?;
-                    let required_items = self.required_items();
                     for method in methods {
-                        let implied_features = required_items
-                            .iter()
-                            .map(|item| item.location())
-                            .chain(iter::once(self.location()));
                         write!(
                             f,
                             "{}",
-                            cfg_gate_ln(
-                                method.required_items(),
-                                implied_features,
-                                config,
-                                self.location()
-                            )
+                            self.cfg_gate_ln_inner(method.required_items(), config)
                         )?;
                         writeln!(f, "{method}")?;
                     }
@@ -2185,11 +2181,12 @@ impl Stmt {
                     write!(
                         f,
                         "    {}",
-                        cfg_gate_ln(
-                            iter::once(cls).chain(cls_superclasses),
-                            [self.location()],
+                        self.cfg_gate_ln_for(
+                            [ItemTree::new(
+                                cls.clone(),
+                                superclasses_required_items(cls_superclasses.iter().cloned())
+                            )],
                             config,
-                            self.location()
                         )
                     )?;
                     writeln!(
@@ -2266,12 +2263,12 @@ impl Stmt {
                     if matches!(&*protocol.name, "NSCopying" | "NSMutableCopying") {
                         let copy_helper = ItemIdentifier::copyhelper(protocol.name != "NSCopying");
 
-                        let mut required_items = self.required_items();
+                        let mut required_items: Vec<_> = self.required_items().collect();
 
                         // Assume counterparts have the same generics.
                         let ty = match (cls_counterpart, &*protocol.name) {
                             (Counterpart::ImmutableSuperclass(superclass), "NSCopying") => {
-                                required_items.push(superclass.clone());
+                                // REMARK: Already part of required items.
                                 format!(
                                     "{}{}",
                                     superclass.path_in_relation_to(id),
@@ -2279,7 +2276,7 @@ impl Stmt {
                                 )
                             }
                             (Counterpart::MutableSubclass(subclass), "NSMutableCopying") => {
-                                required_items.push(subclass.clone());
+                                required_items.push(ItemTree::from_id(subclass.clone()));
                                 format!(
                                     "{}{}",
                                     subclass.path_in_relation_to(id),
@@ -2290,11 +2287,7 @@ impl Stmt {
                         };
 
                         writeln!(f)?;
-                        write!(
-                            f,
-                            "{}",
-                            cfg_gate_ln(required_items, [self.location()], config, self.location())
-                        )?;
+                        write!(f, "{}", self.cfg_gate_ln_for(required_items, config))?;
                         writeln!(
                             f,
                             "unsafe impl{} {} for {}{} {{",
@@ -2331,12 +2324,7 @@ impl Stmt {
                     required_mainthreadonly,
                     documentation,
                 } => {
-                    let cfg = cfg_gate_ln(
-                        [ItemIdentifier::objc("extern_protocol")],
-                        [self.location()],
-                        config,
-                        self.location(),
-                    );
+                    let cfg = self.cfg_gate_ln_for([ItemTree::objc("extern_protocol")], config);
                     write!(f, "{cfg}")?;
                     writeln!(f, "extern_protocol!(")?;
 
@@ -2376,21 +2364,11 @@ impl Stmt {
                     }
                     writeln!(f, " {{")?;
 
-                    let required_items = self.required_items();
                     for method in methods {
-                        let implied_features = required_items
-                            .iter()
-                            .map(|item| item.location())
-                            .chain(iter::once(self.location()));
                         write!(
                             f,
                             "{}",
-                            cfg_gate_ln(
-                                method.required_items(),
-                                implied_features,
-                                config,
-                                self.location()
-                            )
+                            self.cfg_gate_ln_inner(method.required_items(), config)
                         )?;
                         writeln!(f, "{method}")?;
                     }
@@ -2446,10 +2424,10 @@ impl Stmt {
                     writeln!(f, "}}")?;
                     writeln!(f)?;
 
-                    let mut required_items = self.required_items();
-                    required_items.push(ItemIdentifier::objc("Encoding"));
-                    let cfg_encoding =
-                        cfg_gate_ln(required_items, [self.location()], config, self.location());
+                    let required_items = self
+                        .required_items()
+                        .chain(iter::once(ItemTree::objc("Encoding")));
+                    let cfg_encoding = self.cfg_gate_ln_for(required_items, config);
 
                     let encoding = FormatterFn(|f| {
                         if *is_union {
@@ -2553,14 +2531,9 @@ impl Stmt {
                         write!(f, "{}", self.cfg_gate_ln(config))?;
                         writeln!(f, "impl {} {{", id.name)?;
 
-                        let required_items = self.required_items();
                         for (name, documentation, availability, expr) in variants {
                             write!(f, "{}", documentation.fmt(None))?;
-                            let implied_features = required_items
-                                .iter()
-                                .map(|item| item.location())
-                                .chain(iter::once(self.location()));
-                            write!(f, "    {}", cfg_gate_ln(expr.required_items(), implied_features, config, self.location()))?;
+                            write!(f, "    {}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
                             write!(f, "    {availability}")?;
                             let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
@@ -2589,14 +2562,9 @@ impl Stmt {
 
                         writeln!(f, "    impl {}: {} {{", id.name, ty.enum_())?;
 
-                        let required_items = self.required_items();
                         for (name, documentation, availability, expr) in variants {
                             write!(f, "{}", documentation.fmt(None))?;
-                            let implied_features = required_items
-                                .iter()
-                                .map(|item| item.location())
-                                .chain(iter::once(self.location()));
-                            write!(f, "{}", cfg_gate_ln(expr.required_items(), implied_features, config, self.location()))?;
+                            write!(f, "{}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
                             write!(f, "{availability}")?;
                             let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
@@ -2623,14 +2591,9 @@ impl Stmt {
                         )?;
                         writeln!(f, "pub enum {} {{", id.name)?;
 
-                        let required_items = self.required_items();
                         for (name, documentation, availability, expr) in variants {
                             write!(f, "{}", documentation.fmt(None))?;
-                            let implied_features = required_items
-                                .iter()
-                                .map(|item| item.location())
-                                .chain(iter::once(self.location()));
-                            write!(f, "    {}", cfg_gate_ln(expr.required_items(), implied_features, config, self.location()))?;
+                            write!(f, "    {}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
                             write!(f, "    {availability}")?;
                             let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
@@ -2644,10 +2607,10 @@ impl Stmt {
                     _ => panic!("invalid enum kind"),
                 }
 
-                    let mut required_items = self.required_items();
-                    required_items.push(ItemIdentifier::objc("Encoding"));
-                    let cfg_encoding =
-                        cfg_gate_ln(required_items, [self.location()], config, self.location());
+                    let required_items = self
+                        .required_items()
+                        .chain(iter::once(ItemTree::objc("Encoding")));
+                    let cfg_encoding = self.cfg_gate_ln_for(required_items, config);
 
                     // SAFETY: The enum is either a `#[repr(transparent)]` newtype
                     // over the type, or a `#[repr(REPR)]`, where REPR is a valid
@@ -2944,10 +2907,10 @@ impl Stmt {
 
                     // Similar to the output of extern_class!
                     if *is_cf {
-                        let mut required_items = self.required_items();
-                        required_items.push(ItemIdentifier::cf("cf_type"));
-                        let cfg_cf =
-                            cfg_gate_ln(required_items, [self.location()], config, self.location());
+                        let required_items = self
+                            .required_items()
+                            .chain(iter::once(ItemTree::cf("cf_type")));
+                        let cfg_cf = self.cfg_gate_ln_for(required_items, config);
                         write!(f, "{cfg_cf}")?;
                         // SAFETY: The type is a CoreFoundation type, and
                         // correctly declared as a #[repr(C)] ZST.
@@ -2961,10 +2924,10 @@ impl Stmt {
                         }
                         writeln!(f, ");")?;
                     } else {
-                        let mut required_items = self.required_items();
-                        required_items.push(ItemIdentifier::objc("Encoding"));
-                        let cfg_encoding =
-                            cfg_gate_ln(required_items, [self.location()], config, self.location());
+                        let required_items = self
+                            .required_items()
+                            .chain(iter::once(ItemTree::objc("Encoding")));
+                        let cfg_encoding = self.cfg_gate_ln_for(required_items, config);
                         // SAFETY: The struct is a ZST type marked `#[repr(C)]`.
                         write!(f, "{cfg_encoding}")?;
                         writeln!(f, "unsafe impl RefEncode for {} {{", id.name)?;
@@ -3018,7 +2981,7 @@ impl Stmt {
             write!(
                 f,
                 "{}",
-                simple_platform_gate(data, &self.required_items(), &[], config)
+                simple_platform_gate(data, self.required_items(), [], config)
             )?;
             if let Some(check) = availability.check_is_available() {
                 writeln!(f, "    if {check} ")?;
@@ -3041,8 +3004,8 @@ impl Stmt {
                     "{}",
                     simple_platform_gate(
                         data,
-                        &method.required_items(),
-                        &self.required_items(),
+                        method.required_items(),
+                        self.required_items(),
                         config
                     )
                 )?;
@@ -3073,8 +3036,8 @@ impl Stmt {
                         "{}",
                         simple_platform_gate(
                             config.library(id.library_name()),
-                            &self.required_items(),
-                            &[],
+                            self.required_items(),
+                            [],
                             config,
                         )
                     )?;
@@ -3095,8 +3058,8 @@ impl Stmt {
 
 fn simple_platform_gate(
     data: &LibraryConfig,
-    required_items: &[ItemIdentifier],
-    implied_items: &[ItemIdentifier],
+    required_items: impl IntoIterator<Item = ItemTree>,
+    implied_items: impl IntoIterator<Item = ItemTree>,
     config: &Config,
 ) -> impl Display {
     let mut platform_cfg = PlatformCfg::from_config(data);
@@ -3116,4 +3079,47 @@ fn simple_platform_gate(
 
         Ok(())
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_superclasses_required_items() {
+        let superclasses = [
+            ItemIdentifier::dummy(1),
+            ItemIdentifier::dummy(2),
+            ItemIdentifier::dummy(3),
+        ];
+        let required_items = [
+            ItemTree::new(
+                ItemIdentifier::dummy(1),
+                [
+                    ItemTree::new(
+                        ItemIdentifier::dummy(2),
+                        [
+                            ItemTree::new(ItemIdentifier::dummy(3), [ItemTree::objc("__macros__")]),
+                            ItemTree::objc("__macros__"),
+                        ],
+                    ),
+                    ItemTree::new(ItemIdentifier::dummy(3), [ItemTree::objc("__macros__")]),
+                    ItemTree::objc("__macros__"),
+                ],
+            ),
+            ItemTree::new(
+                ItemIdentifier::dummy(2),
+                [
+                    ItemTree::new(ItemIdentifier::dummy(3), [ItemTree::objc("__macros__")]),
+                    ItemTree::objc("__macros__"),
+                ],
+            ),
+            ItemTree::new(ItemIdentifier::dummy(3), [ItemTree::objc("__macros__")]),
+            ItemTree::objc("__macros__"),
+        ];
+        assert_eq!(
+            superclasses_required_items(superclasses).collect::<Vec<_>>(),
+            required_items
+        );
+    }
 }
