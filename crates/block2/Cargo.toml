@@ -25,9 +25,6 @@ default = ["std"]
 std = ["alloc"]
 alloc = []
 
-# Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
-apple = []
-
 # Link to libBlocksRuntime from compiler-rt.
 compiler-rt = ["objc2/unstable-compiler-rt"] # TODO: fix this
 

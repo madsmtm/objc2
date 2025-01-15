@@ -23,9 +23,6 @@ workspace = true
 [features]
 default = []
 
-# Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
-apple = []
-
 # Runtime selection (for future compatibility)
 gnustep-1-7 = []
 gnustep-1-8 = ["gnustep-1-7"]

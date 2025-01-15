@@ -1,6 +1,4 @@
 [features]
-# No-op, deprecated
-apple = []
 gnustep-1-7 = []
 gnustep-1-8 = []
 gnustep-1-9 = []

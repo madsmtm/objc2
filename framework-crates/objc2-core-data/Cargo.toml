@@ -48,7 +48,6 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-apple = []
 gnustep-1-7 = []
 gnustep-1-8 = []
 gnustep-1-9 = []

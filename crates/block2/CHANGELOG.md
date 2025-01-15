@@ -18,6 +18,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Converted function signatures into using `extern "C-unwind"`.
   This allows unwinding through blocks.
 
+### Removed
+* **BREAKING**: Removed the deprecated `apple` Cargo feature flag.
+
 
 ## 0.5.1 - 2024-05-21
 

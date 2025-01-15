@@ -709,7 +709,7 @@ impl ItemTree {
         .into_iter()
     }
 
-    /// Required Cargo.toml features in [dependencies] table.
+    /// Required Cargo.toml features in `[dependencies]` table.
     ///
     /// Returns (crate, required_feature) pairs.
     pub fn required_crate_features<'config>(
@@ -774,7 +774,7 @@ impl ItemTree {
         crate_features.into_iter()
     }
 
-    /// The Cargo.toml features that will be enabled in [features] table.
+    /// The Cargo.toml features that will be enabled in `[features]` table.
     ///
     /// Returns (feature, enabled_feature) pairs.
     pub fn enabled_features(
