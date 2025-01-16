@@ -108,3 +108,10 @@ unsafe impl Encode for cssm_list_element {
 unsafe impl RefEncode for cssm_list_element {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
+
+// Used by `SecAuthenticationType` for endianness-dependent constants.
+#[cfg(feature = "SecKeychain")]
+#[allow(non_snake_case)]
+pub(crate) const fn AUTH_TYPE_FIX_(code: FourCharCode) -> FourCharCode {
+    FourCharCode::from_be(code)
+}

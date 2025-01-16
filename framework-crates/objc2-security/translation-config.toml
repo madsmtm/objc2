@@ -133,12 +133,6 @@ static.oidSubjectAltName.skipped = true
 static.oidSubjectInfoAccess.skipped = true
 static.oidSubjectKeyIdentifier.skipped = true
 
-# `AUTH_TYPE_FIX_` macro in definition
-enum.SecAuthenticationType.use-value = true
-enum.anonymous.constants.CSSM_EVIDENCE_FORM_APPLE_HEADER.use-value = true
-enum.anonymous.constants.CSSM_EVIDENCE_FORM_APPLE_CERTGROUP.use-value = true
-enum.anonymous.constants.CSSM_EVIDENCE_FORM_APPLE_CERT_INFO.use-value = true
-
 # References parent enum SecuritySessionId, which is hard to handle
 enum.anonymous.constants.callerSecuritySession.use-value = true
 

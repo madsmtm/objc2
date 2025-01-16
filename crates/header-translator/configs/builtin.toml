@@ -28,4 +28,3 @@ class.ABNewPersonViewController.methods.newPersonViewDelegate.skipped = true
 
 # Dependent on target endianness
 typedef.WideChar.skipped = true # union+typedef in CoreServices
-enum.SecAuthenticationType.skipped = true # in Security
