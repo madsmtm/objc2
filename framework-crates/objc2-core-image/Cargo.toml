@@ -55,7 +55,6 @@ objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = f
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -65,9 +64,44 @@ targets = [
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
 ]
+features = [
+    "objc2-core-ml",
+    "objc2-io-surface",
+]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CIBarcodeDescriptor",
+    "CIColor",
+    "CIContext",
+    "CIDetector",
+    "CIFeature",
+    "CIFilter",
+    "CIFilterBuiltins",
+    "CIFilterConstructor",
+    "CIFilterGenerator",
+    "CIFilterShape",
+    "CIImage",
+    "CIImageAccumulator",
+    "CIImageProcessor",
+    "CIImageProvider",
+    "CIKernel",
+    "CIKernelMetalLib",
+    "CIPlugIn",
+    "CIPlugInInterface",
+    "CIRAWFilter",
+    "CIRAWFilter_Deprecated",
+    "CIRenderDestination",
+    "CISampler",
+    "CIVector",
+    "CoreImageDefines",
+    "block2",
+    "objc2-core-foundation",
+    "objc2-core-graphics",
+    "objc2-core-video",
+    "objc2-metal",
+]
 std = ["alloc"]
 alloc = []
 gnustep-1-7 = ["objc2/gnustep-1-7", "block2?/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
@@ -188,36 +222,3 @@ CIVector = [
     "objc2-foundation/NSString",
 ]
 CoreImageDefines = []
-all = [
-    "CIBarcodeDescriptor",
-    "CIColor",
-    "CIContext",
-    "CIDetector",
-    "CIFeature",
-    "CIFilter",
-    "CIFilterBuiltins",
-    "CIFilterConstructor",
-    "CIFilterGenerator",
-    "CIFilterShape",
-    "CIImage",
-    "CIImageAccumulator",
-    "CIImageProcessor",
-    "CIImageProvider",
-    "CIKernel",
-    "CIKernelMetalLib",
-    "CIPlugIn",
-    "CIPlugInInterface",
-    "CIRAWFilter",
-    "CIRAWFilter_Deprecated",
-    "CIRenderDestination",
-    "CISampler",
-    "CIVector",
-    "CoreImageDefines",
-    "block2",
-    "objc2-core-foundation",
-    "objc2-core-graphics",
-    "objc2-core-ml",
-    "objc2-core-video",
-    "objc2-io-surface",
-    "objc2-metal",
-]

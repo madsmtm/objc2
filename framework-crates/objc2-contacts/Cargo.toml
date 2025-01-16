@@ -22,7 +22,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -34,7 +33,40 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CNChangeHistoryEvent",
+    "CNChangeHistoryFetchRequest",
+    "CNContact",
+    "CNContactFetchRequest",
+    "CNContactFormatter",
+    "CNContactProperty",
+    "CNContactRelation",
+    "CNContactStore",
+    "CNContactVCardSerialization",
+    "CNContact_NSItemProvider",
+    "CNContact_Predicates",
+    "CNContactsUserDefaults",
+    "CNContainer",
+    "CNContainer_Predicates",
+    "CNError",
+    "CNFetchRequest",
+    "CNFetchResult",
+    "CNGroup",
+    "CNGroup_Predicates",
+    "CNInstantMessageAddress",
+    "CNLabeledValue",
+    "CNMutableContact",
+    "CNMutableGroup",
+    "CNMutablePostalAddress",
+    "CNPhoneNumber",
+    "CNPostalAddress",
+    "CNPostalAddressFormatter",
+    "CNSaveRequest",
+    "CNSocialProfile",
+    "ContactsDefines",
+    "block2",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -165,36 +197,3 @@ CNSocialProfile = [
     "objc2-foundation/NSString",
 ]
 ContactsDefines = []
-all = [
-    "CNChangeHistoryEvent",
-    "CNChangeHistoryFetchRequest",
-    "CNContact",
-    "CNContactFetchRequest",
-    "CNContactFormatter",
-    "CNContactProperty",
-    "CNContactRelation",
-    "CNContactStore",
-    "CNContactVCardSerialization",
-    "CNContact_NSItemProvider",
-    "CNContact_Predicates",
-    "CNContactsUserDefaults",
-    "CNContainer",
-    "CNContainer_Predicates",
-    "CNError",
-    "CNFetchRequest",
-    "CNFetchResult",
-    "CNGroup",
-    "CNGroup_Predicates",
-    "CNInstantMessageAddress",
-    "CNLabeledValue",
-    "CNMutableContact",
-    "CNMutableGroup",
-    "CNMutablePostalAddress",
-    "CNPhoneNumber",
-    "CNPostalAddress",
-    "CNPostalAddressFormatter",
-    "CNSaveRequest",
-    "CNSocialProfile",
-    "ContactsDefines",
-    "block2",
-]

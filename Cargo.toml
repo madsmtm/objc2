@@ -35,6 +35,8 @@ unsafe_op_in_unsafe_fn = "deny"
 [workspace.lints.clippy]
 cargo = { level = "warn", priority = -1 } # Because of `lint_groups_priority`
 ptr_as_ptr = "warn"
+# We can't change the name of `objc2-ad-support`.
+redundant_feature_names = "allow"
 
 [profile.assembly-tests]
 inherits = "release"
@@ -48,7 +50,6 @@ push-remote = "0origin"
 shared-version = true # Framework crates share a version number
 tag-prefix = "icrate"
 tag-name = "{{prefix}}-{{version}}"
-enable-features = ["all"]
 owners = ["madsmtm", "simlay"]
 
 # TODO: Check for typos in CI

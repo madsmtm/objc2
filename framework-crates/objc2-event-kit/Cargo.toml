@@ -32,7 +32,6 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -44,7 +43,33 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "EKAlarm",
+    "EKCalendar",
+    "EKCalendarItem",
+    "EKError",
+    "EKEvent",
+    "EKEventStore",
+    "EKObject",
+    "EKParticipant",
+    "EKRecurrenceDayOfWeek",
+    "EKRecurrenceEnd",
+    "EKRecurrenceRule",
+    "EKReminder",
+    "EKSource",
+    "EKStructuredLocation",
+    "EKTypes",
+    "EKVirtualConferenceDescriptor",
+    "EKVirtualConferenceProvider",
+    "EventKitDefines",
+    "bitflags",
+    "block2",
+    "objc2-app-kit",
+    "objc2-core-graphics",
+    "objc2-core-location",
+    "objc2-map-kit",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -124,29 +149,3 @@ EKVirtualConferenceProvider = [
     "objc2-foundation/NSString",
 ]
 EventKitDefines = []
-all = [
-    "EKAlarm",
-    "EKCalendar",
-    "EKCalendarItem",
-    "EKError",
-    "EKEvent",
-    "EKEventStore",
-    "EKObject",
-    "EKParticipant",
-    "EKRecurrenceDayOfWeek",
-    "EKRecurrenceEnd",
-    "EKRecurrenceRule",
-    "EKReminder",
-    "EKSource",
-    "EKStructuredLocation",
-    "EKTypes",
-    "EKVirtualConferenceDescriptor",
-    "EKVirtualConferenceProvider",
-    "EventKitDefines",
-    "bitflags",
-    "block2",
-    "objc2-app-kit",
-    "objc2-core-graphics",
-    "objc2-core-location",
-    "objc2-map-kit",
-]

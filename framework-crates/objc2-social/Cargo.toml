@@ -36,7 +36,6 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -46,7 +45,16 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "SLComposeServiceViewController",
+    "SLRequest",
+    "SLServiceTypes",
+    "SocialDefines",
+    "block2",
+    "objc2-accounts",
+    "objc2-app-kit",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -71,12 +79,3 @@ SLRequest = [
 ]
 SLServiceTypes = ["objc2-foundation/NSString"]
 SocialDefines = []
-all = [
-    "SLComposeServiceViewController",
-    "SLRequest",
-    "SLServiceTypes",
-    "SocialDefines",
-    "block2",
-    "objc2-accounts",
-    "objc2-app-kit",
-]

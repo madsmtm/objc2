@@ -24,7 +24,6 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -34,7 +33,11 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "BCChatAction",
+    "BCChatButton",
+]
 std = ["alloc"]
 alloc = []
 
@@ -55,8 +58,4 @@ BCChatButton = [
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",
-]
-all = [
-    "BCChatAction",
-    "BCChatButton",
 ]

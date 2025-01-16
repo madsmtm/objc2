@@ -21,7 +21,6 @@ objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = fal
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -34,7 +33,13 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "AudioSessionTypes",
+    "CoreAudioBaseTypes",
+    "bitflags",
+    "objc2",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -42,9 +47,3 @@ objc2 = ["dep:objc2"]
 
 AudioSessionTypes = []
 CoreAudioBaseTypes = ["bitflags"]
-all = [
-    "AudioSessionTypes",
-    "CoreAudioBaseTypes",
-    "bitflags",
-    "objc2",
-]

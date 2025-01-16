@@ -43,7 +43,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -56,7 +55,31 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "MIDIBluetoothConnection",
+    "MIDICIDevice",
+    "MIDICIDeviceManager",
+    "MIDICapabilityInquiry",
+    "MIDIDriver",
+    "MIDIMessages",
+    "MIDINetworkSession",
+    "MIDIServices",
+    "MIDISetup",
+    "MIDIThruConnection",
+    "MIDIUMPCI",
+    "MIDIUMPCIProfile",
+    "MIDIUMPEndpoint",
+    "MIDIUMPEndpointManager",
+    "MIDIUMPFunctionBlock",
+    "MIDIUMPMutableEndpoint",
+    "MIDIUMPMutableFunctionBlock",
+    "bitflags",
+    "block2",
+    "objc2",
+    "objc2-core-foundation",
+    "objc2-foundation",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -82,27 +105,3 @@ MIDIUMPEndpointManager = []
 MIDIUMPFunctionBlock = []
 MIDIUMPMutableEndpoint = []
 MIDIUMPMutableFunctionBlock = []
-all = [
-    "MIDIBluetoothConnection",
-    "MIDICIDevice",
-    "MIDICIDeviceManager",
-    "MIDICapabilityInquiry",
-    "MIDIDriver",
-    "MIDIMessages",
-    "MIDINetworkSession",
-    "MIDIServices",
-    "MIDISetup",
-    "MIDIThruConnection",
-    "MIDIUMPCI",
-    "MIDIUMPCIProfile",
-    "MIDIUMPEndpoint",
-    "MIDIUMPEndpointManager",
-    "MIDIUMPFunctionBlock",
-    "MIDIUMPMutableEndpoint",
-    "MIDIUMPMutableFunctionBlock",
-    "bitflags",
-    "block2",
-    "objc2",
-    "objc2-core-foundation",
-    "objc2-foundation",
-]

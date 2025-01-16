@@ -33,7 +33,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -42,7 +41,26 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CFODContext",
+    "CFODNode",
+    "CFODQuery",
+    "CFODRecord",
+    "CFODSession",
+    "CFOpenDirectory",
+    "CFOpenDirectoryConstants",
+    "ODAttributeMap",
+    "ODConfiguration",
+    "ODMappings",
+    "ODModuleEntry",
+    "ODNode",
+    "ODQuery",
+    "ODRecord",
+    "ODRecordMap",
+    "ODSession",
+    "objc2-core-foundation",
+]
 std = ["alloc"]
 alloc = []
 objc2-core-foundation = ["dep:objc2-core-foundation"]
@@ -102,23 +120,4 @@ ODSession = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
-]
-all = [
-    "CFODContext",
-    "CFODNode",
-    "CFODQuery",
-    "CFODRecord",
-    "CFODSession",
-    "CFOpenDirectory",
-    "CFOpenDirectoryConstants",
-    "ODAttributeMap",
-    "ODConfiguration",
-    "ODMappings",
-    "ODModuleEntry",
-    "ODNode",
-    "ODQuery",
-    "ODRecord",
-    "ODRecordMap",
-    "ODSession",
-    "objc2-core-foundation",
 ]

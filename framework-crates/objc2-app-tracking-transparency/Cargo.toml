@@ -21,7 +21,6 @@ objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = fal
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -33,9 +32,10 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "block2",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
-
-all = ["block2"]

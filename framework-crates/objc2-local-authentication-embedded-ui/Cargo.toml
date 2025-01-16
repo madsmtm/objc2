@@ -36,7 +36,6 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -47,7 +46,14 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "LAAuthenticationView",
+    "LAPresentationContext",
+    "LARight_UI",
+    "block2",
+    "objc2-app-kit",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -65,11 +71,4 @@ LARight_UI = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
     "objc2-local-authentication/LARight",
-]
-all = [
-    "LAAuthenticationView",
-    "LAPresentationContext",
-    "LARight_UI",
-    "block2",
-    "objc2-app-kit",
 ]

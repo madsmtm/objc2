@@ -22,7 +22,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -33,7 +32,30 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "ILBase",
+    "ILCallClassificationRequest",
+    "ILCallCommunication",
+    "ILClassificationActions",
+    "ILClassificationRequest",
+    "ILClassificationResponse",
+    "ILCommunication",
+    "ILMessageClassificationRequest",
+    "ILMessageCommunication",
+    "ILMessageFilterAction",
+    "ILMessageFilterCapabilitiesQueryHandling",
+    "ILMessageFilterCapabilitiesQueryRequest",
+    "ILMessageFilterCapabilitiesQueryResponse",
+    "ILMessageFilterError",
+    "ILMessageFilterExtension",
+    "ILMessageFilterExtensionContext",
+    "ILMessageFilterQueryHandling",
+    "ILMessageFilterQueryRequest",
+    "ILMessageFilterQueryResponse",
+    "ILNetworkResponse",
+    "block2",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -91,27 +113,4 @@ ILNetworkResponse = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSURLResponse",
-]
-all = [
-    "ILBase",
-    "ILCallClassificationRequest",
-    "ILCallCommunication",
-    "ILClassificationActions",
-    "ILClassificationRequest",
-    "ILClassificationResponse",
-    "ILCommunication",
-    "ILMessageClassificationRequest",
-    "ILMessageCommunication",
-    "ILMessageFilterAction",
-    "ILMessageFilterCapabilitiesQueryHandling",
-    "ILMessageFilterCapabilitiesQueryRequest",
-    "ILMessageFilterCapabilitiesQueryResponse",
-    "ILMessageFilterError",
-    "ILMessageFilterExtension",
-    "ILMessageFilterExtensionContext",
-    "ILMessageFilterQueryHandling",
-    "ILMessageFilterQueryRequest",
-    "ILMessageFilterQueryResponse",
-    "ILNetworkResponse",
-    "block2",
 ]

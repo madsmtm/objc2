@@ -22,7 +22,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-ios",
@@ -33,7 +32,14 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "BGDefines",
+    "BGTask",
+    "BGTaskRequest",
+    "BGTaskScheduler",
+    "block2",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -50,11 +56,4 @@ BGTaskScheduler = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
-]
-all = [
-    "BGDefines",
-    "BGTask",
-    "BGTaskRequest",
-    "BGTaskScheduler",
-    "block2",
 ]

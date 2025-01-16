@@ -567,22 +567,32 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
         Ok(())
     }
 
+    // HACK: Linking `objc2-avf-audio` on older systems is not possible
+    // without an SDK that's new enough.
+    let uses_avf_audio = |lib: &LibraryConfig| {
+        matches!(
+            &*lib.krate,
+            "objc2-avf-audio"
+                | "objc2-av-foundation"
+                | "objc2-av-kit"
+                | "objc2-media-player"
+                | "objc2-photos"
+                | "objc2-photos-ui"
+                | "objc2-sprite-kit"
+                | "objc2-scene-kit"
+        )
+    };
     writer(&mut ci, config, "FRAMEWORKS_MACOS_10_12", |lib| {
         lib.macos
             .as_ref()
             .is_some_and(|v| VersionReq::parse("<=10.12").unwrap().matches(v))
-            // HACK: These depend on `objc2-uniform-type-identifiers` or
-            // `objc2-core-ml`, which is not available on macOS 10.12, but
-            // will be enabled by `"all"`.
-            && !["objc2-app-kit", "objc2-file-provider", "objc2-health-kit", "objc2-photos", "objc2-core-image"].contains(&&*lib.krate)
+            && !uses_avf_audio(lib)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_MACOS_10_13", |lib| {
         lib.macos
             .as_ref()
             .is_some_and(|v| VersionReq::parse("<=10.13").unwrap().matches(v))
-            // HACK: These depend on `objc2-uniform-type-identifiers`, which
-            // is not available on macOS 10.13, but will be enabled by `"all"`
-            && !["objc2-app-kit", "objc2-file-provider", "objc2-health-kit", "objc2-photos"].contains(&&*lib.krate)
+            && !uses_avf_audio(lib)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_MACOS_11", |lib| {
         lib.macos
@@ -705,14 +715,15 @@ fn update_test_metadata<'a>(
 
     let mut features = toml_edit::Array::new();
     for lib in libraries.clone() {
-        features.push(format!("dep:{}", lib.krate));
-        features.push(format!("{}/all", lib.krate));
+        // Add feature per crate.
+        //
+        // This is required for some reason for `cargo run --example` to work
+        // nicely in our workspace.
+        cargo_toml["features"][&lib.krate] =
+            toml_edit::Array::from_iter([format!("dep:{}", lib.krate)]).into();
+
+        features.push(lib.krate.to_string());
         // Inserting into array removes decor, so set it afterwards
-        features
-            .get_mut(features.len() - 2)
-            .unwrap()
-            .decor_mut()
-            .set_prefix("\n    ");
         features
             .get_mut(features.len() - 1)
             .unwrap()

@@ -23,7 +23,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -35,7 +34,34 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CXAction",
+    "CXAnswerCallAction",
+    "CXBase",
+    "CXCall",
+    "CXCallAction",
+    "CXCallController",
+    "CXCallDirectory",
+    "CXCallDirectoryExtensionContext",
+    "CXCallDirectoryManager",
+    "CXCallDirectoryProvider",
+    "CXCallObserver",
+    "CXCallUpdate",
+    "CXEndCallAction",
+    "CXError",
+    "CXHandle",
+    "CXPlayDTMFCallAction",
+    "CXProvider",
+    "CXProviderConfiguration",
+    "CXSetGroupCallAction",
+    "CXSetHeldCallAction",
+    "CXSetMutedCallAction",
+    "CXStartCallAction",
+    "CXTransaction",
+    "block2",
+    "objc2-avf-audio",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -144,31 +170,4 @@ CXTransaction = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUUID",
-]
-all = [
-    "CXAction",
-    "CXAnswerCallAction",
-    "CXBase",
-    "CXCall",
-    "CXCallAction",
-    "CXCallController",
-    "CXCallDirectory",
-    "CXCallDirectoryExtensionContext",
-    "CXCallDirectoryManager",
-    "CXCallDirectoryProvider",
-    "CXCallObserver",
-    "CXCallUpdate",
-    "CXEndCallAction",
-    "CXError",
-    "CXHandle",
-    "CXPlayDTMFCallAction",
-    "CXProvider",
-    "CXProviderConfiguration",
-    "CXSetGroupCallAction",
-    "CXSetHeldCallAction",
-    "CXSetMutedCallAction",
-    "CXStartCallAction",
-    "CXTransaction",
-    "block2",
-    "objc2-avf-audio",
 ]

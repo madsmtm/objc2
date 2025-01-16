@@ -1,17 +1,18 @@
-# Cargo features in framework crates
+# Cargo features and long compile-times in framework crates
 
 Each framework crate has a set of Cargo features that control which parts of
 it that is enabled. These are split into two categories; file and dependency
 features.
 
-This is quite important for compilation speed, but if you don't want to bother
-with it, such as when just starting a new project and experimenting or when
-running an example, use the `"all"` feature.
+**Most features are enabled by default** for ease of use for newcomers / in
+small hobby projects, but if you're developing a library for others to use, it
+is recommended that you disable them by adding `default-features = false`
+[to your `Cargo.toml`][cargo-dep-features].
 
-A complication is that ...
-- Rust can't do automatic linking yet, so we don't get the benefits from the linker removing libraries that aren't needed.
-  - Which means that every dependency/framework should ideally be explicitly requested by the user.
-  - Otherwise, e.g. UniformTypeIdentifiers might get linked, which is only available on newer OSes, and hence would fail at runtime on older OSes.
+This can vastly help reduce the compile-time of the framework crates.
+
+[cargo-dep-features]: https://doc.rust-lang.org/cargo/reference/features.html#dependency-features
+
 
 ## File features
 
@@ -45,3 +46,17 @@ dependency if you didn't need that class.
 
 Such optional dependencies can be enabled with Cargo features of the same name
 as the dependency.
+
+
+### Linking and minimum version compatibility
+
+A few select dependency features are **not** enabled by default, as these
+would raise the minimum supported version of your application. An example is
+the `objc2-uniform-type-identifiers` dependency of the `objc2-app-kit` crate,
+which was first introduced in macOS 11.0. If you want to use capabilities from
+that framework in `objc2-app-kit`, you have to enable the feature manually.
+
+(Note that this _could_ also have been worked around by the user with the
+`-weak_framework UniformTypeIdentifiers` linker flag, but that's not very
+discoverable, so `objc2` chooses to default to making your application
+portable across the full set of versions that Rust supports).

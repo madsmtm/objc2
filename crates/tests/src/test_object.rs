@@ -9,7 +9,6 @@ use objc2::runtime::{
 };
 use objc2::{class, extern_protocol, msg_send, msg_send_id, AllocAnyThread, ClassType};
 use objc2::{extern_class, sel};
-#[cfg(feature = "all")]
 use objc2_foundation::{NSArray, NSException, NSMutableString, NSNumber, NSString};
 
 // TODO: Remove once c"" strings are in MSRV
@@ -26,11 +25,9 @@ extern_protocol!(
         #[method(b)]
         fn b() -> c_int;
 
-        #[cfg(feature = "all")]
         #[method_id(c)]
         fn c(&self) -> Retained<NSNumber>;
 
-        #[cfg(feature = "all")]
         #[method_id(d)]
         fn d() -> Retained<NSNumber>;
 
@@ -42,12 +39,10 @@ extern_protocol!(
         #[optional]
         fn f() -> c_int;
 
-        #[cfg(feature = "all")]
         #[optional]
         #[method_id(g)]
         fn g(&self) -> Retained<NSNumber>;
 
-        #[cfg(feature = "all")]
         #[optional]
         #[method_id(h)]
         fn h() -> Retained<NSNumber>;
@@ -304,15 +299,11 @@ fn test_protocol() {
     let proto: Retained<ProtocolObject<dyn MyTestProtocol>> = ProtocolObject::from_id(obj);
     assert_eq!(proto.a(), 1);
     assert_eq!(MyTestObject::b(), 2);
-    #[cfg(feature = "all")]
     assert_eq!(proto.c().as_i32(), 3);
-    #[cfg(feature = "all")]
     assert_eq!(MyTestObject::d().as_i32(), 4);
     assert_eq!(proto.e(), 5);
     assert_eq!(MyTestObject::f(), 6);
-    #[cfg(feature = "all")]
     assert_eq!(proto.g().as_i32(), 7);
-    #[cfg(feature = "all")]
     assert_eq!(MyTestObject::h().as_i32(), 8);
 
     // Check that transforming to `NSObjectProtocol` works
@@ -320,7 +311,6 @@ fn test_protocol() {
 }
 
 #[test]
-#[cfg(feature = "all")]
 fn downcast_basics() {
     let obj = NSString::new();
     assert!(obj.downcast_ref::<NSString>().is_some());
@@ -347,7 +337,6 @@ fn downcast_basics() {
 }
 
 #[test]
-#[cfg(feature = "all")]
 fn test_downcast_class() {
     // Ensure that downcasting `AnyClass` doesn't cause unsoundness.
     let cls = NSString::class();

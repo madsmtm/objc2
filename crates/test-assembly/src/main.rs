@@ -4,7 +4,7 @@
 //!
 //! Use as:
 //! ```
-//! TEST_OVERWRITE=1 cargo run --bin=test-assembly -- -Z build-std --target=x86_64-apple-darwin
+//! TEST_OVERWRITE=1 cargo run --bin=test-assembly -- -Z build-std --target=x86_64-apple-darwin --features=assembly-features
 //! ```
 //!
 //! Very limited currently, for example we can't stably test things that emits
@@ -47,7 +47,6 @@ fn main() {
             .args(args().skip(1))
             .arg("--profile=assembly-tests")
             .arg("--message-format=json-render-diagnostics")
-            .arg("--features=assembly-features")
             .arg("--")
             .arg("--emit=asm")
             // .arg("-Zplt=no")

@@ -13,8 +13,8 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 objc2 = { path = "../objc2" }
-objc2-foundation = { path = "../../framework-crates/objc2-foundation" }
-objc2-core-foundation = { path = "../../framework-crates/objc2-core-foundation" }
+objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = ["std"] }
+objc2-core-foundation = { path = "../../framework-crates/objc2-core-foundation", default-features = false, features = ["std"] }
 arbitrary = { version = "1", features = ["derive"] }
 afl = { version = "0.15", optional = true }
 

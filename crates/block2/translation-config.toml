@@ -1,6 +1,6 @@
 framework = "block"
 crate = "block2"
-required-crates = []
+required-crates = ["objc2"]
 link = false
 skipped = true
 is-library = true

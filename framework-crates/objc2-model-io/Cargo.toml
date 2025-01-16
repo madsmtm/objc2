@@ -31,7 +31,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -43,7 +42,32 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "MDLAnimatedValueTypes",
+    "MDLAnimation",
+    "MDLAsset",
+    "MDLAssetResolver",
+    "MDLCamera",
+    "MDLLight",
+    "MDLMaterial",
+    "MDLMesh",
+    "MDLMeshBuffer",
+    "MDLObject",
+    "MDLSubmesh",
+    "MDLTexture",
+    "MDLTransform",
+    "MDLTransformStack",
+    "MDLTypes",
+    "MDLUtility",
+    "MDLValueTypes",
+    "MDLVertexDescriptor",
+    "MDLVoxelArray",
+    "ModelIOExports",
+    "block2",
+    "objc2-core-foundation",
+    "objc2-core-graphics",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -145,28 +169,3 @@ MDLVertexDescriptor = [
 ]
 MDLVoxelArray = ["objc2-foundation/NSData"]
 ModelIOExports = []
-all = [
-    "MDLAnimatedValueTypes",
-    "MDLAnimation",
-    "MDLAsset",
-    "MDLAssetResolver",
-    "MDLCamera",
-    "MDLLight",
-    "MDLMaterial",
-    "MDLMesh",
-    "MDLMeshBuffer",
-    "MDLObject",
-    "MDLSubmesh",
-    "MDLTexture",
-    "MDLTransform",
-    "MDLTransformStack",
-    "MDLTypes",
-    "MDLUtility",
-    "MDLValueTypes",
-    "MDLVertexDescriptor",
-    "MDLVoxelArray",
-    "ModelIOExports",
-    "block2",
-    "objc2-core-foundation",
-    "objc2-core-graphics",
-]

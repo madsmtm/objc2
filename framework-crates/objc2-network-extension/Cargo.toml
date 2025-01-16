@@ -44,7 +44,6 @@ objc2-security = { path = "../objc2-security", version = "0.2.2", default-featur
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -57,15 +56,14 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "block2",
+    "libc",
+    "objc2-security",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 libc = ["dep:libc"]
 objc2-security = ["dep:objc2-security"]
-
-all = [
-    "block2",
-    "libc",
-    "objc2-security",
-]

@@ -23,7 +23,6 @@ objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", v
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -34,7 +33,16 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "AVCustomDeviceRoute",
+    "AVCustomRoutingActionItem",
+    "AVCustomRoutingController",
+    "AVCustomRoutingEvent",
+    "AVRoutingDefines",
+    "block2",
+    "objc2-uniform-type-identifiers",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -50,12 +58,3 @@ AVCustomRoutingController = [
 ]
 AVCustomRoutingEvent = []
 AVRoutingDefines = []
-all = [
-    "AVCustomDeviceRoute",
-    "AVCustomRoutingActionItem",
-    "AVCustomRoutingController",
-    "AVCustomRoutingEvent",
-    "AVRoutingDefines",
-    "block2",
-    "objc2-uniform-type-identifiers",
-]

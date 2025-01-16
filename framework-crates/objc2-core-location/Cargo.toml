@@ -25,7 +25,6 @@ objc2-contacts = { path = "../objc2-contacts", version = "0.2.2", default-featur
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -38,7 +37,38 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CLAvailability",
+    "CLBackgroundActivitySession",
+    "CLBeaconIdentityCondition",
+    "CLBeaconIdentityConstraint",
+    "CLBeaconRegion",
+    "CLCircularGeographicCondition",
+    "CLCircularRegion",
+    "CLCondition",
+    "CLError",
+    "CLErrorDomain",
+    "CLGeocoder",
+    "CLHeading",
+    "CLLocation",
+    "CLLocationManager",
+    "CLLocationManagerDelegate",
+    "CLLocationManager_CLVisitExtensions",
+    "CLLocationPushServiceError",
+    "CLLocationPushServiceExtension",
+    "CLLocationUpdater",
+    "CLMonitor",
+    "CLMonitorConfiguration",
+    "CLMonitoringEvent",
+    "CLMonitoringRecord",
+    "CLPlacemark",
+    "CLRegion",
+    "CLServiceSession",
+    "CLVisit",
+    "block2",
+    "objc2-contacts",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -134,35 +164,4 @@ CLServiceSession = ["objc2-foundation/NSString"]
 CLVisit = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
-]
-all = [
-    "CLAvailability",
-    "CLBackgroundActivitySession",
-    "CLBeaconIdentityCondition",
-    "CLBeaconIdentityConstraint",
-    "CLBeaconRegion",
-    "CLCircularGeographicCondition",
-    "CLCircularRegion",
-    "CLCondition",
-    "CLError",
-    "CLErrorDomain",
-    "CLGeocoder",
-    "CLHeading",
-    "CLLocation",
-    "CLLocationManager",
-    "CLLocationManagerDelegate",
-    "CLLocationManager_CLVisitExtensions",
-    "CLLocationPushServiceError",
-    "CLLocationPushServiceExtension",
-    "CLLocationUpdater",
-    "CLMonitor",
-    "CLMonitorConfiguration",
-    "CLMonitoringEvent",
-    "CLMonitoringRecord",
-    "CLPlacemark",
-    "CLRegion",
-    "CLServiceSession",
-    "CLVisit",
-    "block2",
-    "objc2-contacts",
 ]

@@ -43,7 +43,6 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -53,9 +52,49 @@ targets = [
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
 ]
+features = ["objc2-uniform-type-identifiers"]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "PHAdjustmentData",
+    "PHAsset",
+    "PHAssetChangeRequest",
+    "PHAssetCollectionChangeRequest",
+    "PHAssetCreationRequest",
+    "PHAssetResource",
+    "PHAssetResourceManager",
+    "PHChange",
+    "PHChangeRequest",
+    "PHCloudIdentifier",
+    "PHCollection",
+    "PHCollectionListChangeRequest",
+    "PHContentEditingInput",
+    "PHContentEditingOutput",
+    "PHError",
+    "PHFetchOptions",
+    "PHFetchResult",
+    "PHImageManager",
+    "PHLivePhoto",
+    "PHLivePhotoEditingContext",
+    "PHObject",
+    "PHPersistentChange",
+    "PHPersistentChangeFetchResult",
+    "PHPersistentChangeToken",
+    "PHPersistentObjectChangeDetails",
+    "PHPhotoLibrary",
+    "PHProject",
+    "PHProjectChangeRequest",
+    "PhotosTypes",
+    "bitflags",
+    "block2",
+    "objc2-app-kit",
+    "objc2-av-foundation",
+    "objc2-core-foundation",
+    "objc2-core-image",
+    "objc2-core-location",
+    "objc2-core-media",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -203,43 +242,3 @@ PHProjectChangeRequest = [
     "objc2-foundation/NSString",
 ]
 PhotosTypes = ["bitflags"]
-all = [
-    "PHAdjustmentData",
-    "PHAsset",
-    "PHAssetChangeRequest",
-    "PHAssetCollectionChangeRequest",
-    "PHAssetCreationRequest",
-    "PHAssetResource",
-    "PHAssetResourceManager",
-    "PHChange",
-    "PHChangeRequest",
-    "PHCloudIdentifier",
-    "PHCollection",
-    "PHCollectionListChangeRequest",
-    "PHContentEditingInput",
-    "PHContentEditingOutput",
-    "PHError",
-    "PHFetchOptions",
-    "PHFetchResult",
-    "PHImageManager",
-    "PHLivePhoto",
-    "PHLivePhotoEditingContext",
-    "PHObject",
-    "PHPersistentChange",
-    "PHPersistentChangeFetchResult",
-    "PHPersistentChangeToken",
-    "PHPersistentObjectChangeDetails",
-    "PHPhotoLibrary",
-    "PHProject",
-    "PHProjectChangeRequest",
-    "PhotosTypes",
-    "bitflags",
-    "block2",
-    "objc2-app-kit",
-    "objc2-av-foundation",
-    "objc2-core-foundation",
-    "objc2-core-image",
-    "objc2-core-location",
-    "objc2-core-media",
-    "objc2-uniform-type-identifiers",
-]

@@ -30,7 +30,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -41,7 +40,23 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "SFErrors",
+    "SFSpeechLanguageModel",
+    "SFSpeechRecognitionMetadata",
+    "SFSpeechRecognitionRequest",
+    "SFSpeechRecognitionResult",
+    "SFSpeechRecognitionTask",
+    "SFSpeechRecognitionTaskHint",
+    "SFSpeechRecognizer",
+    "SFTranscription",
+    "SFTranscriptionSegment",
+    "SFVoiceAnalytics",
+    "block2",
+    "objc2-avf-audio",
+    "objc2-core-media",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -100,20 +115,4 @@ SFVoiceAnalytics = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSValue",
-]
-all = [
-    "SFErrors",
-    "SFSpeechLanguageModel",
-    "SFSpeechRecognitionMetadata",
-    "SFSpeechRecognitionRequest",
-    "SFSpeechRecognitionResult",
-    "SFSpeechRecognitionTask",
-    "SFSpeechRecognitionTaskHint",
-    "SFSpeechRecognizer",
-    "SFTranscription",
-    "SFTranscriptionSegment",
-    "SFVoiceAnalytics",
-    "block2",
-    "objc2-avf-audio",
-    "objc2-core-media",
 ]

@@ -27,7 +27,6 @@ objc2-security = { path = "../objc2-security", version = "0.2.2", default-featur
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -39,7 +38,27 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CaptiveNetwork",
+    "DHCPClientPreferences",
+    "SCDynamicStore",
+    "SCDynamicStoreCopyDHCPInfo",
+    "SCDynamicStoreCopySpecific",
+    "SCDynamicStoreKey",
+    "SCNetwork",
+    "SCNetworkConfiguration",
+    "SCNetworkConnection",
+    "SCNetworkReachability",
+    "SCPreferences",
+    "SCPreferencesPath",
+    "SCPreferencesSetSpecific",
+    "SCSchemaDefinitions",
+    "bitflags",
+    "libc",
+    "objc2",
+    "objc2-security",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -104,23 +123,3 @@ SCPreferencesSetSpecific = [
     "objc2-core-foundation/CFString",
 ]
 SCSchemaDefinitions = ["objc2-core-foundation/CFBase"]
-all = [
-    "CaptiveNetwork",
-    "DHCPClientPreferences",
-    "SCDynamicStore",
-    "SCDynamicStoreCopyDHCPInfo",
-    "SCDynamicStoreCopySpecific",
-    "SCDynamicStoreKey",
-    "SCNetwork",
-    "SCNetworkConfiguration",
-    "SCNetworkConnection",
-    "SCNetworkReachability",
-    "SCPreferences",
-    "SCPreferencesPath",
-    "SCPreferencesSetSpecific",
-    "SCSchemaDefinitions",
-    "bitflags",
-    "libc",
-    "objc2",
-    "objc2-security",
-]

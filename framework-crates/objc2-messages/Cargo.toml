@@ -39,7 +39,6 @@ objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features =
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-ios",
@@ -48,7 +47,27 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "MSConversation",
+    "MSMessage",
+    "MSMessageError",
+    "MSMessageLayout",
+    "MSMessageLiveLayout",
+    "MSMessageTemplateLayout",
+    "MSMessagesAppViewController",
+    "MSSession",
+    "MSSticker",
+    "MSStickerBrowserView",
+    "MSStickerBrowserViewController",
+    "MSStickerBrowserViewDataSource",
+    "MSStickerView",
+    "MessagesDefines",
+    "block2",
+    "objc2-core-foundation",
+    "objc2-quartz-core",
+    "objc2-ui-kit",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -107,23 +126,3 @@ MSStickerView = [
     "objc2-foundation/NSObject",
 ]
 MessagesDefines = []
-all = [
-    "MSConversation",
-    "MSMessage",
-    "MSMessageError",
-    "MSMessageLayout",
-    "MSMessageLiveLayout",
-    "MSMessageTemplateLayout",
-    "MSMessagesAppViewController",
-    "MSSession",
-    "MSSticker",
-    "MSStickerBrowserView",
-    "MSStickerBrowserViewController",
-    "MSStickerBrowserViewDataSource",
-    "MSStickerView",
-    "MessagesDefines",
-    "block2",
-    "objc2-core-foundation",
-    "objc2-quartz-core",
-    "objc2-ui-kit",
-]

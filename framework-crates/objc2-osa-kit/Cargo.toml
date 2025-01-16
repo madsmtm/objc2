@@ -23,7 +23,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -31,7 +30,15 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "OSALanguage",
+    "OSALanguageInstance",
+    "OSAScript",
+    "OSAScriptController",
+    "OSAScriptView",
+    "bitflags",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -92,12 +99,4 @@ OSAScriptView = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/objc2-core-foundation",
-]
-all = [
-    "OSALanguage",
-    "OSALanguageInstance",
-    "OSAScript",
-    "OSAScriptController",
-    "OSAScriptView",
-    "bitflags",
 ]

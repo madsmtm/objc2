@@ -36,7 +36,6 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -47,7 +46,14 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CNContactPicker",
+    "CNContactPickerDelegate",
+    "CNContactViewController",
+    "objc2-app-kit",
+    "objc2-contacts",
+]
 std = ["alloc"]
 alloc = []
 objc2-app-kit = ["dep:objc2-app-kit"]
@@ -64,11 +70,4 @@ CNContactViewController = [
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
-]
-all = [
-    "CNContactPicker",
-    "CNContactPickerDelegate",
-    "CNContactViewController",
-    "objc2-app-kit",
-    "objc2-contacts",
 ]

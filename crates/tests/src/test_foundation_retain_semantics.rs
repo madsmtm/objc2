@@ -1,4 +1,3 @@
-#![cfg(feature = "all")]
 use std::ptr;
 
 use objc2::rc::Retained;

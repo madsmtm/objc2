@@ -33,7 +33,6 @@ objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -46,7 +45,34 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CMAttachment",
+    "CMAudioClock",
+    "CMAudioDeviceClock",
+    "CMBase",
+    "CMBlockBuffer",
+    "CMBufferQueue",
+    "CMFormatDescription",
+    "CMFormatDescriptionBridge",
+    "CMMemoryPool",
+    "CMMetadata",
+    "CMSampleBuffer",
+    "CMSimpleQueue",
+    "CMSync",
+    "CMTag",
+    "CMTagCollection",
+    "CMTaggedBufferGroup",
+    "CMTextMarkup",
+    "CMTime",
+    "CMTimeRange",
+    "bitflags",
+    "block2",
+    "objc2",
+    "objc2-core-audio",
+    "objc2-core-audio-types",
+    "objc2-core-video",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -116,31 +142,4 @@ CMTime = [
 CMTimeRange = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
-]
-all = [
-    "CMAttachment",
-    "CMAudioClock",
-    "CMAudioDeviceClock",
-    "CMBase",
-    "CMBlockBuffer",
-    "CMBufferQueue",
-    "CMFormatDescription",
-    "CMFormatDescriptionBridge",
-    "CMMemoryPool",
-    "CMMetadata",
-    "CMSampleBuffer",
-    "CMSimpleQueue",
-    "CMSync",
-    "CMTag",
-    "CMTagCollection",
-    "CMTaggedBufferGroup",
-    "CMTextMarkup",
-    "CMTime",
-    "CMTimeRange",
-    "bitflags",
-    "block2",
-    "objc2",
-    "objc2-core-audio",
-    "objc2-core-audio-types",
-    "objc2-core-video",
 ]

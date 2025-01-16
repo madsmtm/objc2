@@ -34,7 +34,6 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -47,7 +46,53 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "GKAccessPoint",
+    "GKAchievement",
+    "GKAchievementDescription",
+    "GKAchievementViewController",
+    "GKBasePlayer",
+    "GKChallenge",
+    "GKChallengeEventHandler",
+    "GKChallengesViewController",
+    "GKCloudPlayer",
+    "GKDefines",
+    "GKDialogController",
+    "GKError",
+    "GKEventListener",
+    "GKFriendRequestComposeViewController",
+    "GKGameCenterViewController",
+    "GKGameSession",
+    "GKGameSessionError",
+    "GKGameSessionEventListener",
+    "GKGameSessionSharingViewController",
+    "GKLeaderboard",
+    "GKLeaderboardEntry",
+    "GKLeaderboardScore",
+    "GKLeaderboardSet",
+    "GKLeaderboardViewController",
+    "GKLocalPlayer",
+    "GKMatch",
+    "GKMatchmaker",
+    "GKMatchmakerViewController",
+    "GKNotificationBanner",
+    "GKPeerPickerController",
+    "GKPlayer",
+    "GKPublicConstants",
+    "GKPublicProtocols",
+    "GKSavedGame",
+    "GKSavedGameListener",
+    "GKScore",
+    "GKSession",
+    "GKSessionError",
+    "GKTurnBasedMatch",
+    "GKTurnBasedMatchmakerViewController",
+    "GKVoiceChat",
+    "GKVoiceChatService",
+    "block2",
+    "objc2-app-kit",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -245,50 +290,4 @@ GKVoiceChat = [
 GKVoiceChatService = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSString",
-]
-all = [
-    "GKAccessPoint",
-    "GKAchievement",
-    "GKAchievementDescription",
-    "GKAchievementViewController",
-    "GKBasePlayer",
-    "GKChallenge",
-    "GKChallengeEventHandler",
-    "GKChallengesViewController",
-    "GKCloudPlayer",
-    "GKDefines",
-    "GKDialogController",
-    "GKError",
-    "GKEventListener",
-    "GKFriendRequestComposeViewController",
-    "GKGameCenterViewController",
-    "GKGameSession",
-    "GKGameSessionError",
-    "GKGameSessionEventListener",
-    "GKGameSessionSharingViewController",
-    "GKLeaderboard",
-    "GKLeaderboardEntry",
-    "GKLeaderboardScore",
-    "GKLeaderboardSet",
-    "GKLeaderboardViewController",
-    "GKLocalPlayer",
-    "GKMatch",
-    "GKMatchmaker",
-    "GKMatchmakerViewController",
-    "GKNotificationBanner",
-    "GKPeerPickerController",
-    "GKPlayer",
-    "GKPublicConstants",
-    "GKPublicProtocols",
-    "GKSavedGame",
-    "GKSavedGameListener",
-    "GKScore",
-    "GKSession",
-    "GKSessionError",
-    "GKTurnBasedMatch",
-    "GKTurnBasedMatchmakerViewController",
-    "GKVoiceChat",
-    "GKVoiceChatService",
-    "block2",
-    "objc2-app-kit",
 ]

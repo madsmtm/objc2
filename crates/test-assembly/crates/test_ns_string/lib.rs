@@ -1,6 +1,4 @@
 //! Test the output of the `ns_string!` macro.
-#![cfg(feature = "all")]
-
 use objc2_foundation::{ns_string, NSString};
 
 // Temporary to allow testing putting string references in statics.

@@ -38,7 +38,6 @@ objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = f
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -49,9 +48,35 @@ targets = [
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
 ]
+features = ["objc2-io-surface"]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CVBase",
+    "CVBuffer",
+    "CVDisplayLink",
+    "CVHostTime",
+    "CVImageBuffer",
+    "CVMetalBuffer",
+    "CVMetalBufferCache",
+    "CVMetalTexture",
+    "CVMetalTextureCache",
+    "CVOpenGLBuffer",
+    "CVOpenGLBufferPool",
+    "CVOpenGLTexture",
+    "CVOpenGLTextureCache",
+    "CVPixelBuffer",
+    "CVPixelBufferIOSurface",
+    "CVPixelBufferPool",
+    "CVPixelFormatDescription",
+    "CVReturn",
+    "bitflags",
+    "block2",
+    "objc2",
+    "objc2-core-graphics",
+    "objc2-metal",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -117,29 +142,3 @@ CVPixelFormatDescription = [
     "objc2-core-foundation/CFDictionary",
 ]
 CVReturn = []
-all = [
-    "CVBase",
-    "CVBuffer",
-    "CVDisplayLink",
-    "CVHostTime",
-    "CVImageBuffer",
-    "CVMetalBuffer",
-    "CVMetalBufferCache",
-    "CVMetalTexture",
-    "CVMetalTextureCache",
-    "CVOpenGLBuffer",
-    "CVOpenGLBufferPool",
-    "CVOpenGLTexture",
-    "CVOpenGLTextureCache",
-    "CVPixelBuffer",
-    "CVPixelBufferIOSurface",
-    "CVPixelBufferPool",
-    "CVPixelFormatDescription",
-    "CVReturn",
-    "bitflags",
-    "block2",
-    "objc2",
-    "objc2-core-graphics",
-    "objc2-io-surface",
-    "objc2-metal",
-]

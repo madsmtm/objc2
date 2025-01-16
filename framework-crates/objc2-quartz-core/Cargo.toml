@@ -49,7 +49,6 @@ objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = f
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -61,7 +60,44 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CAAnimation",
+    "CABase",
+    "CAConstraintLayoutManager",
+    "CADisplayLink",
+    "CAEDRMetadata",
+    "CAEmitterCell",
+    "CAEmitterLayer",
+    "CAFrameRateRange",
+    "CAGradientLayer",
+    "CALayer",
+    "CAMediaTiming",
+    "CAMediaTimingFunction",
+    "CAMetalDisplayLink",
+    "CAMetalLayer",
+    "CAOpenGLLayer",
+    "CARemoteLayerClient",
+    "CARemoteLayerServer",
+    "CARenderer",
+    "CAReplicatorLayer",
+    "CAScrollLayer",
+    "CAShapeLayer",
+    "CATextLayer",
+    "CATiledLayer",
+    "CATransaction",
+    "CATransform3D",
+    "CATransformLayer",
+    "CAValueFunction",
+    "CoreAnimation",
+    "bitflags",
+    "block2",
+    "libc",
+    "objc2-core-foundation",
+    "objc2-core-graphics",
+    "objc2-core-video",
+    "objc2-metal",
+]
 std = ["alloc"]
 alloc = []
 gnustep-1-7 = []
@@ -169,40 +205,3 @@ CAValueFunction = [
     "objc2-foundation/NSString",
 ]
 CoreAnimation = []
-all = [
-    "CAAnimation",
-    "CABase",
-    "CAConstraintLayoutManager",
-    "CADisplayLink",
-    "CAEDRMetadata",
-    "CAEmitterCell",
-    "CAEmitterLayer",
-    "CAFrameRateRange",
-    "CAGradientLayer",
-    "CALayer",
-    "CAMediaTiming",
-    "CAMediaTimingFunction",
-    "CAMetalDisplayLink",
-    "CAMetalLayer",
-    "CAOpenGLLayer",
-    "CARemoteLayerClient",
-    "CARemoteLayerServer",
-    "CARenderer",
-    "CAReplicatorLayer",
-    "CAScrollLayer",
-    "CAShapeLayer",
-    "CATextLayer",
-    "CATiledLayer",
-    "CATransaction",
-    "CATransform3D",
-    "CATransformLayer",
-    "CAValueFunction",
-    "CoreAnimation",
-    "bitflags",
-    "block2",
-    "libc",
-    "objc2-core-foundation",
-    "objc2-core-graphics",
-    "objc2-core-video",
-    "objc2-metal",
-]

@@ -28,7 +28,6 @@ objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", v
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -36,9 +35,30 @@ targets = [
     "aarch64-apple-ios",
     "aarch64-apple-visionos",
 ]
+features = ["objc2-uniform-type-identifiers"]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "Extension",
+    "NSFileProviderActions",
+    "NSFileProviderDefines",
+    "NSFileProviderDomain",
+    "NSFileProviderEnumerating",
+    "NSFileProviderError",
+    "NSFileProviderItem",
+    "NSFileProviderItemDecoration",
+    "NSFileProviderKnownFolders",
+    "NSFileProviderModifyItemOptions",
+    "NSFileProviderReplicatedExtension",
+    "NSFileProviderRequest",
+    "NSFileProviderService",
+    "NSFileProviderTesting",
+    "NSFileProviderThumbnailing",
+    "bitflags",
+    "block2",
+    "objc2-core-foundation",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -139,25 +159,4 @@ NSFileProviderThumbnailing = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSProgress",
     "objc2-foundation/NSString",
-]
-all = [
-    "Extension",
-    "NSFileProviderActions",
-    "NSFileProviderDefines",
-    "NSFileProviderDomain",
-    "NSFileProviderEnumerating",
-    "NSFileProviderError",
-    "NSFileProviderItem",
-    "NSFileProviderItemDecoration",
-    "NSFileProviderKnownFolders",
-    "NSFileProviderModifyItemOptions",
-    "NSFileProviderReplicatedExtension",
-    "NSFileProviderRequest",
-    "NSFileProviderService",
-    "NSFileProviderTesting",
-    "NSFileProviderThumbnailing",
-    "bitflags",
-    "block2",
-    "objc2-core-foundation",
-    "objc2-uniform-type-identifiers",
 ]

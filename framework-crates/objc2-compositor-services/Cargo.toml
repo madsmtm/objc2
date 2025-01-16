@@ -37,7 +37,6 @@ objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = f
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-visionos"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-visionos",
@@ -45,14 +44,8 @@ targets = [
 ]
 
 [features]
-default = ["std"]
-std = ["alloc"]
-alloc = []
-bitflags = ["dep:bitflags"]
-objc2-core-foundation = ["dep:objc2-core-foundation"]
-objc2-metal = ["dep:objc2-metal"]
-
-all = [
+default = [
+    "std",
     "bitflags",
     "cp_base",
     "cp_error",
@@ -69,6 +62,12 @@ all = [
     "objc2-metal",
     "view",
 ]
+std = ["alloc"]
+alloc = []
+bitflags = ["dep:bitflags"]
+objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-metal = ["dep:objc2-metal"]
+
 cp_base = []
 cp_error = []
 cp_types = []

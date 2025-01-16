@@ -1,5 +1,4 @@
 //! Test that fast enumeration is handled efficiently.
-#![cfg(feature = "all")]
 use core::hint::black_box;
 
 use objc2_foundation::array::IterUnchecked;

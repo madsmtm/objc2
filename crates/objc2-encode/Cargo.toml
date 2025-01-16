@@ -42,4 +42,3 @@ targets = [
 [package.metadata.release]
 shared-version = false
 tag-prefix = "objc-encode"
-enable-features = []

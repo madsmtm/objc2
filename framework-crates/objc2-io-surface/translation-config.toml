@@ -4,6 +4,10 @@ required-crates = []
 custom-lib-rs = true
 macos = "10.6"
 maccatalyst = "13.0"
+# NOTE: IOSurface.tbd in the iOS SDK does contain some $ld$previous$
+# directives, but they only work when using Swift's auto-linking, not when
+# telling the linker to link the framework directly via the commandline (as
+# Rust does).
 ios = "11.0"
 tvos = "11.0"
 visionos = "1.0"

@@ -22,7 +22,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -35,7 +34,16 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "NSItemProvider_UTType",
+    "UTAdditions",
+    "UTCoreTypes",
+    "UTDefines",
+    "UTTagClass",
+    "UTType",
+    "block2",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -63,13 +71,4 @@ UTType = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
     "objc2-foundation/NSValue",
-]
-all = [
-    "NSItemProvider_UTType",
-    "UTAdditions",
-    "UTCoreTypes",
-    "UTDefines",
-    "UTTagClass",
-    "UTType",
-    "block2",
 ]

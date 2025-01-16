@@ -32,7 +32,6 @@ objc2-security = { path = "../objc2-security", version = "0.2.2", default-featur
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -41,7 +40,21 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CWChannel",
+    "CWConfiguration",
+    "CWInterface",
+    "CWNetwork",
+    "CWNetworkProfile",
+    "CWWiFiClient",
+    "CoreWLANConstants",
+    "CoreWLANTypes",
+    "CoreWLANUtil",
+    "bitflags",
+    "objc2-core-foundation",
+    "objc2-security",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -80,18 +93,4 @@ CoreWLANUtil = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
-]
-all = [
-    "CWChannel",
-    "CWConfiguration",
-    "CWInterface",
-    "CWNetwork",
-    "CWNetworkProfile",
-    "CWWiFiClient",
-    "CoreWLANConstants",
-    "CoreWLANTypes",
-    "CoreWLANUtil",
-    "bitflags",
-    "objc2-core-foundation",
-    "objc2-security",
 ]

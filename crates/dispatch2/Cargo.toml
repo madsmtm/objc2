@@ -24,7 +24,6 @@ objc2 = { path = "../objc2", version = "0.5.2", default-features = false, option
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -39,23 +38,21 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "block2",
+    "libc",
+    "objc2",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 libc = ["dep:libc"]
 objc2 = ["dep:objc2"]
 
-all = [
-    "block2",
-    "libc",
-    "objc2",
-]
-
 [package.metadata.release]
 shared-version = false
 tag-prefix = "dispatch"
-enable-features = []
 
 [dev-dependencies]
 static_assertions = "1.1.0"

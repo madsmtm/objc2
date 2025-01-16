@@ -5,6 +5,7 @@ use std::fmt;
 use std::fs;
 use std::io::ErrorKind;
 use std::io::Write;
+use std::iter;
 use std::path::Path;
 
 use toml_edit::InlineTable;
@@ -389,33 +390,76 @@ see that for related crates.", self.data.krate)?;
         }
 
         let mut emitted_features = self.emitted_features(config);
-        let _ = emitted_features.insert(
-            "all".to_string(),
-            emitted_features.keys().cloned().collect::<BTreeSet<_>>(),
+
+        // All features are enabled by default, except for frameworks that
+        // would bump the minimum version of the library.
+        //
+        // The reasoning is that default features are meant for ease of use,
+        // especially so in end-user binaries and hobby projects. But we also
+        // don't want to make the user's binary incompatible with older OSes
+        // if they didn't explicitly opt-in to that.
+        //
+        // End result: The "only" cost is compilation time (vs. wasted
+        // developer time in finding each feature gate, or an unintentionally
+        // raised minimum OS version).
+        //
+        // And yes, libraries that use these crates _will_ want to disable
+        // default features, but that's the name of the game.
+        //
+        // We _could_ technically try to do something fancy to avoid e.g.
+        // `objc2-app-kit` pulling in `objc2-core-data`, since that is rarely
+        // needed, but where do we draw the line? And besides, that just masks
+        // the problem, library developers _should_ also disable the file
+        // features that they don't use if they really care about compilation
+        // time.
+        //
+        // See also https://github.com/madsmtm/objc2/issues/627.
+        let is_default_feature = |feature| {
+            if let Some(lib) = config.try_library_from_crate(feature) {
+                // Dependency feature
+                self.data.can_safely_depend_on(lib) || !lib.link
+            } else {
+                // File feature
+                true
+            }
+        };
+        cargo_toml["features"]["default"] = array_with_newlines(
+            iter::once("std".to_string()).chain(
+                emitted_features
+                    .keys()
+                    .filter(|feature| is_default_feature(feature))
+                    .cloned(),
+            ),
         );
 
-        // Emit crates first.
+        // Enable non-default features when building docs.
+        let non_default_features: Vec<_> = emitted_features
+            .keys()
+            .filter(|feature| !is_default_feature(feature))
+            .cloned()
+            .collect();
+        if !non_default_features.is_empty() {
+            cargo_toml["package"]["metadata"]["docs"]["rs"]["features"] =
+                array_with_newlines(non_default_features);
+        }
+
+        // Emit crate features first (the "default" feature overrides in
+        // `default_cargo.toml`).
         for (feature, _) in emitted_features.clone().iter() {
             if config.try_library_from_crate(feature).is_none() {
                 continue;
             }
             let enabled_features = emitted_features.remove(feature).unwrap();
-            let array: Array = enabled_features.iter().collect();
-            cargo_toml["features"][feature] = value(array);
+            cargo_toml["features"][feature] = array_with_newlines(enabled_features);
         }
-        add_newline_at_end(&mut cargo_toml["features"]);
+
         // And then the rest of the features.
+        if !emitted_features.is_empty() {
+            add_newline_at_end(&mut cargo_toml["features"]);
+        }
         for (feature, enabled_features) in emitted_features {
-            let mut array: Array = enabled_features.into_iter().collect();
-            if 1 < array.len() {
-                for item in array.iter_mut() {
-                    item.decor_mut().set_prefix("\n    ");
-                }
-                array.set_trailing("\n");
-                array.set_trailing_comma(true);
-            }
             if cargo_toml["features"].get(&feature).is_none() {
-                cargo_toml["features"][feature] = value(array);
+                cargo_toml["features"][feature] = array_with_newlines(enabled_features);
             }
         }
 
@@ -544,6 +588,18 @@ fn add_newline_at_end(item: &mut Item) {
         .unwrap()
         .decor_mut()
         .set_suffix("\n");
+}
+
+fn array_with_newlines(features: impl IntoIterator<Item = String>) -> Item {
+    let mut array: Array = features.into_iter().collect();
+    if 1 < array.len() {
+        for item in array.iter_mut() {
+            item.decor_mut().set_prefix("\n    ");
+        }
+        array.set_trailing("\n");
+        array.set_trailing_comma(true);
+    }
+    value(array)
 }
 
 pub trait EntryExt<'a> {

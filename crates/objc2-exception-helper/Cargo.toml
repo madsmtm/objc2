@@ -58,4 +58,3 @@ targets = [
 [package.metadata.release]
 shared-version = false
 tag-prefix = "objc2-exception-helper"
-enable-features = []

@@ -65,7 +65,6 @@ objc2-photos = { path = "../objc2-photos", version = "0.2.2", default-features =
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -78,7 +77,25 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "PHContentEditingController",
+    "PHLivePhotoView",
+    "PHPicker",
+    "PHProjectExtensionContext",
+    "PHProjectExtensionController",
+    "PHProjectInfo",
+    "PHProjectTypeDescription",
+    "PHProjectTypeDescriptionDataSource",
+    "PhotosUITypes",
+    "bitflags",
+    "block2",
+    "objc2-app-kit",
+    "objc2-core-foundation",
+    "objc2-core-location",
+    "objc2-map-kit",
+    "objc2-photos",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -134,21 +151,3 @@ PHProjectTypeDescriptionDataSource = [
     "objc2-foundation/NSString",
 ]
 PhotosUITypes = ["objc2-foundation/NSString"]
-all = [
-    "PHContentEditingController",
-    "PHLivePhotoView",
-    "PHPicker",
-    "PHProjectExtensionContext",
-    "PHProjectExtensionController",
-    "PHProjectInfo",
-    "PHProjectTypeDescription",
-    "PHProjectTypeDescriptionDataSource",
-    "PhotosUITypes",
-    "bitflags",
-    "block2",
-    "objc2-app-kit",
-    "objc2-core-foundation",
-    "objc2-core-location",
-    "objc2-map-kit",
-    "objc2-photos",
-]

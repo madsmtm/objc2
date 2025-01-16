@@ -33,7 +33,6 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -45,7 +44,16 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "LPError",
+    "LPFoundation",
+    "LPLinkMetadata",
+    "LPLinkView",
+    "LPMetadataProvider",
+    "block2",
+    "objc2-app-kit",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -74,13 +82,4 @@ LPMetadataProvider = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSURL",
     "objc2-foundation/NSURLRequest",
-]
-all = [
-    "LPError",
-    "LPFoundation",
-    "LPLinkMetadata",
-    "LPLinkView",
-    "LPMetadataProvider",
-    "block2",
-    "objc2-app-kit",
 ]

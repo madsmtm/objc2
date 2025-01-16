@@ -37,7 +37,6 @@ objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features =
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-ios",
@@ -47,7 +46,16 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "EKCalendarChooser",
+    "EKEventEditViewController",
+    "EKEventViewController",
+    "EventKitUIBundle",
+    "EventKitUIDefines",
+    "objc2-event-kit",
+    "objc2-ui-kit",
+]
 std = ["alloc"]
 alloc = []
 objc2-event-kit = ["dep:objc2-event-kit"]
@@ -74,12 +82,3 @@ EKEventViewController = [
 ]
 EventKitUIBundle = ["objc2-foundation/NSBundle"]
 EventKitUIDefines = []
-all = [
-    "EKCalendarChooser",
-    "EKEventEditViewController",
-    "EKEventViewController",
-    "EventKitUIBundle",
-    "EventKitUIDefines",
-    "objc2-event-kit",
-    "objc2-ui-kit",
-]

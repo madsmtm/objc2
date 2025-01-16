@@ -21,7 +21,6 @@ objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", 
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -34,7 +33,15 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "ColorSyncBase",
+    "ColorSyncCMM",
+    "ColorSyncDevice",
+    "ColorSyncProfile",
+    "ColorSyncTransform",
+    "objc2",
+]
 std = ["alloc"]
 alloc = []
 objc2 = ["dep:objc2"]
@@ -64,12 +71,4 @@ ColorSyncTransform = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
-]
-all = [
-    "ColorSyncBase",
-    "ColorSyncCMM",
-    "ColorSyncDevice",
-    "ColorSyncProfile",
-    "ColorSyncTransform",
-    "objc2",
 ]

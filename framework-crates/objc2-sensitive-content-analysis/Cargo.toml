@@ -26,7 +26,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -36,7 +35,13 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "SCSensitivityAnalysis",
+    "SCSensitivityAnalyzer",
+    "block2",
+    "objc2-core-graphics",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -47,10 +52,4 @@ SCSensitivityAnalyzer = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSProgress",
     "objc2-foundation/NSURL",
-]
-all = [
-    "SCSensitivityAnalysis",
-    "SCSensitivityAnalyzer",
-    "block2",
-    "objc2-core-graphics",
 ]

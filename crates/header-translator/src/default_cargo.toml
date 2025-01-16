@@ -19,7 +19,6 @@ workspace = true
 
 [package.metadata.docs.rs]
 default-target = "UNSET"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
 ]

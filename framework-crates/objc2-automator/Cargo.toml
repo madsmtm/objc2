@@ -37,7 +37,6 @@ objc2-osa-kit = { path = "../objc2-osa-kit", version = "0.2.2", default-features
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -46,7 +45,22 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "AMAction",
+    "AMAppleScriptAction",
+    "AMAttributesForAnalyzer",
+    "AMBundleAction",
+    "AMShellScriptAction",
+    "AMWorkflow",
+    "AMWorkflowController",
+    "AMWorkflowView",
+    "AMWorkspace",
+    "AutomatorErrors",
+    "objc2-app-kit",
+    "objc2-core-foundation",
+    "objc2-osa-kit",
+]
 std = ["alloc"]
 alloc = []
 objc2-app-kit = ["dep:objc2-app-kit"]
@@ -102,18 +116,3 @@ AMWorkflowView = [
 ]
 AMWorkspace = []
 AutomatorErrors = []
-all = [
-    "AMAction",
-    "AMAppleScriptAction",
-    "AMAttributesForAnalyzer",
-    "AMBundleAction",
-    "AMShellScriptAction",
-    "AMWorkflow",
-    "AMWorkflowController",
-    "AMWorkflowView",
-    "AMWorkspace",
-    "AutomatorErrors",
-    "objc2-app-kit",
-    "objc2-core-foundation",
-    "objc2-osa-kit",
-]

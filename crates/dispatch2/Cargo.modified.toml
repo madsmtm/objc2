@@ -11,4 +11,3 @@ static_assertions = "1.1.0"
 [package.metadata.release]
 shared-version = false
 tag-prefix = "dispatch"
-enable-features = []

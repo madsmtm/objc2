@@ -33,7 +33,6 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -44,7 +43,14 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "FPUIActionExtensionContext",
+    "FPUIActionExtensionViewController",
+    "FPUIBase",
+    "block2",
+    "objc2-app-kit",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -68,10 +74,3 @@ FPUIActionExtensionViewController = [
     "objc2-foundation/NSString",
 ]
 FPUIBase = []
-all = [
-    "FPUIActionExtensionContext",
-    "FPUIActionExtensionViewController",
-    "FPUIBase",
-    "block2",
-    "objc2-app-kit",
-]

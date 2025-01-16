@@ -22,7 +22,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-ios",
@@ -33,7 +32,15 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "WCDefines",
+    "WCError",
+    "WCSession",
+    "WCSessionFile",
+    "WCSessionUserInfoTransfer",
+    "block2",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -58,12 +65,4 @@ WCSessionUserInfoTransfer = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-]
-all = [
-    "WCDefines",
-    "WCError",
-    "WCSession",
-    "WCSessionFile",
-    "WCSessionUserInfoTransfer",
-    "block2",
 ]

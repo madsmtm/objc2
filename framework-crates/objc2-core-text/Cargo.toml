@@ -30,7 +30,6 @@ objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", defa
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -43,7 +42,34 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CTDefines",
+    "CTFont",
+    "CTFontCollection",
+    "CTFontDescriptor",
+    "CTFontManager",
+    "CTFontManagerErrors",
+    "CTFontTraits",
+    "CTFrame",
+    "CTFramesetter",
+    "CTGlyphInfo",
+    "CTLine",
+    "CTParagraphStyle",
+    "CTRubyAnnotation",
+    "CTRun",
+    "CTRunDelegate",
+    "CTStringAttributes",
+    "CTTextTab",
+    "CTTypesetter",
+    "SFNTLayoutTypes",
+    "SFNTTypes",
+    "bitflags",
+    "block2",
+    "libc",
+    "objc2",
+    "objc2-core-graphics",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -144,30 +170,3 @@ CTTypesetter = [
 ]
 SFNTLayoutTypes = []
 SFNTTypes = []
-all = [
-    "CTDefines",
-    "CTFont",
-    "CTFontCollection",
-    "CTFontDescriptor",
-    "CTFontManager",
-    "CTFontManagerErrors",
-    "CTFontTraits",
-    "CTFrame",
-    "CTFramesetter",
-    "CTGlyphInfo",
-    "CTLine",
-    "CTParagraphStyle",
-    "CTRubyAnnotation",
-    "CTRun",
-    "CTRunDelegate",
-    "CTStringAttributes",
-    "CTTextTab",
-    "CTTypesetter",
-    "SFNTLayoutTypes",
-    "SFNTTypes",
-    "bitflags",
-    "block2",
-    "libc",
-    "objc2",
-    "objc2-core-graphics",
-]

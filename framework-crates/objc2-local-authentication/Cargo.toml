@@ -27,7 +27,6 @@ objc2-security = { path = "../objc2-security", version = "0.2.2", default-featur
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -39,7 +38,31 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "LABase",
+    "LABiometryType",
+    "LACompanionType",
+    "LAContext",
+    "LADomainState",
+    "LAEnvironment",
+    "LAEnvironmentMechanism",
+    "LAEnvironmentMechanismBiometry",
+    "LAEnvironmentMechanismCompanion",
+    "LAEnvironmentMechanismUserPassword",
+    "LAEnvironmentState",
+    "LAError",
+    "LAPersistedRight",
+    "LAPrivateKey",
+    "LAPublicDefines",
+    "LAPublicKey",
+    "LARequirement",
+    "LARight",
+    "LARightStore",
+    "LASecret",
+    "block2",
+    "objc2-security",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -94,28 +117,4 @@ LARightStore = [
 LASecret = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
-]
-all = [
-    "LABase",
-    "LABiometryType",
-    "LACompanionType",
-    "LAContext",
-    "LADomainState",
-    "LAEnvironment",
-    "LAEnvironmentMechanism",
-    "LAEnvironmentMechanismBiometry",
-    "LAEnvironmentMechanismCompanion",
-    "LAEnvironmentMechanismUserPassword",
-    "LAEnvironmentState",
-    "LAError",
-    "LAPersistedRight",
-    "LAPrivateKey",
-    "LAPublicDefines",
-    "LAPublicKey",
-    "LARequirement",
-    "LARight",
-    "LARightStore",
-    "LASecret",
-    "block2",
-    "objc2-security",
 ]

@@ -60,6 +60,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (similar to what's done on methods).
 
 ### Changed
+* Enabled all Cargo features by default, and removed the previous `"all"`
+  feature for doing this.
+
+  If you're writing a library, you likely want to disable default features,
+  and spell out the desired features explicitly, to avoid large compile-times
+  for your consumers.
+
+  Recommended for **library** crates:
+  ```toml
+  # Before
+  [dependencies]
+  objc2-foundation = { version = "0.2", features = [
+    "NSNotification",
+    "NSString",
+    "NSThread",
+    "NSObject",
+    "NSArray",
+  ] }
+
+  # After
+  [dependencies]
+  # Added `default-features = false`
+  objc2-foundation = { version = "0.3", default-features = false, features = [
+    "NSNotification",
+    "NSString",
+    "NSThread",
+    "NSObject",
+    "NSArray",
+  ] }
+  ```
+
+  Recommended for **binary** crates:
+  ```toml
+  # Before
+  [dependencies]
+  objc2-foundation = { version = "0.2", features = ["all"] }
+
+  # After
+  [dependencies]
+  # Removed "all" feature
+  objc2-foundation = "0.3"
+  ```
 * Moved `MainThreadBound` and `run_on_main` to the `dispatch2` crate.
 * Removed `HasStableHash` requirement on `NSDictionary` and `NSSet` creation
   methods. This was added in an abundance of caution, but prevents real-world

@@ -6,14 +6,11 @@ custom-lib-rs = true
 # originally available as part of AVFoundation, the linker is able to figure
 # out that it actually needs to link AVFoundation because of the $ld$previous$
 # directives in AVFAudio.tdb.
-#
-# FIXME: We won't be able to use an old SDK though, so this is temporarily
-# kept high for CI.
-macos = "11.3" # 10.7
-maccatalyst = "14.5" # 13.1
-ios = "14.5" # 2.2
-tvos = "14.5" # 9.0
-watchos = "9.0" # 3.0
+macos = "10.7"
+maccatalyst = "13.1"
+ios = "2.2"
+tvos = "9.0"
+watchos = "3.0"
 visionos = "1.0"
 
 # AUMIDIEventListBlock not currently exported by AudioToolbox

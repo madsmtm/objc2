@@ -27,7 +27,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -40,7 +39,29 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CBATTRequest",
+    "CBAdvertisementData",
+    "CBAttribute",
+    "CBCentral",
+    "CBCentralManager",
+    "CBCentralManagerConstants",
+    "CBCharacteristic",
+    "CBDefines",
+    "CBDescriptor",
+    "CBError",
+    "CBL2CAPChannel",
+    "CBManager",
+    "CBPeer",
+    "CBPeripheral",
+    "CBPeripheralManager",
+    "CBPeripheralManagerConstants",
+    "CBService",
+    "CBUUID",
+    "bitflags",
+    "objc2-core-foundation",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -96,26 +117,4 @@ CBUUID = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",
-]
-all = [
-    "CBATTRequest",
-    "CBAdvertisementData",
-    "CBAttribute",
-    "CBCentral",
-    "CBCentralManager",
-    "CBCentralManagerConstants",
-    "CBCharacteristic",
-    "CBDefines",
-    "CBDescriptor",
-    "CBError",
-    "CBL2CAPChannel",
-    "CBManager",
-    "CBPeer",
-    "CBPeripheral",
-    "CBPeripheralManager",
-    "CBPeripheralManagerConstants",
-    "CBService",
-    "CBUUID",
-    "bitflags",
-    "objc2-core-foundation",
 ]

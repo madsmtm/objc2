@@ -38,7 +38,6 @@ objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -50,7 +49,34 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "VTBase",
+    "VTCompressionProperties",
+    "VTCompressionSession",
+    "VTDecompressionProperties",
+    "VTDecompressionSession",
+    "VTErrors",
+    "VTFrameSilo",
+    "VTHDRPerFrameMetadataGenerationSession",
+    "VTMultiPassStorage",
+    "VTPixelRotationProperties",
+    "VTPixelRotationSession",
+    "VTPixelTransferProperties",
+    "VTPixelTransferSession",
+    "VTProfessionalVideoWorkflow",
+    "VTRAWProcessingProperties",
+    "VTRAWProcessingSession",
+    "VTSession",
+    "VTUtilities",
+    "VTVideoEncoderList",
+    "bitflags",
+    "block2",
+    "objc2",
+    "objc2-core-graphics",
+    "objc2-core-media",
+    "objc2-core-video",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -110,31 +136,4 @@ VTVideoEncoderList = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
-]
-all = [
-    "VTBase",
-    "VTCompressionProperties",
-    "VTCompressionSession",
-    "VTDecompressionProperties",
-    "VTDecompressionSession",
-    "VTErrors",
-    "VTFrameSilo",
-    "VTHDRPerFrameMetadataGenerationSession",
-    "VTMultiPassStorage",
-    "VTPixelRotationProperties",
-    "VTPixelRotationSession",
-    "VTPixelTransferProperties",
-    "VTPixelTransferSession",
-    "VTProfessionalVideoWorkflow",
-    "VTRAWProcessingProperties",
-    "VTRAWProcessingSession",
-    "VTSession",
-    "VTUtilities",
-    "VTVideoEncoderList",
-    "bitflags",
-    "block2",
-    "objc2",
-    "objc2-core-graphics",
-    "objc2-core-media",
-    "objc2-core-video",
 ]

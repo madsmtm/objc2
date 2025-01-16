@@ -1,4 +1,3 @@
-#![cfg(feature = "all")]
 use objc2::rc::Retained;
 use objc2::runtime::{NSObject, NSZone};
 use objc2::{define_class, ClassType, ProtocolType};

@@ -24,7 +24,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -36,7 +35,46 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "CMAbsoluteAltitude",
+    "CMAccelerometer",
+    "CMAltimeter",
+    "CMAltitude",
+    "CMAmbientPressure",
+    "CMAttitude",
+    "CMAuthorization",
+    "CMAvailability",
+    "CMBatchedSensorManager",
+    "CMDeviceMotion",
+    "CMError",
+    "CMErrorDomain",
+    "CMFallDetectionEvent",
+    "CMFallDetectionManager",
+    "CMGyro",
+    "CMHeadphoneActivityManager",
+    "CMHeadphoneMotionManager",
+    "CMHeadphoneMotionManagerDelegate",
+    "CMHighFrequencyHeartRateData",
+    "CMLogItem",
+    "CMMagnetometer",
+    "CMMotionActivity",
+    "CMMotionActivityManager",
+    "CMMotionManager",
+    "CMMovementDisorderManager",
+    "CMOdometer",
+    "CMPedometer",
+    "CMRecordedAccelerometerData",
+    "CMRecordedPressureData",
+    "CMRotationRateData",
+    "CMSensorRecorder",
+    "CMStepCounter",
+    "CMWaterSubmersionData",
+    "CMWaterSubmersionManager",
+    "bitflags",
+    "block2",
+    "objc2-core-location",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -156,43 +194,4 @@ CMWaterSubmersionManager = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSMeasurement",
     "objc2-foundation/NSUnit",
-]
-all = [
-    "CMAbsoluteAltitude",
-    "CMAccelerometer",
-    "CMAltimeter",
-    "CMAltitude",
-    "CMAmbientPressure",
-    "CMAttitude",
-    "CMAuthorization",
-    "CMAvailability",
-    "CMBatchedSensorManager",
-    "CMDeviceMotion",
-    "CMError",
-    "CMErrorDomain",
-    "CMFallDetectionEvent",
-    "CMFallDetectionManager",
-    "CMGyro",
-    "CMHeadphoneActivityManager",
-    "CMHeadphoneMotionManager",
-    "CMHeadphoneMotionManagerDelegate",
-    "CMHighFrequencyHeartRateData",
-    "CMLogItem",
-    "CMMagnetometer",
-    "CMMotionActivity",
-    "CMMotionActivityManager",
-    "CMMotionManager",
-    "CMMovementDisorderManager",
-    "CMOdometer",
-    "CMPedometer",
-    "CMRecordedAccelerometerData",
-    "CMRecordedPressureData",
-    "CMRotationRateData",
-    "CMSensorRecorder",
-    "CMStepCounter",
-    "CMWaterSubmersionData",
-    "CMWaterSubmersionManager",
-    "bitflags",
-    "block2",
-    "objc2-core-location",
 ]

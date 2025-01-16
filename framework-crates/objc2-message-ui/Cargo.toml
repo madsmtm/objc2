@@ -33,7 +33,6 @@ objc2-messages = { path = "../objc2-messages", version = "0.2.2", default-featur
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-ios",
@@ -41,9 +40,18 @@ targets = [
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
 ]
+features = ["objc2-messages"]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "MFMailComposeControllerDeferredAction",
+    "MFMailComposeViewController",
+    "MFMessageComposeViewController",
+    "UPI",
+    "block2",
+    "objc2-ui-kit",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -72,12 +80,3 @@ MFMessageComposeViewController = [
     "objc2-foundation/NSURL",
 ]
 UPI = []
-all = [
-    "MFMailComposeControllerDeferredAction",
-    "MFMailComposeViewController",
-    "MFMessageComposeViewController",
-    "UPI",
-    "block2",
-    "objc2-messages",
-    "objc2-ui-kit",
-]

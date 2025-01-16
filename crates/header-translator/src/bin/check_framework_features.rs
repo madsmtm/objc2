@@ -35,10 +35,14 @@ fn get_features(cargo_toml: &Path) -> Result<Vec<String>, Box<dyn Error>> {
     let cargo_toml = fs::read_to_string(cargo_toml)?;
     let CargoToml { features } = basic_toml::from_str(&cargo_toml)?;
 
-    // Skip GNUStep-related and "all" features
+    // Skip GNUStep-related, unstable and default/std/alloc features
     Ok(features
         .into_keys()
-        .filter(|feature| !feature.contains("gnustep") && feature != "all")
+        .filter(|feature| {
+            !feature.contains("gnustep")
+                && !feature.contains("unstable")
+                && !matches!(&**feature, "default" | "std" | "alloc")
+        })
         .collect())
 }
 
@@ -53,6 +57,8 @@ fn test_feature_sets<'a>(
         cmd.arg("check");
         cmd.arg("--package");
         cmd.arg(package);
+        cmd.arg("--no-default-features");
+        cmd.arg("--features=std");
         cmd.arg("--features");
         cmd.arg(features.join(","));
 
@@ -128,11 +134,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     let feature_sets = features.iter().map(|feature| vec![&**feature]);
     test_feature_sets(&mut success, workspace_dir, feature_sets, "objc2-metal")?;
 
-    println!("Testing building each framework with `--features=all` and only their own features");
+    println!(
+        "Testing building each framework with `--features=default` and only their own features"
+    );
     for dir in workspace_dir.join("framework-crates").read_dir().unwrap() {
         let dir = dir.unwrap();
         if dir.file_type().unwrap().is_dir() {
-            let feature_sets = [vec!["all"]];
+            let feature_sets = [vec!["default"]];
             // println!("Testing all {dir:?} features");
             // let features = get_features(&dir.path().join("Cargo.toml"))?;
             // let feature_sets = features.iter().map(|feature| {

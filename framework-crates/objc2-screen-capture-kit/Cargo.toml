@@ -46,7 +46,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -54,7 +53,22 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "SCContentSharingPicker",
+    "SCError",
+    "SCRecordingOutput",
+    "SCScreenshotManager",
+    "SCShareableContent",
+    "SCStream",
+    "bitflags",
+    "block2",
+    "libc",
+    "objc2-av-foundation",
+    "objc2-core-foundation",
+    "objc2-core-graphics",
+    "objc2-core-media",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -88,19 +102,4 @@ SCStream = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
-]
-all = [
-    "SCContentSharingPicker",
-    "SCError",
-    "SCRecordingOutput",
-    "SCScreenshotManager",
-    "SCShareableContent",
-    "SCStream",
-    "bitflags",
-    "block2",
-    "libc",
-    "objc2-av-foundation",
-    "objc2-core-foundation",
-    "objc2-core-graphics",
-    "objc2-core-media",
 ]

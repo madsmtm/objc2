@@ -32,7 +32,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -45,7 +44,24 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "AXAudiograph",
+    "AXBrailleMap",
+    "AXColorUtilities",
+    "AXCustomContent",
+    "AXFeatureOverrideSessionManager",
+    "AXFoundation",
+    "AXHearingUtilities",
+    "AXMathExpression",
+    "AXRequest",
+    "AXSettings",
+    "AXTechnology",
+    "bitflags",
+    "block2",
+    "objc2-core-foundation",
+    "objc2-core-graphics",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -91,20 +107,3 @@ AXSettings = [
     "objc2-foundation/NSString",
 ]
 AXTechnology = ["objc2-foundation/NSString"]
-all = [
-    "AXAudiograph",
-    "AXBrailleMap",
-    "AXColorUtilities",
-    "AXCustomContent",
-    "AXFeatureOverrideSessionManager",
-    "AXFoundation",
-    "AXHearingUtilities",
-    "AXMathExpression",
-    "AXRequest",
-    "AXSettings",
-    "AXTechnology",
-    "bitflags",
-    "block2",
-    "objc2-core-foundation",
-    "objc2-core-graphics",
-]

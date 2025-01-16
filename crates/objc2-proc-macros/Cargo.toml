@@ -21,8 +21,6 @@ proc-macro = true
 workspace = true
 
 [features]
-default = []
-
 # Runtime selection (for future compatibility)
 gnustep-1-7 = []
 gnustep-1-8 = ["gnustep-1-7"]
@@ -47,4 +45,3 @@ targets = [
 [package.metadata.release]
 shared-version = false
 tag-prefix = "objc-proc-macros"
-enable-features = []

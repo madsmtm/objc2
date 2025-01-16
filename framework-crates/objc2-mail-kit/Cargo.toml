@@ -30,7 +30,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -38,7 +37,33 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "MEAddressAnnotation",
+    "MEComposeContext",
+    "MEComposeSession",
+    "MEContentBlocker",
+    "MEDecodedMessage",
+    "MEDecodedMessageBanner",
+    "MEEmailAddress",
+    "MEEncodedOutgoingMessage",
+    "MEExtension",
+    "MEExtensionManager",
+    "MEExtensionViewController",
+    "MEMessage",
+    "MEMessageAction",
+    "MEMessageActionDecision",
+    "MEMessageActionHandler",
+    "MEMessageDecoder",
+    "MEMessageEncoder",
+    "MEMessageEncodingResult",
+    "MEMessageSecurityHandler",
+    "MEMessageSecurityInformation",
+    "MEMessageSigner",
+    "MEOutgoingMessageEncodingStatus",
+    "block2",
+    "objc2-app-kit",
+]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
@@ -129,30 +154,4 @@ MEOutgoingMessageEncodingStatus = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
-]
-all = [
-    "MEAddressAnnotation",
-    "MEComposeContext",
-    "MEComposeSession",
-    "MEContentBlocker",
-    "MEDecodedMessage",
-    "MEDecodedMessageBanner",
-    "MEEmailAddress",
-    "MEEncodedOutgoingMessage",
-    "MEExtension",
-    "MEExtensionManager",
-    "MEExtensionViewController",
-    "MEMessage",
-    "MEMessageAction",
-    "MEMessageActionDecision",
-    "MEMessageActionHandler",
-    "MEMessageDecoder",
-    "MEMessageEncoder",
-    "MEMessageEncodingResult",
-    "MEMessageSecurityHandler",
-    "MEMessageSecurityInformation",
-    "MEMessageSigner",
-    "MEOutgoingMessageEncodingStatus",
-    "block2",
-    "objc2-app-kit",
 ]

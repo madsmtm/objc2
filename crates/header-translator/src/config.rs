@@ -239,6 +239,48 @@ pub struct LibraryConfig {
     pub typedef_data: HashMap<String, TypedefData>,
 }
 
+impl LibraryConfig {
+    // TODO: Merge this with `Availability` somehow.
+    pub(crate) fn can_safely_depend_on(&self, other: &Self) -> bool {
+        fn inner(
+            ours: &Option<semver::Version>,
+            other: &Option<semver::Version>,
+            rust_min: semver::Version,
+        ) -> bool {
+            match (ours, other) {
+                // If both libraries have a platform version, then ensure that
+                // ours is within the minimum of the other, OR that Rust's
+                // default min version is high enough that it won't matter.
+                (Some(ours), Some(other)) => other <= ours || *other <= rust_min,
+                // If only we have support for a platform, then we will emit a
+                // cfg-guarded [dependencies] table (done elsewhere), and thus
+                // it won't affect whether we can safely depend on it.
+                (Some(_), None) => true,
+                // If only the other library has support for platform, then
+                // that's fine.
+                (None, Some(_)) => true,
+                // If neither library support the platform, that's also fine.
+                (None, None) => true,
+            }
+        }
+
+        inner(&self.macos, &other.macos, semver::Version::new(10, 12, 0))
+            && inner(
+                &self.maccatalyst,
+                &other.maccatalyst,
+                semver::Version::new(13, 1, 0),
+            )
+            && inner(&self.ios, &other.ios, semver::Version::new(10, 0, 0))
+            && inner(&self.tvos, &other.tvos, semver::Version::new(10, 0, 0))
+            && inner(&self.watchos, &other.watchos, semver::Version::new(5, 0, 0))
+            && inner(
+                &self.visionos,
+                &other.visionos,
+                semver::Version::new(1, 0, 0),
+            )
+    }
+}
+
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Example {

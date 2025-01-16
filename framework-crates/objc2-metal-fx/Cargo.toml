@@ -22,7 +22,6 @@ objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = f
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -33,7 +32,12 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "MTLFXDefines",
+    "MTLFXSpatialScaler",
+    "MTLFXTemporalScaler",
+]
 std = ["alloc"]
 alloc = []
 
@@ -57,9 +61,4 @@ MTLFXTemporalScaler = [
     "objc2-metal/MTLPixelFormat",
     "objc2-metal/MTLResource",
     "objc2-metal/MTLTexture",
-]
-all = [
-    "MTLFXDefines",
-    "MTLFXSpatialScaler",
-    "MTLFXTemporalScaler",
 ]

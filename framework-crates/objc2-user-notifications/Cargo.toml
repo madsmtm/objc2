@@ -24,7 +24,6 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -37,7 +36,28 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "NSString_UserNotifications",
+    "UNError",
+    "UNNotification",
+    "UNNotificationAction",
+    "UNNotificationActionIcon",
+    "UNNotificationAttachment",
+    "UNNotificationAttributedMessageContext",
+    "UNNotificationCategory",
+    "UNNotificationContent",
+    "UNNotificationRequest",
+    "UNNotificationResponse",
+    "UNNotificationServiceExtension",
+    "UNNotificationSettings",
+    "UNNotificationSound",
+    "UNNotificationTrigger",
+    "UNUserNotificationCenter",
+    "bitflags",
+    "block2",
+    "objc2-core-location",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -109,25 +129,4 @@ UNUserNotificationCenter = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
-]
-all = [
-    "NSString_UserNotifications",
-    "UNError",
-    "UNNotification",
-    "UNNotificationAction",
-    "UNNotificationActionIcon",
-    "UNNotificationAttachment",
-    "UNNotificationAttributedMessageContext",
-    "UNNotificationCategory",
-    "UNNotificationContent",
-    "UNNotificationRequest",
-    "UNNotificationResponse",
-    "UNNotificationServiceExtension",
-    "UNNotificationSettings",
-    "UNNotificationSound",
-    "UNNotificationTrigger",
-    "UNUserNotificationCenter",
-    "bitflags",
-    "block2",
-    "objc2-core-location",
 ]

@@ -10,21 +10,8 @@ build = "build.rs"
 workspace = true
 
 [features]
-default = ["all"]
-exception = ["objc2/exception", "all"]
+exception = ["objc2/exception"]
 catch-all = ["objc2/catch-all", "exception"]
-# TODO: Fix this
-all = [
-    "objc2-foundation/NSException",
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSString",
-    "objc2-foundation/NSSet",
-    "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSValue",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSEnumerator",
-    "objc2-foundation/NSObjCRuntime",
-]
 
 unstable-simd = []
 
@@ -38,7 +25,18 @@ unstable-objfw = ["block2/unstable-objfw", "objc2/unstable-objfw"]
 [dependencies]
 block2 = { path = "../block2" }
 objc2 = { path = "../objc2" }
-objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = ["std"] }
+objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = [
+    "std",
+    "NSException",
+    "NSArray",
+    "NSString",
+    "NSSet",
+    "NSDictionary",
+    "NSValue",
+    "NSObject",
+    "NSEnumerator",
+    "NSObjCRuntime",
+] }
 
 [build-dependencies]
 cc = "1.0"

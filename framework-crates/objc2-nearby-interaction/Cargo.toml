@@ -27,7 +27,6 @@ objc2-ar-kit = { path = "../objc2-ar-kit", version = "0.2.2", default-features =
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -38,7 +37,17 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "NIAlgorithmConvergenceStatusReason",
+    "NIConfiguration",
+    "NIDeviceCapability",
+    "NIError",
+    "NIExport",
+    "NINearbyObject",
+    "NISession",
+    "objc2-ar-kit",
+]
 std = ["alloc"]
 alloc = []
 objc2-ar-kit = ["dep:objc2-ar-kit"]
@@ -63,14 +72,4 @@ NISession = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-]
-all = [
-    "NIAlgorithmConvergenceStatusReason",
-    "NIConfiguration",
-    "NIDeviceCapability",
-    "NIError",
-    "NIExport",
-    "NINearbyObject",
-    "NISession",
-    "objc2-ar-kit",
 ]

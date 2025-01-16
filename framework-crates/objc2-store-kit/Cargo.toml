@@ -37,7 +37,6 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all"]
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-darwin",
@@ -50,7 +49,38 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "SKANError",
+    "SKAdImpression",
+    "SKAdNetwork",
+    "SKArcadeService",
+    "SKCloudServiceController",
+    "SKCloudServiceSetupViewController",
+    "SKDownload",
+    "SKError",
+    "SKOverlay",
+    "SKOverlayConfiguration",
+    "SKOverlayTransitionContext",
+    "SKPayment",
+    "SKPaymentDiscount",
+    "SKPaymentQueue",
+    "SKPaymentTransaction",
+    "SKProduct",
+    "SKProductDiscount",
+    "SKProductStorePromotionController",
+    "SKProductsRequest",
+    "SKReceiptRefreshRequest",
+    "SKRequest",
+    "SKStoreProductViewController",
+    "SKStoreReviewController",
+    "SKStorefront",
+    "StoreKitDefines",
+    "bitflags",
+    "block2",
+    "objc2-app-kit",
+    "objc2-core-foundation",
+]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
@@ -156,34 +186,3 @@ SKStoreProductViewController = [
 SKStoreReviewController = []
 SKStorefront = ["objc2-foundation/NSString"]
 StoreKitDefines = []
-all = [
-    "SKANError",
-    "SKAdImpression",
-    "SKAdNetwork",
-    "SKArcadeService",
-    "SKCloudServiceController",
-    "SKCloudServiceSetupViewController",
-    "SKDownload",
-    "SKError",
-    "SKOverlay",
-    "SKOverlayConfiguration",
-    "SKOverlayTransitionContext",
-    "SKPayment",
-    "SKPaymentDiscount",
-    "SKPaymentQueue",
-    "SKPaymentTransaction",
-    "SKProduct",
-    "SKProductDiscount",
-    "SKProductStorePromotionController",
-    "SKProductsRequest",
-    "SKReceiptRefreshRequest",
-    "SKRequest",
-    "SKStoreProductViewController",
-    "SKStoreReviewController",
-    "SKStorefront",
-    "StoreKitDefines",
-    "bitflags",
-    "block2",
-    "objc2-app-kit",
-    "objc2-core-foundation",
-]

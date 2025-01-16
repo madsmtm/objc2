@@ -50,10 +50,11 @@ unstable-coerce-pointee = []
 [dependencies]
 objc2 = { path = "../objc2", version = "0.5.2", default-features = false, features = ["std"] }
 
-[dev-dependencies.objc2-foundation]
-path = "../../framework-crates/objc2-foundation"
-default-features = false
-features = ["std", "NSError"]
+[dev-dependencies]
+objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = [
+    "std",
+    "NSError",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -73,4 +74,3 @@ targets = [
 [package.metadata.release]
 shared-version = false
 tag-prefix = "block"
-enable-features = []
