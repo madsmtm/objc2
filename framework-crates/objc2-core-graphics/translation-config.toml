@@ -23,6 +23,11 @@ typedef.IOSurfaceRef.skipped = true
 struct.__IOSurface.skipped = true
 external.IOSurfaceRef.module = "IOSurface.IOSurfaceRef"
 
+# Defined for real in ColorSync, CoreGraphics redefines it just for the
+# purpose of this function.
+typedef.ColorSyncProfileRef.skipped = true
+fn.CGColorSpaceCreateWithColorSyncProfile.skipped = true
+
 # Needs io_service_t from the kernel
 fn.CGDisplayIOServicePort.skipped = true
 

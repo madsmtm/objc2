@@ -123,7 +123,6 @@ CGColorSpace = [
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFData",
-    "objc2-core-foundation/CFDictionary",
 ]
 CGContext = [
     "objc2-core-foundation/CFBase",
