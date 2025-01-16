@@ -1,42 +1,5 @@
 	.text
 	.intel_syntax noprefix
-	.section	.text.unlikely.SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
-	.p2align	4, 0x90
-	.type	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),@function
-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
-	push	rbx
-	mov	rbx, rsi
-	call	qword ptr [rip + objc_retain@GOTPCREL]
-	test	rax, rax
-	je	.LBB0_2
-	pop	rbx
-	ret
-.LBB0_2:
-	lea	rdi, [rip + .Lanon.[ID].0]
-	mov	esi, 56
-	mov	rdx, rbx
-	call	qword ptr [rip + SYM(core::option::expect_failed::GENERATED_ID, 0)@GOTPCREL]
-.Lfunc_end0:
-	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end0-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
-
-	.section	.text.unlikely.SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
-	.p2align	4, 0x90
-	.type	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),@function
-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
-	push	rax
-	call	qword ptr [rip + objc_retain@GOTPCREL]
-	test	rax, rax
-	je	.LBB1_2
-	pop	rcx
-	ret
-.LBB1_2:
-	lea	rdi, [rip + .Lanon.[ID].1]
-	lea	rdx, [rip + .Lanon.[ID].3]
-	mov	esi, 54
-	call	qword ptr [rip + SYM(core::option::expect_failed::GENERATED_ID, 0)@GOTPCREL]
-.Lfunc_end1:
-	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end1-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
-
 	.section	.text.error_bool,"ax",@progbits
 	.globl	error_bool
 	.p2align	4, 0x90
@@ -57,20 +20,23 @@ error_bool:
 	mov	edx, ebx
 	call	rax
 	test	al, al
-	je	.LBB2_2
+	je	.LBB0_2
 	xor	eax, eax
-.LBB2_3:
+.LBB0_4:
 	add	rsp, 16
 	pop	rbx
 	pop	r14
 	pop	r15
 	ret
-.LBB2_2:
+.LBB0_2:
 	mov	rdi, qword ptr [rsp + 8]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
-	jmp	.LBB2_3
-.Lfunc_end2:
-	.size	error_bool, .Lfunc_end2-error_bool
+	call	qword ptr [rip + objc_retain@GOTPCREL]
+	test	rax, rax
+	jne	.LBB0_4
+	call	qword ptr [rip + SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
+	jmp	.LBB0_4
+.Lfunc_end0:
+	.size	error_bool, .Lfunc_end0-error_bool
 
 	.section	.text.error_new,"ax",@progbits
 	.globl	error_new
@@ -89,25 +55,30 @@ error_new:
 	mov	rsi, rbx
 	call	rax
 	test	rax, rax
-	je	.LBB3_2
+	je	.LBB1_2
 	mov	rdx, rax
 	xor	eax, eax
+.LBB1_4:
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB3_2:
+.LBB1_2:
 	mov	rdi, qword ptr [rsp]
-	lea	rsi, [rip + .Lanon.[ID].4]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	qword ptr [rip + objc_retain@GOTPCREL]
+	mov	rdx, rax
+	mov	eax, 1
+	test	rdx, rdx
+	jne	.LBB1_4
+	call	qword ptr [rip + SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.Lfunc_end3:
-	.size	error_new, .Lfunc_end3-error_new
+.Lfunc_end1:
+	.size	error_new, .Lfunc_end1-error_new
 
 	.section	.text.error_init,"ax",@progbits
 	.globl	error_init
@@ -119,7 +90,7 @@ error_init:
 	push	rax
 	mov	qword ptr [rsp], 0
 	test	rdi, rdi
-	je	.LBB4_1
+	je	.LBB2_1
 	mov	rbx, rdi
 	mov	r14, rsi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
@@ -128,29 +99,34 @@ error_init:
 	mov	rsi, r14
 	call	rax
 	test	rax, rax
-	je	.LBB4_4
+	je	.LBB2_4
 	mov	rdx, rax
 	xor	eax, eax
+.LBB2_7:
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB4_1:
+.LBB2_1:
 	xor	edi, edi
-	jmp	.LBB4_5
-.LBB4_4:
+	jmp	.LBB2_5
+.LBB2_4:
 	mov	rdi, qword ptr [rsp]
-.LBB4_5:
-	lea	rsi, [rip + .Lanon.[ID].5]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+.LBB2_5:
+	call	qword ptr [rip + objc_retain@GOTPCREL]
+	mov	rdx, rax
+	mov	eax, 1
+	test	rdx, rdx
+	jne	.LBB2_7
+	call	qword ptr [rip + SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.Lfunc_end4:
-	.size	error_init, .Lfunc_end4-error_init
+.Lfunc_end2:
+	.size	error_init, .Lfunc_end2-error_init
 
 	.section	.text.error_copy,"ax",@progbits
 	.globl	error_copy
@@ -169,25 +145,30 @@ error_copy:
 	mov	rsi, rbx
 	call	rax
 	test	rax, rax
-	je	.LBB5_2
+	je	.LBB3_2
 	mov	rdx, rax
 	xor	eax, eax
+.LBB3_4:
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB5_2:
+.LBB3_2:
 	mov	rdi, qword ptr [rsp]
-	lea	rsi, [rip + .Lanon.[ID].6]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	qword ptr [rip + objc_retain@GOTPCREL]
+	mov	rdx, rax
+	mov	eax, 1
+	test	rdx, rdx
+	jne	.LBB3_4
+	call	qword ptr [rip + SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.Lfunc_end5:
-	.size	error_copy, .Lfunc_end5-error_copy
+.Lfunc_end3:
+	.size	error_copy, .Lfunc_end3-error_copy
 
 	.section	.text.error_mutable_copy,"ax",@progbits
 	.globl	error_mutable_copy
@@ -206,25 +187,30 @@ error_mutable_copy:
 	mov	rsi, rbx
 	call	rax
 	test	rax, rax
-	je	.LBB6_2
+	je	.LBB4_2
 	mov	rdx, rax
 	xor	eax, eax
+.LBB4_4:
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB6_2:
+.LBB4_2:
 	mov	rdi, qword ptr [rsp]
-	lea	rsi, [rip + .Lanon.[ID].7]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	qword ptr [rip + objc_retain@GOTPCREL]
+	mov	rdx, rax
+	mov	eax, 1
+	test	rdx, rdx
+	jne	.LBB4_4
+	call	qword ptr [rip + SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.Lfunc_end6:
-	.size	error_mutable_copy, .Lfunc_end6-error_mutable_copy
+.Lfunc_end4:
+	.size	error_mutable_copy, .Lfunc_end4-error_mutable_copy
 
 	.section	.text.error_autoreleased,"ax",@progbits
 	.globl	error_autoreleased
@@ -245,90 +231,29 @@ error_autoreleased:
 	mov	rdi, rax
 	call	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
 	test	rax, rax
-	je	.LBB7_2
+	je	.LBB5_2
 	mov	rdx, rax
 	xor	eax, eax
+.LBB5_4:
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB7_2:
+.LBB5_2:
 	mov	rdi, qword ptr [rsp]
-	lea	rsi, [rip + .Lanon.[ID].8]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	qword ptr [rip + objc_retain@GOTPCREL]
+	mov	rdx, rax
+	mov	eax, 1
+	test	rdx, rdx
+	jne	.LBB5_4
+	call	qword ptr [rip + SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.Lfunc_end7:
-	.size	error_autoreleased, .Lfunc_end7-error_autoreleased
-
-	.type	.Lanon.[ID].0,@object
-	.section	.rodata..Lanon.[ID].0,"a",@progbits
-.Lanon.[ID].0:
-	.ascii	"error parameter should be set if the method returns NULL"
-	.size	.Lanon.[ID].0, 56
-
-	.type	.Lanon.[ID].1,@object
-	.section	.rodata..Lanon.[ID].1,"a",@progbits
-.Lanon.[ID].1:
-	.ascii	"error parameter should be set if the method returns NO"
-	.size	.Lanon.[ID].1, 54
-
-	.type	.Lanon.[ID].2,@object
-	.section	.rodata..Lanon.[ID].2,"a",@progbits
-.Lanon.[ID].2:
-	.ascii	"crates/$DIR/lib.rs"
-	.size	.Lanon.[ID].2, 54
-
-	.type	.Lanon.[ID].3,@object
-	.section	.data.rel.ro..Lanon.[ID].3,"aw",@progbits
-	.p2align	3, 0x0
-.Lanon.[ID].3:
-	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\n\000\000\000\005\000\000"
-	.size	.Lanon.[ID].3, 24
-
-	.type	.Lanon.[ID].4,@object
-	.section	.data.rel.ro..Lanon.[ID].4,"aw",@progbits
-	.p2align	3, 0x0
-.Lanon.[ID].4:
-	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\017\000\000\000\005\000\000"
-	.size	.Lanon.[ID].4, 24
-
-	.type	.Lanon.[ID].5,@object
-	.section	.data.rel.ro..Lanon.[ID].5,"aw",@progbits
-	.p2align	3, 0x0
-.Lanon.[ID].5:
-	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\026\000\000\000\005\000\000"
-	.size	.Lanon.[ID].5, 24
-
-	.type	.Lanon.[ID].6,@object
-	.section	.data.rel.ro..Lanon.[ID].6,"aw",@progbits
-	.p2align	3, 0x0
-.Lanon.[ID].6:
-	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\033\000\000\000\005\000\000"
-	.size	.Lanon.[ID].6, 24
-
-	.type	.Lanon.[ID].7,@object
-	.section	.data.rel.ro..Lanon.[ID].7,"aw",@progbits
-	.p2align	3, 0x0
-.Lanon.[ID].7:
-	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000 \000\000\000\005\000\000"
-	.size	.Lanon.[ID].7, 24
-
-	.type	.Lanon.[ID].8,@object
-	.section	.data.rel.ro..Lanon.[ID].8,"aw",@progbits
-	.p2align	3, 0x0
-.Lanon.[ID].8:
-	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000%\000\000\000\005\000\000"
-	.size	.Lanon.[ID].8, 24
+.Lfunc_end5:
+	.size	error_autoreleased, .Lfunc_end5-error_autoreleased
 
 	.section	".note.GNU-stack","",@progbits

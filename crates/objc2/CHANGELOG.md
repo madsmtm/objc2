@@ -233,6 +233,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   automatically implementing the auto traits `Send` and `Sync`.
 * **BREAKING**: Fixed the signature of `NSObjectProtocol::isEqual` to take a
   nullable argument.
+* Fixed handling of methods that return NULL errors. This affected for example
+  `-[MTLBinaryArchive serializeToURL:error:]`.
 
 
 ## 0.5.2 - 2024-05-21

@@ -1,69 +1,5 @@
 	.text
 	.intel_syntax noprefix
-	.section	.text.unlikely.SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
-	.p2align	4, 0x90
-	.type	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),@function
-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
-	push	ebx
-	push	esi
-	push	eax
-	call	.L0$pb
-.L0$pb:
-	pop	ebx
-	mov	esi, edx
-.Ltmp0:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp0-.L0$pb)
-	sub	esp, 12
-	push	ecx
-	call	objc_retain@PLT
-	add	esp, 16
-	test	eax, eax
-	je	.LBB0_2
-	add	esp, 4
-	pop	esi
-	pop	ebx
-	ret
-.LBB0_2:
-	sub	esp, 4
-	lea	eax, [ebx + .Lanon.[ID].0@GOTOFF]
-	push	esi
-	push	56
-	push	eax
-	call	SYM(core::option::expect_failed::GENERATED_ID, 0)@PLT
-.Lfunc_end0:
-	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end0-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
-
-	.section	.text.unlikely.SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
-	.p2align	4, 0x90
-	.type	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),@function
-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
-	push	ebx
-	sub	esp, 8
-	call	.L1$pb
-.L1$pb:
-	pop	ebx
-.Ltmp1:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp1-.L1$pb)
-	sub	esp, 12
-	push	ecx
-	call	objc_retain@PLT
-	add	esp, 16
-	test	eax, eax
-	je	.LBB1_2
-	add	esp, 8
-	pop	ebx
-	ret
-.LBB1_2:
-	sub	esp, 4
-	lea	eax, [ebx + .Lanon.[ID].3@GOTOFF]
-	lea	ecx, [ebx + .Lanon.[ID].1@GOTOFF]
-	push	eax
-	push	54
-	push	ecx
-	call	SYM(core::option::expect_failed::GENERATED_ID, 0)@PLT
-.Lfunc_end1:
-	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end1-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
-
 	.section	.text.error_bool,"ax",@progbits
 	.globl	error_bool
 	.p2align	4, 0x90
@@ -77,12 +13,12 @@ error_bool:
 	mov	edi, dword ptr [esp + 40]
 	mov	esi, dword ptr [esp + 32]
 	mov	ebp, dword ptr [esp + 36]
-	call	.L2$pb
-.L2$pb:
+	call	.L0$pb
+.L0$pb:
 	pop	ebx
 	mov	dword ptr [esp + 8], 0
-.Ltmp2:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L2$pb)
+.Ltmp0:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp0-.L0$pb)
 	sub	esp, 8
 	push	ebp
 	push	esi
@@ -98,26 +34,150 @@ error_bool:
 	mov	ecx, eax
 	xor	eax, eax
 	test	cl, cl
-	je	.LBB2_1
-.LBB2_2:
+	je	.LBB0_1
+.LBB0_3:
 	add	esp, 12
 	pop	esi
 	pop	edi
 	pop	ebx
 	pop	ebp
 	ret
-.LBB2_1:
-	mov	ecx, dword ptr [esp + 8]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
-	jmp	.LBB2_2
-.Lfunc_end2:
-	.size	error_bool, .Lfunc_end2-error_bool
+.LBB0_1:
+	sub	esp, 12
+	push	dword ptr [esp + 20]
+	call	objc_retain@PLT
+	add	esp, 16
+	test	eax, eax
+	jne	.LBB0_3
+	call	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@PLT
+	jmp	.LBB0_3
+.Lfunc_end0:
+	.size	error_bool, .Lfunc_end0-error_bool
 
 	.section	.text.error_new,"ax",@progbits
 	.globl	error_new
 	.p2align	4, 0x90
 	.type	error_new,@function
 error_new:
+	push	ebx
+	push	edi
+	push	esi
+	sub	esp, 16
+	mov	esi, dword ptr [esp + 32]
+	mov	edi, dword ptr [esp + 36]
+	call	.L1$pb
+.L1$pb:
+	pop	ebx
+	mov	dword ptr [esp + 12], 0
+.Ltmp1:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp1-.L1$pb)
+	sub	esp, 8
+	push	edi
+	push	esi
+	call	objc_msg_lookup@PLT
+	add	esp, 12
+	lea	ecx, [esp + 16]
+	push	ecx
+	push	edi
+	push	esi
+	call	eax
+	add	esp, 16
+	test	eax, eax
+	je	.LBB1_2
+	mov	edx, eax
+	xor	eax, eax
+	jmp	.LBB1_4
+.LBB1_2:
+	sub	esp, 12
+	push	dword ptr [esp + 24]
+	call	objc_retain@PLT
+	add	esp, 16
+	mov	edx, eax
+	mov	eax, 1
+	test	edx, edx
+	je	.LBB1_3
+.LBB1_4:
+	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.LBB1_3:
+	call	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@PLT
+	mov	edx, eax
+	mov	eax, 1
+	jmp	.LBB1_4
+.Lfunc_end1:
+	.size	error_new, .Lfunc_end1-error_new
+
+	.section	.text.error_init,"ax",@progbits
+	.globl	error_init
+	.p2align	4, 0x90
+	.type	error_init,@function
+error_init:
+	push	ebx
+	push	edi
+	push	esi
+	sub	esp, 16
+	mov	esi, dword ptr [esp + 32]
+	call	.L2$pb
+.L2$pb:
+	pop	ebx
+	mov	dword ptr [esp + 12], 0
+.Ltmp2:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L2$pb)
+	test	esi, esi
+	je	.LBB2_1
+	mov	edi, dword ptr [esp + 36]
+	sub	esp, 8
+	push	edi
+	push	esi
+	call	objc_msg_lookup@PLT
+	add	esp, 12
+	lea	ecx, [esp + 16]
+	push	ecx
+	push	edi
+	push	esi
+	call	eax
+	add	esp, 16
+	test	eax, eax
+	je	.LBB2_4
+	mov	edx, eax
+	xor	eax, eax
+	jmp	.LBB2_7
+.LBB2_1:
+	xor	eax, eax
+	jmp	.LBB2_5
+.LBB2_4:
+	mov	eax, dword ptr [esp + 12]
+.LBB2_5:
+	sub	esp, 12
+	push	eax
+	call	objc_retain@PLT
+	add	esp, 16
+	mov	edx, eax
+	mov	eax, 1
+	test	edx, edx
+	je	.LBB2_6
+.LBB2_7:
+	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.LBB2_6:
+	call	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@PLT
+	mov	edx, eax
+	mov	eax, 1
+	jmp	.LBB2_7
+.Lfunc_end2:
+	.size	error_init, .Lfunc_end2-error_init
+
+	.section	.text.error_copy,"ax",@progbits
+	.globl	error_copy
+	.p2align	4, 0x90
+	.type	error_copy,@function
+error_copy:
 	push	ebx
 	push	edi
 	push	esi
@@ -145,123 +205,29 @@ error_new:
 	je	.LBB3_2
 	mov	edx, eax
 	xor	eax, eax
-.LBB3_3:
-	add	esp, 16
-	pop	esi
-	pop	edi
-	pop	ebx
-	ret
+	jmp	.LBB3_4
 .LBB3_2:
-	mov	ecx, dword ptr [esp + 12]
-	lea	edx, [ebx + .Lanon.[ID].4@GOTOFF]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	sub	esp, 12
+	push	dword ptr [esp + 24]
+	call	objc_retain@PLT
+	add	esp, 16
 	mov	edx, eax
 	mov	eax, 1
-	jmp	.LBB3_3
+	test	edx, edx
+	je	.LBB3_3
+.LBB3_4:
+	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.LBB3_3:
+	call	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@PLT
+	mov	edx, eax
+	mov	eax, 1
+	jmp	.LBB3_4
 .Lfunc_end3:
-	.size	error_new, .Lfunc_end3-error_new
-
-	.section	.text.error_init,"ax",@progbits
-	.globl	error_init
-	.p2align	4, 0x90
-	.type	error_init,@function
-error_init:
-	push	ebx
-	push	edi
-	push	esi
-	sub	esp, 16
-	mov	esi, dword ptr [esp + 32]
-	call	.L4$pb
-.L4$pb:
-	pop	ebx
-	mov	dword ptr [esp + 12], 0
-.Ltmp4:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp4-.L4$pb)
-	test	esi, esi
-	je	.LBB4_1
-	mov	edi, dword ptr [esp + 36]
-	sub	esp, 8
-	push	edi
-	push	esi
-	call	objc_msg_lookup@PLT
-	add	esp, 12
-	lea	ecx, [esp + 16]
-	push	ecx
-	push	edi
-	push	esi
-	call	eax
-	add	esp, 16
-	test	eax, eax
-	je	.LBB4_4
-	mov	edx, eax
-	xor	eax, eax
-.LBB4_6:
-	add	esp, 16
-	pop	esi
-	pop	edi
-	pop	ebx
-	ret
-.LBB4_1:
-	xor	ecx, ecx
-	jmp	.LBB4_5
-.LBB4_4:
-	mov	ecx, dword ptr [esp + 12]
-.LBB4_5:
-	lea	edx, [ebx + .Lanon.[ID].5@GOTOFF]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
-	mov	edx, eax
-	mov	eax, 1
-	jmp	.LBB4_6
-.Lfunc_end4:
-	.size	error_init, .Lfunc_end4-error_init
-
-	.section	.text.error_copy,"ax",@progbits
-	.globl	error_copy
-	.p2align	4, 0x90
-	.type	error_copy,@function
-error_copy:
-	push	ebx
-	push	edi
-	push	esi
-	sub	esp, 16
-	mov	esi, dword ptr [esp + 32]
-	mov	edi, dword ptr [esp + 36]
-	call	.L5$pb
-.L5$pb:
-	pop	ebx
-	mov	dword ptr [esp + 12], 0
-.Ltmp5:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp5-.L5$pb)
-	sub	esp, 8
-	push	edi
-	push	esi
-	call	objc_msg_lookup@PLT
-	add	esp, 12
-	lea	ecx, [esp + 16]
-	push	ecx
-	push	edi
-	push	esi
-	call	eax
-	add	esp, 16
-	test	eax, eax
-	je	.LBB5_2
-	mov	edx, eax
-	xor	eax, eax
-.LBB5_3:
-	add	esp, 16
-	pop	esi
-	pop	edi
-	pop	ebx
-	ret
-.LBB5_2:
-	mov	ecx, dword ptr [esp + 12]
-	lea	edx, [ebx + .Lanon.[ID].6@GOTOFF]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
-	mov	edx, eax
-	mov	eax, 1
-	jmp	.LBB5_3
-.Lfunc_end5:
-	.size	error_copy, .Lfunc_end5-error_copy
+	.size	error_copy, .Lfunc_end3-error_copy
 
 	.section	.text.error_mutable_copy,"ax",@progbits
 	.globl	error_mutable_copy
@@ -274,12 +240,12 @@ error_mutable_copy:
 	sub	esp, 16
 	mov	esi, dword ptr [esp + 32]
 	mov	edi, dword ptr [esp + 36]
-	call	.L6$pb
-.L6$pb:
+	call	.L4$pb
+.L4$pb:
 	pop	ebx
 	mov	dword ptr [esp + 12], 0
-.Ltmp6:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp6-.L6$pb)
+.Ltmp4:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp4-.L4$pb)
 	sub	esp, 8
 	push	edi
 	push	esi
@@ -292,24 +258,32 @@ error_mutable_copy:
 	call	eax
 	add	esp, 16
 	test	eax, eax
-	je	.LBB6_2
+	je	.LBB4_2
 	mov	edx, eax
 	xor	eax, eax
-.LBB6_3:
+	jmp	.LBB4_4
+.LBB4_2:
+	sub	esp, 12
+	push	dword ptr [esp + 24]
+	call	objc_retain@PLT
+	add	esp, 16
+	mov	edx, eax
+	mov	eax, 1
+	test	edx, edx
+	je	.LBB4_3
+.LBB4_4:
 	add	esp, 16
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
-.LBB6_2:
-	mov	ecx, dword ptr [esp + 12]
-	lea	edx, [ebx + .Lanon.[ID].7@GOTOFF]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+.LBB4_3:
+	call	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@PLT
 	mov	edx, eax
 	mov	eax, 1
-	jmp	.LBB6_3
-.Lfunc_end6:
-	.size	error_mutable_copy, .Lfunc_end6-error_mutable_copy
+	jmp	.LBB4_4
+.Lfunc_end4:
+	.size	error_mutable_copy, .Lfunc_end4-error_mutable_copy
 
 	.section	.text.error_autoreleased,"ax",@progbits
 	.globl	error_autoreleased
@@ -322,110 +296,47 @@ error_autoreleased:
 	sub	esp, 16
 	mov	esi, dword ptr [esp + 32]
 	mov	edi, dword ptr [esp + 36]
-	call	.L7$pb
-.L7$pb:
+	call	.L5$pb
+.L5$pb:
 	pop	ebx
 	mov	dword ptr [esp + 12], 0
-.Ltmp7:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp7-.L7$pb)
-	sub	esp, 8
-	push	edi
-	push	esi
+.Ltmp5:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp5-.L5$pb)
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
 	call	objc_msg_lookup@PLT
-	add	esp, 12
-	lea	ecx, [esp + 16]
-	push	ecx
-	push	edi
-	push	esi
+	lea	ecx, [esp + 12]
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
+	mov	dword ptr [esp + 8], ecx
 	call	eax
-	add	esp, 4
-	push	eax
+	mov	dword ptr [esp], eax
 	call	objc_retainAutoreleasedReturnValue@PLT
-	add	esp, 16
 	test	eax, eax
-	je	.LBB7_2
+	je	.LBB5_2
 	mov	edx, eax
 	xor	eax, eax
-.LBB7_3:
+	jmp	.LBB5_4
+.LBB5_2:
+	mov	eax, dword ptr [esp + 12]
+	mov	dword ptr [esp], eax
+	call	objc_retain@PLT
+	mov	edx, eax
+	mov	eax, 1
+	test	edx, edx
+	je	.LBB5_3
+.LBB5_4:
 	add	esp, 16
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
-.LBB7_2:
-	mov	ecx, dword ptr [esp + 12]
-	lea	edx, [ebx + .Lanon.[ID].8@GOTOFF]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+.LBB5_3:
+	call	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@PLT
 	mov	edx, eax
 	mov	eax, 1
-	jmp	.LBB7_3
-.Lfunc_end7:
-	.size	error_autoreleased, .Lfunc_end7-error_autoreleased
-
-	.type	.Lanon.[ID].0,@object
-	.section	.rodata..Lanon.[ID].0,"a",@progbits
-.Lanon.[ID].0:
-	.ascii	"error parameter should be set if the method returns NULL"
-	.size	.Lanon.[ID].0, 56
-
-	.type	.Lanon.[ID].1,@object
-	.section	.rodata..Lanon.[ID].1,"a",@progbits
-.Lanon.[ID].1:
-	.ascii	"error parameter should be set if the method returns NO"
-	.size	.Lanon.[ID].1, 54
-
-	.type	.Lanon.[ID].2,@object
-	.section	.rodata..Lanon.[ID].2,"a",@progbits
-.Lanon.[ID].2:
-	.ascii	"crates/$DIR/lib.rs"
-	.size	.Lanon.[ID].2, 54
-
-	.type	.Lanon.[ID].3,@object
-	.section	.data.rel.ro..Lanon.[ID].3,"aw",@progbits
-	.p2align	2, 0x0
-.Lanon.[ID].3:
-	.long	.Lanon.[ID].2
-	.asciz	"6\000\000\000\n\000\000\000\005\000\000"
-	.size	.Lanon.[ID].3, 16
-
-	.type	.Lanon.[ID].4,@object
-	.section	.data.rel.ro..Lanon.[ID].4,"aw",@progbits
-	.p2align	2, 0x0
-.Lanon.[ID].4:
-	.long	.Lanon.[ID].2
-	.asciz	"6\000\000\000\017\000\000\000\005\000\000"
-	.size	.Lanon.[ID].4, 16
-
-	.type	.Lanon.[ID].5,@object
-	.section	.data.rel.ro..Lanon.[ID].5,"aw",@progbits
-	.p2align	2, 0x0
-.Lanon.[ID].5:
-	.long	.Lanon.[ID].2
-	.asciz	"6\000\000\000\026\000\000\000\005\000\000"
-	.size	.Lanon.[ID].5, 16
-
-	.type	.Lanon.[ID].6,@object
-	.section	.data.rel.ro..Lanon.[ID].6,"aw",@progbits
-	.p2align	2, 0x0
-.Lanon.[ID].6:
-	.long	.Lanon.[ID].2
-	.asciz	"6\000\000\000\033\000\000\000\005\000\000"
-	.size	.Lanon.[ID].6, 16
-
-	.type	.Lanon.[ID].7,@object
-	.section	.data.rel.ro..Lanon.[ID].7,"aw",@progbits
-	.p2align	2, 0x0
-.Lanon.[ID].7:
-	.long	.Lanon.[ID].2
-	.asciz	"6\000\000\000 \000\000\000\005\000\000"
-	.size	.Lanon.[ID].7, 16
-
-	.type	.Lanon.[ID].8,@object
-	.section	.data.rel.ro..Lanon.[ID].8,"aw",@progbits
-	.p2align	2, 0x0
-.Lanon.[ID].8:
-	.long	.Lanon.[ID].2
-	.asciz	"6\000\000\000%\000\000\000\005\000\000"
-	.size	.Lanon.[ID].8, 16
+	jmp	.LBB5_4
+.Lfunc_end5:
+	.size	error_autoreleased, .Lfunc_end5-error_autoreleased
 
 	.section	".note.GNU-stack","",@progbits

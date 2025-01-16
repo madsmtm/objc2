@@ -820,7 +820,8 @@ macro_rules! __class_inner {
 ///
 /// In particular, if you make the last argument the special marker `_`, then
 /// the macro will return a `Result<(), Retained<E>>` (where you must specify
-/// `E` yourself, usually you'd use `objc2_foundation::NSError`).
+/// `E` yourself, and where `E` must be either [`NSObject`] or
+/// `objc2_foundation::NSError`).
 ///
 /// At runtime, we create the temporary error variable for you on the stack
 /// and send it as the out-parameter to the method. If the method then returns
@@ -832,6 +833,7 @@ macro_rules! __class_inner {
 ///
 /// [cocoa-error]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ErrorHandlingCocoa/ErrorHandling/ErrorHandling.html
 /// [swift-error]: https://developer.apple.com/documentation/swift/about-imported-cocoa-error-parameters
+/// [`NSObject`]: crate::runtime::NSObject
 ///
 ///
 /// # Panics

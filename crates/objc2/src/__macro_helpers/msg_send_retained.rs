@@ -6,6 +6,7 @@ use crate::runtime::{AnyClass, AnyObject, Sel};
 use crate::{sel, ClassType, DefinedClass, Message};
 
 use super::defined_ivars::set_finalized;
+use super::null_error::encountered_error;
 use super::{Alloc, ConvertArguments, Copy, Init, MsgSend, MutableCopy, New, Other, TupleExtender};
 
 pub trait MsgSendRetained<T, U> {
@@ -29,7 +30,7 @@ pub trait MsgSendRetained<T, U> {
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
         <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
-        E: Message,
+        E: ClassType,
         Option<R>: MaybeUnwrap<Input = U>,
     {
         let mut err: *mut E = ptr::null_mut();
@@ -111,7 +112,7 @@ pub trait MsgSendSuperRetained<T, U> {
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
         <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
-        E: Message,
+        E: ClassType,
         Option<R>: MaybeUnwrap<Input = U>,
     {
         let mut err: *mut E = ptr::null_mut();
@@ -140,7 +141,7 @@ pub trait MsgSendSuperRetained<T, U> {
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
         <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
-        E: Message,
+        E: ClassType,
         Option<R>: MaybeUnwrap<Input = U>,
     {
         let mut err: *mut E = ptr::null_mut();
@@ -154,16 +155,6 @@ pub trait MsgSendSuperRetained<T, U> {
             Err(unsafe { encountered_error(err) })
         }
     }
-}
-
-// Marked `cold` to tell the optimizer that errors are comparatively rare.
-// And intentionally not inlined, for much the same reason.
-#[cold]
-#[track_caller]
-unsafe fn encountered_error<E: Message>(err: *mut E) -> Retained<E> {
-    // SAFETY: Ensured by caller
-    unsafe { Retained::retain(err) }
-        .expect("error parameter should be set if the method returns NULL")
 }
 
 impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for New {
@@ -1032,7 +1023,7 @@ mod tests {
         ($expected:expr, $if_autorelease_not_skipped:expr, $sel:ident, $($obj:tt)*) => {
             // Succeeds
             let res = autoreleasepool(|_pool| {
-                let res: Result<Retained<RcTestObject>, Retained<RcTestObject>> = unsafe {
+                let res: Result<Retained<RcTestObject>, Retained<NSObject>> = unsafe {
                     msg_send_id![$($obj)*, $sel: false, error: _]
                 };
                 let res = res.expect("not ok");
@@ -1053,7 +1044,7 @@ mod tests {
 
             // Errors
             let res = autoreleasepool(|_pool| {
-                let res: Result<Retained<RcTestObject>, Retained<RcTestObject>> = unsafe {
+                let res: Result<Retained<RcTestObject>, Retained<NSObject>> = unsafe {
                     msg_send_id![$($obj)*, $sel: true, error: _]
                 };
                 $expected.alloc += 1;

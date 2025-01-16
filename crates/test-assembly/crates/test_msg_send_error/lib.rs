@@ -1,9 +1,9 @@
 //! Test that error parameters are handled correctly.
 use objc2::__macro_helpers::{Copy, Init, MsgSend, MsgSendRetained, MutableCopy, New, Other};
 use objc2::rc::{Allocated, Retained};
-use objc2::runtime::{AnyClass, AnyObject, Sel};
+use objc2::runtime::{AnyClass, AnyObject, NSObject, Sel};
 
-type Result<T> = std::result::Result<T, Retained<AnyObject>>;
+type Result<T> = std::result::Result<T, Retained<NSObject>>;
 
 #[no_mangle]
 unsafe fn error_bool(obj: &AnyObject, sel: Sel, param: u32) -> Result<()> {

@@ -6,6 +6,7 @@ use crate::rc::Retained;
 use crate::runtime::{AnyClass, AnyObject, MessageReceiver, Sel};
 use crate::{ClassType, Encode, Message};
 
+use super::null_error::encountered_error;
 use super::{ConvertArguments, ConvertReturn, TupleExtender};
 
 pub trait MsgSend: Sized {
@@ -83,7 +84,7 @@ pub trait MsgSend: Sized {
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
         <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
-        E: Message,
+        E: ClassType,
     {
         let mut err: *mut E = ptr::null_mut();
         let args = args.add_argument(&mut err);
@@ -107,7 +108,7 @@ pub trait MsgSend: Sized {
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
         <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
-        E: Message,
+        E: ClassType,
     {
         let mut err: *mut E = ptr::null_mut();
         let args = args.add_argument(&mut err);
@@ -132,7 +133,7 @@ pub trait MsgSend: Sized {
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
         <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
-        E: Message,
+        E: ClassType,
     {
         let mut err: *mut E = ptr::null_mut();
         let args = args.add_argument(&mut err);
@@ -143,14 +144,6 @@ pub trait MsgSend: Sized {
             Err(unsafe { encountered_error(err) })
         }
     }
-}
-
-#[cold]
-#[track_caller]
-unsafe fn encountered_error<E: Message>(err: *mut E) -> Retained<E> {
-    // SAFETY: Ensured by caller
-    unsafe { Retained::retain(err) }
-        .expect("error parameter should be set if the method returns NO")
 }
 
 impl<T: MessageReceiver> MsgSend for T {
@@ -200,7 +193,7 @@ mod tests {
     macro_rules! test_error_bool {
         ($expected:expr, $($obj:tt)*) => {
             // Succeeds
-            let res: Result<(), Retained<RcTestObject>> = unsafe {
+            let res: Result<(), Retained<NSObject>> = unsafe {
                 msg_send![$($obj)*, boolAndShouldError: false, error: _]
             };
             assert_eq!(res, Ok(()));
@@ -209,7 +202,7 @@ mod tests {
             // Errors
             let res = autoreleasepool(|_pool| {
                 // `Ok` type is inferred to be `()`
-                let res: Retained<RcTestObject> = unsafe {
+                let res: Retained<NSObject> = unsafe {
                     msg_send![$($obj)*, boolAndShouldError: true, error: _]
                 }.expect_err("not err");
                 $expected.alloc += 1;

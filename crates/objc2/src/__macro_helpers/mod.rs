@@ -25,6 +25,7 @@ mod method_family;
 mod module_info;
 mod msg_send;
 mod msg_send_retained;
+mod null_error;
 mod os_version;
 mod sync_unsafe_cell;
 mod writeback;
