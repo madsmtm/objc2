@@ -50,7 +50,6 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
-MPSImage = ["objc2-foundation/NSArray"]
 block2 = ["dep:block2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
@@ -213,6 +212,20 @@ MPSCoreTypes = [
     "objc2-metal/MTLTypes",
 ]
 MPSFunctionConstantIndices = []
+MPSImage = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSZone",
+    "objc2-metal/MTLAllocation",
+    "objc2-metal/MTLCommandBuffer",
+    "objc2-metal/MTLDevice",
+    "objc2-metal/MTLPixelFormat",
+    "objc2-metal/MTLResource",
+    "objc2-metal/MTLTexture",
+    "objc2-metal/MTLTypes",
+]
 MPSImageConversion = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",

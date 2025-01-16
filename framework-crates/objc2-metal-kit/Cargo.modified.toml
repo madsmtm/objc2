@@ -1,3 +1,0 @@
-[dependencies]
-# HACK: Work around header-translator not setting required features here
-objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true, features = ["objc2-metal"] }

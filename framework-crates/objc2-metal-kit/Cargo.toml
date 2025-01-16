@@ -37,7 +37,11 @@ objc2-model-io = { path = "../objc2-model-io", version = "0.2.2", default-featur
     "MDLTexture",
     "MDLVertexDescriptor",
 ] }
-objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true, features = ["objc2-metal"] }
+objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true, features = [
+    "CALayer",
+    "CAMetalLayer",
+    "objc2-metal",
+] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true, features = [
