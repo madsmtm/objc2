@@ -20,6 +20,10 @@ fn test() {
 
     let metal_lib = unsafe { NSURL::URLWithString(ns_string!("file://missing.metallib")) }.unwrap();
     let err = binary_archive.serializeToURL_error(&metal_lib).unwrap_err();
-    assert_eq!(err.domain().to_string(), "__objc2.missingError");
-    assert_eq!(err.code(), 0);
+    if err.domain().to_string() == "__objc2.missingError" {
+        assert_eq!(err.code(), 0);
+    } else {
+        // In macOS 15, the error is no longer NULL
+        assert!(err.domain().to_string() == "MTLBinaryArchiveDomain");
+    }
 }
