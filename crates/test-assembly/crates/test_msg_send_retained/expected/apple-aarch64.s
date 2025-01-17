@@ -195,17 +195,20 @@ Lloh9:
 	.globl	_handle_with_out_param
 	.p2align	2
 _handle_with_out_param:
+Lfunc_begin0:
 	stp	x22, x21, [sp, #-48]!
 	stp	x20, x19, [sp, #16]
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
-	mov	x19, x2
-	ldr	x20, [x2]
+	mov	x20, x2
+	ldr	x19, [x2]
+Ltmp0:
 	bl	_objc_msgSend
+Ltmp1:
 	mov	x21, x0
-	ldr	x0, [x19]
+	ldr	x0, [x20]
 	bl	_objc_retain
-	mov	x0, x20
+	mov	x0, x19
 	bl	_objc_release
 	; InlineAsm Start
 	mov	x29, x29
@@ -215,6 +218,57 @@ _handle_with_out_param:
 	ldp	x20, x19, [sp, #16]
 	ldp	x22, x21, [sp], #48
 	b	_objc_retainAutoreleasedReturnValue
+LBB15_2:
+Ltmp2:
+	mov	x21, x0
+	ldr	x0, [x20]
+Ltmp3:
+	bl	_objc_retain
+Ltmp4:
+Ltmp5:
+	mov	x0, x19
+	bl	_objc_release
+Ltmp6:
+	mov	x0, x21
+	bl	__Unwind_Resume
+LBB15_5:
+Ltmp7:
+	bl	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+Lfunc_end0:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table15:
+Lexception0:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase0-Lttbaseref0
+Lttbaseref0:
+	.byte	1
+	.uleb128 Lcst_end0-Lcst_begin0
+Lcst_begin0:
+	.uleb128 Ltmp0-Lfunc_begin0
+	.uleb128 Ltmp1-Ltmp0
+	.uleb128 Ltmp2-Lfunc_begin0
+	.byte	0
+	.uleb128 Ltmp1-Lfunc_begin0
+	.uleb128 Ltmp3-Ltmp1
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp3-Lfunc_begin0
+	.uleb128 Ltmp6-Ltmp3
+	.uleb128 Ltmp7-Lfunc_begin0
+	.byte	1
+	.uleb128 Ltmp6-Lfunc_begin0
+	.uleb128 Lfunc_end0-Ltmp6
+	.byte	0
+	.byte	0
+Lcst_end0:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase0:
+	.byte	0
+	.p2align	2, 0x0
 
 	.section	__TEXT,__const
 l_anon.[ID].0:

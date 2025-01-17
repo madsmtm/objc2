@@ -391,34 +391,89 @@ handle_autoreleased_fallible:
 	.p2align	4, 0x90
 	.type	handle_with_out_param,@function
 handle_with_out_param:
+.Lfunc_begin0:
 	push	r15
 	push	r14
 	push	r12
 	push	rbx
 	push	rax
-	mov	rbx, rdx
-	mov	r14, rsi
-	mov	r15, rdi
-	mov	r12, qword ptr [rdx]
+	mov	r14, rdx
+	mov	r15, rsi
+	mov	r12, rdi
+	mov	rbx, qword ptr [rdx]
+.Ltmp0:
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rdi, r15
-	mov	rsi, r14
-	mov	rdx, rbx
-	call	rax
-	mov	r14, rax
-	mov	rdi, qword ptr [rbx]
-	call	qword ptr [rip + objc_retain@GOTPCREL]
+.Ltmp1:
+.Ltmp2:
 	mov	rdi, r12
+	mov	rsi, r15
+	mov	rdx, r14
+	call	rax
+.Ltmp3:
+	mov	r15, rax
+	mov	rdi, qword ptr [r14]
+	call	qword ptr [rip + objc_retain@GOTPCREL]
+	mov	rdi, rbx
 	call	qword ptr [rip + objc_release@GOTPCREL]
-	mov	rdi, r14
+	mov	rdi, r15
 	add	rsp, 8
 	pop	rbx
 	pop	r12
 	pop	r14
 	pop	r15
 	jmp	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
+.LBB15_3:
+.Ltmp4:
+	mov	r15, rax
+	mov	rdi, qword ptr [r14]
+.Ltmp5:
+	call	qword ptr [rip + objc_retain@GOTPCREL]
+.Ltmp6:
+.Ltmp7:
+	mov	rdi, rbx
+	call	qword ptr [rip + objc_release@GOTPCREL]
+.Ltmp8:
+	mov	rdi, r15
+	call	_Unwind_Resume@PLT
+.LBB15_6:
+.Ltmp9:
+	call	qword ptr [rip + SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end15:
 	.size	handle_with_out_param, .Lfunc_end15-handle_with_out_param
+	.section	.gcc_except_table.handle_with_out_param,"a",@progbits
+	.p2align	2, 0x0
+GCC_except_table15:
+.Lexception0:
+	.byte	255
+	.byte	155
+	.uleb128 .Lttbase0-.Lttbaseref0
+.Lttbaseref0:
+	.byte	1
+	.uleb128 .Lcst_end0-.Lcst_begin0
+.Lcst_begin0:
+	.uleb128 .Ltmp0-.Lfunc_begin0
+	.uleb128 .Ltmp3-.Ltmp0
+	.uleb128 .Ltmp4-.Lfunc_begin0
+	.byte	0
+	.uleb128 .Ltmp3-.Lfunc_begin0
+	.uleb128 .Ltmp5-.Ltmp3
+	.byte	0
+	.byte	0
+	.uleb128 .Ltmp5-.Lfunc_begin0
+	.uleb128 .Ltmp8-.Ltmp5
+	.uleb128 .Ltmp9-.Lfunc_begin0
+	.byte	1
+	.uleb128 .Ltmp8-.Lfunc_begin0
+	.uleb128 .Lfunc_end15-.Ltmp8
+	.byte	0
+	.byte	0
+.Lcst_end0:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+.Lttbase0:
+	.byte	0
+	.p2align	2, 0x0
 
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
@@ -466,4 +521,12 @@ handle_with_out_param:
 	.asciz	"9\000\000\000\000\000\000\000V\000\000\000\005\000\000"
 	.size	.Lanon.[ID].5, 24
 
+	.hidden	DW.ref.rust_eh_personality
+	.weak	DW.ref.rust_eh_personality
+	.section	.data.DW.ref.rust_eh_personality,"awG",@progbits,DW.ref.rust_eh_personality,comdat
+	.p2align	3, 0x0
+	.type	DW.ref.rust_eh_personality,@object
+	.size	DW.ref.rust_eh_personality, 8
+DW.ref.rust_eh_personality:
+	.quad	rust_eh_personality
 	.section	".note.GNU-stack","",@progbits

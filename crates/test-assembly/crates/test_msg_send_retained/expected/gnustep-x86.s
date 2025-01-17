@@ -560,44 +560,102 @@ handle_autoreleased_fallible:
 	.p2align	4, 0x90
 	.type	handle_with_out_param,@function
 handle_with_out_param:
+.Lfunc_begin0:
 	push	ebp
 	push	ebx
 	push	edi
 	push	esi
-	sub	esp, 12
-	mov	ebp, dword ptr [esp + 40]
-	mov	eax, dword ptr [esp + 32]
-	mov	esi, dword ptr [esp + 36]
+	sub	esp, 28
+	mov	ebp, dword ptr [esp + 56]
+	mov	edi, dword ptr [esp + 52]
+	mov	esi, dword ptr [esp + 48]
 	call	.L15$pb
 .L15$pb:
 	pop	ebx
+.Ltmp25:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp25-.L15$pb)
+	mov	eax, dword ptr [ebp]
+	mov	dword ptr [esp + 24], eax
 .Ltmp15:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp15-.L15$pb)
-	mov	edi, dword ptr [ebp]
-	mov	dword ptr [esp + 4], esi
-	mov	dword ptr [esp], eax
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
 	call	objc_msg_lookup@PLT
-	mov	ecx, dword ptr [esp + 32]
+.Ltmp16:
+.Ltmp17:
 	mov	dword ptr [esp + 8], ebp
-	mov	dword ptr [esp + 4], esi
-	mov	dword ptr [esp], ecx
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
 	call	eax
+.Ltmp18:
 	mov	esi, eax
 	mov	eax, dword ptr [ebp]
 	mov	dword ptr [esp], eax
 	call	objc_retain@PLT
-	mov	dword ptr [esp], edi
+	mov	eax, dword ptr [esp + 24]
+	mov	dword ptr [esp], eax
 	call	objc_release@PLT
 	mov	dword ptr [esp], esi
 	call	objc_retainAutoreleasedReturnValue@PLT
-	add	esp, 12
+	add	esp, 28
 	pop	esi
 	pop	edi
 	pop	ebx
 	pop	ebp
 	ret
+.LBB15_3:
+.Ltmp19:
+	mov	esi, eax
+	mov	eax, dword ptr [ebp]
+.Ltmp20:
+	mov	dword ptr [esp], eax
+	call	objc_retain@PLT
+.Ltmp21:
+.Ltmp22:
+	mov	eax, dword ptr [esp + 24]
+	mov	dword ptr [esp], eax
+	call	objc_release@PLT
+.Ltmp23:
+	mov	dword ptr [esp], esi
+	call	_Unwind_Resume@PLT
+.LBB15_6:
+.Ltmp24:
+	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end15:
 	.size	handle_with_out_param, .Lfunc_end15-handle_with_out_param
+	.section	.gcc_except_table.handle_with_out_param,"a",@progbits
+	.p2align	2, 0x0
+GCC_except_table15:
+.Lexception0:
+	.byte	255
+	.byte	155
+	.uleb128 .Lttbase0-.Lttbaseref0
+.Lttbaseref0:
+	.byte	1
+	.uleb128 .Lcst_end0-.Lcst_begin0
+.Lcst_begin0:
+	.uleb128 .Ltmp15-.Lfunc_begin0
+	.uleb128 .Ltmp18-.Ltmp15
+	.uleb128 .Ltmp19-.Lfunc_begin0
+	.byte	0
+	.uleb128 .Ltmp18-.Lfunc_begin0
+	.uleb128 .Ltmp20-.Ltmp18
+	.byte	0
+	.byte	0
+	.uleb128 .Ltmp20-.Lfunc_begin0
+	.uleb128 .Ltmp23-.Ltmp20
+	.uleb128 .Ltmp24-.Lfunc_begin0
+	.byte	1
+	.uleb128 .Ltmp23-.Lfunc_begin0
+	.uleb128 .Lfunc_end15-.Ltmp23
+	.byte	0
+	.byte	0
+.Lcst_end0:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+.Lttbase0:
+	.byte	0
+	.p2align	2, 0x0
 
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
@@ -645,4 +703,12 @@ handle_with_out_param:
 	.asciz	"9\000\000\000V\000\000\000\005\000\000"
 	.size	.Lanon.[ID].5, 16
 
+	.hidden	DW.ref.rust_eh_personality
+	.weak	DW.ref.rust_eh_personality
+	.section	.data.DW.ref.rust_eh_personality,"awG",@progbits,DW.ref.rust_eh_personality,comdat
+	.p2align	2, 0x0
+	.type	DW.ref.rust_eh_personality,@object
+	.size	DW.ref.rust_eh_personality, 4
+DW.ref.rust_eh_personality:
+	.long	rust_eh_personality
 	.section	".note.GNU-stack","",@progbits

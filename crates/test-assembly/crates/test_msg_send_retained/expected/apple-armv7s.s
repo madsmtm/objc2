@@ -197,22 +197,152 @@ LPC14_0:
 	.p2align	2
 	.code	32
 _handle_with_out_param:
+Lfunc_begin0:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
-	mov	r4, r2
-	ldr	r5, [r2]
-	bl	_objc_msgSend
-	mov	r6, r0
-	ldr	r0, [r4]
-	bl	_objc_retain
+	push	{r8, r10, r11}
+	sub	r4, sp, #64
+	bfc	r4, #0, #4
+	mov	sp, r4
+	vst1.64	{d8, d9, d10, d11}, [r4:128]!
+	vst1.64	{d12, d13, d14, d15}, [r4:128]
+	sub	sp, sp, #64
+	mov	r4, r1
+	mov	r5, r0
+	str	r2, [sp, #4]
+	ldr	r0, [sp, #4]
+	ldr	r0, [r0]
+	str	r0, [sp, #8]
+	movw	r0, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC15_2+8))
+	movt	r0, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC15_2+8))
+LPC15_2:
+	ldr	r0, [pc, r0]
+	ldr	r6, [sp, #4]
+	str	r0, [sp, #36]
+	ldr	r0, LCPI15_0
+LPC15_0:
+	add	r0, pc, r0
+	str	r0, [sp, #40]
+	str	r7, [sp, #44]
+	str	sp, [sp, #52]
+	ldr	r0, LCPI15_1
+LPC15_1:
+	add	r0, pc, r0
+	str	r0, [sp, #48]
+	mov	r0, #1
+	str	r0, [sp, #16]
+	add	r0, sp, #12
+	bl	__Unwind_SjLj_Register
+Ltmp0:
 	mov	r0, r5
+	mov	r1, r4
+	mov	r2, r6
+	bl	_objc_msgSend
+Ltmp1:
+	mov	r4, r0
+	ldr	r0, [sp, #4]
+	ldr	r0, [r0]
+	mvn	r5, #0
+	str	r5, [sp, #16]
+	bl	_objc_retain
+	ldr	r0, [sp, #8]
+	str	r5, [sp, #16]
 	bl	_objc_release
 	@ InlineAsm Start
 	mov	r7, r7
 	@ InlineAsm End
-	mov	r0, r6
-	pop	{r4, r5, r6, r7, lr}
-	b	_objc_retainAutoreleasedReturnValue
+	str	r5, [sp, #16]
+	mov	r0, r4
+	bl	_objc_retainAutoreleasedReturnValue
+	mov	r4, r0
+	add	r0, sp, #12
+	bl	__Unwind_SjLj_Unregister
+	mov	r0, r4
+	add	r4, sp, #64
+	vld1.64	{d8, d9, d10, d11}, [r4:128]!
+	vld1.64	{d12, d13, d14, d15}, [r4:128]
+	sub	sp, r7, #24
+	pop	{r8, r10, r11}
+	pop	{r4, r5, r6, r7, pc}
+LBB15_2:
+	lsl	r0, r0, #2
+	adr	r1, LJTI15_0
+	ldr	r0, [r0, r1]
+	add	pc, r0, r1
+	.p2align	2
+LJTI15_0:
+	.data_region jt32
+	.long	LBB15_4-LJTI15_0
+	.long	LBB15_8-LJTI15_0
+	.long	LBB15_8-LJTI15_0
+	.end_data_region
+LBB15_4:
+Ltmp2:
+	ldr	r0, [sp, #20]
+	str	r0, [sp]
+	ldr	r0, [sp, #4]
+	ldr	r0, [r0]
+	mov	r1, #2
+	str	r1, [sp, #16]
+Ltmp3:
+	bl	_objc_retain
+Ltmp4:
+	ldr	r0, [sp, #8]
+	mov	r1, #3
+	str	r1, [sp, #16]
+Ltmp5:
+	bl	_objc_release
+Ltmp6:
+	b	LBB15_9
+LBB15_6:
+	ldr	r0, [sp, #16]
+	cmp	r0, #3
+	bls	LBB15_2
+	trap
+LBB15_8:
+Ltmp7:
+	ldr	r0, [sp, #20]
+	ldr	r0, [sp, #24]
+	mov	lr, pc
+	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+LBB15_9:
+	mvn	r0, #0
+	str	r0, [sp, #16]
+	ldr	r0, [sp]
+	mov	lr, pc
+	b	__Unwind_SjLj_Resume
+	.p2align	2
+	.data_region
+LCPI15_0:
+	.long	Lexception0-(LPC15_0+8)
+LCPI15_1:
+	.long	LBB15_6-(LPC15_1+8)
+	.end_data_region
+Lfunc_end0:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table15:
+Lexception0:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase0-Lttbaseref0
+Lttbaseref0:
+	.byte	3
+	.uleb128 Lcst_end0-Lcst_begin0
+Lcst_begin0:
+	.byte	0
+	.byte	0
+	.byte	1
+	.byte	1
+	.byte	2
+	.byte	1
+Lcst_end0:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase0:
+	.byte	0
+	.p2align	2, 0x0
 
 	.section	__TEXT,__const
 l_anon.[ID].0:
@@ -243,5 +373,11 @@ l_anon.[ID].4:
 l_anon.[ID].5:
 	.long	l_anon.[ID].0
 	.asciz	"9\000\000\000V\000\000\000\005\000\000"
+
+	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
+	.p2align	2, 0x0
+L_rust_eh_personality$non_lazy_ptr:
+	.indirect_symbol	_rust_eh_personality
+	.long	0
 
 .subsections_via_symbols

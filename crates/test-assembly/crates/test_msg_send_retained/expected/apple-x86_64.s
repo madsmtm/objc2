@@ -221,21 +221,24 @@ LBB14_2:
 	.globl	_handle_with_out_param
 	.p2align	4, 0x90
 _handle_with_out_param:
+Lfunc_begin0:
 	push	rbp
 	mov	rbp, rsp
 	push	r15
 	push	r14
 	push	rbx
 	push	rax
-	mov	rbx, rdx
-	mov	r14, qword ptr [rdx]
+	mov	r15, rdx
+	mov	rbx, qword ptr [rdx]
+Ltmp0:
 	call	_objc_msgSend
-	mov	r15, rax
-	mov	rdi, qword ptr [rbx]
+Ltmp1:
+	mov	r14, rax
+	mov	rdi, qword ptr [r15]
 	call	_objc_retain
-	mov	rdi, r14
+	mov	rdi, rbx
 	call	_objc_release
-	mov	rdi, r15
+	mov	rdi, r14
 	call	_objc_retainAutoreleasedReturnValue
 	## InlineAsm Start
 
@@ -248,6 +251,57 @@ _handle_with_out_param:
 	pop	r15
 	pop	rbp
 	ret
+LBB15_2:
+Ltmp2:
+	mov	r14, rax
+	mov	rdi, qword ptr [r15]
+Ltmp3:
+	call	_objc_retain
+Ltmp4:
+Ltmp5:
+	mov	rdi, rbx
+	call	_objc_release
+Ltmp6:
+	mov	rdi, r14
+	call	__Unwind_Resume
+LBB15_5:
+Ltmp7:
+	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+Lfunc_end0:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table15:
+Lexception0:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase0-Lttbaseref0
+Lttbaseref0:
+	.byte	1
+	.uleb128 Lcst_end0-Lcst_begin0
+Lcst_begin0:
+	.uleb128 Ltmp0-Lfunc_begin0
+	.uleb128 Ltmp1-Ltmp0
+	.uleb128 Ltmp2-Lfunc_begin0
+	.byte	0
+	.uleb128 Ltmp1-Lfunc_begin0
+	.uleb128 Ltmp3-Ltmp1
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp3-Lfunc_begin0
+	.uleb128 Ltmp6-Ltmp3
+	.uleb128 Ltmp7-Lfunc_begin0
+	.byte	1
+	.uleb128 Ltmp6-Lfunc_begin0
+	.uleb128 Lfunc_end0-Ltmp6
+	.byte	0
+	.byte	0
+Lcst_end0:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase0:
+	.byte	0
+	.p2align	2, 0x0
 
 	.section	__TEXT,__const
 l_anon.[ID].0:
