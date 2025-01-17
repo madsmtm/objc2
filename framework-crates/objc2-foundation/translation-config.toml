@@ -24,11 +24,6 @@ protocol.NSKeyedUnarchiverDelegate.methods."unarchiver:didDecodeObject:".skipped
 # ns_consumes_self / NS_REPLACES_RECEIVER
 class.NSObject.methods."awakeAfterUsingCoder:".skipped = true
 
-# Uses `SomeObject * __strong *`, which is unsupported
-class.NSNetService.methods."getInputStream:outputStream:".skipped = true
-class.NSPropertyListSerialization.methods."dataFromPropertyList:format:errorDescription:".skipped = true
-class.NSPropertyListSerialization.methods."propertyListFromData:mutabilityOption:format:errorDescription:".skipped = true
-
 # Uses `NSArray<void (^)(void)>`, which is difficult to handle
 class.NSBlockOperation.methods.executionBlocks.skipped = true
 

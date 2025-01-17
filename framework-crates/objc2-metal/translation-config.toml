@@ -8,9 +8,6 @@ ios = "8.0"
 tvos = "9.0"
 visionos = "1.0"
 
-# Uses `SomeObject * __strong *`, which is unsupported
-fn.MTLCopyAllDevicesWithObserver.skipped = true
-
 # Duplicated property
 class.MTLRasterizationRateLayerDescriptor.methods.sampleCount.skipped = true
 
