@@ -1,6 +1,6 @@
 use std::str::FromStr;
 use std::sync::LazyLock;
-use std::{fmt, iter};
+use std::{fmt, iter, mem};
 
 use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
@@ -1184,10 +1184,10 @@ impl Ty {
                     typedef_name,
                     declaration.get_name().expect("typedef declaration name")
                 );
-                let to = declaration
+                let inner = declaration
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                let _span = debug_span!("typedef", ?typedef_name, ?declaration, ?to).entered();
+                let _span = debug_span!("typedef", ?typedef_name, ?declaration, ?inner).entered();
 
                 let mut parser = AttributeParser::new(&attributed_name, &typedef_name);
                 let mut _is_kindof = parser.is_kindof(ParsePosition::Prefix);
@@ -1196,7 +1196,7 @@ impl Ty {
 
                 let is_const2 = parser.is_const(ParsePosition::Suffix);
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
-                let mut nullability = if let Some(nullability) = unexposed_nullability {
+                let nullability = if let Some(nullability) = unexposed_nullability {
                     nullability
                 } else {
                     check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
@@ -1367,7 +1367,7 @@ impl Ty {
                     };
                 }
 
-                let to = Self::parse(to, Lifetime::Unspecified, context);
+                let mut inner = Self::parse(inner, Lifetime::Unspecified, context);
 
                 let id = ItemIdentifier::new(&declaration, context);
 
@@ -1397,22 +1397,24 @@ impl Ty {
                 // parameter.
                 if let Self::Pointer {
                     nullability: inner_nullability,
-                    is_const: _,
+                    is_const: inner_is_const,
                     lifetime: inner_lifetime,
                     pointee,
-                } = &to
+                } = &mut inner
                 {
                     // The outermost attribute, i.e. the one on the typedef,
                     // is the one that matters.
-                    if nullability == Nullability::Unspecified {
-                        nullability = *inner_nullability;
+                    //
+                    // We intentionally mutate the Pointer's data, such that
+                    // this works regardless of what we do further down below.
+                    if nullability != Nullability::Unspecified {
+                        *inner_nullability = nullability;
                     }
-                    // TODO
-                    // if !is_const {
-                    //     is_const = *inner_is_const;
-                    // }
-                    if lifetime == Lifetime::Unspecified {
-                        lifetime = *inner_lifetime;
+                    if is_const {
+                        *inner_is_const = is_const;
+                    }
+                    if lifetime != Lifetime::Unspecified {
+                        *inner_lifetime = lifetime;
                     }
 
                     if pointee.is_direct_cf_type(&id.name, is_bridged(&declaration, context)) {
@@ -1421,25 +1423,16 @@ impl Ty {
                         // type is a CF type or not... But that's how it is
                         // currently.
                         let id = context.replace_typedef_name(id, true);
-                        return Self::Pointer {
-                            nullability,
-                            is_const,
-                            lifetime,
-                            pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef { id })),
-                        };
-                    }
-
-                    // Only do this when visiting object-like typedefs.
-                    if pointee.is_object_like() || pointee.is_cf_type() {
-                        if let Self::Pointee(pointee_ty) = &**pointee {
+                        *pointee = Box::new(Self::Pointee(PointeeTy::CFTypeDef { id }));
+                        return inner;
+                    } else if pointee.is_object_like() || pointee.is_cf_type() {
+                        if let Self::Pointee(pointee_ty) = &mut **pointee {
                             let id = context.replace_typedef_name(id, pointee_ty.is_cf_type());
-                            let to = Box::new(pointee_ty.clone());
-                            return Self::Pointer {
-                                nullability,
-                                is_const,
-                                lifetime,
-                                pointee: Box::new(Self::Pointee(PointeeTy::TypeDef { id, to })),
-                            };
+                            // Replace with a dummy type (will be re-replaced
+                            // on the line below).
+                            let to = Box::new(mem::replace(pointee_ty, PointeeTy::Self_));
+                            *pointee = Box::new(Self::Pointee(PointeeTy::TypeDef { id, to }));
+                            return inner;
                         } else {
                             error!(?pointee, "is_object_like/is_cf_type but not Pointee");
                         }
@@ -1455,7 +1448,7 @@ impl Ty {
 
                 Self::TypeDef {
                     id,
-                    to: Box::new(to),
+                    to: Box::new(inner),
                 }
             }
             // Assume that functions without a prototype simply have 0 arguments.
@@ -1945,8 +1938,8 @@ impl Ty {
                 Self::Pointer {
                     nullability: Nullability::Nullable,
                     lifetime: Lifetime::Unspecified,
-                    is_const: false,
                     pointee,
+                    ..
                 } if pointee.is_static_object() => {
                     // NULL -> error
                     write!(
@@ -1959,8 +1952,8 @@ impl Ty {
                 Self::Pointer {
                     nullability: Nullability::Nullable,
                     lifetime: Lifetime::Unspecified,
-                    is_const: false,
                     pointee,
+                    ..
                 } if pointee.is_object_like() || pointee.is_cf_type() => {
                     // NULL -> error
                     write!(
