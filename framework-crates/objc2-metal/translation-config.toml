@@ -11,17 +11,6 @@ visionos = "1.0"
 # Uses `SomeObject * __strong *`, which is unsupported
 fn.MTLCopyAllDevicesWithObserver.skipped = true
 
-# Uses `__autoreleasing` in a typedef, which I'm unsure how to handle
-typedef.MTLAutoreleasedArgument.skipped = true
-protocol.MTLFunction.methods."newArgumentEncoderWithBufferIndex:reflection:".skipped = true
-typedef.MTLAutoreleasedRenderPipelineReflection.skipped = true
-typedef.MTLAutoreleasedComputePipelineReflection.skipped = true
-protocol.MTLDevice.methods."newRenderPipelineStateWithDescriptor:options:reflection:error:".skipped = true
-protocol.MTLDevice.methods."newComputePipelineStateWithFunction:options:reflection:error:".skipped = true
-protocol.MTLDevice.methods."newComputePipelineStateWithDescriptor:options:reflection:error:".skipped = true
-protocol.MTLDevice.methods."newRenderPipelineStateWithTileDescriptor:options:reflection:error:".skipped = true
-protocol.MTLDevice.methods."newRenderPipelineStateWithMeshDescriptor:options:reflection:error:".skipped = true
-
 # Duplicated property
 class.MTLRasterizationRateLayerDescriptor.methods.sampleCount.skipped = true
 

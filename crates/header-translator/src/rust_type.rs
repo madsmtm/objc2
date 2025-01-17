@@ -1196,11 +1196,9 @@ impl Ty {
 
                 let is_const2 = parser.is_const(ParsePosition::Suffix);
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
-                let nullability = if let Some(nullability) = unexposed_nullability {
-                    nullability
-                } else {
-                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
-                };
+                let nullability = unexposed_nullability
+                    .or(parser.nullability(ParsePosition::Suffix))
+                    .unwrap_or(Nullability::Unspecified);
                 drop(parser);
 
                 let is_const = if is_const1 || is_const2 {
