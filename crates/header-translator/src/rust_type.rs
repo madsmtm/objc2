@@ -1766,7 +1766,7 @@ impl Ty {
                             write!(f, "...")?;
                         }
                         write!(f, ")")?;
-                        write!(f, "{}", result_type.fn_return())?;
+                        write!(f, "{}", result_type.fn_type_return())?;
                         if *nullability != Nullability::NonNull {
                             write!(f, ">")?;
                         }
@@ -1880,7 +1880,7 @@ impl Ty {
                         write!(f, "{}, ", arg.plain())?;
                     }
                     write!(f, ")")?;
-                    write!(f, "{}", result_type.fn_return())?;
+                    write!(f, "{}", result_type.fn_type_return())?;
                     if *no_escape {
                         write!(f, " + '_")?;
                     } else {
@@ -1900,6 +1900,20 @@ impl Ty {
 
     pub(crate) fn method_return(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
+            // Don't output anything here.
+            Self::Primitive(Primitive::Void) => Ok(()),
+            Self::Pointer {
+                nullability,
+                pointee,
+                ..
+            } if pointee.is_static_object() => {
+                if *nullability == Nullability::NonNull {
+                    // TODO: Add runtime nullability check here.
+                    write!(f, " -> &'static {}", pointee.behind_pointer())
+                } else {
+                    write!(f, " -> Option<&'static {}>", pointee.behind_pointer())
+                }
+            }
             Self::Pointer {
                 nullability,
                 lifetime: _, // TODO: Use this somehow?
@@ -1921,7 +1935,7 @@ impl Ty {
                 write!(f, " -> bool")
             }
             Self::Primitive(Primitive::ObjcBool) => write!(f, " -> bool"),
-            _ => write!(f, "{}", self.fn_return()),
+            _ => write!(f, " -> {}", self.plain()),
         })
     }
 
@@ -1983,46 +1997,37 @@ impl Ty {
         })
     }
 
-    pub(crate) fn fn_return(&self) -> impl fmt::Display + '_ {
-        FormatterFn(move |f| {
-            if let Self::Primitive(Primitive::Void) = self {
-                // Don't output anything
-                return Ok(());
-            }
-
-            match self {
-                Self::Pointer {
-                    nullability,
-                    pointee,
-                    ..
-                } if pointee.is_static_object() => {
-                    if *nullability == Nullability::NonNull {
-                        write!(f, " -> &'static {}", pointee.behind_pointer())
-                    } else {
-                        write!(f, " -> Option<&'static {}>", pointee.behind_pointer())
-                    }
+    fn fn_type_return(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            // Don't output anything here.
+            Self::Primitive(Primitive::Void) => Ok(()),
+            Self::Pointer {
+                nullability,
+                pointee,
+                ..
+            } if pointee.is_static_object() => {
+                if *nullability == Nullability::NonNull {
+                    // TODO: Add runtime nullability check here (can we even
+                    // do that?).
+                    write!(f, " -> &'static {}", pointee.behind_pointer())
+                } else {
+                    write!(f, " -> Option<&'static {}>", pointee.behind_pointer())
                 }
-                _ => write!(f, " -> {}", self.plain()),
             }
+            _ => write!(f, " -> {}", self.plain()),
         })
     }
 
     pub(crate) fn fn_return_required_items(&self) -> impl Iterator<Item = ItemTree> {
         let mut items: Vec<_> = self.required_items().collect();
         match self {
-            Self::Pointer {
-                lifetime: Lifetime::Unspecified,
-                pointee,
-                ..
-            } if pointee.is_cf_type() => {
+            Self::Pointer { pointee, .. } if pointee.is_cf_type() => {
                 items.push(ItemTree::cf("CFRetained"));
                 items.push(ItemTree::core_ptr_nonnull());
             }
-            Self::Pointer {
-                lifetime: Lifetime::Unspecified,
-                pointee,
-                ..
-            } if pointee.is_object_like() && !pointee.is_static_object() => {
+            Self::Pointer { pointee, .. }
+                if pointee.is_object_like() && !pointee.is_static_object() =>
+            {
                 items.push(ItemTree::objc("Retained"));
             }
             _ => {}
@@ -2030,41 +2035,79 @@ impl Ty {
         items.into_iter()
     }
 
-    pub(crate) fn fn_return_converter(
+    pub(crate) fn fn_return(
         &self,
         returns_retained: bool,
-    ) -> Option<(
+    ) -> (
         impl fmt::Display + '_,
-        impl fmt::Display + '_,
-        impl fmt::Display + '_,
-    )> {
+        Option<(
+            impl fmt::Display + '_,
+            impl fmt::Display + '_,
+            impl fmt::Display + '_,
+        )>,
+    ) {
         let start = "let ret = ";
         // SAFETY: The function is marked with the correct retain semantics,
         // otherwise it'd be invalid to use from Obj-C with ARC and Swift too.
+        let end_cf = |nullability| {
+            match (nullability, returns_retained) {
+                // TODO: Avoid NULL check, and let CFRetain do that instead?
+                (Nullability::NonNull, true) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { CFRetained::from_raw(ret) }",
+                (Nullability::NonNull, false) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { CFRetained::retain(ret) }",
+                // CFRetain aborts on NULL pointers, so there's not really a more
+                // efficient way to do this (except if we were to use e.g.
+                // `CGColorRetain`/`CVOpenGLBufferRetain`/..., but that's a huge
+                // hassle).
+                (_, true) => ";\nret.map(|ret| unsafe { CFRetained::from_raw(ret) })",
+                (_, false) => ";\nret.map(|ret| unsafe { CFRetained::retain(ret) })",
+            }
+        };
         let end_objc = |nullability| {
             match (nullability, returns_retained) {
                 (Nullability::NonNull, true) => {
-                    ";\nunsafe { Retained::from_raw(ret.as_ptr()) }.expect(\"function was marked as returning non-null, but actually returned NULL\")"
+                    ";\nunsafe { Retained::from_raw(ret) }.expect(\"function was marked as returning non-null, but actually returned NULL\")"
                 }
                 (Nullability::NonNull, false) => {
-                    ";\nunsafe { Retained::retain_autoreleased(ret.as_ptr()) }.expect(\"function was marked as returning non-null, but actually returned NULL\")"
+                    ";\nunsafe { Retained::retain_autoreleased(ret) }.expect(\"function was marked as returning non-null, but actually returned NULL\")"
                 }
                 (_, true) => ";\nunsafe { Retained::from_raw(ret) }",
                 (_, false) => ";\nunsafe { Retained::retain_autoreleased(ret) }",
             }
         };
-        let end_cf = |nullability| match (nullability, returns_retained) {
-            (Nullability::NonNull, true) => ";\nunsafe { CFRetained::from_raw(ret) }",
-            (Nullability::NonNull, false) => ";\nunsafe { CFRetained::retain(ret) }",
-            // CFRetain aborts on NULL pointers, so there's not really a more
-            // efficient way to do this (except if we were to use e.g.
-            // `CGColorRetain`/`CVOpenGLBufferRetain`/..., but that's a huge
-            // hassle).
-            (_, true) => ";\nNonNull::new(ret).map(|ret| unsafe { CFRetained::from_raw(ret) })",
-            (_, false) => ";\nNonNull::new(ret).map(|ret| unsafe { CFRetained::retain(ret) })",
-        };
 
-        match self {
+        let ret = FormatterFn(move |f| match self {
+            // Don't output anything here.
+            Self::Primitive(Primitive::Void) => Ok(()),
+            Self::Pointer {
+                nullability,
+                is_const,
+                pointee,
+                ..
+            } => {
+                // Ignore nullability, always emit a nullable pointer. We will
+                // unwrap it later in `fn_return_converter`.
+                //
+                // This is required because nullability attributes in Clang
+                // are a hint, and not an ABI stable promise.
+                if pointee.is_static_object() {
+                    write!(f, "-> Option<&'static {}>", pointee.behind_pointer())
+                } else if pointee.is_cf_type() {
+                    write!(f, "-> Option<NonNull<{}>>", pointee.behind_pointer())
+                } else if pointee.is_object_like() {
+                    write!(f, "-> *mut {}", pointee.behind_pointer())
+                } else {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "-> Option<NonNull<{}>>", pointee.behind_pointer())
+                    } else if *is_const {
+                        write!(f, " -> *const {}", pointee.behind_pointer())
+                    } else {
+                        write!(f, " -> *mut {}", pointee.behind_pointer())
+                    }
+                }
+            }
+            _ => write!(f, " -> {}", self.plain()),
+        });
+        let converter = match self {
             _ if self.is_objc_bool() => Some((" -> bool".to_string(), "", ".as_bool()")),
             Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
                 Some((" -> bool".to_string(), start, ";\nret != 0"))
@@ -2082,7 +2125,15 @@ impl Ty {
                     _ => error!(?lifetime, returns_retained, "invalid lifetime"),
                 }
 
-                if pointee.is_cf_type() {
+                if pointee.is_static_object() {
+                    if *nullability == Nullability::NonNull {
+                        let res = format!(" -> &'static {}", pointee.behind_pointer());
+                        Some((res, start, ";\nret.expect(\"function was marked as returning non-null, but actually returned NULL\")"))
+                    } else {
+                        // No conversion necessary
+                        None
+                    }
+                } else if pointee.is_cf_type() {
                     let res = if *nullability == Nullability::NonNull {
                         format!(" -> CFRetained<{}>", pointee.behind_pointer())
                     } else {
@@ -2097,11 +2148,17 @@ impl Ty {
                     };
                     Some((res, start, end_objc(*nullability)))
                 } else {
-                    None
+                    if *nullability == Nullability::NonNull {
+                        let res = format!(" -> NonNull<{}>", pointee.behind_pointer());
+                        Some((res, start, ";\nret.expect(\"function was marked as returning non-null, but actually returned NULL\")"))
+                    } else {
+                        None
+                    }
                 }
             }
             _ => None,
-        }
+        };
+        (ret, converter)
     }
 
     pub(crate) fn var(&self) -> impl fmt::Display + '_ {

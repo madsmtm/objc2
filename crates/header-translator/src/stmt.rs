@@ -2685,6 +2685,7 @@ impl Stmt {
                     arguments,
                     result_type,
                     body: Some(_),
+                    returns_retained,
                     ..
                 } => {
                     write!(f, "// TODO: ")?;
@@ -2693,7 +2694,8 @@ impl Stmt {
                         let param = handle_reserved(&crate::to_snake_case(param));
                         write!(f, "{param}: {},", arg_ty.fn_argument())?;
                     }
-                    writeln!(f, "){};", result_type.fn_return())?;
+                    let (ret, _) = result_type.fn_return(*returns_retained);
+                    writeln!(f, "){ret};")?;
                 }
                 Self::FnDecl {
                     id,
@@ -2710,7 +2712,7 @@ impl Stmt {
                 } => {
                     let abi = if *can_unwind { "C-unwind" } else { "C" };
 
-                    let return_converter = result_type.fn_return_converter(*returns_retained);
+                    let (ret, return_converter) = result_type.fn_return(*returns_retained);
 
                     let needs_wrapper = *safe
                         || return_converter.is_some()
@@ -2731,7 +2733,7 @@ impl Stmt {
                             let param = handle_reserved(&crate::to_snake_case(param));
                             write!(f, "{param}: {},", arg_ty.fn_argument())?;
                         }
-                        writeln!(f, "){};", result_type.fn_return())?;
+                        writeln!(f, "){ret};")?;
 
                         Ok(())
                     };
@@ -2760,7 +2762,7 @@ impl Stmt {
                         if let Some((ty, _, _)) = &return_converter {
                             write!(f, "{ty}")?;
                         } else {
-                            write!(f, "{}", result_type.fn_return())?;
+                            write!(f, "{ret}")?;
                         }
                         writeln!(f, " {{")?;
 
@@ -2818,7 +2820,9 @@ impl Stmt {
                 } => {
                     let abi = if *can_unwind { "C-unwind" } else { "C" };
 
-                    // Only emit for base types, not for mutable subclasses,
+                    let (ret, _) = result_type.fn_return(false);
+
+                    // Only emit for base types, not foretr mutable subclasses,
                     // as it's unclear whether it's safe to downcast to
                     // mutable subclasses.
                     write!(f, "{}", self.cfg_gate_ln(config))?;
@@ -2827,15 +2831,10 @@ impl Stmt {
                     write!(f, "{}", documentation.fmt(None))?;
                     writeln!(f, "    #[doc(alias = {:?})]", id.name)?;
                     writeln!(f, "    #[inline]")?;
-                    writeln!(f, "    fn type_id(){} {{", result_type.fn_return())?;
+                    writeln!(f, "    fn type_id(){ret} {{")?;
 
                     writeln!(f, "        extern {abi:?} {{")?;
-                    writeln!(
-                        f,
-                        "            fn {}(){};",
-                        id.name,
-                        result_type.fn_return()
-                    )?;
+                    writeln!(f, "            fn {}(){ret};", id.name,)?;
                     writeln!(f, "        }}")?;
 
                     writeln!(f, "        unsafe {{ {}() }}", id.name)?;
