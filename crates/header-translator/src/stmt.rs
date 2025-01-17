@@ -1134,10 +1134,9 @@ impl Stmt {
                     return vec![];
                 }
 
-                let is_cf = ty.is_inner_cf_type(&id.name, is_bridged(entity, context));
-                let id = context.replace_typedef_name(id, is_cf);
-
-                if let Some(encoding_name) = ty.pointer_to_opaque_struct_or_void() {
+                if let Some((is_cf, encoding_name)) =
+                    ty.pointer_to_opaque_struct_or_void(&id.name, is_bridged(entity, context))
+                {
                     if kind.is_some() {
                         error!(?kind, "unknown kind on opaque type");
                     }
@@ -1152,6 +1151,8 @@ impl Stmt {
                     );
 
                     if is_cf {
+                        let id = context.replace_typedef_name(id, is_cf);
+
                         // If the class name contains the word "Mutable"
                         // exactly once per the usual word-boundary rules, a
                         // corresponding class name without the word "Mutable"
@@ -1198,7 +1199,7 @@ impl Stmt {
                 }
 
                 vec![Self::AliasDecl {
-                    id,
+                    id: context.replace_typedef_name(id, ty.is_cf_type_ptr()),
                     availability,
                     ty,
                     kind,
@@ -1659,7 +1660,7 @@ impl Stmt {
                     && !id.name.ends_with("AndRetain")
                 {
                     if let Some((_, first_arg_ty)) = arguments.first() {
-                        if first_arg_ty.is_cf_type() {
+                        if first_arg_ty.is_cf_type_ptr() {
                             return vec![];
                         }
                     }
