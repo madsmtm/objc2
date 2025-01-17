@@ -7,6 +7,11 @@
 //! address we then work on; instead, we directly reuse the pointer that the
 //! user provides (since, if it's a mutable pointer, we know that it's not
 //! shared elsewhere in the program, and hence it is safe to modify directly).
+//!
+//! Another important consideration is unwinding; I haven't researched how
+//! Clang handles that, but the correct thing is to do the writeback
+//! retain/release dance regardless of whether the function unwinded or not.
+//! We ensure this by doing it in `Drop`.
 use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
 
@@ -23,15 +28,7 @@ impl<T: Message + 'static> ConvertArgument for &mut Retained<T> {
     // made a mistake).
     type __Inner = NonNull<*mut T>;
 
-    type __StoredBeforeMessage = (
-        // A copy of the argument, so that we can retain it after the message
-        // send. Ideally, we'd work with e.g. `&mut *mut T`, but we can't do
-        // that inside the generic context of `MessageArguments::__invoke`.
-        Self::__Inner,
-        // A pointer to the old value stored in the `Retained`, so that we can
-        // release if after the message send.
-        NonNull<T>,
-    );
+    type __WritebackOnDrop = WritebackOnDrop<T>;
 
     #[inline]
     fn __from_defined_param(_inner: Self::__Inner) -> Self {
@@ -39,7 +36,7 @@ impl<T: Message + 'static> ConvertArgument for &mut Retained<T> {
     }
 
     #[inline]
-    fn __into_argument(self) -> (Self::__Inner, Self::__StoredBeforeMessage) {
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
         let ptr: NonNull<Retained<T>> = NonNull::from(self);
         // `Retained` is `#[repr(transparent)]` over `NonNull`.
         let ptr: NonNull<NonNull<T>> = ptr.cast();
@@ -50,11 +47,27 @@ impl<T: Message + 'static> ConvertArgument for &mut Retained<T> {
         // `NonNull<T>` has the same layout as `*mut T`.
         let ptr: NonNull<*mut T> = ptr.cast();
 
-        (ptr, (ptr, old))
+        (ptr, WritebackOnDrop { ptr, old })
     }
+}
 
+#[derive(Debug)]
+pub struct WritebackOnDrop<T: Message> {
+    /// A copy of the argument, so that we can retain it after the message
+    /// send.
+    ///
+    /// Ideally, we'd work with e.g. `&mut *mut T`, but we can't do that
+    /// inside the generic context of `MessageArguments::__invoke`, while
+    /// working within Rust's aliasing rules.
+    ptr: NonNull<*mut T>,
+    /// The old value, stored so that we can release if after the message
+    /// send.
+    old: NonNull<T>,
+}
+
+impl<T: Message> Drop for WritebackOnDrop<T> {
     #[inline]
-    unsafe fn __process_after_message_send((ptr, old): Self::__StoredBeforeMessage) {
+    fn drop(&mut self) {
         // In terms of provenance, we roughly want to do the following:
         // ```
         // fn do(value: &mut Retained<T>) {
@@ -67,7 +80,7 @@ impl<T: Message + 'static> ConvertArgument for &mut Retained<T> {
         //
         // Which is definitely valid under stacked borrows! See also this
         // playground link for testing something equivalent in Miri:
-        // <https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=ef8ecfb54a11b9a59ae17cc7edfbef3d>
+        // <https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=5ad8fcff1f870819081aa534ec754b86>
         //
         //
         //
@@ -82,14 +95,10 @@ impl<T: Message + 'static> ConvertArgument for &mut Retained<T> {
         //     objc_release(old);
         // }
         // ```
-        //
-        // Note that using a mutable `Retained<T>` is perfectly sound, since while
-        // we may intermittently have a retain count of 2 to the value, after
-        // the function returns we're guaranteed to be back to 1.
 
         // SAFETY: Caller ensures that the pointer is either left as-is, or is
         // safe to retain at this point.
-        let new: Option<Retained<T>> = unsafe { Retained::retain(*ptr.as_ptr()) };
+        let new: Option<Retained<T>> = unsafe { Retained::retain(*self.ptr.as_ptr()) };
         // We ignore the result of `retain`, since it always returns the same
         // value as was given (and it would be unnecessary work to write that
         // value back into `ptr` again).
@@ -101,18 +110,18 @@ impl<T: Message + 'static> ConvertArgument for &mut Retained<T> {
 
         // SAFETY: The old pointer was valid when it was constructed.
         //
-        // If the message send modified `ptr`, they would have left a +1
-        // retain count on the old pointer; so either we have +1 from that, or
-        // the message send didn't modify the pointer and we instead have +1
-        // retain count from the `retain` above.
-        let _: Retained<T> = unsafe { Retained::new_nonnull(old) };
+        // If the message send modified the argument, they would have left a
+        // +1 retain count on the old pointer; so either we have +1 from that,
+        // or the message send didn't modify the pointer and we instead have
+        // +1 retain count from the `retain` above.
+        let _: Retained<T> = unsafe { Retained::new_nonnull(self.old) };
     }
 }
 
 impl<T: Message + 'static> ConvertArgument for &mut Option<Retained<T>> {
     type __Inner = NonNull<*mut T>;
 
-    type __StoredBeforeMessage = (Self::__Inner, *mut T);
+    type __WritebackOnDrop = WritebackOnDropNullable<T>;
 
     #[inline]
     fn __from_defined_param(_inner: Self::__Inner) -> Self {
@@ -120,20 +129,30 @@ impl<T: Message + 'static> ConvertArgument for &mut Option<Retained<T>> {
     }
 
     #[inline]
-    fn __into_argument(self) -> (Self::__Inner, Self::__StoredBeforeMessage) {
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
         let ptr: NonNull<Option<Retained<T>>> = NonNull::from(self);
         // `Option<Retained<T>>` has the same memory layout as `*mut T`.
         let ptr: NonNull<*mut T> = ptr.cast();
         // SAFETY: Same as for `&mut Retained`
         let old: *mut T = unsafe { *ptr.as_ptr() };
 
-        (ptr, (ptr, old))
+        (ptr, WritebackOnDropNullable { ptr, old })
     }
+}
 
+/// Mostly the same as `WritebackOnDrop`, except that the old value is
+/// nullable.
+#[derive(Debug)]
+pub struct WritebackOnDropNullable<T: Message> {
+    ptr: NonNull<*mut T>,
+    old: *mut T,
+}
+
+impl<T: Message> Drop for WritebackOnDropNullable<T> {
     #[inline]
-    unsafe fn __process_after_message_send((ptr, old): Self::__StoredBeforeMessage) {
+    fn drop(&mut self) {
         // SAFETY: Same as for `&mut Retained`
-        let new: Option<Retained<T>> = unsafe { Retained::retain(*ptr.as_ptr()) };
+        let new: Option<Retained<T>> = unsafe { Retained::retain(*self.ptr.as_ptr()) };
         let _ = ManuallyDrop::new(new);
 
         // SAFETY: Same as for `&mut Retained`
@@ -147,7 +166,7 @@ impl<T: Message + 'static> ConvertArgument for &mut Option<Retained<T>> {
         // ```
         //
         // And in that case, we can elide the `objc_release`!
-        let _: Option<Retained<T>> = unsafe { Retained::from_raw(old) };
+        let _: Option<Retained<T>> = unsafe { Retained::from_raw(self.old) };
     }
 }
 
@@ -159,7 +178,7 @@ impl<T: Message + 'static> ConvertArgument for &mut Option<Retained<T>> {
 impl<T: Message + 'static> ConvertArgument for Option<&mut Retained<T>> {
     type __Inner = Option<NonNull<*mut T>>;
 
-    type __StoredBeforeMessage = Option<(NonNull<*mut T>, NonNull<T>)>;
+    type __WritebackOnDrop = Option<WritebackOnDrop<T>>;
 
     #[inline]
     fn __from_defined_param(_inner: Self::__Inner) -> Self {
@@ -167,20 +186,13 @@ impl<T: Message + 'static> ConvertArgument for Option<&mut Retained<T>> {
     }
 
     #[inline]
-    fn __into_argument(self) -> (Self::__Inner, Self::__StoredBeforeMessage) {
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
         if let Some(this) = self {
-            let (ptr, stored) = this.__into_argument();
-            (Some(ptr), Some(stored))
+            // SAFETY: Upheld by caller.
+            let (ptr, helper) = unsafe { this.__into_argument() };
+            (Some(ptr), Some(helper))
         } else {
             (None, None)
-        }
-    }
-
-    #[inline]
-    unsafe fn __process_after_message_send(stored: Self::__StoredBeforeMessage) {
-        if let Some(stored) = stored {
-            // SAFETY: Checked by caller
-            unsafe { <&mut Retained<T>>::__process_after_message_send(stored) };
         }
     }
 }
@@ -188,7 +200,7 @@ impl<T: Message + 'static> ConvertArgument for Option<&mut Retained<T>> {
 impl<T: Message + 'static> ConvertArgument for Option<&mut Option<Retained<T>>> {
     type __Inner = Option<NonNull<*mut T>>;
 
-    type __StoredBeforeMessage = Option<(NonNull<*mut T>, *mut T)>;
+    type __WritebackOnDrop = Option<WritebackOnDropNullable<T>>;
 
     #[inline]
     fn __from_defined_param(_inner: Self::__Inner) -> Self {
@@ -196,26 +208,21 @@ impl<T: Message + 'static> ConvertArgument for Option<&mut Option<Retained<T>>> 
     }
 
     #[inline]
-    fn __into_argument(self) -> (Self::__Inner, Self::__StoredBeforeMessage) {
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
         if let Some(this) = self {
-            let (ptr, stored) = this.__into_argument();
+            // SAFETY: Upheld by caller.
+            let (ptr, stored) = unsafe { this.__into_argument() };
             (Some(ptr), Some(stored))
         } else {
             (None, None)
-        }
-    }
-
-    #[inline]
-    unsafe fn __process_after_message_send(stored: Self::__StoredBeforeMessage) {
-        if let Some(stored) = stored {
-            // SAFETY: Checked by caller
-            unsafe { <&mut Option<Retained<T>>>::__process_after_message_send(stored) };
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::panic::{catch_unwind, AssertUnwindSafe};
+
     use super::*;
     use crate::rc::{autoreleasepool, Allocated, RcTestObject, ThreadTestData};
     use crate::{msg_send, msg_send_id, ClassType};
@@ -240,7 +247,6 @@ mod tests {
             should_error: bool,
             mut error: Option<Retained<RcTestObject>>,
         ) {
-            std::dbg!(should_error, &error);
             autoreleasepool(|_| {
                 bool_error(should_error, Some(&mut error));
                 if should_error {
@@ -385,5 +391,88 @@ mod tests {
         expected.release += 1;
         expected.drop += 1;
         expected.assert_current();
+    }
+
+    fn will_panic(param: Option<&mut Option<Retained<RcTestObject>>>, panic_after: bool) {
+        unsafe { msg_send![RcTestObject::class(), willPanicWith: param, panicsAfter: panic_after] }
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "catch-all",
+        ignore = "panics intentionally, which catch-all interferes with"
+    )]
+    fn basic_method_panics() {
+        let expected = ThreadTestData::current();
+
+        let res = catch_unwind(|| {
+            will_panic(None, false);
+        });
+        assert!(res.is_err());
+        expected.assert_current();
+
+        let res = catch_unwind(|| {
+            will_panic(None, true);
+        });
+        assert!(res.is_err());
+        expected.assert_current();
+    }
+
+    #[test]
+    #[cfg_attr(
+        any(feature = "catch-all", panic = "abort"),
+        ignore = "panics intentionally"
+    )]
+    fn method_panics() {
+        let cases = [
+            (false, None),
+            (true, None),
+            // Pre-existing parameter passed in.
+            (false, Some(RcTestObject::new())),
+            (true, Some(RcTestObject::new())),
+        ];
+
+        let mut expected = ThreadTestData::current();
+
+        for (panic_after, mut param) in cases {
+            let initially_set = param.is_some();
+
+            autoreleasepool(|_| {
+                let unwindsafe = AssertUnwindSafe(&mut param);
+                let res = catch_unwind(|| {
+                    let param = unwindsafe;
+                    will_panic(Some(param.0), panic_after);
+                });
+                assert!(res.is_err());
+
+                if panic_after {
+                    expected.alloc += 1;
+                    expected.init += 1;
+                    expected.autorelease += 1;
+                }
+                if panic_after || initially_set {
+                    expected.retain += 1;
+                }
+                if initially_set {
+                    expected.release += 1;
+                    if panic_after {
+                        expected.drop += 1;
+                    }
+                }
+                expected.assert_current();
+            });
+
+            if panic_after {
+                expected.release += 1;
+            }
+            expected.assert_current();
+
+            drop(param);
+            if panic_after || initially_set {
+                expected.release += 1;
+                expected.drop += 1;
+            }
+            expected.assert_current();
+        }
     }
 }

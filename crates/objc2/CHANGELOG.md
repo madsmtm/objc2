@@ -235,6 +235,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   nullable argument.
 * Fixed handling of methods that return NULL errors. This affected for example
   `-[MTLBinaryArchive serializeToURL:error:]`.
+* Fixed unwinding while using writeback / error parameters.
 
 
 ## 0.5.2 - 2024-05-21

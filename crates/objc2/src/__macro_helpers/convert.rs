@@ -13,26 +13,34 @@ mod argument_private {
 /// Objective-C `BOOL`, where it would otherwise not be allowed (since they
 /// are not ABI compatible).
 ///
-/// This is also done specially for `&mut Retained<_>`-like arguments, to allow
-/// using those as "out" parameters.
+/// This is also done specially for `&mut Retained<_>`-like arguments, to
+/// allow using those as "out" / pass-by-writeback parameters.
 pub trait ConvertArgument: argument_private::Sealed {
     /// The inner type that this can be converted to and from.
     #[doc(hidden)]
     type __Inner: EncodeArgument;
 
     /// A helper type for out parameters.
+    ///
+    /// When dropped, this will process any necessary change to the
+    /// parameters.
     #[doc(hidden)]
-    type __StoredBeforeMessage: Sized;
+    type __WritebackOnDrop: Sized;
 
     #[doc(hidden)]
     fn __from_defined_param(inner: Self::__Inner) -> Self;
 
+    /// # Safety
+    ///
+    /// The `__WritebackOnDrop` return type must not be leaked, and the
+    /// `__Inner` pointer must not be used after the `__WritebackOnDrop` has
+    /// dropped.
+    ///
+    /// NOTE: The standard way to ensure such a thing is with closures, but
+    /// using those would interact poorly with backtraces of the message send,
+    /// so we're forced to ensure this out of band.
     #[doc(hidden)]
-    fn __into_argument(self) -> (Self::__Inner, Self::__StoredBeforeMessage);
-
-    #[doc(hidden)]
-    #[inline]
-    unsafe fn __process_after_message_send(_stored: Self::__StoredBeforeMessage) {}
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop);
 }
 
 // Implemented in writeback.rs
@@ -45,7 +53,7 @@ impl<T: EncodeArgument> argument_private::Sealed for T {}
 impl<T: EncodeArgument> ConvertArgument for T {
     type __Inner = Self;
 
-    type __StoredBeforeMessage = ();
+    type __WritebackOnDrop = ();
 
     #[inline]
     fn __from_defined_param(inner: Self::__Inner) -> Self {
@@ -53,7 +61,7 @@ impl<T: EncodeArgument> ConvertArgument for T {
     }
 
     #[inline]
-    fn __into_argument(self) -> (Self::__Inner, Self::__StoredBeforeMessage) {
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
         (self, ())
     }
 }
@@ -62,7 +70,7 @@ impl argument_private::Sealed for bool {}
 impl ConvertArgument for bool {
     type __Inner = Bool;
 
-    type __StoredBeforeMessage = ();
+    type __WritebackOnDrop = ();
 
     #[inline]
     fn __from_defined_param(inner: Self::__Inner) -> Self {
@@ -70,7 +78,7 @@ impl ConvertArgument for bool {
     }
 
     #[inline]
-    fn __into_argument(self) -> (Self::__Inner, Self::__StoredBeforeMessage) {
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
         (Bool::new(self), ())
     }
 }
@@ -127,13 +135,10 @@ pub trait ConvertArguments {
     type __Inner: EncodeArguments;
 
     #[doc(hidden)]
-    type __StoredBeforeMessage: Sized;
+    type __WritebackOnDrop: Sized;
 
     #[doc(hidden)]
-    fn __into_arguments(self) -> (Self::__Inner, Self::__StoredBeforeMessage);
-
-    #[doc(hidden)]
-    unsafe fn __process_after_message_send(_stored: Self::__StoredBeforeMessage);
+    unsafe fn __into_arguments(self) -> (Self::__Inner, Self::__WritebackOnDrop);
 }
 
 pub trait TupleExtender<T> {
@@ -148,21 +153,15 @@ macro_rules! args_impl {
         impl<$($t: ConvertArgument),*> ConvertArguments for ($($t,)*) {
             type __Inner = ($($t::__Inner,)*);
 
-            type __StoredBeforeMessage = ($($t::__StoredBeforeMessage,)*);
+            type __WritebackOnDrop = ($($t::__WritebackOnDrop,)*);
 
             #[inline]
-            fn __into_arguments(self) -> (Self::__Inner, Self::__StoredBeforeMessage) {
+            unsafe fn __into_arguments(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
                 let ($($a,)*) = self;
-                $(let $a = ConvertArgument::__into_argument($a);)*
+                // SAFETY: Upheld by caller
+                $(let $a = unsafe { ConvertArgument::__into_argument($a) };)*
 
                 (($($a.0,)*), ($($a.1,)*))
-            }
-
-            #[inline]
-            unsafe fn __process_after_message_send(($($a,)*): Self::__StoredBeforeMessage) {
-                $(
-                    unsafe { <$t as ConvertArgument>::__process_after_message_send($a) };
-                )*
             }
         }
 
@@ -296,7 +295,7 @@ mod tests {
             TypeId::of::<i32>()
         );
         assert_eq!(<i32 as ConvertArgument>::__from_defined_param(42), 42);
-        assert_eq!(ConvertArgument::__into_argument(42i32).0, 42);
+        assert_eq!(unsafe { ConvertArgument::__into_argument(42i32).0 }, 42);
     }
 
     #[test]
@@ -306,7 +305,7 @@ mod tests {
             TypeId::of::<i8>()
         );
         assert_eq!(<i8 as ConvertArgument>::__from_defined_param(-3), -3);
-        assert_eq!(ConvertArgument::__into_argument(-3i32).0, -3);
+        assert_eq!(unsafe { ConvertArgument::__into_argument(-3i32).0 }, -3);
     }
 
     #[test]
@@ -316,8 +315,8 @@ mod tests {
         assert!(!<bool as ConvertReturn>::__from_return(Bool::NO));
         assert!(<bool as ConvertReturn>::__from_return(Bool::YES));
 
-        assert!(!ConvertArgument::__into_argument(false).0.as_bool());
-        assert!(ConvertArgument::__into_argument(true).0.as_bool());
+        assert!(!unsafe { ConvertArgument::__into_argument(false).0 }.as_bool());
+        assert!(unsafe { ConvertArgument::__into_argument(true).0 }.as_bool());
         assert!(!ConvertReturn::__into_defined_return(false).as_bool());
         assert!(ConvertReturn::__into_defined_return(true).as_bool());
 

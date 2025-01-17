@@ -281,6 +281,19 @@ define_class!(
                 *param = ptr::null_mut();
             }
         }
+
+        #[method(willPanicWith:panicsAfter:)]
+        fn will_panic(param: Option<&mut *mut RcTestObject>, panic_after: bool) {
+            if !panic_after {
+                panic!("intentional panic");
+            }
+            if let Some(param) = param {
+                *param = Retained::autorelease_ptr(RcTestObject::new());
+            }
+            if panic_after {
+                panic!("intentional panic");
+            }
+        }
     }
 
     unsafe impl NSObjectProtocol for RcTestObject {}

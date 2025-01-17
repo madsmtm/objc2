@@ -21,20 +21,16 @@ pub trait MsgSend: Sized {
         A: ConvertArguments,
         R: ConvertReturn,
     {
-        let (args, stored) = A::__into_arguments(args);
-
-        // SAFETY: Upheld by caller
-        let result = unsafe { MessageReceiver::send_message(self.into_raw_receiver(), sel, args) };
-
-        // TODO: If we want `objc_retainAutoreleasedReturnValue` to
-        // work, we must not do any work before it has been run; so
-        // somehow, we should do that _before_ this call!
+        // SAFETY: The writeback helper is not leaked (it is dropped at the
+        // end of this scope).
         //
-        // SAFETY: The argument was passed to the message sending
-        // function, and the stored values are only processed this
-        // once. See `src/__macro_helpers/writeback.rs` for
-        // details.
-        unsafe { A::__process_after_message_send(stored) };
+        // TODO: If we want `objc_retainAutoreleasedReturnValue` to work, we
+        // must not do any work before it has been run; so somehow, we should
+        // do that _before_ the helper is dropped!
+        let (args, _helper) = unsafe { A::__into_arguments(args) };
+
+        // SAFETY: Upheld by caller.
+        let result = unsafe { MessageReceiver::send_message(self.into_raw_receiver(), sel, args) };
 
         R::__from_return(result)
     }
@@ -46,15 +42,14 @@ pub trait MsgSend: Sized {
         A: ConvertArguments,
         R: ConvertReturn,
     {
-        let (args, stored) = A::__into_arguments(args);
+        // SAFETY: The writeback helper is not leaked (it is dropped at the
+        // end of this scope).
+        let (args, _helper) = unsafe { A::__into_arguments(args) };
 
-        // SAFETY: Upheld by caller
+        // SAFETY: Upheld by caller.
         let result = unsafe {
             MessageReceiver::send_super_message(self.into_raw_receiver(), superclass, sel, args)
         };
-
-        // SAFETY: Same as in send_message above.
-        unsafe { A::__process_after_message_send(stored) };
 
         R::__from_return(result)
     }
