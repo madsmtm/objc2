@@ -58,6 +58,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   return types (similar to what's done on methods).
 * Added automatic conversion to `Retained` in external function return types
   (similar to what's done on methods).
+* Added the following types to `ServiceManagement`:
+  - `SMJobBless`
+  - `SMLoginItemSetEnabled`
+  - `kSMDomainSystemLaunchd`
+  - `kSMDomainUserLaunchd`
+  - `kSMErrorDomainFramework`
+  - `kSMErrorDomainIPC`
+  - `kSMErrorDomainLaunchd`
+  - `SMCopyAllJobDictionaries`
+  - `SMJobCopyDictionary`
+  - `SMJobRemove`
+  - `SMJobSubmit`
 
 ### Changed
 * Enabled all Cargo features by default, and removed the previous `"all"`
