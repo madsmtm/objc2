@@ -1422,7 +1422,9 @@ version = "0.2.2"
 dependencies = [
  "block2",
  "objc2",
+ "objc2-core-foundation",
  "objc2-foundation",
+ "objc2-security",
 ]
 
 [[package]]
