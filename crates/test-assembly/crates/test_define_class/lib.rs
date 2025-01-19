@@ -8,7 +8,7 @@ use core::ptr;
 
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::AnyClass;
-use objc2::{define_class, msg_send_id, ClassType, DefinedClass};
+use objc2::{define_class, msg_send, ClassType, DefinedClass};
 use objc2_foundation::{CopyingHelper, NSCopying, NSObject, NSObjectProtocol, NSZone};
 
 define_class!(
@@ -37,7 +37,7 @@ define_class!(
         #[no_mangle]
         #[method_id(methodRetained)]
         fn method_retained(&self) -> Option<Retained<NSObject>> {
-            unsafe { msg_send_id![Self::class(), new] }
+            unsafe { msg_send![Self::class(), new] }
         }
 
         // Test that `objc_autoreleaseReturnValue` is tail-called
@@ -60,7 +60,7 @@ define_class!(
         #[no_mangle]
         #[method_id(copyWithZone:)]
         fn copyWithZone(&self, _zone: *const NSZone) -> Option<Retained<Self>> {
-            unsafe { msg_send_id![Self::class(), new] }
+            unsafe { msg_send![Self::class(), new] }
         }
     }
 );
@@ -86,7 +86,7 @@ define_class!(
         #[method_id(init)]
         fn init_forgetable_ivars(this: Allocated<Self>) -> Option<Retained<Self>> {
             let this = this.set_ivars(ForgetableIvarsIvars { foo: 42, bar: 43 });
-            unsafe { msg_send_id![super(this), init] }
+            unsafe { msg_send![super(this), init] }
         }
     }
 );
@@ -123,7 +123,7 @@ define_class!(
                 obj: NSObject::new(),
                 obj_option: Some(NSObject::new()),
             });
-            unsafe { msg_send_id![super(this), init] }
+            unsafe { msg_send![super(this), init] }
         }
     }
 );

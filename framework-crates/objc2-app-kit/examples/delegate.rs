@@ -1,7 +1,7 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2::{define_class, msg_send_id, DefinedClass, MainThreadMarker, MainThreadOnly};
+use objc2::{define_class, msg_send, DefinedClass, MainThreadMarker, MainThreadOnly};
 use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate};
 use objc2_foundation::{
     ns_string, NSCopying, NSNotification, NSObject, NSObjectProtocol, NSString,
@@ -58,7 +58,7 @@ impl AppDelegate {
             id_ivar: NSString::from_str("abc"),
             maybe_id_ivar: Some(ns_string!("def").copy()),
         });
-        unsafe { msg_send_id![super(this), init] }
+        unsafe { msg_send![super(this), init] }
     }
 }
 

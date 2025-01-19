@@ -1,14 +1,37 @@
-error[E0271]: type mismatch resolving `<Retained<AnyObject> as MaybeUnwrap>::Input == Option<Retained<NSObject>>`
+error[E0277]: the trait bound `Allocated<NSObject>: MessageReceiver` is not satisfied
  --> ui/msg_send_alloc_init_different.rs
   |
-  |     let _: Retained<AnyObject> = unsafe { msg_send_id![obj, init] };
-  |                                           ^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<Retained<NSObject>>`, found `Option<Retained<AnyObject>>`
+  |     let _: Retained<AnyObject> = unsafe { msg_send![obj, init] };
+  |                                           ^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Allocated<NSObject>`
   |
-  = note: expected enum `Option<Retained<NSObject>>`
-             found enum `Option<Retained<AnyObject>>`
-note: required by a bound in `send_message_retained`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<NSObject>, Retained<AnyObject>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<NSObject>, Retained<AnyObject>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Retained<AnyObject>: Encode` is not satisfied
+ --> ui/msg_send_alloc_init_different.rs
   |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |                                                                         ^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  |     let _: Retained<AnyObject> = unsafe { msg_send![obj, init] };
+  |                                           ^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<AnyObject>`
+  |
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Retained<AnyObject>` to implement `EncodeReturn`
+  = note: required for `Retained<AnyObject>` to implement `ConvertReturn<MethodFamily<3>>`
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<NSObject>, Retained<AnyObject>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<NSObject>, Retained<AnyObject>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -22,7 +22,7 @@ use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::encode::Encoding;
-use objc2::msg_send_id;
+use objc2::msg_send;
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 
@@ -262,7 +262,7 @@ impl Ord for NSNumber {
 
 impl fmt::Display for NSNumber {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let string: Retained<NSObject> = unsafe { msg_send_id![self, stringValue] };
+        let string: Retained<NSObject> = unsafe { msg_send![self, stringValue] };
         // SAFETY: `stringValue` returns `NSString`.
         unsafe { util::display_string(&string, f) }
     }

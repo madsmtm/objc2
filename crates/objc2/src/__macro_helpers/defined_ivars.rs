@@ -435,7 +435,7 @@ mod tests {
     use super::*;
     use crate::rc::{Allocated, PartialInit, RcTestObject, Retained, ThreadTestData};
     use crate::runtime::NSObject;
-    use crate::{define_class, msg_send, msg_send_id, AllocAnyThread, Message};
+    use crate::{define_class, msg_send, AllocAnyThread, Message};
 
     /// Initialize superclasses, but not own class.
     unsafe fn init_only_superclasses<T: DefinedClass>(obj: Allocated<T>) -> Retained<T>
@@ -445,7 +445,8 @@ mod tests {
         unsafe { Retained::from_raw(msg_send![super(Allocated::into_ptr(obj)), init]) }.unwrap()
     }
 
-    /// Initialize, but fail to finalize (which is only done by `msg_send_id!`).
+    /// Initialize, but fail to finalize (which is done internally by
+    /// `msg_send!` when returning `Retained`).
     unsafe fn init_no_finalize<T: DefinedClass>(obj: Allocated<T>) -> Retained<T>
     where
         T::Super: ClassType,
@@ -457,7 +458,7 @@ mod tests {
 
     /// Initialize properly.
     unsafe fn init<T: DefinedClass>(obj: Allocated<T>) -> Retained<T> {
-        unsafe { msg_send_id![obj, init] }
+        unsafe { msg_send![obj, init] }
     }
 
     #[test]
@@ -505,7 +506,7 @@ mod tests {
             unsafe impl ImplsDrop {
                 #[method_id(init)]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-                    unsafe { msg_send_id![super(this.set_ivars(())), init] }
+                    unsafe { msg_send![super(this.set_ivars(())), init] }
                 }
             }
         );
@@ -539,7 +540,7 @@ mod tests {
             unsafe impl IvarsImplDrop {
                 #[method_id(init)]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-                    unsafe { msg_send_id![super(this.set_ivars(IvarThatImplsDrop)), init] }
+                    unsafe { msg_send![super(this.set_ivars(IvarThatImplsDrop)), init] }
                 }
             }
         );
@@ -567,7 +568,7 @@ mod tests {
             unsafe impl BothIvarsAndTypeImplsDrop {
                 #[method_id(init)]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-                    unsafe { msg_send_id![super(this.set_ivars(IvarThatImplsDrop)), init] }
+                    unsafe { msg_send![super(this.set_ivars(IvarThatImplsDrop)), init] }
                 }
             }
         );
@@ -637,7 +638,7 @@ mod tests {
             unsafe impl IvarZst {
                 #[method_id(init)]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-                    unsafe { msg_send_id![super(this.set_ivars(Cell::new(Ivar))), init] }
+                    unsafe { msg_send![super(this.set_ivars(Cell::new(Ivar))), init] }
                 }
             }
         );
@@ -701,7 +702,7 @@ mod tests {
                 #[method_id(init)]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     let this = this.set_ivars(Cell::new(Some(RcTestObject::new())));
-                    unsafe { msg_send_id![super(this), init] }
+                    unsafe { msg_send![super(this), init] }
                 }
             }
         );
@@ -764,7 +765,7 @@ mod tests {
                         int: Cell::new(42),
                         obj: Cell::new(RcTestObject::new()),
                     });
-                    unsafe { msg_send_id![super(this), init] }
+                    unsafe { msg_send![super(this), init] }
                 }
             }
         );
@@ -846,7 +847,7 @@ mod tests {
         }
 
         let obj = DropPanics::alloc().set_ivars(());
-        let obj: Retained<DropPanics> = unsafe { msg_send_id![super(obj), init] };
+        let obj: Retained<DropPanics> = unsafe { msg_send![super(obj), init] };
         drop(obj);
     }
 
@@ -870,7 +871,7 @@ mod tests {
         );
 
         let obj = IvarDropPanics::alloc().set_ivars(DropPanics);
-        let obj: Retained<IvarDropPanics> = unsafe { msg_send_id![super(obj), init] };
+        let obj: Retained<IvarDropPanics> = unsafe { msg_send![super(obj), init] };
         drop(obj);
     }
 
@@ -907,7 +908,7 @@ mod tests {
         }
 
         let obj = DropRetainsAndLeaksSelf::alloc().set_ivars(());
-        let obj: Retained<DropRetainsAndLeaksSelf> = unsafe { msg_send_id![super(obj), init] };
+        let obj: Retained<DropRetainsAndLeaksSelf> = unsafe { msg_send![super(obj), init] };
         drop(obj);
 
         // Suddenly, the object is alive again!

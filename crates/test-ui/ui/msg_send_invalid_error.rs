@@ -1,7 +1,7 @@
 //! Test that message sending with error handling works correctly.
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::{AnyObject, NSObject};
-use objc2::{msg_send, msg_send_id, AllocAnyThread, ClassType};
+use objc2::{msg_send, AllocAnyThread, ClassType};
 use objc2_foundation::NSString;
 
 fn main() {
@@ -18,14 +18,11 @@ fn main() {
     let _: () = unsafe { msg_send![super(obj), g: _] };
     let _: () = unsafe { msg_send![super(obj, NSString::class()), h: _] };
 
-    // Basic bad return type for msg_send_id!
-    let _: () = unsafe { msg_send_id![obj, a: _] };
-
     // Bad return type from init
     let _: Result<Retained<AnyObject>, Retained<NSObject>> =
-        unsafe { msg_send_id![NSObject::alloc(), initWithError: _] };
+        unsafe { msg_send![NSObject::alloc(), initWithError: _] };
 
     // Erroring `alloc` is not supported automatically.
     let _: Result<Allocated<NSObject>, Retained<NSObject>> =
-        unsafe { msg_send_id![NSObject::class(), allocWithError: _] };
+        unsafe { msg_send![NSObject::class(), allocWithError: _] };
 }

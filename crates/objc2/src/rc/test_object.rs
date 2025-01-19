@@ -4,7 +4,7 @@ use core::ptr;
 
 use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{NSObject, NSObjectProtocol, NSZone};
-use crate::{define_class, msg_send, msg_send_id, ClassType};
+use crate::{define_class, msg_send, ClassType};
 
 // TODO: Put tests that use this in another crate
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -109,7 +109,7 @@ define_class!(
         unsafe fn init(this: Allocated<Self>) -> Retained<Self> {
             TEST_DATA.with(|data| data.borrow_mut().init += 1);
             let this = this.set_ivars(());
-            unsafe { msg_send_id![super(this), init] }
+            unsafe { msg_send![super(this), init] }
         }
 
         #[method_id(initReturningNull)]
@@ -243,7 +243,7 @@ define_class!(
                 }
                 None
             } else {
-                unsafe { msg_send_id![Self::class(), new] }
+                unsafe { msg_send![Self::class(), new] }
             }
         }
 
@@ -271,7 +271,7 @@ define_class!(
                 }
                 None
             } else {
-                unsafe { msg_send_id![this, init] }
+                unsafe { msg_send![this, init] }
             }
         }
 
@@ -314,7 +314,7 @@ impl DefaultRetained for RcTestObject {
 impl RcTestObject {
     #[doc(hidden)]
     pub(crate) fn new() -> Retained<Self> {
-        // Use msg_send! - msg_send_id! is tested elsewhere!
+        // Use raw `msg_send!`, the automatic conversion are tested elsewhere.
         unsafe { Retained::from_raw(msg_send![Self::class(), new]) }.unwrap()
     }
 }

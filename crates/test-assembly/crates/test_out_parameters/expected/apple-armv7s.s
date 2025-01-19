@@ -394,7 +394,7 @@ LBB5_2:
 LBB5_3:
 	str	r0, [sp, #8]
 	ldr	r2, [sp, #4]
-	mov	r0, #2
+	mov	r0, #1
 	str	r0, [sp, #16]
 Ltmp18:
 	mov	r0, r5
@@ -431,8 +431,8 @@ LBB5_7:
 	.p2align	2
 LJTI5_0:
 	.data_region jt32
-	.long	LBB5_12-LJTI5_0
 	.long	LBB5_9-LJTI5_0
+	.long	LBB5_12-LJTI5_0
 	.end_data_region
 LBB5_9:
 Ltmp20:
@@ -440,7 +440,7 @@ Ltmp20:
 	str	r0, [sp]
 	ldr	r0, [sp, #4]
 	ldr	r1, [sp, #8]
-	mov	r2, #1
+	mov	r2, #2
 	str	r2, [sp, #16]
 Ltmp21:
 	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
@@ -483,9 +483,9 @@ Lttbaseref2:
 	.uleb128 Lcst_end2-Lcst_begin2
 Lcst_begin2:
 	.byte	0
-	.byte	1
-	.byte	1
 	.byte	0
+	.byte	1
+	.byte	1
 Lcst_end2:
 	.byte	127
 	.byte	0
@@ -679,7 +679,7 @@ LBB7_2:
 LBB7_3:
 	str	r0, [sp, #8]
 	ldr	r2, [sp, #4]
-	mov	r0, #2
+	mov	r0, #1
 	str	r0, [sp, #16]
 Ltmp30:
 	mov	r0, r5
@@ -719,8 +719,8 @@ LBB7_8:
 	.p2align	2
 LJTI7_0:
 	.data_region jt32
-	.long	LBB7_13-LJTI7_0
 	.long	LBB7_10-LJTI7_0
+	.long	LBB7_13-LJTI7_0
 	.end_data_region
 LBB7_10:
 Ltmp32:
@@ -728,7 +728,7 @@ Ltmp32:
 	str	r0, [sp]
 	ldr	r0, [sp, #4]
 	ldr	r1, [sp, #8]
-	mov	r2, #1
+	mov	r2, #2
 	str	r2, [sp, #16]
 Ltmp33:
 	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
@@ -771,9 +771,9 @@ Lttbaseref4:
 	.uleb128 Lcst_end4-Lcst_begin4
 Lcst_begin4:
 	.byte	0
-	.byte	1
-	.byte	1
 	.byte	0
+	.byte	1
+	.byte	1
 Lcst_end4:
 	.byte	127
 	.byte	0

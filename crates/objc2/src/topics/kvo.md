@@ -21,7 +21,7 @@ use core::ptr;
 
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
-use objc2::{define_class, msg_send_id, AllocAnyThread, ClassType, DefinedClass};
+use objc2::{define_class, msg_send, AllocAnyThread, ClassType, DefinedClass};
 use objc2_foundation::{
     ns_string, NSCopying, NSDictionary, NSKeyValueChangeKey, NSKeyValueObservingOptions, NSObject,
     NSObjectNSKeyValueObserverRegistration, NSObjectProtocol, NSString,
@@ -78,7 +78,7 @@ impl MyObserver {
             key_path: key_path.copy(),
             handler: Box::new(handler),
         });
-        let observer: Retained<Self> = unsafe { msg_send_id![super(observer), init] };
+        let observer: Retained<Self> = unsafe { msg_send![super(observer), init] };
 
         // SAFETY: We make sure to un-register the observer before it's deallocated.
         //

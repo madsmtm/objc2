@@ -139,12 +139,12 @@ impl<T: ?Sized + Message> Allocated<T> {
     ///
     /// This consumes the allocated instance, and returns the now partially
     /// initialized instance instead, which can be further used in
-    /// [`msg_send_id!`] `super` calls.
+    /// [`msg_send!`] `super` calls.
     ///
     /// This works very similarly to [Swift's two-phase initialization
     /// scheme][two-phase-init], see that for details.
     ///
-    /// [`msg_send_id!`]: crate::msg_send_id
+    /// [`msg_send!`]: crate::msg_send
     /// [two-phase-init]: https://docs.swift.org/swift-book/documentation/the-swift-programming-language/initialization/#Two-Phase-Initialization
     ///
     ///
@@ -216,9 +216,9 @@ impl<T: ?Sized> fmt::Pointer for Allocated<T> {
 /// current class, but not yet initialized in the superclass.
 ///
 /// This is returned by [`Allocated::set_ivars`], and is intended to be used
-/// further in [`msg_send_id!`] `super` calls.
+/// further in [`msg_send!`] `super` calls.
 ///
-/// [`msg_send_id!`]: crate::msg_send_id
+/// [`msg_send!`]: crate::msg_send
 ///
 ///
 /// # Memory layout
@@ -369,7 +369,7 @@ mod tests {
 
         extern_methods!(
             unsafe impl RcTestObject {
-                #[method_id(init)]
+                #[method(init)]
                 fn init_with_self(self: Allocated<Self>) -> Retained<Self>;
             }
         );

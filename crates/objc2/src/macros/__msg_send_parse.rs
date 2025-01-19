@@ -3,22 +3,24 @@
 macro_rules! __msg_send_parse {
     // No arguments
     {
-        ($error_fn:ident)
         // Intentionally empty
         ()
         ()
         ($selector:ident $(,)?)
-        ($fn:ident)
+
+        ($($error_data:tt)*)
+        ($($data:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $crate::__msg_send_parse! {
-            ($error_fn)
             ($selector)
             ()
             ()
-            ($fn)
+
+            ($($error_data)*)
+            ($($data)*)
 
             ($out_macro)
             $($macro_args)*
@@ -28,11 +30,12 @@ macro_rules! __msg_send_parse {
     // tt-munch remaining `selector: argument` pairs, looking for a pattern
     // that ends with `sel: _`.
     {
-        ($_error_fn:ident)
         ($($selector_output:tt)*)
         ($($argument_output:tt)*)
         ()
-        ($fn:ident)
+
+        ($($error_data:tt)*)
+        ($($data:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -40,50 +43,54 @@ macro_rules! __msg_send_parse {
         $out_macro! {
             $($macro_args)*
 
-            ($fn)
+            ($($data)*)
             ($($selector_output)*)
             ($($argument_output)*)
         }
     });
     {
-        ($error_fn:ident)
         ($($selector_output:tt)*)
         ($($argument_output:tt)*)
         ($selector:ident: _ $(,)?)
-        ($fn:ident)
+
+        ($($error_data:tt)*)
+        ($($data:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $crate::__msg_send_parse! {
-            ($error_fn)
             ($($selector_output)* $selector:)
             // Don't pass an argument
             ($($argument_output)*)
             ()
-            // Instead, we change the called function to the error function.
-            ($error_fn)
+
+            // Instead, we change the data to the error data.
+            ($($error_data)*)
+            ($($error_data)*)
 
             ($out_macro)
             $($macro_args)*
         }
     };
     {
-        ($error_fn:ident)
         ($($selector_output:tt)*)
         ($($argument_output:tt)*)
         ($selector:ident : $argument:expr $(, $($rest:tt)*)?)
-        ($fn:ident)
+
+        ($($error_data:tt)*)
+        ($($data:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $crate::__msg_send_parse! {
-            ($error_fn)
             ($($selector_output)* $selector:)
             ($($argument_output)* $argument,)
             ($($($rest)*)?)
-            ($fn)
+
+            ($($error_data)*)
+            ($($data)*)
 
             ($out_macro)
             $($macro_args)*
@@ -92,18 +99,19 @@ macro_rules! __msg_send_parse {
 
     // Handle calls without comma between `selector: argument` pair.
     {
-        ($error_fn:ident)
         // Intentionally empty
         ()
         ()
         ($($selector:ident : $argument:expr)*)
-        ($fn:ident)
+
+        ($($error_data:tt)*)
+        ($($data:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {{
         $crate::__comma_between_args!(
-            ($fn)
+            ($($data)*)
 
             ($(
                 ", ",
@@ -116,11 +124,12 @@ macro_rules! __msg_send_parse {
         );
 
         $crate::__msg_send_parse! {
-            ($error_fn)
             ()
             ()
             ($($selector : $argument),*)
-            ($fn)
+
+            ($($error_data)*)
+            ($($data)*)
 
             ($out_macro)
             $($macro_args)*
@@ -139,11 +148,11 @@ macro_rules! __comma_between_args {
 #[macro_export]
 #[cfg(feature = "unstable-msg-send-always-comma")]
 macro_rules! __comma_between_args {
-    // msg_send!
     (
-        (send_super_message_static)
+        (MsgSendSuper::send_super_message_static)
         ($($args:tt)*)
         ($obj:expr)
+        ()
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send")
@@ -151,9 +160,10 @@ macro_rules! __comma_between_args {
         }
     };
     (
-        (send_super_message)
+        (MsgSendSuper::send_super_message)
         ($($args:tt)*)
         ($obj:expr, $superclass:expr)
+        ()
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send")
@@ -161,49 +171,13 @@ macro_rules! __comma_between_args {
         }
     };
     (
-        (send_message)
+        (MsgSend::send_message)
         ($($args:tt)*)
         ($obj:expr)
+        ()
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send")
-            ($crate::__macro_helpers::stringify!($obj), $($args)*)
-        }
-    };
-    // msg_send_id!
-    (
-        (send_super_message_retained_static)
-        ($($args:tt)*)
-        ($obj:expr)
-        ()
-        (MsgSendSuperRetained)
-    ) => {
-        $crate::__comma_between_args_inner! {
-            ("msg_send_id")
-            ("super", $crate::__macro_helpers::stringify!(($obj)), $($args)*)
-        }
-    };
-    (
-        (send_super_message_retained)
-        ($($args:tt)*)
-        ($obj:expr, $superclass:expr)
-        ()
-        (MsgSendSuperRetained)
-    ) => {
-        $crate::__comma_between_args_inner! {
-            ("msg_send_id")
-            ("super", $crate::__macro_helpers::stringify!(($obj, $superclass)), $($args)*)
-        }
-    };
-    (
-        (send_message_retained)
-        ($($args:tt)*)
-        ($obj:expr)
-        ()
-        (MsgSendRetained)
-    ) => {
-        $crate::__comma_between_args_inner! {
-            ("msg_send_id")
             ($crate::__macro_helpers::stringify!($obj), $($args)*)
         }
     };

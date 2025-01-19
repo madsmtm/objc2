@@ -1,6 +1,6 @@
 use crate::encode::{EncodeArgument, EncodeArguments, EncodeReturn};
-use crate::rc::Retained;
-use crate::runtime::Bool;
+use crate::rc::{Allocated, Retained};
+use crate::runtime::{AnyObject, Bool, Sel};
 use crate::Message;
 
 mod argument_private {
@@ -88,47 +88,63 @@ mod return_private {
 }
 
 /// Same as [`ConvertArgument`], but for return types.
-pub trait ConvertReturn: return_private::Sealed {
-    /// The inner type that this can be converted to and from.
-    #[doc(hidden)]
-    type __Inner: EncodeReturn;
+///
+/// See `RetainSemantics` for more details.
+pub trait ConvertReturn<MethodFamily>: return_private::Sealed {
+    type Inner: EncodeReturn;
 
-    #[doc(hidden)]
-    fn __into_defined_return(self) -> Self::__Inner;
+    #[track_caller]
+    unsafe fn convert_message_return(
+        inner: Self::Inner,
+        receiver_ptr: *mut AnyObject,
+        sel: Sel,
+    ) -> Self;
 
-    #[doc(hidden)]
-    fn __from_return(inner: Self::__Inner) -> Self;
+    fn convert_defined_return(self) -> Self::Inner;
 }
 
 impl<T: EncodeReturn> return_private::Sealed for T {}
-impl<T: EncodeReturn> ConvertReturn for T {
-    type __Inner = Self;
+impl<T: EncodeReturn, MethodFamily> ConvertReturn<MethodFamily> for T {
+    type Inner = Self;
 
     #[inline]
-    fn __into_defined_return(self) -> Self::__Inner {
-        self
+    unsafe fn convert_message_return(
+        inner: Self::Inner,
+        _receiver_ptr: *mut AnyObject,
+        _sel: Sel,
+    ) -> Self {
+        inner
     }
 
     #[inline]
-    fn __from_return(inner: Self::__Inner) -> Self {
-        inner
+    fn convert_defined_return(self) -> Self::Inner {
+        self
     }
 }
 
 impl return_private::Sealed for bool {}
-impl ConvertReturn for bool {
-    type __Inner = Bool;
+impl<MethodFamily> ConvertReturn<MethodFamily> for bool {
+    type Inner = Bool;
 
     #[inline]
-    fn __into_defined_return(self) -> Self::__Inner {
-        Bool::new(self)
-    }
-
-    #[inline]
-    fn __from_return(inner: Self::__Inner) -> Self {
+    unsafe fn convert_message_return(
+        inner: Self::Inner,
+        _receiver_ptr: *mut AnyObject,
+        _sel: Sel,
+    ) -> Self {
         inner.as_bool()
     }
+
+    #[inline]
+    fn convert_defined_return(self) -> Self::Inner {
+        Bool::new(self)
+    }
 }
+
+// Implemented in retain_semantics.rs
+impl<T: ?Sized + Message> return_private::Sealed for Retained<T> {}
+impl<T: ?Sized + Message> return_private::Sealed for Option<Retained<T>> {}
+impl<T: ?Sized + Message> return_private::Sealed for Allocated<T> {}
 
 pub trait ConvertArguments {
     #[doc(hidden)]
@@ -287,6 +303,9 @@ mod tests {
     use super::*;
 
     use core::any::TypeId;
+    use core::ptr;
+
+    use crate::sel;
 
     #[test]
     fn convert_normally_noop() {
@@ -310,15 +329,22 @@ mod tests {
 
     #[test]
     fn convert_bool() {
+        let receiver_ptr = ptr::null_mut::<AnyObject>();
+        let sel = sel!(foo);
+
         assert!(!<bool as ConvertArgument>::__from_defined_param(Bool::NO));
         assert!(<bool as ConvertArgument>::__from_defined_param(Bool::YES));
-        assert!(!<bool as ConvertReturn>::__from_return(Bool::NO));
-        assert!(<bool as ConvertReturn>::__from_return(Bool::YES));
+        assert!(!unsafe {
+            <bool as ConvertReturn<()>>::convert_message_return(Bool::NO, receiver_ptr, sel)
+        });
+        assert!(unsafe {
+            <bool as ConvertReturn<()>>::convert_message_return(Bool::YES, receiver_ptr, sel)
+        });
 
         assert!(!unsafe { ConvertArgument::__into_argument(false).0 }.as_bool());
         assert!(unsafe { ConvertArgument::__into_argument(true).0 }.as_bool());
-        assert!(!ConvertReturn::__into_defined_return(false).as_bool());
-        assert!(ConvertReturn::__into_defined_return(true).as_bool());
+        assert!(!ConvertReturn::<()>::convert_defined_return(false).as_bool());
+        assert!(ConvertReturn::<()>::convert_defined_return(true).as_bool());
 
         #[cfg(all(target_vendor = "apple", target_os = "macos", target_arch = "x86_64"))]
         assert_eq!(

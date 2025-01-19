@@ -16,13 +16,13 @@ error: number of arguments in function and selector did not match
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method_id()]
-  | |         fn no_selector_id_self(&self);
+  | |         #[method()]
+  | |         fn no_selector_self(&self);
   | |     }
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__method_msg_send_id` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: number of arguments in function and selector did not match
  --> ui/extern_methods_bad_selector.rs

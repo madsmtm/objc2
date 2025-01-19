@@ -537,10 +537,10 @@ mod tests {
     use core::ptr;
 
     use super::*;
+    use crate::msg_send;
     use crate::rc::{Allocated, Retained};
     use crate::runtime::NSObject;
     use crate::test_utils;
-    use crate::{msg_send, msg_send_id};
 
     #[allow(unused)]
     fn test_different_receivers(obj: &mut AnyObject) {
@@ -593,7 +593,7 @@ mod tests {
         let nil: *mut NSObject = ::core::ptr::null_mut();
 
         // This result should not be relied on
-        let result: Option<Retained<NSObject>> = unsafe { msg_send_id![nil, description] };
+        let result: Option<Retained<NSObject>> = unsafe { msg_send![nil, description] };
         assert!(result.is_none());
 
         // This result should not be relied on
@@ -611,12 +611,12 @@ mod tests {
 
         // This result should not be relied on
         let result: Option<Retained<NSObject>> =
-            unsafe { msg_send_id![nil, multiple: 1u32, arguments: 2i8] };
+            unsafe { msg_send![nil, multiple: 1u32, arguments: 2i8] };
         assert!(result.is_none());
 
         // This result should not be relied on
         let obj = unsafe { Allocated::new(ptr::null_mut()) };
-        let result: Option<Retained<NSObject>> = unsafe { msg_send_id![obj, init] };
+        let result: Option<Retained<NSObject>> = unsafe { msg_send![obj, init] };
         assert!(result.is_none());
     }
 

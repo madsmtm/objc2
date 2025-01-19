@@ -1,8 +1,8 @@
-//! Test compiler output of msg_send_id when ownership is not specified.
-use objc2::msg_send_id;
+//! Test compiler output of msg_send! when result type is not properly specified.
+use objc2::msg_send;
 use objc2::runtime::NSObject;
 
 fn main() {
     let obj: &NSObject;
-    let _: &NSObject = &*unsafe { msg_send_id![obj, description] };
+    let _: &NSObject = &*unsafe { msg_send![obj, description] };
 }

@@ -118,7 +118,7 @@ impl<T, U: RetainedFromIterator<T>> FromIterator<T> for Retained<U> {
 mod tests {
     use super::*;
     use crate::runtime::NSObject;
-    use crate::{define_class, msg_send_id, ClassType};
+    use crate::{define_class, msg_send, ClassType};
 
     define_class!(
         #[unsafe(super(NSObject))]
@@ -129,7 +129,7 @@ mod tests {
 
     impl DefaultRetained for Collection {
         fn default_retained() -> Retained<Self> {
-            unsafe { msg_send_id![Collection::class(), new] }
+            unsafe { msg_send![Collection::class(), new] }
         }
     }
 

@@ -37,7 +37,7 @@ In graphical applications, the main run loop needs to be managed by the applicat
 
 ```rust, no_run
 use objc2::rc::{Allocated, Retained};
-use objc2::{define_class, msg_send_id, ClassType, DefinedClass, MainThreadOnly};
+use objc2::{define_class, msg_send, ClassType, DefinedClass, MainThreadOnly};
 use objc2_foundation::{NSNotification, NSObject, NSObjectProtocol};
 
 // Application delegate protocols happens to share a few methods,
@@ -64,11 +64,11 @@ define_class!(
 
     unsafe impl AppDelegate {
         // Called by `NSApplicationMain`, `UIApplicationMain`
-        // or our `msg_send_id![AppDelegate::class(), new]`.
+        // or our `msg_send![AppDelegate::class(), new]`.
         #[method_id(init)]
         fn init(this: Allocated<Self>) -> Retained<Self> {
             let this = this.set_ivars(AppState::default());
-            unsafe { msg_send_id![super(this), init] }
+            unsafe { msg_send![super(this), init] }
         }
     }
 
@@ -98,7 +98,7 @@ define_class!(
 fn main() {
     let mtm = objc2::MainThreadMarker::new().unwrap();
     let app = objc2_app_kit::NSApplication::sharedApplication(mtm);
-    let delegate: Retained<AppDelegate> = unsafe { msg_send_id![AppDelegate::class(), new] };
+    let delegate: Retained<AppDelegate> = unsafe { msg_send![AppDelegate::class(), new] };
     app.setDelegate(Some(objc2::runtime::ProtocolObject::from_ref(&*delegate)));
     app.run();
 }

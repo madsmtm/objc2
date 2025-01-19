@@ -41,7 +41,7 @@ LBB1_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<1_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
+	call	SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)
 
 	.globl	_handle_alloc
 	.p2align	4, 0x90
@@ -92,7 +92,7 @@ LBB4_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
+	call	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
 
 	.globl	_handle_alloc_init
 	.p2align	4, 0x90
@@ -187,7 +187,7 @@ L9$pb:
 LBB9_2:
 	lea	eax, [esi + l_anon.[ID].3-L9$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
+	call	SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)
 
 	.globl	_handle_mutable_copy
 	.p2align	4, 0x90
@@ -221,7 +221,7 @@ L11$pb:
 LBB11_2:
 	lea	eax, [esi + l_anon.[ID].4-L11$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
+	call	SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
 
 	.globl	_handle_autoreleased
 	.p2align	4, 0x90
@@ -312,7 +312,7 @@ LBB14_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<6_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
+	call	SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)
 
 	.globl	_handle_with_out_param
 	.p2align	4, 0x90
@@ -334,41 +334,44 @@ Ltmp0:
 	mov	dword ptr [esp], eax
 	call	_objc_msgSend
 Ltmp1:
+	## InlineAsm Start
+
+	mov	ebp, ebp
+
+	## InlineAsm End
+Ltmp2:
+	mov	dword ptr [esp], eax
+	call	_objc_retainAutoreleasedReturnValue
+Ltmp3:
 	mov	esi, eax
 	mov	eax, dword ptr [ebx]
 	mov	dword ptr [esp], eax
 	call	_objc_retain
 	mov	dword ptr [esp], edi
 	call	_objc_release
-	## InlineAsm Start
-
-	mov	ebp, ebp
-
-	## InlineAsm End
-	mov	dword ptr [esp], esi
-	call	_objc_retainAutoreleasedReturnValue
+	mov	eax, esi
 	add	esp, 12
 	pop	esi
 	pop	edi
 	pop	ebx
 	pop	ebp
 	ret
-LBB15_2:
-Ltmp2:
+LBB15_3:
+Ltmp4:
 	mov	esi, eax
 	mov	eax, dword ptr [ebx]
-Ltmp3:
+Ltmp5:
 	mov	dword ptr [esp], eax
 	call	_objc_retain
-Ltmp4:
-Ltmp5:
+Ltmp6:
+Ltmp7:
 	mov	dword ptr [esp], edi
 	call	_objc_release
-Ltmp6:
+Ltmp8:
 	mov	dword ptr [esp], esi
 	call	__Unwind_Resume
-LBB15_5:
-Ltmp7:
+LBB15_6:
+Ltmp9:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
 Lfunc_end0:
 	.section	__TEXT,__gcc_except_tab
@@ -383,19 +386,19 @@ Lttbaseref0:
 	.uleb128 Lcst_end0-Lcst_begin0
 Lcst_begin0:
 	.uleb128 Ltmp0-Lfunc_begin0
-	.uleb128 Ltmp1-Ltmp0
-	.uleb128 Ltmp2-Lfunc_begin0
-	.byte	0
-	.uleb128 Ltmp1-Lfunc_begin0
-	.uleb128 Ltmp3-Ltmp1
-	.byte	0
+	.uleb128 Ltmp3-Ltmp0
+	.uleb128 Ltmp4-Lfunc_begin0
 	.byte	0
 	.uleb128 Ltmp3-Lfunc_begin0
-	.uleb128 Ltmp6-Ltmp3
-	.uleb128 Ltmp7-Lfunc_begin0
+	.uleb128 Ltmp5-Ltmp3
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp5-Lfunc_begin0
+	.uleb128 Ltmp8-Ltmp5
+	.uleb128 Ltmp9-Lfunc_begin0
 	.byte	1
-	.uleb128 Ltmp6-Lfunc_begin0
-	.uleb128 Lfunc_end0-Ltmp6
+	.uleb128 Ltmp8-Lfunc_begin0
+	.uleb128 Lfunc_end0-Ltmp8
 	.byte	0
 	.byte	0
 Lcst_end0:
@@ -414,27 +417,27 @@ l_anon.[ID].0:
 	.p2align	2, 0x0
 l_anon.[ID].1:
 	.long	l_anon.[ID].0
-	.asciz	"9\000\000\000\r\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\017\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].2:
 	.long	l_anon.[ID].0
-	.asciz	"9\000\000\000\034\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\036\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].3:
 	.long	l_anon.[ID].0
-	.asciz	"9\000\000\0008\000\000\000\005\000\000"
+	.asciz	"9\000\000\000:\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].4:
 	.long	l_anon.[ID].0
-	.asciz	"9\000\000\000B\000\000\000\005\000\000"
+	.asciz	"9\000\000\000D\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].5:
 	.long	l_anon.[ID].0
-	.asciz	"9\000\000\000V\000\000\000\005\000\000"
+	.asciz	"9\000\000\000X\000\000\000\005\000\000"
 
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
 L_rust_eh_personality$non_lazy_ptr:

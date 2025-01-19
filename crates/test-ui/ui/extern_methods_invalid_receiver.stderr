@@ -1,50 +1,154 @@
-error[E0308]: mismatched types
+error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
  --> ui/extern_methods_invalid_receiver.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method_id(initWithMut)]
+  | |         #[method(initWithMut)]
   | |         fn init_with_mut(&mut self) -> Option<Retained<Self>>;
   | |     }
   | | );
-  | | ^
-  | | |
-  | |_expected `Allocated<_>`, found `&mut MyObject`
-  |   arguments to this function are incorrect
+  | |_^ the trait `MessageReceiver` is not implemented for `&mut MyObject`
   |
-  = note:         expected struct `Allocated<_>`
-          found mutable reference `&mut MyObject`
-note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |               ^^^^^^^^^^^^^^^^^^^^^
-  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: `MessageReceiver` is implemented for `&MyObject`, but not for `&mut MyObject`
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<&mut MyObject, _, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<&mut MyObject, _>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0308]: mismatched types
+error[E0277]: the trait bound `Retained<MyObject>: Encode` is not satisfied
  --> ui/extern_methods_invalid_receiver.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method_id(initWithOptionAllocated)]
+  | |         #[method(initWithMut)]
+  | |         fn init_with_mut(&mut self) -> Option<Retained<Self>>;
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Retained<MyObject>`
+  |
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Option<Retained<MyObject>>` to implement `Encode`
+  = note: required for `Option<Retained<MyObject>>` to implement `EncodeReturn`
+  = note: required for `Option<Retained<MyObject>>` to implement `ConvertReturn<MethodFamily<3>>`
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<&mut MyObject, Option<Retained<MyObject>>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<&mut MyObject, Option<Retained<MyObject>>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfied
+ --> ui/extern_methods_invalid_receiver.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(initWithMut)]
+  | |         fn init_with_mut(&mut self) -> Option<Retained<Self>>;
+  | |     }
+  | | );
+  | |_^ the trait `OptionEncode` is not implemented for `Retained<MyObject>`
+  |
+  = help: the following other types implement trait `OptionEncode`:
+            &T
+            &mut T
+            NonNull<T>
+            NonZero<i16>
+            NonZero<i32>
+            NonZero<i64>
+            NonZero<i8>
+            NonZero<isize>
+          and $N others
+  = note: required for `Option<Retained<MyObject>>` to implement `Encode`
+  = note: required for `Option<Retained<MyObject>>` to implement `EncodeReturn`
+  = note: required for `Option<Retained<MyObject>>` to implement `ConvertReturn<MethodFamily<3>>`
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<&mut MyObject, Option<Retained<MyObject>>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<&mut MyObject, Option<Retained<MyObject>>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Option<Allocated<MyObject>>: MessageReceiver` is not satisfied
+ --> ui/extern_methods_invalid_receiver.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(initWithOptionAllocated)]
   | |         fn init_with_option_allocated(this: Option<Allocated<Self>>) -> Option<Retained<Self>>;
   | |     }
   | | );
-  | | ^
-  | | |
-  | |_expected `Allocated<_>`, found `Option<Allocated<MyObject>>`
-  |   arguments to this function are incorrect
+  | |_^ the trait `MessageReceiver` is not implemented for `Option<Allocated<MyObject>>`
   |
-  = note: expected struct `Allocated<_>`
-               found enum `Option<Allocated<MyObject>>`
-note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Option<Allocated<MyObject>>, _, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Option<Allocated<MyObject>>, _>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Retained<MyObject>: Encode` is not satisfied
+ --> ui/extern_methods_invalid_receiver.rs
   |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |               ^^^^^^^^^^^^^^^^^^^^^
-  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-help: use the `?` operator to extract the `Option<Allocated<MyObject>>` value, propagating an `Option::None` value to the caller
- --> $WORKSPACE/crates/objc2/src/macros/__rewrite_self_param.rs
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(initWithOptionAllocated)]
+  | |         fn init_with_option_allocated(this: Option<Allocated<Self>>) -> Option<Retained<Self>>;
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Retained<MyObject>`
   |
-  |         }?
-  |          +
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Option<Retained<MyObject>>` to implement `Encode`
+  = note: required for `Option<Retained<MyObject>>` to implement `EncodeReturn`
+  = note: required for `Option<Retained<MyObject>>` to implement `ConvertReturn<MethodFamily<3>>`
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Option<Allocated<MyObject>>, Option<Retained<MyObject>>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Option<Allocated<MyObject>>, Option<Retained<MyObject>>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfied
+ --> ui/extern_methods_invalid_receiver.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(initWithOptionAllocated)]
+  | |         fn init_with_option_allocated(this: Option<Allocated<Self>>) -> Option<Retained<Self>>;
+  | |     }
+  | | );
+  | |_^ the trait `OptionEncode` is not implemented for `Retained<MyObject>`
+  |
+  = help: the following other types implement trait `OptionEncode`:
+            &T
+            &mut T
+            NonNull<T>
+            NonZero<i16>
+            NonZero<i32>
+            NonZero<i64>
+            NonZero<i8>
+            NonZero<isize>
+          and $N others
+  = note: required for `Option<Retained<MyObject>>` to implement `Encode`
+  = note: required for `Option<Retained<MyObject>>` to implement `EncodeReturn`
+  = note: required for `Option<Retained<MyObject>>` to implement `ConvertReturn<MethodFamily<3>>`
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Option<Allocated<MyObject>>, Option<Retained<MyObject>>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Option<Allocated<MyObject>>, Option<Retained<MyObject>>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

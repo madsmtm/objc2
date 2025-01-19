@@ -16,7 +16,7 @@ use crate::runtime::{AnyProtocol, MethodDescription};
 use crate::{AllocAnyThread, ClassType, DefinedClass, Message, ProtocolType};
 
 use super::defined_ivars::{register_with_ivars, setup_dealloc};
-use super::{CopyFamily, InitFamily, MaybeUnwrap, MutableCopyFamily, NewFamily, NoneFamily};
+use super::{CopyFamily, InitFamily, MutableCopyFamily, NewFamily, NoneFamily};
 
 /// Helper for determining auto traits of defined classes.
 ///
@@ -97,7 +97,7 @@ where
 impl<Ret, T> MessageReceiveRetained<Allocated<T>, Ret> for InitFamily
 where
     T: Message,
-    Ret: MaybeOptionRetained<Input = Option<Retained<T>>>,
+    Ret: MaybeOptionRetained<Inner = T>,
 {
     #[inline]
     fn into_return(obj: Ret) -> RetainedReturnValue {
@@ -144,12 +144,16 @@ where
 /// Helper trait for specifying an `Retained<T>` or an `Option<Retained<T>>`.
 ///
 /// (Both of those are valid return types from define_class! `#[method_id]`).
-pub trait MaybeOptionRetained: MaybeUnwrap {
+pub trait MaybeOptionRetained {
+    type Inner;
+
     fn consumed_return(self) -> RetainedReturnValue;
     fn autorelease_return(self) -> RetainedReturnValue;
 }
 
 impl<T: Message> MaybeOptionRetained for Retained<T> {
+    type Inner = T;
+
     #[inline]
     fn consumed_return(self) -> RetainedReturnValue {
         let ptr: *mut T = Retained::into_raw(self);
@@ -164,6 +168,8 @@ impl<T: Message> MaybeOptionRetained for Retained<T> {
 }
 
 impl<T: Message> MaybeOptionRetained for Option<Retained<T>> {
+    type Inner = T;
+
     #[inline]
     fn consumed_return(self) -> RetainedReturnValue {
         let ptr: *mut T = Retained::consume_as_ptr_option(self);

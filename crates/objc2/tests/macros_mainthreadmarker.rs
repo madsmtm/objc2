@@ -9,8 +9,8 @@ extern_protocol!(
         #[method(myMethod:)]
         fn protocol_method(mtm: MainThreadMarker, arg: i32) -> i32;
 
-        #[method_id(myMethodId:)]
-        fn protocol_method_id(mtm: MainThreadMarker, arg: &Self) -> Retained<Self>;
+        #[method(myMethodId:)]
+        fn protocol_method_retained(mtm: MainThreadMarker, arg: &Self) -> Retained<Self>;
     }
 );
 
@@ -29,7 +29,7 @@ define_class!(
         }
 
         #[method_id(myMethodId:)]
-        fn _my_mainthreadonly_method_id(arg: &Self) -> Retained<Self> {
+        fn _my_mainthreadonly_method_retained(arg: &Self) -> Retained<Self> {
             unsafe { Retained::retain(arg as *const Self as *mut Self).unwrap() }
         }
     }
@@ -45,14 +45,18 @@ struct MainThreadMarker {
 
 extern_methods!(
     unsafe impl Cls {
-        #[method_id(new)]
+        #[method(new)]
         fn new(mtm: MainThreadMarker) -> Retained<Self>;
 
         #[method(myMethod:)]
         fn method(mtm: MainThreadMarker, arg: i32, mtm2: MainThreadMarker) -> i32;
 
-        #[method_id(myMethodId:)]
-        fn method_id(mtm: MainThreadMarker, arg: &Self, mtm2: MainThreadMarker) -> Retained<Self>;
+        #[method(myMethodId:)]
+        fn method_retained(
+            mtm: MainThreadMarker,
+            arg: &Self,
+            mtm2: MainThreadMarker,
+        ) -> Retained<Self>;
     }
 );
 
@@ -66,9 +70,9 @@ fn call() {
     let res = Cls::protocol_method(mtm, 3);
     assert_eq!(res, 4);
 
-    let obj2 = Cls::method_id(mtm, &obj1, mtm);
+    let obj2 = Cls::method_retained(mtm, &obj1, mtm);
     assert_eq!(obj1, obj2);
 
-    let obj2 = Cls::protocol_method_id(mtm, &obj1);
+    let obj2 = Cls::protocol_method_retained(mtm, &obj1);
     assert_eq!(obj1, obj2);
 }

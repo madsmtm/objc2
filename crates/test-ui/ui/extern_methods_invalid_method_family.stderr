@@ -1,15 +1,15 @@
-error: `#[method_family = ...]` is only supported together with `#[method_id(...)]`
+error: cannot specify the `method_family` attribute twice
  --> ui/extern_methods_invalid_method_family.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(notOnMethodId)]
-  | |         #[unsafe(method_family = none)]
+  | |         #[method(familyTwice)]
+  | |         #[unsafe(method_family = copy)]
 ... |
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__extern_methods_no_method_family` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: attribute value must be a literal
  --> ui/extern_methods_invalid_method_family.rs

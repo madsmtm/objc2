@@ -141,6 +141,8 @@ objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-f
     "NSObject",
     "NSRunLoop",
     "NSString",
+    "NSURL",
+    "NSValue",
 ] }
 libc = "0.2.158"
 

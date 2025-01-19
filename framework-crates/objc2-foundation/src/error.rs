@@ -1,6 +1,6 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
-use objc2::msg_send_id;
+use objc2::msg_send;
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 
@@ -57,12 +57,11 @@ impl fmt::Display for NSError {
         let desc: Retained<NSObject> = if cfg!(feature = "gnustep-1-7") {
             // Can return NULL:
             // https://github.com/gnustep/libs-base/issues/486
-            let desc: Option<Retained<NSObject>> =
-                unsafe { msg_send_id![self, localizedDescription] };
+            let desc: Option<Retained<NSObject>> = unsafe { msg_send![self, localizedDescription] };
             if let Some(desc) = desc {
                 desc
             } else {
-                let domain: Retained<NSObject> = unsafe { msg_send_id![self, domain] };
+                let domain: Retained<NSObject> = unsafe { msg_send![self, domain] };
                 // SAFETY: `domain` returns `NSErrorDomain`, which is `NSString`.
                 unsafe { util::display_string(&domain, f)? };
                 write!(f, " {}", self.code())?;
@@ -70,7 +69,7 @@ impl fmt::Display for NSError {
                 return Ok(());
             }
         } else {
-            unsafe { msg_send_id![self, localizedDescription] }
+            unsafe { msg_send![self, localizedDescription] }
         };
 
         // SAFETY: `localizedDescription` returns `NSString`.

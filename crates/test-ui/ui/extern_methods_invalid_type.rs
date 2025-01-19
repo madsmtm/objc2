@@ -10,36 +10,15 @@ extern_class!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(a)]
-        fn a(&self) -> Retained<Self>;
+        #[method(takesBox:)]
+        fn takes_box(&self, arg: Box<i32>);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method_id(b)]
-        fn b(&self) -> i32;
-    }
-);
-
-extern_methods!(
-    unsafe impl MyObject {
-        #[method(c:)]
-        fn c(&self, arg: Box<i32>);
-    }
-);
-
-extern_methods!(
-    unsafe impl MyObject {
-        #[method(error:)]
-        fn error(arg: i32) -> Result<(), Retained<NSObject>>;
-    }
-);
-
-extern_methods!(
-    unsafe impl MyObject {
-        #[method_id(error:)]
-        fn error_id(arg: i32) -> Result<Retained<Self>, Retained<NSObject>>;
+        #[method(returnsReferenceToRetained)]
+        fn returns_reference_to_retained(&self) -> &Retained<Self>;
     }
 );
 

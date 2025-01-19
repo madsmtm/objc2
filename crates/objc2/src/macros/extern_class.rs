@@ -106,7 +106,7 @@
 /// # use objc2::runtime::NSObjectProtocol;
 /// use objc2::rc::Retained;
 /// use objc2::runtime::NSObject;
-/// use objc2::{extern_class, msg_send_id, ClassType};
+/// use objc2::{extern_class, msg_send, ClassType};
 ///
 /// extern_class!(
 ///     /// An example description, to show that doc comments work.
@@ -134,7 +134,7 @@
 ///     let cls = NSFormatter::class();
 ///
 ///     // `NSFormatter` implements `Message`:
-///     let obj: Retained<NSFormatter> = unsafe { msg_send_id![cls, new] };
+///     let obj: Retained<NSFormatter> = unsafe { msg_send![cls, new] };
 /// }
 /// ```
 ///

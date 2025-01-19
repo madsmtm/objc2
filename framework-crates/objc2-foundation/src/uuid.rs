@@ -4,7 +4,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::encode::{Encode, Encoding, RefEncode};
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::NSObject;
-use objc2::{extern_methods, msg_send_id, AllocAnyThread};
+use objc2::{extern_methods, msg_send, AllocAnyThread};
 
 use crate::{util, NSUUID};
 
@@ -30,7 +30,7 @@ unsafe impl RefEncode for UuidBytes {
 
 extern_methods!(
     unsafe impl NSUUID {
-        #[method_id(initWithUUIDBytes:)]
+        #[method(initWithUUIDBytes:)]
         fn initWithUUIDBytes(this: Allocated<Self>, bytes: &UuidBytes) -> Retained<Self>;
 
         #[method(getUUIDBytes:)]
@@ -79,7 +79,7 @@ impl NSUUID {
 
 impl fmt::Display for NSUUID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let string: Retained<NSObject> = unsafe { msg_send_id![self, UUIDString] };
+        let string: Retained<NSObject> = unsafe { msg_send![self, UUIDString] };
         // SAFETY: `UUIDString` returns `NSString`.
         unsafe { util::display_string(&string, f) }
     }
@@ -89,7 +89,7 @@ impl fmt::Debug for NSUUID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // The `uuid` crate does `Debug` and `Display` equally, and so do we.
 
-        let string: Retained<NSObject> = unsafe { msg_send_id![self, UUIDString] };
+        let string: Retained<NSObject> = unsafe { msg_send![self, UUIDString] };
         // SAFETY: `UUIDString` returns `NSString`.
         unsafe { util::display_string(&string, f) }
     }

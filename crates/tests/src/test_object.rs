@@ -7,7 +7,7 @@ use objc2::rc::{autoreleasepool, AutoreleasePool, Retained};
 use objc2::runtime::{
     AnyClass, AnyObject, AnyProtocol, Bool, NSObject, NSObjectProtocol, ProtocolObject,
 };
-use objc2::{class, extern_protocol, msg_send, msg_send_id, AllocAnyThread, ClassType};
+use objc2::{class, extern_protocol, msg_send, AllocAnyThread, ClassType};
 use objc2::{extern_class, sel};
 use objc2_foundation::{NSArray, NSException, NSMutableString, NSNumber, NSString};
 
@@ -25,10 +25,10 @@ extern_protocol!(
         #[method(b)]
         fn b() -> c_int;
 
-        #[method_id(c)]
+        #[method(c)]
         fn c(&self) -> Retained<NSNumber>;
 
-        #[method_id(d)]
+        #[method(d)]
         fn d() -> Retained<NSNumber>;
 
         #[method(e)]
@@ -40,11 +40,11 @@ extern_protocol!(
         fn f() -> c_int;
 
         #[optional]
-        #[method_id(g)]
+        #[method(g)]
         fn g(&self) -> Retained<NSNumber>;
 
         #[optional]
-        #[method_id(h)]
+        #[method(h)]
         fn h() -> Retained<NSNumber>;
     }
 );
@@ -90,7 +90,7 @@ static FIX_LINKING: &AnyClass = {
 impl MyTestObject {
     fn new() -> Retained<Self> {
         let cls = Self::class();
-        unsafe { msg_send_id![cls, new] }
+        unsafe { msg_send![cls, new] }
     }
 
     #[allow(clippy::needless_lifetimes)]
@@ -102,7 +102,7 @@ impl MyTestObject {
 
     fn new_autoreleased_retained() -> Retained<Self> {
         let cls = Self::class();
-        unsafe { msg_send_id![cls, getAutoreleasedInstance] }
+        unsafe { msg_send![cls, getAutoreleasedInstance] }
     }
 
     fn add_numbers(a: c_int, b: c_int) -> c_int {

@@ -1,34 +1,10 @@
-error[E0277]: the trait bound `&mut MyObject: MsgSend` is not satisfied
+error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
  --> ui/extern_methods_not_allowed_mutable.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method(test)]
   | |         fn test(&mut self);
-  | |     }
-  | | );
-  | | ^
-  | | |
-  | |_the trait `MessageReceiver` is not implemented for `&mut MyObject`
-  |   required by a bound introduced by this call
-  |
-  = help: the following other types implement trait `MessageReceiver`:
-            &T
-            &mut AnyObject
-            *const T
-            *mut T
-            NonNull<T>
-  = note: `MessageReceiver` is implemented for `&MyObject`, but not for `&mut MyObject`
-  = note: required for `&mut MyObject` to implement `MsgSend`
-  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
- --> ui/extern_methods_not_allowed_mutable.rs
-  |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
-  | |         #[method_id(testId)]
-  | |         fn test_id(&mut self) -> Retained<Self>;
   | |     }
   | | );
   | |_^ the trait `MessageReceiver` is not implemented for `&mut MyObject`
@@ -40,6 +16,28 @@ error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
             *mut T
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&MyObject`, but not for `&mut MyObject`
-  = note: required for `&mut MyObject` to implement `MsgSend`
-  = note: required for `MethodFamily<6>` to implement `MsgSendRetained<&mut MyObject, Option<Retained<_>>>`
-  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: required for `MethodFamily<6>` to implement `RetainSemantics<&mut MyObject, _, KindSendMessage>`
+  = note: required for `MethodFamily<6>` to implement `MsgSend<&mut MyObject, _>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
+ --> ui/extern_methods_not_allowed_mutable.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(testRetained)]
+  | |         fn test_retained(&mut self) -> Retained<Self>;
+  | |     }
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `&mut MyObject`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: `MessageReceiver` is implemented for `&MyObject`, but not for `&mut MyObject`
+  = note: required for `MethodFamily<6>` to implement `RetainSemantics<&mut MyObject, _, KindSendMessage>`
+  = note: required for `MethodFamily<6>` to implement `MsgSend<&mut MyObject, _>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

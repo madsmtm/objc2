@@ -147,7 +147,7 @@ define_class!(
 
 extern_methods!(
     unsafe impl DefineClassCfg {
-        #[method_id(new)]
+        #[method(new)]
         fn new() -> Retained<Self>;
     }
 
@@ -258,7 +258,7 @@ define_class!(
 
 extern_methods!(
     unsafe impl TestMultipleColonSelector {
-        #[method_id(new)]
+        #[method(new)]
         fn new() -> Retained<Self>;
 
         #[method(test::arg3:)]
@@ -270,7 +270,7 @@ extern_methods!(
         #[method(test::error:_)]
         fn test_error(&self, arg1: i32, arg2: i32) -> Result<(), Retained<NSObject>>;
 
-        #[method_id(test:::withObject:)]
+        #[method(test:::withObject:)]
         fn test_object(
             &self,
             arg1: i32,
@@ -417,7 +417,7 @@ define_class!(
 
 extern_methods!(
     unsafe impl OutParam {
-        #[method_id(new)]
+        #[method(new)]
         fn new() -> Retained<Self>;
 
         #[method(unsupported1:)]

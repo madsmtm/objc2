@@ -5,7 +5,7 @@
 //!
 //! Most importantly, a smart pointer [`Retained`] is provided to ensure that
 //! objects are correctly retained and released when created and dropped,
-//! respectively. This ties in strongly with the [`msg_send_id!`] macro.
+//! respectively.
 //!
 //! Weak references may be created using the [`Weak`] struct; these will not
 //! retain the object, but one can attempt to load them and obtain an `Retained`, or
@@ -18,7 +18,6 @@
 //! It can also be useful to [enable Malloc Debugging][mem-debug] if you're trying
 //! to figure out if/where your application has memory errors and leaks.
 //!
-//! [`msg_send_id!`]: crate::msg_send_id
 //! [clang-arc]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html
 //! [mem-mgmt]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html
 //! [cf]: https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/CFMemoryMgmt.html

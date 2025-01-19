@@ -19,12 +19,12 @@ use crate::{ffi, ClassType, DowncastTarget, Message};
 /// [`Message`].
 ///
 /// This can usually be gotten from one of the methods in [the framework
-/// crates], but can also be created manually with the [`msg_send_id!`] macro,
-/// or even more manually with the [`Retained::retain`],
-/// [`Retained::from_raw`] and [`Retained::retain_autoreleased`] methods.
+/// crates], but can also be created manually with the [`msg_send!`] macro, or
+/// even more manually with the [`Retained::retain`], [`Retained::from_raw`]
+/// and [`Retained::retain_autoreleased`] methods.
 ///
 /// [the framework crates]: crate::topics::about_generated
-/// [`msg_send_id!`]: crate::msg_send_id
+/// [`msg_send!`]: crate::msg_send
 ///
 ///
 /// # Comparison to `std` types
@@ -86,18 +86,18 @@ use crate::{ffi, ClassType, DowncastTarget, Message};
 /// # #[cfg(available_in_foundation)]
 /// use objc2_foundation::{NSObject, NSString};
 /// use objc2::rc::Retained;
-/// use objc2::{ClassType, msg_send_id};
+/// use objc2::{ClassType, msg_send};
 /// #
 /// # objc2::extern_class!(
 /// #     #[unsafe(super(NSObject))]
 /// #     pub struct NSString;
 /// # );
 ///
-/// // Use `msg_send_id!` to create an `Retained` with correct memory management
+/// // Use `msg_send!` to create an `Retained` with correct memory management
 /// //
 /// // SAFETY: The types are correct, and it is safe to call the `new`
 /// // selector on `NSString`.
-/// let string: Retained<NSString> = unsafe { msg_send_id![NSString::class(), new] };
+/// let string: Retained<NSString> = unsafe { msg_send![NSString::class(), new] };
 /// // Or:
 /// // let string = NSString::new();
 ///
@@ -194,16 +194,17 @@ impl<T: ?Sized + Message> Retained<T> {
     /// ```
     /// use objc2::rc::Retained;
     /// use objc2::runtime::NSObject;
-    /// use objc2::{msg_send, msg_send_id, AllocAnyThread, ClassType};
+    /// use objc2::{msg_send, AllocAnyThread, ClassType};
     ///
-    /// // Manually using `msg_send!` and `Retained::from_raw`
+    /// // Manually using `msg_send!`, pointers and `Retained::from_raw`
     /// let obj: *mut NSObject = unsafe { msg_send![NSObject::class(), alloc] };
     /// let obj: *mut NSObject = unsafe { msg_send![obj, init] };
     /// // SAFETY: `-[NSObject init]` returns +1 retain count
     /// let obj: Retained<NSObject> = unsafe { Retained::from_raw(obj).unwrap() };
     ///
-    /// // Or with `msg_send_id!`
-    /// let obj: Retained<NSObject> = unsafe { msg_send_id![NSObject::alloc(), init] };
+    /// // Or automatically by specifying `Retained` as the return value from
+    /// // `msg_send!` (it will do the correct conversion internally).
+    /// let obj: Retained<NSObject> = unsafe { msg_send![NSObject::alloc(), init] };
     ///
     /// // Or using the `NSObject::new` method
     /// let obj = NSObject::new();
@@ -265,6 +266,11 @@ impl<T: ?Sized + Message> Retained<T> {
     #[inline]
     pub fn as_ptr(this: &Self) -> *const T {
         this.ptr.as_ptr()
+    }
+
+    #[inline]
+    pub(crate) fn as_nonnull_ptr(&self) -> NonNull<T> {
+        self.ptr
     }
 
     #[inline]
@@ -661,14 +667,14 @@ impl<T: Message> Retained<T> {
     /// [`define_class!`] macro supports doing this for you automatically).
     ///
     /// ```
-    /// use objc2::{class, msg_send_id, sel};
+    /// use objc2::{class, msg_send, sel};
     /// use objc2::rc::Retained;
     /// use objc2::runtime::{AnyClass, AnyObject, ClassBuilder, Sel};
     ///
     /// let mut builder = ClassBuilder::new(c"ExampleObject", class!(NSObject)).unwrap();
     ///
     /// extern "C-unwind" fn get(cls: &AnyClass, _cmd: Sel) -> *mut AnyObject {
-    ///     let obj: Retained<AnyObject> = unsafe { msg_send_id![cls, new] };
+    ///     let obj: Retained<AnyObject> = unsafe { msg_send![cls, new] };
     ///     Retained::autorelease_return(obj)
     /// }
     ///

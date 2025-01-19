@@ -1,49 +1,10 @@
-error: cannot specify the `method`/`method_id` attribute twice
+error: cannot specify the `method` attribute twice
  --> ui/extern_methods_selector_twice.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(a)]
-  | |         #[method(a)]
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: cannot specify the `method`/`method_id` attribute twice
- --> ui/extern_methods_selector_twice.rs
-  |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
-  | |         #[method_id(b)]
-  | |         #[method_id(b)]
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: cannot specify the `method`/`method_id` attribute twice
- --> ui/extern_methods_selector_twice.rs
-  |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
-  | |         #[method(c)]
-  | |         #[method_id(c)]
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: cannot specify the `method`/`method_id` attribute twice
- --> ui/extern_methods_selector_twice.rs
-  |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
-  | |         #[method_id(d)]
-  | |         #[method(d)]
+  | |         #[method(foo)]
+  | |         #[method(bar)]
 ... |
   | | );
   | |_^

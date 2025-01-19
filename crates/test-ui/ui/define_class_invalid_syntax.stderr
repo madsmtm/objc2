@@ -11,7 +11,7 @@ error: must specify the desired selector using `#[method(...)]` or `#[method_id(
   |
   = note: this error originates in the macro `$crate::__extract_method_attributes_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: cannot specify the `method`/`method_id` attribute twice
+error: cannot specify the `method` attribute twice
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -24,7 +24,7 @@ error: cannot specify the `method`/`method_id` attribute twice
   |
   = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: cannot specify the `method`/`method_id` attribute twice
+error: cannot specify the `method` attribute twice
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -241,7 +241,7 @@ error: must specify the desired selector using `#[method(...)]` or `#[method_id(
   |
   = note: this error originates in the macro `$crate::__extract_method_attributes_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: cannot specify the `method`/`method_id` attribute twice
+error: cannot specify the `method` attribute twice
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -254,7 +254,7 @@ error: cannot specify the `method`/`method_id` attribute twice
   |
   = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: cannot specify the `method`/`method_id` attribute twice
+error: cannot specify the `method` attribute twice
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(

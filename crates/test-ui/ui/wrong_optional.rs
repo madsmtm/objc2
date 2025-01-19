@@ -20,7 +20,7 @@ extern_methods!(
     unsafe impl MyObject {
         /// Doc comment
         #[optional]
-        #[method_id(b)]
+        #[method(b)]
         fn b(&self) -> Retained<Self>;
     }
 );

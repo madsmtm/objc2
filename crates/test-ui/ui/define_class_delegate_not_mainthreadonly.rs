@@ -34,7 +34,7 @@ define_class!(
 
 extern_methods!(
     unsafe impl CustomObject {
-        #[method_id(new)]
+        #[method(new)]
         fn new(mtm: MainThreadMarker) -> Retained<Self>;
     }
 );

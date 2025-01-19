@@ -1,10 +1,9 @@
 /// Define methods on an external class.
 ///
 /// This is a convenience macro to generate associated functions and methods
-/// that call [`msg_send!`] or [`msg_send_id!`] appropriately.
+/// that delegate to [`msg_send!`].
 ///
 /// [`msg_send!`]: crate::msg_send
-/// [`msg_send_id!`]: crate::msg_send_id
 ///
 ///
 /// # Specification
@@ -41,17 +40,14 @@
 /// Exceptions and special attributes are noted below.
 ///
 ///
-/// ### `#[method(...)]` or `#[method_id(...)]` (required)
+/// ### `#[method(...)]` (required)
 ///
-/// Specify the desired selector using the `#[method(my:selector:)]` or
-/// `#[method_id(my:selector:)]` attributes. `method` makes the macro delegate
-/// to [`msg_send!`], while `method_id` delegates to [`msg_send_id!`].
+/// Specify the desired selector using this attribute.
 ///
-/// If the selector ends with "_", as in `#[method(my:error:_)]` or
-/// `#[method_id(my:error:_)]`, the method is assumed to take an
-/// implicit `NSError**` parameter, which is automatically converted to a
-/// [`Result`]. See the error section in [`msg_send!`] and [`msg_send_id!`]
-/// for details.
+/// If the selector ends with "_", as in `#[method(my:error:_)]`, the method
+/// is assumed to take an implicit `NSError**` parameter, which is
+/// automatically converted to a [`Result`]. See the error section in
+/// [`msg_send!`] for details.
 ///
 ///
 /// ### `#[unsafe(method_family = ...)]` (optional)
@@ -98,10 +94,6 @@
 /// attribute upholds the safety guarantees described in the [`msg_send!`]
 /// macro, _or_ are marked `unsafe`.
 ///
-/// Likewise, you must ensure that any methods you declare with the
-/// `#[method_id(...)]` attribute upholds the safety guarantees described in
-/// the [`msg_send_id!`] macro, _or_ are marked `unsafe`.
-///
 ///
 /// # Examples
 ///
@@ -133,10 +125,10 @@
 /// extern_methods!(
 ///     /// Creation methods.
 ///     unsafe impl MyObject {
-///         #[method_id(new)]
+///         #[method(new)]
 ///         pub fn new() -> Retained<Self>;
 ///
-///         #[method_id(initWithVal:)]
+///         #[method(initWithVal:)]
 ///         // arbitrary self types are not stable, but we can work around it
 ///         // with the special name `this`.
 ///         pub fn init(this: Allocated<Self>, val: usize) -> Retained<Self>;
@@ -147,7 +139,7 @@
 ///         #[method(foo)]
 ///         pub fn foo(&self) -> NSUInteger;
 ///
-///         #[method_id(fooObject)]
+///         #[method(fooObject)]
 ///         pub fn foo_object(&self) -> Retained<NSObject>;
 ///
 ///         #[method(withError:_)]
@@ -180,16 +172,16 @@
 /// #     }
 /// # );
 /// #
-/// use objc2::{msg_send, msg_send_id};
+/// use objc2::msg_send;
 ///
 /// /// Creation methods.
 /// impl MyObject {
 ///     pub fn new() -> Retained<Self> {
-///         unsafe { msg_send_id![Self::class(), new] }
+///         unsafe { msg_send![Self::class(), new] }
 ///     }
 ///
 ///     pub fn init(this: Allocated<Self>, val: usize) -> Retained<Self> {
-///         unsafe { msg_send_id![this, initWithVal: val] }
+///         unsafe { msg_send![this, initWithVal: val] }
 ///     }
 /// }
 ///
@@ -200,7 +192,7 @@
 ///     }
 ///
 ///     pub fn foo_object(&self) -> Retained<NSObject> {
-///         unsafe { msg_send_id![self, fooObject] }
+///         unsafe { msg_send![self, fooObject] }
 ///     }
 ///
 ///     // Since the selector specifies one more argument than we
@@ -328,7 +320,6 @@ macro_rules! __extern_methods_rewrite_methods {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extern_methods_method_out {
-    // #[method(...)]
     {
         ($($function_start:tt)*)
         ($($where:ty : $bound:path ,)*)
@@ -339,7 +330,7 @@ macro_rules! __extern_methods_method_out {
         ($($__params_prefix:tt)*)
         ($($params_rest:tt)*)
 
-        (#[method($($sel:tt)*)])
+        (#[$method_or_method_id:ident($($sel:tt)*)])
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
@@ -350,50 +341,12 @@ macro_rules! __extern_methods_method_out {
         where
             $($where : $bound,)*
         {
-            $crate::__extern_methods_no_method_family!($($method_family)*);
+            $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel)*));
             $crate::__extern_methods_no_optional!($($optional)*);
 
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send! {
-                    ($receiver)
-                    ($($sel)*)
-                    ($($params_rest)*)
-
-                    ()
-                    ()
-                }
-            }
-        }
-    };
-
-    // #[method_id(...)]
-    {
-        ($($function_start:tt)*)
-        ($($where:ty : $bound:path ,)*)
-
-        ($__builder_method:ident)
-        ($receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
-
-        (#[method_id($($sel:tt)*)])
-        ($($method_family:tt)*)
-        ($($optional:tt)*)
-        ($($attr_method:tt)*)
-        ($($attr_use:tt)*)
-    } => {
-        $($attr_method)*
-        $($function_start)*
-        where
-            $($where : $bound,)*
-        {
-            $crate::__extern_methods_no_optional!($($optional)*);
-
-            #[allow(unused_unsafe)]
-            unsafe {
-                $crate::__method_msg_send_id! {
                     ($receiver)
                     ($($sel)*)
                     ($($params_rest)*)
@@ -409,17 +362,6 @@ macro_rules! __extern_methods_method_out {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __extern_methods_no_method_family {
-    () => {};
-    ($($t:tt)+) => {
-        $crate::__macro_helpers::compile_error!(
-            "`#[method_family = ...]` is only supported together with `#[method_id(...)]`"
-        )
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
 macro_rules! __extern_methods_no_optional {
     () => {};
     (#[optional]) => {
@@ -427,4 +369,22 @@ macro_rules! __extern_methods_no_optional {
             "`#[optional]` is only supported in `extern_protocol!`"
         )
     };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_methods_method_id_deprecated {
+    (method($($sel:tt)*)) => {};
+    (method_id($($sel:tt)*)) => {{
+        #[deprecated = $crate::__macro_helpers::concat!(
+            "using #[method_id(",
+            $crate::__macro_helpers::stringify!($($sel)*),
+            ")] inside extern_methods! is deprecated.\nUse #[method(",
+            $crate::__macro_helpers::stringify!($($sel)*),
+            ")] instead",
+        )]
+        #[inline]
+        fn method_id() {}
+        method_id();
+    }};
 }

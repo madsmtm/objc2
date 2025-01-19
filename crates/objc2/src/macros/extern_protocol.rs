@@ -329,7 +329,7 @@ macro_rules! __extern_protocol_rewrite_methods {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extern_protocol_method_out {
-    // Instance #[method(...)]
+    // Instance method
     {
         ($($function_start:tt)*)
         ($($where:ty : $bound:path ,)*)
@@ -340,7 +340,7 @@ macro_rules! __extern_protocol_method_out {
         ($($__params_prefix:tt)*)
         ($($params_rest:tt)*)
 
-        (#[method($($sel:tt)*)])
+        (#[$method_or_method_id:ident($($sel:tt)*)])
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
@@ -352,48 +352,11 @@ macro_rules! __extern_protocol_method_out {
             Self: $crate::__macro_helpers::Sized + $crate::Message
             $(, $where : $bound)*
         {
-            $crate::__extern_protocol_no_method_family!($($method_family)*);
+            $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel)*));
 
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send! {
-                    ($receiver)
-                    ($($sel)*)
-                    ($($params_rest)*)
-
-                    ()
-                    ()
-                }
-            }
-        }
-    };
-
-    // Instance #[method_id(...)]
-    {
-        ($($function_start:tt)*)
-        ($($where:ty : $bound:path ,)*)
-
-        (add_method)
-        ($receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
-
-        (#[method_id($($sel:tt)*)])
-        ($($method_family:tt)*)
-        ($($optional:tt)*)
-        ($($attr_method:tt)*)
-        ($($attr_use:tt)*)
-    } => {
-        $($attr_method)*
-        $($function_start)*
-        where
-            Self: $crate::__macro_helpers::Sized + $crate::Message
-            $(, $where : $bound)*
-        {
-            #[allow(unused_unsafe)]
-            unsafe {
-                $crate::__method_msg_send_id! {
                     ($receiver)
                     ($($sel)*)
                     ($($params_rest)*)
@@ -406,7 +369,7 @@ macro_rules! __extern_protocol_method_out {
         }
     };
 
-    // Class #[method(...)]
+    // Class method
     {
         ($($function_start:tt)*)
         ($($where:ty : $bound:path ,)*)
@@ -417,7 +380,7 @@ macro_rules! __extern_protocol_method_out {
         ($($__params_prefix:tt)*)
         ($($params_rest:tt)*)
 
-        (#[method($($sel:tt)*)])
+        (#[$method_or_method_id:ident($($sel:tt)*)])
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
@@ -429,48 +392,11 @@ macro_rules! __extern_protocol_method_out {
             Self: $crate::__macro_helpers::Sized + $crate::ClassType
             $(, $where : $bound)*
         {
-            $crate::__extern_protocol_no_method_family!($($method_family)*);
+            $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel)*));
 
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send! {
-                    ($receiver)
-                    ($($sel)*)
-                    ($($params_rest)*)
-
-                    ()
-                    ()
-                }
-            }
-        }
-    };
-
-    // Class #[method_id(...)]
-    {
-        ($($function_start:tt)*)
-        ($($where:ty : $bound:path ,)*)
-
-        (add_class_method)
-        ($receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
-
-        (#[method_id($($sel:tt)*)])
-        ($($method_family:tt)*)
-        ($($optional:tt)*)
-        ($($attr_method:tt)*)
-        ($($attr_use:tt)*)
-    } => {
-        $($attr_method)*
-        $($function_start)*
-        where
-            Self: $crate::__macro_helpers::Sized + $crate::ClassType
-            $(, $where : $bound)*
-        {
-            #[allow(unused_unsafe)]
-            unsafe {
-                $crate::__method_msg_send_id! {
                     ($receiver)
                     ($($sel)*)
                     ($($params_rest)*)
@@ -486,13 +412,20 @@ macro_rules! __extern_protocol_method_out {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __extern_protocol_no_method_family {
-    () => {};
-    ($($t:tt)+) => {
-        $crate::__macro_helpers::compile_error!(
-            "`#[method_family = ...]` is only supported together with `#[method_id(...)]`"
-        )
-    };
+macro_rules! __extern_protocol_method_id_deprecated {
+    (method($($sel:tt)*)) => {};
+    (method_id($($sel:tt)*)) => {{
+        #[deprecated = $crate::__macro_helpers::concat!(
+            "using #[method_id(",
+            $crate::__macro_helpers::stringify!($($sel)*),
+            ")] inside extern_protocol! is deprecated.\nUse #[method(",
+            $crate::__macro_helpers::stringify!($($sel)*),
+            ")] instead",
+        )]
+        #[inline]
+        fn method_id() {}
+        method_id();
+    }};
 }
 
 #[cfg(test)]

@@ -82,7 +82,7 @@ mod tests {
     use crate::rc::Retained;
     use crate::runtime::ClassBuilder;
     use crate::runtime::NSObject;
-    use crate::{msg_send_id, ClassType};
+    use crate::{msg_send, ClassType};
 
     use super::*;
 
@@ -103,7 +103,7 @@ mod tests {
 
         let cls = builder.register();
 
-        let obj: Retained<NSObject> = unsafe { msg_send_id![cls, new] };
+        let obj: Retained<NSObject> = unsafe { msg_send![cls, new] };
         drop(obj);
         let has_run_destruct = HAS_RUN.load(Ordering::Relaxed);
 

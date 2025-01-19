@@ -721,357 +721,24 @@ macro_rules! __class_inner {
 /// C-compatible string. Now it's much, _much_ easier to make a safe
 /// abstraction around this!
 ///
-/// There exists a variant of this macro, [`msg_send_id!`], which can help
-/// with upholding certain requirements of methods that return Objective-C's
-/// `id`, or other object pointers. Use that whenever you want to call such a
-/// method!
+/// The [`extern_methods!`] macro can help with coding this pattern.
 ///
-/// [`msg_send_id!`]: crate::msg_send_id
+/// [`extern_methods!`]: crate::extern_methods
 ///
 ///
-/// # Specification
+/// # Memory management
 ///
-/// The syntax is somewhat similar to the message syntax in Objective-C,
-/// except with a comma between arguments. Eliding the comma is possible,
-/// but it is soft-deprecated, and will be fully deprecated in a future
-/// release. The deprecation can be tried out with the
-/// `"unstable-msg-send-always-comma"` feature flag.
+/// If an Objective-C method returns `id`, `NSObject*`, or similar object
+/// pointers, you should use [`Retained<T>`] on the Rust side, or
+/// `Option<Retained<T>>` if the pointer is nullable.
 ///
-/// The first expression, know as the "receiver", can be any type that
-/// implements [`MessageReceiver`], like a reference or a pointer to an
-/// object. Additionally, it can even be a reference to an [`rc::Retained`]
-/// containing an object.
+/// This is necessary because object pointers in Objective-C have certain
+/// rules for when they should be retained and released across function calls.
 ///
-/// The expression can be wrapped in `super`, with an optional superclass
-/// as the second argument. If no specific superclass is specified, the
-/// direct superclass is retrieved from [`ClassType`].
+/// [`Retained<T>`]: crate::rc::Retained
 ///
-/// All arguments, as well as the return type, must implement [`Encode`] (bar
-/// the exceptions below).
 ///
-/// If the last argument is the special marker `_`, the macro will return a
-/// `Result<(), Retained<E>>`, see below.
-///
-/// This macro roughly translates into a call to [`sel!`], and afterwards a
-/// fully qualified call to [`MessageReceiver::send_message`]. Note that this
-/// means that auto-dereferencing of the receiver is not supported, and that
-/// the receiver is consumed. You may encounter a little trouble with `&mut`
-/// references, try refactoring into a separate method or reborrowing the
-/// reference.
-///
-/// Variadic arguments are currently not supported.
-///
-/// [`MessageReceiver`]: crate::runtime::MessageReceiver
-/// [`rc::Retained`]: crate::rc::Retained
-/// [`ClassType`]: crate::ClassType
-/// [`Encode`]: crate::Encode
-/// [`sel!`]: crate::sel
-/// [`MessageReceiver::send_message`]: crate::runtime::MessageReceiver::send_message
-///
-///
-/// # `bool` handling
-///
-/// Objective-C's `BOOL` is slightly different from Rust's [`bool`], and hence
-/// a conversion step must be performed before using it. This is _very_ easy
-/// to forget (because it'll happen to work in _most_ cases), so this macro
-/// does the conversion step automatically whenever an argument or the return
-/// type is `bool`.
-///
-/// That means that any Objective-C method that take or return `BOOL` can be
-/// translated to use `bool` on the Rust side.
-///
-/// If you want to handle the conversion explicitly, or the Objective-C method
-/// expects e.g. a pointer to a `BOOL`, use [`runtime::Bool`] instead.
-///
-/// [`runtime::Bool`]: crate::runtime::Bool
-///
-///
-/// # Out-parameters
-///
-/// Parameters like `NSString**` in Objective-C are passed by "writeback",
-/// which means that the callee autoreleases any value that they may write
-/// into the parameter.
-///
-/// This macro has support for passing such parameters using the following
-/// types:
-/// - `&mut Retained<_>`
-/// - `Option<&mut Retained<_>>`
-/// - `&mut Option<Retained<_>>`,
-/// - `Option<&mut Option<Retained<_>>>`
-///
-/// Beware with the first two, since they will cause undefined behaviour if
-/// the method overwrites the value with `nil`.
-///
-/// See [clang's documentation][clang-out-params] for more details.
-///
-/// [clang-out-params]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#passing-to-an-out-parameter-by-writeback
-///
-///
-/// # Errors
-///
-/// The most common place you'll see out-parameters is as `NSError**` the last
-/// parameter, which is used to communicate errors to the caller, see [Error
-/// Handling Programming Guide For Cocoa][cocoa-error].
-///
-/// Similar to Swift's [importing of error parameters][swift-error], this
-/// macro supports an even more convenient version than the out-parameter
-/// support, which transforms methods whose last parameter is `NSError**` and
-/// returns `BOOL`, into the Rust equivalent, the [`Result`] type.
-///
-/// In particular, if you make the last argument the special marker `_`, then
-/// the macro will return a `Result<(), Retained<E>>` (where you must specify
-/// `E` yourself, and where `E` must be either [`NSObject`] or
-/// `objc2_foundation::NSError`).
-///
-/// At runtime, we create the temporary error variable for you on the stack
-/// and send it as the out-parameter to the method. If the method then returns
-/// `NO`/`false` (or in the case of `msg_send_id!`, `NULL`), the error
-/// variable is loaded and returned in [`Err`].
-///
-/// Do beware that this is only valid on methods that return `BOOL`, see
-/// [`msg_send_id!`] for methods that return instance types.
-///
-/// [cocoa-error]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ErrorHandlingCocoa/ErrorHandling/ErrorHandling.html
-/// [swift-error]: https://developer.apple.com/documentation/swift/about-imported-cocoa-error-parameters
-/// [`NSObject`]: crate::runtime::NSObject
-///
-///
-/// # Panics
-///
-/// Unwinds if the underlying method throws and exception. If the
-/// `"catch-all"` Cargo feature is enabled, the Objective-C exception is
-/// converted into a Rust panic, with potentially a bit better stack trace.
-///
-/// Panics if `debug_assertions` are enabled and the Objective-C method's
-/// encoding does not match the encoding of the given arguments and return.
-///
-/// And panics if the `NSError**` handling functionality described above is
-/// used, and the error object was unexpectedly `NULL`.
-///
-///
-/// # Safety
-///
-/// Similar to defining and calling an `extern` function in a foreign function
-/// interface. In particular, you must uphold the following requirements:
-///
-/// 1. The selector corresponds to a valid method that is available on the
-///    receiver.
-///
-/// 2. The argument types match what the receiver excepts for this selector.
-///
-/// 3. The return type match what the receiver returns for this selector.
-///
-/// 4. The call must not violate Rust's mutability rules, for example if
-///    passing an `&T`, the Objective-C method must not mutate the variable
-///    (except if the variable is inside [`std::cell::UnsafeCell`] or
-///    derivatives).
-///
-/// 5. If the receiver is a raw pointer it must be valid (aligned,
-///    dereferenceable, initialized and so on). Messages to `null` pointers
-///    are allowed (though heavily discouraged), but _only_ if the return type
-///    itself is a pointer.
-///
-/// 6. The method must not (yet) throw an exception.
-///
-/// 7. You must uphold any additional safety requirements (explicit and
-///    implicit) that the method has. For example:
-///    - Methods that take pointers usually require that the pointer is valid,
-///      and sometimes non-null.
-///    - Sometimes, a method may only be called on the main thread.
-///    - The lifetime of returned pointers usually follows certain rules, and
-///      may not be valid outside of an [`autoreleasepool`] ([`msg_send_id!`]
-///      can greatly help with that).
-///
-/// 8. Each out-parameter must have the correct nullability, and the method
-///    must not have any attributes that changes the how it handles memory
-///    management for these.
-///
-/// 9. TODO: Maybe more?
-///
-/// [`autoreleasepool`]: crate::rc::autoreleasepool
-/// [`msg_send_id!`]: crate::msg_send_id
-///
-///
-/// # Examples
-///
-/// Sending messages to an object.
-///
-/// ```no_run
-/// use objc2::msg_send;
-/// use objc2::runtime::NSObject;
-///
-/// let obj: *mut NSObject;
-/// # obj = 0 as *mut NSObject;
-/// let description: *const NSObject = unsafe { msg_send![obj, description] };
-/// // Usually you'd use msg_send_id here ^
-/// let _: () = unsafe { msg_send![obj, setArg1: 1i32, arg2: true] };
-/// let arg1: i32 = unsafe { msg_send![obj, getArg1] };
-/// let arg2: bool = unsafe { msg_send![obj, getArg2] };
-/// ```
-///
-/// Sending messages to the direct superclass of an object.
-///
-/// ```no_run
-/// use objc2::msg_send;
-/// #
-/// # objc2::define_class!(
-/// #     #[unsafe(super(objc2::runtime::NSObject))]
-/// #     #[name = "MyObject"]
-/// #     struct MyObject;
-/// # );
-///
-/// let obj: &MyObject; // Some object that implements ClassType
-/// # obj = todo!();
-/// let _: () = unsafe { msg_send![super(obj), someMethod] };
-/// ```
-///
-/// Sending messages to a specific superclass of an object.
-///
-/// ```no_run
-/// # use objc2::class;
-/// use objc2::msg_send;
-/// use objc2::runtime::{AnyClass, NSObject};
-///
-/// // Since we specify the superclass ourselves, this doesn't need to
-/// // implement ClassType
-/// let obj: *mut NSObject;
-/// # obj = 0 as *mut NSObject;
-/// let superclass: &AnyClass;
-/// # superclass = class!(NSObject);
-/// let arg3: u32 = unsafe { msg_send![super(obj, superclass), getArg3] };
-/// ```
-///
-/// Sending a message with automatic error handling.
-///
-/// ```no_run
-/// use objc2::msg_send;
-/// use objc2::rc::Retained;
-///
-/// # type NSBundle = objc2::runtime::NSObject;
-/// # type NSError = objc2::runtime::NSObject;
-/// let obj: &NSBundle;
-/// # obj = todo!();
-/// // The `_` tells the macro that the return type should be `Result`.
-/// let res: Result<(), Retained<NSError>> = unsafe {
-///     msg_send![obj, preflightAndReturnError: _]
-/// };
-/// ```
-///
-/// Sending a message with an out parameter _and_ automatic error handling.
-///
-/// ```no_run
-/// use objc2::msg_send;
-/// use objc2::rc::Retained;
-///
-/// # type NSFileManager = objc2::runtime::NSObject;
-/// # type NSURL = objc2::runtime::NSObject;
-/// # type NSError = objc2::runtime::NSObject;
-/// let obj: &NSFileManager;
-/// # obj = todo!();
-/// let url: &NSURL;
-/// # url = todo!();
-/// let mut result_url: Option<Retained<NSURL>> = None;
-/// unsafe {
-///     msg_send![
-///         obj,
-///         trashItemAtURL: url,
-///         resultingItemURL: Some(&mut result_url),
-///         error: _
-///     ]?
-/// //   ^ is possible on error-returning methods, if the return type is specified
-/// };
-///
-/// // Use `result_url` here
-///
-/// # Ok::<(), Retained<NSError>>(())
-/// ```
-#[macro_export]
-macro_rules! msg_send {
-    [super($obj:expr), $($selector_and_arguments:tt)+] => {
-        $crate::__msg_send_parse! {
-            (send_super_message_static_error)
-            ()
-            ()
-            ($($selector_and_arguments)+)
-            (send_super_message_static)
-
-            ($crate::__msg_send_helper)
-            ($obj)
-        }
-    };
-    [super($obj:expr, $superclass:expr), $($selector_and_arguments:tt)+] => {
-        $crate::__msg_send_parse! {
-            (send_super_message_error)
-            ()
-            ()
-            ($($selector_and_arguments)+)
-            (send_super_message)
-
-            ($crate::__msg_send_helper)
-            ($obj, $superclass)
-        }
-    };
-    [$obj:expr, $($selector_and_arguments:tt)+] => {
-        $crate::__msg_send_parse! {
-            (send_message_error)
-            ()
-            ()
-            ($($selector_and_arguments)+)
-            (send_message)
-
-            ($crate::__msg_send_helper)
-            ($obj)
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __msg_send_helper {
-    {
-        ($($fn_args:tt)+)
-        ($fn:ident)
-        ($($selector:tt)*)
-        ($($argument:expr,)*)
-    } => ({
-        // Assign to intermediary variable for better UI, and to prevent
-        // miscompilation on older Rust versions.
-        //
-        // Note: This can be accessed from any expression in `fn_args` and
-        // `arguments` - we won't (yet) bother with preventing that though.
-        let result;
-        // Always add trailing comma after each argument, so that we get a
-        // 1-tuple if there is only one.
-        //
-        // And use `::<_, _>` for better UI
-        result = $crate::__macro_helpers::MsgSend::$fn::<_, _>($($fn_args)+, $crate::sel!($($selector)*), ($($argument,)*));
-        result
-    });
-}
-
-/// Deprecated. Use [`msg_send!`] instead.
-#[macro_export]
-#[deprecated = "use a normal msg_send! instead, it will perform the conversion for you"]
-macro_rules! msg_send_bool {
-    [$($msg_send_args:tt)+] => ({
-        // Use old impl for backwards compat
-        let result: $crate::runtime::Bool = $crate::msg_send![$($msg_send_args)+];
-        result.as_bool()
-    });
-}
-
-/// [`msg_send!`] for methods returning `id`, `NSObject*`, or similar object
-/// pointers.
-///
-/// Object pointers in Objective-C have certain rules for when they should be
-/// retained and released across function calls. This macro helps doing that,
-/// and returns an [`rc::Retained`] with the object, optionally wrapped in an
-/// [`Option`] if you want to handle failures yourself.
-///
-/// [`rc::Retained`]: crate::rc::Retained
-///
-///
-/// # A little history
+/// ## A little history
 ///
 /// Objective-C's type system is... limited, so you can't tell without
 /// consulting the documentation who is responsible for releasing an object.
@@ -1090,23 +757,56 @@ macro_rules! msg_send_bool {
 /// which codifies the rules as part of the language, and inserts the required
 /// `retain` and `release` calls automatically.
 ///
-/// [`msg_send!`] is similar to pre-ARC; you have to know when to retain and
-/// when to release an object. [`msg_send_id!`] is similar to ARC; the rules
-/// are simple enough that we can do them automatically!
+/// Returning a `*const T` pointer is similar to pre-ARC; you have to know
+/// when to retain and when to release an object. Returning `Retained` is
+/// similar to ARC; the rules are simple enough that we can do them
+/// automatically!
 ///
 /// [mmRules]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html#//apple_ref/doc/uid/20000994-SW1
 /// [arc-rel]: https://developer.apple.com/library/archive/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226
 ///
-/// [`msg_send_id!`]: crate::msg_send_id
-///
 ///
 /// # Specification
 ///
-/// The syntax is the same as in [`msg_send!`].
+/// The syntax is somewhat similar to the message syntax in Objective-C,
+/// except with a comma between arguments. Eliding the comma is possible,
+/// but it is soft-deprecated, and will be fully deprecated in a future
+/// release. The deprecation can be tried out with the
+/// `"unstable-msg-send-always-comma"` feature flag.
 ///
-/// Attributes like `objc_method_family`, `ns_returns_retained`, `ns_consumed`
-/// and so on must not present on the method - if they are, you should do
-/// manual memory management using the [`msg_send!`] macro instead.
+/// The first expression, know as the "receiver", can be any type that
+/// implements [`MessageReceiver`], like a reference or a pointer to an
+/// object. Additionally, it can even be a reference to an [`Retained`]
+/// containing an object.
+///
+/// The expression can be wrapped in `super`, with an optional superclass
+/// as the second argument. If no specific superclass is specified, the
+/// direct superclass is retrieved from [`ClassType`].
+///
+/// All arguments, as well as the return type, must implement [`Encode`] (bar
+/// the exceptions below).
+///
+/// If the last argument is the special marker `_`, the macro will return a
+/// `Result<_, Retained<E>>`, see below.
+///
+/// This macro roughly translates into a call to [`sel!`], and afterwards a
+/// fully qualified call to [`MessageReceiver::send_message`]. Note that this
+/// means that auto-dereferencing of the receiver is not supported, and that
+/// the receiver is consumed. You may encounter a little trouble with `&mut`
+/// references, try refactoring into a separate method or reborrowing the
+/// reference.
+///
+/// Variadic arguments are currently not supported.
+///
+/// [`MessageReceiver`]: crate::runtime::MessageReceiver
+/// [`Retained`]: crate::rc::Retained
+/// [`ClassType`]: crate::ClassType
+/// [`Encode`]: crate::Encode
+/// [`sel!`]: crate::sel
+/// [`MessageReceiver::send_message`]: crate::runtime::MessageReceiver::send_message
+///
+///
+/// ## Memory management details
 ///
 /// The accepted receiver and return types, and how we handle them, differ
 /// depending on which, if any, of the [recognized selector
@@ -1164,98 +864,331 @@ macro_rules! msg_send_bool {
 /// [`Retained::autorelease_ptr`]: crate::rc::Retained::autorelease_ptr
 ///
 ///
+/// # `bool` handling
+///
+/// Objective-C's `BOOL` is slightly different from Rust's [`bool`], and hence
+/// a conversion step must be performed before using it. This is _very_ easy
+/// to forget (because it'll happen to work in _most_ cases), so this macro
+/// does the conversion step automatically whenever an argument or the return
+/// type is `bool`.
+///
+/// That means that any Objective-C method that take or return `BOOL` can be
+/// translated to use `bool` on the Rust side.
+///
+/// If you want to handle the conversion explicitly, or the Objective-C method
+/// expects e.g. a pointer to a `BOOL`, use [`runtime::Bool`] instead.
+///
+/// [`runtime::Bool`]: crate::runtime::Bool
+///
+///
+/// # Out-parameters
+///
+/// Parameters like `NSString**` in Objective-C are passed by "writeback",
+/// which means that the callee autoreleases any value that they may write
+/// into the parameter.
+///
+/// This macro has support for passing such parameters using the following
+/// types:
+/// - `&mut Retained<_>`
+/// - `Option<&mut Retained<_>>`
+/// - `&mut Option<Retained<_>>`,
+/// - `Option<&mut Option<Retained<_>>>`
+///
+/// Beware with the first two, since they will cause undefined behaviour if
+/// the method overwrites the value with `nil`.
+///
+/// See [clang's documentation][clang-out-params] for more details.
+///
+/// [clang-out-params]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#passing-to-an-out-parameter-by-writeback
+///
+///
 /// # Errors
 ///
-/// Very similarly to [`msg_send!`], this macro supports transforming the
-/// return type of methods whose last parameter is `NSError**` into the Rust
-/// equivalent, the [`Result`] type.
+/// The most common place you'll see out-parameters is as `NSError**` the last
+/// parameter, which is used to communicate errors to the caller, see [Error
+/// Handling Programming Guide For Cocoa][cocoa-error].
 ///
-/// In particular, you can make the last argument the special marker `_`, and
-/// then the macro will return a `Result<Retained<T>, Retained<E>>` (where you
-/// must specify `E` yourself, usually you'd use `objc2_foundation::NSError`).
+/// Similar to Swift's [importing of error parameters][swift-error], this
+/// macro supports an even more convenient version than the out-parameter
+/// support, which transforms methods whose last parameter is `NSError**` into
+/// the Rust equivalent, the [`Result`] type.
+///
+/// In particular, if you make the last argument the special marker `_`, then
+/// the macro will return a `Result<R, Retained<E>>`. The error type `E` must
+/// be either [`NSObject`] or `objc2_foundation::NSError`.
+///
+/// The success type `R` must be either `()` or `Retained<T>`.
+///
+/// At runtime, we create the temporary error variable for you on the stack
+/// and send it as the out-parameter to the method. If the method then returns
+/// `NO`/`false`, or in the case of an object pointer, `NULL`, the error
+/// variable is loaded and returned in [`Err`].
+///
+/// [cocoa-error]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ErrorHandlingCocoa/ErrorHandling/ErrorHandling.html
+/// [swift-error]: https://developer.apple.com/documentation/swift/about-imported-cocoa-error-parameters
+/// [`NSObject`]: crate::runtime::NSObject
 ///
 ///
 /// # Panics
 ///
-/// Panics if the return type is specified as `Retained<_, _>` and the method
-/// returned NULL.
+/// Unwinds if the underlying method throws and exception. If the
+/// `"catch-all"` Cargo feature is enabled, the Objective-C exception is
+/// converted into a Rust panic, with potentially a bit better stack trace.
 ///
-/// Additional panicking cases are documented in [`msg_send!`].
+/// Panics if `debug_assertions` are enabled and the Objective-C method's
+/// encoding does not match the encoding of the given arguments and return.
+///
+/// Finally, panics if the return type is specified as `Retained<_>`, but the
+/// method actually returned NULL. If this happens, you should change the
+/// signature to instead return `Option<Retained<_>>` to handle the error
+/// yourself.
 ///
 ///
 /// # Safety
 ///
-/// Same as [`msg_send!`], with an expected return type of `id`,
-/// `instancetype`, `NSObject*`, or other such object pointers. The method
-/// must not have any attributes that changes the how it handles memory
-/// management.
+/// Similar to defining and calling an `extern` function in a foreign function
+/// interface. In particular, you must uphold the following requirements:
 ///
-/// Note that if you're using this inside a context that expects unwinding to
-/// have Objective-C semantics (like [`exception::catch`]), you should make
-/// sure that the return type is `Option<Retained<_, _>>` so that you don't
-/// get an unexpected unwind through incompatible ABIs!
+/// 1. The selector corresponds to a valid method that is available on the
+///    receiver.
 ///
-#[cfg_attr(
-    feature = "exception",
-    doc = "[`exception::catch`]: crate::exception::catch"
-)]
-#[cfg_attr(
-    not(feature = "exception"),
-    doc = "[`exception::catch`]: crate::exception#feature-not-enabled"
-)]
+/// 2. The argument types match what the receiver excepts for this selector.
+///
+/// 3. The return type match what the receiver returns for this selector.
+///
+/// 4. The call must not violate Rust's mutability rules, for example if
+///    passing an `&T`, the Objective-C method must not mutate the variable
+///    (except if the variable is inside [`std::cell::UnsafeCell`] or
+///    derivatives).
+///
+/// 5. If the receiver is a raw pointer it must be valid (aligned,
+///    dereferenceable, initialized and so on). Messages to `null` pointers
+///    are allowed (though heavily discouraged), but _only_ if the return type
+///    itself is a pointer.
+///
+/// 6. You must uphold any additional safety requirements (explicit and
+///    implicit) that the method has. For example:
+///    - Methods that take pointers usually require that the pointer is valid,
+///      and sometimes non-null.
+///    - Sometimes, a method may only be called on the main thread.
+///    - The lifetime of returned pointers usually follows certain rules, and
+///      may not be valid outside of an [`autoreleasepool`] (returning
+///      `Retained` usually helps with these cases).
+///
+/// 7. Each out-parameter must have the correct nullability, and the method
+///    must not have any attributes that changes the how it handles memory
+///    management for these.
+///
+/// 8. If using the automatic memory management facilities of this macro, the
+///    method must not have any attributes such as `objc_method_family`,
+///    `ns_returns_retained`, `ns_consumed` that changes the how it handles
+///    memory management.
+///
+/// 8. TODO: Maybe more?
+///
+/// [`autoreleasepool`]: crate::rc::autoreleasepool
 ///
 ///
 /// # Examples
 ///
-/// ```no_run
-/// use objc2::{class, msg_send_id};
-/// use objc2::ffi::NSUInteger;
+/// Interacting with [`NSURLComponents`], [`NSString`] and [`NSNumber`].
+///
+/// [`NSURLComponents`]: https://developer.apple.com/documentation/foundation/nsurlcomponents?language=objc
+/// [`NSString`]: https://developer.apple.com/documentation/foundation/nsstring?language=objc
+/// [`NSNumber`]: https://developer.apple.com/documentation/foundation/nsnumber?language=objc
+///
+/// ```
 /// use objc2::rc::Retained;
+/// use objc2::{msg_send, ClassType};
+/// use objc2_foundation::{NSNumber, NSString, NSURLComponents};
+///
+///
+/// // Create an empty `NSURLComponents` by calling the class method `new`.
+/// let components: Retained<NSURLComponents> = unsafe {
+///     //          ^^^^^^^^^^^^^^^^^^^^^^^^^ the return type, a memory-managed
+///     //                                    `NSURLComponents` instance
+///     //
+///     msg_send![NSURLComponents::class(), new]
+///     //        ------------------------  ^^^ the selector `new`
+///     //        |
+///     //        the receiver, in this case the class itself
+/// };
+///
+///
+/// // Create a new `NSNumber` from an integer.
+/// let port: Retained<NSNumber> = unsafe {
+///     msg_send![NSNumber::class(), numberWithInt: 8080i32]
+///     //                           -------------- ^^^^^^^ the argument to the method
+///     //                           |
+///     //                           the selector `numberWithInt:`
+///     //
+///     // Note how we must fully specify the argument as `8080i32` instead of just `8080`.
+/// };
+///
+///
+/// // Set the port property of the URL.
+/// let _: () = unsafe { msg_send![&components, setPort: &*port] };
+/// //     --                                   -------- ^^^^^^ the port is deref'd to
+/// //     |                                    |               become the correct type
+/// //     |                                    |
+/// //     |                                    the selector `setPort:` is derived
+/// //     |                                    from the property name `port`.
+/// //     |
+/// //     return type (i.e. nothing / void)
+/// //
+/// // Note that even return types of `void` must be explicitly specified as `()`.
+///
+///
+/// // Set the `host` property of the URL.
+/// let host: Retained<NSString> = unsafe {
+///     msg_send![NSString::class(), stringWithUTF8String: c"example.com".as_ptr()]
+/// };
+/// let _: () = unsafe { msg_send![&components, setHost: &*host] };
+///
+///
+/// // Set the `scheme` property of the URL.
+/// let scheme: Retained<NSString> = unsafe {
+///     msg_send![NSString::class(), stringWithUTF8String: c"http".as_ptr()]
+/// };
+/// let _: () = unsafe { msg_send![&components, setScheme: &*scheme] };
+///
+///
+/// // Get the combined URL in string form.
+/// let string: Option<Retained<NSString>> = unsafe { msg_send![&components, string] };
+/// //          ^^^^^^ the method can return NULL, so we specify an option here
+///
+///
+/// assert_eq!(string.unwrap().to_string(), "http://example.com:8080");
+/// ```
+///
+/// The example above uses only `msg_send!` for demonstration purposes; note
+/// that usually the interface you seek is already present in [the framework
+/// crates] and then the equivalent code can be as simple as:
+///
+/// [the framework crates]: crate::topics::about_generated
+///
+/// ```
+/// use objc2_foundation::{NSNumber, NSString, NSURLComponents};
+///
+/// let components = unsafe { NSURLComponents::new() };
+/// unsafe { components.setPort(Some(&NSNumber::new_i32(8080))) };
+/// unsafe { components.setHost(Some(&NSString::from_str("example.com"))) };
+/// unsafe { components.setScheme(Some(&NSString::from_str("http"))) };
+/// let string = unsafe { components.string() };
+///
+/// assert_eq!(string.unwrap().to_string(), "http://example.com:8080");
+/// ```
+///
+/// Sending messages to the superclass of an object.
+///
+/// ```no_run
 /// use objc2::runtime::NSObject;
-/// // Allocate new object
-/// let obj = unsafe { msg_send_id![class!(NSObject), alloc] };
-/// // Consume the allocated object, return initialized object
-/// let obj: Retained<NSObject> = unsafe { msg_send_id![obj, init] };
-/// // Copy the object
-/// let copy: Retained<NSObject> = unsafe { msg_send_id![&obj, copy] };
-/// // Call ordinary selector that returns an object
-/// // This time, we handle failures ourselves
-/// let s: Option<Retained<NSObject>> = unsafe { msg_send_id![&obj, description] };
-/// let s = s.expect("description was NULL");
+/// use objc2::{msg_send, ClassType};
+/// #
+/// # objc2::define_class!(
+/// #     #[unsafe(super(NSObject))]
+/// #     #[name = "MyObject"]
+/// #     struct MyObject;
+/// # );
+/// #
+/// # let obj: objc2::rc::Retained<MyObject> = todo!();
+///
+/// // Call `someMethod` on the direct super class.
+/// let _: () = unsafe { msg_send![super(&obj), someMethod] };
+///
+/// // Or lower-level, a method on a specific superclass.
+/// let superclass = NSObject::class();
+/// let arg3: u32 = unsafe { msg_send![super(&obj, superclass), getArg3] };
+/// ```
+///
+/// Sending a message with automatic error handling.
+///
+/// ```no_run
+/// use objc2::msg_send;
+/// use objc2::rc::Retained;
+/// # #[cfg(requires_foundation)]
+/// use objc2_foundation::{NSBundle, NSError};
+/// # use objc2::runtime::NSObject as NSBundle;
+/// # use objc2::runtime::NSObject as NSError;
+///
+/// # #[cfg(requires_foundation)]
+/// let bundle = NSBundle::mainBundle();
+/// # let bundle = NSBundle::new();
+///
+/// let res: Result<(), Retained<NSError>> = unsafe {
+///     //          --  -------- ^^^^^^^ must be NSError or NSObject
+///     //          |   |
+///     //          |   always retained
+///     //          |
+///     //          `()` means that the method returns `bool`, we check
+///     //          that and return success if `true`, an error if `false`
+///     //
+///     msg_send![&bundle, preflightAndReturnError: _]
+///     //                                          ^ activate error handling
+/// };
+/// ```
+///
+/// Sending a message with an out parameter _and_ automatic error handling.
+///
+/// ```no_run
+/// use objc2::msg_send;
+/// use objc2::rc::Retained;
+///
+/// # type NSFileManager = objc2::runtime::NSObject;
+/// # type NSURL = objc2::runtime::NSObject;
+/// # type NSError = objc2::runtime::NSObject;
+/// let obj: &NSFileManager;
+/// # obj = todo!();
+/// let url: &NSURL;
+/// # url = todo!();
+/// let mut result_url: Option<Retained<NSURL>> = None;
+/// unsafe {
+///     msg_send![
+///         obj,
+///         trashItemAtURL: url,
+///         resultingItemURL: Some(&mut result_url),
+///         error: _
+///     ]?
+/// //   ^ is possible on error-returning methods, if the return type is specified
+/// };
+///
+/// // Use `result_url` here
+///
+/// # Ok::<(), Retained<NSError>>(())
 /// ```
 #[macro_export]
-macro_rules! msg_send_id {
+macro_rules! msg_send {
     [super($obj:expr), $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            (send_super_message_retained_static_error)
             ()
             ()
             ($($selector_and_arguments)+)
-            (send_super_message_retained_static)
 
-            ($crate::__msg_send_id_helper)
+            (MsgSendSuperError::send_super_message_static_error)
+            (MsgSendSuper::send_super_message_static)
+
+            ($crate::__msg_send_helper)
             ($obj)
             () // No method family
-            (MsgSendSuperRetained)
         }
     };
     [super($obj:expr, $superclass:expr), $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            (send_super_message_retained_error)
             ()
             ()
             ($($selector_and_arguments)+)
-            (send_super_message_retained)
 
-            ($crate::__msg_send_id_helper)
+            (MsgSendSuperError::send_super_message_error)
+            (MsgSendSuper::send_super_message)
+
+            ($crate::__msg_send_helper)
             ($obj, $superclass)
             () // No method family
-            (MsgSendSuperRetained)
         }
     };
     [$obj:expr, new $(,)?] => ({
         let result;
-        result = <$crate::__macro_helpers::NewFamily as $crate::__macro_helpers::MsgSendRetained<_, _>>::send_message_retained(
+        result = <$crate::__macro_helpers::NewFamily as $crate::__macro_helpers::MsgSend<_, _>>::send_message(
             $obj,
             $crate::sel!(new),
             (),
@@ -1264,7 +1197,7 @@ macro_rules! msg_send_id {
     });
     [$obj:expr, alloc $(,)?] => ({
         let result;
-        result = <$crate::__macro_helpers::AllocSelector as $crate::__macro_helpers::MsgSendRetained<_, _>>::send_message_retained(
+        result = <$crate::__macro_helpers::AllocSelector as $crate::__macro_helpers::MsgSend<_, _>>::send_message(
             $obj,
             $crate::sel!(alloc),
             (),
@@ -1273,7 +1206,7 @@ macro_rules! msg_send_id {
     });
     [$obj:expr, init $(,)?] => ({
         let result;
-        result = <$crate::__macro_helpers::InitFamily as $crate::__macro_helpers::MsgSendRetained<_, _>>::send_message_retained(
+        result = <$crate::__macro_helpers::InitFamily as $crate::__macro_helpers::MsgSend<_, _>>::send_message(
             $obj,
             $crate::sel!(init),
             (),
@@ -1282,77 +1215,50 @@ macro_rules! msg_send_id {
     });
     [$obj:expr, $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            (send_message_retained_error)
             ()
             ()
             ($($selector_and_arguments)+)
-            (send_message_retained)
 
-            ($crate::__msg_send_id_helper)
+            (MsgSendError::send_message_error)
+            (MsgSend::send_message)
+
+            ($crate::__msg_send_helper)
             ($obj)
             () // No method family
-            (MsgSendRetained)
         }
     };
 }
 
-/// Helper macro to avoid exposing these in the docs for [`msg_send_id!`].
+/// Use [`msg_send!`] instead, it now supports converting to/from `bool`.
+#[macro_export]
+#[deprecated = "use a normal msg_send! instead, it will perform the conversion for you"]
+macro_rules! msg_send_bool {
+    [$($msg_send_args:tt)+] => ({
+        // Use old impl for backwards compat
+        let result: $crate::runtime::Bool = $crate::msg_send![$($msg_send_args)+];
+        result.as_bool()
+    });
+}
+
+/// Use [`msg_send!`] instead, it now supports converting to/from
+/// [`Retained`][crate::rc::Retained].
+#[macro_export]
+#[deprecated = "use a normal msg_send! instead, it will now perform the conversion to/from `Retained` for you"]
+macro_rules! msg_send_id {
+    [$($msg_send_args:tt)+] => {
+        $crate::msg_send![$($msg_send_args)*]
+    }
+}
+
+/// Helper macro to avoid exposing the retain/release/... specializations in
+/// the docs for [`msg_send!`].
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __msg_send_id_helper {
-    {
-        ($($fn_args:tt)+)
-        ($($method_family:ident)?)
-        ($trait:ident)
-        ($fn:ident)
-        (retain)
-        ()
-    } => {{
-        $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, retain] is not supported. Use `Retained::retain` instead"
-        )
-    }};
-    {
-        ($($fn_args:tt)+)
-        ($($method_family:ident)?)
-        ($trait:ident)
-        ($fn:ident)
-        (release)
-        ()
-    } => {{
-        $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, release] is not supported. Drop an `Retained` instead"
-        )
-    }};
-    {
-        ($($fn_args:tt)+)
-        ($($method_family:ident)?)
-        ($trait:ident)
-        ($fn:ident)
-        (autorelease)
-        ()
-    } => {{
-        $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, autorelease] is not supported. Use `Retained::autorelease`"
-        )
-    }};
-    {
-        ($($fn_args:tt)+)
-        ($($method_family:ident)?)
-        ($trait:ident)
-        ($fn:ident)
-        (dealloc)
-        ()
-    } => {{
-        $crate::__macro_helpers::compile_error!(
-            "msg_send_id![obj, dealloc] is not supported. Drop an `Retained` instead"
-        )
-    }};
+macro_rules! __msg_send_helper {
     {
         ($($fn_args:tt)+)
         ($($method_family:tt)+)
-        ($trait:ident)
-        ($fn:ident)
+        ($trait:ident :: $fn:ident)
         ($($selector:tt)*)
         ($($argument:expr,)*)
     } => ({
@@ -1362,11 +1268,70 @@ macro_rules! __msg_send_id_helper {
             ($($argument,)*),
         )
     });
+    (
+        ($($fn_args:tt)+)
+        ()
+        ($trait:ident :: $fn:ident)
+        (retain)
+        ()
+    ) => ({
+        let result;
+        result = <$crate::__macro_helpers::RetainSelector as $crate::__macro_helpers::$trait<_, _>>::$fn(
+            $($fn_args)+,
+            $crate::sel!(retain),
+            (),
+        );
+        result
+    });
+    (
+        ($($fn_args:tt)+)
+        ()
+        ($trait:ident :: $fn:ident)
+        (release)
+        ()
+    ) => ({
+        let result;
+        result = <$crate::__macro_helpers::ReleaseSelector as $crate::__macro_helpers::$trait<_, _>>::$fn(
+            $($fn_args)+,
+            $crate::sel!(release),
+            (),
+        );
+        result
+    });
+    (
+        ($($fn_args:tt)+)
+        ()
+        ($trait:ident :: $fn:ident)
+        (autorelease)
+        ()
+    ) => ({
+        let result;
+        result = <$crate::__macro_helpers::AutoreleaseSelector as $crate::__macro_helpers::$trait<_, _>>::$fn(
+            $($fn_args)+,
+            $crate::sel!(autorelease),
+            (),
+        );
+        result
+    });
+    (
+        ($($fn_args:tt)+)
+        ()
+        ($trait:ident :: $fn:ident)
+        (dealloc)
+        ()
+    ) => ({
+        let result;
+        result = <$crate::__macro_helpers::DeallocSelector as $crate::__macro_helpers::$trait<_, _>>::$fn(
+            $($fn_args)+,
+            $crate::sel!(dealloc),
+            (),
+        );
+        result
+    });
     {
         ($($fn_args:tt)+)
         ()
-        ($trait:ident)
-        ($fn:ident)
+        ($trait:ident :: $fn:ident)
         ($($selector:tt)*)
         ($($argument:expr,)*)
     } => ({
@@ -1374,7 +1339,18 @@ macro_rules! __msg_send_id_helper {
         const __SELECTOR_DATA: &$crate::__macro_helpers::str = $crate::__sel_data!(
             $($selector)*
         );
+
+        // Assign to intermediary variable for better UI, and to prevent
+        // miscompilation on older Rust versions (TODO: Which ones?).
+        //
+        // Note: This can be accessed from any expression in `fn_args` and
+        // `argument` - we won't (yet) bother with preventing that though.
         let result;
+
+        // Always add trailing comma after each argument, so that we get a
+        // 1-tuple if there is only one.
+        //
+        // And use `::<_, _>` for better UI.
         result = <$crate::__macro_helpers::MethodFamily<{
             $crate::__macro_helpers::method_family(__SELECTOR_DATA)
         }> as $crate::__macro_helpers::$trait<_, _>>::$fn(

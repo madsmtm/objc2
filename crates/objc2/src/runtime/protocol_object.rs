@@ -199,7 +199,7 @@ mod tests {
 
     use super::*;
     use crate::runtime::{ClassBuilder, NSObject};
-    use crate::{define_class, extern_methods, extern_protocol, msg_send_id, ClassType};
+    use crate::{define_class, extern_methods, extern_protocol, msg_send, ClassType};
 
     extern_protocol!(
         unsafe trait Foo {
@@ -257,7 +257,7 @@ mod tests {
 
     extern_methods!(
         unsafe impl DummyClass {
-            #[method_id(new)]
+            #[method(new)]
             fn new() -> Retained<Self>;
         }
     );
@@ -389,7 +389,7 @@ mod tests {
         let s = CStr::from_bytes_with_nul(b"My\xF0\x90\x80Class\0").unwrap();
 
         let cls = ClassBuilder::new(s, NSObject::class()).unwrap().register();
-        let obj: Retained<NSObject> = unsafe { msg_send_id![cls, new] };
+        let obj: Retained<NSObject> = unsafe { msg_send![cls, new] };
 
         let expected = format!("<My\u{f8ff}êÄClass: {:p}>", &*obj);
         assert_eq!(format!("{obj:?}"), expected);

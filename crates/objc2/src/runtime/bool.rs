@@ -261,8 +261,8 @@ mod tests {
             <bool as ConvertArgument>::__Inner::ENCODING
         );
         assert_eq!(
-            <bool as ConvertReturn>::__Inner::__ENCODING,
-            <bool as ConvertReturn>::__Inner::ENCODING
+            <bool as ConvertReturn<()>>::Inner::__ENCODING,
+            <bool as ConvertReturn<()>>::Inner::ENCODING
         );
     }
 

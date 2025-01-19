@@ -7,7 +7,7 @@ use core::panic::RefUnwindSafe;
 use core::panic::UnwindSafe;
 use core::str;
 
-use objc2::msg_send_id;
+use objc2::msg_send;
 use objc2::rc::{autoreleasepool_leaking, Allocated, AutoreleasePool, Retained};
 use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
 use objc2::{AllocAnyThread, Message};
@@ -128,10 +128,10 @@ impl NSMutableString {
 
 unsafe fn init_with_str<T: Message>(obj: Allocated<T>, string: &str) -> Retained<T> {
     let bytes: *const c_void = string.as_ptr().cast();
-    // We use `msg_send_id` instead of the generated method, since that
+    // We use `msg_send!` instead of the generated method, since that
     // assumes the encoding is `usize`, whereas GNUStep assumes `i32`.
     unsafe {
-        msg_send_id![
+        msg_send![
             obj,
             initWithBytes: bytes,
             length: string.len(),

@@ -11,15 +11,15 @@ use crate::*;
 
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::{AnyObject, ProtocolObject};
-use objc2::{extern_methods, msg_send_id, Message};
+use objc2::{extern_methods, msg_send, Message};
 
 pub unsafe trait MTLDevicePrivate: Message {
     unsafe fn vendorName(&self) -> Retained<objc2_foundation::NSString> {
-        unsafe { msg_send_id![self, vendorName] }
+        unsafe { msg_send![self, vendorName] }
     }
 
     unsafe fn familyName(&self) -> Retained<objc2_foundation::NSString> {
-        unsafe { msg_send_id![self, familyName] }
+        unsafe { msg_send![self, familyName] }
     }
 }
 
@@ -30,7 +30,7 @@ extern_methods!(
     #[cfg(feature = "MTLRenderPipeline")]
     unsafe impl MTLRenderPipelineReflection {
         #[cfg(feature = "MTLDevice")]
-        #[method_id(initWithVertexData:fragmentData:serializedVertexDescriptor:device:options:flags:)]
+        #[method(initWithVertexData:fragmentData:serializedVertexDescriptor:device:options:flags:)]
         pub unsafe fn initWithVertexData(
             this: Allocated<Self>,
             vertex_data: *mut c_void,
@@ -41,7 +41,7 @@ extern_methods!(
             flags: u64,
         ) -> Option<Retained<Self>>;
 
-        #[method_id(newSerializedVertexDataWithFlags:error:_)]
+        #[method(newSerializedVertexDataWithFlags:error:_)]
         pub unsafe fn newSerializedVertexDataWithFlags_error(
             &self,
             flags: u64,
@@ -63,7 +63,7 @@ extern_methods!(
 extern_methods!(
     #[cfg(feature = "MTLVertexDescriptor")]
     unsafe impl MTLVertexDescriptor {
-        #[method_id(newSerializedDescriptor)]
+        #[method(newSerializedDescriptor)]
         pub unsafe fn newSerializedDescriptor(&self) -> Option<Retained<AnyObject>>;
     }
 );

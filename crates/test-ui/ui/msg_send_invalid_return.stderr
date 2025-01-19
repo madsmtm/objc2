@@ -1,172 +1,181 @@
-error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
+error[E0277]: the trait bound `Retained<AnyObject>: Encode` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
-  |     let _: &AnyObject = unsafe { msg_send_id![cls, new] };
-  |                                  ^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `&AnyObject`
+  |     let _: Retained<AnyObject> = unsafe { msg_send![cls, alloc] };
+  |                                           ^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<AnyObject>`
   |
-  = help: the following other types implement trait `MaybeUnwrap`:
-            Allocated<T>
-            Option<Retained<T>>
-            Retained<T>
-note: required by a bound in `send_message_retained`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |                                                             ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Retained<AnyObject>` to implement `EncodeReturn`
+  = note: required for `Retained<AnyObject>` to implement `ConvertReturn<MethodFamily<7>>`
+  = note: required for `MethodFamily<7>` to implement `RetainSemantics<&AnyClass, Retained<AnyObject>, KindSendMessage>`
+  = note: required for `MethodFamily<7>` to implement `MsgSend<&AnyClass, Retained<AnyObject>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
+error[E0277]: the trait bound `Allocated<AnyObject>: Encode` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
-  |     let _: &AnyObject = unsafe { msg_send_id![cls, alloc] };
-  |                                  ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `&AnyObject`
+  |     let _: Option<Allocated<AnyObject>> = unsafe { msg_send![cls, alloc] };
+  |                                                    ^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Allocated<AnyObject>`
   |
-  = help: the following other types implement trait `MaybeUnwrap`:
-            Allocated<T>
-            Option<Retained<T>>
-            Retained<T>
-note: required by a bound in `__macro_helpers::msg_send_retained::<impl MethodFamily<2>>::send_message_retained_alloc`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     pub unsafe fn send_message_retained_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
-  |                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `__macro_helpers::msg_send_retained::<impl MethodFamily<2>>::send_message_retained_alloc`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Option<Allocated<AnyObject>>` to implement `Encode`
+  = note: required for `Option<Allocated<AnyObject>>` to implement `EncodeReturn`
+  = note: required for `Option<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<7>>`
+  = note: required for `MethodFamily<7>` to implement `RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, KindSendMessage>`
+  = note: required for `MethodFamily<7>` to implement `MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0271]: type mismatch resolving `<Retained<AnyObject> as MaybeUnwrap>::Input == Allocated<_>`
+error[E0277]: the trait bound `Allocated<AnyObject>: OptionEncode` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
-  |     let _: Retained<AnyObject> = unsafe { msg_send_id![cls, alloc] };
-  |                                           ^^^^^^^^^^^^^^^^^^^^^^^^ expected `Allocated<_>`, found `Option<Retained<AnyObject>>`
+  |     let _: Option<Allocated<AnyObject>> = unsafe { msg_send![cls, alloc] };
+  |                                                    ^^^^^^^^^^^^^^^^^^^^^ the trait `OptionEncode` is not implemented for `Allocated<AnyObject>`
   |
-  = note: expected struct `Allocated<_>`
-               found enum `Option<Retained<AnyObject>>`
-note: required by a bound in `__macro_helpers::msg_send_retained::<impl MethodFamily<2>>::send_message_retained_alloc`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     pub unsafe fn send_message_retained_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
-  |                                                                          ^^^^^^^^^^^^^^^^^^^^ required by this bound in `__macro_helpers::msg_send_retained::<impl MethodFamily<2>>::send_message_retained_alloc`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: the following other types implement trait `OptionEncode`:
+            &T
+            &mut T
+            NonNull<T>
+            NonZero<i16>
+            NonZero<i32>
+            NonZero<i64>
+            NonZero<i8>
+            NonZero<isize>
+          and $N others
+  = note: required for `Option<Allocated<AnyObject>>` to implement `Encode`
+  = note: required for `Option<Allocated<AnyObject>>` to implement `EncodeReturn`
+  = note: required for `Option<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<7>>`
+  = note: required for `MethodFamily<7>` to implement `RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, KindSendMessage>`
+  = note: required for `MethodFamily<7>` to implement `MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Option<Allocated<AnyObject>>: MaybeUnwrap` is not satisfied
+error[E0277]: the trait bound `Retained<Allocated<AnyObject>>: Encode` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
-  |     let _: Option<Allocated<AnyObject>> = unsafe { msg_send_id![cls, alloc] };
-  |                                                    ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `Option<Allocated<AnyObject>>`
+  |     let _: Retained<Allocated<AnyObject>> = unsafe { msg_send![cls, alloc] };
+  |                                                      ^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<Allocated<AnyObject>>`
   |
-  = help: the trait `MaybeUnwrap` is implemented for `Option<Retained<T>>`
-note: required by a bound in `__macro_helpers::msg_send_retained::<impl MethodFamily<2>>::send_message_retained_alloc`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     pub unsafe fn send_message_retained_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
-  |                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `__macro_helpers::msg_send_retained::<impl MethodFamily<2>>::send_message_retained_alloc`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Retained<Allocated<AnyObject>>` to implement `EncodeReturn`
+  = note: required for `Retained<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<7>>`
+  = note: required for `MethodFamily<7>` to implement `RetainSemantics<&AnyClass, Retained<Allocated<AnyObject>>, KindSendMessage>`
+  = note: required for `MethodFamily<7>` to implement `MsgSend<&AnyClass, Retained<Allocated<AnyObject>>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0271]: type mismatch resolving `<Retained<Allocated<AnyObject>> as MaybeUnwrap>::Input == Allocated<_>`
+error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
-  |     let _: Retained<Allocated<AnyObject>> = unsafe { msg_send_id![cls, alloc] };
-  |                                                      ^^^^^^^^^^^^^^^^^^^^^^^^ expected `Allocated<_>`, found `Option<Retained<Allocated<...>>>`
+  |     let _: &AnyObject = unsafe { msg_send![obj, init] };
+  |                                  ^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Allocated<AnyObject>`
   |
-  = note: expected struct `Allocated<_>`
-               found enum `Option<Retained<Allocated<AnyObject>>>`
-note: required by a bound in `__macro_helpers::msg_send_retained::<impl MethodFamily<2>>::send_message_retained_alloc`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     pub unsafe fn send_message_retained_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
-  |                                                                          ^^^^^^^^^^^^^^^^^^^^ required by this bound in `__macro_helpers::msg_send_retained::<impl MethodFamily<2>>::send_message_retained_alloc`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, &AnyObject, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, &AnyObject>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
+error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
-  |     let _: &AnyObject = unsafe { msg_send_id![obj, init] };
-  |                                  ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `&AnyObject`
+  |     let _: Retained<AnyClass> = unsafe { msg_send![obj, init] };
+  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Allocated<AnyObject>`
   |
-  = help: the following other types implement trait `MaybeUnwrap`:
-            Allocated<T>
-            Option<Retained<T>>
-            Retained<T>
-note: required by a bound in `send_message_retained`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |                                                             ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, Retained<AnyClass>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, Retained<AnyClass>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0271]: type mismatch resolving `<Retained<AnyClass> as MaybeUnwrap>::Input == Option<Retained<AnyObject>>`
+error[E0277]: the trait bound `Retained<AnyClass>: Encode` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
-  |     let _: Retained<AnyClass> = unsafe { msg_send_id![obj, init] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<Retained<AnyObject>>`, found `Option<Retained<AnyClass>>`
+  |     let _: Retained<AnyClass> = unsafe { msg_send![obj, init] };
+  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<AnyClass>`
   |
-  = note: expected enum `Option<Retained<AnyObject>>`
-             found enum `Option<Retained<AnyClass>>`
-note: required by a bound in `send_message_retained`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |                                                                         ^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Retained<AnyClass>` to implement `EncodeReturn`
+  = note: required for `Retained<AnyClass>` to implement `ConvertReturn<MethodFamily<3>>`
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, Retained<AnyClass>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, Retained<AnyClass>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0271]: type mismatch resolving `<Retained<NSObject> as MaybeUnwrap>::Input == Option<Retained<AnyObject>>`
+error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
-  |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, init] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<Retained<AnyObject>>`, found `Option<Retained<NSObject>>`
+  |     let _: Retained<NSObject> = unsafe { msg_send![obj, init] };
+  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Allocated<AnyObject>`
   |
-  = note: expected enum `Option<Retained<AnyObject>>`
-             found enum `Option<Retained<NSObject>>`
-note: required by a bound in `send_message_retained`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |                                                                         ^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, Retained<NSObject>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, Retained<NSObject>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
+error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
-  |     let _: &AnyObject = unsafe { msg_send_id![obj, copy] };
-  |                                  ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `&AnyObject`
+  |     let _: Retained<NSObject> = unsafe { msg_send![obj, init] };
+  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<NSObject>`
   |
-  = help: the following other types implement trait `MaybeUnwrap`:
-            Allocated<T>
-            Option<Retained<T>>
-            Retained<T>
-note: required by a bound in `send_message_retained`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |                                                             ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained`
-  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
- --> ui/msg_send_invalid_return.rs
-  |
-  |     let _: &AnyObject = unsafe { msg_send_id![obj, description] };
-  |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `&AnyObject`
-  |
-  = help: the following other types implement trait `MaybeUnwrap`:
-            Allocated<T>
-            Option<Retained<T>>
-            Retained<T>
-note: required by a bound in `send_message_retained`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |                                                             ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained`
-  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `Option<&AnyObject>: MaybeUnwrap` is not satisfied
- --> ui/msg_send_invalid_return.rs
-  |
-  |     let _: Option<&AnyObject> = unsafe { msg_send_id![obj, description] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `Option<&AnyObject>`
-  |
-  = help: the trait `MaybeUnwrap` is implemented for `Option<Retained<T>>`
-note: required by a bound in `send_message_retained`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |                                                             ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendRetained::send_message_retained`
-  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Retained<NSObject>` to implement `EncodeReturn`
+  = note: required for `Retained<NSObject>` to implement `ConvertReturn<MethodFamily<3>>`
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, Retained<NSObject>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, Retained<NSObject>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

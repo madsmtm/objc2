@@ -1,0 +1,19 @@
+error: use of deprecated function `MyObject::my_method::method_id`: using #[method_id(myMethod:)] inside extern_methods! is deprecated.
+       Use #[method(myMethod:)] instead
+  --> ui/extern_methods_deprecated.rs
+   |
+   | / extern_methods!(
+   | |     unsafe impl MyObject {
+   | |         #[method_id(myMethod:)]
+   | |         fn my_method(param: i32) -> Retained<Self>;
+   | |     }
+   | | );
+   | |_^
+   |
+note: the lint level is defined here
+  --> ui/extern_methods_deprecated.rs
+   |
+   | #![deny(warnings)]
+   |         ^^^^^^^^
+   = note: `#[deny(deprecated)]` implied by `#[deny(warnings)]`
+   = note: this error originates in the macro `$crate::__extern_methods_method_id_deprecated` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -5,7 +5,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::exception::Exception;
 use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, NSObject, NSObjectProtocol};
-use objc2::{extern_methods, msg_send_id, sel, ClassType};
+use objc2::{extern_methods, msg_send, sel, ClassType};
 
 use crate::{util, NSException};
 
@@ -39,7 +39,7 @@ impl NSException {
         use objc2::AllocAnyThread;
 
         unsafe {
-            objc2::msg_send_id![
+            objc2::msg_send![
                 Self::alloc(),
                 initWithName: name,
                 reason: reason,
@@ -98,13 +98,13 @@ impl fmt::Debug for NSException {
         write!(f, "{obj:?}")?;
 
         write!(f, " '")?;
-        let name: Retained<NSObject> = unsafe { msg_send_id![self, name] };
+        let name: Retained<NSObject> = unsafe { msg_send![self, name] };
         // SAFETY: `name` returns `NSExceptionName`, which is `NSString`.
         unsafe { util::display_string(&name, f)? };
         write!(f, "'")?;
 
         write!(f, " reason: ")?;
-        let reason: Option<Retained<NSObject>> = unsafe { msg_send_id![self, reason] };
+        let reason: Option<Retained<NSObject>> = unsafe { msg_send![self, reason] };
         if let Some(reason) = reason {
             // SAFETY: `reason` returns `NSString`.
             unsafe { util::display_string(&reason, f)? };

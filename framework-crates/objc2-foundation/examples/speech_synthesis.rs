@@ -12,7 +12,7 @@ use std::thread;
 use std::time::Duration;
 
 use objc2::rc::Retained;
-use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+use objc2::{extern_class, msg_send, ClassType};
 use objc2_foundation::{ns_string, NSObject, NSString};
 
 #[cfg(target_os = "macos")]
@@ -35,7 +35,7 @@ mod implementation {
     impl Synthesizer {
         // Uses default voice
         pub(crate) fn new() -> Retained<Self> {
-            unsafe { msg_send_id![Self::class(), new] }
+            unsafe { msg_send![Self::class(), new] }
         }
 
         fn set_rate(&self, rate: f32) {
@@ -110,7 +110,7 @@ mod implementation {
 
     impl Synthesizer {
         pub(crate) fn new() -> Retained<Self> {
-            unsafe { msg_send_id![Self::class(), new] }
+            unsafe { msg_send![Self::class(), new] }
         }
 
         pub(crate) fn speak(&self, utterance: &Utterance) {
@@ -132,7 +132,7 @@ mod implementation {
 
     impl Utterance {
         pub(crate) fn new(string: &NSString) -> Retained<Self> {
-            unsafe { msg_send_id![Self::alloc(), initWithString: string] }
+            unsafe { msg_send![Self::alloc(), initWithString: string] }
         }
 
         pub(crate) fn set_rate(&self, rate: f32) {

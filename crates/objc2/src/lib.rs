@@ -25,13 +25,12 @@
 //! Next, we initialize this object. It is ensured to be deallocated using
 //! [`rc::Retained`].
 //! Now we're free to send messages to the object to our hearts desire using
-//! the [`msg_send!`] or [`msg_send_id!`] macros (depending on the return type
-//! of the method).
+//! the [`msg_send!`] macro.
 //! Finally, the `Retained` goes out of scope, and the object is released and
 //! deallocated.
 //!
 //! ```
-//! use objc2::{msg_send, msg_send_id, AllocAnyThread, ClassType};
+//! use objc2::{msg_send, AllocAnyThread, ClassType};
 //! use objc2::ffi::NSUInteger;
 //! use objc2::rc::Retained;
 //! use objc2::runtime::{NSObject, NSObjectProtocol};
@@ -39,7 +38,7 @@
 //! // Creation
 //!
 //! let obj1: Retained<NSObject> = unsafe {
-//!     msg_send_id![NSObject::alloc(), init]
+//!     msg_send![NSObject::alloc(), init]
 //! };
 //! // Or
 //! let obj2 = NSObject::new();
@@ -55,7 +54,7 @@
 //! };
 //! assert!(is_kind);
 //!
-//! let obj1_self: Retained<NSObject> = unsafe { msg_send_id![&obj1, self] };
+//! let obj1_self: Retained<NSObject> = unsafe { msg_send![&obj1, self] };
 //! assert_eq!(obj1, obj1_self);
 //!
 //! // Deallocation on drop

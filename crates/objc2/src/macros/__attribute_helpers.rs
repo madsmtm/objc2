@@ -72,7 +72,7 @@ macro_rules! __extract_and_apply_cfg_attributes {
 /// 2. The requested method family, if any was present.
 ///
 ///    One of `new`, `alloc`, `init`, `copy`, `mutableCopy` or `none`.
-///    ($($method_family:ident)?)
+///    ($($method_family:tt)*)
 ///
 /// 3. The `optional` attribute, if any.
 ///    ($(#[optional])?)
@@ -183,7 +183,7 @@ macro_rules! __extract_method_attributes_inner {
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__handle_duplicate!("method`/`method_id"; $($method)*);
+        $crate::__handle_duplicate!("method"; $($method)*);
         $crate::__extract_method_attributes_inner! {
             ($($rest)*)
 

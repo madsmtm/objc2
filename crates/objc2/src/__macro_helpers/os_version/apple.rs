@@ -9,7 +9,7 @@ use super::OSVersion;
 use crate::rc::{autoreleasepool, Allocated, Retained};
 use crate::runtime::__nsstring::{nsstring_to_str, UTF8_ENCODING};
 use crate::runtime::{NSObject, NSObjectProtocol};
-use crate::{class, msg_send_id};
+use crate::{class, msg_send};
 
 /// The deployment target for the current OS.
 pub(crate) const DEPLOYMENT_TARGET: OSVersion = {
@@ -208,11 +208,11 @@ fn version_from_plist() -> OSVersion {
             let path = path.as_os_str().as_bytes();
 
             // SAFETY: Allocating a string is valid.
-            let alloc: Allocated<NSObject> = unsafe { msg_send_id![class!(NSString), alloc] };
+            let alloc: Allocated<NSObject> = unsafe { msg_send![class!(NSString), alloc] };
             // SAFETY: The bytes are valid, and the length is correct.
             unsafe {
                 let bytes_ptr: *const c_void = path.as_ptr().cast();
-                msg_send_id![
+                msg_send![
                     alloc,
                     initWithBytes: bytes_ptr,
                     length: path.len(),
@@ -225,12 +225,12 @@ fn version_from_plist() -> OSVersion {
                 .as_ptr()
                 .cast();
             // SAFETY: The path is NULL terminated.
-            unsafe { msg_send_id![class!(NSString), stringWithUTF8String: path] }
+            unsafe { msg_send![class!(NSString), stringWithUTF8String: path] }
         };
 
         // SAFETY: dictionaryWithContentsOfFile: is safe to call.
         let data: Option<Retained<NSObject>> =
-            unsafe { msg_send_id![class!(NSDictionary), dictionaryWithContentsOfFile: &*path] };
+            unsafe { msg_send![class!(NSDictionary), dictionaryWithContentsOfFile: &*path] };
 
         let data = data.expect(
             "`/System/Library/CoreServices/SystemVersion.plist` must be readable, and contain a valid PList",
@@ -245,10 +245,9 @@ fn version_from_plist() -> OSVersion {
         };
         // SAFETY: The lookup key is NULL terminated.
         let lookup_key: Retained<NSObject> =
-            unsafe { msg_send_id![class!(NSString), stringWithUTF8String: lookup_key] };
+            unsafe { msg_send![class!(NSString), stringWithUTF8String: lookup_key] };
 
-        let version: Retained<NSObject> =
-            unsafe { msg_send_id![&data, objectForKey: &*lookup_key] };
+        let version: Retained<NSObject> = unsafe { msg_send![&data, objectForKey: &*lookup_key] };
 
         assert!(
             version.isKindOfClass(class!(NSString)),

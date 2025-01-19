@@ -1,4 +1,4 @@
-error[E0277]: the trait bound `&mut Retained<NSObject>: ConvertReturn` is not satisfied
+error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: &mut Retained<NSObject> = unsafe { msg_send![obj, a] };
@@ -16,22 +16,21 @@ error[E0277]: the trait bound `&mut Retained<NSObject>: ConvertReturn` is not sa
           and $N others
   = note: required for `&mut Retained<NSObject>` to implement `Encode`
   = note: required for `&mut Retained<NSObject>` to implement `EncodeReturn`
-  = note: required for `&mut Retained<NSObject>` to implement `ConvertReturn`
-note: required by a bound in `MsgSend::send_message`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send.rs
-  |
-  |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
-  |               ------------ required by a bound in this associated function
-...
-  |         R: ConvertReturn,
-  |            ^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
+  = note: required for `&mut Retained<NSObject>` to implement `ConvertReturn<MethodFamily<6>>`
+  = note: required for `MethodFamily<6>` to implement `RetainSemantics<*const NSObject, &mut Retained<NSObject>, KindSendMessage>`
+  = note: 1 redundant requirement hidden
+  = note: required for `MethodFamily<6>` to implement `RetainSemantics<&Retained<NSObject>, &mut Retained<NSObject>, KindSendMessage>`
+  = note: required for `MethodFamily<6>` to implement `MsgSend<&Retained<NSObject>, &mut Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: param] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<NSObject>`
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^
+  |                          |
+  |                          the trait `Encode` is not implemented for `Retained<NSObject>`
+  |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -47,20 +46,20 @@ error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
   = note: required for `Retained<NSObject>` to implement `ConvertArgument`
   = note: required for `(Retained<NSObject>,)` to implement `ConvertArguments`
 note: required by a bound in `MsgSend::send_message`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
-  |               ------------ required by a bound in this associated function
-  |     where
-  |         A: ConvertArguments,
-  |            ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
+  |     unsafe fn send_message<A: ConvertArguments>(receiver: Receiver, sel: Sel, args: A) -> Return;
+  |                               ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: &param] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Retained<NSObject>`
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |                          |
+  |                          the trait `RefEncode` is not implemented for `Retained<NSObject>`
+  |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `RefEncode`:
             &'a T
@@ -77,20 +76,20 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
   = note: required for `&Retained<NSObject>` to implement `ConvertArgument`
   = note: required for `(&Retained<NSObject>,)` to implement `ConvertArguments`
 note: required by a bound in `MsgSend::send_message`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
-  |               ------------ required by a bound in this associated function
-  |     where
-  |         A: ConvertArguments,
-  |            ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
+  |     unsafe fn send_message<A: ConvertArguments>(receiver: Receiver, sel: Sel, args: A) -> Return;
+  |                               ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: Some(&param)] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Retained<NSObject>`
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |                          |
+  |                          the trait `RefEncode` is not implemented for `Retained<NSObject>`
+  |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `RefEncode`:
             &'a T
@@ -109,20 +108,20 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
   = note: required for `Option<&Retained<NSObject>>` to implement `ConvertArgument`
   = note: required for `(Option<&Retained<NSObject>>,)` to implement `ConvertArguments`
 note: required by a bound in `MsgSend::send_message`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
-  |               ------------ required by a bound in this associated function
-  |     where
-  |         A: ConvertArguments,
-  |            ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
+  |     unsafe fn send_message<A: ConvertArguments>(receiver: Receiver, sel: Sel, args: A) -> Return;
+  |                               ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: param] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Retained<NSObject>`
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^
+  |                          |
+  |                          the trait `RefEncode` is not implemented for `Retained<NSObject>`
+  |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `RefEncode`:
             &'a T
@@ -139,20 +138,20 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
   = note: required for `*mut Retained<NSObject>` to implement `ConvertArgument`
   = note: required for `(*mut Retained<NSObject>,)` to implement `ConvertArguments`
 note: required by a bound in `MsgSend::send_message`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
-  |               ------------ required by a bound in this associated function
-  |     where
-  |         A: ConvertArguments,
-  |            ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
+  |     unsafe fn send_message<A: ConvertArguments>(receiver: Receiver, sel: Sel, args: A) -> Return;
+  |                               ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: param] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Retained<NSObject>`
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^
+  |                          |
+  |                          the trait `RefEncode` is not implemented for `Retained<NSObject>`
+  |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `RefEncode`:
             &'a T
@@ -170,11 +169,8 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
   = note: required for `&mut &mut Retained<NSObject>` to implement `ConvertArgument`
   = note: required for `(&mut &mut Retained<NSObject>,)` to implement `ConvertArguments`
 note: required by a bound in `MsgSend::send_message`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
   |
-  |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
-  |               ------------ required by a bound in this associated function
-  |     where
-  |         A: ConvertArguments,
-  |            ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
+  |     unsafe fn send_message<A: ConvertArguments>(receiver: Receiver, sel: Sel, args: A) -> Return;
+  |                               ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

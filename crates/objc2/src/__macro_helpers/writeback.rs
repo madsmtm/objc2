@@ -225,7 +225,7 @@ mod tests {
 
     use super::*;
     use crate::rc::{autoreleasepool, Allocated, RcTestObject, ThreadTestData};
-    use crate::{msg_send, msg_send_id, ClassType};
+    use crate::{msg_send, ClassType};
 
     #[test]
     fn test_bool_error() {
@@ -319,7 +319,7 @@ mod tests {
 
         autoreleasepool(|_| {
             let obj: Option<Retained<RcTestObject>> =
-                unsafe { msg_send_id![cls, idAndShouldError: false, error: &mut err] };
+                unsafe { msg_send![cls, idAndShouldError: false, error: &mut err] };
             expected.alloc += 1;
             expected.init += 1;
             if !AUTORELEASE_SKIPPED {
@@ -357,7 +357,7 @@ mod tests {
         // Succeeds
         let mut error: Option<Retained<RcTestObject>> = None;
         let res: Allocated<RcTestObject> = unsafe {
-            msg_send_id![RcTestObject::class(), allocAndShouldError: false, error: &mut error]
+            msg_send![RcTestObject::class(), allocAndShouldError: false, error: &mut error]
         };
         expected.alloc += 1;
         expected.assert_current();
@@ -374,7 +374,7 @@ mod tests {
         let res: Retained<RcTestObject> = autoreleasepool(|_pool| {
             let mut error = None;
             let res: Allocated<RcTestObject> = unsafe {
-                msg_send_id![RcTestObject::class(), allocAndShouldError: true, error: &mut error]
+                msg_send![RcTestObject::class(), allocAndShouldError: true, error: &mut error]
             };
             expected.alloc += 1;
             expected.init += 1;

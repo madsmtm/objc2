@@ -35,7 +35,7 @@ pub unsafe trait CopyingHelper: Message {
     ///
     /// The implementation for `NSString` has itself (`NSString`) here, while
     /// `NSMutableString` instead has `NSString`.
-    type Result: ?Sized + Message;
+    type Result: Message;
 }
 
 /// A helper type for implementing [`NSMutableCopying`].
@@ -56,7 +56,7 @@ pub unsafe trait MutableCopyingHelper: Message {
     ///
     /// The implementation for `NSString` has `NSMutableString` here, while
     /// `NSMutableString` has itself (`NSMutableString`).
-    type Result: ?Sized + Message;
+    type Result: Message;
 }
 
 // SAFETY: Superclasses are not in general required to implement the same
@@ -116,7 +116,7 @@ extern_protocol!(
     /// Implement `NSCopying` for a custom class.
     ///
     /// ```
-    /// use objc2::{define_class, msg_send_id, AllocAnyThread, DefinedClass};
+    /// use objc2::{define_class, msg_send, AllocAnyThread, DefinedClass};
     /// use objc2::rc::Retained;
     /// use objc2::runtime::NSZone;
     /// use objc2_foundation::{CopyingHelper, NSCopying, NSObject};
@@ -131,7 +131,7 @@ extern_protocol!(
     ///         fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
     ///             // Create new class, and transfer ivars
     ///             let new = Self::alloc().set_ivars(self.ivars().clone());
-    ///             unsafe { msg_send_id![super(new), init] }
+    ///             unsafe { msg_send![super(new), init] }
     ///         }
     ///     }
     /// );
@@ -147,7 +147,8 @@ extern_protocol!(
         ///
         /// The output type is the immutable counterpart of the object, which
         /// is usually `Self`, but e.g. `NSMutableString` returns `NSString`.
-        #[method_id(copy)]
+        #[method(copy)]
+        #[unsafe(method_family = copy)]
         #[optional]
         fn copy(&self) -> Retained<Self::Result>
         where
@@ -162,7 +163,8 @@ extern_protocol!(
         /// # Safety
         ///
         /// The zone pointer must be valid or NULL.
-        #[method_id(copyWithZone:)]
+        #[method(copyWithZone:)]
+        #[unsafe(method_family = copy)]
         unsafe fn copyWithZone(&self, zone: *mut NSZone) -> Retained<Self::Result>
         where
             Self: CopyingHelper;
@@ -215,7 +217,8 @@ extern_protocol!(
         ///
         /// The output type is the mutable counterpart of the object. E.g. both
         /// `NSString` and `NSMutableString` return `NSMutableString`.
-        #[method_id(mutableCopy)]
+        #[method(mutableCopy)]
+        #[unsafe(method_family = mutableCopy)]
         #[optional]
         fn mutableCopy(&self) -> Retained<Self::Result>
         where
@@ -230,7 +233,8 @@ extern_protocol!(
         /// # Safety
         ///
         /// The zone pointer must be valid or NULL.
-        #[method_id(mutableCopyWithZone:)]
+        #[method(mutableCopyWithZone:)]
+        #[unsafe(method_family = mutableCopy)]
         unsafe fn mutableCopyWithZone(&self, zone: *mut NSZone) -> Retained<Self::Result>
         where
             Self: MutableCopyingHelper;

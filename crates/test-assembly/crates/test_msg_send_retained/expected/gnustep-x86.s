@@ -67,7 +67,7 @@ handle_new_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<1_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)@PLT
 .Lfunc_end1:
 	.size	handle_new_fallible, .Lfunc_end1-handle_new_fallible
 
@@ -179,7 +179,7 @@ handle_init_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)@PLT
 .Lfunc_end4:
 	.size	handle_init_fallible, .Lfunc_end4-handle_init_fallible
 
@@ -370,7 +370,7 @@ handle_copy_fallible:
 .LBB9_2:
 	lea	eax, [ebx + .Lanon.[ID].3@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)@PLT
 .Lfunc_end9:
 	.size	handle_copy_fallible, .Lfunc_end9-handle_copy_fallible
 
@@ -437,7 +437,7 @@ handle_mutable_copy_fallible:
 .LBB11_2:
 	lea	eax, [ebx + .Lanon.[ID].4@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)@PLT
 .Lfunc_end11:
 	.size	handle_mutable_copy_fallible, .Lfunc_end11-handle_mutable_copy_fallible
 
@@ -551,7 +551,7 @@ handle_autoreleased_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<6_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)@PLT
 .Lfunc_end14:
 	.size	handle_autoreleased_fallible, .Lfunc_end14-handle_autoreleased_fallible
 
@@ -572,8 +572,8 @@ handle_with_out_param:
 	call	.L15$pb
 .L15$pb:
 	pop	ebx
-.Ltmp25:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp25-.L15$pb)
+.Ltmp27:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp27-.L15$pb)
 	mov	eax, dword ptr [ebp]
 	mov	dword ptr [esp + 24], eax
 .Ltmp15:
@@ -587,6 +587,10 @@ handle_with_out_param:
 	mov	dword ptr [esp], esi
 	call	eax
 .Ltmp18:
+.Ltmp19:
+	mov	dword ptr [esp], eax
+	call	objc_retainAutoreleasedReturnValue@PLT
+.Ltmp20:
 	mov	esi, eax
 	mov	eax, dword ptr [ebp]
 	mov	dword ptr [esp], eax
@@ -594,31 +598,30 @@ handle_with_out_param:
 	mov	eax, dword ptr [esp + 24]
 	mov	dword ptr [esp], eax
 	call	objc_release@PLT
-	mov	dword ptr [esp], esi
-	call	objc_retainAutoreleasedReturnValue@PLT
+	mov	eax, esi
 	add	esp, 28
 	pop	esi
 	pop	edi
 	pop	ebx
 	pop	ebp
 	ret
-.LBB15_3:
-.Ltmp19:
+.LBB15_4:
+.Ltmp21:
 	mov	esi, eax
 	mov	eax, dword ptr [ebp]
-.Ltmp20:
+.Ltmp22:
 	mov	dword ptr [esp], eax
 	call	objc_retain@PLT
-.Ltmp21:
-.Ltmp22:
+.Ltmp23:
+.Ltmp24:
 	mov	eax, dword ptr [esp + 24]
 	mov	dword ptr [esp], eax
 	call	objc_release@PLT
-.Ltmp23:
+.Ltmp25:
 	mov	dword ptr [esp], esi
 	call	_Unwind_Resume@PLT
-.LBB15_6:
-.Ltmp24:
+.LBB15_7:
+.Ltmp26:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end15:
 	.size	handle_with_out_param, .Lfunc_end15-handle_with_out_param
@@ -634,19 +637,19 @@ GCC_except_table15:
 	.uleb128 .Lcst_end0-.Lcst_begin0
 .Lcst_begin0:
 	.uleb128 .Ltmp15-.Lfunc_begin0
-	.uleb128 .Ltmp18-.Ltmp15
-	.uleb128 .Ltmp19-.Lfunc_begin0
-	.byte	0
-	.uleb128 .Ltmp18-.Lfunc_begin0
-	.uleb128 .Ltmp20-.Ltmp18
-	.byte	0
+	.uleb128 .Ltmp20-.Ltmp15
+	.uleb128 .Ltmp21-.Lfunc_begin0
 	.byte	0
 	.uleb128 .Ltmp20-.Lfunc_begin0
-	.uleb128 .Ltmp23-.Ltmp20
-	.uleb128 .Ltmp24-.Lfunc_begin0
+	.uleb128 .Ltmp22-.Ltmp20
+	.byte	0
+	.byte	0
+	.uleb128 .Ltmp22-.Lfunc_begin0
+	.uleb128 .Ltmp25-.Ltmp22
+	.uleb128 .Ltmp26-.Lfunc_begin0
 	.byte	1
-	.uleb128 .Ltmp23-.Lfunc_begin0
-	.uleb128 .Lfunc_end15-.Ltmp23
+	.uleb128 .Ltmp25-.Lfunc_begin0
+	.uleb128 .Lfunc_end15-.Ltmp25
 	.byte	0
 	.byte	0
 .Lcst_end0:
@@ -668,7 +671,7 @@ GCC_except_table15:
 	.p2align	2, 0x0
 .Lanon.[ID].1:
 	.long	.Lanon.[ID].0
-	.asciz	"9\000\000\000\r\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\017\000\000\000\005\000\000"
 	.size	.Lanon.[ID].1, 16
 
 	.type	.Lanon.[ID].2,@object
@@ -676,7 +679,7 @@ GCC_except_table15:
 	.p2align	2, 0x0
 .Lanon.[ID].2:
 	.long	.Lanon.[ID].0
-	.asciz	"9\000\000\000\034\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\036\000\000\000\005\000\000"
 	.size	.Lanon.[ID].2, 16
 
 	.type	.Lanon.[ID].3,@object
@@ -684,7 +687,7 @@ GCC_except_table15:
 	.p2align	2, 0x0
 .Lanon.[ID].3:
 	.long	.Lanon.[ID].0
-	.asciz	"9\000\000\0008\000\000\000\005\000\000"
+	.asciz	"9\000\000\000:\000\000\000\005\000\000"
 	.size	.Lanon.[ID].3, 16
 
 	.type	.Lanon.[ID].4,@object
@@ -692,7 +695,7 @@ GCC_except_table15:
 	.p2align	2, 0x0
 .Lanon.[ID].4:
 	.long	.Lanon.[ID].0
-	.asciz	"9\000\000\000B\000\000\000\005\000\000"
+	.asciz	"9\000\000\000D\000\000\000\005\000\000"
 	.size	.Lanon.[ID].4, 16
 
 	.type	.Lanon.[ID].5,@object
@@ -700,7 +703,7 @@ GCC_except_table15:
 	.p2align	2, 0x0
 .Lanon.[ID].5:
 	.long	.Lanon.[ID].0
-	.asciz	"9\000\000\000V\000\000\000\005\000\000"
+	.asciz	"9\000\000\000X\000\000\000\005\000\000"
 	.size	.Lanon.[ID].5, 16
 
 	.hidden	DW.ref.rust_eh_personality

@@ -326,13 +326,13 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 /// Note that this is mostly useful for preventing leaks (as any Objective-C
 /// method may autorelease internally - see also [`autoreleasepool_leaking`]).
 /// If implementing an interface to an object, you should try to return
-/// retained pointers with [`msg_send_id!`] wherever you can instead, since
+/// retained pointers with [`msg_send!`] wherever you can instead, since
 /// it is usually more efficient, safer, and having to use this function can
 /// be quite cumbersome for users.
 ///
 /// [apple-autorelease]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
 /// [The pool]: AutoreleasePool
-/// [`msg_send_id!`]: crate::msg_send_id
+/// [`msg_send!`]: crate::msg_send
 ///
 ///
 /// # Restrictions

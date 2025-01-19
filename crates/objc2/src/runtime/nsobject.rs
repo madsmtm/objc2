@@ -7,9 +7,7 @@ use crate::ffi::NSUInteger;
 use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject, Sel};
 use crate::DowncastTarget;
-use crate::{
-    extern_methods, msg_send, msg_send_id, AllocAnyThread, ClassType, Message, ProtocolType,
-};
+use crate::{extern_methods, msg_send, AllocAnyThread, ClassType, Message, ProtocolType};
 
 /// The root class of most Objective-C class hierarchies.
 ///
@@ -267,7 +265,7 @@ pub unsafe trait NSObjectProtocol {
     where
         Self: Sized + Message,
     {
-        unsafe { msg_send_id![self, description] }
+        unsafe { msg_send![self, description] }
     }
 
     /// A textual representation of the object to use when debugging.
@@ -286,7 +284,7 @@ pub unsafe trait NSObjectProtocol {
     where
         Self: Sized + Message,
     {
-        unsafe { msg_send_id![self, debugDescription] }
+        unsafe { msg_send![self, debugDescription] }
     }
 
     /// Check whether the receiver is a subclass of the `NSProxy` root class
@@ -397,7 +395,8 @@ extern_methods!(
         /// [`init`][Self::init].
         ///
         /// [`alloc`]: AllocAnyThread::alloc
-        #[method_id(new)]
+        #[method(new)]
+        #[unsafe(method_family = new)]
         pub fn new() -> Retained<Self>;
 
         /// Initialize an already allocated object.
@@ -415,10 +414,12 @@ extern_methods!(
         ///
         /// let obj = NSObject::init(NSObject::alloc());
         /// ```
-        #[method_id(init)]
+        #[method(init)]
+        #[unsafe(method_family = init)]
         pub fn init(this: Allocated<Self>) -> Retained<Self>;
 
         #[method(doesNotRecognizeSelector:)]
+        #[unsafe(method_family = none)]
         fn doesNotRecognizeSelector_inner(&self, sel: Sel);
 
         /// Handle messages the object doesn’t recognize.

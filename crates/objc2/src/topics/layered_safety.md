@@ -104,7 +104,7 @@ let hash_code: NSUInteger = unsafe {
 ```
 
 
-## Layer 3a: `msg_send!`
+## Layer 3: `msg_send!`
 
 Introducing macros: [`msg_send!`] can abstract away the tediousness of writing
 the selector expression, as well as ensuring that the number of arguments to
@@ -145,7 +145,7 @@ let _: () = unsafe { msg_send![obj, release] };
 [`NSData`]: https://developer.apple.com/documentation/foundation/nsdata?language=objc
 
 
-## Layer 3b: `msg_send_id!`
+## Layer 4: `Retained<T>`
 
 As you can see in the new example involving `NSData`, it can be quite tedious
 to remember the `release` call when you're done with the object. Furthermore,
@@ -153,12 +153,11 @@ whether you need to `retain` and `release` the object involves subtle rules
 that depend on the name of the method!
 
 Objective-C solved this years ago with the introduction of "ARC". Similarly,
-we can solve this with [`msg_send_id!`] and the smart pointer [`rc::Retained`],
-which work together to ensure that the memory management of the object is done
-correctly.
+we can solve this by changing the return value to the smart pointer
+[`Retained`], which works together with `msg_send!` to ensure that the
+memory management of the object is done correctly.
 
-[`msg_send_id!`]: crate::msg_send_id
-[`rc::Retained`]: crate::rc::Retained
+[`Retained`]: crate::rc::Retained
 
 
 ### Example
@@ -169,15 +168,15 @@ The `NSData` example again.
 use objc2::ffi::NSUInteger;
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
-use objc2::{class, msg_send, msg_send_id};
+use objc2::{class, msg_send};
 
-let obj: Retained<NSObject> = unsafe { msg_send_id![class!(NSData), new] };
+let obj: Retained<NSObject> = unsafe { msg_send![class!(NSData), new] };
 let length: NSUInteger = unsafe { msg_send![&obj, length] };
 // `obj` goes out of scope, `release` is automatically sent to the object
 ```
 
 
-## Layer 4: `extern_x` macros
+## Layer 5: `extern_x!` macros
 
 There's still a problem with the above: we can't actually make a reusable
 `hash` nor `length` function, since `NSObject` can refer to any object, and
@@ -189,9 +188,9 @@ type resembling `NSObject`, but which represents the `NSData` class instead.
 This allows us to make a completely safe API for downstream users!
 
 Along with this, we can now use the [`extern_methods!`] macro to help with
-defining our methods, which is also a big improvement over the `msg_send!` /
-`msg_send_id!` macros, since it allows us to directly "see" the types, instead
-of having them work by type-inference.
+defining our methods, which is also a big improvement over the `msg_send!`
+macro, since it allows us to directly "see" the types, instead of having them
+work by type-inference.
 
 [`extern_class!`]: crate::extern_class
 [`extern_methods!`]: crate::extern_methods
@@ -215,7 +214,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSData {
-        #[method_id(new)]
+        #[method(new)]
         pub fn new() -> Retained<Self>;
 
         #[method(length)]
@@ -228,7 +227,7 @@ let length = obj.length();
 ```
 
 
-## Layer 5: Framework crates
+## Layer 6: Framework crates
 
 Apple has a _lot_ of Objective-C code, and manually defining an interface to
 all of it would take a lifetime. Especially keeping track of which methods are

@@ -1,21 +1,21 @@
 //! Test that out parameters are handled correctly.
-use objc2::__macro_helpers::MsgSend;
+use objc2::__macro_helpers::{MsgSend, NoneFamily};
 use objc2::rc::Retained;
 use objc2::runtime::{NSObject, Sel};
 
 #[no_mangle]
 unsafe fn nonnull_nonnull(obj: &NSObject, sel: Sel, param: &mut Retained<NSObject>) -> usize {
-    MsgSend::send_message(obj, sel, (param,))
+    NoneFamily::send_message(obj, sel, (param,))
 }
 
 #[no_mangle]
 unsafe fn null_nonnull(obj: &NSObject, sel: Sel, param: Option<&mut Retained<NSObject>>) -> usize {
-    MsgSend::send_message(obj, sel, (param,))
+    NoneFamily::send_message(obj, sel, (param,))
 }
 
 #[no_mangle]
 unsafe fn nonnull_null(obj: &NSObject, sel: Sel, param: &mut Option<Retained<NSObject>>) -> usize {
-    MsgSend::send_message(obj, sel, (param,))
+    NoneFamily::send_message(obj, sel, (param,))
 }
 
 #[no_mangle]
@@ -24,7 +24,7 @@ unsafe fn null_null(
     sel: Sel,
     param: Option<&mut Option<Retained<NSObject>>>,
 ) -> usize {
-    MsgSend::send_message(obj, sel, (param,))
+    NoneFamily::send_message(obj, sel, (param,))
 }
 
 #[no_mangle]
@@ -34,7 +34,7 @@ unsafe fn two_nonnull_nonnull(
     param1: &mut Retained<NSObject>,
     param2: &mut Retained<NSObject>,
 ) -> usize {
-    MsgSend::send_message(obj, sel, (param1, param2))
+    NoneFamily::send_message(obj, sel, (param1, param2))
 }
 
 //

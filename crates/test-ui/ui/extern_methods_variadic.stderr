@@ -29,19 +29,6 @@ error: variadic methods are not yet supported
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method_id(a:)]
-  | |         fn variadic_id(arg: i32, arg2: ...) -> Retained<NSObject>;
-  | |     }
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__method_msg_send_id` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: variadic methods are not yet supported
- --> ui/extern_methods_variadic.rs
-  |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
   | |         #[method(a:_)]
   | |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
   | |     }
@@ -61,12 +48,6 @@ error: only foreign, `unsafe extern "C"`, or `unsafe extern "C-unwind"` function
   |
   |         fn variadic_instance(&self, arg: i32, ...);
   |                                               ^^^
-
-error: only foreign, `unsafe extern "C"`, or `unsafe extern "C-unwind"` functions may have a C-variadic arg
- --> ui/extern_methods_variadic.rs
-  |
-  |         fn variadic_id(arg: i32, arg2: ...) -> Retained<NSObject>;
-  |                                  ^^^^^^^^^
 
 error: only foreign, `unsafe extern "C"`, or `unsafe extern "C-unwind"` functions may have a C-variadic arg
  --> ui/extern_methods_variadic.rs
@@ -96,21 +77,6 @@ error[E0658]: C-variadic functions are unstable
   | |     unsafe impl MyObject {
   | |         #[method(a:)]
   | |         fn variadic_instance(&self, arg: i32, ...);
-  | |     }
-  | | );
-  | |_^
-  |
-  = note: see issue #44930 <https://github.com/rust-lang/rust/issues/44930> for more information
-  = help: add `#![feature(c_variadic)]` to the crate attributes to enable
-  = note: this error originates in the macro `$crate::__extern_methods_rewrite_methods` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0658]: C-variadic functions are unstable
- --> ui/extern_methods_variadic.rs
-  |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
-  | |         #[method_id(a:)]
-  | |         fn variadic_id(arg: i32, arg2: ...) -> Retained<NSObject>;
   | |     }
   | | );
   | |_^

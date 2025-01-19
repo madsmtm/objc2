@@ -58,7 +58,7 @@ impl<T> Log2Alignment for T {
 ///
 /// use objc2::rc::Retained;
 /// use objc2::runtime::{AnyClass, AnyObject, ClassBuilder, NSObject, Sel};
-/// use objc2::{sel, msg_send, msg_send_id, ClassType};
+/// use objc2::{sel, msg_send, ClassType};
 ///
 /// fn register_class() -> &'static AnyClass {
 ///     // Inherit from NSObject
@@ -100,8 +100,8 @@ impl<T> Log2Alignment for T {
 ///         number: u32,
 ///     ) -> *mut NSObject {
 ///         let obj: Option<Retained<NSObject>> = unsafe {
-///             msg_send_id![
-///                 msg_send_id![cls, alloc],
+///             msg_send![
+///                 msg_send![cls, alloc],
 ///                 initWithNumber: number,
 ///             ]
 ///         };
@@ -144,7 +144,7 @@ impl<T> Log2Alignment for T {
 /// let cls = register_class();
 ///
 /// let obj: Retained<NSObject> = unsafe {
-///     msg_send_id![cls, withNumber: 42u32]
+///     msg_send![cls, withNumber: 42u32]
 /// };
 ///
 /// let n: u32 = unsafe { msg_send![&obj, number] };
@@ -581,9 +581,7 @@ mod tests {
     use crate::encode::RefEncode;
     use crate::rc::Retained;
     use crate::runtime::{NSObject, NSObjectProtocol};
-    use crate::{
-        define_class, extern_methods, msg_send, msg_send_id, test_utils, ClassType, ProtocolType,
-    };
+    use crate::{define_class, extern_methods, msg_send, test_utils, ClassType, ProtocolType};
 
     // TODO: Remove once c"" strings are in MSRV
     fn c(s: &str) -> CString {
@@ -901,7 +899,7 @@ mod tests {
 
         extern_methods!(
             unsafe impl Custom {
-                #[method_id(new)]
+                #[method(new)]
                 fn new() -> Retained<Self>;
             }
         );
@@ -1069,7 +1067,7 @@ mod tests {
         );
 
         // Ensure our ivar loading works correctly
-        let obj: Retained<NSObject> = unsafe { msg_send_id![subclass, new] };
+        let obj: Retained<NSObject> = unsafe { msg_send![subclass, new] };
         let ptr = unsafe { *subclass_ivar3.load::<*const AnyObject>(&obj) };
         assert!(ptr.is_null());
 

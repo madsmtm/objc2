@@ -25,7 +25,7 @@ LPC1_0:
 	mov	r0, r5
 	mov	r1, r4
 	mov	lr, pc
-	b	SYM(<objc2::__macro_helpers::method_family::MethodFamily<1_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
+	b	SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)
 
 	.globl	_handle_alloc
 	.p2align	2
@@ -58,7 +58,7 @@ LPC4_0:
 	mov	r0, r5
 	mov	r1, r4
 	mov	lr, pc
-	b	SYM(<objc2::__macro_helpers::method_family::MethodFamily<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
+	b	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
 
 	.globl	_handle_alloc_init
 	.p2align	2
@@ -116,7 +116,7 @@ LBB9_1:
 LPC9_0:
 	add	r0, pc, r0
 	mov	lr, pc
-	b	SYM(<objc2::__macro_helpers::method_family::MethodFamily<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
+	b	SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)
 
 	.globl	_handle_mutable_copy
 	.p2align	2
@@ -139,7 +139,7 @@ LBB11_1:
 LPC11_0:
 	add	r0, pc, r0
 	mov	lr, pc
-	b	SYM(<objc2::__macro_helpers::method_family::MethodFamily<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
+	b	SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
 
 	.globl	_handle_autoreleased
 	.p2align	2
@@ -191,7 +191,7 @@ LPC14_0:
 	mov	r0, r5
 	mov	r1, r4
 	mov	lr, pc
-	b	SYM(<objc2::__macro_helpers::method_family::MethodFamily<6_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
+	b	SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)
 
 	.globl	_handle_with_out_param
 	.p2align	2
@@ -239,6 +239,14 @@ Ltmp0:
 	mov	r2, r6
 	bl	_objc_msgSend
 Ltmp1:
+	@ InlineAsm Start
+	mov	r7, r7
+	@ InlineAsm End
+	mov	r1, #4
+	str	r1, [sp, #16]
+Ltmp2:
+	bl	_objc_retainAutoreleasedReturnValue
+Ltmp3:
 	mov	r4, r0
 	ldr	r0, [sp, #4]
 	ldr	r0, [r0]
@@ -248,13 +256,6 @@ Ltmp1:
 	ldr	r0, [sp, #8]
 	str	r5, [sp, #16]
 	bl	_objc_release
-	@ InlineAsm Start
-	mov	r7, r7
-	@ InlineAsm End
-	str	r5, [sp, #16]
-	mov	r0, r4
-	bl	_objc_retainAutoreleasedReturnValue
-	mov	r4, r0
 	add	r0, sp, #12
 	bl	__Unwind_SjLj_Unregister
 	mov	r0, r4
@@ -264,7 +265,7 @@ Ltmp1:
 	sub	sp, r7, #24
 	pop	{r8, r10, r11}
 	pop	{r4, r5, r6, r7, pc}
-LBB15_2:
+LBB15_3:
 	lsl	r0, r0, #2
 	adr	r1, LJTI15_0
 	ldr	r0, [r0, r1]
@@ -272,51 +273,52 @@ LBB15_2:
 	.p2align	2
 LJTI15_0:
 	.data_region jt32
-	.long	LBB15_4-LJTI15_0
-	.long	LBB15_8-LJTI15_0
-	.long	LBB15_8-LJTI15_0
+	.long	LBB15_5-LJTI15_0
+	.long	LBB15_10-LJTI15_0
+	.long	LBB15_10-LJTI15_0
+	.long	LBB15_5-LJTI15_0
 	.end_data_region
-LBB15_4:
-Ltmp2:
+LBB15_5:
+Ltmp4:
 	ldr	r0, [sp, #20]
 	str	r0, [sp]
 	ldr	r0, [sp, #4]
 	ldr	r0, [r0]
 	mov	r1, #2
 	str	r1, [sp, #16]
-Ltmp3:
+Ltmp5:
 	bl	_objc_retain
-Ltmp4:
+Ltmp6:
 	ldr	r0, [sp, #8]
 	mov	r1, #3
 	str	r1, [sp, #16]
-Ltmp5:
-	bl	_objc_release
-Ltmp6:
-	b	LBB15_9
-LBB15_6:
-	ldr	r0, [sp, #16]
-	cmp	r0, #3
-	bls	LBB15_2
-	trap
-LBB15_8:
 Ltmp7:
-	ldr	r0, [sp, #20]
-	ldr	r0, [sp, #24]
-	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	bl	_objc_release
+Ltmp8:
+	b	LBB15_9
+LBB15_7:
+	ldr	r0, [sp, #16]
+	cmp	r0, #4
+	bls	LBB15_3
+	trap
 LBB15_9:
 	mvn	r0, #0
 	str	r0, [sp, #16]
 	ldr	r0, [sp]
 	mov	lr, pc
 	b	__Unwind_SjLj_Resume
+LBB15_10:
+Ltmp9:
+	ldr	r0, [sp, #20]
+	ldr	r0, [sp, #24]
+	mov	lr, pc
+	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
 	.p2align	2
 	.data_region
 LCPI15_0:
 	.long	Lexception0-(LPC15_0+8)
 LCPI15_1:
-	.long	LBB15_6-(LPC15_1+8)
+	.long	LBB15_7-(LPC15_1+8)
 	.end_data_region
 Lfunc_end0:
 	.section	__TEXT,__gcc_except_tab
@@ -336,6 +338,8 @@ Lcst_begin0:
 	.byte	1
 	.byte	2
 	.byte	1
+	.byte	3
+	.byte	0
 Lcst_end0:
 	.byte	127
 	.byte	0
@@ -352,27 +356,27 @@ l_anon.[ID].0:
 	.p2align	2, 0x0
 l_anon.[ID].1:
 	.long	l_anon.[ID].0
-	.asciz	"9\000\000\000\r\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\017\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].2:
 	.long	l_anon.[ID].0
-	.asciz	"9\000\000\000\034\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\036\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].3:
 	.long	l_anon.[ID].0
-	.asciz	"9\000\000\0008\000\000\000\005\000\000"
+	.asciz	"9\000\000\000:\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].4:
 	.long	l_anon.[ID].0
-	.asciz	"9\000\000\000B\000\000\000\005\000\000"
+	.asciz	"9\000\000\000D\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].5:
 	.long	l_anon.[ID].0
-	.asciz	"9\000\000\000V\000\000\000\005\000\000"
+	.asciz	"9\000\000\000X\000\000\000\005\000\000"
 
 	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
 	.p2align	2, 0x0

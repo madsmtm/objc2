@@ -1,3 +1,6 @@
+//! Test using deprecated `#[method_id(...)]`.
+#![deny(warnings)]
+use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 use objc2::{extern_class, extern_methods};
 
@@ -8,9 +11,8 @@ extern_class!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(foo)]
-        #[method(bar)]
-        fn selector_twice();
+        #[method_id(myMethod:)]
+        fn my_method(param: i32) -> Retained<Self>;
     }
 );
 

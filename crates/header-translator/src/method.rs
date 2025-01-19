@@ -767,32 +767,21 @@ impl fmt::Display for Method {
             writeln!(f, "        #[optional]")?;
         }
 
-        let method_kind = if self.memory_management == MemoryManagement::Normal {
-            "method"
-        } else {
-            "method_id"
-        };
         let error_trailing = if self.is_error { "_" } else { "" };
-        writeln!(
-            f,
-            "        #[{}({}{})]",
-            method_kind, self.selector, error_trailing
-        )?;
+        writeln!(f, "        #[method({}{})]", self.selector, error_trailing)?;
 
-        let id_mm_name = match &self.memory_management {
-            // MemoryManagement::IdAlloc => Some("alloc"), // Unsupported
-            MemoryManagement::IdCopy => Some("copy"),
-            MemoryManagement::IdMutableCopy => Some("mutableCopy"),
-            MemoryManagement::IdNew => Some("new"),
-            MemoryManagement::IdInit => Some("init"),
-            MemoryManagement::IdOther => Some("none"),
-            MemoryManagement::Normal => None,
+        let method_family = match &self.memory_management {
+            // MemoryManagement::IdAlloc => "alloc", // Unsupported
+            MemoryManagement::IdCopy => "copy",
+            MemoryManagement::IdMutableCopy => "mutableCopy",
+            MemoryManagement::IdNew => "new",
+            MemoryManagement::IdInit => "init",
+            MemoryManagement::IdOther => "none",
+            MemoryManagement::Normal => "none",
         };
-        if let Some(id_mm_name) = id_mm_name {
-            // TODO: Be explicit about when we emit this for better
-            // compile-times, and when we do it for soundness.
-            writeln!(f, "        #[unsafe(method_family = {id_mm_name})]")?;
-        };
+        // TODO: Be explicit about when we emit this for better
+        // compile-times, and when we do it for soundness.
+        writeln!(f, "        #[unsafe(method_family = {method_family})]")?;
 
         //
         // Signature

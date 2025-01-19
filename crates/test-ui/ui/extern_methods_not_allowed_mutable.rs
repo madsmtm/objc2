@@ -17,8 +17,8 @@ extern_methods!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method_id(testId)]
-        fn test_id(&mut self) -> Retained<Self>;
+        #[method(testRetained)]
+        fn test_retained(&mut self) -> Retained<Self>;
     }
 );
 

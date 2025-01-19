@@ -41,12 +41,12 @@ use crate::encode::{Encoding, RefEncode};
 use crate::ffi;
 #[cfg(feature = "catch-all")]
 use crate::ffi::NSUInteger;
+#[cfg(feature = "catch-all")]
+use crate::msg_send;
 use crate::rc::{autoreleasepool_leaking, Retained};
 use crate::runtime::__nsstring::nsstring_to_str;
 use crate::runtime::{AnyClass, AnyObject, NSObject, NSObjectProtocol};
 use crate::{extern_methods, sel, Message};
-#[cfg(feature = "catch-all")]
-use crate::{msg_send, msg_send_id};
 
 /// An Objective-C exception.
 ///
@@ -105,7 +105,7 @@ impl Exception {
                         // SAFETY: The object is an `NSException`.
                         // Returns `NSArray<NSString *>`.
                         let call_stack_symbols: Option<Retained<NSObject>> =
-                            unsafe { msg_send_id![self.0, callStackSymbols] };
+                            unsafe { msg_send![self.0, callStackSymbols] };
                         if let Some(call_stack_symbols) = call_stack_symbols {
                             writeln!(f, "stack backtrace:")?;
 
@@ -117,7 +117,7 @@ impl Exception {
                             while i < count {
                                 // SAFETY: The index is in-bounds (so no exception will be thrown).
                                 let symbol: Retained<NSObject> =
-                                    unsafe { msg_send_id![&call_stack_symbols, objectAtIndex: i] };
+                                    unsafe { msg_send![&call_stack_symbols, objectAtIndex: i] };
                                 // SAFETY: The symbol is an NSString, and is not used
                                 // beyond this scope.
                                 let symbol = unsafe { nsstring_to_str(&symbol, pool) };
@@ -141,12 +141,14 @@ extern_methods!(
     unsafe impl Exception {
         // Only safe on NSException
         // Returns NSString
-        #[method_id(name)]
+        #[method(name)]
+        #[unsafe(method_family = none)]
         unsafe fn name(&self) -> Option<Retained<NSObject>>;
 
         // Only safe on NSException
         // Returns NSString
-        #[method_id(reason)]
+        #[method(reason)]
+        #[unsafe(method_family = none)]
         unsafe fn reason(&self) -> Option<Retained<NSObject>>;
     }
 );
@@ -347,7 +349,7 @@ mod tests {
     use std::panic::catch_unwind;
 
     use super::*;
-    use crate::msg_send_id;
+    use crate::msg_send;
 
     #[test]
     fn test_catch() {
@@ -384,7 +386,7 @@ mod tests {
         let obj = AssertUnwindSafe(NSObject::new());
         let ptr = Retained::as_ptr(&obj);
         let result = catch(|| {
-            let _: Retained<NSObject> = unsafe { msg_send_id![&*obj, copy] };
+            let _: Retained<NSObject> = unsafe { msg_send![&*obj, copy] };
         });
         let err = result.unwrap_err().unwrap();
 

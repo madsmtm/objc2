@@ -1,5 +1,18 @@
+error[E0283]: type annotations needed
+ --> ui/msg_send_underspecified_error3.rs
+  |
+  |     let _: Result<_, _> = unsafe { msg_send![obj, error: _] };
+  |                                    ^^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type
+  |
+  = note: multiple `impl`s satisfying `MethodFamily<6>: MsgSendError<&NSObject, _>` found in the `objc2` crate:
+          - impl<Receiver, MethodFamily> MsgSendError<Receiver, ()> for MethodFamily
+            where MethodFamily: MsgSend<Receiver, bool>;
+          - impl<Receiver, Return, MethodFamily> MsgSendError<Receiver, Retained<Return>> for MethodFamily
+            where MethodFamily: MsgSend<Receiver, Option<Retained<Return>>>;
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
 error[E0282]: type annotations needed
  --> ui/msg_send_underspecified_error3.rs
   |
-  |     let _: Result<_, _> = unsafe { msg_send_id![obj, error: _] };
+  |     let _: Result<_, _> = unsafe { msg_send![obj, error: _] };
   |            ^^^^^^^^^^^^ cannot infer type

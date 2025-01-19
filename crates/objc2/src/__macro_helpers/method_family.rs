@@ -6,7 +6,7 @@
 /// The slight difference here is:
 /// - The method may be annotated with the `objc_method_family` attribute,
 ///   which would cause it to be in a different family. That this is not the
-///   case is part of the `unsafe` contract of `msg_send_id!`.
+///   case is part of the `unsafe` contract of `msg_send!`.
 /// - The method may not obey the added restrictions of the method family.
 ///   The added restrictions are:
 ///   - `new`, `alloc`, `copy` and `mutableCopy`: The method must return a
@@ -38,6 +38,18 @@ pub type NoneFamily = MethodFamily<6>;
 ///
 /// Used for a fast-path optimization using `objc_alloc`.
 pub type AllocSelector = MethodFamily<7>;
+
+// These are used to avoid trying to do retain-semantics for these special
+// selectors that would otherwise fall under `NoneFamily`.
+
+/// The `retain` selector itself.
+pub type RetainSelector = MethodFamily<8>;
+/// The `release` selector itself.
+pub type ReleaseSelector = MethodFamily<9>;
+/// The `autorelease` selector itself.
+pub type AutoreleaseSelector = MethodFamily<10>;
+/// The `dealloc` selector itself.
+pub type DeallocSelector = MethodFamily<11>;
 
 /// Helper module where `#[unsafe(method_family = $family:ident)]` will import
 /// its value from.

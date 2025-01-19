@@ -23,13 +23,6 @@ extern_methods!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method_id(a:)]
-        fn variadic_id(arg: i32, arg2: ...) -> Retained<NSObject>;
-    }
-);
-
-extern_methods!(
-    unsafe impl MyObject {
         #[method(a:_)]
         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
     }

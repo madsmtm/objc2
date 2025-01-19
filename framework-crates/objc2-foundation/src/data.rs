@@ -341,7 +341,7 @@ unsafe fn with_vec<T: objc2::Message>(obj: objc2::rc::Allocated<T>, bytes: Vec<u
     let bytes_ptr: *mut c_void = bytes.as_mut_ptr().cast();
 
     unsafe {
-        objc2::msg_send_id![
+        objc2::msg_send![
             obj,
             initWithBytesNoCopy: bytes_ptr,
             length: len,

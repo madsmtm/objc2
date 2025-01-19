@@ -4,7 +4,7 @@ use std::sync::OnceLock;
 use crate::ffi::NSInteger;
 use crate::rc::{autoreleasepool, Retained};
 use crate::runtime::{AnyClass, NSObject};
-use crate::{msg_send_id, ClassType};
+use crate::{msg_send, ClassType};
 
 // Marked `#[cold]` to tell the optimizer that errors are comparatively rare.
 //
@@ -96,7 +96,7 @@ fn create_null_error() -> NSErrorWrapper {
         // SAFETY: The signate is correct, and the string is UTF-8 encoded and
         // NUL terminated.
         let domain: Retained<NSObject> =
-            unsafe { msg_send_id![cls, stringWithUTF8String: domain.as_ptr()] };
+            unsafe { msg_send![cls, stringWithUTF8String: domain.as_ptr()] };
 
         // SAFETY: The string is valid.
         let cls = unsafe { CStr::from_bytes_with_nul_unchecked(b"NSError\0") };
@@ -108,7 +108,7 @@ fn create_null_error() -> NSErrorWrapper {
         let user_info: Option<&NSObject> = None;
         // SAFETY: The signate is correct.
         let err: Retained<NSObject> =
-            unsafe { msg_send_id![cls, errorWithDomain: domain, code: code, userInfo: user_info] };
+            unsafe { msg_send![cls, errorWithDomain: domain, code: code, userInfo: user_info] };
         NSErrorWrapper(err)
     })
 }

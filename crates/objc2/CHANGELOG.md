@@ -172,6 +172,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `AnyObject::downcast_ref` method instead.
 * Deprecated `Retained::cast`, this has been renamed to `Retained::cast_unchecked`.
 * Renamed `DeclaredClass` to `DefinedClass`.
+* Merged `msg_send!` and `msg_send_id!`. The latter is now deprecated.
+* Merged `#[method(...)]` and `#[method_id(...)]` in `extern_methods!` and
+  `extern_protocol!`. The latter is now deprecated.
 
 ### Removed
 * **BREAKING**: Removed the `ffi::SEL` and `ffi::objc_selector` types. Use

@@ -1,93 +1,74 @@
-error[E0308]: mismatched types
+error[E0277]: the trait bound `Allocated<NSObject>: Encode` is not satisfied
  --> ui/msg_send_invalid_receiver.rs
   |
-  |     let _: Allocated<NSObject> = unsafe { msg_send_id![obj, alloc] };
-  |                                           -------------^^^--------
-  |                                           |            |
-  |                                           |            expected `&AnyClass`, found `&NSObject`
-  |                                           arguments to this function are incorrect
+  |     let _: Allocated<NSObject> = unsafe { msg_send![obj, alloc] };
+  |                                           ^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Allocated<NSObject>`
   |
-  = note: expected reference `&AnyClass`
-             found reference `&NSObject`
-note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     pub unsafe fn send_message_retained_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
-  |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Allocated<NSObject>` to implement `EncodeReturn`
+  = note: required for `Allocated<NSObject>` to implement `ConvertReturn<MethodFamily<7>>`
+  = note: required for `MethodFamily<7>` to implement `RetainSemantics<&NSObject, Allocated<NSObject>, KindSendMessage>`
+  = note: required for `MethodFamily<7>` to implement `MsgSend<&NSObject, Allocated<NSObject>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0308]: mismatched types
+error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
  --> ui/msg_send_invalid_receiver.rs
   |
-  |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, init] };
-  |                                          -------------^^^-------
-  |                                          |            |
-  |                                          |            expected `Allocated<_>`, found `&NSObject`
-  |                                          arguments to this function are incorrect
+  |     let _: Retained<NSObject> = unsafe { msg_send![obj, init] };
+  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<NSObject>`
   |
-  = note: expected struct `Allocated<_>`
-          found reference `&NSObject`
-note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |               ^^^^^^^^^^^^^^^^^^^^^
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Retained<NSObject>` to implement `EncodeReturn`
+  = note: required for `Retained<NSObject>` to implement `ConvertReturn<MethodFamily<3>>`
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<&NSObject, Retained<NSObject>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<&NSObject, Retained<NSObject>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0308]: mismatched types
+error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
  --> ui/msg_send_invalid_receiver.rs
   |
-  |     let _: Retained<NSObject> = unsafe { msg_send_id![cls, init] };
-  |                                          -------------^^^-------
-  |                                          |            |
-  |                                          |            expected `Allocated<_>`, found `&AnyClass`
-  |                                          arguments to this function are incorrect
+  |     let _: Retained<NSObject> = unsafe { msg_send![cls, init] };
+  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<NSObject>`
   |
-  = note: expected struct `Allocated<_>`
-          found reference `&AnyClass`
-note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |               ^^^^^^^^^^^^^^^^^^^^^
-
-error[E0308]: mismatched types
- --> ui/msg_send_invalid_receiver.rs
-  |
-  |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, init] };
-  |                                          -------------^^^-------
-  |                                          |            |
-  |                                          |            expected `Allocated<_>`, found `Retained<NSObject>`
-  |                                          arguments to this function are incorrect
-  |
-  = note: expected struct `Allocated<_>`
-             found struct `Retained<NSObject>`
-note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |               ^^^^^^^^^^^^^^^^^^^^^
-
-error[E0308]: mismatched types
- --> ui/msg_send_invalid_receiver.rs
-  |
-  |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, init] };
-  |                                          -------------^^^-------
-  |                                          |            |
-  |                                          |            expected `Allocated<_>`, found `Option<Retained<NSObject>>`
-  |                                          arguments to this function are incorrect
-  |
-  = note: expected struct `Allocated<_>`
-               found enum `Option<Retained<NSObject>>`
-note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
-  |
-  |     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |               ^^^^^^^^^^^^^^^^^^^^^
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Retained<NSObject>` to implement `EncodeReturn`
+  = note: required for `Retained<NSObject>` to implement `ConvertReturn<MethodFamily<3>>`
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<&AnyClass, Retained<NSObject>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<&AnyClass, Retained<NSObject>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satisfied
  --> ui/msg_send_invalid_receiver.rs
   |
-  |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, new] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Retained<NSObject>`
+  |     let _: Retained<NSObject> = unsafe { msg_send![obj, init] };
+  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Retained<NSObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T
@@ -95,15 +76,37 @@ error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satis
             *const T
             *mut T
             NonNull<T>
-  = note: required for `Retained<NSObject>` to implement `MsgSend`
-  = note: required for `MethodFamily<1>` to implement `MsgSendRetained<Retained<NSObject>, Option<Retained<_>>>`
-  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Retained<NSObject>, _, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Retained<NSObject>, _>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satisfied
+error[E0277]: the trait bound `Retained<NSObject>: ConvertReturn<MethodFamily<3>>` is not satisfied
  --> ui/msg_send_invalid_receiver.rs
   |
-  |     let _: Retained<NSObject> = unsafe { msg_send_id![obj, copy] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Retained<NSObject>`
+  |     let _: Retained<NSObject> = unsafe { msg_send![obj, init] };
+  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<NSObject>`
+  |
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Retained<NSObject>` to implement `EncodeReturn`
+  = note: required for `Retained<NSObject>` to implement `ConvertReturn<MethodFamily<3>>`
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Retained<NSObject>, Retained<NSObject>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Retained<NSObject>, Retained<NSObject>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Option<Retained<NSObject>>: MessageReceiver` is not satisfied
+ --> ui/msg_send_invalid_receiver.rs
+  |
+  |     let _: Retained<NSObject> = unsafe { msg_send![obj, init] };
+  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Option<Retained<NSObject>>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T
@@ -111,6 +114,60 @@ error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satis
             *const T
             *mut T
             NonNull<T>
-  = note: required for `Retained<NSObject>` to implement `MsgSend`
-  = note: required for `MethodFamily<4>` to implement `MsgSendRetained<Retained<NSObject>, Option<Retained<_>>>`
-  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Option<Retained<NSObject>>, _, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Option<Retained<NSObject>>, _>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Retained<NSObject>: ConvertReturn<MethodFamily<3>>` is not satisfied
+ --> ui/msg_send_invalid_receiver.rs
+  |
+  |     let _: Retained<NSObject> = unsafe { msg_send![obj, init] };
+  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<NSObject>`
+  |
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Retained<NSObject>` to implement `EncodeReturn`
+  = note: required for `Retained<NSObject>` to implement `ConvertReturn<MethodFamily<3>>`
+  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Option<Retained<NSObject>>, Retained<NSObject>, KindSendMessage>`
+  = note: required for `MethodFamily<3>` to implement `MsgSend<Option<Retained<NSObject>>, Retained<NSObject>>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satisfied
+ --> ui/msg_send_invalid_receiver.rs
+  |
+  |     let _: Retained<NSObject> = unsafe { msg_send![obj, new] };
+  |                                          ^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Retained<NSObject>`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `MethodFamily<1>` to implement `RetainSemantics<Retained<NSObject>, _, KindSendMessage>`
+  = note: required for `MethodFamily<1>` to implement `MsgSend<Retained<NSObject>, _>`
+  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satisfied
+ --> ui/msg_send_invalid_receiver.rs
+  |
+  |     let _: Retained<NSObject> = unsafe { msg_send![obj, copy] };
+  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Retained<NSObject>`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `MethodFamily<4>` to implement `RetainSemantics<Retained<NSObject>, _, KindSendMessage>`
+  = note: required for `MethodFamily<4>` to implement `MsgSend<Retained<NSObject>, _>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

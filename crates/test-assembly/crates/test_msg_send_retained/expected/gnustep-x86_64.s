@@ -44,7 +44,7 @@ handle_new_fallible:
 	lea	rdx, [rip + .Lanon.[ID].1]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::MethodFamily<1_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end1:
 	.size	handle_new_fallible, .Lfunc_end1-handle_new_fallible
 
@@ -121,7 +121,7 @@ handle_init_fallible:
 	lea	rdx, [rip + .Lanon.[ID].2]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::MethodFamily<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end4:
 	.size	handle_init_fallible, .Lfunc_end4-handle_init_fallible
 
@@ -260,7 +260,7 @@ handle_copy_fallible:
 	ret
 .LBB9_2:
 	lea	rdi, [rip + .Lanon.[ID].3]
-	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::MethodFamily<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end9:
 	.size	handle_copy_fallible, .Lfunc_end9-handle_copy_fallible
 
@@ -306,7 +306,7 @@ handle_mutable_copy_fallible:
 	ret
 .LBB11_2:
 	lea	rdi, [rip + .Lanon.[ID].4]
-	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::MethodFamily<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end11:
 	.size	handle_mutable_copy_fallible, .Lfunc_end11-handle_mutable_copy_fallible
 
@@ -382,7 +382,7 @@ handle_autoreleased_fallible:
 	lea	rdx, [rip + .Lanon.[ID].5]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::MethodFamily<6_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end14:
 	.size	handle_autoreleased_fallible, .Lfunc_end14-handle_autoreleased_fallible
 
@@ -410,33 +410,37 @@ handle_with_out_param:
 	mov	rdx, r14
 	call	rax
 .Ltmp3:
+.Ltmp4:
+	mov	rdi, rax
+	call	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
+.Ltmp5:
 	mov	r15, rax
 	mov	rdi, qword ptr [r14]
 	call	qword ptr [rip + objc_retain@GOTPCREL]
 	mov	rdi, rbx
 	call	qword ptr [rip + objc_release@GOTPCREL]
-	mov	rdi, r15
+	mov	rax, r15
 	add	rsp, 8
 	pop	rbx
 	pop	r12
 	pop	r14
 	pop	r15
-	jmp	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
-.LBB15_3:
-.Ltmp4:
+	ret
+.LBB15_4:
+.Ltmp6:
 	mov	r15, rax
 	mov	rdi, qword ptr [r14]
-.Ltmp5:
-	call	qword ptr [rip + objc_retain@GOTPCREL]
-.Ltmp6:
 .Ltmp7:
+	call	qword ptr [rip + objc_retain@GOTPCREL]
+.Ltmp8:
+.Ltmp9:
 	mov	rdi, rbx
 	call	qword ptr [rip + objc_release@GOTPCREL]
-.Ltmp8:
+.Ltmp10:
 	mov	rdi, r15
 	call	_Unwind_Resume@PLT
-.LBB15_6:
-.Ltmp9:
+.LBB15_7:
+.Ltmp11:
 	call	qword ptr [rip + SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end15:
 	.size	handle_with_out_param, .Lfunc_end15-handle_with_out_param
@@ -452,19 +456,19 @@ GCC_except_table15:
 	.uleb128 .Lcst_end0-.Lcst_begin0
 .Lcst_begin0:
 	.uleb128 .Ltmp0-.Lfunc_begin0
-	.uleb128 .Ltmp3-.Ltmp0
-	.uleb128 .Ltmp4-.Lfunc_begin0
-	.byte	0
-	.uleb128 .Ltmp3-.Lfunc_begin0
-	.uleb128 .Ltmp5-.Ltmp3
-	.byte	0
+	.uleb128 .Ltmp5-.Ltmp0
+	.uleb128 .Ltmp6-.Lfunc_begin0
 	.byte	0
 	.uleb128 .Ltmp5-.Lfunc_begin0
-	.uleb128 .Ltmp8-.Ltmp5
-	.uleb128 .Ltmp9-.Lfunc_begin0
+	.uleb128 .Ltmp7-.Ltmp5
+	.byte	0
+	.byte	0
+	.uleb128 .Ltmp7-.Lfunc_begin0
+	.uleb128 .Ltmp10-.Ltmp7
+	.uleb128 .Ltmp11-.Lfunc_begin0
 	.byte	1
-	.uleb128 .Ltmp8-.Lfunc_begin0
-	.uleb128 .Lfunc_end15-.Ltmp8
+	.uleb128 .Ltmp10-.Lfunc_begin0
+	.uleb128 .Lfunc_end15-.Ltmp10
 	.byte	0
 	.byte	0
 .Lcst_end0:
@@ -486,7 +490,7 @@ GCC_except_table15:
 	.p2align	3, 0x0
 .Lanon.[ID].1:
 	.quad	.Lanon.[ID].0
-	.asciz	"9\000\000\000\000\000\000\000\r\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\000\000\000\000\017\000\000\000\005\000\000"
 	.size	.Lanon.[ID].1, 24
 
 	.type	.Lanon.[ID].2,@object
@@ -494,7 +498,7 @@ GCC_except_table15:
 	.p2align	3, 0x0
 .Lanon.[ID].2:
 	.quad	.Lanon.[ID].0
-	.asciz	"9\000\000\000\000\000\000\000\034\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\000\000\000\000\036\000\000\000\005\000\000"
 	.size	.Lanon.[ID].2, 24
 
 	.type	.Lanon.[ID].3,@object
@@ -502,7 +506,7 @@ GCC_except_table15:
 	.p2align	3, 0x0
 .Lanon.[ID].3:
 	.quad	.Lanon.[ID].0
-	.asciz	"9\000\000\000\000\000\000\0008\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\000\000\000\000:\000\000\000\005\000\000"
 	.size	.Lanon.[ID].3, 24
 
 	.type	.Lanon.[ID].4,@object
@@ -510,7 +514,7 @@ GCC_except_table15:
 	.p2align	3, 0x0
 .Lanon.[ID].4:
 	.quad	.Lanon.[ID].0
-	.asciz	"9\000\000\000\000\000\000\000B\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\000\000\000\000D\000\000\000\005\000\000"
 	.size	.Lanon.[ID].4, 24
 
 	.type	.Lanon.[ID].5,@object
@@ -518,7 +522,7 @@ GCC_except_table15:
 	.p2align	3, 0x0
 .Lanon.[ID].5:
 	.quad	.Lanon.[ID].0
-	.asciz	"9\000\000\000\000\000\000\000V\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\000\000\000\000X\000\000\000\005\000\000"
 	.size	.Lanon.[ID].5, 24
 
 	.hidden	DW.ref.rust_eh_personality

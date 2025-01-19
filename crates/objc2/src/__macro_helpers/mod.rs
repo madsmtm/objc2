@@ -23,10 +23,10 @@ pub(crate) mod defined_ivars;
 mod image_info;
 mod method_family;
 mod module_info;
-mod msg_send;
 mod msg_send_retained;
 mod null_error;
 mod os_version;
+mod retain_semantics;
 mod sync_unsafe_cell;
 mod writeback;
 
@@ -41,13 +41,16 @@ pub use self::define_class::{
 pub use self::defined_ivars::DefinedIvarsHelper;
 pub use self::image_info::ImageInfo;
 pub use self::method_family::{
-    method_family, method_family_import, AllocFamily, AllocSelector, CopyFamily, InitFamily,
-    MethodFamily, MutableCopyFamily, NewFamily, NoneFamily,
+    method_family, method_family_import, AllocFamily, AllocSelector, AutoreleaseSelector,
+    CopyFamily, DeallocSelector, InitFamily, MethodFamily, MutableCopyFamily, NewFamily,
+    NoneFamily, ReleaseSelector, RetainSelector,
 };
 pub use self::module_info::ModuleInfo;
-pub use self::msg_send::MsgSend;
-pub use self::msg_send_retained::{MaybeUnwrap, MsgSendRetained, MsgSendSuperRetained};
+pub use self::msg_send_retained::{MsgSend, MsgSendError, MsgSendSuper, MsgSendSuperError};
 pub use self::os_version::{is_available, AvailableVersion, OSVersion};
+pub use self::retain_semantics::{
+    KindDefined, KindSendMessage, KindSendMessageSuper, RetainSemantics,
+};
 pub use self::sync_unsafe_cell::SyncUnsafeCell;
 
 /// Disallow using this passed in value in const and statics for forwards

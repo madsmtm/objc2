@@ -268,8 +268,8 @@
 /// use objc2_foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
 /// use objc2::rc::{Allocated, Retained};
 /// use objc2::{
-///     define_class, extern_protocol, msg_send, msg_send_id, AllocAnyThread,
-///     ClassType, DefinedClass, ProtocolType,
+///     define_class, extern_protocol, msg_send, AllocAnyThread, ClassType,
+///     DefinedClass, ProtocolType,
 /// };
 ///
 /// #[derive(Clone)]
@@ -299,7 +299,7 @@
 ///                 bar: 42,
 ///                 object: NSObject::new(),
 ///             });
-///             unsafe { msg_send_id![super(this), init] }
+///             unsafe { msg_send![super(this), init] }
 ///         }
 ///
 ///         #[method(foo)]
@@ -320,7 +320,7 @@
 /// #       #[method_id(copyWithZone:)]
 /// #       fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
 /// #           let new = Self::alloc().set_ivars(self.ivars().clone());
-/// #           unsafe { msg_send_id![super(new), init] }
+/// #           unsafe { msg_send![super(new), init] }
 /// #       }
 ///     }
 ///
@@ -331,7 +331,7 @@
 ///         #[method_id(copyWithZone:)]
 ///         fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
 ///             let new = Self::alloc().set_ivars(self.ivars().clone());
-///             unsafe { msg_send_id![super(new), init] }
+///             unsafe { msg_send![super(new), init] }
 ///         }
 ///
 ///         // If we have tried to add other methods here, or had forgotten
@@ -346,7 +346,7 @@
 ///
 /// impl MyCustomObject {
 ///     pub fn new(foo: u8) -> Retained<Self> {
-///         unsafe { msg_send_id![Self::alloc(), initWithFoo: foo] }
+///         unsafe { msg_send![Self::alloc(), initWithFoo: foo] }
 ///     }
 ///
 ///     pub fn get_foo(&self) -> u8 {
@@ -354,7 +354,7 @@
 ///     }
 ///
 ///     pub fn get_object(&self) -> Retained<NSObject> {
-///         unsafe { msg_send_id![self, object] }
+///         unsafe { msg_send![self, object] }
 ///     }
 ///
 ///     pub fn my_class_method() -> bool {
@@ -368,7 +368,7 @@
 ///     assert_eq!(obj.ivars().bar, 42);
 ///     assert!(obj.ivars().object.isKindOfClass(NSObject::class()));
 ///
-/// #   let obj: Retained<MyCustomObject> = unsafe { msg_send_id![&obj, copy] };
+/// #   let obj: Retained<MyCustomObject> = unsafe { msg_send![&obj, copy] };
 /// #   #[cfg(available_in_foundation)]
 ///     let obj = obj.copy();
 ///
@@ -1266,7 +1266,7 @@ macro_rules! __define_class_method_out_inner {
         $($qualifiers)* extern "C-unwind" fn $name(
             $($params_prefix)*
             $($params_converted)*
-        ) $(-> <$ret as $crate::__macro_helpers::ConvertReturn>::__Inner)? {
+        ) $(-> <$ret as $crate::__macro_helpers::ConvertReturn<()>>::Inner)? {
             $($body_prefix)*
             $crate::__convert_result! {
                 $body $(; $ret)?
@@ -1358,7 +1358,7 @@ macro_rules! __convert_result {
     ($body:block; $ret:ty) => {
         let __objc2_result = $body;
         #[allow(unreachable_code)]
-        <$ret as $crate::__macro_helpers::ConvertReturn>::__into_defined_return(__objc2_result)
+        <$ret as $crate::__macro_helpers::ConvertReturn<()>>::convert_defined_return(__objc2_result)
     };
 }
 

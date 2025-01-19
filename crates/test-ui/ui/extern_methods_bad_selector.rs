@@ -15,8 +15,8 @@ extern_methods!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method_id()]
-        fn no_selector_id_self(&self);
+        #[method()]
+        fn no_selector_self(&self);
     }
 );
 

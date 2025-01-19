@@ -5,7 +5,7 @@ use crate::__macro_helpers::defined_ivars::get_initialized_ivar_ptr;
 use crate::encode::RefEncode;
 use crate::rc::{Allocated, Retained};
 use crate::runtime::{AnyClass, AnyProtocol, ProtocolObject};
-use crate::{msg_send_id, MainThreadMarker};
+use crate::{msg_send, MainThreadMarker};
 
 /// Types that can be sent Objective-C messages.
 ///
@@ -143,7 +143,7 @@ pub unsafe trait Message: RefEncode {
 /// Use the trait to access the [`AnyClass`] of an object.
 ///
 /// ```
-/// use objc2::{ClassType, msg_send_id};
+/// use objc2::{ClassType, msg_send};
 /// use objc2::rc::Retained;
 /// # use objc2::runtime::{NSObject as MyObject};
 ///
@@ -160,13 +160,13 @@ pub unsafe trait Message: RefEncode {
 /// // SAFETY:
 /// // - The class is `MyObject`, which can safely be initialized with `new`.
 /// // - The return type is correctly specified.
-/// let obj: Retained<MyObject> = unsafe { msg_send_id![cls, new] };
+/// let obj: Retained<MyObject> = unsafe { msg_send![cls, new] };
 /// ```
 ///
 /// Use the trait to allocate a new instance of an object.
 ///
 /// ```
-/// use objc2::{msg_send_id, AllocAnyThread};
+/// use objc2::{msg_send, AllocAnyThread};
 /// use objc2::rc::Retained;
 /// # use objc2::runtime::{NSObject as MyObject};
 ///
@@ -175,7 +175,7 @@ pub unsafe trait Message: RefEncode {
 /// // Now we can call initializers on this newly allocated object.
 /// //
 /// // SAFETY: `MyObject` can safely be initialized with `init`.
-/// let obj: Retained<MyObject> = unsafe { msg_send_id![obj, init] };
+/// let obj: Retained<MyObject> = unsafe { msg_send![obj, init] };
 /// ```
 ///
 /// Use the [`extern_class!`][crate::extern_class] macro to implement this
@@ -429,10 +429,10 @@ mod private {
 pub unsafe trait AllocAnyThread: private::SealedAllocAnyThread {
     /// Allocate a new instance of the class.
     ///
-    /// The return value can be used directly inside [`msg_send_id!`] to
+    /// The return value can be used directly inside [`msg_send!`] to
     /// initialize the object.
     ///
-    /// [`msg_send_id!`]: crate::msg_send_id
+    /// [`msg_send!`]: crate::msg_send
     #[inline]
     fn alloc() -> Allocated<Self>
     where
@@ -455,7 +455,7 @@ pub unsafe trait AllocAnyThread: private::SealedAllocAnyThread {
         // to be allowed to `init` on the current thread.
         //
         // See also `MainThreadMarker::alloc`.
-        unsafe { msg_send_id![Self::class(), alloc] }
+        unsafe { msg_send![Self::class(), alloc] }
     }
 }
 
@@ -535,7 +535,7 @@ pub unsafe trait MainThreadOnly: private::SealedMainThreadOnly {
     /// # impl NSView {
     /// #     fn initWithFrame(this: Allocated<Self>, _frame: CGRect) -> Retained<Self> {
     /// #         // Don't use frame, this is NSObject
-    /// #         unsafe { objc2::msg_send_id![this, init] }
+    /// #         unsafe { objc2::msg_send![this, init] }
     /// #     }
     /// # }
     ///

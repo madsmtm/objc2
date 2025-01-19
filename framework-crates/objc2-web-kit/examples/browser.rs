@@ -4,7 +4,7 @@
 use core::cell::OnceCell;
 
 use objc2::{
-    define_class, msg_send_id,
+    define_class, msg_send,
     rc::Retained,
     runtime::{AnyObject, ProtocolObject, Sel},
     sel, DefinedClass, MainThreadMarker, MainThreadOnly,
@@ -297,7 +297,7 @@ impl Delegate {
     fn new(mtm: MainThreadMarker) -> Retained<Self> {
         let this = Self::alloc(mtm);
         let this = this.set_ivars(Ivars::default());
-        unsafe { msg_send_id![super(this), init] }
+        unsafe { msg_send![super(this), init] }
     }
 }
 

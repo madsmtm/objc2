@@ -9,14 +9,14 @@ extern_class!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method_id(initWithMut)]
+        #[method(initWithMut)]
         fn init_with_mut(&mut self) -> Option<Retained<Self>>;
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method_id(initWithOptionAllocated)]
+        #[method(initWithOptionAllocated)]
         fn init_with_option_allocated(this: Option<Allocated<Self>>) -> Option<Retained<Self>>;
     }
 );

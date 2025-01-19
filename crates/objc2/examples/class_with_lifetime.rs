@@ -5,10 +5,9 @@ use std::cell::Cell;
 use std::marker::PhantomData;
 use std::sync::Once;
 
-use objc2::msg_send_id;
 use objc2::rc::Retained;
 use objc2::runtime::{AnyClass, AnyObject, ClassBuilder, NSObject};
-use objc2::{ClassType, Encoding, Message, RefEncode};
+use objc2::{msg_send, ClassType, Encoding, Message, RefEncode};
 
 /// The type of the instance variable that we want to store
 type Ivar<'a> = &'a Cell<u8>;
@@ -49,7 +48,7 @@ impl<'a> MyObject<'a> {
 
     fn new(number: &'a mut u8) -> Retained<Self> {
         // SAFETY: The instance variable is initialized below.
-        let this: Retained<Self> = unsafe { msg_send_id![Self::class(), new] };
+        let this: Retained<Self> = unsafe { msg_send![Self::class(), new] };
 
         // It is generally very hard to use `mut` in Objective-C, so let's use
         // interior mutability instead.

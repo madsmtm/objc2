@@ -153,14 +153,12 @@ fn test_msg_send(obj: &CustomObject) {
     let _: () = unsafe { new_objc2::msg_send![super(obj), a: obj, b: obj] };
     let _: () = unsafe { new_objc2::msg_send![super(obj, superclass), a] };
     let _: () = unsafe { new_objc2::msg_send![super(obj, superclass), a: obj, b: obj] };
-}
 
-fn test_msg_send_id(obj: &new_objc2::runtime::AnyObject) {
     let _: new_objc2::rc::Retained<new_objc2::runtime::AnyObject> =
-        unsafe { new_objc2::msg_send_id![obj, a] };
+        unsafe { new_objc2::msg_send![obj, a] };
     let _: new_objc2::__macro_helpers::Option<
         new_objc2::rc::Retained<new_objc2::runtime::AnyObject>,
-    > = unsafe { new_objc2::msg_send_id![obj, a] };
+    > = unsafe { new_objc2::msg_send![obj, a] };
     let _: new_objc2::rc::Retained<new_objc2::runtime::AnyObject> =
-        unsafe { new_objc2::msg_send_id![obj, a: obj, b: obj] };
+        unsafe { new_objc2::msg_send![obj, a: obj, b: obj] };
 }
