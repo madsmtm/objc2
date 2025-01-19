@@ -162,11 +162,11 @@ macro_rules! __method_msg_send_id {
 
         ()
         ()
-        ($($retain_semantics:ident)?)
+        ($($method_family:ident)?)
     ) => {
         $crate::__msg_send_id_helper! {
             ($receiver)
-            ($($retain_semantics)?)
+            ($($method_family)?)
             (MsgSendRetained)
             (send_message_retained)
             ($sel)
@@ -186,7 +186,7 @@ macro_rules! __method_msg_send_id {
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
-        ($($retain_semantics:ident)?)
+        ($($method_family:ident)?)
     ) => ({
         let _ = $arg;
         $crate::__method_msg_send_id! {
@@ -196,7 +196,7 @@ macro_rules! __method_msg_send_id {
 
             ($($sel_parsed)*)
             ($($arg_parsed)*)
-            ($($retain_semantics)?)
+            ($($method_family)?)
         }
     });
 
@@ -208,7 +208,7 @@ macro_rules! __method_msg_send_id {
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
-        ($($retain_semantics:ident)?)
+        ($($method_family:ident)?)
     ) => {
         $crate::__method_msg_send_id! {
             ($receiver)
@@ -217,7 +217,7 @@ macro_rules! __method_msg_send_id {
 
             ($($sel_parsed)* $($sel)? :)
             ($($arg_parsed)* $arg,)
-            ($($retain_semantics)?)
+            ($($method_family)?)
         }
     };
     // Handle path separator token
@@ -228,7 +228,7 @@ macro_rules! __method_msg_send_id {
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
-        ($($retain_semantics:ident)?)
+        ($($method_family:ident)?)
     ) => {
         $crate::__method_msg_send_id! {
             ($receiver)
@@ -237,7 +237,7 @@ macro_rules! __method_msg_send_id {
 
             ($($sel_parsed)* $($sel)? : :)
             ($($arg_parsed)* $arg1, $arg2,)
-            ($($retain_semantics)?)
+            ($($method_family)?)
         }
     };
 
@@ -251,11 +251,11 @@ macro_rules! __method_msg_send_id {
         // a selector, and haven't just gotten an empty `#[method()]`.
         ($($sel_parsed:tt)+)
         ($($arg_parsed:tt)*)
-        ($($retain_semantics:ident)?)
+        ($($method_family:ident)?)
     ) => {
         $crate::__msg_send_id_helper! {
             ($receiver)
-            ($($retain_semantics)?)
+            ($($method_family)?)
             (MsgSendRetained)
             (send_message_retained)
             ($($sel_parsed)*)
@@ -272,11 +272,11 @@ macro_rules! __method_msg_send_id {
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
-        ($($retain_semantics:ident)?)
+        ($($method_family:ident)?)
     ) => {
         $crate::__msg_send_id_helper! {
             ($receiver)
-            ($($retain_semantics)?)
+            ($($method_family)?)
             (MsgSendRetained)
             // Use error method
             (send_message_retained_error)
@@ -293,7 +293,7 @@ macro_rules! __method_msg_send_id {
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
-        ($($retain_semantics:ident)?)
+        ($($method_family:ident)?)
     ) => ({
         $crate::__macro_helpers::compile_error!(
             "variadic methods are not yet supported"
@@ -308,7 +308,7 @@ macro_rules! __method_msg_send_id {
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
-        ($($retain_semantics:ident)?)
+        ($($method_family:ident)?)
     ) => ({
         $crate::__macro_helpers::compile_error!(
             "number of arguments in function and selector did not match"

@@ -41,5 +41,5 @@ error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&MyObject`, but not for `&mut MyObject`
   = note: required for `&mut MyObject` to implement `MsgSend`
-  = note: required for `RetainSemantics<6>` to implement `MsgSendRetained<&mut MyObject, Option<Retained<_>>>`
+  = note: required for `MethodFamily<6>` to implement `MsgSendRetained<&mut MyObject, Option<Retained<_>>>`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

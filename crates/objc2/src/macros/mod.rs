@@ -1235,7 +1235,7 @@ macro_rules! msg_send_id {
 
             ($crate::__msg_send_id_helper)
             ($obj)
-            () // No retain semantics
+            () // No method family
             (MsgSendSuperRetained)
         }
     };
@@ -1249,7 +1249,7 @@ macro_rules! msg_send_id {
 
             ($crate::__msg_send_id_helper)
             ($obj, $superclass)
-            () // No retain semantics
+            () // No method family
             (MsgSendSuperRetained)
         }
     };
@@ -1286,7 +1286,7 @@ macro_rules! msg_send_id {
 
             ($crate::__msg_send_id_helper)
             ($obj)
-            () // No retain semantics
+            () // No method family
             (MsgSendRetained)
         }
     };
@@ -1298,7 +1298,7 @@ macro_rules! msg_send_id {
 macro_rules! __msg_send_id_helper {
     {
         ($($fn_args:tt)+)
-        ($($retain_semantics:ident)?)
+        ($($method_family:ident)?)
         ($trait:ident)
         ($fn:ident)
         (retain)
@@ -1310,7 +1310,7 @@ macro_rules! __msg_send_id_helper {
     }};
     {
         ($($fn_args:tt)+)
-        ($($retain_semantics:ident)?)
+        ($($method_family:ident)?)
         ($trait:ident)
         ($fn:ident)
         (release)
@@ -1322,7 +1322,7 @@ macro_rules! __msg_send_id_helper {
     }};
     {
         ($($fn_args:tt)+)
-        ($($retain_semantics:ident)?)
+        ($($method_family:ident)?)
         ($trait:ident)
         ($fn:ident)
         (autorelease)
@@ -1334,7 +1334,7 @@ macro_rules! __msg_send_id_helper {
     }};
     {
         ($($fn_args:tt)+)
-        ($($retain_semantics:ident)?)
+        ($($method_family:ident)?)
         ($trait:ident)
         ($fn:ident)
         (dealloc)
@@ -1346,13 +1346,13 @@ macro_rules! __msg_send_id_helper {
     }};
     {
         ($($fn_args:tt)+)
-        ($retain_semantics:ident)
+        ($method_family:ident)
         ($trait:ident)
         ($fn:ident)
         ($($selector:tt)*)
         ($($argument:expr,)*)
     } => ({
-        <$crate::__macro_helpers::$retain_semantics as $crate::__macro_helpers::$trait<_, _>>::$fn(
+        <$crate::__macro_helpers::$method_family as $crate::__macro_helpers::$trait<_, _>>::$fn(
             $($fn_args)+,
             $crate::sel!($($selector)*),
             ($($argument,)*),
@@ -1371,8 +1371,8 @@ macro_rules! __msg_send_id_helper {
             $($selector)*
         );
         let result;
-        result = <$crate::__macro_helpers::RetainSemantics<{
-            $crate::__macro_helpers::retain_semantics(__SELECTOR_DATA)
+        result = <$crate::__macro_helpers::MethodFamily<{
+            $crate::__macro_helpers::method_family(__SELECTOR_DATA)
         }> as $crate::__macro_helpers::$trait<_, _>>::$fn(
             $($fn_args)+,
             $crate::__sel_inner!(

@@ -333,7 +333,7 @@ macro_rules! __extern_methods_method_out {
         ($($params_rest:tt)*)
 
         (#[method_id($($sel:tt)*)])
-        ($($retain_semantics:tt)*)
+        ($($method_family:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -353,7 +353,7 @@ macro_rules! __extern_methods_method_out {
 
                     ()
                     ()
-                    ($($retain_semantics)*)
+                    ($($method_family)*)
                 }
             }
         }

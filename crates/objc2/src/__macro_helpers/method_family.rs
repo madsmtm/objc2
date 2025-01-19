@@ -1,4 +1,4 @@
-/// Helper for specifying the retain semantics for a given selector family.
+/// Helper for specifying the method family for a given selector.
 ///
 /// Note that we can't actually check if a method is in a method family; only
 /// whether the _selector_ is in a _selector_ family.
@@ -17,18 +17,18 @@
 ///     which means it can't be a class method!
 ///
 /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments>
-// TODO: Use an enum instead of u8 here when stable
+// TODO: Use an enum instead of u8 here when possible in `const`.
 #[derive(Debug)]
-pub struct RetainSemantics<const INNER: u8> {}
+pub struct MethodFamily<const INNER: u8> {}
 
-pub type New = RetainSemantics<1>;
-pub type Alloc = RetainSemantics<2>;
-pub type Init = RetainSemantics<3>;
-pub type Copy = RetainSemantics<4>;
-pub type MutableCopy = RetainSemantics<5>;
-pub type Other = RetainSemantics<6>;
+pub type New = MethodFamily<1>;
+pub type Alloc = MethodFamily<2>;
+pub type Init = MethodFamily<3>;
+pub type Copy = MethodFamily<4>;
+pub type MutableCopy = MethodFamily<5>;
+pub type Other = MethodFamily<6>;
 
-pub const fn retain_semantics(selector: &str) -> u8 {
+pub const fn method_family(selector: &str) -> u8 {
     let selector = selector.as_bytes();
     match (
         in_selector_family(selector, b"new"),

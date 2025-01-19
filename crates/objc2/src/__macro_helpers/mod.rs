@@ -41,7 +41,7 @@ pub use self::define_class::{
 pub use self::defined_ivars::DefinedIvarsHelper;
 pub use self::image_info::ImageInfo;
 pub use self::method_family::{
-    retain_semantics, Alloc, Copy, Init, MutableCopy, New, Other, RetainSemantics,
+    method_family, Alloc, Copy, Init, MethodFamily, MutableCopy, New, Other,
 };
 pub use self::module_info::ModuleInfo;
 pub use self::msg_send::MsgSend;

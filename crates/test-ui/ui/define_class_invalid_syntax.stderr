@@ -530,7 +530,7 @@ error[E0599]: no function or associated item named `test_self` found for struct 
   | | );
   | |_- function or associated item `test_self` not found for this struct
 
-error[E0277]: the trait bound `RetainSemantics<2>: MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not satisfied
+error[E0277]: the trait bound `MethodFamily<2>: MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not satisfied
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -539,12 +539,12 @@ error[E0277]: the trait bound `RetainSemantics<2>: MessageReceiveRetained<&AnyCl
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
-  | |_^ the trait `MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `RetainSemantics<2>`
+  | |_^ the trait `MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `MethodFamily<2>`
   |
   = help: the following other types implement trait `MessageReceiveRetained<Receiver, Ret>`:
-            `RetainSemantics<1>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `RetainSemantics<3>` implements `MessageReceiveRetained<Allocated<T>, Ret>`
-            `RetainSemantics<4>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `RetainSemantics<5>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `RetainSemantics<6>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<1>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<3>` implements `MessageReceiveRetained<Allocated<T>, Ret>`
+            `MethodFamily<4>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<5>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<6>` implements `MessageReceiveRetained<Receiver, Ret>`
   = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

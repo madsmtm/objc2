@@ -1124,7 +1124,7 @@ macro_rules! __define_class_method_out {
         ($($params_rest:tt)*)
 
         ($($m_method:tt)*)
-        ($($retain_semantics:tt)*)
+        ($($method_family:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -1146,7 +1146,7 @@ macro_rules! __define_class_method_out {
             ($($params_prefix)*)
 
             ($($m_method)*)
-            ($($retain_semantics)*)
+            ($($method_family)*)
             ($($m_optional)*)
             ($($m_checked)*)
         }
@@ -1283,7 +1283,7 @@ macro_rules! __define_class_method_out_inner {
         ($($params_prefix:tt)*)
 
         (#[method_id($($sel:tt)*)])
-        () // Specifying retain semantics is unsupported in define_class! for now
+        () // Specifying method family is unsupported in define_class! for now
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
@@ -1303,8 +1303,8 @@ macro_rules! __define_class_method_out_inner {
             let __objc2_result = $body;
 
             #[allow(unreachable_code)]
-            <$crate::__macro_helpers::RetainSemantics<{
-                $crate::__macro_helpers::retain_semantics(
+            <$crate::__macro_helpers::MethodFamily<{
+                $crate::__macro_helpers::method_family(
                     $crate::__sel_helper! {
                         ()
                         $($sel)*
@@ -1329,7 +1329,7 @@ macro_rules! __define_class_method_out_inner {
         ($($params_prefix:tt)*)
 
         (#[method_id($($sel:tt)*)])
-        ($($retain_semantics:tt)*)
+        ($($method_family:tt)*)
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
@@ -1373,7 +1373,7 @@ macro_rules! __define_class_register_out {
         ($($params_rest:tt)*)
 
         (#[$method_or_method_id:ident($($sel:tt)*)])
-        ($($retain_semantics:tt)*)
+        ($($method_family:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {

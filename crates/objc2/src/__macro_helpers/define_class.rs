@@ -68,8 +68,8 @@ unsafe impl Encode for RetainedReturnValue {
 // can't actually modify the `self` argument (e.g. `let self = foo(self)` is
 // not allowed).
 //
-// See `MsgSendRetained` and `RetainSemantics` for details on the retain semantics
-// we're following here.
+// See `MsgSendRetained` and `MethodFamily` for details on the retain
+// semantics we're following here.
 pub trait MessageReceiveRetained<Receiver, Ret> {
     fn into_return(obj: Ret) -> RetainedReturnValue;
 }

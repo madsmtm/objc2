@@ -776,7 +776,7 @@ impl fmt::Display for Method {
             MemoryManagement::Normal => None,
         };
         if let Some(id_mm_name) = id_mm_name {
-            write!(f, "        #[method_id(@__retain_semantics {id_mm_name} ")?;
+            write!(f, "        #[method_id(@__method_family {id_mm_name} ")?;
         } else {
             write!(f, "        #[method(")?;
         }

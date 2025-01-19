@@ -67,7 +67,7 @@ handle_new_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<1_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
 .Lfunc_end1:
 	.size	handle_new_fallible, .Lfunc_end1-handle_new_fallible
 
@@ -179,7 +179,7 @@ handle_init_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<3_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
 .Lfunc_end4:
 	.size	handle_init_fallible, .Lfunc_end4-handle_init_fallible
 
@@ -370,7 +370,7 @@ handle_copy_fallible:
 .LBB9_2:
 	lea	eax, [ebx + .Lanon.[ID].3@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
 .Lfunc_end9:
 	.size	handle_copy_fallible, .Lfunc_end9-handle_copy_fallible
 
@@ -437,7 +437,7 @@ handle_mutable_copy_fallible:
 .LBB11_2:
 	lea	eax, [ebx + .Lanon.[ID].4@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
 .Lfunc_end11:
 	.size	handle_mutable_copy_fallible, .Lfunc_end11-handle_mutable_copy_fallible
 
@@ -551,7 +551,7 @@ handle_autoreleased_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<6_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::MethodFamily<6_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
 .Lfunc_end14:
 	.size	handle_autoreleased_fallible, .Lfunc_end14-handle_autoreleased_fallible
 
