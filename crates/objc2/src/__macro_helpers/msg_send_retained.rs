@@ -7,7 +7,10 @@ use crate::{sel, ClassType, DefinedClass, Message};
 
 use super::defined_ivars::set_finalized;
 use super::null_error::encountered_error;
-use super::{Alloc, ConvertArguments, Copy, Init, MsgSend, MutableCopy, New, Other, TupleExtender};
+use super::{
+    AllocFamily, ConvertArguments, CopyFamily, InitFamily, MsgSend, MutableCopyFamily, NewFamily,
+    NoneFamily, TupleExtender,
+};
 
 pub trait MsgSendRetained<T, U> {
     #[track_caller]
@@ -157,7 +160,7 @@ pub trait MsgSendSuperRetained<T, U> {
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for New {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for NewFamily {
     #[inline]
     unsafe fn send_message_retained<
         A: ConvertArguments,
@@ -179,7 +182,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> fo
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>> for New {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>> for NewFamily {
     type Inner = T::Inner;
 
     #[inline]
@@ -202,7 +205,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>
     }
 }
 
-impl<T: Message> MsgSendRetained<&'_ AnyClass, Allocated<T>> for Alloc {
+impl<T: Message> MsgSendRetained<&'_ AnyClass, Allocated<T>> for AllocFamily {
     #[inline]
     unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
         cls: &AnyClass,
@@ -217,7 +220,7 @@ impl<T: Message> MsgSendRetained<&'_ AnyClass, Allocated<T>> for Alloc {
     }
 }
 
-impl<T: ?Sized + Message> MsgSendSuperRetained<&'_ AnyClass, Allocated<T>> for Alloc {
+impl<T: ?Sized + Message> MsgSendSuperRetained<&'_ AnyClass, Allocated<T>> for AllocFamily {
     type Inner = AnyClass;
 
     #[inline]
@@ -238,7 +241,7 @@ impl<T: ?Sized + Message> MsgSendSuperRetained<&'_ AnyClass, Allocated<T>> for A
     }
 }
 
-impl Alloc {
+impl AllocFamily {
     /// Fast path optimization for `msg_send_id![cls, alloc]`.
     #[inline]
     pub unsafe fn send_message_retained_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
@@ -254,7 +257,7 @@ impl Alloc {
             let obj: *mut T = unsafe { crate::ffi::objc_alloc(cls).cast() };
             // SAFETY: The object is newly allocated, so this has +1 retain count
             let obj = unsafe { Allocated::new(obj) };
-            R::maybe_unwrap::<Alloc>(obj, ())
+            R::maybe_unwrap::<AllocFamily>(obj, ())
         }
         #[cfg(not(all(
             target_vendor = "apple",
@@ -262,12 +265,12 @@ impl Alloc {
         )))]
         {
             // SAFETY: Checked by caller
-            unsafe { Alloc::send_message_retained(cls, sel!(alloc), ()) }
+            unsafe { AllocFamily::send_message_retained(cls, sel!(alloc), ()) }
         }
     }
 }
 
-impl<T: ?Sized + Message> MsgSendRetained<Allocated<T>, Option<Retained<T>>> for Init {
+impl<T: ?Sized + Message> MsgSendRetained<Allocated<T>, Option<Retained<T>>> for InitFamily {
     #[inline]
     unsafe fn send_message_retained<
         A: ConvertArguments,
@@ -291,7 +294,7 @@ impl<T: ?Sized + Message> MsgSendRetained<Allocated<T>, Option<Retained<T>>> for
     }
 }
 
-impl<T: DefinedClass> MsgSendSuperRetained<PartialInit<T>, Option<Retained<T>>> for Init {
+impl<T: DefinedClass> MsgSendSuperRetained<PartialInit<T>, Option<Retained<T>>> for InitFamily {
     type Inner = T;
 
     #[inline]
@@ -320,7 +323,7 @@ impl<T: DefinedClass> MsgSendSuperRetained<PartialInit<T>, Option<Retained<T>>> 
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for Copy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for CopyFamily {
     #[inline]
     unsafe fn send_message_retained<
         A: ConvertArguments,
@@ -339,7 +342,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> fo
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>> for Copy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>> for CopyFamily {
     type Inner = T::Inner;
 
     #[inline]
@@ -360,7 +363,9 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for MutableCopy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>>
+    for MutableCopyFamily
+{
     #[inline]
     unsafe fn send_message_retained<
         A: ConvertArguments,
@@ -379,7 +384,9 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> fo
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>> for MutableCopy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>>
+    for MutableCopyFamily
+{
     type Inner = T::Inner;
 
     #[inline]
@@ -400,7 +407,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>
     }
 }
 
-impl<T: MsgSend, U: Message> MsgSendRetained<T, Option<Retained<U>>> for Other {
+impl<T: MsgSend, U: Message> MsgSendRetained<T, Option<Retained<U>>> for NoneFamily {
     #[inline]
     unsafe fn send_message_retained<
         A: ConvertArguments,
@@ -426,7 +433,7 @@ impl<T: MsgSend, U: Message> MsgSendRetained<T, Option<Retained<U>>> for Other {
     }
 }
 
-impl<T: MsgSend, U: Message> MsgSendSuperRetained<T, Option<Retained<U>>> for Other {
+impl<T: MsgSend, U: Message> MsgSendSuperRetained<T, Option<Retained<U>>> for NoneFamily {
     type Inner = T::Inner;
 
     #[inline]
@@ -504,7 +511,7 @@ pub trait MsgSendRetainedFailed<'a> {
     fn failed(args: Self::Args) -> !;
 }
 
-impl<'a> MsgSendRetainedFailed<'a> for New {
+impl<'a> MsgSendRetainedFailed<'a> for NewFamily {
     type Args = (Option<&'a AnyObject>, Sel);
 
     #[cold]
@@ -526,7 +533,7 @@ impl<'a> MsgSendRetainedFailed<'a> for New {
     }
 }
 
-impl MsgSendRetainedFailed<'_> for Alloc {
+impl MsgSendRetainedFailed<'_> for AllocFamily {
     type Args = ();
 
     #[cold]
@@ -535,7 +542,7 @@ impl MsgSendRetainedFailed<'_> for Alloc {
     }
 }
 
-impl MsgSendRetainedFailed<'_> for Init {
+impl MsgSendRetainedFailed<'_> for InitFamily {
     type Args = (*mut AnyObject, Sel);
 
     #[cold]
@@ -554,7 +561,7 @@ impl MsgSendRetainedFailed<'_> for Init {
     }
 }
 
-impl MsgSendRetainedFailed<'_> for Copy {
+impl MsgSendRetainedFailed<'_> for CopyFamily {
     type Args = ();
 
     #[cold]
@@ -563,7 +570,7 @@ impl MsgSendRetainedFailed<'_> for Copy {
     }
 }
 
-impl MsgSendRetainedFailed<'_> for MutableCopy {
+impl MsgSendRetainedFailed<'_> for MutableCopyFamily {
     type Args = ();
 
     #[cold]
@@ -572,7 +579,7 @@ impl MsgSendRetainedFailed<'_> for MutableCopy {
     }
 }
 
-impl<'a> MsgSendRetainedFailed<'a> for Other {
+impl<'a> MsgSendRetainedFailed<'a> for NoneFamily {
     type Args = (Option<&'a AnyObject>, Sel);
 
     #[cold]

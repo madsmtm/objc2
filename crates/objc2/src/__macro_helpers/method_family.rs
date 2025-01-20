@@ -22,17 +22,17 @@
 pub struct MethodFamily<const INNER: u8> {}
 
 /// The `new` family.
-pub type New = MethodFamily<1>;
+pub type NewFamily = MethodFamily<1>;
 /// The `alloc` family.
-pub type Alloc = MethodFamily<2>;
+pub type AllocFamily = MethodFamily<2>;
 /// The `init` family.
-pub type Init = MethodFamily<3>;
+pub type InitFamily = MethodFamily<3>;
 /// The `copy` family.
-pub type Copy = MethodFamily<4>;
+pub type CopyFamily = MethodFamily<4>;
 /// The `mutableCopy` family.
-pub type MutableCopy = MethodFamily<5>;
+pub type MutableCopyFamily = MethodFamily<5>;
 /// No family.
-pub type Other = MethodFamily<6>;
+pub type NoneFamily = MethodFamily<6>;
 
 /// Helper module where `#[unsafe(method_family = $family:ident)]` will import
 /// its value from.
@@ -40,8 +40,8 @@ pub type Other = MethodFamily<6>;
 pub mod method_family_import {
     // Rename to match Clang's `__attribute__((objc_method_family(family)))`.
     pub use super::{
-        Alloc as alloc, Copy as copy, Init as init, MutableCopy as mutableCopy, New as new,
-        Other as none,
+        AllocFamily as alloc, CopyFamily as copy, InitFamily as init,
+        MutableCopyFamily as mutableCopy, NewFamily as new, NoneFamily as none,
     };
 }
 

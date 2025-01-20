@@ -16,7 +16,7 @@ use crate::runtime::{AnyProtocol, MethodDescription};
 use crate::{AllocAnyThread, ClassType, DefinedClass, Message, ProtocolType};
 
 use super::defined_ivars::{register_with_ivars, setup_dealloc};
-use super::{Copy, Init, MaybeUnwrap, MutableCopy, New, Other};
+use super::{CopyFamily, InitFamily, MaybeUnwrap, MutableCopyFamily, NewFamily, NoneFamily};
 
 /// Helper for determining auto traits of defined classes.
 ///
@@ -75,7 +75,7 @@ pub trait MessageReceiveRetained<Receiver, Ret> {
 }
 
 // Receiver and return type have no correlation
-impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for New
+impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for NewFamily
 where
     Receiver: MessageReceiver,
     Ret: MaybeOptionRetained,
@@ -94,7 +94,7 @@ where
 //
 // Additionally, the receiver and return type must have the same generic
 // parameter `T`.
-impl<Ret, T> MessageReceiveRetained<Allocated<T>, Ret> for Init
+impl<Ret, T> MessageReceiveRetained<Allocated<T>, Ret> for InitFamily
 where
     T: Message,
     Ret: MaybeOptionRetained<Input = Option<Retained<T>>>,
@@ -106,7 +106,7 @@ where
 }
 
 // Receiver and return type have no correlation
-impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for Copy
+impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for CopyFamily
 where
     Receiver: MessageReceiver,
     Ret: MaybeOptionRetained,
@@ -118,7 +118,7 @@ where
 }
 
 // Receiver and return type have no correlation
-impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for MutableCopy
+impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for MutableCopyFamily
 where
     Receiver: MessageReceiver,
     Ret: MaybeOptionRetained,
@@ -130,7 +130,7 @@ where
 }
 
 // Receiver and return type have no correlation
-impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for Other
+impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for NoneFamily
 where
     Receiver: MessageReceiver,
     Ret: MaybeOptionRetained,
