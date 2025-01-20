@@ -1,6 +1,6 @@
 framework = "ServiceManagement"
 crate = "objc2-service-management"
-required-crates = ["objc2-core-foundation"]
+required-crates = []
 custom-lib-rs = true
 macos = "10.6"
 maccatalyst = "13.0"
