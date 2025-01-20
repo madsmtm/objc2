@@ -18,7 +18,7 @@ macro_rules! __extract_and_apply_cfg_attributes {
     {
         (
             #[cfg $($args:tt)*]
-            $($m_rest:tt)*
+            $($rest:tt)*
         )
         $($output:tt)*
     } => {
@@ -26,7 +26,7 @@ macro_rules! __extract_and_apply_cfg_attributes {
         #[cfg $($args)*]
         {
             $crate::__extract_and_apply_cfg_attributes! {
-                ($($m_rest)*)
+                ($($rest)*)
                 $($output)*
             }
         }
@@ -35,22 +35,26 @@ macro_rules! __extract_and_apply_cfg_attributes {
     {
         (
             #[$($m_ignored:tt)*]
-            $($m_rest:tt)*
+            $($rest:tt)*
         )
         $($output:tt)*
     } => {
         // Ignore the attribute, and continue parsing the rest
         $crate::__extract_and_apply_cfg_attributes! {
-            ($($m_rest)*)
+            ($($rest)*)
             $($output)*
         }
     };
 }
 
-/// Extract `#[method(...)]` or `#[method_id(...)]` and the `#[optional]`
-/// attribute, and send it to another macro.
+/// Extract our custom method attributes, and send it to another macro.
 ///
-/// This will ensure that there is one and only one of the method attributes
+/// Handles:
+/// - `#[method(...)]` or `#[method_id(...)]`.
+/// - `#[unsafe(method_family(...))]`.
+/// - `#[optional]`.
+///
+/// This will ensure that there is one and only one of the `method` attributes
 /// present.
 ///
 /// This takes the following arguments:
@@ -65,196 +69,197 @@ macro_rules! __extract_and_apply_cfg_attributes {
 /// 1. The `method` or `method_id` attribute.
 ///    (#[$method_or_method_id:ident($($sel:tt)*)])
 ///
-/// 2. The method family, if any was present in the selector for
-///    `#[method_id(...)]`.
+/// 2. The requested method family, if any was present.
 ///
-///    One of `New`, `Alloc`, `Init`, `Copy`, `MutableCopy` and `Other`.
+///    One of `new`, `alloc`, `init`, `copy`, `mutableCopy` or `none`.
 ///    ($($method_family:ident)?)
 ///
 /// 3. The `optional` attribute, if any.
 ///    ($(#[optional])?)
 ///
-/// 4. The remaining attributes.
-///    ($(#[$($m_checked:tt)*])*)
+/// 4. The remaining attributes that should be placed on the method definition
+///    itself.
+///    ($(#[$($attr_method:tt)*])*)
+///
+/// 5. Attributes like `cfg` and `allow` that should be placed on the usage
+///    site of the method.
+///    ($(#[$($attr_use:tt)*])*)
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __extract_custom_attributes {
+macro_rules! __extract_method_attributes {
     {
         ($($m:tt)*)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
-        $crate::__extract_custom_attributes_inner! {
+        $crate::__extract_method_attributes_inner! {
             ($($m)*)
             // No already parsed attributes
             () // method/method_id
             () // method family
             () // optional
-            () // checked
+            () // attr_method
+            () // attr_use
 
             ($out_macro)
-            $($macro_args)*
+            $($out_args)*
         }
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __extract_custom_attributes_inner {
+macro_rules! __extract_method_attributes_inner {
     // No method/method_id attribute found
     {
         // No attributes left to process
         ()
+
         // And we found no `method` or `method_id` attributes
         ()
         ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
         $crate::__macro_helpers::compile_error!("must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`");
+
+        // Try to output anyhow, for better UI.
+        $out_macro! {
+            $($out_args)*
+            // Append attributes to the end of the macro arguments
+            (#[method(invalidSelector)])
+            ($($method_family)*)
+            ($($optional)*)
+            ($($attr_method)*)
+            ($($attr_use)*)
+        }
     };
 
     // Base case
     {
         // No attributes left to process
         ()
+
         // And we found a `method` or `method_id` attribute
-        ($($m_method:tt)*)
+        ($($method:tt)*)
         ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
         // Output
         $out_macro! {
-            $($macro_args)*
+            $($out_args)*
             // Append attributes to the end of the macro arguments
-            ($($m_method)*)
+            ($($method)*)
             ($($method_family)*)
-            ($($m_optional)*)
-            ($($m_checked)*)
+            ($($optional)*)
+            ($($attr_method)*)
+            ($($attr_use)*)
         }
     };
 
     // `method` attribute
     {
         (
-            #[method($($sel:tt)*)]
+            #[method($($parsed:tt)*)]
             $($rest:tt)*
         )
-        // If no existing `method` nor `method_id` attributes exist
-        ()
+
+        ($($method:tt)*)
         ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
-        $crate::__extract_custom_attributes_inner! {
+        $crate::__handle_duplicate!("method`/`method_id"; $($method)*);
+        $crate::__extract_method_attributes_inner! {
             ($($rest)*)
+
             // Add method attribute
-            (#[method($($sel)*)])
+            (#[method($($parsed)*)])
             ($($method_family)*)
-            ($($m_optional)*)
-            ($($m_checked)*)
+            ($($optional)*)
+            ($($attr_method)*)
+            ($($attr_use)*)
 
             ($out_macro)
-            $($macro_args)*
+            $($out_args)*
         }
     };
-    // Duplicate `method` attributes
-    {
-        (
-            #[method($($sel:tt)*)]
-            $($rest:tt)*
-        )
-        ($($m_method:tt)*)
-        ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
 
-        ($out_macro:path)
-        $($macro_args:tt)*
-    } => {
-        $crate::__macro_helpers::compile_error!("cannot specify the `method`/`method_id` attribute twice");
-    };
-
-    // `method_id` attribute with method family
-    {
-        (
-            #[method_id(@__method_family $method_family:ident $($sel:tt)*)]
-            $($rest:tt)*
-        )
-        // If no existing `method` nor `method_id` attributes exist
-        ()
-        ()
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
-
-        ($out_macro:path)
-        $($macro_args:tt)*
-    } => {
-        $crate::__extract_custom_attributes_inner! {
-            ($($rest)*)
-            // Add method_id attribute
-            (#[method_id($($sel)*)])
-            ($method_family)
-            ($($m_optional)*)
-            ($($m_checked)*)
-
-            ($out_macro)
-            $($macro_args)*
-        }
-    };
     // `method_id` attribute
     {
         (
-            #[method_id($($sel:tt)*)]
+            #[method_id($($parsed:tt)*)]
             $($rest:tt)*
         )
-        // If no existing `method` nor `method_id` attributes exist
-        ()
+
+        ($($method:tt)*)
         ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
-        $crate::__extract_custom_attributes_inner! {
+        $crate::__handle_duplicate!("method`/`method_id"; $($method)*);
+        $crate::__extract_method_attributes_inner! {
             ($($rest)*)
+
             // Add method_id attribute
-            (#[method_id($($sel)*)])
+            (#[method_id($($parsed)*)])
             ($($method_family)*)
-            ($($m_optional)*)
-            ($($m_checked)*)
+            ($($optional)*)
+            ($($attr_method)*)
+            ($($attr_use)*)
 
             ($out_macro)
-            $($macro_args)*
+            $($out_args)*
         }
     };
-    // Duplicate `method_id` attributes
+
+    // `method_family` attribute
     {
         (
-            #[method_id($($sel:tt)*)]
+            #[unsafe(method_family($($parsed:tt)+))]
             $($rest:tt)*
         )
-        ($($m_method:tt)*)
+        ($($method:tt)*)
         ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
-        $crate::__macro_helpers::compile_error!("cannot specify the `method`/`method_id` attribute twice");
+        $crate::__handle_duplicate!("method_family"; $($method_family)*);
+        $crate::__extract_method_attributes_inner! {
+            ($($rest)*)
+
+            ($($method)*)
+            // Add method_family attribute
+            ($($parsed)+)
+            ($($optional)*)
+            ($($attr_method)*)
+            ($($attr_use)*)
+
+            ($out_macro)
+            $($out_args)*
+        }
     };
 
     // `optional` attribute
@@ -263,72 +268,140 @@ macro_rules! __extract_custom_attributes_inner {
             #[optional]
             $($rest:tt)*
         )
-        ($($m_method:tt)*)
+
+        ($($method:tt)*)
         ($($method_family:tt)*)
-        // If no existing `optional` attributes exist
-        ()
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
-        $crate::__extract_custom_attributes_inner! {
+        $crate::__handle_duplicate!("optional"; $($optional)*);
+        $crate::__extract_method_attributes_inner! {
             ($($rest)*)
-            ($($m_method)*)
+
+            ($($method)*)
             ($($method_family)*)
             // Add optional attribute
             (#[optional])
-            ($($m_checked)*)
+            ($($attr_method)*)
+            ($($attr_use)*)
 
             ($out_macro)
-            $($macro_args)*
+            $($out_args)*
         }
     };
-    // Duplicate `optional` attributes
+
+    // Special-case `cfg(...)`
     {
         (
-            #[optional]
+            #[cfg $($parsed:tt)*]
             $($rest:tt)*
         )
-        ($($m_method:tt)*)
+
+        ($($method:tt)*)
         ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
-        $crate::__macro_helpers::compile_error!("cannot specify the `optional` attribute twice");
-    };
-
-    // Other attributes
-    {
-        (
-            #[$($checked:tt)*]
-            $($rest:tt)*
-        )
-        ($($m_method:tt)*)
-        ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
-
-        ($out_macro:path)
-        $($macro_args:tt)*
-    } => {
-        $crate::__extract_custom_attributes_inner! {
+        $crate::__extract_method_attributes_inner! {
             ($($rest)*)
-            ($($m_method)*)
+
+            ($($method)*)
             ($($method_family)*)
-            ($($m_optional)*)
+            ($($optional)*)
             (
-                $($m_checked)*
-                // The attribute is appended to the current set, since we've
-                // been consuming the attributes from the front.
-                #[$($checked)*]
+                $($attr_method)*
+                #[cfg $($parsed)*]
+            )
+            // Add `cfg` attributes to use site as well.
+            (
+                $($attr_use)*
+                #[cfg $($parsed)*]
             )
 
             ($out_macro)
-            $($macro_args)*
+            $($out_args)*
+        }
+    };
+
+    // Special-case `allow(...)`
+    {
+        (
+            #[allow $($parsed:tt)*]
+            $($rest:tt)*
+        )
+
+        ($($method:tt)*)
+        ($($method_family:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
+
+        ($out_macro:path)
+        $($out_args:tt)*
+    } => {
+        $crate::__extract_method_attributes_inner! {
+            ($($rest)*)
+
+            ($($method)*)
+            ($($method_family)*)
+            ($($optional)*)
+            (
+                $($attr_method)*
+                #[allow $($parsed)*]
+            )
+            // Add `allow` attributes to use site as well.
+            (
+                $($attr_use)*
+                #[allow $($parsed)*]
+            )
+
+            ($out_macro)
+            $($out_args)*
+        }
+    };
+
+    // Other attributes.
+    // (`doc`, `deprecated`, `expect/warn/deny/forbid`, `cfg_attr`,
+    // `no_mangle`, `inline`, `cold`, `track_caller`, etc.)
+    {
+        (
+            #[$($parsed:tt)*]
+            $($rest:tt)*
+        )
+
+        ($($method:tt)*)
+        ($($method_family:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
+
+        ($out_macro:path)
+        $($out_args:tt)*
+    } => {
+        $crate::__extract_method_attributes_inner! {
+            ($($rest)*)
+
+            ($($method)*)
+            ($($method_family)*)
+            ($($optional)*)
+            (
+                $($attr_method)*
+                // The attribute is appended to the current set, since we've
+                // been consuming the attributes from the front.
+                #[$($parsed)*]
+            )
+            ($($attr_use)*)
+
+            ($out_macro)
+            $($out_args)*
         }
     };
 }

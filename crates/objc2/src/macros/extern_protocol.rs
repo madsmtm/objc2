@@ -33,6 +33,8 @@
 /// This macro creates an `unsafe` trait with the specified methods. A default
 /// implementation of the method is generated based on the selector specified
 /// with `#[method(a:selector:)]` or `#[method_id(a:selector:)]`.
+/// Similar to [`extern_methods!`], you can use the `#[method_family(...)]`
+/// attribute to override the inferred method family.
 ///
 /// Other protocols that this protocol conforms to / inherits can be specified
 /// as supertraits.
@@ -284,7 +286,7 @@ macro_rules! __extern_protocol_rewrite_methods {
         $crate::__rewrite_self_param! {
             ($($params)*)
 
-            ($crate::__extract_custom_attributes)
+            ($crate::__extract_method_attributes)
             ($(#[$($m)*])*)
 
             ($crate::__extern_protocol_method_out)
@@ -309,7 +311,7 @@ macro_rules! __extern_protocol_rewrite_methods {
         $crate::__rewrite_self_param! {
             ($($params)*)
 
-            ($crate::__extract_custom_attributes)
+            ($crate::__extract_method_attributes)
             ($(#[$($m)*])*)
 
             ($crate::__extern_protocol_method_out)
@@ -338,16 +340,19 @@ macro_rules! __extern_protocol_method_out {
         ($($params_rest:tt)*)
 
         (#[method($($sel:tt)*)])
-        ()
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($method_family:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
     } => {
-        $($m_checked)*
+        $($attr_method)*
         $($function_start)*
         where
             Self: $crate::__macro_helpers::Sized + $crate::Message
             $(, $where : $bound)*
         {
+            $crate::__extern_protocol_no_method_family!($($method_family)*);
+
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send! {
@@ -375,10 +380,11 @@ macro_rules! __extern_protocol_method_out {
 
         (#[method_id($($sel:tt)*)])
         ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
     } => {
-        $($m_checked)*
+        $($attr_method)*
         $($function_start)*
         where
             Self: $crate::__macro_helpers::Sized + $crate::Message
@@ -411,16 +417,19 @@ macro_rules! __extern_protocol_method_out {
         ($($params_rest:tt)*)
 
         (#[method($($sel:tt)*)])
-        ()
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($method_family:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
     } => {
-        $($m_checked)*
+        $($attr_method)*
         $($function_start)*
         where
             Self: $crate::__macro_helpers::Sized + $crate::ClassType
             $(, $where : $bound)*
         {
+            $crate::__extern_protocol_no_method_family!($($method_family)*);
+
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send! {
@@ -448,10 +457,11 @@ macro_rules! __extern_protocol_method_out {
 
         (#[method_id($($sel:tt)*)])
         ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
     } => {
-        $($m_checked)*
+        $($attr_method)*
         $($function_start)*
         where
             Self: $crate::__macro_helpers::Sized + $crate::ClassType
@@ -470,6 +480,17 @@ macro_rules! __extern_protocol_method_out {
                 }
             }
         }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_protocol_no_method_family {
+    () => {};
+    ($($t:tt)+) => {
+        $crate::__macro_helpers::compile_error!(
+            "`#[method_family(...)]` is only supported together with `#[method_id(...)]`"
+        )
     };
 }
 

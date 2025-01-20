@@ -1346,13 +1346,13 @@ macro_rules! __msg_send_id_helper {
     }};
     {
         ($($fn_args:tt)+)
-        ($method_family:ident)
+        ($($method_family:tt)+)
         ($trait:ident)
         ($fn:ident)
         ($($selector:tt)*)
         ($($argument:expr,)*)
     } => ({
-        <$crate::__macro_helpers::$method_family as $crate::__macro_helpers::$trait<_, _>>::$fn(
+        <$crate::__macro_helpers::method_family_import::$($method_family)+ as $crate::__macro_helpers::$trait<_, _>>::$fn(
             $($fn_args)+,
             $crate::sel!($($selector)*),
             ($($argument,)*),

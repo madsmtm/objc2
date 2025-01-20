@@ -16,15 +16,12 @@
 /// the special name `this` (or `_this`), your method will assumed to be an
 /// instance method, and if you don't it will be assumed to be a class method.
 ///
-/// The desired selector can be specified using the `#[method(my:selector:)]`
-/// or `#[method_id(my:selector:)]` attribute. The `method` attribute maps to
-/// a call to [`msg_send!`], while the `method_id` maps to [`msg_send_id!`].
+/// If you specify a function/method with a body, the macro will output it
+/// unchanged.
 ///
-/// If the attribute ends with "_", as in `#[method(my:error:_)]` or
-/// `#[method_id(my:error:_)]`, the method is assumed to take an
-/// implicit `NSError**` parameter, which is automatically converted to a
-/// [`Result`]. See the error section in [`msg_send!`] and [`msg_send_id!`]
-/// for details.
+/// The name of the function will be used for the resulting function that the
+/// user will use to access the functionality, but is otherwise not used by
+/// the macro.
 ///
 /// If you use `objc2::MainThreadMarker` as a parameter type, the macro will
 /// ignore it, allowing you to neatly specify "this method must be run on the
@@ -32,21 +29,67 @@
 /// a textual match on `MainThreadMarker`; so you must use that exact
 /// identifier.
 ///
-/// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
-/// `deprecated` and so on is supported. However, note that `cfg_attr` may not
-/// work correctly, due to implementation difficulty - if you have a concrete
-/// use-case, please [open an issue], then we can discuss it.
-///
-/// The name of the function will be used for the resulting function that the
-/// user will use to access the functionality, but is otherwise not used by
-/// the macro.
-///
-/// If you specify a function/method with a body, the macro will output it
-/// unchanged.
-///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
-/// [open an issue]: https://github.com/madsmtm/objc2/issues/new
+///
+///
+/// ## Attributes
+///
+/// You can add most normal attributes to the methods, including
+/// `#[cfg(...)]`, `#[allow(...)]`, `#[deprecated = ...]` and doc comments.
+///
+/// Exceptions and special attributes are noted below.
+///
+///
+/// ### `#[method(...)]` or `#[method_id(...)]` (required)
+///
+/// Specify the desired selector using the `#[method(my:selector:)]` or
+/// `#[method_id(my:selector:)]` attributes. `method` makes the macro delegate
+/// to [`msg_send!`], while `method_id` delegates to [`msg_send_id!`].
+///
+/// If the selector ends with "_", as in `#[method(my:error:_)]` or
+/// `#[method_id(my:error:_)]`, the method is assumed to take an
+/// implicit `NSError**` parameter, which is automatically converted to a
+/// [`Result`]. See the error section in [`msg_send!`] and [`msg_send_id!`]
+/// for details.
+///
+///
+/// ### `#[unsafe(method_family(...))]`
+///
+/// The Cocoa memory management convention is figured out automatically based
+/// on the name of the selector, but it can be overwritten with this `unsafe`
+/// attribute.
+///
+/// This is commonly done in framework crates to improve compile-time
+/// performance, as the logic to determine the family automatically can be
+/// quite taxing at scale. That said, you should rarely need to use this
+/// yourself.
+///
+/// The valid family names are:
+/// - `alloc`.
+/// - `new`.
+/// - `init`.
+/// - `copy`.
+/// - `mutableCopy`.
+///
+/// As well as the special `none` family that opts-out of being in a family.
+///
+/// This corresponds to the `__attribute__((objc_method_family(family)))` C
+/// attribute, see [Clang's documentation][clang-method-families].
+///
+/// [clang-method-families]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#method-families
+///
+///
+/// #### Safety
+///
+/// You must ensure that the specified method family is correct.
+///
+///
+/// ### `#[cfg_attr(..., ...)]`
+///
+/// This is only supported for attributes that apply to the method itself
+/// (i.e. not supported for attributes that apply to any of the custom
+/// attributes, due to implementation difficulty).
 ///
 ///
 /// # Safety
@@ -171,8 +214,8 @@
 /// See the source code of `objc2-foundation` for many more examples.
 #[macro_export]
 macro_rules! extern_methods {
-    // Generic impls
     (
+        // Generic implementations.
         $(
             $(#[$impl_m:meta])*
             unsafe impl<$($t:ident $(: $b:ident $(+ $rest:ident)*)?),* $(,)?> $type:ty {
@@ -189,12 +232,13 @@ macro_rules! extern_methods {
             }
         )+
     };
-
-    // Non-generic impls
     (
+        // Non-generic implementations.
         $(
             $(#[$impl_m:meta])*
             unsafe impl $type:ty {
+                // #[method($($selector)+)]
+                // fn $fn_name($self, $($param: $Ty)*) -> $Return;
                 $($methods:tt)*
             }
         )+
@@ -228,7 +272,7 @@ macro_rules! __extern_methods_rewrite_methods {
         $crate::__rewrite_self_param! {
             ($($params)*)
 
-            ($crate::__extract_custom_attributes)
+            ($crate::__extract_method_attributes)
             ($(#[$($m)*])*)
 
             ($crate::__extern_methods_method_out)
@@ -253,7 +297,7 @@ macro_rules! __extern_methods_rewrite_methods {
         $crate::__rewrite_self_param! {
             ($($params)*)
 
-            ($crate::__extract_custom_attributes)
+            ($crate::__extract_method_attributes)
             ($(#[$($m)*])*)
 
             ($crate::__extern_methods_method_out)
@@ -296,16 +340,18 @@ macro_rules! __extern_methods_method_out {
         ($($params_rest:tt)*)
 
         (#[method($($sel:tt)*)])
-        ()
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($method_family:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
     } => {
-        $($m_checked)*
+        $($attr_method)*
         $($function_start)*
         where
             $($where : $bound,)*
         {
-            $crate::__extern_methods_no_optional!($($m_optional)*);
+            $crate::__extern_methods_no_method_family!($($method_family)*);
+            $crate::__extern_methods_no_optional!($($optional)*);
 
             #[allow(unused_unsafe)]
             unsafe {
@@ -334,15 +380,16 @@ macro_rules! __extern_methods_method_out {
 
         (#[method_id($($sel:tt)*)])
         ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
     } => {
-        $($m_checked)*
+        $($attr_method)*
         $($function_start)*
         where
             $($where : $bound,)*
         {
-            $crate::__extern_methods_no_optional!($($m_optional)*);
+            $crate::__extern_methods_no_optional!($($optional)*);
 
             #[allow(unused_unsafe)]
             unsafe {
@@ -357,6 +404,17 @@ macro_rules! __extern_methods_method_out {
                 }
             }
         }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_methods_no_method_family {
+    () => {};
+    ($($t:tt)+) => {
+        $crate::__macro_helpers::compile_error!(
+            "`#[method_family(...)]` is only supported together with `#[method_id(...)]`"
+        )
     };
 }
 

@@ -144,7 +144,8 @@
 ///
 /// The desired selector can be specified using the `#[method(my:selector:)]`
 /// or `#[method_id(my:selector:)]` attribute, similar to the
-/// [`extern_methods!`] macro.
+/// [`extern_methods!`] macro. The `#[method_family(family)]` attribute is not
+/// yet supported.
 ///
 /// If the `#[method_id(...)]` attribute is used, the return type must be
 /// `Option<Retained<T>>` or `Retained<T>`. Additionally, if the selector is
@@ -897,7 +898,7 @@ macro_rules! __define_class_output_methods {
         $crate::__rewrite_self_param! {
             ($($params)*)
 
-            ($crate::__extract_custom_attributes)
+            ($crate::__extract_method_attributes)
             ($(#[$($m)*])*)
 
             ($crate::__define_class_method_out)
@@ -922,7 +923,7 @@ macro_rules! __define_class_output_methods {
         $crate::__rewrite_self_param! {
             ($($params)*)
 
-            ($crate::__extract_custom_attributes)
+            ($crate::__extract_method_attributes)
             ($(#[$($m)*])*)
 
             ($crate::__define_class_method_out)
@@ -1042,7 +1043,7 @@ macro_rules! __define_class_register_methods {
         $crate::__rewrite_self_param! {
             ($($params)*)
 
-            ($crate::__extract_custom_attributes)
+            ($crate::__extract_method_attributes)
             ($(#[$($m)*])*)
 
             ($crate::__define_class_register_out)
@@ -1072,7 +1073,7 @@ macro_rules! __define_class_register_methods {
         $crate::__rewrite_self_param! {
             ($($params)*)
 
-            ($crate::__extract_custom_attributes)
+            ($crate::__extract_method_attributes)
             ($(#[$($m)*])*)
 
             ($crate::__define_class_register_out)
@@ -1125,8 +1126,9 @@ macro_rules! __define_class_method_out {
 
         ($($m_method:tt)*)
         ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
     } => {
         $crate::__define_class_rewrite_params! {
             ($($params_rest)*)
@@ -1147,8 +1149,9 @@ macro_rules! __define_class_method_out {
 
             ($($m_method)*)
             ($($method_family)*)
-            ($($m_optional)*)
-            ($($m_checked)*)
+            ($($optional)*)
+            ($($attr_method)*)
+            ($($attr_use)*)
         }
     };
 }
@@ -1250,14 +1253,15 @@ macro_rules! __define_class_method_out_inner {
         ($($params_prefix:tt)*)
 
         (#[method($($__sel:tt)*)])
-        ()
-        ($($__m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($method_family:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
 
         ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
     } => {
-        $($m_checked)*
+        $($attr_method)*
         #[allow(clippy::diverging_sub_expression)]
         $($qualifiers)* extern "C-unwind" fn $name(
             $($params_prefix)*
@@ -1283,14 +1287,15 @@ macro_rules! __define_class_method_out_inner {
         ($($params_prefix:tt)*)
 
         (#[method_id($($sel:tt)*)])
-        () // Specifying method family is unsupported in define_class! for now
-        ($($__m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($method_family:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
 
         ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
     } => {
-        $($m_checked)*
+        $($attr_method)*
         #[allow(clippy::diverging_sub_expression)]
         $($qualifiers)* extern "C-unwind" fn $name(
             $($params_prefix)*
@@ -1330,13 +1335,14 @@ macro_rules! __define_class_method_out_inner {
 
         (#[method_id($($sel:tt)*)])
         ($($method_family:tt)*)
-        ($($__m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
 
         ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
     } => {
-        $($m_checked)*
+        $($attr_method)*
         $($qualifiers)* extern "C-unwind" fn $name() {
             $crate::__macro_helpers::compile_error!("`#[method_id(...)]` must have a return type")
         }
@@ -1374,14 +1380,15 @@ macro_rules! __define_class_register_out {
 
         (#[$method_or_method_id:ident($($sel:tt)*)])
         ($($method_family:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
     } => {
-        $crate::__extract_and_apply_cfg_attributes! {
-            ($($m_checked)*)
-
+        $($attr_use)*
+        {
             $crate::__define_class_invalid_selectors!(#[$method_or_method_id($($sel)*)]);
-            $crate::__extern_methods_no_optional!($($m_optional)*);
+            $crate::__define_class_no_method_family!($($method_family)*);
+            $crate::__define_class_no_optional!($($optional)*);
 
             $builder.$builder_method(
                 $crate::sel!($($sel)*),
@@ -1433,6 +1440,17 @@ macro_rules! __define_class_invalid_selectors {
         ))
     };
     (#[$method_or_method_id:ident($($sel:tt)*)]) => {};
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __define_class_no_method_family {
+    () => {};
+    ($($t:tt)+) => {
+        $crate::__macro_helpers::compile_error!(
+            "`#[method_family(...)]` is not yet supported in `define_class!`"
+        )
+    };
 }
 
 #[doc(hidden)]

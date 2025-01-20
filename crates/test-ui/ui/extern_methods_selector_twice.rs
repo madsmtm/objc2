@@ -1,3 +1,4 @@
+use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 use objc2::{extern_class, extern_methods};
 
@@ -18,7 +19,7 @@ extern_methods!(
     unsafe impl MyObject {
         #[method_id(b)]
         #[method_id(b)]
-        fn b();
+        fn b() -> Retained<NSObject>;
     }
 );
 
@@ -26,7 +27,7 @@ extern_methods!(
     unsafe impl MyObject {
         #[method(c)]
         #[method_id(c)]
-        fn c();
+        fn c() -> Retained<NSObject>;
     }
 );
 

@@ -21,12 +21,29 @@
 #[derive(Debug)]
 pub struct MethodFamily<const INNER: u8> {}
 
+/// The `new` family.
 pub type New = MethodFamily<1>;
+/// The `alloc` family.
 pub type Alloc = MethodFamily<2>;
+/// The `init` family.
 pub type Init = MethodFamily<3>;
+/// The `copy` family.
 pub type Copy = MethodFamily<4>;
+/// The `mutableCopy` family.
 pub type MutableCopy = MethodFamily<5>;
+/// No family.
 pub type Other = MethodFamily<6>;
+
+/// Helper module where `#[method_family($family:ident)]` will import its
+/// value from.
+#[allow(non_camel_case_types)]
+pub mod method_family_import {
+    // Rename to match Clang's `__attribute__((objc_method_family(family)))`.
+    pub use super::{
+        Alloc as alloc, Copy as copy, Init as init, MutableCopy as mutableCopy, New as new,
+        Other as none,
+    };
+}
 
 pub const fn method_family(selector: &str) -> u8 {
     let selector = selector.as_bytes();
