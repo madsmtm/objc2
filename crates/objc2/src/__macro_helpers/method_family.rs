@@ -34,6 +34,11 @@ pub type MutableCopyFamily = MethodFamily<5>;
 /// No family.
 pub type NoneFamily = MethodFamily<6>;
 
+/// The `alloc` selector itself.
+///
+/// Used for a fast-path optimization using `objc_alloc`.
+pub type AllocSelector = MethodFamily<7>;
+
 /// Helper module where `#[unsafe(method_family = $family:ident)]` will import
 /// its value from.
 #[allow(non_camel_case_types)]

@@ -8,8 +8,8 @@ use crate::{sel, ClassType, DefinedClass, Message};
 use super::defined_ivars::set_finalized;
 use super::null_error::encountered_error;
 use super::{
-    AllocFamily, ConvertArguments, CopyFamily, InitFamily, MsgSend, MutableCopyFamily, NewFamily,
-    NoneFamily, TupleExtender,
+    AllocFamily, AllocSelector, ConvertArguments, CopyFamily, InitFamily, MsgSend,
+    MutableCopyFamily, NewFamily, NoneFamily, TupleExtender,
 };
 
 pub trait MsgSendRetained<T, U> {
@@ -241,11 +241,12 @@ impl<T: ?Sized + Message> MsgSendSuperRetained<&'_ AnyClass, Allocated<T>> for A
     }
 }
 
-impl AllocFamily {
-    /// Fast path optimization for `msg_send_id![cls, alloc]`.
+impl<T: Message> MsgSendRetained<&'_ AnyClass, Allocated<T>> for AllocSelector {
     #[inline]
-    pub unsafe fn send_message_retained_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
+    unsafe fn send_message_retained<A: ConvertArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
         cls: &AnyClass,
+        sel: Sel,
+        args: A,
     ) -> R {
         // Available on non-fragile Apple runtimes.
         #[cfg(all(
@@ -253,7 +254,13 @@ impl AllocFamily {
             not(all(target_os = "macos", target_arch = "x86"))
         ))]
         {
-            // SAFETY: Checked by caller
+            // We completely ignore both the selector and the arguments, since
+            // we know them to be `alloc` and empty (since this is the
+            // `AllocSelector` "family").
+            let _ = sel;
+            let _ = args;
+
+            // SAFETY: Checked by caller.
             let obj: *mut T = unsafe { crate::ffi::objc_alloc(cls).cast() };
             // SAFETY: The object is newly allocated, so this has +1 retain count
             let obj = unsafe { Allocated::new(obj) };
@@ -265,7 +272,7 @@ impl AllocFamily {
         )))]
         {
             // SAFETY: Checked by caller
-            unsafe { AllocFamily::send_message_retained(cls, sel!(alloc), ()) }
+            unsafe { AllocFamily::send_message_retained(cls, sel, args) }
         }
     }
 }

@@ -1264,7 +1264,11 @@ macro_rules! msg_send_id {
     });
     [$obj:expr, alloc $(,)?] => ({
         let result;
-        result = $crate::__macro_helpers::AllocFamily::send_message_retained_alloc($obj);
+        result = <$crate::__macro_helpers::AllocSelector as $crate::__macro_helpers::MsgSendRetained<_, _>>::send_message_retained(
+            $obj,
+            $crate::sel!(alloc),
+            (),
+        );
         result
     });
     [$obj:expr, init $(,)?] => ({

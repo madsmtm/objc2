@@ -41,8 +41,8 @@ pub use self::define_class::{
 pub use self::defined_ivars::DefinedIvarsHelper;
 pub use self::image_info::ImageInfo;
 pub use self::method_family::{
-    method_family, method_family_import, AllocFamily, CopyFamily, InitFamily, MethodFamily, MutableCopyFamily,
-    NewFamily, NoneFamily,
+    method_family, method_family_import, AllocFamily, AllocSelector, CopyFamily, InitFamily,
+    MethodFamily, MutableCopyFamily, NewFamily, NoneFamily,
 };
 pub use self::module_info::ModuleInfo;
 pub use self::msg_send::MsgSend;
