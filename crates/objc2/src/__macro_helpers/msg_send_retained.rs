@@ -595,7 +595,7 @@ mod tests {
 
     use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
     use crate::runtime::{NSObject, NSZone};
-    use crate::{class, msg_send_id, AllocAnyThread};
+    use crate::{class, extern_methods, msg_send_id, AllocAnyThread};
 
     mod test_trait_disambugated {
         use super::*;
@@ -1135,5 +1135,99 @@ mod tests {
         let retained: Option<Retained<AnyClass>> = unsafe { msg_send_id![cls, self] };
         let retained = retained.unwrap();
         assert_eq!(&*retained, cls);
+    }
+
+    extern_methods!(
+        unsafe impl RcTestObject {
+            #[method_id(copy)]
+            #[unsafe(method_family = new)]
+            fn copy_new(&self) -> Retained<Self>;
+
+            #[method_id(copy)]
+            #[unsafe(method_family = init)]
+            fn copy_init(this: Allocated<Self>) -> Retained<Self>;
+
+            #[method_id(copy)]
+            #[unsafe(method_family = copy)]
+            fn copy_copy(&self) -> Retained<Self>;
+
+            #[method_id(copy)]
+            #[unsafe(method_family = mutableCopy)]
+            fn copy_mutable_copy(&self) -> Retained<Self>;
+
+            #[method_id(copy)]
+            #[unsafe(method_family = none)]
+            fn copy_none(&self) -> Retained<Self>;
+        }
+    );
+
+    #[test]
+    fn test_method_family() {
+        // Test a few combinations of (incorrect) method families.
+        let obj = RcTestObject::new();
+        let mut expected = ThreadTestData::current();
+
+        let copy = obj.copy_new();
+        expected.copy += 1;
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.assert_current();
+        drop(copy);
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
+
+        let alloc = RcTestObject::alloc();
+        let ptr = Allocated::as_ptr(&alloc);
+        expected.alloc += 1;
+        expected.assert_current();
+        let copy = RcTestObject::copy_init(alloc);
+        expected.copy += 1;
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.assert_current();
+        drop(copy);
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
+        drop(unsafe { Allocated::new(ptr.cast_mut()) });
+        expected.release += 1;
+        expected.assert_current();
+
+        let copy = obj.copy_copy();
+        expected.copy += 1;
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.assert_current();
+        drop(copy);
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
+
+        let copy = obj.copy_mutable_copy();
+        expected.copy += 1;
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.assert_current();
+        drop(copy);
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
+
+        let copy = obj.copy_none();
+        expected.copy += 1;
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.retain += 1;
+        expected.assert_current();
+        // SAFETY: Wrong method family specified, so we have +1 retain count
+        // in excess.
+        drop(unsafe { Retained::from_raw(Retained::as_ptr(&copy).cast_mut()) });
+        expected.release += 1;
+        expected.assert_current();
+        drop(copy);
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
     }
 }

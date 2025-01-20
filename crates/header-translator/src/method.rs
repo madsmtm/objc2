@@ -767,6 +767,18 @@ impl fmt::Display for Method {
             writeln!(f, "        #[optional]")?;
         }
 
+        let method_kind = if self.memory_management == MemoryManagement::Normal {
+            "method"
+        } else {
+            "method_id"
+        };
+        let error_trailing = if self.is_error { "_" } else { "" };
+        writeln!(
+            f,
+            "        #[{}({}{})]",
+            method_kind, self.selector, error_trailing
+        )?;
+
         let id_mm_name = match &self.memory_management {
             // MemoryManagement::IdAlloc => Some("alloc"), // Unsupported
             MemoryManagement::IdCopy => Some("copy"),
@@ -779,20 +791,8 @@ impl fmt::Display for Method {
         if let Some(id_mm_name) = id_mm_name {
             // TODO: Be explicit about when we emit this for better
             // compile-times, and when we do it for soundness.
-            writeln!(f, "        #[unsafe(method_family({id_mm_name}))]")?;
+            writeln!(f, "        #[unsafe(method_family = {id_mm_name})]")?;
         };
-
-        let method_kind = if self.memory_management == MemoryManagement::Normal {
-            "method"
-        } else {
-            "method_id"
-        };
-        let error_trailing = if self.is_error { "_" } else { "" };
-        writeln!(
-            f,
-            "        #[{}({}{})]",
-            method_kind, self.selector, error_trailing
-        )?;
 
         //
         // Signature

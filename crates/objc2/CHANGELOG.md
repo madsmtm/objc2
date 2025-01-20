@@ -34,6 +34,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added 16-fold `Encode` and `RefEncode` impls for function pointers
   (previously only implemented for up to 12 arguments, which turned out to be
   insufficient).
+* Added `#[unsafe(method_family = ...)]` attribute in `extern_methods!` and
+  `extern_protocol!`, to allow overriding the inferred method family.
 
 ### Changed
 * **BREAKING**: Renamed `declare_class!` to `define_class!`, and changed the

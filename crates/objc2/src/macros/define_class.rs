@@ -144,8 +144,8 @@
 ///
 /// The desired selector can be specified using the `#[method(my:selector:)]`
 /// or `#[method_id(my:selector:)]` attribute, similar to the
-/// [`extern_methods!`] macro. The `#[method_family(family)]` attribute is not
-/// yet supported.
+/// [`extern_methods!`] macro. The `#[unsafe(method_family = family)]`
+/// attribute is not yet supported.
 ///
 /// If the `#[method_id(...)]` attribute is used, the return type must be
 /// `Option<Retained<T>>` or `Retained<T>`. Additionally, if the selector is
@@ -1448,7 +1448,7 @@ macro_rules! __define_class_no_method_family {
     () => {};
     ($($t:tt)+) => {
         $crate::__macro_helpers::compile_error!(
-            "`#[method_family(...)]` is not yet supported in `define_class!`"
+            "`#[method_family = ...]` is not yet supported in `define_class!`"
         )
     };
 }

@@ -54,7 +54,7 @@
 /// for details.
 ///
 ///
-/// ### `#[unsafe(method_family(...))]`
+/// ### `#[unsafe(method_family = ...)]` (optional)
 ///
 /// The Cocoa memory management convention is figured out automatically based
 /// on the name of the selector, but it can be overwritten with this `unsafe`
@@ -413,7 +413,7 @@ macro_rules! __extern_methods_no_method_family {
     () => {};
     ($($t:tt)+) => {
         $crate::__macro_helpers::compile_error!(
-            "`#[method_family(...)]` is only supported together with `#[method_id(...)]`"
+            "`#[method_family = ...]` is only supported together with `#[method_id(...)]`"
         )
     };
 }

@@ -1,0 +1,30 @@
+error: `#[method_family = ...]` is only supported together with `#[method_id(...)]`
+ --> ui/extern_methods_invalid_method_family.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(notOnMethodId)]
+  | |         #[unsafe(method_family = none)]
+... |
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_methods_no_method_family` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: attribute value must be a literal
+ --> ui/extern_methods_invalid_method_family.rs
+  |
+  |         #[method_family = none]
+  |                           ^^^^
+
+error: cannot find attribute `method_family` in this scope
+ --> ui/extern_methods_invalid_method_family.rs
+  |
+  |         #[method_family = none]
+  |           ^^^^^^^^^^^^^
+
+error[E0412]: cannot find type `unknown` in module `$crate::__macro_helpers::method_family_import`
+ --> ui/extern_methods_invalid_method_family.rs
+  |
+  |         #[unsafe(method_family = unknown)]
+  |                                  ^^^^^^^ not found in `$crate::__macro_helpers::method_family_import`

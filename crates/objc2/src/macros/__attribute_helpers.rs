@@ -234,7 +234,7 @@ macro_rules! __extract_method_attributes_inner {
     // `method_family` attribute
     {
         (
-            #[unsafe(method_family($($parsed:tt)+))]
+            #[unsafe(method_family = $($parsed:tt)+)]
             $($rest:tt)*
         )
         ($($method:tt)*)

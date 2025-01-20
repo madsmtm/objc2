@@ -34,8 +34,8 @@ pub type MutableCopy = MethodFamily<5>;
 /// No family.
 pub type Other = MethodFamily<6>;
 
-/// Helper module where `#[method_family($family:ident)]` will import its
-/// value from.
+/// Helper module where `#[unsafe(method_family = $family:ident)]` will import
+/// its value from.
 #[allow(non_camel_case_types)]
 pub mod method_family_import {
     // Rename to match Clang's `__attribute__((objc_method_family(family)))`.

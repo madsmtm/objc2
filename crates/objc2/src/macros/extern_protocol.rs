@@ -33,8 +33,9 @@
 /// This macro creates an `unsafe` trait with the specified methods. A default
 /// implementation of the method is generated based on the selector specified
 /// with `#[method(a:selector:)]` or `#[method_id(a:selector:)]`.
-/// Similar to [`extern_methods!`], you can use the `#[method_family(...)]`
-/// attribute to override the inferred method family.
+/// Similar to [`extern_methods!`], you can use the
+/// `#[unsafe(method_family = ...)]` attribute to override the inferred method
+/// family.
 ///
 /// Other protocols that this protocol conforms to / inherits can be specified
 /// as supertraits.
@@ -489,7 +490,7 @@ macro_rules! __extern_protocol_no_method_family {
     () => {};
     ($($t:tt)+) => {
         $crate::__macro_helpers::compile_error!(
-            "`#[method_family(...)]` is only supported together with `#[method_id(...)]`"
+            "`#[method_family = ...]` is only supported together with `#[method_id(...)]`"
         )
     };
 }
