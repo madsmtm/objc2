@@ -1,5 +1,5 @@
 #![allow(clippy::upper_case_acronyms)]
-use core::fmt;
+use core::{fmt, hash};
 
 use crate::encode::{Encode, Encoding, RefEncode};
 
@@ -86,17 +86,13 @@ mod inner {
 /// around `bool` instead.
 ///
 /// Note that this is able to contain more states than `bool` on some
-/// platforms, but these cases should not be relied on!
+/// platforms, but these cases should not be relied on! The comparison traits
+/// `PartialEq`, `PartialOrd` etc. will completely ignore these states.
 ///
 /// See also the [corresponding documentation entry][docs].
 ///
 /// [docs]: https://developer.apple.com/documentation/objectivec/bool?language=objc
 #[repr(transparent)]
-// We don't implement comparison traits because they could be implemented with
-// two slightly different semantics:
-// - `self.as_bool().cmp(other.as_bool())`
-// - `self.value.cmp(other.value)`
-// And it is not immediately clear for users which one was chosen.
 #[derive(Copy, Clone, Default)]
 pub struct Bool {
     value: inner::BOOL,
@@ -178,6 +174,38 @@ impl From<Bool> for bool {
 impl fmt::Debug for Bool {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(if self.as_bool() { "YES" } else { "NO" })
+    }
+}
+
+// Implement comparison traits by first converting to a boolean.
+
+impl PartialEq for Bool {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        self.as_bool() == other.as_bool()
+    }
+}
+
+impl Eq for Bool {}
+
+impl hash::Hash for Bool {
+    #[inline]
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        self.as_bool().hash(state);
+    }
+}
+
+impl PartialOrd for Bool {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Bool {
+    #[inline]
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.as_bool().cmp(&other.as_bool())
     }
 }
 
@@ -278,6 +306,11 @@ mod tests {
 
         assert!(Bool::from(true).is_true());
         assert!(Bool::from(false).is_false());
+
+        assert_eq!(Bool::new(true), Bool::new(true));
+        assert_eq!(Bool::new(false), Bool::new(false));
+
+        assert!(Bool::new(false) < Bool::new(true));
     }
 
     #[test]
@@ -294,5 +327,9 @@ mod tests {
         assert!(b.is_true());
         assert!(!b.is_false());
         assert_eq!(b.as_raw(), 42);
+
+        // PartialEq ignores extra data
+        assert_eq!(b, Bool::new(true));
+        assert_ne!(b, Bool::new(false));
     }
 }

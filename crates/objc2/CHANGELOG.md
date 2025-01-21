@@ -36,6 +36,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   insufficient).
 * Added `#[unsafe(method_family = ...)]` attribute in `extern_methods!` and
   `extern_protocol!`, to allow overriding the inferred method family.
+* Added `PartialEq`, `Eq`, `Hash`, `PartialOrd` and `Ord` implementations for
+  `Bool`.
 
 ### Changed
 * **BREAKING**: Renamed `declare_class!` to `define_class!`, and changed the

@@ -11,9 +11,6 @@ visionos = "1.0"
 # Defined in both MPSCore.MPSImage and MPSCore.MPSNDArray
 typedef.MPSImageBatch.skipped = true
 
-# tries to derive with `PartialEq` which fails because of `Bool` fields
-# struct.MPSImageHistogramInfo.skipped = true
-
 # Has a union field, but we'd rather have it as just a struct
 struct._MPSPackedFloat3.skipped = true
 typedef.MPSPackedFloat3.skipped = true

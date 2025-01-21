@@ -15,15 +15,10 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
-#[cfg(feature = "GCExtendedGamepadSnapshot")]
-mod extended_gamepad_snapshot;
 mod generated;
 #[cfg(feature = "GCInputNames")]
 mod input_names;
 
-#[cfg(feature = "GCExtendedGamepadSnapshot")]
-#[allow(deprecated)]
-pub use self::extended_gamepad_snapshot::GCExtendedGamepadSnapshotData;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 #[cfg(feature = "GCInputNames")]

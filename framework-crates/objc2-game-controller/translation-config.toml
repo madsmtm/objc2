@@ -50,9 +50,6 @@ static.GCInputRightPaddle.skipped = true
 # Uses GCInputButtonName
 fn.GCInputArcadeButtonName.skipped = true
 
-# tries to derive with `PartialEq` which fails because of `Bool` fields; manually define for now
-struct.GCExtendedGamepadSnapshotData.skipped = true
-
 # Needs `CHHapticEngine` from the `CoreHaptics` framework
 class.GCDeviceHaptics.methods."createEngineWithLocality:".skipped = true
 

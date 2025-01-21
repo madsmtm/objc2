@@ -29,12 +29,6 @@ class.AVAudioEngine.methods."renderOffline:toBuffer:error:".skipped = true
 # Non-null error return
 class.AVAudioSequencer.methods."dataWithSMPTEResolution:error:".skipped = true
 
-# tries to derive with `PartialEq` which fails because of `Bool` fields
-struct.AVAudioVoiceProcessingOtherAudioDuckingConfiguration.skipped = true
-typedef.AVAudioVoiceProcessingOtherAudioDuckingConfiguration.skipped = true
-class.AVAudioInputNode.methods.voiceProcessingOtherAudioDuckingConfiguration.skipped = true
-class.AVAudioInputNode.methods."setVoiceProcessingOtherAudioDuckingConfiguration:".skipped = true
-
 # Needs AppKit or UIKit
 class.AVAudioUnitComponent.methods.icon.skipped = true
 

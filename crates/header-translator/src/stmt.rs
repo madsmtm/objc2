@@ -2399,12 +2399,7 @@ impl Stmt {
                     if *is_union || fields.iter().any(|(_, _, field)| field.contains_union()) {
                         writeln!(f, "#[derive(Clone, Copy)]")?;
                     } else {
-                        // HACK to make Bool in structs work.
-                        if fields.iter().any(|(_, _, field)| field.is_objc_bool()) {
-                            writeln!(f, "#[derive(Clone, Copy, Debug)]")?;
-                        } else {
-                            writeln!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
-                        }
+                        writeln!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
                     }
                     if *is_union {
                         writeln!(f, "pub union {} {{", id.name)?;
