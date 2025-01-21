@@ -6,27 +6,27 @@
 //! Note that our assembly tests of `unstable-static-sel-inlined` output a GOT
 //! entry for such accesses, but that is just a limitation of our tests - the
 //! actual assembly is as one would expect.
+use crate::__sel_inner;
 use crate::runtime::Sel;
-use crate::{__sel_data, __sel_inner};
 
 #[inline]
 pub fn alloc_sel() -> Sel {
-    __sel_inner!(__sel_data!(alloc), "alloc")
+    __sel_inner!("alloc\0", "alloc")
 }
 
 #[inline]
 pub fn init_sel() -> Sel {
-    __sel_inner!(__sel_data!(init), "init")
+    __sel_inner!("init\0", "init")
 }
 
 #[inline]
 pub fn new_sel() -> Sel {
-    __sel_inner!(__sel_data!(new), "new")
+    __sel_inner!("new\0", "new")
 }
 
 #[inline]
 pub fn dealloc_sel() -> Sel {
-    __sel_inner!(__sel_data!(dealloc), "dealloc")
+    __sel_inner!("dealloc\0", "dealloc")
 }
 
 /// An undocumented selector called by the Objective-C runtime when

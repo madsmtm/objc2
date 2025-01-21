@@ -18,7 +18,7 @@ error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
   = note: required for `Vec<u8>` to implement `ConvertReturn<MethodFamily<1>>`
   = note: required for `MethodFamily<1>` to implement `RetainSemantics<&AnyClass, Vec<u8>, KindSendMessage>`
   = note: required for `MethodFamily<1>` to implement `MsgSend<&AnyClass, Vec<u8>>`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
  --> ui/msg_send_not_encode.rs

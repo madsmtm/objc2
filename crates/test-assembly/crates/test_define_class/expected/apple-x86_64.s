@@ -866,7 +866,8 @@ LBB20_2:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_3b26517fa48cbea8]
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
+	mov	rsi, qword ptr [rax]
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rax, qword ptr [rax]
 	mov	qword ptr [rbp - 16], rdi
@@ -939,7 +940,8 @@ Ltmp58:
 	mov	rdi, r12
 	call	_objc_release
 LBB22_9:
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_2e436b0daa293d6c]
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
+	mov	rsi, qword ptr [rax]
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rax, qword ptr [rax]
 	mov	qword ptr [rbp - 48], rbx
@@ -1277,50 +1279,15 @@ l_anon.[ID].24:
 	.asciz	"4\000\000\000\000\000\000\000M\000\000\000\001\000\000"
 
 .zerofill __DATA,__bss,SYM(<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),8,3
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_3b26517fa48cbea8
-L_OBJC_METH_VAR_NAME_3b26517fa48cbea8:
-	.asciz	"init"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_3b26517fa48cbea8
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_3b26517fa48cbea8:
-	.quad	L_OBJC_METH_VAR_NAME_3b26517fa48cbea8
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_3b26517fa48cbea8
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_3b26517fa48cbea8:
-	.asciz	"\000\000\000\000@\000\000"
-
 .zerofill __DATA,__bss,SYM(test_define_class[CRATE_ID]::_::__OBJC2_CLASS, 1).0,8,3
 	.globl	SYM(test_define_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)
 .zerofill __DATA,__common,SYM(test_define_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0),8,3
 	.globl	SYM(test_define_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 0)
 .zerofill __DATA,__common,SYM(test_define_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 0),8,3
-	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].25:
 	.quad	l_anon.[ID].14
 	.asciz	"4\000\000\000\000\000\000\000o\000\000\000\001\000\000"
 
 .zerofill __DATA,__bss,SYM(<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),8,3
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_2e436b0daa293d6c
-L_OBJC_METH_VAR_NAME_2e436b0daa293d6c:
-	.asciz	"init"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_2e436b0daa293d6c
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_2e436b0daa293d6c:
-	.quad	L_OBJC_METH_VAR_NAME_2e436b0daa293d6c
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_2e436b0daa293d6c
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_2e436b0daa293d6c:
-	.asciz	"\000\000\000\000@\000\000"
-
 .subsections_via_symbols

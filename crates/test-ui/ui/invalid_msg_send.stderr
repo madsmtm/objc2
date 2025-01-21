@@ -7,7 +7,7 @@ error: unexpected end of macro invocation
 note: while trying to match `,`
  --> $WORKSPACE/crates/objc2/src/macros/mod.rs
   |
-  |     [$obj:expr, new $(,)?] => ({
+  |     [$obj:expr, $($selector_and_arguments:tt)+] => {
   |               ^
 
 error: unexpected end of macro invocation
@@ -16,11 +16,11 @@ error: unexpected end of macro invocation
   |     let _: () = unsafe { msg_send![obj,] };
   |                                        ^ missing tokens in macro arguments
   |
-note: while trying to match `new`
+note: while trying to match meta-variable `$selector_and_arguments:tt`
  --> $WORKSPACE/crates/objc2/src/macros/mod.rs
   |
-  |     [$obj:expr, new $(,)?] => ({
-  |                 ^^^
+  |     [$obj:expr, $($selector_and_arguments:tt)+] => {
+  |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: no rules expected `)`
  --> ui/invalid_msg_send.rs

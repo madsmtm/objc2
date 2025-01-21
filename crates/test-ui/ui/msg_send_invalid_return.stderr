@@ -18,7 +18,7 @@ error[E0277]: the trait bound `Retained<AnyObject>: Encode` is not satisfied
   = note: required for `Retained<AnyObject>` to implement `ConvertReturn<MethodFamily<2>>`
   = note: required for `MethodFamily<2>` to implement `RetainSemantics<&AnyClass, Retained<AnyObject>, KindSendMessage>`
   = note: required for `MethodFamily<2>` to implement `MsgSend<&AnyClass, Retained<AnyObject>>`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: Encode` is not satisfied
  --> ui/msg_send_invalid_return.rs
@@ -41,7 +41,7 @@ error[E0277]: the trait bound `Allocated<AnyObject>: Encode` is not satisfied
   = note: required for `Option<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<2>>`
   = note: required for `MethodFamily<2>` to implement `RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, KindSendMessage>`
   = note: required for `MethodFamily<2>` to implement `MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: OptionEncode` is not satisfied
  --> ui/msg_send_invalid_return.rs
@@ -64,7 +64,7 @@ error[E0277]: the trait bound `Allocated<AnyObject>: OptionEncode` is not satisf
   = note: required for `Option<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<2>>`
   = note: required for `MethodFamily<2>` to implement `RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, KindSendMessage>`
   = note: required for `MethodFamily<2>` to implement `MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<Allocated<AnyObject>>: Encode` is not satisfied
  --> ui/msg_send_invalid_return.rs
@@ -86,7 +86,7 @@ error[E0277]: the trait bound `Retained<Allocated<AnyObject>>: Encode` is not sa
   = note: required for `Retained<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<2>>`
   = note: required for `MethodFamily<2>` to implement `RetainSemantics<&AnyClass, Retained<Allocated<AnyObject>>, KindSendMessage>`
   = note: required for `MethodFamily<2>` to implement `MsgSend<&AnyClass, Retained<Allocated<AnyObject>>>`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not satisfied
  --> ui/msg_send_invalid_return.rs
@@ -102,7 +102,7 @@ error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not sat
             NonNull<T>
   = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, &AnyObject, KindSendMessage>`
   = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, &AnyObject>`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not satisfied
  --> ui/msg_send_invalid_return.rs
@@ -118,7 +118,7 @@ error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not sat
             NonNull<T>
   = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, Retained<AnyClass>, KindSendMessage>`
   = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, Retained<AnyClass>>`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<AnyClass>: Encode` is not satisfied
  --> ui/msg_send_invalid_return.rs
@@ -140,7 +140,7 @@ error[E0277]: the trait bound `Retained<AnyClass>: Encode` is not satisfied
   = note: required for `Retained<AnyClass>` to implement `ConvertReturn<MethodFamily<3>>`
   = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, Retained<AnyClass>, KindSendMessage>`
   = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, Retained<AnyClass>>`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not satisfied
  --> ui/msg_send_invalid_return.rs
@@ -156,7 +156,7 @@ error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not sat
             NonNull<T>
   = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, Retained<NSObject>, KindSendMessage>`
   = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, Retained<NSObject>>`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
  --> ui/msg_send_invalid_return.rs
@@ -178,4 +178,4 @@ error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
   = note: required for `Retained<NSObject>` to implement `ConvertReturn<MethodFamily<3>>`
   = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, Retained<NSObject>, KindSendMessage>`
   = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, Retained<NSObject>>`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

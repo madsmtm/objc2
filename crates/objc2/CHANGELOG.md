@@ -34,8 +34,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added 16-fold `Encode` and `RefEncode` impls for function pointers
   (previously only implemented for up to 12 arguments, which turned out to be
   insufficient).
-* Added `#[unsafe(method_family = ...)]` attribute in `extern_methods!` and
-  `extern_protocol!`, to allow overriding the inferred method family.
+* Added `#[unsafe(method_family = ...)]` attribute in `extern_methods!`,
+  `extern_protocol!` and `define_class!`, to allow overriding the inferred
+  method family if need be.
 * Added `PartialEq`, `Eq`, `Hash`, `PartialOrd` and `Ord` implementations for
   `Bool`.
 

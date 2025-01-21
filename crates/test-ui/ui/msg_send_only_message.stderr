@@ -12,4 +12,4 @@ error[E0277]: the trait bound `{integer}: MessageReceiver` is not satisfied
             NonNull<T>
   = note: required for `MethodFamily<1>` to implement `RetainSemantics<{integer}, _, KindSendMessage>`
   = note: required for `MethodFamily<1>` to implement `MsgSend<{integer}, _>`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

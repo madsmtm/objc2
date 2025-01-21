@@ -1267,6 +1267,7 @@ macro_rules! __define_class_method_out_inner {
             $($params_prefix)*
             $($params_converted)*
         ) $(-> <$ret as $crate::__macro_helpers::ConvertReturn<()>>::Inner)? {
+            $crate::__define_class_no_method_family!($($method_family)*);
             $($body_prefix)*
             $crate::__convert_result! {
                 $body $(; $ret)?
@@ -1308,14 +1309,7 @@ macro_rules! __define_class_method_out_inner {
             let __objc2_result = $body;
 
             #[allow(unreachable_code)]
-            <$crate::__macro_helpers::MethodFamily<{
-                $crate::__macro_helpers::method_family(
-                    $crate::__sel_helper! {
-                        ()
-                        $($sel)*
-                    }
-                )
-            }> as $crate::__macro_helpers::MessageReceiveRetained<
+            <$crate::__method_family!(($($method_family)*) ($($sel)*)) as $crate::__macro_helpers::MessageReceiveRetained<
                 $receiver_ty,
                 $ret,
             >>::into_return(__objc2_result)
@@ -1387,7 +1381,6 @@ macro_rules! __define_class_register_out {
         $($attr_use)*
         {
             $crate::__define_class_invalid_selectors!(#[$method_or_method_id($($sel)*)]);
-            $crate::__define_class_no_method_family!($($method_family)*);
             $crate::__define_class_no_optional!($($optional)*);
 
             $builder.$builder_method(
@@ -1448,7 +1441,7 @@ macro_rules! __define_class_no_method_family {
     () => {};
     ($($t:tt)+) => {
         $crate::__macro_helpers::compile_error!(
-            "`#[method_family = ...]` is not yet supported in `define_class!`"
+            "`#[method_family = ...]` is not yet supported in `define_class!` together with `#[method(...)]`"
         )
     };
 }

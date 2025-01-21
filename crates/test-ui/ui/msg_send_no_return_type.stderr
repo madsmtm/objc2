@@ -14,4 +14,4 @@ error[E0283]: type annotations needed
             where T: Message;
   = note: required for `MethodFamily<1>` to implement `RetainSemantics<&AnyClass, _, KindSendMessage>`
   = note: required for `MethodFamily<1>` to implement `MsgSend<&AnyClass, _>`
-  = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

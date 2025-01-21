@@ -548,3 +548,79 @@ error[E0277]: the trait bound `MethodFamily<2>: MessageReceiveRetained<&AnyClass
             `MethodFamily<5>` implements `MessageReceiveRetained<Receiver, Ret>`
             `MethodFamily<6>` implements `MessageReceiveRetained<Receiver, Ret>`
   = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `MethodFamily<8>: MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not satisfied
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
+  | |     struct InvalidMethodDeclarations;
+... |
+  | | );
+  | |_^ the trait `MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `MethodFamily<8>`
+  |
+  = help: the following other types implement trait `MessageReceiveRetained<Receiver, Ret>`:
+            `MethodFamily<1>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<3>` implements `MessageReceiveRetained<Allocated<T>, Ret>`
+            `MethodFamily<4>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<5>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<6>` implements `MessageReceiveRetained<Receiver, Ret>`
+  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `MethodFamily<9>: MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not satisfied
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
+  | |     struct InvalidMethodDeclarations;
+... |
+  | | );
+  | |_^ the trait `MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `MethodFamily<9>`
+  |
+  = help: the following other types implement trait `MessageReceiveRetained<Receiver, Ret>`:
+            `MethodFamily<1>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<3>` implements `MessageReceiveRetained<Allocated<T>, Ret>`
+            `MethodFamily<4>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<5>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<6>` implements `MessageReceiveRetained<Receiver, Ret>`
+  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `MethodFamily<10>: MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not satisfied
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
+  | |     struct InvalidMethodDeclarations;
+... |
+  | | );
+  | |_^ the trait `MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `MethodFamily<10>`
+  |
+  = help: the following other types implement trait `MessageReceiveRetained<Receiver, Ret>`:
+            `MethodFamily<1>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<3>` implements `MessageReceiveRetained<Allocated<T>, Ret>`
+            `MethodFamily<4>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<5>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<6>` implements `MessageReceiveRetained<Receiver, Ret>`
+  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `MethodFamily<11>: MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not satisfied
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[name = "InvalidMethodDeclarations"]
+  | |     struct InvalidMethodDeclarations;
+... |
+  | | );
+  | |_^ the trait `MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `MethodFamily<11>`
+  |
+  = help: the following other types implement trait `MessageReceiveRetained<Receiver, Ret>`:
+            `MethodFamily<1>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<3>` implements `MessageReceiveRetained<Allocated<T>, Ret>`
+            `MethodFamily<4>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<5>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `MethodFamily<6>` implements `MessageReceiveRetained<Receiver, Ret>`
+  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

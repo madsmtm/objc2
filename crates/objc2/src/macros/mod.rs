@@ -1186,33 +1186,6 @@ macro_rules! msg_send {
             () // No method family
         }
     };
-    [$obj:expr, new $(,)?] => ({
-        let result;
-        result = <$crate::__macro_helpers::NewFamily as $crate::__macro_helpers::MsgSend<_, _>>::send_message(
-            $obj,
-            $crate::sel!(new),
-            (),
-        );
-        result
-    });
-    [$obj:expr, alloc $(,)?] => ({
-        let result;
-        result = <$crate::__macro_helpers::AllocFamily as $crate::__macro_helpers::MsgSend<_, _>>::send_message(
-            $obj,
-            $crate::sel!(alloc),
-            (),
-        );
-        result
-    });
-    [$obj:expr, init $(,)?] => ({
-        let result;
-        result = <$crate::__macro_helpers::InitFamily as $crate::__macro_helpers::MsgSend<_, _>>::send_message(
-            $obj,
-            $crate::sel!(init),
-            (),
-        );
-        result
-    });
     [$obj:expr, $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
             ()
@@ -1250,96 +1223,16 @@ macro_rules! msg_send_id {
     }
 }
 
-/// Helper macro to avoid exposing the retain/release/... specializations in
-/// the docs for [`msg_send!`].
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __msg_send_helper {
     {
         ($($fn_args:tt)+)
-        ($($method_family:tt)+)
+        ($($method_family:tt)*)
         ($trait:ident :: $fn:ident)
         ($($selector:tt)*)
         ($($argument:expr,)*)
     } => ({
-        <$crate::__macro_helpers::method_family_import::$($method_family)+ as $crate::__macro_helpers::$trait<_, _>>::$fn(
-            $($fn_args)+,
-            $crate::sel!($($selector)*),
-            ($($argument,)*),
-        )
-    });
-    (
-        ($($fn_args:tt)+)
-        ()
-        ($trait:ident :: $fn:ident)
-        (retain)
-        ()
-    ) => ({
-        let result;
-        result = <$crate::__macro_helpers::RetainSelector as $crate::__macro_helpers::$trait<_, _>>::$fn(
-            $($fn_args)+,
-            $crate::sel!(retain),
-            (),
-        );
-        result
-    });
-    (
-        ($($fn_args:tt)+)
-        ()
-        ($trait:ident :: $fn:ident)
-        (release)
-        ()
-    ) => ({
-        let result;
-        result = <$crate::__macro_helpers::ReleaseSelector as $crate::__macro_helpers::$trait<_, _>>::$fn(
-            $($fn_args)+,
-            $crate::sel!(release),
-            (),
-        );
-        result
-    });
-    (
-        ($($fn_args:tt)+)
-        ()
-        ($trait:ident :: $fn:ident)
-        (autorelease)
-        ()
-    ) => ({
-        let result;
-        result = <$crate::__macro_helpers::AutoreleaseSelector as $crate::__macro_helpers::$trait<_, _>>::$fn(
-            $($fn_args)+,
-            $crate::sel!(autorelease),
-            (),
-        );
-        result
-    });
-    (
-        ($($fn_args:tt)+)
-        ()
-        ($trait:ident :: $fn:ident)
-        (dealloc)
-        ()
-    ) => ({
-        let result;
-        result = <$crate::__macro_helpers::DeallocSelector as $crate::__macro_helpers::$trait<_, _>>::$fn(
-            $($fn_args)+,
-            $crate::sel!(dealloc),
-            (),
-        );
-        result
-    });
-    {
-        ($($fn_args:tt)+)
-        ()
-        ($trait:ident :: $fn:ident)
-        ($($selector:tt)*)
-        ($($argument:expr,)*)
-    } => ({
-        // Don't use `sel!`, otherwise we'd end up with defining this data twice.
-        const __SELECTOR_DATA: &$crate::__macro_helpers::str = $crate::__sel_data!(
-            $($selector)*
-        );
-
         // Assign to intermediary variable for better UI, and to prevent
         // miscompilation on older Rust versions (TODO: Which ones?).
         //
@@ -1351,14 +1244,9 @@ macro_rules! __msg_send_helper {
         // 1-tuple if there is only one.
         //
         // And use `::<_, _>` for better UI.
-        result = <$crate::__macro_helpers::MethodFamily<{
-            $crate::__macro_helpers::method_family(__SELECTOR_DATA)
-        }> as $crate::__macro_helpers::$trait<_, _>>::$fn(
+        result = <$crate::__method_family!(($($method_family)*) ($($selector)*)) as $crate::__macro_helpers::$trait<_, _>>::$fn(
             $($fn_args)+,
-            $crate::__sel_inner!(
-                __SELECTOR_DATA,
-                $crate::__hash_idents!($($selector)*)
-            ),
+            $crate::sel!($($selector)*),
             ($($argument,)*),
         );
         result

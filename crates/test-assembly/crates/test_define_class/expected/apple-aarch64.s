@@ -1280,14 +1280,16 @@ LBB20_2:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 Lloh214:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_3b26517fa48cbea8@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
 Lloh215:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_3b26517fa48cbea8@PAGEOFF]
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
 Lloh216:
-	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
+	ldr	x1, [x8]
 Lloh217:
-	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh218:
+	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+Lloh219:
 	ldr	x8, [x8]
 	stp	x0, x8, [sp]
 	mov	x0, sp
@@ -1296,23 +1298,22 @@ Lloh218:
 	add	sp, sp, #32
 	ret
 	.loh AdrpLdr	Lloh212, Lloh213
-	.loh AdrpLdrGotLdr	Lloh216, Lloh217, Lloh218
-	.loh AdrpAdrp	Lloh214, Lloh216
-	.loh AdrpLdr	Lloh214, Lloh215
+	.loh AdrpLdrGotLdr	Lloh217, Lloh218, Lloh219
+	.loh AdrpLdrGotLdr	Lloh214, Lloh215, Lloh216
 
 	.globl	SYM(<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	2
 SYM(<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
-Lloh219:
-	adrp	x8, __MergedGlobals@PAGE+40
 Lloh220:
+	adrp	x8, __MergedGlobals@PAGE+40
+Lloh221:
 	add	x8, x8, __MergedGlobals@PAGEOFF+40
 	ldapr	x8, [x8]
 	cmp	x8, #3
 	b.ne	LBB21_2
-Lloh221:
-	adrp	x8, __MergedGlobals@PAGE+32
 Lloh222:
+	adrp	x8, __MergedGlobals@PAGE+32
+Lloh223:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF+32]
 	ret
 LBB21_2:
@@ -1323,34 +1324,34 @@ LBB21_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh223:
-	adrp	x0, __MergedGlobals@PAGE+40
 Lloh224:
-	add	x0, x0, __MergedGlobals@PAGEOFF+40
+	adrp	x0, __MergedGlobals@PAGE+40
 Lloh225:
-	adrp	x3, l_anon.[ID].1@PAGE
+	add	x0, x0, __MergedGlobals@PAGEOFF+40
 Lloh226:
-	add	x3, x3, l_anon.[ID].1@PAGEOFF
+	adrp	x3, l_anon.[ID].1@PAGE
 Lloh227:
-	adrp	x4, l_anon.[ID].25@PAGE
+	add	x3, x3, l_anon.[ID].1@PAGEOFF
 Lloh228:
+	adrp	x4, l_anon.[ID].25@PAGE
+Lloh229:
 	add	x4, x4, l_anon.[ID].25@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
-Lloh229:
-	adrp	x8, __MergedGlobals@PAGE+32
 Lloh230:
+	adrp	x8, __MergedGlobals@PAGE+32
+Lloh231:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF+32]
 	ret
-	.loh AdrpAdd	Lloh219, Lloh220
-	.loh AdrpLdr	Lloh221, Lloh222
-	.loh AdrpLdr	Lloh229, Lloh230
-	.loh AdrpAdd	Lloh227, Lloh228
-	.loh AdrpAdd	Lloh225, Lloh226
-	.loh AdrpAdd	Lloh223, Lloh224
+	.loh AdrpAdd	Lloh220, Lloh221
+	.loh AdrpLdr	Lloh222, Lloh223
+	.loh AdrpLdr	Lloh230, Lloh231
+	.loh AdrpAdd	Lloh228, Lloh229
+	.loh AdrpAdd	Lloh226, Lloh227
+	.loh AdrpAdd	Lloh224, Lloh225
 
 	.globl	_init_drop_ivars
 	.p2align	2
@@ -1372,9 +1373,9 @@ Ltmp50:
 	mov	x21, x0
 	adrp	x22, SYM(test_define_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 0)@PAGE
 	cbz	x19, LBB22_4
-Lloh231:
-	adrp	x8, SYM(test_define_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)@PAGE
 Lloh232:
+	adrp	x8, SYM(test_define_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)@PAGE
+Lloh233:
 	ldr	x8, [x8, SYM(test_define_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)@PAGEOFF]
 	add	x8, x19, x8
 	stp	x20, x21, [x8]
@@ -1390,15 +1391,17 @@ Ltmp58:
 	mov	x0, x21
 	bl	_objc_release
 LBB22_6:
-Lloh233:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_2e436b0daa293d6c@PAGE
 Lloh234:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_2e436b0daa293d6c@PAGEOFF]
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
 Lloh235:
-	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
 Lloh236:
-	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+	ldr	x1, [x8]
 Lloh237:
+	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
+Lloh238:
+	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+Lloh239:
 	ldr	x8, [x8]
 	stp	x19, x8, [sp]
 	mov	x0, sp
@@ -1447,10 +1450,9 @@ LBB22_14:
 LBB22_15:
 Ltmp56:
 	bl	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
-	.loh AdrpLdr	Lloh231, Lloh232
-	.loh AdrpLdrGotLdr	Lloh235, Lloh236, Lloh237
-	.loh AdrpAdrp	Lloh233, Lloh235
-	.loh AdrpLdr	Lloh233, Lloh234
+	.loh AdrpLdr	Lloh232, Lloh233
+	.loh AdrpLdrGotLdr	Lloh237, Lloh238, Lloh239
+	.loh AdrpLdrGotLdr	Lloh234, Lloh235, Lloh236
 Lfunc_end5:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -1733,49 +1735,14 @@ l_anon.[ID].24:
 	.quad	l_anon.[ID].14
 	.asciz	"4\000\000\000\000\000\000\000M\000\000\000\001\000\000"
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_3b26517fa48cbea8
-L_OBJC_METH_VAR_NAME_3b26517fa48cbea8:
-	.asciz	"init"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_3b26517fa48cbea8
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_3b26517fa48cbea8:
-	.quad	L_OBJC_METH_VAR_NAME_3b26517fa48cbea8
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_3b26517fa48cbea8
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_3b26517fa48cbea8:
-	.asciz	"\000\000\000\000@\000\000"
-
 	.globl	SYM(test_define_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)
 .zerofill __DATA,__common,SYM(test_define_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0),8,3
 	.globl	SYM(test_define_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 0)
 .zerofill __DATA,__common,SYM(test_define_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 0),8,3
-	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].25:
 	.quad	l_anon.[ID].14
 	.asciz	"4\000\000\000\000\000\000\000o\000\000\000\001\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_2e436b0daa293d6c
-L_OBJC_METH_VAR_NAME_2e436b0daa293d6c:
-	.asciz	"init"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_2e436b0daa293d6c
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_2e436b0daa293d6c:
-	.quad	L_OBJC_METH_VAR_NAME_2e436b0daa293d6c
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_2e436b0daa293d6c
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_2e436b0daa293d6c:
-	.asciz	"\000\000\000\000@\000\000"
 
 .zerofill __DATA,__bss,__MergedGlobals,48,3
 .subsections_via_symbols
