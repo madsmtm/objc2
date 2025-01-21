@@ -15,7 +15,7 @@ fn merge_objc_symbols(exc: &NSException) -> Vec<String> {
     let nssymbols = unsafe { exc.callStackSymbols() };
     let return_addrs = unsafe { exc.callStackReturnAddresses() };
 
-    for (nssymbol, addr) in nssymbols.into_iter().zip(return_addrs) {
+    for (nssymbol, addr) in nssymbols.iter().zip(return_addrs) {
         let addr = addr.as_usize() as *mut c_void;
         let mut call_count = 0;
         backtrace::resolve(addr, |symbol| {
@@ -96,7 +96,7 @@ fn array_exception() {
             panic!("did not find enough symbols: {symbols:?}");
         }
 
-        for (expected, actual) in expected.into_iter().zip(&symbols) {
+        for (expected, actual) in expected.iter().zip(&symbols) {
             assert!(
                 actual.contains(expected),
                 "{expected:?} must be in {actual:?}:\n{symbols:#?}",
@@ -166,7 +166,7 @@ fn capture_backtrace() {
     ] {
         let symbols: Vec<_> = backtrace
             .frames()
-            .into_iter()
+            .iter()
             .flat_map(|frame| frame.symbols())
             .map(|symbol| {
                 symbol
@@ -191,7 +191,7 @@ fn capture_backtrace() {
             panic!("did not find enough symbols: {backtrace:?}");
         }
 
-        for (expected, actual) in expected.into_iter().zip(&symbols) {
+        for (expected, actual) in expected.iter().zip(&symbols) {
             assert!(
                 actual.contains(expected),
                 "{expected:?} must be in {actual:?}:\n{symbols:#?}",
