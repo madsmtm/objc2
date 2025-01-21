@@ -124,6 +124,7 @@ objc2-exception-helper = { path = "../objc2-exception-helper", version = "0.1.0"
 [dev-dependencies]
 iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callgrind" }
 static_assertions = "1.1.0"
+backtrace = "0.3.74"
 memoffset = "0.9.0"
 block2 = { path = "../block2" }
 objc2-core-foundation = { path = "../../framework-crates/objc2-core-foundation", default-features = false, features = [
