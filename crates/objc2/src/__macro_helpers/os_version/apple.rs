@@ -207,8 +207,8 @@ fn version_from_plist() -> OSVersion {
             let path = PathBuf::from(root).join("System/Library/CoreServices/SystemVersion.plist");
             let path = path.as_os_str().as_bytes();
 
-            // SAFETY: Allocating a string is valid.
-            let alloc: Allocated<NSObject> = unsafe { msg_send![class!(NSString), alloc] };
+            // SAFETY: Allocating a string is valid on all threads.
+            let alloc: Allocated<NSObject> = unsafe { Allocated::alloc(class!(NSString)) };
             // SAFETY: The bytes are valid, and the length is correct.
             unsafe {
                 let bytes_ptr: *const c_void = path.as_ptr().cast();

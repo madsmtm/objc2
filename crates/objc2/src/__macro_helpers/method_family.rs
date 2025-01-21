@@ -34,11 +34,6 @@ pub type MutableCopyFamily = MethodFamily<5>;
 /// No family.
 pub type NoneFamily = MethodFamily<6>;
 
-/// The `alloc` selector itself.
-///
-/// Used for a fast-path optimization using `objc_alloc`.
-pub type AllocSelector = MethodFamily<7>;
-
 // These are used to avoid trying to do retain-semantics for these special
 // selectors that would otherwise fall under `NoneFamily`.
 

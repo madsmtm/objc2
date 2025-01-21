@@ -205,6 +205,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed the ability to implement `ClassType` manually, to make
   it easier to evolve the API going forwards.
 * **BREAKING**: Removed the deprecated `apple` Cargo feature flag.
+* The optimization for converting `msg_send_id![cls, alloc]` to a call to
+  the faster runtime function `objc_alloc` no longer works, use
+  `AllocAnyThread::alloc` or `MainThreadOnly::alloc` instead.
 
 ### Fixed
 * Remove an incorrect assertion when adding protocols to classes in an unexpected

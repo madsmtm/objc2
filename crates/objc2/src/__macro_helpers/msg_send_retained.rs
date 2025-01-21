@@ -1,14 +1,13 @@
 use core::ptr;
 
 use crate::encode::{Encode, RefEncode};
-use crate::rc::{Allocated, Retained};
+use crate::rc::Retained;
 use crate::runtime::{AnyClass, MessageReceiver, Sel};
-use crate::{ClassType, Message};
+use crate::ClassType;
 
 use super::null_error::encountered_error;
 use super::{
-    AllocSelector, ConvertArguments, KindSendMessage, KindSendMessageSuper, RetainSemantics,
-    TupleExtender,
+    ConvertArguments, KindSendMessage, KindSendMessageSuper, RetainSemantics, TupleExtender,
 };
 
 //
@@ -38,44 +37,6 @@ where
         // SAFETY: The pointers are valid (or, in the case of the receiver
         // pointer, at least valid when the message send is not `init`).
         unsafe { Self::convert_message_return(ret, ptr, sel) }
-    }
-}
-
-impl<Return> MsgSend<&AnyClass, Allocated<Return>> for AllocSelector
-where
-    Return: Message,
-{
-    #[inline]
-    unsafe fn send_message<A: ConvertArguments>(
-        cls: &AnyClass,
-        sel: Sel,
-        args: A,
-    ) -> Allocated<Return> {
-        // Available on non-fragile Apple runtimes.
-        #[cfg(all(
-            target_vendor = "apple",
-            not(all(target_os = "macos", target_arch = "x86"))
-        ))]
-        {
-            // We completely ignore both the selector and the arguments, since
-            // we know them to be `alloc` and empty (since this is the
-            // `AllocSelector` "family").
-            let _ = sel;
-            let _ = args;
-
-            // SAFETY: Checked by caller.
-            let obj: *mut Return = unsafe { crate::ffi::objc_alloc(cls).cast() };
-            // SAFETY: The object is newly allocated, so this has +1 retain count
-            unsafe { Allocated::new(obj) }
-        }
-        #[cfg(not(all(
-            target_vendor = "apple",
-            not(all(target_os = "macos", target_arch = "x86"))
-        )))]
-        {
-            // SAFETY: Checked by caller
-            unsafe { super::AllocFamily::send_message(cls, sel, args) }
-        }
     }
 }
 
@@ -357,7 +318,7 @@ mod tests {
 
     use super::*;
 
-    use crate::rc::{autoreleasepool, PartialInit, RcTestObject, ThreadTestData};
+    use crate::rc::{autoreleasepool, Allocated, PartialInit, RcTestObject, ThreadTestData};
     use crate::runtime::{AnyObject, NSObject, NSZone};
     use crate::{class, define_class, extern_methods, msg_send, test_utils, AllocAnyThread};
 

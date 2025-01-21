@@ -2,7 +2,7 @@ use core::fmt;
 use core::marker::PhantomData;
 
 use crate::rc::Allocated;
-use crate::{msg_send, ClassType, MainThreadOnly};
+use crate::{ClassType, MainThreadOnly};
 
 /// Whether the current thread is the main thread.
 #[inline]
@@ -161,7 +161,7 @@ impl MainThreadMarker {
         // SAFETY: We hold `MainThreadMarker`, and classes are either only
         // safe to allocate on the main thread, or safe to allocate
         // everywhere.
-        unsafe { msg_send![T::class(), alloc] }
+        unsafe { Allocated::alloc(T::class()) }
     }
 }
 

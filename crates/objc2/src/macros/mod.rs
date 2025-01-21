@@ -1197,7 +1197,7 @@ macro_rules! msg_send {
     });
     [$obj:expr, alloc $(,)?] => ({
         let result;
-        result = <$crate::__macro_helpers::AllocSelector as $crate::__macro_helpers::MsgSend<_, _>>::send_message(
+        result = <$crate::__macro_helpers::AllocFamily as $crate::__macro_helpers::MsgSend<_, _>>::send_message(
             $obj,
             $crate::sel!(alloc),
             (),

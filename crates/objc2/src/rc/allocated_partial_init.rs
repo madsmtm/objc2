@@ -4,7 +4,7 @@ use core::ptr::NonNull;
 use core::{fmt, ptr};
 
 use crate::__macro_helpers::defined_ivars::initialize_ivars;
-use crate::runtime::{objc_release_fast, AnyObject};
+use crate::runtime::{objc_release_fast, AnyClass, AnyObject};
 use crate::{DefinedClass, Message};
 
 /// An Objective-C object that has been allocated, but not initialized.
@@ -80,6 +80,40 @@ impl<T: ?Sized + Message> Allocated<T> {
             ptr,
             p: PhantomData,
             p_auto_traits: PhantomData,
+        }
+    }
+
+    /// Allocate the object with a fast path using `objc_alloc`.
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The object must be safe to allocate on the current thread, and the
+    /// object `T` must be an instance of the class.
+    #[doc(alias = "objc_alloc")]
+    #[inline]
+    pub(crate) unsafe fn alloc(cls: &AnyClass) -> Self
+    where
+        T: Sized,
+    {
+        // Available on non-fragile Apple runtimes.
+        #[cfg(all(
+            target_vendor = "apple",
+            not(all(target_os = "macos", target_arch = "x86"))
+        ))]
+        {
+            // SAFETY: Thread safety checked by the caller.
+            let obj: *mut T = unsafe { crate::ffi::objc_alloc(cls).cast() };
+            // SAFETY: The object is newly allocated, so this has +1 retain count
+            unsafe { Self::new(obj) }
+        }
+        #[cfg(not(all(
+            target_vendor = "apple",
+            not(all(target_os = "macos", target_arch = "x86"))
+        )))]
+        {
+            // SAFETY: Thread safety checked by the caller.
+            unsafe { crate::msg_send![cls, alloc] }
         }
     }
 

@@ -5,7 +5,7 @@ use crate::__macro_helpers::defined_ivars::get_initialized_ivar_ptr;
 use crate::encode::RefEncode;
 use crate::rc::{Allocated, Retained};
 use crate::runtime::{AnyClass, AnyProtocol, ProtocolObject};
-use crate::{msg_send, MainThreadMarker};
+use crate::MainThreadMarker;
 
 /// Types that can be sent Objective-C messages.
 ///
@@ -455,7 +455,7 @@ pub unsafe trait AllocAnyThread: private::SealedAllocAnyThread {
         // to be allowed to `init` on the current thread.
         //
         // See also `MainThreadMarker::alloc`.
-        unsafe { msg_send![Self::class(), alloc] }
+        unsafe { Allocated::alloc(Self::class()) }
     }
 }
 
@@ -551,7 +551,10 @@ pub unsafe trait MainThreadOnly: private::SealedMainThreadOnly {
     where
         Self: Sized + ClassType,
     {
-        mtm.alloc()
+        let _ = mtm;
+        // SAFETY: We hold `MainThreadMarker`, and the class is safe to
+        // allocate on the main thread.
+        unsafe { Allocated::alloc(Self::class()) }
     }
 }
 

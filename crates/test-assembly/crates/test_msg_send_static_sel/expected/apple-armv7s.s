@@ -16,10 +16,15 @@ LPC0_0:
 _handle_alloc_init:
 	push	{r4, r5, r7, lr}
 	add	r7, sp, #8
-	bl	_objc_alloc
-	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_0+8))
-	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_0+8))
+	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-(LPC1_0+8))
+	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-(LPC1_0+8))
 LPC1_0:
+	ldr	r1, [pc, r1]
+	ldr	r1, [r1]
+	bl	_objc_msgSend
+	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_1+8))
+	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_1+8))
+LPC1_1:
 	ldr	r1, [pc, r1]
 	mov	r4, r0
 	ldr	r5, [r1]
@@ -28,9 +33,9 @@ LPC1_0:
 	cmp	r0, #0
 	popne	{r4, r5, r7, pc}
 LBB1_1:
-	movw	r2, :lower16:(l_anon.[ID].1-(LPC1_1+8))
-	movt	r2, :upper16:(l_anon.[ID].1-(LPC1_1+8))
-LPC1_1:
+	movw	r2, :lower16:(l_anon.[ID].1-(LPC1_2+8))
+	movt	r2, :upper16:(l_anon.[ID].1-(LPC1_2+8))
+LPC1_2:
 	add	r2, pc, r2
 	mov	r0, r4
 	mov	r1, r5
@@ -172,6 +177,9 @@ L_OBJC_IMAGE_INFO_993d94b40d47ed52:
 
 	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
 	.p2align	2, 0x0
+LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_alloc
+	.long	0
 LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr:
 	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_init
 	.long	0

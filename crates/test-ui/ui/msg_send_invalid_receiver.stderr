@@ -15,9 +15,9 @@ error[E0277]: the trait bound `Allocated<NSObject>: Encode` is not satisfied
             AtomicI8
           and $N others
   = note: required for `Allocated<NSObject>` to implement `EncodeReturn`
-  = note: required for `Allocated<NSObject>` to implement `ConvertReturn<MethodFamily<7>>`
-  = note: required for `MethodFamily<7>` to implement `RetainSemantics<&NSObject, Allocated<NSObject>, KindSendMessage>`
-  = note: required for `MethodFamily<7>` to implement `MsgSend<&NSObject, Allocated<NSObject>>`
+  = note: required for `Allocated<NSObject>` to implement `ConvertReturn<MethodFamily<2>>`
+  = note: required for `MethodFamily<2>` to implement `RetainSemantics<&NSObject, Allocated<NSObject>, KindSendMessage>`
+  = note: required for `MethodFamily<2>` to implement `MsgSend<&NSObject, Allocated<NSObject>>`
   = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied

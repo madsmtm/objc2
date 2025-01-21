@@ -15,9 +15,9 @@ error[E0277]: the trait bound `Retained<AnyObject>: Encode` is not satisfied
             AtomicI8
           and $N others
   = note: required for `Retained<AnyObject>` to implement `EncodeReturn`
-  = note: required for `Retained<AnyObject>` to implement `ConvertReturn<MethodFamily<7>>`
-  = note: required for `MethodFamily<7>` to implement `RetainSemantics<&AnyClass, Retained<AnyObject>, KindSendMessage>`
-  = note: required for `MethodFamily<7>` to implement `MsgSend<&AnyClass, Retained<AnyObject>>`
+  = note: required for `Retained<AnyObject>` to implement `ConvertReturn<MethodFamily<2>>`
+  = note: required for `MethodFamily<2>` to implement `RetainSemantics<&AnyClass, Retained<AnyObject>, KindSendMessage>`
+  = note: required for `MethodFamily<2>` to implement `MsgSend<&AnyClass, Retained<AnyObject>>`
   = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: Encode` is not satisfied
@@ -38,9 +38,9 @@ error[E0277]: the trait bound `Allocated<AnyObject>: Encode` is not satisfied
           and $N others
   = note: required for `Option<Allocated<AnyObject>>` to implement `Encode`
   = note: required for `Option<Allocated<AnyObject>>` to implement `EncodeReturn`
-  = note: required for `Option<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<7>>`
-  = note: required for `MethodFamily<7>` to implement `RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, KindSendMessage>`
-  = note: required for `MethodFamily<7>` to implement `MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
+  = note: required for `Option<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<2>>`
+  = note: required for `MethodFamily<2>` to implement `RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, KindSendMessage>`
+  = note: required for `MethodFamily<2>` to implement `MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
   = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: OptionEncode` is not satisfied
@@ -61,9 +61,9 @@ error[E0277]: the trait bound `Allocated<AnyObject>: OptionEncode` is not satisf
           and $N others
   = note: required for `Option<Allocated<AnyObject>>` to implement `Encode`
   = note: required for `Option<Allocated<AnyObject>>` to implement `EncodeReturn`
-  = note: required for `Option<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<7>>`
-  = note: required for `MethodFamily<7>` to implement `RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, KindSendMessage>`
-  = note: required for `MethodFamily<7>` to implement `MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
+  = note: required for `Option<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<2>>`
+  = note: required for `MethodFamily<2>` to implement `RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, KindSendMessage>`
+  = note: required for `MethodFamily<2>` to implement `MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
   = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<Allocated<AnyObject>>: Encode` is not satisfied
@@ -83,9 +83,9 @@ error[E0277]: the trait bound `Retained<Allocated<AnyObject>>: Encode` is not sa
             AtomicI8
           and $N others
   = note: required for `Retained<Allocated<AnyObject>>` to implement `EncodeReturn`
-  = note: required for `Retained<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<7>>`
-  = note: required for `MethodFamily<7>` to implement `RetainSemantics<&AnyClass, Retained<Allocated<AnyObject>>, KindSendMessage>`
-  = note: required for `MethodFamily<7>` to implement `MsgSend<&AnyClass, Retained<Allocated<AnyObject>>>`
+  = note: required for `Retained<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<2>>`
+  = note: required for `MethodFamily<2>` to implement `RetainSemantics<&AnyClass, Retained<Allocated<AnyObject>>, KindSendMessage>`
+  = note: required for `MethodFamily<2>` to implement `MsgSend<&AnyClass, Retained<Allocated<AnyObject>>>`
   = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not satisfied

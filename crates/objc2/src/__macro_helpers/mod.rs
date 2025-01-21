@@ -41,9 +41,9 @@ pub use self::define_class::{
 pub use self::defined_ivars::DefinedIvarsHelper;
 pub use self::image_info::ImageInfo;
 pub use self::method_family::{
-    method_family, method_family_import, AllocFamily, AllocSelector, AutoreleaseSelector,
-    CopyFamily, DeallocSelector, InitFamily, MethodFamily, MutableCopyFamily, NewFamily,
-    NoneFamily, ReleaseSelector, RetainSelector,
+    method_family, method_family_import, AllocFamily, AutoreleaseSelector, CopyFamily,
+    DeallocSelector, InitFamily, MethodFamily, MutableCopyFamily, NewFamily, NoneFamily,
+    ReleaseSelector, RetainSelector,
 };
 pub use self::module_info::ModuleInfo;
 pub use self::msg_send_retained::{MsgSend, MsgSendError, MsgSendSuper, MsgSendSuperError};

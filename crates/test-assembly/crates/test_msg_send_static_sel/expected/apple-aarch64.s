@@ -15,13 +15,19 @@ _handle_alloc_init:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
-	bl	_objc_alloc
-	mov	x19, x0
 Lloh2:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_alloc@GOTPAGE
 Lloh3:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_alloc@GOTPAGEOFF]
 Lloh4:
+	ldr	x1, [x8]
+	bl	_objc_msgSend
+	mov	x19, x0
+Lloh5:
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
+Lloh6:
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
+Lloh7:
 	ldr	x20, [x8]
 	mov	x1, x20
 	bl	_objc_msgSend
@@ -30,15 +36,16 @@ Lloh4:
 	ldp	x20, x19, [sp], #32
 	ret
 LBB1_2:
-Lloh5:
+Lloh8:
 	adrp	x2, l_anon.[ID].1@PAGE
-Lloh6:
+Lloh9:
 	add	x2, x2, l_anon.[ID].1@PAGEOFF
 	mov	x0, x19
 	mov	x1, x20
 	bl	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
+	.loh AdrpLdrGotLdr	Lloh5, Lloh6, Lloh7
 	.loh AdrpLdrGotLdr	Lloh2, Lloh3, Lloh4
-	.loh AdrpAdd	Lloh5, Lloh6
+	.loh AdrpAdd	Lloh8, Lloh9
 
 	.globl	_use_generic
 	.p2align	2
@@ -47,32 +54,32 @@ _use_generic:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	mov	x19, x0
-Lloh7:
+Lloh10:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_67bf3e41c7e639a3@PAGE
-Lloh8:
+Lloh11:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_67bf3e41c7e639a3@PAGEOFF]
 	adrp	x20, L_OBJC_SELECTOR_REFERENCES_91c006d97540f4b5@PAGE
 	ldr	x2, [x20, L_OBJC_SELECTOR_REFERENCES_91c006d97540f4b5@PAGEOFF]
 	bl	_objc_msgSend
-Lloh9:
+Lloh12:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_2c2c9a8191012941@PAGE
-Lloh10:
+Lloh13:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_2c2c9a8191012941@PAGEOFF]
 	ldr	x2, [x20, L_OBJC_SELECTOR_REFERENCES_91c006d97540f4b5@PAGEOFF]
 	mov	x0, x19
 	bl	_objc_msgSend
-Lloh11:
+Lloh14:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_993d94b40d47ed52@PAGE
-Lloh12:
+Lloh15:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_993d94b40d47ed52@PAGEOFF]
 	ldr	x2, [x20, L_OBJC_SELECTOR_REFERENCES_91c006d97540f4b5@PAGEOFF]
 	mov	x0, x19
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	b	_objc_msgSend
-	.loh AdrpLdr	Lloh11, Lloh12
-	.loh AdrpLdr	Lloh9, Lloh10
-	.loh AdrpLdr	Lloh7, Lloh8
+	.loh AdrpLdr	Lloh14, Lloh15
+	.loh AdrpLdr	Lloh12, Lloh13
+	.loh AdrpLdr	Lloh10, Lloh11
 
 	.section	__TEXT,__const
 l_anon.[ID].0:
