@@ -63,17 +63,14 @@ impl<T: Message> Weak<T> {
     }
 
     /// Construct a new weak pointer that references the given [`Retained`].
-    ///
-    /// Soft-deprecated alias of [`Weak::from_retained`].
     #[doc(alias = "objc_initWeak")]
+    #[deprecated = "use `Weak::from_retained` instead"]
     #[inline]
     pub fn from_id(obj: &Retained<T>) -> Self {
         Self::from_retained(obj)
     }
 
     /// Construct a new weak pointer that references the given [`Retained`].
-    ///
-    /// You should prefer [`Weak::new`] whenever the object is retainable.
     #[doc(alias = "objc_initWeak")]
     #[inline]
     pub fn from_retained(obj: &Retained<T>) -> Self {

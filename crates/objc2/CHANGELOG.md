@@ -180,6 +180,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Merged `msg_send!` and `msg_send_id!`. The latter is now deprecated.
 * Merged `#[method(...)]` and `#[method_id(...)]` in `extern_methods!` and
   `extern_protocol!`. The latter is now deprecated.
+* Deprecated `rc::Weak::from_id`.Use `rc::Weak::from_retained` instead.
+* Deprecated `ProtocolObject::from_id`. Use `ProtocolObject::from_retained`
+  instead.
 * Deprecated using `msg_send!` without a comma between arguments.
 
   See the following for an example of how to upgrade:

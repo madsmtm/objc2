@@ -97,8 +97,7 @@ impl<P: ?Sized> ProtocolObject<P> {
     }
 
     /// Get a type-erased object from a type implementing a protocol.
-    ///
-    /// Soft-deprecated alias of [`ProtocolObject::from_retained`].
+    #[deprecated = "use `ProtocolObject::from_retained` instead"]
     #[inline]
     pub fn from_id<T>(obj: Retained<T>) -> Retained<Self>
     where
