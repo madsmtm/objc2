@@ -50,7 +50,7 @@ unstable-private = []
 unstable-coerce-pointee = []
 
 [dependencies]
-objc2 = { path = "../objc2", version = "0.5.2", default-features = false, features = ["std"] }
+objc2 = { path = "../objc2", version = "0.6.0", default-features = false, features = ["std"] }
 
 [dev-dependencies]
 objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = [

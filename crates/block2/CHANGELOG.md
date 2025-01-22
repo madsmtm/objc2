@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `RcBlock::as_ptr`.
 * Added `RcBlock::into_raw`.
 
+### Changed
+* **BREAKING**: Updated `objc2` dependency to `v0.6.0`.
+
 ### Fixed
 * **BREAKING**: Converted function signatures into using `extern "C-unwind"`.
   This allows unwinding through blocks.

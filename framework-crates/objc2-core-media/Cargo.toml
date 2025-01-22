@@ -18,7 +18,7 @@ workspace = true
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
+objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
 objc2-core-audio = { path = "../objc2-core-audio", version = "0.2.2", default-features = false, optional = true, features = [
     "AudioHardware",
     "AudioHardwareDeprecated",

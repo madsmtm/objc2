@@ -371,7 +371,7 @@ see that for related crates.", self.data.krate)?;
                 ]),
                 "objc2" => InlineTable::from_iter([
                     ("path", Value::from(path)),
-                    ("version", Value::from("0.5.2")),
+                    ("version", Value::from("0.6.0")),
                 ]),
                 "block2" => InlineTable::from_iter([
                     ("path", Value::from(path)),
