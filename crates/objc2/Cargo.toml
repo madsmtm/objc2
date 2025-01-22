@@ -136,7 +136,7 @@ unstable-objfw = []
 unstable-requires-macos = []
 
 [dependencies]
-objc2-encode = { path = "../objc2-encode", version = "4.0.3", default-features = false }
+objc2-encode = { path = "../objc2-encode", version = "4.1.0", default-features = false }
 objc2-proc-macros = { path = "../objc2-proc-macros", version = "0.2.0", optional = true }
 objc2-exception-helper = { path = "../objc2-exception-helper", version = "0.1.1", default-features = false, optional = true }
 
