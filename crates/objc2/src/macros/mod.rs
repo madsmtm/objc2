@@ -5,7 +5,6 @@ mod __msg_send_parse;
 mod __rewrite_self_param;
 mod available;
 mod define_class;
-mod extern_category;
 mod extern_class;
 mod extern_methods;
 mod extern_protocol;

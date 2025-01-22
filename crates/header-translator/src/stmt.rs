@@ -447,9 +447,13 @@ pub enum Stmt {
         methods: Vec<Method>,
         documentation: Option<Documentation>,
     },
-    /// @interface class_name (category_name) <protocols*>
+    /// @interface class_name (category_name)
     /// ->
-    /// extern_category!
+    /// impl trait category_name {
+    ///     extern_methods!(...)
+    /// }
+    ///
+    /// impl trait category_name for class_name {}
     ExternCategory {
         id: ItemIdentifier,
         actual_name: Option<String>,
@@ -940,7 +944,7 @@ impl Stmt {
                     .chain(protocol_impls)
                     .collect()
                 } else {
-                    // extern_category!
+                    // external category
 
                     if !generics.is_empty() {
                         panic!("external category: cannot handle generics");
@@ -2146,25 +2150,33 @@ impl Stmt {
                     methods,
                     documentation,
                 } => {
-                    let cfg = self.cfg_gate_ln_for([ItemTree::objc("extern_category")], config);
-                    write!(f, "{cfg}")?;
-                    writeln!(f, "extern_category!(")?;
+                    // Helper module to seal the trait.
+                    writeln!(f, "mod private_{} {{", id.name)?;
+                    writeln!(f, "    pub trait Sealed {{}}")?;
+                    writeln!(f, "}}")?;
+
+                    writeln!(f)?;
 
                     if let Some(actual_name) = actual_name {
                         if *actual_name != id.name {
-                            writeln!(f, "    /// Category \"{actual_name}\" on [`{}`].", cls.name)?;
-                            writeln!(f, "    #[doc(alias = \"{actual_name}\")]")?;
+                            writeln!(f, "/// Category \"{actual_name}\" on [`{}`].", cls.name)?;
+                            writeln!(f, "#[doc(alias = \"{actual_name}\")]")?;
                         } else {
-                            writeln!(f, "    /// Category on [`{}`].", cls.name)?;
+                            writeln!(f, "/// Category on [`{}`].", cls.name)?;
                         }
                     } else {
-                        writeln!(f, "    /// Category on [`{}`].", cls.name)?;
+                        writeln!(f, "/// Category on [`{}`].", cls.name)?;
                     }
                     write!(f, "{}", documentation.fmt(None))?;
 
-                    write!(f, "    {}", self.cfg_gate_ln(config))?;
-                    write!(f, "    {availability}")?;
-                    writeln!(f, "    pub unsafe trait {} {{", id.name)?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
+                    writeln!(
+                        f,
+                        "pub unsafe trait {}: ClassType + Sized + private_{}::Sealed {{",
+                        id.name, id.name
+                    )?;
+                    writeln!(f, "    extern_methods!(")?;
                     for method in methods {
                         write!(
                             f,
@@ -2173,29 +2185,34 @@ impl Stmt {
                         )?;
                         writeln!(f, "{method}")?;
                     }
-                    writeln!(f, "    }}")?;
+                    writeln!(f, "    );")?;
+                    writeln!(f, "}}")?;
 
                     writeln!(f)?;
 
-                    write!(
-                        f,
-                        "    {}",
-                        self.cfg_gate_ln_for(
-                            [ItemTree::new(
-                                cls.clone(),
-                                superclasses_required_items(cls_superclasses.iter().cloned())
-                            )],
-                            config,
-                        )
-                    )?;
+                    let impl_cfg = self.cfg_gate_ln_for(
+                        [ItemTree::new(
+                            cls.clone(),
+                            superclasses_required_items(cls_superclasses.iter().cloned()),
+                        )],
+                        config,
+                    );
+
+                    write!(f, "{impl_cfg}")?;
                     writeln!(
                         f,
-                        "    unsafe impl {} for {} {{}}",
+                        "impl private_{}::Sealed for {} {{}}",
                         id.name,
                         cls.path_in_relation_to(id.location()),
                     )?;
 
-                    writeln!(f, ");")?;
+                    write!(f, "{impl_cfg}")?;
+                    writeln!(
+                        f,
+                        "unsafe impl {} for {} {{}}",
+                        id.name,
+                        cls.path_in_relation_to(id.location()),
+                    )?;
                 }
                 Self::ProtocolImpl {
                     location: id,
