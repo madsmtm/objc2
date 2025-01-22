@@ -52,6 +52,7 @@ shared-version = true # Framework crates share a version number
 tag-prefix = "icrate"
 tag-name = "{{prefix}}-{{version}}"
 owners = ["madsmtm", "simlay"]
+rate-limit.existing-packages = 300
 
 # TODO: Check for typos in CI
 [workspace.metadata.typos]
