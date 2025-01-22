@@ -8,7 +8,7 @@
 //!
 //! [cargo-links]: https://doc.rust-lang.org/cargo/reference/build-scripts.html#the-links-manifest-key
 #![no_std]
-#![doc(html_root_url = "https://docs.rs/objc2-exception-helper/0.1.0")]
+#![doc(html_root_url = "https://docs.rs/objc2-exception-helper/0.1.1")]
 
 // Forwards-compatibility
 #[cfg(feature = "alloc")]

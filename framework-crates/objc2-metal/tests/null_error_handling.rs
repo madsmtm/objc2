@@ -1,5 +1,6 @@
 //! Regression test for https://github.com/madsmtm/objc2/issues/653.
 #![cfg(all(feature = "MTLBinaryArchive", feature = "MTLDevice"))]
+use objc2::available;
 use objc2_foundation::{ns_string, NSURL};
 use objc2_metal::{
     MTLBinaryArchive, MTLBinaryArchiveDescriptor, MTLCreateSystemDefaultDevice, MTLDevice,
@@ -14,6 +15,10 @@ fn test() {
         // Ignore, this won't work in CI.
         return;
     };
+    // `MTLBinaryArchiveDescriptor` is unavailable before these.
+    if !available!(ios = 14.0, macos = 11.0, tvos = 14.0, visionos = 1.0) {
+        return;
+    }
     let binary_archive = device
         .newBinaryArchiveWithDescriptor_error(&MTLBinaryArchiveDescriptor::new())
         .unwrap();

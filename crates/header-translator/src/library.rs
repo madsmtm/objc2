@@ -367,15 +367,15 @@ see that for related crates.", self.data.krate)?;
             let mut table = match krate {
                 "dispatch2" => InlineTable::from_iter([
                     ("path", Value::from(path)),
-                    ("version", Value::from("0.1.0")),
+                    ("version", Value::from("0.2.0")),
                 ]),
                 "objc2" => InlineTable::from_iter([
                     ("path", Value::from(path)),
-                    ("version", Value::from("0.5.2")),
+                    ("version", Value::from("0.6.0")),
                 ]),
                 "block2" => InlineTable::from_iter([
                     ("path", Value::from(path)),
-                    ("version", Value::from("0.5.1")),
+                    ("version", Value::from("0.6.0")),
                 ]),
                 // Use a reasonably new version of libc
                 "libc" => InlineTable::from_iter([("version", Value::from("0.2.80"))]),

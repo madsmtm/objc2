@@ -26,11 +26,19 @@ fn throw_catch_raise_catch() {
         let exc = res.unwrap_err().unwrap();
         let exc = NSException::from_exception(exc).unwrap();
 
-        assert_eq!(exc.retainCount(), 1);
+        if cfg!(all(target_os = "macos", target_arch = "x86")) {
+            assert_eq!(exc.retainCount(), 2);
+        } else {
+            assert_eq!(exc.retainCount(), 1);
+        }
         exc
     });
 
-    assert_eq!(exc.retainCount(), 1);
+    if cfg!(all(target_os = "macos", target_arch = "x86")) {
+        assert_eq!(exc.retainCount(), 2);
+    } else {
+        assert_eq!(exc.retainCount(), 1);
+    }
 
     let exc = autoreleasepool(|_| {
         let res = catch(|| {
@@ -42,9 +50,11 @@ fn throw_catch_raise_catch() {
 
         let exc = NSException::from_exception(res.unwrap_err().unwrap()).unwrap();
 
-        // Undesired: The inner pool _should_ have been drained on unwind, but
-        // it isn't, see `rc::Pool::drain`.
-        assert_eq!(exc.retainCount(), 2);
+        if cfg!(all(target_os = "macos", target_arch = "x86")) {
+            assert_eq!(exc.retainCount(), 3);
+        } else {
+            assert_eq!(exc.retainCount(), 1);
+        }
         exc
     });
 

@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.6.0 - 2025-01-22
+
 ### Added
 * Added `AnyClass::is_metaclass`.
 * Added `MainThreadMarker` from `objc2-foundation`.
@@ -211,8 +214,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Renamed `DeclaredClass` to `DefinedClass`.
 * Merged `msg_send!` and `msg_send_id!`. The latter is now deprecated.
 * Merged `#[method(...)]` and `#[method_id(...)]` in `extern_methods!` and
-  `extern_protocol!`. The latter is now deprecated.
-* Deprecated `rc::Weak::from_id`.Use `rc::Weak::from_retained` instead.
+  `extern_protocol!`. `#[method_id(...)]` is now deprecated.
+* Deprecated `rc::Weak::from_id`. Use `rc::Weak::from_retained` instead.
 * Deprecated `ProtocolObject::from_id`. Use `ProtocolObject::from_retained`
   instead.
 * Deprecated using `msg_send!` without a comma between arguments.
@@ -230,10 +233,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   // After
   let _: NSInteger = msg_send![
       obj,
-      addTrackingRect: rect,
-      owner: obj,
-      userData: ptr::null_mut::<c_void>(),
-      assumeInside: false,
+      addTrackingRect: rect, // Added comma
+      owner: obj, // Added comma
+      userData: ptr::null_mut::<c_void>(), // Added comma
+      assumeInside: false, // Added comma (optional when trailing)
   ];
   ```
 
@@ -314,8 +317,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added the feature flag `"relax-sign-encoding"`, which when enabled, allows
   using e.g. `NSInteger` in places where you would otherwise have to use
   `NSUInteger`.
-* Added new mutability options `InteriorMutableWithSubclass` and
-  `InteriorMutableWithSuperclass`.
 
 ### Changed
 * Renamed `Id` to `Retained`, to better reflect what it represents.
@@ -522,28 +523,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * `AnyObject::class` now returns a `'static` reference to the class.
 * Relaxed `ProtocolType` requirement on `ProtocolObject`.
 * **BREAKING**: Updated `encode` types to those from `objc2-encode v4.0.0`.
-
-### Deprecated
-* Soft deprecated using `msg_send!` without a comma between arguments (i.e.
-  deprecated when the `"unstable-msg-send-always-comma"` feature is enabled):
-  ```rust
-  // Before
-  let _: NSInteger = msg_send![
-      obj,
-      addTrackingRect:rect
-      owner:obj
-      userData:ptr::null_mut::<c_void>()
-      assumeInside:Bool::NO
-  ];
-  // After
-  let _: NSInteger = msg_send![
-      obj,
-      addTrackingRect: rect, // Added comma
-      owner: obj, // Added comma
-      userData: ptr::null_mut::<c_void>(), // Added comma
-      assumeInside: false, // Added comma (optional when trailing)
-  ];
-  ```
 
 ### Fixed
 * Fixed the name of the protocol that `NSObjectProtocol` references.

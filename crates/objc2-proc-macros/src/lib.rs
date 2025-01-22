@@ -8,7 +8,7 @@
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-proc-macros/0.1.3")]
+#![doc(html_root_url = "https://docs.rs/objc2-proc-macros/0.2.0")]
 
 use core::hash::{Hash, Hasher};
 

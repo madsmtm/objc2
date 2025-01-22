@@ -17,9 +17,9 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
-block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
+block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
+objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

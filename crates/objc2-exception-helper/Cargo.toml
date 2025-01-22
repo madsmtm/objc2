@@ -5,7 +5,7 @@ name = "objc2-exception-helper"
 #
 # Also, beware of using pre-release versions here, since because of the
 # `links` key, two pre-releases requested with `=...` are incompatible.
-version = "0.1.0"
+version = "0.1.1"
 description = "External helper function for catching Objective-C exceptions"
 keywords = ["objective-c", "macos", "ios", "exception"]
 categories = ["no-std", "no-std::no-alloc", "os::macos-apis"]

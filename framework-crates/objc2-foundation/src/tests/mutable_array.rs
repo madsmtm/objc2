@@ -113,7 +113,14 @@ fn test_sort() {
 
 #[test]
 #[cfg(feature = "NSValue")]
-#[should_panic = "`itemsPtr` was NULL, likely due to mutation during iteration"]
+#[cfg_attr(
+    all(target_os = "macos", target_arch = "x86"),
+    should_panic = "mutation detected during enumeration"
+)]
+#[cfg_attr(
+    not(all(target_os = "macos", target_arch = "x86")),
+    should_panic = "`itemsPtr` was NULL, likely due to mutation during iteration"
+)]
 #[cfg_attr(feature = "gnustep-1-7", ignore = "errors differently on GNUStep")]
 fn null_itemsptr() {
     use crate::NSNumber;

@@ -15,7 +15,7 @@ repository = "https://github.com/madsmtm/objc2"
 # Framework crate defaults
 
 # Remember to update in header-translator, and manually authored lib.rs.
-version = "0.2.2"
+version = "0.3.0"
 # Some crates in this repo have a different license, see LICENSE.md.
 license = "Zlib OR Apache-2.0 OR MIT"
 license-file = "LICENSE.md"
@@ -52,6 +52,7 @@ shared-version = true # Framework crates share a version number
 tag-prefix = "icrate"
 tag-name = "{{prefix}}-{{version}}"
 owners = ["madsmtm", "simlay"]
+rate-limit.existing-packages = 300
 
 # TODO: Check for typos in CI
 [workspace.metadata.typos]

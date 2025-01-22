@@ -159,6 +159,10 @@ fn test_from_base_class(cls: &AnyClass) {
     feature = "gnustep-1-7",
     ignore = "GNUStep stack overflows here for some reason?"
 )]
+#[cfg_attr(
+    all(target_os = "macos", target_arch = "x86"),
+    ignore = "the old runtime seems to have been compiled with -fno-exceptions?"
+)]
 fn no_copy() {
     let mut builder = base_class_builder("NoCopy").unwrap();
 
@@ -189,6 +193,10 @@ fn no_copy() {
 #[cfg_attr(
     feature = "gnustep-1-7",
     ignore = "GNUStep stack overflows here for some reason?"
+)]
+#[cfg_attr(
+    all(target_os = "macos", target_arch = "x86"),
+    ignore = "the old runtime seems to have been compiled with -fno-exceptions?"
 )]
 fn no_is_equal_hash() {
     let mut builder = base_class_builder("NoIsEqualHash").unwrap();

@@ -17,24 +17,24 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
-block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-audio-types = { path = "../objc2-core-audio-types", version = "0.2.2", default-features = false, optional = true, features = [
+block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
+objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
+objc2-core-audio-types = { path = "../objc2-core-audio-types", version = "0.3.0", default-features = false, optional = true, features = [
     "CoreAudioBaseTypes",
     "objc2",
 ] }
-objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-media = { path = "../objc2-core-media", version = "0.3.0", default-features = false, optional = true, features = [
     "CMFormatDescription",
     "objc2",
 ] }
-objc2-core-midi = { path = "../objc2-core-midi", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-midi = { path = "../objc2-core-midi", version = "0.3.0", default-features = false, optional = true, features = [
     "MIDIServices",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
-objc2-audio-toolbox = { path = "../objc2-audio-toolbox", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-audio-toolbox = { path = "../objc2-audio-toolbox", version = "0.3.0", default-features = false, optional = true, features = [
     "AUAudioUnit",
     "AUComponent",
     "AudioComponent",

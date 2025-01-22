@@ -17,14 +17,14 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "CFBase",
     "CFDate",
     "CFError",
     "objc2",
 ] }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-metal = { path = "../objc2-metal", version = "0.3.0", default-features = false, optional = true, features = [
     "MTLAllocation",
     "MTLCommandBuffer",
     "MTLDevice",

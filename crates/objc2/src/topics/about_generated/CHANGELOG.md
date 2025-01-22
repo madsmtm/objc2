@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.3.0 - 2025-01-22
+
 ### Added
 * Added `NSData::to_vec` and `NSData::iter` helper methods.
 * Added `Eq` implementation for `NSValue` and subclasses.
@@ -168,6 +171,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: No longer automatically enable `std` and `alloc` features of
   dependencies. If you want a certain framework crate to use `std` or `alloc`
   features, you cannot rely on a higher-level crate to enable that for you.
+* **BREAKING**: Updated `objc2` dependency to `v0.6.0`.
+* **BREAKING**: Updated `block2` dependency to `v0.6.0`.
 
 ### Deprecated
 * Moved `MainThreadMarker` from `objc2-foundation` to `objc2`.

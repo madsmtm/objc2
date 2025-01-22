@@ -17,18 +17,18 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, features = ["std"] }
-block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
+objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "CFCGTypes",
     "objc2",
 ] }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.3.0", default-features = false, optional = true, features = [
     "CGColorConversionInfo",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, features = [
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
+objc2-metal = { path = "../objc2-metal", version = "0.3.0", default-features = false, features = [
     "MTLCommandBuffer",
     "MTLDevice",
 ] }

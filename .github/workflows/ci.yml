@@ -553,9 +553,9 @@ jobs:
     - name: Test static class and selectors
       if: ${{ matrix.frameworks == 'MACOS_15' }}
       run: >-
-        cargo test $ARGS $PUBLIC_CRATES -ptests -pobjc2-foundation
+        cargo test $ARGS -ptests -pobjc2-foundation
         --no-default-features
-        --features=unstable-static-sel,unstable-static-class,unstable-static-nsstring
+        --features=objc2/unstable-static-sel,objc2/unstable-static-class,unstable-static-nsstring
         --features=std,NSString
 
   test-ios:

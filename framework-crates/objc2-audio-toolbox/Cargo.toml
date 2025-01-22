@@ -17,18 +17,18 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
-block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
+block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-core-audio = { path = "../objc2-core-audio", version = "0.2.2", default-features = false, optional = true, features = [
+objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
+objc2-core-audio = { path = "../objc2-core-audio", version = "0.3.0", default-features = false, optional = true, features = [
     "AudioHardware",
     "objc2",
 ] }
-objc2-core-audio-types = { path = "../objc2-core-audio-types", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-audio-types = { path = "../objc2-core-audio-types", version = "0.3.0", default-features = false, optional = true, features = [
     "CoreAudioBaseTypes",
     "objc2",
 ] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "CFArray",
     "CFBase",
     "CFData",
@@ -38,12 +38,12 @@ objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", 
     "CFURL",
     "objc2",
 ] }
-objc2-core-midi = { path = "../objc2-core-midi", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-midi = { path = "../objc2-core-midi", version = "0.3.0", default-features = false, optional = true, features = [
     "MIDICapabilityInquiry",
     "MIDIServices",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

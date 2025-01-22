@@ -16,11 +16,11 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, features = ["std"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
+objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false }
+objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

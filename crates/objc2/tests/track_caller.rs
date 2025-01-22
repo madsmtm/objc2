@@ -75,6 +75,7 @@ impl Drop for PanicChecker {
 }
 
 #[test]
+#[cfg_attr(panic = "abort", ignore = "requires `catch_unwind`")]
 fn test_track_caller() {
     let checker = PanicChecker::new();
 

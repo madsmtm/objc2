@@ -17,21 +17,21 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
-block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
-objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false, optional = true, features = ["std"] }
-objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
+objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
+objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "AVCaptureDevice",
     "AVDepthData",
 ] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = ["CFCGTypes"] }
-objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true, features = ["CLLocation"] }
-objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true, features = ["CMSampleBuffer"] }
-objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = ["CFCGTypes"] }
+objc2-core-location = { path = "../objc2-core-location", version = "0.3.0", default-features = false, optional = true, features = ["CLLocation"] }
+objc2-core-media = { path = "../objc2-core-media", version = "0.3.0", default-features = false, optional = true, features = ["CMSampleBuffer"] }
+objc2-core-video = { path = "../objc2-core-video", version = "0.3.0", default-features = false, optional = true, features = [
     "CVBuffer",
     "CVImageBuffer",
     "CVPixelBuffer",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "NSArray",
     "NSBundle",
     "NSCoder",
@@ -47,7 +47,7 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-fe
     "NSValue",
     "alloc",
 ] }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-metal = { path = "../objc2-metal", version = "0.3.0", default-features = false, optional = true, features = [
     "MTLAllocation",
     "MTLBuffer",
     "MTLCommandBuffer",
@@ -56,8 +56,8 @@ objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = f
     "MTLTexture",
     "MTLVertexDescriptor",
 ] }
-objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.2", default-features = false, optional = true, features = ["CALayer"] }
-objc2-scene-kit = { path = "../objc2-scene-kit", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.3.0", default-features = false, optional = true, features = ["CALayer"] }
+objc2-scene-kit = { path = "../objc2-scene-kit", version = "0.3.0", default-features = false, optional = true, features = [
     "SCNAnimation",
     "SCNBoundingVolume",
     "SCNGeometry",
@@ -65,8 +65,8 @@ objc2-scene-kit = { path = "../objc2-scene-kit", version = "0.2.2", default-feat
     "SCNSceneRenderer",
     "SCNShadable",
 ] }
-objc2-sprite-kit = { path = "../objc2-sprite-kit", version = "0.2.2", default-features = false, optional = true, features = ["SKView"] }
-objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-sprite-kit = { path = "../objc2-sprite-kit", version = "0.3.0", default-features = false, optional = true, features = ["SKView"] }
+objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.3.0", default-features = false, optional = true, features = [
     "UIAppearance",
     "UIDynamicBehavior",
     "UIFocus",
@@ -76,7 +76,7 @@ objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features =
     "UITraitCollection",
     "UIView",
 ] }
-objc2-vision = { path = "../objc2-vision", version = "0.2.2", default-features = false, optional = true, features = ["VNTypes"] }
+objc2-vision = { path = "../objc2-vision", version = "0.3.0", default-features = false, optional = true, features = ["VNTypes"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"

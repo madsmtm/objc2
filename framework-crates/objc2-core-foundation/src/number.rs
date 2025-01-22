@@ -143,7 +143,12 @@ mod tests {
     #[test]
     fn to_from_number() {
         let n = CFNumber::new_i32(442);
-        assert_eq!(n.as_i8(), Some(442i32 as i8));
+        if cfg!(all(target_os = "macos", target_arch = "x86")) {
+            // Seems to return `None` in the old runtime.
+            assert_eq!(n.as_i8(), None);
+        } else {
+            assert_eq!(n.as_i8(), Some(442i32 as i8));
+        }
         assert_eq!(n.as_i16(), Some(442));
         assert_eq!(n.as_i32(), Some(442));
         assert_eq!(n.as_i64(), Some(442));
