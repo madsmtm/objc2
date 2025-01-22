@@ -63,7 +63,11 @@ std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 libc = ["dep:libc"]
-objc2 = ["dep:objc2"]
+objc2 = [
+    "dep:objc2",
+    "objc2-core-foundation/objc2",
+    "objc2-security?/objc2",
+]
 objc2-security = ["dep:objc2-security"]
 
 CaptiveNetwork = [

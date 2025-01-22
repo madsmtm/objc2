@@ -1182,9 +1182,21 @@ impl Stmt {
                             superclass,
                         }];
                     } else if let Some(entity) = inner_struct {
+                        let mut record_id = ItemIdentifier::new(&entity, context);
+
+                        // Replace module from external data if it exists.
+                        if let Some(external) = context
+                            .library(record_id.library_name())
+                            .external
+                            .get(&record_id.name)
+                        {
+                            record_id =
+                                ItemIdentifier::from_raw(record_id.name, external.module.clone());
+                        }
+
                         return vec![
                             Self::OpaqueDecl {
-                                id: ItemIdentifier::new(&entity, context),
+                                id: record_id,
                                 encoding_name: encoding_name.unwrap().to_string(),
                                 availability: Availability::parse(&entity, context),
                                 documentation: Documentation::from_entity(&entity),
@@ -1215,7 +1227,7 @@ impl Stmt {
                 let id = ItemIdentifier::new_optional(entity, context)
                     .map_name(|name| name.or_else(|| anonymous_record_name(entity, context)))
                     .to_option();
-                let Some(id) = id else {
+                let Some(mut id) = id else {
                     warn!(?entity, "skipped anonymous union/struct");
                     return vec![];
                 };
@@ -1305,6 +1317,11 @@ impl Stmt {
                 if fields.iter().any(|(_, _, field_ty)| field_ty.needs_simd()) {
                     debug!("simd types are not yet possible in struct/union");
                     return res;
+                }
+
+                // Replace module from external data if it exists.
+                if let Some(external) = context.library(id.library_name()).external.get(&id.name) {
+                    id = ItemIdentifier::from_raw(id.name, external.module.clone());
                 }
 
                 res.push(Self::RecordDecl {

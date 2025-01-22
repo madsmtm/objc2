@@ -137,7 +137,7 @@ fn main() -> Result<(), BoxError> {
         library.output(&crate_dir, &test_crate_dir, &config)?;
     }
 
-    update_test_metadata(&test_crate_dir, config.to_parse().map(|(_, data)| data));
+    update_test_metadata(&test_crate_dir, libraries.values(), &config);
 
     let span = info_span!("formatting").entered();
     run_cargo_fmt(libraries.values().map(|library| &library.data.krate));
@@ -687,18 +687,19 @@ fn update_list(workspace_dir: &Path, config: &Config) -> io::Result<()> {
 
 fn update_test_metadata<'a>(
     test_crate_dir: &Path,
-    libraries: impl IntoIterator<Item = &'a LibraryConfig> + Clone,
+    libraries: impl IntoIterator<Item = &'a Library> + Clone,
+    config: &Config,
 ) {
     let _span = info_span!("updating test-frameworks metadata").entered();
 
     // Write imports
     let mut s = String::new();
     for lib in libraries.clone() {
-        let platform_cfg = PlatformCfg::from_config_explicit(lib);
+        let platform_cfg = PlatformCfg::from_config_explicit(&lib.data);
         if let Some(cfgs) = platform_cfg.cfgs() {
             writeln!(&mut s, "#[cfg({cfgs})]",).unwrap();
         }
-        writeln!(&mut s, "pub use {}::*;", lib.krate.replace('-', "_")).unwrap();
+        writeln!(&mut s, "pub use {}::*;", &lib.data.krate.replace('-', "_")).unwrap();
     }
     fs::write(test_crate_dir.join("src").join("imports.rs"), s).unwrap();
 
@@ -719,10 +720,17 @@ fn update_test_metadata<'a>(
         //
         // This is required for some reason for `cargo run --example` to work
         // nicely in our workspace.
-        cargo_toml["features"][&lib.krate] =
-            toml_edit::Array::from_iter([format!("dep:{}", lib.krate)]).into();
+        let mut crate_features = vec![format!("dep:{}", lib.data.krate)];
+        crate_features.extend(
+            lib.emitted_features(config)
+                .keys()
+                .filter(|feature| !lib.is_default_feature(feature, config))
+                .map(|krate| format!("{}?/{krate}", lib.data.krate)),
+        );
+        cargo_toml["features"][&lib.data.krate] =
+            toml_edit::Array::from_iter(crate_features).into();
 
-        features.push(lib.krate.to_string());
+        features.push(lib.data.krate.to_string());
         // Inserting into array removes decor, so set it afterwards
         features
             .get_mut(features.len() - 1)
@@ -759,7 +767,7 @@ fn update_test_metadata<'a>(
     let _ = cargo_toml.remove("target");
 
     for lib in libraries.clone() {
-        let platform_cfg = PlatformCfg::from_config_explicit(lib);
+        let platform_cfg = PlatformCfg::from_config_explicit(&lib.data);
 
         let dependencies = if let Some(cfgs) = platform_cfg.cfgs() {
             let key = format!("'cfg({cfgs})'").parse().unwrap();
@@ -774,13 +782,13 @@ fn update_test_metadata<'a>(
             cargo_toml["dependencies"].as_table_mut().unwrap()
         };
 
-        let path = if lib.is_library {
-            format!("../{}", lib.krate)
+        let path = if lib.data.is_library {
+            format!("../{}", lib.data.krate)
         } else {
-            format!("../../framework-crates/{}", lib.krate)
+            format!("../../framework-crates/{}", lib.data.krate)
         };
 
-        dependencies[&lib.krate] = toml_edit::InlineTable::from_iter([
+        dependencies[&lib.data.krate] = toml_edit::InlineTable::from_iter([
             (
                 "path",
                 toml_edit::Value::String(toml_edit::Formatted::new(path)),

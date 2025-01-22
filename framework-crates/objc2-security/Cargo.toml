@@ -129,7 +129,10 @@ alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 libc = ["dep:libc"]
-objc2 = ["dep:objc2"]
+objc2 = [
+    "dep:objc2",
+    "objc2-core-foundation/objc2",
+]
 
 AuthSession = ["bitflags"]
 Authorization = ["bitflags"]

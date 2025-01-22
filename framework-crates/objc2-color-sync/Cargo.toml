@@ -44,7 +44,10 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
-objc2 = ["dep:objc2"]
+objc2 = [
+    "dep:objc2",
+    "objc2-core-foundation/objc2",
+]
 
 ColorSyncBase = []
 ColorSyncCMM = [

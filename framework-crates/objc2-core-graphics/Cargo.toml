@@ -102,7 +102,11 @@ alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 libc = ["dep:libc"]
-objc2 = ["dep:objc2"]
+objc2 = [
+    "dep:objc2",
+    "objc2-core-foundation/objc2",
+    "objc2-io-surface?/objc2",
+]
 objc2-io-surface = ["dep:objc2-io-surface"]
 objc2-metal = ["dep:objc2-metal"]
 

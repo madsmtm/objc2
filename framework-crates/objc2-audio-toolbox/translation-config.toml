@@ -114,3 +114,6 @@ enum.anonymous.constants.AUEventSampleTimeImmediate.use-value = true
 # Defined for real in CoreMIDI, AudioToolbox just redefines it
 typedef.MIDIChannelNumber.skipped = true
 external.MIDIChannelNumber.module = "CoreMIDI.MIDIMessages"
+
+# Has wrong module because it is also defined in AudioUnitProperties.h.
+external.OpaqueAudioFileID.module = "AudioToolbox.AudioFile"

@@ -77,7 +77,7 @@ impl Library {
             }
         }
 
-        // Encode impls need the inner encode impl to be available.
+        // HACK: Encode impls need the inner encode impl to be available.
         if self.data.required_crates.contains("objc2") {
             for (krate, features) in &mut dependencies {
                 let data = config.library_from_crate(krate);
@@ -109,17 +109,70 @@ impl Library {
         dependencies
     }
 
-    fn emitted_features(&self, config: &Config) -> BTreeMap<String, BTreeSet<String>> {
+    /// All features are enabled by default, except for frameworks that
+    /// would bump the minimum version of the library.
+    ///
+    /// The reasoning is that default features are meant for ease of use,
+    /// especially so in end-user binaries and hobby projects. But we also
+    /// don't want to make the user's binary incompatible with older OSes
+    /// if they didn't explicitly opt-in to that.
+    ///
+    /// End result: The "only" cost is compilation time (vs. wasted
+    /// developer time in finding each feature gate, or an unintentionally
+    /// raised minimum OS version).
+    ///
+    /// And yes, libraries that use these crates _will_ want to disable
+    /// default features, but that's the name of the game.
+    ///
+    /// We _could_ technically try to do something fancy to avoid e.g.
+    /// `objc2-app-kit` pulling in `objc2-core-data`, since that is rarely
+    /// needed, but where do we draw the line? And besides, that just masks
+    /// the problem, library developers _should_ also disable the file
+    /// features that they don't use if they really care about compilation
+    /// time.
+    ///
+    /// See also <https://github.com/madsmtm/objc2/issues/627>.
+    pub fn is_default_feature(&self, feature: &str, config: &Config) -> bool {
+        if let Some(lib) = config.try_library_from_crate(feature) {
+            // Dependency feature
+            self.data.can_safely_depend_on(lib) || !lib.link
+        } else {
+            // File feature
+            true
+        }
+    }
+
+    pub fn emitted_features(&self, config: &Config) -> BTreeMap<String, BTreeSet<String>> {
         let emission_location = Location::from_library(&self.link_name);
         let mut emitted_features = BTreeMap::new();
 
         // Add crates
+        let mut objc2_features = BTreeSet::new();
         for krate in self.module.used_crates(config, &emission_location) {
-            if self.data.required_crates.contains(krate) {
+            let required = self.data.required_crates.contains(krate);
+
+            let data = config.library_from_crate(krate);
+            if !data.required_crates.contains("objc2") && krate != "objc2" && !data.skipped {
+                // Uses optional feature enablement. Sub-optimal since it's
+                // buggy in Cargo, but it's what we have to work with.
+                //
+                // NOTE: This assumes that the dependency even _has_ an
+                // `objc2` feature, which is not necessarily the case.
+                objc2_features.insert(format!("{krate}{}/objc2", if required { "" } else { "?" }));
+            }
+
+            if required {
                 continue;
             }
 
             emitted_features.insert(krate.to_string(), BTreeSet::from([format!("dep:{krate}")]));
+        }
+
+        // HACK: Encode impls need the inner encode impl to be available.
+        if !self.data.required_crates.contains("objc2") {
+            if let Some(objc2) = emitted_features.get_mut("objc2") {
+                objc2.extend(objc2_features);
+            }
         }
 
         // Add features from modules.
@@ -391,43 +444,11 @@ see that for related crates.", self.data.krate)?;
 
         let mut emitted_features = self.emitted_features(config);
 
-        // All features are enabled by default, except for frameworks that
-        // would bump the minimum version of the library.
-        //
-        // The reasoning is that default features are meant for ease of use,
-        // especially so in end-user binaries and hobby projects. But we also
-        // don't want to make the user's binary incompatible with older OSes
-        // if they didn't explicitly opt-in to that.
-        //
-        // End result: The "only" cost is compilation time (vs. wasted
-        // developer time in finding each feature gate, or an unintentionally
-        // raised minimum OS version).
-        //
-        // And yes, libraries that use these crates _will_ want to disable
-        // default features, but that's the name of the game.
-        //
-        // We _could_ technically try to do something fancy to avoid e.g.
-        // `objc2-app-kit` pulling in `objc2-core-data`, since that is rarely
-        // needed, but where do we draw the line? And besides, that just masks
-        // the problem, library developers _should_ also disable the file
-        // features that they don't use if they really care about compilation
-        // time.
-        //
-        // See also https://github.com/madsmtm/objc2/issues/627.
-        let is_default_feature = |feature| {
-            if let Some(lib) = config.try_library_from_crate(feature) {
-                // Dependency feature
-                self.data.can_safely_depend_on(lib) || !lib.link
-            } else {
-                // File feature
-                true
-            }
-        };
         cargo_toml["features"]["default"] = array_with_newlines(
             iter::once("std".to_string()).chain(
                 emitted_features
                     .keys()
-                    .filter(|feature| is_default_feature(feature))
+                    .filter(|feature| self.is_default_feature(feature, config))
                     .cloned(),
             ),
         );
@@ -435,7 +456,7 @@ see that for related crates.", self.data.krate)?;
         // Enable non-default features when building docs.
         let non_default_features: Vec<_> = emitted_features
             .keys()
-            .filter(|feature| !is_default_feature(feature))
+            .filter(|feature| !self.is_default_feature(feature, config))
             .cloned()
             .collect();
         if !non_default_features.is_empty() {

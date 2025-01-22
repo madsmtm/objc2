@@ -59,7 +59,11 @@ std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 libc = ["dep:libc"]
-objc2 = ["dep:objc2"]
+objc2 = [
+    "dep:objc2",
+    "objc2-core-audio-types?/objc2",
+    "objc2-core-foundation/objc2",
+]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-foundation = ["dep:objc2-foundation"]
 

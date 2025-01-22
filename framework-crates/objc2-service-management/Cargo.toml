@@ -56,7 +56,11 @@ default = [
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
-objc2 = ["dep:objc2"]
+objc2 = [
+    "dep:objc2",
+    "objc2-core-foundation?/objc2",
+    "objc2-security?/objc2",
+]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-foundation = ["dep:objc2-foundation"]
 objc2-security = ["dep:objc2-security"]

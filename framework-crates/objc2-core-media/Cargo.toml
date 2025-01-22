@@ -77,7 +77,13 @@ std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
-objc2 = ["dep:objc2"]
+objc2 = [
+    "dep:objc2",
+    "objc2-core-audio-types?/objc2",
+    "objc2-core-audio?/objc2",
+    "objc2-core-foundation/objc2",
+    "objc2-core-video?/objc2",
+]
 objc2-core-audio = ["dep:objc2-core-audio"]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-video = ["dep:objc2-core-video"]

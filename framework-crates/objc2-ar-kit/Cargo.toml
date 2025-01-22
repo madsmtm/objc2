@@ -158,7 +158,12 @@ std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
-objc2 = ["dep:objc2"]
+objc2 = [
+    "dep:objc2",
+    "objc2-core-foundation?/objc2",
+    "objc2-core-media?/objc2",
+    "objc2-core-video?/objc2",
+]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-location = ["dep:objc2-core-location"]

@@ -841,7 +841,14 @@ impl Ty {
             TypeKind::Double => Self::Primitive(Primitive::Double),
             TypeKind::Record => {
                 let declaration = ty.get_declaration().expect("record declaration");
-                let id = ItemIdentifier::new_optional(&declaration, context);
+                let mut id = ItemIdentifier::new_optional(&declaration, context);
+
+                // Replace module from external data if it exists.
+                if let Some(name) = &id.name {
+                    if let Some(external) = context.library(id.library_name()).external.get(name) {
+                        id = ItemIdentifier::from_raw(id.name, external.module.clone());
+                    }
+                }
 
                 // Override for self-referential / recursive types
                 let fields = if matches!(

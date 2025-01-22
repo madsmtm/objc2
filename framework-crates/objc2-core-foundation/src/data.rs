@@ -1,3 +1,4 @@
+#![cfg(feature = "CFBase")]
 use core::slice;
 
 #[cfg(feature = "alloc")]
