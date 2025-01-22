@@ -764,7 +764,7 @@ impl ItemTree {
             }
             _ => {
                 // Assume that the library handles this itself internally.
-                debug!(
+                trace!(
                     ?libraries,
                     ?self,
                     "nested required_crate_features enablement"
@@ -863,7 +863,7 @@ impl ItemTree {
             }
             _ => {
                 // Assume that the library handles this itself internally.
-                debug!(?libraries, ?self, "nested enabled_features enablement");
+                trace!(?libraries, ?self, "nested enabled_features enablement");
             }
         });
         enabled_features.into_iter()
@@ -918,7 +918,7 @@ impl ItemTree {
             }
             _ => {
                 // Assume that the library handles this itself internally.
-                debug!(?libraries, ?self, "nested cfg_features enablement");
+                trace!(?libraries, ?self, "nested cfg_features enablement");
             }
         });
         feature_names.into_iter()

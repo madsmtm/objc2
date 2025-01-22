@@ -10,16 +10,6 @@ visionos = "1.0"
 
 external.MLModel.module = "CoreML.MLModel"
 
-# CF_RETURNS_NOT_RETAINED
-class.CIColor.methods.colorSpace.skipped = true
-class.CIImage.methods.colorSpace.skipped = true
-
-# CF_RETURNS_RETAINED
-class.CIContext.methods."createCGLayerWithSize:info:".skipped = true
-class.CIContext.methods."createCGImage:fromRect:".skipped = true
-class.CIContext.methods."createCGImage:fromRect:format:colorSpace:".skipped = true
-class.CIContext.methods."createCGImage:fromRect:format:colorSpace:deferred:".skipped = true
-
 # Breaks usual conventions for errors, the return value is _not_ nullable, so
 # the user must always check the error variable.
 class.CIFilter.methods."filterArrayFromSerializedXMP:inputImageExtent:error:".skipped = true

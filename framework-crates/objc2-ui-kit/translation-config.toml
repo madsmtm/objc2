@@ -19,7 +19,6 @@ external.CLRegion.module = "CoreLocation.CLRegion"
 
 # CF_RETURNS_NOT_RETAINED
 fn.UIGraphicsGetCurrentContext.skipped = true
-class.UIGraphicsRenderer.methods."contextWithFormat:".skipped = true
 
 # Both property and method
 class.NSDiffableDataSourceSectionSnapshot.methods.items.skipped = true

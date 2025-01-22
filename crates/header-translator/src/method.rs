@@ -147,14 +147,12 @@ impl MethodModifiers {
 /// This also encodes the "method family" that a method belongs to.
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum MemoryManagement {
-    IdCopy,
-    IdMutableCopy,
-    IdNew,
-    IdInit,
-    IdOther,
-    // TODO:
-    // IdReturnsRetained,
-    // IdReturnsNotRetained,
+    RetainedAlloc,
+    RetainedCopy { returns_not_retained: bool },
+    RetainedMutableCopy { returns_not_retained: bool },
+    RetainedNew { returns_not_retained: bool },
+    RetainedInit,
+    RetainedNone { returns_retained: bool },
     Normal,
 }
 
@@ -169,7 +167,7 @@ impl MemoryManagement {
         // If:
         // > its selector falls into the corresponding selector family
         let bytes = selector.as_bytes();
-        let id_type = match (
+        let selector_family = match (
             in_selector_family(bytes, b"alloc"),
             in_selector_family(bytes, b"copy"),
             in_selector_family(bytes, b"mutableCopy"),
@@ -181,13 +179,13 @@ impl MemoryManagement {
                 // they're only defined on `NSObject` and `NSProxy`, and we
                 // have it in `ClassType` anyhow.
                 error!("the `alloc` method-family requires manual handling");
-                Self::IdOther
+                "alloc"
             }
-            (false, true, false, false, false) => Self::IdCopy,
-            (false, false, true, false, false) => Self::IdMutableCopy,
-            (false, false, false, true, false) => Self::IdNew,
-            (false, false, false, false, true) => Self::IdInit,
-            (false, false, false, false, false) => Self::IdOther,
+            (false, true, false, false, false) => "copy",
+            (false, false, true, false, false) => "mutableCopy",
+            (false, false, false, true, false) => "new",
+            (false, false, false, false, true) => "init",
+            (false, false, false, false, false) => "none",
             _ => unreachable!(),
         };
 
@@ -205,11 +203,27 @@ impl MemoryManagement {
                 modifiers.returns_retained,
                 modifiers.returns_not_retained,
                 modifiers.designated_initializer,
-                id_type,
+                selector_family,
             ) {
-                (false, false, true, false, false, Self::IdCopy) => Self::IdCopy,
-                (false, false, true, false, false, Self::IdMutableCopy) => Self::IdMutableCopy,
-                (false, false, true, false, false, Self::IdNew) => Self::IdNew,
+                (false, false, true, false, false, "alloc") => Self::RetainedAlloc,
+                (false, false, true, false, false, "copy") => Self::RetainedCopy {
+                    returns_not_retained: false,
+                },
+                (false, false, false, true, false, "copy") => Self::RetainedCopy {
+                    returns_not_retained: true,
+                },
+                (false, false, true, false, false, "mutableCopy") => Self::RetainedMutableCopy {
+                    returns_not_retained: false,
+                },
+                (false, false, false, true, false, "mutableCopy") => Self::RetainedMutableCopy {
+                    returns_not_retained: true,
+                },
+                (false, false, true, false, false, "new") => Self::RetainedNew {
+                    returns_not_retained: false,
+                },
+                (false, false, false, true, false, "new") => Self::RetainedNew {
+                    returns_not_retained: true,
+                },
                 // For the `init` family there's another restriction:
                 // > must be instance methods
                 //
@@ -218,17 +232,27 @@ impl MemoryManagement {
                 // methods that are not correct super/subclasses, but we don't
                 // need to handle that since the header would fail to compile
                 // in `clang` if that was the case.
-                (false, true, true, false, _, Self::IdInit) => {
+                (false, true, true, false, _, "init") => {
                     if is_class {
-                        Self::IdOther
+                        // TODO: Is this actually correct, or should we still
+                        // emit #[unsafe(method_family = init)] here?
+                        Self::RetainedNone {
+                            returns_retained: false,
+                        }
                     } else {
-                        Self::IdInit
+                        Self::RetainedInit
                     }
                 }
-                (false, false, false, false, false, Self::IdOther) => Self::IdOther,
+                // Don't care if the user specified CF_RETURNS_NOT_RETAINED,
+                // that is the default for this selector anyhow.
+                (false, false, returns_retained, _, false, "none") => {
+                    Self::RetainedNone { returns_retained }
+                }
                 data => {
-                    error!(?data, "invalid MemoryManagement id attributes");
-                    Self::IdOther
+                    error!(?data, "invalid MemoryManagement retainable attributes");
+                    Self::RetainedNone {
+                        returns_retained: false,
+                    }
                 }
             }
         } else if let MethodModifiers {
@@ -488,9 +512,9 @@ impl Method {
         // Related result types.
         // <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types>
         let is_related = if is_class {
-            matches!(memory_management, MemoryManagement::IdNew)
+            matches!(memory_management, MemoryManagement::RetainedNew { .. })
         } else {
-            matches!(memory_management, MemoryManagement::IdInit) || selector == "self"
+            matches!(memory_management, MemoryManagement::RetainedInit) || selector == "self"
         };
 
         if is_related {
@@ -681,7 +705,7 @@ impl Method {
         if self.is_class {
             true
         } else {
-            self.memory_management == MemoryManagement::IdInit
+            self.memory_management == MemoryManagement::RetainedInit
         }
     }
 
@@ -774,17 +798,41 @@ impl fmt::Display for Method {
             self.selector, error_trailing
         )?;
 
-        let method_family = match &self.memory_management {
-            // MemoryManagement::IdAlloc => "alloc", // Unsupported
-            MemoryManagement::IdCopy => "copy",
-            MemoryManagement::IdMutableCopy => "mutableCopy",
-            MemoryManagement::IdNew => "new",
-            MemoryManagement::IdInit => "init",
-            MemoryManagement::IdOther => "none",
-            MemoryManagement::Normal => "none",
+        let (method_family, attr) = match &self.memory_management {
+            MemoryManagement::RetainedAlloc => ("alloc", None),
+            MemoryManagement::RetainedCopy {
+                returns_not_retained: false,
+            } => ("copy", None),
+            MemoryManagement::RetainedCopy {
+                returns_not_retained: true,
+            } => ("none", Some("returns_not_retained")),
+            MemoryManagement::RetainedMutableCopy {
+                returns_not_retained: false,
+            } => ("mutableCopy", None),
+            MemoryManagement::RetainedMutableCopy {
+                returns_not_retained: true,
+            } => ("none", Some("returns_not_retained")),
+            MemoryManagement::RetainedNew {
+                returns_not_retained: false,
+            } => ("new", None),
+            MemoryManagement::RetainedNew {
+                returns_not_retained: true,
+            } => ("none", Some("returns_not_retained")),
+            MemoryManagement::RetainedInit => ("init", None),
+            MemoryManagement::RetainedNone {
+                returns_retained: false,
+            } => ("none", None),
+            MemoryManagement::RetainedNone {
+                returns_retained: true,
+            } => ("copy", Some("returns_retained")),
+            MemoryManagement::Normal => ("none", None),
         };
-        // TODO: Be explicit about when we emit this for better
-        // compile-times, and when we do it for soundness.
+        if let Some(attr) = attr {
+            writeln!(
+                f,
+                "        // required for soundness, method has `{attr}` attribute."
+            )?;
+        }
         writeln!(f, "        #[unsafe(method_family = {method_family})]")?;
 
         //
@@ -802,7 +850,7 @@ impl fmt::Display for Method {
         write!(f, "fn {}(", handle_reserved(&self.fn_name))?;
 
         // Receiver
-        if let MemoryManagement::IdInit = self.memory_management {
+        if let MemoryManagement::RetainedInit = self.memory_management {
             write!(f, "this: Allocated<Self>, ")?;
         } else if self.is_class {
             // Insert nothing; a class method is assumed
