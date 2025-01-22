@@ -63,7 +63,17 @@ pub type CFIndex = isize;
 
 // Manually define CFType
 
-/// [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cftype?language=objc)
+/// An instance of a Core Foundation type.
+///
+/// This is meant to be used behind a reference. In the future, this will be
+/// defined as an [`extern type`][RFC-1861].
+///
+/// All Core Foundation types [`Deref`](std::ops::Deref) to this type (it can
+/// be considered the "root" type).
+///
+/// See also [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cftype?language=objc).
+///
+/// [RFC-1861]: https://rust-lang.github.io/rfcs/1861-extern-types.html
 #[repr(C)]
 pub struct CFType {
     inner: [u8; 0],
