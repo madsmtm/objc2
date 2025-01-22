@@ -9,7 +9,7 @@ extern_protocol!(
         #[method(myMethod:)]
         fn protocol_method(mtm: MainThreadMarker, arg: i32) -> i32;
 
-        #[method(myMethodId:)]
+        #[method(myMethodRetained:)]
         fn protocol_method_retained(mtm: MainThreadMarker, arg: &Self) -> Retained<Self>;
     }
 );
@@ -28,7 +28,7 @@ define_class!(
             arg + 1
         }
 
-        #[method_id(myMethodId:)]
+        #[method_id(myMethodRetained:)]
         fn _my_mainthreadonly_method_retained(arg: &Self) -> Retained<Self> {
             unsafe { Retained::retain(arg as *const Self as *mut Self).unwrap() }
         }
@@ -51,7 +51,7 @@ extern_methods!(
         #[method(myMethod:)]
         fn method(mtm: MainThreadMarker, arg: i32, mtm2: MainThreadMarker) -> i32;
 
-        #[method(myMethodId:)]
+        #[method(myMethodRetained:)]
         fn method_retained(
             mtm: MainThreadMarker,
             arg: &Self,

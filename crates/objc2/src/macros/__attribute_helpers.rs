@@ -183,7 +183,7 @@ macro_rules! __extract_method_attributes_inner {
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__handle_duplicate!("method"; $($method)*);
+        $crate::__handle_duplicate!("method`/`method_id"; $($method)*);
         $crate::__extract_method_attributes_inner! {
             ($($rest)*)
 

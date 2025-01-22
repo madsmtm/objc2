@@ -28,8 +28,7 @@ use crate::{ffi, Message};
 /// [`sync::Weak`]: std::sync::Weak
 /// [`sync::Arc`]: std::sync::Arc
 #[repr(transparent)] // This is not a public guarantee
-#[doc(alias = "WeakId")]
-// TODO: Add derive(CoercePointee) once this doesn't Box internally.
+#[doc(alias = "WeakId")] // Previous name
 pub struct Weak<T: ?Sized> {
     /// We give the runtime the address to this box, so that it can modify it
     /// even if the `Weak` is moved.
@@ -43,6 +42,7 @@ pub struct Weak<T: ?Sized> {
     ///
     /// TODO: Verify the need for UnsafeCell?
     /// TODO: Investigate if we can avoid some allocations using `Pin`.
+    /// TODO: Add derive(CoercePointee) once this doesn't Box internally.
     inner: Box<UnsafeCell<*mut AnyObject>>,
     /// Weak inherits variance, dropck and various marker traits from
     /// `Retained<T>`.

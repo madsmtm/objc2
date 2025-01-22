@@ -816,7 +816,7 @@ mod tests {
         }
     };
 
-    macro_rules! test_error_id {
+    macro_rules! test_error_retained {
         ($expected:expr, $if_autorelease_not_skipped:expr, $sel:ident, $($obj:tt)*) => {
             // Succeeds
             let res = autoreleasepool(|_pool| {
@@ -862,22 +862,22 @@ mod tests {
     }
 
     #[test]
-    fn test_error_id() {
+    fn test_error_retained() {
         let mut expected = ThreadTestData::current();
 
         let cls = RcTestObject::class();
-        test_error_id!(
+        test_error_retained!(
             expected,
             IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK,
             idAndShouldError,
             cls
         );
-        test_error_id!(expected, 0, newAndShouldError, cls);
+        test_error_retained!(expected, 0, newAndShouldError, cls);
 
         let obj = RcTestObject::new();
         expected.alloc += 1;
         expected.init += 1;
-        test_error_id!(
+        test_error_retained!(
             expected,
             IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK,
             idAndShouldError,
@@ -886,7 +886,7 @@ mod tests {
 
         expected.alloc -= 1;
         expected.release -= 1;
-        test_error_id!(expected, 0, initAndShouldError, {
+        test_error_retained!(expected, 0, initAndShouldError, {
             expected.alloc += 1;
             expected.release += 1;
             // Drop flag ensures newly allocated objects do not drop

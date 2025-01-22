@@ -18,8 +18,8 @@ define_class!(
             unimplemented!()
         }
 
-        #[method_id(testMethodId)]
-        fn test_method_id(&mut self) -> Retained<Self> {
+        #[method_id(testRetained)]
+        fn test_retained(&mut self) -> Retained<Self> {
             unimplemented!()
         }
     }

@@ -20,8 +20,8 @@ define_class!(
         #[method(duplicateAttributeDifferent)]
         fn test_duplicate_attribute_different() {}
 
-        #[method_id(testMethodId)]
-        fn test_method_id_no_return() {
+        #[method_id(testMethodRetained)]
+        fn test_retained_no_return() {
             unimplemented!()
         }
 
@@ -83,27 +83,27 @@ define_class!(
 
     unsafe impl InvalidMethodDeclarations {
         #[method_id(alloc)]
-        fn test_method_id_bad_selector1() -> Retained<Self> {
+        fn test_retained_bad_selector1() -> Retained<Self> {
             unimplemented!()
         }
 
         #[method_id(retain)]
-        fn test_method_id_bad_selector2() -> Retained<Self> {
+        fn test_retained_bad_selector2() -> Retained<Self> {
             unimplemented!()
         }
 
         #[method_id(release)]
-        fn test_method_id_bad_selector3() -> Retained<Self> {
+        fn test_retained_bad_selector3() -> Retained<Self> {
             unimplemented!()
         }
 
         #[method_id(autorelease)]
-        fn test_method_id_bad_selector4() -> Retained<Self> {
+        fn test_retained_bad_selector4() -> Retained<Self> {
             unimplemented!()
         }
 
         #[method_id(dealloc)]
-        fn test_method_id_bad_selector5() -> Retained<Self> {
+        fn test_retained_bad_selector5() -> Retained<Self> {
             unimplemented!()
         }
     }

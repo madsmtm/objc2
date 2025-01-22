@@ -308,7 +308,7 @@ mod tests {
     const AUTORELEASE_SKIPPED: bool = cfg!(feature = "gnustep-1-7");
 
     #[test]
-    fn test_id_interaction() {
+    fn test_retained_interaction() {
         let mut expected = ThreadTestData::current();
         let cls = RcTestObject::class();
 

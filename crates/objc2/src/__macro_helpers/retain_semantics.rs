@@ -364,8 +364,8 @@ where
 //
 // InitFamily
 //
-// We restrict `init` methods such that, if they return `Id<T>`, the receiver
-// must be `Allocated<T>` with the same generic parameter.
+// We restrict `init` methods such that, if they return `Retained<T>`, the
+// receiver must be `Allocated<T>` with the same generic parameter.
 //
 // Simple return types have no restriction.
 //

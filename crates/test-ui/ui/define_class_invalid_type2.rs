@@ -13,8 +13,8 @@ define_class!(
             unimplemented!()
         }
 
-        #[method_id(methodIdNotId)]
-        fn test_method_id_not_id(&self) -> i32 {
+        #[method_id(notRetained)]
+        fn test_not_retained(&self) -> i32 {
             unimplemented!()
         }
     }

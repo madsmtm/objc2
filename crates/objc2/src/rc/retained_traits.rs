@@ -3,7 +3,7 @@
 use super::Retained;
 
 /// Helper trait to implement [`Default`] on [`Retained`].
-#[doc(alias = "DefaultId")]
+#[doc(alias = "DefaultId")] // Previous name
 pub trait DefaultRetained {
     /// The default [`Retained`] for a type.
     ///
@@ -29,7 +29,7 @@ impl<T: ?Sized + DefaultRetained> Default for Retained<T> {
 // without this helper trait.
 //
 // [box-move]: https://doc.rust-lang.org/reference/expressions.html#moved-and-copied-types
-#[doc(alias = "IdIntoIterator")]
+#[doc(alias = "IdIntoIterator")] // Previous name
 pub trait RetainedIntoIterator {
     /// The type of the elements being iterated over.
     type Item;
@@ -99,7 +99,7 @@ where
 ///
 /// This should be implemented in exactly the same fashion as if you were
 /// implementing `FromIterator` for your type normally.
-#[doc(alias = "IdFromIterator")]
+#[doc(alias = "IdFromIterator")] // Previous name
 pub trait RetainedFromIterator<T>: Sized {
     /// Creates an `Retained` from an iterator.
     fn retained_from_iter<I>(iter: I) -> Retained<Self>

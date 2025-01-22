@@ -15,7 +15,7 @@ struct Ivars {
     box_ivar: Box<i32>,
     maybe_box_ivar: Option<Box<i32>>,
     id_ivar: Retained<NSString>,
-    maybe_id_ivar: Option<Retained<NSString>>,
+    maybe_retained_ivar: Option<Retained<NSString>>,
 }
 
 define_class!(
@@ -56,7 +56,7 @@ impl AppDelegate {
             box_ivar: Box::new(2),
             maybe_box_ivar: None,
             id_ivar: NSString::from_str("abc"),
-            maybe_id_ivar: Some(ns_string!("def").copy()),
+            maybe_retained_ivar: Some(ns_string!("def").copy()),
         });
         unsafe { msg_send![super(this), init] }
     }

@@ -563,7 +563,7 @@ fn retain_release_stack_block() {
 }
 
 #[test]
-fn capture_id() {
+fn capture_retained() {
     let obj1 = NSObject::new();
     let obj2 = NSObject::new();
     let closure = move || Bool::new(obj1 == obj2);

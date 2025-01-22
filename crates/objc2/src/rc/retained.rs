@@ -119,7 +119,7 @@ use crate::{ffi, ClassType, DowncastTarget, Message};
 /// ```
 #[repr(transparent)]
 #[doc(alias = "id")]
-#[doc(alias = "Id")]
+#[doc(alias = "Id")] // Previous name
 #[doc(alias = "StrongPtr")]
 #[cfg_attr(
     feature = "unstable-coerce-pointee",
@@ -998,7 +998,7 @@ mod tests {
 
     /// Test that `Retained<T>` is covariant over `T`.
     #[allow(unused)]
-    fn assert_id_variance<'b>(obj: Retained<MyObject<'static>>) -> Retained<MyObject<'b>> {
+    fn assert_retained_variance<'b>(obj: Retained<MyObject<'static>>) -> Retained<MyObject<'b>> {
         obj
     }
 

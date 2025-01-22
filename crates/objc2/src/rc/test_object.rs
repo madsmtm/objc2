@@ -202,7 +202,7 @@ define_class!(
         }
 
         #[method_id(idAndShouldError:error:)]
-        fn class_error_id(
+        fn class_error_retained(
             should_error: bool,
             err: Option<&mut *mut RcTestObject>,
         ) -> Option<Retained<Self>> {
@@ -217,7 +217,7 @@ define_class!(
         }
 
         #[method_id(idAndShouldError:error:)]
-        fn instance_error_id(
+        fn instance_error_retained(
             self: &Self,
             should_error: bool,
             err: Option<&mut *mut RcTestObject>,

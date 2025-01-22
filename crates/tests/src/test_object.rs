@@ -296,7 +296,7 @@ fn test_object() {
 )]
 fn test_protocol() {
     let obj = MyTestObject::new();
-    let proto: Retained<ProtocolObject<dyn MyTestProtocol>> = ProtocolObject::from_id(obj);
+    let proto: Retained<ProtocolObject<dyn MyTestProtocol>> = ProtocolObject::from_retained(obj);
     assert_eq!(proto.a(), 1);
     assert_eq!(MyTestObject::b(), 2);
     assert_eq!(proto.c().as_i32(), 3);

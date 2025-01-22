@@ -32,10 +32,9 @@
 ///
 /// This macro creates an `unsafe` trait with the specified methods. A default
 /// implementation of the method is generated based on the selector specified
-/// with `#[method(a:selector:)]` or `#[method_id(a:selector:)]`.
-/// Similar to [`extern_methods!`], you can use the
-/// `#[unsafe(method_family = ...)]` attribute to override the inferred method
-/// family.
+/// with `#[method(a:selector:)]`. Similar to [`extern_methods!`], you can use
+/// the `#[unsafe(method_family = ...)]` attribute to override the inferred
+/// method family.
 ///
 /// Other protocols that this protocol conforms to / inherits can be specified
 /// as supertraits.
@@ -107,14 +106,14 @@
 ///
 ///         // This method we mark as `unsafe`, since we aren't using the correct
 ///         // type for the completion handler
-///         #[method_id(loadDataWithTypeIdentifier:forItemProviderCompletionHandler:)]
+///         #[method(loadDataWithTypeIdentifier:forItemProviderCompletionHandler:)]
 ///         unsafe fn loadData(
 ///             &self,
 ///             type_identifier: &NSString,
 ///             completion_handler: *mut c_void,
 ///         ) -> Option<Retained<NSProgress>>;
 ///
-///         #[method_id(writableTypeIdentifiersForItemProvider)]
+///         #[method(writableTypeIdentifiersForItemProvider)]
 ///         fn writableTypeIdentifiersForItemProvider_class()
 ///             -> Retained<NSArray<NSString>>;
 ///
@@ -122,7 +121,7 @@
 ///         // `define_class!` would not need to implement them.
 ///
 ///         #[optional]
-///         #[method_id(writableTypeIdentifiersForItemProvider)]
+///         #[method(writableTypeIdentifiersForItemProvider)]
 ///         fn writableTypeIdentifiersForItemProvider(&self)
 ///             -> Retained<NSArray<NSString>>;
 ///

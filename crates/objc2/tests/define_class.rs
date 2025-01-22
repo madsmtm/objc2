@@ -377,13 +377,13 @@ define_class!(
             unreachable!()
         }
 
-        #[method_id(unreachableId)]
-        fn unreachable_id(&self) -> Retained<Self> {
+        #[method_id(unreachableRetained)]
+        fn unreachable_retained(&self) -> Retained<Self> {
             unreachable!()
         }
 
-        #[method_id(unreachableClassId)]
-        fn unreachable_class_id() -> Retained<Self> {
+        #[method_id(unreachableClassRetained)]
+        fn unreachable_class_retained() -> Retained<Self> {
             unreachable!()
         }
     }

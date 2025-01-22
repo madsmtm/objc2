@@ -86,7 +86,7 @@ fn test_track_caller() {
         }
     }
 
-    test_id_unwrap(&checker);
+    test_retained_unwrap(&checker);
 
     if cfg!(feature = "catch-all") {
         test_catch_all(&checker);
@@ -151,7 +151,7 @@ fn test_error_methods(checker: &PanicChecker) {
     });
 }
 
-fn test_id_unwrap(checker: &PanicChecker) {
+fn test_retained_unwrap(checker: &PanicChecker) {
     let cls = RcTestObject::class();
     let obj = RcTestObject::new();
 

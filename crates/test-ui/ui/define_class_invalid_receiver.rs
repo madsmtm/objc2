@@ -14,8 +14,8 @@ define_class!(
             unimplemented!()
         }
 
-        #[method(testIdSelf)]
-        fn test_id_self(this: Retained<Self>) {
+        #[method(testRetainedSelf)]
+        fn test_retained_self(this: Retained<Self>) {
             unimplemented!()
         }
 
@@ -36,18 +36,18 @@ define_class!(
     }
 
     unsafe impl CustomObject {
-        #[method_id(testBoxId)]
-        fn test_box_id(self: Box<Self>) -> Retained<Self> {
+        #[method_id(testBoxRetained)]
+        fn test_box_retained(self: Box<Self>) -> Retained<Self> {
             unimplemented!()
         }
 
-        #[method_id(testIdSelfId)]
-        fn test_id_self_id(this: Retained<Self>) -> Retained<Self> {
+        #[method_id(testRetainedSelfRetained)]
+        fn test_retained_self_retained(this: Retained<Self>) -> Retained<Self> {
             unimplemented!()
         }
 
-        #[method_id(testSelfId)]
-        fn test_self_id(this: Self) -> Retained<Self> {
+        #[method_id(testSelfRetained)]
+        fn test_self_retained(this: Self) -> Retained<Self> {
             unimplemented!()
         }
     }

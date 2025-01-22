@@ -13,12 +13,12 @@ impl<T: ?Sized> GetSameType for T {
     type SameType = T;
 }
 
-trait GetId {
-    type IdType;
+trait GetRetained {
+    type RetainedType;
 }
 
-impl<T> GetId for T {
-    type IdType = Retained<T>;
+impl<T> GetRetained for T {
+    type RetainedType = Retained<T>;
 }
 
 macro_rules! get_self {
@@ -53,7 +53,7 @@ define_class!(
         }
 
         #[method_id(test5)]
-        fn test5(&self) -> <Self as GetId>::IdType {
+        fn test5(&self) -> <Self as GetRetained>::RetainedType {
             unimplemented!()
         }
     }
