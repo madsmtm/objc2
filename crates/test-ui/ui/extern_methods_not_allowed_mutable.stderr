@@ -1,13 +1,11 @@
 error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
  --> ui/extern_methods_not_allowed_mutable.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(test))]
   | |         fn test(&mut self);
-  | |     }
-  | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `&mut MyObject`
+  | |     );
+  | |_____^ the trait `MessageReceiver` is not implemented for `&mut MyObject`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T
@@ -23,13 +21,11 @@ error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
 error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
  --> ui/extern_methods_not_allowed_mutable.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(testRetained))]
   | |         fn test_retained(&mut self) -> Retained<Self>;
-  | |     }
-  | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `&mut MyObject`
+  | |     );
+  | |_____^ the trait `MessageReceiver` is not implemented for `&mut MyObject`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T

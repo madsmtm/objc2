@@ -212,15 +212,15 @@ extern_class!(
     pub struct NSData;
 );
 
-extern_methods!(
-    unsafe impl NSData {
+impl NSData {
+    extern_methods!(
         #[unsafe(method(new))]
         pub fn new() -> Retained<Self>;
 
         #[unsafe(method(length))]
         pub fn length(&self) -> NSUInteger;
-    }
-);
+    );
+}
 
 let obj = NSData::new();
 let length = obj.length();

@@ -60,6 +60,9 @@ pub fn disallow_in_static<T>(item: &'static T) -> &'static T {
     item
 }
 
+#[deprecated = "having the `impl` inside `extern_methods!` is deprecated, move it outside instead"]
+pub const fn extern_methods_unsafe_impl() {}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -1,39 +1,33 @@
 error: variadic methods are not yet supported
  --> ui/extern_methods_variadic.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(a:))]
   | |         fn variadic_class(arg: i32, arg2: ...);
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: variadic methods are not yet supported
  --> ui/extern_methods_variadic.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(a:))]
   | |         fn variadic_instance(&self, arg: i32, ...);
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: variadic methods are not yet supported
  --> ui/extern_methods_variadic.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(a:_))]
   | |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -58,44 +52,38 @@ error: only foreign, `unsafe extern "C"`, or `unsafe extern "C-unwind"` function
 error[E0658]: C-variadic functions are unstable
  --> ui/extern_methods_variadic.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(a:))]
   | |         fn variadic_class(arg: i32, arg2: ...);
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: see issue #44930 <https://github.com/rust-lang/rust/issues/44930> for more information
   = help: add `#![feature(c_variadic)]` to the crate attributes to enable
-  = note: this error originates in the macro `$crate::__extern_methods_rewrite_methods` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0658]: C-variadic functions are unstable
  --> ui/extern_methods_variadic.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(a:))]
   | |         fn variadic_instance(&self, arg: i32, ...);
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: see issue #44930 <https://github.com/rust-lang/rust/issues/44930> for more information
   = help: add `#![feature(c_variadic)]` to the crate attributes to enable
-  = note: this error originates in the macro `$crate::__extern_methods_rewrite_methods` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0658]: C-variadic functions are unstable
  --> ui/extern_methods_variadic.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(a:_))]
   | |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: see issue #44930 <https://github.com/rust-lang/rust/issues/44930> for more information
   = help: add `#![feature(c_variadic)]` to the crate attributes to enable
-  = note: this error originates in the macro `$crate::__extern_methods_rewrite_methods` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

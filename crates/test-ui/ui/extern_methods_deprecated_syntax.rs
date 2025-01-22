@@ -1,3 +1,5 @@
+//! Test extern_methods! syntax with `unsafe impl`.
+#![deny(deprecated)]
 use objc2::runtime::NSObject;
 use objc2::{extern_class, extern_methods};
 
@@ -6,12 +8,11 @@ extern_class!(
     pub struct MyObject;
 );
 
-impl MyObject {
-    extern_methods!(
+extern_methods!(
+    unsafe impl MyObject {
         #[unsafe(method(foo))]
-        #[unsafe(method(bar))]
-        fn selector_twice();
-    );
-}
+        fn foo();
+    }
+);
 
 fn main() {}

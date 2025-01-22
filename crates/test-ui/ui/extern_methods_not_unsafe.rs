@@ -7,14 +7,14 @@ extern_class!(
     pub struct MyObject;
 );
 
-extern_methods!(
-    unsafe impl MyObject {
+impl MyObject {
+    extern_methods!(
         #[method(foo)]
         fn method();
 
         #[method_id(foo)]
         fn method_id();
-    }
-);
+    );
+}
 
 fn main() {}

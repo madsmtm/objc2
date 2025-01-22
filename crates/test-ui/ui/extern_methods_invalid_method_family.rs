@@ -8,29 +8,25 @@ extern_class!(
     pub struct MyObject;
 );
 
-extern_methods!(
-    unsafe impl MyObject {
+impl MyObject {
+    extern_methods!(
         #[unsafe(method(noUnsafe))]
         #[method_family = none]
         fn no_unsafe(&self) -> Retained<Self>;
-    }
-);
+    );
 
-extern_methods!(
-    unsafe impl MyObject {
+    extern_methods!(
         #[unsafe(method(unknownFamily))]
         #[unsafe(method_family = unknown)]
         fn unknown_family(&self) -> Retained<Self>;
-    }
-);
+    );
 
-extern_methods!(
-    unsafe impl MyObject {
+    extern_methods!(
         #[unsafe(method(familyTwice))]
         #[unsafe(method_family = copy)]
         #[unsafe(method_family = none)]
         fn family_twice(&self) -> Retained<Self>;
-    }
-);
+    );
+}
 
 fn main() {}

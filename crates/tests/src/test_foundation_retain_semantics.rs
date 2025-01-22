@@ -363,12 +363,12 @@ unsafe impl CopyingHelper for NSCopyingRcTestObject {
     type Result = Self;
 }
 
-extern_methods!(
-    unsafe impl NSCopyingRcTestObject {
+impl NSCopyingRcTestObject {
+    extern_methods!(
         #[unsafe(method(new))]
         fn new() -> Retained<Self>;
-    }
-);
+    );
+}
 
 #[test]
 fn dictionary_insert_key_copies() {

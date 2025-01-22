@@ -16,13 +16,13 @@ macro_rules! methods {
         #[test]
         $(#[$($m)*])*
         fn $name() {
-            extern_methods!(
-                #[allow(non_local_definitions)]
-                unsafe impl TestSimdReturn {
+            #[allow(non_local_definitions)]
+            impl TestSimdReturn {
+                extern_methods!(
                     #[unsafe(method($name))]
                     fn $name() -> $ty;
-                }
-            );
+                );
+            }
 
             let res = TestSimdReturn::$name();
             assert_eq!(res, $expr);

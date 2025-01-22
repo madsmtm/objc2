@@ -8,18 +8,18 @@ extern_class!(
     pub struct MyObject;
 );
 
-extern_methods!(
-    unsafe impl MyObject {
+impl MyObject {
+    extern_methods!(
         #[unsafe(method(test))]
         fn test(&mut self);
-    }
-);
+    );
+}
 
-extern_methods!(
-    unsafe impl MyObject {
+impl MyObject {
+    extern_methods!(
         #[unsafe(method(testRetained))]
         fn test_retained(&mut self) -> Retained<Self>;
-    }
-);
+    );
+}
 
 fn main() {}

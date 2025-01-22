@@ -254,12 +254,12 @@ mod tests {
     unsafe impl FooBar for DummyClass {}
     // unsafe impl FooFooBar for DummyClass {}
 
-    extern_methods!(
-        unsafe impl DummyClass {
+    impl DummyClass {
+        extern_methods!(
             #[unsafe(method(new))]
             fn new() -> Retained<Self>;
-        }
-    );
+        );
+    }
 
     #[test]
     fn impl_traits() {

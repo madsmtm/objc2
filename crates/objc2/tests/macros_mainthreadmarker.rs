@@ -43,8 +43,8 @@ struct MainThreadMarker {
     _some_field: u32,
 }
 
-extern_methods!(
-    unsafe impl Cls {
+impl Cls {
+    extern_methods!(
         #[unsafe(method(new))]
         fn new(mtm: MainThreadMarker) -> Retained<Self>;
 
@@ -57,8 +57,8 @@ extern_methods!(
             arg: &Self,
             mtm2: MainThreadMarker,
         ) -> Retained<Self>;
-    }
-);
+    );
+}
 
 #[test]
 fn call() {

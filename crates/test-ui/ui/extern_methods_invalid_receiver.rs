@@ -7,18 +7,16 @@ extern_class!(
     pub struct MyObject;
 );
 
-extern_methods!(
-    unsafe impl MyObject {
+impl MyObject {
+    extern_methods!(
         #[unsafe(method(initWithMut))]
         fn init_with_mut(&mut self) -> Option<Retained<Self>>;
-    }
-);
+    );
 
-extern_methods!(
-    unsafe impl MyObject {
+    extern_methods!(
         #[unsafe(method(initWithOptionAllocated))]
         fn init_with_option_allocated(this: Option<Allocated<Self>>) -> Option<Retained<Self>>;
-    }
-);
+    );
+}
 
 fn main() {}

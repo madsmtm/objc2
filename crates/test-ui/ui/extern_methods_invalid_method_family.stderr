@@ -1,26 +1,25 @@
 error: The #[method_family] attribute is unsafe, and must be used as #[unsafe(method_family = none)]
  --> ui/extern_methods_invalid_method_family.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(noUnsafe))]
   | |         #[method_family = none]
-... |
-  | | );
-  | |_^
+  | |         fn no_unsafe(&self) -> Retained<Self>;
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__extract_method_attributes_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: cannot specify the `method_family` attribute twice
  --> ui/extern_methods_invalid_method_family.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(familyTwice))]
   | |         #[unsafe(method_family = copy)]
-... |
-  | | );
-  | |_^
+  | |         #[unsafe(method_family = none)]
+  | |         fn family_twice(&self) -> Retained<Self>;
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 

@@ -1,0 +1,19 @@
+error: `self` parameter is only allowed in associated functions
+ --> ui/extern_methods_outside_impl.rs
+  |
+  |     fn instance_method(&self);
+  |                        ^^^^^ not semantically valid as function parameter
+  |
+  = note: associated functions are those in `impl` or `trait` definitions
+
+error[E0411]: cannot find type `Self` in this scope
+ --> ui/extern_methods_outside_impl.rs
+  |
+  | / extern_methods!(
+  | |     #[unsafe(method(foo))]
+  | |     fn class_method();
+  | |        ------------ `Self` not allowed in a function
+  | | );
+  | |_^ `Self` is only available in impls, traits, and type definitions
+  |
+  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -7,8 +7,8 @@ pub type MXLaunchTaskID = objc2_foundation::NSString;
 //     pub unsafe trait OS_os_log: NSObjectProtocol {}
 // );
 
-objc2::extern_methods!(
-    unsafe impl crate::MXMetricManager {
+impl crate::MXMetricManager {
+    objc2::extern_methods!(
         #[unsafe(method(extendLaunchMeasurementForTaskID:error:_))]
         pub unsafe fn extendLaunchMeasurementForTaskID_error(
             &self,
@@ -20,8 +20,8 @@ objc2::extern_methods!(
             &self,
             task_id: &MXLaunchTaskID,
         ) -> Result<(), objc2::rc::Retained<objc2_foundation::NSError>>;
+    );
 
-        // #[unsafe(method(makeLogHandleWithCategory:))]
-        // pub unsafe fn makeLogHandleWithCategory(category: &objc2_foundation::NSString) -> Retained<os_log_t>;
-    }
-);
+    // #[unsafe(method(makeLogHandleWithCategory:))]
+    // pub unsafe fn makeLogHandleWithCategory(category: &objc2_foundation::NSString) -> Retained<os_log_t>;
+}

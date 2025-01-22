@@ -1,13 +1,11 @@
 error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
  --> ui/extern_methods_invalid_receiver.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(initWithMut))]
   | |         fn init_with_mut(&mut self) -> Option<Retained<Self>>;
-  | |     }
-  | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `&mut MyObject`
+  | |     );
+  | |_____^ the trait `MessageReceiver` is not implemented for `&mut MyObject`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T
@@ -23,13 +21,11 @@ error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
 error[E0277]: the trait bound `Retained<MyObject>: Encode` is not satisfied
  --> ui/extern_methods_invalid_receiver.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(initWithMut))]
   | |         fn init_with_mut(&mut self) -> Option<Retained<Self>>;
-  | |     }
-  | | );
-  | |_^ the trait `Encode` is not implemented for `Retained<MyObject>`
+  | |     );
+  | |_____^ the trait `Encode` is not implemented for `Retained<MyObject>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -51,13 +47,11 @@ error[E0277]: the trait bound `Retained<MyObject>: Encode` is not satisfied
 error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfied
  --> ui/extern_methods_invalid_receiver.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(initWithMut))]
   | |         fn init_with_mut(&mut self) -> Option<Retained<Self>>;
-  | |     }
-  | | );
-  | |_^ the trait `OptionEncode` is not implemented for `Retained<MyObject>`
+  | |     );
+  | |_____^ the trait `OptionEncode` is not implemented for `Retained<MyObject>`
   |
   = help: the following other types implement trait `OptionEncode`:
             &T
@@ -79,13 +73,11 @@ error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfie
 error[E0277]: the trait bound `Option<Allocated<MyObject>>: MessageReceiver` is not satisfied
  --> ui/extern_methods_invalid_receiver.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(initWithOptionAllocated))]
   | |         fn init_with_option_allocated(this: Option<Allocated<Self>>) -> Option<Retained<Self>>;
-  | |     }
-  | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `Option<Allocated<MyObject>>`
+  | |     );
+  | |_____^ the trait `MessageReceiver` is not implemented for `Option<Allocated<MyObject>>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T
@@ -100,13 +92,11 @@ error[E0277]: the trait bound `Option<Allocated<MyObject>>: MessageReceiver` is 
 error[E0277]: the trait bound `Retained<MyObject>: Encode` is not satisfied
  --> ui/extern_methods_invalid_receiver.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(initWithOptionAllocated))]
   | |         fn init_with_option_allocated(this: Option<Allocated<Self>>) -> Option<Retained<Self>>;
-  | |     }
-  | | );
-  | |_^ the trait `Encode` is not implemented for `Retained<MyObject>`
+  | |     );
+  | |_____^ the trait `Encode` is not implemented for `Retained<MyObject>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -128,13 +118,11 @@ error[E0277]: the trait bound `Retained<MyObject>: Encode` is not satisfied
 error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfied
  --> ui/extern_methods_invalid_receiver.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(initWithOptionAllocated))]
   | |         fn init_with_option_allocated(this: Option<Allocated<Self>>) -> Option<Retained<Self>>;
-  | |     }
-  | | );
-  | |_^ the trait `OptionEncode` is not implemented for `Retained<MyObject>`
+  | |     );
+  | |_____^ the trait `OptionEncode` is not implemented for `Retained<MyObject>`
   |
   = help: the following other types implement trait `OptionEncode`:
             &T

@@ -2,13 +2,11 @@ error: use of deprecated function `MyObject::my_method::method_id`: using #[unsa
        Use #[unsafe(method(myMethod:))] instead
   --> ui/extern_methods_deprecated.rs
    |
-   | / extern_methods!(
-   | |     unsafe impl MyObject {
+   | /     extern_methods!(
    | |         #[unsafe(method_id(myMethod:))]
    | |         fn my_method(param: i32) -> Retained<Self>;
-   | |     }
-   | | );
-   | |_^
+   | |     );
+   | |_____^
    |
 note: the lint level is defined here
   --> ui/extern_methods_deprecated.rs

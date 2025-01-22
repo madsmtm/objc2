@@ -1,12 +1,11 @@
 error: cannot specify the `method`/`method_id` attribute twice
  --> ui/extern_methods_selector_twice.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(foo))]
   | |         #[unsafe(method(bar))]
-... |
-  | | );
-  | |_^
+  | |         fn selector_twice();
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

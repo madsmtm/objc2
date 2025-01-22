@@ -1,0 +1,17 @@
+error: use of deprecated function `objc2::__macro_helpers::extern_methods_unsafe_impl`: having the `impl` inside `extern_methods!` is deprecated, move it outside instead
+ --> ui/extern_methods_deprecated_syntax.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[unsafe(method(foo))]
+  | |         fn foo();
+  | |     }
+  | | );
+  | |_^
+  |
+note: the lint level is defined here
+ --> ui/extern_methods_deprecated_syntax.rs
+  |
+  | #![deny(deprecated)]
+  |         ^^^^^^^^^^
+  = note: this error originates in the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

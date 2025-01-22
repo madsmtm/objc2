@@ -149,7 +149,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
       }
   );
   ```
-* **BREAKING**: Changed the syntax of `extern_methods!` to require more `unsafe`:
+* **BREAKING**: Changed the syntax of `extern_methods!` to push the `unsafe` inside:
   ```rust
   // Before
   extern_methods!(
@@ -160,12 +160,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   );
 
   // After
-  extern_methods!(
-      unsafe impl MyObject {
+  unsafe impl MyObject {
+      extern_methods!(
           #[unsafe(method(myMethod))]
           fn myMethod(&self);
-      }
-  );
+      );
+  }
   ```
 * **BREAKING**: Moved the common `retain` and `alloc` methods from `ClassType`
   to `Message` and `AllocAnyThread`/`MainThreadOnly`, respectively.

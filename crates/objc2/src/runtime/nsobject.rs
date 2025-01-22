@@ -386,9 +386,9 @@ where
 
 unsafe impl NSObjectProtocol for NSObject {}
 
-extern_methods!(
-    #[allow(non_snake_case)] // Follow the naming scheme in framework crates
-    unsafe impl NSObject {
+#[allow(non_snake_case)] // Follow the naming scheme in framework crates
+impl NSObject {
+    extern_methods!(
         /// Create a new empty `NSObject`.
         ///
         /// This method is a shorthand for calling [`alloc`] and then
@@ -421,23 +421,18 @@ extern_methods!(
         #[unsafe(method(doesNotRecognizeSelector:))]
         #[unsafe(method_family = none)]
         fn doesNotRecognizeSelector_inner(&self, sel: Sel);
+    );
 
-        /// Handle messages the object doesn’t recognize.
-        ///
-        /// See [Apple's documentation][apple-doc] for details.
-        ///
-        /// [apple-doc]: https://developer.apple.com/documentation/objectivec/nsobject/1418637-doesnotrecognizeselector?language=objc
-        pub fn doesNotRecognizeSelector(&self, sel: Sel) -> ! {
-            self.doesNotRecognizeSelector_inner(sel);
-            unreachable!("doesNotRecognizeSelector: should not return")
-        }
-
-        // TODO: `methodForSelector:`, but deprecated, showing how you should do without?
-
-        // Don't expose load, initialize and dealloc, since these should never
-        // be called by the user.
+    /// Handle messages the object doesn’t recognize.
+    ///
+    /// See [Apple's documentation][apple-doc] for details.
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/nsobject/1418637-doesnotrecognizeselector?language=objc
+    pub fn doesNotRecognizeSelector(&self, sel: Sel) -> ! {
+        self.doesNotRecognizeSelector_inner(sel);
+        unreachable!("doesNotRecognizeSelector: should not return")
     }
-);
+}
 
 /// Objective-C equality has approximately the same semantics as Rust
 /// equality (although less aptly specified).

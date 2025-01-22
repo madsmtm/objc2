@@ -137,8 +137,8 @@ impl Exception {
     }
 }
 
-extern_methods!(
-    unsafe impl Exception {
+impl Exception {
+    extern_methods!(
         // Only safe on NSException
         // Returns NSString
         #[unsafe(method(name))]
@@ -150,8 +150,8 @@ extern_methods!(
         #[unsafe(method(reason))]
         #[unsafe(method_family = none)]
         unsafe fn reason(&self) -> Option<Retained<NSObject>>;
-    }
-);
+    );
+}
 
 // Note: We can't implement `Send` nor `Sync` since the exception could be
 // anything!

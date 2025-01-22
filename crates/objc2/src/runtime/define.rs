@@ -901,12 +901,12 @@ mod tests {
             struct Custom;
         );
 
-        extern_methods!(
-            unsafe impl Custom {
+        impl Custom {
+            extern_methods!(
                 #[unsafe(method(new))]
                 fn new() -> Retained<Self>;
-            }
-        );
+            );
+        }
 
         let obj1 = Custom::new();
         let obj2 = Custom::new();

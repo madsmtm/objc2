@@ -9,11 +9,11 @@ extern_class!(
     pub struct MyObject;
 );
 
-extern_methods!(
-    unsafe impl MyObject {
+impl MyObject {
+    extern_methods!(
         #[unsafe(method_id(myMethod:))]
         fn my_method(param: i32) -> Retained<Self>;
-    }
-);
+    );
+}
 
 fn main() {}

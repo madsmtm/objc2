@@ -119,12 +119,12 @@ define_class!(
     }
 );
 
-extern_methods!(
-    unsafe impl Thrower {
+impl Thrower {
+    extern_methods!(
         #[unsafe(method(backtrace))]
         fn backtrace() -> *mut c_void;
-    }
-);
+    );
+}
 
 #[test]
 #[cfg_attr(feature = "catch-all", ignore = "catch-all changes the backtrace")]

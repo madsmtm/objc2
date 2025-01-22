@@ -6,32 +6,26 @@ extern_class!(
     pub struct MyObject;
 );
 
-extern_methods!(
-    unsafe impl MyObject {
+impl MyObject {
+    extern_methods!(
         #[unsafe(method())]
         fn no_selector_class();
-    }
-);
+    );
 
-extern_methods!(
-    unsafe impl MyObject {
+    extern_methods!(
         #[unsafe(method())]
         fn no_selector_self(&self);
-    }
-);
+    );
 
-extern_methods!(
-    unsafe impl MyObject {
+    extern_methods!(
         #[unsafe(method(_))]
         fn underscore(&self);
-    }
-);
+    );
 
-extern_methods!(
-    unsafe impl MyObject {
+    extern_methods!(
         #[unsafe(method(ab:c))]
         fn missing_colon(&self);
-    }
-);
+    );
+}
 
 fn main() {}

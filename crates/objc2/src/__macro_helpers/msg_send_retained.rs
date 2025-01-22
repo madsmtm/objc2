@@ -934,8 +934,8 @@ mod tests {
         assert_eq!(&*retained, cls);
     }
 
-    extern_methods!(
-        unsafe impl RcTestObject {
+    impl RcTestObject {
+        extern_methods!(
             #[unsafe(method(copy))]
             #[unsafe(method_family = new)]
             fn copy_new(&self) -> Retained<Self>;
@@ -955,8 +955,8 @@ mod tests {
             #[unsafe(method(copy))]
             #[unsafe(method_family = none)]
             fn copy_none(&self) -> Retained<Self>;
-        }
-    );
+        );
+    }
 
     #[test]
     fn test_method_family() {

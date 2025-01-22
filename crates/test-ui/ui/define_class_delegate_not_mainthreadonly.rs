@@ -32,11 +32,11 @@ define_class!(
     }
 );
 
-extern_methods!(
-    unsafe impl CustomObject {
+impl CustomObject {
+    extern_methods!(
         #[unsafe(method(new))]
         fn new(mtm: MainThreadMarker) -> Retained<Self>;
-    }
-);
+    );
+}
 
 fn main() {}

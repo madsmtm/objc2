@@ -7,23 +7,21 @@ extern_class!(
     pub struct MyObject;
 );
 
-extern_methods!(
-    unsafe impl MyObject {
+impl MyObject {
+    extern_methods!(
         #[unsafe(method(a))]
         /// Doc comment
         #[optional]
         fn a(&self);
-    }
-);
+    );
 
-extern_methods!(
-    unsafe impl MyObject {
+    extern_methods!(
         /// Doc comment
         #[optional]
         #[unsafe(method(b))]
         fn b(&self) -> Retained<Self>;
-    }
-);
+    );
+}
 
 define_class!(
     #[unsafe(super(NSObject))]

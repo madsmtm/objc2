@@ -2078,35 +2078,33 @@ impl Stmt {
                     methods,
                     documentation,
                 } => {
-                    let cfg = self.cfg_gate_ln_for([ItemTree::objc("extern_methods")], config);
-                    write!(f, "{cfg}")?;
-                    writeln!(f, "extern_methods!(")?;
                     if let Some(source_superclass) = source_superclass {
                         writeln!(
                             f,
-                            "    /// Methods declared on superclass `{}`",
+                            "/// Methods declared on superclass `{}`.",
                             source_superclass.name
                         )?;
                         if let Some(category_name) = category_name {
                             writeln!(f, "///")?;
-                            writeln!(f, "    /// {category_name}")?;
+                            writeln!(f, "/// {category_name}.")?;
                         }
                     } else if let Some(category_name) = category_name {
-                        writeln!(f, "    /// {category_name}")?;
+                        writeln!(f, "/// {category_name}.")?;
                     }
                     // FIXME: Merge with `source_superclass`/`category_name`
                     if let Some(documentation) = documentation {
                         write!(f, "{}", documentation.fmt(None))?;
                     }
-                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
                     // TODO: Add ?Sized here once `extern_methods!` supports it.
                     writeln!(
                         f,
-                        "    unsafe impl{} {}{} {{",
+                        "impl{} {}{} {{",
                         GenericParamsHelper(cls_generics, "Message"),
                         cls.path(),
                         GenericTyHelper(cls_generics),
                     )?;
+                    writeln!(f, "    extern_methods!(")?;
                     for method in methods {
                         write!(
                             f,
@@ -2115,8 +2113,8 @@ impl Stmt {
                         )?;
                         writeln!(f, "{method}")?;
                     }
-                    writeln!(f, "    }}")?;
-                    writeln!(f, ");")?;
+                    writeln!(f, "    );")?;
+                    writeln!(f, "}}")?;
 
                     if let Some(method) = methods
                         .iter()

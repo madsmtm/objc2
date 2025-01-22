@@ -401,12 +401,12 @@ mod tests {
         use crate::rc::Retained;
         use crate::{extern_methods, AllocAnyThread};
 
-        extern_methods!(
-            unsafe impl RcTestObject {
+        impl RcTestObject {
+            extern_methods!(
                 #[unsafe(method(init))]
                 fn init_with_self(self: Allocated<Self>) -> Retained<Self>;
-            }
-        );
+            );
+        }
 
         let _ = RcTestObject::alloc().init_with_self();
     }

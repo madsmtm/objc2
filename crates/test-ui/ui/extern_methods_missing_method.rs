@@ -6,10 +6,10 @@ extern_class!(
     pub struct MyObject;
 );
 
-extern_methods!(
-    unsafe impl MyObject {
+impl MyObject {
+    extern_methods!(
         fn a();
-    }
-);
+    );
+}
 
 fn main() {}

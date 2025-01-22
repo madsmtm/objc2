@@ -22,15 +22,15 @@ unsafe impl RefEncode for UuidBytes {
     const ENCODING_REF: Encoding = Encoding::Array(16, &u8::ENCODING);
 }
 
-extern_methods!(
-    unsafe impl NSUUID {
+impl NSUUID {
+    extern_methods!(
         #[unsafe(method(initWithUUIDBytes:))]
         fn initWithUUIDBytes(this: Allocated<Self>, bytes: &UuidBytes) -> Retained<Self>;
 
         #[unsafe(method(getUUIDBytes:))]
         fn getUUIDBytes(&self, bytes: &mut UuidBytes);
-    }
-);
+    );
+}
 
 impl NSUUID {
     /// The 'nil UUID'.

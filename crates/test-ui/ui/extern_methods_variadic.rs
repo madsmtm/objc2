@@ -7,25 +7,21 @@ extern_class!(
     pub struct MyObject;
 );
 
-extern_methods!(
-    unsafe impl MyObject {
+impl MyObject {
+    extern_methods!(
         #[unsafe(method(a:))]
         fn variadic_class(arg: i32, arg2: ...);
-    }
-);
+    );
 
-extern_methods!(
-    unsafe impl MyObject {
+    extern_methods!(
         #[unsafe(method(a:))]
         fn variadic_instance(&self, arg: i32, ...);
-    }
-);
+    );
 
-extern_methods!(
-    unsafe impl MyObject {
+    extern_methods!(
         #[unsafe(method(a:_))]
         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
-    }
-);
+    );
+}
 
 fn main() {}

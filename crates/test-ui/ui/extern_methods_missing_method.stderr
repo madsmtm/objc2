@@ -1,11 +1,9 @@
 error: must specify the desired selector using `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`
  --> ui/extern_methods_missing_method.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         fn a();
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__extract_method_attributes_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

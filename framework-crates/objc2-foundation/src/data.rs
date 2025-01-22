@@ -20,17 +20,19 @@ impl RefUnwindSafe for NSData {}
 
 // GNUStep returns NULL from these methods, and Apple's documentation says
 // that's valid (even though the headers say otherwise).
-extern_methods!(
-    unsafe impl NSData {
+impl NSData {
+    extern_methods!(
         #[unsafe(method(bytes))]
         pub(crate) fn bytes_raw(&self) -> *const c_void;
-    }
+    );
+}
 
-    unsafe impl NSMutableData {
+impl NSMutableData {
+    extern_methods!(
         #[unsafe(method(mutableBytes))]
         pub(crate) fn mutable_bytes_raw(&self) -> *mut c_void;
-    }
-);
+    );
+}
 
 impl NSData {
     // TODO: Rename to `from_bytes` to match `CFData::from_bytes`.

@@ -122,35 +122,42 @@
 ///     }
 /// );
 ///
-/// extern_methods!(
-///     /// Creation methods.
-///     unsafe impl MyObject {
+/// /// Creation methods.
+/// impl MyObject {
+///     extern_methods!(
+///         // SAFETY: The method is correctly specified.
 ///         #[unsafe(method(new))]
 ///         pub fn new() -> Retained<Self>;
 ///
+///         // SAFETY: The method is correctly specified.
 ///         #[unsafe(method(initWithVal:))]
 ///         // arbitrary self types are not stable, but we can work around it
 ///         // with the special name `this`.
 ///         pub fn init(this: Allocated<Self>, val: usize) -> Retained<Self>;
-///     }
+///     );
+/// }
 ///
-///     /// Instance accessor methods.
-///     unsafe impl MyObject {
+/// /// Instance accessor methods.
+/// impl MyObject {
+///     extern_methods!(
+///         // SAFETY: The method is correctly specified.
 ///         #[unsafe(method(foo))]
 ///         pub fn foo(&self) -> NSUInteger;
 ///
+///         // SAFETY: The method is correctly specified.
 ///         #[unsafe(method(fooObject))]
 ///         pub fn foo_object(&self) -> Retained<NSObject>;
 ///
+///         // SAFETY: The method is correctly specified.
 ///         #[unsafe(method(withError:_))]
 ///         // Since the selector specifies "_", the return type is assumed to
 ///         // be `Result`.
 ///         pub fn with_error(&self) -> Result<(), Retained<NSError>>;
-///     }
-/// );
+///     );
+/// }
 /// ```
 ///
-/// The `extern_methods!` declaration then becomes:
+/// The `extern_methods!` then expands to (roughly):
 ///
 /// ```
 /// # use objc2::encode::{Encode, Encoding};
@@ -207,113 +214,84 @@
 #[macro_export]
 macro_rules! extern_methods {
     (
-        // Generic implementations.
-        $(
-            $(#[$impl_m:meta])*
-            unsafe impl<$($t:ident $(: $b:ident $(+ $rest:ident)*)?),* $(,)?> $type:ty {
-                $($methods:tt)*
-            }
-        )+
-    ) => {
-        $(
-            $(#[$impl_m])*
-            impl<$($t $(: $b $(+ $rest)*)?),*> $type {
-                $crate::__extern_methods_rewrite_methods! {
-                    $($methods)*
-                }
-            }
-        )+
-    };
+        // Base case of the tt-muncher.
+    ) => {};
+
     (
-        // Non-generic implementations.
-        $(
-            $(#[$impl_m:meta])*
-            unsafe impl $type:ty {
-                // #[unsafe(method($($selector)+))]
-                // fn $fn_name($self, $($param: $Ty)*) -> $Return;
-                $($methods:tt)*
-            }
-        )+
+        // Unsafe method.
+        //
+        // Special attributes:
+        // #[unsafe(method($($selector:tt)+))]
+        // #[unsafe(method_family = $family:ident)]
+        $(#[$($m:tt)*])*
+        $v:vis unsafe fn $fn_name:ident($($params:tt)*) $(-> $ret:ty)?
+        // Optionally, a single `where` bound.
+        // TODO: Handle this better.
+        $(where $($where:ty : $bound:path),+ $(,)?)?;
+
+        $($rest:tt)*
     ) => {
-        $(
-            $(#[$impl_m])*
-            impl $type {
-                $crate::__extern_methods_rewrite_methods! {
-                    $($methods)*
-                }
+        $crate::__rewrite_self_param! {
+            ($($params)*)
+
+            ($crate::__extract_method_attributes)
+            ($(#[$($m)*])*)
+
+            ($crate::__extern_methods_method_out)
+            ($v unsafe fn $fn_name($($params)*) $(-> $ret)?)
+            ($($($where : $bound ,)+)?)
+        }
+
+        $crate::extern_methods!($($rest)*);
+    };
+
+    (
+        // Safe method.
+        //
+        // Special attributes:
+        // #[unsafe(method($($selector:tt)+))]
+        // #[unsafe(method_family = $family:ident)]
+        $(#[$($m:tt)*])*
+        $v:vis fn $fn_name:ident($($params:tt)*) $(-> $ret:ty)?
+        // Optionally, a single `where` bound.
+        // TODO: Handle this better.
+        $(where $($where:ty : $bound:path),+ $(,)?)?;
+
+        $($rest:tt)*
+    ) => {
+        $crate::__rewrite_self_param! {
+            ($($params)*)
+
+            ($crate::__extract_method_attributes)
+            ($(#[$($m)*])*)
+
+            ($crate::__extern_methods_method_out)
+            ($v fn $fn_name($($params)*) $(-> $ret)?)
+            ($($($where : $bound ,)+)?)
+        }
+
+        $crate::extern_methods!($($rest)*);
+    };
+
+    (
+        // Deprecated syntax.
+        $(#[$m:meta])*
+        unsafe impl $type:ty {
+            $($methods:tt)*
+        }
+
+        $($rest:tt)*
+    ) => {
+        const _: () = $crate::__macro_helpers::extern_methods_unsafe_impl();
+
+        $(#[$m])*
+        impl<$($t $(: $b $(+ $rest)*)?),*> $type {
+            $crate::extern_methods! {
+                $($methods)*
             }
-        )+
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __extern_methods_rewrite_methods {
-    // Base case
-    {} => {};
-
-    // Unsafe variant
-    {
-        $(#[$($m:tt)*])*
-        $v:vis unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)?
-        // TODO: Handle where bounds better
-        $(where $($where:ty : $bound:path),+ $(,)?)?;
-
-        $($rest:tt)*
-    } => {
-        $crate::__rewrite_self_param! {
-            ($($params)*)
-
-            ($crate::__extract_method_attributes)
-            ($(#[$($m)*])*)
-
-            ($crate::__extern_methods_method_out)
-            ($v unsafe fn $name($($params)*) $(-> $ret)?)
-            ($($($where : $bound ,)+)?)
         }
 
-        $crate::__extern_methods_rewrite_methods! {
-            $($rest)*
-        }
-    };
-
-    // Safe variant
-    {
-        $(#[$($m:tt)*])*
-        $v:vis fn $name:ident($($params:tt)*) $(-> $ret:ty)?
-        // TODO: Handle where bounds better
-        $(where $($where:ty : $bound:path),+ $(,)?)?;
-
-        $($rest:tt)*
-    } => {
-        $crate::__rewrite_self_param! {
-            ($($params)*)
-
-            ($crate::__extract_method_attributes)
-            ($(#[$($m)*])*)
-
-            ($crate::__extern_methods_method_out)
-            ($v fn $name($($params)*) $(-> $ret)?)
-            ($($($where : $bound ,)+)?)
-        }
-
-        $crate::__extern_methods_rewrite_methods! {
-            $($rest)*
-        }
-    };
-
-    // Other items that people might want to put here (e.g. functions with a
-    // body).
-    {
-        $associated_item:item
-
-        $($rest:tt)*
-    } => {
-        $associated_item
-
-        $crate::__extern_methods_rewrite_methods! {
-            $($rest)*
-        }
+        $crate::extern_methods!($($rest)*);
     };
 }
 
@@ -387,4 +365,23 @@ macro_rules! __extern_methods_method_id_deprecated {
         fn method_id() {}
         method_id();
     }};
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::extern_methods;
+    use crate::runtime::{NSObject, NSObjectProtocol};
+
+    #[test]
+    fn outside_impl_using_this() {
+        // The fact that this works outside `impl` is an implementation detail
+        // that will get resolved once we have arbitrary self types.
+        extern_methods!(
+            #[unsafe(method(hash))]
+            fn obj_hash(this: &NSObject) -> usize;
+        );
+
+        let obj = NSObject::new();
+        assert_eq!(obj_hash(&obj), obj.hash())
+    }
 }

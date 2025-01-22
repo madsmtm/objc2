@@ -8,25 +8,21 @@ extern_class!(
     pub struct MyObject;
 );
 
-extern_methods!(
-    unsafe impl MyObject {
+impl MyObject {
+    extern_methods!(
         #[unsafe(method(takesBox:))]
         fn takes_box(&self, arg: Box<i32>);
-    }
-);
+    );
 
-extern_methods!(
-    unsafe impl MyObject {
+    extern_methods!(
         #[unsafe(method(returnsReferenceToRetained))]
         fn returns_reference_to_retained(&self) -> &Retained<Self>;
-    }
-);
+    );
 
-extern_methods!(
-    unsafe impl MyObject {
+    extern_methods!(
         #[unsafe(method(mainThreadMarkerAsReturn))]
         fn main_thread_marker_as_return() -> MainThreadMarker;
-    }
-);
+    );
+}
 
 fn main() {}

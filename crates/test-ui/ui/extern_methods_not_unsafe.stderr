@@ -1,25 +1,25 @@
 error: The #[method] attribute is now unsafe, and must be used as #[unsafe(method(foo))]
  --> ui/extern_methods_not_unsafe.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[method(foo)]
   | |         fn method();
 ... |
-  | | );
-  | |_^
+  | |         fn method_id();
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__extract_method_attributes_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: The #[method_id] attribute is now unsafe, and must be used as #[unsafe(method_id(foo))]
  --> ui/extern_methods_not_unsafe.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[method(foo)]
   | |         fn method();
 ... |
-  | | );
-  | |_^
+  | |         fn method_id();
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__extract_method_attributes_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -105,18 +105,13 @@ new_objc2::define_class!(
     }
 );
 
-// Ensure that extern_methods! works without the ClassType trait in scope
-mod test_extern_methods {
-    use super::{new_objc2, CustomObject};
-
+impl CustomObject {
     new_objc2::extern_methods!(
-        unsafe impl CustomObject {
-            #[unsafe(method(a))]
-            fn a();
+        #[unsafe(method(a))]
+        fn a();
 
-            #[unsafe(method(b))]
-            fn b(&self);
-        }
+        #[unsafe(method(b))]
+        fn b(&self);
     );
 }
 

@@ -1,103 +1,87 @@
 error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(a:))]
   | |         fn a();
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(b))]
   | |         fn b(arg: i32);
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(c:d:e:))]
   | |         fn c(arg1: i32, arg2: u32);
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(f:g:))]
   | |         fn f();
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(x:))]
   | |         fn x(&self);
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(y))]
   | |         fn y(&self, arg: i32);
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(z:))]
   | |         fn z(this: &Self);
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(w))]
   | |         fn w(this: &Self, arg: i32);
-  | |     }
-  | | );
-  | |_^
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

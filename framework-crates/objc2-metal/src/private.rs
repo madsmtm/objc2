@@ -26,9 +26,9 @@ pub unsafe trait MTLDevicePrivate: Message {
 #[cfg(feature = "MTLDevice")]
 unsafe impl<P: MTLDevice + Message> MTLDevicePrivate for P {}
 
-extern_methods!(
-    #[cfg(feature = "MTLRenderPipeline")]
-    unsafe impl MTLRenderPipelineReflection {
+#[cfg(feature = "MTLRenderPipeline")]
+impl MTLRenderPipelineReflection {
+    extern_methods!(
         #[cfg(feature = "MTLDevice")]
         #[unsafe(method(initWithVertexData:fragmentData:serializedVertexDescriptor:device:options:flags:))]
         pub unsafe fn initWithVertexData(
@@ -49,21 +49,21 @@ extern_methods!(
 
         #[unsafe(method(serializeFragmentData))]
         pub unsafe fn serializeFragmentData(&self) -> *mut c_void;
-    }
-);
+    );
+}
 
-extern_methods!(
-    #[cfg(feature = "MTLSampler")]
-    unsafe impl MTLSamplerDescriptor {
+#[cfg(feature = "MTLSampler")]
+impl MTLSamplerDescriptor {
+    extern_methods!(
         #[unsafe(method(setLodBias:))]
         pub unsafe fn setLodBias(&self, bias: f32);
-    }
-);
+    );
+}
 
-extern_methods!(
-    #[cfg(feature = "MTLVertexDescriptor")]
-    unsafe impl MTLVertexDescriptor {
+#[cfg(feature = "MTLVertexDescriptor")]
+impl MTLVertexDescriptor {
+    extern_methods!(
         #[unsafe(method(newSerializedDescriptor))]
         pub unsafe fn newSerializedDescriptor(&self) -> Option<Retained<AnyObject>>;
-    }
-);
+    );
+}

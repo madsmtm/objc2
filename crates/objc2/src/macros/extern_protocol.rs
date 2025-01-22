@@ -101,13 +101,12 @@
 ///     // SAFETY:
 ///     // - The name is correct.
 ///     // - The protocol does inherit from `NSObjectProtocol`.
-///     // - The methods are correctly specified.
 ///     pub unsafe trait NSItemProviderWriting: NSObjectProtocol {
 ///         //                                  ^^^^^^^^^^^^^^^^
 ///         // This protocol inherits from the `NSObject` protocol
 ///
-///         // This method we mark as `unsafe`, since we aren't using the correct
-///         // type for the completion handler
+///         // This method we mark as `unsafe`, since we aren't using the
+///         // correct type for the completion handler.
 ///         #[unsafe(method(loadDataWithTypeIdentifier:forItemProviderCompletionHandler:))]
 ///         unsafe fn loadData(
 ///             &self,
@@ -115,6 +114,7 @@
 ///             completion_handler: *mut c_void,
 ///         ) -> Option<Retained<NSProgress>>;
 ///
+///         // SAFETY: The method is correctly specified.
 ///         #[unsafe(method(writableTypeIdentifiersForItemProvider))]
 ///         fn writableTypeIdentifiersForItemProvider_class()
 ///             -> Retained<NSArray<NSString>>;
@@ -122,19 +122,22 @@
 ///         // The rest of these are optional, which means that a user of
 ///         // `define_class!` would not need to implement them.
 ///
-///         #[optional]
+///         // SAFETY: The method is correctly specified.
 ///         #[unsafe(method(writableTypeIdentifiersForItemProvider))]
+///         #[optional]
 ///         fn writableTypeIdentifiersForItemProvider(&self)
 ///             -> Retained<NSArray<NSString>>;
 ///
-///         #[optional]
+///         // SAFETY: The method is correctly specified.
 ///         #[unsafe(method(itemProviderVisibilityForRepresentationWithTypeIdentifier:))]
+///         #[optional]
 ///         fn itemProviderVisibilityForRepresentation_class(
 ///             type_identifier: &NSString,
 ///         ) -> NSItemProviderRepresentationVisibility;
 ///
-///         #[optional]
+///         // SAFETY: The method is correctly specified.
 ///         #[unsafe(method(itemProviderVisibilityForRepresentationWithTypeIdentifier:))]
+///         #[optional]
 ///         fn itemProviderVisibilityForRepresentation(
 ///             &self,
 ///             type_identifier: &NSString,

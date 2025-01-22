@@ -1,26 +1,26 @@
 error: `#[optional]` is only supported in `extern_protocol!`
  --> ui/wrong_optional.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         #[unsafe(method(a))]
   | |         /// Doc comment
-... |
-  | | );
-  | |_^
+  | |         #[optional]
+  | |         fn a(&self);
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__extern_methods_no_optional` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: `#[optional]` is only supported in `extern_protocol!`
  --> ui/wrong_optional.rs
   |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
+  | /     extern_methods!(
   | |         /// Doc comment
   | |         #[optional]
-... |
-  | | );
-  | |_^
+  | |         #[unsafe(method(b))]
+  | |         fn b(&self) -> Retained<Self>;
+  | |     );
+  | |_____^
   |
   = note: this error originates in the macro `$crate::__extern_methods_no_optional` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 

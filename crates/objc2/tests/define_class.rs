@@ -145,13 +145,13 @@ define_class!(
     }
 );
 
-extern_methods!(
-    unsafe impl DefineClassCfg {
+impl DefineClassCfg {
+    extern_methods!(
         #[unsafe(method(new))]
         fn new() -> Retained<Self>;
-    }
+    );
 
-    unsafe impl DefineClassCfg {
+    extern_methods!(
         #[unsafe(method(changesOnCfg1))]
         fn changes_on_cfg1() -> i32;
 
@@ -165,20 +165,24 @@ extern_methods!(
         #[cfg(not(debug_assertions))]
         #[unsafe(method(onlyWhenDisabled1))]
         fn only_when_disabled1(&self);
-    }
+    );
+}
 
-    #[cfg(debug_assertions)]
-    unsafe impl DefineClassCfg {
+#[cfg(debug_assertions)]
+impl DefineClassCfg {
+    extern_methods!(
         #[unsafe(method(onlyWhenEnabled2))]
         fn only_when_enabled2();
-    }
+    );
+}
 
-    #[cfg(not(debug_assertions))]
-    unsafe impl DefineClassCfg {
+#[cfg(not(debug_assertions))]
+impl DefineClassCfg {
+    extern_methods!(
         #[unsafe(method(onlyWhenDisabled2))]
         fn only_when_disabled2();
-    }
-);
+    );
+}
 
 #[test]
 fn test_method_that_changes_based_on_cfg() {
@@ -256,8 +260,8 @@ define_class!(
     }
 );
 
-extern_methods!(
-    unsafe impl TestMultipleColonSelector {
+impl TestMultipleColonSelector {
+    extern_methods!(
         #[unsafe(method(new))]
         fn new() -> Retained<Self>;
 
@@ -278,8 +282,8 @@ extern_methods!(
             arg3: i32,
             obj: *const Self,
         ) -> Option<Retained<Self>>;
-    }
-);
+    );
+}
 
 #[test]
 fn test_multiple_colon_selector() {
@@ -415,8 +419,8 @@ define_class!(
     }
 );
 
-extern_methods!(
-    unsafe impl OutParam {
+impl OutParam {
+    extern_methods!(
         #[unsafe(method(new))]
         fn new() -> Retained<Self>;
 
@@ -431,8 +435,8 @@ extern_methods!(
 
         #[unsafe(method(unsupported4:))]
         fn unsupported4(_param: Option<&mut Option<Retained<Self>>>);
-    }
-);
+    );
+}
 
 #[test]
 #[should_panic = "`&mut Retained<_>` is not supported in `define_class!` yet"]
