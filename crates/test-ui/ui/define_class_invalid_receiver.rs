@@ -8,7 +8,7 @@ define_class!(
     #[name = "CustomObject"]
     struct CustomObject;
 
-    unsafe impl CustomObject {
+    impl CustomObject {
         #[unsafe(method(testBox))]
         fn test_box(self: Box<Self>) {
             unimplemented!()
@@ -35,7 +35,7 @@ define_class!(
         }
     }
 
-    unsafe impl CustomObject {
+    impl CustomObject {
         #[unsafe(method_id(testBoxRetained))]
         fn test_box_retained(self: Box<Self>) -> Retained<Self> {
             unimplemented!()
@@ -52,7 +52,7 @@ define_class!(
         }
     }
 
-    unsafe impl CustomObject {
+    impl CustomObject {
         #[unsafe(method_id(testAlloc))]
         fn test_alloc(this: Allocated<Self>) -> Retained<Self> {
             unimplemented!()

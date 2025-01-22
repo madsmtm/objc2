@@ -49,7 +49,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ```rust
   // Before
   use objc2::mutability::InteriorMutable;
-  use objc2::runtime::NSObject;
+  use objc2::runtime::{NSObject, NSObjectProtocol};
   use objc2::{declare_class, ClassType, DeclaredClass};
 
   struct MyIvars;
@@ -73,10 +73,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
               // ...
           }
       }
+
+      unsafe impl NSObjectProtocol for MyObject {}
   );
 
   // After
-  use objc2::runtime::NSObject;
+  use objc2::runtime::{NSObject, NSObjectProtocol};
   use objc2::define_class;
 
   struct MyIvars;
@@ -87,12 +89,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
       #[ivars = MyIvars]
       struct MyObject;
 
-      unsafe impl MyObject {
+      impl MyObject {
           #[unsafe(method(myMethod))]
           fn my_method(&self) {
               // ...
           }
       }
+
+      unsafe impl NSObjectProtocol for MyObject {}
   );
   ```
 * Whether classes are only available on the main thread is now automatically

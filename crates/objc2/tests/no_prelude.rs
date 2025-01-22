@@ -94,7 +94,7 @@ new_objc2::define_class!(
     #[ivars = MyCustomIvars]
     struct CustomObject;
 
-    unsafe impl CustomObject {
+    impl CustomObject {
         #[unsafe(method(a))]
         fn _a() {}
 

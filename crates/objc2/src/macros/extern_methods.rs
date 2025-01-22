@@ -117,7 +117,7 @@
 ///     #[name = "MyObject"]
 ///     pub struct MyObject;
 ///
-///     unsafe impl MyObject {
+///     impl MyObject {
 ///         // ... Assume we've implemented all the methods used below
 ///     }
 /// );
@@ -174,7 +174,7 @@
 /// #     #[name = "MyObject2"]
 /// #     pub struct MyObject;
 /// #
-/// #     unsafe impl MyObject {
+/// #     impl MyObject {
 /// #         // ... Assume we've implemented all the methods used below
 /// #     }
 /// # );

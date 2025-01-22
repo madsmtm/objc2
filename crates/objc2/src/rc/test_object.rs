@@ -69,7 +69,7 @@ define_class!(
     #[name = "__RcTestObject"]
     pub(crate) struct RcTestObject;
 
-    unsafe impl RcTestObject {
+    impl RcTestObject {
         #[unsafe(method_id(newReturningNull))]
         fn new_returning_null() -> Option<Retained<Self>> {
             None

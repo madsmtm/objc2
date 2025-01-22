@@ -17,7 +17,7 @@ define_class!(
     #[name = "NoIvars"]
     pub struct NoIvars;
 
-    unsafe impl NoIvars {
+    impl NoIvars {
         #[no_mangle]
         #[unsafe(method(classMethod))]
         fn get_class() -> &'static AnyClass {
@@ -81,7 +81,7 @@ define_class!(
     #[ivars = ForgetableIvarsIvars]
     pub struct ForgetableIvars;
 
-    unsafe impl ForgetableIvars {
+    impl ForgetableIvars {
         #[no_mangle]
         #[unsafe(method_id(init))]
         fn init_forgetable_ivars(this: Allocated<Self>) -> Option<Retained<Self>> {
@@ -115,7 +115,7 @@ define_class!(
     #[ivars = DropIvarsIvars]
     pub struct DropIvars;
 
-    unsafe impl DropIvars {
+    impl DropIvars {
         #[no_mangle]
         #[unsafe(method_id(init))]
         fn init_drop_ivars(this: Allocated<Self>) -> Option<Retained<Self>> {

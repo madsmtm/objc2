@@ -32,7 +32,7 @@ define_class!(
     #[name = "MyTestObject"]
     struct MyTestObject;
 
-    unsafe impl MyTestObject {
+    impl MyTestObject {
         #[unsafe(method_id(initWith:))]
         fn init(
             _this: Allocated<<Self as GetSameType>::SameType>,

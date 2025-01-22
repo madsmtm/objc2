@@ -24,7 +24,7 @@ fn allow_deprecated() {
         struct AllowDeprecated;
 
         #[expect(deprecated)]
-        unsafe impl AllowDeprecated {
+        impl AllowDeprecated {
             #[unsafe(method(someMethod))]
             fn some_method() {}
         }
@@ -40,12 +40,12 @@ define_class!(
     struct DefineClassDeprecatedMethod;
 
     #[deprecated]
-    unsafe impl DefineClassDeprecatedMethod {
+    impl DefineClassDeprecatedMethod {
         #[unsafe(method(deprecatedOnImpl))]
         fn deprecated_on_impl() {}
     }
 
-    unsafe impl DefineClassDeprecatedMethod {
+    impl DefineClassDeprecatedMethod {
         #[deprecated]
         #[unsafe(method(deprecatedOnMethod))]
         fn deprecated_on_method() {}
@@ -89,7 +89,7 @@ define_class!(
     #[name = "DefineClassCfg"]
     struct DefineClassCfg;
 
-    unsafe impl DefineClassCfg {
+    impl DefineClassCfg {
         #[cfg(debug_assertions)]
         #[unsafe(method(changesOnCfg1))]
         fn _changes_on_cfg1() -> i32 {
@@ -112,7 +112,7 @@ define_class!(
     }
 
     #[cfg(debug_assertions)]
-    unsafe impl DefineClassCfg {
+    impl DefineClassCfg {
         #[unsafe(method(changesOnCfg2))]
         fn _changes_on_cfg2(&self) -> i32 {
             1
@@ -123,7 +123,7 @@ define_class!(
     }
 
     #[cfg(not(debug_assertions))]
-    unsafe impl DefineClassCfg {
+    impl DefineClassCfg {
         #[unsafe(method(changesOnCfg2))]
         fn _changes_on_cfg2(&self) -> i32 {
             2
@@ -134,7 +134,7 @@ define_class!(
     }
 
     #[cfg(debug_assertions)]
-    unsafe impl DefineClassCfg {
+    impl DefineClassCfg {
         #[cfg(not(debug_assertions))]
         #[unsafe(method(never))]
         fn _never(&self) {}
@@ -231,7 +231,7 @@ define_class!(
     #[name = "TestMultipleColonSelector"]
     struct TestMultipleColonSelector;
 
-    unsafe impl TestMultipleColonSelector {
+    impl TestMultipleColonSelector {
         #[unsafe(method(test::arg3:))]
         fn _test_class(arg1: i32, arg2: i32, arg3: i32) -> i32 {
             arg1 + arg2 + arg3
@@ -300,7 +300,7 @@ define_class!(
     #[name = "DefineClassAllTheBool"]
     struct DefineClassAllTheBool;
 
-    unsafe impl DefineClassAllTheBool {
+    impl DefineClassAllTheBool {
         #[unsafe(method(returnsBool))]
         fn returns_bool() -> bool {
             true
@@ -360,7 +360,7 @@ define_class!(
     struct DefineClassUnreachable;
 
     // Ensure none of these warn
-    unsafe impl DefineClassUnreachable {
+    impl DefineClassUnreachable {
         #[unsafe(method(unreachable))]
         fn unreachable(&self) -> bool {
             unreachable!()
@@ -404,7 +404,7 @@ define_class!(
     #[derive(Debug)]
     struct OutParam;
 
-    unsafe impl OutParam {
+    impl OutParam {
         #[unsafe(method(unsupported1:))]
         fn _unsupported1(_param: &mut Retained<Self>) {}
 
@@ -488,7 +488,7 @@ fn test_pointer_receiver_allowed() {
         #[derive(Debug)]
         struct PointerReceiver;
 
-        unsafe impl PointerReceiver {
+        impl PointerReceiver {
             #[unsafe(method(constPtr))]
             fn const_ptr(_this: *const Self) {}
 

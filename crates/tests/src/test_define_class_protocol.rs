@@ -53,7 +53,7 @@ fn test_define_class_invalid_method() {
         #[name = "TestDefineClassInvalidMethod"]
         struct Custom;
 
-        unsafe impl Custom {
+        impl Custom {
             // Override `description` with a bad return type
             #[unsafe(method(description))]
             fn description(&self) {}

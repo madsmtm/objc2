@@ -7,7 +7,7 @@ define_class!(
     #[name = "InvalidMethodDeclarations"]
     struct InvalidMethodDeclarations;
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         fn test_no_attribute() {
             unimplemented!()
         }
@@ -41,47 +41,47 @@ define_class!(
         }
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         #[unsafe(method(testPub))]
         pub fn test_pub() {}
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         #[unsafe(method(testConst))]
         const fn test_const() {}
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         #[unsafe(method(testAsync))]
         async fn test_async() {}
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         #[unsafe(method(testExtern))]
         extern "C" fn test_extern() {}
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         #[unsafe(method(testFnFn))]
         fn fn test_fn_fn() {}
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         #[unsafe(method(testGeneric))]
         fn test_generic<T>() {}
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         #[unsafe(method(testNoBody))]
         fn test_no_body(&self);
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         #[unsafe(method(testUnfinished))]
         fn test_unfinished()
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         #[unsafe(method_id(alloc))]
         fn test_retained_bad_selector1() -> Retained<Self> {
             unimplemented!()
@@ -108,20 +108,20 @@ define_class!(
         }
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         #[unsafe(method(dealloc))]
         fn deallocMethod(&mut self) {}
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         #![doc = "inner_attribute"]
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         type TypeAlias = Self;
     }
 
-    unsafe impl InvalidMethodDeclarations {
+    impl InvalidMethodDeclarations {
         const CONSTANT: () = ();
     }
 );

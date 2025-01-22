@@ -28,7 +28,7 @@ define_class!(
     #[name = "CustomObject1"]
     struct CustomObject1;
 
-    unsafe impl CustomObject1 {
+    impl CustomObject1 {
         #[unsafe(method(c))]
         #[optional]
         /// Doc comment
@@ -41,7 +41,7 @@ define_class!(
     #[name = "CustomObject2"]
     struct CustomObject2;
 
-    unsafe impl CustomObject2 {
+    impl CustomObject2 {
         #[optional]
         /// Doc comment
         #[unsafe(method_id(d))]

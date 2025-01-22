@@ -44,7 +44,7 @@ define_class!(
     #[ivars = Ivars]
     struct MyObserver;
 
-    unsafe impl MyObserver {
+    impl MyObserver {
         #[unsafe(method(observeValueForKeyPath:ofObject:change:context:))]
         fn observe_value(
             &self,

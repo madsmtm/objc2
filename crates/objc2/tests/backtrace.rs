@@ -110,7 +110,7 @@ define_class!(
     #[name = "Thrower"]
     struct Thrower;
 
-    unsafe impl Thrower {
+    impl Thrower {
         #[unsafe(method(backtrace))]
         fn __backtrace() -> *mut c_void {
             let backtrace = backtrace::Backtrace::new();

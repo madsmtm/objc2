@@ -7,7 +7,7 @@ define_class!(
     #[name = "CustomObject"]
     struct CustomObject;
 
-    unsafe impl CustomObject {
+    impl CustomObject {
         #[unsafe(method(test1))]
         fn test1() -> Retained<Self> {
             unimplemented!()

@@ -62,7 +62,7 @@ define_class!(
     #[ivars = AppState]
     struct AppDelegate;
 
-    unsafe impl AppDelegate {
+    impl AppDelegate {
         // Called by `NSApplicationMain`, `UIApplicationMain`
         // or our `msg_send![AppDelegate::class(), new]`.
         #[unsafe(method_id(init))]

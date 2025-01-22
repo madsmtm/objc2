@@ -7,7 +7,7 @@ define_class!(
     #[name = "CustomObject"]
     struct CustomObject;
 
-    unsafe impl CustomObject {
+    impl CustomObject {
         #[unsafe(method(initTest))]
         fn init_test(&mut self) -> &mut Self {
             unimplemented!()

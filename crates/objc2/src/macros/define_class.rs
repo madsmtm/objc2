@@ -287,7 +287,7 @@
 ///     #[ivars = Ivars]
 ///     struct MyCustomObject;
 ///
-///     unsafe impl MyCustomObject {
+///     impl MyCustomObject {
 ///         #[unsafe(method(foo))]
 ///         fn __get_foo(&self) -> u8 {
 ///             self.ivars().foo
@@ -435,7 +435,7 @@ macro_rules! define_class {
         $v:vis struct $class:ident;
 
         // unsafe impl Protocol for $class { ... }
-        // unsafe impl $class { ... }
+        // impl $class { ... }
         $($impls:tt)*
     } => {
         // Struct and various impls.
@@ -851,7 +851,7 @@ macro_rules! __define_class_output_impls {
     // Without protocol
     (
         $(#[$m:meta])*
-        unsafe impl $for:ty {
+        impl $for:ty {
             $($methods:tt)*
         }
 
@@ -981,7 +981,7 @@ macro_rules! __define_class_register_impls {
         ($builder:ident)
 
         $(#[$($m:tt)*])*
-        unsafe impl $for:ty {
+        impl $for:ty {
             $($methods:tt)*
         }
 
