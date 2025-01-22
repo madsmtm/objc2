@@ -261,13 +261,11 @@
 /// ```
 /// use std::ffi::c_int;
 ///
-/// # use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
-/// # #[cfg(available_in_foundation)]
-/// use objc2_foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
+/// use objc2_foundation::{CopyingHelper, NSCopying, NSObject, NSObjectProtocol, NSZone};
 /// use objc2::rc::{Allocated, Retained};
 /// use objc2::{
-///     define_class, extern_protocol, msg_send, AllocAnyThread, ClassType,
-///     DefinedClass, ProtocolType,
+///     define_class, extern_methods, extern_protocol, msg_send, AllocAnyThread,
+///     ClassType, DefinedClass, ProtocolType,
 /// };
 ///
 /// #[derive(Clone)]
@@ -290,16 +288,6 @@
 ///     struct MyCustomObject;
 ///
 ///     unsafe impl MyCustomObject {
-///         #[unsafe(method_id(initWithFoo:))]
-///         fn init_with(this: Allocated<Self>, foo: u8) -> Option<Retained<Self>> {
-///             let this = this.set_ivars(Ivars {
-///                 foo,
-///                 bar: 42,
-///                 object: NSObject::new(),
-///             });
-///             unsafe { msg_send![super(this), init] }
-///         }
-///
 ///         #[unsafe(method(foo))]
 ///         fn __get_foo(&self) -> u8 {
 ///             self.ivars().foo
@@ -314,17 +302,10 @@
 ///         fn __my_class_method() -> bool {
 ///             true
 ///         }
-/// #
-/// #       #[unsafe(method_id(copyWithZone:))]
-/// #       fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
-/// #           let new = Self::alloc().set_ivars(self.ivars().clone());
-/// #           unsafe { msg_send![super(new), init] }
-/// #       }
 ///     }
 ///
 ///     unsafe impl NSObjectProtocol for MyCustomObject {}
 ///
-///     # #[cfg(available_in_foundation)]
 ///     unsafe impl NSCopying for MyCustomObject {
 ///         #[unsafe(method_id(copyWithZone:))]
 ///         fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
@@ -337,37 +318,46 @@
 ///     }
 /// );
 ///
-/// # #[cfg(available_in_foundation)]
+/// // Specially required for `NSCopying`, but otherwise not needed.
 /// unsafe impl CopyingHelper for MyCustomObject {
 ///     type Result = Self;
 /// }
 ///
+/// // Add creation method.
 /// impl MyCustomObject {
-///     pub fn new(foo: u8) -> Retained<Self> {
-///         unsafe { msg_send![Self::alloc(), initWithFoo: foo] }
-///     }
-///
-///     pub fn get_foo(&self) -> u8 {
-///         unsafe { msg_send![self, foo] }
-///     }
-///
-///     pub fn get_object(&self) -> Retained<NSObject> {
-///         unsafe { msg_send![self, object] }
-///     }
-///
-///     pub fn my_class_method() -> bool {
-///         unsafe { msg_send![Self::class(), myClassMethod] }
+///     fn new(foo: u8) -> Retained<Self> {
+///         // Initialize instance variables.
+///         let this = Self::alloc().set_ivars(Ivars {
+///             foo,
+///             bar: 42,
+///             object: NSObject::new(),
+///         });
+///         // Call `NSObject`'s `init` method.
+///         unsafe { msg_send![super(this), init] }
 ///     }
 /// }
 ///
+/// // Make an interface to the methods we defined.
+/// impl MyCustomObject {
+///     extern_methods!(
+///         #[unsafe(method(foo))]
+///         pub fn get_foo(&self) -> u8;
+///
+///         #[unsafe(method(object))]
+///         pub fn get_object(&self) -> Retained<NSObject>;
+///
+///         #[unsafe(method(myClassMethod))]
+///         pub fn my_class_method() -> bool;
+///     );
+/// }
+///
+/// # // Intentionally use `fn main` for clarity
 /// fn main() {
 ///     let obj = MyCustomObject::new(3);
 ///     assert_eq!(obj.ivars().foo, 3);
 ///     assert_eq!(obj.ivars().bar, 42);
 ///     assert!(obj.ivars().object.isKindOfClass(NSObject::class()));
 ///
-/// #   let obj: Retained<MyCustomObject> = unsafe { msg_send![&obj, copy] };
-/// #   #[cfg(available_in_foundation)]
 ///     let obj = obj.copy();
 ///
 ///     assert_eq!(obj.get_foo(), 3);
