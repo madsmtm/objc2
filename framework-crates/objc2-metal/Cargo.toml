@@ -10,7 +10,7 @@ rust-version.workspace = true
 keywords = ["cocoa", "apple", "framework", "macos", "ios"]
 categories.workspace = true
 repository.workspace = true
-license = "MIT OR Apache-2.0" # Some code taken from `metal` crate
+license.workspace = true
 
 [lints]
 workspace = true

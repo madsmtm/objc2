@@ -124,13 +124,8 @@ changelog. And so on, with every following release.
 
 ## License
 
-This project is licensed under the MIT license, see [`LICENSE.txt`].
-
-Work is in progress to make it dual-licensed under the Apache License
-(Version 2.0) as well, see [this][#23].
-
-[`LICENSE.txt`]: https://github.com/madsmtm/objc2/blob/master/LICENSE.txt
-[#23]: https://github.com/madsmtm/objc2/issues/23
+The licensing of the project is a bit complicated, see
+[`LICENSE.md`](./LICENSE.md) for details.
 
 
 ## Acknowledgements / Prior art

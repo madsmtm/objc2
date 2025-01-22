@@ -3,7 +3,7 @@ name = "test-ui"
 version = "0.1.0"
 edition.workspace = true
 publish = false
-license = "Zlib OR Apache-2.0 OR MIT"
+license.workspace = true
 
 [lints]
 workspace = true

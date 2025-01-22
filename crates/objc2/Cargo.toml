@@ -10,7 +10,9 @@ categories = [
     "os::macos-apis",
     # "no-std", # TODO
 ]
-license = "MIT" # https://github.com/madsmtm/objc2/issues/23
+# https://github.com/madsmtm/objc2/issues/23
+# All future contributions are licensed under "Zlib OR Apache-2.0 OR MIT".
+license = "MIT"
 authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true

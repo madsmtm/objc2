@@ -10,7 +10,7 @@ rust-version.workspace = true
 keywords = ["cocoa", "apple", "framework", "macos", "ios"]
 categories.workspace = true
 repository.workspace = true
-license = "MIT" # https://github.com/madsmtm/objc2/issues/23
+license = "MIT" # All future contributions are licensed under "Zlib OR Apache-2.0 OR MIT".
 
 [lints]
 workspace = true

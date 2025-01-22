@@ -68,6 +68,15 @@ If you're confused about this, don't worry too much about it, if you enable
 "Allow edits by maintainers" we can fix it for you.
 
 
+## Licensing
+
+When contributing, you agree to license your work under the trio
+`Zlib OR Apache-2.0 OR MIT` license (regardless of what the crate's current
+license is).
+
+See also [the license document](./LICENSE.md).
+
+
 ## Release checklist
 
 Copy and fill out the following checklist into the release PR:

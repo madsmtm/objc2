@@ -16,8 +16,9 @@ repository = "https://github.com/madsmtm/objc2"
 
 # Remember to update in header-translator, and manually authored lib.rs.
 version = "0.2.2"
-# Some crates in this repo may have a different license, see each crate for the specifics.
+# Some crates in this repo have a different license, see LICENSE.md.
 license = "Zlib OR Apache-2.0 OR MIT"
+license-file = "LICENSE.md"
 categories = [
     "api-bindings",
     "development-tools::ffi",

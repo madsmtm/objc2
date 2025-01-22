@@ -13,7 +13,7 @@ authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 repository.workspace = true
-license = "Zlib OR Apache-2.0 OR MIT"
+license.workspace = true
 
 # Use the `links` key to ensure that only one of these symbols are compiled
 #

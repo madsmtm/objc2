@@ -1,5 +1,6 @@
 [package]
-license = "MIT" # https://github.com/madsmtm/objc2/issues/23
+# https://github.com/madsmtm/objc2/issues/23
+license = "MIT" # All future contributions are licensed under "Zlib OR Apache-2.0 OR MIT".
 
 [dev-dependencies]
 static_assertions = "1.1.0"

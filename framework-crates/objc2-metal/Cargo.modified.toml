@@ -1,6 +1,3 @@
-[package]
-license = "MIT OR Apache-2.0" # Some code taken from `metal` crate
-
 [[example]]
 name = "triangle"
 required-features = [

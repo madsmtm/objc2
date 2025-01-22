@@ -12,7 +12,7 @@ categories = [
 edition.workspace = true
 rust-version.workspace = true
 repository.workspace = true
-license = "Zlib OR Apache-2.0 OR MIT"
+license.workspace = true
 
 [lib]
 proc-macro = true
