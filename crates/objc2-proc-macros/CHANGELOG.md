@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
+## 0.2.0 - 2025-01-22
+
+### Removed
+* **BREAKING**: Removed the deprecated `"apple"` Cargo feature flag.
+
+
 ## 0.1.3 - 2024-05-21
 
 ### Fixed
@@ -17,8 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 0.1.2 - 2024-05-21 (Yanked)
 
 ### Deprecated
-* Deprecated the `apple` Cargo feature flag, it is assumed by default on Apple
-  platforms.
+* Deprecated the `"apple"` Cargo feature flag, it is assumed by default on
+  Apple platforms.
 
 
 ## 0.1.1 - 2023-02-07
