@@ -39,6 +39,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   method family if need be.
 * Added `PartialEq`, `Eq`, `Hash`, `PartialOrd` and `Ord` implementations for
   `Bool`.
+* Added `"disable-encoding-assertions"` Cargo feature flag to allow completely
+  disabling encoding verification.
 
 ### Changed
 * **BREAKING**: Renamed `declare_class!` to `define_class!`, and changed the

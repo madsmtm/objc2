@@ -78,17 +78,19 @@ impl Drop for PanicChecker {
 fn test_track_caller() {
     let checker = PanicChecker::new();
 
-    #[cfg(debug_assertions)]
-    {
+    if cfg!(debug_assertions) {
         test_nil(&checker);
-        test_verify(&checker);
-        test_error_methods(&checker);
+        if cfg!(not(feature = "disable-encoding-assertions")) {
+            test_verify(&checker);
+            test_error_methods(&checker);
+        }
     }
 
     test_id_unwrap(&checker);
 
-    #[cfg(feature = "catch-all")]
-    test_catch_all(&checker);
+    if cfg!(feature = "catch-all") {
+        test_catch_all(&checker);
+    }
 
     test_unwind(&checker);
 

@@ -227,7 +227,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(debug_assertions)]
+    #[cfg(all(debug_assertions, not(feature = "disable-encoding-assertions")))]
     #[should_panic = "invalid message send to -[CustomObject foo]: expected return to have type code 'I', but found '^i'"]
     fn test_send_message_verified() {
         let obj = test_utils::custom_object();
@@ -235,7 +235,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(debug_assertions)]
+    #[cfg(all(debug_assertions, not(feature = "disable-encoding-assertions")))]
     #[should_panic = "invalid message send to +[CustomObject abcDef]: method not found"]
     fn test_send_message_verified_to_class() {
         let cls = test_utils::custom_class();
@@ -263,7 +263,11 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        all(debug_assertions, not(feature = "relax-void-encoding")),
+        all(
+            debug_assertions,
+            not(feature = "disable-encoding-assertions"),
+            not(feature = "relax-void-encoding")
+        ),
         should_panic = "invalid message send to -[CustomObject fooReference]: expected return to have type code '^I', but found '^v'"
     )]
     fn test_get_reference_void() {
@@ -276,7 +280,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(debug_assertions)]
+    #[cfg(all(debug_assertions, not(feature = "disable-encoding-assertions")))]
     #[should_panic = "invalid message send to -[CustomObject foo]: expected return to have type code 'I', but found '^v'"]
     fn test_get_integer_void() {
         let obj = test_utils::custom_object();

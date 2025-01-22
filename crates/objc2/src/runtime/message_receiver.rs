@@ -316,6 +316,11 @@ fn msg_send_check_class(
     args: &[crate::encode::Encoding],
     ret: &crate::encode::Encoding,
 ) {
+    if cfg!(feature = "disable-encoding-assertions") {
+        // These checks are disabled.
+        return;
+    }
+
     use crate::verify::{verify_method_signature, Inner, VerificationError};
 
     let err = if let Some(method) = cls.instance_method(sel) {

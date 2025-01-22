@@ -11,21 +11,15 @@ use crate::{util, NSUUID};
 impl UnwindSafe for NSUUID {}
 impl RefUnwindSafe for NSUUID {}
 
-/// The headers describe `initWithUUIDBytes:` and `getUUIDBytes:` as
-/// taking `uuid_t`, but something fishy is going on, in reality they
-/// expect a reference to these!
-///
-/// Hence we create this newtype to change the encoding.
 #[repr(transparent)]
 struct UuidBytes([u8; 16]);
 
 unsafe impl RefEncode for UuidBytes {
-    // Encoding depends on Foundation version, we hack it for now.
-    const ENCODING_REF: Encoding = if cfg!(target_arch = "aarch64") {
-        Encoding::String
-    } else {
-        Encoding::Array(16, &u8::ENCODING)
-    };
+    // Encoding actually depends on the instance class, `__NSConcreteUUID` has
+    // a different method encoding than `NSUUID`, the former takes a `char*`.
+    //
+    // This may also depend on the Foundation / OS version.
+    const ENCODING_REF: Encoding = Encoding::Array(16, &u8::ENCODING);
 }
 
 extern_methods!(
@@ -45,6 +39,13 @@ impl NSUUID {
     }
 
     /// Create a new `NSUUID` from the given bytes.
+    ///
+    /// NOTE: The headers describe `initWithUUIDBytes:` as taking `uuid_t`,
+    /// but their actual implementation may use something else.
+    ///
+    /// Thus, to use this method, you must currently disable encoding
+    /// verification using the `"disable-encoding-assertions"` Cargo feature
+    /// in `objc2`.
     ///
     ///
     /// # Example
@@ -70,6 +71,14 @@ impl NSUUID {
         Self::initWithUUIDString(Self::alloc(), string)
     }
 
+    /// Convert the UUID to an array.
+    ///
+    /// NOTE: The headers describe `getUUIDBytes:` as taking `uuid_t`, but
+    /// their actual implementation may use something else.
+    ///
+    /// Thus, to use this method, you must currently disable encoding
+    /// verification using the `"disable-encoding-assertions"` Cargo feature
+    /// in `objc2`.
     pub fn as_bytes(&self) -> [u8; 16] {
         let mut bytes = UuidBytes([0; 16]);
         self.getUUIDBytes(&mut bytes);

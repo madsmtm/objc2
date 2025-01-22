@@ -937,6 +937,9 @@ macro_rules! __class_inner {
 ///
 /// Panics if `debug_assertions` are enabled and the Objective-C method's
 /// encoding does not match the encoding of the given arguments and return.
+/// This behaviour can be tweaked with the `"relax-void-encoding"`,
+/// `"relax-sign-encoding"` or `"disable-encoding-assertions"` Cargo feature
+/// flags if it is causing you trouble.
 ///
 /// Finally, panics if the return type is specified as `Retained<_>`, but the
 /// method actually returned NULL. If this happens, you should change the

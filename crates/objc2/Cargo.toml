@@ -48,6 +48,21 @@ relax-void-encoding = []
 # instead of `UInt`.
 relax-sign-encoding = []
 
+# Fully disable debug assertions on invalid encodings.
+#
+# Sometimes, the method encoding registered with the runtime doesn't match the
+# encoding in the header. This happens for example in NSUUID methods, see:
+# https://github.com/madsmtm/objc2/issues/671
+#
+# Furthermore, sometimes a method may just not be visible to the runtime
+# before we actually send a message to it, see:
+# https://github.com/madsmtm/objc2/issues/645
+#
+# Ideally, `objc2`'s encoding checks should not encounter these issues, but
+# that is not the state we are in, so for now, this can be used to work around
+# them by disabling all encoding checks.
+disable-encoding-assertions = []
+
 # Enable deprecation of using `msg_send!` without a comma between arguments.
 unstable-msg-send-always-comma = []
 

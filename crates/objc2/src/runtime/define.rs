@@ -282,7 +282,7 @@ impl ClassBuilder {
 
         // Verify that, if the method is present on the superclass, that the
         // encoding is correct.
-        #[cfg(debug_assertions)]
+        #[cfg(all(debug_assertions, not(feature = "disable-encoding-assertions")))]
         if let Some(superclass) = self.superclass() {
             if let Some(method) = superclass.instance_method(sel) {
                 if let Err(err) = crate::verify::verify_method_signature(method, enc_args, enc_ret)
@@ -347,7 +347,7 @@ impl ClassBuilder {
 
         // Verify that, if the method is present on the superclass, that the
         // encoding is correct.
-        #[cfg(debug_assertions)]
+        #[cfg(all(debug_assertions, not(feature = "disable-encoding-assertions")))]
         if let Some(superclass) = self.superclass() {
             if let Some(method) = superclass.class_method(sel) {
                 if let Err(err) = crate::verify::verify_method_signature(method, enc_args, enc_ret)
@@ -681,7 +681,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        debug_assertions,
+        all(debug_assertions, not(feature = "disable-encoding-assertions")),
         should_panic = "defined invalid method -[TestClassBuilderInvalidMethod foo]: expected return to have type code 'I', but found 's'"
     )]
     fn invalid_method() {
@@ -699,7 +699,11 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        all(debug_assertions, not(feature = "relax-sign-encoding")),
+        all(
+            debug_assertions,
+            not(feature = "disable-encoding-assertions"),
+            not(feature = "relax-sign-encoding")
+        ),
         should_panic = "defined invalid method +[TestClassBuilderInvalidClassMethod classFoo]: expected return to have type code 'I', but found 'i'"
     )]
     fn invalid_class_method() {

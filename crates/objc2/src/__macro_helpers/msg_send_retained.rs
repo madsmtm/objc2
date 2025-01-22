@@ -656,10 +656,6 @@ mod tests {
     #[test]
     #[should_panic = "tried to initialize ivars after they were already initialized"]
     #[cfg_attr(not(debug_assertions), ignore = "only checked with debug assertions")]
-    #[cfg_attr(
-        debug_assertions,
-        ignore = "panicking in `init` requires that we emit the function as `C-unwind`"
-    )]
     fn test_super_init_not_initialized() {
         let obj = RcTestObject::alloc().set_ivars(());
         let _: Retained<RcTestObject> =

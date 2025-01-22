@@ -339,7 +339,7 @@ impl Ivar {
 
     #[inline]
     pub(crate) fn debug_assert_encoding(&self, _expected: &Encoding) {
-        #[cfg(debug_assertions)]
+        #[cfg(all(debug_assertions, not(feature = "disable-encoding-assertions")))]
         {
             let encoding = self.type_encoding();
             let encoding = encoding.to_str().expect("encoding must be UTF-8");
@@ -369,7 +369,8 @@ impl Ivar {
     /// # Panics
     ///
     /// Panics when `debug_assertions` are enabled if the type encoding of the
-    /// ivar differs from the type encoding of `T`.
+    /// ivar differs from the type encoding of `T`. This can be disabled with
+    /// the `"disable-encoding-assertions"` Cargo feature flag.
     ///
     ///
     /// # Safety
@@ -407,7 +408,8 @@ impl Ivar {
     /// # Panics
     ///
     /// Panics when `debug_assertions` are enabled if the type encoding of the
-    /// ivar differs from the type encoding of `T`.
+    /// ivar differs from the type encoding of `T`. This can be disabled with
+    /// the `"disable-encoding-assertions"` Cargo feature flag.
     ///
     ///
     /// # Safety
@@ -434,7 +436,8 @@ impl Ivar {
     /// # Panics
     ///
     /// Panics when `debug_assertions` are enabled if the type encoding of the
-    /// ivar differs from the type encoding of `T`.
+    /// ivar differs from the type encoding of `T`. This can be disabled with
+    /// the `"disable-encoding-assertions"` Cargo feature flag.
     ///
     ///
     /// # Safety
@@ -1717,7 +1720,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        debug_assertions,
+        all(debug_assertions, not(feature = "disable-encoding-assertions")),
         should_panic = "wrong encoding. Tried to retrieve ivar with encoding I, but the encoding of the given type was C"
     )]
     fn test_object_ivar_wrong_type() {
