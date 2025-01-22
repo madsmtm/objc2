@@ -11,6 +11,10 @@ visionos = "1.0"
 # Duplicated property
 class.MTLRasterizationRateLayerDescriptor.methods.sampleCount.skipped = true
 
+# Gets emitted as an out pointer, but the pointer is actually an array.
+# Swift also skips this.
+class.MTLRasterizationRateMapDescriptor.methods."rasterizationRateMapDescriptorWithScreenSize:layerCount:layers:".skipped = true
+
 # Needs dispatch
 class.MTLSharedEventListener.methods."initWithDispatchQueue:".skipped = true
 class.MTLSharedEventListener.methods.dispatchQueue.skipped = true
