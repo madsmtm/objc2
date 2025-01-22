@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.3.0 - 2025-01-22
+
 ### Added
 * Added `NSData::to_vec` and `NSData::iter` helper methods.
 * Added `Eq` implementation for `NSValue` and subclasses.

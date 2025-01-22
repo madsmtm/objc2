@@ -18,9 +18,9 @@ workspace = true
 [dependencies]
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false }
-objc2-metal-performance-shaders = { path = "../objc2-metal-performance-shaders", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
+objc2-metal = { path = "../objc2-metal", version = "0.3.0", default-features = false }
+objc2-metal-performance-shaders = { path = "../objc2-metal-performance-shaders", version = "0.3.0", default-features = false, optional = true, features = [
     "MPSCommandBuffer",
     "MPSCore",
     "MPSCoreTypes",

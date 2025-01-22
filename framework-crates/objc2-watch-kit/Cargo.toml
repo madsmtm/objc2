@@ -19,28 +19,28 @@ workspace = true
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
-objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.2.2", default-features = false, optional = true, features = ["CKShareMetadata"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.3.0", default-features = false, optional = true, features = ["CKShareMetadata"] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "CFCGTypes",
     "CFDate",
     "objc2",
 ] }
-objc2-core-location = { path = "../objc2-core-location", version = "0.2.2", default-features = false, optional = true, features = ["CLLocation"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
-objc2-health-kit = { path = "../objc2-health-kit", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-location = { path = "../objc2-core-location", version = "0.3.0", default-features = false, optional = true, features = ["CLLocation"] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
+objc2-health-kit = { path = "../objc2-health-kit", version = "0.3.0", default-features = false, optional = true, features = [
     "HKActivitySummary",
     "HKWorkoutConfiguration",
 ] }
-objc2-home-kit = { path = "../objc2-home-kit", version = "0.2.2", default-features = false, optional = true, features = ["HMCameraSource"] }
-objc2-map-kit = { path = "../objc2-map-kit", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-home-kit = { path = "../objc2-home-kit", version = "0.3.0", default-features = false, optional = true, features = ["HMCameraSource"] }
+objc2-map-kit = { path = "../objc2-map-kit", version = "0.3.0", default-features = false, optional = true, features = [
     "MKGeometry",
     "objc2-core-location",
 ] }
-objc2-scene-kit = { path = "../objc2-scene-kit", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-scene-kit = { path = "../objc2-scene-kit", version = "0.3.0", default-features = false, optional = true, features = [
     "SCNScene",
     "SCNSceneRenderer",
 ] }
-objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.3.0", default-features = false, optional = true, features = [
     "UIAccessibilityConstants",
     "UIColor",
     "UIGeometry",
@@ -48,7 +48,7 @@ objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.2.2", default-features =
     "UILocalNotification",
     "objc2-core-foundation",
 ] }
-objc2-user-notifications = { path = "../objc2-user-notifications", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-user-notifications = { path = "../objc2-user-notifications", version = "0.3.0", default-features = false, optional = true, features = [
     "UNNotification",
     "UNNotificationAction",
 ] }

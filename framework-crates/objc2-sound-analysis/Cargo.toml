@@ -18,18 +18,18 @@ workspace = true
 [dependencies]
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
-objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.3.0", default-features = false, optional = true, features = [
     "AVAudioBuffer",
     "AVAudioFormat",
     "AVAudioTypes",
 ] }
-objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-media = { path = "../objc2-core-media", version = "0.3.0", default-features = false, optional = true, features = [
     "CMTime",
     "CMTimeRange",
     "objc2",
 ] }
-objc2-core-ml = { path = "../objc2-core-ml", version = "0.2.2", default-features = false, optional = true, features = ["MLModel"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
+objc2-core-ml = { path = "../objc2-core-ml", version = "0.3.0", default-features = false, optional = true, features = ["MLModel"] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

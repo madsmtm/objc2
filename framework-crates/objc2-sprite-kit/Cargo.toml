@@ -19,24 +19,24 @@ workspace = true
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
-objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.2.2", default-features = false, optional = true, features = ["AVPlayer"] }
-objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.3.0", default-features = false, optional = true, features = ["AVPlayer"] }
+objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.3.0", default-features = false, optional = true, features = [
     "AVAudioEngine",
     "AVAudioNode",
 ] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "CFCGTypes",
     "objc2",
 ] }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.3.0", default-features = false, optional = true, features = [
     "CGImage",
     "CGPath",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features = false, optional = true, features = [
     "NSAccessibilityProtocols",
     "NSAnimation",
     "NSAppearance",
@@ -51,8 +51,8 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.2", default-features
 ] }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
-objc2-core-image = { path = "../objc2-core-image", version = "0.2.2", default-features = false, optional = true, features = ["CIFilter"] }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-image = { path = "../objc2-core-image", version = "0.3.0", default-features = false, optional = true, features = ["CIFilter"] }
+objc2-metal = { path = "../objc2-metal", version = "0.3.0", default-features = false, optional = true, features = [
     "MTLCommandBuffer",
     "MTLCommandEncoder",
     "MTLCommandQueue",

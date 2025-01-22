@@ -20,29 +20,29 @@ bitflags = { version = "2.5.0", default-features = false, optional = true, featu
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
-objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "AVMediaFormat",
     "AVVideoSettings",
 ] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "CFBase",
     "CFCGTypes",
     "objc2",
 ] }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.3.0", default-features = false, optional = true, features = [
     "CGColor",
     "CGDirectDisplay",
     "CGImage",
     "CGWindow",
     "objc2",
 ] }
-objc2-core-media = { path = "../objc2-core-media", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-media = { path = "../objc2-core-media", version = "0.3.0", default-features = false, optional = true, features = [
     "CMSampleBuffer",
     "CMSync",
     "CMTime",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

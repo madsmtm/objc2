@@ -19,11 +19,11 @@ workspace = true
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, features = [
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, features = [
     "CFBase",
     "CFError",
 ] }
-objc2-security = { path = "../objc2-security", version = "0.2.2", default-features = false, optional = true, features = ["Authorization"] }
+objc2-security = { path = "../objc2-security", version = "0.3.0", default-features = false, optional = true, features = ["Authorization"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

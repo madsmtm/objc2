@@ -19,11 +19,11 @@ workspace = true
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "CFBase",
     "CFDictionary",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "NSDictionary",
     "NSObject",
     "NSString",

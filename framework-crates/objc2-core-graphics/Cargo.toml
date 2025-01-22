@@ -20,11 +20,11 @@ bitflags = { version = "2.5.0", default-features = false, optional = true, featu
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
-objc2-io-surface = { path = "../objc2-io-surface", version = "0.2.2", default-features = false, optional = true, features = ["IOSurfaceRef"] }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true, features = ["MTLDevice"] }
+objc2-io-surface = { path = "../objc2-io-surface", version = "0.3.0", default-features = false, optional = true, features = ["IOSurfaceRef"] }
+objc2-metal = { path = "../objc2-metal", version = "0.3.0", default-features = false, optional = true, features = ["MTLDevice"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

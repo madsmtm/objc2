@@ -20,25 +20,25 @@ bitflags = { version = "2.5.0", default-features = false, optional = true, featu
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "CFBase",
     "CFCGTypes",
     "CFDate",
     "objc2",
 ] }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.3.0", default-features = false, optional = true, features = [
     "CGColor",
     "CGColorSpace",
     "CGContext",
     "CGPath",
     "objc2",
 ] }
-objc2-core-video = { path = "../objc2-core-video", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-core-video = { path = "../objc2-core-video", version = "0.3.0", default-features = false, optional = true, features = [
     "CVBase",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = ["alloc"] }
-objc2-metal = { path = "../objc2-metal", version = "0.2.2", default-features = false, optional = true, features = [
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
+objc2-metal = { path = "../objc2-metal", version = "0.3.0", default-features = false, optional = true, features = [
     "MTLAllocation",
     "MTLDevice",
     "MTLDrawable",

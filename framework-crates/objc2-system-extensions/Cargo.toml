@@ -17,7 +17,7 @@ workspace = true
 
 [dependencies]
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false, features = [
+objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = [
     "NSArray",
     "NSError",
     "NSString",
