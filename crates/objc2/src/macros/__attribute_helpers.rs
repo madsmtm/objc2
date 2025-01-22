@@ -50,7 +50,7 @@ macro_rules! __extract_and_apply_cfg_attributes {
 /// Extract our custom method attributes, and send it to another macro.
 ///
 /// Handles:
-/// - `#[method(...)]` or `#[method_id(...)]`.
+/// - `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`.
 /// - `#[unsafe(method_family(...))]`.
 /// - `#[optional]`.
 ///
@@ -67,7 +67,7 @@ macro_rules! __extract_and_apply_cfg_attributes {
 /// Further arguments are passed on to the output macro, with the following
 /// arguments appended to it:
 /// 1. The `method` or `method_id` attribute.
-///    (#[$method_or_method_id:ident($($sel:tt)*)])
+///    ($method_or_method_id:ident($($sel:tt)*))
 ///
 /// 2. The requested method family, if any was present.
 ///
@@ -126,13 +126,13 @@ macro_rules! __extract_method_attributes_inner {
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__macro_helpers::compile_error!("must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`");
+        $crate::__macro_helpers::compile_error!("must specify the desired selector using `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`");
 
         // Try to output anyhow, for better UI.
         $out_macro! {
             $($out_args)*
             // Append attributes to the end of the macro arguments
-            (#[method(invalidSelector)])
+            (method(invalidSelector))
             ($($method_family)*)
             ($($optional)*)
             ($($attr_method)*)
@@ -167,10 +167,10 @@ macro_rules! __extract_method_attributes_inner {
         }
     };
 
-    // `method` attribute
+    // `unsafe(method)` attribute
     {
         (
-            #[method($($parsed:tt)*)]
+            #[unsafe(method($($parsed:tt)*))]
             $($rest:tt)*
         )
 
@@ -188,7 +188,77 @@ macro_rules! __extract_method_attributes_inner {
             ($($rest)*)
 
             // Add method attribute
-            (#[method($($parsed)*)])
+            (method($($parsed)*))
+            ($($method_family)*)
+            ($($optional)*)
+            ($($attr_method)*)
+            ($($attr_use)*)
+
+            ($out_macro)
+            $($out_args)*
+        }
+    };
+
+    // `method` attribute
+    {
+        (
+            #[method($($parsed:tt)*)]
+            $($rest:tt)*
+        )
+
+        ($($method:tt)*)
+        ($($method_family:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
+
+        ($out_macro:path)
+        $($out_args:tt)*
+    } => {
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
+            "The #[method] attribute is now unsafe, and must be used as #[unsafe(method(",
+            $crate::__macro_helpers::stringify!($($parsed)*),
+            "))]",
+        ));
+
+        // Continue for better UI.
+        $crate::__handle_duplicate!("method`/`method_id"; $($method)*);
+        $crate::__extract_method_attributes_inner! {
+            ($($rest)*)
+
+            (method($($parsed)*))
+            ($($method_family)*)
+            ($($optional)*)
+            ($($attr_method)*)
+            ($($attr_use)*)
+
+            ($out_macro)
+            $($out_args)*
+        }
+    };
+
+    // `unsafe(method_id)` attribute
+    {
+        (
+            #[unsafe(method_id($($parsed:tt)*))]
+            $($rest:tt)*
+        )
+
+        ($($method:tt)*)
+        ($($method_family:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
+
+        ($out_macro:path)
+        $($out_args:tt)*
+    } => {
+        $crate::__handle_duplicate!("method`/`method_id"; $($method)*);
+        $crate::__extract_method_attributes_inner! {
+            ($($rest)*)
+
+            // Add method_id attribute
+            (method_id($($parsed)*))
             ($($method_family)*)
             ($($optional)*)
             ($($attr_method)*)
@@ -215,12 +285,18 @@ macro_rules! __extract_method_attributes_inner {
         ($out_macro:path)
         $($out_args:tt)*
     } => {
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
+            "The #[method_id] attribute is now unsafe, and must be used as #[unsafe(method_id(",
+            $crate::__macro_helpers::stringify!($($parsed)*),
+            "))]",
+        ));
+
+        // Continue for better UI.
         $crate::__handle_duplicate!("method`/`method_id"; $($method)*);
         $crate::__extract_method_attributes_inner! {
             ($($rest)*)
 
-            // Add method_id attribute
-            (#[method_id($($parsed)*)])
+            (method_id($($parsed)*))
             ($($method_family)*)
             ($($optional)*)
             ($($attr_method)*)
@@ -231,7 +307,7 @@ macro_rules! __extract_method_attributes_inner {
         }
     };
 
-    // `method_family` attribute
+    // `unsafe(method_family)` attribute
     {
         (
             #[unsafe(method_family = $($parsed:tt)+)]
@@ -252,6 +328,43 @@ macro_rules! __extract_method_attributes_inner {
 
             ($($method)*)
             // Add method_family attribute
+            ($($parsed)+)
+            ($($optional)*)
+            ($($attr_method)*)
+            ($($attr_use)*)
+
+            ($out_macro)
+            $($out_args)*
+        }
+    };
+
+    // `method_family` attribute
+    {
+        (
+            #[method_family = $($parsed:tt)+]
+            $($rest:tt)*
+        )
+        ($($method:tt)*)
+        ($($method_family:tt)*)
+        ($($optional:tt)*)
+        ($($attr_method:tt)*)
+        ($($attr_use:tt)*)
+
+        ($out_macro:path)
+        $($out_args:tt)*
+    } => {
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
+            "The #[method_family] attribute is unsafe, and must be used as #[unsafe(method_family = ",
+            $crate::__macro_helpers::stringify!($($parsed)*),
+            ")]",
+        ));
+
+        // Continue for better UI.
+        $crate::__handle_duplicate!("method_family"; $($method_family)*);
+        $crate::__extract_method_attributes_inner! {
+            ($($rest)*)
+
+            ($($method)*)
             ($($parsed)+)
             ($($optional)*)
             ($($attr_method)*)

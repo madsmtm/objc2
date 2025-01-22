@@ -141,13 +141,13 @@ extern_methods!(
     unsafe impl Exception {
         // Only safe on NSException
         // Returns NSString
-        #[method(name)]
+        #[unsafe(method(name))]
         #[unsafe(method_family = none)]
         unsafe fn name(&self) -> Option<Retained<NSObject>>;
 
         // Only safe on NSException
         // Returns NSString
-        #[method(reason)]
+        #[unsafe(method(reason))]
         #[unsafe(method_family = none)]
         unsafe fn reason(&self) -> Option<Retained<NSObject>>;
     }

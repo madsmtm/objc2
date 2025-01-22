@@ -15,7 +15,7 @@ note: required by a bound in `NSApplicationDelegate`
   | |     pub unsafe trait NSApplicationDelegate: NSObjectProtocol + MainThreadOnly {
   | |                      --------------------- required by a bound in this trait
   | |         #[optional]
-  | |         #[method(applicationDidFinishLaunching:)]
+  | |         #[unsafe(method(applicationDidFinishLaunching:))]
 ... |
   | | );
   | |_^ required by this bound in `NSApplicationDelegate`

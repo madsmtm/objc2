@@ -15,8 +15,8 @@ LPC0_0:
 	.p2align	2
 	.code	32
 _dyn_call:
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67-(LPC1_0+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67-(LPC1_0+8))
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC1_0+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC1_0+8))
 LPC1_0:
 	ldr	r1, [pc, r1]
 	b	_objc_msgSend
@@ -28,8 +28,8 @@ _dyn_consume:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	mov	r4, r0
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67-(LPC2_0+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67-(LPC2_0+8))
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC2_0+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC2_0+8))
 LPC2_0:
 	ldr	r1, [pc, r1]
 	bl	_objc_msgSend
@@ -42,20 +42,20 @@ l_anon.[ID].0:
 	.ascii	"MyProtocol"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_b79c3c5185d5ed67
-L_OBJC_METH_VAR_NAME_b79c3c5185d5ed67:
+	.globl	L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac
+L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac:
 	.asciz	"aMethod"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67
+	.globl	L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67:
-	.long	L_OBJC_METH_VAR_NAME_b79c3c5185d5ed67
+L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
+	.long	L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_b79c3c5185d5ed67
+	.globl	L_OBJC_IMAGE_INFO_a3f3690bc9f113ac
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_b79c3c5185d5ed67:
+L_OBJC_IMAGE_INFO_a3f3690bc9f113ac:
 	.asciz	"\000\000\000\000@\000\000"
 
 .subsections_via_symbols

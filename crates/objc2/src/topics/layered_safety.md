@@ -214,10 +214,10 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSData {
-        #[method(new)]
+        #[unsafe(method(new))]
         pub fn new() -> Retained<Self>;
 
-        #[method(length)]
+        #[unsafe(method(length))]
         pub fn length(&self) -> NSUInteger;
     }
 );

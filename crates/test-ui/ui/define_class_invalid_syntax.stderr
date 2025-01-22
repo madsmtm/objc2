@@ -1,4 +1,4 @@
-error: must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`
+error: must specify the desired selector using `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -130,7 +130,7 @@ error: expected one of `->`, `where`, or `{`, found `<eof>`
   |         $_associated_item:item
   |         ---------------------- while parsing argument for this `item` macro fragment
 
-error: `#[method_id(alloc)]` is not supported. Use `#[method(alloc)]` and do the memory management yourself
+error: `#[unsafe(method_id(alloc))]` is not supported. Use `#[unsafe(method(alloc))]` and do the memory management yourself
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -143,7 +143,7 @@ error: `#[method_id(alloc)]` is not supported. Use `#[method(alloc)]` and do the
   |
   = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: `#[method_id(retain)]` is not supported. Use `#[method(retain)]` and do the memory management yourself
+error: `#[unsafe(method_id(retain))]` is not supported. Use `#[unsafe(method(retain))]` and do the memory management yourself
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -156,7 +156,7 @@ error: `#[method_id(retain)]` is not supported. Use `#[method(retain)]` and do t
   |
   = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: `#[method_id(release)]` is not supported. Use `#[method(release)]` and do the memory management yourself
+error: `#[unsafe(method_id(release))]` is not supported. Use `#[unsafe(method(release))]` and do the memory management yourself
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -169,7 +169,7 @@ error: `#[method_id(release)]` is not supported. Use `#[method(release)]` and do
   |
   = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: `#[method_id(autorelease)]` is not supported. Use `#[method(autorelease)]` and do the memory management yourself
+error: `#[unsafe(method_id(autorelease))]` is not supported. Use `#[unsafe(method(autorelease))]` and do the memory management yourself
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -182,7 +182,7 @@ error: `#[method_id(autorelease)]` is not supported. Use `#[method(autorelease)]
   |
   = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: `#[method_id(dealloc)]` is not supported. Implement `Drop` for the type instead
+error: `#[unsafe(method_id(dealloc))]` is not supported. Implement `Drop` for the type instead
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -195,7 +195,7 @@ error: `#[method_id(dealloc)]` is not supported. Implement `Drop` for the type i
   |
   = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: `#[method(dealloc)]` is not supported. Implement `Drop` for the type instead
+error: `#[unsafe(method(dealloc))]` is not supported. Implement `Drop` for the type instead
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -228,7 +228,7 @@ error: expected an item keyword
   |         $_associated_item:item
   |         ---------------------- while parsing argument for this `item` macro fragment
 
-error: must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`
+error: must specify the desired selector using `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -267,7 +267,7 @@ error: cannot specify the `method`/`method_id` attribute twice
   |
   = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: `#[method_id(...)]` must have a return type
+error: `#[unsafe(method_id(...))]` must have a return type
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(

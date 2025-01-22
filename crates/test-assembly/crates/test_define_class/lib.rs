@@ -19,30 +19,30 @@ define_class!(
 
     unsafe impl NoIvars {
         #[no_mangle]
-        #[method(classMethod)]
+        #[unsafe(method(classMethod))]
         fn get_class() -> &'static AnyClass {
             Self::class()
         }
 
         #[no_mangle]
-        #[method(method)]
+        #[unsafe(method(method))]
         fn method_simple(&self) {}
 
         #[no_mangle]
-        #[method(methodBool:)]
+        #[unsafe(method(methodBool:))]
         fn method_bool(&self, val: bool) -> bool {
             !val
         }
 
         #[no_mangle]
-        #[method_id(methodRetained)]
+        #[unsafe(method_id(methodRetained))]
         fn method_retained(&self) -> Option<Retained<NSObject>> {
             unsafe { msg_send![Self::class(), new] }
         }
 
         // Test that `objc_autoreleaseReturnValue` is tail-called
         #[no_mangle]
-        #[method_id(methodRetainedWithParam:)]
+        #[unsafe(method_id(methodRetainedWithParam:))]
         fn method_retained_with_param(&self, param: bool) -> Option<Retained<NSObject>> {
             // Intentionally create this outside condition
             let obj = NSObject::new();
@@ -58,7 +58,7 @@ define_class!(
 
     unsafe impl NSCopying for NoIvars {
         #[no_mangle]
-        #[method_id(copyWithZone:)]
+        #[unsafe(method_id(copyWithZone:))]
         fn copyWithZone(&self, _zone: *const NSZone) -> Option<Retained<Self>> {
             unsafe { msg_send![Self::class(), new] }
         }
@@ -83,7 +83,7 @@ define_class!(
 
     unsafe impl ForgetableIvars {
         #[no_mangle]
-        #[method_id(init)]
+        #[unsafe(method_id(init))]
         fn init_forgetable_ivars(this: Allocated<Self>) -> Option<Retained<Self>> {
             let this = this.set_ivars(ForgetableIvarsIvars { foo: 42, bar: 43 });
             unsafe { msg_send![super(this), init] }
@@ -117,7 +117,7 @@ define_class!(
 
     unsafe impl DropIvars {
         #[no_mangle]
-        #[method_id(init)]
+        #[unsafe(method_id(init))]
         fn init_drop_ivars(this: Allocated<Self>) -> Option<Retained<Self>> {
             let this = this.set_ivars(DropIvarsIvars {
                 obj: NSObject::new(),

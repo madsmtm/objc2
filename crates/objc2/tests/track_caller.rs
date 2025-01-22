@@ -207,7 +207,7 @@ define_class!(
     struct PanickingClass;
 
     unsafe impl PanickingClass {
-        #[method(panic)]
+        #[unsafe(method(panic))]
         fn _panic() -> *mut Self {
             panic!("panic in PanickingClass")
         }

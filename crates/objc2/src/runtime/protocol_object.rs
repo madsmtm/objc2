@@ -202,40 +202,40 @@ mod tests {
 
     extern_protocol!(
         unsafe trait Foo {
-            #[method(foo)]
+            #[unsafe(method(foo))]
             fn foo_class();
 
-            #[method(foo)]
+            #[unsafe(method(foo))]
             fn foo_instance(&self);
         }
     );
 
     extern_protocol!(
         unsafe trait Bar: NSObjectProtocol {
-            #[method(bar)]
+            #[unsafe(method(bar))]
             fn bar_class();
 
-            #[method(bar)]
+            #[unsafe(method(bar))]
             fn bar_instance(&self);
         }
     );
 
     extern_protocol!(
         unsafe trait FooBar: Foo + Bar {
-            #[method(foobar)]
+            #[unsafe(method(foobar))]
             fn foobar_class();
 
-            #[method(foobar)]
+            #[unsafe(method(foobar))]
             fn foobar_instance(&self);
         }
     );
 
     extern_protocol!(
         unsafe trait FooFooBar: Foo + FooBar {
-            #[method(foofoobar)]
+            #[unsafe(method(foofoobar))]
             fn foofoobar_class();
 
-            #[method(foofoobar)]
+            #[unsafe(method(foofoobar))]
             fn foofoobar_instance(&self);
         }
     );
@@ -256,7 +256,7 @@ mod tests {
 
     extern_methods!(
         unsafe impl DummyClass {
-            #[method(new)]
+            #[unsafe(method(new))]
             fn new() -> Retained<Self>;
         }
     );

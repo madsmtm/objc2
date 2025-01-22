@@ -3,7 +3,7 @@ error: number of arguments in function and selector did not match
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method()]
+  | |         #[unsafe(method())]
   | |         fn no_selector_class();
   | |     }
   | | );
@@ -16,7 +16,7 @@ error: number of arguments in function and selector did not match
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method()]
+  | |         #[unsafe(method())]
   | |         fn no_selector_self(&self);
   | |     }
   | | );
@@ -29,7 +29,7 @@ error: number of arguments in function and selector did not match
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(_)]
+  | |         #[unsafe(method(_))]
   | |         fn underscore(&self);
   | |     }
   | | );
@@ -42,7 +42,7 @@ error: number of arguments in function and selector did not match
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(ab:c)]
+  | |         #[unsafe(method(ab:c))]
   | |         fn missing_colon(&self);
   | |     }
   | | );

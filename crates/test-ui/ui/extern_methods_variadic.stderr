@@ -3,7 +3,7 @@ error: variadic methods are not yet supported
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(a:)]
+  | |         #[unsafe(method(a:))]
   | |         fn variadic_class(arg: i32, arg2: ...);
   | |     }
   | | );
@@ -16,7 +16,7 @@ error: variadic methods are not yet supported
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(a:)]
+  | |         #[unsafe(method(a:))]
   | |         fn variadic_instance(&self, arg: i32, ...);
   | |     }
   | | );
@@ -29,7 +29,7 @@ error: variadic methods are not yet supported
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(a:_)]
+  | |         #[unsafe(method(a:_))]
   | |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
   | |     }
   | | );
@@ -60,7 +60,7 @@ error[E0658]: C-variadic functions are unstable
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(a:)]
+  | |         #[unsafe(method(a:))]
   | |         fn variadic_class(arg: i32, arg2: ...);
   | |     }
   | | );
@@ -75,7 +75,7 @@ error[E0658]: C-variadic functions are unstable
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(a:)]
+  | |         #[unsafe(method(a:))]
   | |         fn variadic_instance(&self, arg: i32, ...);
   | |     }
   | | );
@@ -90,7 +90,7 @@ error[E0658]: C-variadic functions are unstable
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(a:_)]
+  | |         #[unsafe(method(a:_))]
   | |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
   | |     }
   | | );

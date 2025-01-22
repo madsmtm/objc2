@@ -65,7 +65,7 @@ define_class!(
     unsafe impl AppDelegate {
         // Called by `NSApplicationMain`, `UIApplicationMain`
         // or our `msg_send![AppDelegate::class(), new]`.
-        #[method_id(init)]
+        #[unsafe(method_id(init))]
         fn init(this: Allocated<Self>) -> Retained<Self> {
             let this = this.set_ivars(AppState::default());
             unsafe { msg_send![super(this), init] }
@@ -75,14 +75,14 @@ define_class!(
     unsafe impl NSObjectProtocol for AppDelegate {}
 
     unsafe impl DelegateProtocol for AppDelegate {
-        #[method(applicationDidFinishLaunching:)]
+        #[unsafe(method(applicationDidFinishLaunching:))]
         fn did_finish_launching(&self, _notification: &NSNotification) {
             println!("did finish launching!");
 
             // Do UI initialization in here, such as creating windows, views, etc.
         }
 
-        #[method(applicationWillTerminate:)]
+        #[unsafe(method(applicationWillTerminate:))]
         fn will_terminate(&self, _notification: &NSNotification) {
             println!("will terminate!");
 

@@ -403,7 +403,7 @@ mod tests {
 
         extern_methods!(
             unsafe impl RcTestObject {
-                #[method(init)]
+                #[unsafe(method(init))]
                 fn init_with_self(self: Allocated<Self>) -> Retained<Self>;
             }
         );

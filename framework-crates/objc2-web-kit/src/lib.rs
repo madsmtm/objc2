@@ -34,7 +34,7 @@ extern_methods!(
     #[cfg(feature = "WKNavigationAction")]
     unsafe impl WKNavigationAction {
         #[cfg(feature = "WKFrameInfo")]
-        #[method(sourceFrame)]
+        #[unsafe(method(sourceFrame))]
         pub unsafe fn sourceFrame(&self) -> Option<objc2::rc::Retained<WKFrameInfo>>;
     }
 );

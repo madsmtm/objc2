@@ -504,7 +504,7 @@ mod tests {
             struct ImplsDrop;
 
             unsafe impl ImplsDrop {
-                #[method_id(init)]
+                #[unsafe(method_id(init))]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     unsafe { msg_send![super(this.set_ivars(())), init] }
                 }
@@ -538,7 +538,7 @@ mod tests {
             struct IvarsImplDrop;
 
             unsafe impl IvarsImplDrop {
-                #[method_id(init)]
+                #[unsafe(method_id(init))]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     unsafe { msg_send![super(this.set_ivars(IvarThatImplsDrop)), init] }
                 }
@@ -566,7 +566,7 @@ mod tests {
             struct BothIvarsAndTypeImplsDrop;
 
             unsafe impl BothIvarsAndTypeImplsDrop {
-                #[method_id(init)]
+                #[unsafe(method_id(init))]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     unsafe { msg_send![super(this.set_ivars(IvarThatImplsDrop)), init] }
                 }
@@ -636,7 +636,7 @@ mod tests {
             struct IvarZst;
 
             unsafe impl IvarZst {
-                #[method_id(init)]
+                #[unsafe(method_id(init))]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     unsafe { msg_send![super(this.set_ivars(Cell::new(Ivar))), init] }
                 }
@@ -699,7 +699,7 @@ mod tests {
             struct RcIvar;
 
             unsafe impl RcIvar {
-                #[method_id(init)]
+                #[unsafe(method_id(init))]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     let this = this.set_ivars(Cell::new(Some(RcTestObject::new())));
                     unsafe { msg_send![super(this), init] }
@@ -759,7 +759,7 @@ mod tests {
             struct RcIvarSubclass;
 
             unsafe impl RcIvarSubclass {
-                #[method_id(init)]
+                #[unsafe(method_id(init))]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
                     let this = this.set_ivars(RcIvarSubclassIvars {
                         int: Cell::new(42),

@@ -45,7 +45,7 @@ define_class!(
     struct MyObserver;
 
     unsafe impl MyObserver {
-        #[method(observeValueForKeyPath:ofObject:change:context:)]
+        #[unsafe(method(observeValueForKeyPath:ofObject:change:context:))]
         fn observe_value(
             &self,
             _key_path: Option<&NSString>,

@@ -19,7 +19,7 @@ macro_rules! methods {
             extern_methods!(
                 #[allow(non_local_definitions)]
                 unsafe impl TestSimdReturn {
-                    #[method($name)]
+                    #[unsafe(method($name))]
                     fn $name() -> $ty;
                 }
             );

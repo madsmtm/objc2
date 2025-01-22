@@ -10,7 +10,7 @@ extern_protocol!(
     #[allow(clippy::missing_safety_doc)]
     unsafe trait MyProtocol {
         #[allow(non_snake_case)]
-        #[method(aMethod)]
+        #[unsafe(method(aMethod))]
         fn aMethod(&self);
     }
 );

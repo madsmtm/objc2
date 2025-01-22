@@ -98,7 +98,7 @@ macro_rules! __method_msg_send {
         ()
 
         // Notice the "+" here; we must make sure we actually _did_ parse
-        // a selector, and haven't just gotten an empty `#[method()]`.
+        // a selector, and haven't just gotten an empty `#[unsafe(method())]`.
         ($($sel_parsed:tt)+)
         ($($arg_parsed:tt)*)
         ($($method_family:tt)*)

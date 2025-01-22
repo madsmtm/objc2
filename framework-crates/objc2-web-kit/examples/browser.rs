@@ -67,7 +67,7 @@ define_class!(
 
     #[cfg(target_os = "macos")]
     unsafe impl NSApplicationDelegate for Delegate {
-        #[method(applicationDidFinishLaunching:)]
+        #[unsafe(method(applicationDidFinishLaunching:))]
         #[allow(non_snake_case)]
         unsafe fn applicationDidFinishLaunching(&self, _notification: &NSNotification) {
             let mtm = self.mtm();
@@ -252,7 +252,7 @@ define_class!(
 
     #[cfg(target_os = "macos")]
     unsafe impl NSControlTextEditingDelegate for Delegate {
-        #[method(control:textView:doCommandBySelector:)]
+        #[unsafe(method(control:textView:doCommandBySelector:))]
         #[allow(non_snake_case)]
         unsafe fn control_textView_doCommandBySelector(
             &self,
@@ -276,7 +276,7 @@ define_class!(
 
     #[cfg(target_os = "macos")] // TODO: Enable this on iOS
     unsafe impl WKNavigationDelegate for Delegate {
-        #[method(webView:didFinishNavigation:)]
+        #[unsafe(method(webView:didFinishNavigation:))]
         #[allow(non_snake_case)]
         unsafe fn webView_didFinishNavigation(
             &self,

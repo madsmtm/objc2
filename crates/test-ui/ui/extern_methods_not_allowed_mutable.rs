@@ -10,14 +10,14 @@ extern_class!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(test)]
+        #[unsafe(method(test))]
         fn test(&mut self);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(testRetained)]
+        #[unsafe(method(testRetained))]
         fn test_retained(&mut self) -> Retained<Self>;
     }
 );

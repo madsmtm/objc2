@@ -8,17 +8,17 @@ define_class!(
     struct CustomObject;
 
     unsafe impl CustomObject {
-        #[method(initTest)]
+        #[unsafe(method(initTest))]
         fn init_test(&mut self) -> &mut Self {
             unimplemented!()
         }
 
-        #[method(testMethod)]
+        #[unsafe(method(testMethod))]
         fn test_method(&mut self) {
             unimplemented!()
         }
 
-        #[method_id(testRetained)]
+        #[unsafe(method_id(testRetained))]
         fn test_retained(&mut self) -> Retained<Self> {
             unimplemented!()
         }

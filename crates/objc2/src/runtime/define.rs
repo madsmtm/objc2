@@ -903,7 +903,7 @@ mod tests {
 
         extern_methods!(
             unsafe impl Custom {
-                #[method(new)]
+                #[unsafe(method(new))]
                 fn new() -> Retained<Self>;
             }
         );

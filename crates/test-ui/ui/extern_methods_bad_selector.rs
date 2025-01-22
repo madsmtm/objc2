@@ -8,28 +8,28 @@ extern_class!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method()]
+        #[unsafe(method())]
         fn no_selector_class();
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method()]
+        #[unsafe(method())]
         fn no_selector_self(&self);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(_)]
+        #[unsafe(method(_))]
         fn underscore(&self);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(ab:c)]
+        #[unsafe(method(ab:c))]
         fn missing_colon(&self);
     }
 );

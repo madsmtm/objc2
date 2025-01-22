@@ -3,7 +3,7 @@ error: `#[optional]` is only supported in `extern_protocol!`
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(a)]
+  | |         #[unsafe(method(a))]
   | |         /// Doc comment
 ... |
   | | );

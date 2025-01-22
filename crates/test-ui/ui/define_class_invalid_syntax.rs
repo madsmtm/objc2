@@ -12,104 +12,104 @@ define_class!(
             unimplemented!()
         }
 
-        #[method(duplicateAttribute)]
-        #[method(duplicateAttribute)]
+        #[unsafe(method(duplicateAttribute))]
+        #[unsafe(method(duplicateAttribute))]
         fn test_duplicate_attribute() {}
 
-        #[method_id(duplicateAttributeDifferent)]
-        #[method(duplicateAttributeDifferent)]
+        #[unsafe(method_id(duplicateAttributeDifferent))]
+        #[unsafe(method(duplicateAttributeDifferent))]
         fn test_duplicate_attribute_different() {}
 
-        #[method_id(testMethodRetained)]
+        #[unsafe(method_id(testMethodRetained))]
         fn test_retained_no_return() {
             unimplemented!()
         }
 
-        #[method(testInvalidBody)]
+        #[unsafe(method(testInvalidBody))]
         fn test_invalid_body() {
             a -
         }
 
-        #[method(testPattern:)]
+        #[unsafe(method(testPattern:))]
         fn test_pattern((a, b): (u32, i32)) {
             unimplemented!()
         }
 
-        #[method(testSelf)]
+        #[unsafe(method(testSelf))]
         fn test_self(self) {
             unimplemented!()
         }
     }
 
     unsafe impl InvalidMethodDeclarations {
-        #[method(testPub)]
+        #[unsafe(method(testPub))]
         pub fn test_pub() {}
     }
 
     unsafe impl InvalidMethodDeclarations {
-        #[method(testConst)]
+        #[unsafe(method(testConst))]
         const fn test_const() {}
     }
 
     unsafe impl InvalidMethodDeclarations {
-        #[method(testAsync)]
+        #[unsafe(method(testAsync))]
         async fn test_async() {}
     }
 
     unsafe impl InvalidMethodDeclarations {
-        #[method(testExtern)]
+        #[unsafe(method(testExtern))]
         extern "C" fn test_extern() {}
     }
 
     unsafe impl InvalidMethodDeclarations {
-        #[method(testFnFn)]
+        #[unsafe(method(testFnFn))]
         fn fn test_fn_fn() {}
     }
 
     unsafe impl InvalidMethodDeclarations {
-        #[method(testGeneric)]
+        #[unsafe(method(testGeneric))]
         fn test_generic<T>() {}
     }
 
     unsafe impl InvalidMethodDeclarations {
-        #[method(testNoBody)]
+        #[unsafe(method(testNoBody))]
         fn test_no_body(&self);
     }
 
     unsafe impl InvalidMethodDeclarations {
-        #[method(testUnfinished)]
+        #[unsafe(method(testUnfinished))]
         fn test_unfinished()
     }
 
     unsafe impl InvalidMethodDeclarations {
-        #[method_id(alloc)]
+        #[unsafe(method_id(alloc))]
         fn test_retained_bad_selector1() -> Retained<Self> {
             unimplemented!()
         }
 
-        #[method_id(retain)]
+        #[unsafe(method_id(retain))]
         fn test_retained_bad_selector2() -> Retained<Self> {
             unimplemented!()
         }
 
-        #[method_id(release)]
+        #[unsafe(method_id(release))]
         fn test_retained_bad_selector3() -> Retained<Self> {
             unimplemented!()
         }
 
-        #[method_id(autorelease)]
+        #[unsafe(method_id(autorelease))]
         fn test_retained_bad_selector4() -> Retained<Self> {
             unimplemented!()
         }
 
-        #[method_id(dealloc)]
+        #[unsafe(method_id(dealloc))]
         fn test_retained_bad_selector5() -> Retained<Self> {
             unimplemented!()
         }
     }
 
     unsafe impl InvalidMethodDeclarations {
-        #[method(dealloc)]
+        #[unsafe(method(dealloc))]
         fn deallocMethod(&mut self) {}
     }
 

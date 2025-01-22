@@ -32,9 +32,9 @@
 ///
 /// This macro creates an `unsafe` trait with the specified methods. A default
 /// implementation of the method is generated based on the selector specified
-/// with `#[method(a:selector:)]`. Similar to [`extern_methods!`], you can use
-/// the `#[unsafe(method_family = ...)]` attribute to override the inferred
-/// method family.
+/// with `#[unsafe(method(a:selector:))]`. Similar to [`extern_methods!`], you
+/// can use the `#[unsafe(method_family = ...)]` attribute to override the
+/// inferred method family.
 ///
 /// Other protocols that this protocol conforms to / inherits can be specified
 /// as supertraits.
@@ -63,7 +63,9 @@
 /// - The specified name must be an existing Objective-C protocol.
 /// - The protocol must actually inherit/conform to the protocols specified
 ///   as supertraits.
-/// - The protocol's methods must be correctly specified.
+///
+/// Each method is annotated with `#[unsafe(method(...))]`, where you are
+/// responsible for ensuring that the declaration is correct.
 ///
 /// While the following are required when implementing the `unsafe` trait for
 /// a new type:
@@ -106,14 +108,14 @@
 ///
 ///         // This method we mark as `unsafe`, since we aren't using the correct
 ///         // type for the completion handler
-///         #[method(loadDataWithTypeIdentifier:forItemProviderCompletionHandler:)]
+///         #[unsafe(method(loadDataWithTypeIdentifier:forItemProviderCompletionHandler:))]
 ///         unsafe fn loadData(
 ///             &self,
 ///             type_identifier: &NSString,
 ///             completion_handler: *mut c_void,
 ///         ) -> Option<Retained<NSProgress>>;
 ///
-///         #[method(writableTypeIdentifiersForItemProvider)]
+///         #[unsafe(method(writableTypeIdentifiersForItemProvider))]
 ///         fn writableTypeIdentifiersForItemProvider_class()
 ///             -> Retained<NSArray<NSString>>;
 ///
@@ -121,18 +123,18 @@
 ///         // `define_class!` would not need to implement them.
 ///
 ///         #[optional]
-///         #[method(writableTypeIdentifiersForItemProvider)]
+///         #[unsafe(method(writableTypeIdentifiersForItemProvider))]
 ///         fn writableTypeIdentifiersForItemProvider(&self)
 ///             -> Retained<NSArray<NSString>>;
 ///
 ///         #[optional]
-///         #[method(itemProviderVisibilityForRepresentationWithTypeIdentifier:)]
+///         #[unsafe(method(itemProviderVisibilityForRepresentationWithTypeIdentifier:))]
 ///         fn itemProviderVisibilityForRepresentation_class(
 ///             type_identifier: &NSString,
 ///         ) -> NSItemProviderRepresentationVisibility;
 ///
 ///         #[optional]
-///         #[method(itemProviderVisibilityForRepresentationWithTypeIdentifier:)]
+///         #[unsafe(method(itemProviderVisibilityForRepresentationWithTypeIdentifier:))]
 ///         fn itemProviderVisibilityForRepresentation(
 ///             &self,
 ///             type_identifier: &NSString,
@@ -339,7 +341,7 @@ macro_rules! __extern_protocol_method_out {
         ($($__params_prefix:tt)*)
         ($($params_rest:tt)*)
 
-        (#[$method_or_method_id:ident($($sel:tt)*)])
+        ($method_or_method_id:ident($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
@@ -379,7 +381,7 @@ macro_rules! __extern_protocol_method_out {
         ($($__params_prefix:tt)*)
         ($($params_rest:tt)*)
 
-        (#[$method_or_method_id:ident($($sel:tt)*)])
+        ($method_or_method_id:ident($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
@@ -415,11 +417,11 @@ macro_rules! __extern_protocol_method_id_deprecated {
     (method($($sel:tt)*)) => {};
     (method_id($($sel:tt)*)) => {{
         #[deprecated = $crate::__macro_helpers::concat!(
-            "using #[method_id(",
+            "using #[unsafe(method_id(",
             $crate::__macro_helpers::stringify!($($sel)*),
-            ")] inside extern_protocol! is deprecated.\nUse #[method(",
+            "))] inside extern_protocol! is deprecated.\nUse #[unsafe(method(",
             $crate::__macro_helpers::stringify!($($sel)*),
-            ")] instead",
+            "))] instead",
         )]
         #[inline]
         fn method_id() {}

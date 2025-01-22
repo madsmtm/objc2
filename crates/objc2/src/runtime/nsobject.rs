@@ -395,7 +395,7 @@ extern_methods!(
         /// [`init`][Self::init].
         ///
         /// [`alloc`]: AllocAnyThread::alloc
-        #[method(new)]
+        #[unsafe(method(new))]
         #[unsafe(method_family = new)]
         pub fn new() -> Retained<Self>;
 
@@ -414,11 +414,11 @@ extern_methods!(
         ///
         /// let obj = NSObject::init(NSObject::alloc());
         /// ```
-        #[method(init)]
+        #[unsafe(method(init))]
         #[unsafe(method_family = init)]
         pub fn init(this: Allocated<Self>) -> Retained<Self>;
 
-        #[method(doesNotRecognizeSelector:)]
+        #[unsafe(method(doesNotRecognizeSelector:))]
         #[unsafe(method_family = none)]
         fn doesNotRecognizeSelector_inner(&self, sel: Sel);
 

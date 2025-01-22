@@ -111,7 +111,7 @@ define_class!(
     struct Thrower;
 
     unsafe impl Thrower {
-        #[method(backtrace)]
+        #[unsafe(method(backtrace))]
         fn __backtrace() -> *mut c_void {
             let backtrace = backtrace::Backtrace::new();
             Box::into_raw(Box::new(backtrace)).cast()
@@ -121,7 +121,7 @@ define_class!(
 
 extern_methods!(
     unsafe impl Thrower {
-        #[method(backtrace)]
+        #[unsafe(method(backtrace))]
         fn backtrace() -> *mut c_void;
     }
 );

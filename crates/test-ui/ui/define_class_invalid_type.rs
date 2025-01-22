@@ -8,22 +8,22 @@ define_class!(
     struct CustomObject;
 
     unsafe impl CustomObject {
-        #[method(test1)]
+        #[unsafe(method(test1))]
         fn test1() -> Retained<Self> {
             unimplemented!()
         }
 
-        #[method(test2)]
+        #[unsafe(method(test2))]
         fn test2() -> Vec<()> {
             unimplemented!()
         }
 
-        #[method(test3)]
+        #[unsafe(method(test3))]
         fn test3(&self, arg: Box<u32>) {
             unimplemented!()
         }
 
-        #[method(test4)]
+        #[unsafe(method(test4))]
         fn test4(&self, arg: Self) {
             unimplemented!()
         }

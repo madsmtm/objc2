@@ -19,7 +19,7 @@ impl RefUnwindSafe for NSException {}
 
 extern_methods!(
     unsafe impl NSException {
-        #[method(raise)]
+        #[unsafe(method(raise))]
         unsafe fn raise_raw(&self);
     }
 );

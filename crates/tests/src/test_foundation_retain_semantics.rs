@@ -365,7 +365,7 @@ unsafe impl CopyingHelper for NSCopyingRcTestObject {
 
 extern_methods!(
     unsafe impl NSCopyingRcTestObject {
-        #[method(new)]
+        #[unsafe(method(new))]
         fn new() -> Retained<Self>;
     }
 );

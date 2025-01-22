@@ -14,9 +14,9 @@ Lloh1:
 	.p2align	2
 _dyn_call:
 Lloh2:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGE
 Lloh3:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67@PAGEOFF]
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGEOFF]
 	b	_objc_msgSend
 	.loh AdrpLdr	Lloh2, Lloh3
 
@@ -28,9 +28,9 @@ _dyn_consume:
 	add	x29, sp, #16
 	mov	x19, x0
 Lloh4:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67@PAGE
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGE
 Lloh5:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67@PAGEOFF]
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGEOFF]
 	bl	_objc_msgSend
 	mov	x0, x19
 	ldp	x29, x30, [sp, #16]
@@ -43,20 +43,20 @@ l_anon.[ID].0:
 	.ascii	"MyProtocol"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_b79c3c5185d5ed67
-L_OBJC_METH_VAR_NAME_b79c3c5185d5ed67:
+	.globl	L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac
+L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac:
 	.asciz	"aMethod"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67
+	.globl	L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_b79c3c5185d5ed67:
-	.quad	L_OBJC_METH_VAR_NAME_b79c3c5185d5ed67
+L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
+	.quad	L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_b79c3c5185d5ed67
+	.globl	L_OBJC_IMAGE_INFO_a3f3690bc9f113ac
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_b79c3c5185d5ed67:
+L_OBJC_IMAGE_INFO_a3f3690bc9f113ac:
 	.asciz	"\000\000\000\000@\000\000"
 
 .subsections_via_symbols

@@ -1,10 +1,10 @@
-error: use of deprecated function `MyObject::my_method::method_id`: using #[method_id(myMethod:)] inside extern_methods! is deprecated.
-       Use #[method(myMethod:)] instead
+error: use of deprecated function `MyObject::my_method::method_id`: using #[unsafe(method_id(myMethod:))] inside extern_methods! is deprecated.
+       Use #[unsafe(method(myMethod:))] instead
   --> ui/extern_methods_deprecated.rs
    |
    | / extern_methods!(
    | |     unsafe impl MyObject {
-   | |         #[method_id(myMethod:)]
+   | |         #[unsafe(method_id(myMethod:))]
    | |         fn my_method(param: i32) -> Retained<Self>;
    | |     }
    | | );

@@ -79,7 +79,7 @@ define_class!(
     // define the delegate methods for the `NSApplicationDelegate` protocol
     #[cfg(target_os = "macos")]
     unsafe impl NSApplicationDelegate for Delegate {
-        #[method(applicationDidFinishLaunching:)]
+        #[unsafe(method(applicationDidFinishLaunching:))]
         #[allow(non_snake_case)]
         unsafe fn applicationDidFinishLaunching(&self, _notification: &NSNotification) {
             let mtm = self.mtm();
@@ -172,7 +172,7 @@ define_class!(
     // define the delegate methods for the `MTKViewDelegate` protocol
     #[cfg(target_os = "macos")] // TODO: Support iOS
     unsafe impl MTKViewDelegate for Delegate {
-        #[method(drawInMTKView:)]
+        #[unsafe(method(drawInMTKView:))]
         #[allow(non_snake_case)]
         unsafe fn drawInMTKView(&self, mtk_view: &MTKView) {
             idcell!(command_queue <= self);
@@ -268,7 +268,7 @@ define_class!(
             command_buffer.commit();
         }
 
-        #[method(mtkView:drawableSizeWillChange:)]
+        #[unsafe(method(mtkView:drawableSizeWillChange:))]
         #[allow(non_snake_case)]
         unsafe fn mtkView_drawableSizeWillChange(&self, _view: &MTKView, _size: NSSize) {
             // println!("mtkView_drawableSizeWillChange");

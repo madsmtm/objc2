@@ -33,7 +33,7 @@ define_class!(
     struct MyTestObject;
 
     unsafe impl MyTestObject {
-        #[method_id(initWith:)]
+        #[unsafe(method_id(initWith:))]
         fn init(
             _this: Allocated<<Self as GetSameType>::SameType>,
             _param: <*const Self as GetSameType>::SameType,
@@ -41,18 +41,18 @@ define_class!(
             unimplemented!()
         }
 
-        #[method(isEqual:)]
+        #[unsafe(method(isEqual:))]
         fn is_equal(&self, _other: &Self) -> bool {
             unimplemented!()
         }
 
-        #[method_id(test4)]
+        #[unsafe(method_id(test4))]
         #[allow(unused_parens)]
         fn test4(_this: &<(Self) as GetSameType>::SameType) -> Retained<get_self!()> {
             unimplemented!()
         }
 
-        #[method_id(test5)]
+        #[unsafe(method_id(test5))]
         fn test5(&self) -> <Self as GetRetained>::RetainedType {
             unimplemented!()
         }

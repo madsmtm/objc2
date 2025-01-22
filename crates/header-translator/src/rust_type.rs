@@ -2404,7 +2404,7 @@ impl Ty {
 
         // As in `parse_property_return`, the nullability is not guaranteed by
         // the method, and can also fail in OOM situations, but that is
-        // handled by `#[method(...)]`
+        // handled by `#[unsafe(method(...))]`
         if default_nonnull {
             match &mut ty {
                 Self::Pointer { nullability, .. } => {
@@ -2512,8 +2512,8 @@ impl Ty {
         // can also fail in OOM situations, so we must still perform an unwrap
         // to be sure (Swift also uses forced unwrapping here).
         //
-        // This unwrap is done by `#[method(...)]` when we specify the return
-        // type as `Retained`.
+        // This unwrap is done by `#[unsafe(method(...))]` when we specify the
+        // return type as `Retained`.
         if is_copy {
             match &mut ty {
                 Self::Pointer { nullability, .. } => {

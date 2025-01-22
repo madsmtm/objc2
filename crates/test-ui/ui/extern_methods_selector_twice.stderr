@@ -3,8 +3,8 @@ error: cannot specify the `method`/`method_id` attribute twice
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(foo)]
-  | |         #[method(bar)]
+  | |         #[unsafe(method(foo))]
+  | |         #[unsafe(method(bar))]
 ... |
   | | );
   | |_^

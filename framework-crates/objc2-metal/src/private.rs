@@ -30,7 +30,7 @@ extern_methods!(
     #[cfg(feature = "MTLRenderPipeline")]
     unsafe impl MTLRenderPipelineReflection {
         #[cfg(feature = "MTLDevice")]
-        #[method(initWithVertexData:fragmentData:serializedVertexDescriptor:device:options:flags:)]
+        #[unsafe(method(initWithVertexData:fragmentData:serializedVertexDescriptor:device:options:flags:))]
         pub unsafe fn initWithVertexData(
             this: Allocated<Self>,
             vertex_data: *mut c_void,
@@ -41,13 +41,13 @@ extern_methods!(
             flags: u64,
         ) -> Option<Retained<Self>>;
 
-        #[method(newSerializedVertexDataWithFlags:error:_)]
+        #[unsafe(method(newSerializedVertexDataWithFlags:error:_))]
         pub unsafe fn newSerializedVertexDataWithFlags_error(
             &self,
             flags: u64,
         ) -> Result<Retained<AnyObject>, Retained<objc2_foundation::NSError>>;
 
-        #[method(serializeFragmentData)]
+        #[unsafe(method(serializeFragmentData))]
         pub unsafe fn serializeFragmentData(&self) -> *mut c_void;
     }
 );
@@ -55,7 +55,7 @@ extern_methods!(
 extern_methods!(
     #[cfg(feature = "MTLSampler")]
     unsafe impl MTLSamplerDescriptor {
-        #[method(setLodBias:)]
+        #[unsafe(method(setLodBias:))]
         pub unsafe fn setLodBias(&self, bias: f32);
     }
 );
@@ -63,7 +63,7 @@ extern_methods!(
 extern_methods!(
     #[cfg(feature = "MTLVertexDescriptor")]
     unsafe impl MTLVertexDescriptor {
-        #[method(newSerializedDescriptor)]
+        #[unsafe(method(newSerializedDescriptor))]
         pub unsafe fn newSerializedDescriptor(&self) -> Option<Retained<AnyObject>>;
     }
 );

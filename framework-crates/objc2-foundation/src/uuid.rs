@@ -24,10 +24,10 @@ unsafe impl RefEncode for UuidBytes {
 
 extern_methods!(
     unsafe impl NSUUID {
-        #[method(initWithUUIDBytes:)]
+        #[unsafe(method(initWithUUIDBytes:))]
         fn initWithUUIDBytes(this: Allocated<Self>, bytes: &UuidBytes) -> Retained<Self>;
 
-        #[method(getUUIDBytes:)]
+        #[unsafe(method(getUUIDBytes:))]
         fn getUUIDBytes(&self, bytes: &mut UuidBytes);
     }
 );

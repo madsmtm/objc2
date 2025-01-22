@@ -3,7 +3,7 @@ error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(initWithMut)]
+  | |         #[unsafe(method(initWithMut))]
   | |         fn init_with_mut(&mut self) -> Option<Retained<Self>>;
   | |     }
   | | );
@@ -25,7 +25,7 @@ error[E0277]: the trait bound `Retained<MyObject>: Encode` is not satisfied
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(initWithMut)]
+  | |         #[unsafe(method(initWithMut))]
   | |         fn init_with_mut(&mut self) -> Option<Retained<Self>>;
   | |     }
   | | );
@@ -53,7 +53,7 @@ error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfie
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(initWithMut)]
+  | |         #[unsafe(method(initWithMut))]
   | |         fn init_with_mut(&mut self) -> Option<Retained<Self>>;
   | |     }
   | | );
@@ -81,7 +81,7 @@ error[E0277]: the trait bound `Option<Allocated<MyObject>>: MessageReceiver` is 
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(initWithOptionAllocated)]
+  | |         #[unsafe(method(initWithOptionAllocated))]
   | |         fn init_with_option_allocated(this: Option<Allocated<Self>>) -> Option<Retained<Self>>;
   | |     }
   | | );
@@ -102,7 +102,7 @@ error[E0277]: the trait bound `Retained<MyObject>: Encode` is not satisfied
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(initWithOptionAllocated)]
+  | |         #[unsafe(method(initWithOptionAllocated))]
   | |         fn init_with_option_allocated(this: Option<Allocated<Self>>) -> Option<Retained<Self>>;
   | |     }
   | | );
@@ -130,7 +130,7 @@ error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfie
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(initWithOptionAllocated)]
+  | |         #[unsafe(method(initWithOptionAllocated))]
   | |         fn init_with_option_allocated(this: Option<Allocated<Self>>) -> Option<Retained<Self>>;
   | |     }
   | | );

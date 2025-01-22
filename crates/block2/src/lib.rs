@@ -72,7 +72,7 @@
 //!
 //! extern_methods!(
 //!     unsafe impl MyClass {
-//!         #[method(checkAddition:)]
+//!         #[unsafe(method(checkAddition:))]
 //!         pub fn checkAddition(&self, block: &Block<dyn Fn(i32, i32) -> i32>);
 //!     }
 //! );

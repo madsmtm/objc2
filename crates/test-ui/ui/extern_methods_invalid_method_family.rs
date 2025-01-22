@@ -10,7 +10,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(noUnsafe)]
+        #[unsafe(method(noUnsafe))]
         #[method_family = none]
         fn no_unsafe(&self) -> Retained<Self>;
     }
@@ -18,7 +18,7 @@ extern_methods!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(unknownFamily)]
+        #[unsafe(method(unknownFamily))]
         #[unsafe(method_family = unknown)]
         fn unknown_family(&self) -> Retained<Self>;
     }
@@ -26,7 +26,7 @@ extern_methods!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(familyTwice)]
+        #[unsafe(method(familyTwice))]
         #[unsafe(method_family = copy)]
         #[unsafe(method_family = none)]
         fn family_twice(&self) -> Retained<Self>;

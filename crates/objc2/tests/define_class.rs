@@ -25,7 +25,7 @@ fn allow_deprecated() {
 
         #[expect(deprecated)]
         unsafe impl AllowDeprecated {
-            #[method(someMethod)]
+            #[unsafe(method(someMethod))]
             fn some_method() {}
         }
     );
@@ -41,13 +41,13 @@ define_class!(
 
     #[deprecated]
     unsafe impl DefineClassDeprecatedMethod {
-        #[method(deprecatedOnImpl)]
+        #[unsafe(method(deprecatedOnImpl))]
         fn deprecated_on_impl() {}
     }
 
     unsafe impl DefineClassDeprecatedMethod {
         #[deprecated]
-        #[method(deprecatedOnMethod)]
+        #[unsafe(method(deprecatedOnMethod))]
         fn deprecated_on_method() {}
     }
 );
@@ -91,91 +91,91 @@ define_class!(
 
     unsafe impl DefineClassCfg {
         #[cfg(debug_assertions)]
-        #[method(changesOnCfg1)]
+        #[unsafe(method(changesOnCfg1))]
         fn _changes_on_cfg1() -> i32 {
             1
         }
 
         #[cfg(not(debug_assertions))]
-        #[method(changesOnCfg1)]
+        #[unsafe(method(changesOnCfg1))]
         fn _changes_on_cfg1() -> i32 {
             2
         }
 
         #[cfg(debug_assertions)]
-        #[method(onlyWhenEnabled1)]
+        #[unsafe(method(onlyWhenEnabled1))]
         fn _only_when_enabled1(&self) {}
 
         #[cfg(not(debug_assertions))]
-        #[method(onlyWhenDisabled1)]
+        #[unsafe(method(onlyWhenDisabled1))]
         fn _only_when_disabled1(&self) {}
     }
 
     #[cfg(debug_assertions)]
     unsafe impl DefineClassCfg {
-        #[method(changesOnCfg2)]
+        #[unsafe(method(changesOnCfg2))]
         fn _changes_on_cfg2(&self) -> i32 {
             1
         }
 
-        #[method(onlyWhenEnabled2)]
+        #[unsafe(method(onlyWhenEnabled2))]
         fn _only_when_enabled2() {}
     }
 
     #[cfg(not(debug_assertions))]
     unsafe impl DefineClassCfg {
-        #[method(changesOnCfg2)]
+        #[unsafe(method(changesOnCfg2))]
         fn _changes_on_cfg2(&self) -> i32 {
             2
         }
 
-        #[method(onlyWhenDisabled2)]
+        #[unsafe(method(onlyWhenDisabled2))]
         fn _only_when_disabled2() {}
     }
 
     #[cfg(debug_assertions)]
     unsafe impl DefineClassCfg {
         #[cfg(not(debug_assertions))]
-        #[method(never)]
+        #[unsafe(method(never))]
         fn _never(&self) {}
 
         #[cfg(not(debug_assertions))]
-        #[method(never)]
+        #[unsafe(method(never))]
         fn _never_class() {}
     }
 );
 
 extern_methods!(
     unsafe impl DefineClassCfg {
-        #[method(new)]
+        #[unsafe(method(new))]
         fn new() -> Retained<Self>;
     }
 
     unsafe impl DefineClassCfg {
-        #[method(changesOnCfg1)]
+        #[unsafe(method(changesOnCfg1))]
         fn changes_on_cfg1() -> i32;
 
-        #[method(changesOnCfg2)]
+        #[unsafe(method(changesOnCfg2))]
         fn changes_on_cfg2(&self) -> i32;
 
         #[cfg(debug_assertions)]
-        #[method(onlyWhenEnabled1)]
+        #[unsafe(method(onlyWhenEnabled1))]
         fn only_when_enabled1(&self);
 
         #[cfg(not(debug_assertions))]
-        #[method(onlyWhenDisabled1)]
+        #[unsafe(method(onlyWhenDisabled1))]
         fn only_when_disabled1(&self);
     }
 
     #[cfg(debug_assertions)]
     unsafe impl DefineClassCfg {
-        #[method(onlyWhenEnabled2)]
+        #[unsafe(method(onlyWhenEnabled2))]
         fn only_when_enabled2();
     }
 
     #[cfg(not(debug_assertions))]
     unsafe impl DefineClassCfg {
-        #[method(onlyWhenDisabled2)]
+        #[unsafe(method(onlyWhenDisabled2))]
         fn only_when_disabled2();
     }
 );
@@ -228,22 +228,22 @@ define_class!(
     struct TestMultipleColonSelector;
 
     unsafe impl TestMultipleColonSelector {
-        #[method(test::arg3:)]
+        #[unsafe(method(test::arg3:))]
         fn _test_class(arg1: i32, arg2: i32, arg3: i32) -> i32 {
             arg1 + arg2 + arg3
         }
 
-        #[method(test::arg3:)]
+        #[unsafe(method(test::arg3:))]
         fn _test_instance(&self, arg1: i32, arg2: i32, arg3: i32) -> i32 {
             arg1 * arg2 * arg3
         }
 
-        #[method(test::error:)]
+        #[unsafe(method(test::error:))]
         fn _test_error(&self, _arg1: i32, _arg2: i32, _arg3: *mut *mut NSObject) -> bool {
             true
         }
 
-        #[method_id(test:::withObject:)]
+        #[unsafe(method_id(test:::withObject:))]
         fn _test_object(
             &self,
             _arg1: i32,
@@ -258,19 +258,19 @@ define_class!(
 
 extern_methods!(
     unsafe impl TestMultipleColonSelector {
-        #[method(new)]
+        #[unsafe(method(new))]
         fn new() -> Retained<Self>;
 
-        #[method(test::arg3:)]
+        #[unsafe(method(test::arg3:))]
         fn test_class(arg1: i32, arg2: i32, arg3: i32) -> i32;
 
-        #[method(test::arg3:)]
+        #[unsafe(method(test::arg3:))]
         fn test_instance(&self, arg1: i32, arg2: i32, arg3: i32) -> i32;
 
-        #[method(test::error:_)]
+        #[unsafe(method(test::error:_))]
         fn test_error(&self, arg1: i32, arg2: i32) -> Result<(), Retained<NSObject>>;
 
-        #[method(test:::withObject:)]
+        #[unsafe(method(test:::withObject:))]
         fn test_object(
             &self,
             arg1: i32,
@@ -297,17 +297,17 @@ define_class!(
     struct DefineClassAllTheBool;
 
     unsafe impl DefineClassAllTheBool {
-        #[method(returnsBool)]
+        #[unsafe(method(returnsBool))]
         fn returns_bool() -> bool {
             true
         }
 
-        #[method(returnsBoolInstance)]
+        #[unsafe(method(returnsBoolInstance))]
         fn returns_bool_instance(&self) -> bool {
             true
         }
 
-        #[method(takesBool:andMut:andUnderscore:)]
+        #[unsafe(method(takesBool:andMut:andUnderscore:))]
         fn takes_bool(a: bool, mut b: bool, _: bool) -> bool {
             if b {
                 b = a;
@@ -315,7 +315,7 @@ define_class!(
             b
         }
 
-        #[method(takesBoolInstance:andMut:andUnderscore:)]
+        #[unsafe(method(takesBoolInstance:andMut:andUnderscore:))]
         fn takes_bool_instance(&self, a: bool, mut b: bool, _: bool) -> bool {
             if b {
                 b = a;
@@ -323,22 +323,22 @@ define_class!(
             b
         }
 
-        #[method(takesReturnsBool:)]
+        #[unsafe(method(takesReturnsBool:))]
         fn takes_returns_bool(b: bool) -> bool {
             b
         }
 
-        #[method(takesReturnsBoolInstance:)]
+        #[unsafe(method(takesReturnsBoolInstance:))]
         fn takes_returns_bool_instance(&self, b: bool) -> bool {
             b
         }
 
-        #[method_id(idTakesBool:)]
+        #[unsafe(method_id(idTakesBool:))]
         fn id_takes_bool(_b: bool) -> Option<Retained<Self>> {
             None
         }
 
-        #[method_id(idTakesBoolInstance:)]
+        #[unsafe(method_id(idTakesBoolInstance:))]
         fn id_takes_bool_instance(&self, _b: bool) -> Option<Retained<Self>> {
             None
         }
@@ -357,32 +357,32 @@ define_class!(
 
     // Ensure none of these warn
     unsafe impl DefineClassUnreachable {
-        #[method(unreachable)]
+        #[unsafe(method(unreachable))]
         fn unreachable(&self) -> bool {
             unreachable!()
         }
 
-        #[method(unreachableClass)]
+        #[unsafe(method(unreachableClass))]
         fn unreachable_class() -> bool {
             unreachable!()
         }
 
-        #[method(unreachableVoid)]
+        #[unsafe(method(unreachableVoid))]
         fn unreachable_void(&self) {
             unreachable!()
         }
 
-        #[method(unreachableClassVoid)]
+        #[unsafe(method(unreachableClassVoid))]
         fn unreachable_class_void() {
             unreachable!()
         }
 
-        #[method_id(unreachableRetained)]
+        #[unsafe(method_id(unreachableRetained))]
         fn unreachable_retained(&self) -> Retained<Self> {
             unreachable!()
         }
 
-        #[method_id(unreachableClassRetained)]
+        #[unsafe(method_id(unreachableClassRetained))]
         fn unreachable_class_retained() -> Retained<Self> {
             unreachable!()
         }
@@ -401,35 +401,35 @@ define_class!(
     struct OutParam;
 
     unsafe impl OutParam {
-        #[method(unsupported1:)]
+        #[unsafe(method(unsupported1:))]
         fn _unsupported1(_param: &mut Retained<Self>) {}
 
-        #[method(unsupported2:)]
+        #[unsafe(method(unsupported2:))]
         fn _unsupported2(_param: Option<&mut Retained<Self>>) {}
 
-        #[method(unsupported3:)]
+        #[unsafe(method(unsupported3:))]
         fn _unsupported3(_param: &mut Option<Retained<Self>>) {}
 
-        #[method(unsupported4:)]
+        #[unsafe(method(unsupported4:))]
         fn _unsupported4(_param: Option<&mut Option<Retained<Self>>>) {}
     }
 );
 
 extern_methods!(
     unsafe impl OutParam {
-        #[method(new)]
+        #[unsafe(method(new))]
         fn new() -> Retained<Self>;
 
-        #[method(unsupported1:)]
+        #[unsafe(method(unsupported1:))]
         fn unsupported1(_param: &mut Retained<Self>);
 
-        #[method(unsupported2:)]
+        #[unsafe(method(unsupported2:))]
         fn unsupported2(_param: Option<&mut Retained<Self>>);
 
-        #[method(unsupported3:)]
+        #[unsafe(method(unsupported3:))]
         fn unsupported3(_param: &mut Option<Retained<Self>>);
 
-        #[method(unsupported4:)]
+        #[unsafe(method(unsupported4:))]
         fn unsupported4(_param: Option<&mut Option<Retained<Self>>>);
     }
 );
@@ -485,13 +485,13 @@ fn test_pointer_receiver_allowed() {
         struct PointerReceiver;
 
         unsafe impl PointerReceiver {
-            #[method(constPtr)]
+            #[unsafe(method(constPtr))]
             fn const_ptr(_this: *const Self) {}
 
-            #[method(mutPtr)]
+            #[unsafe(method(mutPtr))]
             fn mut_ptr(_this: *mut Self) {}
 
-            #[method(nonnullPtr)]
+            #[unsafe(method(nonnullPtr))]
             fn nonnull_ptr(_this: NonNull<Self>) {}
         }
     );

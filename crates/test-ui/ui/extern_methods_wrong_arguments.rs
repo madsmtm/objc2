@@ -8,56 +8,56 @@ extern_class!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(a:)]
+        #[unsafe(method(a:))]
         fn a();
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(b)]
+        #[unsafe(method(b))]
         fn b(arg: i32);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(c:d:e:)]
+        #[unsafe(method(c:d:e:))]
         fn c(arg1: i32, arg2: u32);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(f:g:)]
+        #[unsafe(method(f:g:))]
         fn f();
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(x:)]
+        #[unsafe(method(x:))]
         fn x(&self);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(y)]
+        #[unsafe(method(y))]
         fn y(&self, arg: i32);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(z:)]
+        #[unsafe(method(z:))]
         fn z(this: &Self);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(w)]
+        #[unsafe(method(w))]
         fn w(this: &Self, arg: i32);
     }
 );

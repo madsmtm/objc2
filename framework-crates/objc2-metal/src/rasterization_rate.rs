@@ -7,7 +7,7 @@ extern_methods!(
         /// describe its current function, for the horizontal and vertical
         /// axis. The depth component of the returned `MTLSize` is always 0.
         #[cfg(feature = "MTLTypes")]
-        #[method(sampleCount)]
+        #[unsafe(method(sampleCount))]
         pub fn sampleCount(&self) -> crate::MTLSize;
     }
 );

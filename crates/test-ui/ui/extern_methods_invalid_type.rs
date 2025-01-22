@@ -10,21 +10,21 @@ extern_class!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(takesBox:)]
+        #[unsafe(method(takesBox:))]
         fn takes_box(&self, arg: Box<i32>);
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(returnsReferenceToRetained)]
+        #[unsafe(method(returnsReferenceToRetained))]
         fn returns_reference_to_retained(&self) -> &Retained<Self>;
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(mainThreadMarkerAsReturn)]
+        #[unsafe(method(mainThreadMarkerAsReturn))]
         fn main_thread_marker_as_return() -> MainThreadMarker;
     }
 );

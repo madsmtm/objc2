@@ -95,10 +95,10 @@ new_objc2::define_class!(
     struct CustomObject;
 
     unsafe impl CustomObject {
-        #[method(a)]
+        #[unsafe(method(a))]
         fn _a() {}
 
-        #[method_id(b)]
+        #[unsafe(method_id(b))]
         fn _b() -> new_objc2::rc::Retained<CustomObject> {
             ::core::unimplemented!()
         }
@@ -111,10 +111,10 @@ mod test_extern_methods {
 
     new_objc2::extern_methods!(
         unsafe impl CustomObject {
-            #[method(a)]
+            #[unsafe(method(a))]
             fn a();
 
-            #[method(b)]
+            #[unsafe(method(b))]
             fn b(&self);
         }
     );
@@ -129,7 +129,7 @@ new_objc2::extern_class!(
 new_objc2::extern_protocol!(
     #[allow(clippy::missing_safety_doc)]
     unsafe trait CustomProtocol {
-        #[method(c)]
+        #[unsafe(method(c))]
         fn c(&self);
     }
 );

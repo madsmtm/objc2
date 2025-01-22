@@ -67,7 +67,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
           type Ivars = MyIvars;
       }
 
-      // unsafe impl ...
+      unsafe impl MyObject {
+          #[method(myMethod)]
+          fn my_method(&self) {
+              // ...
+          }
+      }
   );
 
   // After
@@ -82,7 +87,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
       #[ivars = MyIvars]
       struct MyObject;
 
-      // unsafe impl ...
+      unsafe impl MyObject {
+          #[unsafe(method(myMethod))]
+          fn my_method(&self) {
+              // ...
+          }
+      }
   );
   ```
 * Whether classes are only available on the main thread is now automatically
@@ -134,7 +144,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   // After
   extern_protocol!(
       unsafe trait MyProtocol {
+          #[unsafe(method(myMethod))]
+          fn myMethod(&self);
+      }
+  );
+  ```
+* **BREAKING**: Changed the syntax of `extern_methods!` to require more `unsafe`:
+  ```rust
+  // Before
+  extern_methods!(
+      unsafe impl MyObject {
           #[method(myMethod)]
+          fn myMethod(&self);
+      }
+  );
+
+  // After
+  extern_methods!(
+      unsafe impl MyObject {
+          #[unsafe(method(myMethod))]
           fn myMethod(&self);
       }
   );

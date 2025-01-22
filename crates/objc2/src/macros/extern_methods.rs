@@ -40,12 +40,12 @@
 /// Exceptions and special attributes are noted below.
 ///
 ///
-/// ### `#[method(...)]` (required)
+/// ### `#[unsafe(method(...))]` (required)
 ///
 /// Specify the desired selector using this attribute.
 ///
-/// If the selector ends with "_", as in `#[method(my:error:_)]`, the method
-/// is assumed to take an implicit `NSError**` parameter, which is
+/// If the selector ends with "_", as in `#[unsafe(method(my:error:_))]`, the
+/// method is assumed to take an implicit `NSError**` parameter, which is
 /// automatically converted to a [`Result`]. See the error section in
 /// [`msg_send!`] for details.
 ///
@@ -90,9 +90,9 @@
 ///
 /// # Safety
 ///
-/// You must ensure that any methods you declare with the `#[method(...)]`
-/// attribute upholds the safety guarantees described in the [`msg_send!`]
-/// macro, _or_ are marked `unsafe`.
+/// You must ensure that any methods you declare with the
+/// `#[unsafe(method(...))]` attribute upholds the safety guarantees described
+/// in the [`msg_send!`] macro, _or_ are marked `unsafe`.
 ///
 ///
 /// # Examples
@@ -125,10 +125,10 @@
 /// extern_methods!(
 ///     /// Creation methods.
 ///     unsafe impl MyObject {
-///         #[method(new)]
+///         #[unsafe(method(new))]
 ///         pub fn new() -> Retained<Self>;
 ///
-///         #[method(initWithVal:)]
+///         #[unsafe(method(initWithVal:))]
 ///         // arbitrary self types are not stable, but we can work around it
 ///         // with the special name `this`.
 ///         pub fn init(this: Allocated<Self>, val: usize) -> Retained<Self>;
@@ -136,13 +136,13 @@
 ///
 ///     /// Instance accessor methods.
 ///     unsafe impl MyObject {
-///         #[method(foo)]
+///         #[unsafe(method(foo))]
 ///         pub fn foo(&self) -> NSUInteger;
 ///
-///         #[method(fooObject)]
+///         #[unsafe(method(fooObject))]
 ///         pub fn foo_object(&self) -> Retained<NSObject>;
 ///
-///         #[method(withError:_)]
+///         #[unsafe(method(withError:_))]
 ///         // Since the selector specifies "_", the return type is assumed to
 ///         // be `Result`.
 ///         pub fn with_error(&self) -> Result<(), Retained<NSError>>;
@@ -229,7 +229,7 @@ macro_rules! extern_methods {
         $(
             $(#[$impl_m:meta])*
             unsafe impl $type:ty {
-                // #[method($($selector)+)]
+                // #[unsafe(method($($selector)+))]
                 // fn $fn_name($self, $($param: $Ty)*) -> $Return;
                 $($methods:tt)*
             }
@@ -330,7 +330,7 @@ macro_rules! __extern_methods_method_out {
         ($($__params_prefix:tt)*)
         ($($params_rest:tt)*)
 
-        (#[$method_or_method_id:ident($($sel:tt)*)])
+        ($method_or_method_id:ident($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
@@ -377,11 +377,11 @@ macro_rules! __extern_methods_method_id_deprecated {
     (method($($sel:tt)*)) => {};
     (method_id($($sel:tt)*)) => {{
         #[deprecated = $crate::__macro_helpers::concat!(
-            "using #[method_id(",
+            "using #[unsafe(method_id(",
             $crate::__macro_helpers::stringify!($($sel)*),
-            ")] inside extern_methods! is deprecated.\nUse #[method(",
+            "))] inside extern_methods! is deprecated.\nUse #[unsafe(method(",
             $crate::__macro_helpers::stringify!($($sel)*),
-            ")] instead",
+            "))] instead",
         )]
         #[inline]
         fn method_id() {}

@@ -9,31 +9,31 @@ extern_class!(
 extern_methods!(
     #[cfg(not(test))]
     unsafe impl MyTest {
-        #[method(enabled)]
+        #[unsafe(method(enabled))]
         fn enabled();
     }
 
     #[cfg(test)]
     unsafe impl MyTest {
-        #[method(disabled)]
+        #[unsafe(method(disabled))]
         fn disabled();
     }
 
     unsafe impl MyTest {
-        #[method(enabled)]
+        #[unsafe(method(enabled))]
         #[cfg(not(test))]
         fn enabled_inner1();
 
         #[cfg(not(test))]
-        #[method(enabled)]
+        #[unsafe(method(enabled))]
         fn enabled_inner2();
 
-        #[method(disabled)]
+        #[unsafe(method(disabled))]
         #[cfg(test)]
         fn disabled_inner1();
 
         #[cfg(test)]
-        #[method(disabled)]
+        #[unsafe(method(disabled))]
         fn disabled_inner2();
     }
 );

@@ -143,7 +143,8 @@ where
 
 /// Helper trait for specifying an `Retained<T>` or an `Option<Retained<T>>`.
 ///
-/// (Both of those are valid return types from define_class! `#[method_id]`).
+/// (Both of those are valid return types from define_class!
+/// `#[unsafe(method_id)]`).
 pub trait MaybeOptionRetained {
     type Inner;
 

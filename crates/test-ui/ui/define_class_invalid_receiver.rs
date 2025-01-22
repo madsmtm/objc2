@@ -9,56 +9,56 @@ define_class!(
     struct CustomObject;
 
     unsafe impl CustomObject {
-        #[method(testBox)]
+        #[unsafe(method(testBox))]
         fn test_box(self: Box<Self>) {
             unimplemented!()
         }
 
-        #[method(testRetainedSelf)]
+        #[unsafe(method(testRetainedSelf))]
         fn test_retained_self(this: Retained<Self>) {
             unimplemented!()
         }
 
-        #[method(testSelf)]
+        #[unsafe(method(testSelf))]
         fn test_self(this: Self) {
             unimplemented!()
         }
 
-        #[method(testClass)]
+        #[unsafe(method(testClass))]
         fn test_class(this: &AnyClass) {
             unimplemented!()
         }
 
-        #[method(testClass)]
+        #[unsafe(method(testClass))]
         fn test_object(this: &NSObject) {
             unimplemented!()
         }
     }
 
     unsafe impl CustomObject {
-        #[method_id(testBoxRetained)]
+        #[unsafe(method_id(testBoxRetained))]
         fn test_box_retained(self: Box<Self>) -> Retained<Self> {
             unimplemented!()
         }
 
-        #[method_id(testRetainedSelfRetained)]
+        #[unsafe(method_id(testRetainedSelfRetained))]
         fn test_retained_self_retained(this: Retained<Self>) -> Retained<Self> {
             unimplemented!()
         }
 
-        #[method_id(testSelfRetained)]
+        #[unsafe(method_id(testSelfRetained))]
         fn test_self_retained(this: Self) -> Retained<Self> {
             unimplemented!()
         }
     }
 
     unsafe impl CustomObject {
-        #[method_id(testAlloc)]
+        #[unsafe(method_id(testAlloc))]
         fn test_alloc(this: Allocated<Self>) -> Retained<Self> {
             unimplemented!()
         }
 
-        #[method_id(initTestNotAlloc)]
+        #[unsafe(method_id(initTestNotAlloc))]
         fn test_init_not_alloc(&self) -> Retained<Self> {
             unimplemented!()
         }

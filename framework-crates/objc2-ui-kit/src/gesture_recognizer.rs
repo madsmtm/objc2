@@ -4,7 +4,7 @@ use crate::{UIGestureRecognizer, UIGestureRecognizerState};
 
 extern_methods!(
     unsafe impl UIGestureRecognizer {
-        #[method(state)]
+        #[unsafe(method(state))]
         pub fn state(&self) -> UIGestureRecognizerState;
     }
 );

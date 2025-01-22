@@ -54,7 +54,7 @@ define_class!(
     struct Key;
 
     unsafe impl NSObjectProtocol for Key {
-        #[method(isEqual:)]
+        #[unsafe(method(isEqual:))]
         fn is_equal(&self, other: &AnyObject) -> bool {
             assert_eq!(other.class(), Self::class());
             let other: *const AnyObject = other;
@@ -65,14 +65,14 @@ define_class!(
             (other.ivars().index & self.ivars().equal_to_mask.get()) != 0
         }
 
-        #[method(hash)]
+        #[unsafe(method(hash))]
         fn hash_(&self) -> NSUInteger {
             self.ivars().hash.get()
         }
     }
 
     unsafe impl NSCopying for Key {
-        #[method_id(copyWithZone:)]
+        #[unsafe(method_id(copyWithZone:))]
         fn copy_with_zone(&self, _zone: *mut NSZone) -> Retained<Self> {
             self.retain()
         }

@@ -6,10 +6,10 @@ extern_protocol!(
     #[allow(clippy::missing_safety_doc)]
     #[name = "MainThreadMarkerTestProtocol"]
     unsafe trait Proto: NSObjectProtocol {
-        #[method(myMethod:)]
+        #[unsafe(method(myMethod:))]
         fn protocol_method(mtm: MainThreadMarker, arg: i32) -> i32;
 
-        #[method(myMethodRetained:)]
+        #[unsafe(method(myMethodRetained:))]
         fn protocol_method_retained(mtm: MainThreadMarker, arg: &Self) -> Retained<Self>;
     }
 );
@@ -23,12 +23,12 @@ define_class!(
     unsafe impl NSObjectProtocol for Cls {}
 
     unsafe impl Proto for Cls {
-        #[method(myMethod:)]
+        #[unsafe(method(myMethod:))]
         fn _my_mainthreadonly_method(arg: i32) -> i32 {
             arg + 1
         }
 
-        #[method_id(myMethodRetained:)]
+        #[unsafe(method_id(myMethodRetained:))]
         fn _my_mainthreadonly_method_retained(arg: &Self) -> Retained<Self> {
             unsafe { Retained::retain(arg as *const Self as *mut Self).unwrap() }
         }
@@ -45,13 +45,13 @@ struct MainThreadMarker {
 
 extern_methods!(
     unsafe impl Cls {
-        #[method(new)]
+        #[unsafe(method(new))]
         fn new(mtm: MainThreadMarker) -> Retained<Self>;
 
-        #[method(myMethod:)]
+        #[unsafe(method(myMethod:))]
         fn method(mtm: MainThreadMarker, arg: i32, mtm2: MainThreadMarker) -> i32;
 
-        #[method(myMethodRetained:)]
+        #[unsafe(method(myMethodRetained:))]
         fn method_retained(
             mtm: MainThreadMarker,
             arg: &Self,

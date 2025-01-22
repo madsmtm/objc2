@@ -8,7 +8,7 @@ use objc2_foundation::{MainThreadMarker, NSNotification, NSObject, NSObjectProto
 extern_protocol!(
     pub unsafe trait NSApplicationDelegate: NSObjectProtocol + MainThreadOnly {
         #[optional]
-        #[method(applicationDidFinishLaunching:)]
+        #[unsafe(method(applicationDidFinishLaunching:))]
         unsafe fn applicationDidFinishLaunching(&self, notification: &NSNotification);
 
         // snip
@@ -24,7 +24,7 @@ define_class!(
     unsafe impl NSObjectProtocol for CustomObject {}
 
     unsafe impl NSApplicationDelegate for CustomObject {
-        #[method(applicationDidFinishLaunching:)]
+        #[unsafe(method(applicationDidFinishLaunching:))]
         unsafe fn application_did_finish_launching(&self, _notification: &NSNotification) {
             // Unclear for the user how to get a main thread marker if `self` is not `MainThreadOnly`
             let _mtm = MainThreadMarker::new().unwrap();
@@ -34,7 +34,7 @@ define_class!(
 
 extern_methods!(
     unsafe impl CustomObject {
-        #[method(new)]
+        #[unsafe(method(new))]
         fn new(mtm: MainThreadMarker) -> Retained<Self>;
     }
 );

@@ -57,7 +57,7 @@ define_class!(
     struct MyClass;
 
     unsafe impl MyClass {
-        #[method(myMethod)]
+        #[unsafe(method(myMethod))]
         fn add_next(&self) {
             let ivars = self.ivars();
 

@@ -768,7 +768,11 @@ impl fmt::Display for Method {
         }
 
         let error_trailing = if self.is_error { "_" } else { "" };
-        writeln!(f, "        #[method({}{})]", self.selector, error_trailing)?;
+        writeln!(
+            f,
+            "        #[unsafe(method({}{}))]",
+            self.selector, error_trailing
+        )?;
 
         let method_family = match &self.memory_management {
             // MemoryManagement::IdAlloc => "alloc", // Unsupported

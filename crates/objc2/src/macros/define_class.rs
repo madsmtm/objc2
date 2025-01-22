@@ -142,14 +142,13 @@
 /// your class' instance variables, consider using [`Cell`] or similar
 /// instead.
 ///
-/// The desired selector can be specified using the `#[method(my:selector:)]`
-/// or `#[method_id(my:selector:)]` attribute, similar to the
-/// [`extern_methods!`] macro. The `#[unsafe(method_family = family)]`
-/// attribute is not yet supported.
+/// The desired selector can be specified using the
+/// `#[unsafe(method(my:selector:))]` or `#[unsafe(method_id(my:selector:))]`
+/// attributes, similar to the [`extern_methods!`] macro.
 ///
-/// If the `#[method_id(...)]` attribute is used, the return type must be
-/// `Option<Retained<T>>` or `Retained<T>`. Additionally, if the selector is
-/// in the "init"-family, the `self`/`this` parameter must be
+/// If the `#[unsafe(method_id(...))]` attribute is used, the return type must
+/// be `Option<Retained<T>>` or `Retained<T>`. Additionally, if the selector
+/// is in the "init"-family, the `self`/`this` parameter must be
 /// `Allocated<Self>`.
 ///
 /// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
@@ -208,7 +207,7 @@
 ///
 /// # Safety
 ///
-/// Using this macro requires writing a few `unsafe` markers:
+/// Using this macro requires writing a lot of `unsafe` markers:
 ///
 /// When writing `#[unsafe(super(...))]`, you must ensure that:
 /// - Any invariants that the superclass [`ClassType::Super`] may have must be
@@ -221,7 +220,7 @@
 ///   - TODO: And probably a few more. [Open an issue] if you would like
 ///     guidance on whether your implementation is correct.
 ///
-/// `unsafe impl T { ... }` asserts that the types match those that are
+/// `#[unsafe(method(...))]` asserts that the types match those that are
 /// expected when the method is invoked from Objective-C. Note that unlike
 /// with [`extern_methods!`], there are no safe-guards here; you can write
 /// `i8`, but if Objective-C thinks it's an `u32`, it will cause UB when
@@ -229,8 +228,7 @@
 ///
 /// `unsafe impl P for T { ... }` requires that all required methods of the
 /// specified protocol is implemented, and that any extra requirements
-/// (implicit or explicit) that the protocol has are upheld. The methods in
-/// this definition has the same safety requirements as above.
+/// (implicit or explicit) that the protocol has are upheld.
 ///
 /// [`ClassType::Super`]: crate::ClassType::Super
 /// [Open an issue]: https://github.com/madsmtm/objc2/issues/new
@@ -292,7 +290,7 @@
 ///     struct MyCustomObject;
 ///
 ///     unsafe impl MyCustomObject {
-///         #[method_id(initWithFoo:)]
+///         #[unsafe(method_id(initWithFoo:))]
 ///         fn init_with(this: Allocated<Self>, foo: u8) -> Option<Retained<Self>> {
 ///             let this = this.set_ivars(Ivars {
 ///                 foo,
@@ -302,22 +300,22 @@
 ///             unsafe { msg_send![super(this), init] }
 ///         }
 ///
-///         #[method(foo)]
+///         #[unsafe(method(foo))]
 ///         fn __get_foo(&self) -> u8 {
 ///             self.ivars().foo
 ///         }
 ///
-///         #[method_id(object)]
+///         #[unsafe(method_id(object))]
 ///         fn __get_object(&self) -> Retained<NSObject> {
 ///             self.ivars().object.clone()
 ///         }
 ///
-///         #[method(myClassMethod)]
+///         #[unsafe(method(myClassMethod))]
 ///         fn __my_class_method() -> bool {
 ///             true
 ///         }
 /// #
-/// #       #[method_id(copyWithZone:)]
+/// #       #[unsafe(method_id(copyWithZone:))]
 /// #       fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
 /// #           let new = Self::alloc().set_ivars(self.ivars().clone());
 /// #           unsafe { msg_send![super(new), init] }
@@ -328,7 +326,7 @@
 ///
 ///     # #[cfg(available_in_foundation)]
 ///     unsafe impl NSCopying for MyCustomObject {
-///         #[method_id(copyWithZone:)]
+///         #[unsafe(method_id(copyWithZone:))]
 ///         fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
 ///             let new = Self::alloc().set_ivars(self.ivars().clone());
 ///             unsafe { msg_send![super(new), init] }
@@ -1240,7 +1238,7 @@ macro_rules! __define_class_rewrite_params {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __define_class_method_out_inner {
-    // #[method(...)]
+    // #[unsafe(method(...))]
     {
         ($($qualifiers:tt)*)
         ($name:ident)
@@ -1252,7 +1250,7 @@ macro_rules! __define_class_method_out_inner {
         ($__receiver_ty:ty)
         ($($params_prefix:tt)*)
 
-        (#[method($($__sel:tt)*)])
+        (method($($__sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
@@ -1275,7 +1273,7 @@ macro_rules! __define_class_method_out_inner {
         }
     };
 
-    // #[method_id(...)]
+    // #[unsafe(method_id(...))]
     {
         ($($qualifiers:tt)*)
         ($name:ident)
@@ -1287,7 +1285,7 @@ macro_rules! __define_class_method_out_inner {
         ($receiver_ty:ty)
         ($($params_prefix:tt)*)
 
-        (#[method_id($($sel:tt)*)])
+        (method_id($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
@@ -1327,7 +1325,7 @@ macro_rules! __define_class_method_out_inner {
         ($__receiver_ty:ty)
         ($($params_prefix:tt)*)
 
-        (#[method_id($($sel:tt)*)])
+        (method_id($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
@@ -1338,7 +1336,7 @@ macro_rules! __define_class_method_out_inner {
     } => {
         $($attr_method)*
         $($qualifiers)* extern "C-unwind" fn $name() {
-            $crate::__macro_helpers::compile_error!("`#[method_id(...)]` must have a return type")
+            $crate::__macro_helpers::compile_error!("`#[unsafe(method_id(...))]` must have a return type")
         }
     };
 }
@@ -1372,7 +1370,7 @@ macro_rules! __define_class_register_out {
         ($($__params_prefix:tt)*)
         ($($params_rest:tt)*)
 
-        (#[$method_or_method_id:ident($($sel:tt)*)])
+        ($method_or_method_id:ident($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
@@ -1380,7 +1378,7 @@ macro_rules! __define_class_register_out {
     } => {
         $($attr_use)*
         {
-            $crate::__define_class_invalid_selectors!(#[$method_or_method_id($($sel)*)]);
+            $crate::__define_class_invalid_selectors!($method_or_method_id($($sel)*));
             $crate::__define_class_no_optional!($($optional)*);
 
             $builder.$builder_method(
@@ -1398,41 +1396,41 @@ macro_rules! __define_class_register_out {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __define_class_invalid_selectors {
-    (#[method(dealloc)]) => {
+    (method(dealloc)) => {
         $crate::__macro_helpers::compile_error!(
-            "`#[method(dealloc)]` is not supported. Implement `Drop` for the type instead"
+            "`#[unsafe(method(dealloc))]` is not supported. Implement `Drop` for the type instead"
         )
     };
-    (#[method_id(dealloc)]) => {
+    (method_id(dealloc)) => {
         $crate::__macro_helpers::compile_error!(
-            "`#[method_id(dealloc)]` is not supported. Implement `Drop` for the type instead"
+            "`#[unsafe(method_id(dealloc))]` is not supported. Implement `Drop` for the type instead"
         )
     };
-    (#[method_id(alloc)]) => {
+    (method_id(alloc)) => {
         $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
-            "`#[method_id(alloc)]` is not supported. ",
-            "Use `#[method(alloc)]` and do the memory management yourself",
+            "`#[unsafe(method_id(alloc))]` is not supported. ",
+            "Use `#[unsafe(method(alloc))]` and do the memory management yourself",
         ))
     };
-    (#[method_id(retain)]) => {
+    (method_id(retain)) => {
         $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
-            "`#[method_id(retain)]` is not supported. ",
-            "Use `#[method(retain)]` and do the memory management yourself",
+            "`#[unsafe(method_id(retain))]` is not supported. ",
+            "Use `#[unsafe(method(retain))]` and do the memory management yourself",
         ))
     };
-    (#[method_id(release)]) => {
+    (method_id(release)) => {
         $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
-            "`#[method_id(release)]` is not supported. ",
-            "Use `#[method(release)]` and do the memory management yourself",
+            "`#[unsafe(method_id(release))]` is not supported. ",
+            "Use `#[unsafe(method(release))]` and do the memory management yourself",
         ))
     };
-    (#[method_id(autorelease)]) => {
+    (method_id(autorelease)) => {
         $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
-            "`#[method_id(autorelease)]` is not supported. ",
-            "Use `#[method(autorelease)]` and do the memory management yourself",
+            "`#[unsafe(method_id(autorelease))]` is not supported. ",
+            "Use `#[unsafe(method(autorelease))]` and do the memory management yourself",
         ))
     };
-    (#[$method_or_method_id:ident($($sel:tt)*)]) => {};
+    ($method_or_method_id:ident($($sel:tt)*)) => {};
 }
 
 #[doc(hidden)]
@@ -1441,7 +1439,7 @@ macro_rules! __define_class_no_method_family {
     () => {};
     ($($t:tt)+) => {
         $crate::__macro_helpers::compile_error!(
-            "`#[method_family = ...]` is not yet supported in `define_class!` together with `#[method(...)]`"
+            "`#[unsafe(method_family = ...)]` is not yet supported in `define_class!` together with `#[unsafe(method(...))]`"
         )
     };
 }

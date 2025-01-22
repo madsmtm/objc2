@@ -22,12 +22,12 @@ impl RefUnwindSafe for NSData {}
 // that's valid (even though the headers say otherwise).
 extern_methods!(
     unsafe impl NSData {
-        #[method(bytes)]
+        #[unsafe(method(bytes))]
         pub(crate) fn bytes_raw(&self) -> *const c_void;
     }
 
     unsafe impl NSMutableData {
-        #[method(mutableBytes)]
+        #[unsafe(method(mutableBytes))]
         pub(crate) fn mutable_bytes_raw(&self) -> *mut c_void;
     }
 );

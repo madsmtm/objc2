@@ -3,7 +3,7 @@ error[E0277]: the trait bound `Box<i32>: Encode` is not satisfied
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(takesBox:)]
+  | |         #[unsafe(method(takesBox:))]
   | |         fn takes_box(&self, arg: Box<i32>);
   | |     }
   | | );
@@ -37,7 +37,7 @@ error[E0277]: the trait bound `Retained<MyObject>: RefEncode` is not satisfied
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(returnsReferenceToRetained)]
+  | |         #[unsafe(method(returnsReferenceToRetained))]
   | |         fn returns_reference_to_retained(&self) -> &Retained<Self>;
   | |     }
   | | );
@@ -65,7 +65,7 @@ error[E0277]: the trait bound `MainThreadMarker: Encode` is not satisfied
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(mainThreadMarkerAsReturn)]
+  | |         #[unsafe(method(mainThreadMarkerAsReturn))]
   | |         fn main_thread_marker_as_return() -> MainThreadMarker;
   | |     }
   | | );

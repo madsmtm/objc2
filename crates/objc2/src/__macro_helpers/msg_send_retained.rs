@@ -936,23 +936,23 @@ mod tests {
 
     extern_methods!(
         unsafe impl RcTestObject {
-            #[method(copy)]
+            #[unsafe(method(copy))]
             #[unsafe(method_family = new)]
             fn copy_new(&self) -> Retained<Self>;
 
-            #[method(copy)]
+            #[unsafe(method(copy))]
             #[unsafe(method_family = init)]
             fn copy_init(this: Allocated<Self>) -> Retained<Self>;
 
-            #[method(copy)]
+            #[unsafe(method(copy))]
             #[unsafe(method_family = copy)]
             fn copy_copy(&self) -> Retained<Self>;
 
-            #[method(copy)]
+            #[unsafe(method(copy))]
             #[unsafe(method_family = mutableCopy)]
             fn copy_mutable_copy(&self) -> Retained<Self>;
 
-            #[method(copy)]
+            #[unsafe(method(copy))]
             #[unsafe(method_family = none)]
             fn copy_none(&self) -> Retained<Self>;
         }

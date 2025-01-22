@@ -9,7 +9,7 @@ extern_class!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(a)]
+        #[unsafe(method(a))]
         /// Doc comment
         #[optional]
         fn a(&self);
@@ -20,7 +20,7 @@ extern_methods!(
     unsafe impl MyObject {
         /// Doc comment
         #[optional]
-        #[method(b)]
+        #[unsafe(method(b))]
         fn b(&self) -> Retained<Self>;
     }
 );
@@ -31,7 +31,7 @@ define_class!(
     struct CustomObject1;
 
     unsafe impl CustomObject1 {
-        #[method(c)]
+        #[unsafe(method(c))]
         #[optional]
         /// Doc comment
         fn c(&self) {}
@@ -46,7 +46,7 @@ define_class!(
     unsafe impl CustomObject2 {
         #[optional]
         /// Doc comment
-        #[method_id(d)]
+        #[unsafe(method_id(d))]
         fn d(&self) -> Retained<Self> {
             unimplemented!()
         }

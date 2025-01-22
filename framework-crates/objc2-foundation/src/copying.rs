@@ -127,7 +127,7 @@ extern_protocol!(
     ///     struct CustomClass;
     ///
     ///     unsafe impl NSCopying for CustomClass {
-    ///         #[method_id(copyWithZone:)]
+    ///         #[unsafe(method_id(copyWithZone:))]
     ///         fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
     ///             // Create new class, and transfer ivars
     ///             let new = Self::alloc().set_ivars(self.ivars().clone());
@@ -147,7 +147,7 @@ extern_protocol!(
         ///
         /// The output type is the immutable counterpart of the object, which
         /// is usually `Self`, but e.g. `NSMutableString` returns `NSString`.
-        #[method(copy)]
+        #[unsafe(method(copy))]
         #[unsafe(method_family = copy)]
         #[optional]
         fn copy(&self) -> Retained<Self::Result>
@@ -163,7 +163,7 @@ extern_protocol!(
         /// # Safety
         ///
         /// The zone pointer must be valid or NULL.
-        #[method(copyWithZone:)]
+        #[unsafe(method(copyWithZone:))]
         #[unsafe(method_family = copy)]
         unsafe fn copyWithZone(&self, zone: *mut NSZone) -> Retained<Self::Result>
         where
@@ -217,7 +217,7 @@ extern_protocol!(
         ///
         /// The output type is the mutable counterpart of the object. E.g. both
         /// `NSString` and `NSMutableString` return `NSMutableString`.
-        #[method(mutableCopy)]
+        #[unsafe(method(mutableCopy))]
         #[unsafe(method_family = mutableCopy)]
         #[optional]
         fn mutableCopy(&self) -> Retained<Self::Result>
@@ -233,7 +233,7 @@ extern_protocol!(
         /// # Safety
         ///
         /// The zone pointer must be valid or NULL.
-        #[method(mutableCopyWithZone:)]
+        #[unsafe(method(mutableCopyWithZone:))]
         #[unsafe(method_family = mutableCopy)]
         unsafe fn mutableCopyWithZone(&self, zone: *mut NSZone) -> Retained<Self::Result>
         where

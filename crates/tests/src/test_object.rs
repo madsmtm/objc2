@@ -19,32 +19,32 @@ fn c(s: &str) -> CString {
 extern_protocol!(
     #[name = "MyTestProtocol"]
     unsafe trait MyTestProtocol: NSObjectProtocol {
-        #[method(a)]
+        #[unsafe(method(a))]
         fn a(&self) -> c_int;
 
-        #[method(b)]
+        #[unsafe(method(b))]
         fn b() -> c_int;
 
-        #[method(c)]
+        #[unsafe(method(c))]
         fn c(&self) -> Retained<NSNumber>;
 
-        #[method(d)]
+        #[unsafe(method(d))]
         fn d() -> Retained<NSNumber>;
 
-        #[method(e)]
+        #[unsafe(method(e))]
         #[optional]
         fn e(&self) -> c_int;
 
-        #[method(f)]
+        #[unsafe(method(f))]
         #[optional]
         fn f() -> c_int;
 
         #[optional]
-        #[method(g)]
+        #[unsafe(method(g))]
         fn g(&self) -> Retained<NSNumber>;
 
         #[optional]
-        #[method(h)]
+        #[unsafe(method(h))]
         fn h() -> Retained<NSNumber>;
     }
 );
