@@ -163,7 +163,7 @@ impl<F: ?Sized> fmt::Debug for GlobalBlock<F> {
 /// }
 /// ```
 ///
-/// [`Box`]: std::boxed::Box
+/// [`Box`]: alloc::boxed::Box
 #[macro_export]
 macro_rules! global_block {
     // `||` is parsed as one token

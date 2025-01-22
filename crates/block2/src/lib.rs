@@ -202,11 +202,88 @@
 //! ## Mutability
 //!
 //! Blocks are generally assumed to be shareable, and as such can only very
-//! rarely be made mutable. In particular, there is no good way to prevent
-//! re-entrancy.
+//! rarely be made mutable.
 //!
-//! You will likely have to use interior mutability instead.
+//! You will likely have to use interior mutability helpers like [`RefCell`]
+//! or [`Cell`] instead, see below.
 //!
+//! [`RefCell`]: core::cell::RefCell
+//! [`Cell`]: core::cell::Cell
+//!
+//!
+//! ### Transforming [`FnMut`] to a block
+//!
+//! Mutable closures differs from immutable ones in part in that they need to
+//! avoid re-entrancy.
+//!
+//! The below example transforms [`FnMut`] to [`Fn`] using a [`RefCell`]. We
+//! do not include this function as part of the public API of `block2`, as the
+//! specifics are very dependent on your use-case, and can be optimized with
+//! e.g. a [`Cell`] if your closure is [`Copy`] or if you do not care about
+//! unwind safety, or with [`UnsafeCell`] if you are able to unsafely
+//! guarantee the absence of re-entrancy.
+//!
+//! [`UnsafeCell`]: core::cell::UnsafeCell
+//!
+//! ```
+//! use std::cell::RefCell;
+//! use block2::RcBlock;
+//!
+//! fn fnmut_to_fn(closure: impl FnMut()) -> impl Fn() {
+//!     let cell = RefCell::new(closure);
+//!
+//!     move || {
+//!         let mut closure = cell.try_borrow_mut().expect("re-entrant call");
+//!         (closure)()
+//!     }
+//! }
+//!
+//! let mut x = 0;
+//! let b = RcBlock::new(fnmut_to_fn(|| {
+//!     x += 1;
+//! }));
+//! b.call(());
+//! b.call(());
+//! drop(b);
+//! assert_eq!(x, 2);
+//! ```
+//!
+//!
+//! ### Transforming [`FnOnce`] to a block
+//!
+//! [`FnOnce`] is similar to [`FnMut`] in that we must protect against
+//! re-entrancy, with the addition that it can also only be called once.
+//!
+//! Ensuring that it can be called once can be done by taking the closure
+//! in/out of an [`Option`] as shown in the example below.
+//!
+//! In certain cases you may be able to do micro-optimizations, namely to use
+//! a [`ManuallyDrop`], if you wanted to optimize with the assumption that the
+//! block is always called, or [`unwrap_unchecked`] if you wanted to optimize
+//! with the assumption that it is only called once.
+//!
+//! [`ManuallyDrop`]: core::mem::ManuallyDrop
+//! [`unwrap_unchecked`]: core::option::Option::unwrap_unchecked
+//!
+//! ```
+//! use std::cell::RefCell;
+//! use block2::RcBlock;
+//!
+//! fn fnonce_to_fn(closure: impl FnOnce()) -> impl Fn() {
+//!     let cell = RefCell::new(Some(closure));
+//!     move || {
+//!         let mut closure = cell.try_borrow_mut().expect("re-entrant call");
+//!         let closure = closure.take().expect("called twice");
+//!         closure()
+//!     }
+//! }
+//!
+//! let v = vec![1, 2, 3];
+//! let b = RcBlock::new(fnonce_to_fn(move || {
+//!     drop(v);
+//! }));
+//! b.call(());
+//! ```
 //!
 //! ## Specifying a runtime
 //!
@@ -216,13 +293,10 @@
 //! account when linking.
 //!
 //! You can choose the desired runtime by using the relevant cargo feature
-//! flags, see the following sections (you might have to disable the default
-//! `"apple"` feature first).
+//! flags, see the following sections.
 //!
 //!
 //! ### Apple's [`libclosure`](https://github.com/apple-oss-distributions/libclosure)
-//!
-//! - Feature flag: `apple`.
 //!
 //! This is the most common and most sophisticated runtime, and it has quite a
 //! lot more features than the specification mandates.
