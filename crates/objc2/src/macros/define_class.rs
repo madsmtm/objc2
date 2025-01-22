@@ -1,4 +1,4 @@
-/// Create a new class.
+/// Create a new Objective-C class.
 ///
 /// This is useful in many cases since Objective-C frameworks tend to favour a
 /// design pattern using "delegates", where to hook into a piece of

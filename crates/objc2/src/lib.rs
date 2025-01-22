@@ -13,111 +13,33 @@
 //! It has since been superseded by Swift, but most of the core libraries and
 //! frameworks that are in use on Apple systems are still written in
 //! Objective-C, and hence we would like the ability to interact with these
-//! using Rust. This crate enables you to do that, in as safe a manner as
-//! possible.
+//! using Rust. This crate enables bi-directional interop with Objective-C, in
+//! as safe a manner as possible.
 //!
 //!
-//! ## Basic usage
+//! ## Example
 //!
-//! This example illustrates major parts of the functionality in this crate:
+//! Most of the time, you'll want to use one of [the framework crates], which
+//! contain bindings to `CoreFoundation`, `Foundation`, `AppKit`, `Metal`,
+//! `UIKit`, `WebKit` and so on.
 //!
-//! First, we allocate a new [`NSObject`] using [`AllocAnyThread::alloc`].
-//! Next, we initialize this object. It is ensured to be deallocated using
-//! [`rc::Retained`].
-//! Now we're free to send messages to the object to our hearts desire using
-//! the [`msg_send!`] macro.
-//! Finally, the `Retained` goes out of scope, and the object is released and
-//! deallocated.
+//! In this example we're going to be using [`objc2-foundation`] and
+//! [`objc2-app-kit`] to create a simple GUI application that displays a
+//! "Hello World" label.
 //!
-//! ```
-//! use objc2::{msg_send, AllocAnyThread, ClassType};
-//! use objc2::ffi::NSUInteger;
-//! use objc2::rc::Retained;
-//! use objc2::runtime::{NSObject, NSObjectProtocol};
-//!
-//! // Creation
-//!
-//! let obj1: Retained<NSObject> = unsafe {
-//!     msg_send![NSObject::alloc(), init]
-//! };
-//! // Or
-//! let obj2 = NSObject::new();
-//!
-//! // Usage
-//!
-//! let hash1: NSUInteger = unsafe { msg_send![&obj1, hash] };
-//! let hash2: NSUInteger = unsafe { msg_send![&obj2, hash] };
-//! assert_ne!(hash1, hash2);
-//!
-//! let is_kind: bool = unsafe {
-//!     msg_send![&obj1, isKindOfClass: NSObject::class()]
-//! };
-//! assert!(is_kind);
-//!
-//! let obj1_self: Retained<NSObject> = unsafe { msg_send![&obj1, self] };
-//! assert_eq!(obj1, obj1_self);
-//!
-//! // Deallocation on drop
+//! ```console
+//! $ # Add the necessary crates to your project.
+//! $ cargo add objc2 objc2-foundation objc2-app-kit
 //! ```
 //!
-//! Note that this example contains a lot of `unsafe` (which should all
-//! ideally be justified with a `// SAFETY` comment). This is required because
-//! our compiler can verify very little about the Objective-C invocation,
-//! including all argument and return types used in [`msg_send!`]. We could
-//! have accidentally made `hash` an `f32`, or any other type, and this would
-//! trigger undefined behaviour!
+#![cfg_attr(target_os = "macos", doc = "```no_run")]
+#![cfg_attr(not(target_os = "macos"), doc = "```ignore")]
+#![doc = include_str!("../examples/hello_world_app.rs")]
+//! ```
 //!
-//! See [the framework crates] for much more ergonomic usage of the system
-//! frameworks like `Foundation`, `AppKit`, `UIKit` and so on.
-//!
-//! Anyhow, all of this `unsafe` nicely leads us to another feature that this
-//! crate has:
-//!
-//! [`NSObject`]: crate::runtime::NSObject
-//! [`rc::Retained`]: crate::rc::Retained
 //! [the framework crates]: crate::topics::about_generated
-//!
-//!
-//! ## Encodings and message type verification
-//!
-//! The Objective-C runtime includes encodings for each method that describe
-//! the argument and return types. See the [`encode`] module for a full
-//! overview of what this is.
-//!
-//! The important part is: To make message sending safer, all arguments and
-//! return values for messages must implement [`encode::Encode`]. This allows
-//! the Rust compiler to prevent you from passing e.g. a [`Vec`] into
-//! Objective-C, which would both be UB and leak the vector.
-//!
-//! Furthermore, we can take advantage of the encodings provided by the
-//! runtime to verify that the types used in Rust actually match the types
-//! encoded for the method. This is not a perfect solution for ensuring safety
-//! (some Rust types have the same Objective-C encoding, but are not
-//! equivalent, such as `&T` and `*const T`), but it gets us much closer to
-//! it!
-//!
-//! When `debug_assertions` are enabled we check the encoding every time you
-//! send a message, and the message send will panic if they are not
-//! equivalent.
-//!
-//! To take the example above, if we changed the `hash` method's return type
-//! as in the following example, it'll panic if debug assertions are enabled:
-//!
-//! ```should_panic
-//! # use objc2::{msg_send, ClassType};
-//! # use objc2::runtime::NSObject;
-//! #
-//! # let obj1 = NSObject::new();
-//! #
-//! // Wrong return type - this is UB!
-//! let hash1: f32 = unsafe { msg_send![&obj1, hash] };
-//! #
-//! # panic!("does not panic in release mode, so for testing we make it!");
-//! ```
-//!
-//! This library contains further such debug checks.
-//!
-//! [`Vec`]: std::vec::Vec
+//! [`objc2-foundation`]: https://docs.rs/objc2-foundation
+//! [`objc2-app-kit`]: https://docs.rs/objc2-app-kit
 //!
 //!
 //! ## Crate features
@@ -125,23 +47,53 @@
 //! This crate exports several optional cargo features, see [`Cargo.toml`] for
 //! an overview and description of these.
 //!
-//! [`Cargo.toml`]: https://github.com/madsmtm/objc2/blob/master/crates/objc2/Cargo.toml
+//! The features in the framework crates are described [here][cr-feat]. Note
+//! that if you're developing a library for others to use, you might want to
+//! reduce compile times by disabling default features and only enabling the
+//! features you need.
+//!
+#![doc = concat!(
+    "[`Cargo.toml`]: https://docs.rs/crate/objc2/",
+    env!("CARGO_PKG_VERSION"),
+    "/source/Cargo.toml.orig",
+)]
+//! [cr-feat]: crate::topics::about_generated::cargo_features
 //!
 //!
-//! ## Support for other Operating Systems
+//! ## Supported operating systems
 //!
-//! The bindings can be used on Linux or *BSD utilizing the
-//! [GNUstep Objective-C runtime](https://www.github.com/gnustep/libobjc2),
-//! see the [`ffi`] module for how to configure this.
+//! - macOS: `10.12-15.2`
+//! - iOS: `10.0-18.2` (includes iPadOS and Mac Catalyst)
+//! - tvOS: `10.0-18.2`
+//! - watchOS: `5.0-11.2`
+//! - visionOS: `1.0-2.2`
+//!
+//! The minimum versions are the same as those supported by `rustc`. Higher
+//! versions will also work, but the framework crates will not have bindings
+//! available for newer APIs.
+//!
+//! The framework bindings are generated from the SDKs in Xcode 16.2. The
+//! Xcode version will be periodically updated.
+//!
+//! Note that the bindings are currently generated in a very macOS-centric, so
+//! they may try to use types from AppKit, even on iOS, see for example
+//! [#637](https://github.com/madsmtm/objc2/issues/637).
+//!
+//! The bindings _can_ also be used on Linux or *BSD utilizing the
+//! [GNUstep Objective-C runtime](https://github.com/gnustep/libobjc2), see
+//! the [`ffi`] module for how to configure this, but this is very much
+//! second-class.
 //!
 //!
-//! ## Other functionality
+//! ## Minimum Supported Rust Version (MSRV)
 //!
-//! That was a quick introduction, this library also has
-//! [support for handling exceptions][crate::exception],
-//! [the ability to create Objective-C classes][crate::define_class],
-//! [advanced reference-counting utilities][crate::rc],
-//! and more - peruse the documentation at will!
+//! The _currently_ minimum supported Rust version is `1.71` (to be able to
+//! use `extern "C-unwind"` functions); this is _not_ defined by policy,
+//! though, so it may change in at any time in a patch release.
+//!
+//! Help us define a policy over in [#203].
+//!
+//! [#203]: https://github.com/madsmtm/objc2/issues/203
 
 #![no_std]
 #![cfg_attr(

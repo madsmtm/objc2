@@ -42,7 +42,7 @@
 //! Basic usage of a few Foundation types.
 //!
 //! ```console
-//! $ cargo add objc2-foundation --features=all
+//! $ cargo add objc2-foundation
 //! ```
 //!
 //! ```ignore

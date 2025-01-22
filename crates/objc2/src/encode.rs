@@ -1,8 +1,9 @@
 //! # Support for type-encodings.
 //!
-//! This module contains traits for annotating types that has an Objective-C
-//! type-encoding: Specifically [`Encode`] for structs/numeric types and
-//! [`RefEncode`] for references.
+//! The Objective-C runtime includes encodings for each method that describe
+//! the argument and return types. This module contains traits for annotating
+//! types that has an Objective-C type-encoding: Specifically [`Encode`] for
+//! structs/numeric types and [`RefEncode`] for references.
 //!
 //! Additionally, this exports the [`Encoding`] and [`EncodingBox`] types from
 //! [`objc2-encode`][objc2_encode], see that crate for a few more details on

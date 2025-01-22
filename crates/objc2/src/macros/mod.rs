@@ -440,8 +440,8 @@ macro_rules! __statics_sel {
         /// it - perhaps it would be better to use `read_volatile` instead of
         /// relying on `UnsafeCell`? Or perhaps `MaybeUninit` would help?
         ///
-        /// See the [`ctor`](https://crates.io/crates/ctor) crate for more
-        /// info on "life before main".
+        /// See the [`ctor`](https://docs.rs/ctor) crate for more info on
+        /// "life before main".
         #[cfg_attr(
             not(all(target_os = "macos", target_arch = "x86")),
             // Clang uses `no_dead_strip` in the link section for some unknown reason,
@@ -932,16 +932,33 @@ macro_rules! __class_inner {
 /// `"catch-all"` Cargo feature is enabled, the Objective-C exception is
 /// converted into a Rust panic, with potentially a bit better stack trace.
 ///
-/// Panics if `debug_assertions` are enabled and the Objective-C method's
-/// encoding does not match the encoding of the given arguments and return.
-/// This behaviour can be tweaked with the `"relax-void-encoding"`,
-/// `"relax-sign-encoding"` or `"disable-encoding-assertions"` Cargo feature
-/// flags if it is causing you trouble.
-///
 /// Finally, panics if the return type is specified as `Retained<_>`, but the
 /// method actually returned NULL. If this happens, you should change the
 /// signature to instead return `Option<Retained<_>>` to handle the error
 /// yourself.
+///
+///
+/// ## Type verification
+///
+/// To make message sending safer, all arguments and return values for
+/// messages must implement [`encode::Encode`]. This allows the Rust compiler
+/// to prevent you from passing e.g. a [`Vec`] into Objective-C, which would
+/// both be UB and leak the vector.
+///
+/// When `debug_assertions` are enabled, this macro will check the encoding of
+/// the given arguments and return every time you send a message, and will
+/// panic if they are not equivalent.
+///
+/// This is not a perfect solution for ensuring safety (some Rust types have
+/// the same Objective-C encoding, but are not equivalent, such as `&T` and
+/// `*const T`), but it gets us much closer to it!
+///
+/// This behaviour can be tweaked with the `"relax-void-encoding"`,
+/// `"relax-sign-encoding"` or `"disable-encoding-assertions"` Cargo feature
+/// flags if it is causing you trouble.
+///
+/// [`encode::Encode`]: crate::encode::Encode
+/// [`Vec`]: std::vec::Vec
 ///
 ///
 /// # Safety
@@ -1155,6 +1172,24 @@ macro_rules! __class_inner {
 /// // Use `result_url` here
 ///
 /// # Ok::<(), Retained<NSError>>(())
+/// ```
+///
+/// Attempt to do an invalid message send. This is undefined behaviour, but
+/// will panic with `debug_assertions` enabled.
+///
+/// ```should_panic
+/// use objc2::msg_send;
+/// use objc2::runtime::NSObject;
+///
+/// let obj = NSObject::new();
+///
+/// // Wrong return type - this is UB!
+/// //
+/// // But it will be caught with `debug_assertions` enabled, stating that
+/// // the return type's encoding is not correct.
+/// let hash: f32 = unsafe { msg_send![&obj, hash] };
+/// #
+/// # panic!("does not panic in release mode, so for testing we make it!");
 /// ```
 #[macro_export]
 macro_rules! msg_send {

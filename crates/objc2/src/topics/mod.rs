@@ -12,6 +12,8 @@ pub mod crate_interop {}
 pub mod kvo {}
 #[doc = include_str!("layered_safety.md")]
 pub mod layered_safety {}
+#[doc = include_str!("migrating_from_objc.md")]
+pub mod migrating_from_objc {}
 #[doc = include_str!("mvc.md")]
 pub mod mvc {}
 #[doc = include_str!("interior_mutability.md")]

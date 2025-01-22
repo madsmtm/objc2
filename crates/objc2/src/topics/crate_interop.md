@@ -1,13 +1,21 @@
 # Interop with other crates
 
-The `objc2` project may not provide bindings for all frameworks, so in certain cases you may need to use existing crates like [`core-foundation`], [`core-graphics`], [`security-framework`], [`system-configuration`] and so on to interact with a given framework.
+The `objc2` project provides bindings for a lot of frameworks, including many existing popular framework crates. A few examples are given in the table below, see the full list [here][all-crates].
 
-This can pose a bit of an issue, since `objc2` and [`block2`] impose certain requirements on the types involved.
+| Existing crate                                                 | `objc2` crate                                                              |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| [`core-foundation`](https://docs.rs/core-foundation)           | [`objc2-core-foundation`](https://docs.rs/objc2-core-foundation)           |
+| [`core-graphics`](https://docs.rs/core-graphics)               | [`objc2-core-graphics`](https://docs.rs/objc2-core-graphics)               |
+| [`security-framework`](https://docs.rs/security-framework)     | [`objc2-security`](https://docs.rs/objc2-security)                         |
+| [`system-configuration`](https://docs.rs/system-configuration) | [`objc2-system-configuration`](https://docs.rs/objc2-system-configuration) |
+| [`cocoa-foundation`](https://docs.rs/cocoa-foundation)         | [`objc2-foundation`](https://docs.rs/objc2-foundation)                     |
+| [`cocoa`](https://docs.rs/cocoa)                               | [`objc2-app-kit`](https://docs.rs/objc2-app-kit)                           |
+| [`coremidi`](https://docs.rs/coremidi)                         | [`objc2-core-midi`](https://docs.rs/objc2-core-midi)                       |
+| [`core-video-sys`](https://docs.rs/core-video-sys)             | [`objc2-core-video`](https://docs.rs/objc2-core-video)                     |
 
-[`core-foundation`]: https://crates.io/crates/core-foundation
-[`core-graphics`]: https://crates.io/crates/core-graphics
-[`security-framework`]: https://crates.io/crates/security-framework
-[`system-configuration`]: https://crates.io/crates/system-configuration
+While it is recommended that you use the `objc2` crates, you may still in certain cases want to use the existing crates. This can be a bit cumbersome, since `objc2` and [`block2`] impose certain requirements on the types involved, see below.
+
+[all-crates]: crate::topics::about_generated::list
 [`block2`]: https://docs.rs/block2/latest/block2/
 
 

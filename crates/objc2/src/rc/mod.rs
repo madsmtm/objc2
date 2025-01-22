@@ -30,7 +30,8 @@
 //! use objc2::rc::{autoreleasepool, Retained, Weak};
 //! use objc2::runtime::NSObject;
 //!
-//! // Retained will release the object when dropped
+//! // Allocate and initialize a new `NSObject`.
+//! // `Retained` will release the object when dropped.
 //! let obj: Retained<NSObject> = NSObject::new();
 //!
 //! // Cloning retains the object an additional time
