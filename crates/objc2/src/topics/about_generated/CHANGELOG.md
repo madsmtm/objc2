@@ -169,6 +169,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   dependencies. If you want a certain framework crate to use `std` or `alloc`
   features, you cannot rely on a higher-level crate to enable that for you.
 * **BREAKING**: Updated `objc2` dependency to `v0.6.0`.
+* **BREAKING**: Updated `block2` dependency to `v0.6.0`.
 
 ### Deprecated
 * Moved `MainThreadMarker` from `objc2-foundation` to `objc2`.

@@ -18,7 +18,7 @@ workspace = true
 
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, features = ["std"] }
-block2 = { path = "../block2", version = "0.5.1", default-features = false, optional = true, features = ["alloc"] }
+block2 = { path = "../block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
 
