@@ -3,7 +3,6 @@ version = "0.1.0" # Remember to update html_root_url in lib.rs
 description = "Bindings and wrappers for Apple's Grand Central Dispatch (GCD)"
 keywords = ["gcd", "macos", "ios", "dispatch", "libdispatch"]
 authors = ["Mads Marquart <mads@marquart.dk>", "Mary <mary@mary.zone>"]
-license = "Apache-2.0 OR MIT"
 
 [dev-dependencies]
 static_assertions = "1.1.0"

@@ -3,8 +3,6 @@
 The licensing of these crates is a bit complicated:
 - The crates `objc2`, `block2`, `objc2-foundation` and `objc2-encode` are
   [currently][#23] licensed under [the MIT license][MIT].
-- The `dispatch2` crate is dual-licensed under the [Apache-2.0] or [MIT]
-  license, at your option.
 - All other crates are trio-licensed under the [Zlib], [Apache-2.0] or [MIT]
   license, at your option.
 

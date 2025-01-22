@@ -10,7 +10,7 @@ rust-version.workspace = true
 keywords = ["gcd", "macos", "ios", "dispatch", "libdispatch"]
 categories.workspace = true
 repository.workspace = true
-license = "Apache-2.0 OR MIT"
+license.workspace = true
 authors = ["Mads Marquart <mads@marquart.dk>", "Mary <mary@mary.zone>"]
 
 [lints]
