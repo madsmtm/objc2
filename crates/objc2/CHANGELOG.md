@@ -180,6 +180,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Merged `msg_send!` and `msg_send_id!`. The latter is now deprecated.
 * Merged `#[method(...)]` and `#[method_id(...)]` in `extern_methods!` and
   `extern_protocol!`. The latter is now deprecated.
+* Deprecated using `msg_send!` without a comma between arguments.
+
+  See the following for an example of how to upgrade:
+  ```rust
+  // Before
+  let _: NSInteger = msg_send![
+      obj,
+      addTrackingRect:rect
+      owner:obj
+      userData:ptr::null_mut::<c_void>()
+      assumeInside:Bool::NO
+  ];
+  // After
+  let _: NSInteger = msg_send![
+      obj,
+      addTrackingRect: rect,
+      owner: obj,
+      userData: ptr::null_mut::<c_void>(),
+      assumeInside: false,
+  ];
+  ```
 
 ### Removed
 * **BREAKING**: Removed the `ffi::SEL` and `ffi::objc_selector` types. Use
@@ -469,9 +490,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Deprecated
 * Soft deprecated using `msg_send!` without a comma between arguments (i.e.
-  deprecated when the `"unstable-msg-send-always-comma"` feature is enabled).
-
-  See the following for an example of how to upgrade:
+  deprecated when the `"unstable-msg-send-always-comma"` feature is enabled):
   ```rust
   // Before
   let _: NSInteger = msg_send![
@@ -484,10 +503,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   // After
   let _: NSInteger = msg_send![
       obj,
-      addTrackingRect: rect,
-      owner: obj,
-      userData: ptr::null_mut::<c_void>(),
-      assumeInside: false,
+      addTrackingRect: rect, // Added comma
+      owner: obj, // Added comma
+      userData: ptr::null_mut::<c_void>(), // Added comma
+      assumeInside: false, // Added comma (optional when trailing)
   ];
   ```
 

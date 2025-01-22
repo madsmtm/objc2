@@ -769,10 +769,8 @@ macro_rules! __class_inner {
 /// # Specification
 ///
 /// The syntax is somewhat similar to the message syntax in Objective-C,
-/// except with a comma between arguments. Eliding the comma is possible,
-/// but it is soft-deprecated, and will be fully deprecated in a future
-/// release. The deprecation can be tried out with the
-/// `"unstable-msg-send-always-comma"` feature flag.
+/// except with a comma between arguments. Eliding the comma is possible, but
+/// deprecated, and may be removed in a future version of `objc2`.
 ///
 /// The first expression, know as the "receiver", can be any type that
 /// implements [`MessageReceiver`], like a reference or a pointer to an

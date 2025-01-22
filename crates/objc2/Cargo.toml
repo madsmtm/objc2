@@ -63,9 +63,6 @@ relax-sign-encoding = []
 # them by disabling all encoding checks.
 disable-encoding-assertions = []
 
-# Enable deprecation of using `msg_send!` without a comma between arguments.
-unstable-msg-send-always-comma = []
-
 # This was necessary to enable certain debug assertions in the past, but it is
 # no longer required.
 verify = []

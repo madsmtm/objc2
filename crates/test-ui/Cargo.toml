@@ -27,7 +27,6 @@ default = [
     "objc2-foundation/NSDictionary",
     "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFString",
-    "objc2/unstable-msg-send-always-comma",
 ]
 run = ["trybuild"]
 

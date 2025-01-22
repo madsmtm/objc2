@@ -110,7 +110,7 @@ macro_rules! __msg_send_parse {
         ($out_macro:path)
         $($macro_args:tt)*
     } => {{
-        $crate::__comma_between_args!(
+        $crate::__missing_comma_between_args!(
             ($($data)*)
 
             ($(
@@ -139,25 +139,16 @@ macro_rules! __msg_send_parse {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(not(feature = "unstable-msg-send-always-comma"))]
-macro_rules! __comma_between_args {
-    ($($args:tt)*) => {};
-}
-
-#[doc(hidden)]
-#[macro_export]
-#[cfg(feature = "unstable-msg-send-always-comma")]
-macro_rules! __comma_between_args {
+macro_rules! __missing_comma_between_args {
     (
         (MsgSendSuper::send_super_message_static)
         ($($args:tt)*)
         ($obj:expr)
         ()
     ) => {
-        $crate::__comma_between_args_inner! {
-            ("msg_send")
-            ("super", $crate::__macro_helpers::stringify!(($obj)), $($args)*)
-        }
+        $crate::__missing_comma_between_args_inner!(
+            "super", $crate::__macro_helpers::stringify!(($obj)), $($args)*
+        );
     };
     (
         (MsgSendSuper::send_super_message)
@@ -165,10 +156,9 @@ macro_rules! __comma_between_args {
         ($obj:expr, $superclass:expr)
         ()
     ) => {
-        $crate::__comma_between_args_inner! {
-            ("msg_send")
-            ("super", $crate::__macro_helpers::stringify!(($obj, $superclass)), $($args)*)
-        }
+        $crate::__missing_comma_between_args_inner!(
+            "super", $crate::__macro_helpers::stringify!(($obj, $superclass)), $($args)*
+        );
     };
     (
         (MsgSend::send_message)
@@ -176,29 +166,24 @@ macro_rules! __comma_between_args {
         ($obj:expr)
         ()
     ) => {
-        $crate::__comma_between_args_inner! {
-            ("msg_send")
-            ($crate::__macro_helpers::stringify!($obj), $($args)*)
-        }
+        $crate::__missing_comma_between_args_inner!(
+            $crate::__macro_helpers::stringify!($obj), $($args)*
+        );
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(feature = "unstable-msg-send-always-comma")]
-macro_rules! __comma_between_args_inner {
-    (
-        ($macro_name:literal)
-        ($($args:tt)*)
-    ) => {
+macro_rules! __missing_comma_between_args_inner {
+    ($($args:tt)*) => {{
         #[deprecated = $crate::__macro_helpers::concat!(
-            "using ", $macro_name, "! without a comma between arguments is ",
+            "using msg_send! without a comma between arguments is ",
             "technically not valid macro syntax, and may break in a future ",
             "version of Rust. You should use the following instead:\n",
-            $macro_name, "![", $($args)* "]"
+            "msg_send![", $($args)* "]"
         )]
         #[inline]
-        fn __msg_send_missing_comma() {}
-        __msg_send_missing_comma();
-    };
+        fn __missing_comma() {}
+        __missing_comma();
+    }};
 }
