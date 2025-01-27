@@ -37,7 +37,7 @@ impl CFData {
     #[inline]
     #[doc(alias = "CFDataGetLength")]
     pub fn len(&self) -> usize {
-        unsafe { CFDataGetLength(self) as _ }
+        CFDataGetLength(self) as _
     }
 
     /// Whether the `CFData` is empty.
@@ -59,7 +59,7 @@ impl CFData {
     #[inline]
     #[doc(alias = "CFDataGetBytePtr")]
     pub unsafe fn as_bytes_unchecked(&self) -> &[u8] {
-        let ptr = unsafe { CFDataGetBytePtr(self) };
+        let ptr = CFDataGetBytePtr(self);
         if !ptr.is_null() {
             // SAFETY: The pointer is valid, and caller ensures that the
             // `CFData` is not mutated for the lifetime of it.

@@ -92,8 +92,7 @@ impl CFString {
     // encoded strings, see the `as_str_broken` test below.
     #[allow(dead_code)]
     unsafe fn as_str_unchecked(&self) -> Option<&str> {
-        let bytes =
-            unsafe { CFStringGetCStringPtr(self, CFStringBuiltInEncodings::EncodingUTF8.0) };
+        let bytes = CFStringGetCStringPtr(self, CFStringBuiltInEncodings::EncodingUTF8.0);
         NonNull::new(bytes as *mut c_char).map(|bytes| {
             // SAFETY: The pointer is valid for as long as the CFString is not
             // mutated (which the caller ensures it isn't for the lifetime of
@@ -131,7 +130,7 @@ impl fmt::Display for CFString {
         let mut location_utf16 = 0;
 
         loop {
-            let len_utf16 = unsafe { CFStringGetLength(self) };
+            let len_utf16 = CFStringGetLength(self);
             let mut read_utf8 = 0;
             let read_utf16 = unsafe {
                 CFStringGetBytes(
@@ -189,7 +188,7 @@ impl Ord for CFString {
     fn cmp(&self, other: &Self) -> Ordering {
         // Request standard lexiographical ordering.
         let flags = CFStringCompareFlags::empty();
-        unsafe { CFStringCompare(self, Some(other), flags) }.into()
+        CFStringCompare(self, Some(other), flags).into()
     }
 }
 
@@ -247,7 +246,7 @@ mod tests {
             .unwrap()
         };
         assert_eq!(s.to_string(), "�"); // Replacement character
-        assert_eq!(unsafe { CFStringGetLength(&s) }, 1);
+        assert_eq!(CFStringGetLength(&s), 1);
     }
 
     #[test]

@@ -5,7 +5,7 @@ use crate::{CFError, CFErrorCopyDescription};
 
 impl fmt::Display for CFError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let desc = unsafe { CFErrorCopyDescription(self) }.unwrap();
+        let desc = CFErrorCopyDescription(self).unwrap();
         write!(f, "{desc}")
     }
 }

@@ -17,7 +17,7 @@ impl CFBoolean {
     }
 
     pub fn as_bool(&self) -> bool {
-        unsafe { CFBooleanGetValue(self) }
+        CFBooleanGetValue(self)
     }
 }
 

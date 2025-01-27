@@ -6,12 +6,12 @@ mod tests {
 
     #[test]
     fn cmp() {
-        let system = unsafe { CFTimeZoneCopySystem().unwrap() };
-        let default = unsafe { CFTimeZoneCopyDefault().unwrap() };
+        let system = CFTimeZoneCopySystem().unwrap();
+        let default = CFTimeZoneCopyDefault().unwrap();
         assert_eq!(system, default);
         assert_eq!(
-            unsafe { CFTimeZoneGetName(&system) }.unwrap(),
-            unsafe { CFTimeZoneGetName(&default) }.unwrap(),
+            CFTimeZoneGetName(&system).unwrap(),
+            CFTimeZoneGetName(&default).unwrap(),
         );
     }
 }

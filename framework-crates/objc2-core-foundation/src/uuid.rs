@@ -55,19 +55,19 @@ mod tests {
 
     #[test]
     fn eq() {
-        let uuid0 = unsafe { CFUUIDCreateFromUUIDBytes(None, [0; 16].into()).unwrap() };
-        let uuid1 = unsafe { CFUUIDCreateFromUUIDBytes(None, [1; 16].into()).unwrap() };
+        let uuid0 = CFUUIDCreateFromUUIDBytes(None, [0; 16].into()).unwrap();
+        let uuid1 = CFUUIDCreateFromUUIDBytes(None, [1; 16].into()).unwrap();
         assert_eq!(uuid0, uuid0);
         assert_ne!(uuid0, uuid1);
     }
 
     #[test]
     fn roundtrip() {
-        let uuid = unsafe { CFUUIDCreate(None).unwrap() };
+        let uuid = CFUUIDCreate(None).unwrap();
         assert_eq!(uuid, uuid);
 
-        let bytes = unsafe { CFUUIDGetUUIDBytes(&uuid) };
-        let same_uuid = unsafe { CFUUIDCreateFromUUIDBytes(None, bytes).unwrap() };
+        let bytes = CFUUIDGetUUIDBytes(&uuid);
+        let same_uuid = CFUUIDCreateFromUUIDBytes(None, bytes).unwrap();
         assert_eq!(uuid, same_uuid);
     }
 }
