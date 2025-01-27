@@ -67,24 +67,24 @@ pub const fn extern_methods_unsafe_impl() {}
 mod tests {
     use super::*;
 
-    #[cfg(feature = "objc2-proc-macros")]
+    #[cfg(any(feature = "unstable-static-sel", feature = "unstable-static-class"))]
     use crate::__hash_idents;
 
     #[test]
-    #[cfg(feature = "objc2-proc-macros")]
+    #[cfg(any(feature = "unstable-static-sel", feature = "unstable-static-class"))]
     fn hash_idents_different() {
         assert_ne!(__hash_idents!(abc), __hash_idents!(def));
     }
 
     #[test]
-    #[cfg(feature = "objc2-proc-macros")]
+    #[cfg(any(feature = "unstable-static-sel", feature = "unstable-static-class"))]
     fn hash_idents_same_no_equal() {
         assert_ne!(__hash_idents!(abc), __hash_idents!(abc));
         assert_ne!(__hash_idents!(abc def ghi), __hash_idents!(abc def ghi));
     }
 
     #[test]
-    #[cfg(feature = "objc2-proc-macros")]
+    #[cfg(any(feature = "unstable-static-sel", feature = "unstable-static-class"))]
     fn hash_idents_exact_same_ident() {
         macro_rules! x {
             ($x:ident) => {

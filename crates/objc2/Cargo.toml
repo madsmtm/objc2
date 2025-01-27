@@ -77,9 +77,9 @@ verify = []
 #
 # Please test it, and report any issues you may find:
 # https://github.com/madsmtm/objc2/issues/new
-unstable-static-sel = ["objc2-proc-macros"]
+unstable-static-sel = ["dep:objc2-proc-macros"]
 unstable-static-sel-inlined = ["unstable-static-sel"]
-unstable-static-class = ["objc2-proc-macros"]
+unstable-static-class = ["dep:objc2-proc-macros"]
 unstable-static-class-inlined = ["unstable-static-class"]
 
 # Uses nightly features to make autorelease pools fully sound
@@ -134,6 +134,9 @@ unstable-objfw = []
 #
 # Workaround for Cargo not supporting target-specific examples.
 unstable-requires-macos = []
+
+# Deprecated, was not intended to be exposed.
+objc2-proc-macros = []
 
 [dependencies]
 objc2-encode = { path = "../objc2-encode", version = "4.1.0", default-features = false }

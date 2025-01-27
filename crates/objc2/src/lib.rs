@@ -136,11 +136,11 @@ pub use self::top_level_traits::{
     AllocAnyThread, ClassType, DefinedClass, MainThreadOnly, Message, ProtocolType, ThreadKind,
 };
 
-#[cfg(feature = "objc2-proc-macros")]
+#[cfg(any(feature = "unstable-static-sel", feature = "unstable-static-class"))]
 #[doc(hidden)]
 pub use objc2_proc_macros::__hash_idents;
 
-#[cfg(not(feature = "objc2-proc-macros"))]
+#[cfg(not(any(feature = "unstable-static-sel", feature = "unstable-static-class")))]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __hash_idents {
