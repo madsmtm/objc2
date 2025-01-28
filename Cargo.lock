@@ -1047,6 +1047,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-gameplay-kit"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-core-foundation",
+ "objc2-foundation",
+ "objc2-scene-kit",
+ "objc2-sprite-kit",
+]
+
+[[package]]
 name = "objc2-health-kit"
 version = "0.3.0"
 dependencies = [
@@ -1985,6 +1999,7 @@ dependencies = [
  "objc2-foundation",
  "objc2-game-controller",
  "objc2-game-kit",
+ "objc2-gameplay-kit",
  "objc2-health-kit",
  "objc2-home-kit",
  "objc2-identity-lookup",

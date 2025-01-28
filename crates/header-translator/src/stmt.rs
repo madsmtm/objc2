@@ -460,6 +460,7 @@ pub enum Stmt {
         availability: Availability,
         cls: ItemIdentifier,
         cls_superclasses: Vec<ItemIdentifier>,
+        cls_generics: Vec<String>,
         methods: Vec<Method>,
         documentation: Documentation,
     },
@@ -946,10 +947,6 @@ impl Stmt {
                 } else {
                     // external category
 
-                    if !generics.is_empty() {
-                        panic!("external category: cannot handle generics");
-                    }
-
                     // Rough heuristic to determine category name.
                     //
                     // Note: There isn't really a good way to do this, as
@@ -1007,6 +1004,7 @@ impl Stmt {
                             availability: availability.clone(),
                             cls: cls.clone(),
                             cls_superclasses: cls_superclasses.clone(),
+                            cls_generics: generics.clone(),
                             methods,
                             documentation: Documentation::from_entity(entity),
                         })
@@ -2164,6 +2162,7 @@ impl Stmt {
                     availability,
                     cls,
                     cls_superclasses,
+                    cls_generics,
                     methods,
                     documentation,
                 } => {
@@ -2190,8 +2189,10 @@ impl Stmt {
                     write!(f, "{availability}")?;
                     writeln!(
                         f,
-                        "pub unsafe trait {}: ClassType + Sized + private_{}::Sealed {{",
-                        id.name, id.name
+                        "pub unsafe trait {}{}: ClassType + Sized + private_{}::Sealed {{",
+                        id.name,
+                        GenericParamsHelper(cls_generics, "Message"),
+                        id.name,
                     )?;
                     writeln!(f, "    extern_methods!(")?;
                     for method in methods {
@@ -2218,17 +2219,22 @@ impl Stmt {
                     write!(f, "{impl_cfg}")?;
                     writeln!(
                         f,
-                        "impl private_{}::Sealed for {} {{}}",
+                        "impl{} private_{}::Sealed for {}{} {{}}",
+                        GenericParamsHelper(cls_generics, "Message"),
                         id.name,
                         cls.path_in_relation_to(id.location()),
+                        GenericTyHelper(cls_generics),
                     )?;
 
                     write!(f, "{impl_cfg}")?;
                     writeln!(
                         f,
-                        "unsafe impl {} for {} {{}}",
+                        "unsafe impl{} {}{} for {}{} {{}}",
+                        GenericParamsHelper(cls_generics, "Message"),
                         id.name,
+                        GenericTyHelper(cls_generics),
                         cls.path_in_relation_to(id.location()),
+                        GenericTyHelper(cls_generics),
                     )?;
                 }
                 Self::ProtocolImpl {
@@ -2991,13 +2997,14 @@ impl Stmt {
                 id,
                 availability,
                 cls,
+                cls_generics,
                 methods,
                 ..
             } => (
                 config.library(id.library_name()),
                 availability,
                 cls,
-                &[] as &[_],
+                &**cls_generics,
                 methods,
             ),
             // TODO: Test protocols too

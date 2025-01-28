@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added new framework crates:
   - `Intents` / `objc2-intents`.
   - `IntentsUI` / `objc2-intents-ui`.
+  - `GameplayKit` / `objc2-gameplay-kit`.
 
 
 ## 0.3.0 - 2025-01-22

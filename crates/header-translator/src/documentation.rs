@@ -128,6 +128,8 @@ fn format_child(child: &CommentChild) -> impl fmt::Display + '_ {
                     "warning" => write!(f, "Warning: ")?,
                     "dependency" => write!(f, "Dependencies: ")?,
                     "result" | "return" | "returns" => write!(f, "Returns: ")?,
+                    // TODO: Convert to # Panic section?
+                    "throws" => write!(f, "Throws a ")?,
                     "performance" => write!(f, "Performance: ")?,
                     // For some odd reason, @host is parsed to post here?
                     "post" => write!(f, "@host")?,

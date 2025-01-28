@@ -1,0 +1,8 @@
+framework = "GameplayKit"
+crate = "objc2-gameplay-kit"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.11"
+maccatalyst = "13.0"
+ios = "9.0"
+tvos = "9.0"
+visionos = "1.0"
