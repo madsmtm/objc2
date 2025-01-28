@@ -1,0 +1,20 @@
+framework = "Intents"
+crate = "objc2-intents"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "12.0"
+maccatalyst = "13.0"
+ios = "10.0"
+tvos = "14.0"
+watchos = "3.2"
+visionos = "1.0"
+
+# Unsure if we want to depend on EventKit?
+class.INDateComponentsRange.methods."initWithEKRecurrenceRule:".skipped = true
+class.INDateComponentsRange.methods.EKRecurrenceRule.skipped = true
+
+# Unsure whether this should depend on UserNotifications, or vice-versa
+class.INSendMessageIntent.skipped-protocols = ["UNNotificationContentProviding"]
+class.INStartCallIntent.skipped-protocols = ["UNNotificationContentProviding"]
+
+# Method needs va_list, which is not ABI compatible yet.
+class.NSString.categories.Intents.skipped = true

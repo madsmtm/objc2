@@ -19,10 +19,6 @@ external.SKTexture.module = "SpriteKit.SKTexture"
 # Needs PKPass from PassKit
 class.WKInterfaceController.methods."presentAddPassesControllerWithPasses:completion:".skipped = true
 
-# Needs Intents
-protocol.WKApplicationDelegate.methods."handleIntent:completionHandler:".skipped = true
-protocol.WKExtensionDelegate.methods."handleIntent:completionHandler:".skipped = true
-
 # Needs SKScene/SKNode to be configured for watchOS/UIKit
 class.WKInterfaceSKScene.methods."presentScene:".skipped = true
 class.WKInterfaceSKScene.methods."presentScene:transition:".skipped = true

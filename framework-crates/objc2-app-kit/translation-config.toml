@@ -113,7 +113,7 @@ class.NSMovie.methods.QTMovie.skipped = true
 class.NSWorkspaceOpenConfiguration.methods.architecture.skipped = true
 class.NSWorkspaceOpenConfiguration.methods."setArchitecture:".skipped = true
 
-# Needs INIntent from Intents
+# Unsure whether we really want AppKit to depend on Intents
 protocol.NSApplicationDelegate.methods."application:handlerForIntent:".skipped = true
 
 # We don't really want objc2-app-kit to depend on objc2-core-text

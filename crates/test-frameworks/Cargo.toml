@@ -72,6 +72,7 @@ test-frameworks = [
     "objc2-io-surface",
     "objc2-identity-lookup",
     "objc2-input-method-kit",
+    "objc2-intents",
     "objc2-link-presentation",
     "objc2-local-authentication",
     "objc2-local-authentication-embedded-ui",
@@ -229,6 +230,7 @@ objc2-vision = ["dep:objc2-vision"]
 objc2-watch-connectivity = ["dep:objc2-watch-connectivity"]
 objc2-watch-kit = ["dep:objc2-watch-kit"]
 objc2-web-kit = ["dep:objc2-web-kit"]
+objc2-intents = ["dep:objc2-intents"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -259,6 +261,7 @@ dispatch2 = { path = "../dispatch2", optional = true }
 objc2-extension-kit = { path = "../../framework-crates/objc2-extension-kit", optional = true }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation", optional = true }
 objc2-game-kit = { path = "../../framework-crates/objc2-game-kit", optional = true }
+objc2-intents = { path = "../../framework-crates/objc2-intents", optional = true }
 objc2-map-kit = { path = "../../framework-crates/objc2-map-kit", optional = true }
 objc2-media-player = { path = "../../framework-crates/objc2-media-player", optional = true }
 objc2-natural-language = { path = "../../framework-crates/objc2-natural-language", optional = true }

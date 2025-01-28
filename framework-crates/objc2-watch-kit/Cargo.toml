@@ -32,6 +32,10 @@ objc2-health-kit = { path = "../objc2-health-kit", version = "0.3.0", default-fe
     "HKWorkoutConfiguration",
 ] }
 objc2-home-kit = { path = "../objc2-home-kit", version = "0.3.0", default-features = false, optional = true, features = ["HMCameraSource"] }
+objc2-intents = { path = "../objc2-intents", version = "0.3.0", default-features = false, optional = true, features = [
+    "INIntent",
+    "INIntentResponse",
+] }
 objc2-map-kit = { path = "../objc2-map-kit", version = "0.3.0", default-features = false, optional = true, features = [
     "MKGeometry",
     "objc2-core-location",
@@ -110,6 +114,7 @@ default = [
     "objc2-core-location",
     "objc2-health-kit",
     "objc2-home-kit",
+    "objc2-intents",
     "objc2-map-kit",
     "objc2-scene-kit",
     "objc2-ui-kit",
@@ -124,6 +129,7 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-location = ["dep:objc2-core-location"]
 objc2-health-kit = ["dep:objc2-health-kit"]
 objc2-home-kit = ["dep:objc2-home-kit"]
+objc2-intents = ["dep:objc2-intents"]
 objc2-map-kit = ["dep:objc2-map-kit"]
 objc2-scene-kit = ["dep:objc2-scene-kit"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
