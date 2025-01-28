@@ -89,7 +89,8 @@ impl CFString {
     /// internally, and can thus mutate the string inside there.
     #[doc(alias = "CFStringGetCStringPtr")]
     // NOTE: This is NOT public, since it's completely broken for differently
-    // encoded strings, see the `as_str_broken` test below.
+    // encoded strings, see the `as_str_broken` test below. See also:
+    // <https://github.com/swiftlang/swift-corelibs-foundation/issues/5164>.
     #[allow(dead_code)]
     unsafe fn as_str_unchecked(&self) -> Option<&str> {
         let bytes = CFStringGetCStringPtr(self, CFStringBuiltInEncodings::EncodingUTF8.0);
