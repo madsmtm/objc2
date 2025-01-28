@@ -1,0 +1,8 @@
+framework = "MediaAccessibility"
+crate = "objc2-media-accessibility"
+required-crates = ["objc2-core-foundation"]
+macos = "10.9"
+maccatalyst = "13.0"
+ios = "17.0"
+tvos = "17.0"
+visionos = "1.0"

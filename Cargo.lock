@@ -1196,6 +1196,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-media-accessibility"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-core-graphics",
+ "objc2-core-text",
+ "objc2-foundation",
+ "objc2-io-surface",
+]
+
+[[package]]
 name = "objc2-media-player"
 version = "0.3.0"
 dependencies = [
@@ -2037,6 +2050,7 @@ dependencies = [
  "objc2-local-authentication-embedded-ui",
  "objc2-mail-kit",
  "objc2-map-kit",
+ "objc2-media-accessibility",
  "objc2-media-player",
  "objc2-media-toolbox",
  "objc2-message-ui",
