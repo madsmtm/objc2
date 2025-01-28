@@ -82,6 +82,7 @@ test-frameworks = [
     "objc2-mail-kit",
     "objc2-map-kit",
     "objc2-media-player",
+    "objc2-media-toolbox",
     "objc2-message-ui",
     "objc2-messages",
     "objc2-metal",
@@ -237,6 +238,7 @@ objc2-intents = ["dep:objc2-intents"]
 objc2-intents-ui = ["dep:objc2-intents-ui"]
 objc2-gameplay-kit = ["dep:objc2-gameplay-kit"]
 objc2-sensor-kit = ["dep:objc2-sensor-kit"]
+objc2-media-toolbox = ["dep:objc2-media-toolbox"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -340,6 +342,7 @@ objc2-game-controller = { path = "../../framework-crates/objc2-game-controller",
 objc2-gameplay-kit = { path = "../../framework-crates/objc2-gameplay-kit", optional = true }
 objc2-io-surface = { path = "../../framework-crates/objc2-io-surface", optional = true }
 objc2-link-presentation = { path = "../../framework-crates/objc2-link-presentation", optional = true }
+objc2-media-toolbox = { path = "../../framework-crates/objc2-media-toolbox", optional = true }
 objc2-metal = { path = "../../framework-crates/objc2-metal", optional = true }
 objc2-metal-kit = { path = "../../framework-crates/objc2-metal-kit", optional = true }
 objc2-metal-performance-shaders = { path = "../../framework-crates/objc2-metal-performance-shaders", optional = true }

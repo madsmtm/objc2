@@ -69,6 +69,7 @@
 | `MailKit` | [![`objc2-mail-kit`](https://badgen.net/crates/v/objc2-mail-kit)](https://crates.io/crates/objc2-mail-kit) | [![docs.rs](https://docs.rs/objc2-mail-kit/badge.svg)](https://docs.rs/objc2-mail-kit/) |
 | `MapKit` | [![`objc2-map-kit`](https://badgen.net/crates/v/objc2-map-kit)](https://crates.io/crates/objc2-map-kit) | [![docs.rs](https://docs.rs/objc2-map-kit/badge.svg)](https://docs.rs/objc2-map-kit/) |
 | `MediaPlayer` | [![`objc2-media-player`](https://badgen.net/crates/v/objc2-media-player)](https://crates.io/crates/objc2-media-player) | [![docs.rs](https://docs.rs/objc2-media-player/badge.svg)](https://docs.rs/objc2-media-player/) |
+| `MediaToolbox` | [![`objc2-media-toolbox`](https://badgen.net/crates/v/objc2-media-toolbox)](https://crates.io/crates/objc2-media-toolbox) | [![docs.rs](https://docs.rs/objc2-media-toolbox/badge.svg)](https://docs.rs/objc2-media-toolbox/) |
 | `MessageUI` | [![`objc2-message-ui`](https://badgen.net/crates/v/objc2-message-ui)](https://crates.io/crates/objc2-message-ui) | [![docs.rs](https://docs.rs/objc2-message-ui/badge.svg)](https://docs.rs/objc2-message-ui/) |
 | `Messages` | [![`objc2-messages`](https://badgen.net/crates/v/objc2-messages)](https://crates.io/crates/objc2-messages) | [![docs.rs](https://docs.rs/objc2-messages/badge.svg)](https://docs.rs/objc2-messages/) |
 | `Metal` | [![`objc2-metal`](https://badgen.net/crates/v/objc2-metal)](https://crates.io/crates/objc2-metal) | [![docs.rs](https://docs.rs/objc2-metal/badge.svg)](https://docs.rs/objc2-metal/) |

@@ -1,0 +1,9 @@
+framework = "MediaToolbox"
+crate = "objc2-media-toolbox"
+required-crates = ["objc2-core-foundation"]
+custom-lib-rs = true
+macos = "10.9"
+maccatalyst = "6.0"
+ios = "6.0"
+tvos = "9.0"
+visionos = "1.0"
