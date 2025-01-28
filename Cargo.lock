@@ -1104,6 +1104,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-intents-ui"
+version = "0.3.0"
+dependencies = [
+ "objc2",
+ "objc2-app-kit",
+ "objc2-core-foundation",
+ "objc2-foundation",
+ "objc2-intents",
+]
+
+[[package]]
 name = "objc2-io-surface"
 version = "0.3.0"
 dependencies = [
@@ -1979,6 +1990,7 @@ dependencies = [
  "objc2-identity-lookup",
  "objc2-input-method-kit",
  "objc2-intents",
+ "objc2-intents-ui",
  "objc2-io-surface",
  "objc2-link-presentation",
  "objc2-local-authentication",

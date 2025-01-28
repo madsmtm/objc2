@@ -16,6 +16,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Marked a bunch of functions safe in:
   - `CoreFoundation` / `objc2-core-foundation`.
   - `SystemConfiguration` / `objc2-system-configuration`.
+* Added new framework crates:
+  - `Intents` / `objc2-intents`.
+  - `IntentsUI` / `objc2-intents-ui`.
 
 
 ## 0.3.0 - 2025-01-22
