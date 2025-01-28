@@ -105,6 +105,7 @@ test-frameworks = [
     "objc2-screen-saver",
     "objc2-security",
     "objc2-sensitive-content-analysis",
+    "objc2-sensor-kit",
     "objc2-service-management",
     "objc2-social",
     "objc2-sound-analysis",
@@ -235,6 +236,7 @@ objc2-web-kit = ["dep:objc2-web-kit"]
 objc2-intents = ["dep:objc2-intents"]
 objc2-intents-ui = ["dep:objc2-intents-ui"]
 objc2-gameplay-kit = ["dep:objc2-gameplay-kit"]
+objc2-sensor-kit = ["dep:objc2-sensor-kit"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -370,6 +372,7 @@ objc2-ui-kit = { path = "../../framework-crates/objc2-ui-kit", optional = true }
 
 [target.'cfg(target_os = "ios")'.dependencies]
 objc2-messages = { path = "../../framework-crates/objc2-messages", optional = true }
+objc2-sensor-kit = { path = "../../framework-crates/objc2-sensor-kit", optional = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "watchos"))'.dependencies]
 objc2-nearby-interaction = { path = "../../framework-crates/objc2-nearby-interaction", optional = true }

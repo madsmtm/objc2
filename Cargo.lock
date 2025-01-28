@@ -1501,6 +1501,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-sensor-kit"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-core-location",
+ "objc2-core-media",
+ "objc2-foundation",
+ "objc2-sound-analysis",
+ "objc2-speech",
+]
+
+[[package]]
 name = "objc2-service-management"
 version = "0.3.0"
 dependencies = [
@@ -2037,6 +2052,7 @@ dependencies = [
  "objc2-screen-saver",
  "objc2-security",
  "objc2-sensitive-content-analysis",
+ "objc2-sensor-kit",
  "objc2-service-management",
  "objc2-social",
  "objc2-sound-analysis",
