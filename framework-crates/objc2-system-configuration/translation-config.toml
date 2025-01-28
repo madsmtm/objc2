@@ -13,3 +13,175 @@ fn.SCDynamicStoreSetDispatchQueue.skipped = true
 fn.SCNetworkConnectionSetDispatchQueue.skipped = true
 fn.SCNetworkReachabilitySetDispatchQueue.skipped = true
 fn.SCPreferencesSetDispatchQueue.skipped = true
+
+##
+## Safety
+##
+
+# CaptiveNetwork
+fn.CNSetSupportedSSIDs.unsafe = true # CFArray can contain anything
+fn.CNMarkPortalOnline.unsafe = false
+fn.CNMarkPortalOffline.unsafe = false
+fn.CNCopySupportedInterfaces.unsafe = false
+fn.CNCopyCurrentNetworkInfo.unsafe = false
+
+# DHCPClientPreferences
+
+# SCDynamicStore
+fn.SCDynamicStoreCreateRunLoopSource.unsafe = false
+fn.SCDynamicStoreCopyKeyList.unsafe = false
+fn.SCDynamicStoreAddValue.unsafe = true # CFPropertyList can be anything
+fn.SCDynamicStoreAddTemporaryValue.unsafe = true # CFPropertyList can be anything
+fn.SCDynamicStoreCopyValue.unsafe = false
+fn.SCDynamicStoreCopyMultiple.unsafe = true # CFArray can contain anything
+fn.SCDynamicStoreSetValue.unsafe = true # CFPropertyList can be anything
+fn.SCDynamicStoreSetMultiple.unsafe = true # CFArray can contain anything
+fn.SCDynamicStoreRemoveValue.unsafe = false
+fn.SCDynamicStoreNotifyValue.unsafe = false
+fn.SCDynamicStoreSetNotificationKeys.unsafe = true # CFArray can contain anything
+fn.SCDynamicStoreCopyNotifiedKeys.unsafe = false
+
+# SCDynamicStoreCopyDHCPInfo
+fn.SCDynamicStoreCopyDHCPInfo.unsafe = false
+fn.DHCPInfoGetOptionData.unsafe = true # CFDictionary can contain anything
+fn.DHCPInfoGetLeaseStartTime.unsafe = true # CFDictionary can contain anything
+fn.DHCPInfoGetLeaseExpirationTime.unsafe = true # CFDictionary can contain anything
+
+# SCDynamicStoreCopySpecific
+fn.SCDynamicStoreCopyLocalHostName.unsafe = false
+fn.SCDynamicStoreCopyLocation.unsafe = false
+fn.SCDynamicStoreCopyProxies.unsafe = false
+
+# SCDynamicStoreKey
+fn.SCDynamicStoreKeyCreateNetworkGlobalEntity.unsafe = false
+fn.SCDynamicStoreKeyCreateNetworkInterface.unsafe = false
+fn.SCDynamicStoreKeyCreateNetworkInterfaceEntity.unsafe = false
+fn.SCDynamicStoreKeyCreateNetworkServiceEntity.unsafe = false
+fn.SCDynamicStoreKeyCreateComputerName.unsafe = false
+fn.SCDynamicStoreKeyCreateConsoleUser.unsafe = false
+fn.SCDynamicStoreKeyCreateHostNames.unsafe = false
+fn.SCDynamicStoreKeyCreateLocation.unsafe = false
+fn.SCDynamicStoreKeyCreateProxies.unsafe = false
+
+# SCNetwork
+fn.SCNetworkInterfaceRefreshConfiguration.unsafe = false
+
+# SCNetworkConfiguration
+fn.SCNetworkInterfaceCopyAll.unsafe = false
+fn.SCNetworkInterfaceGetSupportedInterfaceTypes.unsafe = false
+fn.SCNetworkInterfaceGetSupportedProtocolTypes.unsafe = false
+fn.SCNetworkInterfaceCreateWithInterface.unsafe = false
+fn.SCNetworkInterfaceGetBSDName.unsafe = false
+fn.SCNetworkInterfaceGetConfiguration.unsafe = false
+fn.SCNetworkInterfaceGetExtendedConfiguration.unsafe = false
+fn.SCNetworkInterfaceGetHardwareAddressString.unsafe = false
+fn.SCNetworkInterfaceGetInterface.unsafe = false
+fn.SCNetworkInterfaceGetInterfaceType.unsafe = false
+fn.SCNetworkInterfaceGetLocalizedDisplayName.unsafe = false
+fn.SCNetworkInterfaceSetConfiguration.unsafe = true # CFDictionary can contain anything
+fn.SCNetworkInterfaceSetExtendedConfiguration.unsafe = true # CFDictionary can contain anything
+fn.SCNetworkInterfaceCopyMediaSubTypes.unsafe = false
+fn.SCNetworkInterfaceCopyMediaSubTypeOptions.unsafe = false
+fn.SCNetworkInterfaceSetMediaOptions.unsafe = false
+fn.SCNetworkInterfaceSetMTU.unsafe = false
+fn.SCNetworkInterfaceForceConfigurationRefresh.unsafe = false
+fn.SCBondInterfaceCopyAll.unsafe = false
+fn.SCBondInterfaceCopyAvailableMemberInterfaces.unsafe = false
+fn.SCBondInterfaceCreate.unsafe = false
+fn.SCBondInterfaceRemove.unsafe = false
+fn.SCBondInterfaceGetMemberInterfaces.unsafe = false
+fn.SCBondInterfaceGetOptions.unsafe = false
+fn.SCBondInterfaceSetMemberInterfaces.unsafe = true # CFArray can contain anything
+fn.SCBondInterfaceSetLocalizedDisplayName.unsafe = false
+fn.SCBondInterfaceSetOptions.unsafe = true # CFDictionary can contain anything
+fn.SCBondInterfaceCopyStatus.unsafe = false
+fn.SCBondStatusGetMemberInterfaces.unsafe = false
+fn.SCBondStatusGetInterfaceStatus.unsafe = false
+fn.SCVLANInterfaceCopyAll.unsafe = false
+fn.SCVLANInterfaceCopyAvailablePhysicalInterfaces.unsafe = false
+fn.SCVLANInterfaceCreate.unsafe = false
+fn.SCVLANInterfaceRemove.unsafe = false
+fn.SCVLANInterfaceGetPhysicalInterface.unsafe = false
+fn.SCVLANInterfaceGetTag.unsafe = false
+fn.SCVLANInterfaceGetOptions.unsafe = false
+fn.SCVLANInterfaceSetPhysicalInterfaceAndTag.unsafe = false
+fn.SCVLANInterfaceSetLocalizedDisplayName.unsafe = false
+fn.SCVLANInterfaceSetOptions.unsafe = true # CFDictionary can contain anything
+fn.SCNetworkProtocolGetConfiguration.unsafe = false
+fn.SCNetworkProtocolGetEnabled.unsafe = false
+fn.SCNetworkProtocolGetProtocolType.unsafe = false
+fn.SCNetworkProtocolSetConfiguration.unsafe = true # CFDictionary can contain anything
+fn.SCNetworkProtocolSetEnabled.unsafe = false
+fn.SCNetworkServiceAddProtocolType.unsafe = false
+fn.SCNetworkServiceCopyAll.unsafe = false
+fn.SCNetworkServiceCopyProtocols.unsafe = false
+fn.SCNetworkServiceCreate.unsafe = false
+fn.SCNetworkServiceCopy.unsafe = false
+fn.SCNetworkServiceEstablishDefaultConfiguration.unsafe = false
+fn.SCNetworkServiceGetEnabled.unsafe = false
+fn.SCNetworkServiceGetInterface.unsafe = false
+fn.SCNetworkServiceGetName.unsafe = false
+fn.SCNetworkServiceCopyProtocol.unsafe = false
+fn.SCNetworkServiceGetServiceID.unsafe = false
+fn.SCNetworkServiceRemove.unsafe = false
+fn.SCNetworkServiceRemoveProtocolType.unsafe = false
+fn.SCNetworkServiceSetEnabled.unsafe = false
+fn.SCNetworkServiceSetName.unsafe = false
+fn.SCNetworkSetAddService.unsafe = false
+fn.SCNetworkSetContainsInterface.unsafe = false
+fn.SCNetworkSetCopyAll.unsafe = false
+fn.SCNetworkSetCopyCurrent.unsafe = false
+fn.SCNetworkSetCopyServices.unsafe = false
+fn.SCNetworkSetCreate.unsafe = false
+fn.SCNetworkSetCopy.unsafe = false
+fn.SCNetworkSetGetName.unsafe = false
+fn.SCNetworkSetGetSetID.unsafe = false
+fn.SCNetworkSetGetServiceOrder.unsafe = false
+fn.SCNetworkSetRemove.unsafe = false
+fn.SCNetworkSetRemoveService.unsafe = false
+fn.SCNetworkSetSetCurrent.unsafe = false
+fn.SCNetworkSetSetName.unsafe = false
+fn.SCNetworkSetSetServiceOrder.unsafe = true # CFArray can contain anything
+
+# SCNetworkConnection
+fn.SCNetworkConnectionCopyServiceID.unsafe = false
+fn.SCNetworkConnectionGetStatus.unsafe = false
+fn.SCNetworkConnectionCopyExtendedStatus.unsafe = false
+fn.SCNetworkConnectionCopyStatistics.unsafe = false
+fn.SCNetworkConnectionStart.unsafe = true # CFDictionary can contain anything
+fn.SCNetworkConnectionStop.unsafe = false
+fn.SCNetworkConnectionCopyUserOptions.unsafe = false
+fn.SCNetworkConnectionScheduleWithRunLoop.unsafe = false
+fn.SCNetworkConnectionUnscheduleFromRunLoop.unsafe = false
+
+# SCNetworkReachability
+fn.SCNetworkReachabilityScheduleWithRunLoop.unsafe = false
+fn.SCNetworkReachabilityUnscheduleFromRunLoop.unsafe = false
+
+# SCPreferences
+fn.SCPreferencesCreate.unsafe = false
+fn.SCPreferencesLock.unsafe = false
+fn.SCPreferencesCommitChanges.unsafe = false
+fn.SCPreferencesApplyChanges.unsafe = false
+fn.SCPreferencesUnlock.unsafe = false
+fn.SCPreferencesGetSignature.unsafe = false
+fn.SCPreferencesCopyKeyList.unsafe = false
+fn.SCPreferencesGetValue.unsafe = false
+fn.SCPreferencesAddValue.unsafe = true # CFPropertyList can be anything
+fn.SCPreferencesSetValue.unsafe = true # CFPropertyList can be anything
+fn.SCPreferencesRemoveValue.unsafe = false
+fn.SCPreferencesScheduleWithRunLoop.unsafe = false
+fn.SCPreferencesUnscheduleFromRunLoop.unsafe = false
+fn.SCPreferencesSynchronize.unsafe = false
+
+# SCPreferencesPath
+fn.SCPreferencesPathCreateUniqueChild.unsafe = false
+fn.SCPreferencesPathGetValue.unsafe = false
+fn.SCPreferencesPathGetLink.unsafe = false
+fn.SCPreferencesPathSetValue.unsafe = true # CFDictionary can contain anything
+fn.SCPreferencesPathSetLink.unsafe = false
+fn.SCPreferencesPathRemoveValue.unsafe = false
+
+# SCPreferencesSetSpecific
+fn.SCPreferencesSetComputerName.unsafe = false
+fn.SCPreferencesSetLocalHostName.unsafe = false
