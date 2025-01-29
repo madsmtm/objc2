@@ -203,7 +203,7 @@ compile_error!("The `std` feature currently must be enabled.");
         feature = "unstable-objfw",
     ))
 ))]
-compile_error!("A runtime must be selected");
+compile_error!("`objc2` only works on Apple platforms. Pass `--target aarch64-apple-darwin` or similar to compile for macOS.\n(If you're absolutely certain that you're using GNUStep, you can specify that with the `gnustep-x-y` Cargo feature instead).");
 
 #[cfg(all(feature = "gnustep-1-7", feature = "unstable-objfw"))]
 compile_error!("Only one runtime may be selected");

@@ -396,7 +396,7 @@ extern crate std;
         feature = "unstable-objfw",
     ))
 ))]
-compile_error!("A runtime must be selected");
+compile_error!("`block2` only works on Apple platforms. Pass `--target aarch64-apple-darwin` or similar to compile for macOS.\n(If you're absolutely certain that you want to use `block2` on Linux/Windows, you can specify that with the `gnustep-x-y`/`compiler-rt` Cargo features instead).");
 
 #[cfg(any(
     all(feature = "compiler-rt", feature = "gnustep-1-7"),
