@@ -17,9 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreFoundation` / `objc2-core-foundation`.
   - `SystemConfiguration` / `objc2-system-configuration`.
 * Added new framework crates:
+  - `GameplayKit` / `objc2-gameplay-kit`.
+  - `ImageCaptureCore` / `objc2-image-capture-core`.
   - `Intents` / `objc2-intents`.
   - `IntentsUI` / `objc2-intents-ui`.
-  - `GameplayKit` / `objc2-gameplay-kit`.
   - `MediaAccessibility` / `objc2-media-accessibility`.
   - `MediaToolbox` / `objc2-media-toolbox`.
   - `SensorKit` / `objc2-sensor-kit`.

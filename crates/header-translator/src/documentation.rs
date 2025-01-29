@@ -200,6 +200,8 @@ fn format_child(child: &CommentChild) -> impl fmt::Display + '_ {
                     // Shouldn't actually be hit, but is for some reason?
                     ("header", _) => {}
                     ("description", _) => {}
+                    // ImageCaptureCore uses enums with things like `@ICMediaPresentation`.
+                    (ic, _) if ic.starts_with("IC") => {}
                     _ => warn!(?child, "unknown documentation command"),
                 }
             }

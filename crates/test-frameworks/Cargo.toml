@@ -72,6 +72,7 @@ test-frameworks = [
     "objc2-home-kit",
     "objc2-io-surface",
     "objc2-identity-lookup",
+    "objc2-image-capture-core",
     "objc2-input-method-kit",
     "objc2-intents",
     "objc2-intents-ui",
@@ -241,6 +242,7 @@ objc2-gameplay-kit = ["dep:objc2-gameplay-kit"]
 objc2-sensor-kit = ["dep:objc2-sensor-kit"]
 objc2-media-toolbox = ["dep:objc2-media-toolbox"]
 objc2-media-accessibility = ["dep:objc2-media-accessibility"]
+objc2-image-capture-core = ["dep:objc2-image-capture-core"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -302,6 +304,7 @@ objc2-contacts-ui = { path = "../../framework-crates/objc2-contacts-ui", optiona
 objc2-file-provider = { path = "../../framework-crates/objc2-file-provider", optional = true }
 objc2-file-provider-ui = { path = "../../framework-crates/objc2-file-provider-ui", optional = true }
 objc2-identity-lookup = { path = "../../framework-crates/objc2-identity-lookup", optional = true }
+objc2-image-capture-core = { path = "../../framework-crates/objc2-image-capture-core", optional = true }
 objc2-local-authentication-embedded-ui = { path = "../../framework-crates/objc2-local-authentication-embedded-ui", optional = true }
 objc2-metal-fx = { path = "../../framework-crates/objc2-metal-fx", optional = true }
 objc2-metric-kit = { path = "../../framework-crates/objc2-metric-kit", optional = true }
