@@ -124,6 +124,7 @@ test-frameworks = [
     "objc2-ui-kit",
     "objc2-uniform-type-identifiers",
     "objc2-user-notifications",
+    "objc2-user-notifications-ui",
     "objc2-video-toolbox",
     "objc2-virtualization",
     "objc2-vision",
@@ -249,6 +250,7 @@ objc2-image-capture-core = ["dep:objc2-image-capture-core"]
 objc2-quick-look = ["dep:objc2-quick-look"]
 objc2-quick-look-ui = ["dep:objc2-quick-look-ui"]
 objc2-quick-look-thumbnailing = ["dep:objc2-quick-look-thumbnailing", "objc2-quick-look-thumbnailing?/objc2-uniform-type-identifiers"]
+objc2-user-notifications-ui = ["dep:objc2-user-notifications-ui"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -317,6 +319,7 @@ objc2-metric-kit = { path = "../../framework-crates/objc2-metric-kit", optional 
 objc2-quick-look = { path = "../../framework-crates/objc2-quick-look", optional = true }
 objc2-quick-look-thumbnailing = { path = "../../framework-crates/objc2-quick-look-thumbnailing", optional = true }
 objc2-speech = { path = "../../framework-crates/objc2-speech", optional = true }
+objc2-user-notifications-ui = { path = "../../framework-crates/objc2-user-notifications-ui", optional = true }
 objc2-web-kit = { path = "../../framework-crates/objc2-web-kit", optional = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]

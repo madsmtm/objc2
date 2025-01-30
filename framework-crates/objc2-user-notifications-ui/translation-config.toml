@@ -1,0 +1,11 @@
+framework = "UserNotificationsUI"
+crate = "objc2-user-notifications-ui"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "11.0"
+maccatalyst = "14.0"
+ios = "10.0"
+visionos = "1.0"
+
+external.UNNotification.module = "UserNotifications.UNNotification"
+external.UNNotificationResponse.module = "UserNotifications.UNNotificationResponse"
+external.UNNotificationAction.module = "UserNotifications.UNNotificationAction"
