@@ -104,6 +104,7 @@ test-frameworks = [
     "objc2-photos-ui",
     "objc2-quartz-core",
     "objc2-quick-look",
+    "objc2-quick-look-thumbnailing",
     "objc2-quick-look-ui",
     "objc2-scene-kit",
     "objc2-screen-capture-kit",
@@ -247,6 +248,7 @@ objc2-media-accessibility = ["dep:objc2-media-accessibility"]
 objc2-image-capture-core = ["dep:objc2-image-capture-core"]
 objc2-quick-look = ["dep:objc2-quick-look"]
 objc2-quick-look-ui = ["dep:objc2-quick-look-ui"]
+objc2-quick-look-thumbnailing = ["dep:objc2-quick-look-thumbnailing", "objc2-quick-look-thumbnailing?/objc2-uniform-type-identifiers"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -313,6 +315,7 @@ objc2-local-authentication-embedded-ui = { path = "../../framework-crates/objc2-
 objc2-metal-fx = { path = "../../framework-crates/objc2-metal-fx", optional = true }
 objc2-metric-kit = { path = "../../framework-crates/objc2-metric-kit", optional = true }
 objc2-quick-look = { path = "../../framework-crates/objc2-quick-look", optional = true }
+objc2-quick-look-thumbnailing = { path = "../../framework-crates/objc2-quick-look-thumbnailing", optional = true }
 objc2-speech = { path = "../../framework-crates/objc2-speech", optional = true }
 objc2-web-kit = { path = "../../framework-crates/objc2-web-kit", optional = true }
 
