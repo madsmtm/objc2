@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `IntentsUI` / `objc2-intents-ui`.
   - `MediaAccessibility` / `objc2-media-accessibility`.
   - `MediaToolbox` / `objc2-media-toolbox`.
+  - `QuickLook` / `objc2-quick-look`.
   - `SensorKit` / `objc2-sensor-kit`.
 
 

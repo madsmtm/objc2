@@ -1473,6 +1473,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-quick-look"
+version = "0.3.0"
+dependencies = [
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-core-graphics",
+]
+
+[[package]]
 name = "objc2-scene-kit"
 version = "0.3.0"
 dependencies = [
@@ -2085,6 +2094,7 @@ dependencies = [
  "objc2-photos",
  "objc2-photos-ui",
  "objc2-quartz-core",
+ "objc2-quick-look",
  "objc2-scene-kit",
  "objc2-screen-capture-kit",
  "objc2-screen-saver",
