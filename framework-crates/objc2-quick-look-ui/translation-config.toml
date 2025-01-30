@@ -1,0 +1,7 @@
+framework = "QuickLookUI"
+crate = "objc2-quick-look-ui"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "12.0"
+
+# Needs PDFDocument from PDFKit
+class.QLPreviewReply.methods."initForPDFWithPageSize:documentCreationBlock:".skipped = true
