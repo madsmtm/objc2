@@ -55,6 +55,8 @@ extern crate std;
 mod capture;
 #[cfg(feature = "MTLCounters")]
 mod counters;
+#[cfg(feature = "MTLDevice")]
+mod device;
 mod generated;
 #[cfg(feature = "MTLAccelerationStructureTypes")]
 mod packed;
@@ -72,6 +74,8 @@ mod types;
 
 #[cfg(feature = "MTLCounters")]
 pub use self::counters::*;
+#[cfg(feature = "MTLDevice")]
+pub use self::device::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 #[cfg(feature = "MTLAccelerationStructureTypes")]

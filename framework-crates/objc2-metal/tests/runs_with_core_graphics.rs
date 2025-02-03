@@ -11,7 +11,6 @@ fn test_create_default() {
 }
 
 #[test]
-#[cfg(target_os = "macos")]
 fn get_all() {
     let _ = objc2_metal::MTLCopyAllDevices();
 }

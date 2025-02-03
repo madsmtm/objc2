@@ -28,6 +28,9 @@ struct._MTLPackedFloat3.skipped = true
 typedef.MTLPackedFloat3.skipped = true
 fn.MTLPackedFloat3Make.skipped = true
 
+# Manually defined to allow it to work on older OSes.
+fn.MTLCopyAllDevices.skipped = true
+
 ###
 ### Safety
 ###
