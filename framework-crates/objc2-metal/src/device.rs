@@ -37,7 +37,7 @@ pub extern "C-unwind" fn MTLCopyAllDevices() -> Retained<NSArray<ProtocolObject<
     #[cfg(not(target_os = "macos"))]
     {
         let device = crate::MTLCreateSystemDefaultDevice();
-        let slice = if let Some(device) = device.as_deref() {
+        let slice: &[_] = if let Some(device) = device.as_deref() {
             &[device]
         } else {
             &[]
