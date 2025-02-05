@@ -127,7 +127,7 @@ pub struct Queue {
 }
 
 impl Queue {
-    /// Create a new [Queue].
+    /// Create a new [`Queue`].
     pub fn new(label: &str, queue_attribute: QueueAttribute) -> Self {
         let label = CString::new(label).expect("Invalid label!");
 
@@ -147,7 +147,7 @@ impl Queue {
         }
     }
 
-    /// Create a new [Queue] with a given target [Queue].
+    /// Create a new [`Queue`] with a given target [`Queue`].
     pub fn new_with_target(label: &str, queue_attribute: QueueAttribute, target: &Queue) -> Self {
         let label = CString::new(label).expect("Invalid label!");
 
