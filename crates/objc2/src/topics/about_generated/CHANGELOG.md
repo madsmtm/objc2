@@ -31,6 +31,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `UserNotificationsUI` / `objc2-user-notifications-ui`.
 * Added fallback for `MTLCopyAllDevices` on non-macOS platforms.
 
+### Fixed
+* **BREAKING**: Fixed the type of `AuthorizationExecuteWithPrivileges`'s
+  `arguments` parameter by changing it from `NonNull<NonNull<c_char>>` to
+  `NonNull<AuthorizationString>`, i.e. `NonNull<*const c_char>`. See #711
+  for more details.
+
 
 ## 0.3.0 - 2025-01-22
 
