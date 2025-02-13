@@ -59,6 +59,7 @@ test-frameworks = [
     "objc2-event-kit",
     "objc2-event-kit-ui",
     "objc2-exception-handling",
+    "objc2-execution-policy",
     "objc2-extension-kit",
     "objc2-external-accessory",
     "objc2-file-provider",
@@ -251,6 +252,7 @@ objc2-quick-look = ["dep:objc2-quick-look"]
 objc2-quick-look-ui = ["dep:objc2-quick-look-ui"]
 objc2-quick-look-thumbnailing = ["dep:objc2-quick-look-thumbnailing", "objc2-quick-look-thumbnailing?/objc2-uniform-type-identifiers"]
 objc2-user-notifications-ui = ["dep:objc2-user-notifications-ui"]
+objc2-execution-policy = ["dep:objc2-execution-policy"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -338,6 +340,7 @@ objc2-automator = { path = "../../framework-crates/objc2-automator", optional = 
 objc2-core-wlan = { path = "../../framework-crates/objc2-core-wlan", optional = true }
 objc2-disk-arbitration = { path = "../../framework-crates/objc2-disk-arbitration", optional = true }
 objc2-exception-handling = { path = "../../framework-crates/objc2-exception-handling", optional = true }
+objc2-execution-policy = { path = "../../framework-crates/objc2-execution-policy", optional = true }
 objc2-finder-sync = { path = "../../framework-crates/objc2-finder-sync", optional = true }
 objc2-input-method-kit = { path = "../../framework-crates/objc2-input-method-kit", optional = true }
 objc2-mail-kit = { path = "../../framework-crates/objc2-mail-kit", optional = true }

@@ -1,0 +1,5 @@
+framework = "ExecutionPolicy"
+crate = "objc2-execution-policy"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.15"
+maccatalyst = "13.0"
