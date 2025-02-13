@@ -140,3 +140,6 @@ enum.anonymous.constants.callerSecuritySession.use-value = true
 # CSSM_WORDID_VENDOR_START from i32 to CSSM_WORDID_KEYCHAIN_PROMPT which is
 # u32). So let's just emit all constants directly for now.
 enum.anonymous.use-value = true
+
+# Manually re-defined: see #711.
+fn.AuthorizationExecuteWithPrivileges.skipped = true
