@@ -218,6 +218,33 @@ macro_rules! extern_methods {
     ) => {};
 
     (
+        $(#[$($m:tt)*])*
+        $v:vis unsafe fn $fn_name:ident(this: Allocated<Self> $(, $($params_rest:tt)*)?) $(-> $ret:ty)?
+        $(where $($where:ty : $bound:path),+ $(,)?)?;
+
+        $($rest:tt)*
+    ) => {
+        $crate::__extract_method_attributes! {
+            ($(#[$($m)*])*)
+
+            ($crate::__extern_methods_method_out)
+            ($v unsafe fn $fn_name(self: Allocated<Self> $(, $($params_rest)*)?) $(-> $ret)?)
+            ($($($where : $bound ,)+)?)
+
+            (add_method)
+            (self)
+            (Allocated<Self>)
+            (
+                self: Allocated<Self>,
+                _: $crate::runtime::Sel,
+            )
+            ($($($params_rest)*)?)
+        }
+
+        $crate::extern_methods!($($rest)*);
+    };
+
+    (
         // Unsafe method.
         //
         // Special attributes:
@@ -240,6 +267,33 @@ macro_rules! extern_methods {
             ($crate::__extern_methods_method_out)
             ($v unsafe fn $fn_name($($params)*) $(-> $ret)?)
             ($($($where : $bound ,)+)?)
+        }
+
+        $crate::extern_methods!($($rest)*);
+    };
+
+    (
+        $(#[$($m:tt)*])*
+        $v:vis fn $fn_name:ident(this: Allocated<Self> $(, $($params_rest:tt)*)?) $(-> $ret:ty)?
+        $(where $($where:ty : $bound:path),+ $(,)?)?;
+
+        $($rest:tt)*
+    ) => {
+        $crate::__extract_method_attributes! {
+            ($(#[$($m)*])*)
+
+            ($crate::__extern_methods_method_out)
+            ($v fn $fn_name(self: Allocated<Self> $(, $($params_rest)*)?) $(-> $ret)?)
+            ($($($where : $bound ,)+)?)
+
+            (add_method)
+            (self)
+            (Allocated<Self>)
+            (
+                self: Allocated<Self>,
+                _: $crate::runtime::Sel,
+            )
+            ($($($params_rest)*)?)
         }
 
         $crate::extern_methods!($($rest)*);
