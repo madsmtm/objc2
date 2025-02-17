@@ -255,25 +255,27 @@
 //! re-entrancy, with the addition that it can also only be called once.
 //!
 //! Ensuring that it can be called once can be done by taking the closure
-//! in/out of an [`Option`] as shown in the example below.
+//! out of an [`Option`] as shown in the example below. We can use [`Cell`]
+//! instead of [`RefCell`] here, since we never need to put the closure "back"
+//! for later use (like we need to do with `FnMut` above).
 //!
 //! In certain cases you may be able to do micro-optimizations, namely to use
 //! a [`ManuallyDrop`], if you wanted to optimize with the assumption that the
 //! block is always called, or [`unwrap_unchecked`] if you wanted to optimize
 //! with the assumption that it is only called once.
 //!
+//! [`Cell`]: core::cell::Cell
 //! [`ManuallyDrop`]: core::mem::ManuallyDrop
 //! [`unwrap_unchecked`]: core::option::Option::unwrap_unchecked
 //!
 //! ```
-//! use std::cell::RefCell;
+//! use std::cell::Cell;
 //! use block2::RcBlock;
 //!
 //! fn fnonce_to_fn(closure: impl FnOnce()) -> impl Fn() {
-//!     let cell = RefCell::new(Some(closure));
+//!     let cell = Cell::new(Some(closure));
 //!     move || {
-//!         let mut closure = cell.try_borrow_mut().expect("re-entrant call");
-//!         let closure = closure.take().expect("called twice");
+//!         let closure = cell.take().expect("called twice");
 //!         closure()
 //!     }
 //! }
