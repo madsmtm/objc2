@@ -30,7 +30,7 @@ extern "C-unwind" {
     ///
     ///
     /// This function has been deprecated and should no longer be used.
-    /// Use a launchd-launched helper tool and/or the Service Mangement framework
+    /// Use a launchd-launched helper tool and/or the Service Management framework
     /// for this functionality.
     #[cfg(feature = "libc")]
     #[deprecated]
