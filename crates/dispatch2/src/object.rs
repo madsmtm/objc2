@@ -1,8 +1,12 @@
 //! Dispatch object definition.
 
 use alloc::boxed::Box;
+use core::ptr::NonNull;
 
 use super::{ffi::*, queue::Queue, utils::function_wrapper, QualityOfServiceClass};
+
+// TODO: FFI?
+const DISPATCH_DATA_DESTRUCTOR_DEFAULT: dispatch_block_t = std::ptr::null_mut();
 
 /// Error returned by [DispatchObject::set_target_queue].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -58,6 +62,26 @@ impl<T> DispatchObject<T> {
         }
 
         result
+    }
+
+    /// Creates a dispatch data object with a copy of the given contiguous buffer of memory.
+    // TODO: Would it be safe for users to replace the finalizer?
+    pub fn data_create(data: &[u8], queue: &Queue) -> Self {
+        // SAFETY: Buffer pointer is valid for the given number of bytes. Queue handle is valid,
+        // and the destructor is a NULL value which indicates the buffer should be copied.
+        let object = unsafe {
+            dispatch_data_create(
+                NonNull::new_unchecked(data.as_ptr().cast_mut()).cast(),
+                data.len(),
+                queue.as_raw(),
+                DISPATCH_DATA_DESTRUCTOR_DEFAULT,
+            )
+        };
+
+        Self {
+            object: object.cast(),
+            is_activated: false,
+        }
     }
 
     /// Set the finalizer function for the object.
