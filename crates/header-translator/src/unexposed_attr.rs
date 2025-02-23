@@ -40,7 +40,7 @@ impl UnexposedAttr {
         get_arguments: impl FnOnce() -> T,
     ) -> Result<Option<Self>, ()> {
         Ok(match s {
-            "CF_ENUM" | "DISPATCH_ENUM" | "NS_ENUM" => {
+            "CF_ENUM" | "JSC_CF_ENUM" | "DISPATCH_ENUM" | "NS_ENUM" => {
                 let _ = get_arguments();
                 Some(Self::Enum)
             }

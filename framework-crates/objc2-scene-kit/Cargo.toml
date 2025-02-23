@@ -52,6 +52,10 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
 objc2-core-image = { path = "../objc2-core-image", version = "0.3.0", default-features = false, optional = true, features = ["CIFilter"] }
+objc2-java-script-core = { path = "../objc2-java-script-core", version = "0.3.0", default-features = false, optional = true, features = [
+    "JSContext",
+    "objc2",
+] }
 objc2-metal = { path = "../objc2-metal", version = "0.3.0", default-features = false, optional = true, features = [
     "MTLAllocation",
     "MTLBuffer",
@@ -150,6 +154,7 @@ default = [
     "objc2-core-foundation",
     "objc2-core-graphics",
     "objc2-core-image",
+    "objc2-java-script-core",
     "objc2-metal",
     "objc2-model-io",
     "objc2-quartz-core",
@@ -163,6 +168,7 @@ objc2-avf-audio = ["dep:objc2-avf-audio"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
+objc2-java-script-core = ["dep:objc2-java-script-core"]
 objc2-metal = ["dep:objc2-metal"]
 objc2-model-io = ["dep:objc2-model-io"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]

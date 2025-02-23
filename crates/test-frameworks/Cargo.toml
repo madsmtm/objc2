@@ -83,6 +83,7 @@ test-frameworks = [
     "objc2-input-method-kit",
     "objc2-intents",
     "objc2-intents-ui",
+    "objc2-java-script-core",
     "objc2-link-presentation",
     "objc2-local-authentication",
     "objc2-local-authentication-embedded-ui",
@@ -271,6 +272,7 @@ objc2-core-telephony = ["dep:objc2-core-telephony"]
 objc2-core-haptics = ["dep:objc2-core-haptics"]
 objc2-core-audio-kit = ["dep:objc2-core-audio-kit"]
 objc2-core-media-io = ["dep:objc2-core-media-io"]
+objc2-java-script-core = ["dep:objc2-java-script-core"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -386,6 +388,7 @@ objc2-external-accessory = { path = "../../framework-crates/objc2-external-acces
 objc2-game-controller = { path = "../../framework-crates/objc2-game-controller", optional = true }
 objc2-gameplay-kit = { path = "../../framework-crates/objc2-gameplay-kit", optional = true }
 objc2-io-surface = { path = "../../framework-crates/objc2-io-surface", optional = true }
+objc2-java-script-core = { path = "../../framework-crates/objc2-java-script-core", optional = true }
 objc2-link-presentation = { path = "../../framework-crates/objc2-link-presentation", optional = true }
 objc2-media-accessibility = { path = "../../framework-crates/objc2-media-accessibility", optional = true }
 objc2-media-toolbox = { path = "../../framework-crates/objc2-media-toolbox", optional = true }

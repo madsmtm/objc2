@@ -24,6 +24,12 @@ objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", 
     "objc2",
 ] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
+objc2-java-script-core = { path = "../objc2-java-script-core", version = "0.3.0", default-features = false, optional = true, features = [
+    "JSBase",
+    "JSContext",
+    "JSValue",
+    "objc2",
+] }
 objc2-security = { path = "../objc2-security", version = "0.3.0", default-features = false, optional = true, features = [
     "SecTrust",
     "objc2",
@@ -268,6 +274,7 @@ default = [
     "block2",
     "objc2-app-kit",
     "objc2-core-foundation",
+    "objc2-java-script-core",
     "objc2-security",
 ]
 std = ["alloc"]
@@ -276,6 +283,7 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-java-script-core = ["dep:objc2-java-script-core"]
 objc2-security = ["dep:objc2-security"]
 
 DOM = []

@@ -12,6 +12,7 @@ visionos = "1.0"
 external.AVAudioEngine.module = "AVFAudio.AVAudioEngine"
 external.AVAudioEnvironmentNode.module = "AVFAudio.AVAudioEnvironmentNode"
 external.AVAudioNode.module = "AVFAudio.AVAudioNode"
+external.JSContext.module = "JavaScriptCore.JSContext"
 
 # Both protocol and class
 protocol.SCNAnimation.renamed = "SCNAnimationProtocol"
@@ -20,9 +21,6 @@ protocol.SCNAnimation.renamed = "SCNAnimationProtocol"
 protocol.SCNSceneRenderer.methods."presentScene:withTransition:incomingPointOfView:completionHandler:".skipped = true
 protocol.SCNSceneRenderer.methods."overlaySKScene".skipped = true
 protocol.SCNSceneRenderer.methods."setOverlaySKScene:".skipped = true
-
-# Needs JavaScriptCore
-fn.SCNExportJavaScriptModule.skipped = true
 
 # Needs GLKVector3, GLKVector4 and GLKMatrix4 from GLKit
 fn.SCNMatrix4ToGLKMatrix4.skipped = true

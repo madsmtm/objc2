@@ -20,23 +20,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Cinematic` / `objc2-cinematic`.
   - `CoreAudioKit` / `objc2-audio-kit`.
   - `CoreHaptics` / `objc2-core-haptics`.
-  - `CoreSpotlight` / `objc2-core-spotlight`.
   - `CoreMediaIO` / `objc2-core-media-io`.
+  - `CoreSpotlight` / `objc2-core-spotlight`.
   - `CoreTelephony` / `objc2-core-telephony`.
   - `ExecutionPolicy` / `objc2-execution-policy`.
   - `GameplayKit` / `objc2-gameplay-kit`.
   - `ImageCaptureCore` / `objc2-image-capture-core`.
   - `Intents` / `objc2-intents`.
   - `IntentsUI` / `objc2-intents-ui`.
+  - `JavaScriptCore` / `objc2-java-script-core`.
   - `MediaAccessibility` / `objc2-media-accessibility`.
   - `MediaToolbox` / `objc2-media-toolbox`.
   - `NotificationCenter` / `objc2-notification-center`.
   - `QuickLook` / `objc2-quick-look`.
   - `QuickLookThumbnailing` / `objc2-quick-look-thumbnailing`.
   - `QuickLookUI` / `objc2-quick-look-ui`.
+  - `SafetyKit` / `objc2-safety-kit`.
   - `SensorKit` / `objc2-sensor-kit`.
   - `ShazamKit` / `objc2-shazam-kit`.
-  - `SafetyKit` / `objc2-safety-kit`.
   - `UserNotificationsUI` / `objc2-user-notifications-ui`.
 * Added fallback for `MTLCopyAllDevices` on non-macOS platforms.
 

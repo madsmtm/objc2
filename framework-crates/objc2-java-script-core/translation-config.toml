@@ -1,0 +1,13 @@
+framework = "JavaScriptCore"
+crate = "objc2-java-script-core"
+required-crates = []
+custom-lib-rs = true
+macos = "10.5"
+maccatalyst = "13.1"
+ios = "7.0"
+tvos = "9.0"
+visionos = "1.0"
+
+# Ends up re-defining OpaqueJSContext/OpaqueJSValue twice
+typedef.JSGlobalContextRef.skipped = true
+typedef.JSObjectRef.skipped = true
