@@ -1236,6 +1236,12 @@ impl AnyObject {
     /// Dynamically find the class of this object.
     ///
     ///
+    /// # Panics
+    ///
+    /// May panic if the object is invalid (which may be the case for objects
+    /// returned from unavailable `init`/`new` methods).
+    ///
+    ///
     /// # Example
     ///
     /// Check that an instance of `NSObject` has the precise class `NSObject`.
@@ -1251,10 +1257,15 @@ impl AnyObject {
     #[doc(alias = "object_getClass")]
     pub fn class(&self) -> &'static AnyClass {
         let ptr = unsafe { ffi::object_getClass(self) };
-        // SAFETY: The class is not NULL because the object is not NULL, and
-        // it is safe as `'static` since classes are static, and it could be
-        // retrieved via `AnyClass::get(self.class().name())` anyhow.
-        unsafe { ptr.as_ref().unwrap_unchecked() }
+        // SAFETY: The pointer is valid, and it is safe as `'static` since
+        // classes are static (can also be verified with the fact that they
+        // can be retrieved via `AnyClass::get(self.class().name())`).
+        let cls = unsafe { ptr.as_ref() };
+
+        // The class _should_ not be NULL, because the docs only say that if
+        // the object is NULL, the class also is; and in practice, certain
+        // invalid objects can contain a NULL isa pointer.
+        cls.unwrap_or_else(|| panic!("invalid object {:?} (had NULL class)", self as *const Self))
     }
 
     /// Change the class of the object at runtime.

@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+## Fixed
+* Fixed undefined behaviour when calling `AnyObject::class` on invalid objects.
+
 
 ## 0.6.0 - 2025-01-22
 
