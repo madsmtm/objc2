@@ -798,6 +798,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-core-haptics"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-avf-audio",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-core-image"
 version = "0.3.0"
 dependencies = [
@@ -883,7 +893,12 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-telephony"
-version = "0.0.0"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-foundation",
+]
 
 [[package]]
 name = "objc2-core-text"
@@ -2146,6 +2161,7 @@ dependencies = [
  "objc2-core-data",
  "objc2-core-foundation",
  "objc2-core-graphics",
+ "objc2-core-haptics",
  "objc2-core-image",
  "objc2-core-location",
  "objc2-core-media",
@@ -2153,6 +2169,7 @@ dependencies = [
  "objc2-core-ml",
  "objc2-core-motion",
  "objc2-core-spotlight",
+ "objc2-core-telephony",
  "objc2-core-text",
  "objc2-core-video",
  "objc2-core-wlan",

@@ -44,6 +44,7 @@ test-frameworks = [
     "objc2-core-data",
     "objc2-core-foundation",
     "objc2-core-graphics",
+    "objc2-core-haptics",
     "objc2-core-image",
     "objc2-core-location",
     "objc2-core-midi",
@@ -265,6 +266,7 @@ objc2-notification-center = ["dep:objc2-notification-center"]
 objc2-shazam-kit = ["dep:objc2-shazam-kit"]
 objc2-safety-kit = ["dep:objc2-safety-kit"]
 objc2-core-telephony = ["dep:objc2-core-telephony"]
+objc2-core-haptics = ["dep:objc2-core-haptics"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -395,6 +397,7 @@ objc2-vision = { path = "../../framework-crates/objc2-vision", optional = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "visionos"))'.dependencies]
 objc2-background-tasks = { path = "../../framework-crates/objc2-background-tasks", optional = true }
+objc2-core-haptics = { path = "../../framework-crates/objc2-core-haptics", optional = true }
 
 [target.'cfg(not(target_os = "tvos"))'.dependencies]
 objc2-call-kit = { path = "../../framework-crates/objc2-call-kit", optional = true }

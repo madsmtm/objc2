@@ -1,0 +1,15 @@
+framework = "CoreHaptics"
+crate = "objc2-core-haptics"
+required-crates = ["objc2", "objc2-foundation"]
+maccatalyst = "13.0"
+ios = "13.0"
+tvos = "14.0"
+visionos = "1.0"
+
+external.AVAudioSession.module = "AVFAudio.AVAudioSession"
+
+# Needs `ns_string!` that works reliably in statics.
+static.CoreHapticsErrorDomain.skipped = true
+
+# error: unknown error result type
+class.CHHapticEngine.methods."registerAudioResource:options:error:".skipped = true
