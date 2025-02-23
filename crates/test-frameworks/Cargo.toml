@@ -51,6 +51,7 @@ test-frameworks = [
     "objc2-core-media",
     "objc2-core-motion",
     "objc2-core-spotlight",
+    "objc2-core-telephony",
     "objc2-core-text",
     "objc2-core-video",
     "objc2-core-wlan",
@@ -263,6 +264,7 @@ objc2-core-spotlight = ["dep:objc2-core-spotlight", "objc2-core-spotlight?/objc2
 objc2-notification-center = ["dep:objc2-notification-center"]
 objc2-shazam-kit = ["dep:objc2-shazam-kit"]
 objc2-safety-kit = ["dep:objc2-safety-kit"]
+objc2-core-telephony = ["dep:objc2-core-telephony"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -339,6 +341,7 @@ objc2-web-kit = { path = "../../framework-crates/objc2-web-kit", optional = true
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
 objc2-accounts = { path = "../../framework-crates/objc2-accounts", optional = true }
 objc2-business-chat = { path = "../../framework-crates/objc2-business-chat", optional = true }
+objc2-core-telephony = { path = "../../framework-crates/objc2-core-telephony", optional = true }
 objc2-notification-center = { path = "../../framework-crates/objc2-notification-center", optional = true }
 objc2-sensitive-content-analysis = { path = "../../framework-crates/objc2-sensitive-content-analysis", optional = true }
 objc2-social = { path = "../../framework-crates/objc2-social", optional = true }

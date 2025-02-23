@@ -1,0 +1,6 @@
+framework = "CoreTelephony"
+crate = "objc2-core-telephony"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.10"
+maccatalyst = "14.0"
+ios = "4.0"

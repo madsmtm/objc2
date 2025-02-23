@@ -163,6 +163,8 @@ impl UnexposedAttr {
             | "CK_NEWLY_UNAVAILABLE"
             | "CK_SWIFT_DEPRECATED"
             | "CK_UNAVAILABLE"
+            | "CORETELEPHONY_CLASS_AVAILABLE"
+            | "CORETELEPHONY_CLASS_DEPRECATED"
             | "CS_AVAILABLE"
             | "CS_AVAILABLE_DESKTOP"
             | "CS_AVAILABLE_STARTING"

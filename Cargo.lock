@@ -882,6 +882,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-core-telephony"
+version = "0.0.0"
+
+[[package]]
 name = "objc2-core-text"
 version = "0.3.0"
 dependencies = [
