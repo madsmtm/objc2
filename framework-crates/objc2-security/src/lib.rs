@@ -21,7 +21,8 @@ pub use self::generated::*;
 
 // Manual fixes.
 mod authorization;
-pub use authorization::*;
+#[allow(unused_imports, unreachable_pub)]
+pub use self::authorization::*;
 
 #[cfg(all(feature = "cssmtype", feature = "cssmconfig", feature = "objc2"))]
 use objc2::encode::{Encode, Encoding, RefEncode};
