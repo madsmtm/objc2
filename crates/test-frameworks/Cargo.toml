@@ -121,6 +121,7 @@ test-frameworks = [
     "objc2-screen-saver",
     "objc2-security",
     "objc2-security-foundation",
+    "objc2-security-interface",
     "objc2-sensitive-content-analysis",
     "objc2-sensor-kit",
     "objc2-service-management",
@@ -275,6 +276,7 @@ objc2-core-audio-kit = ["dep:objc2-core-audio-kit"]
 objc2-core-media-io = ["dep:objc2-core-media-io"]
 objc2-java-script-core = ["dep:objc2-java-script-core"]
 objc2-security-foundation = ["dep:objc2-security-foundation"]
+objc2-security-interface = ["dep:objc2-security-interface"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -379,6 +381,7 @@ objc2-quick-look-ui = { path = "../../framework-crates/objc2-quick-look-ui", opt
 objc2-screen-capture-kit = { path = "../../framework-crates/objc2-screen-capture-kit", optional = true }
 objc2-screen-saver = { path = "../../framework-crates/objc2-screen-saver", optional = true }
 objc2-security-foundation = { path = "../../framework-crates/objc2-security-foundation", optional = true }
+objc2-security-interface = { path = "../../framework-crates/objc2-security-interface", optional = true }
 objc2-service-management = { path = "../../framework-crates/objc2-service-management", optional = true }
 objc2-system-extensions = { path = "../../framework-crates/objc2-system-extensions", optional = true }
 objc2-virtualization = { path = "../../framework-crates/objc2-virtualization", optional = true }
