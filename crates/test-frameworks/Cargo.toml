@@ -117,6 +117,7 @@ test-frameworks = [
     "objc2-sensitive-content-analysis",
     "objc2-sensor-kit",
     "objc2-service-management",
+    "objc2-shazam-kit",
     "objc2-social",
     "objc2-sound-analysis",
     "objc2-speech",
@@ -259,6 +260,7 @@ objc2-execution-policy = ["dep:objc2-execution-policy"]
 objc2-cinematic = ["dep:objc2-cinematic"]
 objc2-core-spotlight = ["dep:objc2-core-spotlight", "objc2-core-spotlight?/objc2-uniform-type-identifiers"]
 objc2-notification-center = ["dep:objc2-notification-center"]
+objc2-shazam-kit = ["dep:objc2-shazam-kit"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -298,6 +300,7 @@ objc2-network-extension = { path = "../../framework-crates/objc2-network-extensi
 objc2-photos-ui = { path = "../../framework-crates/objc2-photos-ui", optional = true }
 objc2-scene-kit = { path = "../../framework-crates/objc2-scene-kit", optional = true }
 objc2-security = { path = "../../framework-crates/objc2-security", optional = true }
+objc2-shazam-kit = { path = "../../framework-crates/objc2-shazam-kit", optional = true }
 objc2-sound-analysis = { path = "../../framework-crates/objc2-sound-analysis", optional = true }
 objc2-sprite-kit = { path = "../../framework-crates/objc2-sprite-kit", optional = true }
 objc2-store-kit = { path = "../../framework-crates/objc2-store-kit", optional = true }

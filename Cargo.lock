@@ -1643,6 +1643,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-shazam-kit"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-av-foundation",
+ "objc2-avf-audio",
+ "objc2-foundation",
+ "objc2-uniform-type-identifiers",
+]
+
+[[package]]
 name = "objc2-social"
 version = "0.3.0"
 dependencies = [
@@ -2192,6 +2204,7 @@ dependencies = [
  "objc2-sensitive-content-analysis",
  "objc2-sensor-kit",
  "objc2-service-management",
+ "objc2-shazam-kit",
  "objc2-social",
  "objc2-sound-analysis",
  "objc2-speech",

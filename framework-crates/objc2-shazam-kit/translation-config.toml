@@ -1,0 +1,9 @@
+framework = "ShazamKit"
+crate = "objc2-shazam-kit"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "12.0"
+maccatalyst = "15.0"
+ios = "15.0"
+tvos = "15.0"
+watchos = "8.0"
+visionos = "1.0"

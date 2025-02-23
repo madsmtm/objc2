@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `QuickLookThumbnailing` / `objc2-quick-look-thumbnailing`.
   - `QuickLookUI` / `objc2-quick-look-ui`.
   - `SensorKit` / `objc2-sensor-kit`.
+  - `ShazamKit` / `objc2-shazam-kit`.
   - `UserNotificationsUI` / `objc2-user-notifications-ui`.
 * Added fallback for `MTLCopyAllDevices` on non-macOS platforms.
 
