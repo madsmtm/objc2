@@ -1,0 +1,5 @@
+framework = "PreferencePanes"
+crate = "objc2-preference-panes"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.1"
+maccatalyst = "14.0"

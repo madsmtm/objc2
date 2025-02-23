@@ -111,6 +111,7 @@ test-frameworks = [
     "objc2-open-directory",
     "objc2-photos",
     "objc2-photos-ui",
+    "objc2-preference-panes",
     "objc2-quartz-core",
     "objc2-quick-look",
     "objc2-quick-look-thumbnailing",
@@ -277,6 +278,7 @@ objc2-core-media-io = ["dep:objc2-core-media-io"]
 objc2-java-script-core = ["dep:objc2-java-script-core"]
 objc2-security-foundation = ["dep:objc2-security-foundation"]
 objc2-security-interface = ["dep:objc2-security-interface"]
+objc2-preference-panes = ["dep:objc2-preference-panes"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -377,6 +379,7 @@ objc2-input-method-kit = { path = "../../framework-crates/objc2-input-method-kit
 objc2-mail-kit = { path = "../../framework-crates/objc2-mail-kit", optional = true }
 objc2-osa-kit = { path = "../../framework-crates/objc2-osa-kit", optional = true }
 objc2-open-directory = { path = "../../framework-crates/objc2-open-directory", optional = true }
+objc2-preference-panes = { path = "../../framework-crates/objc2-preference-panes", optional = true }
 objc2-quick-look-ui = { path = "../../framework-crates/objc2-quick-look-ui", optional = true }
 objc2-screen-capture-kit = { path = "../../framework-crates/objc2-screen-capture-kit", optional = true }
 objc2-screen-saver = { path = "../../framework-crates/objc2-screen-saver", optional = true }
