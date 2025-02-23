@@ -1,0 +1,6 @@
+framework = "SecurityFoundation"
+crate = "objc2-security-foundation"
+required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
+macos = "10.3"
+maccatalyst = "13.0"

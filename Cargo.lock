@@ -1674,6 +1674,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-security-foundation"
+version = "0.3.0"
+dependencies = [
+ "objc2",
+ "objc2-foundation",
+ "objc2-security",
+]
+
+[[package]]
 name = "objc2-sensitive-content-analysis"
 version = "0.3.0"
 dependencies = [
@@ -2275,6 +2284,7 @@ dependencies = [
  "objc2-screen-capture-kit",
  "objc2-screen-saver",
  "objc2-security",
+ "objc2-security-foundation",
  "objc2-sensitive-content-analysis",
  "objc2-sensor-kit",
  "objc2-service-management",
