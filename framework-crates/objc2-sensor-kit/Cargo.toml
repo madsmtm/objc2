@@ -16,7 +16,7 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
+bitflags = { version = "2.5.0", default-features = false, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
@@ -60,7 +60,6 @@ targets = [
 [features]
 default = [
     "std",
-    "bitflags",
     "block2",
     "objc2-core-foundation",
     "objc2-core-location",
@@ -70,7 +69,6 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
-bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-location = ["dep:objc2-core-location"]

@@ -1,8 +1,10 @@
 framework = "SensorKit"
 crate = "objc2-sensor-kit"
-required-crates = ["objc2", "objc2-foundation"]
+required-crates = ["objc2", "objc2-foundation", "bitflags"]
 ios = "14.0"
 
 # NOTE: This framework for some reason does not specify
 # `module * { export * }` in its module map, so it's
 # unfortunately emitted as a single large file.
+#
+# This is also why `bitflags` is (currently) a required dependency.
