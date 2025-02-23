@@ -1,0 +1,23 @@
+framework = "CoreMediaIO"
+crate = "objc2-core-media-io"
+required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
+macos = "10.7"
+maccatalyst = "13.0"
+
+# Self-referential
+struct.CMIOHardwarePlugInInterface.skipped = true
+typedef.CMIOHardwarePlugInInterface.skipped = true
+typedef.CMIOHardwarePlugInRef.skipped = true
+
+# Uses CMIOHardwarePlugInInterface
+fn.CMIOObjectCreate.skipped = true
+fn.CMIOObjectsPublishedAndDied.skipped = true
+fn.CMIOObjectPropertiesChanged.skipped = true
+
+# Needs dispatch_queue_t from libdispatch
+class.CMIOExtensionProvider.methods."providerWithSource:clientQueue:".skipped = true
+class.CMIOExtensionProvider.methods."initWithSource:clientQueue:".skipped = true
+class.CMIOExtensionProvider.methods.clientQueue.skipped = true
+fn.CMIOObjectAddPropertyListenerBlock.skipped = true
+fn.CMIOObjectRemovePropertyListenerBlock.skipped = true

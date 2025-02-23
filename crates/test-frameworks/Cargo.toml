@@ -51,6 +51,7 @@ test-frameworks = [
     "objc2-core-midi",
     "objc2-core-ml",
     "objc2-core-media",
+    "objc2-core-media-io",
     "objc2-core-motion",
     "objc2-core-spotlight",
     "objc2-core-telephony",
@@ -269,6 +270,7 @@ objc2-safety-kit = ["dep:objc2-safety-kit"]
 objc2-core-telephony = ["dep:objc2-core-telephony"]
 objc2-core-haptics = ["dep:objc2-core-haptics"]
 objc2-core-audio-kit = ["dep:objc2-core-audio-kit"]
+objc2-core-media-io = ["dep:objc2-core-media-io"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -359,6 +361,7 @@ objc2-ml-compute = { path = "../../framework-crates/objc2-ml-compute", optional 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit = { path = "../../framework-crates/objc2-app-kit", optional = true }
 objc2-automator = { path = "../../framework-crates/objc2-automator", optional = true }
+objc2-core-media-io = { path = "../../framework-crates/objc2-core-media-io", optional = true }
 objc2-core-wlan = { path = "../../framework-crates/objc2-core-wlan", optional = true }
 objc2-disk-arbitration = { path = "../../framework-crates/objc2-disk-arbitration", optional = true }
 objc2-exception-handling = { path = "../../framework-crates/objc2-exception-handling", optional = true }
