@@ -1,0 +1,7 @@
+framework = "SafariServices"
+crate = "objc2-safari-services"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.12"
+maccatalyst = "13.0"
+ios = "7.0"
+visionos = "1.0"

@@ -36,6 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `QuickLookThumbnailing` / `objc2-quick-look-thumbnailing`.
   - `QuickLookUI` / `objc2-quick-look-ui`.
   - `SafetyKit` / `objc2-safety-kit`.
+  - `SafariServices` / `objc2-safari-services`.
   - `SecurityFoundation` / `objc2-security-foundation`.
   - `SecurityInterface` / `objc2-security-interface`.
   - `SensorKit` / `objc2-sensor-kit`.

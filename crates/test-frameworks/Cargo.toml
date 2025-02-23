@@ -116,6 +116,7 @@ test-frameworks = [
     "objc2-quick-look",
     "objc2-quick-look-thumbnailing",
     "objc2-quick-look-ui",
+    "objc2-safari-services",
     "objc2-safety-kit",
     "objc2-scene-kit",
     "objc2-screen-capture-kit",
@@ -279,6 +280,7 @@ objc2-java-script-core = ["dep:objc2-java-script-core"]
 objc2-security-foundation = ["dep:objc2-security-foundation"]
 objc2-security-interface = ["dep:objc2-security-interface"]
 objc2-preference-panes = ["dep:objc2-preference-panes"]
+objc2-safari-services = ["dep:objc2-safari-services"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -349,6 +351,7 @@ objc2-metal-fx = { path = "../../framework-crates/objc2-metal-fx", optional = tr
 objc2-metric-kit = { path = "../../framework-crates/objc2-metric-kit", optional = true }
 objc2-quick-look = { path = "../../framework-crates/objc2-quick-look", optional = true }
 objc2-quick-look-thumbnailing = { path = "../../framework-crates/objc2-quick-look-thumbnailing", optional = true }
+objc2-safari-services = { path = "../../framework-crates/objc2-safari-services", optional = true }
 objc2-speech = { path = "../../framework-crates/objc2-speech", optional = true }
 objc2-user-notifications-ui = { path = "../../framework-crates/objc2-user-notifications-ui", optional = true }
 objc2-web-kit = { path = "../../framework-crates/objc2-web-kit", optional = true }

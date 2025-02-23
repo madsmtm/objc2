@@ -1619,6 +1619,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-safari-services"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-safety-kit"
 version = "0.3.0"
 dependencies = [
@@ -2300,6 +2310,7 @@ dependencies = [
  "objc2-quick-look",
  "objc2-quick-look-thumbnailing",
  "objc2-quick-look-ui",
+ "objc2-safari-services",
  "objc2-safety-kit",
  "objc2-scene-kit",
  "objc2-screen-capture-kit",

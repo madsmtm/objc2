@@ -118,7 +118,7 @@ impl UnexposedAttr {
             // We don't synthethize properties, so irrelevant for us.
             "NS_REQUIRES_PROPERTY_DEFINITIONS" => None,
             // Weak specifiers - would be interesting if Rust supported weak statics
-            "GK_EXTERN_WEAK" | "MC_EXTERN_WEAK" => None,
+            "GK_EXTERN_WEAK" | "MC_EXTERN_WEAK" | "weak_import" => None,
             // Availability attributes - their data is already exposed.
             "__API_AVAILABLE"
             | "__API_DEPRECATED"
@@ -138,6 +138,7 @@ impl UnexposedAttr {
             | "__WATCHOS_AVAILABLE"
             | "__WATCHOS_DEPRECATED"
             | "_NS_SCANNER_DEPRECATED_FOR_SWIFT_ONLY_WITH_REPLACEMENT"
+            | "availability"
             | "API_AVAILABLE_BEGIN"
             | "API_AVAILABLE"
             | "API_DEPRECATED"
@@ -239,6 +240,10 @@ impl UnexposedAttr {
             | "SCN_GL_DEPRECATED_IOS"
             | "SCN_GL_DEPRECATED_MAC"
             | "SCREEN_CAPTURE_OBSOLETE"
+            | "SF_AVAILABLE_MAC_SAFARI"
+            | "SF_CLASS_AVAILABLE_MAC_SAFARI"
+            | "SF_ENUM_AVAILABLE_MAC_SAFARI"
+            | "SF_DEPRECATED_MAC_SAFARI"
             | "SOCIAL_CLASS_AVAILABLE"
             | "SOCIAL_CLASS_AVAILABLE_IOS"
             | "SOCIAL_CLASS_AVAILABLE_MAC"
