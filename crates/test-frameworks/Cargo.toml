@@ -39,6 +39,7 @@ test-frameworks = [
     "objc2-contacts",
     "objc2-contacts-ui",
     "objc2-core-audio",
+    "objc2-core-audio-kit",
     "objc2-core-audio-types",
     "objc2-core-bluetooth",
     "objc2-core-data",
@@ -267,6 +268,7 @@ objc2-shazam-kit = ["dep:objc2-shazam-kit"]
 objc2-safety-kit = ["dep:objc2-safety-kit"]
 objc2-core-telephony = ["dep:objc2-core-telephony"]
 objc2-core-haptics = ["dep:objc2-core-haptics"]
+objc2-core-audio-kit = ["dep:objc2-core-audio-kit"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -326,6 +328,7 @@ objc2-automatic-assessment-configuration = { path = "../../framework-crates/objc
 objc2-background-assets = { path = "../../framework-crates/objc2-background-assets", optional = true }
 objc2-class-kit = { path = "../../framework-crates/objc2-class-kit", optional = true }
 objc2-contacts-ui = { path = "../../framework-crates/objc2-contacts-ui", optional = true }
+objc2-core-audio-kit = { path = "../../framework-crates/objc2-core-audio-kit", optional = true }
 objc2-core-spotlight = { path = "../../framework-crates/objc2-core-spotlight", optional = true }
 objc2-file-provider = { path = "../../framework-crates/objc2-file-provider", optional = true }
 objc2-file-provider-ui = { path = "../../framework-crates/objc2-file-provider-ui", optional = true }

@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `SystemConfiguration` / `objc2-system-configuration`.
 * Added new framework crates:
   - `Cinematic` / `objc2-cinematic`.
+  - `CoreAudioKit` / `objc2-audio-kit`.
   - `CoreSpotlight` / `objc2-core-spotlight`.
   - `CoreHaptics` / `objc2-core-haptics`.
   - `CoreTelephony` / `objc2-core-telephony`.

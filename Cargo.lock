@@ -746,6 +746,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-core-audio-kit"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-audio-toolbox",
+ "objc2-core-foundation",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-core-audio-types"
 version = "0.3.0"
 dependencies = [
@@ -2156,6 +2169,7 @@ dependencies = [
  "objc2-contacts",
  "objc2-contacts-ui",
  "objc2-core-audio",
+ "objc2-core-audio-kit",
  "objc2-core-audio-types",
  "objc2-core-bluetooth",
  "objc2-core-data",

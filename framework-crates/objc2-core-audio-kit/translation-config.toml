@@ -1,0 +1,13 @@
+framework = "CoreAudioKit"
+crate = "objc2-core-audio-kit"
+required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
+macos = "10.4"
+maccatalyst = "13.0"
+ios = "8.0"
+visionos = "1.0"
+
+# The original superclass typedef is a bit difficult to extract from the
+# superclass name, so let's do it manually.
+class.AUViewController.definition-skipped = true
+class.AUGenericViewController.definition-skipped = true
