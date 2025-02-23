@@ -110,6 +110,7 @@ test-frameworks = [
     "objc2-quick-look",
     "objc2-quick-look-thumbnailing",
     "objc2-quick-look-ui",
+    "objc2-safety-kit",
     "objc2-scene-kit",
     "objc2-screen-capture-kit",
     "objc2-screen-saver",
@@ -261,6 +262,7 @@ objc2-cinematic = ["dep:objc2-cinematic"]
 objc2-core-spotlight = ["dep:objc2-core-spotlight", "objc2-core-spotlight?/objc2-uniform-type-identifiers"]
 objc2-notification-center = ["dep:objc2-notification-center"]
 objc2-shazam-kit = ["dep:objc2-shazam-kit"]
+objc2-safety-kit = ["dep:objc2-safety-kit"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -412,6 +414,7 @@ objc2-sensor-kit = { path = "../../framework-crates/objc2-sensor-kit", optional 
 
 [target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "watchos"))'.dependencies]
 objc2-nearby-interaction = { path = "../../framework-crates/objc2-nearby-interaction", optional = true }
+objc2-safety-kit = { path = "../../framework-crates/objc2-safety-kit", optional = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "watchos", target_os = "visionos"))'.dependencies]
 objc2-watch-connectivity = { path = "../../framework-crates/objc2-watch-connectivity", optional = true }

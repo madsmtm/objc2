@@ -1,0 +1,7 @@
+framework = "SafetyKit"
+crate = "objc2-safety-kit"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "13.0"
+maccatalyst = "16.1"
+ios = "16.0"
+watchos = "10.1"
