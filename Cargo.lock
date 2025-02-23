@@ -662,6 +662,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-cinematic"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-av-foundation",
+ "objc2-core-foundation",
+ "objc2-core-media",
+ "objc2-core-video",
+ "objc2-foundation",
+ "objc2-metal",
+]
+
+[[package]]
 name = "objc2-class-kit"
 version = "0.3.0"
 dependencies = [
@@ -2072,6 +2086,7 @@ dependencies = [
  "objc2-background-tasks",
  "objc2-business-chat",
  "objc2-call-kit",
+ "objc2-cinematic",
  "objc2-class-kit",
  "objc2-cloud-kit",
  "objc2-color-sync",

@@ -1,0 +1,10 @@
+framework = "Cinematic"
+crate = "objc2-cinematic"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "14.0"
+ios = "17.0"
+tvos = "17.0"
+
+# Seems to return the same object, unclear why these implement NSMutableCopying.
+class.CNBoundsPrediction.skipped-protocols = ["NSMutableCopying"]
+class.CNRenderingSessionFrameAttributes.skipped-protocols = ["NSMutableCopying"]

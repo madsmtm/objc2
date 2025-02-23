@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreFoundation` / `objc2-core-foundation`.
   - `SystemConfiguration` / `objc2-system-configuration`.
 * Added new framework crates:
+  - `Cinematic` / `objc2-cinematic`.
   - `ExecutionPolicy` / `objc2-execution-policy`.
   - `GameplayKit` / `objc2-gameplay-kit`.
   - `ImageCaptureCore` / `objc2-image-capture-core`.

@@ -31,6 +31,7 @@ test-frameworks = [
     "objc2-background-tasks",
     "objc2-business-chat",
     "objc2-call-kit",
+    "objc2-cinematic",
     "objc2-class-kit",
     "objc2-cloud-kit",
     "objc2-color-sync",
@@ -253,6 +254,7 @@ objc2-quick-look-ui = ["dep:objc2-quick-look-ui"]
 objc2-quick-look-thumbnailing = ["dep:objc2-quick-look-thumbnailing", "objc2-quick-look-thumbnailing?/objc2-uniform-type-identifiers"]
 objc2-user-notifications-ui = ["dep:objc2-user-notifications-ui"]
 objc2-execution-policy = ["dep:objc2-execution-policy"]
+objc2-cinematic = ["dep:objc2-cinematic"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -332,6 +334,7 @@ objc2-social = { path = "../../framework-crates/objc2-social", optional = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "tvos"))'.dependencies]
 objc2-ad-support = { path = "../../framework-crates/objc2-ad-support", optional = true }
+objc2-cinematic = { path = "../../framework-crates/objc2-cinematic", optional = true }
 objc2-ml-compute = { path = "../../framework-crates/objc2-ml-compute", optional = true }
 
 [target.'cfg(target_os = "macos")'.dependencies]
