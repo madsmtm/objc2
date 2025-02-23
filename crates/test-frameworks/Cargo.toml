@@ -50,6 +50,7 @@ test-frameworks = [
     "objc2-core-ml",
     "objc2-core-media",
     "objc2-core-motion",
+    "objc2-core-spotlight",
     "objc2-core-text",
     "objc2-core-video",
     "objc2-core-wlan",
@@ -255,6 +256,7 @@ objc2-quick-look-thumbnailing = ["dep:objc2-quick-look-thumbnailing", "objc2-qui
 objc2-user-notifications-ui = ["dep:objc2-user-notifications-ui"]
 objc2-execution-policy = ["dep:objc2-execution-policy"]
 objc2-cinematic = ["dep:objc2-cinematic"]
+objc2-core-spotlight = ["dep:objc2-core-spotlight", "objc2-core-spotlight?/objc2-uniform-type-identifiers"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -313,6 +315,7 @@ objc2-automatic-assessment-configuration = { path = "../../framework-crates/objc
 objc2-background-assets = { path = "../../framework-crates/objc2-background-assets", optional = true }
 objc2-class-kit = { path = "../../framework-crates/objc2-class-kit", optional = true }
 objc2-contacts-ui = { path = "../../framework-crates/objc2-contacts-ui", optional = true }
+objc2-core-spotlight = { path = "../../framework-crates/objc2-core-spotlight", optional = true }
 objc2-file-provider = { path = "../../framework-crates/objc2-file-provider", optional = true }
 objc2-file-provider-ui = { path = "../../framework-crates/objc2-file-provider-ui", optional = true }
 objc2-identity-lookup = { path = "../../framework-crates/objc2-identity-lookup", optional = true }

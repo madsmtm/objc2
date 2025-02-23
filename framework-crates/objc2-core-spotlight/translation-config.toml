@@ -1,0 +1,11 @@
+framework = "CoreSpotlight"
+crate = "objc2-core-spotlight"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.13"
+maccatalyst = "13.0"
+ios = "9.0"
+visionos = "1.0"
+
+# Protocol conformance has mostly carried over from NSString, and a mutable
+# copy returns NSMutableString.
+class.CSLocalizedString.counterpart = "MutableSubclass(Foundation.NSString.NSMutableString)"

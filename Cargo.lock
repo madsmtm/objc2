@@ -871,6 +871,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-core-spotlight"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-foundation",
+ "objc2-uniform-type-identifiers",
+]
+
+[[package]]
 name = "objc2-core-text"
 version = "0.3.0"
 dependencies = [
@@ -2105,6 +2116,7 @@ dependencies = [
  "objc2-core-midi",
  "objc2-core-ml",
  "objc2-core-motion",
+ "objc2-core-spotlight",
  "objc2-core-text",
  "objc2-core-video",
  "objc2-core-wlan",
