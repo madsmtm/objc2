@@ -101,6 +101,7 @@ test-frameworks = [
     "objc2-natural-language",
     "objc2-nearby-interaction",
     "objc2-network-extension",
+    "objc2-notification-center",
     "objc2-osa-kit",
     "objc2-open-directory",
     "objc2-photos",
@@ -257,6 +258,7 @@ objc2-user-notifications-ui = ["dep:objc2-user-notifications-ui"]
 objc2-execution-policy = ["dep:objc2-execution-policy"]
 objc2-cinematic = ["dep:objc2-cinematic"]
 objc2-core-spotlight = ["dep:objc2-core-spotlight", "objc2-core-spotlight?/objc2-uniform-type-identifiers"]
+objc2-notification-center = ["dep:objc2-notification-center"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -332,6 +334,7 @@ objc2-web-kit = { path = "../../framework-crates/objc2-web-kit", optional = true
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
 objc2-accounts = { path = "../../framework-crates/objc2-accounts", optional = true }
 objc2-business-chat = { path = "../../framework-crates/objc2-business-chat", optional = true }
+objc2-notification-center = { path = "../../framework-crates/objc2-notification-center", optional = true }
 objc2-sensitive-content-analysis = { path = "../../framework-crates/objc2-sensitive-content-analysis", optional = true }
 objc2-social = { path = "../../framework-crates/objc2-social", optional = true }
 

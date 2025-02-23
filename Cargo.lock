@@ -1437,6 +1437,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-notification-center"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-open-directory"
 version = "0.3.0"
 dependencies = [
@@ -2166,6 +2176,7 @@ dependencies = [
  "objc2-natural-language",
  "objc2-nearby-interaction",
  "objc2-network-extension",
+ "objc2-notification-center",
  "objc2-open-directory",
  "objc2-osa-kit",
  "objc2-photos",

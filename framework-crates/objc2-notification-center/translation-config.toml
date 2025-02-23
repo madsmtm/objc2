@@ -1,0 +1,6 @@
+framework = "NotificationCenter"
+crate = "objc2-notification-center"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.10"
+maccatalyst = "8.0"
+ios = "8.0"
