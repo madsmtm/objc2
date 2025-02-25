@@ -1374,7 +1374,11 @@ impl Ty {
 
                 let mut inner = Self::parse(inner, Lifetime::Unspecified, context);
 
-                let id = ItemIdentifier::new(&declaration, context);
+                let mut id = ItemIdentifier::new(&declaration, context);
+                // Replace module from external data if it exists.
+                if let Some(external) = context.library(id.library_name()).external.get(&id.name) {
+                    id = ItemIdentifier::from_raw(id.name, external.module.clone());
+                }
 
                 // "Push" the typedef into an inner object pointer.
                 //

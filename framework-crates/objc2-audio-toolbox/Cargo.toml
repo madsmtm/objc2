@@ -40,6 +40,7 @@ objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", 
 ] }
 objc2-core-midi = { path = "../objc2-core-midi", version = "0.3.0", default-features = false, optional = true, features = [
     "MIDICapabilityInquiry",
+    "MIDIMessages",
     "MIDIServices",
     "objc2",
 ] }
