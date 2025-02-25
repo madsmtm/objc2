@@ -67,9 +67,11 @@ impl UnexposedAttr {
             | "CF_EXTENSIBLE_STRING_ENUM" => Some(Self::TypedExtensibleEnum),
             "NS_SWIFT_BRIDGED_TYPEDEF" | "CF_SWIFT_BRIDGED_TYPEDEF" => Some(Self::BridgedTypedef),
             "CF_IMPLICIT_BRIDGING_ENABLED" => Some(Self::BridgedImplicit),
-            "CF_BRIDGED_TYPE" | "CV_BRIDGED_TYPE" | "CM_BRIDGED_TYPE" | "OPENGL_BRIDGED_TYPE" => {
-                Some(Self::Bridged)
-            }
+            "CF_BRIDGED_TYPE"
+            | "CV_BRIDGED_TYPE"
+            | "CM_BRIDGED_TYPE"
+            | "IIO_BRIDGED_TYPE"
+            | "OPENGL_BRIDGED_TYPE" => Some(Self::Bridged),
             "CF_BRIDGED_MUTABLE_TYPE" => Some(Self::BridgedMutable),
             "CF_RELATED_TYPE" => Some(Self::BridgedRelated),
             "NS_RETURNS_RETAINED"
@@ -190,6 +192,8 @@ impl UnexposedAttr {
             | "IC_DEPRECATED"
             | "IC_DEPRECATED_WITH_REPLACEMENT"
             | "IC_UNAVAILABLE"
+            | "IMAGEIO_AVAILABLE_STARTING"
+            | "IMAGEIO_AVAILABLE_BUT_DEPRECATED"
             | "MLCOMPUTE_AVAILABLE_STARTING"
             | "MLCOMPUTE_AVAILABLE_STARTING_BUT_DEPRECATED_MACOS14"
             | "MLCOMPUTE_CLASS_AVAILABLE_STARTING"
@@ -293,6 +297,8 @@ impl UnexposedAttr {
             | "GK_BASE_AVAILABILITY"
             | "GK_BASE_AVAILABILITY_2"
             | "GK_BASE_AVAILABILITY_3"
+            | "IMAGEIO_UNAVAILABLE_DESKTOP"
+            | "IMAGEIO_UNAVAILABLE_EMBEDDED"
             | "INTERAPP_AUDIO_DEPRECATED"
             | "MD_AVAIL"
             | "MD_AVAIL_LEOPARD"

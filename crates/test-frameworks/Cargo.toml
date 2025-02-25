@@ -82,6 +82,7 @@ test-frameworks = [
     "objc2-io-surface",
     "objc2-identity-lookup",
     "objc2-image-capture-core",
+    "objc2-image-io",
     "objc2-input-method-kit",
     "objc2-intents",
     "objc2-intents-ui",
@@ -285,6 +286,7 @@ objc2-preference-panes = ["dep:objc2-preference-panes"]
 objc2-safari-services = ["dep:objc2-safari-services"]
 objc2-accessory-setup-kit = ["dep:objc2-accessory-setup-kit"]
 objc2-core-services = ["dep:objc2-core-services"]
+objc2-image-io = ["dep:objc2-image-io"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -316,6 +318,7 @@ dispatch2 = { path = "../dispatch2", optional = true }
 objc2-extension-kit = { path = "../../framework-crates/objc2-extension-kit", optional = true }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation", optional = true }
 objc2-game-kit = { path = "../../framework-crates/objc2-game-kit", optional = true }
+objc2-image-io = { path = "../../framework-crates/objc2-image-io", optional = true }
 objc2-intents = { path = "../../framework-crates/objc2-intents", optional = true }
 objc2-intents-ui = { path = "../../framework-crates/objc2-intents-ui", optional = true }
 objc2-map-kit = { path = "../../framework-crates/objc2-map-kit", optional = true }
