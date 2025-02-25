@@ -5,6 +5,12 @@ link = false
 modulemap = "usr/include/dispatch.modulemap"
 is-library = true
 custom-lib-rs = true
+flags = [
+    # Allow dispatch2 to not depend on objc2 for core types.
+    #
+    # See <os/object.h> for details.
+    "-DOS_OBJECT_USE_OBJC=0",
+]
 
 macos = "10.0"
 maccatalyst = "13.0"

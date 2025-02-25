@@ -1729,6 +1729,7 @@ dependencies = [
  "bitflags",
  "block2",
  "objc2",
+ "objc2-ar-kit",
  "objc2-core-foundation",
  "objc2-core-location",
  "objc2-core-media",

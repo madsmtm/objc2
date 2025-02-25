@@ -2,6 +2,11 @@ framework = "Security"
 crate = "objc2-security"
 required-crates = ["objc2-core-foundation"]
 custom-lib-rs = true
+flags = [
+    # Avoid depending on objc2 for core types.
+    # See <os/object.h> for details.
+    "-DOS_OBJECT_USE_OBJC=0",
+]
 macos = "10.0"
 maccatalyst = "13.0"
 ios = "2.0"

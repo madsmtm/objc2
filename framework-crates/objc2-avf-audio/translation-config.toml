@@ -2,6 +2,10 @@ framework = "AVFAudio"
 crate = "objc2-avf-audio"
 required-crates = ["objc2", "objc2-foundation"]
 custom-lib-rs = true
+flags = [
+    # Make AudioToolbox less dependent on CoreServices
+    "-DAUDIOCOMPONENT_NOCARBONINSTANCES=1",
+]
 # The documentation says something newer here, but since AVFAudio was
 # originally available as part of AVFoundation, the linker is able to figure
 # out that it actually needs to link AVFoundation because of the $ld$previous$

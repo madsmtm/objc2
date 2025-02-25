@@ -1,6 +1,10 @@
 framework = "CompositorServices"
 crate = "objc2-compositor-services"
 required-crates = ["objc2"] # Currently
+flags = [
+    # Emit `cp_retain`/`cp_release`.
+    "-DOS_OBJECT_USE_OBJC=0",
+]
 visionos = "1.0"
 
 # ARKit is generated for iOS, and does not include

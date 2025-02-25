@@ -186,6 +186,10 @@ pub struct LibraryConfig {
     #[serde(default)]
     pub skipped: bool,
 
+    /// Extra compilation flags.
+    #[serde(default)]
+    pub flags: Vec<String>,
+
     #[serde(default)]
     #[serde(deserialize_with = "get_version")]
     pub macos: Option<Version>,

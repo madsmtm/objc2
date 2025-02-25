@@ -459,13 +459,6 @@ fn get_translation_unit<'i: 'c, 'c>(
         "-fapinotes",
         "-fapinotes-modules",
         // "-fapi-notes-swift-version=6.0",
-        // Make AudioToolbox less dependent on CoreServices
-        "-DAUDIOCOMPONENT_NOCARBONINSTANCES=1",
-        // Allow dispatch2 to not depend on objc2 for core types.
-        //
-        // See os/object.h for details.
-        "-D",
-        "OS_OBJECT_USE_OBJC=0",
     ];
 
     // Add include paths for Mac Catalyst
@@ -479,6 +472,8 @@ fn get_translation_unit<'i: 'c, 'c>(
             ios_frameworks.to_str().unwrap(),
         ]);
     }
+
+    arguments.extend(data.flags.iter().map(|flag| &**flag));
 
     let tu = index
         .parser(path.to_str().unwrap())

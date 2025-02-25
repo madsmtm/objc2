@@ -19,6 +19,11 @@ workspace = true
 bitflags = { version = "2.5.0", default-features = false, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
+objc2-ar-kit = { path = "../objc2-ar-kit", version = "0.3.0", default-features = false, optional = true, features = [
+    "ARAnchor",
+    "ARFaceAnchor",
+    "objc2",
+] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "CFDate",
     "objc2",
@@ -61,6 +66,7 @@ targets = [
 default = [
     "std",
     "block2",
+    "objc2-ar-kit",
     "objc2-core-foundation",
     "objc2-core-location",
     "objc2-core-media",
@@ -70,6 +76,7 @@ default = [
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
+objc2-ar-kit = ["dep:objc2-ar-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-location = ["dep:objc2-core-location"]
 objc2-core-media = ["dep:objc2-core-media"]

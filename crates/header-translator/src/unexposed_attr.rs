@@ -93,6 +93,7 @@ impl UnexposedAttr {
             }
             // Nullability attributes
             s if s.starts_with("DISPATCH_NONNULL") => None,
+            s if s.starts_with("XPC_NONNULL") => None,
             "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" | "CM_SWIFT_SENDABLE"
             | "CT_SWIFT_SENDABLE" | "CV_SWIFT_SENDABLE" => Some(Self::Sendable),
             "NS_SWIFT_NONSENDABLE" | "CM_SWIFT_NONSENDABLE" | "CV_SWIFT_NONSENDABLE" => {

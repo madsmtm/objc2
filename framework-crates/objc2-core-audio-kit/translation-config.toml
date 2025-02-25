@@ -2,6 +2,10 @@ framework = "CoreAudioKit"
 crate = "objc2-core-audio-kit"
 required-crates = ["objc2", "objc2-foundation"]
 custom-lib-rs = true
+flags = [
+    # Make AudioToolbox less dependent on CoreServices
+    "-DAUDIOCOMPONENT_NOCARBONINSTANCES=1",
+]
 macos = "10.4"
 maccatalyst = "13.0"
 ios = "8.0"
