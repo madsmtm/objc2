@@ -58,7 +58,7 @@ objc2-user-notifications = { path = "../objc2-user-notifications", version = "0.
 ] }
 
 [package.metadata.docs.rs]
-default-target = "aarch64-apple-watchos"
+default-target = "aarch64-apple-darwin"
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-watchos",

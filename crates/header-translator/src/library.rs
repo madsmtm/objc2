@@ -316,6 +316,9 @@ see that for related crates.", self.data.krate)?;
                 targets.push("x86_64-apple-ios");
             }
         }
+        // Having the default target be tier 3 seems to not be supported.
+        // https://github.com/rust-lang/docs.rs/issues/2748
+        default_target.get_or_insert("aarch64-apple-darwin");
         if self.data.tvos.is_some() {
             default_target.get_or_insert("aarch64-apple-tvos");
             targets.push("aarch64-apple-tvos");
