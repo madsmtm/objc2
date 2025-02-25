@@ -3,29 +3,34 @@
 For use in making framework crates. Run using:
 
 ```console
-cargo run --bin header-translator
+cargo run --bin header-translator --release all
+```
+
+Or to only generate for a single crate, do something like:
+
+```console
+cargo run --bin header-translator --release objc2-foundation
+cargo run --bin header-translator --release CoreFoundation
+cargo run --bin header-translator --release MY_FRAMEWORK
 ```
 
 
 ## SDKs
 
-Make sure you have the same XCode version installed as the one documented in [`crates/objc2/src/topics/about_generated/README.md`](../objc2/src/topics/about_generated/README.md).
+Make sure you have the same Xcode version installed as the one documented in [`crates/objc2/src/topics/about_generated/README.md`](../objc2/src/topics/about_generated/README.md).
 
-If you use a different operating system than macOS, or have multiple SDKs installed, you can specify the directory as the first argument:
+If you use a different operating system than macOS, or have multiple SDKs installed, you can specify the developer directory with `DEVELOPER_DIR`.
 
-```console
-cargo run --bin header-translator -- /Applications/Xcode.app/Contents/Developer
-```
-
-Note that you will likely need to use a newer `libclang`, such as [the one distributed with Swift `5.7.2`](https://github.com/apple/llvm-project/tree/swift-5.7.2-RELEASE). You can use a different version as follows (details might vary between operating systems):
+Note that in this case, you will likely need to use a newer `libclang`, such as [the one distributed with Swift `5.7.2`](https://github.com/apple/llvm-project/tree/swift-5.7.2-RELEASE). You can use a different version as follows (details might vary between operating systems):
 
 ```console
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 export LIBCLANG_PATH=/path/to/custom/installation/usr/lib/libclang.dylib
 export CPATH=/path/to/custom/installation/usr/lib/clang/14.0.0/include/
-cargo run --bin header-translator -- /Applications/Xcode_new.app/Contents/Developer
+cargo run --bin header-translator --release all
 ```
 
-We do not redistribute SDKs, to hopefully avoid a license violation. You should download XCode (which contain the SDKs) yourself from [Apple's website](https://developer.apple.com/download/all/?q=xcode) (requires an Apple ID).
+We do not redistribute SDKs, to hopefully avoid a license violation. You should download Xcode (which contain the SDKs) yourself from [Apple's website](https://developer.apple.com/download/all/?q=xcode) (requires an Apple ID).
 
 
 ## Test feature setup

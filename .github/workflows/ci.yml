@@ -299,7 +299,7 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Run header translator
-      run: cargo run -pheader-translator --bin=header-translator
+      run: cargo run -pheader-translator --bin=header-translator --release all
 
     - name: Verify that no files changed
       run: git diff --exit-code --submodule=diff

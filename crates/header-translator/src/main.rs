@@ -1,11 +1,12 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
 use std::io::{ErrorKind, Read, Seek, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::{fs, io};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, EntityKind, EntityVisitResult, Index, TranslationUnit};
+use clap::Parser;
 use semver::VersionReq;
 use tracing::{debug_span, error, info, info_span, trace_span};
 use tracing_subscriber::filter::LevelFilter;
@@ -20,6 +21,16 @@ use header_translator::{
 };
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
+
+/// Search for a pattern in a file and display the lines that contain it.
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Cli {
+    /// The framework/library to output.
+    ///
+    /// The special value "all" means to parse and emit all frameworks.
+    framework: String,
+}
 
 fn main() -> Result<(), BoxError> {
     // use tracing_subscriber::fmt;
@@ -44,6 +55,21 @@ fn main() -> Result<(), BoxError> {
                 .with_filter(LevelFilter::INFO),
         )
         .init();
+
+    let cli = Cli::parse();
+
+    // Normalize framework name
+    let framework = cli
+        .framework
+        .to_lowercase()
+        .replace("-", "")
+        .replace("_", "");
+    let framework = if framework == "all" {
+        None
+    } else {
+        Some(framework.strip_prefix("objc2").unwrap_or(&framework))
+    };
+
     let _span = info_span!("running").entered();
 
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
@@ -57,11 +83,8 @@ fn main() -> Result<(), BoxError> {
     let clang = Clang::new()?;
     let index = Index::new(&clang, true, true);
 
-    let developer_dir = if let Some(path) = std::env::args_os().nth(1) {
-        DeveloperDirectory::from(PathBuf::from(path))
-    } else {
-        DeveloperDirectory::from_xcode_select()?
-    };
+    let developer_dir = DeveloperDirectory::find_default()?
+        .expect("could not find developer directory. Pass DEVELOPER_DIR=...");
 
     let sdks: Vec<_> = developer_dir
         .platforms()
@@ -88,60 +111,24 @@ fn main() -> Result<(), BoxError> {
     let tempdir = workspace_dir.join("target").join("header-translator");
     fs::create_dir_all(&tempdir)?;
 
-    let libraries: BTreeMap<_, _> = config
-        .to_parse()
-        .map(|(name, data)| {
-            let library = parse_library(&index, &config, data, name, &sdks, &tempdir);
-            (name.to_string(), library)
-        })
-        .collect();
-
-    let test_crate_dir = workspace_dir.join("crates").join("test-frameworks");
-
-    for (library_name, library) in &libraries {
-        let _span = info_span!("writing", library_name).entered();
-
-        let crate_dir = if library.data.is_library {
-            workspace_dir.join("crates")
-        } else {
-            workspace_dir.join("framework-crates")
+    let mut found = false;
+    for (name, data) in config.to_parse() {
+        if let Some(framework) = &framework {
+            if *framework != name.to_lowercase() {
+                continue; // Skip if filter requested
+            }
         }
-        .join(&library.data.krate);
+        found = true;
 
-        // Ensure directories exist
-        let generated_dir = workspace_dir.join("generated").join(library_name);
-        fs::create_dir_all(generated_dir)?;
-        fs::create_dir_all(crate_dir.join("src"))?;
-
-        // Recreate symlink to generated directory
-        let symlink_path = crate_dir.join("src").join("generated");
-        match fs::remove_file(&symlink_path) {
-            Ok(()) => {}
-            Err(err) if err.kind() == ErrorKind::NotFound => {}
-            Err(err) => Err(err)?,
-        }
-        #[cfg(unix)]
-        let res =
-            std::os::unix::fs::symlink(format!("../../../generated/{library_name}"), &symlink_path);
-        #[cfg(windows)]
-        let res = std::os::windows::fs::symlink_dir(
-            format!("..\\..\\..\\generated\\{library_name}"),
-            &symlink_path,
-        );
-        match res {
-            Ok(()) => {}
-            Err(err) if err.kind() == ErrorKind::AlreadyExists => {}
-            Err(err) => Err(err)?,
-        }
-
-        library.output(&crate_dir, &test_crate_dir, &config)?;
+        let _span = info_span!("framework", name).entered();
+        let library = parse_library(&index, &config, data, name, &sdks, &tempdir);
+        output_library(workspace_dir, name, &library, &config).unwrap();
+    }
+    if !found {
+        panic!("failed finding framework {}", cli.framework);
     }
 
-    update_test_metadata(&test_crate_dir, libraries.values(), &config);
-
-    let span = info_span!("formatting").entered();
-    run_cargo_fmt(libraries.values().map(|library| &library.data.krate));
-    drop(span);
+    update_test_metadata(workspace_dir, &config);
 
     update_ci(workspace_dir, &config)?;
 
@@ -199,7 +186,6 @@ fn parse_library(
     sdks: &[SdkPath],
     tempdir: &Path,
 ) -> Library {
-    let _span = info_span!("framework", name).entered();
     let mut result = None;
 
     // Find preferred SDK, to hackily support UIKit. For speed, we currently
@@ -273,6 +259,59 @@ fn parse_library(
     }
 
     result.unwrap()
+}
+
+fn output_library(
+    workspace_dir: &Path,
+    library_name: &str,
+    library: &Library,
+    config: &Config,
+) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    let span = info_span!("writing").entered();
+
+    let crate_dir = workspace_dir
+        .join(if library.data.is_library {
+            "crates"
+        } else {
+            "framework-crates"
+        })
+        .join(&library.data.krate);
+
+    // Ensure directories exist
+    let generated_dir = workspace_dir.join("generated").join(library_name);
+    fs::create_dir_all(generated_dir)?;
+    fs::create_dir_all(crate_dir.join("src"))?;
+
+    // Recreate symlink to generated directory
+    let symlink_path = crate_dir.join("src").join("generated");
+    match fs::remove_file(&symlink_path) {
+        Ok(()) => {}
+        Err(err) if err.kind() == ErrorKind::NotFound => {}
+        Err(err) => Err(err)?,
+    }
+    #[cfg(unix)]
+    let res =
+        std::os::unix::fs::symlink(format!("../../../generated/{library_name}"), &symlink_path);
+    #[cfg(windows)]
+    let res = std::os::windows::fs::symlink_dir(
+        format!("..\\..\\..\\generated\\{library_name}"),
+        &symlink_path,
+    );
+    match res {
+        Ok(()) => {}
+        Err(err) if err.kind() == ErrorKind::AlreadyExists => {}
+        Err(err) => Err(err)?,
+    }
+
+    let test_crate_dir = workspace_dir.join("crates").join("test-frameworks");
+    library.output(&crate_dir, &test_crate_dir, config)?;
+
+    drop(span);
+
+    let _span = info_span!("formatting").entered();
+    run_cargo_fmt([&library.data.krate]);
+
+    Ok(())
 }
 
 fn parse_translation_unit(
@@ -680,21 +719,19 @@ fn update_list(workspace_dir: &Path, config: &Config) -> io::Result<()> {
     Ok(())
 }
 
-fn update_test_metadata<'a>(
-    test_crate_dir: &Path,
-    libraries: impl IntoIterator<Item = &'a Library> + Clone,
-    config: &Config,
-) {
+fn update_test_metadata(workspace_dir: &Path, config: &Config) {
+    let test_crate_dir = workspace_dir.join("crates").join("test-frameworks");
+
     let _span = info_span!("updating test-frameworks metadata").entered();
 
     // Write imports
     let mut s = String::new();
-    for lib in libraries.clone() {
-        let platform_cfg = PlatformCfg::from_config_explicit(&lib.data);
+    for (_, lib) in config.to_parse() {
+        let platform_cfg = PlatformCfg::from_config_explicit(lib);
         if let Some(cfgs) = platform_cfg.cfgs() {
             writeln!(&mut s, "#[cfg({cfgs})]",).unwrap();
         }
-        writeln!(&mut s, "pub use {}::*;", &lib.data.krate.replace('-', "_")).unwrap();
+        writeln!(&mut s, "pub use {}::*;", &lib.krate.replace('-', "_")).unwrap();
     }
     fs::write(test_crate_dir.join("src").join("imports.rs"), s).unwrap();
 
@@ -710,22 +747,38 @@ fn update_test_metadata<'a>(
         .expect("invalid test toml");
 
     let mut features = toml_edit::Array::new();
-    for lib in libraries.clone() {
+    for (_, lib) in config.to_parse() {
         // Add feature per crate.
         //
         // This is required for some reason for `cargo run --example` to work
         // nicely in our workspace.
-        let mut crate_features = vec![format!("dep:{}", lib.data.krate)];
-        crate_features.extend(
-            lib.emitted_features(config)
-                .keys()
-                .filter(|feature| !lib.is_default_feature(feature, config))
-                .map(|krate| format!("{}?/{krate}", lib.data.krate)),
-        );
-        cargo_toml["features"][&lib.data.krate] =
-            toml_edit::Array::from_iter(crate_features).into();
+        let mut crate_features = vec![format!("dep:{}", lib.krate)];
 
-        features.push(lib.data.krate.to_string());
+        // Add non-default features.
+        let path = workspace_dir
+            .join(if lib.is_library {
+                "crates"
+            } else {
+                "framework-crates"
+            })
+            .join(&lib.krate)
+            .join("Cargo.toml");
+        let crate_cargo_toml: toml_edit::DocumentMut = fs::read_to_string(path)
+            .unwrap()
+            .parse()
+            .expect("invalid test toml");
+        let docs_rs = &crate_cargo_toml["package"]["metadata"]["docs"]["rs"];
+        if let Some(non_default) = docs_rs.get("features") {
+            let non_default = non_default.as_array().unwrap();
+            for item in non_default {
+                let item = item.as_str().unwrap();
+                crate_features.push(format!("{}?/{item}", lib.krate));
+            }
+        }
+
+        cargo_toml["features"][&lib.krate] = toml_edit::Array::from_iter(crate_features).into();
+
+        features.push(lib.krate.to_string());
         // Inserting into array removes decor, so set it afterwards
         features
             .get_mut(features.len() - 1)
@@ -761,8 +814,8 @@ fn update_test_metadata<'a>(
     ]));
     let _ = cargo_toml.remove("target");
 
-    for lib in libraries.clone() {
-        let platform_cfg = PlatformCfg::from_config_explicit(&lib.data);
+    for (_, lib) in config.to_parse() {
+        let platform_cfg = PlatformCfg::from_config_explicit(lib);
 
         let dependencies = if let Some(cfgs) = platform_cfg.cfgs() {
             let key = format!("'cfg({cfgs})'").parse().unwrap();
@@ -777,13 +830,13 @@ fn update_test_metadata<'a>(
             cargo_toml["dependencies"].as_table_mut().unwrap()
         };
 
-        let path = if lib.data.is_library {
-            format!("../{}", lib.data.krate)
+        let path = if lib.is_library {
+            format!("../{}", lib.krate)
         } else {
-            format!("../../framework-crates/{}", lib.data.krate)
+            format!("../../framework-crates/{}", lib.krate)
         };
 
-        dependencies[&lib.data.krate] = toml_edit::InlineTable::from_iter([
+        dependencies[&lib.krate] = toml_edit::InlineTable::from_iter([
             (
                 "path",
                 toml_edit::Value::String(toml_edit::Formatted::new(path)),
@@ -799,4 +852,6 @@ fn update_test_metadata<'a>(
     f.set_len(0).unwrap();
     f.seek(io::SeekFrom::Start(0)).unwrap();
     f.write_all(cargo_toml.to_string().as_bytes()).unwrap();
+
+    run_cargo_fmt(["test-frameworks"]);
 }
