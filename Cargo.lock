@@ -551,6 +551,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-accessory-setup-kit"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-core-bluetooth",
+ "objc2-foundation",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-accounts"
 version = "0.3.0"
 dependencies = [
@@ -2318,6 +2330,7 @@ dependencies = [
  "libc",
  "objc2",
  "objc2-accessibility",
+ "objc2-accessory-setup-kit",
  "objc2-accounts",
  "objc2-ad-services",
  "objc2-ad-support",

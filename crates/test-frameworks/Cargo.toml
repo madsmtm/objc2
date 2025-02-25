@@ -18,6 +18,7 @@ test-frameworks = [
     "objc2-av-kit",
     "objc2-av-routing",
     "objc2-accessibility",
+    "objc2-accessory-setup-kit",
     "objc2-accounts",
     "objc2-ad-services",
     "objc2-ad-support",
@@ -281,6 +282,7 @@ objc2-security-foundation = ["dep:objc2-security-foundation"]
 objc2-security-interface = ["dep:objc2-security-interface"]
 objc2-preference-panes = ["dep:objc2-preference-panes"]
 objc2-safari-services = ["dep:objc2-safari-services"]
+objc2-accessory-setup-kit = ["dep:objc2-accessory-setup-kit"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -355,6 +357,11 @@ objc2-safari-services = { path = "../../framework-crates/objc2-safari-services",
 objc2-speech = { path = "../../framework-crates/objc2-speech", optional = true }
 objc2-user-notifications-ui = { path = "../../framework-crates/objc2-user-notifications-ui", optional = true }
 objc2-web-kit = { path = "../../framework-crates/objc2-web-kit", optional = true }
+
+[target.'cfg(target_os = "ios")'.dependencies]
+objc2-accessory-setup-kit = { path = "../../framework-crates/objc2-accessory-setup-kit", optional = true }
+objc2-messages = { path = "../../framework-crates/objc2-messages", optional = true }
+objc2-sensor-kit = { path = "../../framework-crates/objc2-sensor-kit", optional = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
 objc2-accounts = { path = "../../framework-crates/objc2-accounts", optional = true }
@@ -434,10 +441,6 @@ objc2-compositor-services = { path = "../../framework-crates/objc2-compositor-se
 [target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos"))'.dependencies]
 objc2-home-kit = { path = "../../framework-crates/objc2-home-kit", optional = true }
 objc2-ui-kit = { path = "../../framework-crates/objc2-ui-kit", optional = true }
-
-[target.'cfg(target_os = "ios")'.dependencies]
-objc2-messages = { path = "../../framework-crates/objc2-messages", optional = true }
-objc2-sensor-kit = { path = "../../framework-crates/objc2-sensor-kit", optional = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "watchos"))'.dependencies]
 objc2-nearby-interaction = { path = "../../framework-crates/objc2-nearby-interaction", optional = true }

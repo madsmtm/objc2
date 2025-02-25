@@ -1,0 +1,8 @@
+framework = "AccessorySetupKit"
+crate = "objc2-accessory-setup-kit"
+required-crates = ["objc2", "objc2-foundation"]
+ios = "18.0"
+maccatalyst = "18.0"
+
+external.CBUUID.module = "CoreBluetooth.CBUUID"
+class.ASAccessorySession.methods."activateWithQueue:eventHandler:".skipped = true
