@@ -1,0 +1,8 @@
+framework = "ReplayKit"
+crate = "objc2-replay-kit"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "11.0"
+maccatalyst = "13.0"
+ios = "9.0"
+tvos = "10.0"
+visionos = "1.0"

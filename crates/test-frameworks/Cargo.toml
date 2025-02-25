@@ -119,6 +119,7 @@ test-frameworks = [
     "objc2-quick-look",
     "objc2-quick-look-thumbnailing",
     "objc2-quick-look-ui",
+    "objc2-replay-kit",
     "objc2-safari-services",
     "objc2-safety-kit",
     "objc2-scene-kit",
@@ -287,6 +288,7 @@ objc2-safari-services = ["dep:objc2-safari-services"]
 objc2-accessory-setup-kit = ["dep:objc2-accessory-setup-kit"]
 objc2-core-services = ["dep:objc2-core-services"]
 objc2-image-io = ["dep:objc2-image-io"]
+objc2-replay-kit = ["dep:objc2-replay-kit"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -425,6 +427,7 @@ objc2-model-io = { path = "../../framework-crates/objc2-model-io", optional = tr
 objc2-multipeer-connectivity = { path = "../../framework-crates/objc2-multipeer-connectivity", optional = true }
 objc2-photos = { path = "../../framework-crates/objc2-photos", optional = true }
 objc2-quartz-core = { path = "../../framework-crates/objc2-quartz-core", optional = true }
+objc2-replay-kit = { path = "../../framework-crates/objc2-replay-kit", optional = true }
 objc2-system-configuration = { path = "../../framework-crates/objc2-system-configuration", optional = true }
 objc2-video-toolbox = { path = "../../framework-crates/objc2-video-toolbox", optional = true }
 objc2-vision = { path = "../../framework-crates/objc2-vision", optional = true }
