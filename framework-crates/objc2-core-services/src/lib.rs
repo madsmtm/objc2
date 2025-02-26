@@ -29,6 +29,11 @@ pub use self::generated::*;
 #[cfg(feature = "FSEvents")]
 pub type ConstFSEventStreamRef = *const __FSEventStream;
 
+#[allow(non_upper_case_globals)]
+#[cfg(feature = "FSEvents")]
+/// [Apple's documentation](https://developer.apple.com/documentation/coreservices/kfseventstreameventidsincenow?language=objc)
+pub const kFSEventStreamEventIdSinceNow: FSEventStreamEventId = 0xFFFFFFFFFFFFFFFF;
+
 // MacTypes.h
 #[allow(dead_code)]
 mod mac_types {

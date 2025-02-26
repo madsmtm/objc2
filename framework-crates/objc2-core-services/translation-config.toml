@@ -65,6 +65,9 @@ fn.DisposeComponentFunctionUPP.skipped = true
 fn.CallComponentFunction.skipped = true
 fn.CallComponentFunctionWithStorage.skipped = true
 
+# Defaults to c_ulong, which is wrong on 32-bit targets.
+enum.anonymous.constants.kFSEventStreamEventIdSinceNow.skipped = true
+
 # Tries to OR u32s and i32s.
 enum.anonymous.constants.kIconServicesCatalogInfoMask.use-value = true
 
