@@ -60,6 +60,7 @@ test-frameworks = [
     "objc2-core-text",
     "objc2-core-video",
     "objc2-core-wlan",
+    "objc2-crypto-token-kit",
     "objc2-data-detection",
     "objc2-device-check",
     "objc2-disk-arbitration",
@@ -289,6 +290,7 @@ objc2-accessory-setup-kit = ["dep:objc2-accessory-setup-kit"]
 objc2-core-services = ["dep:objc2-core-services"]
 objc2-image-io = ["dep:objc2-image-io"]
 objc2-replay-kit = ["dep:objc2-replay-kit"]
+objc2-crypto-token-kit = ["dep:objc2-crypto-token-kit"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -314,6 +316,7 @@ objc2-core-media = { path = "../../framework-crates/objc2-core-media", optional 
 objc2-core-services = { path = "../../framework-crates/objc2-core-services", optional = true }
 objc2-core-text = { path = "../../framework-crates/objc2-core-text", optional = true }
 objc2-core-video = { path = "../../framework-crates/objc2-core-video", optional = true }
+objc2-crypto-token-kit = { path = "../../framework-crates/objc2-crypto-token-kit", optional = true }
 objc2-data-detection = { path = "../../framework-crates/objc2-data-detection", optional = true }
 objc2-device-check = { path = "../../framework-crates/objc2-device-check", optional = true }
 dispatch2 = { path = "../dispatch2", optional = true }

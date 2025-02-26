@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreServices` / `objc2-core-services` (CarbonCore sub-framework not yet supported).
   - `CoreSpotlight` / `objc2-core-spotlight`.
   - `CoreTelephony` / `objc2-core-telephony`.
+  - `CryptoTokenKit` / `objc2-crypto-token-kit`.
   - `ExecutionPolicy` / `objc2-execution-policy`.
   - `GameplayKit` / `objc2-gameplay-kit`.
   - `ImageCaptureCore` / `objc2-image-capture-core`.

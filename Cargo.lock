@@ -1091,6 +1091,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-crypto-token-kit"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-foundation",
+ "objc2-security",
+]
+
+[[package]]
 name = "objc2-data-detection"
 version = "0.3.0"
 dependencies = [
@@ -2412,6 +2423,7 @@ dependencies = [
  "objc2-core-text",
  "objc2-core-video",
  "objc2-core-wlan",
+ "objc2-crypto-token-kit",
  "objc2-data-detection",
  "objc2-device-check",
  "objc2-disk-arbitration",
