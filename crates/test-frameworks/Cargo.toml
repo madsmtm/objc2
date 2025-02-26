@@ -141,6 +141,7 @@ test-frameworks = [
     "objc2-symbols",
     "objc2-system-configuration",
     "objc2-system-extensions",
+    "objc2-tv-services",
     "objc2-ui-kit",
     "objc2-uniform-type-identifiers",
     "objc2-user-notifications",
@@ -291,6 +292,7 @@ objc2-core-services = ["dep:objc2-core-services"]
 objc2-image-io = ["dep:objc2-image-io"]
 objc2-replay-kit = ["dep:objc2-replay-kit"]
 objc2-crypto-token-kit = ["dep:objc2-crypto-token-kit"]
+objc2-tv-services = ["dep:objc2-tv-services"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -457,6 +459,9 @@ objc2-ui-kit = { path = "../../framework-crates/objc2-ui-kit", optional = true }
 [target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "watchos"))'.dependencies]
 objc2-nearby-interaction = { path = "../../framework-crates/objc2-nearby-interaction", optional = true }
 objc2-safety-kit = { path = "../../framework-crates/objc2-safety-kit", optional = true }
+
+[target.'cfg(target_os = "tvos")'.dependencies]
+objc2-tv-services = { path = "../../framework-crates/objc2-tv-services", optional = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "watchos", target_os = "visionos"))'.dependencies]
 objc2-watch-connectivity = { path = "../../framework-crates/objc2-watch-connectivity", optional = true }

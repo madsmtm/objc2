@@ -2013,6 +2013,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-tv-services"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-ui-kit"
 version = "0.3.0"
 dependencies = [
@@ -2503,6 +2514,7 @@ dependencies = [
  "objc2-symbols",
  "objc2-system-configuration",
  "objc2-system-extensions",
+ "objc2-tv-services",
  "objc2-ui-kit",
  "objc2-uniform-type-identifiers",
  "objc2-user-notifications",

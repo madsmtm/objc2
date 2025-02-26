@@ -1,0 +1,4 @@
+framework = "TVServices"
+crate = "objc2-tv-services"
+required-crates = ["objc2", "objc2-foundation"]
+tvos = "9.0"
