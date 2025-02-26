@@ -498,6 +498,10 @@ impl LibraryConfig {
             config.krate.replace("objc2-", "").replace('-', ""),
             "crate name had an unexpected format",
         );
+        if config.krate == "objc2-tv-ml-kit" {
+            // Named this way for better consistency with other tv-specific crates.
+            return Ok(config);
+        }
         assert_eq!(
             Some(&*config.framework.to_train_case().to_lowercase()),
             config.krate.strip_prefix("objc2-"),

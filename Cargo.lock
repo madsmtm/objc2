@@ -2013,6 +2013,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-tv-ml-kit"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-av-foundation",
+ "objc2-core-foundation",
+ "objc2-foundation",
+ "objc2-java-script-core",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-tv-services"
 version = "0.3.0"
 dependencies = [
@@ -2514,6 +2527,7 @@ dependencies = [
  "objc2-symbols",
  "objc2-system-configuration",
  "objc2-system-extensions",
+ "objc2-tv-ml-kit",
  "objc2-tv-services",
  "objc2-ui-kit",
  "objc2-uniform-type-identifiers",

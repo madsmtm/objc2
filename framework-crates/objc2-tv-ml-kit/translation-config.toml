@@ -1,0 +1,13 @@
+framework = "TVMLKit"
+crate = "objc2-tv-ml-kit"
+required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
+tvos = "9.0"
+
+external.AVPlayer.module = "AVFoundation.AVPlayer"
+
+# Swift renames this to "none", so we do too.
+enum.TVElementUpdateType.constants.TVElementUpdateTypeSelf.skipped = true
+
+# FIXME: Make header-translator pick this up from the explicit protocol impl.
+class.TVBrowserTransitionAnimator.main-thread-only = true

@@ -892,6 +892,8 @@ pub(crate) fn handle_reserved(name: &str) -> String {
     // translate whatever remains unchanged (needed for, e.g., `_`)
     else if name == "self" {
         "self_".into()
+    } else if name == "Self" {
+        "r#Self".into()
     } else if name == "super" {
         "super_".into()
     } else if name == "_" {
