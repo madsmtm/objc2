@@ -24,7 +24,7 @@ objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", 
     "objc2",
 ] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
-objc2-java-script-core = { path = "../objc2-java-script-core", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-javascript-core = { path = "../objc2-javascript-core", version = "0.3.0", default-features = false, optional = true, features = [
     "JSContext",
     "JSValue",
     "objc2",
@@ -74,7 +74,7 @@ default = [
     "block2",
     "objc2-av-foundation",
     "objc2-core-foundation",
-    "objc2-java-script-core",
+    "objc2-javascript-core",
     "objc2-ui-kit",
 ]
 std = ["alloc"]
@@ -82,7 +82,7 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
-objc2-java-script-core = ["dep:objc2-java-script-core"]
+objc2-javascript-core = ["dep:objc2-javascript-core"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 
 TVApplicationController = [

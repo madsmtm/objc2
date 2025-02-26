@@ -2,7 +2,7 @@
 # DO NOT EDIT
 
 [package]
-name = "objc2-java-script-core"
+name = "objc2-javascript-core"
 version.workspace = true
 description = "Bindings to the JavaScriptCore framework"
 edition.workspace = true

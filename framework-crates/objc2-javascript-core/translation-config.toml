@@ -1,5 +1,5 @@
 framework = "JavaScriptCore"
-crate = "objc2-java-script-core"
+crate = "objc2-javascript-core"
 required-crates = []
 custom-lib-rs = true
 macos = "10.5"

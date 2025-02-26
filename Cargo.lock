@@ -1381,7 +1381,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "objc2-java-script-core"
+name = "objc2-javascript-core"
 version = "0.3.0"
 dependencies = [
  "block2",
@@ -1812,7 +1812,7 @@ dependencies = [
  "objc2-core-graphics",
  "objc2-core-image",
  "objc2-foundation",
- "objc2-java-script-core",
+ "objc2-javascript-core",
  "objc2-metal",
  "objc2-model-io",
  "objc2-quartz-core",
@@ -2021,7 +2021,7 @@ dependencies = [
  "objc2-av-foundation",
  "objc2-core-foundation",
  "objc2-foundation",
- "objc2-java-script-core",
+ "objc2-javascript-core",
  "objc2-ui-kit",
 ]
 
@@ -2179,7 +2179,7 @@ dependencies = [
  "objc2-app-kit",
  "objc2-core-foundation",
  "objc2-foundation",
- "objc2-java-script-core",
+ "objc2-javascript-core",
  "objc2-security",
 ]
 
@@ -2485,7 +2485,7 @@ dependencies = [
  "objc2-intents",
  "objc2-intents-ui",
  "objc2-io-surface",
- "objc2-java-script-core",
+ "objc2-javascript-core",
  "objc2-link-presentation",
  "objc2-local-authentication",
  "objc2-local-authentication-embedded-ui",
