@@ -2037,6 +2037,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-tv-ui-kit"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-foundation",
+ "objc2-quartz-core",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-ui-kit"
 version = "0.3.0"
 dependencies = [
@@ -2529,6 +2541,7 @@ dependencies = [
  "objc2-system-extensions",
  "objc2-tv-ml-kit",
  "objc2-tv-services",
+ "objc2-tv-ui-kit",
  "objc2-ui-kit",
  "objc2-uniform-type-identifiers",
  "objc2-user-notifications",

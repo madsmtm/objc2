@@ -143,6 +143,7 @@ test-frameworks = [
     "objc2-system-extensions",
     "objc2-tv-ml-kit",
     "objc2-tv-services",
+    "objc2-tv-ui-kit",
     "objc2-ui-kit",
     "objc2-uniform-type-identifiers",
     "objc2-user-notifications",
@@ -295,6 +296,7 @@ objc2-replay-kit = ["dep:objc2-replay-kit"]
 objc2-crypto-token-kit = ["dep:objc2-crypto-token-kit"]
 objc2-tv-services = ["dep:objc2-tv-services"]
 objc2-tv-ml-kit = ["dep:objc2-tv-ml-kit"]
+objc2-tv-ui-kit = ["dep:objc2-tv-ui-kit"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -465,6 +467,7 @@ objc2-safety-kit = { path = "../../framework-crates/objc2-safety-kit", optional 
 [target.'cfg(target_os = "tvos")'.dependencies]
 objc2-tv-ml-kit = { path = "../../framework-crates/objc2-tv-ml-kit", optional = true }
 objc2-tv-services = { path = "../../framework-crates/objc2-tv-services", optional = true }
+objc2-tv-ui-kit = { path = "../../framework-crates/objc2-tv-ui-kit", optional = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "watchos", target_os = "visionos"))'.dependencies]
 objc2-watch-connectivity = { path = "../../framework-crates/objc2-watch-connectivity", optional = true }

@@ -1,0 +1,10 @@
+framework = "TVUIKit"
+crate = "objc2-tv-ui-kit"
+# Require AppKit, since this framework is UI-heavy, and since it allows compiling less of AppKit
+required-crates = ["objc2", "objc2-foundation", "objc2-ui-kit"]
+tvos = "12.0"
+
+# FIXME: Make header-translator pick this up from the explicit
+# UIContentConfiguration protocol impl.
+class.TVMediaItemContentConfiguration.main-thread-only = true
+class.TVMonogramContentConfiguration.main-thread-only = true

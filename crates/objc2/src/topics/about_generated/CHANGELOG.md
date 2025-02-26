@@ -48,6 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `ShazamKit` / `objc2-shazam-kit`.
   - `TVMLKit` / `objc2-tv-ml-kit`.
   - `TVServices` / `objc2-tv-services`.
+  - `TVUIKit` / `objc2-tv-ui-kit`.
   - `UserNotificationsUI` / `objc2-user-notifications-ui`.
 * Added fallback for `MTLCopyAllDevices` on non-macOS platforms.
 
