@@ -30,6 +30,7 @@ test-frameworks = [
     "objc2-automator",
     "objc2-background-assets",
     "objc2-background-tasks",
+    "objc2-browser-engine-core",
     "objc2-business-chat",
     "objc2-call-kit",
     "objc2-cinematic",
@@ -297,6 +298,7 @@ objc2-crypto-token-kit = ["dep:objc2-crypto-token-kit"]
 objc2-tv-services = ["dep:objc2-tv-services"]
 objc2-tv-ml-kit = ["dep:objc2-tv-ml-kit"]
 objc2-tv-ui-kit = ["dep:objc2-tv-ui-kit"]
+objc2-browser-engine-core = ["dep:objc2-browser-engine-core"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -377,6 +379,7 @@ objc2-web-kit = { path = "../../framework-crates/objc2-web-kit", optional = true
 
 [target.'cfg(target_os = "ios")'.dependencies]
 objc2-accessory-setup-kit = { path = "../../framework-crates/objc2-accessory-setup-kit", optional = true }
+objc2-browser-engine-core = { path = "../../framework-crates/objc2-browser-engine-core", optional = true }
 objc2-messages = { path = "../../framework-crates/objc2-messages", optional = true }
 objc2-sensor-kit = { path = "../../framework-crates/objc2-sensor-kit", optional = true }
 

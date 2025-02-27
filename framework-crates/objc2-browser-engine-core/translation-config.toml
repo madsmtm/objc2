@@ -1,0 +1,17 @@
+framework = "BrowserEngineCore"
+crate = "objc2-browser-engine-core"
+required-crates = []
+custom-lib-rs = true
+# Technically _available_ there, but doesn't seem to run properly
+# macos = "14.3"
+ios = "17.4"
+
+# Empty
+module.BEMacros.skipped = true
+
+# cfg-gated with `#if TARGET_CPU_ARM64`
+fn.be_memory_inline_jit_restrict_rwx_to_rw_with_witness_impl.skipped = true
+fn.be_memory_inline_jit_restrict_rwx_to_rx_with_witness_impl.skipped = true
+fn.be_memory_inline_jit_restrict_with_witness_supported.skipped = true
+fn.be_memory_inline_jit_restrict_rwx_to_rw_with_witness.skipped = true
+fn.be_memory_inline_jit_restrict_rwx_to_rx_with_witness.skipped = true

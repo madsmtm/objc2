@@ -74,6 +74,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `AVFAudio` / `objc2-avf-audio`.
   - `AVFoundation` / `objc2-av-foundation`.
   - `AVRouting` / `objc2-av-routing`.
+  - `BrowserEngineCore` / `objc2-browser-engine-core`.
   - `CompositorServices` / `objc2-compositor-services`.
   - `CoreAudioTypes` / `objc2-core-audio-types`.
   - `CoreAudio` / `objc2-core-audio`.

@@ -758,6 +758,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-browser-engine-core"
+version = "0.3.0"
+
+[[package]]
 name = "objc2-business-chat"
 version = "0.3.0"
 dependencies = [
@@ -2429,6 +2433,7 @@ dependencies = [
  "objc2-avf-audio",
  "objc2-background-assets",
  "objc2-background-tasks",
+ "objc2-browser-engine-core",
  "objc2-business-chat",
  "objc2-call-kit",
  "objc2-cinematic",
