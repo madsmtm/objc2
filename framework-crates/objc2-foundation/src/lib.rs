@@ -184,3 +184,11 @@ pub(crate) type FourCharCode = u32;
 pub(crate) type OSType = FourCharCode;
 #[allow(unused)]
 pub(crate) type UTF32Char = u32; // Or maybe Rust's char?
+#[allow(unused)]
+#[cfg(target_pointer_width = "64")]
+pub(crate) type SRefCon = *mut core::ffi::c_void;
+#[allow(unused)]
+#[cfg(target_pointer_width = "32")]
+pub(crate) type SRefCon = i32;
+#[allow(unused)]
+pub(crate) type OSErr = i16;
