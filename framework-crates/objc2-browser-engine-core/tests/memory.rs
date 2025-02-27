@@ -38,11 +38,9 @@ fn check(filename: &str) {
         .unwrap_or(false);
     if should_overwrite {
         fs::write(expected, actual_contents).unwrap();
-    } else {
-        if expected_contents != actual_contents {
-            eprintln!("\n===Expected===\n{expected_contents}\n===Actual===\n{actual_contents}");
-            panic!("expected and actual did not match.");
-        }
+    } else if expected_contents != actual_contents {
+        eprintln!("\n===Expected===\n{expected_contents}\n===Actual===\n{actual_contents}");
+        panic!("expected and actual did not match.");
     }
 }
 
