@@ -14,6 +14,7 @@ extern "C" {}
 #[should_panic = "invalid object"]
 fn when_copying_rendering_session_frame_attributes() {
     unsafe {
+        // init is not a valid selector for CNRenderingSessionFrameAttributes.
         let obj: Retained<AnyObject> = msg_send![
             msg_send![class!(CNRenderingSessionFrameAttributes), alloc],
             init

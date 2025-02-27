@@ -672,6 +672,8 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
             .is_some_and(|v| VersionReq::parse("<=17.0").unwrap().matches(v))
             // HACK: MLCompute and MetalFX are only available on Aarch64
             && !["objc2-ml-compute", "objc2-metal-fx"].contains(&&*lib.krate)
+            // HACK: Cinematic isn't available in the simulator.
+            && !["objc2-cinematic"].contains(&&*lib.krate)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_TVOS_17", |lib| {
         lib.tvos
