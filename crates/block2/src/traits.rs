@@ -173,24 +173,35 @@ impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8:
 /// about what exactly goes on behind the scenes in order to justify all the
 /// following precautions.
 ///
-/// The simplest way to achieve this is to somehow obtain a block with the
-/// correct signature from the Objective-C runtime and [`Debug`]-display it to
-/// copy its `encoding` C string.
+/// The easiest way to do this is probably to ask Clang; the following program
+/// will print the signature of the block (if you're having trouble linking,
+/// you should be able to find the signature in the assembly output).
 ///
-/// Another possibility is to help yourself with [`Encoding::to_string`][enc2s]
-/// in order to get the various components of the signature string separately
-/// and then concatenate them manually with the required numbers described
-/// below inserted at their correct place.
+/// ```objective-c
+/// #import <Foundation/Foundation.h>
 ///
-/// Yet another possibility is to compile a small Objective-C program, with GCC
-/// and GNUstep for example, that simply displays the result of
-/// `method_getTypeEncoding(class_getClassMethod([MyClass class] @selector(sel)))`
-/// where `MyClass::sel` has a signature compatible with the block you want,
-/// after which the string can be slightly modified to fit an actual block
-/// instead of a method: see below.
+/// // Unstable API, but fine for test usage like this.
+/// const char * _Block_signature(void *);
+///
+/// int main() {
+///     // Declare the signature of your block.
+///     // This one takes `id` and `int`, and returns `NSString*`.
+///     id block = ^NSString* (id a, int b) {
+///         return nil;
+///     };
+///
+///     printf("%s\n", _Block_signature((void*)block));
+///     return 0;
+/// }
+/// ```
 ///
 /// A more thorough but manual approach is to only follow the rules described
 /// below.
+///
+/// In this process, you may be able to use [`Encoding::to_string`][enc2s] in
+/// order to get the various components of the signature string and then
+/// concatenate them manually with the required numbers (described below)
+/// inserted at their correct place.
 ///
 /// [enc2s]: objc2::encode::Encoding#impl-Display-for-Encoding
 /// [i442-sign-check]: https://github.com/madsmtm/objc2/issues/442#issuecomment-2284932726
