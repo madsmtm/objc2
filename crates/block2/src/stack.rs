@@ -19,7 +19,15 @@ use crate::{ffi, Block, IntoBlock};
 
 /// An Objective-C block constructed on the stack.
 ///
+/// This can be a micro-optimization if you know that the function you're
+/// passing the block to won't [copy] the block at all (e.g. if it guarantees
+/// that it'll run it synchronously). That's very rare though, most of the
+/// time you'll want to use [`RcBlock`].
+///
 /// This is a smart pointer that [`Deref`]s to [`Block`].
+///
+/// [copy]: Block::copy
+/// [`RcBlock`]: crate::RcBlock
 ///
 ///
 /// # Type parameters
@@ -160,6 +168,20 @@ where
     /// calling the closure.
     ///
     /// [`RcBlock::new`]: crate::RcBlock::new
+    ///
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use block2::StackBlock;
+    /// #
+    /// # extern "C" fn check_addition(block: &block2::Block<dyn Fn(i32, i32) -> i32>) {
+    /// #     assert_eq!(block.call((5, 8)), 13);
+    /// # }
+    ///
+    /// let block = StackBlock::new(|a, b| a + b);
+    /// check_addition(&block);
+    /// ```
     #[inline]
     pub fn new(closure: Closure) -> Self {
         Self::maybe_encoded::<NoBlockEncoding<A, R>>(closure)

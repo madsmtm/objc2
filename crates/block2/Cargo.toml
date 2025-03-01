@@ -60,6 +60,7 @@ objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-f
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
+rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 features = ["unstable-private"]
 targets = [
     "aarch64-apple-darwin",

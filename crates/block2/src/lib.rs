@@ -24,6 +24,40 @@
 //! [`fn` item]: https://doc.rust-lang.org/reference/types/function-item.html
 //!
 //!
+//! ## Using blocks
+//!
+//! You can create a new block from a closure using [`RcBlock::new`]. This can
+//! then be used to call functions or Objective-C methods that takes a block:
+//!
+//! ```
+//! use block2::RcBlock;
+//! #
+//! # struct ExampleObject;
+//! #
+//! # impl ExampleObject {
+//! #     fn someMethod(&self, block: &block2::Block<dyn Fn(i32, i32) -> i32>) {
+//! #         assert_eq!(block.call((5, 8)), 18);
+//! #     }
+//! # }
+//! #
+//! # let obj = ExampleObject;
+//!
+//! let val = 5;
+//! let block = RcBlock::new(move |a, b| a + b + val);
+//! obj.someMethod(&block);
+//! ```
+//!
+//!
+//! ## My block isn't being run?
+//!
+//! Most of the time, blocks are used to do asynchronous work; but just like
+//! futures in Rust don't do anything unless polled, a lot of Apple APIs won't
+//! call your block unless a [run loop][run_loop] is active, see that link for
+//! more information on how to do so.
+//!
+//! [run_loop]: objc2::topics::run_loop
+//!
+//!
 //! ## External functions using blocks
 //!
 //! To declare external functions or methods that takes blocks, use
@@ -99,65 +133,6 @@
 //!
 //! Note the extra parentheses in the `call` method, since the arguments must
 //! be passed as a tuple.
-//!
-//!
-//! ## Creating blocks
-//!
-//! Creating a block to pass to Objective-C can be done with [`RcBlock`] or
-//! [`StackBlock`], depending on if you want to move the block to the heap,
-//! or let the callee decide if it needs to do that.
-//!
-//! To call such a function / method, we could create a new block from a
-//! closure using [`RcBlock::new`].
-//!
-//! ```
-//! use block2::RcBlock;
-//! #
-//! # extern "C" fn check_addition(block: &block2::Block<dyn Fn(i32, i32) -> i32>) {
-//! #     assert_eq!(block.call((5, 8)), 13);
-//! # }
-//!
-//! let block = RcBlock::new(|a, b| a + b);
-//! check_addition(&block);
-//! ```
-//!
-//! This creates the block on the heap. If the external function you're
-//! calling is not going to copy the block, it may be more performant if you
-//! construct a [`StackBlock`] directly, using [`StackBlock::new`].
-//!
-//! Note that this requires that the closure is [`Clone`], as the external
-//! code is allowed to copy the block to the heap in the future.
-//!
-//! ```
-//! use block2::StackBlock;
-//! #
-//! # extern "C" fn check_addition(block: &block2::Block<dyn Fn(i32, i32) -> i32>) {
-//! #     assert_eq!(block.call((5, 8)), 13);
-//! # }
-//!
-//! let block = StackBlock::new(|a, b| a + b);
-//! check_addition(&block);
-//! ```
-//!
-//! As an optimization, if your closure doesn't capture any variables (as in
-//! the above examples), you can use the [`global_block!`] macro to create a
-//! static block.
-//!
-//! ```
-//! use block2::global_block;
-//! #
-//! # extern "C" fn check_addition(block: &block2::Block<dyn Fn(i32, i32) -> i32>) {
-//! #     assert_eq!(block.call((5, 8)), 13);
-//! # }
-//!
-//! global_block! {
-//!     static BLOCK = |a: i32, b: i32| -> i32 {
-//!         a + b
-//!     };
-//! }
-//!
-//! check_addition(&BLOCK);
-//! ```
 //!
 //!
 //! ## Lifetimes
@@ -372,6 +347,7 @@
 //! [flag]: https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-fblocks
 
 #![no_std]
+#![allow(rustdoc::broken_intra_doc_links)] // FIXME link to objc2::topics
 #![warn(missing_docs)]
 #![warn(missing_debug_implementations)]
 #![warn(clippy::missing_errors_doc)]

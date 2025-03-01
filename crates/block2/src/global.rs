@@ -18,11 +18,15 @@ const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
 
 /// A global Objective-C block that does not capture an environment.
 ///
+/// This can be used as an optimization of [`RcBlock`] if your closure doesn't
+/// capture any variables.
+///
 /// This is a smart pointer that [`Deref`]s to [`Block`].
 ///
 /// It can created and stored in static memory using the [`global_block!`]
 /// macro.
 ///
+/// [`RcBlock`]: crate::RcBlock
 /// [`global_block!`]: crate::global_block
 #[repr(C)]
 pub struct GlobalBlock<F: ?Sized> {
