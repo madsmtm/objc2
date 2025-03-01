@@ -58,83 +58,6 @@
 //! [run_loop]: objc2::topics::run_loop
 //!
 //!
-//! ## External functions using blocks
-//!
-//! To declare external functions or methods that takes blocks, use
-//! `&Block<dyn Fn(Params) -> R>` or `Option<&Block<dyn Fn(Args) -> R>>`,
-//! where `Params` is the parameter types, and `R` is the return type.
-//!
-//! In the next few examples, we're going to work with a function
-//! `check_addition`, that takes as parameter a block that adds two integers,
-//! and checks that the addition is correct.
-//!
-//! Such a function could be written in C like in the following.
-//!
-//! ```objc
-//! #include <cassert>
-//! #include <stdint.h>
-//! #include <Block.h>
-//!
-//! void check_addition(int32_t (^block)(int32_t, int32_t)) {
-//!     assert(block(5, 8) == 13);
-//! }
-//! ```
-//!
-//! An `extern "C" { ... }` declaration for that function would then be:
-//!
-//! ```
-//! use block2::Block;
-//!
-//! extern "C" {
-//!     fn check_addition(block: &Block<dyn Fn(i32, i32) -> i32>);
-//! }
-//! ```
-//!
-//! This can similarly be done inside external methods declared with
-//! [`objc2::extern_methods!`].
-//!
-//! ```
-//! use block2::Block;
-//! use objc2::extern_methods;
-//! #
-//! # use objc2::ClassType;
-//! # objc2::extern_class!(
-//! #     #[unsafe(super(objc2::runtime::NSObject))]
-//! #     #[name = "NSObject"]
-//! #     struct MyClass;
-//! # );
-//!
-//! impl MyClass {
-//!     extern_methods!(
-//!         #[unsafe(method(checkAddition:))]
-//!         pub fn checkAddition(&self, block: &Block<dyn Fn(i32, i32) -> i32>);
-//!     );
-//! }
-//! ```
-//!
-//! If the function/method allowed passing `NULL` blocks, the type would be
-//! `Option<&Block<dyn Fn(i32, i32) -> i32>>` instead.
-//!
-//!
-//! ## Invoking blocks
-//!
-//! We can also define the external function in Rust, and expose it to
-//! Objective-C. To do this, we can use [`Block::call`] to invoke the block
-//! inside the function.
-//!
-//! ```
-//! use block2::Block;
-//!
-//! #[no_mangle]
-//! extern "C" fn check_addition(block: &Block<dyn Fn(i32, i32) -> i32>) {
-//!     assert_eq!(block.call((5, 8)), 13);
-//! }
-//! ```
-//!
-//! Note the extra parentheses in the `call` method, since the arguments must
-//! be passed as a tuple.
-//!
-//!
 //! ## Lifetimes
 //!
 //! When dealing with blocks, there can be quite a few lifetimes to keep in
@@ -261,6 +184,87 @@
 //! }));
 //! b.call(());
 //! ```
+//!
+//!
+//! ## External functions using blocks
+//!
+//! To declare external functions or methods that takes blocks, use
+//! `&Block<dyn Fn(Params) -> R>` or `Option<&Block<dyn Fn(Args) -> R>>`,
+//! where `Params` is the parameter types, and `R` is the return type.
+//!
+//! For this example, consider the function `check_addition` which takes a
+//! single parameter, namely a block that adds two integers, and then checks
+//! that the addition is correct.
+//!
+//! Such a function could be written in C like in the following.
+//!
+//! ```objc
+//! #include <cassert>
+//! #include <stdint.h>
+//! #include <Block.h>
+//!
+//! void check_addition(int32_t (^block)(int32_t, int32_t)) {
+//!     assert(block(5, 8) == 13);
+//! }
+//! ```
+//!
+//! An `extern "C" { ... }` declaration for that function would then be:
+//!
+//! ```
+//! use block2::Block;
+//!
+//! extern "C" {
+//!     fn check_addition(block: &Block<dyn Fn(i32, i32) -> i32>);
+//! }
+//! ```
+//!
+//! This can similarly be done for Objcective-C methods declared with
+//! [`objc2::extern_methods!`] (though most of the time, the [framework
+//! crates][framework-crates] will take care of that for you).
+//!
+//! ```
+//! use block2::Block;
+//! use objc2::extern_methods;
+//! #
+//! # use objc2::ClassType;
+//! # objc2::extern_class!(
+//! #     #[unsafe(super(objc2::runtime::NSObject))]
+//! #     #[name = "NSObject"]
+//! #     struct MyClass;
+//! # );
+//!
+//! impl MyClass {
+//!     extern_methods!(
+//!         #[unsafe(method(checkAddition:))]
+//!         pub fn checkAddition(&self, block: &Block<dyn Fn(i32, i32) -> i32>);
+//!     );
+//! }
+//! ```
+//!
+//! If the function/method allows passing `NULL` blocks, the type should be
+//! `Option<&Block<dyn Fn(i32, i32) -> i32>>` instead.
+//!
+//! [framework-crates]: objc2::topics::about_generated
+//!
+//!
+//! ## Invoking blocks
+//!
+//! We can also define the external function in Rust, and expose it to
+//! Objective-C. To do this, we can use [`Block::call`] to invoke the block
+//! inside the function.
+//!
+//! ```
+//! use block2::Block;
+//!
+//! #[no_mangle]
+//! extern "C" fn check_addition(block: &Block<dyn Fn(i32, i32) -> i32>) {
+//!     assert_eq!(block.call((5, 8)), 13);
+//! }
+//! ```
+//!
+//! Note the extra parentheses in the `call` method, since the arguments must
+//! be passed as a tuple.
+//!
 //!
 //! ## Specifying a runtime
 //!
