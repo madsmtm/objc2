@@ -33,6 +33,7 @@ test-frameworks = [
     "objc2-browser-engine-core",
     "objc2-browser-engine-kit",
     "objc2-business-chat",
+    "objc2-cf-network",
     "objc2-call-kit",
     "objc2-cinematic",
     "objc2-class-kit",
@@ -301,6 +302,7 @@ objc2-tv-ml-kit = ["dep:objc2-tv-ml-kit"]
 objc2-tv-ui-kit = ["dep:objc2-tv-ui-kit"]
 objc2-browser-engine-core = ["dep:objc2-browser-engine-core"]
 objc2-browser-engine-kit = ["dep:objc2-browser-engine-kit"]
+objc2-cf-network = ["dep:objc2-cf-network"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -425,6 +427,7 @@ objc2-virtualization = { path = "../../framework-crates/objc2-virtualization", o
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
 objc2-app-tracking-transparency = { path = "../../framework-crates/objc2-app-tracking-transparency", optional = true }
 objc2-audio-toolbox = { path = "../../framework-crates/objc2-audio-toolbox", optional = true }
+objc2-cf-network = { path = "../../framework-crates/objc2-cf-network", optional = true }
 objc2-core-image = { path = "../../framework-crates/objc2-core-image", optional = true }
 objc2-external-accessory = { path = "../../framework-crates/objc2-external-accessory", optional = true }
 objc2-game-controller = { path = "../../framework-crates/objc2-game-controller", optional = true }

@@ -796,6 +796,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-cf-network"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "objc2",
+ "objc2-core-foundation",
+]
+
+[[package]]
 name = "objc2-cinematic"
 version = "0.3.0"
 dependencies = [
@@ -2452,6 +2461,7 @@ dependencies = [
  "objc2-browser-engine-kit",
  "objc2-business-chat",
  "objc2-call-kit",
+ "objc2-cf-network",
  "objc2-cinematic",
  "objc2-class-kit",
  "objc2-cloud-kit",
