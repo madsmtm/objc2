@@ -1359,6 +1359,20 @@ impl Ty {
                         }
                     }
 
+                    // HACK: Make IOBluetooth work without depending on IOKit.
+                    "IOReturn" => {
+                        return Self::TypeDef {
+                            id: ItemIdentifier::iokit_typedefs("IOReturn"),
+                            to: Box::new(Self::Primitive(Primitive::Int)),
+                        }
+                    }
+                    "IOItemCount" => {
+                        return Self::TypeDef {
+                            id: ItemIdentifier::iokit_typedefs("IOItemCount"),
+                            to: Box::new(Self::Primitive(Primitive::U32)),
+                        }
+                    }
+
                     "NSInteger" => return Self::Primitive(Primitive::NSInteger),
                     "NSUInteger" => return Self::Primitive(Primitive::NSUInteger),
 

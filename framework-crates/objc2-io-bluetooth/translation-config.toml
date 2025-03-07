@@ -1,0 +1,32 @@
+framework = "IOBluetooth"
+crate = "objc2-io-bluetooth"
+required-crates = []
+custom-lib-rs = true
+macos = "10.2"
+
+# Treated as recursive, because it cannot be found
+class.IOBluetoothDevicePair.skipped-protocols = ["CBCentralManagerDelegate"]
+
+# Unclear which types these protocol impls return (inherited from NSData).
+class.IOBluetoothSDPUUID.skipped-protocols = ["NSCopying", "NSMutableCopying"]
+
+# TODO: Merge these somehow
+typedef.IOBluetoothDeviceRef.renamed = "IOBluetoothDeviceRef"
+typedef.IOBluetoothL2CAPChannelRef.renamed = "IOBluetoothL2CAPChannelRef"
+typedef.IOBluetoothObjectRef.renamed = "IOBluetoothObjectRef"
+typedef.IOBluetoothRFCOMMChannelRef.renamed = "IOBluetoothRFCOMMChannelRef"
+typedef.IOBluetoothSDPUUIDRef.renamed = "IOBluetoothSDPUUIDRef"
+typedef.IOBluetoothSDPDataElementRef.renamed = "IOBluetoothSDPDataElementRef"
+typedef.IOBluetoothSDPServiceRecordRef.renamed = "IOBluetoothSDPServiceRecordRef"
+typedef.IOBluetoothUserNotificationRef.renamed = "IOBluetoothUserNotificationRef"
+
+# Needs va_list
+fn.IOBluetoothPackDataList.skipped = true
+fn.IOBluetoothUnpackDataList.skipped = true
+
+# The ABI of arrays is unclear, but this is only used within a struct,
+# and there the ABI is defined.
+typedef.BluetoothDeviceName.skipped = true
+
+# ns_consumes_self / NS_REPLACES_RECEIVER
+class.IOBluetoothDevice.methods."awakeAfterUsingCoder:".skipped = true

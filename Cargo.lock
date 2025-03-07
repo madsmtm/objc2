@@ -1398,6 +1398,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-io-bluetooth"
+version = "0.3.0"
+dependencies = [
+ "libc",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-io-surface"
 version = "0.3.0"
 dependencies = [
@@ -2515,6 +2525,7 @@ dependencies = [
  "objc2-input-method-kit",
  "objc2-intents",
  "objc2-intents-ui",
+ "objc2-io-bluetooth",
  "objc2-io-surface",
  "objc2-javascript-core",
  "objc2-link-presentation",

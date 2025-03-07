@@ -2,6 +2,7 @@ framework = "Virtualization"
 crate = "objc2-virtualization"
 required-crates = ["objc2", "objc2-foundation"]
 macos = "11.0"
+# Explicitly not available on Mac Catalyst (modulemap contains `requires !maccatalyst`).
 
 # Needs `ether_addr_t`
 class.VZMACAddress.methods."initWithEthernetAddress:".skipped = true
