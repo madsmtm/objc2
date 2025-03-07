@@ -84,6 +84,7 @@ test-frameworks = [
     "objc2-health-kit",
     "objc2-home-kit",
     "objc2-io-bluetooth",
+    "objc2-io-bluetooth-ui",
     "objc2-io-surface",
     "objc2-identity-lookup",
     "objc2-image-capture-core",
@@ -305,6 +306,7 @@ objc2-browser-engine-core = ["dep:objc2-browser-engine-core"]
 objc2-browser-engine-kit = ["dep:objc2-browser-engine-kit"]
 objc2-cf-network = ["dep:objc2-cf-network"]
 objc2-io-bluetooth = ["dep:objc2-io-bluetooth"]
+objc2-io-bluetooth-ui = ["dep:objc2-io-bluetooth-ui"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -413,6 +415,7 @@ objc2-exception-handling = { path = "../../framework-crates/objc2-exception-hand
 objc2-execution-policy = { path = "../../framework-crates/objc2-execution-policy", optional = true }
 objc2-finder-sync = { path = "../../framework-crates/objc2-finder-sync", optional = true }
 objc2-io-bluetooth = { path = "../../framework-crates/objc2-io-bluetooth", optional = true }
+objc2-io-bluetooth-ui = { path = "../../framework-crates/objc2-io-bluetooth-ui", optional = true }
 objc2-input-method-kit = { path = "../../framework-crates/objc2-input-method-kit", optional = true }
 objc2-mail-kit = { path = "../../framework-crates/objc2-mail-kit", optional = true }
 objc2-osa-kit = { path = "../../framework-crates/objc2-osa-kit", optional = true }

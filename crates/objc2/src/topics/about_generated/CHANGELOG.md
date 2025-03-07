@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Intents` / `objc2-intents`.
   - `IntentsUI` / `objc2-intents-ui`.
   - `IOBluetooth` / `objc2-io-bluetooth`.
+  - `IOBluetoothUI` / `objc2-io-bluetooth-ui`.
   - `JavaScriptCore` / `objc2-java-script-core`.
   - `MediaAccessibility` / `objc2-media-accessibility`.
   - `MediaToolbox` / `objc2-media-toolbox`.
