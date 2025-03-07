@@ -762,6 +762,21 @@ name = "objc2-browser-engine-core"
 version = "0.3.0"
 
 [[package]]
+name = "objc2-browser-engine-kit"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-av-foundation",
+ "objc2-core-foundation",
+ "objc2-foundation",
+ "objc2-quartz-core",
+ "objc2-ui-kit",
+ "objc2-uniform-type-identifiers",
+]
+
+[[package]]
 name = "objc2-business-chat"
 version = "0.3.0"
 dependencies = [
@@ -2434,6 +2449,7 @@ dependencies = [
  "objc2-background-assets",
  "objc2-background-tasks",
  "objc2-browser-engine-core",
+ "objc2-browser-engine-kit",
  "objc2-business-chat",
  "objc2-call-kit",
  "objc2-cinematic",

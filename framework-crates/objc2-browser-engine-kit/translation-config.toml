@@ -1,0 +1,28 @@
+framework = "BrowserEngineKit"
+crate = "objc2-browser-engine-kit"
+required-crates = ["objc2", "objc2-foundation", "objc2-ui-kit"]
+flags = [
+    # Avoid depending on objc2 for XPC types.
+    "-DOS_OBJECT_USE_OBJC=0",
+]
+ios = "17.4"
+
+external.AVCaptureSession.module = "AVFoundation.AVCaptureSession"
+
+# Needs xpc_object_t/xpc_connection_t from XPC / libxpc
+class.BELayerHierarchyHandle.methods."handleWithXPCRepresentation:error:".skipped = true
+class.BELayerHierarchyHandle.methods.createXPCRepresentation.skipped = true
+class.BELayerHierarchyHostingTransactionCoordinator.methods."coordinatorWithXPCRepresentation:error:".skipped = true
+class.BELayerHierarchyHostingTransactionCoordinator.methods.createXPCRepresentation.skipped = true
+class.BEMediaEnvironment.methods."initWithXPCRepresentation:error:".skipped = true
+class.BEMediaEnvironment.methods.createXPCRepresentation.skipped = true
+class.BENetworkingProcess.methods."makeLibXPCConnectionError:".skipped = true
+class.BERenderingProcess.methods."makeLibXPCConnectionError:".skipped = true
+class.BEWebContentProcess.methods."makeLibXPCConnectionError:".skipped = true
+
+# Incorrectly marked as returning non-null
+# Leads to `error: unknown error result type`
+class.BEProcessCapability.methods."requestWithError:".skipped = true
+
+# FIXME: Make header-translator pick this up from the explicit protocol impl.
+class.BETextInteraction.main-thread-only = true
