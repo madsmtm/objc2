@@ -322,7 +322,7 @@ fn handle_timestamps(
     gpu_end: u64,
 ) {
     let samples = unsafe {
-        std::slice::from_raw_parts(resolved_sample_buffer.contents() as *const u64, 4usize)
+        std::slice::from_raw_parts(resolved_sample_buffer.contents().cast::<u64>(), 4usize)
     };
     let vertex_pass_start = samples[0];
     let vertex_pass_end = samples[1];

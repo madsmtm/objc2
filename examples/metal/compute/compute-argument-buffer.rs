@@ -87,9 +87,7 @@ fn main() {
         command_buffer.commit();
         command_buffer.wait_until_completed();
 
-        let ptr = sum.contents() as *mut u32;
-        unsafe {
-            assert_eq!(465, *ptr);
-        }
+        let sum = unsafe { sum.contents().cast::<u32>().read() };
+        assert_eq!(465, sum);
     });
 }

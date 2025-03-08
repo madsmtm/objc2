@@ -228,7 +228,7 @@ fn update_viewport_size_buffer(viewport_size_buffer: &Buffer, size: (u32, u32)) 
     let byte_count = size_of_val(&viewport_size);
 
     unsafe {
-        std::ptr::copy(viewport_size.as_ptr(), contents as *mut u32, byte_count);
+        std::ptr::copy(viewport_size.as_ptr(), contents.cast(), byte_count);
     }
     viewport_size_buffer.did_modify_range(metal::NSRange::new(0, byte_count as u64));
 }

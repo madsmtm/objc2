@@ -1,6 +1,5 @@
 use std::{
     collections::BTreeMap,
-    ffi::c_void,
     mem::transmute,
     ops::Index,
     sync::{Arc, Condvar, Mutex},
@@ -85,7 +84,7 @@ impl Renderer {
 
         let buffer_data = [0u8; UNIFORM_BUFFER_SIZE as usize];
         let uniform_buffer = device.new_buffer_with_data(
-            buffer_data.as_ptr() as *const c_void,
+            buffer_data.as_ptr().cast(),
             UNIFORM_BUFFER_SIZE,
             get_managed_buffer_storage_mode(),
         );
@@ -171,7 +170,7 @@ impl Renderer {
             }
         }
         let instance_buffer = device.new_buffer_with_data(
-            instance_descriptors.as_ptr() as *const c_void,
+            instance_descriptors.as_ptr().cast(),
             size_of_val(instance_descriptors.as_slice()) as NSUInteger,
             get_managed_buffer_storage_mode(),
         );
@@ -304,7 +303,7 @@ impl Renderer {
         self.random_texture.replace_region(
             MTLRegion::new_2d(0, 0, size.width as NSUInteger, size.height as NSUInteger),
             0,
-            random_values.as_ptr() as *const c_void,
+            random_values.as_ptr().cast(),
             size_of::<u32>() as NSUInteger * size.width as NSUInteger,
         );
         self.frame_index = 0;
@@ -314,8 +313,11 @@ impl Renderer {
         self.uniform_buffer_offset = ALIGNED_UNIFORMS_SIZE * self.uniform_buffer_index;
 
         let uniforms = unsafe {
-            &mut *((self.uniform_buffer.contents() as *mut u8)
-                .add(self.uniform_buffer_offset as usize) as *mut Uniforms)
+            &mut *self
+                .uniform_buffer
+                .contents()
+                .add(self.uniform_buffer_offset as usize)
+                .cast::<Uniforms>()
         };
 
         let position = self.scene.camera.position;
@@ -472,13 +474,13 @@ impl Renderer {
         let constants = FunctionConstantValues::new();
         let resources_stride = resources_stride * size_of::<u64>() as u32;
         constants.set_constant_value_at_index(
-            &raw const resources_stride as *const c_void,
+            (&raw const resources_stride).cast(),
             MTLDataType::UInt,
             0,
         );
         let v = true;
-        constants.set_constant_value_at_index(&raw const v as *const c_void, MTLDataType::Bool, 1);
-        constants.set_constant_value_at_index(&raw const v as *const c_void, MTLDataType::Bool, 2);
+        constants.set_constant_value_at_index((&raw const v).cast(), MTLDataType::Bool, 1);
+        constants.set_constant_value_at_index((&raw const v).cast(), MTLDataType::Bool, 2);
         library.get_function(name, Some(constants)).unwrap()
     }
 

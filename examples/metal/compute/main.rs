@@ -69,12 +69,10 @@ fn main() {
         let mut gpu_end = 0;
         device.sample_timestamps(&mut cpu_end, &mut gpu_end);
 
-        let ptr = sum.contents() as *mut u32;
-        println!("Compute shader sum: {}", unsafe { *ptr });
+        let sum = unsafe { sum.contents().cast::<u32>().read() };
+        println!("Compute shader sum: {}", sum);
 
-        unsafe {
-            assert_eq!(num_elements, *ptr);
-        }
+        assert_eq!(num_elements, sum);
 
         handle_timestamps(&destination_buffer, cpu_start, cpu_end, gpu_start, gpu_end);
     });
@@ -134,7 +132,7 @@ fn handle_timestamps(
 ) {
     let samples = unsafe {
         std::slice::from_raw_parts(
-            resolved_sample_buffer.contents() as *const u64,
+            resolved_sample_buffer.contents().cast::<u64>(),
             NUM_SAMPLES as usize,
         )
     };

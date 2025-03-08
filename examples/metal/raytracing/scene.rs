@@ -1,4 +1,4 @@
-use std::{ffi::c_void, sync::Arc};
+use std::sync::Arc;
 
 use glam::{Mat4, Vec3, Vec4};
 use rand::{thread_rng, Rng};
@@ -116,7 +116,7 @@ impl Scene {
             }
         }
         let lights_buffer = device.new_buffer_with_data(
-            lights.as_ptr() as *const c_void,
+            lights.as_ptr().cast(),
             size_of_val(lights.as_slice()) as NSUInteger,
             get_managed_buffer_storage_mode(),
         );

@@ -1,5 +1,4 @@
 use metal::*;
-use std::ffi::c_void;
 
 #[repr(C)]
 struct Vertex {
@@ -38,8 +37,6 @@ fn main() {
         },
     ];
 
-    let vertex_stride = size_of::<Vertex>();
-
     let indices = [0, 1, 2];
 
     // Vertex data should be stored in private or managed buffers on discrete GPU systems (AMD, NVIDIA).
@@ -48,13 +45,13 @@ fn main() {
     let buffer_opts = MTLResourceOptions::StorageModeManaged;
 
     let vertex_buffer = device.new_buffer_with_data(
-        vertices.as_ptr() as *const c_void,
-        (vertex_stride * vertices.len()) as u64,
+        vertices.as_ptr().cast(),
+        size_of_val(&vertices) as u64,
         buffer_opts,
     );
 
     let index_buffer = device.new_buffer_with_data(
-        indices.as_ptr() as *const c_void,
+        indices.as_ptr().cast(),
         size_of_val(&indices) as u64,
         buffer_opts,
     );
@@ -64,7 +61,7 @@ fn main() {
         .expect("Failed to create acceleration structure");
 
     acceleration_structure.set_vertex_buffer(Some(&vertex_buffer));
-    acceleration_structure.set_vertex_stride(vertex_stride as u64);
+    acceleration_structure.set_vertex_stride(size_of::<Vertex>() as u64);
     acceleration_structure.set_index_buffer(Some(&index_buffer));
     acceleration_structure.set_index_type(mps::MPSDataType::UInt32);
     acceleration_structure.set_triangle_count(1);

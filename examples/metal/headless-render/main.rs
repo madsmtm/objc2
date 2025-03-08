@@ -82,7 +82,7 @@ fn save_image(texture: &TextureRef) {
     let mut image = vec![0; TOTAL_BYTES];
 
     texture.get_bytes(
-        image.as_mut_ptr() as *mut std::ffi::c_void,
+        image.as_mut_ptr().cast(),
         VIEW_WIDTH * 4,
         MTLRegion {
             origin: MTLOrigin { x: 0, y: 0, z: 0 },
@@ -141,7 +141,7 @@ fn prepare_pipeline_state(device: &DeviceRef, library: &LibraryRef) -> RenderPip
 
 fn create_vertex_buffer(device: &DeviceRef) -> Buffer {
     device.new_buffer_with_data(
-        VERTEX_ATTRIBS.as_ptr() as *const _,
+        VERTEX_ATTRIBS.as_ptr().cast(),
         size_of_val(&VERTEX_ATTRIBS) as u64,
         MTLResourceOptions::CPUCacheModeDefaultCache | MTLResourceOptions::StorageModeManaged,
     )
