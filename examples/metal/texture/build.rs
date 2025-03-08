@@ -1,6 +1,4 @@
-use std::collections::hash_map::DefaultHasher;
 use std::env;
-use std::hash::{Hash, Hasher};
 use std::path::PathBuf;
 use std::process::Command;
 
@@ -51,13 +49,8 @@ stderr: {}
 fn generate_rust_types_from_shader_types() {
     println!("cargo:rerun-if-changed=shader_types");
 
-    let current_hash = hash_shader_types();
-
-    if let Some(old_hash) = read_cached_shader_types_hash() {
-        if old_hash == current_hash {
-            return;
-        }
-    }
+    let out = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let out = out.join("shader_bindings.rs");
 
     let bindings = bindgen::Builder::default()
         .header("shader_types/wrapper.h")
@@ -65,46 +58,5 @@ fn generate_rust_types_from_shader_types() {
         .generate()
         .expect("Unable to generate bindings");
 
-    let out = PathBuf::from(env::var("OUT_DIR").unwrap());
-    let out = out.join("shader_bindings.rs");
-
     bindings.write_to_file(out).unwrap();
-
-    save_shader_types_hash(current_hash);
-}
-
-fn hash_shader_types() -> u64 {
-    let mut hasher = DefaultHasher::new();
-
-    PathBuf::from("shader_types")
-        .read_dir()
-        .unwrap()
-        .for_each(|entry| {
-            let entry = entry.unwrap();
-            let file = std::fs::read(entry.path()).unwrap();
-
-            file.hash(&mut hasher);
-        });
-
-    hasher.finish()
-}
-
-fn read_cached_shader_types_hash() -> Option<u64> {
-    let hash = shader_types_hash_file();
-    let hash = match std::fs::read(hash) {
-        Ok(hash) => Some(hash),
-        _ => None,
-    }?;
-
-    let hash = String::from_utf8(hash).unwrap().parse::<u64>().unwrap();
-
-    Some(hash)
-}
-
-fn save_shader_types_hash(hash: u64) {
-    std::fs::write(shader_types_hash_file(), format!("{}", hash)).unwrap();
-}
-
-fn shader_types_hash_file() -> PathBuf {
-    PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap()).join("shader_types_hash")
 }
