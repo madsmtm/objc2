@@ -247,11 +247,11 @@ fn redraw(
     };
 
     let render_pass_descriptor = RenderPassDescriptor::new();
-    prepare_render_pass_descriptor(&render_pass_descriptor, drawable.texture());
+    prepare_render_pass_descriptor(render_pass_descriptor, drawable.texture());
 
     let command_buffer = command_queue.new_command_buffer();
 
-    let encoder = command_buffer.new_render_command_encoder(&render_pass_descriptor);
+    let encoder = command_buffer.new_render_command_encoder(render_pass_descriptor);
     encoder.set_render_pipeline_state(&pipeline_state);
 
     encoder.set_vertex_buffer(VerticesBufferIdx as u64, Some(vertex_buffer), 0);

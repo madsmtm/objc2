@@ -9,7 +9,7 @@ edition = "2018"
 bindgen = { version = "0.60", default-features = false, features = ["logging", "runtime", "which-rustfmt"] }
 
 [dependencies]
-core-graphics-types = "0.1"
+core-graphics-types = "0.2"
 cocoa = "0.25"
 core-graphics = "0.22"
 png = "0.17"

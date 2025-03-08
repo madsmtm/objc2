@@ -54,6 +54,9 @@ fn generate_rust_types_from_shader_types() {
 
     let bindings = bindgen::Builder::default()
         .header("shader_types/wrapper.h")
+        .allowlist_type("TexturedVertex")
+        .allowlist_type("TextureIndex")
+        .allowlist_type("VertexInputIndex")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .generate()
         .expect("Unable to generate bindings");
