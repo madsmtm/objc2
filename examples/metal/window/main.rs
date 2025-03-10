@@ -135,7 +135,7 @@ fn main() {
 
         device.new_buffer_with_data(
             vertex_data.as_ptr() as *const _,
-            (vertex_data.len() * mem::size_of::<f32>()) as u64,
+            (vertex_data.len() * size_of::<f32>()) as u64,
             MTLResourceOptions::CPUCacheModeDefaultCache | MTLResourceOptions::StorageModeManaged,
         )
     };
@@ -159,7 +159,7 @@ fn main() {
 
     let clear_rect_buffer = device.new_buffer_with_data(
         clear_rect.as_ptr() as *const _,
-        mem::size_of::<ClearRect>() as u64,
+        size_of::<ClearRect>() as u64,
         MTLResourceOptions::CPUCacheModeDefaultCache | MTLResourceOptions::StorageModeManaged,
     );
 
@@ -202,13 +202,13 @@ fn main() {
                                 std::ptr::copy(
                                     vertex_data.as_ptr(),
                                     p as *mut f32,
-                                    (vertex_data.len() * mem::size_of::<f32>()) as usize,
+                                    (vertex_data.len() * size_of::<f32>()) as usize,
                                 );
                             }
 
                             vbuf.did_modify_range(crate::NSRange::new(
                                 0 as u64,
-                                (vertex_data.len() * mem::size_of::<f32>()) as u64,
+                                (vertex_data.len() * size_of::<f32>()) as u64,
                             ));
 
                             let drawable = match layer.next_drawable() {

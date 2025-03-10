@@ -18,7 +18,7 @@ fn main() {
 
         let counter_sample_buffer = create_counter_sample_buffer(&device);
         let destination_buffer = device.new_buffer(
-            (std::mem::size_of::<u64>() * NUM_SAMPLES as usize) as u64,
+            (size_of::<u64>() * NUM_SAMPLES as usize) as u64,
             MTLResourceOptions::StorageModeShared,
         );
 
@@ -171,7 +171,7 @@ fn create_input_and_output_buffers(
 
     let buffer = device.new_buffer_with_data(
         unsafe { std::mem::transmute(data.as_ptr()) },
-        (data.len() * std::mem::size_of::<u32>()) as u64,
+        (data.len() * size_of::<u32>()) as u64,
         MTLResourceOptions::CPUCacheModeDefaultCache,
     );
 
@@ -179,7 +179,7 @@ fn create_input_and_output_buffers(
         let data = [0u32];
         device.new_buffer_with_data(
             unsafe { std::mem::transmute(data.as_ptr()) },
-            (data.len() * std::mem::size_of::<u32>()) as u64,
+            (data.len() * size_of::<u32>()) as u64,
             MTLResourceOptions::CPUCacheModeDefaultCache,
         )
     };

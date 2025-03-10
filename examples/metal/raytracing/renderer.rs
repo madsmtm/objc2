@@ -2,7 +2,7 @@ use core_graphics_types::{base::CGFloat, geometry::CGSize};
 use std::{
     collections::BTreeMap,
     ffi::c_void,
-    mem::{size_of, transmute},
+    mem::transmute,
     ops::Index,
     sync::{Arc, Condvar, Mutex},
 };
@@ -475,21 +475,13 @@ impl Renderer {
         let constants = FunctionConstantValues::new();
         let resources_stride = resources_stride * size_of::<u64>() as u32;
         constants.set_constant_value_at_index(
-            &resources_stride as *const u32 as *const c_void,
+            &raw const resources_stride as *const c_void,
             MTLDataType::UInt,
             0,
         );
         let v = true;
-        constants.set_constant_value_at_index(
-            &v as *const bool as *const c_void,
-            MTLDataType::Bool,
-            1,
-        );
-        constants.set_constant_value_at_index(
-            &v as *const bool as *const c_void,
-            MTLDataType::Bool,
-            2,
-        );
+        constants.set_constant_value_at_index(&raw const v as *const c_void, MTLDataType::Bool, 1);
+        constants.set_constant_value_at_index(&raw const v as *const c_void, MTLDataType::Bool, 2);
         library.get_function(name, Some(constants)).unwrap()
     }
 

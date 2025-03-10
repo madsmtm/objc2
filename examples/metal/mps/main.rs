@@ -1,6 +1,5 @@
 use metal::*;
 use std::ffi::c_void;
-use std::mem;
 
 #[repr(C)]
 struct Vertex {
@@ -39,7 +38,7 @@ fn main() {
         },
     ];
 
-    let vertex_stride = mem::size_of::<Vertex>();
+    let vertex_stride = size_of::<Vertex>();
 
     let indices: [u32; 3] = [0, 1, 2];
 
@@ -56,7 +55,7 @@ fn main() {
 
     let index_buffer = device.new_buffer_with_data(
         indices.as_ptr() as *const c_void,
-        (mem::size_of::<u32>() * indices.len()) as u64,
+        (size_of::<u32>() * indices.len()) as u64,
         buffer_opts,
     );
 
@@ -75,9 +74,9 @@ fn main() {
     let ray_intersector =
         mps::RayIntersector::from_device(&device).expect("Failed to create ray intersector");
 
-    ray_intersector.set_ray_stride(mem::size_of::<Ray>() as u64);
+    ray_intersector.set_ray_stride(size_of::<Ray>() as u64);
     ray_intersector.set_ray_data_type(mps::MPSRayDataType::OriginMinDistanceDirectionMaxDistance);
-    ray_intersector.set_intersection_stride(mem::size_of::<Intersection>() as u64);
+    ray_intersector.set_intersection_stride(size_of::<Intersection>() as u64);
     ray_intersector.set_intersection_data_type(
         mps::MPSIntersectionDataType::DistancePrimitiveIndexCoordinates,
     );
@@ -85,12 +84,12 @@ fn main() {
     // Create a buffer to hold generated rays and intersection results
     let ray_count = 1024;
     let ray_buffer = device.new_buffer(
-        (mem::size_of::<Ray>() * ray_count) as u64,
+        (size_of::<Ray>() * ray_count) as u64,
         MTLResourceOptions::StorageModePrivate,
     );
 
     let intersection_buffer = device.new_buffer(
-        (mem::size_of::<Intersection>() * ray_count) as u64,
+        (size_of::<Intersection>() * ray_count) as u64,
         MTLResourceOptions::StorageModePrivate,
     );
 

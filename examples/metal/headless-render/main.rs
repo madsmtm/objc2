@@ -1,4 +1,3 @@
-use std::mem;
 use std::path::PathBuf;
 
 use std::fs::File;
@@ -144,7 +143,7 @@ fn prepare_pipeline_state(device: &DeviceRef, library: &LibraryRef) -> RenderPip
 fn create_vertex_buffer(device: &DeviceRef) -> Buffer {
     device.new_buffer_with_data(
         VERTEX_ATTRIBS.as_ptr() as *const _,
-        (VERTEX_ATTRIBS.len() * mem::size_of::<f32>()) as u64,
+        (VERTEX_ATTRIBS.len() * size_of::<f32>()) as u64,
         MTLResourceOptions::CPUCacheModeDefaultCache | MTLResourceOptions::StorageModeManaged,
     )
 }

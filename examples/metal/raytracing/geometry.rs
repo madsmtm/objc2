@@ -1,7 +1,4 @@
-use std::{
-    mem::{size_of, transmute},
-    sync::Arc,
-};
+use std::{mem::transmute, sync::Arc};
 
 use glam::{
     f32::{Mat4, Vec3, Vec4},

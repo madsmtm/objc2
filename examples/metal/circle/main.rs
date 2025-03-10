@@ -52,7 +52,7 @@ fn main() {
     device.sample_timestamps(&mut cpu_start, &mut gpu_start);
     let counter_sample_buffer = create_counter_sample_buffer(&device);
     let destination_buffer = device.new_buffer(
-        (std::mem::size_of::<u64>() * 4 as usize) as u64,
+        (size_of::<u64>() * 4 as usize) as u64,
         MTLResourceOptions::StorageModeShared,
     );
     let counter_sampling_point = MTLCounterSamplingPoint::AtStageBoundary;
@@ -116,7 +116,7 @@ fn main() {
 
         device.new_buffer_with_data(
             vertex_data.as_ptr() as *const _,
-            (vertex_data.len() * mem::size_of::<AAPLVertex>()) as u64,
+            (vertex_data.len() * size_of::<AAPLVertex>()) as u64,
             MTLResourceOptions::CPUCacheModeDefaultCache | MTLResourceOptions::StorageModeManaged,
         )
     };

@@ -1,4 +1,4 @@
-use std::{ffi::c_void, mem::size_of, sync::Arc};
+use std::{ffi::c_void, sync::Arc};
 
 use glam::{Mat4, Vec3, Vec4};
 use rand::{thread_rng, Rng};

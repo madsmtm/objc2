@@ -23,7 +23,7 @@ fn main() {
 
         let buffer = device.new_buffer_with_data(
             unsafe { mem::transmute(data.as_ptr()) },
-            (data.len() * mem::size_of::<u32>()) as u64,
+            (data.len() * size_of::<u32>()) as u64,
             MTLResourceOptions::CPUCacheModeDefaultCache,
         );
 
@@ -31,7 +31,7 @@ fn main() {
             let data = [0u32];
             device.new_buffer_with_data(
                 unsafe { mem::transmute(data.as_ptr()) },
-                (data.len() * mem::size_of::<u32>()) as u64,
+                (data.len() * size_of::<u32>()) as u64,
                 MTLResourceOptions::CPUCacheModeDefaultCache,
             )
         };
