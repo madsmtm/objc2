@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Allow `Queue::exec_sync` on workloops.
   This is discouraged for performance reasons, but doesn't need to be
   outright disallowed.
+- Added `DispatchRetained<T>`, which is a smart pointer which allows
+  retain/release operations on dispatch objects, similar in spirit to
+  `objc2::rc::Retained`. This mostly replaces `DispatchObject<T>`.
 
 ### Removed
 - **BREAKING**: Removed `TargetQueueError` and the error case in
