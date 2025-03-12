@@ -118,6 +118,7 @@ test-frameworks = [
     "objc2-notification-center",
     "objc2-osa-kit",
     "objc2-open-directory",
+    "objc2-pdf-kit",
     "objc2-photos",
     "objc2-photos-ui",
     "objc2-preference-panes",
@@ -307,6 +308,7 @@ objc2-browser-engine-kit = ["dep:objc2-browser-engine-kit"]
 objc2-cf-network = ["dep:objc2-cf-network"]
 objc2-io-bluetooth = ["dep:objc2-io-bluetooth"]
 objc2-io-bluetooth-ui = ["dep:objc2-io-bluetooth-ui"]
+objc2-pdf-kit = ["dep:objc2-pdf-kit"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -378,6 +380,7 @@ objc2-image-capture-core = { path = "../../framework-crates/objc2-image-capture-
 objc2-local-authentication-embedded-ui = { path = "../../framework-crates/objc2-local-authentication-embedded-ui", optional = true }
 objc2-metal-fx = { path = "../../framework-crates/objc2-metal-fx", optional = true }
 objc2-metric-kit = { path = "../../framework-crates/objc2-metric-kit", optional = true }
+objc2-pdf-kit = { path = "../../framework-crates/objc2-pdf-kit", optional = true }
 objc2-quick-look = { path = "../../framework-crates/objc2-quick-look", optional = true }
 objc2-quick-look-thumbnailing = { path = "../../framework-crates/objc2-quick-look-thumbnailing", optional = true }
 objc2-safari-services = { path = "../../framework-crates/objc2-safari-services", optional = true }

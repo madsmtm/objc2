@@ -1,0 +1,7 @@
+framework = "PDFKit"
+crate = "objc2-pdf-kit"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.4"
+maccatalyst = "11.0"
+ios = "11.0"
+visionos = "1.0"
