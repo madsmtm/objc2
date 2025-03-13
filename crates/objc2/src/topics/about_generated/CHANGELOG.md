@@ -53,6 +53,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `SecurityFoundation` / `objc2-security-foundation`.
   - `SecurityInterface` / `objc2-security-interface`.
   - `SensorKit` / `objc2-sensor-kit`.
+  - `SharedWithYou` / `objc2-shared-with-you`.
   - `SharedWithYouCore` / `objc2-shared-with-you-core`.
   - `ShazamKit` / `objc2-shazam-kit`.
   - `TVMLKit` / `objc2-tv-ml-kit`.
