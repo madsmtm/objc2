@@ -1485,6 +1485,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-latent-semantic-mapping"
+version = "0.3.0"
+dependencies = [
+ "objc2-core-foundation",
+]
+
+[[package]]
 name = "objc2-link-presentation"
 version = "0.3.0"
 dependencies = [
@@ -2706,6 +2713,7 @@ dependencies = [
  "objc2-io-bluetooth-ui",
  "objc2-io-surface",
  "objc2-javascript-core",
+ "objc2-latent-semantic-mapping",
  "objc2-link-presentation",
  "objc2-local-authentication",
  "objc2-local-authentication-embedded-ui",

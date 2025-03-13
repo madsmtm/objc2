@@ -97,6 +97,7 @@ test-frameworks = [
     "objc2-intents",
     "objc2-intents-ui",
     "objc2-javascript-core",
+    "objc2-latent-semantic-mapping",
     "objc2-link-presentation",
     "objc2-local-authentication",
     "objc2-local-authentication-embedded-ui",
@@ -337,6 +338,7 @@ objc2-health-kit-ui = ["dep:objc2-health-kit-ui"]
 objc2-clock-kit = ["dep:objc2-clock-kit"]
 objc2-scripting-bridge = ["dep:objc2-scripting-bridge"]
 objc2-core-nfc = ["dep:objc2-core-nfc"]
+objc2-latent-semantic-mapping = ["dep:objc2-latent-semantic-mapping"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -454,6 +456,7 @@ objc2-finder-sync = { path = "../../framework-crates/objc2-finder-sync", optiona
 objc2-io-bluetooth = { path = "../../framework-crates/objc2-io-bluetooth", optional = true }
 objc2-io-bluetooth-ui = { path = "../../framework-crates/objc2-io-bluetooth-ui", optional = true }
 objc2-input-method-kit = { path = "../../framework-crates/objc2-input-method-kit", optional = true }
+objc2-latent-semantic-mapping = { path = "../../framework-crates/objc2-latent-semantic-mapping", optional = true }
 objc2-mail-kit = { path = "../../framework-crates/objc2-mail-kit", optional = true }
 objc2-osa-kit = { path = "../../framework-crates/objc2-osa-kit", optional = true }
 objc2-open-directory = { path = "../../framework-crates/objc2-open-directory", optional = true }

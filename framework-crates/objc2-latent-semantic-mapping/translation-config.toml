@@ -1,0 +1,6 @@
+framework = "LatentSemanticMapping"
+crate = "objc2-latent-semantic-mapping"
+required-crates = ["objc2-core-foundation"]
+custom-lib-rs = true
+macos = "10.5"
+maccatalyst = "13.1"
