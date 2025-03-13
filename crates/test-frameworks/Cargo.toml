@@ -110,6 +110,7 @@ test-frameworks = [
     "objc2-mail-kit",
     "objc2-map-kit",
     "objc2-media-accessibility",
+    "objc2-media-extension",
     "objc2-media-player",
     "objc2-media-toolbox",
     "objc2-message-ui",
@@ -349,6 +350,7 @@ objc2-car-play = ["dep:objc2-car-play"]
 objc2-core-location-ui = ["dep:objc2-core-location-ui"]
 objc2-exposure-notification = ["dep:objc2-exposure-notification"]
 objc2-identity-lookup-ui = ["dep:objc2-identity-lookup-ui"]
+objc2-media-extension = ["dep:objc2-media-extension"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -472,6 +474,7 @@ objc2-io-bluetooth-ui = { path = "../../framework-crates/objc2-io-bluetooth-ui",
 objc2-input-method-kit = { path = "../../framework-crates/objc2-input-method-kit", optional = true }
 objc2-latent-semantic-mapping = { path = "../../framework-crates/objc2-latent-semantic-mapping", optional = true }
 objc2-mail-kit = { path = "../../framework-crates/objc2-mail-kit", optional = true }
+objc2-media-extension = { path = "../../framework-crates/objc2-media-extension", optional = true }
 objc2-osa-kit = { path = "../../framework-crates/objc2-osa-kit", optional = true }
 objc2-open-directory = { path = "../../framework-crates/objc2-open-directory", optional = true }
 objc2-preference-panes = { path = "../../framework-crates/objc2-preference-panes", optional = true }

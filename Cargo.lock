@@ -1616,6 +1616,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-media-extension"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-av-foundation",
+ "objc2-core-foundation",
+ "objc2-core-media",
+ "objc2-core-video",
+ "objc2-foundation",
+ "objc2-uniform-type-identifiers",
+]
+
+[[package]]
 name = "objc2-media-player"
 version = "0.3.0"
 dependencies = [
@@ -2780,6 +2795,7 @@ dependencies = [
  "objc2-mail-kit",
  "objc2-map-kit",
  "objc2-media-accessibility",
+ "objc2-media-extension",
  "objc2-media-player",
  "objc2-media-toolbox",
  "objc2-message-ui",

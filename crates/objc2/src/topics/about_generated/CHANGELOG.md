@@ -48,6 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `JavaScriptCore` / `objc2-java-script-core`.
   - `LatentSemanticMapping` / `objc2-latent-semantic-mapping`.
   - `MediaAccessibility` / `objc2-media-accessibility`.
+  - `MediaExtension` / `objc2-media-extension`.
   - `MediaToolbox` / `objc2-media-toolbox`.
   - `NotificationCenter` / `objc2-notification-center`.
   - `PassKit` / `objc2-pass-kit`.

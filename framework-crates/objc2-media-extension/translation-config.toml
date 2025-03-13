@@ -1,0 +1,5 @@
+framework = "MediaExtension"
+crate = "objc2-media-extension"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "15.0"
+maccatalyst = "18.0"
