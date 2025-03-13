@@ -43,6 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `PassKit` / `objc2-pass-kit`.
   - `PDFKit` / `objc2-pdf-kit`.
   - `PencilKit` / `objc2-pencil-kit`.
+  - `PushKit` / `objc2-push-kit`.
   - `QuickLook` / `objc2-quick-look`.
   - `QuickLookThumbnailing` / `objc2-quick-look-thumbnailing`.
   - `QuickLookUI` / `objc2-quick-look-ui`.

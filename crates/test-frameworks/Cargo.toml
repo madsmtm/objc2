@@ -124,6 +124,7 @@ test-frameworks = [
     "objc2-photos",
     "objc2-photos-ui",
     "objc2-preference-panes",
+    "objc2-push-kit",
     "objc2-quartz-core",
     "objc2-quick-look",
     "objc2-quick-look-thumbnailing",
@@ -313,6 +314,7 @@ objc2-io-bluetooth-ui = ["dep:objc2-io-bluetooth-ui"]
 objc2-pdf-kit = ["dep:objc2-pdf-kit"]
 objc2-pass-kit = ["dep:objc2-pass-kit"]
 objc2-pencil-kit = ["dep:objc2-pencil-kit"]
+objc2-push-kit = ["dep:objc2-push-kit"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -476,6 +478,7 @@ objc2-event-kit = { path = "../../framework-crates/objc2-event-kit", optional = 
 objc2-health-kit = { path = "../../framework-crates/objc2-health-kit", optional = true }
 objc2-local-authentication = { path = "../../framework-crates/objc2-local-authentication", optional = true }
 objc2-pass-kit = { path = "../../framework-crates/objc2-pass-kit", optional = true }
+objc2-push-kit = { path = "../../framework-crates/objc2-push-kit", optional = true }
 
 [target.'cfg(target_os = "visionos")'.dependencies]
 objc2-compositor-services = { path = "../../framework-crates/objc2-compositor-services", optional = true }

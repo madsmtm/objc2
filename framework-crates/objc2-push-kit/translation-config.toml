@@ -1,0 +1,11 @@
+framework = "PushKit"
+crate = "objc2-push-kit"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.15"
+maccatalyst = "13.0"
+ios = "8.0"
+watchos = "6.0"
+visionos = "1.0"
+
+# Needs dispatch
+class.PKPushRegistry.methods."initWithQueue:".skipped = true
