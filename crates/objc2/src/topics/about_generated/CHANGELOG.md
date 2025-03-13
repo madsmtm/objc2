@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `DeviceDiscoveryExtension` / `objc2-device-discovery-extension`.
   - `ExecutionPolicy` / `objc2-execution-policy`.
   - `GameplayKit` / `objc2-gameplay-kit`.
+  - `HealthKitUI` / `objc2-health-kit-ui`.
   - `ImageCaptureCore` / `objc2-image-capture-core`.
   - `ImageIO` / `objc2-image-io`.
   - `Intents` / `objc2-intents`.

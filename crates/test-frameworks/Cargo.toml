@@ -83,6 +83,7 @@ test-frameworks = [
     "objc2-game-kit",
     "objc2-gameplay-kit",
     "objc2-health-kit",
+    "objc2-health-kit-ui",
     "objc2-home-kit",
     "objc2-io-bluetooth",
     "objc2-io-bluetooth-ui",
@@ -329,6 +330,7 @@ objc2-screen-time = ["dep:objc2-screen-time"]
 objc2-device-discovery-extension = ["dep:objc2-device-discovery-extension"]
 objc2-thread-network = ["dep:objc2-thread-network"]
 objc2-video-subscriber-account = ["dep:objc2-video-subscriber-account"]
+objc2-health-kit-ui = ["dep:objc2-health-kit-ui"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -505,6 +507,7 @@ objc2-push-kit = { path = "../../framework-crates/objc2-push-kit", optional = tr
 objc2-compositor-services = { path = "../../framework-crates/objc2-compositor-services", optional = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos"))'.dependencies]
+objc2-health-kit-ui = { path = "../../framework-crates/objc2-health-kit-ui", optional = true }
 objc2-home-kit = { path = "../../framework-crates/objc2-home-kit", optional = true }
 objc2-ui-kit = { path = "../../framework-crates/objc2-ui-kit", optional = true }
 

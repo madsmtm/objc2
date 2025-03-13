@@ -1331,6 +1331,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-health-kit-ui"
+version = "0.3.0"
+dependencies = [
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-foundation",
+ "objc2-health-kit",
+ "objc2-quartz-core",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-home-kit"
 version = "0.3.0"
 dependencies = [
@@ -2648,6 +2660,7 @@ dependencies = [
  "objc2-game-kit",
  "objc2-gameplay-kit",
  "objc2-health-kit",
+ "objc2-health-kit-ui",
  "objc2-home-kit",
  "objc2-identity-lookup",
  "objc2-image-capture-core",
