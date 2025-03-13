@@ -1275,6 +1275,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-exposure-notification"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-extension-kit"
 version = "0.3.0"
 dependencies = [
@@ -2729,6 +2739,7 @@ dependencies = [
  "objc2-event-kit-ui",
  "objc2-exception-handling",
  "objc2-execution-policy",
+ "objc2-exposure-notification",
  "objc2-extension-kit",
  "objc2-external-accessory",
  "objc2-file-provider",

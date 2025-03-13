@@ -78,6 +78,7 @@ test-frameworks = [
     "objc2-event-kit-ui",
     "objc2-exception-handling",
     "objc2-execution-policy",
+    "objc2-exposure-notification",
     "objc2-extension-kit",
     "objc2-external-accessory",
     "objc2-file-provider",
@@ -345,6 +346,7 @@ objc2-latent-semantic-mapping = ["dep:objc2-latent-semantic-mapping"]
 objc2-app-clip = ["dep:objc2-app-clip"]
 objc2-car-play = ["dep:objc2-car-play"]
 objc2-core-location-ui = ["dep:objc2-core-location-ui"]
+objc2-exposure-notification = ["dep:objc2-exposure-notification"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -434,6 +436,7 @@ objc2-browser-engine-core = { path = "../../framework-crates/objc2-browser-engin
 objc2-browser-engine-kit = { path = "../../framework-crates/objc2-browser-engine-kit", optional = true }
 objc2-car-play = { path = "../../framework-crates/objc2-car-play", optional = true }
 objc2-core-nfc = { path = "../../framework-crates/objc2-core-nfc", optional = true }
+objc2-exposure-notification = { path = "../../framework-crates/objc2-exposure-notification", optional = true }
 objc2-messages = { path = "../../framework-crates/objc2-messages", optional = true }
 objc2-push-to-talk = { path = "../../framework-crates/objc2-push-to-talk", optional = true }
 objc2-sensor-kit = { path = "../../framework-crates/objc2-sensor-kit", optional = true }

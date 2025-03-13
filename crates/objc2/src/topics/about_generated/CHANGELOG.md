@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CryptoTokenKit` / `objc2-crypto-token-kit`.
   - `DeviceDiscoveryExtension` / `objc2-device-discovery-extension`.
   - `ExecutionPolicy` / `objc2-execution-policy`.
+  - `ExposureNotification` / `objc2-exposure-notification`.
   - `GameplayKit` / `objc2-gameplay-kit`.
   - `HealthKitUI` / `objc2-health-kit-ui`.
   - `ImageCaptureCore` / `objc2-image-capture-core`.

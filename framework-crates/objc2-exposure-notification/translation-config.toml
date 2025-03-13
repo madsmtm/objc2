@@ -1,0 +1,10 @@
+framework = "ExposureNotification"
+crate = "objc2-exposure-notification"
+required-crates = ["objc2", "objc2-foundation"]
+maccatalyst = "13.5"
+ios = "13.5"
+
+class.ENManager.methods.dispatchQueue.skipped = true
+class.ENManager.methods."setDispatchQueue:".skipped = true
+class.ENManager.methods.invalidationHandler.skipped = true
+class.ENManager.methods."setInvalidationHandler:".skipped = true
