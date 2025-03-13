@@ -1,0 +1,41 @@
+framework = "ParavirtualizedGraphics"
+crate = "objc2-paravirtualized-graphics"
+required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
+macos = "11.0"
+maccatalyst = "14.0"
+
+# Needs dispatch_queue_t from libdispatch
+class.PGDisplayDescriptor.methods.queue.skipped = true
+class.PGDisplayDescriptor.methods."setQueue:".skipped = true
+protocol.PGDisplay.methods.queue.skipped = true
+
+# Returns c99 boolean, ill supported as an error return type
+protocol.PGDevice.methods."willResumeWithSuspendState:error:".skipped = true
+
+# Block returns c99 boolean, which doesn't impl Encode
+typedef.PGMapMemory.skipped = true
+class.PGDeviceDescriptor.methods.mapMemory.skipped = true
+class.PGDeviceDescriptor.methods."setMapMemory:".skipped = true
+typedef.PGUnmapMemory.skipped = true
+class.PGDeviceDescriptor.methods.unmapMemory.skipped = true
+class.PGDeviceDescriptor.methods."setUnmapMemory:".skipped = true
+typedef.PGReadMemory.skipped = true
+class.PGDeviceDescriptor.methods.readMemory.skipped = true
+class.PGDeviceDescriptor.methods."setReadMemory:".skipped = true
+
+# The inner type of PGTask_t and PGTraceRange_t aren't mapped properly
+typedef.PGTask_t.skipped = true
+typedef.PGCreateTask.skipped = true
+typedef.PGDestroyTask.skipped = true
+class.PGDeviceDescriptor.methods.createTask.skipped = true
+class.PGDeviceDescriptor.methods."setCreateTask:".skipped = true
+class.PGDeviceDescriptor.methods.destroyTask.skipped = true
+class.PGDeviceDescriptor.methods."setDestroyTask:".skipped = true
+typedef.PGTraceRange_t.skipped = true
+typedef.PGAddTraceRange.skipped = true
+typedef.PGRemoveTraceRange.skipped = true
+class.PGDeviceDescriptor.methods.addTraceRange.skipped = true
+class.PGDeviceDescriptor.methods."setAddTraceRange:".skipped = true
+class.PGDeviceDescriptor.methods.removeTraceRange.skipped = true
+class.PGDeviceDescriptor.methods."setRemoveTraceRange:".skipped = true

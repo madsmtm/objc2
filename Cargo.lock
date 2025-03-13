@@ -1861,6 +1861,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-paravirtualized-graphics"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+ "objc2-metal",
+]
+
+[[package]]
 name = "objc2-pass-kit"
 version = "0.3.0"
 dependencies = [
@@ -2836,6 +2847,7 @@ dependencies = [
  "objc2-notification-center",
  "objc2-open-directory",
  "objc2-osa-kit",
+ "objc2-paravirtualized-graphics",
  "objc2-pass-kit",
  "objc2-pdf-kit",
  "objc2-pencil-kit",

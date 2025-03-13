@@ -53,6 +53,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `MediaSetup` / `objc2-media-setup`.
   - `MediaToolbox` / `objc2-media-toolbox`.
   - `NotificationCenter` / `objc2-notification-center`.
+  - `ParavirtualizedGraphics` / `objc2-paravirtualized-graphics`.
   - `PassKit` / `objc2-pass-kit`.
   - `PDFKit` / `objc2-pdf-kit`.
   - `PencilKit` / `objc2-pencil-kit`.
