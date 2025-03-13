@@ -158,6 +158,7 @@ test-frameworks = [
     "objc2-tv-ml-kit",
     "objc2-tv-services",
     "objc2-tv-ui-kit",
+    "objc2-thread-network",
     "objc2-ui-kit",
     "objc2-uniform-type-identifiers",
     "objc2-user-notifications",
@@ -325,6 +326,7 @@ objc2-shared-with-you = ["dep:objc2-shared-with-you"]
 objc2-push-to-talk = ["dep:objc2-push-to-talk"]
 objc2-screen-time = ["dep:objc2-screen-time"]
 objc2-device-discovery-extension = ["dep:objc2-device-discovery-extension"]
+objc2-thread-network = ["dep:objc2-thread-network"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -403,6 +405,7 @@ objc2-quick-look = { path = "../../framework-crates/objc2-quick-look", optional 
 objc2-quick-look-thumbnailing = { path = "../../framework-crates/objc2-quick-look-thumbnailing", optional = true }
 objc2-safari-services = { path = "../../framework-crates/objc2-safari-services", optional = true }
 objc2-speech = { path = "../../framework-crates/objc2-speech", optional = true }
+objc2-thread-network = { path = "../../framework-crates/objc2-thread-network", optional = true }
 objc2-user-notifications-ui = { path = "../../framework-crates/objc2-user-notifications-ui", optional = true }
 objc2-web-kit = { path = "../../framework-crates/objc2-web-kit", optional = true }
 

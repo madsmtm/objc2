@@ -1,0 +1,8 @@
+framework = "ThreadNetwork"
+crate = "objc2-thread-network"
+required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
+macos = "13.0"
+maccatalyst = "16.1"
+ios = "15.0"
+visionos = "1.0"

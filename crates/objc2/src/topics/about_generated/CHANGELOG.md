@@ -59,6 +59,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `SharedWithYou` / `objc2-shared-with-you`.
   - `SharedWithYouCore` / `objc2-shared-with-you-core`.
   - `ShazamKit` / `objc2-shazam-kit`.
+  - `ThreadNetwork` / `objc2-thread-network`.
   - `TVMLKit` / `objc2-tv-ml-kit`.
   - `TVServices` / `objc2-tv-services`.
   - `TVUIKit` / `objc2-tv-ui-kit`.
