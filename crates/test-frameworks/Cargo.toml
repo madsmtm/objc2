@@ -141,6 +141,7 @@ test-frameworks = [
     "objc2-sensitive-content-analysis",
     "objc2-sensor-kit",
     "objc2-service-management",
+    "objc2-shared-with-you-core",
     "objc2-shazam-kit",
     "objc2-social",
     "objc2-sound-analysis",
@@ -315,6 +316,7 @@ objc2-pdf-kit = ["dep:objc2-pdf-kit"]
 objc2-pass-kit = ["dep:objc2-pass-kit"]
 objc2-pencil-kit = ["dep:objc2-pencil-kit"]
 objc2-push-kit = ["dep:objc2-push-kit"]
+objc2-shared-with-you-core = ["dep:objc2-shared-with-you-core"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -462,6 +464,7 @@ objc2-multipeer-connectivity = { path = "../../framework-crates/objc2-multipeer-
 objc2-photos = { path = "../../framework-crates/objc2-photos", optional = true }
 objc2-quartz-core = { path = "../../framework-crates/objc2-quartz-core", optional = true }
 objc2-replay-kit = { path = "../../framework-crates/objc2-replay-kit", optional = true }
+objc2-shared-with-you-core = { path = "../../framework-crates/objc2-shared-with-you-core", optional = true }
 objc2-system-configuration = { path = "../../framework-crates/objc2-system-configuration", optional = true }
 objc2-video-toolbox = { path = "../../framework-crates/objc2-video-toolbox", optional = true }
 objc2-vision = { path = "../../framework-crates/objc2-vision", optional = true }

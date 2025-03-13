@@ -1,0 +1,11 @@
+framework = "SharedWithYouCore"
+crate = "objc2-shared-with-you-core"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "13.0"
+maccatalyst = "16.0"
+ios = "16.0"
+tvos = "16.0"
+visionos = "1.0"
+
+# Unsure why this protocol impl exists.
+class.SWCollaborationMetadata.skipped-protocols = ["NSMutableCopying"]
