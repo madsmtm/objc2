@@ -120,6 +120,7 @@ test-frameworks = [
     "objc2-open-directory",
     "objc2-pdf-kit",
     "objc2-pass-kit",
+    "objc2-pencil-kit",
     "objc2-photos",
     "objc2-photos-ui",
     "objc2-preference-panes",
@@ -311,6 +312,7 @@ objc2-io-bluetooth = ["dep:objc2-io-bluetooth"]
 objc2-io-bluetooth-ui = ["dep:objc2-io-bluetooth-ui"]
 objc2-pdf-kit = ["dep:objc2-pdf-kit"]
 objc2-pass-kit = ["dep:objc2-pass-kit"]
+objc2-pencil-kit = ["dep:objc2-pencil-kit"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -383,6 +385,7 @@ objc2-local-authentication-embedded-ui = { path = "../../framework-crates/objc2-
 objc2-metal-fx = { path = "../../framework-crates/objc2-metal-fx", optional = true }
 objc2-metric-kit = { path = "../../framework-crates/objc2-metric-kit", optional = true }
 objc2-pdf-kit = { path = "../../framework-crates/objc2-pdf-kit", optional = true }
+objc2-pencil-kit = { path = "../../framework-crates/objc2-pencil-kit", optional = true }
 objc2-quick-look = { path = "../../framework-crates/objc2-quick-look", optional = true }
 objc2-quick-look-thumbnailing = { path = "../../framework-crates/objc2-quick-look-thumbnailing", optional = true }
 objc2-safari-services = { path = "../../framework-crates/objc2-safari-services", optional = true }

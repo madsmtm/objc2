@@ -1,0 +1,7 @@
+framework = "PencilKit"
+crate = "objc2-pencil-kit"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.15"
+maccatalyst = "13.0"
+ios = "13.0"
+visionos = "1.0"

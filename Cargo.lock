@@ -1746,6 +1746,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-pencil-kit"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-core-foundation",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-photos"
 version = "0.3.0"
 dependencies = [
@@ -2593,6 +2604,7 @@ dependencies = [
  "objc2-osa-kit",
  "objc2-pass-kit",
  "objc2-pdf-kit",
+ "objc2-pencil-kit",
  "objc2-photos",
  "objc2-photos-ui",
  "objc2-preference-panes",
