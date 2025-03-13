@@ -37,6 +37,7 @@ test-frameworks = [
     "objc2-call-kit",
     "objc2-cinematic",
     "objc2-class-kit",
+    "objc2-clock-kit",
     "objc2-cloud-kit",
     "objc2-color-sync",
     "objc2-compositor-services",
@@ -331,6 +332,7 @@ objc2-device-discovery-extension = ["dep:objc2-device-discovery-extension"]
 objc2-thread-network = ["dep:objc2-thread-network"]
 objc2-video-subscriber-account = ["dep:objc2-video-subscriber-account"]
 objc2-health-kit-ui = ["dep:objc2-health-kit-ui"]
+objc2-clock-kit = ["dep:objc2-clock-kit"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -502,6 +504,9 @@ objc2-health-kit = { path = "../../framework-crates/objc2-health-kit", optional 
 objc2-local-authentication = { path = "../../framework-crates/objc2-local-authentication", optional = true }
 objc2-pass-kit = { path = "../../framework-crates/objc2-pass-kit", optional = true }
 objc2-push-kit = { path = "../../framework-crates/objc2-push-kit", optional = true }
+
+[target.'cfg(any(target_os = "ios", target_os = "watchos"))'.dependencies]
+objc2-clock-kit = { path = "../../framework-crates/objc2-clock-kit", optional = true }
 
 [target.'cfg(target_os = "visionos")'.dependencies]
 objc2-compositor-services = { path = "../../framework-crates/objc2-compositor-services", optional = true }

@@ -8,6 +8,7 @@ tvos = "9.0"
 watchos = "2.0"
 visionos = "1.0"
 
+external.INIntent.module = "Intents.INIntent"
 external.UTType.module = "UniformTypeIdentifiers.UTType"
 external.CKContainer.module = "CloudKit.CKContainer"
 external.CKShare.module = "CloudKit.CKShare"

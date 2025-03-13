@@ -829,6 +829,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-clock-kit"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-foundation",
+ "objc2-intents",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-cloud-kit"
 version = "0.3.0"
 dependencies = [
@@ -2615,6 +2627,7 @@ dependencies = [
  "objc2-cf-network",
  "objc2-cinematic",
  "objc2-class-kit",
+ "objc2-clock-kit",
  "objc2-cloud-kit",
  "objc2-color-sync",
  "objc2-compositor-services",

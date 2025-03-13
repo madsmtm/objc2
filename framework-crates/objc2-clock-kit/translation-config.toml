@@ -1,0 +1,6 @@
+framework = "ClockKit"
+crate = "objc2-clock-kit"
+required-crates = ["objc2", "objc2-foundation"]
+maccatalyst = "14.0"
+ios = "14.0"
+watchos = "10.0"
