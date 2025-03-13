@@ -40,6 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `MediaAccessibility` / `objc2-media-accessibility`.
   - `MediaToolbox` / `objc2-media-toolbox`.
   - `NotificationCenter` / `objc2-notification-center`.
+  - `PassKit` / `objc2-pass-kit`.
   - `PDFKit` / `objc2-pdf-kit`.
   - `QuickLook` / `objc2-quick-look`.
   - `QuickLookThumbnailing` / `objc2-quick-look-thumbnailing`.

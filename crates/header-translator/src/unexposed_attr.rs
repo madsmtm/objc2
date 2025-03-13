@@ -127,6 +127,7 @@ impl UnexposedAttr {
             | "__API_DEPRECATED"
             | "__API_DEPRECATED_WITH_REPLACEMENT"
             | "__API_UNAVAILABLE"
+            | "__deprecated_enum_msg"
             | "__deprecated_msg"
             | "__IOS_AVAILABLE"
             | "__IOS_DEPRECATED"

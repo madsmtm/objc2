@@ -1,0 +1,28 @@
+framework = "PassKit"
+crate = "objc2-pass-kit"
+required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
+flags = [
+    # Force using public headers.
+    "-DPK_USE_PUBLIC_PASSKIT=1",
+]
+macos = "11.0"
+maccatalyst = "13.0"
+ios = "6.0"
+watchos = "2.0"
+visionos = "1.0"
+
+# Defined as `~(NSUInteger)0`, which leads header-translator to assume that `NSUInteger` is a macro.
+enum.PKPassType.constants.PKPassTypeAny.skipped = true
+
+# PKPassRelevantDate.h isn't included in the umbrella `PassKit.h`, which makes it invisible to modules.
+#
+# This is also an issue in Swift, e.g. neither of the following works:
+#     import PassKit
+#     let date: PKPassRelevantDate
+#
+#     import PassKit.PKPassRelevantDate
+class.PKPass.methods.relevantDates.skipped = true
+
+# NS_RETURNS_INNER_POINTER, currently ill-supported.
+class.PKIssuerProvisioningExtensionPassEntry.methods.art.skipped = true
