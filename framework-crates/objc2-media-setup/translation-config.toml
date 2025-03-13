@@ -1,0 +1,6 @@
+framework = "MediaSetup"
+crate = "objc2-media-setup"
+required-crates = ["objc2", "objc2-foundation"]
+maccatalyst = "15.4"
+ios = "14.0"
+visionos = "1.0"

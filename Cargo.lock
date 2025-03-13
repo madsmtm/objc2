@@ -1655,6 +1655,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-media-setup"
+version = "0.3.0"
+dependencies = [
+ "objc2",
+ "objc2-foundation",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-media-toolbox"
 version = "0.3.0"
 dependencies = [
@@ -2808,6 +2817,7 @@ dependencies = [
  "objc2-media-accessibility",
  "objc2-media-extension",
  "objc2-media-player",
+ "objc2-media-setup",
  "objc2-media-toolbox",
  "objc2-message-ui",
  "objc2-messages",
