@@ -1063,6 +1063,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-core-nfc"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-core-services"
 version = "0.3.0"
 dependencies = [
@@ -2658,6 +2668,7 @@ dependencies = [
  "objc2-core-midi",
  "objc2-core-ml",
  "objc2-core-motion",
+ "objc2-core-nfc",
  "objc2-core-services",
  "objc2-core-spotlight",
  "objc2-core-telephony",

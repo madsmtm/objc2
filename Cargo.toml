@@ -65,5 +65,7 @@ files.extend-exclude = [
 ]
 # Comes from the `clang` crate
 default.extend-identifiers.ParmDecl = "ParmDecl"
+# In framework-crates/objc2-core-nfc/translation-config.toml
+default.extend-identifiers.initWithVASCommandConfigurations = "initWithVASCommandConfigurations"
 # Used in Metal, LOD = level of detail
 default.extend-words.lod = "lod"

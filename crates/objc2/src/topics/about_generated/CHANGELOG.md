@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreAudioKit` / `objc2-audio-kit`.
   - `CoreHaptics` / `objc2-core-haptics`.
   - `CoreMediaIO` / `objc2-core-media-io`.
+  - `CoreNFC` / `objc2-core-nfc`.
   - `CoreServices` / `objc2-core-services` (CarbonCore sub-framework not yet supported).
   - `CoreSpotlight` / `objc2-core-spotlight`.
   - `CoreTelephony` / `objc2-core-telephony`.
