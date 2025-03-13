@@ -1,6 +1,5 @@
 use std::{
     collections::BTreeMap,
-    mem::transmute,
     ops::Index,
     sync::{Arc, Condvar, Mutex},
 };
@@ -451,10 +450,9 @@ impl Renderer {
         command_encoder.end_encoding();
         command_buffer.commit();
         command_buffer.wait_until_completed();
-        let compacted_size: *const u32 = unsafe { transmute(compacted_size_buffer.contents()) };
-        let compacted_size = unsafe { *compacted_size } as NSUInteger;
+        let compacted_size = unsafe { *compacted_size_buffer.contents().cast::<u32>() };
         let compacted_acceleration_structure =
-            device.new_acceleration_structure_with_size(compacted_size);
+            device.new_acceleration_structure_with_size(compacted_size as NSUInteger);
         let command_buffer = queue.new_command_buffer();
         let command_encoder = command_buffer.new_acceleration_structure_command_encoder();
         command_encoder.copy_and_compact_acceleration_structure(

@@ -69,7 +69,7 @@ fn main() {
         let mut gpu_end = 0;
         device.sample_timestamps(&mut cpu_end, &mut gpu_end);
 
-        let sum = unsafe { sum.contents().cast::<u32>().read() };
+        let sum = unsafe { *sum.contents().cast::<u32>() };
         println!("Compute shader sum: {}", sum);
 
         assert_eq!(num_elements, sum);
