@@ -1147,6 +1147,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-device-discovery-extension"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-foundation",
+ "objc2-uniform-type-identifiers",
+]
+
+[[package]]
 name = "objc2-disk-arbitration"
 version = "0.3.0"
 dependencies = [
@@ -2601,6 +2612,7 @@ dependencies = [
  "objc2-crypto-token-kit",
  "objc2-data-detection",
  "objc2-device-check",
+ "objc2-device-discovery-extension",
  "objc2-disk-arbitration",
  "objc2-event-kit",
  "objc2-event-kit-ui",

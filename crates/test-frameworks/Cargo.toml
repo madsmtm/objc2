@@ -66,6 +66,7 @@ test-frameworks = [
     "objc2-crypto-token-kit",
     "objc2-data-detection",
     "objc2-device-check",
+    "objc2-device-discovery-extension",
     "objc2-disk-arbitration",
     "dispatch2",
     "objc2-event-kit",
@@ -323,6 +324,7 @@ objc2-shared-with-you-core = ["dep:objc2-shared-with-you-core"]
 objc2-shared-with-you = ["dep:objc2-shared-with-you"]
 objc2-push-to-talk = ["dep:objc2-push-to-talk"]
 objc2-screen-time = ["dep:objc2-screen-time"]
+objc2-device-discovery-extension = ["dep:objc2-device-discovery-extension"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -387,6 +389,7 @@ objc2-class-kit = { path = "../../framework-crates/objc2-class-kit", optional = 
 objc2-contacts-ui = { path = "../../framework-crates/objc2-contacts-ui", optional = true }
 objc2-core-audio-kit = { path = "../../framework-crates/objc2-core-audio-kit", optional = true }
 objc2-core-spotlight = { path = "../../framework-crates/objc2-core-spotlight", optional = true }
+objc2-device-discovery-extension = { path = "../../framework-crates/objc2-device-discovery-extension", optional = true }
 objc2-file-provider = { path = "../../framework-crates/objc2-file-provider", optional = true }
 objc2-file-provider-ui = { path = "../../framework-crates/objc2-file-provider-ui", optional = true }
 objc2-identity-lookup = { path = "../../framework-crates/objc2-identity-lookup", optional = true }
