@@ -55,6 +55,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `SafariServices` / `objc2-safari-services`.
   - `SafetyKit` / `objc2-safety-kit`.
   - `ScreenTime` / `objc2-screen-time`.
+  - `ScriptingBridge` / `objc2-scripting-bridge`.
   - `SecurityFoundation` / `objc2-security-foundation`.
   - `SecurityInterface` / `objc2-security-interface`.
   - `SensorKit` / `objc2-sensor-kit`.

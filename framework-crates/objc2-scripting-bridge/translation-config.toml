@@ -1,0 +1,11 @@
+framework = "ScriptingBridge"
+crate = "objc2-scripting-bridge"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.5"
+maccatalyst = "13.0"
+
+# Unsure what this returns.
+class.SBElementArray.skipped-protocols = ["NSCopying", "NSMutableCopying"]
+
+# Debug is broken in generic `objc2::extern_class!` currently.
+class.SBElementArray.derives = "PartialEq, Eq, Hash"

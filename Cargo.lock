@@ -1993,6 +1993,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-scripting-bridge"
+version = "0.3.0"
+dependencies = [
+ "libc",
+ "objc2",
+ "objc2-core-services",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-security"
 version = "0.3.0"
 dependencies = [
@@ -2729,6 +2739,7 @@ dependencies = [
  "objc2-screen-capture-kit",
  "objc2-screen-saver",
  "objc2-screen-time",
+ "objc2-scripting-bridge",
  "objc2-security",
  "objc2-security-foundation",
  "objc2-security-interface",

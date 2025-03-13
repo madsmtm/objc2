@@ -140,6 +140,7 @@ test-frameworks = [
     "objc2-screen-capture-kit",
     "objc2-screen-saver",
     "objc2-screen-time",
+    "objc2-scripting-bridge",
     "objc2-security",
     "objc2-security-foundation",
     "objc2-security-interface",
@@ -333,6 +334,7 @@ objc2-thread-network = ["dep:objc2-thread-network"]
 objc2-video-subscriber-account = ["dep:objc2-video-subscriber-account"]
 objc2-health-kit-ui = ["dep:objc2-health-kit-ui"]
 objc2-clock-kit = ["dep:objc2-clock-kit"]
+objc2-scripting-bridge = ["dep:objc2-scripting-bridge"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -456,6 +458,7 @@ objc2-preference-panes = { path = "../../framework-crates/objc2-preference-panes
 objc2-quick-look-ui = { path = "../../framework-crates/objc2-quick-look-ui", optional = true }
 objc2-screen-capture-kit = { path = "../../framework-crates/objc2-screen-capture-kit", optional = true }
 objc2-screen-saver = { path = "../../framework-crates/objc2-screen-saver", optional = true }
+objc2-scripting-bridge = { path = "../../framework-crates/objc2-scripting-bridge", optional = true }
 objc2-security-foundation = { path = "../../framework-crates/objc2-security-foundation", optional = true }
 objc2-security-interface = { path = "../../framework-crates/objc2-security-interface", optional = true }
 objc2-service-management = { path = "../../framework-crates/objc2-service-management", optional = true }
