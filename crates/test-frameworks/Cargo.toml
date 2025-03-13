@@ -163,6 +163,7 @@ test-frameworks = [
     "objc2-uniform-type-identifiers",
     "objc2-user-notifications",
     "objc2-user-notifications-ui",
+    "objc2-video-subscriber-account",
     "objc2-video-toolbox",
     "objc2-virtualization",
     "objc2-vision",
@@ -327,6 +328,7 @@ objc2-push-to-talk = ["dep:objc2-push-to-talk"]
 objc2-screen-time = ["dep:objc2-screen-time"]
 objc2-device-discovery-extension = ["dep:objc2-device-discovery-extension"]
 objc2-thread-network = ["dep:objc2-thread-network"]
+objc2-video-subscriber-account = ["dep:objc2-video-subscriber-account"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -481,6 +483,7 @@ objc2-replay-kit = { path = "../../framework-crates/objc2-replay-kit", optional 
 objc2-shared-with-you = { path = "../../framework-crates/objc2-shared-with-you", optional = true }
 objc2-shared-with-you-core = { path = "../../framework-crates/objc2-shared-with-you-core", optional = true }
 objc2-system-configuration = { path = "../../framework-crates/objc2-system-configuration", optional = true }
+objc2-video-subscriber-account = { path = "../../framework-crates/objc2-video-subscriber-account", optional = true }
 objc2-video-toolbox = { path = "../../framework-crates/objc2-video-toolbox", optional = true }
 objc2-vision = { path = "../../framework-crates/objc2-vision", optional = true }
 

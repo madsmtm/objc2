@@ -2257,6 +2257,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-video-subscriber-account"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-foundation",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-video-toolbox"
 version = "0.3.0"
 dependencies = [
@@ -2717,6 +2728,7 @@ dependencies = [
  "objc2-uniform-type-identifiers",
  "objc2-user-notifications",
  "objc2-user-notifications-ui",
+ "objc2-video-subscriber-account",
  "objc2-video-toolbox",
  "objc2-virtualization",
  "objc2-vision",

@@ -327,7 +327,8 @@ impl UnexposedAttr {
             | "UT_AVAILABLE_BEGIN"
             | "MP_DEPRECATED_BEGIN"
             | "SEC_ASN1_API_DEPRECATED"
-            | "SECUREDOWNLOAD_API_DEPRECATED" => None,
+            | "SECUREDOWNLOAD_API_DEPRECATED"
+            | "VS_INIT_UNAVAILABLE" => None,
             s if s.starts_with("AVAILABLE_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("DEPRECATED_IN_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("FILEPROVIDER_API_AVAILABILITY_") => None,
