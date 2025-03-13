@@ -22,6 +22,7 @@ test-frameworks = [
     "objc2-accounts",
     "objc2-ad-services",
     "objc2-ad-support",
+    "objc2-app-clip",
     "objc2-app-kit",
     "objc2-app-tracking-transparency",
     "objc2-audio-toolbox",
@@ -339,6 +340,7 @@ objc2-clock-kit = ["dep:objc2-clock-kit"]
 objc2-scripting-bridge = ["dep:objc2-scripting-bridge"]
 objc2-core-nfc = ["dep:objc2-core-nfc"]
 objc2-latent-semantic-mapping = ["dep:objc2-latent-semantic-mapping"]
+objc2-app-clip = ["dep:objc2-app-clip"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -423,6 +425,7 @@ objc2-web-kit = { path = "../../framework-crates/objc2-web-kit", optional = true
 
 [target.'cfg(target_os = "ios")'.dependencies]
 objc2-accessory-setup-kit = { path = "../../framework-crates/objc2-accessory-setup-kit", optional = true }
+objc2-app-clip = { path = "../../framework-crates/objc2-app-clip", optional = true }
 objc2-browser-engine-core = { path = "../../framework-crates/objc2-browser-engine-core", optional = true }
 objc2-browser-engine-kit = { path = "../../framework-crates/objc2-browser-engine-kit", optional = true }
 objc2-core-nfc = { path = "../../framework-crates/objc2-core-nfc", optional = true }

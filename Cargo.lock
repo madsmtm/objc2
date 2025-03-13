@@ -588,6 +588,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-app-clip"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-core-location",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-app-kit"
 version = "0.3.0"
 dependencies = [
@@ -2634,6 +2644,7 @@ dependencies = [
  "objc2-accounts",
  "objc2-ad-services",
  "objc2-ad-support",
+ "objc2-app-clip",
  "objc2-app-kit",
  "objc2-app-tracking-transparency",
  "objc2-ar-kit",
