@@ -55,6 +55,7 @@ test-frameworks = [
     "objc2-core-haptics",
     "objc2-core-image",
     "objc2-core-location",
+    "objc2-core-location-ui",
     "objc2-core-midi",
     "objc2-core-ml",
     "objc2-core-media",
@@ -343,6 +344,7 @@ objc2-core-nfc = ["dep:objc2-core-nfc"]
 objc2-latent-semantic-mapping = ["dep:objc2-latent-semantic-mapping"]
 objc2-app-clip = ["dep:objc2-app-clip"]
 objc2-car-play = ["dep:objc2-car-play"]
+objc2-core-location-ui = ["dep:objc2-core-location-ui"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -522,6 +524,7 @@ objc2-push-kit = { path = "../../framework-crates/objc2-push-kit", optional = tr
 
 [target.'cfg(any(target_os = "ios", target_os = "watchos"))'.dependencies]
 objc2-clock-kit = { path = "../../framework-crates/objc2-clock-kit", optional = true }
+objc2-core-location-ui = { path = "../../framework-crates/objc2-core-location-ui", optional = true }
 
 [target.'cfg(target_os = "visionos")'.dependencies]
 objc2-compositor-services = { path = "../../framework-crates/objc2-compositor-services", optional = true }

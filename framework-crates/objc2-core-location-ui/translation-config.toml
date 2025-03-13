@@ -1,0 +1,6 @@
+framework = "CoreLocationUI"
+crate = "objc2-core-location-ui"
+required-crates = ["objc2", "objc2-foundation"]
+maccatalyst = "15.0"
+ios = "15.0"
+watchos = "10.0"
