@@ -1,0 +1,5 @@
+framework = "iTunesLibrary"
+crate = "objc2-itunes-library"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.13"
+maccatalyst = "14.0"

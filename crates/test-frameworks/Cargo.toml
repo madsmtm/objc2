@@ -181,6 +181,7 @@ test-frameworks = [
     "objc2-watch-connectivity",
     "objc2-watch-kit",
     "objc2-web-kit",
+    "objc2-itunes-library",
 ]
 objc2-ar-kit = ["dep:objc2-ar-kit"]
 objc2-avf-audio = ["dep:objc2-avf-audio", "objc2-avf-audio?/objc2-core-media", "objc2-avf-audio?/objc2-core-midi"]
@@ -351,6 +352,7 @@ objc2-core-location-ui = ["dep:objc2-core-location-ui"]
 objc2-exposure-notification = ["dep:objc2-exposure-notification"]
 objc2-identity-lookup-ui = ["dep:objc2-identity-lookup-ui"]
 objc2-media-extension = ["dep:objc2-media-extension"]
+objc2-itunes-library = ["dep:objc2-itunes-library"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -487,6 +489,7 @@ objc2-security-interface = { path = "../../framework-crates/objc2-security-inter
 objc2-service-management = { path = "../../framework-crates/objc2-service-management", optional = true }
 objc2-system-extensions = { path = "../../framework-crates/objc2-system-extensions", optional = true }
 objc2-virtualization = { path = "../../framework-crates/objc2-virtualization", optional = true }
+objc2-itunes-library = { path = "../../framework-crates/objc2-itunes-library", optional = true }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
 objc2-app-tracking-transparency = { path = "../../framework-crates/objc2-app-tracking-transparency", optional = true }

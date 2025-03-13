@@ -299,6 +299,7 @@ impl UnexposedAttr {
             | "CSSM_DEPRECATED"
             | "deprecated"
             | "DEPRECATED_ATTRIBUTE"
+            | "DEPRECATED_MSG_ATTRIBUTE"
             | "DISPATCH_UNAVAILABLE"
             | "EN_API_AVAILABLE"
             | "EN_API_AVAILABLE_V2"

@@ -506,6 +506,10 @@ impl LibraryConfig {
             // Nobody writes "java-script".
             return Ok(config);
         }
+        if config.krate == "objc2-itunes-library" {
+            // "i-tunes" is confusing.
+            return Ok(config);
+        }
         assert_eq!(
             Some(&*config.framework.to_train_case().to_lowercase()),
             config.krate.strip_prefix("objc2-"),

@@ -1530,6 +1530,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-itunes-library"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-javascript-core"
 version = "0.3.0"
 dependencies = [
@@ -2787,6 +2797,7 @@ dependencies = [
  "objc2-io-bluetooth",
  "objc2-io-bluetooth-ui",
  "objc2-io-surface",
+ "objc2-itunes-library",
  "objc2-javascript-core",
  "objc2-latent-semantic-mapping",
  "objc2-link-presentation",
