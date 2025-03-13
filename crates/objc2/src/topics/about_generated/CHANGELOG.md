@@ -38,6 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `ExposureNotification` / `objc2-exposure-notification`.
   - `GameplayKit` / `objc2-gameplay-kit`.
   - `HealthKitUI` / `objc2-health-kit-ui`.
+  - `IdentityLookupUI` / `objc2-identity-lookup-ui`.
   - `ImageCaptureCore` / `objc2-image-capture-core`.
   - `ImageIO` / `objc2-image-io`.
   - `Intents` / `objc2-intents`.

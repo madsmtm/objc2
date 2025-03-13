@@ -95,6 +95,7 @@ test-frameworks = [
     "objc2-io-bluetooth-ui",
     "objc2-io-surface",
     "objc2-identity-lookup",
+    "objc2-identity-lookup-ui",
     "objc2-image-capture-core",
     "objc2-image-io",
     "objc2-input-method-kit",
@@ -347,6 +348,7 @@ objc2-app-clip = ["dep:objc2-app-clip"]
 objc2-car-play = ["dep:objc2-car-play"]
 objc2-core-location-ui = ["dep:objc2-core-location-ui"]
 objc2-exposure-notification = ["dep:objc2-exposure-notification"]
+objc2-identity-lookup-ui = ["dep:objc2-identity-lookup-ui"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -400,6 +402,7 @@ objc2-user-notifications = { path = "../../framework-crates/objc2-user-notificat
 [target.'cfg(any(target_os = "ios", target_os = "visionos"))'.dependencies]
 objc2-ar-kit = { path = "../../framework-crates/objc2-ar-kit", optional = true }
 objc2-event-kit-ui = { path = "../../framework-crates/objc2-event-kit-ui", optional = true }
+objc2-identity-lookup-ui = { path = "../../framework-crates/objc2-identity-lookup-ui", optional = true }
 objc2-message-ui = { path = "../../framework-crates/objc2-message-ui", optional = true }
 
 [target.'cfg(not(any(target_os = "tvos", target_os = "watchos")))'.dependencies]
