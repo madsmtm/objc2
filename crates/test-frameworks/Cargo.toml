@@ -136,6 +136,7 @@ test-frameworks = [
     "objc2-scene-kit",
     "objc2-screen-capture-kit",
     "objc2-screen-saver",
+    "objc2-screen-time",
     "objc2-security",
     "objc2-security-foundation",
     "objc2-security-interface",
@@ -321,6 +322,7 @@ objc2-push-kit = ["dep:objc2-push-kit"]
 objc2-shared-with-you-core = ["dep:objc2-shared-with-you-core"]
 objc2-shared-with-you = ["dep:objc2-shared-with-you"]
 objc2-push-to-talk = ["dep:objc2-push-to-talk"]
+objc2-screen-time = ["dep:objc2-screen-time"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -414,6 +416,7 @@ objc2-accounts = { path = "../../framework-crates/objc2-accounts", optional = tr
 objc2-business-chat = { path = "../../framework-crates/objc2-business-chat", optional = true }
 objc2-core-telephony = { path = "../../framework-crates/objc2-core-telephony", optional = true }
 objc2-notification-center = { path = "../../framework-crates/objc2-notification-center", optional = true }
+objc2-screen-time = { path = "../../framework-crates/objc2-screen-time", optional = true }
 objc2-sensitive-content-analysis = { path = "../../framework-crates/objc2-sensitive-content-analysis", optional = true }
 objc2-social = { path = "../../framework-crates/objc2-social", optional = true }
 

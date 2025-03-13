@@ -1,0 +1,8 @@
+framework = "ScreenTime"
+crate = "objc2-screen-time"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "11.0"
+maccatalyst = "14.0"
+ios = "14.0"
+
+class.STScreenTimeConfigurationObserver.methods."initWithUpdateQueue:".skipped = true
