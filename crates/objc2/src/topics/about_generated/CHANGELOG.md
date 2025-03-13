@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `AccessorySetupKit` / `objc2-accessory-setup-kit`.
   - `AppClip` / `objc2-app-clip`.
   - `BrowserEngineKit` / `objc2-browser-engine-kit`.
+  - `CarPlay` / `objc2-car-play`.
   - `CFNetwork` / `objc2-cf-network`.
   - `Cinematic` / `objc2-cinematic`.
   - `ClockKit` / `objc2-clock-kit`.

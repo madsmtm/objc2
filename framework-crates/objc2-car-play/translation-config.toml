@@ -1,0 +1,15 @@
+framework = "CarPlay"
+crate = "objc2-car-play"
+required-crates = ["objc2", "objc2-foundation"]
+maccatalyst = "14.0"
+ios = "12.0"
+
+# Needs dispatch_block_t from libdispatch
+class.CPListImageRowItem.methods.handler.skipped = true
+class.CPListImageRowItem.methods."setHandler:".skipped = true
+class.CPListImageRowItem.methods.listImageRowHandler.skipped = true
+class.CPListImageRowItem.methods."setListImageRowHandler:".skipped = true
+class.CPListItem.methods.handler.skipped = true
+class.CPListItem.methods."setHandler:".skipped = true
+protocol.CPSelectableListItem.methods.handler.skipped = true
+protocol.CPSelectableListItem.methods."setHandler:".skipped = true

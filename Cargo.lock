@@ -806,6 +806,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-car-play"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-foundation",
+ "objc2-map-kit",
+ "objc2-quartz-core",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-cf-network"
 version = "0.3.0"
 dependencies = [
@@ -2662,6 +2676,7 @@ dependencies = [
  "objc2-browser-engine-kit",
  "objc2-business-chat",
  "objc2-call-kit",
+ "objc2-car-play",
  "objc2-cf-network",
  "objc2-cinematic",
  "objc2-class-kit",

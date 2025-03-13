@@ -24,6 +24,7 @@
 | `BusinessChat` | [![`objc2-business-chat`](https://badgen.net/crates/v/objc2-business-chat)](https://crates.io/crates/objc2-business-chat) | [![docs.rs](https://docs.rs/objc2-business-chat/badge.svg)](https://docs.rs/objc2-business-chat/) |
 | `CFNetwork` | [![`objc2-cf-network`](https://badgen.net/crates/v/objc2-cf-network)](https://crates.io/crates/objc2-cf-network) | [![docs.rs](https://docs.rs/objc2-cf-network/badge.svg)](https://docs.rs/objc2-cf-network/) |
 | `CallKit` | [![`objc2-call-kit`](https://badgen.net/crates/v/objc2-call-kit)](https://crates.io/crates/objc2-call-kit) | [![docs.rs](https://docs.rs/objc2-call-kit/badge.svg)](https://docs.rs/objc2-call-kit/) |
+| `CarPlay` | [![`objc2-car-play`](https://badgen.net/crates/v/objc2-car-play)](https://crates.io/crates/objc2-car-play) | [![docs.rs](https://docs.rs/objc2-car-play/badge.svg)](https://docs.rs/objc2-car-play/) |
 | `Cinematic` | [![`objc2-cinematic`](https://badgen.net/crates/v/objc2-cinematic)](https://crates.io/crates/objc2-cinematic) | [![docs.rs](https://docs.rs/objc2-cinematic/badge.svg)](https://docs.rs/objc2-cinematic/) |
 | `ClassKit` | [![`objc2-class-kit`](https://badgen.net/crates/v/objc2-class-kit)](https://crates.io/crates/objc2-class-kit) | [![docs.rs](https://docs.rs/objc2-class-kit/badge.svg)](https://docs.rs/objc2-class-kit/) |
 | `ClockKit` | [![`objc2-clock-kit`](https://badgen.net/crates/v/objc2-clock-kit)](https://crates.io/crates/objc2-clock-kit) | [![docs.rs](https://docs.rs/objc2-clock-kit/badge.svg)](https://docs.rs/objc2-clock-kit/) |
