@@ -125,6 +125,7 @@ test-frameworks = [
     "objc2-photos-ui",
     "objc2-preference-panes",
     "objc2-push-kit",
+    "objc2-push-to-talk",
     "objc2-quartz-core",
     "objc2-quick-look",
     "objc2-quick-look-thumbnailing",
@@ -319,6 +320,7 @@ objc2-pencil-kit = ["dep:objc2-pencil-kit"]
 objc2-push-kit = ["dep:objc2-push-kit"]
 objc2-shared-with-you-core = ["dep:objc2-shared-with-you-core"]
 objc2-shared-with-you = ["dep:objc2-shared-with-you"]
+objc2-push-to-talk = ["dep:objc2-push-to-talk"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -404,6 +406,7 @@ objc2-accessory-setup-kit = { path = "../../framework-crates/objc2-accessory-set
 objc2-browser-engine-core = { path = "../../framework-crates/objc2-browser-engine-core", optional = true }
 objc2-browser-engine-kit = { path = "../../framework-crates/objc2-browser-engine-kit", optional = true }
 objc2-messages = { path = "../../framework-crates/objc2-messages", optional = true }
+objc2-push-to-talk = { path = "../../framework-crates/objc2-push-to-talk", optional = true }
 objc2-sensor-kit = { path = "../../framework-crates/objc2-sensor-kit", optional = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]

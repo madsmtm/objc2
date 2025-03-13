@@ -44,6 +44,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `PDFKit` / `objc2-pdf-kit`.
   - `PencilKit` / `objc2-pencil-kit`.
   - `PushKit` / `objc2-push-kit`.
+  - `PushToTalk` / `objc2-push-to-talk`.
   - `QuickLook` / `objc2-quick-look`.
   - `QuickLookThumbnailing` / `objc2-quick-look-thumbnailing`.
   - `QuickLookUI` / `objc2-quick-look-ui`.
