@@ -1,6 +1,6 @@
 framework = "CoreNFC"
 crate = "objc2-core-nfc"
-required-crates = ["objc2", "objc2-foundation"]
+required-crates = ["bitflags", "objc2", "objc2-foundation"]
 maccatalyst = "13.1"
 ios = "11.0"
 

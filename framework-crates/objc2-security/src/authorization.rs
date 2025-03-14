@@ -1,9 +1,6 @@
-#[cfg(feature = "libc")]
 use core::ffi::c_char;
-#[cfg(feature = "libc")]
 use core::ptr::NonNull;
 
-#[cfg(feature = "libc")]
 use crate::{AuthorizationFlags, AuthorizationRef, AuthorizationString, OSStatus};
 
 // Manual re-definition: see #711.
@@ -32,7 +29,6 @@ extern "C-unwind" {
     /// This function has been deprecated and should no longer be used.
     /// Use a launchd-launched helper tool and/or the Service Management framework
     /// for this functionality.
-    #[cfg(feature = "libc")]
     #[deprecated]
     pub fn AuthorizationExecuteWithPrivileges(
         authorization: AuthorizationRef,

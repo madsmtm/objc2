@@ -1,6 +1,6 @@
 framework = "OSLog"
 crate = "objc2-os-log"
-required-crates = ["objc2", "objc2-foundation"]
+required-crates = ["bitflags", "objc2", "objc2-foundation"]
 custom-lib-rs = true
 macos = "10.15"
 maccatalyst = "15.0"

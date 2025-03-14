@@ -20,7 +20,9 @@ mod generated;
 pub use self::generated::*;
 
 // Manual fixes.
+#[cfg(all(feature = "libc", feature = "Authorization"))]
 mod authorization;
+#[cfg(all(feature = "libc", feature = "Authorization"))]
 #[allow(unused_imports, unreachable_pub)]
 pub use self::authorization::*;
 
