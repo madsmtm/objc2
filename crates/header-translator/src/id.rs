@@ -488,15 +488,14 @@ pub fn cfg_gate_ln<'a, R: AsRef<ItemTree> + 'a, I: AsRef<ItemTree> + 'a>(
     // Use a set to deduplicate features, and to have them in
     // a consistent order.
     let mut feature_names = BTreeSet::new();
-    let mut platform_cfg =
-        PlatformCfg::from_config(config.library(emission_location.library_name()));
+    let mut platform_cfg = PlatformCfg::from_config(config.library(emission_location));
 
     for item in required {
         let item: &ItemTree = item.as_ref();
         feature_names.extend(item.cfg_features(config, emission_location));
 
         item.visit(emission_location, |id, _| {
-            platform_cfg.dependency(config.library(id.library_name()));
+            platform_cfg.dependency(config.library(id));
         });
     }
 
@@ -507,7 +506,7 @@ pub fn cfg_gate_ln<'a, R: AsRef<ItemTree> + 'a, I: AsRef<ItemTree> + 'a>(
         }
 
         item.visit(emission_location, |id, _| {
-            platform_cfg.implied(config.library(id.library_name()));
+            platform_cfg.implied(config.library(id));
         });
     }
 
@@ -515,7 +514,7 @@ pub fn cfg_gate_ln<'a, R: AsRef<ItemTree> + 'a, I: AsRef<ItemTree> + 'a>(
     for feature_name in ItemTree::cfg_features_inner(emission_location, config, emission_location) {
         feature_names.remove(&feature_name);
     }
-    platform_cfg.implied(config.library(emission_location.library_name()));
+    platform_cfg.implied(config.library(emission_location));
 
     FormatterFn(move |f| {
         write!(f, "{}", cfg_features_ln(&feature_names))?;
@@ -644,6 +643,10 @@ impl ItemTree {
         }
     }
 
+    pub fn id(&self) -> &ItemIdentifier {
+        &self.id
+    }
+
     fn visit_inner(&self, libraries: &[&str], f: &mut impl FnMut(&ItemIdentifier, &[&str])) {
         let current = *libraries.last().expect("at least one location");
         if matches!(self.id.location.library_name(), "__builtin__" | "__core__") {
@@ -668,10 +671,6 @@ impl ItemTree {
 
     fn visit(&self, emission_location: &Location, mut f: impl FnMut(&ItemIdentifier, &[&str])) {
         self.visit_inner(&[emission_location.library_name()], &mut f);
-    }
-
-    pub fn library_name(&self) -> &str {
-        self.id.library_name()
     }
 
     pub fn nserror() -> Self {
@@ -754,7 +753,7 @@ impl ItemTree {
         config: &'config Config,
         emission_location: &Location,
     ) -> impl Iterator<Item = &'config str> {
-        match self.library_name() {
+        match self.id.library_name() {
             "__builtin__" | "__core__" => None,
             library if library == emission_location.library_name() => None,
             library => config.try_library(library).map(|data| &*data.krate),
@@ -781,7 +780,7 @@ impl ItemTree {
 
                 let krate = &*data.krate;
                 let required = config
-                    .library(emission_location.library_name())
+                    .library(emission_location)
                     .required_crates
                     .contains(krate);
 
@@ -800,7 +799,7 @@ impl ItemTree {
                 };
                 let krate = &*data.krate;
                 let required = config
-                    .library(emission_location.library_name())
+                    .library(emission_location)
                     .required_crates
                     .contains(krate);
 
@@ -842,7 +841,7 @@ impl ItemTree {
             [] => {}
             ["__bitflags__"] => {
                 let required = config
-                    .library(emission_location.library_name())
+                    .library(emission_location)
                     .required_crates
                     .contains("bitflags");
 
@@ -861,7 +860,7 @@ impl ItemTree {
                     let krate = &*data.krate;
 
                     let required = config
-                        .library(emission_location.library_name())
+                        .library(emission_location)
                         .required_crates
                         .contains(krate);
 
@@ -896,7 +895,7 @@ impl ItemTree {
                 };
                 let krate = &*data.krate;
                 let required = config
-                    .library(emission_location.library_name())
+                    .library(emission_location)
                     .required_crates
                     .contains(krate);
 
@@ -932,10 +931,10 @@ impl ItemTree {
             library if library == emission_location.library_name() => {
                 location.feature_names().map(Cow::Owned).collect()
             }
-            library => {
-                let krate = &*config.library(library).krate;
+            _ => {
+                let krate = &*config.library(location).krate;
                 let required = config
-                    .library(emission_location.library_name())
+                    .library(emission_location)
                     .required_crates
                     .contains(krate);
                 if !required {
@@ -986,7 +985,7 @@ impl ItemTree {
         config: &'config Config,
         emission_location: &Location,
     ) -> Option<(Cow<'static, str>, impl fmt::Display + 'config)> {
-        let import = match self.library_name() {
+        let import = match self.id.library_name() {
             "__builtin__" => None,
             "__core__" => match &*self.id.location().module_path {
                 "__core__.ffi" => Some("core::ffi::*".into()),
@@ -1009,17 +1008,16 @@ impl ItemTree {
             // Not currently needed, but might be useful to emit
             // `Some("crate")` here in the future.
             library if library == emission_location.library_name() => None,
-            library => {
-                let krate = &config.library(library).krate;
+            _ => {
+                let krate = &config.library(&self.id).krate;
                 Some(format!("{}::*", krate.replace('-', "_")).into())
             }
         };
         import.map(|import: Cow<'static, str>| {
             let feature_names: Vec<_> =
                 Self::cfg_features_inner(&self.id.location, config, emission_location).collect();
-            let mut platform_cfg =
-                PlatformCfg::from_config(config.library(emission_location.library_name()));
-            platform_cfg.dependency(config.library(self.library_name()));
+            let mut platform_cfg = PlatformCfg::from_config(config.library(emission_location));
+            platform_cfg.dependency(config.library(&self.id));
             (
                 import,
                 FormatterFn(move |f| {

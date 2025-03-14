@@ -653,7 +653,7 @@ impl Stmt {
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
                 let id = ItemIdentifier::new(entity, context);
-                let data = context.library(id.library_name()).class_data.get(&id.name);
+                let data = context.library(&id).class_data.get(&id.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -703,7 +703,7 @@ impl Stmt {
                     .iter()
                     .filter_map(|(superclass_id, _, entity)| {
                         let superclass_data = context
-                            .library(superclass_id.library_name())
+                            .library(superclass_id)
                             .class_data
                             .get(&superclass_id.name);
 
@@ -806,10 +806,7 @@ impl Stmt {
                 let cls_entity = cls_entity.expect("could not find category class");
 
                 let cls = ItemIdentifier::new(&cls_entity, context);
-                let data = context
-                    .library(category.library_name())
-                    .class_data
-                    .get(&cls.name);
+                let data = context.library(&category).class_data.get(&cls.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -889,10 +886,8 @@ impl Stmt {
                         .map(|data| data.counterpart.clone())
                         .unwrap_or_default()
                     {
-                        let subclass_data = context
-                            .library(subclass.library_name())
-                            .class_data
-                            .get(&subclass.name);
+                        let subclass_data =
+                            context.library(&subclass).class_data.get(&subclass.name);
                         assert!(!subclass_data.map(|data| data.skipped).unwrap_or_default());
 
                         let (mut methods, _) = parse_methods(
@@ -1017,7 +1012,7 @@ impl Stmt {
             EntityKind::ObjCProtocolDecl => {
                 let actual_id = ItemIdentifier::new(entity, context);
                 let data = context
-                    .library(actual_id.library_name())
+                    .library(&actual_id)
                     .protocol_data
                     .get(&actual_id.name);
                 let actual_name = data
@@ -1071,7 +1066,7 @@ impl Stmt {
                 let documentation = Documentation::from_entity(entity);
 
                 let data = context
-                    .library(id.library_name())
+                    .library(&id)
                     .typedef_data
                     .get(&id.name)
                     .cloned()
@@ -1184,10 +1179,8 @@ impl Stmt {
                         let mut record_id = ItemIdentifier::new(&entity, context);
 
                         // Replace module from external data if it exists.
-                        if let Some(external) = context
-                            .library(record_id.library_name())
-                            .external
-                            .get(&record_id.name)
+                        if let Some(external) =
+                            context.library(&record_id).external.get(&record_id.name)
                         {
                             record_id =
                                 ItemIdentifier::from_raw(record_id.name, external.module.clone());
@@ -1232,7 +1225,7 @@ impl Stmt {
                 };
                 let availability = Availability::parse(entity, context);
 
-                let library = context.library(id.library_name());
+                let library = context.library(&id);
                 let data = if is_union {
                     &library.union_data
                 } else {
@@ -1319,7 +1312,7 @@ impl Stmt {
                 }
 
                 // Replace module from external data if it exists.
-                if let Some(external) = context.library(id.library_name()).external.get(&id.name) {
+                if let Some(external) = context.library(&id).external.get(&id.name) {
                     id = ItemIdentifier::from_raw(id.name, external.module.clone());
                 }
 
@@ -1347,7 +1340,7 @@ impl Stmt {
                 let id = ItemIdentifier::new_optional(entity, context);
 
                 let data = context
-                    .library(id.library_name())
+                    .library(&id)
                     .enum_data
                     .get(id.name.as_deref().unwrap_or("anonymous"))
                     .cloned()
@@ -1498,7 +1491,7 @@ impl Stmt {
                 let id = ItemIdentifier::new(entity, context);
 
                 let data = context
-                    .library(id.library_name())
+                    .library(&id)
                     .statics
                     .get(&id.name)
                     .cloned()
@@ -1561,7 +1554,7 @@ impl Stmt {
                 let id = ItemIdentifier::new(entity, context);
 
                 let data = context
-                    .library(id.library_name())
+                    .library(&id)
                     .fns
                     .get(&id.name)
                     .cloned()
@@ -2988,7 +2981,7 @@ impl Stmt {
                 methods,
                 ..
             } => (
-                config.library(location.library_name()),
+                config.library(location),
                 availability,
                 cls,
                 &**cls_generics,
@@ -3002,7 +2995,7 @@ impl Stmt {
                 methods,
                 ..
             } => (
-                config.library(id.library_name()),
+                config.library(id),
                 availability,
                 cls,
                 &**cls_generics,
@@ -3065,16 +3058,11 @@ impl Stmt {
                 if !availability.is_available_host() {
                     return None;
                 }
-                Some(FormatterFn(|f| {
+                Some(FormatterFn(move |f| {
                     write!(
                         f,
                         "{}",
-                        simple_platform_gate(
-                            config.library(id.library_name()),
-                            self.required_items(),
-                            [],
-                            config,
-                        )
+                        simple_platform_gate(config.library(id), self.required_items(), [], config,)
                     )?;
                     let ty = ty.var().to_string();
                     if ty.starts_with("&'static") {
@@ -3100,11 +3088,11 @@ fn simple_platform_gate(
     let mut platform_cfg = PlatformCfg::from_config(data);
 
     for item in required_items {
-        platform_cfg.dependency(config.library(item.library_name()));
+        platform_cfg.dependency(config.library(item.id()));
     }
 
     for item in implied_items {
-        platform_cfg.implied(config.library(item.library_name()));
+        platform_cfg.implied(config.library(item.id()));
     }
 
     FormatterFn(move |f| {

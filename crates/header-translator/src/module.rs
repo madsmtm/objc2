@@ -110,7 +110,7 @@ impl Module {
             }
             writeln!(f)?;
 
-            if config.library(emission_location.library_name()).is_library {
+            if config.library(emission_location).is_library {
                 writeln!(f, "use crate::ffi::*;")?;
             } else {
                 writeln!(f, "use crate::*;")?;
@@ -295,7 +295,7 @@ impl Module {
             }
 
             if emission_location.is_top_level() {
-                let data = config.library(emission_location.library_name());
+                let data = config.library(emission_location);
                 let mut s = String::new();
                 writeln!(&mut s, "#![cfg(feature = \"test-frameworks\")]")?;
                 let platform_cfg = PlatformCfg::from_config_explicit(data);

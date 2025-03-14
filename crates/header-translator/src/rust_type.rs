@@ -369,7 +369,7 @@ fn get_class_data(
 
     let mut id = ItemIdentifier::new(&entity, context);
 
-    if let Some(external) = context.library(id.library_name()).external.get(&id.name) {
+    if let Some(external) = context.library(&id).external.get(&id.name) {
         let id = ItemIdentifier::from_raw(id.name, external.module.clone());
         let thread_safety = external
             .thread_safety
@@ -420,7 +420,7 @@ fn parse_protocol(entity: Entity<'_>, context: &Context<'_>) -> (ProtocolRef, Th
 
     let id = ItemIdentifier::new(&entity, context);
 
-    if let Some(external) = context.library(id.library_name()).external.get(&id.name) {
+    if let Some(external) = context.library(&id).external.get(&id.name) {
         let id = ItemIdentifier::from_raw(id.name, external.module.clone());
         let thread_safety = external
             .thread_safety
@@ -852,7 +852,7 @@ impl Ty {
 
                 // Replace module from external data if it exists.
                 if let Some(name) = &id.name {
-                    if let Some(external) = context.library(id.library_name()).external.get(name) {
+                    if let Some(external) = context.library(&id).external.get(name) {
                         id = ItemIdentifier::from_raw(id.name, external.module.clone());
                     }
                 }
@@ -1410,7 +1410,7 @@ impl Ty {
 
                 let mut id = ItemIdentifier::new(&declaration, context);
                 // Replace module from external data if it exists.
-                if let Some(external) = context.library(id.library_name()).external.get(&id.name) {
+                if let Some(external) = context.library(&id).external.get(&id.name) {
                     id = ItemIdentifier::from_raw(id.name, external.module.clone());
                 }
 

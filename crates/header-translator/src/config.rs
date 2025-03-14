@@ -38,13 +38,18 @@ impl Config {
         self.libraries.get(library_name)
     }
 
-    pub fn library(&self, library_name: &str) -> &LibraryConfig {
-        self.try_library(library_name).unwrap_or_else(|| {
-            error!("tried to get library config from {library_name:?}");
-            self.libraries
-                .get("__builtin__")
-                .expect("could not find builtin library")
-        })
+    /// Look up the library config.
+    ///
+    /// This only needs the library name, but it takes ItemIdentifier or
+    /// Location for better error reporting.
+    pub fn library(&self, location: impl AsRef<Location> + fmt::Debug) -> &LibraryConfig {
+        self.try_library(location.as_ref().library_name())
+            .unwrap_or_else(|| {
+                error!("tried to get library config from {location:?}");
+                self.libraries
+                    .get("__builtin__")
+                    .expect("could not find builtin library")
+            })
     }
 
     pub fn library_from_crate(&self, krate: &str) -> &LibraryConfig {
@@ -61,7 +66,7 @@ impl Config {
     }
 
     pub fn replace_protocol_name(&self, id: ItemIdentifier) -> ItemIdentifier {
-        let library_config = self.library(id.library_name());
+        let library_config = self.library(&id);
         id.map_name(|name| {
             library_config
                 .protocol_data
@@ -72,7 +77,7 @@ impl Config {
     }
 
     pub fn replace_typedef_name(&self, id: ItemIdentifier, is_cf: bool) -> ItemIdentifier {
-        let library_config = self.library(id.library_name());
+        let library_config = self.library(&id);
         id.map_name(|name| {
             library_config
                 .typedef_data
