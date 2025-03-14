@@ -180,7 +180,7 @@ impl Expr {
                 (TokenKind::Punctuation, punct) => {
                     match &*punct {
                         // These have the same semantics in C and Rust (bar overflow)
-                        "(" | ")" | "<<" | "-" | "+" | "|" | "&" | "^" | "*" => {
+                        "(" | ")" | "<<" | "-" | "+" | "|" | "&" | "^" | "*" | "/" | "," => {
                             Token::Punctuation(punct)
                         }
                         // Bitwise not

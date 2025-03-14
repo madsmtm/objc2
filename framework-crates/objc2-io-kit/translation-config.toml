@@ -1,0 +1,74 @@
+framework = "IOKit"
+crate = "objc2-io-kit"
+required-crates = ["objc2-core-foundation"]
+custom-lib-rs = true
+macos = "10.0"
+maccatalyst = "13.0"
+ios = "16.0"
+visionos = "1.0"
+
+# FIXME: Map the rest of IOKit
+module.audio.skipped = true
+module.avc.skipped = true
+module.firewire.skipped = true
+module.graphics.skipped = true
+module.hid.skipped = true
+module.hidsystem.skipped = true
+module.i2c.skipped = true
+module.iokitmig.skipped = true
+module.kext.skipped = true
+module.ndrvsupport.skipped = true
+module.network.skipped = true
+module.ps.skipped = true
+module.pwr_mgt.skipped = true
+module.sbp2.skipped = true
+module.scsi.skipped = true
+module.serial.skipped = true
+module.storage.skipped = true
+module.stream.skipped = true
+module.usb.skipped = true
+
+# Requires C++
+module.video.skipped = true
+
+# `ns_consumed`, `cf_consumed` and `os_consumed`
+fn.IOServiceGetMatchingService.skipped = true
+fn.IOServiceGetMatchingServices.skipped = true
+fn.IOServiceAddMatchingNotification.skipped = true
+# + a few methods from DriverKit.framework and Kernel.framework, but those
+# are written in C++, so we're not going to ever handle them anyhow.
+
+# Unnecessarily requires `libc`
+typedef.IOReturn.skipped = true
+
+# Complex expression involving `sizeof`
+enum.anonymous.constants.kOSAsyncRef64Size.skipped = true
+enum.anonymous.constants.kOSAsyncRef64Count.skipped = true
+
+# Needs io_user_reference_t, and contains arrays in typedefs
+typedef.OSAsyncReference64.skipped = true
+struct.OSNotificationHeader64.skipped = true
+struct.IOServiceInterestContent64.skipped = true
+
+# Needs mach_msg_size_t/mach_msg_header_t/mach_timespec_t/task_port_t, which isn't exposed by libc
+typedef.OSAsyncReference.skipped = true
+struct.OSNotificationHeader.skipped = true
+fn.IODispatchCalloutFromMessage.skipped = true
+fn.IOServiceWaitQuiet.skipped = true
+fn.IOKitWaitQuietWithOptions.skipped = true
+fn.IOKitWaitQuiet.skipped = true
+fn.OSGetNotificationFromMessage.skipped = true
+struct._IODataQueueAppendix.skipped = true
+typedef.IODataQueueAppendix.skipped = true
+struct.IORPCMessageMach.skipped = true
+struct.IORPCMessageErrorReturn.skipped = true
+struct.IORPC.skipped = true
+fn.IORPCMessageFromMach.skipped = true
+fn.IOServiceOpen.skipped = true
+fn.IOConnectMapMemory.skipped = true
+fn.IOConnectMapMemory64.skipped = true
+fn.IOConnectUnmapMemory.skipped = true
+fn.IOConnectUnmapMemory64.skipped = true
+
+# Needs libdispatch
+fn.IONotificationPortSetDispatchQueue.skipped = true

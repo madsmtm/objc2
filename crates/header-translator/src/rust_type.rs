@@ -140,6 +140,10 @@ impl AttributeParser<'_, '_> {
         self.strip("const", position)
     }
 
+    fn is_volatile(&mut self, position: ParsePosition) -> bool {
+        self.strip("volatile", position)
+    }
+
     fn nullability(&mut self, position: ParsePosition) -> Option<Nullability> {
         if self.strip("_Nullable", position) {
             Some(Nullability::Nullable)
@@ -1208,6 +1212,7 @@ impl Ty {
 
                 let mut parser = AttributeParser::new(&attributed_name, &typedef_name);
                 let mut _is_kindof = parser.is_kindof(ParsePosition::Prefix);
+                let mut _is_volatile = parser.is_volatile(ParsePosition::Prefix);
                 let is_const1 = parser.is_const(ParsePosition::Prefix);
                 lifetime.update(parser.lifetime(ParsePosition::Prefix));
 

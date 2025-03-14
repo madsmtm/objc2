@@ -78,6 +78,7 @@ impl Location {
 
             // These types are redefined in the framework crate itself.
             "Darwin.MacTypes" => "__builtin__".into(),
+            "Darwin.device" => "__builtin__".into(),
 
             // We don't emit the `hfs`, so let's act as-if CoreServices is the
             // one that defines the types in there (such as HFSUniStr255).

@@ -13,15 +13,6 @@ watchos = "2.0"
 visionos = "1.0"
 gnustep = true
 
-# TODO: Move these
-
-# `ns_consumed`, `cf_consumed` and `os_consumed`
-fn.IOServiceGetMatchingService.skipped = true
-fn.IOServiceGetMatchingServices.skipped = true
-fn.IOServiceAddMatchingNotification.skipped = true
-# + a few methods from DriverKit.framework and Kernel.framework, but those
-# are written in C++, so we're not going to ever handle them anyhow.
-
 # `objc_method_family`
 # TODO: Move this
 class.ABNewPersonViewController.methods.newPersonViewDelegate.skipped = true
