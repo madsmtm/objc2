@@ -1,0 +1,51 @@
+framework = "IOUSBHost"
+crate = "objc2-io-usb-host"
+required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
+macos = "10.15"
+maccatalyst = "14.0"
+
+# Return type marked as non-null, raises `unknown error result type`.
+class.IOUSBHostControllerInterface.methods."getPortStateMachineForCommand:error:".skipped = true
+class.IOUSBHostControllerInterface.methods."getPortStateMachineForPort:error:".skipped = true
+
+# Returns non-object pointer in error method, raises `unknown error result type`.
+class.IOUSBHostObject.methods."descriptorWithType:length:index:languageID:requestType:requestRecipient:error:".skipped = true
+class.IOUSBHostObject.methods."descriptorWithType:length:index:languageID:error:".skipped = true
+class.IOUSBHostObject.methods."descriptorWithType:length:error:".skipped = true
+class.IOUSBHostObject.methods."configurationDescriptorWithIndex:error:".skipped = true
+class.IOUSBHostObject.methods."configurationDescriptorWithConfigurationValue:error:".skipped = true
+
+# Needs uuid_t, unsure about the ABI.
+fn.IOUSBGetPlatformCapabilityDescriptorWithUUID.skipped = true
+
+# Overflows while calculating.
+enum.anonymous.constants.IOUSBHostCIDeviceUpdateCommandData1DescriptorAddress.use-value = true
+enum.anonymous.constants.IOUSBHostCINormalTransferData1Buffer.use-value = true
+enum.anonymous.constants.IOUSBHostCILinkData1TransferStructureAddress.use-value = true
+
+# Declared twice.
+static.IOUSBHostMatchingPropertyKeyProductIDMask.skipped = true
+
+# Needs dispatch_queue_t from libdispatch
+class.IOUSBHostControllerInterface.methods."initWithCapabilities:queue:interruptRateHz:error:commandHandler:doorbellHandler:interestHandler:".skipped = true
+class.IOUSBHostControllerInterface.methods.queue.skipped = true
+class.IOUSBHostDevice.methods."initWithIOService:options:queue:error:interestHandler:".skipped = true
+class.IOUSBHostDevice.methods."initWithIOService:queue:error:interestHandler:".skipped = true
+class.IOUSBHostInterface.methods."initWithIOService:options:queue:error:interestHandler:".skipped = true
+class.IOUSBHostInterface.methods."initWithIOService:queue:error:interestHandler:".skipped = true
+class.IOUSBHostObject.methods."initWithIOService:options:queue:error:interestHandler:".skipped = true
+class.IOUSBHostObject.methods."initWithIOService:queue:error:interestHandler:".skipped = true
+class.IOUSBHostObject.methods.queue.skipped = true
+
+# Value taken from a type that is c_uint internally.
+enum.anonymous.constants.IOUSBHostCITransferCompletionMessageControlStatus.use-value = true
+enum.anonymous.constants.IOUSBHostCITransferCompletionMessageControlStatusPhase.use-value = true
+
+# Overflows while calculating on 32-bit.
+enum.anonymous.constants.IOUSBHostCIEndpointCreateCommandData1Descriptor.skipped = true
+enum.anonymous.constants.IOUSBHostCIEndpointUpdateCommandData1Descriptor.skipped = true
+enum.anonymous.constants.IOUSBHostCIEndpointSetNextTransferCommandData1Address.skipped = true
+enum.anonymous.constants.IOUSBHostCISetupTransferData1wIndex.skipped = true
+enum.anonymous.constants.IOUSBHostCISetupTransferData1wLength.skipped = true
+enum.anonymous.constants.IOUSBHostCITransferCompletionMessageData1TransferStructure.skipped = true

@@ -96,6 +96,7 @@ test-frameworks = [
     "objc2-io-bluetooth-ui",
     "objc2-io-kit",
     "objc2-io-surface",
+    "objc2-io-usb-host",
     "objc2-identity-lookup",
     "objc2-identity-lookup-ui",
     "objc2-image-capture-core",
@@ -363,6 +364,7 @@ objc2-paravirtualized-graphics = ["dep:objc2-paravirtualized-graphics"]
 objc2-os-log = ["dep:objc2-os-log"]
 objc2-collaboration = ["dep:objc2-collaboration"]
 objc2-io-kit = ["dep:objc2-io-kit"]
+objc2-io-usb-host = ["dep:objc2-io-usb-host"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -487,6 +489,7 @@ objc2-execution-policy = { path = "../../framework-crates/objc2-execution-policy
 objc2-finder-sync = { path = "../../framework-crates/objc2-finder-sync", optional = true }
 objc2-io-bluetooth = { path = "../../framework-crates/objc2-io-bluetooth", optional = true }
 objc2-io-bluetooth-ui = { path = "../../framework-crates/objc2-io-bluetooth-ui", optional = true }
+objc2-io-usb-host = { path = "../../framework-crates/objc2-io-usb-host", optional = true }
 objc2-input-method-kit = { path = "../../framework-crates/objc2-input-method-kit", optional = true }
 objc2-latent-semantic-mapping = { path = "../../framework-crates/objc2-latent-semantic-mapping", optional = true }
 objc2-mail-kit = { path = "../../framework-crates/objc2-mail-kit", optional = true }

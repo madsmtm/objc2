@@ -515,6 +515,10 @@ impl LibraryConfig {
             // "i-tunes" is confusing.
             return Ok(config);
         }
+        if config.krate == "objc2-io-usb-host" {
+            // "io-usb" is clearer than "iousb", and more consistent with other "io" crates.
+            return Ok(config);
+        }
         assert_eq!(
             Some(&*config.framework.to_train_case().to_lowercase()),
             config.krate.strip_prefix("objc2-"),

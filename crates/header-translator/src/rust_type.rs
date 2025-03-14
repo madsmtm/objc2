@@ -2345,25 +2345,29 @@ impl Ty {
     }
 
     fn fn_contains_bool(&self) -> bool {
-        if let Self::Pointer { pointee, .. } = self {
-            if let Self::Pointee(PointeeTy::Fn {
-                arguments,
-                result_type,
-                ..
-            }) = &**pointee
-            {
-                if arguments
-                    .iter()
-                    .any(|arg| matches!(arg, Self::Primitive(Primitive::C99Bool)))
+        match self {
+            Self::Pointer { pointee, .. } => {
+                if let Self::Pointee(PointeeTy::Fn {
+                    arguments,
+                    result_type,
+                    ..
+                }) = &**pointee
                 {
-                    return true;
+                    if arguments
+                        .iter()
+                        .any(|arg| matches!(arg, Self::Primitive(Primitive::C99Bool)))
+                    {
+                        return true;
+                    }
+                    if matches!(**result_type, Self::Primitive(Primitive::C99Bool)) {
+                        return true;
+                    }
                 }
-                if matches!(**result_type, Self::Primitive(Primitive::C99Bool)) {
-                    return true;
-                }
+                false
             }
+            Self::TypeDef { to, .. } => to.fn_contains_bool(),
+            _ => false,
         }
-        false
     }
 
     pub(crate) fn record_encoding(&self) -> impl fmt::Display + '_ {
@@ -2372,7 +2376,7 @@ impl Ty {
             Self::Primitive(Primitive::Long) => write!(f, "Encoding::C_LONG"),
             Self::Primitive(Primitive::ULong) => write!(f, "Encoding::C_ULONG"),
             // TODO: Make all function pointers be encode, regardless of arguments
-            Self::TypeDef { to, .. } if to.fn_contains_bool() => {
+            _ if self.fn_contains_bool() => {
                 write!(f, "Encoding::Pointer(&Encoding::Unknown)")
             }
             _ => write!(f, "<{}>::ENCODING", self.record()),

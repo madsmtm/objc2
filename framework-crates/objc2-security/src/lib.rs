@@ -119,6 +119,10 @@ unsafe impl RefEncode for cssm_list_element {
 // Used by `SecAuthenticationType` for endianness-dependent constants.
 #[cfg(feature = "SecKeychain")]
 #[allow(non_snake_case)]
-pub(crate) const fn AUTH_TYPE_FIX_(code: FourCharCode) -> FourCharCode {
-    FourCharCode::from_be(code)
+macro_rules! AUTH_TYPE_FIX_ {
+    ($code:expr) => {
+        $crate::FourCharCode::from_be($code)
+    };
 }
+#[cfg(feature = "SecKeychain")]
+pub(crate) use AUTH_TYPE_FIX_;

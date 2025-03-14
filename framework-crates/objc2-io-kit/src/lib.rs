@@ -17,13 +17,17 @@ extern crate std;
 
 #[cfg(feature = "libc")]
 mod consumes_argument;
+#[allow(unused_parens, clippy::double_parens)]
 mod generated;
+mod macros;
 
 #[cfg(feature = "libc")]
 #[allow(unused_imports, unreachable_pub)]
 pub use self::consumes_argument::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+#[allow(unused_imports, unreachable_pub)]
+pub use self::macros::*;
 
 // IOKit/IOReturn.h
 /// [Apple's documentation](https://developer.apple.com/documentation/iokit/ioreturn?language=objc)
@@ -32,6 +36,10 @@ pub type IOReturn = core::ffi::c_int; // kern_return_t
 // MacTypes.h
 #[allow(dead_code)]
 pub(crate) type Boolean = u8;
+#[allow(dead_code)]
+pub(crate) type AbsoluteTime = i32;
+#[allow(dead_code)]
+pub(crate) type NumVersion = u32; // Actually a struct with 4 u8s
 
 // device/device_types.h
 #[allow(dead_code, non_camel_case_types)]
@@ -40,3 +48,7 @@ pub(crate) type io_name_t = *mut [core::ffi::c_char; 128];
 pub(crate) type io_string_t = *mut [core::ffi::c_char; 512];
 #[allow(dead_code, non_camel_case_types)]
 pub(crate) type io_struct_inband_t = *mut [core::ffi::c_char; 4096];
+
+// uuid/uuid_t.h
+#[allow(dead_code, non_camel_case_types)]
+pub(crate) type uuid_t = [u8; 16]; // Usage sites are all in structs

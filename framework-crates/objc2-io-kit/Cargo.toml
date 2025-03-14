@@ -43,8 +43,14 @@ targets = [
 [features]
 default = [
     "std",
+    "AppleUSBDefinitions",
+    "IOUSBHostFamilyDefinitions",
+    "IOUSBLib",
+    "USB",
+    "USBSpec",
     "libc",
     "objc2",
+    "usb",
 ]
 std = ["alloc"]
 alloc = []
@@ -53,3 +59,14 @@ objc2 = [
     "dep:objc2",
     "objc2-core-foundation/objc2",
 ]
+
+AppleUSBDefinitions = []
+IOUSBHostFamilyDefinitions = []
+IOUSBLib = [
+    "objc2-core-foundation/CFPlugInCOM",
+    "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFUUID",
+]
+USB = []
+USBSpec = []
+usb = []

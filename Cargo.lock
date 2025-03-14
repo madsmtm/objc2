@@ -1552,6 +1552,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-io-usb-host"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-foundation",
+ "objc2-io-kit",
+]
+
+[[package]]
 name = "objc2-itunes-library"
 version = "0.3.0"
 dependencies = [
@@ -2851,6 +2863,7 @@ dependencies = [
  "objc2-io-bluetooth-ui",
  "objc2-io-kit",
  "objc2-io-surface",
+ "objc2-io-usb-host",
  "objc2-itunes-library",
  "objc2-javascript-core",
  "objc2-latent-semantic-mapping",

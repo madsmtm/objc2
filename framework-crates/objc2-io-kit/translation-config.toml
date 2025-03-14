@@ -26,7 +26,6 @@ module.scsi.skipped = true
 module.serial.skipped = true
 module.storage.skipped = true
 module.stream.skipped = true
-module.usb.skipped = true
 
 # Requires C++
 module.video.skipped = true
@@ -72,3 +71,18 @@ fn.IOConnectUnmapMemory64.skipped = true
 
 # Needs libdispatch
 fn.IONotificationPortSetDispatchQueue.skipped = true
+
+# Value taken from a type that is c_long internally.
+enum.anonymous.constants.kXHCISSRootHubAddress.use-value = true
+enum.anonymous.constants.kXHCIUSB2RootHubAddress.use-value = true
+
+# Recursive
+typedef.LowLatencyUserBufferInfo.skipped = true
+struct.LowLatencyUserBufferInfo.skipped = true
+typedef.LowLatencyUserBufferInfoV2.skipped = true
+struct.LowLatencyUserBufferInfoV2.skipped = true
+typedef.LowLatencyUserBufferInfoV3.skipped = true
+struct.LowLatencyUserBufferInfoV3.skipped = true
+
+# Overflows while calculating on 32-bit.
+enum.anonymous.constants.kIORPCMessageIDKernel.skipped = true

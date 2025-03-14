@@ -195,6 +195,8 @@ fn format_child(child: &CommentChild) -> impl fmt::Display + '_ {
                     ("parameters", &[]) => write!(f, "Parameters ")?,
                     // Not parsed into a block
                     ("field", &[]) => write!(f, "Field: ")?,
+                    ("super", _) => write!(f, "Super: ")?,
+                    ("availability", _) => write!(f, "Availability: ")?,
                     // This is just the name of the thing we're parsing, so ignore.
                     ("define" | "defined" | "key" | "options", _) => {}
                     // Shouldn't actually be hit, but is for some reason?

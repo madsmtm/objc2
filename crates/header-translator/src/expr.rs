@@ -27,6 +27,7 @@ pub enum Expr {
     Float(f64),
     MacroInvocation {
         id: ItemIdentifier,
+        is_function_like: bool,
         evaluated: Option<Box<Expr>>,
     },
     Enum {
@@ -118,6 +119,7 @@ impl Expr {
             {
                 return Expr::MacroInvocation {
                     id: macro_invocation.id.clone(),
+                    is_function_like: macro_invocation.is_function_like,
                     evaluated: Some(Box::new(Self::from_evaluated(entity))),
                 };
             } else {
@@ -138,6 +140,7 @@ impl Expr {
                     {
                         Expr::MacroInvocation {
                             id: macro_invocation.id.clone(),
+                            is_function_like: macro_invocation.is_function_like,
                             evaluated: None,
                         }
                     } else {
@@ -180,7 +183,7 @@ impl Expr {
                 (TokenKind::Punctuation, punct) => {
                     match &*punct {
                         // These have the same semantics in C and Rust (bar overflow)
-                        "(" | ")" | "<<" | "-" | "+" | "|" | "&" | "^" | "*" | "/" | "," => {
+                        "(" | ")" | "<<" | ">>" | "-" | "+" | "|" | "&" | "^" | "*" | "/" | "," => {
                             Token::Punctuation(punct)
                         }
                         // Bitwise not
@@ -193,6 +196,7 @@ impl Expr {
                         }
                     }
                 }
+                (TokenKind::Comment, spelling) => Token::Literal(spelling.to_string()),
                 (kind, spelling) => {
                     error!("unknown expr token {kind:?}/{spelling}");
                     Token::Literal(spelling.to_string())
@@ -290,7 +294,7 @@ impl Expr {
             Self::Signed(_) => {}
             Self::Unsigned(_) => {}
             Self::Float(_) => {}
-            Self::MacroInvocation { evaluated, id } => {
+            Self::MacroInvocation { evaluated, id, .. } => {
                 if evaluated.is_none() {
                     items.push(ItemTree::from_id(id.clone()));
                 }
@@ -327,7 +331,11 @@ impl fmt::Display for Expr {
             Self::Signed(signed) => write!(f, "{signed}"),
             Self::Unsigned(unsigned) => write!(f, "{unsigned}"),
             Self::Float(n) => write!(f, "{n}"),
-            Self::MacroInvocation { id, evaluated } => {
+            Self::MacroInvocation {
+                id,
+                is_function_like,
+                evaluated,
+            } => {
                 if id.name == "NSIntegerMax" {
                     write!(f, "NSIntegerMax as _")
                 } else if id.name == "NSUIntegerMax" {
@@ -342,6 +350,8 @@ impl fmt::Display for Expr {
                     write!(f, "c_double::MAX")
                 } else if let Some(evaluated) = evaluated {
                     write!(f, "{evaluated}")
+                } else if *is_function_like {
+                    write!(f, "{}!", id.path())
                 } else {
                     write!(f, "{}", id.path())
                 }
