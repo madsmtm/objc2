@@ -129,6 +129,7 @@ test-frameworks = [
     "objc2-network-extension",
     "objc2-notification-center",
     "objc2-osa-kit",
+    "objc2-os-log",
     "objc2-open-directory",
     "objc2-pdf-kit",
     "objc2-paravirtualized-graphics",
@@ -357,6 +358,7 @@ objc2-media-extension = ["dep:objc2-media-extension"]
 objc2-itunes-library = ["dep:objc2-itunes-library"]
 objc2-media-setup = ["dep:objc2-media-setup"]
 objc2-paravirtualized-graphics = ["dep:objc2-paravirtualized-graphics"]
+objc2-os-log = ["dep:objc2-os-log"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -396,6 +398,7 @@ objc2-map-kit = { path = "../../framework-crates/objc2-map-kit", optional = true
 objc2-media-player = { path = "../../framework-crates/objc2-media-player", optional = true }
 objc2-natural-language = { path = "../../framework-crates/objc2-natural-language", optional = true }
 objc2-network-extension = { path = "../../framework-crates/objc2-network-extension", optional = true }
+objc2-os-log = { path = "../../framework-crates/objc2-os-log", optional = true }
 objc2-photos-ui = { path = "../../framework-crates/objc2-photos-ui", optional = true }
 objc2-scene-kit = { path = "../../framework-crates/objc2-scene-kit", optional = true }
 objc2-security = { path = "../../framework-crates/objc2-security", optional = true }

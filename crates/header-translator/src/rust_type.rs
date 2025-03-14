@@ -1373,6 +1373,14 @@ impl Ty {
                         }
                     }
 
+                    // HACK: Prevent OSLog from requiring dependency on os
+                    "os_activity_id_t" | "os_signpost_id_t" => {
+                        return Self::TypeDef {
+                            id: ItemIdentifier::os_typedefs(typedef_name),
+                            to: Box::new(Self::Primitive(Primitive::I64)),
+                        }
+                    }
+
                     "NSInteger" => return Self::Primitive(Primitive::NSInteger),
                     "NSUInteger" => return Self::Primitive(Primitive::NSUInteger),
 

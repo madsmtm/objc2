@@ -1,0 +1,10 @@
+framework = "OSLog"
+crate = "objc2-os-log"
+required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
+macos = "10.15"
+maccatalyst = "15.0"
+ios = "15.0"
+tvos = "15.0"
+watchos = "8.0"
+visionos = "1.0"

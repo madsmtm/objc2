@@ -360,6 +360,13 @@ impl ItemIdentifier {
         }
     }
 
+    pub fn os_typedefs(name: impl Into<String>) -> Self {
+        Self {
+            name: name.into(),
+            location: Location::new("__builtin__"),
+        }
+    }
+
     pub fn copyhelper(mutable: bool) -> Self {
         let name = if mutable {
             "MutableCopyingHelper"

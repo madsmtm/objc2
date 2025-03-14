@@ -1851,6 +1851,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-os-log"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "libc",
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-osa-kit"
 version = "0.3.0"
 dependencies = [
@@ -2846,6 +2856,7 @@ dependencies = [
  "objc2-network-extension",
  "objc2-notification-center",
  "objc2-open-directory",
+ "objc2-os-log",
  "objc2-osa-kit",
  "objc2-paravirtualized-graphics",
  "objc2-pass-kit",
