@@ -41,6 +41,7 @@ test-frameworks = [
     "objc2-class-kit",
     "objc2-clock-kit",
     "objc2-cloud-kit",
+    "objc2-collaboration",
     "objc2-color-sync",
     "objc2-compositor-services",
     "objc2-contacts",
@@ -359,6 +360,7 @@ objc2-itunes-library = ["dep:objc2-itunes-library"]
 objc2-media-setup = ["dep:objc2-media-setup"]
 objc2-paravirtualized-graphics = ["dep:objc2-paravirtualized-graphics"]
 objc2-os-log = ["dep:objc2-os-log"]
+objc2-collaboration = ["dep:objc2-collaboration"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -473,6 +475,7 @@ objc2-ml-compute = { path = "../../framework-crates/objc2-ml-compute", optional 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit = { path = "../../framework-crates/objc2-app-kit", optional = true }
 objc2-automator = { path = "../../framework-crates/objc2-automator", optional = true }
+objc2-collaboration = { path = "../../framework-crates/objc2-collaboration", optional = true }
 objc2-core-media-io = { path = "../../framework-crates/objc2-core-media-io", optional = true }
 objc2-core-wlan = { path = "../../framework-crates/objc2-core-wlan", optional = true }
 objc2-disk-arbitration = { path = "../../framework-crates/objc2-disk-arbitration", optional = true }

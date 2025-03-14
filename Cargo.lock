@@ -876,6 +876,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-collaboration"
+version = "0.3.0"
+dependencies = [
+ "block2",
+ "libc",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-core-services",
+ "objc2-foundation",
+ "objc2-security",
+]
+
+[[package]]
 name = "objc2-color-sync"
 version = "0.3.0"
 dependencies = [
@@ -2768,6 +2781,7 @@ dependencies = [
  "objc2-class-kit",
  "objc2-clock-kit",
  "objc2-cloud-kit",
+ "objc2-collaboration",
  "objc2-color-sync",
  "objc2-compositor-services",
  "objc2-contacts",

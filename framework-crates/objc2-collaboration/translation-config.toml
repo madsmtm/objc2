@@ -1,0 +1,4 @@
+framework = "Collaboration"
+crate = "objc2-collaboration"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "10.5"

@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CFNetwork` / `objc2-cf-network`.
   - `Cinematic` / `objc2-cinematic`.
   - `ClockKit` / `objc2-clock-kit`.
+  - `Collaboration` / `objc2-collaboration`.
   - `CoreAudioKit` / `objc2-audio-kit`.
   - `CoreHaptics` / `objc2-core-haptics`.
   - `CoreLocationUI` / `objc2-core-location-ui`.
