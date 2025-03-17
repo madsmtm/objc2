@@ -86,3 +86,4 @@ struct.LowLatencyUserBufferInfoV3.skipped = true
 
 # Overflows while calculating on 32-bit.
 enum.anonymous.constants.kIORPCMessageIDKernel.skipped = true
+enum.anonymous.constants.kUSBAllStreams.skipped = true
