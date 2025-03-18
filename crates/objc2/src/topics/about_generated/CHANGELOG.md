@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added new framework crates:
   - `AccessorySetupKit` / `objc2-accessory-setup-kit`.
   - `AppClip` / `objc2-app-clip`.
+  - `ApplicationServices` / `objc2-application-services`.
   - `BrowserEngineKit` / `objc2-browser-engine-kit`.
   - `CarPlay` / `objc2-car-play`.
   - `CFNetwork` / `objc2-cf-network`.

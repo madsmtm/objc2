@@ -25,6 +25,7 @@ test-frameworks = [
     "objc2-app-clip",
     "objc2-app-kit",
     "objc2-app-tracking-transparency",
+    "objc2-application-services",
     "objc2-audio-toolbox",
     "objc2-authentication-services",
     "objc2-automatic-assessment-configuration",
@@ -365,6 +366,7 @@ objc2-os-log = ["dep:objc2-os-log"]
 objc2-collaboration = ["dep:objc2-collaboration"]
 objc2-io-kit = ["dep:objc2-io-kit"]
 objc2-io-usb-host = ["dep:objc2-io-usb-host"]
+objc2-application-services = ["dep:objc2-application-services"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -479,6 +481,7 @@ objc2-ml-compute = { path = "../../framework-crates/objc2-ml-compute", optional 
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit = { path = "../../framework-crates/objc2-app-kit", optional = true }
+objc2-application-services = { path = "../../framework-crates/objc2-application-services", optional = true }
 objc2-automator = { path = "../../framework-crates/objc2-automator", optional = true }
 objc2-collaboration = { path = "../../framework-crates/objc2-collaboration", optional = true }
 objc2-core-media-io = { path = "../../framework-crates/objc2-core-media-io", optional = true }

@@ -1,0 +1,64 @@
+framework = "ApplicationServices"
+crate = "objc2-application-services"
+required-crates = ["objc2-core-foundation"]
+custom-lib-rs = true
+macos = "10.0"
+maccatalyst = "13.0"
+
+# Headers say that these are "private".
+module.ATS.skipped = true
+module.QD.skipped = true
+# Maybe private?
+module.ATSUI.skipped = true
+# Replaced by AVFoundation
+module.SpeechSynthesis.skipped = true
+
+# Uses `ppd_file_s` from cups/pdd.h
+protocol.PDEPlugInCallbackProtocol.methods.ppdFile.skipped = true
+
+# Uses NSView, which requires NSResponder, which this `extern` declaration can't represent yet.
+external.NSView.module = "AppKit.NSView"
+protocol.PDEPanel.methods.panelView.skipped = true
+
+# Mapped as `false`, would need a cast to int to work.
+enum.anonymous.constants.kPMUnlocked.use-value = true
+
+# Needs AliasRecord/FSSpec/FSRef from CoreServices.CarbonCore.Files
+struct.ICFileSpec.skipped = true
+typedef.ICFileSpecPtr.skipped = true
+typedef.ICFileSpecHandle.skipped = true
+fn.GetProcessBundleLocation.skipped = true
+fn.TranslationPerformForFile.skipped = true
+struct.LaunchParamBlockRec.skipped = true
+typedef.LaunchPBPtr.skipped = true
+fn.LaunchApplication.skipped = true
+struct.ProcessInfoRec.skipped = true
+typedef.ProcessInfoRecPtr.skipped = true
+fn.GetProcessInformation.skipped = true
+struct.ProcessInfoExtendedRec.skipped = true
+typedef.ProcessInfoExtendedRecPtr.skipped = true
+
+# Needs VersRec from MacTypes.h
+fn.PMPrinterGetDriverReleaseInfo.skipped = true
+
+# Uses constants from CoreServices.CarbonCore.MacErrors
+enum.anonymous.constants.kPMNoError.use-value = true
+enum.anonymous.constants.kPMInvalidParameter.use-value = true
+enum.anonymous.constants.kPMAllocationFailure.use-value = true
+
+# Overflows
+enum.anonymous.constants.kProcessDictionaryIncludeAllInformationMask.skipped = true
+
+# Uses `sizeof`
+enum.anonymous.constants.kICFileSpecHeaderSize.skipped = true
+enum.anonymous.constants.extendedBlockLen.skipped = true
+
+# Uses Str255 (an array) directly in parameter, which is unclear ABI-wise.
+fn.ICGetConfigName.skipped = true
+fn.ICGetIndPref.skipped = true
+fn.ICGetProfileName.skipped = true
+
+# Needs ApplicationServices.QD
+fn.HIShapeCreateWithQDRgn.skipped = true
+fn.HIShapeGetAsQDRgn.skipped = true
+fn.PlotIconRefInContext.skipped = true
