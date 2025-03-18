@@ -1966,6 +1966,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-phase"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-avf-audio",
+ "objc2-core-audio-types",
+ "objc2-foundation",
+ "objc2-model-io",
+]
+
+[[package]]
 name = "objc2-photos"
 version = "0.3.0"
 dependencies = [
@@ -2927,6 +2940,7 @@ dependencies = [
  "objc2-pass-kit",
  "objc2-pdf-kit",
  "objc2-pencil-kit",
+ "objc2-phase",
  "objc2-photos",
  "objc2-photos-ui",
  "objc2-preference-panes",

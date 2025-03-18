@@ -78,7 +78,6 @@
 | `OpenGL` | OpenGL-specific, use Metal instead. |
 | `OpenGLES` | OpenGL-specific, use Metal instead. |
 | `PCSC` | Too low-level, consider crates like `pcsc` instead. |
-| `PHASE` | TODO. |
 | `ProximityReader` | Swift-only. |
 | `ProximityReaderStub` | Basically empty. |
 | `QTKit` | No headers present in Xcode's SDK. |

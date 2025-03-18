@@ -1,0 +1,12 @@
+framework = "PHASE"
+crate = "objc2-phase"
+required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
+macos = "12.0"
+maccatalyst = "15.0"
+ios = "15.0"
+tvos = "15.0"
+visionos = "1.0"
+
+# Block uses C99 boolean
+class.PHASEAssetRegistry.methods."unregisterAssetWithIdentifier:completion:".skipped = true

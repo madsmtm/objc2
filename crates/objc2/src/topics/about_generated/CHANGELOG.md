@@ -62,6 +62,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `PassKit` / `objc2-pass-kit`.
   - `PDFKit` / `objc2-pdf-kit`.
   - `PencilKit` / `objc2-pencil-kit`.
+  - `PHASE` / `objc2-phase`.
   - `PushKit` / `objc2-push-kit`.
   - `PushToTalk` / `objc2-push-to-talk`.
   - `Quartz` / `objc2-quartz` (QuartzComposer left out for now).

@@ -123,6 +123,7 @@
 | `OSLog` | [`objc2-os-log`](https://crates.io/crates/objc2-os-log) | [![docs.rs](https://docs.rs/objc2-os-log/badge.svg)](https://docs.rs/objc2-os-log/) |
 | `OpenDirectory` | [`objc2-open-directory`](https://crates.io/crates/objc2-open-directory) | [![docs.rs](https://docs.rs/objc2-open-directory/badge.svg)](https://docs.rs/objc2-open-directory/) |
 | `PDFKit` | [`objc2-pdf-kit`](https://crates.io/crates/objc2-pdf-kit) | [![docs.rs](https://docs.rs/objc2-pdf-kit/badge.svg)](https://docs.rs/objc2-pdf-kit/) |
+| `PHASE` | [`objc2-phase`](https://crates.io/crates/objc2-phase) | [![docs.rs](https://docs.rs/objc2-phase/badge.svg)](https://docs.rs/objc2-phase/) |
 | `ParavirtualizedGraphics` | [`objc2-paravirtualized-graphics`](https://crates.io/crates/objc2-paravirtualized-graphics) | [![docs.rs](https://docs.rs/objc2-paravirtualized-graphics/badge.svg)](https://docs.rs/objc2-paravirtualized-graphics/) |
 | `PassKit` | [`objc2-pass-kit`](https://crates.io/crates/objc2-pass-kit) | [![docs.rs](https://docs.rs/objc2-pass-kit/badge.svg)](https://docs.rs/objc2-pass-kit/) |
 | `PencilKit` | [`objc2-pencil-kit`](https://crates.io/crates/objc2-pencil-kit) | [![docs.rs](https://docs.rs/objc2-pencil-kit/badge.svg)](https://docs.rs/objc2-pencil-kit/) |

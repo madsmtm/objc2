@@ -136,6 +136,7 @@ test-frameworks = [
     "objc2-os-log",
     "objc2-open-directory",
     "objc2-pdf-kit",
+    "objc2-phase",
     "objc2-paravirtualized-graphics",
     "objc2-pass-kit",
     "objc2-pencil-kit",
@@ -369,6 +370,7 @@ objc2-io-kit = ["dep:objc2-io-kit"]
 objc2-io-usb-host = ["dep:objc2-io-usb-host"]
 objc2-application-services = ["dep:objc2-application-services"]
 objc2-quartz = ["dep:objc2-quartz"]
+objc2-phase = ["dep:objc2-phase"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -534,6 +536,7 @@ objc2-metal-performance-shaders = { path = "../../framework-crates/objc2-metal-p
 objc2-metal-performance-shaders-graph = { path = "../../framework-crates/objc2-metal-performance-shaders-graph", optional = true }
 objc2-model-io = { path = "../../framework-crates/objc2-model-io", optional = true }
 objc2-multipeer-connectivity = { path = "../../framework-crates/objc2-multipeer-connectivity", optional = true }
+objc2-phase = { path = "../../framework-crates/objc2-phase", optional = true }
 objc2-photos = { path = "../../framework-crates/objc2-photos", optional = true }
 objc2-quartz-core = { path = "../../framework-crates/objc2-quartz-core", optional = true }
 objc2-replay-kit = { path = "../../framework-crates/objc2-replay-kit", optional = true }
