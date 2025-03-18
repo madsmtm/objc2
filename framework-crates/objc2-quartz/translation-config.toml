@@ -1,0 +1,16 @@
+framework = "Quartz"
+crate = "objc2-quartz"
+# Depends on objc2-app-kit because all of ImageKit is basically different NSViews.
+required-crates = ["objc2", "objc2-foundation", "objc2-app-kit"]
+custom-lib-rs = true
+macos = "10.4"
+
+# Deprecated in macOS 10.15, uses OpenGL
+module.QuartzComposer.skipped = true
+
+# Moved to separate framework
+module.PDFKit.skipped = true
+module.QuickLookUI.skipped = true
+
+# Duplicate definitions
+class.IKImageBrowserView.methods."initWithFrame:".skipped = true

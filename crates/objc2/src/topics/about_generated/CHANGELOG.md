@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added new framework crates:
   - `AccessorySetupKit` / `objc2-accessory-setup-kit`.
   - `AppClip` / `objc2-app-clip`.
-  - `ApplicationServices` / `objc2-application-services`.
+  - `ApplicationServices` / `objc2-application-services` (some submodules left out).
   - `BrowserEngineKit` / `objc2-browser-engine-kit`.
   - `CarPlay` / `objc2-car-play`.
   - `CFNetwork` / `objc2-cf-network`.
@@ -64,6 +64,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `PencilKit` / `objc2-pencil-kit`.
   - `PushKit` / `objc2-push-kit`.
   - `PushToTalk` / `objc2-push-to-talk`.
+  - `Quartz` / `objc2-quartz` (QuartzComposer left out for now).
   - `QuickLook` / `objc2-quick-look`.
   - `QuickLookThumbnailing` / `objc2-quick-look-thumbnailing`.
   - `QuickLookUI` / `objc2-quick-look-ui`.

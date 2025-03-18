@@ -2031,6 +2031,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-quartz"
+version = "0.3.0"
+dependencies = [
+ "objc2",
+ "objc2-app-kit",
+ "objc2-core-foundation",
+ "objc2-core-graphics",
+ "objc2-core-image",
+ "objc2-foundation",
+ "objc2-image-capture-core",
+ "objc2-quartz-core",
+]
+
+[[package]]
 name = "objc2-quartz-core"
 version = "0.3.0"
 dependencies = [
@@ -2918,6 +2932,7 @@ dependencies = [
  "objc2-preference-panes",
  "objc2-push-kit",
  "objc2-push-to-talk",
+ "objc2-quartz",
  "objc2-quartz-core",
  "objc2-quick-look",
  "objc2-quick-look-thumbnailing",
