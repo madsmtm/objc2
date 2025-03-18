@@ -33,7 +33,7 @@ mod thread_safety;
 mod unexposed_attr;
 
 pub use self::cfgs::PlatformCfg;
-pub use self::config::{Config, LibraryConfig};
+pub use self::config::{load_config, load_skipped, Config, LibraryConfig};
 pub use self::context::{Context, MacroEntity, MacroLocation};
 pub use self::global_analysis::global_analysis;
 pub use self::id::{ItemIdentifier, Location};

@@ -16,8 +16,8 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
-    global_analysis, run_cargo_fmt, Config, Context, EntryExt, Library, LibraryConfig, Location,
-    MacroEntity, MacroLocation, PlatformCfg, Stmt,
+    global_analysis, load_config, load_skipped, run_cargo_fmt, Config, Context, EntryExt, Library,
+    LibraryConfig, Location, MacroEntity, MacroLocation, PlatformCfg, Stmt,
 };
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -75,7 +75,7 @@ fn main() -> Result<(), BoxError> {
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
     let workspace_dir = manifest_dir.parent().unwrap().parent().unwrap();
 
-    let config = load_config(workspace_dir)?;
+    let config = load_config()?;
 
     clang_sys::load()?;
     info!(clang_version = clang::get_version());
@@ -132,50 +132,9 @@ fn main() -> Result<(), BoxError> {
 
     update_ci(workspace_dir, &config)?;
 
-    update_list(workspace_dir, &config)?;
+    update_list(workspace_dir, &config, &load_skipped().unwrap())?;
 
     Ok(())
-}
-
-fn load_config(workspace_dir: &Path) -> Result<Config, BoxError> {
-    let _span = info_span!("loading configs").entered();
-
-    let mut libraries = BTreeMap::default();
-
-    for dir in fs::read_dir(workspace_dir.join("framework-crates"))? {
-        let dir = dir?;
-        if !dir.file_type()?.is_dir() {
-            continue;
-        }
-        let path = dir.path().join("translation-config.toml");
-        let config =
-            LibraryConfig::from_file(&path).unwrap_or_else(|e| panic!("read {path:?} config: {e}"));
-        assert_eq!(*config.krate, *dir.file_name());
-        libraries.insert(config.framework.to_string(), config);
-    }
-
-    let path = workspace_dir
-        .join("crates")
-        .join("block2")
-        .join("translation-config.toml");
-    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
-    libraries.insert("block".to_string(), objc);
-
-    let path = workspace_dir
-        .join("crates")
-        .join("objc2")
-        .join("translation-config.toml");
-    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
-    libraries.insert("ObjectiveC".to_string(), objc);
-
-    let path = workspace_dir
-        .join("crates")
-        .join("dispatch2")
-        .join("translation-config.toml");
-    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
-    libraries.insert("Dispatch".to_string(), objc);
-
-    Config::new(libraries)
 }
 
 fn parse_library(
@@ -705,14 +664,18 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
     Ok(())
 }
 
-fn update_list(workspace_dir: &Path, config: &Config) -> io::Result<()> {
-    let _span = info_span!("updating list_data.md").entered();
+fn update_list(
+    workspace_dir: &Path,
+    config: &Config,
+    skipped: &BTreeMap<String, String>,
+) -> io::Result<()> {
+    let _span = info_span!("updating lists").entered();
 
     let mut f = fs::File::create(
         workspace_dir.join("crates/objc2/src/topics/about_generated/list_data.md"),
     )?;
 
-    writeln!(f, "| Framework | Crate | Documentation |")?;
+    writeln!(f, "| Framework | Crate | Docs.rs |")?;
     writeln!(f, "| --- | --- | --- |")?;
 
     for (name, library) in config.to_parse() {
@@ -720,10 +683,18 @@ fn update_list(workspace_dir: &Path, config: &Config) -> io::Result<()> {
             continue; // Skip non-framework crates for now
         }
         let package = &library.krate;
-        writeln!(
-            f,
-            "| `{name}` | [![`{package}`](https://badgen.net/crates/v/{package})](https://crates.io/crates/{package}) | [![docs.rs](https://docs.rs/{package}/badge.svg)](https://docs.rs/{package}/) |",
-        )?;
+        writeln!(f, "| `{name}` | [`{package}`](https://crates.io/crates/{package}) | [![docs.rs](https://docs.rs/{package}/badge.svg)](https://docs.rs/{package}/) |")?;
+    }
+
+    let mut f = fs::File::create(
+        workspace_dir.join("crates/objc2/src/topics/about_generated/list_unsupported.md"),
+    )?;
+
+    writeln!(f, "| Framework | Why is this unsupported? |")?;
+    writeln!(f, "| --- | --- |")?;
+
+    for (framework, why) in skipped {
+        writeln!(f, "| `{framework}` | {why}. |")?;
     }
 
     Ok(())

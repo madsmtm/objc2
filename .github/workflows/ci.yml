@@ -298,6 +298,9 @@ jobs:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
+    - name: Verify that all of Apple's frameworks are known to us
+      run: cargo run -pheader-translator --bin=check_all_frameworks_known
+
     - name: Run header translator
       run: cargo run -pheader-translator --bin=header-translator --release all
 

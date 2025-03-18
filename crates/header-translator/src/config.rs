@@ -17,6 +17,57 @@ pub struct Config {
     libraries: BTreeMap<String, LibraryConfig>,
 }
 
+pub fn load_skipped() -> Result<BTreeMap<String, String>, Box<dyn Error + Send + Sync>> {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("configs")
+        .join("skipped.toml");
+    Ok(basic_toml::from_str(&fs::read_to_string(path)?)?)
+}
+
+pub fn load_config() -> Result<Config, Box<dyn Error + Send + Sync>> {
+    let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let workspace_dir = manifest_dir.parent().unwrap().parent().unwrap();
+
+    let _span = info_span!("loading configs").entered();
+
+    let mut libraries = BTreeMap::default();
+
+    for dir in fs::read_dir(workspace_dir.join("framework-crates"))? {
+        let dir = dir?;
+        if !dir.file_type()?.is_dir() {
+            continue;
+        }
+        let path = dir.path().join("translation-config.toml");
+        let config =
+            LibraryConfig::from_file(&path).unwrap_or_else(|e| panic!("read {path:?} config: {e}"));
+        assert_eq!(*config.krate, *dir.file_name());
+        libraries.insert(config.framework.to_string(), config);
+    }
+
+    let path = workspace_dir
+        .join("crates")
+        .join("block2")
+        .join("translation-config.toml");
+    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
+    libraries.insert("block".to_string(), objc);
+
+    let path = workspace_dir
+        .join("crates")
+        .join("objc2")
+        .join("translation-config.toml");
+    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
+    libraries.insert("ObjectiveC".to_string(), objc);
+
+    let path = workspace_dir
+        .join("crates")
+        .join("dispatch2")
+        .join("translation-config.toml");
+    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
+    libraries.insert("Dispatch".to_string(), objc);
+
+    Config::new(libraries)
+}
+
 impl Config {
     pub fn new(
         mut libraries: BTreeMap<String, LibraryConfig>,
@@ -29,6 +80,13 @@ impl Config {
             let path = configs_dir.join(builtin_file);
             let config: LibraryConfig = basic_toml::from_str(&fs::read_to_string(path)?)?;
             libraries.insert(config.framework.clone(), config);
+        }
+
+        for framework in load_skipped()?.keys() {
+            assert!(
+                !libraries.contains_key(framework),
+                "skipped framework {framework} was not actually skipped"
+            );
         }
 
         Ok(Self { libraries })
