@@ -46,6 +46,7 @@ use core::hash;
 use core::marker::{PhantomData, PhantomPinned};
 
 use crate::CFComparisonResult;
+use crate::CFGetRetainCount;
 use crate::ConcreteType;
 use crate::{CFEqual, CFHash, Type};
 
@@ -110,6 +111,21 @@ impl CFType {
         } else {
             None
         }
+    }
+
+    /// Get the reference count of the object.
+    ///
+    /// This function may be useful for debugging. You normally do not use
+    /// this function otherwise.
+    ///
+    /// Beware that some things (like `CFNumber`s, small `CFString`s etc.) may
+    /// not have a normal retain count for optimization purposes, and can
+    /// return `usize::MAX` in that case.
+    #[doc(alias = "CFGetRetainCount")]
+    pub fn retain_count(&self) -> usize {
+        // Cast is fine, if the reference count is `-1` we want to return
+        // `usize::MAX` as a sentinel instead.
+        CFGetRetainCount(Some(self)) as _
     }
 }
 

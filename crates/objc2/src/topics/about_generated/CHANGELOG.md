@@ -87,6 +87,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `UserNotificationsUI` / `objc2-user-notifications-ui`.
   - `VideoSubscriberAccount` / `objc2-video-subscriber-account`.
 * Added fallback for `MTLCopyAllDevices` on non-macOS platforms.
+* Added `CFType::retain_count` convenience function.
 
 ### Changed
 * Made `CFArray`, `CFBag`, `CFBinaryHeap`, `CFDictionary`, `CFSet` and their

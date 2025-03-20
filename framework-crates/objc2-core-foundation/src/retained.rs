@@ -153,9 +153,8 @@ impl<T: ?Sized + Type> CFRetained<T> {
 
     /// Unchecked conversion to another CoreFoundation type.
     ///
-    /// This is equivalent to a `cast` between two pointers.
-    ///
-    /// TODO: See `CFRetained::downcast` for a safe alternative.
+    /// This is equivalent to an `unsafe` `cast` between two pointers, see
+    /// [`CFRetained::downcast`] for a safe alternative.
     ///
     /// This is an associated method, and must be called as
     /// `CFRetained::cast_unchecked(obj)`.
