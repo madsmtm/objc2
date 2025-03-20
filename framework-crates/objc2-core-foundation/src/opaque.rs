@@ -10,6 +10,7 @@ use core::{
 /// be incorrect).
 #[repr(C)]
 #[doc(hidden)]
+#[allow(dead_code, unreachable_pub)]
 pub struct Opaque {
     inner: [u8; 0],
     _p: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,
