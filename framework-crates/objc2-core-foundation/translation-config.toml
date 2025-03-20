@@ -10,6 +10,18 @@ watchos = "2.0"
 visionos = "1.0"
 gnustep = true
 
+## Generic types
+typedef.CFArrayRef.generics = ["T"]
+typedef.CFBagRef.generics = ["T"]
+typedef.CFBinaryHeapRef.generics = ["T"]
+typedef.CFDictionaryRef.generics = ["K", "V"]
+typedef.CFSetRef.generics = ["T"]
+typedef.CFMutableArrayRef.generics = ["T"]
+typedef.CFMutableBagRef.generics = ["T"]
+typedef.CFMutableDictionaryRef.generics = ["K", "V"]
+typedef.CFMutableSetRef.generics = ["T"]
+# Not CFTreeRef
+
 # Uses variadics
 fn.CFStringCreateWithFormatAndArguments.skipped = true
 fn.CFStringCreateStringWithValidatedFormatAndArguments.skipped = true

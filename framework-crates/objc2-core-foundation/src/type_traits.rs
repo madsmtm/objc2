@@ -44,8 +44,8 @@ pub unsafe trait Type {
 /// A concrete CoreFoundation type.
 ///
 /// This trait is implemented for CoreFoundation types which have a
-/// `CFTypeID`, which should be most types except for mutable variants, as
-/// well as the root `CFType`.
+/// `CFTypeID`, which should be most types except for mutable variants, types
+/// with generics, as well as the root `CFType`.
 ///
 ///
 /// # Mutable types
@@ -64,9 +64,21 @@ pub unsafe trait Type {
 /// `CFStringCreateMutableCopy`, or use an unchecked cast.
 ///
 ///
+/// # Generic types
+///
+/// Only the "base" type / the type without generics implements this.
+///
+/// So for example, `CFArray` implements this trait, but `CFArray<CFString>`
+/// does not (as we cannot query the type of the inner element without
+/// actually inspecting the element, and since `CFArray`s aren't required to
+/// hold CF types).
+///
+///
 /// # Safety
 ///
 /// - The type must not be mutable.
+/// - The type must not be generic (e.g. this can only be implemented for the
+///   base `CFArray`, not for all `CFArray<T>`).
 /// - The [`type_id`][Self::type_id] must be implemented correctly, and must
 ///   uniquely identify the type.
 pub unsafe trait ConcreteType: Type {

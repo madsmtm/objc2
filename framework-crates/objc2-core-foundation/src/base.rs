@@ -172,7 +172,7 @@ impl hash::Hash for CFType {
     }
 }
 
-crate::__cf_type_objc2!(CFType, crate::__cf_macro_helpers::Encoding::Void);
+crate::__cf_type_objc2!(impl () CFType, crate::__cf_macro_helpers::Encoding::Void);
 
 // NOTE: impl AsRef<CFType> for AnyObject would probably not be valid, since
 // not all Objective-C objects can be used as CoreFoundation objects (?)

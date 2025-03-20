@@ -603,6 +603,7 @@ pub enum Stmt {
     /// typedef struct CF_BRIDGED_TYPE(id) CGColorSpace *CGColorSpaceRef;
     OpaqueDecl {
         id: ItemIdentifier,
+        generics: Vec<String>,
         encoding_name: String,
         availability: Availability,
         documentation: Documentation,
@@ -1169,6 +1170,7 @@ impl Stmt {
 
                         return vec![Self::OpaqueDecl {
                             id,
+                            generics: data.generics.clone(),
                             encoding_name: encoding_name.unwrap().to_string(),
                             availability,
                             documentation,
@@ -1189,6 +1191,7 @@ impl Stmt {
                         return vec![
                             Self::OpaqueDecl {
                                 id: record_id,
+                                generics: data.generics.clone(),
                                 encoding_name: encoding_name.unwrap().to_string(),
                                 availability: Availability::parse(&entity, context),
                                 documentation: Documentation::from_entity(&entity),
@@ -1864,10 +1867,17 @@ impl Stmt {
                 items
             }
             Self::AliasDecl { ty, .. } => ty.required_items().collect(),
-            Self::OpaqueDecl { superclass, .. } => {
+            Self::OpaqueDecl {
+                generics,
+                superclass,
+                ..
+            } => {
                 let mut items = vec![ItemTree::unsafecell(), ItemTree::phantoms()];
                 if let Some(superclass) = superclass {
                     items.push(ItemTree::new(superclass.clone(), items.clone()));
+                }
+                if !generics.is_empty() {
+                    items.push(ItemTree::core_ffi("c_void"));
                 }
                 items
             }
@@ -1951,10 +1961,11 @@ impl Stmt {
 
             impl fmt::Display for GenericTyHelper<'_> {
                 fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                    if !self.0.is_empty() {
-                        write!(f, "<")?;
-                        for generic in self.0 {
-                            write!(f, "{generic}, ")?;
+                    let mut iter = self.0.iter();
+                    if let Some(first) = iter.next() {
+                        write!(f, "<{first}")?;
+                        for generic in iter {
+                            write!(f, ", {generic}")?;
                         }
                         write!(f, ">")?;
                     }
@@ -1966,10 +1977,11 @@ impl Stmt {
 
             impl fmt::Display for GenericParamsHelper<'_> {
                 fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                    if !self.0.is_empty() {
-                        write!(f, "<")?;
-                        for generic in self.0 {
-                            write!(f, "{generic}: {}, ", self.1)?;
+                    let mut iter = self.0.iter();
+                    if let Some(first) = iter.next() {
+                        write!(f, "<{first}: {}", self.1)?;
+                        for generic in iter {
+                            write!(f, ", {generic}: {}", self.1)?;
                         }
                         write!(f, ">")?;
                     }
@@ -2849,9 +2861,10 @@ impl Stmt {
 
                     let (ret, _) = result_type.fn_return(false);
 
-                    // Only emit for base types, not foretr mutable subclasses,
+                    // Only emit for base types, not for mutable subclasses,
                     // as it's unclear whether it's safe to downcast to
-                    // mutable subclasses.
+                    // mutable subclasses. Similarly, we only implement this
+                    // for the base generic type (`CFArray<c_void>`).
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     writeln!(f, "unsafe impl ConcreteType for {} {{", cf_id.path())?;
 
@@ -2906,6 +2919,7 @@ impl Stmt {
                 }
                 Self::OpaqueDecl {
                     id,
+                    generics,
                     encoding_name,
                     availability,
                     documentation,
@@ -2920,7 +2934,13 @@ impl Stmt {
                         // To avoid warnings, though mostly useless.
                         writeln!(f, "#[derive(Debug)]")?;
                     }
-                    writeln!(f, "pub struct {} {{", id.name)?;
+                    // Default generics to `Opaque` helper type.
+                    writeln!(
+                        f,
+                        "pub struct {}{} {{",
+                        id.name,
+                        GenericParamsHelper(generics, "?Sized = Opaque")
+                    )?;
                     // Make the type be considered FFI-safe.
                     writeln!(f, "    inner: [u8; 0],")?;
                     // Same as objc2::ffi::OpaqueData, almost equivalent to using `extern type`.
@@ -2928,6 +2948,14 @@ impl Stmt {
                         f,
                         "    _p: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,"
                     )?;
+                    if !generics.is_empty() {
+                        write!(f, "    _generics: PhantomData<(")?;
+                        for generic in generics {
+                            // Make generics invariant (like in `objc2::extern_class!`).
+                            write!(f, "*mut {generic}, ")?;
+                        }
+                        writeln!(f, ")>,")?;
+                    }
                     writeln!(f, "}}")?;
 
                     writeln!(f)?;
@@ -2944,11 +2972,23 @@ impl Stmt {
                         writeln!(f, "cf_type!(")?;
                         writeln!(f, "    #[encoding_name = {encoding_name:?}]")?;
 
+                        // SAFETY: It's fine to implement helper traits for
+                        // all generics (e.g. all of `CFArray<u32>`,
+                        // `CFArray<CFString>` and `CFArray<Box<String>>`),
+                        // since unlike e.g. `NSArray<u32>`, these are all
+                        // perfectly valid types (their correct construction
+                        // is controlled with CFArrayCallBacks).
+                        write!(
+                            f,
+                            "    unsafe impl{} {}{}",
+                            GenericParamsHelper(generics, "?Sized"),
+                            id.name,
+                            GenericTyHelper(generics),
+                        )?;
                         if let Some(superclass) = superclass {
-                            writeln!(f, "    unsafe impl {}: {} {{}}", id.name, superclass.name)?;
-                        } else {
-                            writeln!(f, "    unsafe impl {} {{}}", id.name)?;
+                            write!(f, ": {}{}", superclass.name, GenericTyHelper(generics))?;
                         }
+                        writeln!(f, " {{}}")?;
                         writeln!(f, ");")?;
                     } else {
                         let required_items = self
@@ -2957,7 +2997,13 @@ impl Stmt {
                         let cfg_encoding = self.cfg_gate_ln_for(required_items, config);
                         // SAFETY: The struct is a ZST type marked `#[repr(C)]`.
                         write!(f, "{cfg_encoding}")?;
-                        writeln!(f, "unsafe impl RefEncode for {} {{", id.name)?;
+                        writeln!(
+                            f,
+                            "unsafe impl{} RefEncode for {}{} {{",
+                            GenericParamsHelper(generics, "UnknownBound"),
+                            id.name,
+                            GenericTyHelper(generics)
+                        )?;
                         write!(f, "    const ENCODING_REF: Encoding = ")?;
                         writeln!(f, "Encoding::Pointer(&Encoding::Struct(")?;
                         writeln!(f, "        {encoding_name:?},")?;

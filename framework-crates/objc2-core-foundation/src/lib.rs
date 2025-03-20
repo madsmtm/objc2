@@ -34,6 +34,7 @@ mod generated;
 mod geometry;
 #[cfg(feature = "CFNumber")]
 mod number;
+mod opaque;
 mod retained;
 #[cfg(feature = "CFString")]
 mod string;
@@ -53,6 +54,11 @@ pub use self::generated::*;
 pub use self::geometry::*;
 pub use self::retained::CFRetained;
 pub use self::type_traits::{ConcreteType, Type};
+
+// This is not exposed publicly, so the only way to use this in types with
+// generics is to use it through the default type (e.g. the user should write
+// `CFArray` instead of `CFArray<Opaque>`).
+pub(crate) use self::opaque::Opaque;
 
 // MacTypes.h
 #[allow(dead_code)]

@@ -488,6 +488,8 @@ pub struct TypedefData {
     pub skipped: bool,
     #[serde(default)]
     pub renamed: Option<String>,
+    #[serde(default)]
+    pub generics: Vec<String>,
 }
 
 #[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]

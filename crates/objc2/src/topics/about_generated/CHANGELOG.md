@@ -88,6 +88,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `VideoSubscriberAccount` / `objc2-video-subscriber-account`.
 * Added fallback for `MTLCopyAllDevices` on non-macOS platforms.
 
+### Changed
+* Made `CFArray`, `CFBag`, `CFBinaryHeap`, `CFDictionary`, `CFSet` and their
+  mutable counterparts generic. Most signatures won't use the generic version,
+  but making these generic allows for higher-level abstractions and more
+  ergonomic usage.
+
 ### Fixed
 * **BREAKING**: Fixed the type of `AuthorizationExecuteWithPrivileges`'s
   `arguments` parameter by changing it from `NonNull<NonNull<c_char>>` to
