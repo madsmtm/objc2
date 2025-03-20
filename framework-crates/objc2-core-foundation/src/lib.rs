@@ -29,6 +29,8 @@ mod data;
 mod date;
 #[cfg(feature = "CFError")]
 mod error;
+#[cfg(feature = "CFFileDescriptor")]
+mod filedescriptor;
 mod generated;
 #[cfg(feature = "CFCGTypes")]
 mod geometry;
