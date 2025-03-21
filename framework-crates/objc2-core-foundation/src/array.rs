@@ -197,6 +197,7 @@ impl<T: ?Sized> CFArray<T> {
     ///
     /// The array must not be mutated while the returned references are alive.
     #[cfg(feature = "alloc")]
+    #[doc(alias = "CFArrayGetValues")]
     pub unsafe fn to_vec_unchecked(&self) -> Vec<&T>
     where
         T: Type,
@@ -292,7 +293,8 @@ impl<T: ?Sized> CFArray<T> {
     }
 
     /// Convert the array to a `Vec` of the array's objects.
-    #[doc(alias = "getObjects:")]
+    #[cfg(feature = "alloc")]
+    #[doc(alias = "CFArrayGetValues")]
     pub fn to_vec(&self) -> Vec<CFRetained<T>>
     where
         T: Type + Sized,
