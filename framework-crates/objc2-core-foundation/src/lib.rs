@@ -10,7 +10,7 @@
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-core-foundation/0.3.0")]
 
-#[cfg(feature = "alloc")]
+#[cfg(any(test, feature = "alloc"))]
 extern crate alloc;
 
 #[cfg(feature = "std")]
@@ -18,6 +18,8 @@ extern crate std;
 
 #[doc(hidden)]
 pub mod __cf_macro_helpers;
+#[cfg(feature = "CFArray")]
+mod array;
 #[cfg(feature = "CFBase")]
 mod base;
 #[cfg(feature = "CFBundle")]
@@ -46,6 +48,8 @@ mod type_traits;
 #[cfg(feature = "CFUUID")]
 mod uuid;
 
+#[cfg(all(feature = "CFBase", feature = "CFArray"))]
+pub use self::array::*;
 #[cfg(feature = "CFBase")]
 pub use self::base::*;
 #[cfg(feature = "CFBundle")]

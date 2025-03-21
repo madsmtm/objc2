@@ -189,8 +189,8 @@ impl<ObjectType: Message> NSArray<ObjectType> {
     ///
     /// # Safety
     ///
-    /// The array must not be mutated for the lifetime of the iterator, or the
-    /// elements it returns.
+    /// The array must not be mutated for the lifetime of the iterator or for
+    /// the lifetime of the elements the iterator returns.
     #[cfg(feature = "NSEnumerator")]
     #[doc(alias = "objectEnumerator")]
     #[inline]
@@ -278,7 +278,7 @@ impl<ObjectType: Message> NSMutableArray<ObjectType> {
     pub fn insert(&self, index: usize, obj: &ObjectType) {
         // TODO: Replace this check with catching the thrown NSRangeException
         let len = self.len();
-        if index < len {
+        if index <= len {
             self.insertObject_atIndex(obj, index)
         } else {
             panic!(

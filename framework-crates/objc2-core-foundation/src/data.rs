@@ -4,7 +4,17 @@ use core::slice;
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 
+#[cfg(feature = "CFBase")]
+use crate::CFIndex;
 use crate::{CFData, CFDataGetBytePtr, CFDataGetLength};
+
+#[cfg(feature = "CFBase")]
+fn get_len(bytes: &[u8]) -> CFIndex {
+    bytes
+        .len()
+        .try_into()
+        .expect("buffer too large to fit in CFData")
+}
 
 impl CFData {
     /// Creates a new `CFData` from a byte slice.
@@ -12,7 +22,7 @@ impl CFData {
     #[cfg(feature = "CFBase")]
     #[doc(alias = "CFDataCreate")]
     pub fn from_bytes(bytes: &[u8]) -> crate::CFRetained<Self> {
-        let len = bytes.len().try_into().expect("buffer too large");
+        let len = get_len(bytes);
         unsafe { crate::CFDataCreate(None, bytes.as_ptr(), len) }.expect("failed creating CFData")
     }
 
@@ -25,7 +35,7 @@ impl CFData {
     #[cfg(feature = "CFBase")]
     #[doc(alias = "CFDataCreateWithBytesNoCopy")]
     pub fn from_static_bytes(bytes: &'static [u8]) -> crate::CFRetained<Self> {
-        let len = bytes.len().try_into().expect("buffer too large");
+        let len = get_len(bytes);
         // SAFETY: Same as `CFString::from_static_str`.
         unsafe {
             crate::CFDataCreateWithBytesNoCopy(None, bytes.as_ptr(), len, crate::kCFAllocatorNull)
