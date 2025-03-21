@@ -72,10 +72,6 @@ fn.IOConnectUnmapMemory64.skipped = true
 # Needs libdispatch
 fn.IONotificationPortSetDispatchQueue.skipped = true
 
-# Value taken from a type that is c_long internally.
-const.kXHCISSRootHubAddress.use-value = true
-const.kXHCIUSB2RootHubAddress.use-value = true
-
 # Recursive
 typedef.LowLatencyUserBufferInfo.skipped = true
 struct.LowLatencyUserBufferInfo.skipped = true

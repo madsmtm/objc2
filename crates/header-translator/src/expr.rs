@@ -9,15 +9,16 @@ use crate::availability::Availability;
 use crate::context::MacroLocation;
 use crate::id::ItemTree;
 use crate::name_translation::enum_prefix;
-use crate::rust_type::Ty;
+use crate::rust_type::{Primitive, Ty};
 use crate::unexposed_attr::UnexposedAttr;
-use crate::{immediate_children, Context, ItemIdentifier};
+use crate::{immediate_children, Context, ItemIdentifier, Location};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Token {
     Punctuation(String),
     Literal(String),
     Expr(Expr),
+    Cast { to: String },
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -33,9 +34,13 @@ pub enum Expr {
     Enum {
         id: ItemIdentifier,
         variant: String,
+        ty: Ty,
         attrs: HashSet<UnexposedAttr>,
     },
-    Const(ItemIdentifier), // TODO: Type
+    Const {
+        id: ItemIdentifier,
+        ty: Ty,
+    },
     Var {
         id: ItemIdentifier,
         ty: Ty,
@@ -53,6 +58,35 @@ impl Expr {
             EvaluationResult::UnsignedInteger(n) => Expr::Unsigned(n),
             EvaluationResult::Float(n) => Self::Float(n),
             res => panic!("unexpected evaluation result {res:?}"),
+        }
+    }
+
+    pub fn guess_type(&self, location: &Location) -> Ty {
+        let fallback = Ty::Primitive(Primitive::UInt);
+
+        match self {
+            Self::Signed(_) => Ty::Primitive(Primitive::Int),
+            Self::Unsigned(_) => Ty::Primitive(Primitive::UInt),
+            Self::Float(_) => Ty::Primitive(Primitive::Float),
+            Self::MacroInvocation { evaluated, .. } => {
+                if let Some(evaluated) = evaluated {
+                    evaluated.guess_type(location)
+                } else {
+                    fallback
+                }
+            }
+            Self::Enum { ty, .. } | Self::Var { ty, .. } | Self::Const { ty, .. } => ty.clone(),
+            Self::Tokens(tokens) => match &tokens[..] {
+                [Token::Cast { to }, ..] => {
+                    Ty::TypeDef {
+                        id: ItemIdentifier::from_raw(to.clone(), location.clone()),
+                        // Unclear what the casted type actually typedefs to.
+                        to: Box::new(Ty::Primitive(Primitive::Void)),
+                    }
+                }
+                [Token::Expr(expr), ..] => expr.guess_type(location),
+                _ => fallback,
+            },
         }
     }
 
@@ -129,7 +163,8 @@ impl Expr {
 
         let mut res = vec![];
 
-        for token in &tokens {
+        let mut i = 0;
+        while let Some(token) = tokens.get(i) {
             res.push(match (token.get_kind(), token.get_spelling()) {
                 (TokenKind::Identifier, ident) => {
                     Token::Expr(if let Some(expr) = declaration_references.get(&ident) {
@@ -182,8 +217,27 @@ impl Expr {
                 }
                 (TokenKind::Punctuation, punct) => {
                     match &*punct {
+                        "(" => {
+                            // Try to parse type-cast expression.
+                            if let Some(token) = tokens.get(i + 1) {
+                                if token.get_kind() == TokenKind::Identifier {
+                                    let to = token.get_spelling();
+                                    if let Some(token) = tokens.get(i + 2) {
+                                        if token.get_kind() == TokenKind::Punctuation
+                                            && token.get_spelling() == ")"
+                                        {
+                                            res.push(Token::Cast { to });
+                                            i += 3;
+                                            continue;
+                                        }
+                                    }
+                                }
+                            }
+                            // Otherwise, treat it as a normal parenthesis.
+                            Token::Punctuation(punct)
+                        }
                         // These have the same semantics in C and Rust (bar overflow)
-                        "(" | ")" | "<<" | ">>" | "-" | "+" | "|" | "&" | "^" | "*" | "/" | "," => {
+                        ")" | "<<" | ">>" | "-" | "+" | "|" | "&" | "^" | "*" | "/" | "," => {
                             Token::Punctuation(punct)
                         }
                         // Bitwise not
@@ -202,6 +256,7 @@ impl Expr {
                     Token::Literal(spelling.to_string())
                 }
             });
+            i += 1;
         }
 
         // Trim unnecessary parentheses
@@ -209,11 +264,11 @@ impl Expr {
         let is_right_paren = |token: &Token| matches!(token, Token::Punctuation(p) if p == ")");
         if res.first().map(is_left_paren).unwrap_or(false)
             && res.last().map(is_right_paren).unwrap_or(false)
-            && res
+            && res[1..res.len() - 1]
                 .iter()
-                .filter(|token| is_left_paren(token) || is_right_paren(token))
-                .count()
-                == 2
+                .find(|token| is_left_paren(token) || is_right_paren(token))
+                .map(is_left_paren)
+                .unwrap_or(true)
         {
             res.remove(0);
             res.pop();
@@ -239,6 +294,12 @@ impl Expr {
                 assert_eq!(parent.get_kind(), EntityKind::EnumDecl);
                 let parent_id = ItemIdentifier::new_optional(&parent, context);
                 let variant = entity.get_name().expect("EnumConstantDecl name");
+
+                let ty = Ty::parse_enum(
+                    parent.get_enum_underlying_type().expect("enum type"),
+                    context,
+                );
+
                 if parent_id.name.is_some() {
                     let parent_id = parent_id.map_name(|name| name.unwrap());
 
@@ -273,10 +334,14 @@ impl Expr {
                     Self::Enum {
                         id: parent_id,
                         variant,
+                        ty,
                         attrs,
                     }
                 } else {
-                    Self::Const(parent_id.map_name(|_| variant))
+                    Self::Const {
+                        id: parent_id.map_name(|_| variant),
+                        ty,
+                    }
                 }
             }
             EntityKind::VarDecl => Self::Var {
@@ -299,11 +364,11 @@ impl Expr {
                     items.push(ItemTree::from_id(id.clone()));
                 }
             }
-            Self::Enum { id, .. } => {
-                items.push(ItemTree::from_id(id.clone()));
+            Self::Enum { id, ty, .. } => {
+                items.push(ItemTree::new(id.clone(), ty.required_items()));
             }
-            Self::Const(id) => {
-                items.push(ItemTree::from_id(id.clone()));
+            Self::Const { id, ty, .. } => {
+                items.push(ItemTree::new(id.clone(), ty.required_items()));
             }
             Self::Var { id, ty } => {
                 items.push(ItemTree::new(id.clone(), ty.required_items()));
@@ -316,6 +381,7 @@ impl Expr {
                         Token::Expr(expr) => {
                             items.extend(expr.required_items());
                         }
+                        Token::Cast { .. } => {}
                     }
                 }
             }
@@ -356,13 +422,16 @@ impl fmt::Display for Expr {
                     write!(f, "{}", id.path())
                 }
             }
-            Self::Enum { id, variant, attrs } => {
+            Self::Enum {
+                id,
+                variant,
+                ty,
+                attrs,
+            } => {
                 if attrs.contains(&UnexposedAttr::ClosedEnum) {
                     // Close enums are actual Rust `enum`s, so to get their
                     // value, we use an `as` cast.
-                    // Using `usize` here is a hack, we should be using the
-                    // actual enum type.
-                    write!(f, "{}::{variant} as usize", id.name)
+                    write!(f, "{}::{variant} as {}", id.name, ty.enum_())
                 } else {
                     // Note: Even though we have the enum kind available here,
                     // we cannot avoid the `.0` here, as the expression must
@@ -370,7 +439,7 @@ impl fmt::Display for Expr {
                     write!(f, "{}::{variant}.0", id.name)
                 }
             }
-            Self::Const(id) => write!(f, "{}", id.name),
+            Self::Const { id, .. } => write!(f, "{}", id.name),
             Self::Var { id, ty } => {
                 if ty.is_enum_through_typedef() {
                     write!(f, "{}.xxx", id.name)
@@ -384,6 +453,7 @@ impl fmt::Display for Expr {
                         Token::Punctuation(punct) => write!(f, "{punct}")?,
                         Token::Literal(lit) => write!(f, "{lit}")?,
                         Token::Expr(expr) => write!(f, "{expr}")?,
+                        Token::Cast { .. } => write!(f, "")?,
                     }
                 }
                 Ok(())

@@ -2612,6 +2612,10 @@ impl Ty {
         Self::parse(ty, Lifetime::Unspecified, context)
     }
 
+    pub(crate) fn is_simple_uint(&self) -> bool {
+        matches!(self, Self::Primitive(Primitive::UInt))
+    }
+
     pub(crate) fn parse_static(ty: Type<'_>, context: &Context<'_>) -> Self {
         Self::parse(ty, Lifetime::Unspecified, context)
     }

@@ -4,6 +4,6 @@ crate = "objc2-security-interface"
 required-crates = ["objc2", "objc2-foundation", "objc2-app-kit"]
 macos = "10.3"
 
-# Uses NSCancelButton and NSOKButton, which are skipped in AppKit.
+# Uses NSCancelButton and NSOKButton, which have a different type in AppKit.
 const.SFButtonTypeCancel.use-value = true
 const.SFButtonTypeOK.use-value = true

@@ -17,7 +17,6 @@ extern crate std;
 
 #[cfg(feature = "libc")]
 mod consumes_argument;
-#[allow(unused_parens, clippy::double_parens)]
 mod generated;
 mod macros;
 

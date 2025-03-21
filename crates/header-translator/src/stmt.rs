@@ -1355,7 +1355,7 @@ impl Stmt {
                 let availability = Availability::parse(entity, context);
 
                 let ty = entity.get_enum_underlying_type().expect("enum type");
-                let ty = Ty::parse_enum(ty, context);
+                let mut ty = Ty::parse_enum(ty, context);
                 let is_signed = ty.is_signed().unwrap_or_else(|| {
                     error!(?ty, "cannot determine signed-ness of enum");
                     false
@@ -1424,6 +1424,10 @@ impl Stmt {
                         };
 
                         let documentation = Documentation::from_entity(&entity);
+
+                        if ty.is_simple_uint() {
+                            ty = expr.guess_type(id.location());
+                        }
 
                         variants.push((name, documentation, availability, expr));
                     }

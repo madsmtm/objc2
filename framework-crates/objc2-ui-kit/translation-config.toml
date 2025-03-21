@@ -77,14 +77,6 @@ class.UIImage.skipped-protocols = ["UIItemProviderPresentationSizeProviding", "U
 # Requires MainThreadOnly, which I'm not sure NSTextAttachment is?
 class.NSTextAttachment.skipped-protocols = ["UIAccessibilityContentSizeCategoryImageAdjusting"]
 
-# Type defaults to `c_int`, but value is `NSInteger`
-const.NSControlCharacterZeroAdvancementAction.use-value = true
-const.NSControlCharacterWhitespaceAction.use-value = true
-const.NSControlCharacterHorizontalTabAction.use-value = true
-const.NSControlCharacterLineBreakAction.use-value = true
-const.NSControlCharacterParagraphBreakAction.use-value = true
-const.NSControlCharacterContainerBreakAction.use-value = true
-
 # Typedef to an enum, which our values handle wrong
 typedef.UITextWritingDirection.skipped = true
 static.UITextWritingDirectionNatural.skipped = true

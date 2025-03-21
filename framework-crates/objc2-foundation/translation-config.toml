@@ -146,9 +146,6 @@ class.NSMutableAttributedString.methods."initWithRTFDFileWrapper:documentAttribu
 class.NSMutableAttributedString.methods."initWithURL:documentAttributes:".skipped = true
 class.NSMutableAttributedString.methods."initWithPath:documentAttributes:".skipped = true
 
-# Wrong type compared to value
-const.NSWrapCalendarComponents.skipped = true
-
 # Marked as API_UNAVAILABLE in a category, so we hit the duplicate checking
 class.NSLocale.methods.init.skipped = true
 class.NSLocale.methods.new.skipped = true
