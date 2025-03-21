@@ -192,3 +192,13 @@ pub(crate) type SRefCon = *mut core::ffi::c_void;
 pub(crate) type SRefCon = i32;
 #[allow(unused)]
 pub(crate) type OSErr = i16;
+
+/// [Apple's documentation](https://developer.apple.com/documentation/foundation/nstimeintervalsince1970?language=objc)
+#[allow(non_upper_case_globals)]
+#[cfg(feature = "NSDate")]
+pub const NSTimeIntervalSince1970: crate::NSTimeInterval = 978307200.0;
+
+/// [Apple's documentation](https://developer.apple.com/documentation/foundation/nsurlresponseunknownlength?language=objc)
+#[allow(non_upper_case_globals)]
+#[cfg(feature = "NSURLResponse")]
+pub const NSURLResponseUnknownLength: core::ffi::c_longlong = -1;

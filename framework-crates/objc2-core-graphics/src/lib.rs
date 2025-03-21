@@ -25,3 +25,29 @@ pub use self::generated::*;
 pub(crate) type UniCharCount = core::ffi::c_ulong;
 #[allow(dead_code)]
 pub(crate) type UniChar = u16;
+
+#[allow(non_upper_case_globals)]
+#[cfg(feature = "CGWindowLevel")]
+/// [Apple's documentation](https://developer.apple.com/documentation/coregraphics/kcgnumreservedwindowlevels?language=objc)
+pub const kCGNumReservedWindowLevels: i32 = 16;
+
+#[allow(non_upper_case_globals)]
+#[cfg(feature = "CGWindowLevel")]
+/// [Apple's documentation](https://developer.apple.com/documentation/coregraphics/kcgnumreservedbasewindowlevels?language=objc)
+pub const kCGNumReservedBaseWindowLevels: i32 = 5;
+
+#[allow(non_upper_case_globals)]
+#[cfg(feature = "CGWindowLevel")]
+/// [Apple's documentation](https://developer.apple.com/documentation/coregraphics/kcgbasewindowlevel?language=objc)
+pub const kCGBaseWindowLevel: CGWindowLevel = i32::MIN;
+
+#[allow(non_upper_case_globals)]
+#[cfg(feature = "CGWindowLevel")]
+/// [Apple's documentation](https://developer.apple.com/documentation/coregraphics/kcgminimumwindowlevel?language=objc)
+pub const kCGMinimumWindowLevel: CGWindowLevel =
+    kCGBaseWindowLevel + kCGNumReservedBaseWindowLevels;
+
+#[allow(non_upper_case_globals)]
+#[cfg(feature = "CGWindowLevel")]
+/// [Apple's documentation](https://developer.apple.com/documentation/coregraphics/kcgmaximumwindowlevel?language=objc)
+pub const kCGMaximumWindowLevel: CGWindowLevel = i32::MAX - kCGNumReservedWindowLevels;

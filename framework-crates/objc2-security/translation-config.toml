@@ -148,3 +148,9 @@ enum.__anonymous__.use-value = true
 
 # Manually re-defined: see #711.
 fn.AuthorizationExecuteWithPrivileges.skipped = true
+
+# Does `-1 as SecCertificateRef`.
+const.kSecTrustSettingsDefaultRootCertSetting.skipped = true
+
+# Concatenates strings
+const.kSystemKeychainPath.skipped = true

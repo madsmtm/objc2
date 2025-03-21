@@ -21,3 +21,18 @@ static.MPSFunctionConstantNoneArray.skipped = true
 # Unclear how to handle these (non-null return error methods).
 class.MPSKeyedUnarchiver.methods."initForReadingFromData:error:".skipped = true
 class.MPSKeyedUnarchiver.methods."initForReadingFromData:device:error:".skipped = true
+
+# Emit these.
+const.MPSDeviceCapsIndex.skipped = false
+const.MPSFunctionConstantIndex.skipped = false
+const.MPSBatchSizeIndex.skipped = false
+const.MPSUserConstantIndex.skipped = false
+const.MPSNDArrayConstantIndex.skipped = false
+const.MPSFunctionConstantIndexReserved.skipped = false
+const.MPSTextureLinkingConstantIndex.skipped = false
+const.MPSNDArrayConstantMultiDestIndex.skipped = false
+const.MPSNDArrayConstantMultiDestIndex0.skipped = false
+const.MPSNDArrayConstantMultiDestIndex1.skipped = false
+const.MPSNDArrayConstantMultiDestSrcAddressingIndex.skipped = false
+const.MPSNDArrayConstantMultiDestDstAddressingIndex.skipped = false
+const.MPSUserAvailableFunctionConstantStartIndex.skipped = false

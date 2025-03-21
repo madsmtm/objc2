@@ -21,3 +21,6 @@ fn.CMTextFormatDescriptionGetDefaultStyle.skipped = true
 # Differing definitions depending on architecture
 typedef.CMBaseClassVersion.skipped = true
 typedef.CMStructVersion.skipped = true
+
+# Used to better support older versions that didn't expose the symbol, but redundant nowadays.
+const.kCMFormatDescriptionExtension_VerbatimImageDescription.skipped = true

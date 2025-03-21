@@ -99,7 +99,7 @@ impl Versions {
 }
 
 /// <https://docs.swift.org/swift-book/ReferenceManual/Attributes.html#ID583>
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct Availability {
     unavailable: Unavailable,
     introduced: Versions,

@@ -325,9 +325,30 @@ fn parse_translation_unit(
                     .insert(MacroLocation::from_location(&location), entity);
             }
             EntityKind::MacroDefinition if preprocessing => {
-                // let name = entity.get_name().expect("macro def name");
-                // entity.is_function_like_macro();
-                // trace!("macrodef", name);
+                let macro_entity = MacroEntity::from_entity(&entity, context);
+                context
+                    .macro_invocations
+                    .insert(MacroLocation::from_location(&location), macro_entity);
+
+                let Some(file) = location.get_expansion_location().file else {
+                    // Ignore built-in macro definitions.
+                    return EntityVisitResult::Continue;
+                };
+
+                let location = Location::from_file(file);
+
+                // Only parse if the module is the current one and is not skipped.
+                if location.library_name() != library.data.framework
+                    || context.module_configs(&location).any(|c| c.skipped)
+                {
+                    return EntityVisitResult::Continue;
+                }
+
+                let module = library.module_mut(location);
+                if let Some(stmt) = Stmt::parse_macro_definition(&entity, context) {
+                    context.ident_mapping.extend(stmt.get_ident_mapping());
+                    module.add_stmt(stmt);
+                }
             }
             _ => {
                 if preprocessing {
@@ -349,6 +370,7 @@ fn parse_translation_unit(
 
                 let module = library.module_mut(location);
                 for stmt in Stmt::parse(&entity, context) {
+                    context.ident_mapping.extend(stmt.get_ident_mapping());
                     module.add_stmt(stmt);
                 }
             }

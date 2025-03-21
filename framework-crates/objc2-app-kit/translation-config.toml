@@ -116,6 +116,9 @@ class.NSAdaptiveImageGlyph.skipped-protocols = ["CTAdaptiveImageProviding"]
 # header-translator crashes when trying to figure out the return type of this.
 class.NSTextView.methods."quickLookPreviewableItemsInRanges:".skipped = true
 
+# Deprecated.
+const.NSImageRepRegistryChangedNotification.skipped = true
+
 ###
 ### Main Thread Overrides
 ###

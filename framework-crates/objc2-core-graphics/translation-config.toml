@@ -54,3 +54,16 @@ enum.CGEventFlags.use-value = true
 enum.CGEventType.use-value = true
 const.kCGEventTapDisabledByTimeout.use-value = true
 const.kCGEventTapDisabledByUserInput.use-value = true
+
+# Calls `CGMainDisplayID`.
+const.kCGDirectMainDisplay.skipped = true
+
+# Wrong type (should be i32)
+const.kCGNumReservedWindowLevels.skipped = true
+const.kCGNumReservedBaseWindowLevels.skipped = true
+
+# Needs to be wrapped as `CGEventType(!0)`.
+const.kCGAnyInputEventType.skipped = true
+
+# Complex value.
+const.CG_OS_VERSION_2020.skipped = true

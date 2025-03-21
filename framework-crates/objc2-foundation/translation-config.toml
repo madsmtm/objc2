@@ -182,6 +182,9 @@ const.NS_UnknownByteOrder.skipped = true
 const.NS_LittleEndian.skipped = true
 const.NS_BigEndian.skipped = true
 
+# Wrong type (should be `c_double`).
+const.NSTimeIntervalSince1970.skipped = true
+
 # Uses stuff from different frameworks / system libraries
 class.NSOperationQueue.methods.underlyingQueue.skipped = true
 class.NSOperationQueue.methods."setUnderlyingQueue:".skipped = true

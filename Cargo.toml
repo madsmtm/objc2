@@ -67,5 +67,10 @@ files.extend-exclude = [
 default.extend-identifiers.ParmDecl = "ParmDecl"
 # In framework-crates/objc2-core-nfc/translation-config.toml
 default.extend-identifiers.initWithVASCommandConfigurations = "initWithVASCommandConfigurations"
+# In framework-crates/objc2-image-io/translation-config.toml
+default.extend-identifiers.IMAGEIO_PNG_FILTER_PAETH = "IMAGEIO_PNG_FILTER_PAETH"
+# In framework-crates/objc2-io-bluetooth/translation-config.toml
+default.extend-identifiers.kBluetoothHCIEvnetMaskLinkSupervisionTimeoutChangedEvent = "kBluetoothHCIEvnetMaskLinkSupervisionTimeoutChangedEvent"
+default.extend-identifiers.kBluetoothHCIEvnetMaskEnhancedFlushCompleteEvent = "kBluetoothHCIEvnetMaskEnhancedFlushCompleteEvent"
 # Used in Metal, LOD = level of detail
 default.extend-words.lod = "lod"

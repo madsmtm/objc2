@@ -15,3 +15,6 @@ fn.be_memory_inline_jit_restrict_rwx_to_rx_with_witness_impl.skipped = true
 fn.be_memory_inline_jit_restrict_with_witness_supported.skipped = true
 fn.be_memory_inline_jit_restrict_rwx_to_rw_with_witness.skipped = true
 fn.be_memory_inline_jit_restrict_rwx_to_rx_with_witness.skipped = true
+
+# Not needed for us, we can't use it as a `const` anyhow.
+const.BE_JIT_WRITE_PROTECT_TAG.skipped = true

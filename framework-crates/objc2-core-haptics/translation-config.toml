@@ -13,3 +13,6 @@ static.CoreHapticsErrorDomain.skipped = true
 
 # error: unknown error result type
 class.CHHapticEngine.methods."registerAudioResource:options:error:".skipped = true
+
+# Emit this.
+const.CHHapticTimeImmediate.skipped = false

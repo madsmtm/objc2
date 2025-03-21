@@ -355,14 +355,7 @@ impl ItemIdentifier {
         }
     }
 
-    pub fn iokit_typedefs(name: impl Into<String>) -> Self {
-        Self {
-            name: name.into(),
-            location: Location::new("__builtin__"),
-        }
-    }
-
-    pub fn os_typedefs(name: impl Into<String>) -> Self {
+    pub fn builtin(name: impl Into<String>) -> Self {
         Self {
             name: name.into(),
             location: Location::new("__builtin__"),
@@ -378,6 +371,27 @@ impl ItemIdentifier {
         Self {
             name: name.into(),
             location: Location::new("Foundation.NSObject"),
+        }
+    }
+
+    pub fn cf_string() -> Self {
+        Self {
+            name: "CFString".into(),
+            location: Location::new("CoreFoundation.CFString"),
+        }
+    }
+
+    pub fn ns_string() -> Self {
+        Self {
+            name: "NSString".into(),
+            location: Location::new("Foundation.NSString"),
+        }
+    }
+
+    pub fn cf_uuid() -> Self {
+        Self {
+            name: "CFUUID".into(),
+            location: Location::new("CoreFoundation.CFUUID"),
         }
     }
 
@@ -704,6 +718,20 @@ impl ItemTree {
         Self::from_id(ItemIdentifier {
             name: name.into(),
             location: Location::new("CoreFoundation"),
+        })
+    }
+
+    pub fn cf_string_macro() -> Self {
+        Self::from_id(ItemIdentifier {
+            name: "cf_string".into(),
+            location: Location::new("CoreFoundation.CFString"),
+        })
+    }
+
+    pub fn ns_string_macro() -> Self {
+        Self::from_id(ItemIdentifier {
+            name: "ns_string".into(),
+            location: Location::new("Foundation.NSString"),
         })
     }
 

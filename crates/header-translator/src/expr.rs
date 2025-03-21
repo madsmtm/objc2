@@ -1,9 +1,10 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt;
 
 use clang::source::SourceRange;
 use clang::token::TokenKind;
 use clang::{Entity, EntityKind, EntityVisitResult, EvaluationResult};
+use four_char_code::FourCharCode;
 
 use crate::availability::Availability;
 use crate::context::MacroLocation;
@@ -14,9 +15,17 @@ use crate::unexposed_attr::UnexposedAttr;
 use crate::{immediate_children, Context, ItemIdentifier, Location};
 
 #[derive(Clone, Debug, PartialEq)]
+#[allow(clippy::upper_case_acronyms)]
 pub enum Token {
     Punctuation(String),
     Literal(String),
+    UnknownIdent(String),
+    ByteChar(u8),
+    FourChar(FourCharCode),
+    CStr(String),
+    CFStringBegin,
+    NSStringBegin,
+    CFUUID(String),
     Expr(Expr),
     Cast { to: String },
 }
@@ -77,17 +86,47 @@ impl Expr {
             }
             Self::Enum { ty, .. } | Self::Var { ty, .. } | Self::Const { ty, .. } => ty.clone(),
             Self::Tokens(tokens) => match &tokens[..] {
-                [Token::Cast { to }, ..] => {
+                [Token::CFStringBegin, ..] => Ty::const_cf_string_ref(),
+                [Token::NSStringBegin, ..] => Ty::const_ns_string_ref(),
+                [Token::CFUUID(_)] => Ty::const_cf_uuid_ref(),
+                [Token::CStr(_)] => Ty::const_cstr_ref(),
+                [Token::Literal(lit)] if lit.contains(".") => Ty::Primitive(Primitive::Float),
+                [.., Token::Cast { to }] => {
                     Ty::TypeDef {
                         id: ItemIdentifier::from_raw(to.clone(), location.clone()),
-                        // Unclear what the casted type actually typedefs to.
+                        // Unknown at this point what the casted type actually is.
                         to: Box::new(Ty::Primitive(Primitive::Void)),
                     }
                 }
-                [Token::Expr(expr), ..] => expr.guess_type(location),
+                [Token::Expr(expr)] => expr.guess_type(location),
+                [Token::Punctuation(punct), ..] if punct == "-" => Ty::Primitive(Primitive::Int),
                 _ => fallback,
             },
         }
+    }
+
+    pub fn update_idents(&mut self, ident_mapping: &HashMap<String, Expr>) -> bool {
+        let Self::Tokens(tokens) = self else {
+            return false;
+        };
+        let mut has_unknowns = false;
+        for token in tokens {
+            match token {
+                Token::UnknownIdent(ident) => {
+                    if let Some(expr) = ident_mapping.get(ident) {
+                        debug!(?expr, "updated expression");
+                        *token = Token::Expr(expr.clone());
+                    } else {
+                        has_unknowns = true;
+                    }
+                }
+                Token::Expr(expr) => {
+                    has_unknowns |= expr.update_idents(ident_mapping);
+                }
+                _ => {}
+            }
+        }
+        has_unknowns
     }
 
     pub fn parse_enum_constant(entity: &Entity<'_>, context: &Context<'_>) -> Self {
@@ -96,6 +135,36 @@ impl Expr {
 
     pub fn parse_var(entity: &Entity<'_>, context: &Context<'_>) -> Self {
         Self::parse(entity, context)
+    }
+
+    pub fn parse_macro_definition(entity: &Entity<'_>, context: &Context<'_>) -> Option<Self> {
+        let declaration_references = BTreeMap::new();
+
+        let [name_range] = entity.get_name_ranges()[..] else {
+            error!(?entity, "got multiple name ranges");
+            return None;
+        };
+        let range = entity.get_range().expect("macro def range");
+
+        // Remove the macro definition name from the source range.
+        let range = SourceRange::new(name_range.get_end(), range.get_end());
+
+        if range.get_start() == range.get_end() {
+            // Empty #define (like in header double-include guards).
+            return None;
+        }
+
+        let tokens = range.tokenize();
+
+        // Ignore macros that redefine themselves, like #define XYZ XYZ
+        if let [token] = &*tokens {
+            let name = entity.get_name().expect("macro def name");
+            if token.get_kind() == TokenKind::Identifier && token.get_spelling() == name {
+                return None;
+            }
+        }
+
+        Self::from_tokens(&tokens, &declaration_references, context)
     }
 
     fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Self {
@@ -161,36 +230,56 @@ impl Expr {
             }
         }
 
+        Self::from_tokens(&tokens, &declaration_references, context)
+            .unwrap_or_else(|| panic!("failed parsing tokens: {tokens:#?}"))
+    }
+
+    fn from_tokens(
+        tokens: &[clang::token::Token<'_>],
+        declaration_references: &BTreeMap<String, Expr>,
+        context: &Context<'_>,
+    ) -> Option<Self> {
         let mut res = vec![];
 
         let mut i = 0;
         while let Some(token) = tokens.get(i) {
             res.push(match (token.get_kind(), token.get_spelling()) {
                 (TokenKind::Identifier, ident) => {
-                    Token::Expr(if let Some(expr) = declaration_references.get(&ident) {
-                        expr.clone()
+                    if ident == "CFSTR" {
+                        Token::CFStringBegin
+                    } else if ident == "CFUUIDGetConstantUUIDWithBytes" {
+                        i += tokens.len();
+                        Token::CFUUID("todo".into())
+                    } else if let Some(expr) = declaration_references.get(&ident) {
+                        Token::Expr(expr.clone())
                     } else if let Some(macro_invocation) = context
                         .macro_invocations
                         .get(&MacroLocation::from_location(&token.get_location()))
                     {
-                        Expr::MacroInvocation {
+                        Token::Expr(Expr::MacroInvocation {
                             id: macro_invocation.id.clone(),
                             is_function_like: macro_invocation.is_function_like,
+                            evaluated: macro_invocation.value.clone(),
+                        })
+                    } else if tokens
+                        .get(i + 1)
+                        .map(|token| {
+                            token.get_kind() == TokenKind::Punctuation
+                                && token.get_spelling() == "("
+                        })
+                        .unwrap_or(false)
+                    {
+                        // Guess that this is a macro invocation
+                        Token::Expr(Expr::MacroInvocation {
+                            id: ItemIdentifier::builtin(ident),
+                            is_function_like: true,
                             evaluated: None,
-                        }
+                        })
                     } else {
-                        error!(?entity, ?token, "missing macro invocation in expr");
-                        return Self::from_evaluated(entity);
-                    })
+                        Token::UnknownIdent(ident)
+                    }
                 }
                 (TokenKind::Literal, lit) => {
-                    // UL, ull, etc.
-                    let lit = lit
-                        .trim_end_matches('l')
-                        .trim_end_matches('L')
-                        .trim_end_matches('u')
-                        .trim_end_matches('U');
-                    let lit = lit.replace("0X", "0x");
                     if let Some(lit) = lit.strip_prefix('\'') {
                         let chars = lit
                             .strip_suffix('\'')
@@ -198,20 +287,38 @@ impl Expr {
 
                         match chars.len() {
                             // Byte-character literal
-                            1 => Token::Literal(format!("b'{chars}' as _")),
+                            1 => Token::ByteChar(chars.as_bytes()[0]),
                             // Four character codes
                             4 => {
-                                let fcc = four_char_code::FourCharCode::from_str(chars)
+                                let fcc = FourCharCode::from_str(chars)
                                     .expect("invalid four character code");
 
-                                Token::Literal(format!("{:#010x}", fcc.as_u32()))
+                                Token::FourChar(fcc)
                             }
                             _ => {
                                 error!(?chars, "unknown length of single-quoted string");
                                 Token::Literal("UNSUPPORTED".into())
                             }
                         }
+                    } else if let Some(lit) = lit.strip_prefix('"') {
+                        let s = lit
+                            .strip_suffix('"')
+                            .expect("start quote to have end quote")
+                            .replace("\\p", "\\\\p");
+
+                        Token::CStr(s.to_string())
                     } else {
+                        // UL, ull, f, etc.
+                        let lit = lit
+                            .trim_end_matches('l')
+                            .trim_end_matches('L')
+                            .trim_end_matches('u')
+                            .trim_end_matches('U');
+                        let mut lit = lit.replace("0X", "0x");
+                        if lit.contains('.') {
+                            // If float
+                            lit = lit.trim_end_matches('f').to_string();
+                        }
                         Token::Literal(lit)
                     }
                 }
@@ -225,6 +332,7 @@ impl Expr {
                                     if let Some(token) = tokens.get(i + 2) {
                                         if token.get_kind() == TokenKind::Punctuation
                                             && token.get_spelling() == ")"
+                                            && tokens.get(i + 3).is_some()
                                         {
                                             res.push(Token::Cast { to });
                                             i += 3;
@@ -244,6 +352,7 @@ impl Expr {
                         "~" => Token::Punctuation("!".to_string()),
                         // Binary/boolean not
                         "!" => Token::Punctuation("!".to_string()),
+                        "@" => Token::NSStringBegin,
                         punct => {
                             error!("unknown expr punctuation {punct}");
                             Token::Punctuation(punct.to_string())
@@ -251,6 +360,14 @@ impl Expr {
                     }
                 }
                 (TokenKind::Comment, spelling) => Token::Literal(spelling.to_string()),
+                (TokenKind::Keyword, spelling) if spelling == "extern" => {
+                    // Cannot handle `extern` in expression.
+                    return None;
+                }
+                (TokenKind::Keyword, spelling) if spelling == "__attribute__" => {
+                    // `__attribute__` is usually not a macro we want to map as an expression.
+                    return None;
+                }
                 (kind, spelling) => {
                     error!("unknown expr token {kind:?}/{spelling}");
                     Token::Literal(spelling.to_string())
@@ -259,27 +376,44 @@ impl Expr {
             i += 1;
         }
 
-        // Trim unnecessary parentheses
-        let is_left_paren = |token: &Token| matches!(token, Token::Punctuation(p) if p == "(");
-        let is_right_paren = |token: &Token| matches!(token, Token::Punctuation(p) if p == ")");
-        if res.first().map(is_left_paren).unwrap_or(false)
-            && res.last().map(is_right_paren).unwrap_or(false)
-            && res[1..res.len() - 1]
-                .iter()
-                .find(|token| is_left_paren(token) || is_right_paren(token))
-                .map(is_left_paren)
-                .unwrap_or(true)
-        {
-            res.remove(0);
-            res.pop();
+        fn trim_parens(res: &mut Vec<Token>) {
+            // Trim unnecessary parentheses
+            let is_left_paren = |token: &Token| matches!(token, Token::Punctuation(p) if p == "(");
+            let is_right_paren = |token: &Token| matches!(token, Token::Punctuation(p) if p == ")");
+            if res.first().map(is_left_paren).unwrap_or(false)
+                && res.last().map(is_right_paren).unwrap_or(false)
+                && res[1..res.len() - 1]
+                    .iter()
+                    .find(|token| is_left_paren(token) || is_right_paren(token))
+                    .map(is_left_paren)
+                    .unwrap_or(true)
+            {
+                res.remove(0);
+                res.pop();
+            }
         }
+
+        trim_parens(&mut res);
+
+        // HACK: Move cast to the end of the expression.
+        let cast = if let Some(Token::Cast { .. }) = res.first() {
+            Some(res.remove(0))
+        } else {
+            None
+        };
+
+        trim_parens(&mut res);
 
         // Trim leading `+`
         if matches!(res.first(), Some(Token::Punctuation(p)) if p == "+") {
             res.remove(0);
         }
 
-        Self::Tokens(res)
+        if let Some(cast) = cast {
+            res.push(cast);
+        }
+
+        Some(Self::Tokens(res))
     }
 
     fn parse_from_decl_ref(entity: &Entity<'_>, context: &Context<'_>) -> Self {
@@ -376,12 +510,13 @@ impl Expr {
             Self::Tokens(tokens) => {
                 for token in tokens {
                     match token {
-                        Token::Punctuation(_) => {}
-                        Token::Literal(_) => {}
+                        Token::CStr(_) => items.push(ItemTree::core_ffi("CStr")),
+                        Token::CFStringBegin => items.push(ItemTree::cf_string_macro()),
+                        Token::NSStringBegin => items.push(ItemTree::ns_string_macro()),
                         Token::Expr(expr) => {
                             items.extend(expr.required_items());
                         }
-                        Token::Cast { .. } => {}
+                        _ => {}
                     }
                 }
             }
@@ -414,6 +549,10 @@ impl fmt::Display for Expr {
                     write!(f, "c_float::MAX")
                 } else if id.name == "DBL_MAX" {
                     write!(f, "c_double::MAX")
+                } else if id.name == "INT32_MIN" {
+                    write!(f, "i32::MIN")
+                } else if id.name == "INT32_MAX" {
+                    write!(f, "i32::MAX")
                 } else if let Some(evaluated) = evaluated {
                     write!(f, "{evaluated}")
                 } else if *is_function_like {
@@ -452,6 +591,19 @@ impl fmt::Display for Expr {
                     match token {
                         Token::Punctuation(punct) => write!(f, "{punct}")?,
                         Token::Literal(lit) => write!(f, "{lit}")?,
+                        Token::ByteChar(char) => {
+                            write!(f, "b'{}' as _", core::str::from_utf8(&[*char]).unwrap())?
+                        }
+                        Token::FourChar(fcc) => write!(f, "{:#010x}", fcc.as_u32())?,
+                        Token::UnknownIdent(ident) => write!(f, "Unknown{ident}")?,
+                        // TODO: Use c"..." once in MSRV.
+                        Token::CStr(s) => write!(
+                            f,
+                            "unsafe {{ CStr::from_bytes_with_nul_unchecked(b\"{s}\\0\") }}"
+                        )?,
+                        Token::CFStringBegin => write!(f, "cf_string!")?,
+                        Token::NSStringBegin => write!(f, "cf_string!")?,
+                        Token::CFUUID(_) => write!(f, "cf_uuid!(todo!())")?,
                         Token::Expr(expr) => write!(f, "{expr}")?,
                         Token::Cast { .. } => write!(f, "")?,
                     }

@@ -1,9 +1,10 @@
 //! Perform analyses that requires a full information about the parsed output.
 //!
 //! Try to keep these as few as possible.
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::mem;
 
+use crate::expr::Expr;
 use crate::method::Method;
 use crate::module::Module;
 use crate::stmt::Stmt;
@@ -20,7 +21,9 @@ pub fn global_analysis(library: &mut Library) {
             );
         }
     }
-    update_module(&mut library.module, &cf_type_id_mapping);
+
+    let ident_mapping = create_ident_mapping(&library.module);
+    update_module(&mut library.module, &cf_type_id_mapping, &ident_mapping);
 }
 
 fn find_cf_type_id_mapping(module: &Module) -> BTreeMap<String, ItemIdentifier> {
@@ -40,7 +43,22 @@ fn find_cf_type_id_mapping(module: &Module) -> BTreeMap<String, ItemIdentifier> 
     types
 }
 
-fn update_module(module: &mut Module, cf_type_id_mapping: &BTreeMap<String, ItemIdentifier>) {
+fn create_ident_mapping(module: &Module) -> HashMap<String, Expr> {
+    let mut mapping = HashMap::new();
+    for stmt in &module.stmts {
+        mapping.extend(stmt.get_ident_mapping());
+    }
+    for submodule in module.submodules.values() {
+        mapping.extend(create_ident_mapping(submodule));
+    }
+    mapping
+}
+
+fn update_module(
+    module: &mut Module,
+    cf_type_id_mapping: &BTreeMap<String, ItemIdentifier>,
+    ident_mapping: &HashMap<String, Expr>,
+) {
     // Fix location for GetTypeId functions
     for stmt in module.stmts.iter_mut() {
         if let Stmt::FnGetTypeId {
@@ -167,12 +185,21 @@ fn update_module(module: &mut Module, cf_type_id_mapping: &BTreeMap<String, Item
             }
         }
 
+        // Fix expressions in #define constants
+        if let Stmt::ConstDecl { id, value, .. } = &mut stmt {
+            let has_unknowns = value.update_idents(ident_mapping);
+            if has_unknowns {
+                warn!(name = ?id.name, "did not emit const, it had unknown values");
+                continue;
+            }
+        }
+
         module.stmts.push(stmt);
     }
 
     // Recurse for submodules
     for (name, module) in &mut module.submodules {
         let _span = debug_span!("file", name).entered();
-        update_module(module, cf_type_id_mapping);
+        update_module(module, cf_type_id_mapping, ident_mapping);
     }
 }

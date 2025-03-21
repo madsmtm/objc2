@@ -25,6 +25,38 @@ macro_rules! EncodeRequest {
     };
 }
 
+macro_rules! err_system {
+    ($x:expr) => {
+        ((($x as u32) & 0x3f) as i32) << 26
+    };
+}
+
+macro_rules! err_sub {
+    ($x:expr) => {
+        ($x & 0xfff) << 14
+    };
+}
+
+macro_rules! iokit_common_msg {
+    ($message:expr) => {
+        // (sys_iokit | sub_iokit_common | message)
+        (err_system!(0x38) | err_sub!(0) | $message) as u32
+    };
+}
+
+macro_rules! iokit_usb_msg {
+    ($message:expr) => {
+        // (sys_iokit | sub_iokit_usb | message)
+        (err_system!(0x38) | err_sub!(1) | $message) as u32
+    };
+}
+
+pub(crate) use err_sub;
+pub(crate) use err_system;
+pub(crate) use iokit_common_msg;
+pub(crate) use iokit_common_msg as iokit_common_err;
+pub(crate) use iokit_usb_msg as iokit_usb_err;
+pub(crate) use iokit_usb_msg;
 pub(crate) use EncodeRequest;
 pub(crate) use IOUSBBit;
 pub(crate) use IOUSBBit as IOUSBHostFamilyBit;

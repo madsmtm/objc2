@@ -7,3 +7,8 @@ ios = "16.0"
 tvos = "16.0"
 watchos = "9.0"
 visionos = "1.0"
+
+# Emit these.
+const.icVersion4Number.skipped = false
+const.COLORSYNC_PROFILE_INSTALL_ENTITLEMENT.skipped = false
+const.COLORSYNC_MD5_LENGTH.skipped = false

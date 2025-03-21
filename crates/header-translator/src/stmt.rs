@@ -1,6 +1,7 @@
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
+use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
 use std::fmt::Display;
@@ -1376,7 +1377,7 @@ impl Stmt {
                             .cloned()
                             .unwrap_or_default();
 
-                        if const_data.skipped {
+                        if const_data.skipped.unwrap_or(false) {
                             return;
                         }
 
@@ -1744,6 +1745,120 @@ impl Stmt {
                 vec![]
             }
         }
+    }
+
+    /// Ideally, we'd import macros in a similar fashion as Swift does:
+    /// <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/docs/HowSwiftImportsCAPIs.md#macros>
+    /// <https://developer.apple.com/documentation/swift/using-imported-c-macros-in-swift>
+    ///
+    /// I couldn't figure out a clean way to do that though, so our impl is a bit messy.
+    pub fn parse_macro_definition(entity: &Entity<'_>, context: &Context<'_>) -> Option<Self> {
+        let id = ItemIdentifier::new(entity, context);
+
+        if entity.is_function_like_macro() {
+            // Ignore function-like macros for now.
+            return None;
+        };
+
+        let data = context
+            .library(&id)
+            .const_data
+            .get(&id.name)
+            .cloned()
+            .unwrap_or_default();
+
+        if data.skipped.unwrap_or(false) {
+            return None;
+        }
+
+        if data.skipped.is_none()
+            && !id.name.starts_with('k')
+            && !id.name.to_lowercase().contains("version")
+        {
+            // By default, we want to map macros that start with "k", or
+            // contain the word "version". Seems to get us most of the things
+            // we want, without emitting weird things like `CG_INLINE`.
+            return None;
+        }
+
+        let mut value = Expr::parse_macro_definition(entity, context)?;
+        let _ = value.update_idents(&context.ident_mapping);
+
+        let ty = value.guess_type(id.location());
+
+        if ty.is_cf_type_ptr() || ty.is_object_like_ptr() {
+            // cf_string! and ns_string! are not supported (since they cannot
+            // yet be used in `const`).
+            return None;
+        }
+
+        Some(Self::ConstDecl {
+            id,
+            // macro definitions cannot have availability.
+            availability: Availability::default(),
+            ty,
+            value,
+            is_last: false,
+            documentation: Documentation::from_entity(entity),
+        })
+    }
+
+    pub fn get_ident_mapping(&self) -> HashMap<String, Expr> {
+        let mut mapping = HashMap::new();
+
+        match self {
+            Stmt::EnumDecl {
+                id,
+                ty,
+                kind,
+                variants,
+                ..
+            } => {
+                let mut relevant_enum_cases = variants
+                    .iter()
+                    .filter(|(_, _, availability, _)| availability.is_available_non_deprecated())
+                    .map(|(name, _, _, _)| &**name)
+                    .peekable();
+                let prefix = if relevant_enum_cases.peek().is_some() {
+                    enum_prefix(&id.name, relevant_enum_cases)
+                } else {
+                    enum_prefix(&id.name, variants.iter().map(|(name, _, _, _)| &**name))
+                };
+
+                for (name, ..) in variants {
+                    mapping.insert(
+                        name.clone(),
+                        Expr::Enum {
+                            id: id.clone(),
+                            variant: name.strip_prefix(prefix).unwrap_or(name).to_string(),
+                            ty: ty.clone(),
+                            attrs: kind.iter().cloned().collect(),
+                        },
+                    );
+                }
+            }
+            Stmt::ConstDecl { id, ty, .. } => {
+                mapping.insert(
+                    id.name.clone(),
+                    Expr::Const {
+                        id: id.clone(),
+                        ty: ty.clone(),
+                    },
+                );
+            }
+            Stmt::VarDecl { id, ty, .. } => {
+                mapping.insert(
+                    id.name.clone(),
+                    Expr::Var {
+                        id: id.clone(),
+                        ty: ty.clone(),
+                    },
+                );
+            }
+            _ => {}
+        }
+
+        mapping
     }
 
     pub(crate) fn provided_item(&self) -> Option<ItemIdentifier> {
@@ -2690,7 +2805,7 @@ impl Stmt {
                     write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
-                    write!(f, "pub const {}: {} = {value};", id.name, ty.enum_())?;
+                    write!(f, "pub const {}: {} = {value};", id.name, ty.const_())?;
                     if *is_last {
                         writeln!(f)?;
                     }

@@ -1,6 +1,7 @@
 framework = "HealthKit"
 crate = "objc2-health-kit"
 required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
 macos = "13.0"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -8,3 +9,6 @@ watchos = "2.0"
 visionos = "1.0"
 
 external.CLLocation.module = "CoreLocation.CLLocation"
+
+# Emit this.
+const.HKUnitMolarMassBloodGlucose.skipped = false

@@ -15,6 +15,7 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[allow(clippy::excessive_precision)]
 mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;

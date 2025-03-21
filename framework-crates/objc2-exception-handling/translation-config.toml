@@ -3,3 +3,7 @@ crate = "objc2-exception-handling"
 required-crates = ["objc2", "objc2-foundation"]
 macos = "10.0"
 maccatalyst = "13.0"
+
+# Emit these.
+const.NSLogAndHandleEveryExceptionMask.skipped = false
+const.NSHangOnEveryExceptionMask.skipped = false

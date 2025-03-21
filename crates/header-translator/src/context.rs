@@ -4,6 +4,7 @@ use std::ops;
 use clang::Entity;
 
 use crate::config::Config;
+use crate::expr::Expr;
 use crate::ItemIdentifier;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -31,11 +32,12 @@ impl MacroLocation {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct MacroEntity {
     /// The name and location of the macro definition.
     pub(crate) id: ItemIdentifier,
     pub(crate) is_function_like: bool,
+    pub(crate) value: Option<Box<Expr>>,
 }
 
 impl MacroEntity {
@@ -46,6 +48,12 @@ impl MacroEntity {
             // doesn't exist, let's just get it from the entity.
             id: ItemIdentifier::new(definition.as_ref().unwrap_or(entity), context),
             is_function_like: entity.is_function_like_macro(),
+            // TODO:
+            // value: definition
+            //     .as_ref()
+            //     .and_then(|definition| Expr::parse_macro_definition(definition, context))
+            //     .map(Box::new),
+            value: None,
         }
     }
 }
@@ -53,6 +61,7 @@ impl MacroEntity {
 pub struct Context<'config> {
     config: &'config Config,
     pub macro_invocations: HashMap<MacroLocation, MacroEntity>,
+    pub ident_mapping: HashMap<String, Expr>,
 }
 
 impl<'config> Context<'config> {
@@ -60,6 +69,7 @@ impl<'config> Context<'config> {
         Self {
             config,
             macro_invocations: Default::default(),
+            ident_mapping: Default::default(),
         }
     }
 }

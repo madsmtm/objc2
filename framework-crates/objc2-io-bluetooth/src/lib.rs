@@ -16,8 +16,12 @@ extern crate alloc;
 extern crate std;
 
 mod generated;
+mod macros;
+
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+#[allow(unused_imports, unreachable_pub)]
+pub use self::macros::*;
 
 // IOKit/IOReturn.h
 #[allow(dead_code)]

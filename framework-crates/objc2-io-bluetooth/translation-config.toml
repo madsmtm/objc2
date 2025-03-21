@@ -30,3 +30,31 @@ typedef.BluetoothDeviceName.skipped = true
 
 # ns_consumes_self / NS_REPLACES_RECEIVER
 class.IOBluetoothDevice.methods."awakeAfterUsingCoder:".skipped = true
+
+# Overflows c_uint.
+const.kBluetoothHCIEventMaskLEDefault64Bit.skipped = true
+const.kBluetoothHCIEventMaskDefault64Bit.skipped = true
+const.kBluetoothHCIEventMaskAll64Bit.skipped = true
+const.kBluetoothHCIEventMaskFlowSpecificationCompleteEvent.skipped = true
+const.kBluetoothHCIEventMaskInquiryResultWithRSSIEvent.skipped = true
+const.kBluetoothHCIEventMaskReadRemoteExtendedFeaturesCompleteEvent.skipped = true
+const.kBluetoothHCIEventMaskSynchronousConnectionCompleteEvent.skipped = true
+const.kBluetoothHCIEventMaskSynchronousConnectionChangedEvent.skipped = true
+const.kBluetoothHCIEventMaskSniffSubratingEvent.skipped = true
+const.kBluetoothHCIEventMaskExtendedInquiryResultEvent.skipped = true
+const.kBluetoothHCIEventMaskEncryptionChangeEvent.skipped = true
+const.kBluetoothHCIEventMaskEncryptionKeyRefreshCompleteEvent.skipped = true
+const.kBluetoothHCIEventMaskLinkSupervisionTimeoutChangedEvent.skipped = true
+const.kBluetoothHCIEventMaskEnhancedFlushCompleteEvent.skipped = true
+const.kBluetoothHCIEventMaskIOCapabilityRequestEvent.skipped = true
+const.kBluetoothHCIEventMaskIOCapabilityRequestReplyEvent.skipped = true
+const.kBluetoothHCIEventMaskUserConfirmationRequestEvent.skipped = true
+const.kBluetoothHCIEventMaskUserPasskeyRequestEvent.skipped = true
+const.kBluetoothHCIEventMaskRemoteOOBDataRequestEvent.skipped = true
+const.kBluetoothHCIEventMaskSimplePairingCompleteEvent.skipped = true
+const.kBluetoothHCIEvnetMaskLinkSupervisionTimeoutChangedEvent.skipped = true
+const.kBluetoothHCIEvnetMaskEnhancedFlushCompleteEvent.skipped = true
+const.kBluetoothHCIEventMaskUserPasskeyNotificationEvent.skipped = true
+const.kBluetoothHCIEventMaskKeypressNotificationEvent.skipped = true
+const.kBluetoothHCIEventMaskRemoteHostSupportedFeaturesNotificationEvent.skipped = true
+const.kBluetoothHCIEventMaskLEMetaEvent.skipped = true

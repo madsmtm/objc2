@@ -83,3 +83,37 @@ struct.LowLatencyUserBufferInfoV3.skipped = true
 # Overflows while calculating on 32-bit.
 const.kIORPCMessageIDKernel.skipped = true
 const.kUSBAllStreams.skipped = true
+
+# Defined twice
+const.kIOUserServerCDHashKey.skipped = true
+const.kAppleExternalConnectorBitmap.skipped = true
+
+# Needs us to define `iokit_usbhost_msg` and `iokit_usbhost_err`.
+const.kUSBHostMessageConfigurationSet.skipped = true
+const.kUSBHostMessageRenegotiateCurrent.skipped = true
+const.kUSBHostMessageControllerException.skipped = true
+const.kUSBHostMessageDeviceIsRequestingClose.skipped = true
+const.kUSBHostReturnPipeStalled.skipped = true
+const.kUSBHostReturnNoPower.skipped = true
+const.kUSBHostReturnRedundant.skipped = true
+
+# Defined before the thing it refers to.
+const.kUSBDeviceContainerID.skipped = true
+
+# Overflows while calculating
+const.kIOUSB30Bitrate5Gbps.skipped = true
+const.kIOUSB30Bitrate10Gbps.skipped = true
+const.kIOUSB32Bitrate20Gbps.skipped = true
+
+# Emit these.
+const.IO1BitIndexedPixels.skipped = false
+const.IO2BitIndexedPixels.skipped = false
+const.IO4BitIndexedPixels.skipped = false
+const.IO8BitIndexedPixels.skipped = false
+const.IO16BitDirectPixels.skipped = false
+const.IO32BitDirectPixels.skipped = false
+const.IOYUV422Pixels.skipped = false
+const.IO8BitOverlayPixels.skipped = false
+const.IOPagedPixels.skipped = false
+const.IO_SampleTypeAlpha.skipped = false
+const.IO_SampleTypeSkip.skipped = false

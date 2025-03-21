@@ -456,7 +456,7 @@ pub struct RecordData {
 #[serde(deny_unknown_fields)]
 pub struct ConstantData {
     #[serde(default)]
-    pub skipped: bool,
+    pub skipped: Option<bool>,
     #[serde(rename = "use-value")]
     #[serde(default)]
     pub use_value: Option<bool>,

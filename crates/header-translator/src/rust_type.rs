@@ -503,6 +503,7 @@ pub enum PointeeTy {
         id: ItemIdentifier,
         to: Box<PointeeTy>,
     },
+    CStr,
 }
 
 impl PointeeTy {
@@ -568,6 +569,7 @@ impl PointeeTy {
             Self::TypeDef { id, to } => {
                 vec![ItemTree::new(id.clone(), to.required_items())]
             }
+            Self::CStr => vec![ItemTree::core_ffi("CStr")],
         }
         .into_iter()
     }
@@ -619,6 +621,7 @@ impl PointeeTy {
             }
             Self::CFTypeDef { .. } => false,
             Self::TypeDef { to, .. } => to.requires_mainthreadmarker(self_requires),
+            Self::CStr => false,
         }
     }
 
@@ -1367,13 +1370,13 @@ impl Ty {
                     // HACK: Make IOBluetooth work without depending on IOKit.
                     "IOReturn" => {
                         return Self::TypeDef {
-                            id: ItemIdentifier::iokit_typedefs("IOReturn"),
+                            id: ItemIdentifier::builtin("IOReturn"),
                             to: Box::new(Self::Primitive(Primitive::Int)),
                         }
                     }
                     "IOItemCount" => {
                         return Self::TypeDef {
-                            id: ItemIdentifier::iokit_typedefs("IOItemCount"),
+                            id: ItemIdentifier::builtin("IOItemCount"),
                             to: Box::new(Self::Primitive(Primitive::U32)),
                         }
                     }
@@ -1381,7 +1384,7 @@ impl Ty {
                     // HACK: Prevent OSLog from requiring dependency on os
                     "os_activity_id_t" | "os_signpost_id_t" => {
                         return Self::TypeDef {
-                            id: ItemIdentifier::os_typedefs(typedef_name),
+                            id: ItemIdentifier::builtin(typedef_name),
                             to: Box::new(Self::Primitive(Primitive::I64)),
                         }
                     }
@@ -1736,6 +1739,14 @@ impl Ty {
         }
     }
 
+    pub(crate) fn is_object_like_ptr(&self) -> bool {
+        if let Self::Pointer { pointee, .. } = self {
+            pointee.is_object_like()
+        } else {
+            false
+        }
+    }
+
     pub(crate) fn is_cf_type_id(&self) -> bool {
         matches!(self, Self::TypeDef { id, .. } if id.name == "CFTypeID")
     }
@@ -1934,6 +1945,7 @@ impl Ty {
                 }
                 PointeeTy::CFTypeDef { id } => write!(f, "{}", id.path()),
                 PointeeTy::TypeDef { id, .. } => write!(f, "{}", id.path()),
+                PointeeTy::CStr => write!(f, "CStr"),
             },
             _ => write!(f, "{}", self.plain()),
         })
@@ -2211,11 +2223,37 @@ impl Ty {
                 is_const: _,
                 lifetime: Lifetime::Strong | Lifetime::Unspecified,
                 pointee,
-            } if pointee.is_object_like() || pointee.is_cf_type() => {
+            } if pointee.is_object_like()
+                || pointee.is_cf_type()
+                || **pointee == Ty::Pointee(PointeeTy::CStr) =>
+            {
                 if *nullability == Nullability::NonNull {
                     write!(f, "&'static {}", pointee.behind_pointer())
                 } else {
                     write!(f, "Option<&'static {}>", pointee.behind_pointer())
+                }
+            }
+            _ => write!(f, "{}", self.plain()),
+        })
+    }
+
+    pub(crate) fn const_(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Pointer {
+                nullability,
+                // `const` is irrelevant in constants since they're always
+                // constant.
+                is_const: _,
+                lifetime: Lifetime::Strong | Lifetime::Unspecified,
+                pointee,
+            } if pointee.is_object_like()
+                || pointee.is_cf_type()
+                || **pointee == Ty::Pointee(PointeeTy::CStr) =>
+            {
+                if *nullability == Nullability::NonNull {
+                    write!(f, "&{}", pointee.behind_pointer())
+                } else {
+                    write!(f, "Option<&{}>", pointee.behind_pointer())
                 }
             }
             _ => write!(f, "{}", self.plain()),
@@ -2777,6 +2815,52 @@ impl Ty {
                     *nullability = Nullability::NonNull;
                 }
             }
+        }
+    }
+
+    pub(crate) fn const_cf_string_ref() -> Self {
+        Self::Pointer {
+            nullability: Nullability::NonNull,
+            is_const: true,
+            lifetime: Lifetime::Unspecified,
+            pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef {
+                id: ItemIdentifier::cf_string(),
+            })),
+        }
+    }
+
+    pub(crate) fn const_ns_string_ref() -> Self {
+        Self::Pointer {
+            nullability: Nullability::NonNull,
+            is_const: true,
+            lifetime: Lifetime::Unspecified,
+            pointee: Box::new(Self::Pointee(PointeeTy::Class {
+                id: ItemIdentifier::ns_string(),
+                thread_safety: ThreadSafety::dummy(),
+                superclasses: vec![],
+                generics: vec![],
+                protocols: vec![],
+            })),
+        }
+    }
+
+    pub(crate) fn const_cf_uuid_ref() -> Self {
+        Self::Pointer {
+            nullability: Nullability::NonNull,
+            is_const: true,
+            lifetime: Lifetime::Unspecified,
+            pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef {
+                id: ItemIdentifier::cf_uuid(),
+            })),
+        }
+    }
+
+    pub(crate) fn const_cstr_ref() -> Self {
+        Self::Pointer {
+            nullability: Nullability::NonNull,
+            is_const: true,
+            lifetime: Lifetime::Unspecified,
+            pointee: Box::new(Self::Pointee(PointeeTy::CStr)),
         }
     }
 }
