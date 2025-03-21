@@ -46,6 +46,12 @@ protocol.NSAccessibilityElement.renamed = "NSAccessibilityElementProtocol"
 # Both property and method
 class.NSDocument.methods."setDisplayName:".skipped = true
 
+# References static in `const`, which isn't yet in MSRV.
+const.NSOKButton.skipped = true
+const.NSCancelButton.skipped = true
+const.NSFileHandlingPanelCancelButton.skipped = true
+const.NSFileHandlingPanelOKButton.skipped = true
+
 # These subclass a generic struct, and hence the type parameter defaults to
 # `AnyObject`, which is not PartialEq, Eq nor Hash.
 class.NSLayoutXAxisAnchor.derives = "Debug"
