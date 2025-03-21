@@ -93,6 +93,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Added getters.
   - Added iteration helpers.
   - Added a few mutation helpers.
+* Improved `CFDictionary` interface:
+  - Added constructors.
+  - Added getters.
+  - Added mutation methods.
 
 ### Changed
 * Made `CFArray`, `CFBag`, `CFBinaryHeap`, `CFDictionary`, `CFSet` and their

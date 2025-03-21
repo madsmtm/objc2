@@ -109,6 +109,17 @@ impl<T: ?Sized> CFArray<T> {
 
 /// Convenience creation methods.
 impl<T: ?Sized> CFMutableArray<T> {
+    /// Create a new empty mutable array.
+    #[inline]
+    #[doc(alias = "CFArrayCreateMutable")]
+    pub fn new() -> CFRetained<Self>
+    where
+        T: Type,
+    {
+        Self::with_capacity(0)
+    }
+
+    /// Create a new mutable array with the given capacity.
     #[inline]
     #[doc(alias = "CFArrayCreateMutable")]
     pub fn with_capacity(capacity: usize) -> CFRetained<Self>
@@ -253,9 +264,9 @@ impl<T: ?Sized> CFArray<T> {
         self.len() == 0
     }
 
-    /// Get a direct reference to one of the array's objects.
+    /// Retrieve the object at the given index.
     ///
-    /// Throws an error if the object was not found.
+    /// Returns `None` if the index was out of bounds.
     #[doc(alias = "CFArrayGetValueAtIndex")]
     pub fn get(&self, index: usize) -> Option<CFRetained<T>>
     where
@@ -503,16 +514,6 @@ impl<T: ?Sized + Type> AsRef<CFArray> for CFArray<T> {
         self.as_opaque()
     }
 }
-
-// `Eq`, `Ord` and `Hash` have the same semantics.
-impl<T: ?Sized + Type> Borrow<CFArray> for CFArray<T> {
-    fn borrow(&self) -> &CFArray {
-        self.as_opaque()
-    }
-}
-
-// Allow easy conversion from `&CFArray<T>` to `&CFArray`.
-// Requires `T: Type` because of reflexive impl in `cf_type!`.
 impl<T: ?Sized + Type> AsRef<CFMutableArray> for CFMutableArray<T> {
     fn as_ref(&self) -> &CFMutableArray {
         self.as_opaque()
@@ -520,6 +521,11 @@ impl<T: ?Sized + Type> AsRef<CFMutableArray> for CFMutableArray<T> {
 }
 
 // `Eq`, `Ord` and `Hash` have the same semantics.
+impl<T: ?Sized + Type> Borrow<CFArray> for CFArray<T> {
+    fn borrow(&self) -> &CFArray {
+        self.as_opaque()
+    }
+}
 impl<T: ?Sized + Type> Borrow<CFMutableArray> for CFMutableArray<T> {
     fn borrow(&self) -> &CFMutableArray {
         self.as_opaque()

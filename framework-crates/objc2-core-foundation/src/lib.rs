@@ -29,6 +29,8 @@ mod cf_type;
 mod data;
 #[cfg(feature = "CFDate")]
 mod date;
+#[cfg(feature = "CFDictionary")]
+mod dictionary;
 #[cfg(feature = "CFError")]
 mod error;
 #[cfg(feature = "CFFileDescriptor")]
