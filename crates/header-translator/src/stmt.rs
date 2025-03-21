@@ -1345,7 +1345,7 @@ impl Stmt {
                 let data = context
                     .library(&id)
                     .enum_data
-                    .get(id.name.as_deref().unwrap_or("anonymous"))
+                    .get(id.name.as_deref().unwrap_or("__anonymous__"))
                     .cloned()
                     .unwrap_or_default();
                 if data.skipped {
@@ -1369,7 +1369,12 @@ impl Stmt {
                         let name = entity.get_name().expect("enum constant name");
                         let availability = Availability::parse(&entity, context);
 
-                        let const_data = data.constants.get(&name).cloned().unwrap_or_default();
+                        let const_data = context
+                            .library(&id)
+                            .const_data
+                            .get(&name)
+                            .cloned()
+                            .unwrap_or_default();
 
                         if const_data.skipped {
                             return;

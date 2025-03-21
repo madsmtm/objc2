@@ -113,7 +113,7 @@ fn.AudioOutputUnitGetHostIcon.skipped = true
 protocol.AUCocoaUIBase.methods."uiViewForAudioUnit:withSize:".skipped = true
 
 # Value too large
-enum.anonymous.constants.AUEventSampleTimeImmediate.use-value = true
+const.AUEventSampleTimeImmediate.use-value = true
 
 # Defined for real in CoreMIDI, AudioToolbox just redefines it
 typedef.MIDIChannelNumber.skipped = true

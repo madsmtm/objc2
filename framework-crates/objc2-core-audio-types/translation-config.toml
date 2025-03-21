@@ -11,7 +11,7 @@ watchos = "6.0"
 visionos = "1.0"
 
 # Requires a cast, and deprecated anyhow
-enum.anonymous.constants.AVAudioSessionErrorInsufficientPriority.skipped = true
+const.AVAudioSessionErrorInsufficientPriority.skipped = true
 
 # Differs based on architecture
 typedef.AVAudioInteger.skipped = true

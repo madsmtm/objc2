@@ -39,7 +39,7 @@ typedef.dispatch_io_type_t.skipped = true
 typedef.dispatch_io_close_flags_t.skipped = true
 typedef.dispatch_io_interval_flags_t.skipped = true
 # Lonely enum constant that we want to tie to dispatch_time_t
-enum.anonymous.constants.DISPATCH_WALLTIME_NOW.skipped = true
+const.DISPATCH_WALLTIME_NOW.skipped = true
 
 # `dispatch_object_t` is a special union that declares all the different kinds
 # of dispatch objects, but that won't work in Rust.

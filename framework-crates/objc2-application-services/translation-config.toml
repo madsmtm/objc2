@@ -21,7 +21,7 @@ external.NSView.module = "AppKit.NSView"
 protocol.PDEPanel.methods.panelView.skipped = true
 
 # Mapped as `false`, would need a cast to int to work.
-enum.anonymous.constants.kPMUnlocked.use-value = true
+const.kPMUnlocked.use-value = true
 
 # Needs AliasRecord/FSSpec/FSRef from CoreServices.CarbonCore.Files
 struct.ICFileSpec.skipped = true
@@ -42,16 +42,16 @@ typedef.ProcessInfoExtendedRecPtr.skipped = true
 fn.PMPrinterGetDriverReleaseInfo.skipped = true
 
 # Uses constants from CoreServices.CarbonCore.MacErrors
-enum.anonymous.constants.kPMNoError.use-value = true
-enum.anonymous.constants.kPMInvalidParameter.use-value = true
-enum.anonymous.constants.kPMAllocationFailure.use-value = true
+const.kPMNoError.use-value = true
+const.kPMInvalidParameter.use-value = true
+const.kPMAllocationFailure.use-value = true
 
 # Overflows
-enum.anonymous.constants.kProcessDictionaryIncludeAllInformationMask.skipped = true
+const.kProcessDictionaryIncludeAllInformationMask.skipped = true
 
 # Uses `sizeof`
-enum.anonymous.constants.kICFileSpecHeaderSize.skipped = true
-enum.anonymous.constants.extendedBlockLen.skipped = true
+const.kICFileSpecHeaderSize.skipped = true
+const.extendedBlockLen.skipped = true
 
 # Uses Str255 (an array) directly in parameter, which is unclear ABI-wise.
 fn.ICGetConfigName.skipped = true

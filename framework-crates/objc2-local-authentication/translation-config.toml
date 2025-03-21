@@ -9,7 +9,7 @@ visionos = "1.0"
 
 # Uses defines
 enum.LABiometryType.use-value = true
-enum.LABiometryType.constants.LABiometryNone.use-value = false
+const.LABiometryNone.use-value = false
 enum.LACompanionType.use-value = true
 enum.LAPolicy.use-value = true
 enum.LACredentialType.use-value = true

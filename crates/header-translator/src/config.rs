@@ -324,6 +324,9 @@ pub struct LibraryConfig {
     #[serde(rename = "typedef")]
     #[serde(default)]
     pub typedef_data: HashMap<String, TypedefData>,
+    #[serde(rename = "const")]
+    #[serde(default)]
+    pub const_data: HashMap<String, ConstantData>,
 
     #[serde(default)]
     pub module: HashMap<String, ModuleConfig>,
@@ -451,7 +454,7 @@ pub struct RecordData {
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct EnumVariantData {
+pub struct ConstantData {
     #[serde(default)]
     pub skipped: bool,
     #[serde(rename = "use-value")]
@@ -467,8 +470,6 @@ pub struct EnumData {
     #[serde(rename = "use-value")]
     #[serde(default)]
     pub use_value: Option<bool>,
-    #[serde(default)]
-    pub constants: HashMap<String, EnumVariantData>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

@@ -18,11 +18,11 @@ fn.CTFontGetPlatformFont.skipped = true
 fn.CTFontCreateWithPlatformFont.skipped = true
 
 # Emits -1 on an unsigned type
-enum.CTFontUIFontType.constants.kCTFontUIFontNone.use-value = true
-enum.CTRubyAlignment.constants.kCTRubyAlignmentInvalid.use-value = true
-enum.CTRubyOverhang.constants.kCTRubyOverhangInvalid.use-value = true
+const.kCTFontUIFontNone.use-value = true
+const.kCTRubyAlignmentInvalid.use-value = true
+const.kCTRubyOverhangInvalid.use-value = true
 
 # Emits 0x80000000 on an int
-enum.anonymous.constants.kMORTLigLastAction.use-value = true
-enum.anonymous.constants.kMORXCoverVertical.use-value = true
-enum.anonymous.constants.kKERXVertical.use-value = true
+const.kMORTLigLastAction.use-value = true
+const.kMORXCoverVertical.use-value = true
+const.kKERXVertical.use-value = true

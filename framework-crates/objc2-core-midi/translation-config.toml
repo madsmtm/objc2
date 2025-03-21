@@ -12,5 +12,5 @@ watchos = "8.0"
 visionos = "1.0"
 
 # Wrongly renamed (Swift's renaming algorithm is insufficient)
-enum.MIDIProtocolID.constants.kMIDIProtocol_1_0.skipped = true
-enum.MIDIProtocolID.constants.kMIDIProtocol_2_0.skipped = true
+const.kMIDIProtocol_1_0.skipped = true
+const.kMIDIProtocol_2_0.skipped = true

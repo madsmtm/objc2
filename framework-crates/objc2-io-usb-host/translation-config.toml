@@ -20,9 +20,9 @@ class.IOUSBHostObject.methods."configurationDescriptorWithConfigurationValue:err
 fn.IOUSBGetPlatformCapabilityDescriptorWithUUID.skipped = true
 
 # Overflows while calculating.
-enum.anonymous.constants.IOUSBHostCIDeviceUpdateCommandData1DescriptorAddress.use-value = true
-enum.anonymous.constants.IOUSBHostCINormalTransferData1Buffer.use-value = true
-enum.anonymous.constants.IOUSBHostCILinkData1TransferStructureAddress.use-value = true
+const.IOUSBHostCIDeviceUpdateCommandData1DescriptorAddress.use-value = true
+const.IOUSBHostCINormalTransferData1Buffer.use-value = true
+const.IOUSBHostCILinkData1TransferStructureAddress.use-value = true
 
 # Declared twice.
 static.IOUSBHostMatchingPropertyKeyProductIDMask.skipped = true
@@ -39,13 +39,13 @@ class.IOUSBHostObject.methods."initWithIOService:queue:error:interestHandler:".s
 class.IOUSBHostObject.methods.queue.skipped = true
 
 # Value taken from a type that is c_uint internally.
-enum.anonymous.constants.IOUSBHostCITransferCompletionMessageControlStatus.use-value = true
-enum.anonymous.constants.IOUSBHostCITransferCompletionMessageControlStatusPhase.use-value = true
+const.IOUSBHostCITransferCompletionMessageControlStatus.use-value = true
+const.IOUSBHostCITransferCompletionMessageControlStatusPhase.use-value = true
 
 # Overflows while calculating on 32-bit.
-enum.anonymous.constants.IOUSBHostCIEndpointCreateCommandData1Descriptor.skipped = true
-enum.anonymous.constants.IOUSBHostCIEndpointUpdateCommandData1Descriptor.skipped = true
-enum.anonymous.constants.IOUSBHostCIEndpointSetNextTransferCommandData1Address.skipped = true
-enum.anonymous.constants.IOUSBHostCISetupTransferData1wIndex.skipped = true
-enum.anonymous.constants.IOUSBHostCISetupTransferData1wLength.skipped = true
-enum.anonymous.constants.IOUSBHostCITransferCompletionMessageData1TransferStructure.skipped = true
+const.IOUSBHostCIEndpointCreateCommandData1Descriptor.skipped = true
+const.IOUSBHostCIEndpointUpdateCommandData1Descriptor.skipped = true
+const.IOUSBHostCIEndpointSetNextTransferCommandData1Address.skipped = true
+const.IOUSBHostCISetupTransferData1wIndex.skipped = true
+const.IOUSBHostCISetupTransferData1wLength.skipped = true
+const.IOUSBHostCITransferCompletionMessageData1TransferStructure.skipped = true

@@ -139,12 +139,12 @@ static.oidSubjectInfoAccess.skipped = true
 static.oidSubjectKeyIdentifier.skipped = true
 
 # References parent enum SecuritySessionId, which is hard to handle
-enum.anonymous.constants.callerSecuritySession.use-value = true
+const.callerSecuritySession.use-value = true
 
 # There's a bunch of constants in cssmtype that need casts (e.g.
 # CSSM_WORDID_VENDOR_START from i32 to CSSM_WORDID_KEYCHAIN_PROMPT which is
 # u32). So let's just emit all constants directly for now.
-enum.anonymous.use-value = true
+enum.__anonymous__.use-value = true
 
 # Manually re-defined: see #711.
 fn.AuthorizationExecuteWithPrivileges.skipped = true

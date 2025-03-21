@@ -47,10 +47,10 @@ protocol.NSAccessibilityElement.renamed = "NSAccessibilityElementProtocol"
 class.NSDocument.methods."setDisplayName:".skipped = true
 
 # Wrong type for enum
-enum.anonymous.constants.NSOKButton.skipped = true
-enum.anonymous.constants.NSCancelButton.skipped = true
-enum.anonymous.constants.NSFileHandlingPanelCancelButton.skipped = true
-enum.anonymous.constants.NSFileHandlingPanelOKButton.skipped = true
+const.NSOKButton.skipped = true
+const.NSCancelButton.skipped = true
+const.NSFileHandlingPanelCancelButton.skipped = true
+const.NSFileHandlingPanelOKButton.skipped = true
 
 # These subclass a generic struct, and hence the type parameter defaults to
 # `AnyObject`, which is not PartialEq, Eq nor Hash.

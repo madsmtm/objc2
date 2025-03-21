@@ -52,5 +52,5 @@ static.kCGBitmapByteOrder32Host.skipped = true
 # Uses defines from IOKit
 enum.CGEventFlags.use-value = true
 enum.CGEventType.use-value = true
-enum.CGEventType.constants.kCGEventTapDisabledByTimeout.use-value = true
-enum.CGEventType.constants.kCGEventTapDisabledByUserInput.use-value = true
+const.kCGEventTapDisabledByTimeout.use-value = true
+const.kCGEventTapDisabledByUserInput.use-value = true

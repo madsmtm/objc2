@@ -41,8 +41,8 @@ fn.IOServiceAddMatchingNotification.skipped = true
 typedef.IOReturn.skipped = true
 
 # Complex expression involving `sizeof`
-enum.anonymous.constants.kOSAsyncRef64Size.skipped = true
-enum.anonymous.constants.kOSAsyncRef64Count.skipped = true
+const.kOSAsyncRef64Size.skipped = true
+const.kOSAsyncRef64Count.skipped = true
 
 # Needs io_user_reference_t, and contains arrays in typedefs
 typedef.OSAsyncReference64.skipped = true
@@ -73,8 +73,8 @@ fn.IOConnectUnmapMemory64.skipped = true
 fn.IONotificationPortSetDispatchQueue.skipped = true
 
 # Value taken from a type that is c_long internally.
-enum.anonymous.constants.kXHCISSRootHubAddress.use-value = true
-enum.anonymous.constants.kXHCIUSB2RootHubAddress.use-value = true
+const.kXHCISSRootHubAddress.use-value = true
+const.kXHCIUSB2RootHubAddress.use-value = true
 
 # Recursive
 typedef.LowLatencyUserBufferInfo.skipped = true
@@ -85,5 +85,5 @@ typedef.LowLatencyUserBufferInfoV3.skipped = true
 struct.LowLatencyUserBufferInfoV3.skipped = true
 
 # Overflows while calculating on 32-bit.
-enum.anonymous.constants.kIORPCMessageIDKernel.skipped = true
-enum.anonymous.constants.kUSBAllStreams.skipped = true
+const.kIORPCMessageIDKernel.skipped = true
+const.kUSBAllStreams.skipped = true

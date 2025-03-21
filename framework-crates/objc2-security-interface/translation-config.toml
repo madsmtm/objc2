@@ -5,5 +5,5 @@ required-crates = ["objc2", "objc2-foundation", "objc2-app-kit"]
 macos = "10.3"
 
 # Uses NSCancelButton and NSOKButton, which are skipped in AppKit.
-enum.SFButtonType.constants.SFButtonTypeCancel.use-value = true
-enum.SFButtonType.constants.SFButtonTypeOK.use-value = true
+const.SFButtonTypeCancel.use-value = true
+const.SFButtonTypeOK.use-value = true

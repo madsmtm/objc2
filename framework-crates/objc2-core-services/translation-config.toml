@@ -66,20 +66,20 @@ fn.CallComponentFunction.skipped = true
 fn.CallComponentFunctionWithStorage.skipped = true
 
 # Defaults to c_ulong, which is wrong on 32-bit targets.
-enum.anonymous.constants.kFSEventStreamEventIdSinceNow.skipped = true
+const.kFSEventStreamEventIdSinceNow.skipped = true
 
 # Tries to OR u32s and i32s.
-enum.anonymous.constants.kIconServicesCatalogInfoMask.use-value = true
+const.kIconServicesCatalogInfoMask.use-value = true
 
 # Literals are out of the i32 range.
-enum.anonymous.constants.kFSCatInfoReserved.use-value = true
-enum.anonymous.constants.kFSIterateReserved.use-value = true
-enum.anonymous.constants.kioACAccessOwnerMask.use-value = true
-enum.anonymous.constants.kHelpFolderIcon.use-value = true
-enum.anonymous.constants.kInternetPlugInFolderIcon.use-value = true
-enum.anonymous.constants.kLocalesFolderIcon.use-value = true
-enum.anonymous.constants.kPrinterDriverFolderIcon.use-value = true
-enum.anonymous.constants.kScriptingAdditionsFolderIcon.use-value = true
-enum.anonymous.constants.kSharedLibrariesFolderIcon.use-value = true
-enum.anonymous.constants.kTextEncodingsFolderIcon.use-value = true
-enum.anonymous.constants.kAEDebugXMLDebugAll.use-value = true
+const.kFSCatInfoReserved.use-value = true
+const.kFSIterateReserved.use-value = true
+const.kioACAccessOwnerMask.use-value = true
+const.kHelpFolderIcon.use-value = true
+const.kInternetPlugInFolderIcon.use-value = true
+const.kLocalesFolderIcon.use-value = true
+const.kPrinterDriverFolderIcon.use-value = true
+const.kScriptingAdditionsFolderIcon.use-value = true
+const.kSharedLibrariesFolderIcon.use-value = true
+const.kTextEncodingsFolderIcon.use-value = true
+const.kAEDebugXMLDebugAll.use-value = true

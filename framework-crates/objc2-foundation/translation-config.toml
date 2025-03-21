@@ -147,7 +147,7 @@ class.NSMutableAttributedString.methods."initWithURL:documentAttributes:".skippe
 class.NSMutableAttributedString.methods."initWithPath:documentAttributes:".skipped = true
 
 # Wrong type compared to value
-enum.anonymous.constants.NSWrapCalendarComponents.skipped = true
+const.NSWrapCalendarComponents.skipped = true
 
 # Marked as API_UNAVAILABLE in a category, so we hit the duplicate checking
 class.NSLocale.methods.init.skipped = true
@@ -160,7 +160,7 @@ class.NSUserNotification.methods.contentImage.skipped = true
 class.NSUserNotification.methods."setContentImage:".skipped = true
 
 # Outlier that really should have been part of the original enum
-enum.anonymous.constants.NSProprietaryStringEncoding.skipped = true
+const.NSProprietaryStringEncoding.skipped = true
 
 # Has the wrong generic parameter
 class.NSDictionary.methods."initWithContentsOfURL:error:".skipped = true
@@ -181,9 +181,9 @@ enum.NSNumberFormatterPadPosition.use-value = true
 enum.NSNumberFormatterRoundingMode.use-value = true
 enum.NSPropertyListMutabilityOptions.use-value = true
 enum.NSPropertyListFormat.use-value = true
-enum.anonymous.constants.NS_UnknownByteOrder.skipped = true
-enum.anonymous.constants.NS_LittleEndian.skipped = true
-enum.anonymous.constants.NS_BigEndian.skipped = true
+const.NS_UnknownByteOrder.skipped = true
+const.NS_LittleEndian.skipped = true
+const.NS_BigEndian.skipped = true
 
 # Uses stuff from different frameworks / system libraries
 class.NSOperationQueue.methods.underlyingQueue.skipped = true
