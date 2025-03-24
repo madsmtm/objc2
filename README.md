@@ -66,6 +66,5 @@ Finally, this is by far not the only project that ever tried to interoperate wit
 - Java: [Java-Objective-C-Bridge](https://github.com/shannah/Java-Objective-C-Bridge), [Multi-OS Engine: Nat/J](https://github.com/multi-os-engine/moe-natj) (also has a [generator](https://github.com/multi-os-engine/moe-natjgen)), Apple also has a very old official project.
 - Node.js: [NodObjC](https://github.com/TooTallNate/NodObjC), [`objc`](https://github.com/lukaskollmer/objc)
 - Zig: [zig-objcrt](https://github.com/hazeycode/zig-objcrt)
-- D: [somewhat built-in support](https://dlang.org/spec/objc_interface.html), [`derelict`](https://github.com/AuburnSounds/Dplug/tree/v12.8.0/macos/derelict/cocoa)
 - V: Not really existing, they just write and compile Objective-C code, and use manual C-bindings.
 - Go: [MacDriver](https://github.com/progrium/macdriver)
