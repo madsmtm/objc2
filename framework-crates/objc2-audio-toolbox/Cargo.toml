@@ -105,7 +105,7 @@ libc = ["dep:libc"]
 objc2-core-audio = ["dep:objc2-core-audio"]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
-objc2-core-midi = ["dep:objc2-core-midi"]
+objc2-core-midi = ["dep:objc2-core-midi", "objc2-core-midi/MIDIMessages"]
 
 AUAudioUnit = [
     "bitflags",
