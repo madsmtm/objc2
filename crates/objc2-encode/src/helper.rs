@@ -355,21 +355,21 @@ impl<E: EncodingType> Helper<'_, E> {
         match self {
             Self::NoneInvalid => None,
             Self::Primitive(prim) => prim.size(),
-            Self::BitField(size_bits, off_typ) => Some(
+            Self::BitField(size_bits, off_ty) => Some(
                 (usize::from(*size_bits).next_power_of_two().max(8) / 8).max(
-                    off_typ
-                        .and_then(|(_, typ)| typ.helper().size(level.bitfield()))
+                    off_ty
+                        .and_then(|(_, ty)| ty.helper().size(level.bitfield()))
                         .unwrap_or_default(),
                 ),
             ),
-            Self::Indirection(kind, typ) => match kind {
+            Self::Indirection(kind, ty) => match kind {
                 IndirectionKind::Pointer => Some(mem::size_of::<*const ()>()),
-                IndirectionKind::Atomic => typ.helper().size(level.indirection(*kind)),
+                IndirectionKind::Atomic => ty.helper().size(level.indirection(*kind)),
             },
-            Self::Array(len, typ) => typ
+            Self::Array(len, ty) => ty
                 .helper()
                 .size(level.array())
-                .map(|typ_size| *len as usize * typ_size),
+                .map(|ty_size| *len as usize * ty_size),
             Self::Container(kind, _, fields) => {
                 level
                     .container_include_fields()
