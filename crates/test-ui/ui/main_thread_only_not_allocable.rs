@@ -6,7 +6,6 @@ use objc2::{define_class, MainThreadOnly};
 define_class!(
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[name = "MyMainThreadOnlyClass"]
     struct MyMainThreadOnlyClass;
 );
 

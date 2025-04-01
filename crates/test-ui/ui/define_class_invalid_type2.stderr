@@ -3,7 +3,6 @@ error[E0271]: type mismatch resolving `<Retained<NSObject> as MaybeOptionRetaine
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -17,7 +16,6 @@ error[E0277]: the trait bound `i32: MaybeOptionRetained` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );

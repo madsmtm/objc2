@@ -67,12 +67,23 @@
 /// Same [as in `extern_class!`](crate::extern_class#thread_kind---optional).
 ///
 ///
-/// ### `#[name = "..."]` (required)
+/// ### `#[name = "..."]` (optional)
 ///
-/// This is required, and must be unique across the entire application.
+/// Specify the runtime-name for the class. Must be unique across the entire
+/// application. This is useful if the name of a class is used elsewhere, such
+/// as when defining a delegate that needs to be named in e.g. `Info.plist`.
 ///
-/// If you're developing a library, good practice here would be to include
-/// your crate name in the prefix (something like `"MyLibrary_MyClass"`).
+/// If not set, this will default to:
+/// ```ignore
+/// concat!(module_path!(), "::", $class, env!("CARGO_PKG_VERSION"));
+/// ```
+///
+/// E.g. for example `"my_crate::my_module::MyClass0.1.0"`.
+///
+/// If you're developing a library, it is recommended that you do not set
+/// this, and instead rely on the default naming, since that usually works
+/// better with users having multiple SemVer-incompatible versions of your
+/// library in the same binary.
 ///
 ///
 /// ### `#[ivars = ...]` (optional)
@@ -280,10 +291,16 @@
 ///     // - The superclass NSObject does not have any subclassing requirements.
 ///     // - `MyCustomObject` does not implement `Drop`.
 ///     #[unsafe(super(NSObject))]
+///
 ///     // If we were implementing delegate methods like `NSApplicationDelegate`,
 ///     // we would specify the object to only be usable on the main thread:
 ///     // #[thread_kind = MainThreadOnly]
-///     #[name = "MyCustomObject"]
+///
+///     // If we needed to refer to the class from elsewhere, we'd give it a
+///     // name here explicitly.
+///     // #[name = "MyCustomObject"]
+///
+///     // Specify the instance variables this class has.
 ///     #[ivars = Ivars]
 ///     struct MyCustomObject;
 ///
@@ -565,7 +582,15 @@ macro_rules! __define_class_inner {
 
                 const NAME: &'static $crate::__macro_helpers::str = $crate::__fallback_if_not_set! {
                     ($($name)*)
-                    ($crate::__macro_helpers::compile_error!("must set name of class with #[name = ...]"))
+                    (
+                        $crate::__macro_helpers::concat!(
+                            // Module path includes crate name when in library.
+                            $crate::__macro_helpers::module_path!(),
+                            "::",
+                            $crate::__macro_helpers::stringify!($class),
+                            $crate::__macro_helpers::env!("CARGO_PKG_VERSION"),
+                        )
+                    )
                 };
 
                 fn class() -> &'static $crate::runtime::AnyClass {

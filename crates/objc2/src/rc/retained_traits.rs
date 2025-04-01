@@ -122,7 +122,6 @@ mod tests {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "MyCustomCollection"]
         #[derive(PartialEq, Eq, Hash, Debug)]
         struct Collection;
     );

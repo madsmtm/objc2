@@ -10,7 +10,7 @@ pub use core::mem::{size_of, ManuallyDrop, MaybeUninit};
 pub use core::ops::Deref;
 pub use core::option::Option::{self, None, Some};
 pub use core::primitive::{bool, isize, str, u8};
-pub use core::{compile_error, concat, panic, stringify};
+pub use core::{compile_error, concat, env, module_path, panic, stringify};
 // TODO: Use `core::cell::LazyCell`
 pub use std::sync::Once;
 

@@ -59,7 +59,6 @@ define_class!(
     // - `Delegate` does not implement `Drop`.
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[name = "Delegate"]
     #[ivars = Ivars]
     struct Delegate;
 

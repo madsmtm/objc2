@@ -18,7 +18,6 @@ fn allow_deprecated() {
     // Test allow propagates to impls
     define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "AllowDeprecated"]
         #[deprecated]
         #[allow(deprecated)]
         struct AllowDeprecated;
@@ -36,7 +35,6 @@ fn allow_deprecated() {
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "DefineClassDeprecatedMethod"]
     struct DefineClassDeprecatedMethod;
 
     #[deprecated]
@@ -64,7 +62,6 @@ fn cfg() {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "OnlyOnDebugAssertions"]
         #[cfg(debug_assertions)]
         struct OnlyOnDebugAssertions;
     );
@@ -74,7 +71,6 @@ fn cfg() {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "NeverOnDebugAssertions"]
         #[cfg(not(debug_assertions))]
         struct NeverOnDebugAssertions;
     );
@@ -86,7 +82,6 @@ fn cfg() {
 // Test that `cfg` in methods.
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "DefineClassCfg"]
     struct DefineClassCfg;
 
     impl DefineClassCfg {
@@ -228,7 +223,6 @@ fn test_method_that_is_never_available() {
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "TestMultipleColonSelector"]
     struct TestMultipleColonSelector;
 
     impl TestMultipleColonSelector {
@@ -297,7 +291,6 @@ fn test_multiple_colon_selector() {
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "DefineClassAllTheBool"]
     struct DefineClassAllTheBool;
 
     impl DefineClassAllTheBool {
@@ -356,7 +349,6 @@ fn test_all_the_bool() {
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "DefineClassUnreachable"]
     struct DefineClassUnreachable;
 
     // Ensure none of these warn
@@ -400,7 +392,6 @@ fn test_unreachable() {
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "OutParam"]
     #[derive(Debug)]
     struct OutParam;
 
@@ -484,7 +475,6 @@ fn out_param4() {
 fn test_pointer_receiver_allowed() {
     define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "PointerReceiver"]
         #[derive(Debug)]
         struct PointerReceiver;
 
@@ -525,13 +515,11 @@ fn test_auto_traits() {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "NonThreadSafeHelper"]
         #[ivars = (NotSend, NotSync, NotUnwindSafe)]
         struct NonThreadSafeHelper;
     );
     define_class!(
         #[unsafe(super(NonThreadSafeHelper))]
-        #[name = "InheritsCustomWithNonSendIvar"]
         #[ivars = ()]
         struct InheritsCustomWithNonSendIvar;
     );
@@ -543,7 +531,6 @@ fn test_auto_traits() {
     define_class!(
         #[unsafe(super(NSObject))]
         #[thread_kind = MainThreadOnly]
-        #[name = "InheritsNSObjectMainThreadOnly"]
         #[ivars = ()]
         struct InheritsNSObjectMainThreadOnly;
     );
@@ -555,7 +542,6 @@ fn test_auto_traits() {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "InheritsNSObject"]
         #[ivars = ()]
         struct InheritsNSObject;
     );
@@ -565,7 +551,6 @@ fn test_auto_traits() {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "InheritsNSObjectWithNonSendIvar"]
         #[ivars = NotSend]
         struct InheritsNSObjectWithNonSendIvar;
     );
@@ -575,7 +560,6 @@ fn test_auto_traits() {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "InheritsNSObjectWithNonSyncIvar"]
         #[ivars = NotSync]
         struct InheritsNSObjectWithNonSyncIvar;
     );
@@ -585,11 +569,51 @@ fn test_auto_traits() {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "InheritsNSObjectWithNonUnwindSafeIvar"]
         #[ivars = NotUnwindSafe]
         struct InheritsNSObjectWithNonUnwindSafeIvar;
     );
     let _ = InheritsNSObjectWithNonUnwindSafeIvar::class();
     assert_impl_all!(InheritsNSObjectWithNonUnwindSafeIvar: Send, Sync);
     assert_not_impl_any!(InheritsNSObjectWithNonUnwindSafeIvar: Unpin, UnwindSafe, RefUnwindSafe);
+}
+
+#[test]
+fn auto_name() {
+    define_class!(
+        #[unsafe(super(NSObject))]
+        #[ivars = ()]
+        struct AutoName;
+    );
+
+    let expected = format!("define_class::AutoName{}", env!("CARGO_PKG_VERSION"));
+
+    assert_eq!(AutoName::class().name().to_str().unwrap(), expected);
+    assert_eq!(AutoName::NAME, expected);
+}
+
+#[test]
+fn set_name() {
+    define_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "SetName"]
+        struct SetName;
+    );
+
+    assert_eq!(SetName::class().name().to_str().unwrap(), "SetName");
+    assert_eq!(SetName::NAME, "SetName");
+}
+
+#[test]
+fn name_can_be_expr() {
+    const NAME: &str = "  NameCanBeExpr  ";
+
+    define_class!(
+        #[unsafe(super(NSObject))]
+        #[name = NAME.trim_ascii()]
+        struct NameCanBeExpr;
+    );
+
+    let expected = "NameCanBeExpr";
+    assert_eq!(NameCanBeExpr::class().name().to_str().unwrap(), expected);
+    assert_eq!(NameCanBeExpr::NAME, expected);
 }

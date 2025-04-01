@@ -40,7 +40,6 @@ define_class!(
     //   - It does not call an overridden method.
     //   - It does not `retain` itself.
     #[unsafe(super(NSObject))]
-    #[name = "MyObserver"]
     #[ivars = Ivars]
     struct MyObserver;
 

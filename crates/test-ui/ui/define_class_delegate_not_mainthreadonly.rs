@@ -18,7 +18,6 @@ extern_protocol!(
 define_class!(
     #[unsafe(super(NSObject))]
     #[thread_kind = AllocAnyThread] // Not `MainThreadOnly`
-    #[name = "CustomObject"]
     struct CustomObject;
 
     unsafe impl NSObjectProtocol for CustomObject {}

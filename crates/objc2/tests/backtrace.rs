@@ -107,7 +107,6 @@ fn array_exception() {
 
 define_class!(
     #[unsafe(super = NSObject)]
-    #[name = "Thrower"]
     struct Thrower;
 
     impl Thrower {

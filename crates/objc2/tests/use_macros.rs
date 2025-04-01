@@ -3,7 +3,6 @@ use objc2::{class, define_class, msg_send, sel};
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "MyObject"]
     pub struct MyObject;
 );
 

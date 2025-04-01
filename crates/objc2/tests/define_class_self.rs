@@ -29,7 +29,6 @@ macro_rules! get_self {
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "MyTestObject"]
     struct MyTestObject;
 
     impl MyTestObject {

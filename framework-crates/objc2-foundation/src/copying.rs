@@ -123,7 +123,6 @@ extern_protocol!(
     ///
     /// define_class!(
     ///     #[unsafe(super(NSObject))]
-    ///     #[name = "CustomClass"]
     ///     struct CustomClass;
     ///
     ///     unsafe impl NSCopying for CustomClass {

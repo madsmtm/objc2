@@ -25,7 +25,6 @@ impl MyObject {
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "CustomObject1"]
     struct CustomObject1;
 
     impl CustomObject1 {
@@ -38,7 +37,6 @@ define_class!(
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "CustomObject2"]
     struct CustomObject2;
 
     impl CustomObject2 {

@@ -352,7 +352,6 @@ fn value_does_not_retain() {
 
 define_class!(
     #[unsafe(super(RcTestObject))]
-    #[name = "NSCopyingRcTestObject"]
     #[derive(Debug, PartialEq, Eq, Hash)]
     struct NSCopyingRcTestObject;
 

@@ -29,7 +29,6 @@ error: `#[optional]` is only supported in `extern_protocol!`
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject1"]
   | |     struct CustomObject1;
 ... |
   | | );
@@ -42,7 +41,6 @@ error: `#[optional]` is only supported in `extern_protocol!`
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject2"]
   | |     struct CustomObject2;
 ... |
   | | );

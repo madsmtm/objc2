@@ -4,7 +4,6 @@ use objc2::runtime::NSObject;
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "CustomObject"]
     struct CustomObject;
 
     impl CustomObject {

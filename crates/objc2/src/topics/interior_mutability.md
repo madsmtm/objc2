@@ -52,7 +52,6 @@ struct Ivars {
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "MyClass"]
     #[ivars = Ivars]
     struct MyClass;
 

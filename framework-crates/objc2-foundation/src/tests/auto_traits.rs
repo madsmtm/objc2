@@ -30,7 +30,6 @@ fn assert_auto_traits<T: Send + Sync + UnwindSafe + RefUnwindSafe>() {
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "SendSyncObject"]
     struct SendSyncObject;
 );
 

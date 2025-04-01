@@ -3,7 +3,6 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -28,7 +27,6 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -65,7 +63,6 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -103,7 +100,6 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -141,7 +137,6 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -166,7 +161,6 @@ error[E0277]: the trait bound `Retained<CustomObject>: Encode` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -202,7 +196,6 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -227,7 +220,6 @@ error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -263,7 +255,6 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -288,7 +279,6 @@ error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -324,7 +314,6 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -349,7 +338,6 @@ error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -385,7 +373,6 @@ error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not sati
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -410,7 +397,6 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -435,7 +421,6 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -460,7 +445,6 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );

@@ -365,7 +365,6 @@ mod tests {
 
     define_class!(
         #[unsafe(super(RcTestObject, NSObject))]
-        #[name = "RcTestObjectSubclass"]
         #[derive(Debug, PartialEq, Eq)]
         struct RcTestObjectSubclass;
     );

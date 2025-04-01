@@ -1104,7 +1104,6 @@ macro_rules! __class_inner {
 /// #
 /// # objc2::define_class!(
 /// #     #[unsafe(super(NSObject))]
-/// #     #[name = "MyObject"]
 /// #     struct MyObject;
 /// # );
 /// #

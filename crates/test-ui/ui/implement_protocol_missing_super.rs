@@ -6,7 +6,6 @@ use objc2_foundation::{NSObject, NSURLSessionDelegate};
 define_class!(
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[name = "CustomObject"]
     struct CustomObject;
 
     unsafe impl NSURLSessionDelegate for CustomObject {}

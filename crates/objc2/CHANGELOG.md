@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+## Added
+* Make `#[name = ...]` in `define_class!` optional. If not specified, the macro
+  will choose a suitable default that makes loading multiple versions of the
+  same library possible.
+
 ## Fixed
 * Fixed undefined behaviour when calling `AnyObject::class` on invalid objects.
 

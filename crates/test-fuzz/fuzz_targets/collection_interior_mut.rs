@@ -49,7 +49,6 @@ struct KeyIvars {
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "Key"]
     #[ivars = KeyIvars]
     struct Key;
 

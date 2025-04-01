@@ -4,7 +4,6 @@ use objc2::runtime::NSObject;
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "InvalidMethodDeclarations"]
     struct InvalidMethodDeclarations;
 
     impl InvalidMethodDeclarations {
@@ -127,28 +126,16 @@ define_class!(
 );
 
 define_class!(
-    #[unsafe(super(NSObject))]
-    struct MissingName;
-);
-
-define_class!(
-    #[name = "MissingSuper"]
     struct MissingSuper;
 );
 
 define_class!(
     #[super(NSObject)]
-    #[name = "SafeSuper"]
     struct SafeSuper;
 );
 
 define_class!(
-    struct MissingBoth;
-);
-
-define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "HasRepr"]
     #[repr(transparent)]
     struct HasRepr;
 );

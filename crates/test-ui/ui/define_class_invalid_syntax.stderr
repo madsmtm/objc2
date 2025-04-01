@@ -3,7 +3,6 @@ error: must specify the desired selector using `#[unsafe(method(...))]` or `#[un
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -16,7 +15,6 @@ error: cannot specify the `method`/`method_id` attribute twice
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -29,7 +27,6 @@ error: cannot specify the `method`/`method_id` attribute twice
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -68,7 +65,6 @@ error: no rules expected `(`
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -82,7 +78,6 @@ error: no rules expected `(`
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -105,7 +100,7 @@ error: missing parameters for function definition
    |
 help: add a parameter list
    |
-66 |         fn fn() test_fn_fn() {}
+65 |         fn fn() test_fn_fn() {}
    |              ++
 
 error: expected one of `->`, `<`, `where`, or `{`, found `test_fn_fn`
@@ -135,7 +130,6 @@ error: `#[unsafe(method_id(alloc))]` is not supported. Use `#[unsafe(method(allo
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -148,7 +142,6 @@ error: `#[unsafe(method_id(retain))]` is not supported. Use `#[unsafe(method(ret
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -161,7 +154,6 @@ error: `#[unsafe(method_id(release))]` is not supported. Use `#[unsafe(method(re
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -174,7 +166,6 @@ error: `#[unsafe(method_id(autorelease))]` is not supported. Use `#[unsafe(metho
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -187,7 +178,6 @@ error: `#[unsafe(method_id(dealloc))]` is not supported. Implement `Drop` for th
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -200,7 +190,6 @@ error: `#[unsafe(method(dealloc))]` is not supported. Implement `Drop` for the t
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -233,7 +222,6 @@ error: must specify the desired selector using `#[unsafe(method(...))]` or `#[un
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -246,7 +234,6 @@ error: cannot specify the `method`/`method_id` attribute twice
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -259,7 +246,6 @@ error: cannot specify the `method`/`method_id` attribute twice
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -272,7 +258,6 @@ error: `#[unsafe(method_id(...))]` must have a return type
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -297,7 +282,6 @@ error: no rules expected `)`
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -434,22 +418,10 @@ error: no rules expected keyword `const`
   |
   = note: while trying to match end of macro
 
-error: must set name of class with #[name = ...]
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct MissingName;
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
 error: must specify the superclass with #[unsafe(super(...))]
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
-  | |     #[name = "MissingSuper"]
   | |     struct MissingSuper;
   | | );
   | |_^
@@ -461,28 +433,7 @@ error: #[super(...)] must be wrapped in `unsafe`, as in #[unsafe(super(...))]
   |
   | / define_class!(
   | |     #[super(NSObject)]
-  | |     #[name = "SafeSuper"]
   | |     struct SafeSuper;
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__extern_class_check_super_unsafe` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: must set name of class with #[name = ...]
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     struct MissingBoth;
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: must specify the superclass with #[unsafe(super(...))]
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     struct MissingBoth;
   | | );
   | |_^
   |
@@ -493,7 +444,6 @@ error[E0692]: transparent struct cannot have other repr hints
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "HasRepr"]
   | |     #[repr(transparent)]
   | |            ^^^^^^^^^^^
   | |     struct HasRepr;
@@ -507,7 +457,6 @@ error[E0599]: no function or associated item named `test_pattern` found for stru
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | |         fn test_pattern((a, b): (u32, i32)) {
@@ -521,7 +470,6 @@ error[E0599]: no function or associated item named `test_self` found for struct 
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | |         fn test_self(self) {
@@ -535,7 +483,6 @@ error[E0277]: the trait bound `MethodFamily<2>: MessageReceiveRetained<&AnyClass
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -554,7 +501,6 @@ error[E0277]: the trait bound `MethodFamily<8>: MessageReceiveRetained<&AnyClass
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -573,7 +519,6 @@ error[E0277]: the trait bound `MethodFamily<9>: MessageReceiveRetained<&AnyClass
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -592,7 +537,6 @@ error[E0277]: the trait bound `MethodFamily<10>: MessageReceiveRetained<&AnyClas
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );
@@ -611,7 +555,6 @@ error[E0277]: the trait bound `MethodFamily<11>: MessageReceiveRetained<&AnyClas
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "InvalidMethodDeclarations"]
   | |     struct InvalidMethodDeclarations;
 ... |
   | | );

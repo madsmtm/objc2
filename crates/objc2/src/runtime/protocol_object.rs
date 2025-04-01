@@ -242,7 +242,6 @@ mod tests {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[name = "ProtocolTestsDummyClass"]
         #[derive(Debug, PartialEq, Eq, Hash)]
         struct DummyClass;
 

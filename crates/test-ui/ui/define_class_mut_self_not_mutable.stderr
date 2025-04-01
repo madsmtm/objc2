@@ -3,7 +3,6 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -35,7 +34,6 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -67,7 +65,6 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );
@@ -99,7 +96,6 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     #[name = "CustomObject"]
   | |     struct CustomObject;
 ... |
   | | );

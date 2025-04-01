@@ -499,7 +499,6 @@ mod tests {
 
         define_class!(
             #[unsafe(super(NSObject))]
-            #[name = "ImplsDrop"]
             #[ivars = ()]
             struct ImplsDrop;
 
@@ -533,7 +532,6 @@ mod tests {
 
         define_class!(
             #[unsafe(super(ImplsDrop))]
-            #[name = "IvarsImplDrop"]
             #[ivars = IvarThatImplsDrop]
             struct IvarsImplDrop;
 
@@ -561,7 +559,6 @@ mod tests {
 
         define_class!(
             #[unsafe(super(IvarsImplDrop))]
-            #[name = "BothIvarsAndTypeImplsDrop"]
             #[ivars = IvarThatImplsDrop]
             struct BothIvarsAndTypeImplsDrop;
 
@@ -611,7 +608,6 @@ mod tests {
 
         define_class!(
             #[unsafe(super(NSObject))]
-            #[name = "IvarsNoDrop"]
             #[ivars = Ivar]
             struct IvarsNoDrop;
         );
@@ -631,7 +627,6 @@ mod tests {
 
         define_class!(
             #[unsafe(super(NSObject))]
-            #[name = "IvarZst"]
             #[ivars = Cell<Ivar>]
             struct IvarZst;
 
@@ -694,7 +689,6 @@ mod tests {
     fn test_ivar_access() {
         define_class!(
             #[unsafe(super(NSObject))]
-            #[name = "RcIvar"]
             #[ivars = Cell<Option<Retained<RcTestObject>>>]
             struct RcIvar;
 
@@ -754,7 +748,6 @@ mod tests {
 
         define_class!(
             #[unsafe(super(RcIvar))]
-            #[name = "RcIvarSubclass"]
             #[ivars = RcIvarSubclassIvars]
             struct RcIvarSubclass;
 
@@ -819,7 +812,6 @@ mod tests {
     fn access_invalid() {
         define_class!(
             #[unsafe(super(NSObject))]
-            #[name = "InvalidAccess"]
             // Type has to have a drop flag to detect invalid access
             #[ivars = Retained<NSObject>]
             struct InvalidAccess;
@@ -836,7 +828,6 @@ mod tests {
     fn test_panic_in_drop() {
         define_class!(
             #[unsafe(super(NSObject))]
-            #[name = "DropPanics"]
             struct DropPanics;
         );
 
@@ -865,7 +856,6 @@ mod tests {
 
         define_class!(
             #[unsafe(super(NSObject))]
-            #[name = "IvarDropPanics"]
             #[ivars = DropPanics]
             struct IvarDropPanics;
         );
@@ -886,7 +876,6 @@ mod tests {
         define_class!(
             // SAFETY: Intentionally broken!
             #[unsafe(super(NSObject))]
-            #[name = "DropRetainsAndLeaksSelf"]
             #[derive(Debug)]
             struct DropRetainsAndLeaksSelf;
         );

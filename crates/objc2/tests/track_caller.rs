@@ -204,7 +204,6 @@ fn test_catch_all(checker: &PanicChecker) {
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[name = "PanickingClass"]
     struct PanickingClass;
 
     impl PanickingClass {

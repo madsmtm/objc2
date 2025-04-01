@@ -1081,4 +1081,22 @@ mod tests {
         //
         // let ivar = *obj.get_ivar::<u8>("ivar3");
     }
+
+    #[test]
+    fn auto_name() {
+        define_class!(
+            #[unsafe(super(NSObject))]
+            #[ivars = ()]
+            struct AutoName;
+        );
+
+        let expected = format!(
+            "objc2::runtime::define::tests::AutoName{}",
+            env!("CARGO_PKG_VERSION")
+        );
+
+        let cls = AutoName::class();
+        assert_eq!(cls.name().to_str().unwrap(), expected);
+        assert_eq!(AutoName::NAME, expected);
+    }
 }

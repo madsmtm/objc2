@@ -114,7 +114,6 @@
 ///     // - The superclass NSObject does not have any subclassing requirements.
 ///     // - `MyObject` does not implement `Drop`.
 ///     #[unsafe(super(NSObject))]
-///     #[name = "MyObject"]
 ///     pub struct MyObject;
 ///
 ///     impl MyObject {
@@ -171,7 +170,6 @@
 /// #
 /// # define_class!(
 /// #     #[unsafe(super(NSObject))]
-/// #     #[name = "MyObject2"]
 /// #     pub struct MyObject;
 /// #
 /// #     impl MyObject {
