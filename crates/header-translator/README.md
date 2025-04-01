@@ -72,6 +72,12 @@ The `translation-config.toml` file describes various tweaks that we need to do b
 
 However, even if our header translation was perfect, we still need a way to enrich the generated data, since C headers have no way to describe which methods are safe and which are not!
 
+Manual modifications to `Cargo.toml` can be done by adding a
+`Cargo.modified.toml` file, and including the keys that you want modified.
+
+See [objc2-foundation](../../framework-crates/objc2-foundation) for a good
+example of these files at work.
+
 
 ### What is required for a method to be safe?
 

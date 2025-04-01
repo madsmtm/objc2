@@ -3,19 +3,21 @@
 [![License](https://badgen.net/badge/license/MIT/blue)](./LICENSE.txt)
 [![CI](https://github.com/madsmtm/objc2/actions/workflows/ci.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/ci.yml)
 
-**See [`objc2`] for top-level documentation**, including its [documentation on framework crates]. Also check out [`block2`] and [`dispatch2`].
+**See [`objc2`] for top-level documentation**, including [the documentation on framework crates].
+
+Also check out [`block2`] and [`dispatch2`].
 
 [`objc2`]: https://docs.rs/objc2/
-[documentation on framework crates]: https://docs.rs/objc2/latest/objc2/topics/about_generated/index.html
+[the documentation on framework crates]: https://docs.rs/objc2/latest/objc2/topics/about_generated/index.html
 [`block2`]: https://docs.rs/block2/
 [`dispatch2`]: https://docs.rs/dispatch2/
 
 
-## Contact Us
+## Contact
 
 Always feel free to [open an issue on GitHub](https://github.com/madsmtm/objc2/issues/new/choose) if you find a problem or have any questions.
 
-If you prefer to have a more synchronous and less "formal" discussion, we have [a Matrix workspace](https://matrix.to/#/#objc2:matrix.org), feel free to ask any questions in the "Users" room.
+If you prefer to have a more synchronous and less "formal" discussion, there is [a Matrix workspace](https://matrix.to/#/#objc2:matrix.org), feel free to ask any questions in the "Users" room.
 
 
 ## License
