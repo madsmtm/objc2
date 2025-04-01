@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `AppClip` / `objc2-app-clip`.
   - `ApplicationServices` / `objc2-application-services` (some submodules left out).
   - `BrowserEngineKit` / `objc2-browser-engine-kit`.
+  - `Carbon` / `objc2-carbon` (empty for now).
   - `CarPlay` / `objc2-car-play`.
   - `CFNetwork` / `objc2-cf-network`.
   - `Cinematic` / `objc2-cinematic`.

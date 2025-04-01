@@ -833,6 +833,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-carbon"
+version = "0.3.0"
+
+[[package]]
 name = "objc2-cf-network"
 version = "0.3.0"
 dependencies = [
@@ -2838,6 +2842,7 @@ dependencies = [
  "objc2-business-chat",
  "objc2-call-kit",
  "objc2-car-play",
+ "objc2-carbon",
  "objc2-cf-network",
  "objc2-cinematic",
  "objc2-class-kit",

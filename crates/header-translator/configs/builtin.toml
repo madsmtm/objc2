@@ -12,7 +12,3 @@ tvos = "9.0"
 watchos = "2.0"
 visionos = "1.0"
 gnustep = true
-
-# `objc_method_family`
-# TODO: Move this
-class.ABNewPersonViewController.methods.newPersonViewDelegate.skipped = true

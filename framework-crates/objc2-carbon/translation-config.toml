@@ -1,0 +1,21 @@
+framework = "Carbon"
+crate = "objc2-carbon"
+required-crates = ["objc2-core-foundation"]
+macos = "10.0"
+
+# Use AppKit instead
+module.CommonPanels.skipped = true
+# Empty
+module.ImageCapture.skipped = true
+module.Ink.skipped = true
+# Use ScriptingBridge instead
+module.OpenScripting.skipped = true
+# Use SecurityInterface instead
+module.SecurityHI.skipped = true
+# Use NSSpeechRecognizer (or AVFoundation) instead
+module.SpeechRecognition.skipped = true
+
+# TODO: Maybe add these in the future?
+custom-lib-rs = true # For docs
+module.Help.skipped = true
+module.HIToolbox.skipped = true

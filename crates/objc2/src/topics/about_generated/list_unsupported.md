@@ -16,7 +16,6 @@
 | `AutomatedDeviceEnrollment` | Swift-only. |
 | `CalendarStore` | Very deprecated. |
 | `CarKey` | Swift-only. |
-| `Carbon` | TODO. |
 | `Charts` | Swift-only. |
 | `Cocoa` | Basically empty nowadays, use AppKit. |
 | `Combine` | Swift-only. |

@@ -26,6 +26,7 @@
 | `CFNetwork` | [`objc2-cf-network`](https://crates.io/crates/objc2-cf-network) | [![docs.rs](https://docs.rs/objc2-cf-network/badge.svg)](https://docs.rs/objc2-cf-network/) |
 | `CallKit` | [`objc2-call-kit`](https://crates.io/crates/objc2-call-kit) | [![docs.rs](https://docs.rs/objc2-call-kit/badge.svg)](https://docs.rs/objc2-call-kit/) |
 | `CarPlay` | [`objc2-car-play`](https://crates.io/crates/objc2-car-play) | [![docs.rs](https://docs.rs/objc2-car-play/badge.svg)](https://docs.rs/objc2-car-play/) |
+| `Carbon` | [`objc2-carbon`](https://crates.io/crates/objc2-carbon) | [![docs.rs](https://docs.rs/objc2-carbon/badge.svg)](https://docs.rs/objc2-carbon/) |
 | `Cinematic` | [`objc2-cinematic`](https://crates.io/crates/objc2-cinematic) | [![docs.rs](https://docs.rs/objc2-cinematic/badge.svg)](https://docs.rs/objc2-cinematic/) |
 | `ClassKit` | [`objc2-class-kit`](https://crates.io/crates/objc2-class-kit) | [![docs.rs](https://docs.rs/objc2-class-kit/badge.svg)](https://docs.rs/objc2-class-kit/) |
 | `ClockKit` | [`objc2-clock-kit`](https://crates.io/crates/objc2-clock-kit) | [![docs.rs](https://docs.rs/objc2-clock-kit/badge.svg)](https://docs.rs/objc2-clock-kit/) |

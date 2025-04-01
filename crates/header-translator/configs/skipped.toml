@@ -97,6 +97,7 @@ System = "Deprecated wrapper over libSystem.dylib"
 AudioVideoBridging = "Deprecated, use AVKit/AVFoundation instead (maybe?)"
 AddressBook        = "Deprecated, use Contacts instead"
 AddressBookUI      = "Deprecated, use Contacts instead"
+# -> `objc_method_family` means we should class.ABNewPersonViewController.methods.newPersonViewDelegate.skipped = true
 AssetsLibrary      = "Deprecated, use PhotoKit instead"
 DirectoryService   = "Deprecated, use OpenDirectory instead"
 Twitter            = "Deprecated, use Social instead" # requires !swift
@@ -116,13 +117,6 @@ NetFS              = "Deprecated, use macFUSE or FSKit instead (probably)"
 JavaRuntimeSupport = "Probably not really interesting."
 CalendarStore = "Very deprecated" # requires !swift
 CoreMIDIServer = "Very deprecated"
-
-# Split:
-# - HIToolbox: Use AppKit
-# - OpenScripting: Use ScriptingBridge
-# - SecurityHI: Use SecurityInterface
-# - SpeechRecognition: Use NSSpeechRecognizer
-Carbon = "TODO"
 
 Network = "TODO, see [#646](https://github.com/madsmtm/objc2/issues/646)"
 DeviceDiscoveryUI = "Needs Network first"

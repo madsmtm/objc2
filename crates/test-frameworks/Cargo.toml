@@ -38,6 +38,7 @@ test-frameworks = [
     "objc2-cf-network",
     "objc2-call-kit",
     "objc2-car-play",
+    "objc2-carbon",
     "objc2-cinematic",
     "objc2-class-kit",
     "objc2-clock-kit",
@@ -371,6 +372,7 @@ objc2-io-usb-host = ["dep:objc2-io-usb-host"]
 objc2-application-services = ["dep:objc2-application-services"]
 objc2-quartz = ["dep:objc2-quartz"]
 objc2-phase = ["dep:objc2-phase"]
+objc2-carbon = ["dep:objc2-carbon"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -487,6 +489,7 @@ objc2-ml-compute = { path = "../../framework-crates/objc2-ml-compute", optional 
 objc2-app-kit = { path = "../../framework-crates/objc2-app-kit", optional = true }
 objc2-application-services = { path = "../../framework-crates/objc2-application-services", optional = true }
 objc2-automator = { path = "../../framework-crates/objc2-automator", optional = true }
+objc2-carbon = { path = "../../framework-crates/objc2-carbon", optional = true }
 objc2-collaboration = { path = "../../framework-crates/objc2-collaboration", optional = true }
 objc2-core-media-io = { path = "../../framework-crates/objc2-core-media-io", optional = true }
 objc2-core-wlan = { path = "../../framework-crates/objc2-core-wlan", optional = true }
