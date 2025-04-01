@@ -39,6 +39,8 @@ pub(crate) type Boolean = u8;
 pub(crate) type AbsoluteTime = i32;
 #[allow(dead_code)]
 pub(crate) type NumVersion = u32; // Actually a struct with 4 u8s
+#[allow(dead_code)]
+pub(crate) type FourCharCode = u32;
 
 // device/device_types.h
 #[allow(dead_code, non_camel_case_types)]

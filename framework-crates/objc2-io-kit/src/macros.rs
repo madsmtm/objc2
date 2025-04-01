@@ -51,6 +51,12 @@ macro_rules! iokit_usb_msg {
     };
 }
 
+macro_rules! IO_FOUR_CHAR_CODE {
+    ($code:expr) => {
+        $code
+    };
+}
+
 pub(crate) use err_sub;
 pub(crate) use err_system;
 pub(crate) use iokit_common_msg;
@@ -66,3 +72,4 @@ pub(crate) use IOUSBBitRange as IOUSBHostFamilyBitRange;
 pub(crate) use IOUSBBitRangePhase;
 pub(crate) use IOUSBBitRangePhase as USBBitRangePhase;
 pub(crate) use IOUSBBitRangePhase as IOUSBHostFamilyBitRangePhase;
+pub(crate) use IO_FOUR_CHAR_CODE;

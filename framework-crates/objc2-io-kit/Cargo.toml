@@ -48,6 +48,7 @@ default = [
     "IOUSBLib",
     "USB",
     "USBSpec",
+    "graphics",
     "libc",
     "objc2",
     "usb",
@@ -69,4 +70,10 @@ IOUSBLib = [
 ]
 USB = []
 USBSpec = []
+graphics = [
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFPlugInCOM",
+    "objc2-core-foundation/CFUUID",
+]
 usb = []

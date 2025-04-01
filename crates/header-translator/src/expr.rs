@@ -248,7 +248,7 @@ impl Expr {
                     if ident == "CFSTR" {
                         Token::CFStringBegin
                     } else if ident == "CFUUIDGetConstantUUIDWithBytes" {
-                        i += tokens.len();
+                        i = tokens.len() - i - 1;
                         Token::CFUUID("todo".into())
                     } else if let Some(expr) = declaration_references.get(&ident) {
                         Token::Expr(expr.clone())

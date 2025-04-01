@@ -48,7 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `IntentsUI` / `objc2-intents-ui`.
   - `IOBluetooth` / `objc2-io-bluetooth`.
   - `IOBluetoothUI` / `objc2-io-bluetooth-ui`.
-  - `IOKit` / `objc2-io-kit` (currently only `usb` submodule).
+  - `IOKit` / `objc2-io-kit` (currently only `usb` and `graphics` submodules).
   - `IOUSBHost` / `objc2-io-usb-host`.
   - `iTunesLibrary` / `objc2-itunes-library`.
   - `JavaScriptCore` / `objc2-java-script-core`.

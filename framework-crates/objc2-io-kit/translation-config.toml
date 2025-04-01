@@ -11,7 +11,6 @@ visionos = "1.0"
 module.audio.skipped = true
 module.avc.skipped = true
 module.firewire.skipped = true
-module.graphics.skipped = true
 module.hid.skipped = true
 module.hidsystem.skipped = true
 module.i2c.skipped = true
@@ -104,6 +103,8 @@ const.kUSBDeviceContainerID.skipped = true
 const.kIOUSB30Bitrate5Gbps.skipped = true
 const.kIOUSB30Bitrate10Gbps.skipped = true
 const.kIOUSB32Bitrate20Gbps.skipped = true
+const.kIODisplayModeIDBootProgrammable.skipped = true
+const.kIODisplayModeIDReservedBase.skipped = true
 
 # Emit these.
 const.IO1BitIndexedPixels.skipped = false
@@ -117,3 +118,35 @@ const.IO8BitOverlayPixels.skipped = false
 const.IOPagedPixels.skipped = false
 const.IO_SampleTypeAlpha.skipped = false
 const.IO_SampleTypeSkip.skipped = false
+
+# https://github.com/shurizzle/rust-four-char-code/issues/2
+const.kConnectionIgnore.skipped = true
+const.kConnectionControllerDepthsSupported.skipped = true
+const.kConnectionControllerColorDepth.skipped = true
+const.kConnectionControllerDitherControl.skipped = true
+
+# Needs OSSpinLock
+struct.StdFBShmem_t.skipped = true
+typedef.StdFBShmem_t.skipped = true
+struct.IOGraphicsEngineContext.skipped = true
+typedef.IOGraphicsEngineContext.skipped = true
+const.kIOGraphicsEngineContext.skipped = true
+const.kIOGraphicsEngineContextVersion.skipped = true
+struct._NXEQElStruct.skipped = true
+typedef._NXEQElStruct.skipped = true
+struct._evGlobals.skipped = true
+typedef._evGlobals.skipped = true
+const.IOSharedLockData.skipped = true
+const.ev_lock_data_t.skipped = true
+
+# Needs `task_port_t` to be available in `libc`
+fn.IOFramebufferOpen.skipped = true
+
+# Unknown ABI
+typedef.IOPixelEncoding.skipped = true
+struct.IOPixelInformation.skipped = true
+typedef.IOPixelInformation.skipped = true
+struct.bm12Cursor.skipped = true
+struct.bm18Cursor.skipped = true
+struct.bm34Cursor.skipped = true
+struct.bm38Cursor.skipped = true
