@@ -8,6 +8,8 @@ pub mod alternatives {}
 #[cfg(not(feature = "gnustep-1-7"))]
 #[doc = include_str!("crate_interop.md")]
 pub mod crate_interop {}
+#[doc = include_str!("cross_compiling.md")]
+pub mod cross_compiling {}
 #[doc = include_str!("kvo.md")]
 pub mod kvo {}
 #[doc = include_str!("layered_safety.md")]
