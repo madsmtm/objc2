@@ -1,8 +1,12 @@
 //! Dispatch object definition.
 
 use alloc::boxed::Box;
+use core::{ops::Deref, ptr::NonNull};
 
 use super::{ffi::*, queue::Queue, utils::function_wrapper, QualityOfServiceClass};
+
+// TODO: Autogenerate with https://github.com/madsmtm/objc2/issues/609
+const DISPATCH_DATA_DESTRUCTOR_DEFAULT: dispatch_block_t = std::ptr::null_mut();
 
 /// Error returned by [DispatchObject::set_target_queue].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -58,6 +62,77 @@ impl<T> DispatchObject<T> {
         }
 
         result
+    }
+
+    /// Creates a dispatch data object with a copy of the given contiguous buffer of memory.
+    // TODO: Would it be safe for users to replace the finalizer?
+    pub fn data_create_copy(data: &[u8], queue: &Queue) -> Self {
+        // SAFETY: Buffer pointer is valid for the given number of bytes. Queue handle is valid,
+        // and the destructor is a NULL value which indicates the buffer should be copied.
+        let object = unsafe {
+            dispatch_data_create(
+                NonNull::new_unchecked(data.as_ptr().cast_mut()).cast(),
+                data.len(),
+                queue.as_raw(),
+                DISPATCH_DATA_DESTRUCTOR_DEFAULT,
+            )
+        };
+
+        Self {
+            object: object.cast(),
+            is_activated: false,
+        }
+    }
+
+    /// Creates a dispatch data object with a reference to the given contiguous buffer of memory.
+    pub fn data_create_static(data: &'static [u8], queue: &Queue) -> Self {
+        block2::global_block! {
+            static NOOP_BLOCK = || {}
+        }
+        // SAFETY: Buffer pointer is valid for the given number of bytes. Queue handle is valid,
+        // and the destructor is a NULL value which indicates the buffer should be copied.
+        let object = unsafe {
+            dispatch_data_create(
+                NonNull::new_unchecked(data.as_ptr().cast_mut()).cast(),
+                data.len(),
+                queue.as_raw(),
+                <*const _>::cast_mut(NOOP_BLOCK.deref()),
+            )
+        };
+
+        Self {
+            object: object.cast(),
+            is_activated: false,
+        }
+    }
+
+    /// Creates a dispatch data object with ownership of the given contiguous buffer of memory.
+    // TODO: Would it be safe for users to replace the finalizer?
+    pub fn data_create(data: Box<[u8]>, queue: &Queue) -> Self {
+        let data_len = data.len();
+        let raw = Box::into_raw(data);
+        let delete_box = block2::RcBlock::new(move || {
+            // SAFETY: The fat pointer (plus size) was retrieved from Box::into_raw(), and its
+            // ownership was *not* consumed by dispatch_data_create().
+            let _ = unsafe { Box::<[u8]>::from_raw(raw) };
+        });
+
+        // SAFETY: Buffer pointer is valid for the given number of bytes. Queue handle is valid,
+        // and the destructor is a NULL value which indicates the buffer should be copied.
+        // let t = Box::into_raw(data);
+        let object = unsafe {
+            dispatch_data_create(
+                NonNull::new_unchecked(raw).cast(),
+                data_len,
+                queue.as_raw(),
+                <*const _>::cast_mut(delete_box.deref()),
+            )
+        };
+
+        Self {
+            object: object.cast(),
+            is_activated: false,
+        }
     }
 
     /// Set the finalizer function for the object.
