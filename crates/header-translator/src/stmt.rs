@@ -2042,7 +2042,7 @@ impl Stmt {
             }
             Self::OpaqueDecl { is_cf, .. } => {
                 if *is_cf {
-                    vec![ItemTree::cf("cf_type")]
+                    vec![ItemTree::cf("cf_type"), ItemTree::objc("cf_objc2_type")]
                 } else {
                     vec![ItemTree::objc("Encoding")]
                 }
@@ -3094,7 +3094,6 @@ impl Stmt {
                         // SAFETY: The type is a CoreFoundation type, and
                         // correctly declared as a #[repr(C)] ZST.
                         writeln!(f, "cf_type!(")?;
-                        writeln!(f, "    #[encoding_name = {encoding_name:?}]")?;
 
                         // SAFETY: It's fine to implement helper traits for
                         // all generics (e.g. all of `CFArray<u32>`,
@@ -3113,6 +3112,22 @@ impl Stmt {
                             write!(f, ": {}{}", superclass.name, GenericTyHelper(generics))?;
                         }
                         writeln!(f, " {{}}")?;
+                        writeln!(f, ");")?;
+
+                        let required_items = self
+                            .required_items()
+                            .chain(iter::once(ItemTree::objc("cf_objc2_type")));
+                        let cfg_objc2 = self.cfg_gate_ln_for(required_items, config);
+                        write!(f, "{cfg_objc2}")?;
+                        writeln!(f, "cf_objc2_type!(")?;
+                        // SAFETY: The type is a CoreFoundation type.
+                        writeln!(
+                            f,
+                            "    unsafe impl{} RefEncode<{encoding_name:?}> for {}{} {{}}",
+                            GenericParamsHelper(generics, "?Sized"),
+                            id.name,
+                            GenericTyHelper(generics),
+                        )?;
                         writeln!(f, ");")?;
                     } else {
                         let required_items = self

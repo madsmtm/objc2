@@ -6,7 +6,7 @@ pub use core::default::Default;
 pub use core::fmt;
 pub use core::hash::{Hash, Hasher};
 pub use core::marker::{PhantomData, Sized};
-pub use core::mem::{size_of, ManuallyDrop, MaybeUninit};
+pub use core::mem::{size_of, transmute, ManuallyDrop, MaybeUninit};
 pub use core::ops::Deref;
 pub use core::option::Option::{self, None, Some};
 pub use core::primitive::{bool, isize, str, u8};

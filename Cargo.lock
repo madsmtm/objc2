@@ -1249,6 +1249,7 @@ name = "objc2-disk-arbitration"
 version = "0.3.0"
 dependencies = [
  "libc",
+ "objc2",
  "objc2-core-foundation",
 ]
 
@@ -1604,6 +1605,7 @@ dependencies = [
 name = "objc2-latent-semantic-mapping"
 version = "0.3.0"
 dependencies = [
+ "objc2",
  "objc2-core-foundation",
 ]
 

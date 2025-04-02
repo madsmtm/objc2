@@ -29,7 +29,6 @@
 #[macro_export]
 macro_rules! cf_type {
     (
-        #[encoding_name = $encoding_name:expr]
         unsafe impl $(<$($generic:ident : ?$sized:ident),* $(,)?>)? $ty:ident $(<$($generic_param:ident),* $(,)?>)? $(: $superclass:ty)? {}
     ) => {
         // Reflexive AsRef impl.
@@ -46,12 +45,6 @@ macro_rules! cf_type {
         $crate::__cf_type_needs_cf_base!(impl ($(<$($generic : ?$sized),*>)?) $ty $(<$($generic_param),*>)?);
 
         $crate::__cf_type_superclass!(impl ($(<$($generic : ?$sized),*>)?) $ty $(<$($generic_param),*>)? $(: $superclass)?);
-
-        // Objective-C interop
-        $crate::__cf_type_objc2!(
-            impl ($(<$($generic : ?$sized),*>)?) $ty $(<$($generic_param),*>)?,
-            $crate::__cf_macro_helpers::Encoding::Struct($encoding_name, &[])
-        );
     };
 }
 
@@ -181,54 +174,4 @@ macro_rules! __cf_type_no_superclass {
 #[macro_export]
 macro_rules! __cf_type_no_superclass {
     (impl ($($generics:tt)*) $ty:ty) => {};
-}
-
-#[cfg(feature = "objc2")]
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __cf_type_objc2 {
-    (impl ($($generics:tt)*) $ty:ty, $encoding:expr) => {
-        // SAFETY: Caller upholds that the struct is a ZST type, and
-        // represents a C struct with the given encoding.
-        unsafe impl $($generics)* $crate::__cf_macro_helpers::RefEncode for $ty {
-            const ENCODING_REF: $crate::__cf_macro_helpers::Encoding =
-                $crate::__cf_macro_helpers::Encoding::Pointer(&$encoding);
-        }
-
-        // SAFETY: CF types are message-able in the Objective-C runtime.
-        //
-        // (Yes, even e.g. `CFArray<u32>`, though the return type from methods
-        // might not be what's expected).
-        unsafe impl $($generics)* $crate::__cf_macro_helpers::Message for $ty {}
-
-        // Allow converting to AnyObject.
-        // Similar to objc2::__extern_class_impl_as_ref_borrow!
-        impl $($generics)* $crate::__cf_macro_helpers::AsRef<$crate::__cf_macro_helpers::AnyObject> for $ty {
-            #[inline]
-            fn as_ref(&self) -> &$crate::__cf_macro_helpers::AnyObject {
-                // SAFETY: CF types are valid to re-interpret as AnyObject.
-                unsafe { $crate::__cf_macro_helpers::transmute(self) }
-            }
-        }
-
-        impl $($generics)* $crate::__cf_macro_helpers::Borrow<$crate::__cf_macro_helpers::AnyObject> for $ty {
-            #[inline]
-            fn borrow(&self) -> &$crate::__cf_macro_helpers::AnyObject {
-                <Self as $crate::__cf_macro_helpers::AsRef<$crate::__cf_macro_helpers::AnyObject>>::as_ref(self)
-            }
-        }
-
-        // Do not implement `ClassType`, CoreFoundation objects are root
-        // objects, and all inherit from the same (hidden) __NSCFType class.
-        //
-        // This also means that casting etc. must be implemented differently
-        // for CoreFoundation objects (compare).
-    };
-}
-
-#[cfg(not(feature = "objc2"))]
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __cf_type_objc2 {
-    ($($t:tt)*) => {};
 }

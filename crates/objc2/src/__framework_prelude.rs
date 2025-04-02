@@ -10,6 +10,6 @@ pub use crate::runtime::{
     AnyClass, AnyObject, AnyProtocol, Bool, Imp, NSObject, NSObjectProtocol, ProtocolObject, Sel,
 };
 pub use crate::{
-    extern_class, extern_methods, extern_protocol, ClassType, MainThreadMarker, MainThreadOnly,
-    Message, ProtocolType,
+    cf_objc2_type, extern_class, extern_methods, extern_protocol, ClassType, MainThreadMarker,
+    MainThreadOnly, Message, ProtocolType,
 };

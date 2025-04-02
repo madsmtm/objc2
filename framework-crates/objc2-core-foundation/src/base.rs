@@ -188,7 +188,32 @@ impl hash::Hash for CFType {
     }
 }
 
-crate::__cf_type_objc2!(impl () CFType, crate::__cf_macro_helpers::Encoding::Void);
+// SAFETY: CFType is defined as the following in the header:
+// typedef const CF_BRIDGED_TYPE(id) void * CFTypeRef;
+#[cfg(feature = "objc2")]
+unsafe impl objc2::encode::RefEncode for CFType {
+    const ENCODING_REF: objc2::encode::Encoding =
+        objc2::encode::Encoding::Pointer(&objc2::encode::Encoding::Void);
+}
+
+// SAFETY: CF types are message-able in the Objective-C runtime.
+#[cfg(feature = "objc2")]
+unsafe impl objc2::Message for CFType {}
+
+#[cfg(feature = "objc2")]
+impl AsRef<objc2::runtime::AnyObject> for CFType {
+    fn as_ref(&self) -> &objc2::runtime::AnyObject {
+        // SAFETY: CFType is valid to re-interpret as AnyObject.
+        unsafe { core::mem::transmute(self) }
+    }
+}
+
+#[cfg(feature = "objc2")]
+impl core::borrow::Borrow<objc2::runtime::AnyObject> for CFType {
+    fn borrow(&self) -> &objc2::runtime::AnyObject {
+        <Self as AsRef<objc2::runtime::AnyObject>>::as_ref(self)
+    }
+}
 
 // NOTE: impl AsRef<CFType> for AnyObject would probably not be valid, since
 // not all Objective-C objects can be used as CoreFoundation objects (?)
