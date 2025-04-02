@@ -53,3 +53,8 @@ pub(crate) type io_struct_inband_t = *mut [core::ffi::c_char; 4096];
 // uuid/uuid_t.h
 #[allow(dead_code, non_camel_case_types)]
 pub(crate) type uuid_t = [u8; 16]; // Usage sites are all in structs
+
+// mach/mach_types.h
+#[allow(dead_code, non_camel_case_types)]
+#[cfg(feature = "libc")]
+pub(crate) type task_port_t = libc::task_t;

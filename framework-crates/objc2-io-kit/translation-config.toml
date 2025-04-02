@@ -48,7 +48,7 @@ typedef.OSAsyncReference64.skipped = true
 struct.OSNotificationHeader64.skipped = true
 struct.IOServiceInterestContent64.skipped = true
 
-# Needs mach_msg_size_t/mach_msg_header_t/mach_timespec_t/task_port_t, which isn't exposed by libc
+# Needs mach_msg_size_t/mach_msg_header_t/mach_timespec_t, which isn't exposed by libc
 typedef.OSAsyncReference.skipped = true
 struct.OSNotificationHeader.skipped = true
 fn.IODispatchCalloutFromMessage.skipped = true
@@ -62,11 +62,6 @@ struct.IORPCMessageMach.skipped = true
 struct.IORPCMessageErrorReturn.skipped = true
 struct.IORPC.skipped = true
 fn.IORPCMessageFromMach.skipped = true
-fn.IOServiceOpen.skipped = true
-fn.IOConnectMapMemory.skipped = true
-fn.IOConnectMapMemory64.skipped = true
-fn.IOConnectUnmapMemory.skipped = true
-fn.IOConnectUnmapMemory64.skipped = true
 
 # Needs libdispatch
 fn.IONotificationPortSetDispatchQueue.skipped = true
@@ -138,9 +133,6 @@ struct._evGlobals.skipped = true
 typedef._evGlobals.skipped = true
 const.IOSharedLockData.skipped = true
 const.ev_lock_data_t.skipped = true
-
-# Needs `task_port_t` to be available in `libc`
-fn.IOFramebufferOpen.skipped = true
 
 # Unknown ABI
 typedef.IOPixelEncoding.skipped = true

@@ -13,3 +13,6 @@ tvos = "9.0"
 watchos = "2.0"
 visionos = "1.0"
 gnustep = true
+
+# HACK: Define `task_port_t` in the using crate (it's a simple alias to `task_t`).
+external.task_port_t.module = "__builtin__"
