@@ -9,11 +9,7 @@ pub use core::ops::Deref;
 pub use core::primitive::bool;
 pub use core::stringify;
 #[cfg(feature = "objc2")]
-pub use objc2::encode::{Encode, Encoding, RefEncode};
-#[cfg(feature = "objc2")]
-pub use objc2::runtime::AnyObject;
-#[cfg(feature = "objc2")]
-pub use objc2::Message;
+pub use objc2::cf_objc2_type;
 
 #[cfg(feature = "CFBase")]
 pub use crate::CFTypeID;

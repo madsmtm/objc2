@@ -29,6 +29,7 @@
 #[macro_export]
 macro_rules! cf_type {
     (
+        $(#[encoding_name = $encoding_name:literal])? // TODO(breaking): Remove this.
         unsafe impl $(<$($generic:ident : ?$sized:ident),* $(,)?>)? $ty:ident $(<$($generic_param:ident),* $(,)?>)? $(: $superclass:ty)? {}
     ) => {
         // Reflexive AsRef impl.
@@ -45,6 +46,12 @@ macro_rules! cf_type {
         $crate::__cf_type_needs_cf_base!(impl ($(<$($generic : ?$sized),*>)?) $ty $(<$($generic_param),*>)?);
 
         $crate::__cf_type_superclass!(impl ($(<$($generic : ?$sized),*>)?) $ty $(<$($generic_param),*>)? $(: $superclass)?);
+
+        // Objective-C interop
+        $crate::__cf_type_objc2!(
+            impl ($(<$($generic : ?$sized),*>)?) $ty $(<$($generic_param),*>)?;
+            $($encoding_name)?
+        );
     };
 }
 
@@ -174,4 +181,23 @@ macro_rules! __cf_type_no_superclass {
 #[macro_export]
 macro_rules! __cf_type_no_superclass {
     (impl ($($generics:tt)*) $ty:ty) => {};
+}
+
+#[cfg(feature = "objc2")]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __cf_type_objc2 {
+    (impl ($($generics:tt)*) $ty:ty;) => {};
+    (impl ($($generics:tt)*) $ty:ty; $encoding:literal) => {
+        $crate::__cf_macro_helpers::cf_objc2_type!(
+            unsafe impl $($generics)* for RefEncode<$encoding> $ty {}
+        );
+    };
+}
+
+#[cfg(not(feature = "objc2"))]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __cf_type_objc2 {
+    ($($t:tt)*) => {};
 }
