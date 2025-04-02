@@ -5,3 +5,7 @@ macos = "10.12"
 maccatalyst = "13.0"
 ios = "7.0"
 visionos = "1.0"
+
+# SFSwiftOverlaySupport says these are private.
+static._SFSafariServicesAvailable.skipped = true
+static._SFSafariServicesVersion.skipped = true
