@@ -32,6 +32,10 @@ pub use self::macros::*;
 /// [Apple's documentation](https://developer.apple.com/documentation/iokit/ioreturn?language=objc)
 pub type IOReturn = core::ffi::c_int; // kern_return_t
 
+/// [Apple's documentation](https://developer.apple.com/documentation/iokit/kioreturnsuccess?language=objc)
+#[allow(non_upper_case_globals)]
+pub const kIOReturnSuccess: IOReturn = 0;
+
 // MacTypes.h
 #[allow(dead_code)]
 pub(crate) type Boolean = u8;
