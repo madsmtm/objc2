@@ -99,6 +99,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Added getters.
   - Added mutation methods.
 * Added simple `#define`ed constants.
+* Added `CFString::as_str_unchecked`.
 
 ### Changed
 * Made `CFArray`, `CFBag`, `CFBinaryHeap`, `CFDictionary`, `CFSet` and their

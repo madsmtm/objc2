@@ -86,13 +86,10 @@ impl CFString {
     ///
     /// Warning: This is very difficult to ensure in generic contexts, e.g. it
     /// cannot even be used inside `Debug::fmt`, since `Formatter` uses `dyn`
-    /// internally, and can thus mutate the string inside there.
+    /// internally, and could thus mutate the string inside there.
     #[doc(alias = "CFStringGetCStringPtr")]
-    // NOTE: This is NOT public, since it's completely broken for differently
-    // encoded strings, see the `as_str_broken` test below. See also:
-    // <https://github.com/swiftlang/swift-corelibs-foundation/issues/5164>.
-    #[allow(dead_code)]
-    unsafe fn as_str_unchecked(&self) -> Option<&str> {
+    pub unsafe fn as_str_unchecked(&self) -> Option<&str> {
+        // NOTE: The encoding is an 8-bit encoding.
         let bytes = CFStringGetCStringPtr(self, CFStringBuiltInEncodings::EncodingUTF8.0);
         NonNull::new(bytes as *mut c_char).map(|bytes| {
             // SAFETY: The pointer is valid for as long as the CFString is not
@@ -102,8 +99,6 @@ impl CFString {
             // We won't accidentally truncate the string here, since
             // `CFStringGetCStringPtr` makes sure that there are no internal
             // NUL bytes in the string.
-            //
-            // TODO: Verify this claim with a test.
             let cstr = unsafe { CStr::from_ptr(bytes.as_ptr()) };
             // SAFETY: `CFStringGetCStringPtr` is (very likely) implemented
             // correctly, and won't return non-UTF8 strings.
@@ -255,6 +250,8 @@ mod tests {
         let s = CFString::from_str("a\0b\0c\0d");
         // Works with `CFStringGetBytes`.
         assert_eq!(s.to_string(), "a\0b\0c\0d");
+        // Expectedly does not work `CFStringGetCStringPtr`.
+        assert_eq!(unsafe { s.as_str_unchecked() }, None);
 
         // Test `CFStringGetCString`.
         let mut buf = [0u8; 10];
@@ -287,9 +284,15 @@ mod tests {
     }
 
     #[test]
-    fn as_str_broken() {
+    fn create_with_cstring_broken_on_non_8_bit() {
         // A CFString that is supposed to contain a "♥" (the UTF-8 encoding of
         // that is the vastly different b"\xE2\x99\xA5").
+        //
+        // This line is wrong, because `CFStringCreateWithCString` expects an
+        // 8-bit encoding.
+        //
+        // See also:
+        // https://github.com/swiftlang/swift-corelibs-foundation/issues/5164
         let s = unsafe {
             CFStringCreateWithCString(
                 None,
@@ -315,8 +318,7 @@ mod tests {
         let cstr = CStr::from_bytes_until_nul(&buf).unwrap();
         assert_eq!(cstr.to_bytes(), "♥".as_bytes());
 
-        // But `CFStringGetCStringPtr` completely ignores the UTF-8 conversion
-        // we asked it to do, i.e. a huge correctness footgun!
+        // `CFStringGetCStringPtr` completely ignores the UTF-8 conversion.
         assert_eq!(unsafe { s.as_str_unchecked() }, Some("e&"));
     }
 
