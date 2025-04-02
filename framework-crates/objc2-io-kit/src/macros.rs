@@ -51,6 +51,13 @@ macro_rules! iokit_usb_msg {
     };
 }
 
+macro_rules! iokit_vendor_specific_msg {
+    ($message:expr) => {
+        // (sys_iokit | sub_iokit_vendor_specific | message)
+        (err_system!(0x38) | err_sub!(-2) | $message) as u32
+    };
+}
+
 macro_rules! IO_FOUR_CHAR_CODE {
     ($code:expr) => {
         $code
@@ -63,6 +70,7 @@ pub(crate) use iokit_common_msg;
 pub(crate) use iokit_common_msg as iokit_common_err;
 pub(crate) use iokit_usb_msg as iokit_usb_err;
 pub(crate) use iokit_usb_msg;
+pub(crate) use iokit_vendor_specific_msg;
 pub(crate) use EncodeRequest;
 pub(crate) use IOUSBBit;
 pub(crate) use IOUSBBit as IOUSBHostFamilyBit;

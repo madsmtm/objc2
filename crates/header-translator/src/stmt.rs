@@ -1110,7 +1110,8 @@ impl Stmt {
                     | EntityKind::EnumDecl
                     | EntityKind::IntegerLiteral
                     | EntityKind::BinaryOperator
-                    | EntityKind::DeclRefExpr => {}
+                    | EntityKind::DeclRefExpr
+                    | EntityKind::ParenExpr => {}
                     EntityKind::ObjCIndependentClass => {
                         // TODO: Might be interesting?
                     }

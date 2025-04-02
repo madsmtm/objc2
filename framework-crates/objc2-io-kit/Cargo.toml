@@ -16,6 +16,8 @@ license.workspace = true
 workspace = true
 
 [dependencies]
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
+block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, features = [
@@ -48,13 +50,19 @@ default = [
     "IOUSBLib",
     "USB",
     "USBSpec",
+    "bitflags",
+    "block2",
     "graphics",
+    "hid",
+    "hidsystem",
     "libc",
     "objc2",
     "usb",
 ]
 std = ["alloc"]
 alloc = []
+bitflags = ["dep:bitflags"]
+block2 = ["dep:block2"]
 libc = ["dep:libc"]
 objc2 = [
     "dep:objc2",
@@ -75,5 +83,21 @@ graphics = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFPlugInCOM",
     "objc2-core-foundation/CFUUID",
+]
+hid = [
+    "bitflags",
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDate",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFPlugInCOM",
+    "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFSet",
+    "objc2-core-foundation/CFUUID",
+]
+hidsystem = [
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFBase",
+    "objc2-core-foundation/CFDictionary",
 ]
 usb = []

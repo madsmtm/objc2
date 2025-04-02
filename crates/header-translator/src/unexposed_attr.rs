@@ -281,6 +281,7 @@ impl UnexposedAttr {
             "AS_API_AVAILABLE" | "AS_HEADER_AUDIT_BEGIN" => None,
             "__CG_DEPRECATED_ENUMERATOR"
             | "__CG_DEPRECATED"
+            | "__deprecated"
             | "__IOS_PROHIBITED"
             | "__IOS_UNAVAILABLE"
             | "__OSX_UNAVAILABLE"

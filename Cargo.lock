@@ -1553,6 +1553,8 @@ dependencies = [
 name = "objc2-io-kit"
 version = "0.3.0"
 dependencies = [
+ "bitflags",
+ "block2",
  "libc",
  "objc2",
  "objc2-core-foundation",

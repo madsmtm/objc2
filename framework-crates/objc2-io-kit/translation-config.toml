@@ -11,8 +11,6 @@ visionos = "1.0"
 module.audio.skipped = true
 module.avc.skipped = true
 module.firewire.skipped = true
-module.hid.skipped = true
-module.hidsystem.skipped = true
 module.i2c.skipped = true
 module.iokitmig.skipped = true
 module.kext.skipped = true
@@ -62,9 +60,21 @@ struct.IORPCMessageMach.skipped = true
 struct.IORPCMessageErrorReturn.skipped = true
 struct.IORPC.skipped = true
 fn.IORPCMessageFromMach.skipped = true
+struct.evioSpecialKeyMsg.skipped = true
+typedef.evioSpecialKeyMsg_t.skipped = true
 
-# Needs libdispatch
+# Needs dispatch_queue_t from libdispatch
 fn.IONotificationPortSetDispatchQueue.skipped = true
+fn.IOHIDQueueSetDispatchQueue.skipped = true
+fn.IOHIDDeviceSetDispatchQueue.skipped = true
+fn.IOHIDManagerSetDispatchQueue.skipped = true
+fn.IOHIDUserDeviceSetDispatchQueue.skipped = true
+
+# Needs dispatch_block_t from libdispatch
+fn.IOHIDQueueSetCancelHandler.skipped = true
+fn.IOHIDDeviceSetCancelHandler.skipped = true
+fn.IOHIDManagerSetCancelHandler.skipped = true
+fn.IOHIDUserDeviceSetCancelHandler.skipped = true
 
 # Recursive
 typedef.LowLatencyUserBufferInfo.skipped = true
@@ -100,6 +110,7 @@ const.kIOUSB30Bitrate10Gbps.skipped = true
 const.kIOUSB32Bitrate20Gbps.skipped = true
 const.kIODisplayModeIDBootProgrammable.skipped = true
 const.kIODisplayModeIDReservedBase.skipped = true
+const.kAppleOnboardGUID.skipped = true
 
 # Emit these.
 const.IO1BitIndexedPixels.skipped = false
@@ -128,9 +139,9 @@ typedef.IOGraphicsEngineContext.skipped = true
 const.kIOGraphicsEngineContext.skipped = true
 const.kIOGraphicsEngineContextVersion.skipped = true
 struct._NXEQElStruct.skipped = true
-typedef._NXEQElStruct.skipped = true
+typedef.NXEQElement.skipped = true
 struct._evGlobals.skipped = true
-typedef._evGlobals.skipped = true
+typedef.EvGlobals.skipped = true
 const.IOSharedLockData.skipped = true
 const.ev_lock_data_t.skipped = true
 
@@ -142,3 +153,19 @@ struct.bm12Cursor.skipped = true
 struct.bm18Cursor.skipped = true
 struct.bm34Cursor.skipped = true
 struct.bm38Cursor.skipped = true
+typedef.NXEventSystemInfoData.skipped = true
+
+# Double typedefs
+typedef.NXTabletPointDataPtr.skipped = true
+typedef.NXTabletProximityDataPtr.skipped = true
+typedef.NXEventPtr.skipped = true
+
+# Needs libc::audit_token_t
+struct._NXEventExtension.skipped = true
+typedef.NXEventExtension.skipped = true
+struct._NXEventExt.skipped = true
+typedef.NXEventExt.skipped = true
+fn.IOHIDAccessCheckAuditToken.skipped = true
+
+# Private
+typedef._NXLLEvent.skipped = true
