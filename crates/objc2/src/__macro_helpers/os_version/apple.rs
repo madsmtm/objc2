@@ -1,15 +1,18 @@
-use core::ffi::{c_char, c_uint, c_void};
-use core::num::NonZeroU32;
-use core::ptr;
+//! Heavily copied from:
+//! <https://github.com/rust-lang/rust/pull/138944>
+//!
+//! Once in MSRV, we should be able to replace this with just using that
+//! symbol.
+use core::ffi::{c_char, c_int, c_uint, c_void, CStr};
+use core::ptr::null_mut;
 use core::sync::atomic::{AtomicU32, Ordering};
-use std::os::unix::ffi::OsStrExt;
-use std::path::PathBuf;
+use std::env;
+use std::ffi::CString;
+use std::fs;
+use std::os::unix::ffi::OsStringExt;
+use std::path::{Path, PathBuf};
 
 use super::OSVersion;
-use crate::rc::{autoreleasepool, Allocated, Retained};
-use crate::runtime::__nsstring::{nsstring_to_str, UTF8_ENCODING};
-use crate::runtime::{NSObject, NSObjectProtocol};
-use crate::{class, msg_send};
 
 /// The deployment target for the current OS.
 pub(crate) const DEPLOYMENT_TARGET: OSVersion = {
@@ -89,60 +92,88 @@ pub(crate) const DEPLOYMENT_TARGET: OSVersion = {
     }
 };
 
-/// Look up the current version at runtime.
+/// Get the current OS version, packed according to [`pack_os_version`].
 ///
-/// Note that this doesn't work with "zippered" `dylib`s yet, though
-/// that's probably fine, `rustc` doesn't support those either:
-/// <https://github.com/rust-lang/rust/issues/131216>
+/// # Semantics
+///
+/// The reported version on macOS might be 10.16 if the SDK version of the binary is less than 11.0.
+/// This is a workaround that Apple implemented to handle applications that assumed that macOS
+/// versions would always start with "10", see:
+/// <https://github.com/apple-oss-distributions/xnu/blob/xnu-11215.81.4/libsyscall/wrappers/system-version-compat.c>
+///
+/// It _is_ possible to get the real version regardless of the SDK version of the binary, this is
+/// what Zig does:
+/// <https://github.com/ziglang/zig/blob/0.13.0/lib/std/zig/system/darwin/macos.zig>
+///
+/// We choose to not do that, and instead follow Apple's behaviour here, and return 10.16 when
+/// compiled with an older SDK; the user should instead upgrade their tooling.
+///
+/// NOTE: `rustc` currently doesn't set the right SDK version when linking with ld64, so this will
+/// have the wrong behaviour with `-Clinker=ld` on x86_64. But that's a `rustc` bug:
+/// <https://github.com/rust-lang/rust/issues/129432>
 #[inline]
 pub(crate) fn current_version() -> OSVersion {
     // Cache the lookup for performance.
     //
-    // We assume that 0.0.0 is never gonna be a valid version,
-    // and use that as our sentinel value.
+    // 0.0.0 is never going to be a valid version ("vtool" reports "n/a" on 0 versions), so we use
+    // that as our sentinel value.
     static CURRENT_VERSION: AtomicU32 = AtomicU32::new(0);
 
-    // We use relaxed atomics, it doesn't matter if two threads end up racing
-    // to read or write the version.
+    // We use relaxed atomics instead of e.g. a `Once`, it doesn't matter if multiple threads end up
+    // racing to read or write the version, `lookup_version` should be idempotent and always return
+    // the same value.
+    //
+    // `compiler-rt` uses `dispatch_once`, but that's overkill for the reasons above.
     let version = CURRENT_VERSION.load(Ordering::Relaxed);
-    OSVersion::from_u32(if version == 0 {
-        // TODO: Consider using `std::panic::abort_unwind` here for code-size?
-        let version = lookup_version().get();
-        CURRENT_VERSION.store(version, Ordering::Relaxed);
+    if version == 0 {
+        let version = lookup_version();
+        CURRENT_VERSION.store(version.to_u32(), Ordering::Relaxed);
         version
     } else {
-        version
-    })
+        OSVersion::from_u32(version)
+    }
 }
 
+/// Look up the os version.
+///
+/// # Aborts
+///
+/// Aborts if reading or parsing the version fails (or if the system was out of memory).
+///
+/// We deliberately choose to abort, as having this silently return an invalid OS version would be
+/// impossible for a user to debug.
+// The lookup is costly and should be on the cold path because of the cache in `current_version`.
 #[cold]
-fn lookup_version() -> NonZeroU32 {
-    // Since macOS 10.15, libSystem has provided the undocumented
-    // `_availability_version_check` via `libxpc` for doing this version
-    // lookup, though it's usage may be a bit dangerous, see:
-    // - https://reviews.llvm.org/D150397
-    // - https://github.com/llvm/llvm-project/issues/64227
-    //
-    // So instead, we use the safer approach of reading from `sysctl`, and
-    // if that fails, we fall back to the property list (this is what
-    // `_availability_version_check` does internally).
+// Micro-optimization: We use `extern "C"` to abort on panic, allowing `current_version` (inlined)
+// to be free of unwind handling.
+extern "C" fn lookup_version() -> OSVersion {
+    // Try to read from `sysctl` first (faster), but if that fails, fall back to reading the
+    // property list (this is roughly what `_availability_version_check` does internally).
     let version = version_from_sysctl().unwrap_or_else(version_from_plist);
-    // Use `NonZeroU32` to try to make it clearer to the optimizer that this
-    // will never return 0.
-    NonZeroU32::new(version.to_u32()).expect("version cannot be 0.0.0")
+
+    // Try to make it clearer to the optimizer that this will never return 0.
+    assert_ne!(version, OSVersion::MIN, "version cannot be 0.0.0");
+    version
 }
 
 /// Read the version from `kern.osproductversion` or `kern.iossupportversion`.
+///
+/// This is faster than `version_from_plist`, since it doesn't need to invoke `dlsym`.
 fn version_from_sysctl() -> Option<OSVersion> {
-    // This won't work in the simulator, `kern.osproductversion` will return
-    // the host macOS version.
-    if cfg!(target_simulator) {
+    // This won't work in the simulator, as `kern.osproductversion` returns the host macOS version,
+    // and `kern.iossupportversion` returns the host macOS' iOSSupportVersion (while you can run
+    // simulators with many different iOS versions).
+    if cfg!(target_abi = "sim") {
+        // Fall back to `version_from_plist` on these targets.
         return None;
     }
 
-    // SAFETY: Same signature as in `libc`
-    extern "C" {
-        fn sysctlbyname(
+    // SAFETY: Same signatures as in `libc`.
+    //
+    // NOTE: We do not need to link this, that will be done by `std` by linking `libSystem`
+    // (which is required on macOS/Darwin).
+    unsafe extern "C" {
+        unsafe fn sysctlbyname(
             name: *const c_char,
             oldp: *mut c_void,
             oldlenp: *mut usize,
@@ -151,115 +182,344 @@ fn version_from_sysctl() -> Option<OSVersion> {
         ) -> c_uint;
     }
 
-    let name = if cfg!(target_abi_macabi) {
-        b"kern.iossupportversion\0".as_ptr().cast()
-    } else {
-        // Introduced in macOS 10.13.4.
-        b"kern.osproductversion\0".as_ptr().cast()
+    let sysctl_version = |name: &CStr| {
+        let mut buf: [u8; 32] = [0; 32];
+        let mut size = buf.len();
+        let ptr = buf.as_mut_ptr().cast();
+        let ret = unsafe { sysctlbyname(name.as_ptr(), ptr, &mut size, null_mut(), 0) };
+        if ret != 0 {
+            // This sysctl is not available.
+            return None;
+        }
+        let buf = &buf[..(size - 1)];
+
+        if buf.is_empty() {
+            // The buffer may be empty when using `kern.iossupportversion` on an actual iOS device,
+            // or on visionOS when running under "Designed for iPad".
+            //
+            // In that case, fall back to `kern.osproductversion`.
+            return None;
+        }
+
+        Some(OSVersion::from_bytes(buf))
     };
 
-    let mut buf: [u8; 32] = [0; 32];
-    let mut size = buf.len();
-    let ret = unsafe { sysctlbyname(name, buf.as_mut_ptr().cast(), &mut size, ptr::null_mut(), 0) };
-    if ret != 0 {
-        // `sysctlbyname` is not available.
-        return None;
+    // When `target_os = "ios"`, we may be in many different states:
+    // - Native iOS device.
+    // - iOS Simulator.
+    // - Mac Catalyst.
+    // - Mac + "Designed for iPad".
+    // - Native visionOS device + "Designed for iPad".
+    // - visionOS simulator + "Designed for iPad".
+    //
+    // Of these, only native, Mac Catalyst and simulators can be differentiated at compile-time
+    // (with `target_abi = ""`, `target_abi = "macabi"` and `target_abi = "sim"` respectively).
+    //
+    // That is, "Designed for iPad" will act as iOS at compile-time, but the `ProductVersion` will
+    // still be the host macOS or visionOS version.
+    //
+    // Furthermore, we can't even reliably differentiate between these at runtime, since
+    // `dyld_get_active_platform` isn't publically available.
+    //
+    // Fortunately, we won't need to know any of that; we can simply attempt to get the
+    // `iOSSupportVersion` (which may be set on native iOS too, but then it will be set to the host
+    // iOS version), and if that fails, fall back to the `ProductVersion`.
+    if cfg!(target_os = "ios") {
+        // https://github.com/apple-oss-distributions/xnu/blob/xnu-11215.81.4/bsd/kern/kern_sysctl.c#L2077-L2100
+        if let Some(ios_support_version) = sysctl_version(c"kern.iossupportversion") {
+            return Some(ios_support_version);
+        }
+
+        // On Mac Catalyst, if we failed looking up `iOSSupportVersion`, we don't want to
+        // accidentally fall back to `ProductVersion`.
+        if cfg!(target_abi = "macabi") {
+            return None;
+        }
     }
 
-    Some(OSVersion::from_bytes(&buf[..(size - 1)]))
+    // Introduced in macOS 10.13.4.
+    // https://github.com/apple-oss-distributions/xnu/blob/xnu-11215.81.4/bsd/kern/kern_sysctl.c#L2015-L2051
+    sysctl_version(c"kern.osproductversion")
 }
 
-/// Look up the current OS version from the `ProductVersion` or
-/// `iOSSupportVersion` in `/System/Library/CoreServices/SystemVersion.plist`.
-/// This file was introduced in macOS 10.3.0.
+/// Look up the current OS version(s) from `/System/Library/CoreServices/SystemVersion.plist`.
 ///
-/// This is also what is done in `compiler-rt`:
-/// <https://github.com/llvm/llvm-project/blob/llvmorg-19.1.1/compiler-rt/lib/builtins/os_version_check.c>
+/// More specifically, from the `ProductVersion` and `iOSSupportVersion` keys, and from
+/// `$IPHONE_SIMULATOR_ROOT/System/Library/CoreServices/SystemVersion.plist` on the simulator.
 ///
-/// NOTE: I don't _think_ we need to do a similar thing as what Zig does to
-/// handle the fake 10.16 versions returned when the SDK version of the binary
-/// is less than 11.0:
-/// <https://github.com/ziglang/zig/blob/0.13.0/lib/std/zig/system/darwin/macos.zig>
+/// This file was introduced in macOS 10.3, which is well below the minimum supported version by
+/// `rustc`, which is (at the time of writing) macOS 10.12.
 ///
-/// My reasoning is that we _want_ to follow Apple's behaviour here, and
-/// return 10.16 when compiled with an older SDK; the user should upgrade
-/// their tooling.
+/// # Implementation
 ///
-/// NOTE: `rustc` currently doesn't set the right SDK version when linking
-/// with ld64, so this will usually have the wrong behaviour on x86_64. But
-/// that's a `rustc` bug, and is tracked in:
-/// <https://github.com/rust-lang/rust/issues/129432>
+/// We do roughly the same thing in here as `compiler-rt`, and dynamically look up CoreFoundation
+/// utilities for parsing PLists (to avoid having to re-implement that in here, as pulling in a full
+/// PList parser into `std` seems costly).
 ///
-///
-/// # Panics
-///
-/// Panics if reading or parsing the PList fails (or if the system was out of
-/// memory).
-///
-/// We deliberately choose to panic, as having this lookup silently return
-/// an empty OS version would be impossible for a user to debug.
+/// If this is found to be undesirable, we _could_ possibly hack it by parsing the PList manually
+/// (it seems to use the plain-text "xml1" encoding/format in all versions), but that seems brittle.
 fn version_from_plist() -> OSVersion {
-    // Use Foundation's mechanisms for reading the PList.
-    autoreleasepool(|pool| {
-        let path: Retained<NSObject> = if cfg!(target_simulator) {
-            let root = std::env::var_os("IPHONE_SIMULATOR_ROOT")
-                    .expect("environment variable `IPHONE_SIMULATOR_ROOT` must be set when executing under simulator");
-            let path = PathBuf::from(root).join("System/Library/CoreServices/SystemVersion.plist");
-            let path = path.as_os_str().as_bytes();
+    // The root directory relative to where all files are located.
+    let root = if cfg!(target_abi = "sim") {
+        PathBuf::from(env::var_os("IPHONE_SIMULATOR_ROOT").expect(
+            "environment variable `IPHONE_SIMULATOR_ROOT` must be set when executing under simulator",
+        ))
+    } else {
+        PathBuf::from("/")
+    };
 
-            // SAFETY: Allocating a string is valid on all threads.
-            let alloc: Allocated<NSObject> = unsafe { Allocated::alloc(class!(NSString)) };
-            // SAFETY: The bytes are valid, and the length is correct.
-            unsafe {
-                let bytes_ptr: *const c_void = path.as_ptr().cast();
-                msg_send![
-                    alloc,
-                    initWithBytes: bytes_ptr,
-                    length: path.len(),
-                    // OsStr is a superset of UTF-8 on unix platforms
-                    encoding: UTF8_ENCODING,
-                ]
+    // Read `SystemVersion.plist`. Always present on Apple platforms, reading it cannot fail.
+    let path = root.join("System/Library/CoreServices/SystemVersion.plist");
+    let plist_buffer = fs::read(&path).unwrap_or_else(|e| panic!("failed reading {path:?}: {e}"));
+    parse_version_from_plist(&root, &plist_buffer)
+}
+
+/// Split out from [`version_from_plist`] to allow for testing.
+#[allow(non_upper_case_globals, non_snake_case)]
+fn parse_version_from_plist(root: &Path, plist_buffer: &[u8]) -> OSVersion {
+    const RTLD_LAZY: c_int = 0x1;
+    const RTLD_LOCAL: c_int = 0x4;
+
+    unsafe extern "C" {
+        fn dlopen(filename: *const c_char, flag: c_int) -> *mut c_void;
+        fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
+        fn dlerror() -> *mut c_char;
+        fn dlclose(handle: *mut c_void) -> c_int;
+    }
+
+    // Link to the CoreFoundation dylib, and look up symbols from that.
+    // We explicitly use non-versioned path here, to allow this to work on older iOS devices.
+    let cf_path = root.join("System/Library/Frameworks/CoreFoundation.framework/CoreFoundation");
+
+    let cf_path =
+        CString::new(cf_path.into_os_string().into_vec()).expect("failed allocating string");
+    let cf_handle = unsafe { dlopen(cf_path.as_ptr(), RTLD_LAZY | RTLD_LOCAL) };
+    if cf_handle.is_null() {
+        let err = unsafe { CStr::from_ptr(dlerror()) };
+        panic!("could not open CoreFoundation.framework: {err:?}");
+    }
+    let _cf_handle_free = Deferred(|| {
+        // Ignore errors when closing. This is also what `libloading` does:
+        // https://docs.rs/libloading/0.8.6/src/libloading/os/unix/mod.rs.html#374
+        let _ = unsafe { dlclose(cf_handle) };
+    });
+
+    macro_rules! dlsym {
+        (
+            unsafe fn $name:ident($($param:ident: $param_ty:ty),* $(,)?) $(-> $ret:ty)?;
+        ) => {{
+            let ptr = unsafe {
+                dlsym(
+                    cf_handle,
+                    concat!(stringify!($name), '\0').as_bytes().as_ptr().cast(),
+                )
+            };
+            if ptr.is_null() {
+                let err = unsafe { CStr::from_ptr(dlerror()) };
+                panic!("could not find function {}: {err:?}", stringify!($name));
             }
-        } else {
-            let path: *const c_char = b"/System/Library/CoreServices/SystemVersion.plist\0"
-                .as_ptr()
-                .cast();
-            // SAFETY: The path is NULL terminated.
-            unsafe { msg_send![class!(NSString), stringWithUTF8String: path] }
+            // SAFETY: Just checked that the symbol isn't NULL, and caller verifies that the
+            // signature is correct.
+            unsafe {
+                core::mem::transmute::<
+                    *mut c_void,
+                    unsafe extern "C" fn($($param_ty),*) $(-> $ret)?,
+                >(ptr)
+            }
+        }};
+    }
+
+    // MacTypes.h
+    type Boolean = u8;
+    // CoreFoundation/CFBase.h
+    type CFTypeID = usize;
+    type CFOptionFlags = usize;
+    type CFIndex = isize;
+    type CFTypeRef = *mut c_void;
+    type CFAllocatorRef = CFTypeRef;
+    const kCFAllocatorDefault: CFAllocatorRef = null_mut();
+    // Available: in all CF versions.
+    let allocator_null = unsafe { dlsym(cf_handle, c"kCFAllocatorNull".as_ptr()) };
+    if allocator_null.is_null() {
+        let err = unsafe { CStr::from_ptr(dlerror()) };
+        panic!("could not find kCFAllocatorNull: {err:?}");
+    }
+    let kCFAllocatorNull = unsafe { *allocator_null.cast::<CFAllocatorRef>() };
+    let CFRelease = dlsym!(
+        // Available: in all CF versions.
+        unsafe fn CFRelease(cf: CFTypeRef);
+    );
+    let CFGetTypeID = dlsym!(
+        // Available: in all CF versions.
+        unsafe fn CFGetTypeID(cf: CFTypeRef) -> CFTypeID;
+    );
+    // CoreFoundation/CFError.h
+    type CFErrorRef = CFTypeRef;
+    // CoreFoundation/CFData.h
+    type CFDataRef = CFTypeRef;
+    let CFDataCreateWithBytesNoCopy = dlsym!(
+        // Available: in all CF versions.
+        unsafe fn CFDataCreateWithBytesNoCopy(
+            allocator: CFAllocatorRef,
+            bytes: *const u8,
+            length: CFIndex,
+            bytes_deallocator: CFAllocatorRef,
+        ) -> CFDataRef;
+    );
+    // CoreFoundation/CFPropertyList.h
+    const kCFPropertyListImmutable: CFOptionFlags = 0;
+    type CFPropertyListFormat = CFIndex;
+    type CFPropertyListRef = CFTypeRef;
+    let CFPropertyListCreateWithData = dlsym!(
+        // Available: since macOS 10.6.
+        unsafe fn CFPropertyListCreateWithData(
+            allocator: CFAllocatorRef,
+            data: CFDataRef,
+            options: CFOptionFlags,
+            format: *mut CFPropertyListFormat,
+            error: *mut CFErrorRef,
+        ) -> CFPropertyListRef;
+    );
+    // CoreFoundation/CFString.h
+    type CFStringRef = CFTypeRef;
+    type CFStringEncoding = u32;
+    const kCFStringEncodingUTF8: CFStringEncoding = 0x08000100;
+    let CFStringGetTypeID = dlsym!(
+        // Available: in all CF versions.
+        unsafe fn CFStringGetTypeID() -> CFTypeID;
+    );
+    let CFStringCreateWithCStringNoCopy = dlsym!(
+        // Available: in all CF versions.
+        unsafe fn CFStringCreateWithCStringNoCopy(
+            alloc: CFAllocatorRef,
+            c_str: *const c_char,
+            encoding: CFStringEncoding,
+            contents_deallocator: CFAllocatorRef,
+        ) -> CFStringRef;
+    );
+    let CFStringGetCString = dlsym!(
+        // Available: in all CF versions.
+        unsafe fn CFStringGetCString(
+            the_string: CFStringRef,
+            buffer: *mut c_char,
+            buffer_size: CFIndex,
+            encoding: CFStringEncoding,
+        ) -> Boolean;
+    );
+    // CoreFoundation/CFDictionary.h
+    type CFDictionaryRef = CFTypeRef;
+    let CFDictionaryGetTypeID = dlsym!(
+        // Available: in all CF versions.
+        unsafe fn CFDictionaryGetTypeID() -> CFTypeID;
+    );
+    let CFDictionaryGetValue = dlsym!(
+        // Available: in all CF versions.
+        unsafe fn CFDictionaryGetValue(
+            the_dict: CFDictionaryRef,
+            key: *const c_void,
+        ) -> *const c_void;
+    );
+
+    // MARK: Done declaring symbols.
+
+    let plist_data = unsafe {
+        CFDataCreateWithBytesNoCopy(
+            kCFAllocatorDefault,
+            plist_buffer.as_ptr(),
+            plist_buffer.len() as CFIndex,
+            kCFAllocatorNull,
+        )
+    };
+    assert!(!plist_data.is_null(), "failed creating data");
+    let _plist_data_release = Deferred(|| unsafe { CFRelease(plist_data) });
+
+    let plist = unsafe {
+        CFPropertyListCreateWithData(
+            kCFAllocatorDefault,
+            plist_data,
+            kCFPropertyListImmutable,
+            null_mut(), // Don't care about the format of the PList.
+            null_mut(), // Don't care about the error data.
+        )
+    };
+    assert!(
+        !plist.is_null(),
+        "failed reading PList in SystemVersion.plist"
+    );
+    let _plist_release = Deferred(|| unsafe { CFRelease(plist) });
+
+    assert_eq!(
+        unsafe { CFGetTypeID(plist) },
+        unsafe { CFDictionaryGetTypeID() },
+        "SystemVersion.plist did not contain a dictionary at the top level"
+    );
+    let plist = plist as CFDictionaryRef;
+
+    let get_string_key = |plist, lookup_key: &CStr| {
+        let cf_lookup_key = unsafe {
+            CFStringCreateWithCStringNoCopy(
+                kCFAllocatorDefault,
+                lookup_key.as_ptr(),
+                kCFStringEncodingUTF8,
+                kCFAllocatorNull,
+            )
         };
+        assert!(!cf_lookup_key.is_null(), "failed creating CFString");
+        let _lookup_key_release = Deferred(|| unsafe { CFRelease(cf_lookup_key) });
 
-        // SAFETY: dictionaryWithContentsOfFile: is safe to call.
-        let data: Option<Retained<NSObject>> =
-            unsafe { msg_send![class!(NSDictionary), dictionaryWithContentsOfFile: &*path] };
+        let value = unsafe { CFDictionaryGetValue(plist, cf_lookup_key) as CFTypeRef };
+        // ^ getter, so don't release.
+        if value.is_null() {
+            return None;
+        }
 
-        let data = data.expect(
-            "`/System/Library/CoreServices/SystemVersion.plist` must be readable, and contain a valid PList",
+        assert_eq!(
+            unsafe { CFGetTypeID(value) },
+            unsafe { CFStringGetTypeID() },
+            "key in SystemVersion.plist must be a string"
         );
+        let value = value as CFStringRef;
 
-        // Read `ProductVersion`, except when running on Mac Catalyst, then we
-        // read `iOSSupportVersion` instead.
-        let lookup_key: *const c_char = if cfg!(target_abi_macabi) {
-            b"iOSSupportVersion\0".as_ptr().cast()
-        } else {
-            b"ProductVersion\0".as_ptr().cast()
+        let mut version_str = [0u8; 32];
+        let ret = unsafe {
+            CFStringGetCString(
+                value,
+                version_str.as_mut_ptr().cast::<c_char>(),
+                version_str.len() as CFIndex,
+                kCFStringEncodingUTF8,
+            )
         };
-        // SAFETY: The lookup key is NULL terminated.
-        let lookup_key: Retained<NSObject> =
-            unsafe { msg_send![class!(NSString), stringWithUTF8String: lookup_key] };
+        assert_ne!(ret, 0, "failed getting string from CFString");
 
-        let version: Retained<NSObject> = unsafe { msg_send![&data, objectForKey: &*lookup_key] };
+        let version_str =
+            CStr::from_bytes_until_nul(&version_str).expect("failed converting to CStr");
 
-        assert!(
-            version.isKindOfClass(class!(NSString)),
-            "`ProductVersion` key in `/System/Library/CoreServices/SystemVersion.plist` must be a string"
-        );
+        Some(OSVersion::from_bytes(version_str.to_bytes()))
+    };
 
-        // SAFETY: The given object is an NSString, and the returned string
-        // slice is not used outside of the current pool.
-        let version = unsafe { nsstring_to_str(&version, pool) };
+    // Same logic as in `version_from_sysctl`.
+    if cfg!(target_os = "ios") {
+        if let Some(ios_support_version) = get_string_key(plist, c"iOSSupportVersion") {
+            return ios_support_version;
+        }
 
-        OSVersion::from_str(version)
-    })
+        // Force Mac Catalyst to use iOSSupportVersion (do not fall back to ProductVersion).
+        if cfg!(target_abi = "macabi") {
+            panic!("expected iOSSupportVersion in SystemVersion.plist");
+        }
+    }
+
+    // On all other platforms, we can find the OS version by simply looking at `ProductVersion`.
+    get_string_key(plist, c"ProductVersion")
+        .expect("expected ProductVersion in SystemVersion.plist")
+}
+
+struct Deferred<F: FnMut()>(F);
+
+impl<F: FnMut()> Drop for Deferred<F> {
+    fn drop(&mut self) {
+        (self.0)();
+    }
 }
 
 #[cfg(test)]

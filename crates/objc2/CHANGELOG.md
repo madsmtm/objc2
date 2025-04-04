@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Fixed
 * Fixed undefined behaviour when calling `AnyObject::class` on invalid objects.
+* Fixed `available!` macro when running under Xcode's "Designed for iPad" setting.
 
 
 ## 0.6.0 - 2025-01-22
