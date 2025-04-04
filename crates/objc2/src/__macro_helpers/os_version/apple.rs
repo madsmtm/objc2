@@ -219,7 +219,7 @@ fn version_from_sysctl() -> Option<OSVersion> {
     // still be the host macOS or visionOS version.
     //
     // Furthermore, we can't even reliably differentiate between these at runtime, since
-    // `dyld_get_active_platform` isn't publically available.
+    // `dyld_get_active_platform` isn't publicly available.
     //
     // Fortunately, we won't need to know any of that; we can simply attempt to get the
     // `iOSSupportVersion` (which may be set on native iOS too, but then it will be set to the host

@@ -161,6 +161,7 @@ objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-f
     "NSDictionary",
     "NSEnumerator",
     "NSError",
+    "NSException",
     "NSKeyValueObserving",
     "NSNotification",
     "NSNotification",
