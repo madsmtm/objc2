@@ -163,7 +163,7 @@ fn version_from_sysctl() -> Option<OSVersion> {
     // This won't work in the simulator, as `kern.osproductversion` returns the host macOS version,
     // and `kern.iossupportversion` returns the host macOS' iOSSupportVersion (while you can run
     // simulators with many different iOS versions).
-    if cfg!(target_abi = "sim") {
+    if cfg!(target_simulator) {
         // Fall back to `version_from_plist` on these targets.
         return None;
     }
@@ -172,8 +172,8 @@ fn version_from_sysctl() -> Option<OSVersion> {
     //
     // NOTE: We do not need to link this, that will be done by `std` by linking `libSystem`
     // (which is required on macOS/Darwin).
-    unsafe extern "C" {
-        unsafe fn sysctlbyname(
+    extern "C" {
+        fn sysctlbyname(
             name: *const c_char,
             oldp: *mut c_void,
             oldlenp: *mut usize,
@@ -182,11 +182,11 @@ fn version_from_sysctl() -> Option<OSVersion> {
         ) -> c_uint;
     }
 
-    let sysctl_version = |name: &CStr| {
+    let sysctl_version = |name: &[u8]| {
         let mut buf: [u8; 32] = [0; 32];
         let mut size = buf.len();
         let ptr = buf.as_mut_ptr().cast();
-        let ret = unsafe { sysctlbyname(name.as_ptr(), ptr, &mut size, null_mut(), 0) };
+        let ret = unsafe { sysctlbyname(name.as_ptr().cast(), ptr, &mut size, null_mut(), 0) };
         if ret != 0 {
             // This sysctl is not available.
             return None;
@@ -226,20 +226,20 @@ fn version_from_sysctl() -> Option<OSVersion> {
     // iOS version), and if that fails, fall back to the `ProductVersion`.
     if cfg!(target_os = "ios") {
         // https://github.com/apple-oss-distributions/xnu/blob/xnu-11215.81.4/bsd/kern/kern_sysctl.c#L2077-L2100
-        if let Some(ios_support_version) = sysctl_version(c"kern.iossupportversion") {
+        if let Some(ios_support_version) = sysctl_version(b"kern.iossupportversion\0") {
             return Some(ios_support_version);
         }
 
         // On Mac Catalyst, if we failed looking up `iOSSupportVersion`, we don't want to
         // accidentally fall back to `ProductVersion`.
-        if cfg!(target_abi = "macabi") {
+        if cfg!(target_abi_macabi) {
             return None;
         }
     }
 
     // Introduced in macOS 10.13.4.
     // https://github.com/apple-oss-distributions/xnu/blob/xnu-11215.81.4/bsd/kern/kern_sysctl.c#L2015-L2051
-    sysctl_version(c"kern.osproductversion")
+    sysctl_version(b"kern.osproductversion\0")
 }
 
 /// Look up the current OS version(s) from `/System/Library/CoreServices/SystemVersion.plist`.
@@ -260,7 +260,7 @@ fn version_from_sysctl() -> Option<OSVersion> {
 /// (it seems to use the plain-text "xml1" encoding/format in all versions), but that seems brittle.
 fn version_from_plist() -> OSVersion {
     // The root directory relative to where all files are located.
-    let root = if cfg!(target_abi = "sim") {
+    let root = if cfg!(target_simulator) {
         PathBuf::from(env::var_os("IPHONE_SIMULATOR_ROOT").expect(
             "environment variable `IPHONE_SIMULATOR_ROOT` must be set when executing under simulator",
         ))
@@ -280,7 +280,7 @@ fn parse_version_from_plist(root: &Path, plist_buffer: &[u8]) -> OSVersion {
     const RTLD_LAZY: c_int = 0x1;
     const RTLD_LOCAL: c_int = 0x4;
 
-    unsafe extern "C" {
+    extern "C" {
         fn dlopen(filename: *const c_char, flag: c_int) -> *mut c_void;
         fn dlsym(handle: *mut c_void, symbol: *const c_char) -> *mut c_void;
         fn dlerror() -> *mut c_char;
@@ -339,7 +339,7 @@ fn parse_version_from_plist(root: &Path, plist_buffer: &[u8]) -> OSVersion {
     type CFAllocatorRef = CFTypeRef;
     const kCFAllocatorDefault: CFAllocatorRef = null_mut();
     // Available: in all CF versions.
-    let allocator_null = unsafe { dlsym(cf_handle, c"kCFAllocatorNull".as_ptr()) };
+    let allocator_null = unsafe { dlsym(cf_handle, b"kCFAllocatorNull\0".as_ptr().cast()) };
     if allocator_null.is_null() {
         let err = unsafe { CStr::from_ptr(dlerror()) };
         panic!("could not find kCFAllocatorNull: {err:?}");
@@ -455,11 +455,11 @@ fn parse_version_from_plist(root: &Path, plist_buffer: &[u8]) -> OSVersion {
     );
     let plist = plist as CFDictionaryRef;
 
-    let get_string_key = |plist, lookup_key: &CStr| {
+    let get_string_key = |plist, lookup_key: &[u8]| {
         let cf_lookup_key = unsafe {
             CFStringCreateWithCStringNoCopy(
                 kCFAllocatorDefault,
-                lookup_key.as_ptr(),
+                lookup_key.as_ptr().cast(),
                 kCFStringEncodingUTF8,
                 kCFAllocatorNull,
             )
@@ -499,18 +499,18 @@ fn parse_version_from_plist(root: &Path, plist_buffer: &[u8]) -> OSVersion {
 
     // Same logic as in `version_from_sysctl`.
     if cfg!(target_os = "ios") {
-        if let Some(ios_support_version) = get_string_key(plist, c"iOSSupportVersion") {
+        if let Some(ios_support_version) = get_string_key(plist, b"iOSSupportVersion\0") {
             return ios_support_version;
         }
 
         // Force Mac Catalyst to use iOSSupportVersion (do not fall back to ProductVersion).
-        if cfg!(target_abi = "macabi") {
+        if cfg!(target_abi_macabi) {
             panic!("expected iOSSupportVersion in SystemVersion.plist");
         }
     }
 
     // On all other platforms, we can find the OS version by simply looking at `ProductVersion`.
-    get_string_key(plist, c"ProductVersion")
+    get_string_key(plist, b"ProductVersion\0")
         .expect("expected ProductVersion in SystemVersion.plist")
 }
 
