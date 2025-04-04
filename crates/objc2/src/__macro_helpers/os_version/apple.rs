@@ -92,7 +92,7 @@ pub(crate) const DEPLOYMENT_TARGET: OSVersion = {
     }
 };
 
-/// Get the current OS version, packed according to [`pack_os_version`].
+/// Get the current OS version.
 ///
 /// # Semantics
 ///
