@@ -26,6 +26,14 @@ impl CFData {
         unsafe { crate::CFDataCreate(None, bytes.as_ptr(), len) }.expect("failed creating CFData")
     }
 
+    /// Alias for easier transition from the `core-foundation` crate.
+    #[inline]
+    #[cfg(feature = "CFBase")]
+    #[deprecated = "renamed to CFData::from_bytes"]
+    pub fn from_buffer(bytes: &[u8]) -> crate::CFRetained<Self> {
+        Self::from_bytes(bytes)
+    }
+
     /// Creates a new `CFData` from a `'static` byte slice.
     ///
     /// This may be slightly more efficient than [`CFData::from_bytes`], as it

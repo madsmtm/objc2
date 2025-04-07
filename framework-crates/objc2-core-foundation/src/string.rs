@@ -28,9 +28,10 @@ unsafe fn debug_checked_utf8_unchecked(bytes: &[u8]) -> &str {
 
 impl CFString {
     /// Creates a new `CFString` from a [`str`][prim@str].
+    #[inline]
     #[doc(alias = "CFStringCreateWithBytes")]
     #[allow(clippy::should_implement_trait)] // Not really sure of a better name
-    pub fn from_str(string: &str) -> CFRetained<CFString> {
+    pub fn from_str(string: &str) -> CFRetained<Self> {
         let len = string.len().try_into().expect("string too large");
         let s = unsafe {
             CFStringCreateWithBytes(
@@ -41,9 +42,16 @@ impl CFString {
                 false,
             )
         };
-        // Should only fail if the string is not UTF-u (which we know it is)
+        // Should only fail if the string is not UTF-8 (which we know it is)
         // or perhaps on allocation error.
         s.expect("failed creating CFString")
+    }
+
+    /// Alias for easier transition from the `core-foundation` crate.
+    #[inline]
+    #[deprecated = "renamed to CFString::from_str"]
+    pub fn new(string: &str) -> CFRetained<Self> {
+        Self::from_str(string)
     }
 
     /// Creates a new `CFString` from a `'static` [`str`][prim@str].
@@ -51,8 +59,9 @@ impl CFString {
     /// This may be slightly more efficient than [`CFString::from_str`], as it
     /// may be able to re-use the existing buffer (since we know it won't be
     /// deallocated).
+    #[inline]
     #[doc(alias = "CFStringCreateWithBytesNoCopy")]
-    pub fn from_static_str(string: &'static str) -> CFRetained<CFString> {
+    pub fn from_static_str(string: &'static str) -> CFRetained<Self> {
         let len = string.len().try_into().expect("string too large");
         // SAFETY: The string is used as a backing store, and thus must
         // potentially live forever, since we don't know how long the returned

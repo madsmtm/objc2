@@ -87,6 +87,17 @@ impl<T: ?Sized> CFArray<T> {
         unsafe { CFRetained::cast_unchecked::<Self>(array) }
     }
 
+    /// Alias for easier transition from the `core-foundation` crate.
+    #[inline]
+    #[allow(non_snake_case)]
+    #[deprecated = "renamed to CFArray::from_objects"]
+    pub fn from_CFTypes(objects: &[&T]) -> CFRetained<Self>
+    where
+        T: Type,
+    {
+        Self::from_objects(objects)
+    }
+
     /// Create a new `CFArray` with the given retained CoreFoundation objects.
     #[inline]
     #[doc(alias = "CFArrayCreate")]
