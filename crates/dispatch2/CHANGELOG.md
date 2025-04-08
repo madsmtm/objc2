@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+- Allow `Queue::exec_sync` on workloops.
+  This is discouraged for performance reasons, but doesn't need to be
+  outright disallowed.
+
 ### Removed
 - **BREAKING**: Removed `TargetQueueError` and the error case in
   `DispatchObject::set_target_queue` (it now instead aborts on error,

@@ -123,7 +123,6 @@ impl From<DispatchAutoReleaseFrequency> for dispatch_autorelease_frequency_t {
 #[derive(Debug, Clone)]
 pub struct Queue {
     dispatch_object: DispatchObject<dispatch_queue_s>,
-    is_workloop: bool,
 }
 
 impl Queue {
@@ -141,10 +140,7 @@ impl Queue {
         // Safety: object cannot be null.
         let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
 
-        Queue {
-            dispatch_object,
-            is_workloop: false,
-        }
+        Queue { dispatch_object }
     }
 
     /// Create a new [Queue] with a given target [Queue].
@@ -167,10 +163,7 @@ impl Queue {
 
         // NOTE: dispatch_queue_create_with_target is in charge of retaining the target Queue.
 
-        Queue {
-            dispatch_object,
-            is_workloop: false,
-        }
+        Queue { dispatch_object }
     }
 
     /// Return a system-defined global concurrent [Queue] with the priority derived from [GlobalQueueIdentifier].
@@ -188,10 +181,7 @@ impl Queue {
         // Safety: object cannot be null.
         let dispatch_object = unsafe { DispatchObject::new_shared(object.cast()) };
 
-        Queue {
-            dispatch_object,
-            is_workloop: false,
-        }
+        Queue { dispatch_object }
     }
 
     /// Return the main queue.
@@ -204,10 +194,7 @@ impl Queue {
         // Safety: object cannot be null.
         let dispatch_object = unsafe { DispatchObject::new_shared(object.cast()) };
 
-        Queue {
-            dispatch_object,
-            is_workloop: false,
-        }
+        Queue { dispatch_object }
     }
 
     /// Submit a function for synchronous execution on the [Queue].
@@ -215,10 +202,12 @@ impl Queue {
     where
         F: Send + FnOnce(),
     {
-        assert!(!self.is_workloop, "exec_sync is invalid for WorkloopQueue");
-
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
+        // NOTE: `dispatch_sync*` functions are discouraged on workloops for
+        // performance reasons, but they should still work, so we won't forbid
+        // it here.
+        //
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe { dispatch_sync_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
     }
@@ -393,10 +382,7 @@ impl WorkloopQueue {
         let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
 
         WorkloopQueue {
-            queue: Queue {
-                dispatch_object,
-                is_workloop: true,
-            },
+            queue: Queue { dispatch_object },
         }
     }
 
