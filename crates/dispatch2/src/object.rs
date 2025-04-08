@@ -1,5 +1,3 @@
-//! Dispatch object definition.
-
 use core::ptr::NonNull;
 
 use alloc::boxed::Box;

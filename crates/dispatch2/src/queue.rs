@@ -1,5 +1,3 @@
-//! Dispatch queue definition.
-
 use alloc::boxed::Box;
 use alloc::ffi::CString;
 use core::borrow::Borrow;

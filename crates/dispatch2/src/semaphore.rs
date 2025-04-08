@@ -1,5 +1,3 @@
-//! Dispatch semaphore definition.
-
 use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
 use core::time::Duration;

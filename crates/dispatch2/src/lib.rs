@@ -45,14 +45,14 @@ use self::ffi::dispatch_qos_class_t;
 pub mod ffi;
 #[allow(clippy::undocumented_unsafe_blocks)]
 mod generated;
-pub mod group;
+mod group;
 #[cfg(feature = "objc2")]
 mod main_thread_bound;
-pub mod object;
+mod object;
 mod once;
-pub mod queue;
+mod queue;
 mod retained;
-pub mod semaphore;
+mod semaphore;
 mod utils;
 
 /// Wait error.
@@ -99,14 +99,17 @@ impl From<QualityOfServiceClass> for dispatch_qos_class_t {
     }
 }
 
-pub use self::group::*;
+pub use self::group::{DispatchGroup, DispatchGroupGuard};
 #[cfg(feature = "objc2")]
 pub use self::main_thread_bound::{run_on_main, MainThreadBound};
-pub use self::object::*;
-pub use self::once::*;
-pub use self::queue::*;
+pub use self::object::{DispatchObject, QualityOfServiceClassFloorError};
+pub use self::once::DispatchOnce;
+pub use self::queue::{
+    DispatchAutoReleaseFrequency, DispatchQueue, DispatchWorkloop, GlobalQueueIdentifier,
+    QueueAfterError, QueueAttribute, QueuePriority,
+};
 pub use self::retained::DispatchRetained;
-pub use self::semaphore::*;
+pub use self::semaphore::{DispatchSemaphore, DispatchSemaphoreGuard};
 
 // Helper type
 type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;

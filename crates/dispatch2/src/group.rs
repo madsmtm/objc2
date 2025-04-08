@@ -1,5 +1,3 @@
-//! Dispatch group definition.
-
 use alloc::boxed::Box;
 use core::ffi::c_void;
 use core::ptr::NonNull;

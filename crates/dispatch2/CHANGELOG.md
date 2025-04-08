@@ -35,6 +35,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `dispatch_testcancel`
 
   Using these would have resulted in a linker error before.
+* **BREAKING**: Removed direct access to most modules. Instead, types are
+  publicly exported in the root.
 
 
 ## 0.2.0 - 2025-01-22
