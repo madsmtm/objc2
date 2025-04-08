@@ -101,6 +101,7 @@ default = [
     "CPNavigationAlert",
     "CPNavigationSession",
     "CPNowPlayingButton",
+    "CPNowPlayingMode",
     "CPNowPlayingTemplate",
     "CPPointOfInterest",
     "CPPointOfInterestTemplate",
@@ -262,6 +263,12 @@ CPNavigationSession = [
     "objc2-foundation/NSString",
 ]
 CPNowPlayingButton = ["objc2-foundation/NSObject"]
+CPNowPlayingMode = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 CPNowPlayingTemplate = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",

@@ -24,6 +24,7 @@ objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = fal
 objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = [
     "NSArray",
     "NSError",
+    "NSSet",
     "NSString",
     "NSURL",
     "alloc",

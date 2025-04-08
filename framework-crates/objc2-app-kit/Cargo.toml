@@ -1335,13 +1335,18 @@ NSPasteboard = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
     "objc2-foundation/NSFileWrapper",
+    "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
 NSPasteboardItem = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
 NSPathCell = [

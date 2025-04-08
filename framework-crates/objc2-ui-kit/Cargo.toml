@@ -198,6 +198,8 @@ default = [
     "UIContextMenuInteraction",
     "UIContextualAction",
     "UIControl",
+    "UIConversationContext",
+    "UIConversationEntry",
     "UIDataDetectors",
     "UIDataSourceTranslating",
     "UIDatePicker",
@@ -268,6 +270,7 @@ default = [
     "UIImageView",
     "UIImpactFeedbackGenerator",
     "UIIndirectScribbleInteraction",
+    "UIInputSuggestion",
     "UIInputView",
     "UIInputViewController",
     "UIInteraction",
@@ -290,6 +293,8 @@ default = [
     "UILocalNotification",
     "UILocalizedIndexedCollation",
     "UILongPressGestureRecognizer",
+    "UIMailConversationContext",
+    "UIMailConversationEntry",
     "UIManagedDocument",
     "UIMenu",
     "UIMenuBuilder",
@@ -298,6 +303,8 @@ default = [
     "UIMenuElement",
     "UIMenuLeaf",
     "UIMenuSystem",
+    "UIMessageConversationContext",
+    "UIMessageConversationEntry",
     "UIMotionEffect",
     "UINavigationBar",
     "UINavigationBarAppearance",
@@ -381,6 +388,7 @@ default = [
     "UIShape",
     "UISheetPresentationController",
     "UISlider",
+    "UISmartReplySuggestion",
     "UISnapBehavior",
     "UISplitViewController",
     "UISpringLoadedInteraction",
@@ -1040,6 +1048,18 @@ UIControl = [
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
+UIConversationContext = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSPersonNameComponents",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
+UIConversationEntry = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
 UIDataDetectors = ["bitflags"]
 UIDataSourceTranslating = ["objc2-foundation/NSIndexPath"]
 UIDatePicker = [
@@ -1332,6 +1352,7 @@ UIIndirectScribbleInteraction = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
 ]
+UIInputSuggestion = []
 UIInputView = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
@@ -1406,6 +1427,14 @@ UILongPressGestureRecognizer = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
 ]
+UIMailConversationContext = [
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
+UIMailConversationEntry = [
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
 UIManagedDocument = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -1439,6 +1468,8 @@ UIMenuElement = [
 ]
 UIMenuLeaf = ["objc2-foundation/NSString"]
 UIMenuSystem = []
+UIMessageConversationContext = []
+UIMessageConversationEntry = []
 UIMotionEffect = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
@@ -1750,6 +1781,7 @@ UISlider = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
+UISmartReplySuggestion = ["objc2-foundation/NSString"]
 UISnapBehavior = []
 UISplitViewController = [
     "objc2-foundation/NSArray",
@@ -1820,7 +1852,11 @@ UITabBarController = [
     "objc2-foundation/NSProgress",
     "objc2-foundation/NSString",
 ]
-UITabBarControllerSidebar = ["objc2-foundation/NSObject"]
+UITabBarControllerSidebar = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSProgress",
+]
 UITabBarItem = [
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",

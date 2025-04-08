@@ -45,7 +45,9 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features
     "NSDragging",
     "NSEvent",
     "NSImage",
+    "NSMenuItem",
     "NSPasteboard",
+    "NSPopover",
     "NSPrintInfo",
     "NSPrintOperation",
     "NSResponder",
@@ -239,6 +241,22 @@ default = [
     "WKURLSchemeTask",
     "WKUserContentController",
     "WKUserScript",
+    "WKWebExtension",
+    "WKWebExtensionAction",
+    "WKWebExtensionCommand",
+    "WKWebExtensionContext",
+    "WKWebExtensionController",
+    "WKWebExtensionControllerConfiguration",
+    "WKWebExtensionControllerDelegate",
+    "WKWebExtensionDataRecord",
+    "WKWebExtensionDataType",
+    "WKWebExtensionMatchPattern",
+    "WKWebExtensionMessagePort",
+    "WKWebExtensionPermission",
+    "WKWebExtensionTab",
+    "WKWebExtensionTabConfiguration",
+    "WKWebExtensionWindow",
+    "WKWebExtensionWindowConfiguration",
     "WKWebView",
     "WKWebViewConfiguration",
     "WKWebpagePreferences",
@@ -776,6 +794,85 @@ WKUserContentController = [
 WKUserScript = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+]
+WKWebExtension = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+WKWebExtensionAction = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+]
+WKWebExtensionCommand = ["objc2-foundation/NSString"]
+WKWebExtensionContext = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+WKWebExtensionController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+WKWebExtensionControllerConfiguration = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
+]
+WKWebExtensionControllerDelegate = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+WKWebExtensionDataRecord = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
+WKWebExtensionDataType = ["objc2-foundation/NSString"]
+WKWebExtensionMatchPattern = [
+    "bitflags",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+WKWebExtensionMessagePort = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+]
+WKWebExtensionPermission = ["objc2-foundation/NSString"]
+WKWebExtensionTab = [
+    "bitflags",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+WKWebExtensionTabConfiguration = ["objc2-foundation/NSURL"]
+WKWebExtensionWindow = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+]
+WKWebExtensionWindowConfiguration = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSURL",
 ]
 WKWebView = [
     "objc2-foundation/NSArray",

@@ -89,7 +89,7 @@ impl UnexposedAttr {
             // `nullability` is already exposed, so we won't bother with that.
             // `sendability` is most for backwards-compatibility with older
             // versions of system headers that didn't assign sendability.
-            "NS_HEADER_AUDIT_BEGIN" => {
+            "NS_HEADER_AUDIT_BEGIN" | "WK_HEADER_AUDIT_BEGIN" => {
                 let _ = get_arguments();
                 None
             }

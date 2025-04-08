@@ -93,6 +93,7 @@ CSSearchableIndex = [
     "objc2-foundation/NSURL",
 ]
 CSSearchableItem = [
+    "bitflags",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObjCRuntime",
     "objc2-foundation/NSObject",

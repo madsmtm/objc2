@@ -65,6 +65,7 @@ MFMailComposeViewController = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
+    "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]

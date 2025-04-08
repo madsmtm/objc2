@@ -109,14 +109,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CFUserNotificationSecureTextField`
   - `CFUserNotificationPopUpSelection`
 * Added `CFRange::new`.
+* **BREAKING**: Added `MainThreadOnly` to the following UIKit traits:
+  - `UICalendarSelectionMultiDateDelegate`
+  - `UICalendarSelectionSingleDateDelegate`
+  - `UICalendarSelectionWeekOfYearDelegate`
+  - `UICalendarViewDelegate`
+  - `UIEditMenuInteractionDelegate`
+  - `UITabBarControllerSidebarDelegate`
 
 ### Changed
+* Updated SDK from Xcode 16.2 to 16.3.
+
+  View the release notes to learn more details:
+  - [16.3](https://developer.apple.com/documentation/xcode-release-notes/xcode-16_3-release-notes)
+
+  Breaking changes are noted elsewhere in this changelog entry.
 * Made `CFArray`, `CFBag`, `CFBinaryHeap`, `CFDictionary`, `CFSet` and their
   mutable counterparts generic. Most signatures won't use the generic version,
   but making these generic allows for higher-level abstractions and more
   ergonomic usage.
 * The `CFBase` feature is now always enabled.
 * Renamed `objc2-io-surface`'s `"ObjC"` feature to `"objc2"`.
+* **BREAKING**: Renamed `GKInviteRecipientResponse` enumeration variants.
+* **BREAKING**: Made the following APIs no longer return an `Option`:
+  - `GKAchievement::player`
+  - `GKScore::player`
+  - `GKTurnBasedExchangeReply::replyDate`
 
 ### Fixed
 * **BREAKING**: Fixed the type of `AuthorizationExecuteWithPrivileges`'s
@@ -124,7 +142,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NonNull<AuthorizationString>`, i.e. `NonNull<*const c_char>`. See #711
   for more details.
 * Fixed off-by-one error in `NSArray::insert`.
-
+* **BREAKING**: Fixed nullability of types in `WKWebView::createWebArchiveDataWithCompletionHandler`.
 
 ## 0.3.0 - 2025-01-22
 

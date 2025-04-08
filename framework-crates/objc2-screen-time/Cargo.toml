@@ -16,6 +16,7 @@ license.workspace = true
 workspace = true
 
 [dependencies]
+block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
 
@@ -44,16 +45,19 @@ default = [
     "STScreenTimeConfiguration",
     "STWebHistory",
     "STWebpageController",
+    "block2",
     "objc2-app-kit",
 ]
 std = ["alloc"]
 alloc = []
+block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
 STScreenTimeConfiguration = []
 STWebHistory = [
     "objc2-foundation/NSDateInterval",
     "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]

@@ -119,6 +119,7 @@ impl Location {
             "_time.timespec" => "__libc__".into(),
             "_fenv" => "__libc__".into(),
             "Darwin.sys.acl" => "__libc__".into(),
+            "Darwin.sys.event" => "__libc__".into(),
             "_ctype" => "__libc__".into(),
             "_errno" => "__libc__".into(),
             "_locale.locale" => "__libc__".into(),
@@ -132,6 +133,7 @@ impl Location {
 
             // Will be moved to the `mach2` crate in `libc` v1.0
             name if name.starts_with("Darwin.Mach") => "__libc__".into(),
+            "mach.mach_port_t" => "__libc__".into(),
             "_mach_port_t" => "__libc__".into(),
 
             // Rename "ObjC" modules to `objc2`, such that the feature flag matches.

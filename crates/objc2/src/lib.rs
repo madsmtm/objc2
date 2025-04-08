@@ -62,11 +62,11 @@
 //!
 //! ## Supported operating systems
 //!
-//! - macOS: `10.12-15.2`
-//! - iOS: `10.0-18.2` (includes iPadOS and Mac Catalyst)
-//! - tvOS: `10.0-18.2`
-//! - watchOS: `5.0-11.2`
-//! - visionOS: `1.0-2.2`
+//! - macOS: `10.12-15.4`
+//! - iOS: `10.0-18.4` (including iPadOS and Mac Catalyst)
+//! - tvOS: `10.0-18.4`
+//! - watchOS: `5.0-11.4`
+//! - visionOS: `1.0-2.4`
 //!
 //! The minimum versions are the same as those supported by `rustc`. Higher
 //! versions will also work, but the framework crates will not have bindings

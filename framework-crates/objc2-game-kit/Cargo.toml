@@ -16,6 +16,7 @@ license.workspace = true
 workspace = true
 
 [dependencies]
+bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
@@ -81,6 +82,7 @@ default = [
     "GKPlayer",
     "GKPublicConstants",
     "GKPublicProtocols",
+    "GKReleaseState",
     "GKSavedGame",
     "GKSavedGameListener",
     "GKScore",
@@ -90,11 +92,13 @@ default = [
     "GKTurnBasedMatchmakerViewController",
     "GKVoiceChat",
     "GKVoiceChatService",
+    "bitflags",
     "block2",
     "objc2-app-kit",
 ]
 std = ["alloc"]
 alloc = []
+bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
@@ -248,6 +252,7 @@ GKPublicProtocols = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
+GKReleaseState = ["bitflags"]
 GKSavedGame = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",

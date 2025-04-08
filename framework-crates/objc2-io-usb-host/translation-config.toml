@@ -19,11 +19,6 @@ class.IOUSBHostObject.methods."configurationDescriptorWithConfigurationValue:err
 # Needs uuid_t, unsure about the ABI.
 fn.IOUSBGetPlatformCapabilityDescriptorWithUUID.skipped = true
 
-# Overflows while calculating.
-const.IOUSBHostCIDeviceUpdateCommandData1DescriptorAddress.use-value = true
-const.IOUSBHostCINormalTransferData1Buffer.use-value = true
-const.IOUSBHostCILinkData1TransferStructureAddress.use-value = true
-
 # Declared twice.
 static.IOUSBHostMatchingPropertyKeyProductIDMask.skipped = true
 

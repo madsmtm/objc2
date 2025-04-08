@@ -2942,7 +2942,6 @@ impl Ty {
 /// Strip macros from unexposed types.
 ///
 /// These appear in newer clang versions.
-/// We should be able to extract data from the following macros if desired:
 /// - NS_SWIFT_NAME
 /// - NS_SWIFT_UNAVAILABLE
 /// - NS_REFINED_FOR_SWIFT
@@ -2953,11 +2952,14 @@ fn parse_unexposed_tokens(s: &str) -> (String, Option<UnexposedAttr>) {
     let attr = if let Some(TokenTree::Ident(ident)) = iter.peek() {
         let ident = ident.to_string();
         if let Ok(attr) = UnexposedAttr::from_name(&ident, || {
-            iter.next();
-            if let Some(TokenTree::Group(group)) = iter.peek() {
+            if let Some(TokenTree::Group(_)) = iter.peek() {
+                let Some(TokenTree::Group(group)) = iter.next() else {
+                    unreachable!();
+                };
                 Some(group)
             } else {
-                error!(?ident, "expected group in macro");
+                // The associated data on the macro is removed since Xcode 16.3.
+                trace!(?ident, "expected group in macro");
                 None
             }
         }) {

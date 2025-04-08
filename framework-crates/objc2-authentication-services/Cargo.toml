@@ -295,6 +295,8 @@ ASAuthorizationProviderExtensionLoginConfiguration = [
     "objc2-foundation/NSValue",
 ]
 ASAuthorizationProviderExtensionLoginManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",

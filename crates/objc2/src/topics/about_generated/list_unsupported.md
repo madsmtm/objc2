@@ -14,6 +14,7 @@
 | `AudioUnit` | Deprecated, use AudioToolbox instead. |
 | `AudioVideoBridging` | Deprecated, use AVKit/AVFoundation instead (maybe?). |
 | `AutomatedDeviceEnrollment` | Swift-only. |
+| `BrowserKit` | TODO. |
 | `CalendarStore` | Very deprecated. |
 | `CarKey` | Swift-only. |
 | `Charts` | Swift-only. |
@@ -37,6 +38,7 @@
 | `DockKit` | Swift-only. |
 | `DriverKit` | Uses C++ classes. |
 | `ExtensionFoundation` | Swift-only. |
+| `FSKit` | TODO. |
 | `FamilyControls` | Swift-only. |
 | `FinanceKit` | Swift-only. |
 | `FinanceKitUI` | Swift-only. |
@@ -60,6 +62,7 @@
 | `LightweightCodeRequirements` | Swift-only. |
 | `LiveCommunicationKit` | Swift-only. |
 | `LockedCameraCapture` | Swift-only. |
+| `ManagedApp` | Swift-only. |
 | `ManagedAppDistribution` | Swift-only. |
 | `ManagedSettings` | Swift-only. |
 | `ManagedSettingsUI` | Swift-only. |
@@ -85,6 +88,7 @@
 | `RoomPlan` | Swift-only. |
 | `Ruby` | Very C-centric and old. |
 | `SecureElementCredential` | Swift-only. |
+| `SecurityUI` | TODO. |
 | `StickerFoundation` | Basically empty. |
 | `StickerKit` | Basically empty. |
 | `SwiftData` | Swift-only. |
@@ -99,6 +103,7 @@
 | `TipKit` | Swift-only. |
 | `Tk` | Very C-centric and old. |
 | `Translation` | Swift-only. |
+| `TranslationUIProvider` | Swift-only. |
 | `Twitter` | Deprecated, use Social instead. |
 | `VideoDecodeAcceleration` | Very C-centric and old. |
 | `VisionKit` | Swift-only. |
