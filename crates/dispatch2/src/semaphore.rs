@@ -1,38 +1,35 @@
 //! Dispatch semaphore definition.
 
+use core::ptr::NonNull;
 use core::time::Duration;
 
+use crate::retained::DispatchObject;
+use crate::DispatchRetained;
+
 use super::ffi::*;
-use super::object::DispatchObject;
 use super::WaitError;
 
-/// Dispatch semaphore.
-#[derive(Debug, Clone)]
-pub struct DispatchSemaphore {
-    dispatch_object: DispatchObject<dispatch_semaphore_s>,
-}
+dispatch_object!(
+    /// Dispatch semaphore.
+    pub struct DispatchSemaphore;
+);
 
 impl DispatchSemaphore {
     /// Creates a new [`DispatchSemaphore`] with an initial value.
     ///
     /// Returns None if value is negative or if creation failed.
-    pub fn new(value: isize) -> Option<Self> {
+    pub fn new(value: isize) -> Option<DispatchRetained<Self>> {
         // Per documentation creating a semaphore with a negative size isn't allowed.
         if value < 0 {
             return None;
         }
 
-        // Safety: value is valid
-        let object = unsafe { dispatch_semaphore_create(value) };
-
-        if object.is_null() {
-            return None;
-        }
-
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
-
-        Some(Self { dispatch_object })
+        // SAFETY: The value is valid.
+        let ptr = unsafe { dispatch_semaphore_create(value) };
+        NonNull::new(ptr).map(|ptr| {
+            // SAFETY: The object came from a "create" method.
+            unsafe { DispatchRetained::from_raw(ptr.cast()) }
+        })
     }
 
     /// Attempt to acquire the [`DispatchSemaphore`] and return a [`SemaphoreGuard`].
@@ -53,17 +50,9 @@ impl DispatchSemaphore {
         let result = unsafe { dispatch_semaphore_wait(self.as_raw(), timeout) };
 
         match result {
-            0 => Ok(SemaphoreGuard(self.clone(), false)),
+            0 => Ok(SemaphoreGuard(self.retain(), false)),
             _ => Err(WaitError::Timeout),
         }
-    }
-
-    /// Set the finalizer function for the object.
-    pub fn set_finalizer<F>(&mut self, destructor: F)
-    where
-        F: Send + FnOnce(),
-    {
-        self.dispatch_object.set_finalizer(destructor);
     }
 
     /// Get the raw [dispatch_semaphore_t] value.
@@ -72,14 +61,14 @@ impl DispatchSemaphore {
     ///
     /// - Object shouldn't be released manually.
     pub const unsafe fn as_raw(&self) -> dispatch_semaphore_t {
-        // SAFETY: Upheld by caller.
-        unsafe { self.dispatch_object.as_raw() }
+        let ptr: *const Self = self;
+        ptr as dispatch_semaphore_t
     }
 }
 
 /// Dispatch semaphore guard.
 #[derive(Debug)]
-pub struct SemaphoreGuard(DispatchSemaphore, bool);
+pub struct SemaphoreGuard(DispatchRetained<DispatchSemaphore>, bool);
 
 impl SemaphoreGuard {
     /// Release the [`DispatchSemaphore`].

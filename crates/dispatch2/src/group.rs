@@ -2,37 +2,34 @@
 
 use alloc::boxed::Box;
 use core::ffi::c_void;
+use core::ptr::NonNull;
 use core::time::Duration;
 
-use super::object::DispatchObject;
-use super::queue::DispatchQueue;
+use crate::retained::DispatchObject;
+use crate::{DispatchQueue, DispatchRetained};
+
 use super::utils::function_wrapper;
 use super::{ffi::*, WaitError};
 
-/// Dispatch group.
-#[derive(Debug, Clone)]
-pub struct DispatchGroup {
-    dispatch_object: DispatchObject<dispatch_group_s>,
-}
+dispatch_object!(
+    /// Dispatch group.
+    pub struct DispatchGroup;
+);
 
 /// Dispatch group guard.
 #[derive(Debug)]
-pub struct GroupGuard(DispatchGroup, bool);
+pub struct GroupGuard(DispatchRetained<DispatchGroup>, bool);
 
 impl DispatchGroup {
     /// Creates a new [`DispatchGroup`].
-    pub fn new() -> Option<Self> {
+    pub fn new() -> Option<DispatchRetained<Self>> {
         // Safety: valid to call.
-        let object = unsafe { dispatch_group_create() };
+        let ptr = unsafe { dispatch_group_create() };
 
-        if object.is_null() {
-            return None;
-        }
-
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
-
-        Some(DispatchGroup { dispatch_object })
+        NonNull::new(ptr).map(|ptr| {
+            // SAFETY: The object came from a "create" method.
+            unsafe { DispatchRetained::from_raw(ptr.cast()) }
+        })
     }
 
     /// Submit a function to a [`DispatchQueue`] and associates it with the [`DispatchGroup`].
@@ -103,15 +100,7 @@ impl DispatchGroup {
             dispatch_group_enter(self.as_raw());
         }
 
-        GroupGuard(self.clone(), false)
-    }
-
-    /// Set the finalizer function for the object.
-    pub fn set_finalizer<F>(&mut self, destructor: F)
-    where
-        F: Send + FnOnce(),
-    {
-        self.dispatch_object.set_finalizer(destructor);
+        GroupGuard(self.retain(), false)
     }
 
     /// Get the raw [dispatch_group_t] value.
@@ -120,8 +109,8 @@ impl DispatchGroup {
     ///
     /// - Object shouldn't be released manually.
     pub const unsafe fn as_raw(&self) -> dispatch_group_t {
-        // SAFETY: Upheld by caller
-        unsafe { self.dispatch_object.as_raw() }
+        let ptr: *const Self = self;
+        ptr as dispatch_group_t
     }
 }
 

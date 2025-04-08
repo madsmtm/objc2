@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `objc2::rc::Retained`. This mostly replaces `DispatchObject<T>`.
 
 ### Changed
+- Changed how memory management works to match other `objc2` crates. Instead
+  of types like `DispatchGroup` holding the retain count internally, it is now
+  done externally by `DispatchRetained<DispatchGroup>`.
 - Renamed dispatch types to be prefixed with `Dispatch` (e.g. `DispatchGroup`,
   `DispatchQueue`, `DispatchOnce` etc).
 

@@ -34,6 +34,12 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[macro_use]
+mod macros;
+
+use core::cell::UnsafeCell;
+use core::marker::{PhantomData, PhantomPinned};
+
 use self::ffi::dispatch_qos_class_t;
 
 pub mod ffi;
@@ -101,6 +107,9 @@ pub use self::once::*;
 pub use self::queue::*;
 pub use self::retained::DispatchRetained;
 pub use self::semaphore::*;
+
+// Helper type
+type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;
 
 /// Deprecated alias for [`DispatchGroup`].
 #[deprecated = "renamed to DispatchGroup"]

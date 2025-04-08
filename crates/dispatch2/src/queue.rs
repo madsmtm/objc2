@@ -2,10 +2,12 @@
 
 use alloc::boxed::Box;
 use alloc::ffi::CString;
-use core::borrow::{Borrow, BorrowMut};
-use core::ops::{Deref, DerefMut};
+use core::borrow::Borrow;
+use core::ops::Deref;
 use core::ptr::NonNull;
 use core::time::Duration;
+
+use crate::DispatchRetained;
 
 use super::object::{DispatchObject, QualityOfServiceClassFloorError};
 use super::utils::function_wrapper;
@@ -119,15 +121,14 @@ impl From<DispatchAutoReleaseFrequency> for dispatch_autorelease_frequency_t {
     }
 }
 
-/// Dispatch queue.
-#[derive(Debug, Clone)]
-pub struct DispatchQueue {
-    dispatch_object: DispatchObject<dispatch_queue_s>,
-}
+dispatch_object!(
+    /// Dispatch queue.
+    pub struct DispatchQueue;
+);
 
 impl DispatchQueue {
     /// Create a new [`DispatchQueue`].
-    pub fn new(label: &str, queue_attribute: QueueAttribute) -> Self {
+    pub fn new(label: &str, queue_attribute: QueueAttribute) -> DispatchRetained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
         // Safety: label and queue_attribute can only be valid.
@@ -135,12 +136,9 @@ impl DispatchQueue {
             dispatch_queue_create(label.as_ptr(), dispatch_queue_attr_t::from(queue_attribute))
         };
 
-        assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
-
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
-
-        Self { dispatch_object }
+        let object = NonNull::new(object).expect("dispatch_queue_create returned NULL");
+        // SAFETY: Object came from a "create" method.
+        unsafe { DispatchRetained::from_raw(object.cast()) }
     }
 
     /// Create a new [`DispatchQueue`] with a given target [`DispatchQueue`].
@@ -148,57 +146,44 @@ impl DispatchQueue {
         label: &str,
         queue_attribute: QueueAttribute,
         target: &DispatchQueue,
-    ) -> Self {
+    ) -> DispatchRetained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
         // Safety: label, queue_attribute and target can only be valid.
+        // NOTE: dispatch_queue_create_with_target is in charge of retaining the target DispatchQueue.
         let object = unsafe {
             dispatch_queue_create_with_target(
                 label.as_ptr(),
                 dispatch_queue_attr_t::from(queue_attribute),
-                target.dispatch_object.as_raw(),
+                target.as_raw(),
             )
         };
 
-        assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
-
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
-
-        // NOTE: dispatch_queue_create_with_target is in charge of retaining the target DispatchQueue.
-
-        Self { dispatch_object }
+        let object = NonNull::new(object).expect("dispatch_queue_create_with_target returned NULL");
+        // SAFETY: Object came from a "create" method.
+        unsafe { DispatchRetained::from_raw(object.cast()) }
     }
 
     /// Return a system-defined global concurrent [`DispatchQueue`] with the priority derived from [GlobalQueueIdentifier].
-    pub fn global_queue(identifier: GlobalQueueIdentifier) -> Self {
+    pub fn global_queue(identifier: GlobalQueueIdentifier) -> DispatchRetained<Self> {
         let raw_identifier = identifier.to_identifier();
 
         // Safety: raw_identifier cannot be invalid, flags is reserved.
         let object = unsafe { dispatch_get_global_queue(raw_identifier, 0) };
 
-        assert!(
-            !object.is_null(),
-            "dispatch_get_global_queue shouldn't fail!"
-        );
-
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_shared(object.cast()) };
-
-        Self { dispatch_object }
+        let object = NonNull::new(object).expect("dispatch_get_global_queue returned NULL");
+        // SAFETY: Object came from a "create" method.
+        unsafe { DispatchRetained::from_raw(object.cast()) }
     }
 
     /// Return the main queue.
-    pub fn main() -> Self {
+    pub fn main() -> DispatchRetained<Self> {
         // Safety: raw_identifier cannot be invalid, flags is reserved.
         let object = dispatch_get_main_queue();
 
-        assert!(!object.is_null(), "dispatch_get_main_queue shouldn't fail!");
-
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_shared(object.cast()) };
-
-        Self { dispatch_object }
+        let object = NonNull::new(object).expect("dispatch_get_main_queue returned NULL");
+        // SAFETY: Object came from a "create" method.
+        unsafe { DispatchRetained::from_raw(object.cast()) }
     }
 
     /// Submit a function for synchronous execution on the [`DispatchQueue`].
@@ -307,46 +292,16 @@ impl DispatchQueue {
         }
     }
 
-    /// Set the finalizer function for the [`DispatchQueue`].
-    pub fn set_finalizer<F>(&mut self, destructor: F)
-    where
-        F: Send + FnOnce(),
-    {
-        self.dispatch_object.set_finalizer(destructor);
-    }
-
-    /// Set the target [`DispatchQueue`] of this [`DispatchQueue`].
-    pub fn set_target_queue(&self, queue: &DispatchQueue) {
-        // Safety: We are in DispatchQueue instance.
-        unsafe { self.dispatch_object.set_target_queue(queue) }
-    }
-
     /// Set the QOS class floor of the [`DispatchQueue`].
     pub fn set_qos_class_floor(
         &self,
         qos_class: QualityOfServiceClass,
         relative_priority: i32,
     ) -> Result<(), QualityOfServiceClassFloorError> {
-        // Safety: We are in DispatchQueue instance.
-        unsafe {
-            self.dispatch_object
-                .set_qos_class_floor(qos_class, relative_priority)
-        }
-    }
+        let obj = unsafe { DispatchObject::new_shared(self.as_raw()) };
 
-    /// Activate the [`DispatchQueue`].
-    pub fn activate(&mut self) {
-        self.dispatch_object.activate();
-    }
-
-    /// Suspend the invocation of functions on the [`DispatchQueue`].
-    pub fn suspend(&self) {
-        self.dispatch_object.suspend();
-    }
-
-    /// Resume the invocation of functions on the [`DispatchQueue`].
-    pub fn resume(&self) {
-        self.dispatch_object.resume();
+        // Safety: We are a queue.
+        unsafe { obj.set_qos_class_floor(qos_class, relative_priority) }
     }
 
     /// Get the raw [dispatch_queue_t] value.
@@ -355,20 +310,19 @@ impl DispatchQueue {
     ///
     /// - Object shouldn't be released manually.
     pub const unsafe fn as_raw(&self) -> dispatch_queue_t {
-        // SAFETY: Upheld by caller.
-        unsafe { self.dispatch_object.as_raw() }
+        let ptr: *const Self = self;
+        ptr as dispatch_queue_t
     }
 }
 
-/// Dispatch workloop queue.
-#[derive(Debug, Clone)]
-pub struct DispatchWorkloop {
-    queue: DispatchQueue,
-}
+dispatch_object!(
+    /// Dispatch workloop queue.
+    pub struct DispatchWorkloop;
+);
 
 impl DispatchWorkloop {
     /// Create a new [`DispatchWorkloop`].
-    pub fn new(label: &str, inactive: bool) -> Self {
+    pub fn new(label: &str, inactive: bool) -> DispatchRetained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
         // Safety: label can only be valid.
@@ -380,14 +334,9 @@ impl DispatchWorkloop {
             }
         };
 
-        assert!(!object.is_null(), "dispatch_queue_create shouldn't fail!");
-
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
-
-        DispatchWorkloop {
-            queue: DispatchQueue { dispatch_object },
-        }
+        let object = NonNull::new(object).expect("dispatch_workloop_create returned NULL");
+        // SAFETY: Object came from a "create" method.
+        unsafe { DispatchRetained::from_raw(object.cast()) }
     }
 
     /// Configure how the [`DispatchWorkloop`] manage the autorelease pools for the functions it executes.
@@ -407,24 +356,22 @@ impl DispatchWorkloop {
     ///
     /// - Object shouldn't be released manually.
     pub const unsafe fn as_raw(&self) -> dispatch_workloop_t {
-        // SAFETY: Upheld by caller.
-        unsafe { self.queue.as_raw() as dispatch_workloop_t }
+        let ptr: *const Self = self;
+        ptr as dispatch_workloop_t
     }
 }
 
 impl Deref for DispatchWorkloop {
     type Target = DispatchQueue;
 
+    /// Access the workloop as a [`DispatchQueue`].
     #[inline]
     fn deref(&self) -> &Self::Target {
-        &self.queue
-    }
-}
-
-impl DerefMut for DispatchWorkloop {
-    #[inline]
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.queue
+        let ptr: *const DispatchWorkloop = self;
+        let ptr: *const DispatchQueue = ptr.cast();
+        // SAFETY: Workloop queues are "subclasses" of queues (they can be
+        // used in all the same places that normal queues can).
+        unsafe { &*ptr }
     }
 }
 
@@ -435,23 +382,10 @@ impl AsRef<DispatchQueue> for DispatchWorkloop {
     }
 }
 
-impl AsMut<DispatchQueue> for DispatchWorkloop {
-    #[inline]
-    fn as_mut(&mut self) -> &mut DispatchQueue {
-        &mut *self
-    }
-}
-
+// PartialEq, Eq and Hash work the same for workloops and queues.
 impl Borrow<DispatchQueue> for DispatchWorkloop {
     #[inline]
     fn borrow(&self) -> &DispatchQueue {
         self
-    }
-}
-
-impl BorrowMut<DispatchQueue> for DispatchWorkloop {
-    #[inline]
-    fn borrow_mut(&mut self) -> &mut DispatchQueue {
-        &mut *self
     }
 }
