@@ -1,42 +1,32 @@
-//! Dispatch group definition.
-
 use alloc::boxed::Box;
 use core::ffi::c_void;
+use core::ptr::NonNull;
 use core::time::Duration;
 
-use super::object::DispatchObject;
-use super::queue::Queue;
+use crate::{DispatchObject, DispatchQueue, DispatchRetained};
+
 use super::utils::function_wrapper;
 use super::{ffi::*, WaitError};
 
-/// Dispatch group.
-#[derive(Debug, Clone)]
-pub struct Group {
-    dispatch_object: DispatchObject<dispatch_group_s>,
-}
+dispatch_object!(
+    /// Dispatch group.
+    pub struct DispatchGroup;
+);
 
-/// Dispatch group guard.
-#[derive(Debug)]
-pub struct GroupGuard(Group, bool);
-
-impl Group {
-    /// Creates a new [Group].
-    pub fn new() -> Option<Self> {
+impl DispatchGroup {
+    /// Creates a new [`DispatchGroup`].
+    pub fn new() -> Option<DispatchRetained<Self>> {
         // Safety: valid to call.
-        let object = unsafe { dispatch_group_create() };
+        let ptr = unsafe { dispatch_group_create() };
 
-        if object.is_null() {
-            return None;
-        }
-
-        // Safety: object cannot be null.
-        let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
-
-        Some(Group { dispatch_object })
+        NonNull::new(ptr).map(|ptr| {
+            // SAFETY: The object came from a "create" method.
+            unsafe { DispatchRetained::from_raw(ptr.cast()) }
+        })
     }
 
-    /// Submit a function to a [Queue] and associates it with the [Group].
-    pub fn exec_async<F>(&self, queue: &Queue, work: F)
+    /// Submit a function to a [`DispatchQueue`] and associates it with the [`DispatchGroup`].
+    pub fn exec_async<F>(&self, queue: &DispatchQueue, work: F)
     where
         // We need `'static` to make sure any referenced values are borrowed for
         // long enough since `work` will be performed asynchronously.
@@ -78,8 +68,8 @@ impl Group {
         }
     }
 
-    /// Schedule a function to be submitted to a [Queue] when a group of previously submitted functions have completed.
-    pub fn notify<F>(&self, queue: &Queue, work: F)
+    /// Schedule a function to be submitted to a [`DispatchQueue`] when a group of previously submitted functions have completed.
+    pub fn notify<F>(&self, queue: &DispatchQueue, work: F)
     where
         F: Send + FnOnce(),
     {
@@ -96,22 +86,12 @@ impl Group {
         }
     }
 
-    /// Explicitly indicates that the function has entered the [Group].
-    pub fn enter(&self) -> GroupGuard {
+    /// Explicitly indicates that the function has entered the [`DispatchGroup`].
+    pub fn enter(&self) -> DispatchGroupGuard {
         // Safety: object cannot be null.
-        unsafe {
-            dispatch_group_enter(self.as_raw());
-        }
+        unsafe { dispatch_group_enter(self.as_raw()) };
 
-        GroupGuard(self.clone(), false)
-    }
-
-    /// Set the finalizer function for the object.
-    pub fn set_finalizer<F>(&mut self, destructor: F)
-    where
-        F: Send + FnOnce(),
-    {
-        self.dispatch_object.set_finalizer(destructor);
+        DispatchGroupGuard(self.retain())
     }
 
     /// Get the raw [dispatch_group_t] value.
@@ -120,32 +100,26 @@ impl Group {
     ///
     /// - Object shouldn't be released manually.
     pub const unsafe fn as_raw(&self) -> dispatch_group_t {
-        // SAFETY: Upheld by caller
-        unsafe { self.dispatch_object.as_raw() }
+        let ptr: *const Self = self;
+        ptr as dispatch_group_t
     }
 }
 
-impl GroupGuard {
-    /// Explicitly indicates that the function in the [Group] finished executing.
-    pub fn leave(mut self) {
-        // Safety: object cannot be null.
-        unsafe {
-            dispatch_group_leave(self.0.as_raw());
-        }
+/// Dispatch group guard.
+#[derive(Debug)]
+pub struct DispatchGroupGuard(DispatchRetained<DispatchGroup>);
 
-        self.1 = true;
+impl DispatchGroupGuard {
+    /// Explicitly indicate that the function in the [`DispatchGroup`] finished executing.
+    pub fn leave(self) {
+        // Drop.
+        let _ = self;
     }
 }
 
-impl Drop for GroupGuard {
+impl Drop for DispatchGroupGuard {
     fn drop(&mut self) {
-        if !self.1 {
-            // Safety: object cannot be null.
-            unsafe {
-                dispatch_group_leave(self.0.as_raw());
-            }
-
-            self.1 = true;
-        }
+        // SAFETY: Dispatch group cannot be null.
+        unsafe { dispatch_group_leave(self.0.as_raw()) };
     }
 }

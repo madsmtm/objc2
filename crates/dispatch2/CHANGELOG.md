@@ -6,7 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
-### Fixed
+### Added
+- Allow `Queue::exec_sync` on workloops.
+  This is discouraged for performance reasons, but doesn't need to be
+  outright disallowed.
+- Added `DispatchRetained<T>`, which is a smart pointer which allows
+  retain/release operations on dispatch objects, similar in spirit to
+  `objc2::rc::Retained`. This mostly replaces `DispatchObject<T>`.
+
+### Changed
+- Changed how memory management works to match other `objc2` crates. Instead
+  of types like `DispatchGroup` holding the retain count internally, it is now
+  done externally by `DispatchRetained<DispatchGroup>`.
+- Converted `DispatchObject` to a trait.
+- **BREAKING**: Renamed dispatch types to be prefixed with `Dispatch`
+  (e.g. `DispatchGroup`, `DispatchQueue` and `DispatchOnce`).
+
+  Some of the old names are kept (but deprecated) for easier migration.
+
+### Removed
+- **BREAKING**: Removed `TargetQueueError` and the error case in
+  `DispatchObject::set_target_queue` (it now instead aborts on error,
+  as that's what the underlying function does).
 - Removed `ffi` methods that are actually macros:
   - `dispatch_wait`
   - `dispatch_notify`
@@ -14,6 +35,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `dispatch_testcancel`
 
   Using these would have resulted in a linker error before.
+* **BREAKING**: Removed direct access to most modules. Instead, types are
+  publicly exported in the root.
 
 
 ## 0.2.0 - 2025-01-22

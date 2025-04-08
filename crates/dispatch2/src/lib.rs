@@ -11,9 +11,9 @@
 //! ## Example
 //!
 //! ```
-//! use dispatch2::{Queue, QueueAttribute};
+//! use dispatch2::{DispatchQueue, QueueAttribute};
 //!
-//! let queue = Queue::new("example_queue", QueueAttribute::Serial);
+//! let queue = DispatchQueue::new("example_queue", QueueAttribute::Serial);
 //! queue.exec_async(|| println!("Hello"));
 //! queue.exec_sync(|| println!("World"));
 //! ```
@@ -34,19 +34,27 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[macro_use]
+mod macros;
+
+use core::cell::UnsafeCell;
+use core::marker::{PhantomData, PhantomPinned};
+
 use self::ffi::dispatch_qos_class_t;
 
 pub mod ffi;
 #[allow(clippy::undocumented_unsafe_blocks)]
 mod generated;
-pub mod group;
+mod group;
 #[cfg(feature = "objc2")]
 mod main_thread_bound;
-pub mod object;
+mod object;
 mod once;
-pub mod queue;
-pub mod semaphore;
+mod queue;
+mod retained;
+mod semaphore;
 mod utils;
+mod workloop;
 
 /// Wait error.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -92,10 +100,37 @@ impl From<QualityOfServiceClass> for dispatch_qos_class_t {
     }
 }
 
-pub use self::group::*;
+pub use self::group::{DispatchGroup, DispatchGroupGuard};
 #[cfg(feature = "objc2")]
 pub use self::main_thread_bound::{run_on_main, MainThreadBound};
-pub use self::object::*;
-pub use self::once::*;
-pub use self::queue::*;
-pub use self::semaphore::*;
+pub use self::object::{DispatchObject, QualityOfServiceClassFloorError};
+pub use self::once::DispatchOnce;
+pub use self::queue::{
+    DispatchQueue, GlobalQueueIdentifier, QueueAfterError, QueueAttribute, QueuePriority,
+};
+pub use self::retained::DispatchRetained;
+pub use self::semaphore::{DispatchSemaphore, DispatchSemaphoreGuard};
+pub use self::workloop::{DispatchAutoReleaseFrequency, DispatchWorkloop};
+
+// Helper type
+type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;
+
+/// Deprecated alias for [`DispatchGroup`].
+#[deprecated = "renamed to DispatchGroup"]
+pub type Group = DispatchGroup;
+
+/// Deprecated alias for [`DispatchOnce`].
+#[deprecated = "renamed to DispatchOnce"]
+pub type Once = DispatchOnce;
+
+/// Deprecated alias for [`DispatchQueue`].
+#[deprecated = "renamed to DispatchQueue"]
+pub type Queue = DispatchQueue;
+
+/// Deprecated alias for [`DispatchSemaphore`].
+#[deprecated = "renamed to DispatchSemaphore"]
+pub type Semaphore = DispatchSemaphore;
+
+/// Deprecated alias for [`DispatchWorkloop`].
+#[deprecated = "renamed to DispatchWorkloop"]
+pub type WorkloopQueue = DispatchWorkloop;
