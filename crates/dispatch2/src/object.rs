@@ -4,14 +4,6 @@ use alloc::boxed::Box;
 
 use super::{ffi::*, queue::Queue, utils::function_wrapper, QualityOfServiceClass};
 
-/// Error returned by [DispatchObject::set_target_queue].
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-#[non_exhaustive]
-pub enum TargetQueueError {
-    /// The [DispatchObject] is already active.
-    ObjectAlreadyActive,
-}
-
 /// Error returned by [DispatchObject::set_qos_class_floor].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
@@ -25,7 +17,6 @@ pub enum QualityOfServiceClassFloorError {
 #[derive(Debug)]
 pub struct DispatchObject<T> {
     object: *mut T,
-    is_activated: bool,
 }
 
 impl<T> DispatchObject<T> {
@@ -35,10 +26,7 @@ impl<T> DispatchObject<T> {
     ///
     /// - ``object`` is expected to be a dispatch object that is owned.
     pub unsafe fn new_owned(object: *mut T) -> Self {
-        Self {
-            object,
-            is_activated: false,
-        }
+        Self { object }
     }
 
     /// Create a new shared instance
@@ -47,10 +35,7 @@ impl<T> DispatchObject<T> {
     ///
     /// - ``object`` is expected to be a dispatch object that is shared.
     pub unsafe fn new_shared(object: *mut T) -> Self {
-        let result = Self {
-            object,
-            is_activated: false,
-        };
+        let result = Self { object };
 
         // Safety: We own a reference to the object.
         unsafe {
@@ -78,20 +63,17 @@ impl<T> DispatchObject<T> {
 
     /// Set the target [Queue] of this object.
     ///
+    /// # Aborts
+    ///
+    /// Aborts if the object has been activated.
+    ///
     /// # Safety
     ///
-    /// - DispatchObject should be a queue or queue source.
-    pub unsafe fn set_target_queue(&self, queue: &Queue) -> Result<(), TargetQueueError> {
-        if self.is_activated {
-            return Err(TargetQueueError::ObjectAlreadyActive);
-        }
-
-        // SAFETY: object and queue cannot be null.
-        unsafe {
-            dispatch_set_target_queue(self.as_raw().cast(), queue.as_raw());
-        }
-
-        Ok(())
+    /// - There must not be a cycle in the hierarchy of queues.
+    #[doc(alias = "dispatch_set_target_queue")]
+    pub unsafe fn set_target_queue(&self, queue: &Queue) {
+        // SAFETY: `object` and `queue` cannot be null, rest is upheld by caller.
+        unsafe { dispatch_set_target_queue(self.as_raw().cast(), queue.as_raw()) };
     }
 
     /// Set the QOS class floor on a dispatch queue, source or workloop.
@@ -126,8 +108,6 @@ impl<T> DispatchObject<T> {
         unsafe {
             dispatch_activate(self.as_raw().cast());
         }
-
-        self.is_activated = true;
     }
 
     /// Suspend the invocation of functions on the object.

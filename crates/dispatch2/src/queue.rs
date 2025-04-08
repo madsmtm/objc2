@@ -7,7 +7,7 @@ use core::ops::{Deref, DerefMut};
 use core::ptr::NonNull;
 use core::time::Duration;
 
-use super::object::{DispatchObject, QualityOfServiceClassFloorError, TargetQueueError};
+use super::object::{DispatchObject, QualityOfServiceClassFloorError};
 use super::utils::function_wrapper;
 use super::{ffi::*, QualityOfServiceClass};
 
@@ -323,7 +323,7 @@ impl Queue {
     }
 
     /// Set the target [Queue] of this [Queue].
-    pub fn set_target_queue(&self, queue: &Queue) -> Result<(), TargetQueueError> {
+    pub fn set_target_queue(&self, queue: &Queue) {
         // Safety: We are in Queue instance.
         unsafe { self.dispatch_object.set_target_queue(queue) }
     }

@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
-### Fixed
+### Removed
+- **BREAKING**: Removed `TargetQueueError` and the error case in
+  `DispatchObject::set_target_queue` (it now instead aborts on error,
+  as that's what the underlying function does).
 - Removed `ffi` methods that are actually macros:
   - `dispatch_wait`
   - `dispatch_notify`
