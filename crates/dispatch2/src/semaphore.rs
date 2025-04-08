@@ -12,6 +12,8 @@ dispatch_object!(
     pub struct DispatchSemaphore;
 );
 
+dispatch_object_not_data!(unsafe DispatchSemaphore);
+
 impl DispatchSemaphore {
     /// Creates a new [`DispatchSemaphore`] with an initial value.
     ///

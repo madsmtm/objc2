@@ -8,6 +8,8 @@ dispatch_object!(
     pub struct DispatchWorkloop;
 );
 
+dispatch_object_not_data!(unsafe DispatchWorkloop);
+
 impl DispatchWorkloop {
     /// Create a new [`DispatchWorkloop`].
     pub fn new(label: &str, inactive: bool) -> DispatchRetained<Self> {

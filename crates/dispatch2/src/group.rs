@@ -13,6 +13,8 @@ dispatch_object!(
     pub struct DispatchGroup;
 );
 
+dispatch_object_not_data!(unsafe DispatchGroup);
+
 impl DispatchGroup {
     /// Creates a new [`DispatchGroup`].
     pub fn new() -> Option<DispatchRetained<Self>> {

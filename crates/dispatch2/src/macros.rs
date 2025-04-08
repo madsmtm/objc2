@@ -84,3 +84,15 @@ macro_rules! dispatch_object {
         // though (they're marked `objc_runtime_visible`).
     };
 }
+
+macro_rules! dispatch_object_not_data {
+    (unsafe $type:ident) => {
+        // SAFETY: All Dispatch objects, except for DispatchObject and
+        // DispatchData, go through `DISPATCH_DECL` or `DISPATCH_DECL_SUBCLASS`,
+        // which delegate to `OS_OBJECT_DECL_SENDABLE_SUBCLASS_SWIFT`, which
+        // in turn marks the type as `OS_OBJECT_SWIFT_SENDABLE`.
+        unsafe impl Send for $type {}
+        // SAFETY: Same as above.
+        unsafe impl Sync for $type {}
+    };
+}

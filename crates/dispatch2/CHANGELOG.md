@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added `DispatchRetained<T>`, which is a smart pointer which allows
   retain/release operations on dispatch objects, similar in spirit to
   `objc2::rc::Retained`. This mostly replaces `DispatchObject<T>`.
+- Implement `Send` and `Sync` for dispatch objects.
 
 ### Changed
 - Changed how memory management works to match other `objc2` crates. Instead

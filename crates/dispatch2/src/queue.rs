@@ -93,6 +93,8 @@ dispatch_object!(
     pub struct DispatchQueue;
 );
 
+dispatch_object_not_data!(unsafe DispatchQueue);
+
 impl DispatchQueue {
     /// Create a new [`DispatchQueue`].
     pub fn new(label: &str, queue_attribute: QueueAttribute) -> DispatchRetained<Self> {
@@ -277,5 +279,89 @@ impl DispatchQueue {
     pub const unsafe fn as_raw(&self) -> dispatch_queue_t {
         let ptr: *const Self = self;
         ptr as dispatch_queue_t
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_create_main_queue() {
+        let _ = DispatchQueue::main();
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn test_serial_queue() {
+        let queue = DispatchQueue::new("com.github.madsmtm.objc2", QueueAttribute::Serial);
+        let (tx, rx) = std::sync::mpsc::channel();
+        queue.exec_async(move || {
+            tx.send(()).unwrap();
+        });
+        rx.recv().unwrap();
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn test_concurrent_queue() {
+        let queue = DispatchQueue::new("com.github.madsmtm.objc2", QueueAttribute::Concurrent);
+        let (tx, rx) = std::sync::mpsc::channel();
+        let cloned_tx = tx.clone();
+        queue.exec_async(move || {
+            tx.send(()).unwrap();
+        });
+        queue.exec_async(move || {
+            cloned_tx.send(()).unwrap();
+        });
+        for _ in 0..2 {
+            rx.recv().unwrap();
+        }
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn test_global_default_queue() {
+        let queue = DispatchQueue::global_queue(GlobalQueueIdentifier::QualityOfService(
+            QualityOfServiceClass::Default,
+        ));
+        let (tx, rx) = std::sync::mpsc::channel();
+        queue.exec_async(move || {
+            tx.send(()).unwrap();
+        });
+        rx.recv().unwrap();
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn test_share_queue_across_threads() {
+        let queue = DispatchQueue::new("com.github.madsmtm.objc2", QueueAttribute::Serial);
+        let (tx, rx) = std::sync::mpsc::channel();
+        let cloned_tx = tx.clone();
+        let cloned_queue = queue.clone();
+        queue.exec_async(move || {
+            cloned_queue.exec_async(move || {
+                cloned_tx.send(()).unwrap();
+            });
+        });
+        queue.exec_async(move || {
+            tx.send(()).unwrap();
+        });
+        for _ in 0..2 {
+            rx.recv().unwrap();
+        }
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn test_move_queue_between_threads() {
+        let queue = DispatchQueue::new("com.github.madsmtm.objc2", QueueAttribute::Serial);
+        let (tx, rx) = std::sync::mpsc::channel();
+        std::thread::spawn(move || {
+            queue.exec_async(move || {
+                tx.send(()).unwrap();
+            });
+        });
+        rx.recv().unwrap();
     }
 }
