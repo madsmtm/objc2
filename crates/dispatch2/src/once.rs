@@ -24,16 +24,16 @@ use crate::ffi;
 /// [`std::sync::Once`].
 ///
 /// ```
-/// use dispatch2::Once;
+/// use dispatch2::DispatchOnce;
 ///
-/// static INIT: Once = Once::new();
+/// static INIT: DispatchOnce = DispatchOnce::new();
 ///
 /// INIT.call_once(|| {
 ///     // run initialization here
 /// });
 /// ```
 #[doc(alias = "dispatch_once_t")]
-pub struct Once {
+pub struct DispatchOnce {
     predicate: UnsafeCell<ffi::dispatch_once_t>,
 }
 
@@ -56,7 +56,7 @@ where
 }
 
 #[cfg_attr(
-    // DISPATCH_ONCE_INLINE_FASTPATH, see Once::call_once below.
+    // DISPATCH_ONCE_INLINE_FASTPATH, see DispatchOnce::call_once below.
     any(target_arch = "x86", target_arch = "x86_64", target_vendor = "apple"),
     cold,
     inline(never)
@@ -79,15 +79,15 @@ where
     // > storage (including Objective-C instance variables) is undefined.
     //
     // In Rust though, we have stronger guarantees, and can guarantee that the
-    // predicate is never moved while in use, because the `Once` itself is not
-    // cloneable.
+    // predicate is never moved while in use, because the `DispatchOnce`
+    // itself is not cloneable.
     //
     // Even if libdispatch may sometimes use the pointer as a condition
     // variable, or may internally store a self-referential pointer, it can
-    // only do that while the Once is in use somewhere (i.e. it should not be
-    // able to do that while the Once is being moved).
+    // only do that while the DispatchOnce is in use somewhere (i.e. it should
+    // not be able to do that while the DispatchOnce is being moved).
     //
-    // Outside of being moved, the Once can only be in two states:
+    // Outside of being moved, the DispatchOnce can only be in two states:
     // - Initialized.
     // - Done.
     //
@@ -98,8 +98,8 @@ where
     // from the `Option`) by `dispatch_once_f` or not.
 }
 
-impl Once {
-    /// Creates a new `Once`.
+impl DispatchOnce {
+    /// Creates a new `DispatchOnce`.
     #[inline]
     #[allow(clippy::new_without_default)] // `std::sync::Once` doesn't have it either
     pub const fn new() -> Self {
@@ -119,7 +119,7 @@ impl Once {
     /// The process will trap or abort if:
     /// - The given initialization closure unwinds.
     /// - The given closure recursively invokes `call_once` on the same
-    ///   `Once` instance.
+    ///   `DispatchOnce` instance.
     #[inline]
     #[doc(alias = "dispatch_once")]
     #[doc(alias = "dispatch_once_f")]
@@ -179,17 +179,17 @@ impl Once {
 }
 
 // SAFETY: Same as `std::sync::Once`
-unsafe impl Send for Once {}
+unsafe impl Send for DispatchOnce {}
 
 // SAFETY: Same as `std::sync::Once`
-unsafe impl Sync for Once {}
+unsafe impl Sync for DispatchOnce {}
 
-impl UnwindSafe for Once {}
-impl RefUnwindSafe for Once {}
+impl UnwindSafe for DispatchOnce {}
+impl RefUnwindSafe for DispatchOnce {}
 
-impl fmt::Debug for Once {
+impl fmt::Debug for DispatchOnce {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Once").finish_non_exhaustive()
+        f.debug_struct("DispatchOnce").finish_non_exhaustive()
     }
 }
 
@@ -202,7 +202,7 @@ mod tests {
 
     #[test]
     fn test_static() {
-        static ONCE: Once = Once::new();
+        static ONCE: DispatchOnce = DispatchOnce::new();
         let mut num = 0;
         ONCE.call_once(|| num += 1);
         ONCE.call_once(|| num += 1);
@@ -211,7 +211,7 @@ mod tests {
 
     #[test]
     fn test_in_loop() {
-        let once = Once::new();
+        let once = DispatchOnce::new();
 
         let mut call_count = 0;
         for _ in 0..10 {
@@ -223,7 +223,7 @@ mod tests {
 
     #[test]
     fn test_move() {
-        let once = Once::new();
+        let once = DispatchOnce::new();
 
         let mut call_count = 0;
         for _ in 0..10 {
@@ -236,7 +236,7 @@ mod tests {
             once.call_once(|| call_count += 1);
         }
 
-        let once = Once {
+        let once = DispatchOnce {
             predicate: UnsafeCell::new(once.predicate.into_inner()),
         };
         for _ in 0..10 {
@@ -249,7 +249,7 @@ mod tests {
     #[test]
     #[cfg(feature = "std")]
     fn test_threaded() {
-        let once = Once::new();
+        let once = DispatchOnce::new();
 
         let num = AtomicIsize::new(0);
 
@@ -286,7 +286,7 @@ mod tests {
     #[test]
     fn test_drop_in_closure() {
         let amount_of_drops = Cell::new(0);
-        let once = Once::new();
+        let once = DispatchOnce::new();
 
         let tester = DropTest(&amount_of_drops);
         once.call_once(move || {
@@ -304,7 +304,7 @@ mod tests {
     #[test]
     fn test_drop_in_closure_with_leak() {
         let amount_of_drops = Cell::new(0);
-        let once = Once::new();
+        let once = DispatchOnce::new();
 
         // Not dropped here, since we ManuallyDrop inside the closure (and the
         // closure is executed).
@@ -325,7 +325,7 @@ mod tests {
     #[test]
     #[ignore = "traps the process (as expected)"]
     fn test_recursive_invocation() {
-        let once = Once::new();
+        let once = DispatchOnce::new();
 
         once.call_once(|| {
             once.call_once(|| {});

@@ -5,22 +5,22 @@ use core::ffi::c_void;
 use core::time::Duration;
 
 use super::object::DispatchObject;
-use super::queue::Queue;
+use super::queue::DispatchQueue;
 use super::utils::function_wrapper;
 use super::{ffi::*, WaitError};
 
 /// Dispatch group.
 #[derive(Debug, Clone)]
-pub struct Group {
+pub struct DispatchGroup {
     dispatch_object: DispatchObject<dispatch_group_s>,
 }
 
 /// Dispatch group guard.
 #[derive(Debug)]
-pub struct GroupGuard(Group, bool);
+pub struct GroupGuard(DispatchGroup, bool);
 
-impl Group {
-    /// Creates a new [Group].
+impl DispatchGroup {
+    /// Creates a new [`DispatchGroup`].
     pub fn new() -> Option<Self> {
         // Safety: valid to call.
         let object = unsafe { dispatch_group_create() };
@@ -32,11 +32,11 @@ impl Group {
         // Safety: object cannot be null.
         let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
 
-        Some(Group { dispatch_object })
+        Some(DispatchGroup { dispatch_object })
     }
 
-    /// Submit a function to a [Queue] and associates it with the [Group].
-    pub fn exec_async<F>(&self, queue: &Queue, work: F)
+    /// Submit a function to a [`DispatchQueue`] and associates it with the [`DispatchGroup`].
+    pub fn exec_async<F>(&self, queue: &DispatchQueue, work: F)
     where
         // We need `'static` to make sure any referenced values are borrowed for
         // long enough since `work` will be performed asynchronously.
@@ -78,8 +78,8 @@ impl Group {
         }
     }
 
-    /// Schedule a function to be submitted to a [Queue] when a group of previously submitted functions have completed.
-    pub fn notify<F>(&self, queue: &Queue, work: F)
+    /// Schedule a function to be submitted to a [`DispatchQueue`] when a group of previously submitted functions have completed.
+    pub fn notify<F>(&self, queue: &DispatchQueue, work: F)
     where
         F: Send + FnOnce(),
     {
@@ -96,7 +96,7 @@ impl Group {
         }
     }
 
-    /// Explicitly indicates that the function has entered the [Group].
+    /// Explicitly indicates that the function has entered the [`DispatchGroup`].
     pub fn enter(&self) -> GroupGuard {
         // Safety: object cannot be null.
         unsafe {
@@ -126,7 +126,7 @@ impl Group {
 }
 
 impl GroupGuard {
-    /// Explicitly indicates that the function in the [Group] finished executing.
+    /// Explicitly indicates that the function in the [`DispatchGroup`] finished executing.
     pub fn leave(mut self) {
         // Safety: object cannot be null.
         unsafe {

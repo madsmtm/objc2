@@ -11,9 +11,9 @@
 //! ## Example
 //!
 //! ```
-//! use dispatch2::{Queue, QueueAttribute};
+//! use dispatch2::{DispatchQueue, QueueAttribute};
 //!
-//! let queue = Queue::new("example_queue", QueueAttribute::Serial);
+//! let queue = DispatchQueue::new("example_queue", QueueAttribute::Serial);
 //! queue.exec_async(|| println!("Hello"));
 //! queue.exec_sync(|| println!("World"));
 //! ```
@@ -101,3 +101,23 @@ pub use self::once::*;
 pub use self::queue::*;
 pub use self::retained::DispatchRetained;
 pub use self::semaphore::*;
+
+/// Deprecated alias for [`DispatchGroup`].
+#[deprecated = "renamed to DispatchGroup"]
+pub type Group = DispatchGroup;
+
+/// Deprecated alias for [`DispatchOnce`].
+#[deprecated = "renamed to DispatchOnce"]
+pub type Once = DispatchOnce;
+
+/// Deprecated alias for [`DispatchQueue`].
+#[deprecated = "renamed to DispatchQueue"]
+pub type Queue = DispatchQueue;
+
+/// Deprecated alias for [`DispatchSemaphore`].
+#[deprecated = "renamed to DispatchSemaphore"]
+pub type Semaphore = DispatchSemaphore;
+
+/// Deprecated alias for [`DispatchWorkloop`].
+#[deprecated = "renamed to DispatchWorkloop"]
+pub type WorkloopQueue = DispatchWorkloop;

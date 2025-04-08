@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   retain/release operations on dispatch objects, similar in spirit to
   `objc2::rc::Retained`. This mostly replaces `DispatchObject<T>`.
 
+### Changed
+- Renamed dispatch types to be prefixed with `Dispatch` (e.g. `DispatchGroup`,
+  `DispatchQueue`, `DispatchOnce` etc).
+
+  The old names are kept (but deprecated) for easier migration.
+
 ### Removed
 - **BREAKING**: Removed `TargetQueueError` and the error case in
   `DispatchObject::set_target_queue` (it now instead aborts on error,

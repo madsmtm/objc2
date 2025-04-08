@@ -8,12 +8,12 @@ use super::WaitError;
 
 /// Dispatch semaphore.
 #[derive(Debug, Clone)]
-pub struct Semaphore {
+pub struct DispatchSemaphore {
     dispatch_object: DispatchObject<dispatch_semaphore_s>,
 }
 
-impl Semaphore {
-    /// Creates a new [Semaphore] with an initial value.
+impl DispatchSemaphore {
+    /// Creates a new [`DispatchSemaphore`] with an initial value.
     ///
     /// Returns None if value is negative or if creation failed.
     pub fn new(value: isize) -> Option<Self> {
@@ -32,10 +32,10 @@ impl Semaphore {
         // Safety: object cannot be null.
         let dispatch_object = unsafe { DispatchObject::new_owned(object.cast()) };
 
-        Some(Semaphore { dispatch_object })
+        Some(Self { dispatch_object })
     }
 
-    /// Attempt to acquire the [Semaphore] and return a [SemaphoreGuard].
+    /// Attempt to acquire the [`DispatchSemaphore`] and return a [`SemaphoreGuard`].
     ///
     /// # Errors
     ///
@@ -49,7 +49,7 @@ impl Semaphore {
             DISPATCH_TIME_FOREVER
         };
 
-        // Safety: Semaphore cannot be null.
+        // Safety: DispatchSemaphore cannot be null.
         let result = unsafe { dispatch_semaphore_wait(self.as_raw(), timeout) };
 
         match result {
@@ -79,12 +79,12 @@ impl Semaphore {
 
 /// Dispatch semaphore guard.
 #[derive(Debug)]
-pub struct SemaphoreGuard(Semaphore, bool);
+pub struct SemaphoreGuard(DispatchSemaphore, bool);
 
 impl SemaphoreGuard {
-    /// Release the [Semaphore].
+    /// Release the [`DispatchSemaphore`].
     pub fn release(mut self) -> bool {
-        // Safety: Semaphore cannot be null.
+        // Safety: DispatchSemaphore cannot be null.
         let result = unsafe { dispatch_semaphore_signal(self.0.as_raw()) };
 
         self.1 = true;
@@ -96,7 +96,7 @@ impl SemaphoreGuard {
 impl Drop for SemaphoreGuard {
     fn drop(&mut self) {
         if !self.1 {
-            // Safety: Semaphore cannot be null.
+            // Safety: DispatchSemaphore cannot be null.
             unsafe {
                 dispatch_semaphore_signal(self.0.as_raw());
             }

@@ -3,7 +3,7 @@ use core::mem::{self, ManuallyDrop};
 
 use objc2::MainThreadMarker;
 
-use crate::Queue;
+use crate::DispatchQueue;
 
 /// Submit the given closure to the runloop on the main thread.
 ///
@@ -35,7 +35,7 @@ where
         f(mtm)
     } else {
         let mut ret = None;
-        Queue::main().exec_sync(|| {
+        DispatchQueue::main().exec_sync(|| {
             // SAFETY: The outer closure is submitted to run on the main
             // thread, so now, when the closure actually runs, it's
             // guaranteed to be on the main thread.

@@ -2,7 +2,7 @@
 
 use alloc::boxed::Box;
 
-use super::{ffi::*, queue::Queue, utils::function_wrapper, QualityOfServiceClass};
+use super::{ffi::*, queue::DispatchQueue, utils::function_wrapper, QualityOfServiceClass};
 
 /// Error returned by [DispatchObject::set_qos_class_floor].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -61,7 +61,7 @@ impl<T> DispatchObject<T> {
         }
     }
 
-    /// Set the target [Queue] of this object.
+    /// Set the target [`DispatchQueue`] of this object.
     ///
     /// # Aborts
     ///
@@ -71,7 +71,7 @@ impl<T> DispatchObject<T> {
     ///
     /// - There must not be a cycle in the hierarchy of queues.
     #[doc(alias = "dispatch_set_target_queue")]
-    pub unsafe fn set_target_queue(&self, queue: &Queue) {
+    pub unsafe fn set_target_queue(&self, queue: &DispatchQueue) {
         // SAFETY: `object` and `queue` cannot be null, rest is upheld by caller.
         unsafe { dispatch_set_target_queue(self.as_raw().cast(), queue.as_raw()) };
     }
