@@ -24,6 +24,7 @@ gnustep = true
 fn.dispatch_workloop_set_os_workgroup.skipped = true
 
 # Needs va_list, and deprecated anyhow.
+fn.dispatch_debug.skipped = true
 fn.dispatch_debugv.skipped = true
 
 # Actually enums
@@ -84,3 +85,9 @@ fn.dispatch_get_main_queue.skipped = true
 # Fast paths for dispatch_once, done manually
 fn._dispatch_once.skipped = true
 fn._dispatch_once_f.skipped = true
+
+# Fake functions that are actually macros
+fn.dispatch_wait.skipped = true
+fn.dispatch_notify.skipped = true
+fn.dispatch_cancel.skipped = true
+fn.dispatch_testcancel.skipped = true
