@@ -230,7 +230,10 @@ enum_with_val! {
 
 #[cfg_attr(target_vendor = "apple", link(name = "System", kind = "dylib"))]
 #[cfg_attr(not(target_vendor = "apple"), link(name = "dispatch", kind = "dylib"))]
-extern "C-unwind" {
+extern "C" {}
+
+// `dispatch_main` is marked DISPATCH_NOTHROW.
+extern "C" {
     /// Executes blocks submitted to the main queue.
     pub fn dispatch_main() -> !;
 }
