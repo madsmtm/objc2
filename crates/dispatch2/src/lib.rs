@@ -54,6 +54,7 @@ mod queue;
 mod retained;
 mod semaphore;
 mod utils;
+mod workloop;
 
 /// Wait error.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -105,11 +106,11 @@ pub use self::main_thread_bound::{run_on_main, MainThreadBound};
 pub use self::object::{DispatchObject, QualityOfServiceClassFloorError};
 pub use self::once::DispatchOnce;
 pub use self::queue::{
-    DispatchAutoReleaseFrequency, DispatchQueue, DispatchWorkloop, GlobalQueueIdentifier,
-    QueueAfterError, QueueAttribute, QueuePriority,
+    DispatchQueue, GlobalQueueIdentifier, QueueAfterError, QueueAttribute, QueuePriority,
 };
 pub use self::retained::DispatchRetained;
 pub use self::semaphore::{DispatchSemaphore, DispatchSemaphoreGuard};
+pub use self::workloop::{DispatchAutoReleaseFrequency, DispatchWorkloop};
 
 // Helper type
 type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;
