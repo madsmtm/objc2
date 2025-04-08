@@ -19,10 +19,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   of types like `DispatchGroup` holding the retain count internally, it is now
   done externally by `DispatchRetained<DispatchGroup>`.
 - Converted `DispatchObject` to a trait.
-- Renamed dispatch types to be prefixed with `Dispatch` (e.g. `DispatchGroup`,
-  `DispatchQueue`, `DispatchOnce` etc).
+- **BREAKING**: Renamed dispatch types to be prefixed with `Dispatch`
+  (e.g. `DispatchGroup`, `DispatchQueue` and `DispatchOnce`).
 
-  The old names are kept (but deprecated) for easier migration.
+  Some of the old names are kept (but deprecated) for easier migration.
 
 ### Removed
 - **BREAKING**: Removed `TargetQueueError` and the error case in

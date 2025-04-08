@@ -15,10 +15,6 @@ dispatch_object!(
     pub struct DispatchGroup;
 );
 
-/// Dispatch group guard.
-#[derive(Debug)]
-pub struct GroupGuard(DispatchRetained<DispatchGroup>, bool);
-
 impl DispatchGroup {
     /// Creates a new [`DispatchGroup`].
     pub fn new() -> Option<DispatchRetained<Self>> {
@@ -93,13 +89,11 @@ impl DispatchGroup {
     }
 
     /// Explicitly indicates that the function has entered the [`DispatchGroup`].
-    pub fn enter(&self) -> GroupGuard {
+    pub fn enter(&self) -> DispatchGroupGuard {
         // Safety: object cannot be null.
-        unsafe {
-            dispatch_group_enter(self.as_raw());
-        }
+        unsafe { dispatch_group_enter(self.as_raw()) };
 
-        GroupGuard(self.retain(), false)
+        DispatchGroupGuard(self.retain())
     }
 
     /// Get the raw [dispatch_group_t] value.
@@ -113,27 +107,21 @@ impl DispatchGroup {
     }
 }
 
-impl GroupGuard {
-    /// Explicitly indicates that the function in the [`DispatchGroup`] finished executing.
-    pub fn leave(mut self) {
-        // Safety: object cannot be null.
-        unsafe {
-            dispatch_group_leave(self.0.as_raw());
-        }
+/// Dispatch group guard.
+#[derive(Debug)]
+pub struct DispatchGroupGuard(DispatchRetained<DispatchGroup>);
 
-        self.1 = true;
+impl DispatchGroupGuard {
+    /// Explicitly indicate that the function in the [`DispatchGroup`] finished executing.
+    pub fn leave(self) {
+        // Drop.
+        let _ = self;
     }
 }
 
-impl Drop for GroupGuard {
+impl Drop for DispatchGroupGuard {
     fn drop(&mut self) {
-        if !self.1 {
-            // Safety: object cannot be null.
-            unsafe {
-                dispatch_group_leave(self.0.as_raw());
-            }
-
-            self.1 = true;
-        }
+        // SAFETY: Dispatch group cannot be null.
+        unsafe { dispatch_group_leave(self.0.as_raw()) };
     }
 }
