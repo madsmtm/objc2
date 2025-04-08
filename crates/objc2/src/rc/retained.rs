@@ -6,7 +6,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
 use super::AutoreleasePool;
-use crate::runtime::{objc_release_fast, objc_retain_fast, AnyObject};
+use crate::runtime::{objc_release_fast, objc_retain_fast, AnyObject, ProtocolObject};
 use crate::{ffi, ClassType, DowncastTarget, Message};
 
 /// A reference counted pointer type for Objective-C objects.
@@ -806,6 +806,15 @@ impl<T: ClassType + 'static> From<Retained<T>> for Retained<AnyObject> {
     }
 }
 
+impl<P: ?Sized + 'static> From<Retained<ProtocolObject<P>>> for Retained<AnyObject> {
+    /// Convert the protocol object to `AnyObject`.
+    #[inline]
+    fn from(obj: Retained<ProtocolObject<P>>) -> Self {
+        // SAFETY: All protocol objects are Objective-C objects too.
+        unsafe { Retained::cast_unchecked(obj) }
+    }
+}
+
 /// `Retained<T>` is `Send` if `T` is `Send + Sync`.
 //
 // SAFETY:
@@ -1023,6 +1032,9 @@ mod tests {
         let obj_retained_ref = &NSObject::new();
         let _: Retained<NSObject> = Into::into(obj_retained_ref);
         let _: Retained<AnyObject> = Into::into(obj_retained_ref);
+
+        let protocol_obj = ProtocolObject::<dyn NSObjectProtocol>::from_retained(NSObject::new());
+        let _: Retained<AnyObject> = Into::into(protocol_obj);
     }
 
     #[test]

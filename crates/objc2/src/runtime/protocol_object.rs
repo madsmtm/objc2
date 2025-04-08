@@ -187,6 +187,16 @@ where
 
 // TODO: Maybe implement Borrow?
 
+impl<P: ?Sized + 'static> AsRef<AnyObject> for ProtocolObject<P> {
+    #[inline]
+    fn as_ref(&self) -> &AnyObject {
+        let ptr: NonNull<ProtocolObject<P>> = NonNull::from(self);
+        let ptr: NonNull<AnyObject> = ptr.cast();
+        // SAFETY: All protocol objects are Objective-C objects too.
+        unsafe { ptr.as_ref() }
+    }
+}
+
 #[cfg(test)]
 #[allow(clippy::missing_safety_doc)]
 #[allow(dead_code)]
@@ -333,6 +343,14 @@ mod tests {
             ProtocolObject::from_ref(&*obj);
 
         let _foobar: Retained<ProtocolObject<dyn FooBar>> = ProtocolObject::from_retained(obj);
+    }
+
+    #[test]
+    fn convert_to_anyobj() {
+        let obj = NSObject::new();
+        let obj: Retained<ProtocolObject<dyn NSObjectProtocol>> =
+            ProtocolObject::from_retained(obj);
+        let _obj: &AnyObject = obj.as_ref();
     }
 
     #[test]
