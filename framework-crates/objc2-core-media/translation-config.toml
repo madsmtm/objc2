@@ -24,3 +24,7 @@ typedef.CMStructVersion.skipped = true
 
 # Used to better support older versions that didn't expose the symbol, but redundant nowadays.
 const.kCMFormatDescriptionExtension_VerbatimImageDescription.skipped = true
+
+# Depends on CFTimeInterval and CFAbsoluteTime without feature gating.
+const.kCMTimebaseVeryLongCFTimeInterval.skipped = true
+const.kCMTimebaseFarFutureCFAbsoluteTime.skipped = true
