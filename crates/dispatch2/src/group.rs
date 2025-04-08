@@ -5,8 +5,7 @@ use core::ffi::c_void;
 use core::ptr::NonNull;
 use core::time::Duration;
 
-use crate::retained::DispatchObject;
-use crate::{DispatchQueue, DispatchRetained};
+use crate::{DispatchObject, DispatchQueue, DispatchRetained};
 
 use super::utils::function_wrapper;
 use super::{ffi::*, WaitError};

@@ -298,10 +298,8 @@ impl DispatchQueue {
         qos_class: QualityOfServiceClass,
         relative_priority: i32,
     ) -> Result<(), QualityOfServiceClassFloorError> {
-        let obj = unsafe { DispatchObject::new_shared(self.as_raw()) };
-
-        // Safety: We are a queue.
-        unsafe { obj.set_qos_class_floor(qos_class, relative_priority) }
+        // SAFETY: We are a queue.
+        unsafe { DispatchObject::set_qos_class_floor(self, qos_class, relative_priority) }
     }
 
     /// Get the raw [dispatch_queue_t] value.

@@ -11,7 +11,7 @@ macro_rules! dispatch_object {
         }
 
         // SAFETY: The object is a dispatch object.
-        unsafe impl $crate::retained::DispatchObject for $type {}
+        unsafe impl $crate::DispatchObject for $type {}
 
         // Reflexive impl
         impl core::convert::AsRef<Self> for $type {

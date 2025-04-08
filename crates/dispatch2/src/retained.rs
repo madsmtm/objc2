@@ -6,25 +6,13 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
 
 use crate::ffi::{dispatch_release, dispatch_retain};
+use crate::DispatchObject;
 
 // Symlinked to `objc2/src/rc/retained_forwarding_impls.rs`, Cargo will make
 // a copy when publishing.
 mod forwarding_impls;
 // Allow the `use super::Retained;` in `forwarding_impls` to work.
 use DispatchRetained as Retained;
-
-/// TODO
-pub unsafe trait DispatchObject {
-    /// TODO
-    fn retain(&self) -> DispatchRetained<Self> {
-        let ptr: NonNull<Self> = NonNull::from(self);
-        // SAFETY:
-        // - The pointer is valid since it came from `&self`.
-        // - The lifetime of the pointer itself is extended, but any lifetime
-        //   that the object may carry is still kept within the type itself.
-        unsafe { DispatchRetained::retain(ptr) }
-    }
-}
 
 /// A reference counted pointer type for Dispatch objects.
 ///

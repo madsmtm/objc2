@@ -3,8 +3,7 @@
 use core::ptr::NonNull;
 use core::time::Duration;
 
-use crate::retained::DispatchObject;
-use crate::DispatchRetained;
+use crate::{DispatchObject, DispatchRetained};
 
 use super::ffi::*;
 use super::WaitError;
