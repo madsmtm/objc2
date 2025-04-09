@@ -27,11 +27,11 @@ pub enum QueueAttribute {
     Concurrent,
 }
 
-impl From<QueueAttribute> for dispatch_queue_attr_t {
+impl From<QueueAttribute> for Option<&DispatchQueueAttr> {
     fn from(value: QueueAttribute) -> Self {
         match value {
             QueueAttribute::Serial => DISPATCH_QUEUE_SERIAL,
-            QueueAttribute::Concurrent => DISPATCH_QUEUE_CONCURRENT as *const _ as *mut _,
+            QueueAttribute::Concurrent => DISPATCH_QUEUE_CONCURRENT,
             _ => panic!("Unknown QueueAttribute value: {:?}", value),
         }
     }
@@ -90,6 +90,8 @@ impl GlobalQueueIdentifier {
 
 dispatch_object!(
     /// Dispatch queue.
+    #[doc(alias = "dispatch_queue_t")]
+    #[doc(alias = "dispatch_queue_s")]
     pub struct DispatchQueue;
 );
 
@@ -101,13 +103,7 @@ impl DispatchQueue {
         let label = CString::new(label).expect("Invalid label!");
 
         // Safety: label and queue_attribute can only be valid.
-        let object = unsafe {
-            dispatch_queue_create(label.as_ptr(), dispatch_queue_attr_t::from(queue_attribute))
-        };
-
-        let object = NonNull::new(object).expect("dispatch_queue_create returned NULL");
-        // SAFETY: Object came from a "create" method.
-        unsafe { DispatchRetained::from_raw(object.cast()) }
+        unsafe { dispatch_queue_create(label.as_ptr(), queue_attribute.into()) }
     }
 
     /// Create a new [`DispatchQueue`] with a given target [`DispatchQueue`].
@@ -120,17 +116,9 @@ impl DispatchQueue {
 
         // Safety: label, queue_attribute and target can only be valid.
         // NOTE: dispatch_queue_create_with_target is in charge of retaining the target DispatchQueue.
-        let object = unsafe {
-            dispatch_queue_create_with_target(
-                label.as_ptr(),
-                dispatch_queue_attr_t::from(queue_attribute),
-                target.as_raw(),
-            )
-        };
-
-        let object = NonNull::new(object).expect("dispatch_queue_create_with_target returned NULL");
-        // SAFETY: Object came from a "create" method.
-        unsafe { DispatchRetained::from_raw(object.cast()) }
+        unsafe {
+            dispatch_queue_create_with_target(label.as_ptr(), queue_attribute.into(), Some(target))
+        }
     }
 
     /// Return a system-defined global concurrent [`DispatchQueue`] with the priority derived from [GlobalQueueIdentifier].
@@ -138,21 +126,13 @@ impl DispatchQueue {
         let raw_identifier = identifier.to_identifier();
 
         // Safety: raw_identifier cannot be invalid, flags is reserved.
-        let object = unsafe { dispatch_get_global_queue(raw_identifier, 0) };
-
-        let object = NonNull::new(object).expect("dispatch_get_global_queue returned NULL");
-        // SAFETY: Object came from a "create" method.
-        unsafe { DispatchRetained::from_raw(object.cast()) }
+        unsafe { dispatch_get_global_queue(raw_identifier, 0) }
     }
 
     /// Return the main queue.
     pub fn main() -> DispatchRetained<Self> {
         // Safety: raw_identifier cannot be invalid, flags is reserved.
-        let object = dispatch_get_main_queue();
-
-        let object = NonNull::new(object).expect("dispatch_get_main_queue returned NULL");
-        // SAFETY: Object came from a "create" method.
-        unsafe { DispatchRetained::from_raw(object.cast()) }
+        dispatch_get_main_queue().retain()
     }
 
     /// Submit a function for synchronous execution on the [`DispatchQueue`].
@@ -167,7 +147,7 @@ impl DispatchQueue {
         // it here.
         //
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
-        unsafe { dispatch_sync_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
+        unsafe { dispatch_sync_f(self, work_boxed, function_wrapper::<F>) }
     }
 
     /// Submit a function for asynchronous execution on the [`DispatchQueue`].
@@ -180,7 +160,7 @@ impl DispatchQueue {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
-        unsafe { dispatch_async_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
+        unsafe { dispatch_async_f(self, work_boxed, function_wrapper::<F>) }
     }
 
     /// Enqueue a function for execution at the specified time on the [`DispatchQueue`].
@@ -194,7 +174,7 @@ impl DispatchQueue {
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe {
-            dispatch_after_f(when, self.as_raw(), work_boxed, function_wrapper::<F>);
+            dispatch_after_f(when, self, work_boxed, function_wrapper::<F>);
         }
 
         Ok(())
@@ -210,7 +190,7 @@ impl DispatchQueue {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
-        unsafe { dispatch_barrier_async_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
+        unsafe { dispatch_barrier_async_f(self, work_boxed, function_wrapper::<F>) }
     }
 
     /// Enqueue a barrier function for synchronous execution on the [`DispatchQueue`] and wait until that function completes.
@@ -221,7 +201,7 @@ impl DispatchQueue {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
-        unsafe { dispatch_barrier_sync_f(self.as_raw(), work_boxed, function_wrapper::<F>) }
+        unsafe { dispatch_barrier_sync_f(self, work_boxed, function_wrapper::<F>) }
     }
 
     /// Submit a function for synchronous execution and mark the function as a barrier for subsequent concurrent tasks.
@@ -234,9 +214,7 @@ impl DispatchQueue {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
-        unsafe {
-            dispatch_barrier_async_and_wait_f(self.as_raw(), work_boxed, function_wrapper::<F>)
-        }
+        unsafe { dispatch_barrier_async_and_wait_f(self, work_boxed, function_wrapper::<F>) }
     }
 
     /// Sets a function at the given key that will be executed at [`DispatchQueue`] destruction.
@@ -252,12 +230,7 @@ impl DispatchQueue {
         // The key is never dereferenced, so passing _any_ pointer here is
         // safe and allowed.
         unsafe {
-            dispatch_queue_set_specific(
-                self.as_raw(),
-                key.cast(),
-                destructor_boxed,
-                function_wrapper::<F>,
-            )
+            dispatch_queue_set_specific(self, key.cast(), destructor_boxed, function_wrapper::<F>)
         }
     }
 
@@ -270,17 +243,16 @@ impl DispatchQueue {
         // SAFETY: We are a queue.
         unsafe { DispatchObject::set_qos_class_floor(self, qos_class, relative_priority) }
     }
-
-    /// Get the raw [dispatch_queue_t] value.
-    ///
-    /// # Safety
-    ///
-    /// - Object shouldn't be released manually.
-    pub const unsafe fn as_raw(&self) -> dispatch_queue_t {
-        let ptr: *const Self = self;
-        ptr as dispatch_queue_t
-    }
 }
+
+dispatch_object!(
+    /// Dispatch queue attribute.
+    #[doc(alias = "dispatch_queue_attr_t")]
+    #[doc(alias = "dispatch_queue_attr_s")]
+    pub struct DispatchQueueAttr;
+);
+
+dispatch_object_not_data!(unsafe DispatchQueueAttr);
 
 #[cfg(test)]
 mod tests {

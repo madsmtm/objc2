@@ -62,7 +62,7 @@ pub unsafe trait DispatchObject {
     #[doc(alias = "dispatch_set_target_queue")]
     unsafe fn set_target_queue(&self, queue: &DispatchQueue) {
         // SAFETY: `object` and `queue` cannot be null, rest is upheld by caller.
-        unsafe { dispatch_set_target_queue(self.as_raw(), queue.as_raw()) };
+        unsafe { dispatch_set_target_queue(self.as_raw(), Some(queue)) };
     }
 
     /// Set the QOS class floor on a dispatch queue, source or workloop.
@@ -110,8 +110,7 @@ pub unsafe trait DispatchObject {
     }
 
     #[doc(hidden)]
-    fn as_raw(&self) -> dispatch_object_t {
-        let ptr: *const Self = self;
-        ptr as dispatch_object_t
+    fn as_raw(&self) -> NonNull<dispatch_object_s> {
+        NonNull::from(self).cast()
     }
 }

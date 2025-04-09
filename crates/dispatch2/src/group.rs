@@ -1,6 +1,5 @@
 use alloc::boxed::Box;
 use core::ffi::c_void;
-use core::ptr::NonNull;
 use core::time::Duration;
 
 use crate::{DispatchObject, DispatchQueue, DispatchRetained};
@@ -10,6 +9,8 @@ use super::{ffi::*, WaitError};
 
 dispatch_object!(
     /// Dispatch group.
+    #[doc(alias = "dispatch_group_t")]
+    #[doc(alias = "dispatch_group_s")]
     pub struct DispatchGroup;
 );
 
@@ -18,13 +19,9 @@ dispatch_object_not_data!(unsafe DispatchGroup);
 impl DispatchGroup {
     /// Creates a new [`DispatchGroup`].
     pub fn new() -> Option<DispatchRetained<Self>> {
-        // Safety: valid to call.
-        let ptr = unsafe { dispatch_group_create() };
-
-        NonNull::new(ptr).map(|ptr| {
-            // SAFETY: The object came from a "create" method.
-            unsafe { DispatchRetained::from_raw(ptr.cast()) }
-        })
+        // SAFETY: Valid to call.
+        // TODO: Properly allow NULL again (`dispatch_group_create` is incorrectly mapped).
+        Some(unsafe { dispatch_group_create() })
     }
 
     /// Submit a function to a [`DispatchQueue`] and associates it with the [`DispatchGroup`].
@@ -38,12 +35,7 @@ impl DispatchGroup {
 
         // Safety: All parameters cannot be null.
         unsafe {
-            dispatch_group_async_f(
-                self.as_raw(),
-                queue.as_raw(),
-                work_boxed,
-                function_wrapper::<F>,
-            );
+            dispatch_group_async_f(self, queue, work_boxed, function_wrapper::<F>);
         }
     }
 
@@ -62,7 +54,7 @@ impl DispatchGroup {
         };
 
         // Safety: object cannot be null and timeout is valid.
-        let result = unsafe { dispatch_group_wait(self.as_raw(), timeout) };
+        let result = unsafe { dispatch_group_wait(self, timeout) };
 
         match result {
             0 => Ok(()),
@@ -79,31 +71,16 @@ impl DispatchGroup {
 
         // Safety: All parameters cannot be null.
         unsafe {
-            dispatch_group_notify_f(
-                self.as_raw(),
-                queue.as_raw(),
-                work_boxed,
-                function_wrapper::<F>,
-            );
+            dispatch_group_notify_f(self, queue, work_boxed, function_wrapper::<F>);
         }
     }
 
     /// Explicitly indicates that the function has entered the [`DispatchGroup`].
     pub fn enter(&self) -> DispatchGroupGuard {
         // Safety: object cannot be null.
-        unsafe { dispatch_group_enter(self.as_raw()) };
+        unsafe { dispatch_group_enter(self) };
 
         DispatchGroupGuard(self.retain())
-    }
-
-    /// Get the raw [dispatch_group_t] value.
-    ///
-    /// # Safety
-    ///
-    /// - Object shouldn't be released manually.
-    pub const unsafe fn as_raw(&self) -> dispatch_group_t {
-        let ptr: *const Self = self;
-        ptr as dispatch_group_t
     }
 }
 
@@ -122,6 +99,6 @@ impl DispatchGroupGuard {
 impl Drop for DispatchGroupGuard {
     fn drop(&mut self) {
         // SAFETY: Dispatch group cannot be null.
-        unsafe { dispatch_group_leave(self.0.as_raw()) };
+        unsafe { dispatch_group_leave(&self.0) };
     }
 }

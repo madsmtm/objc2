@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (e.g. `DispatchGroup`, `DispatchQueue` and `DispatchOnce`).
 
   Some of the old names are kept (but deprecated) for easier migration.
+- Handle memory management in `ffi` module automatically.
+- Merged some high-level binding types with their `ffi` "_t"/"_s" counterparts.
+  E.g. `dispatch_group_t`, `dispatch_group_s` and `DispatchGroup` are now one
+  type.
 
 ### Removed
 - **BREAKING**: Removed `TargetQueueError` and the error case in

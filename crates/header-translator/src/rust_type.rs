@@ -499,6 +499,9 @@ pub enum PointeeTy {
     CFTypeDef {
         id: ItemIdentifier,
     },
+    DispatchTypeDef {
+        id: ItemIdentifier,
+    },
     TypeDef {
         id: ItemIdentifier,
         to: Box<PointeeTy>,
@@ -565,7 +568,9 @@ impl PointeeTy {
                 .chain(result_type.required_items())
                 .chain(arguments.iter().flat_map(|arg| arg.required_items()))
                 .collect(),
-            Self::CFTypeDef { id } => vec![ItemTree::from_id(id.clone())],
+            Self::CFTypeDef { id } | Self::DispatchTypeDef { id } => {
+                vec![ItemTree::from_id(id.clone())]
+            }
             Self::TypeDef { id, to } => {
                 vec![ItemTree::new(id.clone(), to.required_items())]
             }
@@ -619,7 +624,7 @@ impl PointeeTy {
                     .any(|arg| arg.requires_mainthreadmarker(self_requires))
                     || result_type.requires_mainthreadmarker(self_requires)
             }
-            Self::CFTypeDef { .. } => false,
+            Self::CFTypeDef { .. } | Self::DispatchTypeDef { .. } => false,
             Self::TypeDef { to, .. } => to.requires_mainthreadmarker(self_requires),
             Self::CStr => false,
         }
@@ -653,7 +658,7 @@ impl PointeeTy {
         }
     }
 
-    fn is_object_like(&self) -> bool {
+    fn is_objc_type(&self) -> bool {
         matches!(
             self,
             Self::Class { .. }
@@ -671,6 +676,15 @@ impl PointeeTy {
             // Recurse into typedefs
             Self::TypeDef { to, .. } => to.is_cf_type(),
             Self::CFTypeDef { .. } => true,
+            _ => false,
+        }
+    }
+
+    fn is_dispatch_type(&self) -> bool {
+        match self {
+            // Recurse into typedefs
+            Self::TypeDef { to, .. } => to.is_dispatch_type(),
+            Self::DispatchTypeDef { .. } => true,
             _ => false,
         }
     }
@@ -1400,6 +1414,36 @@ impl Ty {
                             pointee: Box::new(Self::Pointee(PointeeTy::Self_)),
                         }
                     }
+
+                    // Emit `dispatch_object_t` as a raw pointer (at least for now,
+                    // since we currently treat `DispatchObject` as a trait).
+                    "dispatch_object_t" => {
+                        return Self::Pointer {
+                            nullability,
+                            is_const,
+                            lifetime,
+                            pointee: Box::new(Self::TypeDef {
+                                id: ItemIdentifier::builtin("dispatch_object_s"),
+                                to: Box::new(Self::Primitive(Primitive::PtrDiff)),
+                            }),
+                        };
+                    }
+
+                    // Handle other Dispatch Objective-C objects.
+                    name if name.starts_with("dispatch_")
+                        && inner.get_kind() == TypeKind::ObjCObjectPointer =>
+                    {
+                        let id = ItemIdentifier::new(&declaration, context);
+                        let id = context.replace_typedef_name(id, false);
+                        let pointee = Box::new(Self::Pointee(PointeeTy::DispatchTypeDef { id }));
+                        return Self::Pointer {
+                            nullability,
+                            is_const,
+                            lifetime,
+                            pointee,
+                        };
+                    }
+
                     _ => {}
                 }
 
@@ -1476,7 +1520,7 @@ impl Ty {
                         let id = context.replace_typedef_name(id, true);
                         *pointee = Box::new(Self::Pointee(PointeeTy::CFTypeDef { id }));
                         return inner;
-                    } else if pointee.is_object_like() || pointee.is_cf_type() {
+                    } else if pointee.is_object_like() {
                         if let Self::Pointee(pointee_ty) = &mut **pointee {
                             let id = context.replace_typedef_name(id, pointee_ty.is_cf_type());
                             // Replace with a dummy type (will be re-replaced
@@ -1485,7 +1529,10 @@ impl Ty {
                             *pointee = Box::new(Self::Pointee(PointeeTy::TypeDef { id, to }));
                             return inner;
                         } else {
-                            error!(?pointee, "is_object_like/is_cf_type but not Pointee");
+                            error!(
+                                ?pointee,
+                                "is_object_like/is_cf_type/is_os_type but not Pointee"
+                            );
                         }
                     }
                 } else {
@@ -1676,12 +1723,16 @@ impl Ty {
         }
     }
 
-    /// Determine whether the inner type of a `Pointer` is object-like.
     fn is_object_like(&self) -> bool {
+        self.is_objc_type() || self.is_cf_type() || self.is_dispatch_type()
+    }
+
+    /// Determine whether the inner type of a `Pointer` is object-like.
+    fn is_objc_type(&self) -> bool {
         match self {
             // Recurse into typedefs
-            Self::TypeDef { to, .. } => to.is_object_like(),
-            Self::Pointee(pointee_ty) => pointee_ty.is_object_like(),
+            Self::TypeDef { to, .. } => to.is_objc_type(),
+            Self::Pointee(pointee_ty) => pointee_ty.is_objc_type(),
             _ => false,
         }
     }
@@ -1692,6 +1743,16 @@ impl Ty {
             // Recurse into typedefs
             Self::TypeDef { to, .. } => to.is_cf_type(),
             Self::Pointee(pointee_ty) => pointee_ty.is_cf_type(),
+            _ => false,
+        }
+    }
+
+    /// Determine whether the pointee inside a `Pointer` is a Dispatch-like type.
+    fn is_dispatch_type(&self) -> bool {
+        match self {
+            // Recurse into typedefs
+            Self::TypeDef { to, .. } => to.is_dispatch_type(),
+            Self::Pointee(pointee_ty) => pointee_ty.is_dispatch_type(),
             _ => false,
         }
     }
@@ -1741,7 +1802,7 @@ impl Ty {
 
     pub(crate) fn is_object_like_ptr(&self) -> bool {
         if let Self::Pointer { pointee, .. } = self {
-            pointee.is_object_like()
+            pointee.is_objc_type()
         } else {
             false
         }
@@ -1944,6 +2005,7 @@ impl Ty {
                     write!(f, ">")
                 }
                 PointeeTy::CFTypeDef { id } => write!(f, "{}", id.path()),
+                PointeeTy::DispatchTypeDef { id } => write!(f, "{}", id.path()),
                 PointeeTy::TypeDef { id, .. } => write!(f, "{}", id.path()),
                 PointeeTy::CStr => write!(f, "CStr"),
             },
@@ -1972,9 +2034,7 @@ impl Ty {
                 lifetime: _, // TODO: Use this somehow?
                 pointee,
                 ..
-            } if (pointee.is_object_like() || pointee.is_cf_type())
-                && !pointee.is_static_object() =>
-            {
+            } if pointee.is_object_like() && !pointee.is_static_object() => {
                 // NOTE: We return CF types as `Retained` for now, since we
                 // don't have support for the CF wrapper in msg_send! yet.
                 if *nullability == Nullability::NonNull {
@@ -2014,7 +2074,7 @@ impl Ty {
                     lifetime: Lifetime::Unspecified,
                     pointee,
                     ..
-                } if pointee.is_object_like() || pointee.is_cf_type() => {
+                } if pointee.is_object_like() => {
                     // NULL -> error
                     write!(
                         f,
@@ -2079,9 +2139,12 @@ impl Ty {
                 items.push(ItemTree::core_ptr_nonnull());
             }
             Self::Pointer { pointee, .. }
-                if pointee.is_object_like() && !pointee.is_static_object() =>
+                if pointee.is_objc_type() && !pointee.is_static_object() =>
             {
                 items.push(ItemTree::objc("Retained"));
+            }
+            Self::Pointer { pointee, .. } if pointee.is_dispatch_type() => {
+                items.push(ItemTree::dispatch("DispatchRetained"));
             }
             _ => {}
         }
@@ -2115,6 +2178,14 @@ impl Ty {
                 (_, false) => ";\nret.map(|ret| unsafe { CFRetained::retain(ret) })",
             }
         };
+        let end_dispatch = |nullability| {
+            match (nullability, returns_retained) {
+                (Nullability::NonNull, true) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { DispatchRetained::from_raw(ret) }",
+                (Nullability::NonNull, false) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { DispatchRetained::retain(ret) }",
+                (_, true) => ";\nret.map(|ret| unsafe { DispatchRetained::from_raw(ret) })",
+                (_, false) => ";\nret.map(|ret| unsafe { DispatchRetained::retain(ret) })",
+            }
+        };
         let end_objc = |nullability| {
             match (nullability, returns_retained) {
                 (Nullability::NonNull, true) => {
@@ -2144,9 +2215,9 @@ impl Ty {
                 // are a hint, and not an ABI stable promise.
                 if pointee.is_static_object() {
                     write!(f, "-> Option<&'static {}>", pointee.behind_pointer())
-                } else if pointee.is_cf_type() {
+                } else if pointee.is_cf_type() || pointee.is_dispatch_type() {
                     write!(f, "-> Option<NonNull<{}>>", pointee.behind_pointer())
-                } else if pointee.is_object_like() {
+                } else if pointee.is_objc_type() {
                     write!(f, "-> *mut {}", pointee.behind_pointer())
                 } else {
                     if *nullability == Nullability::NonNull {
@@ -2193,7 +2264,14 @@ impl Ty {
                         format!(" -> Option<CFRetained<{}>>", pointee.behind_pointer())
                     };
                     Some((res, start, end_cf(*nullability)))
-                } else if pointee.is_object_like() && !pointee.is_static_object() {
+                } else if pointee.is_dispatch_type() {
+                    let res = if *nullability == Nullability::NonNull {
+                        format!(" -> DispatchRetained<{}>", pointee.behind_pointer())
+                    } else {
+                        format!(" -> Option<DispatchRetained<{}>>", pointee.behind_pointer())
+                    };
+                    Some((res, start, end_dispatch(*nullability)))
+                } else if pointee.is_objc_type() && !pointee.is_static_object() {
                     let res = if *nullability == Nullability::NonNull {
                         format!(" -> Retained<{}>", pointee.behind_pointer())
                     } else {
@@ -2223,17 +2301,14 @@ impl Ty {
                 is_const: _,
                 lifetime: Lifetime::Strong | Lifetime::Unspecified,
                 pointee,
-            } if pointee.is_object_like()
-                || pointee.is_cf_type()
-                || **pointee == Ty::Pointee(PointeeTy::CStr) =>
-            {
+            } if pointee.is_object_like() || **pointee == Ty::Pointee(PointeeTy::CStr) => {
                 if *nullability == Nullability::NonNull {
                     write!(f, "&'static {}", pointee.behind_pointer())
                 } else {
                     write!(f, "Option<&'static {}>", pointee.behind_pointer())
                 }
             }
-            _ => write!(f, "{}", self.plain()),
+            _ => write!(f, "{}", self.behind_pointer()),
         })
     }
 
@@ -2246,10 +2321,7 @@ impl Ty {
                 is_const: _,
                 lifetime: Lifetime::Strong | Lifetime::Unspecified,
                 pointee,
-            } if pointee.is_object_like()
-                || pointee.is_cf_type()
-                || **pointee == Ty::Pointee(PointeeTy::CStr) =>
-            {
+            } if pointee.is_object_like() || **pointee == Ty::Pointee(PointeeTy::CStr) => {
                 if *nullability == Nullability::NonNull {
                     write!(f, "&{}", pointee.behind_pointer())
                 } else {
@@ -2267,7 +2339,7 @@ impl Ty {
                 is_const: _,
                 lifetime: _,
                 pointee,
-            } if pointee.is_object_like() || pointee.is_cf_type() => {
+            } if pointee.is_object_like() => {
                 write!(f, "{}", pointee.behind_pointer())
             }
             Self::IncompleteArray { .. } => unimplemented!("incomplete array in typedef"),
@@ -2290,7 +2362,6 @@ impl Ty {
                 lifetime,
                 pointee,
             } if pointee.is_object_like()
-                || pointee.is_cf_type()
                 || matches!(
                     **pointee,
                     Self::Pointee(PointeeTy::AnyClass { .. } | PointeeTy::Block { .. })
@@ -2709,7 +2780,7 @@ impl Ty {
 
     pub(crate) fn is_retainable(&self) -> bool {
         if let Self::Pointer { pointee, .. } = self {
-            (pointee.is_object_like() || pointee.is_cf_type()) && !pointee.is_static_object()
+            pointee.is_object_like() && !pointee.is_static_object()
         } else {
             false
         }

@@ -721,6 +721,13 @@ impl ItemTree {
         })
     }
 
+    pub fn dispatch(name: impl Into<String>) -> Self {
+        Self::from_id(ItemIdentifier {
+            name: name.into(),
+            location: Location::new("Dispatch"),
+        })
+    }
+
     pub fn cf_string_macro() -> Self {
         Self::from_id(ItemIdentifier {
             name: "cf_string".into(),

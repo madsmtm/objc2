@@ -100,9 +100,9 @@ impl<T: ?Sized> Drop for DispatchRetained<T> {
     #[doc(alias = "release")]
     #[inline]
     fn drop(&mut self) {
-        // SAFETY: The `ptr` is guaranteed to be valid, is not NULL, and has
-        // at least one retain count.
-        unsafe { dispatch_release(self.ptr.as_ptr().cast()) };
+        // SAFETY: The `ptr` is guaranteed to be valid and have at least one
+        // retain count.
+        unsafe { dispatch_release(self.ptr.cast()) };
     }
 }
 
@@ -149,9 +149,8 @@ impl<T: ?Sized + DispatchObject> DispatchRetained<T> {
     #[doc(alias = "dispatch_retain")]
     #[inline]
     pub unsafe fn retain(ptr: NonNull<T>) -> Self {
-        // SAFETY: The caller upholds that the pointer is valid, and it came
-        // from NonNull, so we know it's not NULL.
-        unsafe { dispatch_retain(ptr.as_ptr().cast()) };
+        // SAFETY: The caller upholds that the pointer is valid.
+        unsafe { dispatch_retain(ptr.cast()) };
 
         // SAFETY: We just retained the object, so it has +1 retain count.
         // Validity of the pointer is upheld by the caller.

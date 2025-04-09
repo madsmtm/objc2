@@ -42,10 +42,12 @@ use core::marker::{PhantomData, PhantomPinned};
 
 use self::ffi::dispatch_qos_class_t;
 
+mod data;
 pub mod ffi;
 #[allow(clippy::undocumented_unsafe_blocks)]
 mod generated;
 mod group;
+mod io;
 #[cfg(feature = "objc2")]
 mod main_thread_bound;
 mod object;
@@ -53,6 +55,7 @@ mod once;
 mod queue;
 mod retained;
 mod semaphore;
+mod source;
 mod utils;
 mod workloop;
 
@@ -100,16 +103,20 @@ impl From<QualityOfServiceClass> for dispatch_qos_class_t {
     }
 }
 
+pub use self::data::DispatchData;
 pub use self::group::{DispatchGroup, DispatchGroupGuard};
+pub use self::io::DispatchIO;
 #[cfg(feature = "objc2")]
 pub use self::main_thread_bound::{run_on_main, MainThreadBound};
 pub use self::object::{DispatchObject, QualityOfServiceClassFloorError};
 pub use self::once::DispatchOnce;
 pub use self::queue::{
-    DispatchQueue, GlobalQueueIdentifier, QueueAfterError, QueueAttribute, QueuePriority,
+    DispatchQueue, DispatchQueueAttr, GlobalQueueIdentifier, QueueAfterError, QueueAttribute,
+    QueuePriority,
 };
 pub use self::retained::DispatchRetained;
 pub use self::semaphore::{DispatchSemaphore, DispatchSemaphoreGuard};
+pub use self::source::DispatchSource;
 pub use self::workloop::{DispatchAutoReleaseFrequency, DispatchWorkloop};
 
 // Helper type

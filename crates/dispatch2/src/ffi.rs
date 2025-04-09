@@ -3,16 +3,20 @@
 #![allow(missing_docs, non_camel_case_types)]
 
 use core::ffi::{c_long, c_uint, c_ulong, c_void};
-use core::ptr::addr_of;
 
 #[cfg(feature = "objc2")]
 use objc2::encode::{Encode, Encoding, RefEncode};
 
 // Try to generate as much as possible.
 pub use crate::generated::*;
+pub(crate) use crate::*;
+
+pub(crate) type dispatch_data_s = DispatchData;
+pub(crate) type dispatch_queue_attr_s = DispatchQueueAttr;
+pub(crate) type dispatch_queue_s = DispatchQueue;
 
 macro_rules! create_opaque_type {
-    ($type_name: ident, $typedef_name: ident) => {
+    ($type_name: ident) => {
         #[repr(C)]
         #[derive(Copy, Clone, Debug)]
         #[allow(missing_docs)]
@@ -20,9 +24,6 @@ macro_rules! create_opaque_type {
             /// opaque value
             _inner: [u8; 0],
         }
-
-        #[allow(missing_docs)]
-        pub type $typedef_name = *mut $type_name;
 
         #[cfg(feature = "objc2")]
         // SAFETY: Dispatch types are internally objects.
@@ -66,9 +67,15 @@ macro_rules! enum_with_val {
     }
 }
 
-create_opaque_type!(dispatch_object_s, dispatch_object_t);
-create_opaque_type!(dispatch_data_s, dispatch_data_t);
-create_opaque_type!(dispatch_source_type_s, dispatch_source_type_t);
+create_opaque_type!(dispatch_object_s);
+
+#[allow(missing_docs)]
+pub type dispatch_object_t = *mut dispatch_object_s;
+
+create_opaque_type!(dispatch_source_type_s);
+
+#[allow(missing_docs)]
+pub type dispatch_source_type_t = *mut dispatch_source_type_s;
 
 /// The prototype of functions submitted to dispatch queues.
 ///
@@ -94,29 +101,17 @@ unsafe impl RefEncode for dispatch_time_t {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
-create_opaque_type!(dispatch_group_s, dispatch_group_t);
-create_opaque_type!(dispatch_queue_global_s, dispatch_queue_global_t);
-create_opaque_type!(dispatch_queue_serial_s, dispatch_queue_serial_t);
-create_opaque_type!(dispatch_queue_main_s, dispatch_queue_main_t);
-create_opaque_type!(dispatch_queue_concurrent_s, dispatch_queue_concurrent_t);
-create_opaque_type!(dispatch_queue_attr_s, dispatch_queue_attr_t);
-create_opaque_type!(dispatch_semaphore_s, dispatch_semaphore_t);
-create_opaque_type!(dispatch_source_s, dispatch_source_t);
-create_opaque_type!(dispatch_queue_s, dispatch_queue_t);
-create_opaque_type!(dispatch_workloop_s, dispatch_workloop_t);
-create_opaque_type!(dispatch_io_s, dispatch_io_t);
-
 /// A dispatch queue that executes blocks serially in FIFO order.
-pub const DISPATCH_QUEUE_SERIAL: dispatch_queue_attr_t = core::ptr::null_mut();
+pub const DISPATCH_QUEUE_SERIAL: Option<&DispatchQueueAttr> = None;
 /// A dispatch queue that executes blocks concurrently.
-pub static DISPATCH_QUEUE_CONCURRENT: &dispatch_queue_attr_s = {
+pub static DISPATCH_QUEUE_CONCURRENT: Option<&DispatchQueueAttr> = {
     // Safety: immutable external definition
-    unsafe { &_dispatch_queue_attr_concurrent }
+    unsafe { Some(&_dispatch_queue_attr_concurrent) }
 };
 
-pub const DISPATCH_APPLY_AUTO: dispatch_queue_t = core::ptr::null_mut();
-pub const DISPATCH_TARGET_QUEUE_DEFAULT: dispatch_queue_t = core::ptr::null_mut();
-pub const DISPATCH_CURRENT_QUEUE_LABEL: dispatch_queue_t = core::ptr::null_mut();
+pub const DISPATCH_APPLY_AUTO: Option<&DispatchQueue> = None;
+pub const DISPATCH_TARGET_QUEUE_DEFAULT: Option<&DispatchQueue> = None;
+pub const DISPATCH_CURRENT_QUEUE_LABEL: Option<&DispatchQueue> = None;
 
 pub const DISPATCH_TIME_NOW: dispatch_time_t = dispatch_time_t(0);
 pub const DISPATCH_TIME_FOREVER: dispatch_time_t = dispatch_time_t(u64::MAX);
@@ -239,8 +234,8 @@ extern "C" {
 }
 
 // Inline function in the header
-#[allow(unused_unsafe)] // MSRV. Also, we'd like to mark this as `const`
-pub extern "C" fn dispatch_get_main_queue() -> dispatch_queue_main_t {
-    // SAFETY: Always safe to get pointer from static, only needed for MSRV.
-    unsafe { addr_of!(_dispatch_main_q) as dispatch_queue_main_t }
+// TODO: Mark this as `const`
+pub extern "C" fn dispatch_get_main_queue() -> &'static DispatchQueue {
+    // SAFETY: The main queue is safe to access from anywhere.
+    unsafe { &_dispatch_main_q }
 }

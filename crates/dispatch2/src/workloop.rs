@@ -1,10 +1,12 @@
 use alloc::ffi::CString;
-use core::{borrow::Borrow, ops::Deref, ptr::NonNull};
+use core::{borrow::Borrow, ops::Deref};
 
 use crate::{ffi::*, DispatchQueue, DispatchRetained};
 
 dispatch_object!(
     /// Dispatch workloop queue.
+    #[doc(alias = "dispatch_workloop_t")]
+    #[doc(alias = "dispatch_workloop_s")]
     pub struct DispatchWorkloop;
 );
 
@@ -16,17 +18,13 @@ impl DispatchWorkloop {
         let label = CString::new(label).expect("Invalid label!");
 
         // Safety: label can only be valid.
-        let object = unsafe {
+        unsafe {
             if inactive {
                 dispatch_workloop_create_inactive(label.as_ptr())
             } else {
                 dispatch_workloop_create(label.as_ptr())
             }
-        };
-
-        let object = NonNull::new(object).expect("dispatch_workloop_create returned NULL");
-        // SAFETY: Object came from a "create" method.
-        unsafe { DispatchRetained::from_raw(object.cast()) }
+        }
     }
 
     /// Configure how the [`DispatchWorkloop`] manage the autorelease pools for the functions it executes.
@@ -34,20 +32,10 @@ impl DispatchWorkloop {
         // Safety: object and frequency can only be valid.
         unsafe {
             dispatch_workloop_set_autorelease_frequency(
-                self.as_raw(),
+                self,
                 dispatch_autorelease_frequency_t::from(frequency),
             );
         }
-    }
-
-    /// Get the raw [dispatch_workloop_t] value.
-    ///
-    /// # Safety
-    ///
-    /// - Object shouldn't be released manually.
-    pub const unsafe fn as_raw(&self) -> dispatch_workloop_t {
-        let ptr: *const Self = self;
-        ptr as dispatch_workloop_t
     }
 }
 

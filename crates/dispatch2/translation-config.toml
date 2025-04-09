@@ -5,12 +5,6 @@ link = false
 modulemap = "usr/include/dispatch.modulemap"
 is-library = true
 custom-lib-rs = true
-flags = [
-    # Allow dispatch2 to not depend on objc2 for core types.
-    #
-    # See <os/object.h> for details.
-    "-DOS_OBJECT_USE_OBJC=0",
-]
 
 macos = "10.0"
 maccatalyst = "13.0"
@@ -46,6 +40,7 @@ const.DISPATCH_WALLTIME_NOW.skipped = true
 # of dispatch objects, but that won't work in Rust.
 union.dispatch_object_t.skipped = true
 typedef.dispatch_object_t.skipped = true
+protocol.OS_dispatch_object.skipped = true
 
 # We want to implement TryFrom on this
 typedef.dispatch_time_t.skipped = true
@@ -62,22 +57,53 @@ typedef.dispatch_function_t.skipped = true
 # The libc definition is unsound (?)
 typedef.dispatch_qos_class_t.skipped = true
 
-# We need the inner struct to be available
+# We custom-define these instead.
 typedef.dispatch_queue_t.skipped = true
+protocol.OS_dispatch_queue.skipped = true
 typedef.dispatch_queue_global_t.skipped = true
+protocol.OS_dispatch_queue_global.skipped = true
 typedef.dispatch_queue_serial_executor_t.skipped = true
+protocol.OS_dispatch_queue_serial_executor.skipped = true
 typedef.dispatch_queue_serial_t.skipped = true
+protocol.OS_dispatch_queue_serial.skipped = true
 typedef.dispatch_queue_main_t.skipped = true
+protocol.OS_dispatch_queue_main.skipped = true
 typedef.dispatch_queue_concurrent_t.skipped = true
+protocol.OS_dispatch_queue_concurrent.skipped = true
 typedef.dispatch_queue_attr_t.skipped = true
+protocol.OS_dispatch_queue_attr.skipped = true
 typedef.dispatch_source_t.skipped = true
+protocol.OS_dispatch_source.skipped = true
+typedef.dispatch_group_t.skipped = true
+protocol.OS_dispatch_group.skipped = true
+typedef.dispatch_semaphore_t.skipped = true
+protocol.OS_dispatch_semaphore.skipped = true
+typedef.dispatch_data_t.skipped = true
+protocol.OS_dispatch_data.skipped = true
+typedef.dispatch_io_t.skipped = true
+protocol.OS_dispatch_io.skipped = true
+typedef.dispatch_workloop_t.skipped = true
+protocol.OS_dispatch_workloop.skipped = true
+
+# Rename typedefs to match Swift naming scheme.
+typedef.dispatch_queue_t.renamed = "DispatchQueue"
+typedef.dispatch_queue_global_t.renamed = "DispatchQueue" # For now
+typedef.dispatch_queue_serial_executor_t.renamed = "DispatchQueue" # For now
+typedef.dispatch_queue_serial_t.renamed = "DispatchQueue" # For now
+typedef.dispatch_queue_main_t.renamed = "DispatchQueue" # For now
+typedef.dispatch_queue_concurrent_t.renamed = "DispatchQueue" # For now
+typedef.dispatch_queue_attr_t.renamed = "DispatchQueueAttr"
+typedef.dispatch_source_t.renamed = "DispatchSource"
+typedef.dispatch_group_t.renamed = "DispatchGroup"
+typedef.dispatch_semaphore_t.renamed = "DispatchSemaphore"
+typedef.dispatch_data_t.renamed = "DispatchData"
+typedef.dispatch_io_t.renamed = "DispatchIO"
+typedef.dispatch_workloop_t.renamed = "DispatchWorkloop"
+
+# Dispatch sources types should perhaps be mapped as a trait,
+# similar to what Swift does for `DispatchSourceProtocol`?
 struct.dispatch_source_type_s.skipped = true
 typedef.dispatch_source_type_t.skipped = true
-typedef.dispatch_group_t.skipped = true
-typedef.dispatch_semaphore_t.skipped = true
-typedef.dispatch_data_t.skipped = true
-typedef.dispatch_io_t.skipped = true
-typedef.dispatch_workloop_t.skipped = true
 
 # Inline, defined manually for now
 fn.dispatch_get_main_queue.skipped = true
@@ -85,6 +111,10 @@ fn.dispatch_get_main_queue.skipped = true
 # Fast paths for dispatch_once, done manually
 fn._dispatch_once.skipped = true
 fn._dispatch_once_f.skipped = true
+
+# Inline helper for validating before retain/release,
+# probably undesirable for our case.
+fn._dispatch_object_validate.skipped = true
 
 # Fake functions that are actually macros
 fn.dispatch_wait.skipped = true
