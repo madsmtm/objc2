@@ -17,11 +17,6 @@ struct.AudioServerPlugInDriverInterface.skipped = true
 typedef.AudioServerPlugInDriverInterface.skipped = true
 typedef.AudioServerPlugInDriverRef.skipped = true
 
-# Needs dispatch_queue_t from libdispatch
-fn.AudioObjectAddPropertyListenerBlock.skipped = true
-fn.AudioObjectRemovePropertyListenerBlock.skipped = true
-fn.AudioDeviceCreateIOProcIDWithBlock.skipped = true
-
 # This is currently emitted incorrectly, the union field is
 # not included, which is an ABI mismatch.
 struct.AudioServerPlugInIOCycleInfo.skipped = true

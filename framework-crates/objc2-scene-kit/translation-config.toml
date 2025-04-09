@@ -36,6 +36,3 @@ class.SCNView.methods.openGLContext.skipped = true
 class.SCNView.methods."setOpenGLContext:".skipped = true
 class.SCNView.methods.pixelFormat.skipped = true
 class.SCNView.methods."setPixelFormat:".skipped = true
-
-# Needs dispatch_queue_t from libdispatch
-class.SCNAction.methods."runBlock:queue:".skipped = true

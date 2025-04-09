@@ -7,7 +7,3 @@ ios = "14.0"
 watchos = "8.0"
 
 external.ARSession.module = "ARKit.ARSession"
-
-# Needs `dispatch_queue_t`
-class.NISession.methods.delegateQueue.skipped = true
-class.NISession.methods."setDelegateQueue:".skipped = true

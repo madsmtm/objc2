@@ -45,11 +45,6 @@ fn.vAEBuildAppleEvent.skipped = true
 fn.GetComponentPublicIndString.skipped = true
 fn.GetComponentIndString.skipped = true
 
-# Needs dispatch_queue_t from libdispatch
-fn.CSDiskSpaceStartRecovery.skipped = true
-fn.MDQuerySetDispatchQueue.skipped = true
-fn.FSEventStreamSetDispatchQueue.skipped = true
-
 # Dependent on target endianness
 typedef.WideChar.skipped = true # union+typedef
 

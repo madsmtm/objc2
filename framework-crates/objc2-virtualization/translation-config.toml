@@ -8,5 +8,3 @@ macos = "11.0"
 class.VZMACAddress.methods."initWithEthernetAddress:".skipped = true
 # Needs `ether_addr_t`
 class.VZMACAddress.methods.ethernetAddress.skipped = true
-# Needs `dispatch_queue_t`
-class.VZVirtualMachine.methods."initWithConfiguration:queue:".skipped = true

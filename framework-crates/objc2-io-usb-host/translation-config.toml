@@ -27,17 +27,6 @@ const.IOUSBHostCILinkData1TransferStructureAddress.use-value = true
 # Declared twice.
 static.IOUSBHostMatchingPropertyKeyProductIDMask.skipped = true
 
-# Needs dispatch_queue_t from libdispatch
-class.IOUSBHostControllerInterface.methods."initWithCapabilities:queue:interruptRateHz:error:commandHandler:doorbellHandler:interestHandler:".skipped = true
-class.IOUSBHostControllerInterface.methods.queue.skipped = true
-class.IOUSBHostDevice.methods."initWithIOService:options:queue:error:interestHandler:".skipped = true
-class.IOUSBHostDevice.methods."initWithIOService:queue:error:interestHandler:".skipped = true
-class.IOUSBHostInterface.methods."initWithIOService:options:queue:error:interestHandler:".skipped = true
-class.IOUSBHostInterface.methods."initWithIOService:queue:error:interestHandler:".skipped = true
-class.IOUSBHostObject.methods."initWithIOService:options:queue:error:interestHandler:".skipped = true
-class.IOUSBHostObject.methods."initWithIOService:queue:error:interestHandler:".skipped = true
-class.IOUSBHostObject.methods.queue.skipped = true
-
 # Value taken from a type that is c_uint internally.
 const.IOUSBHostCITransferCompletionMessageControlStatus.use-value = true
 const.IOUSBHostCITransferCompletionMessageControlStatusPhase.use-value = true

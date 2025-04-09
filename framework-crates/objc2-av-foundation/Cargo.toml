@@ -18,6 +18,11 @@ workspace = true
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
+dispatch2 = { path = "../../crates/dispatch2", version = "0.2.0", default-features = false, optional = true, features = [
+    "alloc",
+    "block2",
+    "objc2",
+] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
 objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.3.0", default-features = false, optional = true, features = ["AVAudioSessionRoute"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
@@ -237,6 +242,7 @@ default = [
     "AVVideoSettings",
     "bitflags",
     "block2",
+    "dispatch2",
     "objc2-avf-audio",
     "objc2-core-foundation",
     "objc2-core-graphics",
@@ -248,6 +254,7 @@ std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
+dispatch2 = ["dep:dispatch2"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
@@ -676,6 +683,7 @@ AVPlayer = [
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
+    "objc2-foundation/NSValue",
 ]
 AVPlayerInterstitialEventController = [
     "bitflags",
@@ -768,6 +776,7 @@ AVSampleBufferRenderSynchronizer = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
 AVSampleBufferVideoRenderer = [
     "objc2-foundation/NSError",

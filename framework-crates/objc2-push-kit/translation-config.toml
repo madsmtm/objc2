@@ -6,6 +6,3 @@ maccatalyst = "13.0"
 ios = "8.0"
 watchos = "6.0"
 visionos = "1.0"
-
-# Needs dispatch
-class.PKPushRegistry.methods."initWithQueue:".skipped = true

@@ -9,10 +9,6 @@ visionos = "1.0"
 class.ARReferenceImage.methods."initWithCGImage:orientation:physicalWidth:".skipped = true
 class.ARReferenceImage.methods."initWithPixelBuffer:orientation:physicalWidth:".skipped = true
 
-# Needs dispatch_queue_t from libdispatch
-class.ARSession.methods.delegateQueue.skipped = true
-class.ARSession.methods."setDelegateQueue:".skipped = true
-
 # Needs QLPreviewItem from QuickLook
 class.ARQuickLookPreviewItem.skipped-protocols = ["QLPreviewItem"]
 

@@ -17,6 +17,7 @@ workspace = true
 
 [dependencies]
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
+dispatch2 = { path = "../../crates/dispatch2", version = "0.2.0", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
 objc2-core-audio-types = { path = "../objc2-core-audio-types", version = "0.3.0", default-features = false, optional = true, features = ["CoreAudioBaseTypes"] }
@@ -50,6 +51,7 @@ default = [
     "AudioServerPlugIn",
     "HostTime",
     "block2",
+    "dispatch2",
     "libc",
     "objc2",
     "objc2-core-audio-types",
@@ -58,9 +60,11 @@ default = [
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
+dispatch2 = ["dep:dispatch2"]
 libc = ["dep:libc"]
 objc2 = [
     "dep:objc2",
+    "dispatch2?/objc2",
     "objc2-core-audio-types?/objc2",
     "objc2-core-foundation/objc2",
 ]

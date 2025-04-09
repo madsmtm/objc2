@@ -16,7 +16,3 @@ class.PHLivePhotoEditingContext.methods.orientation.skipped = true
 class.PHImageManager.methods."requestImageDataAndOrientationForAsset:options:resultHandler:".skipped = true
 # Needs `UIImageOrientation` from `UIKit`
 class.PHImageManager.methods."requestImageDataForAsset:options:resultHandler:".skipped = true
-
-# Needs `dispatch_block_t`
-class.PHPhotoLibrary.methods."performChanges:completionHandler:".skipped = true
-class.PHPhotoLibrary.methods."performChangesAndWait:error:".skipped = true

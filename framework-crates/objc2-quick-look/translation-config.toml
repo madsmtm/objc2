@@ -6,6 +6,3 @@ macos = "10.5"
 maccatalyst = "13.0"
 ios = "4.0"
 visionos = "1.0"
-
-# Needs libdispatch
-fn.QLThumbnailDispatchAsync.skipped = true

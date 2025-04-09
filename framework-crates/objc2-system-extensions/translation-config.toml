@@ -2,8 +2,3 @@ framework = "SystemExtensions"
 crate = "objc2-system-extensions"
 required-crates = ["objc2", "objc2-foundation"]
 macos = "10.15"
-
-# Needs `dispatch_queue_t` from libdispatch
-class.OSSystemExtensionRequest.methods.'activationRequestForExtension:queue:'.skipped = true
-class.OSSystemExtensionRequest.methods.'deactivationRequestForExtension:queue:'.skipped = true
-class.OSSystemExtensionRequest.methods.'propertiesRequestForExtension:queue:'.skipped = true

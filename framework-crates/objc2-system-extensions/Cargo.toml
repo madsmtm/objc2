@@ -16,6 +16,10 @@ license.workspace = true
 workspace = true
 
 [dependencies]
+dispatch2 = { path = "../../crates/dispatch2", version = "0.2.0", default-features = false, optional = true, features = [
+    "alloc",
+    "objc2",
+] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = [
     "NSArray",
@@ -34,6 +38,10 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "dispatch2",
+]
 std = ["alloc"]
 alloc = []
+dispatch2 = ["dep:dispatch2"]

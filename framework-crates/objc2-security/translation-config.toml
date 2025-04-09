@@ -32,7 +32,7 @@ typedef.CSSM_STRING.skipped = true
 # Needs audit_token_t which is not exposed by libc
 fn.SecTaskCreateWithAuditToken.skipped = true
 
-# Needs libdispatch
+# Needs libdispatch, but needs us to not use `-DOS_OBJECT_USE_OBJC=0` first.
 fn.SecKeyGeneratePairAsync.skipped = true
 fn.sec_protocol_metadata_copy_peer_public_key.skipped = true
 fn.sec_protocol_metadata_access_ocsp_response.skipped = true

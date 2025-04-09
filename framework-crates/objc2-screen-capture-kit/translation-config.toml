@@ -3,6 +3,3 @@ crate = "objc2-screen-capture-kit"
 required-crates = ["objc2", "objc2-foundation"]
 custom-lib-rs = true
 macos = "12.3"
-
-# Needs `dispatch_queue_t`
-class.SCStream.methods."addStreamOutput:type:sampleHandlerQueue:error:".skipped = true

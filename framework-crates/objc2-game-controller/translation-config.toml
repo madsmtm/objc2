@@ -53,11 +53,5 @@ fn.GCInputArcadeButtonName.skipped = true
 # Needs `CHHapticEngine` from the `CoreHaptics` framework
 class.GCDeviceHaptics.methods."createEngineWithLocality:".skipped = true
 
-# Needs `dispatch_queue_t`
-protocol.GCDevice.methods.handlerQueue.skipped = true
-protocol.GCDevice.methods."setHandlerQueue:".skipped = true
-protocol.GCDevicePhysicalInput.methods.queue.skipped = true
-protocol.GCDevicePhysicalInput.methods."setQueue:".skipped = true
-
 # Needs `IOHIDDeviceRef` from IOKit
 class.GCController.methods."supportsHIDDevice:".skipped = true

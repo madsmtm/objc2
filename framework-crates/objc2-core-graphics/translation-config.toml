@@ -11,9 +11,6 @@ visionos = "1.0"
 
 external.MTLDevice.module = "Metal.MTLDevice"
 
-# Needs dispatch_queue_t from libdispatch
-fn.CGDisplayStreamCreateWithDispatchQueue.skipped = true
-
 # CF_RELEASES_ARGUMENT / cf_consumed, requires manual handling
 fn.CGColorSpaceRelease.skipped = true
 

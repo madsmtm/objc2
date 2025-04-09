@@ -18,6 +18,7 @@ workspace = true
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
+dispatch2 = { path = "../../crates/dispatch2", version = "0.2.0", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
 objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "AVCaptureDevice",
@@ -140,6 +141,7 @@ default = [
     "ARWorldMap",
     "bitflags",
     "block2",
+    "dispatch2",
     "objc2",
     "objc2-av-foundation",
     "objc2-core-foundation",
@@ -158,8 +160,10 @@ std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
+dispatch2 = ["dep:dispatch2"]
 objc2 = [
     "dep:objc2",
+    "dispatch2?/objc2",
     "objc2-core-foundation?/objc2",
     "objc2-core-media?/objc2",
     "objc2-core-video?/objc2",

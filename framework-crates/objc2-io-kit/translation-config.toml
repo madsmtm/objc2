@@ -63,19 +63,6 @@ fn.IORPCMessageFromMach.skipped = true
 struct.evioSpecialKeyMsg.skipped = true
 typedef.evioSpecialKeyMsg_t.skipped = true
 
-# Needs dispatch_queue_t from libdispatch
-fn.IONotificationPortSetDispatchQueue.skipped = true
-fn.IOHIDQueueSetDispatchQueue.skipped = true
-fn.IOHIDDeviceSetDispatchQueue.skipped = true
-fn.IOHIDManagerSetDispatchQueue.skipped = true
-fn.IOHIDUserDeviceSetDispatchQueue.skipped = true
-
-# Needs dispatch_block_t from libdispatch
-fn.IOHIDQueueSetCancelHandler.skipped = true
-fn.IOHIDDeviceSetCancelHandler.skipped = true
-fn.IOHIDManagerSetCancelHandler.skipped = true
-fn.IOHIDUserDeviceSetCancelHandler.skipped = true
-
 # Recursive
 typedef.LowLatencyUserBufferInfo.skipped = true
 struct.LowLatencyUserBufferInfo.skipped = true

@@ -7,9 +7,3 @@ ios = "5.0"
 tvos = "9.0"
 watchos = "4.0"
 visionos = "1.0"
-
-# Needs `dispatch_queue_t`
-class.CBCentralManager.methods."initWithDelegate:queue:".skipped = true
-class.CBCentralManager.methods."initWithDelegate:queue:options:".skipped = true
-class.CBPeripheralManager.methods."initWithDelegate:queue:".skipped = true
-class.CBPeripheralManager.methods."initWithDelegate:queue:options:".skipped = true

@@ -39,9 +39,6 @@ class.NENetworkRule.methods.matchRemoteHostOrNetworkEndpoint.skipped = true
 class.NENetworkRule.methods.matchLocalNetworkEndpoint.skipped = true
 class.NEPacketTunnelProvider.methods.virtualInterface.skipped = true
 
-# Needs `dispatch_queue_t` from libdispatch
-class.NEHotspotHelper.methods."registerWithOptions:queue:handler:".skipped = true
-
 # Needs `ASAccessory` from AccessorySetupKit
 class.NEHotspotConfigurationManager.methods."joinAccessoryHotspot:passphrase:completionHandler:".skipped = true
 class.NEHotspotConfigurationManager.methods."joinAccessoryHotspotWithoutSecurity:completionHandler:".skipped = true

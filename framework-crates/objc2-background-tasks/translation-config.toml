@@ -5,6 +5,3 @@ maccatalyst = "13.0"
 ios = "13.0"
 tvos = "13.0"
 visionos = "1.0"
-
-# Needs `dispatch_queue_t`
-class.BGTaskScheduler.methods."registerForTaskWithIdentifier:usingQueue:launchHandler:".skipped = true

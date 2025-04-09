@@ -18,6 +18,7 @@ workspace = true
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
+dispatch2 = { path = "../../crates/dispatch2", version = "0.2.0", default-features = false, optional = true, features = ["alloc"] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
 objc2-core-audio = { path = "../objc2-core-audio", version = "0.3.0", default-features = false, optional = true, features = [
     "AudioHardware",
@@ -68,6 +69,7 @@ default = [
     "CMTimeRange",
     "bitflags",
     "block2",
+    "dispatch2",
     "objc2",
     "objc2-core-audio",
     "objc2-core-audio-types",
@@ -77,8 +79,10 @@ std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
+dispatch2 = ["dep:dispatch2"]
 objc2 = [
     "dep:objc2",
+    "dispatch2?/objc2",
     "objc2-core-audio-types?/objc2",
     "objc2-core-audio?/objc2",
     "objc2-core-foundation/objc2",

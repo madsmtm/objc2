@@ -104,6 +104,7 @@ impl From<QualityOfServiceClass> for dispatch_qos_class_t {
 }
 
 pub use self::data::DispatchData;
+pub use self::ffi::dispatch_block_t;
 pub use self::group::{DispatchGroup, DispatchGroupGuard};
 pub use self::io::DispatchIO;
 #[cfg(feature = "objc2")]

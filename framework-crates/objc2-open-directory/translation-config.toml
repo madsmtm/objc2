@@ -11,9 +11,6 @@ class.ODSession.methods."addConfiguration:authorization:error:".skipped = true
 class.ODSession.methods."deleteConfiguration:authorization:error:".skipped = true
 class.ODSession.methods."deleteConfigurationWithNodename:authorization:error:".skipped = true
 
-# Needs `dispatch_queue_t`
-fn.ODQuerySetDispatchQueue.skipped = true
-
 # Old compatibility aliases
 typedef._ODRecordType.skipped = true
 typedef._ODAttributeType.skipped = true

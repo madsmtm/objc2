@@ -17,6 +17,10 @@ workspace = true
 
 [dependencies]
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
+dispatch2 = { path = "../../crates/dispatch2", version = "0.2.0", default-features = false, optional = true, features = [
+    "alloc",
+    "objc2",
+] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
 objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.3.0", default-features = false, optional = true, features = ["AVAudioSession"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
@@ -60,11 +64,13 @@ default = [
     "CXStartCallAction",
     "CXTransaction",
     "block2",
+    "dispatch2",
     "objc2-avf-audio",
 ]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
+dispatch2 = ["dep:dispatch2"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]
 
 CXAction = [

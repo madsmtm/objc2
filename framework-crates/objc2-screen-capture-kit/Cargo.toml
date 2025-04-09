@@ -18,6 +18,10 @@ workspace = true
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
+dispatch2 = { path = "../../crates/dispatch2", version = "0.2.0", default-features = false, optional = true, features = [
+    "alloc",
+    "objc2",
+] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
 objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.3.0", default-features = false, optional = true, features = [
@@ -63,6 +67,7 @@ default = [
     "SCStream",
     "bitflags",
     "block2",
+    "dispatch2",
     "libc",
     "objc2-av-foundation",
     "objc2-core-foundation",
@@ -73,6 +78,7 @@ std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
+dispatch2 = ["dep:dispatch2"]
 libc = ["dep:libc"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]

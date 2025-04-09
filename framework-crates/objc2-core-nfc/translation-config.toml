@@ -6,10 +6,3 @@ ios = "11.0"
 
 # Both protocol and class.
 protocol.NFCReaderSession.renamed = "NFCReaderSessionProtocol"
-
-# Needs libdispatch
-class.NFCReaderSession.methods.sessionQueue.skipped = true
-class.NFCTagReaderSession.methods."initWithPollingOption:delegate:queue:".skipped = true
-class.NFCNDEFReaderSession.methods."initWithDelegate:queue:invalidateAfterFirstRead:".skipped = true
-class.NFCISO15693ReaderSession.methods."initWithDelegate:queue:".skipped = true
-class.NFCVASReaderSession.methods."initWithVASCommandConfigurations:delegate:queue:".skipped = true

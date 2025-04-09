@@ -16,6 +16,10 @@ license.workspace = true
 workspace = true
 
 [dependencies]
+dispatch2 = { path = "../../crates/dispatch2", version = "0.2.0", default-features = false, optional = true, features = [
+    "alloc",
+    "block2",
+] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false }
 objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.3.0", default-features = false, optional = true, features = [
@@ -41,13 +45,16 @@ default = [
     "QLGenerator",
     "QLThumbnail",
     "QLThumbnailImage",
+    "dispatch2",
     "objc2",
     "objc2-core-graphics",
 ]
 std = ["alloc"]
 alloc = []
+dispatch2 = ["dep:dispatch2"]
 objc2 = [
     "dep:objc2",
+    "dispatch2?/objc2",
     "objc2-core-foundation/objc2",
     "objc2-core-graphics?/objc2",
 ]

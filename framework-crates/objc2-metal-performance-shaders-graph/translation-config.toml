@@ -6,7 +6,3 @@ maccatalyst = "14.0"
 ios = "14.0"
 tvos = "14.0"
 visionos = "1.0"
-
-# Needs libdispatch
-class.MPSGraphCompilationDescriptor.methods.dispatchQueue.skipped = true
-class.MPSGraphCompilationDescriptor.methods."setDispatchQueue:".skipped = true

@@ -14,10 +14,3 @@ typedef.CMIOHardwarePlugInRef.skipped = true
 fn.CMIOObjectCreate.skipped = true
 fn.CMIOObjectsPublishedAndDied.skipped = true
 fn.CMIOObjectPropertiesChanged.skipped = true
-
-# Needs dispatch_queue_t from libdispatch
-class.CMIOExtensionProvider.methods."providerWithSource:clientQueue:".skipped = true
-class.CMIOExtensionProvider.methods."initWithSource:clientQueue:".skipped = true
-class.CMIOExtensionProvider.methods.clientQueue.skipped = true
-fn.CMIOObjectAddPropertyListenerBlock.skipped = true
-fn.CMIOObjectRemovePropertyListenerBlock.skipped = true

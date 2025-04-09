@@ -23,6 +23,3 @@ const.kDAReturnNotPrivileged.use-value = true
 const.kDAReturnNotReady.use-value = true
 const.kDAReturnNotWritable.use-value = true
 const.kDAReturnUnsupported.use-value = true
-
-# Needs dispatch_queue_t from libdispatch
-fn.DASessionSetDispatchQueue.skipped = true

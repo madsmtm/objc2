@@ -47,7 +47,3 @@ class.SKUniform.methods."initWithName:floatVector4:".skipped = true
 class.SKUniform.methods."initWithName:floatMatrix2:".skipped = true
 class.SKUniform.methods."initWithName:floatMatrix3:".skipped = true
 class.SKUniform.methods."initWithName:floatMatrix4:".skipped = true
-
-# Needs dispatch_block_t and dispatch_queue_t from libdispatch
-class.SKAction.methods."runBlock:".skipped = true
-class.SKAction.methods."runBlock:queue:".skipped = true

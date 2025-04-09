@@ -9,12 +9,6 @@ tvos = "9.0"
 watchos = "6.0"
 visionos = "1.0"
 
-# Needs `dispatch_source_t`
-fn.CMTimebaseAddTimerDispatchSource.skipped = true
-fn.CMTimebaseRemoveTimerDispatchSource.skipped = true
-fn.CMTimebaseSetTimerDispatchSourceNextFireTime.skipped = true
-fn.CMTimebaseSetTimerDispatchSourceToFireImmediately.skipped = true
-
 # Unknown how to handle the calling convention for arrays
 fn.CMTextFormatDescriptionGetDefaultStyle.skipped = true
 

@@ -18,6 +18,10 @@ workspace = true
 [dependencies]
 bitflags = { version = "2.5.0", default-features = false, optional = true, features = ["std"] }
 block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
+dispatch2 = { path = "../../crates/dispatch2", version = "0.2.0", default-features = false, optional = true, features = [
+    "alloc",
+    "objc2",
+] }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "CFDictionary",
@@ -61,6 +65,7 @@ default = [
     "IOUSBHostStream",
     "bitflags",
     "block2",
+    "dispatch2",
     "objc2-core-foundation",
     "objc2-io-kit",
 ]
@@ -68,6 +73,7 @@ std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
+dispatch2 = ["dep:dispatch2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-io-kit = ["dep:objc2-io-kit"]
 
@@ -77,6 +83,7 @@ IOUSBHostCIDeviceStateMachine = ["objc2-foundation/NSError"]
 IOUSBHostCIEndpointStateMachine = ["objc2-foundation/NSError"]
 IOUSBHostCIPortStateMachine = ["objc2-foundation/NSError"]
 IOUSBHostControllerInterface = [
+    "objc2-foundation/NSData",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",

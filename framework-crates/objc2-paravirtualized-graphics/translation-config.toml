@@ -5,11 +5,6 @@ custom-lib-rs = true
 macos = "11.0"
 maccatalyst = "14.0"
 
-# Needs dispatch_queue_t from libdispatch
-class.PGDisplayDescriptor.methods.queue.skipped = true
-class.PGDisplayDescriptor.methods."setQueue:".skipped = true
-protocol.PGDisplay.methods.queue.skipped = true
-
 # Returns c99 boolean, ill supported as an error return type
 protocol.PGDevice.methods."willResumeWithSuspendState:error:".skipped = true
 

@@ -44,6 +44,7 @@ typedef.AudioUnitScheduleParametersProc.skipped = true
 struct.AudioUnitEvent.skipped = true
 typedef.AudioUnitEvent.skipped = true
 typedef.AUEventListenerBlock.skipped = true
+fn.AUEventListenerCreateWithDispatchQueue.skipped = true
 typedef.AUEventListenerProc.skipped = true
 fn.AUEventListenerCreate.skipped = true
 fn.AUEventListenerAddEventType.skipped = true
@@ -79,13 +80,7 @@ fn.GetNameFromSoundBank.skipped = true
 fn.MusicSequenceLoadSMFWithFlags.skipped = true
 fn.MusicSequenceSaveMIDIFile.skipped = true
 
-# Needs dispatch_queue_t from libdispatch
-fn.AudioQueueNewOutputWithDispatchQueue.skipped = true
-fn.AudioQueueNewInputWithDispatchQueue.skipped = true
-fn.AUListenerCreateWithDispatchQueue.skipped = true
-fn.AUEventListenerCreateWithDispatchQueue.skipped = true
-
-# Needs os_workgroup_t from libdispatch
+# Needs os_workgroup_t
 class.AUAudioUnit.methods.osWorkgroup.skipped = true
 struct.AudioUnitRenderContext.skipped = true
 typedef.AudioUnitRenderContext.skipped = true

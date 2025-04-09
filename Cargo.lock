@@ -642,6 +642,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-av-foundation",
  "objc2-core-foundation",
@@ -663,6 +664,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "libc",
  "objc2",
  "objc2-core-audio",
@@ -712,6 +714,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-avf-audio",
  "objc2-core-foundation",
@@ -776,6 +779,7 @@ name = "objc2-background-tasks"
 version = "0.3.0"
 dependencies = [
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-foundation",
 ]
@@ -813,6 +817,7 @@ name = "objc2-call-kit"
 version = "0.3.0"
 dependencies = [
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-avf-audio",
  "objc2-foundation",
@@ -824,6 +829,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-core-foundation",
  "objc2-foundation",
@@ -947,6 +953,7 @@ name = "objc2-core-audio"
 version = "0.3.0"
 dependencies = [
  "block2",
+ "dispatch2",
  "libc",
  "objc2",
  "objc2-core-audio-types",
@@ -980,6 +987,7 @@ name = "objc2-core-bluetooth"
 version = "0.3.0"
 dependencies = [
  "bitflags",
+ "dispatch2",
  "objc2",
  "objc2-core-foundation",
  "objc2-foundation",
@@ -1002,6 +1010,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "libc",
  "objc2",
 ]
@@ -1012,6 +1021,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "libc",
  "objc2",
  "objc2-core-foundation",
@@ -1049,6 +1059,7 @@ name = "objc2-core-location"
 version = "0.3.0"
 dependencies = [
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-contacts",
  "objc2-foundation",
@@ -1071,6 +1082,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-core-audio",
  "objc2-core-audio-types",
@@ -1084,6 +1096,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "libc",
  "objc2",
  "objc2-core-foundation",
@@ -1133,6 +1146,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-foundation",
 ]
@@ -1143,6 +1157,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "libc",
  "objc2",
  "objc2-core-foundation",
@@ -1248,6 +1263,7 @@ dependencies = [
 name = "objc2-disk-arbitration"
 version = "0.3.0"
 dependencies = [
+ "dispatch2",
  "libc",
  "objc2",
  "objc2-core-foundation",
@@ -1311,6 +1327,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-foundation",
 ]
@@ -1330,6 +1347,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-foundation",
 ]
@@ -1386,6 +1404,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-app-kit",
  "objc2-core-foundation",
@@ -1555,6 +1574,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "libc",
  "objc2",
  "objc2-core-foundation",
@@ -1577,6 +1597,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-core-foundation",
  "objc2-foundation",
@@ -1658,6 +1679,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-app-kit",
  "objc2-contacts",
@@ -1757,6 +1779,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-app-kit",
  "objc2-core-foundation",
@@ -1808,6 +1831,7 @@ name = "objc2-metal-performance-shaders-graph"
 version = "0.3.0"
 dependencies = [
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-foundation",
  "objc2-metal",
@@ -1870,6 +1894,7 @@ dependencies = [
 name = "objc2-nearby-interaction"
 version = "0.3.0"
 dependencies = [
+ "dispatch2",
  "objc2",
  "objc2-ar-kit",
  "objc2-foundation",
@@ -1880,6 +1905,7 @@ name = "objc2-network-extension"
 version = "0.3.0"
 dependencies = [
  "block2",
+ "dispatch2",
  "libc",
  "objc2",
  "objc2-foundation",
@@ -1900,6 +1926,7 @@ dependencies = [
 name = "objc2-open-directory"
 version = "0.3.0"
 dependencies = [
+ "dispatch2",
  "objc2",
  "objc2-core-foundation",
  "objc2-foundation",
@@ -1930,6 +1957,7 @@ name = "objc2-paravirtualized-graphics"
 version = "0.3.0"
 dependencies = [
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-app-kit",
  "objc2-foundation",
@@ -1992,6 +2020,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-app-kit",
  "objc2-av-foundation",
@@ -2036,6 +2065,7 @@ name = "objc2-push-kit"
 version = "0.3.0"
 dependencies = [
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-foundation",
 ]
@@ -2084,6 +2114,7 @@ dependencies = [
 name = "objc2-quick-look"
 version = "0.3.0"
 dependencies = [
+ "dispatch2",
  "objc2",
  "objc2-core-foundation",
  "objc2-core-graphics",
@@ -2155,6 +2186,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-app-kit",
  "objc2-avf-audio",
@@ -2174,6 +2206,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "libc",
  "objc2",
  "objc2-av-foundation",
@@ -2352,6 +2385,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-app-kit",
  "objc2-av-foundation",
@@ -2388,6 +2422,7 @@ name = "objc2-system-configuration"
 version = "0.3.0"
 dependencies = [
  "bitflags",
+ "dispatch2",
  "libc",
  "objc2",
  "objc2-core-foundation",
@@ -2398,6 +2433,7 @@ dependencies = [
 name = "objc2-system-extensions"
 version = "0.3.0"
 dependencies = [
+ "dispatch2",
  "objc2",
  "objc2-foundation",
 ]
@@ -2529,6 +2565,7 @@ version = "0.3.0"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-app-kit",
  "objc2-core-foundation",

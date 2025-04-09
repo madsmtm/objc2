@@ -102,6 +102,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `CFString::as_str_unchecked`.
 * Added a few compatibility aliases to help with migrating from the
   `core-foundation` crate.
+* Added support for using `dispatch2` types in framework crates.
 
 ### Changed
 * Made `CFArray`, `CFBag`, `CFBinaryHeap`, `CFDictionary`, `CFSet` and their

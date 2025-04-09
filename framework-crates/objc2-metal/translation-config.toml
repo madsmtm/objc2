@@ -15,11 +15,6 @@ class.MTLRasterizationRateLayerDescriptor.methods.sampleCount.skipped = true
 # Swift also skips this.
 class.MTLRasterizationRateMapDescriptor.methods."rasterizationRateMapDescriptorWithScreenSize:layerCount:layers:".skipped = true
 
-# Needs dispatch
-class.MTLSharedEventListener.methods."initWithDispatchQueue:".skipped = true
-class.MTLSharedEventListener.methods.dispatchQueue.skipped = true
-protocol.MTLDevice.methods."newLibraryWithData:error:".skipped = true
-
 # Needs mach / kernel types
 protocol.MTLResource.methods."setOwnerWithIdentity:".skipped = true
 
