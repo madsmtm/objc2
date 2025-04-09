@@ -19,6 +19,8 @@ Always feel free to [open an issue on GitHub](https://github.com/madsmtm/objc2/i
 
 If you prefer to have a more synchronous and less "formal" discussion, there is [a Matrix workspace](https://matrix.to/#/#objc2:matrix.org), feel free to ask any questions in the "Users" room.
 
+Also see [`CONTRIBUTING.md`](./CONTRIBUTING.md) if you would like to help out.
+
 
 ## License
 

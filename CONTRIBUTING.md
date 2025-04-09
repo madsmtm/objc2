@@ -14,6 +14,19 @@ If you prefer to have a more synchronous and less "formal" discussion, we have
 discuss implenentation details in the "Developers" room.
 
 
+## Scope
+
+The aim of the project is to map all of Apple's C and Objective-C frameworks,
+in [a manner that is as nice to use as possible][nice-to-use].
+
+Access to Swift-only frameworks or functionality is [out of scope][swift-oos]
+because of complexity, and should be handled in another project (though I'm
+open to adding functionality in `objc2` to facilitate that).
+
+[nice-to-use]: https://github.com/madsmtm/objc2/issues/429
+[swift-oos]: https://github.com/madsmtm/objc2/issues/524
+
+
 ## Windows users
 
 This repository relies heavily on symlinks, so make sure that your system is
@@ -77,18 +90,6 @@ you'll have to rebase more often.
 
 If you're confused about this, don't worry too much about it, if you enable
 "Allow edits by maintainers", we can fix it for you.
-
-
-## Scope
-
-The aim of the project is to map all of Apple's C and Objective-C frameworks,
-in [a manner that is as nice to use as possible][nice-to-use].
-
-Access to Swift-only frameworks or functionality is [out of scope][swift-oos]
-for the time being.
-
-[nice-to-use]: https://github.com/madsmtm/objc2/issues/429
-[swift-oos]: https://github.com/madsmtm/objc2/issues/524
 
 
 ## Licensing
