@@ -53,6 +53,13 @@ pub fn load_config() -> Result<Config, Box<dyn Error + Send + Sync>> {
 
     let path = workspace_dir
         .join("crates")
+        .join("libc2")
+        .join("translation-config.toml");
+    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
+    libraries.insert("Darwin".to_string(), objc);
+
+    let path = workspace_dir
+        .join("crates")
         .join("objc2")
         .join("translation-config.toml");
     let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
@@ -74,7 +81,7 @@ impl Config {
     ) -> Result<Self, Box<dyn Error + Send + Sync>> {
         let configs_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("configs");
 
-        let builtin_files = ["bitflags.toml", "builtin.toml", "core.toml", "libc.toml"];
+        let builtin_files = ["bitflags.toml", "builtin.toml", "core.toml"];
 
         for builtin_file in builtin_files {
             let path = configs_dir.join(builtin_file);

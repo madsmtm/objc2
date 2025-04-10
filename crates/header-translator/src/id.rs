@@ -48,7 +48,7 @@ pub struct Location {
     // __bitflags__
     // __builtin__
     // __core__
-    // __libc__
+    // libc
     module_path: Box<str>,
 }
 
@@ -61,7 +61,10 @@ impl Location {
 
             // Remove "Darwin" prefix for Darwin.block and Darwin.os.
             "Darwin.block" => "block".into(),
-            name if name.starts_with("Darwin.os") => name.strip_prefix("Darwin.").unwrap().into(),
+            // name if name.starts_with("Darwin.os") => name.strip_prefix("Darwin.").unwrap().into(),
+            name if name.starts_with("Darwin.POSIX") => {
+                name.replace("Darwin.POSIX", "Darwin").into()
+            }
 
             // Move os_object to os
             "os_object" => "os.object".into(),
@@ -110,30 +113,30 @@ impl Location {
             name if name.starts_with("simd") => "__core__.simd".into(),
 
             // `libc`
-            name if name.starts_with("sys_types") => "__libc__".into(),
-            name if name.starts_with("Darwin.POSIX") => "__libc__".into(),
-            name if name.starts_with("_signal") => "__libc__".into(),
-            "DarwinFoundation.types.sys_types" => "__libc__".into(),
-            "DarwinFoundation.qos" => "__libc__".into(),
-            "_stdio" => "__libc__".into(),
-            "_time.timespec" => "__libc__".into(),
-            "_fenv" => "__libc__".into(),
-            "Darwin.sys.acl" => "__libc__".into(),
-            "_ctype" => "__libc__".into(),
-            "_errno" => "__libc__".into(),
-            "_locale.locale" => "__libc__".into(),
-            "_setjmp" => "__libc__".into(),
-            "_stdlib" => "__libc__".into(),
-            "_string" => "__libc__".into(),
-            "_time" => "__libc__".into(),
-            "ptrauth" => "__libc__".into(),
-            "Darwin.uuid" => "__libc__".into(),
-            "unistd" => "__libc__".into(),
+            name if name.starts_with("sys_types") => "Darwin".into(),
+            // name if name.starts_with("Darwin.POSIX") => "Darwin".into(),
+            name if name.starts_with("_signal") => "Darwin".into(),
+            // "DarwinFoundation.types.sys_types" => "Darwin".into(),
+            // "DarwinFoundation.qos" => "Darwin".into(),
+            "_stdio" => "Darwin".into(),
+            "_time.timespec" => "Darwin".into(),
+            "_fenv" => "Darwin".into(),
+            // "Darwin.sys.acl" => "Darwin".into(),
+            "_ctype" => "Darwin".into(),
+            "_errno" => "Darwin".into(),
+            "_locale.locale" => "Darwin".into(),
+            "_setjmp" => "Darwin".into(),
+            "_stdlib" => "Darwin".into(),
+            "_string" => "Darwin".into(),
+            "_time" => "Darwin".into(),
+            "ptrauth" => "Darwin".into(),
+            // // "Darwin.uuid" => "Darwin".into(),
+            // // "Darwin.libc" => "Darwin".into(),
+            "unistd" => "Darwin".into(),
 
-            // Will be moved to the `mach2` crate in `libc` v1.0
-            name if name.starts_with("Darwin.Mach") => "__libc__".into(),
-            "_mach_port_t" => "__libc__".into(),
-
+            // // Will be moved to the `mach2` crate in `libc` v1.0
+            // name if name.starts_with("Darwin.Mach") => "Darwin".into(),
+            "_mach_port_t" => "Darwin".into(),
             _ => module_path,
         };
 
@@ -415,7 +418,7 @@ impl ItemIdentifier {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 match self.0.location.library_name() {
                     "__bitflags__" => write!(f, "bitflags::{}", self.0.name),
-                    "__libc__" => write!(f, "libc::{}", self.0.name),
+                    "Darwin" => write!(f, "libc::{}", self.0.name),
                     "block" => write!(f, "block2::{}", self.0.name),
                     _ => write!(f, "{}", self.0.name),
                 }
@@ -531,11 +534,11 @@ pub fn cfg_gate_ln<'a, R: AsRef<ItemTree> + 'a, I: AsRef<ItemTree> + 'a>(
     platform_cfg.implied(config.library(emission_location));
 
     FormatterFn(move |f| {
-        write!(f, "{}", cfg_features_ln(&feature_names))?;
+        // write!(f, "{}", cfg_features_ln(&feature_names))?;
 
-        if let Some(cfg) = platform_cfg.cfgs() {
-            writeln!(f, "#[cfg({cfg})]")?;
-        }
+        // if let Some(cfg) = platform_cfg.cfgs() {
+        //     writeln!(f, "#[cfg({cfg})]")?;
+        // }
 
         Ok(())
     })
@@ -1038,7 +1041,7 @@ impl ItemTree {
             },
             // Rare enough that it's written directly instead of
             // glob-imported, see `ItemIdentifier::path`.
-            "__bitflags__" | "__libc__" | "block" => None,
+            "__bitflags__" | "Darwin" | "block" => None,
             "ObjectiveC" => Some("objc2::__framework_prelude::*".into()),
             // Not currently needed, but might be useful to emit
             // `Some("crate")` here in the future.

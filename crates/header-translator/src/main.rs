@@ -425,7 +425,7 @@ fn get_translation_unit<'i: 'c, 'c>(
     };
 
     let cache_path = format!("-fmodules-cache-path={}", tempdir.to_str().unwrap());
-    let module_name = format!("-fmodule-name={module}");
+    let module_name = format!("-fmodule-name=Darwin");
     let mut arguments = vec![
         "-x",
         "objective-c",

@@ -72,6 +72,7 @@ test-frameworks = [
     "objc2-core-video",
     "objc2-core-wlan",
     "objc2-crypto-token-kit",
+    "libc2",
     "objc2-data-detection",
     "objc2-device-check",
     "objc2-device-discovery-extension",
@@ -373,6 +374,7 @@ objc2-application-services = ["dep:objc2-application-services"]
 objc2-quartz = ["dep:objc2-quartz"]
 objc2-phase = ["dep:objc2-phase"]
 objc2-carbon = ["dep:objc2-carbon"]
+libc2 = ["dep:libc2"]
 
 [dependencies]
 block2 = { path = "../block2" }
@@ -399,6 +401,7 @@ objc2-core-services = { path = "../../framework-crates/objc2-core-services", opt
 objc2-core-text = { path = "../../framework-crates/objc2-core-text", optional = true }
 objc2-core-video = { path = "../../framework-crates/objc2-core-video", optional = true }
 objc2-crypto-token-kit = { path = "../../framework-crates/objc2-crypto-token-kit", optional = true }
+libc2 = { path = "../libc2", optional = true }
 objc2-data-detection = { path = "../../framework-crates/objc2-data-detection", optional = true }
 objc2-device-check = { path = "../../framework-crates/objc2-device-check", optional = true }
 dispatch2 = { path = "../dispatch2", optional = true }

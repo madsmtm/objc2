@@ -187,6 +187,7 @@ impl Expr {
             (EntityKind::CStyleCastExpr, [child]) => Self::parse_from_tokens(child, context),
             (EntityKind::UnexposedExpr, _) => Self::parse_from_tokens(entity, context),
             (EntityKind::CharacterLiteral, []) => Self::parse_from_tokens(entity, context),
+            (EntityKind::InitListExpr, _) => Self::parse_from_tokens(entity, context),
             (_, children) => panic!("unknown expr: {entity:?}, {children:#?}"),
         }
     }

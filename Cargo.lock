@@ -459,6 +459,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "18d287de67fe55fd7e1581fe933d965a5a9477b38e949cfa9f8574ef01506398"
 
 [[package]]
+name = "libc2"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+]
+
+[[package]]
 name = "libfuzzer-sys"
 version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2857,6 +2866,7 @@ dependencies = [
  "block2",
  "dispatch2",
  "libc",
+ "libc2",
  "objc2",
  "objc2-accessibility",
  "objc2-accessory-setup-kit",

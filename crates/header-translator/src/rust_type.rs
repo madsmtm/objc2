@@ -894,7 +894,25 @@ impl Ty {
                     // Fake fields, we'll have to define it ourselves
                     vec![Self::Pointee(PointeeTy::Self_)]
                 } else {
-                    ty.get_fields()
+                    static SEEN: std::sync::Mutex<
+                        Option<std::collections::HashMap<Option<String>, usize>>,
+                    > = std::sync::Mutex::new(None);
+
+                    let mut map = SEEN.lock().unwrap();
+                    let seen = map
+                        .get_or_insert_default()
+                        .entry(id.name.clone())
+                        .or_insert(0);
+                    *seen += 1;
+
+                    if *seen > 10 {
+                        error!("recursive type found: {id:?}");
+                        return Self::Pointee(PointeeTy::Self_);
+                    }
+                    drop(map);
+
+                    let fields = ty
+                        .get_fields()
                         .expect("struct fields")
                         .into_iter()
                         .map(|field| {
@@ -904,7 +922,16 @@ impl Ty {
                                 context,
                             )
                         })
-                        .collect()
+                        .collect();
+
+                    *SEEN
+                        .lock()
+                        .unwrap()
+                        .get_or_insert_default()
+                        .get_mut(&id.name)
+                        .unwrap() -= 1;
+
+                    fields
                 };
 
                 match declaration.get_kind() {

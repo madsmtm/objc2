@@ -1,9 +1,11 @@
-framework = "__libc__"
-crate = "libc"
+framework = "Darwin"
+crate = "libc2"
 required-crates = []
 link = false
-skipped = true
+modulemap = "usr/include/Darwin.modulemap"
 is-library = true
+
+module.Mach.skipped = true
 
 # Available everywhere
 macos = "10.0"
@@ -16,3 +18,8 @@ gnustep = true
 
 # HACK: Define `task_port_t` in the using crate (it's a simple alias to `task_t`).
 external.task_port_t.module = "__builtin__"
+
+# Definition fails formatting
+static.NDR_record.skipped = true
+fn.box.skipped = true
+fn.move.skipped = true

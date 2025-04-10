@@ -1515,6 +1515,10 @@ impl Stmt {
                     return vec![];
                 }
 
+                if id.name == "NDR_record" {
+                    return vec![];
+                }
+
                 let availability = Availability::parse(entity, context);
                 let ty = entity.get_type().expect("var type");
                 let ty = Ty::parse_static(ty, context);
