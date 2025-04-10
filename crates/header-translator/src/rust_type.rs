@@ -2342,7 +2342,10 @@ impl Ty {
             } if pointee.is_object_like() => {
                 write!(f, "{}", pointee.behind_pointer())
             }
-            Self::IncompleteArray { .. } => unimplemented!("incomplete array in typedef"),
+            Self::IncompleteArray { .. } => {
+                error!("incomplete array in typedef");
+                write!(f, "{}", self.behind_pointer())
+            }
             // We mark `typedefs` as-if behind a pointer, as even though
             // typedefs are _usually_ to a pointer of the type (handled
             // above), we sometimes have typedefs to the inner type as well.

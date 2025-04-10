@@ -1285,7 +1285,7 @@ impl Stmt {
                     }
                     EntityKind::FieldDecl => {
                         drop(span);
-                        let name = entity.get_name().expect("struct/union field name");
+                        let name = entity.get_name().unwrap_or_else(|| "__unknown__".into());
                         let _span = debug_span!("field", name).entered();
 
                         let ty = entity.get_type().expect("struct/union field type");
@@ -1553,7 +1553,7 @@ impl Stmt {
                             error!(?value, ?entity, "got variable value twice");
                         }
                     }
-                    _ => panic!("unknown vardecl child in {id:?}: {entity:?}"),
+                    _ => error!(?id, ?entity, "unknown vardecl child"),
                 });
 
                 vec![Self::VarDecl {

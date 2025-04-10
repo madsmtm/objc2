@@ -291,9 +291,7 @@ impl<N: ToOptionString> ItemIdentifier<N> {
     pub fn with_name(name: N, entity: &Entity<'_>, _context: &Context<'_>) -> Self {
         let file = entity
             .get_location()
-            .unwrap_or_else(|| panic!("no entity location: {entity:?}"))
-            .get_expansion_location()
-            .file;
+            .and_then(|loc| loc.get_expansion_location().file);
 
         let mut location = if let Some(file) = file {
             Location::from_file(file)
