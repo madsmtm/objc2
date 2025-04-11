@@ -418,7 +418,7 @@ impl ItemIdentifier {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 match self.0.location.library_name() {
                     "__bitflags__" => write!(f, "bitflags::{}", self.0.name),
-                    "Darwin" => write!(f, "libc::{}", self.0.name),
+                    // "Darwin" => write!(f, "libc::{}", self.0.name),
                     "block" => write!(f, "block2::{}", self.0.name),
                     _ => write!(f, "{}", self.0.name),
                 }
