@@ -2033,7 +2033,7 @@ impl Stmt {
                 .iter()
                 .flat_map(|method| method.required_items())
                 .collect(),
-            Self::RecordDecl { .. } => vec![ItemTree::objc("Encoding")],
+            Self::RecordDecl { .. } => vec![],
             Self::EnumDecl { kind, variants, .. } => {
                 let mut items: Vec<_> = variants
                     .iter()
@@ -2042,14 +2042,14 @@ impl Stmt {
                 if let Some(UnexposedAttr::Options) = kind {
                     items.push(ItemTree::bitflags());
                 }
-                items.push(ItemTree::objc("Encoding"));
+                // items.push(ItemTree::objc("Encoding"));
                 items
             }
             Self::OpaqueDecl { is_cf, .. } => {
                 if *is_cf {
                     vec![ItemTree::cf("cf_type"), ItemTree::objc("cf_objc2_type")]
                 } else {
-                    vec![ItemTree::objc("Encoding")]
+                    vec![]
                 }
             }
             _ => vec![],
@@ -2613,10 +2613,10 @@ impl Stmt {
                     });
 
                     // SAFETY: The struct/union is marked `#[repr(C)]`.
-                    write!(f, "{cfg_encoding}")?;
-                    writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
-                    write!(f, "{cfg_encoding}")?;
-                    writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
+                    // write!(f, "{cfg_encoding}")?;
+                    // writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
+                    // write!(f, "{cfg_encoding}")?;
+                    // writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
 
                     if let Some(true) = sendable {
                         writeln!(f)?;
@@ -2784,10 +2784,10 @@ impl Stmt {
                     // SAFETY: The enum is either a `#[repr(transparent)]` newtype
                     // over the type, or a `#[repr(REPR)]`, where REPR is a valid
                     // repr with the same size and alignment as the type.
-                    write!(f, "{cfg_encoding}")?;
-                    writeln!(f, "{}", unsafe_impl_encode(&id.name, ty.enum_encoding()))?;
-                    write!(f, "{cfg_encoding}")?;
-                    writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
+                    // write!(f, "{cfg_encoding}")?;
+                    // writeln!(f, "{}", unsafe_impl_encode(&id.name, ty.enum_encoding()))?;
+                    // write!(f, "{cfg_encoding}")?;
+                    // writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
 
                     if let Some(true) = sendable {
                         writeln!(f)?;
