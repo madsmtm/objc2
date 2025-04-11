@@ -67,20 +67,20 @@ impl Documentation {
             // methods, and possibly some renamed classes and traits.
             //
             // Additionally, the link may redirect.
-            if let Some(id) = doc_id {
-                if s.is_empty() {
-                    write!(f, "/// ")?;
-                } else {
-                    writeln!(f, "///")?;
-                    write!(f, "/// See also ")?;
-                }
-                writeln!(
-                    f,
-                    "[Apple's documentation](https://developer.apple.com/documentation/{}/{}?language=objc)",
-                    id.library_name().to_lowercase(),
-                    id.name.to_lowercase()
-                )?;
-            }
+            // if let Some(id) = doc_id {
+            //     if s.is_empty() {
+            //         write!(f, "/// ")?;
+            //     } else {
+            //         writeln!(f, "///")?;
+            //         write!(f, "/// See also ")?;
+            //     }
+            //     writeln!(
+            //         f,
+            //         "[Apple's documentation](https://developer.apple.com/documentation/{}/{}?language=objc)",
+            //         id.library_name().to_lowercase(),
+            //         id.name.to_lowercase()
+            //     )?;
+            // }
 
             Ok(())
         })
