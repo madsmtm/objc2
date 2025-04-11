@@ -190,7 +190,7 @@ macro_rules! __cf_type_objc2 {
     (impl ($($generics:tt)*) $ty:ty;) => {};
     (impl ($($generics:tt)*) $ty:ty; $encoding:literal) => {
         $crate::__cf_macro_helpers::cf_objc2_type!(
-            unsafe impl $($generics)* for RefEncode<$encoding> $ty {}
+            unsafe impl $($generics)* RefEncode<$encoding> for $ty {}
         );
     };
 }
@@ -200,4 +200,16 @@ macro_rules! __cf_type_objc2 {
 #[macro_export]
 macro_rules! __cf_type_objc2 {
     ($($t:tt)*) => {};
+}
+
+#[cfg(test)]
+mod tests {
+    #[allow(dead_code)]
+    struct TISInputSource {}
+
+    // Test old syntax still works (used by dependencies).
+    cf_type!(
+        #[encoding_name = "__TISInputSource"]
+        unsafe impl TISInputSource {}
+    );
 }
