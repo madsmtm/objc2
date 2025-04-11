@@ -444,7 +444,7 @@ fn get_translation_unit<'i: 'c, 'c>(
         // See: https://clang.llvm.org/docs/UsersManual.html#comment-parsing-options
         "-fretain-comments-from-system-headers",
         // Tell Clang to parse non-doc comments too.
-        // "-fparse-all-comments",
+        "-fparse-all-comments",
         // Explicitly pass the sysroot (we aren't invoked through
         // `/usr/bin/clang` which is what usually passes it).
         "-isysroot",
