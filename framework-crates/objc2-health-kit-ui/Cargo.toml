@@ -22,13 +22,11 @@ objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", 
     "objc2",
 ] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
-objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.3.0", default-features = false }
-
-[target.'cfg(not(target_os = "tvos"))'.dependencies]
 objc2-health-kit = { path = "../objc2-health-kit", version = "0.3.0", default-features = false, optional = true, features = [
     "HKActivitySummary",
     "HKHealthStore",
 ] }
+objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.3.0", default-features = false }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
 objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.3.0", default-features = false, optional = true, features = ["CALayer"] }
@@ -39,7 +37,6 @@ rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-ios",
     "x86_64-apple-ios",
-    "aarch64-apple-tvos",
     "aarch64-apple-watchos",
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",

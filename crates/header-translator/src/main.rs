@@ -610,12 +610,20 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
             .as_ref()
             .is_some_and(|v| VersionReq::parse("<=10.12").unwrap().matches(v))
             && !uses_avf_audio(lib)
+            // HACK: PDFKit requires linking Quartz on older systems.
+            && !["objc2-pdf-kit"].contains(&&*lib.krate)
+            // HACK: iTunesLibrary has a different install name on older systems.
+            && !["objc2-itunes-library"].contains(&&*lib.krate)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_MACOS_10_13", |lib| {
         lib.macos
             .as_ref()
             .is_some_and(|v| VersionReq::parse("<=10.13").unwrap().matches(v))
             && !uses_avf_audio(lib)
+            // HACK: PDFKit requires linking Quartz on older systems.
+            && !["objc2-pdf-kit"].contains(&&*lib.krate)
+            // HACK: iTunesLibrary has a different install name on older systems.
+            && !["objc2-itunes-library"].contains(&&*lib.krate)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_MACOS_11", |lib| {
         lib.macos
@@ -653,8 +661,8 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
             .is_some_and(|v| VersionReq::parse("<=17.0").unwrap().matches(v))
             // HACK: MLCompute and MetalFX are only available on Aarch64
             && !["objc2-ml-compute", "objc2-metal-fx"].contains(&&*lib.krate)
-            // HACK: Cinematic isn't available in the simulator.
-            && !["objc2-cinematic"].contains(&&*lib.krate)
+            // HACK: Cinematic, MediaSetup, etc. aren't available in the simulator.
+            && !["objc2-cinematic", "objc2-media-setup", "objc2-thread-network"].contains(&&*lib.krate)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_TVOS_17", |lib| {
         lib.tvos

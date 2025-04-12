@@ -32,7 +32,6 @@ rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
     "aarch64-apple-ios",
     "x86_64-apple-ios",
-    "aarch64-apple-ios-macabi",
 ]
 
 [features]

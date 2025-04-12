@@ -407,7 +407,6 @@ objc2-foundation = { path = "../../framework-crates/objc2-foundation", optional 
 objc2-game-kit = { path = "../../framework-crates/objc2-game-kit", optional = true }
 objc2-image-io = { path = "../../framework-crates/objc2-image-io", optional = true }
 objc2-intents = { path = "../../framework-crates/objc2-intents", optional = true }
-objc2-intents-ui = { path = "../../framework-crates/objc2-intents-ui", optional = true }
 objc2-map-kit = { path = "../../framework-crates/objc2-map-kit", optional = true }
 objc2-media-player = { path = "../../framework-crates/objc2-media-player", optional = true }
 objc2-natural-language = { path = "../../framework-crates/objc2-natural-language", optional = true }
@@ -529,6 +528,7 @@ objc2-external-accessory = { path = "../../framework-crates/objc2-external-acces
 objc2-game-controller = { path = "../../framework-crates/objc2-game-controller", optional = true }
 objc2-gameplay-kit = { path = "../../framework-crates/objc2-gameplay-kit", optional = true }
 objc2-io-surface = { path = "../../framework-crates/objc2-io-surface", optional = true }
+objc2-intents-ui = { path = "../../framework-crates/objc2-intents-ui", optional = true }
 objc2-javascript-core = { path = "../../framework-crates/objc2-javascript-core", optional = true }
 objc2-link-presentation = { path = "../../framework-crates/objc2-link-presentation", optional = true }
 objc2-media-accessibility = { path = "../../framework-crates/objc2-media-accessibility", optional = true }
@@ -571,8 +571,11 @@ objc2-core-location-ui = { path = "../../framework-crates/objc2-core-location-ui
 [target.'cfg(target_os = "visionos")'.dependencies]
 objc2-compositor-services = { path = "../../framework-crates/objc2-compositor-services", optional = true }
 
-[target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos"))'.dependencies]
+[target.'cfg(any(target_os = "ios", target_os = "watchos", target_os = "visionos"))'.dependencies]
 objc2-health-kit-ui = { path = "../../framework-crates/objc2-health-kit-ui", optional = true }
+objc2-watch-connectivity = { path = "../../framework-crates/objc2-watch-connectivity", optional = true }
+
+[target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos"))'.dependencies]
 objc2-home-kit = { path = "../../framework-crates/objc2-home-kit", optional = true }
 objc2-ui-kit = { path = "../../framework-crates/objc2-ui-kit", optional = true }
 
@@ -584,9 +587,6 @@ objc2-safety-kit = { path = "../../framework-crates/objc2-safety-kit", optional 
 objc2-tv-ml-kit = { path = "../../framework-crates/objc2-tv-ml-kit", optional = true }
 objc2-tv-services = { path = "../../framework-crates/objc2-tv-services", optional = true }
 objc2-tv-ui-kit = { path = "../../framework-crates/objc2-tv-ui-kit", optional = true }
-
-[target.'cfg(any(target_os = "ios", target_os = "watchos", target_os = "visionos"))'.dependencies]
-objc2-watch-connectivity = { path = "../../framework-crates/objc2-watch-connectivity", optional = true }
 
 [target.'cfg(target_os = "watchos")'.dependencies]
 objc2-watch-kit = { path = "../../framework-crates/objc2-watch-kit", optional = true }

@@ -3,6 +3,6 @@ crate = "objc2-health-kit-ui"
 required-crates = ["objc2", "objc2-foundation", "objc2-ui-kit"]
 maccatalyst = "17.0"
 ios = "8.0"
-tvos = "10.0"
+# tvos = "10.0" # Not actually available on tvOS
 watchos = "2.0"
 visionos = "1.0"
