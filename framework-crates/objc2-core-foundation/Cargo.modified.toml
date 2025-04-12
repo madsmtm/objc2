@@ -1,3 +1,6 @@
 [features]
 # Uses the nightly derive_coerce_pointee feature to make conversions more ergonomic.
 unstable-coerce-pointee = []
+
+[dev-dependencies]
+static_assertions = "1.1.0"

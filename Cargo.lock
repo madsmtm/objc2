@@ -1013,6 +1013,7 @@ dependencies = [
  "dispatch2",
  "libc",
  "objc2",
+ "static_assertions",
 ]
 
 [[package]]
@@ -1194,6 +1195,7 @@ dependencies = [
  "objc2",
  "objc2-core-foundation",
  "objc2-core-graphics",
+ "static_assertions",
 ]
 
 [[package]]

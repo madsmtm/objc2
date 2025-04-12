@@ -44,6 +44,7 @@ mod opaque;
 mod retained;
 #[cfg(feature = "CFString")]
 mod string;
+mod thread_safety;
 #[cfg(feature = "CFTimeZone")]
 mod timezone;
 mod type_traits;

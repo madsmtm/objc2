@@ -150,3 +150,6 @@ CFUserNotification = []
 CFUtilities = []
 CFXMLNode = []
 CFXMLParser = ["bitflags"]
+
+[dev-dependencies]
+static_assertions = "1.1.0"

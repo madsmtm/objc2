@@ -138,7 +138,7 @@ fn.CFGetAllocator.unsafe = false
 # CFBundle
 fn.CFBundleGetMainBundle.unsafe = false
 fn.CFBundleGetBundleWithIdentifier.unsafe = false
-fn.CFBundleGetAllBundles.unsafe = false
+fn.CFBundleGetAllBundles.unsafe = true # Not thread-safe
 fn.CFBundleCreate.unsafe = false
 fn.CFBundleCreateBundlesFromDirectory.unsafe = false
 fn.CFBundleCopyBundleURL.unsafe = false

@@ -174,3 +174,6 @@ CTTypesetter = [
 ]
 SFNTLayoutTypes = []
 SFNTTypes = []
+
+[dev-dependencies]
+static_assertions = "1.1.0"
