@@ -74,21 +74,16 @@ objc2-core-text = ["dep:objc2-core-text"]
 objc2-foundation = ["dep:objc2-foundation"]
 objc2-io-surface = ["dep:objc2-io-surface"]
 
-MAAudibleMedia = [
-    "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
-]
+MAAudibleMedia = ["objc2-core-foundation/CFArray"]
 MACaptionAppearance = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
 ]
 MADefinitions = []
 MAFlashingLightsProcessing = ["objc2-core-foundation/CFDate"]
 MAImageCaptioning = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFError",
     "objc2-core-foundation/CFURL",
 ]
 MAMusicHaptics = []
-MAVideoAccommodations = ["objc2-core-foundation/CFBase"]
+MAVideoAccommodations = []

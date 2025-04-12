@@ -137,66 +137,54 @@ objc2 = [
 AuthSession = ["bitflags"]
 Authorization = ["bitflags"]
 AuthorizationDB = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFBundle",
     "objc2-core-foundation/CFDictionary",
 ]
 AuthorizationPlugin = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
 ]
 AuthorizationTags = []
 CMSDecoder = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDate",
 ]
 CMSEncoder = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDate",
 ]
-CSCommon = [
-    "bitflags",
-    "objc2-core-foundation/CFBase",
-]
+CSCommon = ["bitflags"]
 CipherSuite = []
 CodeSigning = []
 SecACL = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
 ]
 SecAccess = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFError",
 ]
 SecAccessControl = [
     "bitflags",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFError",
 ]
 SecAsn1Coder = []
 SecAsn1Templates = []
 SecAsn1Types = []
-SecBase = ["objc2-core-foundation/CFBase"]
+SecBase = []
 SecCertificate = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDate",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
 ]
-SecCertificateOIDs = ["objc2-core-foundation/CFBase"]
+SecCertificateOIDs = []
 SecCode = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
@@ -206,45 +194,22 @@ SecCodeHost = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
 ]
-SecCustomTransform = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFError",
-]
-SecDecodeTransform = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFError",
-]
-SecDigestTransform = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFError",
-]
-SecEncodeTransform = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFError",
-]
-SecEncryptTransform = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFError",
-]
-SecIdentity = [
-    "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
-]
-SecIdentitySearch = ["objc2-core-foundation/CFBase"]
+SecCustomTransform = ["objc2-core-foundation/CFError"]
+SecDecodeTransform = ["objc2-core-foundation/CFError"]
+SecDigestTransform = ["objc2-core-foundation/CFError"]
+SecEncodeTransform = ["objc2-core-foundation/CFError"]
+SecEncryptTransform = ["objc2-core-foundation/CFError"]
+SecIdentity = ["objc2-core-foundation/CFArray"]
+SecIdentitySearch = []
 SecImportExport = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
 ]
-SecItem = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDictionary",
-]
+SecItem = ["objc2-core-foundation/CFDictionary"]
 SecKey = [
     "bitflags",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
@@ -252,18 +217,11 @@ SecKey = [
 SecKeychain = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
 ]
-SecKeychainItem = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFData",
-]
-SecKeychainSearch = ["objc2-core-foundation/CFBase"]
-SecPolicy = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDictionary",
-]
-SecPolicySearch = ["objc2-core-foundation/CFBase"]
+SecKeychainItem = ["objc2-core-foundation/CFData"]
+SecKeychainSearch = []
+SecPolicy = ["objc2-core-foundation/CFDictionary"]
+SecPolicySearch = []
 SecProtocolMetadata = []
 SecProtocolObject = []
 SecProtocolOptions = []
@@ -271,45 +229,35 @@ SecProtocolTypes = ["objc2-core-foundation/CFArray"]
 SecRandom = []
 SecReadTransform = []
 SecRequirement = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFError",
 ]
 SecSharedCredential = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFError",
 ]
 SecSignVerifyTransform = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFError",
 ]
 SecStaticCode = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
     "objc2-core-foundation/CFURL",
 ]
 SecTask = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
 ]
 SecTransform = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
 ]
-SecTransformReadTransform = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFStream",
-]
+SecTransformReadTransform = ["objc2-core-foundation/CFStream"]
 SecTrust = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDate",
     "objc2-core-foundation/CFDictionary",
@@ -318,24 +266,18 @@ SecTrust = [
 SecTrustSettings = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDate",
 ]
-SecTrustedApplication = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFData",
-]
+SecTrustedApplication = ["objc2-core-foundation/CFData"]
 SecureDownload = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDate",
     "objc2-core-foundation/CFURL",
 ]
 SecureTransport = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
 ]
 certextensions = []

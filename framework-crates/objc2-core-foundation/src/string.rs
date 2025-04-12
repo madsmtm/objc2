@@ -1,4 +1,3 @@
-#![cfg(feature = "CFBase")]
 use core::cmp::Ordering;
 use core::ffi::{c_char, CStr};
 use core::fmt::Write;

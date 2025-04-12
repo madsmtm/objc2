@@ -1,6 +1,5 @@
 //! Thread-safety.
 
-#[allow(unused_imports)]
 use crate::*;
 
 // SAFETY: CFBundle is immutable, and can be retrieved from any thread.
@@ -56,9 +55,7 @@ unsafe impl Send for CFLocale {}
 unsafe impl Sync for CFLocale {}
 
 // SAFETY: NSNull is thread-safe, and this is toll-free bridged to that.
-#[cfg(feature = "CFBase")]
 unsafe impl Send for CFNull {}
-#[cfg(feature = "CFBase")]
 unsafe impl Sync for CFNull {}
 
 // SAFETY: NSTimeZone is thread-safe, and this is toll-free bridged to that.
@@ -73,7 +70,7 @@ unsafe impl Send for CFURL {}
 #[cfg(feature = "CFURL")]
 unsafe impl Sync for CFURL {}
 
-#[allow(unused_imports, unused_macros)]
+#[allow(unused_macros)]
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -97,13 +94,11 @@ mod tests {
     fn base() {
         // CFType can hold thread-unsafe objects.
         // Just like AnyObject and NSObject aren't thread-safe.
-        #[cfg(feature = "CFBase")]
         not_thread_safe!(CFType, CFPropertyList);
 
         // Only the built-ins are thread-safe, other allocators aren't
         // guaranteed to be. Usually fine though, since they're placed in
         // statics anyhow, and can thus already be accessed from all threads.
-        #[cfg(feature = "CFBase")]
         not_thread_safe!(CFAllocator);
     }
 
@@ -162,7 +157,7 @@ mod tests {
         not_thread_safe!(CFRunLoopTimer);
         #[cfg(feature = "CFSet")]
         not_thread_safe!(CFSet<u32>, CFMutableSet<u32>);
-        #[cfg(all(feature = "CFBase", feature = "CFString"))]
+        #[cfg(feature = "CFString")]
         not_thread_safe!(CFString, CFMutableString);
         #[cfg(feature = "CFStream")]
         not_thread_safe!(CFReadStream, CFWriteStream);
@@ -191,7 +186,6 @@ mod tests {
         thread_safe!(CFError);
         #[cfg(feature = "CFLocale")]
         thread_safe!(CFLocale);
-        #[cfg(feature = "CFBase")]
         thread_safe!(CFNull);
         #[cfg(feature = "CFDate")]
         thread_safe!(CFTimeZone);

@@ -58,43 +58,34 @@ objc2 = [
 ]
 
 CFFTPStream = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFStream",
     "objc2-core-foundation/CFURL",
 ]
 CFHTTPAuthentication = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFStream",
 ]
 CFHTTPMessage = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
 ]
-CFHTTPStream = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFStream",
-]
+CFHTTPStream = ["objc2-core-foundation/CFStream"]
 CFHost = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFRunLoop",
     "objc2-core-foundation/CFStream",
 ]
 CFNetDiagnostics = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFStream",
     "objc2-core-foundation/CFURL",
 ]
 CFNetServices = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDate",
     "objc2-core-foundation/CFDictionary",
@@ -102,17 +93,13 @@ CFNetServices = [
     "objc2-core-foundation/CFStream",
 ]
 CFNetworkDefs = []
-CFNetworkErrors = ["objc2-core-foundation/CFBase"]
+CFNetworkErrors = []
 CFProxySupport = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
     "objc2-core-foundation/CFRunLoop",
     "objc2-core-foundation/CFStream",
     "objc2-core-foundation/CFURL",
 ]
-CFSocketStream = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFStream",
-]
+CFSocketStream = ["objc2-core-foundation/CFStream"]

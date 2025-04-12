@@ -107,30 +107,25 @@ AXActionConstants = []
 AXAttributeConstants = ["bitflags"]
 AXConstants = []
 AXError = []
-AXNotificationConstants = ["objc2-core-foundation/CFBase"]
+AXNotificationConstants = []
 AXRoleConstants = []
-AXTextAttributedString = ["objc2-core-foundation/CFBase"]
+AXTextAttributedString = []
 AXUIElement = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFRunLoop",
 ]
-AXValue = ["objc2-core-foundation/CFBase"]
+AXValue = []
 AXValueConstants = []
 Accessibility = []
 HIServices = []
-HIShape = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFCGTypes",
-]
+HIShape = ["objc2-core-foundation/CFCGTypes"]
 Icons = ["objc2-core-foundation/CFCGTypes"]
 InternetConfig = []
 PDEPluginInterface = []
 PMCore = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
@@ -143,18 +138,13 @@ PMPrintingDialogExtensions = []
 Pasteboard = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFURL",
 ]
 PrintCore = []
-Processes = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDictionary",
-]
+Processes = ["objc2-core-foundation/CFDictionary"]
 TranslationServices = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",

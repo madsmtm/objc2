@@ -30,7 +30,6 @@ objc2-core-data = { path = "../objc2-core-data", version = "0.3.0", default-feat
     "NSManagedObjectModel",
 ] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
-    "CFBase",
     "CFCGTypes",
     "CFDate",
     "objc2",

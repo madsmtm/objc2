@@ -93,53 +93,36 @@ objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-video = ["dep:objc2-core-video"]
 
 VTBase = []
-VTCompressionProperties = ["objc2-core-foundation/CFBase"]
+VTCompressionProperties = []
 VTCompressionSession = [
     "bitflags",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
 ]
-VTDecompressionProperties = ["objc2-core-foundation/CFBase"]
-VTDecompressionSession = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDictionary",
-]
+VTDecompressionProperties = []
+VTDecompressionSession = ["objc2-core-foundation/CFDictionary"]
 VTErrors = ["bitflags"]
 VTFrameSilo = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
 ]
-VTHDRPerFrameMetadataGenerationSession = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDictionary",
-]
+VTHDRPerFrameMetadataGenerationSession = ["objc2-core-foundation/CFDictionary"]
 VTMultiPassStorage = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
 ]
-VTPixelRotationProperties = ["objc2-core-foundation/CFBase"]
-VTPixelRotationSession = ["objc2-core-foundation/CFBase"]
-VTPixelTransferProperties = ["objc2-core-foundation/CFBase"]
-VTPixelTransferSession = ["objc2-core-foundation/CFBase"]
+VTPixelRotationProperties = []
+VTPixelRotationSession = []
+VTPixelTransferProperties = []
+VTPixelTransferSession = []
 VTProfessionalVideoWorkflow = []
-VTRAWProcessingProperties = ["objc2-core-foundation/CFBase"]
+VTRAWProcessingProperties = []
 VTRAWProcessingSession = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
 ]
-VTSession = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDictionary",
-]
-VTUtilities = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDictionary",
-]
+VTSession = ["objc2-core-foundation/CFDictionary"]
+VTUtilities = ["objc2-core-foundation/CFDictionary"]
 VTVideoEncoderList = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
 ]

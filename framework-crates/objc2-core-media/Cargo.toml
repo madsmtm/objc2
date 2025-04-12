@@ -92,64 +92,38 @@ objc2-core-audio = ["dep:objc2-core-audio"]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-video = ["dep:objc2-core-video"]
 
-CMAttachment = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDictionary",
-]
-CMAudioClock = ["objc2-core-foundation/CFBase"]
-CMAudioDeviceClock = ["objc2-core-foundation/CFBase"]
-CMBase = ["objc2-core-foundation/CFBase"]
-CMBlockBuffer = ["objc2-core-foundation/CFBase"]
-CMBufferQueue = ["objc2-core-foundation/CFBase"]
+CMAttachment = ["objc2-core-foundation/CFDictionary"]
+CMAudioClock = []
+CMAudioDeviceClock = []
+CMBase = []
+CMBlockBuffer = []
+CMBufferQueue = []
 CMFormatDescription = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
 ]
-CMFormatDescriptionBridge = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFString",
-]
-CMMemoryPool = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDictionary",
-]
+CMFormatDescriptionBridge = ["objc2-core-foundation/CFString"]
+CMMemoryPool = ["objc2-core-foundation/CFDictionary"]
 CMMetadata = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
 ]
-CMSampleBuffer = [
-    "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
-]
-CMSimpleQueue = ["objc2-core-foundation/CFBase"]
-CMSync = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFRunLoop",
-]
+CMSampleBuffer = ["objc2-core-foundation/CFArray"]
+CMSimpleQueue = []
+CMSync = ["objc2-core-foundation/CFRunLoop"]
 CMTag = [
     "bitflags",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
 ]
 CMTagCollection = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
 ]
-CMTaggedBufferGroup = [
-    "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
-]
-CMTextMarkup = ["objc2-core-foundation/CFBase"]
+CMTaggedBufferGroup = ["objc2-core-foundation/CFArray"]
+CMTextMarkup = []
 CMTime = [
     "bitflags",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
 ]
-CMTimeRange = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDictionary",
-]
+CMTimeRange = ["objc2-core-foundation/CFDictionary"]

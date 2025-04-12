@@ -115,6 +115,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   mutable counterparts generic. Most signatures won't use the generic version,
   but making these generic allows for higher-level abstractions and more
   ergonomic usage.
+* The `CFBase` feature is now always enabled.
 
 ### Fixed
 * **BREAKING**: Fixed the type of `AuthorizationExecuteWithPrivileges`'s

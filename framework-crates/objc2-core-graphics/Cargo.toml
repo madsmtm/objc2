@@ -118,44 +118,36 @@ CGAffineTransform = ["objc2-core-foundation/CFCGTypes"]
 CGBase = []
 CGBitmapContext = []
 CGColor = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
 ]
 CGColorConversionInfo = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
 ]
 CGColorSpace = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFData",
 ]
 CGContext = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
 ]
 CGConvertColorDataWithFormat = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
 ]
 CGDataConsumer = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFURL",
 ]
 CGDataProvider = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFURL",
 ]
 CGDirectDisplay = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
 ]
@@ -168,35 +160,26 @@ CGDisplayConfiguration = [
 ]
 CGDisplayFade = []
 CGDisplayStream = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFRunLoop",
 ]
-CGEXRToneMappingGamma = ["objc2-core-foundation/CFBase"]
+CGEXRToneMappingGamma = []
 CGError = []
 CGEvent = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFMachPort",
 ]
-CGEventSource = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDate",
-]
+CGEventSource = ["objc2-core-foundation/CFDate"]
 CGEventTypes = ["bitflags"]
 CGFont = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
 ]
-CGFunction = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFCGTypes",
-]
+CGFunction = ["objc2-core-foundation/CFCGTypes"]
 CGGeometry = [
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
@@ -204,24 +187,20 @@ CGGeometry = [
 CGGradient = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
 ]
-CGITUToneMapping = ["objc2-core-foundation/CFBase"]
+CGITUToneMapping = []
 CGImage = [
     "bitflags",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
 ]
 CGLayer = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
 ]
 CGPDFArray = ["objc2-core-foundation/CFCGTypes"]
 CGPDFContentStream = ["objc2-core-foundation/CFArray"]
 CGPDFContext = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
@@ -230,36 +209,22 @@ CGPDFContext = [
 CGPDFDictionary = ["objc2-core-foundation/CFCGTypes"]
 CGPDFDocument = [
     "bitflags",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
 ]
 CGPDFObject = ["objc2-core-foundation/CFCGTypes"]
 CGPDFOperatorTable = []
-CGPDFPage = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFCGTypes",
-]
+CGPDFPage = ["objc2-core-foundation/CFCGTypes"]
 CGPDFScanner = ["objc2-core-foundation/CFCGTypes"]
 CGPDFStream = ["objc2-core-foundation/CFData"]
-CGPDFString = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDate",
-]
-CGPSConverter = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDictionary",
-]
+CGPDFString = ["objc2-core-foundation/CFDate"]
+CGPSConverter = ["objc2-core-foundation/CFDictionary"]
 CGPath = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
 ]
-CGPattern = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFCGTypes",
-]
+CGPattern = ["objc2-core-foundation/CFCGTypes"]
 CGRemoteOperation = [
     "bitflags",
     "objc2-core-foundation/CFCGTypes",
@@ -267,15 +232,11 @@ CGRemoteOperation = [
     "objc2-core-foundation/CFMachPort",
 ]
 CGSession = ["objc2-core-foundation/CFDictionary"]
-CGShading = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFCGTypes",
-]
+CGShading = ["objc2-core-foundation/CFCGTypes"]
 CGToneMapping = []
 CGWindow = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
 ]
 CGWindowLevel = []

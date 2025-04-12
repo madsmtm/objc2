@@ -20,7 +20,6 @@ extern crate std;
 pub mod __cf_macro_helpers;
 #[cfg(feature = "CFArray")]
 mod array;
-#[cfg(feature = "CFBase")]
 mod base;
 #[cfg(feature = "CFBundle")]
 mod bundle;
@@ -48,14 +47,13 @@ mod thread_safety;
 #[cfg(feature = "CFTimeZone")]
 mod timezone;
 mod type_traits;
-#[cfg(all(feature = "CFBase", feature = "CFUserNotification"))]
+#[cfg(feature = "CFUserNotification")]
 mod user_notification;
 #[cfg(feature = "CFUUID")]
 mod uuid;
 
-#[cfg(all(feature = "CFBase", feature = "CFArray"))]
+#[cfg(feature = "CFArray")]
 pub use self::array::*;
-#[cfg(feature = "CFBase")]
 pub use self::base::*;
 #[cfg(feature = "CFBundle")]
 pub use self::bundle::CFBundleRefNum;
@@ -65,7 +63,7 @@ pub use self::generated::*;
 pub use self::geometry::*;
 pub use self::retained::CFRetained;
 pub use self::type_traits::{ConcreteType, Type};
-#[cfg(all(feature = "CFBase", feature = "CFUserNotification"))]
+#[cfg(feature = "CFUserNotification")]
 pub use self::user_notification::*;
 
 // This is not exposed publicly, so the only way to use this in types with

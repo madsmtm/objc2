@@ -73,5 +73,5 @@ objc2-foundation = ["dep:objc2-foundation"]
 
 AudioHardware = ["objc2-core-foundation/CFDictionary"]
 AudioHardwareDeprecated = ["objc2-core-foundation/CFRunLoop"]
-AudioServerPlugIn = ["objc2-core-foundation/CFBase"]
+AudioServerPlugIn = []
 HostTime = []

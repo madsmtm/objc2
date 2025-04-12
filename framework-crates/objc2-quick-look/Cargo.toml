@@ -63,7 +63,6 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 QLBase = []
 QLGenerator = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFBundle",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFData",
@@ -73,13 +72,11 @@ QLGenerator = [
     "objc2-core-foundation/CFUUID",
 ]
 QLThumbnail = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
 ]
 QLThumbnailImage = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",

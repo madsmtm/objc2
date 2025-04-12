@@ -1,4 +1,3 @@
-#![cfg(feature = "CFBase")]
 use core::{cmp::Ordering, ptr};
 
 use crate::{CFDate, CFDateCompare};

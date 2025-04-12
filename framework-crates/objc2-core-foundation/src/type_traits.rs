@@ -1,6 +1,6 @@
 use core::ptr::NonNull;
 
-use crate::CFRetained;
+use crate::{CFRetained, CFTypeID};
 
 /// A CoreFoundation-like type.
 ///
@@ -87,5 +87,5 @@ pub unsafe trait ConcreteType: Type {
     /// For example, this corresponds to `CFStringGetTypeID` for `CFString`
     /// and `CGColorGetTypeID` for `CGColor`.
     #[doc(alias = "GetTypeID")]
-    fn type_id() -> crate::__cf_macro_helpers::CFTypeID;
+    fn type_id() -> CFTypeID;
 }

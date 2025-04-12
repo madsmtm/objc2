@@ -59,6 +59,6 @@ objc2 = [
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-media = ["dep:objc2-core-media"]
 
-MTAudioProcessingTap = ["objc2-core-foundation/CFBase"]
-MTFormatNames = ["objc2-core-foundation/CFBase"]
+MTAudioProcessingTap = []
+MTFormatNames = []
 MTProfessionalVideoWorkflow = []

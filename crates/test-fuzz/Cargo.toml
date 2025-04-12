@@ -39,7 +39,6 @@ fuzz-all = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSZone",
     "objc2-foundation/unstable-mutation-return-null",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFString",
 ]
 
@@ -50,7 +49,6 @@ test = false
 doc = false
 bench = false
 required-features = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFString",
 ]
 

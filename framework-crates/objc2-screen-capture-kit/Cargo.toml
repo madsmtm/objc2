@@ -29,7 +29,6 @@ objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.3.0", defa
     "AVVideoSettings",
 ] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
-    "CFBase",
     "CFCGTypes",
     "objc2",
 ] }

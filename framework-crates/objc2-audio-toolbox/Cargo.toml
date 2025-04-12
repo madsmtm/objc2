@@ -34,7 +34,6 @@ objc2-core-audio-types = { path = "../objc2-core-audio-types", version = "0.3.0"
 ] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
     "CFArray",
-    "CFBase",
     "CFData",
     "CFDate",
     "CFDictionary",

@@ -45,7 +45,9 @@ use core::fmt;
 use core::hash;
 use core::marker::{PhantomData, PhantomPinned};
 
-use crate::{CFComparisonResult, CFEqual, CFGetRetainCount, CFHash, CFRange, ConcreteType, Type};
+use crate::{
+    CFComparisonResult, CFEqual, CFGetRetainCount, CFGetTypeID, CFHash, CFRange, ConcreteType, Type,
+};
 
 /// [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cftypeid?language=objc)
 pub type CFTypeID = usize;
@@ -90,12 +92,7 @@ impl CFType {
     // Not #[inline], we call two functions here.
     #[doc(alias = "CFGetTypeID")]
     pub fn downcast_ref<T: ConcreteType>(&self) -> Option<&T> {
-        extern "C-unwind" {
-            fn CFGetTypeID(cf: Option<&CFType>) -> CFTypeID;
-        }
-
-        // SAFETY: The pointer is valid.
-        if unsafe { CFGetTypeID(Some(self)) } == T::type_id() {
+        if CFGetTypeID(Some(self)) == T::type_id() {
             let ptr: *const Self = self;
             let ptr: *const T = ptr.cast();
             // SAFETY: Just checked that the object is a class of type `T`.

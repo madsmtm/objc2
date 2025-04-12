@@ -49,7 +49,6 @@ impl From<CFUUIDBytes> for [u8; 16] {
 }
 
 #[cfg(test)]
-#[cfg(feature = "CFBase")]
 mod tests {
     use crate::{CFUUIDCreate, CFUUIDCreateFromUUIDBytes, CFUUIDGetUUIDBytes};
 

@@ -43,9 +43,53 @@ macro_rules! cf_type {
         // SAFETY: The type is a CoreFoundation-like type.
         unsafe impl $(<$($generic : ?$sized),*>)? $crate::Type for $ty $(<$($generic_param),*>)? {}
 
-        $crate::__cf_type_needs_cf_base!(impl ($(<$($generic : ?$sized),*>)?) $ty $(<$($generic_param),*>)?);
-
+        // Implement Deref-chain to CFType.
         $crate::__cf_type_superclass!(impl ($(<$($generic : ?$sized),*>)?) $ty $(<$($generic_param),*>)? $(: $superclass)?);
+
+        // Various trait impls.
+
+        impl $(<$($generic : ?$sized),*>)? $crate::__cf_macro_helpers::AsRef<$crate::CFType> for $ty $(<$($generic_param),*>)? {
+            #[inline]
+            fn as_ref(&self) -> &$crate::CFType {
+                self // Through Deref of self or superclass
+            }
+        }
+
+        impl $(<$($generic : ?$sized),*>)? $crate::__cf_macro_helpers::Borrow<$crate::CFType> for $ty $(<$($generic_param),*>)? {
+            #[inline]
+            fn borrow(&self) -> &$crate::CFType {
+                self // Through Deref of self or superclass
+            }
+        }
+
+        impl $(<$($generic : ?$sized),*>)? $crate::__cf_macro_helpers::PartialEq for $ty $(<$($generic_param),*>)? {
+            #[inline]
+            fn eq(&self, other: &Self) -> $crate::__cf_macro_helpers::bool {
+                let this: &$crate::CFType = self; // Through Deref
+                let other: &$crate::CFType = other; // Through Deref
+                $crate::__cf_macro_helpers::PartialEq::eq(this, other)
+            }
+        }
+
+        impl $(<$($generic : ?$sized),*>)? $crate::__cf_macro_helpers::Eq for $ty $(<$($generic_param),*>)? {}
+
+        impl $(<$($generic : ?$sized),*>)? $crate::__cf_macro_helpers::Hash for $ty $(<$($generic_param),*>)? {
+            #[inline]
+            fn hash<H: $crate::__cf_macro_helpers::Hasher>(&self, state: &mut H) {
+                let this: &$crate::CFType = self; // Through Deref
+                $crate::__cf_macro_helpers::Hash::hash(this, state);
+            }
+        }
+
+        impl $(<$($generic : ?$sized),*>)? $crate::__cf_macro_helpers::fmt::Debug for $ty $(<$($generic_param),*>)? {
+            fn fmt(
+                &self,
+                f: &mut $crate::__cf_macro_helpers::fmt::Formatter<'_>,
+            ) -> $crate::__cf_macro_helpers::fmt::Result {
+                let this: &$crate::CFType = self; // Through Deref
+                $crate::__cf_macro_helpers::fmt::Debug::fmt(this, f)
+            }
+        }
 
         // Objective-C interop
         $crate::__cf_type_objc2!(
@@ -55,71 +99,25 @@ macro_rules! cf_type {
     };
 }
 
-#[cfg(feature = "CFBase")]
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __cf_type_needs_cf_base {
-    (impl ($($generics:tt)*) $ty:ty) => {
-        // Allow converting to CFType.
-
-        impl $($generics)* $crate::__cf_macro_helpers::AsRef<$crate::CFType> for $ty {
-            #[inline]
-            fn as_ref(&self) -> &$crate::CFType {
-                self // Through Deref of self or superclass
-            }
-        }
-
-        impl $($generics)* $crate::__cf_macro_helpers::Borrow<$crate::CFType> for $ty {
-            #[inline]
-            fn borrow(&self) -> &$crate::CFType {
-                self // Through Deref of self or superclass
-            }
-        }
-
-        impl $($generics)* $crate::__cf_macro_helpers::PartialEq for $ty {
-            #[inline]
-            fn eq(&self, other: &Self) -> $crate::__cf_macro_helpers::bool {
-                let this: &$crate::CFType = self; // Through Deref
-                let other: &$crate::CFType = other; // Through Deref
-                $crate::__cf_macro_helpers::PartialEq::eq(this, other)
-            }
-        }
-
-        impl $($generics)* $crate::__cf_macro_helpers::Eq for $ty {}
-
-        impl $($generics)* $crate::__cf_macro_helpers::Hash for $ty {
-            #[inline]
-            fn hash<H: $crate::__cf_macro_helpers::Hasher>(&self, state: &mut H) {
-                let this: &$crate::CFType = self; // Through Deref
-                $crate::__cf_macro_helpers::Hash::hash(this, state);
-            }
-        }
-
-        impl $($generics)* $crate::__cf_macro_helpers::fmt::Debug for $ty {
-            fn fmt(
-                &self,
-                f: &mut $crate::__cf_macro_helpers::fmt::Formatter<'_>,
-            ) -> $crate::__cf_macro_helpers::fmt::Result {
-                let this: &$crate::CFType = self; // Through Deref
-                $crate::__cf_macro_helpers::fmt::Debug::fmt(this, f)
-            }
-        }
-    };
-}
-
-#[cfg(not(feature = "CFBase"))]
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __cf_type_needs_cf_base {
-    (impl ($($generics:tt)*) $ty:ty) => {};
-}
-
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __cf_type_superclass {
     // No superclass
     (impl ($($generics:tt)*) $ty:ty) => {
-        $crate::__cf_type_no_superclass!(impl ($($generics)*) $ty);
+        // NOTE: We intentionally don't implement `Deref` with
+        // `Target = AnyObject` when there isn't a superclass, as we want
+        // conversions to Objective-C types to be explicit.
+        //
+        // Instead, we prefer a `Deref` impl to `CFType`.
+        impl $($generics)* $crate::__cf_macro_helpers::Deref for $ty {
+            type Target = $crate::CFType;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                // SAFETY: It is valid to re-interpret a type as CFType.
+                unsafe { $crate::__cf_macro_helpers::transmute(self) }
+            }
+        }
     };
     // If has superclass.
     (impl ($($generics:tt)*) $ty:ty: $superclass:ty) => {
@@ -131,7 +129,7 @@ macro_rules! __cf_type_superclass {
             #[inline]
             fn deref(&self) -> &Self::Target {
                 // SAFETY: It is valid to re-interpret a type as its superclass.
-                unsafe { core::mem::transmute(self) }
+                unsafe { $crate::__cf_macro_helpers::transmute(self) }
             }
         }
 
@@ -154,29 +152,6 @@ macro_rules! __cf_type_superclass {
     };
 }
 
-#[cfg(feature = "CFBase")]
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __cf_type_no_superclass {
-    (impl ($($generics:tt)*) $ty:ty) => {
-        // NOTE: We intentionally don't implement `Deref` with
-        // `Target = AnyObject` when there isn't a superclass, as we want
-        // conversions to Objective-C types to be explicit.
-        //
-        // Instead, we prefer a `Deref` impl to `CFType`.
-        impl $($generics)* $crate::__cf_macro_helpers::Deref for $ty {
-            type Target = $crate::CFType;
-
-            #[inline]
-            fn deref(&self) -> &Self::Target {
-                // SAFETY: It is valid to re-interpret a type as CFType.
-                unsafe { core::mem::transmute(self) }
-            }
-        }
-    };
-}
-
-#[cfg(not(feature = "CFBase"))]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __cf_type_no_superclass {

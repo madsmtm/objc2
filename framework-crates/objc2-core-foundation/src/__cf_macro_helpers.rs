@@ -10,8 +10,3 @@ pub use core::primitive::bool;
 pub use core::stringify;
 #[cfg(feature = "objc2")]
 pub use objc2::cf_objc2_type;
-
-#[cfg(feature = "CFBase")]
-pub use crate::CFTypeID;
-#[cfg(not(feature = "CFBase"))]
-pub use core::primitive::usize as CFTypeID;

@@ -117,45 +117,40 @@ AERegistry = []
 AEUserTermTypes = []
 AppleEvents = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFRunLoop",
     "objc2-core-foundation/CFStream",
     "objc2-core-foundation/CFURL",
 ]
 CSIdentity = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFError",
     "objc2-core-foundation/CFRunLoop",
     "objc2-core-foundation/CFURL",
     "objc2-core-foundation/CFUUID",
 ]
-CSIdentityAuthority = ["objc2-core-foundation/CFBase"]
-CSIdentityBase = ["objc2-core-foundation/CFBase"]
+CSIdentityAuthority = []
+CSIdentityBase = []
 CSIdentityQuery = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFError",
     "objc2-core-foundation/CFRunLoop",
     "objc2-core-foundation/CFUUID",
 ]
-DictionaryServices = ["objc2-core-foundation/CFBase"]
+DictionaryServices = []
 FSEvents = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDate",
     "objc2-core-foundation/CFRunLoop",
     "objc2-core-foundation/CFUUID",
 ]
 IconStorage = []
-IconsCore = ["objc2-core-foundation/CFBase"]
+IconsCore = []
 LSConstants = ["bitflags"]
 LSInfo = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFError",
     "objc2-core-foundation/CFURL",
 ]
@@ -164,10 +159,9 @@ LSOpen = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFURL",
 ]
-LSQuarantine = ["objc2-core-foundation/CFBase"]
+LSQuarantine = []
 LSSharedFileList = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
     "objc2-core-foundation/CFRunLoop",
@@ -175,7 +169,6 @@ LSSharedFileList = [
 ]
 LaunchServices = []
 MDImporter = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFPlugInCOM",
     "objc2-core-foundation/CFURL",
@@ -183,59 +176,46 @@ MDImporter = [
 ]
 MDItem = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
 ]
 MDLabel = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFUUID",
 ]
-MDQuery = [
-    "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
-]
+MDQuery = ["objc2-core-foundation/CFArray"]
 MDSchema = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
 ]
 Metadata = []
 OSServices = []
-SKAnalysis = ["objc2-core-foundation/CFBase"]
-SKDocument = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFURL",
-]
+SKAnalysis = []
+SKDocument = ["objc2-core-foundation/CFURL"]
 SKIndex = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
 ]
 SKSearch = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDate",
     "objc2-core-foundation/CFURL",
 ]
-SKSummary = ["objc2-core-foundation/CFBase"]
+SKSummary = []
 SearchKit = []
 SecurityCore = []
 SharedFileList = []
-UTCoreTypes = ["objc2-core-foundation/CFBase"]
+UTCoreTypes = []
 UTType = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
 ]
 WSMethodInvocation = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFRunLoop",
@@ -245,10 +225,9 @@ WSMethodInvocation = [
 ]
 WSProtocolHandler = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFTree",
     "objc2-core-foundation/CFXMLNode",
 ]
-WSTypes = ["objc2-core-foundation/CFBase"]
+WSTypes = []

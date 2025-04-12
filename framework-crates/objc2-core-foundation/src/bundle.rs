@@ -7,7 +7,7 @@ type Inner = i16; // SInt16
 pub type CFBundleRefNum = Inner;
 
 #[cfg(test)]
-#[cfg(all(feature = "CFBase", feature = "CFString", feature = "CFURL"))]
+#[cfg(all(feature = "CFString", feature = "CFURL"))]
 mod tests {
     use alloc::string::ToString;
 

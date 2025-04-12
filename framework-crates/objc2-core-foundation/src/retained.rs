@@ -6,7 +6,7 @@ use core::ops::Deref;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
 
-use crate::{ConcreteType, Type};
+use crate::{CFType, CFTypeID, ConcreteType, Type};
 
 // Symlinked to `objc2/src/rc/retained_forwarding_impls.rs`, Cargo will make
 // a copy when publishing.
@@ -190,14 +190,7 @@ impl<T: Type> CFRetained<T> {
     ///
     /// See [`CFType::downcast_ref`] for more details.
     ///
-    #[cfg_attr(
-        feature = "CFBase",
-        doc = "[`CFType::downcast_ref`]: crate::CFType::downcast_ref"
-    )]
-    #[cfg_attr(
-        not(feature = "CFBase"),
-        doc = "[`CFType::downcast_ref`]: #CFType-not-available"
-    )]
+    /// [`CFType::downcast_ref`]: crate::CFType::downcast_ref
     ///
     /// # Errors
     ///
@@ -215,7 +208,7 @@ impl<T: Type> CFRetained<T> {
         extern "C-unwind" {
             // `*const c_void` and `Option<&CFType>` are ABI compatible.
             #[allow(clashing_extern_declarations)]
-            fn CFGetTypeID(cf: *const c_void) -> crate::__cf_macro_helpers::CFTypeID;
+            fn CFGetTypeID(cf: *const c_void) -> CFTypeID;
         }
 
         let ptr: *const c_void = self.ptr.as_ptr().cast();
@@ -369,9 +362,8 @@ impl<T: ?Sized + AsRef<U>, U: Type> From<&T> for CFRetained<U> {
 }
 
 // Use `ConcreteType` to avoid the reflexive impl (as CFType does not implement that).
-#[cfg(feature = "CFBase")]
-impl<T: ?Sized + ConcreteType + 'static> From<CFRetained<T>> for CFRetained<crate::CFType> {
-    /// Convert to [`CFType`][crate::CFType].
+impl<T: ?Sized + ConcreteType + 'static> From<CFRetained<T>> for CFRetained<CFType> {
+    /// Convert to [`CFType`].
     #[inline]
     fn from(obj: CFRetained<T>) -> Self {
         // SAFETY: All `'static` types can be converted to `CFType` without

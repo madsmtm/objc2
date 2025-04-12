@@ -19,7 +19,6 @@ workspace = true
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, features = [
     "CFArray",
-    "CFBase",
     "CFData",
     "CFDictionary",
     "CFLocale",

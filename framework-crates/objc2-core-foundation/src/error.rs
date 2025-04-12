@@ -1,4 +1,4 @@
-#![cfg(all(feature = "CFBase", feature = "CFString"))]
+#![cfg(feature = "CFString")]
 use core::fmt;
 
 use crate::{CFError, CFErrorCopyDescription};

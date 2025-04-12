@@ -20,10 +20,7 @@ bitflags = { version = "2.5.0", default-features = false, optional = true, featu
 dispatch2 = { path = "../../crates/dispatch2", version = "0.2.0", default-features = false, optional = true, features = ["alloc"] }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, features = [
-    "CFBase",
-    "CFError",
-] }
+objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, features = ["CFError"] }
 objc2-security = { path = "../objc2-security", version = "0.3.0", default-features = false, optional = true, features = ["Authorization"] }
 
 [package.metadata.docs.rs]
@@ -76,58 +73,44 @@ objc2-security = ["dep:objc2-security"]
 
 CaptiveNetwork = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
 ]
-DHCPClientPreferences = ["objc2-core-foundation/CFBase"]
+DHCPClientPreferences = []
 SCDynamicStore = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFRunLoop",
 ]
 SCDynamicStoreCopyDHCPInfo = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDate",
     "objc2-core-foundation/CFDictionary",
 ]
 SCDynamicStoreCopySpecific = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFString",
 ]
-SCDynamicStoreKey = ["objc2-core-foundation/CFBase"]
-SCNetwork = ["objc2-core-foundation/CFBase"]
+SCDynamicStoreKey = []
+SCNetwork = []
 SCNetworkConfiguration = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFNumber",
 ]
 SCNetworkConnection = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFRunLoop",
 ]
 SCNetworkReachability = [
     "bitflags",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFRunLoop",
 ]
 SCPreferences = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFRunLoop",
 ]
-SCPreferencesPath = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFDictionary",
-]
-SCPreferencesSetSpecific = [
-    "objc2-core-foundation/CFBase",
-    "objc2-core-foundation/CFString",
-]
-SCSchemaDefinitions = ["objc2-core-foundation/CFBase"]
+SCPreferencesPath = ["objc2-core-foundation/CFDictionary"]
+SCPreferencesSetSpecific = ["objc2-core-foundation/CFString"]
+SCSchemaDefinitions = []

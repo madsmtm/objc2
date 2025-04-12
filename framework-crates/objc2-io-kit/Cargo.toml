@@ -26,7 +26,6 @@ libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, features = [
     "CFArray",
-    "CFBase",
     "CFData",
     "CFDictionary",
     "CFPlugInCOM",
@@ -86,7 +85,6 @@ IOUSBLib = [
 USB = []
 USBSpec = []
 graphics = [
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFPlugInCOM",
     "objc2-core-foundation/CFUUID",
@@ -94,7 +92,6 @@ graphics = [
 hid = [
     "bitflags",
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDate",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFPlugInCOM",
@@ -104,7 +101,6 @@ hid = [
 ]
 hidsystem = [
     "objc2-core-foundation/CFArray",
-    "objc2-core-foundation/CFBase",
     "objc2-core-foundation/CFDictionary",
 ]
 usb = []

@@ -237,7 +237,7 @@ impl Location {
 
     pub fn assert_file(&self, file_name: &str) {
         if self.modules().last() != Some(file_name) {
-            error!(?self, ?file_name, "expected to be in file");
+            warn!(?self, ?file_name, "expected to be in file");
         }
     }
 }
@@ -303,6 +303,12 @@ impl<N: ToOptionString> ItemIdentifier<N> {
         // Defined in multiple places for some reason.
         if let Some("IOSurfaceRef" | "__IOSurface") = name.to_option() {
             location = Location::new("IOSurface.IOSurfaceRef");
+        }
+
+        // Remove unnecessary CFBase module, a lot of trait impls aren't
+        // available without it, which can be quite confusing.
+        if location == Location::new("CoreFoundation.CFBase") {
+            location = Location::new("CoreFoundation");
         }
 
         Self { name, location }

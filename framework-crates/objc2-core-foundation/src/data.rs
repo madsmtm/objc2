@@ -1,14 +1,11 @@
-#![cfg(feature = "CFBase")]
 use core::slice;
 
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 
-#[cfg(feature = "CFBase")]
 use crate::CFIndex;
 use crate::{CFData, CFDataGetBytePtr, CFDataGetLength};
 
-#[cfg(feature = "CFBase")]
 fn get_len(bytes: &[u8]) -> CFIndex {
     bytes
         .len()
@@ -19,7 +16,6 @@ fn get_len(bytes: &[u8]) -> CFIndex {
 impl CFData {
     /// Creates a new `CFData` from a byte slice.
     #[inline]
-    #[cfg(feature = "CFBase")]
     #[doc(alias = "CFDataCreate")]
     pub fn from_bytes(bytes: &[u8]) -> crate::CFRetained<Self> {
         let len = get_len(bytes);
@@ -28,7 +24,6 @@ impl CFData {
 
     /// Alias for easier transition from the `core-foundation` crate.
     #[inline]
-    #[cfg(feature = "CFBase")]
     #[deprecated = "renamed to CFData::from_bytes"]
     pub fn from_buffer(bytes: &[u8]) -> crate::CFRetained<Self> {
         Self::from_bytes(bytes)
@@ -40,7 +35,6 @@ impl CFData {
     /// may be able to re-use the existing buffer (since we know it won't be
     /// deallocated).
     #[inline]
-    #[cfg(feature = "CFBase")]
     #[doc(alias = "CFDataCreateWithBytesNoCopy")]
     pub fn from_static_bytes(bytes: &'static [u8]) -> crate::CFRetained<Self> {
         let len = get_len(bytes);

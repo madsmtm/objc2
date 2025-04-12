@@ -1,5 +1,3 @@
-#![cfg(feature = "CFBase")] // Basically everything in here requires CFIndex
-
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 use core::{borrow::Borrow, ffi::c_void, hash::Hash, mem};
