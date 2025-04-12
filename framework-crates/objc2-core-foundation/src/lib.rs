@@ -48,6 +48,8 @@ mod thread_safety;
 #[cfg(feature = "CFTimeZone")]
 mod timezone;
 mod type_traits;
+#[cfg(all(feature = "CFBase", feature = "CFUserNotification"))]
+mod user_notification;
 #[cfg(feature = "CFUUID")]
 mod uuid;
 
@@ -63,6 +65,8 @@ pub use self::generated::*;
 pub use self::geometry::*;
 pub use self::retained::CFRetained;
 pub use self::type_traits::{ConcreteType, Type};
+#[cfg(all(feature = "CFBase", feature = "CFUserNotification"))]
+pub use self::user_notification::*;
 
 // This is not exposed publicly, so the only way to use this in types with
 // generics is to use it through the default type (e.g. the user should write

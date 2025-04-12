@@ -45,10 +45,7 @@ use core::fmt;
 use core::hash;
 use core::marker::{PhantomData, PhantomPinned};
 
-use crate::CFComparisonResult;
-use crate::CFGetRetainCount;
-use crate::ConcreteType;
-use crate::{CFEqual, CFHash, Type};
+use crate::{CFComparisonResult, CFEqual, CFGetRetainCount, CFHash, CFRange, ConcreteType, Type};
 
 /// [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cftypeid?language=objc)
 pub type CFTypeID = usize;
@@ -246,5 +243,13 @@ impl From<CFComparisonResult> for Ordering {
             #[allow(unreachable_patterns)] // MSRV between 1.73 and 1.76
             _ => Self::Equal,
         }
+    }
+}
+
+impl CFRange {
+    /// Create a new [`CFRange`].
+    #[doc(alias = "CFRangeMake")]
+    pub fn new(location: CFIndex, length: CFIndex) -> Self {
+        Self { location, length }
     }
 }

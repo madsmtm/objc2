@@ -103,6 +103,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added a few compatibility aliases to help with migrating from the
   `core-foundation` crate.
 * Added support for using `dispatch2` types in framework crates.
+* Marked some CoreFoundation types as thread-safe.
+* Added a few missing inline functions:
+  - `CFUserNotificationCheckBoxChecked`
+  - `CFUserNotificationSecureTextField`
+  - `CFUserNotificationPopUpSelection`
+* Added `CFRange::new`.
 
 ### Changed
 * Made `CFArray`, `CFBag`, `CFBinaryHeap`, `CFDictionary`, `CFSet` and their

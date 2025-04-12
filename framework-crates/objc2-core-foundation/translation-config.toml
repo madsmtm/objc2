@@ -66,9 +66,12 @@ typedef.CFIndex.skipped = true
 fn.CFAutorelease.skipped = true
 fn.CFRetain.skipped = true
 fn.CFRelease.skipped = true
-fn.CFMakeCollectable.skipped = true
+fn.CFMakeCollectable.skipped = true # Simply returns the argument on macOS 10.12 or later
 
 # Dependent on target endianness
+fn.CFSwapInt16.skipped = true
+fn.CFSwapInt32.skipped = true
+fn.CFSwapInt64.skipped = true
 fn.CFByteOrderGetCurrent.skipped = true
 fn.CFSwapInt16BigToHost.skipped = true
 fn.CFSwapInt32BigToHost.skipped = true
@@ -90,6 +93,12 @@ fn.CFConvertFloatHostToSwapped.skipped = true
 fn.CFConvertFloatSwappedToHost.skipped = true
 fn.CFConvertDoubleHostToSwapped.skipped = true
 fn.CFConvertDoubleSwappedToHost.skipped = true
+
+# Custom-defined inline functions
+fn.CFRangeMake.skipped = true
+fn.CFUserNotificationCheckBoxChecked.skipped = true
+fn.CFUserNotificationSecureTextField.skipped = true
+fn.CFUserNotificationPopUpSelection.skipped = true
 
 ##
 ## Safety
