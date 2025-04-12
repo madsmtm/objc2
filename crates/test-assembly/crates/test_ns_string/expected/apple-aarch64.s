@@ -40,6 +40,11 @@ _EMPTY:
 _XYZ:
 	.quad	SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0)
 
+	.globl	_NON_ASCII
+	.p2align	3, 0x0
+_NON_ASCII:
+	.quad	SYM(test_ns_string[CRATE_ID]::NON_ASCII::CFSTRING, 0)
+
 	.section	__TEXT,__cstring,cstring_literals
 	.globl	SYM(test_ns_string[CRATE_ID]::EMPTY::ASCII, 0)
 SYM(test_ns_string[CRATE_ID]::EMPTY::ASCII, 0):
@@ -67,6 +72,21 @@ SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0):
 	.asciz	"\310\007\000\000\000\000\000"
 	.quad	SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0)
 	.asciz	"\003\000\000\000\000\000\000"
+
+	.section	__TEXT,__ustring
+	.globl	SYM(test_ns_string[CRATE_ID]::NON_ASCII::UTF16, 0)
+	.p2align	1, 0x0
+SYM(test_ns_string[CRATE_ID]::NON_ASCII::UTF16, 0):
+	.asciz	"=\330\000\336\000"
+
+	.section	__DATA,__cfstring
+	.globl	SYM(test_ns_string[CRATE_ID]::NON_ASCII::CFSTRING, 0)
+	.p2align	3, 0x0
+SYM(test_ns_string[CRATE_ID]::NON_ASCII::CFSTRING, 0):
+	.quad	___CFConstantStringClassReference
+	.asciz	"\320\007\000\000\000\000\000"
+	.quad	SYM(test_ns_string[CRATE_ID]::NON_ASCII::UTF16, 0)
+	.asciz	"\002\000\000\000\000\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
 SYM(test_ns_string[CRATE_ID]::get_ascii::ASCII, 0):

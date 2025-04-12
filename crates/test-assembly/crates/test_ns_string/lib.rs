@@ -26,6 +26,14 @@ static XYZ: StaticString = {
     StaticString(CFSTRING.as_nsstring_const())
 };
 
+#[cfg(all(target_vendor = "apple", feature = "assembly-features"))]
+#[no_mangle]
+static NON_ASCII: StaticString = {
+    const INPUT: &[u8] = b"\xf0\x9f\x98\x80";
+    objc2_foundation::__ns_string_static!(INPUT);
+    StaticString(CFSTRING.as_nsstring_const())
+};
+
 #[no_mangle]
 fn get_ascii() -> &'static NSString {
     ns_string!("abc")
