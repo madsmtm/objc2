@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_get_protocol
-	.p2align	4, 0x90
+	.p2align	4
 _get_protocol:
 	push	ebp
 	mov	ebp, esp
@@ -19,7 +19,7 @@ L0$pb:
 	ret
 
 	.globl	_dyn_call
-	.p2align	4, 0x90
+	.p2align	4
 _dyn_call:
 	push	ebp
 	mov	ebp, esp
@@ -36,7 +36,7 @@ L1$pb:
 	ret
 
 	.globl	_dyn_consume
-	.p2align	4, 0x90
+	.p2align	4
 _dyn_consume:
 	push	ebp
 	mov	ebp, esp

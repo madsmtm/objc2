@@ -1,6 +1,6 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.p2align	4, 0x90
+	.p2align	4
 SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
 	test	ecx, ecx
 	je	LBB0_2
@@ -20,7 +20,7 @@ SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[C
 LBB0_2:
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
 	push	ebp
 	mov	ebp, esp
@@ -42,7 +42,7 @@ LBB1_3:
 	pop	ebp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0):
 Lfunc_begin0:
 	push	ebp
@@ -130,7 +130,7 @@ Lttbase0:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.p2align	4, 0x90
+	.p2align	4
 SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0):
 	push	ebp
 	mov	ebp, esp
@@ -151,7 +151,7 @@ LBB3_2:
 	ret
 
 	.globl	_nonnull_nonnull
-	.p2align	4, 0x90
+	.p2align	4
 _nonnull_nonnull:
 Lfunc_begin1:
 	push	ebp
@@ -238,7 +238,7 @@ Lttbase1:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_null_nonnull
-	.p2align	4, 0x90
+	.p2align	4
 _null_nonnull:
 Lfunc_begin2:
 	push	ebp
@@ -329,7 +329,7 @@ Lttbase2:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_nonnull_null
-	.p2align	4, 0x90
+	.p2align	4
 _nonnull_null:
 Lfunc_begin3:
 	push	ebp
@@ -415,7 +415,7 @@ Lttbase3:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_null_null
-	.p2align	4, 0x90
+	.p2align	4
 _null_null:
 Lfunc_begin4:
 	push	ebp
@@ -508,7 +508,7 @@ Lttbase4:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_two_nonnull_nonnull
-	.p2align	4, 0x90
+	.p2align	4
 _two_nonnull_nonnull:
 Lfunc_begin5:
 	push	ebp
@@ -634,7 +634,7 @@ Lttbase5:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_call_with_none1
-	.p2align	4, 0x90
+	.p2align	4
 _call_with_none1:
 	push	ebp
 	mov	ebp, esp
@@ -649,7 +649,7 @@ _call_with_none1:
 	ret
 
 	.globl	_call_with_none2
-	.p2align	4, 0x90
+	.p2align	4
 _call_with_none2:
 	push	ebp
 	mov	ebp, esp
@@ -664,7 +664,7 @@ _call_with_none2:
 	ret
 
 	.globl	_call_with_none3
-	.p2align	4, 0x90
+	.p2align	4
 _call_with_none3:
 Lfunc_begin6:
 	push	ebp
@@ -764,7 +764,7 @@ Lttbase6:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_call_with_none4
-	.p2align	4, 0x90
+	.p2align	4
 _call_with_none4:
 Lfunc_begin7:
 	push	ebp
@@ -864,7 +864,7 @@ Lttbase7:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_call_with_some1
-	.p2align	4, 0x90
+	.p2align	4
 _call_with_some1:
 Lfunc_begin8:
 	push	ebp
@@ -971,7 +971,7 @@ Lttbase8:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_call_with_some2
-	.p2align	4, 0x90
+	.p2align	4
 _call_with_some2:
 Lfunc_begin9:
 	push	ebp
@@ -1082,7 +1082,7 @@ Lttbase9:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_call_with_some3
-	.p2align	4, 0x90
+	.p2align	4
 _call_with_some3:
 Lfunc_begin10:
 	push	ebp

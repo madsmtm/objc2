@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_get_protocol
-	.p2align	4, 0x90
+	.p2align	4
 _get_protocol:
 	push	rbp
 	mov	rbp, rsp
@@ -11,7 +11,7 @@ _get_protocol:
 	jmp	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
 
 	.globl	_dyn_call
-	.p2align	4, 0x90
+	.p2align	4
 _dyn_call:
 	push	rbp
 	mov	rbp, rsp
@@ -20,7 +20,7 @@ _dyn_call:
 	jmp	_objc_msgSend
 
 	.globl	_dyn_consume
-	.p2align	4, 0x90
+	.p2align	4
 _dyn_consume:
 	push	rbp
 	mov	rbp, rsp

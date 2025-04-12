@@ -1,8 +1,7 @@
-	.text
 	.intel_syntax noprefix
 	.section	.text.simple,"ax",@progbits
 	.globl	simple
-	.p2align	4, 0x90
+	.p2align	4
 	.type	simple,@function
 simple:
 	push	ebx
@@ -23,7 +22,7 @@ simple:
 
 	.section	.text.with_body,"ax",@progbits
 	.globl	with_body
-	.p2align	4, 0x90
+	.p2align	4
 	.type	with_body,@function
 with_body:
 	push	ebx

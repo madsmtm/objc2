@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_get_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_class:
 	push	ebp
 	mov	ebp, esp
@@ -29,7 +29,7 @@ LBB0_1:
 	ret
 
 	.globl	_get_same_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_same_class:
 	push	ebp
 	mov	ebp, esp
@@ -57,7 +57,7 @@ LBB1_1:
 	ret
 
 	.globl	_get_different_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_different_class:
 	push	ebp
 	mov	ebp, esp
@@ -85,7 +85,7 @@ LBB2_1:
 	ret
 
 	.globl	_unused_class
-	.p2align	4, 0x90
+	.p2align	4
 _unused_class:
 	push	ebp
 	mov	ebp, esp
@@ -113,7 +113,7 @@ LBB3_1:
 	ret
 
 	.globl	_use_fns
-	.p2align	4, 0x90
+	.p2align	4
 _use_fns:
 	push	ebp
 	mov	ebp, esp
@@ -216,7 +216,7 @@ LBB4_7:
 	jmp	LBB4_8
 
 	.globl	_use_same_twice
-	.p2align	4, 0x90
+	.p2align	4
 _use_same_twice:
 	push	ebp
 	mov	ebp, esp
@@ -275,7 +275,7 @@ LBB5_3:
 	jmp	LBB5_4
 
 	.globl	_use_in_loop
-	.p2align	4, 0x90
+	.p2align	4
 _use_in_loop:
 	push	ebp
 	mov	ebp, esp
@@ -292,7 +292,7 @@ L6$pb:
 	lea	ecx, [esi + l_anon.[ID].11-L6$pb]
 	lea	edx, [esi + l_anon.[ID].10-L6$pb]
 	lea	ebx, [esi + SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-L6$pb]
-	.p2align	4, 0x90
+	.p2align	4
 LBB6_2:
 	mov	eax, dword ptr [esi + SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-L6$pb]
 	test	eax, eax

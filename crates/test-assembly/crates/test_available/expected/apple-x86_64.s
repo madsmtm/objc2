@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_always
-	.p2align	4, 0x90
+	.p2align	4
 _always:
 	push	rbp
 	mov	rbp, rsp
@@ -10,7 +10,7 @@ _always:
 	ret
 
 	.globl	_never
-	.p2align	4, 0x90
+	.p2align	4
 _never:
 	push	rbp
 	mov	rbp, rsp
@@ -19,7 +19,7 @@ _never:
 	ret
 
 	.globl	_low
-	.p2align	4, 0x90
+	.p2align	4
 _low:
 	push	rbp
 	mov	rbp, rsp
@@ -28,7 +28,7 @@ _low:
 	ret
 
 	.globl	_high
-	.p2align	4, 0x90
+	.p2align	4
 _high:
 	push	rbp
 	mov	rbp, rsp
@@ -51,7 +51,7 @@ LBB3_1:
 	jmp	LBB3_2
 
 	.globl	_only_ios
-	.p2align	4, 0x90
+	.p2align	4
 _only_ios:
 	push	rbp
 	mov	rbp, rsp
@@ -60,7 +60,7 @@ _only_ios:
 	ret
 
 	.globl	_two_checks
-	.p2align	4, 0x90
+	.p2align	4
 _two_checks:
 	push	rbp
 	mov	rbp, rsp

@@ -1,8 +1,7 @@
-	.text
 	.intel_syntax noprefix
 	.section	.text.iter_create,"ax",@progbits
 	.globl	iter_create
-	.p2align	4, 0x90
+	.p2align	4
 	.type	iter_create,@function
 iter_create:
 	mov	rax, rdi
@@ -28,7 +27,7 @@ iter_create:
 
 	.section	.text.iter_once,"ax",@progbits
 	.globl	iter_once
-	.p2align	4, 0x90
+	.p2align	4
 	.type	iter_once,@function
 iter_once:
 	push	r15
@@ -86,7 +85,7 @@ iter_once:
 
 	.section	.text.use_obj,"ax",@progbits
 	.globl	use_obj
-	.p2align	4, 0x90
+	.p2align	4
 	.type	use_obj,@function
 use_obj:
 	mov	qword ptr [rsp - 8], rdi
@@ -99,7 +98,7 @@ use_obj:
 
 	.section	.text.iter,"ax",@progbits
 	.globl	iter
-	.p2align	4, 0x90
+	.p2align	4
 	.type	iter,@function
 iter:
 	push	rbp
@@ -134,7 +133,7 @@ iter:
 	xor	eax, eax
 	cmp	rax, rcx
 	jb	.LBB3_6
-	.p2align	4, 0x90
+	.p2align	4
 .LBB3_2:
 	mov	rbp, qword ptr [r15]
 	test	rbp, rbp
@@ -187,7 +186,7 @@ iter:
 
 	.section	.text.iter_noop,"ax",@progbits
 	.globl	iter_noop
-	.p2align	4, 0x90
+	.p2align	4
 	.type	iter_noop,@function
 iter_noop:
 	push	rbp
@@ -221,7 +220,7 @@ iter_noop:
 	xor	eax, eax
 	xor	edx, edx
 	jmp	.LBB4_1
-	.p2align	4, 0x90
+	.p2align	4
 .LBB4_6:
 	lea	rsi, [rdx + 1]
 	mov	qword ptr [rsp + 200], rsi
@@ -271,7 +270,7 @@ iter_noop:
 
 	.section	.text.iter_retained,"ax",@progbits
 	.globl	iter_retained
-	.p2align	4, 0x90
+	.p2align	4
 	.type	iter_retained,@function
 iter_retained:
 .Lfunc_begin0:
@@ -308,7 +307,7 @@ iter_retained:
 	xor	eax, eax
 	cmp	rax, rcx
 	jb	.LBB5_7
-	.p2align	4, 0x90
+	.p2align	4
 .LBB5_2:
 	mov	rax, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	mov	rbp, qword ptr [rax]
@@ -341,7 +340,7 @@ iter_retained:
 	cmp	qword ptr [rsp + 8], rcx
 	je	.LBB5_11
 	jmp	.LBB5_18
-	.p2align	4, 0x90
+	.p2align	4
 .LBB5_9:
 	mov	qword ptr [rsp], 1
 	mov	qword ptr [rsp + 8], rcx

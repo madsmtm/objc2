@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_get_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_class:
 	push	rbp
 	mov	rbp, rsp
@@ -10,7 +10,7 @@ _get_class:
 	ret
 
 	.globl	_get_same_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_same_class:
 	push	rbp
 	mov	rbp, rsp
@@ -19,7 +19,7 @@ _get_same_class:
 	ret
 
 	.globl	_get_different_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_different_class:
 	push	rbp
 	mov	rbp, rsp
@@ -28,7 +28,7 @@ _get_different_class:
 	ret
 
 	.globl	_unused_class
-	.p2align	4, 0x90
+	.p2align	4
 _unused_class:
 	push	rbp
 	mov	rbp, rsp
@@ -36,7 +36,7 @@ _unused_class:
 	ret
 
 	.globl	_use_fns
-	.p2align	4, 0x90
+	.p2align	4
 _use_fns:
 	push	rbp
 	mov	rbp, rsp
@@ -53,7 +53,7 @@ _use_fns:
 	ret
 
 	.globl	_use_same_twice
-	.p2align	4, 0x90
+	.p2align	4
 _use_same_twice:
 	push	rbp
 	mov	rbp, rsp
@@ -65,7 +65,7 @@ _use_same_twice:
 	ret
 
 	.globl	_use_in_loop
-	.p2align	4, 0x90
+	.p2align	4
 _use_in_loop:
 	push	rbp
 	mov	rbp, rsp

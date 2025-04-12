@@ -1,6 +1,6 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.p2align	4, 0x90
+	.p2align	4
 SYM(objc2[CRATE_ID]::__macro_helpers::defined_ivars::dealloc::<test_define_class[CRATE_ID]::DropIvars>, 0):
 Lfunc_begin0:
 	push	rbp
@@ -99,7 +99,7 @@ Lttbase0:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin1:
 	push	rbp
@@ -237,7 +237,7 @@ Lcst_end1:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin2:
 	push	rbp
@@ -386,7 +386,7 @@ Lcst_end2:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin3:
 	push	rbp
@@ -495,7 +495,7 @@ Lcst_end3:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -508,7 +508,7 @@ SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -521,7 +521,7 @@ SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -535,7 +535,7 @@ SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::
 	ret
 
 	.globl	_access_forgetable_ivars_class
-	.p2align	4, 0x90
+	.p2align	4
 _access_forgetable_ivars_class:
 	mov	rax, qword ptr [rip + SYM(<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	cmp	rax, 3
@@ -561,7 +561,7 @@ LBB7_1:
 	ret
 
 	.globl	_access_forgetable_ivars
-	.p2align	4, 0x90
+	.p2align	4
 _access_forgetable_ivars:
 	push	rbp
 	mov	rbp, rsp
@@ -572,7 +572,7 @@ _access_forgetable_ivars:
 	ret
 
 	.globl	SYM(<test_define_class[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>::drop, 0)
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<test_define_class[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>::drop, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -582,7 +582,7 @@ SYM(<test_define_class[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>:
 	ret
 
 	.globl	_access_drop_ivars_class
-	.p2align	4, 0x90
+	.p2align	4
 _access_drop_ivars_class:
 	mov	rax, qword ptr [rip + SYM(<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	cmp	rax, 3
@@ -608,7 +608,7 @@ LBB10_1:
 	ret
 
 	.globl	_access_drop_ivars
-	.p2align	4, 0x90
+	.p2align	4
 _access_drop_ivars:
 	push	rbp
 	mov	rbp, rsp
@@ -619,7 +619,7 @@ _access_drop_ivars:
 	ret
 
 	.globl	SYM(<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 	mov	rax, qword ptr [rip + SYM(<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	cmp	rax, 3
@@ -645,7 +645,7 @@ LBB12_1:
 	ret
 
 	.globl	_get_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_class:
 	mov	rax, qword ptr [rip + SYM(<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	cmp	rax, 3
@@ -671,7 +671,7 @@ LBB13_1:
 	ret
 
 	.globl	_method_simple
-	.p2align	4, 0x90
+	.p2align	4
 _method_simple:
 	push	rbp
 	mov	rbp, rsp
@@ -679,7 +679,7 @@ _method_simple:
 	ret
 
 	.globl	_method_bool
-	.p2align	4, 0x90
+	.p2align	4
 _method_bool:
 	push	rbp
 	mov	rbp, rsp
@@ -690,7 +690,7 @@ _method_bool:
 	ret
 
 	.globl	_method_retained
-	.p2align	4, 0x90
+	.p2align	4
 _method_retained:
 	push	rbp
 	mov	rbp, rsp
@@ -721,7 +721,7 @@ LBB16_1:
 	jmp	LBB16_2
 
 	.globl	_method_retained_with_param
-	.p2align	4, 0x90
+	.p2align	4
 _method_retained_with_param:
 Lfunc_begin4:
 	push	rbp
@@ -800,7 +800,7 @@ Lttbase1:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_copyWithZone
-	.p2align	4, 0x90
+	.p2align	4
 _copyWithZone:
 	push	rbp
 	mov	rbp, rsp
@@ -829,7 +829,7 @@ LBB18_1:
 	jmp	LBB18_2
 
 	.globl	SYM(<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 	mov	rax, qword ptr [rip + SYM(<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	cmp	rax, 3
@@ -855,7 +855,7 @@ LBB19_1:
 	ret
 
 	.globl	_init_forgetable_ivars
-	.p2align	4, 0x90
+	.p2align	4
 _init_forgetable_ivars:
 	test	rdi, rdi
 	je	LBB20_2
@@ -879,7 +879,7 @@ LBB20_2:
 	ret
 
 	.globl	SYM(<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 	mov	rax, qword ptr [rip + SYM(<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	cmp	rax, 3
@@ -905,7 +905,7 @@ LBB21_1:
 	ret
 
 	.globl	_init_drop_ivars
-	.p2align	4, 0x90
+	.p2align	4
 _init_drop_ivars:
 Lfunc_begin5:
 	push	rbp

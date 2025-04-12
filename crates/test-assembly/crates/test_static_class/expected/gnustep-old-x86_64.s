@@ -1,8 +1,7 @@
-	.text
 	.intel_syntax noprefix
 	.section	.text.get_class,"ax",@progbits
 	.globl	get_class
-	.p2align	4, 0x90
+	.p2align	4
 	.type	get_class,@function
 get_class:
 	mov	rax, qword ptr [rip + _OBJC_CLASS_NSObject@GOTPCREL]
@@ -12,7 +11,7 @@ get_class:
 
 	.section	.text.get_same_class,"ax",@progbits
 	.globl	get_same_class
-	.p2align	4, 0x90
+	.p2align	4
 	.type	get_same_class,@function
 get_same_class:
 	mov	rax, qword ptr [rip + _OBJC_CLASS_NSObject@GOTPCREL]
@@ -22,7 +21,7 @@ get_same_class:
 
 	.section	.text.get_different_class,"ax",@progbits
 	.globl	get_different_class
-	.p2align	4, 0x90
+	.p2align	4
 	.type	get_different_class,@function
 get_different_class:
 	mov	rax, qword ptr [rip + _OBJC_CLASS_NSString@GOTPCREL]
@@ -32,7 +31,7 @@ get_different_class:
 
 	.section	.text.unused_class,"ax",@progbits
 	.globl	unused_class
-	.p2align	4, 0x90
+	.p2align	4
 	.type	unused_class,@function
 unused_class:
 	ret
@@ -41,7 +40,7 @@ unused_class:
 
 	.section	.text.use_fns,"ax",@progbits
 	.globl	use_fns
-	.p2align	4, 0x90
+	.p2align	4
 	.type	use_fns,@function
 use_fns:
 	mov	rax, rdi
@@ -58,7 +57,7 @@ use_fns:
 
 	.section	.text.use_same_twice,"ax",@progbits
 	.globl	use_same_twice
-	.p2align	4, 0x90
+	.p2align	4
 	.type	use_same_twice,@function
 use_same_twice:
 	mov	rax, rdi
@@ -71,7 +70,7 @@ use_same_twice:
 
 	.section	.text.use_in_loop,"ax",@progbits
 	.globl	use_in_loop
-	.p2align	4, 0x90
+	.p2align	4
 	.type	use_in_loop,@function
 use_in_loop:
 	ret

@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_get_sel
-	.p2align	4, 0x90
+	.p2align	4
 _get_sel:
 	push	ebp
 	mov	ebp, esp
@@ -13,7 +13,7 @@ L0$pb:
 	ret
 
 	.globl	_get_same_sel
-	.p2align	4, 0x90
+	.p2align	4
 _get_same_sel:
 	push	ebp
 	mov	ebp, esp
@@ -25,7 +25,7 @@ L1$pb:
 	ret
 
 	.globl	_get_common_twice
-	.p2align	4, 0x90
+	.p2align	4
 _get_common_twice:
 	push	ebp
 	mov	ebp, esp
@@ -39,7 +39,7 @@ L2$pb:
 	ret
 
 	.globl	_get_different_sel
-	.p2align	4, 0x90
+	.p2align	4
 _get_different_sel:
 	push	ebp
 	mov	ebp, esp
@@ -51,7 +51,7 @@ L3$pb:
 	ret
 
 	.globl	_unused_sel
-	.p2align	4, 0x90
+	.p2align	4
 _unused_sel:
 	push	ebp
 	mov	ebp, esp
@@ -59,7 +59,7 @@ _unused_sel:
 	ret
 
 	.globl	_use_fns
-	.p2align	4, 0x90
+	.p2align	4
 _use_fns:
 	push	ebp
 	mov	ebp, esp
@@ -83,7 +83,7 @@ L5$pb:
 	ret	4
 
 	.globl	_use_same_twice
-	.p2align	4, 0x90
+	.p2align	4
 _use_same_twice:
 	push	ebp
 	mov	ebp, esp
@@ -98,7 +98,7 @@ L6$pb:
 	ret	4
 
 	.globl	_use_in_loop
-	.p2align	4, 0x90
+	.p2align	4
 _use_in_loop:
 	push	ebp
 	mov	ebp, esp

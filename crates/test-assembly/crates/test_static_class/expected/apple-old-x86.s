@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_get_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_class:
 	push	ebp
 	mov	ebp, esp
@@ -13,7 +13,7 @@ L0$pb:
 	ret
 
 	.globl	_get_same_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_same_class:
 	push	ebp
 	mov	ebp, esp
@@ -25,7 +25,7 @@ L1$pb:
 	ret
 
 	.globl	_get_different_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_different_class:
 	push	ebp
 	mov	ebp, esp
@@ -37,7 +37,7 @@ L2$pb:
 	ret
 
 	.globl	_unused_class
-	.p2align	4, 0x90
+	.p2align	4
 _unused_class:
 	push	ebp
 	mov	ebp, esp
@@ -45,7 +45,7 @@ _unused_class:
 	ret
 
 	.globl	_use_fns
-	.p2align	4, 0x90
+	.p2align	4
 _use_fns:
 	push	ebp
 	mov	ebp, esp
@@ -69,7 +69,7 @@ L4$pb:
 	ret	4
 
 	.globl	_use_same_twice
-	.p2align	4, 0x90
+	.p2align	4
 _use_same_twice:
 	push	ebp
 	mov	ebp, esp
@@ -84,7 +84,7 @@ L5$pb:
 	ret	4
 
 	.globl	_use_in_loop
-	.p2align	4, 0x90
+	.p2align	4
 _use_in_loop:
 	push	ebp
 	mov	ebp, esp

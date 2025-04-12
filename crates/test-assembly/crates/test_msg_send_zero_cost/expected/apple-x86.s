@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_handle
-	.p2align	4, 0x90
+	.p2align	4
 _handle:
 	push	ebp
 	mov	ebp, esp
@@ -9,7 +9,7 @@ _handle:
 	jmp	_objc_msgSend
 
 	.globl	_handle_with_sel
-	.p2align	4, 0x90
+	.p2align	4
 _handle_with_sel:
 	push	ebp
 	mov	ebp, esp

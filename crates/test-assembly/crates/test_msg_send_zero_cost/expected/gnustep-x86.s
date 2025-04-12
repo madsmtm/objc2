@@ -1,8 +1,7 @@
-	.text
 	.intel_syntax noprefix
 	.section	.text.handle,"ax",@progbits
 	.globl	handle
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle,@function
 handle:
 	push	ebx
@@ -33,7 +32,7 @@ handle:
 
 	.section	.text.handle_with_sel,"ax",@progbits
 	.globl	handle_with_sel
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_with_sel,@function
 handle_with_sel:
 	push	ebx

@@ -93,6 +93,10 @@ pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result
     let s = s.replace(".asciz\t\"{\\000", ".asciz\t\"p\\000");
     let s = s.replace(".asciz\t\"T\\000", ".asciz\t\"P\\000");
 
+    // HACK: Make diff smaller when updating rustc version.
+    let s = s.replace(".p2align\t4, 0x90", ".p2align\t4");
+    let s = strip_lines(&s, ".text");
+
     // HACK: Replace Objective-C image info for simulator targets
     let s = s.replace(
         ".asciz\t\"\\000\\000\\000\\000`\\000\\000\"",

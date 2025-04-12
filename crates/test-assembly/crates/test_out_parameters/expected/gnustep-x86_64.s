@@ -1,7 +1,6 @@
-	.text
 	.intel_syntax noprefix
 	.section	.text.SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0),"ax",@progbits
-	.p2align	4, 0x90
+	.p2align	4
 	.type	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0),@function
 SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
 	push	rbx
@@ -20,7 +19,7 @@ SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[C
 	.size	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0), .Lfunc_end0-SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
 
 	.section	.text.SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0),"ax",@progbits
-	.p2align	4, 0x90
+	.p2align	4
 	.type	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0),@function
 SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
 	push	rbx
@@ -41,7 +40,7 @@ SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[C
 	.size	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0), .Lfunc_end1-SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
 
 	.section	.text.SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0),"ax",@progbits
-	.p2align	4, 0x90
+	.p2align	4
 	.type	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0),@function
 SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0):
 .Lfunc_begin0:
@@ -124,7 +123,7 @@ GCC_except_table2:
 	.p2align	2, 0x0
 
 	.section	.text.SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0),"ax",@progbits
-	.p2align	4, 0x90
+	.p2align	4
 	.type	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0),@function
 SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0):
 	push	rbx
@@ -144,7 +143,7 @@ SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writ
 
 	.section	.text.nonnull_nonnull,"ax",@progbits
 	.globl	nonnull_nonnull
-	.p2align	4, 0x90
+	.p2align	4
 	.type	nonnull_nonnull,@function
 nonnull_nonnull:
 .Lfunc_begin1:
@@ -233,7 +232,7 @@ GCC_except_table4:
 
 	.section	.text.null_nonnull,"ax",@progbits
 	.globl	null_nonnull
-	.p2align	4, 0x90
+	.p2align	4
 	.type	null_nonnull,@function
 null_nonnull:
 .Lfunc_begin2:
@@ -329,7 +328,7 @@ GCC_except_table5:
 
 	.section	.text.nonnull_null,"ax",@progbits
 	.globl	nonnull_null
-	.p2align	4, 0x90
+	.p2align	4
 	.type	nonnull_null,@function
 nonnull_null:
 .Lfunc_begin3:
@@ -418,7 +417,7 @@ GCC_except_table6:
 
 	.section	.text.null_null,"ax",@progbits
 	.globl	null_null
-	.p2align	4, 0x90
+	.p2align	4
 	.type	null_null,@function
 null_null:
 .Lfunc_begin4:
@@ -516,7 +515,7 @@ GCC_except_table7:
 
 	.section	.text.two_nonnull_nonnull,"ax",@progbits
 	.globl	two_nonnull_nonnull
-	.p2align	4, 0x90
+	.p2align	4
 	.type	two_nonnull_nonnull,@function
 two_nonnull_nonnull:
 .Lfunc_begin5:
@@ -644,7 +643,7 @@ GCC_except_table8:
 
 	.section	.text.call_with_none1,"ax",@progbits
 	.globl	call_with_none1
-	.p2align	4, 0x90
+	.p2align	4
 	.type	call_with_none1,@function
 call_with_none1:
 	push	r14
@@ -665,7 +664,7 @@ call_with_none1:
 
 	.section	.text.call_with_none2,"ax",@progbits
 	.globl	call_with_none2
-	.p2align	4, 0x90
+	.p2align	4
 	.type	call_with_none2,@function
 call_with_none2:
 	push	r14
@@ -686,7 +685,7 @@ call_with_none2:
 
 	.section	.text.call_with_none3,"ax",@progbits
 	.globl	call_with_none3
-	.p2align	4, 0x90
+	.p2align	4
 	.type	call_with_none3,@function
 call_with_none3:
 .Lfunc_begin6:
@@ -786,7 +785,7 @@ GCC_except_table11:
 
 	.section	.text.call_with_none4,"ax",@progbits
 	.globl	call_with_none4
-	.p2align	4, 0x90
+	.p2align	4
 	.type	call_with_none4,@function
 call_with_none4:
 .Lfunc_begin7:
@@ -886,7 +885,7 @@ GCC_except_table12:
 
 	.section	.text.call_with_some1,"ax",@progbits
 	.globl	call_with_some1
-	.p2align	4, 0x90
+	.p2align	4
 	.type	call_with_some1,@function
 call_with_some1:
 .Lfunc_begin8:
@@ -994,7 +993,7 @@ GCC_except_table13:
 
 	.section	.text.call_with_some2,"ax",@progbits
 	.globl	call_with_some2
-	.p2align	4, 0x90
+	.p2align	4
 	.type	call_with_some2,@function
 call_with_some2:
 .Lfunc_begin9:
@@ -1105,7 +1104,7 @@ GCC_except_table14:
 
 	.section	.text.call_with_some3,"ax",@progbits
 	.globl	call_with_some3
-	.p2align	4, 0x90
+	.p2align	4
 	.type	call_with_some3,@function
 call_with_some3:
 .Lfunc_begin10:

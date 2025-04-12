@@ -1,8 +1,7 @@
-	.text
 	.intel_syntax noprefix
 	.section	.text.iter_create,"ax",@progbits
 	.globl	iter_create
-	.p2align	4, 0x90
+	.p2align	4
 	.type	iter_create,@function
 iter_create:
 	mov	eax, dword ptr [esp + 4]
@@ -31,7 +30,7 @@ iter_create:
 
 	.section	.text.iter_once,"ax",@progbits
 	.globl	iter_once
-	.p2align	4, 0x90
+	.p2align	4
 	.type	iter_once,@function
 iter_once:
 	push	ebp
@@ -102,7 +101,7 @@ iter_once:
 
 	.section	.text.use_obj,"ax",@progbits
 	.globl	use_obj
-	.p2align	4, 0x90
+	.p2align	4
 	.type	use_obj,@function
 use_obj:
 	push	eax
@@ -118,7 +117,7 @@ use_obj:
 
 	.section	.text.iter,"ax",@progbits
 	.globl	iter
-	.p2align	4, 0x90
+	.p2align	4
 	.type	iter,@function
 iter:
 	push	ebp
@@ -157,7 +156,7 @@ iter:
 	mov	dword ptr [esp + 120], 0
 	cmp	ecx, eax
 	jb	.LBB3_5
-	.p2align	4, 0x90
+	.p2align	4
 .LBB3_2:
 	mov	esi, dword ptr [edi]
 	test	esi, esi
@@ -218,7 +217,7 @@ iter:
 
 	.section	.text.iter_noop,"ax",@progbits
 	.globl	iter_noop
-	.p2align	4, 0x90
+	.p2align	4
 	.type	iter_noop,@function
 iter_noop:
 	push	ebp
@@ -257,7 +256,7 @@ iter_noop:
 	mov	dword ptr [esp + 12], eax
 	xor	eax, eax
 	jmp	.LBB4_1
-	.p2align	4, 0x90
+	.p2align	4
 .LBB4_6:
 	lea	esi, [edx + 1]
 	mov	dword ptr [esp + 116], esi
@@ -312,7 +311,7 @@ iter_noop:
 
 	.section	.text.iter_retained,"ax",@progbits
 	.globl	iter_retained
-	.p2align	4, 0x90
+	.p2align	4
 	.type	iter_retained,@function
 iter_retained:
 .Lfunc_begin0:
@@ -353,7 +352,7 @@ iter_retained:
 	mov	dword ptr [esp + 136], 0
 	cmp	eax, ecx
 	jb	.LBB5_11
-	.p2align	4, 0x90
+	.p2align	4
 .LBB5_2:
 	mov	esi, dword ptr [edi]
 	test	esi, esi
@@ -387,7 +386,7 @@ iter_retained:
 	cmp	dword ptr [esp + 28], ecx
 	je	.LBB5_12
 	jmp	.LBB5_10
-	.p2align	4, 0x90
+	.p2align	4
 .LBB5_8:
 	mov	dword ptr [esp + 24], 1
 	mov	dword ptr [esp + 28], ecx

@@ -1,8 +1,7 @@
-	.text
 	.intel_syntax noprefix
 	.section	.text.error_bool,"ax",@progbits
 	.globl	error_bool
-	.p2align	4, 0x90
+	.p2align	4
 	.type	error_bool,@function
 error_bool:
 	push	r15
@@ -40,7 +39,7 @@ error_bool:
 
 	.section	.text.error_new,"ax",@progbits
 	.globl	error_new
-	.p2align	4, 0x90
+	.p2align	4
 	.type	error_new,@function
 error_new:
 	push	r14
@@ -82,7 +81,7 @@ error_new:
 
 	.section	.text.error_init,"ax",@progbits
 	.globl	error_init
-	.p2align	4, 0x90
+	.p2align	4
 	.type	error_init,@function
 error_init:
 	push	r14
@@ -130,7 +129,7 @@ error_init:
 
 	.section	.text.error_copy,"ax",@progbits
 	.globl	error_copy
-	.p2align	4, 0x90
+	.p2align	4
 	.type	error_copy,@function
 error_copy:
 	push	r14
@@ -172,7 +171,7 @@ error_copy:
 
 	.section	.text.error_mutable_copy,"ax",@progbits
 	.globl	error_mutable_copy
-	.p2align	4, 0x90
+	.p2align	4
 	.type	error_mutable_copy,@function
 error_mutable_copy:
 	push	r14
@@ -214,7 +213,7 @@ error_mutable_copy:
 
 	.section	.text.error_autoreleased,"ax",@progbits
 	.globl	error_autoreleased
-	.p2align	4, 0x90
+	.p2align	4
 	.type	error_autoreleased,@function
 error_autoreleased:
 	push	r14

@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_iter_create
-	.p2align	4, 0x90
+	.p2align	4
 _iter_create:
 	push	rbp
 	mov	rbp, rsp
@@ -37,7 +37,7 @@ _iter_create:
 	ret
 
 	.globl	_iter_once
-	.p2align	4, 0x90
+	.p2align	4
 _iter_once:
 	push	rbp
 	mov	rbp, rsp
@@ -92,7 +92,7 @@ LBB1_2:
 	jmp	LBB1_3
 
 	.globl	_use_obj
-	.p2align	4, 0x90
+	.p2align	4
 _use_obj:
 	push	rbp
 	mov	rbp, rsp
@@ -104,7 +104,7 @@ _use_obj:
 	ret
 
 	.globl	_iter
-	.p2align	4, 0x90
+	.p2align	4
 _iter:
 	push	rbp
 	mov	rbp, rsp
@@ -149,7 +149,7 @@ _iter:
 	xor	eax, eax
 	cmp	rax, rcx
 	jb	LBB3_6
-	.p2align	4, 0x90
+	.p2align	4
 LBB3_2:
 	mov	rsi, qword ptr [r15]
 	test	rsi, rsi
@@ -196,7 +196,7 @@ LBB3_7:
 	ret
 
 	.globl	_iter_noop
-	.p2align	4, 0x90
+	.p2align	4
 _iter_noop:
 	push	rbp
 	mov	rbp, rsp
@@ -241,7 +241,7 @@ _iter_noop:
 	xor	eax, eax
 	xor	edx, edx
 	jmp	LBB4_1
-	.p2align	4, 0x90
+	.p2align	4
 LBB4_6:
 	lea	rsi, [rdx + 1]
 	mov	qword ptr [rbp - 56], rsi
@@ -285,7 +285,7 @@ LBB4_7:
 	ret
 
 	.globl	_iter_retained
-	.p2align	4, 0x90
+	.p2align	4
 _iter_retained:
 Lfunc_begin0:
 	push	rbp
@@ -332,7 +332,7 @@ Lfunc_begin0:
 	xor	eax, eax
 	cmp	rax, rcx
 	jb	LBB5_7
-	.p2align	4, 0x90
+	.p2align	4
 LBB5_2:
 	mov	rsi, qword ptr [r15]
 	test	rsi, rsi
@@ -359,7 +359,7 @@ LBB5_7:
 	cmp	qword ptr [rbp - 264], rcx
 	je	LBB5_11
 	jmp	LBB5_18
-	.p2align	4, 0x90
+	.p2align	4
 LBB5_9:
 	mov	qword ptr [rbp - 272], 1
 	mov	qword ptr [rbp - 264], rcx

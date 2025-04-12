@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_get_sel
-	.p2align	4, 0x90
+	.p2align	4
 _get_sel:
 	push	ebp
 	mov	ebp, esp
@@ -27,7 +27,7 @@ LBB0_1:
 	ret
 
 	.globl	_get_same_sel
-	.p2align	4, 0x90
+	.p2align	4
 _get_same_sel:
 	push	ebp
 	mov	ebp, esp
@@ -53,7 +53,7 @@ LBB1_1:
 	ret
 
 	.globl	_get_common_twice
-	.p2align	4, 0x90
+	.p2align	4
 _get_common_twice:
 	push	ebp
 	mov	ebp, esp
@@ -100,7 +100,7 @@ LBB2_3:
 	ret
 
 	.globl	_get_different_sel
-	.p2align	4, 0x90
+	.p2align	4
 _get_different_sel:
 	push	ebp
 	mov	ebp, esp
@@ -126,7 +126,7 @@ LBB3_1:
 	ret
 
 	.globl	_unused_sel
-	.p2align	4, 0x90
+	.p2align	4
 _unused_sel:
 	push	ebp
 	mov	ebp, esp
@@ -152,7 +152,7 @@ LBB4_1:
 	ret
 
 	.globl	_use_fns
-	.p2align	4, 0x90
+	.p2align	4
 _use_fns:
 	push	ebp
 	mov	ebp, esp
@@ -247,7 +247,7 @@ LBB5_7:
 	jmp	LBB5_8
 
 	.globl	_use_same_twice
-	.p2align	4, 0x90
+	.p2align	4
 _use_same_twice:
 	push	ebp
 	mov	ebp, esp
@@ -302,7 +302,7 @@ LBB6_3:
 	jmp	LBB6_4
 
 	.globl	_use_in_loop
-	.p2align	4, 0x90
+	.p2align	4
 _use_in_loop:
 	push	ebp
 	mov	ebp, esp
@@ -318,7 +318,7 @@ L7$pb:
 	je	LBB7_5
 	lea	ecx, [esi + l_anon.[ID].5-L7$pb]
 	lea	ebx, [esi + SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)-L7$pb]
-	.p2align	4, 0x90
+	.p2align	4
 LBB7_2:
 	mov	eax, dword ptr [esi + SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)-L7$pb]
 	test	eax, eax

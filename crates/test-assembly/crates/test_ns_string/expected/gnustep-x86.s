@@ -1,8 +1,7 @@
-	.text
 	.intel_syntax noprefix
 	.section	.text.get_ascii,"ax",@progbits
 	.globl	get_ascii
-	.p2align	4, 0x90
+	.p2align	4
 	.type	get_ascii,@function
 get_ascii:
 	push	ebx
@@ -35,7 +34,7 @@ get_ascii:
 
 	.section	.text.get_utf16,"ax",@progbits
 	.globl	get_utf16
-	.p2align	4, 0x90
+	.p2align	4
 	.type	get_utf16,@function
 get_utf16:
 	push	ebx
@@ -68,7 +67,7 @@ get_utf16:
 
 	.section	.text.get_with_nul,"ax",@progbits
 	.globl	get_with_nul
-	.p2align	4, 0x90
+	.p2align	4
 	.type	get_with_nul,@function
 get_with_nul:
 	push	ebx

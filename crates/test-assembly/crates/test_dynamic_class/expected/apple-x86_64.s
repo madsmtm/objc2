@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_get_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_class:
 	push	rbp
 	mov	rbp, rsp
@@ -18,7 +18,7 @@ LBB0_2:
 	jmp	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 
 	.globl	_get_same_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_same_class:
 	push	rbp
 	mov	rbp, rsp
@@ -35,7 +35,7 @@ LBB1_2:
 	jmp	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 
 	.globl	_get_different_class
-	.p2align	4, 0x90
+	.p2align	4
 _get_different_class:
 	push	rbp
 	mov	rbp, rsp
@@ -52,7 +52,7 @@ LBB2_2:
 	jmp	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 
 	.globl	_unused_class
-	.p2align	4, 0x90
+	.p2align	4
 _unused_class:
 	push	rbp
 	mov	rbp, rsp
@@ -69,7 +69,7 @@ LBB3_2:
 	jmp	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 
 	.globl	_use_fns
-	.p2align	4, 0x90
+	.p2align	4
 _use_fns:
 	push	rbp
 	mov	rbp, rsp
@@ -147,7 +147,7 @@ LBB4_7:
 	jmp	LBB4_8
 
 	.globl	_use_same_twice
-	.p2align	4, 0x90
+	.p2align	4
 _use_same_twice:
 	push	rbp
 	mov	rbp, rsp
@@ -189,7 +189,7 @@ LBB5_3:
 	jmp	LBB5_4
 
 	.globl	_use_in_loop
-	.p2align	4, 0x90
+	.p2align	4
 _use_in_loop:
 	test	rdi, rdi
 	je	LBB6_6
@@ -202,7 +202,7 @@ _use_in_loop:
 	lea	rbx, [rip + SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)]
 	lea	r14, [rip + l_anon.[ID].10]
 	lea	r15, [rip + l_anon.[ID].11]
-	.p2align	4, 0x90
+	.p2align	4
 LBB6_2:
 	mov	rax, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)]
 	test	rax, rax

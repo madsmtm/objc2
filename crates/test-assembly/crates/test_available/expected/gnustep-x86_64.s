@@ -1,8 +1,7 @@
-	.text
 	.intel_syntax noprefix
 	.section	.text.always,"ax",@progbits
 	.globl	always
-	.p2align	4, 0x90
+	.p2align	4
 	.type	always,@function
 always:
 	mov	al, 1
@@ -12,7 +11,7 @@ always:
 
 	.section	.text.never,"ax",@progbits
 	.globl	never
-	.p2align	4, 0x90
+	.p2align	4
 	.type	never,@function
 never:
 	xor	eax, eax
@@ -22,7 +21,7 @@ never:
 
 	.section	.text.low,"ax",@progbits
 	.globl	low
-	.p2align	4, 0x90
+	.p2align	4
 	.type	low,@function
 low:
 	mov	al, 1
@@ -32,7 +31,7 @@ low:
 
 	.section	.text.high,"ax",@progbits
 	.globl	high
-	.p2align	4, 0x90
+	.p2align	4
 	.type	high,@function
 high:
 	mov	al, 1
@@ -42,7 +41,7 @@ high:
 
 	.section	.text.only_ios,"ax",@progbits
 	.globl	only_ios
-	.p2align	4, 0x90
+	.p2align	4
 	.type	only_ios,@function
 only_ios:
 	xor	eax, eax
@@ -52,7 +51,7 @@ only_ios:
 
 	.section	.text.two_checks,"ax",@progbits
 	.globl	two_checks
-	.p2align	4, 0x90
+	.p2align	4
 	.type	two_checks,@function
 two_checks:
 	mov	al, 1

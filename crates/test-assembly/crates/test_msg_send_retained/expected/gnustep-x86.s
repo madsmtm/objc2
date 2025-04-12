@@ -1,8 +1,7 @@
-	.text
 	.intel_syntax noprefix
 	.section	.text.handle_new,"ax",@progbits
 	.globl	handle_new
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_new,@function
 handle_new:
 	push	ebx
@@ -33,7 +32,7 @@ handle_new:
 
 	.section	.text.handle_new_fallible,"ax",@progbits
 	.globl	handle_new_fallible
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_new_fallible,@function
 handle_new_fallible:
 	push	ebx
@@ -73,7 +72,7 @@ handle_new_fallible:
 
 	.section	.text.handle_alloc,"ax",@progbits
 	.globl	handle_alloc
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_alloc,@function
 handle_alloc:
 	push	ebx
@@ -104,7 +103,7 @@ handle_alloc:
 
 	.section	.text.handle_init,"ax",@progbits
 	.globl	handle_init
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_init,@function
 handle_init:
 	push	ebx
@@ -143,7 +142,7 @@ handle_init:
 
 	.section	.text.handle_init_fallible,"ax",@progbits
 	.globl	handle_init_fallible
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_init_fallible,@function
 handle_init_fallible:
 	push	ebx
@@ -185,7 +184,7 @@ handle_init_fallible:
 
 	.section	.text.handle_alloc_init,"ax",@progbits
 	.globl	handle_alloc_init
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_alloc_init,@function
 handle_alloc_init:
 	push	ebx
@@ -235,7 +234,7 @@ handle_alloc_init:
 
 	.section	.text.handle_alloc_release,"ax",@progbits
 	.globl	handle_alloc_release
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_alloc_release,@function
 handle_alloc_release:
 	push	ebx
@@ -267,7 +266,7 @@ handle_alloc_release:
 
 	.section	.text.handle_alloc_init_release,"ax",@progbits
 	.globl	handle_alloc_init_release
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_alloc_init_release,@function
 handle_alloc_init_release:
 	push	ebp
@@ -309,7 +308,7 @@ handle_alloc_init_release:
 
 	.section	.text.handle_copy,"ax",@progbits
 	.globl	handle_copy
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_copy,@function
 handle_copy:
 	push	ebx
@@ -340,7 +339,7 @@ handle_copy:
 
 	.section	.text.handle_copy_fallible,"ax",@progbits
 	.globl	handle_copy_fallible
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_copy_fallible,@function
 handle_copy_fallible:
 	push	ebx
@@ -376,7 +375,7 @@ handle_copy_fallible:
 
 	.section	.text.handle_mutable_copy,"ax",@progbits
 	.globl	handle_mutable_copy
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_mutable_copy,@function
 handle_mutable_copy:
 	push	ebx
@@ -407,7 +406,7 @@ handle_mutable_copy:
 
 	.section	.text.handle_mutable_copy_fallible,"ax",@progbits
 	.globl	handle_mutable_copy_fallible
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_mutable_copy_fallible,@function
 handle_mutable_copy_fallible:
 	push	ebx
@@ -443,7 +442,7 @@ handle_mutable_copy_fallible:
 
 	.section	.text.handle_autoreleased,"ax",@progbits
 	.globl	handle_autoreleased
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_autoreleased,@function
 handle_autoreleased:
 	push	ebx
@@ -475,7 +474,7 @@ handle_autoreleased:
 
 	.section	.text.handle_autoreleased_with_arg,"ax",@progbits
 	.globl	handle_autoreleased_with_arg
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_autoreleased_with_arg,@function
 handle_autoreleased_with_arg:
 	push	ebp
@@ -514,7 +513,7 @@ handle_autoreleased_with_arg:
 
 	.section	.text.handle_autoreleased_fallible,"ax",@progbits
 	.globl	handle_autoreleased_fallible
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_autoreleased_fallible,@function
 handle_autoreleased_fallible:
 	push	ebx
@@ -557,7 +556,7 @@ handle_autoreleased_fallible:
 
 	.section	.text.handle_with_out_param,"ax",@progbits
 	.globl	handle_with_out_param
-	.p2align	4, 0x90
+	.p2align	4
 	.type	handle_with_out_param,@function
 handle_with_out_param:
 .Lfunc_begin0:

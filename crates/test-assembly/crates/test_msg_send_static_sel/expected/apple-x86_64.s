@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_handle_with_sel
-	.p2align	4, 0x90
+	.p2align	4
 _handle_with_sel:
 	push	rbp
 	mov	rbp, rsp
@@ -10,7 +10,7 @@ _handle_with_sel:
 	jmp	_objc_msgSend
 
 	.globl	_handle_alloc_init
-	.p2align	4, 0x90
+	.p2align	4
 _handle_alloc_init:
 	push	rbp
 	mov	rbp, rsp
@@ -38,7 +38,7 @@ LBB1_2:
 	call	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
 
 	.globl	_use_generic
-	.p2align	4, 0x90
+	.p2align	4
 _use_generic:
 	push	rbp
 	mov	rbp, rsp

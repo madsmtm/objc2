@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_get_sel
-	.p2align	4, 0x90
+	.p2align	4
 _get_sel:
 	push	rbp
 	mov	rbp, rsp
@@ -17,7 +17,7 @@ LBB0_2:
 	jmp	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
 	.globl	_get_same_sel
-	.p2align	4, 0x90
+	.p2align	4
 _get_same_sel:
 	push	rbp
 	mov	rbp, rsp
@@ -33,7 +33,7 @@ LBB1_2:
 	jmp	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
 	.globl	_get_common_twice
-	.p2align	4, 0x90
+	.p2align	4
 _get_common_twice:
 	push	rbp
 	mov	rbp, rsp
@@ -71,7 +71,7 @@ LBB2_3:
 	ret
 
 	.globl	_get_different_sel
-	.p2align	4, 0x90
+	.p2align	4
 _get_different_sel:
 	push	rbp
 	mov	rbp, rsp
@@ -87,7 +87,7 @@ LBB3_2:
 	jmp	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
 	.globl	_unused_sel
-	.p2align	4, 0x90
+	.p2align	4
 _unused_sel:
 	push	rbp
 	mov	rbp, rsp
@@ -103,7 +103,7 @@ LBB4_2:
 	jmp	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
 	.globl	_use_fns
-	.p2align	4, 0x90
+	.p2align	4
 _use_fns:
 	push	rbp
 	mov	rbp, rsp
@@ -177,7 +177,7 @@ LBB5_7:
 	jmp	LBB5_8
 
 	.globl	_use_same_twice
-	.p2align	4, 0x90
+	.p2align	4
 _use_same_twice:
 	push	rbp
 	mov	rbp, rsp
@@ -217,7 +217,7 @@ LBB6_3:
 	jmp	LBB6_4
 
 	.globl	_use_in_loop
-	.p2align	4, 0x90
+	.p2align	4
 _use_in_loop:
 	test	rdi, rdi
 	je	LBB7_6
@@ -229,7 +229,7 @@ _use_in_loop:
 	push	rax
 	lea	rbx, [rip + SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)]
 	lea	r14, [rip + l_anon.[ID].5]
-	.p2align	4, 0x90
+	.p2align	4
 LBB7_2:
 	mov	rax, qword ptr [rip + SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)]
 	test	rax, rax

@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_handle_new
-	.p2align	4, 0x90
+	.p2align	4
 _handle_new:
 	push	ebp
 	mov	ebp, esp
@@ -9,7 +9,7 @@ _handle_new:
 	jmp	_objc_msgSend
 
 	.globl	_handle_new_fallible
-	.p2align	4, 0x90
+	.p2align	4
 _handle_new_fallible:
 	push	ebp
 	mov	ebp, esp
@@ -44,7 +44,7 @@ LBB1_2:
 	call	SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)
 
 	.globl	_handle_alloc
-	.p2align	4, 0x90
+	.p2align	4
 _handle_alloc:
 	push	ebp
 	mov	ebp, esp
@@ -52,7 +52,7 @@ _handle_alloc:
 	jmp	_objc_msgSend
 
 	.globl	_handle_init
-	.p2align	4, 0x90
+	.p2align	4
 _handle_init:
 	push	ebp
 	mov	ebp, esp
@@ -60,7 +60,7 @@ _handle_init:
 	jmp	_objc_msgSend
 
 	.globl	_handle_init_fallible
-	.p2align	4, 0x90
+	.p2align	4
 _handle_init_fallible:
 	push	ebp
 	mov	ebp, esp
@@ -95,7 +95,7 @@ LBB4_2:
 	call	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
 
 	.globl	_handle_alloc_init
-	.p2align	4, 0x90
+	.p2align	4
 _handle_alloc_init:
 	push	ebp
 	mov	ebp, esp
@@ -116,7 +116,7 @@ _handle_alloc_init:
 	ret
 
 	.globl	_handle_alloc_release
-	.p2align	4, 0x90
+	.p2align	4
 _handle_alloc_release:
 	push	ebp
 	mov	ebp, esp
@@ -133,7 +133,7 @@ _handle_alloc_release:
 	ret
 
 	.globl	_handle_alloc_init_release
-	.p2align	4, 0x90
+	.p2align	4
 _handle_alloc_init_release:
 	push	ebp
 	mov	ebp, esp
@@ -156,7 +156,7 @@ _handle_alloc_init_release:
 	ret
 
 	.globl	_handle_copy
-	.p2align	4, 0x90
+	.p2align	4
 _handle_copy:
 	push	ebp
 	mov	ebp, esp
@@ -164,7 +164,7 @@ _handle_copy:
 	jmp	_objc_msgSend
 
 	.globl	_handle_copy_fallible
-	.p2align	4, 0x90
+	.p2align	4
 _handle_copy_fallible:
 	push	ebp
 	mov	ebp, esp
@@ -190,7 +190,7 @@ LBB9_2:
 	call	SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)
 
 	.globl	_handle_mutable_copy
-	.p2align	4, 0x90
+	.p2align	4
 _handle_mutable_copy:
 	push	ebp
 	mov	ebp, esp
@@ -198,7 +198,7 @@ _handle_mutable_copy:
 	jmp	_objc_msgSend
 
 	.globl	_handle_mutable_copy_fallible
-	.p2align	4, 0x90
+	.p2align	4
 _handle_mutable_copy_fallible:
 	push	ebp
 	mov	ebp, esp
@@ -224,7 +224,7 @@ LBB11_2:
 	call	SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
 
 	.globl	_handle_autoreleased
-	.p2align	4, 0x90
+	.p2align	4
 _handle_autoreleased:
 	push	ebp
 	mov	ebp, esp
@@ -246,7 +246,7 @@ _handle_autoreleased:
 	ret
 
 	.globl	_handle_autoreleased_with_arg
-	.p2align	4, 0x90
+	.p2align	4
 _handle_autoreleased_with_arg:
 	push	ebp
 	mov	ebp, esp
@@ -271,7 +271,7 @@ _handle_autoreleased_with_arg:
 	ret
 
 	.globl	_handle_autoreleased_fallible
-	.p2align	4, 0x90
+	.p2align	4
 _handle_autoreleased_fallible:
 	push	ebp
 	mov	ebp, esp
@@ -315,7 +315,7 @@ LBB14_2:
 	call	SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)
 
 	.globl	_handle_with_out_param
-	.p2align	4, 0x90
+	.p2align	4
 _handle_with_out_param:
 Lfunc_begin0:
 	push	ebp

@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_error_bool
-	.p2align	4, 0x90
+	.p2align	4
 _error_bool:
 	push	ebp
 	mov	ebp, esp
@@ -41,7 +41,7 @@ LBB0_1:
 	ret
 
 	.globl	_error_new
-	.p2align	4, 0x90
+	.p2align	4
 _error_new:
 	push	ebp
 	mov	ebp, esp
@@ -81,7 +81,7 @@ LBB1_2:
 	ret
 
 	.globl	_error_init
-	.p2align	4, 0x90
+	.p2align	4
 _error_init:
 	push	ebp
 	mov	ebp, esp
@@ -121,7 +121,7 @@ LBB2_2:
 	ret
 
 	.globl	_error_copy
-	.p2align	4, 0x90
+	.p2align	4
 _error_copy:
 	push	ebp
 	mov	ebp, esp
@@ -161,7 +161,7 @@ LBB3_2:
 	ret
 
 	.globl	_error_mutable_copy
-	.p2align	4, 0x90
+	.p2align	4
 _error_mutable_copy:
 	push	ebp
 	mov	ebp, esp
@@ -201,7 +201,7 @@ LBB4_2:
 	ret
 
 	.globl	_error_autoreleased
-	.p2align	4, 0x90
+	.p2align	4
 _error_autoreleased:
 	push	ebp
 	mov	ebp, esp

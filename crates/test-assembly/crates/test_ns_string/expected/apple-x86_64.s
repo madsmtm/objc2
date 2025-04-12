@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.globl	_get_ascii
-	.p2align	4, 0x90
+	.p2align	4
 _get_ascii:
 	push	rbp
 	mov	rbp, rsp
@@ -10,7 +10,7 @@ _get_ascii:
 	ret
 
 	.globl	_get_utf16
-	.p2align	4, 0x90
+	.p2align	4
 _get_utf16:
 	push	rbp
 	mov	rbp, rsp
@@ -19,7 +19,7 @@ _get_utf16:
 	ret
 
 	.globl	_get_with_nul
-	.p2align	4, 0x90
+	.p2align	4
 _get_with_nul:
 	push	rbp
 	mov	rbp, rsp

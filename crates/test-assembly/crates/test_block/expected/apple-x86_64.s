@@ -1,6 +1,6 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -10,7 +10,7 @@ SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_bloc
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -18,7 +18,7 @@ SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_bloc
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -26,7 +26,7 @@ SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_bloc
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -34,7 +34,7 @@ SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_bloc
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -44,7 +44,7 @@ SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_bloc
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -52,21 +52,21 @@ SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_bloc
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>>::clone_closure, 0):
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>>::clone_closure, 0):
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>>::clone_closure, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -94,14 +94,14 @@ LBB8_2:
 	mov	esi, 4
 	call	SYM(alloc::alloc::handle_alloc_error::GENERATED_ID, 0)
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>>::empty_clone_closure, 0):
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>>::drop_closure, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -111,21 +111,21 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::rc_b
 	pop	rbp
 	jmp	___rust_dealloc
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>>::drop_closure, 0):
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>>::drop_closure, 0):
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
 	ret
 
-	.p2align	4, 0x90
+	.p2align	4
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>>::drop_closure, 0):
 	push	rbp
 	mov	rbp, rsp
@@ -136,7 +136,7 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::crea
 	jmp	___rust_dealloc
 
 	.globl	_stack_block_to_rc
-	.p2align	4, 0x90
+	.p2align	4
 _stack_block_to_rc:
 	push	rbp
 	mov	rbp, rsp
@@ -159,7 +159,7 @@ LBB14_2:
 	call	SYM(block2::rc_block::block_copy_fail::GENERATED_ID, 0)
 
 	.globl	_rc_block
-	.p2align	4, 0x90
+	.p2align	4
 _rc_block:
 	push	rbp
 	mov	rbp, rsp
@@ -182,7 +182,7 @@ LBB15_2:
 	call	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
 
 	.globl	_rc_block_drop
-	.p2align	4, 0x90
+	.p2align	4
 _rc_block_drop:
 	push	rbp
 	mov	rbp, rsp
@@ -206,7 +206,7 @@ LBB16_2:
 	call	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
 
 	.globl	_create_and_use_stack_block
-	.p2align	4, 0x90
+	.p2align	4
 _create_and_use_stack_block:
 	push	rbp
 	mov	rbp, rsp
@@ -225,7 +225,7 @@ _create_and_use_stack_block:
 	ret
 
 	.globl	_create_and_use_stack_block_drop
-	.p2align	4, 0x90
+	.p2align	4
 _create_and_use_stack_block_drop:
 	push	rbp
 	mov	rbp, rsp
@@ -252,7 +252,7 @@ _create_and_use_stack_block_drop:
 	ret
 
 	.globl	_create_and_use_rc_block
-	.p2align	4, 0x90
+	.p2align	4
 _create_and_use_rc_block:
 	push	rbp
 	mov	rbp, rsp
