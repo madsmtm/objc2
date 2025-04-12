@@ -43,6 +43,8 @@ unsafe impl Send for CFDate {}
 unsafe impl Sync for CFDate {}
 
 // SAFETY: NSError is thread-safe, and this is toll-free bridged to that.
+// Also, Foundation's .swiftinterface adds a `@unchecked Swift.Sendable`
+// protocol conformance to CoreFoundation.CFError.
 #[cfg(feature = "CFError")]
 unsafe impl Send for CFError {}
 #[cfg(feature = "CFError")]

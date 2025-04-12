@@ -24,3 +24,8 @@ pub use self::generated::*;
 pub(crate) type OSType = u32;
 #[allow(dead_code)]
 pub(crate) type OSStatus = i32;
+
+// NOTE: Certain classes are marked as `@unchecked Swift.Sendable` in
+// `$(xcrun --show-sdk-path)/usr/lib/swift/AVFoundation.swiftmodule/*`, but
+// only when the deployment target is high enough (so we can only do that too
+// when https://github.com/rust-lang/rfcs/pull/3750 lands).

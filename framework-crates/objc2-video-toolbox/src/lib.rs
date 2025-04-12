@@ -28,3 +28,8 @@ pub use self::generated::*;
 pub(crate) type Boolean = u8;
 #[allow(dead_code)]
 pub(crate) type OSStatus = i32;
+
+// NOTE: `VTRAWProcessingSessionRef` is marked as `CM_SWIFT_NONSENDABLE`, but
+// `$(xcrun --show-sdk-path)/usr/lib/swift/VideoToolbox.swiftmodule/*`
+// includes an `@unchecked Swift.Sendable` extension, so might be safe to
+// mark it as sendable?

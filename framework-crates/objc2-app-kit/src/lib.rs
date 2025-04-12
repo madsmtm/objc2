@@ -98,6 +98,11 @@ pub(crate) type UTF32Char = u32; // Or maybe Rust's char?
 // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CocoaFundamentals/AddingBehaviortoaCocoaProgram/AddingBehaviorCocoa.html#//apple_ref/doc/uid/TP40002974-CH5-SW47>
 // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Multithreading/ThreadSafetySummary/ThreadSafetySummary.html#//apple_ref/doc/uid/10000057i-CH12-123383>
 
+// NOTE: `NSShadow` is marked as `@unchecked Swift.Sendable` in
+// `AppKit.Framework/Modules/AppKit.swiftmodule/*.swiftinterface`, but
+// only when the deployment target is macOS 14.0 (so we can only do that too
+// when https://github.com/rust-lang/rfcs/pull/3750 lands).
+
 #[cfg(test)]
 mod tests {
     #[test]
