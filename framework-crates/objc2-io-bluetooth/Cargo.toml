@@ -73,7 +73,6 @@ default = [
     "OBEXFileTransferServices",
     "OBEXSession",
     "libc",
-    "objc",
     "objc2",
     "objc2-core-foundation",
     "objc2-foundation",
@@ -114,4 +113,3 @@ OBEX = []
 OBEXBluetooth = []
 OBEXFileTransferServices = []
 OBEXSession = []
-objc = []

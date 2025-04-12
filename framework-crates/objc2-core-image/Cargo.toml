@@ -41,7 +41,6 @@ objc2-core-video = { path = "../objc2-core-video", version = "0.3.0", default-fe
 objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
 objc2-io-surface = { path = "../objc2-io-surface", version = "0.3.0", default-features = false, optional = true, features = [
     "IOSurfaceRef",
-    "ObjC",
     "objc2",
 ] }
 objc2-metal = { path = "../objc2-metal", version = "0.3.0", default-features = false, optional = true, features = [

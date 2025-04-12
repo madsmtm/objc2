@@ -177,6 +177,10 @@ impl Library {
 
         // Add features from modules.
         for feature in self.module.all_features(&emission_location) {
+            if emitted_features.contains_key(&feature) {
+                // Already added above.
+                continue;
+            }
             emitted_features.insert(feature, BTreeSet::new());
         }
 

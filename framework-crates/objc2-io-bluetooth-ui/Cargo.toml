@@ -27,7 +27,6 @@ objc2-io-bluetooth = { path = "../objc2-io-bluetooth", version = "0.3.0", defaul
     "IOBluetoothSDPServiceRecord",
     "IOBluetoothSDPUUID",
     "IOBluetoothUserLib",
-    "objc",
     "objc2",
     "objc2-foundation",
 ] }
@@ -49,12 +48,13 @@ default = [
     "IOBluetoothPasskeyDisplay",
     "IOBluetoothServiceBrowserController",
     "IOBluetoothUIUserLib",
-    "objc",
+    "objc2",
     "objc2-core-foundation",
     "objc2-io-bluetooth",
 ]
 std = ["alloc"]
 alloc = []
+objc2 = []
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-io-bluetooth = ["dep:objc2-io-bluetooth"]
 
@@ -124,4 +124,3 @@ IOBluetoothServiceBrowserController = [
     "objc2-foundation/NSString",
 ]
 IOBluetoothUIUserLib = []
-objc = []

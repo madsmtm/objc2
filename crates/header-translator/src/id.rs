@@ -134,6 +134,15 @@ impl Location {
             name if name.starts_with("Darwin.Mach") => "__libc__".into(),
             "_mach_port_t" => "__libc__".into(),
 
+            // Rename "ObjC" modules to `objc2`, such that the feature flag matches.
+            "IOSurface.ObjC" => "IOSurface.objc2".into(),
+            name if name.starts_with("IOBluetooth.objc") => {
+                name.replace("IOBluetooth.objc", "IOBluetooth.objc2").into()
+            }
+            name if name.starts_with("IOBluetoothUI.objc") => name
+                .replace("IOBluetoothUI.objc", "IOBluetoothUI.objc2")
+                .into(),
+
             _ => module_path,
         };
 
@@ -978,7 +987,11 @@ impl ItemTree {
                     .library(emission_location)
                     .required_crates
                     .contains(krate);
-                if !required {
+                if !required
+                    && !emission_location
+                        .feature_names()
+                        .any(|feature| feature == krate)
+                {
                     vec![Cow::Borrowed(krate)]
                 } else {
                     vec![]

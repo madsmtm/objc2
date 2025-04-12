@@ -116,6 +116,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   but making these generic allows for higher-level abstractions and more
   ergonomic usage.
 * The `CFBase` feature is now always enabled.
+* Renamed `objc2-io-surface`'s `"ObjC"` feature to `"objc2"`.
 
 ### Fixed
 * **BREAKING**: Fixed the type of `AuthorizationExecuteWithPrivileges`'s

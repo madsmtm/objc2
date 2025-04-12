@@ -47,7 +47,6 @@ default = [
     "IOSurfaceBase",
     "IOSurfaceRef",
     "IOSurfaceTypes",
-    "ObjC",
     "bitflags",
     "libc",
     "objc2",
@@ -56,6 +55,7 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+ObjC = ["objc2"]
 bitflags = ["dep:bitflags"]
 libc = ["dep:libc"]
 objc2 = [
@@ -70,4 +70,3 @@ IOSurfaceAPI = []
 IOSurfaceBase = []
 IOSurfaceRef = ["bitflags"]
 IOSurfaceTypes = ["bitflags"]
-ObjC = []
