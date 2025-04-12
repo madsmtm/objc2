@@ -38,6 +38,7 @@ impl<T> MallocSlice<T> {
 }
 
 impl<T> Drop for MallocSlice<T> {
+    #[allow(clippy::len_zero)]
     fn drop(&mut self) {
         // If the length is 0, then the pointer is dangling from `from_array`
         // (since the length is immutable), and we can skip calling `free`.

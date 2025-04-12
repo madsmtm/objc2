@@ -179,14 +179,14 @@ iter:
 	xor	ecx, ecx
 	test	eax, eax
 	mov	dword ptr [esp + 120], eax
-	je	.LBB3_6
+	je	.LBB3_7
 .LBB3_5:
 	mov	eax, dword ptr [esp + 88]
 	lea	edx, [ecx + 1]
 	mov	dword ptr [esp + 116], edx
 	mov	eax, dword ptr [eax + 4*ecx]
 	test	eax, eax
-	je	.LBB3_6
+	je	.LBB3_7
 	sub	esp, 12
 	push	eax
 	call	use_obj@PLT
@@ -205,7 +205,7 @@ iter:
 	add	esp, 16
 	mov	esi, eax
 	jmp	.LBB3_4
-.LBB3_6:
+.LBB3_7:
 	add	esp, 124
 	pop	esi
 	pop	edi
@@ -351,7 +351,7 @@ iter_retained:
 	mov	dword ptr [esp + 132], 0
 	mov	dword ptr [esp + 136], 0
 	cmp	eax, ecx
-	jb	.LBB5_11
+	jb	.LBB5_10
 	.p2align	4
 .LBB5_2:
 	mov	esi, dword ptr [edi]
@@ -372,31 +372,31 @@ iter_retained:
 	test	eax, eax
 	mov	dword ptr [esp + 136], eax
 	mov	dword ptr [esp + 132], 0
-	je	.LBB5_18
+	je	.LBB5_14
 	xor	eax, eax
 	cmp	dword ptr [esp + 104], 0
 	je	.LBB5_6
-.LBB5_11:
+.LBB5_10:
 	mov	ecx, dword ptr [esp + 108]
 	test	ecx, ecx
-	je	.LBB5_12
+	je	.LBB5_11
 	mov	ecx, dword ptr [ecx]
-	test	byte ptr [esp + 24], 1
-	je	.LBB5_8
+	cmp	dword ptr [esp + 24], 1
+	jne	.LBB5_18
 	cmp	dword ptr [esp + 28], ecx
-	je	.LBB5_12
-	jmp	.LBB5_10
+	je	.LBB5_11
+	jmp	.LBB5_9
 	.p2align	4
-.LBB5_8:
+.LBB5_18:
 	mov	dword ptr [esp + 24], 1
 	mov	dword ptr [esp + 28], ecx
-.LBB5_12:
+.LBB5_11:
 	mov	ecx, dword ptr [esp + 104]
 	lea	edx, [eax + 1]
 	mov	dword ptr [esp + 132], edx
 	mov	eax, dword ptr [ecx + 4*eax]
 	test	eax, eax
-	je	.LBB5_18
+	je	.LBB5_14
 	mov	dword ptr [esp], eax
 	call	objc_retain@PLT
 	mov	esi, eax
@@ -411,7 +411,7 @@ iter_retained:
 	mov	ecx, dword ptr [esp + 136]
 	cmp	eax, ecx
 	jae	.LBB5_2
-	jmp	.LBB5_11
+	jmp	.LBB5_10
 .LBB5_3:
 	mov	eax, dword ptr [esp + 20]
 	mov	dword ptr [esp], edi
@@ -419,7 +419,7 @@ iter_retained:
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@PLT
 	mov	esi, eax
 	jmp	.LBB5_4
-.LBB5_18:
+.LBB5_14:
 	add	esp, 140
 	pop	esi
 	pop	edi
@@ -428,7 +428,7 @@ iter_retained:
 	ret
 .LBB5_6:
 	call	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)@PLT
-.LBB5_10:
+.LBB5_9:
 	call	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)@PLT
 .LBB5_16:
 .Ltmp5:
@@ -484,7 +484,7 @@ GCC_except_table5:
 	.p2align	2, 0x0
 
 	.type	.Lanon.[ID].0,@object
-	.section	.rodata..Lanon.[ID].0,"a",@progbits
+	.section	.rodata.str1.1,"aMS",@progbits,1
 .Lanon.[ID].0:
 	.asciz	"countByEnumeratingWithState:objects:count:"
 	.size	.Lanon.[ID].0, 43

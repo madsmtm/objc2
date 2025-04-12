@@ -242,7 +242,7 @@ impl PartialEq for Sel {
             // `ffi::sel_isEqual` uses pointer comparison on Apple (the
             // documentation explicitly notes this); so as an optimization,
             // let's do that as well!
-            self.as_ptr() == other.as_ptr()
+            ptr::eq(self.as_ptr(), other.as_ptr())
         }
     }
 }
@@ -1584,7 +1584,7 @@ mod tests {
         assert!(<u32>::ENCODING.equivalent_to_str(method.return_type().to_str().unwrap()));
         assert!(Sel::ENCODING.equivalent_to_str(method.argument_type(1).unwrap().to_str().unwrap()));
 
-        assert!(cls.instance_methods().iter().any(|m| *m == method));
+        assert!(cls.instance_methods().contains(&method));
     }
 
     #[test]
@@ -1597,11 +1597,7 @@ mod tests {
         assert!(<u32>::ENCODING.equivalent_to_str(method.return_type().to_str().unwrap()));
         assert!(Sel::ENCODING.equivalent_to_str(method.argument_type(1).unwrap().to_str().unwrap()));
 
-        assert!(cls
-            .metaclass()
-            .instance_methods()
-            .iter()
-            .any(|m| *m == method));
+        assert!(cls.metaclass().instance_methods().contains(&method));
     }
 
     #[test]
@@ -1669,7 +1665,7 @@ mod tests {
         }
         assert_eq!(&proto.class_method_descriptions(false), &[]);
 
-        assert!(class.adopted_protocols().iter().any(|p| *p == proto));
+        assert!(class.adopted_protocols().contains(&proto));
     }
 
     #[test]

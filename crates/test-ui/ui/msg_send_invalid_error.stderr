@@ -111,7 +111,7 @@ error[E0308]: mismatched types
  --> ui/msg_send_invalid_error.rs
   |
   |         unsafe { msg_send![NSObject::alloc(), initWithError: _] };
-  |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Result<Retained<AnyObject>, ...>`, found `Result<Retained<NSObject>, ...>`
+  |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Result<Retained<AnyObject>, ...>`, found `Result<Retained<NSObject>, Retained<_>>`
   |
   = note: expected enum `Result<Retained<AnyObject>, Retained<NSObject>>`
              found enum `Result<Retained<NSObject>, Retained<_>>`

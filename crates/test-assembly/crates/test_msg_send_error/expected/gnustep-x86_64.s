@@ -108,9 +108,6 @@ error_init:
 	ret
 .LBB2_1:
 	xor	edi, edi
-	jmp	.LBB2_5
-.LBB2_4:
-	mov	rdi, qword ptr [rsp]
 .LBB2_5:
 	call	qword ptr [rip + objc_retain@GOTPCREL]
 	mov	rdx, rax
@@ -124,6 +121,9 @@ error_init:
 	pop	rbx
 	pop	r14
 	ret
+.LBB2_4:
+	mov	rdi, qword ptr [rsp]
+	jmp	.LBB2_5
 .Lfunc_end2:
 	.size	error_init, .Lfunc_end2-error_init
 

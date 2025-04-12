@@ -1,57 +1,69 @@
-	.section	__TEXT,__text,regular,pure_instructions
 	.syntax unified
+	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_get_sel
 	.p2align	2
 	.code	32
 _get_sel:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_caedaca3f40015a7-(LPC0_0+8))
 	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_caedaca3f40015a7-(LPC0_0+8))
 LPC0_0:
 	ldr	r0, [pc, r0]
-	bx	lr
+	pop	{r7, pc}
 
 	.globl	_get_same_sel
 	.p2align	2
 	.code	32
 _get_same_sel:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_a7c7f3067f40b513-(LPC1_0+8))
 	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_a7c7f3067f40b513-(LPC1_0+8))
 LPC1_0:
 	ldr	r0, [pc, r0]
-	bx	lr
+	pop	{r7, pc}
 
 	.globl	_get_common_twice
 	.p2align	2
 	.code	32
 _get_common_twice:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r0, :lower16:(LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-(LPC2_0+8))
 	movt	r0, :upper16:(LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-(LPC2_0+8))
 LPC2_0:
 	ldr	r0, [pc, r0]
 	ldr	r0, [r0]
 	mov	r1, r0
-	bx	lr
+	pop	{r7, pc}
 
 	.globl	_get_different_sel
 	.p2align	2
 	.code	32
 _get_different_sel:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r0, :lower16:(L_OBJC_SELECTOR_REFERENCES_bae8570d40d73864-(LPC3_0+8))
 	movt	r0, :upper16:(L_OBJC_SELECTOR_REFERENCES_bae8570d40d73864-(LPC3_0+8))
 LPC3_0:
 	ldr	r0, [pc, r0]
-	bx	lr
+	pop	{r7, pc}
 
 	.globl	_unused_sel
 	.p2align	2
 	.code	32
 _unused_sel:
-	bx	lr
+	push	{r7, lr}
+	mov	r7, sp
+	pop	{r7, pc}
 
 	.globl	_use_fns
 	.p2align	2
 	.code	32
 _use_fns:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_caedaca3f40015a7-(LPC5_0+8))
 	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_caedaca3f40015a7-(LPC5_0+8))
 LPC5_0:
@@ -69,25 +81,29 @@ LPC5_2:
 LPC5_3:
 	ldr	r9, [pc, r9]
 	stm	r0, {r1, r2, r3, r9}
-	bx	lr
+	pop	{r7, pc}
 
 	.globl	_use_same_twice
 	.p2align	2
 	.code	32
 _use_same_twice:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_caedaca3f40015a7-(LPC6_0+8))
 	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_caedaca3f40015a7-(LPC6_0+8))
 LPC6_0:
 	ldr	r1, [pc, r1]
 	str	r1, [r0]
 	str	r1, [r0, #4]
-	bx	lr
+	pop	{r7, pc}
 
 	.globl	_use_in_loop
 	.p2align	2
 	.code	32
 _use_in_loop:
-	bx	lr
+	push	{r7, lr}
+	mov	r7, sp
+	pop	{r7, pc}
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_caedaca3f40015a7
@@ -100,12 +116,6 @@ L_OBJC_METH_VAR_NAME_caedaca3f40015a7:
 L_OBJC_SELECTOR_REFERENCES_caedaca3f40015a7:
 	.long	L_OBJC_METH_VAR_NAME_caedaca3f40015a7
 
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_caedaca3f40015a7
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_caedaca3f40015a7:
-	.asciz	"\000\000\000\000@\000\000"
-
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_a7c7f3067f40b513
 L_OBJC_METH_VAR_NAME_a7c7f3067f40b513:
@@ -116,12 +126,6 @@ L_OBJC_METH_VAR_NAME_a7c7f3067f40b513:
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_a7c7f3067f40b513:
 	.long	L_OBJC_METH_VAR_NAME_a7c7f3067f40b513
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_a7c7f3067f40b513
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_a7c7f3067f40b513:
-	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_bae8570d40d73864
@@ -134,12 +138,6 @@ L_OBJC_METH_VAR_NAME_bae8570d40d73864:
 L_OBJC_SELECTOR_REFERENCES_bae8570d40d73864:
 	.long	L_OBJC_METH_VAR_NAME_bae8570d40d73864
 
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_bae8570d40d73864
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_bae8570d40d73864:
-	.asciz	"\000\000\000\000@\000\000"
-
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_9c1b77e8cf40622d
 L_OBJC_METH_VAR_NAME_9c1b77e8cf40622d:
@@ -151,12 +149,6 @@ L_OBJC_METH_VAR_NAME_9c1b77e8cf40622d:
 L_OBJC_SELECTOR_REFERENCES_9c1b77e8cf40622d:
 	.long	L_OBJC_METH_VAR_NAME_9c1b77e8cf40622d
 
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_9c1b77e8cf40622d
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_9c1b77e8cf40622d:
-	.asciz	"\000\000\000\000@\000\000"
-
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_408f5be8f4fd2627
 L_OBJC_METH_VAR_NAME_408f5be8f4fd2627:
@@ -167,12 +159,6 @@ L_OBJC_METH_VAR_NAME_408f5be8f4fd2627:
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_408f5be8f4fd2627:
 	.long	L_OBJC_METH_VAR_NAME_408f5be8f4fd2627
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_408f5be8f4fd2627
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_408f5be8f4fd2627:
-	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_82483a8131827890
@@ -186,6 +172,31 @@ L_OBJC_SELECTOR_REFERENCES_82483a8131827890:
 	.long	L_OBJC_METH_VAR_NAME_82483a8131827890
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
+	.globl	L_OBJC_IMAGE_INFO_caedaca3f40015a7
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_caedaca3f40015a7:
+	.asciz	"\000\000\000\000@\000\000"
+
+	.globl	L_OBJC_IMAGE_INFO_a7c7f3067f40b513
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_a7c7f3067f40b513:
+	.asciz	"\000\000\000\000@\000\000"
+
+	.globl	L_OBJC_IMAGE_INFO_bae8570d40d73864
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_bae8570d40d73864:
+	.asciz	"\000\000\000\000@\000\000"
+
+	.globl	L_OBJC_IMAGE_INFO_9c1b77e8cf40622d
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_9c1b77e8cf40622d:
+	.asciz	"\000\000\000\000@\000\000"
+
+	.globl	L_OBJC_IMAGE_INFO_408f5be8f4fd2627
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_408f5be8f4fd2627:
+	.asciz	"\000\000\000\000@\000\000"
+
 	.globl	L_OBJC_IMAGE_INFO_82483a8131827890
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_82483a8131827890:

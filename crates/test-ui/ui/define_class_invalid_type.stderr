@@ -368,30 +368,6 @@ note: required by a bound in `ClassBuilderHelper::<T>::add_method`
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
   = note: this error originates in the macro `$crate::__define_class_register_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Retained<CustomObject>: EncodeReturn` is not satisfied
- --> ui/define_class_invalid_type.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
-... |
-  | | );
-  | |_^ the trait `Encode` is not implemented for `Retained<CustomObject>`
-  |
-  = help: the following other types implement trait `Encode`:
-            &'a T
-            &'a mut T
-            *const T
-            *mut T
-            AtomicI16
-            AtomicI32
-            AtomicI64
-            AtomicI8
-          and $N others
-  = note: required for `Retained<CustomObject>` to implement `EncodeReturn`
-  = note: required for `Retained<CustomObject>` to implement `ConvertReturn<()>`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
 error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
  --> ui/define_class_invalid_type.rs
   |
@@ -438,7 +414,7 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
           and $N others
   = note: required for `Box<u32>` to implement `EncodeArgument`
   = note: required for `Box<u32>` to implement `ConvertArgument`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_rewrite_params` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
  --> ui/define_class_invalid_type.rs
@@ -462,4 +438,4 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
           and $N others
   = note: required for `CustomObject` to implement `EncodeArgument`
   = note: required for `CustomObject` to implement `ConvertArgument`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_rewrite_params` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

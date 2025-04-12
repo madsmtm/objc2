@@ -1,33 +1,35 @@
 error[E0599]: no function or associated item named `disabled1` found for struct `MyTest` in the current scope
-  --> ui/extern_methods_feature_flag.rs
-   |
-   | / extern_class!(
-   | |     #[unsafe(super(NSObject))]
-   | |     pub struct MyTest;
-   | | );
-   | |_- function or associated item `disabled1` not found for this struct
+ --> ui/extern_methods_feature_flag.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     pub struct MyTest;
+  | | );
+  | |_- function or associated item `disabled1` not found for this struct
 ...
-   |       MyTest::disabled1();
-   |               ^^^^^^^^^ function or associated item not found in `MyTest`
-   |
+  |       MyTest::disabled1();
+  |               ^^^^^^^^^ function or associated item not found in `MyTest`
+  |
 help: there is an associated function `enabled1` with a similar name
+  |
+32 -     MyTest::disabled1();
+32 +     MyTest::enabled1();
    |
-32 |     MyTest::enabled1();
-   |             ~~~~~~~~
 
 error[E0599]: no function or associated item named `disabled2` found for struct `MyTest` in the current scope
-  --> ui/extern_methods_feature_flag.rs
-   |
-   | / extern_class!(
-   | |     #[unsafe(super(NSObject))]
-   | |     pub struct MyTest;
-   | | );
-   | |_- function or associated item `disabled2` not found for this struct
+ --> ui/extern_methods_feature_flag.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     pub struct MyTest;
+  | | );
+  | |_- function or associated item `disabled2` not found for this struct
 ...
-   |       MyTest::disabled2();
-   |               ^^^^^^^^^ function or associated item not found in `MyTest`
-   |
+  |       MyTest::disabled2();
+  |               ^^^^^^^^^ function or associated item not found in `MyTest`
+  |
 help: there is an associated function `enabled2` with a similar name
+  |
+33 -     MyTest::disabled2();
+33 +     MyTest::enabled2();
    |
-33 |     MyTest::enabled2();
-   |             ~~~~~~~~

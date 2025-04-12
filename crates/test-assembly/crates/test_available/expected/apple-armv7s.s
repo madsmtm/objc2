@@ -1,25 +1,31 @@
-	.section	__TEXT,__text,regular,pure_instructions
 	.syntax unified
+	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_always
 	.p2align	2
 	.code	32
 _always:
+	push	{r7, lr}
+	mov	r7, sp
 	mov	r0, #1
-	bx	lr
+	pop	{r7, pc}
 
 	.globl	_never
 	.p2align	2
 	.code	32
 _never:
+	push	{r7, lr}
+	mov	r7, sp
 	mov	r0, #0
-	bx	lr
+	pop	{r7, pc}
 
 	.globl	_low
 	.p2align	2
 	.code	32
 _low:
+	push	{r7, lr}
+	mov	r7, sp
 	mov	r0, #1
-	bx	lr
+	pop	{r7, pc}
 
 	.globl	_high
 	.p2align	2
@@ -35,9 +41,9 @@ LPC3_0:
 	cmp	r0, #0
 	beq	LBB3_2
 LBB3_1:
-	lsr	r1, r0, #17
+	lsr	r0, r0, #17
+	cmp	r0, #8
 	mov	r0, #0
-	cmp	r1, #8
 	movwhi	r0, #1
 	pop	{r4, r7, pc}
 LBB3_2:
@@ -49,8 +55,10 @@ LBB3_2:
 	.p2align	2
 	.code	32
 _only_ios:
+	push	{r7, lr}
+	mov	r7, sp
 	mov	r0, #1
-	bx	lr
+	pop	{r7, pc}
 
 	.globl	_two_checks
 	.p2align	2
@@ -70,16 +78,16 @@ LPC5_0:
 	beq	LBB5_4
 LBB5_2:
 	lsr	r1, r4, #16
-	mov	r2, #0
 	cmp	r1, #16
 	mov	r1, #0
-	movwhi	r1, #1
+	mov	r2, #0
+	movwhi	r2, #1
 	movw	r3, #65535
 	movt	r3, #16
 	orr	r3, r3, #65536
 	cmp	r0, r3
-	movwhi	r2, #1
-	and	r0, r1, r2
+	movwhi	r1, #1
+	and	r0, r2, r1
 	pop	{r4, r5, r7, pc}
 LBB5_3:
 	bl	SYM(objc2::__macro_helpers::os_version::apple::lookup_version::GENERATED_ID, 0)

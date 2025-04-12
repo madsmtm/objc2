@@ -17,7 +17,7 @@ L0$pb:
 	ret
 LBB0_1:
 	sub	esp, 8
-	lea	eax, [ecx + l_anon.[ID].0-L0$pb]
+	lea	eax, [ecx + L_anon.[ID].0-L0$pb]
 	lea	ecx, [ecx + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)-L0$pb]
 	push	eax
 	push	ecx
@@ -43,7 +43,7 @@ L1$pb:
 	ret
 LBB1_1:
 	sub	esp, 8
-	lea	eax, [ecx + l_anon.[ID].0-L1$pb]
+	lea	eax, [ecx + L_anon.[ID].0-L1$pb]
 	lea	ecx, [ecx + SYM(test_dynamic_sel[CRATE_ID]::get_same_sel::CACHED_SEL, 0)-L1$pb]
 	push	eax
 	push	ecx
@@ -76,7 +76,7 @@ LBB2_4:
 	ret
 LBB2_1:
 	sub	esp, 8
-	lea	eax, [edi + l_anon.[ID].1-L2$pb]
+	lea	eax, [edi + L_anon.[ID].1-L2$pb]
 	push	eax
 	push	esi
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
@@ -86,7 +86,7 @@ LBB2_1:
 	jne	LBB2_4
 LBB2_3:
 	sub	esp, 8
-	lea	ecx, [edi + l_anon.[ID].1-L2$pb]
+	lea	ecx, [edi + L_anon.[ID].1-L2$pb]
 	push	ecx
 	push	esi
 	mov	esi, eax
@@ -142,7 +142,7 @@ L4$pb:
 	ret
 LBB4_1:
 	sub	esp, 8
-	lea	ecx, [eax + l_anon.[ID].3-L4$pb]
+	lea	ecx, [eax + L_anon.[ID].3-L4$pb]
 	lea	eax, [eax + SYM(test_dynamic_sel[CRATE_ID]::unused_sel::CACHED_SEL, 0)-L4$pb]
 	push	ecx
 	push	eax
@@ -191,7 +191,7 @@ LBB5_8:
 	ret	4
 LBB5_1:
 	sub	esp, 8
-	lea	eax, [esi + l_anon.[ID].0-L5$pb]
+	lea	eax, [esi + L_anon.[ID].0-L5$pb]
 	lea	ecx, [esi + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)-L5$pb]
 	push	eax
 	push	ecx
@@ -203,7 +203,7 @@ LBB5_1:
 	jne	LBB5_4
 LBB5_3:
 	sub	esp, 8
-	lea	eax, [esi + l_anon.[ID].0-L5$pb]
+	lea	eax, [esi + L_anon.[ID].0-L5$pb]
 	lea	ecx, [esi + SYM(test_dynamic_sel[CRATE_ID]::get_same_sel::CACHED_SEL, 0)-L5$pb]
 	push	eax
 	push	ecx
@@ -233,7 +233,7 @@ LBB5_5:
 	jne	LBB5_8
 LBB5_7:
 	sub	esp, 8
-	lea	ecx, [esi + l_anon.[ID].4-L5$pb]
+	lea	ecx, [esi + L_anon.[ID].4-L5$pb]
 	mov	dword ptr [ebp - 16], edx
 	lea	edx, [esi + SYM(test_dynamic_sel[CRATE_ID]::use_fns::CACHED_SEL, 0)-L5$pb]
 	push	ecx
@@ -276,7 +276,7 @@ LBB6_4:
 	ret	4
 LBB6_1:
 	sub	esp, 8
-	lea	ecx, [edi + l_anon.[ID].0-L6$pb]
+	lea	ecx, [edi + L_anon.[ID].0-L6$pb]
 	lea	edx, [edi + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)-L6$pb]
 	push	ecx
 	push	edx
@@ -290,7 +290,7 @@ LBB6_1:
 	jne	LBB6_4
 LBB6_3:
 	sub	esp, 8
-	lea	ecx, [edi + l_anon.[ID].0-L6$pb]
+	lea	ecx, [edi + L_anon.[ID].0-L6$pb]
 	lea	edx, [edi + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)-L6$pb]
 	push	ecx
 	push	edx
@@ -316,7 +316,7 @@ L7$pb:
 	mov	edi, dword ptr [ebp + 8]
 	test	edi, edi
 	je	LBB7_5
-	lea	ecx, [esi + l_anon.[ID].5-L7$pb]
+	lea	ecx, [esi + L_anon.[ID].5-L7$pb]
 	lea	ebx, [esi + SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)-L7$pb]
 	.p2align	4
 LBB7_2:
@@ -331,7 +331,7 @@ LBB7_3:
 	push	ecx
 	push	ebx
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	lea	ecx, [esi + l_anon.[ID].5-L7$pb]
+	lea	ecx, [esi + L_anon.[ID].5-L7$pb]
 	add	esp, 16
 	dec	edi
 	jne	LBB7_2
@@ -343,25 +343,23 @@ LBB7_5:
 	pop	ebp
 	ret
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].0:
 	.asciz	"simple"
 
-l_anon.[ID].1:
+L_anon.[ID].1:
 	.asciz	"alloc"
 
-	.section	__TEXT,__literal16,16byte_literals
 L_anon.[ID].2:
 	.asciz	"i:am:different:"
 
-	.section	__TEXT,__const
-l_anon.[ID].3:
+L_anon.[ID].3:
 	.asciz	"unused"
 
-l_anon.[ID].4:
+L_anon.[ID].4:
 	.asciz	"fourthSel"
 
-l_anon.[ID].5:
+L_anon.[ID].5:
 	.asciz	"loopedSelector"
 
 .zerofill __DATA,__bss,SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0),4,2

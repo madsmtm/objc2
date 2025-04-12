@@ -13,12 +13,10 @@ Lfunc_begin0:
 	mov	r14, rdi
 	mov	rax, qword ptr [rip + SYM(test_define_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 0)]
 	movzx	eax, byte ptr [rdi + rax]
-	test	eax, eax
-	je	LBB0_6
 	cmp	eax, 255
-	jne	LBB0_3
+	jne	LBB0_1
 	call	SYM(<test_define_class[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>::drop, 0)
-LBB0_3:
+LBB0_4:
 	mov	rax, qword ptr [rip + SYM(test_define_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)]
 	mov	rdi, qword ptr [r14 + rax]
 	mov	r15, qword ptr [r14 + rax + 8]
@@ -26,10 +24,10 @@ Ltmp0:
 	call	_objc_release
 Ltmp1:
 	test	r15, r15
-	je	LBB0_6
+	je	LBB0_2
 	mov	rdi, r15
 	call	_objc_release
-LBB0_6:
+LBB0_2:
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rax, qword ptr [rax]
 	mov	qword ptr [rbp - 40], r14
@@ -43,6 +41,10 @@ LBB0_6:
 	pop	r15
 	pop	rbp
 	ret
+LBB0_1:
+	test	eax, eax
+	jne	LBB0_4
+	jmp	LBB0_2
 LBB0_7:
 Ltmp2:
 	mov	rbx, rax
@@ -100,16 +102,17 @@ Lttbase0:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	4
-SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin1:
 	push	rbp
 	mov	rbp, rsp
 	push	rbx
 	push	rax
 	mov	rax, qword ptr [rdi]
-	cmp	byte ptr [rax], 0
+	movzx	ecx, byte ptr [rax]
 	mov	byte ptr [rax], 0
-	je	LBB1_14
+	cmp	cl, 1
+	jne	LBB1_14
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
 	lea	rdi, [rip + l_anon.[ID].13]
@@ -238,7 +241,7 @@ Lcst_end1:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	4
-SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin2:
 	push	rbp
 	mov	rbp, rsp
@@ -246,9 +249,10 @@ Lfunc_begin2:
 	push	rbx
 	sub	rsp, 64
 	mov	rax, qword ptr [rdi]
-	cmp	byte ptr [rax], 0
+	movzx	ecx, byte ptr [rax]
 	mov	byte ptr [rax], 0
-	je	LBB2_14
+	cmp	cl, 1
+	jne	LBB2_14
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
 	lea	rdi, [rip + l_anon.[ID].10]
@@ -287,7 +291,7 @@ Ltmp27:
 	mov	qword ptr [rbp - 56], rax
 	mov	byte ptr [rbp - 72], 27
 Ltmp29:
-	lea	rsi, [rip + l_anon.[ID].4]
+	lea	rsi, [rip + L_anon.[ID].4]
 	lea	rbx, [rbp - 24]
 	lea	r9, [rbp - 72]
 	mov	edx, 6
@@ -297,7 +301,7 @@ Ltmp29:
 	call	SYM(objc2::runtime::define::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
 Ltmp30:
 Ltmp31:
-	lea	rsi, [rip + l_anon.[ID].5]
+	lea	rsi, [rip + L_anon.[ID].5]
 	lea	r9, [rip + l_anon.[ID].6]
 	lea	rdi, [rbp - 24]
 	mov	edx, 10
@@ -308,19 +312,19 @@ Ltmp32:
 	mov	rbx, qword ptr [rbp - 24]
 	mov	rdi, rbx
 	call	_objc_registerClassPair
-	lea	rsi, [rip + l_anon.[ID].4]
-	mov	rdi, rbx
-	call	_class_getInstanceVariable
-	test	rax, rax
-	je	LBB2_6
-	mov	rdi, rax
-	call	_ivar_getOffset
-	mov	r14, rax
-	lea	rsi, [rip + l_anon.[ID].5]
+	lea	rsi, [rip + L_anon.[ID].4]
 	mov	rdi, rbx
 	call	_class_getInstanceVariable
 	test	rax, rax
 	je	LBB2_10
+	mov	rdi, rax
+	call	_ivar_getOffset
+	mov	r14, rax
+	lea	rsi, [rip + L_anon.[ID].5]
+	mov	rdi, rbx
+	call	_class_getInstanceVariable
+	test	rax, rax
+	je	LBB2_7
 	mov	rdi, rax
 	call	_ivar_getOffset
 	mov	qword ptr [rip + SYM(test_define_class[CRATE_ID]::_::__OBJC2_CLASS, 1).0], rbx
@@ -334,19 +338,19 @@ Ltmp32:
 LBB2_14:
 	lea	rdi, [rip + l_anon.[ID].12]
 	call	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
-LBB2_6:
-	call	SYM(objc2::__macro_helpers::defined_ivars::register_with_ivars::get_ivar_failed::GENERATED_ID, 0)
 LBB2_10:
+	call	SYM(objc2::__macro_helpers::defined_ivars::register_with_ivars::get_ivar_failed::GENERATED_ID, 0)
+LBB2_7:
 	call	SYM(objc2::__macro_helpers::defined_ivars::register_with_ivars::get_drop_flag_failed::GENERATED_ID, 0)
 LBB2_12:
 Ltmp28:
-	jmp	LBB2_8
-LBB2_7:
+	jmp	LBB2_9
+LBB2_8:
 Ltmp25:
-	jmp	LBB2_8
+	jmp	LBB2_9
 LBB2_11:
 Ltmp33:
-LBB2_8:
+LBB2_9:
 	mov	r14, rax
 	mov	rdi, qword ptr [rbx]
 	call	_objc_disposeClassPair
@@ -387,7 +391,7 @@ Lcst_end2:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	4
-SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin3:
 	push	rbp
 	mov	rbp, rsp
@@ -395,9 +399,10 @@ Lfunc_begin3:
 	push	rbx
 	sub	rsp, 64
 	mov	rax, qword ptr [rdi]
-	cmp	byte ptr [rax], 0
+	movzx	ecx, byte ptr [rax]
 	mov	byte ptr [rax], 0
-	je	LBB3_9
+	cmp	cl, 1
+	jne	LBB3_9
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
 	lea	rdi, [rip + l_anon.[ID].9]
@@ -423,7 +428,7 @@ Ltmp35:
 	mov	qword ptr [rbp - 56], rax
 	mov	byte ptr [rbp - 72], 27
 Ltmp37:
-	lea	rsi, [rip + l_anon.[ID].4]
+	lea	rsi, [rip + L_anon.[ID].4]
 	lea	rbx, [rbp - 32]
 	lea	r9, [rbp - 72]
 	mov	edx, 6
@@ -435,7 +440,7 @@ Ltmp38:
 	mov	rbx, qword ptr [rbp - 32]
 	mov	rdi, rbx
 	call	_objc_registerClassPair
-	lea	rsi, [rip + l_anon.[ID].4]
+	lea	rsi, [rip + L_anon.[ID].4]
 	mov	rdi, rbx
 	call	_class_getInstanceVariable
 	test	rax, rax
@@ -496,40 +501,40 @@ Lcst_end3:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	4
-SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
 	mov	rax, qword ptr [rdi]
 	mov	qword ptr [rbp - 8], rax
 	lea	rdi, [rbp - 8]
-	call	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	call	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	add	rsp, 16
 	pop	rbp
 	ret
 
 	.p2align	4
-SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
 	mov	rax, qword ptr [rdi]
 	mov	qword ptr [rbp - 8], rax
 	lea	rdi, [rbp - 8]
-	call	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	call	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	add	rsp, 16
 	pop	rbp
 	ret
 
 	.p2align	4
-SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
 	mov	rax, qword ptr [rdi]
 	mov	qword ptr [rbp - 8], rax
 	lea	rdi, [rbp - 8]
-	call	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	call	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	add	rsp, 16
 	pop	rbp
 	ret
@@ -1041,24 +1046,90 @@ Lttbase2:
 	.byte	0
 	.p2align	2, 0x0
 
+	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_da7dfba076f8819b
+L_OBJC_METH_VAR_NAME_da7dfba076f8819b:
+	.asciz	"classMethod"
+
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_da7dfba076f8819b
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_da7dfba076f8819b:
+	.quad	L_OBJC_METH_VAR_NAME_da7dfba076f8819b
+
+	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_af51813a2f91b268
+L_OBJC_METH_VAR_NAME_af51813a2f91b268:
+	.asciz	"method"
+
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_af51813a2f91b268
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_af51813a2f91b268:
+	.quad	L_OBJC_METH_VAR_NAME_af51813a2f91b268
+
+	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_43ff92728f706391
+L_OBJC_METH_VAR_NAME_43ff92728f706391:
+	.asciz	"methodBool:"
+
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_43ff92728f706391
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_43ff92728f706391:
+	.quad	L_OBJC_METH_VAR_NAME_43ff92728f706391
+
+	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_defcf1f00a4b4302
+L_OBJC_METH_VAR_NAME_defcf1f00a4b4302:
+	.asciz	"methodRetained"
+
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_defcf1f00a4b4302
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_defcf1f00a4b4302:
+	.quad	L_OBJC_METH_VAR_NAME_defcf1f00a4b4302
+
+	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_9e0e96761ff41d49
+L_OBJC_METH_VAR_NAME_9e0e96761ff41d49:
+	.asciz	"methodRetainedWithParam:"
+
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_9e0e96761ff41d49
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_9e0e96761ff41d49:
+	.quad	L_OBJC_METH_VAR_NAME_9e0e96761ff41d49
+
+	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_597b404e7f57234e
+L_OBJC_METH_VAR_NAME_597b404e7f57234e:
+	.asciz	"copyWithZone:"
+
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_597b404e7f57234e
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_597b404e7f57234e:
+	.quad	L_OBJC_METH_VAR_NAME_597b404e7f57234e
+
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].0:
 	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
 	.p2align	3, 0x0
 l_anon.[ID].1:
 	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
 	.p2align	3, 0x0
 l_anon.[ID].2:
 	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0
@@ -1066,12 +1137,14 @@ l_anon.[ID].3:
 	.byte	17
 	.space	39
 
-l_anon.[ID].4:
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].4:
 	.asciz	"ivars"
 
-l_anon.[ID].5:
+L_anon.[ID].5:
 	.asciz	"drop_flag"
 
+	.section	__TEXT,__const
 	.p2align	3, 0x0
 l_anon.[ID].6:
 	.byte	5
@@ -1094,13 +1167,13 @@ l_anon.[ID].10:
 	.ascii	"DropIvars"
 
 l_anon.[ID].11:
-	.ascii	"$RUSTC/library/std/src/sync/once.rs"
+	.ascii	"$RUSTC/library/std/src/sync/poison/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].12:
 	.quad	l_anon.[ID].11
-	.asciz	"p\000\000\000\000\000\000\000\236\000\000\0002\000\000"
+	.asciz	"\20x\000\000\000\000\000\000\000\233\000\000\0002\000\000"
 
 	.section	__TEXT,__const
 l_anon.[ID].13:
@@ -1165,103 +1238,32 @@ l_anon.[ID].23:
 	.quad	l_anon.[ID].22
 	.space	24
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_da7dfba076f8819b
-L_OBJC_METH_VAR_NAME_da7dfba076f8819b:
-	.asciz	"classMethod"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_da7dfba076f8819b
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_da7dfba076f8819b:
-	.quad	L_OBJC_METH_VAR_NAME_da7dfba076f8819b
-
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_da7dfba076f8819b
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_da7dfba076f8819b:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_af51813a2f91b268
-L_OBJC_METH_VAR_NAME_af51813a2f91b268:
-	.asciz	"method"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_af51813a2f91b268
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_af51813a2f91b268:
-	.quad	L_OBJC_METH_VAR_NAME_af51813a2f91b268
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_af51813a2f91b268
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_af51813a2f91b268:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_43ff92728f706391
-L_OBJC_METH_VAR_NAME_43ff92728f706391:
-	.asciz	"methodBool:"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_43ff92728f706391
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_43ff92728f706391:
-	.quad	L_OBJC_METH_VAR_NAME_43ff92728f706391
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_43ff92728f706391
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_43ff92728f706391:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_defcf1f00a4b4302
-L_OBJC_METH_VAR_NAME_defcf1f00a4b4302:
-	.asciz	"methodRetained"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_defcf1f00a4b4302
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_defcf1f00a4b4302:
-	.quad	L_OBJC_METH_VAR_NAME_defcf1f00a4b4302
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_defcf1f00a4b4302
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_defcf1f00a4b4302:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_9e0e96761ff41d49
-L_OBJC_METH_VAR_NAME_9e0e96761ff41d49:
-	.asciz	"methodRetainedWithParam:"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_9e0e96761ff41d49
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_9e0e96761ff41d49:
-	.quad	L_OBJC_METH_VAR_NAME_9e0e96761ff41d49
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_9e0e96761ff41d49
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_9e0e96761ff41d49:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_597b404e7f57234e
-L_OBJC_METH_VAR_NAME_597b404e7f57234e:
-	.asciz	"copyWithZone:"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_597b404e7f57234e
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_597b404e7f57234e:
-	.quad	L_OBJC_METH_VAR_NAME_597b404e7f57234e
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_597b404e7f57234e
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_597b404e7f57234e:

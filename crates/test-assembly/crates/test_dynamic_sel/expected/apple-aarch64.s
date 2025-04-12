@@ -349,18 +349,16 @@ LBB7_6:
 	.loh AdrpAdd	Lloh74, Lloh75
 	.loh AdrpAdd	Lloh72, Lloh73
 
-	.section	__TEXT,__const
+	.section	__TEXT,__cstring,cstring_literals
 l_anon.[ID].0:
 	.asciz	"simple"
 
 l_anon.[ID].1:
 	.asciz	"alloc"
 
-	.section	__TEXT,__literal16,16byte_literals
 l_anon.[ID].2:
 	.asciz	"i:am:different:"
 
-	.section	__TEXT,__const
 l_anon.[ID].3:
 	.asciz	"unused"
 

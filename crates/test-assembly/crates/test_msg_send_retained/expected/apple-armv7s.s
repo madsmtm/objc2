@@ -1,9 +1,12 @@
-	.section	__TEXT,__text,regular,pure_instructions
 	.syntax unified
+	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_handle_new
 	.p2align	2
 	.code	32
 _handle_new:
+	push	{r7, lr}
+	mov	r7, sp
+	pop	{r7, lr}
 	b	_objc_msgSend
 
 	.globl	_handle_new_fallible
@@ -31,12 +34,18 @@ LPC1_0:
 	.p2align	2
 	.code	32
 _handle_alloc:
+	push	{r7, lr}
+	mov	r7, sp
+	pop	{r7, lr}
 	b	_objc_msgSend
 
 	.globl	_handle_init
 	.p2align	2
 	.code	32
 _handle_init:
+	push	{r7, lr}
+	mov	r7, sp
+	pop	{r7, lr}
 	b	_objc_msgSend
 
 	.globl	_handle_init_fallible
@@ -99,6 +108,9 @@ _handle_alloc_init_release:
 	.p2align	2
 	.code	32
 _handle_copy:
+	push	{r7, lr}
+	mov	r7, sp
+	pop	{r7, lr}
 	b	_objc_msgSend
 
 	.globl	_handle_copy_fallible
@@ -122,6 +134,9 @@ LPC9_0:
 	.p2align	2
 	.code	32
 _handle_mutable_copy:
+	push	{r7, lr}
+	mov	r7, sp
+	pop	{r7, lr}
 	b	_objc_msgSend
 
 	.globl	_handle_mutable_copy_fallible
@@ -213,11 +228,11 @@ Lfunc_begin0:
 	ldr	r0, [sp, #4]
 	ldr	r0, [r0]
 	str	r0, [sp, #8]
+	ldr	r6, [sp, #4]
 	movw	r0, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC15_2+8))
 	movt	r0, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC15_2+8))
 LPC15_2:
 	ldr	r0, [pc, r0]
-	ldr	r6, [sp, #4]
 	str	r0, [sp, #36]
 	ldr	r0, LCPI15_0
 LPC15_0:
@@ -229,10 +244,10 @@ LPC15_0:
 LPC15_1:
 	add	r0, pc, r0
 	str	r0, [sp, #48]
-	mov	r0, #1
-	str	r0, [sp, #16]
 	add	r0, sp, #12
 	bl	__Unwind_SjLj_Register
+	mov	r0, #1
+	str	r0, [sp, #16]
 Ltmp0:
 	mov	r0, r5
 	mov	r1, r4

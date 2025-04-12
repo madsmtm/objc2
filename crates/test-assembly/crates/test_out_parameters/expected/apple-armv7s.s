@@ -1,5 +1,5 @@
-	.section	__TEXT,__text,regular,pure_instructions
 	.syntax unified
+	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
 	.code	32
 SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
@@ -52,12 +52,12 @@ Lfunc_begin0:
 	ldr	r1, [sp, #8]
 	ldr	r1, [r1, #4]
 	str	r1, [sp, #4]
-	movw	r1, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC2_2+8))
-	movt	r1, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC2_2+8))
-LPC2_2:
-	ldr	r1, [pc, r1]
 	ldr	r4, [r0]
-	str	r1, [sp, #36]
+	movw	r0, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC2_2+8))
+	movt	r0, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC2_2+8))
+LPC2_2:
+	ldr	r0, [pc, r0]
+	str	r0, [sp, #36]
 	ldr	r0, LCPI2_0
 LPC2_0:
 	add	r0, pc, r0
@@ -68,10 +68,10 @@ LPC2_0:
 LPC2_1:
 	add	r0, pc, r0
 	str	r0, [sp, #48]
-	mov	r0, #1
-	str	r0, [sp, #16]
 	add	r0, sp, #12
 	bl	__Unwind_SjLj_Register
+	mov	r0, #1
+	str	r0, [sp, #16]
 Ltmp0:
 	mov	r0, r4
 	bl	_objc_retain
@@ -225,11 +225,11 @@ Lfunc_begin1:
 	ldr	r0, [sp, #4]
 	ldr	r0, [r0]
 	str	r0, [sp, #8]
+	ldr	r6, [sp, #4]
 	movw	r0, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC4_2+8))
 	movt	r0, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC4_2+8))
 LPC4_2:
 	ldr	r0, [pc, r0]
-	ldr	r6, [sp, #4]
 	str	r0, [sp, #36]
 	ldr	r0, LCPI4_0
 LPC4_0:
@@ -241,10 +241,10 @@ LPC4_0:
 LPC4_1:
 	add	r0, pc, r0
 	str	r0, [sp, #48]
-	mov	r0, #1
-	str	r0, [sp, #16]
 	add	r0, sp, #12
 	bl	__Unwind_SjLj_Register
+	mov	r0, #1
+	str	r0, [sp, #16]
 Ltmp10:
 	mov	r0, r5
 	mov	r1, r4
@@ -515,11 +515,11 @@ Lfunc_begin3:
 	ldr	r0, [sp, #4]
 	ldr	r0, [r0]
 	str	r0, [sp, #8]
+	ldr	r6, [sp, #4]
 	movw	r0, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC6_2+8))
 	movt	r0, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC6_2+8))
 LPC6_2:
 	ldr	r0, [pc, r0]
-	ldr	r6, [sp, #4]
 	str	r0, [sp, #36]
 	ldr	r0, LCPI6_0
 LPC6_0:
@@ -531,10 +531,10 @@ LPC6_0:
 LPC6_1:
 	add	r0, pc, r0
 	str	r0, [sp, #48]
-	mov	r0, #1
-	str	r0, [sp, #16]
 	add	r0, sp, #12
 	bl	__Unwind_SjLj_Register
+	mov	r0, #1
+	str	r0, [sp, #16]
 Ltmp24:
 	mov	r0, r5
 	mov	r1, r4
@@ -812,11 +812,11 @@ Lfunc_begin5:
 	str	r0, [sp, #28]
 	ldr	r0, [sp, #40]
 	str	r0, [sp, #32]
+	ldr	r6, [sp, #36]
 	movw	r0, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC8_2+8))
 	movt	r0, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC8_2+8))
 LPC8_2:
 	ldr	r0, [pc, r0]
-	ldr	r6, [sp, #36]
 	str	r0, [sp, #68]
 	ldr	r0, LCPI8_0
 LPC8_0:
@@ -828,10 +828,10 @@ LPC8_0:
 LPC8_1:
 	add	r0, pc, r0
 	str	r0, [sp, #80]
-	mov	r0, #1
-	str	r0, [sp, #48]
 	add	r0, sp, #44
 	bl	__Unwind_SjLj_Register
+	mov	r0, #1
+	str	r0, [sp, #48]
 Ltmp36:
 	mov	r0, r5
 	mov	r1, r8
@@ -984,14 +984,20 @@ Lttbase5:
 	.p2align	2
 	.code	32
 _call_with_none1:
+	push	{r7, lr}
+	mov	r7, sp
 	mov	r2, #0
+	pop	{r7, lr}
 	b	_objc_msgSend
 
 	.globl	_call_with_none2
 	.p2align	2
 	.code	32
 _call_with_none2:
+	push	{r7, lr}
+	mov	r7, sp
 	mov	r2, #0
+	pop	{r7, lr}
 	b	_objc_msgSend
 
 	.globl	_call_with_none3
@@ -1011,12 +1017,12 @@ Lfunc_begin6:
 	mov	r4, r1
 	mov	r5, r0
 	mov	r0, #0
-	movw	r1, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC11_2+8))
-	movt	r1, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC11_2+8))
-LPC11_2:
-	ldr	r1, [pc, r1]
 	str	r0, [sp, #12]
-	str	r1, [sp, #52]
+	movw	r0, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC11_2+8))
+	movt	r0, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC11_2+8))
+LPC11_2:
+	ldr	r0, [pc, r0]
+	str	r0, [sp, #52]
 	ldr	r0, LCPI11_0
 LPC11_0:
 	add	r0, pc, r0
@@ -1027,10 +1033,10 @@ LPC11_0:
 LPC11_1:
 	add	r0, pc, r0
 	str	r0, [sp, #64]
-	mov	r0, #1
-	str	r0, [sp, #32]
 	add	r0, sp, #28
 	bl	__Unwind_SjLj_Register
+	mov	r0, #1
+	str	r0, [sp, #32]
 Ltmp52:
 	add	r2, sp, #12
 	mov	r0, r5
@@ -1181,12 +1187,12 @@ Lfunc_begin7:
 	mov	r4, r1
 	mov	r5, r0
 	mov	r0, #0
-	movw	r1, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC12_2+8))
-	movt	r1, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC12_2+8))
-LPC12_2:
-	ldr	r1, [pc, r1]
 	str	r0, [sp, #12]
-	str	r1, [sp, #52]
+	movw	r0, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC12_2+8))
+	movt	r0, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC12_2+8))
+LPC12_2:
+	ldr	r0, [pc, r0]
+	str	r0, [sp, #52]
 	ldr	r0, LCPI12_0
 LPC12_0:
 	add	r0, pc, r0
@@ -1197,10 +1203,10 @@ LPC12_0:
 LPC12_1:
 	add	r0, pc, r0
 	str	r0, [sp, #64]
-	mov	r0, #1
-	str	r0, [sp, #32]
 	add	r0, sp, #28
 	bl	__Unwind_SjLj_Register
+	mov	r0, #1
+	str	r0, [sp, #32]
 Ltmp64:
 	add	r2, sp, #12
 	mov	r0, r5
@@ -1352,12 +1358,12 @@ Lfunc_begin8:
 	mov	r5, r0
 	str	r2, [sp, #16]
 	ldr	r0, [sp, #16]
-	movw	r1, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC13_2+8))
-	movt	r1, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC13_2+8))
-LPC13_2:
-	ldr	r1, [pc, r1]
 	str	r0, [sp, #12]
-	str	r1, [sp, #52]
+	movw	r0, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC13_2+8))
+	movt	r0, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC13_2+8))
+LPC13_2:
+	ldr	r0, [pc, r0]
+	str	r0, [sp, #52]
 	ldr	r0, LCPI13_0
 LPC13_0:
 	add	r0, pc, r0
@@ -1368,10 +1374,10 @@ LPC13_0:
 LPC13_1:
 	add	r0, pc, r0
 	str	r0, [sp, #64]
-	mov	r0, #1
-	str	r0, [sp, #32]
 	add	r0, sp, #28
 	bl	__Unwind_SjLj_Register
+	mov	r0, #1
+	str	r0, [sp, #32]
 Ltmp76:
 	add	r2, sp, #12
 	mov	r0, r5
@@ -1536,12 +1542,12 @@ Lfunc_begin9:
 	mov	r5, r0
 	str	r2, [sp, #12]
 	ldr	r0, [sp, #12]
-	movw	r1, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC14_2+8))
-	movt	r1, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC14_2+8))
-LPC14_2:
-	ldr	r1, [pc, r1]
 	str	r0, [sp, #8]
-	str	r1, [sp, #52]
+	movw	r0, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC14_2+8))
+	movt	r0, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC14_2+8))
+LPC14_2:
+	ldr	r0, [pc, r0]
+	str	r0, [sp, #52]
 	ldr	r0, LCPI14_0
 LPC14_0:
 	add	r0, pc, r0
@@ -1552,10 +1558,10 @@ LPC14_0:
 LPC14_1:
 	add	r0, pc, r0
 	str	r0, [sp, #64]
-	mov	r0, #1
-	str	r0, [sp, #32]
 	add	r0, sp, #28
 	bl	__Unwind_SjLj_Register
+	mov	r0, #1
+	str	r0, [sp, #32]
 Ltmp92:
 	add	r2, sp, #8
 	mov	r0, r5
@@ -1725,12 +1731,12 @@ Lfunc_begin10:
 	mov	r5, r0
 	str	r2, [sp, #12]
 	ldr	r0, [sp, #12]
-	movw	r1, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC15_2+8))
-	movt	r1, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC15_2+8))
-LPC15_2:
-	ldr	r1, [pc, r1]
 	str	r0, [sp, #8]
-	str	r1, [sp, #52]
+	movw	r0, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC15_2+8))
+	movt	r0, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC15_2+8))
+LPC15_2:
+	ldr	r0, [pc, r0]
+	str	r0, [sp, #52]
 	ldr	r0, LCPI15_0
 LPC15_0:
 	add	r0, pc, r0
@@ -1741,10 +1747,10 @@ LPC15_0:
 LPC15_1:
 	add	r0, pc, r0
 	str	r0, [sp, #64]
-	mov	r0, #1
-	str	r0, [sp, #32]
 	add	r0, sp, #28
 	bl	__Unwind_SjLj_Register
+	mov	r0, #1
+	str	r0, [sp, #32]
 Ltmp108:
 	add	r2, sp, #8
 	mov	r0, r5

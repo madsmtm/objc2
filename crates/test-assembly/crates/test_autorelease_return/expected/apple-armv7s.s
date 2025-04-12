@@ -1,9 +1,12 @@
-	.section	__TEXT,__text,regular,pure_instructions
 	.syntax unified
+	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_simple
 	.p2align	2
 	.code	32
 _simple:
+	push	{r7, lr}
+	mov	r7, sp
+	pop	{r7, lr}
 	b	_objc_autoreleaseReturnValue
 
 	.globl	_with_body

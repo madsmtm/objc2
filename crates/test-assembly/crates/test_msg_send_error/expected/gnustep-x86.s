@@ -85,7 +85,12 @@ error_new:
 	je	.LBB1_2
 	mov	edx, eax
 	xor	eax, eax
-	jmp	.LBB1_4
+.LBB1_4:
+	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
 .LBB1_2:
 	sub	esp, 12
 	push	dword ptr [esp + 24]
@@ -94,14 +99,7 @@ error_new:
 	mov	edx, eax
 	mov	eax, 1
 	test	edx, edx
-	je	.LBB1_3
-.LBB1_4:
-	add	esp, 16
-	pop	esi
-	pop	edi
-	pop	ebx
-	ret
-.LBB1_3:
+	jne	.LBB1_4
 	call	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@PLT
 	mov	edx, eax
 	mov	eax, 1
@@ -146,9 +144,6 @@ error_init:
 	jmp	.LBB2_7
 .LBB2_1:
 	xor	eax, eax
-	jmp	.LBB2_5
-.LBB2_4:
-	mov	eax, dword ptr [esp + 12]
 .LBB2_5:
 	sub	esp, 12
 	push	eax
@@ -169,6 +164,9 @@ error_init:
 	mov	edx, eax
 	mov	eax, 1
 	jmp	.LBB2_7
+.LBB2_4:
+	mov	eax, dword ptr [esp + 12]
+	jmp	.LBB2_5
 .Lfunc_end2:
 	.size	error_init, .Lfunc_end2-error_init
 
@@ -204,7 +202,12 @@ error_copy:
 	je	.LBB3_2
 	mov	edx, eax
 	xor	eax, eax
-	jmp	.LBB3_4
+.LBB3_4:
+	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
 .LBB3_2:
 	sub	esp, 12
 	push	dword ptr [esp + 24]
@@ -213,14 +216,7 @@ error_copy:
 	mov	edx, eax
 	mov	eax, 1
 	test	edx, edx
-	je	.LBB3_3
-.LBB3_4:
-	add	esp, 16
-	pop	esi
-	pop	edi
-	pop	ebx
-	ret
-.LBB3_3:
+	jne	.LBB3_4
 	call	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@PLT
 	mov	edx, eax
 	mov	eax, 1
@@ -260,7 +256,12 @@ error_mutable_copy:
 	je	.LBB4_2
 	mov	edx, eax
 	xor	eax, eax
-	jmp	.LBB4_4
+.LBB4_4:
+	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
 .LBB4_2:
 	sub	esp, 12
 	push	dword ptr [esp + 24]
@@ -269,14 +270,7 @@ error_mutable_copy:
 	mov	edx, eax
 	mov	eax, 1
 	test	edx, edx
-	je	.LBB4_3
-.LBB4_4:
-	add	esp, 16
-	pop	esi
-	pop	edi
-	pop	ebx
-	ret
-.LBB4_3:
+	jne	.LBB4_4
 	call	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@PLT
 	mov	edx, eax
 	mov	eax, 1
@@ -315,7 +309,12 @@ error_autoreleased:
 	je	.LBB5_2
 	mov	edx, eax
 	xor	eax, eax
-	jmp	.LBB5_4
+.LBB5_4:
+	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
 .LBB5_2:
 	mov	eax, dword ptr [esp + 12]
 	mov	dword ptr [esp], eax
@@ -323,14 +322,7 @@ error_autoreleased:
 	mov	edx, eax
 	mov	eax, 1
 	test	edx, edx
-	je	.LBB5_3
-.LBB5_4:
-	add	esp, 16
-	pop	esi
-	pop	edi
-	pop	ebx
-	ret
-.LBB5_3:
+	jne	.LBB5_4
 	call	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@PLT
 	mov	edx, eax
 	mov	eax, 1

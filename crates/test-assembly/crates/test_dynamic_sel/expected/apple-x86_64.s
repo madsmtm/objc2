@@ -12,7 +12,7 @@ _get_sel:
 	ret
 LBB0_2:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)]
-	lea	rsi, [rip + l_anon.[ID].0]
+	lea	rsi, [rip + L_anon.[ID].0]
 	pop	rbp
 	jmp	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
@@ -28,7 +28,7 @@ _get_same_sel:
 	ret
 LBB1_2:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_same_sel::CACHED_SEL, 0)]
-	lea	rsi, [rip + l_anon.[ID].0]
+	lea	rsi, [rip + L_anon.[ID].0]
 	pop	rbp
 	jmp	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
@@ -53,14 +53,14 @@ LBB2_4:
 	ret
 LBB2_1:
 	mov	rdi, qword ptr [rip + SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
-	lea	rsi, [rip + l_anon.[ID].1]
+	lea	rsi, [rip + L_anon.[ID].1]
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rdx, qword ptr [rbx]
 	test	rdx, rdx
 	jne	LBB2_4
 LBB2_3:
 	mov	rdi, qword ptr [rip + SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
-	lea	rsi, [rip + l_anon.[ID].1]
+	lea	rsi, [rip + L_anon.[ID].1]
 	mov	rbx, rax
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rdx, rax
@@ -98,7 +98,7 @@ _unused_sel:
 	ret
 LBB4_2:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::unused_sel::CACHED_SEL, 0)]
-	lea	rsi, [rip + l_anon.[ID].3]
+	lea	rsi, [rip + L_anon.[ID].3]
 	pop	rbp
 	jmp	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
@@ -139,7 +139,7 @@ LBB5_8:
 	ret
 LBB5_1:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)]
-	lea	rsi, [rip + l_anon.[ID].0]
+	lea	rsi, [rip + L_anon.[ID].0]
 	mov	r14, rax
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rbx, rax
@@ -149,7 +149,7 @@ LBB5_1:
 	jne	LBB5_4
 LBB5_3:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_same_sel::CACHED_SEL, 0)]
-	lea	rsi, [rip + l_anon.[ID].0]
+	lea	rsi, [rip + L_anon.[ID].0]
 	mov	r15, rax
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r14, rax
@@ -169,7 +169,7 @@ LBB5_5:
 	jne	LBB5_8
 LBB5_7:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::use_fns::CACHED_SEL, 0)]
-	lea	rsi, [rip + l_anon.[ID].4]
+	lea	rsi, [rip + L_anon.[ID].4]
 	mov	r12, rax
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rcx, rax
@@ -199,7 +199,7 @@ LBB6_4:
 	ret
 LBB6_1:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)]
-	lea	rsi, [rip + l_anon.[ID].0]
+	lea	rsi, [rip + L_anon.[ID].0]
 	mov	r14, rax
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rbx, rax
@@ -209,7 +209,7 @@ LBB6_1:
 	jne	LBB6_4
 LBB6_3:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)]
-	lea	rsi, [rip + l_anon.[ID].0]
+	lea	rsi, [rip + L_anon.[ID].0]
 	mov	r14, rax
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rcx, rax
@@ -228,7 +228,7 @@ _use_in_loop:
 	push	rbx
 	push	rax
 	lea	rbx, [rip + SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)]
-	lea	r14, [rip + l_anon.[ID].5]
+	lea	r14, [rip + L_anon.[ID].5]
 	.p2align	4
 LBB7_2:
 	mov	rax, qword ptr [rip + SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)]
@@ -254,25 +254,23 @@ LBB7_5:
 LBB7_6:
 	ret
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].0:
 	.asciz	"simple"
 
-l_anon.[ID].1:
+L_anon.[ID].1:
 	.asciz	"alloc"
 
-	.section	__TEXT,__literal16,16byte_literals
 L_anon.[ID].2:
 	.asciz	"i:am:different:"
 
-	.section	__TEXT,__const
-l_anon.[ID].3:
+L_anon.[ID].3:
 	.asciz	"unused"
 
-l_anon.[ID].4:
+L_anon.[ID].4:
 	.asciz	"fourthSel"
 
-l_anon.[ID].5:
+L_anon.[ID].5:
 	.asciz	"loopedSelector"
 
 .zerofill __DATA,__bss,SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0),8,3

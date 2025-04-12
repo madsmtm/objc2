@@ -1,5 +1,5 @@
-	.section	__TEXT,__text,regular,pure_instructions
 	.syntax unified
+	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_error_bool
 	.p2align	2
 	.code	32

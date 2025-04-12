@@ -18,7 +18,7 @@ L0$pb:
 LBB0_1:
 	sub	esp, 4
 	lea	eax, [ecx + l_anon.[ID].2-L0$pb]
-	lea	edx, [ecx + l_anon.[ID].0-L0$pb]
+	lea	edx, [ecx + L_anon.[ID].0-L0$pb]
 	lea	ecx, [ecx + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L0$pb]
 	push	eax
 	push	edx
@@ -46,7 +46,7 @@ L1$pb:
 LBB1_1:
 	sub	esp, 4
 	lea	eax, [ecx + l_anon.[ID].3-L1$pb]
-	lea	edx, [ecx + l_anon.[ID].0-L1$pb]
+	lea	edx, [ecx + L_anon.[ID].0-L1$pb]
 	lea	ecx, [ecx + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)-L1$pb]
 	push	eax
 	push	edx
@@ -74,7 +74,7 @@ L2$pb:
 LBB2_1:
 	sub	esp, 4
 	lea	eax, [ecx + l_anon.[ID].5-L2$pb]
-	lea	edx, [ecx + l_anon.[ID].4-L2$pb]
+	lea	edx, [ecx + L_anon.[ID].4-L2$pb]
 	lea	ecx, [ecx + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)-L2$pb]
 	push	eax
 	push	edx
@@ -102,7 +102,7 @@ L3$pb:
 LBB3_1:
 	sub	esp, 4
 	lea	ecx, [eax + l_anon.[ID].7-L3$pb]
-	lea	edx, [eax + l_anon.[ID].6-L3$pb]
+	lea	edx, [eax + L_anon.[ID].6-L3$pb]
 	lea	eax, [eax + SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0)-L3$pb]
 	push	ecx
 	push	edx
@@ -153,7 +153,7 @@ LBB4_8:
 LBB4_1:
 	sub	esp, 4
 	lea	eax, [esi + l_anon.[ID].2-L4$pb]
-	lea	ecx, [esi + l_anon.[ID].0-L4$pb]
+	lea	ecx, [esi + L_anon.[ID].0-L4$pb]
 	lea	edx, [esi + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L4$pb]
 	push	eax
 	push	ecx
@@ -167,7 +167,7 @@ LBB4_1:
 LBB4_3:
 	sub	esp, 4
 	lea	eax, [esi + l_anon.[ID].3-L4$pb]
-	lea	ecx, [esi + l_anon.[ID].0-L4$pb]
+	lea	ecx, [esi + L_anon.[ID].0-L4$pb]
 	mov	edi, edx
 	lea	edx, [esi + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)-L4$pb]
 	push	eax
@@ -184,7 +184,7 @@ LBB4_3:
 LBB4_5:
 	sub	esp, 4
 	lea	eax, [esi + l_anon.[ID].5-L4$pb]
-	lea	ecx, [esi + l_anon.[ID].4-L4$pb]
+	lea	ecx, [esi + L_anon.[ID].4-L4$pb]
 	mov	ebx, edx
 	lea	edx, [esi + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)-L4$pb]
 	push	eax
@@ -202,7 +202,7 @@ LBB4_7:
 	sub	esp, 4
 	lea	ecx, [esi + l_anon.[ID].9-L4$pb]
 	mov	dword ptr [ebp - 16], edx
-	lea	edx, [esi + l_anon.[ID].8-L4$pb]
+	lea	edx, [esi + L_anon.[ID].8-L4$pb]
 	lea	esi, [esi + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)-L4$pb]
 	push	ecx
 	push	edx
@@ -246,7 +246,7 @@ LBB5_4:
 LBB5_1:
 	sub	esp, 4
 	lea	ecx, [edi + l_anon.[ID].2-L5$pb]
-	lea	edx, [edi + l_anon.[ID].0-L5$pb]
+	lea	edx, [edi + L_anon.[ID].0-L5$pb]
 	lea	esi, [edi + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L5$pb]
 	push	ecx
 	push	edx
@@ -262,7 +262,7 @@ LBB5_1:
 LBB5_3:
 	sub	esp, 4
 	lea	ecx, [edi + l_anon.[ID].2-L5$pb]
-	lea	edx, [edi + l_anon.[ID].0-L5$pb]
+	lea	edx, [edi + L_anon.[ID].0-L5$pb]
 	lea	edi, [edi + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L5$pb]
 	push	ecx
 	push	edx
@@ -290,7 +290,7 @@ L6$pb:
 	test	edi, edi
 	je	LBB6_5
 	lea	ecx, [esi + l_anon.[ID].11-L6$pb]
-	lea	edx, [esi + l_anon.[ID].10-L6$pb]
+	lea	edx, [esi + L_anon.[ID].10-L6$pb]
 	lea	ebx, [esi + SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-L6$pb]
 	.p2align	4
 LBB6_2:
@@ -306,7 +306,7 @@ LBB6_3:
 	push	edx
 	push	ebx
 	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	lea	edx, [esi + l_anon.[ID].10-L6$pb]
+	lea	edx, [esi + L_anon.[ID].10-L6$pb]
 	lea	ecx, [esi + l_anon.[ID].11-L6$pb]
 	add	esp, 16
 	dec	edi
@@ -319,10 +319,11 @@ LBB6_5:
 	pop	ebp
 	ret
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].0:
 	.asciz	"NSObject"
 
+	.section	__TEXT,__const
 l_anon.[ID].1:
 	.ascii	"crates/$DIR/../test_static_class/lib.rs"
 
@@ -337,8 +338,8 @@ l_anon.[ID].3:
 	.long	l_anon.[ID].1
 	.asciz	"J\000\000\000\f\000\000\000\005\000\000"
 
-	.section	__TEXT,__const
-l_anon.[ID].4:
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].4:
 	.asciz	"NSString"
 
 	.section	__DATA,__const
@@ -347,8 +348,8 @@ l_anon.[ID].5:
 	.long	l_anon.[ID].1
 	.asciz	"J\000\000\000\021\000\000\000\005\000\000"
 
-	.section	__TEXT,__const
-l_anon.[ID].6:
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].6:
 	.asciz	"NSData"
 
 	.section	__DATA,__const
@@ -357,8 +358,8 @@ l_anon.[ID].7:
 	.long	l_anon.[ID].1
 	.asciz	"J\000\000\000\026\000\000\000\r\000\000"
 
-	.section	__TEXT,__const
-l_anon.[ID].8:
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].8:
 	.asciz	"NSException"
 
 	.section	__DATA,__const
@@ -367,8 +368,8 @@ l_anon.[ID].9:
 	.long	l_anon.[ID].1
 	.asciz	"J\000\000\000\036\000\000\000\016\000\000"
 
-	.section	__TEXT,__const
-l_anon.[ID].10:
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].10:
 	.asciz	"NSLock"
 
 	.section	__DATA,__const

@@ -55,7 +55,7 @@ Lloh1:
 	ldrb	wzr, [x8]
 	mov	w0, #4
 	mov	w1, #4
-	bl	___rust_alloc
+	bl	SYM(__rustc[CRATE_ID]::__rust_alloc, 0)
 	cbz	x0, LBB8_2
 	ldr	x8, [x20, #32]
 	ldr	w8, [x8]
@@ -79,7 +79,7 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::rc_b
 	ldr	x0, [x0, #32]
 	mov	w1, #4
 	mov	w2, #4
-	b	___rust_dealloc
+	b	SYM(__rustc[CRATE_ID]::__rust_dealloc, 0)
 
 	.p2align	2
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>>::drop_closure, 0):
@@ -94,7 +94,7 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::crea
 	ldr	x0, [x0, #32]
 	mov	w1, #4
 	mov	w2, #4
-	b	___rust_dealloc
+	b	SYM(__rustc[CRATE_ID]::__rust_dealloc, 0)
 
 	.globl	_stack_block_to_rc
 	.p2align	2
@@ -254,7 +254,7 @@ Lloh31:
 	mov	x0, x19
 	mov	w1, #4
 	mov	w2, #4
-	bl	___rust_dealloc
+	bl	SYM(__rustc[CRATE_ID]::__rust_dealloc, 0)
 	ldp	x29, x30, [sp, #64]
 	ldp	x20, x19, [sp, #48]
 	add	sp, sp, #80

@@ -1,44 +1,50 @@
-	.section	__TEXT,__text,regular,pure_instructions
 	.syntax unified
+	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_get_sel
 	.p2align	2
 	.code	32
 _get_sel:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r0, :lower16:(__MergedGlobals-(LPC0_0+8))
 	movt	r0, :upper16:(__MergedGlobals-(LPC0_0+8))
 LPC0_0:
 	add	r0, pc, r0
 	ldr	r0, [r0]
 	cmp	r0, #0
-	bxne	lr
+	popne	{r7, pc}
 LBB0_1:
 	movw	r0, :lower16:(__MergedGlobals-(LPC0_1+8))
 	movt	r0, :upper16:(__MergedGlobals-(LPC0_1+8))
 LPC0_1:
 	add	r0, pc, r0
-	movw	r1, :lower16:(l_anon.[ID].0-(LPC0_2+8))
-	movt	r1, :upper16:(l_anon.[ID].0-(LPC0_2+8))
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC0_2+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC0_2+8))
 LPC0_2:
 	add	r1, pc, r1
+	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
 	.globl	_get_same_sel
 	.p2align	2
 	.code	32
 _get_same_sel:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r1, :lower16:(__MergedGlobals-(LPC1_0+8))
 	movt	r1, :upper16:(__MergedGlobals-(LPC1_0+8))
 LPC1_0:
 	add	r1, pc, r1
 	ldr	r0, [r1, #4]
 	cmp	r0, #0
-	bxne	lr
+	popne	{r7, pc}
 LBB1_1:
 	add	r0, r1, #4
-	movw	r1, :lower16:(l_anon.[ID].0-(LPC1_1+8))
-	movt	r1, :upper16:(l_anon.[ID].0-(LPC1_1+8))
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC1_1+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC1_1+8))
 LPC1_1:
 	add	r1, pc, r1
+	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
 	.globl	_get_common_twice
@@ -63,8 +69,8 @@ LBB2_2:
 	movt	r2, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
 LPC2_3:
 	ldr	r2, [pc, r2]
-	movw	r1, :lower16:(l_anon.[ID].1-(LPC2_4+8))
-	movt	r1, :upper16:(l_anon.[ID].1-(LPC2_4+8))
+	movw	r1, :lower16:(L_anon.[ID].1-(LPC2_4+8))
+	movt	r1, :upper16:(L_anon.[ID].1-(LPC2_4+8))
 LPC2_4:
 	add	r1, pc, r1
 	mov	r4, r0
@@ -78,8 +84,8 @@ LBB2_3:
 	movt	r0, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_1+8))
 LPC2_1:
 	ldr	r0, [pc, r0]
-	movw	r1, :lower16:(l_anon.[ID].1-(LPC2_2+8))
-	movt	r1, :upper16:(l_anon.[ID].1-(LPC2_2+8))
+	movw	r1, :lower16:(L_anon.[ID].1-(LPC2_2+8))
+	movt	r1, :upper16:(L_anon.[ID].1-(LPC2_2+8))
 LPC2_2:
 	add	r1, pc, r1
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
@@ -89,41 +95,47 @@ LPC2_2:
 	.p2align	2
 	.code	32
 _get_different_sel:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r1, :lower16:(__MergedGlobals-(LPC3_0+8))
 	movt	r1, :upper16:(__MergedGlobals-(LPC3_0+8))
 LPC3_0:
 	add	r1, pc, r1
 	ldr	r0, [r1, #8]
 	cmp	r0, #0
-	bxne	lr
+	popne	{r7, pc}
 LBB3_1:
 	add	r0, r1, #8
 	movw	r1, :lower16:(L_anon.[ID].2-(LPC3_1+8))
 	movt	r1, :upper16:(L_anon.[ID].2-(LPC3_1+8))
 LPC3_1:
 	add	r1, pc, r1
+	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
 	.globl	_unused_sel
 	.p2align	2
 	.code	32
 _unused_sel:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r0, :lower16:(SYM(test_dynamic_sel[CRATE_ID]::unused_sel::CACHED_SEL, 0)-(LPC4_0+8))
 	movt	r0, :upper16:(SYM(test_dynamic_sel[CRATE_ID]::unused_sel::CACHED_SEL, 0)-(LPC4_0+8))
 LPC4_0:
 	add	r0, pc, r0
 	ldr	r0, [r0]
 	cmp	r0, #0
-	bxne	lr
+	popne	{r7, pc}
 LBB4_1:
 	movw	r0, :lower16:(SYM(test_dynamic_sel[CRATE_ID]::unused_sel::CACHED_SEL, 0)-(LPC4_1+8))
 	movt	r0, :upper16:(SYM(test_dynamic_sel[CRATE_ID]::unused_sel::CACHED_SEL, 0)-(LPC4_1+8))
 LPC4_1:
 	add	r0, pc, r0
-	movw	r1, :lower16:(l_anon.[ID].3-(LPC4_2+8))
-	movt	r1, :upper16:(l_anon.[ID].3-(LPC4_2+8))
+	movw	r1, :lower16:(L_anon.[ID].3-(LPC4_2+8))
+	movt	r1, :upper16:(L_anon.[ID].3-(LPC4_2+8))
 LPC4_2:
 	add	r1, pc, r1
+	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
 	.globl	_use_fns
@@ -161,8 +173,8 @@ LBB5_5:
 	movt	r2, :upper16:(__MergedGlobals-(LPC5_1+8))
 LPC5_1:
 	add	r2, pc, r2
-	movw	r1, :lower16:(l_anon.[ID].0-(LPC5_2+8))
-	movt	r1, :upper16:(l_anon.[ID].0-(LPC5_2+8))
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC5_2+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC5_2+8))
 LPC5_2:
 	add	r1, pc, r1
 	mov	r5, r0
@@ -175,8 +187,8 @@ LPC5_2:
 	bne	LBB5_2
 LBB5_6:
 	add	r2, r8, #4
-	movw	r1, :lower16:(l_anon.[ID].0-(LPC5_3+8))
-	movt	r1, :upper16:(l_anon.[ID].0-(LPC5_3+8))
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC5_3+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC5_3+8))
 LPC5_3:
 	add	r1, pc, r1
 	mov	r6, r0
@@ -203,8 +215,8 @@ LPC5_4:
 	bne	LBB5_4
 LBB5_8:
 	add	r2, r8, #12
-	movw	r1, :lower16:(l_anon.[ID].4-(LPC5_5+8))
-	movt	r1, :upper16:(l_anon.[ID].4-(LPC5_5+8))
+	movw	r1, :lower16:(L_anon.[ID].4-(LPC5_5+8))
+	movt	r1, :upper16:(L_anon.[ID].4-(LPC5_5+8))
 LPC5_5:
 	add	r1, pc, r1
 	mov	r8, r0
@@ -241,8 +253,8 @@ LBB6_3:
 	movt	r2, :upper16:(__MergedGlobals-(LPC6_1+8))
 LPC6_1:
 	add	r2, pc, r2
-	movw	r1, :lower16:(l_anon.[ID].0-(LPC6_2+8))
-	movt	r1, :upper16:(l_anon.[ID].0-(LPC6_2+8))
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC6_2+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC6_2+8))
 LPC6_2:
 	add	r1, pc, r1
 	mov	r6, r0
@@ -258,8 +270,8 @@ LBB6_4:
 	movt	r2, :upper16:(__MergedGlobals-(LPC6_3+8))
 LPC6_3:
 	add	r2, pc, r2
-	movw	r1, :lower16:(l_anon.[ID].0-(LPC6_4+8))
-	movt	r1, :upper16:(l_anon.[ID].0-(LPC6_4+8))
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC6_4+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC6_4+8))
 LPC6_4:
 	add	r1, pc, r1
 	mov	r6, r0
@@ -283,8 +295,8 @@ LBB7_1:
 	movt	r4, :upper16:(SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)-(LPC7_0+8))
 LPC7_0:
 	add	r4, pc, r4
-	movw	r5, :lower16:(l_anon.[ID].5-(LPC7_1+8))
-	movt	r5, :upper16:(l_anon.[ID].5-(LPC7_1+8))
+	movw	r5, :lower16:(L_anon.[ID].5-(LPC7_1+8))
+	movt	r5, :upper16:(L_anon.[ID].5-(LPC7_1+8))
 LPC7_1:
 	add	r5, pc, r5
 LBB7_2:
@@ -306,25 +318,23 @@ LBB7_5:
 	pop	{r4, r5, r6, r7, lr}
 	bx	lr
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].0:
 	.asciz	"simple"
 
-l_anon.[ID].1:
+L_anon.[ID].1:
 	.asciz	"alloc"
 
-	.section	__TEXT,__literal16,16byte_literals
 L_anon.[ID].2:
 	.asciz	"i:am:different:"
 
-	.section	__TEXT,__const
-l_anon.[ID].3:
+L_anon.[ID].3:
 	.asciz	"unused"
 
-l_anon.[ID].4:
+L_anon.[ID].4:
 	.asciz	"fourthSel"
 
-l_anon.[ID].5:
+L_anon.[ID].5:
 	.asciz	"loopedSelector"
 
 .zerofill __DATA,__bss,SYM(test_dynamic_sel[CRATE_ID]::unused_sel::CACHED_SEL, 0),4,2

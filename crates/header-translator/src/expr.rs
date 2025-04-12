@@ -16,6 +16,7 @@ use crate::{immediate_children, Context, ItemIdentifier, Location};
 
 #[derive(Clone, Debug, PartialEq)]
 #[allow(clippy::upper_case_acronyms)]
+#[allow(clippy::large_enum_variant)]
 pub enum Token {
     Punctuation(String),
     Literal(String),

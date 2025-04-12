@@ -14,11 +14,10 @@ Lloh0:
 Lloh1:
 	ldr	x8, [x8, SYM(test_define_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 0)@PAGEOFF]
 	ldrb	w8, [x0, x8]
-	cbz	w8, LBB0_6
 	cmp	w8, #255
-	b.ne	LBB0_3
+	b.ne	LBB0_6
 	bl	SYM(<test_define_class[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>::drop, 0)
-LBB0_3:
+LBB0_2:
 Lloh2:
 	adrp	x8, SYM(test_define_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)@PAGE
 Lloh3:
@@ -28,10 +27,10 @@ Lloh3:
 Ltmp0:
 	bl	_objc_release
 Ltmp1:
-	cbz	x21, LBB0_6
+	cbz	x21, LBB0_5
 	mov	x0, x21
 	bl	_objc_release
-LBB0_6:
+LBB0_5:
 Lloh4:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh5:
@@ -47,6 +46,9 @@ Lloh6:
 	ldp	x22, x21, [sp, #16]
 	add	sp, sp, #64
 	ret
+LBB0_6:
+	cbnz	w8, LBB0_2
+	b	LBB0_5
 LBB0_7:
 Ltmp2:
 	mov	x19, x0
@@ -106,7 +108,7 @@ Lttbase0:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin1:
 	sub	sp, sp, #48
 	stp	x20, x19, [sp, #16]
@@ -115,7 +117,8 @@ Lfunc_begin1:
 	ldr	x8, [x0]
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
-	tbz	w9, #0, LBB1_14
+	cmp	w9, #1
+	b.ne	LBB1_14
 Lloh7:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh8:
@@ -348,7 +351,7 @@ Lcst_end1:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin2:
 	sub	sp, sp, #96
 	stp	x20, x19, [sp, #64]
@@ -357,7 +360,8 @@ Lfunc_begin2:
 	ldr	x8, [x0]
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
-	tbz	w9, #0, LBB2_8
+	cmp	w9, #1
+	b.ne	LBB2_8
 Lloh60:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh61:
@@ -574,7 +578,7 @@ Lcst_end2:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin3:
 	sub	sp, sp, #96
 	stp	x20, x19, [sp, #64]
@@ -583,7 +587,8 @@ Lfunc_begin3:
 	ldr	x8, [x0]
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
-	tbz	w9, #0, LBB3_5
+	cmp	w9, #1
+	b.ne	LBB3_5
 Lloh98:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh99:
@@ -730,40 +735,40 @@ Lcst_end3:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	ldr	x8, [x0]
 	str	x8, [sp, #8]
 	add	x0, sp, #8
-	bl	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	bl	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
 
 	.p2align	2
-SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	ldr	x8, [x0]
 	str	x8, [sp, #8]
 	add	x0, sp, #8
-	bl	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	bl	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
 
 	.p2align	2
-SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	ldr	x8, [x0]
 	str	x8, [sp, #8]
 	add	x0, sp, #8
-	bl	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	bl	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
@@ -1501,24 +1506,90 @@ Lttbase2:
 	.byte	0
 	.p2align	2, 0x0
 
+	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_da7dfba076f8819b
+L_OBJC_METH_VAR_NAME_da7dfba076f8819b:
+	.asciz	"classMethod"
+
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_da7dfba076f8819b
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_da7dfba076f8819b:
+	.quad	L_OBJC_METH_VAR_NAME_da7dfba076f8819b
+
+	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_af51813a2f91b268
+L_OBJC_METH_VAR_NAME_af51813a2f91b268:
+	.asciz	"method"
+
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_af51813a2f91b268
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_af51813a2f91b268:
+	.quad	L_OBJC_METH_VAR_NAME_af51813a2f91b268
+
+	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_43ff92728f706391
+L_OBJC_METH_VAR_NAME_43ff92728f706391:
+	.asciz	"methodBool:"
+
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_43ff92728f706391
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_43ff92728f706391:
+	.quad	L_OBJC_METH_VAR_NAME_43ff92728f706391
+
+	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_defcf1f00a4b4302
+L_OBJC_METH_VAR_NAME_defcf1f00a4b4302:
+	.asciz	"methodRetained"
+
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_defcf1f00a4b4302
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_defcf1f00a4b4302:
+	.quad	L_OBJC_METH_VAR_NAME_defcf1f00a4b4302
+
+	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_9e0e96761ff41d49
+L_OBJC_METH_VAR_NAME_9e0e96761ff41d49:
+	.asciz	"methodRetainedWithParam:"
+
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_9e0e96761ff41d49
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_9e0e96761ff41d49:
+	.quad	L_OBJC_METH_VAR_NAME_9e0e96761ff41d49
+
+	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_597b404e7f57234e
+L_OBJC_METH_VAR_NAME_597b404e7f57234e:
+	.asciz	"copyWithZone:"
+
+	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_597b404e7f57234e
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_597b404e7f57234e:
+	.quad	L_OBJC_METH_VAR_NAME_597b404e7f57234e
+
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].0:
 	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
 	.p2align	3, 0x0
 l_anon.[ID].1:
 	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
 	.p2align	3, 0x0
 l_anon.[ID].2:
 	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0
@@ -1526,12 +1597,14 @@ l_anon.[ID].3:
 	.byte	17
 	.space	39
 
+	.section	__TEXT,__cstring,cstring_literals
 l_anon.[ID].4:
 	.asciz	"ivars"
 
 l_anon.[ID].5:
 	.asciz	"drop_flag"
 
+	.section	__TEXT,__const
 	.p2align	3, 0x0
 l_anon.[ID].6:
 	.byte	5
@@ -1554,13 +1627,13 @@ l_anon.[ID].10:
 	.ascii	"DropIvars"
 
 l_anon.[ID].11:
-	.ascii	"$RUSTC/library/std/src/sync/once.rs"
+	.ascii	"$RUSTC/library/std/src/sync/poison/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].12:
 	.quad	l_anon.[ID].11
-	.asciz	"p\000\000\000\000\000\000\000\236\000\000\0002\000\000"
+	.asciz	"\20x\000\000\000\000\000\000\000\233\000\000\0002\000\000"
 
 	.section	__TEXT,__const
 l_anon.[ID].13:
@@ -1623,103 +1696,32 @@ l_anon.[ID].23:
 	.quad	l_anon.[ID].22
 	.space	24
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_da7dfba076f8819b
-L_OBJC_METH_VAR_NAME_da7dfba076f8819b:
-	.asciz	"classMethod"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_da7dfba076f8819b
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_da7dfba076f8819b:
-	.quad	L_OBJC_METH_VAR_NAME_da7dfba076f8819b
-
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_da7dfba076f8819b
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_da7dfba076f8819b:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_af51813a2f91b268
-L_OBJC_METH_VAR_NAME_af51813a2f91b268:
-	.asciz	"method"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_af51813a2f91b268
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_af51813a2f91b268:
-	.quad	L_OBJC_METH_VAR_NAME_af51813a2f91b268
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_af51813a2f91b268
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_af51813a2f91b268:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_43ff92728f706391
-L_OBJC_METH_VAR_NAME_43ff92728f706391:
-	.asciz	"methodBool:"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_43ff92728f706391
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_43ff92728f706391:
-	.quad	L_OBJC_METH_VAR_NAME_43ff92728f706391
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_43ff92728f706391
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_43ff92728f706391:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_defcf1f00a4b4302
-L_OBJC_METH_VAR_NAME_defcf1f00a4b4302:
-	.asciz	"methodRetained"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_defcf1f00a4b4302
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_defcf1f00a4b4302:
-	.quad	L_OBJC_METH_VAR_NAME_defcf1f00a4b4302
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_defcf1f00a4b4302
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_defcf1f00a4b4302:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_9e0e96761ff41d49
-L_OBJC_METH_VAR_NAME_9e0e96761ff41d49:
-	.asciz	"methodRetainedWithParam:"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_9e0e96761ff41d49
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_9e0e96761ff41d49:
-	.quad	L_OBJC_METH_VAR_NAME_9e0e96761ff41d49
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_9e0e96761ff41d49
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_9e0e96761ff41d49:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_597b404e7f57234e
-L_OBJC_METH_VAR_NAME_597b404e7f57234e:
-	.asciz	"copyWithZone:"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_597b404e7f57234e
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_597b404e7f57234e:
-	.quad	L_OBJC_METH_VAR_NAME_597b404e7f57234e
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_597b404e7f57234e
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_597b404e7f57234e:

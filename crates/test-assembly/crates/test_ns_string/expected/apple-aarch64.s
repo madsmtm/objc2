@@ -50,6 +50,13 @@ _NON_ASCII:
 SYM(test_ns_string[CRATE_ID]::EMPTY::ASCII, 0):
 	.space	1
 
+	.globl	SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0)
+SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0):
+	.asciz	"xyz"
+
+SYM(test_ns_string[CRATE_ID]::get_ascii::ASCII, 0):
+	.asciz	"abc"
+
 	.section	__DATA,__cfstring
 	.globl	SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 0)
 	.p2align	3, 0x0
@@ -59,12 +66,6 @@ SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 0):
 	.quad	SYM(test_ns_string[CRATE_ID]::EMPTY::ASCII, 0)
 	.space	8
 
-	.section	__TEXT,__cstring,cstring_literals
-	.globl	SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0)
-SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0):
-	.asciz	"xyz"
-
-	.section	__DATA,__cfstring
 	.globl	SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0)
 	.p2align	3, 0x0
 SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0):
@@ -88,11 +89,6 @@ SYM(test_ns_string[CRATE_ID]::NON_ASCII::CFSTRING, 0):
 	.quad	SYM(test_ns_string[CRATE_ID]::NON_ASCII::UTF16, 0)
 	.asciz	"\002\000\000\000\000\000\000"
 
-	.section	__TEXT,__cstring,cstring_literals
-SYM(test_ns_string[CRATE_ID]::get_ascii::ASCII, 0):
-	.asciz	"abc"
-
-	.section	__DATA,__cfstring
 	.p2align	3, 0x0
 SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0):
 	.quad	___CFConstantStringClassReference

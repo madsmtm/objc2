@@ -52,10 +52,6 @@ L2$pb:
 	pop	ebp
 	jmp	_objc_release
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
-	.ascii	"MyProtocol"
-
 	.section	__TEXT,__cstring,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac
 L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac:
@@ -66,6 +62,10 @@ L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac:
 	.p2align	2, 0x0
 L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
 	.long	L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac
+
+	.section	__TEXT,__const
+l_anon.[ID].0:
+	.ascii	"MyProtocol"
 
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_a3f3690bc9f113ac

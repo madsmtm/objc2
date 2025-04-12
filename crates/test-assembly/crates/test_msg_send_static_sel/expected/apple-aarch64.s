@@ -81,16 +81,6 @@ Lloh15:
 	.loh AdrpLdr	Lloh12, Lloh13
 	.loh AdrpLdr	Lloh10, Lloh11
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
-	.ascii	"crates/$DIR/lib.rs"
-
-	.section	__DATA,__const
-	.p2align	3, 0x0
-l_anon.[ID].1:
-	.quad	l_anon.[ID].0
-	.asciz	";\000\000\000\000\000\000\000\016\000\000\000\005\000\000"
-
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_80f1580ed33ec51b
 L_OBJC_METH_VAR_NAME_80f1580ed33ec51b:
@@ -101,12 +91,6 @@ L_OBJC_METH_VAR_NAME_80f1580ed33ec51b:
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_80f1580ed33ec51b:
 	.quad	L_OBJC_METH_VAR_NAME_80f1580ed33ec51b
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_80f1580ed33ec51b
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_80f1580ed33ec51b:
-	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_91c006d97540f4b5
@@ -119,12 +103,6 @@ L_OBJC_METH_VAR_NAME_91c006d97540f4b5:
 L_OBJC_SELECTOR_REFERENCES_91c006d97540f4b5:
 	.quad	L_OBJC_METH_VAR_NAME_91c006d97540f4b5
 
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_91c006d97540f4b5
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_91c006d97540f4b5:
-	.asciz	"\000\000\000\000@\000\000"
-
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_67bf3e41c7e639a3
 L_OBJC_METH_VAR_NAME_67bf3e41c7e639a3:
@@ -135,12 +113,6 @@ L_OBJC_METH_VAR_NAME_67bf3e41c7e639a3:
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_67bf3e41c7e639a3:
 	.quad	L_OBJC_METH_VAR_NAME_67bf3e41c7e639a3
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_67bf3e41c7e639a3
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_67bf3e41c7e639a3:
-	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_2c2c9a8191012941
@@ -153,12 +125,6 @@ L_OBJC_METH_VAR_NAME_2c2c9a8191012941:
 L_OBJC_SELECTOR_REFERENCES_2c2c9a8191012941:
 	.quad	L_OBJC_METH_VAR_NAME_2c2c9a8191012941
 
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_2c2c9a8191012941
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_2c2c9a8191012941:
-	.asciz	"\000\000\000\000@\000\000"
-
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_993d94b40d47ed52
 L_OBJC_METH_VAR_NAME_993d94b40d47ed52:
@@ -170,7 +136,37 @@ L_OBJC_METH_VAR_NAME_993d94b40d47ed52:
 L_OBJC_SELECTOR_REFERENCES_993d94b40d47ed52:
 	.quad	L_OBJC_METH_VAR_NAME_993d94b40d47ed52
 
+	.section	__TEXT,__const
+l_anon.[ID].0:
+	.ascii	"crates/$DIR/lib.rs"
+
+	.section	__DATA,__const
+	.p2align	3, 0x0
+l_anon.[ID].1:
+	.quad	l_anon.[ID].0
+	.asciz	";\000\000\000\000\000\000\000\016\000\000\000\005\000\000"
+
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
+	.globl	L_OBJC_IMAGE_INFO_80f1580ed33ec51b
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_80f1580ed33ec51b:
+	.asciz	"\000\000\000\000@\000\000"
+
+	.globl	L_OBJC_IMAGE_INFO_91c006d97540f4b5
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_91c006d97540f4b5:
+	.asciz	"\000\000\000\000@\000\000"
+
+	.globl	L_OBJC_IMAGE_INFO_67bf3e41c7e639a3
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_67bf3e41c7e639a3:
+	.asciz	"\000\000\000\000@\000\000"
+
+	.globl	L_OBJC_IMAGE_INFO_2c2c9a8191012941
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_2c2c9a8191012941:
+	.asciz	"\000\000\000\000@\000\000"
+
 	.globl	L_OBJC_IMAGE_INFO_993d94b40d47ed52
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_993d94b40d47ed52:

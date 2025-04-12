@@ -36,32 +36,34 @@ pub fn be_memory_inline_jit_restrict_with_witness_supported() -> bool {
 ///
 /// Instead, we use a custom calling convention. This serves two purposes:
 /// 1) Performance. The effects of this call can be precisely modeled, so
-///     the performance is as close as possible to the case where we can
-///     inline this body directly.
+///    the performance is as close as possible to the case where we can
+///    inline this body directly.
 /// 2) Security. This calling convention greatly reduces the chances of spilling
-///     an important value to the stack. See below.
+///    an important value to the stack. See below.
 ///
 /// In support of this function's security goals, users of this function must
-///     confirm the following:
+/// confirm the following:
 ///
 /// 1) You must not emit general PAC signing gadgets.
 /// 2) The critical section defined by calls to these two functions must not
-///     loop on any induction variable that is spilled to the stack, or otherwise
-///     spill any important values there. An attacker can control these values.
-///     If any values must be spilled or loaded from the heap or stack, they should be signed
-///     outside the critical section, and authenticated inside.
+///    loop on any induction variable that is spilled to the stack, or otherwise
+///    spill any important values there. An attacker can control these values.
+///    If any values must be spilled or loaded from the heap or stack, they should be signed
+///    outside the critical section, and authenticated inside.
 /// 3) Do not create a gadget that is overly general. For example, wrapping this
-///     function inside a body like this is very bad:
+///    function inside a body like this is very bad:
 ///
-///     NEVER_INLINE void myFunction() {
-///     if (variableFromStackOrHeap)
-///         be_memory_inline_jit_restrict_rwx_to_rx_with_witness();
-///     else
-///         be_memory_inline_jit_restrict_rwx_to_rw_with_witness();
-///     }
+///    ```c
+///    NEVER_INLINE void myFunction() {
+///    if (variableFromStackOrHeap)
+///        be_memory_inline_jit_restrict_rwx_to_rx_with_witness();
+///    else
+///        be_memory_inline_jit_restrict_rwx_to_rw_with_witness();
+///    }
+///    ```
 ///
-///     Each use of this function should be maximally inlined to reduce the power
-///     that attackers gain by manipulating calls to it.
+///    Each use of this function should be maximally inlined to reduce the power
+///    that attackers gain by manipulating calls to it.
 ///
 /// Please look at the WebKit source code for an example.
 ///

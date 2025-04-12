@@ -2,9 +2,7 @@ error[E0080]: evaluation of `<objc2_foundation::NSString as objc2::__macro_helpe
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/null_error.rs
   |
   |             panic!("error parameter must be either `NSError` or `NSObject`")
-  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the evaluated program panicked at 'error parameter must be either `NSError` or `NSObject`', $WORKSPACE/crates/objc2/src/__macro_helpers/null_error.rs:61:13
-  |
-  = note: this error originates in the macro `$crate::panic::panic_2021` which comes from the expansion of the macro `panic` (in Nightly builds, run with -Z macro-backtrace for more info)
+  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ evaluation panicked: error parameter must be either `NSError` or `NSObject`
 
 note: erroneous constant encountered
   --> $WORKSPACE/crates/objc2/src/__macro_helpers/null_error.rs

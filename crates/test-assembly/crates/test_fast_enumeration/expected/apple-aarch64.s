@@ -295,7 +295,8 @@ LBB5_5:
 	cbz	x9, LBB5_8
 	ldr	x9, [x9]
 	ldr	w10, [sp, #8]
-	tbz	w10, #0, LBB5_9
+	cmp	w10, #1
+	b.ne	LBB5_9
 	ldr	x10, [sp, #16]
 	cmp	x10, x9
 	b.ne	LBB5_15
@@ -404,7 +405,7 @@ Lttbase0:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	__TEXT,__const
+	.section	__TEXT,__cstring,cstring_literals
 l_anon.[ID].0:
 	.asciz	"countByEnumeratingWithState:objects:count:"
 

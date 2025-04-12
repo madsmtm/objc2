@@ -78,7 +78,7 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::crea
 	movzx	eax, byte ptr [rax]
 	mov	edi, 4
 	mov	esi, 4
-	call	___rust_alloc
+	call	SYM(__rustc[CRATE_ID]::__rust_alloc, 0)
 	test	rax, rax
 	je	LBB8_2
 	mov	rcx, qword ptr [r14 + 32]
@@ -109,7 +109,7 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::rc_b
 	mov	esi, 4
 	mov	edx, 4
 	pop	rbp
-	jmp	___rust_dealloc
+	jmp	SYM(__rustc[CRATE_ID]::__rust_dealloc, 0)
 
 	.p2align	4
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>>::drop_closure, 0):
@@ -133,7 +133,7 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::crea
 	mov	esi, 4
 	mov	edx, 4
 	pop	rbp
-	jmp	___rust_dealloc
+	jmp	SYM(__rustc[CRATE_ID]::__rust_dealloc, 0)
 
 	.globl	_stack_block_to_rc
 	.p2align	4
@@ -245,7 +245,7 @@ _create_and_use_stack_block_drop:
 	mov	esi, 4
 	mov	edx, 4
 	mov	rdi, rbx
-	call	___rust_dealloc
+	call	SYM(__rustc[CRATE_ID]::__rust_dealloc, 0)
 	add	rsp, 40
 	pop	rbx
 	pop	rbp

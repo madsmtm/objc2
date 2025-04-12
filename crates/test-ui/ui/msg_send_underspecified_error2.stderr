@@ -1,3 +1,9 @@
+error[E0282]: type annotations needed
+ --> ui/msg_send_underspecified_error2.rs
+  |
+  |     let _: Result<_, Retained<NSError>> = unsafe { msg_send![obj, error: _] };
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type
+
 error[E0283]: type annotations needed
  --> ui/msg_send_underspecified_error2.rs
   |
@@ -10,9 +16,3 @@ error[E0283]: type annotations needed
           - impl<Receiver, Return, MethodFamily> MsgSendError<Receiver, Retained<Return>> for MethodFamily
             where MethodFamily: MsgSend<Receiver, Option<Retained<Return>>>;
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0282]: type annotations needed
- --> ui/msg_send_underspecified_error2.rs
-  |
-  |     let _: Result<_, Retained<NSError>> = unsafe { msg_send![obj, error: _] };
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type

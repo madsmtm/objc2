@@ -79,7 +79,7 @@ LBB1_5:
 	ret
 LBB1_2:
 	mov	rax, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
-	lea	rsi, [rip + l_anon.[ID].0]
+	lea	rsi, [rip + L_anon.[ID].0]
 	mov	r14, rdi
 	mov	rdi, rax
 	mov	r15, rcx
@@ -145,7 +145,7 @@ _iter:
 	mov	qword ptr [rbp - 56], 0
 	xor	ecx, ecx
 	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
-	lea	r12, [rip + l_anon.[ID].0]
+	lea	r12, [rip + L_anon.[ID].0]
 	xor	eax, eax
 	cmp	rax, rcx
 	jb	LBB3_6
@@ -161,7 +161,7 @@ LBB3_4:
 	call	_objc_msgSend
 	mov	qword ptr [rbp - 48], rax
 	test	rax, rax
-	je	LBB3_7
+	je	LBB3_8
 	xor	eax, eax
 LBB3_6:
 	mov	rcx, qword ptr [rbp - 112]
@@ -169,7 +169,7 @@ LBB3_6:
 	mov	qword ptr [rbp - 56], rdx
 	mov	rdi, qword ptr [rcx + 8*rax]
 	test	rdi, rdi
-	je	LBB3_7
+	je	LBB3_8
 	call	_use_obj
 	mov	rdi, qword ptr [rbp - 256]
 	mov	rax, qword ptr [rbp - 56]
@@ -185,7 +185,7 @@ LBB3_3:
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB3_4
-LBB3_7:
+LBB3_8:
 	add	rsp, 216
 	pop	rbx
 	pop	r12
@@ -237,7 +237,7 @@ _iter_noop:
 	mov	qword ptr [rbp - 56], 0
 	xor	ecx, ecx
 	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
-	lea	r12, [rip + l_anon.[ID].0]
+	lea	r12, [rip + L_anon.[ID].0]
 	xor	eax, eax
 	xor	edx, edx
 	jmp	LBB4_1
@@ -328,7 +328,7 @@ Lfunc_begin0:
 	mov	qword ptr [rbp - 56], 0
 	xor	ecx, ecx
 	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
-	lea	r12, [rip + l_anon.[ID].0]
+	lea	r12, [rip + L_anon.[ID].0]
 	xor	eax, eax
 	cmp	rax, rcx
 	jb	LBB5_7
@@ -345,31 +345,31 @@ LBB5_4:
 	mov	qword ptr [rbp - 48], rax
 	mov	qword ptr [rbp - 56], 0
 	test	rax, rax
-	je	LBB5_19
+	je	LBB5_15
 	cmp	qword ptr [rbp - 112], 0
-	je	LBB5_17
+	je	LBB5_19
 	xor	eax, eax
 LBB5_7:
 	mov	rcx, qword ptr [rbp - 104]
 	test	rcx, rcx
-	je	LBB5_11
+	je	LBB5_12
 	mov	rcx, qword ptr [rcx]
-	test	byte ptr [rbp - 272], 1
-	je	LBB5_9
+	cmp	dword ptr [rbp - 272], 1
+	jne	LBB5_11
 	cmp	qword ptr [rbp - 264], rcx
-	je	LBB5_11
-	jmp	LBB5_18
+	je	LBB5_12
+	jmp	LBB5_10
 	.p2align	4
-LBB5_9:
+LBB5_11:
 	mov	qword ptr [rbp - 272], 1
 	mov	qword ptr [rbp - 264], rcx
-LBB5_11:
+LBB5_12:
 	mov	rcx, qword ptr [rbp - 112]
 	lea	rdx, [rax + 1]
 	mov	qword ptr [rbp - 56], rdx
 	mov	rdi, qword ptr [rcx + 8*rax]
 	test	rdi, rdi
-	je	LBB5_19
+	je	LBB5_15
 	call	_objc_retain
 	mov	r13, rax
 Ltmp0:
@@ -392,7 +392,7 @@ LBB5_3:
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB5_4
-LBB5_19:
+LBB5_15:
 	add	rsp, 232
 	pop	rbx
 	pop	r12
@@ -401,11 +401,11 @@ LBB5_19:
 	pop	r15
 	pop	rbp
 	ret
-LBB5_17:
+LBB5_19:
 	call	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)
-LBB5_18:
+LBB5_10:
 	call	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)
-LBB5_15:
+LBB5_17:
 Ltmp2:
 	mov	rbx, rax
 Ltmp3:
@@ -414,7 +414,7 @@ Ltmp3:
 Ltmp4:
 	mov	rdi, rbx
 	call	__Unwind_Resume
-LBB5_14:
+LBB5_16:
 Ltmp5:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
 Lfunc_end0:
@@ -457,8 +457,8 @@ Lttbase0:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].0:
 	.asciz	"countByEnumeratingWithState:objects:count:"
 
 .subsections_via_symbols

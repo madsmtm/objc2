@@ -1,9 +1,11 @@
-	.section	__TEXT,__text,regular,pure_instructions
 	.syntax unified
+	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_iter_create
 	.p2align	2
 	.code	32
 _iter_create:
+	push	{r7, lr}
+	mov	r7, sp
 	add	r2, r0, #80
 	vmov.i32	q8, #0x0
 	vst1.32	{d16, d17}, [r2]!
@@ -20,7 +22,7 @@ _iter_create:
 	str	r3, [r0, #76]
 	str	r3, [r0, #100]
 	str	r3, [r0, #104]
-	bx	lr
+	pop	{r7, pc}
 
 	.globl	_iter_once
 	.p2align	2
@@ -67,8 +69,8 @@ LBB1_5:
 	movt	r9, :upper16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC1_1+8))
 LPC1_1:
 	ldr	r9, [pc, r9]
-	movw	r1, :lower16:(l_anon.[ID].0-(LPC1_2+8))
-	movt	r1, :upper16:(l_anon.[ID].0-(LPC1_2+8))
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC1_2+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC1_2+8))
 LPC1_2:
 	add	r1, pc, r1
 	mov	r8, r0
@@ -86,13 +88,14 @@ LPC1_2:
 	.p2align	2
 	.code	32
 _use_obj:
-	sub	sp, sp, #4
-	str	r0, [sp]
+	push	{r7, lr}
+	mov	r7, sp
+	push	{r0}
 	mov	r0, sp
 	@ InlineAsm Start
 	@ InlineAsm End
-	add	sp, sp, #4
-	bx	lr
+	mov	sp, r7
+	pop	{r7, pc}
 
 	.globl	_iter
 	.p2align	2
@@ -124,8 +127,8 @@ _iter:
 	movt	r10, :upper16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
 LPC3_0:
 	ldr	r10, [pc, r10]
-	movw	r8, :lower16:(l_anon.[ID].0-(LPC3_1+8))
-	movt	r8, :upper16:(l_anon.[ID].0-(LPC3_1+8))
+	movw	r8, :lower16:(L_anon.[ID].0-(LPC3_1+8))
+	movt	r8, :upper16:(L_anon.[ID].0-(LPC3_1+8))
 LPC3_1:
 	add	r8, pc, r8
 	str	r1, [sp, #112]
@@ -204,8 +207,8 @@ _iter_noop:
 	movt	r10, :upper16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
 LPC4_0:
 	ldr	r10, [pc, r10]
-	movw	r8, :lower16:(l_anon.[ID].0-(LPC4_1+8))
-	movt	r8, :upper16:(l_anon.[ID].0-(LPC4_1+8))
+	movw	r8, :lower16:(L_anon.[ID].0-(LPC4_1+8))
+	movt	r8, :upper16:(L_anon.[ID].0-(LPC4_1+8))
 LPC4_1:
 	add	r8, pc, r8
 	mov	r6, #16
@@ -337,8 +340,8 @@ LBB5_4:
 	beq	LBB5_8
 	ldr	r0, [r0]
 	ldr	r2, [sp, #16]
-	cmp	r2, #0
-	beq	LBB5_7
+	cmp	r2, #1
+	bne	LBB5_7
 	ldr	r2, [sp, #20]
 	cmp	r2, r0
 	beq	LBB5_8
@@ -381,8 +384,8 @@ LBB5_11:
 	movt	r0, :upper16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_4+8))
 LPC5_4:
 	ldr	r0, [pc, r0]
-	movw	r1, :lower16:(l_anon.[ID].0-(LPC5_5+8))
-	movt	r1, :upper16:(l_anon.[ID].0-(LPC5_5+8))
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC5_5+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC5_5+8))
 LPC5_5:
 	add	r1, pc, r1
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
@@ -478,8 +481,8 @@ Lttbase0:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].0:
 	.asciz	"countByEnumeratingWithState:objects:count:"
 
 	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers

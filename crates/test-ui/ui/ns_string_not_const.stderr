@@ -7,5 +7,6 @@ error[E0435]: attempt to use a non-constant value in a constant
 help: consider using `let` instead of `const`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/macros/ns_string.rs
   |
-  |         let INPUT: &str = $s;
-  |         ~~~
+  -         const INPUT: &str = $s;
+  +         let INPUT: &str = $s;
+  |
