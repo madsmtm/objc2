@@ -125,13 +125,13 @@ pub(crate) fn current_version() -> OSVersion {
     //
     // `compiler-rt` uses `dispatch_once`, but that's overkill for the reasons above.
     let version = CURRENT_VERSION.load(Ordering::Relaxed);
-    if version == 0 {
+    OSVersion::from_u32(if version == 0 {
         let version = lookup_version();
-        CURRENT_VERSION.store(version.to_u32(), Ordering::Relaxed);
+        CURRENT_VERSION.store(version, Ordering::Relaxed);
         version
     } else {
-        OSVersion::from_u32(version)
-    }
+        version
+    })
 }
 
 /// Look up the os version.
@@ -146,14 +146,14 @@ pub(crate) fn current_version() -> OSVersion {
 #[cold]
 // Micro-optimization: We use `extern "C"` to abort on panic, allowing `current_version` (inlined)
 // to be free of unwind handling.
-extern "C" fn lookup_version() -> OSVersion {
+extern "C" fn lookup_version() -> u32 {
     // Try to read from `sysctl` first (faster), but if that fails, fall back to reading the
     // property list (this is roughly what `_availability_version_check` does internally).
     let version = version_from_sysctl().unwrap_or_else(version_from_plist);
 
     // Try to make it clearer to the optimizer that this will never return 0.
     assert_ne!(version, OSVersion::MIN, "version cannot be 0.0.0");
-    version
+    version.to_u32()
 }
 
 /// Read the version from `kern.osproductversion` or `kern.iossupportversion`.
