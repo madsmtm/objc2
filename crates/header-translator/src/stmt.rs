@@ -3241,6 +3241,11 @@ impl Stmt {
                 value: None,
                 ..
             } => {
+                // Certain statics are only set when the MIDI server is
+                // running / when disk arbitration has been initialized.
+                if ["CoreMIDI", "DiskArbitration"].contains(&id.library_name()) {
+                    return None;
+                }
                 if !availability.is_available_host() {
                     return None;
                 }
@@ -3251,10 +3256,12 @@ impl Stmt {
                         simple_platform_gate(config.library(id), self.required_items(), [], config,)
                     )?;
                     let ty = ty.var().to_string();
-                    if ty.starts_with("&'static") {
+                    if ty.starts_with("&") {
                         writeln!(f, "    check_static_nonnull(unsafe {{ {} }});", id.path())?;
-                    } else {
+                    } else if ty.starts_with("Option<&") {
                         writeln!(f, "    let _ = unsafe {{ {} }};", id.path())?;
+                    } else {
+                        writeln!(f, "    let _ = unsafe {{ &{} }};", id.path())?;
                     }
 
                     Ok(())
