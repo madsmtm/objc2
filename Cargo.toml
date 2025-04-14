@@ -26,6 +26,16 @@ categories = [
     "os::macos-apis",
 ]
 
+# Used in framework crates.
+[workspace.dependencies]
+dispatch2 = { path = "crates/dispatch2", version = "0.2.0", default-features = false }
+block2 = { path = "crates/block2", version = "0.6.0", default-features = false }
+objc2 = { path = "crates/objc2", version = "0.6.0", default-features = false }
+# Use a reasonably new version of libc.
+libc = { version = "0.2.80", default-features = false }
+# Use a version of bitflags that supports `impl`.
+bitflags = { version = "2.5.0", default-features = false }
+
 [workspace.lints.rust]
 elided_lifetimes_in_paths = "warn"
 missing_copy_implementations = "warn"

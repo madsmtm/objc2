@@ -365,35 +365,22 @@ see that for related crates.", self.data.krate)?;
         for (krate, required_features) in self.dependencies(config) {
             let library = config.library_from_crate(krate);
             let required = self.data.required_crates.contains(krate);
-            let path = match (library.is_library, self.data.is_library) {
-                (true, true) => format!("../{krate}"),
-                (true, false) => format!("../../crates/{krate}"),
-                (false, true) => format!("../../framework-crates/{krate}"),
-                (false, false) => format!("../{krate}"),
-            };
-            let mut table = match krate {
-                "dispatch2" => InlineTable::from_iter([
-                    ("path", Value::from(path)),
-                    ("version", Value::from("0.2.0")),
-                ]),
-                "objc2" => InlineTable::from_iter([
-                    ("path", Value::from(path)),
-                    ("version", Value::from("0.6.0")),
-                ]),
-                "block2" => InlineTable::from_iter([
-                    ("path", Value::from(path)),
-                    ("version", Value::from("0.6.0")),
-                ]),
-                // Use a reasonably new version of libc
-                "libc" => InlineTable::from_iter([("version", Value::from("0.2.80"))]),
-                // Use a version of bitflags that supports `impl`
-                "bitflags" => InlineTable::from_iter([("version", Value::from("2.5.0"))]),
-                _ => InlineTable::from_iter([
-                    ("path", Value::from(path)),
+            let mut table = match (library.is_library, self.data.is_library) {
+                (true, _) => InlineTable::from_iter([("workspace", Value::from(true))]),
+                (false, true) => InlineTable::from_iter([
+                    (
+                        "path",
+                        Value::from(format!("../../framework-crates/{krate}")),
+                    ),
                     ("version", Value::from(VERSION)),
+                    ("default-features", Value::from(false)),
+                ]),
+                (false, false) => InlineTable::from_iter([
+                    ("path", Value::from(format!("../{krate}"))),
+                    ("version", Value::from(VERSION)),
+                    ("default-features", Value::from(false)),
                 ]),
             };
-            table.insert("default-features", Value::from(false));
             if !required {
                 table.insert("optional", Value::from(true));
             }

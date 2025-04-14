@@ -16,10 +16,10 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-block2 = { path = "../../crates/block2", version = "0.6.0", default-features = false, optional = true, features = ["alloc"] }
-dispatch2 = { path = "../../crates/dispatch2", version = "0.2.0", default-features = false, optional = true, features = ["alloc"] }
-libc = { version = "0.2.80", default-features = false, optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, optional = true, features = ["std"] }
+block2 = { workspace = true, optional = true, features = ["alloc"] }
+dispatch2 = { workspace = true, optional = true, features = ["alloc"] }
+libc = { workspace = true, optional = true }
+objc2 = { workspace = true, optional = true, features = ["std"] }
 objc2-core-audio-types = { path = "../objc2-core-audio-types", version = "0.3.0", default-features = false, optional = true, features = ["CoreAudioBaseTypes"] }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false }
 objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, optional = true, features = [

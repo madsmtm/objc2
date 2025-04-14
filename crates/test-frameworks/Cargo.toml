@@ -375,9 +375,9 @@ objc2-phase = ["dep:objc2-phase"]
 objc2-carbon = ["dep:objc2-carbon"]
 
 [dependencies]
-block2 = { path = "../block2" }
-objc2 = { path = "../objc2", features = ["relax-sign-encoding"] }
-libc = "0.2.80"
+block2 = { workspace = true }
+objc2 = { workspace = true, features = ["relax-sign-encoding"] }
+libc = { workspace = true }
 objc2-avf-audio = { path = "../../framework-crates/objc2-avf-audio", optional = true }
 objc2-av-foundation = { path = "../../framework-crates/objc2-av-foundation", optional = true }
 objc2-av-kit = { path = "../../framework-crates/objc2-av-kit", optional = true }

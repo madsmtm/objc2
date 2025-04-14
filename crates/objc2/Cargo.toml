@@ -149,6 +149,8 @@ static_assertions = "1.1.0"
 backtrace = "0.3.74"
 memoffset = "0.9.0"
 block2 = { path = "../block2" }
+
+# Intentionally does not use workspace deps, since we want to NOT put a version number in here for *Cargo reasons*
 objc2-core-foundation = { path = "../../framework-crates/objc2-core-foundation", default-features = false, features = [
     "CFCGTypes",
 ] }

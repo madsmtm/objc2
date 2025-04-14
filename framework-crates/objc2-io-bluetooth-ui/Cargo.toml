@@ -16,7 +16,7 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-objc2 = { path = "../../crates/objc2", version = "0.6.0", default-features = false, features = ["std"] }
+objc2 = { workspace = true, features = ["std"] }
 objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features = false }
 objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = ["objc2"] }
 objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }

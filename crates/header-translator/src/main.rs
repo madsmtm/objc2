@@ -809,14 +809,14 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
         (
             "block2",
             toml_edit::Value::InlineTable(toml_edit::InlineTable::from_iter([(
-                "path",
-                "../block2",
+                "workspace",
+                toml_edit::Value::from(true),
             )])),
         ),
         (
             "objc2",
             toml_edit::Value::InlineTable(toml_edit::InlineTable::from_iter([
-                ("path", toml_edit::Value::from("../objc2")),
+                ("workspace", toml_edit::Value::from(true)),
                 // FIXME: Make these not required for tests
                 (
                     "features",
@@ -824,7 +824,13 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
                 ),
             ])),
         ),
-        ("libc", "0.2.80".into()),
+        (
+            "libc",
+            toml_edit::Value::InlineTable(toml_edit::InlineTable::from_iter([(
+                "workspace",
+                toml_edit::Value::from(true),
+            )])),
+        ),
     ]));
     let _ = cargo_toml.remove("target");
 

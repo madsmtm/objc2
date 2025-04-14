@@ -16,7 +16,7 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-libc = { version = "0.2.80", default-features = false, optional = true }
+libc = { workspace = true, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
