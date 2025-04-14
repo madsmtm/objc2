@@ -18,14 +18,14 @@ workspace = true
 [dependencies]
 libc = { workspace = true, optional = true }
 objc2 = { workspace = true, features = ["std"] }
-objc2-core-services = { path = "../objc2-core-services", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-services = { workspace = true, optional = true, features = [
     "AE",
     "AEDataModel",
     "LSOpen",
     "LaunchServices",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
+objc2-foundation = { workspace = true, features = ["alloc"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

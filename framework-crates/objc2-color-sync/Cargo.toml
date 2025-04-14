@@ -17,7 +17,7 @@ workspace = true
 
 [dependencies]
 objc2 = { workspace = true, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false }
+objc2-core-foundation = { workspace = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

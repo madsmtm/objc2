@@ -19,16 +19,16 @@ workspace = true
 bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFCGTypes",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
-objc2-scene-kit = { path = "../objc2-scene-kit", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-scene-kit = { workspace = true, optional = true, features = [
     "SCNNode",
     "SCNScene",
 ] }
-objc2-sprite-kit = { path = "../objc2-sprite-kit", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-sprite-kit = { workspace = true, optional = true, features = [
     "SKEffectNode",
     "SKNode",
     "SKScene",
@@ -39,7 +39,7 @@ objc2-sprite-kit = { path = "../objc2-sprite-kit", version = "0.3.0", default-fe
 ] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features = false, optional = true, features = ["NSColor"] }
+objc2-app-kit = { workspace = true, optional = true, features = ["NSColor"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

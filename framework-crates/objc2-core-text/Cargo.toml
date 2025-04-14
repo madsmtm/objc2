@@ -20,8 +20,8 @@ bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 libc = { workspace = true, optional = true }
 objc2 = { workspace = true, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true }
+objc2-core-graphics = { workspace = true, optional = true, features = [
     "CGContext",
     "CGFont",
     "CGImage",

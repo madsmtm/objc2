@@ -20,8 +20,8 @@ bitflags = { workspace = true, optional = true, features = ["std"] }
 dispatch2 = { workspace = true, optional = true, features = ["alloc"] }
 libc = { workspace = true, optional = true }
 objc2 = { workspace = true, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, features = ["CFError"] }
-objc2-security = { path = "../objc2-security", version = "0.3.0", default-features = false, optional = true, features = ["Authorization"] }
+objc2-core-foundation = { workspace = true, features = ["CFError"] }
+objc2-security = { workspace = true, optional = true, features = ["Authorization"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

@@ -19,24 +19,24 @@ workspace = true
 bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFCGTypes",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
-objc2-javascript-core = { path = "../objc2-javascript-core", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-javascript-core = { workspace = true, optional = true, features = [
     "JSBase",
     "JSContext",
     "JSValue",
     "objc2",
 ] }
-objc2-security = { path = "../objc2-security", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-security = { workspace = true, optional = true, features = [
     "SecTrust",
     "objc2",
 ] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-app-kit = { workspace = true, optional = true, features = [
     "NSAccessibilityProtocols",
     "NSAnimation",
     "NSAppearance",

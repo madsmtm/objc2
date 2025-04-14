@@ -17,7 +17,7 @@ workspace = true
 
 [dependencies]
 objc2 = { workspace = true, features = ["std"] }
-objc2-event-kit = { path = "../objc2-event-kit", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-event-kit = { workspace = true, optional = true, features = [
     "EKCalendar",
     "EKCalendarItem",
     "EKEvent",
@@ -25,8 +25,8 @@ objc2-event-kit = { path = "../objc2-event-kit", version = "0.3.0", default-feat
     "EKObject",
     "EKTypes",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
-objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-ui-kit = { workspace = true, optional = true, features = [
     "UIAppearance",
     "UIFocus",
     "UINavigationController",

@@ -24,20 +24,20 @@ dispatch2 = { workspace = true, optional = true, features = [
     "objc2",
 ] }
 objc2 = { workspace = true, features = ["std"] }
-objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.3.0", default-features = false, optional = true, features = ["AVAudioSessionRoute"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-avf-audio = { workspace = true, optional = true, features = ["AVAudioSessionRoute"] }
+objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFCGTypes",
     "CFDate",
     "objc2",
 ] }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-graphics = { workspace = true, optional = true, features = [
     "CGColor",
     "CGContext",
     "CGDirectDisplay",
     "CGImage",
     "objc2",
 ] }
-objc2-core-media = { path = "../objc2-core-media", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-media = { workspace = true, optional = true, features = [
     "CMBase",
     "CMFormatDescription",
     "CMSampleBuffer",
@@ -49,7 +49,7 @@ objc2-core-media = { path = "../objc2-core-media", version = "0.3.0", default-fe
     "CMTimeRange",
     "objc2",
 ] }
-objc2-core-video = { path = "../objc2-core-video", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-video = { workspace = true, optional = true, features = [
     "CVBase",
     "CVBuffer",
     "CVImageBuffer",
@@ -57,16 +57,16 @@ objc2-core-video = { path = "../objc2-core-video", version = "0.3.0", default-fe
     "CVPixelBufferPool",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
-objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", version = "0.3.0", default-features = false, optional = true, features = ["UTType"] }
+objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-uniform-type-identifiers = { workspace = true, optional = true, features = ["UTType"] }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
-objc2-core-image = { path = "../objc2-core-image", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-image = { workspace = true, optional = true, features = [
     "CIBarcodeDescriptor",
     "CIContext",
     "CIImage",
 ] }
-objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-quartz-core = { workspace = true, optional = true, features = [
     "CALayer",
     "CAMediaTiming",
 ] }

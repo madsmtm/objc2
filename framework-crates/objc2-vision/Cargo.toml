@@ -18,40 +18,40 @@ workspace = true
 [dependencies]
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFCGTypes",
     "CFDate",
     "objc2",
 ] }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-graphics = { workspace = true, optional = true, features = [
     "CGImage",
     "CGPath",
     "objc2",
 ] }
-objc2-core-image = { path = "../objc2-core-image", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-image = { workspace = true, optional = true, features = [
     "CIBarcodeDescriptor",
     "CIImage",
 ] }
-objc2-core-media = { path = "../objc2-core-media", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-media = { workspace = true, optional = true, features = [
     "CMSampleBuffer",
     "CMTime",
     "CMTimeRange",
     "objc2",
 ] }
-objc2-core-ml = { path = "../objc2-core-ml", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-ml = { workspace = true, optional = true, features = [
     "MLComputeDeviceProtocol",
     "MLFeatureProvider",
     "MLFeatureValue",
     "MLModel",
     "MLMultiArray",
 ] }
-objc2-core-video = { path = "../objc2-core-video", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-video = { workspace = true, optional = true, features = [
     "CVBuffer",
     "CVImageBuffer",
     "CVPixelBuffer",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
+objc2-foundation = { workspace = true, features = ["alloc"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

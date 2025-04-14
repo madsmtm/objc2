@@ -19,19 +19,19 @@ workspace = true
 bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFCGTypes",
     "objc2",
 ] }
-objc2-core-location = { path = "../objc2-core-location", version = "0.3.0", default-features = false, optional = true, features = ["CLLocation"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
-objc2-map-kit = { path = "../objc2-map-kit", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-location = { workspace = true, optional = true, features = ["CLLocation"] }
+objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-map-kit = { workspace = true, optional = true, features = [
     "MKAnnotation",
     "MKTypes",
 ] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-app-kit = { workspace = true, optional = true, features = [
     "NSAccessibilityProtocols",
     "NSAnimation",
     "NSAppearance",
@@ -49,7 +49,7 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features
 ] }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
-objc2-photos = { path = "../objc2-photos", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-photos = { workspace = true, optional = true, features = [
     "PHAdjustmentData",
     "PHAsset",
     "PHCloudIdentifier",

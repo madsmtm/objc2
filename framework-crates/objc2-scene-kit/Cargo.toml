@@ -23,24 +23,24 @@ dispatch2 = { workspace = true, optional = true, features = [
     "objc2",
 ] }
 objc2 = { workspace = true, features = ["std"] }
-objc2-avf-audio = { path = "../objc2-avf-audio", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-avf-audio = { workspace = true, optional = true, features = [
     "AVAudioEngine",
     "AVAudioEnvironmentNode",
     "AVAudioNode",
 ] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFCGTypes",
     "CFDate",
     "objc2",
 ] }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-graphics = { workspace = true, optional = true, features = [
     "CGColorSpace",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
+objc2-foundation = { workspace = true, features = ["alloc"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-app-kit = { workspace = true, optional = true, features = [
     "NSAccessibilityProtocols",
     "NSAnimation",
     "NSAppearance",
@@ -55,12 +55,12 @@ objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features
 ] }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
-objc2-core-image = { path = "../objc2-core-image", version = "0.3.0", default-features = false, optional = true, features = ["CIFilter"] }
-objc2-javascript-core = { path = "../objc2-javascript-core", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-image = { workspace = true, optional = true, features = ["CIFilter"] }
+objc2-javascript-core = { workspace = true, optional = true, features = [
     "JSContext",
     "objc2",
 ] }
-objc2-metal = { path = "../objc2-metal", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-metal = { workspace = true, optional = true, features = [
     "MTLAllocation",
     "MTLBuffer",
     "MTLCommandBuffer",
@@ -75,7 +75,7 @@ objc2-metal = { path = "../objc2-metal", version = "0.3.0", default-features = f
     "MTLResource",
     "MTLVertexDescriptor",
 ] }
-objc2-model-io = { path = "../objc2-model-io", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-model-io = { workspace = true, optional = true, features = [
     "MDLAsset",
     "MDLCamera",
     "MDLLight",
@@ -85,7 +85,7 @@ objc2-model-io = { path = "../objc2-model-io", version = "0.3.0", default-featur
     "MDLObject",
     "MDLSubmesh",
 ] }
-objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-quartz-core = { workspace = true, optional = true, features = [
     "CAAnimation",
     "CALayer",
     "CAMediaTiming",

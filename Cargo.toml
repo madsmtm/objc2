@@ -26,16 +26,6 @@ categories = [
     "os::macos-apis",
 ]
 
-# Used in framework crates.
-[workspace.dependencies]
-dispatch2 = { path = "crates/dispatch2", version = "0.2.0", default-features = false }
-block2 = { path = "crates/block2", version = "0.6.0", default-features = false }
-objc2 = { path = "crates/objc2", version = "0.6.0", default-features = false }
-# Use a reasonably new version of libc.
-libc = { version = "0.2.80", default-features = false }
-# Use a version of bitflags that supports `impl`.
-bitflags = { version = "2.5.0", default-features = false }
-
 [workspace.lints.rust]
 elided_lifetimes_in_paths = "warn"
 missing_copy_implementations = "warn"
@@ -84,3 +74,197 @@ default.extend-identifiers.kBluetoothHCIEvnetMaskLinkSupervisionTimeoutChangedEv
 default.extend-identifiers.kBluetoothHCIEvnetMaskEnhancedFlushCompleteEvent = "kBluetoothHCIEvnetMaskEnhancedFlushCompleteEvent"
 # Used in Metal, LOD = level of detail
 default.extend-words.lod = "lod"
+
+# Used in framework crates.
+[workspace.dependencies]
+dispatch2 = { path = "crates/dispatch2", version = "0.2.0", default-features = false }
+block2 = { path = "crates/block2", version = "0.6.0", default-features = false }
+objc2 = { path = "crates/objc2", version = "0.6.0", default-features = false }
+# Use a reasonably new version of libc.
+libc = { version = "0.2.80", default-features = false }
+# Use a version of bitflags that supports `impl`.
+bitflags = { version = "2.5.0", default-features = false }
+
+##
+## AUTO-GENERATED BELOW
+##
+
+objc2-ar-kit = { path = "framework-crates/objc2-ar-kit", version = "0.3.0", default-features = false }
+objc2-avf-audio = { path = "framework-crates/objc2-avf-audio", version = "0.3.0", default-features = false }
+objc2-av-foundation = { path = "framework-crates/objc2-av-foundation", version = "0.3.0", default-features = false }
+objc2-av-kit = { path = "framework-crates/objc2-av-kit", version = "0.3.0", default-features = false }
+objc2-av-routing = { path = "framework-crates/objc2-av-routing", version = "0.3.0", default-features = false }
+objc2-accessibility = { path = "framework-crates/objc2-accessibility", version = "0.3.0", default-features = false }
+objc2-accessory-setup-kit = { path = "framework-crates/objc2-accessory-setup-kit", version = "0.3.0", default-features = false }
+objc2-accounts = { path = "framework-crates/objc2-accounts", version = "0.3.0", default-features = false }
+objc2-ad-services = { path = "framework-crates/objc2-ad-services", version = "0.3.0", default-features = false }
+objc2-ad-support = { path = "framework-crates/objc2-ad-support", version = "0.3.0", default-features = false }
+objc2-app-clip = { path = "framework-crates/objc2-app-clip", version = "0.3.0", default-features = false }
+objc2-app-kit = { path = "framework-crates/objc2-app-kit", version = "0.3.0", default-features = false }
+objc2-app-tracking-transparency = { path = "framework-crates/objc2-app-tracking-transparency", version = "0.3.0", default-features = false }
+objc2-application-services = { path = "framework-crates/objc2-application-services", version = "0.3.0", default-features = false }
+objc2-audio-toolbox = { path = "framework-crates/objc2-audio-toolbox", version = "0.3.0", default-features = false }
+objc2-authentication-services = { path = "framework-crates/objc2-authentication-services", version = "0.3.0", default-features = false }
+objc2-automatic-assessment-configuration = { path = "framework-crates/objc2-automatic-assessment-configuration", version = "0.3.0", default-features = false }
+objc2-automator = { path = "framework-crates/objc2-automator", version = "0.3.0", default-features = false }
+objc2-background-assets = { path = "framework-crates/objc2-background-assets", version = "0.3.0", default-features = false }
+objc2-background-tasks = { path = "framework-crates/objc2-background-tasks", version = "0.3.0", default-features = false }
+objc2-browser-engine-core = { path = "framework-crates/objc2-browser-engine-core", version = "0.3.0", default-features = false }
+objc2-browser-engine-kit = { path = "framework-crates/objc2-browser-engine-kit", version = "0.3.0", default-features = false }
+objc2-business-chat = { path = "framework-crates/objc2-business-chat", version = "0.3.0", default-features = false }
+objc2-cf-network = { path = "framework-crates/objc2-cf-network", version = "0.3.0", default-features = false }
+objc2-call-kit = { path = "framework-crates/objc2-call-kit", version = "0.3.0", default-features = false }
+objc2-car-play = { path = "framework-crates/objc2-car-play", version = "0.3.0", default-features = false }
+objc2-carbon = { path = "framework-crates/objc2-carbon", version = "0.3.0", default-features = false }
+objc2-cinematic = { path = "framework-crates/objc2-cinematic", version = "0.3.0", default-features = false }
+objc2-class-kit = { path = "framework-crates/objc2-class-kit", version = "0.3.0", default-features = false }
+objc2-clock-kit = { path = "framework-crates/objc2-clock-kit", version = "0.3.0", default-features = false }
+objc2-cloud-kit = { path = "framework-crates/objc2-cloud-kit", version = "0.3.0", default-features = false }
+objc2-collaboration = { path = "framework-crates/objc2-collaboration", version = "0.3.0", default-features = false }
+objc2-color-sync = { path = "framework-crates/objc2-color-sync", version = "0.3.0", default-features = false }
+objc2-compositor-services = { path = "framework-crates/objc2-compositor-services", version = "0.3.0", default-features = false }
+objc2-contacts = { path = "framework-crates/objc2-contacts", version = "0.3.0", default-features = false }
+objc2-contacts-ui = { path = "framework-crates/objc2-contacts-ui", version = "0.3.0", default-features = false }
+objc2-core-audio = { path = "framework-crates/objc2-core-audio", version = "0.3.0", default-features = false }
+objc2-core-audio-kit = { path = "framework-crates/objc2-core-audio-kit", version = "0.3.0", default-features = false }
+objc2-core-audio-types = { path = "framework-crates/objc2-core-audio-types", version = "0.3.0", default-features = false }
+objc2-core-bluetooth = { path = "framework-crates/objc2-core-bluetooth", version = "0.3.0", default-features = false }
+objc2-core-data = { path = "framework-crates/objc2-core-data", version = "0.3.0", default-features = false }
+objc2-core-foundation = { path = "framework-crates/objc2-core-foundation", version = "0.3.0", default-features = false }
+objc2-core-graphics = { path = "framework-crates/objc2-core-graphics", version = "0.3.0", default-features = false }
+objc2-core-haptics = { path = "framework-crates/objc2-core-haptics", version = "0.3.0", default-features = false }
+objc2-core-image = { path = "framework-crates/objc2-core-image", version = "0.3.0", default-features = false }
+objc2-core-location = { path = "framework-crates/objc2-core-location", version = "0.3.0", default-features = false }
+objc2-core-location-ui = { path = "framework-crates/objc2-core-location-ui", version = "0.3.0", default-features = false }
+objc2-core-midi = { path = "framework-crates/objc2-core-midi", version = "0.3.0", default-features = false }
+objc2-core-ml = { path = "framework-crates/objc2-core-ml", version = "0.3.0", default-features = false }
+objc2-core-media = { path = "framework-crates/objc2-core-media", version = "0.3.0", default-features = false }
+objc2-core-media-io = { path = "framework-crates/objc2-core-media-io", version = "0.3.0", default-features = false }
+objc2-core-motion = { path = "framework-crates/objc2-core-motion", version = "0.3.0", default-features = false }
+objc2-core-nfc = { path = "framework-crates/objc2-core-nfc", version = "0.3.0", default-features = false }
+objc2-core-services = { path = "framework-crates/objc2-core-services", version = "0.3.0", default-features = false }
+objc2-core-spotlight = { path = "framework-crates/objc2-core-spotlight", version = "0.3.0", default-features = false }
+objc2-core-telephony = { path = "framework-crates/objc2-core-telephony", version = "0.3.0", default-features = false }
+objc2-core-text = { path = "framework-crates/objc2-core-text", version = "0.3.0", default-features = false }
+objc2-core-video = { path = "framework-crates/objc2-core-video", version = "0.3.0", default-features = false }
+objc2-core-wlan = { path = "framework-crates/objc2-core-wlan", version = "0.3.0", default-features = false }
+objc2-crypto-token-kit = { path = "framework-crates/objc2-crypto-token-kit", version = "0.3.0", default-features = false }
+objc2-data-detection = { path = "framework-crates/objc2-data-detection", version = "0.3.0", default-features = false }
+objc2-device-check = { path = "framework-crates/objc2-device-check", version = "0.3.0", default-features = false }
+objc2-device-discovery-extension = { path = "framework-crates/objc2-device-discovery-extension", version = "0.3.0", default-features = false }
+objc2-disk-arbitration = { path = "framework-crates/objc2-disk-arbitration", version = "0.3.0", default-features = false }
+objc2-event-kit = { path = "framework-crates/objc2-event-kit", version = "0.3.0", default-features = false }
+objc2-event-kit-ui = { path = "framework-crates/objc2-event-kit-ui", version = "0.3.0", default-features = false }
+objc2-exception-handling = { path = "framework-crates/objc2-exception-handling", version = "0.3.0", default-features = false }
+objc2-execution-policy = { path = "framework-crates/objc2-execution-policy", version = "0.3.0", default-features = false }
+objc2-exposure-notification = { path = "framework-crates/objc2-exposure-notification", version = "0.3.0", default-features = false }
+objc2-extension-kit = { path = "framework-crates/objc2-extension-kit", version = "0.3.0", default-features = false }
+objc2-external-accessory = { path = "framework-crates/objc2-external-accessory", version = "0.3.0", default-features = false }
+objc2-file-provider = { path = "framework-crates/objc2-file-provider", version = "0.3.0", default-features = false }
+objc2-file-provider-ui = { path = "framework-crates/objc2-file-provider-ui", version = "0.3.0", default-features = false }
+objc2-finder-sync = { path = "framework-crates/objc2-finder-sync", version = "0.3.0", default-features = false }
+objc2-foundation = { path = "framework-crates/objc2-foundation", version = "0.3.0", default-features = false }
+objc2-game-controller = { path = "framework-crates/objc2-game-controller", version = "0.3.0", default-features = false }
+objc2-game-kit = { path = "framework-crates/objc2-game-kit", version = "0.3.0", default-features = false }
+objc2-gameplay-kit = { path = "framework-crates/objc2-gameplay-kit", version = "0.3.0", default-features = false }
+objc2-health-kit = { path = "framework-crates/objc2-health-kit", version = "0.3.0", default-features = false }
+objc2-health-kit-ui = { path = "framework-crates/objc2-health-kit-ui", version = "0.3.0", default-features = false }
+objc2-home-kit = { path = "framework-crates/objc2-home-kit", version = "0.3.0", default-features = false }
+objc2-io-bluetooth = { path = "framework-crates/objc2-io-bluetooth", version = "0.3.0", default-features = false }
+objc2-io-bluetooth-ui = { path = "framework-crates/objc2-io-bluetooth-ui", version = "0.3.0", default-features = false }
+objc2-io-kit = { path = "framework-crates/objc2-io-kit", version = "0.3.0", default-features = false }
+objc2-io-surface = { path = "framework-crates/objc2-io-surface", version = "0.3.0", default-features = false }
+objc2-io-usb-host = { path = "framework-crates/objc2-io-usb-host", version = "0.3.0", default-features = false }
+objc2-identity-lookup = { path = "framework-crates/objc2-identity-lookup", version = "0.3.0", default-features = false }
+objc2-identity-lookup-ui = { path = "framework-crates/objc2-identity-lookup-ui", version = "0.3.0", default-features = false }
+objc2-image-capture-core = { path = "framework-crates/objc2-image-capture-core", version = "0.3.0", default-features = false }
+objc2-image-io = { path = "framework-crates/objc2-image-io", version = "0.3.0", default-features = false }
+objc2-input-method-kit = { path = "framework-crates/objc2-input-method-kit", version = "0.3.0", default-features = false }
+objc2-intents = { path = "framework-crates/objc2-intents", version = "0.3.0", default-features = false }
+objc2-intents-ui = { path = "framework-crates/objc2-intents-ui", version = "0.3.0", default-features = false }
+objc2-javascript-core = { path = "framework-crates/objc2-javascript-core", version = "0.3.0", default-features = false }
+objc2-latent-semantic-mapping = { path = "framework-crates/objc2-latent-semantic-mapping", version = "0.3.0", default-features = false }
+objc2-link-presentation = { path = "framework-crates/objc2-link-presentation", version = "0.3.0", default-features = false }
+objc2-local-authentication = { path = "framework-crates/objc2-local-authentication", version = "0.3.0", default-features = false }
+objc2-local-authentication-embedded-ui = { path = "framework-crates/objc2-local-authentication-embedded-ui", version = "0.3.0", default-features = false }
+objc2-ml-compute = { path = "framework-crates/objc2-ml-compute", version = "0.3.0", default-features = false }
+objc2-mail-kit = { path = "framework-crates/objc2-mail-kit", version = "0.3.0", default-features = false }
+objc2-map-kit = { path = "framework-crates/objc2-map-kit", version = "0.3.0", default-features = false }
+objc2-media-accessibility = { path = "framework-crates/objc2-media-accessibility", version = "0.3.0", default-features = false }
+objc2-media-extension = { path = "framework-crates/objc2-media-extension", version = "0.3.0", default-features = false }
+objc2-media-player = { path = "framework-crates/objc2-media-player", version = "0.3.0", default-features = false }
+objc2-media-setup = { path = "framework-crates/objc2-media-setup", version = "0.3.0", default-features = false }
+objc2-media-toolbox = { path = "framework-crates/objc2-media-toolbox", version = "0.3.0", default-features = false }
+objc2-message-ui = { path = "framework-crates/objc2-message-ui", version = "0.3.0", default-features = false }
+objc2-messages = { path = "framework-crates/objc2-messages", version = "0.3.0", default-features = false }
+objc2-metal = { path = "framework-crates/objc2-metal", version = "0.3.0", default-features = false }
+objc2-metal-fx = { path = "framework-crates/objc2-metal-fx", version = "0.3.0", default-features = false }
+objc2-metal-kit = { path = "framework-crates/objc2-metal-kit", version = "0.3.0", default-features = false }
+objc2-metal-performance-shaders = { path = "framework-crates/objc2-metal-performance-shaders", version = "0.3.0", default-features = false }
+objc2-metal-performance-shaders-graph = { path = "framework-crates/objc2-metal-performance-shaders-graph", version = "0.3.0", default-features = false }
+objc2-metric-kit = { path = "framework-crates/objc2-metric-kit", version = "0.3.0", default-features = false }
+objc2-model-io = { path = "framework-crates/objc2-model-io", version = "0.3.0", default-features = false }
+objc2-multipeer-connectivity = { path = "framework-crates/objc2-multipeer-connectivity", version = "0.3.0", default-features = false }
+objc2-natural-language = { path = "framework-crates/objc2-natural-language", version = "0.3.0", default-features = false }
+objc2-nearby-interaction = { path = "framework-crates/objc2-nearby-interaction", version = "0.3.0", default-features = false }
+objc2-network-extension = { path = "framework-crates/objc2-network-extension", version = "0.3.0", default-features = false }
+objc2-notification-center = { path = "framework-crates/objc2-notification-center", version = "0.3.0", default-features = false }
+objc2-osa-kit = { path = "framework-crates/objc2-osa-kit", version = "0.3.0", default-features = false }
+objc2-os-log = { path = "framework-crates/objc2-os-log", version = "0.3.0", default-features = false }
+objc2-open-directory = { path = "framework-crates/objc2-open-directory", version = "0.3.0", default-features = false }
+objc2-pdf-kit = { path = "framework-crates/objc2-pdf-kit", version = "0.3.0", default-features = false }
+objc2-phase = { path = "framework-crates/objc2-phase", version = "0.3.0", default-features = false }
+objc2-paravirtualized-graphics = { path = "framework-crates/objc2-paravirtualized-graphics", version = "0.3.0", default-features = false }
+objc2-pass-kit = { path = "framework-crates/objc2-pass-kit", version = "0.3.0", default-features = false }
+objc2-pencil-kit = { path = "framework-crates/objc2-pencil-kit", version = "0.3.0", default-features = false }
+objc2-photos = { path = "framework-crates/objc2-photos", version = "0.3.0", default-features = false }
+objc2-photos-ui = { path = "framework-crates/objc2-photos-ui", version = "0.3.0", default-features = false }
+objc2-preference-panes = { path = "framework-crates/objc2-preference-panes", version = "0.3.0", default-features = false }
+objc2-push-kit = { path = "framework-crates/objc2-push-kit", version = "0.3.0", default-features = false }
+objc2-push-to-talk = { path = "framework-crates/objc2-push-to-talk", version = "0.3.0", default-features = false }
+objc2-quartz = { path = "framework-crates/objc2-quartz", version = "0.3.0", default-features = false }
+objc2-quartz-core = { path = "framework-crates/objc2-quartz-core", version = "0.3.0", default-features = false }
+objc2-quick-look = { path = "framework-crates/objc2-quick-look", version = "0.3.0", default-features = false }
+objc2-quick-look-thumbnailing = { path = "framework-crates/objc2-quick-look-thumbnailing", version = "0.3.0", default-features = false }
+objc2-quick-look-ui = { path = "framework-crates/objc2-quick-look-ui", version = "0.3.0", default-features = false }
+objc2-replay-kit = { path = "framework-crates/objc2-replay-kit", version = "0.3.0", default-features = false }
+objc2-safari-services = { path = "framework-crates/objc2-safari-services", version = "0.3.0", default-features = false }
+objc2-safety-kit = { path = "framework-crates/objc2-safety-kit", version = "0.3.0", default-features = false }
+objc2-scene-kit = { path = "framework-crates/objc2-scene-kit", version = "0.3.0", default-features = false }
+objc2-screen-capture-kit = { path = "framework-crates/objc2-screen-capture-kit", version = "0.3.0", default-features = false }
+objc2-screen-saver = { path = "framework-crates/objc2-screen-saver", version = "0.3.0", default-features = false }
+objc2-screen-time = { path = "framework-crates/objc2-screen-time", version = "0.3.0", default-features = false }
+objc2-scripting-bridge = { path = "framework-crates/objc2-scripting-bridge", version = "0.3.0", default-features = false }
+objc2-security = { path = "framework-crates/objc2-security", version = "0.3.0", default-features = false }
+objc2-security-foundation = { path = "framework-crates/objc2-security-foundation", version = "0.3.0", default-features = false }
+objc2-security-interface = { path = "framework-crates/objc2-security-interface", version = "0.3.0", default-features = false }
+objc2-sensitive-content-analysis = { path = "framework-crates/objc2-sensitive-content-analysis", version = "0.3.0", default-features = false }
+objc2-sensor-kit = { path = "framework-crates/objc2-sensor-kit", version = "0.3.0", default-features = false }
+objc2-service-management = { path = "framework-crates/objc2-service-management", version = "0.3.0", default-features = false }
+objc2-shared-with-you = { path = "framework-crates/objc2-shared-with-you", version = "0.3.0", default-features = false }
+objc2-shared-with-you-core = { path = "framework-crates/objc2-shared-with-you-core", version = "0.3.0", default-features = false }
+objc2-shazam-kit = { path = "framework-crates/objc2-shazam-kit", version = "0.3.0", default-features = false }
+objc2-social = { path = "framework-crates/objc2-social", version = "0.3.0", default-features = false }
+objc2-sound-analysis = { path = "framework-crates/objc2-sound-analysis", version = "0.3.0", default-features = false }
+objc2-speech = { path = "framework-crates/objc2-speech", version = "0.3.0", default-features = false }
+objc2-sprite-kit = { path = "framework-crates/objc2-sprite-kit", version = "0.3.0", default-features = false }
+objc2-store-kit = { path = "framework-crates/objc2-store-kit", version = "0.3.0", default-features = false }
+objc2-symbols = { path = "framework-crates/objc2-symbols", version = "0.3.0", default-features = false }
+objc2-system-configuration = { path = "framework-crates/objc2-system-configuration", version = "0.3.0", default-features = false }
+objc2-system-extensions = { path = "framework-crates/objc2-system-extensions", version = "0.3.0", default-features = false }
+objc2-tv-ml-kit = { path = "framework-crates/objc2-tv-ml-kit", version = "0.3.0", default-features = false }
+objc2-tv-services = { path = "framework-crates/objc2-tv-services", version = "0.3.0", default-features = false }
+objc2-tv-ui-kit = { path = "framework-crates/objc2-tv-ui-kit", version = "0.3.0", default-features = false }
+objc2-thread-network = { path = "framework-crates/objc2-thread-network", version = "0.3.0", default-features = false }
+objc2-ui-kit = { path = "framework-crates/objc2-ui-kit", version = "0.3.0", default-features = false }
+objc2-uniform-type-identifiers = { path = "framework-crates/objc2-uniform-type-identifiers", version = "0.3.0", default-features = false }
+objc2-user-notifications = { path = "framework-crates/objc2-user-notifications", version = "0.3.0", default-features = false }
+objc2-user-notifications-ui = { path = "framework-crates/objc2-user-notifications-ui", version = "0.3.0", default-features = false }
+objc2-video-subscriber-account = { path = "framework-crates/objc2-video-subscriber-account", version = "0.3.0", default-features = false }
+objc2-video-toolbox = { path = "framework-crates/objc2-video-toolbox", version = "0.3.0", default-features = false }
+objc2-virtualization = { path = "framework-crates/objc2-virtualization", version = "0.3.0", default-features = false }
+objc2-vision = { path = "framework-crates/objc2-vision", version = "0.3.0", default-features = false }
+objc2-watch-connectivity = { path = "framework-crates/objc2-watch-connectivity", version = "0.3.0", default-features = false }
+objc2-watch-kit = { path = "framework-crates/objc2-watch-kit", version = "0.3.0", default-features = false }
+objc2-web-kit = { path = "framework-crates/objc2-web-kit", version = "0.3.0", default-features = false }
+objc2-itunes-library = { path = "framework-crates/objc2-itunes-library", version = "0.3.0", default-features = false }

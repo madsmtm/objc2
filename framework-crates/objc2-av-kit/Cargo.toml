@@ -19,7 +19,7 @@ workspace = true
 bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, features = ["std"] }
-objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-av-foundation = { workspace = true, optional = true, features = [
     "AVAnimation",
     "AVCaptureFileOutput",
     "AVCaptureOutputBase",
@@ -29,20 +29,20 @@ objc2-av-foundation = { path = "../objc2-av-foundation", version = "0.3.0", defa
     "AVSampleBufferDisplayLayer",
     "objc2-quartz-core",
 ] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFCGTypes",
     "objc2",
 ] }
-objc2-core-media = { path = "../objc2-core-media", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-media = { workspace = true, optional = true, features = [
     "CMFormatDescription",
     "CMTime",
     "CMTimeRange",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
+objc2-foundation = { workspace = true, features = ["alloc"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-app-kit = { workspace = true, optional = true, features = [
     "NSAccessibilityProtocols",
     "NSAnimation",
     "NSAppearance",

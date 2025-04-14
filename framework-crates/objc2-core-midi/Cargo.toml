@@ -19,7 +19,7 @@ workspace = true
 bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFArray",
     "CFData",
     "CFDictionary",
@@ -27,7 +27,7 @@ objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", 
     "CFRunLoop",
     "CFUUID",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-foundation = { workspace = true, optional = true, features = [
     "NSArray",
     "NSData",
     "NSError",

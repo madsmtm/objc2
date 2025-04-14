@@ -24,7 +24,7 @@ dispatch2 = { workspace = true, optional = true, features = [
 ] }
 libc = { workspace = true, optional = true }
 objc2 = { workspace = true, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, features = [
+objc2-core-foundation = { workspace = true, features = [
     "CFArray",
     "CFData",
     "CFDictionary",

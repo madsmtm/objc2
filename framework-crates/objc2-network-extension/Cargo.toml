@@ -23,7 +23,7 @@ dispatch2 = { workspace = true, optional = true, features = [
 ] }
 libc = { workspace = true, optional = true }
 objc2 = { workspace = true, features = ["std"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = [
+objc2-foundation = { workspace = true, features = [
     "NSArray",
     "NSData",
     "NSDate",
@@ -39,7 +39,7 @@ objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-fe
     "NSValue",
     "alloc",
 ] }
-objc2-security = { path = "../objc2-security", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-security = { workspace = true, optional = true, features = [
     "Authorization",
     "SecBase",
     "SecTrust",

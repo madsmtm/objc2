@@ -365,22 +365,7 @@ see that for related crates.", self.data.krate)?;
         for (krate, required_features) in self.dependencies(config) {
             let library = config.library_from_crate(krate);
             let required = self.data.required_crates.contains(krate);
-            let mut table = match (library.is_library, self.data.is_library) {
-                (true, _) => InlineTable::from_iter([("workspace", Value::from(true))]),
-                (false, true) => InlineTable::from_iter([
-                    (
-                        "path",
-                        Value::from(format!("../../framework-crates/{krate}")),
-                    ),
-                    ("version", Value::from(VERSION)),
-                    ("default-features", Value::from(false)),
-                ]),
-                (false, false) => InlineTable::from_iter([
-                    ("path", Value::from(format!("../{krate}"))),
-                    ("version", Value::from(VERSION)),
-                    ("default-features", Value::from(false)),
-                ]),
-            };
+            let mut table = InlineTable::from_iter([("workspace", Value::from(true))]);
             if !required {
                 table.insert("optional", Value::from(true));
             }

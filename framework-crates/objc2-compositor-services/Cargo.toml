@@ -18,12 +18,12 @@ workspace = true
 [dependencies]
 bitflags = { workspace = true, optional = true, features = ["std"] }
 objc2 = { workspace = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFDate",
     "CFError",
     "objc2",
 ] }
-objc2-metal = { path = "../objc2-metal", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-metal = { workspace = true, optional = true, features = [
     "MTLAllocation",
     "MTLCommandBuffer",
     "MTLDevice",

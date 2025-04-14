@@ -104,4 +104,5 @@ pub(crate) fn to_snake_case(input: impl AsRef<str>) -> String {
     }
 }
 
+/// The version of the framework crates.
 pub const VERSION: &str = "0.3.0";

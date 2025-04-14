@@ -18,17 +18,17 @@ workspace = true
 [dependencies]
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false }
-objc2-core-graphics = { path = "../objc2-core-graphics", version = "0.3.0", default-features = false, optional = true, features = ["CGColor"] }
-objc2-core-text = { path = "../objc2-core-text", version = "0.3.0", default-features = false, optional = true, features = ["CTFontDescriptor"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true }
+objc2-core-graphics = { workspace = true, optional = true, features = ["CGColor"] }
+objc2-core-text = { workspace = true, optional = true, features = ["CTFontDescriptor"] }
+objc2-foundation = { workspace = true, optional = true, features = [
     "NSDictionary",
     "NSNotification",
     "NSObject",
     "NSString",
     "alloc",
 ] }
-objc2-io-surface = { path = "../objc2-io-surface", version = "0.3.0", default-features = false, optional = true, features = ["IOSurfaceRef"] }
+objc2-io-surface = { workspace = true, optional = true, features = ["IOSurfaceRef"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

@@ -18,8 +18,8 @@ workspace = true
 [dependencies]
 bitflags = { workspace = true, optional = true, features = ["std"] }
 objc2 = { workspace = true, features = ["std"] }
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.3.0", default-features = false }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
+objc2-app-kit = { workspace = true }
+objc2-foundation = { workspace = true, features = ["alloc"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

@@ -24,18 +24,18 @@ dispatch2 = { workspace = true, optional = true, features = [
     "objc2",
 ] }
 objc2 = { workspace = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFCGTypes",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
-objc2-map-kit = { path = "../objc2-map-kit", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-map-kit = { workspace = true, optional = true, features = [
     "MKGeometry",
     "MKMapItem",
     "objc2-core-location",
 ] }
-objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.3.0", default-features = false, optional = true, features = ["CALayer"] }
-objc2-ui-kit = { path = "../objc2-ui-kit", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-quartz-core = { workspace = true, optional = true, features = ["CALayer"] }
+objc2-ui-kit = { workspace = true, optional = true, features = [
     "UIAppearance",
     "UIApplication",
     "UIColor",

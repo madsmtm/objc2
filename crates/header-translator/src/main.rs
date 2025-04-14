@@ -17,7 +17,7 @@ use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
     global_analysis, load_config, load_skipped, run_cargo_fmt, Config, Context, EntryExt, Library,
-    LibraryConfig, Location, MacroEntity, MacroLocation, PlatformCfg, Stmt,
+    LibraryConfig, Location, MacroEntity, MacroLocation, PlatformCfg, Stmt, VERSION,
 };
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -114,6 +114,8 @@ fn main() -> Result<(), BoxError> {
     let tempdir = workspace_dir.join("target").join("header-translator");
     fs::create_dir_all(&tempdir)?;
 
+    update_root_cargo_toml(workspace_dir, &config);
+
     let mut found = false;
     for (name, data) in config.to_parse() {
         if let Some(framework) = &framework {
@@ -138,6 +140,55 @@ fn main() -> Result<(), BoxError> {
     update_list(workspace_dir, &config, &load_skipped().unwrap())?;
 
     Ok(())
+}
+
+fn update_root_cargo_toml(workspace_dir: &Path, config: &Config) {
+    let _span = info_span!("updating root Cargo.toml").entered();
+
+    // Make library be imported by test crate
+    let mut f = std::fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(workspace_dir.join("Cargo.toml"))
+        .unwrap();
+    let mut cargo_toml: toml_edit::DocumentMut = io::read_to_string(&f)
+        .unwrap()
+        .parse()
+        .expect("invalid test toml");
+
+    let dependencies = cargo_toml["workspace"]["dependencies"]
+        .as_table_mut()
+        .unwrap();
+
+    // Delete all framework crate entries.
+    dependencies.retain(|key, _| !key.starts_with("objc2-"));
+
+    // And add them again.
+    for (i, (_, lib)) in config.to_parse().enumerate() {
+        if lib.is_library {
+            continue;
+        }
+        let table = toml_edit::InlineTable::from_iter([
+            (
+                "path",
+                toml_edit::Value::from(format!("framework-crates/{}", lib.krate)),
+            ),
+            ("version", toml_edit::Value::from(VERSION)),
+            ("default-features", toml_edit::Value::from(false)),
+        ]);
+        dependencies[&lib.krate] = table.into();
+        if i == 0 {
+            dependencies
+                .key_mut(&lib.krate)
+                .unwrap()
+                .leaf_decor_mut()
+                .set_prefix("\n##\n## AUTO-GENERATED BELOW\n##\n\n")
+        }
+    }
+
+    f.set_len(0).unwrap();
+    f.seek(io::SeekFrom::Start(0)).unwrap();
+    f.write_all(cargo_toml.to_string().as_bytes()).unwrap();
 }
 
 fn parse_library(
@@ -850,21 +901,9 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
             cargo_toml["dependencies"].as_table_mut().unwrap()
         };
 
-        let path = if lib.is_library {
-            format!("../{}", lib.krate)
-        } else {
-            format!("../../framework-crates/{}", lib.krate)
-        };
-
         dependencies[&lib.krate] = toml_edit::InlineTable::from_iter([
-            (
-                "path",
-                toml_edit::Value::String(toml_edit::Formatted::new(path)),
-            ),
-            (
-                "optional",
-                toml_edit::Value::Boolean(toml_edit::Formatted::new(true)),
-            ),
+            ("workspace", toml_edit::Value::from(true)),
+            ("optional", toml_edit::Value::from(true)),
         ])
         .into();
     }

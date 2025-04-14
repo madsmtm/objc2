@@ -19,8 +19,8 @@ workspace = true
 bitflags = { workspace = true, optional = true, features = ["std"] }
 libc = { workspace = true, optional = true }
 objc2 = { workspace = true, optional = true, features = ["std"] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = ["CFDictionary"] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true, optional = true, features = ["CFDictionary"] }
+objc2-foundation = { workspace = true, optional = true, features = [
     "NSDictionary",
     "NSObject",
     "NSString",

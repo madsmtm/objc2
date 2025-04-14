@@ -24,15 +24,15 @@ dispatch2 = { workspace = true, optional = true, features = [
 ] }
 libc = { workspace = true, optional = true }
 objc2 = { workspace = true, features = ["std"] }
-objc2-core-audio = { path = "../objc2-core-audio", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-audio = { workspace = true, optional = true, features = [
     "AudioHardware",
     "objc2",
 ] }
-objc2-core-audio-types = { path = "../objc2-core-audio-types", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-audio-types = { workspace = true, optional = true, features = [
     "CoreAudioBaseTypes",
     "objc2",
 ] }
-objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFArray",
     "CFData",
     "CFDate",
@@ -41,13 +41,13 @@ objc2-core-foundation = { path = "../objc2-core-foundation", version = "0.3.0", 
     "CFURL",
     "objc2",
 ] }
-objc2-core-midi = { path = "../objc2-core-midi", version = "0.3.0", default-features = false, optional = true, features = [
+objc2-core-midi = { workspace = true, optional = true, features = [
     "MIDICapabilityInquiry",
     "MIDIMessages",
     "MIDIServices",
     "objc2",
 ] }
-objc2-foundation = { path = "../objc2-foundation", version = "0.3.0", default-features = false, features = ["alloc"] }
+objc2-foundation = { workspace = true, features = ["alloc"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
