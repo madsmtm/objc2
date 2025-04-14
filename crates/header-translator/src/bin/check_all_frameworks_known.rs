@@ -13,8 +13,10 @@ use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SimpleSdk};
 use header_translator::{load_config, load_skipped};
 
 fn all_frameworks() -> BTreeSet<String> {
-    let developer_dir = DeveloperDirectory::find_default()
+    let developer_dir = DeveloperDirectory::from_env()
         .unwrap()
+        .or_else(|| DeveloperDirectory::from_xcode_select_paths().unwrap())
+        .or_else(DeveloperDirectory::default_xcode)
         .expect("could not find developer directory. Pass DEVELOPER_DIR=...");
 
     let mut res = BTreeSet::new();

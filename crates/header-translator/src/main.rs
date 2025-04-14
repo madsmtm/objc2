@@ -83,7 +83,10 @@ fn main() -> Result<(), BoxError> {
     let clang = Clang::new()?;
     let index = Index::new(&clang, true, true);
 
-    let developer_dir = DeveloperDirectory::find_default()?
+    let developer_dir = DeveloperDirectory::from_env()
+        .unwrap()
+        .or_else(|| DeveloperDirectory::from_xcode_select_paths().unwrap())
+        .or_else(DeveloperDirectory::default_xcode)
         .expect("could not find developer directory. Pass DEVELOPER_DIR=...");
 
     let sdks: Vec<_> = developer_dir
