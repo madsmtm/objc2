@@ -8,6 +8,7 @@ mod cf_objc2_type;
 mod define_class;
 mod extern_class;
 mod extern_methods;
+mod associated_object;
 mod extern_protocol;
 
 /// Gets a reference to an [`AnyClass`] from the given name.
