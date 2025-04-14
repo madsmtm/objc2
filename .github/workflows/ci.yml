@@ -586,7 +586,7 @@ jobs:
 
     - name: Test Foundation with unstable features
       if: ${{ matrix.nightly }}
-      run: cargo test $ARGS $PUBLIC_CRATES -ptests -pobjc2-foundation --features=catch-all ${{ matrix.sdk != '10.12' && '--features=unstable-simd' || '' }}
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests -pobjc2-foundation -pobjc2-core-foundation --features=catch-all ${{ matrix.sdk != '10.12' && '--features=unstable-simd --features=unstable-allocator-api' || '' }}
 
     # TODO: Re-enable this on all of Foundation once we do some form of
     # availability checking.

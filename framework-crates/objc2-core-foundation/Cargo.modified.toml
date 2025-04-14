@@ -1,6 +1,10 @@
 [features]
 # Uses the nightly derive_coerce_pointee feature to make conversions more ergonomic.
 unstable-coerce-pointee = []
+
+# Implements conversions from Rust allocators to/from CFAllocator using the nightly allocator_api feature.
+unstable-allocator-api = []
+
 # For backwards compatibility, but unnecessary.
 CFBase = []
 

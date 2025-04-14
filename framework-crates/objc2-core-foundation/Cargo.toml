@@ -94,6 +94,7 @@ default = [
 std = ["alloc"]
 alloc = []
 unstable-coerce-pointee = []
+unstable-allocator-api = []
 CFBase = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]

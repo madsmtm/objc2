@@ -7,6 +7,7 @@
 #![no_std]
 #![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 #![cfg_attr(feature = "unstable-coerce-pointee", feature(derive_coerce_pointee))]
+#![cfg_attr(feature = "unstable-allocator-api", feature(allocator_api))]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-core-foundation/0.3.2")]
@@ -19,6 +20,8 @@ extern crate std;
 
 #[doc(hidden)]
 pub mod __cf_macro_helpers;
+#[cfg(feature = "unstable-allocator-api")]
+mod allocator;
 #[cfg(feature = "CFArray")]
 mod array;
 mod base;
