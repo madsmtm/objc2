@@ -4,8 +4,7 @@ use core::fmt;
 use core::hash;
 
 use crate::runtime::{AnyClass, AnyObject, NSObjectProtocol, ProtocolObject};
-use crate::DowncastTarget;
-use crate::{AnyThread, ClassType};
+use crate::{extern_conformance, AnyThread, ClassType, DowncastTarget};
 
 /// An abstract superclass defining an API for objects that act as
 /// stand-ins for other objects or for objects that don’t exist yet.
@@ -49,7 +48,9 @@ unsafe impl ClassType for NSProxy {
 
 unsafe impl DowncastTarget for NSProxy {}
 
-unsafe impl NSObjectProtocol for NSProxy {}
+extern_conformance!(
+    unsafe impl NSObjectProtocol for NSProxy {}
+);
 
 impl PartialEq for NSProxy {
     #[inline]

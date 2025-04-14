@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   will choose a suitable default that makes loading multiple versions of the
   same library possible.
 * Added conversion trait impls from `ProtocolObject<P>` to `AnyObject`.
+* Added `extern_conformance!` to make it clearer how to correctly conform to protocols.
 
 ## Changed
 * Renamed `AllocAnyThread` to `AnyThread`. The old name is kept as deprecated.

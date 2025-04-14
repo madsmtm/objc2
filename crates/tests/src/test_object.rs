@@ -7,8 +7,9 @@ use objc2::rc::{autoreleasepool, AutoreleasePool, Retained};
 use objc2::runtime::{
     AnyClass, AnyObject, AnyProtocol, Bool, NSObject, NSObjectProtocol, ProtocolObject,
 };
-use objc2::{class, extern_protocol, msg_send, AnyThread, ClassType};
-use objc2::{extern_class, sel};
+use objc2::{
+    class, extern_class, extern_conformance, extern_protocol, msg_send, sel, AnyThread, ClassType,
+};
 use objc2_foundation::{NSArray, NSException, NSMutableString, NSNumber, NSString};
 
 // TODO: Remove once c"" strings are in MSRV
@@ -73,8 +74,13 @@ extern_class!(
     struct MyTestObject;
 );
 
-unsafe impl NSObjectProtocol for MyTestObject {}
-unsafe impl MyTestProtocol for MyTestObject {}
+extern_conformance!(
+    unsafe impl NSObjectProtocol for MyTestObject {}
+);
+
+extern_conformance!(
+    unsafe impl MyTestProtocol for MyTestObject {}
+);
 
 #[cfg(all(target_vendor = "apple", target_arch = "aarch64"))]
 #[used]

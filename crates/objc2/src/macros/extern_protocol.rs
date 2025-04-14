@@ -6,13 +6,13 @@
 /// [Working with Protocols - Programming with Objective-C][working-with] for
 /// general information about protocols in Objective-C.
 ///
-/// This macro will create an `unsafe` trait with methods which all have
-/// default implementations, such that an external class that conforms to the
-/// protocol can write `unsafe impl MyProtocol for MyClass {}`, and get access
+/// This macro will create an `unsafe` trait with methods that provide access
 /// to the functionality exposed by the protocol.
 ///
-/// Note that that conforming to a protocol in a custom object requires
-/// putting the implementation inside the [`define_class!`] invocation.
+/// Conforming to the protocol can be done in two ways:
+/// - For external classes, use the [`extern_conformance!`] macro.
+/// - For custom classes created with the [`define_class!`] macro, implement
+///   the trait inside the macro.
 ///
 /// Objective-C has a smart feature where you can write `id<MyProtocol>`, and
 /// then work with the protocol as-if it was an object; this is very similar
@@ -21,6 +21,7 @@
 ///
 /// [protocols]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocProtocols.html
 /// [working-with]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithProtocols/WorkingwithProtocols.html
+/// [`extern_conformance!`]: crate::extern_conformance
 /// [`ProtocolObject`]: crate::runtime::ProtocolObject
 ///
 ///

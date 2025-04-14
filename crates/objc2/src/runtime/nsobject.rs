@@ -6,8 +6,10 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use crate::ffi::NSUInteger;
 use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject, Sel};
-use crate::DowncastTarget;
-use crate::{extern_methods, msg_send, AnyThread, ClassType, Message, ProtocolType};
+use crate::{
+    extern_conformance, extern_methods, msg_send, AnyThread, ClassType, DowncastTarget, Message,
+    ProtocolType,
+};
 
 /// The root class of most Objective-C class hierarchies.
 ///
@@ -384,7 +386,9 @@ where
     const __INNER: () = ();
 }
 
-unsafe impl NSObjectProtocol for NSObject {}
+extern_conformance!(
+    unsafe impl NSObjectProtocol for NSObject {}
+);
 
 #[allow(non_snake_case)] // Follow the naming scheme in framework crates
 impl NSObject {

@@ -1952,6 +1952,7 @@ impl Stmt {
                         .iter()
                         .flat_map(|p| p.required_items()),
                 ),
+                ItemTree::objc("__macros__"),
             ],
             Self::RecordDecl { fields, .. } => fields
                 .iter()
@@ -2419,7 +2420,7 @@ impl Stmt {
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     writeln!(
                         f,
-                        "unsafe impl{} {} for {}{} {}{{}}",
+                        "extern_conformance!(unsafe impl{} {} for {}{} {}{{}});",
                         GenericParamsHelper(generics, generic_bound),
                         protocol.path_in_relation_to(id),
                         cls.path_in_relation_to(id),

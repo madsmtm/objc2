@@ -7,6 +7,7 @@ mod available;
 mod cf_objc2_type;
 mod define_class;
 mod extern_class;
+mod extern_conformance;
 mod extern_methods;
 mod extern_protocol;
 

@@ -106,7 +106,7 @@
 /// # use objc2::runtime::NSObjectProtocol;
 /// use objc2::rc::Retained;
 /// use objc2::runtime::NSObject;
-/// use objc2::{extern_class, msg_send, ClassType};
+/// use objc2::{extern_class, extern_conformance, msg_send, ClassType};
 ///
 /// extern_class!(
 ///     /// An example description, to show that doc comments work.
@@ -123,11 +123,11 @@
 ///
 /// // Note: We have to specify the protocols for the superclasses as well,
 /// // since Rust doesn't do inheritance.
-/// unsafe impl NSObjectProtocol for NSFormatter {}
+/// extern_conformance!(unsafe impl NSObjectProtocol for NSFormatter {});
 /// # #[cfg(not_available)]
-/// unsafe impl NSCopying for NSFormatter {}
+/// extern_conformance!(unsafe impl NSCopying for NSFormatter {});
 /// # #[cfg(not_available)]
-/// unsafe impl NSCoding for NSFormatter {}
+/// extern_conformance!(unsafe impl NSCoding for NSFormatter {});
 ///
 /// fn main() {
 ///     // Provided by the implementation of `ClassType`
@@ -146,7 +146,7 @@
 /// use objc2_foundation::{NSCoding, NSCopying, NSObjectProtocol};
 /// # use objc2::runtime::NSObjectProtocol;
 /// use objc2::runtime::NSObject;
-/// use objc2::{extern_class, ClassType};
+/// use objc2::{extern_class, extern_conformance, ClassType};
 /// #
 /// # extern_class!(
 /// #     #[unsafe(super(NSObject))]
@@ -162,11 +162,11 @@
 /// );
 ///
 /// // Similarly, we can specify the protocols that this implements here:
-/// unsafe impl NSObjectProtocol for NSFormatter {}
+/// extern_conformance!(unsafe impl NSObjectProtocol for NSDateFormatter {});
 /// # #[cfg(not_available)]
-/// unsafe impl NSCopying for NSDateFormatter {}
+/// extern_conformance!(unsafe impl NSCopying for NSDateFormatter {});
 /// # #[cfg(not_available)]
-/// unsafe impl NSCoding for NSDateFormatter {}
+/// extern_conformance!(unsafe impl NSCoding for NSDateFormatter {});
 /// ```
 ///
 /// See the source code of `objc2-foundation` for many more examples.
