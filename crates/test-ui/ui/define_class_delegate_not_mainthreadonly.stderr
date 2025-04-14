@@ -2,7 +2,7 @@ error[E0271]: type mismatch resolving `<CustomObject as ClassType>::ThreadKind =
  --> ui/define_class_delegate_not_mainthreadonly.rs
   |
   |     unsafe impl NSApplicationDelegate for CustomObject {
-  |                                           ^^^^^^^^^^^^ expected trait `MainThreadOnly`, found trait `AllocAnyThread`
+  |                                           ^^^^^^^^^^^^ expected trait `MainThreadOnly`, found trait `AnyThread`
   |
   = note: expected trait object `dyn MainThreadOnly`
              found trait object `(dyn AllocAnyThread + 'static)`

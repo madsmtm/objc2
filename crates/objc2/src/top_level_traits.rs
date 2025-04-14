@@ -166,7 +166,7 @@ pub unsafe trait Message: RefEncode {
 /// Use the trait to allocate a new instance of an object.
 ///
 /// ```
-/// use objc2::{msg_send, AllocAnyThread};
+/// use objc2::{msg_send, AnyThread};
 /// use objc2::rc::Retained;
 /// # use objc2::runtime::{NSObject as MyObject};
 ///
@@ -183,7 +183,7 @@ pub unsafe trait Message: RefEncode {
 ///
 /// ```
 /// use objc2::runtime::NSObject;
-/// use objc2::{extern_class, ClassType, AllocAnyThread};
+/// use objc2::{extern_class, ClassType, AnyThread};
 ///
 /// extern_class!(
 ///     // SAFETY: The superclass is correctly specified, and the class can be
@@ -224,12 +224,12 @@ pub unsafe trait ClassType: Message {
     /// Whether the type can be used from any thread, or from only the main
     /// thread.
     ///
-    /// One of [`dyn AllocAnyThread`] or [`dyn MainThreadOnly`].
+    /// One of [`dyn AnyThread`] or [`dyn MainThreadOnly`].
     ///
     /// Setting this makes `ClassType` provide an implementation of either
-    /// [`AllocAnyThread`] or [`MainThreadOnly`].
+    /// [`AnyThread`] or [`MainThreadOnly`].
     ///
-    /// [`dyn AllocAnyThread`]: AllocAnyThread
+    /// [`dyn AnyThread`]: AnyThread
     /// [`dyn MainThreadOnly`]: MainThreadOnly
     type ThreadKind: ?Sized + ThreadKind;
 
@@ -398,7 +398,7 @@ fn get_protocol(name: &str) -> Option<&'static AnyProtocol> {
 
 // Split into separate traits for better diagnostics
 mod private {
-    pub trait SealedAllocAnyThread {}
+    pub trait SealedAnyThread {}
     pub trait SealedMainThreadOnly {}
     pub trait SealedThreadKind {}
 }
@@ -426,7 +426,7 @@ mod private {
 //     impl<T: ?Sized + MainThreadOnly> !AnyThread for T {}
 //
 // This isn't possible in current Rust though, so we'll have to hack it.
-pub unsafe trait AllocAnyThread: private::SealedAllocAnyThread {
+pub unsafe trait AnyThread: private::SealedAnyThread {
     /// Allocate a new instance of the class.
     ///
     /// The return value can be used directly inside [`msg_send!`] to
@@ -461,14 +461,11 @@ pub unsafe trait AllocAnyThread: private::SealedAllocAnyThread {
 
 // The impl here is a bit bad for diagnostics, but required to prevent users
 // implementing the trait themselves.
-impl<'a, T: ?Sized + ClassType<ThreadKind = dyn AllocAnyThread + 'a>> private::SealedAllocAnyThread
-    for T
-{
-}
-unsafe impl<'a, T: ?Sized + ClassType<ThreadKind = dyn AllocAnyThread + 'a>> AllocAnyThread for T {}
+impl<'a, T: ?Sized + ClassType<ThreadKind = dyn AnyThread + 'a>> private::SealedAnyThread for T {}
+unsafe impl<'a, T: ?Sized + ClassType<ThreadKind = dyn AnyThread + 'a>> AnyThread for T {}
 
-impl<P: ?Sized> private::SealedAllocAnyThread for ProtocolObject<P> {}
-unsafe impl<P: ?Sized + AllocAnyThread> AllocAnyThread for ProtocolObject<P> {}
+impl<P: ?Sized> private::SealedAnyThread for ProtocolObject<P> {}
+unsafe impl<P: ?Sized + AnyThread> AnyThread for ProtocolObject<P> {}
 
 /// Marker trait for classes and protocols that are only safe to use on the
 /// main thread.
@@ -569,9 +566,9 @@ unsafe impl<P: ?Sized + MainThreadOnly> MainThreadOnly for ProtocolObject<P> {}
 
 /// The allowed values in [`ClassType::ThreadKind`].
 ///
-/// One of [`dyn AllocAnyThread`] or [`dyn MainThreadOnly`].
+/// One of [`dyn AnyThread`] or [`dyn MainThreadOnly`].
 ///
-/// [`dyn AllocAnyThread`]: AllocAnyThread
+/// [`dyn AnyThread`]: AnyThread
 /// [`dyn MainThreadOnly`]: MainThreadOnly
 pub trait ThreadKind: private::SealedThreadKind {
     // To mark `ThreadKind` as dyn-incompatible for now.
@@ -579,8 +576,8 @@ pub trait ThreadKind: private::SealedThreadKind {
     const __DYN_INCOMPATIBLE: ();
 }
 
-impl private::SealedThreadKind for dyn AllocAnyThread + '_ {}
-impl ThreadKind for dyn AllocAnyThread + '_ {
+impl private::SealedThreadKind for dyn AnyThread + '_ {}
+impl ThreadKind for dyn AnyThread + '_ {
     const __DYN_INCOMPATIBLE: () = ();
 }
 
@@ -594,5 +591,5 @@ mod tests {
     use super::*;
 
     #[allow(unused)]
-    fn dyn_compatible(_: &dyn AllocAnyThread, _: &dyn MainThreadOnly) {}
+    fn dyn_compatible(_: &dyn AnyThread, _: &dyn MainThreadOnly) {}
 }

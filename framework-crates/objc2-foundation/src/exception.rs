@@ -36,7 +36,7 @@ impl NSException {
         reason: Option<&crate::NSString>,
         user_info: Option<&crate::NSDictionary>,
     ) -> Option<Retained<Self>> {
-        use objc2::AllocAnyThread;
+        use objc2::AnyThread;
 
         unsafe {
             objc2::msg_send![

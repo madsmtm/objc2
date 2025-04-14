@@ -11,7 +11,7 @@ use core::slice::{self};
 use objc2::rc::Retained;
 #[cfg(feature = "block2")]
 use objc2::rc::RetainedFromIterator;
-use objc2::{extern_methods, AllocAnyThread};
+use objc2::{extern_methods, AnyThread};
 
 use crate::{NSData, NSMutableData};
 

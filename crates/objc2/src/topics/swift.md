@@ -78,7 +78,7 @@ Mapping this to Rust would then look something like:
 
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::NSObject;
-use objc2::{extern_class, extern_methods, AllocAnyThread};
+use objc2::{extern_class, extern_methods, AnyThread};
 
 extern_class!(
     #[unsafe(super(NSObject))]

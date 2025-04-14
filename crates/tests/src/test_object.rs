@@ -7,7 +7,7 @@ use objc2::rc::{autoreleasepool, AutoreleasePool, Retained};
 use objc2::runtime::{
     AnyClass, AnyObject, AnyProtocol, Bool, NSObject, NSObjectProtocol, ProtocolObject,
 };
-use objc2::{class, extern_protocol, msg_send, AllocAnyThread, ClassType};
+use objc2::{class, extern_protocol, msg_send, AnyThread, ClassType};
 use objc2::{extern_class, sel};
 use objc2_foundation::{NSArray, NSException, NSMutableString, NSNumber, NSString};
 
@@ -69,7 +69,7 @@ extern_protocol!(
 
 extern_class!(
     #[unsafe(super(NSObject))]
-    #[thread_kind = AllocAnyThread]
+    #[thread_kind = AnyThread]
     struct MyTestObject;
 );
 

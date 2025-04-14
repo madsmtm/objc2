@@ -1,7 +1,7 @@
 #![cfg(feature = "CSSearchableItemAttributeSet")]
 use std::assert_eq;
 
-use objc2::{rc::Retained, AllocAnyThread, ClassType};
+use objc2::{rc::Retained, AnyThread, ClassType};
 use objc2_core_spotlight::CSLocalizedString;
 use objc2_foundation::{ns_string, NSCopying, NSDictionary, NSMutableCopying};
 

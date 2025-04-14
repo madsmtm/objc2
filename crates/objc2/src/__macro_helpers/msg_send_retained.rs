@@ -320,7 +320,7 @@ mod tests {
 
     use crate::rc::{autoreleasepool, Allocated, PartialInit, RcTestObject, ThreadTestData};
     use crate::runtime::{AnyObject, NSObject, NSObjectProtocol, NSZone};
-    use crate::{class, define_class, extern_methods, msg_send, test_utils, AllocAnyThread};
+    use crate::{class, define_class, extern_methods, msg_send, test_utils, AnyThread};
 
     #[test]
     fn test_send_message_manuallydrop() {

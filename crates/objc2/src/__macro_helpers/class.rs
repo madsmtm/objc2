@@ -1,4 +1,4 @@
-use crate::{AllocAnyThread, ClassType, MainThreadOnly, ThreadKind};
+use crate::{AnyThread, ClassType, MainThreadOnly, ThreadKind};
 
 /// Helper for ensuring that `ClassType::ThreadKind`, if specified, is set
 /// correctly.
@@ -20,11 +20,11 @@ where
 {
 }
 
-/// But restrict `AllocAnyThread` to only if the superclass also sets it.
-impl<'a, 'b, Cls> ValidThreadKind<dyn AllocAnyThread + 'a> for Cls
+/// But restrict `AnyThread` to only if the superclass also sets it.
+impl<'a, 'b, Cls> ValidThreadKind<dyn AnyThread + 'a> for Cls
 where
-    Self: ClassType<ThreadKind = dyn AllocAnyThread + 'a>,
-    Self::Super: ClassType<ThreadKind = dyn AllocAnyThread + 'b>,
+    Self: ClassType<ThreadKind = dyn AnyThread + 'a>,
+    Self::Super: ClassType<ThreadKind = dyn AnyThread + 'b>,
 {
 }
 
@@ -75,14 +75,14 @@ mod tests {
 
     extern_class!(
         #[unsafe(super(NSObject))]
-        #[thread_kind = AllocAnyThread]
+        #[thread_kind = AnyThread]
         #[name = "NSObject"]
         struct SetAnyThread;
     );
 
     extern_class!(
         #[unsafe(super(NSObject))]
-        #[thread_kind = AllocAnyThread]
+        #[thread_kind = AnyThread]
         #[name = "NSObject"]
         struct SendSync;
     );

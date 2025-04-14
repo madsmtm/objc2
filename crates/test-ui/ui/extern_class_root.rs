@@ -2,7 +2,7 @@ use core::ops::Deref;
 
 use objc2::encode::{Encoding, RefEncode};
 use objc2::runtime::AnyObject;
-use objc2::{extern_class, AllocAnyThread, Message};
+use objc2::{extern_class, AnyThread, Message};
 
 #[repr(transparent)]
 struct MyObject(AnyObject);
@@ -23,7 +23,7 @@ impl Deref for MyObject {
 
 extern_class!(
     #[unsafe(super(MyObject))]
-    #[thread_kind = AllocAnyThread]
+    #[thread_kind = AnyThread]
     pub struct MyRootClass;
 );
 

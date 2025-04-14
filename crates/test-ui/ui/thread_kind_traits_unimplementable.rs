@@ -1,10 +1,10 @@
-//! Check that `MainThreadOnly`/`AllocAnyThread` traits are not implementable manually.
+//! Check that `MainThreadOnly`/`AnyThread` traits are not implementable manually.
 use objc2::runtime::NSObject;
-use objc2::{define_class, AllocAnyThread, MainThreadOnly};
+use objc2::{define_class, AnyThread, MainThreadOnly};
 
 define_class!(
     #[unsafe(super(NSObject))]
-    #[thread_kind = AllocAnyThread]
+    #[thread_kind = AnyThread]
     #[ivars = *mut ()]
     struct Normal;
 );
@@ -17,6 +17,6 @@ define_class!(
     struct OnlyMain;
 );
 
-unsafe impl AllocAnyThread for OnlyMain {}
+unsafe impl AnyThread for OnlyMain {}
 
 fn main() {}

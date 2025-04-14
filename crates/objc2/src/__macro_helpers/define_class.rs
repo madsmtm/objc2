@@ -13,22 +13,22 @@ use crate::runtime::{
 };
 #[cfg(debug_assertions)]
 use crate::runtime::{AnyProtocol, MethodDescription};
-use crate::{AllocAnyThread, ClassType, DefinedClass, Message, ProtocolType};
+use crate::{AnyThread, ClassType, DefinedClass, Message, ProtocolType};
 
 use super::defined_ivars::{register_with_ivars, setup_dealloc};
 use super::{CopyFamily, InitFamily, MutableCopyFamily, NewFamily, NoneFamily};
 
 /// Helper for determining auto traits of defined classes.
 ///
-/// This will contain either `dyn AllocAnyThread` or `dyn MainThreadOnly`, so
-/// it will have no auto traits by default.
+/// This will contain either `dyn AnyThread` or `dyn MainThreadOnly`, so it
+/// will have no auto traits by default.
 #[derive(Debug)]
 pub struct ThreadKindAutoTraits<T: ?Sized>(T);
 
-// SAFETY: `AllocAnyThread` does not place restrictions on thread safety.
-unsafe impl Send for ThreadKindAutoTraits<dyn AllocAnyThread> {}
+// SAFETY: `AnyThread` does not place restrictions on thread safety.
+unsafe impl Send for ThreadKindAutoTraits<dyn AnyThread> {}
 // SAFETY: Same as above.
-unsafe impl Sync for ThreadKindAutoTraits<dyn AllocAnyThread> {}
+unsafe impl Sync for ThreadKindAutoTraits<dyn AnyThread> {}
 
 // NOTE: A similar implementation for `dyn MainThreadOnly` is explicitly not
 // allowed, as that would enable users to pass something that is tied to the

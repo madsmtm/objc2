@@ -1,7 +1,7 @@
 #![cfg(feature = "NSArray")]
 use objc2::rc::Allocated;
 use objc2::runtime::AnyObject;
-use objc2::AllocAnyThread;
+use objc2::AnyThread;
 
 use crate::{NSMutableArray, NSObject};
 

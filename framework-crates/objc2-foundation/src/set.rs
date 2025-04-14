@@ -4,7 +4,7 @@ use alloc::vec::Vec;
 use core::fmt;
 
 use objc2::rc::{Retained, RetainedFromIterator};
-use objc2::{msg_send, AllocAnyThread, Message};
+use objc2::{msg_send, AnyThread, Message};
 
 #[cfg(feature = "NSEnumerator")]
 use crate::iter;

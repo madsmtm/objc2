@@ -10,7 +10,7 @@ use objc2::rc::Retained;
 #[cfg(feature = "NSObject")]
 use objc2::runtime::ProtocolObject;
 #[cfg(feature = "NSObject")]
-use objc2::AllocAnyThread;
+use objc2::AnyThread;
 use objc2::Message;
 
 #[cfg(feature = "NSEnumerator")]

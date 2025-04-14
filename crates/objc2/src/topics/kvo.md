@@ -21,7 +21,7 @@ use core::ptr;
 
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
-use objc2::{define_class, msg_send, AllocAnyThread, ClassType, DefinedClass};
+use objc2::{define_class, msg_send, AnyThread, ClassType, DefinedClass};
 use objc2_foundation::{
     ns_string, NSCopying, NSDictionary, NSKeyValueChangeKey, NSKeyValueObservingOptions, NSObject,
     NSObjectNSKeyValueObserverRegistration, NSObjectProtocol, NSString,

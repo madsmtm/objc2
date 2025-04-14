@@ -3,7 +3,7 @@
     feature = "NSDecimalNumber",
     feature = "NSValue"
 ))]
-use objc2::AllocAnyThread;
+use objc2::AnyThread;
 
 use crate::{NSDecimal, NSDecimalNumber};
 

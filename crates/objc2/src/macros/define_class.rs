@@ -275,7 +275,7 @@
 /// use objc2_foundation::{CopyingHelper, NSCopying, NSObject, NSObjectProtocol, NSZone};
 /// use objc2::rc::{Allocated, Retained};
 /// use objc2::{
-///     define_class, extern_methods, extern_protocol, msg_send, AllocAnyThread,
+///     define_class, extern_methods, extern_protocol, msg_send, AnyThread,
 ///     ClassType, DefinedClass, ProtocolType,
 /// };
 ///

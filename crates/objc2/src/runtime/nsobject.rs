@@ -7,7 +7,7 @@ use crate::ffi::NSUInteger;
 use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject, Sel};
 use crate::DowncastTarget;
-use crate::{extern_methods, msg_send, AllocAnyThread, ClassType, Message, ProtocolType};
+use crate::{extern_methods, msg_send, AnyThread, ClassType, Message, ProtocolType};
 
 /// The root class of most Objective-C class hierarchies.
 ///
@@ -78,7 +78,7 @@ impl RefUnwindSafe for private::ForDefinedSubclasses {}
 
 unsafe impl ClassType for NSObject {
     type Super = AnyObject;
-    type ThreadKind = dyn AllocAnyThread;
+    type ThreadKind = dyn AnyThread;
     const NAME: &'static str = "NSObject";
 
     #[inline]
@@ -391,10 +391,8 @@ impl NSObject {
     extern_methods!(
         /// Create a new empty `NSObject`.
         ///
-        /// This method is a shorthand for calling [`alloc`] and then
-        /// [`init`][Self::init].
-        ///
-        /// [`alloc`]: AllocAnyThread::alloc
+        /// This method is a shorthand for calling [`alloc`][AnyThread::alloc]
+        /// and then [`init`][Self::init].
         #[unsafe(method(new))]
         #[unsafe(method_family = new)]
         pub fn new() -> Retained<Self>;
@@ -410,7 +408,7 @@ impl NSObject {
         ///
         /// ```
         /// use objc2::runtime::NSObject;
-        /// use objc2::AllocAnyThread;
+        /// use objc2::AnyThread;
         ///
         /// let obj = NSObject::init(NSObject::alloc());
         /// ```

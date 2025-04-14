@@ -1,7 +1,7 @@
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::Retained;
-use objc2::AllocAnyThread;
+use objc2::AnyThread;
 
 use crate::*;
 

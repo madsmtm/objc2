@@ -435,7 +435,7 @@ mod tests {
     use super::*;
     use crate::rc::{Allocated, PartialInit, RcTestObject, Retained, ThreadTestData};
     use crate::runtime::NSObject;
-    use crate::{define_class, msg_send, AllocAnyThread, Message};
+    use crate::{define_class, msg_send, AnyThread, Message};
 
     /// Initialize superclasses, but not own class.
     unsafe fn init_only_superclasses<T: DefinedClass>(obj: Allocated<T>) -> Retained<T>

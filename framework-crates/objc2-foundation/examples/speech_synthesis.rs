@@ -95,7 +95,7 @@ mod implementation {
 #[cfg(all(target_vendor = "apple", not(target_os = "macos")))]
 mod implementation {
     use super::*;
-    use objc2::AllocAnyThread;
+    use objc2::AnyThread;
 
     #[link(name = "AVFoundation", kind = "framework")]
     extern "C" {}

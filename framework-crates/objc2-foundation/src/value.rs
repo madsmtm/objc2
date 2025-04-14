@@ -9,7 +9,7 @@ use core::str;
 
 use objc2::encode::Encode;
 use objc2::rc::Retained;
-use objc2::AllocAnyThread;
+use objc2::AnyThread;
 
 use crate::NSValue;
 

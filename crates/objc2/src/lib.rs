@@ -133,7 +133,7 @@ pub use self::downcast::DowncastTarget;
 pub use self::encode::{Encode, Encoding, RefEncode};
 pub use self::main_thread_marker::MainThreadMarker;
 pub use self::top_level_traits::{
-    AllocAnyThread, ClassType, DefinedClass, MainThreadOnly, Message, ProtocolType, ThreadKind,
+    AnyThread, ClassType, DefinedClass, MainThreadOnly, Message, ProtocolType, ThreadKind,
 };
 
 #[cfg(any(feature = "unstable-static-sel", feature = "unstable-static-class"))]
@@ -190,6 +190,10 @@ pub mod declare {
 /// Deprecated alias of [`DefinedClass`].
 #[deprecated = "renamed to DefinedClass"]
 pub use DefinedClass as DeclaredClass;
+
+/// Deprecated alias of [`AnyThread`].
+#[deprecated = "renamed to AnyThread"]
+pub use AnyThread as AllocAnyThread;
 
 #[cfg(not(feature = "std"))]
 compile_error!("The `std` feature currently must be enabled.");

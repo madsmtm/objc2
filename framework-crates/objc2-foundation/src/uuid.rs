@@ -4,7 +4,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::encode::{Encode, Encoding, RefEncode};
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::NSObject;
-use objc2::{extern_methods, msg_send, AllocAnyThread};
+use objc2::{extern_methods, msg_send, AnyThread};
 
 use crate::{util, NSUUID};
 

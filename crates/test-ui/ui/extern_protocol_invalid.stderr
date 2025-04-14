@@ -55,7 +55,7 @@ error: #[ivars] is not supported in extern_protocol!
   |
   = note: this error originates in the macro `$crate::__extern_protocol_check_no_ivars` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: #[thread_kind = ...] is not supported in extern_protocol!. Add MainThreadOnly or AllocAnyThread bound instead
+error: #[thread_kind = ...] is not supported in extern_protocol!. Add MainThreadOnly or AnyThread bound instead
  --> ui/extern_protocol_invalid.rs
   |
   | / extern_protocol!(

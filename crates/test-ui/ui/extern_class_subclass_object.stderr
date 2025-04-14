@@ -3,7 +3,7 @@ error[E0119]: conflicting implementations of trait `AsRef<AnyObject>` for type `
   |
   | / extern_class!(
   | |     #[unsafe(super(AnyObject))]
-  | |     #[thread_kind = AllocAnyThread]
+  | |     #[thread_kind = AnyThread]
   | |     pub struct MyRootClass;
   | | );
   | | ^
@@ -18,7 +18,7 @@ error[E0119]: conflicting implementations of trait `Borrow<AnyObject>` for type 
   |
   | / extern_class!(
   | |     #[unsafe(super(AnyObject))]
-  | |     #[thread_kind = AllocAnyThread]
+  | |     #[thread_kind = AnyThread]
   | |     pub struct MyRootClass;
   | | );
   | | ^
@@ -33,7 +33,7 @@ error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
   |
   | / extern_class!(
   | |     #[unsafe(super(AnyObject))]
-  | |     #[thread_kind = AllocAnyThread]
+  | |     #[thread_kind = AnyThread]
   | |     pub struct MyRootClass;
   | | );
   | |_^ the trait `ClassType` is not implemented for `AnyObject`

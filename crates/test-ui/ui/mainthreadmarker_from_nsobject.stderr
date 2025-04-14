@@ -2,10 +2,10 @@ error[E0271]: type mismatch resolving `<NSObject as ClassType>::ThreadKind == dy
  --> ui/mainthreadmarker_from_nsobject.rs
   |
   |     let mtm = MainThreadMarker::from(&*obj);
-  |               ^^^^^^^^^^^^^^^^ expected trait `MainThreadOnly`, found trait `AllocAnyThread`
+  |               ^^^^^^^^^^^^^^^^ expected trait `MainThreadOnly`, found trait `AnyThread`
   |
   = note: expected trait object `dyn objc2::top_level_traits::MainThreadOnly`
-             found trait object `(dyn objc2::top_level_traits::AllocAnyThread + 'static)`
-  = help: `(dyn objc2::top_level_traits::AllocAnyThread + 'static)` implements `MainThreadOnly` so you could box the found value and coerce it to the trait object `Box<dyn MainThreadOnly>`, you will have to change the expected type as well
+             found trait object `(dyn objc2::top_level_traits::AnyThread + 'static)`
+  = help: `(dyn objc2::top_level_traits::AnyThread + 'static)` implements `MainThreadOnly` so you could box the found value and coerce it to the trait object `Box<dyn MainThreadOnly>`, you will have to change the expected type as well
   = note: required for `NSObject` to implement `objc2::top_level_traits::MainThreadOnly`
   = note: required for `MainThreadMarker` to implement `From<&NSObject>`

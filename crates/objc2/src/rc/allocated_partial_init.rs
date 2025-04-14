@@ -399,7 +399,7 @@ mod tests {
     #[cfg(feature = "unstable-arbitrary-self-types")]
     fn arbitrary_self_types() {
         use crate::rc::Retained;
-        use crate::{extern_methods, AllocAnyThread};
+        use crate::{extern_methods, AnyThread};
 
         impl RcTestObject {
             extern_methods!(

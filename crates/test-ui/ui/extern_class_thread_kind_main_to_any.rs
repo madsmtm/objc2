@@ -1,5 +1,5 @@
 use objc2::runtime::NSObject;
-use objc2::{extern_class, AllocAnyThread, MainThreadOnly};
+use objc2::{extern_class, AnyThread, MainThreadOnly};
 
 extern_class!(
     #[unsafe(super(NSObject))]
@@ -9,7 +9,7 @@ extern_class!(
 
 extern_class!(
     #[unsafe(super(OnlyMain))]
-    #[thread_kind = AllocAnyThread]
+    #[thread_kind = AnyThread]
     struct AnyThreadButSubclassesOnlyMain;
 );
 

@@ -1,6 +1,6 @@
 use objc2::runtime::NSObject;
 #[expect(unused_imports)]
-use objc2::AllocAnyThread;
+use objc2::AnyThread;
 use objc2::{define_class, MainThreadOnly};
 
 define_class!(

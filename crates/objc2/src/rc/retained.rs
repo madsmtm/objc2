@@ -194,7 +194,7 @@ impl<T: ?Sized + Message> Retained<T> {
     /// ```
     /// use objc2::rc::Retained;
     /// use objc2::runtime::NSObject;
-    /// use objc2::{msg_send, AllocAnyThread, ClassType};
+    /// use objc2::{msg_send, AnyThread, ClassType};
     ///
     /// // Manually using `msg_send!`, pointers and `Retained::from_raw`
     /// let obj: *mut NSObject = unsafe { msg_send![NSObject::class(), alloc] };

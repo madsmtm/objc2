@@ -247,7 +247,7 @@ macro_rules! __extern_protocol_check_no_thread_kind {
     () => {};
     ($($ivars:tt)*) => {
         $crate::__macro_helpers::compile_error!(
-            "#[thread_kind = ...] is not supported in extern_protocol!. Add MainThreadOnly or AllocAnyThread bound instead"
+            "#[thread_kind = ...] is not supported in extern_protocol!. Add MainThreadOnly or AnyThread bound instead"
         );
     };
 }

@@ -12,7 +12,7 @@ use std::hint::black_box;
 use arbitrary::Arbitrary;
 use objc2::rc::{autoreleasepool, Retained};
 use objc2::runtime::AnyObject;
-use objc2::{define_class, msg_send, AllocAnyThread, ClassType, DefinedClass, Message};
+use objc2::{define_class, msg_send, AnyThread, ClassType, DefinedClass, Message};
 use objc2_foundation::{
     CopyingHelper, NSCopying, NSMutableDictionary, NSMutableSet, NSObject, NSObjectProtocol,
     NSUInteger, NSZone,

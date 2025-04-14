@@ -1,7 +1,7 @@
 //! Test that message sending with error handling works correctly.
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::{AnyObject, NSObject};
-use objc2::{msg_send, AllocAnyThread, ClassType};
+use objc2::{msg_send, AnyThread, ClassType};
 use objc2_foundation::NSString;
 
 fn main() {

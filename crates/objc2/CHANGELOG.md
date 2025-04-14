@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   same library possible.
 * Added conversion trait impls from `ProtocolObject<P>` to `AnyObject`.
 
+## Changed
+* Renamed `AllocAnyThread` to `AnyThread`. The old name is kept as deprecated.
+
 ## Fixed
 * Fixed undefined behaviour when calling `AnyObject::class` on invalid objects.
 * Fixed `available!` macro when running under Xcode's "Designed for iPad" setting.
