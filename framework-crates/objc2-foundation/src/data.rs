@@ -326,7 +326,7 @@ impl RetainedFromIterator<u8> for NSMutableData {
 unsafe fn with_vec<T: objc2::Message>(obj: objc2::rc::Allocated<T>, bytes: Vec<u8>) -> Retained<T> {
     use core::mem::ManuallyDrop;
 
-    use block2::{Block, RcBlock};
+    use block2::{DynBlock, RcBlock};
 
     let capacity = bytes.capacity();
 
@@ -334,7 +334,7 @@ unsafe fn with_vec<T: objc2::Message>(obj: objc2::rc::Allocated<T>, bytes: Vec<u
         // Recreate the Vec and let it drop
         let _ = unsafe { <Vec<u8>>::from_raw_parts(bytes.cast(), len, capacity) };
     });
-    let dealloc: &Block<dyn Fn(*mut c_void, usize) + 'static> = &dealloc;
+    let dealloc: &DynBlock<dyn Fn(*mut c_void, usize) + 'static> = &dealloc;
 
     let mut bytes = ManuallyDrop::new(bytes);
     // We intentionally extract the length before we access the

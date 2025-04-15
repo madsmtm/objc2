@@ -449,3 +449,9 @@ pub type ConcreteBlock<A, R, Closure> = StackBlock<'static, A, R, Closure>;
 // just using `Box`, `Rc` or `Arc`, and since `__block` variables are
 // basically never exposed as part of a (public) function's API, we won't
 // implement such a thing yet.
+
+/// Helper type to allow changing [`Block`] in the future without affecting
+/// framework crates.
+///
+/// Tracked in [#572](https://github.com/madsmtm/objc2/issues/572).
+pub type DynBlock<F> = crate::Block<F>;

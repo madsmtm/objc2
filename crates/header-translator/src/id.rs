@@ -433,7 +433,7 @@ impl ItemIdentifier {
                 match self.0.location.library_name() {
                     "__bitflags__" => write!(f, "bitflags::{}", self.0.name),
                     "__libc__" => write!(f, "libc::{}", self.0.name),
-                    "block" => write!(f, "block2::{}", self.0.name),
+                    "block" => write!(f, "block2::Dyn{}", self.0.name),
                     _ => write!(f, "{}", self.0.name),
                 }
             }
