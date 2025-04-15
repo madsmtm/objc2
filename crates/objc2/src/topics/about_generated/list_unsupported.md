@@ -38,7 +38,6 @@
 | `DockKit` | Swift-only. |
 | `DriverKit` | Uses C++ classes. |
 | `ExtensionFoundation` | Swift-only. |
-| `FSKit` | TODO. |
 | `FamilyControls` | Swift-only. |
 | `FinanceKit` | Swift-only. |
 | `FinanceKitUI` | Swift-only. |

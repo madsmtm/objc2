@@ -348,6 +348,8 @@ impl UnexposedAttr {
             s if s.starts_with("AVAILABLE_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("DEPRECATED_IN_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("FILEPROVIDER_API_AVAILABILITY_") => None,
+            s if s.starts_with("FSKIT_API_AVAILABILITY_") => None,
+            s if s.starts_with("FSKIT_API_UNAVAILABLE_") => None,
             // Might be interesting in the future
             "swift_name"
             | "CF_SWIFT_NAME"

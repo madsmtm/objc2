@@ -160,6 +160,7 @@ objc2-execution-policy = { path = "framework-crates/objc2-execution-policy", ver
 objc2-exposure-notification = { path = "framework-crates/objc2-exposure-notification", version = "0.3.0", default-features = false }
 objc2-extension-kit = { path = "framework-crates/objc2-extension-kit", version = "0.3.0", default-features = false }
 objc2-external-accessory = { path = "framework-crates/objc2-external-accessory", version = "0.3.0", default-features = false }
+objc2-fs-kit = { path = "framework-crates/objc2-fs-kit", version = "0.3.0", default-features = false }
 objc2-file-provider = { path = "framework-crates/objc2-file-provider", version = "0.3.0", default-features = false }
 objc2-file-provider-ui = { path = "framework-crates/objc2-file-provider-ui", version = "0.3.0", default-features = false }
 objc2-finder-sync = { path = "framework-crates/objc2-finder-sync", version = "0.3.0", default-features = false }

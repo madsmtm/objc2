@@ -1417,6 +1417,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-fs-kit"
+version = "0.3.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "libc",
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-game-controller"
 version = "0.3.0"
 dependencies = [
@@ -2961,6 +2972,7 @@ dependencies = [
  "objc2-file-provider-ui",
  "objc2-finder-sync",
  "objc2-foundation",
+ "objc2-fs-kit",
  "objc2-game-controller",
  "objc2-game-kit",
  "objc2-gameplay-kit",

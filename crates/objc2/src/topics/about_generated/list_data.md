@@ -71,6 +71,7 @@
 | `ExposureNotification` | [`objc2-exposure-notification`](https://crates.io/crates/objc2-exposure-notification) | [![docs.rs](https://docs.rs/objc2-exposure-notification/badge.svg)](https://docs.rs/objc2-exposure-notification/) |
 | `ExtensionKit` | [`objc2-extension-kit`](https://crates.io/crates/objc2-extension-kit) | [![docs.rs](https://docs.rs/objc2-extension-kit/badge.svg)](https://docs.rs/objc2-extension-kit/) |
 | `ExternalAccessory` | [`objc2-external-accessory`](https://crates.io/crates/objc2-external-accessory) | [![docs.rs](https://docs.rs/objc2-external-accessory/badge.svg)](https://docs.rs/objc2-external-accessory/) |
+| `FSKit` | [`objc2-fs-kit`](https://crates.io/crates/objc2-fs-kit) | [![docs.rs](https://docs.rs/objc2-fs-kit/badge.svg)](https://docs.rs/objc2-fs-kit/) |
 | `FileProvider` | [`objc2-file-provider`](https://crates.io/crates/objc2-file-provider) | [![docs.rs](https://docs.rs/objc2-file-provider/badge.svg)](https://docs.rs/objc2-file-provider/) |
 | `FileProviderUI` | [`objc2-file-provider-ui`](https://crates.io/crates/objc2-file-provider-ui) | [![docs.rs](https://docs.rs/objc2-file-provider-ui/badge.svg)](https://docs.rs/objc2-file-provider-ui/) |
 | `FinderSync` | [`objc2-finder-sync`](https://crates.io/crates/objc2-finder-sync) | [![docs.rs](https://docs.rs/objc2-finder-sync/badge.svg)](https://docs.rs/objc2-finder-sync/) |

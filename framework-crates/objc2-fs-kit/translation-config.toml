@@ -1,0 +1,30 @@
+framework = "FSKit"
+crate = "objc2-fs-kit"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "15.4"
+
+# Currently requires manual handling
+class.FSItemAttributes.methods.allocSize.skipped = true
+class.FSItemSetAttributesRequest.methods.allocSize.skipped = true
+
+# Unknown error result type.
+class.FSBlockDeviceResource.methods."readInto:startingAt:length:error:".skipped = true
+class.FSBlockDeviceResource.methods."writeFrom:startingAt:length:error:".skipped = true
+
+# Uses `libc::FREAD` and `libc::FWRITE`
+enum.FSVolumeOpenModes.use-value = true
+
+# Wants to pass `libc::timespec` to/from objc2 methods
+# (but `libc::timespec` doesn't implement `Encode`).
+class.FSItemAttributes.methods.modifyTime.skipped = true
+class.FSItemAttributes.methods."setModifyTime:".skipped = true
+class.FSItemAttributes.methods.addedTime.skipped = true
+class.FSItemAttributes.methods."setAddedTime:".skipped = true
+class.FSItemAttributes.methods.changeTime.skipped = true
+class.FSItemAttributes.methods."setChangeTime:".skipped = true
+class.FSItemAttributes.methods.accessTime.skipped = true
+class.FSItemAttributes.methods."setAccessTime:".skipped = true
+class.FSItemAttributes.methods.birthTime.skipped = true
+class.FSItemAttributes.methods."setBirthTime:".skipped = true
+class.FSItemAttributes.methods.backupTime.skipped = true
+class.FSItemAttributes.methods."setBackupTime:".skipped = true
