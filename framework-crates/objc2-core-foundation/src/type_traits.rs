@@ -1,6 +1,6 @@
 use core::ptr::NonNull;
 
-use crate::{CFRetained, CFTypeID};
+use crate::{CFRetained, CFType, CFTypeID};
 
 /// A CoreFoundation-like type.
 ///
@@ -38,6 +38,49 @@ pub unsafe trait Type {
 
         // SAFETY: The pointer is valid, since it came from a Rust reference.
         unsafe { CFRetained::retain(ptr) }
+    }
+
+    /// Helper for easier transition from the `core-foundation` crate.
+    #[deprecated = "this is redundant"]
+    #[inline]
+    #[allow(non_snake_case)]
+    fn as_concrete_TypeRef(&self) -> &Self {
+        self
+    }
+
+    /// Helper for easier transition from the `core-foundation` crate.
+    #[deprecated = "use CFRetained::retain"]
+    #[inline]
+    unsafe fn wrap_under_get_rule(ptr: *const Self) -> CFRetained<Self>
+    where
+        Self: Sized,
+    {
+        let ptr = NonNull::new(ptr.cast_mut()).expect("attempted to create a NULL object");
+        // SAFETY: Upheld by caller.
+        unsafe { CFRetained::retain(ptr) }
+    }
+
+    /// Helper for easier transition from the `core-foundation` crate.
+    #[deprecated = "this is redundant (CF types deref to CFType)"]
+    #[inline]
+    #[allow(non_snake_case)]
+    fn as_CFTypeRef(&self) -> &CFType
+    where
+        Self: AsRef<CFType>,
+    {
+        self.as_ref()
+    }
+
+    /// Helper for easier transition from the `core-foundation` crate.
+    #[deprecated = "use CFRetained::from_raw"]
+    #[inline]
+    unsafe fn wrap_under_create_rule(ptr: *const Self) -> CFRetained<Self>
+    where
+        Self: Sized,
+    {
+        let ptr = NonNull::new(ptr.cast_mut()).expect("attempted to create a NULL object");
+        // SAFETY: Upheld by caller.
+        unsafe { CFRetained::from_raw(ptr) }
     }
 }
 
