@@ -262,18 +262,20 @@ impl Library {
 
         // Output `README.md`.
         let mut readme = fs::File::create(crate_dir.join("README.md"))?;
-        let (framework_or_lib, license) = if self.data.krate == "dispatch2" {
-            (
-                "Grand Central Dispatch".to_string(),
-                "MIT%20OR%20Apache%202.0",
-            )
+        let framework_or_lib = if self.data.krate == "dispatch2" {
+            "Grand Central Dispatch".to_string()
         } else {
-            (format!("framework {}", self.link_name), "MIT")
+            format!("framework {}", self.link_name)
+        };
+        let license = if self.data.krate == "objc2-foundation" {
+            "MIT"
+        } else {
+            "Zlib%20OR%20Apache-2.0%20OR%20MIT"
         };
         writeln!(readme, "# `{0}`
 
 [![Latest version](https://badgen.net/crates/v/{0})](https://crates.io/crates/{0})
-[![License](https://badgen.net/badge/license/{license}/blue)](../LICENSE.txt)
+[![License](https://badgen.net/badge/license/{license}/blue)](../../LICENSE.md)
 [![Documentation](https://docs.rs/{0}/badge.svg)](https://docs.rs/{0}/)
 [![CI](https://github.com/madsmtm/objc2/actions/workflows/ci.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/ci.yml)
 

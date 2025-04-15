@@ -1,7 +1,7 @@
 # `objc2-encode`
 
 [![Latest version](https://badgen.net/crates/v/objc2-encode)](https://crates.io/crates/objc2-encode)
-[![License](https://badgen.net/badge/license/MIT/blue)](https://github.com/madsmtm/objc2/blob/master/LICENSE.txt)
+[![License](https://badgen.net/badge/license/MIT/blue)](../../LICENSE.md)
 [![Documentation](https://docs.rs/objc2-encode/badge.svg)](https://docs.rs/objc2-encode/)
 [![CI](https://github.com/madsmtm/objc2/actions/workflows/ci.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/ci.yml)
 

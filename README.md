@@ -1,6 +1,7 @@
 # [![Rust + \[Obj-C\]](assets/logo-small.png)](https://github.com/madsmtm/objc2) <br> Objective-C in Rust
 
-[![License](https://badgen.net/badge/license/MIT/blue)](./LICENSE.txt)
+[![License](https://badgen.net/badge/license/Zlib%20OR%20Apache-2.0%20OR%20MIT/blue)](./LICENSE.md)
+[![Documentation](https://docs.rs/objc2/badge.svg)](https://docs.rs/objc2/)
 [![CI](https://github.com/madsmtm/objc2/actions/workflows/ci.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/ci.yml)
 
 **See [`objc2`] for top-level documentation**, including [the documentation on framework crates].
