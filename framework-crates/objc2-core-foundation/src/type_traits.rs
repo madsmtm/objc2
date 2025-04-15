@@ -49,6 +49,10 @@ pub unsafe trait Type {
     }
 
     /// Helper for easier transition from the `core-foundation` crate.
+    ///
+    /// # Safety
+    ///
+    /// Same as [`CFRetained::retain`].
     #[deprecated = "use CFRetained::retain"]
     #[inline]
     unsafe fn wrap_under_get_rule(ptr: *const Self) -> CFRetained<Self>
@@ -72,6 +76,10 @@ pub unsafe trait Type {
     }
 
     /// Helper for easier transition from the `core-foundation` crate.
+    ///
+    /// # Safety
+    ///
+    /// Same as [`CFRetained::from_raw`].
     #[deprecated = "use CFRetained::from_raw"]
     #[inline]
     unsafe fn wrap_under_create_rule(ptr: *const Self) -> CFRetained<Self>

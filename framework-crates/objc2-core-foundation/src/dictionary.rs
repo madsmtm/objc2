@@ -71,10 +71,9 @@ impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
             values.len(),
             "key and object slices must have the same length",
         );
-        let len = keys
-            .len()
-            .try_into()
-            .expect("too many keys/values to fit in CFDictionary");
+        // Can never happen, allocations in Rust cannot be this large.
+        debug_assert!(keys.len() < CFIndex::MAX as usize);
+        let len = keys.len() as CFIndex;
 
         // `&T` has the same layout as `*const c_void`, and is non-NULL.
         let keys = keys.as_ptr().cast::<*const c_void>().cast_mut();

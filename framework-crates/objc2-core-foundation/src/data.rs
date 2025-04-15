@@ -7,10 +7,11 @@ use crate::CFIndex;
 use crate::{CFData, CFDataGetBytePtr, CFDataGetLength};
 
 fn get_len(bytes: &[u8]) -> CFIndex {
-    bytes
-        .len()
-        .try_into()
-        .expect("buffer too large to fit in CFData")
+    // An allocation in Rust cannot be larger than isize::MAX, so this will
+    // never fail.
+    let len = bytes.len();
+    debug_assert!(len < CFIndex::MAX as usize);
+    len as CFIndex
 }
 
 impl CFData {

@@ -11,12 +11,14 @@ use crate::{
 
 #[inline]
 fn get_len<T>(objects: &[T]) -> CFIndex {
-    // We must panic on too large size, since as `CFArrayCreate` documents:
+    // An allocation in Rust cannot be larger than isize::MAX, so this will
+    // never fail.
+    //
+    // Note that `CFArrayCreate` documents:
     // > If this parameter is negative, [...] the behavior is undefined.
-    objects
-        .len()
-        .try_into()
-        .expect("too many objects to fit in CFArray")
+    let len = objects.len();
+    debug_assert!(len < CFIndex::MAX as usize);
+    len as CFIndex
 }
 
 /// Reading the source code:
@@ -136,6 +138,7 @@ impl<T: ?Sized> CFMutableArray<T> {
     where
         T: Type,
     {
+        // User can pass wrong value here, we must check.
         let capacity = capacity.try_into().expect("capacity too high");
 
         // SAFETY: The objects are CFTypes (`T: Type` bound), and the array

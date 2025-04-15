@@ -5,9 +5,9 @@ use core::ptr::NonNull;
 use core::{fmt, str};
 
 use crate::{
-    kCFAllocatorNull, CFRange, CFRetained, CFString, CFStringBuiltInEncodings, CFStringCompare,
-    CFStringCompareFlags, CFStringCreateWithBytes, CFStringCreateWithBytesNoCopy, CFStringGetBytes,
-    CFStringGetCStringPtr, CFStringGetLength,
+    kCFAllocatorNull, CFIndex, CFRange, CFRetained, CFString, CFStringBuiltInEncodings,
+    CFStringCompare, CFStringCompareFlags, CFStringCreateWithBytes, CFStringCreateWithBytesNoCopy,
+    CFStringGetBytes, CFStringGetCStringPtr, CFStringGetLength,
 };
 
 #[track_caller]
@@ -31,7 +31,9 @@ impl CFString {
     #[doc(alias = "CFStringCreateWithBytes")]
     #[allow(clippy::should_implement_trait)] // Not really sure of a better name
     pub fn from_str(string: &str) -> CFRetained<Self> {
-        let len = string.len().try_into().expect("string too large");
+        // Can never happen, allocations in Rust cannot be this large.
+        debug_assert!(string.len() < CFIndex::MAX as usize);
+        let len = string.len() as CFIndex;
         let s = unsafe {
             CFStringCreateWithBytes(
                 None,
@@ -61,7 +63,8 @@ impl CFString {
     #[inline]
     #[doc(alias = "CFStringCreateWithBytesNoCopy")]
     pub fn from_static_str(string: &'static str) -> CFRetained<Self> {
-        let len = string.len().try_into().expect("string too large");
+        debug_assert!(string.len() < CFIndex::MAX as usize);
+        let len = string.len() as CFIndex;
         // SAFETY: The string is used as a backing store, and thus must
         // potentially live forever, since we don't know how long the returned
         // CFString will be alive for. This is ensured by the `'static`
