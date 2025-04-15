@@ -537,6 +537,7 @@ fn.CFURLCopyFileSystemPath.unsafe = false
 fn.CFURLHasDirectoryPath.unsafe = false
 fn.CFURLCopyResourceSpecifier.unsafe = false
 fn.CFURLCopyHostName.unsafe = false
+fn.CFURLGetPortNumber.unsafe = false
 fn.CFURLCopyUserName.unsafe = false
 fn.CFURLCopyPassword.unsafe = false
 fn.CFURLCopyParameterString.unsafe = false
