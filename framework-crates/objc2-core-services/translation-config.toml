@@ -78,3 +78,17 @@ const.kScriptingAdditionsFolderIcon.use-value = true
 const.kSharedLibrariesFolderIcon.use-value = true
 const.kTextEncodingsFolderIcon.use-value = true
 const.kAEDebugXMLDebugAll.use-value = true
+
+# Deprecated and only defined on 32-bit architectures
+const.typeSMInt.skipped = true
+const.typeShortInteger.skipped = true
+const.typeInteger.skipped = true
+const.typeLongInteger.skipped = true
+const.typeMagnitude.skipped = true
+const.typeComp.skipped = true
+const.typeSMFloat.skipped = true
+const.typeShortFloat.skipped = true
+const.typeFloat.skipped = true
+const.typeLongFloat.skipped = true
+const.typeExtended.skipped = true
+const.typeFSS.skipped = true

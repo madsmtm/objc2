@@ -116,3 +116,25 @@ external.MIDIChannelNumber.module = "CoreMIDI.MIDIMessages"
 
 # Has wrong module because it is also defined in AudioUnitProperties.h.
 external.OpaqueAudioFileID.module = "AudioToolbox.AudioFile"
+
+# Deprecated and only defined on 32-bit architectures
+fn.MusicSequenceLoadSMFData.skipped = true
+fn.OpenDefaultAudioOutput.skipped = true
+fn.OpenSystemSoundAudioOutput.skipped = true
+fn.AudioUnitRemovePropertyListener.skipped = true
+
+# Only defined on 32-bit architectures
+typedef.AudioUnitCarbonViewEventListener.skipped = true
+fn.AudioUnitCarbonViewCreate.skipped = true
+fn.AudioUnitCarbonViewSetEventListener.skipped = true
+struct.OpaqueAUMIDIController.skipped = true
+typedef.AUMIDIControllerRef.skipped = true
+fn.AUMIDIControllerCreate.skipped = true
+fn.AUMIDIControllerDispose.skipped = true
+fn.AUMIDIControllerMapChannelToAU.skipped = true
+fn.AUMIDIControllerMapEventToParameter.skipped = true
+fn.AUMIDIControllerUnmapAudioUnit.skipped = true
+fn.AUMIDIControllerHandleMIDI.skipped = true
+fn.AUMIDIControllerConnectSource.skipped = true
+fn.AUMIDIControllerDisconnectSource.skipped = true
+fn.AUMIDIControllerExportXMLNames.skipped = true
