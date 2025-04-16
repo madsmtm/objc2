@@ -43,6 +43,9 @@ impl fmt::Debug for NSError {
         debug.field("code", &self.code());
 
         #[cfg(feature = "NSString")]
+        debug.field("localizedDescription", &self.localizedDescription());
+
+        #[cfg(feature = "NSString")]
         debug.field("domain", &self.domain());
 
         #[cfg(all(feature = "NSDictionary", feature = "NSString"))]
