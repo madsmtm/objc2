@@ -625,27 +625,27 @@ jobs:
           target: x86_64-unknown-linux-gnu
           runtime: gnustep-1-9
           libobjc2: "1.9"
-        - name: Test GNUStep with libobjc2 v2.0
-          # Fails for some reason on Ubuntu 22
-          os: ubuntu-20.04
-          target: x86_64-unknown-linux-gnu
-          runtime: gnustep-2-0
-          libobjc2: "2.0"
+        # Fails for some reason on Ubuntu 22
+        # - name: Test GNUStep with libobjc2 v2.0
+        #   os: ubuntu-20.04
+        #   target: x86_64-unknown-linux-gnu
+        #   runtime: gnustep-2-0
+        #   libobjc2: "2.0"
         - name: Test GNUStep with libobjc2 v2.1 on nightly
           target: x86_64-unknown-linux-gnu
           nightly: true
           runtime: gnustep-2-1
           libobjc2: "2.1"
           # fuzz: true # Disable fuzzing for now, it fails because it tries to load all symbols in Foundation
-        - name: Test GNUStep 32bit
-          # Ubuntu 22 image doesn't have the required C++ libraries
-          # installed for 32-bit
-          os: ubuntu-20.04
-          target: i686-unknown-linux-gnu
-          cflags: -m32
-          configureflags: --target=x86-pc-linux-gnu
-          runtime: gnustep-1-9
-          libobjc2: "1.9"
+        # Ubuntu 22 image doesn't seem to have the required C++ libraries
+        # installed for 32-bit
+        # - name: Test GNUStep 32bit
+        #   os: ubuntu-20.04
+        #   target: i686-unknown-linux-gnu
+        #   cflags: -m32
+        #   configureflags: --target=x86-pc-linux-gnu
+        #   runtime: gnustep-1-9
+        #   libobjc2: "1.9"
 
     env:
       CARGO_BUILD_TARGET: ${{ matrix.target }}
