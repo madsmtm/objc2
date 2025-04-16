@@ -1,8 +1,8 @@
 use core::cmp::Ordering;
-use core::ffi::{c_char, CStr};
+use core::ffi::c_char;
 use core::fmt::Write;
 use core::ptr::NonNull;
-use core::{fmt, str};
+use core::{fmt, slice, str};
 
 use crate::{
     kCFAllocatorNull, CFIndex, CFRange, CFRetained, CFString, CFStringBuiltInEncodings,
@@ -89,7 +89,6 @@ impl CFString {
     /// done efficiently. Use `CFString::to_string` if performance is not an
     /// issue.
     ///
-    ///
     /// # Safety
     ///
     /// The `CFString` must not be mutated for the lifetime of the returned
@@ -101,19 +100,30 @@ impl CFString {
     #[doc(alias = "CFStringGetCStringPtr")]
     pub unsafe fn as_str_unchecked(&self) -> Option<&str> {
         // NOTE: The encoding is an 8-bit encoding.
-        let bytes = CFStringGetCStringPtr(self, CFStringBuiltInEncodings::EncodingUTF8.0);
+        let bytes = CFStringGetCStringPtr(self, CFStringBuiltInEncodings::EncodingASCII.0);
         NonNull::new(bytes as *mut c_char).map(|bytes| {
+            // NOTE: The returned string may contain interior NUL bytes:
+            // https://github.com/swiftlang/swift-corelibs-foundation/issues/5200
+            //
+            // So we have to check the length of the string too. We do that
+            // using `CFStringGetLength`; Since `CFStringGetCStringPtr`
+            // returned a pointer, and we picked the encoding to be ASCII
+            // (which has 1 codepoint per byte), this means that the number of
+            // codepoints is the same as the number of bytes in the string.
+            //
+            // This is also what Swift does:
+            // https://github.com/swiftlang/swift-corelibs-foundation/commit/8422c1a5e63913613a93523b3b398cb982df6205
+            let len = CFStringGetLength(self) as usize;
+
             // SAFETY: The pointer is valid for as long as the CFString is not
             // mutated (which the caller ensures it isn't for the lifetime of
-            // the reference).
-            //
-            // We won't accidentally truncate the string here, since
-            // `CFStringGetCStringPtr` makes sure that there are no internal
-            // NUL bytes in the string.
-            let cstr = unsafe { CStr::from_ptr(bytes.as_ptr()) };
+            // the reference), and the length is correct (see above).
+            let bytes = unsafe { slice::from_raw_parts(bytes.as_ptr().cast(), len) };
+
             // SAFETY: `CFStringGetCStringPtr` is (very likely) implemented
-            // correctly, and won't return non-UTF8 strings.
-            unsafe { debug_checked_utf8_unchecked(cstr.to_bytes()) }
+            // correctly, and we picked the encoding to be ASCII (which is a
+            // subset of UTF-8).
+            unsafe { debug_checked_utf8_unchecked(bytes) }
         })
     }
 }
@@ -202,6 +212,7 @@ impl Ord for CFString {
 #[cfg(test)]
 mod tests {
     use alloc::string::ToString;
+    use core::ffi::CStr;
 
     use super::*;
     use crate::{CFStringCreateWithCString, CFStringGetCString};
@@ -261,7 +272,7 @@ mod tests {
         let s = CFString::from_str("a\0b\0c\0d");
         // Works with `CFStringGetBytes`.
         assert_eq!(s.to_string(), "a\0b\0c\0d");
-        // Expectedly does not work `CFStringGetCStringPtr`.
+        // `CFStringGetCStringPtr` does not seem to work on very short strings.
         assert_eq!(unsafe { s.as_str_unchecked() }, None);
 
         // Test `CFStringGetCString`.
@@ -281,6 +292,22 @@ mod tests {
         // interior NUL bytes.
         let cstr = CStr::from_bytes_until_nul(&buf).unwrap();
         assert_eq!(cstr.to_bytes(), b"a");
+
+        // Test with a bit longer string, to ensure the same holds for heap-
+        // allocated CFStrings
+        let s = CFString::from_str("a\0aaaaaaaaaaaaaaa");
+        // Works with `CFStringGetBytes`.
+        assert_eq!(s.to_string(), "a\0aaaaaaaaaaaaaaa");
+        // `CFStringGetCStringPtr` also allows these without truncation.
+        assert_eq!(unsafe { s.as_str_unchecked() }, Some("a\0aaaaaaaaaaaaaaa"));
+    }
+
+    #[test]
+    fn as_str_correct_on_unicode() {
+        let s = CFString::from_static_str("😀");
+        assert_eq!(unsafe { s.as_str_unchecked() }, None);
+        let s = CFString::from_static_str("♥");
+        assert_eq!(unsafe { s.as_str_unchecked() }, None);
     }
 
     #[test]
@@ -329,8 +356,17 @@ mod tests {
         let cstr = CStr::from_bytes_until_nul(&buf).unwrap();
         assert_eq!(cstr.to_bytes(), "♥".as_bytes());
 
-        // `CFStringGetCStringPtr` completely ignores the UTF-8 conversion.
-        assert_eq!(unsafe { s.as_str_unchecked() }, Some("e&"));
+        // `CFStringGetCStringPtr` completely ignores the requested UTF-8 conversion.
+        assert_eq!(unsafe { s.as_str_unchecked() }, Some("e"));
+        assert_eq!(
+            unsafe {
+                CStr::from_ptr(CFStringGetCStringPtr(
+                    &s,
+                    CFStringBuiltInEncodings::EncodingUTF8.0,
+                ))
+            },
+            CStr::from_bytes_with_nul(b"e&\0").unwrap()
+        );
     }
 
     #[test]
