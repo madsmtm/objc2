@@ -1,5 +1,6 @@
 #![cfg(feature = "std")]
 #![cfg(unix)] // TODO: Use as_encoded_bytes/from_encoded_bytes_unchecked once in MSRV.
+#![cfg(not(feature = "gnustep-1-7"))] // Doesn't seem to be available on GNUStep?
 use core::ptr::NonNull;
 use std::ffi::{CStr, CString, OsStr};
 use std::os::unix::ffi::OsStrExt;
