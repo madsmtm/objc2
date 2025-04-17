@@ -653,6 +653,9 @@ impl PointeeTy {
     pub(crate) fn implementable(&self) -> Option<ItemTree> {
         match self {
             Self::CFTypeDef { id } | Self::Class { id, .. } => Some(ItemTree::from_id(id.clone())),
+            Self::TypeDef { id, to } => to
+                .implementable()
+                .filter(|implementor| implementor.id() == id),
             _ => None,
         }
     }
@@ -1727,8 +1730,14 @@ impl Ty {
                 element_type: pointee,
                 ..
             } => pointee.implementable(),
-            // TypeDefs aren't implement-able, even if their underlying type is.
-            Self::TypeDef { .. } => None,
+            // TypeDefs aren't implement-able, even if their underlying type
+            // is, since the type might come from another crate.
+            //
+            // So only if the typedef is "fake" / points to a type with the
+            // exact same name do we want to mark it implementable.
+            Self::TypeDef { id, to } => to
+                .implementable()
+                .filter(|implementor| implementor.id() == id),
             Self::Enum { id, ty } => Some(ItemTree::new(id.clone(), ty.required_items())),
             Self::Struct { id, fields, .. } | Self::Union { id, fields } => {
                 let fields = fields.iter().flat_map(|field| field.required_items());
@@ -2945,9 +2954,7 @@ impl Ty {
                 Self::Pointee(pointee) => pointee
                     .implementable()
                     .is_some_and(|implementor| implementor.id() == for_id),
-                Self::Enum { id, .. } | Self::Struct { id, .. } | Self::Union { id, .. } => {
-                    id == for_id
-                }
+                // NOTE: Do not allow structs etc., that requires arbitrary self types.
                 // NOTE: Do not recurse pointers here, that's invalid for
                 // e.g. `SecKeychainCopyDefault`.
                 _ => false,
@@ -2955,6 +2962,9 @@ impl Ty {
             Self::Enum { id, .. } | Self::Struct { id, .. } | Self::Union { id, .. } => {
                 id == for_id
             }
+            // Perhaps overly restrictive, but that's necessary to not
+            // accidentally allow typedefs to `*mut T`.
+            Self::TypeDef { id, .. } => id == for_id,
             _ => false,
         }
     }

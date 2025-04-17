@@ -4,9 +4,11 @@
 //!
 //! Kinda ugly and under-tested, may not work for all cases.
 
-use std::iter::FusedIterator;
+use std::{collections::BTreeSet, iter::FusedIterator};
 
 use itertools::Itertools;
+
+use crate::{id::ItemTree, rust_type::Ty, ItemIdentifier};
 
 /// Split a string according to Swift's word boundary algorithm.
 ///
@@ -237,37 +239,124 @@ pub(crate) fn cf_no_ref(type_name: &str) -> &str {
     type_name.strip_suffix("Ref").unwrap_or(type_name)
 }
 
-/// Translate CoreFoundation-like functions to methods.
-///
-/// Swift does this manually for CoreGraphics, but not in general.
+/// Find the type onto whom a function should be inserted.
+pub(crate) fn find_fn_implementor(
+    implementable_mapping: &BTreeSet<ItemTree>,
+    fn_id: &ItemIdentifier,
+    arguments: &[(String, Ty)],
+    result_type: &Ty,
+) -> Option<ItemTree> {
+    let mut candidates = vec![];
+
+    // Check the first argument, and see if that matches.
+    if let Some((_, first_arg_ty)) = arguments.first() {
+        // Skip CFAllocator if that's the first argument.
+        // Useful for e.g. `CGEventCreateData` and `CFDateFormatterCreateDateFromString`.
+        let mut first_arg_ty = first_arg_ty;
+        if first_arg_ty.is_cf_allocator() && !fn_id.name.starts_with("CFAllocator") {
+            // TODO: Consider shuffling around so that the allocator becomes
+            // the second argument?
+            if let Some((_, arg_ty)) = arguments.get(1) {
+                first_arg_ty = arg_ty;
+            }
+        }
+
+        if let Some(item) = first_arg_ty.implementable() {
+            let type_name = cf_no_ref(&item.id().name).replace("Mutable", "");
+            if is_method_candidate(&fn_id.name, &type_name) {
+                // Only emit if in same crate (otherwise it requires a helper trait).
+                if fn_id.library_name() == item.id().library_name() {
+                    candidates.push(item.clone());
+                }
+            }
+        }
+    }
+
+    // Check the return type, and see if that matches.
+    if let Some(item) = result_type.implementable() {
+        // Allowing this means that things like `CGPathCreateMutableCopy`
+        // are considered part of `CFMutablePath`.
+        let type_name = cf_no_ref(&item.id().name).replace("Mutable", "");
+
+        if is_method_candidate(&fn_id.name, &type_name) {
+            // Only emit if in same crate (otherwise it requires a helper trait).
+            if fn_id.library_name() == item.id().library_name() {
+                candidates.push(item.clone());
+            }
+        } else {
+            // TODO: Special-case CFArray returns?
+        }
+    }
+
+    // Look for a type that matches the name as closely as possible.
+    //
+    // This allows e.g. `CFDateFormatterCreateDateFromString` to be mapped on
+    // `CFDateFormatter` even though the function itself doesn't use that.
+    for item in implementable_mapping {
+        // Ignore most functions that are not in the same file as the
+        // implementor, to avoid cases where the function has nothing to do
+        // with the implementor. Relevant examples from Foundation include
+        // NSSetUncaughtExceptionHandler and NSHostByteOrder.
+        // TODO: Is this worth the effort?
+        if !fn_id.location().semi_part_of(item.id().location())
+            && !fn_id.name.contains("GetTypeID")
+            // FIXME: CFString, CFPlugIn and CFTimeZone are defined in other
+            // files than their "native" file.
+            && !fn_id.name.contains("CFString")
+            && !fn_id.name.contains("CFPlugIn")
+            && !fn_id.name.contains("CFTimeZone")
+            // FIXME: CGEvent is defined in CGEventTypes
+            && !fn_id.name.contains("CGEvent")
+            // FIXME: A lot of Security types are defined in SecBase.
+            && fn_id.library_name() != "Security"
+        {
+            continue;
+        }
+        // FIXME: CTFontManager seems to be separate from CTFont.
+        // Similarly for ASAuthorizationAllSupportedPublicKeyCredentialDescriptor
+        if fn_id.name.contains("CTFontManager")
+            || fn_id
+                .name
+                .contains("ASAuthorizationAllSupportedPublicKeyCredentialDescriptor")
+        {
+            continue;
+        }
+        // Makes sense to put on `SecKeychain`, even though the name contains
+        // `SecKeychainAttributeInfo`.
+        if fn_id.name == "SecKeychainAttributeInfoForItemID" {
+            continue;
+        }
+        // Makes sense to put on `MIDIEvent`, even though the name contains
+        // `MIDIEventList`.
+        if fn_id.name == "MIDIEventListForEachEvent" {
+            continue;
+        }
+        if is_method_candidate(&fn_id.name, cf_no_ref(&item.id().name)) {
+            candidates.push(item.clone());
+        }
+    }
+
+    // The best match is the longest type name that prefixes the function.
+    candidates.sort_by(|a, b| b.id().name.len().cmp(&a.id().name.len()));
+
+    Some(candidates.first()?.clone())
+}
+
+/// Translate CoreFoundation-like function name to a method name.
 ///
 /// See: <https://github.com/madsmtm/objc2/issues/736>
-pub(crate) fn cf_fn(
+///
+/// Swift does this manually for CoreGraphics, but not in general.
+pub(crate) fn cf_fn_name(
     fn_name: &str,
     type_name: &str,
-    consider_mutable: bool,
     omit_memory_management_words: bool,
-) -> Option<String> {
-    let stripped_type_name = if consider_mutable {
-        type_name.replace("Mutable", "")
-    } else {
-        type_name.to_string()
-    };
-    let is_mutable = stripped_type_name != type_name;
-    let stripped_type_name = cf_no_ref(&stripped_type_name);
+) -> String {
+    let is_mutable = type_name.contains("Mutable");
+    let type_name = cf_no_ref(type_name).replace("Mutable", "");
 
-    let cp = common_prefix([fn_name, stripped_type_name]);
-    // Things like CGDisplayModelNumber should not be mapped on CGDisplayMode.
-    if stripped_type_name != cp {
-        return None;
-    }
-    // TODO: Maybe make this more like "if all words in type name exists in fn name"?
-    // That would allow `CGPDFContextCreate` to be emitted as `CGContext.pdf_create`.
-    let rest = fn_name.strip_prefix(cp)?;
-
-    if rest.is_empty() {
-        return None;
-    }
+    debug_assert!(is_method_candidate(fn_name, &type_name));
+    let rest = fn_name.strip_prefix(&type_name).expect("must prefix");
 
     // Change wording to better match Rust's name scheme:
     // <https://rust-lang.github.io/api-guidelines/naming.html>
@@ -316,15 +405,25 @@ pub(crate) fn cf_fn(
         }
     };
 
-    Some(
-        prefix
-            .iter()
-            .chain(rest)
-            // Make things like CGColorCreateGenericGrayGamma2_2 work.
-            .filter(|word| **word != "_")
-            .join("_")
-            .to_lowercase(),
-    )
+    prefix
+        .iter()
+        .chain(rest)
+        // Make things like CGColorCreateGenericGrayGamma2_2 work.
+        .filter(|word| **word != "_")
+        .join("_")
+        .to_lowercase()
+}
+
+/// Whether the function is a candidate for being a method.
+fn is_method_candidate(fn_name: &str, type_name: &str) -> bool {
+    let cp = common_prefix([fn_name, type_name]);
+    // Things like CGDisplayModelNumber should not be mapped on CGDisplayMode.
+    if type_name != cp {
+        return false;
+    }
+    // TODO: Maybe make this more like "if all words in type name exists in fn name"?
+    // That would allow `CGPDFContextCreate` to be emitted as `CGContext.pdf_create`.
+    fn_name.starts_with(cp)
 }
 
 #[cfg(test)]
@@ -487,39 +586,36 @@ mod tests {
     #[test]
     fn test_cf_fn() {
         #[track_caller]
-        fn check(fn_name: &str, type_name: &str, expected: Option<&str>) {
-            assert_eq!(cf_fn(fn_name, type_name, false, true).as_deref(), expected);
+        fn check(fn_name: &str, type_name: &str, expected: &str) {
+            assert_eq!(cf_fn_name(fn_name, type_name, true), expected);
         }
 
         // Successful cases.
-        check("CFDataCreateCopy", "CFData", Some("new_copy"));
+        check("CFDataCreateCopy", "CFData", "new_copy");
         check(
             "CFCalendarCreateWithIdentifier",
             "CFCalendar",
-            Some("with_identifier"),
+            "with_identifier",
         );
-        check("CFBundleCopyBundleURL", "CFBundle", Some("bundle_url"));
-        check("CFNumberGetByteSize", "CFNumber", Some("byte_size"));
-        check("CFDateCompare", "CFDate", Some("compare"));
-        check(
-            "CMTagMakeWithSInt64Value",
-            "CMTag",
-            Some("with_s_int64_value"),
-        );
+        check("CFBundleCopyBundleURL", "CFBundle", "bundle_url");
+        check("CFNumberGetByteSize", "CFNumber", "byte_size");
+        check("CFDateCompare", "CFDate", "compare");
+        check("CMTagMakeWithSInt64Value", "CMTag", "with_s_int64_value");
         check(
             "CGColorSpaceCreateCopyWithStandardRange",
             "CGColorSpace",
-            Some("new_copy_with_standard_range"),
+            "new_copy_with_standard_range",
         );
-        check("HIShapeCreateMutableCopy", "HIMutableShape", Some("copy"));
+        check("HIShapeCreateMutableCopy", "HIMutableShape", "new_copy");
 
-        check("CFDateCompare", "CF", Some("date_compare"));
-        check("AbcDef", "AbcDef", Some(""));
-        check("Ac", "Bc", None);
+        check("CFDateCompare", "CF", "date_compare");
+        check("AbcDef", "AbcDef", "");
 
-        check("FooBar", "Foo", Some("bar"));
-        check("FooBar", "MutableFoo", Some("bar"));
-        check("FooBar", "FooRef", Some("bar"));
-        check("FooBar", "MutableFooRef", Some("bar"));
+        check("FooBar", "Foo", "bar");
+        check("FooBar", "MutableFoo", "bar");
+        check("FooBar", "FooRef", "bar");
+        check("FooBar", "MutableFooRef", "bar");
+
+        // check("Ac", "Bc", None);
     }
 }

@@ -110,10 +110,6 @@ fn.CFDictionaryContainsValue.renamed = "contains_ptr_value"
 fn.CFURLCreateWithString.renamed = "__from_string"
 fn.CFURLGetString.renamed = "__string"
 
-# Emitted on `CFDate`, which means that the auto-generated name is terrible.
-fn.CFDateFormatterCreateDateFromString.renamed = "from_formatter"
-fn.CFNumberFormatterCreateNumberFromString.renamed = "from_formatter"
-
 ##
 ## Safety
 ##

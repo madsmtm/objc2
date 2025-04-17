@@ -11,8 +11,7 @@ use crate::expr::Expr;
 use crate::id::ItemTree;
 use crate::method::Method;
 use crate::module::Module;
-use crate::name_translation::cf_fn;
-use crate::rust_type::Ty;
+use crate::name_translation::{cf_fn_name, find_fn_implementor};
 use crate::stmt::Stmt;
 use crate::{ItemIdentifier, Library};
 
@@ -49,6 +48,7 @@ fn create_implementable_mapping(module: &Module) -> BTreeSet<ItemTree> {
     types
 }
 
+// TODO: Maybe do this only within the context of a single file?
 fn create_ident_mapping(module: &Module) -> HashMap<String, Expr> {
     let mut mapping = HashMap::new();
     for stmt in &module.stmts {
@@ -85,19 +85,14 @@ fn update_module(
             documentation,
         } = stmt
         {
-            let omit_memory_management_words = result_type.fn_return(*returns_retained).1.is_some();
-            let implementor = find_implementor(
-                implementable_mapping,
-                id,
-                arguments,
-                result_type,
-                omit_memory_management_words,
-            );
-            if let Some((cf_item, name)) = implementor {
-                if id.library_name() != cf_item.id().library_name() {
-                    // Cannot emit into different library (or it at least requires a helper trait).
-                    continue;
-                }
+            if let Some(cf_item) =
+                find_fn_implementor(implementable_mapping, id, arguments, result_type)
+            {
+                let omit_memory_management_words =
+                    result_type.fn_return(*returns_retained).1.is_some();
+
+                let name = cf_fn_name(&id.name, &cf_item.id().name, omit_memory_management_words);
+
                 if name == "type_id" {
                     assert!(arguments.is_empty(), "{id:?} must have no arguments");
                     assert!(result_type.is_cf_type_id(), "{id:?} must return CFTypeID");
@@ -309,116 +304,4 @@ fn update_module(
         let _span = debug_span!("file", name).entered();
         update_module(module, implementable_mapping, ident_mapping);
     }
-}
-
-/// Find the type onto whom the function should be inserted.
-fn find_implementor(
-    implementable_mapping: &BTreeSet<ItemTree>,
-    fn_id: &ItemIdentifier,
-    arguments: &[(String, Ty)],
-    result_type: &Ty,
-    omit_memory_management_words: bool,
-) -> Option<(ItemTree, String)> {
-    // TODO: Maybe do this only within the context of a single file?
-
-    let mut found = None;
-
-    // Check the first argument, and see if that matches.
-    if let Some((_, first_arg_ty)) = arguments.first() {
-        // Skip CFAllocator if that's the first argument.
-        // Useful for e.g. `CGEventCreateData` and `CFDateFormatterCreateDateFromString`.
-        let mut first_arg_ty = first_arg_ty;
-        if first_arg_ty.is_cf_allocator() && !fn_id.name.starts_with("CFAllocator") {
-            // TODO: Consider shuffling around so that the allocator becomes
-            // the second argument?
-            if let Some((_, arg_ty)) = arguments.get(1) {
-                first_arg_ty = arg_ty;
-            }
-        }
-
-        if let Some(type_id) = first_arg_ty.implementable() {
-            if let Some(name) = cf_fn(
-                &fn_id.name,
-                &type_id.id().name,
-                true,
-                omit_memory_management_words,
-            ) {
-                found = Some((type_id.clone(), name.to_string()));
-            }
-        }
-    }
-
-    // Check the return type, and see if that matches.
-    //
-    // Letting this override the above means that things like
-    // `CGPathCreateMutableCopy` are considered part of `CFMutablePath`. Same
-    // for `CFStringTokenizerCreate` and `CFDateFormatterCreateDateFromString`.
-    if let Some(type_id) = result_type.implementable() {
-        if let Some(name) = cf_fn(
-            &fn_id.name,
-            &type_id.id().name,
-            true,
-            omit_memory_management_words,
-        ) {
-            found = Some((type_id.clone(), name.to_string()));
-        } else {
-            // TODO: Special-case CFArray returns?
-        }
-    }
-
-    if let Some((type_id, name)) = found {
-        return Some((type_id, name));
-    }
-
-    // If none of the type matches above worked, look for a type that matches
-    // the name as closely as possible.
-    let mut best_match: Option<(ItemTree, String)> = None;
-
-    for item in implementable_mapping {
-        // Ignore most functions that are not in the same file as the
-        // implementor, to avoid cases where the function has nothing to do
-        // with the implementor. Relevant examples from Foundation include
-        // NSSetUncaughtExceptionHandler and NSHostByteOrder.
-        // TODO: Is this worth the effort?
-        if !fn_id.location().semi_part_of(item.id().location())
-            && !fn_id.name.contains("GetTypeID")
-            // FIXME: CFString, CFPlugIn and CFTimeZone are defined in other
-            // files than their "native" file.
-            && !fn_id.name.contains("CFString")
-            && !fn_id.name.contains("CFPlugIn")
-            && !fn_id.name.contains("CFTimeZone")
-            // FIXME: CGEvent is defined in CGEventTypes
-            && !fn_id.name.contains("CGEvent")
-            // FIXME: A lot of Security types are defined in SecBase.
-            && fn_id.library_name() != "Security"
-        {
-            continue;
-        }
-        // FIXME: CTFontManager seems to be separate from CTFont.
-        // Similarly for ASAuthorizationAllSupportedPublicKeyCredentialDescriptor
-        if fn_id.name.contains("CTFontManager")
-            || fn_id
-                .name
-                .contains("ASAuthorizationAllSupportedPublicKeyCredentialDescriptor")
-        {
-            continue;
-        }
-        if let Some(name) = cf_fn(
-            &fn_id.name,
-            &item.id().name,
-            false,
-            omit_memory_management_words,
-        ) {
-            if let Some(best_match) = &mut best_match {
-                // Best match is the longest type name that prefixes the function.
-                if best_match.0.id().name.len() < item.id().name.len() {
-                    *best_match = (item.clone(), name);
-                }
-            } else {
-                best_match = Some((item.clone(), name));
-            }
-        }
-    }
-
-    best_match
 }
