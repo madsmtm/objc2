@@ -25,3 +25,6 @@ class.WKInterfaceSKScene.methods."presentScene:transition:".skipped = true
 class.WKInterfaceSKScene.methods.scene.skipped = true
 class.WKInterfaceSKScene.methods."textureFromNode:".skipped = true
 class.WKInterfaceSKScene.methods."textureFromNode:crop:".skipped = true
+
+# Custom-defined.
+fn.WKApplicationMain.renamed = "__main"

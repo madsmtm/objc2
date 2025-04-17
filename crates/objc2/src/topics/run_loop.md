@@ -106,31 +106,21 @@ fn main() {
 #[cfg(target_os = "macos")]
 # #[cfg(with_storyboard)] // Hack to make example compile.
 fn main() {
+    let mtm = objc2::MainThreadMarker::new().unwrap();
     // Initialize the class so that the storyboard can see it.
     //
     // The name specified in `define_class!`, i.e. "AppDelegate", must
     // match what's specified in the storyboard.
     let _cls = AppDelegate::class();
-    unsafe {
-        objc2_app_kit::NSApplicationMain(
-            *libc::_NSGetArgc(),
-            std::ptr::NonNull::new(*libc::_NSGetArgv()).unwrap().cast(),
-        );
-    }
+    objc2_app_kit::NSApplication::main(mtm);
 }
 
 // UIKit (iOS/tvOS/watchOS/visionOS).
 #[cfg(not(target_os = "macos"))]
 fn main() {
-    let delegate_class = unsafe { objc2_foundation::NSStringFromClass(AppDelegate::class()) };
-    unsafe {
-        objc2_ui_kit::UIApplicationMain(
-            *libc::_NSGetArgc(),
-            std::ptr::NonNull::new(*libc::_NSGetArgv()).unwrap(),
-            None,
-            Some(&delegate_class),
-        );
-    }
+    let mtm = objc2::MainThreadMarker::new().unwrap();
+    let delegate_class = objc2_foundation::NSString::from_class(AppDelegate::class());
+    objc2_ui_kit::UIApplication::main(None, Some(&delegate_class), mtm);
 }
 ```
 

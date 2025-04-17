@@ -133,6 +133,9 @@ class.NSAdaptiveImageGlyph.skipped-protocols = ["CTAdaptiveImageProviding"]
 # Needs `INPerson`
 protocol.UIActivityItemSource.methods."activityViewControllerShareRecipients:".skipped = true
 
+# Custom-defined.
+fn.UIApplicationMain.renamed = "__main"
+
 ###
 ### Safety
 ###

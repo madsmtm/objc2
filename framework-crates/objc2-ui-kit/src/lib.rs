@@ -16,6 +16,8 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[cfg(feature = "UIApplication")]
+mod application;
 mod generated;
 #[cfg(feature = "UIGestureRecognizer")]
 mod gesture_recognizer;

@@ -319,6 +319,7 @@ class.NSMutableString.methods."initWithString:".unsafe = false
 class.NSMutableString.methods."stringWithString:".unsafe = false
 class.NSMutableString.methods."appendString:".unsafe = false
 class.NSMutableString.methods."setString:".unsafe = false
+fn.NSStringFromClass.unsafe = false
 
 class.NSAttributedString.methods.init.unsafe = false
 class.NSAttributedString.methods.new.unsafe = false

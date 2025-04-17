@@ -37,6 +37,8 @@ define_class!(
             dbg!(notification);
             // Access instance variables
             dbg!(self.ivars());
+
+            NSApplication::main(MainThreadMarker::from(self));
         }
 
         #[unsafe(method(applicationWillTerminate:))]
