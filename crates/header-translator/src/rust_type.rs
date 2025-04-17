@@ -652,7 +652,13 @@ impl PointeeTy {
 
     pub(crate) fn implementable(&self) -> Option<ItemTree> {
         match self {
-            Self::CFTypeDef { id } | Self::Class { id, .. } => Some(ItemTree::from_id(id.clone())),
+            Self::CFTypeDef { id } | Self::Class { id, .. } | Self::DispatchTypeDef { id } => {
+                Some(ItemTree::from_id(id.clone()))
+            }
+            // We shouldn't encounter this here, since `Self` is only on
+            // Objective-C methods, but if we do, it's very unclear how we
+            // should translate it.
+            Self::Self_ => Some(ItemTree::from_id(ItemIdentifier::builtin("__Self__"))),
             Self::TypeDef { id, to } => to
                 .implementable()
                 .filter(|implementor| implementor.id() == id),

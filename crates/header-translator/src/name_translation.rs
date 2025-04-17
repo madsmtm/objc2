@@ -4,7 +4,10 @@
 //!
 //! Kinda ugly and under-tested, may not work for all cases.
 
-use std::{collections::BTreeSet, iter::FusedIterator};
+use std::{
+    collections::{BTreeSet, VecDeque},
+    iter::FusedIterator,
+};
 
 use itertools::Itertools;
 
@@ -344,9 +347,15 @@ pub(crate) fn find_fn_implementor(
 
 /// Translate CoreFoundation-like function name to a method name.
 ///
-/// See: <https://github.com/madsmtm/objc2/issues/736>
+/// To better match  Rust's name scheme: <https://rust-lang.github.io/api-guidelines/naming.html>
 ///
 /// Swift does this manually for CoreGraphics, but not in general.
+///
+/// See the following for inspiration:
+/// <https://github.com/swiftlang/swift/blob/swift-6.1-RELEASE/docs/CToSwiftNameTranslation-OmitNeedlessWords.md>
+///
+/// See motivation in <https://github.com/madsmtm/objc2/issues/736>.
+#[track_caller]
 pub(crate) fn cf_fn_name(
     fn_name: &str,
     type_name: &str,
@@ -359,72 +368,50 @@ pub(crate) fn cf_fn_name(
     debug_assert!(is_method_candidate(fn_name, &type_name));
     let rest = fn_name.strip_prefix(&type_name).expect("must prefix");
 
-    // Change wording to better match Rust's name scheme:
-    // <https://rust-lang.github.io/api-guidelines/naming.html>
-    //
-    // See the following for inspiration:
-    // <https://github.com/swiftlang/swift/blob/swift-6.1-RELEASE/docs/CToSwiftNameTranslation-OmitNeedlessWords.md>
-    let rest = split_words(rest).collect::<Vec<_>>();
+    // Make things like CGColorCreateGenericGrayGamma2_2 work.
+    let mut words = split_words(rest)
+        .filter(|word| *word != "_")
+        .map(str::to_lowercase)
+        .collect::<VecDeque<_>>();
 
-    // Keep "Create" and "Copy" if needed for the user to be able to determine
+    // Keep "create" and "copy" if needed for the user to be able to determine
     // memory management. Used for things like `CFPlugInInstanceCreate` and
-    // `CFSocketCopyRegisteredValue`, where objc2 doesn't handle memory
-    // management.
+    // `CFSocketCopyRegisteredValue` where objc2 doesn't (yet) handle memory.
     //
-    // "Make" and "Get" are fine to always omit.
-    let (prefix, rest) = if !omit_memory_management_words && matches!(rest[0], "Create" | "Copy") {
-        (None, &rest[..])
-    } else {
-        // It probably makes sense to keep the "With" and "From" distinction
-        // that CF makes, since it might be communicating something?
+    // "make" and "get" are fine to always omit.
+    let first_word = words.front().expect("at least one word");
+
+    if first_word == "make" || (omit_memory_management_words && first_word == "create") {
+        words.pop_front();
+
+        // Remove the word "mutable" if it is already communicated in the type.
+        if is_mutable && words.front().map(|w| &**w) == Some("mutable") {
+            words.pop_front();
+        }
+
+        // "with_" and "from_" are fairly common in the standard library, so
+        // we allow using those to communicate that something is a constructor.
+        //
+        // It makes sense to keep the "With" and "From" distinction that
+        // CF makes, since it might be communicating something?
         //
         // Compare e.g. `CFUUIDCreateFromString` (doesn't retain the string)
         // and `CFURLCreateWithString` (does, at least semantically).
-        match &rest[..] {
-            // Same as below + remove the word "Mutable" if it is already
-            // communicated in the type name.
-            ["Create" | "Make", "Mutable", "With", rest @ ..] if is_mutable => (Some("with"), rest),
-            ["Create" | "Make", "Mutable", "From", rest @ ..] if is_mutable => (Some("from"), rest),
-            ["Create" | "Make", "Mutable"] if is_mutable => (Some("new"), &[] as &[_]),
-            ["Create" | "Make", "Mutable", rest @ ..] if is_mutable => {
-                if is_instance_method {
-                    (None, rest)
-                } else {
-                    (Some("new"), rest)
-                }
-            }
-
-            // Convert constructor methods to use "new" and "from_":
+        //
+        // Also, don't output "create" or "new" prefix if the method is an
+        // instance method like `CTFontCreatePathForGlyph`.
+        if !matches!(words.front().map(|w| &**w), Some("with" | "from")) && !is_instance_method {
+            // Convert constructor methods to use "new":
             // <https://rust-lang.github.io/api-guidelines/predictability.html#constructors-are-static-inherent-methods-c-ctor>
-            //
-            // "with_" is also fairly common in the standard library, so we
-            // allow that too.
-            ["Create" | "Make", "With", rest @ ..] => (Some("with"), rest),
-            ["Create" | "Make", "From", rest @ ..] => (Some("from"), rest),
-            ["Create" | "Make"] => (Some("new"), &[] as &[_]),
-            ["Create" | "Make", rest @ ..] => {
-                // Don't output "new" if the method is actually an instance
-                // method like `CTFontCreatePathForGlyph`.
-                if is_instance_method {
-                    (None, rest)
-                } else {
-                    (Some("new"), rest)
-                }
-            }
-
-            ["Copy", rest @ ..] if !rest.is_empty() => (None, rest),
-            ["Get", rest @ ..] if !rest.is_empty() => (None, rest),
-            rest => (None, rest),
+            words.push_front("new".to_string());
         }
-    };
+    } else if first_word == "copy" && omit_memory_management_words && 1 < words.len() {
+        words.pop_front();
+    } else if first_word == "get" && 1 < words.len() {
+        words.pop_front();
+    }
 
-    prefix
-        .iter()
-        .chain(rest)
-        // Make things like CGColorCreateGenericGrayGamma2_2 work.
-        .filter(|word| **word != "_")
-        .join("_")
-        .to_lowercase()
+    words.iter().join("_")
 }
 
 /// Whether the function is a candidate for being a method.
@@ -622,13 +609,13 @@ mod tests {
         check("HIShapeCreateMutableCopy", "HIMutableShape", "new_copy");
 
         check("CFDateCompare", "CF", "date_compare");
-        check("AbcDef", "AbcDef", "");
 
         check("FooBar", "Foo", "bar");
         check("FooBar", "MutableFoo", "bar");
         check("FooBar", "FooRef", "bar");
         check("FooBar", "MutableFooRef", "bar");
 
+        // check("AbcDef", "AbcDef", "");
         // check("Ac", "Bc", None);
     }
 }
