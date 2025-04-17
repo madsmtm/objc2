@@ -1,6 +1,7 @@
 framework = "WatchKit"
 crate = "objc2-watch-kit"
 required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
 watchos = "2.0"
 
 external.PKPass.module = "PassKit.PKPass"
