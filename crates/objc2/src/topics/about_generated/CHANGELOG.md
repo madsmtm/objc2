@@ -16,6 +16,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Marked a bunch of functions safe in:
   - `CoreFoundation` / `objc2-core-foundation`.
   - `SystemConfiguration` / `objc2-system-configuration`.
+* A lot of functions in CoreFoundation and similar frameworks have been moved
+  onto the type they refer to as associated functions / methods instead.
+  The old names are kept as deprecated.
 * Added new framework crates:
   - `AccessorySetupKit` / `objc2-accessory-setup-kit`.
   - `AppClip` / `objc2-app-clip`.
@@ -118,8 +121,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `UITabBarControllerSidebarDelegate`
 * Added `CFURL` and `NSURL` path conversion methods `from_file_path`,
   `from_directory_path` and `to_file_path`.
-* Added `CFURL` string conversion methods `from_string`, `from_str_unchecked`
-  and `to_string`.
+* Added `CFURL` string conversion method `from_str_unchecked`.
 
 ### Changed
 * Updated SDK from Xcode 16.2 to 16.3.

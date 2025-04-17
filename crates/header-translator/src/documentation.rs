@@ -15,6 +15,10 @@ pub struct Documentation {
 }
 
 impl Documentation {
+    pub fn empty() -> Self {
+        Self { children: vec![] }
+    }
+
     pub fn from_entity(entity: &Entity<'_>) -> Self {
         if let Some(comment) = entity.get_comment() {
             if let Some(parsed) = entity.get_parsed_comment() {

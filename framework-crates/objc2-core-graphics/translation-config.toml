@@ -64,3 +64,10 @@ const.kCGAnyInputEventType.skipped = true
 
 # Complex value.
 const.CG_OS_VERSION_2020.skipped = true
+
+# Rename because it conflicts with `CGColorSpaceCopyName`.
+# TODO(breaking): Simply skip this.
+fn.CGColorSpaceGetName.renamed = "get_name"
+
+# Conflicts with `CGColorSpaceGetBaseColorSpace`.
+fn.CGColorSpaceCopyBaseColorSpace.renamed = "copy_base_color_space"

@@ -34,6 +34,8 @@ mod dictionary;
 mod error;
 #[cfg(feature = "CFFileDescriptor")]
 mod filedescriptor;
+// Allow `default` methods on CFAllocator and CFTimeZone
+#[allow(clippy::should_implement_trait)]
 mod generated;
 #[cfg(feature = "CFCGTypes")]
 mod geometry;
@@ -65,8 +67,6 @@ pub use self::generated::*;
 pub use self::geometry::*;
 pub use self::retained::CFRetained;
 pub use self::type_traits::{ConcreteType, Type};
-#[cfg(feature = "CFUserNotification")]
-pub use self::user_notification::*;
 
 // This is not exposed publicly, so the only way to use this in types with
 // generics is to use it through the default type (e.g. the user should write

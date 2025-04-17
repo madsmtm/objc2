@@ -23,8 +23,7 @@ use crate::id::ItemTree;
 use crate::id::Location;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
-use crate::name_translation::enum_prefix;
-use crate::name_translation::split_words;
+use crate::name_translation::{enum_prefix, split_words};
 use crate::protocol::parse_direct_protocols;
 use crate::protocol::ProtocolRef;
 use crate::rust_type::Ty;
@@ -416,6 +415,43 @@ pub enum Counterpart {
     MutableSubclass(ItemIdentifier),
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Abi {
+    C,
+    CUnwind,
+    OuterRustInnerC,
+    OuterRustInnerCUnwind,
+}
+
+impl Abi {
+    fn extern_inner(&self) -> &'static str {
+        match self {
+            Self::OuterRustInnerC | Self::C => "extern \"C\" ",
+            Self::OuterRustInnerCUnwind | Self::CUnwind => "extern \"C-unwind\" ",
+        }
+    }
+
+    fn extern_outer(&self) -> &'static str {
+        if self.rust_outer() {
+            ""
+        } else {
+            self.extern_inner()
+        }
+    }
+
+    fn rust_outer(&self) -> bool {
+        matches!(self, Self::OuterRustInnerC | Self::OuterRustInnerCUnwind)
+    }
+
+    pub(crate) fn as_rust_outer(&self) -> Self {
+        match self {
+            Self::C => Self::OuterRustInnerC,
+            Self::CUnwind => Self::OuterRustInnerCUnwind,
+            Self::OuterRustInnerC | Self::OuterRustInnerCUnwind => panic!("already Rust outer"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Stmt {
     /// @interface name: superclass <protocols*>
@@ -572,14 +608,16 @@ pub enum Stmt {
     /// }
     FnDecl {
         id: ItemIdentifier,
+        renamed: Option<String>,
         availability: Availability,
         arguments: Vec<(String, Ty)>,
+        first_arg_is_self: bool,
         result_type: Ty,
         // Some -> inline function.
         body: Option<()>,
         safe: bool,
         must_use: bool,
-        can_unwind: bool,
+        abi: Abi,
         link_name: Option<String>,
         returns_retained: bool,
         documentation: Documentation,
@@ -590,7 +628,7 @@ pub enum Stmt {
         cf_id: ItemIdentifier,
         result_type: Ty,
         availability: Availability,
-        can_unwind: bool,
+        abi: Abi,
         documentation: Documentation,
     },
     /// typedef Type TypedefName;
@@ -610,6 +648,11 @@ pub enum Stmt {
         documentation: Documentation,
         is_cf: bool,
         superclass: Option<ItemIdentifier>,
+    },
+    GeneralImpl {
+        location: Location,
+        item: ItemTree, // TODO: Make this a Ty?
+        stmts: Vec<Self>,
     },
 }
 
@@ -1590,7 +1633,7 @@ impl Stmt {
                 let mut arguments = Vec::new();
                 let mut must_use = false;
                 // Assume by default that functions can unwind.
-                let mut can_unwind = true;
+                let mut abi = Abi::CUnwind;
                 let mut link_name = None;
 
                 if entity.is_static_method() {
@@ -1617,7 +1660,7 @@ impl Stmt {
                                     returns_retained = false;
                                 }
                                 UnexposedAttr::NoThrow => {
-                                    can_unwind = false;
+                                    abi = Abi::C;
                                 }
                                 _ => error!(?attr, "unknown attribute on function"),
                             }
@@ -1699,38 +1742,19 @@ impl Stmt {
                     None
                 };
 
-                if id.name.ends_with("GetTypeID") && id.name != "CFGetTypeID" {
-                    assert!(arguments.is_empty(), "{id:?} must have no arguments");
-                    assert!(result_type.is_cf_type_id(), "{id:?} must return CFTypeID");
-                    assert!(body.is_none(), "{id:?} must not be inline");
-                    assert!(
-                        data.unsafe_,
-                        "{id:?} must not have manually modified safety"
-                    );
-                    assert!(!must_use, "{id:?} must not have must_use");
-                    assert!(link_name.is_none(), "{id:?} must not have link_name");
-                    assert!(!returns_retained, "{id:?} must not have returns_retained");
-
-                    return vec![Self::FnGetTypeId {
-                        id,
-                        // Will get replaced in global_analysis with the actual id.
-                        cf_id: ItemIdentifier::dummy(0),
-                        result_type,
-                        availability,
-                        can_unwind,
-                        documentation,
-                    }];
-                }
-
                 vec![Self::FnDecl {
                     id,
+                    // May be changed by global analysis.
+                    renamed: data.renamed.clone(),
                     availability,
                     arguments,
+                    // May be changed by global analysis.
+                    first_arg_is_self: false,
                     result_type,
                     body,
                     safe: !data.unsafe_,
                     must_use,
-                    can_unwind,
+                    abi,
                     link_name,
                     returns_retained,
                     documentation,
@@ -1885,7 +1909,19 @@ impl Stmt {
             Self::FnGetTypeId { .. } => None, // Emits a trait impl
             Self::AliasDecl { id, .. } => Some(id.clone()),
             Self::OpaqueDecl { id, .. } => Some(id.clone()),
+            Self::GeneralImpl { .. } => None,
         }
+    }
+
+    /// Whether it is possible to attach `impl` stmts to the provided item.
+    pub(crate) fn implementable(&self) -> bool {
+        matches!(
+            self,
+            Self::ClassDecl { skipped: false, .. }
+                | Self::RecordDecl { .. }
+                | Self::EnumDecl { .. }
+                | Self::OpaqueDecl { .. }
+        )
     }
 
     pub(crate) fn location(&self) -> &Location {
@@ -1903,6 +1939,7 @@ impl Stmt {
             Self::FnGetTypeId { id, .. } => id.location(),
             Self::AliasDecl { id, .. } => id.location(),
             Self::OpaqueDecl { id, .. } => id.location(),
+            Self::GeneralImpl { location, .. } => location,
         }
     }
 
@@ -2007,6 +2044,9 @@ impl Stmt {
                 }
                 items
             }
+            Self::GeneralImpl { item, .. } => {
+                vec![item.clone()]
+            }
         };
 
         items.into_iter()
@@ -2049,6 +2089,10 @@ impl Stmt {
                     vec![ItemTree::objc("Encoding")]
                 }
             }
+            Self::GeneralImpl { stmts, .. } => stmts
+                .iter()
+                .flat_map(|stmt| stmt.required_items().chain(stmt.required_items_inner()))
+                .collect(),
             _ => vec![],
         };
         self.required_items().chain(required_by_inner)
@@ -2864,26 +2908,28 @@ impl Stmt {
                 }
                 Self::FnDecl {
                     id,
+                    renamed,
                     availability,
                     arguments,
+                    first_arg_is_self,
                     result_type,
                     body: None,
                     safe,
                     must_use,
-                    can_unwind,
+                    abi,
                     link_name,
                     returns_retained,
                     documentation,
                 } => {
-                    let abi = if *can_unwind { "C-unwind" } else { "C" };
-
                     let (ret, return_converter) = result_type.fn_return(*returns_retained);
 
                     let needs_wrapper = *safe
                         || return_converter.is_some()
                         || arguments
                             .iter()
-                            .any(|(_, arg)| arg.fn_argument_converter().is_some());
+                            .any(|(_, arg)| arg.fn_argument_converter().is_some())
+                        || renamed.is_some()
+                        || abi.rust_outer();
 
                     let raw_fn_decl = |f: &mut fmt::Formatter<'_>, vis| {
                         if let Some(link_name) = link_name {
@@ -2903,6 +2949,13 @@ impl Stmt {
                         Ok(())
                     };
 
+                    let name = handle_reserved(renamed.as_ref().unwrap_or(&id.name));
+                    let vis = if name.starts_with("_") {
+                        "pub(crate)"
+                    } else {
+                        "pub"
+                    };
+
                     if needs_wrapper {
                         write!(f, "{}", documentation.fmt(None))?;
                         write!(f, "{}", self.cfg_gate_ln(config))?;
@@ -2911,11 +2964,18 @@ impl Stmt {
                             writeln!(f, "#[must_use]")?;
                         }
                         writeln!(f, "#[inline]")?;
+                        if renamed.is_some() {
+                            writeln!(f, "#[doc(alias = {:?})]", id.name)?;
+                        }
                         let unsafe_ = if *safe { "" } else { "unsafe " };
-                        write!(f, "pub {unsafe_}extern {abi:?} fn {}(", id.name)?;
-                        for (param, arg_ty) in arguments {
-                            let param = handle_reserved(&crate::to_snake_case(param));
-                            write!(f, "{param}: ")?;
+                        write!(f, "{vis} {unsafe_}{}fn {name}(", abi.extern_outer())?;
+                        for (i, (param, arg_ty)) in arguments.iter().enumerate() {
+                            if i == 0 && *first_arg_is_self {
+                                write!(f, "self: ")?;
+                            } else {
+                                let param = handle_reserved(&crate::to_snake_case(param));
+                                write!(f, "{param}: ")?;
+                            }
                             if let Some((converted_ty, _, _)) = arg_ty.fn_argument_converter() {
                                 write!(f, "{converted_ty}")?;
                             } else {
@@ -2932,7 +2992,7 @@ impl Stmt {
                         writeln!(f, " {{")?;
 
                         // Emit raw
-                        writeln!(f, "    extern {abi:?} {{")?;
+                        writeln!(f, "    {}{{", abi.extern_inner())?;
                         raw_fn_decl(f, "")?;
                         writeln!(f, "    }}")?;
 
@@ -2942,8 +3002,12 @@ impl Stmt {
                             write!(f, "{converter_start}")?;
                         }
                         write!(f, "unsafe {{ {}(", id.name)?;
-                        for (param, ty) in arguments {
-                            let param = handle_reserved(&crate::to_snake_case(param));
+                        for (i, (param, ty)) in arguments.iter().enumerate() {
+                            let param = if i == 0 && *first_arg_is_self {
+                                "self".to_string()
+                            } else {
+                                handle_reserved(&crate::to_snake_case(param))
+                            };
                             if let Some((_, converter_start, converter_end)) =
                                 ty.fn_argument_converter()
                             {
@@ -2961,7 +3025,7 @@ impl Stmt {
 
                         writeln!(f, "}}")?;
                     } else {
-                        writeln!(f, "extern {abi:?} {{")?;
+                        writeln!(f, "{}{{", abi.extern_outer())?;
 
                         write!(f, "{}", documentation.fmt(None))?;
                         write!(f, "    {}", self.cfg_gate_ln(config))?;
@@ -2970,7 +3034,7 @@ impl Stmt {
                             writeln!(f, "    #[must_use]")?;
                         }
 
-                        raw_fn_decl(f, "pub ")?;
+                        raw_fn_decl(f, &format!("{vis} "))?;
 
                         writeln!(f, "}}")?;
                     }
@@ -2980,11 +3044,9 @@ impl Stmt {
                     cf_id,
                     result_type,
                     availability: _, // #[deprecated] is useless on traits.
-                    can_unwind,
+                    abi,
                     documentation,
                 } => {
-                    let abi = if *can_unwind { "C-unwind" } else { "C" };
-
                     let (ret, _) = result_type.fn_return(false);
 
                     // Only emit for base types, not for mutable subclasses,
@@ -2997,9 +3059,9 @@ impl Stmt {
                     write!(f, "{}", documentation.fmt(None))?;
                     writeln!(f, "    #[doc(alias = {:?})]", id.name)?;
                     writeln!(f, "    #[inline]")?;
-                    writeln!(f, "    fn type_id(){ret} {{")?;
+                    writeln!(f, "    {}fn type_id(){ret} {{", abi.extern_outer())?;
 
-                    writeln!(f, "        extern {abi:?} {{")?;
+                    writeln!(f, "        {}{{", abi.extern_inner())?;
                     writeln!(f, "            fn {}(){ret};", id.name,)?;
                     writeln!(f, "        }}")?;
 
@@ -3152,6 +3214,18 @@ impl Stmt {
                         writeln!(f, "    ));")?;
                         writeln!(f, "}}")?;
                     }
+                }
+                Self::GeneralImpl {
+                    location: _,
+                    item,
+                    stmts,
+                } => {
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "impl {} {{", item.id().path())?;
+                    for stmt in stmts {
+                        writeln!(f, "{}", stmt.fmt(config))?;
+                    }
+                    writeln!(f, "}}")?;
                 }
             };
             Ok(())

@@ -1,10 +1,7 @@
 use core::cmp::Ordering;
 use core::ptr;
 
-use crate::{
-    kCFBooleanFalse, kCFBooleanTrue, CFBoolean, CFBooleanGetValue, CFNumber, CFNumberCompare,
-    CFNumberCreate, CFNumberGetValue, CFNumberType, CFRetained,
-};
+use crate::{kCFBooleanFalse, kCFBooleanTrue, CFBoolean, CFNumber, CFNumberType, CFRetained};
 
 impl CFBoolean {
     pub fn new(value: bool) -> &'static CFBoolean {
@@ -16,7 +13,7 @@ impl CFBoolean {
     }
 
     pub fn as_bool(&self) -> bool {
-        CFBooleanGetValue(self)
+        self.value()
     }
 }
 
@@ -29,7 +26,7 @@ macro_rules! def_new_fn {
         #[inline]
         pub fn $fn_name(val: $fn_inp) -> CFRetained<Self> {
             let ptr: *const $fn_inp = &val;
-            unsafe { CFNumberCreate(None, CFNumberType::$type, ptr.cast()).expect("failed creating CFNumber") }
+            unsafe { Self::new(None, CFNumberType::$type, ptr.cast()).expect("failed creating CFNumber") }
         }
     )*}
 }
@@ -70,7 +67,7 @@ macro_rules! def_get_fn {
         pub fn $fn_name(&self) -> Option<$fn_ret> {
             let mut value: $fn_ret = <$fn_ret>::default();
             let ptr: *mut $fn_ret = &mut value;
-            let ret = unsafe { CFNumberGetValue(self, CFNumberType::$type, ptr.cast()) };
+            let ret = unsafe { self.value(CFNumberType::$type, ptr.cast()) };
             if ret {
                 Some(value)
             } else {
@@ -120,7 +117,7 @@ impl Ord for CFNumber {
     fn cmp(&self, other: &Self) -> Ordering {
         // Documented that one should pass NULL here.
         let context = ptr::null_mut();
-        unsafe { CFNumberCompare(self, Some(other), context) }.into()
+        unsafe { self.compare(Some(other), context) }.into()
     }
 }
 

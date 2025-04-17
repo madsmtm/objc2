@@ -3,8 +3,7 @@ use core::slice;
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 
-use crate::CFIndex;
-use crate::{CFData, CFDataGetBytePtr, CFDataGetLength};
+use crate::{CFData, CFIndex};
 
 fn get_len(bytes: &[u8]) -> CFIndex {
     // An allocation in Rust cannot be larger than isize::MAX, so this will
@@ -20,7 +19,7 @@ impl CFData {
     #[doc(alias = "CFDataCreate")]
     pub fn from_bytes(bytes: &[u8]) -> crate::CFRetained<Self> {
         let len = get_len(bytes);
-        unsafe { crate::CFDataCreate(None, bytes.as_ptr(), len) }.expect("failed creating CFData")
+        unsafe { crate::CFData::new(None, bytes.as_ptr(), len) }.expect("failed creating CFData")
     }
 
     /// Alias for easier transition from the `core-foundation` crate.
@@ -40,17 +39,15 @@ impl CFData {
     pub fn from_static_bytes(bytes: &'static [u8]) -> crate::CFRetained<Self> {
         let len = get_len(bytes);
         // SAFETY: Same as `CFString::from_static_str`.
-        unsafe {
-            crate::CFDataCreateWithBytesNoCopy(None, bytes.as_ptr(), len, crate::kCFAllocatorNull)
-        }
-        .expect("failed creating CFData")
+        unsafe { CFData::with_bytes_no_copy(None, bytes.as_ptr(), len, crate::kCFAllocatorNull) }
+            .expect("failed creating CFData")
     }
 
     /// The number of bytes contained by the `CFData`.
     #[inline]
     #[doc(alias = "CFDataGetLength")]
     pub fn len(&self) -> usize {
-        CFDataGetLength(self) as _
+        self.length() as usize
     }
 
     /// Whether the `CFData` is empty.
@@ -72,7 +69,7 @@ impl CFData {
     #[inline]
     #[doc(alias = "CFDataGetBytePtr")]
     pub unsafe fn as_bytes_unchecked(&self) -> &[u8] {
-        let ptr = CFDataGetBytePtr(self);
+        let ptr = self.byte_ptr();
         if !ptr.is_null() {
             // SAFETY: The pointer is valid, and caller ensures that the
             // `CFData` is not mutated for the lifetime of it.

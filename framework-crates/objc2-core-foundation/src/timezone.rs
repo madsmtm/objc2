@@ -2,16 +2,13 @@
 
 #[cfg(test)]
 mod tests {
-    use crate::{CFTimeZoneCopyDefault, CFTimeZoneCopySystem, CFTimeZoneGetName};
+    use crate::CFTimeZone;
 
     #[test]
     fn cmp() {
-        let system = CFTimeZoneCopySystem().unwrap();
-        let default = CFTimeZoneCopyDefault().unwrap();
+        let system = CFTimeZone::system().unwrap();
+        let default = CFTimeZone::default().unwrap();
         assert_eq!(system, default);
-        assert_eq!(
-            CFTimeZoneGetName(&system).unwrap(),
-            CFTimeZoneGetName(&default).unwrap(),
-        );
+        assert_eq!(system.name().unwrap(), default.name().unwrap(),);
     }
 }

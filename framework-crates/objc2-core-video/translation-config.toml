@@ -37,3 +37,13 @@ fn.CVOpenGLESTextureGetName.skipped = true
 fn.CVMetalTextureGetCleanTexCoords.skipped = true
 fn.CVOpenGLTextureGetCleanTexCoords.skipped = true
 fn.CVOpenGLESTextureGetCleanTexCoords.skipped = true
+
+fn.CVMetalBufferGetTypeID.unsafe = false
+fn.CVMetalTextureGetTypeID.unsafe = false
+fn.CVOpenGLBufferGetTypeID.unsafe = false
+fn.CVOpenGLTextureGetTypeID.unsafe = false
+fn.CVPixelBufferGetTypeID.unsafe = false
+
+# Naming conflicts with the newer Copy variants.
+fn.CVBufferGetAttachment.renamed = "get_attachment"
+fn.CVBufferGetAttachments.renamed = "get_attachments"

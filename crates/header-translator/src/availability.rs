@@ -232,6 +232,14 @@ impl Availability {
         }
     }
 
+    pub fn new_deprecated(msg: impl Into<String>) -> Self {
+        Self {
+            deprecated: Versions::RUST_OS_MIN,
+            message: Some(msg.into()),
+            ..Default::default()
+        }
+    }
+
     /// Available and non-deprecated enum cases.
     pub fn is_available_non_deprecated(&self) -> bool {
         !matches!(

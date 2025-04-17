@@ -6,6 +6,8 @@
 
 use std::iter::FusedIterator;
 
+use itertools::Itertools;
+
 /// Split a string according to Swift's word boundary algorithm.
 ///
 /// The docs says:
@@ -231,6 +233,100 @@ pub(crate) fn enum_prefix<'a>(
     ep
 }
 
+pub(crate) fn cf_no_ref(type_name: &str) -> &str {
+    type_name.strip_suffix("Ref").unwrap_or(type_name)
+}
+
+/// Translate CoreFoundation-like functions to methods.
+///
+/// Swift does this manually for CoreGraphics, but not in general.
+///
+/// See: <https://github.com/madsmtm/objc2/issues/736>
+pub(crate) fn cf_fn(
+    fn_name: &str,
+    type_name: &str,
+    consider_mutable: bool,
+    omit_memory_management_words: bool,
+) -> Option<String> {
+    let stripped_type_name = if consider_mutable {
+        type_name.replace("Mutable", "")
+    } else {
+        type_name.to_string()
+    };
+    let is_mutable = stripped_type_name != type_name;
+    let stripped_type_name = cf_no_ref(&stripped_type_name);
+
+    let cp = common_prefix([fn_name, stripped_type_name]);
+    // Things like CGDisplayModelNumber should not be mapped on CGDisplayMode.
+    if stripped_type_name != cp {
+        return None;
+    }
+    // TODO: Maybe make this more like "if all words in type name exists in fn name"?
+    // That would allow `CGPDFContextCreate` to be emitted as `CGContext.pdf_create`.
+    let rest = fn_name.strip_prefix(cp)?;
+
+    if rest.is_empty() {
+        return None;
+    }
+
+    // Change wording to better match Rust's name scheme:
+    // <https://rust-lang.github.io/api-guidelines/naming.html>
+    //
+    // See the following for inspiration:
+    // <https://github.com/swiftlang/swift/blob/swift-6.1-RELEASE/docs/CToSwiftNameTranslation-OmitNeedlessWords.md>
+    let rest = split_words(rest).collect::<Vec<_>>();
+
+    // Keep "Create" and "Copy" if needed for the user to be able to determine
+    // memory management. Used for things like `CFPlugInInstanceCreate` and
+    // `CFSocketCopyRegisteredValue`, where objc2 doesn't handle memory
+    // management.
+    //
+    // "Make" and "Get" are fine to always omit.
+    let (prefix, rest) = if !omit_memory_management_words && matches!(rest[0], "Create" | "Copy") {
+        (None, &rest[..])
+    } else {
+        // It probably makes sense to keep the "With" and "From" distinction
+        // that CF makes, since it might be communicating something?
+        //
+        // Compare e.g. `CFUUIDCreateFromString` (doesn't retain the string)
+        // and `CFURLCreateWithString` (does, at least semantically).
+        match &rest[..] {
+            // Same as below + remove the word "Mutable" if it is already
+            // communicated in the type name.
+            ["Create" | "Make", "Mutable", "Copy"] if is_mutable => (Some("new_copy"), &[] as &[_]),
+            ["Create" | "Make", "Mutable", "With", rest @ ..] if is_mutable => (Some("with"), rest),
+            ["Create" | "Make", "Mutable", "From", rest @ ..] if is_mutable => (Some("from"), rest),
+            ["Create" | "Make", "Mutable"] if is_mutable => (Some("new"), &[] as &[_]),
+            ["Create" | "Make", "Mutable", rest @ ..] => (Some("new"), rest),
+
+            // Convert constructor methods to use "new" and "from_":
+            // <https://rust-lang.github.io/api-guidelines/predictability.html#constructors-are-static-inherent-methods-c-ctor>
+            //
+            // "with_" is also fairly common in the standard library, so we
+            // allow that too.
+            ["Create" | "Make", "Copy"] => (Some("new_copy"), &[] as &[_]),
+            ["Create" | "Make", "With", rest @ ..] => (Some("with"), rest),
+            ["Create" | "Make", "From", rest @ ..] => (Some("from"), rest),
+            ["Create" | "Make"] => (Some("new"), &[] as &[_]),
+            ["Create" | "Make", rest @ ..] => (Some("new"), rest),
+
+            ["Copy", rest @ ..] if !rest.is_empty() => (None, rest),
+            ["Get", rest @ ..] if !rest.is_empty() => (None, rest),
+            rest => (None, rest),
+        }
+    };
+
+    Some(
+        prefix
+            .iter()
+            .chain(rest)
+            // Make things like CGColorCreateGenericGrayGamma2_2 work.
+            .filter(|word| **word != "_")
+            .join("_")
+            .to_lowercase(),
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -280,6 +376,7 @@ mod tests {
                 "Type640x480",
             ],
         );
+        check("UTF__8", &["UTF", "_", "_", "8"]);
     }
 
     #[test]
@@ -385,5 +482,44 @@ mod tests {
             ],
             "NEHotspotConfigurationEAPTLSVersion_",
         );
+    }
+
+    #[test]
+    fn test_cf_fn() {
+        #[track_caller]
+        fn check(fn_name: &str, type_name: &str, expected: Option<&str>) {
+            assert_eq!(cf_fn(fn_name, type_name, false, true).as_deref(), expected);
+        }
+
+        // Successful cases.
+        check("CFDataCreateCopy", "CFData", Some("new_copy"));
+        check(
+            "CFCalendarCreateWithIdentifier",
+            "CFCalendar",
+            Some("with_identifier"),
+        );
+        check("CFBundleCopyBundleURL", "CFBundle", Some("bundle_url"));
+        check("CFNumberGetByteSize", "CFNumber", Some("byte_size"));
+        check("CFDateCompare", "CFDate", Some("compare"));
+        check(
+            "CMTagMakeWithSInt64Value",
+            "CMTag",
+            Some("with_s_int64_value"),
+        );
+        check(
+            "CGColorSpaceCreateCopyWithStandardRange",
+            "CGColorSpace",
+            Some("new_copy_with_standard_range"),
+        );
+        check("HIShapeCreateMutableCopy", "HIMutableShape", Some("copy"));
+
+        check("CFDateCompare", "CF", Some("date_compare"));
+        check("AbcDef", "AbcDef", Some(""));
+        check("Ac", "Bc", None);
+
+        check("FooBar", "Foo", Some("bar"));
+        check("FooBar", "MutableFoo", Some("bar"));
+        check("FooBar", "FooRef", Some("bar"));
+        check("FooBar", "MutableFooRef", Some("bar"));
     }
 }

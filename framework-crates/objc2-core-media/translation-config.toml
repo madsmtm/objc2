@@ -22,3 +22,10 @@ const.kCMFormatDescriptionExtension_VerbatimImageDescription.skipped = true
 # Depends on CFTimeInterval and CFAbsoluteTime without feature gating.
 const.kCMTimebaseVeryLongCFTimeInterval.skipped = true
 const.kCMTimebaseFarFutureCFAbsoluteTime.skipped = true
+
+# Naming conflicts with the newer Copy variants.
+fn.CMBufferQueueGetHead.renamed = "get_head"
+fn.CMTimebaseGetMasterTimebase.renamed = "get_master_timebase"
+fn.CMTimebaseGetMasterClock.renamed = "get_master_clock"
+fn.CMTimebaseGetMaster.renamed = "get_master"
+fn.CMTimebaseGetUltimateMasterClock.renamed = "get_ultimate_master_clock"

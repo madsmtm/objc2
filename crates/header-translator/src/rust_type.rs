@@ -8,6 +8,7 @@ use proc_macro2::{TokenStream, TokenTree};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::id::{ItemIdentifier, ItemTree};
+use crate::name_translation::cf_no_ref;
 use crate::protocol::ProtocolRef;
 use crate::stmt::{anonymous_record_name, is_bridged};
 use crate::stmt::{parse_superclasses, superclasses_required_items};
@@ -646,6 +647,13 @@ impl PointeeTy {
             Self::Self_ => self_provides,
             Self::TypeDef { to, .. } => to.provides_mainthreadmarker(self_provides),
             _ => false,
+        }
+    }
+
+    pub(crate) fn implementable(&self) -> Option<ItemTree> {
+        match self {
+            Self::CFTypeDef { id } | Self::Class { id, .. } => Some(ItemTree::from_id(id.clone())),
+            _ => None,
         }
     }
 
@@ -1708,6 +1716,27 @@ impl Ty {
         }
     }
 
+    /// Return the `ItemTree` for the nearest implement-able type, if any.
+    pub(crate) fn implementable(&self) -> Option<ItemTree> {
+        match self {
+            Self::Primitive(_) | Self::Simd { .. } | Self::Sel { .. } => None,
+            Self::Pointee(pointee) => pointee.implementable(),
+            Self::Pointer { pointee, .. }
+            | Self::IncompleteArray { pointee, .. }
+            | Self::Array {
+                element_type: pointee,
+                ..
+            } => pointee.implementable(),
+            // TypeDefs aren't implement-able, even if their underlying type is.
+            Self::TypeDef { .. } => None,
+            Self::Enum { id, ty } => Some(ItemTree::new(id.clone(), ty.required_items())),
+            Self::Struct { id, fields, .. } | Self::Union { id, fields } => {
+                let fields = fields.iter().flat_map(|field| field.required_items());
+                Some(ItemTree::new(id.clone(), fields))
+            }
+        }
+    }
+
     /// AnyClass is safe to return as `&'static T`, since the runtime will it
     /// alive forever (and it has infinite retain count).
     ///
@@ -1798,6 +1827,18 @@ impl Ty {
         } else {
             false
         }
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn is_cf_allocator(&self) -> bool {
+        if let Self::Pointer { pointee, .. } = self {
+            if let Ty::Pointee(PointeeTy::CFTypeDef { id }) = &**pointee {
+                if id.name == "CFAllocator" {
+                    return true;
+                }
+            }
+        }
+        false
     }
 
     pub(crate) fn is_object_like_ptr(&self) -> bool {
@@ -2878,7 +2919,7 @@ impl Ty {
                     PointeeTy::CFTypeDef { id } => id,
                     _ => return,
                 };
-                let type_name = id.name.strip_suffix("Ref").unwrap_or(&id.name);
+                let type_name = cf_no_ref(&id.name);
                 // We don't ever want to mark these as non-NULL, as they have NULL
                 // statics (`kCFAllocatorDefault` and `kODSessionDefault`).
                 if fn_name.contains(type_name) && !matches!(type_name, "ODSession" | "CFAllocator")
@@ -2889,6 +2930,32 @@ impl Ty {
                     *nullability = Nullability::NonNull;
                 }
             }
+        }
+    }
+
+    pub(crate) fn is_self_ty_legal(&self, for_id: &ItemIdentifier) -> bool {
+        match self {
+            Self::Pointer {
+                // Only non-NULL pointers are valid `self` types.
+                // (at least until we get arbitrary self types).
+                nullability: Nullability::NonNull,
+                pointee,
+                ..
+            } => match &**pointee {
+                Self::Pointee(pointee) => pointee
+                    .implementable()
+                    .is_some_and(|implementor| implementor.id() == for_id),
+                Self::Enum { id, .. } | Self::Struct { id, .. } | Self::Union { id, .. } => {
+                    id == for_id
+                }
+                // NOTE: Do not recurse pointers here, that's invalid for
+                // e.g. `SecKeychainCopyDefault`.
+                _ => false,
+            },
+            Self::Enum { id, .. } | Self::Struct { id, .. } | Self::Union { id, .. } => {
+                id == for_id
+            }
+            _ => false,
         }
     }
 

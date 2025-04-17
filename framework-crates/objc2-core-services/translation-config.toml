@@ -92,3 +92,5 @@ const.typeFloat.skipped = true
 const.typeLongFloat.skipped = true
 const.typeExtended.skipped = true
 const.typeFSS.skipped = true
+
+fn.SKDocumentGetTypeID.unsafe = false

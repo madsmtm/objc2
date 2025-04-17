@@ -6,8 +6,7 @@ use core::{fmt, slice, str};
 
 use crate::{
     kCFAllocatorNull, CFIndex, CFRange, CFRetained, CFString, CFStringBuiltInEncodings,
-    CFStringCompare, CFStringCompareFlags, CFStringCreateWithBytes, CFStringCreateWithBytesNoCopy,
-    CFStringGetBytes, CFStringGetCStringPtr, CFStringGetLength,
+    CFStringCompareFlags,
 };
 
 #[track_caller]
@@ -35,7 +34,7 @@ impl CFString {
         debug_assert!(string.len() < CFIndex::MAX as usize);
         let len = string.len() as CFIndex;
         let s = unsafe {
-            CFStringCreateWithBytes(
+            Self::with_bytes(
                 None,
                 string.as_ptr(),
                 len,
@@ -70,7 +69,7 @@ impl CFString {
         // CFString will be alive for. This is ensured by the `'static`
         // requirement.
         let s = unsafe {
-            CFStringCreateWithBytesNoCopy(
+            Self::with_bytes_no_copy(
                 None,
                 string.as_ptr(),
                 len,
@@ -100,7 +99,7 @@ impl CFString {
     #[doc(alias = "CFStringGetCStringPtr")]
     pub unsafe fn as_str_unchecked(&self) -> Option<&str> {
         // NOTE: The encoding is an 8-bit encoding.
-        let bytes = CFStringGetCStringPtr(self, CFStringBuiltInEncodings::EncodingASCII.0);
+        let bytes = self.c_string_ptr(CFStringBuiltInEncodings::EncodingASCII.0);
         NonNull::new(bytes as *mut c_char).map(|bytes| {
             // NOTE: The returned string may contain interior NUL bytes:
             // https://github.com/swiftlang/swift-corelibs-foundation/issues/5200
@@ -113,7 +112,7 @@ impl CFString {
             //
             // This is also what Swift does:
             // https://github.com/swiftlang/swift-corelibs-foundation/commit/8422c1a5e63913613a93523b3b398cb982df6205
-            let len = CFStringGetLength(self) as usize;
+            let len = self.length() as usize;
 
             // SAFETY: The pointer is valid for as long as the CFString is not
             // mutated (which the caller ensures it isn't for the lifetime of
@@ -147,11 +146,10 @@ impl fmt::Display for CFString {
         let mut location_utf16 = 0;
 
         loop {
-            let len_utf16 = CFStringGetLength(self);
+            let len_utf16 = self.length();
             let mut read_utf8 = 0;
             let read_utf16 = unsafe {
-                CFStringGetBytes(
-                    self,
+                self.bytes(
                     CFRange {
                         location: location_utf16,
                         length: len_utf16 - location_utf16,
@@ -205,7 +203,7 @@ impl Ord for CFString {
     fn cmp(&self, other: &Self) -> Ordering {
         // Request standard lexiographical ordering.
         let flags = CFStringCompareFlags::empty();
-        CFStringCompare(self, Some(other), flags).into()
+        self.compare(Some(other), flags).into()
     }
 }
 
@@ -215,7 +213,6 @@ mod tests {
     use core::ffi::CStr;
 
     use super::*;
-    use crate::{CFStringCreateWithCString, CFStringGetCString};
 
     #[test]
     fn basic_conversion() {
@@ -246,7 +243,7 @@ mod tests {
         ];
         for (cstr, encoding, expected) in table {
             let cstr = CStr::from_bytes_with_nul(cstr).unwrap();
-            let s = unsafe { CFStringCreateWithCString(None, cstr.as_ptr(), encoding.0) }.unwrap();
+            let s = unsafe { CFString::with_c_string(None, cstr.as_ptr(), encoding.0) }.unwrap();
             assert_eq!(s.to_string(), expected);
         }
     }
@@ -254,7 +251,7 @@ mod tests {
     #[test]
     fn from_incomplete() {
         let s = unsafe {
-            CFStringCreateWithBytes(
+            CFString::with_bytes(
                 None,
                 b"\xd8\x3d\xde".as_ptr(),
                 3,
@@ -264,7 +261,7 @@ mod tests {
             .unwrap()
         };
         assert_eq!(s.to_string(), "�"); // Replacement character
-        assert_eq!(CFStringGetLength(&s), 1);
+        assert_eq!(s.length(), 1);
     }
 
     #[test]
@@ -278,8 +275,7 @@ mod tests {
         // Test `CFStringGetCString`.
         let mut buf = [0u8; 10];
         assert!(unsafe {
-            CFStringGetCString(
-                &s,
+            s.c_string(
                 buf.as_mut_ptr().cast(),
                 buf.len() as _,
                 CFStringBuiltInEncodings::EncodingUTF8.0,
@@ -332,7 +328,7 @@ mod tests {
         // See also:
         // https://github.com/swiftlang/swift-corelibs-foundation/issues/5164
         let s = unsafe {
-            CFStringCreateWithCString(
+            CFString::with_c_string(
                 None,
                 b"\x65\x26\0".as_ptr().cast(),
                 CFStringBuiltInEncodings::EncodingUnicode.0,
@@ -346,8 +342,7 @@ mod tests {
         // So does `CFStringGetCString`.
         let mut buf = [0u8; 20];
         assert!(unsafe {
-            CFStringGetCString(
-                &s,
+            s.c_string(
                 buf.as_mut_ptr().cast(),
                 buf.len() as _,
                 CFStringBuiltInEncodings::EncodingUTF8.0,
@@ -359,12 +354,7 @@ mod tests {
         // `CFStringGetCStringPtr` completely ignores the requested UTF-8 conversion.
         assert_eq!(unsafe { s.as_str_unchecked() }, Some("e"));
         assert_eq!(
-            unsafe {
-                CStr::from_ptr(CFStringGetCStringPtr(
-                    &s,
-                    CFStringBuiltInEncodings::EncodingUTF8.0,
-                ))
-            },
+            unsafe { CStr::from_ptr(s.c_string_ptr(CFStringBuiltInEncodings::EncodingUTF8.0,)) },
             CStr::from_bytes_with_nul(b"e&\0").unwrap()
         );
     }

@@ -1,11 +1,11 @@
 #![cfg(unix)] // std::os::fd only available on unix platforms.
 use std::os::fd::{AsRawFd, RawFd};
 
-use crate::{CFFileDescriptor, CFFileDescriptorGetNativeDescriptor};
+use crate::CFFileDescriptor;
 
 impl AsRawFd for CFFileDescriptor {
     fn as_raw_fd(&self) -> RawFd {
-        CFFileDescriptorGetNativeDescriptor(self)
+        self.native_descriptor()
     }
 }
 

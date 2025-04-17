@@ -3,11 +3,8 @@ use alloc::vec::Vec;
 use core::{borrow::Borrow, ffi::c_void, hash::Hash, mem};
 
 use crate::{
-    kCFTypeDictionaryKeyCallBacks, kCFTypeDictionaryValueCallBacks, CFDictionary,
-    CFDictionaryAddValue, CFDictionaryContainsKey, CFDictionaryContainsValue, CFDictionaryCreate,
-    CFDictionaryCreateMutable, CFDictionaryGetCount, CFDictionaryGetValue,
-    CFDictionaryRemoveAllValues, CFDictionaryRemoveValue, CFDictionaryReplaceValue,
-    CFDictionarySetValue, CFIndex, CFMutableDictionary, CFRetained, Type,
+    kCFTypeDictionaryKeyCallBacks, kCFTypeDictionaryValueCallBacks, CFDictionary, CFIndex,
+    CFMutableDictionary, CFRetained, Type,
 };
 
 /// Roughly same as `failed_creating_array`.
@@ -46,7 +43,7 @@ impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
     /// Create a new empty dictionary.
     #[inline]
     #[doc(alias = "CFDictionaryCreate")]
-    pub fn new() -> CFRetained<Self>
+    pub fn empty() -> CFRetained<Self>
     where
         K: Type + PartialEq + Hash,
         V: Type,
@@ -85,7 +82,7 @@ impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
         // The keys and values are retained internally by the dictionary, so
         // we do not need to keep them alive ourselves after this.
         let dictionary = unsafe {
-            CFDictionaryCreate(
+            CFDictionary::new(
                 None,
                 keys,
                 values,
@@ -108,7 +105,7 @@ impl<K: ?Sized, V: ?Sized> CFMutableDictionary<K, V> {
     /// Create a new empty mutable dictionary.
     #[inline]
     #[doc(alias = "CFDictionaryCreateMutable")]
-    pub fn new() -> CFRetained<Self>
+    pub fn empty() -> CFRetained<Self>
     where
         K: Type + PartialEq + Hash,
         V: Type,
@@ -129,7 +126,7 @@ impl<K: ?Sized, V: ?Sized> CFMutableDictionary<K, V> {
         // SAFETY: The keys and values are CFTypes (`K: Type` and `V: Type`
         // bounds), and the dictionary callbacks are thus correct.
         let dictionary = unsafe {
-            CFDictionaryCreateMutable(
+            CFMutableDictionary::new(
                 None,
                 capacity,
                 &kCFTypeDictionaryKeyCallBacks,
@@ -172,7 +169,7 @@ impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
         //
         // The values are CoreFoundation types, and thus cannot be NULL, so
         // no need to use `CFDictionaryGetValueIfPresent`.
-        let value = unsafe { CFDictionaryGetValue(self.as_opaque(), to_void(key)) };
+        let value = unsafe { self.as_opaque().value(to_void(key)) };
         // SAFETY: The dictionary's values are of type `V`.
         //
         // Caller ensures that the dictionary isn't mutated for the lifetime
@@ -204,7 +201,7 @@ impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
         let values_ptr = values.as_mut_ptr().cast::<*const c_void>();
 
         // SAFETY: The arrays are both of the right size.
-        unsafe { crate::CFDictionaryGetKeysAndValues(self.as_opaque(), keys_ptr, values_ptr) };
+        unsafe { self.as_opaque().keys_and_values(keys_ptr, values_ptr) };
 
         // SAFETY: Just initialized the `Vec`s above.
         unsafe {
@@ -230,7 +227,7 @@ impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
     #[doc(alias = "CFDictionaryGetCount")]
     pub fn len(&self) -> usize {
         // Fine to cast here, the count is never negative.
-        CFDictionaryGetCount(self.as_opaque()) as _
+        self.as_opaque().count() as _
     }
 
     /// Whether the dictionary is empty or not.
@@ -279,7 +276,7 @@ impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
     {
         // SAFETY: The key is bound by `K: Type`, and thus know to be valid
         // for the callbacks in the dictionary.
-        unsafe { CFDictionaryContainsKey(self.as_opaque(), to_void(key)) }
+        unsafe { self.as_opaque().contains_ptr_key(to_void(key)) }
     }
 
     /// Whether the value can be found anywhere in the dictionary.
@@ -291,7 +288,7 @@ impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
     {
         // SAFETY: The value is bound by `V: Type`, and thus know to be valid
         // for the callbacks in the dictionary.
-        unsafe { CFDictionaryContainsValue(self.as_opaque(), to_void(value)) }
+        unsafe { self.as_opaque().contains_ptr_value(to_void(value)) }
     }
 }
 
@@ -311,7 +308,9 @@ impl<K: ?Sized, V: ?Sized> CFMutableDictionary<K, V> {
         K: Type + Sized + PartialEq + Hash,
         V: Type + Sized,
     {
-        unsafe { CFDictionaryAddValue(Some(self.as_opaque()), to_void(key), to_void(value)) }
+        unsafe {
+            CFMutableDictionary::add_value(Some(self.as_opaque()), to_void(key), to_void(value))
+        }
     }
 
     /// Set the value of the key in the dictionary.
@@ -322,7 +321,9 @@ impl<K: ?Sized, V: ?Sized> CFMutableDictionary<K, V> {
         K: Type + Sized + PartialEq + Hash,
         V: Type + Sized,
     {
-        unsafe { CFDictionarySetValue(Some(self.as_opaque()), to_void(key), to_void(value)) }
+        unsafe {
+            CFMutableDictionary::set_value(Some(self.as_opaque()), to_void(key), to_void(value))
+        }
     }
 
     /// Replace the value of the key in the dictionary.
@@ -333,7 +334,9 @@ impl<K: ?Sized, V: ?Sized> CFMutableDictionary<K, V> {
         K: Type + Sized + PartialEq + Hash,
         V: Type + Sized,
     {
-        unsafe { CFDictionaryReplaceValue(Some(self.as_opaque()), to_void(key), to_void(value)) }
+        unsafe {
+            CFMutableDictionary::replace_value(Some(self.as_opaque()), to_void(key), to_void(value))
+        }
     }
 
     /// Remove the value from the dictionary associated with the key.
@@ -343,14 +346,14 @@ impl<K: ?Sized, V: ?Sized> CFMutableDictionary<K, V> {
     where
         K: Type + Sized + PartialEq + Hash,
     {
-        unsafe { CFDictionaryRemoveValue(Some(self.as_opaque()), to_void(key)) }
+        unsafe { CFMutableDictionary::remove_value(Some(self.as_opaque()), to_void(key)) }
     }
 
     /// Remove all keys and values from the dictionary.
     #[inline]
     #[doc(alias = "CFDictionaryRemoveAllValues")]
     pub fn clear(&self) {
-        CFDictionaryRemoveAllValues(Some(self.as_opaque()))
+        CFMutableDictionary::remove_all_values(Some(self.as_opaque()))
     }
 }
 
@@ -386,8 +389,8 @@ mod tests {
 
     #[test]
     fn empty() {
-        let dict1 = CFDictionary::<CFType, CFType>::new();
-        let dict2 = CFDictionary::<CFType, CFType>::new();
+        let dict1 = CFDictionary::<CFType, CFType>::empty();
+        let dict2 = CFDictionary::<CFType, CFType>::empty();
         assert_eq!(dict1, dict2);
         assert_eq!(dict1.len(), 0);
         assert_eq!(dict1.get(dict1.as_ref()), None);
@@ -402,7 +405,7 @@ mod tests {
     fn mutable_dictionary() {
         use crate::CFString;
 
-        let dict = CFMutableDictionary::<CFString, CFString>::new();
+        let dict = CFMutableDictionary::<CFString, CFString>::empty();
         dict.add(&CFString::from_str("a"), &CFString::from_str("b"));
         dict.add(&CFString::from_str("c"), &CFString::from_str("d"));
         assert_eq!(dict.len(), 2);

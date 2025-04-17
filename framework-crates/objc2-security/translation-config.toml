@@ -154,3 +154,15 @@ const.kSecTrustSettingsDefaultRootCertSetting.skipped = true
 
 # Concatenates strings
 const.kSystemKeychainPath.skipped = true
+
+fn.SecDigestTransformGetTypeID.unsafe = false
+fn.SecDecryptTransformGetTypeID.unsafe = false
+fn.SecEncryptTransformGetTypeID.unsafe = false
+fn.SecTransformGetTypeID.unsafe = false
+fn.SecGroupTransformGetTypeID.unsafe = false
+
+# Naming conflicts with the newer Copy variants.
+fn.SecAccessGetOwnerAndACL.renamed = "get_owner_and_acl"
+fn.SecCertificateGetData.renamed = "get_data"
+fn.SecACLGetAuthorizations.renamed = "get_authorizations"
+fn.SecTrustGetResult.renamed = "get_trust"

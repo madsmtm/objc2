@@ -100,6 +100,20 @@ fn.CFUserNotificationCheckBoxChecked.skipped = true
 fn.CFUserNotificationSecureTextField.skipped = true
 fn.CFUserNotificationPopUpSelection.skipped = true
 
+# Conflicts with the Get variants.
+fn.CFReadStreamCopyError.renamed = "copy_error"
+fn.CFWriteStreamCopyError.renamed = "copy_error"
+
+# Customized.
+fn.CFDictionaryContainsKey.renamed = "contains_ptr_key"
+fn.CFDictionaryContainsValue.renamed = "contains_ptr_value"
+fn.CFURLCreateWithString.renamed = "__from_string"
+fn.CFURLGetString.renamed = "__string"
+
+# Emitted on `CFDate`, which means that the auto-generated name is terrible.
+fn.CFDateFormatterCreateDateFromString.renamed = "from_formatter"
+fn.CFNumberFormatterCreateNumberFromString.renamed = "from_formatter"
+
 ##
 ## Safety
 ##

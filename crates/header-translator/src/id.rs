@@ -251,6 +251,14 @@ impl Location {
             warn!(?self, ?file_name, "expected to be in file");
         }
     }
+
+    /// Whether the location is textually similar to another.
+    ///
+    /// Example would be:
+    /// "CoreFoundation.CFURLAccess".semi_part_of("CoreFoundation.CFURL")
+    pub fn semi_part_of(&self, other: &Location) -> bool {
+        self.module_path.starts_with(&*other.module_path)
+    }
 }
 
 /// Names in C and Objective-C are global, so this is always enough to
@@ -652,10 +660,36 @@ impl<'de> de::Deserialize<'de> for ItemIdentifier {
 ///
 /// Instead of:
 /// XYZ = ["objc2-foundation/NSGeometry", "objc2-core-foundation"]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone)]
 pub struct ItemTree {
     id: ItemIdentifier,
     children: BTreeSet<ItemTree>,
+}
+
+impl PartialEq for ItemTree {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
+impl Eq for ItemTree {}
+
+impl hash::Hash for ItemTree {
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        self.id.hash(state);
+    }
+}
+
+impl PartialOrd for ItemTree {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for ItemTree {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.id.cmp(&other.id)
+    }
 }
 
 impl ItemTree {

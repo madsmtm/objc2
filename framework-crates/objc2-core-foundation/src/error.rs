@@ -1,11 +1,11 @@
 #![cfg(feature = "CFString")]
 use core::fmt;
 
-use crate::{CFError, CFErrorCopyDescription};
+use crate::CFError;
 
 impl fmt::Display for CFError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let desc = CFErrorCopyDescription(self).unwrap();
+        let desc = self.description().unwrap();
         write!(f, "{desc}")
     }
 }

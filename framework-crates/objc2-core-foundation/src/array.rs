@@ -3,18 +3,14 @@ use alloc::vec::Vec;
 use core::ffi::c_void;
 use core::{borrow::Borrow, mem};
 
-use crate::{
-    kCFTypeArrayCallBacks, CFArray, CFArrayAppendValue, CFArrayCreate, CFArrayCreateMutable,
-    CFArrayGetCount, CFArrayGetValueAtIndex, CFArrayInsertValueAtIndex, CFIndex, CFMutableArray,
-    CFRetained, Type,
-};
+use crate::{kCFTypeArrayCallBacks, CFArray, CFIndex, CFMutableArray, CFRetained, Type};
 
 #[inline]
 fn get_len<T>(objects: &[T]) -> CFIndex {
     // An allocation in Rust cannot be larger than isize::MAX, so this will
     // never fail.
     //
-    // Note that `CFArrayCreate` documents:
+    // Note that `CFArray::new` documents:
     // > If this parameter is negative, [...] the behavior is undefined.
     let len = objects.len();
     debug_assert!(len < CFIndex::MAX as usize);
@@ -54,20 +50,20 @@ impl<T: ?Sized> CFArray<T> {
     /// Create a new empty `CFArray` capable of holding CoreFoundation
     /// objects.
     #[inline]
-    #[doc(alias = "CFArrayCreate")]
-    pub fn new() -> CFRetained<Self>
+    #[doc(alias = "CFArray::new")]
+    pub fn empty() -> CFRetained<Self>
     where
         T: Type,
     {
         // It may not strictly be necessary to use correct array callbacks
         // here, though it's good to know that it's correct for use in e.g.
-        // `CFArrayCreateMutableCopy`.
+        // `CFMutableArray::newCopy`.
         Self::from_objects(&[])
     }
 
     /// Create a new `CFArray` with the given CoreFoundation objects.
     #[inline]
-    #[doc(alias = "CFArrayCreate")]
+    #[doc(alias = "CFArray::new")]
     pub fn from_objects(objects: &[&T]) -> CFRetained<Self>
     where
         T: Type,
@@ -81,7 +77,7 @@ impl<T: ?Sized> CFArray<T> {
         //
         // The objects are retained internally by the array, so we do not need
         // to keep them alive ourselves after this.
-        let array = unsafe { CFArrayCreate(None, ptr, len, &kCFTypeArrayCallBacks) }
+        let array = unsafe { CFArray::new(None, ptr, len, &kCFTypeArrayCallBacks) }
             .unwrap_or_else(|| failed_creating_array(len));
 
         // SAFETY: The objects came from `T`.
@@ -101,7 +97,7 @@ impl<T: ?Sized> CFArray<T> {
 
     /// Create a new `CFArray` with the given retained CoreFoundation objects.
     #[inline]
-    #[doc(alias = "CFArrayCreate")]
+    #[doc(alias = "CFArray::new")]
     pub fn from_retained_objects(objects: &[CFRetained<T>]) -> CFRetained<Self>
     where
         T: Type,
@@ -111,7 +107,7 @@ impl<T: ?Sized> CFArray<T> {
         let ptr = objects.as_ptr().cast::<*const c_void>().cast_mut();
 
         // SAFETY: Same as in `from_objects`.
-        let array = unsafe { CFArrayCreate(None, ptr, len, &kCFTypeArrayCallBacks) }
+        let array = unsafe { CFArray::new(None, ptr, len, &kCFTypeArrayCallBacks) }
             .unwrap_or_else(|| failed_creating_array(len));
 
         // SAFETY: The objects came from `T`.
@@ -123,8 +119,8 @@ impl<T: ?Sized> CFArray<T> {
 impl<T: ?Sized> CFMutableArray<T> {
     /// Create a new empty mutable array.
     #[inline]
-    #[doc(alias = "CFArrayCreateMutable")]
-    pub fn new() -> CFRetained<Self>
+    #[doc(alias = "CFMutableArray::new")]
+    pub fn empty() -> CFRetained<Self>
     where
         T: Type,
     {
@@ -133,7 +129,7 @@ impl<T: ?Sized> CFMutableArray<T> {
 
     /// Create a new mutable array with the given capacity.
     #[inline]
-    #[doc(alias = "CFArrayCreateMutable")]
+    #[doc(alias = "CFMutableArray::new")]
     pub fn with_capacity(capacity: usize) -> CFRetained<Self>
     where
         T: Type,
@@ -143,7 +139,7 @@ impl<T: ?Sized> CFMutableArray<T> {
 
         // SAFETY: The objects are CFTypes (`T: Type` bound), and the array
         // callbacks are thus correct.
-        let array = unsafe { CFArrayCreateMutable(None, capacity, &kCFTypeArrayCallBacks) }
+        let array = unsafe { CFMutableArray::new(None, capacity, &kCFTypeArrayCallBacks) }
             .unwrap_or_else(|| failed_creating_array(capacity));
 
         // SAFETY: The array contains no objects yet, and thus it's safe to
@@ -161,7 +157,7 @@ impl<T: ?Sized> CFMutableArray<T> {
 //         let ptr: *const c_void = objects.as_ptr().cast();
 //
 //         // SAFETY: Same as in `from_objects`.
-//         let array = unsafe { CFArrayCreate(None, ptr, len, null) }
+//         let array = unsafe { CFArray::new(None, ptr, len, null) }
 //             .unwrap_or(|| failed_creating_array(len));
 //
 //         // SAFETY: The objects came from `T`.
@@ -192,7 +188,7 @@ impl<T: ?Sized> CFArray<T> {
         T: Type + Sized,
     {
         // SAFETY: Caller ensures that `index` is in bounds.
-        let ptr = unsafe { CFArrayGetValueAtIndex(self.as_opaque(), index) };
+        let ptr = unsafe { self.as_opaque().value_at_index(index) };
         // SAFETY: The array's values are of type `T`, and the objects are
         // CoreFoundation types (and thus cannot be NULL).
         //
@@ -226,7 +222,7 @@ impl<T: ?Sized> CFArray<T> {
         // `&T` has the same layout as `*const c_void`.
         let ptr = vec.as_mut_ptr().cast::<*const c_void>();
         // SAFETY: The range is in bounds
-        unsafe { crate::CFArrayGetValues(self.as_opaque(), range, ptr) };
+        unsafe { self.as_opaque().values(range, ptr) };
         // SAFETY: Just initialized the Vec above.
         unsafe { vec.set_len(len) };
 
@@ -269,7 +265,7 @@ impl<T: ?Sized> CFArray<T> {
     #[doc(alias = "CFArrayGetCount")]
     pub fn len(&self) -> usize {
         // Fine to cast here, the count is never negative.
-        CFArrayGetCount(self.as_opaque()) as _
+        self.as_opaque().count() as _
     }
 
     /// Whether the array is empty or not.
@@ -346,7 +342,7 @@ impl<T> CFMutableArray<T> {
         let ptr: *const T = obj;
         let ptr: *const c_void = ptr.cast();
         // SAFETY: The pointer is valid.
-        unsafe { CFArrayAppendValue(Some(self.as_opaque()), ptr) }
+        unsafe { CFMutableArray::append_value(Some(self.as_opaque()), ptr) }
     }
 
     /// Insert an object into the array at the given index.
@@ -363,7 +359,9 @@ impl<T> CFMutableArray<T> {
             let ptr: *const c_void = ptr.cast();
             // SAFETY: The pointer is valid, and just checked that the index
             // is in bounds.
-            unsafe { CFArrayInsertValueAtIndex(Some(self.as_opaque()), index as CFIndex, ptr) }
+            unsafe {
+                CFMutableArray::insert_value_at_index(Some(self.as_opaque()), index as CFIndex, ptr)
+            }
         } else {
             panic!(
                 "insertion index (is {}) should be <= len (is {})",
@@ -558,8 +556,8 @@ mod tests {
     fn array_with_invalid_pointers() {
         // without_provenance
         let ptr = [0 as _, 1 as _, 2 as _, 3 as _, usize::MAX as _].as_mut_ptr();
-        let array = unsafe { CFArrayCreate(None, ptr, 1, null()) }.unwrap();
-        let value = unsafe { CFArrayGetValueAtIndex(&array, 0) };
+        let array = unsafe { CFArray::new(None, ptr, 1, null()) }.unwrap();
+        let value = unsafe { array.value_at_index(0) };
         assert!(value.is_null());
     }
 
@@ -568,7 +566,7 @@ mod tests {
     #[ignore = "aborts (as expected)"]
     fn object_array_cannot_contain_null() {
         let ptr = [null()].as_mut_ptr();
-        let _array = unsafe { CFArrayCreate(None, ptr, 1, &kCFTypeArrayCallBacks) };
+        let _array = unsafe { CFArray::new(None, ptr, 1, &kCFTypeArrayCallBacks) };
     }
 
     #[test]

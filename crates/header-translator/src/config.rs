@@ -9,6 +9,7 @@ use heck::ToTrainCase;
 use semver::Version;
 use serde::{de, Deserialize, Deserializer};
 
+use crate::name_translation::cf_no_ref;
 use crate::stmt::{Counterpart, Derives};
 use crate::{ItemIdentifier, Location};
 
@@ -156,11 +157,7 @@ impl Config {
                     // We'll have to manually keep the name of those in
                     // translation-config.toml.
                     if is_cf {
-                        if let Some(name) = name.strip_suffix("Ref") {
-                            name.to_string()
-                        } else {
-                            name
-                        }
+                        cf_no_ref(&name).to_string()
                     } else {
                         name
                     }
@@ -521,6 +518,8 @@ pub struct FnData {
     #[serde(rename = "unsafe")]
     #[serde(default = "unsafe_default")]
     pub unsafe_: bool,
+    #[serde(default)]
+    pub renamed: Option<String>,
 }
 
 impl Default for FnData {
@@ -528,6 +527,7 @@ impl Default for FnData {
         Self {
             skipped: skipped_default(),
             unsafe_: unsafe_default(),
+            renamed: None,
         }
     }
 }

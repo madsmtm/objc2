@@ -11,14 +11,10 @@ pub type CFBundleRefNum = Inner;
 mod tests {
     use alloc::string::ToString;
 
-    use crate::{
-        CFBundleCopyExecutableURL, CFBundleCopyPrivateFrameworksURL, CFBundleCreate, CFRetained,
-        CFString, CFURLCopyAbsoluteURL, CFURLCopyFileSystemPath, CFURLCreateWithFileSystemPath,
-        CFURLPathStyle, CFURL,
-    };
+    use crate::{CFBundle, CFRetained, CFString, CFURLPathStyle, CFURL};
 
     fn url_from_str(s: &str, is_dir: bool) -> CFRetained<CFURL> {
-        CFURLCreateWithFileSystemPath(
+        CFURL::with_file_system_path(
             None,
             Some(&CFString::from_str(s)),
             CFURLPathStyle::CFURLPOSIXPathStyle,
@@ -30,11 +26,11 @@ mod tests {
     #[test]
     fn safari_executable_url() {
         let path = url_from_str("/Applications/Safari.app", true);
-        let bundle = CFBundleCreate(None, Some(&path)).expect("Safari not present");
-        let executable = CFBundleCopyExecutableURL(&bundle).unwrap();
+        let bundle = CFBundle::new(None, Some(&path)).expect("Safari not present");
+        let executable = CFBundle::executable_url(&bundle).unwrap();
         assert_eq!(
-            CFURLCopyFileSystemPath(
-                &CFURLCopyAbsoluteURL(&executable).unwrap(),
+            CFURL::file_system_path(
+                &CFURL::absolute_url(&executable).unwrap(),
                 CFURLPathStyle::CFURLPOSIXPathStyle,
             )
             .unwrap()
@@ -46,11 +42,11 @@ mod tests {
     #[test]
     fn safari_private_frameworks_url() {
         let path = url_from_str("/Applications/Safari.app", true);
-        let bundle = CFBundleCreate(None, Some(&path)).expect("Safari not present");
-        let frameworks = CFBundleCopyPrivateFrameworksURL(&bundle).unwrap();
+        let bundle = CFBundle::new(None, Some(&path)).expect("Safari not present");
+        let frameworks = CFBundle::private_frameworks_url(&bundle).unwrap();
         assert_eq!(
-            CFURLCopyFileSystemPath(
-                &CFURLCopyAbsoluteURL(&frameworks).unwrap(),
+            CFURL::file_system_path(
+                &CFURL::absolute_url(&frameworks).unwrap(),
                 CFURLPathStyle::CFURLPOSIXPathStyle,
             )
             .unwrap()
@@ -62,6 +58,6 @@ mod tests {
     #[test]
     fn non_existent_bundle() {
         let path = url_from_str("/usr/local/non_existent", true);
-        assert_eq!(CFBundleCreate(None, Some(&path)), None);
+        assert_eq!(CFBundle::new(None, Some(&path)), None);
     }
 }

@@ -1,25 +1,18 @@
-#![cfg(feature = "std")]
-#![cfg(unix)] // TODO: Use as_encoded_bytes/from_encoded_bytes_unchecked once in MSRV.
-use core::ffi::CStr;
-use std::ffi::OsStr;
-use std::os::unix::ffi::OsStrExt;
-use std::path::{Path, PathBuf};
+#[allow(unused_imports)]
+use crate::{CFIndex, CFRetained, CFURL};
 
-use crate::{
-    CFIndex, CFRetained, CFURLCreateFromFileSystemRepresentation,
-    CFURLCreateFromFileSystemRepresentationRelativeToBase, CFURLGetFileSystemRepresentation, CFURL,
-};
-
-const PATH_MAX: usize = 1024;
-
-/// [`Path`] conversion.
+/// [`Path`][std::path::Path] conversion.
+#[cfg(feature = "std")]
+#[cfg(unix)] // TODO: Use as_encoded_bytes/from_encoded_bytes_unchecked once in MSRV.
 impl CFURL {
     #[inline]
     fn from_path(
-        path: &Path,
+        path: &std::path::Path,
         is_directory: bool,
         base: Option<&CFURL>,
     ) -> Option<CFRetained<CFURL>> {
+        use std::os::unix::ffi::OsStrExt;
+
         // CFURL expects to get a string with the system encoding, and will
         // internally handle the different encodings, depending on if compiled
         // for Apple platforms or Windows (which is very rare, but could
@@ -36,7 +29,7 @@ impl CFURL {
             //
             // TODO: Expose this publicly?
             unsafe {
-                CFURLCreateFromFileSystemRepresentationRelativeToBase(
+                Self::from_file_system_representation_relative_to_base(
                     None,
                     bytes.as_ptr(),
                     len,
@@ -46,12 +39,12 @@ impl CFURL {
             }
         } else {
             unsafe {
-                CFURLCreateFromFileSystemRepresentation(None, bytes.as_ptr(), len, is_directory)
+                Self::from_file_system_representation(None, bytes.as_ptr(), len, is_directory)
             }
         }
     }
 
-    /// Create a file url from a [`Path`].
+    /// Create a file url from a [`Path`][std::path::Path].
     ///
     /// This is useful because a lot of CoreFoundation APIs use `CFURL` to
     /// represent file-system paths as well.
@@ -91,11 +84,11 @@ impl CFURL {
     /// ```
     #[inline]
     #[doc(alias = "CFURLCreateFromFileSystemRepresentation")]
-    pub fn from_file_path<P: AsRef<Path>>(path: P) -> Option<CFRetained<CFURL>> {
+    pub fn from_file_path<P: AsRef<std::path::Path>>(path: P) -> Option<CFRetained<CFURL>> {
         Self::from_path(path.as_ref(), false, None)
     }
 
-    /// Create a directory url from a [`Path`].
+    /// Create a directory url from a [`Path`][std::path::Path].
     ///
     /// This differs from [`from_file_path`][Self::from_file_path] in that the
     /// path is treated as a directory, which means that other normalization
@@ -130,11 +123,11 @@ impl CFURL {
     /// ```
     #[inline]
     #[doc(alias = "CFURLCreateFromFileSystemRepresentation")]
-    pub fn from_directory_path<P: AsRef<Path>>(path: P) -> Option<CFRetained<CFURL>> {
+    pub fn from_directory_path<P: AsRef<std::path::Path>>(path: P) -> Option<CFRetained<CFURL>> {
         Self::from_path(path.as_ref(), true, None)
     }
 
-    /// Extract the path part of the URL as a `PathBuf`.
+    /// Extract the path part of the URL as a [`PathBuf`][std::path::PathBuf].
     ///
     /// This will return a path regardless of whether the scheme is `file://`.
     /// It is the responsibility of the caller to ensure that the URL is valid
@@ -156,13 +149,17 @@ impl CFURL {
     /// use std::path::Path;
     /// use objc2_core_foundation::{CFURL, CFString};
     ///
-    /// let url = CFURL::from_string(&CFString::from_str("file:///tmp/foo.txt")).unwrap();
+    /// let url = CFURL::from_string(None, &CFString::from_str("file:///tmp/foo.txt"), None).unwrap();
     /// assert_eq!(url.to_file_path().unwrap(), Path::new("/tmp/foo.txt"));
     /// ```
     ///
     /// See also the examples in [`from_file_path`][Self::from_file_path].
     #[doc(alias = "CFURLGetFileSystemRepresentation")]
-    pub fn to_file_path(&self) -> Option<PathBuf> {
+    pub fn to_file_path(&self) -> Option<std::path::PathBuf> {
+        use std::os::unix::ffi::OsStrExt;
+
+        const PATH_MAX: usize = 1024;
+
         // TODO: if a path is relative with no base, how do we get that
         // relative path out again (without adding current dir?).
         //
@@ -172,7 +169,7 @@ impl CFURL {
         // the URL just cannot be converted).
         let mut buf = [0u8; PATH_MAX];
         let result = unsafe {
-            CFURLGetFileSystemRepresentation(self, true, buf.as_mut_ptr(), buf.len() as CFIndex)
+            self.file_system_representation(true, buf.as_mut_ptr(), buf.len() as CFIndex)
         };
         if !result {
             return None;
@@ -180,15 +177,14 @@ impl CFURL {
 
         // SAFETY: CF is guaranteed to null-terminate the buffer if
         // the function succeeded.
-        let cstr = unsafe { CStr::from_bytes_until_nul(&buf).unwrap_unchecked() };
+        let cstr = unsafe { core::ffi::CStr::from_bytes_until_nul(&buf).unwrap_unchecked() };
 
-        let path = OsStr::from_bytes(cstr.to_bytes());
-        Some(PathBuf::from(path))
+        let path = std::ffi::OsStr::from_bytes(cstr.to_bytes());
+        Some(path.into())
     }
 }
 
 /// String conversion.
-#[cfg(feature = "CFString")]
 impl CFURL {
     /// Create an URL from a `CFString`.
     ///
@@ -211,8 +207,8 @@ impl CFURL {
     ///     CFString, CFURL, CFURLCopyHostName, CFURLCopyScheme, CFURLCopyPath,
     /// };
     ///
-    /// let url = CFURL::from_string(&CFString::from_str("http://example.com/foo")).unwrap();
-    /// assert_eq!(url.to_string().to_string(), "http://example.com/foo");
+    /// let url = CFURL::from_string(None, &CFString::from_str("http://example.com/foo"), None).unwrap();
+    /// assert_eq!(url.string().to_string(), "http://example.com/foo");
     /// assert_eq!(CFURLCopyScheme(&url).unwrap().to_string(), "http");
     /// assert_eq!(CFURLCopyHostName(&url).unwrap().to_string(), "example.com");
     /// assert_eq!(CFURLCopyPath(&url).unwrap().to_string(), "/foo");
@@ -224,15 +220,19 @@ impl CFURL {
     /// use objc2_core_foundation::{CFString, CFURL};
     ///
     /// // Percent-encoding needs two characters.
-    /// assert_eq!(CFURL::from_string(&CFString::from_str("http://example.com/%A")), None);
+    /// assert_eq!(CFURL::from_string(None, &CFString::from_str("http://example.com/%A"), None), None);
     ///
     /// // Two hash-characters is disallowed.
-    /// assert_eq!(CFURL::from_string(&CFString::from_str("http://example.com/abc#a#b")), None);
+    /// assert_eq!(CFURL::from_string(None, &CFString::from_str("http://example.com/abc#a#b"), None), None);
     /// ```
     #[inline]
     #[doc(alias = "CFURLCreateWithString")]
-    pub fn from_string(url: &crate::CFString) -> Option<CFRetained<Self>> {
-        crate::CFURLCreateWithString(None, Some(url), None)
+    pub fn from_string(
+        allocator: Option<&crate::CFAllocator>,
+        url_string: &crate::CFString,
+        base_url: Option<&CFURL>,
+    ) -> Option<CFRetained<Self>> {
+        Self::__from_string(allocator, Some(url_string), base_url)
     }
 
     /// Create an URL from a string without checking it for validity.
@@ -248,6 +248,7 @@ impl CFURL {
     /// or simply a correctness requirement. So we conservatively mark this
     /// function as `unsafe`.
     #[inline]
+    #[cfg(feature = "CFString")]
     #[doc(alias = "CFURLCreateWithBytes")]
     pub unsafe fn from_str_unchecked(s: &str) -> Option<CFRetained<Self>> {
         let ptr = s.as_ptr();
@@ -264,7 +265,7 @@ impl CFURL {
         // all, and thus we propagate the validity checks to the user. See
         // also the source code for the checks:
         // https://github.com/apple-oss-distributions/CF/blob/CF-1153.18/CFURL.c#L1882-L1970
-        unsafe { crate::CFURLCreateWithBytes(None, ptr, len, encoding.0, None) }
+        unsafe { Self::with_bytes(None, ptr, len, encoding.0, None) }
     }
 
     /// Get the string-representation of the URL.
@@ -273,55 +274,56 @@ impl CFURL {
     /// this returning exactly the same string as was passed in
     /// [`from_string`][Self::from_string].
     #[doc(alias = "CFURLGetString")]
-    pub fn to_string(&self) -> CFRetained<crate::CFString> {
+    pub fn string(&self) -> CFRetained<crate::CFString> {
         // URLs contain valid UTF-8, so this should only fail on allocation
         // error.
-        crate::CFURLGetString(self).expect("failed getting string from CFURL")
+        self.__string().expect("failed getting string from CFURL")
     }
 }
 
 #[cfg(unix)]
 #[cfg(test)]
 #[cfg(feature = "CFString")]
+#[cfg(feature = "std")]
 mod tests {
+    use std::ffi::OsStr;
     use std::os::unix::ffi::OsStrExt;
+    use std::path::Path;
     use std::{env::current_dir, string::ToString};
 
-    use crate::{
-        CFString, CFURLCopyAbsoluteURL, CFURLCopyFileSystemPath, CFURLCopyPath, CFURLGetString,
-        CFURLPathStyle,
-    };
+    use crate::{CFString, CFURLPathStyle};
 
     use super::*;
 
     #[test]
     fn from_string() {
-        let url = CFURL::from_string(&CFString::from_str("https://example.com/xyz")).unwrap();
+        let url =
+            CFURL::from_string(None, &CFString::from_str("https://example.com/xyz"), None).unwrap();
         assert_eq!(url.to_file_path().unwrap(), Path::new("/xyz"));
-        assert_eq!(url.to_string().to_string(), "https://example.com/xyz");
+        assert_eq!(url.string().to_string(), "https://example.com/xyz");
 
         // Invalid.
-        let url = CFURL::from_string(&CFString::from_str("\0"));
+        let url = CFURL::from_string(None, &CFString::from_str("\0"), None);
         assert_eq!(url, None);
 
         // Also invalid.
-        let url = CFURL::from_string(&CFString::from_str("http://example.com/%a"));
+        let url = CFURL::from_string(None, &CFString::from_str("http://example.com/%a"), None);
         assert_eq!(url, None);
 
         // Though using `from_str_unchecked` succeeds.
         let url = unsafe { CFURL::from_str_unchecked("http://example.com/%a") }.unwrap();
-        assert_eq!(url.to_string().to_string(), "http://example.com/%25a");
+        assert_eq!(url.string().to_string(), "http://example.com/%25a");
         assert_eq!(url.to_file_path().unwrap(), Path::new("/%a"));
 
         let url = unsafe { CFURL::from_str_unchecked("/\0a\0") }.unwrap();
-        assert_eq!(url.to_string().to_string(), "/%00a%00");
+        assert_eq!(url.string().to_string(), "/%00a%00");
         assert_eq!(url.to_file_path(), None);
     }
 
     #[test]
     fn to_string_may_extra_percent_encode() {
-        let url = CFURL::from_string(&CFString::from_str("[")).unwrap();
-        assert_eq!(url.to_string().to_string(), "%5B");
+        let url = CFURL::from_string(None, &CFString::from_str("["), None).unwrap();
+        assert_eq!(url.string().to_string(), "%5B");
     }
 
     #[test]
@@ -348,7 +350,7 @@ mod tests {
             Some(current_dir().unwrap().join("relative.txt"))
         );
         assert_eq!(
-            CFURLCopyAbsoluteURL(&url).unwrap().to_file_path(),
+            url.absolute_url().unwrap().to_file_path(),
             Some(current_dir().unwrap().join("relative.txt"))
         );
 
@@ -375,12 +377,18 @@ mod tests {
         let url = CFURL::from_file_path("/abc/def\0\0\0").unwrap();
         assert_eq!(url.to_file_path().unwrap(), Path::new("/abc/def"));
 
-        let path = CFURLCopyFileSystemPath(&url, CFURLPathStyle::CFURLPOSIXPathStyle).unwrap();
+        let path = url
+            .file_system_path(CFURLPathStyle::CFURLPOSIXPathStyle)
+            .unwrap();
         assert_eq!(path.to_string(), "/abc/def");
         #[allow(deprecated)]
-        let path = CFURLCopyFileSystemPath(&url, CFURLPathStyle::CFURLHFSPathStyle).unwrap();
+        let path = url
+            .file_system_path(CFURLPathStyle::CFURLHFSPathStyle)
+            .unwrap();
         assert_eq!(path.to_string(), "Macintosh HD:abc:def");
-        let path = CFURLCopyFileSystemPath(&url, CFURLPathStyle::CFURLWindowsPathStyle).unwrap();
+        let path = url
+            .file_system_path(CFURLPathStyle::CFURLWindowsPathStyle)
+            .unwrap();
         assert_eq!(path.to_string(), "\\abc\\def");
     }
 
@@ -400,9 +408,11 @@ mod tests {
         // Non-root path.
         let url = CFURL::from_file_path(OsStr::from_bytes(b"abc\xd4def/xyz")).unwrap();
         assert_eq!(url.to_file_path().unwrap(), current_dir().unwrap()); // Huh?
-        assert!(CFURLCopyFileSystemPath(&url, CFURLPathStyle::CFURLPOSIXPathStyle).is_none());
-        assert_eq!(CFURLGetString(&url).unwrap().to_string(), "abc%D4def/xyz");
-        assert_eq!(CFURLCopyPath(&url).unwrap().to_string(), "abc%D4def/xyz");
+        assert!(url
+            .file_system_path(CFURLPathStyle::CFURLPOSIXPathStyle)
+            .is_none());
+        assert_eq!(url.string().to_string(), "abc%D4def/xyz");
+        assert_eq!(url.path().unwrap().to_string(), "abc%D4def/xyz");
 
         // Root path.
         // lone continuation byte (128) (invalid utf8)
@@ -411,11 +421,8 @@ mod tests {
             url.to_file_path().unwrap(),
             OsStr::from_bytes(b"/\xf8a/b/c")
         );
-        assert_eq!(
-            CFURLGetString(&url).unwrap().to_string(),
-            "file:///%F8a/b/c"
-        );
-        assert_eq!(CFURLCopyPath(&url).unwrap().to_string(), "/%F8a/b/c");
+        assert_eq!(url.string().to_string(), "file:///%F8a/b/c");
+        assert_eq!(url.path().unwrap().to_string(), "/%F8a/b/c");
 
         // Joined paths
         let url = CFURL::from_path(
@@ -425,28 +432,22 @@ mod tests {
         )
         .unwrap();
         assert_eq!(url.to_file_path(), None);
-        assert_eq!(CFURLGetString(&url).unwrap().to_string(), "sub%D4/%25D4");
-        assert_eq!(CFURLCopyPath(&url).unwrap().to_string(), "sub%D4/%25D4");
-        let abs = CFURLCopyAbsoluteURL(&url).unwrap();
+        assert_eq!(url.string().to_string(), "sub%D4/%25D4");
+        assert_eq!(url.path().unwrap().to_string(), "sub%D4/%25D4");
+        let abs = url.absolute_url().unwrap();
         assert_eq!(abs.to_file_path(), None);
-        assert_eq!(
-            CFURLGetString(&abs).unwrap().to_string(),
-            "file:///%F8a/b/sub%D4/%25D4"
-        );
-        assert_eq!(
-            CFURLCopyPath(&abs).unwrap().to_string(),
-            "/%F8a/b/sub%D4/%25D4"
-        );
+        assert_eq!(abs.string().to_string(), "file:///%F8a/b/sub%D4/%25D4");
+        assert_eq!(abs.path().unwrap().to_string(), "/%F8a/b/sub%D4/%25D4");
     }
 
     #[test]
     fn path_percent_encoded() {
         let url = CFURL::from_file_path("/%D4").unwrap();
-        assert_eq!(CFURLCopyPath(&url).unwrap().to_string(), "/%25D4");
+        assert_eq!(url.path().unwrap().to_string(), "/%25D4");
         assert_eq!(url.to_file_path().unwrap(), Path::new("/%D4"));
 
         let url = CFURL::from_file_path("/%invalid").unwrap();
-        assert_eq!(CFURLCopyPath(&url).unwrap().to_string(), "/%25invalid");
+        assert_eq!(url.path().unwrap().to_string(), "/%25invalid");
         assert_eq!(url.to_file_path().unwrap(), Path::new("/%invalid"));
     }
 
@@ -463,6 +464,8 @@ mod tests {
     #[ignore = "TODO: Crashes - is this unsound?"]
     fn hfs_invalid_utf8() {
         let url = CFURL::from_file_path(OsStr::from_bytes(b"\xd4")).unwrap();
-        assert!(CFURLCopyFileSystemPath(&url, CFURLPathStyle::CFURLHFSPathStyle).is_none());
+        assert!(url
+            .file_system_path(CFURLPathStyle::CFURLHFSPathStyle)
+            .is_none());
     }
 }
