@@ -4,6 +4,12 @@
 //!
 //! [apple-doc]: https://developer.apple.com/documentation/corefoundation/
 //! [framework-crates]: https://docs.rs/objc2/latest/objc2/topics/about_generated/index.html
+//!
+//! ## Examples
+//!
+//! ```ignore
+#![doc = include_str!("../examples/timer.rs")]
+//! ```
 #![no_std]
 #![cfg_attr(feature = "unstable-coerce-pointee", feature(derive_coerce_pointee))]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]

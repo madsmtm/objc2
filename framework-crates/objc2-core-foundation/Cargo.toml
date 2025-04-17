@@ -153,3 +153,10 @@ CFXMLParser = ["bitflags"]
 
 [dev-dependencies]
 static_assertions = "1.1.0"
+
+[[example]]
+name = "timer"
+required-features = [
+    "CFDate",
+    "CFRunLoop",
+]
