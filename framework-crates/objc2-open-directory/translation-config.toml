@@ -23,3 +23,7 @@ typedef.ODNodeRef.renamed = "ODNodeRef"
 typedef.ODQueryRef.renamed = "ODQueryRef"
 typedef.ODRecordRef.renamed = "ODRecordRef"
 typedef.ODSessionRef.renamed = "ODSessionRef"
+
+# Conflicts with each other, and it's not clear if one is preferred.
+fn.ODNodeCreateRecord.renamed = "create_record"
+fn.ODNodeCopyRecord.renamed = "copy_record"

@@ -350,6 +350,7 @@ pub(crate) fn find_fn_implementor(
 pub(crate) fn cf_fn_name(
     fn_name: &str,
     type_name: &str,
+    is_instance_method: bool,
     omit_memory_management_words: bool,
 ) -> String {
     let is_mutable = type_name.contains("Mutable");
@@ -382,22 +383,34 @@ pub(crate) fn cf_fn_name(
         match &rest[..] {
             // Same as below + remove the word "Mutable" if it is already
             // communicated in the type name.
-            ["Create" | "Make", "Mutable", "Copy"] if is_mutable => (Some("new_copy"), &[] as &[_]),
             ["Create" | "Make", "Mutable", "With", rest @ ..] if is_mutable => (Some("with"), rest),
             ["Create" | "Make", "Mutable", "From", rest @ ..] if is_mutable => (Some("from"), rest),
             ["Create" | "Make", "Mutable"] if is_mutable => (Some("new"), &[] as &[_]),
-            ["Create" | "Make", "Mutable", rest @ ..] => (Some("new"), rest),
+            ["Create" | "Make", "Mutable", rest @ ..] if is_mutable => {
+                if is_instance_method {
+                    (None, rest)
+                } else {
+                    (Some("new"), rest)
+                }
+            }
 
             // Convert constructor methods to use "new" and "from_":
             // <https://rust-lang.github.io/api-guidelines/predictability.html#constructors-are-static-inherent-methods-c-ctor>
             //
             // "with_" is also fairly common in the standard library, so we
             // allow that too.
-            ["Create" | "Make", "Copy"] => (Some("new_copy"), &[] as &[_]),
             ["Create" | "Make", "With", rest @ ..] => (Some("with"), rest),
             ["Create" | "Make", "From", rest @ ..] => (Some("from"), rest),
             ["Create" | "Make"] => (Some("new"), &[] as &[_]),
-            ["Create" | "Make", rest @ ..] => (Some("new"), rest),
+            ["Create" | "Make", rest @ ..] => {
+                // Don't output "new" if the method is actually an instance
+                // method like `CTFontCreatePathForGlyph`.
+                if is_instance_method {
+                    (None, rest)
+                } else {
+                    (Some("new"), rest)
+                }
+            }
 
             ["Copy", rest @ ..] if !rest.is_empty() => (None, rest),
             ["Get", rest @ ..] if !rest.is_empty() => (None, rest),
@@ -587,7 +600,7 @@ mod tests {
     fn test_cf_fn() {
         #[track_caller]
         fn check(fn_name: &str, type_name: &str, expected: &str) {
-            assert_eq!(cf_fn_name(fn_name, type_name, true), expected);
+            assert_eq!(cf_fn_name(fn_name, type_name, false, true), expected);
         }
 
         // Successful cases.

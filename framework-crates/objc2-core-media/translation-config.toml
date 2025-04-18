@@ -29,3 +29,10 @@ fn.CMTimebaseGetMasterTimebase.renamed = "get_master_timebase"
 fn.CMTimebaseGetMasterClock.renamed = "get_master_clock"
 fn.CMTimebaseGetMaster.renamed = "get_master"
 fn.CMTimebaseGetUltimateMasterClock.renamed = "get_ultimate_master_clock"
+
+# Doesn't use usual "Make" terminology
+fn.CMSampleBufferMakeDataReady.renamed = "make_data_ready"
+fn.CMClockMakeHostTimeFromSystemUnits.renamed = "make_host_time_from_system_units"
+
+# Translated as "new_empty", but it's common in Rust to just use "empty".
+fn.CMTimeMappingMakeEmpty.renamed = "empty"

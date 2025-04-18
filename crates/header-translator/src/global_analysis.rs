@@ -88,10 +88,18 @@ fn update_module(
             if let Some(cf_item) =
                 find_fn_implementor(implementable_mapping, id, arguments, result_type)
             {
+                let is_instance_method = arguments
+                    .first()
+                    .is_some_and(|(_, arg_ty)| arg_ty.is_self_ty_legal(cf_item.id()));
                 let omit_memory_management_words =
                     result_type.fn_return(*returns_retained).1.is_some();
 
-                let name = cf_fn_name(&id.name, &cf_item.id().name, omit_memory_management_words);
+                let name = cf_fn_name(
+                    &id.name,
+                    &cf_item.id().name,
+                    is_instance_method,
+                    omit_memory_management_words,
+                );
 
                 if name == "type_id" {
                     assert!(arguments.is_empty(), "{id:?} must have no arguments");
@@ -137,10 +145,7 @@ fn update_module(
                     if renamed.is_none() {
                         *renamed = Some(name);
                     }
-                    if arguments
-                        .first()
-                        .is_some_and(|(_, arg_ty)| arg_ty.is_self_ty_legal(cf_item.id()))
-                    {
+                    if is_instance_method {
                         *first_arg_is_self = true;
                     }
                     // Wrappers have normal Rust ABI (mostly to unclutter docs).

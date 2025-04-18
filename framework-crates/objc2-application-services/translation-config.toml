@@ -118,3 +118,8 @@ fn.GetIconSizesFromIconRef.skipped = true
 struct.ICDirSpec.skipped = true
 typedef.ICDirSpecArray.skipped = true
 typedef.ICDirSpecArrayPtr.skipped = true
+
+# Conflicting names non-"Create" variants.
+fn.HIShapeCreateDifference.renamed = "create_difference"
+fn.HIShapeCreateUnion.renamed = "create_union"
+fn.HIShapeCreateXor.renamed = "create_xor"
