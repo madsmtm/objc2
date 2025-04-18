@@ -42,9 +42,6 @@ union.dispatch_object_t.skipped = true
 typedef.dispatch_object_t.skipped = true
 protocol.OS_dispatch_object.skipped = true
 
-# We want to implement TryFrom on this
-typedef.dispatch_time_t.skipped = true
-
 # Marked as noreturn, but header-translator doesn't handle that yet.
 fn.dispatch_main.skipped = true
 
@@ -86,19 +83,43 @@ typedef.dispatch_workloop_t.skipped = true
 protocol.OS_dispatch_workloop.skipped = true
 
 # Rename typedefs to match Swift naming scheme.
+struct.dispatch_queue_s.renamed = "DispatchQueue"
 typedef.dispatch_queue_t.renamed = "DispatchQueue"
 typedef.dispatch_queue_global_t.renamed = "DispatchQueue" # For now
 typedef.dispatch_queue_serial_executor_t.renamed = "DispatchQueue" # For now
 typedef.dispatch_queue_serial_t.renamed = "DispatchQueue" # For now
 typedef.dispatch_queue_main_t.renamed = "DispatchQueue" # For now
 typedef.dispatch_queue_concurrent_t.renamed = "DispatchQueue" # For now
+struct.dispatch_queue_attr_s.renamed = "DispatchQueueAttr"
 typedef.dispatch_queue_attr_t.renamed = "DispatchQueueAttr"
 typedef.dispatch_source_t.renamed = "DispatchSource"
 typedef.dispatch_group_t.renamed = "DispatchGroup"
 typedef.dispatch_semaphore_t.renamed = "DispatchSemaphore"
+struct.dispatch_data_s.renamed = "DispatchData"
 typedef.dispatch_data_t.renamed = "DispatchData"
 typedef.dispatch_io_t.renamed = "DispatchIO"
 typedef.dispatch_workloop_t.renamed = "DispatchWorkloop"
+
+# Rename enums.
+typedef.dispatch_queue_priority_t.renamed = "DispatchQueueGlobalPriority"
+typedef.dispatch_qos_class_t.renamed = "DispatchQoS"
+enum.dispatch_autorelease_frequency_t.renamed = "DispatchAutoReleaseFrequency"
+typedef.dispatch_autorelease_frequency_t.renamed = "DispatchAutoReleaseFrequency"
+const.DISPATCH_AUTORELEASE_FREQUENCY_INHERIT.renamed = "INHERIT"
+const.DISPATCH_AUTORELEASE_FREQUENCY_WORK_ITEM.renamed = "WORK_ITEM"
+const.DISPATCH_AUTORELEASE_FREQUENCY_NEVER.renamed = "NEVER"
+
+# DispatchIO enums.
+enum.dispatch_io_type_t.renamed = "DispatchIOStreamType"
+typedef.dispatch_io_type_t.renamed = "DispatchIOStreamType"
+enum.dispatch_io_close_flags_t.renamed = "DispatchIOCloseFlags"
+typedef.dispatch_io_close_flags_t.renamed = "DispatchIOCloseFlags"
+enum.dispatch_io_interval_flags_t.renamed = "DispatchIOIntervalFlags"
+typedef.dispatch_io_interval_flags_t.renamed = "DispatchIOIntervalFlags"
+
+# Rename and redefine dispatch_time_t (we want it as a newtype instead).
+typedef.dispatch_time_t.skipped = true
+typedef.dispatch_time_t.renamed = "DispatchTime"
 
 # Dispatch sources types should perhaps be mapped as a trait,
 # similar to what Swift does for `DispatchSourceProtocol`?
@@ -126,16 +147,11 @@ fn.dispatch_testcancel.skipped = true
 fn.dispatch_group_wait.no-implementor = true
 fn.dispatch_group_enter.no-implementor = true
 fn.dispatch_queue_set_specific.no-implementor = true
-fn.dispatch_workloop_create.no-implementor = true
-fn.dispatch_workloop_set_autorelease_frequency.no-implementor = true
 fn.dispatch_get_global_queue.no-implementor = true
 
 fn.dispatch_source_set_event_handler.renamed = "set_event_handler_with_block"
 fn.dispatch_source_set_cancel_handler.renamed = "set_cancel_handler_with_block"
 fn.dispatch_source_set_registration_handler.renamed = "set_registration_handler_with_block"
-
-# fn.dispatch_once.renamed = "__dispatch_once_block"
-# fn.dispatch_once_f.renamed = "__dispatch_once_f"
 
 # Map queue getters to DispatchQueue.
 fn.dispatch_get_current_queue.implementor = "Dispatch.DispatchQueue"
@@ -194,9 +210,23 @@ fn.dispatch_barrier_async_and_wait.renamed = "barrier_async_and_wait_with_block"
 fn.dispatch_barrier_async_and_wait_f.implementor = "Dispatch.DispatchQueue"
 fn.dispatch_barrier_async_and_wait_f.renamed = "barrier_async_and_wait_f"
 
+# Map time functions.
+fn.dispatch_time.implementor = "Dispatch.DispatchTime"
+fn.dispatch_time.renamed = "time"
+fn.dispatch_walltime.implementor = "Dispatch.DispatchTime"
+fn.dispatch_walltime.renamed = "walltime"
+
+# Map once functions.
+fn.dispatch_once.implementor = "Dispatch.DispatchOnce"
+fn.dispatch_once.renamed = "once_with_block"
+fn.dispatch_once_f.implementor = "Dispatch.DispatchOnce"
+fn.dispatch_once_f.renamed = "once_f"
+
 # Mapped to convert label CStr.
 fn.dispatch_queue_create.renamed = "__new"
 fn.dispatch_queue_create_with_target.renamed = "__new_with_target"
+fn.dispatch_workloop_create.renamed = "__new"
+fn.dispatch_workloop_create_inactive.renamed = "__new_inactive"
 
 ##
 ## Safety + API

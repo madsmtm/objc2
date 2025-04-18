@@ -5,7 +5,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
 use core::sync::atomic::{AtomicIsize, Ordering};
 
-use crate::ffi;
+use crate::generated::dispatch_once_t;
 
 /// A low-level synchronization primitive for one-time global execution.
 ///
@@ -34,7 +34,7 @@ use crate::ffi;
 /// ```
 #[doc(alias = "dispatch_once_t")]
 pub struct DispatchOnce {
-    predicate: UnsafeCell<ffi::dispatch_once_t>,
+    predicate: UnsafeCell<dispatch_once_t>,
 }
 
 // This is intentionally `extern "C"`, since libdispatch will not propagate an
@@ -61,7 +61,7 @@ where
     cold,
     inline(never)
 )]
-fn invoke_dispatch_once<F>(predicate: NonNull<ffi::dispatch_once_t>, closure: F)
+fn invoke_dispatch_once<F>(predicate: NonNull<dispatch_once_t>, closure: F)
 where
     F: FnOnce(),
 {
@@ -92,7 +92,7 @@ where
     // - Done.
     //
     // And those two states are freely movable.
-    unsafe { ffi::dispatch_once_f(predicate, context, invoke_closure::<F>) };
+    unsafe { DispatchOnce::once_f(predicate, context, invoke_closure::<F>) };
 
     // Closure is dropped here, depending on if it was executed (and taken
     // from the `Option`) by `dispatch_once_f` or not.

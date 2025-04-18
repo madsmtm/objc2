@@ -1,10 +1,8 @@
 use core::mem::ManuallyDrop;
-use core::time::Duration;
 
 use crate::{DispatchObject, DispatchRetained};
 
-use super::ffi::*;
-use super::WaitError;
+use crate::{DispatchTime, WaitError};
 
 dispatch_object!(
     /// Dispatch semaphore.
@@ -23,16 +21,7 @@ impl DispatchSemaphore {
     /// Return [WaitError::TimeOverflow] if the passed ``timeout`` is too big.
     ///
     /// Return [WaitError::Timeout] in case of timeout.
-    pub fn try_acquire(
-        &self,
-        timeout: Option<Duration>,
-    ) -> Result<DispatchSemaphoreGuard, WaitError> {
-        let timeout = if let Some(timeout) = timeout {
-            dispatch_time_t::try_from(timeout).map_err(|_| WaitError::TimeOverflow)?
-        } else {
-            DISPATCH_TIME_FOREVER
-        };
-
+    pub fn try_acquire(&self, timeout: DispatchTime) -> Result<DispatchSemaphoreGuard, WaitError> {
         // Safety: DispatchSemaphore cannot be null.
         let result = Self::wait(self, timeout);
 

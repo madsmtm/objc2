@@ -1,13 +1,16 @@
 use alloc::boxed::Box;
 use alloc::ffi::CString;
+use core::ffi::c_long;
 use core::ptr::NonNull;
-use core::time::Duration;
 
-use crate::DispatchRetained;
-
-use super::object::{DispatchObject, QualityOfServiceClassFloorError};
 use super::utils::function_wrapper;
-use super::{ffi::*, QualityOfServiceClass};
+use crate::generated::{
+    _dispatch_main_q, _dispatch_queue_attr_concurrent, dispatch_get_global_queue,
+    dispatch_queue_set_specific,
+};
+use crate::{
+    DispatchObject, DispatchQoS, DispatchRetained, DispatchTime, QualityOfServiceClassFloorError,
+};
 
 /// Error returned by [`DispatchQueue::after`].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -17,51 +20,23 @@ pub enum QueueAfterError {
     TimeOverflow,
 }
 
-/// Queue type attribute.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-#[non_exhaustive]
-pub enum QueueAttribute {
-    /// Serial queue.
-    Serial,
-    /// Concurrent queue.
-    Concurrent,
-}
-
-impl From<QueueAttribute> for Option<&DispatchQueueAttr> {
-    fn from(value: QueueAttribute) -> Self {
-        match value {
-            QueueAttribute::Serial => DISPATCH_QUEUE_SERIAL,
-            QueueAttribute::Concurrent => DISPATCH_QUEUE_CONCURRENT,
-            _ => panic!("Unknown QueueAttribute value: {:?}", value),
-        }
-    }
-}
-
-/// Queue priority.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-#[non_exhaustive]
-pub enum QueuePriority {
-    /// High priority.
-    High,
-    /// Default priority.
-    Default,
-    /// Low priority.
-    Low,
-    /// Background priority.
-    Background,
-}
-
-impl From<QueuePriority> for dispatch_queue_priority_t {
-    fn from(value: QueuePriority) -> Self {
-        match value {
-            QueuePriority::High => dispatch_queue_priority_t::DISPATCH_QUEUE_PRIORITY_HIGH,
-            QueuePriority::Default => dispatch_queue_priority_t::DISPATCH_QUEUE_PRIORITY_DEFAULT,
-            QueuePriority::Low => dispatch_queue_priority_t::DISPATCH_QUEUE_PRIORITY_LOW,
-            QueuePriority::Background => {
-                dispatch_queue_priority_t::DISPATCH_QUEUE_PRIORITY_BACKGROUND
-            }
-            _ => panic!("Unknown QueuePriority value: {:?}", value),
-        }
+enum_with_val! {
+    /// Queue priority.
+    #[doc(alias = "dispatch_queue_priority_t")]
+    #[derive(Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+    pub struct DispatchQueueGlobalPriority(pub c_long) {
+        /// High priority.
+        #[doc(alias = "DISPATCH_QUEUE_PRIORITY_HIGH")]
+        High = 0x2,
+        /// Default priority.
+        #[doc(alias = "DISPATCH_QUEUE_PRIORITY_DEFAULT")]
+        Default = 0x0,
+        /// Low priority.
+        #[doc(alias = "DISPATCH_QUEUE_PRIORITY_LOW")]
+        Low = -0x2,
+        /// Background priority.
+        #[doc(alias = "DISPATCH_QUEUE_PRIORITY_BACKGROUND")]
+        Background = u16::MIN as c_long,
     }
 }
 
@@ -69,21 +44,17 @@ impl From<QueuePriority> for dispatch_queue_priority_t {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum GlobalQueueIdentifier {
     /// Standard priority based queue.
-    Priority(QueuePriority),
+    Priority(DispatchQueueGlobalPriority),
     /// Quality of service priority based queue.
-    QualityOfService(QualityOfServiceClass),
+    QualityOfService(DispatchQoS),
 }
 
 impl GlobalQueueIdentifier {
     /// Convert and consume [GlobalQueueIdentifier] into its raw value.
     pub fn to_identifier(self) -> isize {
         match self {
-            GlobalQueueIdentifier::Priority(queue_priority) => {
-                dispatch_queue_priority_t::from(queue_priority).0 as isize
-            }
-            GlobalQueueIdentifier::QualityOfService(qos_class) => {
-                dispatch_qos_class_t::from(qos_class).0 as isize
-            }
+            GlobalQueueIdentifier::Priority(queue_priority) => queue_priority.0 as isize,
+            GlobalQueueIdentifier::QualityOfService(qos_class) => qos_class.0 as isize,
         }
     }
 }
@@ -99,23 +70,23 @@ dispatch_object_not_data!(unsafe DispatchQueue);
 
 impl DispatchQueue {
     /// Create a new [`DispatchQueue`].
-    pub fn new(label: &str, queue_attribute: QueueAttribute) -> DispatchRetained<Self> {
+    pub fn new(label: &str, queue_attribute: Option<&DispatchQueueAttr>) -> DispatchRetained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
         // SAFETY: The label is a valid C string.
-        unsafe { Self::__new(label.as_ptr(), queue_attribute.into()) }
+        unsafe { Self::__new(label.as_ptr(), queue_attribute) }
     }
 
     /// Create a new [`DispatchQueue`] with a given target [`DispatchQueue`].
     pub fn new_with_target(
         label: &str,
-        queue_attribute: QueueAttribute,
+        queue_attribute: Option<&DispatchQueueAttr>,
         target: Option<&DispatchQueue>,
     ) -> DispatchRetained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
         // SAFETY: The label is a valid C string.
-        unsafe { Self::__new_with_target(label.as_ptr(), queue_attribute.into(), target) }
+        unsafe { Self::__new_with_target(label.as_ptr(), queue_attribute, target) }
     }
 
     /// Return a system-defined global concurrent [`DispatchQueue`] with the priority derived from [GlobalQueueIdentifier].
@@ -167,12 +138,10 @@ impl DispatchQueue {
     }
 
     /// Enqueue a function for execution at the specified time on the [`DispatchQueue`].
-    pub fn after<F>(&self, wait_time: Duration, work: F) -> Result<(), QueueAfterError>
+    pub fn after<F>(&self, when: DispatchTime, work: F) -> Result<(), QueueAfterError>
     where
         F: Send + FnOnce(),
     {
-        let when =
-            dispatch_time_t::try_from(wait_time).map_err(|_| QueueAfterError::TimeOverflow)?;
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
@@ -238,12 +207,24 @@ impl DispatchQueue {
     /// Set the QOS class floor of the [`DispatchQueue`].
     pub fn set_qos_class_floor(
         &self,
-        qos_class: QualityOfServiceClass,
+        qos_class: DispatchQoS,
         relative_priority: i32,
     ) -> Result<(), QualityOfServiceClassFloorError> {
         // SAFETY: We are a queue.
         unsafe { DispatchObject::set_qos_class_floor(self, qos_class, relative_priority) }
     }
+
+    #[allow(missing_docs)]
+    #[doc(alias = "DISPATCH_APPLY_AUTO")]
+    pub const APPLY_AUTO: Option<&DispatchQueue> = None;
+
+    #[allow(missing_docs)]
+    #[doc(alias = "DISPATCH_TARGET_QUEUE_DEFAULT")]
+    pub const TARGET_QUEUE_DEFAULT: Option<&DispatchQueue> = None;
+
+    #[allow(missing_docs)]
+    #[doc(alias = "DISPATCH_CURRENT_QUEUE_LABEL")]
+    pub const CURRENT_QUEUE_LABEL: Option<&DispatchQueue> = None;
 }
 
 dispatch_object!(
@@ -254,6 +235,25 @@ dispatch_object!(
 );
 
 dispatch_object_not_data!(unsafe DispatchQueueAttr);
+
+impl DispatchQueueAttr {
+    /// A dispatch queue that executes blocks serially in FIFO order.
+    #[doc(alias = "DISPATCH_QUEUE_SERIAL")]
+    pub const SERIAL: Option<&Self> = None;
+
+    // TODO(msrv): Expose this once
+    // #[doc(alias = "DISPATCH_QUEUE_CONCURRENT")]
+    // pub static CONCURRENT: Option<&Self> = {
+    //     // Safety: immutable external definition
+    //     unsafe { Some(&_dispatch_queue_attr_concurrent) }
+    // };
+
+    /// A dispatch queue that executes blocks concurrently.
+    pub fn concurrent() -> Option<&'static Self> {
+        // SAFETY: Queues are
+        unsafe { Some(&_dispatch_queue_attr_concurrent) }
+    }
+}
 
 /// Executes blocks submitted to the main queue.
 pub fn dispatch_main() -> ! {
@@ -279,7 +279,7 @@ mod tests {
     #[test]
     #[cfg(feature = "std")]
     fn test_serial_queue() {
-        let queue = DispatchQueue::new("com.github.madsmtm.objc2", QueueAttribute::Serial);
+        let queue = DispatchQueue::new("com.github.madsmtm.objc2", DispatchQueueAttr::SERIAL);
         let (tx, rx) = std::sync::mpsc::channel();
         queue.exec_async(move || {
             tx.send(()).unwrap();
@@ -290,7 +290,7 @@ mod tests {
     #[test]
     #[cfg(feature = "std")]
     fn test_concurrent_queue() {
-        let queue = DispatchQueue::new("com.github.madsmtm.objc2", QueueAttribute::Concurrent);
+        let queue = DispatchQueue::new("com.github.madsmtm.objc2", DispatchQueueAttr::concurrent());
         let (tx, rx) = std::sync::mpsc::channel();
         let cloned_tx = tx.clone();
         queue.exec_async(move || {
@@ -308,7 +308,7 @@ mod tests {
     #[cfg(feature = "std")]
     fn test_global_default_queue() {
         let queue = DispatchQueue::global_queue(GlobalQueueIdentifier::QualityOfService(
-            QualityOfServiceClass::Default,
+            DispatchQoS::Default,
         ));
         let (tx, rx) = std::sync::mpsc::channel();
         queue.exec_async(move || {
@@ -320,7 +320,7 @@ mod tests {
     #[test]
     #[cfg(feature = "std")]
     fn test_share_queue_across_threads() {
-        let queue = DispatchQueue::new("com.github.madsmtm.objc2", QueueAttribute::Serial);
+        let queue = DispatchQueue::new("com.github.madsmtm.objc2", DispatchQueueAttr::SERIAL);
         let (tx, rx) = std::sync::mpsc::channel();
         let cloned_tx = tx.clone();
         let cloned_queue = queue.clone();
@@ -340,7 +340,7 @@ mod tests {
     #[test]
     #[cfg(feature = "std")]
     fn test_move_queue_between_threads() {
-        let queue = DispatchQueue::new("com.github.madsmtm.objc2", QueueAttribute::Serial);
+        let queue = DispatchQueue::new("com.github.madsmtm.objc2", DispatchQueueAttr::SERIAL);
         let (tx, rx) = std::sync::mpsc::channel();
         std::thread::spawn(move || {
             queue.exec_async(move || {

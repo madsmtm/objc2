@@ -1,8 +1,7 @@
 //! # Apple's Dispatch (Grand Central Dispatch)
 //!
 //! This crate provides a safe and sound interface to Apple's Grand Central
-//! dispatch, as well as the ability to drop into lower-level bindings
-//! ([`ffi`] module).
+//! dispatch.
 //!
 //! See [Apple's documentation](https://developer.apple.com/documentation/dispatch)
 //! and [the source code for libdispatch](https://github.com/swiftlang/swift-corelibs-libdispatch)
@@ -11,9 +10,9 @@
 //! ## Example
 //!
 //! ```
-//! use dispatch2::{DispatchQueue, QueueAttribute};
+//! use dispatch2::{DispatchQueue, DispatchQueueAttr};
 //!
-//! let queue = DispatchQueue::new("example_queue", QueueAttribute::Serial);
+//! let queue = DispatchQueue::new("example_queue", DispatchQueueAttr::SERIAL);
 //! queue.exec_async(|| println!("Hello"));
 //! queue.exec_sync(|| println!("World"));
 //! ```
@@ -40,11 +39,8 @@ mod macros;
 use core::cell::UnsafeCell;
 use core::marker::{PhantomData, PhantomPinned};
 
-use self::ffi::dispatch_qos_class_t;
-
 mod data;
-pub mod ffi;
-#[allow(clippy::undocumented_unsafe_blocks)]
+#[allow(clippy::undocumented_unsafe_blocks, unreachable_pub)]
 mod generated;
 mod group;
 mod io;
@@ -56,6 +52,7 @@ mod queue;
 mod retained;
 mod semaphore;
 mod source;
+mod time;
 mod utils;
 mod workloop;
 
@@ -69,57 +66,50 @@ pub enum WaitError {
     Timeout,
 }
 
-/// Quality of service that specify the priorities for executing tasks.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-#[non_exhaustive]
-pub enum QualityOfServiceClass {
-    /// Quality of service for user-interactive tasks.
-    UserInteractive,
-    /// Quality of service for tasks that prevent the user from actively using your app.
-    UserInitiated,
-    /// Default Quality of service.
-    Default,
-    /// Quality of service for tasks that the user does not track actively.
-    Utility,
-    /// Quality of service for maintenance or cleanup tasks.
-    Background,
-    /// The absence of a Quality of service.
-    Unspecified,
-}
-
-impl From<QualityOfServiceClass> for dispatch_qos_class_t {
-    fn from(value: QualityOfServiceClass) -> Self {
-        match value {
-            QualityOfServiceClass::UserInteractive => {
-                dispatch_qos_class_t::QOS_CLASS_USER_INTERACTIVE
-            }
-            QualityOfServiceClass::UserInitiated => dispatch_qos_class_t::QOS_CLASS_USER_INITIATED,
-            QualityOfServiceClass::Default => dispatch_qos_class_t::QOS_CLASS_DEFAULT,
-            QualityOfServiceClass::Utility => dispatch_qos_class_t::QOS_CLASS_UTILITY,
-            QualityOfServiceClass::Background => dispatch_qos_class_t::QOS_CLASS_BACKGROUND,
-            QualityOfServiceClass::Unspecified => dispatch_qos_class_t::QOS_CLASS_UNSPECIFIED,
-            _ => panic!("Unknown QualityOfServiceClass value: {:?}", value),
-        }
-    }
-}
-
 pub use self::data::DispatchData;
+pub use self::generated::{
+    dispatch_allow_send_signals, dispatch_fd_t, dispatch_get_specific, dispatch_once_t,
+    DispatchAutoReleaseFrequency, _dispatch_data_destructor_free, _dispatch_data_destructor_munmap,
+    _dispatch_data_empty, _dispatch_main_q, _dispatch_queue_attr_concurrent,
+    _dispatch_source_type_data_add, _dispatch_source_type_data_or,
+    _dispatch_source_type_data_replace, _dispatch_source_type_mach_recv,
+    _dispatch_source_type_mach_send, _dispatch_source_type_memorypressure,
+    _dispatch_source_type_proc, _dispatch_source_type_read, _dispatch_source_type_signal,
+    _dispatch_source_type_timer, _dispatch_source_type_vnode, _dispatch_source_type_write,
+    DISPATCH_API_VERSION,
+};
 #[cfg(feature = "block2")]
-pub use self::ffi::dispatch_block_t;
+pub use self::generated::{
+    dispatch_block_cancel, dispatch_block_create, dispatch_block_create_with_qos_class,
+    dispatch_block_notify, dispatch_block_perform, dispatch_block_t, dispatch_block_testcancel,
+    dispatch_block_wait, dispatch_data_applier_t, dispatch_io_handler_t, dispatch_read,
+    dispatch_write,
+};
 pub use self::group::{DispatchGroup, DispatchGroupGuard};
-pub use self::io::DispatchIO;
+pub use self::io::{
+    DispatchIO, DispatchIOCloseFlags, DispatchIOIntervalFlags, DispatchIOStreamType,
+};
 #[cfg(feature = "objc2")]
 pub use self::main_thread_bound::{run_on_main, MainThreadBound};
-pub use self::object::{DispatchObject, QualityOfServiceClassFloorError};
+pub(crate) use self::object::dispatch_object_s;
+pub use self::object::{
+    DispatchObject, DispatchQoS, QualityOfServiceClassFloorError, QOS_MIN_RELATIVE_PRIORITY,
+};
 pub use self::once::DispatchOnce;
 pub use self::queue::{
-    dispatch_main, DispatchQueue, DispatchQueueAttr, GlobalQueueIdentifier, QueueAfterError,
-    QueueAttribute, QueuePriority,
+    dispatch_main, DispatchQueue, DispatchQueueAttr, DispatchQueueGlobalPriority,
+    GlobalQueueIdentifier, QueueAfterError,
 };
 pub use self::retained::DispatchRetained;
 pub use self::semaphore::{DispatchSemaphore, DispatchSemaphoreGuard};
-pub use self::source::DispatchSource;
-pub use self::workloop::{DispatchAutoReleaseFrequency, DispatchWorkloop};
+pub use self::source::{
+    dispatch_source_mach_recv_flags_t, dispatch_source_mach_send_flags_t,
+    dispatch_source_memorypressure_flags_t, dispatch_source_proc_flags_t,
+    dispatch_source_timer_flags_t, dispatch_source_type_s, dispatch_source_type_t,
+    dispatch_source_vnode_flags_t, DispatchSource,
+};
+pub use self::time::DispatchTime;
+pub use self::workloop::DispatchWorkloop;
 
 // Helper type
 type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;
@@ -143,3 +133,15 @@ pub type Semaphore = DispatchSemaphore;
 /// Deprecated alias for [`DispatchWorkloop`].
 #[deprecated = "renamed to DispatchWorkloop"]
 pub type WorkloopQueue = DispatchWorkloop;
+
+#[cfg_attr(target_vendor = "apple", link(name = "System", kind = "dylib"))]
+#[cfg_attr(not(target_vendor = "apple"), link(name = "dispatch", kind = "dylib"))]
+extern "C" {}
+
+/// The prototype of functions submitted to dispatch queues.
+///
+/// This is deliberately `extern "C"`, since libdispatch doesn't support
+/// unwinding in handler functions, and this gives us better error messages
+/// if that does happen.
+#[allow(non_camel_case_types)]
+pub type dispatch_function_t = extern "C" fn(*mut core::ffi::c_void);

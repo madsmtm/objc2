@@ -125,11 +125,7 @@ impl Module {
             }
             writeln!(f)?;
 
-            if config.library(emission_location).is_library {
-                writeln!(f, "use crate::ffi::*;")?;
-            } else {
-                writeln!(f, "use crate::*;")?;
-            }
+            writeln!(f, "use crate::*;")?;
 
             writeln!(f)?;
 

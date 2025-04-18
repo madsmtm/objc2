@@ -1,11 +1,11 @@
 use alloc::boxed::Box;
 use core::ffi::c_void;
-use core::time::Duration;
 
-use crate::{DispatchObject, DispatchQueue, DispatchRetained};
+use crate::generated::{dispatch_group_enter, dispatch_group_wait};
+use crate::{DispatchObject, DispatchQueue, DispatchRetained, DispatchTime};
 
 use super::utils::function_wrapper;
-use super::{ffi::*, WaitError};
+use super::WaitError;
 
 dispatch_object!(
     /// Dispatch group.
@@ -34,16 +34,8 @@ impl DispatchGroup {
     ///
     /// # Errors
     ///
-    /// Return [WaitError::TimeOverflow] if the passed ``timeout`` is too big.
-    ///
     /// Return [WaitError::Timeout] in case of timeout.
-    pub fn wait(&self, timeout: Option<Duration>) -> Result<(), WaitError> {
-        let timeout = if let Some(timeout) = timeout {
-            dispatch_time_t::try_from(timeout).map_err(|_| WaitError::TimeOverflow)?
-        } else {
-            DISPATCH_TIME_FOREVER
-        };
-
+    pub fn wait(&self, timeout: DispatchTime) -> Result<(), WaitError> {
         let result = dispatch_group_wait(self, timeout);
 
         match result {

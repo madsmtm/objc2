@@ -1,7 +1,7 @@
 use alloc::ffi::CString;
 use core::{borrow::Borrow, ops::Deref};
 
-use crate::{ffi::*, DispatchQueue, DispatchRetained};
+use crate::{DispatchQueue, DispatchRetained};
 
 dispatch_object!(
     /// Dispatch workloop queue.
@@ -20,19 +20,11 @@ impl DispatchWorkloop {
         // Safety: label can only be valid.
         unsafe {
             if inactive {
-                DispatchWorkloop::new_inactive(label.as_ptr())
+                DispatchWorkloop::__new_inactive(label.as_ptr())
             } else {
-                dispatch_workloop_create(label.as_ptr())
+                DispatchWorkloop::__new(label.as_ptr())
             }
         }
-    }
-
-    /// Configure how the [`DispatchWorkloop`] manage the autorelease pools for the functions it executes.
-    pub fn set_autorelease_frequency(&self, frequency: DispatchAutoReleaseFrequency) {
-        dispatch_workloop_set_autorelease_frequency(
-            self,
-            dispatch_autorelease_frequency_t::from(frequency),
-        )
     }
 }
 
@@ -62,34 +54,5 @@ impl Borrow<DispatchQueue> for DispatchWorkloop {
     #[inline]
     fn borrow(&self) -> &DispatchQueue {
         self
-    }
-}
-
-/// Auto release frequency for [`DispatchWorkloop::set_autorelease_frequency`].
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-#[non_exhaustive]
-pub enum DispatchAutoReleaseFrequency {
-    /// Inherit autorelease frequency from the target [`DispatchQueue`].
-    Inherit,
-    /// Configure an autorelease pool before the execution of a function and releases the objects in that pool after the function finishes executing.
-    WorkItem,
-    /// Never setup an autorelease pool.
-    Never,
-}
-
-impl From<DispatchAutoReleaseFrequency> for dispatch_autorelease_frequency_t {
-    fn from(value: DispatchAutoReleaseFrequency) -> Self {
-        match value {
-            DispatchAutoReleaseFrequency::Inherit => {
-                dispatch_autorelease_frequency_t::DISPATCH_AUTORELEASE_FREQUENCY_INHERIT
-            }
-            DispatchAutoReleaseFrequency::WorkItem => {
-                dispatch_autorelease_frequency_t::DISPATCH_AUTORELEASE_FREQUENCY_WORK_ITEM
-            }
-            DispatchAutoReleaseFrequency::Never => {
-                dispatch_autorelease_frequency_t::DISPATCH_AUTORELEASE_FREQUENCY_NEVER
-            }
-            _ => panic!("Unknown DispatchAutoReleaseFrequency value: {:?}", value),
-        }
     }
 }

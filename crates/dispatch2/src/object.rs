@@ -1,10 +1,48 @@
+use core::ffi::{c_uint, c_void};
 use core::ptr::NonNull;
 
 use alloc::boxed::Box;
 
-use crate::DispatchRetained;
+use crate::dispatch_function_t;
+use crate::generated::dispatch_get_context;
+use crate::{
+    generated::{
+        dispatch_activate, dispatch_resume, dispatch_set_context, dispatch_set_finalizer_f,
+        dispatch_set_qos_class_floor, dispatch_set_target_queue, dispatch_suspend,
+    },
+    DispatchRetained,
+};
 
-use super::{ffi::*, queue::DispatchQueue, utils::function_wrapper, QualityOfServiceClass};
+use super::{utils::function_wrapper, DispatchQueue};
+
+enum_with_val! {
+    /// Quality-of-service classes that specify the priorities for executing tasks.
+    #[doc(alias = "dispatch_qos_class_t")]
+    #[derive(Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+    pub struct DispatchQoS(pub c_uint) {
+        /// Quality of service for user-interactive tasks.
+        #[doc(alias = "QOS_CLASS_USER_INTERACTIVE")]
+        UserInteractive = 0x21,
+        /// Quality of service for tasks that prevent the user from actively using your app.
+        #[doc(alias = "QOS_CLASS_USER_INITIATED")]
+        UserInitiated = 0x19,
+        /// Default Quality of service.
+        #[doc(alias = "QOS_CLASS_DEFAULT")]
+        Default = 0x15,
+        /// Quality of service for tasks that the user does not track actively.
+        #[doc(alias = "QOS_CLASS_UTILITY")]
+        Utility = 0x11,
+        /// Quality of service for maintenance or cleanup tasks.
+        #[doc(alias = "QOS_CLASS_BACKGROUND")]
+        Background = 0x09,
+        /// The absence of a Quality of service.
+        #[doc(alias = "QOS_CLASS_UNSPECIFIED")]
+        Unspecified = 0x00,
+    }
+}
+
+#[allow(missing_docs)] // TODO
+pub const QOS_MIN_RELATIVE_PRIORITY: i32 = -15;
 
 /// Error returned by [DispatchObject::set_qos_class_floor].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -20,6 +58,7 @@ pub enum QualityOfServiceClassFloorError {
 ///
 /// The object must represent a dispatch object, and be usable in
 /// `dispatch_retain` / `dispatch_release`.
+#[doc(alias = "dispatch_object_t")]
 pub unsafe trait DispatchObject {
     /// Increment the reference count of the object.
     ///
@@ -35,6 +74,38 @@ pub unsafe trait DispatchObject {
         unsafe { DispatchRetained::retain(ptr) }
     }
 
+    /// TODO.
+    ///
+    /// # Safety
+    ///
+    /// TODO.
+    #[doc(alias = "dispatch_get_context")]
+    fn context(&self) -> *mut c_void {
+        dispatch_get_context(self.as_raw())
+    }
+
+    /// TODO.
+    ///
+    /// # Safety
+    ///
+    /// TODO.
+    #[doc(alias = "dispatch_set_context")]
+    unsafe fn set_context(&self, context: *mut c_void) {
+        // SAFETY: Upheld by the caller.
+        unsafe { dispatch_set_context(self.as_raw(), context) }
+    }
+
+    /// TODO.
+    ///
+    /// # Safety
+    ///
+    /// TODO.
+    #[doc(alias = "dispatch_set_finalizer_f")]
+    unsafe fn set_finalizer_f(&self, finalizer: dispatch_function_t) {
+        // SAFETY: Upheld by the caller.
+        unsafe { dispatch_set_finalizer_f(self.as_raw(), finalizer) }
+    }
+
     /// Set the finalizer function for the object.
     fn set_finalizer<F>(&mut self, destructor: F)
     where
@@ -46,8 +117,8 @@ pub unsafe trait DispatchObject {
         //         Once the finalizer is executed, the context will be dangling.
         //         This isn't an issue as the context shall not be accessed after the dispatch object is destroyed.
         unsafe {
-            dispatch_set_context(self.as_raw(), destructor_boxed);
-            dispatch_set_finalizer_f(self.as_raw(), function_wrapper::<F>)
+            self.set_context(destructor_boxed);
+            self.set_finalizer_f(function_wrapper::<F>)
         }
     }
 
@@ -73,7 +144,7 @@ pub unsafe trait DispatchObject {
     /// - DispatchObject should be a queue or queue source.
     unsafe fn set_qos_class_floor(
         &self,
-        qos_class: QualityOfServiceClass,
+        qos_class: DispatchQoS,
         relative_priority: i32,
     ) -> Result<(), QualityOfServiceClassFloorError> {
         if !(QOS_MIN_RELATIVE_PRIORITY..=0).contains(&relative_priority) {
@@ -81,32 +152,23 @@ pub unsafe trait DispatchObject {
         }
 
         // SAFETY: Safe as relative_priority can only be valid.
-        unsafe {
-            dispatch_set_qos_class_floor(
-                self.as_raw(),
-                dispatch_qos_class_t::from(qos_class),
-                relative_priority,
-            );
-        }
+        unsafe { dispatch_set_qos_class_floor(self.as_raw(), qos_class, relative_priority) };
 
         Ok(())
     }
 
     /// Activate the object.
     fn activate(&mut self) {
-        // Safety: object cannot be null.
         dispatch_activate(self.as_raw());
     }
 
     /// Suspend the invocation of functions on the object.
     fn suspend(&self) {
-        // Safety: object cannot be null.
         dispatch_suspend(self.as_raw());
     }
 
     /// Resume the invocation of functions on the object.
     fn resume(&self) {
-        // Safety: object cannot be null.
         dispatch_resume(self.as_raw());
     }
 
@@ -115,3 +177,27 @@ pub unsafe trait DispatchObject {
         NonNull::from(self).cast()
     }
 }
+
+// Helper to allow generated/mod.rs to emit the functions it needs to.
+//
+// This is private because we do not want users to hold a `dispatch_object_t`
+// directly, as there's no way to safely down- nor upcast to the other types.
+// Instead, they should use `DispatchObject`.
+mod private {
+    #[allow(non_camel_case_types)]
+    #[repr(C)]
+    #[derive(Debug)]
+    pub struct dispatch_object_s {
+        /// opaque value
+        _inner: [u8; 0],
+        _p: crate::OpaqueData,
+    }
+
+    #[cfg(feature = "objc2")]
+    // SAFETY: Dispatch types are internally objects.
+    unsafe impl objc2::encode::RefEncode for dispatch_object_s {
+        const ENCODING_REF: objc2::encode::Encoding = objc2::encode::Encoding::Object;
+    }
+}
+
+pub(crate) use private::dispatch_object_s;

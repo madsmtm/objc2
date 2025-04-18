@@ -5,7 +5,7 @@ use core::ops::Deref;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
 
-use crate::ffi::{dispatch_release, dispatch_retain};
+use crate::generated::{dispatch_release, dispatch_retain};
 use crate::DispatchObject;
 
 // Symlinked to `objc2/src/rc/retained_forwarding_impls.rs`, Cargo will make
