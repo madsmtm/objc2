@@ -13,8 +13,8 @@ impl TryFrom<Duration> for dispatch_time_t {
         secs.checked_mul(1_000_000_000)
             .and_then(|x| x.checked_add(i64::from(value.subsec_nanos())))
             .map(|delta| {
-                // Safety: delta cannot overflow
-                unsafe { dispatch_time(DISPATCH_TIME_NOW, delta) }
+                // delta cannot overflow
+                dispatch_time(DISPATCH_TIME_NOW, delta)
             })
             .ok_or(())
     }

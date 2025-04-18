@@ -113,8 +113,8 @@ pub use self::main_thread_bound::{run_on_main, MainThreadBound};
 pub use self::object::{DispatchObject, QualityOfServiceClassFloorError};
 pub use self::once::DispatchOnce;
 pub use self::queue::{
-    DispatchQueue, DispatchQueueAttr, GlobalQueueIdentifier, QueueAfterError, QueueAttribute,
-    QueuePriority,
+    dispatch_main, DispatchQueue, DispatchQueueAttr, GlobalQueueIdentifier, QueueAfterError,
+    QueueAttribute, QueuePriority,
 };
 pub use self::retained::DispatchRetained;
 pub use self::semaphore::{DispatchSemaphore, DispatchSemaphoreGuard};

@@ -123,21 +123,215 @@ fn.dispatch_cancel.skipped = true
 fn.dispatch_testcancel.skipped = true
 
 # TODO: Map these properly
-fn.dispatch_queue_create.no-implementor = true
-fn.dispatch_queue_create_with_target.no-implementor = true
 fn.dispatch_group_wait.no-implementor = true
-fn.dispatch_semaphore_create.no-implementor = true
-fn.dispatch_group_create.no-implementor = true
 fn.dispatch_group_enter.no-implementor = true
 fn.dispatch_queue_set_specific.no-implementor = true
 fn.dispatch_workloop_create.no-implementor = true
 fn.dispatch_workloop_set_autorelease_frequency.no-implementor = true
+fn.dispatch_get_global_queue.no-implementor = true
 
-fn.dispatch_source_set_event_handler.renamed = "set_event_handler_block"
-fn.dispatch_source_set_cancel_handler.renamed = "set_cancel_handler_block"
-fn.dispatch_source_set_registration_handler.renamed = "set_registration_handler_block"
-fn.dispatch_group_async.renamed = "async_block"
-fn.dispatch_group_notify.renamed = "notify_block"
+fn.dispatch_source_set_event_handler.renamed = "set_event_handler_with_block"
+fn.dispatch_source_set_cancel_handler.renamed = "set_cancel_handler_with_block"
+fn.dispatch_source_set_registration_handler.renamed = "set_registration_handler_with_block"
 
 # fn.dispatch_once.renamed = "__dispatch_once_block"
 # fn.dispatch_once_f.renamed = "__dispatch_once_f"
+
+# Map queue getters to DispatchQueue.
+fn.dispatch_get_current_queue.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_get_current_queue.renamed = "current"
+fn.dispatch_get_main_queue.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_get_main_queue.renamed = "main"
+fn.dispatch_get_global_queue.implementor = "Dispatch.DispatchQueue"
+# fn.dispatch_get_global_queue.renamed = "global"
+
+# Map queue assertions to DispatchQueue.
+fn.dispatch_assert_queue.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_assert_queue.renamed = "assert"
+fn.dispatch_assert_queue_barrier.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_assert_queue_barrier.renamed = "assert_barrier"
+fn.dispatch_assert_queue_not.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_assert_queue_not.renamed = "assert_not"
+
+# Map queue dispatching to DispatchQueue.
+fn.dispatch_async.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_async.renamed = "exec_async_with_block"
+fn.dispatch_async_f.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_async_f.renamed = "exec_async_f"
+fn.dispatch_sync.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_sync.renamed = "exec_sync_with_block"
+fn.dispatch_sync_f.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_sync_f.renamed = "exec_sync_f"
+fn.dispatch_async_and_wait.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_async_and_wait.renamed = "exec_sync_and_wait_with_block"
+fn.dispatch_async_and_wait_f.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_async_and_wait_f.renamed = "exec_sync_and_wait_f"
+fn.dispatch_after.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_after.renamed = "exec_after_with_block"
+fn.dispatch_after_f.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_after_f.renamed = "exec_after_f"
+fn.dispatch_apply.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_apply.renamed = "apply_with_block"
+fn.dispatch_apply_f.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_apply_f.renamed = "apply_f"
+
+# Map group dispatching to DispatchGroup, with consistent naming.
+fn.dispatch_group_async.renamed = "exec_async_with_block"
+fn.dispatch_group_async_f.renamed = "exec_async_f"
+fn.dispatch_group_notify.renamed = "notify_with_block"
+
+# Map queue barriers to DispatchQueue.
+fn.dispatch_barrier_async.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_barrier_async.renamed = "barrier_async_with_block"
+fn.dispatch_barrier_async_f.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_barrier_async_f.renamed = "barrier_async_f"
+fn.dispatch_barrier_sync.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_barrier_sync.renamed = "barrier_sync_with_block"
+fn.dispatch_barrier_sync_f.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_barrier_sync_f.renamed = "barrier_sync_f"
+fn.dispatch_barrier_async_and_wait.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_barrier_async_and_wait.renamed = "barrier_async_and_wait_with_block"
+fn.dispatch_barrier_async_and_wait_f.implementor = "Dispatch.DispatchQueue"
+fn.dispatch_barrier_async_and_wait_f.renamed = "barrier_async_and_wait_f"
+
+# Mapped to convert label CStr.
+fn.dispatch_queue_create.renamed = "__new"
+fn.dispatch_queue_create_with_target.renamed = "__new_with_target"
+
+##
+## Safety + API
+##
+
+# block.h
+# Needs us to map to &Block instead of pointer.
+fn.dispatch_block_create.unsafe = true
+fn.dispatch_block_create_with_qos_class.unsafe = true
+fn.dispatch_block_perform.unsafe = true
+fn.dispatch_block_wait.unsafe = true
+fn.dispatch_block_notify.unsafe = true
+fn.dispatch_block_cancel.unsafe = true
+fn.dispatch_block_testcancel.unsafe = true
+
+# data.h
+fn.dispatch_data_create.unsafe = true # Takes pointers
+fn.dispatch_data_get_size.unsafe = false
+fn.dispatch_data_create_map.unsafe = true # Takes pointers
+fn.dispatch_data_create_concat.unsafe = false
+fn.dispatch_data_create_subrange.unsafe = true # Unsure if does range check?
+fn.dispatch_data_apply.unsafe = true # Needs block non-ptr
+fn.dispatch_data_copy_region.unsafe = true # Takes pointers
+
+# group.h
+fn.dispatch_group_create.unsafe = false
+fn.dispatch_group_async.unsafe = true # Needs block non-ptr
+fn.dispatch_group_async_f.unsafe = true # Takes pointers
+fn.dispatch_group_wait.unsafe = false
+fn.dispatch_group_notify.unsafe = true # Needs block non-ptr
+fn.dispatch_group_notify_f.unsafe = true # Takes pointers
+fn.dispatch_group_enter.unsafe = true # TODO: What happens if not paired with leave?
+fn.dispatch_group_leave.unsafe = true # TODO: What happens if not paired with enter?
+
+# introspection.h
+# TODO
+
+# io.h
+fn.dispatch_read.unsafe = true # Takes pointers
+fn.dispatch_write.unsafe = true # Takes pointers
+fn.dispatch_io_create.unsafe = true # TODO: Invalid file descriptor?
+fn.dispatch_io_create_with_path.unsafe = true # Takes pointers
+fn.dispatch_io_create_with_io.unsafe = false
+fn.dispatch_io_read.unsafe = true # Takes pointers? Offsets?
+fn.dispatch_io_write.unsafe = true # Takes pointers? Offsets?
+fn.dispatch_io_close.unsafe = false
+fn.dispatch_io_barrier.unsafe = true # Needs block non-ptr
+fn.dispatch_io_get_descriptor.unsafe = false
+fn.dispatch_io_set_high_water.unsafe = false
+fn.dispatch_io_set_low_water.unsafe = false
+fn.dispatch_io_set_interval.unsafe = false
+
+# object.h
+# NOTE: These work on a raw context pointer, but that's
+# usually fine, since it's under full control by the
+# user. We do mark them as unsafe though, since you
+# could have set a context and finalizer yourself, and
+# then given your Dispatch object to someone else, and
+# then _they_ set a context, which would give you an
+# invalid pointer in your finalizer.
+fn.dispatch_get_context.unsafe = false
+fn.dispatch_set_context.unsafe = true
+fn.dispatch_set_finalizer_f.unsafe = true
+fn.dispatch_activate.unsafe = false
+fn.dispatch_suspend.unsafe = false
+fn.dispatch_resume.unsafe = false
+fn.dispatch_set_qos_class_floor.unsafe = true # Undefined to pass incorrect type (though maybe not UB?)
+
+# once.h
+fn.dispatch_once.unsafe = true # Takes `predicate` pointer argument
+fn.dispatch_once_f.unsafe = true # Takes `predicate` pointer argument
+
+# queue.h
+fn.dispatch_async.unsafe = true # Needs block non-ptr
+fn.dispatch_async_f.unsafe = true # Takes pointers
+fn.dispatch_sync.unsafe = true # Needs block non-ptr
+fn.dispatch_sync_f.unsafe = true # Takes pointers
+fn.dispatch_async_and_wait.unsafe = true # Needs block non-ptr
+fn.dispatch_async_and_wait_f.unsafe = true # Takes pointers
+fn.dispatch_apply.unsafe = false
+fn.dispatch_apply_f.unsafe = true # Takes pointers
+fn.dispatch_get_current_queue.unsafe = false
+fn.dispatch_get_main_queue.unsafe = false
+fn.dispatch_get_global_queue.unsafe = false
+fn.dispatch_queue_attr_make_initially_inactive.unsafe = false
+fn.dispatch_queue_attr_make_with_autorelease_frequency.unsafe = false
+fn.dispatch_queue_attr_make_with_qos_class.unsafe = false
+fn.dispatch_queue_create_with_target.unsafe = true # Takes pointer label
+fn.dispatch_queue_create.unsafe = true # Takes pointer label
+fn.dispatch_queue_get_label.unsafe = false
+fn.dispatch_queue_get_qos_class.unsafe = true # Takes pointer
+fn.dispatch_set_target_queue.unsafe = true # Must be no cycles. Is it UB if there is?
+fn.dispatch_main.unsafe = false
+fn.dispatch_after.unsafe = true # Needs block non-ptr
+fn.dispatch_after_f.unsafe = true # Takes pointers
+fn.dispatch_barrier_async.unsafe = true # Needs block non-ptr
+fn.dispatch_barrier_async_f.unsafe = true # Takes pointers
+fn.dispatch_barrier_sync.unsafe = true # Needs block non-ptr
+fn.dispatch_barrier_sync_f.unsafe = true # Takes pointers
+fn.dispatch_barrier_async_and_wait.unsafe = true # Needs block non-ptr
+fn.dispatch_barrier_async_and_wait_f.unsafe = true # Takes pointers
+fn.dispatch_queue_set_specific.unsafe = true # Takes pointer context
+fn.dispatch_queue_get_specific.unsafe = true # Could be safe, keys are never dereferenced
+fn.dispatch_get_specific.unsafe = true # Same as above
+fn.dispatch_assert_queue.unsafe = false
+fn.dispatch_assert_queue_barrier.unsafe = false
+fn.dispatch_assert_queue_not.unsafe = false
+fn.dispatch_allow_send_signals.unsafe = true # Unsure
+
+# semaphore.h
+fn.dispatch_semaphore_create.unsafe = false # All values allowed, negative will return NULL
+fn.dispatch_semaphore_wait.unsafe = false
+fn.dispatch_semaphore_signal.unsafe = false
+
+# source.h
+fn.dispatch_source_create.unsafe = true # Takes dispatch_source_type_t ptr
+fn.dispatch_source_set_event_handler.unsafe = true # Needs block non-ptr
+fn.dispatch_source_set_event_handler_f.unsafe = false # Doesn't take context ptr, so is safe
+fn.dispatch_source_set_cancel_handler.unsafe = true # Needs block non-ptr
+fn.dispatch_source_set_cancel_handler_f.unsafe = false # Doesn't take context ptr, so is safe
+fn.dispatch_source_cancel.unsafe = false
+fn.dispatch_source_testcancel.unsafe = false
+fn.dispatch_source_get_handle.unsafe = false
+fn.dispatch_source_get_mask.unsafe = false
+fn.dispatch_source_get_data.unsafe = false
+fn.dispatch_source_merge_data.unsafe = false
+fn.dispatch_source_set_timer.unsafe = false
+fn.dispatch_source_set_registration_handler.unsafe = true # Needs block non-ptr
+fn.dispatch_source_set_registration_handler_f.unsafe = false # Doesn't take context ptr, so is safe
+
+# time.h
+fn.dispatch_time.unsafe = false
+fn.dispatch_walltime.unsafe = true # Takes `timespec` pointer
+
+# workloop.h
+fn.dispatch_workloop_create.unsafe = true # Takes cstr label
+fn.dispatch_workloop_create_inactive.unsafe = true # Takes cstr label
+fn.dispatch_workloop_set_autorelease_frequency.unsafe = false

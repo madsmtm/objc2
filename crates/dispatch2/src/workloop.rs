@@ -29,13 +29,10 @@ impl DispatchWorkloop {
 
     /// Configure how the [`DispatchWorkloop`] manage the autorelease pools for the functions it executes.
     pub fn set_autorelease_frequency(&self, frequency: DispatchAutoReleaseFrequency) {
-        // Safety: object and frequency can only be valid.
-        unsafe {
-            dispatch_workloop_set_autorelease_frequency(
-                self,
-                dispatch_autorelease_frequency_t::from(frequency),
-            );
-        }
+        dispatch_workloop_set_autorelease_frequency(
+            self,
+            dispatch_autorelease_frequency_t::from(frequency),
+        )
     }
 }
 

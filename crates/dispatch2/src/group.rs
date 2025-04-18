@@ -17,13 +17,6 @@ dispatch_object!(
 dispatch_object_not_data!(unsafe DispatchGroup);
 
 impl DispatchGroup {
-    /// Creates a new [`DispatchGroup`].
-    pub fn new() -> Option<DispatchRetained<Self>> {
-        // SAFETY: Valid to call.
-        // TODO: Properly allow NULL again (`dispatch_group_create` is incorrectly mapped).
-        Some(unsafe { dispatch_group_create() })
-    }
-
     /// Submit a function to a [`DispatchQueue`] and associates it with the [`DispatchGroup`].
     pub fn exec_async<F>(&self, queue: &DispatchQueue, work: F)
     where
@@ -34,7 +27,7 @@ impl DispatchGroup {
         let work_boxed = Box::into_raw(Box::new(work)).cast::<c_void>();
 
         // Safety: All parameters cannot be null.
-        unsafe { Self::async_f(self, queue, work_boxed, function_wrapper::<F>) };
+        unsafe { Self::exec_async_f(self, queue, work_boxed, function_wrapper::<F>) };
     }
 
     /// Wait synchronously for the previously submitted functions to finish.
@@ -51,8 +44,7 @@ impl DispatchGroup {
             DISPATCH_TIME_FOREVER
         };
 
-        // Safety: object cannot be null and timeout is valid.
-        let result = unsafe { dispatch_group_wait(self, timeout) };
+        let result = dispatch_group_wait(self, timeout);
 
         match result {
             0 => Ok(()),
@@ -75,7 +67,7 @@ impl DispatchGroup {
 
     /// Explicitly indicates that the function has entered the [`DispatchGroup`].
     pub fn enter(&self) -> DispatchGroupGuard {
-        // Safety: object cannot be null.
+        // SAFETY: TODO: Is it a soundness requirement that this is paired with leave?
         unsafe { dispatch_group_enter(self) };
 
         DispatchGroupGuard(self.retain())
@@ -96,7 +88,7 @@ impl DispatchGroupGuard {
 
 impl Drop for DispatchGroupGuard {
     fn drop(&mut self) {
-        // SAFETY: Dispatch group cannot be null.
+        // SAFETY: TODO: Is it a soundness requirement that this is paired with enter?
         unsafe { DispatchGroup::leave(&self.0) };
     }
 }

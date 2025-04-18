@@ -226,16 +226,3 @@ enum_with_val! {
 #[cfg_attr(target_vendor = "apple", link(name = "System", kind = "dylib"))]
 #[cfg_attr(not(target_vendor = "apple"), link(name = "dispatch", kind = "dylib"))]
 extern "C" {}
-
-// `dispatch_main` is marked DISPATCH_NOTHROW.
-extern "C" {
-    /// Executes blocks submitted to the main queue.
-    pub fn dispatch_main() -> !;
-}
-
-// Inline function in the header
-// TODO: Mark this as `const`
-pub extern "C" fn dispatch_get_main_queue() -> &'static DispatchQueue {
-    // SAFETY: The main queue is safe to access from anywhere.
-    unsafe { &_dispatch_main_q }
-}

@@ -102,23 +102,20 @@ impl DispatchQueue {
     pub fn new(label: &str, queue_attribute: QueueAttribute) -> DispatchRetained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
-        // Safety: label and queue_attribute can only be valid.
-        unsafe { dispatch_queue_create(label.as_ptr(), queue_attribute.into()) }
+        // SAFETY: The label is a valid C string.
+        unsafe { Self::__new(label.as_ptr(), queue_attribute.into()) }
     }
 
     /// Create a new [`DispatchQueue`] with a given target [`DispatchQueue`].
     pub fn new_with_target(
         label: &str,
         queue_attribute: QueueAttribute,
-        target: &DispatchQueue,
+        target: Option<&DispatchQueue>,
     ) -> DispatchRetained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
-        // Safety: label, queue_attribute and target can only be valid.
-        // NOTE: dispatch_queue_create_with_target is in charge of retaining the target DispatchQueue.
-        unsafe {
-            dispatch_queue_create_with_target(label.as_ptr(), queue_attribute.into(), Some(target))
-        }
+        // SAFETY: The label is a valid C string.
+        unsafe { Self::__new_with_target(label.as_ptr(), queue_attribute.into(), target) }
     }
 
     /// Return a system-defined global concurrent [`DispatchQueue`] with the priority derived from [GlobalQueueIdentifier].
@@ -126,13 +123,19 @@ impl DispatchQueue {
         let raw_identifier = identifier.to_identifier();
 
         // Safety: raw_identifier cannot be invalid, flags is reserved.
-        unsafe { dispatch_get_global_queue(raw_identifier, 0) }
+        dispatch_get_global_queue(raw_identifier, 0)
     }
 
     /// Return the main queue.
-    pub fn main() -> DispatchRetained<Self> {
-        // Safety: raw_identifier cannot be invalid, flags is reserved.
-        dispatch_get_main_queue().retain()
+    // TODO: Mark this as `const` once in MSRV.
+    #[inline]
+    #[doc(alias = "dispatch_get_main_queue")]
+    pub fn main() -> &'static Self {
+        // Inline function in the header
+
+        // SAFETY: The main queue is safe to access from anywhere, and is
+        // valid forever.
+        unsafe { &_dispatch_main_q }
     }
 
     /// Submit a function for synchronous execution on the [`DispatchQueue`].
@@ -147,7 +150,7 @@ impl DispatchQueue {
         // it here.
         //
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
-        unsafe { dispatch_sync_f(self, work_boxed, function_wrapper::<F>) }
+        unsafe { Self::exec_sync_f(self, work_boxed, function_wrapper::<F>) }
     }
 
     /// Submit a function for asynchronous execution on the [`DispatchQueue`].
@@ -160,7 +163,7 @@ impl DispatchQueue {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
-        unsafe { dispatch_async_f(self, work_boxed, function_wrapper::<F>) }
+        unsafe { Self::exec_async_f(self, work_boxed, function_wrapper::<F>) }
     }
 
     /// Enqueue a function for execution at the specified time on the [`DispatchQueue`].
@@ -173,9 +176,7 @@ impl DispatchQueue {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
-        unsafe {
-            dispatch_after_f(when, self, work_boxed, function_wrapper::<F>);
-        }
+        unsafe { Self::exec_after_f(when, self, work_boxed, function_wrapper::<F>) };
 
         Ok(())
     }
@@ -190,7 +191,7 @@ impl DispatchQueue {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
-        unsafe { dispatch_barrier_async_f(self, work_boxed, function_wrapper::<F>) }
+        unsafe { Self::barrier_async_f(self, work_boxed, function_wrapper::<F>) }
     }
 
     /// Enqueue a barrier function for synchronous execution on the [`DispatchQueue`] and wait until that function completes.
@@ -201,7 +202,7 @@ impl DispatchQueue {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
-        unsafe { dispatch_barrier_sync_f(self, work_boxed, function_wrapper::<F>) }
+        unsafe { Self::barrier_sync_f(self, work_boxed, function_wrapper::<F>) }
     }
 
     /// Submit a function for synchronous execution and mark the function as a barrier for subsequent concurrent tasks.
@@ -214,7 +215,7 @@ impl DispatchQueue {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
-        unsafe { dispatch_barrier_async_and_wait_f(self, work_boxed, function_wrapper::<F>) }
+        unsafe { Self::barrier_async_and_wait_f(self, work_boxed, function_wrapper::<F>) }
     }
 
     /// Sets a function at the given key that will be executed at [`DispatchQueue`] destruction.
@@ -253,6 +254,18 @@ dispatch_object!(
 );
 
 dispatch_object_not_data!(unsafe DispatchQueueAttr);
+
+/// Executes blocks submitted to the main queue.
+pub fn dispatch_main() -> ! {
+    extern "C" {
+        // `dispatch_main` is marked DISPATCH_NOTHROW.
+        fn dispatch_main() -> !;
+    }
+
+    // SAFETY: TODO: Must this be run on the main thread? Do we need to take
+    // `MainThreadMarker`?
+    unsafe { dispatch_main() }
+}
 
 #[cfg(test)]
 mod tests {

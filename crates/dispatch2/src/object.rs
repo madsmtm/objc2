@@ -25,6 +25,7 @@ pub unsafe trait DispatchObject {
     ///
     /// This extends the duration in which the object is alive by detaching it
     /// from the lifetime information carried by the reference.
+    #[doc(alias = "dispatch_retain")]
     fn retain(&self) -> DispatchRetained<Self> {
         let ptr: NonNull<Self> = NonNull::from(self);
         // SAFETY:
@@ -94,19 +95,19 @@ pub unsafe trait DispatchObject {
     /// Activate the object.
     fn activate(&mut self) {
         // Safety: object cannot be null.
-        unsafe { dispatch_activate(self.as_raw()) };
+        dispatch_activate(self.as_raw());
     }
 
     /// Suspend the invocation of functions on the object.
     fn suspend(&self) {
         // Safety: object cannot be null.
-        unsafe { dispatch_suspend(self.as_raw()) };
+        dispatch_suspend(self.as_raw());
     }
 
     /// Resume the invocation of functions on the object.
     fn resume(&self) {
         // Safety: object cannot be null.
-        unsafe { dispatch_resume(self.as_raw()) };
+        dispatch_resume(self.as_raw());
     }
 
     #[doc(hidden)]
