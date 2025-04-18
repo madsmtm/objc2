@@ -48,7 +48,7 @@ impl DispatchSemaphore {
         };
 
         // Safety: DispatchSemaphore cannot be null.
-        let result = unsafe { dispatch_semaphore_wait(self, timeout) };
+        let result = unsafe { Self::wait(self, timeout) };
 
         match result {
             0 => Ok(DispatchSemaphoreGuard(self.retain())),
@@ -67,7 +67,7 @@ impl DispatchSemaphoreGuard {
         let this = ManuallyDrop::new(self);
 
         // SAFETY: DispatchSemaphore cannot be null.
-        let result = unsafe { dispatch_semaphore_signal(&this.0) };
+        let result = unsafe { DispatchSemaphore::signal(&this.0) };
 
         result != 0
     }
@@ -76,6 +76,6 @@ impl DispatchSemaphoreGuard {
 impl Drop for DispatchSemaphoreGuard {
     fn drop(&mut self) {
         // SAFETY: DispatchSemaphore cannot be null.
-        unsafe { dispatch_semaphore_signal(&self.0) };
+        unsafe { DispatchSemaphore::signal(&self.0) };
     }
 }

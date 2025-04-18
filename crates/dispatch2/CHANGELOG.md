@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Merged some high-level binding types with their `ffi` "_t"/"_s" counterparts.
   E.g. `dispatch_group_t`, `dispatch_group_s` and `DispatchGroup` are now one
   type.
+- Move some functions to methods on the relevant Dispatch type.
 
 ### Removed
 - **BREAKING**: Removed `TargetQueueError` and the error case in

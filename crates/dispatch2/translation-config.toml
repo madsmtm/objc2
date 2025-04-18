@@ -121,3 +121,23 @@ fn.dispatch_wait.skipped = true
 fn.dispatch_notify.skipped = true
 fn.dispatch_cancel.skipped = true
 fn.dispatch_testcancel.skipped = true
+
+# TODO: Map these properly
+fn.dispatch_queue_create.no-implementor = true
+fn.dispatch_queue_create_with_target.no-implementor = true
+fn.dispatch_group_wait.no-implementor = true
+fn.dispatch_semaphore_create.no-implementor = true
+fn.dispatch_group_create.no-implementor = true
+fn.dispatch_group_enter.no-implementor = true
+fn.dispatch_queue_set_specific.no-implementor = true
+fn.dispatch_workloop_create.no-implementor = true
+fn.dispatch_workloop_set_autorelease_frequency.no-implementor = true
+
+fn.dispatch_source_set_event_handler.renamed = "set_event_handler_block"
+fn.dispatch_source_set_cancel_handler.renamed = "set_cancel_handler_block"
+fn.dispatch_source_set_registration_handler.renamed = "set_registration_handler_block"
+fn.dispatch_group_async.renamed = "async_block"
+fn.dispatch_group_notify.renamed = "notify_block"
+
+# fn.dispatch_once.renamed = "__dispatch_once_block"
+# fn.dispatch_once_f.renamed = "__dispatch_once_f"

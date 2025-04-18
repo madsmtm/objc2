@@ -34,9 +34,7 @@ impl DispatchGroup {
         let work_boxed = Box::into_raw(Box::new(work)).cast::<c_void>();
 
         // Safety: All parameters cannot be null.
-        unsafe {
-            dispatch_group_async_f(self, queue, work_boxed, function_wrapper::<F>);
-        }
+        unsafe { Self::async_f(self, queue, work_boxed, function_wrapper::<F>) };
     }
 
     /// Wait synchronously for the previously submitted functions to finish.
@@ -71,7 +69,7 @@ impl DispatchGroup {
 
         // Safety: All parameters cannot be null.
         unsafe {
-            dispatch_group_notify_f(self, queue, work_boxed, function_wrapper::<F>);
+            Self::notify_f(self, queue, work_boxed, function_wrapper::<F>);
         }
     }
 
@@ -99,6 +97,6 @@ impl DispatchGroupGuard {
 impl Drop for DispatchGroupGuard {
     fn drop(&mut self) {
         // SAFETY: Dispatch group cannot be null.
-        unsafe { dispatch_group_leave(&self.0) };
+        unsafe { DispatchGroup::leave(&self.0) };
     }
 }

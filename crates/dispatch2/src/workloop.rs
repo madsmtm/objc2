@@ -20,7 +20,7 @@ impl DispatchWorkloop {
         // Safety: label can only be valid.
         unsafe {
             if inactive {
-                dispatch_workloop_create_inactive(label.as_ptr())
+                DispatchWorkloop::new_inactive(label.as_ptr())
             } else {
                 dispatch_workloop_create(label.as_ptr())
             }

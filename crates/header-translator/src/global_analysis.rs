@@ -138,7 +138,7 @@ fn update_module(
                     };
                 } else {
                     // TODO(breaking): Remove in next version
-                    if body.is_none() {
+                    if body.is_none() && id.library_name() != "Dispatch" {
                         deprecated_fns.push(Stmt::FnDecl {
                             id: id.clone(),
                             renamed: None, // Never rename these
