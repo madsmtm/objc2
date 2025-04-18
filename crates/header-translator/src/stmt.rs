@@ -2349,10 +2349,11 @@ impl Stmt {
 
                     writeln!(f)?;
 
+                    let mut alias = None;
                     if let Some(actual_name) = actual_name {
                         if *actual_name != id.name {
                             writeln!(f, "/// Category \"{actual_name}\" on [`{}`].", cls.name)?;
-                            writeln!(f, "#[doc(alias = \"{actual_name}\")]")?;
+                            alias = Some(actual_name);
                         } else {
                             writeln!(f, "/// Category on [`{}`].", cls.name)?;
                         }
@@ -2360,6 +2361,9 @@ impl Stmt {
                         writeln!(f, "/// Category on [`{}`].", cls.name)?;
                     }
                     write!(f, "{}", documentation.fmt(None))?;
+                    if let Some(alias) = alias {
+                        writeln!(f, "#[doc(alias = \"{alias}\")]")?;
+                    }
 
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
@@ -2743,12 +2747,12 @@ impl Stmt {
 
                         for (name, documentation, availability, expr) in variants {
                             write!(f, "{}", documentation.fmt(None))?;
-                            write!(f, "    {}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
-                            write!(f, "    {availability}")?;
                             let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
                                 writeln!(f, "    #[doc(alias = \"{name}\")]")?;
                             }
+                            write!(f, "    {}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
+                            write!(f, "    {availability}")?;
                             writeln!(f, "    pub const {pretty_name}: Self = Self({expr});")?;
                         }
                         writeln!(f, "}}")?;
@@ -2774,12 +2778,12 @@ impl Stmt {
 
                         for (name, documentation, availability, expr) in variants {
                             write!(f, "{}", documentation.fmt(None))?;
-                            write!(f, "{}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
-                            write!(f, "{availability}")?;
                             let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
                                 writeln!(f, "        #[doc(alias = \"{name}\")]")?;
                             }
+                            write!(f, "{}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
+                            write!(f, "{availability}")?;
                             writeln!(f, "        const {pretty_name} = {expr};")?;
                         }
                         writeln!(f, "    }}")?;
@@ -2803,12 +2807,12 @@ impl Stmt {
 
                         for (name, documentation, availability, expr) in variants {
                             write!(f, "{}", documentation.fmt(None))?;
-                            write!(f, "    {}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
-                            write!(f, "    {availability}")?;
                             let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
                                 writeln!(f, "    #[doc(alias = \"{name}\")]")?;
                             }
+                            write!(f, "    {}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
+                            write!(f, "    {availability}")?;
                             writeln!(f, "    {pretty_name} = {expr},")?;
                         }
                         writeln!(f, "}}")?;
@@ -2958,15 +2962,15 @@ impl Stmt {
 
                     if needs_wrapper {
                         write!(f, "{}", documentation.fmt(None))?;
+                        if renamed.is_some() {
+                            writeln!(f, "#[doc(alias = {:?})]", id.name)?;
+                        }
                         write!(f, "{}", self.cfg_gate_ln(config))?;
                         write!(f, "{availability}")?;
                         if *must_use {
                             writeln!(f, "#[must_use]")?;
                         }
                         writeln!(f, "#[inline]")?;
-                        if renamed.is_some() {
-                            writeln!(f, "#[doc(alias = {:?})]", id.name)?;
-                        }
                         let unsafe_ = if *safe { "" } else { "unsafe " };
                         write!(f, "{vis} {unsafe_}{}fn {name}(", abi.extern_outer())?;
                         for (i, (param, arg_ty)) in arguments.iter().enumerate() {
@@ -3115,8 +3119,8 @@ impl Stmt {
                     superclass,
                 } => {
                     write!(f, "{}", documentation.fmt(Some(id)))?;
-                    write!(f, "{availability}")?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
                     writeln!(f, "#[repr(C)]")?;
                     if !*is_cf {
                         // To avoid warnings, though mostly useless.
