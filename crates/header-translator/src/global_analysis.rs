@@ -13,7 +13,7 @@ use crate::method::Method;
 use crate::module::Module;
 use crate::name_translation::{cf_fn_name, find_fn_implementor};
 use crate::stmt::Stmt;
-use crate::{ItemIdentifier, Library};
+use crate::{ItemIdentifier, Library, LibraryConfig};
 
 pub fn global_analysis(library: &mut Library) {
     let _span = info_span!("analyzing").entered();
@@ -29,7 +29,12 @@ pub fn global_analysis(library: &mut Library) {
     }
 
     let ident_mapping = create_ident_mapping(&library.module);
-    update_module(&mut library.module, &implementable_mapping, &ident_mapping);
+    update_module(
+        &mut library.module,
+        &implementable_mapping,
+        &ident_mapping,
+        &library.data,
+    );
 }
 
 fn create_implementable_mapping(module: &Module) -> BTreeSet<ItemTree> {
@@ -64,6 +69,7 @@ fn update_module(
     module: &mut Module,
     implementable_mapping: &BTreeSet<ItemTree>,
     ident_mapping: &HashMap<String, Expr>,
+    library_data: &LibraryConfig,
 ) {
     let mut deprecated_fns = vec![];
 
@@ -85,21 +91,33 @@ fn update_module(
             documentation,
         } = stmt
         {
-            if let Some(cf_item) =
+            let data = library_data.fns.get(&id.name).cloned().unwrap_or_default();
+
+            if data.no_implementor {
+                continue;
+            }
+
+            let implementor = if let Some(implementor) = data.implementor {
+                Some(ItemTree::from_id(implementor))
+            } else {
                 find_fn_implementor(implementable_mapping, id, arguments, result_type)
-            {
+            };
+
+            if let Some(cf_item) = implementor {
                 let is_instance_method = arguments
                     .first()
                     .is_some_and(|(_, arg_ty)| arg_ty.is_self_ty_legal(cf_item.id()));
                 let omit_memory_management_words =
                     result_type.fn_return(*returns_retained).1.is_some();
 
-                let name = cf_fn_name(
-                    &id.name,
-                    &cf_item.id().name,
-                    is_instance_method,
-                    omit_memory_management_words,
-                );
+                let name = renamed.clone().unwrap_or_else(|| {
+                    cf_fn_name(
+                        &id.name,
+                        &cf_item.id().name,
+                        is_instance_method,
+                        omit_memory_management_words,
+                    )
+                });
 
                 if name == "type_id" {
                     assert!(arguments.is_empty(), "{id:?} must have no arguments");
@@ -307,6 +325,6 @@ fn update_module(
     // Recurse for submodules
     for (name, module) in &mut module.submodules {
         let _span = debug_span!("file", name).entered();
-        update_module(module, implementable_mapping, ident_mapping);
+        update_module(module, implementable_mapping, ident_mapping, library_data);
     }
 }

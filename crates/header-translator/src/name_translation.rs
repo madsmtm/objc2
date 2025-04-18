@@ -3,6 +3,7 @@
 //! See <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/docs/CToSwiftNameTranslation.md>.
 //!
 //! Kinda ugly and under-tested, may not work for all cases.
+#![allow(clippy::if_same_then_else)]
 
 use std::{
     collections::{BTreeSet, VecDeque},
@@ -316,22 +317,7 @@ pub(crate) fn find_fn_implementor(
             continue;
         }
         // FIXME: CTFontManager seems to be separate from CTFont.
-        // Similarly for ASAuthorizationAllSupportedPublicKeyCredentialDescriptor
-        if fn_id.name.contains("CTFontManager")
-            || fn_id
-                .name
-                .contains("ASAuthorizationAllSupportedPublicKeyCredentialDescriptor")
-        {
-            continue;
-        }
-        // Makes sense to put on `SecKeychain`, even though the name contains
-        // `SecKeychainAttributeInfo`.
-        if fn_id.name == "SecKeychainAttributeInfoForItemID" {
-            continue;
-        }
-        // Makes sense to put on `MIDIEvent`, even though the name contains
-        // `MIDIEventList`.
-        if fn_id.name == "MIDIEventListForEachEvent" {
+        if fn_id.name.contains("CTFontManager") {
             continue;
         }
         if is_method_candidate(&fn_id.name, cf_no_ref(&item.id().name)) {
@@ -339,8 +325,16 @@ pub(crate) fn find_fn_implementor(
         }
     }
 
-    // The best match is the longest type name that prefixes the function.
-    candidates.sort_by(|a, b| b.id().name.len().cmp(&a.id().name.len()));
+    // The best match is the longest type name that prefixes the function,
+    // with names that match case-wise being preferred.
+    let fn_is_lowercase = fn_id.name.to_lowercase() == fn_id.name;
+    candidates.sort_by(|a, b| {
+        let a_is_lowercase = a.id().name.to_lowercase() == a.id().name;
+        let b_is_lowercase = b.id().name.to_lowercase() == b.id().name;
+        (b_is_lowercase == fn_is_lowercase)
+            .cmp(&(a_is_lowercase == fn_is_lowercase))
+            .then(b.id().name.len().cmp(&a.id().name.len()))
+    });
 
     Some(candidates.first()?.clone())
 }
@@ -355,7 +349,6 @@ pub(crate) fn find_fn_implementor(
 /// <https://github.com/swiftlang/swift/blob/swift-6.1-RELEASE/docs/CToSwiftNameTranslation-OmitNeedlessWords.md>
 ///
 /// See motivation in <https://github.com/madsmtm/objc2/issues/736>.
-#[track_caller]
 pub(crate) fn cf_fn_name(
     fn_name: &str,
     type_name: &str,
@@ -366,13 +359,26 @@ pub(crate) fn cf_fn_name(
     let type_name = cf_no_ref(type_name).replace("Mutable", "");
 
     debug_assert!(is_method_candidate(fn_name, &type_name));
-    let rest = fn_name.strip_prefix(&type_name).expect("must prefix");
 
-    // Make things like CGColorCreateGenericGrayGamma2_2 work.
-    let mut words = split_words(rest)
-        .filter(|word| *word != "_")
-        .map(str::to_lowercase)
+    let mut type_words = lowercase_words(&type_name);
+    let mut words = lowercase_words(fn_name)
+        .skip_while(|fn_word| {
+            if let Some(type_word) = type_words.next() {
+                assert_eq!(*fn_word, type_word);
+                true
+            } else {
+                false
+            }
+        })
         .collect::<VecDeque<_>>();
+
+    if type_words.count() != 0 {
+        panic!("function name must prefix type: {fn_name:?}, {type_name:?}");
+    }
+
+    if words.is_empty() {
+        return "".to_string();
+    }
 
     // Keep "create" and "copy" if needed for the user to be able to determine
     // memory management. Used for things like `CFPlugInInstanceCreate` and
@@ -416,14 +422,44 @@ pub(crate) fn cf_fn_name(
 
 /// Whether the function is a candidate for being a method.
 fn is_method_candidate(fn_name: &str, type_name: &str) -> bool {
-    let cp = common_prefix([fn_name, type_name]);
-    // Things like CGDisplayModelNumber should not be mapped on CGDisplayMode.
-    if type_name != cp {
-        return false;
-    }
+    // Things like CGDisplayModelNumber should not be mapped on CGDisplayMode,
+    // so compare on a word-basis instead of just `str::starts_with`.
+    //
     // TODO: Maybe make this more like "if all words in type name exists in fn name"?
     // That would allow `CGPDFContextCreate` to be emitted as `CGContext.pdf_create`.
-    fn_name.starts_with(cp)
+    let mut fn_words = lowercase_words(fn_name);
+
+    for type_word in lowercase_words(type_name) {
+        if let Some(fn_word) = fn_words.next() {
+            if fn_word == type_word {
+                continue;
+            } else {
+                return false;
+            }
+        } else {
+            // Type name is longer than the function.
+            return false;
+        }
+    }
+
+    true
+}
+
+fn lowercase_words(s: &str) -> impl Iterator<Item = String> + '_ {
+    // Removing `_` is desirable everywhere except in the beginning, it makes
+    // things like `CGColorCreateGenericGrayGamma2_2` work, and we merge it
+    // back with `.join("_")` anyhow.
+    let mut has_seen_non_underscore = false;
+    split_words(s)
+        .filter(move |word| {
+            if *word == "_" {
+                !has_seen_non_underscore
+            } else {
+                has_seen_non_underscore = true;
+                true
+            }
+        })
+        .map(str::to_lowercase)
 }
 
 #[cfg(test)]

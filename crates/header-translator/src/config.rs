@@ -520,6 +520,11 @@ pub struct FnData {
     pub unsafe_: bool,
     #[serde(default)]
     pub renamed: Option<String>,
+    #[serde(rename = "no-implementor")]
+    #[serde(default)]
+    pub no_implementor: bool,
+    #[serde(default)]
+    pub implementor: Option<ItemIdentifier>,
 }
 
 impl Default for FnData {
@@ -528,6 +533,8 @@ impl Default for FnData {
             skipped: skipped_default(),
             unsafe_: unsafe_default(),
             renamed: None,
+            no_implementor: false,
+            implementor: None,
         }
     }
 }

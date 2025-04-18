@@ -23,3 +23,6 @@ class.ASAccountAuthenticationModificationViewController.definition-skipped = tru
 
 # Specifies superclass as UIControl or NSControl conditionally
 class.ASAuthorizationAppleIDButton.definition-skipped = true
+
+# header-translator incorrectly maps this as a method on `ASAuthorization`.
+fn.ASAuthorizationAllSupportedPublicKeyCredentialDescriptorTransports.no-implementor = true

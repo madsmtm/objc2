@@ -169,3 +169,11 @@ fn.SecTrustGetResult.renamed = "get_trust"
 
 # Make it clear that this is a getter.
 fn.sec_protocol_options_get_enable_encrypted_client_hello.renamed = "enabled_encrypted_client_hello"
+
+# Makes sense to put on `SecKeychain`, even though the name contains `SecKeychainAttributeInfo`.
+fn.SecKeychainAttributeInfoForItemID.implementor = "Security.SecBase.SecKeychain"
+
+# Doesn't make sense to map to `cssm_list`/`cssm_query`, should instead be mapped on a different type.
+fn.CSSM_ListAttachedModuleManagers.no-implementor = true
+fn.CSSM_QuerySize.no-implementor = true
+fn.CSSM_QueryKeySizeInBits.no-implementor = true
