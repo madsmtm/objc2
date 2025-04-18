@@ -8,7 +8,7 @@
 //! ## Examples
 //!
 //! ```ignore
-#![doc = include_str!("../examples/timer.rs")]
+#![doc = include_str!("../examples/run_loop.rs")]
 //! ```
 #![no_std]
 #![cfg_attr(feature = "unstable-coerce-pointee", feature(derive_coerce_pointee))]
