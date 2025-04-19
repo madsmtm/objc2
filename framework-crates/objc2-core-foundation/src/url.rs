@@ -79,6 +79,7 @@ impl CFURL {
     /// assert!(CFURL::from_file_path("/a/\0a").is_none());
     ///
     /// // Trailing NUL bytes are stripped.
+    /// // NOTE: This only seems to work on some versions of CoreFoundation.
     /// let url = CFURL::from_file_path("/a\0\0").unwrap();
     /// assert_eq!(url.to_file_path().unwrap(), Path::new("/a"));
     /// ```
@@ -327,10 +328,16 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "objc2")]
     fn invalid_with_nul_bytes() {
-        // This is probably a bug in CF:
+        // This is a bug in newer CF versions:
         // https://github.com/swiftlang/swift-corelibs-foundation/issues/5200
-        assert_eq!(unsafe { CFURL::from_str_unchecked("a\0aaaaaa") }, None);
+        let url = unsafe { CFURL::from_str_unchecked("a\0aaaaaa") };
+        if objc2::available!(macos = 12.0, ios = 15.0, watchos = 8.0, tvos = 15.0, ..) {
+            assert_eq!(url, None);
+        } else {
+            assert_eq!(url.unwrap().string().to_string(), "a%00aaaaaa");
+        }
     }
 
     #[test]
@@ -373,6 +380,10 @@ mod tests {
 
     /// Ensure that trailing NULs are completely stripped.
     #[test]
+    #[cfg_attr(
+        not(target_os = "macos"),
+        ignore = "seems to work differently in the simulator"
+    )]
     fn path_with_trailing_nul() {
         let url = CFURL::from_file_path("/abc/def\0\0\0").unwrap();
         assert_eq!(url.to_file_path().unwrap(), Path::new("/abc/def"));
@@ -385,7 +396,7 @@ mod tests {
         let path = url
             .file_system_path(CFURLPathStyle::CFURLHFSPathStyle)
             .unwrap();
-        assert_eq!(path.to_string(), "Macintosh HD:abc:def");
+        assert!(path.to_string().ends_with(":abc:def")); // $DISK_NAME:abc:def
         let path = url
             .file_system_path(CFURLPathStyle::CFURLWindowsPathStyle)
             .unwrap();
