@@ -859,15 +859,16 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
     cargo_toml["dependencies"] = toml_edit::Item::Table(toml_edit::Table::from_iter([
         (
             "block2",
-            toml_edit::Value::InlineTable(toml_edit::InlineTable::from_iter([(
-                "workspace",
-                toml_edit::Value::from(true),
-            )])),
+            toml_edit::Value::InlineTable(toml_edit::InlineTable::from_iter([
+                ("workspace", toml_edit::Value::from(true)),
+                ("default-features", toml_edit::Value::from(true)),
+            ])),
         ),
         (
             "objc2",
             toml_edit::Value::InlineTable(toml_edit::InlineTable::from_iter([
                 ("workspace", toml_edit::Value::from(true)),
+                ("default-features", toml_edit::Value::from(true)),
                 // FIXME: Make these not required for tests
                 (
                     "features",
@@ -877,10 +878,10 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
         ),
         (
             "libc",
-            toml_edit::Value::InlineTable(toml_edit::InlineTable::from_iter([(
-                "workspace",
-                toml_edit::Value::from(true),
-            )])),
+            toml_edit::Value::InlineTable(toml_edit::InlineTable::from_iter([
+                ("workspace", toml_edit::Value::from(true)),
+                ("default-features", toml_edit::Value::from(true)),
+            ])),
         ),
     ]));
     let _ = cargo_toml.remove("target");
@@ -904,6 +905,7 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
         dependencies[&lib.krate] = toml_edit::InlineTable::from_iter([
             ("workspace", toml_edit::Value::from(true)),
             ("optional", toml_edit::Value::from(true)),
+            ("default-features", toml_edit::Value::from(true)),
         ])
         .into();
     }

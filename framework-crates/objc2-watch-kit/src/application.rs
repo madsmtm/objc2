@@ -35,13 +35,13 @@ impl WKApplication {
 
         // SAFETY: `argc` and `argv` are correct.
         // `WKApplicationMain` is safely re-entrant, just weird to do so.
-        let ret = unsafe { Self::__main(argc, argv, application_delegate_class_name) };
+        let _ret = unsafe { Self::__main(argc, argv, application_delegate_class_name) };
 
         // WKApplicationMain is documented to never return, so whatever we do
         // here is just for show really.
         #[cfg(feature = "std")]
         {
-            std::process::exit(ret as i32)
+            std::process::exit(_ret as i32)
         }
         #[cfg(not(feature = "std"))]
         {

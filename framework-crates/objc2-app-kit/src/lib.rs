@@ -36,7 +36,7 @@
 #![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-app-kit/0.3.0")]
+#![doc(html_root_url = "https://docs.rs/objc2-app-kit/0.3.1")]
 #![recursion_limit = "512"]
 #![allow(non_snake_case)]
 #![allow(unused_imports)]
@@ -68,6 +68,7 @@ mod image;
 mod text;
 
 #[cfg(feature = "NSApplication")]
+#[cfg(feature = "NSResponder")]
 pub use self::application::*;
 pub use self::generated::*;
 #[cfg(feature = "NSImage")]

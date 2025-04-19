@@ -1,6 +1,6 @@
 [package]
 name = "objc2"
-version = "0.6.0" # Remember to update html_root_url in lib.rs
+version = "0.6.1" # Remember to update html_root_url in lib.rs
 description = "Objective-C interface and runtime bindings"
 keywords = ["objective-c", "macos", "ios", "objc_msgSend", "objc"]
 categories = [

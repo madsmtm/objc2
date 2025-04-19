@@ -3251,6 +3251,10 @@ impl Stmt {
                 if ["CoreMIDI", "DiskArbitration"].contains(&id.library_name()) {
                     return None;
                 }
+                // Some dispatch statics are not exposed.
+                if ["Dispatch"].contains(&id.library_name()) {
+                    return None;
+                }
                 if !availability.is_available_host() {
                     return None;
                 }

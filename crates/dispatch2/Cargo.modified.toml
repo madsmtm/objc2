@@ -1,5 +1,5 @@
 [package]
-version = "0.2.0" # Remember to update html_root_url in lib.rs
+version = "0.3.0" # Remember to update html_root_url in lib.rs
 description = "Bindings and wrappers for Apple's Grand Central Dispatch (GCD)"
 keywords = ["gcd", "macos", "ios", "dispatch", "libdispatch"]
 authors = ["Mads Marquart <mads@marquart.dk>", "Mary <mary@mary.zone>"]
