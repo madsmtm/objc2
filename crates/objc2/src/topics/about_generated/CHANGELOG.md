@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `AccessorySetupKit` / `objc2-accessory-setup-kit`.
   - `AppClip` / `objc2-app-clip`.
   - `ApplicationServices` / `objc2-application-services` (some submodules left out).
+  - `BrowserEngineCore` / `objc2-browser-engine-core`.
   - `BrowserEngineKit` / `objc2-browser-engine-kit`.
   - `Carbon` / `objc2-carbon` (empty for now).
   - `CarPlay` / `objc2-car-play`.
@@ -165,7 +166,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `AVFAudio` / `objc2-avf-audio`.
   - `AVFoundation` / `objc2-av-foundation`.
   - `AVRouting` / `objc2-av-routing`.
-  - `BrowserEngineCore` / `objc2-browser-engine-core`.
   - `CompositorServices` / `objc2-compositor-services`.
   - `CoreAudioTypes` / `objc2-core-audio-types`.
   - `CoreAudio` / `objc2-core-audio`.
@@ -174,7 +174,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreFoundation` / `objc2-core-foundation`.
   - `CoreMedia` / `objc2-core-media`.
   - `CoreMIDI` / `objc2-core-midi`.
-  - `CoreServices` / `objc2-core-services`.
   - `CoreText` / `objc2-core-text`.
   - `CoreVideo` / `objc2-core-video`.
   - `DiskArbitration` / `objc2-disk-arbitration`.
