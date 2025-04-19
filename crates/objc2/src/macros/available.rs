@@ -110,8 +110,22 @@
 /// }
 /// ```
 ///
+/// Work around problems in a specific range of versions (an example of this
+/// in the real world can be seen in [#662]).
+///
+/// ```
+/// use objc2::available;
+///
+/// if available!(macos = 15.0) && !available!(macos = 15.1) {
+///     // Do something on macOS 15.0 and 15.0.1.
+/// } else {
+///     // Do something else on all other versions.
+/// }
+/// ```
+///
 /// [`effectiveAppearance`]: https://developer.apple.com/documentation/appkit/nsapplication/2967171-effectiveappearance?language=objc
 /// [`wantsExtendedDynamicRangeContent`]: https://developer.apple.com/documentation/quartzcore/cametallayer/1478161-wantsextendeddynamicrangecontent
+/// [#662]: https://github.com/madsmtm/objc2/issues/662
 #[doc(alias = "@available")] // Objective-C
 #[doc(alias = "#available")] // Swift
 #[macro_export]
