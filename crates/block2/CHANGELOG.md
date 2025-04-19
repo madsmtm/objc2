@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.6.1 - 2025-04-19
+
+### Added
+* Added `DynBlock` alias to help facilitate upgrading to v0.7 when that's done.
+
 ### Fixed
 * Slightly improved documentation around `ManualBlockEncoding`.
 

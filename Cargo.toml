@@ -86,7 +86,7 @@ default.extend-words.lod = "lod"
 # (this of course requires that the API we expose is similar enough that framework
 # crates themselves won't break in that version update. But that's the plan).
 dispatch2 = { path = "crates/dispatch2", version = ">=0.2.0, <0.4.0", default-features = false } # v0.2.0 or v0.3.*
-block2 = { path = "crates/block2", version = ">=0.6.0, <0.8.0", default-features = false } # v0.6.0 or v0.7.*
+block2 = { path = "crates/block2", version = ">=0.6.1, <0.8.0", default-features = false } # v0.6.1 or v0.7.*
 objc2 = { path = "crates/objc2", version = ">=0.6.1, <0.8.0", default-features = false } # v0.6.1 or v0.7.*
 # Use a reasonably new version of libc.
 libc = { version = "0.2.80", default-features = false }
