@@ -107,7 +107,7 @@ pub unsafe trait DispatchObject {
     }
 
     /// Set the finalizer function for the object.
-    fn set_finalizer<F>(&mut self, destructor: F)
+    fn set_finalizer<F>(&self, destructor: F)
     where
         F: Send + FnOnce(),
     {
@@ -158,7 +158,7 @@ pub unsafe trait DispatchObject {
     }
 
     /// Activate the object.
-    fn activate(&mut self) {
+    fn activate(&self) {
         dispatch_activate(self.as_raw());
     }
 

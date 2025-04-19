@@ -188,7 +188,7 @@ impl DispatchQueue {
     }
 
     /// Sets a function at the given key that will be executed at [`DispatchQueue`] destruction.
-    pub fn set_specific<F>(&mut self, key: NonNull<()>, destructor: F)
+    pub fn set_specific<F>(&self, key: NonNull<()>, destructor: F)
     where
         F: Send + FnOnce(),
     {

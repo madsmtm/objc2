@@ -70,7 +70,6 @@ pub use self::data::DispatchData;
 pub use self::generated::{
     dispatch_allow_send_signals, dispatch_fd_t, dispatch_get_specific, dispatch_once_t,
     DispatchAutoReleaseFrequency, _dispatch_data_destructor_free, _dispatch_data_destructor_munmap,
-    _dispatch_data_empty, _dispatch_main_q, _dispatch_queue_attr_concurrent,
     _dispatch_source_type_data_add, _dispatch_source_type_data_or,
     _dispatch_source_type_data_replace, _dispatch_source_type_mach_recv,
     _dispatch_source_type_mach_send, _dispatch_source_type_memorypressure,
