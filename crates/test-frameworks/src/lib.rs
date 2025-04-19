@@ -23,7 +23,7 @@ pub use core::ffi::{
 };
 pub use core::ptr::NonNull;
 #[cfg(feature = "test-frameworks")]
-pub use dispatch2::ffi::*;
+pub use dispatch2::*;
 pub use libc;
 pub use objc2::ffi::{NSInteger, NSUInteger};
 pub use objc2::rc::{Allocated, Retained};

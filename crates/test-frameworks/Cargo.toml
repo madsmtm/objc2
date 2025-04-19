@@ -377,219 +377,219 @@ objc2-carbon = ["dep:objc2-carbon"]
 objc2-fs-kit = ["dep:objc2-fs-kit"]
 
 [dependencies]
-block2 = { workspace = true }
-objc2 = { workspace = true, features = ["relax-sign-encoding"] }
-libc = { workspace = true }
-objc2-avf-audio = { workspace = true, optional = true }
-objc2-av-foundation = { workspace = true, optional = true }
-objc2-av-kit = { workspace = true, optional = true }
-objc2-accessibility = { workspace = true, optional = true }
-objc2-authentication-services = { workspace = true, optional = true }
-objc2-cloud-kit = { workspace = true, optional = true }
-objc2-color-sync = { workspace = true, optional = true }
-objc2-core-audio = { workspace = true, optional = true }
-objc2-core-audio-types = { workspace = true, optional = true }
-objc2-core-bluetooth = { workspace = true, optional = true }
-objc2-core-data = { workspace = true, optional = true }
-objc2-core-foundation = { workspace = true, optional = true }
-objc2-core-graphics = { workspace = true, optional = true }
-objc2-core-location = { workspace = true, optional = true }
-objc2-core-midi = { workspace = true, optional = true }
-objc2-core-ml = { workspace = true, optional = true }
-objc2-core-media = { workspace = true, optional = true }
-objc2-core-services = { workspace = true, optional = true }
-objc2-core-text = { workspace = true, optional = true }
-objc2-core-video = { workspace = true, optional = true }
-objc2-crypto-token-kit = { workspace = true, optional = true }
-objc2-data-detection = { workspace = true, optional = true }
-objc2-device-check = { workspace = true, optional = true }
-dispatch2 = { workspace = true, optional = true }
-objc2-extension-kit = { workspace = true, optional = true }
-objc2-foundation = { workspace = true, optional = true }
-objc2-game-kit = { workspace = true, optional = true }
-objc2-image-io = { workspace = true, optional = true }
-objc2-intents = { workspace = true, optional = true }
-objc2-map-kit = { workspace = true, optional = true }
-objc2-media-player = { workspace = true, optional = true }
-objc2-natural-language = { workspace = true, optional = true }
-objc2-network-extension = { workspace = true, optional = true }
-objc2-os-log = { workspace = true, optional = true }
-objc2-photos-ui = { workspace = true, optional = true }
-objc2-scene-kit = { workspace = true, optional = true }
-objc2-security = { workspace = true, optional = true }
-objc2-shazam-kit = { workspace = true, optional = true }
-objc2-sound-analysis = { workspace = true, optional = true }
-objc2-sprite-kit = { workspace = true, optional = true }
-objc2-store-kit = { workspace = true, optional = true }
-objc2-symbols = { workspace = true, optional = true }
-objc2-uniform-type-identifiers = { workspace = true, optional = true }
-objc2-user-notifications = { workspace = true, optional = true }
+block2 = { workspace = true, default-features = true }
+objc2 = { workspace = true, default-features = true, features = ["relax-sign-encoding"] }
+libc = { workspace = true, default-features = true }
+objc2-avf-audio = { workspace = true, optional = true, default-features = true }
+objc2-av-foundation = { workspace = true, optional = true, default-features = true }
+objc2-av-kit = { workspace = true, optional = true, default-features = true }
+objc2-accessibility = { workspace = true, optional = true, default-features = true }
+objc2-authentication-services = { workspace = true, optional = true, default-features = true }
+objc2-cloud-kit = { workspace = true, optional = true, default-features = true }
+objc2-color-sync = { workspace = true, optional = true, default-features = true }
+objc2-core-audio = { workspace = true, optional = true, default-features = true }
+objc2-core-audio-types = { workspace = true, optional = true, default-features = true }
+objc2-core-bluetooth = { workspace = true, optional = true, default-features = true }
+objc2-core-data = { workspace = true, optional = true, default-features = true }
+objc2-core-foundation = { workspace = true, optional = true, default-features = true }
+objc2-core-graphics = { workspace = true, optional = true, default-features = true }
+objc2-core-location = { workspace = true, optional = true, default-features = true }
+objc2-core-midi = { workspace = true, optional = true, default-features = true }
+objc2-core-ml = { workspace = true, optional = true, default-features = true }
+objc2-core-media = { workspace = true, optional = true, default-features = true }
+objc2-core-services = { workspace = true, optional = true, default-features = true }
+objc2-core-text = { workspace = true, optional = true, default-features = true }
+objc2-core-video = { workspace = true, optional = true, default-features = true }
+objc2-crypto-token-kit = { workspace = true, optional = true, default-features = true }
+objc2-data-detection = { workspace = true, optional = true, default-features = true }
+objc2-device-check = { workspace = true, optional = true, default-features = true }
+dispatch2 = { workspace = true, optional = true, default-features = true }
+objc2-extension-kit = { workspace = true, optional = true, default-features = true }
+objc2-foundation = { workspace = true, optional = true, default-features = true }
+objc2-game-kit = { workspace = true, optional = true, default-features = true }
+objc2-image-io = { workspace = true, optional = true, default-features = true }
+objc2-intents = { workspace = true, optional = true, default-features = true }
+objc2-map-kit = { workspace = true, optional = true, default-features = true }
+objc2-media-player = { workspace = true, optional = true, default-features = true }
+objc2-natural-language = { workspace = true, optional = true, default-features = true }
+objc2-network-extension = { workspace = true, optional = true, default-features = true }
+objc2-os-log = { workspace = true, optional = true, default-features = true }
+objc2-photos-ui = { workspace = true, optional = true, default-features = true }
+objc2-scene-kit = { workspace = true, optional = true, default-features = true }
+objc2-security = { workspace = true, optional = true, default-features = true }
+objc2-shazam-kit = { workspace = true, optional = true, default-features = true }
+objc2-sound-analysis = { workspace = true, optional = true, default-features = true }
+objc2-sprite-kit = { workspace = true, optional = true, default-features = true }
+objc2-store-kit = { workspace = true, optional = true, default-features = true }
+objc2-symbols = { workspace = true, optional = true, default-features = true }
+objc2-uniform-type-identifiers = { workspace = true, optional = true, default-features = true }
+objc2-user-notifications = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "visionos"))'.dependencies]
-objc2-ar-kit = { workspace = true, optional = true }
-objc2-event-kit-ui = { workspace = true, optional = true }
-objc2-identity-lookup-ui = { workspace = true, optional = true }
-objc2-media-setup = { workspace = true, optional = true }
-objc2-message-ui = { workspace = true, optional = true }
+objc2-ar-kit = { workspace = true, optional = true, default-features = true }
+objc2-event-kit-ui = { workspace = true, optional = true, default-features = true }
+objc2-identity-lookup-ui = { workspace = true, optional = true, default-features = true }
+objc2-media-setup = { workspace = true, optional = true, default-features = true }
+objc2-message-ui = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(not(any(target_os = "tvos", target_os = "watchos")))'.dependencies]
-objc2-av-routing = { workspace = true, optional = true }
-objc2-ad-services = { workspace = true, optional = true }
-objc2-automatic-assessment-configuration = { workspace = true, optional = true }
-objc2-background-assets = { workspace = true, optional = true }
-objc2-class-kit = { workspace = true, optional = true }
-objc2-contacts-ui = { workspace = true, optional = true }
-objc2-core-audio-kit = { workspace = true, optional = true }
-objc2-core-spotlight = { workspace = true, optional = true }
-objc2-device-discovery-extension = { workspace = true, optional = true }
-objc2-file-provider = { workspace = true, optional = true }
-objc2-file-provider-ui = { workspace = true, optional = true }
-objc2-io-kit = { workspace = true, optional = true }
-objc2-identity-lookup = { workspace = true, optional = true }
-objc2-image-capture-core = { workspace = true, optional = true }
-objc2-local-authentication-embedded-ui = { workspace = true, optional = true }
-objc2-metal-fx = { workspace = true, optional = true }
-objc2-metric-kit = { workspace = true, optional = true }
-objc2-pdf-kit = { workspace = true, optional = true }
-objc2-pencil-kit = { workspace = true, optional = true }
-objc2-quick-look = { workspace = true, optional = true }
-objc2-quick-look-thumbnailing = { workspace = true, optional = true }
-objc2-safari-services = { workspace = true, optional = true }
-objc2-speech = { workspace = true, optional = true }
-objc2-thread-network = { workspace = true, optional = true }
-objc2-user-notifications-ui = { workspace = true, optional = true }
-objc2-web-kit = { workspace = true, optional = true }
+objc2-av-routing = { workspace = true, optional = true, default-features = true }
+objc2-ad-services = { workspace = true, optional = true, default-features = true }
+objc2-automatic-assessment-configuration = { workspace = true, optional = true, default-features = true }
+objc2-background-assets = { workspace = true, optional = true, default-features = true }
+objc2-class-kit = { workspace = true, optional = true, default-features = true }
+objc2-contacts-ui = { workspace = true, optional = true, default-features = true }
+objc2-core-audio-kit = { workspace = true, optional = true, default-features = true }
+objc2-core-spotlight = { workspace = true, optional = true, default-features = true }
+objc2-device-discovery-extension = { workspace = true, optional = true, default-features = true }
+objc2-file-provider = { workspace = true, optional = true, default-features = true }
+objc2-file-provider-ui = { workspace = true, optional = true, default-features = true }
+objc2-io-kit = { workspace = true, optional = true, default-features = true }
+objc2-identity-lookup = { workspace = true, optional = true, default-features = true }
+objc2-image-capture-core = { workspace = true, optional = true, default-features = true }
+objc2-local-authentication-embedded-ui = { workspace = true, optional = true, default-features = true }
+objc2-metal-fx = { workspace = true, optional = true, default-features = true }
+objc2-metric-kit = { workspace = true, optional = true, default-features = true }
+objc2-pdf-kit = { workspace = true, optional = true, default-features = true }
+objc2-pencil-kit = { workspace = true, optional = true, default-features = true }
+objc2-quick-look = { workspace = true, optional = true, default-features = true }
+objc2-quick-look-thumbnailing = { workspace = true, optional = true, default-features = true }
+objc2-safari-services = { workspace = true, optional = true, default-features = true }
+objc2-speech = { workspace = true, optional = true, default-features = true }
+objc2-thread-network = { workspace = true, optional = true, default-features = true }
+objc2-user-notifications-ui = { workspace = true, optional = true, default-features = true }
+objc2-web-kit = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(target_os = "ios")'.dependencies]
-objc2-accessory-setup-kit = { workspace = true, optional = true }
-objc2-app-clip = { workspace = true, optional = true }
-objc2-browser-engine-core = { workspace = true, optional = true }
-objc2-browser-engine-kit = { workspace = true, optional = true }
-objc2-car-play = { workspace = true, optional = true }
-objc2-core-nfc = { workspace = true, optional = true }
-objc2-exposure-notification = { workspace = true, optional = true }
-objc2-messages = { workspace = true, optional = true }
-objc2-push-to-talk = { workspace = true, optional = true }
-objc2-sensor-kit = { workspace = true, optional = true }
+objc2-accessory-setup-kit = { workspace = true, optional = true, default-features = true }
+objc2-app-clip = { workspace = true, optional = true, default-features = true }
+objc2-browser-engine-core = { workspace = true, optional = true, default-features = true }
+objc2-browser-engine-kit = { workspace = true, optional = true, default-features = true }
+objc2-car-play = { workspace = true, optional = true, default-features = true }
+objc2-core-nfc = { workspace = true, optional = true, default-features = true }
+objc2-exposure-notification = { workspace = true, optional = true, default-features = true }
+objc2-messages = { workspace = true, optional = true, default-features = true }
+objc2-push-to-talk = { workspace = true, optional = true, default-features = true }
+objc2-sensor-kit = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
-objc2-accounts = { workspace = true, optional = true }
-objc2-business-chat = { workspace = true, optional = true }
-objc2-core-telephony = { workspace = true, optional = true }
-objc2-notification-center = { workspace = true, optional = true }
-objc2-screen-time = { workspace = true, optional = true }
-objc2-sensitive-content-analysis = { workspace = true, optional = true }
-objc2-social = { workspace = true, optional = true }
+objc2-accounts = { workspace = true, optional = true, default-features = true }
+objc2-business-chat = { workspace = true, optional = true, default-features = true }
+objc2-core-telephony = { workspace = true, optional = true, default-features = true }
+objc2-notification-center = { workspace = true, optional = true, default-features = true }
+objc2-screen-time = { workspace = true, optional = true, default-features = true }
+objc2-sensitive-content-analysis = { workspace = true, optional = true, default-features = true }
+objc2-social = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "tvos"))'.dependencies]
-objc2-ad-support = { workspace = true, optional = true }
-objc2-cinematic = { workspace = true, optional = true }
-objc2-ml-compute = { workspace = true, optional = true }
+objc2-ad-support = { workspace = true, optional = true, default-features = true }
+objc2-cinematic = { workspace = true, optional = true, default-features = true }
+objc2-ml-compute = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { workspace = true, optional = true }
-objc2-application-services = { workspace = true, optional = true }
-objc2-automator = { workspace = true, optional = true }
-objc2-carbon = { workspace = true, optional = true }
-objc2-collaboration = { workspace = true, optional = true }
-objc2-core-media-io = { workspace = true, optional = true }
-objc2-core-wlan = { workspace = true, optional = true }
-objc2-disk-arbitration = { workspace = true, optional = true }
-objc2-exception-handling = { workspace = true, optional = true }
-objc2-execution-policy = { workspace = true, optional = true }
-objc2-fs-kit = { workspace = true, optional = true }
-objc2-finder-sync = { workspace = true, optional = true }
-objc2-io-bluetooth = { workspace = true, optional = true }
-objc2-io-bluetooth-ui = { workspace = true, optional = true }
-objc2-io-usb-host = { workspace = true, optional = true }
-objc2-input-method-kit = { workspace = true, optional = true }
-objc2-latent-semantic-mapping = { workspace = true, optional = true }
-objc2-mail-kit = { workspace = true, optional = true }
-objc2-media-extension = { workspace = true, optional = true }
-objc2-osa-kit = { workspace = true, optional = true }
-objc2-open-directory = { workspace = true, optional = true }
-objc2-paravirtualized-graphics = { workspace = true, optional = true }
-objc2-preference-panes = { workspace = true, optional = true }
-objc2-quartz = { workspace = true, optional = true }
-objc2-quick-look-ui = { workspace = true, optional = true }
-objc2-screen-capture-kit = { workspace = true, optional = true }
-objc2-screen-saver = { workspace = true, optional = true }
-objc2-scripting-bridge = { workspace = true, optional = true }
-objc2-security-foundation = { workspace = true, optional = true }
-objc2-security-interface = { workspace = true, optional = true }
-objc2-service-management = { workspace = true, optional = true }
-objc2-system-extensions = { workspace = true, optional = true }
-objc2-virtualization = { workspace = true, optional = true }
-objc2-itunes-library = { workspace = true, optional = true }
+objc2-app-kit = { workspace = true, optional = true, default-features = true }
+objc2-application-services = { workspace = true, optional = true, default-features = true }
+objc2-automator = { workspace = true, optional = true, default-features = true }
+objc2-carbon = { workspace = true, optional = true, default-features = true }
+objc2-collaboration = { workspace = true, optional = true, default-features = true }
+objc2-core-media-io = { workspace = true, optional = true, default-features = true }
+objc2-core-wlan = { workspace = true, optional = true, default-features = true }
+objc2-disk-arbitration = { workspace = true, optional = true, default-features = true }
+objc2-exception-handling = { workspace = true, optional = true, default-features = true }
+objc2-execution-policy = { workspace = true, optional = true, default-features = true }
+objc2-fs-kit = { workspace = true, optional = true, default-features = true }
+objc2-finder-sync = { workspace = true, optional = true, default-features = true }
+objc2-io-bluetooth = { workspace = true, optional = true, default-features = true }
+objc2-io-bluetooth-ui = { workspace = true, optional = true, default-features = true }
+objc2-io-usb-host = { workspace = true, optional = true, default-features = true }
+objc2-input-method-kit = { workspace = true, optional = true, default-features = true }
+objc2-latent-semantic-mapping = { workspace = true, optional = true, default-features = true }
+objc2-mail-kit = { workspace = true, optional = true, default-features = true }
+objc2-media-extension = { workspace = true, optional = true, default-features = true }
+objc2-osa-kit = { workspace = true, optional = true, default-features = true }
+objc2-open-directory = { workspace = true, optional = true, default-features = true }
+objc2-paravirtualized-graphics = { workspace = true, optional = true, default-features = true }
+objc2-preference-panes = { workspace = true, optional = true, default-features = true }
+objc2-quartz = { workspace = true, optional = true, default-features = true }
+objc2-quick-look-ui = { workspace = true, optional = true, default-features = true }
+objc2-screen-capture-kit = { workspace = true, optional = true, default-features = true }
+objc2-screen-saver = { workspace = true, optional = true, default-features = true }
+objc2-scripting-bridge = { workspace = true, optional = true, default-features = true }
+objc2-security-foundation = { workspace = true, optional = true, default-features = true }
+objc2-security-interface = { workspace = true, optional = true, default-features = true }
+objc2-service-management = { workspace = true, optional = true, default-features = true }
+objc2-system-extensions = { workspace = true, optional = true, default-features = true }
+objc2-virtualization = { workspace = true, optional = true, default-features = true }
+objc2-itunes-library = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
-objc2-app-tracking-transparency = { workspace = true, optional = true }
-objc2-audio-toolbox = { workspace = true, optional = true }
-objc2-cf-network = { workspace = true, optional = true }
-objc2-core-image = { workspace = true, optional = true }
-objc2-external-accessory = { workspace = true, optional = true }
-objc2-game-controller = { workspace = true, optional = true }
-objc2-gameplay-kit = { workspace = true, optional = true }
-objc2-io-surface = { workspace = true, optional = true }
-objc2-intents-ui = { workspace = true, optional = true }
-objc2-javascript-core = { workspace = true, optional = true }
-objc2-link-presentation = { workspace = true, optional = true }
-objc2-media-accessibility = { workspace = true, optional = true }
-objc2-media-toolbox = { workspace = true, optional = true }
-objc2-metal = { workspace = true, optional = true }
-objc2-metal-kit = { workspace = true, optional = true }
-objc2-metal-performance-shaders = { workspace = true, optional = true }
-objc2-metal-performance-shaders-graph = { workspace = true, optional = true }
-objc2-model-io = { workspace = true, optional = true }
-objc2-multipeer-connectivity = { workspace = true, optional = true }
-objc2-phase = { workspace = true, optional = true }
-objc2-photos = { workspace = true, optional = true }
-objc2-quartz-core = { workspace = true, optional = true }
-objc2-replay-kit = { workspace = true, optional = true }
-objc2-shared-with-you = { workspace = true, optional = true }
-objc2-shared-with-you-core = { workspace = true, optional = true }
-objc2-system-configuration = { workspace = true, optional = true }
-objc2-video-subscriber-account = { workspace = true, optional = true }
-objc2-video-toolbox = { workspace = true, optional = true }
-objc2-vision = { workspace = true, optional = true }
+objc2-app-tracking-transparency = { workspace = true, optional = true, default-features = true }
+objc2-audio-toolbox = { workspace = true, optional = true, default-features = true }
+objc2-cf-network = { workspace = true, optional = true, default-features = true }
+objc2-core-image = { workspace = true, optional = true, default-features = true }
+objc2-external-accessory = { workspace = true, optional = true, default-features = true }
+objc2-game-controller = { workspace = true, optional = true, default-features = true }
+objc2-gameplay-kit = { workspace = true, optional = true, default-features = true }
+objc2-io-surface = { workspace = true, optional = true, default-features = true }
+objc2-intents-ui = { workspace = true, optional = true, default-features = true }
+objc2-javascript-core = { workspace = true, optional = true, default-features = true }
+objc2-link-presentation = { workspace = true, optional = true, default-features = true }
+objc2-media-accessibility = { workspace = true, optional = true, default-features = true }
+objc2-media-toolbox = { workspace = true, optional = true, default-features = true }
+objc2-metal = { workspace = true, optional = true, default-features = true }
+objc2-metal-kit = { workspace = true, optional = true, default-features = true }
+objc2-metal-performance-shaders = { workspace = true, optional = true, default-features = true }
+objc2-metal-performance-shaders-graph = { workspace = true, optional = true, default-features = true }
+objc2-model-io = { workspace = true, optional = true, default-features = true }
+objc2-multipeer-connectivity = { workspace = true, optional = true, default-features = true }
+objc2-phase = { workspace = true, optional = true, default-features = true }
+objc2-photos = { workspace = true, optional = true, default-features = true }
+objc2-quartz-core = { workspace = true, optional = true, default-features = true }
+objc2-replay-kit = { workspace = true, optional = true, default-features = true }
+objc2-shared-with-you = { workspace = true, optional = true, default-features = true }
+objc2-shared-with-you-core = { workspace = true, optional = true, default-features = true }
+objc2-system-configuration = { workspace = true, optional = true, default-features = true }
+objc2-video-subscriber-account = { workspace = true, optional = true, default-features = true }
+objc2-video-toolbox = { workspace = true, optional = true, default-features = true }
+objc2-vision = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "visionos"))'.dependencies]
-objc2-background-tasks = { workspace = true, optional = true }
-objc2-core-haptics = { workspace = true, optional = true }
+objc2-background-tasks = { workspace = true, optional = true, default-features = true }
+objc2-core-haptics = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(not(target_os = "tvos"))'.dependencies]
-objc2-call-kit = { workspace = true, optional = true }
-objc2-contacts = { workspace = true, optional = true }
-objc2-core-motion = { workspace = true, optional = true }
-objc2-event-kit = { workspace = true, optional = true }
-objc2-health-kit = { workspace = true, optional = true }
-objc2-local-authentication = { workspace = true, optional = true }
-objc2-pass-kit = { workspace = true, optional = true }
-objc2-push-kit = { workspace = true, optional = true }
+objc2-call-kit = { workspace = true, optional = true, default-features = true }
+objc2-contacts = { workspace = true, optional = true, default-features = true }
+objc2-core-motion = { workspace = true, optional = true, default-features = true }
+objc2-event-kit = { workspace = true, optional = true, default-features = true }
+objc2-health-kit = { workspace = true, optional = true, default-features = true }
+objc2-local-authentication = { workspace = true, optional = true, default-features = true }
+objc2-pass-kit = { workspace = true, optional = true, default-features = true }
+objc2-push-kit = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "watchos"))'.dependencies]
-objc2-clock-kit = { workspace = true, optional = true }
-objc2-core-location-ui = { workspace = true, optional = true }
+objc2-clock-kit = { workspace = true, optional = true, default-features = true }
+objc2-core-location-ui = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(target_os = "visionos")'.dependencies]
-objc2-compositor-services = { workspace = true, optional = true }
+objc2-compositor-services = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "watchos", target_os = "visionos"))'.dependencies]
-objc2-health-kit-ui = { workspace = true, optional = true }
-objc2-watch-connectivity = { workspace = true, optional = true }
+objc2-health-kit-ui = { workspace = true, optional = true, default-features = true }
+objc2-watch-connectivity = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "watchos", target_os = "visionos"))'.dependencies]
-objc2-home-kit = { workspace = true, optional = true }
-objc2-ui-kit = { workspace = true, optional = true }
+objc2-home-kit = { workspace = true, optional = true, default-features = true }
+objc2-ui-kit = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "watchos"))'.dependencies]
-objc2-nearby-interaction = { workspace = true, optional = true }
-objc2-safety-kit = { workspace = true, optional = true }
+objc2-nearby-interaction = { workspace = true, optional = true, default-features = true }
+objc2-safety-kit = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(target_os = "tvos")'.dependencies]
-objc2-tv-ml-kit = { workspace = true, optional = true }
-objc2-tv-services = { workspace = true, optional = true }
-objc2-tv-ui-kit = { workspace = true, optional = true }
+objc2-tv-ml-kit = { workspace = true, optional = true, default-features = true }
+objc2-tv-services = { workspace = true, optional = true, default-features = true }
+objc2-tv-ui-kit = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(target_os = "watchos")'.dependencies]
-objc2-watch-kit = { workspace = true, optional = true }
+objc2-watch-kit = { workspace = true, optional = true, default-features = true }
