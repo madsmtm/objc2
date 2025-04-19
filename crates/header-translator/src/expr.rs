@@ -43,6 +43,7 @@ pub enum Expr {
     },
     Enum {
         id: ItemIdentifier,
+        /// The (renamed) Rust name of the variant.
         variant: String,
         ty: Ty,
         attrs: HashSet<UnexposedAttr>,
@@ -93,6 +94,8 @@ impl Expr {
                 [Token::CStr(_)] => Ty::const_cstr_ref(),
                 [Token::Literal(lit)] if lit.contains(".") => Ty::Primitive(Primitive::Float),
                 [.., Token::Cast { to }] => {
+                    // TODO: Look up all struct, enum and typedef renames from
+                    // config, and try to use the name from any of those.
                     Ty::TypeDef {
                         id: ItemIdentifier::from_raw(to.clone(), location.clone()),
                         // Unknown at this point what the casted type actually is.

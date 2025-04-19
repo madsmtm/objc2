@@ -18,6 +18,3 @@ extern crate std;
 mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
-
-mod renamed_enums;
-pub use self::renamed_enums::*;

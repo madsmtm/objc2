@@ -1,7 +1,6 @@
 framework = "NetworkExtension"
 crate = "objc2-network-extension"
 required-crates = ["objc2", "objc2-foundation"]
-custom-lib-rs = true
 macos = "10.10"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -44,5 +43,13 @@ class.NEHotspotConfigurationManager.methods."joinAccessoryHotspot:passphrase:com
 class.NEHotspotConfigurationManager.methods."joinAccessoryHotspotWithoutSecurity:completionHandler:".skipped = true
 
 # Wrongly renamed (Swift's renaming algorithm is insufficient)
-enum.NEHotspotConfigurationEAPTLSVersion.skipped = true
-enum.NEVPNIKEv2EncryptionAlgorithm.skipped = true
+const.NEHotspotConfigurationEAPTLSVersion_1_0.renamed = "Version_1_0"
+const.NEHotspotConfigurationEAPTLSVersion_1_1.renamed = "Version_1_1"
+const.NEHotspotConfigurationEAPTLSVersion_1_2.renamed = "Version_1_2"
+const.NEVPNIKEv2EncryptionAlgorithmDES.renamed = "AlgorithmDES"
+const.NEVPNIKEv2EncryptionAlgorithm3DES.renamed = "Algorithm3DES"
+const.NEVPNIKEv2EncryptionAlgorithmAES128.renamed = "AlgorithmAES128"
+const.NEVPNIKEv2EncryptionAlgorithmAES256.renamed = "AlgorithmAES256"
+const.NEVPNIKEv2EncryptionAlgorithmAES128GCM.renamed = "AlgorithmAES128GCM"
+const.NEVPNIKEv2EncryptionAlgorithmAES256GCM.renamed = "AlgorithmAES256GCM"
+const.NEVPNIKEv2EncryptionAlgorithmChaCha20Poly1305.renamed = "AlgorithmChaCha20Poly1305"

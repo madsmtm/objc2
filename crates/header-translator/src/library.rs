@@ -1,6 +1,4 @@
-use std::collections::btree_map::Entry;
-use std::collections::BTreeMap;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 use std::fs;
 use std::io::ErrorKind;
@@ -40,20 +38,6 @@ impl Library {
         for component in location.modules() {
             current = current.submodules.entry(component.into()).or_default();
         }
-    }
-
-    pub fn module_mut(&mut self, location: Location) -> &mut Module {
-        let mut current = &mut self.module;
-        for component in location.modules() {
-            current = match current.submodules.entry(component.into()) {
-                Entry::Occupied(entry) => entry.into_mut(),
-                Entry::Vacant(entry) => {
-                    error!(?location, "expected module to be available in library");
-                    entry.insert(Default::default())
-                }
-            };
-        }
-        current
     }
 
     fn dependencies<'c>(&'c self, config: &'c Config) -> BTreeMap<&'c str, BTreeSet<String>> {

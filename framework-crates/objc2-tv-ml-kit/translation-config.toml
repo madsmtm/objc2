@@ -1,13 +1,16 @@
 framework = "TVMLKit"
 crate = "objc2-tv-ml-kit"
 required-crates = ["objc2", "objc2-foundation"]
-custom-lib-rs = true
 tvos = "9.0"
 
 external.AVPlayer.module = "AVFoundation.AVPlayer"
 
-# Swift renames this to "none", so we do too.
-const.TVElementUpdateTypeSelf.skipped = true
+# Swift renames "Self" to "none", so we do too.
+const.TVElementUpdateTypeNone.renamed = "None"
+const.TVElementUpdateTypeSubtree.renamed = "Subtree"
+const.TVElementUpdateTypeStyles.renamed = "Styles"
+const.TVElementUpdateTypeChildren.renamed = "Children"
+const.TVElementUpdateTypeSelf.renamed = "Node"
 
 # FIXME: Make header-translator pick this up from the explicit protocol impl.
 class.TVBrowserTransitionAnimator.main-thread-only = true

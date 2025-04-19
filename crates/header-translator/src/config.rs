@@ -1,10 +1,12 @@
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::error::Error;
-use std::fmt;
 use std::fs;
 use std::path::Path;
 use std::str::FromStr;
+use std::sync::OnceLock;
+use std::{fmt, ptr};
 
+use clang::{Entity, EntityKind};
 use heck::ToTrainCase;
 use semver::Version;
 use serde::{de, Deserialize, Deserializer};
@@ -75,6 +77,10 @@ impl Config {
     ) -> Result<Self, Box<dyn Error + Send + Sync>> {
         let configs_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("configs");
 
+        for lib in libraries.values() {
+            lib.validate();
+        }
+
         let builtin_files = ["bitflags.toml", "builtin.toml", "core.toml", "libc.toml"];
 
         for builtin_file in builtin_files {
@@ -122,17 +128,6 @@ impl Config {
 
     pub fn try_library_from_crate(&self, krate: &str) -> Option<&LibraryConfig> {
         self.libraries.values().find(|lib| lib.krate == krate)
-    }
-
-    pub fn replace_protocol_name(&self, id: ItemIdentifier) -> ItemIdentifier {
-        let library_config = self.library(&id);
-        id.map_name(|name| {
-            library_config
-                .protocol_data
-                .get(&name)
-                .and_then(|data| data.renamed.clone())
-                .unwrap_or(name)
-        })
     }
 
     pub fn replace_typedef_name(&self, id: ItemIdentifier, is_cf: bool) -> ItemIdentifier {
@@ -226,13 +221,13 @@ fn get_version<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Option<Vers
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ExternalData {
-    pub module: Location,
-    #[serde(rename = "thread-safety")]
-    #[serde(default)]
-    pub thread_safety: Option<String>,
-    #[serde(rename = "super-items")]
-    #[serde(default)]
-    pub super_items: Vec<ItemIdentifier>,
+    pub(crate) module: Location,
+}
+
+impl ExternalData {
+    pub(crate) fn into_id(self, name: String) -> ItemIdentifier {
+        ItemIdentifier::from_raw(name, self.module)
+    }
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
@@ -291,42 +286,47 @@ pub struct LibraryConfig {
     #[serde(default)]
     pub gnustep: bool,
 
-    /// Data about an external class or protocol whose header isn't imported.
+    /// Data about an external item whose header isn't imported.
     ///
-    /// I.e. a bare `@protocol X;` or `@class X;`.
+    /// Usually a bare `@protocol X;` or `@class X;`, but might also be used
+    /// for other things.
     #[serde(default)]
     pub external: BTreeMap<String, ExternalData>,
 
     #[serde(rename = "class")]
     #[serde(default)]
-    pub class_data: HashMap<String, ClassData>,
+    pub class_data: HashMap<String, StmtData>,
     #[serde(rename = "protocol")]
     #[serde(default)]
-    pub protocol_data: HashMap<String, ProtocolData>,
+    pub protocol_data: HashMap<String, StmtData>,
     #[serde(rename = "struct")]
     #[serde(default)]
-    pub struct_data: HashMap<String, RecordData>,
+    pub struct_data: HashMap<String, StmtData>,
     #[serde(rename = "union")]
     #[serde(default)]
-    pub union_data: HashMap<String, RecordData>,
+    pub union_data: HashMap<String, StmtData>,
     #[serde(rename = "enum")]
     #[serde(default)]
-    pub enum_data: HashMap<String, EnumData>,
+    pub enum_data: HashMap<String, StmtData>,
     #[serde(rename = "fn")]
     #[serde(default)]
-    pub fns: HashMap<String, FnData>,
+    pub fns: HashMap<String, StmtData>,
     #[serde(rename = "static")]
     #[serde(default)]
-    pub statics: HashMap<String, StaticData>,
+    pub statics: HashMap<String, StmtData>,
     #[serde(rename = "typedef")]
     #[serde(default)]
-    pub typedef_data: HashMap<String, TypedefData>,
+    pub typedef_data: HashMap<String, StmtData>,
     #[serde(rename = "const")]
     #[serde(default)]
-    pub const_data: HashMap<String, ConstantData>,
+    pub const_data: HashMap<String, StmtData>,
 
     #[serde(default)]
     pub module: HashMap<String, ModuleConfig>,
+}
+
+fn link_default() -> bool {
+    true
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
@@ -378,6 +378,119 @@ impl LibraryConfig {
                 semver::Version::new(1, 0, 0),
             )
     }
+
+    fn validate(&self) {
+        use std::iter::empty;
+
+        let all = empty()
+            .chain(self.class_data.values())
+            .chain(self.protocol_data.values())
+            .chain(self.struct_data.values())
+            .chain(self.union_data.values())
+            .chain(self.enum_data.values())
+            .chain(self.fns.values())
+            .chain(self.statics.values())
+            .chain(self.typedef_data.values())
+            .chain(self.const_data.values());
+
+        fn filter_ptr<'a>(
+            allowed_in: impl Iterator<Item = &'a StmtData> + Clone,
+        ) -> impl Fn(&&StmtData) -> bool {
+            move |data| !allowed_in.clone().any(|allowed| ptr::eq(*data, allowed))
+        }
+
+        let allowed_in = empty()
+            .chain(self.class_data.values())
+            .chain(self.protocol_data.values());
+        for data in all.clone().filter(filter_ptr(allowed_in)) {
+            assert_eq!(data.methods, Default::default());
+        }
+
+        let allowed_in = empty()
+            .chain(self.enum_data.values())
+            .chain(self.statics.values())
+            .chain(self.const_data.values());
+        for data in all.clone().filter(filter_ptr(allowed_in)) {
+            assert_eq!(data.use_value, Default::default());
+        }
+
+        let allowed_in = self.class_data.values();
+        for data in all.clone().filter(filter_ptr(allowed_in)) {
+            assert_eq!(data.derives, Default::default());
+            assert_eq!(data.definition_skipped, Default::default());
+            assert_eq!(data.categories, Default::default());
+            assert_eq!(data.counterpart, Default::default());
+            assert_eq!(data.skipped_protocols, Default::default());
+            assert_eq!(data.main_thread_only, Default::default());
+        }
+
+        let allowed_in = self.protocol_data.values();
+        for data in all.clone().filter(filter_ptr(allowed_in)) {
+            assert_eq!(data.requires_mainthreadonly, Default::default());
+        }
+
+        let allowed_in = self.typedef_data.values();
+        for data in all.clone().filter(filter_ptr(allowed_in)) {
+            assert!(data.generics.is_empty());
+        }
+
+        let allowed_in = self.fns.values();
+        for data in all.clone().filter(filter_ptr(allowed_in)) {
+            assert_eq!(data.unsafe_, Default::default());
+            assert_eq!(data.no_implementor, Default::default());
+            assert_eq!(data.implementor, Default::default());
+        }
+    }
+
+    pub(crate) fn get(&self, entity: &Entity<'_>) -> &StmtData {
+        let name = if entity.is_anonymous() {
+            // union (unnamed at /Applications/Xcode.app/...)
+            // union (anonymous at /Applications/Xcode.app/...)
+            // enum (unnamed at /Applications/Xcode.app/...)
+            // struct (unnamed at /Applications/Xcode.app/...)
+            //
+            // Anonymous enums don't have a name that we can use to look up
+            // a config. So we use the special "__anonymous__" instead.
+            "__anonymous__".to_string()
+        } else {
+            if let Some(name) = entity.get_name() {
+                name
+            } else {
+                return StmtData::empty();
+            }
+        };
+
+        let data = match entity.get_kind() {
+            EntityKind::ObjCInterfaceDecl | EntityKind::ObjCClassRef => self.class_data.get(&name),
+            EntityKind::ObjCCategoryDecl => None, // TODO
+            EntityKind::ObjCProtocolDecl | EntityKind::ObjCProtocolRef => {
+                self.protocol_data.get(&name)
+            }
+            EntityKind::TypedefDecl => self.typedef_data.get(&name),
+            EntityKind::StructDecl => self.struct_data.get(&name),
+            EntityKind::UnionDecl => self.union_data.get(&name),
+            EntityKind::EnumDecl => self.enum_data.get(&name),
+            EntityKind::EnumConstantDecl => self.const_data.get(&name),
+            EntityKind::VarDecl => self.statics.get(&name),
+            EntityKind::FunctionDecl => self.fns.get(&name),
+            EntityKind::FieldDecl => None, // TODO
+            // TODO: Add #[doc(alias = ...)] on methods?
+            EntityKind::ObjCClassMethodDecl
+            | EntityKind::ObjCInstanceMethodDecl
+            | EntityKind::ObjCPropertyDecl => None,
+            EntityKind::MacroDefinition | EntityKind::MacroExpansion => None,
+            EntityKind::UnexposedDecl => None,
+            kind => {
+                error!(
+                    ?kind,
+                    "tried to look up ItemIdentifier from unknown entity kind"
+                );
+                None
+            }
+        };
+
+        data.unwrap_or_else(|| StmtData::empty())
+    }
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
@@ -390,32 +503,63 @@ pub struct Example {
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct ClassData {
+pub struct StmtData {
+    // Common
     #[serde(default)]
-    pub skipped: bool,
+    pub skipped: Option<bool>,
+    #[serde(default)]
+    pub renamed: Option<String>,
+
+    // Classes and protocols.
+    #[serde(default)]
+    pub methods: HashMap<String, MethodData>,
+
+    // Enums, constants and statics.
+    #[serde(rename = "use-value")]
+    #[serde(default)]
+    pub use_value: Option<bool>,
+
+    // Class only.
+    #[serde(default)]
+    pub derives: Derives,
     #[serde(rename = "definition-skipped")]
     #[serde(default)]
     pub definition_skipped: bool,
     #[serde(default)]
-    pub methods: HashMap<String, MethodData>,
-    #[serde(default)]
     pub categories: HashMap<String, CategoryData>,
     #[serde(default)]
-    pub derives: Derives,
-    #[serde(default)]
     pub counterpart: Counterpart,
-    #[serde(default)]
-    #[serde(rename = "main-thread-only")]
-    pub main_thread_only: bool,
     #[serde(rename = "skipped-protocols")]
     #[serde(default)]
     pub skipped_protocols: HashSet<String>,
+    #[serde(default)]
+    #[serde(rename = "main-thread-only")]
+    pub main_thread_only: bool,
+
+    // Protocol only.
+    #[serde(default)]
+    #[serde(rename = "requires-mainthreadonly")]
+    pub requires_mainthreadonly: Option<bool>,
+
+    // Typedef only.
+    #[serde(default)]
+    pub generics: Vec<String>,
+
+    // Functions only.
+    #[serde(rename = "unsafe")]
+    #[serde(default)]
+    pub unsafe_: Unsafe,
+    #[serde(rename = "no-implementor")]
+    #[serde(default)]
+    pub no_implementor: bool,
+    #[serde(default)]
+    pub implementor: Option<ItemIdentifier>,
 }
 
-impl ClassData {
-    pub fn get_method_data(this: Option<&Self>, name: &str) -> MethodData {
-        this.map(|data| data.methods.get(name).copied().unwrap_or_default())
-            .unwrap_or_default()
+impl StmtData {
+    pub fn empty() -> &'static Self {
+        static DEFAULT: OnceLock<StmtData> = OnceLock::new();
+        DEFAULT.get_or_init(StmtData::default)
     }
 }
 
@@ -430,74 +574,14 @@ pub struct CategoryData {
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct ProtocolData {
-    #[serde(default)]
-    pub skipped: bool,
-    #[serde(default)]
-    pub renamed: Option<String>,
-    #[serde(default)]
-    #[serde(rename = "requires-mainthreadonly")]
-    pub requires_mainthreadonly: Option<bool>,
-    #[serde(default)]
-    pub methods: HashMap<String, MethodData>,
-}
-
-#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct RecordData {
-    #[serde(default)]
-    pub skipped: bool,
-}
-
-#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct ConstantData {
-    #[serde(default)]
-    pub skipped: Option<bool>,
-    #[serde(rename = "use-value")]
-    #[serde(default)]
-    pub use_value: Option<bool>,
-}
-
-#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct EnumData {
-    #[serde(default)]
-    pub skipped: bool,
-    #[serde(rename = "use-value")]
-    #[serde(default)]
-    pub use_value: Option<bool>,
-}
-
-#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct StaticData {
-    #[serde(default)]
-    pub skipped: bool,
-    #[serde(rename = "use-value")]
-    #[serde(default)]
-    pub use_value: bool,
-}
-
-#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct TypedefData {
-    #[serde(default)]
-    pub skipped: bool,
-    #[serde(default)]
-    pub renamed: Option<String>,
-    #[serde(default)]
-    pub generics: Vec<String>,
-}
-
-#[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
 pub struct MethodData {
-    #[serde(rename = "unsafe")]
-    #[serde(default = "unsafe_default")]
-    pub unsafe_: bool,
-    #[serde(default = "skipped_default")]
+    #[serde(default)]
     pub skipped: bool,
+    #[serde(default)]
+    pub renamed: Option<String>,
+    #[serde(rename = "unsafe")]
+    #[serde(default)]
+    pub unsafe_: Unsafe,
 }
 
 impl MethodData {
@@ -505,58 +589,25 @@ impl MethodData {
         Self {
             // Only use `unsafe` from itself, never take if from the superclass
             unsafe_: self.unsafe_,
+            renamed: self.renamed.or(superclass.renamed).clone(),
             skipped: self.skipped | superclass.skipped,
         }
     }
 }
 
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct FnData {
-    #[serde(default)]
-    pub skipped: bool,
-    #[serde(rename = "unsafe")]
-    #[serde(default = "unsafe_default")]
-    pub unsafe_: bool,
-    #[serde(default)]
-    pub renamed: Option<String>,
-    #[serde(rename = "no-implementor")]
-    #[serde(default)]
-    pub no_implementor: bool,
-    #[serde(default)]
-    pub implementor: Option<ItemIdentifier>,
-}
+#[repr(transparent)]
+pub struct Unsafe(pub bool);
 
-impl Default for FnData {
-    fn default() -> Self {
-        Self {
-            skipped: skipped_default(),
-            unsafe_: unsafe_default(),
-            renamed: None,
-            no_implementor: false,
-            implementor: None,
-        }
+impl Unsafe {
+    pub(crate) fn safe(&self) -> bool {
+        !self.0
     }
 }
 
-fn unsafe_default() -> bool {
-    true
-}
-
-fn skipped_default() -> bool {
-    false
-}
-
-fn link_default() -> bool {
-    true
-}
-
-impl Default for MethodData {
+impl Default for Unsafe {
     fn default() -> Self {
-        Self {
-            unsafe_: unsafe_default(),
-            skipped: skipped_default(),
-        }
+        Self(true)
     }
 }
 

@@ -398,7 +398,7 @@ fn parse_translation_unit(
                     return EntityVisitResult::Continue;
                 }
 
-                let module = library.module_mut(location);
+                let module = library.module.submodule_mut(location);
                 if let Some(stmt) = Stmt::parse_macro_definition(&entity, context) {
                     context.ident_mapping.extend(stmt.get_ident_mapping());
                     module.add_stmt(stmt);
@@ -422,8 +422,8 @@ fn parse_translation_unit(
                     return EntityVisitResult::Continue;
                 }
 
-                let module = library.module_mut(location);
-                for stmt in Stmt::parse(&entity, context) {
+                let module = library.module.submodule_mut(location);
+                for stmt in Stmt::parse(&entity, context, &library.data) {
                     context.ident_mapping.extend(stmt.get_ident_mapping());
                     module.add_stmt(stmt);
                 }

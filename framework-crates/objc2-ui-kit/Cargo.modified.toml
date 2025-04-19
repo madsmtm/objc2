@@ -1,0 +1,8 @@
+[dependencies]
+# Set manually, since `CKShare` has superclass `CKRecord`
+objc2-cloud-kit = { workspace = true, optional = true, features = [
+    "CKContainer",
+    "CKRecord",
+    "CKShare",
+    "CKShareMetadata",
+] }

@@ -14,10 +14,9 @@ external.MTLDevice.module = "Metal.MTLDevice"
 # CF_RELEASES_ARGUMENT / cf_consumed, requires manual handling
 fn.CGColorSpaceRelease.skipped = true
 
-# CoreGraphics defines this for some reason?
-typedef.IOSurfaceRef.renamed = "IOSurfaceRef"
-typedef.IOSurfaceRef.skipped = true
+# CoreGraphics redefines this for some reason
 struct.__IOSurface.skipped = true
+typedef.IOSurfaceRef.skipped = true
 external.IOSurfaceRef.module = "IOSurface.IOSurfaceRef"
 
 # Defined for real in ColorSync, CoreGraphics redefines it just for the

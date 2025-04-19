@@ -15,11 +15,7 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
-#[cfg(feature = "VTErrors")]
-mod errors;
 mod generated;
-#[cfg(feature = "VTErrors")]
-pub use self::errors::VTDecodeFrameFlags;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 

@@ -1,3 +1,4 @@
+use std::collections::btree_map::Entry;
 use std::collections::{BTreeMap, BTreeSet};
 use std::ffi::OsString;
 use std::fmt::Write as _;
@@ -28,6 +29,20 @@ impl Module {
 
     pub fn add_stmt(&mut self, stmt: Stmt) {
         self.stmts.push(stmt);
+    }
+
+    pub fn submodule_mut(&mut self, location: Location) -> &mut Module {
+        let mut current = self;
+        for component in location.modules() {
+            current = match current.submodules.entry(component.into()) {
+                Entry::Occupied(entry) => entry.into_mut(),
+                Entry::Vacant(entry) => {
+                    error!(?location, "expected module to be available in library");
+                    entry.insert(Default::default())
+                }
+            };
+        }
+        current
     }
 
     // TODO: Merge the functions below using some sort of visitor pattern?

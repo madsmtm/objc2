@@ -7,35 +7,49 @@ use clang::documentation::{
 use clang::Entity;
 
 use crate::display_helper::FormatterFn;
-use crate::ItemIdentifier;
+use crate::{Context, ItemIdentifier};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Documentation {
+    alias: Option<String>,
     children: Vec<CommentChild>,
 }
 
 impl Documentation {
     pub fn empty() -> Self {
-        Self { children: vec![] }
+        Self {
+            children: vec![],
+            alias: None,
+        }
     }
 
-    pub fn from_entity(entity: &Entity<'_>) -> Self {
-        if let Some(comment) = entity.get_comment() {
+    /// Construct from an entity, possible one that has been renamed (such
+    /// that we'll want a doc alias to the entity's actual name).
+    pub fn from_entity(entity: &Entity<'_>, context: &Context<'_>) -> Self {
+        let children = if let Some(comment) = entity.get_comment() {
             if let Some(parsed) = entity.get_parsed_comment() {
-                Self {
-                    children: parsed.get_children(),
-                }
+                parsed.get_children()
             } else {
                 warn!(?entity, comment, "had comment, but not parsed comment");
-                Self {
-                    children: Vec::new(),
-                }
+                Vec::new()
             }
         } else {
-            Self {
-                children: Vec::new(),
+            Vec::new()
+        };
+
+        let library = context.library(ItemIdentifier::new_optional(entity, context));
+        let alias = if let Some(renamed) = &library.get(entity).renamed {
+            let name = entity.get_name().expect("renamed entity must have name");
+            if *renamed != name {
+                Some(name)
+            } else {
+                None
             }
-        }
+        } else {
+            None
+        };
+
+        Self { children, alias }
     }
 
     pub fn property_setter(getter_sel: &str) -> Self {
@@ -44,7 +58,34 @@ impl Documentation {
         let text = format!("Setter for [`{getter_sel}`][Self::{getter_sel}].");
         Self {
             children: vec![CommentChild::Paragraph(vec![CommentChild::Text(text)])],
+            alias: None,
         }
+    }
+
+    pub fn set_alias(&mut self, alias: String) {
+        self.alias = Some(alias);
+    }
+
+    pub fn fmt_category<'a>(
+        &'a self,
+        category_name: &'a str,
+        cls_name: &'a str,
+    ) -> impl fmt::Display + 'a {
+        FormatterFn(move |f| {
+            if let Some(actual_name) = &self.alias {
+                if actual_name != category_name {
+                    writeln!(f, "/// Category \"{actual_name}\" on [`{cls_name}`].")?;
+                } else {
+                    writeln!(f, "/// Category on [`{cls_name}`].")?;
+                }
+            } else {
+                writeln!(f, "/// Category on [`{cls_name}`].")?;
+            }
+
+            write!(f, "{}", self.fmt(None))?;
+
+            Ok(())
+        })
     }
 
     pub fn fmt<'a>(&'a self, doc_id: Option<&'a ItemIdentifier>) -> impl fmt::Display + 'a {
@@ -84,6 +125,10 @@ impl Documentation {
                     id.library_name().to_lowercase(),
                     id.name.to_lowercase()
                 )?;
+            }
+
+            if let Some(alias) = &self.alias {
+                write!(f, "#[doc(alias = {alias:?})]")?;
             }
 
             Ok(())
@@ -286,6 +331,7 @@ mod tests {
     fn check(children: &[CommentChild], expected: &str) {
         let actual = Documentation {
             children: children.to_vec(),
+            alias: None,
         }
         .fmt(None)
         .to_string();

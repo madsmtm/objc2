@@ -12,7 +12,6 @@ external.INIntent.module = "Intents.INIntent"
 external.UTType.module = "UniformTypeIdentifiers.UTType"
 external.CKContainer.module = "CloudKit.CKContainer"
 external.CKShare.module = "CloudKit.CKShare"
-external.CKShare.super-items = ["CloudKit.CKRecord.CKRecord"]
 external.CKShareMetadata.module = "CloudKit.CKShareMetadata"
 external.NSManagedObjectContext.module = "CoreData.NSManagedObjectContext"
 external.NSManagedObjectModel.module = "CoreData.NSManagedObjectModel"

@@ -13,7 +13,7 @@ use crate::method::Method;
 use crate::module::Module;
 use crate::name_translation::{cf_fn_name, find_fn_implementor};
 use crate::stmt::Stmt;
-use crate::{ItemIdentifier, Library, LibraryConfig};
+use crate::Library;
 
 pub fn global_analysis(library: &mut Library) {
     let _span = info_span!("analyzing").entered();
@@ -22,19 +22,13 @@ pub fn global_analysis(library: &mut Library) {
     let mut implementable_mapping = create_implementable_mapping(&library.module);
 
     for (external_name, external_data) in &library.data.external {
-        implementable_mapping.insert(ItemTree::from_id(ItemIdentifier::from_raw(
-            external_name.clone(),
-            external_data.module.clone(),
-        )));
+        implementable_mapping.insert(ItemTree::from_id(
+            external_data.clone().into_id(external_name.clone()),
+        ));
     }
 
     let ident_mapping = create_ident_mapping(&library.module);
-    update_module(
-        &mut library.module,
-        &implementable_mapping,
-        &ident_mapping,
-        &library.data,
-    );
+    update_module(&mut library.module, &implementable_mapping, &ident_mapping);
 }
 
 fn create_implementable_mapping(module: &Module) -> BTreeSet<ItemTree> {
@@ -69,7 +63,6 @@ fn update_module(
     module: &mut Module,
     implementable_mapping: &BTreeSet<ItemTree>,
     ident_mapping: &HashMap<String, Expr>,
-    library_data: &LibraryConfig,
 ) {
     let mut deprecated_fns = vec![];
 
@@ -77,7 +70,8 @@ fn update_module(
     for stmt in module.stmts.iter_mut() {
         if let Stmt::FnDecl {
             id,
-            renamed,
+            c_name,
+            link_name,
             availability,
             arguments,
             first_arg_is_self,
@@ -86,21 +80,26 @@ fn update_module(
             safe,
             must_use,
             abi,
-            link_name,
             returns_retained,
             documentation,
+            no_implementor,
+            custom_implementor,
         } = stmt
         {
-            let data = library_data.fns.get(&id.name).cloned().unwrap_or_default();
-
-            if data.no_implementor {
+            if *no_implementor {
                 continue;
             }
 
-            let implementor = if let Some(implementor) = data.implementor {
-                Some(ItemTree::from_id(implementor))
+            let implementor = if let Some(implementor) = custom_implementor {
+                Some(implementor.clone())
             } else {
-                find_fn_implementor(implementable_mapping, id, arguments, result_type)
+                find_fn_implementor(
+                    implementable_mapping,
+                    c_name,
+                    id.location(),
+                    arguments,
+                    result_type,
+                )
             };
 
             if let Some(cf_item) = implementor {
@@ -110,65 +109,76 @@ fn update_module(
                 let omit_memory_management_words =
                     result_type.fn_return(*returns_retained).1.is_some();
 
-                let name = renamed.clone().unwrap_or_else(|| {
+                let name = if id.name != *c_name {
+                    // Has been renamed already
+                    id.name.clone()
+                } else {
                     cf_fn_name(
-                        &id.name,
+                        c_name,
                         &cf_item.id().name,
                         is_instance_method,
                         omit_memory_management_words,
                     )
-                });
+                };
 
-                if name == "type_id" {
+                // TODO(breaking): Remove in next version
+                if body.is_none()
+                    && id.library_name() != "Dispatch"
+                    && !link_name.contains("GetTypeID")
+                {
+                    deprecated_fns.push(Stmt::FnDecl {
+                        // Emit with the actual, non-renamed name.
+                        id: id.clone().map_name(|_| c_name.clone()),
+                        c_name: c_name.clone(),
+                        link_name: link_name.clone(),
+                        availability: Availability::new_deprecated(format!(
+                            "renamed to `{}::{}`",
+                            cf_item.id().name,
+                            name,
+                        )),
+                        arguments: arguments.clone(),
+                        result_type: result_type.clone(),
+                        first_arg_is_self: *first_arg_is_self,
+                        body: *body,
+                        safe: *safe,
+                        must_use: *must_use,
+                        abi: abi.clone(),
+                        returns_retained: *returns_retained,
+                        documentation: Documentation::empty(),
+                        no_implementor: false,
+                        custom_implementor: None,
+                    });
+                }
+
+                *id = id.clone().map_name(|_| name.clone());
+
+                if is_instance_method {
+                    *first_arg_is_self = true;
+                }
+
+                documentation.set_alias(c_name.clone());
+
+                // Wrappers have normal Rust ABI (mostly to unclutter docs).
+                *abi = abi.as_rust_outer();
+
+                if link_name.contains("GetTypeID") {
                     assert!(arguments.is_empty(), "{id:?} must have no arguments");
                     assert!(result_type.is_cf_type_id(), "{id:?} must return CFTypeID");
                     assert!(body.is_none(), "{id:?} must not be inline");
                     assert!(!*safe, "{id:?} must not have manually modified safety");
                     assert!(!*must_use, "{id:?} must not have must_use");
-                    assert!(link_name.is_none(), "{id:?} must not have link_name");
                     assert!(!*returns_retained, "{id:?} must not have returns_retained");
 
                     *stmt = Stmt::FnGetTypeId {
                         id: id.clone(),
-                        cf_id: cf_item.id().clone(),
+                        cf_item,
+                        link_name: link_name.clone(),
                         result_type: result_type.clone(),
                         availability: availability.clone(),
-                        abi: abi.as_rust_outer(),
+                        abi: abi.clone(),
                         documentation: documentation.clone(),
                     };
                 } else {
-                    // TODO(breaking): Remove in next version
-                    if body.is_none() && id.library_name() != "Dispatch" {
-                        deprecated_fns.push(Stmt::FnDecl {
-                            id: id.clone(),
-                            renamed: None, // Never rename these
-                            availability: Availability::new_deprecated(format!(
-                                "renamed to `{}::{}`",
-                                cf_item.id().name,
-                                name,
-                            )),
-                            arguments: arguments.clone(),
-                            result_type: result_type.clone(),
-                            first_arg_is_self: *first_arg_is_self,
-                            body: *body,
-                            safe: *safe,
-                            must_use: *must_use,
-                            abi: abi.clone(),
-                            link_name: link_name.clone(),
-                            returns_retained: *returns_retained,
-                            documentation: Documentation::empty(),
-                        });
-                    }
-
-                    if renamed.is_none() {
-                        *renamed = Some(name);
-                    }
-                    if is_instance_method {
-                        *first_arg_is_self = true;
-                    }
-                    // Wrappers have normal Rust ABI (mostly to unclutter docs).
-                    *abi = abi.as_rust_outer();
-
                     let location = id.location().clone();
                     let fn_stmt = mem::replace(
                         stmt,
@@ -262,10 +272,7 @@ fn update_module(
         //     AVMusicTimeStamp start;
         //     AVMusicTimeStamp length;
         // } AVBeatRange;
-        if let Stmt::RecordDecl {
-            id, encoding_name, ..
-        } = &mut stmt
-        {
+        if let Stmt::RecordDecl { id: record_id, .. } = &mut stmt {
             if let Some(Stmt::AliasDecl {
                 id: typedef_id,
                 ty,
@@ -273,11 +280,10 @@ fn update_module(
                 ..
             }) = iter.peek()
             {
-                if ty.is_record(&id.name) && typedef_id.name == id.name.trim_start_matches("_") {
-                    if encoding_name.is_none() {
-                        *encoding_name = Some(id.name.clone());
-                    }
-                    *id = typedef_id.clone();
+                if ty.is_record(&record_id.name)
+                    && typedef_id.name == record_id.name.trim_start_matches("_")
+                {
+                    *record_id = typedef_id.clone();
                     // Skip adding the now-redundant alias to the list of statements
                     let _ = iter.next();
                 }
@@ -325,6 +331,6 @@ fn update_module(
     // Recurse for submodules
     for (name, module) in &mut module.submodules {
         let _span = debug_span!("file", name).entered();
-        update_module(module, implementable_mapping, ident_mapping, library_data);
+        update_module(module, implementable_mapping, ident_mapping);
     }
 }

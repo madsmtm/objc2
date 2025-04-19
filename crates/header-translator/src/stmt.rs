@@ -11,7 +11,8 @@ use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::availability::Availability;
 use crate::cfgs::PlatformCfg;
-use crate::config::{ClassData, Config, LibraryConfig, MethodData};
+use crate::config::StmtData;
+use crate::config::{Config, LibraryConfig, MethodData};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
@@ -460,6 +461,7 @@ pub enum Stmt {
     ClassDecl {
         id: ItemIdentifier,
         generics: Vec<String>,
+        objc_name: String,
         availability: Availability,
         /// Superclass + generics
         superclasses: Vec<(ItemIdentifier, Vec<String>)>,
@@ -493,7 +495,6 @@ pub enum Stmt {
     /// impl trait category_name for class_name {}
     ExternCategory {
         id: ItemIdentifier,
-        actual_name: Option<String>,
         availability: Availability,
         cls: ItemIdentifier,
         cls_superclasses: Vec<ItemIdentifier>,
@@ -506,7 +507,7 @@ pub enum Stmt {
     /// extern_protocol!
     ProtocolDecl {
         id: ItemIdentifier,
-        actual_name: Option<String>,
+        objc_name: String,
         availability: Availability,
         super_protocols: Vec<ProtocolRef>,
         methods: Vec<Method>,
@@ -543,9 +544,9 @@ pub enum Stmt {
     /// };
     RecordDecl {
         id: ItemIdentifier,
-        // internal objc struct name (before typedef). shows up in encoding
-        // and is used in message verification.
-        encoding_name: Option<String>,
+        /// internal objc struct name (before typedef). shows up in encoding
+        /// and is used in message verification.
+        encoding_name: String,
         availability: Availability,
         boxable: bool,
         fields: Vec<(String, Documentation, Ty)>,
@@ -596,6 +597,7 @@ pub enum Stmt {
     /// extern const ty name;
     VarDecl {
         id: ItemIdentifier,
+        link_name: String,
         availability: Availability,
         ty: Ty,
         value: Option<Expr>,
@@ -608,7 +610,8 @@ pub enum Stmt {
     /// }
     FnDecl {
         id: ItemIdentifier,
-        renamed: Option<String>,
+        c_name: String,
+        link_name: String,
         availability: Availability,
         arguments: Vec<(String, Ty)>,
         first_arg_is_self: bool,
@@ -618,14 +621,18 @@ pub enum Stmt {
         safe: bool,
         must_use: bool,
         abi: Abi,
-        link_name: Option<String>,
         returns_retained: bool,
         documentation: Documentation,
+        /// Passed onwards from FnData to global analysis.
+        no_implementor: bool,
+        /// Passed onwards from FnData to global analysis.
+        custom_implementor: Option<ItemTree>,
     },
     /// CFTypeID CGColorGetTypeID(void)
     FnGetTypeId {
         id: ItemIdentifier,
-        cf_id: ItemIdentifier,
+        cf_item: ItemTree,
+        link_name: String,
         result_type: Ty,
         availability: Availability,
         abi: Abi,
@@ -684,38 +691,59 @@ fn parse_fn_param_children(parent: &Entity<'_>, context: &Context<'_>) -> Option
 }
 
 impl Stmt {
-    pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Vec<Self> {
-        let _span = debug_span!(
-            "stmt",
-            kind = ?entity.get_kind(),
-            dbg = entity.get_name(),
-        )
-        .entered();
+    pub fn parse(
+        entity: &Entity<'_>,
+        context: &Context<'_>,
+        current_library: &LibraryConfig,
+    ) -> Vec<Self> {
+        if let EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef = entity.get_kind() {
+            // These are inconsequential for us, since we resolve imports differently
+            return vec![];
+        }
+
+        // The C name of the entity.
+        let c_name = if !entity.is_anonymous() {
+            entity.get_name()
+        } else {
+            None
+        };
+
+        let _span = debug_span!("stmt", kind = ?entity.get_kind(), ?c_name).entered();
+
+        // The Rust name + the location of the entity.
+        let id = ItemIdentifier::new_optional(entity, context);
+
+        // The configuration data.
+        //
+        // NOTE: We look this up relative to what we're currently parsing,
+        // instead of the more natural `context.library(&id).get(entity))`.
+        //
+        // This allows us to configure the item (like skipping it) even when
+        // the item is marked as `external` and id thus points to another crate.
+        let data = current_library.get(entity);
+
+        if data.skipped.unwrap_or(false) {
+            return vec![];
+        }
+
+        let availability = Availability::parse(entity, context);
+        let mut documentation = Documentation::from_entity(entity, context);
 
         match entity.get_kind() {
-            // These are inconsequential for us, since we resolve imports differently
-            EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef => vec![],
             EntityKind::ObjCInterfaceDecl => {
+                let id = id.require_name();
                 // entity.get_mangled_objc_names()
-                let id = ItemIdentifier::new(entity, context);
-                let data = context.library(&id).class_data.get(&id.name);
+                let objc_name = entity.get_name().unwrap();
 
-                if data.map(|data| data.skipped).unwrap_or_default() {
-                    return vec![];
-                }
-
-                let availability = Availability::parse(entity, context);
                 let thread_safety = ThreadSafety::from_decl(entity, context);
 
-                let counterpart = data
-                    .map(|data| data.counterpart.clone())
-                    .unwrap_or_default();
+                let counterpart = data.counterpart.clone();
 
                 verify_objc_decl(entity, context);
                 let generics = parse_class_generics(entity, context);
                 let (methods, designated_initializers) = parse_methods(
                     entity,
-                    |name| ClassData::get_method_data(data, name),
+                    |name| data.methods.get(name).cloned().unwrap_or_default(),
                     &thread_safety,
                     true,
                     context,
@@ -723,9 +751,7 @@ impl Stmt {
 
                 let mut protocols = Default::default();
                 parse_protocols(entity, &mut protocols, context);
-                let skipped_protocols = data
-                    .map(|data| data.skipped_protocols.clone())
-                    .unwrap_or_default();
+                let skipped_protocols = data.skipped_protocols.clone();
                 protocols.retain(|protocol, _| !skipped_protocols.contains(&protocol.name));
 
                 let superclasses_full = parse_superclasses(entity, context);
@@ -750,7 +776,8 @@ impl Stmt {
                         let superclass_data = context
                             .library(superclass_id)
                             .class_data
-                            .get(&superclass_id.name);
+                            .get(&superclass_id.name)
+                            .unwrap_or_else(|| StmtData::empty());
 
                         // Explicitly keep going, even if the class itself is skipped
                         // if superclass_data.skipped
@@ -758,9 +785,12 @@ impl Stmt {
                         let (mut methods, _) = parse_methods(
                             entity,
                             |name| {
-                                let data = ClassData::get_method_data(data, name);
-                                let superclass_data =
-                                    ClassData::get_method_data(superclass_data, name);
+                                let data = data.methods.get(name).cloned().unwrap_or_default();
+                                let superclass_data = superclass_data
+                                    .methods
+                                    .get(name)
+                                    .cloned()
+                                    .unwrap_or_default();
                                 data.merge_with_superclass(superclass_data)
                             },
                             &thread_safety,
@@ -803,24 +833,25 @@ impl Stmt {
 
                 iter::once(Self::ClassDecl {
                     id: id.clone(),
+                    objc_name,
                     generics: generics.clone(),
                     availability: availability.clone(),
                     superclasses,
                     designated_initializers,
-                    derives: data.map(|data| data.derives.clone()).unwrap_or_default(),
+                    derives: data.derives.clone(),
                     main_thread_only: thread_safety.explicit_mainthreadonly(),
-                    skipped: data.map(|data| data.definition_skipped).unwrap_or_default(),
+                    skipped: data.definition_skipped,
                     // Ignore sendability on superclasses; since it's an auto
                     // trait, it's propagated to subclasses anyhow!
                     sendable: thread_safety.explicit_sendable(),
-                    documentation: Documentation::from_entity(entity),
+                    documentation,
                 })
                 .chain(protocols.into_iter().map(|(p, entity)| Self::ProtocolImpl {
                     location: id.location().clone(),
                     cls: id.clone(),
                     cls_superclasses: cls_superclasses.clone(),
                     cls_counterpart: counterpart.clone(),
-                    protocol: context.replace_protocol_name(p),
+                    protocol: p,
                     protocol_super_protocols: ProtocolRef::super_protocols(&entity, context),
                     generics: generics.clone(),
                     availability: availability.clone(),
@@ -830,8 +861,8 @@ impl Stmt {
                 .collect()
             }
             EntityKind::ObjCCategoryDecl => {
-                let category = ItemIdentifier::new_optional(entity, context);
-                let availability = Availability::parse(entity, context);
+                // TODO: Move this parsing to LibraryData.get?
+                let category = id;
 
                 let mut cls_entity = None;
                 entity.visit_children(|entity, _parent| {
@@ -851,14 +882,20 @@ impl Stmt {
                 let cls_entity = cls_entity.expect("could not find category class");
 
                 let cls = ItemIdentifier::new(&cls_entity, context);
-                let data = context.library(&category).class_data.get(&cls.name);
+                let cls_data = context
+                    .library(&category)
+                    .class_data
+                    .get(&cls.name)
+                    .unwrap_or_else(|| StmtData::empty());
 
-                if data.map(|data| data.skipped).unwrap_or_default() {
+                if cls_data.skipped.unwrap_or(false) {
                     return vec![];
                 }
 
                 let category_data = if let Some(category_name) = &category.name {
-                    data.and_then(|data| data.categories.get(category_name))
+                    cls_data
+                        .categories
+                        .get(category_name)
                         .cloned()
                         .unwrap_or_default()
                 } else {
@@ -874,31 +911,25 @@ impl Stmt {
                     .into_iter()
                     .map(|(id, _, _)| id)
                     .collect();
-                let cls_counterpart = data
-                    .map(|data| data.counterpart.clone())
-                    .unwrap_or_default();
 
                 verify_objc_decl(entity, context);
                 let generics = parse_class_generics(entity, context);
 
-                let skipped_protocols = data
-                    .map(|data| data.skipped_protocols.clone())
-                    .unwrap_or_default();
                 let protocols = parse_direct_protocols(entity, context);
                 let protocols: BTreeMap<_, _> = protocols
                     .into_iter()
                     .map(|entity| (ItemIdentifier::new(&entity, context), entity))
-                    .filter(|(protocol, _)| !skipped_protocols.contains(&protocol.name))
+                    .filter(|(protocol, _)| !cls_data.skipped_protocols.contains(&protocol.name))
                     .collect();
 
                 let protocol_impls = protocols.into_iter().map(|(p, entity)| Self::ProtocolImpl {
                     location: category.location().clone(),
                     cls: cls.clone(),
                     cls_superclasses: cls_superclasses.clone(),
-                    cls_counterpart: cls_counterpart.clone(),
+                    cls_counterpart: cls_data.counterpart.clone().clone(),
                     generics: generics.clone(),
                     availability: availability.clone(),
-                    protocol: context.replace_protocol_name(p),
+                    protocol: p,
                     protocol_super_protocols: ProtocolRef::super_protocols(&entity, context),
                 });
 
@@ -914,7 +945,7 @@ impl Stmt {
 
                     let (methods, designated_initializers) = parse_methods(
                         entity,
-                        |name| ClassData::get_method_data(data, name),
+                        |name| cls_data.methods.get(name).cloned().unwrap_or_default(),
                         &cls_thread_safety,
                         true,
                         context,
@@ -927,19 +958,22 @@ impl Stmt {
                         );
                     }
 
-                    let extra_methods = if let Counterpart::MutableSubclass(subclass) = data
-                        .map(|data| data.counterpart.clone())
-                        .unwrap_or_default()
+                    let extra_methods = if let Counterpart::MutableSubclass(subclass) =
+                        cls_data.counterpart.clone()
                     {
-                        let subclass_data =
-                            context.library(&subclass).class_data.get(&subclass.name);
-                        assert!(!subclass_data.map(|data| data.skipped).unwrap_or_default());
+                        let subclass_data = context
+                            .library(&subclass)
+                            .class_data
+                            .get(&subclass.name)
+                            .unwrap_or_else(|| StmtData::empty());
+                        assert!(!subclass_data.skipped.unwrap_or(false));
 
                         let (mut methods, _) = parse_methods(
                             entity,
                             |name| {
-                                let data = ClassData::get_method_data(data, name);
-                                let subclass_data = ClassData::get_method_data(subclass_data, name);
+                                let data = cls_data.methods.get(name).cloned().unwrap_or_default();
+                                let subclass_data =
+                                    subclass_data.methods.get(name).cloned().unwrap_or_default();
                                 subclass_data.merge_with_superclass(data)
                             },
                             &cls_thread_safety,
@@ -963,7 +997,7 @@ impl Stmt {
                                 cls_generics: generics.clone(),
                                 category_name: category.name.clone(),
                                 methods,
-                                documentation: Some(Documentation::from_entity(entity)),
+                                documentation: Some(documentation.clone()),
                             })
                         }
                     } else {
@@ -979,7 +1013,7 @@ impl Stmt {
                         cls_generics: generics.clone(),
                         category_name: category.name.clone(),
                         methods,
-                        documentation: Some(Documentation::from_entity(entity)),
+                        documentation: Some(documentation),
                     })
                     .chain(extra_methods)
                     .chain(protocol_impls)
@@ -1009,9 +1043,16 @@ impl Stmt {
                         }
                     });
 
+                    // Alias to the C name.
+                    if let Some(c_name) = entity.get_name() {
+                        if c_name != id.name {
+                            documentation.set_alias(c_name);
+                        }
+                    }
+
                     let (methods, designated_initializers) = parse_methods(
                         entity,
-                        |name| ClassData::get_method_data(data, name),
+                        |name| cls_data.methods.get(name).cloned().unwrap_or_default(),
                         &cls_thread_safety,
                         false,
                         context,
@@ -1040,13 +1081,12 @@ impl Stmt {
                     } else {
                         Some(Self::ExternCategory {
                             id,
-                            actual_name: category.name.clone(),
                             availability: availability.clone(),
                             cls: cls.clone(),
                             cls_superclasses: cls_superclasses.clone(),
                             cls_generics: generics.clone(),
                             methods,
-                            documentation: Documentation::from_entity(entity),
+                            documentation,
                         })
                     }
                     .into_iter()
@@ -1055,33 +1095,15 @@ impl Stmt {
                 }
             }
             EntityKind::ObjCProtocolDecl => {
-                let actual_id = ItemIdentifier::new(entity, context);
-                let data = context
-                    .library(&actual_id)
-                    .protocol_data
-                    .get(&actual_id.name);
-                let actual_name = data
-                    .map(|data| data.renamed.is_some())
-                    .unwrap_or_default()
-                    .then(|| actual_id.name.clone());
+                let id = id.require_name();
+                let objc_name = c_name.unwrap();
 
-                let id = context.replace_protocol_name(actual_id);
-
-                if data.map(|data| data.skipped).unwrap_or_default() {
-                    return vec![];
-                }
-
-                let availability = Availability::parse(entity, context);
                 let thread_safety = ThreadSafety::from_decl(entity, context);
 
                 verify_objc_decl(entity, context);
                 let (methods, designated_initializers) = parse_methods(
                     entity,
-                    |name| {
-                        data.and_then(|data| data.methods.get(name))
-                            .copied()
-                            .unwrap_or_default()
-                    },
+                    |name| data.methods.get(name).cloned().unwrap_or_default(),
                     &thread_safety,
                     false,
                     context,
@@ -1096,30 +1118,18 @@ impl Stmt {
 
                 vec![Self::ProtocolDecl {
                     id,
-                    actual_name,
+                    objc_name,
                     availability,
                     super_protocols: ProtocolRef::super_protocols(entity, context),
                     methods,
                     required_sendable: thread_safety.explicit_sendable(),
                     required_mainthreadonly: thread_safety.explicit_mainthreadonly(),
-                    documentation: Documentation::from_entity(entity),
+                    documentation,
                 }]
             }
             EntityKind::TypedefDecl => {
-                let id = ItemIdentifier::new(entity, context);
-                let availability = Availability::parse(entity, context);
-                let documentation = Documentation::from_entity(entity);
-
-                let data = context
-                    .library(&id)
-                    .typedef_data
-                    .get(&id.name)
-                    .cloned()
-                    .unwrap_or_default();
-
-                if data.skipped {
-                    return vec![];
-                }
+                let id = id.require_name();
+                let c_name = c_name.unwrap();
 
                 let mut kind = None;
                 let mut inner_struct = None;
@@ -1174,12 +1184,12 @@ impl Stmt {
                 // No need to output a typedef if it'll just point to the same thing.
                 //
                 // TODO: We're discarding a slight bit of availability data this way.
-                if ty.is_enum(&id.name) || ty.is_record(&id.name) {
+                if ty.is_enum(&c_name) || ty.is_record(&c_name) {
                     return vec![];
                 }
 
                 if let Some((is_cf, encoding_name)) =
-                    ty.pointer_to_opaque_struct_or_void(&id.name, is_bridged(entity, context))
+                    ty.pointer_to_opaque_struct_or_void(&c_name, is_bridged(entity, context))
                 {
                     if kind.is_some() {
                         error!(?kind, "unknown kind on opaque type");
@@ -1215,31 +1225,21 @@ impl Stmt {
 
                         return vec![Self::OpaqueDecl {
                             id,
-                            generics: data.generics.clone(),
                             encoding_name: encoding_name.unwrap().to_string(),
+                            generics: data.generics.clone(),
                             availability,
                             documentation,
                             is_cf,
                             superclass,
                         }];
                     } else if let Some(entity) = inner_struct {
-                        let mut record_id = ItemIdentifier::new(&entity, context);
-
-                        // Replace module from external data if it exists.
-                        if let Some(external) =
-                            context.library(&record_id).external.get(&record_id.name)
-                        {
-                            record_id =
-                                ItemIdentifier::from_raw(record_id.name, external.module.clone());
-                        }
-
                         return vec![
                             Self::OpaqueDecl {
-                                id: record_id,
+                                id: ItemIdentifier::new(&entity, context),
                                 generics: data.generics.clone(),
                                 encoding_name: encoding_name.unwrap().to_string(),
                                 availability: Availability::parse(&entity, context),
-                                documentation: Documentation::from_entity(&entity),
+                                documentation: Documentation::from_entity(&entity, context),
                                 is_cf,
                                 superclass: None,
                             },
@@ -1264,28 +1264,13 @@ impl Stmt {
             }
             EntityKind::StructDecl | EntityKind::UnionDecl => {
                 let is_union = entity.get_kind() == EntityKind::UnionDecl;
-                let id = ItemIdentifier::new_optional(entity, context)
+                let id = id
                     .map_name(|name| name.or_else(|| anonymous_record_name(entity, context)))
                     .to_option();
-                let Some(mut id) = id else {
+                let Some(id) = id else {
                     warn!(?entity, "skipped anonymous union/struct");
                     return vec![];
                 };
-                let availability = Availability::parse(entity, context);
-
-                let library = context.library(&id);
-                let data = if is_union {
-                    &library.union_data
-                } else {
-                    &library.struct_data
-                }
-                .get(&id.name)
-                .cloned()
-                .unwrap_or_default();
-
-                if data.skipped {
-                    return vec![];
-                }
 
                 // See https://github.com/rust-lang/rust-bindgen/blob/95fd17b874910184cc0fcd33b287fa4e205d9d7a/bindgen/ir/comp.rs#L1392-L1408
                 if !entity.is_definition() {
@@ -1302,12 +1287,8 @@ impl Stmt {
                     })
                     .split_once('=')
                     .unwrap()
-                    .0;
-                let encoding_name = if encoding_name == id.name {
-                    None
-                } else {
-                    Some(encoding_name.to_string())
-                };
+                    .0
+                    .to_string();
 
                 let mut boxable = false;
                 let mut fields = Vec::new();
@@ -1338,7 +1319,7 @@ impl Stmt {
                             error!("unsound struct/union bitfield");
                         }
 
-                        let documentation = Documentation::from_entity(&entity);
+                        let documentation = Documentation::from_entity(&entity, context);
                         fields.push((name, documentation, ty))
                     }
                     EntityKind::ObjCBoxable => {
@@ -1347,7 +1328,7 @@ impl Stmt {
                     EntityKind::UnionDecl | EntityKind::StructDecl => {
                         // Recursively parse inner unions and structs, but
                         // emit them at the top-level.
-                        res.extend(Self::parse(&entity, context));
+                        res.extend(Self::parse(&entity, context, current_library));
                     }
                     EntityKind::PackedAttr => packed = true,
                     EntityKind::VisibilityAttr => {}
@@ -1359,11 +1340,6 @@ impl Stmt {
                     return res;
                 }
 
-                // Replace module from external data if it exists.
-                if let Some(external) = context.library(&id).external.get(&id.name) {
-                    id = ItemIdentifier::from_raw(id.name, external.module.clone());
-                }
-
                 res.push(Self::RecordDecl {
                     id,
                     encoding_name,
@@ -1372,7 +1348,7 @@ impl Stmt {
                     fields,
                     sendable,
                     packed,
-                    documentation: Documentation::from_entity(entity),
+                    documentation,
                     is_union,
                 });
 
@@ -1384,20 +1360,6 @@ impl Stmt {
                 if !entity.is_definition() {
                     return vec![];
                 }
-
-                let id = ItemIdentifier::new_optional(entity, context);
-
-                let data = context
-                    .library(&id)
-                    .enum_data
-                    .get(id.name.as_deref().unwrap_or("__anonymous__"))
-                    .cloned()
-                    .unwrap_or_default();
-                if data.skipped {
-                    return vec![];
-                }
-
-                let availability = Availability::parse(entity, context);
 
                 let ty = entity.get_enum_underlying_type().expect("enum type");
                 let mut ty = Ty::parse_enum(ty, context);
@@ -1411,15 +1373,9 @@ impl Stmt {
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::EnumConstantDecl => {
-                        let name = entity.get_name().expect("enum constant name");
+                        let id = ItemIdentifier::new(&entity, context);
+                        let const_data = context.library(&id).get(&entity);
                         let availability = Availability::parse(&entity, context);
-
-                        let const_data = context
-                            .library(&id)
-                            .const_data
-                            .get(&name)
-                            .cloned()
-                            .unwrap_or_default();
 
                         if const_data.skipped.unwrap_or(false) {
                             return;
@@ -1463,18 +1419,18 @@ impl Stmt {
                                     expr = Expr::parse_enum_constant(&entity, context);
                                 }
                                 _ => {
-                                    panic!("unknown EnumConstantDecl child in {name:?}: {entity:?}")
+                                    panic!("unknown EnumConstantDecl child in {id:?}: {entity:?}")
                                 }
                             });
                         };
 
-                        let documentation = Documentation::from_entity(&entity);
+                        let documentation = Documentation::from_entity(&entity, context);
 
                         if ty.is_simple_uint() {
                             ty = expr.guess_type(id.location());
                         }
 
-                        variants.push((name, documentation, availability, expr));
+                        variants.push((id.name, documentation, availability, expr));
                     }
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
@@ -1540,25 +1496,11 @@ impl Stmt {
                         kind,
                         variants,
                         sendable,
-                        documentation: Documentation::from_entity(entity),
+                        documentation,
                     }]
                 }
             }
             EntityKind::VarDecl => {
-                let id = ItemIdentifier::new(entity, context);
-
-                let data = context
-                    .library(&id)
-                    .statics
-                    .get(&id.name)
-                    .cloned()
-                    .unwrap_or_default();
-
-                if data.skipped {
-                    return vec![];
-                }
-
-                let availability = Availability::parse(entity, context);
                 let ty = entity.get_type().expect("var type");
                 let ty = Ty::parse_static(ty, context);
                 let mut value = None;
@@ -1587,7 +1529,7 @@ impl Stmt {
                     EntityKind::TypeRef => {}
                     _ if entity.is_expression() => {
                         if value.is_none() {
-                            if data.use_value {
+                            if data.use_value.unwrap_or(false) {
                                 value = Some(Expr::from_evaluated(&entity));
                             } else {
                                 value = Some(Expr::parse_var(&entity, context));
@@ -1600,47 +1542,35 @@ impl Stmt {
                 });
 
                 vec![Self::VarDecl {
-                    id,
+                    id: id.require_name(),
+                    link_name: c_name.unwrap(),
                     availability,
                     ty,
                     value,
-                    documentation: Documentation::from_entity(entity),
+                    documentation,
                 }]
             }
             EntityKind::FunctionDecl => {
-                let id = ItemIdentifier::new(entity, context);
-
-                let data = context
-                    .library(&id)
-                    .fns
-                    .get(&id.name)
-                    .cloned()
-                    .unwrap_or_default();
-
-                if data.skipped {
-                    return vec![];
-                }
+                let c_name = c_name.unwrap();
 
                 if entity.is_variadic() {
                     warn!("can't handle variadic function");
                     return vec![];
                 }
 
-                let availability = Availability::parse(entity, context);
-                let documentation = Documentation::from_entity(entity);
                 let result_type = entity.get_result_type().expect("function result type");
                 let result_type = Ty::parse_function_return(result_type, context);
                 let mut arguments = Vec::new();
                 let mut must_use = false;
                 // Assume by default that functions can unwind.
                 let mut abi = Abi::CUnwind;
-                let mut link_name = None;
+                let mut link_name = c_name.clone();
 
                 if entity.is_static_method() {
                     warn!("unexpected static method");
                 }
 
-                let mut returns_retained = follows_create_rule(&id.name);
+                let mut returns_retained = follows_create_rule(&c_name);
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
@@ -1692,7 +1622,7 @@ impl Stmt {
                             error!(?name, "symbol did not start with _");
                             name
                         };
-                        link_name = Some(name);
+                        link_name = name;
                     }
                     EntityKind::VisibilityAttr => {
                         // CG_EXTERN or UIKIT_EXTERN
@@ -1708,7 +1638,7 @@ impl Stmt {
                 }
 
                 if let Some((_, first_ty)) = arguments.first_mut() {
-                    first_ty.fix_fn_first_argument_cf_nullability(&id.name);
+                    first_ty.fix_fn_first_argument_cf_nullability(&c_name);
                 }
 
                 // Don't map `CFRetain`, `CFRelease`, `CFAutorelease`, as well
@@ -1724,10 +1654,10 @@ impl Stmt {
                 // Besides, these do not have the necessary memory management
                 // attributes (cf_consumed/cf_returns_retained), and as such
                 // cannot be mapped correctly without extra hacks.
-                if (id.name.ends_with("Retain")
-                    || id.name.ends_with("Release")
-                    || id.name.ends_with("Autorelease"))
-                    && !id.name.ends_with("AndRetain")
+                if (c_name.ends_with("Retain")
+                    || c_name.ends_with("Release")
+                    || c_name.ends_with("Autorelease"))
+                    && !c_name.ends_with("AndRetain")
                 {
                     if let Some((_, first_arg_ty)) = arguments.first() {
                         if first_arg_ty.is_cf_type_ptr() {
@@ -1743,21 +1673,22 @@ impl Stmt {
                 };
 
                 vec![Self::FnDecl {
-                    id,
-                    // May be changed by global analysis.
-                    renamed: data.renamed.clone(),
+                    id: id.require_name(),
+                    c_name,
+                    link_name,
                     availability,
                     arguments,
                     // May be changed by global analysis.
                     first_arg_is_self: false,
                     result_type,
                     body,
-                    safe: !data.unsafe_,
+                    safe: data.unsafe_.safe(),
                     must_use,
                     abi,
-                    link_name,
                     returns_retained,
                     documentation,
+                    no_implementor: data.no_implementor,
+                    custom_implementor: data.implementor.clone().map(ItemTree::from_id),
                 }]
             }
             EntityKind::UnexposedDecl => {
@@ -1785,18 +1716,14 @@ impl Stmt {
             return None;
         };
 
-        let data = context
-            .library(&id)
-            .const_data
-            .get(&id.name)
-            .cloned()
-            .unwrap_or_default();
+        let data = context.library(&id).const_data.get(&id.name);
+        let skipped = data.and_then(|data| data.skipped);
 
-        if data.skipped.unwrap_or(false) {
+        if skipped.unwrap_or(false) {
             return None;
         }
 
-        if data.skipped.is_none()
+        if skipped.is_none()
             && !id.name.starts_with('k')
             && !id.name.to_lowercase().contains("version")
         {
@@ -1824,7 +1751,7 @@ impl Stmt {
             ty,
             value,
             is_last: false,
-            documentation: Documentation::from_entity(entity),
+            documentation: Documentation::from_entity(entity, context),
         })
     }
 
@@ -2020,12 +1947,11 @@ impl Stmt {
             // TODO
             Self::FnDecl { body: Some(_), .. } => Vec::new(),
             Self::FnGetTypeId {
-                cf_id, result_type, ..
+                cf_item,
+                result_type,
+                ..
             } => {
-                let mut items = vec![
-                    ItemTree::from_id(cf_id.clone()),
-                    ItemTree::cf("ConcreteType"),
-                ];
+                let mut items = vec![ItemTree::cf("ConcreteType"), cf_item.clone()];
                 items.extend(result_type.fn_return_required_items());
                 items
             }
@@ -2204,6 +2130,7 @@ impl Stmt {
             match self {
                 Self::ClassDecl {
                     id,
+                    objc_name,
                     generics,
                     availability,
                     superclasses,
@@ -2237,6 +2164,9 @@ impl Stmt {
                     writeln!(f, "))]")?;
                     if *main_thread_only {
                         writeln!(f, "    #[thread_kind = MainThreadOnly]")?;
+                    }
+                    if *objc_name != id.name {
+                        writeln!(f, "    #[name = {objc_name:?}]")?;
                     }
                     writeln!(f, "    {derives}")?;
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
@@ -2334,7 +2264,6 @@ impl Stmt {
                 }
                 Self::ExternCategory {
                     id,
-                    actual_name,
                     availability,
                     cls,
                     cls_superclasses,
@@ -2349,21 +2278,7 @@ impl Stmt {
 
                     writeln!(f)?;
 
-                    let mut alias = None;
-                    if let Some(actual_name) = actual_name {
-                        if *actual_name != id.name {
-                            writeln!(f, "/// Category \"{actual_name}\" on [`{}`].", cls.name)?;
-                            alias = Some(actual_name);
-                        } else {
-                            writeln!(f, "/// Category on [`{}`].", cls.name)?;
-                        }
-                    } else {
-                        writeln!(f, "/// Category on [`{}`].", cls.name)?;
-                    }
-                    write!(f, "{}", documentation.fmt(None))?;
-                    if let Some(alias) = alias {
-                        writeln!(f, "#[doc(alias = \"{alias}\")]")?;
-                    }
+                    write!(f, "{}", documentation.fmt_category(&id.name, &cls.name))?;
 
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
@@ -2535,7 +2450,7 @@ impl Stmt {
                 }
                 Self::ProtocolDecl {
                     id,
-                    actual_name,
+                    objc_name,
                     availability,
                     super_protocols,
                     methods,
@@ -2550,8 +2465,8 @@ impl Stmt {
                     write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
                     write!(f, "    {availability}")?;
-                    if let Some(actual_name) = actual_name {
-                        writeln!(f, "    #[name = {actual_name:?}]")?;
+                    if *objc_name != id.name {
+                        writeln!(f, "    #[name = {objc_name:?}]")?;
                     }
                     write!(f, "    pub unsafe trait {}", id.name)?;
                     if !super_protocols.is_empty() {
@@ -2649,7 +2564,7 @@ impl Stmt {
                         } else {
                             write!(f, "Encoding::Struct")?;
                         }
-                        writeln!(f, "({:?}, &[", encoding_name.as_deref().unwrap_or(&id.name),)?;
+                        writeln!(f, "({encoding_name:?}, &[")?;
                         for (_, _, ty) in fields {
                             writeln!(f, "        {},", ty.record_encoding())?;
                         }
@@ -2862,6 +2777,7 @@ impl Stmt {
                 }
                 Self::VarDecl {
                     id,
+                    link_name,
                     availability: _,
                     ty,
                     value: None,
@@ -2870,11 +2786,15 @@ impl Stmt {
                     writeln!(f, "extern \"C\" {{")?;
                     write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
+                    if *link_name != id.name {
+                        writeln!(f, "#[link_name = {link_name:?}]")?;
+                    }
                     writeln!(f, "    pub static {}: {};", id.name, ty.var())?;
                     writeln!(f, "}}")?;
                 }
                 Self::VarDecl {
                     id,
+                    link_name: _, // Don't care about the link name on variables with a value.
                     availability: _,
                     ty,
                     value: Some(expr),
@@ -2894,7 +2814,7 @@ impl Stmt {
                     writeln!(f, ";")?;
                 }
                 Self::FnDecl {
-                    id,
+                    c_name,
                     arguments,
                     result_type,
                     body: Some(_),
@@ -2902,7 +2822,7 @@ impl Stmt {
                     ..
                 } => {
                     write!(f, "// TODO: ")?;
-                    write!(f, "pub fn {}(", id.name)?;
+                    write!(f, "pub fn {c_name}(")?;
                     for (param, arg_ty) in arguments {
                         let param = handle_reserved(&crate::to_snake_case(param));
                         write!(f, "{param}: {},", arg_ty.fn_argument())?;
@@ -2912,7 +2832,8 @@ impl Stmt {
                 }
                 Self::FnDecl {
                     id,
-                    renamed,
+                    c_name,
+                    link_name,
                     availability,
                     arguments,
                     first_arg_is_self,
@@ -2921,9 +2842,10 @@ impl Stmt {
                     safe,
                     must_use,
                     abi,
-                    link_name,
                     returns_retained,
                     documentation,
+                    no_implementor: _,
+                    custom_implementor: _,
                 } => {
                     let (ret, return_converter) = result_type.fn_return(*returns_retained);
 
@@ -2932,18 +2854,25 @@ impl Stmt {
                         || arguments
                             .iter()
                             .any(|(_, arg)| arg.fn_argument_converter().is_some())
-                        || renamed.is_some()
                         || abi.rust_outer();
 
                     let raw_fn_decl = |f: &mut fmt::Formatter<'_>, vis| {
-                        if let Some(link_name) = link_name {
-                            // NOTE: Currently only used on Apple targets.
-                            writeln!(
-                                f,
-                                "#[cfg_attr(target_vendor = \"apple\", link_name = {link_name:?})]"
-                            )?;
+                        if c_name != link_name {
+                            if id.library_name() == "Dispatch" {
+                                // HACK: Currently only used in libdispatch on Apple targets.
+                                writeln!(f, "#[cfg_attr(target_vendor = \"apple\", link_name = {link_name:?})]")?;
+                            } else if link_name.contains("$LEGACYMAC") {
+                                // HACK: Security needs this only on macOS.
+                                writeln!(
+                                    f,
+                                    "#[cfg_attr(target_os = \"macos\", link_name = {link_name:?})]"
+                                )?;
+                            } else {
+                                writeln!(f, "#[link_name = {link_name:?}]")?;
+                            }
                         }
-                        write!(f, "{vis}fn {}(", id.name)?;
+
+                        write!(f, "{vis}fn {c_name}(")?;
                         for (param, arg_ty) in arguments {
                             let param = handle_reserved(&crate::to_snake_case(param));
                             write!(f, "{param}: {},", arg_ty.fn_argument())?;
@@ -2953,8 +2882,7 @@ impl Stmt {
                         Ok(())
                     };
 
-                    let name = handle_reserved(renamed.as_ref().unwrap_or(&id.name));
-                    let vis = if name.starts_with("_") {
+                    let vis = if id.name.starts_with("_") {
                         "pub(crate)"
                     } else {
                         "pub"
@@ -2962,9 +2890,6 @@ impl Stmt {
 
                     if needs_wrapper {
                         write!(f, "{}", documentation.fmt(None))?;
-                        if renamed.is_some() {
-                            writeln!(f, "#[doc(alias = {:?})]", id.name)?;
-                        }
                         write!(f, "{}", self.cfg_gate_ln(config))?;
                         write!(f, "{availability}")?;
                         if *must_use {
@@ -2972,7 +2897,8 @@ impl Stmt {
                         }
                         writeln!(f, "#[inline]")?;
                         let unsafe_ = if *safe { "" } else { "unsafe " };
-                        write!(f, "{vis} {unsafe_}{}fn {name}(", abi.extern_outer())?;
+                        let fn_name = handle_reserved(&id.name);
+                        write!(f, "{vis} {unsafe_}{}fn {fn_name}(", abi.extern_outer())?;
                         for (i, (param, arg_ty)) in arguments.iter().enumerate() {
                             if i == 0 && *first_arg_is_self {
                                 write!(f, "self: ")?;
@@ -3005,7 +2931,7 @@ impl Stmt {
                         if let Some((_, converter_start, _)) = &return_converter {
                             write!(f, "{converter_start}")?;
                         }
-                        write!(f, "unsafe {{ {}(", id.name)?;
+                        write!(f, "unsafe {{ {c_name}(")?;
                         for (i, (param, ty)) in arguments.iter().enumerate() {
                             let param = if i == 0 && *first_arg_is_self {
                                 "self".to_string()
@@ -3045,7 +2971,8 @@ impl Stmt {
                 }
                 Self::FnGetTypeId {
                     id,
-                    cf_id,
+                    cf_item,
+                    link_name,
                     result_type,
                     availability: _, // #[deprecated] is useless on traits.
                     abi,
@@ -3058,18 +2985,17 @@ impl Stmt {
                     // mutable subclasses. Similarly, we only implement this
                     // for the base generic type (`CFArray<c_void>`).
                     write!(f, "{}", self.cfg_gate_ln(config))?;
-                    writeln!(f, "unsafe impl ConcreteType for {} {{", cf_id.path())?;
+                    writeln!(f, "unsafe impl ConcreteType for {} {{", cf_item.id().path())?;
 
                     write!(f, "{}", documentation.fmt(None))?;
-                    writeln!(f, "    #[doc(alias = {:?})]", id.name)?;
                     writeln!(f, "    #[inline]")?;
-                    writeln!(f, "    {}fn type_id(){ret} {{", abi.extern_outer())?;
+                    writeln!(f, "    {}fn {}(){ret} {{", abi.extern_outer(), id.name)?;
 
                     writeln!(f, "        {}{{", abi.extern_inner())?;
-                    writeln!(f, "            fn {}(){ret};", id.name,)?;
+                    writeln!(f, "            fn {link_name}(){ret};")?;
                     writeln!(f, "        }}")?;
 
-                    writeln!(f, "        unsafe {{ {}() }}", id.name)?;
+                    writeln!(f, "        unsafe {{ {link_name}() }}")?;
 
                     writeln!(f, "    }}")?;
                     writeln!(f, "}}")?;

@@ -1,3 +1,4 @@
+use clang::EntityKind;
 use core::fmt;
 use core::hash;
 use serde::de;
@@ -19,22 +20,35 @@ use crate::module::clean_name;
 use crate::Config;
 
 pub trait ToOptionString: fmt::Debug {
+    fn set(&mut self, name: Option<String>);
     fn to_option(&self) -> Option<&str>;
 }
 
 impl ToOptionString for String {
+    fn set(&mut self, name: Option<String>) {
+        *self = name.unwrap();
+    }
+
     fn to_option(&self) -> Option<&str> {
         Some(self)
     }
 }
 
 impl ToOptionString for Option<String> {
+    fn set(&mut self, name: Option<String>) {
+        *self = name;
+    }
+
     fn to_option(&self) -> Option<&str> {
         self.as_deref()
     }
 }
 
 impl ToOptionString for () {
+    fn set(&mut self, name: Option<String>) {
+        assert_eq!(name, None);
+    }
+
     fn to_option(&self) -> Option<&str> {
         None
     }
@@ -59,12 +73,13 @@ impl Location {
             // Remove submodules for Objective-C.
             name if name.starts_with("ObjectiveC") => "ObjectiveC".into(),
 
-            // Remove "Darwin" prefix for Darwin.block and Darwin.os.
+            // Remove "Darwin" prefix for Darwin.block.
             "Darwin.block" => "block".into(),
-            name if name.starts_with("Darwin.os") => name.strip_prefix("Darwin.").unwrap().into(),
 
-            // Move os_object to os
-            "os_object" => "os.object".into(),
+            // TODO: Handle OS?
+            "os_object" => "__builtin__".into(),
+            name if name.starts_with("Darwin.os.") => "__builtin__".into(),
+            "os_workgroup.workgroup" => "__builtin__".into(),
 
             // Various macros
             name if name.starts_with("os_availability") => "__builtin__".into(),
@@ -74,12 +89,16 @@ impl Location {
             "Darwin.AssertMacros" => "__builtin__".into(),
             "Darwin.ConditionalMacros" => "__builtin__".into(),
             "AvailabilityMacros" => "__builtin__".into(),
+            "ExtensionFoundation.EXMacros" => "__builtin__".into(),
             name if name.starts_with("_assert") => "__builtin__".into(),
 
             // These types are redefined in the framework crate itself.
             "Darwin.MacTypes" => "__builtin__".into(),
             "Darwin.device" => "__builtin__".into(),
             "uuid.uuid_t" => "__builtin__".into(),
+            "libkern.OSTypes" => "__builtin__".into(),
+            "Darwin.net.if_media" => "__builtin__".into(),
+            "XPC" => "__builtin__".into(),
 
             // We don't emit the `hfs`, so let's act as-if CoreServices is the
             // one that defines the types in there (such as HFSUniStr255).
@@ -268,6 +287,7 @@ impl Location {
 /// an item came from as well.
 #[derive(Debug, Clone)]
 pub struct ItemIdentifier<N = String> {
+    /// The name of the item in Rust (i.e. it may have been renamed).
     pub name: N,
     location: Location,
 }
@@ -307,7 +327,10 @@ impl<N: ToOptionString> ItemIdentifier<N> {
         Self { name, location }
     }
 
-    pub fn with_name(name: N, entity: &Entity<'_>, _context: &Context<'_>) -> Self {
+    /// Construct a new `ItemIdentifier` from the given entity and C name.
+    ///
+    /// The C name will be renamed according to the configuration.
+    pub fn with_name(mut name: N, entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let file = entity
             .get_location()
             .and_then(|loc| loc.get_expansion_location().file);
@@ -319,20 +342,34 @@ impl<N: ToOptionString> ItemIdentifier<N> {
             Location::new("__builtin__")
         };
 
-        // Defined in multiple places for some reason.
-        if let Some("IOSurfaceRef" | "__IOSurface") = name.to_option() {
-            location = Location::new("IOSurface.IOSurfaceRef");
-        }
-
         // Remove unnecessary CFBase module, a lot of trait impls aren't
         // available without it, which can be quite confusing.
         if location == Location::new("CoreFoundation.CFBase") {
             location = Location::new("CoreFoundation");
         }
 
+        // Replace module from external data if it exists, such that all
+        // subsequent usage of the location, including in other configuration
+        // lookups, is done in the external library.
+        if let Some(name) = name.to_option() {
+            // TODO: Lookup only in current library? Or always there?
+            if let Some(external) = context.library(&location).external.get(name) {
+                location = external.module.clone();
+            } else if let EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef = entity.get_kind()
+            {
+                error!(?entity, "could not get declaration, add appropriate external.{name}.module = \"...\" to translation-config.toml");
+            }
+        }
+
+        // Rename if the config contains a rename.
+        if let Some(renamed) = context.library(&location).get(entity).renamed.clone() {
+            name.set(Some(renamed));
+        }
+
         Self { name, location }
     }
 
+    #[track_caller]
     pub fn map_name<R: ToOptionString>(self, f: impl FnOnce(N) -> R) -> ItemIdentifier<R> {
         let Self { name, location } = self;
         ItemIdentifier {
@@ -358,9 +395,10 @@ impl<N: ToOptionString> ItemIdentifier<N> {
 }
 
 impl ItemIdentifier {
+    #[track_caller]
     pub fn new(entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let name = entity.get_name().expect("ItemIdentifier get name");
-        Self::with_name(name, entity, context)
+        let name = entity.get_name().expect("ItemIdentifier must have name");
+        ItemIdentifier::with_name(name, entity, context)
     }
 
     pub fn to_some(self) -> ItemIdentifier<Option<String>> {
@@ -469,22 +507,12 @@ impl ItemIdentifier {
 
 impl ItemIdentifier<Option<String>> {
     pub fn new_optional(entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let mut id = Self::with_name(entity.get_name(), entity, context);
-
-        // union (unnamed at /Applications/Xcode.app/...)
-        // union (anonymous at /Applications/Xcode.app/...)
-        // enum (unnamed at /Applications/Xcode.app/...)
-        // struct (unnamed at /Applications/Xcode.app/...)
-        if id
-            .name
-            .as_deref()
-            .map(|name| name.contains(" (unnamed at") || name.contains(" (anonymous at"))
-            .unwrap_or(false)
-        {
-            id.name = None;
-        }
-
-        id
+        let name = if !entity.is_anonymous() {
+            entity.get_name()
+        } else {
+            None
+        };
+        Self::with_name(name, entity, context)
     }
 
     pub fn to_option(self) -> Option<ItemIdentifier> {
@@ -493,6 +521,11 @@ impl ItemIdentifier<Option<String>> {
         } else {
             None
         }
+    }
+
+    #[track_caller]
+    pub fn require_name(self) -> ItemIdentifier {
+        self.to_option().expect("item must name a name")
     }
 }
 

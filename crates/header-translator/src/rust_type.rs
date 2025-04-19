@@ -374,16 +374,6 @@ fn get_class_data(
 
     let mut id = ItemIdentifier::new(&entity, context);
 
-    if let Some(external) = context.library(&id).external.get(&id.name) {
-        let id = ItemIdentifier::from_raw(id.name, external.module.clone());
-        let thread_safety = external
-            .thread_safety
-            .as_deref()
-            .map(ThreadSafety::from_string)
-            .unwrap_or(ThreadSafety::dummy());
-        return (id, thread_safety, external.super_items.clone());
-    }
-
     match entity.get_kind() {
         EntityKind::ObjCInterfaceDecl => {
             let thread_safety = ThreadSafety::from_decl(&entity, context);
@@ -393,6 +383,10 @@ fn get_class_data(
                 .collect();
 
             (id, thread_safety, superclasses)
+        }
+        EntityKind::ObjCClassRef => {
+            let thread_safety = ThreadSafety::from_ref(&entity, context);
+            (id, thread_safety, vec![])
         }
         EntityKind::MacroExpansion => {
             id.name = entity_ref.get_name().unwrap_or_else(|| {
@@ -406,7 +400,7 @@ fn get_class_data(
             (id, thread_safety, superclasses)
         }
         _ => {
-            error!(?entity, "could not get declaration. Add appropriate external.{}.module = \"...\" to translation-config.toml", id.name);
+            error!(?entity, "was not a class");
             (id, ThreadSafety::dummy(), vec![])
         }
     }
@@ -425,36 +419,19 @@ fn parse_protocol(entity: Entity<'_>, context: &Context<'_>) -> (ProtocolRef, Th
 
     let id = ItemIdentifier::new(&entity, context);
 
-    if let Some(external) = context.library(&id).external.get(&id.name) {
-        let id = ItemIdentifier::from_raw(id.name, external.module.clone());
-        let thread_safety = external
-            .thread_safety
-            .as_deref()
-            .map(ThreadSafety::from_string)
-            .unwrap_or(ThreadSafety::dummy());
-        let protocol = ProtocolRef {
-            id,
-            super_protocols: external
-                .super_items
-                .iter()
-                .map(|item| ProtocolRef {
-                    id: item.clone(),
-                    // TODO: Populate this somehow?
-                    super_protocols: vec![],
-                })
-                .collect(),
-        };
-        return (protocol, thread_safety);
-    }
-
     match entity.get_kind() {
         EntityKind::ObjCProtocolDecl => {
             let protocol = ProtocolRef::from_entity(&entity, context);
             let thread_safety = ThreadSafety::from_decl(&entity, context);
             (protocol, thread_safety)
         }
+        EntityKind::ObjCProtocolRef => {
+            let protocol = ProtocolRef::from_entity(&entity, context);
+            let thread_safety = ThreadSafety::from_ref(&entity, context);
+            (protocol, thread_safety)
+        }
         _ => {
-            error!(?entity, "could not get declaration. Add appropriate external.{}.module = \"...\" to translation-config.toml", id.name);
+            error!(?entity, "was not a protocol");
             let protocol = ProtocolRef {
                 id,
                 super_protocols: vec![],
@@ -886,14 +863,7 @@ impl Ty {
             }
             TypeKind::Record => {
                 let declaration = ty.get_declaration().expect("record declaration");
-                let mut id = ItemIdentifier::new_optional(&declaration, context);
-
-                // Replace module from external data if it exists.
-                if let Some(name) = &id.name {
-                    if let Some(external) = context.library(&id).external.get(name) {
-                        id = ItemIdentifier::from_raw(id.name, external.module.clone());
-                    }
-                }
+                let id = ItemIdentifier::new_optional(&declaration, context);
 
                 // Override for self-referential / recursive types
                 let fields = if matches!(
@@ -1477,11 +1447,7 @@ impl Ty {
 
                 let mut inner = Self::parse(inner, Lifetime::Unspecified, context);
 
-                let mut id = ItemIdentifier::new(&declaration, context);
-                // Replace module from external data if it exists.
-                if let Some(external) = context.library(&id).external.get(&id.name) {
-                    id = ItemIdentifier::from_raw(id.name, external.module.clone());
-                }
+                let id = ItemIdentifier::new(&declaration, context);
 
                 // "Push" the typedef into an inner object pointer.
                 //

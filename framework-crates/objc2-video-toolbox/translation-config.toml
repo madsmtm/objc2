@@ -9,4 +9,7 @@ tvos = "10.2"
 visionos = "1.0"
 
 # Wrongly renamed (Swift's renaming algorithm is insufficient)
-enum.VTDecodeFrameFlags.skipped = true
+const.kVTDecodeFrame_EnableAsynchronousDecompression.renamed = "Frame_EnableAsynchronousDecompression"
+const.kVTDecodeFrame_DoNotOutputFrame.renamed = "Frame_DoNotOutputFrame"
+const.kVTDecodeFrame_1xRealTimePlayback.renamed = "Frame_1xRealTimePlayback"
+const.kVTDecodeFrame_EnableTemporalProcessing.renamed = "Frame_EnableTemporalProcessing"

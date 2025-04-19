@@ -51,7 +51,7 @@ pub(crate) enum ThreadSafetyAttr {
 impl ThreadSafetyAttr {
     fn search_protocols(entity: &Entity<'_>, context: &Context<'_>) -> Option<Self> {
         for protocol in parse_direct_protocols(entity, context) {
-            if let Some(explicit) = Self::parse_explicit_decl(entity, context) {
+            if let Some(explicit) = Self::parse_explicit(entity, context, true) {
                 return Some(explicit);
             }
             // Recurse
@@ -63,7 +63,7 @@ impl ThreadSafetyAttr {
         None
     }
 
-    fn parse_explicit_decl(entity: &Entity<'_>, context: &Context<'_>) -> Option<Self> {
+    fn parse_explicit(entity: &Entity<'_>, context: &Context<'_>, is_decl: bool) -> Option<Self> {
         let mut attr = match parse(entity, context) {
             (sendable, true) => {
                 if sendable == Some(true) {
@@ -76,19 +76,22 @@ impl ThreadSafetyAttr {
             (None, false) => None,
         };
 
-        match entity.get_kind() {
-            EntityKind::ObjCInterfaceDecl => {
-                let id = ItemIdentifier::new(entity, context);
-                let data = context.library(&id).class_data.get(&id.name);
+        let id = ItemIdentifier::new(entity, context);
 
-                if data.map(|data| data.main_thread_only).unwrap_or_default() {
+        let data = context.library(&id).get(entity);
+
+        match entity.get_kind() {
+            EntityKind::ObjCInterfaceDecl if is_decl => {
+                if data.main_thread_only {
                     return Some(Self::MainThreadOnly);
                 }
             }
-            EntityKind::ObjCProtocolDecl => {
-                let id = ItemIdentifier::new(entity, context);
-                let data = context.library(&id).protocol_data.get(&id.name);
-
+            EntityKind::ObjCClassRef if !is_decl => {
+                if data.main_thread_only {
+                    return Some(Self::MainThreadOnly);
+                }
+            }
+            EntityKind::ObjCProtocolDecl if is_decl => {
                 // Set the protocol as main thread only if all methods are
                 // explicitly _marked_ (not inferred, since then we'd have to
                 // recurse into types) main thread only.
@@ -109,9 +112,7 @@ impl ThreadSafetyAttr {
                 // delegate in the first place would be through
                 // `NSApplication`!
                 let entities = method_or_property_entities(entity, |name| {
-                    data.and_then(|data| data.methods.get(name))
-                        .copied()
-                        .unwrap_or_default()
+                    data.methods.get(name).cloned().unwrap_or_default()
                 });
                 if !entities.is_empty()
                     && entities.iter().all(|method_or_property| {
@@ -122,10 +123,7 @@ impl ThreadSafetyAttr {
                 }
 
                 // Overwrite with config preference
-                if let Some(data) = data
-                    .map(|data| data.requires_mainthreadonly)
-                    .unwrap_or_default()
-                {
+                if let Some(data) = data.requires_mainthreadonly {
                     if data {
                         if attr == Some(Self::MainThreadOnly) {
                             warn!("set `requires-mainthreadonly = true`, but the protocol was already marked as main thread only");
@@ -134,6 +132,11 @@ impl ThreadSafetyAttr {
                     } else {
                         error!("cannot set `requires-mainthreadonly = false`");
                     }
+                }
+            }
+            EntityKind::ObjCProtocolRef if !is_decl => {
+                if let Some(true) = data.requires_mainthreadonly {
+                    attr = Some(Self::MainThreadOnly);
                 }
             }
             kind => error!(?kind, "invalid decl for thread safety"),
@@ -147,7 +150,7 @@ impl ThreadSafetyAttr {
             EntityKind::ObjCInterfaceDecl => {
                 let parsed_explicit: Vec<_> = parse_superclasses(entity, context)
                     .iter()
-                    .flat_map(|(_, _, entity)| Self::parse_explicit_decl(entity, context))
+                    .flat_map(|(_, _, entity)| Self::parse_explicit(entity, context, true))
                     .collect();
 
                 for attr in &parsed_explicit {
@@ -195,6 +198,7 @@ impl ThreadSafety {
         }
     }
 
+    #[allow(dead_code)]
     pub(crate) fn from_string(s: &str) -> Self {
         let attr = match s {
             "MainThreadOnly" => ThreadSafetyAttr::MainThreadOnly,
@@ -209,9 +213,18 @@ impl ThreadSafety {
     }
 
     pub(crate) fn from_decl(entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let explicit = ThreadSafetyAttr::parse_explicit_decl(entity, context);
+        let explicit = ThreadSafetyAttr::parse_explicit(entity, context, true);
         let inferred =
             explicit.unwrap_or_else(|| ThreadSafetyAttr::parse_inferred_decl(entity, context));
+        Self { explicit, inferred }
+    }
+
+    /// Ideally, we'd parse thread-safety from the decl itself, since then
+    /// we're _sure_ we got it right. But sometimes the item might not have
+    /// been parsed itself, and then we need to fall back to what's in .
+    pub(crate) fn from_ref(entity: &Entity<'_>, context: &Context<'_>) -> Self {
+        let explicit = ThreadSafetyAttr::parse_explicit(entity, context, false);
+        let inferred = explicit.unwrap_or(ThreadSafetyAttr::NotSendable);
         Self { explicit, inferred }
     }
 

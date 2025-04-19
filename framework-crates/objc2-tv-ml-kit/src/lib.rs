@@ -18,12 +18,3 @@ extern crate std;
 mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
-
-#[allow(deprecated, non_upper_case_globals)]
-#[cfg(feature = "TVViewElement")]
-impl TVElementUpdateType {
-    /// Signifies that the node itself and its subtree is modified.
-    #[deprecated = "Please use SwiftUI or UIKit"]
-    #[doc(alias = "TVElementUpdateTypeSelf")]
-    pub const Node: Self = Self(4);
-}

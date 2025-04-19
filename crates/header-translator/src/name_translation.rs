@@ -12,7 +12,7 @@ use std::{
 
 use itertools::Itertools;
 
-use crate::{id::ItemTree, rust_type::Ty, ItemIdentifier};
+use crate::{id::ItemTree, rust_type::Ty, Location};
 
 /// Split a string according to Swift's word boundary algorithm.
 ///
@@ -246,7 +246,8 @@ pub(crate) fn cf_no_ref(type_name: &str) -> &str {
 /// Find the type onto whom a function should be inserted.
 pub(crate) fn find_fn_implementor(
     implementable_mapping: &BTreeSet<ItemTree>,
-    fn_id: &ItemIdentifier,
+    fn_name: &str,
+    fn_location: &Location,
     arguments: &[(String, Ty)],
     result_type: &Ty,
 ) -> Option<ItemTree> {
@@ -257,7 +258,7 @@ pub(crate) fn find_fn_implementor(
         // Skip CFAllocator if that's the first argument.
         // Useful for e.g. `CGEventCreateData` and `CFDateFormatterCreateDateFromString`.
         let mut first_arg_ty = first_arg_ty;
-        if first_arg_ty.is_cf_allocator() && !fn_id.name.starts_with("CFAllocator") {
+        if first_arg_ty.is_cf_allocator() && !fn_name.starts_with("CFAllocator") {
             // TODO: Consider shuffling around so that the allocator becomes
             // the second argument?
             if let Some((_, arg_ty)) = arguments.get(1) {
@@ -267,9 +268,9 @@ pub(crate) fn find_fn_implementor(
 
         if let Some(item) = first_arg_ty.implementable() {
             let type_name = cf_no_ref(&item.id().name).replace("Mutable", "");
-            if is_method_candidate(&fn_id.name, &type_name) {
+            if is_method_candidate(fn_name, &type_name) {
                 // Only emit if in same crate (otherwise it requires a helper trait).
-                if fn_id.library_name() == item.id().library_name() {
+                if fn_location.library_name() == item.id().library_name() {
                     candidates.push(item.clone());
                 }
             }
@@ -282,9 +283,9 @@ pub(crate) fn find_fn_implementor(
         // are considered part of `CFMutablePath`.
         let type_name = cf_no_ref(&item.id().name).replace("Mutable", "");
 
-        if is_method_candidate(&fn_id.name, &type_name) {
+        if is_method_candidate(fn_name, &type_name) {
             // Only emit if in same crate (otherwise it requires a helper trait).
-            if fn_id.library_name() == item.id().library_name() {
+            if fn_location.library_name() == item.id().library_name() {
                 candidates.push(item.clone());
             }
         } else {
@@ -302,32 +303,32 @@ pub(crate) fn find_fn_implementor(
         // with the implementor. Relevant examples from Foundation include
         // NSSetUncaughtExceptionHandler and NSHostByteOrder.
         // TODO: Is this worth the effort?
-        if !fn_id.location().semi_part_of(item.id().location())
-            && !fn_id.name.contains("GetTypeID")
+        if !fn_location.semi_part_of(item.id().location())
+            && !fn_name.contains("GetTypeID")
             // FIXME: CFString, CFPlugIn and CFTimeZone are defined in other
             // files than their "native" file.
-            && !fn_id.name.contains("CFString")
-            && !fn_id.name.contains("CFPlugIn")
-            && !fn_id.name.contains("CFTimeZone")
+            && !fn_name.contains("CFString")
+            && !fn_name.contains("CFPlugIn")
+            && !fn_name.contains("CFTimeZone")
             // FIXME: CGEvent is defined in CGEventTypes
-            && !fn_id.name.contains("CGEvent")
+            && !fn_name.contains("CGEvent")
             // FIXME: A lot of Security types are defined in SecBase.
-            && fn_id.library_name() != "Security"
+            && fn_location.library_name() != "Security"
         {
             continue;
         }
         // FIXME: CTFontManager seems to be separate from CTFont.
-        if fn_id.name.contains("CTFontManager") {
+        if fn_name.contains("CTFontManager") {
             continue;
         }
-        if is_method_candidate(&fn_id.name, cf_no_ref(&item.id().name)) {
+        if is_method_candidate(fn_name, cf_no_ref(&item.id().name)) {
             candidates.push(item.clone());
         }
     }
 
     // The best match is the longest type name that prefixes the function,
     // with names that match case-wise being preferred.
-    let fn_is_lowercase = fn_id.name.to_lowercase() == fn_id.name;
+    let fn_is_lowercase = fn_name.to_lowercase() == fn_name;
     candidates.sort_by(|a, b| {
         let a_is_lowercase = a.id().name.to_lowercase() == a.id().name;
         let b_is_lowercase = b.id().name.to_lowercase() == b.id().name;

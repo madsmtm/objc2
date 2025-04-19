@@ -547,14 +547,14 @@ impl Method {
                 arguments,
                 result_type,
                 is_error,
-                safe: !data.unsafe_,
+                safe: data.unsafe_.safe(),
                 is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
                 weak_property: false,
                 must_use: modifiers.must_use,
                 encoding,
-                documentation: Documentation::from_entity(&entity),
+                documentation: Documentation::from_entity(&entity, context),
             },
         ))
     }
@@ -581,7 +581,12 @@ impl Method {
         // Early return if both getter and setter are skipped
         //
         // To reduce warnings.
-        if getter_data.skipped && setter_data.map(|data| data.skipped).unwrap_or(true) {
+        if getter_data.skipped
+            && setter_data
+                .as_ref()
+                .map(|data| data.skipped)
+                .unwrap_or(true)
+        {
             return (None, None);
         }
 
@@ -632,7 +637,7 @@ impl Method {
                 arguments: Vec::new(),
                 result_type: ty,
                 is_error: false,
-                safe: !getter_data.unsafe_,
+                safe: getter_data.unsafe_.safe(),
                 is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
@@ -640,7 +645,7 @@ impl Method {
                 weak_property: false,
                 must_use: modifiers.must_use,
                 encoding: encoding.clone(),
-                documentation: Documentation::from_entity(&entity),
+                documentation: Documentation::from_entity(&entity, context),
             })
         } else {
             None
@@ -679,7 +684,7 @@ impl Method {
                     arguments: vec![(name, ty)],
                     result_type,
                     is_error: false,
-                    safe: !setter_data.unsafe_,
+                    safe: setter_data.unsafe_.safe(),
                     is_pub,
                     non_isolated: modifiers.non_isolated,
                     mainthreadonly,

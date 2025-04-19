@@ -8,4 +8,5 @@ tvos = "14.0"
 watchos = "7.0"
 visionos = "1.0"
 
+# Both static and enum.
 static.AXFeatureOverrideSessionErrorDomain.skipped = true

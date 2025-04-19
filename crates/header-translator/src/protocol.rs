@@ -45,14 +45,15 @@ impl ProtocolRef {
     }
 
     pub(crate) fn from_entity(entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let mut super_protocols = Vec::new();
+        let id = ItemIdentifier::new(entity, context);
 
+        let mut super_protocols = Vec::new();
         for entity in parse_direct_protocols(entity, context) {
             super_protocols.push(ProtocolRef::from_entity(&entity, context));
         }
 
         Self {
-            id: context.replace_protocol_name(ItemIdentifier::new(entity, context)),
+            id,
             super_protocols,
         }
     }
