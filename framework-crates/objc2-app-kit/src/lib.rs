@@ -68,6 +68,7 @@ mod image;
 mod text;
 
 #[cfg(feature = "NSApplication")]
+#[cfg(feature = "NSResponder")]
 pub use self::application::*;
 pub use self::generated::*;
 #[cfg(feature = "NSImage")]

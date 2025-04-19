@@ -12,12 +12,6 @@ pub fn NSApp(mtm: MainThreadMarker) -> Retained<NSApplication> {
     NSApplication::sharedApplication(mtm)
 }
 
-// These functions are in crt_externs.h.
-extern "C" {
-    fn _NSGetArgc() -> *mut c_int;
-    fn _NSGetArgv() -> *mut *mut *mut c_char;
-}
-
 impl NSApplication {
     /// An entry point to AppKit applications.
     ///
@@ -29,26 +23,40 @@ impl NSApplication {
         // NSApplicationMain must be called on the main thread.
         let _ = mtm;
 
-        // NOTE: `NSApplicationMain` is explicitly documented to ignore the
-        // `argc` and `argv` arguments, so we choose to not expose those in
-        // our API.
-        // We pass correct values anyhow though, just to be certain.
-        let argc = unsafe { *_NSGetArgc() };
-        let argv = unsafe { NonNull::new(*_NSGetArgv()).unwrap().cast() };
-
-        // SAFETY: `argc` and `argv` are correct.
-        // `NSApplicationMain` is safely re-entrant, just weird to do so.
-        let ret = unsafe { Self::__main(argc, argv) };
-
-        // NSApplicationMain is documented to never return, so whatever we do
-        // here is just for show really.
-        #[cfg(feature = "std")]
+        #[cfg(not(feature = "gnustep-1-7"))]
         {
-            std::process::exit(ret as i32)
+            // These functions are in crt_externs.h.
+            extern "C" {
+                fn _NSGetArgc() -> *mut c_int;
+                fn _NSGetArgv() -> *mut *mut *mut c_char;
+            }
+
+            // NOTE: `NSApplicationMain` is explicitly documented to ignore the
+            // `argc` and `argv` arguments, so we choose to not expose those in
+            // our API.
+            // We pass correct values anyhow though, just to be certain.
+            let argc = unsafe { *_NSGetArgc() };
+            let argv = unsafe { NonNull::new(*_NSGetArgv()).unwrap().cast() };
+
+            // SAFETY: `argc` and `argv` are correct.
+            // `NSApplicationMain` is safely re-entrant, just weird to do so.
+            let _ret = unsafe { Self::__main(argc, argv) };
+
+            // NSApplicationMain is documented to never return, so whatever we do
+            // here is just for show really.
+            #[cfg(feature = "std")]
+            {
+                std::process::exit(_ret as i32)
+            }
+            #[cfg(not(feature = "std"))]
+            {
+                unreachable!("NSApplicationMain should not have returned")
+            }
         }
-        #[cfg(not(feature = "std"))]
+        #[cfg(feature = "gnustep-1-7")]
         {
-            unreachable!("NSApplicationMain should not have returned")
+            unsafe { Self::__main(0, NonNull::dangling()) };
+            unreachable!()
         }
     }
 }
