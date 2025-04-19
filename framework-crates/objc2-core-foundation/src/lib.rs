@@ -14,7 +14,7 @@
 #![cfg_attr(feature = "unstable-coerce-pointee", feature(derive_coerce_pointee))]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-core-foundation/0.3.0")]
+#![doc(html_root_url = "https://docs.rs/objc2-core-foundation/0.3.1")]
 
 #[cfg(any(test, feature = "alloc"))]
 extern crate alloc;

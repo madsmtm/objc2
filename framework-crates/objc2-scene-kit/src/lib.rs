@@ -7,7 +7,7 @@
 #![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-scene-kit/0.3.0")]
+#![doc(html_root_url = "https://docs.rs/objc2-scene-kit/0.3.1")]
 #![recursion_limit = "512"]
 
 #[cfg(feature = "alloc")]
