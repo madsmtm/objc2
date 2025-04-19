@@ -32,6 +32,8 @@ use crate::generated::dispatch_once_t;
 ///     // run initialization here
 /// });
 /// ```
+///
+#[cfg_attr(not(feature = "std"), doc = "[`std::sync::Once`]: #std-not-enabled")]
 #[doc(alias = "dispatch_once_t")]
 pub struct DispatchOnce {
     predicate: UnsafeCell<dispatch_once_t>,

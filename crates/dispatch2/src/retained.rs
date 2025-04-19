@@ -47,6 +47,7 @@ use DispatchRetained as Retained;
     not(feature = "objc2"),
     doc = "[`objc2::rc::Retained`]: #objc2-not-available"
 )]
+#[cfg_attr(not(feature = "std"), doc = "[`std::sync::Arc`]: #std-not-enabled")]
 ///
 ///
 /// # Forwarding implementations
