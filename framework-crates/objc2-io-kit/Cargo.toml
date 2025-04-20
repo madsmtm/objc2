@@ -61,6 +61,7 @@ default = [
     "hidsystem",
     "libc",
     "objc2",
+    "serial",
     "usb",
 ]
 std = ["alloc"]
@@ -103,4 +104,5 @@ hidsystem = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
 ]
+serial = []
 usb = []

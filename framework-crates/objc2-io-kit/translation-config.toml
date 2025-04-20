@@ -20,7 +20,6 @@ module.ps.skipped = true
 module.pwr_mgt.skipped = true
 module.sbp2.skipped = true
 module.scsi.skipped = true
-module.serial.skipped = true
 module.storage.skipped = true
 module.stream.skipped = true
 

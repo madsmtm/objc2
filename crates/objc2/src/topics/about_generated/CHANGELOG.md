@@ -13,6 +13,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
+* Added `IOKit` "serial" submodule.
+
+## 0.3.1 - 2025-04-19
+
+### Added
 * Marked a bunch of functions safe in:
   - `CoreFoundation` / `objc2-core-foundation`.
   - `SystemConfiguration` / `objc2-system-configuration`.
