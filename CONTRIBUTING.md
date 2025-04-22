@@ -123,3 +123,13 @@ Post merge:
 - [ ] Run `cargo release`.
 - [ ] Create a tag on the merge commit for each new version.
 ```
+
+### Changelogs and tags
+
+The changelog is shared for the framework crates, and is public at
+[this link][frameworks-changelog], the other crates have their own changelogs.
+
+The framework crates share the tag prefix "frameworks", while the other crates
+also have their own tag prefix.
+
+[frameworks-changelog]: https://docs.rs/objc2/latest/objc2/topics/about_generated/changelog/index.html
