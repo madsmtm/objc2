@@ -26,6 +26,29 @@ open to adding functionality in `objc2` to facilitate that).
 [nice-to-use]: https://github.com/madsmtm/objc2/issues/429
 [swift-oos]: https://github.com/madsmtm/objc2/issues/524
 
+### Helper APIs
+
+`objc2` usually tries to stick as closely to the upstream API as possible,
+both for predictability (it's easier for users to know what their code is
+doing when one Rust function call == one foreign function call) and for
+maintainability (less code for us to maintain).
+
+When deciding whether to add a helper API, the following loose principles are
+used:
+- Make sure to still expose all internals such that users ideally never need
+  to write `extern "C" { ... }` or `msg_send!`.
+- Make everything as nice to use as possible when coming from Rust. Functions
+  are exposed as associated functions/methods, conversions to/from common Rust
+  types are provided.
+- Be performance-minded when creating wrappers. For example, we shouldn't add
+  a `CFURL -> String` conversion, since that requires at least two
+  CoreFoundation functions to be called. Instead, `CFURL -> CFString` is
+  provided, and so is `CFString -> String` (so the user can do the conversion
+  explicitly themselves).
+
+These are not set in stone, feel free to open an issue discussing a specific
+case.
+
 
 ## Windows users
 
