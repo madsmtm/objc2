@@ -72,17 +72,22 @@
 //! versions will also work, but the framework crates will not have bindings
 //! available for newer APIs.
 //!
-//! The framework bindings are generated from the SDKs in Xcode 16.2. The
-//! Xcode version will be periodically updated.
+//! The framework bindings are generated from the SDKs in Xcode 16.3. The
+//! Xcode version are updated usually within a week of [GitHub Actions]
+//! supporting the new Xcode version, and we try to schedule crate releases
+//! such that align fairly closely with Xcode updates. We only support stable
+//! Xcode versions.
 //!
-//! Note that the bindings are currently generated in a very macOS-centric, so
-//! they may try to use types from AppKit, even on iOS, see for example
-//! [#637](https://github.com/madsmtm/objc2/issues/637).
+//! Note that the bindings are currently generated in a very macOS-centric
+//! manner, so they may try to use types from AppKit, even on iOS, see for
+//! example [#637](https://github.com/madsmtm/objc2/issues/637).
 //!
 //! The bindings _can_ also be used on Linux or *BSD utilizing the
 //! [GNUstep Objective-C runtime](https://github.com/gnustep/libobjc2), see
 //! the [`ffi`] module for how to configure this, but this is very much
 //! second-class.
+//!
+//! [GitHub actions]: https://github.com/actions/runner-images
 //!
 //!
 //! ## Minimum Supported Rust Version (MSRV)
