@@ -9,4 +9,4 @@ static_assertions = "1.1.0"
 
 [package.metadata.release]
 shared-version = false
-tag-prefix = "dispatch"
+tag-prefix = "dispatch2"

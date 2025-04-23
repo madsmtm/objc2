@@ -7,7 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
-## 0.6.1 - 2025-04-19
+## [0.6.1] - 2025-04-19
+[0.6.1]: https://github.com/madsmtm/objc2/compare/objc2-0.6.0...objc2-0.6.1
 
 ## Added
 * Make `#[name = ...]` in `define_class!` optional. If not specified, the macro
@@ -24,7 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed `available!` macro when running under Xcode's "Designed for iPad" setting.
 
 
-## 0.6.0 - 2025-01-22
+## [0.6.0] - 2025-01-22
+[0.6.0]: https://github.com/madsmtm/objc2/compare/objc2-0.5.2...objc2-0.6.0
 
 ### Added
 * Added `AnyClass::is_metaclass`.
@@ -327,7 +329,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed unwinding while using writeback / error parameters.
 
 
-## 0.5.2 - 2024-05-21
+## [0.5.2] - 2024-05-21
+[0.5.2]: https://github.com/madsmtm/objc2/compare/objc2-0.5.1...objc2-0.5.2
 
 ### Added
 * Added `Retained::autorelease_ptr`.
@@ -352,7 +355,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   platforms.
 
 
-## 0.5.1 - 2024-04-17
+## [0.5.1] - 2024-04-17
+[0.5.1]: https://github.com/madsmtm/objc2/compare/objc2-0.5.0...objc2-0.5.1
 
 ### Added
 * Made the following runtime methods available without the `"malloc"` feature
@@ -389,7 +393,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   deprecated alias.
 
 
-## 0.5.0 - 2023-12-03
+## [0.5.0] - 2023-12-03
+[0.5.0]: https://github.com/madsmtm/objc2/compare/objc2-0.4.1...objc2-0.5.0
 
 ### Added
 * Added the following traits to the `mutability` module (see the documentation
@@ -583,7 +588,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed `ClassBuilder::add_static_ivar`.
 
 
-## 0.4.1 - 2023-07-31
+## [0.4.1] - 2023-07-31
+[0.4.1]: https://github.com/madsmtm/objc2/compare/objc2-0.4.0...objc2-0.4.1
 
 ### Added
 * Allow using `MainThreadMarker` in `extern_methods!`.
@@ -609,7 +615,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   deemed the better trade-off.
 
 
-## 0.4.0 - 2023-06-20
+## [0.4.0] - 2023-06-20
+[0.4.0]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-beta.5...objc2-0.4.0
 
 ### Added
 * Added `objc2::rc::autoreleasepool_leaking`, and improve performance of
@@ -723,7 +730,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   it conflicts with the `IntoIterator` implementation that it now has instead.
 
 
-## 0.3.0-beta.5 - 2023-02-07
+## [0.3.0-beta.5] - 2023-02-07
+[0.3.0-beta.5]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-beta.4...objc2-0.3.0-beta.5
 
 ### Added
 * Support `#[cfg(...)]` attributes in `extern_class!` macro.
@@ -852,7 +860,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed `()` being possible in argument position in `msg_send!`.
 
 
-## 0.3.0-beta.4 - 2022-12-24
+## [0.3.0-beta.4] - 2022-12-24
+[0.3.0-beta.4]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-beta.3...objc2-0.3.0-beta.4
 
 ### Added
 * Allow directly specifying class name in `extern_class!` macro.
@@ -924,7 +933,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   replaced by `debug_assertions` and the `"verify"` feature.
 
 
-## 0.3.0-beta.3 - 2022-09-01
+## [0.3.0-beta.3] - 2022-09-01
+[0.3.0-beta.3]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-beta.2...objc2-0.3.0-beta.3
 
 ### Added
 * Added `Ivar::write`, `Ivar::as_ptr` and `Ivar::as_mut_ptr` for safely
@@ -941,7 +951,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `Ivar::write` instead.
 
 
-## 0.3.0-beta.2 - 2022-08-28
+## [0.3.0-beta.2] - 2022-08-28
+[0.3.0-beta.2]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-beta.1...objc2-0.3.0-beta.2
 
 ### Added
 * Added the `"unstable-static-class"` and `"unstable-static-class-inlined"`
@@ -1047,7 +1058,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   that allows seamlessly handling `bool`.
 
 
-## 0.3.0-beta.1 - 2022-07-19
+## [0.3.0-beta.1] - 2022-07-19
+[0.3.0-beta.1]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-beta.0...objc2-0.3.0-beta.1
 
 ### Added
 * Added `msg_send_id!` to help with following Objective-C's memory management
@@ -1139,7 +1151,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed `MessageError`.
 
 
-## 0.3.0-beta.0 - 2022-06-13
+## [0.3.0-beta.0] - 2022-06-13
+[0.3.0-beta.0]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-alpha.6...objc2-0.3.0-beta.0
 
 ### Added
 * Added deprecated `Object::get_ivar` and `Object::get_mut_ivar` to make
@@ -1222,7 +1235,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `MessageReceiver::as_raw_receiver` is no longer public.
 
 
-## 0.3.0-alpha.6 - 2022-01-03
+## [0.3.0-alpha.6] - 2022-01-03
+[0.3.0-alpha.6]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-alpha.5...objc2-0.3.0-alpha.6
 
 ### Added
 * Implement `Hash` for `Sel`, `Ivar`, `Class`, `Method` and `MessageError`.
@@ -1264,7 +1278,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `EncodeArguments`) to `v2.0.0-beta.2`.
 
 
-## 0.3.0-alpha.5 - 2021-12-22
+## [0.3.0-alpha.5] - 2021-12-22
+[0.3.0-alpha.5]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-alpha.4...objc2-0.3.0-alpha.5
 
 ### Added
 * Export `objc-sys` as `ffi` module.
@@ -1320,7 +1335,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   subclass.
 
 
-## 0.3.0-alpha.4 - 2021-11-22
+## [0.3.0-alpha.4] - 2021-11-22
+[0.3.0-alpha.4]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-alpha.3...objc2-0.3.0-alpha.4
 
 Note: To use this version, specify `objc2-encode = "=2.0.0-beta.0"` in your
 `Cargo.toml` as well.
@@ -1346,7 +1362,8 @@ Note: To use this version, specify `objc2-encode = "=2.0.0-beta.0"` in your
   `EncodeArguments`) to `v2.0.0-beta.0`.
 
 
-## 0.3.0-alpha.3 - 2021-09-05
+## [0.3.0-alpha.3] - 2021-09-05
+[0.3.0-alpha.3]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-alpha.2...objc2-0.3.0-alpha.3
 
 Note: To use this version, specify `objc2-encode = "=2.0.0-alpha.1"` in your
 `Cargo.toml` as well.
@@ -1402,7 +1419,8 @@ Note: To use this version, specify `objc2-encode = "=2.0.0-alpha.1"` in your
   change.
 
 
-## 0.3.0-alpha.2 - 2021-09-05
+## [0.3.0-alpha.2] - 2021-09-05
+[0.3.0-alpha.2]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-alpha.1...objc2-0.3.0-alpha.2
 
 ### Added
 * Added `rc::AutoreleasePool` and `rc::AutoreleaseSafe` to make accessing
@@ -1431,7 +1449,8 @@ Note: To use this version, specify `objc2-encode = "=2.0.0-alpha.1"` in your
 * The encoding of `BOOL` on `GNUStep`.
 
 
-## 0.3.0-alpha.1 - 2021-09-02
+## [0.3.0-alpha.1] - 2021-09-02
+[0.3.0-alpha.1]: https://github.com/madsmtm/objc2/compare/objc2-0.3.0-alpha.0...objc2-0.3.0-alpha.1
 
 ### Added
 * More documentation of safety requirements, and in general.
@@ -1490,7 +1509,8 @@ Note: To use this version, specify `objc2-encode = "=2.0.0-alpha.1"` in your
 * Documentation links.
 
 
-## 0.3.0-alpha.0 - 2021-08-29
+## [0.3.0-alpha.0] - 2021-08-29
+[0.3.0-alpha.0]: https://github.com/madsmtm/objc2/compare/objc2-0.2.7...objc2-0.3.0-alpha.0
 
 Note: This is the version that is, as of this writing, available on the
 `master` branch in the original `objc` project.
@@ -1555,6 +1575,7 @@ Note: This is the version that is, as of this writing, available on the
 
 
 ## [0.2.7] (`objc` crate) - 2019-10-19
+[0.2.7]: https://github.com/madsmtm/objc2/compare/objc2-0.2.6...objc2-0.2.7
 
 ### Fixed
 * **BREAKING**: Uses of `msg_send!` will now correctly fail to compile if no
@@ -1563,12 +1584,14 @@ Note: This is the version that is, as of this writing, available on the
 
 
 ## [0.2.6] (`objc` crate) - 2019-03-25
+[0.2.6]: https://github.com/madsmtm/objc2/compare/objc2-0.2.5...objc2-0.2.6
 
 ### Fixed
 * Suppressed a deprecation warning in `sel!`, `msg_send!`, and `class!`.
 
 
 ## [0.2.5] (`objc` crate) - 2018-07-24
+[0.2.5]: https://github.com/madsmtm/objc2/compare/objc2-0.2.4...objc2-0.2.5
 
 ### Added
 * **BREAKING**: `autoreleasepool` returns the value returned by its body
@@ -1576,6 +1599,7 @@ Note: This is the version that is, as of this writing, available on the
 
 
 ## [0.2.4] (`objc` crate) - 2018-07-22
+[0.2.4]: https://github.com/madsmtm/objc2/compare/objc2-0.2.3...objc2-0.2.4
 
 ### Added
 * Added an `rc` module with reference counting utilities:
@@ -1588,6 +1612,7 @@ Note: This is the version that is, as of this writing, available on the
 
 
 ## [0.2.3] (`objc` crate) - 2018-07-07
+[0.2.3]: https://github.com/madsmtm/objc2/compare/objc2-0.2.2...objc2-0.2.3
 
 ### Added
 * Added a `class!` macro for getting statically-known classes. The result is
@@ -1602,12 +1627,14 @@ Note: This is the version that is, as of this writing, available on the
 
 
 ## [0.2.2] (`objc` crate) - 2016-10-30
+[0.2.2]: https://github.com/madsmtm/objc2/compare/objc2-0.2.1...objc2-0.2.2
 
 ### Added
 * Implemented `Sync` and `Send` for `Sel`.
 
 
 ## [0.2.1] (`objc` crate) - 2016-04-23
+[0.2.1]: https://github.com/madsmtm/objc2/compare/objc2-0.2.0...objc2-0.2.1
 
 ### Added
 * Added support for working with protocols with the `Protocol` struct.
@@ -1617,6 +1644,7 @@ Note: This is the version that is, as of this writing, available on the
 
 
 ## [0.2.0] (`objc` crate) - 2016-03-20
+[0.2.0]: https://github.com/madsmtm/objc2/compare/objc2-0.1.8...objc2-0.2.0
 
 ### Added
 * Added verification for the types used when sending messages.
@@ -1661,18 +1689,21 @@ Note: This is the version that is, as of this writing, available on the
   used, rather than from within the implementation of messaging.
 
 ## [0.1.8] (`objc` crate) - 2015-11-06
+[0.1.8]: https://github.com/madsmtm/objc2/compare/objc2-0.1.7...objc2-0.1.8
 
 ### Changed
 * Updated `libc` dependency.
 
 
 ## [0.1.7] (`objc` crate) - 2015-09-23
+[0.1.7]: https://github.com/madsmtm/objc2/compare/objc2-0.1.6...objc2-0.1.7
 
 ### Fixed
 * `improper_ctypes` warning.
 
 
 ## [0.1.6] (`objc` crate) - 2015-08-08
+[0.1.6]: https://github.com/madsmtm/objc2/compare/objc2-0.1.5...objc2-0.1.6
 
 ### Added
 * Added `"exception"` feature which catches Objective-C exceptions and turns
@@ -1684,6 +1715,7 @@ Note: This is the version that is, as of this writing, available on the
 
 
 ## [0.1.5] (`objc` crate) - 2015-05-02
+[0.1.5]: https://github.com/madsmtm/objc2/compare/objc2-0.1.4...objc2-0.1.5
 
 ### Changed
 * **BREAKING**: Renamed `IntoMethodImp` to `MethodImplementation`.
@@ -1699,6 +1731,7 @@ Note: This is the version that is, as of this writing, available on the
 
 
 ## [0.1.4] (`objc` crate) - 2015-04-17
+[0.1.4]: https://github.com/madsmtm/objc2/compare/objc2-0.1.3...objc2-0.1.4
 
 ### Removed
 * **BREAKING**: Removed `block` module. Use them from the `block` crate
@@ -1706,6 +1739,7 @@ Note: This is the version that is, as of this writing, available on the
 
 
 ## [0.1.3] (`objc` crate) - 2015-04-11
+[0.1.3]: https://github.com/madsmtm/objc2/compare/objc2-0.1.2...objc2-0.1.3
 
 ### Added
 * Implement `fmt::Pointer` for `Id`.
@@ -1715,33 +1749,17 @@ Note: This is the version that is, as of this writing, available on the
 
 
 ## [0.1.2] (`objc` crate) - 2015-04-04
+[0.1.2]: https://github.com/madsmtm/objc2/compare/objc2-0.1.1...objc2-0.1.2
 
 ### Fixed
 * **BREAKING**: Replace uses of `PhantomFn` with `Sized`.
 
 
 ## [0.1.1] (`objc` crate) - 2015-03-27
+[0.1.1]: https://github.com/madsmtm/objc2/compare/objc2-0.1.0...objc2-0.1.1
 
 ### Added
 * Implement `Error` for `UnequalArgsError`.
 
 ### Removed
 * **BREAKING**: Move `objc::foundation` into new crate `objc_foundation`.
-
-
-[0.2.7]: https://github.com/madsmtm/objc2/compare/objc-0.2.6...objc-0.2.7
-[0.2.6]: https://github.com/madsmtm/objc2/compare/objc-0.2.5...objc-0.2.6
-[0.2.5]: https://github.com/madsmtm/objc2/compare/objc-0.2.4...objc-0.2.5
-[0.2.4]: https://github.com/madsmtm/objc2/compare/objc-0.2.3...objc-0.2.4
-[0.2.3]: https://github.com/madsmtm/objc2/compare/objc-0.2.2...objc-0.2.3
-[0.2.2]: https://github.com/madsmtm/objc2/compare/objc-0.2.1...objc-0.2.2
-[0.2.1]: https://github.com/madsmtm/objc2/compare/objc-0.2.0...objc-0.2.1
-[0.2.0]: https://github.com/madsmtm/objc2/compare/objc-0.1.8...objc-0.2.0
-[0.1.8]: https://github.com/madsmtm/objc2/compare/objc-0.1.7...objc-0.1.8
-[0.1.7]: https://github.com/madsmtm/objc2/compare/objc-0.1.6...objc-0.1.7
-[0.1.6]: https://github.com/madsmtm/objc2/compare/objc-0.1.5...objc-0.1.6
-[0.1.5]: https://github.com/madsmtm/objc2/compare/objc-0.1.4...objc-0.1.5
-[0.1.4]: https://github.com/madsmtm/objc2/compare/objc-0.1.3...objc-0.1.4
-[0.1.3]: https://github.com/madsmtm/objc2/compare/objc-0.1.2...objc-0.1.3
-[0.1.2]: https://github.com/madsmtm/objc2/compare/objc-0.1.1...objc-0.1.2
-[0.1.1]: https://github.com/madsmtm/objc2/compare/objc-0.1.0...objc-0.1.1

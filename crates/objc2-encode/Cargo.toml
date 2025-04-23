@@ -43,4 +43,4 @@ targets = [
 
 [package.metadata.release]
 shared-version = false
-tag-prefix = "objc-encode"
+tag-prefix = "objc2-encode"

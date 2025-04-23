@@ -76,4 +76,4 @@ targets = [
 
 [package.metadata.release]
 shared-version = false
-tag-prefix = "block"
+tag-prefix = "block2"

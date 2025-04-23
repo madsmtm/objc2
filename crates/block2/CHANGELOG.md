@@ -7,7 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
-## 0.6.1 - 2025-04-19
+## [0.6.1] - 2025-04-19
+[0.6.1]: https://github.com/madsmtm/objc2/compare/block2-0.6.0...block2-0.6.1
 
 ### Added
 * Added `DynBlock` alias to help facilitate upgrading to v0.7 when that's done.
@@ -16,7 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Slightly improved documentation around `ManualBlockEncoding`.
 
 
-## 0.6.0 - 2025-01-22
+## [0.6.0] - 2025-01-22
+[0.6.0]: https://github.com/madsmtm/objc2/compare/block2-0.5.1...block2-0.6.0
 
 ### Added
 * Added `StackBlock::with_encoding` and `RcBlock::with_encoding` for creating
@@ -37,14 +39,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed the deprecated `apple` Cargo feature flag.
 
 
-## 0.5.1 - 2024-05-21
+## [0.5.1] - 2024-05-21
+[0.5.1]: https://github.com/madsmtm/objc2/compare/block2-0.5.0...block2-0.5.1
 
 ### Deprecated
 * Deprecated the `apple` Cargo feature flag, it is assumed by default on Apple
   platforms.
 
 
-## 0.5.0 - 2024-04-17
+## [0.5.0] - 2024-04-17
+[0.5.0]: https://github.com/madsmtm/objc2/compare/block2-0.4.0...block2-0.5.0
 
 ### Added
 * **BREAKING**: Added `Block::copy` to convert blocks to `RcBlock`. This
@@ -102,26 +106,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   too restrictive.
 
 
-## 0.4.0 - 2023-12-03
+## [0.4.0] - 2023-12-03
+[0.4.0]: https://github.com/madsmtm/objc2/compare/block2-0.3.0...block2-0.4.0
 
 ### Changed
 * **BREAKING**: Updated `objc2` dependency to `v0.5.0`.
 
 
-## 0.3.0 - 2023-07-31
+## [0.3.0] - 2023-07-31
+[0.3.0]: https://github.com/madsmtm/objc2/compare/block2-0.2.0...block2-0.3.0
 
 ### Fixed
 * Bumped version number to ensure that this crate can be compiled together
   with code that depends on pre-releases of `0.2.0`.
 
 
-## 0.2.0 - 2023-06-20
+## [0.2.0] - 2023-06-20
+[0.2.0]: https://github.com/madsmtm/objc2/compare/block2-0.2.0-alpha.8...block2-0.2.0
 
 ### Changed
 * **BREAKING**: Updated `objc2` dependency to `v0.4.0`.
 
 
-## 0.2.0-alpha.8 - 2023-02-07
+## [0.2.0-alpha.8] - 2023-02-07
+[0.2.0-alpha.8]: https://github.com/madsmtm/objc2/compare/block2-0.2.0-alpha.7...block2-0.2.0-alpha.8
 
 ### Changed
 * **BREAKING**: Use traits from `objc2` `v0.3.0-beta.5` instead of
@@ -129,7 +137,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Updated `ffi` module to `block-sys v0.2.0`.
 
 
-## 0.2.0-alpha.7 - 2022-12-24
+## [0.2.0-alpha.7] - 2022-12-24
+[0.2.0-alpha.7]: https://github.com/madsmtm/objc2/compare/block2-0.2.0-alpha.6...block2-0.2.0-alpha.7
 
 ### Changed
 * Improve efficiency when a block doesn't need to be destroyed.
@@ -137,7 +146,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Updated `ffi` module to `block-sys v0.1.0-beta.2`.
 
 
-## 0.2.0-alpha.6 - 2022-08-28
+## [0.2.0-alpha.6] - 2022-08-28
+[0.2.0-alpha.6]: https://github.com/madsmtm/objc2/compare/block2-0.2.0-alpha.5...block2-0.2.0-alpha.6
 
 ### Changed
 * **BREAKING**: Updated `objc2-encode` to `v2.0.0-pre.2`.
@@ -150,7 +160,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   associated output type has been renamed to `Output`.
 
 
-## 0.2.0-alpha.5 - 2022-07-19
+## [0.2.0-alpha.5] - 2022-07-19
+[0.2.0-alpha.5]: https://github.com/madsmtm/objc2/compare/block2-0.2.0-alpha.4...block2-0.2.0-alpha.5
 
 ### Added
 * Implemented `Debug` for `Block`, `ConcreteBlock`, `RcBlock` and
@@ -161,7 +172,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Updated `ffi` module to `block-sys v0.1.0-beta.0`.
 
 
-## 0.2.0-alpha.4 - 2022-06-13
+## [0.2.0-alpha.4] - 2022-06-13
+[0.2.0-alpha.4]: https://github.com/madsmtm/objc2/compare/block2-0.2.0-alpha.3...block2-0.2.0-alpha.4
 
 ### Changed
 * **BREAKING**: Updated `objc2-encode` to `v2.0.0-pre.0`.
@@ -173,7 +185,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed `DerefMut` implementation for `ConcreteBlock`.
 
 
-## 0.2.0-alpha.3 - 2022-01-03
+## [0.2.0-alpha.3] - 2022-01-03
+[0.2.0-alpha.3]: https://github.com/madsmtm/objc2/compare/block2-0.2.0-alpha.2...block2-0.2.0-alpha.3
 
 ### Changed
 * Changed `global_block!` macro to take an optional semicolon at the end.
@@ -181,7 +194,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Updated `ffi` module to `block-sys v0.0.3`.
 
 
-## 0.2.0-alpha.2 - 2021-12-22
+## [0.2.0-alpha.2] - 2021-12-22
+[0.2.0-alpha.2]: https://github.com/madsmtm/objc2/compare/block2-0.2.0-alpha.1...block2-0.2.0-alpha.2
 
 ### Added
 * `GlobalBlock` and corresponding `global_block!` macro, allowing statically
@@ -192,7 +206,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `Class` is now `!UnwindSafe`.
 
 
-## 0.2.0-alpha.1 - 2021-11-22
+## [0.2.0-alpha.1] - 2021-11-22
+[0.2.0-alpha.1]: https://github.com/madsmtm/objc2/compare/block2-0.2.0-alpha.0...block2-0.2.0-alpha.1
 
 ### Added
 * Proper GNUStep support using `block-sys`. See that crate for usage.
@@ -206,7 +221,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Better unwind safety in `ConcreteBlock::copy`.
 
 
-## 0.2.0-alpha.0 - 2021-10-28
+## [0.2.0-alpha.0] - 2021-10-28
+[0.2.0-alpha.0]: https://github.com/madsmtm/objc2/compare/block2-0.1.6...block2-0.2.0-alpha.0
 
 ### Added
 * **BREAKING**: Blocks now require that parameter and return types implement
@@ -225,42 +241,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 ## [0.1.6] (`block` crate) - 2016-05-08
+[0.1.6]: https://github.com/madsmtm/objc2/compare/block2-0.1.5...block2-0.1.6
 
 ### Added
 * Support for linking to `libBlocksRuntime`.
 
 
 ## [0.1.5] (`block` crate) - 2016-04-04
+[0.1.5]: https://github.com/madsmtm/objc2/compare/block2-0.1.4...block2-0.1.5
 
 ### Changed
 * Minor code changes
 
 
 ## [0.1.4] (`block` crate) - 2015-11-12
+[0.1.4]: https://github.com/madsmtm/objc2/compare/block2-0.1.3...block2-0.1.4
 
 ### Removed
 * `libc` dependency.
 
 
 ## [0.1.3] (`block` crate) - 2015-11-07
+[0.1.3]: https://github.com/madsmtm/objc2/compare/block2-0.1.2...block2-0.1.3
 
 ### Changed
 * Updated `libc` dependency.
 
 
 ## [0.1.2] (`block` crate) - 2015-10-10
+[0.1.2]: https://github.com/madsmtm/objc2/compare/block2-0.1.1...block2-0.1.2
 
 ### Fixed
 * `improper_ctypes` warning.
 
 
 ## [0.1.1] (`block` crate) - 2015-09-03
+[0.1.1]: https://github.com/madsmtm/objc2/compare/block2-0.1.0...block2-0.1.1
 
 ### Fixed
 * Missing `Sized` bounds on traits.
 
 
 ## [0.1.0] (`block` crate) - 2015-05-18
+[0.1.0]: https://github.com/madsmtm/objc2/compare/block2-0.0.2...block2-0.1.0
 
 ### Added
 * `Clone` implementation for `RcBlock`.
@@ -278,22 +301,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 ## [0.0.2] (`block` crate) - 2015-05-02
+[0.0.2]: https://github.com/madsmtm/objc2/compare/block2-0.0.1...block2-0.0.2
 
 ### Changed
 * Use `objc_id`.
 
 
 ## [0.0.1] (`block` crate) - 2015-04-17
+[0.0.1]: https://github.com/madsmtm/objc2/releases/tag/block2-0.0.1
 
 Initial version.
-
-
-[0.1.6]: https://github.com/madsmtm/objc2/compare/block-0.1.5...block-0.1.6
-[0.1.5]: https://github.com/madsmtm/objc2/compare/block-0.1.4...block-0.1.5
-[0.1.4]: https://github.com/madsmtm/objc2/compare/block-0.1.3...block-0.1.4
-[0.1.3]: https://github.com/madsmtm/objc2/compare/block-0.1.2...block-0.1.3
-[0.1.2]: https://github.com/madsmtm/objc2/compare/block-0.1.1...block-0.1.2
-[0.1.1]: https://github.com/madsmtm/objc2/compare/block-0.1.0...block-0.1.1
-[0.1.0]: https://github.com/madsmtm/objc2/compare/block-0.0.2...block-0.1.0
-[0.0.2]: https://github.com/madsmtm/objc2/compare/block-0.0.1...block-0.0.2
-[0.0.1]: https://github.com/madsmtm/objc2/releases/tag/block-0.0.1

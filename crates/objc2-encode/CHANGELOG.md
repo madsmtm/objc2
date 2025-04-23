@@ -7,7 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
-## 4.1.0 - 2025-01-22
+## [4.1.0] - 2025-01-22
+[4.1.0]: https://github.com/madsmtm/objc2/compare/objc2-encode-4.0.3...objc2-encode-4.1.0
 
 ### Added
 * Added `Encoding::size`, which computes the size of the encoded type for the
@@ -18,14 +19,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   and `Encoding::Block` as equivalent.
 
 
-## 4.0.3 - 2024-05-21
+## [4.0.3] - 2024-05-21
+[4.0.3]: https://github.com/madsmtm/objc2/compare/objc2-encode-4.0.2...objc2-encode-4.0.3
 
 ### Fixed
 * Fixed an issue with publishing using an older version of Cargo that didn't
   handle the `lints.workspace = true` Cargo setup properly.
 
 
-## 4.0.2 - 2024-05-21 (Yanked)
+## [4.0.2] - 2024-05-21 (Yanked)
+[4.0.2]: https://github.com/madsmtm/objc2/compare/objc2-encode-4.0.1...objc2-encode-4.0.2
 
 ### Added
 * Added `Encoding::None`, which represents encodings where the host compiler
@@ -34,13 +37,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   This is useful when working with SIMD types.
 
 
-## 4.0.1 - 2024-04-17
+## [4.0.1] - 2024-04-17
+[4.0.1]: https://github.com/madsmtm/objc2/compare/objc2-encode-4.0.0...objc2-encode-4.0.1
 
 ### Changed
 * Build documentation on docs.rs on more Apple platforms.
 
 
-## 4.0.0 - 2023-12-03
+## [4.0.0] - 2023-12-03
+[4.0.0]: https://github.com/madsmtm/objc2/compare/objc2-encode-3.0.0...objc2-encode-4.0.0
 
 ### Changed
 * **BREAKING**: Changed the type of `EncodingBox::Struct` and
@@ -51,20 +56,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Parse (and ignore) extended type information.
 
 
-## 3.0.0 - 2023-07-31
+## [3.0.0] - 2023-07-31
+[3.0.0]: https://github.com/madsmtm/objc2/compare/objc2-encode-2.0.0...objc2-encode-3.0.0
 
 ### Fixed
 * Bumped version number to ensure that this crate can be compiled together
   with code that depends on pre-releases of `2.0.0`.
 
 
-## 2.0.0 - 2023-06-20
+## [2.0.0] - 2023-06-20
+[2.0.0]: https://github.com/madsmtm/objc2/compare/objc2-encode-2.0.0-pre.4...objc2-encode-2.0.0
 
 ### Added
 * Improved documentation slightly.
 
 
-## 2.0.0-pre.4 - 2023-02-07
+## [2.0.0-pre.4] - 2023-02-07
+[2.0.0-pre.4]: https://github.com/madsmtm/objc2/compare/objc2-encode-2.0.0-pre.3...objc2-encode-2.0.0-pre.4
 
 ### Added
 * Made the crate `no_std` compatible.
@@ -82,7 +90,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed `Encoding::BitField` encoding parsing.
 
 
-## 2.0.0-pre.3 - 2022-12-24
+## [2.0.0-pre.3] - 2022-12-24
+[2.0.0-pre.3]: https://github.com/madsmtm/objc2/compare/objc2-encode-2.0.0-pre.2...objc2-encode-2.0.0-pre.3
 
 ### Added
 * Added `EncodingBox` for dynamically parsing encodings and creating them on
@@ -106,7 +115,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   wasn't really useful.
 
 
-## 2.0.0-pre.2 - 2022-08-28
+## [2.0.0-pre.2] - 2022-08-28
+[2.0.0-pre.2]: https://github.com/madsmtm/objc2/compare/objc2-encode-2.0.0-pre.1...objc2-encode-2.0.0-pre.2
 
 ### Added
 * Added `EncodeConvert` trait to help with correctly handling `BOOL`/`bool`.
@@ -124,7 +134,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `objc2::runtime::Bool` instead.
 
 
-## 2.0.0-pre.1 - 2022-07-19
+## [2.0.0-pre.1] - 2022-07-19
+[2.0.0-pre.1]: https://github.com/madsmtm/objc2/compare/objc2-encode-2.0.0-pre.0...objc2-encode-2.0.0-pre.1
 
 ### Added
 * Added `Encoding::Atomic`.
@@ -134,7 +145,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Renamed `Encoding::C_U_LONG` to `Encoding::C_ULONG`.
 
 
-## 2.0.0-pre.0 - 2022-06-13
+## [2.0.0-pre.0] - 2022-06-13
+[2.0.0-pre.0]: https://github.com/madsmtm/objc2/compare/objc2-encode-2.0.0-beta.2...objc2-encode-2.0.0-pre.0
 
 ### Added
 * Added `Encoding::C_LONG` and `Encoding::C_U_LONG` to help with platform
@@ -154,7 +166,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   since it may not be sound.
 
 
-## 2.0.0-beta.2 - 2022-01-03
+## [2.0.0-beta.2] - 2022-01-03
+[2.0.0-beta.2]: https://github.com/madsmtm/objc2/compare/objc2-encode-2.0.0-beta.1...objc2-encode-2.0.0-beta.2
 
 ### Added
 * Implement `Hash` for `Encoding`.
@@ -163,7 +176,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Improved documentation.
 
 
-## 2.0.0-beta.1 - 2021-12-22
+## [2.0.0-beta.1] - 2021-12-22
+[2.0.0-beta.1]: https://github.com/madsmtm/objc2/compare/objc2-encode-2.0.0-beta.0...objc2-encode-2.0.0-beta.1
 
 ### Added
 * `Encoding::equivalent_to`, `Encoding::equivalent_to_str` and
@@ -177,7 +191,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   impl might get removed in a future version.
 
 
-## 2.0.0-beta.0 - 2021-11-22
+## [2.0.0-beta.0] - 2021-11-22
+[2.0.0-beta.0]: https://github.com/madsmtm/objc2/compare/objc2-encode-2.0.0-alpha.1...objc2-encode-2.0.0-beta.0
 
 ### Added
 * **BREAKING**: Add `Encoding::LongDouble`, `Encoding::FloatComplex`,
@@ -197,7 +212,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   type.
 
 
-## 2.0.0-alpha.1 - 2021-09-01
+## [2.0.0-alpha.1] - 2021-09-01
+[2.0.0-alpha.1]: https://github.com/madsmtm/objc2/compare/objc2-encode-2.0.0-alpha.0...objc2-encode-2.0.0-alpha.1
 
 ### Added
 * Improved documentation.
@@ -225,7 +241,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Implement `T: RefEncode` instead!
 
 
-## 2.0.0-alpha.0 - 2021-09-01
+## [2.0.0-alpha.0] - 2021-09-01
+[2.0.0-alpha.0]: https://github.com/madsmtm/objc2/compare/objc2-encode-1.1.0...objc2-encode-2.0.0-alpha.0
 
 ### Added
 * Improved documentation.
@@ -242,6 +259,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 ## [1.1.0] (`objc-encode` crate) - 2019-10-16
+[1.1.0]: https://github.com/madsmtm/objc2/compare/objc2-encode-1.0.0...objc2-encode-1.1.0
 
 ### Added
 * Implement `Encode` for arrays with up to 32 elements.
@@ -251,6 +269,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 ## [1.0.0] (`objc-encode` crate) - 2019-03-25
+[1.0.0]: https://github.com/madsmtm/objc2/compare/objc2-encode-0.0.3...objc2-encode-1.0.0
 
 ### Added
 * Implement `PartialEq` between `Encoding` and `&str`.
@@ -266,12 +285,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 ## [0.0.3] (`objc-encode` crate) - 2017-04-30
+[0.0.3]: https://github.com/madsmtm/objc2/compare/objc2-encode-0.0.2...objc2-encode-0.0.3
 
 ### Fixed
 * Compilation on versions prior to Rust `1.15`.
 
 
 ## [0.0.2] (`objc-encode` crate) - 2017-02-20
+[0.0.2]: https://github.com/madsmtm/objc2/compare/objc2-encode-0.0.1...objc2-encode-0.0.2
 
 ### Added
 * **BREAKING**: `Display` requirement for encodings.
@@ -284,12 +305,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 ## [0.0.1] (`objc-encode` crate) - 2017-02-19
+[0.0.1]: https://github.com/madsmtm/objc2/releases/tag/objc2-encode-0.0.1
 
 Initial version.
-
-
-[1.1.0]: https://github.com/madsmtm/objc2/compare/objc-encode-1.0.0...objc-encode-1.1.0
-[1.0.0]: https://github.com/madsmtm/objc2/compare/objc-encode-0.0.3...objc-encode-1.0.0
-[0.0.3]: https://github.com/madsmtm/objc2/compare/objc-encode-0.0.2...objc-encode-0.0.3
-[0.0.2]: https://github.com/madsmtm/objc2/compare/objc-encode-0.0.1...objc-encode-0.0.2
-[0.0.1]: https://github.com/madsmtm/objc2/releases/tag/objc-encode-0.0.1

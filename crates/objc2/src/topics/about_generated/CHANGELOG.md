@@ -15,7 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `IOKit` "serial" submodule.
 
-## 0.3.1 - 2025-04-19
+## [0.3.1] - 2025-04-19
+[0.3.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.0...frameworks-0.3.1
 
 ### Added
 * Marked a bunch of functions safe in:
@@ -156,7 +157,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed off-by-one error in `NSArray::insert`.
 * **BREAKING**: Fixed nullability of types in `WKWebView::createWebArchiveDataWithCompletionHandler`.
 
-## 0.3.0 - 2025-01-22
+## [0.3.0] - 2025-01-22
+[0.3.0]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.0...frameworks-0.3.0
 
 ### Added
 * Added `NSData::to_vec` and `NSData::iter` helper methods.
@@ -393,14 +395,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `MTLRasterizationRateLayerDescriptor`.
 
 
-## 0.2.2 - 2024-05-21
+## [0.2.2] - 2024-05-21
+[0.2.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.1...frameworks-0.2.2
 
 ### Fixed
 * Fixed an issue with publishing using an older version of Cargo that didn't
   handle the `lints.workspace = true` Cargo setup properly.
 
 
-## 0.2.1 - 2024-05-21 (Yanked)
+## [0.2.1] - 2024-05-21 (Yanked)
+[0.2.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0...frameworks-0.2.1
 
 ### Added
 * `NS_OPTIONS` enums are now `bitflags!`-style enums.
@@ -462,7 +466,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * `objc2-quartz-core`: Removed broken GNUStep support.
 
 
-## 0.2.0 - 2024-04-17
+## [0.2.0] - 2024-04-17
+[0.2.0]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-icrate-0.1.2...frameworks-0.2.0
 
 ### Added
 * Added `NSObject` categories, notably those used by key-value coding and
@@ -548,19 +553,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   functions and statics.
 
 
-## icrate 0.1.2 - 2023-04-18
+## [icrate 0.1.2] - 2023-04-18
+[icrate 0.1.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-icrate-0.1.1...frameworks-0.2.0-icrate-0.1.2
 
 ## Fixed
 * Fixed "multiple applicable items in scope" error when upgrading `objc2` to `v0.5.1`.
 
 
-## icrate 0.1.1 - 2023-04-17
+## [icrate 0.1.1] - 2023-04-17
+[icrate 0.1.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-icrate-0.1.0...frameworks-0.2.0-icrate-0.1.1
 
 ### Deprecated
 * Deprecated the `icrate` crate, it has been split into multiple smaller crates.
 
 
-## icrate 0.1.0 - 2023-12-23
+## [icrate 0.1.0] - 2023-12-23
+[icrate 0.1.0]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-icrate-0.0.4...frameworks-0.2.0-icrate-0.1.0
 
 ### Added
 * Added `MainThreadMarker` `From` implementation for `MainThreadOnly` types.
@@ -650,7 +658,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `NSColor::ignoresAlpha` now requires a main thread marker.
 
 
-## icrate 0.0.4 - 2023-07-31
+## [icrate 0.0.4] - 2023-07-31
+[icrate 0.0.4]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-icrate-0.0.3...frameworks-0.2.0-icrate-0.0.4
 
 ### Changed
 * **BREAKING**: Updated `block2` to `v0.3.0`.
@@ -659,7 +668,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Documentation on docs.rs.
 
 
-## icrate 0.0.3 - 2023-06-20
+## [icrate 0.0.3] - 2023-06-20
+[icrate 0.0.3]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-icrate-0.0.2...frameworks-0.2.0-icrate-0.0.3
 
 ### Added
 * Added the following frameworks:
@@ -754,7 +764,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Soundness issues with enumeration / iteration over collection types.
 
 
-## icrate 0.0.2 - 2023-02-07
+## [icrate 0.0.2] - 2023-02-07
+[icrate 0.0.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-icrate-0.0.1...frameworks-0.2.0-icrate-0.0.2
 
 ### Added
 * Added the following frameworks:
@@ -839,7 +850,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Fixed type in methods that worked with out-parameters.
 
 
-## icrate 0.0.1 - 2022-12-24
+## [icrate 0.0.1] - 2022-12-24
+[icrate 0.0.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-objc2-0.3.0-beta.3...frameworks-0.2.0-icrate-0.0.1
 
 ### Added
 * Added `NSString::write_to_file`.
@@ -911,7 +923,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed `NSZone` not specifying a `#[repr(...)]`.
 
 
-## objc2::foundation 0.3.0-beta.3 - 2022-09-01
+## [objc2::foundation 0.3.0-beta.3] - 2022-09-01
+[objc2::foundation 0.3.0-beta.3]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-objc2-0.3.0-beta.2...frameworks-0.2.0-objc2-0.3.0-beta.3
 
 ### Added
 * Added `NSSet`.
@@ -931,7 +944,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   binding to requires a non-negative size.
 
 
-## objc2::foundation 0.3.0-beta.2 - 2022-08-28
+## [objc2::foundation 0.3.0-beta.2] - 2022-08-28
+[objc2::foundation 0.3.0-beta.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-alpha.6...frameworks-0.2.0-objc2-0.3.0-beta.2
 
 ### Added
 * Added `NSNumber`.
@@ -966,7 +980,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   favour of having the trait implementations `Hash`, `PartiqalEq` and `Debug`.
 
 
-## objc2-foundation 0.2.0-alpha.6 - 2022-07-19
+## [0.2.0-alpha.6] - 2022-07-19
+[0.2.0-alpha.6]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-alpha.5...frameworks-0.2.0-alpha.6
 
 ### Added
 * Added `MainThreadMarker` to help with designing APIs where a method is only
@@ -983,7 +998,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Changed a few `Debug` impls.
 
 
-## objc2-foundation 0.2.0-alpha.5 - 2022-06-13
+## [0.2.0-alpha.5] - 2022-06-13
+[0.2.0-alpha.5]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-alpha.4...frameworks-0.2.0-alpha.5
 
 ### Added
 * Objects now `Deref` to their superclasses. E.g. `NSMutableArray` derefs to
@@ -1033,7 +1049,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Renamed `NSMutableData::append` to `extend_from_slice`.
 
 
-## 0.2.0-alpha.4 - 2022-01-03
+## [0.2.0-alpha.4] - 2022-01-03
+[0.2.0-alpha.4]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-alpha.3...frameworks-0.2.0-alpha.4
 
 ### Added
 * Implement `PartialOrd` and `Ord` for `NSComparisonResult` and `NSValue`.
@@ -1052,7 +1069,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   lead to hard-to-diagnose performance issues.
 
 
-## objc2-foundation 0.2.0-alpha.3 - 2021-12-22
+## [0.2.0-alpha.3] - 2021-12-22
+[0.2.0-alpha.3]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-alpha.2...frameworks-0.2.0-alpha.3
 
 ### Added
 * **BREAKING**: Added associated `Ownership` type to `NSCopying`.
@@ -1078,7 +1096,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   subclasses may not be).
 
 
-## objc2-foundation 0.2.0-alpha.2 - 2021-11-22
+## [0.2.0-alpha.2] - 2021-11-22
+[0.2.0-alpha.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-alpha.1...frameworks-0.2.0-alpha.2
 
 ### Added
 * **BREAKING**: Added associated `Ownership` type to `INSObject` to specify
@@ -1140,7 +1159,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed `NSData::from_vec` on GNUStep.
 
 
-## objc2-foundation 0.2.0-alpha.1 - 2021-10-28
+## [0.2.0-alpha.1] - 2021-10-28
+[0.2.0-alpha.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.2.0-alpha.0...frameworks-0.2.0-alpha.1
 
 ### Added
 * Implement new `RefEncode` trait for objects.
@@ -1156,7 +1176,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * `INSString::from_str` on GNUStep (`UTF8_ENCODING` was the wrong type).
 
 
-## objc2-foundation 0.2.0-alpha.0 - 2021-08-29
+## [0.2.0-alpha.0] - 2021-08-29
+[0.2.0-alpha.0]: https://github.com/madsmtm/objc2/compare/frameworks-0.1.1...frameworks-0.2.0-alpha.0
 
 Note: This is the version that is, as of this writing, available on the
 `master` branch in the original `objc-foundation` project.
@@ -1172,27 +1193,31 @@ Note: This is the version that is, as of this writing, available on the
 * Fixed types in various calls to `objc::msg_send!` for better verification.
 
 
-## objc-foundation [0.1.1] - 2016-06-19
+## [0.1.1] (`objc2-foundation` crate) - 2016-06-19
+[0.1.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.1.0...frameworks-0.1.1
 
 ### Fixed
 * An issue with passing functions (instead of function pointers) in
   `INSMutableArray::sort_by`.
 
 
-## objc-foundation [0.1.0] - 2016-03-20
+## [0.1.0] (`objc2-foundation` crate) - 2016-03-20
+[0.1.0]: https://github.com/madsmtm/objc2/compare/frameworks-0.0.4...frameworks-0.1.0
 
 ### Changed
 * Update `objc` to `v0.2`.
 * Update `objc_id` to `v0.1`.
 
 
-## objc-foundation [0.0.4] - 2015-12-09
+## [0.0.4] (`objc2-foundation` crate) - 2015-12-09
+[0.0.4]: https://github.com/madsmtm/objc2/compare/frameworks-0.0.3...frameworks-0.0.4
 
 ### Removed
 * `libc` dependency.
 
 
-## objc-foundation [0.0.3] - 2015-11-07
+## [0.0.3] (`objc2-foundation` crate) - 2015-11-07
+[0.0.3]: https://github.com/madsmtm/objc2/compare/frameworks-0.0.2...frameworks-0.0.3
 
 ### Added
 * `object_struct!` macro.
@@ -1201,20 +1226,14 @@ Note: This is the version that is, as of this writing, available on the
 * `libc` version can both be `0.1` and `0.2`.
 
 
-## objc-foundation [0.0.2] - 2015-09-03
+## [0.0.2] (`objc2-foundation` crate) - 2015-09-03
+[0.0.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.0.1...frameworks-0.0.2
 
 ### Added
 * `Any` bound on `INSObject`, because of a change in `objc` `v0.1.6`.
 
 
-## objc-foundation [0.0.1] - 2015-06-13
+## [0.0.1] (`objc2-foundation` crate) - 2015-06-13
+[0.0.1]: https://github.com/madsmtm/objc2/releases/tag/frameworks-0.0.1
 
 Initial release.
-
-
-[0.1.1]: https://github.com/madsmtm/objc2/compare/objc-foundation-0.1.0...objc-foundation-0.1.1
-[0.1.0]: https://github.com/madsmtm/objc2/compare/objc-foundation-0.0.4...objc-foundation-0.1.0
-[0.0.4]: https://github.com/madsmtm/objc2/compare/objc-foundation-0.0.3...objc-foundation-0.0.4
-[0.0.3]: https://github.com/madsmtm/objc2/compare/objc-foundation-0.0.2...objc-foundation-0.0.3
-[0.0.2]: https://github.com/madsmtm/objc2/compare/objc-foundation-0.0.1...objc-foundation-0.0.2
-[0.0.1]: https://github.com/madsmtm/objc2/releases/tag/objc-foundation-0.0.1

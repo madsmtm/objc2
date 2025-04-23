@@ -228,4 +228,4 @@ targets = [
 
 [package.metadata.release]
 shared-version = false
-tag-prefix = "objc"
+tag-prefix = "objc2"

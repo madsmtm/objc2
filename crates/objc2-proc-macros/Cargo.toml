@@ -44,4 +44,4 @@ targets = [
 
 [package.metadata.release]
 shared-version = false
-tag-prefix = "objc-proc-macros"
+tag-prefix = "objc2-proc-macros"
