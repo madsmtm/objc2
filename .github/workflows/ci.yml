@@ -268,7 +268,7 @@ jobs:
 
     - name: Run all assembly tests
       if: ${{ github.ref_name == 'ci-full' }}
-      run: ./helper-scripts/run-assembly-tests.sh
+      run: ./crates/test-assembly/run-all.sh
 
     - name: Check diff
       if: ${{ always() }}
