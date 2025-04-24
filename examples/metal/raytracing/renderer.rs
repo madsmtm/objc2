@@ -7,7 +7,7 @@ use std::{
 use core_graphics_types::{base::CGFloat, geometry::CGSize};
 use glam::{Vec3, Vec4, Vec4Swizzles};
 use metal::{foreign_types::ForeignType, *};
-use rand::{thread_rng, RngCore};
+use rand::RngCore;
 
 use crate::{camera::Camera, geometry::get_managed_buffer_storage_mode, scene::Scene};
 
@@ -294,7 +294,7 @@ impl Renderer {
         texture_descriptor.set_usage(MTLTextureUsage::ShaderRead);
         texture_descriptor.set_storage_mode(MTLStorageMode::Managed);
         self.random_texture = self.device.new_texture(&texture_descriptor);
-        let mut rng = thread_rng();
+        let mut rng = rand::rng();
         let mut random_values = vec![0u32; (size.width * size.height) as usize];
         for v in &mut random_values {
             *v = rng.next_u32();

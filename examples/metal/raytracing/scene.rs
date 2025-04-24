@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use glam::{Mat4, Vec3, Vec4};
-use rand::{thread_rng, Rng};
+use rand::Rng;
 
 use metal::{Buffer, Device, NSRange, NSUInteger};
 
@@ -76,7 +76,7 @@ impl Scene {
         let sphere_geometry = Arc::new(sphere_geometry);
         geometries.push(sphere_geometry.clone());
 
-        let mut rng = thread_rng();
+        let mut rng = rand::rng();
         let mut geometry_instances = Vec::new();
         let mut lights = Vec::new();
         for y in -1..2 {
@@ -107,9 +107,9 @@ impl Scene {
                     right: Vec4::new(0.25, 0.0, 0.0, 0.0),
                     up: Vec4::new(0.0, 0.0, 0.25, 0.0),
                     colour: Vec4::new(
-                        rng.gen_range(0f32..=1.0),
-                        rng.gen_range(0f32..=1.0),
-                        rng.gen_range(0f32..=1.0),
+                        rng.random_range(0f32..=1.0),
+                        rng.random_range(0f32..=1.0),
+                        rng.random_range(0f32..=1.0),
                         0.0,
                     ),
                 });
