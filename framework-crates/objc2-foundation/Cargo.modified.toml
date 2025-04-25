@@ -5,23 +5,6 @@ license = "MIT" # All future contributions are licensed under "Zlib OR Apache-2.
 [dev-dependencies]
 static_assertions = "1.1.0"
 
-[[example]]
-name = "basic_usage"
-required-features = [
-    "NSArray",
-    "NSDictionary",
-    "NSEnumerator",
-    "NSRange",
-    "NSObject",
-]
-
-[[example]]
-name = "speech_synthesis"
-required-features = [
-    "NSString",
-    "NSObject",
-]
-
 [features]
 # Runtime selection. See `objc2` for details.
 gnustep-1-7 = ["objc2/gnustep-1-7", "block2?/gnustep-1-7"]

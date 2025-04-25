@@ -1,0 +1,53 @@
+[package]
+name = "examples-webkit"
+version = "0.0.0"
+edition = "2021"
+license = "Zlib OR Apache-2.0 OR MIT"
+publish = false
+
+[[example]]
+name = "browser"
+path = "browser.rs"
+
+[dependencies]
+objc2 = "0.6.1"
+objc2-web-kit = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "objc2-app-kit",
+    "objc2-core-foundation",
+    "WKNavigation",
+    "WKNavigationDelegate",
+    "WKWebView",
+] }
+objc2-foundation = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "NSString",
+    "NSGeometry",
+    "NSNotification",
+    "NSURL",
+    "NSURLRequest",
+    "NSThread",
+] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2-app-kit = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "NSResponder",
+    "NSView",
+    "NSColor",
+    "NSButton",
+    "NSButtonCell",
+    "NSMenu",
+    "NSMenuItem",
+    "NSStackView",
+    "NSText",
+    "NSTextField",
+    "NSTextView",
+    "NSWindow",
+    "NSControl",
+    "NSApplication",
+    "NSRunningApplication",
+    "NSGraphics",
+    "NSLayoutConstraint",
+    "NSUserInterfaceLayout",
+] }

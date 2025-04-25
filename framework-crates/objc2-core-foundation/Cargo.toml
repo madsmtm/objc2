@@ -153,10 +153,3 @@ CFXMLParser = ["bitflags"]
 
 [dev-dependencies]
 static_assertions = "1.1.0"
-
-[[example]]
-name = "run_loop"
-required-features = [
-    "CFDate",
-    "CFRunLoop",
-]

@@ -1,3 +1,4 @@
+//! Implementing `NSApplicationDelegate` for a custom class.
 #![deny(unsafe_op_in_unsafe_fn)]
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;

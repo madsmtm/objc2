@@ -104,17 +104,32 @@ jobs:
         # This should give us fairly good coverage for normal PRs.
         - name: macOS x86_64
           target: x86_64-apple-darwin
-          args: $PUBLIC_CRATES $FRAMEWORKS_MACOS_14
+          # `cc` works poorly when cross-compiling, so let's ignore `objc2-exception-helper` for now.
+          args: >
+            --workspace
+            --exclude header-translator --exclude test-assembly
+            --exclude test-ui --exclude test-fuzz --exclude tests
+            --exclude objc2-exception-helper
         - name: iOS ARMv7s
           target: armv7s-apple-ios
           build-std: true
-          # `cc` works poorly when cross-compiling, so let's ignore `objc2-exception-helper` for now.
-          args: --package=dispatch2 --package=block2 --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_IOS_17 -Zbuild-std
+          # FIXME: `objc2-io-usb-host` is excluded for now, some constants overflow on 32-bit.
+          args: >
+            -Zbuild-std
+            --workspace
+            --exclude header-translator --exclude test-assembly
+            --exclude test-ui --exclude test-fuzz --exclude tests
+            --exclude objc2-exception-helper
+            --exclude objc2-io-usb-host
         - name: visionOS Aarch64 simulator
           target: aarch64-apple-visionos-sim
           build-std: true
-          # `cc` works poorly when cross-compiling, so let's ignore `objc2-exception-helper` for now.
-          args: --package=dispatch2 --package=block2 --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_VISIONOS_1 -Zbuild-std
+          args: >
+            -Zbuild-std
+            --workspace
+            --exclude header-translator --exclude test-assembly
+            --exclude test-ui --exclude test-fuzz --exclude tests
+            --exclude objc2-exception-helper
 
         - name: GNUStep + exceptions
           target: x86_64-unknown-linux-gnu
@@ -122,11 +137,11 @@ jobs:
 
         - name: header-translator
           target: x86_64-unknown-linux-gnu
-          args: -pheader-translator
+          args: --package header-translator
 
         - name: test-assembly
           target: x86_64-unknown-linux-gnu
-          args: -ptest-assembly
+          args: --package test-assembly
 
     env:
       CARGO_BUILD_TARGET: ${{ matrix.target }}

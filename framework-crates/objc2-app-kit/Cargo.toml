@@ -2313,24 +2313,3 @@ NSWritingToolsCoordinatorContext = [
     "objc2-foundation/NSRange",
     "objc2-foundation/NSUUID",
 ]
-
-[[example]]
-name = "delegate"
-required-features = [
-    "objc2-foundation/NSNotification",
-    "objc2-foundation/NSString",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSThread",
-    "NSResponder",
-    "NSApplication",
-    "NSRunningApplication",
-]
-
-[[example]]
-name = "nspasteboard"
-required-features = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSString",
-    "objc2-foundation/NSObject",
-    "NSPasteboard",
-]

@@ -1,0 +1,56 @@
+[package]
+name = "examples-metal"
+version = "0.0.0"
+edition = "2021"
+license = "Zlib OR Apache-2.0 OR MIT"
+publish = false
+
+[[example]]
+name = "triangle"
+path = "triangle/main.rs"
+
+[dependencies]
+objc2 = "0.6.1"
+objc2-metal = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "objc2-core-foundation",
+    "MTLAllocation",
+    "MTLAccelerationStructureTypes",
+    "MTLLibrary",
+    "MTLRenderPipeline",
+    "MTLRenderCommandEncoder",
+    "MTLCommandBuffer",
+    "MTLCommandEncoder",
+    "MTLCommandQueue",
+    "MTLPixelFormat",
+    "MTLDevice",
+    "MTLDrawable",
+    "MTLRenderPass",
+] }
+objc2-metal-kit = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "objc2-core-foundation",
+    "objc2-app-kit",
+    "objc2-quartz-core",
+    "MTKView",
+] }
+objc2-foundation = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "NSError",
+    "NSString",
+    "NSDate",
+    "NSNotification",
+    "NSThread",
+    "NSGeometry",
+] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2-app-kit = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "NSGraphics",
+    "NSWindow",
+    "NSResponder",
+    "NSApplication",
+    "NSRunningApplication",
+    "NSView",
+] }

@@ -1,0 +1,18 @@
+[package]
+name = "examples-corefoundation"
+version = "0.0.0"
+edition = "2021"
+license = "Zlib OR Apache-2.0 OR MIT"
+publish = false
+
+[[example]]
+name = "runloop"
+path = "runloop.rs"
+
+[dependencies]
+objc2-core-foundation = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "CFString",
+    "CFDate",
+    "CFRunLoop",
+] }

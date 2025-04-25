@@ -2,8 +2,11 @@
 //!
 //! Quick links:
 //! - [All Topics][crate::topics].
+//! - [All examples].
 //! - [About framework crates][crate::topics::about_generated].
 //! - [List of framework crates][crate::topics::about_generated::list].
+//!
+#![doc = concat!("[All examples]: https://github.com/madsmtm/objc2/tree/objc2-", env!("CARGO_PKG_VERSION"), "/examples")]
 //!
 //! Objective-C was the standard programming language on Apple platforms like
 //! macOS, iOS, iPadOS, tvOS and watchOS. It is an object-oriented language

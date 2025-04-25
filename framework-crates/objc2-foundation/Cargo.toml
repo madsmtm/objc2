@@ -415,20 +415,3 @@ NSZone = []
 
 [dev-dependencies]
 static_assertions = "1.1.0"
-
-[[example]]
-name = "basic_usage"
-required-features = [
-    "NSArray",
-    "NSDictionary",
-    "NSEnumerator",
-    "NSRange",
-    "NSObject",
-]
-
-[[example]]
-name = "speech_synthesis"
-required-features = [
-    "NSString",
-    "NSObject",
-]

@@ -4,13 +4,6 @@
 //!
 //! [apple-doc]: https://developer.apple.com/documentation/webkit/
 //! [framework-crates]: https://docs.rs/objc2/latest/objc2/topics/about_generated/index.html
-//!
-//!
-//! ## Example
-//!
-//! ```ignore
-#![doc = include_str!("../examples/browser.rs")]
-//! ```
 #![recursion_limit = "512"]
 #![allow(non_snake_case)]
 #![no_std]

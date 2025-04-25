@@ -324,6 +324,60 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
+name = "examples-app"
+version = "0.0.0"
+dependencies = [
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+]
+
+[[package]]
+name = "examples-audio"
+version = "0.0.0"
+dependencies = [
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
+name = "examples-corefoundation"
+version = "0.0.0"
+dependencies = [
+ "objc2-core-foundation",
+]
+
+[[package]]
+name = "examples-metal"
+version = "0.0.0"
+dependencies = [
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+ "objc2-metal",
+ "objc2-metal-kit",
+]
+
+[[package]]
+name = "examples-pasteboard"
+version = "0.0.0"
+dependencies = [
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+]
+
+[[package]]
+name = "examples-webkit"
+version = "0.0.0"
+dependencies = [
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+ "objc2-web-kit",
+]
+
+[[package]]
 name = "four-char-code"
 version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1827,12 +1881,9 @@ dependencies = [
  "block2",
  "dispatch2",
  "objc2",
- "objc2-app-kit",
  "objc2-core-foundation",
  "objc2-foundation",
  "objc2-io-surface",
- "objc2-metal-kit",
- "objc2-quartz-core",
 ]
 
 [[package]]

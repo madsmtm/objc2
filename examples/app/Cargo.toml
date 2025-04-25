@@ -1,0 +1,26 @@
+[package]
+name = "examples-app"
+version = "0.0.0"
+edition = "2021"
+license = "Zlib OR Apache-2.0 OR MIT"
+publish = false
+
+[[example]]
+name = "delegate"
+path = "delegate.rs"
+
+[dependencies]
+objc2 = "0.6.1"
+objc2-foundation = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "NSNotification",
+    "NSString",
+    "NSObject",
+    "NSThread",
+] }
+objc2-app-kit = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "NSResponder",
+    "NSApplication",
+    "NSRunningApplication",
+] }

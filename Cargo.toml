@@ -1,8 +1,9 @@
 [workspace]
 members = [
     "crates/*",
-    "framework-crates/*",
     "crates/test-assembly/crates/*",
+    "examples/*",
+    "framework-crates/*",
 ]
 resolver = "2"
 
@@ -277,3 +278,193 @@ objc2-watch-connectivity = { path = "framework-crates/objc2-watch-connectivity",
 objc2-watch-kit = { path = "framework-crates/objc2-watch-kit", version = "0.3.1", default-features = false }
 objc2-web-kit = { path = "framework-crates/objc2-web-kit", version = "0.3.1", default-features = false }
 objc2-itunes-library = { path = "framework-crates/objc2-itunes-library", version = "0.3.1", default-features = false }
+
+# These are useful for examples, since it allows them to be self-contained.
+#
+# That is, the examples can specify the dependencies as one normally would,
+# with version and everything, and the patches here will take care of
+# ensuring they are still compiled against the crates in the repository.
+[patch.crates-io]
+block2 = { path = "crates/block2" }
+dispatch2 = { path = "crates/dispatch2" }
+objc2 = { path = "crates/objc2" }
+objc2-ar-kit = { path = "framework-crates/objc2-ar-kit" }
+objc2-avf-audio = { path = "framework-crates/objc2-avf-audio" }
+objc2-av-foundation = { path = "framework-crates/objc2-av-foundation" }
+objc2-av-kit = { path = "framework-crates/objc2-av-kit" }
+objc2-av-routing = { path = "framework-crates/objc2-av-routing" }
+objc2-accessibility = { path = "framework-crates/objc2-accessibility" }
+objc2-accessory-setup-kit = { path = "framework-crates/objc2-accessory-setup-kit" }
+objc2-accounts = { path = "framework-crates/objc2-accounts" }
+objc2-ad-services = { path = "framework-crates/objc2-ad-services" }
+objc2-ad-support = { path = "framework-crates/objc2-ad-support" }
+objc2-app-clip = { path = "framework-crates/objc2-app-clip" }
+objc2-app-kit = { path = "framework-crates/objc2-app-kit" }
+objc2-app-tracking-transparency = { path = "framework-crates/objc2-app-tracking-transparency" }
+objc2-application-services = { path = "framework-crates/objc2-application-services" }
+objc2-audio-toolbox = { path = "framework-crates/objc2-audio-toolbox" }
+objc2-authentication-services = { path = "framework-crates/objc2-authentication-services" }
+objc2-automatic-assessment-configuration = { path = "framework-crates/objc2-automatic-assessment-configuration" }
+objc2-automator = { path = "framework-crates/objc2-automator" }
+objc2-background-assets = { path = "framework-crates/objc2-background-assets" }
+objc2-background-tasks = { path = "framework-crates/objc2-background-tasks" }
+objc2-browser-engine-core = { path = "framework-crates/objc2-browser-engine-core" }
+objc2-browser-engine-kit = { path = "framework-crates/objc2-browser-engine-kit" }
+objc2-business-chat = { path = "framework-crates/objc2-business-chat" }
+objc2-cf-network = { path = "framework-crates/objc2-cf-network" }
+objc2-call-kit = { path = "framework-crates/objc2-call-kit" }
+objc2-car-play = { path = "framework-crates/objc2-car-play" }
+objc2-carbon = { path = "framework-crates/objc2-carbon" }
+objc2-cinematic = { path = "framework-crates/objc2-cinematic" }
+objc2-class-kit = { path = "framework-crates/objc2-class-kit" }
+objc2-clock-kit = { path = "framework-crates/objc2-clock-kit" }
+objc2-cloud-kit = { path = "framework-crates/objc2-cloud-kit" }
+objc2-collaboration = { path = "framework-crates/objc2-collaboration" }
+objc2-color-sync = { path = "framework-crates/objc2-color-sync" }
+objc2-compositor-services = { path = "framework-crates/objc2-compositor-services" }
+objc2-contacts = { path = "framework-crates/objc2-contacts" }
+objc2-contacts-ui = { path = "framework-crates/objc2-contacts-ui" }
+objc2-core-audio = { path = "framework-crates/objc2-core-audio" }
+objc2-core-audio-kit = { path = "framework-crates/objc2-core-audio-kit" }
+objc2-core-audio-types = { path = "framework-crates/objc2-core-audio-types" }
+objc2-core-bluetooth = { path = "framework-crates/objc2-core-bluetooth" }
+objc2-core-data = { path = "framework-crates/objc2-core-data" }
+objc2-core-foundation = { path = "framework-crates/objc2-core-foundation" }
+objc2-core-graphics = { path = "framework-crates/objc2-core-graphics" }
+objc2-core-haptics = { path = "framework-crates/objc2-core-haptics" }
+objc2-core-image = { path = "framework-crates/objc2-core-image" }
+objc2-core-location = { path = "framework-crates/objc2-core-location" }
+objc2-core-location-ui = { path = "framework-crates/objc2-core-location-ui" }
+objc2-core-midi = { path = "framework-crates/objc2-core-midi" }
+objc2-core-ml = { path = "framework-crates/objc2-core-ml" }
+objc2-core-media = { path = "framework-crates/objc2-core-media" }
+objc2-core-media-io = { path = "framework-crates/objc2-core-media-io" }
+objc2-core-motion = { path = "framework-crates/objc2-core-motion" }
+objc2-core-nfc = { path = "framework-crates/objc2-core-nfc" }
+objc2-core-services = { path = "framework-crates/objc2-core-services" }
+objc2-core-spotlight = { path = "framework-crates/objc2-core-spotlight" }
+objc2-core-telephony = { path = "framework-crates/objc2-core-telephony" }
+objc2-core-text = { path = "framework-crates/objc2-core-text" }
+objc2-core-video = { path = "framework-crates/objc2-core-video" }
+objc2-core-wlan = { path = "framework-crates/objc2-core-wlan" }
+objc2-crypto-token-kit = { path = "framework-crates/objc2-crypto-token-kit" }
+objc2-data-detection = { path = "framework-crates/objc2-data-detection" }
+objc2-device-check = { path = "framework-crates/objc2-device-check" }
+objc2-device-discovery-extension = { path = "framework-crates/objc2-device-discovery-extension" }
+objc2-disk-arbitration = { path = "framework-crates/objc2-disk-arbitration" }
+objc2-event-kit = { path = "framework-crates/objc2-event-kit" }
+objc2-event-kit-ui = { path = "framework-crates/objc2-event-kit-ui" }
+objc2-exception-handling = { path = "framework-crates/objc2-exception-handling" }
+objc2-execution-policy = { path = "framework-crates/objc2-execution-policy" }
+objc2-exposure-notification = { path = "framework-crates/objc2-exposure-notification" }
+objc2-extension-kit = { path = "framework-crates/objc2-extension-kit" }
+objc2-external-accessory = { path = "framework-crates/objc2-external-accessory" }
+objc2-fs-kit = { path = "framework-crates/objc2-fs-kit" }
+objc2-file-provider = { path = "framework-crates/objc2-file-provider" }
+objc2-file-provider-ui = { path = "framework-crates/objc2-file-provider-ui" }
+objc2-finder-sync = { path = "framework-crates/objc2-finder-sync" }
+objc2-foundation = { path = "framework-crates/objc2-foundation" }
+objc2-game-controller = { path = "framework-crates/objc2-game-controller" }
+objc2-game-kit = { path = "framework-crates/objc2-game-kit" }
+objc2-gameplay-kit = { path = "framework-crates/objc2-gameplay-kit" }
+objc2-health-kit = { path = "framework-crates/objc2-health-kit" }
+objc2-health-kit-ui = { path = "framework-crates/objc2-health-kit-ui" }
+objc2-home-kit = { path = "framework-crates/objc2-home-kit" }
+objc2-io-bluetooth = { path = "framework-crates/objc2-io-bluetooth" }
+objc2-io-bluetooth-ui = { path = "framework-crates/objc2-io-bluetooth-ui" }
+objc2-io-kit = { path = "framework-crates/objc2-io-kit" }
+objc2-io-surface = { path = "framework-crates/objc2-io-surface" }
+objc2-io-usb-host = { path = "framework-crates/objc2-io-usb-host" }
+objc2-identity-lookup = { path = "framework-crates/objc2-identity-lookup" }
+objc2-identity-lookup-ui = { path = "framework-crates/objc2-identity-lookup-ui" }
+objc2-image-capture-core = { path = "framework-crates/objc2-image-capture-core" }
+objc2-image-io = { path = "framework-crates/objc2-image-io" }
+objc2-input-method-kit = { path = "framework-crates/objc2-input-method-kit" }
+objc2-intents = { path = "framework-crates/objc2-intents" }
+objc2-intents-ui = { path = "framework-crates/objc2-intents-ui" }
+objc2-javascript-core = { path = "framework-crates/objc2-javascript-core" }
+objc2-latent-semantic-mapping = { path = "framework-crates/objc2-latent-semantic-mapping" }
+objc2-link-presentation = { path = "framework-crates/objc2-link-presentation" }
+objc2-local-authentication = { path = "framework-crates/objc2-local-authentication" }
+objc2-local-authentication-embedded-ui = { path = "framework-crates/objc2-local-authentication-embedded-ui" }
+objc2-ml-compute = { path = "framework-crates/objc2-ml-compute" }
+objc2-mail-kit = { path = "framework-crates/objc2-mail-kit" }
+objc2-map-kit = { path = "framework-crates/objc2-map-kit" }
+objc2-media-accessibility = { path = "framework-crates/objc2-media-accessibility" }
+objc2-media-extension = { path = "framework-crates/objc2-media-extension" }
+objc2-media-player = { path = "framework-crates/objc2-media-player" }
+objc2-media-setup = { path = "framework-crates/objc2-media-setup" }
+objc2-media-toolbox = { path = "framework-crates/objc2-media-toolbox" }
+objc2-message-ui = { path = "framework-crates/objc2-message-ui" }
+objc2-messages = { path = "framework-crates/objc2-messages" }
+objc2-metal = { path = "framework-crates/objc2-metal" }
+objc2-metal-fx = { path = "framework-crates/objc2-metal-fx" }
+objc2-metal-kit = { path = "framework-crates/objc2-metal-kit" }
+objc2-metal-performance-shaders = { path = "framework-crates/objc2-metal-performance-shaders" }
+objc2-metal-performance-shaders-graph = { path = "framework-crates/objc2-metal-performance-shaders-graph" }
+objc2-metric-kit = { path = "framework-crates/objc2-metric-kit" }
+objc2-model-io = { path = "framework-crates/objc2-model-io" }
+objc2-multipeer-connectivity = { path = "framework-crates/objc2-multipeer-connectivity" }
+objc2-natural-language = { path = "framework-crates/objc2-natural-language" }
+objc2-nearby-interaction = { path = "framework-crates/objc2-nearby-interaction" }
+objc2-network-extension = { path = "framework-crates/objc2-network-extension" }
+objc2-notification-center = { path = "framework-crates/objc2-notification-center" }
+objc2-osa-kit = { path = "framework-crates/objc2-osa-kit" }
+objc2-os-log = { path = "framework-crates/objc2-os-log" }
+objc2-open-directory = { path = "framework-crates/objc2-open-directory" }
+objc2-pdf-kit = { path = "framework-crates/objc2-pdf-kit" }
+objc2-phase = { path = "framework-crates/objc2-phase" }
+objc2-paravirtualized-graphics = { path = "framework-crates/objc2-paravirtualized-graphics" }
+objc2-pass-kit = { path = "framework-crates/objc2-pass-kit" }
+objc2-pencil-kit = { path = "framework-crates/objc2-pencil-kit" }
+objc2-photos = { path = "framework-crates/objc2-photos" }
+objc2-photos-ui = { path = "framework-crates/objc2-photos-ui" }
+objc2-preference-panes = { path = "framework-crates/objc2-preference-panes" }
+objc2-push-kit = { path = "framework-crates/objc2-push-kit" }
+objc2-push-to-talk = { path = "framework-crates/objc2-push-to-talk" }
+objc2-quartz = { path = "framework-crates/objc2-quartz" }
+objc2-quartz-core = { path = "framework-crates/objc2-quartz-core" }
+objc2-quick-look = { path = "framework-crates/objc2-quick-look" }
+objc2-quick-look-thumbnailing = { path = "framework-crates/objc2-quick-look-thumbnailing" }
+objc2-quick-look-ui = { path = "framework-crates/objc2-quick-look-ui" }
+objc2-replay-kit = { path = "framework-crates/objc2-replay-kit" }
+objc2-safari-services = { path = "framework-crates/objc2-safari-services" }
+objc2-safety-kit = { path = "framework-crates/objc2-safety-kit" }
+objc2-scene-kit = { path = "framework-crates/objc2-scene-kit" }
+objc2-screen-capture-kit = { path = "framework-crates/objc2-screen-capture-kit" }
+objc2-screen-saver = { path = "framework-crates/objc2-screen-saver" }
+objc2-screen-time = { path = "framework-crates/objc2-screen-time" }
+objc2-scripting-bridge = { path = "framework-crates/objc2-scripting-bridge" }
+objc2-security = { path = "framework-crates/objc2-security" }
+objc2-security-foundation = { path = "framework-crates/objc2-security-foundation" }
+objc2-security-interface = { path = "framework-crates/objc2-security-interface" }
+objc2-sensitive-content-analysis = { path = "framework-crates/objc2-sensitive-content-analysis" }
+objc2-sensor-kit = { path = "framework-crates/objc2-sensor-kit" }
+objc2-service-management = { path = "framework-crates/objc2-service-management" }
+objc2-shared-with-you = { path = "framework-crates/objc2-shared-with-you" }
+objc2-shared-with-you-core = { path = "framework-crates/objc2-shared-with-you-core" }
+objc2-shazam-kit = { path = "framework-crates/objc2-shazam-kit" }
+objc2-social = { path = "framework-crates/objc2-social" }
+objc2-sound-analysis = { path = "framework-crates/objc2-sound-analysis" }
+objc2-speech = { path = "framework-crates/objc2-speech" }
+objc2-sprite-kit = { path = "framework-crates/objc2-sprite-kit" }
+objc2-store-kit = { path = "framework-crates/objc2-store-kit" }
+objc2-symbols = { path = "framework-crates/objc2-symbols" }
+objc2-system-configuration = { path = "framework-crates/objc2-system-configuration" }
+objc2-system-extensions = { path = "framework-crates/objc2-system-extensions" }
+objc2-tv-ml-kit = { path = "framework-crates/objc2-tv-ml-kit" }
+objc2-tv-services = { path = "framework-crates/objc2-tv-services" }
+objc2-tv-ui-kit = { path = "framework-crates/objc2-tv-ui-kit" }
+objc2-thread-network = { path = "framework-crates/objc2-thread-network" }
+objc2-ui-kit = { path = "framework-crates/objc2-ui-kit" }
+objc2-uniform-type-identifiers = { path = "framework-crates/objc2-uniform-type-identifiers" }
+objc2-user-notifications = { path = "framework-crates/objc2-user-notifications" }
+objc2-user-notifications-ui = { path = "framework-crates/objc2-user-notifications-ui" }
+objc2-video-subscriber-account = { path = "framework-crates/objc2-video-subscriber-account" }
+objc2-video-toolbox = { path = "framework-crates/objc2-video-toolbox" }
+objc2-virtualization = { path = "framework-crates/objc2-virtualization" }
+objc2-vision = { path = "framework-crates/objc2-vision" }
+objc2-watch-connectivity = { path = "framework-crates/objc2-watch-connectivity" }
+objc2-watch-kit = { path = "framework-crates/objc2-watch-kit" }
+objc2-web-kit = { path = "framework-crates/objc2-web-kit" }
+objc2-itunes-library = { path = "framework-crates/objc2-itunes-library" }

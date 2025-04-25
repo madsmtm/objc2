@@ -186,6 +186,26 @@ fn update_root_cargo_toml(workspace_dir: &Path, config: &Config) {
         }
     }
 
+    let patch_crates_io = cargo_toml["patch"]["crates-io"].as_table_mut().unwrap();
+
+    // Delete all framework crate entries.
+    patch_crates_io.retain(|key, _| !key.starts_with("objc2-"));
+
+    // And add them again.
+    for (_, lib) in config.to_parse() {
+        if lib.is_library {
+            continue;
+        }
+        let path = if lib.is_library {
+            format!("crates/{}", lib.krate)
+        } else {
+            format!("framework-crates/{}", lib.krate)
+        };
+
+        patch_crates_io[&lib.krate] =
+            toml_edit::InlineTable::from_iter([("path", toml_edit::Value::from(&path))]).into();
+    }
+
     f.set_len(0).unwrap();
     f.seek(io::SeekFrom::Start(0)).unwrap();
     f.write_all(cargo_toml.to_string().as_bytes()).unwrap();

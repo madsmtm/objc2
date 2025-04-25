@@ -1,3 +1,4 @@
+//! Drawing a rotating triangle.
 #![deny(unsafe_op_in_unsafe_fn)]
 #![allow(clippy::incompatible_msrv)]
 #![cfg_attr(not(target_os = "macos"), allow(dead_code, unused))]

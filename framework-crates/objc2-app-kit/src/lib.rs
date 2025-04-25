@@ -18,21 +18,6 @@
 //! controller; in those cases you're _required_ to call
 //! `window.releasedWhenClosed(false)` to get correct memory management, which
 //! is also why the creation methods for `NSWindow` are `unsafe`.
-//!
-//!
-//! ## Examples
-//!
-//! Implementing `NSApplicationDelegate` for a custom class.
-//!
-//! ```ignore
-#![doc = include_str!("../examples/delegate.rs")]
-//! ```
-//!
-//! An example showing basic and a bit more advanced usage of `NSPasteboard`.
-//!
-//! ```ignore
-#![doc = include_str!("../examples/nspasteboard.rs")]
-//! ```
 #![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 // Update in Cargo.toml as well.

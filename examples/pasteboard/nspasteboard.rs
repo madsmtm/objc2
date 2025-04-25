@@ -1,4 +1,4 @@
-//! Read from the global pasteboard, and write a new string into it.
+//! Read from the global NSPasteboard, and write a new string into it.
 //!
 //! Works on macOS 10.7+
 #![deny(unsafe_op_in_unsafe_fn)]
