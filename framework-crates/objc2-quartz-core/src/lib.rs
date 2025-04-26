@@ -10,6 +10,7 @@
 #![recursion_limit = "256"]
 #![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![feature(arbitrary_self_types)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-quartz-core/0.3.1")]
 

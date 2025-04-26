@@ -1,6 +1,7 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 #![allow(clippy::incompatible_msrv)]
 #![cfg_attr(not(target_os = "macos"), allow(dead_code, unused))]
+#![feature(arbitrary_self_types)]
 
 use core::{cell::OnceCell, ptr::NonNull};
 
@@ -91,8 +92,7 @@ define_class!(
                 let backing_store_type = NSBackingStoreType::Buffered;
                 let flag = false;
                 unsafe {
-                    NSWindow::initWithContentRect_styleMask_backing_defer(
-                        NSWindow::alloc(mtm),
+                    NSWindow::alloc(mtm).initWithContentRect_styleMask_backing_defer(
                         content_rect,
                         style,
                         backing_store_type,
@@ -114,7 +114,7 @@ define_class!(
             let mtk_view = {
                 let frame_rect = window.frame();
                 unsafe {
-                    MTKView::initWithFrame_device(MTKView::alloc(mtm), frame_rect, Some(&device))
+                    MTKView::alloc(mtm).initWithFrame_device(frame_rect, Some(&device))
                 }
             };
 

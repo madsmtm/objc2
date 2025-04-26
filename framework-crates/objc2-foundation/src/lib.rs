@@ -71,6 +71,7 @@
 #![doc(html_root_url = "https://docs.rs/objc2-foundation/0.3.1")]
 #![allow(non_snake_case)]
 #![recursion_limit = "512"]
+#![feature(arbitrary_self_types)]
 
 #[cfg(not(feature = "alloc"))]
 compile_error!("The `alloc` feature currently must be enabled.");

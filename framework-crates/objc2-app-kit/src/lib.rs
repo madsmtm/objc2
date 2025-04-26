@@ -35,6 +35,7 @@
 //! ```
 #![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![feature(arbitrary_self_types)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-app-kit/0.3.1")]
 #![recursion_limit = "512"]

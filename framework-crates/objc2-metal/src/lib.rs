@@ -42,6 +42,7 @@
 #![allow(non_snake_case)]
 #![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![feature(arbitrary_self_types)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-metal/0.3.1")]
 
