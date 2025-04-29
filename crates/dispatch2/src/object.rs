@@ -44,7 +44,7 @@ enum_with_val! {
 #[allow(missing_docs)] // TODO
 pub const QOS_MIN_RELATIVE_PRIORITY: i32 = -15;
 
-/// Error returned by [DispatchObject::set_qos_class_floor].
+/// Error returned by [`DispatchObject::set_qos_class_floor()`].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum QualityOfServiceClassFloorError {
