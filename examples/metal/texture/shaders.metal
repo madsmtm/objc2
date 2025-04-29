@@ -3,16 +3,33 @@
 
 using namespace metal;
 
-#import "./shader_types/shader_types.h"
+typedef enum VertexInputIndex {
+    VertexInputIndexVertices = 0,
+    VertexInputIndexViewportSize = 1,
+} VertexInputIndex;
+
+typedef enum TextureIndex {
+    TextureIndexBaseColor = 0
+} TextureIndex;
+
+typedef struct {
+    // (0, 0) is the center of the screen
+    // (-viewport_size / 2, 0) is the middle of the furthest left column of screen pixels.
+    // (0, viewport_size / 2) is the middle of the furthest top row of screen pixels.
+    vector_float2 position;
+    // (0,0) is the top left corner of the image
+    // (1,1) is the bottom right corner of the image
+    vector_float2 texture_coord;
+} TexturedVertex;
 
 typedef struct {
     // The [[position]] attribute qualifier of this member indicates this
     // value is the clip space position of the vertex when this structure
     // is returned from the vertex shader.
     float4 position [[position]];
-    
+
     // Since this member does not have a special attribute qualifier, the
-    // rasterizer will interpolate its value with values of other verticse 
+    // rasterizer will interpolate its value with values of other verticse
     // making up the triangle and pass that interpolated value to the
     // fragment shader for each fragment of that triangle.
     float2 texture_coord;

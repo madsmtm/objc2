@@ -1,25 +1,29 @@
-use std::sync::Arc;
+use std::ptr::NonNull;
+use std::rc::Rc;
 
 use glam::{Mat4, Vec3, Vec4};
+use objc2::Message;
+use objc2::{rc::Retained, runtime::ProtocolObject};
+use objc2_foundation::{ns_string, NSRange};
+use objc2_metal::{MTLBuffer, MTLDevice, MTLResource};
 use rand::Rng;
 
-use metal::{Buffer, Device, NSRange, NSUInteger};
-
-use super::{camera::Camera, geometry::*};
+use super::camera::Camera;
+use super::geometry::*;
 
 pub struct Scene {
-    pub device: Device,
+    pub device: Retained<ProtocolObject<dyn MTLDevice>>,
     pub camera: Camera,
-    pub geometries: Vec<Arc<dyn Geometry>>,
+    pub geometries: Vec<Rc<dyn Geometry>>,
     pub geometry_instances: Vec<GeometryInstance>,
     pub lights: Vec<AreaLight>,
-    pub lights_buffer: Buffer,
+    pub lights_buffer: Retained<ProtocolObject<dyn MTLBuffer>>,
 }
 
 impl Scene {
-    pub fn new(device: Device) -> Self {
-        let mut geometries = Vec::<Arc<dyn Geometry>>::new();
-        let mut light_mesh = TriangleGeometry::new(device.clone(), "light".to_string());
+    pub fn new(device: &ProtocolObject<dyn MTLDevice>) -> Self {
+        let mut geometries = Vec::<Rc<dyn Geometry>>::new();
+        let mut light_mesh = TriangleGeometry::new(device, "light".to_string());
         let transform = Mat4::from_translation(Vec3::new(0.0, 1.0, 0.0))
             * Mat4::from_scale(Vec3::new(0.5, 1.98, 0.5));
         light_mesh.add_cube_with_faces(
@@ -29,10 +33,10 @@ impl Scene {
             true,
         );
         light_mesh.upload_to_buffers();
-        let light_mesh = Arc::new(light_mesh);
+        let light_mesh = Rc::new(light_mesh);
         geometries.push(light_mesh.clone());
 
-        let mut geometry_mesh = TriangleGeometry::new(device.clone(), "geometry".to_string());
+        let mut geometry_mesh = TriangleGeometry::new(device, "geometry".to_string());
         let transform = Mat4::from_translation(Vec3::new(0.0, 1.0, 0.0))
             * Mat4::from_scale(Vec3::new(2.0, 2.0, 2.0));
         geometry_mesh.add_cube_with_faces(
@@ -63,17 +67,17 @@ impl Scene {
             false,
         );
         geometry_mesh.upload_to_buffers();
-        let geometry_mesh = Arc::new(geometry_mesh);
+        let geometry_mesh = Rc::new(geometry_mesh);
         geometries.push(geometry_mesh.clone());
 
-        let mut sphere_geometry = SphereGeometry::new(device.clone());
+        let mut sphere_geometry = SphereGeometry::new(device);
         sphere_geometry.add_sphere_with_origin(
             Vec3::new(0.3275, 0.3, 0.3725),
             0.3,
             Vec3::new(0.725, 0.71, 0.68),
         );
         sphere_geometry.upload_to_buffers();
-        let sphere_geometry = Arc::new(sphere_geometry);
+        let sphere_geometry = Rc::new(sphere_geometry);
         geometries.push(sphere_geometry.clone());
 
         let mut rng = rand::rng();
@@ -115,16 +119,19 @@ impl Scene {
                 });
             }
         }
-        let lights_buffer = device.new_buffer_with_data(
-            lights.as_ptr().cast(),
-            size_of_val(lights.as_slice()) as NSUInteger,
-            get_managed_buffer_storage_mode(),
-        );
-        lights_buffer.did_modify_range(NSRange::new(0, lights_buffer.length()));
-        lights_buffer.set_label("lights buffer");
+        let lights_buffer = unsafe {
+            device.newBufferWithBytes_length_options(
+                NonNull::new(lights.as_ptr().cast_mut().cast()).unwrap(),
+                size_of_val(lights.as_slice()),
+                get_managed_buffer_storage_mode(),
+            )
+        }
+        .unwrap();
+        lights_buffer.didModifyRange(NSRange::new(0, lights_buffer.length()));
+        lights_buffer.setLabel(Some(ns_string!("lights buffer")));
 
         Self {
-            device,
+            device: device.retain(),
             camera: Camera::new(),
             geometries,
             geometry_instances,

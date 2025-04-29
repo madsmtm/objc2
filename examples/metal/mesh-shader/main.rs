@@ -1,127 +1,244 @@
-extern crate objc;
+// Modified from <https://github.com/gfx-rs/metal-rs/tree/v0.33.0/examples/mesh-shader>
+#![cfg_attr(not(target_os = "macos"), allow(dead_code, unused))]
 
-use cocoa::{appkit::NSView, base::id as cocoa_id};
-use core_graphics_types::geometry::CGSize;
+use std::cell::OnceCell;
 
-use metal::*;
-use objc::{rc::autoreleasepool, runtime::YES};
-
-use winit::{
-    event::{Event, WindowEvent},
-    event_loop::ControlFlow,
-    raw_window_handle::{HasWindowHandle, RawWindowHandle},
+use objc2::{
+    define_class, msg_send, rc::Retained, runtime::ProtocolObject, Ivars, MainThreadMarker,
+    MainThreadOnly,
 };
+#[cfg(target_os = "macos")]
+use objc2_app_kit::{
+    NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSBackingStoreType,
+    NSWindow, NSWindowStyleMask,
+};
+use objc2_foundation::{
+    ns_string, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize,
+};
+use objc2_metal::{
+    MTLClearColor, MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue,
+    MTLCreateSystemDefaultDevice, MTLDevice, MTLLibrary, MTLLoadAction,
+    MTLMeshRenderPipelineDescriptor, MTLPipelineOption, MTLPixelFormat, MTLRenderCommandEncoder,
+    MTLRenderPassDescriptor, MTLRenderPipelineState, MTLSize, MTLStoreAction,
+};
+#[cfg(target_os = "macos")]
+use objc2_metal_kit::{MTKView, MTKViewDelegate};
+use objc2_quartz_core::CAMetalDrawable;
 
-fn prepare_render_pass_descriptor(descriptor: &RenderPassDescriptorRef, texture: &TextureRef) {
-    let color_attachment = descriptor.color_attachments().object_at(0).unwrap();
-
-    color_attachment.set_texture(Some(texture));
-    color_attachment.set_load_action(MTLLoadAction::Clear);
-    color_attachment.set_clear_color(MTLClearColor::new(0.2, 0.2, 0.25, 1.0));
-    color_attachment.set_store_action(MTLStoreAction::Store);
+/// The state of our renderer.
+#[derive(Debug)]
+struct Renderer {
+    pipeline_state: Retained<ProtocolObject<dyn MTLRenderPipelineState>>,
+    command_queue: Retained<ProtocolObject<dyn MTLCommandQueue>>,
 }
 
-fn main() {
-    let event_loop = winit::event_loop::EventLoop::new().unwrap();
-    let size = winit::dpi::LogicalSize::new(800, 600);
+impl Renderer {
+    fn new(device: &ProtocolObject<dyn MTLDevice>, pixel_format: MTLPixelFormat) -> Self {
+        let library = device
+            .newLibraryWithSource_options_error(ns_string!(include_str!("shaders.metal")), None)
+            .unwrap_or_else(|e| panic!("{e}"));
 
-    let window = winit::window::WindowBuilder::new()
-        .with_inner_size(size)
-        .with_title("Metal Mesh Shader Example".to_string())
-        .build(&event_loop)
-        .unwrap();
+        let mesh = library
+            .newFunctionWithName(ns_string!("mesh_function"))
+            .unwrap();
+        let frag = library
+            .newFunctionWithName(ns_string!("fragment_function"))
+            .unwrap();
 
-    let device = Device::system_default().expect("no device found");
+        let pipeline_state_desc = MTLMeshRenderPipelineDescriptor::new();
+        let color_attachment = unsafe {
+            pipeline_state_desc
+                .colorAttachments()
+                .objectAtIndexedSubscript(0)
+        };
+        color_attachment.setPixelFormat(pixel_format);
+        unsafe { pipeline_state_desc.setMeshFunction(Some(&mesh)) };
+        unsafe { pipeline_state_desc.setFragmentFunction(Some(&frag)) };
 
-    let mut layer = MetalLayer::new();
-    layer.set_device(&device);
-    layer.set_pixel_format(MTLPixelFormat::BGRA8Unorm);
-    layer.set_presents_with_transaction(false);
+        let pipeline_state = device
+            .newRenderPipelineStateWithMeshDescriptor_options_reflection_error(
+                &pipeline_state_desc,
+                MTLPipelineOption::None,
+                None,
+            )
+            .unwrap();
 
-    unsafe {
-        if let Ok(RawWindowHandle::AppKit(rw)) = window.window_handle().map(|wh| wh.as_raw()) {
-            let view = rw.ns_view.as_ptr() as cocoa_id;
-            view.setWantsLayer(YES);
-            view.setLayer(<*mut _>::cast(layer.as_mut()));
+        let command_queue = device.newCommandQueue().unwrap();
+
+        Self {
+            pipeline_state,
+            command_queue,
         }
     }
 
-    let draw_size = window.inner_size();
-    layer.set_drawable_size(CGSize::new(draw_size.width as f64, draw_size.height as f64));
+    fn draw(&self, drawable: &ProtocolObject<dyn CAMetalDrawable>) {
+        let render_pass_descriptor = MTLRenderPassDescriptor::new();
 
-    let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("examples/mesh-shader/shaders.metallib");
-    let library = device.new_library_with_file(library_path).unwrap();
+        let color_attachment = unsafe {
+            render_pass_descriptor
+                .colorAttachments()
+                .objectAtIndexedSubscript(0)
+        };
 
-    let mesh = library.get_function("mesh_function", None).unwrap();
-    let frag = library.get_function("fragment_function", None).unwrap();
+        color_attachment.setTexture(Some(&drawable.texture()));
+        color_attachment.setLoadAction(MTLLoadAction::Clear);
+        color_attachment.setClearColor(MTLClearColor {
+            red: 0.2,
+            green: 0.2,
+            blue: 0.25,
+            alpha: 1.0,
+        });
+        color_attachment.setStoreAction(MTLStoreAction::Store);
 
-    let pipeline_state_desc = MeshRenderPipelineDescriptor::new();
-    pipeline_state_desc
-        .color_attachments()
-        .object_at(0)
-        .unwrap()
-        .set_pixel_format(MTLPixelFormat::BGRA8Unorm);
-    pipeline_state_desc.set_mesh_function(Some(&mesh));
-    pipeline_state_desc.set_fragment_function(Some(&frag));
+        let command_buffer = self.command_queue.commandBuffer().unwrap();
+        let encoder = command_buffer
+            .renderCommandEncoderWithDescriptor(&render_pass_descriptor)
+            .unwrap();
 
-    let pipeline_state = device
-        .new_mesh_render_pipeline_state(&pipeline_state_desc)
-        .unwrap();
+        encoder.setRenderPipelineState(&self.pipeline_state);
+        encoder.drawMeshThreads_threadsPerObjectThreadgroup_threadsPerMeshThreadgroup(
+            MTLSize {
+                width: 1,
+                height: 1,
+                depth: 1,
+            },
+            MTLSize {
+                width: 1,
+                height: 1,
+                depth: 1,
+            },
+            MTLSize {
+                width: 1,
+                height: 1,
+                depth: 1,
+            },
+        );
 
-    let command_queue = device.new_command_queue();
+        encoder.endEncoding();
 
-    event_loop
-        .run(move |event, event_loop| {
-            autoreleasepool(|| {
-                event_loop.set_control_flow(ControlFlow::Poll);
+        command_buffer.presentDrawable(drawable.as_ref());
+        command_buffer.commit();
+    }
+}
 
-                match event {
-                    Event::AboutToWait => {
-                        window.request_redraw();
-                    }
-                    Event::WindowEvent { event, .. } => match event {
-                        WindowEvent::CloseRequested => event_loop.exit(),
-                        WindowEvent::Resized(size) => {
-                            layer.set_drawable_size(CGSize::new(
-                                size.width as f64,
-                                size.height as f64,
-                            ));
-                        }
-                        WindowEvent::RedrawRequested => {
-                            let drawable = match layer.next_drawable() {
-                                Some(drawable) => drawable,
-                                None => return,
-                            };
+//
+// Boilerplate for setting up a MTKView in a window.
+//
 
-                            let render_pass_descriptor = RenderPassDescriptor::new();
+define_class!(
+    /// The state of our application.
+    #[unsafe(super(NSObject))]
+    #[thread_kind = MainThreadOnly]
+    struct Delegate {
+        renderer: OnceCell<Renderer>,
+        #[cfg(target_os = "macos")]
+        window: OnceCell<Retained<NSWindow>>,
+    }
 
-                            prepare_render_pass_descriptor(
-                                render_pass_descriptor,
-                                drawable.texture(),
-                            );
+    unsafe impl NSObjectProtocol for Delegate {}
 
-                            let command_buffer = command_queue.new_command_buffer();
-                            let encoder =
-                                command_buffer.new_render_command_encoder(render_pass_descriptor);
-
-                            encoder.set_render_pipeline_state(&pipeline_state);
-                            encoder.draw_mesh_threads(
-                                MTLSize::new(1, 1, 1),
-                                MTLSize::new(1, 1, 1),
-                                MTLSize::new(1, 1, 1),
-                            );
-
-                            encoder.end_encoding();
-
-                            command_buffer.present_drawable(drawable);
-                            command_buffer.commit();
-                        }
-                        _ => (),
-                    },
-                    _ => {}
+    // define the delegate methods for the `NSApplicationDelegate` protocol
+    #[cfg(target_os = "macos")]
+    unsafe impl NSApplicationDelegate for Delegate {
+        #[unsafe(method(applicationDidFinishLaunching:))]
+        #[allow(non_snake_case)]
+        unsafe fn applicationDidFinishLaunching(&self, _notification: &NSNotification) {
+            let mtm = self.mtm();
+            // create the app window
+            let window = {
+                let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(768., 768.));
+                let style = NSWindowStyleMask::Closable
+                    | NSWindowStyleMask::Resizable
+                    | NSWindowStyleMask::Titled;
+                let backing_store_type = NSBackingStoreType::Buffered;
+                let flag = false;
+                unsafe {
+                    NSWindow::initWithContentRect_styleMask_backing_defer(
+                        NSWindow::alloc(mtm),
+                        content_rect,
+                        style,
+                        backing_store_type,
+                        flag,
+                    )
                 }
-            });
-        })
-        .unwrap();
+            };
+
+            // get the default device
+            let device =
+                MTLCreateSystemDefaultDevice().expect("failed to get default system device");
+
+            // create the metal view
+            let mtk_view = {
+                let frame_rect = window.frame();
+                MTKView::initWithFrame_device(MTKView::alloc(mtm), frame_rect, Some(&device))
+            };
+
+            // initialize the renderer
+            let renderer = Renderer::new(&device, mtk_view.colorPixelFormat());
+            self.renderer().set(renderer).unwrap();
+
+            // configure the metal view delegate
+            let object = ProtocolObject::from_ref(self);
+            mtk_view.setDelegate(Some(object));
+
+            // configure the window
+            window.setContentView(Some(&mtk_view));
+            window.center();
+            window.setTitle(ns_string!("metal example"));
+            window.makeKeyAndOrderFront(None);
+
+            self.window().set(window).unwrap();
+        }
+    }
+
+    // define the delegate methods for the `MTKViewDelegate` protocol
+    #[cfg(target_os = "macos")] // TODO: Support iOS
+    unsafe impl MTKViewDelegate for Delegate {
+        #[unsafe(method(drawInMTKView:))]
+        #[allow(non_snake_case)]
+        unsafe fn drawInMTKView(&self, mtk_view: &MTKView) {
+            let renderer = self.renderer().get().unwrap();
+            let drawable = mtk_view.currentDrawable().unwrap();
+            renderer.draw(&drawable);
+        }
+
+        #[unsafe(method(mtkView:drawableSizeWillChange:))]
+        #[allow(non_snake_case)]
+        unsafe fn mtkView_drawableSizeWillChange(&self, _view: &MTKView, _size: NSSize) {
+            // println!("mtkView_drawableSizeWillChange");
+        }
+    }
+);
+
+impl Delegate {
+    fn new(mtm: MainThreadMarker) -> Retained<Self> {
+        let this = Self::alloc(mtm);
+        let this = this.set_ivars(Ivars::<Self> {
+            renderer: OnceCell::default(),
+            #[cfg(target_os = "macos")]
+            window: OnceCell::default(),
+        });
+        unsafe { msg_send![super(this), init] }
+    }
+}
+
+#[cfg(target_os = "macos")]
+fn main() {
+    let mtm = MainThreadMarker::new().unwrap();
+    // configure the app
+    let app = NSApplication::sharedApplication(mtm);
+    app.setActivationPolicy(NSApplicationActivationPolicy::Regular);
+
+    // configure the application delegate
+    let delegate = Delegate::new(mtm);
+    let object = ProtocolObject::from_ref(&*delegate);
+    app.setDelegate(Some(object));
+
+    // run the app
+    app.run();
+}
+
+#[cfg(not(target_os = "macos"))]
+fn main() {
+    panic!("This example is currently only supported on macOS");
 }

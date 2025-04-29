@@ -130,7 +130,7 @@ fn load_pipeline_state(
                 .stringByAppendingString(ns_string!(include_str!("shaders.metal"))),
             None,
         )
-        .unwrap();
+        .unwrap_or_else(|e| panic!("{e}"));
 
     let vertex_function = default_library
         .newFunctionWithName(ns_string!("vertexShader"))

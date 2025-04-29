@@ -5,13 +5,21 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-use metal::*;
+// Modified from <https://github.com/gfx-rs/metal-rs/tree/v0.33.0/examples/library
+
+use objc2_foundation::ns_string;
+use objc2_metal::{MTLCompileOptions, MTLCreateSystemDefaultDevice, MTLDevice};
 
 const PROGRAM: &str = "";
 
-fn main() {
-    let device = Device::system_default().expect("no device found");
+#[link(name = "CoreGraphics", kind = "framework")]
+extern "C" {}
 
-    let options = CompileOptions::new();
-    let _library = device.new_library_with_source(PROGRAM, &options);
+fn main() {
+    let device = MTLCreateSystemDefaultDevice().expect("no device found");
+
+    let options = MTLCompileOptions::new();
+    let _library = device
+        .newLibraryWithSource_options_error(ns_string!(PROGRAM), Some(&options))
+        .unwrap_or_else(|e| panic!("{e}"));
 }

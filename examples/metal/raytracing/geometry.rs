@@ -1,11 +1,13 @@
-use std::sync::Arc;
+use std::{ptr::NonNull, rc::Rc};
 
-use glam::{
-    f32::{Mat4, Vec3, Vec4},
-    Vec4Swizzles,
+use glam::{Mat4, Vec3, Vec4, Vec4Swizzles};
+use objc2::{rc::Retained, runtime::ProtocolObject, Message};
+use objc2_foundation::{ns_string, NSRange, NSString, NSUInteger};
+use objc2_metal::{
+    MTLAccelerationStructureBoundingBoxGeometryDescriptor,
+    MTLAccelerationStructureGeometryDescriptor, MTLAccelerationStructureTriangleGeometryDescriptor,
+    MTLBuffer, MTLDevice, MTLIndexType, MTLResource, MTLResourceOptions,
 };
-
-use metal::*;
 
 pub const GEOMETRY_MASK_TRIANGLE: u32 = 1;
 pub const GEOMETRY_MASK_SPHERE: u32 = 2;
@@ -21,19 +23,11 @@ pub const FACE_MASK_POSITIVE_Z: u16 = 1 << 5;
 pub const FACE_MASK_ALL: u16 = (1 << 6) - 1;
 
 pub trait Geometry {
-    fn upload_to_buffers(&mut self) {
-        todo!()
-    }
-    fn clear(&mut self) {
-        todo!()
-    }
-    fn get_geometry_descriptor(&self) -> AccelerationStructureGeometryDescriptor {
-        todo!()
-    }
-    fn get_resources(&self) -> Vec<Resource> {
-        todo!()
-    }
-    fn get_intersection_function_name(&self) -> Option<&str> {
+    fn upload_to_buffers(&mut self);
+    fn clear(&mut self);
+    fn get_geometry_descriptor(&self) -> Retained<MTLAccelerationStructureGeometryDescriptor>;
+    fn get_resources(&self) -> Vec<&ProtocolObject<dyn MTLResource>>;
+    fn get_intersection_function_name(&self) -> Option<&NSString> {
         None
     }
 }
@@ -56,13 +50,13 @@ pub fn get_managed_buffer_storage_mode() -> MTLResourceOptions {
 }
 
 pub struct TriangleGeometry {
-    pub device: Device,
+    pub device: Retained<ProtocolObject<dyn MTLDevice>>,
     pub name: String,
-    pub index_buffer: Option<Buffer>,
-    pub vertex_position_buffer: Option<Buffer>,
-    pub vertex_normal_buffer: Option<Buffer>,
-    pub vertex_colour_buffer: Option<Buffer>,
-    pub per_primitive_data_buffer: Option<Buffer>,
+    pub index_buffer: Option<Retained<ProtocolObject<dyn MTLBuffer>>>,
+    pub vertex_position_buffer: Option<Retained<ProtocolObject<dyn MTLBuffer>>>,
+    pub vertex_normal_buffer: Option<Retained<ProtocolObject<dyn MTLBuffer>>>,
+    pub vertex_colour_buffer: Option<Retained<ProtocolObject<dyn MTLBuffer>>>,
+    pub per_primitive_data_buffer: Option<Retained<ProtocolObject<dyn MTLBuffer>>>,
     pub indices: Vec<u16>,
     pub vertices: Vec<Vec4>,
     pub normals: Vec<Vec4>,
@@ -71,9 +65,9 @@ pub struct TriangleGeometry {
 }
 
 impl TriangleGeometry {
-    pub fn new(device: Device, name: String) -> Self {
+    pub fn new(device: &ProtocolObject<dyn MTLDevice>, name: String) -> Self {
         Self {
-            device,
+            device: device.retain(),
             name,
             index_buffer: None,
             vertex_position_buffer: None,
@@ -188,63 +182,86 @@ impl TriangleGeometry {
 
 impl Geometry for TriangleGeometry {
     fn upload_to_buffers(&mut self) {
-        self.index_buffer = Some(self.device.new_buffer_with_data(
-            self.indices.as_ptr().cast(),
-            size_of_val(self.indices.as_slice()) as NSUInteger,
-            get_managed_buffer_storage_mode(),
-        ));
-        self.vertex_position_buffer = Some(self.device.new_buffer_with_data(
-            self.vertices.as_ptr().cast(),
-            size_of_val(self.vertices.as_slice()) as NSUInteger,
-            get_managed_buffer_storage_mode(),
-        ));
-        self.vertex_normal_buffer = Some(self.device.new_buffer_with_data(
-            self.normals.as_ptr().cast(),
-            size_of_val(self.normals.as_slice()) as NSUInteger,
-            get_managed_buffer_storage_mode(),
-        ));
-        self.vertex_colour_buffer = Some(self.device.new_buffer_with_data(
-            self.colours.as_ptr().cast(),
-            size_of_val(self.colours.as_slice()) as NSUInteger,
-            get_managed_buffer_storage_mode(),
-        ));
-        self.per_primitive_data_buffer = Some(self.device.new_buffer_with_data(
-            self.triangles.as_ptr().cast(),
-            size_of_val(self.triangles.as_slice()) as NSUInteger,
-            get_managed_buffer_storage_mode(),
-        ));
+        unsafe {
+            self.index_buffer = Some(
+                self.device
+                    .newBufferWithBytes_length_options(
+                        NonNull::new(self.indices.as_ptr().cast_mut().cast()).unwrap(),
+                        size_of_val(self.indices.as_slice()),
+                        get_managed_buffer_storage_mode(),
+                    )
+                    .unwrap(),
+            );
+            self.vertex_position_buffer = Some(
+                self.device
+                    .newBufferWithBytes_length_options(
+                        NonNull::new(self.vertices.as_ptr().cast_mut().cast()).unwrap(),
+                        size_of_val(self.vertices.as_slice()),
+                        get_managed_buffer_storage_mode(),
+                    )
+                    .unwrap(),
+            );
+            self.vertex_normal_buffer = Some(
+                self.device
+                    .newBufferWithBytes_length_options(
+                        NonNull::new(self.normals.as_ptr().cast_mut().cast()).unwrap(),
+                        size_of_val(self.normals.as_slice()),
+                        get_managed_buffer_storage_mode(),
+                    )
+                    .unwrap(),
+            );
+            self.vertex_colour_buffer = Some(
+                self.device
+                    .newBufferWithBytes_length_options(
+                        NonNull::new(self.colours.as_ptr().cast_mut().cast()).unwrap(),
+                        size_of_val(self.colours.as_slice()),
+                        get_managed_buffer_storage_mode(),
+                    )
+                    .unwrap(),
+            );
+            self.per_primitive_data_buffer = Some(
+                self.device
+                    .newBufferWithBytes_length_options(
+                        NonNull::new(self.triangles.as_ptr().cast_mut().cast()).unwrap(),
+                        size_of_val(self.triangles.as_slice()),
+                        get_managed_buffer_storage_mode(),
+                    )
+                    .unwrap(),
+            );
+        }
+
         self.index_buffer
             .as_ref()
             .unwrap()
-            .did_modify_range(NSRange::new(
+            .didModifyRange(NSRange::new(
                 0,
                 self.index_buffer.as_ref().unwrap().length(),
             ));
         self.vertex_position_buffer
             .as_ref()
             .unwrap()
-            .did_modify_range(NSRange::new(
+            .didModifyRange(NSRange::new(
                 0,
                 self.vertex_position_buffer.as_ref().unwrap().length(),
             ));
         self.vertex_normal_buffer
             .as_ref()
             .unwrap()
-            .did_modify_range(NSRange::new(
+            .didModifyRange(NSRange::new(
                 0,
                 self.vertex_normal_buffer.as_ref().unwrap().length(),
             ));
         self.vertex_colour_buffer
             .as_ref()
             .unwrap()
-            .did_modify_range(NSRange::new(
+            .didModifyRange(NSRange::new(
                 0,
                 self.vertex_colour_buffer.as_ref().unwrap().length(),
             ));
         self.per_primitive_data_buffer
             .as_ref()
             .unwrap()
-            .did_modify_range(NSRange::new(
+            .didModifyRange(NSRange::new(
                 0,
                 self.per_primitive_data_buffer.as_ref().unwrap().length(),
             ));
@@ -252,23 +269,38 @@ impl Geometry for TriangleGeometry {
         self.index_buffer
             .as_ref()
             .unwrap()
-            .set_label(&format!("index buffer of {}", self.name));
+            .setLabel(Some(&NSString::from_str(&format!(
+                "index buffer of {}",
+                self.name
+            ))));
         self.vertex_position_buffer
             .as_ref()
             .unwrap()
-            .set_label(&format!("vertex position buffer of {}", self.name));
+            .setLabel(Some(&NSString::from_str(&format!(
+                "vertex position buffer of {}",
+                self.name
+            ))));
         self.vertex_normal_buffer
             .as_ref()
             .unwrap()
-            .set_label(&format!("vertex normal buffer of {}", self.name));
+            .setLabel(Some(&NSString::from_str(&format!(
+                "vertex normal buffer of {}",
+                self.name
+            ))));
         self.vertex_colour_buffer
             .as_ref()
             .unwrap()
-            .set_label(&format!("vertex colour buffer of {}", self.name));
+            .setLabel(Some(&NSString::from_str(&format!(
+                "vertex colour buffer of {}",
+                self.name
+            ))));
         self.per_primitive_data_buffer
             .as_ref()
             .unwrap()
-            .set_label(&format!("per primitive data buffer of {}", self.name));
+            .setLabel(Some(&NSString::from_str(&format!(
+                "per primitive data buffer of {}",
+                self.name
+            ))));
     }
 
     fn clear(&mut self) {
@@ -279,26 +311,25 @@ impl Geometry for TriangleGeometry {
         self.triangles.clear();
     }
 
-    fn get_geometry_descriptor(&self) -> AccelerationStructureGeometryDescriptor {
-        let descriptor = AccelerationStructureTriangleGeometryDescriptor::descriptor();
+    fn get_geometry_descriptor(&self) -> Retained<MTLAccelerationStructureGeometryDescriptor> {
+        let descriptor = MTLAccelerationStructureTriangleGeometryDescriptor::new();
 
-        descriptor.set_index_buffer(Some(self.index_buffer.as_ref().unwrap()));
-        descriptor.set_index_type(MTLIndexType::UInt16);
-        descriptor.set_vertex_buffer(Some(self.vertex_position_buffer.as_ref().unwrap()));
-        descriptor.set_vertex_stride(size_of::<Vec4>() as NSUInteger);
-        descriptor.set_triangle_count((self.indices.len() / 3) as NSUInteger);
-        descriptor
-            .set_primitive_data_buffer(Some(self.per_primitive_data_buffer.as_ref().unwrap()));
-        descriptor.set_primitive_data_stride(size_of::<Triangle>() as NSUInteger);
-        descriptor.set_primitive_data_element_size(size_of::<Triangle>() as NSUInteger);
-        From::from(descriptor)
+        descriptor.setIndexBuffer(Some(self.index_buffer.as_ref().unwrap()));
+        descriptor.setIndexType(MTLIndexType::UInt16);
+        descriptor.setVertexBuffer(Some(self.vertex_position_buffer.as_ref().unwrap()));
+        descriptor.setVertexStride(size_of::<Vec4>());
+        descriptor.setTriangleCount(self.indices.len() / 3);
+        descriptor.setPrimitiveDataBuffer(Some(self.per_primitive_data_buffer.as_ref().unwrap()));
+        descriptor.setPrimitiveDataStride(size_of::<Triangle>());
+        descriptor.setPrimitiveDataElementSize(size_of::<Triangle>());
+        descriptor.into_super()
     }
 
-    fn get_resources(&self) -> Vec<Resource> {
+    fn get_resources(&self) -> Vec<&ProtocolObject<dyn MTLResource>> {
         vec![
-            From::from(self.index_buffer.as_ref().unwrap().clone()),
-            From::from(self.vertex_normal_buffer.as_ref().unwrap().clone()),
-            From::from(self.vertex_colour_buffer.as_ref().unwrap().clone()),
+            self.index_buffer.as_ref().unwrap().as_ref(),
+            self.vertex_normal_buffer.as_ref().unwrap().as_ref(),
+            self.vertex_colour_buffer.as_ref().unwrap().as_ref(),
         ]
     }
 }
@@ -316,17 +347,17 @@ pub struct Sphere {
 }
 
 pub struct SphereGeometry {
-    pub device: Device,
-    pub sphere_buffer: Option<Buffer>,
-    pub bounding_box_buffer: Option<Buffer>,
-    pub per_primitive_data_buffer: Option<Buffer>,
+    pub device: Retained<ProtocolObject<dyn MTLDevice>>,
+    pub sphere_buffer: Option<Retained<ProtocolObject<dyn MTLBuffer>>>,
+    pub bounding_box_buffer: Option<Retained<ProtocolObject<dyn MTLBuffer>>>,
+    pub per_primitive_data_buffer: Option<Retained<ProtocolObject<dyn MTLBuffer>>>,
     pub spheres: Vec<Sphere>,
 }
 
 impl SphereGeometry {
-    pub fn new(device: Device) -> Self {
+    pub fn new(device: &ProtocolObject<dyn MTLDevice>) -> Self {
         Self {
-            device,
+            device: device.retain(),
             sphere_buffer: None,
             bounding_box_buffer: None,
             per_primitive_data_buffer: None,
@@ -344,15 +375,20 @@ impl SphereGeometry {
 
 impl Geometry for SphereGeometry {
     fn upload_to_buffers(&mut self) {
-        self.sphere_buffer = Some(self.device.new_buffer_with_data(
-            self.spheres.as_ptr().cast(),
-            size_of_val(self.spheres.as_slice()) as NSUInteger,
-            get_managed_buffer_storage_mode(),
-        ));
+        self.sphere_buffer = Some(
+            unsafe {
+                self.device.newBufferWithBytes_length_options(
+                    NonNull::new(self.spheres.as_ptr().cast_mut().cast()).unwrap(),
+                    size_of_val(self.spheres.as_slice()),
+                    get_managed_buffer_storage_mode(),
+                )
+            }
+            .unwrap(),
+        );
         self.sphere_buffer
             .as_ref()
             .unwrap()
-            .set_label("sphere buffer");
+            .setLabel(Some(ns_string!("sphere buffer")));
         let bounding_boxes = self
             .spheres
             .iter()
@@ -361,26 +397,31 @@ impl Geometry for SphereGeometry {
                 max: sphere.origin_radius_squared.xyz() + sphere.colour_radius.w,
             })
             .collect::<Vec<_>>();
-        self.bounding_box_buffer = Some(self.device.new_buffer_with_data(
-            bounding_boxes.as_ptr().cast(),
-            size_of_val(bounding_boxes.as_slice()) as NSUInteger,
-            get_managed_buffer_storage_mode(),
-        ));
+        self.bounding_box_buffer = Some(
+            unsafe {
+                self.device.newBufferWithBytes_length_options(
+                    NonNull::new(bounding_boxes.as_ptr().cast_mut().cast()).unwrap(),
+                    size_of_val(bounding_boxes.as_slice()),
+                    get_managed_buffer_storage_mode(),
+                )
+            }
+            .unwrap(),
+        );
         self.bounding_box_buffer
             .as_ref()
             .unwrap()
-            .set_label("bounding box buffer");
+            .setLabel(Some(ns_string!("bounding box buffer")));
         self.sphere_buffer
             .as_ref()
             .unwrap()
-            .did_modify_range(NSRange::new(
+            .didModifyRange(NSRange::new(
                 0,
                 self.sphere_buffer.as_ref().unwrap().length(),
             ));
         self.bounding_box_buffer
             .as_ref()
             .unwrap()
-            .did_modify_range(NSRange::new(
+            .didModifyRange(NSRange::new(
                 0,
                 self.bounding_box_buffer.as_ref().unwrap().length(),
             ));
@@ -390,27 +431,27 @@ impl Geometry for SphereGeometry {
         self.spheres.clear();
     }
 
-    fn get_geometry_descriptor(&self) -> AccelerationStructureGeometryDescriptor {
-        let descriptor = AccelerationStructureBoundingBoxGeometryDescriptor::descriptor();
-        descriptor.set_bounding_box_buffer(Some(self.bounding_box_buffer.as_ref().unwrap()));
-        descriptor.set_bounding_box_count(self.spheres.len() as NSUInteger);
-        descriptor.set_primitive_data_buffer(Some(self.sphere_buffer.as_ref().unwrap()));
-        descriptor.set_primitive_data_stride(size_of::<Sphere>() as NSUInteger);
-        descriptor.set_primitive_data_element_size(size_of::<Sphere>() as NSUInteger);
-        From::from(descriptor)
+    fn get_geometry_descriptor(&self) -> Retained<MTLAccelerationStructureGeometryDescriptor> {
+        let descriptor = MTLAccelerationStructureBoundingBoxGeometryDescriptor::descriptor();
+        descriptor.setBoundingBoxBuffer(Some(self.bounding_box_buffer.as_ref().unwrap()));
+        descriptor.setBoundingBoxCount(self.spheres.len());
+        descriptor.setPrimitiveDataBuffer(Some(self.sphere_buffer.as_ref().unwrap()));
+        descriptor.setPrimitiveDataStride(size_of::<Sphere>());
+        descriptor.setPrimitiveDataElementSize(size_of::<Sphere>());
+        descriptor.into_super()
     }
 
-    fn get_resources(&self) -> Vec<Resource> {
-        vec![From::from(self.sphere_buffer.as_ref().unwrap().clone())]
+    fn get_resources(&self) -> Vec<&ProtocolObject<dyn MTLResource>> {
+        vec![self.sphere_buffer.as_ref().unwrap().as_ref()]
     }
 
-    fn get_intersection_function_name(&self) -> Option<&str> {
-        Some("sphereIntersectionFunction")
+    fn get_intersection_function_name(&self) -> Option<&NSString> {
+        Some(ns_string!("sphereIntersectionFunction"))
     }
 }
 
 pub struct GeometryInstance {
-    pub geometry: Arc<dyn Geometry>,
+    pub geometry: Rc<dyn Geometry>,
     pub transform: Mat4,
     pub mask: u32,
     pub index_in_scene: NSUInteger,

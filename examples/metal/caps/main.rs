@@ -5,29 +5,37 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-use metal::*;
+// Modified from <https://github.com/gfx-rs/metal-rs/tree/v0.33.0/examples/caps>
+
+use objc2_metal::{MTLCreateSystemDefaultDevice, MTLDevice};
+
+#[link(name = "CoreGraphics", kind = "framework")]
+extern "C" {}
 
 fn main() {
-    let device = Device::system_default().expect("no device found");
+    let device = MTLCreateSystemDefaultDevice().expect("no device found");
 
-    #[cfg(feature = "private")]
+    #[cfg(feature = "unstable-private")]
     {
-        println!("Vendor: {:?}", unsafe { device.vendor() });
-        println!("Family: {:?}", unsafe { device.family_name() });
+        println!("Vendor: {:?}", unsafe { device.vendorName() });
+        println!("Family: {:?}", unsafe { device.familyName() });
     }
     println!(
         "Max threads per threadgroup: {:?}",
-        device.max_threads_per_threadgroup()
+        device.maxThreadsPerThreadgroup()
     );
     #[cfg(target_os = "macos")]
     {
-        println!("Integrated GPU: {:?}", device.is_low_power());
-        println!("Headless: {:?}", device.is_headless());
-        println!("D24S8: {:?}", device.d24_s8_supported());
+        println!("Integrated GPU: {:?}", device.isLowPower());
+        println!("Headless: {:?}", device.isHeadless());
+        println!(
+            "D24S8: {:?}",
+            device.isDepth24Stencil8PixelFormatSupported()
+        );
     }
-    println!("maxBufferLength: {} Mb", device.max_buffer_length() >> 20);
+    println!("maxBufferLength: {} Mb", device.maxBufferLength() >> 20);
     println!(
         "Indirect argument buffer: {:?}",
-        device.argument_buffers_support()
+        device.argumentBuffersSupport()
     );
 }

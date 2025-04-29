@@ -1,12 +1,30 @@
 use std::{
+    cell::{Cell, RefCell},
     collections::BTreeMap,
     ops::Index,
+    ptr::NonNull,
     sync::{Arc, Condvar, Mutex},
 };
 
-use core_graphics_types::{base::CGFloat, geometry::CGSize};
 use glam::{Vec3, Vec4, Vec4Swizzles};
-use metal::{foreign_types::ForeignType, *};
+use objc2::{rc::Retained, runtime::ProtocolObject, Message, ProtocolType};
+use objc2_core_foundation::CGSize;
+use objc2_foundation::{ns_string, NSArray, NSObjectProtocol, NSRange, NSString, NSUInteger};
+use objc2_metal::{
+    MTLAccelerationStructure, MTLAccelerationStructureCommandEncoder,
+    MTLAccelerationStructureDescriptor, MTLAccelerationStructureInstanceDescriptor,
+    MTLAccelerationStructureInstanceOptions, MTLBuffer, MTLClearColor, MTLCommandBuffer,
+    MTLCommandEncoder, MTLCommandQueue, MTLComputeCommandEncoder, MTLComputePipelineDescriptor,
+    MTLComputePipelineState, MTLDataType, MTLDevice, MTLFunction, MTLFunctionConstantValues,
+    MTLInstanceAccelerationStructureDescriptor, MTLIntersectionFunctionTable,
+    MTLIntersectionFunctionTableDescriptor, MTLLibrary, MTLLinkedFunctions, MTLLoadAction,
+    MTLOrigin, MTLPipelineOption, MTLPixelFormat, MTLPrimitiveAccelerationStructureDescriptor,
+    MTLPrimitiveType, MTLRegion, MTLRenderCommandEncoder, MTLRenderPassDescriptor,
+    MTLRenderPipelineDescriptor, MTLRenderPipelineState, MTLResource, MTLResourceOptions,
+    MTLResourceUsage, MTLSize, MTLStorageMode, MTLTexture, MTLTextureDescriptor, MTLTextureType,
+    MTLTextureUsage,
+};
+use objc2_quartz_core::CAMetalDrawable;
 use rand::RngCore;
 
 use crate::{camera::Camera, geometry::get_managed_buffer_storage_mode, scene::Scene};
@@ -21,7 +39,7 @@ struct Uniforms {
 }
 
 pub const MAX_FRAMES_IN_FLIGHT: NSUInteger = 3;
-pub const ALIGNED_UNIFORMS_SIZE: NSUInteger = (size_of::<Uniforms>() as NSUInteger + 255) & !255;
+pub const ALIGNED_UNIFORMS_SIZE: NSUInteger = (size_of::<Uniforms>() + 255) & !255;
 pub const UNIFORM_BUFFER_SIZE: NSUInteger = MAX_FRAMES_IN_FLIGHT * ALIGNED_UNIFORMS_SIZE;
 
 #[derive(Clone)]
@@ -52,42 +70,45 @@ impl Semaphore {
 }
 
 pub struct Renderer {
-    pub device: Device,
+    pub device: Retained<ProtocolObject<dyn MTLDevice>>,
     pub scene: Scene,
-    pub uniform_buffer: Buffer,
-    pub resource_buffer: Buffer,
-    pub instance_acceleration_structure: AccelerationStructure,
-    pub accumulation_targets: [Texture; 2],
-    pub random_texture: Texture,
-    pub frame_index: NSUInteger,
-    pub uniform_buffer_index: NSUInteger,
-    pub uniform_buffer_offset: NSUInteger,
-    pub size: CGSize,
+    pub uniform_buffer: Retained<ProtocolObject<dyn MTLBuffer>>,
+    pub resource_buffer: Retained<ProtocolObject<dyn MTLBuffer>>,
+    pub instance_acceleration_structure: Retained<ProtocolObject<dyn MTLAccelerationStructure>>,
+    pub accumulation_targets: [RefCell<Retained<ProtocolObject<dyn MTLTexture>>>; 2],
+    pub random_texture: RefCell<Retained<ProtocolObject<dyn MTLTexture>>>,
+    pub frame_index: Cell<NSUInteger>,
+    pub uniform_buffer_index: Cell<NSUInteger>,
+    pub uniform_buffer_offset: Cell<NSUInteger>,
+    pub size: Cell<CGSize>,
     semaphore: Semaphore,
-    pub queue: CommandQueue,
-    instance_buffer: Buffer,
-    intersection_function_table: IntersectionFunctionTable,
-    primitive_acceleration_structures: Vec<AccelerationStructure>,
-    raytracing_pipeline: ComputePipelineState,
-    copy_pipeline: RenderPipelineState,
+    pub queue: Retained<ProtocolObject<dyn MTLCommandQueue>>,
+    instance_buffer: Retained<ProtocolObject<dyn MTLBuffer>>,
+    intersection_function_table: Retained<ProtocolObject<dyn MTLIntersectionFunctionTable>>,
+    primitive_acceleration_structures: Vec<Retained<ProtocolObject<dyn MTLAccelerationStructure>>>,
+    raytracing_pipeline: Retained<ProtocolObject<dyn MTLComputePipelineState>>,
+    copy_pipeline: Retained<ProtocolObject<dyn MTLRenderPipelineState>>,
 }
 
 impl Renderer {
-    pub fn new(device: Device) -> Self {
-        let scene = Scene::new(device.clone());
+    pub fn new(device: &ProtocolObject<dyn MTLDevice>) -> Self {
+        let scene = Scene::new(device);
 
-        let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("examples/raytracing/shaders.metallib");
-        let library = device.new_library_with_file(library_path).unwrap();
-        let queue = device.new_command_queue();
+        let library = device
+            .newLibraryWithSource_options_error(ns_string!(include_str!("shaders.metal")), None)
+            .unwrap_or_else(|e| panic!("{e}"));
+        let queue = device.newCommandQueue().unwrap();
 
-        let buffer_data = [0u8; UNIFORM_BUFFER_SIZE as usize];
-        let uniform_buffer = device.new_buffer_with_data(
-            buffer_data.as_ptr().cast(),
-            UNIFORM_BUFFER_SIZE,
-            get_managed_buffer_storage_mode(),
-        );
-        uniform_buffer.set_label("uniform buffer");
+        let buffer_data = [0u8; UNIFORM_BUFFER_SIZE];
+        let uniform_buffer = unsafe {
+            device.newBufferWithBytes_length_options(
+                NonNull::new(buffer_data.as_ptr().cast_mut().cast()).unwrap(),
+                UNIFORM_BUFFER_SIZE,
+                get_managed_buffer_storage_mode(),
+            )
+        }
+        .unwrap();
+        uniform_buffer.setLabel(Some(ns_string!("uniform buffer")));
         let resources_stride = {
             let mut max = 0;
             for geometry in &scene.geometries {
@@ -106,42 +127,41 @@ impl Renderer {
 
             for (argument_index, resource) in resources.iter().enumerate() {
                 let resource_buffer_index = resource_buffer_begin_index + argument_index;
-                let resource = resource.clone();
-                resource_buffer_data[resource_buffer_index] =
-                    if resource.conforms_to_protocol::<MTLBuffer>().unwrap() {
-                        let buffer = unsafe { Buffer::from_ptr(resource.into_ptr().cast()) };
-                        buffer.gpu_address()
-                    } else if resource.conforms_to_protocol::<MTLTexture>().unwrap() {
-                        let texture = unsafe { Texture::from_ptr(resource.into_ptr().cast()) };
-                        texture.gpu_resource_id()._impl
-                    } else {
-                        panic!("Unexpected resource!")
-                    }
+                let resource_ptr: *const ProtocolObject<dyn MTLResource> = &**resource;
+                let value = if resource.conformsToProtocol(<dyn MTLBuffer>::protocol().unwrap()) {
+                    let buffer = unsafe { &*resource_ptr.cast::<ProtocolObject<dyn MTLBuffer>>() };
+                    buffer.gpuAddress()
+                } else if resource.conformsToProtocol(<dyn MTLTexture>::protocol().unwrap()) {
+                    let texture =
+                        unsafe { &*resource_ptr.cast::<ProtocolObject<dyn MTLTexture>>() };
+                    texture.gpuResourceID().to_raw()
+                } else {
+                    panic!("Unexpected resource!")
+                };
+                resource_buffer_data[resource_buffer_index] = value;
             }
         }
-        let resource_buffer = device.new_buffer_with_data(
-            resource_buffer_data.as_ptr().cast(),
-            size_of_val(resource_buffer_data.as_slice()) as NSUInteger,
-            get_managed_buffer_storage_mode(),
-        );
-        resource_buffer.set_label("resource buffer");
-        resource_buffer.did_modify_range(NSRange::new(0, resource_buffer.length()));
+        let resource_buffer = unsafe {
+            device.newBufferWithBytes_length_options(
+                NonNull::new(resource_buffer_data.as_ptr().cast_mut().cast()).unwrap(),
+                size_of_val(resource_buffer_data.as_slice()),
+                get_managed_buffer_storage_mode(),
+            )
+        }
+        .unwrap();
+        resource_buffer.setLabel(Some(ns_string!("resource buffer")));
+        resource_buffer.didModifyRange(NSRange::new(0, resource_buffer.length()));
 
         let mut primitive_acceleration_structures = Vec::new();
         for i in 0..scene.geometries.len() {
             let mesh = scene.geometries[i].as_ref();
             let geometry_descriptor = mesh.get_geometry_descriptor();
-            geometry_descriptor.set_intersection_function_table_offset(i as NSUInteger);
-            let geometry_descriptors = Array::from_owned_slice(&[geometry_descriptor]);
-            let accel_descriptor = PrimitiveAccelerationStructureDescriptor::descriptor();
-            accel_descriptor.set_geometry_descriptors(geometry_descriptors);
-            let accel_descriptor: AccelerationStructureDescriptor = From::from(accel_descriptor);
+            geometry_descriptor.setIntersectionFunctionTableOffset(i);
+            let geometry_descriptors = NSArray::from_slice(&[&*geometry_descriptor]);
+            let accel_descriptor = MTLPrimitiveAccelerationStructureDescriptor::descriptor();
+            accel_descriptor.setGeometryDescriptors(Some(&geometry_descriptors));
             primitive_acceleration_structures.push(
-                Self::new_acceleration_structure_with_descriptor(
-                    &device,
-                    &queue,
-                    &accel_descriptor,
-                ),
+                Self::new_acceleration_structure_with_descriptor(device, &queue, &accel_descriptor),
             );
         }
 
@@ -151,42 +171,46 @@ impl Renderer {
         ];
         for (instance_index, instance) in scene.geometry_instances.iter().enumerate() {
             let geometry_index = instance.index_in_scene;
-            instance_descriptors[instance_index].acceleration_structure_index =
-                geometry_index as u32;
+            instance_descriptors[instance_index].accelerationStructureIndex = geometry_index as u32;
             instance_descriptors[instance_index].options =
                 if instance.geometry.get_intersection_function_name().is_none() {
                     MTLAccelerationStructureInstanceOptions::Opaque
                 } else {
                     MTLAccelerationStructureInstanceOptions::None
                 };
-            instance_descriptors[instance_index].intersection_function_table_offset = 0;
+            instance_descriptors[instance_index].intersectionFunctionTableOffset = 0;
             instance_descriptors[instance_index].mask = instance.mask;
             for column in 0..4 {
-                for row in 0..3 {
-                    instance_descriptors[instance_index].transformation_matrix[column][row] =
-                        *instance.transform.col(column).index(row);
-                }
+                let packed = &mut instance_descriptors[instance_index]
+                    .transformationMatrix
+                    .columns[column];
+                packed.x = *instance.transform.col(column).index(0);
+                packed.y = *instance.transform.col(column).index(1);
+                packed.z = *instance.transform.col(column).index(2);
             }
         }
-        let instance_buffer = device.new_buffer_with_data(
-            instance_descriptors.as_ptr().cast(),
-            size_of_val(instance_descriptors.as_slice()) as NSUInteger,
-            get_managed_buffer_storage_mode(),
-        );
-        instance_buffer.set_label("instance buffer");
-        instance_buffer.did_modify_range(NSRange::new(0, instance_buffer.length()));
+        let instance_buffer = unsafe {
+            device.newBufferWithBytes_length_options(
+                NonNull::new(instance_descriptors.as_ptr().cast_mut().cast()).unwrap(),
+                size_of_val(instance_descriptors.as_slice()),
+                get_managed_buffer_storage_mode(),
+            )
+        }
+        .unwrap();
+        instance_buffer.setLabel(Some(ns_string!("instance buffer")));
+        instance_buffer.didModifyRange(NSRange::new(0, instance_buffer.length()));
 
-        let accel_descriptor = InstanceAccelerationStructureDescriptor::descriptor();
-        accel_descriptor.set_instanced_acceleration_structures(Array::from_owned_slice(
+        let accel_descriptor = MTLInstanceAccelerationStructureDescriptor::descriptor();
+        accel_descriptor.setInstancedAccelerationStructures(Some(&NSArray::from_retained_slice(
             &primitive_acceleration_structures,
-        ));
-        accel_descriptor.set_instance_count(scene.geometry_instances.len() as NSUInteger);
-        accel_descriptor.set_instance_descriptor_buffer(&instance_buffer);
-        let accel_descriptor: AccelerationStructureDescriptor = From::from(accel_descriptor);
+        )));
+        accel_descriptor.setInstanceCount(scene.geometry_instances.len());
+        accel_descriptor.setInstanceDescriptorBuffer(Some(&instance_buffer));
         let instance_acceleration_structure =
-            Self::new_acceleration_structure_with_descriptor(&device, &queue, &accel_descriptor);
+            Self::new_acceleration_structure_with_descriptor(device, &queue, &accel_descriptor);
 
-        let mut intersection_functions = BTreeMap::<String, Function>::new();
+        let mut intersection_functions =
+            BTreeMap::<Retained<NSString>, Retained<ProtocolObject<dyn MTLFunction>>>::new();
         for geometry in &scene.geometries {
             if let Some(name) = geometry.get_intersection_function_name() {
                 if !intersection_functions.contains_key(name) {
@@ -195,75 +219,91 @@ impl Renderer {
                         resources_stride as u32,
                         name,
                     );
-                    intersection_functions.insert(name.to_string(), intersection_function);
+                    intersection_functions.insert(name.retain(), intersection_function);
                 }
             }
         }
         let raytracing_function = Self::new_specialised_function_with_name(
             &library,
             resources_stride as u32,
-            "raytracingKernel",
+            ns_string!("raytracingKernel"),
         );
-        let intersection_function_array: Vec<&FunctionRef> = intersection_functions
-            .values()
-            .map(|f| -> &FunctionRef { f })
-            .collect();
+        let intersection_function_array: Vec<&ProtocolObject<dyn MTLFunction>> =
+            intersection_functions.values().map(|f| &**f).collect();
+        let intersection_function_array = NSArray::from_slice(&intersection_function_array);
         let raytracing_pipeline = Self::new_compute_pipeline_state_with_function(
-            &device,
+            device,
             &raytracing_function,
             &intersection_function_array,
         );
-        let intersection_function_table_descriptor = IntersectionFunctionTableDescriptor::new();
-        intersection_function_table_descriptor
-            .set_function_count(scene.geometries.len() as NSUInteger);
+        let intersection_function_table_descriptor = MTLIntersectionFunctionTableDescriptor::new();
+        intersection_function_table_descriptor.setFunctionCount(scene.geometries.len());
         let intersection_function_table = raytracing_pipeline
-            .new_intersection_function_table_with_descriptor(
-                &intersection_function_table_descriptor,
-            );
+            .newIntersectionFunctionTableWithDescriptor(&intersection_function_table_descriptor)
+            .unwrap();
         for geometry_index in 0..scene.geometries.len() {
             let geometry = scene.geometries[geometry_index].as_ref();
             if let Some(intersection_function_name) = geometry.get_intersection_function_name() {
                 let intersection_function = &intersection_functions[intersection_function_name];
                 let handle = raytracing_pipeline
-                    .function_handle_with_function(intersection_function)
+                    .functionHandleWithFunction(intersection_function)
                     .unwrap();
-                intersection_function_table.set_function(handle, geometry_index as NSUInteger);
+                intersection_function_table.setFunction_atIndex(Some(&handle), geometry_index);
             }
         }
-        let render_descriptor = RenderPipelineDescriptor::new();
-        render_descriptor
-            .set_vertex_function(Some(&library.get_function("copyVertex", None).unwrap()));
-        render_descriptor
-            .set_fragment_function(Some(&library.get_function("copyFragment", None).unwrap()));
-        render_descriptor
-            .color_attachments()
-            .object_at(0)
-            .unwrap()
-            .set_pixel_format(MTLPixelFormat::RGBA16Float);
+        let render_descriptor = MTLRenderPipelineDescriptor::new();
+        render_descriptor.setVertexFunction(Some(
+            &library
+                .newFunctionWithName(ns_string!("copyVertex"))
+                .unwrap(),
+        ));
+        render_descriptor.setFragmentFunction(Some(
+            &library
+                .newFunctionWithName(ns_string!("copyFragment"))
+                .unwrap(),
+        ));
+        unsafe {
+            render_descriptor
+                .colorAttachments()
+                .objectAtIndexedSubscript(0)
+        }
+        .setPixelFormat(MTLPixelFormat::RGBA16Float);
         let copy_pipeline = device
-            .new_render_pipeline_state(&render_descriptor)
+            .newRenderPipelineStateWithDescriptor_error(&render_descriptor)
             .unwrap();
 
         let texture_descriptor = Self::create_target_descriptor(1024, 1024);
         let accumulation_targets = [
-            device.new_texture(&texture_descriptor),
-            device.new_texture(&texture_descriptor),
+            RefCell::new(
+                device
+                    .newTextureWithDescriptor(&texture_descriptor)
+                    .unwrap(),
+            ),
+            RefCell::new(
+                device
+                    .newTextureWithDescriptor(&texture_descriptor)
+                    .unwrap(),
+            ),
         ];
-        let random_texture = device.new_texture(&texture_descriptor);
+        let random_texture = RefCell::new(
+            device
+                .newTextureWithDescriptor(&texture_descriptor)
+                .unwrap(),
+        );
 
         Self {
-            device,
+            device: device.retain(),
             scene,
             uniform_buffer,
             resource_buffer,
             instance_acceleration_structure,
             accumulation_targets,
             random_texture,
-            frame_index: 0,
-            uniform_buffer_index: 0,
-            uniform_buffer_offset: 0,
-            size: CGSize::new(1024 as CGFloat, 1024 as CGFloat),
-            semaphore: Semaphore::new((MAX_FRAMES_IN_FLIGHT - 2) as usize),
+            frame_index: Cell::new(0),
+            uniform_buffer_index: Cell::new(0),
+            uniform_buffer_offset: Cell::new(0),
+            size: Cell::new(CGSize::new(1024.0, 1024.0)),
+            semaphore: Semaphore::new(MAX_FRAMES_IN_FLIGHT - 2),
             instance_buffer,
             queue,
             intersection_function_table,
@@ -273,50 +313,77 @@ impl Renderer {
         }
     }
 
-    fn create_target_descriptor(width: NSUInteger, height: NSUInteger) -> TextureDescriptor {
-        let texture_descriptor = TextureDescriptor::new();
-        texture_descriptor.set_pixel_format(MTLPixelFormat::RGBA32Float);
-        texture_descriptor.set_texture_type(MTLTextureType::D2);
-        texture_descriptor.set_width(width);
-        texture_descriptor.set_height(height);
-        texture_descriptor.set_storage_mode(MTLStorageMode::Private);
-        texture_descriptor.set_usage(MTLTextureUsage::ShaderRead | MTLTextureUsage::ShaderWrite);
+    fn create_target_descriptor(
+        width: NSUInteger,
+        height: NSUInteger,
+    ) -> Retained<MTLTextureDescriptor> {
+        let texture_descriptor = MTLTextureDescriptor::new();
+        texture_descriptor.setPixelFormat(MTLPixelFormat::RGBA32Float);
+        texture_descriptor.setTextureType(MTLTextureType::Type2D);
+        unsafe {
+            texture_descriptor.setWidth(width);
+            texture_descriptor.setHeight(height);
+        }
+        texture_descriptor.setStorageMode(MTLStorageMode::Private);
+        texture_descriptor.setUsage(MTLTextureUsage::ShaderRead | MTLTextureUsage::ShaderWrite);
         texture_descriptor
     }
 
-    pub fn window_resized(&mut self, size: CGSize) {
-        self.size = size;
+    pub fn resize(&self, size: CGSize) {
+        self.size.set(size);
         let texture_descriptor =
             Self::create_target_descriptor(size.width as NSUInteger, size.height as NSUInteger);
-        self.accumulation_targets[0] = self.device.new_texture(&texture_descriptor);
-        self.accumulation_targets[1] = self.device.new_texture(&texture_descriptor);
-        texture_descriptor.set_pixel_format(MTLPixelFormat::R32Uint);
-        texture_descriptor.set_usage(MTLTextureUsage::ShaderRead);
-        texture_descriptor.set_storage_mode(MTLStorageMode::Managed);
-        self.random_texture = self.device.new_texture(&texture_descriptor);
+        *self.accumulation_targets[0].borrow_mut() = self
+            .device
+            .newTextureWithDescriptor(&texture_descriptor)
+            .unwrap();
+        *self.accumulation_targets[1].borrow_mut() = self
+            .device
+            .newTextureWithDescriptor(&texture_descriptor)
+            .unwrap();
+        texture_descriptor.setPixelFormat(MTLPixelFormat::R32Uint);
+        texture_descriptor.setUsage(MTLTextureUsage::ShaderRead);
+        texture_descriptor.setStorageMode(MTLStorageMode::Managed);
+        *self.random_texture.borrow_mut() = self
+            .device
+            .newTextureWithDescriptor(&texture_descriptor)
+            .unwrap();
         let mut rng = rand::rng();
         let mut random_values = vec![0u32; (size.width * size.height) as usize];
         for v in &mut random_values {
             *v = rng.next_u32();
         }
-        self.random_texture.replace_region(
-            MTLRegion::new_2d(0, 0, size.width as NSUInteger, size.height as NSUInteger),
-            0,
-            random_values.as_ptr().cast(),
-            size_of::<u32>() as NSUInteger * size.width as NSUInteger,
-        );
-        self.frame_index = 0;
+        unsafe {
+            self.random_texture
+                .borrow()
+                .replaceRegion_mipmapLevel_withBytes_bytesPerRow(
+                    // TODO: new_2d
+                    MTLRegion {
+                        origin: MTLOrigin { x: 0, y: 0, z: 0 },
+                        size: MTLSize {
+                            width: size.width as NSUInteger,
+                            height: size.height as NSUInteger,
+                            depth: 1,
+                        },
+                    },
+                    0,
+                    NonNull::new(random_values.as_ptr().cast_mut().cast()).unwrap(),
+                    size_of::<u32>() * size.width as NSUInteger,
+                )
+        };
+        self.frame_index.set(0);
     }
 
-    fn update_uniforms(&mut self) {
-        self.uniform_buffer_offset = ALIGNED_UNIFORMS_SIZE * self.uniform_buffer_index;
+    fn update_uniforms(&self) {
+        self.uniform_buffer_offset
+            .set(ALIGNED_UNIFORMS_SIZE * self.uniform_buffer_index.get());
 
         let uniforms = unsafe {
-            &mut *self
-                .uniform_buffer
+            self.uniform_buffer
                 .contents()
-                .add(self.uniform_buffer_offset as usize)
+                .add(self.uniform_buffer_offset.get())
                 .cast::<Uniforms>()
+                .as_mut()
         };
 
         let position = self.scene.camera.position;
@@ -333,169 +400,221 @@ impl Renderer {
         uniforms.camera.up = Vec4::from((up, 0.0));
 
         let field_of_view = 45.0 * (std::f32::consts::PI / 180.0);
-        let aspect_ratio = self.size.width as f32 / self.size.height as f32;
+        #[allow(clippy::unnecessary_cast)]
+        let aspect_ratio = self.size.get().width as f32 / self.size.get().height as f32;
         let image_plane_height = f32::tan(field_of_view / 2.0);
         let image_plane_width = aspect_ratio * image_plane_height;
 
         uniforms.camera.right *= image_plane_width;
         uniforms.camera.up *= image_plane_height;
 
-        uniforms.width = self.size.width as u32;
-        uniforms.height = self.size.height as u32;
+        uniforms.width = self.size.get().width as u32;
+        uniforms.height = self.size.get().height as u32;
 
-        uniforms.frame_index = self.frame_index as u32;
-        self.frame_index += 1;
+        uniforms.frame_index = self.frame_index.get() as u32;
+        self.frame_index.set(self.frame_index.get() + 1);
 
         uniforms.light_count = self.scene.lights.len() as u32;
 
-        self.uniform_buffer.did_modify_range(NSRange {
-            location: self.uniform_buffer_offset,
+        self.uniform_buffer.didModifyRange(NSRange {
+            location: self.uniform_buffer_offset.get(),
             length: ALIGNED_UNIFORMS_SIZE,
         });
 
-        self.uniform_buffer_index = (self.uniform_buffer_index + 1) % MAX_FRAMES_IN_FLIGHT;
+        self.uniform_buffer_index
+            .set((self.uniform_buffer_index.get() + 1) % MAX_FRAMES_IN_FLIGHT);
     }
 
-    pub fn draw(&mut self, layer: &MetalLayer) {
+    pub fn draw(&self, drawable: &ProtocolObject<dyn CAMetalDrawable>) {
         self.semaphore.acquire();
         self.update_uniforms();
-        let command_buffer = self.queue.new_command_buffer();
+        let command_buffer = self.queue.commandBuffer().unwrap();
         let sem = self.semaphore.clone();
-        let block = block::ConcreteBlock::new(move |_| {
+        let block = block2::RcBlock::new(move |_| {
             sem.release();
-        })
-        .copy();
-        command_buffer.add_completed_handler(&block);
-        let width = self.size.width as NSUInteger;
-        let height = self.size.height as NSUInteger;
-        let threads_per_thread_group = MTLSize::new(8, 8, 1);
-        let thread_groups = MTLSize::new(
-            width.div_ceil(threads_per_thread_group.width),
-            height.div_ceil(threads_per_thread_group.height),
-            1,
-        );
-        let compute_encoder = command_buffer.new_compute_command_encoder();
-        compute_encoder.set_buffer(0, Some(&self.uniform_buffer), self.uniform_buffer_offset);
-        compute_encoder.set_buffer(2, Some(&self.instance_buffer), 0);
-        compute_encoder.set_buffer(3, Some(&self.scene.lights_buffer), 0);
-        compute_encoder.set_acceleration_structure(4, Some(&self.instance_acceleration_structure));
-        compute_encoder.set_intersection_function_table(5, Some(&self.intersection_function_table));
-        compute_encoder.set_texture(0, Some(&self.random_texture));
-        compute_encoder.set_texture(1, Some(&self.accumulation_targets[0]));
-        compute_encoder.set_texture(2, Some(&self.accumulation_targets[1]));
+        });
+        unsafe { command_buffer.addCompletedHandler(block2::RcBlock::as_ptr(&block)) };
+        let width = self.size.get().width as NSUInteger;
+        let height = self.size.get().height as NSUInteger;
+        let threads_per_thread_group = MTLSize {
+            width: 8,
+            height: 8,
+            depth: 1,
+        };
+        let thread_groups = MTLSize {
+            width: width.div_ceil(threads_per_thread_group.width),
+            height: height.div_ceil(threads_per_thread_group.height),
+            depth: 1,
+        };
+        let compute_encoder = command_buffer.computeCommandEncoder().unwrap();
+        unsafe {
+            compute_encoder.setBuffer_offset_atIndex(
+                Some(&self.uniform_buffer),
+                self.uniform_buffer_offset.get(),
+                0,
+            );
+            compute_encoder.setBuffer_offset_atIndex(Some(&self.instance_buffer), 0, 2);
+            compute_encoder.setBuffer_offset_atIndex(Some(&self.scene.lights_buffer), 0, 3);
+            compute_encoder.setAccelerationStructure_atBufferIndex(
+                Some(&self.instance_acceleration_structure),
+                4,
+            );
+            compute_encoder.setIntersectionFunctionTable_atBufferIndex(
+                Some(&self.intersection_function_table),
+                5,
+            );
+            compute_encoder.setTexture_atIndex(Some(&self.random_texture.borrow()), 0);
+            compute_encoder.setTexture_atIndex(Some(&self.accumulation_targets[0].borrow()), 1);
+            compute_encoder.setTexture_atIndex(Some(&self.accumulation_targets[1].borrow()), 2);
+        }
         for geometry in &self.scene.geometries {
             for resource in geometry.get_resources() {
-                compute_encoder.use_resource(&resource, MTLResourceUsage::Read);
+                compute_encoder.useResource_usage(resource, MTLResourceUsage::Read);
             }
         }
         for primitive_acceleration_structure in &self.primitive_acceleration_structures {
-            let resource: Resource = From::from(primitive_acceleration_structure.clone());
-            compute_encoder.use_resource(&resource, MTLResourceUsage::Read);
+            compute_encoder.useResource_usage(
+                primitive_acceleration_structure.as_ref(),
+                MTLResourceUsage::Read,
+            );
         }
-        compute_encoder.set_compute_pipeline_state(&self.raytracing_pipeline);
-        compute_encoder.dispatch_thread_groups(thread_groups, threads_per_thread_group);
-        compute_encoder.end_encoding();
-        (self.accumulation_targets[0], self.accumulation_targets[1]) = (
-            self.accumulation_targets[1].clone(),
-            self.accumulation_targets[0].clone(),
+        compute_encoder.setComputePipelineState(&self.raytracing_pipeline);
+        compute_encoder
+            .dispatchThreadgroups_threadsPerThreadgroup(thread_groups, threads_per_thread_group);
+        compute_encoder.endEncoding();
+        std::mem::swap(
+            &mut *self.accumulation_targets[0].borrow_mut(),
+            &mut *self.accumulation_targets[1].borrow_mut(),
         );
-        if let Some(drawable) = layer.next_drawable() {
-            let render_pass_descriptor = RenderPassDescriptor::new();
-            let colour_attachment = render_pass_descriptor
-                .color_attachments()
-                .object_at(0)
-                .unwrap();
-            colour_attachment.set_texture(Some(drawable.texture()));
-            colour_attachment.set_load_action(MTLLoadAction::Clear);
-            colour_attachment.set_clear_color(MTLClearColor::new(0.0, 0.0, 0.0, 1.0));
-            let render_encoder = command_buffer.new_render_command_encoder(render_pass_descriptor);
-            render_encoder.set_render_pipeline_state(&self.copy_pipeline);
-            render_encoder.set_fragment_texture(0, Some(&self.accumulation_targets[0]));
-            render_encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 6);
-            render_encoder.end_encoding();
-            command_buffer.present_drawable(drawable);
+
+        let render_pass_descriptor = MTLRenderPassDescriptor::new();
+        let colour_attachment = unsafe {
+            render_pass_descriptor
+                .colorAttachments()
+                .objectAtIndexedSubscript(0)
+        };
+        colour_attachment.setTexture(Some(&drawable.texture()));
+        colour_attachment.setLoadAction(MTLLoadAction::Clear);
+        colour_attachment.setClearColor(MTLClearColor {
+            red: 0.0,
+            green: 0.0,
+            blue: 0.0,
+            alpha: 1.0,
+        });
+        let render_encoder = command_buffer
+            .renderCommandEncoderWithDescriptor(&render_pass_descriptor)
+            .unwrap();
+        render_encoder.setRenderPipelineState(&self.copy_pipeline);
+        unsafe {
+            render_encoder
+                .setFragmentTexture_atIndex(Some(&self.accumulation_targets[0].borrow()), 0);
+            render_encoder.drawPrimitives_vertexStart_vertexCount(MTLPrimitiveType::Triangle, 0, 6);
         }
+        render_encoder.endEncoding();
+        command_buffer.presentDrawable(drawable.as_ref());
+
         command_buffer.commit();
     }
 
     fn new_acceleration_structure_with_descriptor(
-        device: &Device,
-        queue: &CommandQueue,
-        descriptor: &AccelerationStructureDescriptorRef,
-    ) -> AccelerationStructure {
-        let accel_sizes = device.acceleration_structure_sizes_with_descriptor(descriptor);
-        let acceleration_structure =
-            device.new_acceleration_structure_with_size(accel_sizes.acceleration_structure_size);
-        let scratch_buffer = device.new_buffer(
-            accel_sizes.build_scratch_buffer_size,
-            MTLResourceOptions::StorageModePrivate,
-        );
-        let command_buffer = queue.new_command_buffer();
-        let command_encoder = command_buffer.new_acceleration_structure_command_encoder();
-        let compacted_size_buffer = device.new_buffer(
-            size_of::<u32>() as NSUInteger,
-            MTLResourceOptions::StorageModeShared,
-        );
-        command_encoder.build_acceleration_structure(
+        device: &ProtocolObject<dyn MTLDevice>,
+        queue: &ProtocolObject<dyn MTLCommandQueue>,
+        descriptor: &MTLAccelerationStructureDescriptor,
+    ) -> Retained<ProtocolObject<dyn MTLAccelerationStructure>> {
+        let accel_sizes = device.accelerationStructureSizesWithDescriptor(descriptor);
+        let acceleration_structure = device
+            .newAccelerationStructureWithSize(accel_sizes.accelerationStructureSize)
+            .unwrap();
+        let scratch_buffer = device
+            .newBufferWithLength_options(
+                accel_sizes.buildScratchBufferSize,
+                MTLResourceOptions::StorageModePrivate,
+            )
+            .unwrap();
+        let command_buffer = queue.commandBuffer().unwrap();
+        let command_encoder = command_buffer
+            .accelerationStructureCommandEncoder()
+            .unwrap();
+        let compacted_size_buffer = device
+            .newBufferWithLength_options(size_of::<u32>(), MTLResourceOptions::StorageModeShared)
+            .unwrap();
+        command_encoder.buildAccelerationStructure_descriptor_scratchBuffer_scratchBufferOffset(
             &acceleration_structure,
             descriptor,
             &scratch_buffer,
             0,
         );
-        command_encoder.write_compacted_acceleration_structure_size(
+        command_encoder.writeCompactedAccelerationStructureSize_toBuffer_offset(
             &acceleration_structure,
             &compacted_size_buffer,
             0,
         );
-        command_encoder.end_encoding();
+        command_encoder.endEncoding();
         command_buffer.commit();
-        command_buffer.wait_until_completed();
-        let compacted_size = unsafe { *compacted_size_buffer.contents().cast::<u32>() };
-        let compacted_acceleration_structure =
-            device.new_acceleration_structure_with_size(compacted_size as NSUInteger);
-        let command_buffer = queue.new_command_buffer();
-        let command_encoder = command_buffer.new_acceleration_structure_command_encoder();
-        command_encoder.copy_and_compact_acceleration_structure(
+        command_buffer.waitUntilCompleted();
+        let compacted_size = unsafe { compacted_size_buffer.contents().cast::<u32>().read() };
+        let compacted_acceleration_structure = device
+            .newAccelerationStructureWithSize(compacted_size as NSUInteger)
+            .unwrap();
+        let command_buffer = queue.commandBuffer().unwrap();
+        let command_encoder = command_buffer
+            .accelerationStructureCommandEncoder()
+            .unwrap();
+        command_encoder.copyAndCompactAccelerationStructure_toAccelerationStructure(
             &acceleration_structure,
             &compacted_acceleration_structure,
         );
-        command_encoder.end_encoding();
+        command_encoder.endEncoding();
         command_buffer.commit();
         compacted_acceleration_structure
     }
 
     fn new_specialised_function_with_name(
-        library: &Library,
+        library: &ProtocolObject<dyn MTLLibrary>,
         resources_stride: u32,
-        name: &str,
-    ) -> Function {
-        let constants = FunctionConstantValues::new();
+        name: &NSString,
+    ) -> Retained<ProtocolObject<dyn MTLFunction>> {
+        let constants = MTLFunctionConstantValues::new();
         let resources_stride = resources_stride * size_of::<u64>() as u32;
-        constants.set_constant_value_at_index(
-            (&raw const resources_stride).cast(),
-            MTLDataType::UInt,
-            0,
-        );
+        unsafe {
+            constants.setConstantValue_type_atIndex(
+                NonNull::from(&resources_stride).cast(),
+                MTLDataType::UInt,
+                0,
+            )
+        };
         let v = true;
-        constants.set_constant_value_at_index((&raw const v).cast(), MTLDataType::Bool, 1);
-        constants.set_constant_value_at_index((&raw const v).cast(), MTLDataType::Bool, 2);
-        library.get_function(name, Some(constants)).unwrap()
+        unsafe {
+            constants.setConstantValue_type_atIndex(NonNull::from(&v).cast(), MTLDataType::Bool, 1)
+        };
+        unsafe {
+            constants.setConstantValue_type_atIndex(NonNull::from(&v).cast(), MTLDataType::Bool, 2)
+        };
+        library
+            .newFunctionWithName_constantValues_error(name, &constants)
+            .unwrap()
     }
 
     fn new_compute_pipeline_state_with_function(
-        device: &Device,
-        function: &Function,
-        linked_functions: &[&FunctionRef],
-    ) -> ComputePipelineState {
+        device: &ProtocolObject<dyn MTLDevice>,
+        function: &ProtocolObject<dyn MTLFunction>,
+        linked_functions: &NSArray<ProtocolObject<dyn MTLFunction>>,
+    ) -> Retained<ProtocolObject<dyn MTLComputePipelineState>> {
         let linked_functions = {
-            let lf = LinkedFunctions::new();
-            lf.set_functions(linked_functions);
+            let lf = MTLLinkedFunctions::new();
+            lf.setFunctions(Some(linked_functions));
             lf
         };
-        let descriptor = ComputePipelineDescriptor::new();
-        descriptor.set_compute_function(Some(function));
-        descriptor.set_linked_functions(linked_functions.as_ref());
-        descriptor.set_thread_group_size_is_multiple_of_thread_execution_width(true);
-        device.new_compute_pipeline_state(&descriptor).unwrap()
+        let descriptor = MTLComputePipelineDescriptor::new();
+        descriptor.setComputeFunction(Some(function));
+        descriptor.setLinkedFunctions(Some(&linked_functions));
+        unsafe { descriptor.setThreadGroupSizeIsMultipleOfThreadExecutionWidth(true) };
+        device
+            .newComputePipelineStateWithDescriptor_options_reflection_error(
+                &descriptor,
+                MTLPipelineOption::None,
+                None,
+            )
+            .unwrap()
     }
 }
