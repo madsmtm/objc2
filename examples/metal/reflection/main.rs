@@ -5,8 +5,17 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-use metal::*;
-use objc::rc::autoreleasepool;
+// Modified from <https://github.com/gfx-rs/metal-rs/tree/v0.33.0/examples/reflection>
+
+use objc2::rc::autoreleasepool;
+use objc2_foundation::ns_string;
+use objc2_metal::{
+    MTLCompileOptions, MTLCreateSystemDefaultDevice, MTLDevice, MTLLibrary, MTLPipelineOption,
+    MTLRenderPipelineDescriptor, MTLVertexDescriptor,
+};
+
+#[link(name = "CoreGraphics", kind = "framework")]
+extern "C" {}
 
 const PROGRAM: &str = r"
     #include <metal_stdlib>
@@ -23,7 +32,7 @@ const PROGRAM: &str = r"
         float4 color;
     };
 
-    vertex ColorInOut vs(device vertex_t* vertex_array [[ buffer(0) ]],
+    vertex ColorInOut vs(const device vertex_t* vertex_array [[ buffer(0) ]],
                                       unsigned int vid [[ vertex_id ]])
     {
         ColorInOut out;
@@ -41,34 +50,44 @@ const PROGRAM: &str = r"
 ";
 
 fn main() {
-    autoreleasepool(|| {
-        let device = Device::system_default().expect("no device found");
+    autoreleasepool(|_| {
+        let device = MTLCreateSystemDefaultDevice().expect("no device found");
 
-        let options = CompileOptions::new();
-        let library = device.new_library_with_source(PROGRAM, &options).unwrap();
+        let options = MTLCompileOptions::new();
+        let library = device
+            .newLibraryWithSource_options_error(ns_string!(PROGRAM), Some(&options))
+            .unwrap_or_else(|e| panic!("{e}"));
         let (vs, ps) = (
-            library.get_function("vs", None).unwrap(),
-            library.get_function("ps", None).unwrap(),
+            library.newFunctionWithName(ns_string!("vs")).unwrap(),
+            library.newFunctionWithName(ns_string!("ps")).unwrap(),
         );
 
-        let vertex_desc = VertexDescriptor::new();
+        let vertex_desc = MTLVertexDescriptor::new();
 
-        let desc = RenderPipelineDescriptor::new();
-        desc.set_vertex_function(Some(&vs));
-        desc.set_fragment_function(Some(&ps));
-        desc.set_vertex_descriptor(Some(vertex_desc));
+        let desc = MTLRenderPipelineDescriptor::new();
+        desc.setVertexFunction(Some(&vs));
+        desc.setFragmentFunction(Some(&ps));
+        desc.setVertexDescriptor(Some(&vertex_desc));
 
         println!("{:?}", desc);
 
+        #[allow(deprecated)]
         let reflect_options = MTLPipelineOption::ArgumentInfo | MTLPipelineOption::BufferTypeInfo;
-        let (_, reflection) = device
-            .new_render_pipeline_state_with_reflection(&desc, reflect_options)
+        let mut reflection = None;
+        let _ = device
+            .newRenderPipelineStateWithDescriptor_options_reflection_error(
+                &desc,
+                reflect_options,
+                Some(&mut reflection),
+            )
             .unwrap();
 
+        let reflection = reflection.unwrap();
+
         println!("Vertex arguments: ");
-        let vertex_arguments = reflection.vertex_arguments();
-        for index in 0..vertex_arguments.count() {
-            let argument = vertex_arguments.object_at(index).unwrap();
+        #[allow(deprecated)]
+        let vertex_arguments = reflection.vertexArguments().unwrap();
+        for argument in vertex_arguments {
             println!("{:?}", argument);
         }
     });

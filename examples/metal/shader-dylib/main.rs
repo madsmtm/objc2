@@ -1,171 +1,258 @@
-use cocoa::{appkit::NSView, base::id as cocoa_id};
-use core_graphics_types::geometry::CGSize;
+// Modified from <https://github.com/gfx-rs/metal-rs/tree/v0.33.0/examples/shader-dylib>
 
-use metal::*;
-use objc::{rc::autoreleasepool, runtime::YES};
+#![cfg_attr(not(target_os = "macos"), allow(dead_code, unused))]
+#![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 
-use winit::{
-    event::{Event, WindowEvent},
-    event_loop::ControlFlow,
-    raw_window_handle::{HasWindowHandle, RawWindowHandle},
+use core::cell::OnceCell;
+
+use objc2::rc::Retained;
+use objc2::runtime::ProtocolObject;
+use objc2::{define_class, msg_send, Ivars, MainThreadMarker, MainThreadOnly};
+#[cfg(target_os = "macos")]
+use objc2_app_kit::{
+    NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSBackingStoreType,
+    NSWindow, NSWindowStyleMask,
 };
+use objc2_foundation::{
+    ns_string, NSArray, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize,
+    NSString, NSURL,
+};
+use objc2_metal::{
+    MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLCompileOptions,
+    MTLComputeCommandEncoder, MTLComputePipelineState, MTLCopyAllDevices, MTLDevice,
+    MTLDynamicLibrary, MTLLibrary, MTLLibraryType, MTLPixelFormat, MTLSize,
+};
+#[cfg(target_os = "macos")]
+use objc2_metal_kit::{MTKView, MTKViewDelegate};
+use objc2_quartz_core::CAMetalDrawable;
 
-struct App {
-    pub _device: Device,
-    pub command_queue: CommandQueue,
-    pub layer: MetalLayer,
-    pub image_fill_cps: ComputePipelineState,
-    pub width: u32,
-    pub height: u32,
+#[derive(Debug)]
+struct Renderer {
+    command_queue: Retained<ProtocolObject<dyn MTLCommandQueue>>,
+    image_fill_cps: Retained<ProtocolObject<dyn MTLComputePipelineState>>,
 }
 
-fn select_device() -> Option<Device> {
-    let devices = Device::all();
-    devices.into_iter().find(|d| d.supports_dynamic_libraries())
+fn select_device() -> Retained<ProtocolObject<dyn MTLDevice>> {
+    let devices = MTLCopyAllDevices();
+    devices
+        .into_iter()
+        .find(|d| d.supportsDynamicLibraries())
+        .expect("could not find Metal device that supports dynamic libraries")
 }
 
-impl App {
-    fn new(window: &winit::window::Window) -> Self {
-        let device = select_device().expect("no device found that supports dynamic libraries");
-        let command_queue = device.new_command_queue();
+#[cfg(target_os = "macos")]
+fn configure_view(mtk_view: &MTKView) {
+    // Allow filling the layer's texture with a compute shader.
+    //
+    // You could also set these properties on the CAMetalLayer.
+    mtk_view.setFramebufferOnly(false);
+    mtk_view.setColorPixelFormat(MTLPixelFormat::BGRA8Unorm);
+}
 
-        let mut layer = MetalLayer::new();
-        layer.set_device(&device);
-        layer.set_pixel_format(MTLPixelFormat::BGRA8Unorm);
-        layer.set_presents_with_transaction(false);
-        layer.set_framebuffer_only(false);
-        unsafe {
-            if let Ok(RawWindowHandle::AppKit(rw)) = window.window_handle().map(|wh| wh.as_raw()) {
-                let view = rw.ns_view.as_ptr() as cocoa_id;
-                view.setWantsLayer(YES);
-                view.setLayer(<*mut _>::cast(layer.as_mut()));
-            }
-        }
-        let draw_size = window.inner_size();
-        layer.set_drawable_size(CGSize::new(draw_size.width as f64, draw_size.height as f64));
+impl Renderer {
+    fn new(device: &ProtocolObject<dyn MTLDevice>) -> Self {
+        let command_queue = device.newCommandQueue().unwrap();
 
         // compile dynamic lib shader
-        let dylib_src_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("examples/shader-dylib/test_dylib.metal");
-        let install_path =
-            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("target/test_dylib.metallib");
+        let dylib_src = ns_string!(include_str!("test_dylib.metal"));
 
-        let dylib_src = std::fs::read_to_string(dylib_src_path).expect("bad shit");
-        let opts = metal::CompileOptions::new();
-        opts.set_library_type(MTLLibraryType::Dynamic);
-        opts.set_install_name(install_path.to_str().unwrap());
+        let install_path = std::env::temp_dir().join("test_dylib.metallib");
+
+        let opts = MTLCompileOptions::new();
+        opts.setLibraryType(MTLLibraryType::Dynamic);
+        opts.setInstallName(Some(&NSString::from_str(install_path.to_str().unwrap())));
 
         let lib = device
-            .new_library_with_source(dylib_src.as_str(), &opts)
-            .unwrap();
+            .newLibraryWithSource_options_error(dylib_src, Some(&opts))
+            .unwrap_or_else(|e| panic!("{e}"));
 
         // create dylib
-        let dylib = device.new_dynamic_library(&lib).unwrap();
-        dylib.set_label("test_dylib");
+        let dylib = device.newDynamicLibrary_error(&lib).unwrap();
+        dylib.setLabel(Some(ns_string!("test_dylib")));
 
         // optional: serialize binary blob that can be loaded later
-        let blob_url = String::from("file://") + install_path.to_str().unwrap();
-        let url = URL::new_with_string(&blob_url);
-        dylib.serialize_to_url(&url).unwrap();
+        let url = NSURL::from_file_path(&install_path).unwrap();
+        dylib.serializeToURL_error(&url).unwrap();
 
         // create shader that links with dylib
-        let shader_src_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("examples/shader-dylib/test_shader.metal");
+        let shader_src = ns_string!(include_str!("test_shader.metal"));
 
-        let shader_src = std::fs::read_to_string(shader_src_path).expect("bad shit");
-        let opts = metal::CompileOptions::new();
+        let opts = MTLCompileOptions::new();
         // add dynamic library to link with
-        let libraries = [dylib.as_ref()];
-        opts.set_libraries(&libraries);
+        let libraries = NSArray::from_slice(&[dylib.as_ref()]);
+        opts.setLibraries(Some(&libraries));
 
         // compile
         let shader_lib = device
-            .new_library_with_source(shader_src.as_str(), &opts)
-            .unwrap();
+            .newLibraryWithSource_options_error(shader_src, Some(&opts))
+            .unwrap_or_else(|e| panic!("{e}"));
 
-        let func = shader_lib.get_function("test_kernel", None).unwrap();
+        let func = shader_lib
+            .newFunctionWithName(ns_string!("test_kernel"))
+            .unwrap();
 
         // create pipeline state
         // linking occurs here
         let image_fill_cps = device
-            .new_compute_pipeline_state_with_function(&func)
+            .newComputePipelineStateWithFunction_error(&func)
             .unwrap();
 
         Self {
-            _device: device,
             command_queue,
-            layer,
             image_fill_cps,
-            width: draw_size.width,
-            height: draw_size.height,
         }
     }
 
-    fn resize(&mut self, width: u32, height: u32) {
-        self.layer
-            .set_drawable_size(CGSize::new(width as f64, height as f64));
-        self.width = width;
-        self.height = height;
-    }
+    fn draw(&self, drawable: &ProtocolObject<dyn CAMetalDrawable>) {
+        let size = drawable.layer().drawableSize();
 
-    fn draw(&self) {
-        let drawable = match self.layer.next_drawable() {
-            Some(drawable) => drawable,
-            None => return,
+        let w = self.image_fill_cps.threadExecutionWidth();
+        let h = self.image_fill_cps.maxTotalThreadsPerThreadgroup() / w;
+        let threads_per_threadgroup = MTLSize {
+            width: w,
+            height: h,
+            depth: 1,
+        };
+        let threads_per_grid = MTLSize {
+            width: size.width as _,
+            height: size.height as _,
+            depth: 1,
         };
 
-        let w = self.image_fill_cps.thread_execution_width();
-        let h = self.image_fill_cps.max_total_threads_per_threadgroup() / w;
-        let threads_per_threadgroup = MTLSize::new(w, h, 1);
-        let threads_per_grid = MTLSize::new(self.width as _, self.height as _, 1);
-
-        let command_buffer = self.command_queue.new_command_buffer();
+        let command_buffer = self.command_queue.commandBuffer().unwrap();
 
         {
-            let encoder = command_buffer.new_compute_command_encoder();
-            encoder.set_compute_pipeline_state(&self.image_fill_cps);
-            encoder.set_texture(0, Some(drawable.texture()));
-            encoder.dispatch_threads(threads_per_grid, threads_per_threadgroup);
-            encoder.end_encoding();
+            let encoder = command_buffer.computeCommandEncoder().unwrap();
+            encoder.setComputePipelineState(&self.image_fill_cps);
+            unsafe { encoder.setTexture_atIndex(Some(&drawable.texture()), 0) };
+            encoder
+                .dispatchThreads_threadsPerThreadgroup(threads_per_grid, threads_per_threadgroup);
+            encoder.endEncoding();
         }
 
-        command_buffer.present_drawable(drawable);
+        command_buffer.presentDrawable(drawable.as_ref());
         command_buffer.commit();
     }
 }
 
-fn main() {
-    let event_loop = winit::event_loop::EventLoop::new().unwrap();
-    let size = winit::dpi::LogicalSize::new(800, 600);
+//
+// Boilerplate for setting up a MTKView in a window.
+//
 
-    let window = winit::window::WindowBuilder::new()
-        .with_inner_size(size)
-        .with_title("Metal Shader Dylib Example".to_string())
-        .build(&event_loop)
-        .unwrap();
+define_class!(
+    /// The state of our application.
+    #[unsafe(super(NSObject))]
+    #[thread_kind = MainThreadOnly]
+    struct Delegate {
+        renderer: OnceCell<Renderer>,
+        #[cfg(target_os = "macos")]
+        window: OnceCell<Retained<NSWindow>>,
+    }
 
-    let mut app = App::new(&window);
+    unsafe impl NSObjectProtocol for Delegate {}
 
-    event_loop
-        .run(move |event, event_loop| {
-            autoreleasepool(|| {
-                event_loop.set_control_flow(ControlFlow::Poll);
-
-                match event {
-                    Event::AboutToWait => window.request_redraw(),
-                    Event::WindowEvent { event, .. } => match event {
-                        WindowEvent::CloseRequested => event_loop.exit(),
-                        WindowEvent::Resized(size) => {
-                            app.resize(size.width, size.height);
-                        }
-                        WindowEvent::RedrawRequested => {
-                            app.draw();
-                        }
-                        _ => (),
-                    },
-                    _ => {}
+    // define the delegate methods for the `NSApplicationDelegate` protocol
+    #[cfg(target_os = "macos")]
+    unsafe impl NSApplicationDelegate for Delegate {
+        #[unsafe(method(applicationDidFinishLaunching:))]
+        #[allow(non_snake_case)]
+        unsafe fn applicationDidFinishLaunching(&self, _notification: &NSNotification) {
+            let mtm = self.mtm();
+            // create the app window
+            let window = {
+                let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(768., 768.));
+                let style = NSWindowStyleMask::Closable
+                    | NSWindowStyleMask::Resizable
+                    | NSWindowStyleMask::Titled;
+                let backing_store_type = NSBackingStoreType::Buffered;
+                let flag = false;
+                unsafe {
+                    NSWindow::initWithContentRect_styleMask_backing_defer(
+                        NSWindow::alloc(mtm),
+                        content_rect,
+                        style,
+                        backing_store_type,
+                        flag,
+                    )
                 }
-            });
-        })
-        .unwrap();
+            };
+
+            let device = select_device();
+
+            // create the metal view
+            let mtk_view = {
+                let frame_rect = window.frame();
+                MTKView::initWithFrame_device(MTKView::alloc(mtm), frame_rect, Some(&device))
+            };
+
+            // initialize the renderer
+            let renderer = Renderer::new(&device);
+            self.renderer().set(renderer).unwrap();
+
+            // configure the metal view delegate
+            let object = ProtocolObject::from_ref(self);
+            mtk_view.setDelegate(Some(object));
+
+            configure_view(&mtk_view);
+
+            // configure the window
+            window.setContentView(Some(&mtk_view));
+            window.center();
+            window.setTitle(ns_string!("metal example"));
+            window.makeKeyAndOrderFront(None);
+
+            self.window().set(window).unwrap();
+        }
+    }
+
+    // define the delegate methods for the `MTKViewDelegate` protocol
+    #[cfg(target_os = "macos")] // TODO: Support iOS
+    unsafe impl MTKViewDelegate for Delegate {
+        #[unsafe(method(drawInMTKView:))]
+        #[allow(non_snake_case)]
+        unsafe fn drawInMTKView(&self, mtk_view: &MTKView) {
+            let renderer = self.renderer().get().unwrap();
+            let drawable = mtk_view.currentDrawable().unwrap();
+            renderer.draw(&drawable);
+        }
+
+        #[unsafe(method(mtkView:drawableSizeWillChange:))]
+        #[allow(non_snake_case)]
+        unsafe fn mtkView_drawableSizeWillChange(&self, _view: &MTKView, _size: NSSize) {
+            // println!("mtkView_drawableSizeWillChange");
+        }
+    }
+);
+
+impl Delegate {
+    fn new(mtm: MainThreadMarker) -> Retained<Self> {
+        let this = Self::alloc(mtm);
+        let this = this.set_ivars(Ivars::<Self> {
+            renderer: OnceCell::default(),
+            #[cfg(target_os = "macos")]
+            window: OnceCell::default(),
+        });
+        unsafe { msg_send![super(this), init] }
+    }
+}
+
+#[cfg(target_os = "macos")]
+fn main() {
+    let mtm = MainThreadMarker::new().unwrap();
+    // configure the app
+    let app = NSApplication::sharedApplication(mtm);
+    app.setActivationPolicy(NSApplicationActivationPolicy::Regular);
+
+    // configure the application delegate
+    let delegate = Delegate::new(mtm);
+    let object = ProtocolObject::from_ref(&*delegate);
+    app.setDelegate(Some(object));
+
+    // run the app
+    app.run();
+}
+
+#[cfg(not(target_os = "macos"))]
+fn main() {
+    panic!("This example is currently only supported on macOS");
 }

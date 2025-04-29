@@ -1,9 +1,23 @@
-use std::path::PathBuf;
+// Modified from <https://github.com/gfx-rs/metal-rs/tree/v0.33.0/examples/compute>
+use std::ptr::NonNull;
 
-use metal::*;
-use objc::rc::autoreleasepool;
+use objc2::{
+    rc::{autoreleasepool, Retained},
+    runtime::ProtocolObject,
+};
+use objc2_foundation::{ns_string, NSRange, NSUInteger};
+use objc2_metal::{
+    MTLBlitCommandEncoder, MTLBuffer, MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue,
+    MTLComputeCommandEncoder, MTLComputePassDescriptor, MTLComputePipelineDescriptor,
+    MTLComputePipelineState, MTLCounterSampleBuffer, MTLCounterSampleBufferDescriptor,
+    MTLCounterSamplingPoint, MTLCounterSet, MTLCreateSystemDefaultDevice, MTLDevice, MTLFunction,
+    MTLFunctionType, MTLLibrary, MTLResourceOptions, MTLSize, MTLStorageMode,
+};
 
-const NUM_SAMPLES: u64 = 2;
+const NUM_SAMPLES: usize = 2;
+
+#[link(name = "CoreGraphics", kind = "framework")]
+extern "C" {}
 
 fn main() {
     let num_elements = std::env::args()
@@ -11,40 +25,48 @@ fn main() {
         .map(|s| s.parse::<u32>().unwrap())
         .unwrap_or(64 * 64);
 
-    autoreleasepool(|| {
-        let device = Device::system_default().expect("No device found");
+    autoreleasepool(|_| {
+        let device = MTLCreateSystemDefaultDevice().expect("No device found");
         let mut cpu_start = 0;
         let mut gpu_start = 0;
-        device.sample_timestamps(&mut cpu_start, &mut gpu_start);
+        unsafe {
+            device.sampleTimestamps_gpuTimestamp(
+                NonNull::from(&mut cpu_start),
+                NonNull::from(&mut gpu_start),
+            )
+        };
 
         let counter_sample_buffer = create_counter_sample_buffer(&device);
-        let destination_buffer = device.new_buffer(
-            (size_of::<u64>() * NUM_SAMPLES as usize) as u64,
-            MTLResourceOptions::StorageModeShared,
-        );
+        let destination_buffer = device
+            .newBufferWithLength_options(
+                size_of::<u64>() * NUM_SAMPLES,
+                MTLResourceOptions::StorageModeShared,
+            )
+            .unwrap();
 
         let counter_sampling_point = MTLCounterSamplingPoint::AtStageBoundary;
-        assert!(device.supports_counter_sampling(counter_sampling_point));
+        assert!(device.supportsCounterSampling(counter_sampling_point));
 
-        let command_queue = device.new_command_queue();
-        let command_buffer = command_queue.new_command_buffer();
+        let command_queue = device.newCommandQueue().unwrap();
+        let command_buffer = command_queue.commandBuffer().unwrap();
 
-        let compute_pass_descriptor = ComputePassDescriptor::new();
+        let compute_pass_descriptor = MTLComputePassDescriptor::new();
         handle_compute_pass_sample_buffer_attachment(
-            compute_pass_descriptor,
+            &compute_pass_descriptor,
             &counter_sample_buffer,
         );
-        let encoder =
-            command_buffer.compute_command_encoder_with_descriptor(compute_pass_descriptor);
+        let encoder = command_buffer
+            .computeCommandEncoderWithDescriptor(&compute_pass_descriptor)
+            .unwrap();
 
         let pipeline_state = create_pipeline_state(&device);
-        encoder.set_compute_pipeline_state(&pipeline_state);
+        encoder.setComputePipelineState(&pipeline_state);
 
         let (buffer, sum) = create_input_and_output_buffers(&device, num_elements);
-        encoder.set_buffer(0, Some(&buffer), 0);
-        encoder.set_buffer(1, Some(&sum), 0);
+        unsafe { encoder.setBuffer_offset_atIndex(Some(&buffer), 0, 0) };
+        unsafe { encoder.setBuffer_offset_atIndex(Some(&sum), 0, 1) };
 
-        let num_threads = pipeline_state.thread_execution_width();
+        let num_threads = pipeline_state.threadExecutionWidth();
 
         let thread_group_count = MTLSize {
             width: ((num_elements as NSUInteger + num_threads) / num_threads),
@@ -58,18 +80,23 @@ fn main() {
             depth: 1,
         };
 
-        encoder.dispatch_thread_groups(thread_group_count, thread_group_size);
-        encoder.end_encoding();
+        encoder.dispatchThreadgroups_threadsPerThreadgroup(thread_group_count, thread_group_size);
+        encoder.endEncoding();
 
-        resolve_samples_into_buffer(command_buffer, &counter_sample_buffer, &destination_buffer);
+        resolve_samples_into_buffer(&command_buffer, &counter_sample_buffer, &destination_buffer);
 
         command_buffer.commit();
-        command_buffer.wait_until_completed();
+        command_buffer.waitUntilCompleted();
         let mut cpu_end = 0;
         let mut gpu_end = 0;
-        device.sample_timestamps(&mut cpu_end, &mut gpu_end);
+        unsafe {
+            device.sampleTimestamps_gpuTimestamp(
+                NonNull::from(&mut cpu_end),
+                NonNull::from(&mut gpu_end),
+            )
+        };
 
-        let sum = unsafe { *sum.contents().cast::<u32>() };
+        let sum = unsafe { sum.contents().cast::<u32>().read() };
         println!("Compute shader sum: {}", sum);
 
         assert_eq!(num_elements, sum);
@@ -78,53 +105,61 @@ fn main() {
     });
 }
 
-fn create_pipeline_state(device: &Device) -> ComputePipelineState {
-    let library_path =
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("examples/compute/shaders.metallib");
-    let library = device.new_library_with_file(library_path).unwrap();
-    let kernel = library.get_function("sum", None).unwrap();
+fn create_pipeline_state(
+    device: &ProtocolObject<dyn MTLDevice>,
+) -> Retained<ProtocolObject<dyn MTLComputePipelineState>> {
+    let library = device
+        .newLibraryWithSource_options_error(ns_string!(include_str!("shaders.metal")), None)
+        .unwrap_or_else(|e| panic!("{e}"));
+    let kernel = library.newFunctionWithName(ns_string!("sum")).unwrap();
 
-    let pipeline_state_descriptor = ComputePipelineDescriptor::new();
-    pipeline_state_descriptor.set_compute_function(Some(&kernel));
+    debug_assert_eq!(&*kernel.name(), ns_string!("sum"));
+    debug_assert_eq!(kernel.functionType(), MTLFunctionType::Kernel);
+
+    let pipeline_state_descriptor = MTLComputePipelineDescriptor::new();
+    pipeline_state_descriptor.setComputeFunction(Some(&kernel));
 
     device
-        .new_compute_pipeline_state_with_function(
-            pipeline_state_descriptor.compute_function().unwrap(),
+        .newComputePipelineStateWithFunction_error(
+            &pipeline_state_descriptor.computeFunction().unwrap(),
         )
         .unwrap()
 }
 
 fn handle_compute_pass_sample_buffer_attachment(
-    compute_pass_descriptor: &ComputePassDescriptorRef,
-    counter_sample_buffer: &CounterSampleBufferRef,
+    compute_pass_descriptor: &MTLComputePassDescriptor,
+    counter_sample_buffer: &ProtocolObject<dyn MTLCounterSampleBuffer>,
 ) {
-    let sample_buffer_attachment_descriptor = compute_pass_descriptor
-        .sample_buffer_attachments()
-        .object_at(0)
-        .unwrap();
+    let sample_buffer_attachment_descriptor = unsafe {
+        compute_pass_descriptor
+            .sampleBufferAttachments()
+            .objectAtIndexedSubscript(0)
+    };
 
-    sample_buffer_attachment_descriptor.set_sample_buffer(counter_sample_buffer);
-    sample_buffer_attachment_descriptor.set_start_of_encoder_sample_index(0);
-    sample_buffer_attachment_descriptor.set_end_of_encoder_sample_index(1);
+    sample_buffer_attachment_descriptor.setSampleBuffer(Some(counter_sample_buffer));
+    unsafe { sample_buffer_attachment_descriptor.setStartOfEncoderSampleIndex(0) };
+    unsafe { sample_buffer_attachment_descriptor.setEndOfEncoderSampleIndex(1) };
 }
 
 fn resolve_samples_into_buffer(
-    command_buffer: &CommandBufferRef,
-    counter_sample_buffer: &CounterSampleBufferRef,
-    destination_buffer: &BufferRef,
+    command_buffer: &ProtocolObject<dyn MTLCommandBuffer>,
+    counter_sample_buffer: &ProtocolObject<dyn MTLCounterSampleBuffer>,
+    destination_buffer: &ProtocolObject<dyn MTLBuffer>,
 ) {
-    let blit_encoder = command_buffer.new_blit_command_encoder();
-    blit_encoder.resolve_counters(
-        counter_sample_buffer,
-        crate::NSRange::new(0u64, NUM_SAMPLES),
-        destination_buffer,
-        0u64,
-    );
-    blit_encoder.end_encoding();
+    let blit_encoder = command_buffer.blitCommandEncoder().unwrap();
+    unsafe {
+        blit_encoder.resolveCounters_inRange_destinationBuffer_destinationOffset(
+            counter_sample_buffer,
+            NSRange::new(0, NUM_SAMPLES),
+            destination_buffer,
+            0,
+        )
+    };
+    blit_encoder.endEncoding();
 }
 
 fn handle_timestamps(
-    resolved_sample_buffer: &BufferRef,
+    resolved_sample_buffer: &ProtocolObject<dyn MTLBuffer>,
     cpu_start: u64,
     cpu_end: u64,
     gpu_start: u64,
@@ -132,8 +167,8 @@ fn handle_timestamps(
 ) {
     let samples = unsafe {
         std::slice::from_raw_parts(
-            resolved_sample_buffer.contents().cast::<u64>(),
-            NUM_SAMPLES as usize,
+            resolved_sample_buffer.contents().as_ptr().cast::<u64>(),
+            NUM_SAMPLES,
         )
     };
     let pass_start = samples[0];
@@ -146,42 +181,54 @@ fn handle_timestamps(
     println!("Compute pass duration: {} µs", micros);
 }
 
-fn create_counter_sample_buffer(device: &Device) -> CounterSampleBuffer {
-    let counter_sample_buffer_desc = metal::CounterSampleBufferDescriptor::new();
-    counter_sample_buffer_desc.set_storage_mode(metal::MTLStorageMode::Shared);
-    counter_sample_buffer_desc.set_sample_count(NUM_SAMPLES);
-    let counter_sets = device.counter_sets();
+fn create_counter_sample_buffer(
+    device: &ProtocolObject<dyn MTLDevice>,
+) -> Retained<ProtocolObject<dyn MTLCounterSampleBuffer>> {
+    let counter_sample_buffer_desc = MTLCounterSampleBufferDescriptor::new();
+    counter_sample_buffer_desc.setStorageMode(MTLStorageMode::Shared);
+    unsafe { counter_sample_buffer_desc.setSampleCount(NUM_SAMPLES) };
+    let counter_sets = device.counterSets().unwrap();
 
-    let timestamp_counter = counter_sets.iter().find(|cs| cs.name() == "timestamp");
+    let timestamp_counter = counter_sets
+        .iter()
+        .find(|cs| *cs.name() == *ns_string!("timestamp"))
+        .expect("No timestamp counter found");
 
-    counter_sample_buffer_desc
-        .set_counter_set(timestamp_counter.expect("No timestamp counter found"));
+    counter_sample_buffer_desc.setCounterSet(Some(&timestamp_counter));
 
     device
-        .new_counter_sample_buffer_with_descriptor(&counter_sample_buffer_desc)
+        .newCounterSampleBufferWithDescriptor_error(&counter_sample_buffer_desc)
         .unwrap()
 }
 
+#[allow(clippy::type_complexity)]
 fn create_input_and_output_buffers(
-    device: &Device,
+    device: &ProtocolObject<dyn MTLDevice>,
     num_elements: u32,
-) -> (metal::Buffer, metal::Buffer) {
+) -> (
+    Retained<ProtocolObject<dyn MTLBuffer>>,
+    Retained<ProtocolObject<dyn MTLBuffer>>,
+) {
     let data = vec![1u32; num_elements as usize];
 
-    let buffer = device.new_buffer_with_data(
-        data.as_ptr().cast(),
-        size_of_val(data.as_slice()) as u64,
-        MTLResourceOptions::CPUCacheModeDefaultCache,
-    );
-
-    let sum = {
-        let data = [0u32];
-        device.new_buffer_with_data(
-            data.as_ptr().cast(),
-            size_of_val(&data) as u64,
+    let buffer = unsafe {
+        device.newBufferWithBytes_length_options(
+            NonNull::new(data.as_ptr().cast_mut().cast()).unwrap(),
+            size_of_val(data.as_slice()),
             MTLResourceOptions::CPUCacheModeDefaultCache,
         )
-    };
+    }
+    .unwrap();
+
+    let data = [0u32];
+    let sum = unsafe {
+        device.newBufferWithBytes_length_options(
+            NonNull::new(data.as_ptr().cast_mut().cast()).unwrap(),
+            size_of_val(&data),
+            MTLResourceOptions::CPUCacheModeDefaultCache,
+        )
+    }
+    .unwrap();
     (buffer, sum)
 }
 

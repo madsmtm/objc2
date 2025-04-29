@@ -6,45 +6,104 @@ license = "Zlib OR Apache-2.0 OR MIT"
 publish = false
 
 [[example]]
-name = "triangle"
-path = "triangle/main.rs"
+name = "argument-buffer"
+path = "argument-buffer/main.rs"
+
+[[example]]
+name = "bind"
+path = "bind/main.rs"
+
+[[example]]
+name = "bindless"
+path = "bindless/main.rs"
+
+[[example]]
+name = "caps"
+path = "caps/main.rs"
+
+[[example]]
+name = "circle"
+path = "circle/main.rs"
+
+[[example]]
+name = "compute"
+path = "compute/main.rs"
+
+[[example]]
+name = "compute-argument-buffer"
+path = "compute-argument-buffer/main.rs"
 
 [[example]]
 name = "default_xcode_game"
 path = "default_xcode_game/main.rs"
 
+[[example]]
+name = "events"
+path = "events/main.rs"
+
+[[example]]
+name = "fence"
+path = "fence/main.rs"
+
+[[example]]
+name = "headless-render"
+path = "headless-render/main.rs"
+
+[[example]]
+name = "library"
+path = "library/main.rs"
+
+[[example]]
+name = "mesh-shader"
+path = "mesh-shader/main.rs"
+
+[[example]]
+name = "mps"
+path = "mps/main.rs"
+
+[[example]]
+name = "raytracing"
+path = "raytracing/main.rs"
+
+[[example]]
+name = "reflection"
+path = "reflection/main.rs"
+
+[[example]]
+name = "shader-dylib"
+path = "shader-dylib/main.rs"
+
+[[example]]
+name = "texture"
+path = "texture/main.rs"
+
+[[example]]
+name = "triangle"
+path = "triangle/main.rs"
+
 [features]
 unstable-darwin-objc = [
     "objc2/unstable-darwin-objc",
-    "objc2-app-kit/unstable-darwin-objc",
-    "objc2-core-foundation/unstable-darwin-objc",
-    "objc2-foundation/unstable-darwin-objc",
-    "objc2-metal-kit/unstable-darwin-objc",
-    "objc2-metal/unstable-darwin-objc",
-    "objc2-model-io/unstable-darwin-objc",
-    "objc2-quartz-core/unstable-darwin-objc",
+    # "objc2-app-kit/unstable-darwin-objc",
+    # "objc2-core-foundation/unstable-darwin-objc",
+    # "objc2-foundation/unstable-darwin-objc",
+    # "objc2-metal/unstable-darwin-objc",
+    # "objc2-metal-kit/unstable-darwin-objc",
+    # "objc2-metal-performance-shaders/unstable-darwin-objc",
+    # "objc2-model-io/unstable-darwin-objc",
+    # "objc2-quartz-core/unstable-darwin-objc",
 ]
+unstable-private = ["objc2-metal/unstable-private"]
 
 [dependencies]
 objc2 = "0.6.2"
-dispatch2 = "0.3.0"
 block2 = "0.6.1"
+dispatch2 = "0.3.0"
 objc2-metal = { version = "0.3.2", default-features = false, features = [
-    "std",
-    "objc2-core-foundation",
-    "MTLAllocation",
-    "MTLAccelerationStructureTypes",
-    "MTLLibrary",
-    "MTLRenderPipeline",
-    "MTLRenderCommandEncoder",
-    "MTLCommandBuffer",
-    "MTLCommandEncoder",
-    "MTLCommandQueue",
-    "MTLPixelFormat",
-    "MTLDevice",
-    "MTLDrawable",
-    "MTLRenderPass",
-    "default" # temp
+    # Enable everything in the Metal crate. In your own code, you'll probably
+    # want to reduce this to just the things you need, to reduce compilation
+    # times.
+    "default",
 ] }
 objc2-metal-kit = { version = "0.3.2", default-features = false, features = [
     "std",
@@ -52,14 +111,26 @@ objc2-metal-kit = { version = "0.3.2", default-features = false, features = [
     "objc2-app-kit",
     "objc2-quartz-core",
     "objc2-model-io",
-    "MTKView",
     "MTKModel",
-    "default" # temporary
+    "MTKTextureLoader",
+    "MTKView",
+] }
+objc2-metal-performance-shaders = { version = "0.3.2", default-features = false, features = [
+    "std",
+    "MPSAccelerationStructure",
+    "MPSCore",
+    "MPSCoreTypes",
+    "MPSKernel",
+    "MPSPolygonAccelerationStructure",
+    "MPSRayIntersector",
+    "MPSRayIntersectorTypes",
+    "MPSTriangleAccelerationStructure",
 ] }
 objc2-model-io = { version = "0.3.2", default-features = false, features = [
     "std",
-    "MDLTypes",
     "MDLMesh",
+    "MDLObject",
+    "MDLTypes",
 ] }
 objc2-foundation = { version = "0.3.2", default-features = false, features = [
     "std",
@@ -69,12 +140,26 @@ objc2-foundation = { version = "0.3.2", default-features = false, features = [
     "NSNotification",
     "NSThread",
     "NSGeometry",
+    "NSURL",
 ] }
 objc2-core-foundation = { version = "0.3.2", default-features = false, features = [
     "std",
     "CFCGTypes",
 ] }
-objc2-quartz-core = { version = "0.3.2", default-features = false, features = [] }
+objc2-quartz-core = { version = "0.3.2", default-features = false, features = [
+    "std",
+    "objc2-core-foundation",
+    "objc2-metal",
+    "CALayer",
+    "CAMetalLayer",
+] }
+
+# Used for `headless-render` and `texture` examples.
+png = "0.18.0"
+
+# Used for `raytracing` example.
+glam = "0.30.10"
+rand = "0.9.2"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit = { version = "0.3.2", default-features = false, features = [

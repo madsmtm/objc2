@@ -18,12 +18,14 @@ use objc2_foundation::{
     ns_string, NSDate, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize,
 };
 use objc2_metal::{
-    MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLCreateSystemDefaultDevice,
-    MTLDevice as _, MTLLibrary, MTLPackedFloat3, MTLPrimitiveType, MTLRenderCommandEncoder,
-    MTLRenderPipelineDescriptor, MTLRenderPipelineState,
+    MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLCreateSystemDefaultDevice, MTLDevice,
+    MTLLibrary, MTLLoadAction, MTLPackedFloat3, MTLPixelFormat, MTLPrimitiveType,
+    MTLRenderCommandEncoder, MTLRenderPassDescriptor, MTLRenderPipelineDescriptor,
+    MTLRenderPipelineState, MTLStoreAction,
 };
 #[cfg(target_os = "macos")]
 use objc2_metal_kit::{MTKView, MTKViewDelegate};
+use objc2_quartz_core::CAMetalDrawable;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -38,23 +40,152 @@ struct VertexInput {
     color: MTLPackedFloat3,
 }
 
-macro_rules! idcell {
-    ($name:ident => $this:expr) => {
-        $this.$name().set($name).expect(&format!(
-            "ivar should not already be initialized: `{}`",
-            stringify!($name)
-        ));
-    };
-    ($name:ident <= $this:expr) => {
-        #[rustfmt::skip]
-        let Some($name) = $this.$name().get() else {
-            unreachable!(
-                "ivar should be initialized: `{}`",
-                stringify!($name)
+/// The state of our renderer.
+#[derive(Debug)]
+struct Renderer {
+    start_date: Retained<NSDate>,
+    command_queue: Retained<ProtocolObject<dyn MTLCommandQueue>>,
+    pipeline_state: Retained<ProtocolObject<dyn MTLRenderPipelineState>>,
+}
+
+impl Renderer {
+    fn new(device: &ProtocolObject<dyn MTLDevice>, pixel_format: MTLPixelFormat) -> Self {
+        // create the command queue
+        let command_queue = device
+            .newCommandQueue()
+            .expect("Failed to create a command queue.");
+
+        // create the pipeline descriptor
+        let pipeline_descriptor = MTLRenderPipelineDescriptor::new();
+
+        unsafe {
+            pipeline_descriptor
+                .colorAttachments()
+                .objectAtIndexedSubscript(0)
+                .setPixelFormat(pixel_format);
+        }
+
+        // compile the shaders
+        let library = device
+            .newLibraryWithSource_options_error(ns_string!(include_str!("triangle.metal")), None)
+            .unwrap_or_else(|e| panic!("Failed to create a library: {e}"));
+
+        // configure the vertex shader
+        let vertex_function = library.newFunctionWithName(ns_string!("vertex_main"));
+        pipeline_descriptor.setVertexFunction(vertex_function.as_deref());
+
+        // configure the fragment shader
+        let fragment_function = library.newFunctionWithName(ns_string!("fragment_main"));
+        pipeline_descriptor.setFragmentFunction(fragment_function.as_deref());
+
+        // create the pipeline state
+        let pipeline_state = device
+            .newRenderPipelineStateWithDescriptor_error(&pipeline_descriptor)
+            .expect("Failed to create a pipeline state.");
+
+        let start_date = NSDate::now();
+
+        Self {
+            start_date,
+            command_queue,
+            pipeline_state,
+        }
+    }
+
+    fn draw(&self, drawable: &ProtocolObject<dyn CAMetalDrawable>) {
+        let command_buffer = self.command_queue.commandBuffer().unwrap();
+
+        let pass_descriptor = MTLRenderPassDescriptor::new();
+        let color_attachment = unsafe {
+            pass_descriptor
+                .colorAttachments()
+                .objectAtIndexedSubscript(0)
+        };
+
+        color_attachment.setTexture(Some(&drawable.texture()));
+        color_attachment.setLoadAction(MTLLoadAction::Clear);
+        color_attachment.setStoreAction(MTLStoreAction::Store);
+        let encoder = command_buffer
+            .renderCommandEncoderWithDescriptor(&pass_descriptor)
+            .unwrap();
+
+        // compute the scene properties
+        let scene_properties_data = &SceneProperties {
+            time: self.start_date.timeIntervalSinceNow() as f32,
+        };
+        // write the scene properties to the vertex shader argument buffer at index 0
+        let scene_properties_bytes = NonNull::from(scene_properties_data);
+        unsafe {
+            encoder.setVertexBytes_length_atIndex(
+                scene_properties_bytes.cast::<core::ffi::c_void>(),
+                core::mem::size_of_val(scene_properties_data),
+                0,
             )
         };
-    };
+
+        // compute the triangle geometry
+        let vertex_input_data: &[VertexInput] = &[
+            VertexInput {
+                position: MTLPackedFloat3 {
+                    x: -f32::sqrt(3.0) / 4.0,
+                    y: -0.25,
+                    z: 0.,
+                },
+                color: MTLPackedFloat3 {
+                    x: 1.,
+                    y: 0.,
+                    z: 0.,
+                },
+            },
+            VertexInput {
+                position: MTLPackedFloat3 {
+                    x: f32::sqrt(3.0) / 4.0,
+                    y: -0.25,
+                    z: 0.,
+                },
+                color: MTLPackedFloat3 {
+                    x: 0.,
+                    y: 1.,
+                    z: 0.,
+                },
+            },
+            VertexInput {
+                position: MTLPackedFloat3 {
+                    x: 0.,
+                    y: 0.5,
+                    z: 0.,
+                },
+                color: MTLPackedFloat3 {
+                    x: 0.,
+                    y: 0.,
+                    z: 1.,
+                },
+            },
+        ];
+        // write the triangle geometry to the vertex shader argument buffer at index 1
+        let vertex_input_bytes = NonNull::from(vertex_input_data);
+        unsafe {
+            encoder.setVertexBytes_length_atIndex(
+                vertex_input_bytes.cast::<core::ffi::c_void>(),
+                core::mem::size_of_val(vertex_input_data),
+                1,
+            )
+        };
+
+        // configure the encoder with the pipeline and draw the triangle
+        encoder.setRenderPipelineState(&self.pipeline_state);
+        unsafe { encoder.drawPrimitives_vertexStart_vertexCount(MTLPrimitiveType::Triangle, 0, 3) };
+        encoder.endEncoding();
+
+        // schedule the command buffer for display and commit
+        command_buffer.presentDrawable(drawable.as_ref());
+        command_buffer.commit();
+    }
 }
+
+//
+// Boilerplate for setting up a MTKView in a window.
+//
 
 define_class!(
     /// The state of our application.
@@ -66,9 +197,7 @@ define_class!(
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
     struct Delegate {
-        start_date: Retained<NSDate>,
-        command_queue: OnceCell<Retained<ProtocolObject<dyn MTLCommandQueue>>>,
-        pipeline_state: OnceCell<Retained<ProtocolObject<dyn MTLRenderPipelineState>>>,
+        renderer: OnceCell<Renderer>,
         #[cfg(target_os = "macos")]
         window: OnceCell<Retained<NSWindow>>,
     }
@@ -105,47 +234,15 @@ define_class!(
             let device =
                 MTLCreateSystemDefaultDevice().expect("failed to get default system device");
 
-            // create the command queue
-            let command_queue = device
-                .newCommandQueue()
-                .expect("Failed to create a command queue.");
-
             // create the metal view
             let mtk_view = {
                 let frame_rect = window.frame();
                 MTKView::initWithFrame_device(MTKView::alloc(mtm), frame_rect, Some(&device))
             };
 
-            // create the pipeline descriptor
-            let pipeline_descriptor = MTLRenderPipelineDescriptor::new();
-
-            unsafe {
-                pipeline_descriptor
-                    .colorAttachments()
-                    .objectAtIndexedSubscript(0)
-                    .setPixelFormat(mtk_view.colorPixelFormat());
-            }
-
-            // compile the shaders
-            let library = device
-                .newLibraryWithSource_options_error(
-                    ns_string!(include_str!("triangle.metal")),
-                    None,
-                )
-                .expect("Failed to create a library.");
-
-            // configure the vertex shader
-            let vertex_function = library.newFunctionWithName(ns_string!("vertex_main"));
-            pipeline_descriptor.setVertexFunction(vertex_function.as_deref());
-
-            // configure the fragment shader
-            let fragment_function = library.newFunctionWithName(ns_string!("fragment_main"));
-            pipeline_descriptor.setFragmentFunction(fragment_function.as_deref());
-
-            // create the pipeline state
-            let pipeline_state = device
-                .newRenderPipelineStateWithDescriptor_error(&pipeline_descriptor)
-                .expect("Failed to create a pipeline state.");
+            // initialize the renderer
+            let renderer = Renderer::new(&device, mtk_view.colorPixelFormat());
+            self.renderer().set(renderer).unwrap();
 
             // configure the metal view delegate
             let object = ProtocolObject::from_ref(self);
@@ -157,10 +254,7 @@ define_class!(
             window.setTitle(ns_string!("metal example"));
             window.makeKeyAndOrderFront(None);
 
-            // initialize the delegate state
-            idcell!(command_queue => self);
-            idcell!(pipeline_state => self);
-            idcell!(window => self);
+            self.window().set(window).unwrap();
         }
     }
 
@@ -170,97 +264,9 @@ define_class!(
         #[unsafe(method(drawInMTKView:))]
         #[allow(non_snake_case)]
         unsafe fn drawInMTKView(&self, mtk_view: &MTKView) {
-            idcell!(command_queue <= self);
-            idcell!(pipeline_state <= self);
-
-            // prepare for drawing
-            let Some(current_drawable) = mtk_view.currentDrawable() else {
-                return;
-            };
-            let Some(command_buffer) = command_queue.commandBuffer() else {
-                return;
-            };
-            let Some(pass_descriptor) = mtk_view.currentRenderPassDescriptor() else {
-                return;
-            };
-            let Some(encoder) = command_buffer.renderCommandEncoderWithDescriptor(&pass_descriptor)
-            else {
-                return;
-            };
-
-            // compute the scene properties
-            let scene_properties_data = &SceneProperties {
-                time: self.start_date().timeIntervalSinceNow() as f32,
-            };
-            // write the scene properties to the vertex shader argument buffer at index 0
-            let scene_properties_bytes = NonNull::from(scene_properties_data);
-            unsafe {
-                encoder.setVertexBytes_length_atIndex(
-                    scene_properties_bytes.cast::<core::ffi::c_void>(),
-                    core::mem::size_of_val(scene_properties_data),
-                    0,
-                )
-            };
-
-            // compute the triangle geometry
-            let vertex_input_data: &[VertexInput] = &[
-                VertexInput {
-                    position: MTLPackedFloat3 {
-                        x: -f32::sqrt(3.0) / 4.0,
-                        y: -0.25,
-                        z: 0.,
-                    },
-                    color: MTLPackedFloat3 {
-                        x: 1.,
-                        y: 0.,
-                        z: 0.,
-                    },
-                },
-                VertexInput {
-                    position: MTLPackedFloat3 {
-                        x: f32::sqrt(3.0) / 4.0,
-                        y: -0.25,
-                        z: 0.,
-                    },
-                    color: MTLPackedFloat3 {
-                        x: 0.,
-                        y: 1.,
-                        z: 0.,
-                    },
-                },
-                VertexInput {
-                    position: MTLPackedFloat3 {
-                        x: 0.,
-                        y: 0.5,
-                        z: 0.,
-                    },
-                    color: MTLPackedFloat3 {
-                        x: 0.,
-                        y: 0.,
-                        z: 1.,
-                    },
-                },
-            ];
-            // write the triangle geometry to the vertex shader argument buffer at index 1
-            let vertex_input_bytes = NonNull::from(vertex_input_data);
-            unsafe {
-                encoder.setVertexBytes_length_atIndex(
-                    vertex_input_bytes.cast::<core::ffi::c_void>(),
-                    core::mem::size_of_val(vertex_input_data),
-                    1,
-                )
-            };
-
-            // configure the encoder with the pipeline and draw the triangle
-            encoder.setRenderPipelineState(pipeline_state);
-            unsafe {
-                encoder.drawPrimitives_vertexStart_vertexCount(MTLPrimitiveType::Triangle, 0, 3)
-            };
-            encoder.endEncoding();
-
-            // schedule the command buffer for display and commit
-            command_buffer.presentDrawable(ProtocolObject::from_ref(&*current_drawable));
-            command_buffer.commit();
+            let renderer = self.renderer().get().unwrap();
+            let drawable = mtk_view.currentDrawable().unwrap();
+            renderer.draw(&drawable);
         }
 
         #[unsafe(method(mtkView:drawableSizeWillChange:))]
@@ -275,9 +281,7 @@ impl Delegate {
     fn new(mtm: MainThreadMarker) -> Retained<Self> {
         let this = Self::alloc(mtm);
         let this = this.set_ivars(Ivars::<Self> {
-            start_date: NSDate::now(),
-            command_queue: OnceCell::default(),
-            pipeline_state: OnceCell::default(),
+            renderer: OnceCell::default(),
             #[cfg(target_os = "macos")]
             window: OnceCell::default(),
         });

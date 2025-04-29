@@ -1,18 +1,25 @@
-use std::fs::File;
+// Modified from <https://github.com/gfx-rs/metal-rs/tree/v0.33.0/examples/headless-render>
 use std::io::BufWriter;
 use std::path::PathBuf;
+use std::{fs::File, ptr::NonNull};
 
-use metal::{
-    Buffer, Device, DeviceRef, LibraryRef, MTLClearColor, MTLLoadAction, MTLOrigin, MTLPixelFormat,
-    MTLPrimitiveType, MTLRegion, MTLResourceOptions, MTLSize, MTLStoreAction, RenderPassDescriptor,
-    RenderPassDescriptorRef, RenderPipelineDescriptor, RenderPipelineState, Texture,
-    TextureDescriptor, TextureRef,
+use objc2::rc::Retained;
+use objc2::runtime::ProtocolObject;
+use objc2_foundation::ns_string;
+use objc2_metal::{
+    MTLBlitCommandEncoder, MTLBuffer, MTLClearColor, MTLCommandBuffer, MTLCommandEncoder,
+    MTLCommandQueue, MTLCreateSystemDefaultDevice, MTLDevice, MTLLibrary, MTLLoadAction, MTLOrigin,
+    MTLPixelFormat, MTLPrimitiveType, MTLRegion, MTLRenderCommandEncoder, MTLRenderPassDescriptor,
+    MTLRenderPipelineDescriptor, MTLRenderPipelineState, MTLResourceOptions, MTLSize,
+    MTLStoreAction, MTLTexture, MTLTextureDescriptor, MTLTextureUsage,
 };
-use png::ColorType;
 
-const VIEW_WIDTH: u64 = 512;
-const VIEW_HEIGHT: u64 = 512;
-const TOTAL_BYTES: usize = (VIEW_WIDTH * VIEW_HEIGHT * 4) as usize;
+#[link(name = "CoreGraphics", kind = "framework")]
+extern "C" {}
+
+const VIEW_WIDTH: usize = 512;
+const VIEW_HEIGHT: usize = 512;
+const TOTAL_BYTES: usize = VIEW_WIDTH * VIEW_HEIGHT * 4;
 
 const VERTEX_SHADER: &str = "triangle_vertex";
 const FRAGMENT_SHADER: &str = "triangle_fragment";
@@ -27,81 +34,84 @@ const VERTEX_ATTRIBS: [f32; 15] = [
 
 /// This example shows how to render headlessly by:
 ///
-/// 1. Rendering a triangle to an MtlDrawable
+/// 1. Rendering a triangle to an MTLDrawable
 ///
 /// 2. Waiting for the render to complete and the color texture to be synchronized with the CPU
 ///    by using a blit command encoder
 ///
-/// 3. Reading the texture bytes from the MtlTexture
+/// 3. Reading the texture bytes from the MTLTexture
 ///
 /// 4. Saving the texture to a PNG file
 fn main() {
-    let device = Device::system_default().expect("No device found");
+    let device = MTLCreateSystemDefaultDevice().expect("No device found");
 
     let texture = create_texture(&device);
 
-    let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("examples/window/shaders.metallib");
-
-    let library = device.new_library_with_file(library_path).unwrap();
+    let library = device
+        .newLibraryWithSource_options_error(ns_string!(include_str!("shaders.metal")), None)
+        .unwrap_or_else(|e| panic!("{e}"));
 
     let pipeline_state = prepare_pipeline_state(&device, &library);
 
-    let command_queue = device.new_command_queue();
+    let command_queue = device.newCommandQueue().unwrap();
 
     let vertex_buffer = create_vertex_buffer(&device);
 
-    let render_pass_descriptor = RenderPassDescriptor::new();
-    initialize_color_attachment(render_pass_descriptor, &texture);
+    let render_pass_descriptor = MTLRenderPassDescriptor::new();
+    initialize_color_attachment(&render_pass_descriptor, &texture);
 
-    let command_buffer = command_queue.new_command_buffer();
-    let rc_encoder = command_buffer.new_render_command_encoder(render_pass_descriptor);
-    rc_encoder.set_render_pipeline_state(&pipeline_state);
-    rc_encoder.set_vertex_buffer(0, Some(&vertex_buffer), 0);
-    rc_encoder.draw_primitives(MTLPrimitiveType::Triangle, 0, 3);
-    rc_encoder.end_encoding();
+    let command_buffer = command_queue.commandBuffer().unwrap();
+    let rc_encoder = command_buffer
+        .renderCommandEncoderWithDescriptor(&render_pass_descriptor)
+        .unwrap();
+    rc_encoder.setRenderPipelineState(&pipeline_state);
+    unsafe { rc_encoder.setVertexBuffer_offset_atIndex(Some(&vertex_buffer), 0, 0) };
+    unsafe { rc_encoder.drawPrimitives_vertexStart_vertexCount(MTLPrimitiveType::Triangle, 0, 3) };
+    rc_encoder.endEncoding();
 
-    render_pass_descriptor
-        .color_attachments()
-        .object_at(0)
-        .unwrap()
-        .set_load_action(MTLLoadAction::DontCare);
+    unsafe {
+        render_pass_descriptor
+            .colorAttachments()
+            .objectAtIndexedSubscript(0)
+    }
+    .setLoadAction(MTLLoadAction::DontCare);
 
-    let blit_encoder = command_buffer.new_blit_command_encoder();
-    blit_encoder.synchronize_resource(&texture);
-    blit_encoder.end_encoding();
+    let blit_encoder = command_buffer.blitCommandEncoder().unwrap();
+    blit_encoder.synchronizeResource(ProtocolObject::from_ref(&*texture));
+    blit_encoder.endEncoding();
 
     command_buffer.commit();
 
-    command_buffer.wait_until_completed();
+    command_buffer.waitUntilCompleted();
 
     save_image(&texture);
 }
 
-fn save_image(texture: &TextureRef) {
+fn save_image(texture: &ProtocolObject<dyn MTLTexture>) {
     let mut image = vec![0; TOTAL_BYTES];
 
-    texture.get_bytes(
-        image.as_mut_ptr().cast(),
-        VIEW_WIDTH * 4,
-        MTLRegion {
-            origin: MTLOrigin { x: 0, y: 0, z: 0 },
-            size: MTLSize {
-                width: VIEW_WIDTH,
-                height: VIEW_HEIGHT,
-                depth: 1,
+    unsafe {
+        texture.getBytes_bytesPerRow_fromRegion_mipmapLevel(
+            NonNull::new(image.as_mut_ptr().cast()).unwrap(),
+            VIEW_WIDTH * 4,
+            MTLRegion {
+                origin: MTLOrigin { x: 0, y: 0, z: 0 },
+                size: MTLSize {
+                    width: VIEW_WIDTH,
+                    height: VIEW_HEIGHT,
+                    depth: 1,
+                },
             },
-        },
-        0,
-    );
+            0,
+        )
+    };
 
-    let out_file =
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("examples/headless-render/out.png");
+    let out_file = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("headless-render/out.png");
     let file = File::create(&out_file).unwrap();
     let w = &mut BufWriter::new(file);
 
     let mut encoder = png::Encoder::new(w, VIEW_WIDTH as u32, VIEW_HEIGHT as u32);
-    encoder.set_color(ColorType::Rgba);
+    encoder.set_color(png::ColorType::Rgba);
     encoder.set_depth(png::BitDepth::Eight);
     let mut writer = encoder.write_header().unwrap();
 
@@ -110,48 +120,72 @@ fn save_image(texture: &TextureRef) {
     println!("Image saved to {:?}", out_file);
 }
 
-fn create_texture(device: &Device) -> Texture {
-    let texture = TextureDescriptor::new();
-    texture.set_width(VIEW_WIDTH);
-    texture.set_height(VIEW_HEIGHT);
-    texture.set_pixel_format(MTLPixelFormat::RGBA8Unorm);
+fn create_texture(
+    device: &ProtocolObject<dyn MTLDevice>,
+) -> Retained<ProtocolObject<dyn MTLTexture>> {
+    let texture = MTLTextureDescriptor::new();
+    unsafe { texture.setWidth(VIEW_WIDTH) };
+    unsafe { texture.setHeight(VIEW_HEIGHT) };
+    texture.setPixelFormat(MTLPixelFormat::RGBA8Unorm);
+    texture.setUsage(MTLTextureUsage::RenderTarget);
 
-    device.new_texture(&texture)
+    device.newTextureWithDescriptor(&texture).unwrap()
 }
 
-fn prepare_pipeline_state(device: &DeviceRef, library: &LibraryRef) -> RenderPipelineState {
-    let vert = library.get_function(VERTEX_SHADER, None).unwrap();
-    let frag = library.get_function(FRAGMENT_SHADER, None).unwrap();
+fn prepare_pipeline_state(
+    device: &ProtocolObject<dyn MTLDevice>,
+    library: &ProtocolObject<dyn MTLLibrary>,
+) -> Retained<ProtocolObject<dyn MTLRenderPipelineState>> {
+    let vert = library
+        .newFunctionWithName(ns_string!(VERTEX_SHADER))
+        .unwrap();
+    let frag = library
+        .newFunctionWithName(ns_string!(FRAGMENT_SHADER))
+        .unwrap();
 
-    let pipeline_state_descriptor = RenderPipelineDescriptor::new();
+    let pipeline_state_descriptor = MTLRenderPipelineDescriptor::new();
 
-    pipeline_state_descriptor.set_vertex_function(Some(&vert));
-    pipeline_state_descriptor.set_fragment_function(Some(&frag));
+    pipeline_state_descriptor.setVertexFunction(Some(&vert));
+    pipeline_state_descriptor.setFragmentFunction(Some(&frag));
 
-    pipeline_state_descriptor
-        .color_attachments()
-        .object_at(0)
-        .unwrap()
-        .set_pixel_format(MTLPixelFormat::RGBA8Unorm);
+    unsafe {
+        pipeline_state_descriptor
+            .colorAttachments()
+            .objectAtIndexedSubscript(0)
+    }
+    .setPixelFormat(MTLPixelFormat::RGBA8Unorm);
 
     device
-        .new_render_pipeline_state(&pipeline_state_descriptor)
+        .newRenderPipelineStateWithDescriptor_error(&pipeline_state_descriptor)
         .unwrap()
 }
 
-fn create_vertex_buffer(device: &DeviceRef) -> Buffer {
-    device.new_buffer_with_data(
-        VERTEX_ATTRIBS.as_ptr().cast(),
-        size_of_val(&VERTEX_ATTRIBS) as u64,
-        MTLResourceOptions::CPUCacheModeDefaultCache | MTLResourceOptions::StorageModeManaged,
-    )
+fn create_vertex_buffer(
+    device: &ProtocolObject<dyn MTLDevice>,
+) -> Retained<ProtocolObject<dyn MTLBuffer>> {
+    unsafe {
+        device.newBufferWithBytes_length_options(
+            NonNull::new(VERTEX_ATTRIBS.as_ptr().cast_mut().cast()).unwrap(),
+            size_of_val(&VERTEX_ATTRIBS),
+            MTLResourceOptions::CPUCacheModeDefaultCache | MTLResourceOptions::StorageModeManaged,
+        )
+    }
+    .unwrap()
 }
 
-fn initialize_color_attachment(descriptor: &RenderPassDescriptorRef, texture: &TextureRef) {
-    let color_attachment = descriptor.color_attachments().object_at(0).unwrap();
+fn initialize_color_attachment(
+    descriptor: &MTLRenderPassDescriptor,
+    texture: &ProtocolObject<dyn MTLTexture>,
+) {
+    let color_attachment = unsafe { descriptor.colorAttachments().objectAtIndexedSubscript(0) };
 
-    color_attachment.set_texture(Some(texture));
-    color_attachment.set_load_action(MTLLoadAction::Clear);
-    color_attachment.set_clear_color(MTLClearColor::new(0.5, 0.2, 0.2, 1.0));
-    color_attachment.set_store_action(MTLStoreAction::Store);
+    color_attachment.setTexture(Some(texture));
+    color_attachment.setLoadAction(MTLLoadAction::Clear);
+    color_attachment.setClearColor(MTLClearColor {
+        red: 0.5,
+        green: 0.2,
+        blue: 0.2,
+        alpha: 1.0,
+    });
+    color_attachment.setStoreAction(MTLStoreAction::Store);
 }

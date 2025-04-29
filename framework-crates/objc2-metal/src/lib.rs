@@ -24,6 +24,27 @@
     doc = "[`MTLCreateSystemDefaultDevice`]: #needs-MTLDevice-feature"
 )]
 //!
+//! # Precompiling shaders
+//!
+//! When you're testing things out, you can usually get by with using
+//! [`MTLDevice::newLibraryWithSource_options_error`]. However, when you
+//! actually want to ship your application to users, you should strongly
+//! consider pre-compiling and bundling your shaders with your application.
+//!
+//! This can be done using something like:
+//!
+//! ```sh
+//! xcrun -sdk macosx metal -c shaders.metal -o shaders.air
+//! xcrun -sdk macosx metallib shaders.air -o shaders.metallib
+//! ```
+//!
+//! TODO: Expand on this further.
+//!
+#![cfg_attr(
+    not(feature = "MTLDevice"),
+    doc = "[`MTLDevice::newLibraryWithSource_options_error`]: #needs-MTLDevice-feature"
+)]
+//!
 //! # Safety considerations
 //!
 //! Metal allows running arbitrary code on the GPU. We treat memory safety

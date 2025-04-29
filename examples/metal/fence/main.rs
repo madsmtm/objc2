@@ -5,26 +5,34 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-use metal::*;
+// Modified from <https://github.com/gfx-rs/metal-rs/tree/v0.33.0/examples/fence>
+
+use objc2_metal::{
+    MTLBlitCommandEncoder, MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue,
+    MTLComputeCommandEncoder, MTLCreateSystemDefaultDevice, MTLDevice,
+};
+
+#[link(name = "CoreGraphics", kind = "framework")]
+extern "C" {}
 
 fn main() {
-    let device = Device::system_default().expect("No device found");
+    let device = MTLCreateSystemDefaultDevice().expect("No device found");
 
-    let command_queue = device.new_command_queue();
-    let command_buffer = command_queue.new_command_buffer();
+    let command_queue = device.newCommandQueue().unwrap();
+    let command_buffer = command_queue.commandBuffer().unwrap();
 
-    let fence = device.new_fence();
+    let fence = device.newFence().unwrap();
 
-    let blit_encoder = command_buffer.new_blit_command_encoder();
-    blit_encoder.update_fence(&fence);
-    blit_encoder.end_encoding();
+    let blit_encoder = command_buffer.blitCommandEncoder().unwrap();
+    blit_encoder.updateFence(&fence);
+    blit_encoder.endEncoding();
 
-    let compute_encoder = command_buffer.new_compute_command_encoder();
-    compute_encoder.wait_for_fence(&fence);
-    compute_encoder.end_encoding();
+    let compute_encoder = command_buffer.computeCommandEncoder().unwrap();
+    compute_encoder.waitForFence(&fence);
+    compute_encoder.endEncoding();
 
     command_buffer.commit();
-    command_buffer.wait_until_completed();
+    command_buffer.waitUntilCompleted();
 
     println!("Done");
 }

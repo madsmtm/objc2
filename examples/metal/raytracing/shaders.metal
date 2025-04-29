@@ -73,7 +73,7 @@ constant unsigned int primes[] = {
 };
 
 // Returns the i'th element of the Halton sequence using the d'th prime number as a
-// base. The Halton sequence is a low discrepency sequence: the values appear
+// base. The Halton sequence is a low discrepancy sequence: the values appear
 // random, but are more evenly distributed than a purely random sequence. Each random
 // value used to render the image uses a different independent dimension, `d`,
 // and each sample (frame) uses a different index `i`. To decorrelate each pixel,
@@ -234,7 +234,7 @@ struct SphereResources {
  them.
 
  The arguments to the intersection function contain information about the ray, primitive to be
- tested, and so on. The ray intersector provides this datas when it calls the intersection function.
+ tested, and so on. The ray intersector provides this data when it calls the intersection function.
  Metal provides other built-in arguments, but this sample doesn't use them.
  */
 [[intersection(bounding_box, triangle_data, instancing)]]

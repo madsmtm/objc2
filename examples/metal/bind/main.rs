@@ -5,28 +5,67 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-use metal::*;
-use objc::rc::autoreleasepool;
+// Modified from <https://github.com/gfx-rs/metal-rs/tree/v0.33.0/examples/bind>
+
+use objc2::{rc::autoreleasepool, runtime::ProtocolObject};
+use objc2_foundation::NSRange;
+use objc2_metal::{
+    MTLBuffer, MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLComputeCommandEncoder,
+    MTLCreateSystemDefaultDevice, MTLDevice, MTLResourceOptions, MTLSamplerDescriptor,
+    MTLSamplerState,
+};
+use std::ptr::{self, NonNull};
+
+#[link(name = "CoreGraphics", kind = "framework")]
+extern "C" {}
 
 fn main() {
-    autoreleasepool(|| {
-        let device = Device::system_default().expect("no device found");
+    autoreleasepool(|_| {
+        let device = MTLCreateSystemDefaultDevice().expect("no device found");
 
-        let buffer = device.new_buffer(4, MTLResourceOptions::empty());
+        let buffer = device
+            .newBufferWithLength_options(8, MTLResourceOptions::empty())
+            .unwrap();
         let sampler = {
-            let descriptor = SamplerDescriptor::new();
-            device.new_sampler(&descriptor)
+            let descriptor = MTLSamplerDescriptor::new();
+            device.newSamplerStateWithDescriptor(&descriptor).unwrap()
         };
 
-        let queue = device.new_command_queue();
-        let cmd_buf = queue.new_command_buffer();
+        let queue = device.newCommandQueue().unwrap();
+        let cmd_buf = queue.commandBuffer().unwrap();
 
-        let encoder = cmd_buf.new_compute_command_encoder();
+        let encoder = cmd_buf.computeCommandEncoder().unwrap();
 
-        encoder.set_buffers(2, &[Some(&buffer), None], &[4, 0]);
-        encoder.set_sampler_states(1, &[Some(&sampler), None]);
+        let buffers = &[
+            &*buffer as *const ProtocolObject<dyn MTLBuffer>,
+            ptr::null(),
+        ];
+        let offsets = &[4, 0];
+        unsafe {
+            encoder.setBuffers_offsets_withRange(
+                NonNull::new(buffers.as_ptr().cast_mut()).unwrap(),
+                NonNull::new(offsets.as_ptr().cast_mut()).unwrap(),
+                NSRange {
+                    location: 2,
+                    length: buffers.len() as _,
+                },
+            )
+        };
+        let states = &[
+            &*sampler as *const ProtocolObject<dyn MTLSamplerState>,
+            ptr::null(),
+        ];
+        unsafe {
+            encoder.setSamplerStates_withRange(
+                NonNull::new(states.as_ptr().cast_mut()).unwrap(),
+                NSRange {
+                    location: 1,
+                    length: 2,
+                },
+            )
+        };
 
-        encoder.end_encoding();
+        encoder.endEncoding();
         cmd_buf.commit();
 
         println!("Everything is bound");

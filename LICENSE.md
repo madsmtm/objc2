@@ -1,10 +1,12 @@
 # License
 
-The licensing of these crates is a bit complicated:
+The licensing in this repository is a bit complicated:
 - The crates `objc2`, `block2`, `objc2-foundation` and `objc2-encode` are
   [currently][#23] licensed under [the MIT license][MIT].
 - All other crates are trio-licensed under the [Zlib], [Apache-2.0] or [MIT]
   license, at your option.
+- Some example code may be more restrictively licensed, see each example for
+  details.
 
 Furthermore, the crates are (usually automatically) derived from Apple SDKs,
 and that may have implications for licensing, see below for details.
