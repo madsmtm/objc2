@@ -12,6 +12,5 @@ visionos = "1.0"
 external.AVGroupExperienceCoordinator.module = "AVKit.AVPlayerViewController"
 external.AVContentProposal.module = "AVKit.AVPlayerViewController"
 
-# Needs AVCustomRoutingController from AVRouting
-class.AVRoutePickerView.methods.customRoutingController.skipped = true
-class.AVRoutePickerView.methods."setCustomRoutingController:".skipped = true
+# Defined in AVRouting.
+external.AVCustomRoutingController.module = "AVRouting.AVCustomRoutingController"

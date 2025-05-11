@@ -28,6 +28,7 @@ objc2-security = { workspace = true, optional = true, features = [
     "SecBase",
     "objc2",
 ] }
+objc2-security-foundation = { workspace = true, optional = true, features = ["SFAuthorization"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -53,12 +54,14 @@ default = [
     "bitflags",
     "objc2-core-foundation",
     "objc2-security",
+    "objc2-security-foundation",
 ]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-security = ["dep:objc2-security"]
+objc2-security-foundation = ["dep:objc2-security-foundation"]
 
 CWChannel = ["objc2-foundation/NSObject"]
 CWConfiguration = [

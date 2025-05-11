@@ -8,6 +8,8 @@ tvos = "17.0"
 watchos = "7.0"
 visionos = "1.0"
 
+external.ASAccessory.module = "AccessorySetupKit.ASAccessory"
+
 # error: translator assertion failure: (left `"NSString"`) (right `"const NSString"`)
 static.kNEHotspotHelperOptionDisplayName.skipped = true
 static.NEFilterProviderRemediationMapRemediationURLs.skipped = true
@@ -37,10 +39,6 @@ class.NENetworkRule.methods."initWithRemoteNetworkEndpoint:remotePrefix:localNet
 class.NENetworkRule.methods.matchRemoteHostOrNetworkEndpoint.skipped = true
 class.NENetworkRule.methods.matchLocalNetworkEndpoint.skipped = true
 class.NEPacketTunnelProvider.methods.virtualInterface.skipped = true
-
-# Needs `ASAccessory` from AccessorySetupKit
-class.NEHotspotConfigurationManager.methods."joinAccessoryHotspot:passphrase:completionHandler:".skipped = true
-class.NEHotspotConfigurationManager.methods."joinAccessoryHotspotWithoutSecurity:completionHandler:".skipped = true
 
 # Wrongly renamed (Swift's renaming algorithm is insufficient)
 const.NEHotspotConfigurationEAPTLSVersion_1_0.renamed = "Version_1_0"

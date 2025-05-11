@@ -25,6 +25,7 @@ objc2-av-foundation = { workspace = true, optional = true, features = [
     "AVDepthData",
 ] }
 objc2-core-foundation = { workspace = true, optional = true, features = ["CFCGTypes"] }
+objc2-core-graphics = { workspace = true, optional = true, features = ["CGImage"] }
 objc2-core-location = { workspace = true, optional = true, features = ["CLLocation"] }
 objc2-core-media = { workspace = true, optional = true, features = ["CMSampleBuffer"] }
 objc2-core-video = { workspace = true, optional = true, features = [
@@ -48,6 +49,7 @@ objc2-foundation = { workspace = true, optional = true, features = [
     "NSValue",
     "alloc",
 ] }
+objc2-image-io = { workspace = true, optional = true, features = ["CGImageProperties"] }
 objc2-metal = { workspace = true, optional = true, features = [
     "MTLAllocation",
     "MTLBuffer",
@@ -145,10 +147,12 @@ default = [
     "objc2",
     "objc2-av-foundation",
     "objc2-core-foundation",
+    "objc2-core-graphics",
     "objc2-core-location",
     "objc2-core-media",
     "objc2-core-video",
     "objc2-foundation",
+    "objc2-image-io",
     "objc2-metal",
     "objc2-quartz-core",
     "objc2-scene-kit",
@@ -165,15 +169,19 @@ objc2 = [
     "dep:objc2",
     "dispatch2?/objc2",
     "objc2-core-foundation?/objc2",
+    "objc2-core-graphics?/objc2",
     "objc2-core-media?/objc2",
     "objc2-core-video?/objc2",
+    "objc2-image-io?/objc2",
 ]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-location = ["dep:objc2-core-location"]
 objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-video = ["dep:objc2-core-video"]
 objc2-foundation = ["dep:objc2-foundation"]
+objc2-image-io = ["dep:objc2-image-io"]
 objc2-metal = ["dep:objc2-metal"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-scene-kit = ["dep:objc2-scene-kit"]

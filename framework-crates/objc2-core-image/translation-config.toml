@@ -26,20 +26,6 @@ class.CIImage.categories.AVSemanticSegmentationMatte.skipped = true
 class.CIContext.methods."contextWithEAGLContext:".skipped = true
 class.CIContext.methods."contextWithEAGLContext:options:".skipped = true
 
-# Needs CGImagePropertyOrientation from ImageIO
-class.CIContext.methods."depthBlurEffectFilterForImage:disparityImage:portraitEffectsMatte:orientation:options:".skipped = true
-class.CIContext.methods."depthBlurEffectFilterForImage:disparityImage:portraitEffectsMatte:hairSemanticSegmentation:orientation:options:".skipped = true
-class.CIContext.methods."depthBlurEffectFilterForImage:disparityImage:portraitEffectsMatte:hairSemanticSegmentation:glassesMatte:gainMap:orientation:options:".skipped = true
-class.CIImage.methods."imageTransformForOrientation:".skipped = true
-class.CIImage.methods."imageByApplyingCGOrientation:".skipped = true
-class.CIImage.methods."imageTransformForCGOrientation:".skipped = true
-class.CIRAWFilter.methods.orientation.skipped = true
-class.CIRAWFilter.methods."setOrientation:".skipped = true
-
-# Needs CGImageSourceRef from ImageIO
-class.CIImage.methods."imageWithCGImageSource:index:options:".skipped = true
-class.CIImage.methods."initWithCGImageSource:index:options:".skipped = true
-
 # Needs CGLContextObj from OpenGL
 class.CIContext.methods."contextWithCGLContext:pixelFormat:colorSpace:options:".skipped = true
 class.CIContext.methods."contextWithCGLContext:pixelFormat:options:".skipped = true

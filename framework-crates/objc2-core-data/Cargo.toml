@@ -21,7 +21,9 @@ block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, features = ["std"] }
 objc2-cloud-kit = { workspace = true, optional = true, features = [
     "CKContainer",
+    "CKDatabase",
     "CKRecord",
+    "CKRecordID",
     "CKRecordZoneID",
     "CKShare",
     "CKShareMetadata",
@@ -29,6 +31,12 @@ objc2-cloud-kit = { workspace = true, optional = true, features = [
     "CKUserIdentityLookupInfo",
 ] }
 objc2-foundation = { workspace = true, features = ["alloc"] }
+
+[target.'cfg(not(any(target_os = "tvos", target_os = "watchos")))'.dependencies]
+objc2-core-spotlight = { workspace = true, optional = true, features = [
+    "CSSearchableIndex",
+    "CSSearchableItemAttributeSet",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -42,6 +50,7 @@ targets = [
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
 ]
+features = ["objc2-core-spotlight"]
 
 [features]
 default = [
@@ -115,6 +124,7 @@ gnustep-2-1 = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-cloud-kit = ["dep:objc2-cloud-kit"]
+objc2-core-spotlight = ["dep:objc2-core-spotlight"]
 
 CloudKit = [
     "objc2-foundation/NSArray",
@@ -161,6 +171,7 @@ NSCompositeAttributeDescription = [
     "objc2-foundation/NSObject",
 ]
 NSCoreDataCoreSpotlightDelegate = [
+    "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
@@ -310,6 +321,8 @@ NSMigrationManager = [
 NSMigrationStage = ["objc2-foundation/NSString"]
 NSPersistentCloudKitContainer = [
     "bitflags",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]

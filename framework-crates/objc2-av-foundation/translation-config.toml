@@ -27,16 +27,6 @@ class.AVSampleBufferGenerator.methods."createSampleBufferForRequest:addingToBatc
 protocol.AVAsynchronousKeyValueLoading.methods."statusOfValueForKey:error:".skipped = true
 class.AVMetadataItem.methods."statusOfValueForKey:error:".skipped = true
 
-# Needs MTAudioProcessingTap from MediaToolbox
-class.AVAudioMixInputParameters.methods.audioTapProcessor.skipped = true
-class.AVMutableAudioMixInputParameters.methods.audioTapProcessor.skipped = true
-class.AVMutableAudioMixInputParameters.methods."setAudioTapProcessor:".skipped = true
-
-# Needs CGImagePropertyOrientation from ImageIO
-class.AVDepthData.methods."depthDataByApplyingExifOrientation:".skipped = true
-class.AVPortraitEffectsMatte.methods."portraitEffectsMatteByApplyingExifOrientation:".skipped = true
-class.AVSemanticSegmentationMatte.methods."semanticSegmentationMatteByApplyingExifOrientation:".skipped = true
-
 # Counterparts
 class.AVAssetDownloadStorageManagementPolicy.counterpart = "MutableSubclass(AVFoundation.AVAssetDownloadStorageManager.AVMutableAssetDownloadStorageManagementPolicy)"
 class.AVMutableAssetDownloadStorageManagementPolicy.counterpart = "ImmutableSuperclass(AVFoundation.AVAssetDownloadStorageManager.AVAssetDownloadStorageManagementPolicy)"

@@ -4,12 +4,7 @@ required-crates = ["objc2", "objc2-foundation"]
 macos = "10.6"
 maccatalyst = "13.0"
 
-# Needs `SFAuthorization` from the `SecurityFoundation` framework
-class.ODConfiguration.methods."saveUsingAuthorization:error:".skipped = true
-class.ODSession.methods."configurationAuthorizationAllowingUserInteraction:error:".skipped = true
-class.ODSession.methods."addConfiguration:authorization:error:".skipped = true
-class.ODSession.methods."deleteConfiguration:authorization:error:".skipped = true
-class.ODSession.methods."deleteConfigurationWithNodename:authorization:error:".skipped = true
+external.SFAuthorization.module = "SecurityFoundation.SFAuthorization"
 
 # Old compatibility aliases
 typedef._ODRecordType.skipped = true

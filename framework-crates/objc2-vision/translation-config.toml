@@ -10,6 +10,7 @@ visionos = "1.0"
 
 external.CIBarcodeDescriptor.module = "CoreImage.CIBarcodeDescriptor"
 external.CIImage.module = "CoreImage.CIImage"
+external.AVDepthData.module = "AVFoundation.AVDepthData"
 
 # error: unknown error result type
 class.VNTrackingRequest.methods."supportedNumberOfTrackersAndReturnError:".skipped = true
@@ -21,34 +22,6 @@ class.VNRecognizedText.methods."boundingBoxForRange:error:".skipped = true
 class.VNInstanceMaskObservation.methods."generateMaskForInstances:error:".skipped = true
 class.VNInstanceMaskObservation.methods."generateMaskedImageOfInstances:fromRequestHandler:croppedToInstancesExtent:error:".skipped = true
 class.VNInstanceMaskObservation.methods."generateScaledMaskForImageForInstances:fromRequestHandler:error:".skipped = true
-
-# Needs `CGImagePropertyOrientation` from `ImageIO`
-class.VNImageRequestHandler.methods."initWithCVPixelBuffer:orientation:options:".skipped = true
-class.VNImageRequestHandler.methods."initWithCVPixelBuffer:depthData:orientation:options:".skipped = true
-class.VNImageRequestHandler.methods."initWithCGImage:orientation:options:".skipped = true
-class.VNImageRequestHandler.methods."initWithCIImage:orientation:options:".skipped = true
-class.VNImageRequestHandler.methods."initWithURL:orientation:options:".skipped = true
-class.VNImageRequestHandler.methods."initWithData:orientation:options:".skipped = true
-class.VNSequenceRequestHandler.methods."performRequests:onCVPixelBuffer:orientation:error:".skipped = true
-class.VNSequenceRequestHandler.methods."performRequests:onCGImage:orientation:error:".skipped = true
-class.VNSequenceRequestHandler.methods."performRequests:onCIImage:orientation:error:".skipped = true
-class.VNSequenceRequestHandler.methods."performRequests:onImageURL:orientation:error:".skipped = true
-class.VNSequenceRequestHandler.methods."performRequests:onImageData:orientation:error:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCVPixelBuffer:orientation:options:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCVPixelBuffer:orientation:options:completionHandler:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCGImage:orientation:options:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCGImage:orientation:options:completionHandler:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCIImage:orientation:options:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCIImage:orientation:options:completionHandler:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedImageURL:orientation:options:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedImageURL:orientation:options:completionHandler:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedImageData:orientation:options:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedImageData:orientation:options:completionHandler:".skipped = true
-class.VNImageRequestHandler.methods."initWithCMSampleBuffer:orientation:options:".skipped = true
-class.VNImageRequestHandler.methods."initWithCMSampleBuffer:depthData:orientation:options:".skipped = true
-class.VNSequenceRequestHandler.methods."performRequests:onCMSampleBuffer:orientation:error:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:orientation:options:".skipped = true
-class.VNTargetedImageRequest.methods."initWithTargetedCMSampleBuffer:orientation:options:completionHandler:".skipped = true
 
 
 

@@ -11,8 +11,5 @@ visionos = "1.0"
 external.NSImage.module = "AppKit.NSImage"
 external.UIImage.module = "UIKit.UIImage"
 
-# Needs `CGImagePropertyOrientation` from `ImageIO`
-class.PHLivePhotoEditingContext.methods.orientation.skipped = true
-class.PHImageManager.methods."requestImageDataAndOrientationForAsset:options:resultHandler:".skipped = true
-# Needs `UIImageOrientation` from `UIKit`
+# Needs `UIImageOrientation` from `UIKit`, but isn't configured to only be available on iOS
 class.PHImageManager.methods."requestImageDataForAsset:options:resultHandler:".skipped = true

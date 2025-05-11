@@ -58,6 +58,10 @@ objc2-core-video = { workspace = true, optional = true, features = [
     "objc2",
 ] }
 objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-image-io = { workspace = true, optional = true, features = [
+    "CGImageProperties",
+    "objc2",
+] }
 objc2-uniform-type-identifiers = { workspace = true, optional = true, features = ["UTType"] }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
@@ -65,6 +69,10 @@ objc2-core-image = { workspace = true, optional = true, features = [
     "CIBarcodeDescriptor",
     "CIContext",
     "CIImage",
+] }
+objc2-media-toolbox = { workspace = true, optional = true, features = [
+    "MTAudioProcessingTap",
+    "objc2",
 ] }
 objc2-quartz-core = { workspace = true, optional = true, features = [
     "CALayer",
@@ -247,6 +255,8 @@ default = [
     "objc2-core-graphics",
     "objc2-core-image",
     "objc2-core-video",
+    "objc2-image-io",
+    "objc2-media-toolbox",
     "objc2-quartz-core",
 ]
 std = ["alloc"]
@@ -260,6 +270,8 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
 objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-video = ["dep:objc2-core-video"]
+objc2-image-io = ["dep:objc2-image-io"]
+objc2-media-toolbox = ["dep:objc2-media-toolbox"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 

@@ -55,6 +55,9 @@ objc2-app-kit = { workspace = true, optional = true, features = [
     "NSView",
 ] }
 
+[target.'cfg(not(any(target_os = "tvos", target_os = "watchos")))'.dependencies]
+objc2-av-routing = { workspace = true, optional = true, features = ["AVCustomRoutingController"] }
+
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
@@ -67,6 +70,7 @@ targets = [
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
 ]
+features = ["objc2-av-routing"]
 
 [features]
 default = [
@@ -93,6 +97,7 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
+objc2-av-routing = ["dep:objc2-av-routing"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-media = ["dep:objc2-core-media"]
 

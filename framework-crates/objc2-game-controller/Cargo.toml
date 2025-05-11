@@ -36,6 +36,9 @@ objc2-app-kit = { workspace = true, optional = true, features = [
     "NSViewController",
 ] }
 
+[target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "visionos"))'.dependencies]
+objc2-core-haptics = { workspace = true, optional = true, features = ["CHHapticEngine"] }
+
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
@@ -47,6 +50,7 @@ targets = [
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
 ]
+features = ["objc2-core-haptics"]
 
 [features]
 default = [
@@ -122,6 +126,7 @@ block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-core-haptics = ["dep:objc2-core-haptics"]
 
 GCAxis2DInput = [
     "objc2-foundation/NSDate",

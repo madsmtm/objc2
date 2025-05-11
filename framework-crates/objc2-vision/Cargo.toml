@@ -18,6 +18,7 @@ workspace = true
 [dependencies]
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, features = ["std"] }
+objc2-av-foundation = { workspace = true, optional = true, features = ["AVDepthData"] }
 objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFCGTypes",
     "CFDate",
@@ -52,6 +53,10 @@ objc2-core-video = { workspace = true, optional = true, features = [
     "objc2",
 ] }
 objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-image-io = { workspace = true, optional = true, features = [
+    "CGImageProperties",
+    "objc2",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -121,22 +126,26 @@ default = [
     "VNUtils",
     "VNVideoProcessor",
     "block2",
+    "objc2-av-foundation",
     "objc2-core-foundation",
     "objc2-core-graphics",
     "objc2-core-image",
     "objc2-core-media",
     "objc2-core-ml",
     "objc2-core-video",
+    "objc2-image-io",
 ]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
+objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
 objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-ml = ["dep:objc2-core-ml"]
 objc2-core-video = ["dep:objc2-core-video"]
+objc2-image-io = ["dep:objc2-image-io"]
 
 VNCalculateImageAestheticsScoresRequest = [
     "objc2-foundation/NSArray",

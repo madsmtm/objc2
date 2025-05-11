@@ -39,6 +39,11 @@ objc2-core-video = { workspace = true, optional = true, features = [
     "objc2",
 ] }
 objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-image-io = { workspace = true, optional = true, features = [
+    "CGImageProperties",
+    "CGImageSource",
+    "objc2",
+] }
 objc2-io-surface = { workspace = true, optional = true, features = [
     "IOSurfaceRef",
     "objc2",
@@ -100,6 +105,7 @@ default = [
     "objc2-core-foundation",
     "objc2-core-graphics",
     "objc2-core-video",
+    "objc2-image-io",
     "objc2-metal",
 ]
 std = ["alloc"]
@@ -114,6 +120,7 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-ml = ["dep:objc2-core-ml"]
 objc2-core-video = ["dep:objc2-core-video"]
+objc2-image-io = ["dep:objc2-image-io"]
 objc2-io-surface = ["dep:objc2-io-surface"]
 objc2-metal = ["dep:objc2-metal"]
 
