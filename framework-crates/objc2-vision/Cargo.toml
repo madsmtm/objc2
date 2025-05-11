@@ -137,6 +137,19 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+VNObservation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSIndexPath",
+    "objc2-foundation/NSIndexSet",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange", # Added
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
+    "objc2-foundation/NSValue",
+]
 block2 = ["dep:block2"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
@@ -320,18 +333,6 @@ VNImageRegistrationRequest = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
-]
-VNObservation = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSData",
-    "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSIndexPath",
-    "objc2-foundation/NSIndexSet",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
-    "objc2-foundation/NSUUID",
-    "objc2-foundation/NSValue",
 ]
 VNRecognizeAnimalsRequest = [
     "objc2-foundation/NSArray",

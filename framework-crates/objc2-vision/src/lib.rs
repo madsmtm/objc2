@@ -18,6 +18,8 @@ extern crate std;
 mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+#[cfg(feature = "VNObservation")]
+mod observation;
 
 #[allow(unused)]
 pub(crate) type OSType = u32;
