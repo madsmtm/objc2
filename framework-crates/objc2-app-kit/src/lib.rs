@@ -46,6 +46,8 @@ pub(crate) const TARGET_ABI_USES_IOS_VALUES: bool =
 
 #[cfg(feature = "NSApplication")]
 mod application;
+#[cfg(feature = "NSEvent")]
+mod event;
 mod generated;
 #[cfg(feature = "NSImage")]
 mod image;

@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Added `IOKit` "serial" submodule.
+* Added various missing APIs.
 
 ## [0.3.1] - 2025-04-19
 [0.3.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.0...frameworks-0.3.1
