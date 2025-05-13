@@ -574,6 +574,22 @@ pub struct CategoryData {
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+#[serde(rename_all = "lowercase")]
+pub enum Nullability {
+    #[default]
+    Nullable,
+    NonNull,
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct TypeOverride {
+    #[serde(default)]
+    pub nullability: Option<Nullability>,
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct MethodData {
     #[serde(default)]
     pub skipped: bool,
@@ -582,6 +598,12 @@ pub struct MethodData {
     #[serde(rename = "unsafe")]
     #[serde(default)]
     pub unsafe_: Unsafe,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_argument_overrides")]
+    pub arguments: HashMap<usize, TypeOverride>,
+    #[serde(rename = "return")]
+    #[serde(default)]
+    pub return_: TypeOverride,
 }
 
 impl MethodData {
@@ -591,6 +613,8 @@ impl MethodData {
             unsafe_: self.unsafe_,
             renamed: self.renamed.or(superclass.renamed).clone(),
             skipped: self.skipped | superclass.skipped,
+            arguments: self.arguments,
+            return_: self.return_,
         }
     }
 }
@@ -688,4 +712,33 @@ impl<'de> de::Deserialize<'de> for Counterpart {
 
         deserializer.deserialize_str(CounterpartVisitor)
     }
+}
+
+fn deserialize_argument_overrides<'de, D>(
+    deserializer: D,
+) -> Result<HashMap<usize, TypeOverride>, D::Error>
+where
+    D: de::Deserializer<'de>,
+{
+    let str_map = HashMap::<&str, TypeOverride>::deserialize(deserializer)?;
+    let original_len = str_map.len();
+    let data = {
+        str_map
+            .into_iter()
+            .map(|(str_key, value)| match str_key.parse() {
+                Ok(int_key) => Ok((int_key, value)),
+                Err(_) => Err({
+                    de::Error::invalid_value(
+                        de::Unexpected::Str(str_key),
+                        &"a non-negative integer",
+                    )
+                }),
+            })
+            .collect::<Result<HashMap<_, _>, _>>()?
+    };
+    // multiple strings could parse to the same int, e.g "0" and "00"
+    if data.len() < original_len {
+        return Err(de::Error::custom("duplicate integer key"));
+    }
+    Ok(data)
 }
