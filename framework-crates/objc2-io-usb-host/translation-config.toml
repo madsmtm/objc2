@@ -5,9 +5,9 @@ custom-lib-rs = true
 macos = "10.15"
 maccatalyst = "14.0"
 
-# Return type marked as non-null, raises `unknown error result type`.
-class.IOUSBHostControllerInterface.methods."getPortStateMachineForCommand:error:".skipped = true
-class.IOUSBHostControllerInterface.methods."getPortStateMachineForPort:error:".skipped = true
+# Return type nullability is incorrectly declared in the header. It should be `nullable` instead of `nonnull`.
+class.IOUSBHostControllerInterface.methods."getPortStateMachineForCommand:error:".return.nullability = "nullable"
+class.IOUSBHostControllerInterface.methods."getPortStateMachineForPort:error:".return.nullability = "nullable"
 
 # Returns non-object pointer in error method, raises `unknown error result type`.
 class.IOUSBHostObject.methods."descriptorWithType:length:index:languageID:requestType:requestRecipient:error:".skipped = true

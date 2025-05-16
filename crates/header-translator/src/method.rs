@@ -1,9 +1,10 @@
+use core::panic;
 use std::fmt;
 
 use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
 
 use crate::availability::Availability;
-use crate::config::MethodData;
+use crate::config::{self, MethodData, TypeOverride};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
@@ -437,7 +438,8 @@ impl Method {
             .get_arguments()
             .expect("method arguments")
             .into_iter()
-            .map(|entity| {
+            .enumerate()
+            .map(|(index, entity)| {
                 let name = entity.get_name().expect("arg display name");
                 let _span = debug_span!("method argument", name).entered();
                 let qualifier = entity
@@ -473,11 +475,23 @@ impl Method {
                 });
 
                 let ty = entity.get_type().expect("argument type");
-                let ty = Ty::parse_method_argument(ty, qualifier, sendable, no_escape, context);
+                let mut ty = Ty::parse_method_argument(ty, qualifier, sendable, no_escape, context);
+
+                if let Some(ty_or) = data.arguments.get(&index) {
+                    apply_type_override(&mut ty, ty_or);
+                }
 
                 (name, ty)
             })
             .collect();
+
+        let last_arg_override = *data.arguments.keys().max().unwrap_or(&0);
+        if arguments.len() < last_arg_override {
+            panic!(
+                "argument override index out of bounds {}",
+                last_arg_override
+            );
+        }
 
         let is_error = if let Some((_, ty)) = arguments.last() {
             ty.argument_is_error_out()
@@ -530,6 +544,8 @@ impl Method {
             is_class,
             modifiers.mainthreadonly,
         );
+
+        apply_type_override(&mut result_type, &data.return_);
 
         let encoding = entity
             .get_objc_type_encoding()
@@ -605,7 +621,7 @@ impl Method {
             .expect("method to have encoding");
 
         let getter = if !getter_data.skipped {
-            let ty = Ty::parse_property_return(
+            let mut ty = Ty::parse_property_return(
                 entity.get_type().expect("property type"),
                 is_copy,
                 modifiers.sendable,
@@ -626,6 +642,8 @@ impl Method {
                 is_class,
                 modifiers.mainthreadonly,
             );
+
+            apply_type_override(&mut ty, &getter_data.return_);
 
             Some(Method {
                 selector: getter_sel.clone(),
@@ -655,7 +673,7 @@ impl Method {
             let setter_data = setter_data.expect("setter_data must be present if setter_sel was");
             if !setter_data.skipped {
                 let result_type = Ty::VOID_RESULT;
-                let ty = Ty::parse_property(
+                let mut ty = Ty::parse_property(
                     entity.get_type().expect("property type"),
                     is_copy,
                     modifiers.sendable,
@@ -673,6 +691,10 @@ impl Method {
                     is_class,
                     modifiers.mainthreadonly,
                 );
+
+                if let Some(ty_or) = setter_data.arguments.get(&0) {
+                    apply_type_override(&mut ty, ty_or);
+                }
 
                 Some(Method {
                     selector,
@@ -907,5 +929,30 @@ pub(crate) fn handle_reserved(name: &str) -> String {
         "param1".into()
     } else {
         name.into()
+    }
+}
+
+pub(crate) fn apply_type_override(ty: &mut Ty, or: &TypeOverride) {
+    if let Some(nullability) = &or.nullability {
+        let c_nullability = match nullability {
+            config::Nullability::Nullable => clang::Nullability::Nullable,
+            config::Nullability::NonNull => clang::Nullability::NonNull,
+        };
+
+        let check_and_set_nullability = |current_nullability: &mut clang::Nullability| {
+            if *current_nullability == c_nullability {
+                warn!("nullability already set to {:?}", current_nullability);
+            }
+            *current_nullability = c_nullability;
+        };
+
+        match ty {
+            Ty::Pointer { nullability, .. }
+            | Ty::Sel { nullability, .. }
+            | Ty::IncompleteArray { nullability, .. } => {
+                check_and_set_nullability(nullability);
+            }
+            _ => panic!("unexpected type: {:?}", ty),
+        };
     }
 }
