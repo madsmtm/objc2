@@ -44,6 +44,20 @@ macro_rules! iokit_common_msg {
     };
 }
 
+macro_rules! iokit_family_msg {
+    ($sub:expr, $message:expr) => {
+        // (sys_iokit | sub| message)
+        (err_system!(0x38) | ($sub as i32) | $message) as u32
+    };
+}
+
+macro_rules! iokit_family_err {
+    ($sub:expr, $return:expr) => {
+        // (sys_iokit | sub| return)
+        (err_system!(0x38) | ($sub as i32) | $return) as i32
+    };
+}
+
 macro_rules! iokit_usb_msg {
     ($message:expr) => {
         // (sys_iokit | sub_iokit_usb | message)
@@ -68,6 +82,8 @@ pub(crate) use err_sub;
 pub(crate) use err_system;
 pub(crate) use iokit_common_msg;
 pub(crate) use iokit_common_msg as iokit_common_err;
+pub(crate) use iokit_family_err;
+pub(crate) use iokit_family_msg;
 pub(crate) use iokit_usb_msg as iokit_usb_err;
 pub(crate) use iokit_usb_msg;
 pub(crate) use iokit_vendor_specific_msg;
