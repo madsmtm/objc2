@@ -16,11 +16,53 @@ module.iokitmig.skipped = true
 module.kext.skipped = true
 module.ndrvsupport.skipped = true
 module.ps.skipped = true
-module.pwr_mgt.skipped = true
 module.sbp2.skipped = true
 module.scsi.skipped = true
 module.storage.skipped = true
 module.stream.skipped = true
+
+# IOPM.h
+# Cast to (void*)1
+const.kIOPMMessageSleepWakeUUIDSet.skipped = true
+# Cast to (void*)NULL
+const.kIOPMMessageSleepWakeUUIDCleared.skipped = true
+
+# References kIOReturnUnsupported (u32) in enum (i32)
+const.kIOPSFamilyCodeUnsupported.skipped = true
+
+# IOKit/IOReturn.h
+# Defines
+const.sub_iokit_common.skipped = false
+const.sub_iokit_usb.skipped = false
+const.sub_iokit_firewire.skipped = false
+const.sub_iokit_block_storage.skipped = false
+const.sub_iokit_graphics.skipped = false
+const.sub_iokit_networking.skipped = false
+const.sub_iokit_bluetooth.skipped = false
+const.sub_iokit_pmu.skipped = false
+const.sub_iokit_acpi.skipped = false
+const.sub_iokit_smbus.skipped = false
+const.sub_iokit_ahci.skipped = false
+const.sub_iokit_powermanagement.skipped = false
+const.sub_iokit_hidsystem.skipped = false
+const.sub_iokit_scsi.skipped = false
+const.sub_iokit_usbaudio.skipped = false
+const.sub_iokit_wirelesscharging.skipped = false
+const.sub_iokit_thunderbol.skipped = false
+const.sub_iokit_graphics_acceleration.skipped = false
+const.sub_iokit_keystore.skipped = false
+const.sub_iokit_apfs.skipped = false
+const.sub_iokit_acpiec.skipped = false
+const.sub_iokit_timesync_avb.skipped = false
+
+# usb/IOUSB.h
+# Constants using CFUUIDGetConstantUUIDWithBytes
+const.kIOUSBDeviceInterfaceID.skipped = true
+const.kIOUSBInterfaceInterfaceID.skipped = true
+
+# usb/USB.h
+# Redefine for kUSBHostMessageRenegotiateCurrent
+const.kIOUSBMessageRenegotiateCurrent.skipped = true
 
 # Requires C++
 module.video.skipped = true
