@@ -36,6 +36,11 @@ pub type IOReturn = core::ffi::c_int; // kern_return_t
 #[allow(non_upper_case_globals)]
 pub const kIOReturnSuccess: IOReturn = 0;
 
+// IOKit/IOPM.h
+/// [Apple's documentation](https://developer.apple.com/documentation/kernel/2876248-anonymous/kiopsfamilycodeunsupported/)
+#[allow(non_upper_case_globals)]
+pub const kIOPSFamilyCodeUnsupported: core::ffi::c_int = kIOReturnUnsupported as core::ffi::c_int;
+
 // MacTypes.h
 #[allow(dead_code)]
 pub(crate) type Boolean = u8;
