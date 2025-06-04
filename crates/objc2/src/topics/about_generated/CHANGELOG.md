@@ -16,6 +16,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `IOKit` "serial" submodule.
 * Added various missing APIs.
 
+### Changed
+* Updated SDK from Xcode 16.3 to 16.4.
+
+  View the release notes to learn more details:
+  - [16.4](https://developer.apple.com/documentation/xcode-release-notes/xcode-16_4-release-notes)
+
+  Breaking changes are noted elsewhere in this changelog entry.
+* **BREAKING**: The reply block in `FSVolumeRenameOperations::setVolumeName_replyHandler` now
+  takes a nullable file name.
+* **BREAKING**: The media selection option on `AVAssetVariantQualifier` is now nullable.
+
 ## [0.3.1] - 2025-04-19
 [0.3.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.0...frameworks-0.3.1
 
