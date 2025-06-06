@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use std::cmp::Ordering;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashMap;
@@ -551,7 +552,8 @@ pub enum Stmt {
         boxable: bool,
         fields: Vec<(String, Documentation, Ty)>,
         sendable: Option<bool>,
-        packed: bool,
+        align: usize,
+        natural_align: usize,
         documentation: Documentation,
         is_union: bool,
     },
@@ -1294,6 +1296,8 @@ impl Stmt {
                 let mut fields = Vec::new();
                 let mut sendable = None;
                 let mut packed = false;
+                let align = ty.get_alignof().expect("alignment of record type");
+                let mut natural_align = 0;
 
                 let mut res = vec![];
 
@@ -1313,6 +1317,17 @@ impl Stmt {
                         let _span = debug_span!("field", name).entered();
 
                         let ty = entity.get_type().expect("struct/union field type");
+                        let field_align = ty.get_alignof().unwrap();
+                        if align < field_align {
+                            // Similar to what bindgen does, we cannot detect
+                            // #pragma pack, but we can detect it's effect
+                            // (that the type itself has lower alignment than
+                            // its fields).
+                            packed = true;
+                        }
+                        // Compute the natural alignment of the struct.
+                        natural_align = natural_align.max(field_align);
+
                         let ty = Ty::parse_record_field(ty, context);
 
                         if entity.is_bit_field() {
@@ -1330,7 +1345,9 @@ impl Stmt {
                         // emit them at the top-level.
                         res.extend(Self::parse(&entity, context, current_library));
                     }
-                    EntityKind::PackedAttr => packed = true,
+                    EntityKind::PackedAttr => {
+                        assert_eq!(align, 1, "packed records must have an alignment of 1");
+                    }
                     EntityKind::VisibilityAttr => {}
                     _ => error!(?entity, "unknown struct/union child"),
                 });
@@ -1347,7 +1364,8 @@ impl Stmt {
                     boxable,
                     fields,
                     sendable,
-                    packed,
+                    align,
+                    natural_align,
                     documentation,
                     is_union,
                 });
@@ -2517,18 +2535,23 @@ impl Stmt {
                     boxable: _,
                     fields,
                     sendable,
-                    packed,
+                    align,
+                    natural_align,
                     documentation,
                     is_union,
                 } => {
                     write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
-                    if *packed {
-                        writeln!(f, "#[repr(C, packed)]")?;
-                    } else {
-                        writeln!(f, "#[repr(C)]")?;
+
+                    // See <https://doc.rust-lang.org/reference/type-layout.html#the-alignment-modifiers>
+                    match align.cmp(natural_align) {
+                        Ordering::Less if *align == 1 => writeln!(f, "#[repr(C, packed)]")?,
+                        Ordering::Less => writeln!(f, "#[repr(C, packed({align}))]")?,
+                        Ordering::Equal => writeln!(f, "#[repr(C)]")?,
+                        Ordering::Greater => writeln!(f, "#[repr(C, align({align}))]")?,
                     }
+
                     if *is_union || fields.iter().any(|(_, _, field)| field.contains_union()) {
                         writeln!(f, "#[derive(Clone, Copy)]")?;
                     } else {
