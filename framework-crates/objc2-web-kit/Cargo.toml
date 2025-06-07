@@ -304,6 +304,15 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-javascript-core = ["dep:objc2-javascript-core"]
 objc2-security = ["dep:objc2-security"]
 
+unstable-core-ffi-objc = [
+    "objc2-app-kit?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-javascript-core?/unstable-core-ffi-objc",
+    "objc2-security?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 DOM = []
 DOMAbstractView = ["objc2-foundation/NSObject"]
 DOMAttr = [

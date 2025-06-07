@@ -61,6 +61,12 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-ui-kit?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 VSAccountApplicationProvider = ["objc2-foundation/NSString"]
 VSAccountManager = [
     "objc2-foundation/NSDictionary",

@@ -74,6 +74,11 @@ std = ["alloc"]
 alloc = []
 libc = ["dep:libc"]
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 MXAnimationMetric = [
     "objc2-foundation/NSMeasurement",
     "objc2-foundation/NSObject",

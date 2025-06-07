@@ -47,6 +47,12 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-graphics?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 SCSensitivityAnalysis = []
 SCSensitivityAnalyzer = [
     "objc2-foundation/NSError",

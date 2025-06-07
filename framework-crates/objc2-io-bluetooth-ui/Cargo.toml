@@ -58,6 +58,14 @@ objc2 = []
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-io-bluetooth = ["dep:objc2-io-bluetooth"]
 
+unstable-core-ffi-objc = [
+    "objc2-app-kit/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-io-bluetooth?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 IOBluetoothDeviceSelectorController = [
     "objc2-app-kit/NSNib",
     "objc2-app-kit/NSResponder",

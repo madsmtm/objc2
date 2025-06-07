@@ -65,6 +65,12 @@ objc2 = [
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-foundation = ["dep:objc2-foundation"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-foundation?/unstable-core-ffi-objc",
+    "objc2?/unstable-core-ffi-objc",
+]
+
 IOSurface = []
 IOSurfaceAPI = []
 IOSurfaceBase = []

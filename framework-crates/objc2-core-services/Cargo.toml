@@ -107,6 +107,12 @@ objc2 = [
 ]
 objc2-security = ["dep:objc2-security"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-foundation/unstable-core-ffi-objc",
+    "objc2-security?/unstable-core-ffi-objc",
+    "objc2?/unstable-core-ffi-objc",
+]
+
 AE = []
 AEDataModel = []
 AEHelpers = []

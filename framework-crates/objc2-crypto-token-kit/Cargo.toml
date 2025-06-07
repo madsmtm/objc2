@@ -62,6 +62,12 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-security = ["dep:objc2-security"]
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-security?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 TKBase = []
 TKError = ["objc2-foundation/NSString"]
 TKSmartCard = [

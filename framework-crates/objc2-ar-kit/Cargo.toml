@@ -189,6 +189,24 @@ objc2-sprite-kit = ["dep:objc2-sprite-kit"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 objc2-vision = ["dep:objc2-vision"]
 
+unstable-core-ffi-objc = [
+    "objc2-av-foundation?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-core-graphics?/unstable-core-ffi-objc",
+    "objc2-core-location?/unstable-core-ffi-objc",
+    "objc2-core-media?/unstable-core-ffi-objc",
+    "objc2-core-video?/unstable-core-ffi-objc",
+    "objc2-foundation?/unstable-core-ffi-objc",
+    "objc2-image-io?/unstable-core-ffi-objc",
+    "objc2-metal?/unstable-core-ffi-objc",
+    "objc2-quartz-core?/unstable-core-ffi-objc",
+    "objc2-scene-kit?/unstable-core-ffi-objc",
+    "objc2-sprite-kit?/unstable-core-ffi-objc",
+    "objc2-ui-kit?/unstable-core-ffi-objc",
+    "objc2-vision?/unstable-core-ffi-objc",
+    "objc2?/unstable-core-ffi-objc",
+]
+
 ARAnchor = []
 ARAppClipCodeAnchor = []
 ARBody2D = []

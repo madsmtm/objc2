@@ -45,6 +45,11 @@ std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 WCDefines = []
 WCError = ["objc2-foundation/NSString"]
 WCSession = [

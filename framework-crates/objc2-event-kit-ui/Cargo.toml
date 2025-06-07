@@ -61,6 +61,13 @@ alloc = []
 objc2-event-kit = ["dep:objc2-event-kit"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 
+unstable-core-ffi-objc = [
+    "objc2-event-kit?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-ui-kit?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 EKCalendarChooser = [
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",

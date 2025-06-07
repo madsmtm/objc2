@@ -55,6 +55,13 @@ block2 = ["dep:block2"]
 objc2-core-bluetooth = ["dep:objc2-core-bluetooth"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-bluetooth?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-ui-kit?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 ASAccessory = [
     "bitflags",
     "objc2-foundation/NSData",

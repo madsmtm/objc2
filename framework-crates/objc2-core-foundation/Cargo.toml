@@ -105,6 +105,8 @@ objc2 = [
     "dispatch2?/objc2",
 ]
 
+unstable-core-ffi-objc = ["objc2?/unstable-core-ffi-objc"]
+
 CFArray = []
 CFAttributedString = []
 CFAvailability = []

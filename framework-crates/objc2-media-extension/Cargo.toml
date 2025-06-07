@@ -78,6 +78,16 @@ objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-video = ["dep:objc2-core-video"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 
+unstable-core-ffi-objc = [
+    "objc2-av-foundation?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-core-media?/unstable-core-ffi-objc",
+    "objc2-core-video?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-uniform-type-identifiers?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 MEError = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",

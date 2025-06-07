@@ -59,6 +59,12 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
+unstable-core-ffi-objc = [
+    "objc2-app-kit?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 LPError = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",

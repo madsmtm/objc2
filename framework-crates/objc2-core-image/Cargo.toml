@@ -124,6 +124,18 @@ objc2-image-io = ["dep:objc2-image-io"]
 objc2-io-surface = ["dep:objc2-io-surface"]
 objc2-metal = ["dep:objc2-metal"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-core-graphics?/unstable-core-ffi-objc",
+    "objc2-core-ml?/unstable-core-ffi-objc",
+    "objc2-core-video?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-image-io?/unstable-core-ffi-objc",
+    "objc2-io-surface?/unstable-core-ffi-objc",
+    "objc2-metal?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 CIBarcodeDescriptor = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",

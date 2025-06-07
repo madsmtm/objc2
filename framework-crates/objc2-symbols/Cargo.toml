@@ -40,4 +40,9 @@ default = [
 std = ["alloc"]
 alloc = []
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 NSSymbolEffect = ["objc2-foundation/NSObject"]

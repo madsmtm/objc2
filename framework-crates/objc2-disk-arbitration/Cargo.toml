@@ -54,6 +54,11 @@ objc2 = [
     "objc2-core-foundation/objc2",
 ]
 
+unstable-core-ffi-objc = [
+    "objc2-core-foundation/unstable-core-ffi-objc",
+    "objc2?/unstable-core-ffi-objc",
+]
+
 DADisk = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",

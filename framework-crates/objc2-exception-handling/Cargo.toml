@@ -37,6 +37,11 @@ default = [
 std = ["alloc"]
 alloc = []
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 ExceptionHandlingDefines = []
 NSExceptionHandler = [
     "objc2-foundation/NSException",

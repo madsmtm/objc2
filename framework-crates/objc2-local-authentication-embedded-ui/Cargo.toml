@@ -59,6 +59,13 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
+unstable-core-ffi-objc = [
+    "objc2-app-kit?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-local-authentication/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 LAAuthenticationView = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",

@@ -224,6 +224,12 @@ impl Library {
             )?;
             writeln!(lib_rs, "//! [framework-crates]: https://docs.rs/objc2/latest/objc2/topics/about_generated/index.html")?;
             writeln!(lib_rs, "#![no_std]")?;
+            if !self.data.is_library {
+                writeln!(
+                    lib_rs,
+                    "#![cfg_attr(feature = \"unstable-core-ffi-objc\", feature(core_ffi_objc))]"
+                )?;
+            }
             writeln!(lib_rs, "#![cfg_attr(docsrs, feature(doc_auto_cfg))]")?;
             writeln!(lib_rs, "// Update in Cargo.toml as well.")?;
             writeln!(
@@ -348,7 +354,8 @@ see that for related crates.", self.data.krate)?;
         cargo_toml["package"]["metadata"]["docs"]["rs"]["default-target"] =
             value(default_target.unwrap());
 
-        for (krate, required_features) in self.dependencies(config) {
+        let dependencies = self.dependencies(config);
+        for (&krate, required_features) in &dependencies {
             let library = config.library_from_crate(krate);
             let required = self.data.required_crates.contains(krate);
             let mut table = InlineTable::from_iter([("workspace", Value::from(true))]);
@@ -436,6 +443,21 @@ see that for related crates.", self.data.krate)?;
                 continue;
             }
             let enabled_features = emitted_features.remove(feature).unwrap();
+            cargo_toml["features"][feature] = array_with_newlines(enabled_features);
+        }
+
+        // Emit unstable-core-ffi-objc feature in framework crates.
+        if !self.data.is_library {
+            let feature = "unstable-core-ffi-objc";
+            let mut enabled_features = BTreeSet::new();
+            for &krate in dependencies.keys() {
+                if krate == "objc2" || !config.library_from_crate(krate).is_library {
+                    let required = self.data.required_crates.contains(krate);
+                    let qmark = if required { "" } else { "?" };
+                    enabled_features.insert(format!("{krate}{qmark}/{feature}"));
+                }
+            }
+            add_newline_at_end(&mut cargo_toml["features"]);
             cargo_toml["features"][feature] = array_with_newlines(enabled_features);
         }
 

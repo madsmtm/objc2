@@ -85,6 +85,16 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 
+unstable-core-ffi-objc = [
+    "objc2-av-foundation?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-quartz-core?/unstable-core-ffi-objc",
+    "objc2-ui-kit/unstable-core-ffi-objc",
+    "objc2-uniform-type-identifiers?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 BEAccessibility = [
     "bitflags",
     "objc2-foundation/NSAttributedString",

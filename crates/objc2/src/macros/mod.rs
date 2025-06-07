@@ -222,6 +222,11 @@ macro_rules! __class_inner {
 /// x!(abc);
 /// ```
 #[macro_export]
+#[cfg(any(
+    doc,
+    not(feature = "unstable-core-ffi-objc"),
+    feature = "unstable-static-sel"
+))]
 macro_rules! sel {
     (new) => ({
         $crate::__macro_helpers::new_sel()
@@ -256,6 +261,21 @@ macro_rules! sel {
             $crate::__hash_idents!($($sel)*)
         )
     };
+}
+
+#[macro_export]
+#[cfg(all(
+    not(doc),
+    feature = "unstable-core-ffi-objc",
+    not(feature = "unstable-static-sel")
+))]
+macro_rules! sel {
+    ($($sel:tt)*) => {{
+        let ptr = $crate::__macro_helpers::core_ffi_objc_selector!($($sel)*);
+        let ptr: *const u8 = ptr.cast_const().cast();
+        #[allow(unused_unsafe)]
+        unsafe { $crate::runtime::Sel::__internal_from_ptr(ptr) }
+    }};
 }
 
 /// Handle selectors with internal colons.

@@ -92,6 +92,15 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-shared-with-you-core = ["dep:objc2-shared-with-you-core"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 
+unstable-core-ffi-objc = [
+    "objc2-app-kit?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-shared-with-you-core?/unstable-core-ffi-objc",
+    "objc2-uniform-type-identifiers?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 NSItemProvider_SWCollaborationMetadata = ["objc2-foundation/NSString"]
 NSPasteboardItem_SWCollaborationMetadata = []
 SWAttributionView = [

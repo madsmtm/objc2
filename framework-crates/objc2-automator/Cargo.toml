@@ -67,6 +67,14 @@ objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-osa-kit = ["dep:objc2-osa-kit"]
 
+unstable-core-ffi-objc = [
+    "objc2-app-kit?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-osa-kit?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 AMAction = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",

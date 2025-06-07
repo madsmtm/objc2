@@ -79,6 +79,15 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-location = ["dep:objc2-core-location"]
 objc2-map-kit = ["dep:objc2-map-kit"]
 
+unstable-core-ffi-objc = [
+    "objc2-app-kit?/unstable-core-ffi-objc",
+    "objc2-core-graphics?/unstable-core-ffi-objc",
+    "objc2-core-location?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-map-kit?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 EKAlarm = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",

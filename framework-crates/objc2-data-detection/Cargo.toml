@@ -41,6 +41,11 @@ default = [
 std = ["alloc"]
 alloc = []
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 DDMatch = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSString",

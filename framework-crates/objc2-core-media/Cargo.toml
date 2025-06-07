@@ -92,6 +92,14 @@ objc2-core-audio = ["dep:objc2-core-audio"]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-video = ["dep:objc2-core-video"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-audio-types?/unstable-core-ffi-objc",
+    "objc2-core-audio?/unstable-core-ffi-objc",
+    "objc2-core-foundation/unstable-core-ffi-objc",
+    "objc2-core-video?/unstable-core-ffi-objc",
+    "objc2?/unstable-core-ffi-objc",
+]
+
 CMAttachment = ["objc2-core-foundation/CFDictionary"]
 CMAudioClock = []
 CMAudioDeviceClock = []

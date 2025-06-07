@@ -179,6 +179,20 @@ objc2-metal = ["dep:objc2-metal"]
 objc2-model-io = ["dep:objc2-model-io"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 
+unstable-core-ffi-objc = [
+    "objc2-app-kit?/unstable-core-ffi-objc",
+    "objc2-avf-audio?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-core-graphics?/unstable-core-ffi-objc",
+    "objc2-core-image?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-javascript-core?/unstable-core-ffi-objc",
+    "objc2-metal?/unstable-core-ffi-objc",
+    "objc2-model-io?/unstable-core-ffi-objc",
+    "objc2-quartz-core?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 ModelIO = []
 SCNAction = [
     "objc2-foundation/NSArray",

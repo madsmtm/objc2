@@ -69,6 +69,12 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
+unstable-core-ffi-objc = [
+    "objc2-app-kit?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 MEAddressAnnotation = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",

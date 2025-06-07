@@ -103,6 +103,14 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-services = ["dep:objc2-core-services"]
 objc2-foundation = ["dep:objc2-foundation"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-foundation/unstable-core-ffi-objc",
+    "objc2-core-graphics?/unstable-core-ffi-objc",
+    "objc2-core-services?/unstable-core-ffi-objc",
+    "objc2-foundation?/unstable-core-ffi-objc",
+    "objc2?/unstable-core-ffi-objc",
+]
+
 AXActionConstants = []
 AXAttributeConstants = ["bitflags"]
 AXConstants = []

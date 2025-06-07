@@ -50,6 +50,12 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-uniform-type-identifiers?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 DDCommon = []
 DDDevice = [
     "bitflags",

@@ -80,6 +80,12 @@ block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 objc2-contacts = ["dep:objc2-contacts"]
 
+unstable-core-ffi-objc = [
+    "objc2-contacts?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 CLAvailability = []
 CLBackgroundActivitySession = []
 CLBeaconIdentityCondition = [

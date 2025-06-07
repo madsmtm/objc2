@@ -45,6 +45,12 @@ std = ["alloc"]
 alloc = []
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-ui-kit?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 MSServiceAccount = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",

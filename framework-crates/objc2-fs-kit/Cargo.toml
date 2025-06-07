@@ -62,6 +62,11 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 libc = ["dep:libc"]
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 FSClient = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",

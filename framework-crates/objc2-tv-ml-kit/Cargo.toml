@@ -85,6 +85,15 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-javascript-core = ["dep:objc2-javascript-core"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 
+unstable-core-ffi-objc = [
+    "objc2-av-foundation?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-javascript-core?/unstable-core-ffi-objc",
+    "objc2-ui-kit?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 TVApplicationController = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",

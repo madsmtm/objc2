@@ -49,6 +49,11 @@ std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 CTCall = ["objc2-foundation/NSString"]
 CTCallCenter = ["objc2-foundation/NSSet"]
 CTCarrier = ["objc2-foundation/NSString"]

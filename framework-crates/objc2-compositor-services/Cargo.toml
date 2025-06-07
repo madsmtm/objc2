@@ -67,6 +67,12 @@ bitflags = ["dep:bitflags"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-metal = ["dep:objc2-metal"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-metal?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 cp_base = []
 cp_error = []
 cp_types = []

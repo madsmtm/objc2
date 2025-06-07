@@ -41,6 +41,12 @@ default = [
 std = ["alloc"]
 alloc = []
 
+unstable-core-ffi-objc = [
+    "objc2-app-kit/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 BCChatAction = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSString",

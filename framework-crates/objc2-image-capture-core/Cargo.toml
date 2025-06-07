@@ -66,6 +66,13 @@ libc = ["dep:libc"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-core-graphics?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 ICCameraDevice = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",

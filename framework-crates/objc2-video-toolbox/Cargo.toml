@@ -114,6 +114,16 @@ objc2-core-video = ["dep:objc2-core-video"]
 objc2-foundation = ["dep:objc2-foundation"]
 objc2-metal = ["dep:objc2-metal"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-foundation/unstable-core-ffi-objc",
+    "objc2-core-graphics?/unstable-core-ffi-objc",
+    "objc2-core-media?/unstable-core-ffi-objc",
+    "objc2-core-video?/unstable-core-ffi-objc",
+    "objc2-foundation?/unstable-core-ffi-objc",
+    "objc2-metal?/unstable-core-ffi-objc",
+    "objc2?/unstable-core-ffi-objc",
+]
+
 VTBase = []
 VTCompressionProperties = []
 VTCompressionSession = [

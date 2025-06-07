@@ -43,6 +43,12 @@ std = ["alloc"]
 alloc = []
 objc2-security = ["dep:objc2-security"]
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-security?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 SFAuthorization = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",

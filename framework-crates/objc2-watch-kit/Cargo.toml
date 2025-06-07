@@ -135,6 +135,21 @@ objc2-scene-kit = ["dep:objc2-scene-kit"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 objc2-user-notifications = ["dep:objc2-user-notifications"]
 
+unstable-core-ffi-objc = [
+    "objc2-cloud-kit?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-core-location?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-health-kit?/unstable-core-ffi-objc",
+    "objc2-home-kit?/unstable-core-ffi-objc",
+    "objc2-intents?/unstable-core-ffi-objc",
+    "objc2-map-kit?/unstable-core-ffi-objc",
+    "objc2-scene-kit?/unstable-core-ffi-objc",
+    "objc2-ui-kit?/unstable-core-ffi-objc",
+    "objc2-user-notifications?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 WKAccessibility = ["objc2-foundation/NSString"]
 WKAlertAction = ["objc2-foundation/NSString"]
 WKApplication = [

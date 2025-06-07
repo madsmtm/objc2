@@ -50,6 +50,12 @@ alloc = []
 libc = ["dep:libc"]
 objc2-core-services = ["dep:objc2-core-services"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-services?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 SBApplication = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",

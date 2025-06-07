@@ -467,6 +467,14 @@ objc2-contacts = ["dep:objc2-contacts"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-location = ["dep:objc2-core-location"]
 
+unstable-core-ffi-objc = [
+    "objc2-contacts?/unstable-core-ffi-objc",
+    "objc2-core-graphics?/unstable-core-ffi-objc",
+    "objc2-core-location?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 CLPlacemark_IntentsAdditions = ["objc2-foundation/NSString"]
 INAccountType = []
 INAccountTypeResolutionResult = []

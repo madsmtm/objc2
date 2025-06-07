@@ -53,6 +53,13 @@ alloc = []
 objc2-identity-lookup = ["dep:objc2-identity-lookup"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-identity-lookup?/unstable-core-ffi-objc",
+    "objc2-ui-kit?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 ILClassificationUIExtensionContext = ["objc2-foundation/NSExtensionContext"]
 ILClassificationUIExtensionViewController = [
     "objc2-foundation/NSBundle",

@@ -78,3 +78,10 @@ dispatch2 = ["dep:dispatch2"]
 libc = ["dep:libc"]
 objc2-accessory-setup-kit = ["dep:objc2-accessory-setup-kit"]
 objc2-security = ["dep:objc2-security"]
+
+unstable-core-ffi-objc = [
+    "objc2-accessory-setup-kit?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-security?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]

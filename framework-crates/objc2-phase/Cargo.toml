@@ -87,6 +87,14 @@ objc2-avf-audio = ["dep:objc2-avf-audio"]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-model-io = ["dep:objc2-model-io"]
 
+unstable-core-ffi-objc = [
+    "objc2-avf-audio?/unstable-core-ffi-objc",
+    "objc2-core-audio-types?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-model-io?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 PHASEAssetRegistry = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",

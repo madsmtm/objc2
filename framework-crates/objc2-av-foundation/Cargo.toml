@@ -275,6 +275,21 @@ objc2-media-toolbox = ["dep:objc2-media-toolbox"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 
+unstable-core-ffi-objc = [
+    "objc2-avf-audio?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-core-graphics?/unstable-core-ffi-objc",
+    "objc2-core-image?/unstable-core-ffi-objc",
+    "objc2-core-media?/unstable-core-ffi-objc",
+    "objc2-core-video?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-image-io?/unstable-core-ffi-objc",
+    "objc2-media-toolbox?/unstable-core-ffi-objc",
+    "objc2-quartz-core?/unstable-core-ffi-objc",
+    "objc2-uniform-type-identifiers?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 AVAnimation = ["objc2-foundation/NSString"]
 AVAsset = [
     "bitflags",

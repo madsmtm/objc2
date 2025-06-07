@@ -149,6 +149,14 @@ block2 = ["dep:block2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-core-graphics?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-metal/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 MPSAccelerationStructure = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",

@@ -163,6 +163,15 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-local-authentication = ["dep:objc2-local-authentication"]
 objc2-security = ["dep:objc2-security"]
 
+unstable-core-ffi-objc = [
+    "objc2-app-kit/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-local-authentication?/unstable-core-ffi-objc",
+    "objc2-security?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 ASAccountAuthenticationModificationController = [
     "objc2-app-kit/NSResponder",
     "objc2-app-kit/NSWindow",

@@ -160,6 +160,19 @@ objc2-core-ml = ["dep:objc2-core-ml"]
 objc2-core-video = ["dep:objc2-core-video"]
 objc2-image-io = ["dep:objc2-image-io"]
 
+unstable-core-ffi-objc = [
+    "objc2-av-foundation?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-core-graphics?/unstable-core-ffi-objc",
+    "objc2-core-image?/unstable-core-ffi-objc",
+    "objc2-core-media?/unstable-core-ffi-objc",
+    "objc2-core-ml?/unstable-core-ffi-objc",
+    "objc2-core-video?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-image-io?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 VNCalculateImageAestheticsScoresRequest = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",

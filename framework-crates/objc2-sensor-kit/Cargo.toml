@@ -82,3 +82,14 @@ objc2-core-location = ["dep:objc2-core-location"]
 objc2-core-media = ["dep:objc2-core-media"]
 objc2-sound-analysis = ["dep:objc2-sound-analysis"]
 objc2-speech = ["dep:objc2-speech"]
+
+unstable-core-ffi-objc = [
+    "objc2-ar-kit?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-core-location?/unstable-core-ffi-objc",
+    "objc2-core-media?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2-sound-analysis?/unstable-core-ffi-objc",
+    "objc2-speech?/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]

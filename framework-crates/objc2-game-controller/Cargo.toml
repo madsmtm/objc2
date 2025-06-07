@@ -128,6 +128,14 @@ objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-haptics = ["dep:objc2-core-haptics"]
 
+unstable-core-ffi-objc = [
+    "objc2-app-kit?/unstable-core-ffi-objc",
+    "objc2-core-foundation?/unstable-core-ffi-objc",
+    "objc2-core-haptics?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 GCAxis2DInput = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSSet",

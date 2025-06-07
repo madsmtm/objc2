@@ -49,6 +49,12 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-core-location = ["dep:objc2-core-location"]
 
+unstable-core-ffi-objc = [
+    "objc2-core-location?/unstable-core-ffi-objc",
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 SAAuthorizationStatus = []
 SABase = []
 SACrashDetectionEvent = [

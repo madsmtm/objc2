@@ -5,6 +5,7 @@
 //!
 //! [new-issue]: https://github.com/madsmtm/objc2/issues/new
 #![no_std]
+#![cfg_attr(feature = "unstable-core-ffi-objc", feature(core_ffi_objc))]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;

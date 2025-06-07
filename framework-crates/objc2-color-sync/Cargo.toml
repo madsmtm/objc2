@@ -49,6 +49,11 @@ objc2 = [
     "objc2-core-foundation/objc2",
 ]
 
+unstable-core-ffi-objc = [
+    "objc2-core-foundation/unstable-core-ffi-objc",
+    "objc2?/unstable-core-ffi-objc",
+]
+
 ColorSyncBase = []
 ColorSyncCMM = [
     "objc2-core-foundation/CFArray",

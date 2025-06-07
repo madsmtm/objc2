@@ -52,6 +52,11 @@ default = [
 std = ["alloc"]
 alloc = []
 
+unstable-core-ffi-objc = [
+    "objc2-foundation/unstable-core-ffi-objc",
+    "objc2/unstable-core-ffi-objc",
+]
+
 SWAction = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUUID",
