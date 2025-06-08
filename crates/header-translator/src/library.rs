@@ -354,8 +354,7 @@ see that for related crates.", self.data.krate)?;
         cargo_toml["package"]["metadata"]["docs"]["rs"]["default-target"] =
             value(default_target.unwrap());
 
-        let dependencies = self.dependencies(config);
-        for (&krate, required_features) in &dependencies {
+        for (krate, required_features) in self.dependencies(config) {
             let library = config.library_from_crate(krate);
             let required = self.data.required_crates.contains(krate);
             let mut table = InlineTable::from_iter([("workspace", Value::from(true))]);
