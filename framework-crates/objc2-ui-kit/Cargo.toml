@@ -526,21 +526,7 @@ objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-symbols = ["dep:objc2-symbols"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 objc2-user-notifications = ["dep:objc2-user-notifications"]
-
-unstable-core-ffi-objc = [
-    "objc2-cloud-kit?/unstable-core-ffi-objc",
-    "objc2-core-data?/unstable-core-ffi-objc",
-    "objc2-core-foundation?/unstable-core-ffi-objc",
-    "objc2-core-graphics?/unstable-core-ffi-objc",
-    "objc2-core-image?/unstable-core-ffi-objc",
-    "objc2-core-location?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2-quartz-core?/unstable-core-ffi-objc",
-    "objc2-symbols?/unstable-core-ffi-objc",
-    "objc2-uniform-type-identifiers?/unstable-core-ffi-objc",
-    "objc2-user-notifications?/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 DocumentManager = []
 NSAdaptiveImageGlyph = [

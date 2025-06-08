@@ -40,12 +40,7 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
-
-unstable-core-ffi-objc = [
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2-metal/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 MTLFXDefines = []
 MTLFXSpatialScaler = [

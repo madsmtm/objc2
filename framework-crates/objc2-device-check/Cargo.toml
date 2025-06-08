@@ -44,11 +44,7 @@ default = [
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
-
-unstable-core-ffi-objc = [
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 DCAppAttestService = [
     "objc2-foundation/NSData",

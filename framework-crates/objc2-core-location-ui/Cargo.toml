@@ -60,14 +60,7 @@ alloc = []
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
-
-unstable-core-ffi-objc = [
-    "objc2-core-foundation?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2-quartz-core?/unstable-core-ffi-objc",
-    "objc2-ui-kit?/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 CLLocationButton = [
     "objc2-foundation/NSCoder",

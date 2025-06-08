@@ -75,14 +75,7 @@ alloc = []
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-intents = ["dep:objc2-intents"]
-
-unstable-core-ffi-objc = [
-    "objc2-app-kit?/unstable-core-ffi-objc",
-    "objc2-core-foundation?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2-intents?/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 INImage_IntentsUI = []
 INUIAddVoiceShortcutButton = [

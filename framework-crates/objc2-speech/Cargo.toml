@@ -62,13 +62,7 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]
 objc2-core-media = ["dep:objc2-core-media"]
-
-unstable-core-ffi-objc = [
-    "objc2-avf-audio?/unstable-core-ffi-objc",
-    "objc2-core-media?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 SFErrors = [
     "objc2-foundation/NSError",

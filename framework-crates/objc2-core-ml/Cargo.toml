@@ -146,15 +146,7 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-video = ["dep:objc2-core-video"]
 objc2-image-io = ["dep:objc2-image-io"]
 objc2-metal = ["dep:objc2-metal"]
-
-unstable-core-ffi-objc = [
-    "objc2-core-graphics?/unstable-core-ffi-objc",
-    "objc2-core-video?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2-image-io?/unstable-core-ffi-objc",
-    "objc2-metal?/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 MLAllComputeDevices = ["objc2-foundation/NSArray"]
 MLArrayBatchProvider = [

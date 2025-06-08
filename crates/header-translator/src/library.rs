@@ -447,18 +447,17 @@ see that for related crates.", self.data.krate)?;
         }
 
         // Emit unstable-core-ffi-objc feature in framework crates.
+        //
+        // We could also use this to enable the feature automatically in
+        // dependencies, but we'd like for this feature to remain "unstable" in
+        // the sense that we'd be free to remove it in a patch release. By
+        // mentioning it across crates, that would no longer be the case.
+        //
+        // It's slightly less convenient for users, but in practice, most users
+        // already directly depend on all their `objc2-*` crates in their
+        // dependency tree.
         if !self.data.is_library {
-            let feature = "unstable-core-ffi-objc";
-            let mut enabled_features = BTreeSet::new();
-            for &krate in dependencies.keys() {
-                if krate == "objc2" || !config.library_from_crate(krate).is_library {
-                    let required = self.data.required_crates.contains(krate);
-                    let qmark = if required { "" } else { "?" };
-                    enabled_features.insert(format!("{krate}{qmark}/{feature}"));
-                }
-            }
-            add_newline_at_end(&mut cargo_toml["features"]);
-            cargo_toml["features"][feature] = array_with_newlines(enabled_features);
+            cargo_toml["features"]["unstable-core-ffi-objc"] = array_with_newlines([]);
         }
 
         // And then the rest of the features.

@@ -44,8 +44,7 @@ std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 objc2 = ["dep:objc2"]
-
-unstable-core-ffi-objc = ["objc2?/unstable-core-ffi-objc"]
+unstable-core-ffi-objc = []
 
 AudioSessionTypes = []
 CoreAudioBaseTypes = ["bitflags"]

@@ -83,17 +83,7 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
 objc2-image-capture-core = ["dep:objc2-image-capture-core"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
-
-unstable-core-ffi-objc = [
-    "objc2-app-kit/unstable-core-ffi-objc",
-    "objc2-core-foundation?/unstable-core-ffi-objc",
-    "objc2-core-graphics?/unstable-core-ffi-objc",
-    "objc2-core-image?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2-image-capture-core?/unstable-core-ffi-objc",
-    "objc2-quartz-core?/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 IKCameraDeviceView = [
     "objc2-app-kit/NSAccessibilityProtocols",

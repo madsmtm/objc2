@@ -48,12 +48,7 @@ default = [
 std = ["alloc"]
 alloc = []
 objc2-app-kit = ["dep:objc2-app-kit"]
-
-unstable-core-ffi-objc = [
-    "objc2-app-kit?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 ScreenSaverDefaults = [
     "objc2-foundation/NSString",

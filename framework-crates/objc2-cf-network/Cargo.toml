@@ -56,11 +56,7 @@ objc2 = [
     "dep:objc2",
     "objc2-core-foundation/objc2",
 ]
-
-unstable-core-ffi-objc = [
-    "objc2-core-foundation/unstable-core-ffi-objc",
-    "objc2?/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 CFFTPStream = [
     "objc2-core-foundation/CFDictionary",

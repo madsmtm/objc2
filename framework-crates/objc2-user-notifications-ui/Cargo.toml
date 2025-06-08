@@ -58,14 +58,7 @@ block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-user-notifications = ["dep:objc2-user-notifications"]
-
-unstable-core-ffi-objc = [
-    "objc2-app-kit?/unstable-core-ffi-objc",
-    "objc2-core-foundation?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2-user-notifications?/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 UNNotificationContentExtension = [
     "objc2-foundation/NSArray",

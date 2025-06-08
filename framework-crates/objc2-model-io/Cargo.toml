@@ -70,13 +70,7 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
-
-unstable-core-ffi-objc = [
-    "objc2-core-foundation?/unstable-core-ffi-objc",
-    "objc2-core-graphics?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 MDLAnimatedValueTypes = [
     "objc2-foundation/NSArray",

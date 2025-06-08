@@ -102,15 +102,7 @@ objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-media = ["dep:objc2-core-media"]
-
-unstable-core-ffi-objc = [
-    "objc2-app-kit?/unstable-core-ffi-objc",
-    "objc2-av-foundation?/unstable-core-ffi-objc",
-    "objc2-core-foundation?/unstable-core-ffi-objc",
-    "objc2-core-media?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 AVFoundation_MPNowPlayingInfoLanguageOptionAdditions = []
 AVPlayerItem_MediaPlayerAdditions = [

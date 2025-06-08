@@ -58,13 +58,7 @@ std = ["alloc"]
 alloc = []
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-contacts = ["dep:objc2-contacts"]
-
-unstable-core-ffi-objc = [
-    "objc2-app-kit?/unstable-core-ffi-objc",
-    "objc2-contacts?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 CNContactPicker = [
     "objc2-foundation/NSArray",

@@ -63,12 +63,7 @@ alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
-
-unstable-core-ffi-objc = [
-    "objc2-core-foundation?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 NSUserActivity_TVServices = ["objc2-foundation/NSString"]
 TVAppProfileDescriptor = [

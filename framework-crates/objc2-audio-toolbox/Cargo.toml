@@ -111,15 +111,7 @@ objc2-core-audio = ["dep:objc2-core-audio"]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-midi = ["dep:objc2-core-midi"]
-
-unstable-core-ffi-objc = [
-    "objc2-core-audio-types?/unstable-core-ffi-objc",
-    "objc2-core-audio?/unstable-core-ffi-objc",
-    "objc2-core-foundation?/unstable-core-ffi-objc",
-    "objc2-core-midi?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 AUAudioUnit = [
     "bitflags",

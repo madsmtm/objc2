@@ -83,14 +83,7 @@ libc = ["dep:libc"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-video = ["dep:objc2-core-video"]
-
-unstable-core-ffi-objc = [
-    "objc2-core-foundation?/unstable-core-ffi-objc",
-    "objc2-core-media?/unstable-core-ffi-objc",
-    "objc2-core-video?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 CMIOExtension = []
 CMIOExtensionDevice = [

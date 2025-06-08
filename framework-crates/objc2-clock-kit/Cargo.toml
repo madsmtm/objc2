@@ -66,13 +66,7 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-intents = ["dep:objc2-intents"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
-
-unstable-core-ffi-objc = [
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2-intents?/unstable-core-ffi-objc",
-    "objc2-ui-kit?/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 CLKComplication = [
     "objc2-foundation/NSDictionary",

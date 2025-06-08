@@ -100,16 +100,7 @@ objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-av-routing = ["dep:objc2-av-routing"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-media = ["dep:objc2-core-media"]
-
-unstable-core-ffi-objc = [
-    "objc2-app-kit?/unstable-core-ffi-objc",
-    "objc2-av-foundation?/unstable-core-ffi-objc",
-    "objc2-av-routing?/unstable-core-ffi-objc",
-    "objc2-core-foundation?/unstable-core-ffi-objc",
-    "objc2-core-media?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 AVCaptureView = [
     "objc2-foundation/NSCoder",

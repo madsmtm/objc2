@@ -139,13 +139,23 @@ macro_rules! __class_inner {
 /// - runtime, causing UB (unlikely)
 ///
 /// The `"unstable-static-sel-inlined"` feature is the even more extreme
-/// version - it yields the best performance and is closest to real
+/// version - it yields better performance and is closer to real
 /// Objective-C code, but probably won't work unless your code and its
 /// inlining is written in a very certain way.
 ///
 /// Enabling LTO greatly increases the chance that these features work.
 ///
 /// [rust-lang/rust#53929]: https://github.com/rust-lang/rust/issues/53929
+///
+/// The `"unstable-core-ffi-objc"` feature solves this problem by implementing
+/// support for Objective-C selectors directly in the compiler. It yields the
+/// best performance and is closest to real Objective-C code, but requires the
+/// unstable, nightly-only `core_ffi_objc` feature be enabled in every crate
+/// that uses this macro, which can be achieved in `objc2-*` framework crates
+/// by enabling their own `unstable-core-ffi-objc` features.
+///
+/// `"unstable-static-sel"` and `"unstable-static-sel-inlined"` take precedence
+/// over `"unstable-core-ffi-objc"`.
 ///
 ///
 /// # Examples
@@ -222,12 +232,19 @@ macro_rules! __class_inner {
 /// x!(abc);
 /// ```
 #[macro_export]
+macro_rules! sel {
+    ($($sel:tt)*) => {
+        $crate::__sel_outer!($($sel)*)
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
 #[cfg(any(
-    doc,
     not(feature = "unstable-core-ffi-objc"),
     feature = "unstable-static-sel"
 ))]
-macro_rules! sel {
+macro_rules! __sel_outer {
     (new) => ({
         $crate::__macro_helpers::new_sel()
     });
@@ -263,16 +280,16 @@ macro_rules! sel {
     };
 }
 
+#[doc(hidden)]
 #[macro_export]
 #[cfg(all(
-    not(doc),
     feature = "unstable-core-ffi-objc",
     not(feature = "unstable-static-sel")
 ))]
-macro_rules! sel {
+macro_rules! __sel_outer {
     ($($sel:tt)*) => {{
         let ptr = $crate::__macro_helpers::core_ffi_objc_selector!($($sel)*);
-        let ptr: *const u8 = ptr.cast_const().cast();
+        let ptr = ptr.cast_const().cast::<$crate::__macro_helpers::u8>();
         #[allow(unused_unsafe)]
         unsafe { $crate::runtime::Sel::__internal_from_ptr(ptr) }
     }};

@@ -57,12 +57,7 @@ alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-core-ml = ["dep:objc2-core-ml"]
-
-unstable-core-ffi-objc = [
-    "objc2-core-ml?/unstable-core-ffi-objc",
-    "objc2-foundation/unstable-core-ffi-objc",
-    "objc2/unstable-core-ffi-objc",
-]
+unstable-core-ffi-objc = []
 
 NLContextualEmbedding = [
     "objc2-foundation/NSArray",
