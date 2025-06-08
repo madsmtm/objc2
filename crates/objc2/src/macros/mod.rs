@@ -49,6 +49,14 @@ mod extern_protocol;
 /// [sel#features]: crate::sel#features
 /// [`sel!`]: crate::sel
 ///
+/// As with [`sel!`], these limitations can be overcome with the
+/// `"unstable-core-ffi-objc"` feature, but that requires the nightly-only
+/// `core_ffi_objc` language feature be enabled in every crate that uses this
+/// macro.
+///
+/// `"unstable-static-class"` and `"unstable-static-class-inlined"` take
+/// precedence over `"unstable-core-ffi-objc"`.
+///
 ///
 /// # Examples
 ///
@@ -73,11 +81,39 @@ mod extern_protocol;
 /// ```
 #[macro_export]
 macro_rules! class {
+    ($name:ident) => {
+        $crate::__class_outer!($name)
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(any(
+    not(feature = "unstable-core-ffi-objc"),
+    feature = "unstable-static-class"
+))]
+macro_rules! __class_outer {
     ($name:ident) => {{
         $crate::__class_inner!(
             $crate::__macro_helpers::stringify!($name),
             $crate::__hash_idents!($name)
         )
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    feature = "unstable-core-ffi-objc",
+    not(feature = "unstable-static-class")
+))]
+macro_rules! __class_outer {
+    ($name:ident) => {{
+        let ptr = $crate::__macro_helpers::core_ffi_objc::class!($name);
+        let ptr = ptr.cast_const().cast::<$crate::runtime::AnyClass>();
+        #[allow(unused_unsafe)]
+        let r: &'static $crate::runtime::AnyClass = unsafe { &*ptr };
+        r
     }};
 }
 
@@ -150,7 +186,7 @@ macro_rules! __class_inner {
 /// The `"unstable-core-ffi-objc"` feature solves this problem by implementing
 /// support for Objective-C selectors directly in the compiler. It yields the
 /// best performance and is closest to real Objective-C code, but requires the
-/// unstable, nightly-only `core_ffi_objc` feature be enabled in every crate
+/// nightly-only `core_ffi_objc` language feature be enabled in every crate
 /// that uses this macro, which can be achieved in `objc2-*` framework crates
 /// by enabling their own `unstable-core-ffi-objc` features.
 ///
@@ -288,7 +324,7 @@ macro_rules! __sel_outer {
 ))]
 macro_rules! __sel_outer {
     ($($sel:tt)*) => {{
-        let ptr = $crate::__macro_helpers::core_ffi_objc_selector!($($sel)*);
+        let ptr = $crate::__macro_helpers::core_ffi_objc::selector!($($sel)*);
         let ptr = ptr.cast_const().cast::<$crate::__macro_helpers::u8>();
         #[allow(unused_unsafe)]
         unsafe { $crate::runtime::Sel::__internal_from_ptr(ptr) }
