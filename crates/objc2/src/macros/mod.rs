@@ -108,7 +108,7 @@ macro_rules! __class_outer {
     not(feature = "unstable-static-class")
 ))]
 macro_rules! __class_outer {
-    ($name:ident) => {{
+    ($name:tt) => {{
         let ptr = $crate::__macro_helpers::core_ffi_objc::class!($name);
         let ptr = ptr.cast_const().cast::<$crate::runtime::AnyClass>();
         #[allow(unused_unsafe)]

@@ -307,10 +307,10 @@ macro_rules! __extern_class_inner {
                 let _ = <Self as $crate::__macro_helpers::MainThreadOnlyDoesNotImplSendSync<_>>::check;
                 let _ = <Self as $crate::__macro_helpers::DoesNotImplDrop<_>>::check;
 
-                $crate::__class_inner!($crate::__fallback_if_not_set! {
+                $crate::__extern_class_class! {
                     ($($name)*)
-                    ($crate::__macro_helpers::stringify!($class))
-                }, $crate::__hash_idents!($class))
+                    ($class)
+                }
             }
 
             #[inline]
@@ -328,6 +328,45 @@ macro_rules! __extern_class_inner {
 
         $($attr_impl)*
         $crate::__extern_class_check_no_ivars!($($ivars)*);
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(any(
+    not(feature = "unstable-core-ffi-objc"),
+    feature = "unstable-static-class"
+))]
+macro_rules! __extern_class_class {
+    (
+        ($($name:tt)*)
+        ($class:ident)
+    ) => {
+        $crate::__class_inner!($crate::__fallback_if_not_set! {
+            ($($name)*)
+            ($crate::__macro_helpers::stringify!($class))
+        }, $crate::__hash_idents!($class))
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    feature = "unstable-core-ffi-objc",
+    not(feature = "unstable-static-class")
+))]
+macro_rules! __extern_class_class {
+    (
+        ()
+        ($class:ident)
+    ) => {
+        $crate::__class_outer!($class)
+    };
+    (
+        ($name:literal)
+        ($_class:ident)
+    ) => {
+        $crate::__class_outer!($name)
     };
 }
 

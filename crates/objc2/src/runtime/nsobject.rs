@@ -84,8 +84,21 @@ unsafe impl ClassType for NSObject {
     const NAME: &'static str = "NSObject";
 
     #[inline]
+    #[cfg(any(
+        not(feature = "unstable-core-ffi-objc"),
+        feature = "unstable-static-class"
+    ))]
     fn class() -> &'static AnyClass {
         crate::__class_inner!("NSObject", "NSObject")
+    }
+
+    #[inline]
+    #[cfg(all(
+        feature = "unstable-core-ffi-objc",
+        not(feature = "unstable-static-class")
+    ))]
+    fn class() -> &'static AnyClass {
+        crate::__class_outer!(NSObject)
     }
 
     #[inline]
