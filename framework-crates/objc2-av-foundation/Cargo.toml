@@ -25,6 +25,10 @@ dispatch2 = { workspace = true, optional = true, features = [
 ] }
 objc2 = { workspace = true, features = ["std"] }
 objc2-avf-audio = { workspace = true, optional = true, features = ["AVAudioSessionRoute"] }
+objc2-core-audio-types = { workspace = true, optional = true, features = [
+    "CoreAudioBaseTypes",
+    "objc2",
+] }
 objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFCGTypes",
     "CFDate",
@@ -184,6 +188,7 @@ default = [
     "AVCaptureSession",
     "AVCaptureSessionPreset",
     "AVCaptureSlider",
+    "AVCaptureSpatialAudioMetadataSampleGenerator",
     "AVCaptureStillImageOutput",
     "AVCaptureSystemExposureBiasSlider",
     "AVCaptureSystemPressure",
@@ -214,6 +219,7 @@ default = [
     "AVMovie",
     "AVMovieTrack",
     "AVOutputSettingsAssistant",
+    "AVPlaybackCoordinationMedium",
     "AVPlaybackCoordinator",
     "AVPlayer",
     "AVPlayerInterstitialEventController",
@@ -251,6 +257,7 @@ default = [
     "block2",
     "dispatch2",
     "objc2-avf-audio",
+    "objc2-core-audio-types",
     "objc2-core-foundation",
     "objc2-core-graphics",
     "objc2-core-image",
@@ -265,6 +272,7 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]
+objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
@@ -289,7 +297,11 @@ AVAsset = [
     "objc2-foundation/NSURL",
     "objc2-foundation/NSUUID",
 ]
-AVAssetCache = ["objc2-foundation/NSArray"]
+AVAssetCache = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
+]
 AVAssetDownloadStorageManager = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
@@ -371,6 +383,7 @@ AVAssetVariant = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSPredicate",
     "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
     "objc2-foundation/NSValue",
 ]
 AVAssetWriter = [
@@ -537,6 +550,7 @@ AVCaptureSlider = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
 ]
+AVCaptureSpatialAudioMetadataSampleGenerator = []
 AVCaptureStillImageOutput = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
@@ -677,10 +691,12 @@ AVOutputSettingsAssistant = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSString",
 ]
+AVPlaybackCoordinationMedium = ["objc2-foundation/NSArray"]
 AVPlaybackCoordinator = [
     "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",
@@ -699,6 +715,7 @@ AVPlayer = [
 AVPlayerInterstitialEventController = [
     "bitflags",
     "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSNotification",

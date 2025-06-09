@@ -26,3 +26,7 @@ class.PKPass.methods.relevantDates.skipped = true
 
 # NS_RETURNS_INNER_POINTER, currently ill-supported.
 class.PKIssuerProvisioningExtensionPassEntry.methods.art.skipped = true
+
+# FIXME: Duplicated for some reason?
+class.PKPassRelevantDate.methods.init.skipped = true
+class.PKPassRelevantDate.methods.new.skipped = true

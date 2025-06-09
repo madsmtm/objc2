@@ -43,6 +43,7 @@ default = [
     "ASDiscoveryDescriptor",
     "ASErrors",
     "ASPickerDisplayItem",
+    "ASPickerDisplaySettings",
     "bitflags",
     "block2",
     "objc2-core-bluetooth",
@@ -70,7 +71,10 @@ ASAccessorySettings = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSString",
 ]
-ASCommon = []
+ASCommon = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 ASDiscoveryDescriptor = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSString",
@@ -84,3 +88,4 @@ ASPickerDisplayItem = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",
 ]
+ASPickerDisplaySettings = ["objc2-foundation/NSDate"]

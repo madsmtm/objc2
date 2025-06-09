@@ -1,11 +1,11 @@
 | Framework | Why is this unsupported? |
 | --- | --- |
-| `AGL` | OpenGL-specific, use Metal instead. |
 | `Accelerate` | Very C-centric, hard for us to map. |
 | `ActivityKit` | Swift-only. |
 | `AdAttributionKit` | Swift-only. |
 | `AddressBook` | Deprecated, use Contacts instead. |
 | `AddressBookUI` | Deprecated, use Contacts instead. |
+| `AlarmKit` | Mostly Swift-only. |
 | `AppIntents` | Swift-only. |
 | `AppleScriptKit` | Basically empty nowadays. |
 | `AppleScriptObjC` | Basically empty nowadays. |
@@ -29,6 +29,7 @@
 | `CreateMLComponents` | Swift-only. |
 | `CryptoKit` | Swift-only. |
 | `DVDPlayback` | Deprecated, use AVKit/AVFoundation instead. |
+| `DeclaredAgeRange` | Swift-only. |
 | `DeveloperToolsSupport` | Swift-only. |
 | `DeviceActivity` | Swift-only. |
 | `DeviceDiscoveryUI` | Needs Network first. |
@@ -37,18 +38,25 @@
 | `DiscRecordingUI` | Deprecated, use AVKit/AVFoundation instead. |
 | `DockKit` | Swift-only. |
 | `DriverKit` | Uses C++ classes. |
+| `EnergyKit` | Swift-only. |
 | `ExtensionFoundation` | Swift-only. |
 | `FamilyControls` | Swift-only. |
 | `FinanceKit` | Swift-only. |
 | `FinanceKitUI` | Swift-only. |
 | `ForceFeedback` | Very C-centric and old. |
+| `FoundationModels` | Swift-only. |
 | `GLKit` | OpenGL-specific, use Metal instead. |
 | `GLUT` | OpenGL-specific, use Metal instead. |
 | `GSS` | Very C-centric and old. |
+| `GameSave` | TODO. |
+| `GeoToolbox` | Swift-only. |
 | `GroupActivities` | Swift-only. |
 | `Hypervisor` | Very low-level, consider crates like `applevisor` instead. |
 | `ICADevices` | Deprecated, use ImageCaptureCore instead. |
+| `IdentityDocumentServices` | Swift-only. |
+| `IdentityDocumentServicesUI` | Swift-only. |
 | `ImagePlayground` | Swift-only. |
+| `ImmersiveMediaSupport` | Swift-only. |
 | `InstallerPlugins` | Deprecated. |
 | `InstantMessage` | Deprecated in macOS 10.9. |
 | `JavaNativeFoundation` | Basically empty. |
@@ -69,7 +77,9 @@
 | `Matter` | Mostly available [here](https://github.com/project-chip/connectedhomeip). |
 | `MatterSupport` | Swift-only. |
 | `MediaLibrary` | Deprecated, use PhotoKit instead. |
+| `MeshNetFramework` | Weirdly incomplete. |
 | `Message` | Basically empty. |
+| `MetalPerformancePrimitives` | Header-only framework (no symbols). |
 | `MobileCoreServices` | Deprecated, use CoreServices + UniformTypeIdentifiers instead. |
 | `MusicKit` | Swift-only. |
 | `NetFS` | Deprecated, use macFUSE or FSKit instead (probably). |
@@ -79,11 +89,14 @@
 | `OpenGL` | OpenGL-specific, use Metal instead. |
 | `OpenGLES` | OpenGL-specific, use Metal instead. |
 | `PCSC` | Too low-level, consider crates like `pcsc` instead. |
+| `PaperKit` | Swift-only. |
+| `PermissionKit` | Swift-only. |
 | `ProximityReader` | Swift-only. |
 | `ProximityReaderStub` | Basically empty. |
 | `QTKit` | No headers present in Xcode's SDK. |
 | `RealityFoundation` | Swift-only. |
 | `RealityKit` | Swift-only. |
+| `RelevanceKit` | Swift-only. |
 | `RoomPlan` | Swift-only. |
 | `Ruby` | Very C-centric and old. |
 | `SecureElementCredential` | Swift-only. |
@@ -99,15 +112,21 @@
 | `TabletopKit` | Swift-only. |
 | `TabularData` | Swift-only. |
 | `Tcl` | Very C-centric and old. |
+| `TelephonyMessagingKit` | Swift-only. |
 | `TipKit` | Swift-only. |
 | `Tk` | Very C-centric and old. |
+| `TouchControls` | TODO. |
 | `Translation` | Swift-only. |
 | `TranslationUIProvider` | Swift-only. |
 | `Twitter` | Deprecated, use Social instead. |
 | `VideoDecodeAcceleration` | Very C-centric and old. |
+| `VisionEntitlementServices` | Mostly Swift-only. |
 | `VisionKit` | Swift-only. |
+| `VisualIntelligence` | Swift-only. |
 | `WeatherKit` | Swift-only. |
+| `WiFiAware` | Swift-only. |
 | `WidgetKit` | Mostly Swift-only. |
+| `WirelessInsights` | Swift-only. |
 | `WorkoutKit` | Swift-only. |
 | `iAd` | Disabled on server side, use AdServices instead. |
 | `vecLib` | Very C-centric and old. |

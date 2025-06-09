@@ -42,6 +42,7 @@ objc2-metal = { workspace = true, optional = true, features = [
     "MTLDevice",
     "MTLDrawable",
     "MTLPixelFormat",
+    "MTLResidencySet",
     "MTLResource",
     "MTLTexture",
 ] }
@@ -65,6 +66,7 @@ default = [
     "CABase",
     "CAConstraintLayoutManager",
     "CADisplayLink",
+    "CAEAGLLayer",
     "CAEDRMetadata",
     "CAEmitterCell",
     "CAEmitterLayer",
@@ -129,6 +131,7 @@ CADisplayLink = [
     "objc2-foundation/NSRunLoop",
     "objc2-foundation/NSString",
 ]
+CAEAGLLayer = []
 CAEDRMetadata = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",

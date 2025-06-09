@@ -50,6 +50,7 @@ default = [
     "MXDiagnostic",
     "MXDiagnosticPayload",
     "MXDiskIOMetric",
+    "MXDiskSpaceUsageMetric",
     "MXDiskWriteExceptionDiagnostic",
     "MXDisplayMetric",
     "MXError",
@@ -147,6 +148,11 @@ MXDiagnosticPayload = [
     "objc2-foundation/NSObject",
 ]
 MXDiskIOMetric = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
+]
+MXDiskSpaceUsageMetric = [
     "objc2-foundation/NSMeasurement",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUnit",

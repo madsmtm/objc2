@@ -19,6 +19,7 @@ class.BEMediaEnvironment.methods.createXPCRepresentation.skipped = true
 class.BENetworkingProcess.methods."makeLibXPCConnectionError:".skipped = true
 class.BERenderingProcess.methods."makeLibXPCConnectionError:".skipped = true
 class.BEWebContentProcess.methods."makeLibXPCConnectionError:".skipped = true
+protocol.BEExtensionProcess.methods."makeLibXPCConnectionError:".skipped = true
 
 # Incorrectly marked as returning non-null
 # Leads to `error: unknown error result type`

@@ -89,6 +89,12 @@ default = [
     "CPLane",
     "CPLaneGuidance",
     "CPListImageRowItem",
+    "CPListImageRowItemCardElement",
+    "CPListImageRowItemCondensedElement",
+    "CPListImageRowItemElement",
+    "CPListImageRowItemGridElement",
+    "CPListImageRowItemImageGridElement",
+    "CPListImageRowItemRowElement",
     "CPListItem",
     "CPListItemTypes",
     "CPListSection",
@@ -219,6 +225,12 @@ CPListImageRowItem = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
 ]
+CPListImageRowItemCardElement = ["objc2-foundation/NSString"]
+CPListImageRowItemCondensedElement = ["objc2-foundation/NSString"]
+CPListImageRowItemElement = []
+CPListImageRowItemGridElement = []
+CPListImageRowItemImageGridElement = []
+CPListImageRowItemRowElement = ["objc2-foundation/NSString"]
 CPListItem = ["objc2-foundation/NSString"]
 CPListItemTypes = ["objc2-foundation/NSString"]
 CPListSection = [

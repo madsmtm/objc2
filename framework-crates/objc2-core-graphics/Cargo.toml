@@ -83,10 +83,12 @@ default = [
     "CGPDFScanner",
     "CGPDFStream",
     "CGPDFString",
+    "CGPDFWrappedObject",
     "CGPSConverter",
     "CGPath",
     "CGPattern",
     "CGRemoteOperation",
+    "CGRenderingBufferProvider",
     "CGSession",
     "CGShading",
     "CGToneMapping",
@@ -116,7 +118,12 @@ objc2-metal = ["dep:objc2-metal"]
 
 CGAffineTransform = ["objc2-core-foundation/CFCGTypes"]
 CGBase = []
-CGBitmapContext = []
+CGBitmapContext = [
+    "bitflags",
+    "objc2-core-foundation/CFByteOrder",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFError",
+]
 CGColor = [
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
@@ -164,7 +171,7 @@ CGDisplayStream = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFRunLoop",
 ]
-CGEXRToneMappingGamma = []
+CGEXRToneMappingGamma = ["objc2-core-foundation/CFDictionary"]
 CGError = []
 CGEvent = [
     "objc2-core-foundation/CFCGTypes",
@@ -219,6 +226,7 @@ CGPDFPage = ["objc2-core-foundation/CFCGTypes"]
 CGPDFScanner = ["objc2-core-foundation/CFCGTypes"]
 CGPDFStream = ["objc2-core-foundation/CFData"]
 CGPDFString = ["objc2-core-foundation/CFDate"]
+CGPDFWrappedObject = ["objc2-core-foundation/CFCGTypes"]
 CGPSConverter = ["objc2-core-foundation/CFDictionary"]
 CGPath = [
     "objc2-core-foundation/CFArray",
@@ -231,9 +239,10 @@ CGRemoteOperation = [
     "objc2-core-foundation/CFDate",
     "objc2-core-foundation/CFMachPort",
 ]
+CGRenderingBufferProvider = ["objc2-core-foundation/CFData"]
 CGSession = ["objc2-core-foundation/CFDictionary"]
 CGShading = ["objc2-core-foundation/CFCGTypes"]
-CGToneMapping = []
+CGToneMapping = ["objc2-core-foundation/CFDictionary"]
 CGWindow = [
     "bitflags",
     "objc2-core-foundation/CFArray",

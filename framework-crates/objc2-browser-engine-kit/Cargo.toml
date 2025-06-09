@@ -18,6 +18,7 @@ workspace = true
 [dependencies]
 bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
+libc = { workspace = true, optional = true }
 objc2 = { workspace = true, features = ["std"] }
 objc2-av-foundation = { workspace = true, optional = true, features = ["AVCaptureSession"] }
 objc2-core-foundation = { workspace = true, optional = true, features = [
@@ -48,6 +49,7 @@ default = [
     "BEContextMenuConfiguration",
     "BEDownloads",
     "BEDragInteraction",
+    "BEExtensionProcess",
     "BEKeyEntry",
     "BEKeyEntryContext",
     "BELayerHierarchy",
@@ -71,6 +73,7 @@ default = [
     "BEWebContentProcess",
     "bitflags",
     "block2",
+    "libc",
     "objc2-av-foundation",
     "objc2-core-foundation",
     "objc2-quartz-core",
@@ -80,6 +83,7 @@ std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
+libc = ["dep:libc"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
@@ -129,14 +133,20 @@ BEDragInteraction = [
     "objc2-ui-kit/UIDragSession",
     "objc2-ui-kit/UIInteraction",
 ]
+BEExtensionProcess = []
 BEKeyEntry = [
     "objc2-foundation/NSDate",
     "objc2-ui-kit/UIKey",
 ]
 BEKeyEntryContext = []
 BELayerHierarchy = ["objc2-foundation/NSError"]
-BELayerHierarchyHandle = ["objc2-foundation/NSObject"]
+BELayerHierarchyHandle = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+]
 BELayerHierarchyHostingTransactionCoordinator = [
+    "objc2-foundation/NSData",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-ui-kit/UIResponder",

@@ -55,6 +55,7 @@ default = [
     "HKCategoryValues",
     "HKCharacteristicObjects",
     "HKCharacteristicValues",
+    "HKClinicalCoding",
     "HKClinicalRecord",
     "HKClinicalType",
     "HKContactsLensSpecification",
@@ -77,6 +78,7 @@ default = [
     "HKGAD7Assessment",
     "HKGlassesLensSpecification",
     "HKGlassesPrescription",
+    "HKHealthConceptIdentifier",
     "HKHealthStore",
     "HKHeartbeatSeriesBuilder",
     "HKHeartbeatSeriesQuery",
@@ -84,7 +86,10 @@ default = [
     "HKLensSpecification",
     "HKLiveWorkoutBuilder",
     "HKLiveWorkoutDataSource",
+    "HKMedicationConcept",
+    "HKMedicationDoseEvent",
     "HKMetadata",
+    "HKMetadataEnums",
     "HKObject",
     "HKObjectType",
     "HKObserverQuery",
@@ -111,6 +116,8 @@ default = [
     "HKStatisticsQuery",
     "HKTypeIdentifiers",
     "HKUnit",
+    "HKUserAnnotatedMedication",
+    "HKUserAnnotatedMedicationQuery",
     "HKVerifiableClinicalRecord",
     "HKVerifiableClinicalRecordQuery",
     "HKVerifiableClinicalRecordSubject",
@@ -207,6 +214,10 @@ HKCategorySample = [
 HKCategoryValues = []
 HKCharacteristicObjects = ["objc2-foundation/NSObject"]
 HKCharacteristicValues = []
+HKClinicalCoding = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 HKClinicalRecord = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -312,6 +323,10 @@ HKGlassesPrescription = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+HKHealthConceptIdentifier = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 HKHealthStore = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCalendar",
@@ -342,7 +357,19 @@ HKLiveWorkoutDataSource = [
     "objc2-foundation/NSPredicate",
     "objc2-foundation/NSSet",
 ]
+HKMedicationConcept = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
+HKMedicationDoseEvent = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
+]
 HKMetadata = ["objc2-foundation/NSString"]
+HKMetadataEnums = []
 HKObject = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
@@ -474,6 +501,14 @@ HKUnit = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+HKUserAnnotatedMedication = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+HKUserAnnotatedMedicationQuery = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
+]
 HKVerifiableClinicalRecord = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
@@ -549,5 +584,6 @@ HKWorkoutSession = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]

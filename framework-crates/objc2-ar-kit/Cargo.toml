@@ -22,6 +22,7 @@ dispatch2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, optional = true, features = ["std"] }
 objc2-av-foundation = { workspace = true, optional = true, features = [
     "AVCaptureDevice",
+    "AVCapturePhotoOutput",
     "AVDepthData",
 ] }
 objc2-core-foundation = { workspace = true, optional = true, features = ["CFCGTypes"] }
@@ -125,7 +126,6 @@ default = [
     "ARPlaneDetectionTypes",
     "ARPlaneGeometry",
     "ARPointCloud",
-    "ARQuickLookPreviewItem",
     "ARRaycastQuery",
     "ARRaycastResult",
     "ARReferenceImage",
@@ -220,7 +220,6 @@ ARPlaneAnchor = []
 ARPlaneDetectionTypes = ["bitflags"]
 ARPlaneGeometry = []
 ARPointCloud = []
-ARQuickLookPreviewItem = []
 ARRaycastQuery = []
 ARRaycastResult = []
 ARReferenceImage = []

@@ -16,5 +16,7 @@ extern crate alloc;
 extern crate std;
 
 mod generated;
+mod location;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+pub use self::location::*;

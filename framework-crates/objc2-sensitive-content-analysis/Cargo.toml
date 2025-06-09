@@ -18,11 +18,22 @@ workspace = true
 [dependencies]
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, features = ["std"] }
+objc2-av-foundation = { workspace = true, optional = true, features = ["AVCaptureInput"] }
 objc2-core-graphics = { workspace = true, optional = true, features = [
     "CGImage",
     "objc2",
 ] }
+objc2-core-video = { workspace = true, optional = true, features = [
+    "CVBuffer",
+    "CVImageBuffer",
+    "CVPixelBuffer",
+    "objc2",
+] }
 objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-video-toolbox = { workspace = true, optional = true, features = [
+    "VTDecompressionSession",
+    "objc2",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -39,17 +50,29 @@ default = [
     "std",
     "SCSensitivityAnalysis",
     "SCSensitivityAnalyzer",
+    "SCVideoStreamAnalyzer_Public",
     "block2",
+    "objc2-av-foundation",
     "objc2-core-graphics",
+    "objc2-core-video",
+    "objc2-video-toolbox",
 ]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
+objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
+objc2-core-video = ["dep:objc2-core-video"]
+objc2-video-toolbox = ["dep:objc2-video-toolbox"]
 
 SCSensitivityAnalysis = []
 SCSensitivityAnalyzer = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSProgress",
     "objc2-foundation/NSURL",
+]
+SCVideoStreamAnalyzer_Public = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
