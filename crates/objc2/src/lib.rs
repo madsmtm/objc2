@@ -65,17 +65,17 @@
 //!
 //! ## Supported operating systems
 //!
-//! - macOS: `10.12-15.4`
-//! - iOS: `10.0-18.4` (including iPadOS and Mac Catalyst)
-//! - tvOS: `10.0-18.4`
-//! - watchOS: `5.0-11.4`
-//! - visionOS: `1.0-2.4`
+//! - macOS: `10.12-15.5`
+//! - iOS: `10.0-18.5` (including iPadOS and Mac Catalyst)
+//! - tvOS: `10.0-18.5`
+//! - watchOS: `5.0-11.5`
+//! - visionOS: `1.0-2.5`
 //!
 //! The minimum versions are the same as those supported by `rustc`. Higher
 //! versions will also work, but the framework crates will not have bindings
 //! available for newer APIs.
 //!
-//! The framework bindings are generated from the SDKs in Xcode 16.3. The
+//! The framework bindings are generated from the SDKs in Xcode 16.4. The
 //! Xcode version are updated usually within a week of [GitHub Actions]
 //! supporting the new Xcode version, and we try to schedule crate releases
 //! such that align fairly closely with Xcode updates. We only support stable
