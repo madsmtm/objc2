@@ -52,7 +52,8 @@ mod extern_protocol;
 /// As with [`sel!`], these limitations can be overcome with the
 /// `"unstable-core-ffi-objc"` feature, but that requires the nightly-only
 /// `core_ffi_objc` language feature be enabled in every crate that uses this
-/// macro.
+/// macro, which can be achieved in `objc2-*` framework crates by enabling their
+/// own `unstable-core-ffi-objc` features.
 ///
 /// `"unstable-static-class"` and `"unstable-static-class-inlined"` take
 /// precedence over `"unstable-core-ffi-objc"`.
@@ -396,7 +397,9 @@ macro_rules! __sel_inner {
         let ptr = $crate::__macro_helpers::core_ffi_objc::selector!($data);
         let ptr = ptr.cast_const().cast::<$crate::__macro_helpers::u8>();
         #[allow(unused_unsafe)]
-        unsafe { $crate::runtime::Sel::__internal_from_ptr(ptr) }
+        unsafe {
+            $crate::runtime::Sel::__internal_from_ptr(ptr)
+        }
     }};
 }
 
