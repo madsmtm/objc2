@@ -30,21 +30,8 @@ unsafe impl ClassType for NSProxy {
     const NAME: &'static str = "NSProxy";
 
     #[inline]
-    #[cfg(any(
-        not(feature = "unstable-core-ffi-objc"),
-        feature = "unstable-static-class"
-    ))]
     fn class() -> &'static AnyClass {
         crate::__class_inner!("NSProxy", "NSProxy")
-    }
-
-    #[inline]
-    #[cfg(all(
-        feature = "unstable-core-ffi-objc",
-        not(feature = "unstable-static-class")
-    ))]
-    fn class() -> &'static AnyClass {
-        crate::__class_outer!(NSProxy)
     }
 
     #[inline]

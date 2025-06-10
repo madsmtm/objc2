@@ -81,18 +81,6 @@ mod extern_protocol;
 /// ```
 #[macro_export]
 macro_rules! class {
-    ($name:ident) => {
-        $crate::__class_outer!($name)
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-#[cfg(any(
-    not(feature = "unstable-core-ffi-objc"),
-    feature = "unstable-static-class"
-))]
-macro_rules! __class_outer {
     ($name:ident) => {{
         $crate::__class_inner!(
             $crate::__macro_helpers::stringify!($name),
@@ -103,23 +91,7 @@ macro_rules! __class_outer {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(all(
-    feature = "unstable-core-ffi-objc",
-    not(feature = "unstable-static-class")
-))]
-macro_rules! __class_outer {
-    ($name:tt) => {{
-        let ptr = $crate::__macro_helpers::core_ffi_objc::class!($name);
-        let ptr = ptr.cast_const().cast::<$crate::runtime::AnyClass>();
-        #[allow(unused_unsafe)]
-        let r: &'static $crate::runtime::AnyClass = unsafe { &*ptr };
-        r
-    }};
-}
-
-#[doc(hidden)]
-#[macro_export]
-#[cfg(not(feature = "unstable-static-class"))]
+#[cfg(not(any(feature = "unstable-core-ffi-objc", feature = "unstable-static-class")))]
 macro_rules! __class_inner {
     ($name:expr, $_hash:expr) => {{
         static CACHED_CLASS: $crate::__macro_helpers::CachedClass =
@@ -128,6 +100,22 @@ macro_rules! __class_inner {
         unsafe {
             CACHED_CLASS.get($crate::__macro_helpers::concat!($name, '\0'))
         }
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    feature = "unstable-core-ffi-objc",
+    not(feature = "unstable-static-class")
+))]
+macro_rules! __class_inner {
+    ($name:expr, $_hash:expr) => {{
+        let ptr = $crate::__macro_helpers::core_ffi_objc::class!($name);
+        let ptr = ptr.cast_const().cast::<$crate::runtime::AnyClass>();
+        #[allow(unused_unsafe)]
+        let r: &'static $crate::runtime::AnyClass = unsafe { &*ptr };
+        r
     }};
 }
 
@@ -269,18 +257,6 @@ macro_rules! __class_inner {
 /// ```
 #[macro_export]
 macro_rules! sel {
-    ($($sel:tt)*) => {
-        $crate::__sel_outer!($($sel)*)
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-#[cfg(any(
-    not(feature = "unstable-core-ffi-objc"),
-    feature = "unstable-static-sel"
-))]
-macro_rules! __sel_outer {
     (new) => ({
         $crate::__macro_helpers::new_sel()
     });
@@ -314,21 +290,6 @@ macro_rules! __sel_outer {
             $crate::__hash_idents!($($sel)*)
         )
     };
-}
-
-#[doc(hidden)]
-#[macro_export]
-#[cfg(all(
-    feature = "unstable-core-ffi-objc",
-    not(feature = "unstable-static-sel")
-))]
-macro_rules! __sel_outer {
-    ($($sel:tt)*) => {{
-        let ptr = $crate::__macro_helpers::core_ffi_objc::selector!($($sel)*);
-        let ptr = ptr.cast_const().cast::<$crate::__macro_helpers::u8>();
-        #[allow(unused_unsafe)]
-        unsafe { $crate::runtime::Sel::__internal_from_ptr(ptr) }
-    }};
 }
 
 /// Handle selectors with internal colons.
@@ -379,17 +340,40 @@ macro_rules! __sel_helper {
 #[macro_export]
 macro_rules! __sel_data {
     ($first:ident $(: $($($rest:ident)? :)*)?) => {
-        $crate::__macro_helpers::concat!(
+        $crate::__sel_data_terminate!($crate::__macro_helpers::concat!(
             $crate::__macro_helpers::stringify!($first),
             $(':', $($($crate::__macro_helpers::stringify!($rest),)? ':',)*)?
-            '\0',
-        )
+        ))
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(not(feature = "unstable-static-sel"))]
+#[cfg(any(
+    not(feature = "unstable-core-ffi-objc"),
+    feature = "unstable-static-sel",
+))]
+macro_rules! __sel_data_terminate {
+    ($data:expr) => {
+        $crate::__macro_helpers::concat!($data, '\0')
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    feature = "unstable-core-ffi-objc",
+    not(feature = "unstable-static-sel"),
+))]
+macro_rules! __sel_data_terminate {
+    ($data:expr) => {
+        $data
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(not(any(feature = "unstable-core-ffi-objc", feature = "unstable-static-sel")))]
 macro_rules! __sel_inner {
     ($data:expr, $_hash:expr) => {{
         static CACHED_SEL: $crate::__macro_helpers::CachedSel =
@@ -398,6 +382,21 @@ macro_rules! __sel_inner {
         unsafe {
             CACHED_SEL.get($data)
         }
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    feature = "unstable-core-ffi-objc",
+    not(feature = "unstable-static-sel"),
+))]
+macro_rules! __sel_inner {
+    ($data:expr, $_hash:expr) => {{
+        let ptr = $crate::__macro_helpers::core_ffi_objc::selector!($data);
+        let ptr = ptr.cast_const().cast::<$crate::__macro_helpers::u8>();
+        #[allow(unused_unsafe)]
+        unsafe { $crate::runtime::Sel::__internal_from_ptr(ptr) }
     }};
 }
 
