@@ -876,6 +876,8 @@ impl Ty {
                             | "MIDISysexSendRequestUMP"
                             | "MIDIDriverInterface"
                             | "cssm_list_element"
+                            | "malloc_zone_t"
+                            | "_malloc_zone_t"
                     )
                 ) {
                     // Fake fields, we'll have to define it ourselves

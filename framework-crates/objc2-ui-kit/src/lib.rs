@@ -29,6 +29,7 @@ mod responder;
 mod tests;
 #[cfg(feature = "NSText")]
 mod text;
+mod utilities;
 
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
@@ -36,3 +37,4 @@ pub use self::generated::*;
 pub use self::responder::*;
 #[cfg(feature = "NSText")]
 pub use self::text::*;
+pub use self::utilities::*;

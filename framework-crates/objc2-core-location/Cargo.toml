@@ -118,10 +118,7 @@ CLHeading = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
 ]
-CLLocation = [
-    "objc2-foundation/NSDate",
-    "objc2-foundation/NSObject",
-]
+CLLocation = []
 CLLocationManager = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",

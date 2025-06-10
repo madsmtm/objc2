@@ -177,6 +177,7 @@ MPMusicPlayerQueueDescriptor = [
     "objc2-foundation/NSString",
 ]
 MPNowPlayingInfoCenter = [
+    "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSString",
 ]
