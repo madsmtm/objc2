@@ -111,6 +111,7 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-video = ["dep:objc2-core-video"]
 objc2-metal = ["dep:objc2-metal"]
+unstable-core-ffi-objc = []
 
 CAAnimation = [
     "objc2-foundation/NSArray",

@@ -63,6 +63,9 @@ pub fn disallow_in_static<T>(item: &'static T) -> &'static T {
 #[deprecated = "having the `impl` inside `extern_methods!` is deprecated, move it outside instead"]
 pub const fn extern_methods_unsafe_impl() {}
 
+#[cfg(feature = "unstable-core-ffi-objc")]
+pub use core::ffi::objc as core_ffi_objc;
+
 #[cfg(test)]
 mod tests {
     use super::*;

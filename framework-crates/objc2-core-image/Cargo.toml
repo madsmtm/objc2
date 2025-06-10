@@ -123,6 +123,7 @@ objc2-core-video = ["dep:objc2-core-video"]
 objc2-image-io = ["dep:objc2-image-io"]
 objc2-io-surface = ["dep:objc2-io-surface"]
 objc2-metal = ["dep:objc2-metal"]
+unstable-core-ffi-objc = []
 
 CIBarcodeDescriptor = [
     "objc2-foundation/NSData",

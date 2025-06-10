@@ -394,6 +394,7 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
+unstable-core-ffi-objc = []
 
 AppKitDefines = []
 AppKitErrors = []

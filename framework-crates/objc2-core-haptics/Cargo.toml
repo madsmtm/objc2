@@ -49,6 +49,7 @@ std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]
+unstable-core-ffi-objc = []
 
 CHHapticDeviceCapability = [
     "objc2-foundation/NSError",
