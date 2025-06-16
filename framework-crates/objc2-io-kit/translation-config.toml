@@ -15,7 +15,6 @@ module.i2c.skipped = true
 module.iokitmig.skipped = true
 module.kext.skipped = true
 module.ndrvsupport.skipped = true
-module.ps.skipped = true
 module.sbp2.skipped = true
 module.scsi.skipped = true
 module.storage.skipped = true
