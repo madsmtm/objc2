@@ -38,6 +38,8 @@ enum.MTLTensorDataType.use-value = true
 fn.MTLCreateSystemDefaultDevice.unsafe = false
 fn.MTLCopyAllDevices.unsafe = false
 
+# class.MTL4AccelerationStructureDescriptor.methods.new.unsafe = false
+
 class.MTLPrimitiveAccelerationStructureDescriptor.methods.descriptor.unsafe = false
 class.MTLPrimitiveAccelerationStructureDescriptor.methods."setGeometryDescriptors:".unsafe = false
 
@@ -53,14 +55,20 @@ class.MTLAccelerationStructureTriangleGeometryDescriptor.methods."setVertexBuffe
 class.MTLAccelerationStructureTriangleGeometryDescriptor.methods."setVertexStride:".unsafe = false
 class.MTLAccelerationStructureTriangleGeometryDescriptor.methods."setTriangleCount:".unsafe = false
 
+class.MTL4AccelerationStructureTriangleGeometryDescriptor.methods.new.unsafe = false
+
 class.MTLAccelerationStructureBoundingBoxGeometryDescriptor.methods.descriptor.unsafe = false
 class.MTLAccelerationStructureBoundingBoxGeometryDescriptor.methods."setBoundingBoxBuffer:".unsafe = false
 class.MTLAccelerationStructureBoundingBoxGeometryDescriptor.methods."setBoundingBoxCount:".unsafe = false
+
+class.MTL4AccelerationStructureBoundingBoxGeometryDescriptor.methods.new.unsafe = false
 
 class.MTLInstanceAccelerationStructureDescriptor.methods.descriptor.unsafe = false
 class.MTLInstanceAccelerationStructureDescriptor.methods."setInstancedAccelerationStructures:".unsafe = false
 class.MTLInstanceAccelerationStructureDescriptor.methods."setInstanceCount:".unsafe = false
 class.MTLInstanceAccelerationStructureDescriptor.methods."setInstanceDescriptorBuffer:".unsafe = false
+
+class.MTL4InstanceAccelerationStructureDescriptor.methods.new.unsafe = false
 
 class.MTLAccelerationStructurePassSampleBufferAttachmentDescriptorArray.methods.new.unsafe = false
 
@@ -215,6 +223,39 @@ protocol.MTLCommandBuffer.methods.popDebugGroup.unsafe = false
 protocol.MTLCommandBuffer.methods."useResidencySet:".unsafe = false
 # protocol.MTLCommandBuffer.methods."useResidencySets:count:".unsafe = false
 
+class.MTL4CommandBufferOptions.methods.logState.unsafe = false
+class.MTL4CommandBufferOptions.methods."setLogState:".unsafe = false
+
+protocol.MTL4CommandBuffer.methods.device.unsafe = false
+protocol.MTL4CommandBuffer.methods.label.unsafe = false
+protocol.MTL4CommandBuffer.methods."setLabel:".unsafe = false
+# protocol.MTL4CommandBuffer.methods.enqueue.unsafe = false
+# protocol.MTL4CommandBuffer.methods.commit.unsafe = false
+protocol.MTL4CommandBuffer.methods."beginCommandBufferWithAllocator:".unsafe = false
+protocol.MTL4CommandBuffer.methods."beginCommandBufferWithAllocator:options:".unsafe = false
+protocol.MTL4CommandBuffer.methods.endCommandBuffer.unsafe = false
+# protocol.MTL4CommandBuffer.methods."presentDrawable:".unsafe = false
+# protocol.MTL4CommandBuffer.methods.waitUntilScheduled.unsafe = false
+# # TODO once blocks are better
+# # protocol.MTL4CommandBuffer.methods."addCompletedHandler:".unsafe = false
+# protocol.MTL4CommandBuffer.methods.status.unsafe = false
+# protocol.MTL4CommandBuffer.methods.blitCommandEncoder.unsafe = false
+protocol.MTL4CommandBuffer.methods."renderCommandEncoderWithDescriptor:".unsafe = false
+protocol.MTL4CommandBuffer.methods."renderCommandEncoderWithDescriptor:options:".unsafe = false
+protocol.MTL4CommandBuffer.methods.computeCommandEncoder.unsafe = false
+protocol.MTL4CommandBuffer.methods.machineLearningCommandEncoder.unsafe = false
+# protocol.MTL4CommandBuffer.methods."computeCommandEncoderWithDispatchType:".unsafe = false
+# protocol.MTL4CommandBuffer.methods."encodeWaitForEvent:value:".unsafe = false
+# protocol.MTL4CommandBuffer.methods."encodeSignalEvent:value:".unsafe = false
+# protocol.MTL4CommandBuffer.methods."parallelRenderCommandEncoderWithDescriptor:".unsafe = false
+# protocol.MTL4CommandBuffer.methods.accelerationStructureCommandEncoder.unsafe = false
+protocol.MTL4CommandBuffer.methods."useResidencySet:".unsafe = false
+# protocol.MTL4CommandBuffer.methods."useResidencySets:count:".unsafe = false
+protocol.MTL4CommandBuffer.methods."pushDebugGroup:".unsafe = false
+protocol.MTL4CommandBuffer.methods.popDebugGroup.unsafe = false
+protocol.MTL4CommandBuffer.methods."writeTimestampIntoHeap:atIndex:".unsafe = false
+protocol.MTL4CommandBuffer.methods."resolveCounterHeap:withRange:intoBuffer:waitFence:updateFence:".unsafe = false
+
 protocol.MTLCommandQueue.methods.label.unsafe = false
 protocol.MTLCommandQueue.methods."setLabel:".unsafe = false
 protocol.MTLCommandQueue.methods.device.unsafe = false
@@ -243,6 +284,40 @@ class.MTLComputePassDescriptor.methods."setDispatchType:".unsafe = false
 class.MTLComputePassDescriptor.methods.sampleBufferAttachments.unsafe = false
 
 class.MTLStencilDescriptor.methods.new.unsafe = false
+
+# Probably also pending block improvements?
+# class.MTL4CommitOptions.methods."addFeedbackHandler:".unsafe = false
+
+class.MTL4CommitOptions.methods.new.unsafe = false
+
+class.MTL4CommandQueueDescriptor.methods.new.unsafe = false
+class.MTL4CommandQueueDescriptor.methods.label.unsafe = false
+class.MTL4CommandQueueDescriptor.methods."setLabel:".unsafe = false
+class.MTL4CommandQueueDescriptor.methods."feedbackQueue".unsafe = false
+class.MTL4CommandQueueDescriptor.methods."setFeedbackQueue:".unsafe = false
+
+protocol.MTL4CommandQueue.methods.device.unsafe = false
+protocol.MTL4CommandQueue.methods.label.unsafe = false
+# protocol.MTL4CommandQueue.methods."commit:count:".unsafe = false
+# protocol.MTL4CommandQueue.methods."commit:count:options:".unsafe = false
+protocol.MTL4CommandQueue.methods."signalEvent:value:".unsafe = false
+protocol.MTL4CommandQueue.methods."waitForEvent:value:".unsafe = false
+protocol.MTL4CommandQueue.methods."signalDrawable:".unsafe = false
+protocol.MTL4CommandQueue.methods."waitForDrawable:".unsafe = false
+protocol.MTL4CommandQueue.methods."addResidencySet:".unsafe = false
+# protocol.MTL4CommandQueue.methods."addResidencySets:count:".unsafe = false
+protocol.MTL4CommandQueue.methods."removeResidencySet:".unsafe = false
+# protocol.MTL4CommandQueue.methods."removeResidencySets:count:".unsafe = false
+
+class.MTL4CommandAllocatorDescriptor.methods.new.unsafe = false
+class.MTL4CommandAllocatorDescriptor.methods.label.unsafe = false
+class.MTL4CommandAllocatorDescriptor.methods."setLabel:".unsafe = false
+
+protocol.MTL4CommandAllocator.methods.device.unsafe = false
+protocol.MTL4CommandAllocator.methods.label.unsafe = false
+protocol.MTL4CommandAllocator.methods.allocatedSize.unsafe = false
+protocol.MTL4CommandAllocator.methods.reset.unsafe = false
+
 class.MTLStencilDescriptor.methods.stencilCompareFunction.unsafe = false
 class.MTLStencilDescriptor.methods."setStencilCompareFunction:".unsafe = false
 class.MTLStencilDescriptor.methods.stencilFailureOperation.unsafe = false
@@ -271,6 +346,7 @@ class.MTLDepthStencilDescriptor.methods."setLabel:".unsafe = false
 protocol.MTLDepthStencilState.methods.label.unsafe = false
 protocol.MTLDepthStencilState.methods.device.unsafe = false
 
+# TODO: This is not sorted with respect to the file...
 protocol.MTLDevice.methods.name.unsafe = false
 protocol.MTLDevice.methods.registryID.unsafe = false
 protocol.MTLDevice.methods.maxThreadsPerThreadgroup.unsafe = false
@@ -332,6 +408,22 @@ protocol.MTLDevice.methods."heapAccelerationStructureSizeAndAlign:size:".unsafe 
 protocol.MTLDevice.methods."heapAccelerationStructureSizeAndAlign:descriptor:".unsafe = false
 protocol.MTLDevice.methods.supportsFunctionPointers.unsafe = false
 
+protocol.MTLDevice.methods.newCommandAllocator.unsafe = false
+protocol.MTLDevice.methods."newCommandAllocatorWithDescriptor:error:".unsafe = false
+protocol.MTLDevice.methods.newMTL4CommandQueue.unsafe = false
+protocol.MTLDevice.methods."newMTL4CommandQueueWithDescriptor:error:".unsafe = false
+protocol.MTLDevice.methods.newCommandBuffer.unsafe = false
+protocol.MTLDevice.methods."newArgumentTableWithDescriptor:error:".unsafe = false
+protocol.MTLDevice.methods."newTextureViewPoolWithDescriptor:error:".unsafe = false
+protocol.MTLDevice.methods."newCompilerWithDescriptor:error:".unsafe = false
+protocol.MTLDevice.methods."newArchiveWithURL:error:".unsafe = false
+protocol.MTLDevice.methods."newPipelineDataSetSerializerWithDescriptor:".unsafe = false
+protocol.MTLDevice.methods."newBufferWithLength:options:placementSparsePageSize:".unsafe = false
+protocol.MTLDevice.methods."newCounterHeapWithDescriptor:error:".unsafe = false
+protocol.MTLDevice.methods."sizeOfCounterHeapEntry:".unsafe = false
+protocol.MTLDevice.methods.queryTimestampFrequency.unsafe = false
+protocol.MTLDevice.methods."functionHandleWithBinaryFunction:".unsafe = false
+
 protocol.MTLDrawable.methods.present.unsafe = false
 protocol.MTLDrawable.methods.drawableID.unsafe = false
 
@@ -344,7 +436,50 @@ protocol.MTLCommandEncoder.methods."insertDebugSignpost:".unsafe = false
 protocol.MTLCommandEncoder.methods."pushDebugGroup:".unsafe = false
 protocol.MTLCommandEncoder.methods.popDebugGroup.unsafe = false
 
+protocol.MTL4CommandEncoder.methods.label.unsafe = false
+protocol.MTL4CommandEncoder.methods."setLabel:".unsafe = false
+protocol.MTL4CommandEncoder.methods.commandBuffer.unsafe = false
+protocol.MTL4CommandEncoder.methods."barrierAfterQueueStages:beforeStages:visibilityOptions:".unsafe = false
+protocol.MTL4CommandEncoder.methods."barrierAfterStages:beforeQueueStages:visibilityOptions:".unsafe = false
+protocol.MTL4CommandEncoder.methods."barrierAfterEncoderStages:beforeEncoderStages:visibilityOptions:".unsafe = false
+protocol.MTL4CommandEncoder.methods."updateFence:afterEncoderStages:".unsafe = false
+protocol.MTL4CommandEncoder.methods."waitForFence:beforeEncoderStages:".unsafe = false
+protocol.MTL4CommandEncoder.methods."insertDebugSignpost:".unsafe = false
+protocol.MTL4CommandEncoder.methods."pushDebugGroup:".unsafe = false
+protocol.MTL4CommandEncoder.methods.popDebugGroup.unsafe = false
+protocol.MTL4CommandEncoder.methods.endEncoding.unsafe = false
+
 protocol.MTLParallelRenderCommandEncoder.methods.renderCommandEncoder.unsafe = false
+
+protocol.MTL4RenderCommandEncoder.methods.tileWidth.unsafe = false
+protocol.MTL4RenderCommandEncoder.methods.tileHeight.unsafe = false
+# protocol.MTL4RenderCommandEncoder.methods."setColorAttachmentMap:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setRenderPipelineState:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setViewport:".unsafe = false
+# protocol.MTL4RenderCommandEncoder.methods."setViewports:count:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setCullMode:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setDepthClipMode:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setDepthBias:slopeScale:clamp:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setScissorRect:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setTriangleFillMode:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setBlendColorRed:green:blue:alpha:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setDepthStencilState:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setStencilReferenceValue:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setStencilFrontReferenceValue:backReferenceValue:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setVisibilityResultMode:offset:".unsafe = false
+# TODO: Index OOB for setColorStoreAction
+protocol.MTL4RenderCommandEncoder.methods."setDepthStoreAction:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setStencilStoreAction:".unsafe = false
+# drawPrimitives:, drawIndexedPrimitives: ...
+# executeCommandsInBuffer:withRange: (the indirectRangeBuffer: variant is definitely unsafe)
+# TODO: Retype indirectRangeBuffer: from u64 to GPU ptr type?
+# drawMesh...:,
+# TODO: What if going out of tileWidth/tileHeight bounds?
+# protocol.MTL4RenderCommandEncoder.methods."dispatchThreadsPerTile:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setArgumentTable:atStages:".unsafe = false
+protocol.MTL4RenderCommandEncoder.methods."setFrontFacingWinding:".unsafe = false
+# TODO: Test what happens if this GPU index is out of bounds?
+# protocol.MTL4RenderCommandEncoder.methods."writeTimestampWithGranularity:afterStage:intoHeap:atIndex:".unsafe = false
 
 # TODO: Verify that offset out-of-bounds is sound.
 # TODO: Verify that index out-of-bounds is sound.
@@ -429,6 +564,41 @@ protocol.MTLComputeCommandEncoder.methods."useHeap:".unsafe = false
 # protocol.MTLComputeCommandEncoder.methods."executeCommandsInBuffer:indirectBuffer:indirectBufferOffset:".unsafe = false
 protocol.MTLComputeCommandEncoder.methods."memoryBarrierWithScope:".unsafe = false
 # sampleCountersInBuffer:atSampleIndex:withBarrier: is the GPU-based sample indes OOB sound?
+
+protocol.MTL4ComputeCommandEncoder.methods.stages.unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."setComputePipelineState:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."setImageBlockWidth:Height:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."dispatchThreads:threadsPerThreadgroup:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."dispatchThreadgroups:threadsPerThreadgroup:".unsafe = false
+# dispatchThreadgroupsWithIndirectBuffer:threadsPerThreadgroup:
+# dispatchThreadsWithIndirectBuffer:
+protocol.MTL4ComputeCommandEncoder.methods."executeCommandsInBuffer:withRange:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."executeCommandsInBuffer:indirectBuffer:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."copyFromTexture:toTexture:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."copyFromTexture:sourceSlice:sourceLevel:toTexture:destinationSlice:destinationLevel:sliceCount:levelCount:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."copyFromTexture:sourceSlice:sourceLevel:sourceOrigin:sourceSize:toTexture:destinationSlice:destinationLevel:destinationOrigin:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."copyFromTexture:sourceSlice:sourceLevel:sourceOrigin:sourceSize:toBuffer:destinationOffset:destinationBytesPerRow:destinationBytesPerImage:options:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."copyFromBuffer:sourceOffset:sourceBytesPerRow:sourceBytesPerImage:sourceSize:toTexture:destinationSlice:destinationLevel:destinationOrigin:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."copyFromBuffer:sourceOffset:sourceBytesPerRow:sourceBytesPerImage:sourceSize:toTexture:destinationSlice:destinationLevel:destinationOrigin:options:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."copyFromTensor:sourceOrigin:sourceDimensions:toTensor:destinationOrigin:destinationDimensions:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."generateMipmapsForTexture:".unsafe = false
+# TODO: Bounds?
+# protocol.MTL4ComputeCommandEncoder.methods."fillBuffer:range:value:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."optimizeContentsForGPUAccess:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."optimizeContentsForGPUAccess:slice:level:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."optimizeContentsForCPUAccess:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."optimizeContentsForCPUAccess:slice:level:".unsafe = false
+# protocol.MTL4ComputeCommandEncoder.methods."resetCommandsInBuffer:withRange:".unsafe = false
+# protocol.MTL4ComputeCommandEncoder.methods."copyIndirectCommandBuffer:sourceRange:destination:destinationIndex:".unsafe = false
+# protocol.MTL4ComputeCommandEncoder.methods."optimizeIndirectCommandBuffer:withRange:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."setArgumentTable:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."buildAccelerationStructure:descriptor:scratchBuffer:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."refitAccelerationStructure:descriptor:destination:scratchBuffer:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."refitAccelerationStructure:descriptor:destination:scratchBuffer:options:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."copyAccelerationStructure:toAccelerationStructure:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."writeCompactedAccelerationStructureSize:toBuffer:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."copyAndCompactAccelerationStructure:toAccelerationStructure:".unsafe = false
+protocol.MTL4ComputeCommandEncoder.methods."writeTimestampWithGranularity:intoHeap:atIndex:".unsafe = false
 
 # TODO: Verify out-of-bounds access is sound.
 protocol.MTLArgumentEncoder.methods.encodedLength.unsafe = false
@@ -701,6 +871,36 @@ class.MTLRenderPassDescriptor.methods.rasterizationRateMap.unsafe = false
 class.MTLRenderPassDescriptor.methods."setRasterizationRateMap:".unsafe = false
 class.MTLRenderPassDescriptor.methods.sampleBufferAttachments.unsafe = false
 
+class.MTL4RenderPassDescriptor.methods.colorAttachments.unsafe = false
+class.MTL4RenderPassDescriptor.methods.depthAttachment.unsafe = false
+class.MTL4RenderPassDescriptor.methods."setDepthAttachment:".unsafe = false
+class.MTL4RenderPassDescriptor.methods.stencilAttachment.unsafe = false
+class.MTL4RenderPassDescriptor.methods."setStencilAttachment:".unsafe = false
+class.MTL4RenderPassDescriptor.methods.renderTargetArrayLength.unsafe = false
+# setRenderTargetArrayLength:
+class.MTL4RenderPassDescriptor.methods.imageblockSampleLength.unsafe = false
+# setImageblockSampleLength:
+class.MTL4RenderPassDescriptor.methods.threadgroupMemoryLength.unsafe = false
+# setThreadgroupMemoryLength:
+class.MTL4RenderPassDescriptor.methods.tileWidth.unsafe = false
+class.MTL4RenderPassDescriptor.methods."setTileWidth:".unsafe = false
+class.MTL4RenderPassDescriptor.methods.tileHeight.unsafe = false
+class.MTL4RenderPassDescriptor.methods."setTileHeight:".unsafe = false
+class.MTL4RenderPassDescriptor.methods.defaultRasterSampleCount.unsafe = false
+class.MTL4RenderPassDescriptor.methods."setDefaultRasterSampleCount:".unsafe = false
+class.MTL4RenderPassDescriptor.methods.renderTargetWidth.unsafe = false
+class.MTL4RenderPassDescriptor.methods."setRenderTargetWidth:".unsafe = false
+class.MTL4RenderPassDescriptor.methods.renderTargetHeight.unsafe = false
+class.MTL4RenderPassDescriptor.methods."setRenderTargetHeight:".unsafe = false
+class.MTL4RenderPassDescriptor.methods.rasterizationRateMap.unsafe = false
+class.MTL4RenderPassDescriptor.methods."setRasterizationRateMap:".unsafe = false
+class.MTL4RenderPassDescriptor.methods.visibilityResultBuffer.unsafe = false
+class.MTL4RenderPassDescriptor.methods."setVisibilityResultBuffer:".unsafe = false
+class.MTL4RenderPassDescriptor.methods.visibilityResultType.unsafe = false
+class.MTL4RenderPassDescriptor.methods."setVisibilityResultType:".unsafe = false
+class.MTL4RenderPassDescriptor.methods.supportColorAttachmentMapping.unsafe = false
+class.MTL4RenderPassDescriptor.methods."setSupportColorAttachmentMapping:".unsafe = false
+
 class.MTLResidencySetDescriptor.methods.new.unsafe = false
 class.MTLResidencySetDescriptor.methods.label.unsafe = false
 class.MTLResidencySetDescriptor.methods."setLabel:".unsafe = false
@@ -860,6 +1060,29 @@ class.MTLBufferLayoutDescriptor.methods.stepFunction.unsafe = false
 class.MTLBufferLayoutDescriptor.methods."setStepFunction:".unsafe = false
 class.MTLBufferLayoutDescriptor.methods.stepRate.unsafe = false
 class.MTLBufferLayoutDescriptor.methods."setStepRate:".unsafe = false
+
+class.MTL4ArgumentTableDescriptor.methods.maxBufferBindCount.unsafe = false
+class.MTL4ArgumentTableDescriptor.methods."setMaxBufferBindCount:".unsafe = false
+class.MTL4ArgumentTableDescriptor.methods.maxTextureBindCount.unsafe = false
+class.MTL4ArgumentTableDescriptor.methods."setMaxTextureBindCount:".unsafe = false
+class.MTL4ArgumentTableDescriptor.methods.maxSamplerStateBindCount.unsafe = false
+class.MTL4ArgumentTableDescriptor.methods."setMaxSamplerStateBindCount:".unsafe = false
+class.MTL4ArgumentTableDescriptor.methods.initializeBindings.unsafe = false
+class.MTL4ArgumentTableDescriptor.methods."setInitializeBindings:".unsafe = false
+class.MTL4ArgumentTableDescriptor.methods.supportAttributeStrides.unsafe = false
+class.MTL4ArgumentTableDescriptor.methods."setSupportAttributeStrides:".unsafe = false
+class.MTL4ArgumentTableDescriptor.methods.label.unsafe = false
+class.MTL4ArgumentTableDescriptor.methods."setLabel:".unsafe = false
+class.MTL4ArgumentTableDescriptor.methods.new.unsafe = false
+
+# TODO: Buffer index out of bounds? GPU address invalid?
+protocol.MTL4ArgumentTable.methods."setAddress:atIndex:".unsafe = false
+protocol.MTL4ArgumentTable.methods."setAddress:attributeStride:atIndex:".unsafe = false
+protocol.MTL4ArgumentTable.methods."setResource:atBufferIndex:".unsafe = false
+protocol.MTL4ArgumentTable.methods."setTexture:atIndex:".unsafe = false
+protocol.MTL4ArgumentTable.methods."setSamplerState:atIndex:".unsafe = false
+protocol.MTL4ArgumentTable.methods.device.unsafe = false
+protocol.MTL4ArgumentTable.methods.label.unsafe = false
 
 class.MTLAttributeDescriptor.methods.format.unsafe = false
 class.MTLAttributeDescriptor.methods."setFormat:".unsafe = false
