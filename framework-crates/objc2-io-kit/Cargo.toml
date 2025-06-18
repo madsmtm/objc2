@@ -62,6 +62,7 @@ default = [
     "libc",
     "network",
     "objc2",
+    "ps",
     "pwr_mgt",
     "serial",
     "usb",
@@ -107,6 +108,15 @@ hidsystem = [
     "objc2-core-foundation/CFDictionary",
 ]
 network = []
+ps = [
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFDate",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFPlugInCOM",
+    "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFSet",
+    "objc2-core-foundation/CFUUID",
+]
 pwr_mgt = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDate",
