@@ -32,6 +32,7 @@ mod stmt;
 mod thread_safety;
 mod unexposed_attr;
 
+pub use self::availability::HOST_MACOS;
 pub use self::cfgs::PlatformCfg;
 pub use self::config::{load_config, load_skipped, Config, LibraryConfig};
 pub use self::context::{Context, MacroEntity, MacroLocation};

@@ -17,7 +17,7 @@ use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
     global_analysis, load_config, load_skipped, run_cargo_fmt, Config, Context, EntryExt, Library,
-    LibraryConfig, Location, MacroEntity, MacroLocation, PlatformCfg, Stmt, VERSION,
+    LibraryConfig, Location, MacroEntity, MacroLocation, PlatformCfg, Stmt, HOST_MACOS, VERSION,
 };
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -812,6 +812,12 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
     // Write imports
     let mut s = String::new();
     for (_, lib) in config.to_parse() {
+        if let Some(macos) = &lib.macos {
+            if (HOST_MACOS as u64) < macos.major {
+                // Skip library if not available on current host.
+                continue;
+            }
+        }
         let platform_cfg = PlatformCfg::from_config_explicit(lib);
         if let Some(cfgs) = platform_cfg.cfgs() {
             writeln!(&mut s, "#[cfg({cfgs})]",).unwrap();

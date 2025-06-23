@@ -339,7 +339,7 @@ impl Availability {
         if let Some(macos) = self.introduced.macos {
             // Disable test if introduced later than my current OS.
             // TODO: Use `available!` macro here.
-            if 14 < macos.x {
+            if HOST_MACOS < macos.x {
                 return false;
             }
         }
@@ -374,3 +374,10 @@ impl fmt::Display for Availability {
         Ok(())
     }
 }
+
+pub const HOST_MACOS: u32 = if option_env!("CI").is_some() {
+    9999
+} else {
+    // @madsmtm's development machine's current OS version.
+    14
+};

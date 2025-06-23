@@ -193,6 +193,12 @@ impl Library {
         let generated_dir = crate_dir.join("src").join("generated");
         let test_path = test_crate_dir.join("tests").join(&self.data.framework);
         let emission_location = Location::from_library(&self.link_name);
+        let emit_tests = self
+            .data
+            .macos
+            .as_ref()
+            .map(|macos| macos.major <= (crate::HOST_MACOS as u64))
+            .unwrap_or(true);
 
         // Output `src/generated/*`.
         self.module.output(
@@ -201,6 +207,7 @@ impl Library {
             config,
             &emission_location,
             self.top_level_prefix(),
+            emit_tests,
         )?;
 
         if !self.data.custom_lib_rs {

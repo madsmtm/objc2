@@ -3219,6 +3219,11 @@ impl Stmt {
             _ => return None,
         };
 
+        // Availability is broken in MDLUtility.h for some reason?
+        if cls.name == "MDLUtility" {
+            return None;
+        }
+
         Some(FormatterFn(move |f| {
             write!(
                 f,
@@ -3276,6 +3281,17 @@ impl Stmt {
                 }
                 // Some dispatch statics are not exposed.
                 if ["Dispatch"].contains(&id.library_name()) {
+                    return None;
+                }
+                // Some statics are missing / have wrong availability attributes.
+                if [
+                    "CBUUIDCharacteristicObservationScheduleString",
+                    "kMDItemXMPCredit",
+                    "kMDItemXMPDigitalSourceType",
+                    "HKDataTypeIdentifierStateOfMind",
+                ]
+                .contains(&&*id.name)
+                {
                     return None;
                 }
                 if !availability.is_available_host() {
