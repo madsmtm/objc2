@@ -302,9 +302,9 @@ macro_rules! __sel_helper {
     // Base-case
     {
         ($($parsed_sel:tt)*)
-    } => ({
+    } => {
         $crate::__sel_data!($($parsed_sel)*)
-    });
+    };
     // Single identifier
     {
         ()
@@ -341,34 +341,10 @@ macro_rules! __sel_helper {
 #[macro_export]
 macro_rules! __sel_data {
     ($first:ident $(: $($($rest:ident)? :)*)?) => {
-        $crate::__sel_data_terminate!($crate::__macro_helpers::concat!(
+        $crate::__macro_helpers::concat!(
             $crate::__macro_helpers::stringify!($first),
             $(':', $($($crate::__macro_helpers::stringify!($rest),)? ':',)*)?
-        ))
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-#[cfg(any(
-    not(feature = "unstable-core-ffi-objc"),
-    feature = "unstable-static-sel",
-))]
-macro_rules! __sel_data_terminate {
-    ($data:expr) => {
-        $crate::__macro_helpers::concat!($data, '\0')
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-#[cfg(all(
-    feature = "unstable-core-ffi-objc",
-    not(feature = "unstable-static-sel"),
-))]
-macro_rules! __sel_data_terminate {
-    ($data:expr) => {
-        $data
+        )
     };
 }
 
@@ -381,7 +357,7 @@ macro_rules! __sel_inner {
             $crate::__macro_helpers::CachedSel::new();
         #[allow(unused_unsafe)]
         unsafe {
-            CACHED_SEL.get($data)
+            CACHED_SEL.get($crate::__macro_helpers::concat!($data, '\0'))
         }
     }};
 }
@@ -480,7 +456,7 @@ macro_rules! __statics_sel {
         ($data:expr)
         ($hash:expr)
     } => {
-        const X: &[$crate::__macro_helpers::u8] = $data.as_bytes();
+        const X: &[$crate::__macro_helpers::u8] = $crate::__macro_helpers::concat!($data, '\0').as_bytes();
 
         /// Clang marks this with LLVM's `unnamed_addr`.
         /// See rust-lang/rust#18297

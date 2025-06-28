@@ -6,28 +6,27 @@
 //! Note that our assembly tests of `unstable-static-sel-inlined` output a GOT
 //! entry for such accesses, but that is just a limitation of our tests - the
 //! actual assembly is as one would expect.
-use crate::__sel_data_terminate;
 use crate::__sel_inner;
 use crate::runtime::Sel;
 
 #[inline]
 pub fn alloc_sel() -> Sel {
-    __sel_inner!(__sel_data_terminate!("alloc"), "alloc")
+    __sel_inner!("alloc", "alloc")
 }
 
 #[inline]
 pub fn init_sel() -> Sel {
-    __sel_inner!(__sel_data_terminate!("init"), "init")
+    __sel_inner!("init", "init")
 }
 
 #[inline]
 pub fn new_sel() -> Sel {
-    __sel_inner!(__sel_data_terminate!("new"), "new")
+    __sel_inner!("new", "new")
 }
 
 #[inline]
 pub fn dealloc_sel() -> Sel {
-    __sel_inner!(__sel_data_terminate!("dealloc"), "dealloc")
+    __sel_inner!("dealloc", "dealloc")
 }
 
 /// An undocumented selector called by the Objective-C runtime when
@@ -35,7 +34,7 @@ pub fn dealloc_sel() -> Sel {
 #[inline]
 #[allow(dead_code)] // May be useful in the future
 fn cxx_construct_sel() -> Sel {
-    __sel_inner!(__sel_data_terminate!(".cxx_construct"), ".cxx_construct")
+    __sel_inner!(".cxx_construct", ".cxx_construct")
 }
 
 /// Objective-C runtimes call `.cxx_destruct` as part of the final `dealloc`
@@ -72,7 +71,7 @@ fn cxx_construct_sel() -> Sel {
 #[inline]
 #[allow(dead_code)] // May be useful in the future
 fn cxx_destruct_sel() -> Sel {
-    __sel_inner!(__sel_data_terminate!(".cxx_destruct"), ".cxx_destruct")
+    __sel_inner!(".cxx_destruct", ".cxx_destruct")
 }
 
 #[cfg(test)]
