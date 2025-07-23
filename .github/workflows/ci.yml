@@ -297,7 +297,7 @@ jobs:
     - lint
 
     env:
-      DEVELOPER_DIR: /Applications/Xcode_26.0_beta_1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.0_beta_3.app/Contents/Developer
 
     steps:
     - uses: actions/checkout@v4

@@ -43,6 +43,7 @@ default = [
     "std",
     "BEAccessibility",
     "BEAccessibilityConstants",
+    "BEAccessibilityRemoteElement",
     "BEAccessibilityTextMarker",
     "BEAutoFillTextSuggestion",
     "BECapability",
@@ -96,6 +97,7 @@ BEAccessibility = [
     "objc2-foundation/NSString",
 ]
 BEAccessibilityConstants = ["objc2-ui-kit/UIAccessibilityConstants"]
+BEAccessibilityRemoteElement = ["objc2-foundation/NSString"]
 BEAccessibilityTextMarker = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",

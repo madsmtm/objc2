@@ -50,7 +50,7 @@ default = [
     "std",
     "SCSensitivityAnalysis",
     "SCSensitivityAnalyzer",
-    "SCVideoStreamAnalyzer_Public",
+    "SCVideoStreamAnalyzer",
     "block2",
     "objc2-av-foundation",
     "objc2-core-graphics",
@@ -71,8 +71,7 @@ SCSensitivityAnalyzer = [
     "objc2-foundation/NSProgress",
     "objc2-foundation/NSURL",
 ]
-SCVideoStreamAnalyzer_Public = [
+SCVideoStreamAnalyzer = [
     "objc2-foundation/NSError",
-    "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]

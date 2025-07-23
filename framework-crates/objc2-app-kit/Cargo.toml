@@ -188,6 +188,7 @@ default = [
     "NSInputManager",
     "NSInputServer",
     "NSInterfaceStyle",
+    "NSItemBadge",
     "NSItemProvider",
     "NSKeyValueBinding",
     "NSLayoutAnchor",
@@ -337,6 +338,7 @@ default = [
     "NSTextView",
     "NSTextViewportLayoutController",
     "NSTintConfiguration",
+    "NSTintProminence",
     "NSTitlebarAccessoryViewController",
     "NSTokenField",
     "NSTokenFieldCell",
@@ -1126,6 +1128,7 @@ NSInputServer = [
     "objc2-foundation/objc2-core-foundation",
 ]
 NSInterfaceStyle = ["objc2-foundation/NSString"]
+NSItemBadge = ["objc2-foundation/NSString"]
 NSItemProvider = [
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSItemProvider",
@@ -2109,6 +2112,7 @@ NSTextView = [
 ]
 NSTextViewportLayoutController = []
 NSTintConfiguration = ["objc2-foundation/NSObject"]
+NSTintProminence = []
 NSTitlebarAccessoryViewController = [
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
