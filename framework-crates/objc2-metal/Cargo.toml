@@ -113,6 +113,7 @@ default = [
     "MTLFunctionHandle",
     "MTLFunctionLog",
     "MTLFunctionStitching",
+    "MTLGPUAddress",
     "MTLHeap",
     "MTLIOCommandBuffer",
     "MTLIOCommandQueue",
@@ -395,6 +396,7 @@ MTLFunctionStitching = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+MTLGPUAddress = []
 MTLHeap = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",

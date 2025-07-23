@@ -244,6 +244,7 @@ default = [
     "AVSampleBufferVideoRenderer",
     "AVSampleCursor",
     "AVSemanticSegmentationMatte",
+    "AVSpatialVideoConfiguration",
     "AVSynchronizedLayer",
     "AVTextStyleRule",
     "AVTime",
@@ -822,6 +823,12 @@ AVSemanticSegmentationMatte = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
+]
+AVSpatialVideoConfiguration = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
 AVSynchronizedLayer = ["objc2-foundation/NSObject"]
 AVTextStyleRule = [
