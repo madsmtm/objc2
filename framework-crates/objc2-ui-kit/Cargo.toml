@@ -208,6 +208,8 @@ default = [
     "UIControl",
     "UIConversationContext",
     "UIConversationEntry",
+    "UICornerConfiguration",
+    "UICornerRadius",
     "UIDataDetectors",
     "UIDataSourceTranslating",
     "UIDatePicker",
@@ -1094,6 +1096,8 @@ UIConversationEntry = [
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
+UICornerConfiguration = ["objc2-foundation/NSObject"]
+UICornerRadius = ["objc2-foundation/NSObject"]
 UIDataDetectors = ["bitflags"]
 UIDataSourceTranslating = ["objc2-foundation/NSIndexPath"]
 UIDatePicker = [
@@ -1784,6 +1788,7 @@ UISearchBar = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
 UISearchContainerViewController = [
     "objc2-foundation/NSBundle",
