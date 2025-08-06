@@ -42,6 +42,7 @@ default = [
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
+unstable-core-ffi-objc = []
 
 OSALanguage = [
     "bitflags",

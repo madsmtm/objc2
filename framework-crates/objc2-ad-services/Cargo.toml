@@ -37,6 +37,7 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+unstable-core-ffi-objc = []
 
 AAAttribution = [
     "objc2-foundation/NSError",

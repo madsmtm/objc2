@@ -26,6 +26,7 @@
 #![recursion_limit = "256"]
 #![allow(non_snake_case)]
 #![no_std]
+#![cfg_attr(feature = "unstable-core-ffi-objc", feature(core_ffi_objc))]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-metal/0.3.1")]

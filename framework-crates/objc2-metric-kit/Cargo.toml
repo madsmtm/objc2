@@ -73,6 +73,7 @@ default = [
 std = ["alloc"]
 alloc = []
 libc = ["dep:libc"]
+unstable-core-ffi-objc = []
 
 MXAnimationMetric = [
     "objc2-foundation/NSMeasurement",

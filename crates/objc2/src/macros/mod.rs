@@ -49,6 +49,15 @@ mod extern_protocol;
 /// [sel#features]: crate::sel#features
 /// [`sel!`]: crate::sel
 ///
+/// As with [`sel!`], these limitations can be overcome with the
+/// `"unstable-core-ffi-objc"` feature, but that requires the nightly-only
+/// `core_ffi_objc` language feature be enabled in every crate that uses this
+/// macro, which can be achieved in `objc2-*` framework crates by enabling their
+/// own `unstable-core-ffi-objc` features.
+///
+/// `"unstable-static-class"` and `"unstable-static-class-inlined"` take
+/// precedence over `"unstable-core-ffi-objc"`.
+///
 ///
 /// # Examples
 ///
@@ -83,7 +92,7 @@ macro_rules! class {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(not(feature = "unstable-static-class"))]
+#[cfg(not(any(feature = "unstable-core-ffi-objc", feature = "unstable-static-class")))]
 macro_rules! __class_inner {
     ($name:expr, $_hash:expr) => {{
         static CACHED_CLASS: $crate::__macro_helpers::CachedClass =
@@ -92,6 +101,22 @@ macro_rules! __class_inner {
         unsafe {
             CACHED_CLASS.get($crate::__macro_helpers::concat!($name, '\0'))
         }
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    feature = "unstable-core-ffi-objc",
+    not(feature = "unstable-static-class")
+))]
+macro_rules! __class_inner {
+    ($name:expr, $_hash:expr) => {{
+        let ptr = $crate::__macro_helpers::core_ffi_objc::class!($name);
+        let ptr = ptr.cast_const().cast::<$crate::runtime::AnyClass>();
+        #[allow(unused_unsafe)]
+        let r: &'static $crate::runtime::AnyClass = unsafe { &*ptr };
+        r
     }};
 }
 
@@ -139,13 +164,23 @@ macro_rules! __class_inner {
 /// - runtime, causing UB (unlikely)
 ///
 /// The `"unstable-static-sel-inlined"` feature is the even more extreme
-/// version - it yields the best performance and is closest to real
+/// version - it yields better performance and is closer to real
 /// Objective-C code, but probably won't work unless your code and its
 /// inlining is written in a very certain way.
 ///
 /// Enabling LTO greatly increases the chance that these features work.
 ///
 /// [rust-lang/rust#53929]: https://github.com/rust-lang/rust/issues/53929
+///
+/// The `"unstable-core-ffi-objc"` feature solves this problem by implementing
+/// support for Objective-C selectors directly in the compiler. It yields the
+/// best performance and is closest to real Objective-C code, but requires the
+/// nightly-only `core_ffi_objc` language feature be enabled in every crate
+/// that uses this macro, which can be achieved in `objc2-*` framework crates
+/// by enabling their own `unstable-core-ffi-objc` features.
+///
+/// `"unstable-static-sel"` and `"unstable-static-sel-inlined"` take precedence
+/// over `"unstable-core-ffi-objc"`.
 ///
 ///
 /// # Examples
@@ -267,9 +302,9 @@ macro_rules! __sel_helper {
     // Base-case
     {
         ($($parsed_sel:tt)*)
-    } => ({
+    } => {
         $crate::__sel_data!($($parsed_sel)*)
-    });
+    };
     // Single identifier
     {
         ()
@@ -309,21 +344,37 @@ macro_rules! __sel_data {
         $crate::__macro_helpers::concat!(
             $crate::__macro_helpers::stringify!($first),
             $(':', $($($crate::__macro_helpers::stringify!($rest),)? ':',)*)?
-            '\0',
         )
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(not(feature = "unstable-static-sel"))]
+#[cfg(not(any(feature = "unstable-core-ffi-objc", feature = "unstable-static-sel")))]
 macro_rules! __sel_inner {
     ($data:expr, $_hash:expr) => {{
         static CACHED_SEL: $crate::__macro_helpers::CachedSel =
             $crate::__macro_helpers::CachedSel::new();
         #[allow(unused_unsafe)]
         unsafe {
-            CACHED_SEL.get($data)
+            CACHED_SEL.get($crate::__macro_helpers::concat!($data, '\0'))
+        }
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    feature = "unstable-core-ffi-objc",
+    not(feature = "unstable-static-sel"),
+))]
+macro_rules! __sel_inner {
+    ($data:expr, $_hash:expr) => {{
+        let ptr = $crate::__macro_helpers::core_ffi_objc::selector!($data);
+        let ptr = ptr.cast_const().cast::<$crate::__macro_helpers::u8>();
+        #[allow(unused_unsafe)]
+        unsafe {
+            $crate::runtime::Sel::__internal_from_ptr(ptr)
         }
     }};
 }
@@ -405,7 +456,7 @@ macro_rules! __statics_sel {
         ($data:expr)
         ($hash:expr)
     } => {
-        const X: &[$crate::__macro_helpers::u8] = $data.as_bytes();
+        const X: &[$crate::__macro_helpers::u8] = $crate::__macro_helpers::concat!($data, '\0').as_bytes();
 
         /// Clang marks this with LLVM's `unnamed_addr`.
         /// See rust-lang/rust#18297

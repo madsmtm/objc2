@@ -46,6 +46,7 @@ std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
+unstable-core-ffi-objc = []
 
 SCSensitivityAnalysis = []
 SCSensitivityAnalyzer = [
