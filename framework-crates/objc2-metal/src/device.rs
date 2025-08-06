@@ -1,7 +1,10 @@
-use crate::MTLDevice;
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
 use objc2_foundation::NSArray;
+
+#[cfg(doc)]
+use crate::MTLCreateSystemDefaultDevice;
+use crate::MTLDevice;
 
 /// Returns all Metal devices in the system.
 ///
@@ -10,7 +13,7 @@ use objc2_foundation::NSArray;
 /// application based on whatever criteria it deems appropriate.
 ///
 /// On iOS, tvOS and visionOS, this API returns an array containing the same
-/// device that MTLCreateSystemDefaultDevice would have returned, or an empty
+/// device that [`MTLCreateSystemDefaultDevice()`] would have returned, or an empty
 /// array if it would have failed.
 #[inline]
 pub extern "C-unwind" fn MTLCopyAllDevices() -> Retained<NSArray<ProtocolObject<dyn MTLDevice>>> {
