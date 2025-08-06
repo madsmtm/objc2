@@ -143,6 +143,4 @@ DeviceDiscoveryUI = "Needs Network first"
 BrowserKit = "TODO"
 SecurityUI = "TODO"
 GameSave = "TODO"
-TouchControls = "TODO"
-
-MeshNetFramework = "Weirdly incomplete"
+TouchController = "TODO"

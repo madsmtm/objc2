@@ -71,10 +71,7 @@ ASAccessorySettings = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSString",
 ]
-ASCommon = [
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
-]
+ASCommon = ["objc2-foundation/NSString"]
 ASDiscoveryDescriptor = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSString",
