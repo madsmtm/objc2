@@ -36,6 +36,8 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[cfg(feature = "MTLAccelerationStructureTypes")]
+mod acceleration_structure_types;
 #[cfg(feature = "MTLCaptureManager")]
 mod capture;
 #[cfg(feature = "MTLCounters")]
@@ -43,8 +45,6 @@ mod counters;
 #[cfg(feature = "MTLDevice")]
 mod device;
 mod generated;
-#[cfg(feature = "MTLAccelerationStructureTypes")]
-mod packed;
 #[cfg(feature = "unstable-private")]
 mod private;
 #[cfg(feature = "MTLRasterizationRate")]
@@ -57,14 +57,14 @@ mod texture;
 #[cfg(feature = "MTLTypes")]
 mod types;
 
+#[cfg(feature = "MTLAccelerationStructureTypes")]
+pub use self::acceleration_structure_types::MTLPackedFloat3;
 #[cfg(feature = "MTLCounters")]
 pub use self::counters::*;
 #[cfg(feature = "MTLDevice")]
 pub use self::device::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
-#[cfg(feature = "MTLAccelerationStructureTypes")]
-pub use self::packed::MTLPackedFloat3;
 #[cfg(feature = "unstable-private")]
 pub use self::private::MTLDevicePrivate;
 #[cfg(feature = "MTLResource")]
