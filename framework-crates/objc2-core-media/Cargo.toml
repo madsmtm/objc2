@@ -120,7 +120,10 @@ CMTagCollection = [
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
 ]
-CMTaggedBufferGroup = ["objc2-core-foundation/CFArray"]
+CMTaggedBufferGroup = [
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFDictionary",
+]
 CMTextMarkup = []
 CMTime = [
     "bitflags",

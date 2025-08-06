@@ -108,6 +108,7 @@ default = [
     "PKObject",
     "PKPass",
     "PKPassLibrary",
+    "PKPassRelevantDate",
     "PKPass_Types",
     "PKPayment",
     "PKPaymentAuthorizationController",
@@ -269,6 +270,10 @@ PKPassLibrary = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
+]
+PKPassRelevantDate = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDateInterval",
 ]
 PKPass_Types = []
 PKPayment = []

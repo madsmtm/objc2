@@ -65,6 +65,7 @@ default = [
     "AXUIElement",
     "AXValue",
     "AXValueConstants",
+    "AXWebConstants",
     "Accessibility",
     "HIServices",
     "HIShape",
@@ -118,6 +119,7 @@ AXUIElement = [
 ]
 AXValue = []
 AXValueConstants = []
+AXWebConstants = []
 Accessibility = []
 HIServices = []
 HIShape = ["objc2-core-foundation/CFCGTypes"]
