@@ -16,6 +16,7 @@ license.workspace = true
 workspace = true
 
 [dependencies]
+bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, features = ["std"] }
 objc2-foundation = { workspace = true, features = ["alloc"] }
@@ -35,23 +36,51 @@ targets = [
 default = [
     "std",
     "BAAppExtensionInfo",
+    "BAAssetPack",
+    "BAAssetPackManager",
+    "BAAssetPackManifest",
+    "BAAssetPackStatus",
     "BABase",
     "BADownload",
     "BADownloadManager",
     "BADownloaderExtension",
     "BAError",
+    "BAManagedAssetPackDownloadDelegate",
+    "BAManagedDownloaderExtension",
+    "BAManagedError",
     "BATypes",
     "BAURLDownload",
+    "bitflags",
     "block2",
 ]
 std = ["alloc"]
 alloc = []
+bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 
 BAAppExtensionInfo = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSValue",
 ]
+BAAssetPack = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSString",
+]
+BAAssetPackManager = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+BAAssetPackManifest = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+BAAssetPackStatus = ["bitflags"]
 BABase = []
 BADownload = [
     "objc2-foundation/NSObject",
@@ -75,6 +104,15 @@ BADownloaderExtension = [
     "objc2-foundation/NSURLSession",
 ]
 BAError = ["objc2-foundation/NSString"]
+BAManagedAssetPackDownloadDelegate = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSProgress",
+]
+BAManagedDownloaderExtension = []
+BAManagedError = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+]
 BATypes = []
 BAURLDownload = [
     "objc2-foundation/NSObject",

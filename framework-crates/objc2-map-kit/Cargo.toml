@@ -75,7 +75,9 @@ targets = [
 [features]
 default = [
     "std",
+    "MKAddress",
     "MKAddressFilter",
+    "MKAddressRepresentations",
     "MKAnnotation",
     "MKAnnotationView",
     "MKCircle",
@@ -89,6 +91,7 @@ default = [
     "MKDistanceFormatter",
     "MKFoundation",
     "MKGeoJSONSerialization",
+    "MKGeocodingRequest",
     "MKGeodesicPolyline",
     "MKGeometry",
     "MKGradientPolylineRenderer",
@@ -137,6 +140,7 @@ default = [
     "MKPolygonRenderer",
     "MKPolyline",
     "MKPolylineRenderer",
+    "MKReverseGeocodingRequest",
     "MKSelectionAccessory",
     "MKShape",
     "MKStandardMapConfiguration",
@@ -167,10 +171,12 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-location = ["dep:objc2-core-location"]
 
+MKAddress = ["objc2-foundation/NSString"]
 MKAddressFilter = [
     "bitflags",
     "objc2-foundation/NSObject",
 ]
+MKAddressRepresentations = ["objc2-foundation/NSString"]
 MKAnnotation = ["objc2-foundation/NSString"]
 MKAnnotationView = [
     "objc2-foundation/NSCoder",
@@ -213,6 +219,12 @@ MKGeoJSONSerialization = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+]
+MKGeocodingRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSLocale",
     "objc2-foundation/NSString",
 ]
 MKGeodesicPolyline = []
@@ -348,6 +360,11 @@ MKPolygon = ["objc2-foundation/NSArray"]
 MKPolygonRenderer = []
 MKPolyline = []
 MKPolylineRenderer = []
+MKReverseGeocodingRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSLocale",
+]
 MKSelectionAccessory = []
 MKShape = ["objc2-foundation/NSString"]
 MKStandardMapConfiguration = ["objc2-foundation/NSObject"]

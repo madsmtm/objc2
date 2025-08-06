@@ -22,6 +22,10 @@ objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFCGTypes",
     "objc2",
 ] }
+objc2-core-graphics = { workspace = true, optional = true, features = [
+    "CGColor",
+    "objc2",
+] }
 objc2-foundation = { workspace = true, features = ["alloc"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
@@ -57,15 +61,20 @@ default = [
     "PKStrokePath",
     "PKStrokePoint",
     "PKTool",
+    "PKToolPickerEraserItem",
+    "PKToolPickerInkingItem",
+    "PKToolPickerItem",
     "block2",
     "objc2-app-kit",
     "objc2-core-foundation",
+    "objc2-core-graphics",
 ]
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-core-graphics = ["dep:objc2-core-graphics"]
 
 PKContentVersion = []
 PKDrawing = [
@@ -100,3 +109,12 @@ PKStrokePoint = [
     "objc2-foundation/NSObject",
 ]
 PKTool = ["objc2-foundation/NSObject"]
+PKToolPickerEraserItem = ["objc2-foundation/NSObject"]
+PKToolPickerInkingItem = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+PKToolPickerItem = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]

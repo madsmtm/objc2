@@ -16,6 +16,12 @@ external.CIBarcodeDescriptor.module = "CoreImage.CIBarcodeDescriptor"
 # Only available on iOS
 class.AVAsset.methods.preferredDisplayCriteria.skipped = true
 
+# Needs CASpatialAudioExperience, which is not available on macOS (where header-translator runs).
+class.AVPlayer.methods.intendedSpatialAudioExperience.skipped = true
+class.AVPlayer.methods."setIntendedSpatialAudioExperience:".skipped = true
+class.AVSampleBufferRenderSynchronizer.methods.intendedSpatialAudioExperience.skipped = true
+class.AVSampleBufferRenderSynchronizer.methods."setIntendedSpatialAudioExperience:".skipped = true
+
 # CG*Ref as error return is not yet supported
 class.AVAssetImageGenerator.methods."copyCGImageAtTime:actualTime:error:".skipped = true
 protocol.AVCapturePhotoCaptureDelegate.methods."captureOutput:didFinishProcessingPhotoSampleBuffer:previewPhotoSampleBuffer:resolvedSettings:bracketSettings:error:".skipped = true

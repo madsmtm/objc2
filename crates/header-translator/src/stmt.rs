@@ -324,7 +324,10 @@ fn verify_objc_decl(entity: &Entity<'_>, _context: &Context<'_>) {
             (EntityKind::UnexposedAttr, _) => {
                 // Parsed in parse_attributes
             }
-            (_, parent_kind) => error!(?parent_kind, "unknown in parent"),
+            (EntityKind::AnnotateAttr, _) if entity.get_name().unwrap() == "main-thread-only" => {
+                // Already parsed via. UnexposedAttr.
+            }
+            (_, parent_kind) => error!(?entity, ?parent_kind, "unknown in parent"),
         }
     });
 }

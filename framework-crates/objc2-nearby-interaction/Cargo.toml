@@ -45,6 +45,7 @@ default = [
     "std",
     "NIAlgorithmConvergenceStatusReason",
     "NIConfiguration",
+    "NIDLTDOAMeasurement",
     "NIDeviceCapability",
     "NIError",
     "NIExport",
@@ -65,6 +66,7 @@ NIConfiguration = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUUID",
 ]
+NIDLTDOAMeasurement = ["objc2-foundation/NSObject"]
 NIDeviceCapability = []
 NIError = [
     "objc2-foundation/NSError",
