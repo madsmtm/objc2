@@ -362,6 +362,7 @@ default = [
     "NSUserInterfaceValidation",
     "NSView",
     "NSViewController",
+    "NSViewLayoutRegion",
     "NSVisualEffectView",
     "NSWindow",
     "NSWindowController",
@@ -2261,6 +2262,10 @@ NSViewController = [
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+    "objc2-foundation/objc2-core-foundation",
+]
+NSViewLayoutRegion = [
+    "objc2-foundation/NSGeometry",
     "objc2-foundation/objc2-core-foundation",
 ]
 NSVisualEffectView = [
