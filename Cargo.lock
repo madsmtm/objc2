@@ -802,6 +802,7 @@ dependencies = [
  "dispatch2",
  "objc2",
  "objc2-avf-audio",
+ "objc2-core-audio-types",
  "objc2-core-foundation",
  "objc2-core-graphics",
  "objc2-core-image",
@@ -857,6 +858,7 @@ dependencies = [
 name = "objc2-background-assets"
 version = "0.3.1"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-foundation",
@@ -866,6 +868,7 @@ dependencies = [
 name = "objc2-background-tasks"
 version = "0.3.1"
 dependencies = [
+ "bitflags",
  "block2",
  "dispatch2",
  "objc2",
@@ -877,6 +880,9 @@ name = "objc2-browser-engine-core"
 version = "0.3.1"
 dependencies = [
  "libc",
+ "objc2",
+ "objc2-avf-audio",
+ "objc2-foundation",
 ]
 
 [[package]]
@@ -885,6 +891,7 @@ version = "0.3.1"
 dependencies = [
  "bitflags",
  "block2",
+ "libc",
  "objc2",
  "objc2-av-foundation",
  "objc2-core-foundation",
@@ -985,6 +992,7 @@ dependencies = [
  "bitflags",
  "block2",
  "objc2",
+ "objc2-contacts",
  "objc2-core-location",
  "objc2-foundation",
 ]
@@ -2325,6 +2333,7 @@ dependencies = [
  "objc2-core-graphics",
  "objc2-core-media",
  "objc2-foundation",
+ "objc2-uniform-type-identifiers",
 ]
 
 [[package]]
@@ -2393,8 +2402,11 @@ version = "0.3.1"
 dependencies = [
  "block2",
  "objc2",
+ "objc2-av-foundation",
  "objc2-core-graphics",
+ "objc2-core-video",
  "objc2-foundation",
+ "objc2-video-toolbox",
 ]
 
 [[package]]
@@ -2517,6 +2529,7 @@ dependencies = [
  "block2",
  "objc2",
  "objc2-app-kit",
+ "objc2-background-assets",
  "objc2-core-foundation",
  "objc2-foundation",
 ]

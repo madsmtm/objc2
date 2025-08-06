@@ -218,6 +218,7 @@ CIRAWFilter_Deprecated = [
 CIRenderDestination = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
+    "objc2-foundation/NSURL",
 ]
 CISampler = [
     "objc2-foundation/NSDictionary",

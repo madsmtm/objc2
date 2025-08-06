@@ -99,6 +99,7 @@ default = [
     "GCMouse",
     "GCMouseInput",
     "GCPhysicalInputElement",
+    "GCPhysicalInputExtents",
     "GCPhysicalInputProfile",
     "GCPhysicalInputSource",
     "GCPressedStateInput",
@@ -106,7 +107,9 @@ default = [
     "GCRacingWheel",
     "GCRacingWheelInput",
     "GCRelativeInput",
+    "GCSpatialAccessory",
     "GCSteeringWheelElement",
+    "GCStylus",
     "GCSwitchElement",
     "GCSwitchPositionInput",
     "GCSyntheticDeviceKeys",
@@ -204,6 +207,7 @@ GCPhysicalInputElement = [
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
+GCPhysicalInputExtents = []
 GCPhysicalInputProfile = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
@@ -230,7 +234,12 @@ GCRelativeInput = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSSet",
 ]
+GCSpatialAccessory = []
 GCSteeringWheelElement = []
+GCStylus = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+]
 GCSwitchElement = []
 GCSwitchPositionInput = [
     "objc2-foundation/NSDate",

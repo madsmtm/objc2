@@ -106,6 +106,7 @@ FSResource = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSProgress",
     "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
 FSTask = [
     "objc2-foundation/NSError",
