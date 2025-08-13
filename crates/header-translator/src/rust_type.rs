@@ -1849,6 +1849,18 @@ impl Ty {
         }
     }
 
+    pub(crate) fn directly_contains_fn_ptr(&self) -> bool {
+        match self {
+            Self::Pointer { pointee, .. }
+                if matches!(&**pointee, Ty::Pointee(PointeeTy::Fn { .. })) =>
+            {
+                true
+            }
+            Self::TypeDef { to, .. } => to.directly_contains_fn_ptr(),
+            _ => false,
+        }
+    }
+
     pub(crate) fn is_objc_bool(&self) -> bool {
         match self {
             Self::Primitive(Primitive::ObjcBool) => true,

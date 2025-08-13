@@ -2555,6 +2555,13 @@ impl Stmt {
                     if *is_union || fields.iter().any(|(_, _, field)| field.contains_union()) {
                         writeln!(f, "#[derive(Clone, Copy)]")?;
                     } else {
+                        if fields
+                            .iter()
+                            .any(|(_, _, field)| field.directly_contains_fn_ptr())
+                        {
+                            // TODO(breaking): Maybe remove the PartialEq implementation here?
+                            writeln!(f, "#[allow(unpredictable_function_pointer_comparisons)]")?;
+                        }
                         writeln!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
                     }
                     if *is_union {

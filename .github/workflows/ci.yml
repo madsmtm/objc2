@@ -211,7 +211,7 @@ jobs:
     - name: cargo check
       run: cargo check --package=dispatch2 --package=block2 --package=objc2 --package=objc2-encode --package=objc2-proc-macros $FRAMEWORKS_MACOS_14
       env:
-        RUSTFLAGS: "--codegen=debuginfo=0" # Removed --deny=warnings
+        RUSTFLAGS: "--codegen=debuginfo=0 --allow=unknown_lints" # Removed --deny=warnings, added --allow=unknown_lints
 
   ui:
     name: Compiler UI
