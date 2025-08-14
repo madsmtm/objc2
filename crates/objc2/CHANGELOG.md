@@ -6,7 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
-## Changed
+
+## [0.6.2] - 2025-08-14
+[0.6.2]: https://github.com/madsmtm/objc2/compare/objc2-0.6.1...objc2-0.6.2
+
+## Fixed
 * Relaxed the rules for when encodings are considered equal, to support macOS 26.
 
 

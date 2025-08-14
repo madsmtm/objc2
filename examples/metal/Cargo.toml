@@ -10,7 +10,7 @@ name = "triangle"
 path = "triangle/main.rs"
 
 [dependencies]
-objc2 = "0.6.1"
+objc2 = "0.6.2"
 objc2-metal = { version = "0.3.1", default-features = false, features = [
     "std",
     "objc2-core-foundation",
