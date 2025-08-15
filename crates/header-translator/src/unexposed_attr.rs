@@ -1,6 +1,7 @@
 use clang::source::{SourceLocation, SourceRange};
 use clang::token::{Token, TokenKind};
 use clang::{Entity, EntityKind};
+use proc_macro2::TokenStream;
 
 use crate::context::{Context, MacroLocation};
 
@@ -16,8 +17,8 @@ pub enum UnexposedAttr {
 
     BridgedTypedef,
     BridgedImplicit,
-    Bridged,
-    BridgedMutable,
+    Bridged(String),
+    BridgedMutable(String),
     BridgedRelated,
 
     /// `ns_returns_retained` / `cf_returns_retained` / `os_returns_retained`
@@ -35,9 +36,9 @@ pub enum UnexposedAttr {
 }
 
 impl UnexposedAttr {
-    pub(crate) fn from_name<T>(
+    pub(crate) fn from_name(
         s: &str,
-        get_arguments: impl FnOnce() -> T,
+        get_arguments: impl FnOnce() -> TokenStream,
     ) -> Result<Option<Self>, ()> {
         Ok(match s {
             "CF_ENUM" | "JSC_CF_ENUM" | "DISPATCH_ENUM" | "NS_ENUM" => {
@@ -71,8 +72,20 @@ impl UnexposedAttr {
             | "CV_BRIDGED_TYPE"
             | "CM_BRIDGED_TYPE"
             | "IIO_BRIDGED_TYPE"
-            | "OPENGL_BRIDGED_TYPE" => Some(Self::Bridged),
-            "CF_BRIDGED_MUTABLE_TYPE" => Some(Self::BridgedMutable),
+            | "OPENGL_BRIDGED_TYPE"
+            | "CF_BRIDGED_MUTABLE_TYPE" => {
+                let mut args = get_arguments().into_iter();
+                let ty = args.next().unwrap().to_string();
+                assert!(
+                    args.next().is_none(),
+                    "invalid number of arguments in error macro"
+                );
+                if s.contains("MUTABLE") {
+                    Some(Self::BridgedMutable(ty))
+                } else {
+                    Some(Self::Bridged(ty))
+                }
+            }
             "CF_RELATED_TYPE" => Some(Self::BridgedRelated),
             "NS_RETURNS_RETAINED"
             | "CF_RETURNS_RETAINED"
@@ -405,6 +418,7 @@ impl UnexposedAttr {
                     if !entity.is_function_like {
                         error!(?entity, "tried to get tokens from non-function-like macro");
                     }
+                    entity.macro_arguments.clone()
                 })
                 .unwrap_or_else(|()| {
                     error!(
@@ -429,12 +443,13 @@ impl UnexposedAttr {
             match parsed.get_kind() {
                 EntityKind::MacroExpansion => {
                     let macro_name = parsed.get_name().expect("macro name");
-                    Self::from_name(&macro_name, || get_argument_tokens(&parsed)).unwrap_or_else(
-                        |()| {
-                            error!(macro_name, "unknown unexposed attribute");
-                            None
-                        },
-                    )
+                    Self::from_name(&macro_name, || {
+                        parse_macro_arguments(&get_argument_tokens(&parsed))
+                    })
+                    .unwrap_or_else(|()| {
+                        error!(macro_name, "unknown unexposed attribute");
+                        None
+                    })
                 }
                 // Some macros can't be found using this method,
                 // for example NS_NOESCAPE.
@@ -466,32 +481,18 @@ impl UnexposedAttr {
             }
             let macro_name = token.get_spelling();
 
-            Self::from_name(&macro_name, move || {
-                if tokens.is_empty() {
-                    error!(?entity, "tried to get tokens from non-function-like macro");
-                    return vec![];
-                }
-
-                let start = tokens.remove(0);
-                assert_eq!(start.get_kind(), TokenKind::Punctuation);
-                assert_eq!(start.get_spelling(), "(");
-                let end = tokens.pop().expect("tokens to have parentheses");
-                assert_eq!(end.get_kind(), TokenKind::Punctuation);
-                assert_eq!(end.get_spelling(), ")");
-
-                tokens
-            })
-            .unwrap_or_else(|()| {
-                error!(macro_name, "unknown unexposed attribute");
-                None
-            })
+            Self::from_name(&macro_name, move || parse_macro_arguments(&tokens)).unwrap_or_else(
+                |()| {
+                    error!(macro_name, "unknown unexposed attribute");
+                    None
+                },
+            )
         }
     }
 }
 
-fn get_argument_tokens<'a>(entity: &Entity<'a>) -> Vec<Token<'a>> {
+pub(crate) fn get_argument_tokens<'a>(entity: &Entity<'a>) -> Vec<Token<'a>> {
     if !entity.is_function_like_macro() {
-        error!(?entity, "tried to get tokens from non-function-like macro");
         return vec![];
     }
     // Remove the macro name from the full macro tokens
@@ -500,14 +501,30 @@ fn get_argument_tokens<'a>(entity: &Entity<'a>) -> Vec<Token<'a>> {
     let name_range = name_ranges.first().unwrap();
     let range = entity.get_range().expect("macro range");
 
-    let mut tokens = SourceRange::new(name_range.get_end(), range.get_end()).tokenize();
+    if range.get_start() == range.get_end() {
+        // No arguments.
+        return vec![];
+    }
 
-    let start = tokens.remove(0);
+    SourceRange::new(name_range.get_end(), range.get_end()).tokenize()
+}
+
+pub(crate) fn parse_macro_arguments(tokens: &[Token<'_>]) -> TokenStream {
+    let Some((start, tokens)) = tokens.split_first() else {
+        return TokenStream::new();
+    };
     assert_eq!(start.get_kind(), TokenKind::Punctuation);
     assert_eq!(start.get_spelling(), "(");
-    let end = tokens.pop().expect("tokens to have parentheses");
+    let (end, tokens) = tokens.split_last().expect("tokens to have parentheses");
     assert_eq!(end.get_kind(), TokenKind::Punctuation);
     assert_eq!(end.get_spelling(), ")");
 
+    // TODO: Actually parse commas etc. here
     tokens
+        .iter()
+        .map(|token| token.get_spelling())
+        .collect::<Vec<_>>()
+        .join("")
+        .parse()
+        .expect("invalid tokenstream")
 }

@@ -10,7 +10,7 @@ use crate::display_helper::FormatterFn;
 use crate::id::{ItemIdentifier, ItemTree};
 use crate::name_translation::cf_no_ref;
 use crate::protocol::ProtocolRef;
-use crate::stmt::{anonymous_record_name, is_bridged};
+use crate::stmt::{anonymous_record_name, bridged_to};
 use crate::stmt::{parse_superclasses, superclasses_required_items};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -901,7 +901,7 @@ impl Ty {
                                 .unwrap_or_else(|| "UnknownStruct".into())
                         }),
                         fields,
-                        is_bridged: is_bridged(&declaration, context),
+                        is_bridged: bridged_to(&declaration, context).is_some(),
                     },
                     EntityKind::UnionDecl => Self::Union {
                         id: id.map_name(|name| {
@@ -1495,7 +1495,9 @@ impl Ty {
                         *inner_lifetime = lifetime;
                     }
 
-                    if pointee.is_direct_cf_type(&id.name, is_bridged(&declaration, context)) {
+                    if pointee
+                        .is_direct_cf_type(&id.name, bridged_to(&declaration, context).is_some())
+                    {
                         // A bit annoying that we replace the typedef name
                         // here, as that's also what determines whether the
                         // type is a CF type or not... But that's how it is
@@ -3017,11 +3019,11 @@ fn parse_unexposed_tokens(s: &str) -> (String, Option<UnexposedAttr>) {
                 let Some(TokenTree::Group(group)) = iter.next() else {
                     unreachable!();
                 };
-                Some(group)
+                group.stream()
             } else {
                 // The associated data on the macro is removed since Xcode 16.3.
                 trace!(?ident, "expected group in macro");
-                None
+                TokenStream::new()
             }
         }) {
             iter.next();

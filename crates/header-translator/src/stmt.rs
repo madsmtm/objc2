@@ -329,26 +329,32 @@ fn verify_objc_decl(entity: &Entity<'_>, _context: &Context<'_>) {
     });
 }
 
-/// Whether the entity contains a bridging modifier.
-pub(crate) fn is_bridged(entity: &Entity<'_>, context: &Context<'_>) -> bool {
-    let mut is_bridged = false;
-    immediate_children(entity, |entity, _span| {
-        if let EntityKind::UnexposedAttr = entity.get_kind() {
-            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                if matches!(
-                    attr,
-                    UnexposedAttr::Bridged
-                        | UnexposedAttr::BridgedMutable
-                        | UnexposedAttr::BridgedRelated
-                        | UnexposedAttr::BridgedTypedef
-                        | UnexposedAttr::BridgedImplicit
-                ) {
-                    is_bridged = true;
+/// Whether the entity contains a bridging modifier, and if so, what that
+/// modifier bridges to.
+pub(crate) fn bridged_to(entity: &Entity<'_>, context: &Context<'_>) -> Option<Option<String>> {
+    let mut bridged = None;
+    immediate_children(entity, |child, _span| {
+        if let EntityKind::UnexposedAttr = child.get_kind() {
+            if let Some(attr) = UnexposedAttr::parse(&child, context) {
+                match attr {
+                    UnexposedAttr::Bridged(to) | UnexposedAttr::BridgedMutable(to) => {
+                        if to == "id" {
+                            bridged = Some(None);
+                        } else {
+                            bridged = Some(Some(to));
+                        }
+                    }
+                    UnexposedAttr::BridgedRelated
+                    | UnexposedAttr::BridgedTypedef
+                    | UnexposedAttr::BridgedImplicit => {
+                        bridged = Some(None);
+                    }
+                    _ => {}
                 }
             }
         }
     });
-    is_bridged
+    bridged
 }
 
 pub(crate) fn anonymous_record_name(entity: &Entity<'_>, context: &Context<'_>) -> Option<String> {
@@ -472,6 +478,7 @@ pub enum Stmt {
         skipped: bool,
         sendable: bool,
         documentation: Documentation,
+        bridged_to: Option<ItemIdentifier>,
     },
     /// @interface class_name (category_name) <protocols*>
     /// ->
@@ -847,6 +854,7 @@ impl Stmt {
                     // trait, it's propagated to subclasses anyhow!
                     sendable: thread_safety.explicit_sendable(),
                     documentation,
+                    bridged_to: data.bridged_to.clone(),
                 })
                 .chain(protocols.into_iter().map(|(p, entity)| Self::ProtocolImpl {
                     location: id.location().clone(),
@@ -1190,8 +1198,14 @@ impl Stmt {
                     return vec![];
                 }
 
+                let mut bridged = if let Some(inner_struct) = &inner_struct {
+                    bridged_to(inner_struct, context)
+                } else {
+                    bridged_to(entity, context)
+                };
+
                 if let Some((is_cf, encoding_name)) =
-                    ty.pointer_to_opaque_struct_or_void(&c_name, is_bridged(entity, context))
+                    ty.pointer_to_opaque_struct_or_void(&c_name, bridged.is_some())
                 {
                     if kind.is_some() {
                         error!(?kind, "unknown kind on opaque type");
@@ -1224,6 +1238,26 @@ impl Stmt {
                         } else {
                             None
                         };
+
+                        // Mutable typedefs have the same underlying struct
+                        // name as their non-mutable counterparts, so clang
+                        // unifies them, and we don't get the correct bridging
+                        // name. So try to fix that here.
+                        if is_mutable {
+                            if let Some(Some(bridged_name)) = &bridged {
+                                let mut class_iter = split_words(&id.name);
+                                let mut res_name = String::new();
+                                for bridged_word in split_words(bridged_name) {
+                                    if class_iter.next() == Some("Mutable") {
+                                        res_name.push_str("Mutable");
+                                    }
+                                    res_name.push_str(bridged_word);
+                                }
+                                bridged = Some(Some(res_name));
+                            }
+                        }
+
+                        documentation.set_bridged(bridged.flatten());
 
                         return vec![Self::OpaqueDecl {
                             id,
@@ -1999,6 +2033,10 @@ impl Stmt {
     /// Items required for any part of the statement.
     pub(crate) fn required_items_inner(&self) -> impl Iterator<Item = ItemTree> {
         let required_by_inner: Vec<ItemTree> = match self {
+            Self::ClassDecl {
+                bridged_to: Some(bridged_to),
+                ..
+            } => vec![ItemTree::from_id(bridged_to.clone())],
             Self::ExternCategory {
                 cls,
                 cls_superclasses,
@@ -2158,6 +2196,7 @@ impl Stmt {
                     skipped,
                     sendable,
                     documentation,
+                    bridged_to,
                 } => {
                     if *skipped {
                         return Ok(());
@@ -2208,6 +2247,65 @@ impl Stmt {
                         writeln!(f)?;
                         write!(f, "{}", self.cfg_gate_ln(config))?;
                         writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
+                    }
+
+                    if let Some(bridged_to) = bridged_to {
+                        writeln!(f)?;
+                        write!(
+                            f,
+                            "{}",
+                            self.cfg_gate_ln_for([ItemTree::from_id(bridged_to.clone())], config)
+                        )?;
+                        writeln!(
+                            f,
+                            "impl{} AsRef<{}{}> for {}{} {{",
+                            GenericParamsHelper(generics, "?Sized + Message"),
+                            id.path(),
+                            GenericTyHelper(generics),
+                            bridged_to.name,
+                            GenericTyHelper(generics),
+                        )?;
+                        writeln!(
+                            f,
+                            "    fn as_ref(&self) -> &{}{} {{",
+                            id.path(),
+                            GenericTyHelper(generics),
+                        )?;
+                        // SAFETY: The two types are toll-free bridged, and
+                        // can hence be freely converted to/from each other.
+                        //
+                        // For generic types like `CFArray<T>`, this is only
+                        // true when the `T` is messagable (so `CFArray<i32>`
+                        // and similar are possible, but those won't fly).
+                        writeln!(f, "        unsafe {{ &*((self as *const Self).cast()) }}",)?;
+                        writeln!(f, "    }}")?;
+                        writeln!(f, "}}")?;
+
+                        writeln!(f)?;
+                        write!(
+                            f,
+                            "{}",
+                            self.cfg_gate_ln_for([ItemTree::from_id(bridged_to.clone())], config)
+                        )?;
+                        writeln!(
+                            f,
+                            "impl{} AsRef<{}{}> for {}{} {{",
+                            GenericParamsHelper(generics, "?Sized + Message"),
+                            bridged_to.name,
+                            GenericTyHelper(generics),
+                            id.path(),
+                            GenericTyHelper(generics),
+                        )?;
+                        writeln!(
+                            f,
+                            "    fn as_ref(&self) -> &{}{} {{",
+                            bridged_to.path(),
+                            GenericTyHelper(generics),
+                        )?;
+                        // SAFETY: Same as above.
+                        writeln!(f, "        unsafe {{ &*((self as *const Self).cast()) }}",)?;
+                        writeln!(f, "    }}")?;
+                        writeln!(f, "}}")?;
                     }
                 }
                 Self::ExternMethods {
@@ -3055,7 +3153,9 @@ impl Stmt {
                         kind => {
                             if !matches!(
                                 kind,
-                                None | Some(UnexposedAttr::BridgedTypedef | UnexposedAttr::Bridged)
+                                None | Some(
+                                    UnexposedAttr::BridgedTypedef | UnexposedAttr::Bridged(_)
+                                )
                             ) {
                                 error!("invalid alias kind {kind:?} for {ty:?}");
                             }

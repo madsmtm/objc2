@@ -4,6 +4,9 @@ license = "MIT" # All future contributions are licensed under "Zlib OR Apache-2.
 
 [dev-dependencies]
 static_assertions = "1.1.0"
+objc2-core-foundation = { workspace = true, features = [
+    "CFString", # FIXME: Remove this once CFString is moved into that feature gate.
+] }
 
 [features]
 # Runtime selection. See `objc2` for details.

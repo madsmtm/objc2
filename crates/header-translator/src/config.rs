@@ -17,7 +17,7 @@ use crate::{ItemIdentifier, Location};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Config {
-    libraries: BTreeMap<String, LibraryConfig>,
+    pub(crate) libraries: BTreeMap<String, LibraryConfig>,
 }
 
 pub fn load_skipped() -> Result<BTreeMap<String, String>, Box<dyn Error + Send + Sync>> {
@@ -422,6 +422,7 @@ impl LibraryConfig {
             assert_eq!(data.counterpart, Default::default());
             assert_eq!(data.skipped_protocols, Default::default());
             assert_eq!(data.main_thread_only, Default::default());
+            assert_eq!(data.bridged_to, Default::default());
         }
 
         let allowed_in = self.protocol_data.values();
@@ -535,6 +536,15 @@ pub struct StmtData {
     #[serde(default)]
     #[serde(rename = "main-thread-only")]
     pub main_thread_only: bool,
+    /// Toll-free bridging is declared on the CF-typedef, while we need it on
+    /// the class in a different framework. `header-translator` tries to avoid
+    /// too much global analysis (to allow processing a single framework at a
+    /// time), so we must define each of these manually.
+    ///
+    /// They are correctness-checked in `global_analysis.rs` though.
+    #[serde(default)]
+    #[serde(rename = "bridged-to")]
+    pub bridged_to: Option<ItemIdentifier>,
 
     // Protocol only.
     #[serde(default)]

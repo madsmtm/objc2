@@ -613,6 +613,12 @@ impl FromStr for Location {
     }
 }
 
+impl fmt::Display for Location {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.module_path)
+    }
+}
+
 impl<'de> de::Deserialize<'de> for Location {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -656,6 +662,12 @@ impl FromStr for ItemIdentifier {
                 module_path: module_path.into(),
             },
         })
+    }
+}
+
+impl fmt::Display for ItemIdentifier {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}.{}", self.location, self.name)
     }
 }
 

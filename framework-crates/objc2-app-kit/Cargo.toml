@@ -58,6 +58,13 @@ objc2-core-image = { workspace = true, optional = true, features = [
     "CIFilter",
     "CIImage",
 ] }
+objc2-core-text = { workspace = true, optional = true, features = [
+    "CTFont",
+    "CTFontCollection",
+    "CTFontDescriptor",
+    "CTGlyphInfo",
+    "objc2",
+] }
 objc2-quartz-core = { workspace = true, optional = true, features = [
     "CADisplayLink",
     "CALayer",
@@ -375,6 +382,7 @@ default = [
     "objc2-core-foundation",
     "objc2-core-graphics",
     "objc2-core-image",
+    "objc2-core-text",
     "objc2-quartz-core",
 ]
 std = ["alloc"]
@@ -392,6 +400,7 @@ objc2-core-data = ["dep:objc2-core-data"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
+objc2-core-text = ["dep:objc2-core-text"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 

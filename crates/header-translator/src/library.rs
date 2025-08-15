@@ -20,7 +20,7 @@ use crate::VERSION;
 #[derive(Debug, PartialEq)]
 pub struct Library {
     pub module: Module,
-    link_name: String,
+    pub link_name: String,
     pub data: LibraryConfig,
 }
 

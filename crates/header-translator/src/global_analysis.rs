@@ -13,9 +13,9 @@ use crate::method::Method;
 use crate::module::Module;
 use crate::name_translation::{cf_fn_name, find_fn_implementor};
 use crate::stmt::Stmt;
-use crate::Library;
+use crate::{Config, ItemIdentifier, Library};
 
-pub fn global_analysis(library: &mut Library) {
+pub fn global_analysis(library: &mut Library, config: &Config) {
     let _span = info_span!("analyzing").entered();
 
     // Create a list of implement-able items.
@@ -27,8 +27,25 @@ pub fn global_analysis(library: &mut Library) {
         ));
     }
 
+    let mut expected_bridged_types = config
+        .libraries
+        .values()
+        .flat_map(|data| &data.class_data)
+        .filter_map(|(name, data)| data.bridged_to.as_ref().map(|bridged| (&**name, bridged)))
+        .filter(|(_, bridged)| bridged.library_name() == library.link_name)
+        .collect();
+
     let ident_mapping = create_ident_mapping(&library.module);
-    update_module(&mut library.module, &implementable_mapping, &ident_mapping);
+    update_module(
+        &mut library.module,
+        &implementable_mapping,
+        &ident_mapping,
+        &mut expected_bridged_types,
+    );
+
+    if !expected_bridged_types.is_empty() {
+        warn!("too many bridged-to in config: {expected_bridged_types:?}");
+    }
 }
 
 fn create_implementable_mapping(module: &Module) -> BTreeSet<ItemTree> {
@@ -63,6 +80,7 @@ fn update_module(
     module: &mut Module,
     implementable_mapping: &BTreeSet<ItemTree>,
     ident_mapping: &HashMap<String, Expr>,
+    expected_bridged_types: &mut BTreeMap<&str, &ItemIdentifier>,
 ) {
     let mut deprecated_fns = vec![];
 
@@ -328,9 +346,34 @@ fn update_module(
         module.stmts.push(stmt);
     }
 
+    // Check bridged types.
+    for stmt in &module.stmts {
+        if let Stmt::OpaqueDecl {
+            id, documentation, ..
+        } = stmt
+        {
+            if let Some(bridged_class) = documentation.bridged() {
+                if let Some(bridged_typedef) = expected_bridged_types.remove(bridged_class) {
+                    if bridged_typedef != id {
+                        warn!("incorrect bridged typedef for {bridged_class}: found `{bridged_typedef}`, expected `{id}`");
+                    }
+                } else {
+                    warn!(
+                        "missing bridging decl, add:    class.{bridged_class}.bridged-to = \"{id}\""
+                    );
+                }
+            }
+        }
+    }
+
     // Recurse for submodules
     for (name, module) in &mut module.submodules {
         let _span = debug_span!("file", name).entered();
-        update_module(module, implementable_mapping, ident_mapping);
+        update_module(
+            module,
+            implementable_mapping,
+            ident_mapping,
+            expected_bridged_types,
+        );
     }
 }

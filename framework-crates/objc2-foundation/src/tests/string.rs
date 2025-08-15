@@ -285,3 +285,16 @@ fn class_cluster_and_init_method() {
     let _: () = unsafe { msg_send![allocated_object, release] };
     assert!(has_method, "Allocated (but uninitialized) has method");
 }
+
+#[test]
+#[cfg(feature = "objc2-core-foundation")]
+fn toll_free_bridging() {
+    use objc2_core_foundation::CFString;
+
+    let string = ns_string!("foo");
+
+    let cf_string: &CFString = string.as_ref();
+    let _: &NSString = cf_string.as_ref();
+
+    assert_eq!(cf_string.to_string(), string.to_string());
+}

@@ -273,6 +273,42 @@ class.NSMutableURLRequest.counterpart = "ImmutableSuperclass(Foundation.NSURLReq
 # class.NSEnumerator.senable = false
 
 ###
+### Bridging
+###
+
+class.NSArray.bridged-to = "CoreFoundation.CFArray.CFArray"
+class.NSMutableArray.bridged-to = "CoreFoundation.CFArray.CFMutableArray"
+class.NSAttributedString.bridged-to = "CoreFoundation.CFAttributedString.CFAttributedString"
+class.NSMutableAttributedString.bridged-to = "CoreFoundation.CFAttributedString.CFMutableAttributedString"
+class.NSString.bridged-to = "CoreFoundation.CFString"
+class.NSMutableString.bridged-to = "CoreFoundation.CFMutableString"
+class.NSNull.bridged-to = "CoreFoundation.CFNull"
+class.NSCalendar.bridged-to = "CoreFoundation.CFCalendar.CFCalendar"
+class.NSCharacterSet.bridged-to = "CoreFoundation.CFCharacterSet.CFCharacterSet"
+class.NSMutableCharacterSet.bridged-to = "CoreFoundation.CFCharacterSet.CFMutableCharacterSet"
+class.NSData.bridged-to = "CoreFoundation.CFData.CFData"
+class.NSMutableData.bridged-to = "CoreFoundation.CFData.CFMutableData"
+class.NSDate.bridged-to = "CoreFoundation.CFDate.CFDate"
+class.NSTimeZone.bridged-to = "CoreFoundation.CFDate.CFTimeZone"
+class.NSDictionary.bridged-to = "CoreFoundation.CFDictionary.CFDictionary"
+class.NSMutableDictionary.bridged-to = "CoreFoundation.CFDictionary.CFMutableDictionary"
+class.NSError.bridged-to = "CoreFoundation.CFError.CFError"
+class.NSFileSecurity.bridged-to = "CoreFoundation.CFFileSecurity.CFFileSecurity"
+class.NSLocale.bridged-to = "CoreFoundation.CFLocale.CFLocale"
+class.NSMachPort.bridged-to = "CoreFoundation.CFMachPort.CFMachPort"
+class.NSMessagePort.bridged-to = "CoreFoundation.CFMessagePort.CFMessagePort"
+class.NSTimer.bridged-to = "CoreFoundation.CFRunLoop.CFRunLoopTimer"
+class.NSSet.bridged-to = "CoreFoundation.CFSet.CFSet"
+class.NSMutableSet.bridged-to = "CoreFoundation.CFSet.CFMutableSet"
+class.NSInputStream.bridged-to = "CoreFoundation.CFStream.CFReadStream"
+class.NSOutputStream.bridged-to = "CoreFoundation.CFStream.CFWriteStream"
+class.NSURL.bridged-to = "CoreFoundation.CFURL.CFURL"
+
+# Bridging NSNumber is one-way.
+# TODO: Custom-define this bridging (needs extra feature in Cargo.toml)
+# class.NSNumber.bridged-to = "CoreFoundation.CFNumber.?"
+
+###
 ### Safety
 ###
 

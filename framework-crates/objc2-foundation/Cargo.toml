@@ -21,8 +21,23 @@ block2 = { workspace = true, optional = true, features = ["alloc"] }
 libc = { workspace = true, optional = true }
 objc2 = { workspace = true, features = ["std"] }
 objc2-core-foundation = { workspace = true, optional = true, features = [
+    "CFArray",
+    "CFAttributedString",
     "CFCGTypes",
+    "CFCalendar",
+    "CFCharacterSet",
+    "CFData",
+    "CFDate",
+    "CFDictionary",
+    "CFError",
+    "CFFileSecurity",
+    "CFLocale",
+    "CFMachPort",
+    "CFMessagePort",
     "CFRunLoop",
+    "CFSet",
+    "CFStream",
+    "CFURL",
     "objc2",
 ] }
 
@@ -415,3 +430,6 @@ NSZone = []
 
 [dev-dependencies]
 static_assertions = "1.1.0"
+objc2-core-foundation = { workspace = true, features = [
+    "CFString", # FIXME: Remove this once CFString is moved into that feature gate.
+] }

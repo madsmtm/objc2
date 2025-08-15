@@ -12,6 +12,8 @@ use crate::{Context, ItemIdentifier};
 #[derive(Debug, Clone, PartialEq)]
 pub struct Documentation {
     alias: Option<String>,
+    /// What name a type is bridged to, if it has such an attribute.
+    bridged: Option<String>,
     children: Vec<CommentChild>,
 }
 
@@ -19,6 +21,7 @@ impl Documentation {
     pub fn empty() -> Self {
         Self {
             children: vec![],
+            bridged: None,
             alias: None,
         }
     }
@@ -49,7 +52,11 @@ impl Documentation {
             None
         };
 
-        Self { children, alias }
+        Self {
+            children,
+            bridged: None,
+            alias,
+        }
     }
 
     pub fn property_setter(getter_sel: &str) -> Self {
@@ -58,12 +65,21 @@ impl Documentation {
         let text = format!("Setter for [`{getter_sel}`][Self::{getter_sel}].");
         Self {
             children: vec![CommentChild::Paragraph(vec![CommentChild::Text(text)])],
+            bridged: None,
             alias: None,
         }
     }
 
     pub fn set_alias(&mut self, alias: String) {
         self.alias = Some(alias);
+    }
+
+    pub fn set_bridged(&mut self, bridged: Option<String>) {
+        self.bridged = bridged;
+    }
+
+    pub fn bridged(&self) -> Option<&str> {
+        self.bridged.as_deref()
     }
 
     pub fn fmt_category<'a>(
@@ -106,6 +122,13 @@ impl Documentation {
                 writeln!(f, "/// {s}")?;
             }
 
+            if let Some(bridged) = &self.bridged {
+                if !s.is_empty() {
+                    writeln!(f, "///")?;
+                    writeln!(f, "/// This is toll-free bridged with `{bridged}`.")?;
+                }
+            }
+
             // Generate a markdown link to Apple's documentation.
             //
             // This is best effort only, and doesn't work for functions and
@@ -127,8 +150,15 @@ impl Documentation {
                 )?;
             }
 
+            if let Some(bridged) = &self.bridged {
+                if s.is_empty() {
+                    writeln!(f, "///")?;
+                    writeln!(f, "/// This is toll-free bridged with `{bridged}`.")?;
+                }
+            }
+
             if let Some(alias) = &self.alias {
-                write!(f, "#[doc(alias = {alias:?})]")?;
+                writeln!(f, "#[doc(alias = {alias:?})]")?;
             }
 
             Ok(())
@@ -332,6 +362,7 @@ mod tests {
         let actual = Documentation {
             children: children.to_vec(),
             alias: None,
+            bridged: None,
         }
         .fmt(None)
         .to_string();

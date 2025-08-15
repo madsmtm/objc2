@@ -8,6 +8,12 @@ gnustep = true
 
 external.UTType.module = "UniformTypeIdentifiers.UTType"
 
+class.NSFont.bridged-to = "CoreText.CTFont.CTFont"
+class.NSFontCollection.bridged-to = "CoreText.CTFontCollection.CTFontCollection"
+class.NSMutableFontCollection.bridged-to = "CoreText.CTFontCollection.CTMutableFontCollection"
+class.NSFontDescriptor.bridged-to = "CoreText.CTFontDescriptor.CTFontDescriptor"
+class.NSGlyphInfo.bridged-to = "CoreText.CTGlyphInfo.CTGlyphInfo"
+
 # `objc_ownership` in .apinotes
 class.NSBundle.methods."loadNibNamed:owner:topLevelObjects:".skipped = true
 class.NSNib.methods."instantiateWithOwner:topLevelObjects:".skipped = true

@@ -17,6 +17,9 @@ external.NSManagedObjectContext.module = "CoreData.NSManagedObjectContext"
 external.NSManagedObjectModel.module = "CoreData.NSManagedObjectModel"
 external.CLRegion.module = "CoreLocation.CLRegion"
 
+class.UIFont.bridged-to = "CoreText.CTFont.CTFont"
+class.UIFontDescriptor.bridged-to = "CoreText.CTFontDescriptor.CTFontDescriptor"
+
 # CF_RETURNS_NOT_RETAINED
 fn.UIGraphicsGetCurrentContext.skipped = true
 

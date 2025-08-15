@@ -281,7 +281,7 @@ fn parse_library(
         let mut library = Library::new(name, data);
         let tu = get_translation_unit(index, sdk, llvm_target, data, tempdir);
         parse_translation_unit(tu, &mut context, &mut library);
-        global_analysis(&mut library);
+        global_analysis(&mut library, config);
 
         if let Some(prev_result) = &result {
             // Ensure that each target produces the same result.
@@ -393,13 +393,13 @@ fn parse_translation_unit(
                 }
             }
             EntityKind::MacroExpansion if preprocessing => {
-                let entity = MacroEntity::from_entity(&entity, context);
+                let entity = MacroEntity::from_entity(&entity, context, false);
                 context
                     .macro_invocations
                     .insert(MacroLocation::from_location(&location), entity);
             }
             EntityKind::MacroDefinition if preprocessing => {
-                let macro_entity = MacroEntity::from_entity(&entity, context);
+                let macro_entity = MacroEntity::from_entity(&entity, context, true);
                 context
                     .macro_invocations
                     .insert(MacroLocation::from_location(&location), macro_entity);
