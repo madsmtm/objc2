@@ -190,6 +190,7 @@ fn test_access_anyobject() {
 
 #[test]
 #[cfg(feature = "objc2-core-foundation")]
+#[cfg(not(feature = "gnustep-1-7"))]
 fn toll_free_bridging() {
     use objc2_core_foundation::{CFArray, CFRetained};
 

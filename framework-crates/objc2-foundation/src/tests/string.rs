@@ -288,6 +288,7 @@ fn class_cluster_and_init_method() {
 
 #[test]
 #[cfg(feature = "objc2-core-foundation")]
+#[cfg(not(feature = "gnustep-1-7"))]
 fn toll_free_bridging() {
     use objc2_core_foundation::CFString;
 
