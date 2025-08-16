@@ -9,8 +9,14 @@ publish = false
 name = "triangle"
 path = "triangle/main.rs"
 
+[[example]]
+name = "default_xcode_game"
+path = "default_xcode_game/main.rs"
+
 [dependencies]
 objc2 = "0.6.2"
+dispatch2 = "0.3.0"
+block2 = "0.6.1"
 objc2-metal = { version = "0.3.1", default-features = false, features = [
     "std",
     "objc2-core-foundation",
@@ -26,13 +32,22 @@ objc2-metal = { version = "0.3.1", default-features = false, features = [
     "MTLDevice",
     "MTLDrawable",
     "MTLRenderPass",
+    "default" # temp
 ] }
 objc2-metal-kit = { version = "0.3.1", default-features = false, features = [
     "std",
     "objc2-core-foundation",
     "objc2-app-kit",
     "objc2-quartz-core",
+    "objc2-model-io",
     "MTKView",
+    "MTKModel",
+    "default" # temporary
+] }
+objc2-model-io = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "MDLTypes",
+    "MDLMesh",
 ] }
 objc2-foundation = { version = "0.3.1", default-features = false, features = [
     "std",
@@ -43,14 +58,22 @@ objc2-foundation = { version = "0.3.1", default-features = false, features = [
     "NSThread",
     "NSGeometry",
 ] }
+objc2-core-foundation = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "CFCGTypes",
+] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit = { version = "0.3.1", default-features = false, features = [
     "std",
-    "NSGraphics",
-    "NSWindow",
-    "NSResponder",
     "NSApplication",
+    "NSGraphics",
+    "NSMenu",
+    "NSMenuItem",
+    "NSResponder",
     "NSRunningApplication",
     "NSView",
+    "NSViewController",
+    "NSWindow",
+    "NSWindowController",
 ] }

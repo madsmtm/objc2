@@ -351,11 +351,15 @@ dependencies = [
 name = "examples-metal"
 version = "0.0.0"
 dependencies = [
+ "block2",
+ "dispatch2",
  "objc2",
  "objc2-app-kit",
+ "objc2-core-foundation",
  "objc2-foundation",
  "objc2-metal",
  "objc2-metal-kit",
+ "objc2-model-io",
 ]
 
 [[package]]

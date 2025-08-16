@@ -9,7 +9,7 @@ use objc2_app_kit::{
 };
 use objc2_foundation::{ns_string, NSNotification, NSObject, NSObjectProtocol};
 
-use crate::view_controller::ViewController;
+use crate::game_view_controller::GameViewController;
 
 #[derive(Default)]
 pub struct Ivars {
@@ -36,7 +36,7 @@ define_class!(
         fn did_finish_launching(&self, notification: &NSNotification) {
             // Insert code here to initialize your application
             let mtm = self.mtm();
-            let view_controller = ViewController::new(mtm);
+            let view_controller = GameViewController::new(mtm);
 
             let app = unsafe { notification.object() }
                 .unwrap()
