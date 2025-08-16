@@ -51,6 +51,7 @@
 | `ImagePlayground` | Swift-only. |
 | `InstallerPlugins` | Deprecated. |
 | `InstantMessage` | Deprecated in macOS 10.9. |
+| `InterfaceBuilderKit` | TODO. Developer-only. |
 | `JavaNativeFoundation` | Basically empty. |
 | `JavaRuntimeSupport` | Probably not really interesting.. |
 | `JournalingSuggestions` | Swift-only. |
@@ -60,6 +61,7 @@
 | `LDAP` | Basically empty. |
 | `LightweightCodeRequirements` | Swift-only. |
 | `LiveCommunicationKit` | Swift-only. |
+| `LiveExecutionResultsLogger` | Removed in Xcode 26. |
 | `LockedCameraCapture` | Swift-only. |
 | `ManagedApp` | Swift-only. |
 | `ManagedAppDistribution` | Swift-only. |
@@ -81,6 +83,7 @@
 | `PCSC` | Too low-level, consider crates like `pcsc` instead. |
 | `ProximityReader` | Swift-only. |
 | `ProximityReaderStub` | Basically empty. |
+| `Python3` | Better served by dedicated crates like `pyo3-ffi`. |
 | `QTKit` | No headers present in Xcode's SDK. |
 | `RealityFoundation` | Swift-only. |
 | `RealityKit` | Swift-only. |
@@ -90,6 +93,7 @@
 | `SecurityUI` | TODO. |
 | `StickerFoundation` | Basically empty. |
 | `StickerKit` | Basically empty. |
+| `StoreKitTest` | TODO. Developer-only. |
 | `SwiftData` | Swift-only. |
 | `SwiftUI` | Swift-only. |
 | `SwiftUICore` | Swift-only. |
@@ -99,6 +103,7 @@
 | `TabletopKit` | Swift-only. |
 | `TabularData` | Swift-only. |
 | `Tcl` | Very C-centric and old. |
+| `Testing` | Swift-only. |
 | `TipKit` | Swift-only. |
 | `Tk` | Very C-centric and old. |
 | `Translation` | Swift-only. |
@@ -109,6 +114,7 @@
 | `WeatherKit` | Swift-only. |
 | `WidgetKit` | Mostly Swift-only. |
 | `WorkoutKit` | Swift-only. |
+| `XcodeKit` | TODO. Developer-only. |
 | `iAd` | Disabled on server side, use AdServices instead. |
 | `vecLib` | Very C-centric and old. |
 | `vmnet` | Very C-centric and old. |

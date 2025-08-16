@@ -484,6 +484,24 @@ fn get_translation_unit<'i: 'c, 'c>(
         }
     }
 
+    // Certain developer frameworks like XCTest are found in the platform
+    // path instead of the SDK path.
+    let platform_framework_path = sdk
+        .path
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("Library/Frameworks");
+
+    let platform_path = platform_framework_path.join(format!(
+        "{}.framework/Modules/module.modulemap",
+        data.framework
+    ));
+    if data.located_outside_sdk {
+        path = platform_path;
+    }
+
     // Find the framework module name
     let module = if data.modulemap.is_none() {
         let re = regex::Regex::new(r"(?m)^framework +module +(\w*)").unwrap();
@@ -575,6 +593,13 @@ fn get_translation_unit<'i: 'c, 'c>(
         ]);
     }
 
+    if data.located_outside_sdk {
+        arguments.extend(&[
+            "-iframework",
+            platform_framework_path.as_os_str().to_str().unwrap(),
+        ]);
+    }
+
     arguments.extend(data.flags.iter().map(|flag| &**flag));
 
     let tu = index
@@ -650,6 +675,9 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
         for (_, library) in config.to_parse() {
             if library.is_library {
                 continue; // Skip non-framework crates for now
+            }
+            if library.located_outside_sdk {
+                continue; // Cannot easily link to these.
             }
             if check(library) {
                 frameworks.insert(&*library.krate);
@@ -806,12 +834,15 @@ fn update_list(
 
 fn update_test_metadata(workspace_dir: &Path, config: &Config) {
     let test_crate_dir = workspace_dir.join("crates").join("test-frameworks");
+    let tested = config
+        .to_parse()
+        .filter(|(_, lib)| !lib.located_outside_sdk);
 
     let _span = info_span!("updating test-frameworks metadata").entered();
 
     // Write imports
     let mut s = String::new();
-    for (_, lib) in config.to_parse() {
+    for (_, lib) in tested.clone() {
         if let Some(macos) = &lib.macos {
             if (HOST_MACOS as u64) < macos.major {
                 // Skip library if not available on current host.
@@ -838,7 +869,7 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
         .expect("invalid test toml");
 
     let mut features = toml_edit::Array::new();
-    for (_, lib) in config.to_parse() {
+    for (_, lib) in tested.clone() {
         // Add feature per crate.
         //
         // This is required for some reason for `cargo run --example` to work
@@ -912,7 +943,7 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
     ]));
     let _ = cargo_toml.remove("target");
 
-    for (_, lib) in config.to_parse() {
+    for (_, lib) in tested.clone() {
         let platform_cfg = PlatformCfg::from_config_explicit(lib);
 
         let dependencies = if let Some(cfgs) = platform_cfg.cfgs() {

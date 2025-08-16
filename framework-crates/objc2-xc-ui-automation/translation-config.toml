@@ -1,0 +1,15 @@
+framework = "XCUIAutomation"
+crate = "objc2-xc-ui-automation"
+required-crates = ["objc2", "objc2-foundation", "bitflags"]
+link = false # Introduced later than XCTest, so linking directly to this is inadvisable
+located-outside-sdk = true
+custom-lib-rs = true
+# Xcode 16.3, though available inside XCTest for longer.
+macos = "10.9"
+maccatalyst = "13.0"
+ios = "7.0"
+tvos = "9.0"
+watchos = "2.0"
+visionos = "1.0" # TODO: Documented as not available here, but this seems to be untrue?
+
+class.XCUIElementQuery.main-thread-only = true

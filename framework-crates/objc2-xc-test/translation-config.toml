@@ -1,0 +1,18 @@
+framework = "XCTest"
+crate = "objc2-xc-test"
+required-crates = ["objc2", "objc2-foundation", "bitflags"]
+located-outside-sdk = true
+custom-lib-rs = true
+# Xcode 5.0
+macos = "10.9"
+maccatalyst = "13.0"
+ios = "7.0"
+tvos = "9.0"
+watchos = "2.0"
+visionos = "1.0"
+
+class.XCTIssue.counterpart = "MutableSubclass(XCTest.XCTMutableIssue)"
+class.XCTMutableIssue.counterpart = "ImmutableSuperclass(XCTest.XCTIssue)"
+
+# Uses va_list
+class.XCTestLog.methods."testLogWithFormat:arguments:".skipped = true

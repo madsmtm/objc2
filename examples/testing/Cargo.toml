@@ -1,0 +1,30 @@
+[package]
+name = "examples-testing"
+version = "0.0.0"
+edition = "2021"
+license = "Zlib OR Apache-2.0 OR MIT"
+publish = false
+
+[[bin]]
+name = "screenshot"
+path = "screenshot.rs"
+
+[[bin]]
+name = "ui_test"
+path = "ui_test.rs"
+
+[dependencies]
+objc2 = "0.6.2"
+objc2-foundation = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "NSObject",
+    "NSString",
+] }
+objc2-xc-test = { version = "0.3.1", default-features = false, features = [
+    "std",
+] }
+objc2-xc-ui-automation = { version = "0.3.1", default-features = false, features = [
+    "std",
+] }
+libc = "0.2"
+ctor = { version = "0.5", default-features = false, features = ["proc_macro"] }

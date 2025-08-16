@@ -1,0 +1,30 @@
+[package]
+name = "examples-testing-helper"
+version = "0.0.0"
+edition = "2021"
+license = "Zlib OR Apache-2.0 OR MIT"
+publish = false
+
+[[bin]]
+name = "run_xc_test"
+path = "run_xc_test.rs"
+
+[dependencies]
+objc2 = "0.6.2"
+objc2-foundation = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "NSArray",
+    "NSCoder",
+    "NSData",
+    "NSDictionary",
+    "NSEnumerator",
+    "NSKeyedArchiver",
+    "NSKeyValueCoding",
+    "NSObject",
+    "NSPropertyList",
+    "NSString",
+    "NSValue",
+    "NSURL",
+    "NSUUID",
+] }
+libc = "0.2"

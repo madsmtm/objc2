@@ -198,7 +198,8 @@ impl Library {
             .macos
             .as_ref()
             .map(|macos| macos.major <= (crate::HOST_MACOS as u64))
-            .unwrap_or(true);
+            .unwrap_or(true)
+            && !self.data.located_outside_sdk;
 
         // Output `src/generated/*`.
         self.module.output(

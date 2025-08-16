@@ -102,16 +102,22 @@ impl UnexposedAttr {
             // `nullability` is already exposed, so we won't bother with that.
             // `sendability` is most for backwards-compatibility with older
             // versions of system headers that didn't assign sendability.
-            "NS_HEADER_AUDIT_BEGIN" | "WK_HEADER_AUDIT_BEGIN" => None,
+            "NS_HEADER_AUDIT_BEGIN" | "WK_HEADER_AUDIT_BEGIN" | "XCT_HEADER_AUDIT_BEGIN" => None,
             // Nullability attributes
             s if s.starts_with("DISPATCH_NONNULL") => None,
             s if s.starts_with("XPC_NONNULL") => None,
             "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" | "CM_SWIFT_SENDABLE"
-            | "CT_SWIFT_SENDABLE" | "CV_SWIFT_SENDABLE" => Some(Self::Sendable),
+            | "CT_SWIFT_SENDABLE" | "CV_SWIFT_SENDABLE" | "XCT_SWIFT_SENDABLE" => {
+                Some(Self::Sendable)
+            }
             "NS_SWIFT_NONSENDABLE" | "CM_SWIFT_NONSENDABLE" | "CV_SWIFT_NONSENDABLE" => {
                 Some(Self::NonSendable)
             }
-            "NS_SWIFT_UI_ACTOR" | "WK_SWIFT_UI_ACTOR" => Some(Self::UIActor),
+            // The main and UI actor is effectively the same on Apple platforms.
+            "NS_SWIFT_UI_ACTOR"
+            | "WK_SWIFT_UI_ACTOR"
+            | "XCT_SWIFT_MAIN_ACTOR"
+            | "XCUI_SWIFT_MAIN_ACTOR" => Some(Self::UIActor),
             "NS_SWIFT_NONISOLATED" | "UIKIT_SWIFT_ACTOR_INDEPENDENT" => Some(Self::NonIsolated),
             // TODO
             "CF_FORMAT_ARGUMENT" | "CF_FORMAT_FUNCTION" | "NS_FORMAT_FUNCTION"
@@ -119,7 +125,8 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
-            "CF_NOESCAPE" | "DISPATCH_NOESCAPE" | "NS_NOESCAPE" => Some(Self::NoEscape),
+            "CF_NOESCAPE" | "DISPATCH_NOESCAPE" | "NS_NOESCAPE" | "XCT_NOESCAPE"
+            | "XCUI_NOESCAPE" => Some(Self::NoEscape),
             "DISPATCH_NOTHROW" | "NS_SWIFT_NOTHROW" => Some(Self::NoThrow),
             // TODO: We could potentially automatically elide this argument
             // from the method call, though it's rare enough that it's
@@ -282,7 +289,12 @@ impl UnexposedAttr {
             | "WEBKIT_ENUM_DEPRECATED_MAC"
             | "WK_AVAILABLE_WATCHOS_ONLY"
             | "WK_DEPRECATED_WATCHOS"
-            | "WK_DEPRECATED_WITH_REPLACEMENT" => {
+            | "WK_DEPRECATED_WITH_REPLACEMENT"
+            | "XCT_UNAVAILABLE"
+            | "XCT_DEPRECATED_WITH_REPLACEMENT"
+            | "XCUI_UNAVAILABLE"
+            | "XCUI_DEPRECATED_WITH_REPLACEMENT"
+            | "XCUI_DEPRECATED_WITH_DIRECT_REPLACEMENT" => {
                 let _ = get_arguments();
                 None
             }
@@ -354,7 +366,9 @@ impl UnexposedAttr {
             | "MP_DEPRECATED_BEGIN"
             | "SEC_ASN1_API_DEPRECATED"
             | "SECUREDOWNLOAD_API_DEPRECATED"
-            | "VS_INIT_UNAVAILABLE" => None,
+            | "VS_INIT_UNAVAILABLE"
+            | "XCT_METRIC_API_AVAILABLE"
+            | "XCUI_PROTECTED_RESOURCES_RESET_API_AVAILABLE" => None,
             s if s.starts_with("AVAILABLE_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("DEPRECATED_IN_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("FILEPROVIDER_API_AVAILABILITY_") => None,
@@ -364,6 +378,7 @@ impl UnexposedAttr {
             "swift_name"
             | "CF_SWIFT_NAME"
             | "CF_SWIFT_UNAVAILABLE_FROM_ASYNC"
+            | "XCT_SWIFT_UNAVAILABLE_FROM_ASYNC"
             | "DISPATCH_SWIFT_NAME"
             | "IOSFC_SWIFT_NAME"
             | "MPS_SWIFT_NAME"
@@ -402,6 +417,8 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
+            // Weak imports are still unsupported by Rust.
+            "XCT_WEAK_EXPORT" => None,
             // Irrelevant, we don't emit dispatch_object_t anyhow.
             "DISPATCH_TRANSPARENT_UNION" => None,
             _ => return Err(()),

@@ -290,6 +290,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
 
 [[package]]
+name = "ctor"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "67773048316103656a637612c4a62477603b777d91d9c62ff2290f9cde178fdb"
+dependencies = [
+ "ctor-proc-macro",
+ "dtor",
+]
+
+[[package]]
+name = "ctor-proc-macro"
+version = "0.0.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2931af7e13dc045d8e9d26afccc6fa115d64e115c9c84b1166288b46f6782c2"
+
+[[package]]
 name = "derive_arbitrary"
 version = "1.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -310,6 +326,21 @@ dependencies = [
  "objc2",
  "static_assertions",
 ]
+
+[[package]]
+name = "dtor"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e58a0764cddb55ab28955347b45be00ade43d4d6f3ba4bf3dc354e4ec9432934"
+dependencies = [
+ "dtor-proc-macro",
+]
+
+[[package]]
+name = "dtor-proc-macro"
+version = "0.0.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f678cf4a922c215c63e0de95eb1ff08a958a81d47e485cf9da1e27bf6305cfa5"
 
 [[package]]
 name = "either"
@@ -368,6 +399,27 @@ version = "0.0.0"
 dependencies = [
  "objc2",
  "objc2-app-kit",
+ "objc2-foundation",
+]
+
+[[package]]
+name = "examples-testing"
+version = "0.0.0"
+dependencies = [
+ "ctor",
+ "libc",
+ "objc2",
+ "objc2-foundation",
+ "objc2-xc-test",
+ "objc2-xc-ui-automation",
+]
+
+[[package]]
+name = "examples-testing-helper"
+version = "0.0.0"
+dependencies = [
+ "libc",
+ "objc2",
  "objc2-foundation",
 ]
 
@@ -2750,6 +2802,31 @@ dependencies = [
  "objc2-foundation",
  "objc2-javascript-core",
  "objc2-security",
+]
+
+[[package]]
+name = "objc2-xc-test"
+version = "0.3.1"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+ "objc2-xc-ui-automation",
+]
+
+[[package]]
+name = "objc2-xc-ui-automation"
+version = "0.3.1"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-core-foundation",
+ "objc2-core-location",
+ "objc2-foundation",
 ]
 
 [[package]]

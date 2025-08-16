@@ -389,8 +389,14 @@ jobs:
     - name: Test without features
       run: cargo test $PUBLIC_CRATES -ptests
 
-    - name: Test all frameworks
+    - name: Test all macOS frameworks
       run: cargo test $PUBLIC_CRATES $FRAMEWORKS_MACOS_10_12 -ptests
+
+    - name: Run XCTest example
+      run: cargo run --bin run_xc_test -- default_xcode_game screenshot
+
+    - name: Ensure that XCTest successfully created screenshot.png
+      run: test -f ./screenshot.png
 
   test-apple:
     if: ${{ github.ref_name == 'ci-full' }}

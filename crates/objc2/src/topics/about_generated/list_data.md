@@ -179,4 +179,6 @@
 | `WatchConnectivity` | [`objc2-watch-connectivity`](https://crates.io/crates/objc2-watch-connectivity) | [![docs.rs](https://docs.rs/objc2-watch-connectivity/badge.svg)](https://docs.rs/objc2-watch-connectivity/) |
 | `WatchKit` | [`objc2-watch-kit`](https://crates.io/crates/objc2-watch-kit) | [![docs.rs](https://docs.rs/objc2-watch-kit/badge.svg)](https://docs.rs/objc2-watch-kit/) |
 | `WebKit` | [`objc2-web-kit`](https://crates.io/crates/objc2-web-kit) | [![docs.rs](https://docs.rs/objc2-web-kit/badge.svg)](https://docs.rs/objc2-web-kit/) |
+| `XCTest` | [`objc2-xc-test`](https://crates.io/crates/objc2-xc-test) | [![docs.rs](https://docs.rs/objc2-xc-test/badge.svg)](https://docs.rs/objc2-xc-test/) |
+| `XCUIAutomation` | [`objc2-xc-ui-automation`](https://crates.io/crates/objc2-xc-ui-automation) | [![docs.rs](https://docs.rs/objc2-xc-ui-automation/badge.svg)](https://docs.rs/objc2-xc-ui-automation/) |
 | `iTunesLibrary` | [`objc2-itunes-library`](https://crates.io/crates/objc2-itunes-library) | [![docs.rs](https://docs.rs/objc2-itunes-library/badge.svg)](https://docs.rs/objc2-itunes-library/) |

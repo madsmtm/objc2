@@ -253,6 +253,9 @@ pub struct LibraryConfig {
     #[serde(rename = "is-library")]
     #[serde(default)]
     pub is_library: bool,
+    #[serde(rename = "located-outside-sdk")]
+    #[serde(default)]
+    pub located_outside_sdk: bool,
 
     #[serde(default = "link_default")]
     pub link: bool,
@@ -656,7 +659,10 @@ impl LibraryConfig {
             config.krate.replace("objc2-", "").replace('-', ""),
             "crate name had an unexpected format",
         );
-        if matches!(&*config.krate, "objc2-tv-ml-kit" | "objc2-tv-ui-kit") {
+        if matches!(
+            &*config.krate,
+            "objc2-tv-ml-kit" | "objc2-tv-ui-kit" | "objc2-xc-ui-automation"
+        ) {
             // Named this way for better consistency with other tv-specific crates.
             return Ok(config);
         }

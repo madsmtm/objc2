@@ -277,6 +277,8 @@ objc2-vision = { path = "framework-crates/objc2-vision", version = "0.3.1", defa
 objc2-watch-connectivity = { path = "framework-crates/objc2-watch-connectivity", version = "0.3.1", default-features = false }
 objc2-watch-kit = { path = "framework-crates/objc2-watch-kit", version = "0.3.1", default-features = false }
 objc2-web-kit = { path = "framework-crates/objc2-web-kit", version = "0.3.1", default-features = false }
+objc2-xc-test = { path = "framework-crates/objc2-xc-test", version = "0.3.1", default-features = false }
+objc2-xc-ui-automation = { path = "framework-crates/objc2-xc-ui-automation", version = "0.3.1", default-features = false }
 objc2-itunes-library = { path = "framework-crates/objc2-itunes-library", version = "0.3.1", default-features = false }
 
 # These are useful for examples, since it allows them to be self-contained.
@@ -467,4 +469,6 @@ objc2-vision = { path = "framework-crates/objc2-vision" }
 objc2-watch-connectivity = { path = "framework-crates/objc2-watch-connectivity" }
 objc2-watch-kit = { path = "framework-crates/objc2-watch-kit" }
 objc2-web-kit = { path = "framework-crates/objc2-web-kit" }
+objc2-xc-test = { path = "framework-crates/objc2-xc-test" }
+objc2-xc-ui-automation = { path = "framework-crates/objc2-xc-ui-automation" }
 objc2-itunes-library = { path = "framework-crates/objc2-itunes-library" }
