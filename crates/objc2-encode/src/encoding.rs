@@ -53,6 +53,8 @@ pub enum Encoding {
     Long,
     /// A C `long long`. Corresponds to the `"q"` code.
     LongLong,
+    /// A C `__int128`. Corresponds to the `"t"` code.
+    Int128,
     /// A C `unsigned char`. Corresponds to the `"C"` code.
     UChar,
     /// A C `unsigned short`. Corresponds to the `"S"` code.
@@ -65,6 +67,8 @@ pub enum Encoding {
     ULong,
     /// A C `unsigned long long`. Corresponds to the `"Q"` code.
     ULongLong,
+    /// A C `unsigned __int128`. Corresponds to the `"T"` code.
+    UInt128,
     /// A C `float`. Corresponds to the `"f"` code.
     Float,
     /// A C `double`. Corresponds to the `"d"` code.
@@ -158,8 +162,6 @@ pub enum Encoding {
     None,
     // TODO: "Vector" types have the '!' encoding, but are not implemented in
     // clang
-
-    // TODO: `t` and `T` codes for i128 and u128?
 }
 
 impl Encoding {
@@ -666,6 +668,14 @@ mod tests {
             ~"@?";
             ~"@";
             !"a";
+        }
+
+        fn int128() {
+            Encoding::Int128;
+            !Encoding::UInt128;
+            !Encoding::LongLong;
+            "t";
+            !"T";
         }
     }
 

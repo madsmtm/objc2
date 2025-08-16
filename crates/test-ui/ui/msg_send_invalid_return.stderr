@@ -53,11 +53,11 @@ error[E0277]: the trait bound `Allocated<AnyObject>: OptionEncode` is not satisf
             &T
             &mut T
             NonNull<T>
+            NonZero<i128>
             NonZero<i16>
             NonZero<i32>
             NonZero<i64>
             NonZero<i8>
-            NonZero<isize>
           and $N others
   = note: required for `Option<Allocated<AnyObject>>` to implement `Encode`
   = note: required for `Option<Allocated<AnyObject>>` to implement `EncodeReturn`

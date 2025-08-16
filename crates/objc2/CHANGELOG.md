@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Implement `Encode` for i128 and u128, allowing using them in more FFI situations.
+
 ## Changed
 * **BREAKING** (very slightly): `define_class!` now rejects non-static and
   non-unique class names.

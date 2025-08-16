@@ -38,6 +38,8 @@ pub enum EncodingBox {
     Long,
     /// Same as [`Encoding::LongLong`].
     LongLong,
+    /// Same as [`Encoding::Int128`].
+    Int128,
     /// Same as [`Encoding::UChar`].
     UChar,
     /// Same as [`Encoding::UShort`].
@@ -48,6 +50,8 @@ pub enum EncodingBox {
     ULong,
     /// Same as [`Encoding::ULongLong`].
     ULongLong,
+    /// Same as [`Encoding::UInt128`].
+    UInt128,
     /// Same as [`Encoding::Float`].
     Float,
     /// Same as [`Encoding::Double`].

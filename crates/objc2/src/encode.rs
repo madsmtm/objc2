@@ -76,8 +76,8 @@ use core::cell::{Cell, UnsafeCell};
 use core::ffi::c_void;
 use core::mem::{self, ManuallyDrop, MaybeUninit};
 use core::num::{
-    NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU16, NonZeroU32,
-    NonZeroU64, NonZeroU8, NonZeroUsize, Wrapping,
+    NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU128,
+    NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8, NonZeroUsize, Wrapping,
 };
 use core::ptr::NonNull;
 use core::sync::atomic;
@@ -557,15 +557,14 @@ encode_impls!(
     i16 => Short,
     i32 => Int,
     i64 => LongLong,
+    i128 => Int128,
     u8 => UChar,
     u16 => UShort,
     u32 => UInt,
     u64 => ULongLong,
+    u128 => UInt128,
     f32 => Float,
     f64 => Double,
-
-    // TODO: i128 & u128
-    // https://github.com/rust-lang/rust/issues/54341
 );
 
 // TODO: Structs in core::arch?
@@ -601,7 +600,7 @@ macro_rules! pointer_refencode_impl {
     )*);
 }
 
-pointer_refencode_impl!(i16, i32, i64, isize, u16, u32, u64, usize, f32, f64);
+pointer_refencode_impl!(i16, i32, i64, i128, isize, u16, u32, u64, u128, usize, f32, f64);
 
 /// Pointers to [`i8`] use the special [`Encoding::String`] encoding.
 unsafe impl RefEncode for i8 {
@@ -634,11 +633,13 @@ encode_impls_nonzero!(
     NonZeroI16 => i16,
     NonZeroI32 => i32,
     NonZeroI64 => i64,
+    NonZeroI128 => i128,
     NonZeroIsize => isize,
     NonZeroU8 => u8,
     NonZeroU16 => u16,
     NonZeroU32 => u32,
     NonZeroU64 => u64,
+    NonZeroU128 => u128,
     NonZeroUsize => usize,
 );
 
@@ -683,12 +684,6 @@ encode_atomic_impls!(
     AtomicI64 => i64,
     #[cfg(target_has_atomic = "64")]
     AtomicU64 => u64,
-
-    // TODO
-    // #[cfg(target_has_atomic = "128")]
-    // AtomicI128 => i128,
-    // #[cfg(target_has_atomic = "128")]
-    // AtomicU128 => u128,
 
     #[cfg(target_has_atomic = "ptr")]
     AtomicIsize => isize,

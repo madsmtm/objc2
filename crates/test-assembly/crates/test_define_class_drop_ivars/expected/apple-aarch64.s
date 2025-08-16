@@ -179,7 +179,7 @@ Lloh26:
 Lloh27:
 	add	x9, x9, l_anon.[ID].2@PAGEOFF
 	stp	x8, x9, [sp, #16]
-	mov	w8, #27
+	mov	w8, #29
 	strb	w8, [sp, #8]
 Ltmp10:
 Lloh28:
@@ -603,12 +603,12 @@ l_anon.[ID].0:
 	.section	__TEXT,__const
 	.p2align	3, 0x0
 l_anon.[ID].1:
-	.byte	5
+	.byte	6
 	.space	39
 
 	.p2align	3, 0x0
 l_anon.[ID].2:
-	.byte	9
+	.byte	10
 	.space	39
 
 	.section	__TEXT,__cstring,cstring_literals
@@ -621,7 +621,7 @@ l_anon.[ID].4:
 	.section	__TEXT,__const
 	.p2align	3, 0x0
 l_anon.[ID].5:
-	.byte	17
+	.byte	19
 	.space	39
 
 	.section	__TEXT,__cstring,cstring_literals
@@ -637,7 +637,7 @@ l_anon.[ID].7:
 	.section	__TEXT,__const
 	.p2align	3, 0x0
 l_anon.[ID].8:
-	.byte	19
+	.byte	21
 	.space	39
 
 	.section	__TEXT,__cstring,cstring_literals

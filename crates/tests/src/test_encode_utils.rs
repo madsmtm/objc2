@@ -312,6 +312,9 @@ assert_types! {
 
     // Possible extras; need to be #[cfg]-ed somehow
 
-    // SIGNED_INT_128 => i128,
-    // UNSIGNED_INT_128 => u128,
+    // Supported by Rust, not by Apple's Clang (?)
+    #[cfg(not(target_pointer_width = "32"))]
+    SIGNED_INT_128 => i128,
+    #[cfg(not(target_pointer_width = "32"))]
+    UNSIGNED_INT_128 => u128,
 }

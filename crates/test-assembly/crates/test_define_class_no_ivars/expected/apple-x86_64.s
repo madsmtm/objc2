@@ -471,12 +471,12 @@ l_anon.[ID].2:
 	.section	__TEXT,__const
 	.p2align	3, 0x0
 l_anon.[ID].3:
-	.byte	21
+	.byte	23
 	.space	39
 
 	.p2align	3, 0x0
 l_anon.[ID].4:
-	.byte	17
+	.byte	19
 	.space	39
 
 	.p2align	3, 0x0
@@ -486,7 +486,7 @@ l_anon.[ID].5:
 
 	.p2align	3, 0x0
 l_anon.[ID].6:
-	.byte	19
+	.byte	21
 	.space	39
 
 	.section	__TEXT,__literal8,8byte_literals
@@ -503,7 +503,7 @@ l_anon.[ID].9:
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].10:
-	.byte	28
+	.byte	30
 	.space	7
 	.quad	l_anon.[ID].9
 	.asciz	"\007\000\000\000\000\000\000"
@@ -512,7 +512,7 @@ l_anon.[ID].10:
 
 	.p2align	3, 0x0
 l_anon.[ID].11:
-	.byte	25
+	.byte	27
 	.space	7
 	.quad	l_anon.[ID].10
 	.space	24

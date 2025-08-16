@@ -57,11 +57,11 @@ error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfie
             &T
             &mut T
             NonNull<T>
+            NonZero<i128>
             NonZero<i16>
             NonZero<i32>
             NonZero<i64>
             NonZero<i8>
-            NonZero<isize>
           and $N others
   = note: required for `Option<Retained<MyObject>>` to implement `Encode`
   = note: required for `Option<Retained<MyObject>>` to implement `EncodeReturn`
@@ -128,11 +128,11 @@ error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfie
             &T
             &mut T
             NonNull<T>
+            NonZero<i128>
             NonZero<i16>
             NonZero<i32>
             NonZero<i64>
             NonZero<i8>
-            NonZero<isize>
           and $N others
   = note: required for `Option<Retained<MyObject>>` to implement `Encode`
   = note: required for `Option<Retained<MyObject>>` to implement `EncodeReturn`

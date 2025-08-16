@@ -1,5 +1,6 @@
 #include <objc/objc.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <stddef.h>
 #include <Foundation/NSObject.h> // For NSInteger / NSUInteger. Linking is not required.
 
@@ -220,7 +221,7 @@ ENCODING(SIMD_FLOAT4X2, matrix_float4x2);
 
 // Possible extras
 
-#if __has_builtin(__int128_t)
-ENCODING(SIGNED_INT_128, __int128_t);
-ENCODING(UNSIGNED_INT_128, __uint128_t);
+#ifdef __SIZEOF_INT128__
+ENCODING(SIGNED_INT_128, __int128);
+ENCODING(UNSIGNED_INT_128, unsigned __int128);
 #endif
