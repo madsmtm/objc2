@@ -190,12 +190,12 @@ fn test_access_anyobject() {
 
 #[test]
 fn test_cast() {
-    let array = NSArray::from_retained_slice(&[NSNumber::new_i32(42)]);
+    let array = NSArray::from_retained_slice(&[NSNumber::new_i64(42)]);
     // SAFETY: NSNumber is a subclass of NSValue.
     let array = unsafe { array.cast_unchecked::<NSValue>() };
     let value = array.objectAtIndex(0);
-    // SAFETY: We put an i32 into the NSNumber.
-    assert_eq!(unsafe { value.get::<i32>() }, 42);
+    // SAFETY: We put an i64 into the NSNumber.
+    assert_eq!(unsafe { value.get::<i64>() }, 42);
 }
 
 #[test]
