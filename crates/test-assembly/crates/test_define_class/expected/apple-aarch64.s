@@ -126,9 +126,9 @@ Lloh8:
 Lloh9:
 	ldr	x2, [x8]
 Lloh10:
-	adrp	x0, l_anon.[ID].13@PAGE
+	adrp	x0, l_anon.[ID].12@PAGE
 Lloh11:
-	add	x0, x0, l_anon.[ID].13@PAGEOFF
+	add	x0, x0, l_anon.[ID].12@PAGEOFF
 Lloh12:
 	adrp	x3, l_anon.[ID].15@PAGE
 Lloh13:
@@ -287,9 +287,9 @@ Ltmp21:
 	ret
 LBB1_14:
 Lloh58:
-	adrp	x0, l_anon.[ID].12@PAGE
+	adrp	x0, l_anon.[ID].10@PAGE
 Lloh59:
-	add	x0, x0, l_anon.[ID].12@PAGEOFF
+	add	x0, x0, l_anon.[ID].10@PAGEOFF
 	bl	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
 LBB1_15:
 Ltmp22:
@@ -369,9 +369,9 @@ Lloh61:
 Lloh62:
 	ldr	x2, [x8]
 Lloh63:
-	adrp	x0, l_anon.[ID].10@PAGE
+	adrp	x0, l_anon.[ID].13@PAGE
 Lloh64:
-	add	x0, x0, l_anon.[ID].10@PAGEOFF
+	add	x0, x0, l_anon.[ID].13@PAGEOFF
 Lloh65:
 	adrp	x3, l_anon.[ID].25@PAGE
 Lloh66:
@@ -423,7 +423,7 @@ Lloh80:
 Ltmp27:
 	ldr	x8, [sp, #8]
 	str	x8, [sp, #16]
-	mov	w8, #16
+	mov	w8, #2
 Lloh81:
 	adrp	x9, l_anon.[ID].8@PAGE
 Lloh82:
@@ -493,9 +493,9 @@ Lloh95:
 	ret
 LBB2_8:
 Lloh96:
-	adrp	x0, l_anon.[ID].12@PAGE
+	adrp	x0, l_anon.[ID].10@PAGE
 Lloh97:
-	add	x0, x0, l_anon.[ID].12@PAGEOFF
+	add	x0, x0, l_anon.[ID].10@PAGEOFF
 	bl	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
 LBB2_9:
 	bl	SYM(objc2::__macro_helpers::defined_ivars::register_with_ivars::get_ivar_failed::GENERATED_ID, 0)
@@ -596,9 +596,9 @@ Lloh99:
 Lloh100:
 	ldr	x2, [x8]
 Lloh101:
-	adrp	x0, l_anon.[ID].9@PAGE
+	adrp	x0, l_anon.[ID].11@PAGE
 Lloh102:
-	add	x0, x0, l_anon.[ID].9@PAGEOFF
+	add	x0, x0, l_anon.[ID].11@PAGEOFF
 Lloh103:
 	adrp	x3, l_anon.[ID].24@PAGE
 Lloh104:
@@ -628,7 +628,7 @@ Lloh111:
 Ltmp35:
 	ldr	x8, [sp, #8]
 	str	x8, [sp, #16]
-	mov	w8, #8
+	mov	w8, #2
 Lloh112:
 	adrp	x9, l_anon.[ID].7@PAGE
 Lloh113:
@@ -671,9 +671,9 @@ Lloh119:
 	ret
 LBB3_5:
 Lloh120:
-	adrp	x0, l_anon.[ID].12@PAGE
+	adrp	x0, l_anon.[ID].10@PAGE
 Lloh121:
-	add	x0, x0, l_anon.[ID].12@PAGEOFF
+	add	x0, x0, l_anon.[ID].10@PAGEOFF
 	bl	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
 LBB3_6:
 	bl	SYM(objc2::__macro_helpers::defined_ivars::register_with_ivars::get_ivar_failed::GENERATED_ID, 0)
@@ -1621,23 +1621,23 @@ l_anon.[ID].8:
 	.space	39
 
 l_anon.[ID].9:
-	.ascii	"ForgetableIvars"
-
-l_anon.[ID].10:
-	.ascii	"DropIvars"
-
-l_anon.[ID].11:
 	.ascii	"$RUSTC/library/std/src/sync/poison/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].12:
-	.quad	l_anon.[ID].11
+l_anon.[ID].10:
+	.quad	l_anon.[ID].9
 	.asciz	"\20x\000\000\000\000\000\000\000\233\000\000\0002\000\000"
 
 	.section	__TEXT,__const
-l_anon.[ID].13:
+l_anon.[ID].11:
+	.ascii	"ForgetableIvars"
+
+l_anon.[ID].12:
 	.ascii	"NoIvars"
+
+l_anon.[ID].13:
+	.ascii	"DropIvars"
 
 	.globl	SYM(test_define_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2)
 .zerofill __DATA,__common,SYM(test_define_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2),8,3

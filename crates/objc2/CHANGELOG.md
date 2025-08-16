@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Fixed
 * Fixed encoding check when using SIMD types in signatures.
+* Allow declaring classes with ivars that require high alignment.
 
 
 ## [0.6.2] - 2025-08-14

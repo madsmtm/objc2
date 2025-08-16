@@ -115,7 +115,7 @@ Lfunc_begin1:
 	jne	LBB1_14
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
-	lea	rdi, [rip + l_anon.[ID].13]
+	lea	rdi, [rip + l_anon.[ID].12]
 	lea	rcx, [rip + l_anon.[ID].15]
 	mov	esi, 7
 	call	SYM(objc2::__macro_helpers::define_class::create_builder::GENERATED_ID, 0)
@@ -205,7 +205,7 @@ Ltmp21:
 	pop	rbp
 	ret
 LBB1_14:
-	lea	rdi, [rip + l_anon.[ID].12]
+	lea	rdi, [rip + l_anon.[ID].10]
 	call	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
 LBB1_15:
 Ltmp22:
@@ -255,7 +255,7 @@ Lfunc_begin2:
 	jne	LBB2_14
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
-	lea	rdi, [rip + l_anon.[ID].10]
+	lea	rdi, [rip + l_anon.[ID].13]
 	lea	rcx, [rip + l_anon.[ID].25]
 	mov	esi, 9
 	call	SYM(objc2::__macro_helpers::define_class::create_builder::GENERATED_ID, 0)
@@ -286,7 +286,7 @@ Ltmp26:
 Ltmp27:
 	mov	rax, qword ptr [rbp - 32]
 	mov	qword ptr [rbp - 24], rax
-	mov	qword ptr [rbp - 64], 16
+	mov	qword ptr [rbp - 64], 2
 	lea	rax, [rip + l_anon.[ID].8]
 	mov	qword ptr [rbp - 56], rax
 	mov	byte ptr [rbp - 72], 27
@@ -336,7 +336,7 @@ Ltmp32:
 	pop	rbp
 	ret
 LBB2_14:
-	lea	rdi, [rip + l_anon.[ID].12]
+	lea	rdi, [rip + l_anon.[ID].10]
 	call	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
 LBB2_10:
 	call	SYM(objc2::__macro_helpers::defined_ivars::register_with_ivars::get_ivar_failed::GENERATED_ID, 0)
@@ -405,7 +405,7 @@ Lfunc_begin3:
 	jne	LBB3_9
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
-	lea	rdi, [rip + l_anon.[ID].9]
+	lea	rdi, [rip + l_anon.[ID].11]
 	lea	rcx, [rip + l_anon.[ID].24]
 	mov	esi, 15
 	call	SYM(objc2::__macro_helpers::define_class::create_builder::GENERATED_ID, 0)
@@ -423,7 +423,7 @@ Ltmp34:
 Ltmp35:
 	mov	rax, qword ptr [rbp - 24]
 	mov	qword ptr [rbp - 32], rax
-	mov	qword ptr [rbp - 64], 8
+	mov	qword ptr [rbp - 64], 2
 	lea	rax, [rip + l_anon.[ID].7]
 	mov	qword ptr [rbp - 56], rax
 	mov	byte ptr [rbp - 72], 27
@@ -455,7 +455,7 @@ Ltmp38:
 	pop	rbp
 	ret
 LBB3_9:
-	lea	rdi, [rip + l_anon.[ID].12]
+	lea	rdi, [rip + l_anon.[ID].10]
 	call	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
 LBB3_4:
 	call	SYM(objc2::__macro_helpers::defined_ivars::register_with_ivars::get_ivar_failed::GENERATED_ID, 0)
@@ -1161,23 +1161,23 @@ l_anon.[ID].8:
 	.space	39
 
 l_anon.[ID].9:
-	.ascii	"ForgetableIvars"
-
-l_anon.[ID].10:
-	.ascii	"DropIvars"
-
-l_anon.[ID].11:
 	.ascii	"$RUSTC/library/std/src/sync/poison/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].12:
-	.quad	l_anon.[ID].11
+l_anon.[ID].10:
+	.quad	l_anon.[ID].9
 	.asciz	"\20x\000\000\000\000\000\000\000\233\000\000\0002\000\000"
 
 	.section	__TEXT,__const
-l_anon.[ID].13:
+l_anon.[ID].11:
+	.ascii	"ForgetableIvars"
+
+l_anon.[ID].12:
 	.ascii	"NoIvars"
+
+l_anon.[ID].13:
+	.ascii	"DropIvars"
 
 .zerofill __DATA,__bss,SYM(test_define_class[CRATE_ID]::_::__OBJC2_CLASS, 0).0,8,3
 	.globl	SYM(test_define_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2)

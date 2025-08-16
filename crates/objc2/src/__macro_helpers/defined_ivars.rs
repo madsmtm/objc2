@@ -266,14 +266,17 @@ pub(crate) fn register_with_ivars<T: DefinedClass>(
     if T::HAS_IVARS {
         // TODO: Consider not adding a encoding - Swift doesn't do it.
         let ivar_encoding = Encoding::Array(
-            mem::size_of::<T::Ivars>() as u64,
+            (mem::size_of::<T::Ivars>() / mem::align_of::<T::Ivars>()) as u64,
             match mem::align_of::<T::Ivars>() {
                 1 => &u8::ENCODING,
                 2 => &u16::ENCODING,
                 4 => &u32::ENCODING,
                 // The alignment of `u64` may not be 8 on all architectures
                 8 if mem::align_of::<u64>() == 8 => &u64::ENCODING,
-                alignment => panic!("unsupported alignment {alignment} for `{}::Ivars`", T::NAME),
+                // Beyond this point, there's no way to communicate the
+                // required alignment via the encoding; so to be sure that bad
+                // code that assumes it can will fail horribly if it tries.
+                _ => &Encoding::None,
             },
         );
         unsafe { builder.add_ivar_inner::<T::Ivars>(&ivar_name, &ivar_encoding) };
@@ -627,6 +630,7 @@ mod tests {
 
         define_class!(
             #[unsafe(super(NSObject))]
+            #[name = "IvarZst"]
             #[ivars = Cell<Ivar>]
             struct IvarZst;
 
@@ -657,9 +661,8 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "unsupported alignment 16 for `HasIvarWithHighAlignment::Ivars`"]
     fn test_generate_ivar_high_alignment() {
-        #[repr(align(16))]
+        #[repr(align(64))]
         struct HighAlignment;
 
         define_class!(
@@ -671,10 +674,10 @@ mod tests {
 
         // Have to allocate up to the desired alignment, but no need to go
         // further, since the object is zero-sized.
-        assert_eq!(HasIvarWithHighAlignment::class().instance_size(), 16);
+        assert_eq!(HasIvarWithHighAlignment::class().instance_size(), 64);
 
         let ivar_name = if cfg!(feature = "gnustep-1-7") {
-            "IvarZst_ivars"
+            "HasIvarWithHighAlignment_ivars"
         } else {
             "ivars"
         };
@@ -682,7 +685,7 @@ mod tests {
         let ivar = HasIvarWithHighAlignment::class()
             .instance_variable(&ivar_name)
             .unwrap();
-        assert_eq!(ivar.offset(), 16);
+        assert_eq!(ivar.offset(), 64);
     }
 
     #[test]
