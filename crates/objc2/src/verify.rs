@@ -163,9 +163,11 @@ pub(crate) fn verify_method_signature(
     let mut iter = method.types();
 
     // TODO: Verify stack layout
-    let (expected, _stack_layout) = iter.extract_return()?;
-    if !relaxed_equivalent_to_box(ret, &expected) {
-        return Err(Inner::MismatchedReturn(expected, ret.clone()).into());
+    if *ret != Encoding::None {
+        let (expected, _stack_layout) = iter.extract_return()?;
+        if !relaxed_equivalent_to_box(ret, &expected) {
+            return Err(Inner::MismatchedReturn(expected, ret.clone()).into());
+        }
     }
 
     iter.verify_receiver()?;
@@ -174,6 +176,10 @@ pub(crate) fn verify_method_signature(
     let actual_count = args.len();
 
     for (i, actual) in args.iter().enumerate() {
+        // If the encoding is entirely missing, we don't try to parse it.
+        if *actual == Encoding::None {
+            continue;
+        }
         if let Some(res) = iter.next() {
             // TODO: Verify stack layout
             let (expected, _stack_layout) = res?;
@@ -201,6 +207,7 @@ pub(crate) fn verify_method_signature(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::encode::Encode;
     use crate::ffi;
     use crate::runtime::Sel;
     use crate::test_utils;
@@ -333,5 +340,24 @@ mod tests {
     fn test_get_integer_void() {
         let obj = test_utils::custom_object();
         let _: *mut c_void = unsafe { msg_send![&obj, foo] };
+    }
+
+    #[test]
+    fn test_verify_simd() {
+        let cls = test_utils::custom_class();
+
+        // Actually a different calling convention, but `#[repr(simd)]` etc.
+        // isn't yet stable, so just do something here.
+        #[repr(C)]
+        struct SimdTy(u32);
+
+        unsafe impl Encode for SimdTy {
+            const ENCODING: Encoding = Encoding::None;
+        }
+
+        assert_eq!(
+            cls.verify_sel::<(SimdTy, u32), SimdTy>(sel!(withSimd:andArg:)),
+            Ok(())
+        );
     }
 }

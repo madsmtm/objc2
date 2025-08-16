@@ -139,6 +139,24 @@ pub(crate) fn custom_class() -> &'static AnyClass {
             arg1 + arg2 + arg3 + arg4
         }
 
+        // Actually a different calling convention, but `#[repr(simd)]` etc.
+        // isn't yet stable, so just do something here.
+        #[repr(C)]
+        struct SimdTy(u32);
+
+        unsafe impl Encode for SimdTy {
+            const ENCODING: Encoding = Encoding::None;
+        }
+
+        extern "C-unwind" fn with_simd_types(
+            _this: &AnyObject,
+            _cmd: Sel,
+            _simd: SimdTy,
+            _int_arg: u32,
+        ) -> SimdTy {
+            SimdTy(0)
+        }
+
         unsafe {
             // On GNUStep 2.0, it is required to have `dealloc` methods for some reason
             if cfg!(all(feature = "gnustep-2-0", not(feature = "gnustep-2-1"))) {
@@ -180,6 +198,9 @@ pub(crate) fn custom_class() -> &'static AnyClass {
             builder.add_method(sel!(test::test::), f);
             let f: extern "C-unwind" fn(_, _, _, _, _, _) -> _ = custom_obj_multiple_colon_class;
             builder.add_class_method(sel!(test::test::), f);
+
+            let with_simd_types: extern "C-unwind" fn(_, _, _, _) -> _ = with_simd_types;
+            builder.add_method(sel!(withSimd:andArg:), with_simd_types);
         }
 
         builder.register();

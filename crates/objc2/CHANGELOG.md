@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+## Fixed
+* Fixed encoding check when using SIMD types in signatures.
+
 
 ## [0.6.2] - 2025-08-14
 [0.6.2]: https://github.com/madsmtm/objc2/compare/objc2-0.6.1...objc2-0.6.2
