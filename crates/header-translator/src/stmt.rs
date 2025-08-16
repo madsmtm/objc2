@@ -2109,54 +2109,6 @@ impl Stmt {
         FormatterFn(move |f| {
             let _span = debug_span!("stmt", provided_item = ?self.provided_item()).entered();
 
-            struct GenericTyHelper<'a>(&'a [String]);
-
-            impl fmt::Display for GenericTyHelper<'_> {
-                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                    let mut iter = self.0.iter();
-                    if let Some(first) = iter.next() {
-                        write!(f, "<{first}")?;
-                        for generic in iter {
-                            write!(f, ", {generic}")?;
-                        }
-                        write!(f, ">")?;
-                    }
-                    Ok(())
-                }
-            }
-
-            struct GenericParamsHelper<'a>(&'a [String], &'a str);
-
-            impl fmt::Display for GenericParamsHelper<'_> {
-                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                    let mut iter = self.0.iter();
-                    if let Some(first) = iter.next() {
-                        write!(f, "<{first}: {}", self.1)?;
-                        for generic in iter {
-                            write!(f, ", {generic}: {}", self.1)?;
-                        }
-                        write!(f, ">")?;
-                    }
-                    Ok(())
-                }
-            }
-
-            struct WhereBoundHelper<'a>(&'a [String], Option<&'a str>);
-
-            impl fmt::Display for WhereBoundHelper<'_> {
-                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                    if let Some(bound) = self.1 {
-                        if !self.0.is_empty() {
-                            writeln!(f, "where")?;
-                            for generic in self.0 {
-                                writeln!(f, "{generic}{bound},")?;
-                            }
-                        }
-                    }
-                    Ok(())
-                }
-            }
-
             // TODO: Derive this after https://github.com/madsmtm/objc2/issues/55
             fn unsafe_impl_encode<'a>(
                 ident: impl fmt::Display + 'a,
@@ -2265,6 +2217,7 @@ impl Stmt {
                             bridged_to.name,
                             GenericTyHelper(generics),
                         )?;
+                        writeln!(f, "    #[inline]")?;
                         writeln!(
                             f,
                             "    fn as_ref(&self) -> &{}{} {{",
@@ -2296,6 +2249,7 @@ impl Stmt {
                             id.path(),
                             GenericTyHelper(generics),
                         )?;
+                        writeln!(f, "    #[inline]")?;
                         writeln!(
                             f,
                             "    fn as_ref(&self) -> &{}{} {{",
@@ -2306,6 +2260,13 @@ impl Stmt {
                         writeln!(f, "        unsafe {{ &*((self as *const Self).cast()) }}",)?;
                         writeln!(f, "    }}")?;
                         writeln!(f, "}}")?;
+                    }
+
+                    // Add casting from `NSArray<T>` to `NSArray<U>`.
+                    if !generics.is_empty() {
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        add_generic_cast_helpers(f, id, generics, false)?;
                     }
                 }
                 Self::ExternMethods {
@@ -3274,6 +3235,13 @@ impl Stmt {
                         writeln!(f, "    ));")?;
                         writeln!(f, "}}")?;
                     }
+
+                    // Add casting from `CFArray<T>` to `CFArray<U>`.
+                    if !generics.is_empty() {
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        add_generic_cast_helpers(f, id, generics, true)?;
+                    }
                 }
                 Self::GeneralImpl {
                     location: _,
@@ -3425,6 +3393,121 @@ impl Stmt {
             _ => None,
         }
     }
+}
+
+struct GenericTyHelper<'a>(&'a [String]);
+
+impl fmt::Display for GenericTyHelper<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut iter = self.0.iter();
+        if let Some(first) = iter.next() {
+            write!(f, "<{first}")?;
+            for generic in iter {
+                write!(f, ", {generic}")?;
+            }
+            write!(f, ">")?;
+        }
+        Ok(())
+    }
+}
+
+struct GenericParamsHelper<'a>(&'a [String], &'a str);
+
+impl fmt::Display for GenericParamsHelper<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut iter = self.0.iter();
+        if let Some(first) = iter.next() {
+            write!(f, "<{first}: {}", self.1)?;
+            for generic in iter {
+                write!(f, ", {generic}: {}", self.1)?;
+            }
+            write!(f, ">")?;
+        }
+        Ok(())
+    }
+}
+
+struct WhereBoundHelper<'a>(&'a [String], Option<&'a str>);
+
+impl fmt::Display for WhereBoundHelper<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if let Some(bound) = self.1 {
+            if !self.0.is_empty() {
+                writeln!(f, "where")?;
+                for generic in self.0 {
+                    writeln!(f, "{generic}{bound},")?;
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
+/// Add `.cast_unchecked()` and `.as_opaque()` methods for converting a
+/// type's generic parameters.
+///
+/// Note: Ideally, this would probably be done with safe_transmute or smth.
+fn add_generic_cast_helpers(
+    f: &mut fmt::Formatter<'_>,
+    id: &ItemIdentifier,
+    generics: &[String],
+    cf: bool,
+) -> fmt::Result {
+    let s = if generics.len() == 1 { "" } else { "s" };
+    // Using just `?Sized` is intentional here, we have no
+    // bound on `T: Type` (CF collections can contain
+    // non-object types).
+    let bound = if cf { "?Sized" } else { "?Sized + Message" };
+    let casted_generics: Vec<_> = generics
+        .iter()
+        .map(|generic| format!("New{generic}"))
+        .collect();
+
+    writeln!(
+        f,
+        "impl{} {}{} {{",
+        GenericParamsHelper(generics, bound),
+        id.path(),
+        GenericTyHelper(generics),
+    )?;
+    writeln!(
+        f,
+        "    /// Unchecked conversion of the generic parameter{s}."
+    )?;
+    writeln!(f, "    ///")?;
+    writeln!(f, "    /// # Safety")?;
+    writeln!(f, "    ///")?;
+    writeln!(
+        f,
+        "    /// The generic{s} must be valid to reinterpret as the given type{s}."
+    )?;
+    writeln!(f, "    #[inline]")?;
+    writeln!(
+        f,
+        "    pub unsafe fn cast_unchecked{}(&self) -> &{}{} {{",
+        GenericParamsHelper(&casted_generics, bound),
+        id.path(),
+        GenericTyHelper(&casted_generics),
+    )?;
+    // SAFETY: Upheld by the caller.
+    writeln!(f, "        unsafe {{ &*((self as *const Self).cast()) }}",)?;
+    writeln!(f, "    }}")?;
+
+    // Add `as_opaque`.
+    if cf {
+        writeln!(f)?;
+        writeln!(f, "    /// Convert to the opaque/untyped variant.")?;
+        writeln!(f, "    #[inline]")?;
+        writeln!(f, "    pub fn as_opaque(&self) -> &{} {{", id.path())?;
+        // SAFETY: CF collections store objects behind a reference, and can
+        // all be represented by `objc2_core_foundation::opaque::Opaque`.
+        writeln!(f, "        unsafe {{ self.cast_unchecked() }}",)?;
+        writeln!(f, "    }}")?;
+    }
+
+    writeln!(f, "}}")?;
+
+    Ok(())
 }
 
 fn simple_platform_gate(

@@ -5,7 +5,7 @@ use alloc::format;
 use alloc::vec::Vec;
 use core::ptr;
 
-use crate::{NSArray, NSNumber, NSObject};
+use crate::{NSArray, NSNumber, NSObject, NSValue};
 use objc2::extern_protocol;
 use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, ProtocolObject};
@@ -186,6 +186,16 @@ fn test_access_anyobject() {
     for _ in array.iter() {}
     for _ in unsafe { array.iter_unchecked() } {}
     for _ in array {}
+}
+
+#[test]
+fn test_cast() {
+    let array = NSArray::from_retained_slice(&[NSNumber::new_i32(42)]);
+    // SAFETY: NSNumber is a subclass of NSValue.
+    let array = unsafe { array.cast_unchecked::<NSValue>() };
+    let value = array.objectAtIndex(0);
+    // SAFETY: We put an i32 into the NSNumber.
+    assert_eq!(unsafe { value.get::<i32>() }, 42);
 }
 
 #[test]

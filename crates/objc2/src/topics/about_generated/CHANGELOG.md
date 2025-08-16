@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `IOKit` "serial" submodule.
 * Added various missing APIs.
+* Added `AsRef` impls for toll-free bridging between types like `CFString` and `NSString`.
+* Added `cast_unchecked` methods on collection types like `NSArray<T>` and `CFDictionary<K, V>`.
+  This should allow more easily converting the generics on said types.
 
 ### Changed
 * Updated SDK from Xcode 16.3 to 16.4.

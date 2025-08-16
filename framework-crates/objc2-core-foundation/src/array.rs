@@ -1,7 +1,7 @@
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
+use core::borrow::Borrow;
 use core::ffi::c_void;
-use core::{borrow::Borrow, mem};
 
 use crate::{kCFTypeArrayCallBacks, CFArray, CFIndex, CFMutableArray, CFRetained, Type};
 
@@ -253,13 +253,6 @@ impl<T: ?Sized> CFArray<T> {
 
 /// Various accessor methods.
 impl<T: ?Sized> CFArray<T> {
-    /// Convert to the opaque/untyped variant.
-    pub fn as_opaque(&self) -> &CFArray {
-        // SAFETY: The array stores objects behind a reference, and can all be
-        // represented by `crate::opaque::Opaque`.
-        unsafe { mem::transmute::<&CFArray<T>, &CFArray>(self) }
-    }
-
     /// The amount of elements in the array.
     #[inline]
     #[doc(alias = "CFArrayGetCount")]
@@ -321,15 +314,6 @@ impl<T: ?Sized> CFArray<T> {
             array: self,
             index: 0,
         }
-    }
-}
-
-/// Various accessor methods.
-impl<T: ?Sized> CFMutableArray<T> {
-    /// Convert to the opaque/untyped variant.
-    pub fn as_opaque(&self) -> &CFMutableArray {
-        // SAFETY: Same as `CFArray::as_opaque`.
-        unsafe { mem::transmute::<&CFMutableArray<T>, &CFMutableArray>(self) }
     }
 }
 

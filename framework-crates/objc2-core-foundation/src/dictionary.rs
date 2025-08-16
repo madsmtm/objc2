@@ -1,6 +1,6 @@
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
-use core::{borrow::Borrow, ffi::c_void, hash::Hash, mem};
+use core::{borrow::Borrow, ffi::c_void, hash::Hash};
 
 use crate::{
     kCFTypeDictionaryKeyCallBacks, kCFTypeDictionaryValueCallBacks, CFDictionary, CFIndex,
@@ -215,13 +215,6 @@ impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
 
 /// Various accessor methods.
 impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
-    /// Convert to the opaque/untyped variant.
-    pub fn as_opaque(&self) -> &CFDictionary {
-        // SAFETY: The dictionary stores keys and values behind a reference,
-        // and those can all be represented by `crate::opaque::Opaque`.
-        unsafe { mem::transmute::<&CFDictionary<K, V>, &CFDictionary>(self) }
-    }
-
     /// The amount of elements in the dictionary.
     #[inline]
     #[doc(alias = "CFDictionaryGetCount")]
@@ -294,12 +287,6 @@ impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
 
 /// Various mutation methods.
 impl<K: ?Sized, V: ?Sized> CFMutableDictionary<K, V> {
-    /// Convert to the opaque/untyped variant.
-    pub fn as_opaque(&self) -> &CFMutableDictionary {
-        // SAFETY: Same as `CFDictionary::as_opaque`.
-        unsafe { mem::transmute::<&CFMutableDictionary<K, V>, &CFMutableDictionary>(self) }
-    }
-
     /// Add the key-value pair to the dictionary if no such key already exist.
     #[inline]
     #[doc(alias = "CFDictionaryAddValue")]
