@@ -4,26 +4,6 @@ use objc2::{define_class, ClassType, ProtocolType};
 use objc2_foundation::NSCopying;
 
 #[test]
-#[should_panic = "could not create new class TestDefineClassDuplicate. Perhaps a class with that name already exists?"]
-fn test_define_class_duplicate() {
-    define_class!(
-        #[unsafe(super(NSObject))]
-        #[name = "TestDefineClassDuplicate"]
-        struct Custom1;
-    );
-
-    define_class!(
-        #[unsafe(super(NSObject))]
-        #[name = "TestDefineClassDuplicate"]
-        struct Custom2;
-    );
-
-    let _cls = Custom1::class();
-    // Should panic
-    let _cls = Custom2::class();
-}
-
-#[test]
 fn test_define_class_protocol() {
     define_class!(
         #[unsafe(super(NSObject))]

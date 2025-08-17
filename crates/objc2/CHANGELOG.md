@@ -6,9 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+## Changed
+* **BREAKING** (very slightly): `define_class!` now rejects non-static and
+  non-unique class names.
+
 ## Fixed
 * Fixed encoding check when using SIMD types in signatures.
 * Allow declaring classes with ivars that require high alignment.
+* Allow classes created with `define_class!` to be used in multiple shared
+  dynamic libraries in the same process.
 
 
 ## [0.6.2] - 2025-08-14
