@@ -3501,6 +3501,12 @@ fn add_generic_cast_helpers(
         writeln!(f, "    pub fn as_opaque(&self) -> &{} {{", id.path())?;
         // SAFETY: CF collections store objects behind a reference, and can
         // all be represented by `objc2_core_foundation::opaque::Opaque`.
+        //
+        // For invariant collections like `CFMutableArray`, while it would
+        // not normally be safe to add upcasts like this, it should be safe
+        // for the `Opaque` type, since there are no safe way to neither get
+        // nor set that (and thus we cannot do the otherwise dangerous
+        // `CFMutableArray<NSString> -> CFMutableArray<NSObject> -> set`).
         writeln!(f, "        unsafe {{ self.cast_unchecked() }}",)?;
         writeln!(f, "    }}")?;
     }
