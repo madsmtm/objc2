@@ -1,0 +1,215 @@
+error[E0648]: `export_name` may not contain null characters
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "NulAtEnd\0"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulAtEnd;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0648]: `export_name` may not contain null characters
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "NulAtEnd\0"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulAtEnd;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0648]: `export_name` may not contain null characters
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "NulAtEnd\0"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulAtEnd;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0648]: `export_name` may not contain null characters
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "NulAtEnd\0"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulAtEnd;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0648]: `export_name` may not contain null characters
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "NulIn\0Middle"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulInMiddle;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0648]: `export_name` may not contain null characters
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "NulIn\0Middle"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulInMiddle;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0648]: `export_name` may not contain null characters
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "NulIn\0Middle"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulInMiddle;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0648]: `export_name` may not contain null characters
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "NulIn\0Middle"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulInMiddle;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0648]: `export_name` may not contain null characters
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "\0NulAtStart"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulAtStart;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0648]: `export_name` may not contain null characters
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "\0NulAtStart"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulAtStart;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0648]: `export_name` may not contain null characters
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "\0NulAtStart"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulAtStart;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0648]: `export_name` may not contain null characters
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "\0NulAtStart"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulAtStart;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0080]: evaluation of constant value failed
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "NulAtEnd\0"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulAtEnd;
+  | | );
+  | |_^ evaluation panicked: class name must not contain interior NUL bytes
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0080]: evaluation of constant value failed
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "NulIn\0Middle"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulInMiddle;
+  | | );
+  | |_^ evaluation panicked: class name must not contain interior NUL bytes
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0080]: evaluation of constant value failed
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "\0NulAtStart"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulAtStart;
+  | | );
+  | |_^ evaluation panicked: class name must not contain interior NUL bytes
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+note: erroneous constant encountered
+ --> ui/declare_class_name_interior_nul.rs
+  |
+  | / define_class!(
+  | |     #[name = "NulAtEnd\0"]
+  | |     #[unsafe(super = NSObject)]
+  | |     struct NulAtEnd;
+  | | );
+  | |_^
+  |
+  = note: this note originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+note: erroneous constant encountered
+  --> ui/declare_class_name_interior_nul.rs
+   |
+   | / define_class!(
+   | |     #[name = "NulIn\0Middle"]
+   | |     #[unsafe(super = NSObject)]
+   | |     struct NulInMiddle;
+   | | );
+   | |_^
+   |
+   = note: this note originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+note: erroneous constant encountered
+  --> ui/declare_class_name_interior_nul.rs
+   |
+   | / define_class!(
+   | |     #[name = "\0NulAtStart"]
+   | |     #[unsafe(super = NSObject)]
+   | |     struct NulAtStart;
+   | | );
+   | |_^
+   |
+   = note: this note originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

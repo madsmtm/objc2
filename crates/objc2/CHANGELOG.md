@@ -9,6 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Added
 * Added support for the unstable `darwin_objc` feature.
 
+## Changed
+* **BREAKING** (very slightly): `define_class!` now rejects non-static and
+  non-unique class names.
+
+## Fixed
+* Allow classes created with `define_class!` to be used in multiple shared
+  dynamic libraries in the same process.
+
 
 ## [0.6.3] - 2025-10-04
 [0.6.3]: https://github.com/madsmtm/objc2/compare/objc2-0.6.2...objc2-0.6.3
