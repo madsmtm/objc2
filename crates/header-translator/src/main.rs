@@ -277,7 +277,7 @@ fn parse_library(
     for llvm_target in llvm_targets {
         let _span = info_span!("target", platform = ?sdk.platform, llvm_target).entered();
 
-        let mut context = Context::new(config);
+        let mut context = Context::new(config, name);
         let mut library = Library::new(name, data);
         let tu = get_translation_unit(index, sdk, llvm_target, data, tempdir);
         parse_translation_unit(tu, &mut context, &mut library);

@@ -76,14 +76,16 @@ pub struct Context<'config> {
     config: &'config Config,
     pub macro_invocations: HashMap<MacroLocation, MacroEntity>,
     pub ident_mapping: HashMap<String, Expr>,
+    pub current_library: &'config str,
 }
 
 impl<'config> Context<'config> {
-    pub fn new(config: &'config Config) -> Self {
+    pub fn new(config: &'config Config, current_library: &'config str) -> Self {
         Self {
             config,
             macro_invocations: Default::default(),
             ident_mapping: Default::default(),
+            current_library,
         }
     }
 }

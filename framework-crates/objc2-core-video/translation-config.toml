@@ -9,6 +9,8 @@ tvos = "9.0"
 watchos = "4.0"
 visionos = "1.0"
 
+external.__IOSurface.module = "IOSurface.IOSurfaceRef"
+
 # `cf_consumed`, requires manual handling
 fn.CVOpenGLBufferRelease.skipped = true
 fn.CVDisplayLinkRelease.skipped = true

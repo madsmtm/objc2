@@ -352,8 +352,21 @@ impl<N: ToOptionString> ItemIdentifier<N> {
         // subsequent usage of the location, including in other configuration
         // lookups, is done in the external library.
         if let Some(name) = name.to_option() {
-            // TODO: Lookup only in current library? Or always there?
-            if let Some(external) = context.library(&location).external.get(name) {
+            // Try find the item in the library where it was supposed to be.
+            //
+            // If we can't find that library, try in the currently parsed
+            // library instead.
+            if let Some(external) = context
+                .try_library(location.library_name())
+                .and_then(|data| data.external.get(name))
+                .or_else(|| {
+                    context
+                        .try_library(context.current_library)
+                        .expect("must be able to find current library")
+                        .external
+                        .get(name)
+                })
+            {
                 location = external.module.clone();
             } else if let EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef = entity.get_kind()
             {
