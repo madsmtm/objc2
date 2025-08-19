@@ -49,10 +49,12 @@ objc2-app-kit = { workspace = true, optional = true, features = [
     "NSDragging",
     "NSFont",
     "NSImage",
+    "NSOpenGL",
     "NSResponder",
     "NSUserInterfaceItemIdentification",
     "NSView",
 ] }
+objc2-open-gl = { workspace = true, optional = true, features = ["CGLTypes"] }
 
 [target.'cfg(not(target_os = "watchos"))'.dependencies]
 objc2-core-image = { workspace = true, optional = true, features = ["CIFilter"] }
@@ -95,6 +97,9 @@ objc2-quartz-core = { workspace = true, optional = true, features = [
     "objc2-core-foundation",
 ] }
 
+[target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "tvos"))'.dependencies]
+objc2-gl-kit = { workspace = true, optional = true, features = ["GLKMathTypes"] }
+
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
@@ -106,6 +111,10 @@ targets = [
     "aarch64-apple-watchos",
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
+]
+features = [
+    "objc2-gl-kit",
+    "objc2-open-gl",
 ]
 
 [features]
@@ -174,9 +183,11 @@ objc2-avf-audio = ["dep:objc2-avf-audio"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
+objc2-gl-kit = ["dep:objc2-gl-kit"]
 objc2-javascript-core = ["dep:objc2-javascript-core"]
 objc2-metal = ["dep:objc2-metal"]
 objc2-model-io = ["dep:objc2-model-io"]
+objc2-open-gl = ["dep:objc2-open-gl"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 
 ModelIO = []

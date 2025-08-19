@@ -89,6 +89,7 @@ test-frameworks = [
     "objc2-file-provider-ui",
     "objc2-finder-sync",
     "objc2-foundation",
+    "objc2-gl-kit",
     "objc2-game-controller",
     "objc2-game-kit",
     "objc2-gameplay-kit",
@@ -137,6 +138,8 @@ test-frameworks = [
     "objc2-osa-kit",
     "objc2-os-log",
     "objc2-open-directory",
+    "objc2-open-gl",
+    "objc2-open-gl-es",
     "objc2-pdf-kit",
     "objc2-phase",
     "objc2-paravirtualized-graphics",
@@ -203,7 +206,7 @@ objc2-accessibility = ["dep:objc2-accessibility"]
 objc2-accounts = ["dep:objc2-accounts"]
 objc2-ad-services = ["dep:objc2-ad-services"]
 objc2-ad-support = ["dep:objc2-ad-support"]
-objc2-app-kit = ["dep:objc2-app-kit", "objc2-app-kit?/objc2-uniform-type-identifiers"]
+objc2-app-kit = ["dep:objc2-app-kit", "objc2-app-kit?/objc2-open-gl", "objc2-app-kit?/objc2-uniform-type-identifiers"]
 objc2-app-tracking-transparency = ["dep:objc2-app-tracking-transparency"]
 objc2-audio-toolbox = ["dep:objc2-audio-toolbox", "objc2-audio-toolbox?/objc2-core-midi"]
 objc2-authentication-services = ["dep:objc2-authentication-services", "objc2-authentication-services?/objc2-local-authentication"]
@@ -225,14 +228,14 @@ objc2-core-bluetooth = ["dep:objc2-core-bluetooth"]
 objc2-core-data = ["dep:objc2-core-data", "objc2-core-data?/objc2-core-spotlight"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics", "objc2-core-graphics?/objc2-io-surface"]
-objc2-core-image = ["dep:objc2-core-image", "objc2-core-image?/objc2-core-ml", "objc2-core-image?/objc2-io-surface"]
+objc2-core-image = ["dep:objc2-core-image", "objc2-core-image?/objc2-core-ml", "objc2-core-image?/objc2-io-surface", "objc2-core-image?/objc2-open-gl"]
 objc2-core-location = ["dep:objc2-core-location"]
 objc2-core-midi = ["dep:objc2-core-midi"]
 objc2-core-ml = ["dep:objc2-core-ml"]
 objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-motion = ["dep:objc2-core-motion"]
 objc2-core-text = ["dep:objc2-core-text"]
-objc2-core-video = ["dep:objc2-core-video", "objc2-core-video?/objc2-io-surface"]
+objc2-core-video = ["dep:objc2-core-video", "objc2-core-video?/objc2-io-surface", "objc2-core-video?/objc2-open-gl"]
 objc2-core-wlan = ["dep:objc2-core-wlan"]
 objc2-data-detection = ["dep:objc2-data-detection"]
 objc2-device-check = ["dep:objc2-device-check"]
@@ -278,8 +281,8 @@ objc2-osa-kit = ["dep:objc2-osa-kit"]
 objc2-open-directory = ["dep:objc2-open-directory"]
 objc2-photos = ["dep:objc2-photos", "objc2-photos?/objc2-uniform-type-identifiers"]
 objc2-photos-ui = ["dep:objc2-photos-ui"]
-objc2-quartz-core = ["dep:objc2-quartz-core"]
-objc2-scene-kit = ["dep:objc2-scene-kit"]
+objc2-quartz-core = ["dep:objc2-quartz-core", "objc2-quartz-core?/objc2-open-gl"]
+objc2-scene-kit = ["dep:objc2-scene-kit", "objc2-scene-kit?/objc2-gl-kit", "objc2-scene-kit?/objc2-open-gl"]
 objc2-screen-capture-kit = ["dep:objc2-screen-capture-kit"]
 objc2-screen-saver = ["dep:objc2-screen-saver"]
 objc2-security = ["dep:objc2-security"]
@@ -288,7 +291,7 @@ objc2-service-management = ["dep:objc2-service-management"]
 objc2-social = ["dep:objc2-social"]
 objc2-sound-analysis = ["dep:objc2-sound-analysis"]
 objc2-speech = ["dep:objc2-speech"]
-objc2-sprite-kit = ["dep:objc2-sprite-kit"]
+objc2-sprite-kit = ["dep:objc2-sprite-kit", "objc2-sprite-kit?/objc2-gl-kit"]
 objc2-store-kit = ["dep:objc2-store-kit"]
 objc2-symbols = ["dep:objc2-symbols"]
 objc2-system-configuration = ["dep:objc2-system-configuration"]
@@ -375,6 +378,9 @@ objc2-quartz = ["dep:objc2-quartz"]
 objc2-phase = ["dep:objc2-phase"]
 objc2-carbon = ["dep:objc2-carbon"]
 objc2-fs-kit = ["dep:objc2-fs-kit"]
+objc2-gl-kit = ["dep:objc2-gl-kit"]
+objc2-open-gl = ["dep:objc2-open-gl"]
+objc2-open-gl-es = ["dep:objc2-open-gl-es", "objc2-open-gl-es?/objc2-io-surface"]
 
 [dependencies]
 block2 = { workspace = true, default-features = true }
@@ -484,6 +490,7 @@ objc2-social = { workspace = true, optional = true, default-features = true }
 [target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "tvos"))'.dependencies]
 objc2-ad-support = { workspace = true, optional = true, default-features = true }
 objc2-cinematic = { workspace = true, optional = true, default-features = true }
+objc2-gl-kit = { workspace = true, optional = true, default-features = true }
 objc2-ml-compute = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(target_os = "macos")'.dependencies]
@@ -508,6 +515,7 @@ objc2-mail-kit = { workspace = true, optional = true, default-features = true }
 objc2-media-extension = { workspace = true, optional = true, default-features = true }
 objc2-osa-kit = { workspace = true, optional = true, default-features = true }
 objc2-open-directory = { workspace = true, optional = true, default-features = true }
+objc2-open-gl = { workspace = true, optional = true, default-features = true }
 objc2-paravirtualized-graphics = { workspace = true, optional = true, default-features = true }
 objc2-preference-panes = { workspace = true, optional = true, default-features = true }
 objc2-quartz = { workspace = true, optional = true, default-features = true }
@@ -556,6 +564,7 @@ objc2-vision = { workspace = true, optional = true, default-features = true }
 [target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "visionos"))'.dependencies]
 objc2-background-tasks = { workspace = true, optional = true, default-features = true }
 objc2-core-haptics = { workspace = true, optional = true, default-features = true }
+objc2-open-gl-es = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(not(target_os = "tvos"))'.dependencies]
 objc2-call-kit = { workspace = true, optional = true, default-features = true }

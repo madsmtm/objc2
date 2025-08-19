@@ -66,6 +66,9 @@ objc2-metal = { workspace = true, optional = true, features = [
     "MTLRenderPass",
 ] }
 
+[target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "tvos"))'.dependencies]
+objc2-gl-kit = { workspace = true, optional = true, features = ["GLKMathTypes"] }
+
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
@@ -78,6 +81,7 @@ targets = [
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
 ]
+features = ["objc2-gl-kit"]
 
 [features]
 default = [
@@ -145,6 +149,7 @@ objc2-avf-audio = ["dep:objc2-avf-audio"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
+objc2-gl-kit = ["dep:objc2-gl-kit"]
 objc2-metal = ["dep:objc2-metal"]
 
 SK3DNode = [

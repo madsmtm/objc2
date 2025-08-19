@@ -1,0 +1,64 @@
+framework = "OpenGL"
+crate = "objc2-open-gl"
+required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
+flags = [
+    # Silence OpenGL deprecation (people know that by now, and it's just noise).
+    "-DGL_SILENCE_DEPRECATION=1",
+]
+macos = "10.0"
+
+# The actual OpenGL definitions are better left to other crates like `gl` or `gl_generator`.
+module.GL.skipped = true
+module.GL3.skipped = true
+# Macro-only module
+module.OpenGLAvailability.skipped = true
+
+# OpenGL redefines this.
+struct.__IOSurface.skipped = true
+typedef.IOSurfaceRef.skipped = true
+external.IOSurfaceRef.module = "IOSurface.IOSurfaceRef"
+
+# We don't really want to expose these types from `gltypes.h`.
+# They're better exposed by `gl` or `gl_generator`.
+module.GLTypes.skipped = true
+external.GLbitfield.module = "OpenGL"
+external.GLboolean.module = "OpenGL"
+external.GLbyte.module = "OpenGL"
+external.GLclampf.module = "OpenGL"
+external.GLenum.module = "OpenGL"
+external.GLfloat.module = "OpenGL"
+external.GLint.module = "OpenGL"
+external.GLshort.module = "OpenGL"
+external.GLsizei.module = "OpenGL"
+external.GLubyte.module = "OpenGL"
+external.GLuint.module = "OpenGL"
+external.GLushort.module = "OpenGL"
+external.GLvoid.module = "OpenGL"
+external.GLchar.module = "OpenGL"
+external.GLcharARB.module = "OpenGL"
+external.GLhandleARB.module = "OpenGL"
+external.GLdouble.module = "OpenGL"
+external.GLclampd.module = "OpenGL"
+external.GLfixed.module = "OpenGL"
+external.GLhalf.module = "OpenGL"
+external.GLhalfARB.module = "OpenGL"
+external.GLint64.module = "OpenGL"
+external.__GLsync.module = "OpenGL"
+external.GLsync.module = "OpenGL"
+external.GLuint64.module = "OpenGL"
+external.GLint64EXT.module = "OpenGL"
+external.GLuint64EXT.module = "OpenGL"
+external.GLintptr.module = "OpenGL"
+external.GLsizeiptr.module = "OpenGL"
+external.GLintptrARB.module = "OpenGL"
+external.GLsizeiptrARB.module = "OpenGL"
+
+# TODO
+external._CGLContextObject.module = "OpenGL"
+external.GLIContext.module = "OpenGL"
+external.__GLIContextRec.module = "OpenGL"
+external.__GLIFunctionDispatchRec.module = "OpenGL"
+external.GLIFunctionDispatch.module = "OpenGL"
+external._CGLPrivateObject.module = "OpenGL"
+external.CGLPrivateObj.module = "OpenGL"

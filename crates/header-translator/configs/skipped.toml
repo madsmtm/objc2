@@ -9,6 +9,7 @@ Kernel = "Too low-level"
 PCSC = "Too low-level, consider crates like `pcsc` instead"
 Matter = "Mostly available [here](https://github.com/project-chip/connectedhomeip)"
 Python3 = "Better served by dedicated crates like `pyo3-ffi`"
+GLUT = "Apple's redistribution of GLUT headers, better served by a different crate"
 
 ForceFeedback = "Very C-centric and old"
 GSS = "Very C-centric and old"
@@ -23,12 +24,6 @@ VideoDecodeAcceleration = "Very C-centric and old" # requires !swift
 vmnet = "Very C-centric and old"
 
 DriverKit = "Uses C++ classes"
-
-AGL = "OpenGL-specific, use Metal instead"
-GLKit = "OpenGL-specific, use Metal instead"
-GLUT = "OpenGL-specific, use Metal instead"
-OpenGL = "OpenGL-specific, use Metal instead"
-OpenGLES = "OpenGL-specific, use Metal instead"
 
 ActivityKit = "Swift-only"
 AdAttributionKit = "Swift-only"
@@ -126,6 +121,7 @@ InterfaceBuilderKit = "TODO. Developer-only"
 XcodeKit = "TODO. Developer-only"
 StoreKitTest = "TODO. Developer-only"
 LiveExecutionResultsLogger = "Removed in Xcode 26"
+AGL = "Removed in Xcode 26"
 
 Network = "TODO, see [#646](https://github.com/madsmtm/objc2/issues/646)"
 DeviceDiscoveryUI = "Needs Network first"

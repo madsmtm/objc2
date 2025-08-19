@@ -24,7 +24,7 @@ use crate::id::ItemIdentifier;
 use crate::id::ItemTree;
 use crate::id::Location;
 use crate::immediate_children;
-use crate::method::{handle_reserved, Method};
+use crate::method::{apply_type_override, handle_reserved, Method};
 use crate::name_translation::{enum_prefix, split_words};
 use crate::protocol::parse_direct_protocols;
 use crate::protocol::ProtocolRef;
@@ -1387,6 +1387,9 @@ impl Stmt {
                         assert_eq!(align, 1, "packed records must have an alignment of 1");
                     }
                     EntityKind::VisibilityAttr => {}
+                    EntityKind::AlignedAttr => {
+                        // Handled with ty.get_alignof() above.
+                    }
                     _ => error!(?entity, "unknown struct/union child"),
                 });
 
@@ -1619,7 +1622,8 @@ impl Stmt {
                 }
 
                 let result_type = entity.get_result_type().expect("function result type");
-                let result_type = Ty::parse_function_return(result_type, context);
+                let mut result_type = Ty::parse_function_return(result_type, context);
+                apply_type_override(&mut result_type, &data.return_);
                 let mut arguments = Vec::new();
                 let mut must_use = false;
                 // Assume by default that functions can unwind.
@@ -1664,7 +1668,10 @@ impl Stmt {
                         // Could also be retrieved via `get_arguments`
                         let name = entity.get_name().unwrap_or_else(|| "_".into());
                         let ty = entity.get_type().expect("function argument type");
-                        let ty = Ty::parse_function_argument(ty, attr, context);
+                        let mut ty = Ty::parse_function_argument(ty, attr, context);
+                        if let Some(ty_or) = data.arguments.get(&arguments.len()) {
+                            apply_type_override(&mut ty, ty_or);
+                        }
                         arguments.push((name, ty))
                     }
                     EntityKind::WarnUnusedResultAttr => {

@@ -1,6 +1,7 @@
 framework = "SceneKit"
 crate = "objc2-scene-kit"
 required-crates = ["objc2", "objc2-foundation"]
+undesired-default-dependencies = ["objc2-open-gl", "objc2-gl-kit"] # OpenGL is deprecated
 custom-lib-rs = true
 macos = "10.8"
 maccatalyst = "13.1"
@@ -21,18 +22,3 @@ protocol.SCNAnimation.renamed = "SCNAnimationProtocol"
 protocol.SCNSceneRenderer.methods."presentScene:withTransition:incomingPointOfView:completionHandler:".skipped = true
 protocol.SCNSceneRenderer.methods."overlaySKScene".skipped = true
 protocol.SCNSceneRenderer.methods."setOverlaySKScene:".skipped = true
-
-# Needs GLKVector3, GLKVector4 and GLKMatrix4 from GLKit
-fn.SCNMatrix4ToGLKMatrix4.skipped = true
-fn.SCNMatrix4FromGLKMatrix4.skipped = true
-fn.SCNVector3FromGLKVector3.skipped = true
-fn.SCNVector3ToGLKVector3.skipped = true
-fn.SCNVector4FromGLKVector4.skipped = true
-fn.SCNVector4ToGLKVector4.skipped = true
-
-# Needs CGLContextObj from OpenGL, and NSOpenGLContext from AppKit
-class.SCNRenderer.methods."rendererWithContext:options:".skipped = true
-class.SCNView.methods.openGLContext.skipped = true
-class.SCNView.methods."setOpenGLContext:".skipped = true
-class.SCNView.methods.pixelFormat.skipped = true
-class.SCNView.methods."setPixelFormat:".skipped = true

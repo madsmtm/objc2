@@ -1,6 +1,7 @@
 framework = "SpriteKit"
 crate = "objc2-sprite-kit"
 required-crates = ["objc2", "objc2-foundation"]
+undesired-default-dependencies = ["objc2-open-gl", "objc2-gl-kit"] # OpenGL is deprecated
 macos = "10.9"
 maccatalyst = "13.0"
 ios = "7.0"
@@ -21,29 +22,3 @@ class.SK3DNode.methods."setPointOfView:".skipped = true
 
 # Custom simd definition
 typedef.vector_float3.skipped = true
-
-# Needs GLKVector*/GLKMatrix* from GLKit
-class.SKUniform.methods.floatVector2Value.skipped = true
-class.SKUniform.methods."setFloatVector2Value:".skipped = true
-class.SKUniform.methods.floatVector3Value.skipped = true
-class.SKUniform.methods."setFloatVector3Value:".skipped = true
-class.SKUniform.methods.floatVector4Value.skipped = true
-class.SKUniform.methods."setFloatVector4Value:".skipped = true
-class.SKUniform.methods.floatMatrix2Value.skipped = true
-class.SKUniform.methods."setFloatMatrix2Value:".skipped = true
-class.SKUniform.methods.floatMatrix3Value.skipped = true
-class.SKUniform.methods."setFloatMatrix3Value:".skipped = true
-class.SKUniform.methods.floatMatrix4Value.skipped = true
-class.SKUniform.methods."setFloatMatrix4Value:".skipped = true
-class.SKUniform.methods."uniformWithName:floatVector2:".skipped = true
-class.SKUniform.methods."uniformWithName:floatVector3:".skipped = true
-class.SKUniform.methods."uniformWithName:floatVector4:".skipped = true
-class.SKUniform.methods."uniformWithName:floatMatrix2:".skipped = true
-class.SKUniform.methods."uniformWithName:floatMatrix3:".skipped = true
-class.SKUniform.methods."uniformWithName:floatMatrix4:".skipped = true
-class.SKUniform.methods."initWithName:floatVector2:".skipped = true
-class.SKUniform.methods."initWithName:floatVector3:".skipped = true
-class.SKUniform.methods."initWithName:floatVector4:".skipped = true
-class.SKUniform.methods."initWithName:floatMatrix2:".skipped = true
-class.SKUniform.methods."initWithName:floatMatrix3:".skipped = true
-class.SKUniform.methods."initWithName:floatMatrix4:".skipped = true

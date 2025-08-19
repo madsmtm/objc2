@@ -1,0 +1,14 @@
+framework = "GLKit"
+crate = "objc2-gl-kit"
+required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
+flags = [
+    # Make types in GLKMathTypes.h not be translated as unions.
+    "-D__STRICT_ANSI__=1",
+]
+macos = "10.8"
+ios = "5.0"
+tvos = "9.0"
+
+# Uses constants from OpenGL.
+enum.GLKTextureTarget.use-value = true

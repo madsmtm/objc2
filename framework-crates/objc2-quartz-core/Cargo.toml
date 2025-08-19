@@ -46,6 +46,9 @@ objc2-metal = { workspace = true, optional = true, features = [
     "MTLTexture",
 ] }
 
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2-open-gl = { workspace = true, optional = true, features = ["CGLTypes"] }
+
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
@@ -57,6 +60,7 @@ targets = [
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
 ]
+features = ["objc2-open-gl"]
 
 [features]
 default = [
@@ -111,6 +115,7 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-video = ["dep:objc2-core-video"]
 objc2-metal = ["dep:objc2-metal"]
+objc2-open-gl = ["dep:objc2-open-gl"]
 
 CAAnimation = [
     "objc2-foundation/NSArray",

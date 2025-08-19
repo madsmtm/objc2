@@ -256,6 +256,10 @@ pub struct LibraryConfig {
     #[serde(rename = "located-outside-sdk")]
     #[serde(default)]
     pub located_outside_sdk: bool,
+    // TODO: Maybe flip this config option, and make most dependencies non-default?
+    #[serde(rename = "undesired-default-dependencies")]
+    #[serde(default)]
+    pub undesired_default_dependencies: HashSet<String>,
 
     #[serde(default = "link_default")]
     pub link: bool,
@@ -366,7 +370,8 @@ impl LibraryConfig {
             }
         }
 
-        inner(&self.macos, &other.macos, semver::Version::new(10, 12, 0))
+        !self.undesired_default_dependencies.contains(&other.krate)
+            && inner(&self.macos, &other.macos, semver::Version::new(10, 12, 0))
             && inner(
                 &self.maccatalyst,
                 &other.maccatalyst,
@@ -443,6 +448,8 @@ impl LibraryConfig {
             assert_eq!(data.unsafe_, Default::default());
             assert_eq!(data.no_implementor, Default::default());
             assert_eq!(data.implementor, Default::default());
+            assert_eq!(data.arguments, Default::default());
+            assert_eq!(data.return_, Default::default());
         }
 
         let allowed_in = self.typedef_data.values().chain(self.statics.values());
@@ -572,6 +579,12 @@ pub struct StmtData {
     pub no_implementor: bool,
     #[serde(default)]
     pub implementor: Option<ItemIdentifier>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_argument_overrides")]
+    pub arguments: HashMap<usize, TypeOverride>,
+    #[serde(rename = "return")]
+    #[serde(default)]
+    pub return_: TypeOverride,
 
     // Typedef and statics
     #[serde(default)]
@@ -676,11 +689,16 @@ impl LibraryConfig {
             config.krate.replace("objc2-", "").replace('-', ""),
             "crate name had an unexpected format",
         );
-        if matches!(
-            &*config.krate,
-            "objc2-tv-ml-kit" | "objc2-tv-ui-kit" | "objc2-xc-ui-automation"
-        ) {
+        if matches!(&*config.krate, "objc2-tv-ml-kit" | "objc2-tv-ui-kit") {
             // Named this way for better consistency with other tv-specific crates.
+            return Ok(config);
+        }
+        if config.krate == "objc2-xc-ui-automation" {
+            // Better match `objc2-xc-test`.
+            return Ok(config);
+        }
+        if config.krate == "objc2-open-gl-es" {
+            // Better match `objc2-open-gl`.
             return Ok(config);
         }
         if config.krate == "objc2-javascript-core" {

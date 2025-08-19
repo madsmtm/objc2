@@ -67,6 +67,17 @@ pub use self::text::*;
 #[allow(unused)]
 pub(crate) type UTF32Char = u32; // Or maybe Rust's char?
 
+// OpenGL/gltypes.h
+// Not re-exported by objc2-open-gl.
+#[allow(unused)]
+pub(crate) type GLbitfield = u32;
+#[allow(unused)]
+pub(crate) type GLenum = u32;
+#[allow(unused)]
+pub(crate) type GLint = i32;
+#[allow(unused)]
+pub(crate) type GLsizei = i32;
+
 // TODO: Send + Sync for NSColor. Documentation says:
 // > Color objects are immutable and thread-safe
 //

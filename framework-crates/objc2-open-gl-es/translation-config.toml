@@ -1,0 +1,18 @@
+framework = "OpenGLES"
+crate = "objc2-open-gl-es"
+required-crates = ["objc2", "objc2-foundation"]
+flags = [
+    # Silence OpenGL deprecation (people know that by now, and it's just noise).
+    "-DGLES_SILENCE_DEPRECATION=1",
+]
+ios = "2.0"
+tvos = "9.0"
+visionos = "1.0"
+
+# The actual OpenGL definitions are better left to other crates like `gl` or `gl_generator`.
+module.ES1.skipped = true
+module.ES2.skipped = true
+module.ES3.skipped = true
+module.gltypes.skipped = true
+# Macro-only module
+module.OpenGLESAvailability.skipped = true

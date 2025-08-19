@@ -174,6 +174,7 @@ objc2-file-provider = { path = "framework-crates/objc2-file-provider", version =
 objc2-file-provider-ui = { path = "framework-crates/objc2-file-provider-ui", version = "0.3.1", default-features = false }
 objc2-finder-sync = { path = "framework-crates/objc2-finder-sync", version = "0.3.1", default-features = false }
 objc2-foundation = { path = "framework-crates/objc2-foundation", version = "0.3.1", default-features = false }
+objc2-gl-kit = { path = "framework-crates/objc2-gl-kit", version = "0.3.1", default-features = false }
 objc2-game-controller = { path = "framework-crates/objc2-game-controller", version = "0.3.1", default-features = false }
 objc2-game-kit = { path = "framework-crates/objc2-game-kit", version = "0.3.1", default-features = false }
 objc2-gameplay-kit = { path = "framework-crates/objc2-gameplay-kit", version = "0.3.1", default-features = false }
@@ -222,6 +223,8 @@ objc2-notification-center = { path = "framework-crates/objc2-notification-center
 objc2-osa-kit = { path = "framework-crates/objc2-osa-kit", version = "0.3.1", default-features = false }
 objc2-os-log = { path = "framework-crates/objc2-os-log", version = "0.3.1", default-features = false }
 objc2-open-directory = { path = "framework-crates/objc2-open-directory", version = "0.3.1", default-features = false }
+objc2-open-gl = { path = "framework-crates/objc2-open-gl", version = "0.3.1", default-features = false }
+objc2-open-gl-es = { path = "framework-crates/objc2-open-gl-es", version = "0.3.1", default-features = false }
 objc2-pdf-kit = { path = "framework-crates/objc2-pdf-kit", version = "0.3.1", default-features = false }
 objc2-phase = { path = "framework-crates/objc2-phase", version = "0.3.1", default-features = false }
 objc2-paravirtualized-graphics = { path = "framework-crates/objc2-paravirtualized-graphics", version = "0.3.1", default-features = false }
@@ -366,6 +369,7 @@ objc2-file-provider = { path = "framework-crates/objc2-file-provider" }
 objc2-file-provider-ui = { path = "framework-crates/objc2-file-provider-ui" }
 objc2-finder-sync = { path = "framework-crates/objc2-finder-sync" }
 objc2-foundation = { path = "framework-crates/objc2-foundation" }
+objc2-gl-kit = { path = "framework-crates/objc2-gl-kit" }
 objc2-game-controller = { path = "framework-crates/objc2-game-controller" }
 objc2-game-kit = { path = "framework-crates/objc2-game-kit" }
 objc2-gameplay-kit = { path = "framework-crates/objc2-gameplay-kit" }
@@ -414,6 +418,8 @@ objc2-notification-center = { path = "framework-crates/objc2-notification-center
 objc2-osa-kit = { path = "framework-crates/objc2-osa-kit" }
 objc2-os-log = { path = "framework-crates/objc2-os-log" }
 objc2-open-directory = { path = "framework-crates/objc2-open-directory" }
+objc2-open-gl = { path = "framework-crates/objc2-open-gl" }
+objc2-open-gl-es = { path = "framework-crates/objc2-open-gl-es" }
 objc2-pdf-kit = { path = "framework-crates/objc2-pdf-kit" }
 objc2-phase = { path = "framework-crates/objc2-phase" }
 objc2-paravirtualized-graphics = { path = "framework-crates/objc2-paravirtualized-graphics" }

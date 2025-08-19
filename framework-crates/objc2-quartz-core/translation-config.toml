@@ -1,6 +1,7 @@
 framework = "QuartzCore"
 crate = "objc2-quartz-core"
 required-crates = ["objc2", "objc2-foundation"]
+undesired-default-dependencies = ["objc2-open-gl"] # OpenGL is deprecated
 custom-lib-rs = true
 macos = "10.3"
 maccatalyst = "13.0"
@@ -8,19 +9,8 @@ ios = "2.0"
 tvos = "9.0"
 visionos = "1.0"
 
-# Needs CGLContextObj from OpenGL
-class.CAOpenGLLayer.methods."canDrawInCGLContext:pixelFormat:forLayerTime:displayTime:".skipped = true
-class.CAOpenGLLayer.methods."drawInCGLContext:pixelFormat:forLayerTime:displayTime:".skipped = true
-class.CAOpenGLLayer.methods."copyCGLPixelFormatForDisplayMask:".skipped = true
-class.CAOpenGLLayer.methods."releaseCGLPixelFormat:".skipped = true
-class.CAOpenGLLayer.methods."copyCGLContextForPixelFormat:".skipped = true
-class.CAOpenGLLayer.methods."releaseCGLContext:".skipped = true
-
 # I'm unsure of the ABI of the array this takes
 class.CAMediaTimingFunction.methods."getControlPointAtIndex:values:".skipped = true
-
-# Needs `EAGLDrawable` from `OpenGLES`
-class.CAEAGLLayer.skipped-protocols = ["EAGLDrawable"]
 
 ###
 ### Safety

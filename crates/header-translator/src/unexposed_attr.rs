@@ -389,7 +389,8 @@ impl UnexposedAttr {
             | "NS_SWIFT_NAME"
             | "NS_SWIFT_UNAVAILABLE_FROM_ASYNC"
             | "WK_SWIFT_ASYNC_NAME"
-            | "WK_SWIFT_ASYNC" => {
+            | "WK_SWIFT_ASYNC"
+            | "OPENGL_SWIFT_NAME" => {
                 let _ = get_arguments();
                 None
             }

@@ -751,7 +751,9 @@ dependencies = [
  "objc2-core-graphics",
  "objc2-core-image",
  "objc2-core-text",
+ "objc2-core-video",
  "objc2-foundation",
+ "objc2-open-gl",
  "objc2-quartz-core",
  "objc2-uniform-type-identifiers",
 ]
@@ -1204,6 +1206,7 @@ dependencies = [
  "objc2-image-io",
  "objc2-io-surface",
  "objc2-metal",
+ "objc2-open-gl",
 ]
 
 [[package]]
@@ -1361,6 +1364,7 @@ dependencies = [
  "objc2-core-graphics",
  "objc2-io-surface",
  "objc2-metal",
+ "objc2-open-gl",
 ]
 
 [[package]]
@@ -1601,6 +1605,21 @@ dependencies = [
  "objc2-foundation",
  "objc2-scene-kit",
  "objc2-sprite-kit",
+]
+
+[[package]]
+name = "objc2-gl-kit"
+version = "0.3.1"
+dependencies = [
+ "block2",
+ "dispatch2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-core-foundation",
+ "objc2-core-graphics",
+ "objc2-foundation",
+ "objc2-model-io",
+ "objc2-open-gl",
 ]
 
 [[package]]
@@ -2100,6 +2119,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-open-gl"
+version = "0.3.1"
+dependencies = [
+ "objc2",
+ "objc2-io-surface",
+]
+
+[[package]]
+name = "objc2-open-gl-es"
+version = "0.3.1"
+dependencies = [
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-foundation",
+ "objc2-io-surface",
+]
+
+[[package]]
 name = "objc2-os-log"
 version = "0.3.1"
 dependencies = [
@@ -2276,6 +2313,7 @@ dependencies = [
  "objc2-core-video",
  "objc2-foundation",
  "objc2-metal",
+ "objc2-open-gl",
 ]
 
 [[package]]
@@ -2363,9 +2401,11 @@ dependencies = [
  "objc2-core-graphics",
  "objc2-core-image",
  "objc2-foundation",
+ "objc2-gl-kit",
  "objc2-javascript-core",
  "objc2-metal",
  "objc2-model-io",
+ "objc2-open-gl",
  "objc2-quartz-core",
 ]
 
@@ -2565,6 +2605,7 @@ dependencies = [
  "objc2-core-graphics",
  "objc2-core-image",
  "objc2-foundation",
+ "objc2-gl-kit",
  "objc2-metal",
 ]
 
@@ -3144,6 +3185,7 @@ dependencies = [
  "objc2-game-controller",
  "objc2-game-kit",
  "objc2-gameplay-kit",
+ "objc2-gl-kit",
  "objc2-health-kit",
  "objc2-health-kit-ui",
  "objc2-home-kit",
@@ -3188,6 +3230,8 @@ dependencies = [
  "objc2-network-extension",
  "objc2-notification-center",
  "objc2-open-directory",
+ "objc2-open-gl",
+ "objc2-open-gl-es",
  "objc2-os-log",
  "objc2-osa-kit",
  "objc2-paravirtualized-graphics",

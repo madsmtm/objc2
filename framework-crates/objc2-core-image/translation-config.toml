@@ -1,6 +1,7 @@
 framework = "CoreImage"
 crate = "objc2-core-image"
 required-crates = ["objc2", "objc2-foundation"]
+undesired-default-dependencies = ["objc2-open-gl", "objc2-open-gl-es"] # OpenGL is deprecated
 custom-lib-rs = true
 macos = "10.11"
 maccatalyst = "13.0"
@@ -18,12 +19,3 @@ protocol.CIFilter.renamed = "CIFilterProtocol"
 class.CIImage.categories.AVDepthData.skipped = true
 class.CIImage.categories.AVPortraitEffectsMatte.skipped = true
 class.CIImage.categories.AVSemanticSegmentationMatte.skipped = true
-
-# Needs `EAGLContext`
-class.CIContext.methods."contextWithEAGLContext:".skipped = true
-class.CIContext.methods."contextWithEAGLContext:options:".skipped = true
-
-# Needs CGLContextObj from OpenGL
-class.CIContext.methods."contextWithCGLContext:pixelFormat:colorSpace:options:".skipped = true
-class.CIContext.methods."contextWithCGLContext:pixelFormat:options:".skipped = true
-class.CIContext.methods."contextForOfflineGPUAtIndex:colorSpace:options:sharedContext:".skipped = true

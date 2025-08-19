@@ -1,6 +1,6 @@
 | Framework | Why is this unsupported? |
 | --- | --- |
-| `AGL` | OpenGL-specific, use Metal instead. |
+| `AGL` | Removed in Xcode 26. |
 | `Accelerate` | Very C-centric, hard for us to map. |
 | `ActivityKit` | Swift-only. |
 | `AdAttributionKit` | Swift-only. |
@@ -42,8 +42,7 @@
 | `FinanceKit` | Swift-only. |
 | `FinanceKitUI` | Swift-only. |
 | `ForceFeedback` | Very C-centric and old. |
-| `GLKit` | OpenGL-specific, use Metal instead. |
-| `GLUT` | OpenGL-specific, use Metal instead. |
+| `GLUT` | Apple's redistribution of GLUT headers, better served by a different crate. |
 | `GSS` | Very C-centric and old. |
 | `GroupActivities` | Swift-only. |
 | `Hypervisor` | Very low-level, consider crates like `applevisor` instead. |
@@ -78,8 +77,6 @@
 | `Network` | TODO, see [#646](https://github.com/madsmtm/objc2/issues/646). |
 | `OpenAL` | Very C-centric, use newer Audio frameworks instead. |
 | `OpenCL` | Very C-centric and old. |
-| `OpenGL` | OpenGL-specific, use Metal instead. |
-| `OpenGLES` | OpenGL-specific, use Metal instead. |
 | `PCSC` | Too low-level, consider crates like `pcsc` instead. |
 | `ProximityReader` | Swift-only. |
 | `ProximityReaderStub` | Basically empty. |

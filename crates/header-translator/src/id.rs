@@ -115,7 +115,7 @@ impl Location {
             // C99 bool
             "_Builtin_stdbool" => "__builtin__".into(),
             // float_t and double_t
-            "_math" => "__builtin__".into(),
+            "_math" | "_tgmath" => "__builtin__".into(),
 
             // `core::ffi` types
             name if name.starts_with("_Builtin_stdarg") => {

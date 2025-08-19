@@ -1,6 +1,7 @@
 framework = "AppKit"
 crate = "objc2-app-kit"
 required-crates = ["objc2", "objc2-foundation"]
+undesired-default-dependencies = ["objc2-open-gl"] # OpenGL is deprecated
 custom-lib-rs = true
 macos = "10.0"
 maccatalyst = "13.0"
@@ -100,16 +101,6 @@ class.NSImageView.categories.NSSymbolEffect.skipped = true
 
 # Needs IconRef from HIServices / Carbon
 class.NSImage.methods."initWithIconRef:".skipped = true
-
-# OpenGL
-class.NSOpenGLContext.skipped = true
-class.NSOpenGLLayer.skipped = true
-class.NSOpenGLPixelFormat.skipped = true
-class.NSOpenGLPixelBuffer.skipped = true
-class.NSOpenGLView.skipped = true
-fn.NSOpenGLSetOption.skipped = true
-fn.NSOpenGLGetOption.skipped = true
-fn.NSOpenGLGetVersion.skipped = true
 
 # QTKit
 class.NSMovie.methods."initWithMovie:".skipped = true

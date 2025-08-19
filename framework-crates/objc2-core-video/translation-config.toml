@@ -1,6 +1,7 @@
 framework = "CoreVideo"
 crate = "objc2-core-video"
 required-crates = ["objc2-core-foundation"]
+undesired-default-dependencies = ["objc2-open-gl"] # OpenGL is deprecated
 custom-lib-rs = true
 macos = "10.4"
 maccatalyst = "13.0"
@@ -20,20 +21,6 @@ fn.CVPixelBufferPoolRelease.skipped = true
 fn.CVPixelBufferRelease.skipped = true
 fn.CVOpenGLTextureCacheRelease.skipped = true
 fn.CVBufferRelease.skipped = true
-
-# Needs CGLContextObj, CGLPixelFormatObj etc. from OpenGL
-fn.CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext.skipped = true
-fn.CVOpenGLBufferAttach.skipped = true
-fn.CVOpenGLTextureCacheCreate.skipped = true
-fn.CVOpenGLTextureGetTarget.skipped = true
-fn.CVOpenGLTextureGetName.skipped = true
-
-# Needs OpenGLES
-typedef.CVEAGLContext.skipped = true
-fn.CVOpenGLESTextureCacheCreate.skipped = true
-fn.CVOpenGLESTextureCacheCreateTextureFromImage.skipped = true
-fn.CVOpenGLESTextureGetTarget.skipped = true
-fn.CVOpenGLESTextureGetName.skipped = true
 
 # Unknown how to handle the calling convention here?
 fn.CVMetalTextureGetCleanTexCoords.skipped = true
