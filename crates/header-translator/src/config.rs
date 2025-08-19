@@ -444,6 +444,11 @@ impl LibraryConfig {
             assert_eq!(data.no_implementor, Default::default());
             assert_eq!(data.implementor, Default::default());
         }
+
+        let allowed_in = self.typedef_data.values().chain(self.statics.values());
+        for data in all.clone().filter(filter_ptr(allowed_in)) {
+            assert_eq!(data.nullability, Default::default());
+        }
     }
 
     pub(crate) fn get(&self, entity: &Entity<'_>) -> &StmtData {
@@ -567,6 +572,10 @@ pub struct StmtData {
     pub no_implementor: bool,
     #[serde(default)]
     pub implementor: Option<ItemIdentifier>,
+
+    // Typedef and statics
+    #[serde(default)]
+    pub nullability: Option<Nullability>,
 }
 
 impl StmtData {
@@ -585,13 +594,21 @@ pub struct CategoryData {
     pub renamed: Option<String>,
 }
 
-#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "lowercase")]
 pub enum Nullability {
-    #[default]
     Nullable,
     NonNull,
+}
+
+impl From<Nullability> for clang::Nullability {
+    fn from(nullability: Nullability) -> Self {
+        match nullability {
+            Nullability::Nullable => clang::Nullability::Nullable,
+            Nullability::NonNull => clang::Nullability::NonNull,
+        }
+    }
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

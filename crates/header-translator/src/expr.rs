@@ -288,19 +288,20 @@ impl Expr {
                         let chars = lit
                             .strip_suffix('\'')
                             .expect("start quote to have end quote");
+                        let chars = chars.replace("\\0", "\0");
 
                         match chars.len() {
                             // Byte-character literal
                             1 => Token::ByteChar(chars.as_bytes()[0]),
                             // Four character codes
                             4 => {
-                                let fcc = FourCharCode::from_str(chars)
+                                let fcc = FourCharCode::from_str(&chars)
                                     .expect("invalid four character code");
 
                                 Token::FourChar(fcc)
                             }
-                            _ => {
-                                error!(?chars, "unknown length of single-quoted string");
+                            len => {
+                                error!(len, ?chars, "unknown length of single-quoted string");
                                 Token::Literal("UNSUPPORTED".into())
                             }
                         }

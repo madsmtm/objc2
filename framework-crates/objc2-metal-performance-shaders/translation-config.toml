@@ -18,10 +18,6 @@ typedef.MPSPackedFloat3.skipped = true
 # Array in static is unimplemented
 static.MPSFunctionConstantNoneArray.skipped = true
 
-# Unclear how to handle these (non-null return error methods).
-class.MPSKeyedUnarchiver.methods."initForReadingFromData:error:".skipped = true
-class.MPSKeyedUnarchiver.methods."initForReadingFromData:device:error:".skipped = true
-
 # Emit these.
 const.MPSDeviceCapsIndex.skipped = false
 const.MPSFunctionConstantIndex.skipped = false

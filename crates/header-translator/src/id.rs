@@ -119,7 +119,7 @@ impl Location {
 
             // `core::ffi` types
             name if name.starts_with("_Builtin_stdarg") => {
-                warn!("va_list is not yet supported");
+                debug!("va_list is not yet supported");
                 "__core__.ffi".into()
             }
             // c_float and c_double

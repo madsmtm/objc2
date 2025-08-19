@@ -695,6 +695,7 @@ version = "0.3.1"
 dependencies = [
  "bitflags",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-core-bluetooth",
  "objc2-foundation",
@@ -2398,6 +2399,7 @@ name = "objc2-screen-time"
 version = "0.3.1"
 dependencies = [
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-app-kit",
  "objc2-foundation",

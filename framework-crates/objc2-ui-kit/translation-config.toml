@@ -20,9 +20,6 @@ external.CLRegion.module = "CoreLocation.CLRegion"
 class.UIFont.bridged-to = "CoreText.CTFont.CTFont"
 class.UIFontDescriptor.bridged-to = "CoreText.CTFontDescriptor.CTFontDescriptor"
 
-# CF_RETURNS_NOT_RETAINED
-fn.UIGraphicsGetCurrentContext.skipped = true
-
 # Both property and method
 class.NSDiffableDataSourceSectionSnapshot.methods.items.skipped = true
 

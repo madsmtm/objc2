@@ -16,13 +16,6 @@ external.CIBarcodeDescriptor.module = "CoreImage.CIBarcodeDescriptor"
 # Only available on iOS
 class.AVAsset.methods.preferredDisplayCriteria.skipped = true
 
-# CG*Ref as error return is not yet supported
-class.AVAssetImageGenerator.methods."copyCGImageAtTime:actualTime:error:".skipped = true
-protocol.AVCapturePhotoCaptureDelegate.methods."captureOutput:didFinishProcessingPhotoSampleBuffer:previewPhotoSampleBuffer:resolvedSettings:bracketSettings:error:".skipped = true
-protocol.AVCapturePhotoCaptureDelegate.methods."captureOutput:didFinishProcessingRawPhotoSampleBuffer:previewPhotoSampleBuffer:resolvedSettings:bracketSettings:error:".skipped = true
-class.AVSampleBufferGenerator.methods."createSampleBufferForRequest:error:".skipped = true
-class.AVSampleBufferGenerator.methods."createSampleBufferForRequest:addingToBatch:error:".skipped = true
-
 # Unclear error return
 protocol.AVAsynchronousKeyValueLoading.methods."statusOfValueForKey:error:".skipped = true
 class.AVMetadataItem.methods."statusOfValueForKey:error:".skipped = true

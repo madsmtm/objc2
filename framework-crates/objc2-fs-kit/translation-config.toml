@@ -3,14 +3,6 @@ crate = "objc2-fs-kit"
 required-crates = ["objc2", "objc2-foundation"]
 macos = "15.4"
 
-# Currently requires manual handling
-class.FSItemAttributes.methods.allocSize.skipped = true
-class.FSItemSetAttributesRequest.methods.allocSize.skipped = true
-
-# Unknown error result type.
-class.FSBlockDeviceResource.methods."readInto:startingAt:length:error:".skipped = true
-class.FSBlockDeviceResource.methods."writeFrom:startingAt:length:error:".skipped = true
-
 # Uses `libc::FREAD` and `libc::FWRITE`
 enum.FSVolumeOpenModes.use-value = true
 

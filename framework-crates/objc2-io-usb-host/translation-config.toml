@@ -9,13 +9,6 @@ maccatalyst = "14.0"
 class.IOUSBHostControllerInterface.methods."getPortStateMachineForCommand:error:".return.nullability = "nullable"
 class.IOUSBHostControllerInterface.methods."getPortStateMachineForPort:error:".return.nullability = "nullable"
 
-# Returns non-object pointer in error method, raises `unknown error result type`.
-class.IOUSBHostObject.methods."descriptorWithType:length:index:languageID:requestType:requestRecipient:error:".skipped = true
-class.IOUSBHostObject.methods."descriptorWithType:length:index:languageID:error:".skipped = true
-class.IOUSBHostObject.methods."descriptorWithType:length:error:".skipped = true
-class.IOUSBHostObject.methods."configurationDescriptorWithIndex:error:".skipped = true
-class.IOUSBHostObject.methods."configurationDescriptorWithConfigurationValue:error:".skipped = true
-
 # Needs uuid_t, unsure about the ABI.
 fn.IOUSBGetPlatformCapabilityDescriptorWithUUID.skipped = true
 

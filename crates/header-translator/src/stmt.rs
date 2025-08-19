@@ -1184,7 +1184,11 @@ impl Stmt {
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                let ty = Ty::parse_typedef(ty, context);
+                let mut ty = Ty::parse_typedef(ty, context);
+
+                if let Some(nullability) = data.nullability {
+                    ty.change_nullability(nullability.into());
+                }
 
                 if ty.needs_simd() {
                     debug!("simd types are not yet possible in typedefs");
@@ -1554,14 +1558,18 @@ impl Stmt {
             }
             EntityKind::VarDecl => {
                 let ty = entity.get_type().expect("var type");
-                let ty = Ty::parse_static(ty, context);
-                let mut value = None;
+                let mut ty = Ty::parse_static(ty, context);
+
+                if let Some(nullability) = data.nullability {
+                    ty.change_nullability(nullability.into());
+                }
 
                 if ty.needs_simd() {
                     debug!("simd types are not yet possible in statics");
                     return vec![];
                 }
 
+                let mut value = None;
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
@@ -1606,7 +1614,7 @@ impl Stmt {
                 let c_name = c_name.unwrap();
 
                 if entity.is_variadic() {
-                    warn!("can't handle variadic function");
+                    debug!(?c_name, "can't handle variadic function");
                     return vec![];
                 }
 

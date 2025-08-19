@@ -11,10 +11,6 @@ visionos = "1.0"
 external.MLModel.module = "CoreML.MLModel"
 external.__IOSurface.module = "IOSurface.IOSurfaceRef"
 
-# Breaks usual conventions for errors, the return value is _not_ nullable, so
-# the user must always check the error variable.
-class.CIFilter.methods."filterArrayFromSerializedXMP:inputImageExtent:error:".skipped = true
-
 # Both a protocol and a class, so we use Swift's naming scheme
 protocol.CIFilter.renamed = "CIFilterProtocol"
 

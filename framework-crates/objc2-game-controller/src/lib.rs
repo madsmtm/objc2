@@ -16,10 +16,5 @@ extern crate alloc;
 extern crate std;
 
 mod generated;
-#[cfg(feature = "GCInputNames")]
-mod input_names;
-
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
-#[cfg(feature = "GCInputNames")]
-pub use self::input_names::*;

@@ -24,7 +24,7 @@ syn = { version = "2.0", features = ["parsing"] }
 heck = "0.5"
 semver = { version = "1.0", features = ["serde"] }
 lenient_semver_parser = "0.4"
-four-char-code = "2.2.0"
+four-char-code = "2.3.0"
 regex = "1.6"
 clap = { version = "4.5.31", features = ["derive"] }
 itertools = "0.14.0"

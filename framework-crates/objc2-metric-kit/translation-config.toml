@@ -1,18 +1,10 @@
 framework = "MetricKit"
 crate = "objc2-metric-kit"
 required-crates = ["objc2", "objc2-foundation"]
-custom-lib-rs = true
 macos = "12.0"
 maccatalyst = "13.0"
 ios = "13.0"
 visionos = "1.0"
-
-# fails to strip const from `typedef const NSString *const MXLaunchTaskID;`
-typedef.MXLaunchTaskID.skipped = true
-
-# fails to parse method argument with `MXLaunchTaskID`
-class.MXMetricManager.methods."extendLaunchMeasurementForTaskID:error:".skipped = true
-class.MXMetricManager.methods."finishExtendedLaunchMeasurementForTaskID:error:".skipped = true
 
 # `os_log_t` not defined; skip for now
 class.MXMetricManager.methods."makeLogHandleWithCategory:".skipped = true

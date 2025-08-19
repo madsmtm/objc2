@@ -20,9 +20,8 @@ class.BENetworkingProcess.methods."makeLibXPCConnectionError:".skipped = true
 class.BERenderingProcess.methods."makeLibXPCConnectionError:".skipped = true
 class.BEWebContentProcess.methods."makeLibXPCConnectionError:".skipped = true
 
-# Incorrectly marked as returning non-null
-# Leads to `error: unknown error result type`
-class.BEProcessCapability.methods."requestWithError:".skipped = true
+# Documentation says the return can be nil.
+class.BEProcessCapability.methods."requestWithError:".return.nullability = "nullable"
 
 # FIXME: Make header-translator pick this up from the explicit protocol impl.
 class.BETextInteraction.main-thread-only = true

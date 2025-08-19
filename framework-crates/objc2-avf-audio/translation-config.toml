@@ -30,9 +30,6 @@ class.AVAudioSequencer.methods."hostTimeForBeats:error:".skipped = true
 class.AVAudioSequencer.methods."beatsForHostTime:error:".skipped = true
 class.AVAudioEngine.methods."renderOffline:toBuffer:error:".skipped = true
 
-# Non-null error return
-class.AVAudioSequencer.methods."dataWithSMPTEResolution:error:".skipped = true
-
 # Needs AppKit or UIKit
 class.AVAudioUnitComponent.methods.icon.skipped = true
 

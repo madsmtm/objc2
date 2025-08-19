@@ -10,6 +10,3 @@ visionos = "1.0"
 # TODO: Re-enable these once the relevant frameworks are present
 class.MTKMeshBufferAllocator.skipped-protocols = ["MDLMeshBufferAllocator"]
 class.MTKMeshBuffer.skipped-protocols = ["MDLMeshBuffer", "MDLNamed"]
-
-# error: unknown error result type
-class.MTKTextureLoader.methods."newTexturesWithContentsOfURLs:options:error:".skipped = true

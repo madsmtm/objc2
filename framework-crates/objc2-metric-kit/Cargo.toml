@@ -200,7 +200,11 @@ MXMetric = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
 ]
-MXMetricManager = ["objc2-foundation/NSArray"]
+MXMetricManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+]
 MXMetricPayload = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",

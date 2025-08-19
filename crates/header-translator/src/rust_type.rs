@@ -2088,51 +2088,63 @@ impl Ty {
         })
     }
 
-    pub(crate) fn method_return_with_error(&self) -> impl fmt::Display + '_ {
-        FormatterFn(move |f| {
-            match self {
-                Self::Pointer {
-                    nullability: Nullability::Nullable,
-                    lifetime: Lifetime::Unspecified,
-                    pointee,
-                    ..
-                } if pointee.is_static_object() => {
-                    // NULL -> error
+    pub fn method_return_inner_pointer(&self) -> impl fmt::Display + '_ {
+        // TODO(breaking): Return " -> self.plain()" here instead.
+        self.method_return()
+    }
+
+    pub(crate) fn method_return_with_error(&self) -> Option<impl fmt::Display + '_> {
+        let display_closure: Box<dyn Fn(&mut fmt::Formatter<'_>) -> _> = match self {
+            Self::Pointer {
+                nullability: Nullability::Nullable,
+                lifetime: Lifetime::Unspecified,
+                pointee,
+                ..
+            } if pointee.is_static_object() => {
+                // NULL -> error
+                Box::new(move |f| {
                     write!(
                         f,
                         " -> Result<&'static {}, Retained<{}>>",
                         pointee.behind_pointer(),
                         ItemIdentifier::nserror().path(),
                     )
-                }
-                Self::Pointer {
-                    nullability: Nullability::Nullable,
-                    lifetime: Lifetime::Unspecified,
-                    pointee,
-                    ..
-                } if pointee.is_object_like() => {
-                    // NULL -> error
+                })
+            }
+            Self::Pointer {
+                nullability: Nullability::Nullable,
+                lifetime: Lifetime::Unspecified,
+                pointee,
+                ..
+            } if pointee.is_object_like() => {
+                // NULL -> error
+                Box::new(move |f| {
                     write!(
                         f,
                         " -> Result<Retained<{}>, Retained<{}>>",
                         pointee.behind_pointer(),
                         ItemIdentifier::nserror().path(),
                     )
+                })
+            }
+            Self::Primitive(Primitive::C99Bool) | Self::Primitive(Primitive::ObjcBool) => {
+                if *self == Self::Primitive(Primitive::C99Bool) {
+                    warn!("C99's bool as Objective-C method return is ill supported");
                 }
-                Self::Primitive(Primitive::ObjcBool) => {
-                    // NO -> error
+                // NO -> error
+                Box::new(move |f| {
                     write!(
                         f,
                         " -> Result<(), Retained<{}>>",
                         ItemIdentifier::nserror().path()
                     )
-                }
-                _ => {
-                    error!("unknown error result type {self:?}");
-                    write!(f, "{}", self.method_return())
-                }
+                })
             }
-        })
+            _ => {
+                return None;
+            }
+        };
+        Some(FormatterFn(display_closure))
     }
 
     pub(crate) fn method_return_encoding_type(&self) -> impl fmt::Display + '_ {
@@ -2772,7 +2784,8 @@ impl Ty {
         if let Self::Pointer {
             // We always pass a place to write the error information,
             // so doesn't matter whether it's optional or not.
-            nullability: Nullability::Nullable | Nullability::NonNull,
+            // TODO(breaking): Allow Unspecified here too.
+            nullability: Nullability::NonNull | Nullability::Nullable,
             is_const,
             lifetime: Lifetime::Unspecified,
             pointee,
@@ -2796,9 +2809,9 @@ impl Ty {
                         return false;
                     }
                     assert!(!is_const, "expected error not const {self:?}");
-                    assert_eq!(
+                    assert_ne!(
                         *inner_nullability,
-                        Nullability::Nullable,
+                        Nullability::NonNull,
                         "invalid inner error nullability {self:?}"
                     );
                     assert!(!inner_is_const, "expected inner error not const {self:?}");
@@ -2998,6 +3011,20 @@ impl Ty {
             is_const: true,
             lifetime: Lifetime::Unspecified,
             pointee: Box::new(Self::Pointee(PointeeTy::CStr)),
+        }
+    }
+
+    pub(crate) fn change_nullability(&mut self, new: Nullability) {
+        match self {
+            Ty::Pointer { nullability, .. }
+            | Ty::Sel { nullability, .. }
+            | Ty::IncompleteArray { nullability, .. } => {
+                if *nullability == new {
+                    warn!(?nullability, ?new, "nullability already set");
+                }
+                *nullability = new;
+            }
+            ty => error!(?ty, "unexpected type for nullability attribute"),
         }
     }
 }

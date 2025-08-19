@@ -4,7 +4,7 @@ use std::fmt;
 use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
 
 use crate::availability::Availability;
-use crate::config::{self, MethodData, TypeOverride};
+use crate::config::{MethodData, TypeOverride};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
@@ -154,6 +154,7 @@ pub enum MemoryManagement {
     RetainedNew { returns_not_retained: bool },
     RetainedInit,
     RetainedNone { returns_retained: bool },
+    InnerPointer,
     Normal,
 }
 
@@ -175,13 +176,7 @@ impl MemoryManagement {
             in_selector_family(bytes, b"new"),
             in_selector_family(bytes, b"init"),
         ) {
-            (true, false, false, false, false) => {
-                // It's not really worth the effort to support these, since
-                // they're only defined on `NSObject` and `NSProxy`, and we
-                // have it in `ClassType` anyhow.
-                error!("the `alloc` method-family requires manual handling");
-                "alloc"
-            }
+            (true, false, false, false, false) => "alloc",
             (false, true, false, false, false) => "copy",
             (false, false, true, false, false) => "mutableCopy",
             (false, false, false, true, false) => "new",
@@ -206,7 +201,13 @@ impl MemoryManagement {
                 modifiers.designated_initializer,
                 selector_family,
             ) {
-                (false, false, true, false, false, "alloc") => Self::RetainedAlloc,
+                (false, false, true, false, false, "alloc") => {
+                    // It's not really worth the effort to support these, since
+                    // they're only defined on `NSObject` and `NSProxy`, and we
+                    // have it in `ClassType` anyhow.
+                    error!("the `alloc` method-family requires manual handling");
+                    Self::RetainedAlloc
+                }
                 (false, false, true, false, false, "copy") => Self::RetainedCopy {
                     returns_not_retained: false,
                 },
@@ -224,6 +225,9 @@ impl MemoryManagement {
                 },
                 (false, false, false, true, false, "new") => Self::RetainedNew {
                     returns_not_retained: true,
+                },
+                (false, false, false, false, false, "new") => Self::RetainedNone {
+                    returns_retained: false,
                 },
                 // For the `init` family there's another restriction:
                 // > must be instance methods
@@ -249,6 +253,7 @@ impl MemoryManagement {
                 (false, false, returns_retained, _, false, "none") => {
                     Self::RetainedNone { returns_retained }
                 }
+                (true, false, false, _, false, "none") => Self::InnerPointer,
                 data => {
                     error!(?data, "invalid MemoryManagement retainable attributes");
                     Self::RetainedNone {
@@ -286,7 +291,6 @@ pub struct Method {
     memory_management: MemoryManagement,
     arguments: Vec<(String, Ty)>,
     result_type: Ty,
-    is_error: bool,
     safe: bool,
     is_pub: bool,
     // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
@@ -398,6 +402,11 @@ impl Method {
         let selector = entity.get_name().expect("method selector");
         let _span = debug_span!("method", selector).entered();
 
+        // TODO: Strip these from function name?
+        // selector.ends_with("error:")
+        // || selector.ends_with("AndReturnError:")
+        // || selector.ends_with("WithError:")
+
         if data.skipped {
             return None;
         }
@@ -422,7 +431,7 @@ impl Method {
         }
 
         if entity.is_variadic() {
-            warn!("can't handle variadic method");
+            debug!(?selector, "can't handle variadic method");
             return None;
         }
 
@@ -434,7 +443,7 @@ impl Method {
             error!("sendable on method");
         }
 
-        let mut arguments: Vec<_> = entity
+        let arguments: Vec<_> = entity
             .get_arguments()
             .expect("method arguments")
             .into_iter()
@@ -493,21 +502,6 @@ impl Method {
             );
         }
 
-        let is_error = if let Some((_, ty)) = arguments.last() {
-            ty.argument_is_error_out()
-        } else {
-            false
-        };
-
-        // TODO: Strip these from function name?
-        // selector.ends_with("error:")
-        // || selector.ends_with("AndReturnError:")
-        // || selector.ends_with("WithError:")
-
-        if is_error {
-            arguments.pop();
-        }
-
         if let Some(qualifiers) = entity.get_objc_qualifiers() {
             error!(?qualifiers, "unsupported qualifiers on return type");
         }
@@ -562,7 +556,6 @@ impl Method {
                 memory_management,
                 arguments,
                 result_type,
-                is_error,
                 safe: data.unsafe_.safe(),
                 is_pub,
                 non_isolated: modifiers.non_isolated,
@@ -654,7 +647,6 @@ impl Method {
                 memory_management,
                 arguments: Vec::new(),
                 result_type: ty,
-                is_error: false,
                 safe: getter_data.unsafe_.safe(),
                 is_pub,
                 non_isolated: modifiers.non_isolated,
@@ -705,7 +697,6 @@ impl Method {
                     memory_management,
                     arguments: vec![(name, ty)],
                     result_type,
-                    is_error: false,
                     safe: setter_data.unsafe_.safe(),
                     is_pub,
                     non_isolated: modifiers.non_isolated,
@@ -742,9 +733,6 @@ impl Method {
             items.extend(arg_ty.required_items());
         }
         items.extend(self.result_type.required_items());
-        if self.is_error {
-            items.push(ItemTree::nserror());
-        }
         if self.mainthreadonly {
             items.push(ItemTree::main_thread_marker());
         }
@@ -765,9 +753,6 @@ impl Method {
                 write!(f, "check_method::<(")?;
                 for (_, arg_ty) in &self.arguments {
                     write!(f, "{},", arg_ty.method_argument_encoding_type())?;
-                }
-                if self.is_error {
-                    write!(f, "*mut *mut NSError,")?;
                 }
                 write!(f, "), {}>(", self.result_type.method_return_encoding_type())?;
                 if self.is_class {
@@ -790,6 +775,22 @@ impl Method {
 impl fmt::Display for Method {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let _span = debug_span!("method", self.fn_name).entered();
+
+        let mut arguments = &self.arguments[..];
+        let error_return = if let Some(((_, ty), rest)) = arguments.split_last() {
+            if ty.argument_is_error_out() {
+                if let Some(error_return) = self.result_type.method_return_with_error() {
+                    arguments = rest;
+                    Some(error_return)
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
+        };
 
         // TODO: Use this somehow?
         // if self.non_isolated {
@@ -818,7 +819,7 @@ impl fmt::Display for Method {
             writeln!(f, "        #[optional]")?;
         }
 
-        let error_trailing = if self.is_error { "_" } else { "" };
+        let error_trailing = if error_return.is_some() { "_" } else { "" };
         writeln!(
             f,
             "        #[unsafe(method({}{}))]",
@@ -852,6 +853,7 @@ impl fmt::Display for Method {
             MemoryManagement::RetainedNone {
                 returns_retained: true,
             } => ("copy", Some("returns_retained")),
+            MemoryManagement::InnerPointer => ("none", None),
             MemoryManagement::Normal => ("none", None),
         };
         if let Some(attr) = attr {
@@ -886,7 +888,7 @@ impl fmt::Display for Method {
         }
 
         // Arguments
-        for (param, arg_ty) in &self.arguments {
+        for (param, arg_ty) in arguments {
             let param = handle_reserved(&crate::to_snake_case(param));
             write!(f, "{param}: {}, ", arg_ty.method_argument())?;
         }
@@ -896,8 +898,10 @@ impl fmt::Display for Method {
         write!(f, ")")?;
 
         // Result
-        if self.is_error {
-            write!(f, "{}", self.result_type.method_return_with_error())?;
+        if let MemoryManagement::InnerPointer = self.memory_management {
+            write!(f, "{}", self.result_type.method_return_inner_pointer())?;
+        } else if let Some(error_return) = error_return {
+            write!(f, "{error_return}")?;
         } else {
             write!(f, "{}", self.result_type.method_return())?;
         }
@@ -933,26 +937,7 @@ pub(crate) fn handle_reserved(name: &str) -> String {
 }
 
 pub(crate) fn apply_type_override(ty: &mut Ty, or: &TypeOverride) {
-    if let Some(nullability) = &or.nullability {
-        let c_nullability = match nullability {
-            config::Nullability::Nullable => clang::Nullability::Nullable,
-            config::Nullability::NonNull => clang::Nullability::NonNull,
-        };
-
-        let check_and_set_nullability = |current_nullability: &mut clang::Nullability| {
-            if *current_nullability == c_nullability {
-                warn!("nullability already set to {:?}", current_nullability);
-            }
-            *current_nullability = c_nullability;
-        };
-
-        match ty {
-            Ty::Pointer { nullability, .. }
-            | Ty::Sel { nullability, .. }
-            | Ty::IncompleteArray { nullability, .. } => {
-                check_and_set_nullability(nullability);
-            }
-            _ => panic!("unexpected type: {:?}", ty),
-        };
+    if let Some(nullability) = or.nullability {
+        ty.change_nullability(nullability.into());
     }
 }

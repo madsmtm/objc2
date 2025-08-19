@@ -6,6 +6,3 @@ maccatalyst = "13.0"
 ios = "9.0"
 tvos = "9.0"
 visionos = "1.0"
-
-# error: unknown error result type
-class.MDLAsset.methods."initWithURL:vertexDescriptor:bufferAllocator:preserveTopology:error:".skipped = true

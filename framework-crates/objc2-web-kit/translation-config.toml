@@ -7,16 +7,9 @@ maccatalyst = "13.0"
 ios = "16.0"
 visionos = "1.0"
 
-# Uses NS_RETURNS_NOT_RETAINED on a `NSString*`
-class.DOMMutationEvent.methods.newValue.skipped = true
+# Not marked as nullable, but should be.
+class.WKNavigationAction.methods.sourceFrame.return.nullability = "nullable"
 
-# Not marked as nullable but should be; manually defined in additions
-class.WKNavigationAction.methods.sourceFrame.skipped = true
-
-# Needs `nw_proxy_config_t`
+# Needs `nw_proxy_config_t` from the Network framework
 class.WKWebsiteDataStore.methods.proxyConfigurations.skipped = true
 class.WKWebsiteDataStore.methods."setProxyConfigurations:".skipped = true
-
-# error: translator assertion failure: invalid error nullability (left: Unspecified) (Right: Nullable)
-class.WebHistory.methods."loadFromURL:error:".skipped = true
-class.WebHistory.methods."saveToURL:error:".skipped = true

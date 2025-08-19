@@ -1,7 +1,6 @@
 framework = "GameController"
 crate = "objc2-game-controller"
 required-crates = ["objc2", "objc2-foundation"]
-custom-lib-rs = true
 macos = "10.9"
 maccatalyst = "13.0"
 ios = "7.0"
@@ -9,48 +8,6 @@ tvos = "9.0"
 visionos = "1.0"
 
 external.CHHapticEngine.module = "CoreHaptics.CHHapticEngine"
-
-# tries to parse these as `pub type <name> = *const NSString`; fix manually for now
-typedef.GCInputElementName.skipped = true
-typedef.GCInputButtonName.skipped = true
-typedef.GCInputAxisName.skipped = true
-typedef.GCInputSwitchName.skipped = true
-typedef.GCInputDirectionPadName.skipped = true
-# corresponding constants which we want to treat as (nonnull); fix manually for now
-static.GCInputButtonA.skipped = true
-static.GCInputButtonB.skipped = true
-static.GCInputButtonX.skipped = true
-static.GCInputButtonY.skipped = true
-static.GCInputDirectionPad.skipped = true
-static.GCInputLeftThumbstick.skipped = true
-static.GCInputRightThumbstick.skipped = true
-static.GCInputLeftShoulder.skipped = true
-static.GCInputRightShoulder.skipped = true
-static.GCInputLeftTrigger.skipped = true
-static.GCInputRightTrigger.skipped = true
-static.GCInputLeftThumbstickButton.skipped = true
-static.GCInputRightThumbstickButton.skipped = true
-static.GCInputButtonHome.skipped = true
-static.GCInputButtonMenu.skipped = true
-static.GCInputButtonOptions.skipped = true
-static.GCInputButtonShare.skipped = true
-static.GCInputXboxPaddleOne.skipped = true
-static.GCInputXboxPaddleTwo.skipped = true
-static.GCInputXboxPaddleThree.skipped = true
-static.GCInputXboxPaddleFour.skipped = true
-static.GCInputDualShockTouchpadOne.skipped = true
-static.GCInputDualShockTouchpadTwo.skipped = true
-static.GCInputDualShockTouchpadButton.skipped = true
-static.GCInputSteeringWheel.skipped = true
-static.GCInputShifter.skipped = true
-static.GCInputPedalAccelerator.skipped = true
-static.GCInputPedalBrake.skipped = true
-static.GCInputPedalClutch.skipped = true
-static.GCInputLeftPaddle.skipped = true
-static.GCInputRightPaddle.skipped = true
-
-# Uses GCInputButtonName
-fn.GCInputArcadeButtonName.skipped = true
 
 # Needs `IOHIDDeviceRef` from IOKit
 class.GCController.methods."supportsHIDDevice:".skipped = true

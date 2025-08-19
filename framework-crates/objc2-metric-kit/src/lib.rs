@@ -16,11 +16,5 @@ extern crate alloc;
 extern crate std;
 
 mod generated;
-#[cfg(feature = "MXMetricManager")]
-mod manager;
-
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
-#[cfg(feature = "MXMetricManager")]
-#[allow(unused_imports, unreachable_pub)]
-pub use self::manager::*;

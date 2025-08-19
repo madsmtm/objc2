@@ -151,12 +151,6 @@ const.IOPagedPixels.skipped = false
 const.IO_SampleTypeAlpha.skipped = false
 const.IO_SampleTypeSkip.skipped = false
 
-# https://github.com/shurizzle/rust-four-char-code/issues/2
-const.kConnectionIgnore.skipped = true
-const.kConnectionControllerDepthsSupported.skipped = true
-const.kConnectionControllerColorDepth.skipped = true
-const.kConnectionControllerDitherControl.skipped = true
-
 # Needs OSSpinLock
 struct.StdFBShmem_t.skipped = true
 typedef.StdFBShmem_t.skipped = true

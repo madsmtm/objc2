@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Added `IOKit` "serial" submodule.
-* Added various missing APIs.
+* Added a lot of missing APIs.
 * Added `AsRef` impls for toll-free bridging between types like `CFString` and `NSString`.
 * Added `cast_unchecked` methods on collection types like `NSArray<T>` and `CFDictionary<K, V>`.
   This should allow more easily converting the generics on said types.
@@ -31,7 +31,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: The media selection option on `AVAssetVariantQualifier` is now nullable.
 
 ### Fixed
-* **BREAKING**: Fix structs with packed alignment by marking them `#[repr(packed(...))]`.
+* **BREAKING**: Fixed structs with packed alignment by marking them `#[repr(packed(...))]`.
+* **BREAKING**: Fixed a few `MXMetricManager` methods that were instance methods instead of class methods.
 
 ## [0.3.1] - 2025-04-19
 [0.3.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.0...frameworks-0.3.1

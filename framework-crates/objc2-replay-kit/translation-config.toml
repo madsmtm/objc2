@@ -7,5 +7,5 @@ ios = "9.0"
 tvos = "10.0"
 visionos = "1.0"
 
-# Belongs in ScreenCaptureKit
+# Belongs in ScreenCaptureKit, redefined here too for some reason?
 static.SCStreamErrorDomain.skipped = true

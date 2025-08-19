@@ -10,11 +10,6 @@ visionos = "1.0"
 
 external.ASAccessory.module = "AccessorySetupKit.ASAccessory"
 
-# error: translator assertion failure: (left `"NSString"`) (right `"const NSString"`)
-static.kNEHotspotHelperOptionDisplayName.skipped = true
-static.NEFilterProviderRemediationMapRemediationURLs.skipped = true
-static.NEFilterProviderRemediationMapRemediationButtonTexts.skipped = true
-
 # Needs Network framework
 class.NEAppProxyFlow.methods."setMetadata:".skipped = true
 class.NEAppProxyFlow.methods.networkInterface.skipped = true

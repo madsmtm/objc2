@@ -51,6 +51,7 @@ IMKCandidates = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
     "objc2-foundation/objc2-core-foundation",
 ]
 IMKInputController = [

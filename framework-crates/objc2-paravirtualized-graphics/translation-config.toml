@@ -5,9 +5,6 @@ custom-lib-rs = true
 macos = "11.0"
 maccatalyst = "14.0"
 
-# Returns c99 boolean, ill supported as an error return type
-protocol.PGDevice.methods."willResumeWithSuspendState:error:".skipped = true
-
 # Block returns c99 boolean, which doesn't impl Encode
 typedef.PGMapMemory.skipped = true
 class.PGDeviceDescriptor.methods.mapMemory.skipped = true

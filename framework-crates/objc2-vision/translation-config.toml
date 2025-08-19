@@ -18,12 +18,6 @@ class.VNTrackingRequest.methods."supportedNumberOfTrackersAndReturnError:".skipp
 # apinotes are being weird here
 class.VNRecognizedText.methods."boundingBoxForRange:error:".skipped = true
 
-# Needs CoreVideo to have proper retain semantics
-class.VNInstanceMaskObservation.methods."generateMaskForInstances:error:".skipped = true
-class.VNInstanceMaskObservation.methods."generateMaskedImageOfInstances:fromRequestHandler:croppedToInstancesExtent:error:".skipped = true
-class.VNInstanceMaskObservation.methods."generateScaledMaskForImageForInstances:fromRequestHandler:error:".skipped = true
-
-
 
 ###
 ### Safety

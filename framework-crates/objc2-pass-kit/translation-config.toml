@@ -23,6 +23,3 @@ const.PKPassTypeAny.skipped = true
 #
 #     import PassKit.PKPassRelevantDate
 class.PKPass.methods.relevantDates.skipped = true
-
-# NS_RETURNS_INNER_POINTER, currently ill-supported.
-class.PKIssuerProvisioningExtensionPassEntry.methods.art.skipped = true

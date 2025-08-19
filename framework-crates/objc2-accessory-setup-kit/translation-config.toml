@@ -5,4 +5,3 @@ ios = "18.0"
 maccatalyst = "18.0"
 
 external.CBUUID.module = "CoreBluetooth.CBUUID"
-class.ASAccessorySession.methods."activateWithQueue:eventHandler:".skipped = true

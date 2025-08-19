@@ -114,5 +114,8 @@ AMWorkflowView = [
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",
 ]
-AMWorkspace = []
+AMWorkspace = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+]
 AutomatorErrors = []
