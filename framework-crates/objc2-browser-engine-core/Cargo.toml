@@ -17,6 +17,16 @@ workspace = true
 
 [dependencies]
 libc = { workspace = true, optional = true }
+objc2 = { workspace = true, optional = true, features = ["std"] }
+objc2-avf-audio = { workspace = true, optional = true, features = [
+    "AVAudioSession",
+    "AVAudioSessionRoute",
+] }
+objc2-foundation = { workspace = true, optional = true, features = [
+    "NSArray",
+    "NSError",
+    "alloc",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
@@ -29,13 +39,21 @@ targets = [
 [features]
 default = [
     "std",
+    "BEAudioSession",
     "BEMemory",
     "BEkevent",
     "libc",
+    "objc2",
+    "objc2-avf-audio",
+    "objc2-foundation",
 ]
 std = ["alloc"]
 alloc = []
 libc = ["dep:libc"]
+objc2 = ["dep:objc2"]
+objc2-avf-audio = ["dep:objc2-avf-audio"]
+objc2-foundation = ["dep:objc2-foundation"]
 
+BEAudioSession = []
 BEMemory = []
 BEkevent = []

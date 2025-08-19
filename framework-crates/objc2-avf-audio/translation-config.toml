@@ -36,6 +36,12 @@ class.AVAudioSequencer.methods."dataWithSMPTEResolution:error:".skipped = true
 # Needs AppKit or UIKit
 class.AVAudioUnitComponent.methods.icon.skipped = true
 
+# Needs CASpatialAudioExperience, which is not available on macOS (where header-translator runs).
+class.AVAudioOutputNode.methods.intendedSpatialExperience.skipped = true
+class.AVAudioOutputNode.methods."setIntendedSpatialExperience:".skipped = true
+class.AVAudioPlayer.methods.intendedSpatialExperience.skipped = true
+class.AVAudioPlayer.methods."setIntendedSpatialExperience:".skipped = true
+
 class.AVAudioBuffer.skipped-protocols = ["NSMutableCopying"]
 class.AVAudioPCMBuffer.skipped-protocols = ["NSMutableCopying"]
 class.AVAudioCompressedBuffer.skipped-protocols = ["NSMutableCopying"]

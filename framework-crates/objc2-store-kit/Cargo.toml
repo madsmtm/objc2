@@ -35,6 +35,12 @@ objc2-app-kit = { workspace = true, optional = true, features = [
     "NSViewController",
 ] }
 
+[target.'cfg(not(any(target_os = "tvos", target_os = "watchos")))'.dependencies]
+objc2-background-assets = { workspace = true, optional = true, features = [
+    "BADownloaderExtension",
+    "BAManagedDownloaderExtension",
+] }
+
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
@@ -47,6 +53,7 @@ targets = [
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
 ]
+features = ["objc2-background-assets"]
 
 [features]
 default = [
@@ -58,6 +65,7 @@ default = [
     "SKCloudServiceController",
     "SKCloudServiceSetupViewController",
     "SKDownload",
+    "SKDownloaderExtension",
     "SKError",
     "SKOverlay",
     "SKOverlayConfiguration",
@@ -86,6 +94,7 @@ alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
+objc2-background-assets = ["dep:objc2-background-assets"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 
 SKANError = ["objc2-foundation/NSString"]
@@ -122,6 +131,7 @@ SKDownload = [
     "objc2-foundation/NSURL",
     "objc2-foundation/NSValue",
 ]
+SKDownloaderExtension = []
 SKError = ["objc2-foundation/NSString"]
 SKOverlay = ["objc2-foundation/NSError"]
 SKOverlayConfiguration = ["objc2-foundation/NSString"]

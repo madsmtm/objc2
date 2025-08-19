@@ -9,6 +9,7 @@ watchos = "2.0"
 visionos = "1.0"
 
 external.INIntent.module = "Intents.INIntent"
+external.INIntentResponse.module = "Intents.INIntentResponse"
 external.UTType.module = "UniformTypeIdentifiers.UTType"
 external.CKContainer.module = "CloudKit.CKContainer"
 external.CKShare.module = "CloudKit.CKShare"
@@ -128,6 +129,8 @@ class.UITraitImageDynamicRange.main-thread-only = true
 class.UITraitTypesettingLanguage.main-thread-only = true
 class.UITraitSceneCaptureState.main-thread-only = true
 class.UITraitListEnvironment.main-thread-only = true
+class.UITraitSplitViewControllerLayoutEnvironment.main-thread-only = true
+class.UITraitHDRHeadroomUsageLimit.main-thread-only = true
 
 # We don't really want objc2-ui-kit to depend on objc2-core-text
 class.NSAdaptiveImageGlyph.skipped-protocols = ["CTAdaptiveImageProviding"]

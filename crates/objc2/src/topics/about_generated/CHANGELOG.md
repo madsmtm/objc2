@@ -20,10 +20,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   This should allow more easily converting the generics on said types.
 
 ### Changed
-* Updated SDK from Xcode 16.3 to 16.4.
+* Updated SDK from Xcode 16.3 to 26.0.
 
   View the release notes to learn more details:
   - [16.4](https://developer.apple.com/documentation/xcode-release-notes/xcode-16_4-release-notes)
+  - [26.0](https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes)
 
   Breaking changes are noted elsewhere in this changelog entry.
 * **BREAKING**: The reply block in `FSVolumeRenameOperations::setVolumeName_replyHandler` now

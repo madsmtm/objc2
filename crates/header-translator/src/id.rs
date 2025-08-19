@@ -69,6 +69,22 @@ pub struct Location {
 impl Location {
     fn new(module_path: impl Into<Box<str>>) -> Self {
         let module_path = module_path.into();
+
+        // We don't care about the difference between the different
+        // DarwinFoundation modules (for now at least).
+        if let Some(rest) = module_path.strip_prefix("DarwinFoundation.") {
+            return Self::new(rest);
+        }
+        if let Some(rest) = module_path.strip_prefix("_DarwinFoundation1.") {
+            return Self::new(rest);
+        }
+        if let Some(rest) = module_path.strip_prefix("_DarwinFoundation2.") {
+            return Self::new(rest);
+        }
+        if let Some(rest) = module_path.strip_prefix("_DarwinFoundation3.") {
+            return Self::new(rest);
+        }
+
         let module_path = match &*module_path {
             // Remove submodules for Objective-C.
             name if name.starts_with("ObjectiveC") => "ObjectiveC".into(),
@@ -83,7 +99,9 @@ impl Location {
 
             // Various macros
             name if name.starts_with("os_availability") => "__builtin__".into(),
-            "DarwinFoundation.cdefs" => "__builtin__".into(),
+            name if name.starts_with("_AvailabilityInternal") => "__builtin__".into(),
+            name if name.starts_with("availability") => "__builtin__".into(),
+            "cdefs" => "__builtin__".into(),
             "Darwin.libkern.OSByteOrder" => "__builtin__".into(),
             "TargetConditionals" => "__builtin__".into(),
             "Darwin.AssertMacros" => "__builtin__".into(),
@@ -108,7 +126,7 @@ impl Location {
             "_Builtin_stdint" | "_stdint" => "__builtin__".into(),
             name if name.starts_with("_Builtin_stddef") => "__builtin__".into(),
             // Implementation of the above
-            "DarwinFoundation.types.machine_types" => "__builtin__".into(),
+            name if name.starts_with("types.machine_types") => "__builtin__".into(),
             // UINT_MAX, FLT_MIN, DBL_MAX, etc.
             // Handled manually in `expr.rs`.
             "_Builtin_limits" => "__builtin__".into(),
@@ -132,8 +150,8 @@ impl Location {
             name if name.starts_with("sys_types") => "__libc__".into(),
             name if name.starts_with("Darwin.POSIX") => "__libc__".into(),
             name if name.starts_with("_signal") => "__libc__".into(),
-            "DarwinFoundation.types.sys_types" => "__libc__".into(),
-            "DarwinFoundation.qos" => "__libc__".into(),
+            "types.sys_types" => "__libc__".into(),
+            "qos" => "__libc__".into(),
             "_stdio" => "__libc__".into(),
             "_time.timespec" => "__libc__".into(),
             "_fenv" => "__libc__".into(),
@@ -149,9 +167,12 @@ impl Location {
             "ptrauth" => "__libc__".into(),
             "Darwin.uuid" => "__libc__".into(),
             "unistd" => "__libc__".into(),
+            "Darwin.malloc" => "__libc__".into(),
+            "_stdlib.malloc.malloc_type" => "__libc__".into(),
 
             // Will be moved to the `mach2` crate in `libc` v1.0
             name if name.starts_with("Darwin.Mach") => "__libc__".into(),
+            "mach.port.mach_port_t" => "__libc__".into(),
             "mach.mach_port_t" => "__libc__".into(),
             "_mach_port_t" => "__libc__".into(),
 
@@ -163,6 +184,18 @@ impl Location {
             name if name.starts_with("IOBluetoothUI.objc") => name
                 .replace("IOBluetoothUI.objc", "IOBluetoothUI.objc2")
                 .into(),
+
+            // UIUtilities "subframework". It doesn't seem to be intentionally
+            // exposed. It's small enough that we'll just inline it into
+            // UIKit for now (which is where it was extracted from anyhow).
+            "UIUtilities.UIGeometry" => "UIKit.UIGeometry".into(),
+            "UIUtilities.UICoordinateSpace" => "UIKit.UIView".into(),
+            "UIUtilities.UIDefines" => "UIKit.UIKitDefines".into(),
+
+            // Similarly, _LocationEssentials was extracted from CoreLocation.
+            "_LocationEssentials" => "CoreLocation".into(),
+            "_LocationEssentials.CLEssentionsAvailability" => "CoreLocation.CLAvailability".into(),
+            "_LocationEssentials.CLLocationEssentials" => "CoreLocation.CLLocation".into(),
 
             _ => module_path,
         };
