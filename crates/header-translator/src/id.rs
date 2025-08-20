@@ -164,6 +164,10 @@ impl Location {
                 .replace("IOBluetoothUI.objc", "IOBluetoothUI.objc2")
                 .into(),
 
+            // Remove unnecessary CFBase module, a lot of trait impls aren't
+            // available without it, which can be quite confusing.
+            "CoreFoundation.CFBase" => "CoreFoundation".into(),
+
             _ => module_path,
         };
 
@@ -341,12 +345,6 @@ impl<N: ToOptionString> ItemIdentifier<N> {
             // Assume item to be a built-in macro like __nonnull if no file.
             Location::new("__builtin__")
         };
-
-        // Remove unnecessary CFBase module, a lot of trait impls aren't
-        // available without it, which can be quite confusing.
-        if location == Location::new("CoreFoundation.CFBase") {
-            location = Location::new("CoreFoundation");
-        }
 
         // Replace module from external data if it exists, such that all
         // subsequent usage of the location, including in other configuration
