@@ -12,6 +12,7 @@ use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::availability::Availability;
 use crate::cfgs::PlatformCfg;
+use crate::config::SafetyKind;
 use crate::config::StmtData;
 use crate::config::{Config, LibraryConfig, MethodData};
 use crate::context::Context;
@@ -215,13 +216,9 @@ fn parse_methods(
 
                 let data = get_data(&selector);
 
-                if let Some((designated_initializer, method)) = Method::parse_method(
-                    entity,
-                    data,
-                    thread_safety.inferred_mainthreadonly(),
-                    is_pub,
-                    context,
-                ) {
+                if let Some((designated_initializer, method)) =
+                    Method::parse_method(entity, data, thread_safety, is_pub, context)
+                {
                     if designated_initializer {
                         designated_initializers.push(method.selector.clone());
                     }
@@ -244,7 +241,7 @@ fn parse_methods(
                     partial,
                     getter_data,
                     setter_data,
-                    thread_safety.inferred_mainthreadonly(),
+                    thread_safety,
                     is_pub,
                     context,
                 );
@@ -1739,6 +1736,32 @@ impl Stmt {
                     None
                 };
 
+                let safe = if !arguments
+                    .iter()
+                    .all(|(_, ty)| ty.is_safe_in_argument(false))
+                {
+                    // We don't care about the return type when checking safety.
+                    if !data.unsafe_.unwrap_or(true) {
+                        error!(
+                            ?id,
+                            ?arguments,
+                            "function with unsafe arg was marked as safe"
+                        );
+                        true // TODO(breaking): Change to false
+                    } else {
+                        false
+                    }
+                } else if let Some(unsafe_) = data.unsafe_ {
+                    // Allow overriding safety with config.
+                    !unsafe_
+                } else {
+                    // Functions are otherwise allowed to be safe by default.
+                    context
+                        .library(Location::from_entity(entity, context).unwrap())
+                        .unsafe_default_safe
+                        .contains(&SafetyKind::Functions)
+                };
+
                 vec![Self::FnDecl {
                     id: id.require_name(),
                     c_name,
@@ -1749,7 +1772,7 @@ impl Stmt {
                     first_arg_is_self: false,
                     result_type,
                     body,
-                    safe: data.unsafe_.safe(),
+                    safe,
                     must_use,
                     abi,
                     returns_retained,

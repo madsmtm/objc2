@@ -78,8 +78,8 @@ fn.IOSurfaceAllowsPixelSizeCasting.unsafe = false
 
 # ObjC
 class.IOSurface.methods."initWithProperties:".unsafe = false
-class.IOSurface.methods."lockWithOptions:seed:".unsafe = false
-class.IOSurface.methods."unlockWithOptions:seed:".unsafe = false
+class.IOSurface.methods."lockWithOptions:seed:".unsafe = false # TODO(breaking): Mark as unsafe (takes pointer)
+class.IOSurface.methods."unlockWithOptions:seed:".unsafe = false # TODO(breaking): Mark as unsafe (takes pointer)
 class.IOSurface.methods.allocationSize.unsafe = false
 class.IOSurface.methods.width.unsafe = false
 class.IOSurface.methods.height.unsafe = false

@@ -144,15 +144,12 @@ impl Module {
     ) -> impl fmt::Display + 'a {
         FormatterFn(move |f| {
             for (name, module) in &self.submodules {
-                // Do not emit CoreFoundation.CFBase feature.
-                if name != "CFBase" {
-                    let location = emission_location.add_module(name);
-                    write!(
-                        f,
-                        "#[cfg(feature = {:?})]",
-                        location.feature_names().last().unwrap()
-                    )?;
-                }
+                let location = emission_location.add_module(name);
+                write!(
+                    f,
+                    "#[cfg(feature = {:?})]",
+                    location.feature_names().last().unwrap()
+                )?;
                 let name = clean_name(name);
                 if module.submodules.is_empty() {
                     writeln!(f, "#[path = \"{name}.rs\"]")?;

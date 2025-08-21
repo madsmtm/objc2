@@ -236,6 +236,10 @@ impl ThreadSafety {
         self.explicit == Some(ThreadSafetyAttr::MainThreadOnly)
     }
 
+    pub(crate) fn inferred_sendable(&self) -> bool {
+        self.inferred == ThreadSafetyAttr::Sendable
+    }
+
     pub(crate) fn explicit_sendable(&self) -> bool {
         self.explicit == Some(ThreadSafetyAttr::Sendable)
     }

@@ -174,7 +174,14 @@ impl Location {
         Self { module_path }
     }
 
-    pub fn from_file(file: File<'_>) -> Self {
+    pub fn from_entity(entity: &Entity<'_>, context: &Context<'_>) -> Option<Self> {
+        entity
+            .get_location()
+            .and_then(|loc| loc.get_expansion_location().file)
+            .map(|file| Self::from_file(file, context))
+    }
+
+    pub fn from_file(file: File<'_>, _context: &Context<'_>) -> Self {
         // Get from module first if available
         if let Some(module) = file.get_module() {
             return Self::new(module.get_full_name());
@@ -335,16 +342,10 @@ impl<N: ToOptionString> ItemIdentifier<N> {
     ///
     /// The C name will be renamed according to the configuration.
     pub fn with_name(mut name: N, entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let file = entity
-            .get_location()
-            .and_then(|loc| loc.get_expansion_location().file);
-
-        let mut location = if let Some(file) = file {
-            Location::from_file(file)
-        } else {
+        let mut location = Location::from_entity(entity, context).unwrap_or_else(|| {
             // Assume item to be a built-in macro like __nonnull if no file.
             Location::new("__builtin__")
-        };
+        });
 
         // Replace module from external data if it exists, such that all
         // subsequent usage of the location, including in other configuration

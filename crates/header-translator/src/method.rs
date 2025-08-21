@@ -4,15 +4,16 @@ use std::fmt;
 use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
 
 use crate::availability::Availability;
-use crate::config::{MethodData, TypeOverride};
+use crate::config::{MethodData, SafetyKind, TypeOverride};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
 use crate::id::ItemTree;
-use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{MethodArgumentQualifier, Ty};
+use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
+use crate::{immediate_children, Location};
 
 impl MethodArgumentQualifier {
     pub fn parse(qualifiers: ObjCQualifiers) -> Self {
@@ -395,7 +396,7 @@ impl Method {
     pub(crate) fn parse_method(
         entity: Entity<'_>,
         data: MethodData,
-        parent_is_mainthreadonly: bool,
+        parent_thread_safety: &ThreadSafety,
         is_pub: bool,
         context: &Context<'_>,
     ) -> Option<(bool, Method)> {
@@ -534,7 +535,7 @@ impl Method {
         let mainthreadonly = mainthreadonly_override(
             &result_type,
             arguments.iter().map(|(_, ty)| ty),
-            parent_is_mainthreadonly,
+            parent_thread_safety.inferred_mainthreadonly(),
             is_class,
             modifiers.mainthreadonly,
         );
@@ -544,6 +545,34 @@ impl Method {
         let encoding = entity
             .get_objc_type_encoding()
             .expect("method to have encoding");
+
+        let safe = if !arguments.iter().all(|(_, ty)| ty.is_safe_in_argument(true)) {
+            // We don't care about the return type when checking safety.
+            if !data.unsafe_.unwrap_or(true) {
+                error!(
+                    ?selector,
+                    ?arguments,
+                    "method with unsafe arg was marked as safe"
+                );
+                true // TODO(breaking): Change to false
+            } else {
+                false
+            }
+        } else if let Some(unsafe_) = data.unsafe_ {
+            // Allow overriding safety with config.
+            !unsafe_
+        } else {
+            // Methods are otherwise allowed to be safe by default.
+            let kind = if is_class || memory_management == MemoryManagement::RetainedInit {
+                SafetyKind::ClassMethods
+            } else {
+                SafetyKind::InstanceMethods
+            };
+            context
+                .library(Location::from_entity(&entity, context).unwrap())
+                .unsafe_default_safe
+                .contains(&kind)
+        };
 
         Some((
             modifiers.designated_initializer,
@@ -556,7 +585,7 @@ impl Method {
                 memory_management,
                 arguments,
                 result_type,
-                safe: data.unsafe_.safe(),
+                safe,
                 is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
@@ -573,7 +602,7 @@ impl Method {
         property: PartialProperty<'_>,
         getter_data: MethodData,
         setter_data: Option<MethodData>,
-        parent_is_mainthreadonly: bool,
+        parent_thread_safety: &ThreadSafety,
         is_pub: bool,
         context: &Context<'_>,
     ) -> (Option<Method>, Option<Method>) {
@@ -603,7 +632,17 @@ impl Method {
 
         let modifiers = MethodModifiers::parse(&entity, context);
 
+        // Properties are by default retained, not copied.
         let is_copy = attributes.map(|a| a.copy).unwrap_or(false);
+
+        // Properties are atomic by default.
+        let atomic = attributes.map(|a| !a.nonatomic).unwrap_or(true);
+
+        // Whether the property is marked as not internally retained, neither
+        // strongly nor weakly.
+        let unsafe_retained = attributes
+            .map(|a| a.unsafe_retained || a.assign)
+            .unwrap_or(false);
 
         if let Some(qualifiers) = entity.get_objc_qualifiers() {
             error!(?qualifiers, "properties do not support qualifiers");
@@ -631,12 +670,38 @@ impl Method {
             let mainthreadonly = mainthreadonly_override(
                 &ty,
                 &[],
-                parent_is_mainthreadonly,
+                parent_thread_safety.inferred_mainthreadonly(),
                 is_class,
                 modifiers.mainthreadonly,
             );
 
             apply_type_override(&mut ty, &getter_data.return_);
+
+            let safe = if unsafe_retained && !ty.is_primitive_or_record() {
+                // We cannot mark these as safe, since the pointer is not
+                // guaranteed to remain valid while being stored inside the
+                // class.
+                if !getter_data.unsafe_.unwrap_or(true) {
+                    error!(?getter_sel, "`unsafe_retained` property was marked as safe");
+                    true // TODO(breaking): Change to false
+                } else {
+                    false
+                }
+            } else if let Some(unsafe_) = getter_data.unsafe_ {
+                // Allow overriding safety with config.
+                !unsafe_
+            } else if !atomic && parent_thread_safety.inferred_sendable() {
+                // `nonatomic` properties on sendable classes are not safe
+                // by default.
+                false
+            } else {
+                // Property getters are otherwise allowed to be safe by
+                // default (regardless of what the result type is).
+                context
+                    .library(Location::from_entity(&entity, context).unwrap())
+                    .unsafe_default_safe
+                    .contains(&SafetyKind::PropertyGetters)
+            };
 
             Some(Method {
                 selector: getter_sel.clone(),
@@ -647,7 +712,7 @@ impl Method {
                 memory_management,
                 arguments: Vec::new(),
                 result_type: ty,
-                safe: getter_data.unsafe_.safe(),
+                safe,
                 is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
@@ -679,7 +744,7 @@ impl Method {
                 let mainthreadonly = mainthreadonly_override(
                     &result_type,
                     std::iter::once(&ty),
-                    parent_is_mainthreadonly,
+                    parent_thread_safety.inferred_mainthreadonly(),
                     is_class,
                     modifiers.mainthreadonly,
                 );
@@ -687,6 +752,42 @@ impl Method {
                 if let Some(ty_or) = setter_data.arguments.get(&0) {
                     apply_type_override(&mut ty, ty_or);
                 }
+
+                let safe = if !ty.is_safe_in_argument(false) {
+                    if !setter_data.unsafe_.unwrap_or(true) {
+                        error!(
+                            ?selector,
+                            ?ty,
+                            "property setter with unsafe arg was marked as safe"
+                        );
+                    }
+                    false
+                } else if unsafe_retained && !ty.is_primitive_or_record() {
+                    // We could _probably_ mark these as safe, but let's not
+                    // for now, they interact weirdly with the getters (which
+                    // have to be unsafe).
+                    if !setter_data.unsafe_.unwrap_or(true) {
+                        error!(
+                            ?selector,
+                            "`unsafe_retained` property setter was marked as safe"
+                        );
+                    }
+                    false
+                } else if let Some(unsafe_) = setter_data.unsafe_ {
+                    // Allow overriding safety with config.
+                    !unsafe_
+                } else if !atomic && parent_thread_safety.inferred_sendable() {
+                    // `nonatomic` properties on sendable classes are not safe
+                    // by default.
+                    false
+                } else {
+                    // Property setters are otherwise allowed to be safe by
+                    // default.
+                    context
+                        .library(Location::from_entity(&entity, context).unwrap())
+                        .unsafe_default_safe
+                        .contains(&SafetyKind::PropertySetters)
+                };
 
                 Some(Method {
                     selector,
@@ -697,7 +798,7 @@ impl Method {
                     memory_management,
                     arguments: vec![(name, ty)],
                     result_type,
-                    safe: setter_data.unsafe_.safe(),
+                    safe,
                     is_pub,
                     non_isolated: modifiers.non_isolated,
                     mainthreadonly,

@@ -476,6 +476,7 @@ pub enum PointeeTy {
     },
     CFTypeDef {
         id: ItemIdentifier,
+        can_have_generics: bool,
     },
     DispatchTypeDef {
         id: ItemIdentifier,
@@ -546,7 +547,7 @@ impl PointeeTy {
                 .chain(result_type.required_items())
                 .chain(arguments.iter().flat_map(|arg| arg.required_items()))
                 .collect(),
-            Self::CFTypeDef { id } | Self::DispatchTypeDef { id } => {
+            Self::CFTypeDef { id, .. } | Self::DispatchTypeDef { id } => {
                 vec![ItemTree::from_id(id.clone())]
             }
             Self::TypeDef { id, to } => {
@@ -627,9 +628,45 @@ impl PointeeTy {
         }
     }
 
+    fn is_safe_in_argument(&self) -> bool {
+        match self {
+            // SAFETY: `objc2` ensures that objects are initialized before
+            // being allowed as references. We don't uphold type safety
+            // properly yet though, since we have no way of specifying
+            // protocol requirements.
+            Self::Class { protocols, .. } => protocols.is_empty(),
+            Self::AnyObject { protocols } => protocols.len() <= 1,
+            // SAFETY: `objc2` ensures that objects are initialized before
+            // being allowed as references.
+            Self::GenericParam { .. } | Self::Self_ => true,
+            // Types like `&CFArray` are not safe, since their generic can be
+            // anything. But `&CFString` is safe.
+            Self::CFTypeDef {
+                can_have_generics, ..
+            } => !can_have_generics,
+            Self::DispatchTypeDef { .. } => true,
+            // SAFETY: &CStr is safe as a parameter.
+            Self::CStr => true,
+            // Taking `&AnyClass` or `&AnyProtocol` can be perilous if the
+            // method tries to assume it can e.g. create new instances of the
+            // class.
+            Self::AnyProtocol | Self::AnyClass { .. } => false,
+            // TODO: Allow certain types of function pointers and blocks.
+            Self::Fn { .. } => false,
+            // Allow simple blocks that only take
+            Self::Block {
+                sendable,
+                result_type,
+                ..
+            } if !sendable.unwrap_or(false) => result_type.is_primitive_or_record(),
+            Self::Block { .. } => false,
+            Self::TypeDef { to, .. } => to.is_safe_in_argument(),
+        }
+    }
+
     pub(crate) fn implementable(&self) -> Option<ItemTree> {
         match self {
-            Self::CFTypeDef { id } | Self::Class { id, .. } | Self::DispatchTypeDef { id } => {
+            Self::CFTypeDef { id, .. } | Self::Class { id, .. } | Self::DispatchTypeDef { id } => {
                 Some(ItemTree::from_id(id.clone()))
             }
             // We shouldn't encounter this here, since `Self` is only on
@@ -1503,7 +1540,16 @@ impl Ty {
                         // type is a CF type or not... But that's how it is
                         // currently.
                         let id = context.replace_typedef_name(id, true);
-                        *pointee = Box::new(Self::Pointee(PointeeTy::CFTypeDef { id }));
+                        let can_have_generics = context
+                            .library(&id)
+                            .typedef_data
+                            .get(&id.name)
+                            .map(|data| !data.generics.is_empty())
+                            .unwrap_or(false);
+                        *pointee = Box::new(Self::Pointee(PointeeTy::CFTypeDef {
+                            id,
+                            can_have_generics,
+                        }));
                         return inner;
                     } else if pointee.is_object_like() {
                         if let Self::Pointee(pointee_ty) = &mut **pointee {
@@ -1693,6 +1739,68 @@ impl Ty {
         }
     }
 
+    fn is_safe_in_argument_inner(&self) -> bool {
+        match self {
+            Self::Primitive(_) => true,
+            Self::Pointee(pointee) => pointee.is_safe_in_argument(),
+            Self::Simd { .. } => true,
+            Self::Sel { .. } => false, // Rarely safe, selectors can point to anything.
+            Self::Pointer { .. } => false,
+            Self::TypeDef { to, .. } => to.is_safe_in_argument_inner(),
+            Self::IncompleteArray { .. } => false, // Conservative
+            Self::Array { element_type, .. } => element_type.is_safe_in_argument_inner(),
+            Self::Enum { .. } => true,
+            Self::Struct { fields, .. } => {
+                fields.iter().all(|field| field.is_safe_in_argument_inner())
+            }
+            Self::Union { .. } => false, // Conservative.
+        }
+    }
+
+    pub(crate) fn is_safe_in_argument(&self, supports_out_pointers: bool) -> bool {
+        if supports_out_pointers && self.fmt_out_pointer().is_some() {
+            true
+        } else {
+            match self {
+                // We don't allow `Nullability::Unspecified`, to avoid
+                // situations where an API does not actually support taking a
+                // nullable value (i.e. cases where we might be emitting the
+                // wrong binding).
+                // See also https://github.com/madsmtm/objc2/issues/695.
+                Self::Pointer {
+                    nullability: Nullability::Nullable | Nullability::NonNull,
+                    pointee,
+                    ..
+                } if pointee.is_object_like() => pointee.is_safe_in_argument_inner(),
+                Self::Pointer {
+                    nullability: Nullability::Nullable | Nullability::NonNull,
+                    pointee,
+                    ..
+                } if matches!(
+                    &**pointee,
+                    Self::Pointee(PointeeTy::AnyClass { .. })
+                        | Self::Pointee(PointeeTy::Block { .. })
+                        | Self::Pointee(PointeeTy::Fn { .. })
+                ) =>
+                {
+                    pointee.is_safe_in_argument_inner()
+                }
+                _ => self.is_safe_in_argument_inner(),
+            }
+        }
+    }
+
+    pub(crate) fn is_primitive_or_record(&self) -> bool {
+        match self {
+            Self::Primitive(_) | Self::Simd { .. } => true,
+            Self::TypeDef { to, .. } => to.is_primitive_or_record(),
+            Self::Enum { .. } => true,
+            Self::Struct { .. } => true,
+            Self::Union { .. } => true,
+            _ => false,
+        }
+    }
+
     /// Return the `ItemTree` for the nearest implement-able type, if any.
     pub(crate) fn implementable(&self) -> Option<ItemTree> {
         match self {
@@ -1815,7 +1923,7 @@ impl Ty {
     #[allow(dead_code)]
     pub(crate) fn is_cf_allocator(&self) -> bool {
         if let Self::Pointer { pointee, .. } = self {
-            if let Ty::Pointee(PointeeTy::CFTypeDef { id }) = &**pointee {
+            if let Ty::Pointee(PointeeTy::CFTypeDef { id, .. }) = &**pointee {
                 if id.name == "CFAllocator" {
                     return true;
                 }
@@ -2040,7 +2148,7 @@ impl Ty {
                     }
                     write!(f, ">")
                 }
-                PointeeTy::CFTypeDef { id } => write!(f, "{}", id.path()),
+                PointeeTy::CFTypeDef { id, .. } => write!(f, "{}", id.path()),
                 PointeeTy::DispatchTypeDef { id } => write!(f, "{}", id.path()),
                 PointeeTy::TypeDef { id, .. } => write!(f, "{}", id.path()),
                 PointeeTy::CStr => write!(f, "CStr"),
@@ -2448,15 +2556,8 @@ impl Ty {
         }
     }
 
-    pub(crate) fn method_argument(&self) -> impl fmt::Display + '_ {
-        FormatterFn(move |f| match self {
-            Self::Primitive(Primitive::C99Bool) => {
-                warn!("C99's bool as Objective-C method argument is ill supported");
-                write!(f, "bool")
-            }
-            Self::Primitive(Primitive::ObjcBool) => {
-                write!(f, "bool")
-            }
+    fn fmt_out_pointer(&self) -> Option<impl fmt::Display + '_> {
+        match self {
             Self::Pointer {
                 nullability,
                 is_const: false,
@@ -2469,7 +2570,7 @@ impl Ty {
                     is_const: _,
                     lifetime: Lifetime::Autoreleasing,
                     pointee,
-                } => {
+                } => Some(FormatterFn(move |f| {
                     let tokens = if *inner_nullability == Nullability::NonNull {
                         format!("Retained<{}>", pointee.behind_pointer())
                     } else {
@@ -2480,10 +2581,29 @@ impl Ty {
                     } else {
                         write!(f, "Option<&mut {tokens}>")
                     }
-                }
-                _ => write!(f, "{}", self.fn_argument()),
+                })),
+                _ => None,
             },
-            _ => write!(f, "{}", self.fn_argument()),
+            _ => None,
+        }
+    }
+
+    pub(crate) fn method_argument(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Primitive(Primitive::C99Bool) => {
+                warn!("C99's bool as Objective-C method argument is ill supported");
+                write!(f, "bool")
+            }
+            Self::Primitive(Primitive::ObjcBool) => {
+                write!(f, "bool")
+            }
+            _ => {
+                if let Some(fmt) = self.fmt_out_pointer() {
+                    write!(f, "{fmt}")
+                } else {
+                    write!(f, "{}", self.fn_argument())
+                }
+            }
         })
     }
 
@@ -2924,7 +3044,7 @@ impl Ty {
             if let Self::Pointee(pointee_ty) = &**pointee {
                 let id = match pointee_ty {
                     PointeeTy::TypeDef { id, to } if to.is_cf_type() => id,
-                    PointeeTy::CFTypeDef { id } => id,
+                    PointeeTy::CFTypeDef { id, .. } => id,
                     _ => return,
                 };
                 let type_name = cf_no_ref(&id.name);
@@ -2975,6 +3095,7 @@ impl Ty {
             lifetime: Lifetime::Unspecified,
             pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef {
                 id: ItemIdentifier::cf_string(),
+                can_have_generics: false,
             })),
         }
     }
@@ -3001,6 +3122,7 @@ impl Ty {
             lifetime: Lifetime::Unspecified,
             pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef {
                 id: ItemIdentifier::cf_uuid(),
+                can_have_generics: false,
             })),
         }
     }

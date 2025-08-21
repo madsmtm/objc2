@@ -328,8 +328,56 @@ pub struct LibraryConfig {
     #[serde(default)]
     pub const_data: HashMap<String, StmtData>,
 
+    #[serde(rename = "unsafe-default-safe")]
+    #[serde(default)]
+    pub unsafe_default_safe: HashSet<SafetyKind>,
     #[serde(default)]
     pub module: HashMap<String, ModuleConfig>,
+}
+
+/// There are many different things that influence the soundness
+/// of an API. A few of these:
+/// 1. Initialization safety.
+/// 2. Lifetime safety.
+/// 3. Type safety.
+/// 4. Bounds safety.
+/// 5. Thread safety.
+/// 6. Arbitrary additional restrictions.
+///
+/// Objective-C's object model upholds the initialization requirement, we can
+/// reasonably ensure that lifetime safety is upheld (object pointers are
+/// reference-counted, and we can disallow direct pointers), type safety is
+/// also doable (the subtyping model is fairly intricate, but we can be
+/// conservative), collections like NSArray etc. are internally bounds checked
+/// and thread safety is handled by `nonatomic` on properties, as well as the
+/// NS_SWIFT_SENDABLE- and NS_SWIFT_UI_ACTOR-like macros.
+///
+/// The only thing we really can't check automatically is if a function/method
+/// does something outside the usual. One example of this is the
+/// `NSAutoreleasePool` class, which may allow one to violate lifetime safety
+/// if misused.
+///
+/// As such, each framework must be explicitly marked with the kinds of safety
+/// it has been reviewed for.
+#[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[serde(deny_unknown_fields)]
+pub enum SafetyKind {
+    /// Property getters are marked as safe by default.
+    PropertyGetters,
+    /// Property setters are marked as safe by default, provided that they do
+    /// not take pointers as arguments.
+    PropertySetters,
+    /// Class and protocol instance methods are marked as safe by default,
+    /// provided that they do not take pointers as arguments.
+    InstanceMethods,
+    /// Class and protocol class methods are marked as safe by default,
+    /// provided that they do not take pointers as arguments.
+    ///
+    /// Class methods in this instance includes initializers.
+    ClassMethods,
+    /// Functions are marked as safe by default, provided that they do not
+    /// take pointers as arguments.
+    Functions,
 }
 
 fn link_default() -> bool {
@@ -573,7 +621,7 @@ pub struct StmtData {
     // Functions only.
     #[serde(rename = "unsafe")]
     #[serde(default)]
-    pub unsafe_: Unsafe,
+    pub unsafe_: Option<bool>,
     #[serde(rename = "no-implementor")]
     #[serde(default)]
     pub no_implementor: bool,
@@ -640,7 +688,7 @@ pub struct MethodData {
     pub renamed: Option<String>,
     #[serde(rename = "unsafe")]
     #[serde(default)]
-    pub unsafe_: Unsafe,
+    pub unsafe_: Option<bool>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_argument_overrides")]
     pub arguments: HashMap<usize, TypeOverride>,
@@ -652,29 +700,13 @@ pub struct MethodData {
 impl MethodData {
     pub(crate) fn merge_with_superclass(self, superclass: Self) -> Self {
         Self {
-            // Only use `unsafe` from itself, never take if from the superclass
+            // Only use safety from itself, never take it from the superclass.
             unsafe_: self.unsafe_,
             renamed: self.renamed.or(superclass.renamed).clone(),
             skipped: self.skipped | superclass.skipped,
             arguments: self.arguments,
             return_: self.return_,
         }
-    }
-}
-
-#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
-#[repr(transparent)]
-pub struct Unsafe(pub bool);
-
-impl Unsafe {
-    pub(crate) fn safe(&self) -> bool {
-        !self.0
-    }
-}
-
-impl Default for Unsafe {
-    fn default() -> Self {
-        Self(true)
     }
 }
 

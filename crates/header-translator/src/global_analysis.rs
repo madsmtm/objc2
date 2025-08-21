@@ -183,7 +183,6 @@ fn update_module(
                     assert!(arguments.is_empty(), "{id:?} must have no arguments");
                     assert!(result_type.is_cf_type_id(), "{id:?} must return CFTypeID");
                     assert!(body.is_none(), "{id:?} must not be inline");
-                    assert!(!*safe, "{id:?} must not have manually modified safety");
                     assert!(!*must_use, "{id:?} must not have must_use");
                     assert!(!*returns_retained, "{id:?} must not have returns_retained");
 
