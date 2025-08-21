@@ -760,8 +760,10 @@ impl Method {
                             ?ty,
                             "property setter with unsafe arg was marked as safe"
                         );
+                        true // TODO(breaking): Change to false
+                    } else {
+                        false
                     }
-                    false
                 } else if unsafe_retained && !ty.is_primitive_or_record() {
                     // We could _probably_ mark these as safe, but let's not
                     // for now, they interact weirdly with the getters (which
@@ -771,8 +773,10 @@ impl Method {
                             ?selector,
                             "`unsafe_retained` property setter was marked as safe"
                         );
+                        true // TODO(breaking): Change to false
+                    } else {
+                        false
                     }
-                    false
                 } else if let Some(unsafe_) = setter_data.unsafe_ {
                     // Allow overriding safety with config.
                     !unsafe_
