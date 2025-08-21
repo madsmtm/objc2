@@ -493,11 +493,19 @@ impl LibraryConfig {
 
         let allowed_in = self.fns.values();
         for data in all.clone().filter(filter_ptr(allowed_in)) {
-            assert_eq!(data.unsafe_, Default::default());
             assert_eq!(data.no_implementor, Default::default());
             assert_eq!(data.implementor, Default::default());
             assert_eq!(data.arguments, Default::default());
             assert_eq!(data.return_, Default::default());
+        }
+
+        let allowed_in = self
+            .fns
+            .values()
+            .chain(self.class_data.values())
+            .chain(self.protocol_data.values());
+        for data in all.clone().filter(filter_ptr(allowed_in)) {
+            assert_eq!(data.unsafe_, Default::default());
         }
 
         let allowed_in = self.typedef_data.values().chain(self.statics.values());
@@ -619,9 +627,6 @@ pub struct StmtData {
     pub generics: Vec<String>,
 
     // Functions only.
-    #[serde(rename = "unsafe")]
-    #[serde(default)]
-    pub unsafe_: Option<bool>,
     #[serde(rename = "no-implementor")]
     #[serde(default)]
     pub no_implementor: bool,
@@ -634,6 +639,11 @@ pub struct StmtData {
     #[serde(default)]
     pub return_: TypeOverride,
 
+    // Classes, protocols and functions
+    #[serde(rename = "unsafe")]
+    #[serde(default)]
+    pub unsafe_: Option<bool>,
+
     // Typedef and statics
     #[serde(default)]
     pub nullability: Option<Nullability>,
@@ -643,6 +653,15 @@ impl StmtData {
     pub fn empty() -> &'static Self {
         static DEFAULT: OnceLock<StmtData> = OnceLock::new();
         DEFAULT.get_or_init(StmtData::default)
+    }
+
+    pub fn method(&self, key: &str) -> MethodData {
+        let mut data = self.methods.get(key).cloned().unwrap_or_default();
+        if data.unsafe_.is_none() {
+            // Propagate safety of class/protocol to methods.
+            data.unsafe_ = self.unsafe_;
+        }
+        data
     }
 }
 
@@ -699,9 +718,16 @@ pub struct MethodData {
 
 impl MethodData {
     pub(crate) fn merge_with_superclass(self, superclass: Self) -> Self {
+        let unsafe_ = match (self.unsafe_, superclass.unsafe_) {
+            // Prefer safety attribute on the item itself.
+            (Some(unsafe_), _) => Some(unsafe_),
+            // Otherwise, take from the superclass if explicitly set as unsafe.
+            (_, Some(true)) => Some(true),
+            // Otherwise assume nothing.
+            _ => None,
+        };
         Self {
-            // Only use safety from itself, never take it from the superclass.
-            unsafe_: self.unsafe_,
+            unsafe_,
             renamed: self.renamed.or(superclass.renamed).clone(),
             skipped: self.skipped | superclass.skipped,
             arguments: self.arguments,

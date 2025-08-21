@@ -119,7 +119,7 @@ pub(crate) fn parse_superclasses<'ty>(
     }
 }
 
-fn parse_class_generics(entity: &Entity<'_>, _context: &Context<'_>) -> Vec<String> {
+pub(crate) fn parse_class_generics(entity: &Entity<'_>, _context: &Context<'_>) -> Vec<String> {
     let mut generics = Vec::new();
 
     #[allow(clippy::single_match)]
@@ -749,7 +749,7 @@ impl Stmt {
                 let generics = parse_class_generics(entity, context);
                 let (methods, designated_initializers) = parse_methods(
                     entity,
-                    |name| data.methods.get(name).cloned().unwrap_or_default(),
+                    |name| data.method(name),
                     &thread_safety,
                     true,
                     context,
@@ -791,12 +791,8 @@ impl Stmt {
                         let (mut methods, _) = parse_methods(
                             entity,
                             |name| {
-                                let data = data.methods.get(name).cloned().unwrap_or_default();
-                                let superclass_data = superclass_data
-                                    .methods
-                                    .get(name)
-                                    .cloned()
-                                    .unwrap_or_default();
+                                let data = data.method(name);
+                                let superclass_data = superclass_data.method(name);
                                 data.merge_with_superclass(superclass_data)
                             },
                             &thread_safety,
@@ -952,7 +948,7 @@ impl Stmt {
 
                     let (methods, designated_initializers) = parse_methods(
                         entity,
-                        |name| cls_data.methods.get(name).cloned().unwrap_or_default(),
+                        |name| cls_data.method(name),
                         &cls_thread_safety,
                         true,
                         context,
@@ -978,9 +974,8 @@ impl Stmt {
                         let (mut methods, _) = parse_methods(
                             entity,
                             |name| {
-                                let data = cls_data.methods.get(name).cloned().unwrap_or_default();
-                                let subclass_data =
-                                    subclass_data.methods.get(name).cloned().unwrap_or_default();
+                                let data = cls_data.method(name);
+                                let subclass_data = subclass_data.method(name);
                                 subclass_data.merge_with_superclass(data)
                             },
                             &cls_thread_safety,
@@ -1059,7 +1054,7 @@ impl Stmt {
 
                     let (methods, designated_initializers) = parse_methods(
                         entity,
-                        |name| cls_data.methods.get(name).cloned().unwrap_or_default(),
+                        |name| cls_data.method(name),
                         &cls_thread_safety,
                         false,
                         context,
@@ -1110,7 +1105,7 @@ impl Stmt {
                 verify_objc_decl(entity, context);
                 let (methods, designated_initializers) = parse_methods(
                     entity,
-                    |name| data.methods.get(name).cloned().unwrap_or_default(),
+                    |name| data.method(name),
                     &thread_safety,
                     false,
                     context,
@@ -2309,7 +2304,7 @@ impl Stmt {
                 }
                 Self::ExternMethods {
                     location: _,
-                    availability: _,
+                    availability,
                     cls,
                     cls_superclasses: _,
                     source_superclass,
@@ -2356,10 +2351,11 @@ impl Stmt {
                     writeln!(f, "    );")?;
                     writeln!(f, "}}")?;
 
-                    if let Some(method) = methods
-                        .iter()
-                        .find(|method| method.usable_in_default_retained())
-                    {
+                    if let Some(method) = methods.iter().find(|method| {
+                        method.usable_in_default_retained()
+                            && (availability.is_available_non_deprecated()
+                                == method.availability.is_available_non_deprecated())
+                    }) {
                         writeln!(f)?;
                         // Assume `new` methods require no extra features
                         write!(f, "{}", self.cfg_gate_ln(config))?;

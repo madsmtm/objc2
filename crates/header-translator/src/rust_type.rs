@@ -10,7 +10,7 @@ use crate::display_helper::FormatterFn;
 use crate::id::{ItemIdentifier, ItemTree};
 use crate::name_translation::cf_no_ref;
 use crate::protocol::ProtocolRef;
-use crate::stmt::{anonymous_record_name, bridged_to};
+use crate::stmt::{anonymous_record_name, bridged_to, parse_class_generics};
 use crate::stmt::{parse_superclasses, superclasses_required_items};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -448,7 +448,8 @@ pub enum PointeeTy {
         id: ItemIdentifier,
         thread_safety: ThreadSafety,
         superclasses: Vec<ItemIdentifier>,
-        generics: Vec<Ty>,
+        generics: Vec<PointeeTy>,
+        declaration_generics: Vec<String>,
         protocols: Vec<(ProtocolRef, ThreadSafety)>,
     },
     GenericParam {
@@ -476,7 +477,7 @@ pub enum PointeeTy {
     },
     CFTypeDef {
         id: ItemIdentifier,
-        can_have_generics: bool,
+        declaration_generics: Vec<String>,
     },
     DispatchTypeDef {
         id: ItemIdentifier,
@@ -496,6 +497,7 @@ impl PointeeTy {
                 thread_safety: _,
                 superclasses,
                 generics,
+                declaration_generics: _,
                 protocols,
             } => {
                 let superclasses = superclasses_required_items(superclasses.iter().cloned());
@@ -565,6 +567,7 @@ impl PointeeTy {
                 thread_safety,
                 superclasses: _,
                 generics,
+                declaration_generics: _,
                 protocols,
             } => {
                 thread_safety.inferred_mainthreadonly()
@@ -628,22 +631,47 @@ impl PointeeTy {
         }
     }
 
-    fn is_safe_in_argument(&self) -> bool {
+    fn is_safe_in_argument(&self, in_generic: bool) -> bool {
         match self {
-            // SAFETY: `objc2` ensures that objects are initialized before
-            // being allowed as references. We don't uphold type safety
-            // properly yet though, since we have no way of specifying
-            // protocol requirements.
-            Self::Class { protocols, .. } => protocols.is_empty(),
-            Self::AnyObject { protocols } => protocols.len() <= 1,
-            // SAFETY: `objc2` ensures that objects are initialized before
-            // being allowed as references.
-            Self::GenericParam { .. } | Self::Self_ => true,
+            // `objc2` ensures that objects are initialized before being
+            // allowed as references.
+            Self::Class {
+                generics,
+                declaration_generics,
+                protocols,
+                ..
+            } => {
+                // We don't uphold protocol type safety properly yet, since we
+                // have no way of specifying ad-hoc protocol requirements.
+                protocols.is_empty()
+                    // Check that the inner generic is safe to use.
+                    && generics.iter().all(|generic| generic.is_safe_in_argument(true))
+                    // Further disallow AnyObject in generics.
+                    && (generics.len() == declaration_generics.len())
+            }
+            Self::AnyObject { protocols } => match protocols.len() {
+                // Conservatively disallow `AnyObject` in generics, to avoid
+                // marking `&NSDictionary<NSString, AnyObject>` as safe.
+                // TODO: Relax this once we're more confident that passing an
+                // incorrect object won't cause unsoundness.
+                0 => !in_generic,
+                // Allow `ProtocolObject<dyn Xyz>`.
+                1 => true,
+                // Only single protocol is properly supported.
+                _ => false,
+            },
+            // Generic parameters are safe by themselves.
+            // TODO: NSDictionary's KeyType perhaps isn't really?
+            Self::GenericParam { .. } => true,
+            // Self types aren't present in arguments, but would be perfectly
+            // legal, since we specify all generics on the impl.
+            Self::Self_ => false,
             // Types like `&CFArray` are not safe, since their generic can be
-            // anything. But `&CFString` is safe.
+            // anything (including `usize`). But `&CFString` is safe.
             Self::CFTypeDef {
-                can_have_generics, ..
-            } => !can_have_generics,
+                declaration_generics,
+                ..
+            } => declaration_generics.is_empty(),
             Self::DispatchTypeDef { .. } => true,
             // SAFETY: &CStr is safe as a parameter.
             Self::CStr => true,
@@ -653,14 +681,16 @@ impl PointeeTy {
             Self::AnyProtocol | Self::AnyClass { .. } => false,
             // TODO: Allow certain types of function pointers and blocks.
             Self::Fn { .. } => false,
-            // Allow simple blocks that only take
+            // Allow simple blocks that return a primitive, and are not marked
+            // as sendable, as we don't yet restrict sendability in blocks:
+            // https://github.com/madsmtm/objc2/issues/572
             Self::Block {
-                sendable,
+                sendable: Some(false) | None,
                 result_type,
                 ..
-            } if !sendable.unwrap_or(false) => result_type.is_primitive_or_record(),
+            } => result_type.is_primitive(),
             Self::Block { .. } => false,
-            Self::TypeDef { to, .. } => to.is_safe_in_argument(),
+            Self::TypeDef { to, .. } => to.is_safe_in_argument(in_generic),
         }
     }
 
@@ -781,6 +811,7 @@ impl Ty {
         let mut name = ty.get_display_name();
         let mut unexposed_nullability = None;
         let mut no_escape = false;
+        let mut sendable = None;
 
         while let TypeKind::Unexposed | TypeKind::Attributed = ty.get_kind() {
             if let TypeKind::Attributed = ty.get_kind() {
@@ -811,14 +842,14 @@ impl Ty {
             }
 
             match attr {
-                Some(
-                    UnexposedAttr::NonIsolated
-                    | UnexposedAttr::UIActor
-                    | UnexposedAttr::Sendable
-                    | UnexposedAttr::NonSendable,
-                ) => {
-                    // Ignored for now; these are usually also emitted on the method/property,
-                    // which is where they will be useful in any case.
+                Some(UnexposedAttr::Sendable) => {
+                    sendable = Some(true);
+                }
+                Some(UnexposedAttr::NonSendable) => {
+                    sendable = Some(false);
+                }
+                Some(UnexposedAttr::NonIsolated | UnexposedAttr::UIActor) => {
+                    // Ignored for now.
                 }
                 Some(UnexposedAttr::ReturnsRetained) => {
                     lifetime = Lifetime::Strong;
@@ -827,7 +858,6 @@ impl Ty {
                     lifetime = Lifetime::Autoreleasing;
                 }
                 Some(UnexposedAttr::NoEscape) => {
-                    // TODO: Use this on Pointer and BlockPointer
                     no_escape = true;
                 }
                 Some(attr) => error!(?attr, "unknown attribute on type"),
@@ -1018,6 +1048,7 @@ impl Ty {
             }
             TypeKind::ObjCInterface => {
                 let declaration = ty.get_declaration().expect("ObjCInterface declaration");
+                let declaration_generics = parse_class_generics(&declaration, context);
 
                 if !ty.get_objc_type_arguments().is_empty() {
                     panic!("generics not empty: {ty:?}");
@@ -1039,6 +1070,7 @@ impl Ty {
                         superclasses,
                         protocols: vec![],
                         generics: vec![],
+                        declaration_generics,
                     })
                 }
             }
@@ -1052,6 +1084,18 @@ impl Ty {
                     .get_objc_type_arguments()
                     .into_iter()
                     .map(|param| Self::parse(param, Lifetime::Unspecified, context))
+                    .map(|generic| match generic {
+                        Self::Pointer { pointee, .. } => {
+                            pointee.into_pointee().unwrap_or_else(|| {
+                                error!(?name, "unknown generic in class");
+                                PointeeTy::Self_
+                            })
+                        }
+                        generic => {
+                            error!(?name, ?generic, "unknown generic in class");
+                            PointeeTy::Self_
+                        }
+                    })
                     .collect();
 
                 let protocols: Vec<_> = ty
@@ -1076,6 +1120,7 @@ impl Ty {
                             .expect("ObjCObject -> ObjCInterface declaration");
                         let (id, thread_safety, superclasses) =
                             get_class_data(&declaration, context);
+                        let declaration_generics = parse_class_generics(&declaration, context);
                         if id.name != name {
                             error!(?name, "ObjCObject -> ObjCInterface invalid name");
                         }
@@ -1083,9 +1128,11 @@ impl Ty {
                         if !generics.is_empty() && !protocols.is_empty() {
                             panic!("got object with both protocols and generics: {name:?}, {protocols:?}, {generics:?}");
                         }
-
                         if generics.is_empty() && protocols.is_empty() {
                             panic!("got object with empty protocols and generics: {name:?}");
+                        }
+                        if declaration_generics.len() < generics.len() {
+                            panic!("got class with more generics than declaration: {name:?}");
                         }
 
                         PointeeTy::Class {
@@ -1093,6 +1140,7 @@ impl Ty {
                             thread_safety,
                             superclasses,
                             generics,
+                            declaration_generics,
                             protocols,
                         }
                     }
@@ -1145,7 +1193,7 @@ impl Ty {
                 match Self::parse(ty, Lifetime::Unspecified, context) {
                     Self::Pointee(PointeeTy::Fn {
                         is_variadic: false,
-                        no_escape,
+                        no_escape: fn_no_escape,
                         arguments,
                         result_type,
                     }) => Self::Pointer {
@@ -1153,8 +1201,8 @@ impl Ty {
                         is_const,
                         lifetime,
                         pointee: Box::new(Self::Pointee(PointeeTy::Block {
-                            sendable: None,
-                            no_escape,
+                            sendable,
+                            no_escape: fn_no_escape || no_escape,
                             arguments,
                             result_type,
                         })),
@@ -1540,15 +1588,15 @@ impl Ty {
                         // type is a CF type or not... But that's how it is
                         // currently.
                         let id = context.replace_typedef_name(id, true);
-                        let can_have_generics = context
+                        let declaration_generics = context
                             .library(&id)
                             .typedef_data
                             .get(&id.name)
-                            .map(|data| !data.generics.is_empty())
-                            .unwrap_or(false);
+                            .map(|data| data.generics.clone())
+                            .unwrap_or_default();
                         *pointee = Box::new(Self::Pointee(PointeeTy::CFTypeDef {
                             id,
-                            can_have_generics,
+                            declaration_generics,
                         }));
                         return inner;
                     } else if pointee.is_object_like() {
@@ -1742,9 +1790,11 @@ impl Ty {
     fn is_safe_in_argument_inner(&self) -> bool {
         match self {
             Self::Primitive(_) => true,
-            Self::Pointee(pointee) => pointee.is_safe_in_argument(),
+            Self::Pointee(pointee) => pointee.is_safe_in_argument(false),
             Self::Simd { .. } => true,
-            Self::Sel { .. } => false, // Rarely safe, selectors can point to anything.
+            // Rarely safe, selectors can point to anything, and it's hard to
+            // specify threading requirements.
+            Self::Sel { .. } => false,
             Self::Pointer { .. } => false,
             Self::TypeDef { to, .. } => to.is_safe_in_argument_inner(),
             Self::IncompleteArray { .. } => false, // Conservative
@@ -1787,6 +1837,15 @@ impl Ty {
                 }
                 _ => self.is_safe_in_argument_inner(),
             }
+        }
+    }
+
+    pub(crate) fn is_primitive(&self) -> bool {
+        match self {
+            Self::Primitive(_) | Self::Simd { .. } => true,
+            Self::TypeDef { to, .. } => to.is_primitive(),
+            Self::Enum { .. } => true,
+            _ => false,
         }
     }
 
@@ -2084,18 +2143,14 @@ impl Ty {
                     thread_safety: _,
                     superclasses: _,
                     generics,
+                    declaration_generics: _,
                     protocols: _,
                 } => {
                     write!(f, "{}", id.path())?;
                     if !generics.is_empty() {
                         write!(f, "<")?;
                         for generic in generics {
-                            if let Self::Pointer { pointee, .. } = generic {
-                                write!(f, "{},", pointee.behind_pointer())?;
-                            } else {
-                                error!(?self, ?generic, "unknown generic");
-                                write!(f, "{},", generic.behind_pointer())?;
-                            }
+                            write!(f, "{},", Self::Pointee(generic.clone()).behind_pointer())?;
                         }
                         write!(f, ">")?;
                     }
@@ -2705,9 +2760,10 @@ impl Ty {
                     no_escape,
                     ..
                 }) => {
-                    *sendable = arg_sendable;
+                    if let Some(arg_sendable) = arg_sendable.take() {
+                        *sendable = Some(arg_sendable);
+                    }
                     *no_escape = arg_no_escape;
-                    arg_sendable = None;
                     arg_no_escape = false;
                 }
                 Self::Pointee(PointeeTy::Fn { no_escape, .. }) => {
@@ -2822,17 +2878,7 @@ impl Ty {
         None
     }
 
-    pub(crate) fn parse_property(
-        ty: Type<'_>,
-        // Ignored; see `parse_property_return`
-        _is_copy: bool,
-        _sendable: Option<bool>,
-        context: &Context<'_>,
-    ) -> Self {
-        Self::parse(ty, Lifetime::Unspecified, context)
-    }
-
-    pub(crate) fn parse_property_return(
+    pub(crate) fn parse_property_getter(
         ty: Type<'_>,
         is_copy: bool,
         _sendable: Option<bool>,
@@ -2867,6 +2913,30 @@ impl Ty {
                     // Typedefs to e.g. blocks.
                     // TODO: Move these into Pointer?
                 }
+                _ => warn!(?ty, "property(copy) which is not an object"),
+            }
+        }
+
+        ty
+    }
+
+    pub(crate) fn parse_property_setter(
+        ty: Type<'_>,
+        is_copy: bool,
+        _sendable: Option<bool>,
+        context: &Context<'_>,
+    ) -> Self {
+        let mut ty = Self::parse(ty, Lifetime::Unspecified, context);
+
+        // See `parse_property_getter` above.
+        if is_copy {
+            match &mut ty {
+                Self::Pointer { nullability, .. } => {
+                    if *nullability == Nullability::Unspecified {
+                        *nullability = Nullability::Nullable;
+                    }
+                }
+                Self::TypeDef { .. } => {}
                 _ => warn!(?ty, "property(copy) which is not an object"),
             }
         }
@@ -3095,7 +3165,7 @@ impl Ty {
             lifetime: Lifetime::Unspecified,
             pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef {
                 id: ItemIdentifier::cf_string(),
-                can_have_generics: false,
+                declaration_generics: vec![],
             })),
         }
     }
@@ -3110,6 +3180,7 @@ impl Ty {
                 thread_safety: ThreadSafety::dummy(),
                 superclasses: vec![],
                 generics: vec![],
+                declaration_generics: vec![],
                 protocols: vec![],
             })),
         }
@@ -3122,7 +3193,7 @@ impl Ty {
             lifetime: Lifetime::Unspecified,
             pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef {
                 id: ItemIdentifier::cf_uuid(),
-                can_have_generics: false,
+                declaration_generics: vec![],
             })),
         }
     }
@@ -3147,6 +3218,17 @@ impl Ty {
                 *nullability = new;
             }
             ty => error!(?ty, "unexpected type for nullability attribute"),
+        }
+    }
+
+    fn into_pointee(self) -> Option<PointeeTy> {
+        match self {
+            Self::Pointee(pointee) => Some(pointee),
+            Self::TypeDef { id, to } => to.into_pointee().map(|to| PointeeTy::TypeDef {
+                id,
+                to: Box::new(to),
+            }),
+            _ => None,
         }
     }
 }

@@ -111,9 +111,7 @@ impl ThreadSafetyAttr {
                 // _already_ do that, since the only way to retrieve the
                 // delegate in the first place would be through
                 // `NSApplication`!
-                let entities = method_or_property_entities(entity, |name| {
-                    data.methods.get(name).cloned().unwrap_or_default()
-                });
+                let entities = method_or_property_entities(entity, |name| data.method(name));
                 if !entities.is_empty()
                     && entities.iter().all(|method_or_property| {
                         MethodModifiers::parse(method_or_property, context).mainthreadonly

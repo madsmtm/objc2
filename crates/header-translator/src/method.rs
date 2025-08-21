@@ -653,7 +653,7 @@ impl Method {
             .expect("method to have encoding");
 
         let getter = if !getter_data.skipped {
-            let mut ty = Ty::parse_property_return(
+            let mut ty = Ty::parse_property_getter(
                 entity.get_type().expect("property type"),
                 is_copy,
                 modifiers.sendable,
@@ -730,7 +730,7 @@ impl Method {
             let setter_data = setter_data.expect("setter_data must be present if setter_sel was");
             if !setter_data.skipped {
                 let result_type = Ty::VOID_RESULT;
-                let mut ty = Ty::parse_property(
+                let mut ty = Ty::parse_property_setter(
                     entity.get_type().expect("property type"),
                     is_copy,
                     modifiers.sendable,
