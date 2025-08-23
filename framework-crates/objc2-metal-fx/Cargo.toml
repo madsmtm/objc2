@@ -40,6 +40,7 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+unstable-core-darwin-objc = []
 
 MTLFXDefines = []
 MTLFXSpatialScaler = [

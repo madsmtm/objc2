@@ -63,6 +63,7 @@ alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
+unstable-core-darwin-objc = []
 
 NSUserActivity_TVServices = ["objc2-foundation/NSString"]
 TVAppProfileDescriptor = [
