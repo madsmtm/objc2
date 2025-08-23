@@ -51,6 +51,7 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+unstable-core-darwin-objc = []
 
 SWAction = [
     "objc2-foundation/NSObject",

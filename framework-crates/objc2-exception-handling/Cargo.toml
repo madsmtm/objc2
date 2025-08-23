@@ -36,6 +36,7 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+unstable-core-darwin-objc = []
 
 ExceptionHandlingDefines = []
 NSExceptionHandler = [

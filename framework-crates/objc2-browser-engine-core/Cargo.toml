@@ -36,6 +36,7 @@ default = [
 std = ["alloc"]
 alloc = []
 libc = ["dep:libc"]
+unstable-core-darwin-objc = []
 
 BEMemory = []
 BEkevent = []
