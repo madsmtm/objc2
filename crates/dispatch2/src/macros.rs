@@ -22,7 +22,7 @@ macro_rules! dispatch_object {
         }
 
         impl PartialEq for $type {
-            /// Compare this [`$type`] with another using pointer equality.
+            #[doc = concat!("Compare this [`", stringify!($type), "`] with another using pointer equality.")]
             #[inline]
             fn eq(&self, other: &Self) -> bool {
                 // Dispatch objects use pointer equality.

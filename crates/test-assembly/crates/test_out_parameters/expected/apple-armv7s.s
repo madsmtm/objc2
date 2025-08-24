@@ -1,4 +1,4 @@
-	.syntax unified
+	.syntax	unified
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
 	.code	32

@@ -88,66 +88,56 @@ _fn8_use_in_loop:
 L_OBJC_METH_VAR_NAME_2668dedcc69bf8fb:
 	.asciz	"simple"
 
+	.globl	L_OBJC_METH_VAR_NAME_29d0234b9445d447
+L_OBJC_METH_VAR_NAME_29d0234b9445d447:
+	.asciz	"unused"
+
+	.globl	L_OBJC_METH_VAR_NAME_9303807037ba4f9f
+L_OBJC_METH_VAR_NAME_9303807037ba4f9f:
+	.asciz	"simple"
+
+	.globl	L_OBJC_METH_VAR_NAME_a23daf114eba1518
+L_OBJC_METH_VAR_NAME_a23daf114eba1518:
+	.asciz	"loopedSelector"
+
+	.globl	L_OBJC_METH_VAR_NAME_e91a5376ddae3cfc
+L_OBJC_METH_VAR_NAME_e91a5376ddae3cfc:
+	.asciz	"fourthSel"
+
+	.globl	L_OBJC_METH_VAR_NAME_ff60dae1998e0c85
+L_OBJC_METH_VAR_NAME_ff60dae1998e0c85:
+	.asciz	"i:am:different:"
+
 	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_2668dedcc69bf8fb
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_2668dedcc69bf8fb:
 	.quad	L_OBJC_METH_VAR_NAME_2668dedcc69bf8fb
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_9303807037ba4f9f
-L_OBJC_METH_VAR_NAME_9303807037ba4f9f:
-	.asciz	"simple"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_9303807037ba4f9f
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_9303807037ba4f9f:
-	.quad	L_OBJC_METH_VAR_NAME_9303807037ba4f9f
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_ff60dae1998e0c85
-L_OBJC_METH_VAR_NAME_ff60dae1998e0c85:
-	.asciz	"i:am:different:"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_ff60dae1998e0c85
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_ff60dae1998e0c85:
-	.quad	L_OBJC_METH_VAR_NAME_ff60dae1998e0c85
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_29d0234b9445d447
-L_OBJC_METH_VAR_NAME_29d0234b9445d447:
-	.asciz	"unused"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_29d0234b9445d447
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_29d0234b9445d447:
 	.quad	L_OBJC_METH_VAR_NAME_29d0234b9445d447
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_e91a5376ddae3cfc
-L_OBJC_METH_VAR_NAME_e91a5376ddae3cfc:
-	.asciz	"fourthSel"
+	.globl	L_OBJC_SELECTOR_REFERENCES_9303807037ba4f9f
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_9303807037ba4f9f:
+	.quad	L_OBJC_METH_VAR_NAME_9303807037ba4f9f
 
-	.section	__DATA,__objc_selrefs,literal_pointers
+	.globl	L_OBJC_SELECTOR_REFERENCES_a23daf114eba1518
+	.p2align	3, 0x0
+L_OBJC_SELECTOR_REFERENCES_a23daf114eba1518:
+	.quad	L_OBJC_METH_VAR_NAME_a23daf114eba1518
+
 	.globl	L_OBJC_SELECTOR_REFERENCES_e91a5376ddae3cfc
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_e91a5376ddae3cfc:
 	.quad	L_OBJC_METH_VAR_NAME_e91a5376ddae3cfc
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_a23daf114eba1518
-L_OBJC_METH_VAR_NAME_a23daf114eba1518:
-	.asciz	"loopedSelector"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_a23daf114eba1518
+	.globl	L_OBJC_SELECTOR_REFERENCES_ff60dae1998e0c85
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_a23daf114eba1518:
-	.quad	L_OBJC_METH_VAR_NAME_a23daf114eba1518
+L_OBJC_SELECTOR_REFERENCES_ff60dae1998e0c85:
+	.quad	L_OBJC_METH_VAR_NAME_ff60dae1998e0c85
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_2668dedcc69bf8fb
@@ -155,19 +145,19 @@ L_OBJC_SELECTOR_REFERENCES_a23daf114eba1518:
 L_OBJC_IMAGE_INFO_2668dedcc69bf8fb:
 	.asciz	"\000\000\000\000@\000\000"
 
+	.globl	L_OBJC_IMAGE_INFO_29d0234b9445d447
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_29d0234b9445d447:
+	.asciz	"\000\000\000\000@\000\000"
+
 	.globl	L_OBJC_IMAGE_INFO_9303807037ba4f9f
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_9303807037ba4f9f:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_ff60dae1998e0c85
+	.globl	L_OBJC_IMAGE_INFO_a23daf114eba1518
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_ff60dae1998e0c85:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.globl	L_OBJC_IMAGE_INFO_29d0234b9445d447
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_29d0234b9445d447:
+L_OBJC_IMAGE_INFO_a23daf114eba1518:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.globl	L_OBJC_IMAGE_INFO_e91a5376ddae3cfc
@@ -175,9 +165,9 @@ L_OBJC_IMAGE_INFO_29d0234b9445d447:
 L_OBJC_IMAGE_INFO_e91a5376ddae3cfc:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_a23daf114eba1518
+	.globl	L_OBJC_IMAGE_INFO_ff60dae1998e0c85
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_a23daf114eba1518:
+L_OBJC_IMAGE_INFO_ff60dae1998e0c85:
 	.asciz	"\000\000\000\000@\000\000"
 
 .subsections_via_symbols

@@ -290,6 +290,8 @@ macro_rules! __extern_class_inner {
                 ($crate::runtime::NSObject)
             };
 
+            // We add extra parens to make sure the thread kind doesn't "escape".
+            #[allow(unused_parens)]
             type ThreadKind = $crate::__fallback_if_not_set! {
                 ($(dyn ($($thread_kind)+))?)
                 // Default to the super class' thread kind

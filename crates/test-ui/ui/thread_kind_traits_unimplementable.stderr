@@ -2,8 +2,18 @@ error[E0271]: type mismatch resolving `<Normal as ClassType>::ThreadKind == dyn 
  --> ui/thread_kind_traits_unimplementable.rs
   |
   | unsafe impl MainThreadOnly for Normal {}
-  |                                ^^^^^^ expected trait `MainThreadOnly`, found trait `AnyThread`
+  |                                ^^^^^^ type mismatch resolving `<Normal as ClassType>::ThreadKind == dyn MainThreadOnly`
   |
+note: expected this to be `dyn MainThreadOnly`
+ --> ui/thread_kind_traits_unimplementable.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[thread_kind = AnyThread]
+  | |     #[ivars = *mut ()]
+  | |     struct Normal;
+  | | );
+  | |_^
   = note: expected trait object `dyn MainThreadOnly`
              found trait object `(dyn AllocAnyThread + 'static)`
   = help: `(dyn AllocAnyThread + 'static)` implements `MainThreadOnly` so you could box the found value and coerce it to the trait object `Box<dyn MainThreadOnly>`, you will have to change the expected type as well
@@ -17,13 +27,23 @@ note: required by a bound in `MainThreadOnly`
   = help: the following types implement the trait:
             objc2::runtime::ProtocolObject<P>
             T
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0271]: type mismatch resolving `<OnlyMain as ClassType>::ThreadKind == dyn AnyThread`
  --> ui/thread_kind_traits_unimplementable.rs
   |
   | unsafe impl AnyThread for OnlyMain {}
-  |                           ^^^^^^^^ expected trait `AnyThread`, found trait `MainThreadOnly`
+  |                           ^^^^^^^^ type mismatch resolving `<OnlyMain as ClassType>::ThreadKind == dyn AnyThread`
   |
+note: expected this to be `dyn AllocAnyThread`
+ --> ui/thread_kind_traits_unimplementable.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[thread_kind = MainThreadOnly]
+  | |     struct OnlyMain;
+  | | );
+  | |_^
   = note: expected trait object `dyn AllocAnyThread`
              found trait object `(dyn MainThreadOnly + 'static)`
   = help: `(dyn MainThreadOnly + 'static)` implements `AnyThread` so you could box the found value and coerce it to the trait object `Box<dyn AnyThread>`, you will have to change the expected type as well
@@ -37,3 +57,4 @@ note: required by a bound in `AllocAnyThread`
   = help: the following types implement the trait:
             objc2::runtime::ProtocolObject<P>
             T
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -2,8 +2,16 @@ error[E0277]: the trait bound `MyObj: CopyingHelper` is not satisfied
  --> ui/ns_copying_without_copy_helper.rs
   |
   |     let _ = obj.copy();
-  |                 ^^^^ the trait `CopyingHelper` is not implemented for `MyObj`
+  |                 ^^^^ unsatisfied trait bound
   |
+help: the trait `CopyingHelper` is not implemented for `MyObj`
+ --> ui/ns_copying_without_copy_helper.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct MyObj;
+  | | );
+  | |_^
   = help: the following other types implement trait `CopyingHelper`:
             NSArray<ObjectType>
             NSDictionary<KeyType, ObjectType>
@@ -14,13 +22,22 @@ error[E0277]: the trait bound `MyObj: CopyingHelper` is not satisfied
             NSMutableString
             NSNotification
           and $N others
+  = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `MyObj: MutableCopyingHelper` is not satisfied
  --> ui/ns_copying_without_copy_helper.rs
   |
   |     let _ = obj.mutableCopy();
-  |                 ^^^^^^^^^^^ the trait `MutableCopyingHelper` is not implemented for `MyObj`
+  |                 ^^^^^^^^^^^ unsatisfied trait bound
   |
+help: the trait `MutableCopyingHelper` is not implemented for `MyObj`
+ --> ui/ns_copying_without_copy_helper.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct MyObj;
+  | | );
+  | |_^
   = help: the following other types implement trait `MutableCopyingHelper`:
             NSArray<ObjectType>
             NSDictionary<KeyType, ObjectType>
@@ -31,3 +48,4 @@ error[E0277]: the trait bound `MyObj: MutableCopyingHelper` is not satisfied
             NSSet<ObjectType>
             NSString
             ProtocolObject<P>
+  = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

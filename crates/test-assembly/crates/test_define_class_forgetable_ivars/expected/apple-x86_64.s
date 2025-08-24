@@ -14,7 +14,7 @@ Lfunc_begin0:
 	jne	LBB0_8
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdi, qword ptr [rax]
-	lea	rsi, [rip + L_anon.[ID].7]
+	lea	rsi, [rip + L_anon.[ID].6]
 	xor	edx, edx
 	call	_objc_allocateClassPair
 	test	rax, rax
@@ -23,7 +23,7 @@ Lfunc_begin0:
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 Ltmp0:
-	lea	r8, [rip + l_anon.[ID].8]
+	lea	r8, [rip + l_anon.[ID].5]
 	lea	r9, [rip + _fn1_init]
 	lea	rdi, [rbp - 16]
 	mov	edx, 8
@@ -63,8 +63,8 @@ LBB0_8:
 	lea	rdi, [rip + l_anon.[ID].4]
 	call	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
 LBB0_6:
-	lea	rdi, [rip + L_anon.[ID].7]
-	lea	rdx, [rip + l_anon.[ID].6]
+	lea	rdi, [rip + L_anon.[ID].6]
+	lea	rdx, [rip + l_anon.[ID].8]
 	mov	esi, 16
 	call	SYM(objc2::__macro_helpers::define_class::class_not_unique::GENERATED_ID, 0)
 LBB0_5:
@@ -111,11 +111,11 @@ SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_for
 	pop	rbp
 	ret
 
-	.globl	_fn2_access_class
+	.globl	SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	4
-_fn2_access_class:
+SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 	mov	rax, qword ptr [rip + ___REGISTER_CLASS_ForgetableIvars]
-	cmp	rax, 3
+	test	rax, rax
 	jne	LBB2_1
 	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
 	ret
@@ -128,7 +128,57 @@ LBB2_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + ___REGISTER_CLASS_ForgetableIvars]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].6]
+	lea	r8, [rip + l_anon.[ID].8]
+	lea	rdx, [rbp - 16]
+	xor	esi, esi
+	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	add	rsp, 16
+	pop	rbp
+	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
+	ret
+
+	.globl	_fn1_init
+	.p2align	4
+_fn1_init:
+	test	rdi, rdi
+	je	LBB3_2
+	mov	rax, qword ptr [rip + ___IVAR_OFFSET_ForgetableIvars]
+	mov	dword ptr [rdi + rax], 43
+	mov	byte ptr [rdi + rax + 4], 42
+LBB3_2:
+	push	rbp
+	mov	rbp, rsp
+	sub	rsp, 16
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
+	mov	rsi, qword ptr [rax]
+	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rax, qword ptr [rax]
+	mov	qword ptr [rbp - 16], rdi
+	mov	qword ptr [rbp - 8], rax
+	lea	rdi, [rbp - 16]
+	call	_objc_msgSendSuper
+	add	rsp, 16
+	pop	rbp
+	ret
+
+	.globl	_fn2_access_class
+	.p2align	4
+_fn2_access_class:
+	mov	rax, qword ptr [rip + ___REGISTER_CLASS_ForgetableIvars]
+	test	rax, rax
+	jne	LBB4_1
+	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
+	ret
+LBB4_1:
+	push	rbp
+	mov	rbp, rsp
+	sub	rsp, 16
+	mov	byte ptr [rbp - 1], 1
+	lea	rax, [rbp - 1]
+	mov	qword ptr [rbp - 16], rax
+	lea	rdi, [rip + ___REGISTER_CLASS_ForgetableIvars]
+	lea	rcx, [rip + l_anon.[ID].0]
+	lea	r8, [rip + l_anon.[ID].8]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
@@ -145,56 +195,6 @@ _fn3_access_ivars:
 	mov	rcx, qword ptr [rip + ___IVAR_OFFSET_ForgetableIvars]
 	movzx	eax, byte ptr [rdi + rcx + 4]
 	mov	edx, dword ptr [rdi + rcx]
-	pop	rbp
-	ret
-
-	.globl	SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
-	.p2align	4
-SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
-	mov	rax, qword ptr [rip + ___REGISTER_CLASS_ForgetableIvars]
-	cmp	rax, 3
-	jne	LBB4_1
-	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
-	ret
-LBB4_1:
-	push	rbp
-	mov	rbp, rsp
-	sub	rsp, 16
-	mov	byte ptr [rbp - 1], 1
-	lea	rax, [rbp - 1]
-	mov	qword ptr [rbp - 16], rax
-	lea	rdi, [rip + ___REGISTER_CLASS_ForgetableIvars]
-	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].6]
-	lea	rdx, [rbp - 16]
-	xor	esi, esi
-	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
-	add	rsp, 16
-	pop	rbp
-	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
-	ret
-
-	.globl	_fn1_init
-	.p2align	4
-_fn1_init:
-	test	rdi, rdi
-	je	LBB5_2
-	mov	rax, qword ptr [rip + ___IVAR_OFFSET_ForgetableIvars]
-	mov	dword ptr [rdi + rax], 43
-	mov	byte ptr [rdi + rax + 4], 42
-LBB5_2:
-	push	rbp
-	mov	rbp, rsp
-	sub	rsp, 16
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
-	mov	rsi, qword ptr [rax]
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
-	mov	rax, qword ptr [rax]
-	mov	qword ptr [rbp - 16], rdi
-	mov	qword ptr [rbp - 8], rax
-	lea	rdi, [rbp - 16]
-	call	_objc_msgSendSuper
-	add	rsp, 16
 	pop	rbp
 	ret
 
@@ -215,41 +215,45 @@ l_anon.[ID].2:
 	.byte	7
 	.space	39
 
-l_anon.[ID].3:
-	.ascii	"$RUSTC/library/std/src/sync/poison/once.rs"
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].3:
+	.asciz	"$RUSTC/library/std/src/sync/poison/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].4:
-	.quad	l_anon.[ID].3
-	.asciz	"\20x\000\000\000\000\000\000\000\233\000\000\0002\000\000"
+	.quad	L_anon.[ID].3
+	.asciz	"\20x\000\000\000\000\000\000\000\234\000\000\0002\000\000"
 
-	.globl	___CLASS_ForgetableIvars
-.zerofill __DATA,__common,___CLASS_ForgetableIvars,8,3
-	.globl	___IVAR_OFFSET_ForgetableIvars
-.zerofill __DATA,__common,___IVAR_OFFSET_ForgetableIvars,8,3
-	.globl	___DROP_FLAG_OFFSET_ForgetableIvars
-.zerofill __DATA,__common,___DROP_FLAG_OFFSET_ForgetableIvars,8,3
 	.section	__TEXT,__const
+	.p2align	3, 0x0
 l_anon.[ID].5:
-	.ascii	"crates/$DIR/lib.rs"
+	.byte	19
+	.space	39
+
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].6:
+	.asciz	"ForgetableIvars"
+
+L_anon.[ID].7:
+	.asciz	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].6:
-	.quad	l_anon.[ID].5
+l_anon.[ID].8:
+	.quad	L_anon.[ID].7
 	.asciz	"E\000\000\000\000\000\000\000\022\000\000\000\001\000\000"
 
+	.globl	___CLASS_ForgetableIvars
+.zerofill __DATA,__common,___CLASS_ForgetableIvars,8,3
+	.globl	___DROP_FLAG_OFFSET_ForgetableIvars
+.zerofill __DATA,__common,___DROP_FLAG_OFFSET_ForgetableIvars,8,3
+	.globl	___IVAR_OFFSET_ForgetableIvars
+.zerofill __DATA,__common,___IVAR_OFFSET_ForgetableIvars,8,3
+	.section	__DATA,__data
 	.globl	___REGISTER_CLASS_ForgetableIvars
-.zerofill __DATA,__common,___REGISTER_CLASS_ForgetableIvars,8,3
-	.section	__TEXT,__cstring,cstring_literals
-L_anon.[ID].7:
-	.asciz	"ForgetableIvars"
-
-	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].8:
-	.byte	19
-	.space	39
+___REGISTER_CLASS_ForgetableIvars:
+	.asciz	"\003\000\000\000\000\000\000"
 
 .subsections_via_symbols

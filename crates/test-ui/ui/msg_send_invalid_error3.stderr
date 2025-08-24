@@ -1,8 +1,8 @@
-error[E0080]: evaluation of `<objc2_foundation::NSString as objc2::__macro_helpers::null_error::IsNSError>::IS_NSERROR_COMPATIBLE` failed
+error[E0080]: evaluation panicked: error parameter must be either `NSError` or `NSObject`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/null_error.rs
   |
   |             panic!("error parameter must be either `NSError` or `NSObject`")
-  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ evaluation panicked: error parameter must be either `NSError` or `NSObject`
+  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ evaluation of `<objc2_foundation::NSString as objc2::__macro_helpers::null_error::IsNSError>::IS_NSERROR_COMPATIBLE` failed here
 
 note: erroneous constant encountered
   --> $WORKSPACE/crates/objc2/src/__macro_helpers/null_error.rs
@@ -10,7 +10,7 @@ note: erroneous constant encountered
    |         assert!(E::IS_NSERROR_COMPATIBLE);
    |                 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-note: the above error was encountered while instantiating `fn objc2::__macro_helpers::null_error::encountered_error::<objc2_foundation::NSString>::{closure#0}`
+note: the above error was encountered while instantiating `fn __macro_helpers::null_error::encountered_error::<NSString>::{closure#0}`
     --> $RUST/core/src/option.rs
      |
      |             None => f(),

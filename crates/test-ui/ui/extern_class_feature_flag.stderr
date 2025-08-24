@@ -6,3 +6,12 @@ error[E0433]: failed to resolve: use of undeclared type `MyTestDisabled`
   |                |
   |                use of undeclared type `MyTestDisabled`
   |                help: a struct with a similar name exists: `MyTestEnabled`
+  |
+note: found an item that was configured out
+ --> ui/extern_class_feature_flag.rs
+  |
+  |     #[cfg(test)]
+  |           ---- the item is gated here
+  |     #[unsafe(super(NSObject))]
+  |     pub struct MyTestDisabled;
+  |                ^^^^^^^^^^^^^^

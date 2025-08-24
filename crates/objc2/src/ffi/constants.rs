@@ -3,14 +3,15 @@
 
 #[cfg(any(doc, target_vendor = "apple"))]
 use core::ffi::c_int;
+use core::ptr::null_mut;
 
 use crate::runtime::{AnyClass, AnyObject};
 
 /// A quick alias for a [`null_mut`][`core::ptr::null_mut`] object / instance.
-pub const nil: *mut AnyObject = 0 as *mut _;
+pub const nil: *mut AnyObject = null_mut();
 
 /// A quick alias for a [`null_mut`][`core::ptr::null_mut`] class.
-pub const Nil: *mut AnyClass = 0 as *mut _;
+pub const Nil: *mut AnyClass = null_mut();
 
 /// Policies related to associative references.
 ///

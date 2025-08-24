@@ -41,6 +41,7 @@ macro_rules! extern_conformance {
 }
 
 #[cfg(test)]
+#[allow(dead_code)]
 mod tests {
     use crate::runtime::NSObject;
     use crate::{extern_class, extern_protocol};

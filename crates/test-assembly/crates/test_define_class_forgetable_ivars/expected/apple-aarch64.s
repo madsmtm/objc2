@@ -18,9 +18,9 @@ Lloh1:
 Lloh2:
 	ldr	x0, [x8]
 Lloh3:
-	adrp	x1, l_anon.[ID].7@PAGE
+	adrp	x1, l_anon.[ID].6@PAGE
 Lloh4:
-	add	x1, x1, l_anon.[ID].7@PAGEOFF
+	add	x1, x1, l_anon.[ID].6@PAGEOFF
 	mov	x2, #0
 	bl	_objc_allocateClassPair
 	cbz	x0, LBB0_7
@@ -33,9 +33,9 @@ Lloh7:
 	ldr	x1, [x8]
 Ltmp0:
 Lloh8:
-	adrp	x4, l_anon.[ID].8@PAGE
+	adrp	x4, l_anon.[ID].5@PAGE
 Lloh9:
-	add	x4, x4, l_anon.[ID].8@PAGEOFF
+	add	x4, x4, l_anon.[ID].5@PAGEOFF
 Lloh10:
 	adrp	x5, _fn1_init@PAGE
 Lloh11:
@@ -94,13 +94,13 @@ Lloh21:
 	bl	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
 LBB0_7:
 Lloh22:
-	adrp	x0, l_anon.[ID].7@PAGE
+	adrp	x0, l_anon.[ID].6@PAGE
 Lloh23:
-	add	x0, x0, l_anon.[ID].7@PAGEOFF
+	add	x0, x0, l_anon.[ID].6@PAGEOFF
 Lloh24:
-	adrp	x2, l_anon.[ID].6@PAGE
+	adrp	x2, l_anon.[ID].8@PAGE
 Lloh25:
-	add	x2, x2, l_anon.[ID].6@PAGEOFF
+	add	x2, x2, l_anon.[ID].8@PAGEOFF
 	mov	w1, #16
 	bl	SYM(objc2::__macro_helpers::define_class::class_not_unique::GENERATED_ID, 0)
 LBB0_8:
@@ -159,16 +159,15 @@ SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_for
 	add	sp, sp, #32
 	ret
 
-	.globl	_fn2_access_class
+	.globl	SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	2
-_fn2_access_class:
+SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 Lloh26:
 	adrp	x8, ___REGISTER_CLASS_ForgetableIvars@PAGE
 Lloh27:
 	add	x8, x8, ___REGISTER_CLASS_ForgetableIvars@PAGEOFF
 	ldapr	x8, [x8]
-	cmp	x8, #3
-	b.ne	LBB2_2
+	cbnz	x8, LBB2_2
 Lloh28:
 	adrp	x8, ___CLASS_ForgetableIvars@PAGE
 Lloh29:
@@ -191,9 +190,9 @@ Lloh32:
 Lloh33:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
 Lloh34:
-	adrp	x4, l_anon.[ID].6@PAGE
+	adrp	x4, l_anon.[ID].8@PAGE
 Lloh35:
-	add	x4, x4, l_anon.[ID].6@PAGEOFF
+	add	x4, x4, l_anon.[ID].8@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
@@ -211,32 +210,57 @@ Lloh37:
 	.loh AdrpAdd	Lloh32, Lloh33
 	.loh AdrpAdd	Lloh30, Lloh31
 
-	.globl	_fn3_access_ivars
+	.globl	_fn1_init
 	.p2align	2
-_fn3_access_ivars:
+_fn1_init:
+	cbz	x0, LBB3_2
 Lloh38:
 	adrp	x8, ___IVAR_OFFSET_ForgetableIvars@PAGE
 Lloh39:
 	ldr	x8, [x8, ___IVAR_OFFSET_ForgetableIvars@PAGEOFF]
 	add	x8, x0, x8
-	ldr	w1, [x8]
-	ldrb	w0, [x8, #4]
+	mov	w9, #43
+	str	w9, [x8]
+	mov	w9, #42
+	strb	w9, [x8, #4]
+LBB3_2:
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+Lloh40:
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
+Lloh41:
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
+Lloh42:
+	ldr	x1, [x8]
+Lloh43:
+	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
+Lloh44:
+	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+Lloh45:
+	ldr	x8, [x8]
+	stp	x0, x8, [sp]
+	mov	x0, sp
+	bl	_objc_msgSendSuper
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
 	ret
 	.loh AdrpLdr	Lloh38, Lloh39
+	.loh AdrpLdrGotLdr	Lloh43, Lloh44, Lloh45
+	.loh AdrpLdrGotLdr	Lloh40, Lloh41, Lloh42
 
-	.globl	SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
+	.globl	_fn2_access_class
 	.p2align	2
-SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
-Lloh40:
+_fn2_access_class:
+Lloh46:
 	adrp	x8, ___REGISTER_CLASS_ForgetableIvars@PAGE
-Lloh41:
+Lloh47:
 	add	x8, x8, ___REGISTER_CLASS_ForgetableIvars@PAGEOFF
 	ldapr	x8, [x8]
-	cmp	x8, #3
-	b.ne	LBB4_2
-Lloh42:
+	cbnz	x8, LBB4_2
+Lloh48:
 	adrp	x8, ___CLASS_ForgetableIvars@PAGE
-Lloh43:
+Lloh49:
 	ldr	x0, [x8, ___CLASS_ForgetableIvars@PAGEOFF]
 	ret
 LBB4_2:
@@ -247,73 +271,47 @@ LBB4_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh44:
+Lloh50:
 	adrp	x0, ___REGISTER_CLASS_ForgetableIvars@PAGE
-Lloh45:
+Lloh51:
 	add	x0, x0, ___REGISTER_CLASS_ForgetableIvars@PAGEOFF
-Lloh46:
+Lloh52:
 	adrp	x3, l_anon.[ID].0@PAGE
-Lloh47:
+Lloh53:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh48:
-	adrp	x4, l_anon.[ID].6@PAGE
-Lloh49:
-	add	x4, x4, l_anon.[ID].6@PAGEOFF
+Lloh54:
+	adrp	x4, l_anon.[ID].8@PAGE
+Lloh55:
+	add	x4, x4, l_anon.[ID].8@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
-Lloh50:
+Lloh56:
 	adrp	x8, ___CLASS_ForgetableIvars@PAGE
-Lloh51:
+Lloh57:
 	ldr	x0, [x8, ___CLASS_ForgetableIvars@PAGEOFF]
 	ret
-	.loh AdrpAdd	Lloh40, Lloh41
-	.loh AdrpLdr	Lloh42, Lloh43
-	.loh AdrpLdr	Lloh50, Lloh51
-	.loh AdrpAdd	Lloh48, Lloh49
 	.loh AdrpAdd	Lloh46, Lloh47
-	.loh AdrpAdd	Lloh44, Lloh45
+	.loh AdrpLdr	Lloh48, Lloh49
+	.loh AdrpLdr	Lloh56, Lloh57
+	.loh AdrpAdd	Lloh54, Lloh55
+	.loh AdrpAdd	Lloh52, Lloh53
+	.loh AdrpAdd	Lloh50, Lloh51
 
-	.globl	_fn1_init
+	.globl	_fn3_access_ivars
 	.p2align	2
-_fn1_init:
-	cbz	x0, LBB5_2
-Lloh52:
+_fn3_access_ivars:
+Lloh58:
 	adrp	x8, ___IVAR_OFFSET_ForgetableIvars@PAGE
-Lloh53:
+Lloh59:
 	ldr	x8, [x8, ___IVAR_OFFSET_ForgetableIvars@PAGEOFF]
 	add	x8, x0, x8
-	mov	w9, #43
-	str	w9, [x8]
-	mov	w9, #42
-	strb	w9, [x8, #4]
-LBB5_2:
-	sub	sp, sp, #32
-	stp	x29, x30, [sp, #16]
-	add	x29, sp, #16
-Lloh54:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
-Lloh55:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
-Lloh56:
-	ldr	x1, [x8]
-Lloh57:
-	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
-Lloh58:
-	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
-Lloh59:
-	ldr	x8, [x8]
-	stp	x0, x8, [sp]
-	mov	x0, sp
-	bl	_objc_msgSendSuper
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
+	ldr	w1, [x8]
+	ldrb	w0, [x8, #4]
 	ret
-	.loh AdrpLdr	Lloh52, Lloh53
-	.loh AdrpLdrGotLdr	Lloh57, Lloh58, Lloh59
-	.loh AdrpLdrGotLdr	Lloh54, Lloh55, Lloh56
+	.loh AdrpLdr	Lloh58, Lloh59
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
@@ -332,41 +330,45 @@ l_anon.[ID].2:
 	.byte	7
 	.space	39
 
+	.section	__TEXT,__cstring,cstring_literals
 l_anon.[ID].3:
-	.ascii	"$RUSTC/library/std/src/sync/poison/once.rs"
+	.asciz	"$RUSTC/library/std/src/sync/poison/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	l_anon.[ID].3
-	.asciz	"\20x\000\000\000\000\000\000\000\233\000\000\0002\000\000"
+	.asciz	"\20x\000\000\000\000\000\000\000\234\000\000\0002\000\000"
 
-	.globl	___CLASS_ForgetableIvars
-.zerofill __DATA,__common,___CLASS_ForgetableIvars,8,3
-	.globl	___IVAR_OFFSET_ForgetableIvars
-.zerofill __DATA,__common,___IVAR_OFFSET_ForgetableIvars,8,3
-	.globl	___DROP_FLAG_OFFSET_ForgetableIvars
-.zerofill __DATA,__common,___DROP_FLAG_OFFSET_ForgetableIvars,8,3
 	.section	__TEXT,__const
+	.p2align	3, 0x0
 l_anon.[ID].5:
-	.ascii	"crates/$DIR/lib.rs"
+	.byte	19
+	.space	39
+
+	.section	__TEXT,__cstring,cstring_literals
+l_anon.[ID].6:
+	.asciz	"ForgetableIvars"
+
+l_anon.[ID].7:
+	.asciz	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].6:
-	.quad	l_anon.[ID].5
+l_anon.[ID].8:
+	.quad	l_anon.[ID].7
 	.asciz	"E\000\000\000\000\000\000\000\022\000\000\000\001\000\000"
 
+	.globl	___CLASS_ForgetableIvars
+.zerofill __DATA,__common,___CLASS_ForgetableIvars,8,3
+	.globl	___DROP_FLAG_OFFSET_ForgetableIvars
+.zerofill __DATA,__common,___DROP_FLAG_OFFSET_ForgetableIvars,8,3
+	.globl	___IVAR_OFFSET_ForgetableIvars
+.zerofill __DATA,__common,___IVAR_OFFSET_ForgetableIvars,8,3
+	.section	__DATA,__data
 	.globl	___REGISTER_CLASS_ForgetableIvars
-.zerofill __DATA,__common,___REGISTER_CLASS_ForgetableIvars,8,3
-	.section	__TEXT,__cstring,cstring_literals
-l_anon.[ID].7:
-	.asciz	"ForgetableIvars"
-
-	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].8:
-	.byte	19
-	.space	39
+___REGISTER_CLASS_ForgetableIvars:
+	.asciz	"\003\000\000\000\000\000\000"
 
 .subsections_via_symbols

@@ -1,4 +1,4 @@
-	.syntax unified
+	.syntax	unified
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_fn1_iter_create
 	.p2align	2
@@ -134,13 +134,23 @@ LPC3_1:
 	str	r1, [sp, #112]
 	mov	r6, #16
 	mov	r2, #0
-	cmp	r2, r1
-	blo	LBB3_3
+	b	LBB3_2
 LBB3_1:
+	ldr	r0, [sp, #80]
+	add	r1, r2, #1
+	str	r1, [sp, #108]
+	ldr	r0, [r0, r2, lsl #2]
+	bl	_fn3_use_obj
+	ldr	r0, [sp, #8]
+	ldr	r2, [sp, #108]
+	ldr	r1, [sp, #112]
+LBB3_2:
+	cmp	r2, r1
+	blo	LBB3_1
 	ldr	r1, [r10]
 	cmp	r1, #0
 	beq	LBB3_5
-LBB3_2:
+LBB3_4:
 	str	r6, [sp]
 	mov	r2, r5
 	mov	r3, r4
@@ -148,21 +158,8 @@ LBB3_2:
 	str	r0, [sp, #112]
 	mov	r2, #0
 	cmp	r0, #0
-	beq	LBB3_6
-LBB3_3:
-	ldr	r0, [sp, #80]
-	add	r1, r2, #1
-	str	r1, [sp, #108]
-	ldr	r0, [r0, r2, lsl #2]
-	cmp	r0, #0
-	beq	LBB3_6
-	bl	_fn3_use_obj
-	ldr	r0, [sp, #8]
-	ldr	r2, [sp, #108]
-	ldr	r1, [sp, #112]
-	cmp	r2, r1
-	bhs	LBB3_1
-	b	LBB3_3
+	bne	LBB3_1
+	b	LBB3_6
 LBB3_5:
 	mov	r11, r0
 	mov	r0, r10
@@ -170,7 +167,7 @@ LBB3_5:
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r11
-	b	LBB3_2
+	b	LBB3_4
 LBB3_6:
 	sub	sp, r7, #24
 	pop	{r8, r10, r11}
@@ -190,19 +187,18 @@ _fn5_iter_noop:
 	vmov.i32	q8, #0x0
 	vst1.64	{d16, d17}, [r3]!
 	mov	r1, #0
-	str	r1, [r3]
 	orr	r4, r2, #4
 	mov	r5, r4
 	vst1.32	{d16, d17}, [r5]!
 	vst1.32	{d16, d17}, [r5]!
 	vst1.32	{d16, d17}, [r5]!
 	vst1.32	{d16, d17}, [r5]!
+	str	r1, [r3]
 	str	r0, [sp, #8]
 	str	r1, [r5]
 	str	r1, [sp, #80]
 	str	r1, [sp, #84]
 	str	r1, [sp, #108]
-	str	r1, [sp, #112]
 	movw	r10, :lower16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
 	movt	r10, :upper16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
 LPC4_0:
@@ -211,21 +207,16 @@ LPC4_0:
 	movt	r8, :upper16:(L_anon.[ID].0-(LPC4_1+8))
 LPC4_1:
 	add	r8, pc, r8
+	str	r1, [sp, #112]
 	mov	r6, #16
-	mov	r0, #0
 	mov	r2, #0
 	b	LBB4_2
 LBB4_1:
-	add	r3, r2, #1
-	str	r3, [sp, #108]
-	ldr	r2, [r1, r2, lsl #2]
-	cmp	r2, #0
-	mov	r2, r3
-	beq	LBB4_7
+	add	r2, r2, #1
+	str	r2, [sp, #108]
 LBB4_2:
-	cmp	r2, r0
+	cmp	r2, r1
 	blo	LBB4_1
-	ldr	r0, [sp, #8]
 	ldr	r1, [r10]
 	cmp	r1, #0
 	beq	LBB4_6
@@ -237,8 +228,9 @@ LBB4_4:
 	str	r0, [sp, #112]
 	cmp	r0, #0
 	beq	LBB4_7
+	mov	r1, r0
 	mov	r2, #0
-	ldr	r1, [sp, #80]
+	ldr	r0, [sp, #8]
 	b	LBB4_1
 LBB4_6:
 	mov	r11, r0
@@ -318,7 +310,7 @@ LPC5_3:
 	ldr	r1, [pc, r1]
 	ldr	r1, [r1]
 	cmp	r1, #0
-	beq	LBB5_11
+	beq	LBB5_10
 LBB5_2:
 	str	r5, [sp, #144]
 	mov	r2, #16
@@ -330,22 +322,22 @@ LBB5_2:
 	mov	r1, #0
 	str	r1, [sp, #124]
 	cmp	r0, #0
-	beq	LBB5_12
+	beq	LBB5_11
 	ldr	r0, [sp, #96]
 	cmp	r0, #0
-	beq	LBB5_13
+	beq	LBB5_12
 LBB5_4:
 	ldr	r0, [sp, #100]
 	cmp	r0, #0
 	beq	LBB5_8
 	ldr	r0, [r0]
 	ldr	r2, [sp, #16]
-	cmp	r2, #1
-	bne	LBB5_7
+	tst	r2, #1
+	beq	LBB5_7
 	ldr	r2, [sp, #20]
 	cmp	r2, r0
 	beq	LBB5_8
-	b	LBB5_14
+	b	LBB5_13
 LBB5_7:
 	mov	r2, #1
 	str	r2, [sp, #16]
@@ -355,8 +347,6 @@ LBB5_8:
 	add	r2, r1, #1
 	str	r2, [sp, #124]
 	ldr	r0, [r0, r1, lsl #2]
-	cmp	r0, #0
-	beq	LBB5_12
 	str	r5, [sp, #144]
 	bl	_objc_retain
 	str	r0, [sp, #136]
@@ -377,7 +367,7 @@ Ltmp1:
 	cmp	r1, r2
 	bhs	LBB5_1
 	b	LBB5_4
-LBB5_11:
+LBB5_10:
 	str	r5, [sp, #144]
 	mov	r4, r0
 	movw	r0, :lower16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_4+8))
@@ -392,7 +382,7 @@ LPC5_5:
 	mov	r1, r0
 	mov	r0, r4
 	b	LBB5_2
-LBB5_12:
+LBB5_11:
 	add	r0, sp, #140
 	bl	__Unwind_SjLj_Unregister
 	add	r4, sp, #192
@@ -401,17 +391,17 @@ LBB5_12:
 	sub	sp, r7, #24
 	pop	{r8, r10, r11}
 	pop	{r4, r5, r6, r7, pc}
-LBB5_13:
+LBB5_12:
 	mvn	r0, #0
 	str	r0, [sp, #144]
 	mov	lr, pc
 	b	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)
-LBB5_14:
+LBB5_13:
 	mvn	r0, #0
 	str	r0, [sp, #144]
 	mov	lr, pc
 	b	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)
-LBB5_15:
+LBB5_14:
 	lsl	r0, r0, #2
 	adr	r1, LJTI5_0
 	ldr	r0, [r0, r1]
@@ -419,10 +409,10 @@ LBB5_15:
 	.p2align	2
 LJTI5_0:
 	.data_region jt32
-	.long	LBB5_17-LJTI5_0
-	.long	LBB5_20-LJTI5_0
+	.long	LBB5_16-LJTI5_0
+	.long	LBB5_19-LJTI5_0
 	.end_data_region
-LBB5_17:
+LBB5_16:
 Ltmp2:
 	ldr	r0, [sp, #148]
 	str	r0, [sp, #12]
@@ -432,19 +422,19 @@ Ltmp2:
 Ltmp3:
 	bl	_objc_release
 Ltmp4:
-	b	LBB5_21
-LBB5_18:
+	b	LBB5_20
+LBB5_17:
 	ldr	r0, [sp, #144]
 	cmp	r0, #2
-	bls	LBB5_15
+	bls	LBB5_14
 	trap
-LBB5_20:
+LBB5_19:
 Ltmp5:
 	ldr	r0, [sp, #148]
 	ldr	r0, [sp, #152]
 	mov	lr, pc
 	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
-LBB5_21:
+LBB5_20:
 	mvn	r0, #0
 	str	r0, [sp, #144]
 	ldr	r0, [sp, #12]
@@ -455,7 +445,7 @@ LBB5_21:
 LCPI5_0:
 	.long	Lexception0-(LPC5_0+8)
 LCPI5_1:
-	.long	LBB5_18-(LPC5_1+8)
+	.long	LBB5_17-(LPC5_1+8)
 	.end_data_region
 Lfunc_end0:
 	.section	__TEXT,__gcc_except_tab

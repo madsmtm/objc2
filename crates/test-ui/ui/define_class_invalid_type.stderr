@@ -103,8 +103,17 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
   | |     struct CustomObject;
 ... |
   | | );
-  | |_^ the trait `Encode` is not implemented for `CustomObject`
+  | |_^ unsatisfied trait bound
   |
+help: the trait `Encode` is not implemented for `CustomObject`
+ --> ui/define_class_invalid_type.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^
   = help: the following other types implement trait `Encode`:
             &'a T
             &'a mut T
@@ -317,8 +326,17 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
   | |     struct CustomObject;
 ... |
   | | );
-  | |_^ the trait `Encode` is not implemented for `CustomObject`
+  | |_^ unsatisfied trait bound
   |
+help: the trait `Encode` is not implemented for `CustomObject`
+ --> ui/define_class_invalid_type.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^
   = help: the following other types implement trait `Encode`:
             &'a T
             &'a mut T
@@ -343,9 +361,18 @@ error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
   | | );
   | | ^
   | | |
-  | |_the trait `Encode` is not implemented for `CustomObject`
+  | |_unsatisfied trait bound
   |   required by a bound introduced by this call
   |
+help: the trait `Encode` is not implemented for `CustomObject`
+ --> ui/define_class_invalid_type.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^
   = help: the following other types implement trait `Encode`:
             &'a T
             &'a mut T
@@ -424,8 +451,17 @@ error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
   | |     struct CustomObject;
 ... |
   | | );
-  | |_^ the trait `Encode` is not implemented for `CustomObject`
+  | |_^ unsatisfied trait bound
   |
+help: the trait `Encode` is not implemented for `CustomObject`
+ --> ui/define_class_invalid_type.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^
   = help: the following other types implement trait `Encode`:
             &'a T
             &'a mut T

@@ -1,5 +1,5 @@
 [toolchain]
 # Remember to update this in ci.yml as well.
-channel = "nightly-2025-04-11"
+channel = "nightly-2025-08-24"
 profile = "minimal"
 components = ["rustfmt", "clippy", "rust-src"]

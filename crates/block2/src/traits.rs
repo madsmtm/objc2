@@ -25,7 +25,7 @@ mod private {
 /// # Safety
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
-/// issue if you know a use-case where this restrition should be lifted!
+/// issue if you know a use-case where this restriction should be lifted!
 pub unsafe trait BlockFn: private::Sealed<Self::Args, Self::Output> {
     /// The parameters/arguments to the block.
     type Args: EncodeArguments;
@@ -52,7 +52,7 @@ pub unsafe trait BlockFn: private::Sealed<Self::Args, Self::Output> {
 /// # Safety
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
-/// issue if you know a use-case where this restrition should be lifted!
+/// issue if you know a use-case where this restriction should be lifted!
 pub unsafe trait IntoBlock<'f, A, R>: private::Sealed<A, R>
 where
     A: EncodeArguments,

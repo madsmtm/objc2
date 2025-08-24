@@ -273,9 +273,9 @@ Lttbase0:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	__TEXT,__const
+	.section	__TEXT,__cstring,cstring_literals
 l_anon.[ID].0:
-	.ascii	"crates/$DIR/lib.rs"
+	.asciz	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0

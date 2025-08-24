@@ -228,23 +228,28 @@ LBB6_5:
 LBB6_6:
 	ret
 
+.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0),8,3
+.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0),8,3
+.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0),8,3
+.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0),8,3
+.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0),8,3
+.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0),8,3
 	.section	__TEXT,__cstring,cstring_literals
 L_anon.[ID].0:
 	.asciz	"NSObject"
 
-	.section	__TEXT,__const
-l_anon.[ID].1:
-	.ascii	"crates/$DIR/../test_static_class/lib.rs"
+L_anon.[ID].1:
+	.asciz	"crates/$DIR/../test_static_class/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].2:
-	.quad	l_anon.[ID].1
+	.quad	L_anon.[ID].1
 	.asciz	"J\000\000\000\000\000\000\000\007\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].3:
-	.quad	l_anon.[ID].1
+	.quad	L_anon.[ID].1
 	.asciz	"J\000\000\000\000\000\000\000\f\000\000\000\005\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
@@ -254,7 +259,7 @@ L_anon.[ID].4:
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].5:
-	.quad	l_anon.[ID].1
+	.quad	L_anon.[ID].1
 	.asciz	"J\000\000\000\000\000\000\000\021\000\000\000\005\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
@@ -264,7 +269,7 @@ L_anon.[ID].6:
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].7:
-	.quad	l_anon.[ID].1
+	.quad	L_anon.[ID].1
 	.asciz	"J\000\000\000\000\000\000\000\026\000\000\000\r\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
@@ -274,7 +279,7 @@ L_anon.[ID].8:
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].9:
-	.quad	l_anon.[ID].1
+	.quad	L_anon.[ID].1
 	.asciz	"J\000\000\000\000\000\000\000\036\000\000\000\016\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
@@ -284,13 +289,7 @@ L_anon.[ID].10:
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].11:
-	.quad	l_anon.[ID].1
+	.quad	L_anon.[ID].1
 	.asciz	"J\000\000\000\000\000\000\000,\000\000\000\021\000\000"
 
-.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0),8,3
-.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0),8,3
-.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0),8,3
-.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0),8,3
-.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0),8,3
-.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0),8,3
 .subsections_via_symbols

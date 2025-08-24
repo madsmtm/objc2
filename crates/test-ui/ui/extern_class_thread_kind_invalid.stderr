@@ -15,6 +15,12 @@ note: for a trait to be dyn compatible it needs to allow building a vtable
   |     const __DYN_INCOMPATIBLE: ();
   |           ^^^^^^^^^^^^^^^^^^ the trait is not dyn compatible because it contains this associated `const`
   = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: you might have meant to use `Self` to refer to the implementing type
+ --> $WORKSPACE/crates/objc2/src/macros/extern_class.rs
+  |
+    -                 ($(dyn ($($thread_kind)+))?)
+    +                 ($(Self)?)
+    |
 
 error[E0277]: the trait bound `BogusThreadKind: ValidThreadKind<(dyn ThreadKind + 'static)>` is not satisfied
  --> ui/extern_class_thread_kind_invalid.rs
@@ -24,8 +30,17 @@ error[E0277]: the trait bound `BogusThreadKind: ValidThreadKind<(dyn ThreadKind 
   | |     #[thread_kind = ThreadKind]
   | |     struct BogusThreadKind;
   | | );
-  | |_^ the trait `ValidThreadKind<(dyn ThreadKind + 'static)>` is not implemented for `BogusThreadKind`
+  | |_^ unsatisfied trait bound
   |
+help: the trait `ValidThreadKind<(dyn ThreadKind + 'static)>` is not implemented for `BogusThreadKind`
+ --> ui/extern_class_thread_kind_invalid.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[thread_kind = ThreadKind]
+  | |     struct BogusThreadKind;
+  | | );
+  | |_^
   = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0038]: the trait `ThreadKind` is not dyn compatible

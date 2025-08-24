@@ -68,6 +68,7 @@ struct ImplsDrop;
 impl<Cls: ?Sized + Drop> DoesNotImplDrop<ImplsDrop> for Cls {}
 
 #[cfg(test)]
+#[allow(dead_code)]
 mod tests {
     use super::*;
     use crate::extern_class;

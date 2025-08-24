@@ -46,19 +46,14 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::crea
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
-	mov	x20, x1
 	mov	x19, x0
-Lloh0:
-	adrp	x8, ___rust_no_alloc_shim_is_unstable@GOTPAGE
-Lloh1:
-	ldr	x8, [x8, ___rust_no_alloc_shim_is_unstable@GOTPAGEOFF]
-	ldrb	wzr, [x8]
+	ldr	x20, [x1, #32]
+	bl	SYM(__rustc[CRATE_ID]::__rust_no_alloc_shim_is_unstable_v2, 0)
 	mov	w0, #4
 	mov	w1, #4
 	bl	SYM(__rustc[CRATE_ID]::__rust_alloc, 0)
 	cbz	x0, LBB8_2
-	ldr	x8, [x20, #32]
-	ldr	w8, [x8]
+	ldr	w8, [x20]
 	str	w8, [x0]
 	str	x0, [x19, #32]
 	ldp	x29, x30, [sp, #16]
@@ -68,7 +63,6 @@ LBB8_2:
 	mov	w0, #4
 	mov	w1, #4
 	bl	SYM(alloc::alloc::handle_alloc_error::GENERATED_ID, 0)
-	.loh AdrpLdrGot	Lloh0, Lloh1
 
 	.p2align	2
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>>::empty_clone_closure, 0):
@@ -102,19 +96,19 @@ _fn1_stack_block_to_rc:
 	sub	sp, sp, #48
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
-Lloh2:
+Lloh0:
 	adrp	x8, __NSConcreteStackBlock@GOTPAGE
-Lloh3:
+Lloh1:
 	ldr	x8, [x8, __NSConcreteStackBlock@GOTPAGEOFF]
 	mov	w9, #33554432
 	stp	x8, x9, [sp]
-Lloh4:
+Lloh2:
 	adrp	x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0)@PAGE
-Lloh5:
+Lloh3:
 	add	x8, x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0)@PAGEOFF
-Lloh6:
+Lloh4:
 	adrp	x9, l_anon.[ID].0@PAGE
-Lloh7:
+Lloh5:
 	add	x9, x9, l_anon.[ID].0@PAGEOFF
 	stp	x8, x9, [sp, #16]
 	mov	x0, sp
@@ -125,9 +119,9 @@ Lloh7:
 	ret
 LBB14_2:
 	bl	SYM(block2::rc_block::block_copy_fail::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh6, Lloh7
 	.loh AdrpAdd	Lloh4, Lloh5
-	.loh AdrpLdrGot	Lloh2, Lloh3
+	.loh AdrpAdd	Lloh2, Lloh3
+	.loh AdrpLdrGot	Lloh0, Lloh1
 
 	.globl	_fn2_rc_block
 	.p2align	2
@@ -135,18 +129,18 @@ _fn2_rc_block:
 	sub	sp, sp, #48
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
-Lloh8:
+Lloh6:
 	adrp	x8, __NSConcreteStackBlock@GOTPAGE
-Lloh9:
+Lloh7:
 	ldr	x8, [x8, __NSConcreteStackBlock@GOTPAGEOFF]
 	stp	x8, xzr, [sp]
-Lloh10:
+Lloh8:
 	adrp	x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0)@PAGE
-Lloh11:
+Lloh9:
 	add	x8, x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0)@PAGEOFF
-Lloh12:
+Lloh10:
 	adrp	x9, l_anon.[ID].4@PAGE
-Lloh13:
+Lloh11:
 	add	x9, x9, l_anon.[ID].4@PAGEOFF
 	stp	x8, x9, [sp, #16]
 	mov	x0, sp
@@ -157,9 +151,9 @@ Lloh13:
 	ret
 LBB15_2:
 	bl	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh12, Lloh13
 	.loh AdrpAdd	Lloh10, Lloh11
-	.loh AdrpLdrGot	Lloh8, Lloh9
+	.loh AdrpAdd	Lloh8, Lloh9
+	.loh AdrpLdrGot	Lloh6, Lloh7
 
 	.globl	_fn3_rc_block_drop
 	.p2align	2
@@ -167,19 +161,19 @@ _fn3_rc_block_drop:
 	sub	sp, sp, #64
 	stp	x29, x30, [sp, #48]
 	add	x29, sp, #48
-Lloh14:
+Lloh12:
 	adrp	x8, __NSConcreteStackBlock@GOTPAGE
-Lloh15:
+Lloh13:
 	ldr	x8, [x8, __NSConcreteStackBlock@GOTPAGEOFF]
 	mov	w9, #33554432
-Lloh16:
+Lloh14:
 	adrp	x10, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0)@PAGE
-Lloh17:
+Lloh15:
 	add	x10, x10, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0)@PAGEOFF
 	stp	x8, x9, [sp, #8]
-Lloh18:
+Lloh16:
 	adrp	x8, l_anon.[ID].3@PAGE
-Lloh19:
+Lloh17:
 	add	x8, x8, l_anon.[ID].3@PAGEOFF
 	stp	x10, x8, [sp, #24]
 	str	x0, [sp, #40]
@@ -191,9 +185,9 @@ Lloh19:
 	ret
 LBB16_2:
 	bl	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh18, Lloh19
 	.loh AdrpAdd	Lloh16, Lloh17
-	.loh AdrpLdrGot	Lloh14, Lloh15
+	.loh AdrpAdd	Lloh14, Lloh15
+	.loh AdrpLdrGot	Lloh12, Lloh13
 
 	.globl	_fn4_create_and_use_stack_block
 	.p2align	2
@@ -201,19 +195,19 @@ _fn4_create_and_use_stack_block:
 	sub	sp, sp, #48
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
-Lloh20:
+Lloh18:
 	adrp	x8, __NSConcreteStackBlock@GOTPAGE
-Lloh21:
+Lloh19:
 	ldr	x8, [x8, __NSConcreteStackBlock@GOTPAGEOFF]
 	mov	w9, #33554432
 	stp	x8, x9, [sp]
-Lloh22:
+Lloh20:
 	adrp	x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0)@PAGE
-Lloh23:
+Lloh21:
 	add	x8, x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0)@PAGEOFF
-Lloh24:
+Lloh22:
 	adrp	x9, l_anon.[ID].1@PAGE
-Lloh25:
+Lloh23:
 	add	x9, x9, l_anon.[ID].1@PAGEOFF
 	stp	x8, x9, [sp, #16]
 	mov	x0, sp
@@ -221,9 +215,9 @@ Lloh25:
 	ldp	x29, x30, [sp, #32]
 	add	sp, sp, #48
 	ret
-	.loh AdrpAdd	Lloh24, Lloh25
 	.loh AdrpAdd	Lloh22, Lloh23
-	.loh AdrpLdrGot	Lloh20, Lloh21
+	.loh AdrpAdd	Lloh20, Lloh21
+	.loh AdrpLdrGot	Lloh18, Lloh19
 
 	.globl	_fn5_create_and_use_stack_block_drop
 	.p2align	2
@@ -233,19 +227,19 @@ _fn5_create_and_use_stack_block_drop:
 	stp	x29, x30, [sp, #64]
 	add	x29, sp, #64
 	mov	x19, x0
-Lloh26:
+Lloh24:
 	adrp	x8, __NSConcreteStackBlock@GOTPAGE
-Lloh27:
+Lloh25:
 	ldr	x8, [x8, __NSConcreteStackBlock@GOTPAGEOFF]
 	mov	w9, #33554432
-Lloh28:
+Lloh26:
 	adrp	x10, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0)@PAGE
-Lloh29:
+Lloh27:
 	add	x10, x10, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0)@PAGEOFF
 	stp	x8, x9, [sp, #8]
-Lloh30:
+Lloh28:
 	adrp	x8, l_anon.[ID].2@PAGE
-Lloh31:
+Lloh29:
 	add	x8, x8, l_anon.[ID].2@PAGEOFF
 	stp	x10, x8, [sp, #24]
 	str	x0, [sp, #40]
@@ -259,9 +253,9 @@ Lloh31:
 	ldp	x20, x19, [sp, #48]
 	add	sp, sp, #80
 	ret
-	.loh AdrpAdd	Lloh30, Lloh31
 	.loh AdrpAdd	Lloh28, Lloh29
-	.loh AdrpLdrGot	Lloh26, Lloh27
+	.loh AdrpAdd	Lloh26, Lloh27
+	.loh AdrpLdrGot	Lloh24, Lloh25
 
 	.globl	_fn6_create_and_use_rc_block
 	.p2align	2
@@ -270,18 +264,18 @@ _fn6_create_and_use_rc_block:
 	stp	x20, x19, [sp, #32]
 	stp	x29, x30, [sp, #48]
 	add	x29, sp, #48
-Lloh32:
+Lloh30:
 	adrp	x8, __NSConcreteStackBlock@GOTPAGE
-Lloh33:
+Lloh31:
 	ldr	x8, [x8, __NSConcreteStackBlock@GOTPAGEOFF]
 	stp	x8, xzr, [sp]
-Lloh34:
+Lloh32:
 	adrp	x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0)@PAGE
-Lloh35:
+Lloh33:
 	add	x8, x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0)@PAGEOFF
-Lloh36:
+Lloh34:
 	adrp	x9, l_anon.[ID].4@PAGE
-Lloh37:
+Lloh35:
 	add	x9, x9, l_anon.[ID].4@PAGEOFF
 	stp	x8, x9, [sp, #16]
 	mov	x0, sp
@@ -297,9 +291,9 @@ Lloh37:
 	ret
 LBB19_2:
 	bl	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh36, Lloh37
 	.loh AdrpAdd	Lloh34, Lloh35
-	.loh AdrpLdrGot	Lloh32, Lloh33
+	.loh AdrpAdd	Lloh32, Lloh33
+	.loh AdrpLdrGot	Lloh30, Lloh31
 
 	.section	__DATA,__const
 	.p2align	3, 0x0

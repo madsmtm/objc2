@@ -363,7 +363,7 @@ mod private {
 /// # Safety
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
-/// issue if you know a use-case where this restrition should be lifted!
+/// issue if you know a use-case where this restriction should be lifted!
 pub unsafe trait MessageReceiver: private::Sealed + Sized {
     #[doc(hidden)]
     type __Inner: ?Sized + RefEncode;

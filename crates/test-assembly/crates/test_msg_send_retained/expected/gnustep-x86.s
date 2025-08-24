@@ -660,10 +660,10 @@ GCC_except_table15:
 	.p2align	2, 0x0
 
 	.type	.Lanon.[ID].0,@object
-	.section	.rodata..Lanon.[ID].0,"a",@progbits
+	.section	.rodata.str1.1,"aMS",@progbits,1
 .Lanon.[ID].0:
-	.ascii	"crates/$DIR/lib.rs"
-	.size	.Lanon.[ID].0, 57
+	.asciz	"crates/$DIR/lib.rs"
+	.size	.Lanon.[ID].0, 58
 
 	.type	.Lanon.[ID].1,@object
 	.section	.data.rel.ro..Lanon.[ID].1,"aw",@progbits

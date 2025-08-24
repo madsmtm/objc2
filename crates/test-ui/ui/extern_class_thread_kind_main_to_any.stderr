@@ -6,8 +6,17 @@ error[E0271]: type mismatch resolving `<OnlyMain as ClassType>::ThreadKind == dy
   | |     #[thread_kind = AnyThread]
   | |     struct AnyThreadButSubclassesOnlyMain;
   | | );
-  | |_^ expected trait `AnyThread`, found trait `MainThreadOnly`
+  | |_^ type mismatch resolving `<OnlyMain as ClassType>::ThreadKind == dyn AnyThread`
   |
+note: expected this to be `dyn AllocAnyThread`
+ --> ui/extern_class_thread_kind_main_to_any.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[thread_kind = MainThreadOnly]
+  | |     struct OnlyMain;
+  | | );
+  | |_^
   = note: expected trait object `dyn AllocAnyThread`
              found trait object `(dyn MainThreadOnly + 'static)`
   = help: `(dyn MainThreadOnly + 'static)` implements `AnyThread` so you could box the found value and coerce it to the trait object `Box<dyn AnyThread>`, you will have to change the expected type as well

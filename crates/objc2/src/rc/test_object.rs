@@ -313,6 +313,7 @@ impl DefaultRetained for RcTestObject {
 
 impl RcTestObject {
     #[doc(hidden)]
+    #[allow(dead_code)]
     pub(crate) fn new() -> Retained<Self> {
         // Use raw `msg_send!`, the automatic conversion are tested elsewhere.
         unsafe { Retained::from_raw(msg_send![Self::class(), new]) }.unwrap()

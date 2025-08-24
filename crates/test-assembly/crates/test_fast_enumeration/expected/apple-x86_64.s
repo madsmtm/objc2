@@ -147,10 +147,20 @@ _fn4_iter:
 	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	lea	r12, [rip + L_anon.[ID].0]
 	xor	eax, eax
+	jmp	LBB3_1
+	.p2align	4
+LBB3_6:
+	mov	rcx, qword ptr [rbp - 112]
+	lea	rdx, [rax + 1]
+	mov	qword ptr [rbp - 56], rdx
+	mov	rdi, qword ptr [rcx + 8*rax]
+	call	_fn3_use_obj
+	mov	rdi, qword ptr [rbp - 256]
+	mov	rax, qword ptr [rbp - 56]
+	mov	rcx, qword ptr [rbp - 48]
+LBB3_1:
 	cmp	rax, rcx
 	jb	LBB3_6
-	.p2align	4
-LBB3_2:
 	mov	rsi, qword ptr [r15]
 	test	rsi, rsi
 	je	LBB3_3
@@ -161,21 +171,8 @@ LBB3_4:
 	call	_objc_msgSend
 	mov	qword ptr [rbp - 48], rax
 	test	rax, rax
-	je	LBB3_8
+	je	LBB3_7
 	xor	eax, eax
-LBB3_6:
-	mov	rcx, qword ptr [rbp - 112]
-	lea	rdx, [rax + 1]
-	mov	qword ptr [rbp - 56], rdx
-	mov	rdi, qword ptr [rcx + 8*rax]
-	test	rdi, rdi
-	je	LBB3_8
-	call	_fn3_use_obj
-	mov	rdi, qword ptr [rbp - 256]
-	mov	rax, qword ptr [rbp - 56]
-	mov	rcx, qword ptr [rbp - 48]
-	cmp	rax, rcx
-	jae	LBB3_2
 	jmp	LBB3_6
 LBB3_3:
 	mov	r13, rdi
@@ -185,7 +182,7 @@ LBB3_3:
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB3_4
-LBB3_8:
+LBB3_7:
 	add	rsp, 216
 	pop	rbx
 	pop	r12
@@ -235,23 +232,18 @@ _fn5_iter_noop:
 	mov	qword ptr [rbp - 120], 0
 	mov	qword ptr [rbp - 48], 0
 	mov	qword ptr [rbp - 56], 0
-	xor	ecx, ecx
+	xor	eax, eax
 	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	lea	r12, [rip + L_anon.[ID].0]
-	xor	eax, eax
-	xor	edx, edx
+	xor	ecx, ecx
 	jmp	LBB4_1
 	.p2align	4
 LBB4_6:
-	lea	rsi, [rdx + 1]
-	mov	qword ptr [rbp - 56], rsi
-	cmp	qword ptr [rcx + 8*rdx], 0
-	mov	rdx, rsi
-	je	LBB4_7
+	inc	rcx
+	mov	qword ptr [rbp - 56], rcx
 LBB4_1:
-	cmp	rdx, rax
+	cmp	rcx, rax
 	jb	LBB4_6
-	mov	rdi, qword ptr [rbp - 256]
 	mov	rsi, qword ptr [r15]
 	test	rsi, rsi
 	je	LBB4_3
@@ -263,8 +255,8 @@ LBB4_4:
 	mov	qword ptr [rbp - 48], rax
 	test	rax, rax
 	je	LBB4_7
-	mov	rcx, qword ptr [rbp - 112]
-	xor	edx, edx
+	mov	rdi, qword ptr [rbp - 256]
+	xor	ecx, ecx
 	jmp	LBB4_6
 LBB4_3:
 	mov	r13, rdi
@@ -345,9 +337,9 @@ LBB5_4:
 	mov	qword ptr [rbp - 48], rax
 	mov	qword ptr [rbp - 56], 0
 	test	rax, rax
-	je	LBB5_15
+	je	LBB5_14
 	cmp	qword ptr [rbp - 112], 0
-	je	LBB5_19
+	je	LBB5_18
 	xor	eax, eax
 LBB5_7:
 	mov	rcx, qword ptr [rbp - 104]
@@ -368,8 +360,6 @@ LBB5_12:
 	lea	rdx, [rax + 1]
 	mov	qword ptr [rbp - 56], rdx
 	mov	rdi, qword ptr [rcx + 8*rax]
-	test	rdi, rdi
-	je	LBB5_15
 	call	_objc_retain
 	mov	r13, rax
 Ltmp0:
@@ -392,7 +382,7 @@ LBB5_3:
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB5_4
-LBB5_15:
+LBB5_14:
 	add	rsp, 232
 	pop	rbx
 	pop	r12
@@ -401,11 +391,11 @@ LBB5_15:
 	pop	r15
 	pop	rbp
 	ret
-LBB5_19:
+LBB5_18:
 	call	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)
 LBB5_10:
 	call	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)
-LBB5_17:
+LBB5_16:
 Ltmp2:
 	mov	rbx, rax
 Ltmp3:
@@ -414,7 +404,7 @@ Ltmp3:
 Ltmp4:
 	mov	rdi, rbx
 	call	__Unwind_Resume
-LBB5_16:
+LBB5_15:
 Ltmp5:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
 Lfunc_end0:

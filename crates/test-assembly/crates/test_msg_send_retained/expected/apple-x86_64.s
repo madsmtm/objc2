@@ -306,34 +306,34 @@ Lttbase0:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
-	.ascii	"crates/$DIR/lib.rs"
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].0:
+	.asciz	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].1:
-	.quad	l_anon.[ID].0
+	.quad	L_anon.[ID].0
 	.asciz	"9\000\000\000\000\000\000\000\017\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].2:
-	.quad	l_anon.[ID].0
+	.quad	L_anon.[ID].0
 	.asciz	"9\000\000\000\000\000\000\000\036\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].3:
-	.quad	l_anon.[ID].0
+	.quad	L_anon.[ID].0
 	.asciz	"9\000\000\000\000\000\000\000:\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].4:
-	.quad	l_anon.[ID].0
+	.quad	L_anon.[ID].0
 	.asciz	"9\000\000\000\000\000\000\000D\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].5:
-	.quad	l_anon.[ID].0
+	.quad	L_anon.[ID].0
 	.asciz	"9\000\000\000\000\000\000\000X\000\000\000\005\000\000"
 
 .subsections_via_symbols

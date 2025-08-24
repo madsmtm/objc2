@@ -18,9 +18,9 @@ Lloh1:
 Lloh2:
 	ldr	x0, [x8]
 Lloh3:
-	adrp	x1, l_anon.[ID].6@PAGE
+	adrp	x1, l_anon.[ID].12@PAGE
 Lloh4:
-	add	x1, x1, l_anon.[ID].6@PAGEOFF
+	add	x1, x1, l_anon.[ID].12@PAGEOFF
 	mov	x2, #0
 	bl	_objc_allocateClassPair
 	cbz	x0, LBB0_16
@@ -31,9 +31,9 @@ Lloh6:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_7a01db584ce7207f@PAGEOFF]
 Ltmp0:
 Lloh7:
-	adrp	x4, l_anon.[ID].7@PAGE
+	adrp	x4, l_anon.[ID].3@PAGE
 Lloh8:
-	add	x4, x4, l_anon.[ID].7@PAGEOFF
+	add	x4, x4, l_anon.[ID].3@PAGEOFF
 Lloh9:
 	adrp	x5, _fn1_get_class@PAGE
 Lloh10:
@@ -49,9 +49,9 @@ Lloh12:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_7af348e2d6ca08be@PAGEOFF]
 Ltmp2:
 Lloh13:
-	adrp	x4, l_anon.[ID].1@PAGE
+	adrp	x4, l_anon.[ID].4@PAGE
 Lloh14:
-	add	x4, x4, l_anon.[ID].1@PAGEOFF
+	add	x4, x4, l_anon.[ID].4@PAGEOFF
 Lloh15:
 	adrp	x5, _fn2_method_simple@PAGE
 Lloh16:
@@ -67,9 +67,9 @@ Lloh18:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_59b65ebff80505d9@PAGEOFF]
 Ltmp4:
 Lloh19:
-	adrp	x2, l_anon.[ID].8@PAGE
+	adrp	x2, l_anon.[ID].5@PAGE
 Lloh20:
-	add	x2, x2, l_anon.[ID].8@PAGEOFF
+	add	x2, x2, l_anon.[ID].5@PAGEOFF
 Lloh21:
 	adrp	x5, _fn3_method_bool@PAGE
 Lloh22:
@@ -85,9 +85,9 @@ Lloh24:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_f8d5ad39f22c9fc5@PAGEOFF]
 Ltmp6:
 Lloh25:
-	adrp	x4, l_anon.[ID].9@PAGE
+	adrp	x4, l_anon.[ID].6@PAGE
 Lloh26:
-	add	x4, x4, l_anon.[ID].9@PAGEOFF
+	add	x4, x4, l_anon.[ID].6@PAGEOFF
 Lloh27:
 	adrp	x5, _fn4_method_retained@PAGE
 Lloh28:
@@ -103,13 +103,13 @@ Lloh30:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_31d62824a4f71757@PAGEOFF]
 Ltmp8:
 Lloh31:
-	adrp	x2, l_anon.[ID].8@PAGE
+	adrp	x2, l_anon.[ID].5@PAGE
 Lloh32:
-	add	x2, x2, l_anon.[ID].8@PAGEOFF
+	add	x2, x2, l_anon.[ID].5@PAGEOFF
 Lloh33:
-	adrp	x4, l_anon.[ID].9@PAGE
+	adrp	x4, l_anon.[ID].6@PAGE
 Lloh34:
-	add	x4, x4, l_anon.[ID].9@PAGEOFF
+	add	x4, x4, l_anon.[ID].6@PAGEOFF
 Lloh35:
 	adrp	x5, _fn5_method_retained_with_param@PAGE
 Lloh36:
@@ -120,9 +120,9 @@ Lloh36:
 Ltmp9:
 Ltmp10:
 Lloh37:
-	adrp	x0, l_anon.[ID].10@PAGE
+	adrp	x0, l_anon.[ID].7@PAGE
 Lloh38:
-	add	x0, x0, l_anon.[ID].10@PAGEOFF
+	add	x0, x0, l_anon.[ID].7@PAGEOFF
 	mov	w1, #8
 	bl	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
 	mov	x1, x0
@@ -133,9 +133,9 @@ Ltmp11:
 LBB0_10:
 Ltmp12:
 Lloh39:
-	adrp	x0, l_anon.[ID].11@PAGE
+	adrp	x0, l_anon.[ID].8@PAGE
 Lloh40:
-	add	x0, x0, l_anon.[ID].11@PAGEOFF
+	add	x0, x0, l_anon.[ID].8@PAGEOFF
 	mov	w1, #9
 	bl	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
 	mov	x1, x0
@@ -150,13 +150,13 @@ Lloh42:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_217b1b90b2d164b1@PAGEOFF]
 Ltmp14:
 Lloh43:
-	adrp	x2, l_anon.[ID].14@PAGE
+	adrp	x2, l_anon.[ID].11@PAGE
 Lloh44:
-	add	x2, x2, l_anon.[ID].14@PAGEOFF
+	add	x2, x2, l_anon.[ID].11@PAGEOFF
 Lloh45:
-	adrp	x4, l_anon.[ID].9@PAGE
+	adrp	x4, l_anon.[ID].6@PAGE
 Lloh46:
-	add	x4, x4, l_anon.[ID].9@PAGEOFF
+	add	x4, x4, l_anon.[ID].6@PAGEOFF
 Lloh47:
 	adrp	x5, _fn6_copyWithZone@PAGE
 Lloh48:
@@ -176,19 +176,19 @@ Ltmp15:
 	ret
 LBB0_15:
 Lloh49:
-	adrp	x0, l_anon.[ID].3@PAGE
+	adrp	x0, l_anon.[ID].2@PAGE
 Lloh50:
-	add	x0, x0, l_anon.[ID].3@PAGEOFF
+	add	x0, x0, l_anon.[ID].2@PAGEOFF
 	bl	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
 LBB0_16:
 Lloh51:
-	adrp	x0, l_anon.[ID].6@PAGE
+	adrp	x0, l_anon.[ID].12@PAGE
 Lloh52:
-	add	x0, x0, l_anon.[ID].6@PAGEOFF
+	add	x0, x0, l_anon.[ID].12@PAGEOFF
 Lloh53:
-	adrp	x2, l_anon.[ID].5@PAGE
+	adrp	x2, l_anon.[ID].14@PAGE
 Lloh54:
-	add	x2, x2, l_anon.[ID].5@PAGEOFF
+	add	x2, x2, l_anon.[ID].14@PAGEOFF
 	mov	w1, #8
 	bl	SYM(objc2::__macro_helpers::define_class::class_not_unique::GENERATED_ID, 0)
 LBB0_17:
@@ -268,8 +268,7 @@ Lloh55:
 Lloh56:
 	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
 	ldapr	x8, [x8]
-	cmp	x8, #3
-	b.ne	LBB2_2
+	cbnz	x8, LBB2_2
 Lloh57:
 	adrp	x8, ___CLASS_NoIvars@PAGE
 Lloh58:
@@ -292,9 +291,9 @@ Lloh61:
 Lloh62:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
 Lloh63:
-	adrp	x4, l_anon.[ID].5@PAGE
+	adrp	x4, l_anon.[ID].14@PAGE
 Lloh64:
-	add	x4, x4, l_anon.[ID].5@PAGEOFF
+	add	x4, x4, l_anon.[ID].14@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
@@ -320,8 +319,7 @@ Lloh67:
 Lloh68:
 	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
 	ldapr	x8, [x8]
-	cmp	x8, #3
-	b.ne	LBB3_2
+	cbnz	x8, LBB3_2
 Lloh69:
 	adrp	x8, ___CLASS_NoIvars@PAGE
 Lloh70:
@@ -344,9 +342,9 @@ Lloh73:
 Lloh74:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
 Lloh75:
-	adrp	x4, l_anon.[ID].5@PAGE
+	adrp	x4, l_anon.[ID].14@PAGE
 Lloh76:
-	add	x4, x4, l_anon.[ID].5@PAGEOFF
+	add	x4, x4, l_anon.[ID].14@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
@@ -386,8 +384,7 @@ Lloh79:
 Lloh80:
 	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
 	ldapr	x8, [x8]
-	cmp	x8, #3
-	b.ne	LBB6_2
+	cbnz	x8, LBB6_2
 LBB6_1:
 Lloh81:
 	adrp	x8, ___CLASS_NoIvars@PAGE
@@ -418,9 +415,9 @@ Lloh88:
 Lloh89:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
 Lloh90:
-	adrp	x4, l_anon.[ID].5@PAGE
+	adrp	x4, l_anon.[ID].14@PAGE
 Lloh91:
-	add	x4, x4, l_anon.[ID].5@PAGEOFF
+	add	x4, x4, l_anon.[ID].14@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
@@ -520,8 +517,7 @@ Lloh92:
 Lloh93:
 	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
 	ldapr	x8, [x8]
-	cmp	x8, #3
-	b.ne	LBB8_2
+	cbnz	x8, LBB8_2
 LBB8_1:
 Lloh94:
 	adrp	x8, ___CLASS_NoIvars@PAGE
@@ -551,9 +547,9 @@ Lloh101:
 Lloh102:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
 Lloh103:
-	adrp	x4, l_anon.[ID].5@PAGE
+	adrp	x4, l_anon.[ID].14@PAGE
 Lloh104:
-	add	x4, x4, l_anon.[ID].5@PAGEOFF
+	add	x4, x4, l_anon.[ID].14@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
@@ -567,64 +563,29 @@ Lloh104:
 	.loh AdrpAdd	Lloh99, Lloh100
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_7a01db584ce7207f
-L_OBJC_METH_VAR_NAME_7a01db584ce7207f:
-	.asciz	"classMethod"
+	.globl	L_OBJC_METH_VAR_NAME_217b1b90b2d164b1
+L_OBJC_METH_VAR_NAME_217b1b90b2d164b1:
+	.asciz	"copyWithZone:"
 
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_7a01db584ce7207f
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_7a01db584ce7207f:
-	.quad	L_OBJC_METH_VAR_NAME_7a01db584ce7207f
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_7af348e2d6ca08be
-L_OBJC_METH_VAR_NAME_7af348e2d6ca08be:
-	.asciz	"method"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_7af348e2d6ca08be
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_7af348e2d6ca08be:
-	.quad	L_OBJC_METH_VAR_NAME_7af348e2d6ca08be
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_59b65ebff80505d9
-L_OBJC_METH_VAR_NAME_59b65ebff80505d9:
-	.asciz	"methodBool:"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_59b65ebff80505d9
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_59b65ebff80505d9:
-	.quad	L_OBJC_METH_VAR_NAME_59b65ebff80505d9
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_f8d5ad39f22c9fc5
-L_OBJC_METH_VAR_NAME_f8d5ad39f22c9fc5:
-	.asciz	"methodRetained"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_f8d5ad39f22c9fc5
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_f8d5ad39f22c9fc5:
-	.quad	L_OBJC_METH_VAR_NAME_f8d5ad39f22c9fc5
-
-	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_31d62824a4f71757
 L_OBJC_METH_VAR_NAME_31d62824a4f71757:
 	.asciz	"methodRetainedWithParam:"
 
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_31d62824a4f71757
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_31d62824a4f71757:
-	.quad	L_OBJC_METH_VAR_NAME_31d62824a4f71757
+	.globl	L_OBJC_METH_VAR_NAME_59b65ebff80505d9
+L_OBJC_METH_VAR_NAME_59b65ebff80505d9:
+	.asciz	"methodBool:"
 
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_217b1b90b2d164b1
-L_OBJC_METH_VAR_NAME_217b1b90b2d164b1:
-	.asciz	"copyWithZone:"
+	.globl	L_OBJC_METH_VAR_NAME_7a01db584ce7207f
+L_OBJC_METH_VAR_NAME_7a01db584ce7207f:
+	.asciz	"classMethod"
+
+	.globl	L_OBJC_METH_VAR_NAME_7af348e2d6ca08be
+L_OBJC_METH_VAR_NAME_7af348e2d6ca08be:
+	.asciz	"method"
+
+	.globl	L_OBJC_METH_VAR_NAME_f8d5ad39f22c9fc5
+L_OBJC_METH_VAR_NAME_f8d5ad39f22c9fc5:
+	.asciz	"methodRetained"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_217b1b90b2d164b1
@@ -632,95 +593,47 @@ L_OBJC_METH_VAR_NAME_217b1b90b2d164b1:
 L_OBJC_SELECTOR_REFERENCES_217b1b90b2d164b1:
 	.quad	L_OBJC_METH_VAR_NAME_217b1b90b2d164b1
 
-	.section	__DATA,__const
+	.globl	L_OBJC_SELECTOR_REFERENCES_31d62824a4f71757
 	.p2align	3, 0x0
-l_anon.[ID].0:
-	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+L_OBJC_SELECTOR_REFERENCES_31d62824a4f71757:
+	.quad	L_OBJC_METH_VAR_NAME_31d62824a4f71757
 
-	.section	__TEXT,__const
+	.globl	L_OBJC_SELECTOR_REFERENCES_59b65ebff80505d9
 	.p2align	3, 0x0
-l_anon.[ID].1:
-	.byte	17
-	.space	39
+L_OBJC_SELECTOR_REFERENCES_59b65ebff80505d9:
+	.quad	L_OBJC_METH_VAR_NAME_59b65ebff80505d9
 
-l_anon.[ID].2:
-	.ascii	"$RUSTC/library/std/src/sync/poison/once.rs"
-
-	.section	__DATA,__const
+	.globl	L_OBJC_SELECTOR_REFERENCES_7a01db584ce7207f
 	.p2align	3, 0x0
-l_anon.[ID].3:
-	.quad	l_anon.[ID].2
-	.asciz	"\20x\000\000\000\000\000\000\000\233\000\000\0002\000\000"
+L_OBJC_SELECTOR_REFERENCES_7a01db584ce7207f:
+	.quad	L_OBJC_METH_VAR_NAME_7a01db584ce7207f
 
-	.globl	___CLASS_NoIvars
-.zerofill __DATA,__common,___CLASS_NoIvars,8,3
-	.globl	___IVAR_OFFSET_NoIvars
-.zerofill __DATA,__common,___IVAR_OFFSET_NoIvars,8,3
-	.globl	___DROP_FLAG_OFFSET_NoIvars
-.zerofill __DATA,__common,___DROP_FLAG_OFFSET_NoIvars,8,3
-	.section	__TEXT,__const
-l_anon.[ID].4:
-	.ascii	"crates/$DIR/lib.rs"
-
-	.section	__DATA,__const
+	.globl	L_OBJC_SELECTOR_REFERENCES_7af348e2d6ca08be
 	.p2align	3, 0x0
-l_anon.[ID].5:
-	.quad	l_anon.[ID].4
-	.asciz	"=\000\000\000\000\000\000\000\r\000\000\000\001\000\000"
+L_OBJC_SELECTOR_REFERENCES_7af348e2d6ca08be:
+	.quad	L_OBJC_METH_VAR_NAME_7af348e2d6ca08be
 
-	.globl	___REGISTER_CLASS_NoIvars
-.zerofill __DATA,__common,___REGISTER_CLASS_NoIvars,8,3
-	.section	__TEXT,__cstring,cstring_literals
-l_anon.[ID].6:
-	.asciz	"NoIvars"
-
-	.section	__TEXT,__const
+	.globl	L_OBJC_SELECTOR_REFERENCES_f8d5ad39f22c9fc5
 	.p2align	3, 0x0
-l_anon.[ID].7:
-	.byte	21
-	.space	39
-
-	.p2align	3, 0x0
-l_anon.[ID].8:
-	.byte	16
-	.space	39
-
-	.p2align	3, 0x0
-l_anon.[ID].9:
-	.byte	19
-	.space	39
-
-	.section	__TEXT,__literal8,8byte_literals
-l_anon.[ID].10:
-	.ascii	"NSObject"
-
-	.section	__TEXT,__const
-l_anon.[ID].11:
-	.ascii	"NSCopying"
-
-l_anon.[ID].12:
-	.ascii	"_NSZone"
-
-	.section	__DATA,__const
-	.p2align	3, 0x0
-l_anon.[ID].13:
-	.byte	28
-	.space	7
-	.quad	l_anon.[ID].12
-	.asciz	"\007\000\000\000\000\000\000"
-	.quad	8
-	.space	8
-
-	.p2align	3, 0x0
-l_anon.[ID].14:
-	.byte	25
-	.space	7
-	.quad	l_anon.[ID].13
-	.space	24
+L_OBJC_SELECTOR_REFERENCES_f8d5ad39f22c9fc5:
+	.quad	L_OBJC_METH_VAR_NAME_f8d5ad39f22c9fc5
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
+	.globl	L_OBJC_IMAGE_INFO_217b1b90b2d164b1
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_217b1b90b2d164b1:
+	.asciz	"\000\000\000\000@\000\000"
+
+	.globl	L_OBJC_IMAGE_INFO_31d62824a4f71757
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_31d62824a4f71757:
+	.asciz	"\000\000\000\000@\000\000"
+
+	.globl	L_OBJC_IMAGE_INFO_59b65ebff80505d9
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_59b65ebff80505d9:
+	.asciz	"\000\000\000\000@\000\000"
+
 	.globl	L_OBJC_IMAGE_INFO_7a01db584ce7207f
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_7a01db584ce7207f:
@@ -731,24 +644,100 @@ L_OBJC_IMAGE_INFO_7a01db584ce7207f:
 L_OBJC_IMAGE_INFO_7af348e2d6ca08be:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_59b65ebff80505d9
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_59b65ebff80505d9:
-	.asciz	"\000\000\000\000@\000\000"
-
 	.globl	L_OBJC_IMAGE_INFO_f8d5ad39f22c9fc5
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_f8d5ad39f22c9fc5:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_31d62824a4f71757
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_31d62824a4f71757:
-	.asciz	"\000\000\000\000@\000\000"
+	.section	__DATA,__const
+	.p2align	3, 0x0
+l_anon.[ID].0:
+	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
+	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
-	.globl	L_OBJC_IMAGE_INFO_217b1b90b2d164b1
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_217b1b90b2d164b1:
-	.asciz	"\000\000\000\000@\000\000"
+	.section	__TEXT,__cstring,cstring_literals
+l_anon.[ID].1:
+	.asciz	"$RUSTC/library/std/src/sync/poison/once.rs"
+
+	.section	__DATA,__const
+	.p2align	3, 0x0
+l_anon.[ID].2:
+	.quad	l_anon.[ID].1
+	.asciz	"\20x\000\000\000\000\000\000\000\234\000\000\0002\000\000"
+
+	.section	__TEXT,__const
+	.p2align	3, 0x0
+l_anon.[ID].3:
+	.byte	21
+	.space	39
+
+	.p2align	3, 0x0
+l_anon.[ID].4:
+	.byte	17
+	.space	39
+
+	.p2align	3, 0x0
+l_anon.[ID].5:
+	.byte	16
+	.space	39
+
+	.p2align	3, 0x0
+l_anon.[ID].6:
+	.byte	19
+	.space	39
+
+	.section	__TEXT,__literal8,8byte_literals
+l_anon.[ID].7:
+	.ascii	"NSObject"
+
+	.section	__TEXT,__const
+l_anon.[ID].8:
+	.ascii	"NSCopying"
+
+l_anon.[ID].9:
+	.ascii	"_NSZone"
+
+	.section	__DATA,__const
+	.p2align	3, 0x0
+l_anon.[ID].10:
+	.byte	28
+	.space	7
+	.quad	l_anon.[ID].9
+	.asciz	"\007\000\000\000\000\000\000"
+	.quad	8
+	.space	8
+
+	.p2align	3, 0x0
+l_anon.[ID].11:
+	.byte	25
+	.space	7
+	.quad	l_anon.[ID].10
+	.space	24
+
+	.section	__TEXT,__cstring,cstring_literals
+l_anon.[ID].12:
+	.asciz	"NoIvars"
+
+l_anon.[ID].13:
+	.asciz	"crates/$DIR/lib.rs"
+
+	.section	__DATA,__const
+	.p2align	3, 0x0
+l_anon.[ID].14:
+	.quad	l_anon.[ID].13
+	.asciz	"=\000\000\000\000\000\000\000\r\000\000\000\001\000\000"
+
+	.globl	___CLASS_NoIvars
+.zerofill __DATA,__common,___CLASS_NoIvars,8,3
+	.globl	___DROP_FLAG_OFFSET_NoIvars
+.zerofill __DATA,__common,___DROP_FLAG_OFFSET_NoIvars,8,3
+	.globl	___IVAR_OFFSET_NoIvars
+.zerofill __DATA,__common,___IVAR_OFFSET_NoIvars,8,3
+	.section	__DATA,__data
+	.globl	___REGISTER_CLASS_NoIvars
+	.p2align	3, 0x0
+___REGISTER_CLASS_NoIvars:
+	.asciz	"\003\000\000\000\000\000\000"
 
 .subsections_via_symbols

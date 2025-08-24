@@ -567,14 +567,6 @@ impl LibraryConfig {
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct Example {
-    pub name: String,
-    #[serde(default)]
-    pub description: String,
-}
-
-#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
 pub struct StmtData {
     // Common
     #[serde(default)]

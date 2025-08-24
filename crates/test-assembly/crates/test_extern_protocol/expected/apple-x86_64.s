@@ -46,14 +46,14 @@ L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac:
 L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
 	.quad	L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
-	.ascii	"MyProtocol"
-
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_a3f3690bc9f113ac
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_a3f3690bc9f113ac:
 	.asciz	"\000\000\000\000@\000\000"
+
+	.section	__TEXT,__const
+l_anon.[ID].0:
+	.ascii	"MyProtocol"
 
 .subsections_via_symbols

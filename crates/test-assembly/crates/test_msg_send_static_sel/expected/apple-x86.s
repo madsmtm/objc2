@@ -92,53 +92,25 @@ L2$pb:
 	ret
 
 	.section	__TEXT,__objc_methname,cstring_literals
+	.globl	L_OBJC_METH_VAR_NAME_6659046596384437
+L_OBJC_METH_VAR_NAME_6659046596384437:
+	.asciz	"performSelector:"
+
 	.globl	L_OBJC_METH_VAR_NAME_66d4c61f523c7074
 L_OBJC_METH_VAR_NAME_66d4c61f523c7074:
 	.asciz	"someSelector"
 
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074
-	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074:
-	.long	L_OBJC_METH_VAR_NAME_66d4c61f523c7074
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_e348e18690a1021e
-L_OBJC_METH_VAR_NAME_e348e18690a1021e:
-	.asciz	"generic:selector:"
-
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e
-	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e:
-	.long	L_OBJC_METH_VAR_NAME_e348e18690a1021e
-
-	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_8d4579a56572fa21
 L_OBJC_METH_VAR_NAME_8d4579a56572fa21:
 	.asciz	"performSelector:"
 
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21
-	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21:
-	.long	L_OBJC_METH_VAR_NAME_8d4579a56572fa21
-
-	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_d018146ff130bbd9
 L_OBJC_METH_VAR_NAME_d018146ff130bbd9:
 	.asciz	"performSelector:"
 
-	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9
-	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9:
-	.long	L_OBJC_METH_VAR_NAME_d018146ff130bbd9
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_6659046596384437
-L_OBJC_METH_VAR_NAME_6659046596384437:
-	.asciz	"performSelector:"
+	.globl	L_OBJC_METH_VAR_NAME_e348e18690a1021e
+L_OBJC_METH_VAR_NAME_e348e18690a1021e:
+	.asciz	"generic:selector:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
 	.globl	L_OBJC_SELECTOR_REFERENCES_6659046596384437
@@ -146,25 +118,35 @@ L_OBJC_METH_VAR_NAME_6659046596384437:
 L_OBJC_SELECTOR_REFERENCES_6659046596384437:
 	.long	L_OBJC_METH_VAR_NAME_6659046596384437
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
-	.ascii	"crates/$DIR/lib.rs"
-
-	.section	__DATA,__const
+	.globl	L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074
 	.p2align	2, 0x0
-l_anon.[ID].1:
-	.long	l_anon.[ID].0
-	.asciz	";\000\000\000\016\000\000\000\005\000\000"
+L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074:
+	.long	L_OBJC_METH_VAR_NAME_66d4c61f523c7074
+
+	.globl	L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21
+	.p2align	2, 0x0
+L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21:
+	.long	L_OBJC_METH_VAR_NAME_8d4579a56572fa21
+
+	.globl	L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9
+	.p2align	2, 0x0
+L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9:
+	.long	L_OBJC_METH_VAR_NAME_d018146ff130bbd9
+
+	.globl	L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e
+	.p2align	2, 0x0
+L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e:
+	.long	L_OBJC_METH_VAR_NAME_e348e18690a1021e
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
+	.globl	L_OBJC_IMAGE_INFO_6659046596384437
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_6659046596384437:
+	.asciz	"\000\000\000\000@\000\000"
+
 	.globl	L_OBJC_IMAGE_INFO_66d4c61f523c7074
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_66d4c61f523c7074:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.globl	L_OBJC_IMAGE_INFO_e348e18690a1021e
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_e348e18690a1021e:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.globl	L_OBJC_IMAGE_INFO_8d4579a56572fa21
@@ -177,10 +159,20 @@ L_OBJC_IMAGE_INFO_8d4579a56572fa21:
 L_OBJC_IMAGE_INFO_d018146ff130bbd9:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_6659046596384437
+	.globl	L_OBJC_IMAGE_INFO_e348e18690a1021e
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_6659046596384437:
+L_OBJC_IMAGE_INFO_e348e18690a1021e:
 	.asciz	"\000\000\000\000@\000\000"
+
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].0:
+	.asciz	"crates/$DIR/lib.rs"
+
+	.section	__DATA,__const
+	.p2align	2, 0x0
+l_anon.[ID].1:
+	.long	L_anon.[ID].0
+	.asciz	";\000\000\000\016\000\000\000\005\000\000"
 
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
 LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr:

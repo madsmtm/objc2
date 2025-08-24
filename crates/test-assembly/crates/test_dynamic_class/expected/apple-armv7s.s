@@ -1,4 +1,4 @@
-	.syntax unified
+	.syntax	unified
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_fn1_get_class
 	.p2align	2
@@ -6,25 +6,22 @@
 _fn1_get_class:
 	push	{r7, lr}
 	mov	r7, sp
-	movw	r0, :lower16:(__MergedGlobals-(LPC0_0+8))
-	movt	r0, :upper16:(__MergedGlobals-(LPC0_0+8))
+	movw	r1, :lower16:(__MergedGlobals-(LPC0_0+8))
+	movt	r1, :upper16:(__MergedGlobals-(LPC0_0+8))
 LPC0_0:
-	add	r0, pc, r0
-	ldr	r0, [r0]
+	add	r1, pc, r1
+	ldr	r0, [r1, #12]
 	cmp	r0, #0
 	popne	{r7, pc}
 LBB0_1:
-	movw	r0, :lower16:(__MergedGlobals-(LPC0_1+8))
-	movt	r0, :upper16:(__MergedGlobals-(LPC0_1+8))
+	add	r0, r1, #12
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC0_1+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC0_1+8))
 LPC0_1:
-	add	r0, pc, r0
-	movw	r1, :lower16:(L_anon.[ID].0-(LPC0_2+8))
-	movt	r1, :upper16:(L_anon.[ID].0-(LPC0_2+8))
-LPC0_2:
 	add	r1, pc, r1
-	movw	r2, :lower16:(l_anon.[ID].2-(LPC0_3+8))
-	movt	r2, :upper16:(l_anon.[ID].2-(LPC0_3+8))
-LPC0_3:
+	movw	r2, :lower16:(l_anon.[ID].2-(LPC0_2+8))
+	movt	r2, :upper16:(l_anon.[ID].2-(LPC0_2+8))
+LPC0_2:
 	add	r2, pc, r2
 	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
@@ -35,22 +32,25 @@ LPC0_3:
 _fn1_get_same_class:
 	push	{r7, lr}
 	mov	r7, sp
-	movw	r1, :lower16:(__MergedGlobals-(LPC1_0+8))
-	movt	r1, :upper16:(__MergedGlobals-(LPC1_0+8))
+	movw	r0, :lower16:(__MergedGlobals-(LPC1_0+8))
+	movt	r0, :upper16:(__MergedGlobals-(LPC1_0+8))
 LPC1_0:
-	add	r1, pc, r1
-	ldr	r0, [r1, #4]
+	add	r0, pc, r0
+	ldr	r0, [r0]
 	cmp	r0, #0
 	popne	{r7, pc}
 LBB1_1:
-	add	r0, r1, #4
-	movw	r1, :lower16:(L_anon.[ID].0-(LPC1_1+8))
-	movt	r1, :upper16:(L_anon.[ID].0-(LPC1_1+8))
+	movw	r0, :lower16:(__MergedGlobals-(LPC1_1+8))
+	movt	r0, :upper16:(__MergedGlobals-(LPC1_1+8))
 LPC1_1:
-	add	r1, pc, r1
-	movw	r2, :lower16:(l_anon.[ID].3-(LPC1_2+8))
-	movt	r2, :upper16:(l_anon.[ID].3-(LPC1_2+8))
+	add	r0, pc, r0
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC1_2+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC1_2+8))
 LPC1_2:
+	add	r1, pc, r1
+	movw	r2, :lower16:(l_anon.[ID].3-(LPC1_3+8))
+	movt	r2, :upper16:(l_anon.[ID].3-(LPC1_3+8))
+LPC1_3:
 	add	r2, pc, r2
 	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
@@ -65,11 +65,11 @@ _fn3_get_different_class:
 	movt	r1, :upper16:(__MergedGlobals-(LPC2_0+8))
 LPC2_0:
 	add	r1, pc, r1
-	ldr	r0, [r1, #8]
+	ldr	r0, [r1, #4]
 	cmp	r0, #0
 	popne	{r7, pc}
 LBB2_1:
-	add	r0, r1, #8
+	add	r0, r1, #4
 	movw	r1, :lower16:(L_anon.[ID].4-(LPC2_1+8))
 	movt	r1, :upper16:(L_anon.[ID].4-(LPC2_1+8))
 LPC2_1:
@@ -121,18 +121,18 @@ _fn5_use_fns:
 	movt	r8, :upper16:(__MergedGlobals-(LPC4_0+8))
 LPC4_0:
 	add	r8, pc, r8
-	ldr	r4, [r8]
+	ldr	r4, [r8, #12]
 	cmp	r4, #0
 	beq	LBB4_5
-	ldr	r5, [r8, #4]
+	ldr	r5, [r8]
 	cmp	r5, #0
 	beq	LBB4_6
 LBB4_2:
-	ldr	r6, [r8, #8]
+	ldr	r6, [r8, #4]
 	cmp	r6, #0
 	beq	LBB4_7
 LBB4_3:
-	ldr	r1, [r8, #12]
+	ldr	r1, [r8, #8]
 	cmp	r1, #0
 	beq	LBB4_8
 LBB4_4:
@@ -141,28 +141,28 @@ LBB4_4:
 	pop	{r8, r10}
 	pop	{r4, r5, r6, r7, pc}
 LBB4_5:
-	movw	r3, :lower16:(__MergedGlobals-(LPC4_1+8))
-	movt	r3, :upper16:(__MergedGlobals-(LPC4_1+8))
+	add	r3, r8, #12
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC4_1+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC4_1+8))
 LPC4_1:
-	add	r3, pc, r3
-	movw	r1, :lower16:(L_anon.[ID].0-(LPC4_2+8))
-	movt	r1, :upper16:(L_anon.[ID].0-(LPC4_2+8))
-LPC4_2:
 	add	r1, pc, r1
-	movw	r2, :lower16:(l_anon.[ID].2-(LPC4_3+8))
-	movt	r2, :upper16:(l_anon.[ID].2-(LPC4_3+8))
-LPC4_3:
+	movw	r2, :lower16:(l_anon.[ID].2-(LPC4_2+8))
+	movt	r2, :upper16:(l_anon.[ID].2-(LPC4_2+8))
+LPC4_2:
 	add	r2, pc, r2
 	mov	r5, r0
 	mov	r0, r3
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r4, r0
 	mov	r0, r5
-	ldr	r5, [r8, #4]
+	ldr	r5, [r8]
 	cmp	r5, #0
 	bne	LBB4_2
 LBB4_6:
-	add	r3, r8, #4
+	movw	r3, :lower16:(__MergedGlobals-(LPC4_3+8))
+	movt	r3, :upper16:(__MergedGlobals-(LPC4_3+8))
+LPC4_3:
+	add	r3, pc, r3
 	movw	r1, :lower16:(L_anon.[ID].0-(LPC4_4+8))
 	movt	r1, :upper16:(L_anon.[ID].0-(LPC4_4+8))
 LPC4_4:
@@ -176,11 +176,11 @@ LPC4_5:
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r5, r0
 	mov	r0, r6
-	ldr	r6, [r8, #8]
+	ldr	r6, [r8, #4]
 	cmp	r6, #0
 	bne	LBB4_3
 LBB4_7:
-	add	r3, r8, #8
+	add	r3, r8, #4
 	movw	r1, :lower16:(L_anon.[ID].4-(LPC4_6+8))
 	movt	r1, :upper16:(L_anon.[ID].4-(LPC4_6+8))
 LPC4_6:
@@ -194,11 +194,11 @@ LPC4_7:
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r6, r0
 	mov	r0, r10
-	ldr	r1, [r8, #12]
+	ldr	r1, [r8, #8]
 	cmp	r1, #0
 	bne	LBB4_4
 LBB4_8:
-	add	r3, r8, #12
+	add	r3, r8, #8
 	movw	r1, :lower16:(L_anon.[ID].8-(LPC4_8+8))
 	movt	r1, :upper16:(L_anon.[ID].8-(LPC4_8+8))
 LPC4_8:
@@ -227,55 +227,51 @@ _fn6_use_same_twice:
 	movt	r5, :upper16:(__MergedGlobals-(LPC5_0+8))
 LPC5_0:
 	add	r5, pc, r5
-	ldr	r4, [r5]
+	ldr	r4, [r5, #12]
 	cmp	r4, #0
 	beq	LBB5_3
-	ldr	r5, [r5]
-	cmp	r5, #0
+	ldr	r1, [r5, #12]
+	cmp	r1, #0
 	beq	LBB5_4
 LBB5_2:
-	strd	r4, r5, [r0]
+	str	r4, [r0]
+	str	r1, [r0, #4]
 	pop	{r4, r5, r6, r7, pc}
 LBB5_3:
-	movw	r3, :lower16:(__MergedGlobals-(LPC5_1+8))
-	movt	r3, :upper16:(__MergedGlobals-(LPC5_1+8))
+	add	r3, r5, #12
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC5_1+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC5_1+8))
 LPC5_1:
-	add	r3, pc, r3
-	movw	r1, :lower16:(L_anon.[ID].0-(LPC5_2+8))
-	movt	r1, :upper16:(L_anon.[ID].0-(LPC5_2+8))
-LPC5_2:
 	add	r1, pc, r1
-	movw	r2, :lower16:(l_anon.[ID].2-(LPC5_3+8))
-	movt	r2, :upper16:(l_anon.[ID].2-(LPC5_3+8))
-LPC5_3:
+	movw	r2, :lower16:(l_anon.[ID].2-(LPC5_2+8))
+	movt	r2, :upper16:(l_anon.[ID].2-(LPC5_2+8))
+LPC5_2:
 	add	r2, pc, r2
 	mov	r6, r0
 	mov	r0, r3
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r4, r0
 	mov	r0, r6
-	ldr	r5, [r5]
-	cmp	r5, #0
+	ldr	r1, [r5, #12]
+	cmp	r1, #0
 	bne	LBB5_2
 LBB5_4:
-	movw	r3, :lower16:(__MergedGlobals-(LPC5_4+8))
-	movt	r3, :upper16:(__MergedGlobals-(LPC5_4+8))
-LPC5_4:
-	add	r3, pc, r3
-	movw	r1, :lower16:(L_anon.[ID].0-(LPC5_5+8))
-	movt	r1, :upper16:(L_anon.[ID].0-(LPC5_5+8))
-LPC5_5:
+	add	r3, r5, #12
+	movw	r1, :lower16:(L_anon.[ID].0-(LPC5_3+8))
+	movt	r1, :upper16:(L_anon.[ID].0-(LPC5_3+8))
+LPC5_3:
 	add	r1, pc, r1
-	movw	r2, :lower16:(l_anon.[ID].2-(LPC5_6+8))
-	movt	r2, :upper16:(l_anon.[ID].2-(LPC5_6+8))
-LPC5_6:
+	movw	r2, :lower16:(l_anon.[ID].2-(LPC5_4+8))
+	movt	r2, :upper16:(l_anon.[ID].2-(LPC5_4+8))
+LPC5_4:
 	add	r2, pc, r2
-	mov	r6, r0
+	mov	r5, r0
 	mov	r0, r3
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	mov	r5, r0
-	mov	r0, r6
-	strd	r4, r5, [r0]
+	mov	r1, r0
+	mov	r0, r5
+	str	r4, [r0]
+	str	r1, [r0, #4]
 	pop	{r4, r5, r6, r7, pc}
 
 	.globl	_fn7_use_in_loop
@@ -321,23 +317,24 @@ LBB6_5:
 	pop	{r4, r5, r6, r7, lr}
 	bx	lr
 
+.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0),4,2
+.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0),4,2
 	.section	__TEXT,__cstring,cstring_literals
 L_anon.[ID].0:
 	.asciz	"NSObject"
 
-	.section	__TEXT,__const
-l_anon.[ID].1:
-	.ascii	"crates/$DIR/../test_static_class/lib.rs"
+L_anon.[ID].1:
+	.asciz	"crates/$DIR/../test_static_class/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	2, 0x0
 l_anon.[ID].2:
-	.long	l_anon.[ID].1
+	.long	L_anon.[ID].1
 	.asciz	"J\000\000\000\007\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].3:
-	.long	l_anon.[ID].1
+	.long	L_anon.[ID].1
 	.asciz	"J\000\000\000\f\000\000\000\005\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
@@ -347,7 +344,7 @@ L_anon.[ID].4:
 	.section	__DATA,__const
 	.p2align	2, 0x0
 l_anon.[ID].5:
-	.long	l_anon.[ID].1
+	.long	L_anon.[ID].1
 	.asciz	"J\000\000\000\021\000\000\000\005\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
@@ -357,7 +354,7 @@ L_anon.[ID].6:
 	.section	__DATA,__const
 	.p2align	2, 0x0
 l_anon.[ID].7:
-	.long	l_anon.[ID].1
+	.long	L_anon.[ID].1
 	.asciz	"J\000\000\000\026\000\000\000\r\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
@@ -367,7 +364,7 @@ L_anon.[ID].8:
 	.section	__DATA,__const
 	.p2align	2, 0x0
 l_anon.[ID].9:
-	.long	l_anon.[ID].1
+	.long	L_anon.[ID].1
 	.asciz	"J\000\000\000\036\000\000\000\016\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
@@ -377,10 +374,8 @@ L_anon.[ID].10:
 	.section	__DATA,__const
 	.p2align	2, 0x0
 l_anon.[ID].11:
-	.long	l_anon.[ID].1
+	.long	L_anon.[ID].1
 	.asciz	"J\000\000\000,\000\000\000\021\000\000"
 
-.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0),4,2
-.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0),4,2
 .zerofill __DATA,__bss,__MergedGlobals,16,2
 .subsections_via_symbols

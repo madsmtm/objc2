@@ -116,7 +116,7 @@ Lfunc_begin1:
 	jne	LBB1_11
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdi, qword ptr [rax]
-	lea	rsi, [rip + L_anon.[ID].10]
+	lea	rsi, [rip + L_anon.[ID].9]
 	xor	edx, edx
 	call	_objc_allocateClassPair
 	test	rax, rax
@@ -125,7 +125,7 @@ Lfunc_begin1:
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_dealloc@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 Ltmp6:
-	lea	r8, [rip + l_anon.[ID].4]
+	lea	r8, [rip + l_anon.[ID].3]
 	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macro_helpers::defined_ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)]
 	lea	rdi, [rbp - 24]
 	mov	edx, 8
@@ -135,7 +135,7 @@ Ltmp7:
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 Ltmp8:
-	lea	r8, [rip + l_anon.[ID].11]
+	lea	r8, [rip + l_anon.[ID].8]
 	lea	r9, [rip + _fn1_init]
 	lea	rdi, [rbp - 24]
 	mov	edx, 8
@@ -157,7 +157,7 @@ Ltmp10:
 Ltmp11:
 Ltmp12:
 	lea	rsi, [rip + L_anon.[ID].2]
-	lea	r9, [rip + l_anon.[ID].3]
+	lea	r9, [rip + l_anon.[ID].4]
 	lea	rdi, [rbp - 24]
 	mov	edx, 10
 	mov	ecx, 1
@@ -194,8 +194,8 @@ LBB1_11:
 	lea	rdi, [rip + l_anon.[ID].7]
 	call	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
 LBB1_8:
-	lea	rdi, [rip + L_anon.[ID].10]
-	lea	rdx, [rip + l_anon.[ID].9]
+	lea	rdi, [rip + L_anon.[ID].9]
+	lea	rdx, [rip + l_anon.[ID].11]
 	mov	esi, 10
 	call	SYM(objc2::__macro_helpers::define_class::class_not_unique::GENERATED_ID, 0)
 LBB1_7:
@@ -244,62 +244,15 @@ SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_dro
 	pop	rbp
 	ret
 
-	.globl	_fn2_drop
-	.p2align	4
-_fn2_drop:
-	push	rbp
-	mov	rbp, rsp
-	## InlineAsm Start
-	## InlineAsm End
-	pop	rbp
-	ret
-
-	.globl	_fn3_access_class
-	.p2align	4
-_fn3_access_class:
-	mov	rax, qword ptr [rip + ___REGISTER_CLASS_DropIvars]
-	cmp	rax, 3
-	jne	LBB4_1
-	mov	rax, qword ptr [rip + ___CLASS_DropIvars]
-	ret
-LBB4_1:
-	push	rbp
-	mov	rbp, rsp
-	sub	rsp, 16
-	mov	byte ptr [rbp - 1], 1
-	lea	rax, [rbp - 1]
-	mov	qword ptr [rbp - 16], rax
-	lea	rdi, [rip + ___REGISTER_CLASS_DropIvars]
-	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].9]
-	lea	rdx, [rbp - 16]
-	xor	esi, esi
-	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
-	add	rsp, 16
-	pop	rbp
-	mov	rax, qword ptr [rip + ___CLASS_DropIvars]
-	ret
-
-	.globl	_fn3_access_ivars
-	.p2align	4
-_fn3_access_ivars:
-	push	rbp
-	mov	rbp, rsp
-	mov	rcx, qword ptr [rip + ___IVAR_OFFSET_DropIvars]
-	mov	rax, qword ptr [rdi + rcx]
-	mov	rdx, qword ptr [rdi + rcx + 8]
-	pop	rbp
-	ret
-
 	.globl	SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	4
 SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 	mov	rax, qword ptr [rip + ___REGISTER_CLASS_DropIvars]
-	cmp	rax, 3
-	jne	LBB6_1
+	test	rax, rax
+	jne	LBB3_1
 	mov	rax, qword ptr [rip + ___CLASS_DropIvars]
 	ret
-LBB6_1:
+LBB3_1:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -308,7 +261,7 @@ LBB6_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + ___REGISTER_CLASS_DropIvars]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].9]
+	lea	r8, [rip + l_anon.[ID].11]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
@@ -338,21 +291,21 @@ Ltmp18:
 Ltmp19:
 	mov	r12, rax
 	test	rbx, rbx
-	je	LBB7_3
+	je	LBB4_3
 	mov	rax, qword ptr [rip + ___IVAR_OFFSET_DropIvars]
 	mov	qword ptr [rbx + rax], r15
 	mov	qword ptr [rbx + rax + 8], r12
 	mov	rax, qword ptr [rip + ___DROP_FLAG_OFFSET_DropIvars]
 	mov	byte ptr [rbx + rax], 15
-	jmp	LBB7_9
-LBB7_3:
+	jmp	LBB4_9
+LBB4_3:
 Ltmp26:
 	mov	rdi, r15
 	call	_objc_release
 Ltmp27:
 	mov	rdi, r12
 	call	_objc_release
-LBB7_9:
+LBB4_9:
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
@@ -362,10 +315,10 @@ LBB7_9:
 	lea	rdi, [rbp - 48]
 	call	_objc_msgSendSuper
 	test	rax, rax
-	je	LBB7_11
+	je	LBB4_11
 	mov	rcx, qword ptr [rip + ___DROP_FLAG_OFFSET_DropIvars]
 	mov	byte ptr [rax + rcx], -1
-LBB7_11:
+LBB4_11:
 	add	rsp, 16
 	pop	rbx
 	pop	r12
@@ -373,43 +326,43 @@ LBB7_11:
 	pop	r15
 	pop	rbp
 	ret
-LBB7_6:
+LBB4_6:
 Ltmp28:
 	mov	r14, rax
 Ltmp29:
 	mov	rdi, r12
 	call	_objc_release
 Ltmp30:
-	jmp	LBB7_15
-LBB7_7:
+	jmp	LBB4_15
+LBB4_7:
 Ltmp31:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
-LBB7_5:
+LBB4_5:
 Ltmp20:
 	mov	r14, rax
 Ltmp21:
 	mov	rdi, r15
 	call	_objc_release
 Ltmp22:
-	jmp	LBB7_14
-LBB7_13:
+	jmp	LBB4_14
+LBB4_13:
 Ltmp17:
 	mov	r14, rax
-LBB7_14:
+LBB4_14:
 Ltmp23:
 	mov	rdi, rbx
 	call	_objc_release
 Ltmp24:
-LBB7_15:
+LBB4_15:
 	mov	rdi, r14
 	call	__Unwind_Resume
-LBB7_12:
+LBB4_12:
 Ltmp25:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
 Lfunc_end2:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
-GCC_except_table7:
+GCC_except_table4:
 Lexception2:
 	.byte	255
 	.byte	155
@@ -454,6 +407,54 @@ Lttbase1:
 	.byte	0
 	.p2align	2, 0x0
 
+	.section	__TEXT,__text,regular,pure_instructions
+	.globl	_fn2_drop
+	.p2align	4
+_fn2_drop:
+	push	rbp
+	mov	rbp, rsp
+	## InlineAsm Start
+	## InlineAsm End
+	pop	rbp
+	ret
+
+	.globl	_fn3_access_class
+	.p2align	4
+_fn3_access_class:
+	mov	rax, qword ptr [rip + ___REGISTER_CLASS_DropIvars]
+	test	rax, rax
+	jne	LBB6_1
+	mov	rax, qword ptr [rip + ___CLASS_DropIvars]
+	ret
+LBB6_1:
+	push	rbp
+	mov	rbp, rsp
+	sub	rsp, 16
+	mov	byte ptr [rbp - 1], 1
+	lea	rax, [rbp - 1]
+	mov	qword ptr [rbp - 16], rax
+	lea	rdi, [rip + ___REGISTER_CLASS_DropIvars]
+	lea	rcx, [rip + l_anon.[ID].0]
+	lea	r8, [rip + l_anon.[ID].11]
+	lea	rdx, [rbp - 16]
+	xor	esi, esi
+	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	add	rsp, 16
+	pop	rbp
+	mov	rax, qword ptr [rip + ___CLASS_DropIvars]
+	ret
+
+	.globl	_fn3_access_ivars
+	.p2align	4
+_fn3_access_ivars:
+	push	rbp
+	mov	rbp, rsp
+	mov	rcx, qword ptr [rip + ___IVAR_OFFSET_DropIvars]
+	mov	rax, qword ptr [rdi + rcx]
+	mov	rdx, qword ptr [rdi + rcx + 8]
+	pop	rbp
+	ret
+
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].0:
@@ -471,12 +472,12 @@ L_anon.[ID].2:
 	.section	__TEXT,__const
 	.p2align	3, 0x0
 l_anon.[ID].3:
-	.byte	5
+	.byte	17
 	.space	39
 
 	.p2align	3, 0x0
 l_anon.[ID].4:
-	.byte	17
+	.byte	5
 	.space	39
 
 	.p2align	3, 0x0
@@ -484,41 +485,45 @@ l_anon.[ID].5:
 	.byte	9
 	.space	39
 
-l_anon.[ID].6:
-	.ascii	"$RUSTC/library/std/src/sync/poison/once.rs"
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].6:
+	.asciz	"$RUSTC/library/std/src/sync/poison/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].7:
-	.quad	l_anon.[ID].6
-	.asciz	"\20x\000\000\000\000\000\000\000\233\000\000\0002\000\000"
+	.quad	L_anon.[ID].6
+	.asciz	"\20x\000\000\000\000\000\000\000\234\000\000\0002\000\000"
 
-	.globl	___CLASS_DropIvars
-.zerofill __DATA,__common,___CLASS_DropIvars,8,3
-	.globl	___IVAR_OFFSET_DropIvars
-.zerofill __DATA,__common,___IVAR_OFFSET_DropIvars,8,3
-	.globl	___DROP_FLAG_OFFSET_DropIvars
-.zerofill __DATA,__common,___DROP_FLAG_OFFSET_DropIvars,8,3
 	.section	__TEXT,__const
+	.p2align	3, 0x0
 l_anon.[ID].8:
-	.ascii	"crates/$DIR/lib.rs"
+	.byte	19
+	.space	39
+
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].9:
+	.asciz	"DropIvars"
+
+L_anon.[ID].10:
+	.asciz	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].9:
-	.quad	l_anon.[ID].8
+l_anon.[ID].11:
+	.quad	L_anon.[ID].10
 	.asciz	"?\000\000\000\000\000\000\000\023\000\000\000\001\000\000"
 
+	.globl	___CLASS_DropIvars
+.zerofill __DATA,__common,___CLASS_DropIvars,8,3
+	.globl	___DROP_FLAG_OFFSET_DropIvars
+.zerofill __DATA,__common,___DROP_FLAG_OFFSET_DropIvars,8,3
+	.globl	___IVAR_OFFSET_DropIvars
+.zerofill __DATA,__common,___IVAR_OFFSET_DropIvars,8,3
+	.section	__DATA,__data
 	.globl	___REGISTER_CLASS_DropIvars
-.zerofill __DATA,__common,___REGISTER_CLASS_DropIvars,8,3
-	.section	__TEXT,__cstring,cstring_literals
-L_anon.[ID].10:
-	.asciz	"DropIvars"
-
-	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].11:
-	.byte	19
-	.space	39
+___REGISTER_CLASS_DropIvars:
+	.asciz	"\003\000\000\000\000\000\000"
 
 .subsections_via_symbols

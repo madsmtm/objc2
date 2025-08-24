@@ -68,9 +68,18 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `CustomObject`
+  | |_unsatisfied trait bound
   |   required by a bound introduced by this call
   |
+help: the trait `MessageReceiver` is not implemented for `CustomObject`
+ --> ui/define_class_invalid_receiver.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^
   = help: the following other types implement trait `MessageReceiver`:
             &T
             &mut AnyObject
@@ -204,9 +213,18 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `CustomObject`
+  | |_unsatisfied trait bound
   |   required by a bound introduced by this call
   |
+help: the trait `MessageReceiver` is not implemented for `CustomObject`
+ --> ui/define_class_invalid_receiver.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^
   = help: the following other types implement trait `MessageReceiver`:
             &T
             &mut AnyObject
@@ -270,8 +288,17 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   | |     struct CustomObject;
 ... |
   | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `CustomObject`
+  | |_^ unsatisfied trait bound
   |
+help: the trait `MessageReceiver` is not implemented for `CustomObject`
+ --> ui/define_class_invalid_receiver.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^
   = help: the following other types implement trait `MessageReceiver`:
             &T
             &mut AnyObject

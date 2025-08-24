@@ -2,8 +2,13 @@ error[E0277]: the trait bound `CustomStruct: objc2::top_level_traits::private::S
  --> ui/thread_kind_traits_unimplementable2.rs
   |
   | unsafe impl AnyThread for CustomStruct {}
-  |                           ^^^^^^^^^^^^ the trait `ClassType` is not implemented for `CustomStruct`
+  |                           ^^^^^^^^^^^^ unsatisfied trait bound
   |
+help: the trait `ClassType` is not implemented for `CustomStruct`
+ --> ui/thread_kind_traits_unimplementable2.rs
+  |
+  | struct CustomStruct;
+  | ^^^^^^^^^^^^^^^^^^^
   = help: the following other types implement trait `ClassType`:
             NSObject
             __NSProxy
@@ -22,8 +27,13 @@ error[E0277]: the trait bound `CustomStruct: objc2::top_level_traits::private::S
  --> ui/thread_kind_traits_unimplementable2.rs
   |
   | unsafe impl MainThreadOnly for CustomStruct {}
-  |                                ^^^^^^^^^^^^ the trait `ClassType` is not implemented for `CustomStruct`
+  |                                ^^^^^^^^^^^^ unsatisfied trait bound
   |
+help: the trait `ClassType` is not implemented for `CustomStruct`
+ --> ui/thread_kind_traits_unimplementable2.rs
+  |
+  | struct CustomStruct;
+  | ^^^^^^^^^^^^^^^^^^^
   = help: the following other types implement trait `ClassType`:
             NSObject
             __NSProxy

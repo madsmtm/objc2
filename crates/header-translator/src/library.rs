@@ -501,7 +501,6 @@ see that for related crates.", self.data.krate)?;
             writeln!(f, "#![allow(clippy::doc_lazy_continuation)]")?;
             writeln!(f, "#![allow(rustdoc::broken_intra_doc_links)]")?;
             writeln!(f, "#![allow(rustdoc::bare_urls)]")?;
-            writeln!(f, "#![allow(rustdoc::unportable_markdown)]")?;
             writeln!(f, "#![allow(rustdoc::invalid_html_tags)]")?;
 
             writeln!(f)?;

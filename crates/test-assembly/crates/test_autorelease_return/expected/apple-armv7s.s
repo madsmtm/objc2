@@ -1,4 +1,4 @@
-	.syntax unified
+	.syntax	unified
 	.section	__TEXT,__text,regular,pure_instructions
 	.globl	_simple
 	.p2align	2

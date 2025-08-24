@@ -154,10 +154,22 @@ fn4_iter:
 	mov	dword ptr [esp + 92], 0
 	mov	dword ptr [esp + 116], 0
 	mov	dword ptr [esp + 120], 0
+	jmp	.LBB3_1
+	.p2align	4
+.LBB3_5:
+	mov	eax, dword ptr [esp + 88]
+	lea	edx, [ecx + 1]
+	mov	dword ptr [esp + 116], edx
+	sub	esp, 12
+	push	dword ptr [eax + 4*ecx]
+	call	fn3_use_obj@PLT
+	add	esp, 16
+	mov	ebp, dword ptr [esp + 16]
+	mov	ecx, dword ptr [esp + 116]
+	mov	eax, dword ptr [esp + 120]
+.LBB3_1:
 	cmp	ecx, eax
 	jb	.LBB3_5
-	.p2align	4
-.LBB3_2:
 	mov	esi, dword ptr [edi]
 	test	esi, esi
 	je	.LBB3_3
@@ -179,24 +191,8 @@ fn4_iter:
 	xor	ecx, ecx
 	test	eax, eax
 	mov	dword ptr [esp + 120], eax
-	je	.LBB3_7
-.LBB3_5:
-	mov	eax, dword ptr [esp + 88]
-	lea	edx, [ecx + 1]
-	mov	dword ptr [esp + 116], edx
-	mov	eax, dword ptr [eax + 4*ecx]
-	test	eax, eax
-	je	.LBB3_7
-	sub	esp, 12
-	push	eax
-	call	fn3_use_obj@PLT
-	add	esp, 16
-	mov	ebp, dword ptr [esp + 16]
-	mov	ecx, dword ptr [esp + 116]
-	mov	eax, dword ptr [esp + 120]
-	cmp	ecx, eax
-	jae	.LBB3_2
-	jmp	.LBB3_5
+	jne	.LBB3_5
+	jmp	.LBB3_6
 .LBB3_3:
 	sub	esp, 8
 	push	dword ptr [esp + 20]
@@ -205,7 +201,7 @@ fn4_iter:
 	add	esp, 16
 	mov	esi, eax
 	jmp	.LBB3_4
-.LBB3_7:
+.LBB3_6:
 	add	esp, 124
 	pop	esi
 	pop	edi
@@ -228,11 +224,10 @@ fn5_iter_noop:
 	call	.L4$pb
 .L4$pb:
 	pop	ebx
-	mov	eax, dword ptr [esp + 144]
+	mov	ebp, dword ptr [esp + 144]
 	xorps	xmm0, xmm0
+	xor	eax, eax
 	mov	dword ptr [esp + 112], 0
-	xor	ecx, ecx
-	xor	edx, edx
 .Ltmp2:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L4$pb)
 	movsd	qword ptr [esp + 104], xmm0
@@ -246,27 +241,23 @@ fn5_iter_noop:
 	movsd	qword ptr [esp + 68], xmm0
 	movsd	qword ptr [esp + 76], xmm0
 	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
-	mov	dword ptr [esp + 16], eax
-	lea	eax, [ebx + .Lanon.[ID].0@GOTOFF]
+	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
+	mov	dword ptr [esp + 12], ecx
+	xor	ecx, ecx
+	mov	dword ptr [esp + 16], ebp
 	mov	dword ptr [esp + 84], 0
 	mov	dword ptr [esp + 88], 0
 	mov	dword ptr [esp + 92], 0
 	mov	dword ptr [esp + 116], 0
 	mov	dword ptr [esp + 120], 0
-	mov	dword ptr [esp + 12], eax
-	xor	eax, eax
 	jmp	.LBB4_1
 	.p2align	4
 .LBB4_6:
-	lea	esi, [edx + 1]
-	mov	dword ptr [esp + 116], esi
-	cmp	dword ptr [ecx + 4*edx], 0
-	mov	edx, esi
-	je	.LBB4_7
+	inc	ecx
+	mov	dword ptr [esp + 116], ecx
 .LBB4_1:
-	cmp	edx, eax
+	cmp	ecx, eax
 	jb	.LBB4_6
-	mov	ebp, dword ptr [esp + 16]
 	mov	esi, dword ptr [edi]
 	test	esi, esi
 	je	.LBB4_3
@@ -288,8 +279,8 @@ fn5_iter_noop:
 	test	eax, eax
 	mov	dword ptr [esp + 120], eax
 	je	.LBB4_7
-	mov	ecx, dword ptr [esp + 88]
-	xor	edx, edx
+	mov	ebp, dword ptr [esp + 16]
+	xor	ecx, ecx
 	jmp	.LBB4_6
 .LBB4_3:
 	sub	esp, 8
@@ -372,7 +363,7 @@ fn6_iter_retained:
 	test	eax, eax
 	mov	dword ptr [esp + 136], eax
 	mov	dword ptr [esp + 132], 0
-	je	.LBB5_14
+	je	.LBB5_13
 	xor	eax, eax
 	cmp	dword ptr [esp + 104], 0
 	je	.LBB5_6
@@ -382,12 +373,12 @@ fn6_iter_retained:
 	je	.LBB5_11
 	mov	ecx, dword ptr [ecx]
 	cmp	dword ptr [esp + 24], 1
-	jne	.LBB5_18
+	jne	.LBB5_17
 	cmp	dword ptr [esp + 28], ecx
 	je	.LBB5_11
 	jmp	.LBB5_9
 	.p2align	4
-.LBB5_18:
+.LBB5_17:
 	mov	dword ptr [esp + 24], 1
 	mov	dword ptr [esp + 28], ecx
 .LBB5_11:
@@ -395,8 +386,6 @@ fn6_iter_retained:
 	lea	edx, [eax + 1]
 	mov	dword ptr [esp + 132], edx
 	mov	eax, dword ptr [ecx + 4*eax]
-	test	eax, eax
-	je	.LBB5_14
 	mov	dword ptr [esp], eax
 	call	objc_retain@PLT
 	mov	esi, eax
@@ -419,7 +408,7 @@ fn6_iter_retained:
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@PLT
 	mov	esi, eax
 	jmp	.LBB5_4
-.LBB5_14:
+.LBB5_13:
 	add	esp, 140
 	pop	esi
 	pop	edi
@@ -430,7 +419,7 @@ fn6_iter_retained:
 	call	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)@PLT
 .LBB5_9:
 	call	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)@PLT
-.LBB5_16:
+.LBB5_15:
 .Ltmp5:
 	mov	edi, eax
 .Ltmp6:
@@ -439,7 +428,7 @@ fn6_iter_retained:
 .Ltmp7:
 	mov	dword ptr [esp], edi
 	call	_Unwind_Resume@PLT
-.LBB5_15:
+.LBB5_14:
 .Ltmp8:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end5:

@@ -2,8 +2,19 @@ error[E0277]: the trait bound `CustomObject: NSObjectProtocol` is not satisfied
  --> ui/implement_protocol_missing_super.rs
   |
   |     unsafe impl NSURLSessionDelegate for CustomObject {}
-  |                                          ^^^^^^^^^^^^ the trait `NSObjectProtocol` is not implemented for `CustomObject`
+  |                                          ^^^^^^^^^^^^ unsatisfied trait bound
   |
+help: the trait `NSObjectProtocol` is not implemented for `CustomObject`
+ --> ui/implement_protocol_missing_super.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[thread_kind = MainThreadOnly]
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl NSURLSessionDelegate for CustomObject {}
+  | | );
+  | |_^
   = help: the following other types implement trait `NSObjectProtocol`:
             NSArray<ObjectType>
             NSConstantString
@@ -25,4 +36,4 @@ note: required by a bound in `NSURLSessionDelegate`
 ... |
   | | );
   | |_^ required by this bound in `NSURLSessionDelegate`
-  = note: this error originates in the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -1,2 +1,2 @@
-	.syntax unified
+	.syntax	unified
 .subsections_via_symbols

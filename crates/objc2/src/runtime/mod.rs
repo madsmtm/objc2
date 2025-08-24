@@ -1,8 +1,7 @@
 //! # Direct runtime bindings.
 //!
 //! This module contains safe(r) bindings to common parts of the Objective-C
-//! runtime. See the [`ffi`][crate::ffi] module for details on the raw
-//! bindings.
+//! runtime. See the [`ffi`] module for details on the raw bindings.
 //!
 //!
 //! # Example

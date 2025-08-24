@@ -142,7 +142,7 @@ error[E0648]: `export_name` may not contain null characters
   |
   = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0080]: evaluation of constant value failed
+error[E0080]: evaluation panicked: class name must not contain interior NUL bytes
  --> ui/declare_class_name_interior_nul.rs
   |
   | / define_class!(
@@ -150,11 +150,11 @@ error[E0080]: evaluation of constant value failed
   | |     #[unsafe(super = NSObject)]
   | |     struct NulAtEnd;
   | | );
-  | |_^ evaluation panicked: class name must not contain interior NUL bytes
+  | |_^ evaluation of `_::<impl objc2::ClassType for NulAtEnd>::class::C_NAME` failed here
   |
   = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0080]: evaluation of constant value failed
+error[E0080]: evaluation panicked: class name must not contain interior NUL bytes
  --> ui/declare_class_name_interior_nul.rs
   |
   | / define_class!(
@@ -162,11 +162,11 @@ error[E0080]: evaluation of constant value failed
   | |     #[unsafe(super = NSObject)]
   | |     struct NulInMiddle;
   | | );
-  | |_^ evaluation panicked: class name must not contain interior NUL bytes
+  | |_^ evaluation of `_::<impl objc2::ClassType for NulInMiddle>::class::C_NAME` failed here
   |
   = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0080]: evaluation of constant value failed
+error[E0080]: evaluation panicked: class name must not contain interior NUL bytes
  --> ui/declare_class_name_interior_nul.rs
   |
   | / define_class!(
@@ -174,7 +174,7 @@ error[E0080]: evaluation of constant value failed
   | |     #[unsafe(super = NSObject)]
   | |     struct NulAtStart;
   | | );
-  | |_^ evaluation panicked: class name must not contain interior NUL bytes
+  | |_^ evaluation of `_::<impl objc2::ClassType for NulAtStart>::class::C_NAME` failed here
   |
   = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 

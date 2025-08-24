@@ -72,17 +72,15 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::crea
 	mov	rbp, rsp
 	push	r14
 	push	rbx
-	mov	r14, rsi
 	mov	rbx, rdi
-	mov	rax, qword ptr [rip + ___rust_no_alloc_shim_is_unstable@GOTPCREL]
-	movzx	eax, byte ptr [rax]
+	mov	r14, qword ptr [rsi + 32]
+	call	SYM(__rustc[CRATE_ID]::__rust_no_alloc_shim_is_unstable_v2, 0)
 	mov	edi, 4
 	mov	esi, 4
 	call	SYM(__rustc[CRATE_ID]::__rust_alloc, 0)
 	test	rax, rax
 	je	LBB8_2
-	mov	rcx, qword ptr [r14 + 32]
-	mov	ecx, dword ptr [rcx]
+	mov	ecx, dword ptr [r14]
 	mov	dword ptr [rax], ecx
 	mov	qword ptr [rbx + 32], rax
 	pop	rbx

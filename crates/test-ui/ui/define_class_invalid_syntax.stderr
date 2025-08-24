@@ -3,7 +3,19 @@ error: must specify the desired selector using `#[unsafe(method(...))]` or `#[un
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
+  | |     struct NoAttribute;
+... |
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extract_method_attributes_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: must specify the desired selector using `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct NoAttribute;
 ... |
   | | );
   | |_^
@@ -15,7 +27,7 @@ error: cannot specify the `method`/`method_id` attribute twice
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
+  | |     struct DuplicateAttributes;
 ... |
   | | );
   | |_^
@@ -27,18 +39,126 @@ error: cannot specify the `method`/`method_id` attribute twice
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
+  | |     struct DuplicateAttributes;
 ... |
   | | );
   | |_^
   |
   = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
+error: cannot specify the `method`/`method_id` attribute twice
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct DuplicateAttributes;
+... |
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: cannot specify the `method`/`method_id` attribute twice
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct DuplicateAttributes;
+... |
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[unsafe(method_id(alloc))]` is not supported. Use `#[unsafe(method(alloc))]` and do the memory management yourself
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct BadSelectors;
+... |
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[unsafe(method_id(retain))]` is not supported. Use `#[unsafe(method(retain))]` and do the memory management yourself
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct BadSelectors;
+... |
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[unsafe(method_id(release))]` is not supported. Use `#[unsafe(method(release))]` and do the memory management yourself
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct BadSelectors;
+... |
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[unsafe(method_id(autorelease))]` is not supported. Use `#[unsafe(method(autorelease))]` and do the memory management yourself
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct BadSelectors;
+... |
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[unsafe(method_id(dealloc))]` is not supported. Implement `Drop` for the type instead
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct BadSelectors;
+... |
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[unsafe(method(dealloc))]` is not supported. Implement `Drop` for the type instead
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct BadSelectors;
+... |
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[unsafe(method_id(...))]` must have a return type
+ --> ui/define_class_invalid_syntax.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct InvalidRetain;
+... |
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
 error: expected expression, found `}`
  --> ui/define_class_invalid_syntax.rs
   |
-  |         }
-  |         ^ expected expression
+  |         fn test_invalid_body() { a - }
+  |                                      ^ expected expression
 
 error: no rules expected `(`
  --> ui/define_class_invalid_syntax.rs
@@ -65,7 +185,7 @@ error: no rules expected `(`
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
+  | |     struct BasicBadSyntax;
 ... |
   | | );
   | |_^ no rules expected this token in macro call
@@ -78,7 +198,7 @@ error: no rules expected `(`
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
+  | |     struct BasicBadSyntax;
 ... |
   | | );
   | |_^ no rules expected this token in macro call
@@ -93,15 +213,15 @@ error: expected identifier, found keyword `fn`
   |            ^^ expected identifier, found keyword
 
 error: missing parameters for function definition
-  --> ui/define_class_invalid_syntax.rs
-   |
-   |         fn fn test_fn_fn() {}
-   |              ^
-   |
+   --> ui/define_class_invalid_syntax.rs
+    |
+    |         fn fn test_fn_fn() {}
+    |              ^
+    |
 help: add a parameter list
-   |
-65 |         fn fn() test_fn_fn() {}
-   |              ++
+    |
+123 |         fn fn() test_fn_fn() {}
+    |              ++
 
 error: expected one of `->`, `<`, `where`, or `{`, found `test_fn_fn`
  --> ui/define_class_invalid_syntax.rs
@@ -125,78 +245,6 @@ error: expected one of `->`, `where`, or `{`, found `<eof>`
   |         $_associated_item:item
   |         ---------------------- while parsing argument for this `item` macro fragment
 
-error: `#[unsafe(method_id(alloc))]` is not supported. Use `#[unsafe(method(alloc))]` and do the memory management yourself
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `#[unsafe(method_id(retain))]` is not supported. Use `#[unsafe(method(retain))]` and do the memory management yourself
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `#[unsafe(method_id(release))]` is not supported. Use `#[unsafe(method(release))]` and do the memory management yourself
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `#[unsafe(method_id(autorelease))]` is not supported. Use `#[unsafe(method(autorelease))]` and do the memory management yourself
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `#[unsafe(method_id(dealloc))]` is not supported. Implement `Drop` for the type instead
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `#[unsafe(method(dealloc))]` is not supported. Implement `Drop` for the type instead
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
 error: an inner attribute is not permitted in this context
  --> ui/define_class_invalid_syntax.rs
   |
@@ -217,54 +265,6 @@ error: expected an item keyword
   |         $_associated_item:item
   |         ---------------------- while parsing argument for this `item` macro fragment
 
-error: must specify the desired selector using `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__extract_method_attributes_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: cannot specify the `method`/`method_id` attribute twice
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: cannot specify the `method`/`method_id` attribute twice
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `#[unsafe(method_id(...))]` must have a return type
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
 error: no rules expected `(`
  --> ui/define_class_invalid_syntax.rs
   |
@@ -282,7 +282,7 @@ error: no rules expected `)`
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
+  | |     struct BasicBadSyntax;
 ... |
   | | );
   | |_^ no rules expected this token in macro call
@@ -438,132 +438,3 @@ error: #[super(...)] must be wrapped in `unsafe`, as in #[unsafe(super(...))]
   | |_^
   |
   = note: this error originates in the macro `$crate::__extern_class_check_super_unsafe` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0692]: transparent struct cannot have other repr hints
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     #[repr(transparent)]
-  | |            ^^^^^^^^^^^
-  | |     struct HasRepr;
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0599]: no function or associated item named `test_pattern` found for struct `InvalidMethodDeclarations` in the current scope
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | |         fn test_pattern((a, b): (u32, i32)) {
-  | |            ^^^^^^^^^^^^ function or associated item not found in `InvalidMethodDeclarations`
-... |
-  | | );
-  | |_- function or associated item `test_pattern` not found for this struct
-
-error[E0599]: no function or associated item named `test_self` found for struct `InvalidMethodDeclarations` in the current scope
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | |         fn test_self(self) {
-  | |            ^^^^^^^^^ function or associated item not found in `InvalidMethodDeclarations`
-... |
-  | | );
-  | |_- function or associated item `test_self` not found for this struct
-
-error[E0277]: the trait bound `MethodFamily<2>: MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not satisfied
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^ the trait `MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `MethodFamily<2>`
-  |
-  = help: the following other types implement trait `MessageReceiveRetained<Receiver, Ret>`:
-            `MethodFamily<1>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<3>` implements `MessageReceiveRetained<Allocated<T>, Ret>`
-            `MethodFamily<4>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<5>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<6>` implements `MessageReceiveRetained<Receiver, Ret>`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `MethodFamily<8>: MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not satisfied
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^ the trait `MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `MethodFamily<8>`
-  |
-  = help: the following other types implement trait `MessageReceiveRetained<Receiver, Ret>`:
-            `MethodFamily<1>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<3>` implements `MessageReceiveRetained<Allocated<T>, Ret>`
-            `MethodFamily<4>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<5>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<6>` implements `MessageReceiveRetained<Receiver, Ret>`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `MethodFamily<9>: MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not satisfied
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^ the trait `MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `MethodFamily<9>`
-  |
-  = help: the following other types implement trait `MessageReceiveRetained<Receiver, Ret>`:
-            `MethodFamily<1>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<3>` implements `MessageReceiveRetained<Allocated<T>, Ret>`
-            `MethodFamily<4>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<5>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<6>` implements `MessageReceiveRetained<Receiver, Ret>`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `MethodFamily<10>: MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not satisfied
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^ the trait `MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `MethodFamily<10>`
-  |
-  = help: the following other types implement trait `MessageReceiveRetained<Receiver, Ret>`:
-            `MethodFamily<1>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<3>` implements `MessageReceiveRetained<Allocated<T>, Ret>`
-            `MethodFamily<4>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<5>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<6>` implements `MessageReceiveRetained<Receiver, Ret>`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `MethodFamily<11>: MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not satisfied
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidMethodDeclarations;
-... |
-  | | );
-  | |_^ the trait `MessageReceiveRetained<&AnyClass, Retained<InvalidMethodDeclarations>>` is not implemented for `MethodFamily<11>`
-  |
-  = help: the following other types implement trait `MessageReceiveRetained<Receiver, Ret>`:
-            `MethodFamily<1>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<3>` implements `MessageReceiveRetained<Allocated<T>, Ret>`
-            `MethodFamily<4>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<5>` implements `MessageReceiveRetained<Receiver, Ret>`
-            `MethodFamily<6>` implements `MessageReceiveRetained<Receiver, Ret>`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

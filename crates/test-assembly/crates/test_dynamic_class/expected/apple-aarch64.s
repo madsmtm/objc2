@@ -3,16 +3,16 @@
 	.p2align	2
 _fn1_get_class:
 Lloh0:
-	adrp	x8, __MergedGlobals@PAGE
+	adrp	x8, __MergedGlobals@PAGE+24
 Lloh1:
-	ldr	x0, [x8, __MergedGlobals@PAGEOFF]
+	ldr	x0, [x8, __MergedGlobals@PAGEOFF+24]
 	cbz	x0, LBB0_2
 	ret
 LBB0_2:
 Lloh2:
-	adrp	x0, __MergedGlobals@PAGE
+	adrp	x0, __MergedGlobals@PAGE+24
 Lloh3:
-	add	x0, x0, __MergedGlobals@PAGEOFF
+	add	x0, x0, __MergedGlobals@PAGEOFF+24
 Lloh4:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh5:
@@ -31,16 +31,16 @@ Lloh7:
 	.p2align	2
 _fn1_get_same_class:
 Lloh8:
-	adrp	x8, __MergedGlobals@PAGE+8
+	adrp	x8, __MergedGlobals@PAGE
 Lloh9:
-	ldr	x0, [x8, __MergedGlobals@PAGEOFF+8]
+	ldr	x0, [x8, __MergedGlobals@PAGEOFF]
 	cbz	x0, LBB1_2
 	ret
 LBB1_2:
 Lloh10:
-	adrp	x0, __MergedGlobals@PAGE+8
+	adrp	x0, __MergedGlobals@PAGE
 Lloh11:
-	add	x0, x0, __MergedGlobals@PAGEOFF+8
+	add	x0, x0, __MergedGlobals@PAGEOFF
 Lloh12:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh13:
@@ -59,16 +59,16 @@ Lloh15:
 	.p2align	2
 _fn3_get_different_class:
 Lloh16:
-	adrp	x8, __MergedGlobals@PAGE+16
+	adrp	x8, __MergedGlobals@PAGE+8
 Lloh17:
-	ldr	x0, [x8, __MergedGlobals@PAGEOFF+16]
+	ldr	x0, [x8, __MergedGlobals@PAGEOFF+8]
 	cbz	x0, LBB2_2
 	ret
 LBB2_2:
 Lloh18:
-	adrp	x0, __MergedGlobals@PAGE+16
+	adrp	x0, __MergedGlobals@PAGE+8
 Lloh19:
-	add	x0, x0, __MergedGlobals@PAGEOFF+16
+	add	x0, x0, __MergedGlobals@PAGEOFF+8
 Lloh20:
 	adrp	x1, l_anon.[ID].4@PAGE
 Lloh21:
@@ -119,26 +119,26 @@ _fn5_use_fns:
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
 Lloh32:
-	adrp	x9, __MergedGlobals@PAGE
+	adrp	x9, __MergedGlobals@PAGE+24
 Lloh33:
-	ldr	x19, [x9, __MergedGlobals@PAGEOFF]
+	ldr	x19, [x9, __MergedGlobals@PAGEOFF+24]
 	cbz	x19, LBB4_5
 Lloh34:
-	adrp	x9, __MergedGlobals@PAGE+8
+	adrp	x9, __MergedGlobals@PAGE
 Lloh35:
-	ldr	x20, [x9, __MergedGlobals@PAGEOFF+8]
+	ldr	x20, [x9, __MergedGlobals@PAGEOFF]
 	cbz	x20, LBB4_6
 LBB4_2:
 Lloh36:
-	adrp	x9, __MergedGlobals@PAGE+16
+	adrp	x9, __MergedGlobals@PAGE+8
 Lloh37:
-	ldr	x21, [x9, __MergedGlobals@PAGEOFF+16]
+	ldr	x21, [x9, __MergedGlobals@PAGEOFF+8]
 	cbz	x21, LBB4_7
 LBB4_3:
 Lloh38:
-	adrp	x9, __MergedGlobals@PAGE+24
+	adrp	x9, __MergedGlobals@PAGE+16
 Lloh39:
-	ldr	x0, [x9, __MergedGlobals@PAGEOFF+24]
+	ldr	x0, [x9, __MergedGlobals@PAGEOFF+16]
 	cbz	x0, LBB4_8
 LBB4_4:
 	stp	x19, x20, [x8]
@@ -149,9 +149,9 @@ LBB4_4:
 	ret
 LBB4_5:
 Lloh40:
-	adrp	x0, __MergedGlobals@PAGE
+	adrp	x0, __MergedGlobals@PAGE+24
 Lloh41:
-	add	x0, x0, __MergedGlobals@PAGEOFF
+	add	x0, x0, __MergedGlobals@PAGEOFF+24
 Lloh42:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh43:
@@ -165,15 +165,15 @@ Lloh45:
 	mov	x8, x19
 	mov	x19, x0
 Lloh46:
-	adrp	x9, __MergedGlobals@PAGE+8
+	adrp	x9, __MergedGlobals@PAGE
 Lloh47:
-	ldr	x20, [x9, __MergedGlobals@PAGEOFF+8]
+	ldr	x20, [x9, __MergedGlobals@PAGEOFF]
 	cbnz	x20, LBB4_2
 LBB4_6:
 Lloh48:
-	adrp	x0, __MergedGlobals@PAGE+8
+	adrp	x0, __MergedGlobals@PAGE
 Lloh49:
-	add	x0, x0, __MergedGlobals@PAGEOFF+8
+	add	x0, x0, __MergedGlobals@PAGEOFF
 Lloh50:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh51:
@@ -187,15 +187,15 @@ Lloh53:
 	mov	x8, x20
 	mov	x20, x0
 Lloh54:
-	adrp	x9, __MergedGlobals@PAGE+16
+	adrp	x9, __MergedGlobals@PAGE+8
 Lloh55:
-	ldr	x21, [x9, __MergedGlobals@PAGEOFF+16]
+	ldr	x21, [x9, __MergedGlobals@PAGEOFF+8]
 	cbnz	x21, LBB4_3
 LBB4_7:
 Lloh56:
-	adrp	x0, __MergedGlobals@PAGE+16
+	adrp	x0, __MergedGlobals@PAGE+8
 Lloh57:
-	add	x0, x0, __MergedGlobals@PAGEOFF+16
+	add	x0, x0, __MergedGlobals@PAGEOFF+8
 Lloh58:
 	adrp	x1, l_anon.[ID].4@PAGE
 Lloh59:
@@ -209,15 +209,15 @@ Lloh61:
 	mov	x8, x21
 	mov	x21, x0
 Lloh62:
-	adrp	x9, __MergedGlobals@PAGE+24
+	adrp	x9, __MergedGlobals@PAGE+16
 Lloh63:
-	ldr	x0, [x9, __MergedGlobals@PAGEOFF+24]
+	ldr	x0, [x9, __MergedGlobals@PAGEOFF+16]
 	cbnz	x0, LBB4_4
 LBB4_8:
 Lloh64:
-	adrp	x0, __MergedGlobals@PAGE+24
+	adrp	x0, __MergedGlobals@PAGE+16
 Lloh65:
-	add	x0, x0, __MergedGlobals@PAGEOFF+24
+	add	x0, x0, __MergedGlobals@PAGEOFF+16
 Lloh66:
 	adrp	x1, l_anon.[ID].8@PAGE
 Lloh67:
@@ -256,10 +256,10 @@ _fn6_use_same_twice:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
-	adrp	x20, __MergedGlobals@PAGE
-	ldr	x19, [x20, __MergedGlobals@PAGEOFF]
+	adrp	x20, __MergedGlobals@PAGE+24
+	ldr	x19, [x20, __MergedGlobals@PAGEOFF+24]
 	cbz	x19, LBB5_3
-	ldr	x0, [x20, __MergedGlobals@PAGEOFF]
+	ldr	x0, [x20, __MergedGlobals@PAGEOFF+24]
 	cbz	x0, LBB5_4
 LBB5_2:
 	stp	x19, x0, [x8]
@@ -268,9 +268,9 @@ LBB5_2:
 	ret
 LBB5_3:
 Lloh70:
-	adrp	x0, __MergedGlobals@PAGE
+	adrp	x0, __MergedGlobals@PAGE+24
 Lloh71:
-	add	x0, x0, __MergedGlobals@PAGEOFF
+	add	x0, x0, __MergedGlobals@PAGEOFF+24
 Lloh72:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh73:
@@ -283,13 +283,13 @@ Lloh75:
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 	mov	x8, x19
 	mov	x19, x0
-	ldr	x0, [x20, __MergedGlobals@PAGEOFF]
+	ldr	x0, [x20, __MergedGlobals@PAGEOFF+24]
 	cbnz	x0, LBB5_2
 LBB5_4:
 Lloh76:
-	adrp	x0, __MergedGlobals@PAGE
+	adrp	x0, __MergedGlobals@PAGE+24
 Lloh77:
-	add	x0, x0, __MergedGlobals@PAGEOFF
+	add	x0, x0, __MergedGlobals@PAGEOFF+24
 Lloh78:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh79:
@@ -356,13 +356,14 @@ LBB6_6:
 	.loh AdrpAdd	Lloh84, Lloh85
 	.loh AdrpAdd	Lloh82, Lloh83
 
+.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0),8,3
+.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0),8,3
 	.section	__TEXT,__cstring,cstring_literals
 l_anon.[ID].0:
 	.asciz	"NSObject"
 
-	.section	__TEXT,__const
 l_anon.[ID].1:
-	.ascii	"crates/$DIR/../test_static_class/lib.rs"
+	.asciz	"crates/$DIR/../test_static_class/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
@@ -415,7 +416,5 @@ l_anon.[ID].11:
 	.quad	l_anon.[ID].1
 	.asciz	"J\000\000\000\000\000\000\000,\000\000\000\021\000\000"
 
-.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0),8,3
-.zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0),8,3
 .zerofill __DATA,__bss,__MergedGlobals,32,3
 .subsections_via_symbols

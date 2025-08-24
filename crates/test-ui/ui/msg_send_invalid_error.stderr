@@ -1,17 +1,16 @@
 error[E0308]: mismatched types
- --> ui/msg_send_invalid_error.rs
-  |
-  |     let _: () = unsafe { msg_send![obj, a: _] };
-  |                          ^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<_, Retained<_>>`
-  |
-  = note: expected unit type `()`
-                  found enum `Result<_, Retained<_>>`
-  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  --> ui/msg_send_invalid_error.rs
+   |
+   |     let _: () = unsafe { msg_send![obj, a: _] };
+   |                          ^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<_, Retained<_>>`
+   |
+   = note: expected unit type `()`
+                   found enum `Result<_, Retained<_>>`
+   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 help: consider using `Result::expect` to unwrap the `Result<_, Retained<_>>` value, panicking if the value is a `Result::Err`
- --> $WORKSPACE/crates/objc2/src/macros/mod.rs
-  |
-  |             ($crate::__msg_send_helper.expect("REASON"))
-  |                                       +++++++++++++++++
+   |
+11 |     let _: () = unsafe { msg_send![obj, a: _].expect("REASON") };
+   |                                              +++++++++++++++++
 
 error[E0277]: the trait bound `MethodFamily<6>: MsgSendError<&NSString, i32>` is not satisfied
  --> ui/msg_send_invalid_error.rs
@@ -22,19 +21,18 @@ error[E0277]: the trait bound `MethodFamily<6>: MsgSendError<&NSString, i32>` is
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0308]: mismatched types
- --> ui/msg_send_invalid_error.rs
-  |
-  |     let _: Result<(), i32> = unsafe { msg_send![obj, c: _] };
-  |                                       ^^^^^^^^^^^^^^^^^^^^ expected `Result<(), i32>`, found `Result<_, Retained<_>>`
-  |
-  = note: expected enum `Result<(), i32>`
-             found enum `Result<_, Retained<_>>`
-  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  --> ui/msg_send_invalid_error.rs
+   |
+   |     let _: Result<(), i32> = unsafe { msg_send![obj, c: _] };
+   |                                       ^^^^^^^^^^^^^^^^^^^^ expected `Result<(), i32>`, found `Result<_, Retained<_>>`
+   |
+   = note: expected enum `Result<(), i32>`
+              found enum `Result<_, Retained<_>>`
+   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 help: consider using `Result::expect` to unwrap the `Result<_, Retained<_>>` value, panicking if the value is a `Result::Err`
- --> $WORKSPACE/crates/objc2/src/macros/mod.rs
-  |
-  |             ($crate::__msg_send_helper.expect("REASON"))
-  |                                       +++++++++++++++++
+   |
+13 |     let _: Result<(), i32> = unsafe { msg_send![obj, c: _].expect("REASON") };
+   |                                                           +++++++++++++++++
 
 error[E0277]: the trait bound `i32: ClassType` is not satisfied
  --> ui/msg_send_invalid_error.rs
@@ -63,49 +61,46 @@ note: required by a bound in `send_message_error`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0308]: mismatched types
- --> ui/msg_send_invalid_error.rs
-  |
-  |     let _: () = unsafe { msg_send![obj, e: obj, f: _] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<_, Retained<_>>`
-  |
-  = note: expected unit type `()`
-                  found enum `Result<_, Retained<_>>`
-  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  --> ui/msg_send_invalid_error.rs
+   |
+   |     let _: () = unsafe { msg_send![obj, e: obj, f: _] };
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<_, Retained<_>>`
+   |
+   = note: expected unit type `()`
+                   found enum `Result<_, Retained<_>>`
+   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 help: consider using `Result::expect` to unwrap the `Result<_, Retained<_>>` value, panicking if the value is a `Result::Err`
- --> $WORKSPACE/crates/objc2/src/macros/mod.rs
-  |
-  |             ($crate::__msg_send_helper.expect("REASON"))
-  |                                       +++++++++++++++++
+   |
+17 |     let _: () = unsafe { msg_send![obj, e: obj, f: _].expect("REASON") };
+   |                                                      +++++++++++++++++
 
 error[E0308]: mismatched types
- --> ui/msg_send_invalid_error.rs
-  |
-  |     let _: () = unsafe { msg_send![super(obj), g: _] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<_, Retained<_>>`
-  |
-  = note: expected unit type `()`
-                  found enum `Result<_, Retained<_>>`
-  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  --> ui/msg_send_invalid_error.rs
+   |
+   |     let _: () = unsafe { msg_send![super(obj), g: _] };
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<_, Retained<_>>`
+   |
+   = note: expected unit type `()`
+                   found enum `Result<_, Retained<_>>`
+   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 help: consider using `Result::expect` to unwrap the `Result<_, Retained<_>>` value, panicking if the value is a `Result::Err`
- --> $WORKSPACE/crates/objc2/src/macros/mod.rs
-  |
-  |             ($crate::__msg_send_helper.expect("REASON"))
-  |                                       +++++++++++++++++
+   |
+18 |     let _: () = unsafe { msg_send![super(obj), g: _].expect("REASON") };
+   |                                                     +++++++++++++++++
 
 error[E0308]: mismatched types
- --> ui/msg_send_invalid_error.rs
-  |
-  |     let _: () = unsafe { msg_send![super(obj, NSString::class()), h: _] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<_, Retained<_>>`
-  |
-  = note: expected unit type `()`
-                  found enum `Result<_, Retained<_>>`
-  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  --> ui/msg_send_invalid_error.rs
+   |
+   |     let _: () = unsafe { msg_send![super(obj, NSString::class()), h: _] };
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<_, Retained<_>>`
+   |
+   = note: expected unit type `()`
+                   found enum `Result<_, Retained<_>>`
+   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 help: consider using `Result::expect` to unwrap the `Result<_, Retained<_>>` value, panicking if the value is a `Result::Err`
- --> $WORKSPACE/crates/objc2/src/macros/mod.rs
-  |
-  |             ($crate::__msg_send_helper.expect("REASON"))
-  |                                       +++++++++++++++++
+   |
+19 |     let _: () = unsafe { msg_send![super(obj, NSString::class()), h: _].expect("REASON") };
+   |                                                                        +++++++++++++++++
 
 error[E0308]: mismatched types
  --> ui/msg_send_invalid_error.rs

@@ -126,9 +126,9 @@ Lloh8:
 Lloh9:
 	ldr	x0, [x8]
 Lloh10:
-	adrp	x1, l_anon.[ID].10@PAGE
+	adrp	x1, l_anon.[ID].9@PAGE
 Lloh11:
-	add	x1, x1, l_anon.[ID].10@PAGEOFF
+	add	x1, x1, l_anon.[ID].9@PAGEOFF
 	mov	x2, #0
 	bl	_objc_allocateClassPair
 	cbz	x0, LBB1_10
@@ -141,9 +141,9 @@ Lloh14:
 	ldr	x1, [x8]
 Ltmp6:
 Lloh15:
-	adrp	x4, l_anon.[ID].4@PAGE
+	adrp	x4, l_anon.[ID].3@PAGE
 Lloh16:
-	add	x4, x4, l_anon.[ID].4@PAGEOFF
+	add	x4, x4, l_anon.[ID].3@PAGEOFF
 Lloh17:
 	adrp	x5, SYM(objc2[CRATE_ID]::__macro_helpers::defined_ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGE
 Lloh18:
@@ -161,9 +161,9 @@ Lloh21:
 	ldr	x1, [x8]
 Ltmp8:
 Lloh22:
-	adrp	x4, l_anon.[ID].11@PAGE
+	adrp	x4, l_anon.[ID].8@PAGE
 Lloh23:
-	add	x4, x4, l_anon.[ID].11@PAGEOFF
+	add	x4, x4, l_anon.[ID].8@PAGEOFF
 Lloh24:
 	adrp	x5, _fn1_init@PAGE
 Lloh25:
@@ -199,9 +199,9 @@ Lloh30:
 Lloh31:
 	add	x1, x1, l_anon.[ID].2@PAGEOFF
 Lloh32:
-	adrp	x5, l_anon.[ID].3@PAGE
+	adrp	x5, l_anon.[ID].4@PAGE
 Lloh33:
-	add	x5, x5, l_anon.[ID].3@PAGEOFF
+	add	x5, x5, l_anon.[ID].4@PAGEOFF
 	mov	x0, sp
 	mov	w2, #10
 	mov	w3, #1
@@ -249,13 +249,13 @@ Lloh42:
 	bl	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
 LBB1_10:
 Lloh43:
-	adrp	x0, l_anon.[ID].10@PAGE
+	adrp	x0, l_anon.[ID].9@PAGE
 Lloh44:
-	add	x0, x0, l_anon.[ID].10@PAGEOFF
+	add	x0, x0, l_anon.[ID].9@PAGEOFF
 Lloh45:
-	adrp	x2, l_anon.[ID].9@PAGE
+	adrp	x2, l_anon.[ID].11@PAGE
 Lloh46:
-	add	x2, x2, l_anon.[ID].9@PAGEOFF
+	add	x2, x2, l_anon.[ID].11@PAGEOFF
 	mov	w1, #10
 	bl	SYM(objc2::__macro_helpers::define_class::class_not_unique::GENERATED_ID, 0)
 LBB1_11:
@@ -323,29 +323,21 @@ SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_dro
 	add	sp, sp, #32
 	ret
 
-	.globl	_fn2_drop
+	.globl	SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	2
-_fn2_drop:
-	; InlineAsm Start
-	; InlineAsm End
-	ret
-
-	.globl	_fn3_access_class
-	.p2align	2
-_fn3_access_class:
+SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 Lloh47:
 	adrp	x8, ___REGISTER_CLASS_DropIvars@PAGE
 Lloh48:
 	add	x8, x8, ___REGISTER_CLASS_DropIvars@PAGEOFF
 	ldapr	x8, [x8]
-	cmp	x8, #3
-	b.ne	LBB4_2
+	cbnz	x8, LBB3_2
 Lloh49:
 	adrp	x8, ___CLASS_DropIvars@PAGE
 Lloh50:
 	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
 	ret
-LBB4_2:
+LBB3_2:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -362,9 +354,9 @@ Lloh53:
 Lloh54:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
 Lloh55:
-	adrp	x4, l_anon.[ID].9@PAGE
+	adrp	x4, l_anon.[ID].11@PAGE
 Lloh56:
-	add	x4, x4, l_anon.[ID].9@PAGEOFF
+	add	x4, x4, l_anon.[ID].11@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
@@ -381,70 +373,6 @@ Lloh58:
 	.loh AdrpAdd	Lloh55, Lloh56
 	.loh AdrpAdd	Lloh53, Lloh54
 	.loh AdrpAdd	Lloh51, Lloh52
-
-	.globl	_fn3_access_ivars
-	.p2align	2
-_fn3_access_ivars:
-Lloh59:
-	adrp	x8, ___IVAR_OFFSET_DropIvars@PAGE
-Lloh60:
-	ldr	x8, [x8, ___IVAR_OFFSET_DropIvars@PAGEOFF]
-	add	x8, x0, x8
-	ldp	x0, x1, [x8]
-	ret
-	.loh AdrpLdr	Lloh59, Lloh60
-
-	.globl	SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
-	.p2align	2
-SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
-Lloh61:
-	adrp	x8, ___REGISTER_CLASS_DropIvars@PAGE
-Lloh62:
-	add	x8, x8, ___REGISTER_CLASS_DropIvars@PAGEOFF
-	ldapr	x8, [x8]
-	cmp	x8, #3
-	b.ne	LBB6_2
-Lloh63:
-	adrp	x8, ___CLASS_DropIvars@PAGE
-Lloh64:
-	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
-	ret
-LBB6_2:
-	sub	sp, sp, #32
-	stp	x29, x30, [sp, #16]
-	add	x29, sp, #16
-	mov	w8, #1
-	strb	w8, [sp, #7]
-	add	x8, sp, #7
-	str	x8, [sp, #8]
-Lloh65:
-	adrp	x0, ___REGISTER_CLASS_DropIvars@PAGE
-Lloh66:
-	add	x0, x0, ___REGISTER_CLASS_DropIvars@PAGEOFF
-Lloh67:
-	adrp	x3, l_anon.[ID].0@PAGE
-Lloh68:
-	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh69:
-	adrp	x4, l_anon.[ID].9@PAGE
-Lloh70:
-	add	x4, x4, l_anon.[ID].9@PAGEOFF
-	add	x2, sp, #8
-	mov	w1, #0
-	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
-Lloh71:
-	adrp	x8, ___CLASS_DropIvars@PAGE
-Lloh72:
-	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
-	ret
-	.loh AdrpAdd	Lloh61, Lloh62
-	.loh AdrpLdr	Lloh63, Lloh64
-	.loh AdrpLdr	Lloh71, Lloh72
-	.loh AdrpAdd	Lloh69, Lloh70
-	.loh AdrpAdd	Lloh67, Lloh68
-	.loh AdrpAdd	Lloh65, Lloh66
 
 	.globl	_fn1_init
 	.p2align	2
@@ -465,62 +393,62 @@ Ltmp18:
 Ltmp19:
 	mov	x21, x0
 	adrp	x22, ___DROP_FLAG_OFFSET_DropIvars@PAGE
-	cbz	x19, LBB7_4
-Lloh73:
+	cbz	x19, LBB4_4
+Lloh59:
 	adrp	x8, ___IVAR_OFFSET_DropIvars@PAGE
-Lloh74:
+Lloh60:
 	ldr	x8, [x8, ___IVAR_OFFSET_DropIvars@PAGEOFF]
 	add	x8, x19, x8
 	stp	x20, x21, [x8]
 	ldr	x8, [x22, ___DROP_FLAG_OFFSET_DropIvars@PAGEOFF]
 	mov	w9, #15
 	strb	w9, [x19, x8]
-	b	LBB7_6
-LBB7_4:
+	b	LBB4_6
+LBB4_4:
 Ltmp26:
 	mov	x0, x20
 	bl	_objc_release
 Ltmp27:
 	mov	x0, x21
 	bl	_objc_release
-LBB7_6:
-Lloh75:
+LBB4_6:
+Lloh61:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
-Lloh76:
+Lloh62:
 	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
-Lloh77:
+Lloh63:
 	ldr	x1, [x8]
-Lloh78:
+Lloh64:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
-Lloh79:
+Lloh65:
 	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
-Lloh80:
+Lloh66:
 	ldr	x8, [x8]
 	stp	x19, x8, [sp]
 	mov	x0, sp
 	bl	_objc_msgSendSuper
-	cbz	x0, LBB7_8
+	cbz	x0, LBB4_8
 	ldr	x8, [x22, ___DROP_FLAG_OFFSET_DropIvars@PAGEOFF]
 	mov	w9, #255
 	strb	w9, [x0, x8]
-LBB7_8:
+LBB4_8:
 	ldp	x29, x30, [sp, #48]
 	ldp	x20, x19, [sp, #32]
 	ldp	x22, x21, [sp, #16]
 	add	sp, sp, #64
 	ret
-LBB7_9:
+LBB4_9:
 Ltmp28:
 	mov	x20, x0
 Ltmp29:
 	mov	x0, x21
 	bl	_objc_release
 Ltmp30:
-	b	LBB7_14
-LBB7_10:
+	b	LBB4_14
+LBB4_10:
 Ltmp31:
 	bl	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
-LBB7_11:
+LBB4_11:
 Ltmp20:
 	mov	x8, x20
 	mov	x20, x0
@@ -528,28 +456,28 @@ Ltmp21:
 	mov	x0, x8
 	bl	_objc_release
 Ltmp22:
-	b	LBB7_13
-LBB7_12:
+	b	LBB4_13
+LBB4_12:
 Ltmp17:
 	mov	x20, x0
-LBB7_13:
+LBB4_13:
 Ltmp23:
 	mov	x0, x19
 	bl	_objc_release
 Ltmp24:
-LBB7_14:
+LBB4_14:
 	mov	x0, x20
 	bl	__Unwind_Resume
-LBB7_15:
+LBB4_15:
 Ltmp25:
 	bl	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
-	.loh AdrpLdr	Lloh73, Lloh74
-	.loh AdrpLdrGotLdr	Lloh78, Lloh79, Lloh80
-	.loh AdrpLdrGotLdr	Lloh75, Lloh76, Lloh77
+	.loh AdrpLdr	Lloh59, Lloh60
+	.loh AdrpLdrGotLdr	Lloh64, Lloh65, Lloh66
+	.loh AdrpLdrGotLdr	Lloh61, Lloh62, Lloh63
 Lfunc_end2:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
-GCC_except_table7:
+GCC_except_table4:
 Lexception2:
 	.byte	255
 	.byte	155
@@ -594,6 +522,77 @@ Lttbase1:
 	.byte	0
 	.p2align	2, 0x0
 
+	.section	__TEXT,__text,regular,pure_instructions
+	.globl	_fn2_drop
+	.p2align	2
+_fn2_drop:
+	; InlineAsm Start
+	; InlineAsm End
+	ret
+
+	.globl	_fn3_access_class
+	.p2align	2
+_fn3_access_class:
+Lloh67:
+	adrp	x8, ___REGISTER_CLASS_DropIvars@PAGE
+Lloh68:
+	add	x8, x8, ___REGISTER_CLASS_DropIvars@PAGEOFF
+	ldapr	x8, [x8]
+	cbnz	x8, LBB6_2
+Lloh69:
+	adrp	x8, ___CLASS_DropIvars@PAGE
+Lloh70:
+	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
+	ret
+LBB6_2:
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+	mov	w8, #1
+	strb	w8, [sp, #7]
+	add	x8, sp, #7
+	str	x8, [sp, #8]
+Lloh71:
+	adrp	x0, ___REGISTER_CLASS_DropIvars@PAGE
+Lloh72:
+	add	x0, x0, ___REGISTER_CLASS_DropIvars@PAGEOFF
+Lloh73:
+	adrp	x3, l_anon.[ID].0@PAGE
+Lloh74:
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
+Lloh75:
+	adrp	x4, l_anon.[ID].11@PAGE
+Lloh76:
+	add	x4, x4, l_anon.[ID].11@PAGEOFF
+	add	x2, sp, #8
+	mov	w1, #0
+	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
+Lloh77:
+	adrp	x8, ___CLASS_DropIvars@PAGE
+Lloh78:
+	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
+	ret
+	.loh AdrpAdd	Lloh67, Lloh68
+	.loh AdrpLdr	Lloh69, Lloh70
+	.loh AdrpLdr	Lloh77, Lloh78
+	.loh AdrpAdd	Lloh75, Lloh76
+	.loh AdrpAdd	Lloh73, Lloh74
+	.loh AdrpAdd	Lloh71, Lloh72
+
+	.globl	_fn3_access_ivars
+	.p2align	2
+_fn3_access_ivars:
+Lloh79:
+	adrp	x8, ___IVAR_OFFSET_DropIvars@PAGE
+Lloh80:
+	ldr	x8, [x8, ___IVAR_OFFSET_DropIvars@PAGEOFF]
+	add	x8, x0, x8
+	ldp	x0, x1, [x8]
+	ret
+	.loh AdrpLdr	Lloh79, Lloh80
+
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].0:
@@ -611,12 +610,12 @@ l_anon.[ID].2:
 	.section	__TEXT,__const
 	.p2align	3, 0x0
 l_anon.[ID].3:
-	.byte	5
+	.byte	17
 	.space	39
 
 	.p2align	3, 0x0
 l_anon.[ID].4:
-	.byte	17
+	.byte	5
 	.space	39
 
 	.p2align	3, 0x0
@@ -624,41 +623,45 @@ l_anon.[ID].5:
 	.byte	9
 	.space	39
 
+	.section	__TEXT,__cstring,cstring_literals
 l_anon.[ID].6:
-	.ascii	"$RUSTC/library/std/src/sync/poison/once.rs"
+	.asciz	"$RUSTC/library/std/src/sync/poison/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].7:
 	.quad	l_anon.[ID].6
-	.asciz	"\20x\000\000\000\000\000\000\000\233\000\000\0002\000\000"
+	.asciz	"\20x\000\000\000\000\000\000\000\234\000\000\0002\000\000"
 
-	.globl	___CLASS_DropIvars
-.zerofill __DATA,__common,___CLASS_DropIvars,8,3
-	.globl	___IVAR_OFFSET_DropIvars
-.zerofill __DATA,__common,___IVAR_OFFSET_DropIvars,8,3
-	.globl	___DROP_FLAG_OFFSET_DropIvars
-.zerofill __DATA,__common,___DROP_FLAG_OFFSET_DropIvars,8,3
 	.section	__TEXT,__const
+	.p2align	3, 0x0
 l_anon.[ID].8:
-	.ascii	"crates/$DIR/lib.rs"
+	.byte	19
+	.space	39
+
+	.section	__TEXT,__cstring,cstring_literals
+l_anon.[ID].9:
+	.asciz	"DropIvars"
+
+l_anon.[ID].10:
+	.asciz	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].9:
-	.quad	l_anon.[ID].8
+l_anon.[ID].11:
+	.quad	l_anon.[ID].10
 	.asciz	"?\000\000\000\000\000\000\000\023\000\000\000\001\000\000"
 
+	.globl	___CLASS_DropIvars
+.zerofill __DATA,__common,___CLASS_DropIvars,8,3
+	.globl	___DROP_FLAG_OFFSET_DropIvars
+.zerofill __DATA,__common,___DROP_FLAG_OFFSET_DropIvars,8,3
+	.globl	___IVAR_OFFSET_DropIvars
+.zerofill __DATA,__common,___IVAR_OFFSET_DropIvars,8,3
+	.section	__DATA,__data
 	.globl	___REGISTER_CLASS_DropIvars
-.zerofill __DATA,__common,___REGISTER_CLASS_DropIvars,8,3
-	.section	__TEXT,__cstring,cstring_literals
-l_anon.[ID].10:
-	.asciz	"DropIvars"
-
-	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].11:
-	.byte	19
-	.space	39
+___REGISTER_CLASS_DropIvars:
+	.asciz	"\003\000\000\000\000\000\000"
 
 .subsections_via_symbols

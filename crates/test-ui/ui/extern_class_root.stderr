@@ -6,8 +6,13 @@ error[E0277]: the trait bound `MyObject: ClassType` is not satisfied
   | |     #[thread_kind = AnyThread]
   | |     pub struct MyRootClass;
   | | );
-  | |_^ the trait `ClassType` is not implemented for `MyObject`
+  | |_^ unsatisfied trait bound
   |
+help: the trait `ClassType` is not implemented for `MyObject`
+ --> ui/extern_class_root.rs
+  |
+  | struct MyObject(AnyObject);
+  | ^^^^^^^^^^^^^^^
   = help: the following other types implement trait `ClassType`:
             MyRootClass
             NSObject
