@@ -552,12 +552,12 @@ fn merge_toml_table(original: &mut Table, addition: Table) {
             toml_edit::Entry::Vacant(original) => {
                 match &mut addition {
                     Item::Table(table) => {
-                        table.set_position(usize::MAX);
+                        table.set_position(isize::MAX);
                         table.decor_mut().clear();
                     }
                     Item::ArrayOfTables(array) => {
                         for table in array.iter_mut() {
-                            table.set_position(usize::MAX);
+                            table.set_position(isize::MAX);
                             table.decor_mut().clear();
                         }
                     }
