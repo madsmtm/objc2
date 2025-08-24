@@ -1,156 +1,156 @@
 	.syntax unified
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_get_class
+	.globl	_fn1_get_class
 	.p2align	2
 	.code	32
-_get_class:
+_fn1_get_class:
 	push	{r7, lr}
 	mov	r7, sp
-	movw	r0, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6-(LPC0_0+8))
-	movt	r0, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6-(LPC0_0+8))
+	movw	r0, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34-(LPC0_0+8))
+	movt	r0, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34-(LPC0_0+8))
 LPC0_0:
 	ldr	r0, [pc, r0]
 	pop	{r7, pc}
 
-	.globl	_get_same_class
+	.globl	_fn1_get_same_class
 	.p2align	2
 	.code	32
-_get_same_class:
+_fn1_get_same_class:
 	push	{r7, lr}
 	mov	r7, sp
-	movw	r0, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702-(LPC1_0+8))
-	movt	r0, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702-(LPC1_0+8))
+	movw	r0, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a-(LPC1_0+8))
+	movt	r0, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a-(LPC1_0+8))
 LPC1_0:
 	ldr	r0, [pc, r0]
 	pop	{r7, pc}
 
-	.globl	_get_different_class
+	.globl	_fn3_get_different_class
 	.p2align	2
 	.code	32
-_get_different_class:
+_fn3_get_different_class:
 	push	{r7, lr}
 	mov	r7, sp
-	movw	r0, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba-(LPC2_0+8))
-	movt	r0, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba-(LPC2_0+8))
+	movw	r0, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1-(LPC2_0+8))
+	movt	r0, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1-(LPC2_0+8))
 LPC2_0:
 	ldr	r0, [pc, r0]
 	pop	{r7, pc}
 
-	.globl	_unused_class
+	.globl	_fn4_unused_class
 	.p2align	2
 	.code	32
-_unused_class:
+_fn4_unused_class:
 	push	{r7, lr}
 	mov	r7, sp
 	pop	{r7, pc}
 
-	.globl	_use_fns
+	.globl	_fn5_use_fns
 	.p2align	2
 	.code	32
-_use_fns:
+_fn5_use_fns:
 	push	{r7, lr}
 	mov	r7, sp
-	movw	r1, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6-(LPC4_0+8))
-	movt	r1, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6-(LPC4_0+8))
+	movw	r1, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34-(LPC4_0+8))
+	movt	r1, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34-(LPC4_0+8))
 LPC4_0:
 	ldr	r1, [pc, r1]
-	movw	r2, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702-(LPC4_1+8))
-	movt	r2, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702-(LPC4_1+8))
+	movw	r2, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a-(LPC4_1+8))
+	movt	r2, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a-(LPC4_1+8))
 LPC4_1:
 	ldr	r2, [pc, r2]
-	movw	r3, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba-(LPC4_2+8))
-	movt	r3, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba-(LPC4_2+8))
+	movw	r3, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1-(LPC4_2+8))
+	movt	r3, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1-(LPC4_2+8))
 LPC4_2:
 	ldr	r3, [pc, r3]
-	movw	r9, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_5ca3eecf631727de-(LPC4_3+8))
-	movt	r9, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_5ca3eecf631727de-(LPC4_3+8))
+	movw	r9, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_a92f01d3b55d29c5-(LPC4_3+8))
+	movt	r9, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_a92f01d3b55d29c5-(LPC4_3+8))
 LPC4_3:
 	ldr	r9, [pc, r9]
 	stm	r0, {r1, r2, r3, r9}
 	pop	{r7, pc}
 
-	.globl	_use_same_twice
+	.globl	_fn6_use_same_twice
 	.p2align	2
 	.code	32
-_use_same_twice:
+_fn6_use_same_twice:
 	push	{r7, lr}
 	mov	r7, sp
-	movw	r1, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6-(LPC5_0+8))
-	movt	r1, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6-(LPC5_0+8))
+	movw	r1, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34-(LPC5_0+8))
+	movt	r1, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34-(LPC5_0+8))
 LPC5_0:
 	ldr	r1, [pc, r1]
 	str	r1, [r0]
 	str	r1, [r0, #4]
 	pop	{r7, pc}
 
-	.globl	_use_in_loop
+	.globl	_fn7_use_in_loop
 	.p2align	2
 	.code	32
-_use_in_loop:
+_fn7_use_in_loop:
 	push	{r7, lr}
 	mov	r7, sp
 	pop	{r7, pc}
 
 	.section	__DATA,__objc_classrefs
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34
 	.p2align	2, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6:
+L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34:
 	.long	_OBJC_CLASS_$_NSObject
 
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a
 	.p2align	2, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702:
+L_OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a:
 	.long	_OBJC_CLASS_$_NSObject
 
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1
 	.p2align	2, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba:
+L_OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1:
 	.long	_OBJC_CLASS_$_NSString
 
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_9c6ceff32d4e4b8b
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_9f503c7582f87b48
 	.p2align	2, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_9c6ceff32d4e4b8b:
+L_OBJC_CLASSLIST_REFERENCES_$_9f503c7582f87b48:
 	.long	_OBJC_CLASS_$_NSData
 
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_5ca3eecf631727de
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_a92f01d3b55d29c5
 	.p2align	2, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_5ca3eecf631727de:
+L_OBJC_CLASSLIST_REFERENCES_$_a92f01d3b55d29c5:
 	.long	_OBJC_CLASS_$_NSException
 
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_76a360f1704b1e39
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_d4ef9efb3ee49ab7
 	.p2align	2, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_76a360f1704b1e39:
+L_OBJC_CLASSLIST_REFERENCES_$_d4ef9efb3ee49ab7:
 	.long	_OBJC_CLASS_$_NSLock
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_7443a74fb2d1e4c6
+	.globl	L_OBJC_IMAGE_INFO_1f36dafa1e0a7b34
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_7443a74fb2d1e4c6:
+L_OBJC_IMAGE_INFO_1f36dafa1e0a7b34:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_8f52a951012bf702
+	.globl	L_OBJC_IMAGE_INFO_e1a6d3426ab3be5a
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_8f52a951012bf702:
+L_OBJC_IMAGE_INFO_e1a6d3426ab3be5a:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_4882212c6ef400ba
+	.globl	L_OBJC_IMAGE_INFO_5a6ce274a9f949e1
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_4882212c6ef400ba:
+L_OBJC_IMAGE_INFO_5a6ce274a9f949e1:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_9c6ceff32d4e4b8b
+	.globl	L_OBJC_IMAGE_INFO_9f503c7582f87b48
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_9c6ceff32d4e4b8b:
+L_OBJC_IMAGE_INFO_9f503c7582f87b48:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_5ca3eecf631727de
+	.globl	L_OBJC_IMAGE_INFO_a92f01d3b55d29c5
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_5ca3eecf631727de:
+L_OBJC_IMAGE_INFO_a92f01d3b55d29c5:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_76a360f1704b1e39
+	.globl	L_OBJC_IMAGE_INFO_d4ef9efb3ee49ab7
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_76a360f1704b1e39:
+L_OBJC_IMAGE_INFO_d4ef9efb3ee49ab7:
 	.asciz	"\000\000\000\000@\000\000"
 
 .subsections_via_symbols

@@ -1,8 +1,8 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.globl	_get_sel
+	.globl	_fn1_get_sel
 	.p2align	4
-_get_sel:
+_fn1_get_sel:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)]
@@ -16,9 +16,9 @@ LBB0_2:
 	pop	rbp
 	jmp	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
-	.globl	_get_same_sel
+	.globl	_fn2_get_same_sel
 	.p2align	4
-_get_same_sel:
+_fn2_get_same_sel:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + SYM(test_dynamic_sel[CRATE_ID]::get_same_sel::CACHED_SEL, 0)]
@@ -32,9 +32,9 @@ LBB1_2:
 	pop	rbp
 	jmp	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
-	.globl	_get_common_twice
+	.globl	_fn3_get_common_twice
 	.p2align	4
-_get_common_twice:
+_fn3_get_common_twice:
 	push	rbp
 	mov	rbp, rsp
 	push	rbx
@@ -70,9 +70,9 @@ LBB2_3:
 	pop	rbp
 	ret
 
-	.globl	_get_different_sel
+	.globl	_fn4_get_different_sel
 	.p2align	4
-_get_different_sel:
+_fn4_get_different_sel:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + SYM(test_dynamic_sel[CRATE_ID]::get_different_sel::CACHED_SEL, 0)]
@@ -86,9 +86,9 @@ LBB3_2:
 	pop	rbp
 	jmp	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
-	.globl	_unused_sel
+	.globl	_fn5_unused_sel
 	.p2align	4
-_unused_sel:
+_fn5_unused_sel:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, qword ptr [rip + SYM(test_dynamic_sel[CRATE_ID]::unused_sel::CACHED_SEL, 0)]
@@ -102,9 +102,9 @@ LBB4_2:
 	pop	rbp
 	jmp	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
-	.globl	_use_fns
+	.globl	_fn6_use_fns
 	.p2align	4
-_use_fns:
+_fn6_use_fns:
 	push	rbp
 	mov	rbp, rsp
 	push	r15
@@ -176,9 +176,9 @@ LBB5_7:
 	mov	rax, r12
 	jmp	LBB5_8
 
-	.globl	_use_same_twice
+	.globl	_fn7_use_same_twice
 	.p2align	4
-_use_same_twice:
+_fn7_use_same_twice:
 	push	rbp
 	mov	rbp, rsp
 	push	r14
@@ -216,9 +216,9 @@ LBB6_3:
 	mov	rax, r14
 	jmp	LBB6_4
 
-	.globl	_use_in_loop
+	.globl	_fn8_use_in_loop
 	.p2align	4
-_use_in_loop:
+_fn8_use_in_loop:
 	test	rdi, rdi
 	je	LBB7_6
 	push	rbp

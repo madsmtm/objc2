@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_error_bool
+	.globl	_fn1_error_bool
 	.p2align	2
-_error_bool:
+_fn1_error_bool:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -22,9 +22,9 @@ LBB0_2:
 	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
 	b	LBB0_1
 
-	.globl	_error_new
+	.globl	_fn2_error_new
 	.p2align	2
-_error_new:
+_fn2_error_new:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -50,9 +50,9 @@ LBB1_5:
 	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
 	b	LBB1_4
 
-	.globl	_error_init
+	.globl	_fn3_error_init
 	.p2align	2
-_error_init:
+_fn3_error_init:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -78,9 +78,9 @@ LBB2_5:
 	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
 	b	LBB2_4
 
-	.globl	_error_copy
+	.globl	_fn4_error_copy
 	.p2align	2
-_error_copy:
+_fn4_error_copy:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -106,9 +106,9 @@ LBB3_5:
 	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
 	b	LBB3_4
 
-	.globl	_error_mutable_copy
+	.globl	_fn5_error_mutable_copy
 	.p2align	2
-_error_mutable_copy:
+_fn5_error_mutable_copy:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -134,9 +134,9 @@ LBB4_5:
 	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
 	b	LBB4_4
 
-	.globl	_error_autoreleased
+	.globl	_fn6_error_autoreleased
 	.p2align	2
-_error_autoreleased:
+_fn6_error_autoreleased:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16

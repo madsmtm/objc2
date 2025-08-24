@@ -1,26 +1,26 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.globl	_get_ascii
+	.globl	_fn1_get_ascii
 	.p2align	4
-_get_ascii:
+_fn1_get_ascii:
 	push	rbp
 	mov	rbp, rsp
 	lea	rax, [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)]
 	pop	rbp
 	ret
 
-	.globl	_get_utf16
+	.globl	_fn2_get_utf16
 	.p2align	4
-_get_utf16:
+_fn2_get_utf16:
 	push	rbp
 	mov	rbp, rsp
 	lea	rax, [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)]
 	pop	rbp
 	ret
 
-	.globl	_get_with_nul
+	.globl	_fn3_get_with_nul
 	.p2align	4
-_get_with_nul:
+_fn3_get_with_nul:
 	push	rbp
 	mov	rbp, rsp
 	lea	rax, [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)]
@@ -28,19 +28,19 @@ _get_with_nul:
 	ret
 
 	.section	__DATA,__const
-	.globl	_EMPTY
+	.globl	_S1_EMPTY
 	.p2align	3, 0x0
-_EMPTY:
+_S1_EMPTY:
 	.quad	SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 0)
 
-	.globl	_XYZ
+	.globl	_S2_XYZ
 	.p2align	3, 0x0
-_XYZ:
+_S2_XYZ:
 	.quad	SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0)
 
-	.globl	_NON_ASCII
+	.globl	_S3_NON_ASCII
 	.p2align	3, 0x0
-_NON_ASCII:
+_S3_NON_ASCII:
 	.quad	SYM(test_ns_string[CRATE_ID]::NON_ASCII::CFSTRING, 0)
 
 	.section	__TEXT,__cstring,cstring_literals

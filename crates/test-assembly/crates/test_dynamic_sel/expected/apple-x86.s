@@ -1,8 +1,8 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.globl	_get_sel
+	.globl	_fn1_get_sel
 	.p2align	4
-_get_sel:
+_fn1_get_sel:
 	push	ebp
 	mov	ebp, esp
 	sub	esp, 8
@@ -26,9 +26,9 @@ LBB0_1:
 	pop	ebp
 	ret
 
-	.globl	_get_same_sel
+	.globl	_fn2_get_same_sel
 	.p2align	4
-_get_same_sel:
+_fn2_get_same_sel:
 	push	ebp
 	mov	ebp, esp
 	sub	esp, 8
@@ -52,9 +52,9 @@ LBB1_1:
 	pop	ebp
 	ret
 
-	.globl	_get_common_twice
+	.globl	_fn3_get_common_twice
 	.p2align	4
-_get_common_twice:
+_fn3_get_common_twice:
 	push	ebp
 	mov	ebp, esp
 	push	edi
@@ -99,9 +99,9 @@ LBB2_3:
 	pop	ebp
 	ret
 
-	.globl	_get_different_sel
+	.globl	_fn4_get_different_sel
 	.p2align	4
-_get_different_sel:
+_fn4_get_different_sel:
 	push	ebp
 	mov	ebp, esp
 	sub	esp, 8
@@ -125,9 +125,9 @@ LBB3_1:
 	pop	ebp
 	ret
 
-	.globl	_unused_sel
+	.globl	_fn5_unused_sel
 	.p2align	4
-_unused_sel:
+_fn5_unused_sel:
 	push	ebp
 	mov	ebp, esp
 	sub	esp, 8
@@ -151,9 +151,9 @@ LBB4_1:
 	pop	ebp
 	ret
 
-	.globl	_use_fns
+	.globl	_fn6_use_fns
 	.p2align	4
-_use_fns:
+_fn6_use_fns:
 	push	ebp
 	mov	ebp, esp
 	push	ebx
@@ -246,9 +246,9 @@ LBB5_7:
 	mov	eax, esi
 	jmp	LBB5_8
 
-	.globl	_use_same_twice
+	.globl	_fn7_use_same_twice
 	.p2align	4
-_use_same_twice:
+_fn7_use_same_twice:
 	push	ebp
 	mov	ebp, esp
 	push	ebx
@@ -301,9 +301,9 @@ LBB6_3:
 	mov	eax, edi
 	jmp	LBB6_4
 
-	.globl	_use_in_loop
+	.globl	_fn8_use_in_loop
 	.p2align	4
-_use_in_loop:
+_fn8_use_in_loop:
 	push	ebp
 	mov	ebp, esp
 	push	ebx

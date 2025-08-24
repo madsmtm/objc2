@@ -1,9 +1,9 @@
 	.intel_syntax noprefix
-	.section	.text.handle_new,"ax",@progbits
-	.globl	handle_new
+	.section	.text.fn01_handle_new,"ax",@progbits
+	.globl	fn01_handle_new
 	.p2align	4
-	.type	handle_new,@function
-handle_new:
+	.type	fn01_handle_new,@function
+fn01_handle_new:
 	push	r14
 	push	rbx
 	push	rax
@@ -17,13 +17,13 @@ handle_new:
 	pop	r14
 	jmp	rax
 .Lfunc_end0:
-	.size	handle_new, .Lfunc_end0-handle_new
+	.size	fn01_handle_new, .Lfunc_end0-fn01_handle_new
 
-	.section	.text.handle_new_fallible,"ax",@progbits
-	.globl	handle_new_fallible
+	.section	.text.fn02_handle_new_fallible,"ax",@progbits
+	.globl	fn02_handle_new_fallible
 	.p2align	4
-	.type	handle_new_fallible,@function
-handle_new_fallible:
+	.type	fn02_handle_new_fallible,@function
+fn02_handle_new_fallible:
 	push	r14
 	push	rbx
 	push	rax
@@ -45,13 +45,13 @@ handle_new_fallible:
 	mov	rsi, rbx
 	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end1:
-	.size	handle_new_fallible, .Lfunc_end1-handle_new_fallible
+	.size	fn02_handle_new_fallible, .Lfunc_end1-fn02_handle_new_fallible
 
-	.section	.text.handle_alloc,"ax",@progbits
-	.globl	handle_alloc
+	.section	.text.fn03_handle_alloc,"ax",@progbits
+	.globl	fn03_handle_alloc
 	.p2align	4
-	.type	handle_alloc,@function
-handle_alloc:
+	.type	fn03_handle_alloc,@function
+fn03_handle_alloc:
 	push	r14
 	push	rbx
 	push	rax
@@ -65,13 +65,13 @@ handle_alloc:
 	pop	r14
 	jmp	rax
 .Lfunc_end2:
-	.size	handle_alloc, .Lfunc_end2-handle_alloc
+	.size	fn03_handle_alloc, .Lfunc_end2-fn03_handle_alloc
 
-	.section	.text.handle_init,"ax",@progbits
-	.globl	handle_init
+	.section	.text.fn04_handle_init,"ax",@progbits
+	.globl	fn04_handle_init
 	.p2align	4
-	.type	handle_init,@function
-handle_init:
+	.type	fn04_handle_init,@function
+fn04_handle_init:
 	test	rdi, rdi
 	je	.LBB3_1
 	push	r14
@@ -90,13 +90,13 @@ handle_init:
 	xor	eax, eax
 	ret
 .Lfunc_end3:
-	.size	handle_init, .Lfunc_end3-handle_init
+	.size	fn04_handle_init, .Lfunc_end3-fn04_handle_init
 
-	.section	.text.handle_init_fallible,"ax",@progbits
-	.globl	handle_init_fallible
+	.section	.text.fn05_handle_init_fallible,"ax",@progbits
+	.globl	fn05_handle_init_fallible
 	.p2align	4
-	.type	handle_init_fallible,@function
-handle_init_fallible:
+	.type	fn05_handle_init_fallible,@function
+fn05_handle_init_fallible:
 	push	r14
 	push	rbx
 	push	rax
@@ -122,13 +122,13 @@ handle_init_fallible:
 	mov	rsi, rbx
 	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end4:
-	.size	handle_init_fallible, .Lfunc_end4-handle_init_fallible
+	.size	fn05_handle_init_fallible, .Lfunc_end4-fn05_handle_init_fallible
 
-	.section	.text.handle_alloc_init,"ax",@progbits
-	.globl	handle_alloc_init
+	.section	.text.fn06_handle_alloc_init,"ax",@progbits
+	.globl	fn06_handle_alloc_init
 	.p2align	4
-	.type	handle_alloc_init,@function
-handle_alloc_init:
+	.type	fn06_handle_alloc_init,@function
+fn06_handle_alloc_init:
 	push	r15
 	push	r14
 	push	rbx
@@ -158,13 +158,13 @@ handle_alloc_init:
 	pop	r15
 	ret
 .Lfunc_end5:
-	.size	handle_alloc_init, .Lfunc_end5-handle_alloc_init
+	.size	fn06_handle_alloc_init, .Lfunc_end5-fn06_handle_alloc_init
 
-	.section	.text.handle_alloc_release,"ax",@progbits
-	.globl	handle_alloc_release
+	.section	.text.fn07_handle_alloc_release,"ax",@progbits
+	.globl	fn07_handle_alloc_release
 	.p2align	4
-	.type	handle_alloc_release,@function
-handle_alloc_release:
+	.type	fn07_handle_alloc_release,@function
+fn07_handle_alloc_release:
 	push	r14
 	push	rbx
 	push	rax
@@ -180,13 +180,13 @@ handle_alloc_release:
 	pop	r14
 	jmp	qword ptr [rip + objc_release@GOTPCREL]
 .Lfunc_end6:
-	.size	handle_alloc_release, .Lfunc_end6-handle_alloc_release
+	.size	fn07_handle_alloc_release, .Lfunc_end6-fn07_handle_alloc_release
 
-	.section	.text.handle_alloc_init_release,"ax",@progbits
-	.globl	handle_alloc_init_release
+	.section	.text.fn08_handle_alloc_init_release,"ax",@progbits
+	.globl	fn08_handle_alloc_init_release
 	.p2align	4
-	.type	handle_alloc_init_release,@function
-handle_alloc_init_release:
+	.type	fn08_handle_alloc_init_release,@function
+fn08_handle_alloc_init_release:
 	push	r15
 	push	r14
 	push	r12
@@ -215,13 +215,13 @@ handle_alloc_init_release:
 	pop	r15
 	jmp	qword ptr [rip + objc_release@GOTPCREL]
 .Lfunc_end7:
-	.size	handle_alloc_init_release, .Lfunc_end7-handle_alloc_init_release
+	.size	fn08_handle_alloc_init_release, .Lfunc_end7-fn08_handle_alloc_init_release
 
-	.section	.text.handle_copy,"ax",@progbits
-	.globl	handle_copy
+	.section	.text.fn09_handle_copy,"ax",@progbits
+	.globl	fn09_handle_copy
 	.p2align	4
-	.type	handle_copy,@function
-handle_copy:
+	.type	fn09_handle_copy,@function
+fn09_handle_copy:
 	push	r14
 	push	rbx
 	push	rax
@@ -235,13 +235,13 @@ handle_copy:
 	pop	r14
 	jmp	rax
 .Lfunc_end8:
-	.size	handle_copy, .Lfunc_end8-handle_copy
+	.size	fn09_handle_copy, .Lfunc_end8-fn09_handle_copy
 
-	.section	.text.handle_copy_fallible,"ax",@progbits
-	.globl	handle_copy_fallible
+	.section	.text.fn10_handle_copy_fallible,"ax",@progbits
+	.globl	fn10_handle_copy_fallible
 	.p2align	4
-	.type	handle_copy_fallible,@function
-handle_copy_fallible:
+	.type	fn10_handle_copy_fallible,@function
+fn10_handle_copy_fallible:
 	push	r14
 	push	rbx
 	push	rax
@@ -261,13 +261,13 @@ handle_copy_fallible:
 	lea	rdi, [rip + .Lanon.[ID].3]
 	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end9:
-	.size	handle_copy_fallible, .Lfunc_end9-handle_copy_fallible
+	.size	fn10_handle_copy_fallible, .Lfunc_end9-fn10_handle_copy_fallible
 
-	.section	.text.handle_mutable_copy,"ax",@progbits
-	.globl	handle_mutable_copy
+	.section	.text.fn11_handle_mutable_copy,"ax",@progbits
+	.globl	fn11_handle_mutable_copy
 	.p2align	4
-	.type	handle_mutable_copy,@function
-handle_mutable_copy:
+	.type	fn11_handle_mutable_copy,@function
+fn11_handle_mutable_copy:
 	push	r14
 	push	rbx
 	push	rax
@@ -281,13 +281,13 @@ handle_mutable_copy:
 	pop	r14
 	jmp	rax
 .Lfunc_end10:
-	.size	handle_mutable_copy, .Lfunc_end10-handle_mutable_copy
+	.size	fn11_handle_mutable_copy, .Lfunc_end10-fn11_handle_mutable_copy
 
-	.section	.text.handle_mutable_copy_fallible,"ax",@progbits
-	.globl	handle_mutable_copy_fallible
+	.section	.text.fn12_handle_mutable_copy_fallible,"ax",@progbits
+	.globl	fn12_handle_mutable_copy_fallible
 	.p2align	4
-	.type	handle_mutable_copy_fallible,@function
-handle_mutable_copy_fallible:
+	.type	fn12_handle_mutable_copy_fallible,@function
+fn12_handle_mutable_copy_fallible:
 	push	r14
 	push	rbx
 	push	rax
@@ -307,13 +307,13 @@ handle_mutable_copy_fallible:
 	lea	rdi, [rip + .Lanon.[ID].4]
 	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end11:
-	.size	handle_mutable_copy_fallible, .Lfunc_end11-handle_mutable_copy_fallible
+	.size	fn12_handle_mutable_copy_fallible, .Lfunc_end11-fn12_handle_mutable_copy_fallible
 
-	.section	.text.handle_autoreleased,"ax",@progbits
-	.globl	handle_autoreleased
+	.section	.text.fn13_handle_autoreleased,"ax",@progbits
+	.globl	fn13_handle_autoreleased
 	.p2align	4
-	.type	handle_autoreleased,@function
-handle_autoreleased:
+	.type	fn13_handle_autoreleased,@function
+fn13_handle_autoreleased:
 	push	r14
 	push	rbx
 	push	rax
@@ -329,13 +329,13 @@ handle_autoreleased:
 	pop	r14
 	jmp	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
 .Lfunc_end12:
-	.size	handle_autoreleased, .Lfunc_end12-handle_autoreleased
+	.size	fn13_handle_autoreleased, .Lfunc_end12-fn13_handle_autoreleased
 
-	.section	.text.handle_autoreleased_with_arg,"ax",@progbits
-	.globl	handle_autoreleased_with_arg
+	.section	.text.fn14_handle_autoreleased_with_arg,"ax",@progbits
+	.globl	fn14_handle_autoreleased_with_arg
 	.p2align	4
-	.type	handle_autoreleased_with_arg,@function
-handle_autoreleased_with_arg:
+	.type	fn14_handle_autoreleased_with_arg,@function
+fn14_handle_autoreleased_with_arg:
 	push	r15
 	push	r14
 	push	rbx
@@ -353,13 +353,13 @@ handle_autoreleased_with_arg:
 	pop	r15
 	jmp	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
 .Lfunc_end13:
-	.size	handle_autoreleased_with_arg, .Lfunc_end13-handle_autoreleased_with_arg
+	.size	fn14_handle_autoreleased_with_arg, .Lfunc_end13-fn14_handle_autoreleased_with_arg
 
-	.section	.text.handle_autoreleased_fallible,"ax",@progbits
-	.globl	handle_autoreleased_fallible
+	.section	.text.fn15_handle_autoreleased_fallible,"ax",@progbits
+	.globl	fn15_handle_autoreleased_fallible
 	.p2align	4
-	.type	handle_autoreleased_fallible,@function
-handle_autoreleased_fallible:
+	.type	fn15_handle_autoreleased_fallible,@function
+fn15_handle_autoreleased_fallible:
 	push	r14
 	push	rbx
 	push	rax
@@ -383,13 +383,13 @@ handle_autoreleased_fallible:
 	mov	rsi, rbx
 	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end14:
-	.size	handle_autoreleased_fallible, .Lfunc_end14-handle_autoreleased_fallible
+	.size	fn15_handle_autoreleased_fallible, .Lfunc_end14-fn15_handle_autoreleased_fallible
 
-	.section	.text.handle_with_out_param,"ax",@progbits
-	.globl	handle_with_out_param
+	.section	.text.fn16_handle_with_out_param,"ax",@progbits
+	.globl	fn16_handle_with_out_param
 	.p2align	4
-	.type	handle_with_out_param,@function
-handle_with_out_param:
+	.type	fn16_handle_with_out_param,@function
+fn16_handle_with_out_param:
 .Lfunc_begin0:
 	push	r15
 	push	r14
@@ -442,8 +442,8 @@ handle_with_out_param:
 .Ltmp11:
 	call	qword ptr [rip + SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end15:
-	.size	handle_with_out_param, .Lfunc_end15-handle_with_out_param
-	.section	.gcc_except_table.handle_with_out_param,"a",@progbits
+	.size	fn16_handle_with_out_param, .Lfunc_end15-fn16_handle_with_out_param
+	.section	.gcc_except_table.fn16_handle_with_out_param,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table15:
 .Lexception0:

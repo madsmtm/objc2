@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_get_ascii
+	.globl	_fn1_get_ascii
 	.p2align	2
-_get_ascii:
+_fn1_get_ascii:
 Lloh0:
 	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_ascii::CFSTRING, 0)@PAGE
 Lloh1:
@@ -9,9 +9,9 @@ Lloh1:
 	ret
 	.loh AdrpAdd	Lloh0, Lloh1
 
-	.globl	_get_utf16
+	.globl	_fn2_get_utf16
 	.p2align	2
-_get_utf16:
+_fn2_get_utf16:
 Lloh2:
 	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_utf16::CFSTRING, 0)@PAGE
 Lloh3:
@@ -19,9 +19,9 @@ Lloh3:
 	ret
 	.loh AdrpAdd	Lloh2, Lloh3
 
-	.globl	_get_with_nul
+	.globl	_fn3_get_with_nul
 	.p2align	2
-_get_with_nul:
+_fn3_get_with_nul:
 Lloh4:
 	adrp	x0, SYM(test_ns_string[CRATE_ID]::get_with_nul::CFSTRING, 0)@PAGE
 Lloh5:
@@ -30,19 +30,19 @@ Lloh5:
 	.loh AdrpAdd	Lloh4, Lloh5
 
 	.section	__DATA,__const
-	.globl	_EMPTY
+	.globl	_S1_EMPTY
 	.p2align	3, 0x0
-_EMPTY:
+_S1_EMPTY:
 	.quad	SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 0)
 
-	.globl	_XYZ
+	.globl	_S2_XYZ
 	.p2align	3, 0x0
-_XYZ:
+_S2_XYZ:
 	.quad	SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0)
 
-	.globl	_NON_ASCII
+	.globl	_S3_NON_ASCII
 	.p2align	3, 0x0
-_NON_ASCII:
+_S3_NON_ASCII:
 	.quad	SYM(test_ns_string[CRATE_ID]::NON_ASCII::CFSTRING, 0)
 
 	.section	__TEXT,__cstring,cstring_literals

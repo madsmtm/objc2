@@ -1,9 +1,9 @@
 	.syntax unified
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_error_bool
+	.globl	_fn1_error_bool
 	.p2align	2
 	.code	32
-_error_bool:
+_fn1_error_bool:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	sub	sp, sp, #4
@@ -29,10 +29,10 @@ LBB0_2:
 	sub	sp, r7, #4
 	pop	{r4, r7, pc}
 
-	.globl	_error_new
+	.globl	_fn2_error_new
 	.p2align	2
 	.code	32
-_error_new:
+_fn2_error_new:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	sub	sp, sp, #4
@@ -59,10 +59,10 @@ LBB1_2:
 	sub	sp, r7, #4
 	pop	{r4, r7, pc}
 
-	.globl	_error_init
+	.globl	_fn3_error_init
 	.p2align	2
 	.code	32
-_error_init:
+_fn3_error_init:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	sub	sp, sp, #4
@@ -89,10 +89,10 @@ LBB2_2:
 	sub	sp, r7, #4
 	pop	{r4, r7, pc}
 
-	.globl	_error_copy
+	.globl	_fn4_error_copy
 	.p2align	2
 	.code	32
-_error_copy:
+_fn4_error_copy:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	sub	sp, sp, #4
@@ -119,10 +119,10 @@ LBB3_2:
 	sub	sp, r7, #4
 	pop	{r4, r7, pc}
 
-	.globl	_error_mutable_copy
+	.globl	_fn5_error_mutable_copy
 	.p2align	2
 	.code	32
-_error_mutable_copy:
+_fn5_error_mutable_copy:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	sub	sp, sp, #4
@@ -149,10 +149,10 @@ LBB4_2:
 	sub	sp, r7, #4
 	pop	{r4, r7, pc}
 
-	.globl	_error_autoreleased
+	.globl	_fn6_error_autoreleased
 	.p2align	2
 	.code	32
-_error_autoreleased:
+_fn6_error_autoreleased:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	sub	sp, sp, #4

@@ -1,9 +1,9 @@
 	.intel_syntax noprefix
-	.section	.text.error_bool,"ax",@progbits
-	.globl	error_bool
+	.section	.text.fn1_error_bool,"ax",@progbits
+	.globl	fn1_error_bool
 	.p2align	4
-	.type	error_bool,@function
-error_bool:
+	.type	fn1_error_bool,@function
+fn1_error_bool:
 	push	ebp
 	push	ebx
 	push	edi
@@ -51,13 +51,13 @@ error_bool:
 	call	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@PLT
 	jmp	.LBB0_3
 .Lfunc_end0:
-	.size	error_bool, .Lfunc_end0-error_bool
+	.size	fn1_error_bool, .Lfunc_end0-fn1_error_bool
 
-	.section	.text.error_new,"ax",@progbits
-	.globl	error_new
+	.section	.text.fn2_error_new,"ax",@progbits
+	.globl	fn2_error_new
 	.p2align	4
-	.type	error_new,@function
-error_new:
+	.type	fn2_error_new,@function
+fn2_error_new:
 	push	ebx
 	push	edi
 	push	esi
@@ -105,13 +105,13 @@ error_new:
 	mov	eax, 1
 	jmp	.LBB1_4
 .Lfunc_end1:
-	.size	error_new, .Lfunc_end1-error_new
+	.size	fn2_error_new, .Lfunc_end1-fn2_error_new
 
-	.section	.text.error_init,"ax",@progbits
-	.globl	error_init
+	.section	.text.fn3_error_init,"ax",@progbits
+	.globl	fn3_error_init
 	.p2align	4
-	.type	error_init,@function
-error_init:
+	.type	fn3_error_init,@function
+fn3_error_init:
 	push	ebx
 	push	edi
 	push	esi
@@ -168,13 +168,13 @@ error_init:
 	mov	eax, dword ptr [esp + 12]
 	jmp	.LBB2_5
 .Lfunc_end2:
-	.size	error_init, .Lfunc_end2-error_init
+	.size	fn3_error_init, .Lfunc_end2-fn3_error_init
 
-	.section	.text.error_copy,"ax",@progbits
-	.globl	error_copy
+	.section	.text.fn4_error_copy,"ax",@progbits
+	.globl	fn4_error_copy
 	.p2align	4
-	.type	error_copy,@function
-error_copy:
+	.type	fn4_error_copy,@function
+fn4_error_copy:
 	push	ebx
 	push	edi
 	push	esi
@@ -222,13 +222,13 @@ error_copy:
 	mov	eax, 1
 	jmp	.LBB3_4
 .Lfunc_end3:
-	.size	error_copy, .Lfunc_end3-error_copy
+	.size	fn4_error_copy, .Lfunc_end3-fn4_error_copy
 
-	.section	.text.error_mutable_copy,"ax",@progbits
-	.globl	error_mutable_copy
+	.section	.text.fn5_error_mutable_copy,"ax",@progbits
+	.globl	fn5_error_mutable_copy
 	.p2align	4
-	.type	error_mutable_copy,@function
-error_mutable_copy:
+	.type	fn5_error_mutable_copy,@function
+fn5_error_mutable_copy:
 	push	ebx
 	push	edi
 	push	esi
@@ -276,13 +276,13 @@ error_mutable_copy:
 	mov	eax, 1
 	jmp	.LBB4_4
 .Lfunc_end4:
-	.size	error_mutable_copy, .Lfunc_end4-error_mutable_copy
+	.size	fn5_error_mutable_copy, .Lfunc_end4-fn5_error_mutable_copy
 
-	.section	.text.error_autoreleased,"ax",@progbits
-	.globl	error_autoreleased
+	.section	.text.fn6_error_autoreleased,"ax",@progbits
+	.globl	fn6_error_autoreleased
 	.p2align	4
-	.type	error_autoreleased,@function
-error_autoreleased:
+	.type	fn6_error_autoreleased,@function
+fn6_error_autoreleased:
 	push	ebx
 	push	edi
 	push	esi
@@ -328,6 +328,6 @@ error_autoreleased:
 	mov	eax, 1
 	jmp	.LBB5_4
 .Lfunc_end5:
-	.size	error_autoreleased, .Lfunc_end5-error_autoreleased
+	.size	fn6_error_autoreleased, .Lfunc_end5-fn6_error_autoreleased
 
 	.section	".note.GNU-stack","",@progbits

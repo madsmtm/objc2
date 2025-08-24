@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_iter_create
+	.globl	_fn1_iter_create
 	.p2align	2
-_iter_create:
+_fn1_iter_create:
 	stp	xzr, xzr, [x8, #192]
 	movi.2d	v0, #0000000000000000
 	stp	q0, q0, [x8, #160]
@@ -19,9 +19,9 @@ _iter_create:
 	str	xzr, [x8, #208]
 	ret
 
-	.globl	_iter_once
+	.globl	_fn2_iter_once
 	.p2align	2
-_iter_once:
+_fn2_iter_once:
 	sub	sp, sp, #48
 	stp	x20, x19, [sp, #16]
 	stp	x29, x30, [sp, #32]
@@ -69,9 +69,9 @@ Lloh3:
 	.loh AdrpLdrGot	Lloh0, Lloh1
 	.loh AdrpAdd	Lloh2, Lloh3
 
-	.globl	_use_obj
+	.globl	_fn3_use_obj
 	.p2align	2
-_use_obj:
+_fn3_use_obj:
 	sub	sp, sp, #16
 	str	x0, [sp, #8]
 	add	x8, sp, #8
@@ -80,9 +80,9 @@ _use_obj:
 	add	sp, sp, #16
 	ret
 
-	.globl	_iter
+	.globl	_fn4_iter
 	.p2align	2
-_iter:
+_fn4_iter:
 	sub	sp, sp, #288
 	stp	x28, x27, [sp, #224]
 	stp	x22, x21, [sp, #240]
@@ -131,7 +131,7 @@ LBB3_4:
 	str	x10, [sp, #208]
 	ldr	x0, [x9, x8, lsl #3]
 	cbz	x0, LBB3_7
-	bl	_use_obj
+	bl	_fn3_use_obj
 	ldr	x0, [sp, #8]
 	ldp	x8, x9, [sp, #208]
 	cmp	x8, x9
@@ -160,9 +160,9 @@ LBB3_7:
 	.loh AdrpLdrGot	Lloh6, Lloh7
 	.loh AdrpAdd	Lloh4, Lloh5
 
-	.globl	_iter_noop
+	.globl	_fn5_iter_noop
 	.p2align	2
-_iter_noop:
+_fn5_iter_noop:
 	sub	sp, sp, #288
 	stp	x28, x27, [sp, #224]
 	stp	x22, x21, [sp, #240]
@@ -240,9 +240,9 @@ LBB4_7:
 	.loh AdrpLdrGot	Lloh10, Lloh11
 	.loh AdrpAdd	Lloh8, Lloh9
 
-	.globl	_iter_retained
+	.globl	_fn6_iter_retained
 	.p2align	2
-_iter_retained:
+_fn6_iter_retained:
 Lfunc_begin0:
 	sub	sp, sp, #304
 	stp	x24, x23, [sp, #240]
@@ -318,7 +318,7 @@ LBB5_10:
 	bl	_objc_retain
 	mov	x21, x0
 Ltmp1:
-	bl	_use_obj
+	bl	_fn3_use_obj
 Ltmp2:
 	mov	x0, x21
 	bl	_objc_release

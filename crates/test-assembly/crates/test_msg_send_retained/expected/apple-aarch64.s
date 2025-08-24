@@ -1,12 +1,12 @@
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_handle_new
+	.globl	_fn01_handle_new
 	.p2align	2
-_handle_new:
+_fn01_handle_new:
 	b	_objc_msgSend
 
-	.globl	_handle_new_fallible
+	.globl	_fn02_handle_new_fallible
 	.p2align	2
-_handle_new_fallible:
+_fn02_handle_new_fallible:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -27,19 +27,19 @@ Lloh1:
 	bl	SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh0, Lloh1
 
-	.globl	_handle_alloc
+	.globl	_fn03_handle_alloc
 	.p2align	2
-_handle_alloc:
+_fn03_handle_alloc:
 	b	_objc_msgSend
 
-	.globl	_handle_init
+	.globl	_fn04_handle_init
 	.p2align	2
-_handle_init:
+_fn04_handle_init:
 	b	_objc_msgSend
 
-	.globl	_handle_init_fallible
+	.globl	_fn05_handle_init_fallible
 	.p2align	2
-_handle_init_fallible:
+_fn05_handle_init_fallible:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -60,9 +60,9 @@ Lloh3:
 	bl	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh2, Lloh3
 
-	.globl	_handle_alloc_init
+	.globl	_fn06_handle_alloc_init
 	.p2align	2
-_handle_alloc_init:
+_fn06_handle_alloc_init:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -73,18 +73,18 @@ _handle_alloc_init:
 	ldp	x20, x19, [sp], #32
 	b	_objc_msgSend
 
-	.globl	_handle_alloc_release
+	.globl	_fn07_handle_alloc_release
 	.p2align	2
-_handle_alloc_release:
+_fn07_handle_alloc_release:
 	stp	x29, x30, [sp, #-16]!
 	mov	x29, sp
 	bl	_objc_msgSend
 	ldp	x29, x30, [sp], #16
 	b	_objc_release
 
-	.globl	_handle_alloc_init_release
+	.globl	_fn08_handle_alloc_init_release
 	.p2align	2
-_handle_alloc_init_release:
+_fn08_handle_alloc_init_release:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -96,14 +96,14 @@ _handle_alloc_init_release:
 	ldp	x20, x19, [sp], #32
 	b	_objc_release
 
-	.globl	_handle_copy
+	.globl	_fn09_handle_copy
 	.p2align	2
-_handle_copy:
+_fn09_handle_copy:
 	b	_objc_msgSend
 
-	.globl	_handle_copy_fallible
+	.globl	_fn10_handle_copy_fallible
 	.p2align	2
-_handle_copy_fallible:
+_fn10_handle_copy_fallible:
 	stp	x29, x30, [sp, #-16]!
 	mov	x29, sp
 	bl	_objc_msgSend
@@ -118,14 +118,14 @@ Lloh5:
 	bl	SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh4, Lloh5
 
-	.globl	_handle_mutable_copy
+	.globl	_fn11_handle_mutable_copy
 	.p2align	2
-_handle_mutable_copy:
+_fn11_handle_mutable_copy:
 	b	_objc_msgSend
 
-	.globl	_handle_mutable_copy_fallible
+	.globl	_fn12_handle_mutable_copy_fallible
 	.p2align	2
-_handle_mutable_copy_fallible:
+_fn12_handle_mutable_copy_fallible:
 	stp	x29, x30, [sp, #-16]!
 	mov	x29, sp
 	bl	_objc_msgSend
@@ -140,9 +140,9 @@ Lloh7:
 	bl	SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh6, Lloh7
 
-	.globl	_handle_autoreleased
+	.globl	_fn13_handle_autoreleased
 	.p2align	2
-_handle_autoreleased:
+_fn13_handle_autoreleased:
 	stp	x29, x30, [sp, #-16]!
 	mov	x29, sp
 	bl	_objc_msgSend
@@ -152,9 +152,9 @@ _handle_autoreleased:
 	ldp	x29, x30, [sp], #16
 	b	_objc_retainAutoreleasedReturnValue
 
-	.globl	_handle_autoreleased_with_arg
+	.globl	_fn14_handle_autoreleased_with_arg
 	.p2align	2
-_handle_autoreleased_with_arg:
+_fn14_handle_autoreleased_with_arg:
 	stp	x29, x30, [sp, #-16]!
 	mov	x29, sp
 	and	w2, w2, #0xff
@@ -165,9 +165,9 @@ _handle_autoreleased_with_arg:
 	ldp	x29, x30, [sp], #16
 	b	_objc_retainAutoreleasedReturnValue
 
-	.globl	_handle_autoreleased_fallible
+	.globl	_fn15_handle_autoreleased_fallible
 	.p2align	2
-_handle_autoreleased_fallible:
+_fn15_handle_autoreleased_fallible:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -192,9 +192,9 @@ Lloh9:
 	bl	SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh8, Lloh9
 
-	.globl	_handle_with_out_param
+	.globl	_fn16_handle_with_out_param
 	.p2align	2
-_handle_with_out_param:
+_fn16_handle_with_out_param:
 Lfunc_begin0:
 	stp	x22, x21, [sp, #-48]!
 	stp	x20, x19, [sp, #16]

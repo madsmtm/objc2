@@ -1,25 +1,25 @@
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_always
+	.globl	_fn1_always
 	.p2align	2
-_always:
+_fn1_always:
 	mov	w0, #1
 	ret
 
-	.globl	_never
+	.globl	_fn2_never
 	.p2align	2
-_never:
+_fn2_never:
 	mov	w0, #0
 	ret
 
-	.globl	_low
+	.globl	_fn3_low
 	.p2align	2
-_low:
+_fn3_low:
 	mov	w0, #1
 	ret
 
-	.globl	_high
+	.globl	_fn4_high
 	.p2align	2
-_high:
+_fn4_high:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -42,15 +42,15 @@ LBB3_2:
 	b	LBB3_1
 	.loh AdrpLdrGot	Lloh0, Lloh1
 
-	.globl	_only_ios
+	.globl	_fn5_only_ios
 	.p2align	2
-_only_ios:
+_fn5_only_ios:
 	mov	w0, #0
 	ret
 
-	.globl	_two_checks
+	.globl	_fn6_two_checks
 	.p2align	2
-_two_checks:
+_fn6_two_checks:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16

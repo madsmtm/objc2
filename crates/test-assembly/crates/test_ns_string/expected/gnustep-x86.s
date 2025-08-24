@@ -1,9 +1,9 @@
 	.intel_syntax noprefix
-	.section	.text.get_ascii,"ax",@progbits
-	.globl	get_ascii
+	.section	.text.fn1_get_ascii,"ax",@progbits
+	.globl	fn1_get_ascii
 	.p2align	4
-	.type	get_ascii,@function
-get_ascii:
+	.type	fn1_get_ascii,@function
+fn1_get_ascii:
 	push	ebx
 	sub	esp, 8
 	call	.L0$pb
@@ -30,13 +30,13 @@ get_ascii:
 	pop	ebx
 	ret
 .Lfunc_end0:
-	.size	get_ascii, .Lfunc_end0-get_ascii
+	.size	fn1_get_ascii, .Lfunc_end0-fn1_get_ascii
 
-	.section	.text.get_utf16,"ax",@progbits
-	.globl	get_utf16
+	.section	.text.fn2_get_utf16,"ax",@progbits
+	.globl	fn2_get_utf16
 	.p2align	4
-	.type	get_utf16,@function
-get_utf16:
+	.type	fn2_get_utf16,@function
+fn2_get_utf16:
 	push	ebx
 	sub	esp, 8
 	call	.L1$pb
@@ -63,13 +63,13 @@ get_utf16:
 	pop	ebx
 	ret
 .Lfunc_end1:
-	.size	get_utf16, .Lfunc_end1-get_utf16
+	.size	fn2_get_utf16, .Lfunc_end1-fn2_get_utf16
 
-	.section	.text.get_with_nul,"ax",@progbits
-	.globl	get_with_nul
+	.section	.text.fn3_get_with_nul,"ax",@progbits
+	.globl	fn3_get_with_nul
 	.p2align	4
-	.type	get_with_nul,@function
-get_with_nul:
+	.type	fn3_get_with_nul,@function
+fn3_get_with_nul:
 	push	ebx
 	sub	esp, 8
 	call	.L2$pb
@@ -96,7 +96,7 @@ get_with_nul:
 	pop	ebx
 	ret
 .Lfunc_end2:
-	.size	get_with_nul, .Lfunc_end2-get_with_nul
+	.size	fn3_get_with_nul, .Lfunc_end2-fn3_get_with_nul
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0,@object
 	.section	.bss.SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0,"aw",@nobits

@@ -1,8 +1,8 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.globl	_error_bool
+	.globl	_fn1_error_bool
 	.p2align	4
-_error_bool:
+_fn1_error_bool:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -26,9 +26,9 @@ LBB0_2:
 	pop	rbp
 	ret
 
-	.globl	_error_new
+	.globl	_fn2_error_new
 	.p2align	4
-_error_new:
+_fn2_error_new:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -57,9 +57,9 @@ LBB1_2:
 	pop	rbp
 	ret
 
-	.globl	_error_init
+	.globl	_fn3_error_init
 	.p2align	4
-_error_init:
+_fn3_error_init:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -88,9 +88,9 @@ LBB2_2:
 	pop	rbp
 	ret
 
-	.globl	_error_copy
+	.globl	_fn4_error_copy
 	.p2align	4
-_error_copy:
+_fn4_error_copy:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -119,9 +119,9 @@ LBB3_2:
 	pop	rbp
 	ret
 
-	.globl	_error_mutable_copy
+	.globl	_fn5_error_mutable_copy
 	.p2align	4
-_error_mutable_copy:
+_fn5_error_mutable_copy:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -150,9 +150,9 @@ LBB4_2:
 	pop	rbp
 	ret
 
-	.globl	_error_autoreleased
+	.globl	_fn6_error_autoreleased
 	.p2align	4
-_error_autoreleased:
+_fn6_error_autoreleased:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16

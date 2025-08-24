@@ -1,9 +1,9 @@
 	.syntax unified
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_get_protocol
+	.globl	_fn1_get_protocol
 	.p2align	2
 	.code	32
-_get_protocol:
+_fn1_get_protocol:
 	push	{r7, lr}
 	mov	r7, sp
 	movw	r0, :lower16:(l_anon.[ID].0-(LPC0_0+8))
@@ -14,10 +14,10 @@ LPC0_0:
 	pop	{r7, lr}
 	b	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
 
-	.globl	_dyn_call
+	.globl	_fn2_dyn_call
 	.p2align	2
 	.code	32
-_dyn_call:
+_fn2_dyn_call:
 	push	{r7, lr}
 	mov	r7, sp
 	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC1_0+8))
@@ -27,10 +27,10 @@ LPC1_0:
 	pop	{r7, lr}
 	b	_objc_msgSend
 
-	.globl	_dyn_consume
+	.globl	_fn3_dyn_consume
 	.p2align	2
 	.code	32
-_dyn_consume:
+_fn3_dyn_consume:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	mov	r4, r0

@@ -15,17 +15,17 @@ extern_protocol!(
     }
 );
 
-#[no_mangle]
+#[export_name = "fn1_get_protocol"]
 unsafe fn get_protocol() -> &'static AnyProtocol {
     <dyn MyProtocol>::protocol().unwrap_unchecked()
 }
 
-#[no_mangle]
+#[export_name = "fn2_dyn_call"]
 fn dyn_call(obj: &ProtocolObject<dyn MyProtocol>) {
     obj.aMethod()
 }
 
-#[no_mangle]
+#[export_name = "fn3_dyn_consume"]
 fn dyn_consume(obj: ManuallyDrop<Retained<ProtocolObject<dyn MyProtocol>>>) {
     obj.aMethod();
     // Use ManuallyDrop to prevent trying to handle the case where `aMethod`

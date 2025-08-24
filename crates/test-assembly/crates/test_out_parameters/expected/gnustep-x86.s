@@ -179,11 +179,11 @@ SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writ
 .Lfunc_end3:
 	.size	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0), .Lfunc_end3-SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0)
 
-	.section	.text.nonnull_nonnull,"ax",@progbits
-	.globl	nonnull_nonnull
+	.section	.text.fn1_nonnull_nonnull,"ax",@progbits
+	.globl	fn1_nonnull_nonnull
 	.p2align	4
-	.type	nonnull_nonnull,@function
-nonnull_nonnull:
+	.type	fn1_nonnull_nonnull,@function
+fn1_nonnull_nonnull:
 .Lfunc_begin1:
 	push	ebp
 	push	ebx
@@ -244,8 +244,8 @@ nonnull_nonnull:
 .Ltmp23:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end4:
-	.size	nonnull_nonnull, .Lfunc_end4-nonnull_nonnull
-	.section	.gcc_except_table.nonnull_nonnull,"a",@progbits
+	.size	fn1_nonnull_nonnull, .Lfunc_end4-fn1_nonnull_nonnull
+	.section	.gcc_except_table.fn1_nonnull_nonnull,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table4:
 .Lexception1:
@@ -280,11 +280,11 @@ GCC_except_table4:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	.text.null_nonnull,"ax",@progbits
-	.globl	null_nonnull
+	.section	.text.fn2_null_nonnull,"ax",@progbits
+	.globl	fn2_null_nonnull
 	.p2align	4
-	.type	null_nonnull,@function
-null_nonnull:
+	.type	fn2_null_nonnull,@function
+fn2_null_nonnull:
 .Lfunc_begin2:
 	push	ebp
 	push	ebx
@@ -348,8 +348,8 @@ null_nonnull:
 .Ltmp32:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end5:
-	.size	null_nonnull, .Lfunc_end5-null_nonnull
-	.section	.gcc_except_table.null_nonnull,"a",@progbits
+	.size	fn2_null_nonnull, .Lfunc_end5-fn2_null_nonnull
+	.section	.gcc_except_table.fn2_null_nonnull,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table5:
 .Lexception2:
@@ -384,11 +384,11 @@ GCC_except_table5:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	.text.nonnull_null,"ax",@progbits
-	.globl	nonnull_null
+	.section	.text.fn3_nonnull_null,"ax",@progbits
+	.globl	fn3_nonnull_null
 	.p2align	4
-	.type	nonnull_null,@function
-nonnull_null:
+	.type	fn3_nonnull_null,@function
+fn3_nonnull_null:
 .Lfunc_begin3:
 	push	ebp
 	push	ebx
@@ -447,8 +447,8 @@ nonnull_null:
 .Ltmp41:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end6:
-	.size	nonnull_null, .Lfunc_end6-nonnull_null
-	.section	.gcc_except_table.nonnull_null,"a",@progbits
+	.size	fn3_nonnull_null, .Lfunc_end6-fn3_nonnull_null
+	.section	.gcc_except_table.fn3_nonnull_null,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table6:
 .Lexception3:
@@ -483,11 +483,11 @@ GCC_except_table6:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	.text.null_null,"ax",@progbits
-	.globl	null_null
+	.section	.text.fn4_null_null,"ax",@progbits
+	.globl	fn4_null_null
 	.p2align	4
-	.type	null_null,@function
-null_null:
+	.type	fn4_null_null,@function
+fn4_null_null:
 .Lfunc_begin4:
 	push	ebp
 	push	ebx
@@ -553,8 +553,8 @@ null_null:
 .Ltmp50:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end7:
-	.size	null_null, .Lfunc_end7-null_null
-	.section	.gcc_except_table.null_null,"a",@progbits
+	.size	fn4_null_null, .Lfunc_end7-fn4_null_null
+	.section	.gcc_except_table.fn4_null_null,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table7:
 .Lexception4:
@@ -589,11 +589,11 @@ GCC_except_table7:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	.text.two_nonnull_nonnull,"ax",@progbits
-	.globl	two_nonnull_nonnull
+	.section	.text.fn5_two_nonnull_nonnull,"ax",@progbits
+	.globl	fn5_two_nonnull_nonnull
 	.p2align	4
-	.type	two_nonnull_nonnull,@function
-two_nonnull_nonnull:
+	.type	fn5_two_nonnull_nonnull,@function
+fn5_two_nonnull_nonnull:
 .Lfunc_begin5:
 	push	ebp
 	push	ebx
@@ -684,8 +684,8 @@ two_nonnull_nonnull:
 .Ltmp59:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end8:
-	.size	two_nonnull_nonnull, .Lfunc_end8-two_nonnull_nonnull
-	.section	.gcc_except_table.two_nonnull_nonnull,"a",@progbits
+	.size	fn5_two_nonnull_nonnull, .Lfunc_end8-fn5_two_nonnull_nonnull
+	.section	.gcc_except_table.fn5_two_nonnull_nonnull,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table8:
 .Lexception5:
@@ -728,11 +728,11 @@ GCC_except_table8:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	.text.call_with_none1,"ax",@progbits
-	.globl	call_with_none1
+	.section	.text.fn6_call_with_none1,"ax",@progbits
+	.globl	fn6_call_with_none1
 	.p2align	4
-	.type	call_with_none1,@function
-call_with_none1:
+	.type	fn6_call_with_none1,@function
+fn6_call_with_none1:
 	push	ebx
 	push	edi
 	push	esi
@@ -758,13 +758,13 @@ call_with_none1:
 	pop	ebx
 	ret
 .Lfunc_end9:
-	.size	call_with_none1, .Lfunc_end9-call_with_none1
+	.size	fn6_call_with_none1, .Lfunc_end9-fn6_call_with_none1
 
-	.section	.text.call_with_none2,"ax",@progbits
-	.globl	call_with_none2
+	.section	.text.fn6_call_with_none2,"ax",@progbits
+	.globl	fn6_call_with_none2
 	.p2align	4
-	.type	call_with_none2,@function
-call_with_none2:
+	.type	fn6_call_with_none2,@function
+fn6_call_with_none2:
 	push	ebx
 	push	edi
 	push	esi
@@ -790,13 +790,13 @@ call_with_none2:
 	pop	ebx
 	ret
 .Lfunc_end10:
-	.size	call_with_none2, .Lfunc_end10-call_with_none2
+	.size	fn6_call_with_none2, .Lfunc_end10-fn6_call_with_none2
 
-	.section	.text.call_with_none3,"ax",@progbits
-	.globl	call_with_none3
+	.section	.text.fn6_call_with_none3,"ax",@progbits
+	.globl	fn6_call_with_none3
 	.p2align	4
-	.type	call_with_none3,@function
-call_with_none3:
+	.type	fn6_call_with_none3,@function
+fn6_call_with_none3:
 .Lfunc_begin6:
 	push	ebx
 	push	edi
@@ -865,8 +865,8 @@ call_with_none3:
 .Ltmp80:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end11:
-	.size	call_with_none3, .Lfunc_end11-call_with_none3
-	.section	.gcc_except_table.call_with_none3,"a",@progbits
+	.size	fn6_call_with_none3, .Lfunc_end11-fn6_call_with_none3
+	.section	.gcc_except_table.fn6_call_with_none3,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table11:
 .Lexception6:
@@ -905,11 +905,11 @@ GCC_except_table11:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	.text.call_with_none4,"ax",@progbits
-	.globl	call_with_none4
+	.section	.text.fn6_call_with_none4,"ax",@progbits
+	.globl	fn6_call_with_none4
 	.p2align	4
-	.type	call_with_none4,@function
-call_with_none4:
+	.type	fn6_call_with_none4,@function
+fn6_call_with_none4:
 .Lfunc_begin7:
 	push	ebx
 	push	edi
@@ -978,8 +978,8 @@ call_with_none4:
 .Ltmp95:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end12:
-	.size	call_with_none4, .Lfunc_end12-call_with_none4
-	.section	.gcc_except_table.call_with_none4,"a",@progbits
+	.size	fn6_call_with_none4, .Lfunc_end12-fn6_call_with_none4
+	.section	.gcc_except_table.fn6_call_with_none4,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table12:
 .Lexception7:
@@ -1018,11 +1018,11 @@ GCC_except_table12:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	.text.call_with_some1,"ax",@progbits
-	.globl	call_with_some1
+	.section	.text.fn7_call_with_some1,"ax",@progbits
+	.globl	fn7_call_with_some1
 	.p2align	4
-	.type	call_with_some1,@function
-call_with_some1:
+	.type	fn7_call_with_some1,@function
+fn7_call_with_some1:
 .Lfunc_begin8:
 	push	ebp
 	push	ebx
@@ -1098,8 +1098,8 @@ call_with_some1:
 .Ltmp112:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end13:
-	.size	call_with_some1, .Lfunc_end13-call_with_some1
-	.section	.gcc_except_table.call_with_some1,"a",@progbits
+	.size	fn7_call_with_some1, .Lfunc_end13-fn7_call_with_some1
+	.section	.gcc_except_table.fn7_call_with_some1,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table13:
 .Lexception8:
@@ -1138,11 +1138,11 @@ GCC_except_table13:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	.text.call_with_some2,"ax",@progbits
-	.globl	call_with_some2
+	.section	.text.fn7_call_with_some2,"ax",@progbits
+	.globl	fn7_call_with_some2
 	.p2align	4
-	.type	call_with_some2,@function
-call_with_some2:
+	.type	fn7_call_with_some2,@function
+fn7_call_with_some2:
 .Lfunc_begin9:
 	push	ebp
 	push	ebx
@@ -1222,8 +1222,8 @@ call_with_some2:
 .Ltmp131:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end14:
-	.size	call_with_some2, .Lfunc_end14-call_with_some2
-	.section	.gcc_except_table.call_with_some2,"a",@progbits
+	.size	fn7_call_with_some2, .Lfunc_end14-fn7_call_with_some2
+	.section	.gcc_except_table.fn7_call_with_some2,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table14:
 .Lexception9:
@@ -1262,11 +1262,11 @@ GCC_except_table14:
 	.byte	0
 	.p2align	2, 0x0
 
-	.section	.text.call_with_some3,"ax",@progbits
-	.globl	call_with_some3
+	.section	.text.fn7_call_with_some3,"ax",@progbits
+	.globl	fn7_call_with_some3
 	.p2align	4
-	.type	call_with_some3,@function
-call_with_some3:
+	.type	fn7_call_with_some3,@function
+fn7_call_with_some3:
 .Lfunc_begin10:
 	push	ebp
 	push	ebx
@@ -1346,8 +1346,8 @@ call_with_some3:
 .Ltmp150:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end15:
-	.size	call_with_some3, .Lfunc_end15-call_with_some3
-	.section	.gcc_except_table.call_with_some3,"a",@progbits
+	.size	fn7_call_with_some3, .Lfunc_end15-fn7_call_with_some3
+	.section	.gcc_except_table.fn7_call_with_some3,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table15:
 .Lexception10:

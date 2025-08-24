@@ -1,9 +1,9 @@
 	.intel_syntax noprefix
-	.section	.text.iter_create,"ax",@progbits
-	.globl	iter_create
+	.section	.text.fn1_iter_create,"ax",@progbits
+	.globl	fn1_iter_create
 	.p2align	4
-	.type	iter_create,@function
-iter_create:
+	.type	fn1_iter_create,@function
+fn1_iter_create:
 	mov	rax, rdi
 	xorps	xmm0, xmm0
 	movups	xmmword ptr [rdi + 176], xmm0
@@ -23,13 +23,13 @@ iter_create:
 	movups	xmmword ptr [rdi + 200], xmm0
 	ret
 .Lfunc_end0:
-	.size	iter_create, .Lfunc_end0-iter_create
+	.size	fn1_iter_create, .Lfunc_end0-fn1_iter_create
 
-	.section	.text.iter_once,"ax",@progbits
-	.globl	iter_once
+	.section	.text.fn2_iter_once,"ax",@progbits
+	.globl	fn2_iter_once
 	.p2align	4
-	.type	iter_once,@function
-iter_once:
+	.type	fn2_iter_once,@function
+fn2_iter_once:
 	push	r15
 	push	r14
 	push	r13
@@ -81,26 +81,26 @@ iter_once:
 	mov	r13, rax
 	jmp	.LBB1_3
 .Lfunc_end1:
-	.size	iter_once, .Lfunc_end1-iter_once
+	.size	fn2_iter_once, .Lfunc_end1-fn2_iter_once
 
-	.section	.text.use_obj,"ax",@progbits
-	.globl	use_obj
+	.section	.text.fn3_use_obj,"ax",@progbits
+	.globl	fn3_use_obj
 	.p2align	4
-	.type	use_obj,@function
-use_obj:
+	.type	fn3_use_obj,@function
+fn3_use_obj:
 	mov	qword ptr [rsp - 8], rdi
 	lea	rax, [rsp - 8]
 	#APP
 	#NO_APP
 	ret
 .Lfunc_end2:
-	.size	use_obj, .Lfunc_end2-use_obj
+	.size	fn3_use_obj, .Lfunc_end2-fn3_use_obj
 
-	.section	.text.iter,"ax",@progbits
-	.globl	iter
+	.section	.text.fn4_iter,"ax",@progbits
+	.globl	fn4_iter
 	.p2align	4
-	.type	iter,@function
-iter:
+	.type	fn4_iter,@function
+fn4_iter:
 	push	rbp
 	push	r15
 	push	r14
@@ -127,7 +127,7 @@ iter:
 	mov	qword ptr [rsp + 152], 0
 	movups	xmmword ptr [rsp + 200], xmm0
 	xor	ecx, ecx
-	mov	r12, qword ptr [rip + use_obj@GOTPCREL]
+	mov	r12, qword ptr [rip + fn3_use_obj@GOTPCREL]
 	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	mov	rbx, qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	xor	eax, eax
@@ -182,13 +182,13 @@ iter:
 	pop	rbp
 	ret
 .Lfunc_end3:
-	.size	iter, .Lfunc_end3-iter
+	.size	fn4_iter, .Lfunc_end3-fn4_iter
 
-	.section	.text.iter_noop,"ax",@progbits
-	.globl	iter_noop
+	.section	.text.fn5_iter_noop,"ax",@progbits
+	.globl	fn5_iter_noop
 	.p2align	4
-	.type	iter_noop,@function
-iter_noop:
+	.type	fn5_iter_noop,@function
+fn5_iter_noop:
 	push	rbp
 	push	r15
 	push	r14
@@ -266,13 +266,13 @@ iter_noop:
 	pop	rbp
 	ret
 .Lfunc_end4:
-	.size	iter_noop, .Lfunc_end4-iter_noop
+	.size	fn5_iter_noop, .Lfunc_end4-fn5_iter_noop
 
-	.section	.text.iter_retained,"ax",@progbits
-	.globl	iter_retained
+	.section	.text.fn6_iter_retained,"ax",@progbits
+	.globl	fn6_iter_retained
 	.p2align	4
-	.type	iter_retained,@function
-iter_retained:
+	.type	fn6_iter_retained,@function
+fn6_iter_retained:
 .Lfunc_begin0:
 	push	rbp
 	push	r15
@@ -301,7 +301,7 @@ iter_retained:
 	movups	xmmword ptr [rsp + 216], xmm0
 	xor	ecx, ecx
 	mov	r12, qword ptr [rip + objc_retain@GOTPCREL]
-	mov	rbx, qword ptr [rip + use_obj@GOTPCREL]
+	mov	rbx, qword ptr [rip + fn3_use_obj@GOTPCREL]
 	mov	r14, qword ptr [rip + objc_release@GOTPCREL]
 	mov	r15, qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	xor	eax, eax
@@ -397,8 +397,8 @@ iter_retained:
 .Ltmp5:
 	call	qword ptr [rip + SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end5:
-	.size	iter_retained, .Lfunc_end5-iter_retained
-	.section	.gcc_except_table.iter_retained,"a",@progbits
+	.size	fn6_iter_retained, .Lfunc_end5-fn6_iter_retained
+	.section	.gcc_except_table.fn6_iter_retained,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table5:
 .Lexception0:

@@ -129,9 +129,9 @@ LBB3_2:
 	ldp	x20, x19, [sp], #32
 	ret
 
-	.globl	_nonnull_nonnull
+	.globl	_fn1_nonnull_nonnull
 	.p2align	2
-_nonnull_nonnull:
+_fn1_nonnull_nonnull:
 Lfunc_begin1:
 	stp	x22, x21, [sp, #-48]!
 	stp	x20, x19, [sp, #16]
@@ -205,9 +205,9 @@ Lttbase1:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_null_nonnull
+	.globl	_fn2_null_nonnull
 	.p2align	2
-_null_nonnull:
+_fn2_null_nonnull:
 Lfunc_begin2:
 	stp	x22, x21, [sp, #-48]!
 	stp	x20, x19, [sp, #16]
@@ -286,9 +286,9 @@ Lttbase2:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_nonnull_null
+	.globl	_fn3_nonnull_null
 	.p2align	2
-_nonnull_null:
+_fn3_nonnull_null:
 Lfunc_begin3:
 	stp	x22, x21, [sp, #-48]!
 	stp	x20, x19, [sp, #16]
@@ -361,9 +361,9 @@ Lttbase3:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_null_null
+	.globl	_fn4_null_null
 	.p2align	2
-_null_null:
+_fn4_null_null:
 Lfunc_begin4:
 	stp	x22, x21, [sp, #-48]!
 	stp	x20, x19, [sp, #16]
@@ -442,9 +442,9 @@ Lttbase4:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_two_nonnull_nonnull
+	.globl	_fn5_two_nonnull_nonnull
 	.p2align	2
-_two_nonnull_nonnull:
+_fn5_two_nonnull_nonnull:
 Lfunc_begin5:
 	sub	sp, sp, #96
 	stp	x24, x23, [sp, #32]
@@ -554,21 +554,21 @@ Lttbase5:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_call_with_none1
+	.globl	_fn6_call_with_none1
 	.p2align	2
-_call_with_none1:
+_fn6_call_with_none1:
 	mov	x2, #0
 	b	_objc_msgSend
 
-	.globl	_call_with_none2
+	.globl	_fn6_call_with_none2
 	.p2align	2
-_call_with_none2:
+_fn6_call_with_none2:
 	mov	x2, #0
 	b	_objc_msgSend
 
-	.globl	_call_with_none3
+	.globl	_fn6_call_with_none3
 	.p2align	2
-_call_with_none3:
+_fn6_call_with_none3:
 Lfunc_begin6:
 	sub	sp, sp, #48
 	stp	x20, x19, [sp, #16]
@@ -657,9 +657,9 @@ Lttbase6:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_call_with_none4
+	.globl	_fn6_call_with_none4
 	.p2align	2
-_call_with_none4:
+_fn6_call_with_none4:
 Lfunc_begin7:
 	sub	sp, sp, #48
 	stp	x20, x19, [sp, #16]
@@ -748,9 +748,9 @@ Lttbase7:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_call_with_some1
+	.globl	_fn7_call_with_some1
 	.p2align	2
-_call_with_some1:
+_fn7_call_with_some1:
 Lfunc_begin8:
 	sub	sp, sp, #48
 	stp	x20, x19, [sp, #16]
@@ -846,9 +846,9 @@ Lttbase8:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_call_with_some2
+	.globl	_fn7_call_with_some2
 	.p2align	2
-_call_with_some2:
+_fn7_call_with_some2:
 Lfunc_begin9:
 	sub	sp, sp, #48
 	stp	x20, x19, [sp, #16]
@@ -946,9 +946,9 @@ Lttbase9:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_call_with_some3
+	.globl	_fn7_call_with_some3
 	.p2align	2
-_call_with_some3:
+_fn7_call_with_some3:
 Lfunc_begin10:
 	sub	sp, sp, #48
 	stp	x20, x19, [sp, #16]

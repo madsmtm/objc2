@@ -1,8 +1,8 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.globl	_iter_create
+	.globl	_fn1_iter_create
 	.p2align	4
-_iter_create:
+_fn1_iter_create:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, rdi
@@ -36,9 +36,9 @@ _iter_create:
 	pop	rbp
 	ret
 
-	.globl	_iter_once
+	.globl	_fn2_iter_once
 	.p2align	4
-_iter_once:
+_fn2_iter_once:
 	push	rbp
 	mov	rbp, rsp
 	push	r15
@@ -91,9 +91,9 @@ LBB1_2:
 	mov	rsi, rax
 	jmp	LBB1_3
 
-	.globl	_use_obj
+	.globl	_fn3_use_obj
 	.p2align	4
-_use_obj:
+_fn3_use_obj:
 	push	rbp
 	mov	rbp, rsp
 	mov	qword ptr [rbp - 8], rdi
@@ -103,9 +103,9 @@ _use_obj:
 	pop	rbp
 	ret
 
-	.globl	_iter
+	.globl	_fn4_iter
 	.p2align	4
-_iter:
+_fn4_iter:
 	push	rbp
 	mov	rbp, rsp
 	push	r15
@@ -170,7 +170,7 @@ LBB3_6:
 	mov	rdi, qword ptr [rcx + 8*rax]
 	test	rdi, rdi
 	je	LBB3_8
-	call	_use_obj
+	call	_fn3_use_obj
 	mov	rdi, qword ptr [rbp - 256]
 	mov	rax, qword ptr [rbp - 56]
 	mov	rcx, qword ptr [rbp - 48]
@@ -195,9 +195,9 @@ LBB3_8:
 	pop	rbp
 	ret
 
-	.globl	_iter_noop
+	.globl	_fn5_iter_noop
 	.p2align	4
-_iter_noop:
+_fn5_iter_noop:
 	push	rbp
 	mov	rbp, rsp
 	push	r15
@@ -284,9 +284,9 @@ LBB4_7:
 	pop	rbp
 	ret
 
-	.globl	_iter_retained
+	.globl	_fn6_iter_retained
 	.p2align	4
-_iter_retained:
+_fn6_iter_retained:
 Lfunc_begin0:
 	push	rbp
 	mov	rbp, rsp
@@ -374,7 +374,7 @@ LBB5_12:
 	mov	r13, rax
 Ltmp0:
 	mov	rdi, rax
-	call	_use_obj
+	call	_fn3_use_obj
 Ltmp1:
 	mov	rdi, r13
 	call	_objc_release

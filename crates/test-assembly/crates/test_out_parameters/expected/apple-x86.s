@@ -150,9 +150,9 @@ LBB3_2:
 	pop	ebp
 	ret
 
-	.globl	_nonnull_nonnull
+	.globl	_fn1_nonnull_nonnull
 	.p2align	4
-_nonnull_nonnull:
+_fn1_nonnull_nonnull:
 Lfunc_begin1:
 	push	ebp
 	mov	ebp, esp
@@ -237,9 +237,9 @@ Lttbase1:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_null_nonnull
+	.globl	_fn2_null_nonnull
 	.p2align	4
-_null_nonnull:
+_fn2_null_nonnull:
 Lfunc_begin2:
 	push	ebp
 	mov	ebp, esp
@@ -328,9 +328,9 @@ Lttbase2:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_nonnull_null
+	.globl	_fn3_nonnull_null
 	.p2align	4
-_nonnull_null:
+_fn3_nonnull_null:
 Lfunc_begin3:
 	push	ebp
 	mov	ebp, esp
@@ -414,9 +414,9 @@ Lttbase3:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_null_null
+	.globl	_fn4_null_null
 	.p2align	4
-_null_null:
+_fn4_null_null:
 Lfunc_begin4:
 	push	ebp
 	mov	ebp, esp
@@ -507,9 +507,9 @@ Lttbase4:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_two_nonnull_nonnull
+	.globl	_fn5_two_nonnull_nonnull
 	.p2align	4
-_two_nonnull_nonnull:
+_fn5_two_nonnull_nonnull:
 Lfunc_begin5:
 	push	ebp
 	mov	ebp, esp
@@ -633,9 +633,9 @@ Lttbase5:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_call_with_none1
+	.globl	_fn6_call_with_none1
 	.p2align	4
-_call_with_none1:
+_fn6_call_with_none1:
 	push	ebp
 	mov	ebp, esp
 	sub	esp, 8
@@ -648,9 +648,9 @@ _call_with_none1:
 	pop	ebp
 	ret
 
-	.globl	_call_with_none2
+	.globl	_fn6_call_with_none2
 	.p2align	4
-_call_with_none2:
+_fn6_call_with_none2:
 	push	ebp
 	mov	ebp, esp
 	sub	esp, 8
@@ -663,9 +663,9 @@ _call_with_none2:
 	pop	ebp
 	ret
 
-	.globl	_call_with_none3
+	.globl	_fn6_call_with_none3
 	.p2align	4
-_call_with_none3:
+_fn6_call_with_none3:
 Lfunc_begin6:
 	push	ebp
 	mov	ebp, esp
@@ -763,9 +763,9 @@ Lttbase6:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_call_with_none4
+	.globl	_fn6_call_with_none4
 	.p2align	4
-_call_with_none4:
+_fn6_call_with_none4:
 Lfunc_begin7:
 	push	ebp
 	mov	ebp, esp
@@ -863,9 +863,9 @@ Lttbase7:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_call_with_some1
+	.globl	_fn7_call_with_some1
 	.p2align	4
-_call_with_some1:
+_fn7_call_with_some1:
 Lfunc_begin8:
 	push	ebp
 	mov	ebp, esp
@@ -970,9 +970,9 @@ Lttbase8:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_call_with_some2
+	.globl	_fn7_call_with_some2
 	.p2align	4
-_call_with_some2:
+_fn7_call_with_some2:
 Lfunc_begin9:
 	push	ebp
 	mov	ebp, esp
@@ -1081,9 +1081,9 @@ Lttbase9:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_call_with_some3
+	.globl	_fn7_call_with_some3
 	.p2align	4
-_call_with_some3:
+_fn7_call_with_some3:
 Lfunc_begin10:
 	push	ebp
 	mov	ebp, esp

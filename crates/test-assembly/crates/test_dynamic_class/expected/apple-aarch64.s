@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_get_class
+	.globl	_fn1_get_class
 	.p2align	2
-_get_class:
+_fn1_get_class:
 Lloh0:
 	adrp	x8, __MergedGlobals@PAGE
 Lloh1:
@@ -27,9 +27,9 @@ Lloh7:
 	.loh AdrpAdd	Lloh4, Lloh5
 	.loh AdrpAdd	Lloh2, Lloh3
 
-	.globl	_get_same_class
+	.globl	_fn1_get_same_class
 	.p2align	2
-_get_same_class:
+_fn1_get_same_class:
 Lloh8:
 	adrp	x8, __MergedGlobals@PAGE+8
 Lloh9:
@@ -55,9 +55,9 @@ Lloh15:
 	.loh AdrpAdd	Lloh12, Lloh13
 	.loh AdrpAdd	Lloh10, Lloh11
 
-	.globl	_get_different_class
+	.globl	_fn3_get_different_class
 	.p2align	2
-_get_different_class:
+_fn3_get_different_class:
 Lloh16:
 	adrp	x8, __MergedGlobals@PAGE+16
 Lloh17:
@@ -83,9 +83,9 @@ Lloh23:
 	.loh AdrpAdd	Lloh20, Lloh21
 	.loh AdrpAdd	Lloh18, Lloh19
 
-	.globl	_unused_class
+	.globl	_fn4_unused_class
 	.p2align	2
-_unused_class:
+_fn4_unused_class:
 Lloh24:
 	adrp	x8, SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0)@PAGE
 Lloh25:
@@ -111,9 +111,9 @@ Lloh31:
 	.loh AdrpAdd	Lloh28, Lloh29
 	.loh AdrpAdd	Lloh26, Lloh27
 
-	.globl	_use_fns
+	.globl	_fn5_use_fns
 	.p2align	2
-_use_fns:
+_fn5_use_fns:
 	stp	x22, x21, [sp, #-48]!
 	stp	x20, x19, [sp, #16]
 	stp	x29, x30, [sp, #32]
@@ -250,9 +250,9 @@ Lloh69:
 	.loh AdrpAdd	Lloh66, Lloh67
 	.loh AdrpAdd	Lloh64, Lloh65
 
-	.globl	_use_same_twice
+	.globl	_fn6_use_same_twice
 	.p2align	2
-_use_same_twice:
+_fn6_use_same_twice:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -309,9 +309,9 @@ Lloh81:
 	.loh AdrpAdd	Lloh78, Lloh79
 	.loh AdrpAdd	Lloh76, Lloh77
 
-	.globl	_use_in_loop
+	.globl	_fn7_use_in_loop
 	.p2align	2
-_use_in_loop:
+_fn7_use_in_loop:
 	cbz	x0, LBB6_6
 	stp	x24, x23, [sp, #-64]!
 	stp	x22, x21, [sp, #16]

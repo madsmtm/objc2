@@ -1,17 +1,17 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.globl	_handle_with_sel
+	.globl	_fn1_handle_with_sel
 	.p2align	4
-_handle_with_sel:
+_fn1_handle_with_sel:
 	push	rbp
 	mov	rbp, rsp
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_80f1580ed33ec51b]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074]
 	pop	rbp
 	jmp	_objc_msgSend
 
-	.globl	_handle_alloc_init
+	.globl	_fn2_handle_alloc_init
 	.p2align	4
-_handle_alloc_init:
+_fn2_handle_alloc_init:
 	push	rbp
 	mov	rbp, rsp
 	push	r14
@@ -37,23 +37,23 @@ LBB1_2:
 	mov	rsi, r14
 	call	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
 
-	.globl	_use_generic
+	.globl	_fn3_use_generic
 	.p2align	4
-_use_generic:
+_fn3_use_generic:
 	push	rbp
 	mov	rbp, rsp
 	push	rbx
 	push	rax
 	mov	rbx, rdi
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_67bf3e41c7e639a3]
-	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_91c006d97540f4b5]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21]
+	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e]
 	call	_objc_msgSend
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_2c2c9a8191012941]
-	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_91c006d97540f4b5]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9]
+	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e]
 	mov	rdi, rbx
 	call	_objc_msgSend
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_993d94b40d47ed52]
-	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_91c006d97540f4b5]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_6659046596384437]
+	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e]
 	mov	rdi, rbx
 	add	rsp, 8
 	pop	rbx
@@ -61,59 +61,59 @@ _use_generic:
 	jmp	_objc_msgSend
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_80f1580ed33ec51b
-L_OBJC_METH_VAR_NAME_80f1580ed33ec51b:
+	.globl	L_OBJC_METH_VAR_NAME_66d4c61f523c7074
+L_OBJC_METH_VAR_NAME_66d4c61f523c7074:
 	.asciz	"someSelector"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_80f1580ed33ec51b
+	.globl	L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_80f1580ed33ec51b:
-	.quad	L_OBJC_METH_VAR_NAME_80f1580ed33ec51b
+L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074:
+	.quad	L_OBJC_METH_VAR_NAME_66d4c61f523c7074
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_91c006d97540f4b5
-L_OBJC_METH_VAR_NAME_91c006d97540f4b5:
+	.globl	L_OBJC_METH_VAR_NAME_e348e18690a1021e
+L_OBJC_METH_VAR_NAME_e348e18690a1021e:
 	.asciz	"generic:selector:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_91c006d97540f4b5
+	.globl	L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_91c006d97540f4b5:
-	.quad	L_OBJC_METH_VAR_NAME_91c006d97540f4b5
+L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e:
+	.quad	L_OBJC_METH_VAR_NAME_e348e18690a1021e
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_67bf3e41c7e639a3
-L_OBJC_METH_VAR_NAME_67bf3e41c7e639a3:
+	.globl	L_OBJC_METH_VAR_NAME_8d4579a56572fa21
+L_OBJC_METH_VAR_NAME_8d4579a56572fa21:
 	.asciz	"performSelector:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_67bf3e41c7e639a3
+	.globl	L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_67bf3e41c7e639a3:
-	.quad	L_OBJC_METH_VAR_NAME_67bf3e41c7e639a3
+L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21:
+	.quad	L_OBJC_METH_VAR_NAME_8d4579a56572fa21
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_2c2c9a8191012941
-L_OBJC_METH_VAR_NAME_2c2c9a8191012941:
+	.globl	L_OBJC_METH_VAR_NAME_d018146ff130bbd9
+L_OBJC_METH_VAR_NAME_d018146ff130bbd9:
 	.asciz	"performSelector:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_2c2c9a8191012941
+	.globl	L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_2c2c9a8191012941:
-	.quad	L_OBJC_METH_VAR_NAME_2c2c9a8191012941
+L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9:
+	.quad	L_OBJC_METH_VAR_NAME_d018146ff130bbd9
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_993d94b40d47ed52
-L_OBJC_METH_VAR_NAME_993d94b40d47ed52:
+	.globl	L_OBJC_METH_VAR_NAME_6659046596384437
+L_OBJC_METH_VAR_NAME_6659046596384437:
 	.asciz	"performSelector:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_993d94b40d47ed52
+	.globl	L_OBJC_SELECTOR_REFERENCES_6659046596384437
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_993d94b40d47ed52:
-	.quad	L_OBJC_METH_VAR_NAME_993d94b40d47ed52
+L_OBJC_SELECTOR_REFERENCES_6659046596384437:
+	.quad	L_OBJC_METH_VAR_NAME_6659046596384437
 
 	.section	__TEXT,__const
 l_anon.[ID].0:
@@ -126,29 +126,29 @@ l_anon.[ID].1:
 	.asciz	";\000\000\000\000\000\000\000\016\000\000\000\005\000\000"
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_80f1580ed33ec51b
+	.globl	L_OBJC_IMAGE_INFO_66d4c61f523c7074
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_80f1580ed33ec51b:
+L_OBJC_IMAGE_INFO_66d4c61f523c7074:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_91c006d97540f4b5
+	.globl	L_OBJC_IMAGE_INFO_e348e18690a1021e
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_91c006d97540f4b5:
+L_OBJC_IMAGE_INFO_e348e18690a1021e:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_67bf3e41c7e639a3
+	.globl	L_OBJC_IMAGE_INFO_8d4579a56572fa21
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_67bf3e41c7e639a3:
+L_OBJC_IMAGE_INFO_8d4579a56572fa21:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_2c2c9a8191012941
+	.globl	L_OBJC_IMAGE_INFO_d018146ff130bbd9
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_2c2c9a8191012941:
+L_OBJC_IMAGE_INFO_d018146ff130bbd9:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_993d94b40d47ed52
+	.globl	L_OBJC_IMAGE_INFO_6659046596384437
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_993d94b40d47ed52:
+L_OBJC_IMAGE_INFO_6659046596384437:
 	.asciz	"\000\000\000\000@\000\000"
 
 .subsections_via_symbols

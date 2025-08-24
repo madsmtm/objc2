@@ -1,16 +1,16 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.globl	_handle_new
+	.globl	_fn01_handle_new
 	.p2align	4
-_handle_new:
+_fn01_handle_new:
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
 	jmp	_objc_msgSend
 
-	.globl	_handle_new_fallible
+	.globl	_fn02_handle_new_fallible
 	.p2align	4
-_handle_new_fallible:
+_fn02_handle_new_fallible:
 	push	rbp
 	mov	rbp, rsp
 	push	r14
@@ -30,25 +30,25 @@ LBB1_2:
 	mov	rsi, rbx
 	call	SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)
 
-	.globl	_handle_alloc
+	.globl	_fn03_handle_alloc
 	.p2align	4
-_handle_alloc:
+_fn03_handle_alloc:
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
 	jmp	_objc_msgSend
 
-	.globl	_handle_init
+	.globl	_fn04_handle_init
 	.p2align	4
-_handle_init:
+_fn04_handle_init:
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
 	jmp	_objc_msgSend
 
-	.globl	_handle_init_fallible
+	.globl	_fn05_handle_init_fallible
 	.p2align	4
-_handle_init_fallible:
+_fn05_handle_init_fallible:
 	push	rbp
 	mov	rbp, rsp
 	push	r14
@@ -68,9 +68,9 @@ LBB4_2:
 	mov	rsi, rbx
 	call	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
 
-	.globl	_handle_alloc_init
+	.globl	_fn06_handle_alloc_init
 	.p2align	4
-_handle_alloc_init:
+_fn06_handle_alloc_init:
 	push	rbp
 	mov	rbp, rsp
 	push	rbx
@@ -84,9 +84,9 @@ _handle_alloc_init:
 	pop	rbp
 	jmp	_objc_msgSend
 
-	.globl	_handle_alloc_release
+	.globl	_fn07_handle_alloc_release
 	.p2align	4
-_handle_alloc_release:
+_fn07_handle_alloc_release:
 	push	rbp
 	mov	rbp, rsp
 	call	_objc_msgSend
@@ -94,9 +94,9 @@ _handle_alloc_release:
 	pop	rbp
 	jmp	_objc_release
 
-	.globl	_handle_alloc_init_release
+	.globl	_fn08_handle_alloc_init_release
 	.p2align	4
-_handle_alloc_init_release:
+_fn08_handle_alloc_init_release:
 	push	rbp
 	mov	rbp, rsp
 	push	rbx
@@ -112,17 +112,17 @@ _handle_alloc_init_release:
 	pop	rbp
 	jmp	_objc_release
 
-	.globl	_handle_copy
+	.globl	_fn09_handle_copy
 	.p2align	4
-_handle_copy:
+_fn09_handle_copy:
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
 	jmp	_objc_msgSend
 
-	.globl	_handle_copy_fallible
+	.globl	_fn10_handle_copy_fallible
 	.p2align	4
-_handle_copy_fallible:
+_fn10_handle_copy_fallible:
 	push	rbp
 	mov	rbp, rsp
 	call	_objc_msgSend
@@ -134,17 +134,17 @@ LBB9_2:
 	lea	rdi, [rip + l_anon.[ID].3]
 	call	SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)
 
-	.globl	_handle_mutable_copy
+	.globl	_fn11_handle_mutable_copy
 	.p2align	4
-_handle_mutable_copy:
+_fn11_handle_mutable_copy:
 	push	rbp
 	mov	rbp, rsp
 	pop	rbp
 	jmp	_objc_msgSend
 
-	.globl	_handle_mutable_copy_fallible
+	.globl	_fn12_handle_mutable_copy_fallible
 	.p2align	4
-_handle_mutable_copy_fallible:
+_fn12_handle_mutable_copy_fallible:
 	push	rbp
 	mov	rbp, rsp
 	call	_objc_msgSend
@@ -156,9 +156,9 @@ LBB11_2:
 	lea	rdi, [rip + l_anon.[ID].4]
 	call	SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
 
-	.globl	_handle_autoreleased
+	.globl	_fn13_handle_autoreleased
 	.p2align	4
-_handle_autoreleased:
+_fn13_handle_autoreleased:
 	push	rbp
 	mov	rbp, rsp
 	call	_objc_msgSend
@@ -172,9 +172,9 @@ _handle_autoreleased:
 	pop	rbp
 	ret
 
-	.globl	_handle_autoreleased_with_arg
+	.globl	_fn14_handle_autoreleased_with_arg
 	.p2align	4
-_handle_autoreleased_with_arg:
+_fn14_handle_autoreleased_with_arg:
 	push	rbp
 	mov	rbp, rsp
 	movzx	edx, dl
@@ -189,9 +189,9 @@ _handle_autoreleased_with_arg:
 	pop	rbp
 	ret
 
-	.globl	_handle_autoreleased_fallible
+	.globl	_fn15_handle_autoreleased_fallible
 	.p2align	4
-_handle_autoreleased_fallible:
+_fn15_handle_autoreleased_fallible:
 	push	rbp
 	mov	rbp, rsp
 	push	r14
@@ -218,9 +218,9 @@ LBB14_2:
 	mov	rsi, rbx
 	call	SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)
 
-	.globl	_handle_with_out_param
+	.globl	_fn16_handle_with_out_param
 	.p2align	4
-_handle_with_out_param:
+_fn16_handle_with_out_param:
 Lfunc_begin0:
 	push	rbp
 	mov	rbp, rsp

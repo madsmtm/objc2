@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_get_sel
+	.globl	_fn1_get_sel
 	.p2align	2
-_get_sel:
+_fn1_get_sel:
 Lloh0:
 	adrp	x8, __MergedGlobals@PAGE
 Lloh1:
@@ -22,9 +22,9 @@ Lloh5:
 	.loh AdrpAdd	Lloh4, Lloh5
 	.loh AdrpAdd	Lloh2, Lloh3
 
-	.globl	_get_same_sel
+	.globl	_fn2_get_same_sel
 	.p2align	2
-_get_same_sel:
+_fn2_get_same_sel:
 Lloh6:
 	adrp	x8, __MergedGlobals@PAGE+8
 Lloh7:
@@ -45,9 +45,9 @@ Lloh11:
 	.loh AdrpAdd	Lloh10, Lloh11
 	.loh AdrpAdd	Lloh8, Lloh9
 
-	.globl	_get_common_twice
+	.globl	_fn3_get_common_twice
 	.p2align	2
-_get_common_twice:
+_fn3_get_common_twice:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -96,9 +96,9 @@ Lloh21:
 	.loh AdrpAdd	Lloh20, Lloh21
 	.loh AdrpLdrGot	Lloh18, Lloh19
 
-	.globl	_get_different_sel
+	.globl	_fn4_get_different_sel
 	.p2align	2
-_get_different_sel:
+_fn4_get_different_sel:
 Lloh22:
 	adrp	x8, __MergedGlobals@PAGE+16
 Lloh23:
@@ -119,9 +119,9 @@ Lloh27:
 	.loh AdrpAdd	Lloh26, Lloh27
 	.loh AdrpAdd	Lloh24, Lloh25
 
-	.globl	_unused_sel
+	.globl	_fn5_unused_sel
 	.p2align	2
-_unused_sel:
+_fn5_unused_sel:
 Lloh28:
 	adrp	x8, SYM(test_dynamic_sel[CRATE_ID]::unused_sel::CACHED_SEL, 0)@PAGE
 Lloh29:
@@ -142,9 +142,9 @@ Lloh33:
 	.loh AdrpAdd	Lloh32, Lloh33
 	.loh AdrpAdd	Lloh30, Lloh31
 
-	.globl	_use_fns
+	.globl	_fn6_use_fns
 	.p2align	2
-_use_fns:
+_fn6_use_fns:
 	stp	x22, x21, [sp, #-48]!
 	stp	x20, x19, [sp, #16]
 	stp	x29, x30, [sp, #32]
@@ -261,9 +261,9 @@ Lloh63:
 	.loh AdrpAdd	Lloh62, Lloh63
 	.loh AdrpAdd	Lloh60, Lloh61
 
-	.globl	_use_same_twice
+	.globl	_fn7_use_same_twice
 	.p2align	2
-_use_same_twice:
+_fn7_use_same_twice:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -310,9 +310,9 @@ Lloh71:
 	.loh AdrpAdd	Lloh70, Lloh71
 	.loh AdrpAdd	Lloh68, Lloh69
 
-	.globl	_use_in_loop
+	.globl	_fn8_use_in_loop
 	.p2align	2
-_use_in_loop:
+_fn8_use_in_loop:
 	cbz	x0, LBB7_6
 	stp	x22, x21, [sp, #-48]!
 	stp	x20, x19, [sp, #16]

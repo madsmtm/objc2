@@ -96,9 +96,9 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::crea
 	mov	w2, #4
 	b	SYM(__rustc[CRATE_ID]::__rust_dealloc, 0)
 
-	.globl	_stack_block_to_rc
+	.globl	_fn1_stack_block_to_rc
 	.p2align	2
-_stack_block_to_rc:
+_fn1_stack_block_to_rc:
 	sub	sp, sp, #48
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
@@ -129,9 +129,9 @@ LBB14_2:
 	.loh AdrpAdd	Lloh4, Lloh5
 	.loh AdrpLdrGot	Lloh2, Lloh3
 
-	.globl	_rc_block
+	.globl	_fn2_rc_block
 	.p2align	2
-_rc_block:
+_fn2_rc_block:
 	sub	sp, sp, #48
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
@@ -161,9 +161,9 @@ LBB15_2:
 	.loh AdrpAdd	Lloh10, Lloh11
 	.loh AdrpLdrGot	Lloh8, Lloh9
 
-	.globl	_rc_block_drop
+	.globl	_fn3_rc_block_drop
 	.p2align	2
-_rc_block_drop:
+_fn3_rc_block_drop:
 	sub	sp, sp, #64
 	stp	x29, x30, [sp, #48]
 	add	x29, sp, #48
@@ -195,9 +195,9 @@ LBB16_2:
 	.loh AdrpAdd	Lloh16, Lloh17
 	.loh AdrpLdrGot	Lloh14, Lloh15
 
-	.globl	_create_and_use_stack_block
+	.globl	_fn4_create_and_use_stack_block
 	.p2align	2
-_create_and_use_stack_block:
+_fn4_create_and_use_stack_block:
 	sub	sp, sp, #48
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
@@ -225,9 +225,9 @@ Lloh25:
 	.loh AdrpAdd	Lloh22, Lloh23
 	.loh AdrpLdrGot	Lloh20, Lloh21
 
-	.globl	_create_and_use_stack_block_drop
+	.globl	_fn5_create_and_use_stack_block_drop
 	.p2align	2
-_create_and_use_stack_block_drop:
+_fn5_create_and_use_stack_block_drop:
 	sub	sp, sp, #80
 	stp	x20, x19, [sp, #48]
 	stp	x29, x30, [sp, #64]
@@ -263,9 +263,9 @@ Lloh31:
 	.loh AdrpAdd	Lloh28, Lloh29
 	.loh AdrpLdrGot	Lloh26, Lloh27
 
-	.globl	_create_and_use_rc_block
+	.globl	_fn6_create_and_use_rc_block
 	.p2align	2
-_create_and_use_rc_block:
+_fn6_create_and_use_rc_block:
 	sub	sp, sp, #64
 	stp	x20, x19, [sp, #32]
 	stp	x29, x30, [sp, #48]

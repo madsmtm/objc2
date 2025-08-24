@@ -1,9 +1,9 @@
 	.syntax unified
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_get_class
+	.globl	_fn1_get_class
 	.p2align	2
 	.code	32
-_get_class:
+_fn1_get_class:
 	push	{r7, lr}
 	mov	r7, sp
 	movw	r0, :lower16:(__MergedGlobals-(LPC0_0+8))
@@ -29,10 +29,10 @@ LPC0_3:
 	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 
-	.globl	_get_same_class
+	.globl	_fn1_get_same_class
 	.p2align	2
 	.code	32
-_get_same_class:
+_fn1_get_same_class:
 	push	{r7, lr}
 	mov	r7, sp
 	movw	r1, :lower16:(__MergedGlobals-(LPC1_0+8))
@@ -55,10 +55,10 @@ LPC1_2:
 	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 
-	.globl	_get_different_class
+	.globl	_fn3_get_different_class
 	.p2align	2
 	.code	32
-_get_different_class:
+_fn3_get_different_class:
 	push	{r7, lr}
 	mov	r7, sp
 	movw	r1, :lower16:(__MergedGlobals-(LPC2_0+8))
@@ -81,10 +81,10 @@ LPC2_2:
 	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 
-	.globl	_unused_class
+	.globl	_fn4_unused_class
 	.p2align	2
 	.code	32
-_unused_class:
+_fn4_unused_class:
 	push	{r7, lr}
 	mov	r7, sp
 	movw	r0, :lower16:(SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0)-(LPC3_0+8))
@@ -110,10 +110,10 @@ LPC3_3:
 	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 
-	.globl	_use_fns
+	.globl	_fn5_use_fns
 	.p2align	2
 	.code	32
-_use_fns:
+_fn5_use_fns:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
 	push	{r8, r10}
@@ -217,10 +217,10 @@ LPC4_9:
 	pop	{r8, r10}
 	pop	{r4, r5, r6, r7, pc}
 
-	.globl	_use_same_twice
+	.globl	_fn6_use_same_twice
 	.p2align	2
 	.code	32
-_use_same_twice:
+_fn6_use_same_twice:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
 	movw	r5, :lower16:(__MergedGlobals-(LPC5_0+8))
@@ -278,10 +278,10 @@ LPC5_6:
 	strd	r4, r5, [r0]
 	pop	{r4, r5, r6, r7, pc}
 
-	.globl	_use_in_loop
+	.globl	_fn7_use_in_loop
 	.p2align	2
 	.code	32
-_use_in_loop:
+_fn7_use_in_loop:
 	cmp	r0, #0
 	bxeq	lr
 LBB6_1:

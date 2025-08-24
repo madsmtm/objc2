@@ -135,9 +135,9 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::crea
 	pop	rbp
 	jmp	SYM(__rustc[CRATE_ID]::__rust_dealloc, 0)
 
-	.globl	_stack_block_to_rc
+	.globl	_fn1_stack_block_to_rc
 	.p2align	4
-_stack_block_to_rc:
+_fn1_stack_block_to_rc:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 32
@@ -158,9 +158,9 @@ _stack_block_to_rc:
 LBB14_2:
 	call	SYM(block2::rc_block::block_copy_fail::GENERATED_ID, 0)
 
-	.globl	_rc_block
+	.globl	_fn2_rc_block
 	.p2align	4
-_rc_block:
+_fn2_rc_block:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 32
@@ -181,9 +181,9 @@ _rc_block:
 LBB15_2:
 	call	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
 
-	.globl	_rc_block_drop
+	.globl	_fn3_rc_block_drop
 	.p2align	4
-_rc_block_drop:
+_fn3_rc_block_drop:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 48
@@ -205,9 +205,9 @@ _rc_block_drop:
 LBB16_2:
 	call	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
 
-	.globl	_create_and_use_stack_block
+	.globl	_fn4_create_and_use_stack_block
 	.p2align	4
-_create_and_use_stack_block:
+_fn4_create_and_use_stack_block:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 32
@@ -224,9 +224,9 @@ _create_and_use_stack_block:
 	pop	rbp
 	ret
 
-	.globl	_create_and_use_stack_block_drop
+	.globl	_fn5_create_and_use_stack_block_drop
 	.p2align	4
-_create_and_use_stack_block_drop:
+_fn5_create_and_use_stack_block_drop:
 	push	rbp
 	mov	rbp, rsp
 	push	rbx
@@ -251,9 +251,9 @@ _create_and_use_stack_block_drop:
 	pop	rbp
 	ret
 
-	.globl	_create_and_use_rc_block
+	.globl	_fn6_create_and_use_rc_block
 	.p2align	4
-_create_and_use_rc_block:
+_fn6_create_and_use_rc_block:
 	push	rbp
 	mov	rbp, rsp
 	push	rbx

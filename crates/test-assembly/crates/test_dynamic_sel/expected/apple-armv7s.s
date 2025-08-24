@@ -1,9 +1,9 @@
 	.syntax unified
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_get_sel
+	.globl	_fn1_get_sel
 	.p2align	2
 	.code	32
-_get_sel:
+_fn1_get_sel:
 	push	{r7, lr}
 	mov	r7, sp
 	movw	r0, :lower16:(__MergedGlobals-(LPC0_0+8))
@@ -25,10 +25,10 @@ LPC0_2:
 	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
-	.globl	_get_same_sel
+	.globl	_fn2_get_same_sel
 	.p2align	2
 	.code	32
-_get_same_sel:
+_fn2_get_same_sel:
 	push	{r7, lr}
 	mov	r7, sp
 	movw	r1, :lower16:(__MergedGlobals-(LPC1_0+8))
@@ -47,10 +47,10 @@ LPC1_1:
 	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
-	.globl	_get_common_twice
+	.globl	_fn3_get_common_twice
 	.p2align	2
 	.code	32
-_get_common_twice:
+_fn3_get_common_twice:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	movw	r4, :lower16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
@@ -91,10 +91,10 @@ LPC2_2:
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	b	LBB2_1
 
-	.globl	_get_different_sel
+	.globl	_fn4_get_different_sel
 	.p2align	2
 	.code	32
-_get_different_sel:
+_fn4_get_different_sel:
 	push	{r7, lr}
 	mov	r7, sp
 	movw	r1, :lower16:(__MergedGlobals-(LPC3_0+8))
@@ -113,10 +113,10 @@ LPC3_1:
 	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
-	.globl	_unused_sel
+	.globl	_fn5_unused_sel
 	.p2align	2
 	.code	32
-_unused_sel:
+_fn5_unused_sel:
 	push	{r7, lr}
 	mov	r7, sp
 	movw	r0, :lower16:(SYM(test_dynamic_sel[CRATE_ID]::unused_sel::CACHED_SEL, 0)-(LPC4_0+8))
@@ -138,10 +138,10 @@ LPC4_2:
 	pop	{r7, lr}
 	b	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 
-	.globl	_use_fns
+	.globl	_fn6_use_fns
 	.p2align	2
 	.code	32
-_use_fns:
+_fn6_use_fns:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
 	push	{r8, r10}
@@ -229,10 +229,10 @@ LPC5_5:
 	pop	{r8, r10}
 	pop	{r4, r5, r6, r7, pc}
 
-	.globl	_use_same_twice
+	.globl	_fn7_use_same_twice
 	.p2align	2
 	.code	32
-_use_same_twice:
+_fn7_use_same_twice:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
 	movw	r5, :lower16:(__MergedGlobals-(LPC6_0+8))
@@ -282,10 +282,10 @@ LPC6_4:
 	strd	r4, r5, [r0]
 	pop	{r4, r5, r6, r7, pc}
 
-	.globl	_use_in_loop
+	.globl	_fn8_use_in_loop
 	.p2align	2
 	.code	32
-_use_in_loop:
+_fn8_use_in_loop:
 	cmp	r0, #0
 	bxeq	lr
 LBB7_1:

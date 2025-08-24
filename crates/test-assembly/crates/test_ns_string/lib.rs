@@ -11,7 +11,7 @@ struct StaticString(&'static NSString);
 unsafe impl Sync for StaticString {}
 
 #[cfg(all(target_vendor = "apple", feature = "assembly-features"))]
-#[no_mangle]
+#[export_name = "S1_EMPTY"]
 static EMPTY: StaticString = {
     const INPUT: &[u8] = b"";
     objc2_foundation::__ns_string_static!(INPUT);
@@ -19,7 +19,7 @@ static EMPTY: StaticString = {
 };
 
 #[cfg(all(target_vendor = "apple", feature = "assembly-features"))]
-#[no_mangle]
+#[export_name = "S2_XYZ"]
 static XYZ: StaticString = {
     const INPUT: &[u8] = b"xyz";
     objc2_foundation::__ns_string_static!(INPUT);
@@ -27,24 +27,24 @@ static XYZ: StaticString = {
 };
 
 #[cfg(all(target_vendor = "apple", feature = "assembly-features"))]
-#[no_mangle]
+#[export_name = "S3_NON_ASCII"]
 static NON_ASCII: StaticString = {
     const INPUT: &[u8] = b"\xf0\x9f\x98\x80";
     objc2_foundation::__ns_string_static!(INPUT);
     StaticString(CFSTRING.as_nsstring_const())
 };
 
-#[no_mangle]
+#[export_name = "fn1_get_ascii"]
 fn get_ascii() -> &'static NSString {
     ns_string!("abc")
 }
 
-#[no_mangle]
+#[export_name = "fn2_get_utf16"]
 fn get_utf16() -> &'static NSString {
     ns_string!("ábć")
 }
 
-#[no_mangle]
+#[export_name = "fn3_get_with_nul"]
 fn get_with_nul() -> &'static NSString {
     ns_string!("a\0b\0c\0")
 }

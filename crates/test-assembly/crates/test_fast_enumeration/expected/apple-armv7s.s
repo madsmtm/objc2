@@ -1,9 +1,9 @@
 	.syntax unified
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_iter_create
+	.globl	_fn1_iter_create
 	.p2align	2
 	.code	32
-_iter_create:
+_fn1_iter_create:
 	push	{r7, lr}
 	mov	r7, sp
 	add	r2, r0, #80
@@ -24,10 +24,10 @@ _iter_create:
 	str	r3, [r0, #104]
 	pop	{r7, pc}
 
-	.globl	_iter_once
+	.globl	_fn2_iter_once
 	.p2align	2
 	.code	32
-_iter_once:
+_fn2_iter_once:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
 	push	{r8}
@@ -84,10 +84,10 @@ LPC1_2:
 	mov	r0, r8
 	b	LBB1_2
 
-	.globl	_use_obj
+	.globl	_fn3_use_obj
 	.p2align	2
 	.code	32
-_use_obj:
+_fn3_use_obj:
 	push	{r7, lr}
 	mov	r7, sp
 	push	{r0}
@@ -97,10 +97,10 @@ _use_obj:
 	mov	sp, r7
 	pop	{r7, pc}
 
-	.globl	_iter
+	.globl	_fn4_iter
 	.p2align	2
 	.code	32
-_iter:
+_fn4_iter:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
 	push	{r8, r10, r11}
@@ -156,7 +156,7 @@ LBB3_3:
 	ldr	r0, [r0, r2, lsl #2]
 	cmp	r0, #0
 	beq	LBB3_6
-	bl	_use_obj
+	bl	_fn3_use_obj
 	ldr	r0, [sp, #8]
 	ldr	r2, [sp, #108]
 	ldr	r1, [sp, #112]
@@ -176,10 +176,10 @@ LBB3_6:
 	pop	{r8, r10, r11}
 	pop	{r4, r5, r6, r7, pc}
 
-	.globl	_iter_noop
+	.globl	_fn5_iter_noop
 	.p2align	2
 	.code	32
-_iter_noop:
+_fn5_iter_noop:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
 	push	{r8, r10, r11}
@@ -253,10 +253,10 @@ LBB4_7:
 	pop	{r8, r10, r11}
 	pop	{r4, r5, r6, r7, pc}
 
-	.globl	_iter_retained
+	.globl	_fn6_iter_retained
 	.p2align	2
 	.code	32
-_iter_retained:
+_fn6_iter_retained:
 Lfunc_begin0:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
@@ -364,7 +364,7 @@ LBB5_8:
 	mov	r1, #1
 	str	r1, [sp, #144]
 Ltmp0:
-	bl	_use_obj
+	bl	_fn3_use_obj
 Ltmp1:
 	ldr	r0, [sp, #136]
 	mvn	r1, #0

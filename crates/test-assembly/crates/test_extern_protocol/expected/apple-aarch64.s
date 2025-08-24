@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_get_protocol
+	.globl	_fn1_get_protocol
 	.p2align	2
-_get_protocol:
+_fn1_get_protocol:
 Lloh0:
 	adrp	x0, l_anon.[ID].0@PAGE
 Lloh1:
@@ -10,9 +10,9 @@ Lloh1:
 	b	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh0, Lloh1
 
-	.globl	_dyn_call
+	.globl	_fn2_dyn_call
 	.p2align	2
-_dyn_call:
+_fn2_dyn_call:
 Lloh2:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGE
 Lloh3:
@@ -20,9 +20,9 @@ Lloh3:
 	b	_objc_msgSend
 	.loh AdrpLdr	Lloh2, Lloh3
 
-	.globl	_dyn_consume
+	.globl	_fn3_dyn_consume
 	.p2align	2
-_dyn_consume:
+_fn3_dyn_consume:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16

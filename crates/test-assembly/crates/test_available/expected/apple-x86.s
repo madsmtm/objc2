@@ -1,35 +1,35 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.globl	_always
+	.globl	_fn1_always
 	.p2align	4
-_always:
+_fn1_always:
 	push	ebp
 	mov	ebp, esp
 	mov	al, 1
 	pop	ebp
 	ret
 
-	.globl	_never
+	.globl	_fn2_never
 	.p2align	4
-_never:
+_fn2_never:
 	push	ebp
 	mov	ebp, esp
 	xor	eax, eax
 	pop	ebp
 	ret
 
-	.globl	_low
+	.globl	_fn3_low
 	.p2align	4
-_low:
+_fn3_low:
 	push	ebp
 	mov	ebp, esp
 	mov	al, 1
 	pop	ebp
 	ret
 
-	.globl	_high
+	.globl	_fn4_high
 	.p2align	4
-_high:
+_fn4_high:
 	push	ebp
 	mov	ebp, esp
 	push	esi
@@ -53,18 +53,18 @@ LBB3_1:
 	mov	dword ptr [esi], eax
 	jmp	LBB3_2
 
-	.globl	_only_ios
+	.globl	_fn5_only_ios
 	.p2align	4
-_only_ios:
+_fn5_only_ios:
 	push	ebp
 	mov	ebp, esp
 	mov	al, 1
 	pop	ebp
 	ret
 
-	.globl	_two_checks
+	.globl	_fn6_two_checks
 	.p2align	4
-_two_checks:
+_fn6_two_checks:
 	push	ebp
 	mov	ebp, esp
 	push	edi

@@ -1,19 +1,19 @@
 //! Test that the `available!` macro is optimized as expected.
 use objc2::available;
 
-#[no_mangle]
+#[export_name = "fn1_always"]
 fn always() -> bool {
     // Can elide the version check here
     available!(..)
 }
 
-#[no_mangle]
+#[export_name = "fn2_never"]
 fn never() -> bool {
     // Can elide the version check here
     available!()
 }
 
-#[no_mangle]
+#[export_name = "fn3_low"]
 fn low() -> bool {
     // Can elide the version check here
     available!(
@@ -26,7 +26,7 @@ fn low() -> bool {
     )
 }
 
-#[no_mangle]
+#[export_name = "fn4_high"]
 fn high() -> bool {
     // Has to insert a runtime check here
     available!(
@@ -39,13 +39,13 @@ fn high() -> bool {
     )
 }
 
-#[no_mangle]
+#[export_name = "fn5_only_ios"]
 fn only_ios() -> bool {
     // Can elide the version check here on macOS
     available!(ios = 5.0)
 }
 
-#[no_mangle]
+#[export_name = "fn6_two_checks"]
 fn two_checks() -> bool {
     // Ideally only has to insert one runtime check here, but currently does two.
 

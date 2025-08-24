@@ -1,0 +1,31 @@
+[package]
+name = "test_define_class_no_ivars"
+version = "0.1.0"
+edition.workspace = true
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+objc2 = { path = "../../../objc2" }
+objc2-foundation = { path = "../../../../framework-crates/objc2-foundation", default-features = false, features = [
+    "std",
+    "block2",
+    "NSObject",
+    "NSZone",
+]}
+
+[features]
+# Runtime
+gnustep-1-7 = ["objc2/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc2/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9", "objc2-foundation/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0", "objc2-foundation/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "objc2-foundation/gnustep-2-1"]
+
+# Hack to prevent these feature flags from being enabled in the entire project
+assembly-features = ["objc2/unstable-static-sel-inlined", "objc2/unstable-static-class-inlined"]
+
+[package.metadata.release]
+release = false

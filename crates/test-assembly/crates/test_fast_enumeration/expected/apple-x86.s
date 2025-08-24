@@ -1,8 +1,8 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.globl	_iter_create
+	.globl	_fn1_iter_create
 	.p2align	4
-_iter_create:
+_fn1_iter_create:
 	push	ebp
 	mov	ebp, esp
 	mov	eax, dword ptr [ebp + 8]
@@ -28,9 +28,9 @@ _iter_create:
 	pop	ebp
 	ret	4
 
-	.globl	_iter_once
+	.globl	_fn2_iter_once
 	.p2align	4
-_iter_once:
+_fn2_iter_once:
 	push	ebp
 	mov	ebp, esp
 	push	ebx
@@ -88,9 +88,9 @@ LBB1_2:
 	add	esp, 16
 	jmp	LBB1_3
 
-	.globl	_use_obj
+	.globl	_fn3_use_obj
 	.p2align	4
-_use_obj:
+_fn3_use_obj:
 	push	ebp
 	mov	ebp, esp
 	push	eax
@@ -103,9 +103,9 @@ _use_obj:
 	pop	ebp
 	ret
 
-	.globl	_iter
+	.globl	_fn4_iter
 	.p2align	4
-_iter:
+_fn4_iter:
 	push	ebp
 	mov	ebp, esp
 	push	ebx
@@ -170,7 +170,7 @@ LBB3_5:
 	je	LBB3_7
 	sub	esp, 12
 	push	eax
-	call	_use_obj
+	call	_fn3_use_obj
 	add	esp, 16
 	mov	esi, dword ptr [ebp - 124]
 	mov	ecx, dword ptr [ebp - 24]
@@ -193,9 +193,9 @@ LBB3_7:
 	pop	ebp
 	ret
 
-	.globl	_iter_noop
+	.globl	_fn5_iter_noop
 	.p2align	4
-_iter_noop:
+_fn5_iter_noop:
 	push	ebp
 	mov	ebp, esp
 	push	ebx
@@ -277,9 +277,9 @@ LBB4_7:
 	pop	ebp
 	ret
 
-	.globl	_iter_retained
+	.globl	_fn6_iter_retained
 	.p2align	4
-_iter_retained:
+_fn6_iter_retained:
 Lfunc_begin0:
 	push	ebp
 	mov	ebp, esp
@@ -364,7 +364,7 @@ LBB5_11:
 	mov	esi, eax
 Ltmp0:
 	mov	dword ptr [esp], eax
-	call	_use_obj
+	call	_fn3_use_obj
 Ltmp1:
 	mov	dword ptr [esp], esi
 	call	_objc_release

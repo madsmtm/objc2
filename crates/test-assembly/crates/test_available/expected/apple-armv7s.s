@@ -1,36 +1,36 @@
 	.syntax unified
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_always
+	.globl	_fn1_always
 	.p2align	2
 	.code	32
-_always:
+_fn1_always:
 	push	{r7, lr}
 	mov	r7, sp
 	mov	r0, #1
 	pop	{r7, pc}
 
-	.globl	_never
+	.globl	_fn2_never
 	.p2align	2
 	.code	32
-_never:
+_fn2_never:
 	push	{r7, lr}
 	mov	r7, sp
 	mov	r0, #0
 	pop	{r7, pc}
 
-	.globl	_low
+	.globl	_fn3_low
 	.p2align	2
 	.code	32
-_low:
+_fn3_low:
 	push	{r7, lr}
 	mov	r7, sp
 	mov	r0, #1
 	pop	{r7, pc}
 
-	.globl	_high
+	.globl	_fn4_high
 	.p2align	2
 	.code	32
-_high:
+_fn4_high:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	movw	r4, :lower16:(LSYM(objc2::__macro_helpers::os_version::apple::current_version::CURRENT_VERSION::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
@@ -51,19 +51,19 @@ LBB3_2:
 	str	r0, [r4]
 	b	LBB3_1
 
-	.globl	_only_ios
+	.globl	_fn5_only_ios
 	.p2align	2
 	.code	32
-_only_ios:
+_fn5_only_ios:
 	push	{r7, lr}
 	mov	r7, sp
 	mov	r0, #1
 	pop	{r7, pc}
 
-	.globl	_two_checks
+	.globl	_fn6_two_checks
 	.p2align	2
 	.code	32
-_two_checks:
+_fn6_two_checks:
 	push	{r4, r5, r7, lr}
 	add	r7, sp, #8
 	movw	r5, :lower16:(LSYM(objc2::__macro_helpers::os_version::apple::current_version::CURRENT_VERSION::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))

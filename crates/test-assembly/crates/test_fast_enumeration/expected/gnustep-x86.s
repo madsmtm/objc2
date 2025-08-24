@@ -1,9 +1,9 @@
 	.intel_syntax noprefix
-	.section	.text.iter_create,"ax",@progbits
-	.globl	iter_create
+	.section	.text.fn1_iter_create,"ax",@progbits
+	.globl	fn1_iter_create
 	.p2align	4
-	.type	iter_create,@function
-iter_create:
+	.type	fn1_iter_create,@function
+fn1_iter_create:
 	mov	eax, dword ptr [esp + 4]
 	mov	ecx, dword ptr [esp + 8]
 	xorps	xmm0, xmm0
@@ -26,13 +26,13 @@ iter_create:
 	mov	dword ptr [eax + 104], 0
 	ret	4
 .Lfunc_end0:
-	.size	iter_create, .Lfunc_end0-iter_create
+	.size	fn1_iter_create, .Lfunc_end0-fn1_iter_create
 
-	.section	.text.iter_once,"ax",@progbits
-	.globl	iter_once
+	.section	.text.fn2_iter_once,"ax",@progbits
+	.globl	fn2_iter_once
 	.p2align	4
-	.type	iter_once,@function
-iter_once:
+	.type	fn2_iter_once,@function
+fn2_iter_once:
 	push	ebp
 	push	ebx
 	push	edi
@@ -97,13 +97,13 @@ iter_once:
 	mov	esi, eax
 	jmp	.LBB1_3
 .Lfunc_end1:
-	.size	iter_once, .Lfunc_end1-iter_once
+	.size	fn2_iter_once, .Lfunc_end1-fn2_iter_once
 
-	.section	.text.use_obj,"ax",@progbits
-	.globl	use_obj
+	.section	.text.fn3_use_obj,"ax",@progbits
+	.globl	fn3_use_obj
 	.p2align	4
-	.type	use_obj,@function
-use_obj:
+	.type	fn3_use_obj,@function
+fn3_use_obj:
 	push	eax
 	mov	eax, dword ptr [esp + 8]
 	mov	dword ptr [esp], eax
@@ -113,13 +113,13 @@ use_obj:
 	pop	eax
 	ret
 .Lfunc_end2:
-	.size	use_obj, .Lfunc_end2-use_obj
+	.size	fn3_use_obj, .Lfunc_end2-fn3_use_obj
 
-	.section	.text.iter,"ax",@progbits
-	.globl	iter
+	.section	.text.fn4_iter,"ax",@progbits
+	.globl	fn4_iter
 	.p2align	4
-	.type	iter,@function
-iter:
+	.type	fn4_iter,@function
+fn4_iter:
 	push	ebp
 	push	ebx
 	push	edi
@@ -189,7 +189,7 @@ iter:
 	je	.LBB3_7
 	sub	esp, 12
 	push	eax
-	call	use_obj@PLT
+	call	fn3_use_obj@PLT
 	add	esp, 16
 	mov	ebp, dword ptr [esp + 16]
 	mov	ecx, dword ptr [esp + 116]
@@ -213,13 +213,13 @@ iter:
 	pop	ebp
 	ret
 .Lfunc_end3:
-	.size	iter, .Lfunc_end3-iter
+	.size	fn4_iter, .Lfunc_end3-fn4_iter
 
-	.section	.text.iter_noop,"ax",@progbits
-	.globl	iter_noop
+	.section	.text.fn5_iter_noop,"ax",@progbits
+	.globl	fn5_iter_noop
 	.p2align	4
-	.type	iter_noop,@function
-iter_noop:
+	.type	fn5_iter_noop,@function
+fn5_iter_noop:
 	push	ebp
 	push	ebx
 	push	edi
@@ -307,13 +307,13 @@ iter_noop:
 	pop	ebp
 	ret
 .Lfunc_end4:
-	.size	iter_noop, .Lfunc_end4-iter_noop
+	.size	fn5_iter_noop, .Lfunc_end4-fn5_iter_noop
 
-	.section	.text.iter_retained,"ax",@progbits
-	.globl	iter_retained
+	.section	.text.fn6_iter_retained,"ax",@progbits
+	.globl	fn6_iter_retained
 	.p2align	4
-	.type	iter_retained,@function
-iter_retained:
+	.type	fn6_iter_retained,@function
+fn6_iter_retained:
 .Lfunc_begin0:
 	push	ebp
 	push	ebx
@@ -402,7 +402,7 @@ iter_retained:
 	mov	esi, eax
 .Ltmp3:
 	mov	dword ptr [esp], eax
-	call	use_obj@PLT
+	call	fn3_use_obj@PLT
 .Ltmp4:
 	mov	dword ptr [esp], esi
 	call	objc_release@PLT
@@ -443,8 +443,8 @@ iter_retained:
 .Ltmp8:
 	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
 .Lfunc_end5:
-	.size	iter_retained, .Lfunc_end5-iter_retained
-	.section	.gcc_except_table.iter_retained,"a",@progbits
+	.size	fn6_iter_retained, .Lfunc_end5-fn6_iter_retained
+	.section	.gcc_except_table.fn6_iter_retained,"a",@progbits
 	.p2align	2, 0x0
 GCC_except_table5:
 .Lexception0:

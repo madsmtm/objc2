@@ -1,8 +1,8 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
-	.globl	_get_protocol
+	.globl	_fn1_get_protocol
 	.p2align	4
-_get_protocol:
+_fn1_get_protocol:
 	push	rbp
 	mov	rbp, rsp
 	lea	rdi, [rip + l_anon.[ID].0]
@@ -10,18 +10,18 @@ _get_protocol:
 	pop	rbp
 	jmp	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
 
-	.globl	_dyn_call
+	.globl	_fn2_dyn_call
 	.p2align	4
-_dyn_call:
+_fn2_dyn_call:
 	push	rbp
 	mov	rbp, rsp
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac]
 	pop	rbp
 	jmp	_objc_msgSend
 
-	.globl	_dyn_consume
+	.globl	_fn3_dyn_consume
 	.p2align	4
-_dyn_consume:
+_fn3_dyn_consume:
 	push	rbp
 	mov	rbp, rsp
 	push	rbx

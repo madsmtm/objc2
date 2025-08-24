@@ -3582,7 +3582,23 @@ dependencies = [
 ]
 
 [[package]]
-name = "test_define_class"
+name = "test_define_class_drop_ivars"
+version = "0.1.0"
+dependencies = [
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
+name = "test_define_class_forgetable_ivars"
+version = "0.1.0"
+dependencies = [
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
+name = "test_define_class_no_ivars"
 version = "0.1.0"
 dependencies = [
  "objc2",

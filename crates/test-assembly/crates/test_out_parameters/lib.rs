@@ -3,22 +3,22 @@ use objc2::__macro_helpers::{MsgSend, NoneFamily};
 use objc2::rc::Retained;
 use objc2::runtime::{NSObject, Sel};
 
-#[no_mangle]
+#[export_name = "fn1_nonnull_nonnull"]
 unsafe fn nonnull_nonnull(obj: &NSObject, sel: Sel, param: &mut Retained<NSObject>) -> usize {
     NoneFamily::send_message(obj, sel, (param,))
 }
 
-#[no_mangle]
+#[export_name = "fn2_null_nonnull"]
 unsafe fn null_nonnull(obj: &NSObject, sel: Sel, param: Option<&mut Retained<NSObject>>) -> usize {
     NoneFamily::send_message(obj, sel, (param,))
 }
 
-#[no_mangle]
+#[export_name = "fn3_nonnull_null"]
 unsafe fn nonnull_null(obj: &NSObject, sel: Sel, param: &mut Option<Retained<NSObject>>) -> usize {
     NoneFamily::send_message(obj, sel, (param,))
 }
 
-#[no_mangle]
+#[export_name = "fn4_null_null"]
 unsafe fn null_null(
     obj: &NSObject,
     sel: Sel,
@@ -27,7 +27,7 @@ unsafe fn null_null(
     NoneFamily::send_message(obj, sel, (param,))
 }
 
-#[no_mangle]
+#[export_name = "fn5_two_nonnull_nonnull"]
 unsafe fn two_nonnull_nonnull(
     obj: &NSObject,
     sel: Sel,
@@ -42,11 +42,11 @@ unsafe fn two_nonnull_nonnull(
 //
 
 // These should fully avoid any extra `retain/release`
-#[no_mangle]
+#[export_name = "fn6_call_with_none1"]
 unsafe fn call_with_none1(obj: &NSObject, sel: Sel) -> usize {
     null_nonnull(obj, sel, None)
 }
-#[no_mangle]
+#[export_name = "fn6_call_with_none2"]
 unsafe fn call_with_none2(obj: &NSObject, sel: Sel) -> usize {
     null_null(obj, sel, None)
 }
@@ -54,13 +54,13 @@ unsafe fn call_with_none2(obj: &NSObject, sel: Sel) -> usize {
 type Res = (usize, Option<Retained<NSObject>>);
 
 // These should only need a `retain`
-#[no_mangle]
+#[export_name = "fn6_call_with_none3"]
 unsafe fn call_with_none3(obj: &NSObject, sel: Sel) -> Res {
     let mut param = None;
     let res = nonnull_null(obj, sel, &mut param);
     (res, param)
 }
-#[no_mangle]
+#[export_name = "fn6_call_with_none4"]
 unsafe fn call_with_none4(obj: &NSObject, sel: Sel) -> Res {
     let mut param = None;
     let res = null_null(obj, sel, Some(&mut param));
@@ -68,18 +68,18 @@ unsafe fn call_with_none4(obj: &NSObject, sel: Sel) -> Res {
 }
 
 // These should need `retain/release`, but not have any branches
-#[no_mangle]
+#[export_name = "fn7_call_with_some1"]
 unsafe fn call_with_some1(obj: &NSObject, sel: Sel, mut param: Retained<NSObject>) -> Res {
     let res = null_nonnull(obj, sel, Some(&mut param));
     (res, Some(param))
 }
-#[no_mangle]
+#[export_name = "fn7_call_with_some2"]
 unsafe fn call_with_some2(obj: &NSObject, sel: Sel, param: Retained<NSObject>) -> Res {
     let mut param = Some(param);
     let res = nonnull_null(obj, sel, &mut param);
     (res, param)
 }
-#[no_mangle]
+#[export_name = "fn7_call_with_some3"]
 unsafe fn call_with_some3(obj: &NSObject, sel: Sel, param: Retained<NSObject>) -> Res {
     let mut param = Some(param);
     let res = null_null(obj, sel, Some(&mut param));
