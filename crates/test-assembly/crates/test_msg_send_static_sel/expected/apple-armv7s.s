@@ -43,7 +43,7 @@ LPC1_2:
 	mov	r0, r4
 	mov	r1, r5
 	mov	lr, pc
-	b	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::retain_semantics::init_fail::GENERATED_ID, 0)
 
 	.globl	_fn3_use_generic
 	.p2align	2

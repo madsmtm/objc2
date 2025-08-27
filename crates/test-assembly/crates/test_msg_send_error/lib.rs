@@ -1,5 +1,5 @@
 //! Test that error parameters are handled correctly.
-use objc2::__macro_helpers::{
+use objc2::__macros::{
     CopyFamily, InitFamily, MsgSendError, MutableCopyFamily, NewFamily, NoneFamily,
 };
 use objc2::rc::{Allocated, Retained};

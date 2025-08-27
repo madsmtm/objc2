@@ -1,3 +1,9 @@
+mod checks;
+mod ivars;
+
+pub use self::checks::*;
+pub use self::ivars::*;
+
 /// Create a new Objective-C class.
 ///
 /// This is useful in many cases since Objective-C frameworks tend to favour a
@@ -501,7 +507,7 @@ macro_rules! declare_class {
         $(#[$m])*
         $v struct $name;
 
-        $crate::__macro_helpers::compile_error!("declare_class! has been renamed to define_class!, and the syntax has changed")
+        $crate::__macros::compile_error!("declare_class! has been renamed to define_class!, and the syntax has changed")
     }
 }
 
@@ -530,16 +536,16 @@ macro_rules! __define_class_inner {
             //
             // Auto traits are taken from `__SubclassingType` (which is
             // usually the super class).
-            __superclass: $crate::__macro_helpers::ManuallyDrop<$crate::__fallback_if_not_set! {
+            __superclass: $crate::__macros::ManuallyDrop<$crate::__fallback_if_not_set! {
                 ($(<$superclass as $crate::ClassType>::__SubclassingType)?)
                 // For better diagnostics, see also __extern_class_inner!
                 ($crate::runtime::NSObject)
             }>,
-            __phantom: $crate::__macro_helpers::PhantomData<(
+            __phantom: $crate::__macros::PhantomData<(
                 // Include ivars for auto traits.
                 <Self as $crate::DefinedClass>::Ivars,
                 // Translate thread kind to appropriate auto traits.
-                $crate::__macro_helpers::ThreadKindAutoTraits<<Self as $crate::ClassType>::ThreadKind>,
+                $crate::__macros::ThreadKindAutoTraits<<Self as $crate::ClassType>::ThreadKind>,
             )>,
         }
 
@@ -563,29 +569,29 @@ macro_rules! __define_class_inner {
             // unique, at least within the resulting linker invocation (though
             // not across dylibs). The Objective-C runtime will ensure this as
             // well, but this will allow ensuring it at link time.
-            #[export_name = $crate::__macro_helpers::concat!(
+            #[export_name = $crate::__macros::concat!(
                 "__CLASS_",
                 $crate::__define_class_name!($class, $($name)*),
             )]
-            static __OBJC2_CLASS: $crate::__macro_helpers::SyncUnsafeCell<
-                $crate::__macro_helpers::MaybeUninit<&'static $crate::runtime::AnyClass>
-            > = $crate::__macro_helpers::SyncUnsafeCell::new($crate::__macro_helpers::MaybeUninit::uninit());
+            static __OBJC2_CLASS: $crate::__macros::SyncUnsafeCell<
+                $crate::__macros::MaybeUninit<&'static $crate::runtime::AnyClass>
+            > = $crate::__macros::SyncUnsafeCell::new($crate::__macros::MaybeUninit::uninit());
 
-            #[export_name = $crate::__macro_helpers::concat!(
+            #[export_name = $crate::__macros::concat!(
                 "__IVAR_OFFSET_",
                 $crate::__define_class_name!($class, $($name)*),
             )]
-            static __OBJC2_IVAR_OFFSET: $crate::__macro_helpers::SyncUnsafeCell<
-                $crate::__macro_helpers::MaybeUninit<$crate::__macro_helpers::isize>
-            > = $crate::__macro_helpers::SyncUnsafeCell::new($crate::__macro_helpers::MaybeUninit::uninit());
+            static __OBJC2_IVAR_OFFSET: $crate::__macros::SyncUnsafeCell<
+                $crate::__macros::MaybeUninit<$crate::__macros::isize>
+            > = $crate::__macros::SyncUnsafeCell::new($crate::__macros::MaybeUninit::uninit());
 
-            #[export_name = $crate::__macro_helpers::concat!(
+            #[export_name = $crate::__macros::concat!(
                 "__DROP_FLAG_OFFSET_",
                 $crate::__define_class_name!($class, $($name)*),
             )]
-            static __OBJC2_DROP_FLAG_OFFSET: $crate::__macro_helpers::SyncUnsafeCell<
-                $crate::__macro_helpers::MaybeUninit<$crate::__macro_helpers::isize>
-            > = $crate::__macro_helpers::SyncUnsafeCell::new($crate::__macro_helpers::MaybeUninit::uninit());
+            static __OBJC2_DROP_FLAG_OFFSET: $crate::__macros::SyncUnsafeCell<
+                $crate::__macros::MaybeUninit<$crate::__macros::isize>
+            > = $crate::__macros::SyncUnsafeCell::new($crate::__macros::MaybeUninit::uninit());
 
             // Creation
             unsafe impl $crate::ClassType for $class {
@@ -601,25 +607,25 @@ macro_rules! __define_class_inner {
                     (<<Self as $crate::ClassType>::Super as $crate::ClassType>::ThreadKind)
                 };
 
-                const NAME: &'static $crate::__macro_helpers::str = $crate::__define_class_name!($class, $($name)*);
+                const NAME: &'static $crate::__macros::str = $crate::__define_class_name!($class, $($name)*);
 
                 fn class() -> &'static $crate::runtime::AnyClass {
-                    let _ = <Self as $crate::__macro_helpers::ValidThreadKind<Self::ThreadKind>>::check;
-                    let _ = <Self as $crate::__macro_helpers::MainThreadOnlyDoesNotImplSendSync<_>>::check;
+                    let _ = <Self as $crate::__macros::ValidThreadKind<Self::ThreadKind>>::check;
+                    let _ = <Self as $crate::__macros::MainThreadOnlyDoesNotImplSendSync<_>>::check;
 
-                    const C_NAME: &'static $crate::__macro_helpers::CStr = $crate::__macro_helpers::class_c_name(
-                        $crate::__macro_helpers::concat!($crate::__define_class_name!($class, $($name)*), "\0")
+                    const C_NAME: &'static $crate::__macros::CStr = $crate::__macros::class_c_name(
+                        $crate::__macros::concat!($crate::__define_class_name!($class, $($name)*), "\0")
                     );
 
                     // TODO: Use `std::sync::OnceLock`
-                    #[export_name = $crate::__macro_helpers::concat!(
+                    #[export_name = $crate::__macros::concat!(
                         "__REGISTER_CLASS_",
                         $crate::__define_class_name!($class, $($name)*),
                     )]
-                    static REGISTER_CLASS: $crate::__macro_helpers::Once = $crate::__macro_helpers::Once::new();
+                    static REGISTER_CLASS: $crate::__macros::Once = $crate::__macros::Once::new();
 
                     REGISTER_CLASS.call_once(|| {
-                        let (__objc2_cls, __objc2_ivar_offset, __objc2_drop_flag_offset) = $crate::__macro_helpers::define_class::<Self>(
+                        let (__objc2_cls, __objc2_ivar_offset, __objc2_drop_flag_offset) = $crate::__macros::define_class::<Self>(
                             C_NAME,
                             $crate::__define_class_name_is_auto_generated!($($name)*),
                             |mut __objc2_builder| {
@@ -634,12 +640,12 @@ macro_rules! __define_class_inner {
                         // SAFETY: Modification is ensured by `Once` to happen
                         // before any access to the variables.
                         unsafe {
-                            __OBJC2_CLASS.get().write($crate::__macro_helpers::MaybeUninit::new(__objc2_cls));
-                            if <Self as $crate::__macro_helpers::DefinedIvarsHelper>::HAS_IVARS {
-                                __OBJC2_IVAR_OFFSET.get().write($crate::__macro_helpers::MaybeUninit::new(__objc2_ivar_offset));
+                            __OBJC2_CLASS.get().write($crate::__macros::MaybeUninit::new(__objc2_cls));
+                            if <Self as $crate::__macros::DefinedIvarsHelper>::HAS_IVARS {
+                                __OBJC2_IVAR_OFFSET.get().write($crate::__macros::MaybeUninit::new(__objc2_ivar_offset));
                             }
-                            if <Self as $crate::__macro_helpers::DefinedIvarsHelper>::HAS_DROP_FLAG {
-                                __OBJC2_DROP_FLAG_OFFSET.get().write($crate::__macro_helpers::MaybeUninit::new(__objc2_drop_flag_offset));
+                            if <Self as $crate::__macros::DefinedIvarsHelper>::HAS_DROP_FLAG {
+                                __OBJC2_DROP_FLAG_OFFSET.get().write($crate::__macros::MaybeUninit::new(__objc2_drop_flag_offset));
                             }
                         }
                     });
@@ -662,12 +668,12 @@ macro_rules! __define_class_inner {
                 type Ivars = $crate::__select_ivars!($($ivars)?);
 
                 #[inline]
-                fn __ivars_offset() -> $crate::__macro_helpers::isize {
+                fn __ivars_offset() -> $crate::__macros::isize {
                     // Only access ivar offset if we have an ivar.
                     //
                     // This makes the offset not be included in the final
                     // executable if it's not needed.
-                    if <Self as $crate::__macro_helpers::DefinedIvarsHelper>::HAS_IVARS {
+                    if <Self as $crate::__macros::DefinedIvarsHelper>::HAS_IVARS {
                         // SAFETY: Accessing the offset is guaranteed to only be
                         // done after the class has been initialized.
                         unsafe { __OBJC2_IVAR_OFFSET.get().read().assume_init() }
@@ -681,8 +687,8 @@ macro_rules! __define_class_inner {
                 }
 
                 #[inline]
-                fn __drop_flag_offset() -> $crate::__macro_helpers::isize {
-                    if <Self as $crate::__macro_helpers::DefinedIvarsHelper>::HAS_DROP_FLAG {
+                fn __drop_flag_offset() -> $crate::__macros::isize {
+                    if <Self as $crate::__macros::DefinedIvarsHelper>::HAS_DROP_FLAG {
                         // SAFETY: Same as above.
                         unsafe { __OBJC2_DROP_FLAG_OFFSET.get().read().assume_init() }
                     } else {
@@ -732,9 +738,9 @@ macro_rules! __define_class_derives {
     ) => {
         $($attr_impl)*
         #[automatically_derived]
-        impl $crate::__macro_helpers::fmt::Debug for $for {
-            fn fmt(&self, f: &mut $crate::__macro_helpers::fmt::Formatter<'_>) -> $crate::__macro_helpers::fmt::Result {
-                f.debug_struct($crate::__macro_helpers::stringify!($for))
+        impl $crate::__macros::fmt::Debug for $for {
+            fn fmt(&self, f: &mut $crate::__macros::fmt::Formatter<'_>) -> $crate::__macros::fmt::Result {
+                f.debug_struct($crate::__macros::stringify!($for))
                     .field("super", &**self.__superclass)
                     .field("ivars", <Self as $crate::DefinedClass>::ivars(self))
                     .finish()
@@ -760,11 +766,11 @@ macro_rules! __define_class_derives {
     ) => {
         $($attr_impl)*
         #[automatically_derived]
-        impl $crate::__macro_helpers::PartialEq for $for {
+        impl $crate::__macros::PartialEq for $for {
             #[inline]
-            fn eq(&self, other: &Self) -> $crate::__macro_helpers::bool {
+            fn eq(&self, other: &Self) -> $crate::__macros::bool {
                 // Delegate to the superclass (referential equality)
-                $crate::__macro_helpers::PartialEq::eq(&self.__superclass, &other.__superclass)
+                $crate::__macros::PartialEq::eq(&self.__superclass, &other.__superclass)
             }
         }
 
@@ -787,7 +793,7 @@ macro_rules! __define_class_derives {
     ) => {
         $($attr_impl)*
         #[automatically_derived]
-        impl $crate::__macro_helpers::Eq for $for {}
+        impl $crate::__macros::Eq for $for {}
 
         $crate::__define_class_derives! {
             ($($attr_impl)*)
@@ -808,11 +814,11 @@ macro_rules! __define_class_derives {
     ) => {
         $($attr_impl)*
         #[automatically_derived]
-        impl $crate::__macro_helpers::Hash for $for {
+        impl $crate::__macros::Hash for $for {
             #[inline]
-            fn hash<H: $crate::__macro_helpers::Hasher>(&self, state: &mut H) {
+            fn hash<H: $crate::__macros::Hasher>(&self, state: &mut H) {
                 // Delegate to the superclass (which hashes the reference)
-                $crate::__macro_helpers::Hash::hash(&self.__superclass, state)
+                $crate::__macros::Hash::hash(&self.__superclass, state)
             }
         }
 
@@ -838,7 +844,7 @@ macro_rules! __define_class_derives {
             #[derive($derive)]
             struct Derive;
         };
-        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::stringify!(
+        $crate::__macros::compile_error!($crate::__macros::stringify!(
             #[derive($derive)] is not supported in define_class!
         ));
 
@@ -882,12 +888,12 @@ macro_rules! __define_class_name {
     };
     ($class:ident,) => {
         // The user didn't specify a name; generate a reasonable one.
-        $crate::__macro_helpers::concat!(
+        $crate::__macros::concat!(
             // Module path includes crate name when in library.
-            $crate::__macro_helpers::module_path!(),
+            $crate::__macros::module_path!(),
             "::",
-            $crate::__macro_helpers::stringify!($class),
-            $crate::__macro_helpers::env!("CARGO_PKG_VERSION"),
+            $crate::__macros::stringify!($class),
+            $crate::__macros::env!("CARGO_PKG_VERSION"),
         )
     };
 }
@@ -1233,7 +1239,7 @@ macro_rules! __define_class_rewrite_params {
     } => {
         $crate::__define_class_rewrite_params! {
             ($($($params_rest)*)?)
-            ($($params_converted)* _ : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
+            ($($params_converted)* _ : <$param_ty as $crate::__macros::ConvertArgument>::__Inner,)
             ($($body_prefix)*)
 
             ($out_macro)
@@ -1251,10 +1257,10 @@ macro_rules! __define_class_rewrite_params {
     } => {
         $crate::__define_class_rewrite_params! {
             ($($($params_rest)*)?)
-            ($($params_converted)* $param : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
+            ($($params_converted)* $param : <$param_ty as $crate::__macros::ConvertArgument>::__Inner,)
             (
                 $($body_prefix)*
-                let mut $param = <$param_ty as $crate::__macro_helpers::ConvertArgument>::__from_defined_param($param);
+                let mut $param = <$param_ty as $crate::__macros::ConvertArgument>::__from_defined_param($param);
             )
 
             ($out_macro)
@@ -1272,10 +1278,10 @@ macro_rules! __define_class_rewrite_params {
     } => {
         $crate::__define_class_rewrite_params! {
             ($($($params_rest)*)?)
-            ($($params_converted)* $param : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
+            ($($params_converted)* $param : <$param_ty as $crate::__macros::ConvertArgument>::__Inner,)
             (
                 $($body_prefix)*
-                let $param = <$param_ty as $crate::__macro_helpers::ConvertArgument>::__from_defined_param($param);
+                let $param = <$param_ty as $crate::__macros::ConvertArgument>::__from_defined_param($param);
             )
 
             ($out_macro)
@@ -1329,7 +1335,7 @@ macro_rules! __define_class_method_out_inner {
         $($qualifiers)* extern "C-unwind" fn $name(
             $($params_prefix)*
             $($params_converted)*
-        ) $(-> <$ret as $crate::__macro_helpers::ConvertReturn<()>>::Inner)? {
+        ) $(-> <$ret as $crate::__macros::ConvertReturn<()>>::Inner)? {
             $crate::__define_class_no_method_family!($($method_family)*);
             $($body_prefix)*
             $crate::__convert_result! {
@@ -1364,7 +1370,7 @@ macro_rules! __define_class_method_out_inner {
         $($qualifiers)* extern "C-unwind" fn $name(
             $($params_prefix)*
             $($params_converted)*
-        ) -> $crate::__macro_helpers::RetainedReturnValue {
+        ) -> $crate::__macros::RetainedReturnValue {
             // TODO: Somehow tell the compiler that `this: Allocated<Self>` is non-null.
 
             $($body_prefix)*
@@ -1372,7 +1378,7 @@ macro_rules! __define_class_method_out_inner {
             let __objc2_result = $body;
 
             #[allow(unreachable_code)]
-            <$crate::__method_family!(($($method_family)*) ($($sel)*)) as $crate::__macro_helpers::MessageReceiveRetained<
+            <$crate::__method_family!(($($method_family)*) ($($sel)*)) as $crate::__macros::MessageReceiveRetained<
                 $receiver_ty,
                 $ret,
             >>::into_return(__objc2_result)
@@ -1401,7 +1407,7 @@ macro_rules! __define_class_method_out_inner {
     } => {
         $($attr_method)*
         $($qualifiers)* extern "C-unwind" fn $name() {
-            $crate::__macro_helpers::compile_error!("`#[unsafe(method_id(...))]` must have a return type")
+            $crate::__macros::compile_error!("`#[unsafe(method_id(...))]` must have a return type")
         }
     };
 }
@@ -1415,7 +1421,7 @@ macro_rules! __convert_result {
     ($body:block; $ret:ty) => {
         let __objc2_result = $body;
         #[allow(unreachable_code)]
-        <$ret as $crate::__macro_helpers::ConvertReturn<()>>::convert_defined_return(__objc2_result)
+        <$ret as $crate::__macros::ConvertReturn<()>>::convert_defined_return(__objc2_result)
     };
 }
 
@@ -1462,35 +1468,35 @@ macro_rules! __define_class_register_out {
 #[macro_export]
 macro_rules! __define_class_invalid_selectors {
     (method(dealloc)) => {
-        $crate::__macro_helpers::compile_error!(
+        $crate::__macros::compile_error!(
             "`#[unsafe(method(dealloc))]` is not supported. Implement `Drop` for the type instead"
         )
     };
     (method_id(dealloc)) => {
-        $crate::__macro_helpers::compile_error!(
+        $crate::__macros::compile_error!(
             "`#[unsafe(method_id(dealloc))]` is not supported. Implement `Drop` for the type instead"
         )
     };
     (method_id(alloc)) => {
-        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
+        $crate::__macros::compile_error!($crate::__macros::concat!(
             "`#[unsafe(method_id(alloc))]` is not supported. ",
             "Use `#[unsafe(method(alloc))]` and do the memory management yourself",
         ))
     };
     (method_id(retain)) => {
-        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
+        $crate::__macros::compile_error!($crate::__macros::concat!(
             "`#[unsafe(method_id(retain))]` is not supported. ",
             "Use `#[unsafe(method(retain))]` and do the memory management yourself",
         ))
     };
     (method_id(release)) => {
-        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
+        $crate::__macros::compile_error!($crate::__macros::concat!(
             "`#[unsafe(method_id(release))]` is not supported. ",
             "Use `#[unsafe(method(release))]` and do the memory management yourself",
         ))
     };
     (method_id(autorelease)) => {
-        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
+        $crate::__macros::compile_error!($crate::__macros::concat!(
             "`#[unsafe(method_id(autorelease))]` is not supported. ",
             "Use `#[unsafe(method(autorelease))]` and do the memory management yourself",
         ))
@@ -1503,7 +1509,7 @@ macro_rules! __define_class_invalid_selectors {
 macro_rules! __define_class_no_method_family {
     () => {};
     ($($t:tt)+) => {
-        $crate::__macro_helpers::compile_error!(
+        $crate::__macros::compile_error!(
             "`#[unsafe(method_family = ...)]` is not yet supported in `define_class!` together with `#[unsafe(method(...))]`"
         )
     };
@@ -1514,9 +1520,7 @@ macro_rules! __define_class_no_method_family {
 macro_rules! __define_class_no_optional {
     () => {};
     (#[optional]) => {
-        $crate::__macro_helpers::compile_error!(
-            "`#[optional]` is only supported in `extern_protocol!`"
-        )
+        $crate::__macros::compile_error!("`#[optional]` is only supported in `extern_protocol!`")
     };
 }
 

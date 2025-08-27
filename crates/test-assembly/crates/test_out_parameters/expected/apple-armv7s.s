@@ -2,7 +2,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
 	.code	32
-SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
 	cmp	r0, #0
 	bxeq	lr
 LBB0_1:
@@ -17,7 +17,7 @@ LBB0_1:
 
 	.p2align	2
 	.code	32
-SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	cmp	r0, #0
@@ -35,7 +35,7 @@ LBB1_3:
 
 	.p2align	2
 	.code	32
-SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0):
 Lfunc_begin0:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
@@ -191,7 +191,7 @@ Lttbase0:
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
 	.code	32
-SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0):
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	mov	r4, r1
@@ -443,7 +443,7 @@ Ltmp20:
 	mov	r2, #2
 	str	r2, [sp, #16]
 Ltmp21:
-	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
+	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
 Ltmp22:
 	b	LBB5_13
 LBB5_10:
@@ -583,7 +583,7 @@ Ltmp26:
 	mov	r2, #2
 	str	r2, [sp, #16]
 Ltmp27:
-	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0)
+	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0)
 Ltmp28:
 	b	LBB6_10
 LBB6_7:
@@ -731,7 +731,7 @@ Ltmp32:
 	mov	r2, #2
 	str	r2, [sp, #16]
 Ltmp33:
-	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
+	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
 Ltmp34:
 	b	LBB7_14
 LBB7_11:
@@ -895,7 +895,7 @@ Ltmp38:
 	str	r0, [sp, #48]
 Ltmp39:
 	add	r0, sp, #20
-	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0)
+	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0)
 Ltmp40:
 	b	LBB8_11
 LBB8_7:

@@ -28,7 +28,7 @@ LPC1_0:
 	mov	r0, r5
 	mov	r1, r4
 	mov	lr, pc
-	b	SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::retain_semantics::new_fail::GENERATED_ID, 0)
 
 	.globl	_fn03_handle_alloc
 	.p2align	2
@@ -67,7 +67,7 @@ LPC4_0:
 	mov	r0, r5
 	mov	r1, r4
 	mov	lr, pc
-	b	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::retain_semantics::init_fail::GENERATED_ID, 0)
 
 	.globl	_fn06_handle_alloc_init
 	.p2align	2
@@ -128,7 +128,7 @@ LBB9_1:
 LPC9_0:
 	add	r0, pc, r0
 	mov	lr, pc
-	b	SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::retain_semantics::copy_fail::GENERATED_ID, 0)
 
 	.globl	_fn11_handle_mutable_copy
 	.p2align	2
@@ -154,7 +154,7 @@ LBB11_1:
 LPC11_0:
 	add	r0, pc, r0
 	mov	lr, pc
-	b	SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
 
 	.globl	_fn13_handle_autoreleased
 	.p2align	2
@@ -206,7 +206,7 @@ LPC14_0:
 	mov	r0, r5
 	mov	r1, r4
 	mov	lr, pc
-	b	SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::retain_semantics::none_fail::GENERATED_ID, 0)
 
 	.globl	_fn16_handle_with_out_param
 	.p2align	2

@@ -15,11 +15,11 @@ use crate::runtime::{
 use crate::runtime::{AnyProtocol, MethodDescription};
 use crate::{AnyThread, ClassType, DefinedClass, Message, ProtocolType};
 
-use super::defined_ivars::{
+use super::super::{CopyFamily, InitFamily, MutableCopyFamily, NewFamily, NoneFamily};
+use super::ivars::{
     drop_flag_offset, ivar_drop_flag_names, ivars_offset, register_drop_flag, register_ivars,
     setup_dealloc,
 };
-use super::{CopyFamily, InitFamily, MutableCopyFamily, NewFamily, NoneFamily};
 
 /// Helper for determining auto traits of defined classes.
 ///

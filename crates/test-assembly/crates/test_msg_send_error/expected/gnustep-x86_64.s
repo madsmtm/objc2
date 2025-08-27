@@ -32,7 +32,7 @@ fn1_error_bool:
 	call	qword ptr [rip + objc_retain@GOTPCREL]
 	test	rax, rax
 	jne	.LBB0_4
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
 	jmp	.LBB0_4
 .Lfunc_end0:
 	.size	fn1_error_bool, .Lfunc_end0-fn1_error_bool
@@ -69,7 +69,7 @@ fn2_error_new:
 	mov	eax, 1
 	test	rdx, rdx
 	jne	.LBB1_4
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8
@@ -114,7 +114,7 @@ fn3_error_init:
 	mov	eax, 1
 	test	rdx, rdx
 	jne	.LBB2_7
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8
@@ -159,7 +159,7 @@ fn4_error_copy:
 	mov	eax, 1
 	test	rdx, rdx
 	jne	.LBB3_4
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8
@@ -201,7 +201,7 @@ fn5_error_mutable_copy:
 	mov	eax, 1
 	test	rdx, rdx
 	jne	.LBB4_4
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8
@@ -245,7 +245,7 @@ fn6_error_autoreleased:
 	mov	eax, 1
 	test	rdx, rdx
 	jne	.LBB5_4
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)@GOTPCREL]
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 8

@@ -1,5 +1,5 @@
 //! Test assembly output of `msg_send!` internals.
-use objc2::__macro_helpers::{
+use objc2::__macros::{
     AllocFamily, CopyFamily, InitFamily, MsgSend, MutableCopyFamily, NewFamily, NoneFamily,
 };
 use objc2::rc::{Allocated, Retained};

@@ -31,11 +31,11 @@ Ltmp0:
 	call	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 Ltmp1:
 	mov	qword ptr [rbp - 48], 2
-	lea	rax, [rip + l_anon.[ID].2]
+	lea	rax, [rip + l_anon.[ID].1]
 	mov	qword ptr [rbp - 40], rax
 	mov	byte ptr [rbp - 56], 27
 Ltmp2:
-	lea	rsi, [rip + L_anon.[ID].1]
+	lea	rsi, [rip + L_anon.[ID].2]
 	lea	rdi, [rbp - 16]
 	lea	r9, [rbp - 56]
 	mov	edx, 6
@@ -46,7 +46,7 @@ Ltmp3:
 	mov	rbx, qword ptr [rbp - 16]
 	mov	rdi, rbx
 	call	_objc_registerClassPair
-	lea	rsi, [rip + L_anon.[ID].1]
+	lea	rsi, [rip + L_anon.[ID].2]
 	mov	rdi, rbx
 	call	_class_getInstanceVariable
 	test	rax, rax
@@ -66,9 +66,9 @@ LBB0_6:
 	lea	rdi, [rip + L_anon.[ID].6]
 	lea	rdx, [rip + l_anon.[ID].8]
 	mov	esi, 16
-	call	SYM(objc2::__macro_helpers::define_class::class_not_unique::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::define_class::checks::class_not_unique::GENERATED_ID, 0)
 LBB0_5:
-	call	SYM(objc2::__macro_helpers::defined_ivars::ivars_offset::get_ivar_failed::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::define_class::ivars::ivars_offset::get_ivar_failed::GENERATED_ID, 0)
 LBB0_9:
 Ltmp4:
 	mov	rbx, rax
@@ -205,17 +205,16 @@ l_anon.[ID].0:
 	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
 	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
-	.section	__TEXT,__cstring,cstring_literals
-L_anon.[ID].1:
-	.asciz	"ivars"
-
 	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].2:
+l_anon.[ID].1:
 	.byte	7
 	.space	39
 
 	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].2:
+	.asciz	"ivars"
+
 L_anon.[ID].3:
 	.asciz	"$RUSTC/library/std/src/sync/poison/once.rs"
 

@@ -28,7 +28,7 @@ LBB1_2:
 	lea	rdx, [rip + l_anon.[ID].1]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::retain_semantics::new_fail::GENERATED_ID, 0)
 
 	.globl	_fn03_handle_alloc
 	.p2align	4
@@ -66,7 +66,7 @@ LBB4_2:
 	lea	rdx, [rip + l_anon.[ID].2]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::retain_semantics::init_fail::GENERATED_ID, 0)
 
 	.globl	_fn06_handle_alloc_init
 	.p2align	4
@@ -132,7 +132,7 @@ _fn10_handle_copy_fallible:
 	ret
 LBB9_2:
 	lea	rdi, [rip + l_anon.[ID].3]
-	call	SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::retain_semantics::copy_fail::GENERATED_ID, 0)
 
 	.globl	_fn11_handle_mutable_copy
 	.p2align	4
@@ -154,7 +154,7 @@ _fn12_handle_mutable_copy_fallible:
 	ret
 LBB11_2:
 	lea	rdi, [rip + l_anon.[ID].4]
-	call	SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
 
 	.globl	_fn13_handle_autoreleased
 	.p2align	4
@@ -216,7 +216,7 @@ LBB14_2:
 	lea	rdx, [rip + l_anon.[ID].5]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::retain_semantics::none_fail::GENERATED_ID, 0)
 
 	.globl	_fn16_handle_with_out_param
 	.p2align	4

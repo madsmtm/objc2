@@ -1,5 +1,5 @@
 //! Test that out parameters are handled correctly.
-use objc2::__macro_helpers::{MsgSend, NoneFamily};
+use objc2::__macros::{MsgSend, NoneFamily};
 use objc2::rc::Retained;
 use objc2::runtime::{NSObject, Sel};
 

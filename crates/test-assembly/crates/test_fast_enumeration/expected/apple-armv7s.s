@@ -77,7 +77,7 @@ LPC1_2:
 	mov	r0, r9
 	mov	r6, r3
 	mov	r5, r2
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r2, r5
 	mov	r3, r6
 	mov	r1, r0
@@ -164,7 +164,7 @@ LBB3_5:
 	mov	r11, r0
 	mov	r0, r10
 	mov	r1, r8
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r11
 	b	LBB3_4
@@ -236,7 +236,7 @@ LBB4_6:
 	mov	r11, r0
 	mov	r0, r10
 	mov	r1, r8
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r11
 	b	LBB4_4
@@ -378,7 +378,7 @@ LPC5_4:
 	movt	r1, :upper16:(L_anon.[ID].0-(LPC5_5+8))
 LPC5_5:
 	add	r1, pc, r1
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r4
 	b	LBB5_2

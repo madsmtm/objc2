@@ -19,7 +19,7 @@ LBB0_2:
 	ldr	x0, [sp, #8]
 	bl	_objc_retain
 	cbnz	x0, LBB0_1
-	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
 	b	LBB0_1
 
 	.globl	_fn2_error_new
@@ -47,7 +47,7 @@ LBB1_4:
 	mov	w0, #1
 	b	LBB1_2
 LBB1_5:
-	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
 	b	LBB1_4
 
 	.globl	_fn3_error_init
@@ -75,7 +75,7 @@ LBB2_4:
 	mov	w0, #1
 	b	LBB2_2
 LBB2_5:
-	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
 	b	LBB2_4
 
 	.globl	_fn4_error_copy
@@ -103,7 +103,7 @@ LBB3_4:
 	mov	w0, #1
 	b	LBB3_2
 LBB3_5:
-	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
 	b	LBB3_4
 
 	.globl	_fn5_error_mutable_copy
@@ -131,7 +131,7 @@ LBB4_4:
 	mov	w0, #1
 	b	LBB4_2
 LBB4_5:
-	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
 	b	LBB4_4
 
 	.globl	_fn6_error_autoreleased
@@ -163,7 +163,7 @@ LBB5_4:
 	mov	w0, #1
 	b	LBB5_2
 LBB5_5:
-	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
 	b	LBB5_4
 
 .subsections_via_symbols

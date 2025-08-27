@@ -196,16 +196,16 @@ macro_rules! __inner_extern_protocol {
         $($attr_impl)*
         unsafe impl<T> $protocol for $crate::runtime::ProtocolObject<T>
         where
-            T: ?$crate::__macro_helpers::Sized + $protocol
+            T: ?$crate::__macros::Sized + $protocol
         {}
 
         // SAFETY: The specified name is ensured by caller to be a protocol,
         // and is correctly defined.
         $($attr_impl)*
         unsafe impl $crate::ProtocolType for dyn $protocol {
-            const NAME: &'static $crate::__macro_helpers::str = $crate::__fallback_if_not_set! {
+            const NAME: &'static $crate::__macros::str = $crate::__fallback_if_not_set! {
                 ($($name)*)
-                ($crate::__macro_helpers::stringify!($protocol))
+                ($crate::__macros::stringify!($protocol))
             };
             const __INNER: () = ();
         }
@@ -215,7 +215,7 @@ macro_rules! __inner_extern_protocol {
         $($attr_impl)*
         unsafe impl<T> $crate::runtime::ImplementedBy<T> for dyn $protocol
         where
-            T: ?$crate::__macro_helpers::Sized + $crate::Message + $protocol
+            T: ?$crate::__macros::Sized + $crate::Message + $protocol
         {
             const __INNER: () = ();
         }
@@ -238,7 +238,7 @@ macro_rules! __inner_extern_protocol {
 macro_rules! __extern_protocol_check_no_super {
     () => {};
     ($($ivars:tt)*) => {
-        $crate::__macro_helpers::compile_error!("#[super] is not supported in extern_protocol!");
+        $crate::__macros::compile_error!("#[super] is not supported in extern_protocol!");
     };
 }
 
@@ -247,7 +247,7 @@ macro_rules! __extern_protocol_check_no_super {
 macro_rules! __extern_protocol_check_no_thread_kind {
     () => {};
     ($($ivars:tt)*) => {
-        $crate::__macro_helpers::compile_error!(
+        $crate::__macros::compile_error!(
             "#[thread_kind = ...] is not supported in extern_protocol!. Add MainThreadOnly or AnyThread bound instead"
         );
     };
@@ -258,7 +258,7 @@ macro_rules! __extern_protocol_check_no_thread_kind {
 macro_rules! __extern_protocol_check_no_ivars {
     () => {};
     ($($ivars:tt)*) => {
-        $crate::__macro_helpers::compile_error!("#[ivars] is not supported in extern_protocol!");
+        $crate::__macros::compile_error!("#[ivars] is not supported in extern_protocol!");
     };
 }
 
@@ -267,9 +267,7 @@ macro_rules! __extern_protocol_check_no_ivars {
 macro_rules! __extern_protocol_check_no_derives {
     () => {};
     ($($ivars:tt)*) => {
-        $crate::__macro_helpers::compile_error!(
-            "#[derive(...)] is not supported in extern_protocol!"
-        );
+        $crate::__macros::compile_error!("#[derive(...)] is not supported in extern_protocol!");
     };
 }
 
@@ -354,7 +352,7 @@ macro_rules! __extern_protocol_method_out {
         $($attr_method)*
         $($function_start)*
         where
-            Self: $crate::__macro_helpers::Sized + $crate::Message
+            Self: $crate::__macros::Sized + $crate::Message
             $(, $where : $bound)*
         {
             $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel)*));
@@ -394,7 +392,7 @@ macro_rules! __extern_protocol_method_out {
         $($attr_method)*
         $($function_start)*
         where
-            Self: $crate::__macro_helpers::Sized + $crate::ClassType
+            Self: $crate::__macros::Sized + $crate::ClassType
             $(, $where : $bound)*
         {
             $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel)*));
@@ -420,11 +418,11 @@ macro_rules! __extern_protocol_method_out {
 macro_rules! __extern_protocol_method_id_deprecated {
     (method($($sel:tt)*)) => {};
     (method_id($($sel:tt)*)) => {{
-        #[deprecated = $crate::__macro_helpers::concat!(
+        #[deprecated = $crate::__macros::concat!(
             "using #[unsafe(method_id(",
-            $crate::__macro_helpers::stringify!($($sel)*),
+            $crate::__macros::stringify!($($sel)*),
             "))] inside extern_protocol! is deprecated.\nUse #[unsafe(method(",
-            $crate::__macro_helpers::stringify!($($sel)*),
+            $crate::__macros::stringify!($($sel)*),
             "))] instead",
         )]
         #[inline]

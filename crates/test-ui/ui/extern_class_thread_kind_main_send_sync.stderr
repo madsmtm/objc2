@@ -11,7 +11,7 @@ error[E0283]: type annotations needed
   = note: multiple `impl`s satisfying `SendAndOnlyMain: MainThreadOnlyDoesNotImplSendSync<_>` found in the `objc2` crate:
           - impl<Cls> MainThreadOnlyDoesNotImplSendSync<()> for Cls
             where Cls: ?Sized;
-          - impl<Cls> MainThreadOnlyDoesNotImplSendSync<__macro_helpers::class::ImplsSend> for Cls
+          - impl<Cls> MainThreadOnlyDoesNotImplSendSync<__macros::extern_class::checks::ImplsSend> for Cls
             where Cls: MainThreadOnly, Cls: Send, Cls: ?Sized;
   = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -28,6 +28,6 @@ error[E0283]: type annotations needed
   = note: multiple `impl`s satisfying `SyncAndOnlyMain: MainThreadOnlyDoesNotImplSendSync<_>` found in the `objc2` crate:
           - impl<Cls> MainThreadOnlyDoesNotImplSendSync<()> for Cls
             where Cls: ?Sized;
-          - impl<Cls> MainThreadOnlyDoesNotImplSendSync<__macro_helpers::class::ImplsSync> for Cls
+          - impl<Cls> MainThreadOnlyDoesNotImplSendSync<__macros::extern_class::checks::ImplsSync> for Cls
             where Cls: MainThreadOnly, Cls: Sync, Cls: ?Sized;
   = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

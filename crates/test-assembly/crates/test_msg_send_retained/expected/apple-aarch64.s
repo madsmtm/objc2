@@ -24,7 +24,7 @@ Lloh1:
 	add	x2, x2, l_anon.[ID].1@PAGEOFF
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::retain_semantics::new_fail::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh0, Lloh1
 
 	.globl	_fn03_handle_alloc
@@ -57,7 +57,7 @@ Lloh3:
 	add	x2, x2, l_anon.[ID].2@PAGEOFF
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::retain_semantics::init_fail::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh2, Lloh3
 
 	.globl	_fn06_handle_alloc_init
@@ -115,7 +115,7 @@ Lloh4:
 	adrp	x0, l_anon.[ID].3@PAGE
 Lloh5:
 	add	x0, x0, l_anon.[ID].3@PAGEOFF
-	bl	SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::retain_semantics::copy_fail::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh4, Lloh5
 
 	.globl	_fn11_handle_mutable_copy
@@ -137,7 +137,7 @@ Lloh6:
 	adrp	x0, l_anon.[ID].4@PAGE
 Lloh7:
 	add	x0, x0, l_anon.[ID].4@PAGEOFF
-	bl	SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh6, Lloh7
 
 	.globl	_fn13_handle_autoreleased
@@ -189,7 +189,7 @@ Lloh9:
 	add	x2, x2, l_anon.[ID].5@PAGEOFF
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::retain_semantics::none_fail::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh8, Lloh9
 
 	.globl	_fn16_handle_with_out_param

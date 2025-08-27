@@ -21,7 +21,7 @@ LBB0_1:
 	lea	ecx, [ecx + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)-L0$pb]
 	push	eax
 	push	ecx
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 24
 	pop	ebp
 	ret
@@ -47,7 +47,7 @@ LBB1_1:
 	lea	ecx, [ecx + SYM(test_dynamic_sel[CRATE_ID]::get_same_sel::CACHED_SEL, 0)-L1$pb]
 	push	eax
 	push	ecx
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 24
 	pop	ebp
 	ret
@@ -62,7 +62,7 @@ _fn3_get_common_twice:
 	call	L2$pb
 L2$pb:
 	pop	edi
-	mov	esi, dword ptr [edi + LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L2$pb]
+	mov	esi, dword ptr [edi + LSYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L2$pb]
 	mov	eax, dword ptr [esi]
 	test	eax, eax
 	je	LBB2_1
@@ -79,7 +79,7 @@ LBB2_1:
 	lea	eax, [edi + L_anon.[ID].1-L2$pb]
 	push	eax
 	push	esi
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	mov	edx, dword ptr [esi]
 	test	edx, edx
@@ -90,7 +90,7 @@ LBB2_3:
 	push	ecx
 	push	esi
 	mov	esi, eax
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	mov	edx, eax
 	mov	eax, esi
@@ -120,7 +120,7 @@ LBB3_1:
 	lea	ecx, [ecx + SYM(test_dynamic_sel[CRATE_ID]::get_different_sel::CACHED_SEL, 0)-L3$pb]
 	push	eax
 	push	ecx
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 24
 	pop	ebp
 	ret
@@ -146,7 +146,7 @@ LBB4_1:
 	lea	eax, [eax + SYM(test_dynamic_sel[CRATE_ID]::unused_sel::CACHED_SEL, 0)-L4$pb]
 	push	ecx
 	push	eax
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 24
 	pop	ebp
 	ret
@@ -195,7 +195,7 @@ LBB5_1:
 	lea	ecx, [esi + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)-L5$pb]
 	push	eax
 	push	ecx
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	mov	edx, eax
 	mov	edi, dword ptr [esi + SYM(test_dynamic_sel[CRATE_ID]::get_same_sel::CACHED_SEL, 0)-L5$pb]
@@ -208,7 +208,7 @@ LBB5_3:
 	push	eax
 	push	ecx
 	mov	edi, edx
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	edx, edi
 	add	esp, 16
 	mov	edi, eax
@@ -223,7 +223,7 @@ LBB5_5:
 	push	eax
 	push	ecx
 	mov	ebx, edx
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	edx, ebx
 	add	esp, 16
 	mov	ebx, eax
@@ -239,7 +239,7 @@ LBB5_7:
 	push	ecx
 	push	edx
 	mov	esi, eax
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	edx, dword ptr [ebp - 16]
 	add	esp, 16
 	mov	ecx, eax
@@ -281,7 +281,7 @@ LBB6_1:
 	push	ecx
 	push	edx
 	mov	ebx, eax
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	mov	esi, eax
 	mov	eax, ebx
@@ -295,7 +295,7 @@ LBB6_3:
 	push	ecx
 	push	edx
 	mov	edi, eax
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	mov	ecx, eax
 	mov	eax, edi
@@ -330,7 +330,7 @@ LBB7_3:
 	sub	esp, 8
 	push	ecx
 	push	ebx
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	lea	ecx, [esi + L_anon.[ID].5-L7$pb]
 	add	esp, 16
 	dec	edi
@@ -369,8 +369,8 @@ L_anon.[ID].5:
 	.asciz	"loopedSelector"
 
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
-LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
-	.indirect_symbol	SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)
+LSYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
+	.indirect_symbol	SYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)
 	.long	0
 
 .subsections_via_symbols

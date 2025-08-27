@@ -92,7 +92,7 @@ fn2_iter_once:
 	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
 	push	ecx
 	push	eax
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@PLT
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	mov	esi, eax
 	jmp	.LBB1_3
@@ -197,7 +197,7 @@ fn4_iter:
 	sub	esp, 8
 	push	dword ptr [esp + 20]
 	push	edi
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@PLT
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	mov	esi, eax
 	jmp	.LBB3_4
@@ -286,7 +286,7 @@ fn5_iter_noop:
 	sub	esp, 8
 	push	dword ptr [esp + 20]
 	push	edi
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@PLT
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	mov	esi, eax
 	jmp	.LBB4_4
@@ -405,7 +405,7 @@ fn6_iter_retained:
 	mov	eax, dword ptr [esp + 20]
 	mov	dword ptr [esp], edi
 	mov	dword ptr [esp + 4], eax
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@PLT
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)@PLT
 	mov	esi, eax
 	jmp	.LBB5_4
 .LBB5_13:

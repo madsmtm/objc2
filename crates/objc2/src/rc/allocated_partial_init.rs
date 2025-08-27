@@ -3,7 +3,7 @@ use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
 use core::{fmt, ptr};
 
-use crate::__macro_helpers::defined_ivars::initialize_ivars;
+use crate::__macros::define_class::initialize_ivars;
 use crate::runtime::{objc_release_fast, AnyClass, AnyObject};
 use crate::{DefinedClass, Message};
 

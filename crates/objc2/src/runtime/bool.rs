@@ -247,7 +247,7 @@ unsafe impl RefEncode for Bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::__macro_helpers::{ConvertArgument, ConvertReturn};
+    use crate::__macros::{ConvertArgument, ConvertReturn};
     use alloc::format;
 
     #[test]

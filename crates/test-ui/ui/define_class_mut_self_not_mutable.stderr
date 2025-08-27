@@ -20,7 +20,7 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
   = note: required for `extern "C-unwind" fn(&mut CustomObject, objc2::runtime::Sel) -> &mut CustomObject` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/define_class.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
   |
   |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
   |                   ---------- required by a bound in this associated function
@@ -51,7 +51,7 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
   = note: required for `extern "C-unwind" fn(&mut CustomObject, objc2::runtime::Sel)` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/define_class.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
   |
   |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
   |                   ---------- required by a bound in this associated function
@@ -82,7 +82,7 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
   = note: required for `extern "C-unwind" fn(&mut CustomObject, objc2::runtime::Sel) -> RetainedReturnValue` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilderHelper::<T>::add_method`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/define_class.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
   |
   |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
   |                   ---------- required by a bound in this associated function

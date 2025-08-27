@@ -84,7 +84,7 @@ LBB1_2:
 	lea	eax, [ecx + L_anon.[ID].0-L1$pb]
 	push	eax
 	push	edx
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	jmp	LBB1_3
 
@@ -178,7 +178,7 @@ LBB3_3:
 	sub	esp, 8
 	push	dword ptr [ebp - 16]
 	push	esi
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	jmp	LBB3_4
 LBB3_6:
@@ -257,7 +257,7 @@ LBB4_3:
 	sub	esp, 8
 	push	dword ptr [ebp - 16]
 	push	esi
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	jmp	LBB4_4
 LBB4_7:
@@ -367,7 +367,7 @@ LBB5_3:
 	mov	eax, dword ptr [ebp - 16]
 	mov	dword ptr [esp + 4], eax
 	mov	dword ptr [esp], edi
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	jmp	LBB5_4
 LBB5_13:
 	add	esp, 140

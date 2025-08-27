@@ -145,31 +145,16 @@ pub use self::top_level_traits::{
     AnyThread, ClassType, DefinedClass, MainThreadOnly, Message, ProtocolType, ThreadKind,
 };
 
-#[cfg(any(feature = "unstable-static-sel", feature = "unstable-static-class"))]
-#[doc(hidden)]
-pub use objc2_proc_macros::__hash_idents;
-
-#[cfg(not(any(feature = "unstable-static-sel", feature = "unstable-static-class")))]
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __hash_idents {
-    // Noop; used to make our other macros a bit easier to read
-    ($($x:tt)*) => {
-        ()
-    };
-}
-
 // Note: While this is not public, it is still a breaking change to change,
 // since framework crates rely on it.
 #[doc(hidden)]
 pub mod __framework_prelude;
 #[doc(hidden)]
-pub mod __macro_helpers;
+pub mod __macros;
 mod downcast;
 pub mod encode;
 pub mod exception;
 pub mod ffi;
-mod macros;
 mod main_thread_marker;
 pub mod rc;
 pub mod runtime;

@@ -1,6 +1,6 @@
 //! Test that `Retained::autorelease_return` is tail-called properly.
 
-use objc2::__macro_helpers::{MsgSend, NewFamily};
+use objc2::__macros::{MsgSend, NewFamily};
 use objc2::rc::Retained;
 use objc2::runtime::{AnyClass, AnyObject, Sel};
 

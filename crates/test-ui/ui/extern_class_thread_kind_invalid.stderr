@@ -16,7 +16,7 @@ note: for a trait to be dyn compatible it needs to allow building a vtable
   |           ^^^^^^^^^^^^^^^^^^ the trait is not dyn compatible because it contains this associated `const`
   = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 help: you might have meant to use `Self` to refer to the implementing type
- --> $WORKSPACE/crates/objc2/src/macros/extern_class.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_class/mod.rs
   |
     -                 ($(dyn ($($thread_kind)+))?)
     +                 ($(Self)?)

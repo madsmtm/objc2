@@ -37,7 +37,7 @@ _fn4_high:
 	call	L3$pb
 L3$pb:
 	pop	eax
-	mov	esi, dword ptr [eax + LSYM(objc2::__macro_helpers::os_version::apple::current_version::CURRENT_VERSION::GENERATED_ID, 0)$non_lazy_ptr-L3$pb]
+	mov	esi, dword ptr [eax + LSYM(objc2::__macros::available::apple::current_version::CURRENT_VERSION::GENERATED_ID, 0)$non_lazy_ptr-L3$pb]
 	mov	eax, dword ptr [esi]
 	test	eax, eax
 	je	LBB3_1
@@ -49,7 +49,7 @@ LBB3_2:
 	pop	ebp
 	ret
 LBB3_1:
-	call	SYM(objc2::__macro_helpers::os_version::apple::lookup_version::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::available::apple::lookup_version::GENERATED_ID, 0)
 	mov	dword ptr [esi], eax
 	jmp	LBB3_2
 
@@ -72,7 +72,7 @@ _fn6_two_checks:
 	call	L5$pb
 L5$pb:
 	pop	eax
-	mov	edi, dword ptr [eax + LSYM(objc2::__macro_helpers::os_version::apple::current_version::CURRENT_VERSION::GENERATED_ID, 0)$non_lazy_ptr-L5$pb]
+	mov	edi, dword ptr [eax + LSYM(objc2::__macros::available::apple::current_version::CURRENT_VERSION::GENERATED_ID, 0)$non_lazy_ptr-L5$pb]
 	mov	esi, dword ptr [edi]
 	test	esi, esi
 	je	LBB5_1
@@ -90,20 +90,20 @@ LBB5_4:
 	pop	ebp
 	ret
 LBB5_1:
-	call	SYM(objc2::__macro_helpers::os_version::apple::lookup_version::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::available::apple::lookup_version::GENERATED_ID, 0)
 	mov	esi, eax
 	mov	dword ptr [edi], eax
 	mov	eax, dword ptr [edi]
 	test	eax, eax
 	jne	LBB5_4
 LBB5_3:
-	call	SYM(objc2::__macro_helpers::os_version::apple::lookup_version::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::available::apple::lookup_version::GENERATED_ID, 0)
 	mov	dword ptr [edi], eax
 	jmp	LBB5_4
 
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
-LSYM(objc2::__macro_helpers::os_version::apple::current_version::CURRENT_VERSION::GENERATED_ID, 0)$non_lazy_ptr:
-	.indirect_symbol	SYM(objc2::__macro_helpers::os_version::apple::current_version::CURRENT_VERSION::GENERATED_ID, 0)
+LSYM(objc2::__macros::available::apple::current_version::CURRENT_VERSION::GENERATED_ID, 0)$non_lazy_ptr:
+	.indirect_symbol	SYM(objc2::__macros::available::apple::current_version::CURRENT_VERSION::GENERATED_ID, 0)
 	.long	0
 
 .subsections_via_symbols

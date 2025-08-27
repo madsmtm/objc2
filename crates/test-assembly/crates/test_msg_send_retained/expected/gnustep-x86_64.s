@@ -43,7 +43,7 @@ fn02_handle_new_fallible:
 	lea	rdx, [rip + .Lanon.[ID].1]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::retain_semantics::new_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end1:
 	.size	fn02_handle_new_fallible, .Lfunc_end1-fn02_handle_new_fallible
 
@@ -120,7 +120,7 @@ fn05_handle_init_fallible:
 	lea	rdx, [rip + .Lanon.[ID].2]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::retain_semantics::init_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end4:
 	.size	fn05_handle_init_fallible, .Lfunc_end4-fn05_handle_init_fallible
 
@@ -259,7 +259,7 @@ fn10_handle_copy_fallible:
 	ret
 .LBB9_2:
 	lea	rdi, [rip + .Lanon.[ID].3]
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::retain_semantics::copy_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end9:
 	.size	fn10_handle_copy_fallible, .Lfunc_end9-fn10_handle_copy_fallible
 
@@ -305,7 +305,7 @@ fn12_handle_mutable_copy_fallible:
 	ret
 .LBB11_2:
 	lea	rdi, [rip + .Lanon.[ID].4]
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end11:
 	.size	fn12_handle_mutable_copy_fallible, .Lfunc_end11-fn12_handle_mutable_copy_fallible
 
@@ -381,7 +381,7 @@ fn15_handle_autoreleased_fallible:
 	lea	rdx, [rip + .Lanon.[ID].5]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::retain_semantics::none_fail::GENERATED_ID, 0)@GOTPCREL]
 .Lfunc_end14:
 	.size	fn15_handle_autoreleased_fallible, .Lfunc_end14-fn15_handle_autoreleased_fallible
 

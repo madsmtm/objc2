@@ -20,7 +20,7 @@ LBB0_1:
 LPC0_1:
 	add	r1, pc, r1
 	pop	{r7, lr}
-	b	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 
 	.globl	_fn2_get_same_sel
 	.p2align	2
@@ -45,7 +45,7 @@ LPC1_1:
 LPC1_2:
 	add	r1, pc, r1
 	pop	{r7, lr}
-	b	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 
 	.globl	_fn3_get_common_twice
 	.p2align	2
@@ -53,8 +53,8 @@ LPC1_2:
 _fn3_get_common_twice:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
-	movw	r4, :lower16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
-	movt	r4, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
+	movw	r4, :lower16:(LSYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
+	movt	r4, :upper16:(LSYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
 LPC2_0:
 	ldr	r4, [pc, r4]
 	ldr	r0, [r4]
@@ -65,8 +65,8 @@ LBB2_1:
 	cmp	r1, #0
 	popne	{r4, r7, pc}
 LBB2_2:
-	movw	r2, :lower16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
-	movt	r2, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
+	movw	r2, :lower16:(LSYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
+	movt	r2, :upper16:(LSYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
 LPC2_3:
 	ldr	r2, [pc, r2]
 	movw	r1, :lower16:(L_anon.[ID].1-(LPC2_4+8))
@@ -75,20 +75,20 @@ LPC2_4:
 	add	r1, pc, r1
 	mov	r4, r0
 	mov	r0, r2
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r4
 	pop	{r4, r7, pc}
 LBB2_3:
-	movw	r0, :lower16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_1+8))
-	movt	r0, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_1+8))
+	movw	r0, :lower16:(LSYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_1+8))
+	movt	r0, :upper16:(LSYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_1+8))
 LPC2_1:
 	ldr	r0, [pc, r0]
 	movw	r1, :lower16:(L_anon.[ID].1-(LPC2_2+8))
 	movt	r1, :upper16:(L_anon.[ID].1-(LPC2_2+8))
 LPC2_2:
 	add	r1, pc, r1
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	b	LBB2_1
 
 	.globl	_fn4_get_different_sel
@@ -111,7 +111,7 @@ LBB3_1:
 LPC3_1:
 	add	r1, pc, r1
 	pop	{r7, lr}
-	b	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 
 	.globl	_fn5_unused_sel
 	.p2align	2
@@ -136,7 +136,7 @@ LPC4_1:
 LPC4_2:
 	add	r1, pc, r1
 	pop	{r7, lr}
-	b	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 
 	.globl	_fn6_use_fns
 	.p2align	2
@@ -176,7 +176,7 @@ LPC5_1:
 	add	r1, pc, r1
 	mov	r5, r0
 	mov	r0, r2
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r4, r0
 	mov	r0, r5
 	ldr	r5, [r8]
@@ -193,7 +193,7 @@ LPC5_3:
 	add	r1, pc, r1
 	mov	r6, r0
 	mov	r0, r2
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r5, r0
 	mov	r0, r6
 	ldr	r6, [r8, #4]
@@ -207,7 +207,7 @@ LPC5_4:
 	add	r1, pc, r1
 	mov	r10, r0
 	mov	r0, r2
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r6, r0
 	mov	r0, r10
 	ldr	r1, [r8, #12]
@@ -221,7 +221,7 @@ LPC5_5:
 	add	r1, pc, r1
 	mov	r8, r0
 	mov	r0, r2
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r8
 	stm	r0, {r4, r5, r6}
@@ -257,7 +257,7 @@ LPC6_1:
 	add	r1, pc, r1
 	mov	r6, r0
 	mov	r0, r2
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r4, r0
 	mov	r0, r6
 	ldr	r1, [r5, #8]
@@ -271,7 +271,7 @@ LPC6_2:
 	add	r1, pc, r1
 	mov	r5, r0
 	mov	r0, r2
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r5
 	str	r4, [r0]
@@ -306,7 +306,7 @@ LBB7_4:
 	mov	r6, r0
 	mov	r0, r4
 	mov	r1, r5
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r0, r6
 	subs	r0, r0, #1
 	bne	LBB7_2
@@ -338,8 +338,8 @@ L_anon.[ID].5:
 .zerofill __DATA,__bss,__MergedGlobals,16,2
 	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
 	.p2align	2, 0x0
-LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
-	.indirect_symbol	SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)
+LSYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
+	.indirect_symbol	SYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)
 	.long	0
 
 .subsections_via_symbols

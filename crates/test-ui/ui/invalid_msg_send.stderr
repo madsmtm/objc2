@@ -5,7 +5,7 @@ error: unexpected end of macro invocation
   |                                       ^ missing tokens in macro arguments
   |
 note: while trying to match `,`
- --> $WORKSPACE/crates/objc2/src/macros/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/msg_send/mod.rs
   |
   |     [$obj:expr, $($selector_and_arguments:tt)+] => {
   |               ^
@@ -17,7 +17,7 @@ error: unexpected end of macro invocation
   |                                        ^ missing tokens in macro arguments
   |
 note: while trying to match meta-variable `$selector_and_arguments:tt`
- --> $WORKSPACE/crates/objc2/src/macros/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/msg_send/mod.rs
   |
   |     [$obj:expr, $($selector_and_arguments:tt)+] => {
   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -29,7 +29,7 @@ error: no rules expected `)`
   |                          ^^^^^^^^^^^^^^^^^^ no rules expected this token in macro call
   |
 note: while trying to match reserved identifier `_`
- --> $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/msg_send/parse.rs
   |
   |         ($selector:ident: _ $(,)?)
   |                           ^
@@ -42,7 +42,7 @@ error: no rules expected `)`
   |                          ^^^^^^^^^^^^^^^^^^^^^^ no rules expected this token in macro call
   |
 note: while trying to match `:`
- --> $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/msg_send/parse.rs
   |
   |         ($($selector:ident : $argument:expr)*)
   |                            ^
@@ -54,7 +54,7 @@ error: expected identifier, found `:`
   |     let _: () = unsafe { msg_send![obj, a: b: c] };
   |                                             ^ expected identifier
   |
- ::: $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+ ::: $WORKSPACE/crates/objc2/src/__macros/msg_send/parse.rs
   |
   |         ($selector:ident : $argument:expr $(, $($rest:tt)*)?)
   |                            -------------- while parsing argument for this `expr` macro fragment
@@ -66,7 +66,7 @@ error: no rules expected `d`
   |                                                 ^ no rules expected this token in macro call
   |
 note: while trying to match `:`
- --> $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/msg_send/parse.rs
   |
   |         ($selector:ident: _ $(,)?)
   |                         ^
@@ -77,7 +77,7 @@ error: expected identifier, found `:`
   |     let _: () = unsafe { msg_send![obj, a: b: c] };
   |                                             ^ expected identifier
   |
- ::: $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+ ::: $WORKSPACE/crates/objc2/src/__macros/msg_send/parse.rs
   |
   |         ($selector:ident : $argument:expr $(, $($rest:tt)*)?)
   |                            -------------- while parsing argument for this `expr` macro fragment
@@ -89,7 +89,7 @@ error: no rules expected `,`
   |                                                  ^ no rules expected this token in macro call
   |
 note: while trying to match `)`
- --> $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/msg_send/parse.rs
   |
   |         ($($selector:ident : $argument:expr)*)
   |                                              ^
@@ -101,7 +101,7 @@ error: no rules expected `b`
   |                                                                           ^ no rules expected this token in macro call
   |
 note: while trying to match `)`
- --> $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/msg_send/parse.rs
   |
   |         ($selector:ident: _ $(,)?)
   |                                  ^

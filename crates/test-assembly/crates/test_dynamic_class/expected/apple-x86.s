@@ -23,7 +23,7 @@ LBB0_1:
 	push	eax
 	push	edx
 	push	ecx
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	add	esp, 24
 	pop	ebp
 	ret
@@ -51,7 +51,7 @@ LBB1_1:
 	push	eax
 	push	edx
 	push	ecx
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	add	esp, 24
 	pop	ebp
 	ret
@@ -79,7 +79,7 @@ LBB2_1:
 	push	eax
 	push	edx
 	push	ecx
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	add	esp, 24
 	pop	ebp
 	ret
@@ -107,7 +107,7 @@ LBB3_1:
 	push	ecx
 	push	edx
 	push	eax
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	add	esp, 24
 	pop	ebp
 	ret
@@ -158,7 +158,7 @@ LBB4_1:
 	push	eax
 	push	ecx
 	push	edx
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	mov	edx, eax
 	mov	edi, dword ptr [esi + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)-L4$pb]
@@ -173,7 +173,7 @@ LBB4_3:
 	push	eax
 	push	ecx
 	push	edx
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	mov	edx, edi
 	add	esp, 16
 	mov	edi, eax
@@ -190,7 +190,7 @@ LBB4_5:
 	push	eax
 	push	ecx
 	push	edx
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	mov	edx, ebx
 	add	esp, 16
 	mov	ebx, eax
@@ -208,7 +208,7 @@ LBB4_7:
 	push	edx
 	push	esi
 	mov	esi, eax
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	mov	edx, dword ptr [ebp - 16]
 	add	esp, 16
 	mov	ecx, eax
@@ -252,7 +252,7 @@ LBB5_1:
 	push	edx
 	push	esi
 	mov	ebx, eax
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	mov	esi, eax
 	mov	eax, ebx
@@ -268,7 +268,7 @@ LBB5_3:
 	push	edx
 	push	edi
 	mov	edi, eax
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	add	esp, 16
 	mov	ecx, eax
 	mov	eax, edi
@@ -305,7 +305,7 @@ LBB6_3:
 	push	ecx
 	push	edx
 	push	ebx
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	lea	edx, [esi + L_anon.[ID].10-L6$pb]
 	lea	ecx, [esi + l_anon.[ID].11-L6$pb]
 	add	esp, 16

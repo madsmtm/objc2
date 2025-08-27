@@ -1,7 +1,7 @@
 use alloc::ffi::CString;
 use core::ptr::NonNull;
 
-use crate::__macro_helpers::defined_ivars::get_initialized_ivar_ptr;
+use crate::__macros::define_class::get_initialized_ivar_ptr;
 use crate::encode::RefEncode;
 use crate::rc::{Allocated, Retained};
 use crate::runtime::{AnyClass, AnyProtocol, ProtocolObject};

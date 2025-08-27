@@ -11,7 +11,7 @@ error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
             NSObject
             __NSProxy
 note: required by a bound in `send_super_message_static`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/msg_send/retained.rs
   |
   |     unsafe fn send_super_message_static<A: ConvertArguments>(
   |               ------------------------- required by a bound in this associated function
@@ -32,7 +32,7 @@ error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
             NSObject
             __NSProxy
 note: required by a bound in `send_super_message_static`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/msg_send/retained.rs
   |
   |     unsafe fn send_super_message_static<A: ConvertArguments>(
   |               ------------------------- required by a bound in this associated function

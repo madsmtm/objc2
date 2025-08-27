@@ -1,6 +1,6 @@
 use core::mem;
 
-use crate::__macro_helpers::RetainedReturnValue;
+use crate::__macros::RetainedReturnValue;
 use crate::encode::{EncodeArgument, EncodeArguments, EncodeReturn, RefEncode};
 use crate::rc::Allocated;
 use crate::runtime::{Imp, MessageReceiver, Sel};

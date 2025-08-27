@@ -5,7 +5,7 @@ error: no rules expected `{`
   |                         ^ no rules expected this token in macro call
   |
 note: while trying to match `;`
- --> $WORKSPACE/crates/objc2/src/macros/extern_class.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_class/mod.rs
   |
   |         $v:vis struct $class:ident;
   |                                   ^

@@ -41,7 +41,7 @@ LBB1_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(objc2::__macro_helpers::retain_semantics::new_fail::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::retain_semantics::new_fail::GENERATED_ID, 0)
 
 	.globl	_fn03_handle_alloc
 	.p2align	4
@@ -92,7 +92,7 @@ LBB4_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(objc2::__macro_helpers::retain_semantics::init_fail::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::retain_semantics::init_fail::GENERATED_ID, 0)
 
 	.globl	_fn06_handle_alloc_init
 	.p2align	4
@@ -187,7 +187,7 @@ L9$pb:
 LBB9_2:
 	lea	eax, [esi + l_anon.[ID].3-L9$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2::__macro_helpers::retain_semantics::copy_fail::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::retain_semantics::copy_fail::GENERATED_ID, 0)
 
 	.globl	_fn11_handle_mutable_copy
 	.p2align	4
@@ -221,7 +221,7 @@ L11$pb:
 LBB11_2:
 	lea	eax, [esi + l_anon.[ID].4-L11$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2::__macro_helpers::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)
 
 	.globl	_fn13_handle_autoreleased
 	.p2align	4
@@ -312,7 +312,7 @@ LBB14_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(objc2::__macro_helpers::retain_semantics::none_fail::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::retain_semantics::none_fail::GENERATED_ID, 0)
 
 	.globl	_fn16_handle_with_out_param
 	.p2align	4

@@ -38,7 +38,7 @@ fn get_idents(input: TokenStream) -> impl Iterator<Item = Ident> {
 ///
 /// This hash is not guaranteed to be stable across compiler versions.
 ///
-/// Tests are in [`objc2::__macro_helpers`].
+/// Tests are in `objc2/src/__macros/hash_idents.rs`.
 #[proc_macro]
 #[doc(hidden)]
 pub fn __hash_idents(input: TokenStream) -> TokenStream {

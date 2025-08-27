@@ -143,7 +143,7 @@ macro_rules! __method_msg_send {
         ($($arg_parsed:tt)*)
         ($($method_family:tt)*)
     ) => ({
-        $crate::__macro_helpers::compile_error!(
+        $crate::__macros::compile_error!(
             "variadic methods are not yet supported"
         )
     });
@@ -158,7 +158,7 @@ macro_rules! __method_msg_send {
         ($($arg_parsed:tt)*)
         ($($method_family:tt)*)
     ) => ({
-        $crate::__macro_helpers::compile_error!(
+        $crate::__macros::compile_error!(
             "number of arguments in function and selector did not match"
         )
     });

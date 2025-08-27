@@ -1,6 +1,6 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
 	cbz	x0, LBB0_2
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
@@ -16,7 +16,7 @@ LBB0_2:
 	ret
 
 	.p2align	2
-SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -35,7 +35,7 @@ LBB1_3:
 	ret
 
 	.p2align	2
-SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0):
 Lfunc_begin0:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
@@ -112,7 +112,7 @@ Lttbase0:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0):
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -242,7 +242,7 @@ Ltmp20:
 Ltmp21:
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
+	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
 Ltmp22:
 	mov	x0, x21
 	bl	__Unwind_Resume
@@ -317,7 +317,7 @@ Ltmp26:
 Ltmp27:
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0)
+	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0)
 Ltmp28:
 	mov	x0, x21
 	bl	__Unwind_Resume
@@ -398,7 +398,7 @@ Ltmp32:
 Ltmp33:
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
+	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
 Ltmp34:
 	mov	x0, x21
 	bl	__Unwind_Resume
@@ -486,7 +486,7 @@ Ltmp38:
 	mov	x21, x0
 Ltmp39:
 	mov	x0, sp
-	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0)
+	bl	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0)
 Ltmp40:
 	b	LBB8_8
 LBB8_5:

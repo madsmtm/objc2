@@ -53,7 +53,7 @@ fn array_exception() {
         "<(A,) as objc2::encode::EncodeArguments>::__invoke",
         "objc2::runtime::message_receiver::msg_send_primitive::send",
         "objc2::runtime::message_receiver::MessageReceiver::send_message",
-        "<MethodFamily as objc2::__macro_helpers::msg_send_retained::MsgSend<Receiver,Return>>::send_message",
+        "<MethodFamily as objc2::__macros::msg_send::retained::MsgSend<Receiver,Return>>::send_message",
         "array_exception_via_msg_send",
     ];
 
@@ -69,7 +69,7 @@ fn array_exception() {
         "<(A,) as objc2::encode::EncodeArguments>::__invoke",
         "objc2::runtime::message_receiver::msg_send_primitive::send",
         "objc2::runtime::message_receiver::MessageReceiver::send_message",
-        "<MethodFamily as objc2::__macro_helpers::msg_send_retained::MsgSend<Receiver,Return>>::send_message",
+        "<MethodFamily as objc2::__macros::msg_send::retained::MsgSend<Receiver,Return>>::send_message",
         "objc2_foundation::generated::__NSArray::NSArray<ObjectType>::objectAtIndex",
         "array_exception_via_extern_methods",
     ];
@@ -139,7 +139,7 @@ fn capture_backtrace() {
         "<() as objc2::encode::EncodeArguments>::__invoke",
         "objc2::runtime::message_receiver::msg_send_primitive::send",
         "objc2::runtime::message_receiver::MessageReceiver::send_message",
-        "<MethodFamily as objc2::__macro_helpers::msg_send_retained::MsgSend<Receiver,Return>>::send_message",
+        "<MethodFamily as objc2::__macros::msg_send::retained::MsgSend<Receiver,Return>>::send_message",
         "rust_backtrace_via_msg_send",
     ];
 
@@ -154,7 +154,7 @@ fn capture_backtrace() {
         "<() as objc2::encode::EncodeArguments>::__invoke",
         "objc2::runtime::message_receiver::msg_send_primitive::send",
         "objc2::runtime::message_receiver::MessageReceiver::send_message",
-        "<MethodFamily as objc2::__macro_helpers::msg_send_retained::MsgSend<Receiver,Return>>::send_message",
+        "<MethodFamily as objc2::__macros::msg_send::retained::MsgSend<Receiver,Return>>::send_message",
         "Thrower::backtrace",
         "rust_backtrace_via_extern_methods",
     ];

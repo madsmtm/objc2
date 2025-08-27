@@ -111,7 +111,7 @@ LBB0_16:
 	lea	rdi, [rip + L_anon.[ID].12]
 	lea	rdx, [rip + l_anon.[ID].14]
 	mov	esi, 8
-	call	SYM(objc2::__macro_helpers::define_class::class_not_unique::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::define_class::checks::class_not_unique::GENERATED_ID, 0)
 LBB0_15:
 Ltmp16:
 	mov	rbx, rax

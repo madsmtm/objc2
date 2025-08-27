@@ -1,4 +1,4 @@
-error: use of deprecated function `objc2::__macro_helpers::extern_methods_unsafe_impl`: having the `impl` inside `extern_methods!` is deprecated, move it outside instead
+error: use of deprecated function `objc2::__macros::extern_methods_unsafe_impl`: having the `impl` inside `extern_methods!` is deprecated, move it outside instead
  --> ui/extern_methods_deprecated_syntax.rs
   |
   | / extern_methods!(

@@ -1,5 +1,7 @@
+//! Minimal copy of <https://doc.rust-lang.org/std/cell/struct.SyncUnsafeCell.html>.
 use core::cell::UnsafeCell;
 
+/// `UnsafeCell`, but `Sync`.
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct SyncUnsafeCell<T: ?Sized> {

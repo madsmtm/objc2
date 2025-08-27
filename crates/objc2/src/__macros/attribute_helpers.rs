@@ -126,7 +126,7 @@ macro_rules! __extract_method_attributes_inner {
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__macro_helpers::compile_error!("must specify the desired selector using `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`");
+        $crate::__macros::compile_error!("must specify the desired selector using `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`");
 
         // Try to output anyhow, for better UI.
         $out_macro! {
@@ -215,9 +215,9 @@ macro_rules! __extract_method_attributes_inner {
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
+        $crate::__macros::compile_error!($crate::__macros::concat!(
             "The #[method] attribute is now unsafe, and must be used as #[unsafe(method(",
-            $crate::__macro_helpers::stringify!($($parsed)*),
+            $crate::__macros::stringify!($($parsed)*),
             "))]",
         ));
 
@@ -285,9 +285,9 @@ macro_rules! __extract_method_attributes_inner {
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
+        $crate::__macros::compile_error!($crate::__macros::concat!(
             "The #[method_id] attribute is now unsafe, and must be used as #[unsafe(method_id(",
-            $crate::__macro_helpers::stringify!($($parsed)*),
+            $crate::__macros::stringify!($($parsed)*),
             "))]",
         ));
 
@@ -353,9 +353,9 @@ macro_rules! __extract_method_attributes_inner {
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
+        $crate::__macros::compile_error!($crate::__macros::concat!(
             "The #[method_family] attribute is unsafe, and must be used as #[unsafe(method_family = ",
-            $crate::__macro_helpers::stringify!($($parsed)*),
+            $crate::__macros::stringify!($($parsed)*),
             ")]",
         ));
 
@@ -1032,7 +1032,7 @@ macro_rules! __handle_duplicate {
         $name:literal;
         $($existing:tt)+ // Has existing value
     ) => {
-        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
+        $crate::__macros::compile_error!($crate::__macros::concat!(
             "cannot specify the `",
             $name,
             "` attribute twice",

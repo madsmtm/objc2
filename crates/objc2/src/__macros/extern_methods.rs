@@ -280,7 +280,7 @@ macro_rules! extern_methods {
 
         $($rest:tt)*
     ) => {
-        const _: () = $crate::__macro_helpers::extern_methods_unsafe_impl();
+        const _: () = $crate::__macros::extern_methods_unsafe_impl();
 
         $(#[$m])*
         impl<$($t $(: $b $(+ $rest)*)?),*> $type {
@@ -341,9 +341,7 @@ macro_rules! __extern_methods_method_out {
 macro_rules! __extern_methods_no_optional {
     () => {};
     (#[optional]) => {
-        $crate::__macro_helpers::compile_error!(
-            "`#[optional]` is only supported in `extern_protocol!`"
-        )
+        $crate::__macros::compile_error!("`#[optional]` is only supported in `extern_protocol!`")
     };
 }
 
@@ -352,11 +350,11 @@ macro_rules! __extern_methods_no_optional {
 macro_rules! __extern_methods_method_id_deprecated {
     (method($($sel:tt)*)) => {};
     (method_id($($sel:tt)*)) => {{
-        #[deprecated = $crate::__macro_helpers::concat!(
+        #[deprecated = $crate::__macros::concat!(
             "using #[unsafe(method_id(",
-            $crate::__macro_helpers::stringify!($($sel)*),
+            $crate::__macros::stringify!($($sel)*),
             "))] inside extern_methods! is deprecated.\nUse #[unsafe(method(",
-            $crate::__macro_helpers::stringify!($($sel)*),
+            $crate::__macros::stringify!($($sel)*),
             "))] instead",
         )]
         #[inline]
@@ -364,6 +362,9 @@ macro_rules! __extern_methods_method_id_deprecated {
         method_id();
     }};
 }
+
+#[deprecated = "having the `impl` inside `extern_methods!` is deprecated, move it outside instead"]
+pub const fn extern_methods_unsafe_impl() {}
 
 #[cfg(test)]
 mod tests {

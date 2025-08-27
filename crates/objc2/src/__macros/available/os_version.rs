@@ -4,9 +4,6 @@
 use core::cmp::Ordering;
 use core::fmt;
 
-#[cfg(target_vendor = "apple")]
-mod apple;
-
 /// The size of the fields here are limited by Mach-O's `LC_BUILD_VERSION`.
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -66,13 +63,13 @@ const fn parse_usize(mut bytes: &[u8]) -> (usize, &[u8]) {
 }
 
 impl OSVersion {
-    const MIN: Self = Self {
+    pub(crate) const MIN: Self = Self {
         major: 0,
         minor: 0,
         patch: 0,
     };
 
-    const MAX: Self = Self {
+    pub(crate) const MAX: Self = Self {
         major: u16::MAX,
         minor: u8::MAX,
         patch: u8::MAX,
@@ -256,12 +253,12 @@ pub fn is_available(version: AvailableVersion) -> bool {
         // If the deployment target is high enough, the API is always available.
         //
         // This check should be optimized away at compile time.
-        if version <= apple::DEPLOYMENT_TARGET {
+        if version <= super::apple::DEPLOYMENT_TARGET {
             return true;
         }
 
         // Otherwise, compare against the version at runtime.
-        version <= apple::current_version()
+        version <= super::apple::current_version()
     }
 
     #[cfg(not(target_vendor = "apple"))]

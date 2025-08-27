@@ -1,3 +1,9 @@
+#[cfg(target_vendor = "apple")]
+mod apple;
+mod os_version;
+
+pub use self::os_version::*;
+
 /// Check if APIs from the given operating system versions are available.
 ///
 /// Apple adds new APIs with new OS releases, and as a developer, you often
@@ -136,10 +142,10 @@ macro_rules! available {
             $os:ident $(= $major:literal $(. $minor:literal $(. $patch:literal)?)?)?
         ),* $(,)?
     ) => {
-        $crate::__macro_helpers::is_available({
+        $crate::__macros::is_available({
             // TODO: Use inline const once in MSRV
             #[allow(clippy::needless_update)]
-            const VERSION: $crate::__macro_helpers::AvailableVersion = $crate::__macro_helpers::AvailableVersion {
+            const VERSION: $crate::__macros::AvailableVersion = $crate::__macros::AvailableVersion {
                 $(
                     // Doesn't actually parse versions this way, but is
                     // helpful to write it like this for documentation.
@@ -151,7 +157,7 @@ macro_rules! available {
                 // A version this high will never be lower than the deployment
                 // target, and hence will always return `false` from
                 // `is_available`.
-                .. $crate::__macro_helpers::AvailableVersion::MAX
+                .. $crate::__macros::AvailableVersion::MAX
             };
             VERSION
         })
@@ -163,9 +169,9 @@ macro_rules! available {
         )*
         ..
     ) => {
-        $crate::__macro_helpers::is_available({
+        $crate::__macros::is_available({
             #[allow(clippy::needless_update)]
-            const VERSION: $crate::__macro_helpers::AvailableVersion = $crate::__macro_helpers::AvailableVersion {
+            const VERSION: $crate::__macros::AvailableVersion = $crate::__macros::AvailableVersion {
                 $(
                     $os: $($crate::__available_version!($major $(. $minor $(. $patch)?)?))?,
                 )*
@@ -174,7 +180,7 @@ macro_rules! available {
                 // `is_available`.
                 //
                 // We do this when `..` is specified.
-                .. $crate::__macro_helpers::AvailableVersion::MIN
+                .. $crate::__macros::AvailableVersion::MIN
             };
             VERSION
         })
@@ -200,8 +206,8 @@ macro_rules! __available_version {
     // Just in case rustc's parsing changes in the future, let's handle this
     // generically, instead of trying to split each part into separate `tt`.
     ($($version_part_or_period:tt)*) => {
-        $crate::__macro_helpers::OSVersion::from_str($crate::__macro_helpers::concat!($(
-            $crate::__macro_helpers::stringify!($version_part_or_period),
+        $crate::__macros::OSVersion::from_str($crate::__macros::concat!($(
+            $crate::__macros::stringify!($version_part_or_period),
         )*))
     };
 }

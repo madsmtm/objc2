@@ -77,7 +77,7 @@ fn2_iter_once:
 .LBB1_2:
 	mov	rdi, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	lea	rsi, [rip + .Lanon.[ID].0]
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)@GOTPCREL]
 	mov	r13, rax
 	jmp	.LBB1_3
 .Lfunc_end1:
@@ -166,7 +166,7 @@ fn4_iter:
 .LBB3_3:
 	mov	rdi, r15
 	lea	rsi, [rip + .Lanon.[ID].0]
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)@GOTPCREL]
 	mov	rbp, rax
 	jmp	.LBB3_4
 .LBB3_7:
@@ -246,7 +246,7 @@ fn5_iter_noop:
 .LBB4_3:
 	mov	rdi, r12
 	lea	rsi, [rip + .Lanon.[ID].0]
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)@GOTPCREL]
 	mov	rbp, rax
 	jmp	.LBB4_4
 .LBB4_7:
@@ -359,7 +359,7 @@ fn6_iter_retained:
 .LBB5_3:
 	mov	rdi, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	lea	rsi, [rip + .Lanon.[ID].0]
-	call	qword ptr [rip + SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)@GOTPCREL]
 	mov	rbp, rax
 	jmp	.LBB5_4
 .LBB5_14:

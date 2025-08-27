@@ -1,3 +1,7 @@
+mod checks;
+
+pub use self::checks::*;
+
 /// Create a new type to represent a class.
 ///
 /// This is similar to an `@interface` declaration in Objective-C.
@@ -258,7 +262,7 @@ macro_rules! __extern_class_inner {
                 ($crate::runtime::NSObject)
             },
             // Bind generics (and make them invariant).
-            $(__generics: $crate::__macro_helpers::PhantomData<($(*mut $generic),+)>,)?
+            $(__generics: $crate::__macros::PhantomData<($(*mut $generic),+)>,)?
         }
 
         $crate::__extern_class_impl_traits! {
@@ -298,20 +302,20 @@ macro_rules! __extern_class_inner {
                 (<<Self as $crate::ClassType>::Super as $crate::ClassType>::ThreadKind)
             };
 
-            const NAME: &'static $crate::__macro_helpers::str = $crate::__fallback_if_not_set! {
+            const NAME: &'static $crate::__macros::str = $crate::__fallback_if_not_set! {
                 ($($name)*)
-                ($crate::__macro_helpers::stringify!($class))
+                ($crate::__macros::stringify!($class))
             };
 
             #[inline]
             fn class() -> &'static $crate::runtime::AnyClass {
-                let _ = <Self as $crate::__macro_helpers::ValidThreadKind<<Self as $crate::ClassType>::ThreadKind>>::check;
-                let _ = <Self as $crate::__macro_helpers::MainThreadOnlyDoesNotImplSendSync<_>>::check;
-                let _ = <Self as $crate::__macro_helpers::DoesNotImplDrop<_>>::check;
+                let _ = <Self as $crate::__macros::ValidThreadKind<<Self as $crate::ClassType>::ThreadKind>>::check;
+                let _ = <Self as $crate::__macros::MainThreadOnlyDoesNotImplSendSync<_>>::check;
+                let _ = <Self as $crate::__macros::DoesNotImplDrop<_>>::check;
 
                 $crate::__class_inner!($crate::__fallback_if_not_set! {
                     ($($name)*)
-                    ($crate::__macro_helpers::stringify!($class))
+                    ($crate::__macros::stringify!($class))
                 }, $crate::__hash_idents!($class))
             }
 
@@ -338,14 +342,12 @@ macro_rules! __extern_class_inner {
 macro_rules! __extern_class_check_super_unsafe {
     (unsafe $($superclass:tt)+) => {};
     (safe $($superclass:tt)+) => {
-        $crate::__macro_helpers::compile_error!(
+        $crate::__macros::compile_error!(
             "#[super(...)] must be wrapped in `unsafe`, as in #[unsafe(super(...))]"
         );
     };
     () => {
-        $crate::__macro_helpers::compile_error!(
-            "must specify the superclass with #[unsafe(super(...))]"
-        );
+        $crate::__macros::compile_error!("must specify the superclass with #[unsafe(super(...))]");
     };
 }
 
@@ -362,7 +364,7 @@ macro_rules! __extern_class_map_anyobject {
 macro_rules! __extern_class_check_no_ivars {
     () => {};
     ($($ivars:tt)*) => {
-        $crate::__macro_helpers::compile_error!("#[ivars] is not supported in extern_class!");
+        $crate::__macros::compile_error!("#[ivars] is not supported in extern_class!");
     };
 }
 
@@ -425,7 +427,7 @@ macro_rules! __extern_class_impl_traits {
         // is not, and hence `&NSArray<UserClass<'a>>` -> `&NSObject` ->
         // `Retained<NSObject>` isn't either.
         $($attr_impl)*
-        impl $($after_impl)* $crate::__macro_helpers::Deref for $($for)* {
+        impl $($after_impl)* $crate::__macros::Deref for $($for)* {
             type Target = $superclass;
 
             #[inline]
@@ -435,7 +437,7 @@ macro_rules! __extern_class_impl_traits {
         }
 
         $($attr_impl)*
-        impl $($after_impl)* $crate::__macro_helpers::AsRef<Self> for $($for)* {
+        impl $($after_impl)* $crate::__macros::AsRef<Self> for $($for)* {
             #[inline]
             fn as_ref(&self) -> &Self {
                 self
@@ -479,7 +481,7 @@ macro_rules! __extern_class_impl_as_ref_borrow {
         fn as_ref($($self:tt)*) $as_ref:block
     } => {
         $($attr_impl)*
-        impl $($after_impl)* $crate::__macro_helpers::AsRef<$superclass> for $($for)* {
+        impl $($after_impl)* $crate::__macros::AsRef<$superclass> for $($for)* {
             #[inline]
             fn as_ref($($self)*) -> &$superclass $as_ref
         }
@@ -491,7 +493,7 @@ macro_rules! __extern_class_impl_as_ref_borrow {
         // after borrow.
 
         $($attr_impl)*
-        impl $($after_impl)* $crate::__macro_helpers::Borrow<$superclass> for $($for)* {
+        impl $($after_impl)* $crate::__macros::Borrow<$superclass> for $($for)* {
             #[inline]
             fn borrow($($self)*) -> &$superclass $as_ref
         }
@@ -534,10 +536,10 @@ macro_rules! __extern_class_derives {
     ) => {
         $($attr_impl)*
         #[automatically_derived]
-        impl $($after_impl)* $crate::__macro_helpers::fmt::Debug for $($for)* {
-            fn fmt(&self, f: &mut $crate::__macro_helpers::fmt::Formatter<'_>) -> $crate::__macro_helpers::fmt::Result {
+        impl $($after_impl)* $crate::__macros::fmt::Debug for $($for)* {
+            fn fmt(&self, f: &mut $crate::__macros::fmt::Formatter<'_>) -> $crate::__macros::fmt::Result {
                 // Delegate to the superclass
-                $crate::__macro_helpers::fmt::Debug::fmt(&self.__superclass, f)
+                $crate::__macros::fmt::Debug::fmt(&self.__superclass, f)
             }
         }
 
@@ -562,11 +564,11 @@ macro_rules! __extern_class_derives {
     ) => {
         $($attr_impl)*
         #[automatically_derived]
-        impl $($after_impl)* $crate::__macro_helpers::PartialEq for $($for)* {
+        impl $($after_impl)* $crate::__macros::PartialEq for $($for)* {
             #[inline]
-            fn eq(&self, other: &Self) -> $crate::__macro_helpers::bool {
+            fn eq(&self, other: &Self) -> $crate::__macros::bool {
                 // Delegate to the superclass
-                $crate::__macro_helpers::PartialEq::eq(&self.__superclass, &other.__superclass)
+                $crate::__macros::PartialEq::eq(&self.__superclass, &other.__superclass)
             }
         }
 
@@ -591,7 +593,7 @@ macro_rules! __extern_class_derives {
     ) => {
         $($attr_impl)*
         #[automatically_derived]
-        impl $($after_impl)* $crate::__macro_helpers::Eq for $($for)* {}
+        impl $($after_impl)* $crate::__macros::Eq for $($for)* {}
 
         $crate::__extern_class_derives! {
             ($($attr_impl)*)
@@ -614,11 +616,11 @@ macro_rules! __extern_class_derives {
     ) => {
         $($attr_impl)*
         #[automatically_derived]
-        impl $($after_impl)* $crate::__macro_helpers::Hash for $($for)* {
+        impl $($after_impl)* $crate::__macros::Hash for $($for)* {
             #[inline]
-            fn hash<H: $crate::__macro_helpers::Hasher>(&self, state: &mut H) {
+            fn hash<H: $crate::__macros::Hasher>(&self, state: &mut H) {
                 // Delegate to the superclass
-                $crate::__macro_helpers::Hash::hash(&self.__superclass, state)
+                $crate::__macros::Hash::hash(&self.__superclass, state)
             }
         }
 
@@ -646,7 +648,7 @@ macro_rules! __extern_class_derives {
             #[derive($derive)]
             struct Derive;
         };
-        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::stringify!(
+        $crate::__macros::compile_error!($crate::__macros::stringify!(
             #[derive($derive)] is not supported in extern_class!
         ));
 
@@ -666,6 +668,6 @@ macro_rules! __select_name {
         $name_const
     };
     ($name:ident;) => {
-        $crate::__macro_helpers::stringify!($name)
+        $crate::__macros::stringify!($name)
     };
 }

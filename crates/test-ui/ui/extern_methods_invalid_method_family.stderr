@@ -23,8 +23,8 @@ error: cannot specify the `method_family` attribute twice
   |
   = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0412]: cannot find type `unknown` in module `$crate::__macro_helpers::method_family_import`
+error[E0412]: cannot find type `unknown` in module `$crate::__macros::method_family_import`
  --> ui/extern_methods_invalid_method_family.rs
   |
   |         #[unsafe(method_family = unknown)]
-  |                                  ^^^^^^^ not found in `$crate::__macro_helpers::method_family_import`
+  |                                  ^^^^^^^ not found in `$crate::__macros::method_family_import`

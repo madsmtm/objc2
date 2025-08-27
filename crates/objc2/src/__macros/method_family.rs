@@ -102,7 +102,7 @@ macro_rules! __method_family {
         ($($method_family:tt)+)
         ($($sel:tt)*)
     ) => {
-        $crate::__macro_helpers::method_family_import::$($method_family)+
+        $crate::__macros::method_family_import::$($method_family)+
     };
 
     // Often called, avoid generating logic for figuring it out from selector.
@@ -110,19 +110,19 @@ macro_rules! __method_family {
         ()
         (alloc)
     ) => {
-        $crate::__macro_helpers::AllocFamily
+        $crate::__macros::AllocFamily
     };
     (
         ()
         (new)
     ) => {
-        $crate::__macro_helpers::NewFamily
+        $crate::__macros::NewFamily
     };
     (
         ()
         (init)
     ) => {
-        $crate::__macro_helpers::InitFamily
+        $crate::__macros::InitFamily
     };
 
     // To prevent automatic memory management when using these.
@@ -130,25 +130,25 @@ macro_rules! __method_family {
         ()
         (dealloc)
     ) => {
-        $crate::__macro_helpers::DeallocSelector
+        $crate::__macros::DeallocSelector
     };
     (
         ()
         (retain)
     ) => {
-        $crate::__macro_helpers::RetainSelector
+        $crate::__macros::RetainSelector
     };
     (
         ()
         (release)
     ) => {
-        $crate::__macro_helpers::ReleaseSelector
+        $crate::__macros::ReleaseSelector
     };
     (
         ()
         (autorelease)
     ) => {
-        $crate::__macro_helpers::AutoreleaseSelector
+        $crate::__macros::AutoreleaseSelector
     };
 
     // Figure out from selector.
@@ -156,11 +156,11 @@ macro_rules! __method_family {
         ()
         ($sel_first:tt $($sel_rest:tt)*)
     ) => {
-        $crate::__macro_helpers::MethodFamily<{
+        $crate::__macros::MethodFamily<{
             // Method families can be determined from just the first part of
             // the selector, so for compile-time performance we only stringify
             // and pass that part.
-            $crate::__macro_helpers::method_family($crate::__macro_helpers::stringify!($sel_first))
+            $crate::__macros::method_family($crate::__macros::stringify!($sel_first))
         }>
     };
 
@@ -169,9 +169,9 @@ macro_rules! __method_family {
         ()
         ()
     ) => {
-        $crate::__macro_helpers::MethodFamily<{
-            $crate::__macro_helpers::compile_error!("missing selector");
-            $crate::__macro_helpers::method_family("")
+        $crate::__macros::MethodFamily<{
+            $crate::__macros::compile_error!("missing selector");
+            $crate::__macros::method_family("")
         }>
     };
 }

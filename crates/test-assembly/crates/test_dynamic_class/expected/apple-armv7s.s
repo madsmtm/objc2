@@ -24,7 +24,7 @@ LPC0_1:
 LPC0_2:
 	add	r2, pc, r2
 	pop	{r7, lr}
-	b	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 
 	.globl	_fn1_get_same_class
 	.p2align	2
@@ -53,7 +53,7 @@ LPC1_2:
 LPC1_3:
 	add	r2, pc, r2
 	pop	{r7, lr}
-	b	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 
 	.globl	_fn3_get_different_class
 	.p2align	2
@@ -79,7 +79,7 @@ LPC2_1:
 LPC2_2:
 	add	r2, pc, r2
 	pop	{r7, lr}
-	b	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 
 	.globl	_fn4_unused_class
 	.p2align	2
@@ -108,7 +108,7 @@ LPC3_2:
 LPC3_3:
 	add	r2, pc, r2
 	pop	{r7, lr}
-	b	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	b	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 
 	.globl	_fn5_use_fns
 	.p2align	2
@@ -152,7 +152,7 @@ LPC4_2:
 	add	r2, pc, r2
 	mov	r5, r0
 	mov	r0, r3
-	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r4, r0
 	mov	r0, r5
 	ldr	r5, [r8]
@@ -173,7 +173,7 @@ LPC4_5:
 	add	r2, pc, r2
 	mov	r6, r0
 	mov	r0, r3
-	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r5, r0
 	mov	r0, r6
 	ldr	r6, [r8, #4]
@@ -191,7 +191,7 @@ LPC4_7:
 	add	r2, pc, r2
 	mov	r10, r0
 	mov	r0, r3
-	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r6, r0
 	mov	r0, r10
 	ldr	r1, [r8, #8]
@@ -209,7 +209,7 @@ LPC4_9:
 	add	r2, pc, r2
 	mov	r8, r0
 	mov	r0, r3
-	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r8
 	stm	r0, {r4, r5, r6}
@@ -249,7 +249,7 @@ LPC5_2:
 	add	r2, pc, r2
 	mov	r6, r0
 	mov	r0, r3
-	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r4, r0
 	mov	r0, r6
 	ldr	r1, [r5, #12]
@@ -267,7 +267,7 @@ LPC5_4:
 	add	r2, pc, r2
 	mov	r5, r0
 	mov	r0, r3
-	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r5
 	str	r4, [r0]
@@ -308,7 +308,7 @@ LBB6_4:
 	mov	r0, r4
 	mov	r1, r5
 	mov	r2, r6
-	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r0, r8
 	subs	r0, r0, #1
 	bne	LBB6_2

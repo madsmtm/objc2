@@ -190,7 +190,7 @@ Lloh53:
 Lloh54:
 	add	x2, x2, l_anon.[ID].14@PAGEOFF
 	mov	w1, #8
-	bl	SYM(objc2::__macro_helpers::define_class::class_not_unique::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::define_class::checks::class_not_unique::GENERATED_ID, 0)
 LBB0_17:
 Ltmp16:
 	mov	x19, x0

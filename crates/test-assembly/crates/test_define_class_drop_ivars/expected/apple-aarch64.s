@@ -1,6 +1,6 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(objc2[CRATE_ID]::__macro_helpers::defined_ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0):
+SYM(objc2[CRATE_ID]::__macros::define_class::ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0):
 Lfunc_begin0:
 	sub	sp, sp, #64
 	stp	x22, x21, [sp, #16]
@@ -141,13 +141,13 @@ Lloh14:
 	ldr	x1, [x8]
 Ltmp6:
 Lloh15:
-	adrp	x4, l_anon.[ID].3@PAGE
+	adrp	x4, l_anon.[ID].5@PAGE
 Lloh16:
-	add	x4, x4, l_anon.[ID].3@PAGEOFF
+	add	x4, x4, l_anon.[ID].5@PAGEOFF
 Lloh17:
-	adrp	x5, SYM(objc2[CRATE_ID]::__macro_helpers::defined_ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGE
+	adrp	x5, SYM(objc2[CRATE_ID]::__macros::define_class::ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGE
 Lloh18:
-	add	x5, x5, SYM(objc2[CRATE_ID]::__macro_helpers::defined_ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGEOFF
+	add	x5, x5, SYM(objc2[CRATE_ID]::__macros::define_class::ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGEOFF
 	mov	x0, sp
 	mov	w2, #8
 	mov	x3, #0
@@ -175,17 +175,17 @@ Lloh25:
 Ltmp9:
 	mov	w8, #2
 Lloh26:
-	adrp	x9, l_anon.[ID].5@PAGE
+	adrp	x9, l_anon.[ID].2@PAGE
 Lloh27:
-	add	x9, x9, l_anon.[ID].5@PAGEOFF
+	add	x9, x9, l_anon.[ID].2@PAGEOFF
 	stp	x8, x9, [sp, #16]
 	mov	w8, #27
 	strb	w8, [sp, #8]
 Ltmp10:
 Lloh28:
-	adrp	x1, l_anon.[ID].1@PAGE
+	adrp	x1, l_anon.[ID].3@PAGE
 Lloh29:
-	add	x1, x1, l_anon.[ID].1@PAGEOFF
+	add	x1, x1, l_anon.[ID].3@PAGEOFF
 	mov	x0, sp
 	add	x5, sp, #8
 	mov	w2, #6
@@ -195,13 +195,13 @@ Lloh29:
 Ltmp11:
 Ltmp12:
 Lloh30:
-	adrp	x1, l_anon.[ID].2@PAGE
+	adrp	x1, l_anon.[ID].4@PAGE
 Lloh31:
-	add	x1, x1, l_anon.[ID].2@PAGEOFF
+	add	x1, x1, l_anon.[ID].4@PAGEOFF
 Lloh32:
-	adrp	x5, l_anon.[ID].4@PAGE
+	adrp	x5, l_anon.[ID].1@PAGE
 Lloh33:
-	add	x5, x5, l_anon.[ID].4@PAGEOFF
+	add	x5, x5, l_anon.[ID].1@PAGEOFF
 	mov	x0, sp
 	mov	w2, #10
 	mov	w3, #1
@@ -212,18 +212,18 @@ Ltmp13:
 	mov	x0, x19
 	bl	_objc_registerClassPair
 Lloh34:
-	adrp	x1, l_anon.[ID].1@PAGE
+	adrp	x1, l_anon.[ID].3@PAGE
 Lloh35:
-	add	x1, x1, l_anon.[ID].1@PAGEOFF
+	add	x1, x1, l_anon.[ID].3@PAGEOFF
 	mov	x0, x19
 	bl	_class_getInstanceVariable
 	cbz	x0, LBB1_11
 	bl	_ivar_getOffset
 	mov	x20, x0
 Lloh36:
-	adrp	x1, l_anon.[ID].2@PAGE
+	adrp	x1, l_anon.[ID].4@PAGE
 Lloh37:
-	add	x1, x1, l_anon.[ID].2@PAGEOFF
+	add	x1, x1, l_anon.[ID].4@PAGEOFF
 	mov	x0, x19
 	bl	_class_getInstanceVariable
 	cbz	x0, LBB1_12
@@ -257,11 +257,11 @@ Lloh45:
 Lloh46:
 	add	x2, x2, l_anon.[ID].11@PAGEOFF
 	mov	w1, #10
-	bl	SYM(objc2::__macro_helpers::define_class::class_not_unique::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::define_class::checks::class_not_unique::GENERATED_ID, 0)
 LBB1_11:
-	bl	SYM(objc2::__macro_helpers::defined_ivars::ivars_offset::get_ivar_failed::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::define_class::ivars::ivars_offset::get_ivar_failed::GENERATED_ID, 0)
 LBB1_12:
-	bl	SYM(objc2::__macro_helpers::defined_ivars::drop_flag_offset::get_drop_flag_failed::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::define_class::ivars::drop_flag_offset::get_drop_flag_failed::GENERATED_ID, 0)
 LBB1_13:
 Ltmp14:
 	mov	x19, x0
@@ -600,27 +600,28 @@ l_anon.[ID].0:
 	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
 	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
-	.section	__TEXT,__cstring,cstring_literals
-l_anon.[ID].1:
-	.asciz	"ivars"
-
-l_anon.[ID].2:
-	.asciz	"drop_flag"
-
 	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].3:
-	.byte	17
-	.space	39
-
-	.p2align	3, 0x0
-l_anon.[ID].4:
+l_anon.[ID].1:
 	.byte	5
 	.space	39
 
 	.p2align	3, 0x0
-l_anon.[ID].5:
+l_anon.[ID].2:
 	.byte	9
+	.space	39
+
+	.section	__TEXT,__cstring,cstring_literals
+l_anon.[ID].3:
+	.asciz	"ivars"
+
+l_anon.[ID].4:
+	.asciz	"drop_flag"
+
+	.section	__TEXT,__const
+	.p2align	3, 0x0
+l_anon.[ID].5:
+	.byte	17
 	.space	39
 
 	.section	__TEXT,__cstring,cstring_literals

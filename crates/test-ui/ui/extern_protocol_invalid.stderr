@@ -5,7 +5,7 @@ error: no rules expected keyword `trait`
   |     ^^^^^ no rules expected this token in macro call
   |
 note: while trying to match keyword `unsafe`
- --> $WORKSPACE/crates/objc2/src/macros/extern_protocol.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_protocol.rs
   |
   |         $v:vis unsafe trait $protocol:ident $(: $conforms_to:ident $(+ $conforms_to_rest:ident)*)? {
   |                ^^^^^^

@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.p2align	4
-SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
 	test	ecx, ecx
 	je	LBB0_2
 	push	ebp
@@ -21,7 +21,7 @@ LBB0_2:
 	ret
 
 	.p2align	4
-SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0):
 	push	ebp
 	mov	ebp, esp
 	push	esi
@@ -43,7 +43,7 @@ LBB1_3:
 	ret
 
 	.p2align	4
-SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0):
 Lfunc_begin0:
 	push	ebp
 	mov	ebp, esp
@@ -131,7 +131,7 @@ Lttbase0:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	4
-SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0):
 	push	ebp
 	mov	ebp, esp
 	push	esi
@@ -284,7 +284,7 @@ Ltmp20:
 Ltmp21:
 	mov	ecx, edi
 	mov	edx, esi
-	call	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
+	call	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
 Ltmp22:
 	mov	dword ptr [esp], ebx
 	call	__Unwind_Resume
@@ -370,7 +370,7 @@ Ltmp26:
 Ltmp27:
 	mov	ecx, edi
 	mov	edx, esi
-	call	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0)
+	call	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>,)>, 0)
 Ltmp28:
 	mov	dword ptr [esp], ebx
 	call	__Unwind_Resume
@@ -463,7 +463,7 @@ Ltmp32:
 Ltmp33:
 	mov	ecx, edi
 	mov	edx, esi
-	call	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
+	call	SYM(core[CRATE_ID]::ptr::drop_in_place::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::WritebackOnDropNullable<objc2[CRATE_ID]::runtime::nsobject::NSObject>>,)>, 0)
 Ltmp34:
 	mov	dword ptr [esp], ebx
 	call	__Unwind_Resume
@@ -563,7 +563,7 @@ Ltmp38:
 	mov	esi, eax
 Ltmp39:
 	lea	ecx, [ebp - 36]
-	call	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macro_helpers::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0)
+	call	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0)
 Ltmp40:
 	jmp	LBB8_7
 LBB8_8:

@@ -43,7 +43,7 @@ error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
             NSObject
             __NSProxy
 note: required by a bound in `ValidThreadKind::check`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/class.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_class/checks.rs
   |
   |     Self::Super: ClassType,
   |                  ^^^^^^^^^ required by this bound in `ValidThreadKind::check`

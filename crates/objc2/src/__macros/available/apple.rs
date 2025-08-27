@@ -152,7 +152,7 @@ extern "C" fn lookup_version() -> u32 {
     let version = version_from_sysctl().unwrap_or_else(version_from_plist);
 
     // Try to make it clearer to the optimizer that this will never return 0.
-    assert_ne!(version, OSVersion::MIN, "version cannot be 0.0.0");
+    assert_ne!(version, super::OSVersion::MIN, "version cannot be 0.0.0");
     version.to_u32()
 }
 

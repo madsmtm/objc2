@@ -24,7 +24,7 @@ error[E0277]: the trait bound `Box<i32>: Encode` is not satisfied
   = note: required for `Box<i32>` to implement `ConvertArgument`
   = note: required for `(Box<i32>,)` to implement `ConvertArguments`
 note: required by a bound in `MsgSend::send_message`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_retained.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/msg_send/retained.rs
   |
   |     unsafe fn send_message<A: ConvertArguments>(receiver: Receiver, sel: Sel, args: A) -> Return;
   |                               ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`

@@ -5,10 +5,10 @@ use crate::rc::Retained;
 use crate::runtime::{AnyClass, MessageReceiver, Sel};
 use crate::ClassType;
 
-use super::null_error::encountered_error;
-use super::{
+use super::super::{
     ConvertArguments, KindSendMessage, KindSendMessageSuper, RetainSemantics, TupleExtender,
 };
+use super::null_error::encountered_error;
 
 //
 // MsgSend
@@ -161,8 +161,8 @@ where
         } else {
             // In this case, the error has very likely been created, but has
             // been autoreleased (as is common for "out parameters", see
-            // `src/__macro_helpers/writeback.rs`). Hence we need to retain it
-            // if we want it to live across autorelease pools.
+            // `src/__macros/writeback.rs`). Hence we need to retain it if we
+            // want it to live across autorelease pools.
             //
             // SAFETY: The message send is guaranteed to populate the error
             // object, or leave it as NULL. The error is shared, and all

@@ -23,7 +23,7 @@ LBB0_2:
 	mov	r4, r0
 	cmp	r0, #0
 	bne	LBB0_1
-	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
 	mov	r4, r0
 	mov	r0, r4
 	sub	sp, r7, #4
@@ -53,7 +53,7 @@ LBB1_2:
 	mov	r4, #1
 	cmp	r0, #0
 	bne	LBB1_1
-	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r4
 	sub	sp, r7, #4
@@ -83,7 +83,7 @@ LBB2_2:
 	mov	r4, #1
 	cmp	r0, #0
 	bne	LBB2_1
-	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r4
 	sub	sp, r7, #4
@@ -113,7 +113,7 @@ LBB3_2:
 	mov	r4, #1
 	cmp	r0, #0
 	bne	LBB3_1
-	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r4
 	sub	sp, r7, #4
@@ -143,7 +143,7 @@ LBB4_2:
 	mov	r4, #1
 	cmp	r0, #0
 	bne	LBB4_1
-	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r4
 	sub	sp, r7, #4
@@ -177,7 +177,7 @@ LBB5_2:
 	mov	r4, #1
 	cmp	r0, #0
 	bne	LBB5_1
-	bl	SYM(objc2::__macro_helpers::null_error::null_error::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r4
 	sub	sp, r7, #4

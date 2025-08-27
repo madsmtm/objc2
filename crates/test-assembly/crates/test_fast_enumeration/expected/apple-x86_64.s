@@ -84,7 +84,7 @@ LBB1_2:
 	mov	rdi, rax
 	mov	r15, rcx
 	mov	r12, rdx
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rdi, r14
 	mov	rdx, r12
 	mov	rcx, r15
@@ -178,7 +178,7 @@ LBB3_3:
 	mov	r13, rdi
 	mov	rdi, r15
 	mov	rsi, r12
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB3_4
@@ -262,7 +262,7 @@ LBB4_3:
 	mov	r13, rdi
 	mov	rdi, r15
 	mov	rsi, r12
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB4_4
@@ -378,7 +378,7 @@ LBB5_3:
 	mov	r13, rdi
 	mov	rdi, r15
 	mov	rsi, r12
-	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB5_4

@@ -115,9 +115,9 @@ macro_rules! __msg_send_parse {
 
             ($(
                 ", ",
-                $crate::__macro_helpers::stringify!($selector),
+                $crate::__macros::stringify!($selector),
                 ": ",
-                $crate::__macro_helpers::stringify!($argument),
+                $crate::__macros::stringify!($argument),
             )+)
 
             $($macro_args)*
@@ -147,7 +147,7 @@ macro_rules! __missing_comma_between_args {
         ()
     ) => {
         $crate::__missing_comma_between_args_inner!(
-            "super", $crate::__macro_helpers::stringify!(($obj)), $($args)*
+            "super", $crate::__macros::stringify!(($obj)), $($args)*
         );
     };
     (
@@ -157,7 +157,7 @@ macro_rules! __missing_comma_between_args {
         ()
     ) => {
         $crate::__missing_comma_between_args_inner!(
-            "super", $crate::__macro_helpers::stringify!(($obj, $superclass)), $($args)*
+            "super", $crate::__macros::stringify!(($obj, $superclass)), $($args)*
         );
     };
     (
@@ -167,7 +167,7 @@ macro_rules! __missing_comma_between_args {
         ()
     ) => {
         $crate::__missing_comma_between_args_inner!(
-            $crate::__macro_helpers::stringify!($obj), $($args)*
+            $crate::__macros::stringify!($obj), $($args)*
         );
     };
 }
@@ -176,7 +176,7 @@ macro_rules! __missing_comma_between_args {
 #[macro_export]
 macro_rules! __missing_comma_between_args_inner {
     ($($args:tt)*) => {{
-        #[deprecated = $crate::__macro_helpers::concat!(
+        #[deprecated = $crate::__macros::concat!(
             "using msg_send! without a comma between arguments is ",
             "technically not valid macro syntax, and may break in a future ",
             "version of Rust. You should use the following instead:\n",

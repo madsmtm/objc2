@@ -5,7 +5,7 @@ use crate::rc::{Allocated, PartialInit, Retained};
 use crate::runtime::{AnyClass, AnyObject, MessageReceiver, Sel};
 use crate::{sel, DefinedClass, Message};
 
-use super::defined_ivars::set_finalized;
+use super::define_class::set_finalized;
 use super::{
     AllocFamily, ConvertReturn, CopyFamily, InitFamily, MutableCopyFamily, NewFamily, NoneFamily,
 };

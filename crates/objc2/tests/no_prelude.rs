@@ -150,9 +150,8 @@ fn test_msg_send(obj: &CustomObject) {
 
     let _: new_objc2::rc::Retained<new_objc2::runtime::AnyObject> =
         unsafe { new_objc2::msg_send![obj, a] };
-    let _: new_objc2::__macro_helpers::Option<
-        new_objc2::rc::Retained<new_objc2::runtime::AnyObject>,
-    > = unsafe { new_objc2::msg_send![obj, a] };
+    let _: new_objc2::__macros::Option<new_objc2::rc::Retained<new_objc2::runtime::AnyObject>> =
+        unsafe { new_objc2::msg_send![obj, a] };
     let _: new_objc2::rc::Retained<new_objc2::runtime::AnyObject> =
         unsafe { new_objc2::msg_send![obj, a: obj, b: obj] };
 }

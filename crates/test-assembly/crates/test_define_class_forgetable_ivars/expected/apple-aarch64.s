@@ -47,17 +47,17 @@ Lloh11:
 Ltmp1:
 	mov	w8, #2
 Lloh12:
-	adrp	x9, l_anon.[ID].2@PAGE
+	adrp	x9, l_anon.[ID].1@PAGE
 Lloh13:
-	add	x9, x9, l_anon.[ID].2@PAGEOFF
+	add	x9, x9, l_anon.[ID].1@PAGEOFF
 	stp	x8, x9, [sp, #16]
 	mov	w8, #27
 	strb	w8, [sp, #8]
 Ltmp2:
 Lloh14:
-	adrp	x1, l_anon.[ID].1@PAGE
+	adrp	x1, l_anon.[ID].2@PAGE
 Lloh15:
-	add	x1, x1, l_anon.[ID].1@PAGEOFF
+	add	x1, x1, l_anon.[ID].2@PAGEOFF
 	mov	x0, sp
 	add	x5, sp, #8
 	mov	w2, #6
@@ -69,9 +69,9 @@ Ltmp3:
 	mov	x0, x19
 	bl	_objc_registerClassPair
 Lloh16:
-	adrp	x1, l_anon.[ID].1@PAGE
+	adrp	x1, l_anon.[ID].2@PAGE
 Lloh17:
-	add	x1, x1, l_anon.[ID].1@PAGEOFF
+	add	x1, x1, l_anon.[ID].2@PAGEOFF
 	mov	x0, x19
 	bl	_class_getInstanceVariable
 	cbz	x0, LBB0_8
@@ -102,9 +102,9 @@ Lloh24:
 Lloh25:
 	add	x2, x2, l_anon.[ID].8@PAGEOFF
 	mov	w1, #16
-	bl	SYM(objc2::__macro_helpers::define_class::class_not_unique::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::define_class::checks::class_not_unique::GENERATED_ID, 0)
 LBB0_8:
-	bl	SYM(objc2::__macro_helpers::defined_ivars::ivars_offset::get_ivar_failed::GENERATED_ID, 0)
+	bl	SYM(objc2::__macros::define_class::ivars::ivars_offset::get_ivar_failed::GENERATED_ID, 0)
 LBB0_9:
 Ltmp4:
 	mov	x19, x0
@@ -320,17 +320,16 @@ l_anon.[ID].0:
 	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
 	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
-	.section	__TEXT,__cstring,cstring_literals
-l_anon.[ID].1:
-	.asciz	"ivars"
-
 	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].2:
+l_anon.[ID].1:
 	.byte	7
 	.space	39
 
 	.section	__TEXT,__cstring,cstring_literals
+l_anon.[ID].2:
+	.asciz	"ivars"
+
 l_anon.[ID].3:
 	.asciz	"$RUSTC/library/std/src/sync/poison/once.rs"
 
