@@ -6,7 +6,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |
   = help: within `AnyObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
 note: required because it appears within the type `AnyObject`
- --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+ --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
   |
   | pub struct AnyObject {
   |            ^^^^^^^^^
@@ -35,7 +35,7 @@ note: required because it appears within the type `UnsafeCell<PhantomData<(*cons
   | pub struct UnsafeCell<T: ?Sized> {
   |            ^^^^^^^^^^
 note: required because it appears within the type `AnyObject`
- --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+ --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
   |
   | pub struct AnyObject {
   |            ^^^^^^^^^
@@ -53,7 +53,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |
   = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
 note: required because it appears within the type `AnyObject`
- --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+ --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
   |
   | pub struct AnyObject {
   |            ^^^^^^^^^
@@ -87,7 +87,7 @@ note: required because it appears within the type `UnsafeCell<PhantomData<(*cons
   | pub struct UnsafeCell<T: ?Sized> {
   |            ^^^^^^^^^^
 note: required because it appears within the type `AnyObject`
- --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+ --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
   |
   | pub struct AnyObject {
   |            ^^^^^^^^^
@@ -110,7 +110,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |
   = help: within `NSValue`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
 note: required because it appears within the type `AnyObject`
- --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+ --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
   |
   | pub struct AnyObject {
   |            ^^^^^^^^^
@@ -149,7 +149,7 @@ note: required because it appears within the type `UnsafeCell<PhantomData<(*cons
   | pub struct UnsafeCell<T: ?Sized> {
   |            ^^^^^^^^^^
 note: required because it appears within the type `AnyObject`
- --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+ --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
   |
   | pub struct AnyObject {
   |            ^^^^^^^^^

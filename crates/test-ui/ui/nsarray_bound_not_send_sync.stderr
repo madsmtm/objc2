@@ -28,8 +28,8 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                  ^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
   = help: within `NSArray<NSObject>`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-note: required because it appears within the type `objc2::runtime::AnyObject`
- --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+note: required because it appears within the type `objc2::runtime::anyobject::AnyObject`
+ --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
   |
   | pub struct AnyObject {
   |            ^^^^^^^^^
@@ -90,8 +90,8 @@ note: required because it appears within the type `UnsafeCell<PhantomData<(*cons
   |
   | pub struct UnsafeCell<T: ?Sized> {
   |            ^^^^^^^^^^
-note: required because it appears within the type `objc2::runtime::AnyObject`
- --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+note: required because it appears within the type `objc2::runtime::anyobject::AnyObject`
+ --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
   |
   | pub struct AnyObject {
   |            ^^^^^^^^^
@@ -141,8 +141,8 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
   = help: within `NSMutableArray<NSObject>`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-note: required because it appears within the type `objc2::runtime::AnyObject`
- --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+note: required because it appears within the type `objc2::runtime::anyobject::AnyObject`
+ --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
   |
   | pub struct AnyObject {
   |            ^^^^^^^^^
@@ -208,8 +208,8 @@ note: required because it appears within the type `UnsafeCell<PhantomData<(*cons
   |
   | pub struct UnsafeCell<T: ?Sized> {
   |            ^^^^^^^^^^
-note: required because it appears within the type `objc2::runtime::AnyObject`
- --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+note: required because it appears within the type `objc2::runtime::anyobject::AnyObject`
+ --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
   |
   | pub struct AnyObject {
   |            ^^^^^^^^^
