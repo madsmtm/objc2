@@ -161,7 +161,7 @@ macro_rules! extern_protocol {
             $($methods:tt)*
         }
     ) => {
-        $crate::__extract_struct_attributes! {
+        $crate::__extract_attributes! {
             ($(#[$($attrs)*])*)
 
             ($crate::__inner_extern_protocol)

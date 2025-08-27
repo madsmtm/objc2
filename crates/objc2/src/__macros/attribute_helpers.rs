@@ -519,9 +519,9 @@ macro_rules! __extract_method_attributes_inner {
     };
 }
 
-/// Extract struct attributes, and send them to another macro.
+/// Extract custom attributes, and forward them to another macro.
 ///
-/// Used by `define_class!` and `extern_class!`.
+/// Used by `define_class!`, `extern_class!` and `extern_protocol!`.
 ///
 /// This will ensure that there is only one of our custom attributes present.
 ///
@@ -529,7 +529,7 @@ macro_rules! __extract_method_attributes_inner {
 /// and if they are wrapped in `unsafe`, that token will be passed onwards.
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __extract_struct_attributes {
+macro_rules! __extract_attributes {
     {
         // The attributes to parse.
         ($($attrs:tt)*)
@@ -557,13 +557,13 @@ macro_rules! __extract_struct_attributes {
         // The list of paths in all `derive` attributes.
         // ($($derives:path),*)
         //
-        // Attributes that should be applied to the struct.
-        // ($($attr_struct:tt)*)
+        // Attributes that should be applied to the item.
+        // ($($attr_item:tt)*)
         //
-        // Attributes that should be applied to struct implementations.
+        // Attributes that should be applied to item implementations.
         // ($($attr_impl:tt)*)
     } => {
-        $crate::__extract_struct_attributes_inner! {
+        $crate::__extract_attributes_inner! {
             ($($attrs)*)
 
             // No already parsed attributes
@@ -572,7 +572,7 @@ macro_rules! __extract_struct_attributes {
             () // name
             () // ivars
             () // derive
-            () // attr_struct
+            () // attr_item
             () // attr_impl
 
             ($out_macro)
@@ -583,7 +583,7 @@ macro_rules! __extract_struct_attributes {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __extract_struct_attributes_inner {
+macro_rules! __extract_attributes_inner {
     // Base case
     {
         // No attributes left to process
@@ -594,7 +594,7 @@ macro_rules! __extract_struct_attributes_inner {
         ($($name:tt)*)
         ($($ivars:tt)*)
         ($($derives:tt)*)
-        ($($attr_struct:tt)*)
+        ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
 
         ($out_macro:path)
@@ -610,7 +610,7 @@ macro_rules! __extract_struct_attributes_inner {
             ($($name)*)
             ($($ivars)*)
             ($($derives)*)
-            ($($attr_struct)*)
+            ($($attr_item)*)
             ($($attr_impl)*)
         }
     };
@@ -627,14 +627,14 @@ macro_rules! __extract_struct_attributes_inner {
         ($($name:tt)*)
         ($($ivars:tt)*)
         ($($derives:tt)*)
-        ($($attr_struct:tt)*)
+        ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
 
         ($out_macro:path)
         $($out_args:tt)*
     } => {
         $crate::__handle_duplicate!("super"; $($superclasses)*);
-        $crate::__extract_struct_attributes_inner! {
+        $crate::__extract_attributes_inner! {
             ($($rest)*)
 
             (unsafe $($parsed)*)
@@ -642,7 +642,7 @@ macro_rules! __extract_struct_attributes_inner {
             ($($name)*)
             ($($ivars)*)
             ($($derives)*)
-            ($($attr_struct)*)
+            ($($attr_item)*)
             ($($attr_impl)*)
 
             ($out_macro)
@@ -661,14 +661,14 @@ macro_rules! __extract_struct_attributes_inner {
         ($($name:tt)*)
         ($($ivars:tt)*)
         ($($derives:tt)*)
-        ($($attr_struct:tt)*)
+        ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
 
         ($out_macro:path)
         $($out_args:tt)*
     } => {
         $crate::__handle_duplicate!("super"; $($superclasses)*);
-        $crate::__extract_struct_attributes_inner! {
+        $crate::__extract_attributes_inner! {
             ($($rest)*)
 
             (unsafe $parsed)
@@ -676,7 +676,7 @@ macro_rules! __extract_struct_attributes_inner {
             ($($name)*)
             ($($ivars)*)
             ($($derives)*)
-            ($($attr_struct)*)
+            ($($attr_item)*)
             ($($attr_impl)*)
 
             ($out_macro)
@@ -696,14 +696,14 @@ macro_rules! __extract_struct_attributes_inner {
         ($($name:tt)*)
         ($($ivars:tt)*)
         ($($derives:tt)*)
-        ($($attr_struct:tt)*)
+        ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
 
         ($out_macro:path)
         $($out_args:tt)*
     } => {
         $crate::__handle_duplicate!("super"; $($superclasses)*);
-        $crate::__extract_struct_attributes_inner! {
+        $crate::__extract_attributes_inner! {
             ($($rest)*)
 
             (safe $($parsed)*)
@@ -711,7 +711,7 @@ macro_rules! __extract_struct_attributes_inner {
             ($($name)*)
             ($($ivars)*)
             ($($derives)*)
-            ($($attr_struct)*)
+            ($($attr_item)*)
             ($($attr_impl)*)
 
             ($out_macro)
@@ -730,14 +730,14 @@ macro_rules! __extract_struct_attributes_inner {
         ($($name:tt)*)
         ($($ivars:tt)*)
         ($($derives:tt)*)
-        ($($attr_struct:tt)*)
+        ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
 
         ($out_macro:path)
         $($out_args:tt)*
     } => {
         $crate::__handle_duplicate!("super"; $($superclasses)*);
-        $crate::__extract_struct_attributes_inner! {
+        $crate::__extract_attributes_inner! {
             ($($rest)*)
 
             (safe $parsed)
@@ -745,7 +745,7 @@ macro_rules! __extract_struct_attributes_inner {
             ($($name)*)
             ($($ivars)*)
             ($($derives)*)
-            ($($attr_struct)*)
+            ($($attr_item)*)
             ($($attr_impl)*)
 
             ($out_macro)
@@ -765,14 +765,14 @@ macro_rules! __extract_struct_attributes_inner {
         ($($name:tt)*)
         ($($ivars:tt)*)
         ($($derives:tt)*)
-        ($($attr_struct:tt)*)
+        ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
 
         ($out_macro:path)
         $($out_args:tt)*
     } => {
         $crate::__handle_duplicate!("thread_kind"; $($thread_kind)*);
-        $crate::__extract_struct_attributes_inner! {
+        $crate::__extract_attributes_inner! {
             ($($rest)*)
 
             ($($superclasses)*)
@@ -780,7 +780,7 @@ macro_rules! __extract_struct_attributes_inner {
             ($($name)*)
             ($($ivars)*)
             ($($derives)*)
-            ($($attr_struct)*)
+            ($($attr_item)*)
             ($($attr_impl)*)
 
             ($out_macro)
@@ -800,14 +800,14 @@ macro_rules! __extract_struct_attributes_inner {
         ($($name:tt)*)
         ($($ivars:tt)*)
         ($($derives:tt)*)
-        ($($attr_struct:tt)*)
+        ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
 
         ($out_macro:path)
         $($out_args:tt)*
     } => {
         $crate::__handle_duplicate!("name"; $($name)*);
-        $crate::__extract_struct_attributes_inner! {
+        $crate::__extract_attributes_inner! {
             ($($rest)*)
 
             ($($superclasses)*)
@@ -815,7 +815,7 @@ macro_rules! __extract_struct_attributes_inner {
             ($($parsed)+)
             ($($ivars)*)
             ($($derives)*)
-            ($($attr_struct)*)
+            ($($attr_item)*)
             ($($attr_impl)*)
 
             ($out_macro)
@@ -835,14 +835,14 @@ macro_rules! __extract_struct_attributes_inner {
         ($($name:tt)*)
         ($($ivars:tt)*)
         ($($derives:tt)*)
-        ($($attr_struct:tt)*)
+        ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
 
         ($out_macro:path)
         $($out_args:tt)*
     } => {
         $crate::__handle_duplicate!("ivars"; $($ivars)*);
-        $crate::__extract_struct_attributes_inner! {
+        $crate::__extract_attributes_inner! {
             ($($rest)*)
 
             ($($superclasses)*)
@@ -850,7 +850,7 @@ macro_rules! __extract_struct_attributes_inner {
             ($($name)*)
             ($($parsed)+)
             ($($derives)*)
-            ($($attr_struct)*)
+            ($($attr_item)*)
             ($($attr_impl)*)
 
             ($out_macro)
@@ -870,13 +870,13 @@ macro_rules! __extract_struct_attributes_inner {
         ($($name:tt)*)
         ($($ivars:tt)*)
         ($($derives:tt)*)
-        ($($attr_struct:tt)*)
+        ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
 
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__extract_struct_attributes_inner! {
+        $crate::__extract_attributes_inner! {
             ($($rest)*)
 
             ($($superclasses)*)
@@ -885,7 +885,7 @@ macro_rules! __extract_struct_attributes_inner {
             ($($ivars)*)
             // Combine all #[derive(...)] into one list.
             ($($derives)*, $($parsed)*)
-            ($($attr_struct)*)
+            ($($attr_item)*)
             ($($attr_impl)*)
 
             ($out_macro)
@@ -905,13 +905,13 @@ macro_rules! __extract_struct_attributes_inner {
         ($($name:tt)*)
         ($($ivars:tt)*)
         ($($derives:tt)*)
-        ($($attr_struct:tt)*)
+        ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
 
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__extract_struct_attributes_inner! {
+        $crate::__extract_attributes_inner! {
             ($($rest)*)
 
             ($($superclasses)*)
@@ -920,7 +920,7 @@ macro_rules! __extract_struct_attributes_inner {
             ($($ivars)*)
             ($($derives)*)
             (
-                $($attr_struct)*
+                $($attr_item)*
                 #[cfg $($parsed)*]
             )
             // Add `cfg` attributes to implementations as well.
@@ -946,13 +946,13 @@ macro_rules! __extract_struct_attributes_inner {
         ($($name:tt)*)
         ($($ivars:tt)*)
         ($($derives:tt)*)
-        ($($attr_struct:tt)*)
+        ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
 
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__extract_struct_attributes_inner! {
+        $crate::__extract_attributes_inner! {
             ($($rest)*)
 
             ($($superclasses)*)
@@ -961,7 +961,7 @@ macro_rules! __extract_struct_attributes_inner {
             ($($ivars)*)
             ($($derives)*)
             (
-                $($attr_struct)*
+                $($attr_item)*
                 #[allow $($parsed)*]
             )
             // Add `allow` attributes to implementations as well.
@@ -988,13 +988,13 @@ macro_rules! __extract_struct_attributes_inner {
         ($($name:tt)*)
         ($($ivars:tt)*)
         ($($derives:tt)*)
-        ($($attr_struct:tt)*)
+        ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
 
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__extract_struct_attributes_inner! {
+        $crate::__extract_attributes_inner! {
             ($($rest)*)
 
             ($($superclasses)*)
@@ -1004,7 +1004,7 @@ macro_rules! __extract_struct_attributes_inner {
             ($($derives)*)
             // Pass all other attributes onwards to the struct.
             (
-                $($attr_struct)*
+                $($attr_item)*
                 #[$($parsed)*]
             )
             ($($attr_impl)*)

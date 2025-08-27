@@ -196,7 +196,7 @@ macro_rules! extern_class {
         $(#[$($attrs:tt)*])*
         $v:vis struct $class:ident;
     ) => {
-        $crate::__extract_struct_attributes! {
+        $crate::__extract_attributes! {
             ($(#[$($attrs)*])*)
 
             ($crate::__extern_class_inner)
@@ -213,7 +213,7 @@ macro_rules! extern_class {
             $(,)?
         >;
     ) => {
-        $crate::__extract_struct_attributes! {
+        $crate::__extract_attributes! {
             ($(#[$($attrs)*])*)
 
             ($crate::__extern_class_inner)

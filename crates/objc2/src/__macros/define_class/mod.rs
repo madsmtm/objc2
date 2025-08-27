@@ -465,7 +465,7 @@ macro_rules! define_class {
         $($impls:tt)*
     } => {
         // Struct and various impls.
-        $crate::__extract_struct_attributes! {
+        $crate::__extract_attributes! {
             ($(#[$($attrs)*])*)
 
             ($crate::__define_class_inner)
