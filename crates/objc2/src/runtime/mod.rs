@@ -38,12 +38,15 @@ mod nsproxy;
 mod nszone;
 mod protocol_object;
 mod retain_release_fast;
+#[cfg(test)]
+pub(crate) mod test_utils;
+mod verify;
 
 pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
 pub(crate) use self::retain_release_fast::{objc_release_fast, objc_retain_fast};
+use self::verify::{verify_method_signature, Inner};
 use crate::encode::{Encode, EncodeArguments, EncodeReturn, Encoding, OptionEncode, RefEncode};
 use crate::msg_send;
-use crate::verify::{verify_method_signature, Inner};
 use crate::{ffi, DowncastTarget, Message};
 
 // Note: While this is not public, it is still a breaking change to remove,
@@ -58,7 +61,7 @@ pub use self::method_implementation::MethodImplementation;
 pub use self::nsobject::{NSObject, NSObjectProtocol};
 pub use self::nszone::NSZone;
 pub use self::protocol_object::{ImplementedBy, ProtocolObject};
-pub use crate::verify::VerificationError;
+pub use self::verify::VerificationError;
 
 #[allow(deprecated)]
 pub use crate::ffi::{BOOL, NO, YES};
@@ -1517,7 +1520,6 @@ mod tests {
     use core::mem::size_of;
 
     use super::*;
-    use crate::test_utils;
     use crate::{class, msg_send, sel, ClassType, ProtocolType};
 
     // TODO: Remove once c"" strings are in MSRV

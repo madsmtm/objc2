@@ -285,7 +285,7 @@ impl ClassBuilder {
         #[cfg(all(debug_assertions, not(feature = "disable-encoding-assertions")))]
         if let Some(superclass) = self.superclass() {
             if let Some(method) = superclass.instance_method(sel) {
-                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, enc_ret)
+                if let Err(err) = super::verify::verify_method_signature(method, enc_args, enc_ret)
                 {
                     panic!(
                         "defined invalid method -[{} {sel}]: {err}",
@@ -350,7 +350,7 @@ impl ClassBuilder {
         #[cfg(all(debug_assertions, not(feature = "disable-encoding-assertions")))]
         if let Some(superclass) = self.superclass() {
             if let Some(method) = superclass.class_method(sel) {
-                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, enc_ret)
+                if let Err(err) = super::verify::verify_method_signature(method, enc_args, enc_ret)
                 {
                     panic!(
                         "defined invalid method +[{} {sel}]: {err}",
@@ -580,8 +580,8 @@ mod tests {
     use super::*;
     use crate::encode::RefEncode;
     use crate::rc::Retained;
-    use crate::runtime::{NSObject, NSObjectProtocol};
-    use crate::{define_class, extern_methods, msg_send, test_utils, ClassType, ProtocolType};
+    use crate::runtime::{test_utils, NSObject, NSObjectProtocol};
+    use crate::{define_class, extern_methods, msg_send, ClassType, ProtocolType};
 
     // TODO: Remove once c"" strings are in MSRV
     fn c(s: &str) -> CString {

@@ -320,14 +320,12 @@ mod tests {
 
     use crate::rc::{autoreleasepool, Allocated, PartialInit, RcTestObject, ThreadTestData};
     use crate::runtime::{AnyObject, NSObject, NSObjectProtocol, NSZone};
-    use crate::{class, define_class, extern_methods, msg_send, test_utils, AnyThread};
+    use crate::{class, define_class, extern_methods, msg_send, AnyThread};
 
     #[test]
     fn test_send_message_manuallydrop() {
-        let obj = ManuallyDrop::new(test_utils::custom_object());
-        unsafe {
-            let _: () = msg_send![obj, release];
-        };
+        let obj = ManuallyDrop::new(NSObject::new());
+        let _: () = unsafe { msg_send![obj, release] };
         // `obj` is consumed, can't use here
     }
 

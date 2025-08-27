@@ -321,7 +321,7 @@ fn msg_send_check_class(
         return;
     }
 
-    use crate::verify::{verify_method_signature, Inner, VerificationError};
+    use super::verify::{verify_method_signature, Inner, VerificationError};
 
     let err = if let Some(method) = cls.instance_method(sel) {
         if let Err(err) = verify_method_signature(method, args, ret) {
@@ -544,8 +544,7 @@ mod tests {
     use super::*;
     use crate::msg_send;
     use crate::rc::{Allocated, Retained};
-    use crate::runtime::NSObject;
-    use crate::test_utils;
+    use crate::runtime::{test_utils, NSObject};
 
     #[allow(unused)]
     fn test_different_receivers(obj: &mut AnyObject) {

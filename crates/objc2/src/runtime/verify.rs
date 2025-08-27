@@ -209,8 +209,7 @@ mod tests {
     use super::*;
     use crate::encode::Encode;
     use crate::ffi;
-    use crate::runtime::Sel;
-    use crate::test_utils;
+    use crate::runtime::{test_utils, Sel};
     use crate::{msg_send, sel};
     use alloc::string::ToString;
     use core::ffi::c_void;

@@ -158,12 +158,9 @@ pub mod ffi;
 mod main_thread_marker;
 pub mod rc;
 pub mod runtime;
-#[cfg(test)]
-mod test_utils;
 mod top_level_traits;
 #[cfg(any(docsrs, doc, doctest, test))]
 pub mod topics;
-mod verify;
 
 /// Deprecated location for a few things that are now in the [`runtime`]
 /// module.
