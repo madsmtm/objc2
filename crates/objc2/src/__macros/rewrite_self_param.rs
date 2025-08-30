@@ -1,21 +1,35 @@
 /// Detect instance vs. class method.
-///
-/// Will add:
-/// ```ignore
-/// (builder_method:ident)
-/// (receiver:expr)
-/// (receiver_ty:ty)
-/// (params_prefix*)
-/// (params_rest*)
-/// ```
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __rewrite_self_param {
     {
+        // The parameters and parameter types to parse.
         ($($params:tt)*)
 
+        // The output macro.
         ($out_macro:path)
-        $($macro_args:tt)*
+
+        // Further arguments to passed to the output macro.
+        $($out_args:tt)*
+
+        // The following arguments will be appended to the output macro:
+        //
+        // The builder that needs to be called to register this function with
+        // the runtime. One of `add_method` or `add_class_method`.
+        // ($builder_method:ident)
+        //
+        // The receiver that we need call to call the method. Roughly either
+        // `self` or `Self::class()`.
+        // ($receiver:expr)
+        //
+        // The type of the receiver.
+        // ($receiver_ty:ty)
+        //
+        // The ABI-required method prefix for functions in `define_class!`.
+        // ($($params_prefix:tt)*)
+        //
+        // The rest of the function's parameters and parameter types.
+        // ($($params_rest:tt)*)
     } => {
         $crate::__rewrite_self_param_inner! {
             // Duplicate params out so that we can match on `self`, while still
@@ -24,7 +38,7 @@ macro_rules! __rewrite_self_param {
             ($($params)*)
 
             ($out_macro)
-            $($macro_args)*
+            $($out_args)*
         }
     };
 }
@@ -38,10 +52,10 @@ macro_rules! __rewrite_self_param_inner {
         (&$self:ident $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
         $out_macro! {
-            $($macro_args)*
+            $($out_args)*
 
             (add_method)
             ($self)
@@ -58,10 +72,10 @@ macro_rules! __rewrite_self_param_inner {
         (&mut $self:ident $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
         $out_macro! {
-            $($macro_args)*
+            $($out_args)*
 
             (add_method)
             ($self)
@@ -78,10 +92,10 @@ macro_rules! __rewrite_self_param_inner {
         ($self:ident: $self_ty:ty $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
         $out_macro! {
-            $($macro_args)*
+            $($out_args)*
 
             (add_method)
             ($self)
@@ -98,10 +112,10 @@ macro_rules! __rewrite_self_param_inner {
         ($mut:ident $self:ident: $self_ty:ty $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
         $out_macro! {
-            $($macro_args)*
+            $($out_args)*
 
             (add_method)
             ($self)
@@ -122,10 +136,10 @@ macro_rules! __rewrite_self_param_inner {
         ($mut:ident $this:ident: $this_ty:ty $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
         $out_macro! {
-            $($macro_args)*
+            $($out_args)*
 
             (add_method)
             ($this)
@@ -142,10 +156,10 @@ macro_rules! __rewrite_self_param_inner {
         ($this:ident: $this_ty:ty $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
         $out_macro! {
-            $($macro_args)*
+            $($out_args)*
 
             (add_method)
             ($this)
@@ -162,10 +176,10 @@ macro_rules! __rewrite_self_param_inner {
         ($mut:ident $this:ident: $this_ty:ty $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
         $out_macro! {
-            $($macro_args)*
+            $($out_args)*
 
             (add_method)
             ($this)
@@ -182,10 +196,10 @@ macro_rules! __rewrite_self_param_inner {
         ($this:ident: $this_ty:ty $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
         $out_macro! {
-            $($macro_args)*
+            $($out_args)*
 
             (add_method)
             ($this)
@@ -204,10 +218,10 @@ macro_rules! __rewrite_self_param_inner {
         ($($params_rest:tt)*)
 
         ($out_macro:path)
-        $($macro_args:tt)*
+        $($out_args:tt)*
     } => {
         $out_macro! {
-            $($macro_args)*
+            $($out_args)*
 
             (add_class_method)
             (<Self as $crate::ClassType>::class())

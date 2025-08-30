@@ -964,11 +964,11 @@ macro_rules! __define_class_output_methods {
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_param! {
-            ($($params)*)
-
-            ($crate::__extract_method_attributes)
+        $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
+
+            ($crate::__rewrite_self_param)
+            ($($params)*)
 
             ($crate::__define_class_method_out)
             (unsafe)
@@ -989,11 +989,11 @@ macro_rules! __define_class_output_methods {
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_param! {
-            ($($params)*)
-
-            ($crate::__extract_method_attributes)
+        $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
+
+            ($crate::__rewrite_self_param)
+            ($($params)*)
 
             ($crate::__define_class_method_out)
             ()
@@ -1109,18 +1109,16 @@ macro_rules! __define_class_register_methods {
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_param! {
-            ($($params)*)
-
-            ($crate::__extract_method_attributes)
+        $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
+
+            ($crate::__rewrite_self_param)
+            ($($params)*)
 
             ($crate::__define_class_register_out)
             ($builder)
             (unsafe)
             ($name)
-            ($($ret)?)
-            ($body)
         }
 
         $crate::__define_class_register_methods! {
@@ -1139,18 +1137,16 @@ macro_rules! __define_class_register_methods {
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_param! {
-            ($($params)*)
-
-            ($crate::__extract_method_attributes)
+        $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
+
+            ($crate::__rewrite_self_param)
+            ($($params)*)
 
             ($crate::__define_class_register_out)
             ($builder)
             ()
             ($name)
-            ($($ret)?)
-            ($body)
         }
 
         $crate::__define_class_register_methods! {
@@ -1187,17 +1183,17 @@ macro_rules! __define_class_method_out {
         ($($ret:ty)?)
         ($body:block)
 
-        ($builder_method:ident)
-        ($receiver:expr)
-        ($receiver_ty:ty)
-        ($($params_prefix:tt)*)
-        ($($params_rest:tt)*)
-
         ($($m_method:tt)*)
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
         ($($attr_use:tt)*)
+
+        ($builder_method:ident)
+        ($receiver:expr)
+        ($receiver_ty:ty)
+        ($($params_prefix:tt)*)
+        ($($params_rest:tt)*)
     } => {
         $crate::__define_class_rewrite_params! {
             ($($params_rest)*)
@@ -1432,20 +1428,18 @@ macro_rules! __define_class_register_out {
         ($builder:ident)
         ($($qualifiers:tt)*)
         ($name:ident)
-        ($($__ret:ty)?)
-        ($__body:block)
-
-        ($builder_method:ident)
-        ($__receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
 
         ($method_or_method_id:ident($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
         ($($attr_use:tt)*)
+
+        ($builder_method:ident)
+        ($__receiver:expr)
+        ($__receiver_ty:ty)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
     } => {
         $($attr_use)*
         {

@@ -287,11 +287,11 @@ macro_rules! __extern_protocol_rewrite_methods {
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_param! {
-            ($($params)*)
-
-            ($crate::__extract_method_attributes)
+        $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
+
+            ($crate::__rewrite_self_param)
+            ($($params)*)
 
             ($crate::__extern_protocol_method_out)
             ($v unsafe fn $name($($params)*) $(-> $ret)?)
@@ -312,11 +312,11 @@ macro_rules! __extern_protocol_rewrite_methods {
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_param! {
-            ($($params)*)
-
-            ($crate::__extract_method_attributes)
+        $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
+
+            ($crate::__rewrite_self_param)
+            ($($params)*)
 
             ($crate::__extern_protocol_method_out)
             ($v fn $name($($params)*) $(-> $ret)?)
@@ -337,17 +337,17 @@ macro_rules! __extern_protocol_method_out {
         ($($function_start:tt)*)
         ($($where:ty : $bound:path ,)*)
 
-        (add_method)
-        ($receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
-
         ($method_or_method_id:ident($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
         ($($attr_use:tt)*)
+
+        (add_method)
+        ($receiver:expr)
+        ($__receiver_ty:ty)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
     } => {
         $($attr_method)*
         $($function_start)*
@@ -377,17 +377,17 @@ macro_rules! __extern_protocol_method_out {
         ($($function_start:tt)*)
         ($($where:ty : $bound:path ,)*)
 
-        (add_class_method)
-        ($receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
-
         ($method_or_method_id:ident($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
         ($($attr_use:tt)*)
+
+        (add_class_method)
+        ($receiver:expr)
+        ($__receiver_ty:ty)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
     } => {
         $($attr_method)*
         $($function_start)*

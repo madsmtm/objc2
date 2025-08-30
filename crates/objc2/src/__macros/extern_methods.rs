@@ -229,15 +229,14 @@ macro_rules! extern_methods {
 
         $($rest:tt)*
     ) => {
-        $crate::__rewrite_self_param! {
-            ($($params)*)
-
-            ($crate::__extract_method_attributes)
+        $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
 
+            ($crate::__rewrite_self_param)
+            ($($params)*)
+
             ($crate::__extern_methods_method_out)
-            ($v unsafe fn $fn_name($($params)*) $(-> $ret)?)
-            ($($($where : $bound ,)+)?)
+            ($v unsafe fn $fn_name($($params)*) $(-> $ret)? $(where $($where : $bound ,)+)?)
         }
 
         $crate::extern_methods!($($rest)*);
@@ -257,15 +256,14 @@ macro_rules! extern_methods {
 
         $($rest:tt)*
     ) => {
-        $crate::__rewrite_self_param! {
-            ($($params)*)
-
-            ($crate::__extract_method_attributes)
+        $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
 
+            ($crate::__rewrite_self_param)
+            ($($params)*)
+
             ($crate::__extern_methods_method_out)
-            ($v fn $fn_name($($params)*) $(-> $ret)?)
-            ($($($where : $bound ,)+)?)
+            ($v fn $fn_name($($params)*) $(-> $ret)? $(where $($where : $bound ,)+)?)
         }
 
         $crate::extern_methods!($($rest)*);
@@ -298,25 +296,21 @@ macro_rules! extern_methods {
 macro_rules! __extern_methods_method_out {
     {
         ($($function_start:tt)*)
-        ($($where:ty : $bound:path ,)*)
-
-        ($__builder_method:ident)
-        ($receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
 
         ($method_or_method_id:ident($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
         ($($attr_use:tt)*)
+
+        ($__builder_method:ident)
+        ($receiver:expr)
+        ($__receiver_ty:ty)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
     } => {
         $($attr_method)*
-        $($function_start)*
-        where
-            $($where : $bound,)*
-        {
+        $($function_start)* {
             $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel)*));
             $crate::__extern_methods_no_optional!($($optional)*);
 
@@ -348,8 +342,8 @@ macro_rules! __extern_methods_no_optional {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extern_methods_method_id_deprecated {
-    (method($($sel:tt)*)) => {};
-    (method_id($($sel:tt)*)) => {{
+    (method ($($sel:tt)*)) => {};
+    ($method_id:ident ($($sel:tt)*)) => {{
         #[deprecated = $crate::__macros::concat!(
             "using #[unsafe(method_id(",
             $crate::__macros::stringify!($($sel)*),
@@ -358,8 +352,8 @@ macro_rules! __extern_methods_method_id_deprecated {
             "))] instead",
         )]
         #[inline]
-        fn method_id() {}
-        method_id();
+        fn $method_id() {}
+        $method_id();
     }};
 }
 

@@ -56,42 +56,38 @@ macro_rules! __extract_and_apply_cfg_attributes {
 ///
 /// This will ensure that there is one and only one of the `method` attributes
 /// present.
-///
-/// This takes the following arguments:
-/// 1. The attributes to parse.
-///    ($($m:tt)*)
-///
-/// 2. The output macro.
-///    ($out_macro:path)
-///
-/// Further arguments are passed on to the output macro, with the following
-/// arguments appended to it:
-/// 1. The `method` or `method_id` attribute.
-///    ($method_or_method_id:ident($($sel:tt)*))
-///
-/// 2. The requested method family, if any was present.
-///
-///    One of `new`, `alloc`, `init`, `copy`, `mutableCopy` or `none`.
-///    ($($method_family:tt)*)
-///
-/// 3. The `optional` attribute, if any.
-///    ($(#[optional])?)
-///
-/// 4. The remaining attributes that should be placed on the method definition
-///    itself.
-///    ($(#[$($attr_method:tt)*])*)
-///
-/// 5. Attributes like `cfg` and `allow` that should be placed on the usage
-///    site of the method.
-///    ($(#[$($attr_use:tt)*])*)
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extract_method_attributes {
     {
+        // The attributes to parse.
         ($($m:tt)*)
 
+        // The output macro.
         ($out_macro:path)
+
+        // Further arguments to passed to the output macro.
         $($out_args:tt)*
+
+        // The following arguments will be appended to the output macro:
+        //
+        // The `method` or `method_id` attribute.
+        // ($method_or_method_id:ident($($sel:tt)*))
+        //
+        // The requested method family, if any was present. One of `new`,
+        // `alloc`, `init`, `copy`, `mutableCopy` or `none`.
+        // ($($method_family:tt)*)
+        //
+        // The `optional` attribute, if any.
+        // ($(#[optional])?)
+        //
+        // The remaining attributes that should be placed on the method
+        // definition itself.
+        // ($(#[$($attr_method:tt)*])*)
+        //
+        // Attributes like `cfg` and `allow` that should be placed on the
+        // usage site of the method.
+        // ($(#[$($attr_use:tt)*])*)
     } => {
         $crate::__extract_method_attributes_inner! {
             ($($m)*)
