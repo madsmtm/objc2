@@ -12,6 +12,7 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-opengl/0.3.1")]
+#![deprecated = "The OpenGL API is deprecated by Apple"]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;

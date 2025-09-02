@@ -5,6 +5,8 @@ custom-lib-rs = true
 flags = [
     # Make types in GLKMathTypes.h not be translated as unions.
     "-D__STRICT_ANSI__=1",
+    # Users of GLKit likely know already that OpenGL is deprecated.
+    "-DGL_SILENCE_DEPRECATION=1",
 ]
 macos = "10.8"
 ios = "5.0"

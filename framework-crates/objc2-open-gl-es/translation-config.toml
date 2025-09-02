@@ -1,6 +1,7 @@
 framework = "OpenGLES"
 crate = "objc2-open-gl-es"
 required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
 flags = [
     # Silence OpenGL deprecation (people know that by now, and it's just noise).
     "-DGLES_SILENCE_DEPRECATION=1",
