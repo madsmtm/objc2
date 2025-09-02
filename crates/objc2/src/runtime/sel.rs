@@ -231,14 +231,14 @@ mod tests {
     #[test]
     fn test_empty_selector() {
         let s = CStr::from_bytes_with_nul(b"\0").unwrap();
-        let sel = Sel::register(&s);
-        assert_eq!(sel.name(), &*s);
+        let sel = Sel::register(s);
+        assert_eq!(sel.name(), s);
         let s = CStr::from_bytes_with_nul(b":\0").unwrap();
-        let sel = Sel::register(&s);
-        assert_eq!(sel.name(), &*s);
+        let sel = Sel::register(s);
+        assert_eq!(sel.name(), s);
         let s = CStr::from_bytes_with_nul(b"::\0").unwrap();
-        let sel = Sel::register(&s);
-        assert_eq!(sel.name(), &*s);
+        let sel = Sel::register(s);
+        assert_eq!(sel.name(), s);
     }
 
     #[test]
