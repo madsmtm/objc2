@@ -83,7 +83,6 @@ default = [
     "CGPDFScanner",
     "CGPDFStream",
     "CGPDFString",
-    "CGPDFWrappedObject",
     "CGPSConverter",
     "CGPath",
     "CGPattern",
@@ -226,7 +225,6 @@ CGPDFPage = ["objc2-core-foundation/CFCGTypes"]
 CGPDFScanner = ["objc2-core-foundation/CFCGTypes"]
 CGPDFStream = ["objc2-core-foundation/CFData"]
 CGPDFString = ["objc2-core-foundation/CFDate"]
-CGPDFWrappedObject = ["objc2-core-foundation/CFCGTypes"]
 CGPSConverter = ["objc2-core-foundation/CFDictionary"]
 CGPath = [
     "objc2-core-foundation/CFArray",

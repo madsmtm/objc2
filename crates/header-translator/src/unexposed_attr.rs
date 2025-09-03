@@ -180,6 +180,7 @@ impl UnexposedAttr {
             | "API_DEPRECATED"
             | "API_DEPRECATED_BEGIN"
             | "API_DEPRECATED_WITH_REPLACEMENT"
+            | "API_OBSOLETED"
             | "API_UNAVAILABLE_BEGIN"
             | "API_UNAVAILABLE"
             | "AUGRAPH_DEPRECATED"
