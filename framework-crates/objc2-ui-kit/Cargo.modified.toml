@@ -6,3 +6,19 @@ objc2-cloud-kit = { workspace = true, optional = true, features = [
     "CKShare",
     "CKShareMetadata",
 ] }
+
+# TODO(breaking): Remove this workaround.
+[features]
+UISceneSession = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUserActivity",
+    "UISceneConfiguration",
+]
+UIWindowScene = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "UISceneSizeRestrictions",
+]
