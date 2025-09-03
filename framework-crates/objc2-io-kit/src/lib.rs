@@ -63,6 +63,10 @@ pub(crate) type io_struct_inband_t = *mut [core::ffi::c_char; 4096];
 #[allow(dead_code, non_camel_case_types)]
 pub(crate) type uuid_t = [u8; 16]; // Usage sites are all in structs
 
+/// [Apple's documentation](https://developer.apple.com/documentation/iokit/io_object_null?language=objc)
+#[cfg(feature = "libc")]
+pub const IO_OBJECT_NULL: io_object_t = 0;
+
 // mach/mach_types.h
 #[allow(dead_code, non_camel_case_types)]
 #[cfg(feature = "libc")]
