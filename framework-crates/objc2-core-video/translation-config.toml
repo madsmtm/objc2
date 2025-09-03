@@ -36,3 +36,7 @@ fn.CVPixelBufferGetTypeID.unsafe = false
 # Naming conflicts with the newer Copy variants.
 fn.CVBufferGetAttachment.renamed = "get_attachment"
 fn.CVBufferGetAttachments.renamed = "get_attachments"
+
+# TODO(breaking): Make these nonnull
+static.kCVImageBufferPostDecodeProcessingSequenceMetadataKey.nullability = "nullable"
+static.kCVImageBufferPostDecodeProcessingFrameMetadataKey.nullability = "nullable"

@@ -37,16 +37,54 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: The reply block in `FSVolumeRenameOperations::setVolumeName_replyHandler` now
   takes a nullable file name.
 * **BREAKING**: The media selection option on `AVAssetVariantQualifier` is now nullable.
+* **BREAKING**: Moved various `AVFAudio` types from the `AVAudioSession` feature flag to
+  `AVAudioSessionTypes`.
+* **BREAKING**: Moved various `HealthKit` types from the `HKMetadata` feature flag to
+  `HKMedicationConcept` or `HKMetadataEnums`.
+* **BREAKING**: Marked a bunch of classes and protocols in `objc2-car-play` as `MainThreadOnly`.
+* **BREAKING**: Marked `NSUndoManager` as `MainThreadOnly`.
+* **BREAKING**: Marked the following types as no longer `MainThreadOnly`:
+  - `UIEditMenuInteractionDelegate`.
+  - `UIPrintPaper`.
+  - `UIPrintPageRenderer`.
+  - `UIPrintFormatter`.
+  - `UISimpleTextPrintFormatter`.
+  - `UIMarkupTextPrintFormatter`.
+  - `UIViewPrintFormatter`.
+* **BREAKING**: Split methods from `MTLFX*Scaler` into subprotocol `MTLFX*ScalerBase`.
+* **BREAKING**: Renamed `VTFrameProcessorConfiguration::processorSupported` to `isSupported`.
+* **BREAKING**: Changed the return type of `VTFrameProcessorConfiguration::sourcePixelBufferAttributes`
+  and `destinationPixelBufferAttributes`.
+
+### Removed
+* **BREAKING**: Removed the following APIs:
+  - `ARQuickLookPreviewItem`.
+  - `NSControl::mouseDown` (still present on the superclass `NSResponder`).
+  - `CPListImageRowItem::setImageTitles`.
+  - `UIFocusUpdateContext::previouslyFocusedView`.
+  - `UIFocusUpdateContext::nextFocusedView`.
+  - `UIFocusSystem::registerURL_forSoundIdentifier`.
+  - `UIWindowScene::focusSystem`.
+  - `WKWebViewConfiguration::writingToolsBehavior` and setter.
+  - `IOUSBHostPortTypeCount`.
+  - `kUSBHostPortPropertyMux`.
+  - `kUSBHostControllerPropertyMuxEnabled`.
+  - `kUSBHostControllerPropertyRevision`.
 
 ### Fixed
 * **BREAKING**: Fixed structs with packed alignment by marking them `#[repr(packed(...))]`.
-* **BREAKING**: Fixed a few `MXMetricManager` methods that were instance methods instead of class methods.
+* **BREAKING**: Fixed a few `MXMetricManager` methods that were instance methods instead of class
+  methods.
 * Fixed missing deprecations on statics, type aliases and some impls blocks.
 * **BREAKING**: Fixed some protocols not being marked `Send + Sync` even when they should be.
+
+  In particular a bunch of Metal protocols like `MTLDevice` and `MTLLibrary`.
 
   This might break if you were implementing these yourself, in that case you should make your
   implementee `Send + Sync` as well.
 * Marked some CoreMedia types as `Send + Sync`.
+* Fixed the value of `kUSBHostPortPropertyPortNumber`.
+* Fixed the value of `SFSpeechErrorCode::Timeout`.
 
 ## [0.3.1] - 2025-04-19
 [0.3.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.0...frameworks-0.3.1
