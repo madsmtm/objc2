@@ -44,11 +44,10 @@ define_class!(
                 .downcast::<NSApplication>()
                 .unwrap();
 
-            let window = unsafe { NSWindow::windowWithContentViewController(&view_controller) };
+            let window = NSWindow::windowWithContentViewController(&view_controller);
 
-            let window_controller = unsafe {
-                NSWindowController::initWithWindow(NSWindowController::alloc(mtm), Some(&window))
-            };
+            let window_controller =
+                NSWindowController::initWithWindow(NSWindowController::alloc(mtm), Some(&window));
 
             unsafe { window_controller.showWindow(None) };
 
@@ -103,23 +102,25 @@ pub fn set_application_delegate(app: &NSApplication) {
 fn add_menubar(app: &NSApplication) {
     let mtm = app.mtm();
 
-    unsafe {
-        let menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), ns_string!(""));
-        let menu_app_item = NSMenuItem::initWithTitle_action_keyEquivalent(
+    let menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), ns_string!(""));
+    let menu_app_item = unsafe {
+        NSMenuItem::initWithTitle_action_keyEquivalent(
             NSMenuItem::alloc(mtm),
             ns_string!(""),
             None,
             ns_string!(""),
-        );
-        let menu_app_menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), ns_string!(""));
+        )
+    };
+    let menu_app_menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), ns_string!(""));
+    unsafe {
         menu_app_menu.addItemWithTitle_action_keyEquivalent(
             ns_string!("Quit"),
             Some(sel!(terminate:)),
             ns_string!("q"),
-        );
-        menu_app_item.setSubmenu(Some(&menu_app_menu));
-        menu.addItem(&menu_app_item);
+        )
+    };
+    menu_app_item.setSubmenu(Some(&menu_app_menu));
+    menu.addItem(&menu_app_item);
 
-        app.setMainMenu(Some(&menu));
-    }
+    app.setMainMenu(Some(&menu));
 }

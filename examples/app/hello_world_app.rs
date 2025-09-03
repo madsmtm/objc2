@@ -45,7 +45,7 @@ define_class!(
                 .downcast::<NSApplication>()
                 .unwrap();
 
-            let text_field = unsafe {
+            let text_field = {
                 let text_field = NSTextField::labelWithString(ns_string!("Hello, World!"), mtm);
                 text_field.setFrame(NSRect::new(
                     NSPoint::new(5.0, 100.0),
@@ -84,9 +84,9 @@ define_class!(
             // Set various window properties.
             window.setTitle(ns_string!("A window"));
             let view = window.contentView().expect("window must have content view");
-            unsafe { view.addSubview(&text_field) };
+            view.addSubview(&text_field);
             window.center();
-            unsafe { window.setContentMinSize(NSSize::new(300.0, 300.0)) };
+            window.setContentMinSize(NSSize::new(300.0, 300.0));
             window.setDelegate(Some(ProtocolObject::from_ref(self)));
 
             // Show the window.
@@ -109,7 +109,8 @@ define_class!(
         #[unsafe(method(windowWillClose:))]
         fn window_will_close(&self, _notification: &NSNotification) {
             // Quit the application when the window is closed.
-            unsafe { NSApplication::sharedApplication(self.mtm()).terminate(None) };
+            let app = NSApplication::sharedApplication(self.mtm());
+            app.terminate(None);
         }
     }
 );

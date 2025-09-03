@@ -42,7 +42,7 @@ define_class!(
                     Some(&device),
                 )
             };
-            unsafe { self.setView(&view) };
+            self.setView(&view);
 
             let renderer = Renderer::new(&view);
             unsafe { renderer.mtkView_drawableSizeWillChange(&view, view.drawableSize()) };

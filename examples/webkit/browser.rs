@@ -99,28 +99,23 @@ define_class!(
             // create the nav bar view
             let nav_bar = {
                 let frame_rect = NSRect::ZERO;
-                let this =
-                    unsafe { NSStackView::initWithFrame(NSStackView::alloc(mtm), frame_rect) };
-                unsafe {
-                    this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
-                    this.setAlignment(NSLayoutAttribute::Height);
-                    this.setDistribution(NSStackViewDistribution::Fill);
-                    this.setSpacing(0.);
-                }
+                let this = NSStackView::initWithFrame(NSStackView::alloc(mtm), frame_rect);
+
+                this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
+                this.setAlignment(NSLayoutAttribute::Height);
+                this.setDistribution(NSStackViewDistribution::Fill);
+                this.setSpacing(0.);
                 this
             };
 
             // create the nav buttons view
             let nav_buttons = {
                 let frame_rect = NSRect::ZERO;
-                let this =
-                    unsafe { NSStackView::initWithFrame(NSStackView::alloc(mtm), frame_rect) };
-                unsafe {
-                    this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
-                    this.setAlignment(NSLayoutAttribute::Height);
-                    this.setDistribution(NSStackViewDistribution::FillEqually);
-                    this.setSpacing(0.);
-                }
+                let this = NSStackView::initWithFrame(NSStackView::alloc(mtm), frame_rect);
+                this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
+                this.setAlignment(NSLayoutAttribute::Height);
+                this.setDistribution(NSStackViewDistribution::FillEqually);
+                this.setSpacing(0.);
                 this
             };
 
@@ -133,9 +128,9 @@ define_class!(
                 let this =
                     unsafe { NSButton::buttonWithTitle_target_action(title, target, action, mtm) };
                 #[allow(deprecated)]
-                unsafe {
-                    this.setBezelStyle(NSBezelStyle::ShadowlessSquare)
-                };
+                {
+                    this.setBezelStyle(NSBezelStyle::ShadowlessSquare);
+                }
                 this
             };
 
@@ -148,85 +143,73 @@ define_class!(
                 let this =
                     unsafe { NSButton::buttonWithTitle_target_action(title, target, action, mtm) };
                 #[allow(deprecated)]
-                unsafe {
-                    this.setBezelStyle(NSBezelStyle::ShadowlessSquare)
-                };
+                {
+                    this.setBezelStyle(NSBezelStyle::ShadowlessSquare);
+                }
                 this
             };
 
-            unsafe {
-                nav_buttons.addArrangedSubview(&back_button);
-                nav_buttons.addArrangedSubview(&forward_button);
-            }
+            nav_buttons.addArrangedSubview(&back_button);
+            nav_buttons.addArrangedSubview(&forward_button);
 
             // create the url text field
             let nav_url = {
                 let frame_rect = NSRect::ZERO;
-                let this =
-                    unsafe { NSTextField::initWithFrame(NSTextField::alloc(mtm), frame_rect) };
-                unsafe {
-                    this.setDrawsBackground(true);
-                    this.setBackgroundColor(Some(&NSColor::lightGrayColor()));
-                    this.setTextColor(Some(&NSColor::blackColor()));
-                }
+                let this = NSTextField::initWithFrame(NSTextField::alloc(mtm), frame_rect);
+                this.setDrawsBackground(true);
+                this.setBackgroundColor(Some(&NSColor::lightGrayColor()));
+                this.setTextColor(Some(&NSColor::blackColor()));
                 this
             };
 
-            unsafe {
-                nav_bar.addArrangedSubview(&nav_buttons);
-                nav_bar.addArrangedSubview(&nav_url);
-            }
+            nav_bar.addArrangedSubview(&nav_buttons);
+            nav_bar.addArrangedSubview(&nav_url);
 
             // create the window content view
             let content_view = {
                 let frame_rect = window.frame();
-                let this =
-                    unsafe { NSStackView::initWithFrame(NSStackView::alloc(mtm), frame_rect) };
-                unsafe {
-                    this.setOrientation(NSUserInterfaceLayoutOrientation::Vertical);
-                    this.setAlignment(NSLayoutAttribute::Width);
-                    this.setDistribution(NSStackViewDistribution::Fill);
-                    this.setSpacing(0.);
-                }
+                let this = NSStackView::initWithFrame(NSStackView::alloc(mtm), frame_rect);
+                this.setOrientation(NSUserInterfaceLayoutOrientation::Vertical);
+                this.setAlignment(NSLayoutAttribute::Width);
+                this.setDistribution(NSStackViewDistribution::Fill);
+                this.setSpacing(0.);
                 this
             };
 
-            unsafe {
-                content_view.addArrangedSubview(&nav_bar);
-                content_view.addArrangedSubview(&web_view);
-            }
+            content_view.addArrangedSubview(&nav_bar);
+            content_view.addArrangedSubview(&web_view);
 
-            unsafe {
-                // handle input from text field (on <ENTER>, load URL from text field in web view)
-                let object = ProtocolObject::from_ref(self);
-                nav_url.setDelegate(Some(object));
+            // handle input from text field (on <ENTER>, load URL from text field in web view)
+            let object = ProtocolObject::from_ref(self);
+            unsafe { nav_url.setDelegate(Some(object)) };
 
-                // handle nav events from web view (on finished navigating, update text area with current URL)
-                let object = ProtocolObject::from_ref(self);
-                web_view.setNavigationDelegate(Some(object));
-            }
+            // handle nav events from web view (on finished navigating, update text area with current URL)
+            let object = ProtocolObject::from_ref(self);
+            unsafe { web_view.setNavigationDelegate(Some(object)) };
 
             // create the menu with a "quit" entry
-            unsafe {
-                let menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), ns_string!(""));
-                let menu_app_item = NSMenuItem::initWithTitle_action_keyEquivalent(
+            let menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), ns_string!(""));
+            let menu_app_item = unsafe {
+                NSMenuItem::initWithTitle_action_keyEquivalent(
                     NSMenuItem::alloc(mtm),
                     ns_string!(""),
                     None,
                     ns_string!(""),
-                );
-                let menu_app_menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), ns_string!(""));
+                )
+            };
+            let menu_app_menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), ns_string!(""));
+            unsafe {
                 menu_app_menu.addItemWithTitle_action_keyEquivalent(
                     ns_string!("Quit"),
                     Some(sel!(terminate:)),
                     ns_string!("q"),
-                );
-                menu_app_item.setSubmenu(Some(&menu_app_menu));
-                menu.addItem(&menu_app_item);
+                )
+            };
+            menu_app_item.setSubmenu(Some(&menu_app_menu));
+            menu.addItem(&menu_app_item);
 
-                let app = NSApplication::sharedApplication(mtm);
-                app.setMainMenu(Some(&menu));
-            }
+            let app = NSApplication::sharedApplication(mtm);
+            app.setMainMenu(Some(&menu));
 
             // configure the window
             window.setContentView(Some(&content_view));
@@ -235,14 +218,12 @@ define_class!(
             window.makeKeyAndOrderFront(None);
 
             // request the web view navigate to a page
-            unsafe {
-                let request = {
-                    let url_string = ns_string!("https://google.com");
-                    let url = NSURL::URLWithString(url_string).expect("URL should parse");
-                    NSURLRequest::requestWithURL(&url)
-                };
-                web_view.loadRequest(&request);
-            }
+            let request = {
+                let url_string = ns_string!("https://google.com");
+                let url = NSURL::URLWithString(url_string).expect("URL should parse");
+                NSURLRequest::requestWithURL(&url)
+            };
+            unsafe { web_view.loadRequest(&request) };
 
             idcell!(nav_url => self);
             idcell!(web_view => self);
@@ -262,7 +243,7 @@ define_class!(
         ) -> bool {
             idcell!(web_view <= self);
             if command_selector == sel!(insertNewline:) {
-                if let Some(url) = unsafe { NSURL::URLWithString(&text_view.string()) } {
+                if let Some(url) = NSURL::URLWithString(&text_view.string()) {
                     unsafe { web_view.loadRequest(&NSURLRequest::requestWithURL(&url)) };
                     return true.into();
                 }
@@ -284,10 +265,8 @@ define_class!(
             _navigation: Option<&WKNavigation>,
         ) {
             idcell!(nav_url <= self);
-            unsafe {
-                if let Some(url) = web_view.URL().and_then(|url| url.absoluteString()) {
-                    nav_url.setStringValue(&url);
-                }
+            if let Some(url) = unsafe { web_view.URL() }.and_then(|url| url.absoluteString()) {
+                nav_url.setStringValue(&url);
             }
         }
     }

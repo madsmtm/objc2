@@ -11,7 +11,7 @@ use objc2_foundation::{NSArray, NSString};
 
 /// Simplest implementation
 pub fn get_text_1(pasteboard: &NSPasteboard) -> Option<Retained<NSString>> {
-    unsafe { pasteboard.stringForType(NSPasteboardTypeString) }
+    pasteboard.stringForType(unsafe { NSPasteboardTypeString })
 }
 
 /// More complex implementation using `readObjectsForClasses:options:`,
@@ -27,17 +27,17 @@ pub fn get_text_2(pasteboard: &NSPasteboard) -> Option<Retained<NSString>> {
 }
 
 pub fn set_text(pasteboard: &NSPasteboard, text: &NSString) {
-    let _ = unsafe { pasteboard.clearContents() };
+    let _ = pasteboard.clearContents();
     let obj = ProtocolObject::from_ref(text);
     let objects = NSArray::from_slice(&[obj]);
-    let res = unsafe { pasteboard.writeObjects(&objects) };
+    let res = pasteboard.writeObjects(&objects);
     if !res {
         panic!("Failed writing to pasteboard");
     }
 }
 
 fn main() {
-    let pasteboard = unsafe { NSPasteboard::generalPasteboard() };
+    let pasteboard = NSPasteboard::generalPasteboard();
     let impl_1 = get_text_1(&pasteboard);
     let impl_2 = get_text_2(&pasteboard);
     println!("Pasteboard text from implementation 1 was: {impl_1:?}");

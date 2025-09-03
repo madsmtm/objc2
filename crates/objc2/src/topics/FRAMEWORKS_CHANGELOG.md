@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `IOKit` "serial" submodule.
 * Marked a bunch of functions safe in:
+  - `AppKit` / `objc2-app-kit`.
   - `CoreGraphics` / `objc2-core-graphics`.
   - `CoreFoundation` / `objc2-core-foundation`.
   - `CoreVideo` / `objc2-core-video`.
