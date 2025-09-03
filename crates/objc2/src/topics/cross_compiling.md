@@ -24,7 +24,7 @@ $ export CC=clang CXX=clang++ AR=llvm-ar # If compiling C code
 $ cargo build --target aarch64-apple-darwin
 ```
 
-For more details, see [Rust Cross](https://github.com/japaric/rust-cross), this has a good explanation of how cross-compiling Rust works in general. [OSXCross](https://github.com/tpoechtrager/osxcross) is also a good resource, it outlines how to create a complete compiler toolchain (including `ld64`).
+For more details, see [Rust Cross](https://github.com/japaric/rust-cross), this has a good explanation of how cross-compiling Rust works in general. [OSXCross](https://github.com/tpoechtrager/osxcross) is also a good resource, it outlines how to create a complete compiler toolchain (including `ld64`). The [cross-rs](https://github.com/cross-rs) project might also be of interest.
 
 ## SDK
 
