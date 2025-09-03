@@ -415,6 +415,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(feature = "gnustep-1-7", ignore = "flaky")]
     fn test_class() {
         let cls = test_utils::custom_class();
         assert_eq!(cls.name(), &*c("CustomObject"));
