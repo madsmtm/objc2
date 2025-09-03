@@ -16,5 +16,9 @@ extern crate alloc;
 extern crate std;
 
 mod generated;
+#[cfg(feature = "CLLocation")]
+mod location;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+#[cfg(feature = "CLLocation")]
+pub use self::location::*;

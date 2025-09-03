@@ -52,6 +52,7 @@ default = [
     "NSFileProviderModifyItemOptions",
     "NSFileProviderReplicatedExtension",
     "NSFileProviderRequest",
+    "NSFileProviderSearch",
     "NSFileProviderService",
     "NSFileProviderTesting",
     "NSFileProviderThumbnailing",
@@ -140,6 +141,14 @@ NSFileProviderReplicatedExtension = [
     "objc2-foundation/NSURL",
 ]
 NSFileProviderRequest = ["objc2-foundation/NSURL"]
+NSFileProviderSearch = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
+]
 NSFileProviderService = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
