@@ -128,6 +128,7 @@ class.UITraitSceneCaptureState.main-thread-only = true
 class.UITraitListEnvironment.main-thread-only = true
 class.UITraitSplitViewControllerLayoutEnvironment.main-thread-only = true
 class.UITraitHDRHeadroomUsageLimit.main-thread-only = true
+class.UITraitResolvesNaturalAlignmentWithBaseWritingDirection.main-thread-only = true
 
 # We don't really want objc2-ui-kit to depend on objc2-core-text
 class.NSAdaptiveImageGlyph.skipped-protocols = ["CTAdaptiveImageProviding"]
