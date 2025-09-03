@@ -18,7 +18,11 @@ extern crate std;
 
 #[cfg(feature = "UIApplication")]
 mod application;
+#[cfg(feature = "UIView")]
+mod coordinate_space;
 mod generated;
+#[cfg(feature = "UIGeometry")]
+mod geometry;
 #[cfg(feature = "UIGestureRecognizer")]
 mod gesture_recognizer;
 #[cfg(feature = "UIPasteConfigurationSupporting")]
@@ -30,8 +34,12 @@ mod tests;
 #[cfg(feature = "NSText")]
 mod text;
 
+#[cfg(feature = "UIView")]
+pub use self::coordinate_space::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+#[cfg(feature = "UIGeometry")]
+pub use self::geometry::*;
 #[cfg(feature = "UIResponder")]
 pub use self::responder::*;
 #[cfg(feature = "NSText")]

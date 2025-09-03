@@ -6,6 +6,9 @@ custom-lib-rs = true
 # macos = "14.3"
 ios = "17.4"
 
+external.AVAudioSession.module = "AVFAudio.AVAudioSession"
+external.AVAudioSessionPortDescription.module = "AVFAudio.AVAudioSessionRoute"
+
 # Empty
 module.BEMacros.skipped = true
 

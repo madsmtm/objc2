@@ -66,6 +66,9 @@ impl UnexposedAttr {
             | "CF_TYPED_EXTENSIBLE_ENUM"
             | "NS_EXTENSIBLE_STRING_ENUM"
             | "CF_EXTENSIBLE_STRING_ENUM" => Some(Self::TypedExtensibleEnum),
+            // FIXME: Attribute used directly in CoreGraphics, we really need
+            // to parse and check the contents of it here.
+            "swift_wrapper" => None,
             "NS_SWIFT_BRIDGED_TYPEDEF" | "CF_SWIFT_BRIDGED_TYPEDEF" => Some(Self::BridgedTypedef),
             "CF_IMPLICIT_BRIDGING_ENABLED" => Some(Self::BridgedImplicit),
             "CF_BRIDGED_TYPE"
@@ -106,18 +109,29 @@ impl UnexposedAttr {
             // Nullability attributes
             s if s.starts_with("DISPATCH_NONNULL") => None,
             s if s.starts_with("XPC_NONNULL") => None,
-            "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" | "CM_SWIFT_SENDABLE"
-            | "CT_SWIFT_SENDABLE" | "CV_SWIFT_SENDABLE" | "XCT_SWIFT_SENDABLE" => {
-                Some(Self::Sendable)
-            }
-            "NS_SWIFT_NONSENDABLE" | "CM_SWIFT_NONSENDABLE" | "CV_SWIFT_NONSENDABLE" => {
-                Some(Self::NonSendable)
+            "NS_SWIFT_SENDABLE"
+            | "AS_SWIFT_SENDABLE"
+            | "CM_SWIFT_SENDABLE"
+            | "CT_SWIFT_SENDABLE"
+            | "CV_SWIFT_SENDABLE"
+            | "XCT_SWIFT_SENDABLE"
+            | "SEC_SWIFT_SENDABLE"
+            | "IOSFC_SWIFT_SENDABLE" => Some(Self::Sendable),
+            "NS_SWIFT_NONSENDABLE"
+            | "CM_SWIFT_NONSENDABLE"
+            | "CV_SWIFT_NONSENDABLE"
+            | "IOSFC_SWIFT_NONSENDABLE" => Some(Self::NonSendable),
+            // TODO
+            "NS_SWIFT_SENDING" | "CM_SWIFT_SENDING" => None,
+            "CM_SWIFT_SENDING_RETAINED_RESULT" | "CM_SWIFT_SENDING_RETAINED_PARAMETER" => {
+                Some(Self::ReturnsRetained)
             }
             // The main and UI actor is effectively the same on Apple platforms.
             "NS_SWIFT_UI_ACTOR"
             | "WK_SWIFT_UI_ACTOR"
             | "XCT_SWIFT_MAIN_ACTOR"
-            | "XCUI_SWIFT_MAIN_ACTOR" => Some(Self::UIActor),
+            | "XCUI_SWIFT_MAIN_ACTOR"
+            | "CARPLAY_TEMPLATE_UI_ACTOR" => Some(Self::UIActor),
             "NS_SWIFT_NONISOLATED" | "UIKIT_SWIFT_ACTOR_INDEPENDENT" => Some(Self::NonIsolated),
             // TODO
             "CF_FORMAT_ARGUMENT" | "CF_FORMAT_FUNCTION" | "NS_FORMAT_FUNCTION"
@@ -166,6 +180,8 @@ impl UnexposedAttr {
             | "API_DEPRECATED"
             | "API_DEPRECATED_BEGIN"
             | "API_DEPRECATED_WITH_REPLACEMENT"
+            | "API_OBSOLETED"
+            | "API_OBSOLETED_WITH_REPLACEMENT"
             | "API_UNAVAILABLE_BEGIN"
             | "API_UNAVAILABLE"
             | "AUGRAPH_DEPRECATED"
@@ -181,6 +197,8 @@ impl UnexposedAttr {
             | "CF_SWIFT_UNAVAILABLE"
             | "CG_AVAILABLE_BUT_DEPRECATED"
             | "CG_AVAILABLE_STARTING"
+            | "CG_SOFT_DEPRECATED_WITH_REPLACEMENT"
+            | "CG_ENUM_SOFT_DEPRECATED_WITH_REPLACEMENT"
             | "CI_GL_DEPRECATED"
             | "CI_GL_DEPRECATED_IOS"
             | "CI_GL_DEPRECATED_MAC"
@@ -319,12 +337,17 @@ impl UnexposedAttr {
             | "BROWSERENGINE_TEXTINPUT_AVAILABILITY"
             | "BROWSERENGINE_ACCESSIBILITY_AVAILABILITY"
             | "BROWSERENGINE_ACCESSIBILITY_MARKER_AVAILABILITY"
+            | "BROWSERENGINE_ACCESSIBILITY_REMOTE_AVAILABILITY"
             | "CA_CANONICAL_DEPRECATED"
             | "CB_CM_API_AVAILABLE"
             | "CF_AUTOMATED_REFCOUNT_UNAVAILABLE"
             | "CG_OBSOLETE"
-            | "CS_UNAVAILABLE_EMBEDDED"
+            | "CK_SHARE_ACCESS_REQUESTER_AVAILABILITY"
+            | "CK_SHARE_BLOCKED_IDENTITY_AVAILABILITY"
+            | "CKSHARE_REQUEST_ACCESS_INTERFACES_AVAILABILITY"
+            | "CM_VISION_OS_AVAILABLE"
             | "CS_TVOS_UNAVAILABLE"
+            | "CS_UNAVAILABLE_EMBEDDED"
             | "CSSM_DEPRECATED"
             | "deprecated"
             | "DEPRECATED_ATTRIBUTE"
@@ -398,7 +421,8 @@ impl UnexposedAttr {
             | "DISPATCH_REFINED_FOR_SWIFT"
             | "NS_REFINED_FOR_SWIFT"
             | "AR_REFINED_FOR_SWIFT"
-            | "NS_SWIFT_DISABLE_ASYNC" => None,
+            | "NS_SWIFT_DISABLE_ASYNC"
+            | "CP_STRUCT_REF" => None,
             // Possibly interesting?
             "DISPATCH_COLD" => None,
             "DISPATCH_MALLOC" => None,

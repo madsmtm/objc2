@@ -163,6 +163,7 @@ default = [
     "VZVirtualMachineDelegate",
     "VZVirtualMachineStartOptions",
     "VZVirtualMachineView",
+    "VZVmnetNetworkDeviceAttachment",
     "VZXHCIController",
     "VZXHCIControllerConfiguration",
     "bitflags",
@@ -397,5 +398,6 @@ VZVirtualMachineView = [
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",
 ]
+VZVmnetNetworkDeviceAttachment = []
 VZXHCIController = []
 VZXHCIControllerConfiguration = ["objc2-foundation/NSObject"]
