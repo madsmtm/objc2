@@ -72,6 +72,7 @@ SFSpeechLanguageModel = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
+    "objc2-foundation/NSValue",
 ]
 SFSpeechRecognitionMetadata = [
     "objc2-foundation/NSDate",
