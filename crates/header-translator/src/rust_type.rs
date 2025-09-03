@@ -1583,17 +1583,18 @@ impl Ty {
                     if pointee
                         .is_direct_cf_type(&id.name, bridged_to(&declaration, context).is_some())
                     {
-                        // A bit annoying that we replace the typedef name
-                        // here, as that's also what determines whether the
-                        // type is a CF type or not... But that's how it is
-                        // currently.
-                        let id = context.replace_typedef_name(id, true);
                         let declaration_generics = context
                             .library(&id)
                             .typedef_data
                             .get(&id.name)
                             .map(|data| data.generics.clone())
                             .unwrap_or_default();
+
+                        // A bit annoying that we replace the typedef name
+                        // here, as that's also what determines whether the
+                        // type is a CF type or not... But that's how it is
+                        // currently.
+                        let id = context.replace_typedef_name(id, true);
                         *pointee = Box::new(Self::Pointee(PointeeTy::CFTypeDef {
                             id,
                             declaration_generics,
