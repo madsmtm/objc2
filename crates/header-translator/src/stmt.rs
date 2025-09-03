@@ -1823,7 +1823,7 @@ impl Stmt {
 
         let ty = value.guess_type(id.location());
 
-        if ty.is_cf_type_ptr() || ty.is_object_like_ptr() {
+        if ty.is_object_like_ptr() {
             // cf_string! and ns_string! are not supported (since they cannot
             // yet be used in `const`).
             return None;
@@ -3024,15 +3024,24 @@ impl Stmt {
                         write!(f, "{vis} {unsafe_}{}fn {fn_name}(", abi.extern_outer())?;
                         for (i, (param, arg_ty)) in arguments.iter().enumerate() {
                             if i == 0 && *first_arg_is_self {
-                                write!(f, "self: ")?;
+                                // Might not be completely correct, but typeck
+                                // should figure out for us when calling the
+                                // inner function if the argument type isn't
+                                // the same type this one.
+                                if arg_ty.is_object_like_ptr() {
+                                    write!(f, "&self")?;
+                                } else {
+                                    write!(f, "self")?;
+                                }
                             } else {
                                 let param = handle_reserved(&crate::to_snake_case(param));
                                 write!(f, "{param}: ")?;
-                            }
-                            if let Some((converted_ty, _, _)) = arg_ty.fn_argument_converter() {
-                                write!(f, "{converted_ty}")?;
-                            } else {
-                                write!(f, "{}", arg_ty.fn_argument())?;
+
+                                if let Some((converted_ty, _, _)) = arg_ty.fn_argument_converter() {
+                                    write!(f, "{converted_ty}")?;
+                                } else {
+                                    write!(f, "{}", arg_ty.fn_argument())?;
+                                }
                             }
                             write!(f, ",")?;
                         }

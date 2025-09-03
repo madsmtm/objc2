@@ -1994,7 +1994,7 @@ impl Ty {
 
     pub(crate) fn is_object_like_ptr(&self) -> bool {
         if let Self::Pointer { pointee, .. } = self {
-            pointee.is_objc_type()
+            pointee.is_object_like()
         } else {
             false
         }
