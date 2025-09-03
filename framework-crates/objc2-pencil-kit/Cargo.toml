@@ -57,6 +57,9 @@ default = [
     "PKStrokePath",
     "PKStrokePoint",
     "PKTool",
+    "PKToolPickerEraserItem",
+    "PKToolPickerInkingItem",
+    "PKToolPickerItem",
     "block2",
     "objc2-app-kit",
     "objc2-core-foundation",
@@ -100,3 +103,12 @@ PKStrokePoint = [
     "objc2-foundation/NSObject",
 ]
 PKTool = ["objc2-foundation/NSObject"]
+PKToolPickerEraserItem = ["objc2-foundation/NSObject"]
+PKToolPickerInkingItem = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+PKToolPickerItem = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]

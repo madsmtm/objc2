@@ -55,6 +55,7 @@ default = [
     "GKAchievementViewController",
     "GKBasePlayer",
     "GKChallenge",
+    "GKChallengeDefinition",
     "GKChallengeEventHandler",
     "GKChallengesViewController",
     "GKCloudPlayer",
@@ -63,6 +64,11 @@ default = [
     "GKError",
     "GKEventListener",
     "GKFriendRequestComposeViewController",
+    "GKGameActivity",
+    "GKGameActivityDefinition",
+    "GKGameActivityListener",
+    "GKGameActivityPlayStyle",
+    "GKGameActivityState",
     "GKGameCenterViewController",
     "GKGameSession",
     "GKGameSessionError",
@@ -116,6 +122,7 @@ GKAchievement = [
 ]
 GKAchievementDescription = [
     "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -132,6 +139,12 @@ GKChallenge = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+GKChallengeDefinition = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCalendar",
+    "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
 GKChallengeEventHandler = []
@@ -161,6 +174,26 @@ GKFriendRequestComposeViewController = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+GKGameActivity = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+GKGameActivityDefinition = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSValue",
+]
+GKGameActivityListener = []
+GKGameActivityPlayStyle = []
+GKGameActivityState = []
 GKGameCenterViewController = [
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
@@ -184,6 +217,7 @@ GKGameSessionSharingViewController = []
 GKLeaderboard = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
