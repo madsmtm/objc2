@@ -107,7 +107,6 @@ default = [
     "GCRacingWheel",
     "GCRacingWheelInput",
     "GCRelativeInput",
-    "GCSpatialAccessory",
     "GCSteeringWheelElement",
     "GCStylus",
     "GCSwitchElement",
@@ -234,7 +233,6 @@ GCRelativeInput = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSSet",
 ]
-GCSpatialAccessory = []
 GCSteeringWheelElement = []
 GCStylus = [
     "objc2-foundation/NSArray",
