@@ -10,6 +10,9 @@ visionos = "1.0"
 
 external.ASAccessory.module = "AccessorySetupKit.ASAccessory"
 
+# See #778: the method has a wrongly-declared return nullability.
+class.NWHostEndpoint.methods.hostname.return.nullability = "nullable"
+
 # Needs Network framework
 class.NEAppProxyFlow.methods."setMetadata:".skipped = true
 class.NEAppProxyFlow.methods.networkInterface.skipped = true
