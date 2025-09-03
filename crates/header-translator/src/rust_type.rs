@@ -1799,7 +1799,7 @@ impl Ty {
             Self::Pointer { .. } => false,
             Self::TypeDef { to, .. } => to.is_safe_in_argument_inner(),
             Self::IncompleteArray { .. } => false, // Conservative
-            Self::Array { element_type, .. } => element_type.is_safe_in_argument_inner(),
+            Self::Array { .. } => false, // Only safe in structs, not safe directly or behind typedefs
             Self::Enum { .. } => true,
             Self::Struct { fields, .. } => {
                 fields.iter().all(|field| field.is_safe_in_argument_inner())
