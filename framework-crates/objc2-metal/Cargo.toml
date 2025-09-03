@@ -54,6 +54,7 @@ default = [
     "MTL4ArgumentTable",
     "MTL4BinaryFunction",
     "MTL4BinaryFunctionDescriptor",
+    "MTL4BufferRange",
     "MTL4CommandAllocator",
     "MTL4CommandBuffer",
     "MTL4CommandEncoder",
@@ -67,7 +68,6 @@ default = [
     "MTL4FunctionDescriptor",
     "MTL4LibraryDescriptor",
     "MTL4LibraryFunctionDescriptor",
-    "MTL4LinkedFunctions",
     "MTL4LinkingDescriptor",
     "MTL4MachineLearningCommandEncoder",
     "MTL4MachineLearningPipeline",
@@ -179,6 +179,7 @@ MTL4BinaryFunctionDescriptor = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+MTL4BufferRange = []
 MTL4CommandAllocator = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -221,12 +222,6 @@ MTL4LibraryDescriptor = [
     "objc2-foundation/NSString",
 ]
 MTL4LibraryFunctionDescriptor = [
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
-]
-MTL4LinkedFunctions = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]

@@ -584,6 +584,5 @@ HKWorkoutSession = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
-    "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]

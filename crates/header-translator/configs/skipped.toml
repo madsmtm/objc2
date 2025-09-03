@@ -144,9 +144,7 @@ DeviceDiscoveryUI = "Needs Network first"
 BrowserKit = "TODO"
 SecurityUI = "TODO"
 GameSave = "TODO"
-TouchControls = "TODO"
-
-MeshNetFramework = "Weirdly incomplete"
+TouchController = "TODO"
 
 # LiveExecutionResultsLogger = "Removed in Xcode 26"
 # AGL = "Removed in Xcode 26"

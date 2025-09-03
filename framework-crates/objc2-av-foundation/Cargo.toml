@@ -807,6 +807,7 @@ AVSampleBufferRenderSynchronizer = [
     "objc2-foundation/NSValue",
 ]
 AVSampleBufferVideoRenderer = [
+    "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
