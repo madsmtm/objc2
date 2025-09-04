@@ -4,11 +4,12 @@ use std::fmt;
 use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
 
 use crate::availability::Availability;
-use crate::config::{MethodData, SafetyKind, TypeOverride};
+use crate::config::{MethodData, TypeOverride};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
 use crate::id::ItemTree;
+use crate::name_translation::is_likely_bounds_affecting;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{MethodArgumentQualifier, SafetyProperty, Ty};
 use crate::thread_safety::ThreadSafety;
@@ -553,22 +554,31 @@ impl Method {
             })
             .merge(result_type.safety_in_fn_return());
 
+        let default_safety = &context
+            .library(Location::from_entity(&entity, context).unwrap())
+            .default_safety;
+
+        let default_safe = if is_class || memory_management == MemoryManagement::RetainedInit {
+            default_safety.class_methods
+        } else {
+            default_safety.instance_methods
+        };
+
         let safe = if let Some(unsafe_) = data.unsafe_ {
             if safety == SafetyProperty::Unsafe && !unsafe_ {
                 // TODO(breaking): Disallow these.
                 error!(?selector, ?arguments, "unsafe method was marked as safe");
             }
             !unsafe_
-        } else if safety == SafetyProperty::Safe {
-            let kind = if is_class || memory_management == MemoryManagement::RetainedInit {
-                SafetyKind::ClassMethods
+        } else if safety == SafetyProperty::Safe && default_safe {
+            if default_safety.not_bounds_affecting {
+                !is_likely_bounds_affecting(&selector)
+                    && arguments
+                        .iter()
+                        .all(|(arg_name, _)| !is_likely_bounds_affecting(arg_name))
             } else {
-                SafetyKind::InstanceMethods
-            };
-            context
-                .library(Location::from_entity(&entity, context).unwrap())
-                .unsafe_default_safe
-                .contains(&kind)
+                true
+            }
         } else {
             false
         };
@@ -643,6 +653,10 @@ impl Method {
             .map(|a| a.unsafe_retained || a.assign)
             .unwrap_or(false);
 
+        let default_safety = &context
+            .library(Location::from_entity(&entity, context).unwrap())
+            .default_safety;
+
         if let Some(qualifiers) = entity.get_objc_qualifiers() {
             error!(?qualifiers, "properties do not support qualifiers");
         }
@@ -695,11 +709,8 @@ impl Method {
                     error!(?getter_sel, ?ty, "unsafe property was marked as safe");
                 }
                 !unsafe_
-            } else if safety == SafetyProperty::Safe {
-                context
-                    .library(Location::from_entity(&entity, context).unwrap())
-                    .unsafe_default_safe
-                    .contains(&SafetyKind::PropertyGetters)
+            } else if safety == SafetyProperty::Safe && default_safety.property_getters {
+                true // Also if bounds affecting
             } else {
                 false
             };
@@ -773,11 +784,12 @@ impl Method {
                         error!(?selector, ?ty, "unsafe property setter was marked as safe");
                     }
                     !unsafe_
-                } else if safety == SafetyProperty::Safe {
-                    context
-                        .library(Location::from_entity(&entity, context).unwrap())
-                        .unsafe_default_safe
-                        .contains(&SafetyKind::PropertySetters)
+                } else if safety == SafetyProperty::Safe && default_safety.property_setters {
+                    if default_safety.not_bounds_affecting {
+                        !is_likely_bounds_affecting(&selector)
+                    } else {
+                        true
+                    }
                 } else {
                     false
                 };

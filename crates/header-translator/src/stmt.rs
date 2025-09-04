@@ -12,7 +12,6 @@ use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::availability::Availability;
 use crate::cfgs::PlatformCfg;
-use crate::config::SafetyKind;
 use crate::config::StmtData;
 use crate::config::{Config, LibraryConfig, MethodData};
 use crate::context::Context;
@@ -26,6 +25,7 @@ use crate::id::ItemTree;
 use crate::id::Location;
 use crate::immediate_children;
 use crate::method::{apply_type_override, handle_reserved, Method};
+use crate::name_translation::is_likely_bounds_affecting;
 use crate::name_translation::{enum_prefix, split_words};
 use crate::protocol::parse_direct_protocols;
 use crate::protocol::ProtocolRef;
@@ -1739,17 +1739,23 @@ impl Stmt {
                     })
                     .merge(result_type.safety_in_fn_return());
 
+                let default_safety = context.library(&id).default_safety;
+
                 let safe = if let Some(unsafe_) = data.unsafe_ {
                     if safety == SafetyProperty::Unsafe && !unsafe_ {
                         // TODO(breaking): Disallow these.
                         error!(?id, "unsafe function was marked as safe");
                     }
                     !unsafe_
-                } else if safety == SafetyProperty::Safe {
-                    context
-                        .library(Location::from_entity(entity, context).unwrap())
-                        .unsafe_default_safe
-                        .contains(&SafetyKind::Functions)
+                } else if safety == SafetyProperty::Safe && default_safety.functions {
+                    if default_safety.not_bounds_affecting {
+                        !is_likely_bounds_affecting(&c_name)
+                            && arguments
+                                .iter()
+                                .all(|(arg_name, _)| !is_likely_bounds_affecting(arg_name))
+                    } else {
+                        true
+                    }
                 } else {
                     false
                 };

@@ -120,7 +120,7 @@ impl<'a> Iterator for Iter<'a> {
 impl FusedIterator for Iter<'_> {}
 
 /// Find the common prefix of a number of names, based on word boundaries.
-pub(crate) fn common_prefix<'a>(items: impl IntoIterator<Item = &'a str>) -> &'a str {
+fn common_prefix<'a>(items: impl IntoIterator<Item = &'a str>) -> &'a str {
     // Algorithm adapted from https://stackoverflow.com/a/6718435.
     let mut items = items.into_iter();
 
@@ -446,6 +446,20 @@ fn is_method_candidate(fn_name: &str, type_name: &str) -> bool {
     true
 }
 
+/// Whether a parameter or function name is likely to require a bounds check.
+///
+/// This is only a best-effort heuristic, the library author may have called
+/// this any number of other things.
+pub(crate) fn is_likely_bounds_affecting(name: &str) -> bool {
+    let name = name.to_lowercase();
+    name.contains("idx")
+        || name.contains("index")
+        || name == "i"
+        || name.contains("capacity")
+        || name.contains("range")
+        || name.contains("offset")
+}
+
 fn lowercase_words(s: &str) -> impl Iterator<Item = String> + '_ {
     // Removing `_` is desirable everywhere except in the beginning, it makes
     // things like `CGColorCreateGenericGrayGamma2_2` work, and we merge it
@@ -654,5 +668,15 @@ mod tests {
 
         // check("AbcDef", "AbcDef", "");
         // check("Ac", "Bc", None);
+    }
+
+    #[test]
+    fn test_index() {
+        assert!(is_likely_bounds_affecting("idx"));
+        assert!(is_likely_bounds_affecting("idx1"));
+        assert!(is_likely_bounds_affecting("idx2"));
+        assert!(is_likely_bounds_affecting("index"));
+        assert!(!is_likely_bounds_affecting("the_array"));
+        assert!(is_likely_bounds_affecting("range"));
     }
 }

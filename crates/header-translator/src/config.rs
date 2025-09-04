@@ -330,7 +330,7 @@ pub struct LibraryConfig {
 
     #[serde(rename = "unsafe-default-safe")]
     #[serde(default)]
-    pub unsafe_default_safe: HashSet<SafetyKind>,
+    pub default_safety: DefaultSafety,
     #[serde(default)]
     pub module: HashMap<String, ModuleConfig>,
 }
@@ -359,25 +359,44 @@ pub struct LibraryConfig {
 ///
 /// As such, each framework must be explicitly marked with the kinds of safety
 /// it has been reviewed for.
-#[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Deserialize, Default, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[serde(deny_unknown_fields)]
-pub enum SafetyKind {
+pub struct DefaultSafety {
     /// Property getters are marked as safe by default.
-    PropertyGetters,
+    #[serde(rename = "property-getters")]
+    #[serde(default)]
+    pub property_getters: bool,
     /// Property setters are marked as safe by default, provided that they do
     /// not take pointers as arguments.
-    PropertySetters,
+    #[serde(rename = "property-setters")]
+    #[serde(default)]
+    pub property_setters: bool,
     /// Class and protocol instance methods are marked as safe by default,
     /// provided that they do not take pointers as arguments.
-    InstanceMethods,
+    #[serde(rename = "instance-methods")]
+    #[serde(default)]
+    pub instance_methods: bool,
     /// Class and protocol class methods are marked as safe by default,
     /// provided that they do not take pointers as arguments.
     ///
-    /// Class methods in this instance includes initializers.
-    ClassMethods,
+    /// This includes initializers.
+    #[serde(rename = "class-methods")]
+    #[serde(default)]
+    pub class_methods: bool,
     /// Functions are marked as safe by default, provided that they do not
     /// take pointers as arguments.
-    Functions,
+    #[serde(default)]
+    pub functions: bool,
+    /// Whether functions or methods with bounds-affecting parameters are
+    /// excluded from this default.
+    ///
+    /// The documentation in CoreFoundation-like frameworks often say it's
+    /// "undefined behaviour" to have indexes or ranges out of bounds - but
+    /// then the function often checks it anyhow, so whether that is something
+    /// we can rely on is unclear?
+    #[serde(rename = "not-bounds-affecting")]
+    #[serde(default)]
+    pub not_bounds_affecting: bool,
 }
 
 fn link_default() -> bool {
