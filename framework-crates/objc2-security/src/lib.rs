@@ -49,6 +49,7 @@ pub type CSSM_STRING = [core::ffi::c_char; 68];
 
 #[allow(non_camel_case_types)]
 #[allow(non_snake_case)]
+#[allow(deprecated)]
 #[cfg(all(
     feature = "cssmtype",
     feature = "SecAsn1Types",
@@ -62,6 +63,7 @@ pub union cssm_list_element_Element {
     pub Word: SecAsn1Item,
 }
 
+#[allow(deprecated)]
 #[cfg(all(
     feature = "cssmtype",
     feature = "SecAsn1Types",
@@ -73,6 +75,7 @@ unsafe impl Encode for cssm_list_element_Element {
         Encoding::Union("?", &[<CSSM_LIST>::ENCODING, <SecAsn1Item>::ENCODING]);
 }
 
+#[allow(deprecated)]
 #[cfg(all(
     feature = "cssmtype",
     feature = "SecAsn1Types",

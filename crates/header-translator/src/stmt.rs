@@ -2453,7 +2453,7 @@ impl Stmt {
                     generics,
                     protocol,
                     protocol_super_protocols: _,
-                    availability: _,
+                    availability: _, // Trait implementations can't be deprecated
                 } => {
                     let (generic_bound, where_bound) = if !generics.is_empty() {
                         match (protocol.library_name(), &*protocol.name) {
@@ -2903,7 +2903,7 @@ impl Stmt {
                 Self::VarDecl {
                     id,
                     link_name,
-                    availability: _,
+                    availability,
                     ty,
                     value: None,
                     documentation,
@@ -2911,6 +2911,7 @@ impl Stmt {
                     writeln!(f, "extern \"C\" {{")?;
                     write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
                     if *link_name != id.name {
                         writeln!(f, "#[link_name = {link_name:?}]")?;
                     }
@@ -2920,13 +2921,14 @@ impl Stmt {
                 Self::VarDecl {
                     id,
                     link_name: _, // Don't care about the link name on variables with a value.
-                    availability: _,
+                    availability,
                     ty,
                     value: Some(expr),
                     documentation,
                 } => {
                     write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
                     write!(f, "pub static {}: {} = ", id.name, ty.var())?;
 
                     if ty.is_floating_through_typedef() {
@@ -3137,12 +3139,13 @@ impl Stmt {
                 }
                 Self::AliasDecl {
                     id,
-                    availability: _,
+                    availability,
                     ty,
                     kind,
                     documentation,
                 } => {
                     write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{availability}")?;
                     match kind {
                         Some(UnexposedAttr::TypedEnum) => {
                             // TODO: Handle this differently
