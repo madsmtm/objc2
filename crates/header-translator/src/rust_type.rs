@@ -228,6 +228,70 @@ pub enum MethodArgumentQualifier {
     Out,
 }
 
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum SafetyProperty {
+    /// The type is unsafe in the selected position.
+    Unsafe,
+    /// The safety of using the type in this position is unknown.
+    Unknown,
+    /// The type is always safe in this position (and methods/functions using
+    /// this is thus eligible for being automatically marked safe).
+    Safe,
+}
+
+impl SafetyProperty {
+    pub fn merge(self, other: Self) -> Self {
+        match (self, other) {
+            (Self::Unsafe, _) => Self::Unsafe,
+            (_, Self::Unsafe) => Self::Unsafe,
+            (Self::Unknown, _) => Self::Unknown,
+            (_, Self::Unknown) => Self::Unknown,
+            (Self::Safe, Self::Safe) => Self::Safe,
+        }
+    }
+}
+
+/// The safety properties of a type.
+///
+/// These depend on which position the type is used in.
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub struct TypeSafety {
+    /// The type's safety properties when passed into foreign code.
+    pub in_argument: SafetyProperty,
+    /// The type's safety properties when given by foreign code.
+    pub in_return: SafetyProperty,
+}
+
+impl TypeSafety {
+    const SAFE: Self = Self {
+        in_argument: SafetyProperty::Safe,
+        in_return: SafetyProperty::Safe,
+    };
+    const UNSAFE: Self = Self {
+        in_argument: SafetyProperty::Unsafe,
+        in_return: SafetyProperty::Unsafe,
+    };
+    const UNKNOWN_IN_ARGUMENT: Self = Self {
+        in_argument: SafetyProperty::Unknown,
+        in_return: SafetyProperty::Safe,
+    };
+    const UNSAFE_IN_ARGUMENT: Self = Self {
+        in_argument: SafetyProperty::Unsafe,
+        in_return: SafetyProperty::Safe,
+    };
+    const UNSAFE_IN_RETURN: Self = Self {
+        in_argument: SafetyProperty::Safe,
+        in_return: SafetyProperty::Unsafe,
+    };
+
+    fn merge(self, other: Self) -> Self {
+        Self {
+            in_argument: self.in_argument.merge(other.in_argument),
+            in_return: self.in_return.merge(other.in_return),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Primitive {
     Void,
@@ -350,6 +414,15 @@ impl Primitive {
             Self::NSUInteger => false,
             _ => return None,
         })
+    }
+
+    fn safety(&self) -> TypeSafety {
+        match self {
+            // FIXME(madsmtm): Remove Imp from primitive?
+            Self::Imp => TypeSafety::UNSAFE,
+            Self::VaList => TypeSafety::UNSAFE,
+            _ => TypeSafety::SAFE,
+        }
     }
 }
 
@@ -631,7 +704,7 @@ impl PointeeTy {
         }
     }
 
-    fn is_safe_in_argument(&self, in_generic: bool) -> bool {
+    fn safety(&self) -> TypeSafety {
         match self {
             // `objc2` ensures that objects are initialized before being
             // allowed as references.
@@ -641,56 +714,122 @@ impl PointeeTy {
                 protocols,
                 ..
             } => {
+                // Check that the inner generics are safe to use.
+                // TODO: NSMutableArray and variance?
+                let mut safety = generics.iter().fold(TypeSafety::SAFE, |safety, generic| {
+                    safety.merge(generic.safety())
+                });
+
+                if generics.len() != declaration_generics.len() {
+                    // If all generics aren't specified, the remaining are
+                    // AnyObject, so apply the restrictions from that as well.
+                    safety = safety.merge(TypeSafety::UNKNOWN_IN_ARGUMENT);
+                }
+
                 // We don't uphold protocol type safety properly yet, since we
                 // have no way of specifying ad-hoc protocol requirements.
-                protocols.is_empty()
-                    // Check that the inner generic is safe to use.
-                    && generics.iter().all(|generic| generic.is_safe_in_argument(true))
-                    // Further disallow AnyObject in generics.
-                    && (generics.len() == declaration_generics.len())
+                if !protocols.is_empty() {
+                    safety = safety.merge(TypeSafety::UNSAFE_IN_ARGUMENT);
+                }
+
+                safety
             }
             Self::AnyObject { protocols } => match protocols.len() {
-                // Conservatively disallow `AnyObject` in generics, to avoid
-                // marking `&NSDictionary<NSString, AnyObject>` as safe.
-                // TODO: Relax this once we're more confident that passing an
-                // incorrect object won't cause unsoundness.
-                0 => !in_generic,
-                // Allow `ProtocolObject<dyn Xyz>`.
-                1 => true,
-                // Only single protocol is properly supported.
-                _ => false,
+                // Make `AnyObject` conservatively disallowed as argument,
+                // see https://github.com/madsmtm/objc2/issues/562.
+                //
+                // Returning it is fine though, since if you actually
+                // want to do anything with the type, you have to downcast it,
+                // and `objc2` checks that at runtime.
+                0 => TypeSafety::UNKNOWN_IN_ARGUMENT,
+                // `ProtocolObject<dyn MyProtocol>` is well-typed.
+                1 => TypeSafety::SAFE,
+                // FIXME: Only a single protocol is properly supported,
+                // multiple protocol restrictions are currently `AnyObject`.
+                _ => TypeSafety::UNKNOWN_IN_ARGUMENT,
             },
-            // Generic parameters are safe by themselves.
+            // Generic parameters are safe.
             // TODO: NSDictionary's KeyType perhaps isn't really?
-            Self::GenericParam { .. } => true,
-            // Self types aren't present in arguments, but would be perfectly
-            // legal, since we specify all generics on the impl.
-            Self::Self_ => false,
-            // Types like `&CFArray` are not safe, since their generic can be
-            // anything (including `usize`). But `&CFString` is safe.
+            Self::GenericParam { .. } => TypeSafety::SAFE,
+            // Self types have all generics specified on the impl, so they are
+            // basically `Class { generics: vec![GenericParam...] }`.
+            Self::Self_ => TypeSafety::SAFE,
             Self::CFTypeDef {
+                id,
                 declaration_generics,
-                ..
-            } => declaration_generics.is_empty(),
-            Self::DispatchTypeDef { .. } => true,
-            // SAFETY: &CStr is safe as a parameter.
-            Self::CStr => true,
+            } => {
+                if matches!(&*id.name, "CFType" | "CFTypeRef") {
+                    // `CFType`, like `AnyObject`, is not known to be safe.
+                    TypeSafety::UNKNOWN_IN_ARGUMENT
+                } else if declaration_generics.is_empty() {
+                    // Types like `&CFArray` are not safe, since their generic
+                    // can be anything (including `usize`, i.e. they don't
+                    // have to be objects).
+                    TypeSafety::SAFE
+                } else {
+                    // `&CFString` and similar are safe.
+                    TypeSafety::UNSAFE_IN_ARGUMENT
+                }
+            }
+            // Dispatch objects have strong type-safety, and are thus
+            // safe in both positions.
+            Self::DispatchTypeDef { .. } => TypeSafety::SAFE,
+            // &CStr is safe as a parameter, though probably not when
+            // returning (since we wouldn't know the lifetime).
+            Self::CStr => TypeSafety::UNSAFE_IN_RETURN,
             // Taking `&AnyClass` or `&AnyProtocol` can be perilous if the
             // method tries to assume it can e.g. create new instances of the
-            // class.
-            Self::AnyProtocol | Self::AnyClass { .. } => false,
-            // TODO: Allow certain types of function pointers and blocks.
-            Self::Fn { .. } => false,
-            // Allow simple blocks that return a primitive, and are not marked
-            // as sendable, as we don't yet restrict sendability in blocks:
-            // https://github.com/madsmtm/objc2/issues/572
+            // class. Some uses are safe though, such as `NSStringFromClass`.
+            Self::AnyProtocol | Self::AnyClass { .. } => TypeSafety::UNKNOWN_IN_ARGUMENT,
+            // Sendable blocks are not yet propagate in the API, and so are
+            // not safe: https://github.com/madsmtm/objc2/issues/572
             Self::Block {
-                sendable: Some(false) | None,
-                result_type,
+                sendable: Some(true),
                 ..
-            } => result_type.is_primitive(),
-            Self::Block { .. } => false,
-            Self::TypeDef { to, .. } => to.is_safe_in_argument(in_generic),
+            } => TypeSafety::UNSAFE,
+            Self::Block {
+                sendable: _,
+                arguments,
+                result_type,
+                no_escape: _, // Doesn't have an effect on this
+            } => {
+                let argument_safety = arguments.iter().fold(TypeSafety::SAFE, |safety, arg| {
+                    // We don't currently handle lifetimes in blocks, so
+                    // let's be conservative here for now.
+                    safety.merge(arg.safety())
+                });
+
+                // Currently conservative, since blocks doesn't handle memory
+                // management, and thus currently return raw pointers.
+                let result_ty_safety = result_type.safety();
+
+                TypeSafety {
+                    // Blocks in arguments have a sort of flipped view; they
+                    // require that the result type is safe as an argument,
+                    // since the user provides this from the block. And they
+                    // require that the arguments are as safe as if they were
+                    // returned, since they are passed to into the block.
+                    in_argument: result_ty_safety
+                        .in_argument
+                        .merge(argument_safety.in_return),
+                    // Returning blocks is the opposite; the returned block's
+                    // arguments must be safe to call from user code, and the
+                    // result type must be safe to use afterwards.
+                    in_return: argument_safety
+                        .in_argument
+                        .merge(result_ty_safety.in_return),
+                }
+            }
+            Self::Fn { .. } => {
+                // Function pointers are emitted as `unsafe fn`, so they are
+                // never safe in argument position.
+                //
+                // That fact cuts both ways though: when being returned, they
+                // are safe, since the user must uphold their safety
+                // guarantees if they want to call the function.
+                TypeSafety::UNSAFE_IN_ARGUMENT
+            }
+            Self::TypeDef { to, .. } => to.safety(),
         }
     }
 
@@ -1788,60 +1927,95 @@ impl Ty {
         }
     }
 
-    fn is_safe_in_argument_inner(&self) -> bool {
+    /// The (conservative) safety properties of the type.
+    fn safety(&self) -> TypeSafety {
         match self {
-            Self::Primitive(_) => true,
-            Self::Pointee(pointee) => pointee.is_safe_in_argument(false),
-            Self::Simd { .. } => true,
+            Self::Primitive(prim) => prim.safety(),
+            Self::Pointee(pointee) => pointee.safety(),
+            // Most SIMD functions are unsafe, but the type itself must be
+            // initialized and is by perfectly safe.
+            Self::Simd { .. } => TypeSafety::SAFE,
             // Rarely safe, selectors can point to anything, and it's hard to
             // specify threading requirements.
-            Self::Sel { .. } => false,
-            Self::Pointer { .. } => false,
-            Self::TypeDef { to, .. } => to.is_safe_in_argument_inner(),
-            Self::IncompleteArray { .. } => false, // Conservative
-            Self::Array { .. } => false, // Only safe in structs, not safe directly or behind typedefs
-            Self::Enum { .. } => true,
-            Self::Struct { fields, .. } => {
-                fields.iter().all(|field| field.is_safe_in_argument_inner())
-            }
-            Self::Union { .. } => false, // Conservative.
+            Self::Sel { .. } => TypeSafety::UNSAFE_IN_ARGUMENT,
+            // By default, pointers aren't safe in arguments, though they are
+            // generally safe to return (at least if the pointee is).
+            Self::Pointer { pointee, .. } => TypeSafety::UNSAFE_IN_ARGUMENT.merge(pointee.safety()),
+            // We don't really support incomplete arrays yet.
+            Self::IncompleteArray { .. } => TypeSafety::UNSAFE,
+            // Only safe in structs, not safe directly or behind typedefs.
+            Self::Array { .. } => TypeSafety::UNSAFE,
+            // Enums are safe in both positions.
+            //
+            // Note that enums don't strictly prevent passing invalid
+            // enumeration values, but this is fine, C code (and by extension
+            // Objective-C code) is written with that in mind.
+            Self::Enum { .. } => TypeSafety::SAFE,
+            // Structs inherit the safety of all their fields.
+            Self::Struct { fields, .. } => fields.iter().fold(TypeSafety::SAFE, |safety, field| {
+                safety.merge(match field {
+                    // Arrays are when inside structs.
+                    Self::Array { element_type, .. } => element_type.safety(),
+                    field => field.safety(),
+                })
+            }),
+            // Conservative.
+            Self::Union { .. } => TypeSafety::UNSAFE,
+            Self::TypeDef { to, .. } => to.safety(),
         }
     }
 
-    pub(crate) fn is_safe_in_argument(&self, supports_out_pointers: bool) -> bool {
-        if supports_out_pointers && self.fmt_out_pointer().is_some() {
-            true
-        } else {
-            match self {
-                // We don't allow `Nullability::Unspecified`, to avoid
-                // situations where an API does not actually support taking a
-                // nullable value (i.e. cases where we might be emitting the
-                // wrong binding).
-                // See also https://github.com/madsmtm/objc2/issues/695.
-                Self::Pointer {
-                    nullability: Nullability::Nullable | Nullability::NonNull,
-                    pointee,
-                    ..
-                } if pointee.is_object_like() => pointee.is_safe_in_argument_inner(),
-                Self::Pointer {
-                    nullability: Nullability::Nullable | Nullability::NonNull,
-                    pointee,
-                    ..
-                } if matches!(
+    fn safety_in_fn(&self) -> TypeSafety {
+        match self {
+            // At the top-level of functions/methods, pointers to object-like
+            // things and block/fn pointers are generally emitted as `&$Ty`
+            // and returned as `Retained<$Ty>` (possibly in an `Option`).
+            //
+            // This is safe if the pointee is.
+            Self::Pointer {
+                nullability,
+                pointee,
+                ..
+            } if pointee.is_object_like()
+                || matches!(
                     &**pointee,
-                    Self::Pointee(PointeeTy::AnyClass { .. })
-                        | Self::Pointee(PointeeTy::Block { .. })
-                        | Self::Pointee(PointeeTy::Fn { .. })
+                    Self::Pointee(PointeeTy::Block { .. }) | Self::Pointee(PointeeTy::Fn { .. })
                 ) =>
-                {
-                    pointee.is_safe_in_argument_inner()
+            {
+                let mut safety = pointee.safety();
+                if *nullability == Nullability::Unspecified {
+                    // Mark as unknown in argument, to avoid situations where
+                    // an API does not actually support taking a nullable
+                    // value (i.e. cases where we might be emitting the wrong
+                    // binding).
+                    //
+                    // See also https://github.com/madsmtm/objc2/issues/695.
+                    safety = safety.merge(TypeSafety::UNKNOWN_IN_ARGUMENT);
                 }
-                _ => self.is_safe_in_argument_inner(),
+                safety
             }
+            _ => self.safety(),
         }
     }
 
-    pub(crate) fn is_primitive(&self) -> bool {
+    pub(crate) fn safety_in_method_argument(&self) -> SafetyProperty {
+        if self.fmt_out_pointer().is_some() {
+            SafetyProperty::Safe
+        } else {
+            self.safety_in_fn_argument()
+        }
+    }
+
+    pub(crate) fn safety_in_fn_argument(&self) -> SafetyProperty {
+        self.safety_in_fn().in_argument
+    }
+
+    pub(crate) fn safety_in_fn_return(&self) -> SafetyProperty {
+        self.safety_in_fn().in_return
+    }
+
+    #[allow(dead_code)]
+    fn is_primitive(&self) -> bool {
         match self {
             Self::Primitive(_) | Self::Simd { .. } => true,
             Self::TypeDef { to, .. } => to.is_primitive(),

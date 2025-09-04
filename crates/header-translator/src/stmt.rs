@@ -29,6 +29,7 @@ use crate::method::{apply_type_override, handle_reserved, Method};
 use crate::name_translation::{enum_prefix, split_words};
 use crate::protocol::parse_direct_protocols;
 use crate::protocol::ProtocolRef;
+use crate::rust_type::SafetyProperty;
 use crate::rust_type::Ty;
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -1731,30 +1732,26 @@ impl Stmt {
                     None
                 };
 
-                let safe = if !arguments
+                let safety = arguments
                     .iter()
-                    .all(|(_, ty)| ty.is_safe_in_argument(false))
-                {
-                    // We don't care about the return type when checking safety.
-                    if !data.unsafe_.unwrap_or(true) {
-                        error!(
-                            ?id,
-                            ?arguments,
-                            "function with unsafe arg was marked as safe"
-                        );
-                        true // TODO(breaking): Change to false
-                    } else {
-                        false
+                    .fold(SafetyProperty::Safe, |safety, (_, arg_ty)| {
+                        safety.merge(arg_ty.safety_in_fn_argument())
+                    })
+                    .merge(result_type.safety_in_fn_return());
+
+                let safe = if let Some(unsafe_) = data.unsafe_ {
+                    if safety == SafetyProperty::Unsafe && !unsafe_ {
+                        // TODO(breaking): Disallow these.
+                        error!(?id, "unsafe function was marked as safe");
                     }
-                } else if let Some(unsafe_) = data.unsafe_ {
-                    // Allow overriding safety with config.
                     !unsafe_
-                } else {
-                    // Functions are otherwise allowed to be safe by default.
+                } else if safety == SafetyProperty::Safe {
                     context
                         .library(Location::from_entity(entity, context).unwrap())
                         .unsafe_default_safe
                         .contains(&SafetyKind::Functions)
+                } else {
+                    false
                 };
 
                 vec![Self::FnDecl {

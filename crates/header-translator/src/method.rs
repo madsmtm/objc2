@@ -10,7 +10,7 @@ use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
 use crate::id::ItemTree;
 use crate::objc2_utils::in_selector_family;
-use crate::rust_type::{MethodArgumentQualifier, Ty};
+use crate::rust_type::{MethodArgumentQualifier, SafetyProperty, Ty};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
 use crate::{immediate_children, Location};
@@ -546,23 +546,20 @@ impl Method {
             .get_objc_type_encoding()
             .expect("method to have encoding");
 
-        let safe = if !arguments.iter().all(|(_, ty)| ty.is_safe_in_argument(true)) {
-            // We don't care about the return type when checking safety.
-            if !data.unsafe_.unwrap_or(true) {
-                error!(
-                    ?selector,
-                    ?arguments,
-                    "method with unsafe arg was marked as safe"
-                );
-                true // TODO(breaking): Change to false
-            } else {
-                false
+        let safety = arguments
+            .iter()
+            .fold(SafetyProperty::Safe, |safety, (_, arg_ty)| {
+                safety.merge(arg_ty.safety_in_method_argument())
+            })
+            .merge(result_type.safety_in_fn_return());
+
+        let safe = if let Some(unsafe_) = data.unsafe_ {
+            if safety == SafetyProperty::Unsafe && !unsafe_ {
+                // TODO(breaking): Disallow these.
+                error!(?selector, ?arguments, "unsafe method was marked as safe");
             }
-        } else if let Some(unsafe_) = data.unsafe_ {
-            // Allow overriding safety with config.
             !unsafe_
-        } else {
-            // Methods are otherwise allowed to be safe by default.
+        } else if safety == SafetyProperty::Safe {
             let kind = if is_class || memory_management == MemoryManagement::RetainedInit {
                 SafetyKind::ClassMethods
             } else {
@@ -572,6 +569,8 @@ impl Method {
                 .library(Location::from_entity(&entity, context).unwrap())
                 .unsafe_default_safe
                 .contains(&kind)
+        } else {
+            false
         };
 
         Some((
@@ -677,30 +676,32 @@ impl Method {
 
             apply_type_override(&mut ty, &getter_data.return_);
 
-            let safe = if unsafe_retained && !ty.is_primitive_or_record() {
+            let mut safety = ty.safety_in_fn_return();
+            if unsafe_retained && !ty.is_primitive_or_record() {
                 // We cannot mark these as safe, since the pointer is not
                 // guaranteed to remain valid while being stored inside the
                 // class.
-                if !getter_data.unsafe_.unwrap_or(true) {
-                    error!(?getter_sel, "`unsafe_retained` property was marked as safe");
-                    true // TODO(breaking): Change to false
-                } else {
-                    false
-                }
-            } else if let Some(unsafe_) = getter_data.unsafe_ {
-                // Allow overriding safety with config.
-                !unsafe_
-            } else if !atomic && parent_thread_safety.inferred_sendable() {
+                safety = SafetyProperty::Unsafe;
+            }
+            if !atomic && parent_thread_safety.inferred_sendable() {
                 // `nonatomic` properties on sendable classes are not safe
                 // by default.
-                false
-            } else {
-                // Property getters are otherwise allowed to be safe by
-                // default (regardless of what the result type is).
+                safety = safety.merge(SafetyProperty::Unknown);
+            };
+
+            let safe = if let Some(unsafe_) = getter_data.unsafe_ {
+                if safety == SafetyProperty::Unsafe && !unsafe_ {
+                    // TODO(breaking): Disallow these.
+                    error!(?getter_sel, ?ty, "unsafe property was marked as safe");
+                }
+                !unsafe_
+            } else if safety == SafetyProperty::Safe {
                 context
                     .library(Location::from_entity(&entity, context).unwrap())
                     .unsafe_default_safe
                     .contains(&SafetyKind::PropertyGetters)
+            } else {
+                false
             };
 
             Some(Method {
@@ -753,44 +754,32 @@ impl Method {
                     apply_type_override(&mut ty, ty_or);
                 }
 
-                let safe = if !ty.is_safe_in_argument(false) {
-                    if !setter_data.unsafe_.unwrap_or(true) {
-                        error!(
-                            ?selector,
-                            ?ty,
-                            "property setter with unsafe arg was marked as safe"
-                        );
-                        true // TODO(breaking): Change to false
-                    } else {
-                        false
-                    }
-                } else if unsafe_retained && !ty.is_primitive_or_record() {
-                    // We could _probably_ mark these as safe, but let's not
-                    // for now, they interact weirdly with the getters (which
-                    // have to be unsafe).
-                    if !setter_data.unsafe_.unwrap_or(true) {
-                        error!(
-                            ?selector,
-                            "`unsafe_retained` property setter was marked as safe"
-                        );
-                        true // TODO(breaking): Change to false
-                    } else {
-                        false
-                    }
-                } else if let Some(unsafe_) = setter_data.unsafe_ {
-                    // Allow overriding safety with config.
-                    !unsafe_
-                } else if !atomic && parent_thread_safety.inferred_sendable() {
+                let mut safety = ty.safety_in_fn_argument();
+                if unsafe_retained && !ty.is_primitive_or_record() {
+                    // We could _possibly_ allow these to be safe, but let's
+                    // not for now, they interact weirdly with the getters
+                    // (which have to be unsafe).
+                    safety = SafetyProperty::Unsafe;
+                }
+                if !atomic && parent_thread_safety.inferred_sendable() {
                     // `nonatomic` properties on sendable classes are not safe
                     // by default.
-                    false
-                } else {
-                    // Property setters are otherwise allowed to be safe by
-                    // default.
+                    safety = safety.merge(SafetyProperty::Unknown);
+                };
+
+                let safe = if let Some(unsafe_) = setter_data.unsafe_ {
+                    if safety == SafetyProperty::Unsafe && !unsafe_ {
+                        // TODO(breaking): Disallow these.
+                        error!(?selector, ?ty, "unsafe property setter was marked as safe");
+                    }
+                    !unsafe_
+                } else if safety == SafetyProperty::Safe {
                     context
                         .library(Location::from_entity(&entity, context).unwrap())
                         .unsafe_default_safe
                         .contains(&SafetyKind::PropertySetters)
+                } else {
+                    false
                 };
 
                 Some(Method {
