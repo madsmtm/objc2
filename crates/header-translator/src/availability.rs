@@ -17,6 +17,17 @@ struct Unavailable {
     visionos: bool,
 }
 
+impl Unavailable {
+    const ALL_UNAVAILABLE: Self = Self {
+        ios: true,
+        macos: true,
+        maccatalyst: true,
+        watchos: true,
+        tvos: true,
+        visionos: true,
+    };
+}
+
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Versions {
     pub(crate) macos: Option<Version>,
@@ -35,6 +46,22 @@ impl Versions {
         tvos: None,
         watchos: None,
         visionos: None,
+    };
+
+    const MIN: Self = {
+        let min = Version {
+            x: 0,
+            y: None,
+            z: None,
+        };
+        Self {
+            macos: Some(min),
+            maccatalyst: Some(min),
+            ios: Some(min),
+            tvos: Some(min),
+            watchos: Some(min),
+            visionos: Some(min),
+        }
     };
 
     const RUST_OS_MIN: Self = Self {
@@ -223,6 +250,25 @@ impl Availability {
             }
         }
 
+        let current_target_availability = entity.get_availability();
+        match current_target_availability {
+            clang::Availability::Available => {}
+            clang::Availability::Deprecated => {
+                if deprecated == Versions::default() {
+                    deprecated = Versions::MIN;
+                }
+            }
+            clang::Availability::Inaccessible => {
+                error!(?entity, "cannot handle 'Inaccessible' availability")
+            }
+            clang::Availability::Unavailable => {
+                if unavailable == Unavailable::default() {
+                    // TODO: Set per-target.
+                    unavailable = Unavailable::ALL_UNAVAILABLE;
+                }
+            }
+        }
+
         Self {
             unavailable,
             introduced,
@@ -234,7 +280,7 @@ impl Availability {
 
     pub fn new_deprecated(msg: impl Into<String>) -> Self {
         Self {
-            deprecated: Versions::RUST_OS_MIN,
+            deprecated: Versions::MIN,
             message: Some(msg.into()),
             ..Default::default()
         }
@@ -242,31 +288,15 @@ impl Availability {
 
     /// Available and non-deprecated enum cases.
     pub fn is_available_non_deprecated(&self) -> bool {
-        !matches!(
-            self.unavailable,
-            Unavailable {
-                ios: true,
-                macos: true,
-                maccatalyst: true,
-                watchos: true,
-                tvos: true,
-                visionos: true,
-            }
-        ) && !self.is_deprecated()
+        self.is_available() && !self.is_deprecated()
+    }
+
+    pub fn is_available(&self) -> bool {
+        self.unavailable != Unavailable::ALL_UNAVAILABLE
     }
 
     pub fn is_deprecated(&self) -> bool {
-        !matches!(
-            self.deprecated,
-            Versions {
-                ios: None,
-                macos: None,
-                maccatalyst: None,
-                watchos: None,
-                tvos: None,
-                visionos: None,
-            }
-        )
+        self.deprecated != Versions::default()
     }
 
     pub fn check_is_available(&self) -> Option<impl Display + '_> {

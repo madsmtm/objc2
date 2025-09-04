@@ -2307,7 +2307,7 @@ impl Stmt {
                 }
                 Self::ExternMethods {
                     location: _,
-                    availability,
+                    availability: _,
                     cls,
                     cls_superclasses: _,
                     source_superclass,
@@ -2354,11 +2354,10 @@ impl Stmt {
                     writeln!(f, "    );")?;
                     writeln!(f, "}}")?;
 
-                    if let Some(method) = methods.iter().find(|method| {
-                        method.usable_in_default_retained()
-                            && (availability.is_available_non_deprecated()
-                                == method.availability.is_available_non_deprecated())
-                    }) {
+                    if let Some(method) = methods
+                        .iter()
+                        .find(|method| method.usable_in_default_retained())
+                    {
                         writeln!(f)?;
                         // Assume `new` methods require no extra features
                         write!(f, "{}", self.cfg_gate_ln(config))?;

@@ -370,6 +370,7 @@ impl Method {
             && self.arguments.is_empty()
             && self.safe
             && !self.mainthreadonly
+            && self.availability.is_available_non_deprecated()
     }
 
     /// Takes `EntityKind::ObjCPropertyDecl`.
