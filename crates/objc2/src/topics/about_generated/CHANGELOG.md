@@ -39,7 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 * **BREAKING**: Fixed structs with packed alignment by marking them `#[repr(packed(...))]`.
 * **BREAKING**: Fixed a few `MXMetricManager` methods that were instance methods instead of class methods.
-* Fixed missing deprecations on statics and type aliases.
+* Fixed missing deprecations on statics, type aliases and some impls blocks.
 
 ## [0.3.1] - 2025-04-19
 [0.3.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.0...frameworks-0.3.1

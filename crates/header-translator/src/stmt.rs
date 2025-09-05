@@ -809,7 +809,7 @@ impl Stmt {
                         } else {
                             Some(Self::ExternMethods {
                                 location: id.location().clone(),
-                                availability: availability.clone(),
+                                availability: Availability::default(),
                                 cls: id.clone(),
                                 cls_superclasses: cls_superclasses.clone(),
                                 source_superclass: Some(superclass_id.clone()),
@@ -824,7 +824,9 @@ impl Stmt {
 
                 let methods = Self::ExternMethods {
                     location: id.location().clone(),
-                    availability: availability.clone(),
+                    // The class is already marked with this availability, so
+                    // no need to mark the impl as well.
+                    availability: Availability::default(),
                     cls: id.clone(),
                     cls_superclasses: cls_superclasses.clone(),
                     source_superclass: None,
@@ -2307,7 +2309,7 @@ impl Stmt {
                 }
                 Self::ExternMethods {
                     location: _,
-                    availability: _,
+                    availability,
                     cls,
                     cls_superclasses: _,
                     source_superclass,
@@ -2333,6 +2335,7 @@ impl Stmt {
                     if let Some(documentation) = documentation {
                         write!(f, "{}", documentation.fmt(None))?;
                     }
+                    write!(f, "{availability}")?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     // TODO: Add ?Sized here once `extern_methods!` supports it.
                     writeln!(
