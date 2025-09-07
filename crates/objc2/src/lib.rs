@@ -3,8 +3,7 @@
 //! Quick links:
 //! - [All Topics][crate::topics].
 //! - [All examples].
-//! - [About framework crates][crate::topics::about_generated].
-//! - [List of framework crates][crate::topics::about_generated::list].
+//! - [List of framework crates][crate::topics::frameworks_list].
 //!
 #![doc = concat!("[All examples]: https://github.com/madsmtm/objc2/tree/objc2-", env!("CARGO_PKG_VERSION"), "/examples")]
 //!
@@ -41,7 +40,7 @@
 #![doc = include_str!("../examples/hello_world_app.rs")]
 //! ```
 //!
-//! [the framework crates]: crate::topics::about_generated
+//! [the framework crates]: crate::topics::frameworks_list
 //! [`objc2-foundation`]: https://docs.rs/objc2-foundation
 //! [`objc2-app-kit`]: https://docs.rs/objc2-app-kit
 //!
@@ -61,7 +60,7 @@
     env!("CARGO_PKG_VERSION"),
     "/source/Cargo.toml.orig",
 )]
-//! [cr-feat]: crate::topics::about_generated::cargo_features
+//! [cr-feat]: crate::topics::frameworks_cargo_features
 //!
 //!
 //! ## Supported operating systems

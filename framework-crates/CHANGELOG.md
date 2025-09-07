@@ -1,1 +1,1 @@
-../crates/objc2/src/topics/about_generated/CHANGELOG.md
+../crates/objc2/src/topics/FRAMEWORKS_CHANGELOG.md

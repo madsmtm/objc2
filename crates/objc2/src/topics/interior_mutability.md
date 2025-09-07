@@ -87,6 +87,6 @@ Even something as basic as `NSString` is not thread safe, because it may have co
 
 See also the [`MainThreadMarker`] and [`MainThreadOnly`] for a similar, even harder restriction, where some types are only usable on the main thread because they access global statics.
 
-[deref]: about_generated::deref
+[deref]: crate::topics::frameworks_deref
 [`MainThreadMarker`]: crate::MainThreadMarker
 [`MainThreadOnly`]: crate::MainThreadOnly

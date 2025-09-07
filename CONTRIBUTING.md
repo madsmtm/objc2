@@ -155,4 +155,4 @@ The changelog is shared for the framework crates, and is public at
 The framework crates share the tag prefix "frameworks", while the other crates
 also have their own tag prefix.
 
-[frameworks-changelog]: https://docs.rs/objc2/latest/objc2/topics/about_generated/changelog/index.html
+[frameworks-changelog]: https://docs.rs/objc2/latest/objc2/topics/frameworks_changelog/index.html

@@ -15,7 +15,7 @@ The `objc2` project provides bindings for a lot of frameworks, including many ex
 
 While it is recommended that you use the `objc2` crates, you may still in certain cases want to use the existing crates. This can be a bit cumbersome, since `objc2` and [`block2`] impose certain requirements on the types involved, see below.
 
-[all-crates]: crate::topics::about_generated::list
+[all-crates]: crate::topics::frameworks_list
 [`block2`]: https://docs.rs/block2/latest/block2/
 
 

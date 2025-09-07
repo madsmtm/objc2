@@ -244,7 +244,7 @@
 //! If the function/method allows passing `NULL` blocks, the type should be
 //! `Option<&Block<dyn Fn(i32, i32) -> i32>>` instead.
 //!
-//! [framework-crates]: objc2::topics::about_generated
+//! [framework-crates]: objc2::topics::frameworks_list
 //!
 //!
 //! ## Invoking blocks

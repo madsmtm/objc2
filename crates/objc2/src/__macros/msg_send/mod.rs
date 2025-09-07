@@ -390,7 +390,7 @@ pub use self::retained::*;
 /// that usually the interface you seek is already present in [the framework
 /// crates] and then the equivalent code can be as simple as:
 ///
-/// [the framework crates]: crate::topics::about_generated
+/// [the framework crates]: crate::topics::frameworks_list
 ///
 /// ```
 /// use objc2_foundation::{NSNumber, NSString, NSURLComponents};

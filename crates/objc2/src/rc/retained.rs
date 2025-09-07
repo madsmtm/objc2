@@ -23,7 +23,7 @@ use crate::{ffi, ClassType, DowncastTarget, Message};
 /// even more manually with the [`Retained::retain`], [`Retained::from_raw`]
 /// and [`Retained::retain_autoreleased`] methods.
 ///
-/// [the framework crates]: crate::topics::about_generated
+/// [the framework crates]: crate::topics::frameworks_list
 /// [`msg_send!`]: crate::msg_send
 ///
 ///

@@ -3,7 +3,7 @@
 //! The following is a full list of all supported Apple frameworks, and the
 //! corresponding Rust crate.
 //!
-#![doc = include_str!("list_data.md")]
+#![doc = include_str!("frameworks_list_data.md")]
 //!
 //! ## Unsupported
 //!
@@ -13,4 +13,4 @@
 //!
 //! [open an issue]: https://github.com/madsmtm/objc2/issues/new
 //!
-#![doc = include_str!("list_unsupported.md")]
+#![doc = include_str!("frameworks_list_unsupported.md")]

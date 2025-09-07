@@ -1,11 +1,39 @@
 //! Various explanations and topics of discussion.
+//!
+//! - [The goals of the `objc2` project][goals].
+//! - [The layers that make message-sending safer][layered_safety].
+//! - [Interior mutability][interior_mutability].
+//! - [Interop with other crates][crate_interop].
+//! - [Migrating from the `objc` crate][migrating_from_objc].
+//! - [Alternatives to `objc2`][alternatives].
+//! - [The changelog][changelog].
+//!
+//! ## Framework crates
+//!
+//! - [About the generated framework crates][about_generated].
+//! - [The full list of crates][frameworks_list].
+//! - [How `Deref` is used][frameworks_deref].
+//! - [How to reduce compile-times][frameworks_cargo_features].
+//! - [The changelog][frameworks_changelog].
+//!
+//! ## Cocoa development
+//!
+//! Explanations of various concepts that are used when developing for Apple
+//! platforms, and how these relate to Rust and `objc2`.
+//!
+//! - [Run loops and applications][run_loop].
+//! - [Key-Value Observing][kvo].
+//! - [The Model-View-Controller design pattern][mvc].
+//! - [Weak properties][weak_property].
+//! - [Interoperating with Swift][swift].
+//! - [Cross-compiling from Linux/Windows][cross_compiling].
 #![allow(clippy::needless_doctest_main)]
 
-pub mod about_generated;
-
+#[doc = include_str!("about_generated.md")]
+pub mod about_generated {} // Referenced by header-translator
 #[doc = include_str!("alternatives.md")]
 pub mod alternatives {}
-#[cfg(not(feature = "gnustep-1-7"))]
+#[cfg(not(all(doctest, feature = "gnustep-1-7")))] // Don't doctest on GNUStep
 #[doc = include_str!("crate_interop.md")]
 pub mod crate_interop {}
 #[doc = include_str!("cross_compiling.md")]
@@ -26,10 +54,19 @@ pub mod interior_mutability {}
 pub mod swift {}
 #[doc = include_str!("weak_property.md")]
 pub mod weak_property {} // Referenced by header-translator
-#[cfg(not(feature = "gnustep-1-7"))]
+#[cfg(not(all(doctest, feature = "gnustep-1-7")))] // Don't doctest on GNUStep
 #[doc = include_str!("run_loop.md")]
 pub mod run_loop {}
 
 #[cfg(not(doctest))]
 #[doc = include_str!("../../CHANGELOG.md")]
 pub mod changelog {}
+
+pub mod frameworks_list;
+#[doc = include_str!("frameworks_cargo_features.md")]
+pub mod frameworks_cargo_features {}
+#[doc = include_str!("frameworks_deref.md")]
+pub mod frameworks_deref {}
+#[cfg(not(doctest))]
+#[doc = include_str!("FRAMEWORKS_CHANGELOG.md")]
+pub mod frameworks_changelog {}

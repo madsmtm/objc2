@@ -17,7 +17,7 @@ cargo run --bin header-translator --release MY_FRAMEWORK
 
 ## SDKs
 
-Make sure you have the same Xcode version installed as the one documented in [`crates/objc2/src/topics/about_generated/README.md`](../objc2/src/topics/about_generated/README.md).
+Make sure you have the same Xcode version installed as the one documented in [`crates/objc2/src/lib.rs`](../objc2/src/lib.rs).
 
 If you use a different operating system than macOS, or have multiple SDKs installed, you can specify the developer directory with `DEVELOPER_DIR`.
 

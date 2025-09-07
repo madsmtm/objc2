@@ -269,7 +269,7 @@ pub use self::ivars::*;
 ///
 /// [`NSObject`]: crate::runtime::NSObject
 /// [`MainThreadOnly`]: crate::MainThreadOnly
-/// [the frameworks]: crate::topics::about_generated
+/// [the frameworks]: crate::topics::frameworks_list
 /// [use interior mutability]: crate::topics::interior_mutability
 ///
 ///
