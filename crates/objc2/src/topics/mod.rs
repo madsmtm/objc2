@@ -10,6 +10,8 @@ pub mod alternatives {}
 pub mod crate_interop {}
 #[doc = include_str!("cross_compiling.md")]
 pub mod cross_compiling {}
+#[doc = include_str!("goals.md")]
+pub mod goals {}
 #[doc = include_str!("kvo.md")]
 pub mod kvo {}
 #[doc = include_str!("layered_safety.md")]
