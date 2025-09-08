@@ -2182,6 +2182,18 @@ impl Ty {
         matches!(self, Self::TypeDef { id, .. } if id.name == "CFTypeID")
     }
 
+    pub(crate) fn is_class_with_mutable_in_name(&self) -> bool {
+        if let Self::Pointer { pointee, .. } = self.through_typedef() {
+            if let Self::Pointee(pointee) = pointee.through_typedef() {
+                matches!(pointee.through_typedef(), PointeeTy::Class { id, .. } | PointeeTy::CFTypeDef { id, .. } if id.name.contains("Mutable"))
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    }
+
     pub(crate) fn contains_union(&self) -> bool {
         match self {
             Self::Union { .. } => true,

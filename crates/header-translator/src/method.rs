@@ -282,6 +282,46 @@ impl MemoryManagement {
     }
 }
 
+/// <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocProperties.html>
+/// <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/EncapsulatingData/EncapsulatingData.html#//apple_ref/doc/uid/TP40011210-CH5-SW3>.
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, Default)]
+pub enum PropertyKind {
+    /// By default, properties are retained.
+    #[default]
+    Normal,
+    /// The object is copied into the property when set. These are retained.
+    Copy,
+    /// The object is weakly referenced by the property.
+    Weak,
+    /// Whether the property is marked as not internally retained,
+    /// neither strongly nor weakly.
+    UnsafeRetained,
+}
+
+impl PropertyKind {
+    fn parse(attrs: Option<ObjCAttributes>) -> Self {
+        let Some(attrs) = attrs else {
+            return Self::Normal;
+        };
+
+        let retained = attrs.retain || attrs.strong;
+
+        let unsafe_retained = attrs.assign || attrs.unsafe_retained;
+
+        match (retained, attrs.copy, attrs.weak, unsafe_retained) {
+            (true, false, false, false) => Self::Normal,
+            (false, true, false, false) => Self::Copy,
+            (false, false, true, false) => Self::Weak,
+            (false, false, false, true) => Self::UnsafeRetained,
+            (false, false, false, false) => Self::Normal,
+            _ => {
+                error!(?attrs, "unclear property attributes");
+                Self::Normal
+            }
+        }
+    }
+}
+
 #[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Method {
@@ -298,7 +338,6 @@ pub struct Method {
     // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
     non_isolated: bool,
     mainthreadonly: bool,
-    weak_property: bool,
     must_use: bool,
     encoding: String,
     documentation: Documentation,
@@ -599,7 +638,6 @@ impl Method {
                 is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
-                weak_property: false,
                 must_use: modifiers.must_use,
                 encoding,
                 documentation: Documentation::from_entity(&entity, context),
@@ -642,17 +680,10 @@ impl Method {
 
         let modifiers = MethodModifiers::parse(&entity, context);
 
-        // Properties are by default retained, not copied.
-        let is_copy = attributes.map(|a| a.copy).unwrap_or(false);
+        let kind = PropertyKind::parse(attributes);
 
         // Properties are atomic by default.
         let atomic = attributes.map(|a| !a.nonatomic).unwrap_or(true);
-
-        // Whether the property is marked as not internally retained, neither
-        // strongly nor weakly.
-        let unsafe_retained = attributes
-            .map(|a| a.unsafe_retained || a.assign)
-            .unwrap_or(false);
 
         let default_safety = &context
             .library(Location::from_entity(&entity, context).unwrap())
@@ -669,10 +700,16 @@ impl Method {
         let getter = if !getter_data.skipped {
             let mut ty = Ty::parse_property_getter(
                 entity.get_type().expect("property type"),
-                is_copy,
+                kind == PropertyKind::Copy,
                 modifiers.sendable,
                 context,
             );
+
+            if kind == PropertyKind::Copy && ty.is_class_with_mutable_in_name() {
+                // Unclear what the semantics are here? How can this be of
+                // the correct type if the type is immutably copied?
+                warn!(?getter_sel, "property is both `copy` and a mutable object");
+            }
 
             if ty.needs_simd() {
                 debug!("simd types are not yet possible in properties");
@@ -692,7 +729,7 @@ impl Method {
             apply_type_override(&mut ty, &getter_data.return_);
 
             let mut safety = ty.safety_in_fn_return();
-            if unsafe_retained && !ty.is_primitive_or_record() {
+            if kind == PropertyKind::UnsafeRetained && !ty.is_primitive_or_record() {
                 // We cannot mark these as safe, since the pointer is not
                 // guaranteed to remain valid while being stored inside the
                 // class.
@@ -716,6 +753,15 @@ impl Method {
                 false
             };
 
+            let mut documentation = Documentation::from_entity(&entity, context);
+
+            if kind == PropertyKind::UnsafeRetained && ty.is_object_like_ptr() {
+                documentation.add("# Safety");
+                documentation.add(
+                    "This is not retained internally, you must ensure the object is still alive.",
+                );
+            }
+
             Some(Method {
                 selector: getter_sel.clone(),
                 fn_name: getter_sel.clone(),
@@ -729,11 +775,9 @@ impl Method {
                 is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly,
-                // Don't show `weak`-ness on getters
-                weak_property: false,
                 must_use: modifiers.must_use,
                 encoding: encoding.clone(),
-                documentation: Documentation::from_entity(&entity, context),
+                documentation,
             })
         } else {
             None
@@ -745,7 +789,7 @@ impl Method {
                 let result_type = Ty::VOID_RESULT;
                 let mut ty = Ty::parse_property_setter(
                     entity.get_type().expect("property type"),
-                    is_copy,
+                    kind == PropertyKind::Copy,
                     modifiers.sendable,
                     context,
                 );
@@ -767,7 +811,7 @@ impl Method {
                 }
 
                 let mut safety = ty.safety_in_fn_argument();
-                if unsafe_retained && !ty.is_primitive_or_record() {
+                if kind == PropertyKind::UnsafeRetained && !ty.is_primitive_or_record() {
                     // We could _possibly_ allow these to be safe, but let's
                     // not for now, they interact weirdly with the getters
                     // (which have to be unsafe).
@@ -800,6 +844,25 @@ impl Method {
                 let mut documentation = Documentation::empty();
                 documentation.add(format!("Setter for [`{getter_sel}`][Self::{getter_sel}]."));
 
+                // Only show `weak`-ness and `copy`-ness on setters (that's
+                // where it's most relevant).
+                match kind {
+                    PropertyKind::Copy => {
+                        if context.current_library == "Foundation" {
+                            documentation.add("This is [copied][crate::NSCopying::copy] when set.");
+                        } else {
+                            documentation.add(
+                                "This is [copied][objc2_foundation::NSCopying::copy] when set.",
+                            );
+                        }
+                    }
+                    PropertyKind::Weak => {
+                        documentation
+                            .add("This is a [weak property][objc2::topics::weak_property].");
+                    }
+                    _ => {}
+                }
+
                 Some(Method {
                     selector,
                     fn_name,
@@ -813,7 +876,6 @@ impl Method {
                     is_pub,
                     non_isolated: modifiers.non_isolated,
                     mainthreadonly,
-                    weak_property: attributes.map(|a| a.weak).unwrap_or(false),
                     must_use: modifiers.must_use,
                     encoding,
                     documentation,
@@ -908,13 +970,6 @@ impl fmt::Display for Method {
         // if self.non_isolated {
         //     writeln!(f, "// non_isolated")?;
         // }
-
-        if self.weak_property {
-            writeln!(
-                f,
-                "        /// This is a [weak property][objc2::topics::weak_property]."
-            )?;
-        }
 
         //
         // Attributes
