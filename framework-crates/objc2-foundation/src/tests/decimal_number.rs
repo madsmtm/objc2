@@ -19,5 +19,5 @@ fn test_decimal_encoding() {
     };
 
     let obj = unsafe { NSDecimalNumber::initWithDecimal(NSDecimalNumber::alloc(), decimal) };
-    assert_eq!(decimal, unsafe { obj.decimalValue() });
+    assert_eq!(decimal, obj.decimalValue());
 }

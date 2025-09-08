@@ -17,8 +17,8 @@ fn merge_objc_symbols(exc: &NSException) -> Vec<String> {
     // demangled symbols.
     let mut demangled_symbols = vec![];
 
-    let nssymbols = unsafe { exc.callStackSymbols() };
-    let return_addrs = unsafe { exc.callStackReturnAddresses() };
+    let nssymbols = exc.callStackSymbols();
+    let return_addrs = exc.callStackReturnAddresses();
 
     for (nssymbol, addr) in nssymbols.iter().zip(return_addrs) {
         let addr = addr.as_usize() as *mut c_void;

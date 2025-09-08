@@ -416,10 +416,10 @@ pub use self::retained::*;
 /// use objc2_foundation::{NSNumber, NSString, NSURLComponents};
 ///
 /// let components = unsafe { NSURLComponents::new() };
-/// unsafe { components.setPort(Some(&NSNumber::new_i32(8080))) };
-/// unsafe { components.setHost(Some(&NSString::from_str("example.com"))) };
-/// unsafe { components.setScheme(Some(&NSString::from_str("http"))) };
-/// let string = unsafe { components.string() };
+/// components.setPort(Some(&NSNumber::new_i32(8080)));
+/// components.setHost(Some(&NSString::from_str("example.com")));
+/// components.setScheme(Some(&NSString::from_str("http")));
+/// let string = components.string();
 ///
 /// assert_eq!(string.unwrap().to_string(), "http://example.com:8080");
 /// ```
