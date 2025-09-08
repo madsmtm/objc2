@@ -15,6 +15,7 @@ const PATH_MAX: usize = 1024;
 
 /// [`Path`] conversion.
 impl NSURL {
+    // FIXME(breaking): Make this private.
     pub fn from_path(
         path: &Path,
         is_directory: bool,
@@ -228,7 +229,7 @@ mod tests {
     fn special_paths() {
         use crate::{NSData, NSFileManager};
 
-        let manager = unsafe { NSFileManager::defaultManager() };
+        let manager = NSFileManager::defaultManager();
 
         let path = Path::new(OsStr::from_bytes(b"\xf8"));
         // Foundation is broken, needs a different encoding to work.

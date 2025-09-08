@@ -38,7 +38,8 @@ define_class!(
             let mtm = self.mtm();
             let view_controller = GameViewController::new(mtm);
 
-            let app = unsafe { notification.object() }
+            let app = notification
+                .object()
                 .unwrap()
                 .downcast::<NSApplication>()
                 .unwrap();
