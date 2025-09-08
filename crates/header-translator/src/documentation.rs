@@ -11,17 +11,18 @@ use crate::{Context, ItemIdentifier};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Documentation {
+    first: Option<String>,
+    from_header: Vec<CommentChild>,
+    extras: Vec<String>,
     alias: Option<String>,
-    /// What name a type is bridged to, if it has such an attribute.
-    bridged: Option<String>,
-    children: Vec<CommentChild>,
 }
 
 impl Documentation {
     pub fn empty() -> Self {
         Self {
-            children: vec![],
-            bridged: None,
+            first: None,
+            from_header: vec![],
+            extras: vec![],
             alias: None,
         }
     }
@@ -29,7 +30,7 @@ impl Documentation {
     /// Construct from an entity, possible one that has been renamed (such
     /// that we'll want a doc alias to the entity's actual name).
     pub fn from_entity(entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let children = if let Some(comment) = entity.get_comment() {
+        let from_header = if let Some(comment) = entity.get_comment() {
             if let Some(parsed) = entity.get_parsed_comment() {
                 parsed.get_children()
             } else {
@@ -53,81 +54,39 @@ impl Documentation {
         };
 
         Self {
-            children,
-            bridged: None,
+            first: None,
+            from_header,
+            extras: vec![],
             alias,
         }
     }
 
-    pub fn property_setter(getter_sel: &str) -> Self {
-        // Emit setter docs to link to getter (otherwise we'd have to
-        // duplicate the documentation across getter and setter).
-        let text = format!("Setter for [`{getter_sel}`][Self::{getter_sel}].");
-        Self {
-            children: vec![CommentChild::Paragraph(vec![CommentChild::Text(text)])],
-            bridged: None,
-            alias: None,
-        }
+    pub fn set_first(&mut self, doc: impl Into<String>) {
+        self.first = Some(doc.into());
+    }
+
+    pub fn add(&mut self, doc: impl Into<String>) {
+        self.extras.push(doc.into());
     }
 
     pub fn set_alias(&mut self, alias: String) {
         self.alias = Some(alias);
     }
 
-    pub fn set_bridged(&mut self, bridged: Option<String>) {
-        self.bridged = bridged;
-    }
-
-    pub fn bridged(&self) -> Option<&str> {
-        self.bridged.as_deref()
-    }
-
-    pub fn fmt_category<'a>(
-        &'a self,
-        category_name: &'a str,
-        cls_name: &'a str,
-    ) -> impl fmt::Display + 'a {
-        FormatterFn(move |f| {
-            if let Some(actual_name) = &self.alias {
-                if actual_name != category_name {
-                    writeln!(f, "/// Category \"{actual_name}\" on [`{cls_name}`].")?;
-                } else {
-                    writeln!(f, "/// Category on [`{cls_name}`].")?;
-                }
-            } else {
-                writeln!(f, "/// Category on [`{cls_name}`].")?;
-            }
-
-            write!(f, "{}", self.fmt(None))?;
-
-            Ok(())
-        })
-    }
-
     pub fn fmt<'a>(&'a self, doc_id: Option<&'a ItemIdentifier>) -> impl fmt::Display + 'a {
         FormatterFn(move |f| {
-            let mut s = String::new();
+            let mut from_header = String::new();
 
-            for child in &self.children {
-                write!(&mut s, "{}", format_child(child))?;
+            for child in &self.from_header {
+                write!(&mut from_header, "{}", format_child(child))?;
             }
 
-            let s = fix_code_blocks(&s)
-                .trim()
-                .replace("\n", "\n/// ")
-                .replace("/// \n", "///\n")
-                .replace("\t", "    ");
-
-            if !s.is_empty() {
-                writeln!(f, "/// {s}")?;
-            }
-
-            if let Some(bridged) = &self.bridged {
-                if !s.is_empty() {
-                    writeln!(f, "///")?;
-                    writeln!(f, "/// This is toll-free bridged with `{bridged}`.")?;
-                }
-            }
+            let from_header = fix_code_blocks(&from_header).trim().replace("\t", "    ");
+            let from_header = if from_header.is_empty() {
+                None
+            } else {
+                Some(from_header.to_string())
+            };
 
             // Generate a markdown link to Apple's documentation.
             //
@@ -135,25 +94,43 @@ impl Documentation {
             // methods, and possibly some renamed classes and traits.
             //
             // Additionally, the link may redirect.
+            let mut first = None;
+            let mut last = None;
             if let Some(id) = doc_id {
-                if s.is_empty() {
-                    write!(f, "/// ")?;
-                } else {
-                    writeln!(f, "///")?;
-                    write!(f, "/// See also ")?;
-                }
-                writeln!(
-                    f,
+                let doc_link = format_args!(
                     "[Apple's documentation](https://developer.apple.com/documentation/{}/{}?language=objc)",
                     id.library_name().to_lowercase(),
                     id.name.to_lowercase()
-                )?;
+                );
+
+                if from_header.is_none() && self.first.is_none() {
+                    // If there is no documentation, put this as the primary
+                    // docs. This looks better in rustdoc.
+                    first = Some(format!("{doc_link}"));
+                } else {
+                    // Otherwise, put it at the very end.
+                    last = Some(format!("See also {doc_link}"));
+                }
             }
 
-            if let Some(bridged) = &self.bridged {
-                if s.is_empty() {
+            let groups = first
+                .iter()
+                .chain(self.first.iter())
+                .chain(from_header.iter())
+                .chain(self.extras.iter())
+                .chain(last.iter());
+
+            for (i, group) in groups.enumerate() {
+                if i != 0 {
+                    // Intersperse extra newline between groups.
                     writeln!(f, "///")?;
-                    writeln!(f, "/// This is toll-free bridged with `{bridged}`.")?;
+                }
+                for line in group.lines() {
+                    if line.is_empty() {
+                        writeln!(f, "///")?;
+                    } else {
+                        writeln!(f, "/// {line}")?;
+                    }
                 }
             }
 
@@ -360,9 +337,10 @@ mod tests {
     #[track_caller]
     fn check(children: &[CommentChild], expected: &str) {
         let actual = Documentation {
-            children: children.to_vec(),
+            first: None,
+            from_header: children.to_vec(),
+            extras: vec![],
             alias: None,
-            bridged: None,
         }
         .fmt(None)
         .to_string();

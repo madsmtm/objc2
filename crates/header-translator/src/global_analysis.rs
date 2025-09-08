@@ -348,19 +348,17 @@ fn update_module(
     // Check bridged types.
     for stmt in &module.stmts {
         if let Stmt::OpaqueDecl {
-            id, documentation, ..
+            id,
+            bridged: Some(bridged_class),
+            ..
         } = stmt
         {
-            if let Some(bridged_class) = documentation.bridged() {
-                if let Some(bridged_typedef) = expected_bridged_types.remove(bridged_class) {
-                    if bridged_typedef != id {
-                        warn!("incorrect bridged typedef for {bridged_class}: found `{bridged_typedef}`, expected `{id}`");
-                    }
-                } else {
-                    warn!(
-                        "missing bridging decl, add:    class.{bridged_class}.bridged-to = \"{id}\""
-                    );
+            if let Some(bridged_typedef) = expected_bridged_types.remove(&**bridged_class) {
+                if bridged_typedef != id {
+                    warn!("incorrect bridged typedef for {bridged_class}: found `{bridged_typedef}`, expected `{id}`");
                 }
+            } else {
+                warn!("missing bridging decl, add:    class.{bridged_class}.bridged-to = \"{id}\"");
             }
         }
     }

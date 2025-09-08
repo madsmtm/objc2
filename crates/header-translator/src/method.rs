@@ -795,6 +795,11 @@ impl Method {
                     false
                 };
 
+                // Do not emit normal docs on setters, otherwise we'd be
+                // duplicating the documentation across getter and setter.
+                let mut documentation = Documentation::empty();
+                documentation.add(format!("Setter for [`{getter_sel}`][Self::{getter_sel}]."));
+
                 Some(Method {
                     selector,
                     fn_name,
@@ -811,7 +816,7 @@ impl Method {
                     weak_property: attributes.map(|a| a.weak).unwrap_or(false),
                     must_use: modifiers.must_use,
                     encoding,
-                    documentation: Documentation::property_setter(&getter_sel),
+                    documentation,
                 })
             } else {
                 None

@@ -486,11 +486,9 @@ pub enum Stmt {
         availability: Availability,
         cls: ItemIdentifier,
         cls_superclasses: Vec<ItemIdentifier>,
-        source_superclass: Option<ItemIdentifier>,
         cls_generics: Vec<String>,
-        category_name: Option<String>,
         methods: Vec<Method>,
-        documentation: Option<Documentation>,
+        documentation: Documentation,
     },
     /// @interface class_name (category_name)
     /// ->
@@ -661,6 +659,7 @@ pub enum Stmt {
         availability: Availability,
         documentation: Documentation,
         is_cf: bool,
+        bridged: Option<String>,
         superclass: Option<ItemIdentifier>,
     },
     GeneralImpl {
@@ -807,16 +806,19 @@ impl Stmt {
                         if methods.is_empty() {
                             None
                         } else {
+                            let mut documentation = Documentation::empty();
+                            documentation.set_first(format!(
+                                "Methods declared on superclass `{}`.",
+                                superclass_id.name
+                            ));
                             Some(Self::ExternMethods {
                                 location: id.location().clone(),
                                 availability: Availability::default(),
                                 cls: id.clone(),
                                 cls_superclasses: cls_superclasses.clone(),
-                                source_superclass: Some(superclass_id.clone()),
                                 cls_generics: generics.clone(),
-                                category_name: None,
                                 methods,
-                                documentation: None,
+                                documentation,
                             })
                         }
                     })
@@ -829,11 +831,9 @@ impl Stmt {
                     availability: Availability::default(),
                     cls: id.clone(),
                     cls_superclasses: cls_superclasses.clone(),
-                    source_superclass: None,
                     cls_generics: generics.clone(),
-                    category_name: None,
                     methods,
-                    documentation: None,
+                    documentation: Documentation::empty(),
                 };
 
                 iter::once(Self::ClassDecl {
@@ -989,9 +989,16 @@ impl Stmt {
                         if methods.is_empty() {
                             None
                         } else {
+                            let mut documentation = documentation.clone();
+                            documentation.set_first(format!(
+                                "Methods declared on superclass `{}`.",
+                                cls.name
+                            ));
+                            if let Some(category_name) = &category.name {
+                                documentation.add(format!("{category_name}."));
+                            }
                             Some(Self::ExternMethods {
                                 location: category.location().clone(),
-                                source_superclass: Some(cls.clone()),
                                 // Assume that immutable/mutable pairs have the
                                 // same availability ...
                                 availability: availability.clone(),
@@ -1000,25 +1007,25 @@ impl Stmt {
                                 cls_superclasses: cls_superclasses.clone(),
                                 // ... and that they have the same amount of generics.
                                 cls_generics: generics.clone(),
-                                category_name: category.name.clone(),
                                 methods,
-                                documentation: Some(documentation.clone()),
+                                documentation,
                             })
                         }
                     } else {
                         None
                     };
 
+                    if let Some(category_name) = &category.name {
+                        documentation.set_first(format!("{category_name}."));
+                    }
                     iter::once(Self::ExternMethods {
                         location: category.location().clone(),
                         availability: availability.clone(),
                         cls: cls.clone(),
                         cls_superclasses: cls_superclasses.clone(),
-                        source_superclass: None,
                         cls_generics: generics.clone(),
-                        category_name: category.name.clone(),
                         methods,
-                        documentation: Some(documentation),
+                        documentation,
                     })
                     .chain(extra_methods)
                     .chain(protocol_impls)
@@ -1051,8 +1058,14 @@ impl Stmt {
                     // Alias to the C name.
                     if let Some(c_name) = entity.get_name() {
                         if c_name != id.name {
+                            documentation
+                                .set_first(format!("Category \"{c_name}\" on [`{}`].", cls.name));
                             documentation.set_alias(c_name);
+                        } else {
+                            documentation.set_first(format!("Category on [`{}`].", cls.name));
                         }
+                    } else {
+                        documentation.set_first(format!("Category on [`{}`].", cls.name));
                     }
 
                     let (methods, designated_initializers) = parse_methods(
@@ -1256,7 +1269,10 @@ impl Stmt {
                             }
                         }
 
-                        documentation.set_bridged(bridged.flatten());
+                        if let Some(Some(bridged)) = &bridged {
+                            documentation
+                                .add(format!("This is toll-free bridged with `{bridged}`."));
+                        }
 
                         return vec![Self::OpaqueDecl {
                             id,
@@ -1265,6 +1281,7 @@ impl Stmt {
                             availability,
                             documentation,
                             is_cf,
+                            bridged: bridged.flatten(),
                             superclass,
                         }];
                     } else if let Some(entity) = inner_struct {
@@ -1276,6 +1293,7 @@ impl Stmt {
                                 availability: Availability::parse(&entity, context),
                                 documentation: Documentation::from_entity(&entity, context),
                                 is_cf,
+                                bridged: bridged.flatten(),
                                 superclass: None,
                             },
                             Self::AliasDecl {
@@ -2312,29 +2330,11 @@ impl Stmt {
                     availability,
                     cls,
                     cls_superclasses: _,
-                    source_superclass,
                     cls_generics,
-                    category_name,
                     methods,
                     documentation,
                 } => {
-                    if let Some(source_superclass) = source_superclass {
-                        writeln!(
-                            f,
-                            "/// Methods declared on superclass `{}`.",
-                            source_superclass.name
-                        )?;
-                        if let Some(category_name) = category_name {
-                            writeln!(f, "///")?;
-                            writeln!(f, "/// {category_name}.")?;
-                        }
-                    } else if let Some(category_name) = category_name {
-                        writeln!(f, "/// {category_name}.")?;
-                    }
-                    // FIXME: Merge with `source_superclass`/`category_name`
-                    if let Some(documentation) = documentation {
-                        write!(f, "{}", documentation.fmt(None))?;
-                    }
+                    write!(f, "{}", documentation.fmt(None))?;
                     write!(f, "{availability}")?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     // TODO: Add ?Sized here once `extern_methods!` supports it.
@@ -2394,7 +2394,7 @@ impl Stmt {
 
                     writeln!(f)?;
 
-                    write!(f, "{}", documentation.fmt_category(&id.name, &cls.name))?;
+                    write!(f, "{}", documentation.fmt(None))?;
 
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
@@ -3184,6 +3184,7 @@ impl Stmt {
                     availability,
                     documentation,
                     is_cf,
+                    bridged: _,
                     superclass,
                 } => {
                     write!(f, "{}", documentation.fmt(Some(id)))?;
