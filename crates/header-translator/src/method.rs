@@ -682,8 +682,24 @@ impl Method {
 
         let kind = PropertyKind::parse(attributes);
 
-        // Properties are atomic by default.
-        let atomic = attributes.map(|a| !a.nonatomic).unwrap_or(true);
+        // Properties are atomic by default, but only if synthethized. It is
+        // unclear if properties that `!nonatomic` are guaranteed to be
+        // atomic, see https://github.com/madsmtm/objc2/issues/757.
+        //
+        // As such, we consider atomic-ness a `Option<bool>`, where `None`
+        // means "not specified".
+        let atomic = match (
+            attributes.map(|a| a.atomic).unwrap_or(false),
+            attributes.map(|a| a.nonatomic).unwrap_or(false),
+        ) {
+            (false, false) => None,
+            (true, false) => Some(true),
+            (false, true) => Some(false),
+            (true, true) => {
+                error!("a property cannot both be atomic and nonatomic");
+                None
+            }
+        };
 
         let default_safety = &context
             .library(Location::from_entity(&entity, context).unwrap())
@@ -728,6 +744,8 @@ impl Method {
 
             apply_type_override(&mut ty, &getter_data.return_);
 
+            let mut documentation = Documentation::from_entity(&entity, context);
+
             let mut safety = ty.safety_in_fn_return();
             if kind == PropertyKind::UnsafeRetained && !ty.is_primitive_or_record() {
                 // We cannot mark these as safe, since the pointer is not
@@ -735,10 +753,17 @@ impl Method {
                 // class.
                 safety = SafetyProperty::Unsafe;
             }
-            if !atomic && parent_thread_safety.inferred_sendable() {
+            if atomic == Some(false)
+                && parent_thread_safety.inferred_sendable()
+                && !(is_class && setter_sel.is_none())
+            {
                 // `nonatomic` properties on sendable classes are not safe
-                // by default.
+                // by default (unless they are readonly class-properties, then
+                // the nonatomic-ness in the header is probably incorrect,
+                // since they are global).
                 safety = safety.merge(SafetyProperty::Unknown);
+                documentation.add("This property is not atomic.");
+                // TODO: Should we document atomic-ness in further cases?
             };
 
             let safe = if let Some(unsafe_) = getter_data.unsafe_ {
@@ -752,8 +777,6 @@ impl Method {
             } else {
                 false
             };
-
-            let mut documentation = Documentation::from_entity(&entity, context);
 
             if kind == PropertyKind::UnsafeRetained && ty.is_object_like_ptr() {
                 documentation.add("# Safety");
@@ -817,7 +840,7 @@ impl Method {
                     // (which have to be unsafe).
                     safety = SafetyProperty::Unsafe;
                 }
-                if !atomic && parent_thread_safety.inferred_sendable() {
+                if atomic == Some(false) && parent_thread_safety.inferred_sendable() {
                     // `nonatomic` properties on sendable classes are not safe
                     // by default.
                     safety = safety.merge(SafetyProperty::Unknown);
