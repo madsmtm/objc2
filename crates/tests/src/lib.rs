@@ -23,6 +23,8 @@ mod enumerator;
 mod exception;
 mod rc_test_object;
 #[cfg(test)]
+mod shadow;
+#[cfg(test)]
 mod test_define_class_protocol;
 #[cfg(test)]
 mod test_encode_utils;

@@ -47,7 +47,13 @@ core-foundation = "0.10.1"
 objc2-quartz-core = { workspace = true, features = ["std", "CALayer"] }
 
 [target.'cfg(target_os = "macos")'.dev-dependencies]
-objc2-app-kit = { workspace = true, features = ["std", "NSApplication", "NSResponder"] }
+objc2-app-kit = { workspace = true, features = [
+    "std",
+    "NSApplication",
+    "NSColor",
+    "NSResponder",
+    "NSShadow",
+] }
 
 [target.'cfg(all(target_vendor = "apple", not(target_os = "macos")))'.dev-dependencies]
 objc2-ui-kit = { workspace = true, features = ["std", "UIApplication"] }

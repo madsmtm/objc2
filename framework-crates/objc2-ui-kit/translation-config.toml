@@ -139,111 +139,48 @@ protocol.UIActivityItemSource.methods."activityViewControllerShareRecipients:".s
 # Custom-defined.
 fn.UIApplicationMain.renamed = "__main"
 
+# TODO: Is it actually allowed to reset the view to NULL?
+class.UIViewController.methods."setView:".arguments.0.nullability = "nullable"
+
 ###
 ### Safety
 ###
-### Methods used in Winit, marked safe mostly for convenience there.
-###
 
-class.UIApplication.methods.windows.unsafe = false
-class.UIApplication.methods.sharedApplication.unsafe = false
-class.UIApplication.methods.statusBarFrame.unsafe = false
-protocol.UICoordinateSpace.methods."convertPoint:toCoordinateSpace:".unsafe = false
-protocol.UICoordinateSpace.methods."convertPoint:fromCoordinateSpace:".unsafe = false
-protocol.UICoordinateSpace.methods."convertRect:toCoordinateSpace:".unsafe = false
-protocol.UICoordinateSpace.methods."convertRect:fromCoordinateSpace:".unsafe = false
-protocol.UICoordinateSpace.methods.bounds.unsafe = false
-class.UIDevice.methods.currentDevice.unsafe = false
-class.UIDevice.methods.userInterfaceIdiom.unsafe = false
-class.UIGestureRecognizer.methods.delegate.unsafe = false
-class.UIGestureRecognizer.methods."setDelegate:".unsafe = false
-class.UIPanGestureRecognizer.methods.maximumNumberOfTouches.unsafe = false
-class.UIPanGestureRecognizer.methods."setMaximumNumberOfTouches:".unsafe = false
-class.UIPanGestureRecognizer.methods.minimumNumberOfTouches.unsafe = false
-class.UIPanGestureRecognizer.methods."setMinimumNumberOfTouches:".unsafe = false
-class.UIPanGestureRecognizer.methods."translationInView:".unsafe = false
-class.UIPanGestureRecognizer.methods."setTranslation:inView:".unsafe = false
-class.UIPanGestureRecognizer.methods."velocityInView:".unsafe = false
-class.UIPanGestureRecognizer.methods.allowedScrollTypesMask.unsafe = false
-class.UIPinchGestureRecognizer.methods.scale.unsafe = false
-class.UIPinchGestureRecognizer.methods.velocity.unsafe = false
-# UIResponder
-class.UIRotationGestureRecognizer.methods.rotation.unsafe = false
-class.UIRotationGestureRecognizer.methods.velocity.unsafe = false
-class.UITapGestureRecognizer.methods.buttonMaskRequired.unsafe = false
-class.UITapGestureRecognizer.methods."setButtonMaskRequired:".unsafe = false
-class.UITapGestureRecognizer.methods.numberOfTapsRequired.unsafe = false
-class.UITapGestureRecognizer.methods."setNumberOfTapsRequired:".unsafe = false
-class.UITapGestureRecognizer.methods.numberOfTouchesRequired.unsafe = false
-class.UITapGestureRecognizer.methods."setNumberOfTouchesRequired:".unsafe = false
-class.UIScreen.methods.mainScreen.unsafe = false
-class.UIScreen.methods.screens.unsafe = false
-class.UIScreen.methods.mirroredScreen.unsafe = false
-class.UIScreen.methods.nativeBounds.unsafe = false
-class.UIScreen.methods.nativeScale.unsafe = false
-class.UIScreen.methods.preferredMode.unsafe = false
-class.UIScreen.methods.maximumFramesPerSecond.unsafe = false
-class.UIScreen.methods.currentMode.unsafe = false
-class.UIScreen.methods.availableModes.unsafe = false
-class.UIScreen.methods."setCurrentMode:".unsafe = false
-class.UIScreen.methods.bounds.unsafe = false
-class.UIScreen.methods.scale.unsafe = false
-class.UIScreen.methods.overscanCompensation.unsafe = false
-class.UIScreen.methods."setOverscanCompensation:".unsafe = false
-class.UIScreen.methods.coordinateSpace.unsafe = false
+# UIKit's is huge, so I (madsmtm) have only skimmed it while reviewing.
+# It is surprisingly well-behaved though!
+#
+# (At least assuming we got the main thread safety stuff right above).
+unsafe-default-safety.property-getters = true
+unsafe-default-safety.property-setters = true
+unsafe-default-safety.instance-methods = true
+unsafe-default-safety.class-methods = true
+unsafe-default-safety.functions = true
+# UIKit is bounds-checked and throw exceptions.
+unsafe-default-safety.not-bounds-affecting = false
+
+# TODO(breaking): Are these actually safe, even though they're nonatomic?
+# Maybe we need to mark the classes themselves as MainThreadOnly?
 class.UIScreenMode.methods.size.unsafe = false
 class.UITraitCollection.methods.forceTouchCapability.unsafe = false
-protocol.UITraitEnvironment.methods.traitCollection.unsafe = false
-class.UITouch.methods."locationInView:".unsafe = false
-class.UITouch.methods."previousLocationInView:".unsafe = false
-class.UITouch.methods.view.unsafe = false
-class.UITouch.methods.window.unsafe = false
-class.UITouch.methods.tapCount.unsafe = false
-class.UITouch.methods.timestamp.unsafe = false
-class.UITouch.methods.type.unsafe = false
-class.UITouch.methods.phase.unsafe = false
-class.UITouch.methods.force.unsafe = false
-class.UITouch.methods.maximumPossibleForce.unsafe = false
-class.UITouch.methods.altitudeAngle.unsafe = false
-class.UITouch.methods."azimuthAngleInView:".unsafe = false
-class.UITouch.methods."azimuthUnitVectorInView:".unsafe = false
-class.UITouch.methods.rollAngle.unsafe = false
-class.UIView.methods."initWithFrame:".unsafe = false
-class.UIView.methods.backgroundColor.unsafe = false
-class.UIView.methods."setBackgroundColor:".unsafe = false
-class.UIView.methods.layerClass.unsafe = false
-class.UIView.methods.layer.unsafe = false
-class.UIView.methods.frame.unsafe = false
-class.UIView.methods."setFrame:".unsafe = false
-class.UIView.methods.bounds.unsafe = false
-class.UIView.methods."setBounds:".unsafe = false
-class.UIView.methods.superview.unsafe = false
-class.UIView.methods.subviews.unsafe = false
-class.UIView.methods.window.unsafe = false
-class.UIView.methods.multipleTouchEnabled.unsafe = false
-class.UIView.methods."setMultipleTouchEnabled:".unsafe = false
-class.UIView.methods.contentScaleFactor.unsafe = false
-class.UIView.methods."setContentScaleFactor:".unsafe = false
-class.UIView.methods."addGestureRecognizer:".unsafe = false
-class.UIView.methods."removeGestureRecognizer:".unsafe = false
-class.UIView.methods.gestureRecognizers.unsafe = false
-class.UIView.methods."gestureRecognizerShouldBegin:".unsafe = false
-class.UIView.methods.isHidden.unsafe = false
-class.UIView.methods."setHidden:".unsafe = false
-class.UIView.methods.setNeedsDisplay.unsafe = false
-class.UIView.methods.safeAreaInsets.unsafe = false
-class.UIViewController.methods.attemptRotationToDeviceOrientation.unsafe = false
-class.UIViewController.methods.setNeedsStatusBarAppearanceUpdate.unsafe = false
-class.UIViewController.methods.setNeedsUpdateOfHomeIndicatorAutoHidden.unsafe = false
-class.UIViewController.methods.setNeedsUpdateOfScreenEdgesDeferringSystemGestures.unsafe = false
-class.UIViewController.methods.view.unsafe = false
-class.UIViewController.methods."setView:".unsafe = false
-class.UIWindow.methods.screen.unsafe = false
-class.UIWindow.methods."setScreen:".unsafe = false
-class.UIWindow.methods.rootViewController.unsafe = false
-class.UIWindow.methods."setRootViewController:".unsafe = false
-class.UIWindow.methods.makeKeyAndVisible.unsafe = false
-class.UIWindow.methods.isKeyWindow.unsafe = false
 
 # Breaks type-safety, you must check encodings before accessing a value.
 class.NSValue.unsafe = true
+
+# The documentation says:
+# > If the transform property is not the identity transform, the value of
+# > this property is undefined and therefore should be ignored.
+# But this not gonna lead to memory safety, so we mark it safe regardless.
+class.UIView.methods."frame".unsafe = false
+
+# TODO: Might be a soundness requirement that these are balanced?
+class.UIApplication.methods.extendStateRestoration.unsafe = true
+class.UIApplication.methods.completeStateRestoration.unsafe = true
+fn.UIGraphicsPushContext.unsafe = true
+fn.UIGraphicsPopContext.unsafe = true
+
+# Unlike for objc2-quartz-core, getting and modifying subviews is safe, since
+# all the methods that modify make sure to first remove the view from its
+# superview.
+
+# This is safe, but note that it's unsafe to override.
+class.UIPrintFormatter.methods.requiresMainThread.unsafe = false
