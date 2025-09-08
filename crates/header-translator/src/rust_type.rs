@@ -563,6 +563,14 @@ pub enum PointeeTy {
 }
 
 impl PointeeTy {
+    /// Recurse into typedefs.
+    fn through_typedef(&self) -> &Self {
+        match self {
+            Self::TypeDef { to, .. } => to.through_typedef(),
+            _ => self,
+        }
+    }
+
     fn required_items(&self) -> impl Iterator<Item = ItemTree> {
         match self {
             Self::Class {
@@ -850,24 +858,18 @@ impl PointeeTy {
     }
 
     fn is_static_object(&self) -> bool {
-        match self {
-            // Recurse into typedefs
-            Self::TypeDef { to, .. } => to.is_static_object(),
-            Self::AnyClass { .. } => true,
-            _ => false,
-        }
+        matches!(self.through_typedef(), Self::AnyClass { .. })
     }
 
     fn is_objc_type(&self) -> bool {
         matches!(
-            self,
+            self.through_typedef(),
             Self::Class { .. }
                 | Self::GenericParam { .. }
                 | Self::AnyObject { .. }
                 | Self::AnyProtocol
                 | Self::AnyClass { .. }
                 | Self::Self_
-                | Self::TypeDef { .. }
         )
     }
 
@@ -1846,6 +1848,14 @@ impl Ty {
         }
     }
 
+    /// Recurse into typedefs (at the topmost layer).
+    fn through_typedef(&self) -> &Self {
+        match self {
+            Self::TypeDef { to, .. } => to.through_typedef(),
+            _ => self,
+        }
+    }
+
     pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
         let items: Vec<ItemTree> = match self {
             Self::Primitive(prim) => prim.required_items().collect(),
@@ -2016,23 +2026,21 @@ impl Ty {
 
     #[allow(dead_code)]
     fn is_primitive(&self) -> bool {
-        match self {
-            Self::Primitive(_) | Self::Simd { .. } => true,
-            Self::TypeDef { to, .. } => to.is_primitive(),
-            Self::Enum { .. } => true,
-            _ => false,
-        }
+        matches!(
+            self.through_typedef(),
+            Self::Primitive(_) | Self::Simd { .. } | Self::Enum { .. }
+        )
     }
 
     pub(crate) fn is_primitive_or_record(&self) -> bool {
-        match self {
-            Self::Primitive(_) | Self::Simd { .. } => true,
-            Self::TypeDef { to, .. } => to.is_primitive_or_record(),
-            Self::Enum { .. } => true,
-            Self::Struct { .. } => true,
-            Self::Union { .. } => true,
-            _ => false,
-        }
+        matches!(
+            self.through_typedef(),
+            Self::Primitive(_)
+                | Self::Simd { .. }
+                | Self::Enum { .. }
+                | Self::Struct { .. }
+                | Self::Union { .. }
+        )
     }
 
     /// Return the `ItemTree` for the nearest implement-able type, if any.
@@ -2069,11 +2077,10 @@ impl Ty {
     /// the runtime is keeping track of, so forgetting to `release` those
     /// would leak resources.
     fn is_static_object(&self) -> bool {
-        match self {
-            // Recurse into typedefs
-            Self::TypeDef { to, .. } => to.is_static_object(),
-            Self::Pointee(pointee_ty) => pointee_ty.is_static_object(),
-            _ => false,
+        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+            pointee_ty.is_static_object()
+        } else {
+            false
         }
     }
 
@@ -2083,31 +2090,28 @@ impl Ty {
 
     /// Determine whether the inner type of a `Pointer` is object-like.
     fn is_objc_type(&self) -> bool {
-        match self {
-            // Recurse into typedefs
-            Self::TypeDef { to, .. } => to.is_objc_type(),
-            Self::Pointee(pointee_ty) => pointee_ty.is_objc_type(),
-            _ => false,
+        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+            pointee_ty.is_objc_type()
+        } else {
+            false
         }
     }
 
     /// Determine whether the pointee inside a `Pointer` is a CF-like type.
     fn is_cf_type(&self) -> bool {
-        match self {
-            // Recurse into typedefs
-            Self::TypeDef { to, .. } => to.is_cf_type(),
-            Self::Pointee(pointee_ty) => pointee_ty.is_cf_type(),
-            _ => false,
+        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+            pointee_ty.is_cf_type()
+        } else {
+            false
         }
     }
 
     /// Determine whether the pointee inside a `Pointer` is a Dispatch-like type.
     fn is_dispatch_type(&self) -> bool {
-        match self {
-            // Recurse into typedefs
-            Self::TypeDef { to, .. } => to.is_dispatch_type(),
-            Self::Pointee(pointee_ty) => pointee_ty.is_dispatch_type(),
-            _ => false,
+        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+            pointee_ty.is_dispatch_type()
+        } else {
+            false
         }
     }
 
@@ -2194,23 +2198,15 @@ impl Ty {
     }
 
     pub(crate) fn directly_contains_fn_ptr(&self) -> bool {
-        match self {
-            Self::Pointer { pointee, .. }
-                if matches!(&**pointee, Ty::Pointee(PointeeTy::Fn { .. })) =>
-            {
-                true
-            }
-            Self::TypeDef { to, .. } => to.directly_contains_fn_ptr(),
-            _ => false,
+        if let Self::Pointer { pointee, .. } = self.through_typedef() {
+            matches!(&**pointee, Ty::Pointee(PointeeTy::Fn { .. }))
+        } else {
+            false
         }
     }
 
     pub(crate) fn is_objc_bool(&self) -> bool {
-        match self {
-            Self::Primitive(Primitive::ObjcBool) => true,
-            Self::TypeDef { to, .. } => to.is_objc_bool(),
-            _ => false,
-        }
+        matches!(self.through_typedef(), Self::Primitive(Primitive::ObjcBool))
     }
 
     fn plain(&self) -> impl fmt::Display + '_ {
@@ -2855,28 +2851,26 @@ impl Ty {
     }
 
     fn fn_contains_bool(&self) -> bool {
-        match self {
-            Self::Pointer { pointee, .. } => {
-                if let Self::Pointee(PointeeTy::Fn {
-                    arguments,
-                    result_type,
-                    ..
-                }) = &**pointee
+        if let Self::Pointer { pointee, .. } = self.through_typedef() {
+            if let Self::Pointee(PointeeTy::Fn {
+                arguments,
+                result_type,
+                ..
+            }) = &**pointee
+            {
+                if arguments
+                    .iter()
+                    .any(|arg| matches!(arg, Self::Primitive(Primitive::C99Bool)))
                 {
-                    if arguments
-                        .iter()
-                        .any(|arg| matches!(arg, Self::Primitive(Primitive::C99Bool)))
-                    {
-                        return true;
-                    }
-                    if matches!(**result_type, Self::Primitive(Primitive::C99Bool)) {
-                        return true;
-                    }
+                    return true;
                 }
-                false
+                if matches!(**result_type, Self::Primitive(Primitive::C99Bool)) {
+                    return true;
+                }
             }
-            Self::TypeDef { to, .. } => to.fn_contains_bool(),
-            _ => false,
+            false
+        } else {
+            false
         }
     }
 
@@ -3124,11 +3118,10 @@ impl Ty {
     }
 
     pub fn is_signed(&self) -> Option<bool> {
-        match self {
+        match self.through_typedef() {
             Self::Primitive(prim) => prim.is_signed(),
             Self::Simd { ty, .. } => ty.is_signed(),
             Self::Enum { ty, .. } => ty.is_signed(),
-            Self::TypeDef { to, .. } => to.is_signed(),
             _ => None,
         }
     }
@@ -3216,32 +3209,24 @@ impl Ty {
     }
 
     pub(crate) fn is_enum_through_typedef(&self) -> bool {
-        match self {
-            Self::Enum { .. } => true,
-            Self::TypeDef { to, .. } => to.is_enum_through_typedef(),
-            _ => false,
-        }
+        matches!(self.through_typedef(), Self::Enum { .. })
     }
 
     pub(crate) fn is_floating_through_typedef(&self) -> bool {
-        match self {
-            Self::Primitive(
-                Primitive::F32 | Primitive::F64 | Primitive::Float | Primitive::Double,
-            ) => true,
-            Self::TypeDef { to, .. } => to.is_floating_through_typedef(),
-            _ => false,
-        }
+        matches!(
+            self.through_typedef(),
+            Self::Primitive(Primitive::F32 | Primitive::F64 | Primitive::Float | Primitive::Double)
+        )
     }
 
     /// SIMD is not yet possible in FFI, see:
     /// <https://github.com/rust-lang/rust/issues/63068>
     pub(crate) fn needs_simd(&self) -> bool {
-        match self {
+        match self.through_typedef() {
             Self::Simd { .. } => true,
             Self::Pointer { pointee, .. } | Self::IncompleteArray { pointee, .. } => {
                 pointee.needs_simd()
             }
-            Self::TypeDef { to, .. } => to.needs_simd(),
             Self::Array { element_type, .. } => element_type.needs_simd(),
             Self::Struct { fields, .. } | Self::Union { fields, .. } => {
                 fields.iter().any(|field| field.needs_simd())
