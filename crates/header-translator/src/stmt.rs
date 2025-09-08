@@ -1752,33 +1752,48 @@ impl Stmt {
                     None
                 };
 
-                let safety = arguments
+                let default_safety = context.library(&id).default_safety;
+
+                let mut any_argument_bounds_affecting = false;
+                let mut safety = arguments
                     .iter()
-                    .fold(SafetyProperty::Safe, |safety, (_, arg_ty)| {
-                        safety.merge(arg_ty.safety_in_fn_argument())
+                    .fold(SafetyProperty::Safe, |mut safety, (arg_name, arg_ty)| {
+                        if default_safety.not_bounds_affecting
+                            && is_likely_bounds_affecting(arg_name)
+                        {
+                            any_argument_bounds_affecting = true;
+                            safety = safety.merge(SafetyProperty::new_unknown(format!(
+                                "`{arg_name}` might not be bounds-checked"
+                            )));
+                        }
+                        safety.merge(arg_ty.safety_in_fn_argument(&crate::to_snake_case(arg_name)))
                     })
                     .merge(result_type.safety_in_fn_return());
 
-                let default_safety = context.library(&id).default_safety;
+                if default_safety.not_bounds_affecting
+                    && !any_argument_bounds_affecting
+                    && is_likely_bounds_affecting(&c_name)
+                {
+                    safety =
+                        safety.merge(SafetyProperty::new_unknown("Might not be bounds-checked"));
+                }
 
                 let safe = if let Some(unsafe_) = data.unsafe_ {
-                    if safety == SafetyProperty::Unsafe && !unsafe_ {
+                    if safety.is_unsafe() && !unsafe_ {
                         // TODO(breaking): Disallow these.
                         error!(?id, "unsafe function was marked as safe");
                     }
                     !unsafe_
-                } else if safety == SafetyProperty::Safe && default_safety.functions {
-                    if default_safety.not_bounds_affecting {
-                        !is_likely_bounds_affecting(&c_name)
-                            && arguments
-                                .iter()
-                                .all(|(arg_name, _)| !is_likely_bounds_affecting(arg_name))
-                    } else {
-                        true
-                    }
                 } else {
-                    false
+                    safety.is_safe() && default_safety.functions
                 };
+
+                if let Some(safety) = safety.to_safety_comment() {
+                    if data.unsafe_ != Some(false) {
+                        documentation.add("# Safety");
+                        documentation.add(safety);
+                    }
+                }
 
                 vec![Self::FnDecl {
                     id: id.require_name(),

@@ -328,7 +328,7 @@ pub struct LibraryConfig {
     #[serde(default)]
     pub const_data: HashMap<String, StmtData>,
 
-    #[serde(rename = "unsafe-default-safe")]
+    #[serde(rename = "unsafe-default-safety")]
     #[serde(default)]
     pub default_safety: DefaultSafety,
     #[serde(default)]

@@ -587,16 +587,32 @@ impl Method {
             .get_objc_type_encoding()
             .expect("method to have encoding");
 
-        let safety = arguments
-            .iter()
-            .fold(SafetyProperty::Safe, |safety, (_, arg_ty)| {
-                safety.merge(arg_ty.safety_in_method_argument())
-            })
-            .merge(result_type.safety_in_fn_return());
-
         let default_safety = &context
             .library(Location::from_entity(&entity, context).unwrap())
             .default_safety;
+
+        let mut any_argument_bounds_affecting = false;
+        let mut safety = arguments
+            .iter()
+            .fold(SafetyProperty::Safe, |mut safety, (arg_name, arg_ty)| {
+                if default_safety.not_bounds_affecting && is_likely_bounds_affecting(arg_name) {
+                    any_argument_bounds_affecting = true;
+                    safety = safety.merge(SafetyProperty::new_unknown(format!(
+                        "`{arg_name}` might not be bounds-checked"
+                    )));
+                }
+                safety.merge(arg_ty.safety_in_method_argument(&crate::to_snake_case(arg_name)))
+            })
+            .merge(result_type.safety_in_fn_return());
+
+        if default_safety.not_bounds_affecting
+            && !any_argument_bounds_affecting
+            && is_likely_bounds_affecting(&selector)
+        {
+            safety = safety.merge(SafetyProperty::new_unknown(
+                "This might not be bounds-checked",
+            ));
+        }
 
         let default_safe = if is_class || memory_management == MemoryManagement::RetainedInit {
             default_safety.class_methods
@@ -605,23 +621,23 @@ impl Method {
         };
 
         let safe = if let Some(unsafe_) = data.unsafe_ {
-            if safety == SafetyProperty::Unsafe && !unsafe_ {
+            if safety.is_unsafe() && !unsafe_ {
                 // TODO(breaking): Disallow these.
                 error!(?selector, ?arguments, "unsafe method was marked as safe");
             }
             !unsafe_
-        } else if safety == SafetyProperty::Safe && default_safe {
-            if default_safety.not_bounds_affecting {
-                !is_likely_bounds_affecting(&selector)
-                    && arguments
-                        .iter()
-                        .all(|(arg_name, _)| !is_likely_bounds_affecting(arg_name))
-            } else {
-                true
-            }
         } else {
-            false
+            safety.is_safe() && default_safe
         };
+
+        let mut documentation = Documentation::from_entity(&entity, context);
+
+        if let Some(safety) = safety.to_safety_comment() {
+            if data.unsafe_ != Some(false) {
+                documentation.add("# Safety");
+                documentation.add(safety);
+            }
+        }
 
         Some((
             modifiers.designated_initializer,
@@ -640,7 +656,7 @@ impl Method {
                 mainthreadonly,
                 must_use: modifiers.must_use,
                 encoding,
-                documentation: Documentation::from_entity(&entity, context),
+                documentation,
             },
         ))
     }
@@ -751,7 +767,19 @@ impl Method {
                 // We cannot mark these as safe, since the pointer is not
                 // guaranteed to remain valid while being stored inside the
                 // class.
-                safety = SafetyProperty::Unsafe;
+                //
+                // TODO(breaking): Make these return raw pointers instead.
+                if !ty.is_object_like_ptr() {
+                    if !safety.is_unsafe() {
+                        safety = safety.merge(SafetyProperty::new_unsafe(
+                            "You must ensure this is still alive",
+                        ));
+                    }
+                } else {
+                    safety = safety.merge(SafetyProperty::new_unsafe(
+                        "This is not retained internally, you must ensure the object is still alive",
+                    ));
+                }
             }
             if atomic == Some(false)
                 && parent_thread_safety.inferred_sendable()
@@ -761,28 +789,28 @@ impl Method {
                 // by default (unless they are readonly class-properties, then
                 // the nonatomic-ness in the header is probably incorrect,
                 // since they are global).
-                safety = safety.merge(SafetyProperty::Unknown);
+                safety = safety.merge(SafetyProperty::new_unknown("This might not be thread-safe"));
                 documentation.add("This property is not atomic.");
                 // TODO: Should we document atomic-ness in further cases?
             };
 
             let safe = if let Some(unsafe_) = getter_data.unsafe_ {
-                if safety == SafetyProperty::Unsafe && !unsafe_ {
+                if safety.is_unsafe() && !unsafe_ {
                     // TODO(breaking): Disallow these.
                     error!(?getter_sel, ?ty, "unsafe property was marked as safe");
                 }
                 !unsafe_
-            } else if safety == SafetyProperty::Safe && default_safety.property_getters {
+            } else if safety.is_safe() && default_safety.property_getters {
                 true // Also if bounds affecting
             } else {
                 false
             };
 
-            if kind == PropertyKind::UnsafeRetained && ty.is_object_like_ptr() {
-                documentation.add("# Safety");
-                documentation.add(
-                    "This is not retained internally, you must ensure the object is still alive.",
-                );
+            if let Some(safety) = safety.to_safety_comment() {
+                if getter_data.unsafe_ != Some(false) {
+                    documentation.add("# Safety");
+                    documentation.add(safety);
+                }
             }
 
             Some(Method {
@@ -833,33 +861,35 @@ impl Method {
                     apply_type_override(&mut ty, ty_or);
                 }
 
-                let mut safety = ty.safety_in_fn_argument();
+                let mut safety = ty.safety_in_fn_argument(&crate::to_snake_case(&name));
                 if kind == PropertyKind::UnsafeRetained && !ty.is_primitive_or_record() {
                     // We could _possibly_ allow these to be safe, but let's
                     // not for now, they interact weirdly with the getters
                     // (which have to be unsafe).
-                    safety = SafetyProperty::Unsafe;
+                    safety = safety.merge(SafetyProperty::new_unsafe(
+                        "This is unretained, you must ensure the object is kept alive while in use",
+                    ));
                 }
                 if atomic == Some(false) && parent_thread_safety.inferred_sendable() {
                     // `nonatomic` properties on sendable classes are not safe
                     // by default.
-                    safety = safety.merge(SafetyProperty::Unknown);
+                    safety =
+                        safety.merge(SafetyProperty::new_unknown("This might not be thread-safe"));
                 };
+                if default_safety.not_bounds_affecting && is_likely_bounds_affecting(&selector) {
+                    safety = safety.merge(SafetyProperty::new_unknown(
+                        "This might not be bounds-checked",
+                    ));
+                }
 
                 let safe = if let Some(unsafe_) = setter_data.unsafe_ {
-                    if safety == SafetyProperty::Unsafe && !unsafe_ {
+                    if safety.is_unsafe() && !unsafe_ {
                         // TODO(breaking): Disallow these.
                         error!(?selector, ?ty, "unsafe property setter was marked as safe");
                     }
                     !unsafe_
-                } else if safety == SafetyProperty::Safe && default_safety.property_setters {
-                    if default_safety.not_bounds_affecting {
-                        !is_likely_bounds_affecting(&selector)
-                    } else {
-                        true
-                    }
                 } else {
-                    false
+                    safety.is_safe() && default_safety.property_setters
                 };
 
                 // Do not emit normal docs on setters, otherwise we'd be
@@ -884,6 +914,13 @@ impl Method {
                             .add("This is a [weak property][objc2::topics::weak_property].");
                     }
                     _ => {}
+                }
+
+                if let Some(safety) = safety.to_safety_comment() {
+                    if setter_data.unsafe_ != Some(false) {
+                        documentation.add("# Safety");
+                        documentation.add(safety);
+                    }
                 }
 
                 Some(Method {

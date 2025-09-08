@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use std::str::FromStr;
 use std::sync::LazyLock;
 use std::{fmt, iter, mem};
@@ -228,25 +229,119 @@ pub enum MethodArgumentQualifier {
     Out,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum SafetyProperty {
     /// The type is unsafe in the selected position.
-    Unsafe,
+    Unsafe { reasons: Vec<String> },
     /// The safety of using the type in this position is unknown.
-    Unknown,
+    Unknown { reasons: Vec<String> },
     /// The type is always safe in this position (and methods/functions using
     /// this is thus eligible for being automatically marked safe).
     Safe,
 }
 
 impl SafetyProperty {
+    pub fn new_unsafe(reason: impl Into<String>) -> Self {
+        Self::Unsafe {
+            reasons: vec![reason.into()],
+        }
+    }
+
+    pub fn new_unknown(reason: impl Into<String>) -> Self {
+        Self::Unknown {
+            reasons: vec![reason.into()],
+        }
+    }
+
+    /// Merge two safety properties.
+    ///
+    /// When there are multiple reasons for something being unsafe, these
+    /// are merged as well.
     pub fn merge(self, other: Self) -> Self {
         match (self, other) {
-            (Self::Unsafe, _) => Self::Unsafe,
-            (_, Self::Unsafe) => Self::Unsafe,
-            (Self::Unknown, _) => Self::Unknown,
-            (_, Self::Unknown) => Self::Unknown,
+            (
+                Self::Unsafe { reasons: reasons1 },
+                Self::Unsafe { reasons: reasons2 } | Self::Unknown { reasons: reasons2 },
+            ) => Self::Unsafe {
+                reasons: reasons1.into_iter().chain(reasons2).collect(),
+            },
+            (Self::Unsafe { reasons }, Self::Safe) => Self::Unsafe { reasons },
+            (_, Self::Unsafe { reasons }) => Self::Unsafe { reasons },
+
+            (Self::Unknown { reasons: reasons1 }, Self::Unknown { reasons: reasons2 }) => {
+                Self::Unknown {
+                    reasons: reasons1.into_iter().chain(reasons2).collect(),
+                }
+            }
+            (Self::Unknown { reasons }, Self::Safe) => Self::Unknown { reasons },
+            (Self::Safe, Self::Unknown { reasons }) => Self::Unknown { reasons },
+
             (Self::Safe, Self::Safe) => Self::Safe,
+        }
+    }
+
+    pub fn is_unsafe(&self) -> bool {
+        matches!(self, SafetyProperty::Unsafe { .. })
+    }
+
+    pub fn is_safe(&self) -> bool {
+        matches!(self, SafetyProperty::Safe)
+    }
+
+    fn ignore(self) -> Self {
+        match self {
+            Self::Unsafe { .. } => Self::Unsafe { reasons: vec![] },
+            Self::Unknown { .. } => Self::Unknown { reasons: vec![] },
+            Self::Safe => Self::Safe,
+        }
+    }
+
+    fn context(self, context: impl Display) -> Self {
+        match self {
+            Self::Unsafe { mut reasons } => {
+                // TODO: Is this how we wanna do context?
+                for reason in &mut reasons {
+                    *reason = format!("{context} {reason}");
+                }
+                Self::Unsafe { reasons }
+            }
+            Self::Unknown { mut reasons } => {
+                // TODO: Is this how we wanna do context?
+                for reason in &mut reasons {
+                    *reason = format!("{context} {reason}");
+                }
+                Self::Unknown { reasons }
+            }
+            Self::Safe => Self::Safe,
+        }
+    }
+
+    fn preface(self, preface: impl Display) -> Self {
+        match self {
+            Self::Unsafe { mut reasons } => {
+                for reason in &mut reasons {
+                    *reason = format!("{preface} {reason}");
+                }
+                Self::Unsafe { reasons }
+            }
+            Self::Unknown { mut reasons } => {
+                for reason in &mut reasons {
+                    *reason = format!("{preface} {reason}");
+                }
+                Self::Unknown { reasons }
+            }
+            Self::Safe => Self::Safe,
+        }
+    }
+
+    pub fn to_safety_comment(&self) -> Option<String> {
+        match self {
+            Self::Unsafe { reasons } | Self::Unknown { reasons } => Some(if reasons.len() == 1 {
+                format!("{}.", reasons[0])
+            } else {
+                format!("- {}.", reasons.join(".\n- "))
+            }),
+            Self::Safe => None,
         }
     }
 }
@@ -254,7 +349,7 @@ impl SafetyProperty {
 /// The safety properties of a type.
 ///
 /// These depend on which position the type is used in.
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct TypeSafety {
     /// The type's safety properties when passed into foreign code.
     pub in_argument: SafetyProperty,
@@ -267,27 +362,53 @@ impl TypeSafety {
         in_argument: SafetyProperty::Safe,
         in_return: SafetyProperty::Safe,
     };
-    const UNSAFE: Self = Self {
-        in_argument: SafetyProperty::Unsafe,
-        in_return: SafetyProperty::Unsafe,
-    };
-    const UNKNOWN_IN_ARGUMENT: Self = Self {
-        in_argument: SafetyProperty::Unknown,
-        in_return: SafetyProperty::Safe,
-    };
-    const UNSAFE_IN_ARGUMENT: Self = Self {
-        in_argument: SafetyProperty::Unsafe,
-        in_return: SafetyProperty::Safe,
-    };
-    const UNSAFE_IN_RETURN: Self = Self {
-        in_argument: SafetyProperty::Safe,
-        in_return: SafetyProperty::Unsafe,
-    };
+
+    fn always_unsafe(reason: impl Into<String> + Clone) -> Self {
+        Self {
+            in_argument: SafetyProperty::new_unsafe(reason.clone()),
+            in_return: SafetyProperty::new_unsafe(reason),
+        }
+    }
+
+    fn unknown_in_argument(reason: impl Into<String>) -> Self {
+        Self {
+            in_argument: SafetyProperty::new_unknown(reason),
+            in_return: SafetyProperty::Safe,
+        }
+    }
+
+    fn unsafe_in_argument(reason: impl Into<String>) -> Self {
+        Self {
+            in_argument: SafetyProperty::new_unsafe(reason),
+            in_return: SafetyProperty::Safe,
+        }
+    }
+
+    fn unsafe_in_return(reason: impl Into<String>) -> Self {
+        Self {
+            in_argument: SafetyProperty::Safe,
+            in_return: SafetyProperty::new_unsafe(reason),
+        }
+    }
 
     fn merge(self, other: Self) -> Self {
         Self {
             in_argument: self.in_argument.merge(other.in_argument),
             in_return: self.in_return.merge(other.in_return),
+        }
+    }
+
+    fn ignore_in_argument(self) -> Self {
+        Self {
+            in_argument: self.in_argument.ignore(),
+            in_return: self.in_return,
+        }
+    }
+
+    fn context(self, context: impl Display + Clone) -> Self {
+        Self {
+            in_argument: self.in_argument.context(context.clone()),
+            in_return: self.in_return.context(context),
         }
     }
 }
@@ -419,8 +540,8 @@ impl Primitive {
     fn safety(&self) -> TypeSafety {
         match self {
             // FIXME(madsmtm): Remove Imp from primitive?
-            Self::Imp => TypeSafety::UNSAFE,
-            Self::VaList => TypeSafety::UNSAFE,
+            Self::Imp => TypeSafety::always_unsafe("must be a valid IMP"),
+            Self::VaList => TypeSafety::always_unsafe("must be valid"),
             _ => TypeSafety::SAFE,
         }
     }
@@ -725,19 +846,26 @@ impl PointeeTy {
                 // Check that the inner generics are safe to use.
                 // TODO: NSMutableArray and variance?
                 let mut safety = generics.iter().fold(TypeSafety::SAFE, |safety, generic| {
-                    safety.merge(generic.safety())
+                    safety.merge(generic.safety().context("generic"))
                 });
 
                 if generics.len() != declaration_generics.len() {
                     // If all generics aren't specified, the remaining are
                     // AnyObject, so apply the restrictions from that as well.
-                    safety = safety.merge(TypeSafety::UNKNOWN_IN_ARGUMENT);
+                    safety = safety
+                        .merge(TypeSafety::unknown_in_argument(
+                            "should be of the correct type",
+                        ))
+                        .context("generic");
                 }
 
                 // We don't uphold protocol type safety properly yet, since we
                 // have no way of specifying ad-hoc protocol requirements.
                 if !protocols.is_empty() {
-                    safety = safety.merge(TypeSafety::UNSAFE_IN_ARGUMENT);
+                    safety = safety.merge(TypeSafety::unsafe_in_argument(format!(
+                        "must implement {}",
+                        separate_with_comma_and(protocols.iter().map(|(p, _)| &p.id.name))
+                    )));
                 }
 
                 safety
@@ -749,12 +877,12 @@ impl PointeeTy {
                 // Returning it is fine though, since if you actually
                 // want to do anything with the type, you have to downcast it,
                 // and `objc2` checks that at runtime.
-                0 => TypeSafety::UNKNOWN_IN_ARGUMENT,
+                0 => TypeSafety::unknown_in_argument("should be of the correct type"),
                 // `ProtocolObject<dyn MyProtocol>` is well-typed.
                 1 => TypeSafety::SAFE,
                 // FIXME: Only a single protocol is properly supported,
                 // multiple protocol restrictions are currently `AnyObject`.
-                _ => TypeSafety::UNKNOWN_IN_ARGUMENT,
+                _ => TypeSafety::unknown_in_argument("should be of the correct type"),
             },
             // Generic parameters are safe.
             // TODO: NSDictionary's KeyType perhaps isn't really?
@@ -768,15 +896,21 @@ impl PointeeTy {
             } => {
                 if matches!(&*id.name, "CFType" | "CFTypeRef") {
                     // `CFType`, like `AnyObject`, is not known to be safe.
-                    TypeSafety::UNKNOWN_IN_ARGUMENT
+                    TypeSafety::unknown_in_argument("should be of the correct type")
                 } else if declaration_generics.is_empty() {
+                    // `&CFString` and similar are safe.
+                    TypeSafety::SAFE
+                } else {
                     // Types like `&CFArray` are not safe, since their generic
                     // can be anything (including `usize`, i.e. they don't
                     // have to be objects).
-                    TypeSafety::SAFE
-                } else {
-                    // `&CFString` and similar are safe.
-                    TypeSafety::UNSAFE_IN_ARGUMENT
+                    TypeSafety::unsafe_in_argument("must be of the correct type").context(
+                        if declaration_generics.len() == 1 {
+                            "generic"
+                        } else {
+                            "generics"
+                        },
+                    )
                 }
             }
             // Dispatch objects have strong type-safety, and are thus
@@ -784,32 +918,53 @@ impl PointeeTy {
             Self::DispatchTypeDef { .. } => TypeSafety::SAFE,
             // &CStr is safe as a parameter, though probably not when
             // returning (since we wouldn't know the lifetime).
-            Self::CStr => TypeSafety::UNSAFE_IN_RETURN,
-            // Taking `&AnyClass` or `&AnyProtocol` can be perilous if the
-            // method tries to assume it can e.g. create new instances of the
-            // class. Some uses are safe though, such as `NSStringFromClass`.
-            Self::AnyProtocol | Self::AnyClass { .. } => TypeSafety::UNKNOWN_IN_ARGUMENT,
+            Self::CStr => TypeSafety::unsafe_in_return("must bound the lifetime"),
+            // Taking `&AnyClass` can be perilous if the method tries to
+            // assume it can e.g. create new instances of the class. Some uses
+            // are safe though, such as `NSStringFromClass`.
+            Self::AnyClass { protocols } => {
+                if protocols.is_empty() {
+                    TypeSafety::unknown_in_argument("probably has further requirements")
+                } else {
+                    TypeSafety::unsafe_in_argument(format!(
+                        "must implement {}",
+                        separate_with_comma_and(protocols.iter().map(|(p, _)| &p.id.name))
+                    ))
+                }
+            }
+            // Same with `&AnyProtocol`.
+            Self::AnyProtocol => {
+                TypeSafety::unknown_in_argument("possibly has further requirements")
+            }
             // Sendable blocks are not yet propagate in the API, and so are
             // not safe: https://github.com/madsmtm/objc2/issues/572
             Self::Block {
                 sendable: Some(true),
                 ..
-            } => TypeSafety::UNSAFE,
+            } => TypeSafety::always_unsafe("block must be sendable"),
             Self::Block {
                 sendable: _,
                 arguments,
                 result_type,
                 no_escape: _, // Doesn't have an effect on this
             } => {
-                let argument_safety = arguments.iter().fold(TypeSafety::SAFE, |safety, arg| {
-                    // We don't currently handle lifetimes in blocks, so
-                    // let's be conservative here for now.
-                    safety.merge(arg.safety())
-                });
+                let argument_safety =
+                    arguments
+                        .iter()
+                        .enumerate()
+                        .fold(TypeSafety::SAFE, |safety, (i, arg)| {
+                            // We don't currently handle lifetimes in blocks, so
+                            // let's be conservative here for now.
+                            safety.merge(arg.safety().context(if i == 0 && arguments.len() == 1 {
+                                "block's argument".to_string()
+                            } else {
+                                format!("block's argument {}", i + 1)
+                            }))
+                        });
 
                 // Currently conservative, since blocks doesn't handle memory
                 // management, and thus currently return raw pointers.
-                let result_ty_safety = result_type.safety();
+                let result_ty_safety = result_type.safety().context("block's return");
 
                 TypeSafety {
                     // Blocks in arguments have a sort of flipped view; they
@@ -835,7 +990,7 @@ impl PointeeTy {
                 // That fact cuts both ways though: when being returned, they
                 // are safe, since the user must uphold their safety
                 // guarantees if they want to call the function.
-                TypeSafety::UNSAFE_IN_ARGUMENT
+                TypeSafety::unsafe_in_argument("must be implemented correctly")
             }
             Self::TypeDef { to, .. } => to.safety(),
         }
@@ -1947,14 +2102,37 @@ impl Ty {
             Self::Simd { .. } => TypeSafety::SAFE,
             // Rarely safe, selectors can point to anything, and it's hard to
             // specify threading requirements.
-            Self::Sel { .. } => TypeSafety::UNSAFE_IN_ARGUMENT,
-            // By default, pointers aren't safe in arguments, though they are
-            // generally safe to return (at least if the pointee is).
-            Self::Pointer { pointee, .. } => TypeSafety::UNSAFE_IN_ARGUMENT.merge(pointee.safety()),
-            // We don't really support incomplete arrays yet.
-            Self::IncompleteArray { .. } => TypeSafety::UNSAFE,
+            Self::Sel { .. } => TypeSafety::unsafe_in_argument("must be a valid selector"),
+            // Function pointers have validity requirements, and are therefore
+            // always safe. Note though that we still defer to the actual
+            // function pointee to figure out if it's safe in that particular
+            // situation.
+            Self::Pointer { pointee, .. }
+                if matches!(**pointee, Ty::Pointee(PointeeTy::Fn { .. })) =>
+            {
+                pointee.safety()
+            }
+            // By default, all other pointers aren't safe in arguments, though
+            // they are generally safe to return (at least if the pointee is).
+            Self::Pointer {
+                pointee,
+                nullability,
+                ..
+            }
+            | Self::IncompleteArray {
+                pointee,
+                nullability,
+                ..
+            } => {
+                let reason = if *nullability == Nullability::Nullable {
+                    "must be a valid pointer or null"
+                } else {
+                    "must be a valid pointer"
+                };
+                TypeSafety::unsafe_in_argument(reason).merge(pointee.safety().ignore_in_argument())
+            }
             // Only safe in structs, not safe directly or behind typedefs.
-            Self::Array { .. } => TypeSafety::UNSAFE,
+            Self::Array { .. } => TypeSafety::always_unsafe("Array TODO"),
             // Enums are safe in both positions.
             //
             // Note that enums don't strictly prevent passing invalid
@@ -1962,15 +2140,23 @@ impl Ty {
             // Objective-C code) is written with that in mind.
             Self::Enum { .. } => TypeSafety::SAFE,
             // Structs inherit the safety of all their fields.
-            Self::Struct { fields, .. } => fields.iter().fold(TypeSafety::SAFE, |safety, field| {
-                safety.merge(match field {
-                    // Arrays are when inside structs.
-                    Self::Array { element_type, .. } => element_type.safety(),
-                    field => field.safety(),
-                })
-            }),
+            Self::Struct { fields, .. } => {
+                fields
+                    .iter()
+                    .enumerate()
+                    .fold(TypeSafety::SAFE, |safety, (i, field)| {
+                        safety.merge(
+                            match field {
+                                // Arrays are safe when inside structs.
+                                Self::Array { element_type, .. } => element_type.safety(),
+                                field => field.safety(),
+                            }
+                            .context(format!("struct field {}", i + 1)),
+                        )
+                    })
+            }
             // Conservative.
-            Self::Union { .. } => TypeSafety::UNSAFE,
+            Self::Union { .. } => TypeSafety::always_unsafe("must be correctly initialized"),
             Self::TypeDef { to, .. } => to.safety(),
         }
     }
@@ -2000,7 +2186,8 @@ impl Ty {
                     // binding).
                     //
                     // See also https://github.com/madsmtm/objc2/issues/695.
-                    safety = safety.merge(TypeSafety::UNKNOWN_IN_ARGUMENT);
+                    safety =
+                        safety.merge(TypeSafety::unknown_in_argument("might not allow `None`"));
                 }
                 safety
             }
@@ -2008,20 +2195,22 @@ impl Ty {
         }
     }
 
-    pub(crate) fn safety_in_method_argument(&self) -> SafetyProperty {
+    pub(crate) fn safety_in_method_argument(&self, arg_name: &str) -> SafetyProperty {
         if self.fmt_out_pointer().is_some() {
             SafetyProperty::Safe
         } else {
-            self.safety_in_fn_argument()
+            self.safety_in_fn_argument(arg_name)
         }
     }
 
-    pub(crate) fn safety_in_fn_argument(&self) -> SafetyProperty {
-        self.safety_in_fn().in_argument
+    pub(crate) fn safety_in_fn_argument(&self, arg_name: &str) -> SafetyProperty {
+        self.safety_in_fn()
+            .in_argument
+            .preface(format!("`{arg_name}`"))
     }
 
     pub(crate) fn safety_in_fn_return(&self) -> SafetyProperty {
-        self.safety_in_fn().in_return
+        self.safety_in_fn().in_return.preface("The returned")
     }
 
     #[allow(dead_code)]
@@ -3438,6 +3627,26 @@ fn parse_unexposed_tokens(s: &str) -> (String, Option<UnexposedAttr>) {
         None
     };
     (TokenStream::from_iter(iter).to_string(), attr)
+}
+
+fn separate_with_comma_and<T: Display>(items: impl IntoIterator<Item = T> + Clone) -> impl Display {
+    FormatterFn(move |f| {
+        let mut iter = items.clone().into_iter().peekable();
+
+        if let Some(item) = iter.next() {
+            write!(f, "{item}")?;
+        }
+
+        while let Some(item) = iter.next() {
+            if iter.peek().is_some() {
+                write!(f, ", {item}")?;
+            } else {
+                write!(f, " and {item}")?;
+            }
+        }
+
+        Ok(())
+    })
 }
 
 #[cfg(test)]
