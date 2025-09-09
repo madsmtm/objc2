@@ -9,12 +9,12 @@ use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
 use crate::id::ItemTree;
+use crate::immediate_children;
 use crate::name_translation::is_likely_bounds_affecting;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{MethodArgumentQualifier, SafetyProperty, Ty};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
-use crate::{immediate_children, Location};
 
 impl MethodArgumentQualifier {
     pub fn parse(qualifiers: ObjCQualifiers) -> Self {
@@ -587,8 +587,13 @@ impl Method {
             .get_objc_type_encoding()
             .expect("method to have encoding");
 
+        // Methods may come from different libraries than the currently parsed
+        // one, such as with inherited `init` methods.
+        //
+        // We still want the default safety of the current library though.
         let default_safety = &context
-            .library(Location::from_entity(&entity, context).unwrap())
+            .try_library(context.current_library)
+            .unwrap()
             .default_safety;
 
         let mut any_argument_bounds_affecting = false;
@@ -627,7 +632,8 @@ impl Method {
             }
             !unsafe_
         } else {
-            safety.is_safe() && default_safe
+            // TODO(breaking): Remove unavailable instead of just marking them unsafe.
+            safety.is_safe() && default_safe && availability.is_available()
         };
 
         let mut documentation = Documentation::from_entity(&entity, context);
@@ -717,8 +723,10 @@ impl Method {
             }
         };
 
+        // See `parse_method`, we intentionally look up in current library.
         let default_safety = &context
-            .library(Location::from_entity(&entity, context).unwrap())
+            .try_library(context.current_library)
+            .unwrap()
             .default_safety;
 
         if let Some(qualifiers) = entity.get_objc_qualifiers() {
@@ -794,16 +802,17 @@ impl Method {
                 // TODO: Should we document atomic-ness in further cases?
             };
 
+            // Note: getters are safe even if bounds affecting.
+
             let safe = if let Some(unsafe_) = getter_data.unsafe_ {
                 if safety.is_unsafe() && !unsafe_ {
                     // TODO(breaking): Disallow these.
                     error!(?getter_sel, ?ty, "unsafe property was marked as safe");
                 }
                 !unsafe_
-            } else if safety.is_safe() && default_safety.property_getters {
-                true // Also if bounds affecting
             } else {
-                false
+                // TODO(breaking): Remove unavailable instead of just marking them unsafe.
+                safety.is_safe() && default_safety.property_getters && availability.is_available()
             };
 
             if let Some(safety) = safety.to_safety_comment() {
@@ -889,7 +898,10 @@ impl Method {
                     }
                     !unsafe_
                 } else {
-                    safety.is_safe() && default_safety.property_setters
+                    // TODO(breaking): Remove unavailable instead of just marking them unsafe.
+                    safety.is_safe()
+                        && default_safety.property_setters
+                        && availability.is_available()
                 };
 
                 // Do not emit normal docs on setters, otherwise we'd be

@@ -1785,7 +1785,8 @@ impl Stmt {
                     }
                     !unsafe_
                 } else {
-                    safety.is_safe() && default_safety.functions
+                    // TODO(breaking): Remove unavailable instead of just marking them unsafe.
+                    safety.is_safe() && default_safety.functions && availability.is_available()
                 };
 
                 if let Some(safety) = safety.to_safety_comment() {
