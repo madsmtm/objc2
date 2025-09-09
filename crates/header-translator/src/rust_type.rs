@@ -839,6 +839,14 @@ impl PointeeTy {
             Self::Class { id, .. } if id.name == "NSCoder" => {
                 TypeSafety::unknown_in_argument("possibly has further requirements")
             }
+            // TODO: Unsure of the thread-safety of run loops.
+            // https://github.com/madsmtm/objc2/issues/696
+            Self::Class { id, .. } if id.name == "NSRunLoop" => {
+                TypeSafety::unknown_in_argument("possibly has additional threading requirements")
+            }
+            Self::CFTypeDef { id, .. } if id.name == "CFRunLoop" => {
+                TypeSafety::unknown_in_argument("possibly has additional threading requirements")
+            }
             // `objc2` ensures that objects are initialized before being
             // allowed as references.
             Self::Class {
