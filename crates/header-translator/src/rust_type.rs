@@ -835,6 +835,10 @@ impl PointeeTy {
 
     fn safety(&self) -> TypeSafety {
         match self {
+            // TODO: Unsure of the safety of `NSCoder`s.
+            Self::Class { id, .. } if id.name == "NSCoder" => {
+                TypeSafety::unknown_in_argument("possibly has further requirements")
+            }
             // `objc2` ensures that objects are initialized before being
             // allowed as references.
             Self::Class {
