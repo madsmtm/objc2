@@ -319,6 +319,9 @@ unsafe-default-safety.property-setters = true
 # TODO: Enable these.
 # unsafe-default-safety.instance-methods = true
 # unsafe-default-safety.class-methods = true
+# Foundation's functions are well-behaved, apart from a few related to memory
+# management that we've skipped above.
+unsafe-default-safety.functions = true
 
 # TODO: Maybe mark NSObject.init as safe?
 #

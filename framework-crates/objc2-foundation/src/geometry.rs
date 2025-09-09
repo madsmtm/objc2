@@ -103,18 +103,18 @@ mod tests {
         for case in cases {
             let point_a = NSPoint::new(case.0, case.1);
             let point_b = NSPoint::new(case.0, case.1);
-            let actual = unsafe { NSEqualPoints(point_a, point_b) };
+            let actual = NSEqualPoints(point_a, point_b);
             assert_eq!(point_a == point_b, actual);
 
             if case.0 >= 0.0 && case.1 >= 0.0 {
                 let size_a = NSSize::new(case.0, case.1);
                 let size_b = NSSize::new(case.0, case.1);
-                let actual = unsafe { NSEqualSizes(size_a, size_b) };
+                let actual = NSEqualSizes(size_a, size_b);
                 assert_eq!(size_a == size_b, actual);
 
                 let rect_a = NSRect::new(point_a, size_a);
                 let rect_b = NSRect::new(point_b, size_b);
-                let actual = unsafe { NSEqualRects(rect_a, rect_b) };
+                let actual = NSEqualRects(rect_a, rect_b);
                 assert_eq!(rect_a == rect_b, actual);
             }
         }
