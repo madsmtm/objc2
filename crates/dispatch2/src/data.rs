@@ -180,22 +180,13 @@ mod tests {
     // Test destruction, and that it still works when we add a finalizer to the data.
     #[test]
     fn with_finalizer() {
-        #[derive(Debug)]
-        struct State {
-            has_run_destructor: bool,
-            has_run_finalizer: bool,
-        }
+        let has_run_destructor = Arc::new((Mutex::new(false), Condvar::new()));
+        let has_run_finalizer = Arc::new((Mutex::new(false), Condvar::new()));
 
-        let state = State {
-            has_run_destructor: false,
-            has_run_finalizer: false,
-        };
-        let pair = Arc::new((Mutex::new(state), Condvar::new()));
-
-        let pair2 = Arc::clone(&pair);
+        let has_run_destructor_clone = Arc::clone(&has_run_destructor);
         let destructor = RcBlock::new(move || {
-            let (lock, cvar) = &*pair2;
-            lock.lock().unwrap().has_run_destructor = true;
+            let (lock, cvar) = &*has_run_destructor_clone;
+            *lock.lock().unwrap() = true;
             cvar.notify_one();
         });
 
@@ -210,21 +201,20 @@ mod tests {
             )
         };
 
-        let pair3 = Arc::clone(&pair);
+        let has_run_finalizer_clone = Arc::clone(&has_run_finalizer);
         data.set_finalizer(move || {
-            let (lock, cvar) = &*pair3;
-            lock.lock().unwrap().has_run_finalizer = true;
+            let (lock, cvar) = &*has_run_finalizer_clone;
+            *lock.lock().unwrap() = true;
             cvar.notify_one();
         });
 
-        let (lock, cvar) = &*pair;
-        let lock = lock.lock().unwrap();
+        let lock = has_run_destructor.0.lock().unwrap();
+        let cvar = &has_run_destructor.1;
 
         // Verify the destructor hasn't run yet.
         let (lock, res) = cvar.wait_timeout(lock, Duration::from_millis(10)).unwrap();
         assert!(res.timed_out());
-        assert!(!lock.has_run_destructor);
-        assert!(!lock.has_run_finalizer);
+        assert!(!*lock);
 
         let data2 = data.clone();
         drop(data);
@@ -232,8 +222,7 @@ mod tests {
         // Still not yet, the second reference is still alive.
         let (lock, res) = cvar.wait_timeout(lock, Duration::from_millis(10)).unwrap();
         assert!(res.timed_out());
-        assert!(!lock.has_run_destructor);
-        assert!(!lock.has_run_finalizer);
+        assert!(!*lock);
 
         let data3 = data2.concat(&DispatchData::from_bytes(b"foo"));
         drop(data2);
@@ -241,15 +230,23 @@ mod tests {
         // Still not yet, the reference is kept alive by the new data.
         let (lock, res) = cvar.wait_timeout(lock, Duration::from_millis(10)).unwrap();
         assert!(res.timed_out());
-        assert!(!lock.has_run_destructor);
-        assert!(!lock.has_run_finalizer);
+        assert!(!*lock);
+
+        // The finalizer also isn't run yet.
+        let finalizer_lock = has_run_finalizer.0.lock().unwrap();
+        let finalizer_cvar = &has_run_finalizer.1;
+        assert!(!*finalizer_lock);
 
         drop(data3);
 
         // Has run now!
-        let (lock, res) = cvar.wait_timeout(lock, Duration::from_millis(10)).unwrap();
-        assert!(!res.timed_out());
-        assert!(lock.has_run_destructor);
-        assert!(lock.has_run_finalizer);
+        let (lock, _) = cvar.wait_timeout(lock, Duration::from_millis(10)).unwrap();
+        assert!(*lock);
+
+        // The finalizer is also run now.
+        let (finalizer_lock, _) = finalizer_cvar
+            .wait_timeout(finalizer_lock, Duration::from_millis(10))
+            .unwrap();
+        assert!(*finalizer_lock);
     }
 }
