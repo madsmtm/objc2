@@ -265,8 +265,13 @@ impl SafetyProperty {
             ) => Self::Unsafe {
                 reasons: reasons1.into_iter().chain(reasons2).collect(),
             },
+            (Self::Unknown { reasons: reasons1 }, Self::Unsafe { reasons: reasons2 }) => {
+                Self::Unsafe {
+                    reasons: reasons1.into_iter().chain(reasons2).collect(),
+                }
+            }
             (Self::Unsafe { reasons }, Self::Safe) => Self::Unsafe { reasons },
-            (_, Self::Unsafe { reasons }) => Self::Unsafe { reasons },
+            (Self::Safe, Self::Unsafe { reasons }) => Self::Unsafe { reasons },
 
             (Self::Unknown { reasons: reasons1 }, Self::Unknown { reasons: reasons2 }) => {
                 Self::Unknown {
