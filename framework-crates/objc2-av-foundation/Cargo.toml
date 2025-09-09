@@ -177,6 +177,7 @@ default = [
     "AVCaptureDepthDataOutput",
     "AVCaptureDeskViewApplication",
     "AVCaptureDevice",
+    "AVCaptureExternalDisplayConfigurator",
     "AVCaptureFileOutput",
     "AVCaptureIndexPicker",
     "AVCaptureInput",
@@ -193,6 +194,7 @@ default = [
     "AVCaptureSystemExposureBiasSlider",
     "AVCaptureSystemPressure",
     "AVCaptureSystemZoomSlider",
+    "AVCaptureTimecodeGenerator",
     "AVCaptureVideoDataOutput",
     "AVCaptureVideoPreviewLayer",
     "AVComposition",
@@ -203,6 +205,7 @@ default = [
     "AVDepthData",
     "AVError",
     "AVExternalStorageDevice",
+    "AVExternalSyncDevice",
     "AVFAudio",
     "AVFCapture",
     "AVFCore",
@@ -503,6 +506,7 @@ AVCaptureDevice = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
 ]
+AVCaptureExternalDisplayConfigurator = []
 AVCaptureFileOutput = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
@@ -566,6 +570,13 @@ AVCaptureSystemPressure = [
     "objc2-foundation/NSString",
 ]
 AVCaptureSystemZoomSlider = []
+AVCaptureTimecodeGenerator = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
+]
 AVCaptureVideoDataOutput = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
@@ -622,6 +633,11 @@ AVExternalStorageDevice = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
+    "objc2-foundation/NSUUID",
+]
+AVExternalSyncDevice = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
     "objc2-foundation/NSUUID",
 ]
 AVFAudio = []
