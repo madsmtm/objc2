@@ -850,6 +850,7 @@ impl PointeeTy {
             // `objc2` ensures that objects are initialized before being
             // allowed as references.
             Self::Class {
+                id,
                 generics,
                 declaration_generics,
                 protocols,
@@ -880,6 +881,21 @@ impl PointeeTy {
                     )));
                 }
 
+                if id.name.contains("Mutable") {
+                    // When returning a mutable collection, treat it as an
+                    // argument as well, since
+                    //
+                    // An example of this is `-[NSThread threadDictionary]`,
+                    // which, apart from being super thread-unsafe, also
+                    // doesn't check the values that you insert into it.
+                    //
+                    // (they are invariant).
+                    safety = TypeSafety {
+                        in_argument: safety.in_argument.clone(),
+                        in_return: safety.in_return.merge(safety.in_argument),
+                    };
+                }
+
                 safety
             }
             Self::AnyObject { protocols } => match protocols.len() {
@@ -906,7 +922,7 @@ impl PointeeTy {
                 id,
                 declaration_generics,
             } => {
-                if matches!(&*id.name, "CFType" | "CFTypeRef") {
+                let mut safety = if matches!(&*id.name, "CFType" | "CFTypeRef") {
                     // `CFType`, like `AnyObject`, is not known to be safe.
                     TypeSafety::unknown_in_argument("should be of the correct type")
                 } else if declaration_generics.is_empty() {
@@ -923,7 +939,17 @@ impl PointeeTy {
                             "generics"
                         },
                     )
+                };
+
+                if id.name.contains("Mutable") {
+                    // Same as in `Self::Class` above.
+                    safety = TypeSafety {
+                        in_argument: safety.in_argument.clone(),
+                        in_return: safety.in_return.merge(safety.in_argument),
+                    };
                 }
+
+                safety
             }
             // Dispatch objects have strong type-safety, and are thus
             // safe in both positions.
