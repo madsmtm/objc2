@@ -1,0 +1,30 @@
+framework = "Network"
+crate = "objc2-network"
+required-crates = []
+macos = "10.14"
+maccatalyst = "13.0"
+ios = "12.0"
+tvos = "12.0"
+watchos = "6.0"
+visionos = "1.0"
+
+# Affects memory management.
+fn.nw_retain.skipped = true
+fn.nw_release.skipped = true
+
+# nw_object is unused, and the semantics of it are unclear.
+typedef.nw_object_t.skipped = true
+
+# TODO: Match Swift naming scheme.
+# typedef.nw_txt_record_t.renamed = "NWTXTRecord"
+
+const.nw_multipath_version_unspecified.renamed = "version_unspecified"
+const.nw_multipath_version_0.renamed = "version_0"
+const.nw_multipath_version_1.renamed = "version_1"
+
+const.nw_ip_version_any.renamed = "version_any"
+const.nw_ip_version_4.renamed = "version_4"
+const.nw_ip_version_6.renamed = "version_6"
+
+const.nw_ws_version_invalid.renamed = "version_invalid"
+const.nw_ws_version_13.renamed = "version_13"

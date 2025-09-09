@@ -120,6 +120,7 @@
 | `MultipeerConnectivity` | [`objc2-multipeer-connectivity`](https://crates.io/crates/objc2-multipeer-connectivity) | [![docs.rs](https://docs.rs/objc2-multipeer-connectivity/badge.svg)](https://docs.rs/objc2-multipeer-connectivity/) |
 | `NaturalLanguage` | [`objc2-natural-language`](https://crates.io/crates/objc2-natural-language) | [![docs.rs](https://docs.rs/objc2-natural-language/badge.svg)](https://docs.rs/objc2-natural-language/) |
 | `NearbyInteraction` | [`objc2-nearby-interaction`](https://crates.io/crates/objc2-nearby-interaction) | [![docs.rs](https://docs.rs/objc2-nearby-interaction/badge.svg)](https://docs.rs/objc2-nearby-interaction/) |
+| `Network` | [`objc2-network`](https://crates.io/crates/objc2-network) | [![docs.rs](https://docs.rs/objc2-network/badge.svg)](https://docs.rs/objc2-network/) |
 | `NetworkExtension` | [`objc2-network-extension`](https://crates.io/crates/objc2-network-extension) | [![docs.rs](https://docs.rs/objc2-network-extension/badge.svg)](https://docs.rs/objc2-network-extension/) |
 | `NotificationCenter` | [`objc2-notification-center`](https://crates.io/crates/objc2-notification-center) | [![docs.rs](https://docs.rs/objc2-notification-center/badge.svg)](https://docs.rs/objc2-notification-center/) |
 | `OSAKit` | [`objc2-osa-kit`](https://crates.io/crates/objc2-osa-kit) | [![docs.rs](https://docs.rs/objc2-osa-kit/badge.svg)](https://docs.rs/objc2-osa-kit/) |

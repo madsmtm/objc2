@@ -7,11 +7,11 @@ use std::sync::OnceLock;
 use std::{fmt, ptr};
 
 use clang::{Entity, EntityKind};
-use heck::ToTrainCase;
+use heck::{ToKebabCase, ToTrainCase, ToUpperCamelCase};
 use semver::Version;
 use serde::{de, Deserialize, Deserializer};
 
-use crate::name_translation::cf_no_ref;
+use crate::name_translation::strip_needless_suffix;
 use crate::stmt::{Counterpart, Derives};
 use crate::{ItemIdentifier, Location};
 
@@ -130,7 +130,12 @@ impl Config {
         self.libraries.values().find(|lib| lib.krate == krate)
     }
 
-    pub fn replace_typedef_name(&self, id: ItemIdentifier, is_cf: bool) -> ItemIdentifier {
+    pub fn replace_typedef_name(
+        &self,
+        id: ItemIdentifier,
+        is_cf: bool,
+        is_nw: bool,
+    ) -> ItemIdentifier {
         let library_config = self.library(&id);
         id.map_name(|name| {
             library_config
@@ -152,7 +157,12 @@ impl Config {
                     // We'll have to manually keep the name of those in
                     // translation-config.toml.
                     if is_cf {
-                        cf_no_ref(&name).to_string()
+                        strip_needless_suffix(&name).to_string()
+                    } else if is_nw {
+                        // Rename network types to match Swift's naming scheme.
+                        strip_needless_suffix(&name)
+                            .to_upper_camel_case()
+                            .replace("Nw", "NW")
                     } else {
                         name
                     }
