@@ -12,6 +12,7 @@
 //!
 //! - [About the generated framework crates][about_generated].
 //! - [The full list of crates][frameworks_list].
+//! - [Soundness analysis][frameworks_soundness].
 //! - [How `Deref` is used][frameworks_deref].
 //! - [How to reduce compile-times][frameworks_cargo_features].
 //! - [The changelog][frameworks_changelog].
@@ -70,3 +71,5 @@ pub mod frameworks_deref {}
 #[cfg(not(doctest))]
 #[doc = include_str!("FRAMEWORKS_CHANGELOG.md")]
 pub mod frameworks_changelog {}
+#[doc = include_str!("frameworks_soundness.md")]
+pub mod frameworks_soundness {}

@@ -237,6 +237,9 @@ Instead, we can autogenerate the above definition from the headers directly
 using type information exposed by `clang`, giving us a very high confidence
 that it is correct!
 
+See [this docs on framework soundness][crate::topics::frameworks_soundness] for
+details on this.
+
 
 ### Example
 

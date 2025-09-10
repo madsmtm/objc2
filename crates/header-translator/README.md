@@ -68,32 +68,49 @@ Feel free to open a half-finished PR if you need assistance.
 
 ## Data enrichment
 
-The `translation-config.toml` file describes various tweaks that we need to do because our header translation is incomplete in some areas.
+The `translation-config.toml` file describes various tweaks that we need to do because our header translation is incomplete in some areas. This includes skipping items, changing the nullability and renaming items, read through [src/config.rs](./src/config.rs) for the full functionality.
 
-However, even if our header translation was perfect, we still need a way to enrich the generated data, since C headers have no way to describe which methods are safe and which are not!
+A common pattern here is to skip an item in the translation config, and then add the manual definition in a file that you simply include in `lib.rs` with `mod my_file;`. If you do this, please specify `custom-lib-rs = true` in the translation config, otherwise your changes will be overwritten the next time you run the translator.
 
-Manual modifications to `Cargo.toml` can be done by adding a
-`Cargo.modified.toml` file, and including the keys that you want modified.
+Manual modifications to `Cargo.toml` can be done by adding a `Cargo.modified.toml` file, and including the keys that you want modified.
 
-See [objc2-foundation](../../framework-crates/objc2-foundation) for a good
-example of these files at work.
+See [objc2-foundation](../../framework-crates/objc2-foundation) for a good example of these files at work.
 
 
-### What is required for a method to be safe?
+### Safety
 
-This is a longer discussion, but the following guidelines will get you far. Do
-not be afraid of opening an issue or PR that discusses the safety of a
-specific API!
+Even if our header translation was perfect, we'd still need a way to enrich the generated data, since C headers have no way to describe which methods are safe and which are not! See [this document](../objc2/src/topics/frameworks_soundness.md) for details on this.
 
-1. The method must not take a raw pointer; one could trivially pass
-    `ptr::invalid()` and cause UB with that.
-2. Any extra requirements that the method states in its documentation must be
-    upheld. For example, a method may declare in its documentation that some
-    property must be something specific in relation to another property. Since
-    we don't know whether this is upheld, the method is not safe.
+Methods/functions/properties can be marked safe with:
 
-    Note: This is the hardest part; determining for sure if a given method is
-    safe or not!
+```toml
+# Mark specific function/method as safe
+fn.my_method.unsafe = false
+class.MyClass.methods.myProperty.unsafe = false
+protocol.MyProtocol.methods."myMethodWithArg:".unsafe = false # Uses selector name
+# Mark all methods as safe
+class.MyClass.unsafe = false
+protocol.MyClass.unsafe = false
+```
 
-Note: It is _not_ considered a breaking change for a method to be marked safe,
-so such an improvement can be made in a minor version!
+Everything is unsafe by default, but the default for the entire framework can be changed with:
+
+```toml
+# Automatically mark properties, methods and free functions as safe.
+unsafe-default-safety.property-getters = true
+unsafe-default-safety.property-setters = true
+unsafe-default-safety.instance-methods = true
+unsafe-default-safety.class-methods = true
+unsafe-default-safety.functions = true
+```
+
+The safety is conservative, and is determined by inspecting the signature of the method/function, so you probably still have to change the safety of some methods that fall outside common patterns.
+
+You can opt-in to some stricter heuristics with the following:
+
+```toml
+# Heuristic, don't mark as safe if method contains a name like `index` or `offset`.
+unsafe-default-safety.not-bounds-affecting = true
+```
+
+Note: It is _not_ considered a breaking change for a method to be marked safe, so marking things as safe can be done in a minor/patch version!
