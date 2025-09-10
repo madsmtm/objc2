@@ -339,6 +339,17 @@ impl SafetyProperty {
         }
     }
 
+    /// This comment is incomplete, it cannot know about extra requirements
+    /// that a method may have.
+    ///
+    /// A concern could be that adding the "# Safety" comments might lead
+    /// users to think that that is all they need to uphold, whereas in
+    /// reality there might be further requirements stated elsewhere in the
+    /// documentation. This is _probably_ fine, having a safety comment is
+    /// better than not having it.
+    ///
+    /// TODO: Maybe search for "undefined behaviour" in the docstring, and use
+    /// that as a marker too?
     pub fn to_safety_comment(&self) -> Option<String> {
         match self {
             Self::Unsafe { reasons } | Self::Unknown { reasons } => Some(if reasons.len() == 1 {
