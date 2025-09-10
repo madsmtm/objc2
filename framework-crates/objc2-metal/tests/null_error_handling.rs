@@ -23,7 +23,7 @@ fn test() {
         .newBinaryArchiveWithDescriptor_error(&MTLBinaryArchiveDescriptor::new())
         .unwrap();
 
-    let metal_lib = unsafe { NSURL::URLWithString(ns_string!("file://missing.metallib")) }.unwrap();
+    let metal_lib = NSURL::URLWithString(ns_string!("file://missing.metallib")).unwrap();
     let err = binary_archive.serializeToURL_error(&metal_lib).unwrap_err();
     if err.domain().to_string() == "__objc2.missingError" {
         assert_eq!(err.code(), 0);

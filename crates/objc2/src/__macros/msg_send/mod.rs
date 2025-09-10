@@ -415,7 +415,7 @@ pub use self::retained::*;
 /// ```ignore
 /// use objc2_foundation::{NSNumber, NSString, NSURLComponents};
 ///
-/// let components = unsafe { NSURLComponents::new() };
+/// let components = NSURLComponents::new();
 /// components.setPort(Some(&NSNumber::new_i32(8080)));
 /// components.setHost(Some(&NSString::from_str("example.com")));
 /// components.setScheme(Some(&NSString::from_str("http")));

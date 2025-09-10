@@ -12,6 +12,6 @@ fn class_cluster_and_wait_method() {
     let method = NSTask::class().instance_method(sel);
     assert!(method.is_none(), "class does not have method");
 
-    let task = unsafe { NSTask::new() };
+    let task = NSTask::new();
     assert!(task.respondsToSelector(sel), "object has method");
 }
