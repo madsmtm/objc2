@@ -2239,11 +2239,45 @@ impl Ty {
     }
 
     pub(crate) fn safety_in_method_argument(&self, arg_name: &str) -> SafetyProperty {
-        if self.fmt_out_pointer().is_some() {
-            SafetyProperty::Safe
-        } else {
-            self.safety_in_fn_argument(arg_name)
+        // Out pointers
+        if let Self::Pointer {
+            nullability,
+            is_const: false,
+            lifetime: Lifetime::Unspecified,
+            pointee,
+        } = self
+        {
+            if let Self::Pointer {
+                nullability: inner_nullability,
+                is_const: _,
+                lifetime: Lifetime::Autoreleasing,
+                pointee,
+            } = &**pointee
+            {
+                debug_assert!(self.fmt_out_pointer().is_some());
+
+                let safety = pointee.safety();
+
+                // Out pointers are both inputs and outputs, and thus they
+                // have requirements in both directions.
+                //
+                // TODO: Actual usage is often for outputs only, so we might
+                // be able to relax this? Maybe just allow
+                // `SafetyProperty::Unknown` in arguments?
+                let mut safety = safety.in_argument.merge(safety.in_return);
+
+                if *nullability == Nullability::Unspecified
+                    || *inner_nullability == Nullability::Unspecified
+                {
+                    safety = safety.merge(SafetyProperty::new_unknown("might not allow `None`"));
+                }
+
+                return safety.context(format!("`{arg_name}`"));
+            }
         }
+        debug_assert!(self.fmt_out_pointer().is_none());
+
+        self.safety_in_fn_argument(arg_name)
     }
 
     pub(crate) fn safety_in_fn_argument(&self, arg_name: &str) -> SafetyProperty {
