@@ -44,6 +44,15 @@ cargo run --bin check_framework_features
 ```
 
 
+## Upgrading Xcode
+
+The support policy for Xcode versions is [documented in `objc2/src/lib.rs`](../objc2/src/lib.rs). Upgrading Xcode is usually done by `@madsmtm`, in a PR for visibility. The process is basically to run with developer directory pointing to the new Xcode (as discussed above), fix issues that arise from this, and document changed APIs (see also [#338]).
+
+For frameworks that are marked as automatically safe, extra vigilance is required to ensure that no new unsafe APIs are introduced.
+
+[#338]: https://github.com/madsmtm/objc2/issues/338
+
+
 ## Adding a new framework crate
 
 To add a new framework crate, create a new empty crate in [`framework-crates`](../../framework-crates/), along with a bare-bones `translation-config.toml`. You can use this as a template:
