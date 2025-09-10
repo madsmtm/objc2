@@ -170,6 +170,8 @@ mod thread;
 mod to_owned;
 #[cfg(feature = "NSURL")]
 mod url;
+#[cfg(feature = "NSUserDefaults")]
+mod user_defaults;
 mod util;
 #[cfg(feature = "NSUUID")]
 mod uuid;
