@@ -18,6 +18,6 @@ fn test_decimal_encoding() {
         _mantissa: [0; 8],
     };
 
-    let obj = unsafe { NSDecimalNumber::initWithDecimal(NSDecimalNumber::alloc(), decimal) };
+    let obj = NSDecimalNumber::initWithDecimal(NSDecimalNumber::alloc(), decimal);
     assert_eq!(decimal, obj.decimalValue());
 }

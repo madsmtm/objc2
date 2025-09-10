@@ -21,6 +21,12 @@ fn.NSMakeCollectable.skipped = true
 fn.NSFreeMapTable.skipped = true
 protocol.NSKeyedUnarchiverDelegate.methods."unarchiver:didDecodeObject:".skipped = true
 
+# TODO(breaking): Memory-management affecting, should be skipped instead.
+fn.NSDeallocateObject.unsafe = true
+fn.NSIncrementExtraRefCount.unsafe = true
+fn.NSDecrementExtraRefCountWasZero.unsafe = true
+fn.NSExtraRefCount.unsafe = true
+
 # ns_consumes_self / NS_REPLACES_RECEIVER
 class.NSObject.methods."awakeAfterUsingCoder:".skipped = true
 
@@ -316,44 +322,13 @@ class.NSURL.bridged-to = "CoreFoundation.CFURL.CFURL"
 unsafe-default-safety.property-getters = true
 unsafe-default-safety.property-setters = true
 # Methods are mostly well-behaved, apart from a few exceptions described below.
-# TODO: Enable these.
-# unsafe-default-safety.instance-methods = true
-# unsafe-default-safety.class-methods = true
+unsafe-default-safety.instance-methods = true
+unsafe-default-safety.class-methods = true
 # Foundation's functions are well-behaved, apart from a few related to memory
 # management that we've skipped above.
 unsafe-default-safety.functions = true
-
-# TODO: Maybe mark NSObject.init as safe?
-#
-# Though that requires us to do better analysis of designated initializers.
-class.NSArray.methods.init.unsafe = false
-class.NSArray.methods.new.unsafe = false
-class.NSMutableArray.methods.init.unsafe = false
-class.NSMutableArray.methods.new.unsafe = false
-class.NSString.methods.init.unsafe = false
-class.NSString.methods.new.unsafe = false
-class.NSMutableString.methods.init.unsafe = false
-class.NSMutableString.methods.new.unsafe = false
-class.NSAttributedString.methods.init.unsafe = false
-class.NSAttributedString.methods.new.unsafe = false
-class.NSMutableAttributedString.methods.init.unsafe = false
-class.NSMutableAttributedString.methods.new.unsafe = false
-class.NSData.methods.init.unsafe = false
-class.NSData.methods.new.unsafe = false
-class.NSMutableData.methods.init.unsafe = false
-class.NSMutableData.methods.new.unsafe = false
-class.NSDictionary.methods.init.unsafe = false
-class.NSDictionary.methods.new.unsafe = false
-class.NSMutableDictionary.methods.init.unsafe = false
-class.NSMutableDictionary.methods.new.unsafe = false
-class.NSUUID.methods.init.unsafe = false
-class.NSUUID.methods.new.unsafe = false
-class.NSThread.methods.init.unsafe = false
-class.NSThread.methods.new.unsafe = false
-class.NSSet.methods.init.unsafe = false
-class.NSSet.methods.new.unsafe = false
-class.NSMutableSet.methods.init.unsafe = false
-class.NSMutableSet.methods.new.unsafe = false
+# Foundation's methods are bounds-checked and throw exceptions.
+unsafe-default-safety.not-bounds-affecting = false
 
 # Collections may not be mutated while enumerating.
 class.NSArray.methods.objectEnumerator.unsafe = true
@@ -379,13 +354,14 @@ fn.NSStringFromClass.unsafe = false
 # unexpectedly shorten the lifetime of objects.
 class.NSAutoreleasePool.unsafe = true
 
-# Unarchival may be unsafe if not requring secure encoding, so let's
+# Unarchival may be unsafe if not requiring secure encoding, so let's
 # be conservative in what we mark safe for now.
 class.NSCoder.unsafe = true
 class.NSUnarchiver.unsafe = true
 class.NSKeyedUnarchiver.unsafe = true
 class.NSPortCoder.unsafe = true
 class.NSXPCCoder.unsafe = true
+class.NSObject.methods."setVersion:".unsafe = true # On `NSCoderMethods` category.
 
 # Key-value coding breaks type-safety when writing (maybe?).
 class.NSObject.methods."setValue:forKey:".unsafe = true
@@ -440,6 +416,10 @@ class.NSDictionary.methods."initWithContentsOfURL:error:".unsafe = true
 class.NSDictionary.methods."writeToFile:atomically:".unsafe = true
 class.NSDictionary.methods."writeToURL:atomically:".unsafe = true
 class.NSDictionary.methods."writeToURL:error:".unsafe = true
+class.NSMutableDictionary.methods."dictionaryWithContentsOfFile:".unsafe = true
+class.NSMutableDictionary.methods."dictionaryWithContentsOfURL:".unsafe = true
+class.NSMutableDictionary.methods."initWithContentsOfFile:".unsafe = true
+class.NSMutableDictionary.methods."initWithContentsOfURL:".unsafe = true
 
 # Breaks type-safety by returning an untyped mutable collection,
 # which is invariant.
@@ -481,6 +461,13 @@ class.NSDictionary.methods."sharedKeySetForKeys:".unsafe = true
 # Breaks lifetime safety unless you call `retainArguments`.
 class.NSInvocation.unsafe = true
 
+# Getting it from anywhere else is thus also perilous.
+class.NSDistantObjectRequest.methods.invocation.unsafe = true
+class.NSInvocationOperation.methods."initWithInvocation:".unsafe = true
+class.NSInvocationOperation.methods.invocation.unsafe = true
+class.NSTimer.methods."timerWithTimeInterval:invocation:repeats:".unsafe = true
+class.NSTimer.methods."scheduledTimerWithTimeInterval:invocation:repeats:".unsafe = true
+
 # Breaks type-safety, you must check encodings before accessing a value.
 #
 # Note that `NSNumber` is fine, the conversions it does are all documented.
@@ -500,96 +487,35 @@ class.NSLock.methods.init.unsafe = false
 class.NSLock.methods.new.unsafe = false
 class.NSLock.methods.name.unsafe = false
 class.NSLock.methods."setName:".unsafe = false
-
-# Various safe methods.
-class.NSArray.methods."objectAtIndex:".unsafe = false
-class.NSArray.methods.firstObject.unsafe = false
-class.NSArray.methods.lastObject.unsafe = false
-class.NSMutableArray.methods."initWithCapacity:".unsafe = false
-class.NSMutableArray.methods."insertObject:atIndex:".unsafe = false
-class.NSMutableArray.methods."removeObjectAtIndex:".unsafe = false
-class.NSMutableArray.methods."removeObject:".unsafe = false
-class.NSMutableArray.methods."addObject:".unsafe = false
-class.NSMutableArray.methods.removeLastObject.unsafe = false
-class.NSMutableArray.methods."replaceObjectAtIndex:withObject:".unsafe = false
-class.NSMutableArray.methods.removeAllObjects.unsafe = false
-class.NSString.methods."compare:".unsafe = false
-class.NSString.methods."hasPrefix:".unsafe = false
-class.NSString.methods."hasSuffix:".unsafe = false
-# The other string is non-null, and won't be retained
-class.NSString.methods."stringByAppendingString:".unsafe = false
-class.NSString.methods."stringByAppendingPathComponent:".unsafe = false
-# Assuming `NSStringEncoding` can be made safe
-class.NSString.methods."lengthOfBytesUsingEncoding:".unsafe = false
-class.NSString.methods."initWithString:".unsafe = false
-class.NSString.methods."stringWithString:".unsafe = false
-class.NSMutableString.methods."initWithCapacity:".unsafe = false
-class.NSMutableString.methods."stringWithCapacity:".unsafe = false
-class.NSMutableString.methods."initWithString:".unsafe = false
-class.NSMutableString.methods."stringWithString:".unsafe = false
-class.NSMutableString.methods."appendString:".unsafe = false
-class.NSMutableString.methods."setString:".unsafe = false
-class.NSAttributedString.methods."initWithString:".unsafe = false
-class.NSAttributedString.methods."initWithAttributedString:".unsafe = false
-class.NSMutableAttributedString.methods."initWithString:".unsafe = false
-class.NSMutableAttributedString.methods."initWithAttributedString:".unsafe = false
-class.NSMutableAttributedString.methods."setAttributedString:".unsafe = false
-class.NSData.methods."initWithData:".unsafe = false
-class.NSData.methods."dataWithData:".unsafe = false
-class.NSMutableData.methods."dataWithData:".unsafe = false
-class.NSMutableData.methods."initWithCapacity:".unsafe = false
-class.NSMutableData.methods."dataWithCapacity:".unsafe = false
-class.NSMutableData.methods."setLength:".unsafe = false
-class.NSDictionary.methods."objectForKey:".unsafe = false
-class.NSDictionary.methods.allValues.unsafe = false
-class.NSDictionary.methods.allKeys.unsafe = false
-class.NSMutableDictionary.methods."initWithCapacity:".unsafe = false
-class.NSMutableDictionary.methods."removeObjectForKey:".unsafe = false
-class.NSMutableDictionary.methods.removeAllObjects.unsafe = false
-class.NSUUID.methods.UUID.unsafe = false
-class.NSUUID.methods."initWithUUIDString:".unsafe = false
-class.NSThread.methods.isMultiThreaded.unsafe = false
-class.NSSet.methods.anyObject.unsafe = false
-class.NSSet.methods."member:".unsafe = false
-class.NSSet.methods.allObjects.unsafe = false
-class.NSSet.methods."containsObject:".unsafe = false
-class.NSSet.methods."isSubsetOfSet:".unsafe = false
-class.NSSet.methods."intersectsSet:".unsafe = false
-class.NSMutableSet.methods."initWithCapacity:".unsafe = false
-class.NSMutableSet.methods."addObject:".unsafe = false
-class.NSMutableSet.methods."removeObject:".unsafe = false
-class.NSMutableSet.methods.removeAllObjects.unsafe = false
-class.NSNumber.methods."initWithChar:".unsafe = false
-class.NSNumber.methods."initWithUnsignedChar:".unsafe = false
-class.NSNumber.methods."initWithShort:".unsafe = false
-class.NSNumber.methods."initWithUnsignedShort:".unsafe = false
-class.NSNumber.methods."initWithInt:".unsafe = false
-class.NSNumber.methods."initWithUnsignedInt:".unsafe = false
-class.NSNumber.methods."initWithLong:".unsafe = false
-class.NSNumber.methods."initWithUnsignedLong:".unsafe = false
-class.NSNumber.methods."initWithLongLong:".unsafe = false
-class.NSNumber.methods."initWithUnsignedLongLong:".unsafe = false
-class.NSNumber.methods."initWithFloat:".unsafe = false
-class.NSNumber.methods."initWithDouble:".unsafe = false
-class.NSNumber.methods."initWithBool:".unsafe = false
-class.NSNumber.methods."initWithInteger:".unsafe = false
-class.NSNumber.methods."initWithUnsignedInteger:".unsafe = false
-class.NSNumber.methods."numberWithChar:".unsafe = false
-class.NSNumber.methods."numberWithUnsignedChar:".unsafe = false
-class.NSNumber.methods."numberWithShort:".unsafe = false
-class.NSNumber.methods."numberWithUnsignedShort:".unsafe = false
-class.NSNumber.methods."numberWithInt:".unsafe = false
-class.NSNumber.methods."numberWithUnsignedInt:".unsafe = false
-class.NSNumber.methods."numberWithLong:".unsafe = false
-class.NSNumber.methods."numberWithUnsignedLong:".unsafe = false
-class.NSNumber.methods."numberWithLongLong:".unsafe = false
-class.NSNumber.methods."numberWithUnsignedLongLong:".unsafe = false
-class.NSNumber.methods."numberWithFloat:".unsafe = false
-class.NSNumber.methods."numberWithDouble:".unsafe = false
-class.NSNumber.methods."numberWithBool:".unsafe = false
-class.NSNumber.methods."numberWithInteger:".unsafe = false
-class.NSNumber.methods."numberWithUnsignedInteger:".unsafe = false
-class.NSNumber.methods."compare:".unsafe = false
-class.NSNumber.methods."isEqualToNumber:".unsafe = false
+# NSDistributedLock is safe, it works with the filesystem instead.
 
 # NSPurgeableData is safe, checked by exceptions.
+
+# Maybe not be thread-safe?
+class.NSBundle.methods.allBundles.unsafe = true
+class.NSBundle.methods.allFrameworks.unsafe = true
+
+# Same requirements as libloading
+class.NSBundle.methods.load.unsafe = true
+class.NSBundle.methods."loadAndReturnError:".unsafe = true
+class.NSBundle.methods.unload.unsafe = true
+
+# Unsure about thread-safety, see:
+# https://github.com/madsmtm/objc2/issues/696
+class.NSRunLoop.methods."addTimer:forMode:".unsafe = true
+class.NSRunLoop.methods."addPort:forMode:".unsafe = true
+class.NSRunLoop.methods."removePort:forMode:".unsafe = true
+
+# These are safe, they call `CFRunLoopRunInMode` on the current
+# thread's run loop (even if called on a runloop that is no the current).
+class.NSRunLoop.methods."limitDateForMode:".unsafe = false
+class.NSRunLoop.methods.run.unsafe = false
+class.NSRunLoop.methods."runMode:beforeDate:".unsafe = false
+class.NSRunLoop.methods."runUntilDate:".unsafe = false
+class.NSRunLoop.methods."acceptInputForMode:beforeDate:".unsafe = false
+
+# Wrong to call (though unsure if unsound).
+class.NSThread.methods.main.unsafe = true
+
+# Unclear memory management semantics (and probably a no-op anyhow).
+class.NSGarbageCollector.unsafe = true

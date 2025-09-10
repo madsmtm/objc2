@@ -15,6 +15,8 @@ extern crate std;
 
 #[cfg(test)]
 mod block;
+#[cfg(test)]
+mod enumerator;
 #[cfg(all(test, feature = "exception"))]
 mod exception;
 mod rc_test_object;

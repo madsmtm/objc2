@@ -237,11 +237,8 @@ mod tests {
 
         // Create, read and remove file, using different APIs.
         fs::write(path, "").unwrap();
-        assert_eq!(
-            unsafe { NSData::dataWithContentsOfURL(&url) },
-            Some(NSData::new())
-        );
-        unsafe { manager.removeItemAtURL_error(&url).unwrap() };
+        assert_eq!(NSData::dataWithContentsOfURL(&url), Some(NSData::new()));
+        manager.removeItemAtURL_error(&url).unwrap();
     }
 
     // Useful when testing HFS+ and non-UTF-8:
