@@ -659,6 +659,7 @@ pub enum Stmt {
         availability: Availability,
         documentation: Documentation,
         is_cf: bool,
+        sendable: Option<bool>,
         bridged: Option<String>,
         superclass: Option<ItemIdentifier>,
     },
@@ -1151,15 +1152,19 @@ impl Stmt {
 
                 let mut kind = None;
                 let mut inner_struct = None;
+                let mut sendable = None;
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
                             match attr {
-                                // TODO
-                                UnexposedAttr::Sendable => warn!("sendable typedef"),
-                                UnexposedAttr::NonSendable => warn!("non-sendable typedef"),
-                                UnexposedAttr::UIActor => warn!("main-thread-only typedef"),
+                                UnexposedAttr::Sendable => sendable = Some(true),
+                                UnexposedAttr::NonSendable => sendable = Some(false),
+                                UnexposedAttr::UIActor => {
+                                    // TODO: Track these on blocks somehow?
+                                    // Maybe add an extra `mtm` argument?
+                                    warn!(name = ?id.name, "main-thread-only typedef");
+                                }
                                 _ => {
                                     if kind.is_some() {
                                         warn!(?kind, ?attr, "got multiple unexposed attributes");
@@ -1281,6 +1286,7 @@ impl Stmt {
                             availability,
                             documentation,
                             is_cf,
+                            sendable,
                             bridged: bridged.flatten(),
                             superclass,
                         }];
@@ -1293,6 +1299,7 @@ impl Stmt {
                                 availability: Availability::parse(&entity, context),
                                 documentation: Documentation::from_entity(&entity, context),
                                 is_cf,
+                                sendable,
                                 bridged: bridged.flatten(),
                                 superclass: None,
                             },
@@ -1305,6 +1312,10 @@ impl Stmt {
                             },
                         ];
                     }
+                }
+
+                if sendable.is_some() {
+                    warn!(name = ?id.name, ?sendable, "unhandled sendability attribute on typedef");
                 }
 
                 vec![Self::AliasDecl {
@@ -3199,6 +3210,7 @@ impl Stmt {
                     availability,
                     documentation,
                     is_cf,
+                    sendable,
                     bridged: _,
                     superclass,
                 } => {
@@ -3301,6 +3313,16 @@ impl Stmt {
                         writeln!(f, "        &[],")?;
                         writeln!(f, "    ));")?;
                         writeln!(f, "}}")?;
+                    }
+
+                    if let Some(true) = sendable {
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
+
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
                     }
 
                     // Add casting from `CFArray<T>` to `CFArray<U>`.

@@ -44,6 +44,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   This might break if you were implementing these yourself, in that case you should make your
   implementee `Send + Sync` as well.
+* Marked some CoreMedia types as `Send + Sync`.
 
 ## [0.3.1] - 2025-04-19
 [0.3.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.0...frameworks-0.3.1
