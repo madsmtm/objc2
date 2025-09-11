@@ -5,6 +5,8 @@ maccatalyst = "14.0"
 ios = "11.0"
 visionos = "1.0"
 
+external.UIInterfaceOrientation.module = "UIKit.UIOrientation"
+
 # Needs QLPreviewItem from QuickLook
 class.ARQuickLookPreviewItem.skipped-protocols = ["QLPreviewItem"]
 

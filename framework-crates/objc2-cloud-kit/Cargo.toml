@@ -22,6 +22,9 @@ objc2 = { workspace = true, features = ["std"] }
 objc2-core-location = { workspace = true, optional = true, features = ["CLLocation"] }
 objc2-foundation = { workspace = true, features = ["alloc"] }
 
+[target.'cfg(not(target_os = "tvos"))'.dependencies]
+objc2-contacts = { workspace = true, optional = true, features = ["CNContact"] }
+
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
@@ -76,8 +79,11 @@ default = [
     "CKReference",
     "CKServerChangeToken",
     "CKShare",
+    "CKShareAccessRequester",
+    "CKShareBlockedIdentity",
     "CKShareMetadata",
     "CKShareParticipant",
+    "CKShareRequestAccessOperation",
     "CKSubscription",
     "CKSyncEngine",
     "CKSyncEngineConfiguration",
@@ -90,12 +96,14 @@ default = [
     "NSItemProvider_CKSharingSupport",
     "bitflags",
     "block2",
+    "objc2-contacts",
     "objc2-core-location",
 ]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
+objc2-contacts = ["dep:objc2-contacts"]
 objc2-core-location = ["dep:objc2-core-location"]
 
 CKAcceptSharesOperation = [
@@ -283,13 +291,22 @@ CKShare = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
+CKShareAccessRequester = ["objc2-foundation/NSObject"]
+CKShareBlockedIdentity = ["objc2-foundation/NSObject"]
 CKShareMetadata = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 CKShareParticipant = [
+    "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+]
+CKShareRequestAccessOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSURL",
 ]
 CKSubscription = [
     "bitflags",

@@ -47,6 +47,7 @@ objc2-core-graphics = { workspace = true, optional = true, features = [
     "CGColor",
     "CGColorSpace",
     "CGContext",
+    "CGDirectDisplay",
     "CGEventTypes",
     "CGFont",
     "CGImage",
@@ -121,6 +122,7 @@ default = [
     "NSApplicationScripting",
     "NSArrayController",
     "NSAttributedString",
+    "NSBackgroundExtensionView",
     "NSBezierPath",
     "NSBitmapImageRep",
     "NSBox",
@@ -187,6 +189,7 @@ default = [
     "NSForm",
     "NSFormCell",
     "NSGestureRecognizer",
+    "NSGlassEffectView",
     "NSGlyphGenerator",
     "NSGlyphInfo",
     "NSGradient",
@@ -203,6 +206,7 @@ default = [
     "NSInputManager",
     "NSInputServer",
     "NSInterfaceStyle",
+    "NSItemBadge",
     "NSItemProvider",
     "NSKeyValueBinding",
     "NSLayoutAnchor",
@@ -299,6 +303,7 @@ default = [
     "NSSplitView",
     "NSSplitViewController",
     "NSSplitViewItem",
+    "NSSplitViewItemAccessoryViewController",
     "NSStackView",
     "NSStatusBar",
     "NSStatusBarButton",
@@ -351,6 +356,7 @@ default = [
     "NSTextView",
     "NSTextViewportLayoutController",
     "NSTintConfiguration",
+    "NSTintProminence",
     "NSTitlebarAccessoryViewController",
     "NSTokenField",
     "NSTokenFieldCell",
@@ -374,6 +380,7 @@ default = [
     "NSUserInterfaceValidation",
     "NSView",
     "NSViewController",
+    "NSViewLayoutRegion",
     "NSVisualEffectView",
     "NSWindow",
     "NSWindowController",
@@ -547,6 +554,12 @@ NSAttributedString = [
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
+]
+NSBackgroundExtensionView = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/objc2-core-foundation",
 ]
 NSBezierPath = [
     "objc2-foundation/NSAffineTransform",
@@ -1031,6 +1044,13 @@ NSGestureRecognizer = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/objc2-core-foundation",
+]
+NSGlassEffectView = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",
 ]
 NSGlyphGenerator = ["objc2-foundation/NSAttributedString"]
@@ -1132,6 +1152,7 @@ NSInputServer = [
     "objc2-foundation/objc2-core-foundation",
 ]
 NSInterfaceStyle = ["objc2-foundation/NSString"]
+NSItemBadge = ["objc2-foundation/NSString"]
 NSItemProvider = [
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSItemProvider",
@@ -1770,7 +1791,16 @@ NSSplitViewController = [
     "objc2-foundation/NSString",
     "objc2-foundation/objc2-core-foundation",
 ]
-NSSplitViewItem = ["objc2-foundation/NSObject"]
+NSSplitViewItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
+NSSplitViewItemAccessoryViewController = [
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 NSStackView = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
@@ -2115,6 +2145,7 @@ NSTextView = [
 ]
 NSTextViewportLayoutController = []
 NSTintConfiguration = ["objc2-foundation/NSObject"]
+NSTintProminence = []
 NSTitlebarAccessoryViewController = [
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
@@ -2263,6 +2294,10 @@ NSViewController = [
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+    "objc2-foundation/objc2-core-foundation",
+]
+NSViewLayoutRegion = [
+    "objc2-foundation/NSGeometry",
     "objc2-foundation/objc2-core-foundation",
 ]
 NSVisualEffectView = [

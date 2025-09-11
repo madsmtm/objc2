@@ -46,6 +46,7 @@ objc2-core-media = { workspace = true, optional = true, features = [
     "objc2",
 ] }
 objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-uniform-type-identifiers = { workspace = true, optional = true, features = ["UTType"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -72,6 +73,7 @@ default = [
     "objc2-core-foundation",
     "objc2-core-graphics",
     "objc2-core-media",
+    "objc2-uniform-type-identifiers",
 ]
 std = ["alloc"]
 alloc = []
@@ -83,6 +85,7 @@ objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-media = ["dep:objc2-core-media"]
+objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 
 SCContentSharingPicker = [
     "bitflags",
@@ -97,7 +100,11 @@ SCRecordingOutput = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSURL",
 ]
-SCScreenshotManager = ["objc2-foundation/NSError"]
+SCScreenshotManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSURL",
+]
 SCShareableContent = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
