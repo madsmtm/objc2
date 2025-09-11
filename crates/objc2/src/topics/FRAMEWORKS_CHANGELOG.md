@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `AsRef` impls for toll-free bridging between types like `CFString` and `NSString`.
 * Added `cast_unchecked` methods on collection types like `NSArray<T>` and `CFDictionary<K, V>`.
   This should allow more easily converting the generics on said types.
+* Added `#[cfg(alias = "...")]` to CoreFoundation-like typedefs.
 * Added new framework crates:
   - `GLKit` / `objc2-gl-kit`.
   - `OpenGL` / `objc2-open-gl`.

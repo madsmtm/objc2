@@ -1240,6 +1240,10 @@ impl Stmt {
                     if is_cf {
                         let id = context.replace_typedef_name(id, is_cf);
 
+                        if id.name != c_name {
+                            documentation.set_alias(c_name);
+                        }
+
                         // If the class name contains the word "Mutable"
                         // exactly once per the usual word-boundary rules, a
                         // corresponding class name without the word "Mutable"
@@ -1318,8 +1322,14 @@ impl Stmt {
                     warn!(name = ?id.name, ?sendable, "unhandled sendability attribute on typedef");
                 }
 
+                let id = context.replace_typedef_name(id, ty.is_cf_type_ptr());
+
+                if id.name != c_name {
+                    documentation.set_alias(c_name);
+                }
+
                 vec![Self::AliasDecl {
-                    id: context.replace_typedef_name(id, ty.is_cf_type_ptr()),
+                    id,
                     availability,
                     ty,
                     kind,
