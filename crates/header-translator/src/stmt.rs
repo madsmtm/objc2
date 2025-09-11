@@ -2586,7 +2586,7 @@ impl Stmt {
                     availability,
                     super_protocols,
                     methods,
-                    required_sendable: _,
+                    required_sendable,
                     required_mainthreadonly,
                     documentation,
                 } => {
@@ -2611,15 +2611,14 @@ impl Stmt {
                             write!(f, "{}", protocol.id.path())?;
                         }
                     }
-                    // TODO
-                    // if *required_sendable {
-                    //     if protocols.is_empty() {
-                    //         write!(f, ": ")?;
-                    //     } else {
-                    //         write!(f, "+ ")?;
-                    //     }
-                    //     write!(f, "Send + Sync")?;
-                    // }
+                    if *required_sendable {
+                        if super_protocols.is_empty() {
+                            write!(f, ": ")?;
+                        } else {
+                            write!(f, "+ ")?;
+                        }
+                        write!(f, "Send + Sync")?;
+                    }
                     if *required_mainthreadonly {
                         if super_protocols.is_empty() {
                             write!(f, ": ")?;

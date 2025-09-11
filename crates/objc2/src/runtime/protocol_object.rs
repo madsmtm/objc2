@@ -208,7 +208,10 @@ mod tests {
 
     use super::*;
     use crate::runtime::{ClassBuilder, NSObject};
-    use crate::{define_class, extern_methods, extern_protocol, msg_send, ClassType};
+    use crate::{
+        define_class, extern_class, extern_conformance, extern_methods, extern_protocol, msg_send,
+        ClassType,
+    };
 
     extern_protocol!(
         unsafe trait Foo {
@@ -258,10 +261,21 @@ mod tests {
         unsafe impl NSObjectProtocol for DummyClass {}
     );
 
-    unsafe impl Foo for DummyClass {}
-    unsafe impl Bar for DummyClass {}
-    unsafe impl FooBar for DummyClass {}
-    // unsafe impl FooFooBar for DummyClass {}
+    extern_conformance!(
+        unsafe impl Foo for DummyClass {}
+    );
+
+    extern_conformance!(
+        unsafe impl Bar for DummyClass {}
+    );
+
+    extern_conformance!(
+        unsafe impl FooBar for DummyClass {}
+    );
+
+    // extern_conformance!(
+    //     unsafe impl FooFooBar for DummyClass {}
+    // );
 
     impl DummyClass {
         extern_methods!(
@@ -409,5 +423,31 @@ mod tests {
 
         let expected = format!("<My\u{f8ff}êÄClass: {:p}>", &*obj);
         assert_eq!(format!("{obj:?}"), expected);
+    }
+
+    #[test]
+    fn send_sync() {
+        extern_protocol!(
+            #[name = "NSObject"]
+            unsafe trait SendableProtocol: Send + Sync {}
+        );
+
+        extern_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "NSObject"]
+            struct SendableObject;
+        );
+
+        unsafe impl Send for SendableObject {}
+        unsafe impl Sync for SendableObject {}
+
+        extern_conformance!(
+            unsafe impl SendableProtocol for SendableObject {}
+        );
+
+        assert_impl_all!(ProtocolObject<dyn SendableProtocol>: Send, Sync);
+
+        let obj: Retained<SendableObject> = unsafe { msg_send![SendableObject::class(), new] };
+        let _proto: &ProtocolObject<dyn SendableProtocol> = ProtocolObject::from_ref(&*obj);
     }
 }

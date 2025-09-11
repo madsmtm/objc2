@@ -40,6 +40,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Fixed structs with packed alignment by marking them `#[repr(packed(...))]`.
 * **BREAKING**: Fixed a few `MXMetricManager` methods that were instance methods instead of class methods.
 * Fixed missing deprecations on statics, type aliases and some impls blocks.
+* **BREAKING**: Fixed some protocols not being marked `Send + Sync` even when they should be.
+
+  This might break if you were implementing these yourself, in that case you should make your
+  implementee `Send + Sync` as well.
 
 ## [0.3.1] - 2025-04-19
 [0.3.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.0...frameworks-0.3.1
