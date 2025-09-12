@@ -660,14 +660,3 @@ macro_rules! __extern_class_derives {
         }
     };
 }
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __select_name {
-    ($_name:ident; $name_const:expr) => {
-        $name_const
-    };
-    ($name:ident;) => {
-        $crate::__macros::stringify!($name)
-    };
-}
