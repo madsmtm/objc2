@@ -511,7 +511,6 @@ macro_rules! msg_send {
 
             ($crate::__msg_send_helper)
             ($obj)
-            () // No method family
         }
     };
     [super($obj:expr, $superclass:expr), $($selector_and_arguments:tt)+] => {
@@ -525,7 +524,6 @@ macro_rules! msg_send {
 
             ($crate::__msg_send_helper)
             ($obj, $superclass)
-            () // No method family
         }
     };
     [$obj:expr, $($selector_and_arguments:tt)+] => {
@@ -539,7 +537,6 @@ macro_rules! msg_send {
 
             ($crate::__msg_send_helper)
             ($obj)
-            () // No method family
         }
     };
 }
@@ -570,7 +567,6 @@ macro_rules! msg_send_id {
 macro_rules! __msg_send_helper {
     {
         ($($fn_args:tt)+)
-        ($($method_family:tt)*)
         ($trait:ident :: $fn:ident)
         ($($selector:tt)*)
         ($($argument:expr,)*)
@@ -586,7 +582,7 @@ macro_rules! __msg_send_helper {
         // 1-tuple if there is only one.
         //
         // And use `::<_, _>` for better UI.
-        result = <$crate::__method_family!(($($method_family)*) ($($selector)*)) as $crate::__macros::$trait<_, _>>::$fn(
+        result = <$crate::__method_family!(() ($($selector)*)) as $crate::__macros::$trait<_, _>>::$fn(
             $($fn_args)+,
             $crate::sel!($($selector)*),
             ($($argument,)*),

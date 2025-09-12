@@ -144,7 +144,6 @@ macro_rules! __missing_comma_between_args {
         (MsgSendSuper::send_super_message_static)
         ($($args:tt)*)
         ($obj:expr)
-        ()
     ) => {
         $crate::__missing_comma_between_args_inner!(
             "super", $crate::__macros::stringify!(($obj)), $($args)*
@@ -154,7 +153,6 @@ macro_rules! __missing_comma_between_args {
         (MsgSendSuper::send_super_message)
         ($($args:tt)*)
         ($obj:expr, $superclass:expr)
-        ()
     ) => {
         $crate::__missing_comma_between_args_inner!(
             "super", $crate::__macros::stringify!(($obj, $superclass)), $($args)*
@@ -164,7 +162,6 @@ macro_rules! __missing_comma_between_args {
         (MsgSend::send_message)
         ($($args:tt)*)
         ($obj:expr)
-        ()
     ) => {
         $crate::__missing_comma_between_args_inner!(
             $crate::__macros::stringify!($obj), $($args)*

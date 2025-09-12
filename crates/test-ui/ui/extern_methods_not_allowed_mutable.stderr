@@ -16,7 +16,7 @@ error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
   = note: `MessageReceiver` is implemented for `&MyObject`, but not for `&mut MyObject`
   = note: required for `MethodFamily<6>` to implement `RetainSemantics<&mut MyObject, _, KindSendMessage>`
   = note: required for `MethodFamily<6>` to implement `MsgSend<&mut MyObject, _>`
-  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
  --> ui/extern_methods_not_allowed_mutable.rs
@@ -36,4 +36,4 @@ error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
   = note: `MessageReceiver` is implemented for `&MyObject`, but not for `&mut MyObject`
   = note: required for `MethodFamily<6>` to implement `RetainSemantics<&mut MyObject, _, KindSendMessage>`
   = note: required for `MethodFamily<6>` to implement `MsgSend<&mut MyObject, _>`
-  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

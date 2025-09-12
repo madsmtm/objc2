@@ -15,13 +15,11 @@ macro_rules! __method_msg_send {
         ()
         ($($method_family:tt)*)
     ) => {
-        $crate::__msg_send_helper! {
-            ($receiver)
-            ($($method_family)*)
-            (MsgSend::send_message)
-            ($sel)
-            ()
-        }
+        <$crate::__method_family!(($($method_family)*) ($sel)) as $crate::__macros::MsgSend<_, _>>::send_message(
+            $receiver,
+            $crate::sel!($sel),
+            (),
+        )
     };
 
     // Skip using `MainThreadMarker` in the message send.
@@ -103,13 +101,11 @@ macro_rules! __method_msg_send {
         ($($arg_parsed:tt)*)
         ($($method_family:tt)*)
     ) => {
-        $crate::__msg_send_helper! {
-            ($receiver)
-            ($($method_family)*)
-            (MsgSend::send_message)
-            ($($sel_parsed)*)
-            ($($arg_parsed)*)
-        }
+        <$crate::__method_family!(($($method_family)*) ($($sel_parsed)*)) as $crate::__macros::MsgSend<_, _>>::send_message(
+            $receiver,
+            $crate::sel!($($sel_parsed)*),
+            ($($arg_parsed)*),
+        )
     };
 
     // Error return
@@ -123,14 +119,12 @@ macro_rules! __method_msg_send {
         ($($arg_parsed:tt)*)
         ($($method_family:tt)*)
     ) => {
-        $crate::__msg_send_helper! {
-            ($receiver)
-            ($($method_family)*)
-            // Use error method
-            (MsgSendError::send_message_error)
-            ($($sel_parsed)* $sel :)
-            ($($arg_parsed)*)
-        }
+        // Use error method
+        <$crate::__method_family!(($($method_family)*) ($($sel_parsed)* $sel :)) as $crate::__macros::MsgSendError<_, _>>::send_message_error(
+            $receiver,
+            $crate::sel!($($sel_parsed)* $sel :),
+            ($($arg_parsed)*),
+        )
     };
 
     // Variadic method
