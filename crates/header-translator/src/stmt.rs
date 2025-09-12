@@ -29,6 +29,7 @@ use crate::name_translation::is_likely_bounds_affecting;
 use crate::name_translation::{enum_prefix, split_words};
 use crate::protocol::parse_direct_protocols;
 use crate::protocol::ProtocolRef;
+use crate::rust_type::PointeeTy;
 use crate::rust_type::SafetyProperty;
 use crate::rust_type::Ty;
 use crate::thread_safety::ThreadSafety;
@@ -120,16 +121,45 @@ pub(crate) fn parse_superclasses<'ty>(
     }
 }
 
-pub(crate) fn parse_class_generics(entity: &Entity<'_>, _context: &Context<'_>) -> Vec<String> {
+pub(crate) type GenericWithBound = (String, Option<PointeeTy>);
+
+pub(crate) fn parse_class_generics(
+    entity: &Entity<'_>,
+    context: &Context<'_>,
+) -> Vec<GenericWithBound> {
     let mut generics = Vec::new();
 
     #[allow(clippy::single_match)]
     immediate_children(entity, |entity, _span| match entity.get_kind() {
         EntityKind::TemplateTypeParameter => {
-            // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
-            // let ty = entity.get_type().expect("template type");
             let name = entity.get_name().expect("template name");
-            generics.push(name);
+            let mut bound = None;
+
+            immediate_children(&entity, |entity, _span| match entity.get_kind() {
+                EntityKind::ObjCClassRef | EntityKind::TypeRef => {
+                    let ty = entity.get_type().expect("template type");
+                    let ty = PointeeTy::parse_generic_bound(ty, context);
+                    bound = Some(ty);
+                }
+                EntityKind::ObjCProtocolRef => {
+                    let definition = entity.get_definition().expect("template definition");
+                    if let Some(ty) = &mut bound {
+                        ty.add_protocol(definition, context);
+                    } else {
+                        error!(?entity, "should have handled protocol type parameter");
+                    }
+                }
+                _ => error!(?entity, "unknown type parameter child"),
+            });
+
+            if let Some(ty) = &bound {
+                if ty.is_plain_anyobject() {
+                    // A bound of just `id` or `AnyObject` is unnecessary.
+                    bound = None;
+                }
+            }
+
+            generics.push((name, bound));
         }
         _ => {}
     });
@@ -465,10 +495,10 @@ pub enum Stmt {
     /// extern_class!
     ClassDecl {
         id: ItemIdentifier,
-        generics: Vec<String>,
+        generics: Vec<GenericWithBound>,
         objc_name: String,
         availability: Availability,
-        /// Superclass + generics
+        /// Superclass + their applied generics.
         superclasses: Vec<(ItemIdentifier, Vec<String>)>,
         designated_initializers: Vec<String>,
         derives: Derives,
@@ -486,7 +516,7 @@ pub enum Stmt {
         availability: Availability,
         cls: ItemIdentifier,
         cls_superclasses: Vec<ItemIdentifier>,
-        cls_generics: Vec<String>,
+        cls_generics: Vec<GenericWithBound>,
         methods: Vec<Method>,
         documentation: Documentation,
     },
@@ -502,7 +532,7 @@ pub enum Stmt {
         availability: Availability,
         cls: ItemIdentifier,
         cls_superclasses: Vec<ItemIdentifier>,
-        cls_generics: Vec<String>,
+        cls_generics: Vec<GenericWithBound>,
         methods: Vec<Method>,
         documentation: Documentation,
     },
@@ -528,7 +558,7 @@ pub enum Stmt {
         cls_counterpart: Counterpart,
         protocol: ItemIdentifier,
         protocol_super_protocols: Vec<ProtocolRef>,
-        generics: Vec<String>,
+        generics: Vec<GenericWithBound>,
         availability: Availability,
     },
     /// struct name {
@@ -654,7 +684,7 @@ pub enum Stmt {
     /// typedef struct CF_BRIDGED_TYPE(id) CGColorSpace *CGColorSpaceRef;
     OpaqueDecl {
         id: ItemIdentifier,
-        generics: Vec<String>,
+        generics: Vec<GenericWithBound>,
         encoding_name: String,
         availability: Availability,
         documentation: Documentation,
@@ -1286,7 +1316,11 @@ impl Stmt {
                         return vec![Self::OpaqueDecl {
                             id,
                             encoding_name: encoding_name.unwrap().to_string(),
-                            generics: data.generics.clone(),
+                            generics: data
+                                .generics
+                                .iter()
+                                .map(|generic| (generic.clone(), None))
+                                .collect(),
                             availability,
                             documentation,
                             is_cf,
@@ -1298,7 +1332,11 @@ impl Stmt {
                         return vec![
                             Self::OpaqueDecl {
                                 id: ItemIdentifier::new(&entity, context),
-                                generics: data.generics.clone(),
+                                generics: data
+                                    .generics
+                                    .iter()
+                                    .map(|generic| (generic.clone(), None))
+                                    .collect(),
                                 encoding_name: encoding_name.unwrap().to_string(),
                                 availability: Availability::parse(&entity, context),
                                 documentation: Documentation::from_entity(&entity, context),
@@ -2018,14 +2056,25 @@ impl Stmt {
     /// Items required by the statement at the top-level.
     pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
         let items: Vec<ItemTree> = match self {
-            Self::ClassDecl { superclasses, .. } => iter::once(ItemTree::objc("__macros__"))
+            Self::ClassDecl {
+                superclasses,
+                generics,
+                ..
+            } => iter::once(ItemTree::objc("__macros__"))
                 .chain(superclasses_required_items(
                     superclasses.iter().map(|(s, _)| s.clone()),
                 ))
+                .chain(
+                    generics
+                        .iter()
+                        .flat_map(|(_, bound)| bound.as_ref())
+                        .flat_map(|bound| bound.required_items()),
+                )
                 .collect(),
             Self::ExternMethods {
                 cls,
                 cls_superclasses,
+                cls_generics,
                 ..
             } => vec![
                 ItemTree::objc("__macros__"),
@@ -2033,7 +2082,15 @@ impl Stmt {
                     cls.clone(),
                     superclasses_required_items(cls_superclasses.iter().cloned()),
                 ),
-            ],
+            ]
+            .into_iter()
+            .chain(
+                cls_generics
+                    .iter()
+                    .flat_map(|(_, bound)| bound.as_ref())
+                    .flat_map(|bound| bound.required_items()),
+            )
+            .collect(),
             // Intentionally doesn't require anything, the impl itself is
             // cfg-gated
             Self::ExternCategory { .. } => {
@@ -2049,6 +2106,7 @@ impl Stmt {
                 cls_superclasses,
                 protocol,
                 protocol_super_protocols,
+                generics,
                 ..
             } => vec![
                 ItemTree::new(
@@ -2062,7 +2120,15 @@ impl Stmt {
                         .flat_map(|p| p.required_items()),
                 ),
                 ItemTree::objc("__macros__"),
-            ],
+            ]
+            .into_iter()
+            .chain(
+                generics
+                    .iter()
+                    .flat_map(|(_, bound)| bound.as_ref())
+                    .flat_map(|bound| bound.required_items()),
+            )
+            .collect(),
             Self::RecordDecl { fields, .. } => fields
                 .iter()
                 .flat_map(|(_, _, field_ty)| field_ty.required_items())
@@ -2113,6 +2179,12 @@ impl Stmt {
                 if !generics.is_empty() {
                     items.push(ItemTree::core_ffi("c_void"));
                 }
+                items.extend(
+                    generics
+                        .iter()
+                        .flat_map(|(_, bound)| bound.as_ref())
+                        .flat_map(|bound| bound.required_items()),
+                );
                 items
             }
             Self::GeneralImpl { item, .. } => {
@@ -2133,6 +2205,7 @@ impl Stmt {
             Self::ExternCategory {
                 cls,
                 cls_superclasses,
+                cls_generics,
                 methods,
                 ..
             } => iter::once(ItemTree::new(
@@ -2140,6 +2213,12 @@ impl Stmt {
                 superclasses_required_items(cls_superclasses.iter().cloned()),
             ))
             .chain(methods.iter().flat_map(|method| method.required_items()))
+            .chain(
+                cls_generics
+                    .iter()
+                    .flat_map(|(_, bound)| bound.as_ref())
+                    .flat_map(|bound| bound.required_items()),
+            )
             .collect(),
             Self::ExternMethods { methods, .. } | Self::ProtocolDecl { methods, .. } => methods
                 .iter()
@@ -2276,8 +2355,15 @@ impl Stmt {
                     write!(f, "    pub struct {}", id.name)?;
                     if !generics.is_empty() {
                         write!(f, "<")?;
-                        for generic in generics {
-                            write!(f, "{generic}: ?Sized = AnyObject, ")?;
+                        for (generic, bound) in generics {
+                            write!(f, "{generic}: ?Sized")?;
+                            if let Some(_bound) = bound {
+                                // TODO(breaking): Add the bound and avoid the
+                                // default generic `AnyObject`.
+                                //
+                                // write!(f, " + {}, ", bound.generic_bound())?;
+                            }
+                            write!(f, " = AnyObject, ")?;
                         }
                         write!(f, ">")?;
                     };
@@ -2306,16 +2392,16 @@ impl Stmt {
                             "impl{} AsRef<{}{}> for {}{} {{",
                             GenericParamsHelper(generics, "?Sized + Message"),
                             id.path(),
-                            GenericTyHelper(generics),
+                            generic_ty(generics),
                             bridged_to.name,
-                            GenericTyHelper(generics),
+                            generic_ty(generics),
                         )?;
                         writeln!(f, "    #[inline]")?;
                         writeln!(
                             f,
                             "    fn as_ref(&self) -> &{}{} {{",
                             id.path(),
-                            GenericTyHelper(generics),
+                            generic_ty(generics),
                         )?;
                         // SAFETY: The two types are toll-free bridged, and
                         // can hence be freely converted to/from each other.
@@ -2338,16 +2424,16 @@ impl Stmt {
                             "impl{} AsRef<{}{}> for {}{} {{",
                             GenericParamsHelper(generics, "?Sized + Message"),
                             bridged_to.name,
-                            GenericTyHelper(generics),
+                            generic_ty(generics),
                             id.path(),
-                            GenericTyHelper(generics),
+                            generic_ty(generics),
                         )?;
                         writeln!(f, "    #[inline]")?;
                         writeln!(
                             f,
                             "    fn as_ref(&self) -> &{}{} {{",
                             bridged_to.path(),
-                            GenericTyHelper(generics),
+                            generic_ty(generics),
                         )?;
                         // SAFETY: Same as above.
                         writeln!(f, "        unsafe {{ &*((self as *const Self).cast()) }}",)?;
@@ -2380,7 +2466,7 @@ impl Stmt {
                         "impl{} {}{} {{",
                         GenericParamsHelper(cls_generics, "Message"),
                         cls.path(),
-                        GenericTyHelper(cls_generics),
+                        generic_ty(cls_generics),
                     )?;
                     writeln!(f, "    extern_methods!(")?;
                     for method in methods {
@@ -2406,7 +2492,7 @@ impl Stmt {
                             "impl{} DefaultRetained for {}{} {{",
                             GenericParamsHelper(cls_generics, "Message"),
                             cls.path(),
-                            GenericTyHelper(cls_generics),
+                            generic_ty(cls_generics),
                         )?;
                         writeln!(f, "    #[inline]")?;
                         writeln!(f, "    fn default_retained() -> Retained<Self> {{")?;
@@ -2471,7 +2557,7 @@ impl Stmt {
                         GenericParamsHelper(cls_generics, "Message"),
                         id.name,
                         cls.path_in_relation_to(id.location()),
-                        GenericTyHelper(cls_generics),
+                        generic_ty(cls_generics),
                     )?;
 
                     write!(f, "{impl_cfg}")?;
@@ -2480,9 +2566,9 @@ impl Stmt {
                         "unsafe impl{} {}{} for {}{} {{}}",
                         GenericParamsHelper(cls_generics, "Message"),
                         id.name,
-                        GenericTyHelper(cls_generics),
+                        generic_ty(cls_generics),
                         cls.path_in_relation_to(id.location()),
-                        GenericTyHelper(cls_generics),
+                        generic_ty(cls_generics),
                     )?;
                 }
                 Self::ProtocolImpl {
@@ -2495,53 +2581,52 @@ impl Stmt {
                     protocol_super_protocols: _,
                     availability: _, // Trait implementations can't be deprecated
                 } => {
-                    let (generic_bound, where_bound) = if !generics.is_empty() {
+                    let extra_bound = if !generics.is_empty() {
                         match (protocol.library_name(), &*protocol.name) {
                             // The object inherits from `NSObject` or `NSProxy` no
                             // matter what the generic type is, so this must be
                             // safe.
-                            ("ObjectiveC", "NSObjectProtocol") => ("?Sized", None),
+                            ("ObjectiveC", "NSObjectProtocol") => "?Sized",
                             // Encoding and decoding requires that the inner types
                             // are codable as well.
-                            ("Foundation", "NSCoding") => ("?Sized + NSCoding", None),
-                            ("Foundation", "NSSecureCoding") => ("?Sized + NSSecureCoding", None),
+                            ("Foundation", "NSCoding") => "?Sized + NSCoding",
+                            ("Foundation", "NSSecureCoding") => "?Sized + NSSecureCoding",
                             // Copying collections is done as a shallow copy:
                             // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Collections/Articles/Copying.html>
                             //
                             // E.g. it does a retain count bump on the items, and
                             // hence does not require the inner type to implement
                             // `NSCopying`.
-                            ("Foundation", "NSCopying") => ("?Sized", None),
-                            ("Foundation", "NSMutableCopying") => ("?Sized", None),
+                            ("Foundation", "NSCopying") => "?Sized",
+                            ("Foundation", "NSMutableCopying") => "?Sized",
                             // TODO: Do we need further tweaks to this?
-                            ("Foundation", "NSFastEnumeration") => ("?Sized", None),
+                            ("Foundation", "NSFastEnumeration") => "?Sized",
                             // AppKit/UIKit fixes. TODO: Should we add more bounds here?
-                            ("AppKit", "NSCollectionViewDataSource") => ("?Sized", None),
-                            ("UIKit", "UICollectionViewDataSource") => ("?Sized + Message", None),
-                            ("AppKit", "NSTableViewDataSource") => ("?Sized", None),
-                            ("UIKit", "UITableViewDataSource") => ("?Sized + Message", None),
+                            ("AppKit", "NSCollectionViewDataSource") => "?Sized",
+                            ("UIKit", "UICollectionViewDataSource") => "?Sized + Message",
+                            ("AppKit", "NSTableViewDataSource") => "?Sized",
+                            ("UIKit", "UITableViewDataSource") => "?Sized + Message",
                             _ => {
                                 error!(
                                     ?protocol,
                                     ?cls,
                                     "unknown where bound for generic protocol impl"
                                 );
-                                ("?Sized", None)
+                                "?Sized"
                             }
                         }
                     } else {
-                        ("InvalidGenericBound", None)
+                        "InvalidGenericBound"
                     };
 
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     writeln!(
                         f,
-                        "extern_conformance!(unsafe impl{} {} for {}{} {}{{}});",
-                        GenericParamsHelper(generics, generic_bound),
+                        "extern_conformance!(unsafe impl{} {} for {}{} {{}});",
+                        GenericParamsHelper(generics, extra_bound),
                         protocol.path_in_relation_to(id),
                         cls.path_in_relation_to(id),
-                        GenericTyHelper(generics),
-                        WhereBoundHelper(generics, where_bound)
+                        generic_ty(generics),
                     )?;
 
                     // To make `NSCopying` and `NSMutableCopying` work, we
@@ -2559,7 +2644,7 @@ impl Stmt {
                                 format!(
                                     "{}{}",
                                     superclass.path_in_relation_to(id),
-                                    GenericTyHelper(generics)
+                                    generic_ty(generics)
                                 )
                             }
                             (Counterpart::MutableSubclass(subclass), "NSMutableCopying") => {
@@ -2567,7 +2652,7 @@ impl Stmt {
                                 format!(
                                     "{}{}",
                                     subclass.path_in_relation_to(id),
-                                    GenericTyHelper(generics)
+                                    generic_ty(generics)
                                 )
                             }
                             _ => "Self".into(),
@@ -2581,7 +2666,7 @@ impl Stmt {
                             GenericParamsHelper(generics, "?Sized + Message"),
                             copy_helper.path_in_relation_to(id),
                             cls.path_in_relation_to(id),
-                            GenericTyHelper(generics),
+                            generic_ty(generics),
                         )?;
 
                         writeln!(f, "    type Result = {ty};")?;
@@ -3248,7 +3333,7 @@ impl Stmt {
                     )?;
                     if !generics.is_empty() {
                         write!(f, "    _generics: PhantomData<(")?;
-                        for generic in generics {
+                        for (generic, _) in generics {
                             // Make generics invariant (like in `objc2::extern_class!`).
                             write!(f, "*mut {generic}, ")?;
                         }
@@ -3280,10 +3365,10 @@ impl Stmt {
                             "    unsafe impl{} {}{}",
                             GenericParamsHelper(generics, "?Sized"),
                             id.name,
-                            GenericTyHelper(generics),
+                            generic_ty(generics),
                         )?;
                         if let Some(superclass) = superclass {
-                            write!(f, ": {}{}", superclass.name, GenericTyHelper(generics))?;
+                            write!(f, ": {}{}", superclass.name, generic_ty(generics))?;
                         }
                         writeln!(f, " {{}}")?;
                         writeln!(f, ");")?;
@@ -3300,7 +3385,7 @@ impl Stmt {
                             "    unsafe impl{} RefEncode<{encoding_name:?}> for {}{} {{}}",
                             GenericParamsHelper(generics, "?Sized"),
                             id.name,
-                            GenericTyHelper(generics),
+                            generic_ty(generics),
                         )?;
                         writeln!(f, ");")?;
                     } else {
@@ -3315,7 +3400,7 @@ impl Stmt {
                             "unsafe impl{} RefEncode for {}{} {{",
                             GenericParamsHelper(generics, "UnknownBound"),
                             id.name,
-                            GenericTyHelper(generics)
+                            generic_ty(generics)
                         )?;
                         write!(f, "    const ENCODING_REF: Encoding = ")?;
                         writeln!(f, "Encoding::Pointer(&Encoding::Struct(")?;
@@ -3408,11 +3493,11 @@ impl Stmt {
                 writeln!(f, "    if {check} ")?;
             }
             writeln!(f, "    {{")?;
-            for generic in cls_generics {
+            for (generic, _) in cls_generics {
                 writeln!(f, "        type {generic} = AnyObject;")?;
             }
             write!(f, "        type This = {}<", cls.path())?;
-            for generic in cls_generics {
+            for (generic, _) in cls_generics {
                 write!(f, "{generic}, ")?;
             }
             writeln!(f, ">;")?;
@@ -3494,11 +3579,23 @@ impl Stmt {
     }
 }
 
-struct GenericTyHelper<'a>(&'a [String]);
+struct GenericTyHelper<I>(I);
 
-impl fmt::Display for GenericTyHelper<'_> {
+fn generic_ty<'a, I: IntoIterator<Item = &'a GenericWithBound>>(
+    iter: I,
+) -> GenericTyHelper<impl IntoIterator<Item = &'a String> + Clone>
+where
+    I::IntoIter: Clone,
+{
+    GenericTyHelper(iter.into_iter().map(|(generic, _bound)| generic))
+}
+
+impl<I: IntoIterator + Clone> fmt::Display for GenericTyHelper<I>
+where
+    I::Item: Display,
+{
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut iter = self.0.iter();
+        let mut iter = self.0.clone().into_iter();
         if let Some(first) = iter.next() {
             write!(f, "<{first}")?;
             for generic in iter {
@@ -3510,33 +3607,25 @@ impl fmt::Display for GenericTyHelper<'_> {
     }
 }
 
-struct GenericParamsHelper<'a>(&'a [String], &'a str);
+struct GenericParamsHelper<'a, I: IntoIterator<Item = &'a GenericWithBound> + Clone>(I, &'a str);
 
-impl fmt::Display for GenericParamsHelper<'_> {
+impl<'a, I: IntoIterator<Item = &'a GenericWithBound> + Clone> fmt::Display
+    for GenericParamsHelper<'a, I>
+{
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut iter = self.0.iter();
-        if let Some(first) = iter.next() {
+        let mut iter = self.0.clone().into_iter();
+        if let Some((first, bound)) = iter.next() {
             write!(f, "<{first}: {}", self.1)?;
-            for generic in iter {
-                write!(f, ", {generic}: {}", self.1)?;
+            if let Some(bound) = bound {
+                write!(f, " + {}", bound.generic_bound())?;
             }
-            write!(f, ">")?;
-        }
-        Ok(())
-    }
-}
-
-struct WhereBoundHelper<'a>(&'a [String], Option<&'a str>);
-
-impl fmt::Display for WhereBoundHelper<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if let Some(bound) = self.1 {
-            if !self.0.is_empty() {
-                writeln!(f, "where")?;
-                for generic in self.0 {
-                    writeln!(f, "{generic}{bound},")?;
+            for (generic, bound) in iter {
+                write!(f, ", {generic}: {}", self.1)?;
+                if let Some(bound) = bound {
+                    write!(f, " + {}", bound.generic_bound())?;
                 }
             }
+            write!(f, ">")?;
         }
         Ok(())
     }
@@ -3549,7 +3638,7 @@ impl fmt::Display for WhereBoundHelper<'_> {
 fn add_generic_cast_helpers(
     f: &mut fmt::Formatter<'_>,
     id: &ItemIdentifier,
-    generics: &[String],
+    generics: &[GenericWithBound],
     cf: bool,
 ) -> fmt::Result {
     let s = if generics.len() == 1 { "" } else { "s" };
@@ -3559,7 +3648,7 @@ fn add_generic_cast_helpers(
     let bound = if cf { "?Sized" } else { "?Sized + Message" };
     let casted_generics: Vec<_> = generics
         .iter()
-        .map(|generic| format!("New{generic}"))
+        .map(|(generic, bound)| (format!("New{generic}"), bound.clone()))
         .collect();
 
     writeln!(
@@ -3567,7 +3656,7 @@ fn add_generic_cast_helpers(
         "impl{} {}{} {{",
         GenericParamsHelper(generics, bound),
         id.path(),
-        GenericTyHelper(generics),
+        generic_ty(generics),
     )?;
     writeln!(
         f,
@@ -3586,7 +3675,7 @@ fn add_generic_cast_helpers(
         "    pub unsafe fn cast_unchecked{}(&self) -> &{}{} {{",
         GenericParamsHelper(&casted_generics, bound),
         id.path(),
-        GenericTyHelper(&casted_generics),
+        generic_ty(&casted_generics),
     )?;
     // SAFETY: Upheld by the caller.
     writeln!(f, "        unsafe {{ &*((self as *const Self).cast()) }}",)?;

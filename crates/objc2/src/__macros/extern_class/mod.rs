@@ -209,7 +209,7 @@ macro_rules! extern_class {
         // Generic version. Currently pretty ill supported.
         $(#[$($attrs:tt)*])*
         $v:vis struct $class:ident<
-            $($generic:ident $(: $(?$bound_sized:ident)? $($bound:ident)?)? $(= $default:ty)?),*
+            $($generic:ident $(: $(?$bound_sized:ident $(+ $plus:ident)?)? $($bound:ident)?)? $(= $default:ty)?),*
             $(,)?
         >;
     ) => {
@@ -221,7 +221,7 @@ macro_rules! extern_class {
             ($class)
             ($(
                 ($generic)
-                ($($(?$bound_sized)? $($bound)?)?)
+                ($($(?$bound_sized $(+ $plus)?)? $($bound)?)?)
                 ($($default)?)
             )*)
         }

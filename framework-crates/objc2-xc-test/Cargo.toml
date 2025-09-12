@@ -37,6 +37,7 @@ objc2-foundation = { workspace = true, features = [
     "NSPredicate",
     "NSString",
     "NSURL",
+    "NSUnit",
     "NSValue",
     "alloc",
 ] }

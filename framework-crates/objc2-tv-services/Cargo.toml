@@ -60,6 +60,10 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+TVTopShelfItemCollection = [
+    "objc2-foundation/NSArray",
+    "TVTopShelfItem",
+]
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
@@ -103,7 +107,6 @@ TVTopShelfItem = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
-TVTopShelfItemCollection = ["objc2-foundation/NSArray"]
 TVTopShelfNamedAttribute = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",

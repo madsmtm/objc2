@@ -1,0 +1,18 @@
+error[E0599]: the function or associated item `new` exists for struct `NSMeasurement<NSObject>`, but its trait bounds were not satisfied
+ --> ui/measurement_generic.rs
+  |
+  |     let _ = unsafe { NSMeasurement::<NSObject>::new() };
+  |                                                 ^^^ function or associated item cannot be called on `NSMeasurement<NSObject>` due to unsatisfied trait bounds
+  |
+ ::: $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
+  |
+  | pub struct NSObject {
+  | ------------------- doesn't satisfy `NSObject: AsRef<NSUnit>`
+  |
+  = note: the following trait bounds were not satisfied:
+          `NSObject: AsRef<NSUnit>`
+note: the function `new` is implemented on `NSObject`
+ --> ui/measurement_generic.rs
+  |
+  |     let _ = unsafe { NSMeasurement::<NSObject>::new() };
+  |                      ^^^^^^^^^^^^^^^^^^^^^^^^^

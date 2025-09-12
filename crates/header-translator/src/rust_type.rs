@@ -11,7 +11,7 @@ use crate::display_helper::FormatterFn;
 use crate::id::{ItemIdentifier, ItemTree};
 use crate::name_translation::cf_no_ref;
 use crate::protocol::ProtocolRef;
-use crate::stmt::{anonymous_record_name, bridged_to, parse_class_generics};
+use crate::stmt::{anonymous_record_name, bridged_to, parse_class_generics, GenericWithBound};
 use crate::stmt::{parse_superclasses, superclasses_required_items};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -659,7 +659,7 @@ pub enum PointeeTy {
         thread_safety: ThreadSafety,
         superclasses: Vec<ItemIdentifier>,
         generics: Vec<PointeeTy>,
-        declaration_generics: Vec<String>,
+        declaration_generics: Vec<GenericWithBound>,
         protocols: Vec<(ProtocolRef, ThreadSafety)>,
     },
     GenericParam {
@@ -708,14 +708,45 @@ impl PointeeTy {
         }
     }
 
-    fn required_items(&self) -> impl Iterator<Item = ItemTree> {
+    pub(crate) fn parse_generic_bound(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = Ty::parse(ty, Lifetime::Unspecified, context);
+        match ty {
+            Ty::Pointee(pointee) => pointee,
+            Ty::Pointer {
+                nullability: Nullability::Unspecified,
+                is_const: false,
+                lifetime: Lifetime::Unspecified,
+                pointee,
+            } => match *pointee {
+                Ty::Pointee(pointee) => pointee,
+                ty => {
+                    error!(?ty, "invalid generic bound pointer");
+                    PointeeTy::GenericParam {
+                        name: "Unknown".to_string(),
+                    }
+                }
+            },
+            ty => {
+                error!(?ty, "invalid generic bound");
+                PointeeTy::GenericParam {
+                    name: "Unknown".to_string(),
+                }
+            }
+        }
+    }
+
+    pub(crate) fn is_plain_anyobject(&self) -> bool {
+        matches!(self, Self::AnyObject { protocols } if protocols.is_empty())
+    }
+
+    pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
         match self {
             Self::Class {
                 id,
                 thread_safety: _,
                 superclasses,
                 generics,
-                declaration_generics: _,
+                declaration_generics,
                 protocols,
             } => {
                 let superclasses = superclasses_required_items(superclasses.iter().cloned());
@@ -725,9 +756,15 @@ impl PointeeTy {
                 iter::once(ItemTree::new(id.clone(), superclasses))
                     .chain(protocols)
                     .chain(generics.iter().flat_map(|generic| generic.required_items()))
+                    .chain(
+                        declaration_generics
+                            .iter()
+                            .flat_map(|(_, bound)| bound.as_ref())
+                            .flat_map(|bound| bound.required_items()),
+                    )
                     .collect()
             }
-            Self::GenericParam { .. } => vec![],
+            Self::GenericParam { name: _ } => vec![],
             Self::AnyObject { protocols } => {
                 let protocols = protocols
                     .iter()
@@ -920,6 +957,44 @@ impl PointeeTy {
             Self::DispatchTypeDef { id } => write!(f, "{}", id.path()),
             Self::TypeDef { id, .. } => write!(f, "{}", id.path()),
             Self::CStr => write!(f, "CStr"),
+        })
+    }
+
+    pub(crate) fn add_protocol(&mut self, entity: Entity<'_>, context: &Context<'_>) {
+        let Self::AnyObject { protocols } = self else {
+            error!(?self, "invalid type to add protocols to");
+            return;
+        };
+
+        protocols.push(parse_protocol(entity, context));
+    }
+
+    pub(crate) fn generic_bound(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Class { .. } => {
+                // HACK: Use `AsRef<Bound>`.
+                //
+                // This is not perfect, since `AsRef` can be implemented for
+                // other reasons than subclassing. We really need a general
+                // `SubclassOf` trait, but this is at least better than
+                // nothing.
+                write!(f, "AsRef<{}>", self.behind_pointer())
+            }
+            Self::AnyObject { protocols } => match &**protocols {
+                // Should be avoided by `is_plain_anyobject` above
+                [] => write!(f, "InvalidAnyObjectAsBound"),
+                [(first, _), rest @ ..] => {
+                    write!(f, "{}", first.id.path())?;
+                    for (protocol, _) in rest {
+                        write!(f, "+ {}", protocol.id.path())?;
+                    }
+                    Ok(())
+                }
+            },
+            pointee => {
+                error!(?pointee, "unhandled generic bound");
+                write!(f, "/* {} */", pointee.behind_pointer())
+            }
         })
     }
 

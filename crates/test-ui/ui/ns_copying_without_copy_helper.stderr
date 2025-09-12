@@ -15,12 +15,12 @@ help: the trait `CopyingHelper` is not implemented for `MyObj`
   = help: the following other types implement trait `CopyingHelper`:
             NSArray<ObjectType>
             NSDictionary<KeyType, ObjectType>
+            NSDimension
             NSError
+            NSMeasurement<UnitType>
             NSMutableArray<ObjectType>
             NSMutableDictionary<KeyType, ObjectType>
             NSMutableSet<ObjectType>
-            NSMutableString
-            NSNotification
           and $N others
   = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 

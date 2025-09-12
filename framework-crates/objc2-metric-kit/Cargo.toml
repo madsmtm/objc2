@@ -101,6 +101,7 @@ MXAppRunTimeMetric = [
 MXAverage = [
     "objc2-foundation/NSMeasurement",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
 MXCPUExceptionDiagnostic = [
     "objc2-foundation/NSMeasurement",
@@ -178,6 +179,7 @@ MXHistogram = [
     "objc2-foundation/NSEnumerator",
     "objc2-foundation/NSMeasurement",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
 MXLocationActivityMetric = [
     "objc2-foundation/NSMeasurement",

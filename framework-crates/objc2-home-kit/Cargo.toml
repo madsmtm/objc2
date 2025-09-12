@@ -206,7 +206,10 @@ HMCharacteristicMetadata = [
 ]
 HMCharacteristicThresholdRangeEvent = ["objc2-foundation/NSObject"]
 HMCharacteristicTypes = ["objc2-foundation/NSString"]
-HMCharacteristicWriteAction = ["objc2-foundation/NSError"]
+HMCharacteristicWriteAction = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+]
 HMDefines = ["objc2-foundation/NSError"]
 HMDurationEvent = [
     "objc2-foundation/NSDate",

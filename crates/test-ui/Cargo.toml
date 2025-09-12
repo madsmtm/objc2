@@ -25,6 +25,8 @@ default = [
     "objc2-foundation/NSURLSession",
     "objc2-foundation/NSEnumerator",
     "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSUnit",
     "objc2-core-foundation/CFString",
 ]
 run = ["trybuild"]

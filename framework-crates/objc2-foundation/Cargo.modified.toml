@@ -23,3 +23,6 @@ unstable-static-nsstring = []
 #
 # Useful when fuzzing, but very unsound.
 unstable-mutation-return-null = ["NSNull"]
+
+# TODO(breaking): Remove this
+NSMeasurement = ["NSUnit"]
