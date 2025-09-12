@@ -849,6 +849,80 @@ impl PointeeTy {
         }
     }
 
+    fn behind_pointer(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Class {
+                id,
+                thread_safety: _,
+                superclasses: _,
+                generics,
+                declaration_generics: _,
+                protocols: _,
+            } => {
+                write!(f, "{}", id.path())?;
+                if !generics.is_empty() {
+                    write!(f, "<")?;
+                    for generic in generics {
+                        write!(f, "{},", generic.behind_pointer())?;
+                    }
+                    write!(f, ">")?;
+                }
+                Ok(())
+            }
+            Self::GenericParam { name } => write!(f, "{name}"),
+            Self::AnyObject { protocols } => match &**protocols {
+                [] => write!(f, "AnyObject"),
+                [(protocol, _)] => write!(f, "ProtocolObject<dyn {}>", protocol.id.path()),
+                // TODO: Handle this better
+                [(first, _), rest @ ..] => {
+                    write!(f, "AnyObject /* {}", first.id.path())?;
+                    for (protocol, _) in rest {
+                        write!(f, "+ {}", protocol.id.path())?;
+                    }
+                    write!(f, " */")?;
+                    Ok(())
+                }
+            },
+            Self::AnyProtocol => write!(f, "AnyProtocol"),
+            Self::AnyClass { protocols } => match &**protocols {
+                [] => write!(f, "AnyClass"),
+                // TODO: Handle this better
+                _ => write!(f, "AnyClass"),
+            },
+            Self::Self_ => write!(f, "Self"),
+            // TODO: Handle this better.
+            Self::Fn { .. } => {
+                write!(f, "core::ffi::c_void /* TODO: Should be a function. */")
+            }
+            Self::Block {
+                sendable: _,
+                no_escape,
+                arguments,
+                result_type,
+            } => {
+                write!(f, "block2::DynBlock<dyn Fn(")?;
+                for arg in arguments {
+                    write!(f, "{}, ", arg.plain())?;
+                }
+                write!(f, ")")?;
+                write!(f, "{}", result_type.fn_type_return())?;
+                if *no_escape {
+                    write!(f, " + '_")?;
+                } else {
+                    // `dyn Fn()` in function parameters implies `+ 'static`,
+                    // so no need to specify that.
+                    //
+                    // write!(f, " + 'static")?;
+                }
+                write!(f, ">")
+            }
+            Self::CFTypeDef { id, .. } => write!(f, "{}", id.path()),
+            Self::DispatchTypeDef { id } => write!(f, "{}", id.path()),
+            Self::TypeDef { id, .. } => write!(f, "{}", id.path()),
+            Self::CStr => write!(f, "CStr"),
+        })
+    }
+
     fn safety(&self) -> TypeSafety {
         match self {
             // TODO: Unsure of the safety of `NSCoder`s.
@@ -2502,9 +2576,9 @@ impl Ty {
         FormatterFn(move |f| {
             match self {
                 Self::Primitive(prim) => write!(f, "{prim}"),
-                Self::Pointee(_) => {
+                Self::Pointee(pointee) => {
                     error!(?self, "must be behind pointer");
-                    write!(f, "{}", self.behind_pointer())
+                    write!(f, "{}", pointee.behind_pointer())
                 }
                 Self::Simd { ty, size } => write!(f, "Simd<{ty}, {size}>"),
                 Self::Sel { nullability } => {
@@ -2597,77 +2671,7 @@ impl Ty {
 
     fn behind_pointer(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
-            Self::Pointee(pointee) => match pointee {
-                PointeeTy::Class {
-                    id,
-                    thread_safety: _,
-                    superclasses: _,
-                    generics,
-                    declaration_generics: _,
-                    protocols: _,
-                } => {
-                    write!(f, "{}", id.path())?;
-                    if !generics.is_empty() {
-                        write!(f, "<")?;
-                        for generic in generics {
-                            write!(f, "{},", Self::Pointee(generic.clone()).behind_pointer())?;
-                        }
-                        write!(f, ">")?;
-                    }
-                    Ok(())
-                }
-                PointeeTy::GenericParam { name } => write!(f, "{name}"),
-                PointeeTy::AnyObject { protocols } => match &**protocols {
-                    [] => write!(f, "AnyObject"),
-                    [(protocol, _)] => write!(f, "ProtocolObject<dyn {}>", protocol.id.path()),
-                    // TODO: Handle this better
-                    [(first, _), rest @ ..] => {
-                        write!(f, "AnyObject /* {}", first.id.path())?;
-                        for (protocol, _) in rest {
-                            write!(f, "+ {}", protocol.id.path())?;
-                        }
-                        write!(f, " */")?;
-                        Ok(())
-                    }
-                },
-                PointeeTy::AnyProtocol => write!(f, "AnyProtocol"),
-                PointeeTy::AnyClass { protocols } => match &**protocols {
-                    [] => write!(f, "AnyClass"),
-                    // TODO: Handle this better
-                    _ => write!(f, "AnyClass"),
-                },
-                PointeeTy::Self_ => write!(f, "Self"),
-                // TODO: Handle this better.
-                PointeeTy::Fn { .. } => {
-                    write!(f, "core::ffi::c_void /* TODO: Should be a function. */")
-                }
-                PointeeTy::Block {
-                    sendable: _,
-                    no_escape,
-                    arguments,
-                    result_type,
-                } => {
-                    write!(f, "block2::DynBlock<dyn Fn(")?;
-                    for arg in arguments {
-                        write!(f, "{}, ", arg.plain())?;
-                    }
-                    write!(f, ")")?;
-                    write!(f, "{}", result_type.fn_type_return())?;
-                    if *no_escape {
-                        write!(f, " + '_")?;
-                    } else {
-                        // `dyn Fn()` in function parameters implies `+ 'static`,
-                        // so no need to specify that.
-                        //
-                        // write!(f, " + 'static")?;
-                    }
-                    write!(f, ">")
-                }
-                PointeeTy::CFTypeDef { id, .. } => write!(f, "{}", id.path()),
-                PointeeTy::DispatchTypeDef { id } => write!(f, "{}", id.path()),
-                PointeeTy::TypeDef { id, .. } => write!(f, "{}", id.path()),
-                PointeeTy::CStr => write!(f, "CStr"),
-            },
+            Self::Pointee(pointee) => write!(f, "{}", pointee.behind_pointer()),
             _ => write!(f, "{}", self.plain()),
         })
     }
