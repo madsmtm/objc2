@@ -986,7 +986,7 @@ impl PointeeTy {
                 [(first, _), rest @ ..] => {
                     write!(f, "{}", first.id.path())?;
                     for (protocol, _) in rest {
-                        write!(f, "+ {}", protocol.id.path())?;
+                        write!(f, " + {}", protocol.id.path())?;
                     }
                     Ok(())
                 }
@@ -1028,13 +1028,27 @@ impl PointeeTy {
                 });
 
                 if generics.len() != declaration_generics.len() {
+                    let mut gave_more_specific_message = false;
+                    for (_, bound) in declaration_generics {
+                        if let Some(bound) = bound {
+                            // Unclear if these bounds are correct.
+                            let reason = format!("should be bound by `{}`", bound.generic_bound());
+                            safety = safety
+                                .merge(TypeSafety::unknown_in_argument(reason))
+                                .context("generic");
+                            gave_more_specific_message = true;
+                        }
+                    }
+
                     // If all generics aren't specified, the remaining are
                     // AnyObject, so apply the restrictions from that as well.
-                    safety = safety
-                        .merge(TypeSafety::unknown_in_argument(
-                            "should be of the correct type",
-                        ))
-                        .context("generic");
+                    if !gave_more_specific_message {
+                        safety = safety
+                            .merge(TypeSafety::unknown_in_argument(
+                                "should be of the correct type",
+                            ))
+                            .context("generic");
+                    }
                 }
 
                 // We don't uphold protocol type safety properly yet, since we
