@@ -146,13 +146,14 @@ impl Documentation {
             EntityKind::UnionDecl => Some(Kind::Union),
             EntityKind::EnumDecl => Some(Kind::Enum),
             EntityKind::VarDecl => Some(Kind::GlobalVariable),
-            EntityKind::FunctionDecl => None, // TODO Function
+            EntityKind::FunctionDecl => Some(Kind::Function),
             EntityKind::ObjCInstanceMethodDecl => None, // TODO
-            EntityKind::ObjCPropertyDecl => None, // TODO
-            EntityKind::ObjCClassMethodDecl => None, // TODO
+            EntityKind::ObjCPropertyDecl => None,       // TODO
+            EntityKind::ObjCClassMethodDecl => None,    // TODO
             EntityKind::EnumConstantDecl => Some(Kind::EnumCase),
-            EntityKind::FieldDecl => None,       // TODO
-            EntityKind::MacroDefinition => None, // TODO
+            EntityKind::FieldDecl => None,                    // TODO
+            EntityKind::MacroDefinition => Some(Kind::Macro), // TODO
+            EntityKind::UnexposedDecl => None,
             _ => {
                 warn!(?entity, "unknown entity being documented");
                 None

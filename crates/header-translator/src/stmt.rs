@@ -1601,9 +1601,6 @@ impl Stmt {
                         };
 
                         let mut documentation = Documentation::from_entity(&entity, context);
-                        if c_name.is_some() {
-                            documentation.set_apple(None); // TEMPORARY
-                        }
 
                         if ty.is_simple_uint() {
                             ty = expr.guess_type(id.location());
