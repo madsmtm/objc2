@@ -2,7 +2,10 @@ use std::cell::RefCell;
 use std::collections::BTreeMap;
 use std::fmt::{self, Write as _};
 
-use apple_doc::{BlobStore, Doc, Kind, SqliteDb};
+use apple_doc::{
+    BlobStore, Content, Doc, DocKind, Kind, PrimaryContentSection, Reference, ReferenceVariant,
+    ReferenceVariantTrait, SqliteDb,
+};
 use clang::documentation::{
     BlockCommand, CommentChild, HtmlStartTag, InlineCommand, InlineCommandStyle, ParamCommand,
     TParamCommand,
@@ -193,6 +196,12 @@ impl Documentation {
 
     pub fn fmt<'a>(&'a self) -> impl fmt::Display + 'a {
         FormatterFn(move |f| {
+            let apple = if let Some(apple) = &self.apple {
+                format!("{}", apple_to_md(apple))
+            } else {
+                String::new()
+            };
+
             let mut from_header = String::new();
 
             for child in &self.from_header {
@@ -200,39 +209,21 @@ impl Documentation {
             }
 
             let from_header = fix_code_blocks(&from_header).trim().replace("\t", "    ");
-            let from_header = if from_header.is_empty() {
+
+            let content = if apple.is_empty() && from_header.is_empty() {
                 None
+            } else if apple == from_header {
+                // TODO: Merge these instead, by comparing nodes
+                Some(apple)
             } else {
-                Some(from_header.to_string())
+                Some(format!("{apple}{from_header}"))
             };
 
-            // Generate a markdown link to Apple's documentation.
-            let mut first = None;
-            let mut last = None;
-            if let Some(doc) = &self.apple {
-                // Output the URL only if we know the true one.
-                let url_path = doc
-                    .identifier
-                    .url
-                    .strip_prefix("doc://com.apple.documentation")
-                    .unwrap();
-                let doc_link = format_args!("https://developer.apple.com{url_path}?language=objc");
-                if from_header.is_none() && self.first.is_none() {
-                    // If there is no documentation, put this as the primary
-                    // docs. This looks better in rustdoc.
-                    first = Some(format!("[Apple's documentation]({doc_link})"));
-                } else {
-                    // Otherwise, put it at the very end.
-                    last = Some(format!("See also [Apple's documentation]({doc_link})"));
-                }
-            }
-
-            let groups = first
+            let groups = self
+                .first
                 .iter()
-                .chain(self.first.iter())
-                .chain(from_header.iter())
-                .chain(self.extras.iter())
-                .chain(last.iter());
+                .chain(content.iter())
+                .chain(self.extras.iter());
 
             for (i, group) in groups.enumerate() {
                 if i != 0 {
@@ -442,6 +433,360 @@ fn format_child(child: &CommentChild) -> impl fmt::Display + '_ {
 
         Ok(())
     })
+}
+
+/// Format Apple's documentation as markdown link.
+fn apple_to_md(doc: &Doc) -> impl fmt::Display + '_ {
+    FormatterFn(move |f| match &doc.kind {
+        DocKind::Symbol(page) => {
+            if !page.abstract_.is_empty() {
+                writeln!(f, "{}", contents_to_md(doc, &page.abstract_))?;
+            }
+
+            for section in &doc.sections {
+                match section {
+                    _ => {
+                        write!(f, "SECTION: {section:?}")?;
+                    }
+                }
+            }
+
+            for section in &page.primary_content_sections {
+                match section {
+                    PrimaryContentSection::Declarations { .. } => {}
+                    PrimaryContentSection::Mentions { .. } => {}
+                    PrimaryContentSection::Content { content } => {
+                        writeln!(f)?;
+                        writeln!(f, "{}", contents_to_md(doc, content))?;
+                    }
+                    PrimaryContentSection::Parameters { parameters } => {
+                        writeln!(f)?;
+                        writeln!(f, "Parameters:")?;
+                        for parameter in parameters {
+                            write!(f, "- ")?;
+                            if let Some(name) = &parameter.name {
+                                write!(f, "{name}: ")?;
+                            }
+                            write!(f, "{}", contents_to_md(doc, &parameter.content))?;
+                        }
+                    }
+                    _ => {
+                        write!(f, "PRIMSECTION: {section:?}")?;
+                    }
+                }
+            }
+
+            Ok(())
+        }
+        _ => writeln!(f, "TODO doc: {doc:?}"),
+    })
+}
+
+fn contents_to_md<'a>(doc: &'a Doc, contents: &'a [Content]) -> impl fmt::Display + 'a {
+    FormatterFn(move |f| {
+        for content in contents {
+            write!(f, "{}", content_to_md(doc, content))?;
+        }
+        Ok(())
+    })
+}
+
+fn content_to_md<'a>(doc: &'a Doc, content: &'a Content) -> impl fmt::Display + 'a {
+    FormatterFn(move |f| match content {
+        Content::Text { text } => write!(f, "{text}"),
+        Content::CodeVoice { code } => write!(f, "`{code}`"),
+        Content::Emphasis { inline_content } => {
+            write!(f, "_{}_", contents_to_md(doc, inline_content))
+        }
+        Content::Strong { inline_content } => {
+            write!(f, "**{}**", contents_to_md(doc, inline_content))
+        }
+        Content::ThematicBreak {} => writeln!(f, "---"),
+        Content::CodeListing {
+            syntax,
+            code,
+            metadata: _,
+        } => {
+            write!(f, "```")?;
+            if let Some(syntax) = syntax {
+                write!(f, "{syntax}")?;
+            } else {
+                write!(f, "text")?;
+            }
+            writeln!(f)?;
+            for line in code {
+                writeln!(f, "{line}")?;
+            }
+            writeln!(f, "```")?;
+            writeln!(f)?;
+            Ok(())
+        }
+        Content::Image {
+            identifier,
+            metadata,
+        } => {
+            if let Some(Reference::Image { variants, alt, .. }) = doc.references.get(identifier) {
+                let alt = metadata
+                    .as_ref()
+                    .and_then(|metadata| metadata.title.clone())
+                    .unwrap_or_else(|| alt.clone().unwrap_or_default());
+                match &**variants {
+                    [] => {
+                        error!(identifier, "image must have at least one variant");
+                        Ok(())
+                    }
+                    [ReferenceVariant { url, .. }] => {
+                        writeln!(f)?;
+                        writeln!(f, "![{alt}]({url})")?;
+                        Ok(())
+                    }
+                    variants => {
+                        let mut light_srcset = String::new();
+                        let mut dark_srcset = String::new();
+                        let mut fallback = None;
+
+                        for variant in variants {
+                            let mut pixel_density = "";
+                            let mut srcset = &mut light_srcset;
+
+                            for trait_ in &variant.traits {
+                                match trait_ {
+                                    ReferenceVariantTrait::X1 => pixel_density = " 1x",
+                                    ReferenceVariantTrait::X2 => pixel_density = " 2x",
+                                    ReferenceVariantTrait::X3 => pixel_density = " 3x",
+                                    ReferenceVariantTrait::Dark => srcset = &mut dark_srcset,
+                                    ReferenceVariantTrait::Light => srcset = &mut light_srcset,
+                                }
+                            }
+
+                            if !srcset.is_empty() {
+                                write!(&mut srcset, ", ").unwrap();
+                            }
+                            write!(&mut srcset, "{}{pixel_density}", variant.url).unwrap();
+
+                            fallback = Some(&variant.url);
+                        }
+
+                        writeln!(f)?;
+                        writeln!(f, "<picture>")?;
+                        if !dark_srcset.is_empty() {
+                            writeln!(
+                                f,
+                                "    <source media=\"(prefers-color-scheme: dark)\" srcset=\"{dark_srcset}\" />"
+                            )?;
+                        }
+                        if !light_srcset.is_empty() {
+                            writeln!(
+                                f,
+                                "    <source media=\"(prefers-color-scheme: light)\" srcset=\"{light_srcset}\" />"
+                            )?;
+                        }
+                        writeln!(f, "    <img alt={alt:?} src={:?} />", fallback.unwrap())?;
+                        writeln!(f, "</picture>")?;
+                        Ok(())
+                    }
+                }
+            } else {
+                error!(identifier, "could not find image reference");
+                Ok(())
+            }
+        }
+        Content::Video { identifier, .. } => {
+            writeln!(f, "(TODO vid: {:?})", doc.references.get(identifier))
+        }
+        Content::Links { style, items } => write!(f, "(TODO links: {content:?})"),
+        Content::Superscript { inline_content } => {
+            writeln!(f, "<sup>{}</sup>", contents_to_md(doc, inline_content))
+        }
+        Content::Small { inline_content } => {
+            writeln!(f, "<sub>{}</sub>", contents_to_md(doc, inline_content))
+        }
+        Content::Row {
+            number_of_columns,
+            columns,
+        } => writeln!(f, "(TODO row: {content:?})"),
+        Content::Table {
+            header,
+            extended_data,
+            rows,
+            alignments,
+            metadata,
+        } => writeln!(f, "(TODO table: {content:?})"),
+        Content::TabNavigator { tabs } => writeln!(f, "(TODO tabnav: {content:?})"),
+        Content::UnorderedList { items } => {
+            for item in items {
+                write!(f, "-")?;
+                let mut iter = item.content.iter();
+                if let Some(first) = iter.next() {
+                    write!(f, " {}", content_to_md(doc, first))?;
+                } else {
+                    writeln!(f)?;
+                }
+                for content in iter {
+                    write!(f, "  {}", content_to_md(doc, content))?;
+                }
+            }
+            Ok(())
+        }
+        Content::OrderedList { start, items } => {
+            let mut value = start.unwrap_or(1);
+            let width = (items.len() + value as usize) / 10;
+            for item in items {
+                write!(f, "{value:>width$}.")?;
+                let mut iter = item.content.iter();
+                if let Some(first) = iter.next() {
+                    write!(f, " {}", content_to_md(doc, first))?;
+                } else {
+                    writeln!(f)?;
+                }
+                for content in iter {
+                    write!(f, "{:>width$} {}", "", content_to_md(doc, content))?;
+                }
+                value += 1;
+            }
+            Ok(())
+        }
+        Content::Topic {
+            identifier,
+            is_active,
+        } => writeln!(f, "(TODO topic: {content:?})"),
+        Content::Reference {
+            identifier,
+            is_active,
+            overriding_title,
+            overriding_title_inline_content,
+        } => {
+            let reference = doc
+                .references
+                .get(identifier)
+                .expect("must have reference in doc");
+            write!(
+                f,
+                "{}",
+                reference_to_md(
+                    doc,
+                    reference,
+                    overriding_title.as_ref(),
+                    overriding_title_inline_content.as_ref()
+                )
+            )
+        }
+        Content::Paragraph { inline_content } => {
+            writeln!(f, "{}", contents_to_md(doc, inline_content))?;
+            writeln!(f)?;
+            Ok(())
+        }
+        Content::Heading {
+            anchor,
+            level,
+            text,
+        } => {
+            // Remove anchor if it's (likely) what `rustdoc` is going to output.
+            // https://github.com/rust-lang/rust/blob/ddaf12390d3ffb7d5ba74491a48f3cd528e5d777/src/librustdoc/html/markdown.rs#L571
+            //
+            // TODO: Normalize the anchor (lowercase).
+            let anchor = anchor.to_ascii_lowercase();
+            if text.chars().filter_map(slugify).collect::<String>() != anchor {
+                writeln!(f, "<a id={anchor:?}></a>")?;
+            }
+            for _ in 0..*level {
+                write!(f, "#")?;
+            }
+            writeln!(f, " {text}")?;
+            writeln!(f)?;
+            Ok(())
+        }
+        Content::NewTerm { inline_content } => {
+            writeln!(f, "(TODO newterm: {})", contents_to_md(doc, inline_content))?;
+            Ok(())
+        }
+        Content::Aside {
+            name,
+            // Styles include "warning", "important", "note" and "tip".
+            // Only "warning" is supported by Rustdoc though:
+            // https://doc.rust-lang.org/rustdoc/how-to-write-documentation.html#adding-a-warning-block
+            style: _,
+            content,
+        } => {
+            writeln!(f, "<div class=\"warning\">")?;
+            writeln!(f)?;
+
+            writeln!(f, "### {}", name.as_deref().unwrap_or("Aside"))?;
+
+            writeln!(f, "{}", contents_to_md(doc, content))?;
+
+            writeln!(f)?;
+            writeln!(f, "</div>")?;
+
+            Ok(())
+        }
+        Content::TermList { items } => {
+            for term in items {
+                write!(
+                    f,
+                    "- {}: {}",
+                    contents_to_md(doc, &term.term.inline_content),
+                    contents_to_md(doc, &term.definition.content)
+                )?;
+            }
+
+            Ok(())
+        }
+    })
+}
+
+fn reference_to_md<'a>(
+    doc: &'a Doc,
+    reference: &'a Reference,
+    overriding_title: Option<&'a String>,
+    overriding_title_inline_content: Option<&'a Vec<Content>>,
+) -> impl fmt::Display + 'a {
+    FormatterFn(move |f| match reference {
+        Reference::Link {
+            identifier: _,
+            url,
+            title: _,
+            title_inline_content,
+        } => {
+            let title_inline_content =
+                overriding_title_inline_content.unwrap_or(title_inline_content);
+            write!(f, "[{}]({url})", contents_to_md(doc, title_inline_content))
+        }
+        Reference::Topic {
+            identifier: _,
+            kind,
+            title,
+            name: _,
+            title_style: _,
+            url,
+            ..
+        } => {
+            let title = overriding_title.unwrap_or(title);
+            // TODO: Make these a doc link to the actual item.
+            //
+            // Probably requires using the identifier to look up the item.
+            if kind == "symbol" {
+                write!(f, "[`{title}`](https://developer.apple.com{url})")
+            } else {
+                write!(f, "[{title}](https://developer.apple.com{url})")
+            }
+        }
+        _ => write!(f, "REFERENCE TODO: {reference:?}"),
+    })
+}
+
+fn slugify(c: char) -> Option<char> {
+    if c.is_alphanumeric() || c == '-' || c == '_' {
+        if c.is_ascii() {
+            Some(c.to_ascii_lowercase())
+        } else {
+            Some(c)
+        }
+    } else if c.is_whitespace() && c.is_ascii() {
+        Some('-')
+    } else {
+        None
+    }
 }
 
 #[cfg(test)]

@@ -1600,7 +1600,7 @@ impl Stmt {
                             });
                         };
 
-                        let mut documentation = Documentation::from_entity(&entity, context);
+                        let documentation = Documentation::from_entity(&entity, context);
 
                         if ty.is_simple_uint() {
                             ty = expr.guess_type(id.location());

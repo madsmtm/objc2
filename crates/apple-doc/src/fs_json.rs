@@ -206,10 +206,24 @@ pub enum Reference {
 #[serde(deny_unknown_fields)]
 pub struct ReferenceVariant {
     pub url: String,
-    pub traits: Vec<String>,
+    pub traits: Vec<ReferenceVariantTrait>,
 
     #[serde(rename = "svgID")]
     pub svg_id: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Clone)]
+pub enum ReferenceVariantTrait {
+    #[serde(rename = "1x")]
+    X1,
+    #[serde(rename = "2x")]
+    X2,
+    #[serde(rename = "3x")]
+    X3,
+    #[serde(rename = "dark")]
+    Dark,
+    #[serde(rename = "light")]
+    Light,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Clone)]
