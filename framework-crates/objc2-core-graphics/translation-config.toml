@@ -44,6 +44,8 @@ static.kCGFontIndexInvalid.use-value = true
 # Dependent on target endianness
 static.kCGBitmapByteOrder16Host.skipped = true
 static.kCGBitmapByteOrder32Host.skipped = true
+const.kCGImageByteOrder16Host.skipped = true
+const.kCGImageByteOrder32Host.skipped = true
 
 # Uses defines from IOKit
 enum.CGEventFlags.use-value = true

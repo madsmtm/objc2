@@ -73,10 +73,16 @@ default = [
     "VTFrameProcessorFrame",
     "VTFrameProcessorParameters",
     "VTFrameProcessor_FrameRateConversion",
+    "VTFrameProcessor_LowLatencyFrameInterpolation",
+    "VTFrameProcessor_LowLatencySuperResolutionScaler",
     "VTFrameProcessor_MotionBlur",
     "VTFrameProcessor_OpticalFlow",
+    "VTFrameProcessor_SuperResolutionScaler",
+    "VTFrameProcessor_TemporalNoiseFilter",
     "VTFrameSilo",
     "VTHDRPerFrameMetadataGenerationSession",
+    "VTMotionEstimationSession",
+    "VTMotionEstimationSessionProperties",
     "VTMultiPassStorage",
     "VTPixelRotationProperties",
     "VTPixelRotationSession",
@@ -129,13 +135,22 @@ VTFrameProcessorErrors = []
 VTFrameProcessorFrame = []
 VTFrameProcessorParameters = []
 VTFrameProcessor_FrameRateConversion = []
+VTFrameProcessor_LowLatencyFrameInterpolation = []
+VTFrameProcessor_LowLatencySuperResolutionScaler = []
 VTFrameProcessor_MotionBlur = []
 VTFrameProcessor_OpticalFlow = []
+VTFrameProcessor_SuperResolutionScaler = []
+VTFrameProcessor_TemporalNoiseFilter = []
 VTFrameSilo = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
 ]
 VTHDRPerFrameMetadataGenerationSession = ["objc2-core-foundation/CFDictionary"]
+VTMotionEstimationSession = [
+    "bitflags",
+    "objc2-core-foundation/CFDictionary",
+]
+VTMotionEstimationSessionProperties = []
 VTMultiPassStorage = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",

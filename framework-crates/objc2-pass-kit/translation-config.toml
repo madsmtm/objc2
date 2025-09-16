@@ -23,3 +23,7 @@ const.PKPassTypeAny.skipped = true
 #
 #     import PassKit.PKPassRelevantDate
 class.PKPass.methods.relevantDates.skipped = true
+
+# FIXME: Duplicated for some reason?
+class.PKPassRelevantDate.methods.init.skipped = true
+class.PKPassRelevantDate.methods.new.skipped = true

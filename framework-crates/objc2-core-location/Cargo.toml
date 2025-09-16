@@ -76,6 +76,10 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+CLLocation = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+]
 block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 objc2-contacts = ["dep:objc2-contacts"]
@@ -115,10 +119,6 @@ CLGeocoder = [
     "objc2-foundation/NSString",
 ]
 CLHeading = [
-    "objc2-foundation/NSDate",
-    "objc2-foundation/NSObject",
-]
-CLLocation = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
 ]

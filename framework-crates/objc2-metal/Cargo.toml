@@ -49,6 +49,37 @@ features = ["objc2-io-surface"]
 [features]
 default = [
     "std",
+    "MTL4AccelerationStructure",
+    "MTL4Archive",
+    "MTL4ArgumentTable",
+    "MTL4BinaryFunction",
+    "MTL4BinaryFunctionDescriptor",
+    "MTL4CommandAllocator",
+    "MTL4CommandBuffer",
+    "MTL4CommandEncoder",
+    "MTL4CommandQueue",
+    "MTL4CommitFeedback",
+    "MTL4Compiler",
+    "MTL4CompilerTask",
+    "MTL4ComputeCommandEncoder",
+    "MTL4ComputePipeline",
+    "MTL4Counters",
+    "MTL4FunctionDescriptor",
+    "MTL4LibraryDescriptor",
+    "MTL4LibraryFunctionDescriptor",
+    "MTL4LinkedFunctions",
+    "MTL4LinkingDescriptor",
+    "MTL4MachineLearningCommandEncoder",
+    "MTL4MachineLearningPipeline",
+    "MTL4MeshRenderPipeline",
+    "MTL4PipelineDataSetSerializer",
+    "MTL4PipelineState",
+    "MTL4RenderCommandEncoder",
+    "MTL4RenderPass",
+    "MTL4RenderPipeline",
+    "MTL4SpecializedFunctionDescriptor",
+    "MTL4StitchedFunctionDescriptor",
+    "MTL4TileRenderPipeline",
     "MTLAccelerationStructure",
     "MTLAccelerationStructureCommandEncoder",
     "MTLAccelerationStructureTypes",
@@ -68,6 +99,7 @@ default = [
     "MTLComputePass",
     "MTLComputePipeline",
     "MTLCounters",
+    "MTLDataType",
     "MTLDefines",
     "MTLDepthStencil",
     "MTLDevice",
@@ -102,9 +134,12 @@ default = [
     "MTLResource",
     "MTLResourceStateCommandEncoder",
     "MTLResourceStatePass",
+    "MTLResourceViewPool",
     "MTLSampler",
     "MTLStageInputOutputDescriptor",
+    "MTLTensor",
     "MTLTexture",
+    "MTLTextureViewPool",
     "MTLTypes",
     "MTLVertexDescriptor",
     "MTLVisibleFunctionTable",
@@ -125,16 +160,127 @@ dispatch2 = ["dep:dispatch2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-io-surface = ["dep:objc2-io-surface"]
 
+MTL4AccelerationStructure = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MTL4Archive = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+]
+MTL4ArgumentTable = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MTL4BinaryFunction = ["objc2-foundation/NSString"]
+MTL4BinaryFunctionDescriptor = [
+    "bitflags",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MTL4CommandAllocator = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MTL4CommandBuffer = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+MTL4CommandEncoder = [
+    "bitflags",
+    "objc2-foundation/NSString",
+]
+MTL4CommandQueue = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+MTL4CommitFeedback = ["objc2-foundation/NSError"]
+MTL4Compiler = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+MTL4CompilerTask = []
+MTL4ComputeCommandEncoder = ["objc2-foundation/NSRange"]
+MTL4ComputePipeline = ["objc2-foundation/NSObject"]
+MTL4Counters = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+MTL4FunctionDescriptor = ["objc2-foundation/NSObject"]
+MTL4LibraryDescriptor = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MTL4LibraryFunctionDescriptor = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MTL4LinkedFunctions = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MTL4LinkingDescriptor = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MTL4MachineLearningCommandEncoder = []
+MTL4MachineLearningPipeline = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+MTL4MeshRenderPipeline = ["objc2-foundation/NSObject"]
+MTL4PipelineDataSetSerializer = [
+    "bitflags",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSURL",
+]
+MTL4PipelineState = [
+    "bitflags",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MTL4RenderCommandEncoder = [
+    "bitflags",
+    "objc2-foundation/NSRange",
+]
+MTL4RenderPass = ["objc2-foundation/NSObject"]
+MTL4RenderPipeline = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
+MTL4SpecializedFunctionDescriptor = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MTL4StitchedFunctionDescriptor = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
+MTL4TileRenderPipeline = ["objc2-foundation/NSObject"]
 MTLAccelerationStructure = [
     "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-MTLAccelerationStructureCommandEncoder = [
-    "bitflags",
-    "objc2-foundation/NSObject",
-]
+MTLAccelerationStructureCommandEncoder = ["objc2-foundation/NSObject"]
 MTLAccelerationStructureTypes = []
 MTLAllocation = []
 MTLArgument = [
@@ -157,6 +303,7 @@ MTLBlitCommandEncoder = [
 ]
 MTLBlitPass = ["objc2-foundation/NSObject"]
 MTLBuffer = [
+    "objc2-foundation/NSError",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
 ]
@@ -199,6 +346,7 @@ MTLCounters = [
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
 ]
+MTLDataType = []
 MTLDefines = []
 MTLDepthStencil = [
     "objc2-foundation/NSObject",
@@ -329,17 +477,29 @@ MTLResource = [
 ]
 MTLResourceStateCommandEncoder = []
 MTLResourceStatePass = ["objc2-foundation/NSObject"]
+MTLResourceViewPool = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
 MTLSampler = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 MTLStageInputOutputDescriptor = ["objc2-foundation/NSObject"]
+MTLTensor = [
+    "bitflags",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 MTLTexture = [
     "bitflags",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
 ]
+MTLTextureViewPool = []
 MTLTypes = []
 MTLVertexDescriptor = ["objc2-foundation/NSObject"]
 MTLVisibleFunctionTable = [

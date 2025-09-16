@@ -8,6 +8,10 @@ visionos = "1.0"
 
 external.AVAudioSession.module = "AVFAudio.AVAudioSession"
 
+# Needs CASpatialAudioExperience, which is not available on macOS (where header-translator runs).
+class.CHHapticEngine.methods.intendedSpatialExperience.skipped = true
+class.CHHapticEngine.methods."setIntendedSpatialExperience:".skipped = true
+
 # Needs `ns_string!` that works reliably in statics.
 static.CoreHapticsErrorDomain.skipped = true
 

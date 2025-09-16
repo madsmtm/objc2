@@ -16,6 +16,7 @@ license.workspace = true
 workspace = true
 
 [dependencies]
+bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 dispatch2 = { workspace = true, optional = true, features = [
     "alloc",
@@ -42,17 +43,23 @@ default = [
     "BGTask",
     "BGTaskRequest",
     "BGTaskScheduler",
+    "bitflags",
     "block2",
     "dispatch2",
 ]
 std = ["alloc"]
 alloc = []
+bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 
 BGDefines = []
-BGTask = ["objc2-foundation/NSString"]
+BGTask = [
+    "objc2-foundation/NSProgress",
+    "objc2-foundation/NSString",
+]
 BGTaskRequest = [
+    "bitflags",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSFileManager",
     "objc2-foundation/NSObject",

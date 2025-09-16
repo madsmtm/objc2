@@ -20,7 +20,7 @@ bitflags = { workspace = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, features = ["std"] }
 objc2-ar-kit = { workspace = true, optional = true, features = [
-    "ARAnchor",
+    "ARAnchor", # Added
     "ARFaceAnchor",
     "objc2",
 ] }

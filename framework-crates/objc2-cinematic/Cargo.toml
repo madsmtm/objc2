@@ -21,6 +21,7 @@ objc2 = { workspace = true, features = ["std"] }
 objc2-av-foundation = { workspace = true, optional = true, features = [
     "AVAsset",
     "AVAssetTrack",
+    "AVAudioMix",
     "AVComposition",
     "AVTimedMetadataGroup",
 ] }
@@ -72,6 +73,7 @@ default = [
     "CNObjectTracker",
     "CNRenderingSession",
     "CNScript",
+    "CNSpatialAudio",
     "block2",
     "objc2-av-foundation",
     "objc2-core-foundation",
@@ -120,4 +122,10 @@ CNScript = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSProgress",
+]
+CNSpatialAudio = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]

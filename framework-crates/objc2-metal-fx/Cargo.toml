@@ -34,16 +34,49 @@ targets = [
 [features]
 default = [
     "std",
+    "MTL4FXFrameInterpolator",
+    "MTL4FXSpatialScaler",
+    "MTL4FXTemporalDenoisedScaler",
+    "MTL4FXTemporalScaler",
     "MTLFXDefines",
+    "MTLFXFrameInterpolator",
     "MTLFXSpatialScaler",
+    "MTLFXTemporalDenoisedScaler",
     "MTLFXTemporalScaler",
 ]
 std = ["alloc"]
 alloc = []
 
+MTL4FXFrameInterpolator = ["objc2-metal/MTL4CommandBuffer"]
+MTL4FXSpatialScaler = ["objc2-metal/MTL4CommandBuffer"]
+MTL4FXTemporalDenoisedScaler = ["objc2-metal/MTL4CommandBuffer"]
+MTL4FXTemporalScaler = ["objc2-metal/MTL4CommandBuffer"]
 MTLFXDefines = []
+MTLFXFrameInterpolator = [
+    "objc2-foundation/NSObject",
+    "objc2-metal/MTL4Compiler",
+    "objc2-metal/MTLAllocation",
+    "objc2-metal/MTLCommandBuffer",
+    "objc2-metal/MTLDevice",
+    "objc2-metal/MTLFence",
+    "objc2-metal/MTLPixelFormat",
+    "objc2-metal/MTLResource",
+    "objc2-metal/MTLTexture",
+]
 MTLFXSpatialScaler = [
     "objc2-foundation/NSObject",
+    "objc2-metal/MTL4Compiler",
+    "objc2-metal/MTLAllocation",
+    "objc2-metal/MTLCommandBuffer",
+    "objc2-metal/MTLDevice",
+    "objc2-metal/MTLFence",
+    "objc2-metal/MTLPixelFormat",
+    "objc2-metal/MTLResource",
+    "objc2-metal/MTLTexture",
+]
+MTLFXTemporalDenoisedScaler = [
+    "objc2-foundation/NSObject",
+    "objc2-metal/MTL4Compiler",
     "objc2-metal/MTLAllocation",
     "objc2-metal/MTLCommandBuffer",
     "objc2-metal/MTLDevice",
@@ -54,6 +87,7 @@ MTLFXSpatialScaler = [
 ]
 MTLFXTemporalScaler = [
     "objc2-foundation/NSObject",
+    "objc2-metal/MTL4Compiler",
     "objc2-metal/MTLAllocation",
     "objc2-metal/MTLCommandBuffer",
     "objc2-metal/MTLDevice",

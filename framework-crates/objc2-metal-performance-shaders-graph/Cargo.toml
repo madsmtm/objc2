@@ -225,6 +225,7 @@ MPSGraphTensorData = [
     "objc2-metal/MTLAllocation",
     "objc2-metal/MTLBuffer",
     "objc2-metal/MTLResource",
+    "objc2-metal/MTLTensor",
 ]
 MPSGraphTensorShapeOps = [
     "objc2-foundation/NSArray",

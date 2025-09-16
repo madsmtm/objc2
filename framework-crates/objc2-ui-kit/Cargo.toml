@@ -150,10 +150,12 @@ default = [
     "UIApplicationShortcutItem",
     "UIAttachmentBehavior",
     "UIBackgroundConfiguration",
+    "UIBackgroundExtensionView",
     "UIBandSelectionInteraction",
     "UIBarAppearance",
     "UIBarButtonItem",
     "UIBarButtonItemAppearance",
+    "UIBarButtonItemBadge",
     "UIBarButtonItemGroup",
     "UIBarCommon",
     "UIBarItem",
@@ -201,6 +203,7 @@ default = [
     "UIContentUnavailableView",
     "UIContextMenuConfiguration",
     "UIContextMenuInteraction",
+    "UIContextMenuSystem",
     "UIContextualAction",
     "UIControl",
     "UIConversationContext",
@@ -241,10 +244,13 @@ default = [
     "UIFocus",
     "UIFocusAnimationCoordinator",
     "UIFocusDebugger",
+    "UIFocusDefines",
     "UIFocusEffect",
     "UIFocusGuide",
     "UIFocusMovementHint",
     "UIFocusSystem",
+    "UIFocusSystem_UIKitAdditions",
+    "UIFocusUpdateContext_UIKitAdditions",
     "UIFont",
     "UIFontDescriptor",
     "UIFontMetrics",
@@ -254,6 +260,7 @@ default = [
     "UIGeometry",
     "UIGestureRecognizer",
     "UIGestureRecognizerSubclass",
+    "UIGlassEffect",
     "UIGraphics",
     "UIGraphicsImageRenderer",
     "UIGraphicsPDFRenderer",
@@ -300,6 +307,7 @@ default = [
     "UILongPressGestureRecognizer",
     "UIMailConversationContext",
     "UIMailConversationEntry",
+    "UIMainMenuSystem",
     "UIManagedDocument",
     "UIMenu",
     "UIMenuBuilder",
@@ -366,19 +374,24 @@ default = [
     "UIRotationGestureRecognizer",
     "UIScene",
     "UISceneActivationConditions",
+    "UISceneConfiguration",
     "UISceneDefinitions",
+    "UISceneDestructionCondition",
     "UISceneEnhancedStateRestoration",
     "UISceneOptions",
     "UISceneSession",
     "UISceneSessionActivationRequest",
+    "UISceneSizeRestrictions",
     "UISceneSystemProtectionManager",
     "UISceneWindowingBehaviors",
+    "UISceneWindowingControlStyle",
     "UIScene_AVAudioSession",
     "UIScreen",
     "UIScreenEdgePanGestureRecognizer",
     "UIScreenMode",
     "UIScreenshotService",
     "UIScribbleInteraction",
+    "UIScrollEdgeElementContainerInteraction",
     "UIScrollView",
     "UISearchBar",
     "UISearchContainerViewController",
@@ -393,9 +406,11 @@ default = [
     "UIShape",
     "UISheetPresentationController",
     "UISlider",
+    "UISliderTrackConfiguration",
     "UISmartReplySuggestion",
     "UISnapBehavior",
     "UISplitViewController",
+    "UISplitViewControllerLayoutEnvironment",
     "UISpringLoadedInteraction",
     "UISpringLoadedInteractionSupporting",
     "UIStackView",
@@ -410,8 +425,10 @@ default = [
     "UISwipeActionsConfiguration",
     "UISwipeGestureRecognizer",
     "UISwitch",
+    "UISymbolContentTransition",
     "UISymbolEffectCompletion",
     "UITab",
+    "UITabAccessory",
     "UITabBar",
     "UITabBarAppearance",
     "UITabBarController",
@@ -480,6 +497,7 @@ default = [
     "UIViewControllerTransition",
     "UIViewControllerTransitionCoordinator",
     "UIViewControllerTransitioning",
+    "UIViewLayoutRegion",
     "UIViewPropertyAnimator",
     "UIVisualEffect",
     "UIVisualEffectView",
@@ -833,6 +851,10 @@ UIApplicationShortcutItem = [
 ]
 UIAttachmentBehavior = ["objc2-foundation/NSArray"]
 UIBackgroundConfiguration = ["objc2-foundation/NSObject"]
+UIBackgroundExtensionView = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+]
 UIBandSelectionInteraction = []
 UIBarAppearance = [
     "objc2-foundation/NSCoder",
@@ -848,6 +870,10 @@ UIBarButtonItemAppearance = [
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+UIBarButtonItemBadge = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -1046,6 +1072,7 @@ UIContextMenuConfiguration = [
     "objc2-foundation/NSSet",
 ]
 UIContextMenuInteraction = ["objc2-foundation/NSObject"]
+UIContextMenuSystem = []
 UIContextualAction = ["objc2-foundation/NSString"]
 UIControl = [
     "bitflags",
@@ -1081,6 +1108,7 @@ UIDeferredMenuElement = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
 UIDevice = [
     "objc2-foundation/NSNotification",
@@ -1226,16 +1254,19 @@ UIFocus = [
 ]
 UIFocusAnimationCoordinator = ["objc2-foundation/NSDate"]
 UIFocusDebugger = []
+UIFocusDefines = []
 UIFocusEffect = ["objc2-foundation/NSObject"]
 UIFocusGuide = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
 ]
 UIFocusMovementHint = ["objc2-foundation/NSObject"]
-UIFocusSystem = [
+UIFocusSystem = []
+UIFocusSystem_UIKitAdditions = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
+UIFocusUpdateContext_UIKitAdditions = []
 UIFont = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
@@ -1277,6 +1308,7 @@ UIGestureRecognizer = [
     "objc2-foundation/NSValue",
 ]
 UIGestureRecognizerSubclass = ["objc2-foundation/NSSet"]
+UIGlassEffect = ["objc2-foundation/NSObject"]
 UIGraphics = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
@@ -1442,6 +1474,7 @@ UIMailConversationEntry = [
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
+UIMainMenuSystem = ["objc2-foundation/NSObject"]
 UIManagedDocument = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -1508,6 +1541,7 @@ UINavigationController = [
 ]
 UINavigationItem = [
     "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
@@ -1693,10 +1727,15 @@ UISceneActivationConditions = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSUserActivity",
 ]
+UISceneConfiguration = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 UISceneDefinitions = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
+UISceneDestructionCondition = ["objc2-foundation/NSObject"]
 UISceneEnhancedStateRestoration = []
 UISceneOptions = [
     "objc2-foundation/NSSet",
@@ -1714,11 +1753,13 @@ UISceneSessionActivationRequest = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSUserActivity",
 ]
+UISceneSizeRestrictions = []
 UISceneSystemProtectionManager = [
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
 ]
 UISceneWindowingBehaviors = []
+UISceneWindowingControlStyle = []
 UIScene_AVAudioSession = []
 UIScreen = [
     "objc2-foundation/NSArray",
@@ -1729,6 +1770,7 @@ UIScreenEdgePanGestureRecognizer = ["objc2-foundation/NSCoder"]
 UIScreenMode = []
 UIScreenshotService = ["objc2-foundation/NSData"]
 UIScribbleInteraction = []
+UIScrollEdgeElementContainerInteraction = []
 UIScrollView = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
@@ -1788,6 +1830,11 @@ UISlider = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
+UISliderTrackConfiguration = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 UISmartReplySuggestion = ["objc2-foundation/NSString"]
 UISnapBehavior = []
 UISplitViewController = [
@@ -1797,6 +1844,7 @@ UISplitViewController = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+UISplitViewControllerLayoutEnvironment = []
 UISpringLoadedInteraction = []
 UISpringLoadedInteractionSupporting = []
 UIStackView = [
@@ -1837,8 +1885,10 @@ UISwitch = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+UISymbolContentTransition = ["objc2-foundation/NSObject"]
 UISymbolEffectCompletion = []
 UITab = ["objc2-foundation/NSString"]
+UITabAccessory = []
 UITabBar = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
@@ -1937,6 +1987,7 @@ UITextField = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
 UITextFormattingCoordinator = [
     "objc2-foundation/NSAttributedString",
@@ -2126,6 +2177,7 @@ UIViewControllerTransitioning = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+UIViewLayoutRegion = []
 UIViewPropertyAnimator = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",

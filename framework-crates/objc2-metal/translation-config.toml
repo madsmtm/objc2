@@ -26,6 +26,9 @@ fn.MTLPackedFloat3Make.skipped = true
 # Manually defined to allow it to work on older OSes.
 fn.MTLCopyAllDevices.skipped = true
 
+# isize referencing usize.
+enum.MTLTensorDataType.use-value = true
+
 ###
 ### Safety
 ###
