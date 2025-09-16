@@ -325,7 +325,21 @@ pub use self::retained::*;
 /// ```
 /// use objc2::rc::Retained;
 /// use objc2::{msg_send, ClassType};
-/// use objc2_foundation::{NSNumber, NSString, NSURLComponents};
+/// use objc2::runtime::NSObject;
+///
+/// // Declare stub types for the three classes we'll be working with.
+/// objc2::extern_class!(
+///     #[unsafe(super(NSObject))] // + NSValue
+///     struct NSNumber;
+/// );
+/// objc2::extern_class!(
+///     #[unsafe(super(NSObject))]
+///     struct NSURLComponents;
+/// );
+/// objc2::extern_class!(
+///     #[unsafe(super(NSObject))]
+///     struct NSString;
+/// );
 ///
 ///
 /// // Create an empty `NSURLComponents` by calling the class method `new`.
@@ -381,9 +395,15 @@ pub use self::retained::*;
 /// // Get the combined URL in string form.
 /// let string: Option<Retained<NSString>> = unsafe { msg_send![&components, string] };
 /// //          ^^^^^^ the method can return NULL, so we specify an option here
+/// let string = string.unwrap();
 ///
+/// // Convert the `NSString` to a Rust string.
+/// // NOTE: This has issues with interior NUL characters.
+/// // `objc2_foundation::NSString` handles this correctly.
+/// let bytes: *const std::ffi::c_char = unsafe { msg_send![&string, UTF8String] };
+/// let c_str = unsafe { std::ffi::CStr::from_ptr(bytes) };
 ///
-/// assert_eq!(string.unwrap().to_string(), "http://example.com:8080");
+/// assert_eq!(c_str, c"http://example.com:8080");
 /// ```
 ///
 /// The example above uses only `msg_send!` for demonstration purposes; note
@@ -392,7 +412,7 @@ pub use self::retained::*;
 ///
 /// [the framework crates]: crate::topics::frameworks_list
 ///
-/// ```
+/// ```ignore
 /// use objc2_foundation::{NSNumber, NSString, NSURLComponents};
 ///
 /// let components = unsafe { NSURLComponents::new() };

@@ -34,7 +34,6 @@
 pub mod about_generated {} // Referenced by header-translator
 #[doc = include_str!("alternatives.md")]
 pub mod alternatives {}
-#[cfg(not(all(doctest, feature = "gnustep-1-7")))] // Don't doctest on GNUStep
 #[doc = include_str!("crate_interop.md")]
 pub mod crate_interop {}
 #[doc = include_str!("cross_compiling.md")]
@@ -55,7 +54,6 @@ pub mod interior_mutability {}
 pub mod swift {}
 #[doc = include_str!("weak_property.md")]
 pub mod weak_property {} // Referenced by header-translator
-#[cfg(not(all(doctest, feature = "gnustep-1-7")))] // Don't doctest on GNUStep
 #[doc = include_str!("run_loop.md")]
 pub mod run_loop {}
 

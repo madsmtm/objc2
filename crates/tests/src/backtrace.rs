@@ -1,5 +1,10 @@
-#![cfg(target_vendor = "apple")] // The test is very Apple centric
+#![cfg(target_vendor = "apple")]
+use std::boxed::Box;
+// The test is very Apple centric
 use std::ffi::c_void;
+use std::string::{String, ToString};
+use std::vec::Vec;
+use std::{format, vec};
 
 use objc2::{define_class, extern_methods, msg_send, ClassType};
 use objc2_foundation::{NSException, NSObject};

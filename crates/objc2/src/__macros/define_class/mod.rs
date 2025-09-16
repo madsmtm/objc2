@@ -281,6 +281,16 @@ pub use self::ivars::*;
 /// ```
 /// use std::ffi::c_int;
 ///
+/// # use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
+/// # objc2::extern_protocol!(
+/// #     unsafe trait NSCopying {
+/// #         #[unsafe(method(copy))]
+/// #         fn copy(&self) -> Retained<Self>;
+/// #         #[unsafe(method(copyWithZone:))]
+/// #         unsafe fn copyWithZone(&self, zone: *mut NSZone) -> Retained<Self>;
+/// #     }
+/// # );
+/// # #[cfg(requires_foundation)]
 /// use objc2_foundation::{CopyingHelper, NSCopying, NSObject, NSObjectProtocol, NSZone};
 /// use objc2::rc::{Allocated, Retained};
 /// use objc2::{
@@ -345,6 +355,7 @@ pub use self::ivars::*;
 /// );
 ///
 /// // Specially required for `NSCopying`, but otherwise not needed.
+/// # #[cfg(requires_foundation)]
 /// unsafe impl CopyingHelper for MyCustomObject {
 ///     type Result = Self;
 /// }

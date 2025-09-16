@@ -13,6 +13,11 @@ path = "delegate.rs"
 name = "default_xcode_app"
 path = "default_xcode_app/main.rs"
 
+# The example from `objc2`'s main docs.
+[[example]]
+name = "hello_world_app"
+path = "hello_world_app.rs"
+
 [dependencies]
 objc2 = "0.6.2"
 objc2-foundation = { version = "0.3.1", default-features = false, features = [
@@ -24,10 +29,16 @@ objc2-foundation = { version = "0.3.1", default-features = false, features = [
 ] }
 objc2-app-kit = { version = "0.3.1", default-features = false, features = [
     "std",
+    "objc2-core-foundation",
     "NSApplication",
+    "NSColor",
+    "NSControl",
+    "NSFont",
     "NSGraphics",
     "NSResponder",
     "NSRunningApplication",
+    "NSText",
+    "NSTextField",
     "NSView",
     "NSViewController",
     "NSWindow",

@@ -83,15 +83,14 @@ use crate::{ffi, ClassType, DowncastTarget, Message};
 ///
 /// ```
 /// # use objc2::runtime::NSObject;
+/// # objc2::extern_class!(
+/// #     #[unsafe(super(NSObject))]
+/// #     struct NSString;
+/// # );
 /// # #[cfg(available_in_foundation)]
 /// use objc2_foundation::{NSObject, NSString};
 /// use objc2::rc::Retained;
 /// use objc2::{ClassType, msg_send};
-/// #
-/// # objc2::extern_class!(
-/// #     #[unsafe(super(NSObject))]
-/// #     pub struct NSString;
-/// # );
 ///
 /// // Use `msg_send!` to create an `Retained` with correct memory management
 /// //
@@ -300,6 +299,19 @@ impl<T: Message> Retained<T> {
     /// Cast a string to an object, and back again.
     ///
     /// ```
+    /// # use objc2::runtime::NSObject;
+    /// # objc2::extern_class!(
+    /// #     #[unsafe(super(NSObject))]
+    /// #     #[derive(Debug)]
+    /// #     struct NSString;
+    /// # );
+    /// # impl NSString {
+    /// #     objc2::extern_methods!(
+    /// #         #[unsafe(method(new))]
+    /// #         fn new() -> objc2::rc::Retained<Self>;
+    /// #     );
+    /// # }
+    /// # #[cfg(available_in_foundation)]
     /// use objc2_foundation::{NSString, NSObject};
     ///
     /// let string = NSString::new();
@@ -313,6 +325,13 @@ impl<T: Message> Retained<T> {
     /// object in [`Err`].
     ///
     /// ```
+    /// # use objc2::runtime::NSObject;
+    /// # objc2::extern_class!(
+    /// #     #[unsafe(super(NSObject))]
+    /// #     #[derive(Debug)]
+    /// #     struct NSString;
+    /// # );
+    /// # #[cfg(available_in_foundation)]
     /// use objc2_foundation::{NSString, NSObject};
     ///
     /// let obj = NSObject::new();

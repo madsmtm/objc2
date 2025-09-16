@@ -279,6 +279,18 @@ impl AnyObject {
     ///
     /// ```
     /// use objc2::rc::Retained;
+    /// # use objc2::runtime::NSObject;
+    /// # objc2::extern_class!(
+    /// #     #[unsafe(super(NSObject))]
+    /// #     struct NSString;
+    /// # );
+    /// # impl NSString {
+    /// #     objc2::extern_methods!(
+    /// #         #[unsafe(method(new))]
+    /// #         fn new() -> objc2::rc::Retained<Self>;
+    /// #     );
+    /// # }
+    /// # #[cfg(available_in_foundation)]
     /// use objc2_foundation::{NSObject, NSString};
     ///
     /// let obj: Retained<NSObject> = NSString::new().into_super();
@@ -290,6 +302,12 @@ impl AnyObject {
     /// Try (and fail) to cast an `NSObject` to an `NSString`.
     ///
     /// ```
+    /// # use objc2::runtime::NSObject;
+    /// # objc2::extern_class!(
+    /// #     #[unsafe(super(NSObject))]
+    /// #     struct NSString;
+    /// # );
+    /// # #[cfg(available_in_foundation)]
     /// use objc2_foundation::{NSObject, NSString};
     ///
     /// let obj = NSObject::new();
@@ -298,7 +316,7 @@ impl AnyObject {
     ///
     /// Try to cast to an array of strings.
     ///
-    /// ```compile_fail,E0277
+    /// ```ignore
     /// use objc2_foundation::{NSArray, NSObject, NSString};
     ///
     /// let arr = NSArray::from_retained_slice(&[NSObject::new()]);
@@ -312,7 +330,7 @@ impl AnyObject {
     ///
     /// Downcast when processing each element instead.
     ///
-    /// ```
+    /// ```ignore
     /// use objc2_foundation::{NSArray, NSObject, NSString};
     ///
     /// let arr = NSArray::from_retained_slice(&[NSObject::new()]);

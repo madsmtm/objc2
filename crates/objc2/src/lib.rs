@@ -34,9 +34,7 @@
 //! $ cargo add objc2 objc2-foundation objc2-app-kit
 //! ```
 //!
-#![cfg_attr(target_os = "macos", doc = "```no_run")]
-#![cfg_attr(not(target_os = "macos"), doc = "```ignore")]
-#![allow(clippy::needless_doctest_main)]
+//! ```ignore
 #![doc = include_str!("../examples/hello_world_app.rs")]
 //! ```
 //!
@@ -124,6 +122,7 @@
 #![warn(missing_debug_implementations)]
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]
+#![allow(clippy::needless_doctest_main)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2/0.6.2")]
 
@@ -158,7 +157,8 @@ mod main_thread_marker;
 pub mod rc;
 pub mod runtime;
 mod top_level_traits;
-#[cfg(any(docsrs, doc, doctest, test))]
+#[cfg(any(docsrs, doc, test))]
+#[cfg(not(doctest))] // Doctests are run in `tests` crate instead.
 pub mod topics;
 
 /// Deprecated location for a few things that are now in the [`runtime`]

@@ -1,5 +1,5 @@
+use objc2::runtime::NSObject;
 use objc2::{extern_class, ClassType};
-use objc2_foundation::NSObject;
 use static_assertions::assert_impl_all;
 
 #[test]

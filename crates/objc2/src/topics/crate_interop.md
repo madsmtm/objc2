@@ -82,7 +82,7 @@ An alternative, if you don't want to go through the trouble of creating a newtyp
 
 Here we set the [`-[CALayer borderColor]`](https://developer.apple.com/documentation/quartzcore/calayer/1410903-bordercolor?language=objc) property (which uses `CGColorRef`).
 
-```rust, ignore
+```rust
 use core_foundation::base::ToVoid;
 use core_graphics::color::CGColor;
 use objc2_quartz_core::CALayer;

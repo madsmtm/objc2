@@ -1,0 +1,14 @@
+error[E0277]: the trait bound `NSArray<NSString>: objc2::downcast::DowncastTarget` is not satisfied
+ --> ui/downcast_generic_ref.rs
+  |
+  |     let _arr = arr.downcast_ref::<NSArray<NSString>>();
+  |                    ------------   ^^^^^^^^^^^^^^^^^ the trait `objc2::downcast::DowncastTarget` is not implemented for `NSArray<NSString>`
+  |                    |
+  |                    required by a bound introduced by this call
+  |
+  = help: the trait `objc2::downcast::DowncastTarget` is implemented for `NSArray`
+note: required by a bound in `objc2::runtime::anyobject::AnyObject::downcast_ref`
+ --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
+  |
+  |     pub fn downcast_ref<T: DowncastTarget>(&self) -> Option<&T> {
+  |                            ^^^^^^^^^^^^^^ required by this bound in `AnyObject::downcast_ref`

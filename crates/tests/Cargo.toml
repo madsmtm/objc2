@@ -23,20 +23,34 @@ gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1", "objc2/gnustep-2-1", "objc2-
 unstable-objfw = ["block2/unstable-objfw", "objc2/unstable-objfw"]
 
 [dependencies]
-block2 = { path = "../block2" }
-objc2 = { path = "../objc2" }
-objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = [
+backtrace = "0.3.74"
+block2 = { workspace = true, features = ["std"] }
+objc2 = { workspace = true, features = ["std", "relax-void-encoding"] }
+objc2-foundation = { workspace = true, features = [
     "std",
-    "NSException",
     "NSArray",
-    "NSString",
-    "NSSet",
     "NSDictionary",
-    "NSValue",
-    "NSObject",
     "NSEnumerator",
+    "NSException",
+    "NSKeyValueObserving",
     "NSObjCRuntime",
+    "NSObject",
+    "NSRunLoop",
+    "NSSet",
+    "NSString",
+    "NSValue",
 ] }
+
+[target.'cfg(target_vendor = "apple")'.dev-dependencies]
+core-graphics = "0.25.0"
+core-foundation = "0.10.1"
+objc2-quartz-core = { workspace = true, features = ["std", "CALayer"] }
+
+[target.'cfg(target_os = "macos")'.dev-dependencies]
+objc2-app-kit = { workspace = true, features = ["std", "NSApplication", "NSResponder"] }
+
+[target.'cfg(all(target_vendor = "apple", not(target_os = "macos")))'.dev-dependencies]
+objc2-ui-kit = { workspace = true, features = ["std", "UIApplication"] }
 
 [build-dependencies]
 cc = "1.0"

@@ -514,31 +514,12 @@ pub unsafe trait MainThreadOnly: private::SealedMainThreadOnly {
     ///
     /// Create a view on the main thread.
     ///
-    /// ```
+    /// ```ignore
     /// use objc2::{MainThreadOnly, MainThreadMarker};
-    /// # #[cfg(available_in_app_kit)]
     /// use objc2_app_kit::NSView;
     /// use objc2_core_foundation::CGRect;
-    /// #
-    /// # use objc2::rc::{Allocated, Retained};
-    /// #
-    /// # objc2::extern_class!(
-    /// #     #[unsafe(super(objc2::runtime::NSObject))]
-    /// #     #[thread_kind = MainThreadOnly]
-    /// #     #[name = "NSObject"] // For example
-    /// #     struct NSView;
-    /// # );
-    /// #
-    /// # impl NSView {
-    /// #     fn initWithFrame(this: Allocated<Self>, _frame: CGRect) -> Retained<Self> {
-    /// #         // Don't use frame, this is NSObject
-    /// #         unsafe { objc2::msg_send![this, init] }
-    /// #     }
-    /// # }
     ///
-    /// # #[cfg(doctests_not_always_run_on_main_thread)]
     /// let mtm = MainThreadMarker::new().expect("must be on the main thread");
-    /// # let mtm = unsafe { MainThreadMarker::new_unchecked() };
     ///
     /// let frame = CGRect::default();
     /// let view = NSView::initWithFrame(NSView::alloc(mtm), frame);

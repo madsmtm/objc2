@@ -245,7 +245,7 @@ details on this.
 
 The `NSData` example again.
 
-```rust, ignore
+```rust
 use objc2_foundation::NSData;
 
 let obj = NSData::new();

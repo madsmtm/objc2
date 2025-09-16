@@ -20,13 +20,13 @@ func foo() -> Int32 {
 }
 ```
 
-```rust,ignore
+```rust,no_run
 // build.rs
 
 fn main() {
     // Somehow invoke `swiftc` to compile the library.
     // You probably want to use a helper library for this!
-    let status = std::process::Command("swiftc")
+    let status = std::process::Command::new("swiftc")
         .arg("foo.swift")
         .arg("-emit-library")
         .status()

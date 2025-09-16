@@ -14,6 +14,8 @@ extern crate alloc;
 extern crate std;
 
 #[cfg(test)]
+mod backtrace;
+#[cfg(test)]
 mod block;
 #[cfg(all(test, feature = "exception"))]
 mod exception;
@@ -29,6 +31,12 @@ mod test_object;
 #[cfg(test)]
 #[cfg(all(target_vendor = "apple", feature = "unstable-simd"))]
 mod test_simd_return;
+
+// Run some `objc2` doctests that require extra crates.
+#[cfg(target_vendor = "apple")]
+#[allow(rustdoc::broken_intra_doc_links)]
+#[path = "../../objc2/src/topics/mod.rs"]
+pub mod objc2_topics;
 
 #[no_mangle]
 extern "C-unwind" fn debug_block(block: *mut c_void) {
