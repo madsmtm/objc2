@@ -8,3 +8,7 @@ macos = "11.0"
 class.VZMACAddress.methods."initWithEthernetAddress:".skipped = true
 # Needs `ether_addr_t`
 class.VZMACAddress.methods.ethernetAddress.skipped = true
+
+# Needs `vmnet_network_ref` from `vmnet`
+class.VZVmnetNetworkDeviceAttachment.methods."initWithNetwork:".skipped = true
+class.VZVmnetNetworkDeviceAttachment.methods.network.skipped = true

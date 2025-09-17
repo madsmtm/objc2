@@ -45,6 +45,9 @@ default = [
     "VSAccountMetadataRequest",
     "VSAccountProviderResponse",
     "VSAppleSubscription",
+    "VSAutoSignInAuthorization",
+    "VSAutoSignInToken",
+    "VSAutoSignInTokenUpdateContext",
     "VSSubscription",
     "VSSubscriptionRegistrationCenter",
     "VSUserAccount",
@@ -82,6 +85,12 @@ VSAppleSubscription = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
 ]
+VSAutoSignInAuthorization = []
+VSAutoSignInToken = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+VSAutoSignInTokenUpdateContext = []
 VSSubscription = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",

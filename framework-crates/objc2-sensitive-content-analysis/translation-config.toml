@@ -4,3 +4,5 @@ required-crates = ["objc2", "objc2-foundation"]
 macos = "14.0"
 maccatalyst = "17.0"
 ios = "17.0"
+
+external.AVCaptureDeviceInput.module = "AVFoundation.AVCaptureInput"

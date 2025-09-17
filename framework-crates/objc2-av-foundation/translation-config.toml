@@ -16,6 +16,12 @@ external.CIBarcodeDescriptor.module = "CoreImage.CIBarcodeDescriptor"
 # Only available on iOS
 class.AVAsset.methods.preferredDisplayCriteria.skipped = true
 
+# Needs CASpatialAudioExperience, which is not available on macOS (where header-translator runs).
+class.AVPlayer.methods.intendedSpatialAudioExperience.skipped = true
+class.AVPlayer.methods."setIntendedSpatialAudioExperience:".skipped = true
+class.AVSampleBufferRenderSynchronizer.methods.intendedSpatialAudioExperience.skipped = true
+class.AVSampleBufferRenderSynchronizer.methods."setIntendedSpatialAudioExperience:".skipped = true
+
 # Unclear error return
 protocol.AVAsynchronousKeyValueLoading.methods."statusOfValueForKey:error:".skipped = true
 class.AVMetadataItem.methods."statusOfValueForKey:error:".skipped = true

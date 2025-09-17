@@ -8,3 +8,5 @@ ios = "14.0"
 # unfortunately emitted as a single large file.
 #
 # This is also why `bitflags` is (currently) a required dependency.
+
+external.ARFaceAnchor.module = "ARKit.ARFaceAnchor"

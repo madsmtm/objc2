@@ -37,8 +37,10 @@ default = [
     "CTCallCenter",
     "CTCarrier",
     "CTCellularData",
+    "CTCellularPlanProperties",
     "CTCellularPlanProvisioning",
     "CTCellularPlanProvisioningRequest",
+    "CTCellularPlanStatus",
     "CTSubscriber",
     "CTSubscriberInfo",
     "CTTelephonyNetworkInfo",
@@ -53,9 +55,18 @@ CTCall = ["objc2-foundation/NSString"]
 CTCallCenter = ["objc2-foundation/NSSet"]
 CTCarrier = ["objc2-foundation/NSString"]
 CTCellularData = []
-CTCellularPlanProvisioning = []
+CTCellularPlanProperties = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+CTCellularPlanProvisioning = ["objc2-foundation/NSError"]
 CTCellularPlanProvisioningRequest = [
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+CTCellularPlanStatus = [
+    "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
 CTSubscriber = [

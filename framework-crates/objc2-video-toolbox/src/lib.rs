@@ -24,6 +24,8 @@ pub use self::generated::*;
 pub(crate) type Boolean = u8;
 #[allow(dead_code)]
 pub(crate) type OSStatus = i32;
+#[allow(dead_code)]
+pub(crate) type OSType = u32;
 
 // NOTE: `VTRAWProcessingSessionRef` is marked as `CM_SWIFT_NONSENDABLE`, but
 // `$(xcrun --show-sdk-path)/usr/lib/swift/VideoToolbox.swiftmodule/*`

@@ -201,7 +201,6 @@ AVAudioSession = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
-    "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
 ]
 AVAudioSessionDeprecated = ["objc2-foundation/NSError"]
@@ -213,6 +212,7 @@ AVAudioSessionRoute = [
 ]
 AVAudioSessionTypes = [
     "bitflags",
+    "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
 ]
 AVAudioSettings = ["objc2-foundation/NSString"]

@@ -1,11 +1,11 @@
 | Framework | Why is this unsupported? |
 | --- | --- |
-| `AGL` | Removed in Xcode 26. |
 | `Accelerate` | Very C-centric, hard for us to map. |
 | `ActivityKit` | Swift-only. |
 | `AdAttributionKit` | Swift-only. |
 | `AddressBook` | Deprecated, use Contacts instead. |
 | `AddressBookUI` | Deprecated, use Contacts instead. |
+| `AlarmKit` | Mostly Swift-only. |
 | `AppIntents` | Swift-only. |
 | `AppleScriptKit` | Basically empty nowadays. |
 | `AppleScriptObjC` | Basically empty nowadays. |
@@ -29,6 +29,7 @@
 | `CreateMLComponents` | Swift-only. |
 | `CryptoKit` | Swift-only. |
 | `DVDPlayback` | Deprecated, use AVKit/AVFoundation instead. |
+| `DeclaredAgeRange` | Swift-only. |
 | `DeveloperToolsSupport` | Swift-only. |
 | `DeviceActivity` | Swift-only. |
 | `DeviceDiscoveryUI` | Needs Network first. |
@@ -37,17 +38,24 @@
 | `DiscRecordingUI` | Deprecated, use AVKit/AVFoundation instead. |
 | `DockKit` | Swift-only. |
 | `DriverKit` | Uses C++ classes. |
+| `EnergyKit` | Swift-only. |
 | `ExtensionFoundation` | Swift-only. |
 | `FamilyControls` | Swift-only. |
 | `FinanceKit` | Swift-only. |
 | `FinanceKitUI` | Swift-only. |
 | `ForceFeedback` | Very C-centric and old. |
+| `FoundationModels` | Swift-only. |
 | `GLUT` | Apple's redistribution of GLUT headers, better served by a different crate. |
 | `GSS` | Very C-centric and old. |
+| `GameSave` | TODO. |
+| `GeoToolbox` | Swift-only. |
 | `GroupActivities` | Swift-only. |
 | `Hypervisor` | Very low-level, consider crates like `applevisor` instead. |
 | `ICADevices` | Deprecated, use ImageCaptureCore instead. |
+| `IdentityDocumentServices` | Swift-only. |
+| `IdentityDocumentServicesUI` | Swift-only. |
 | `ImagePlayground` | Swift-only. |
+| `ImmersiveMediaSupport` | Swift-only. |
 | `InstallerPlugins` | Deprecated. |
 | `InstantMessage` | Deprecated in macOS 10.9. |
 | `InterfaceBuilderKit` | TODO. Developer-only. |
@@ -60,7 +68,6 @@
 | `LDAP` | Basically empty. |
 | `LightweightCodeRequirements` | Swift-only. |
 | `LiveCommunicationKit` | Swift-only. |
-| `LiveExecutionResultsLogger` | Removed in Xcode 26. |
 | `LockedCameraCapture` | Swift-only. |
 | `ManagedApp` | Swift-only. |
 | `ManagedAppDistribution` | Swift-only. |
@@ -71,6 +78,7 @@
 | `MatterSupport` | Swift-only. |
 | `MediaLibrary` | Deprecated, use PhotoKit instead. |
 | `Message` | Basically empty. |
+| `MetalPerformancePrimitives` | Header-only framework used in Metal shaders. |
 | `MobileCoreServices` | Deprecated, use CoreServices + UniformTypeIdentifiers instead. |
 | `MusicKit` | Swift-only. |
 | `NetFS` | Deprecated, use macFUSE or FSKit instead (probably). |
@@ -78,12 +86,15 @@
 | `OpenAL` | Very C-centric, use newer Audio frameworks instead. |
 | `OpenCL` | Very C-centric and old. |
 | `PCSC` | Too low-level, consider crates like `pcsc` instead. |
+| `PaperKit` | Swift-only. |
+| `PermissionKit` | Swift-only. |
 | `ProximityReader` | Swift-only. |
 | `ProximityReaderStub` | Basically empty. |
 | `Python3` | Better served by dedicated crates like `pyo3-ffi`. |
 | `QTKit` | No headers present in Xcode's SDK. |
 | `RealityFoundation` | Swift-only. |
 | `RealityKit` | Swift-only. |
+| `RelevanceKit` | Swift-only. |
 | `RoomPlan` | Swift-only. |
 | `Ruby` | Very C-centric and old. |
 | `SecureElementCredential` | Swift-only. |
@@ -100,16 +111,22 @@
 | `TabletopKit` | Swift-only. |
 | `TabularData` | Swift-only. |
 | `Tcl` | Very C-centric and old. |
+| `TelephonyMessagingKit` | Swift-only. |
 | `Testing` | Swift-only. |
 | `TipKit` | Swift-only. |
 | `Tk` | Very C-centric and old. |
+| `TouchController` | TODO. |
 | `Translation` | Swift-only. |
 | `TranslationUIProvider` | Swift-only. |
 | `Twitter` | Deprecated, use Social instead. |
 | `VideoDecodeAcceleration` | Very C-centric and old. |
+| `VisionEntitlementServices` | Mostly Swift-only. |
 | `VisionKit` | Swift-only. |
+| `VisualIntelligence` | Swift-only. |
 | `WeatherKit` | Swift-only. |
+| `WiFiAware` | Swift-only. |
 | `WidgetKit` | Mostly Swift-only. |
+| `WirelessInsights` | Swift-only. |
 | `WorkoutKit` | Swift-only. |
 | `XcodeKit` | TODO. Developer-only. |
 | `iAd` | Disabled on server side, use AdServices instead. |

@@ -48,6 +48,7 @@ default = [
     "std",
     "AXAudiograph",
     "AXBrailleMap",
+    "AXBrailleTranslator",
     "AXColorUtilities",
     "AXCustomContent",
     "AXFeatureOverrideSessionManager",
@@ -77,6 +78,14 @@ AXAudiograph = [
     "objc2-foundation/NSValue",
 ]
 AXBrailleMap = ["objc2-foundation/NSObject"]
+AXBrailleTranslator = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
+]
 AXColorUtilities = ["objc2-foundation/NSString"]
 AXCustomContent = [
     "objc2-foundation/NSArray",

@@ -16,3 +16,7 @@ gnustep = true
 
 # HACK: Define `task_port_t` in the using crate (it's a simple alias to `task_t`).
 external.task_port_t.module = "__builtin__"
+
+# Redefined by CoreFoundation with a name that makes it hard to see
+# that this is `libc::malloc_zone_t`.
+struct._malloc_zone_t.renamed = "malloc_zone_t"

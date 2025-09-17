@@ -138,3 +138,7 @@ fn.AUMIDIControllerHandleMIDI.skipped = true
 fn.AUMIDIControllerConnectSource.skipped = true
 fn.AUMIDIControllerDisconnectSource.skipped = true
 fn.AUMIDIControllerExportXMLNames.skipped = true
+
+# Needs CASpatialAudioExperience, which is not available on macOS (where header-translator runs).
+class.AUAudioUnit.methods.intendedSpatialExperience.skipped = true
+class.AUAudioUnit.methods."setIntendedSpatialExperience:".skipped = true

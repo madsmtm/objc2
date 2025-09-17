@@ -161,6 +161,10 @@ impl AttributeParser<'_, '_> {
     fn nullable_result(&mut self, position: ParsePosition) -> bool {
         self.strip("_Nullable_result", position)
     }
+
+    fn sending(&mut self, position: ParsePosition) -> bool {
+        self.strip("__attribute__((swift_attr(\"sending\")))", position)
+    }
 }
 
 impl Drop for AttributeParser<'_, '_> {
@@ -1456,6 +1460,8 @@ impl Ty {
                             | "MIDISysexSendRequestUMP"
                             | "MIDIDriverInterface"
                             | "cssm_list_element"
+                            | "malloc_zone_t"
+                            | "_malloc_zone_t"
                     )
                 ) {
                     // Fake fields, we'll have to define it ourselves
@@ -1673,6 +1679,10 @@ impl Ty {
                 {
                     parser.set_fn_ptr();
                 }
+
+                // TODO: Use this
+                // (Swift's @Sendable = Send + Sync, Swift's sending = Send).
+                let _sending = parser.sending(ParsePosition::Suffix);
 
                 let is_const = ty.is_const_qualified() || pointee.is_const_qualified();
                 let nullability = if let Some(nullability) = unexposed_nullability {

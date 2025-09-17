@@ -15,10 +15,15 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[cfg(feature = "CGBitmapContext")]
+mod bitmap_context;
 mod generated;
 #[cfg(feature = "CGImage")]
 mod image;
 mod thread_safety;
+#[cfg(feature = "CGBitmapContext")]
+#[allow(unused_imports, unreachable_pub)]
+pub use self::bitmap_context::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 

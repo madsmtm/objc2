@@ -26,6 +26,7 @@ objc2-foundation = { workspace = true, features = ["alloc"] }
 objc2-quartz-core = { workspace = true, optional = true, features = ["CALayer"] }
 objc2-ui-kit = { workspace = true, optional = true, features = [
     "UIAppearance",
+    "UIColor",
     "UIDynamicBehavior",
     "UIFocus",
     "UIGeometry",

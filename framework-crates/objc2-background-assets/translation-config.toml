@@ -5,3 +5,6 @@ macos = "13.0"
 maccatalyst = "16.0"
 ios = "16.0"
 visionos = "1.0"
+
+# unknown error result type Primitive(Int)
+class.BAAssetPackManager.methods."fileDescriptorForPath:searchingInAssetPackWithIdentifier:error:".skipped = true

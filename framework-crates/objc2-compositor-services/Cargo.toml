@@ -24,8 +24,12 @@ objc2-core-foundation = { workspace = true, optional = true, features = [
     "objc2",
 ] }
 objc2-metal = { workspace = true, optional = true, features = [
+    "MTL4CommandEncoder",
+    "MTL4CommandQueue",
+    "MTL4RenderCommandEncoder",
     "MTLAllocation",
     "MTLCommandBuffer",
+    "MTLCommandEncoder",
     "MTLDevice",
     "MTLPixelFormat",
     "MTLRasterizationRate",
@@ -47,9 +51,11 @@ default = [
     "std",
     "bitflags",
     "cp_base",
+    "cp_conditionals",
     "cp_error",
     "cp_types",
     "drawable",
+    "drawable_render_context",
     "frame",
     "frame_timing",
     "layer_renderer",
@@ -59,6 +65,7 @@ default = [
     "layer_renderer_properties",
     "objc2-core-foundation",
     "objc2-metal",
+    "tracking_area",
     "view",
 ]
 std = ["alloc"]
@@ -68,9 +75,11 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-metal = ["dep:objc2-metal"]
 
 cp_base = []
+cp_conditionals = []
 cp_error = []
 cp_types = []
 drawable = []
+drawable_render_context = []
 frame = []
 frame_timing = []
 layer_renderer = []
@@ -78,4 +87,5 @@ layer_renderer_capabilities = ["bitflags"]
 layer_renderer_configuration = []
 layer_renderer_layout = []
 layer_renderer_properties = []
+tracking_area = []
 view = []

@@ -97,11 +97,11 @@ MTKModel = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-metal/MTLAllocation",
+    "objc2-metal/MTLArgument",
     "objc2-metal/MTLBuffer",
     "objc2-metal/MTLDevice",
     "objc2-metal/MTLRenderCommandEncoder",
     "objc2-metal/MTLResource",
-    "objc2-metal/MTLStageInputOutputDescriptor",
     "objc2-metal/MTLVertexDescriptor",
 ]
 MTKTextureLoader = [
@@ -122,6 +122,7 @@ MTKView = [
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",
+    "objc2-metal/MTL4RenderPass",
     "objc2-metal/MTLAllocation",
     "objc2-metal/MTLDevice",
     "objc2-metal/MTLPixelFormat",
