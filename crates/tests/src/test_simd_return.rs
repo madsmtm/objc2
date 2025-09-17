@@ -1,3 +1,7 @@
+//! Run test with:
+//! ```sh
+//! cargo test -ptests --features unstable-simd,objc2/unstable-static-class,objc2/disable-encoding-assertions
+//! ```
 use core::ffi::{c_char, c_float};
 
 use objc2::runtime::NSObject;
@@ -11,7 +15,7 @@ extern_class!(
 macro_rules! methods {
     ($(
         $(#[$($m:tt)*])*
-        $name:ident: $ty:ty { $expr:expr }
+        $name:ident $(($padding:expr))?: $ty:ty { $expr:expr }
     )*) => {$(
         #[test]
         $(#[$($m)*])*
@@ -25,7 +29,11 @@ macro_rules! methods {
             }
 
             let res = TestSimdReturn::$name();
-            assert_eq!(res, $expr);
+            #[allow(unnecessary_transmutes)]
+            let res_bytes = unsafe { core::mem::transmute_copy::<$ty, [u8; {size_of::<$ty>() $(- $padding)?}]>(&res) };
+            #[allow(unnecessary_transmutes)]
+            let expr_bytes = unsafe { core::mem::transmute_copy::<$ty, [u8; {size_of::<$ty>() $(- $padding)?}]>(&$expr) };
+            assert_eq!(res_bytes, expr_bytes);
         }
     )*};
 }
@@ -39,88 +47,72 @@ macro_rules! encode_none {
 }
 
 #[repr(simd)]
-#[derive(PartialEq, Debug)]
 struct Float2([f32; 2]);
 encode_none!(Float2);
 
 #[repr(simd)]
-#[derive(PartialEq, Debug)]
 struct Float3([f32; 3]);
 encode_none!(Float3);
 
 #[repr(simd)]
-#[derive(PartialEq, Debug)]
 struct Float4([f32; 4]);
 encode_none!(Float4);
 
 #[repr(transparent)]
-#[derive(PartialEq, Debug)]
 struct Float8([f32; 8]);
 encode_none!(Float8);
 
 #[repr(transparent)]
-#[derive(PartialEq, Debug)]
 struct Float16([f32; 16]);
 encode_none!(Float16);
 
 #[repr(simd)]
-#[derive(PartialEq, Debug)]
 struct Char2([i8; 2]);
 encode_none!(Char2);
 
 #[repr(simd)]
-#[derive(PartialEq, Debug)]
 struct Char3([i8; 3]);
 encode_none!(Char3);
 
 #[repr(simd)]
-#[derive(PartialEq, Debug)]
 struct Char4([i8; 4]);
 encode_none!(Char4);
 
 #[repr(simd)]
-#[derive(PartialEq, Debug)]
 struct Char8([i8; 8]);
 encode_none!(Char8);
 
 #[repr(simd)]
-#[derive(PartialEq, Debug)]
 struct Char16([i8; 16]);
 encode_none!(Char16);
 
 #[repr(transparent)]
-#[derive(PartialEq, Debug)]
 struct Char32([i8; 32]);
 encode_none!(Char32);
 
 #[repr(transparent)]
-#[derive(PartialEq, Debug)]
 struct Char64([i8; 64]);
 encode_none!(Char64);
 
 #[repr(C)]
-#[derive(PartialEq, Debug)]
 struct Quatf(Float4);
 unsafe impl Encode for Quatf {
     const ENCODING: Encoding = Encoding::Struct("?", &[Encoding::None]);
 }
 
 #[repr(C)]
-#[derive(PartialEq, Debug)]
 struct Float2x2([Float2; 2]);
 unsafe impl Encode for Float2x2 {
     const ENCODING: Encoding = Encoding::Struct("?", &[Encoding::Array(2, &Encoding::None)]);
 }
 
 #[repr(C)]
-#[derive(PartialEq, Debug)]
 struct Float2x4([Float4; 2]);
 unsafe impl Encode for Float2x4 {
     const ENCODING: Encoding = Encoding::Struct("?", &[Encoding::Array(2, &Encoding::None)]);
 }
 
 #[repr(C)]
-#[derive(PartialEq, Debug)]
 struct Float4x4([Float4; 4]);
 unsafe impl Encode for Float4x4 {
     const ENCODING: Encoding = Encoding::Struct("?", &[Encoding::Array(4, &Encoding::None)]);
@@ -136,7 +128,7 @@ methods! {
     #[cfg_attr(target_pointer_width = "32", ignore = "Rust does not yet support SIMD in FFI")]
     float2: Float2 { Float2([42.0; 2]) }
     #[cfg_attr(target_pointer_width = "32", ignore = "Rust does not yet support SIMD in FFI")]
-    float3: Float3 { Float3([42.0; 3]) }
+    float3 (4): Float3 { Float3([42.0; 3]) }
     #[cfg_attr(target_pointer_width = "32", ignore = "Rust does not yet support SIMD in FFI")]
     float4: Float4 { Float4([42.0; 4]) }
     #[cfg_attr(not(target_arch = "aarch64"), ignore = "Rust does not yet support SIMD in FFI")]
@@ -148,7 +140,7 @@ methods! {
     char2: Char2 { Char2([42; 2]) }
     #[cfg_attr(target_arch = "x86", ignore = "Rust does not yet support SIMD in FFI")]
     #[cfg_attr(target_arch = "x86_64", ignore = "Rust does not yet support SIMD in FFI")]
-    char3: Char3 { Char3([42; 3]) }
+    char3 (1): Char3 { Char3([42; 3]) }
     #[cfg_attr(target_arch = "x86", ignore = "Rust does not yet support SIMD in FFI")]
     #[cfg_attr(target_arch = "x86_64", ignore = "Rust does not yet support SIMD in FFI")]
     char4: Char4 { Char4([42; 4]) }
