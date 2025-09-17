@@ -23,3 +23,10 @@ pub use self::generated::*;
 pub(crate) type Boolean = u8;
 #[allow(dead_code)]
 pub(crate) type OSType = u32;
+
+#[allow(unused)]
+pub(crate) type GLenum = u32;
+#[allow(unused)]
+pub(crate) type GLuint = u32;
+#[allow(unused)]
+pub(crate) type GLint = i32;
