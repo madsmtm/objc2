@@ -244,3 +244,6 @@ class.UIWindow.methods.rootViewController.unsafe = false
 class.UIWindow.methods."setRootViewController:".unsafe = false
 class.UIWindow.methods.makeKeyAndVisible.unsafe = false
 class.UIWindow.methods.isKeyWindow.unsafe = false
+
+# Breaks type-safety, you must check encodings before accessing a value.
+class.NSValue.unsafe = true

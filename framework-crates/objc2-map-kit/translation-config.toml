@@ -15,3 +15,10 @@ external.CNPostalAddress.module = "Contacts.CNPostalAddress"
 class.MKMapItemRequest.methods."initWithMapFeatureAnnotation:".skipped = true
 class.MKMapItemRequest.methods.mapFeatureAnnotation.skipped = true
 class.MKMapItemRequest.methods.featureAnnotation.skipped = true
+
+##
+## Safety
+##
+
+# Breaks type-safety, you must check encodings before accessing a value.
+class.NSValue.unsafe = true

@@ -22,3 +22,10 @@ protocol.SCNAnimation.renamed = "SCNAnimationProtocol"
 protocol.SCNSceneRenderer.methods."presentScene:withTransition:incomingPointOfView:completionHandler:".skipped = true
 protocol.SCNSceneRenderer.methods."overlaySKScene".skipped = true
 protocol.SCNSceneRenderer.methods."setOverlaySKScene:".skipped = true
+
+##
+## Safety
+##
+
+# Breaks type-safety, you must check encodings before accessing a value.
+class.NSValue.unsafe = true

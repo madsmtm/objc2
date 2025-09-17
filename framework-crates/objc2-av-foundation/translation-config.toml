@@ -62,3 +62,10 @@ protocol.AVVideoCompositionInstruction.renamed = "AVVideoCompositionInstructionP
 
 # Property declared twice in MutableEvents
 class.AVPlayerInterstitialEvent.categories.MutableEvents.skipped = true
+
+##
+## Safety
+##
+
+# Breaks type-safety, you must check encodings before accessing a value.
+class.NSValue.unsafe = true

@@ -11,3 +11,10 @@ external.CHHapticEngine.module = "CoreHaptics.CHHapticEngine"
 
 # Needs `IOHIDDeviceRef` from IOKit
 class.GCController.methods."supportsHIDDevice:".skipped = true
+
+##
+## Safety
+##
+
+# Breaks type-safety, you must check encodings before accessing a value.
+class.NSValue.unsafe = true
