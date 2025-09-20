@@ -57,6 +57,7 @@ alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-core-ml = ["dep:objc2-core-ml"]
+unstable-darwin-objc = []
 
 NLContextualEmbedding = [
     "objc2-foundation/NSArray",

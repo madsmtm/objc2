@@ -44,6 +44,7 @@ default = [
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
+unstable-darwin-objc = []
 
 WCDefines = []
 WCError = ["objc2-foundation/NSString"]

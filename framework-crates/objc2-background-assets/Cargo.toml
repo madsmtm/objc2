@@ -57,6 +57,7 @@ std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
+unstable-darwin-objc = []
 
 BAAppExtensionInfo = [
     "objc2-foundation/NSObject",

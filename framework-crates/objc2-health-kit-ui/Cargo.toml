@@ -56,6 +56,7 @@ alloc = []
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-health-kit = ["dep:objc2-health-kit"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
+unstable-darwin-objc = []
 
 HKActivityRingView = [
     "objc2-foundation/NSCoder",

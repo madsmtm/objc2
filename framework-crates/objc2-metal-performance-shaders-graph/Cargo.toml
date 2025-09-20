@@ -102,6 +102,7 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 objc2-metal-performance-shaders = ["dep:objc2-metal-performance-shaders"]
+unstable-darwin-objc = []
 
 MPSGraph = [
     "bitflags",

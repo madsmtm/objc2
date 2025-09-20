@@ -74,6 +74,7 @@ default = [
 std = ["alloc"]
 alloc = []
 libc = ["dep:libc"]
+unstable-darwin-objc = []
 
 MXAnimationMetric = [
     "objc2-foundation/NSMeasurement",

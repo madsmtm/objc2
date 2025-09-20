@@ -146,6 +146,7 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-video = ["dep:objc2-core-video"]
 objc2-image-io = ["dep:objc2-image-io"]
 objc2-metal = ["dep:objc2-metal"]
+unstable-darwin-objc = []
 
 MLAllComputeDevices = ["objc2-foundation/NSArray"]
 MLArrayBatchProvider = [

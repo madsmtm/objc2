@@ -70,6 +70,7 @@ objc2 = [
 ]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-foundation = ["dep:objc2-foundation"]
+unstable-darwin-objc = []
 
 AudioHardware = ["objc2-core-foundation/CFDictionary"]
 AudioHardwareDeprecated = ["objc2-core-foundation/CFRunLoop"]

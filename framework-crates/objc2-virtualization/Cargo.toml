@@ -179,6 +179,7 @@ block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
+unstable-darwin-objc = []
 
 VZAudioDeviceConfiguration = ["objc2-foundation/NSObject"]
 VZAudioInputStreamSource = []

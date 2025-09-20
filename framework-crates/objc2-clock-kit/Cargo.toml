@@ -66,6 +66,7 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-intents = ["dep:objc2-intents"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
+unstable-darwin-objc = []
 
 CLKComplication = [
     "objc2-foundation/NSDictionary",

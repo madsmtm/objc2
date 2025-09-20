@@ -40,6 +40,7 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+unstable-darwin-objc = []
 
 BCChatAction = [
     "objc2-foundation/NSDictionary",

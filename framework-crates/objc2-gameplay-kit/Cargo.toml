@@ -124,6 +124,7 @@ objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-scene-kit = ["dep:objc2-scene-kit"]
 objc2-sprite-kit = ["dep:objc2-sprite-kit"]
+unstable-darwin-objc = []
 
 GKAgent = [
     "objc2-foundation/NSDate",

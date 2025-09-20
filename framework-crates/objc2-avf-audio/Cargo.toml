@@ -120,6 +120,7 @@ objc2-audio-toolbox = ["dep:objc2-audio-toolbox"]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-midi = ["dep:objc2-core-midi"]
+unstable-darwin-objc = []
 
 AVAudioApplication = [
     "objc2-foundation/NSError",

@@ -73,6 +73,7 @@ alloc = []
 bitflags = ["dep:bitflags"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-metal = ["dep:objc2-metal"]
+unstable-darwin-objc = []
 
 cp_base = []
 cp_conditionals = []

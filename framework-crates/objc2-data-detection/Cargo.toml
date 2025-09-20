@@ -40,6 +40,7 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+unstable-darwin-objc = []
 
 DDMatch = [
     "objc2-foundation/NSDate",

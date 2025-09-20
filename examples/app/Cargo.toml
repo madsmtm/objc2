@@ -18,6 +18,9 @@ path = "default_xcode_app/main.rs"
 name = "hello_world_app"
 path = "hello_world_app.rs"
 
+[features]
+unstable-darwin-objc = []
+
 [dependencies]
 objc2 = "0.6.2"
 objc2-foundation = { version = "0.3.1", default-features = false, features = [

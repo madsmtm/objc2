@@ -57,6 +57,7 @@ alloc = []
 objc2 = []
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-io-bluetooth = ["dep:objc2-io-bluetooth"]
+unstable-darwin-objc = []
 
 IOBluetoothDeviceSelectorController = [
     "objc2-app-kit/NSNib",

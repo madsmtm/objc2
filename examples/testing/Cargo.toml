@@ -13,6 +13,9 @@ path = "screenshot.rs"
 name = "ui_test"
 path = "ui_test.rs"
 
+[features]
+unstable-darwin-objc = []
+
 [dependencies]
 objc2 = "0.6.2"
 objc2-foundation = { version = "0.3.1", default-features = false, features = [

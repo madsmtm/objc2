@@ -80,6 +80,7 @@ verify = []
 #
 # Please test it, and report any issues you may find:
 # https://github.com/madsmtm/objc2/issues/new
+unstable-darwin-objc = []
 unstable-static-sel = ["dep:objc2-proc-macros"]
 unstable-static-sel-inlined = ["unstable-static-sel"]
 unstable-static-class = ["dep:objc2-proc-macros"]

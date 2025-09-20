@@ -60,6 +60,7 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-accounts = ["dep:objc2-accounts"]
 objc2-app-kit = ["dep:objc2-app-kit"]
+unstable-darwin-objc = []
 
 SLComposeServiceViewController = [
     "objc2-foundation/NSBundle",

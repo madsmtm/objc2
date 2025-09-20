@@ -103,6 +103,7 @@ objc2 = [
     "dep:objc2",
     "dispatch2?/objc2",
 ]
+unstable-darwin-objc = []
 
 CFArray = []
 CFAttributedString = []

@@ -286,6 +286,7 @@ objc2-image-io = ["dep:objc2-image-io"]
 objc2-media-toolbox = ["dep:objc2-media-toolbox"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
+unstable-darwin-objc = []
 
 AVAnimation = ["objc2-foundation/NSString"]
 AVAsset = [

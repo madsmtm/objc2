@@ -189,6 +189,7 @@ objc2-metal = ["dep:objc2-metal"]
 objc2-model-io = ["dep:objc2-model-io"]
 objc2-open-gl = ["dep:objc2-open-gl"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
+unstable-darwin-objc = []
 
 ModelIO = []
 SCNAction = [

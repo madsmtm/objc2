@@ -83,6 +83,7 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
 objc2-image-capture-core = ["dep:objc2-image-capture-core"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
+unstable-darwin-objc = []
 
 IKCameraDeviceView = [
     "objc2-app-kit/NSAccessibilityProtocols",

@@ -46,6 +46,7 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+unstable-darwin-objc = []
 
 MTL4FXFrameInterpolator = ["objc2-metal/MTL4CommandBuffer"]
 MTL4FXSpatialScaler = ["objc2-metal/MTL4CommandBuffer"]

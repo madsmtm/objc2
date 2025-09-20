@@ -73,6 +73,7 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-text = ["dep:objc2-core-text"]
 objc2-foundation = ["dep:objc2-foundation"]
 objc2-io-surface = ["dep:objc2-io-surface"]
+unstable-darwin-objc = []
 
 MAAudibleMedia = ["objc2-core-foundation/CFArray"]
 MACaptionAppearance = [

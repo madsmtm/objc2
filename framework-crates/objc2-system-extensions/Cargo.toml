@@ -46,3 +46,4 @@ default = [
 std = ["alloc"]
 alloc = []
 dispatch2 = ["dep:dispatch2"]
+unstable-darwin-objc = []

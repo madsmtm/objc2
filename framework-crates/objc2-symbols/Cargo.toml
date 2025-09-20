@@ -39,5 +39,6 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+unstable-darwin-objc = []
 
 NSSymbolEffect = ["objc2-foundation/NSObject"]

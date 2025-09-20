@@ -13,6 +13,9 @@ path = "triangle/main.rs"
 name = "default_xcode_game"
 path = "default_xcode_game/main.rs"
 
+[features]
+unstable-darwin-objc = []
+
 [dependencies]
 objc2 = "0.6.2"
 dispatch2 = "0.3.0"

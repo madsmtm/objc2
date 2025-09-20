@@ -58,6 +58,7 @@ std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
+unstable-darwin-objc = []
 
 LAAuthenticationView = [
     "objc2-foundation/NSCoder",

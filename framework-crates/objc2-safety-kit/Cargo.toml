@@ -48,6 +48,7 @@ std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 objc2-core-location = ["dep:objc2-core-location"]
+unstable-darwin-objc = []
 
 SAAuthorizationStatus = []
 SABase = []

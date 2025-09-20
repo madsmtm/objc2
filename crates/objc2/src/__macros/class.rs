@@ -27,9 +27,9 @@ use crate::runtime::AnyClass;
 ///
 /// # Features
 ///
-/// If the experimental `"unstable-static-class"` feature is enabled, this
-/// will emit special statics that will be replaced by dyld when the program
-/// starts up.
+/// If the experimental `"unstable-static-class"` or `"unstable-darwin-objc"`
+/// features are enabled, this will emit special statics that will be replaced
+/// by dyld when the program starts up.
 ///
 /// Errors that were previously runtime panics may now turn into linker errors
 /// if you try to use a class which is not available. Additionally, you may
@@ -78,7 +78,10 @@ macro_rules! class {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(not(feature = "unstable-static-class"))]
+#[cfg(not(any(
+    feature = "unstable-darwin-objc",
+    feature = "unstable-static-class"
+)))]
 macro_rules! __class_inner {
     ($name:expr, $_hash:expr) => {{
         static CACHED_CLASS: $crate::__macros::CachedClass = $crate::__macros::CachedClass::new();
@@ -86,6 +89,22 @@ macro_rules! __class_inner {
         unsafe {
             CACHED_CLASS.get($crate::__macros::concat!($name, '\0'))
         }
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    feature = "unstable-darwin-objc",
+    not(feature = "unstable-static-class")
+))]
+macro_rules! __class_inner {
+    ($name:expr, $_hash:expr) => {{
+        let ptr = $crate::__macros::core_darwin_objc::class!($name);
+        let ptr = ptr.cast_const().cast::<$crate::runtime::AnyClass>();
+        #[allow(unused_unsafe)]
+        let r: &'static $crate::runtime::AnyClass = unsafe { &*ptr };
+        r
     }};
 }
 

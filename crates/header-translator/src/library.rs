@@ -232,6 +232,12 @@ impl Library {
             )?;
             writeln!(lib_rs, "//! [framework-crates]: https://docs.rs/objc2/latest/objc2/topics/about_generated/index.html")?;
             writeln!(lib_rs, "#![no_std]")?;
+            if !self.data.is_library {
+                writeln!(
+                    lib_rs,
+                    "#![cfg_attr(feature = \"unstable-darwin-objc\", feature(darwin_objc))]"
+                )?;
+            }
             writeln!(lib_rs, "#![cfg_attr(docsrs, feature(doc_auto_cfg))]")?;
             writeln!(lib_rs, "// Update in Cargo.toml as well.")?;
             writeln!(
@@ -445,6 +451,20 @@ see that for related crates.", self.data.krate)?;
             }
             let enabled_features = emitted_features.remove(feature).unwrap();
             cargo_toml["features"][feature] = array_with_newlines(enabled_features);
+        }
+
+        // Emit unstable-darwin-objc feature in framework crates.
+        //
+        // We could also use this to enable the feature automatically in
+        // dependencies, but we'd like for this feature to remain "unstable" in
+        // the sense that we'd be free to remove it in a patch release. By
+        // mentioning it across crates, that would no longer be the case.
+        //
+        // It's slightly less convenient for users, but in practice, most users
+        // already directly depend on all their `objc2-*` crates in their
+        // dependency tree.
+        if !self.data.is_library {
+            cargo_toml["features"]["unstable-darwin-objc"] = array_with_newlines([]);
         }
 
         // And then the rest of the features.

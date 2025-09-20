@@ -78,6 +78,7 @@ objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-location = ["dep:objc2-core-location"]
 objc2-map-kit = ["dep:objc2-map-kit"]
+unstable-darwin-objc = []
 
 EKAlarm = [
     "objc2-foundation/NSDate",

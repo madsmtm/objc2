@@ -66,6 +66,7 @@ alloc = []
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-osa-kit = ["dep:objc2-osa-kit"]
+unstable-darwin-objc = []
 
 AMAction = [
     "objc2-foundation/NSDictionary",

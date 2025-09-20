@@ -257,6 +257,7 @@ block2 = ["dep:block2"]
 libc = ["dep:libc"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-services = ["dep:objc2-core-services"]
+unstable-darwin-objc = []
 
 FoundationErrors = []
 FoundationLegacySwiftCompatibility = []

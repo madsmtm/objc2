@@ -107,6 +107,7 @@ alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
+unstable-darwin-objc = []
 
 GKAccessPoint = [
     "objc2-foundation/NSGeometry",

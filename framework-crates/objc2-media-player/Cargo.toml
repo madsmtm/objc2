@@ -102,6 +102,7 @@ objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-media = ["dep:objc2-core-media"]
+unstable-darwin-objc = []
 
 AVFoundation_MPNowPlayingInfoLanguageOptionAdditions = []
 AVPlayerItem_MediaPlayerAdditions = [

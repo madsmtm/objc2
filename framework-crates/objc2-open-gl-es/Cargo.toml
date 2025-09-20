@@ -50,6 +50,7 @@ std = ["alloc"]
 alloc = []
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-io-surface = ["dep:objc2-io-surface"]
+unstable-darwin-objc = []
 
 EAGL = ["objc2-foundation/NSString"]
 EAGLDrawable = [

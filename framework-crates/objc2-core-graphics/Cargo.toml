@@ -114,6 +114,7 @@ objc2 = [
 ]
 objc2-io-surface = ["dep:objc2-io-surface"]
 objc2-metal = ["dep:objc2-metal"]
+unstable-darwin-objc = []
 
 CGAffineTransform = ["objc2-core-foundation/CFCGTypes"]
 CGBase = []

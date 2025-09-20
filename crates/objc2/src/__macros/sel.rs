@@ -49,13 +49,29 @@ use crate::runtime::Sel;
 /// - runtime, causing UB (unlikely)
 ///
 /// The `"unstable-static-sel-inlined"` feature is the even more extreme
-/// version - it yields the best performance and is closest to real
+/// version - it yield better performance and is closer to real
 /// Objective-C code, but probably won't work unless your code and its
 /// inlining is written in a very certain way.
 ///
 /// Enabling LTO greatly increases the chance that these features work.
 ///
+/// On Apple/Darwin targets, these limitations can be overcome with the
+/// `"unstable-darwin-objc"` feature which uses the nightly-only `darwin_objc`
+/// language feature. This experimental language feature implements the
+/// Objective-C static selector ABI directly in the Rust compiler and should
+/// work in more if not all cases. Using `"unstable-darwin-objc"` requires
+/// `darwin_objc` to be enabled in every crate that uses this macro, which can
+/// be achieved in `objc2` crates by enabling their own
+/// `"unstable-darwin-objc"` features and in your own crates by adding
+/// `#![feature(darwin_objc)]`.
+///
+/// See [rust-lang/rust#145496] for the tracking issue for the feature.
+///
+/// `"unstable-static-sel"` and `"unstable-static-sel-inlined"` take
+/// precedence over `"unstable-darwin-objc"`.
+///
 /// [rust-lang/rust#53929]: https://github.com/rust-lang/rust/issues/53929
+/// [rust-lang/rust#145496]: https://github.com/rust-lang/rust/issues/145496
 ///
 ///
 /// # Examples
@@ -177,9 +193,9 @@ macro_rules! __sel_helper {
     // Base-case
     {
         ($($parsed_sel:tt)*)
-    } => ({
+    } => {
         $crate::__sel_data!($($parsed_sel)*)
-    });
+    };
     // Single identifier
     {
         ()
@@ -219,20 +235,36 @@ macro_rules! __sel_data {
         $crate::__macros::concat!(
             $crate::__macros::stringify!($first),
             $(':', $($($crate::__macros::stringify!($rest),)? ':',)*)?
-            '\0',
         )
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(not(feature = "unstable-static-sel"))]
+#[cfg(not(any(feature = "unstable-darwin-objc", feature = "unstable-static-sel")))]
 macro_rules! __sel_inner {
     ($data:expr, $_hash:expr) => {{
         static CACHED_SEL: $crate::__macros::CachedSel = $crate::__macros::CachedSel::new();
         #[allow(unused_unsafe)]
         unsafe {
-            CACHED_SEL.get($data)
+            CACHED_SEL.get($crate::__macros::concat!($data, '\0'))
+        }
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
+    feature = "unstable-darwin-objc",
+    not(feature = "unstable-static-sel")
+))]
+macro_rules! __sel_inner {
+    ($data:expr, $_hash:expr) => {{
+        let ptr = $crate::__macros::core_darwin_objc::selector!($data);
+        let ptr = ptr.cast_const().cast::<$crate::__macros::u8>();
+        #[allow(unused_unsafe)]
+        unsafe {
+            $crate::runtime::Sel::__internal_from_ptr(ptr)
         }
     }};
 }
@@ -245,7 +277,7 @@ macro_rules! __statics_sel {
         ($data:expr)
         ($hash:expr)
     } => {
-        const X: &[$crate::__macros::u8] = $data.as_bytes();
+        const X: &[$crate::__macros::u8] = $crate::__macros::concat!($data, '\0').as_bytes();
 
         /// Clang marks this with LLVM's `unnamed_addr`.
         /// See rust-lang/rust#18297
@@ -425,22 +457,22 @@ impl CachedSel {
 
 #[inline]
 pub fn alloc_sel() -> Sel {
-    __sel_inner!("alloc\0", "alloc")
+    __sel_inner!("alloc", "alloc")
 }
 
 #[inline]
 pub fn init_sel() -> Sel {
-    __sel_inner!("init\0", "init")
+    __sel_inner!("init", "init")
 }
 
 #[inline]
 pub fn new_sel() -> Sel {
-    __sel_inner!("new\0", "new")
+    __sel_inner!("new", "new")
 }
 
 #[inline]
 pub fn dealloc_sel() -> Sel {
-    __sel_inner!("dealloc\0", "dealloc")
+    __sel_inner!("dealloc", "dealloc")
 }
 
 /// An undocumented selector called by the Objective-C runtime when
@@ -448,7 +480,7 @@ pub fn dealloc_sel() -> Sel {
 #[inline]
 #[allow(dead_code)] // May be useful in the future
 fn cxx_construct_sel() -> Sel {
-    __sel_inner!(".cxx_construct\0", ".cxx_construct")
+    __sel_inner!(".cxx_construct", ".cxx_construct")
 }
 
 /// Objective-C runtimes call `.cxx_destruct` as part of the final `dealloc`
@@ -485,7 +517,7 @@ fn cxx_construct_sel() -> Sel {
 #[inline]
 #[allow(dead_code)] // May be useful in the future
 fn cxx_destruct_sel() -> Sel {
-    __sel_inner!(".cxx_destruct\0", ".cxx_destruct")
+    __sel_inner!(".cxx_destruct", ".cxx_destruct")
 }
 
 #[cfg(test)]

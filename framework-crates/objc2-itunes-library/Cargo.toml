@@ -49,6 +49,7 @@ std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
+unstable-darwin-objc = []
 
 ITLibAlbum = [
     "objc2-foundation/NSString",

@@ -125,6 +125,7 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-location = ["dep:objc2-core-location"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
+unstable-darwin-objc = []
 
 HMAccessControl = []
 HMAccessory = [

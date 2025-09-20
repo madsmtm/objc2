@@ -3,6 +3,8 @@
 //! Using a Storyboard outside of Xcode is quite involved, so instead, we set
 //! up the entire UI (menubar and window) ourselves.
 
+#![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
+
 use objc2::MainThreadMarker;
 use objc2_app_kit::NSApplication;
 

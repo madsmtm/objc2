@@ -50,6 +50,7 @@ default = [
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
+unstable-darwin-objc = []
 
 CTCall = ["objc2-foundation/NSString"]
 CTCallCenter = ["objc2-foundation/NSSet"]

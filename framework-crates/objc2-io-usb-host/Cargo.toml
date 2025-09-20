@@ -76,6 +76,7 @@ block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-io-kit = ["dep:objc2-io-kit"]
+unstable-darwin-objc = []
 
 AppleUSBDescriptorParsing = []
 IOUSBHostCIControllerStateMachine = ["objc2-foundation/NSError"]

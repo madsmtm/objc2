@@ -63,6 +63,7 @@ alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-core-location = ["dep:objc2-core-location"]
+unstable-darwin-objc = []
 
 NSString_UserNotifications = [
     "objc2-foundation/NSArray",

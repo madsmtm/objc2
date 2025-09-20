@@ -42,6 +42,7 @@ default = [
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
+unstable-darwin-objc = []
 
 OSALanguage = [
     "bitflags",

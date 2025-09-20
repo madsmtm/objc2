@@ -52,6 +52,7 @@ std = ["alloc"]
 alloc = []
 objc2-identity-lookup = ["dep:objc2-identity-lookup"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
+unstable-darwin-objc = []
 
 ILClassificationUIExtensionContext = ["objc2-foundation/NSExtensionContext"]
 ILClassificationUIExtensionViewController = [

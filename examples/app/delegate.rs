@@ -1,5 +1,6 @@
 //! Implementing `NSApplicationDelegate` for a custom class.
 #![deny(unsafe_op_in_unsafe_fn)]
+#![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
 use objc2::{define_class, msg_send, DefinedClass, MainThreadMarker, MainThreadOnly};

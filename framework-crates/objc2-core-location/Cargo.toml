@@ -83,6 +83,7 @@ CLLocation = [
 block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 objc2-contacts = ["dep:objc2-contacts"]
+unstable-darwin-objc = []
 
 CLAvailability = []
 CLBackgroundActivitySession = []

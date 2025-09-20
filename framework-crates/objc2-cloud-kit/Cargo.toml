@@ -105,6 +105,7 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-contacts = ["dep:objc2-contacts"]
 objc2-core-location = ["dep:objc2-core-location"]
+unstable-darwin-objc = []
 
 CKAcceptSharesOperation = [
     "objc2-foundation/NSArray",

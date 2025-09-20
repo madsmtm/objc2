@@ -566,6 +566,7 @@ objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-symbols = ["dep:objc2-symbols"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 objc2-user-notifications = ["dep:objc2-user-notifications"]
+unstable-darwin-objc = []
 
 DocumentManager = []
 NSAdaptiveImageGlyph = [

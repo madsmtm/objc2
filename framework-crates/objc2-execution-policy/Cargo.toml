@@ -43,6 +43,7 @@ default = [
 std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
+unstable-darwin-objc = []
 
 EPDeveloperTool = []
 EPErrors = [

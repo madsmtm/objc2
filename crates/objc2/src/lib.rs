@@ -102,6 +102,7 @@
 //! [#203]: https://github.com/madsmtm/objc2/issues/203
 
 #![no_std]
+#![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 #![cfg_attr(
     feature = "unstable-autoreleasesafe",
     feature(negative_impls, auto_traits)

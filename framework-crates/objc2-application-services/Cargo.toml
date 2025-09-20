@@ -103,6 +103,7 @@ objc2 = [
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-services = ["dep:objc2-core-services"]
 objc2-foundation = ["dep:objc2-foundation"]
+unstable-darwin-objc = []
 
 AXActionConstants = []
 AXAttributeConstants = ["bitflags"]

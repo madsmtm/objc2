@@ -58,6 +58,7 @@ objc2 = [
 ]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-media = ["dep:objc2-core-media"]
+unstable-darwin-objc = []
 
 MTAudioProcessingTap = []
 MTFormatNames = []
