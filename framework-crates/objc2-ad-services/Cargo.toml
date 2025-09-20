@@ -37,6 +37,7 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+unstable-core-darwin-objc = []
 
 AAAttribution = [
     "objc2-foundation/NSError",
