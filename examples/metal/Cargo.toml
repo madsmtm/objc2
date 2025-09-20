@@ -77,3 +77,14 @@ objc2-app-kit = { version = "0.3.1", default-features = false, features = [
     "NSWindow",
     "NSWindowController",
 ] }
+
+[features]
+unstable-core-darwin-objc = [
+    "objc2/unstable-core-darwin-objc",
+    "objc2-metal/unstable-core-darwin-objc",
+    "objc2-metal-kit/unstable-core-darwin-objc",
+    "objc2-model-io/unstable-core-darwin-objc",
+    "objc2-foundation/unstable-core-darwin-objc",
+    "objc2-core-foundation/unstable-core-darwin-objc",
+    "objc2-app-kit/unstable-core-darwin-objc",
+]
