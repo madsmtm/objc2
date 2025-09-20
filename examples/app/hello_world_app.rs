@@ -1,4 +1,5 @@
 #![deny(unsafe_op_in_unsafe_fn)]
+#![cfg_attr(feature = "unstable-core-darwin-objc", feature(darwin_objc))]
 use std::cell::OnceCell;
 
 use objc2::rc::Retained;
