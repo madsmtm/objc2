@@ -13,6 +13,9 @@ path = "triangle/main.rs"
 name = "default_xcode_game"
 path = "default_xcode_game/main.rs"
 
+[features]
+unstable-core-darwin-objc = []
+
 [dependencies]
 objc2 = "0.6.2"
 dispatch2 = "0.3.0"
@@ -77,14 +80,3 @@ objc2-app-kit = { version = "0.3.1", default-features = false, features = [
     "NSWindow",
     "NSWindowController",
 ] }
-
-[features]
-unstable-core-darwin-objc = [
-    "objc2/unstable-core-darwin-objc",
-    "objc2-metal/unstable-core-darwin-objc",
-    "objc2-metal-kit/unstable-core-darwin-objc",
-    "objc2-model-io/unstable-core-darwin-objc",
-    "objc2-foundation/unstable-core-darwin-objc",
-    "objc2-core-foundation/unstable-core-darwin-objc",
-    "objc2-app-kit/unstable-core-darwin-objc",
-]
