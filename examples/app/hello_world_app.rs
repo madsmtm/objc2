@@ -38,7 +38,8 @@ define_class!(
         fn did_finish_launching(&self, notification: &NSNotification) {
             let mtm = self.mtm();
 
-            let app = unsafe { notification.object() }
+            let app = notification
+                .object()
                 .unwrap()
                 .downcast::<NSApplication>()
                 .unwrap();

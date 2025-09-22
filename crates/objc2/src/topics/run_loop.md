@@ -15,11 +15,11 @@ In non-graphical applications, you get the thread's current `NSRunLoop`, and run
 use objc2_foundation::{NSDate, NSDefaultRunLoopMode, NSRunLoop};
 
 fn main() {
-    let run_loop = unsafe { NSRunLoop::currentRunLoop() };
+    let run_loop = NSRunLoop::currentRunLoop();
 
     // Set up timers, sources, etc.
 
-    let mut date = unsafe { NSDate::now() };
+    let mut date = NSDate::now();
     // Run for roughly 10 seconds
     for i in 0..10 {
         date = unsafe { date.dateByAddingTimeInterval(1.0) };

@@ -25,6 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `OpenGLES` / `objc2-open-gl-es`.
   - `XCTest` / `objc2-xc-test`.
   - `XCUIAutomation` / `objc2-xc-ui-automation`.
+* Automatically marked a bunch of functions safe in:
+  - `Foundation` / `objc2-foundation`.
 
 ### Changed
 * Updated SDK from Xcode 16.3 to 26.0.

@@ -381,7 +381,7 @@ impl Renderer {
 
             let vertex_buffers = unsafe { self.ivars().mesh.vertexBuffers() };
             for (i, vertex_buffer) in vertex_buffers.into_iter().enumerate() {
-                if **vertex_buffer == **unsafe { NSNull::null() } {
+                if **vertex_buffer == **NSNull::null() {
                     eprintln!("got null vertex_buffer");
                     continue;
                 }

@@ -195,7 +195,7 @@ define_class!(
 
             // compute the scene properties
             let scene_properties_data = &SceneProperties {
-                time: unsafe { self.ivars().start_date.timeIntervalSinceNow() } as f32,
+                time: self.ivars().start_date.timeIntervalSinceNow() as f32,
             };
             // write the scene properties to the vertex shader argument buffer at index 0
             let scene_properties_bytes = NonNull::from(scene_properties_data);
@@ -280,7 +280,7 @@ impl Delegate {
     fn new(mtm: MainThreadMarker) -> Retained<Self> {
         let this = Self::alloc(mtm);
         let this = this.set_ivars(Ivars {
-            start_date: unsafe { NSDate::now() },
+            start_date: NSDate::now(),
             command_queue: OnceCell::default(),
             pipeline_state: OnceCell::default(),
             #[cfg(target_os = "macos")]
