@@ -16,7 +16,7 @@
 //!
 //! [apple-doc]: https://developer.apple.com/documentation/xctest/
 //! [framework-crates]: https://docs.rs/objc2/latest/objc2/topics/about_generated/index.html
-//! [examples-testing]: https://github.com/madsmtm/objc2/tree/master/examples/testing-helper
+//! [examples-testing]: https://github.com/madsmtm/objc2/tree/main/examples/testing-helper
 #![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 // Update in Cargo.toml as well.

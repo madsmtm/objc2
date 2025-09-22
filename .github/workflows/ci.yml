@@ -5,8 +5,8 @@ on:
   pull_request:
   push:
     branches:
-    # Once merged into `master`
-    - master
+    # Once merged into the head branch.
+    - main
     # And on `ci-full` to allow running time-consuming checks.
     - ci-full
   # Every monday at 09:00 in the morning

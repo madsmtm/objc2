@@ -47,7 +47,7 @@ lto = true
 
 # Release data for framework crates
 [workspace.metadata.release]
-allow-branch = ["master"]
+allow-branch = ["main"]
 push-remote = "0origin"
 shared-version = true # Framework crates share a version number
 tag-prefix = "frameworks"
