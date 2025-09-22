@@ -29,11 +29,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Foundation` / `objc2-foundation`.
 
 ### Changed
-* Updated SDK from Xcode 16.3 to 26.0.
+* Updated SDK from Xcode 16.3 to 26.0.1.
 
   View the release notes to learn more details:
   - [16.4](https://developer.apple.com/documentation/xcode-release-notes/xcode-16_4-release-notes)
   - [26.0](https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes)
+  - [26.0.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_0_1-release-notes)
 
   Breaking changes are noted elsewhere in this changelog entry.
 * **BREAKING**: The reply block in `FSVolumeRenameOperations::setVolumeName_replyHandler` now
