@@ -20,15 +20,15 @@ block2 = { workspace = true, optional = true, features = ["alloc"] }
 dispatch2 = { workspace = true, optional = true, features = [
     "alloc",
     "block2",
-    "objc2",
 ] }
 libc = { workspace = true, optional = true }
-objc2 = { workspace = true, features = ["std"] }
-objc2-core-foundation = { workspace = true, optional = true, features = [
-    "CFError",
-    "objc2",
+objc2 = { workspace = true, optional = true, features = ["std"] }
+objc2-core-foundation = { workspace = true, optional = true, features = ["CFError"] }
+objc2-foundation = { workspace = true, optional = true, features = [
+    "NSArray",
+    "NSURLSession",
+    "alloc",
 ] }
-objc2-foundation = { workspace = true, features = ["alloc"] }
 objc2-security = { workspace = true, optional = true, features = [
     "SecProtocolMetadata",
     "SecProtocolOptions",
@@ -55,7 +55,9 @@ default = [
     "block2",
     "dispatch2",
     "libc",
+    "objc2",
     "objc2-core-foundation",
+    "objc2-foundation",
     "objc2-security",
 ]
 std = ["alloc"]
@@ -63,10 +65,14 @@ alloc = []
 block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 libc = ["dep:libc"]
+objc2 = [
+    "dep:objc2",
+    "dispatch2?/objc2",
+    "objc2-core-foundation?/objc2",
+    "objc2-security?/objc2",
+]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-foundation = ["dep:objc2-foundation"]
 objc2-security = ["dep:objc2-security"]
 
-FoundationExtension = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSURLSession",
-]
+FoundationExtension = []

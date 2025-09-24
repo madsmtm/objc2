@@ -1,10 +1,10 @@
 framework = "Network"
 crate = "objc2-network"
-required-crates = ["objc2", "objc2-foundation"]
+required-crates = []
 custom-lib-rs = true
 flags = [
     # Generate nw_release/nw_retain
-    "-DOS_OBJECT_USE_OBJC_RETAIN_RELEASE=1",
+    "-DOS_OBJECT_USE_OBJC_RETAIN_RELEASE=0",
 ]
 
 macos = "10.14"

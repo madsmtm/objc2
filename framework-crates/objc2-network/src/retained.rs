@@ -9,23 +9,17 @@ use core::{
 
 use crate::{
     generated::{nw_release, nw_retain},
-    DispatchObject,
+    NWObject,
 };
 
-// Symlinked to `objc2/src/rc/retained_forwarding_impls.rs`, Cargo will make
-// a copy when publishing.
-mod forwarding_impls;
-// Allow the `use super::Retained;` in `forwarding_impls` to work.
-use NWRetained as Retained;
-
-/// A reference counted pointer type for Dispatch objects.
+/// A reference counted pointer type for Network objects.
 ///
 /// [`NWRetained`] strongly references or "retains" the given object
 /// `T`, and decrements the retain count or "releases" it again when dropped,
 /// thereby ensuring it will be deallocated at the right time.
 ///
 /// The type `T` inside `NWRetained<T>` can be anything that implements
-/// [`DispatchObject`], i.e. any Dispatch object.
+/// [`NWObject`], i.e. any Dispatch object.
 ///
 ///
 /// # Comparison to other types
@@ -42,7 +36,7 @@ use NWRetained as Retained;
 /// pointer that allows cloning by bumping the reference count.
 ///
 /// Unlike `Arc`, objects can be retained directly from a `&T` using
-/// [`DispatchObject::retain`] (for `Arc` you need `&Arc<T>`).
+/// [`NWObject::retain`] (for `Arc` you need `&Arc<T>`).
 ///
 /// Weak references are not supported, for that you need to convert to
 /// `objc2::rc::Retained`.
@@ -62,7 +56,7 @@ use NWRetained as Retained;
 /// such as [`PartialEq`], [`AsRef`], and so on, so that it becomes possible
 /// to use e.g. `NWRetained<DispatchQueue>` as-if it you had a
 /// `&DispatchQueue`. Note that having a `DispatchQueue` directly is not
-/// possible since dispatch objects cannot live on the stack, but instead must
+/// possible since Network objects cannot live on the stack, but instead must
 /// reside on the heap, and as such must be accessed behind a pointer or a
 /// reference.
 ///
@@ -111,7 +105,7 @@ impl<T: ?Sized> Drop for NWRetained<T> {
     }
 }
 
-impl<T: ?Sized + DispatchObject> NWRetained<T> {
+impl<T: ?Sized + NWObject> NWRetained<T> {
     /// Construct a `NWRetained` from a pointer that already has +1
     /// retain count.
     ///
@@ -209,7 +203,7 @@ impl<T: ?Sized + DispatchObject> NWRetained<T> {
     /// type has are upheld.
     #[inline]
     // TODO: Add ?Sized bound
-    pub unsafe fn cast_unchecked<U: DispatchObject>(this: Self) -> NWRetained<U> {
+    pub unsafe fn cast_unchecked<U: NWObject>(this: Self) -> NWRetained<U> {
         // SAFETY: The object is forgotten, so we have +1 retain count.
         //
         // Caller verifies that the object is of the correct type.
@@ -217,10 +211,10 @@ impl<T: ?Sized + DispatchObject> NWRetained<T> {
     }
 }
 
-impl<T: ?Sized + DispatchObject> Clone for NWRetained<T> {
+impl<T: ?Sized + NWObject> Clone for NWRetained<T> {
     /// Retain the object, increasing its reference count.
     ///
-    /// This calls [`DispatchObject::retain`] internally.
+    /// This calls [`NWObject::retain`] internally.
     #[doc(alias = "nw_retain")]
     #[doc(alias = "retain")]
     #[inline]
@@ -248,7 +242,7 @@ impl<T: ?Sized> fmt::Pointer for NWRetained<T> {
 }
 
 // Same as what's implemented for `objc2::rc::Retained`.
-impl<T: ?Sized + AsRef<U>, U: DispatchObject> From<&T> for NWRetained<U> {
+impl<T: ?Sized + AsRef<U>, U: NWObject> From<&T> for NWRetained<U> {
     /// Cast the object to a superclass, and retain it.
     #[inline]
     fn from(obj: &T) -> Self {
@@ -257,18 +251,18 @@ impl<T: ?Sized + AsRef<U>, U: DispatchObject> From<&T> for NWRetained<U> {
 }
 
 #[cfg(feature = "objc2")]
-impl<T: ?Sized + DispatchObject + objc2::Message> From<objc2::rc::Retained<T>> for NWRetained<T> {
+impl<T: ?Sized + NWObject + objc2::Message> From<objc2::rc::Retained<T>> for NWRetained<T> {
     /// Convert a [`objc2::rc::Retained`] into a [`NWRetained`].
     ///
     /// This only works if the type is a Dispatch object (implements the
-    /// [`DispatchObject`] trait).
+    /// [`NWObject`] trait).
     ///
     /// This conversion is cost-free.
     #[inline]
     fn from(obj: objc2::rc::Retained<T>) -> Self {
         let ptr = objc2::rc::Retained::into_raw(obj);
         let ptr = NonNull::new(ptr).unwrap();
-        // SAFETY: `T` is bound by `DispatchObject`, so we know that the type
+        // SAFETY: `T` is bound by `NWObject`, so we know that the type
         // is a Dispatch object, and hence we know that it will respond to
         // `nw_retain`/`nw_release`.
         //
@@ -279,10 +273,10 @@ impl<T: ?Sized + DispatchObject + objc2::Message> From<objc2::rc::Retained<T>> f
 }
 
 #[cfg(feature = "objc2")]
-impl<T: ?Sized + DispatchObject + objc2::Message> From<NWRetained<T>> for objc2::rc::Retained<T> {
+impl<T: ?Sized + NWObject + objc2::Message> From<NWRetained<T>> for objc2::rc::Retained<T> {
     /// Convert a [`NWRetained`] into a [`objc2::rc::Retained`].
     ///
-    /// This conversion is cost-free, since Dispatch objects are fully
+    /// This conversion is cost-free, since Network objects are fully
     /// interoperable with Objective-C retain/release message sending.
     #[inline]
     fn from(obj: NWRetained<T>) -> Self {
