@@ -59,7 +59,7 @@ macro_rules! nw_object {
         }
 
         #[cfg(feature = "objc2")]
-        // SAFETY: Dispatch objects can act as Objective-C objects
+        // SAFETY: Network objects can act as Objective-C objects
         // (and respond to e.g. retain/release messages).
         unsafe impl objc2::Message for $type {}
 
@@ -69,7 +69,7 @@ macro_rules! nw_object {
             fn as_ref(&self) -> &objc2::runtime::AnyObject {
                 let ptr: *const Self = self;
                 let ptr: *const objc2::runtime::AnyObject = ptr.cast();
-                // SAFETY: Dispatch objects can act as Objective-C objects.
+                // SAFETY: Network objects can act as Objective-C objects.
                 unsafe { &*ptr }
             }
         }
