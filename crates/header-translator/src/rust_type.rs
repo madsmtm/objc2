@@ -1,20 +1,21 @@
-use std::fmt::Display;
-use std::str::FromStr;
-use std::sync::LazyLock;
-use std::{fmt, iter, mem};
+use std::{fmt, fmt::Display, iter, mem, str::FromStr, sync::LazyLock};
 
 use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
 
-use crate::context::Context;
-use crate::display_helper::FormatterFn;
-use crate::id::{ItemIdentifier, ItemTree};
-use crate::name_translation::cf_no_ref;
-use crate::protocol::ProtocolRef;
-use crate::stmt::{anonymous_record_name, bridged_to, parse_class_generics, GenericWithBound};
-use crate::stmt::{parse_superclasses, superclasses_required_items};
-use crate::thread_safety::ThreadSafety;
-use crate::unexposed_attr::UnexposedAttr;
+use crate::{
+    context::Context,
+    display_helper::FormatterFn,
+    id::{ItemIdentifier, ItemTree},
+    name_translation::cf_no_ref,
+    protocol::ProtocolRef,
+    stmt::{
+        anonymous_record_name, bridged_to, parse_class_generics, parse_superclasses,
+        superclasses_required_items, GenericWithBound,
+    },
+    thread_safety::ThreadSafety,
+    unexposed_attr::UnexposedAttr,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 enum ParsePosition {
@@ -696,6 +697,9 @@ pub enum PointeeTy {
     DispatchTypeDef {
         id: ItemIdentifier,
     },
+    NetworkTypeDef {
+        id: ItemIdentifier,
+    },
     TypeDef {
         id: ItemIdentifier,
         to: Box<PointeeTy>,
@@ -808,7 +812,9 @@ impl PointeeTy {
                 .chain(result_type.required_items())
                 .chain(arguments.iter().flat_map(|arg| arg.required_items()))
                 .collect(),
-            Self::CFTypeDef { id, .. } | Self::DispatchTypeDef { id } => {
+            Self::CFTypeDef { id, .. }
+            | Self::DispatchTypeDef { id }
+            | Self::NetworkTypeDef { id } => {
                 vec![ItemTree::from_id(id.clone())]
             }
             Self::TypeDef { id, to } => {
@@ -865,7 +871,9 @@ impl PointeeTy {
                     .any(|arg| arg.requires_mainthreadmarker(self_requires))
                     || result_type.requires_mainthreadmarker(self_requires)
             }
-            Self::CFTypeDef { .. } | Self::DispatchTypeDef { .. } => false,
+            Self::CFTypeDef { .. } | Self::DispatchTypeDef { .. } | Self::NetworkTypeDef { .. } => {
+                false
+            }
             Self::TypeDef { to, .. } => to.requires_mainthreadmarker(self_requires),
             Self::CStr => false,
         }
@@ -959,6 +967,7 @@ impl PointeeTy {
             }
             Self::CFTypeDef { id, .. } => write!(f, "{}", id.path()),
             Self::DispatchTypeDef { id } => write!(f, "{}", id.path()),
+            Self::NetworkTypeDef { id } => write!(f, "{}", id.path()),
             Self::TypeDef { id, .. } => write!(f, "{}", id.path()),
             Self::CStr => write!(f, "CStr"),
         })
@@ -1137,6 +1146,8 @@ impl PointeeTy {
             // Dispatch objects have strong type-safety, and are thus
             // safe in both positions.
             Self::DispatchTypeDef { .. } => TypeSafety::SAFE,
+            // Akin to dispatch objects
+            Self::NetworkTypeDef { .. } => TypeSafety::SAFE,
             // &CStr is safe as a parameter, though probably not when
             // returning (since we wouldn't know the lifetime).
             Self::CStr => TypeSafety::unsafe_in_return("must bound the lifetime"),
@@ -1219,9 +1230,10 @@ impl PointeeTy {
 
     pub(crate) fn implementable(&self) -> Option<ItemTree> {
         match self {
-            Self::CFTypeDef { id, .. } | Self::Class { id, .. } | Self::DispatchTypeDef { id } => {
-                Some(ItemTree::from_id(id.clone()))
-            }
+            Self::CFTypeDef { id, .. }
+            | Self::Class { id, .. }
+            | Self::DispatchTypeDef { id }
+            | Self::NetworkTypeDef { id } => Some(ItemTree::from_id(id.clone())),
             // We shouldn't encounter this here, since `Self` is only on
             // Objective-C methods, but if we do, it's very unclear how we
             // should translate it.
@@ -1263,6 +1275,15 @@ impl PointeeTy {
             // Recurse into typedefs
             Self::TypeDef { to, .. } => to.is_dispatch_type(),
             Self::DispatchTypeDef { .. } => true,
+            _ => false,
+        }
+    }
+
+    fn is_network_type(&self) -> bool {
+        match self {
+            // Recurse into typedefs
+            Self::TypeDef { to, .. } => to.is_network_type(),
+            Self::NetworkTypeDef { .. } => true,
             _ => false,
         }
     }
@@ -2039,6 +2060,21 @@ impl Ty {
                         };
                     }
 
+                    // Handle other Network Objective-C objects.
+                    name if name.starts_with("nw_")
+                        && inner.get_kind() == TypeKind::ObjCObjectPointer =>
+                    {
+                        let id = ItemIdentifier::new(&declaration, context);
+                        let id = context.replace_typedef_name(id, false);
+                        let pointee = Box::new(Self::Pointee(PointeeTy::NetworkTypeDef { id }));
+                        return Self::Pointer {
+                            nullability,
+                            is_const,
+                            lifetime,
+                            pointee,
+                        };
+                    }
+
                     _ => {}
                 }
 
@@ -2565,6 +2601,15 @@ impl Ty {
         }
     }
 
+    /// Determine whether the pointee inside a `Pointer` is a Network object-like type.
+    fn is_network_type(&self) -> bool {
+        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+            pointee_ty.is_network_type()
+        } else {
+            false
+        }
+    }
+
     /// Determine whether the pointee inside a `Pointer` is the inner
     /// struct/void type required for a type to be considered a CF type.
     ///
@@ -2920,6 +2965,9 @@ impl Ty {
             Self::Pointer { pointee, .. } if pointee.is_dispatch_type() => {
                 items.push(ItemTree::dispatch("DispatchRetained"));
             }
+            Self::Pointer { pointee, .. } if pointee.is_network_type() => {
+                items.push(ItemTree::dispatch("NWRetained"));
+            }
             _ => {}
         }
         items.into_iter()
@@ -2960,6 +3008,14 @@ impl Ty {
                 (_, false) => ";\nret.map(|ret| unsafe { DispatchRetained::retain(ret) })",
             }
         };
+        let end_network = |nullability| {
+            match (nullability, returns_retained) {
+                (Nullability::NonNull, true) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { NWRetained::from_raw(ret) }",
+                (Nullability::NonNull, false) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { NWRetained::retain(ret) }",
+                (_, true) => ";\nret.map(|ret| unsafe { NWRetained::from_raw(ret) })",
+                (_, false) => ";\nret.map(|ret| unsafe { NWRetained::retain(ret) })",
+            }
+        };
         let end_objc = |nullability| {
             match (nullability, returns_retained) {
                 (Nullability::NonNull, true) => {
@@ -2989,7 +3045,10 @@ impl Ty {
                 // are a hint, and not an ABI stable promise.
                 if pointee.is_static_object() {
                     write!(f, "-> Option<&'static {}>", pointee.behind_pointer())
-                } else if pointee.is_cf_type() || pointee.is_dispatch_type() {
+                } else if pointee.is_cf_type()
+                    || pointee.is_dispatch_type()
+                    || pointee.is_network_type()
+                {
                     write!(f, "-> Option<NonNull<{}>>", pointee.behind_pointer())
                 } else if pointee.is_objc_type() {
                     write!(f, "-> *mut {}", pointee.behind_pointer())
@@ -3045,6 +3104,13 @@ impl Ty {
                         format!(" -> Option<DispatchRetained<{}>>", pointee.behind_pointer())
                     };
                     Some((res, start, end_dispatch(*nullability)))
+                } else if pointee.is_network_type() {
+                    let res = if *nullability == Nullability::NonNull {
+                        format!(" -> NWRetained<{}>", pointee.behind_pointer())
+                    } else {
+                        format!(" -> Option<NWRetained<{}>>", pointee.behind_pointer())
+                    };
+                    Some((res, start, end_network(*nullability)))
                 } else if pointee.is_objc_type() && !pointee.is_static_object() {
                     let res = if *nullability == Nullability::NonNull {
                         format!(" -> Retained<{}>", pointee.behind_pointer())

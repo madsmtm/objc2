@@ -1,6 +1,8 @@
-use clang::source::{SourceLocation, SourceRange};
-use clang::token::{Token, TokenKind};
-use clang::{Entity, EntityKind};
+use clang::{
+    source::{SourceLocation, SourceRange},
+    token::{Token, TokenKind},
+    Entity, EntityKind,
+};
 use proc_macro2::TokenStream;
 
 use crate::context::{Context, MacroLocation};
@@ -41,7 +43,7 @@ impl UnexposedAttr {
         get_arguments: impl FnOnce() -> TokenStream,
     ) -> Result<Option<Self>, ()> {
         Ok(match s {
-            "CF_ENUM" | "JSC_CF_ENUM" | "DISPATCH_ENUM" | "NS_ENUM" => {
+            "CF_ENUM" | "JSC_CF_ENUM" | "DISPATCH_ENUM" | "NS_ENUM" | "NW_ENUM" => {
                 let _ = get_arguments();
                 Some(Self::Enum)
             }
@@ -96,7 +98,8 @@ impl UnexposedAttr {
             | "CM_RETURNS_RETAINED_BLOCK"
             | "CM_RETURNS_RETAINED_PARAMETER"
             | "CV_RETURNS_RETAINED"
-            | "CV_RETURNS_RETAINED_PARAMETER" => Some(Self::ReturnsRetained),
+            | "CV_RETURNS_RETAINED_PARAMETER"
+            | "NW_RETURNS_RETAINED" => Some(Self::ReturnsRetained),
             "NS_RETURNS_NOT_RETAINED"
             | "CF_RETURNS_NOT_RETAINED"
             | "CM_RETURNS_NOT_RETAINED_PARAMETER" => Some(Self::ReturnsNotRetained),
@@ -139,8 +142,8 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
-            "CF_NOESCAPE" | "DISPATCH_NOESCAPE" | "NS_NOESCAPE" | "XCT_NOESCAPE"
-            | "XCUI_NOESCAPE" => Some(Self::NoEscape),
+            "CF_NOESCAPE" | "DISPATCH_NOESCAPE" | "NW_NOESCAPE" | "NS_NOESCAPE"
+            | "XCT_NOESCAPE" | "XCUI_NOESCAPE" => Some(Self::NoEscape),
             "DISPATCH_NOTHROW" | "NS_SWIFT_NOTHROW" => Some(Self::NoThrow),
             // TODO: We could potentially automatically elide this argument
             // from the method call, though it's rare enough that it's
@@ -422,6 +425,7 @@ impl UnexposedAttr {
             | "NS_REFINED_FOR_SWIFT"
             | "AR_REFINED_FOR_SWIFT"
             | "NS_SWIFT_DISABLE_ASYNC"
+            | "NW_SWIFT_DISABLE_ASYNC"
             | "CP_STRUCT_REF" => None,
             // Possibly interesting?
             "DISPATCH_COLD" => None,
