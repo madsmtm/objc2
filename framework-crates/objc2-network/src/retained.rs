@@ -101,7 +101,7 @@ impl<T: ?Sized> Drop for NWRetained<T> {
     fn drop(&mut self) {
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
-        unsafe { nw_release(self.ptr.cast()) };
+        unsafe { nw_release(self.ptr.as_ptr().cast()) };
     }
 }
 
@@ -149,7 +149,7 @@ impl<T: ?Sized + NWObject> NWRetained<T> {
     #[inline]
     pub unsafe fn retain(ptr: NonNull<T>) -> Self {
         // SAFETY: The caller upholds that the pointer is valid.
-        unsafe { nw_retain(ptr.cast()) };
+        unsafe { nw_retain(ptr.as_ptr().cast()) };
 
         // SAFETY: We just retained the object, so it has +1 retain count.
         // Validity of the pointer is upheld by the caller.
