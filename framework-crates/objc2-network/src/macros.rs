@@ -52,7 +52,7 @@ macro_rules! nw_object {
         }
 
         #[cfg(feature = "objc2")]
-        // SAFETY: Dispatch objects are internally objects.
+        // SAFETY: Network objects are internally objects.
         unsafe impl objc2::encode::RefEncode for $type {
             const ENCODING_REF: objc2::encode::Encoding
                 = objc2::encode::Encoding::Object;
