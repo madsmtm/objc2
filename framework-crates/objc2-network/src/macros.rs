@@ -10,7 +10,7 @@ macro_rules! nw_object {
             _p: $crate::OpaqueData,
         }
 
-        // SAFETY: The object is a dispatch object.
+        // SAFETY: The object is a network object.
         unsafe impl $crate::NWObject for $type {}
 
         // Reflexive impl
@@ -25,7 +25,8 @@ macro_rules! nw_object {
             #[doc = concat!("Compare this [`", stringify!($type), "`] with another using pointer equality.")]
             #[inline]
             fn eq(&self, other: &Self) -> bool {
-                // Dispatch objects use pointer equality.
+                // Network objects use pointer equality.
+                // Some objects like Path provide individual method for equality check.
                 core::ptr::eq(self, other)
             }
         }
