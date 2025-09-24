@@ -2307,6 +2307,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-network"
+version = "0.3.1"
+dependencies = [
+ "block2",
+ "dispatch2",
+ "libc",
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-foundation",
+ "objc2-security",
+]
+
+[[package]]
 name = "objc2-network-extension"
 version = "0.3.1"
 dependencies = [
@@ -3532,6 +3545,7 @@ dependencies = [
  "objc2-multipeer-connectivity",
  "objc2-natural-language",
  "objc2-nearby-interaction",
+ "objc2-network",
  "objc2-network-extension",
  "objc2-notification-center",
  "objc2-open-directory",

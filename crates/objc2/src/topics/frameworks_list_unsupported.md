@@ -82,7 +82,6 @@
 | `MobileCoreServices` | Deprecated, use CoreServices + UniformTypeIdentifiers instead. |
 | `MusicKit` | Swift-only. |
 | `NetFS` | Deprecated, use macFUSE or FSKit instead (probably). |
-| `Network` | TODO, see [#646](https://github.com/madsmtm/objc2/issues/646). |
 | `OpenAL` | Very C-centric, use newer Audio frameworks instead. |
 | `OpenCL` | Very C-centric and old. |
 | `PCSC` | Too low-level, consider crates like `pcsc` instead. |
