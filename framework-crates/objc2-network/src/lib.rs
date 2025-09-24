@@ -80,10 +80,14 @@ pub use resolver_config::ResolverConfig;
 pub use txt_record::TxtRecord;
 pub use ws_options::{WsRequest, WsResponse};
 
+// Generated types that should be made public
+pub use generated::{nw_path_monitor_cancel_handler_t, nw_path_monitor_update_handler_t};
+
+// Friendly type-aliases for generated types
+pub use generated::{nw_interface_type_t as InterfaceType, nw_path_status_t as PathStatus};
+
 // Helper type
 type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;
-
-type Retained<T: NWObject> = NWRetained<T>;
 
 // Type aliases for generated types
 #[allow(non_camel_case_types)]
@@ -148,3 +152,7 @@ type nw_browser_t = Browser;
 type nw_connection_group_t = ConnectionGroup;
 #[allow(non_camel_case_types)]
 type nw_content_context_t = ContentContext;
+
+// fixme: Generated as ArrayUnknownABI
+#[allow(non_camel_case_types)]
+pub type nw_ethernet_address_t = [core::ffi::c_uchar; 6];
