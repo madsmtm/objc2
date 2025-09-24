@@ -1,6 +1,6 @@
 framework = "Network"
 crate = "objc2-network"
-required-crates = []
+required-crates = ["block2", "dispatch2"]
 custom-lib-rs = true
 flags = [
     # Generate nw_release/nw_retain
@@ -13,6 +13,8 @@ ios = "12.0"
 tvos = "12.0"
 watchos = "6.0"
 visionos = "1.0"
+
+unsafe-default-safety.functions = true
 
 # Enum generated with integer identifiers
 const.nw_ip_version_any.renamed = "any"
