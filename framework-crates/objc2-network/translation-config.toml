@@ -140,3 +140,13 @@ typedef.nw_ws_request_t.skipped = true
 protocol.OS_nw_ws_request.skipped = true
 typedef.nw_ws_response_t.skipped = true
 protocol.OS_nw_ws_response.skipped = true
+
+# ethernet_channel.h
+# fixme: Generated as ArrayUnknownABI
+typedef.nw_ethernet_address_t.skipped = true
+
+# fixme: Return pointer to pointer which does not work with Retained::from_raw()
+fn.nw_quic_copy_sec_protocol_options.skipped = true
+fn.nw_tls_copy_sec_protocol_metadata.skipped = true
+fn.nw_quic_copy_sec_protocol_metadata.skipped = true
+fn.nw_tls_copy_sec_protocol_options.skipped = true
