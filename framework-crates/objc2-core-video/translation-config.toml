@@ -40,3 +40,24 @@ fn.CVBufferGetAttachments.renamed = "get_attachments"
 # TODO(breaking): Make these nonnull
 static.kCVImageBufferPostDecodeProcessingSequenceMetadataKey.nullability = "nullable"
 static.kCVImageBufferPostDecodeProcessingFrameMetadataKey.nullability = "nullable"
+
+##
+## Safety
+##
+
+# SAFETY: CoreVideo is generally well-behaved.
+#
+# TODO(breaking): Note that the way we do type-safety for it is incomplete,
+# buffers aren't distinct types. This is documented for example as:
+# > On OSX 10.10 and earlier, or iOS 8 and earlier, calling this
+# > function with a non-planar buffer will have undefined behavior.
+#
+# We only support macOS 10.12 and above though, so this should be fine. In the
+# future, we should make these distinct types though.
+unsafe-default-safety.functions = true
+# SAFETY: CoreVideo is bounds-checked internally.
+unsafe-default-safety.not-bounds-affecting = false
+
+# Unsure of soundness of over-unlocking?
+fn.CVPixelBufferLockBaseAddress.unsafe = true
+fn.CVPixelBufferUnlockBaseAddress.unsafe = true
