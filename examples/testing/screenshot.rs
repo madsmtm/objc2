@@ -1,4 +1,5 @@
 #![no_main] // Required, we build this with `-bundle`.
+#![cfg_attr(feature = "unstable-core-darwin-objc", feature(darwin_objc))]
 
 use objc2::{define_class, ClassType, MainThreadOnly};
 use objc2_foundation::ns_string;
