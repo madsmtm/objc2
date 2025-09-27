@@ -17,6 +17,20 @@ class.XCTMutableIssue.counterpart = "ImmutableSuperclass(XCTest.XCTIssue)"
 # Uses va_list
 class.XCTestLog.methods."testLogWithFormat:arguments:".skipped = true
 
+##
+## Safety
+##
+
+# SAFETY: XCTest is well-behaved, and since it's only used for test code, it
+# doesn't matter _that_ much anyhow if it's unsound (though we'd still like to
+# avoid it of course).
+unsafe-default-safety.property-getters = true
+unsafe-default-safety.property-setters = true
+unsafe-default-safety.instance-methods = true
+unsafe-default-safety.class-methods = true
+unsafe-default-safety.functions = true
+unsafe-default-safety.not-bounds-affecting = false
+
 # Using NSInvocation is perilous, since it doesn't retain its target.
 class.XCTestCase.methods."testCaseWithInvocation:".unsafe = true
 class.XCTestCase.methods."initWithInvocation:".unsafe = true

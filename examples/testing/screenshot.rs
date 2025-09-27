@@ -15,21 +15,19 @@ define_class!(
     impl TestCase {
         #[unsafe(method(testScreenshot))]
         fn test_screenshot(&self) {
-            let app = unsafe { XCUIApplication::new(self.mtm()) };
-            unsafe { app.launch() };
+            let app = XCUIApplication::new(self.mtm());
+            app.launch();
 
             // Save screenshot.
-            let screenshot = unsafe { app.windows().element().screenshot() };
-            let res = unsafe {
-                screenshot
-                    .PNGRepresentation()
-                    .writeToFile_atomically(ns_string!("screenshot.png"), false)
-            };
+            let screenshot = app.windows().element().screenshot();
+            let res = screenshot
+                .PNGRepresentation()
+                .writeToFile_atomically(ns_string!("screenshot.png"), false);
             assert!(res, "failed writing screenshot");
 
             // TODO: For some reason, we have to terminate the application
             // manually when running outside Xcode?
-            unsafe { app.terminate() };
+            app.terminate();
         }
     }
 );

@@ -22,14 +22,14 @@ define_class!(
 
         #[unsafe(method(testScreenshot))]
         fn test_screenshot(&self) {
-            let app = unsafe { XCUIApplication::new(self.mtm()) };
-            unsafe { app.launch() };
+            let app = XCUIApplication::new(self.mtm());
+            app.launch();
 
             // Run your test code in here.
 
             // TODO: For some reason, we have to terminate the application
             // manually when running outside Xcode?
-            unsafe { app.terminate() };
+            app.terminate();
         }
     }
 );
