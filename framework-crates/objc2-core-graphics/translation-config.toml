@@ -1,6 +1,10 @@
 framework = "CoreGraphics"
 crate = "objc2-core-graphics"
 required-crates = ["objc2-core-foundation"]
+flags = [
+    # TODO(breaking): Add this to disable cg_nullable and get better nullability information.
+    # "-D__swift__=0",
+]
 custom-lib-rs = true
 macos = "10.8"
 maccatalyst = "13.0"
@@ -76,3 +80,26 @@ fn.CGColorSpaceCopyBaseColorSpace.renamed = "copy_base_color_space"
 # TODO(breaking): Has better typed parameter.
 fn.CGBitmapContextCreateWithData.skipped = true
 fn.CGBitmapContextCreate.skipped = true
+
+##
+## Safety
+##
+
+# SAFETY: CoreGraphics is well-behaved when it comes to memory safety.
+unsafe-default-safety.functions = true
+# TODO: Things like `CGPDFArrayGetNull` are maybe not bounds-checked?
+unsafe-default-safety.not-bounds-affecting = false
+
+# TODO: Unsure if the run loop source must be sendable?
+# https://github.com/madsmtm/objc2/issues/696
+fn.CGDisplayStreamGetRunLoopSource.unsafe = true
+
+# Unclear if these can be used correctly if the dictionary is owned by the
+# system (and hence might be released on another thread just before we retain
+# the return value?)
+fn.CGDisplayAvailableModes.unsafe = true
+fn.CGDisplayBestModeForParameters.unsafe = true
+fn.CGDisplayBestModeForParametersAndRefreshRate.unsafe = true
+fn.CGDisplayCurrentMode.unsafe = true
+fn.CGDisplaySwitchToMode.unsafe = true
+fn.CGDisplaySetDisplayMode.unsafe = true

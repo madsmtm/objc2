@@ -123,3 +123,11 @@ typedef.ICDirSpecArrayPtr.skipped = true
 fn.HIShapeCreateDifference.renamed = "create_difference"
 fn.HIShapeCreateUnion.renamed = "create_union"
 fn.HIShapeCreateXor.renamed = "create_xor"
+
+##
+## Safety
+##
+
+# TODO: Unsure if the run loop source must be sendable?
+# https://github.com/madsmtm/objc2/issues/696
+fn.AXObserverGetRunLoopSource.unsafe = true

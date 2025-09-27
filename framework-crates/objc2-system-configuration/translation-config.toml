@@ -24,3 +24,4 @@ fn.SCNetworkReachabilityScheduleWithRunLoop.unsafe = false
 fn.SCNetworkReachabilityUnscheduleFromRunLoop.unsafe = false
 fn.SCPreferencesScheduleWithRunLoop.unsafe = false
 fn.SCPreferencesUnscheduleFromRunLoop.unsafe = false
+fn.SCDynamicStoreCreateRunLoopSource.unsafe = false
