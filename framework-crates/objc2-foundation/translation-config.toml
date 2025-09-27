@@ -519,3 +519,7 @@ class.NSThread.methods.main.unsafe = true
 
 # Unclear memory management semantics (and probably a no-op anyhow).
 class.NSGarbageCollector.unsafe = true
+
+# Documentation says these must be balanced.
+class.NSURL.methods.startAccessingSecurityScopedResource.unsafe = true
+class.NSURL.methods.stopAccessingSecurityScopedResource.unsafe = true

@@ -22,8 +22,8 @@ fn main() {
     let mut date = NSDate::now();
     // Run for roughly 10 seconds
     for i in 0..10 {
-        date = unsafe { date.dateByAddingTimeInterval(1.0) };
-        unsafe { run_loop.runUntilDate(&date) };
+        date = date.dateByAddingTimeInterval(1.0);
+        run_loop.runUntilDate(&date);
 
         // Do something every second (if there are any sources attached)
     }
