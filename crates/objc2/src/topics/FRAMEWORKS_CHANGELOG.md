@@ -15,7 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `IOKit` "serial" submodule.
 * Marked a bunch of functions safe in:
+  - `CoreFoundation` / `objc2-core-foundation`.
+  - `CoreVideo` / `objc2-core-video`.
+  - `Foundation` / `objc2-foundation`.
   - `IOKit` / `objc2-io-kit`.
+  - `QuartzCore` / `objc2-quartz-core`.
 * Added a lot of missing APIs.
 * Added `AsRef` impls for toll-free bridging between types like `CFString` and `NSString`.
 * Added `cast_unchecked` methods on collection types like `NSArray<T>` and `CFDictionary<K, V>`.
@@ -27,8 +31,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `OpenGLES` / `objc2-open-gl-es`.
   - `XCTest` / `objc2-xc-test`.
   - `XCUIAutomation` / `objc2-xc-ui-automation`.
-* Automatically marked a bunch of functions safe in:
-  - `Foundation` / `objc2-foundation`.
 
 ### Changed
 * Updated SDK from Xcode 16.3 to 26.0.1.
