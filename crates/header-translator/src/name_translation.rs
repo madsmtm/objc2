@@ -267,6 +267,19 @@ pub(crate) fn find_fn_implementor(
             }
         }
 
+        // Certain functions are mistakenly identified as constructors.
+        //
+        // For example:
+        //
+        // nw_txt_record_find_key_t nw_txt_record_find_key(nw_txt_record_t)
+        //
+        // This should be treated as an instance method of NWTxtRecord instead
+        if fn_location.library_name() == "Network" && fn_name == "nw_txt_record_find_key" {
+            if let Some(item) = first_arg_ty.implementable() {
+                return Some(item);
+            }
+        }
+
         if let Some(item) = first_arg_ty.implementable() {
             let type_name = strip_needless_suffix(&item.id().name).replace("Mutable", "");
             if is_method_candidate(fn_name, &type_name) {
