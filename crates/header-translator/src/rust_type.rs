@@ -1019,6 +1019,11 @@ impl PointeeTy {
             Self::DispatchTypeDef { id, .. } if id.name == "DispatchQueue" => {
                 TypeSafety::unknown_in_argument("possibly has additional threading requirements")
             }
+            // Unsure if operation queues are thread-safe? Do blocks added to
+            // it have to be sendable?
+            Self::Class { id, .. } if id.name == "NSOperationQueue" => {
+                TypeSafety::unknown_in_argument("possibly has additional threading requirements")
+            }
             // `objc2` ensures that objects are initialized before being
             // allowed as references.
             Self::Class {
