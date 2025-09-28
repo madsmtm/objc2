@@ -336,7 +336,7 @@ pub struct Method {
     memory_management: MemoryManagement,
     arguments: Vec<(String, Ty)>,
     result_type: Ty,
-    safe: bool,
+    pub safe: bool,
     is_pub: bool,
     // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
     non_isolated: bool,

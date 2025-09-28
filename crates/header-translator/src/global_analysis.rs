@@ -217,6 +217,51 @@ fn update_module(
 
     module.stmts.extend(deprecated_fns);
 
+    // Propagate availability information of `init` to `new`.
+    // NOTE: this only works within single files.
+    let init_availability: BTreeMap<String, Availability> = module
+        .stmts
+        .iter()
+        .filter_map(|stmt| match stmt {
+            Stmt::ExternMethods {
+                cls: id, methods, ..
+            }
+            | Stmt::ExternCategory {
+                cls: id, methods, ..
+            }
+            | Stmt::ProtocolDecl { id, methods, .. } => Some(
+                methods
+                    .iter()
+                    .filter(|method| method.selector == "init")
+                    .map(|method| (id.name.clone(), method.availability.clone())),
+            ),
+            _ => None,
+        })
+        .flatten()
+        .collect();
+    for stmt in module.stmts.iter_mut() {
+        if let Stmt::ExternMethods {
+            cls: id, methods, ..
+        }
+        | Stmt::ExternCategory {
+            cls: id, methods, ..
+        }
+        | Stmt::ProtocolDecl { id, methods, .. } = stmt
+        {
+            if let Some(init_availability) = init_availability.get(&id.name) {
+                if let Some(method) = methods.iter_mut().find(|method| method.selector == "new") {
+                    method
+                        .availability
+                        .method_update_new_from_init(init_availability);
+                    // TODO(breaking): Remove unavailable instead of just marking them unsafe.
+                    if !method.availability.is_available() {
+                        method.safe = false;
+                    }
+                }
+            }
+        }
+    }
+
     // disambiguate duplicate names
     // NOTE: this only works within single files
     let mut names = BTreeMap::<(String, String), &mut Method>::new();

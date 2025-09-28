@@ -397,6 +397,13 @@ impl Availability {
         }
         true
     }
+
+    pub fn method_update_new_from_init(&mut self, other: &Self) {
+        if other.unavailable == Unavailable::ALL_UNAVAILABLE {
+            self.unavailable = Unavailable::ALL_UNAVAILABLE;
+        }
+        // TODO: Other parameters?
+    }
 }
 
 impl fmt::Display for Availability {
