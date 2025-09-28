@@ -1408,6 +1408,9 @@ impl Ty {
                 Some(UnexposedAttr::NoEscape) => {
                     no_escape = true;
                 }
+                Some(UnexposedAttr::FullyUnavailable) => {
+                    // Irrelevant on types.
+                }
                 Some(attr) => error!(?attr, "unknown attribute on type"),
                 None => {}
             }

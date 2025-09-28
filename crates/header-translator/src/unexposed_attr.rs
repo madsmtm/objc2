@@ -33,6 +33,8 @@ pub enum UnexposedAttr {
 
     NoEscape,
     NoThrow,
+
+    FullyUnavailable,
 }
 
 impl UnexposedAttr {
@@ -153,6 +155,18 @@ impl UnexposedAttr {
             "NS_REQUIRES_PROPERTY_DEFINITIONS" => None,
             // Weak specifiers - would be interesting if Rust supported weak statics
             "GK_EXTERN_WEAK" | "MC_EXTERN_WEAK" | "weak_import" => None,
+            // Some availability attributes are not properly exposed.
+            "NS_UNAVAILABLE"
+            | "UNAVAILABLE_ATTRIBUTE"
+            | "DISPATCH_UNAVAILABLE"
+            | "AV_INIT_UNAVAILABLE"
+            | "AVKIT_INIT_UNAVAILABLE"
+            | "MP_INIT_UNAVAILABLE"
+            | "VS_INIT_UNAVAILABLE" => Some(Self::FullyUnavailable),
+            // TODO: Add this to the above?
+            "CF_AUTOMATED_REFCOUNT_UNAVAILABLE"
+            | "NS_AUTOMATED_REFCOUNT_UNAVAILABLE"
+            | "NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE" => None,
             // Availability attributes - their data is already exposed.
             "__API_AVAILABLE"
             | "__API_DEPRECATED"
@@ -333,14 +347,12 @@ impl UnexposedAttr {
             | "__WATCHOS_UNAVAILABLE"
             | "__UNAVAILABLE_PUBLIC_IOS"
             | "APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST"
-            | "AVKIT_INIT_UNAVAILABLE"
             | "BROWSERENGINE_TEXTINPUT_AVAILABILITY"
             | "BROWSERENGINE_ACCESSIBILITY_AVAILABILITY"
             | "BROWSERENGINE_ACCESSIBILITY_MARKER_AVAILABILITY"
             | "BROWSERENGINE_ACCESSIBILITY_REMOTE_AVAILABILITY"
             | "CA_CANONICAL_DEPRECATED"
             | "CB_CM_API_AVAILABLE"
-            | "CF_AUTOMATED_REFCOUNT_UNAVAILABLE"
             | "CG_OBSOLETE"
             | "CK_SHARE_ACCESS_REQUESTER_AVAILABILITY"
             | "CK_SHARE_BLOCKED_IDENTITY_AVAILABILITY"
@@ -353,7 +365,6 @@ impl UnexposedAttr {
             | "DEPRECATED_ATTRIBUTE"
             | "DEPRECATED_ATTRIBUTE_EXCLUDE_PUBLIC_IOS"
             | "DEPRECATED_MSG_ATTRIBUTE"
-            | "DISPATCH_UNAVAILABLE"
             | "EN_API_AVAILABLE"
             | "EN_API_AVAILABLE_V2"
             | "EN_API_AVAILABLE_V3"
@@ -379,17 +390,11 @@ impl UnexposedAttr {
             | "MIDICI1_1"
             | "MIDICI1_2"
             | "MIDINETWORKSESSION_AVAILABLE"
-            | "MP_INIT_UNAVAILABLE"
-            | "NS_AUTOMATED_REFCOUNT_UNAVAILABLE"
-            | "NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE"
             | "NS_CLASS_AVAILABLE"
-            | "NS_UNAVAILABLE"
-            | "UNAVAILABLE_ATTRIBUTE"
             | "UT_AVAILABLE_BEGIN"
             | "MP_DEPRECATED_BEGIN"
             | "SEC_ASN1_API_DEPRECATED"
             | "SECUREDOWNLOAD_API_DEPRECATED"
-            | "VS_INIT_UNAVAILABLE"
             | "XCT_METRIC_API_AVAILABLE"
             | "XCUI_PROTECTED_RESOURCES_RESET_API_AVAILABLE" => None,
             s if s.starts_with("AVAILABLE_MAC_OS_X_VERSION_") => None,
@@ -435,8 +440,6 @@ impl UnexposedAttr {
                 None
             }
             "objc_non_runtime_protocol" => None,
-            // Emits unavailability attributes on `new` and `init` methods
-            "AV_INIT_UNAVAILABLE" => None,
             // Helper used to easy declare @interface in CompositorServices.
             "CP_OBJECT_DECL" => {
                 let _ = get_arguments();
@@ -446,6 +449,7 @@ impl UnexposedAttr {
             "XCT_WEAK_EXPORT" => None,
             // Irrelevant, we don't emit dispatch_object_t anyhow.
             "DISPATCH_TRANSPARENT_UNION" => None,
+            "NS_NO_TAIL_CALL" => None,
             _ => return Err(()),
         })
     }

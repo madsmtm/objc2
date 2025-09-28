@@ -3,9 +3,12 @@ use std::{
     fmt::{self, Display},
 };
 
-use clang::{Entity, PlatformAvailability, Version};
+use clang::{Entity, EntityKind, PlatformAvailability, Version};
 
-use crate::{context::Context, display_helper::FormatterFn};
+use crate::{
+    context::Context, display_helper::FormatterFn, immediate_children,
+    unexposed_attr::UnexposedAttr,
+};
 
 #[derive(Debug, Clone, PartialEq, Default)]
 struct Unavailable {
@@ -162,7 +165,7 @@ fn version_cmp(left: Version, right: Version) -> Ordering {
 }
 
 impl Availability {
-    pub fn parse(entity: &Entity<'_>, _context: &Context<'_>) -> Self {
+    pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let availabilities = entity
             .get_platform_availability()
             .expect("platform availability");
@@ -250,10 +253,16 @@ impl Availability {
             }
         }
 
+        // This is an unconditional attribute that overrides the platform
+        // availability for the current platform.
+        //
+        // Unfortunately, it is partially merged into the platform
+        // availability above, so it's kinda hard to know when it applies.
         let current_target_availability = entity.get_availability();
         match current_target_availability {
             clang::Availability::Available => {}
             clang::Availability::Deprecated => {
+                // TODO: Handle this better?
                 if deprecated == Versions::default() {
                     deprecated = Versions::MIN;
                 }
@@ -262,12 +271,19 @@ impl Availability {
                 error!(?entity, "cannot handle 'Inaccessible' availability")
             }
             clang::Availability::Unavailable => {
-                if unavailable == Unavailable::default() {
-                    // TODO: Set per-target.
+                // Handled below.
+            }
+        }
+
+        immediate_children(entity, |entity, _span| {
+            if let EntityKind::UnexposedAttr = entity.get_kind() {
+                if let Some(UnexposedAttr::FullyUnavailable) =
+                    UnexposedAttr::parse(&entity, context)
+                {
                     unavailable = Unavailable::ALL_UNAVAILABLE;
                 }
             }
-        }
+        });
 
         Self {
             unavailable,

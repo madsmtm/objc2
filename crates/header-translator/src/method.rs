@@ -90,6 +90,9 @@ impl MethodModifiers {
                         UnexposedAttr::NoThrow => {
                             // TODO: Use this somehow?
                         }
+                        UnexposedAttr::FullyUnavailable => {
+                            // Handled in Availability::parse.
+                        }
                         attr => error!(?attr, "unknown attribute on method"),
                     }
                 }
