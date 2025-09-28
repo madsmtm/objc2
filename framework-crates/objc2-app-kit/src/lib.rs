@@ -36,14 +36,6 @@ extern crate std;
 #[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-gui", kind = "dylib"))]
 extern "C" {}
 
-/// (!TARGET_CPU_X86_64 || (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST))
-///
-/// <https://github.com/xamarin/xamarin-macios/issues/12111>
-// TODO: Make this work with mac catalyst
-#[allow(dead_code)]
-pub(crate) const TARGET_ABI_USES_IOS_VALUES: bool =
-    !cfg!(any(target_arch = "x86", target_arch = "x86_64")) || cfg!(not(target_os = "macos"));
-
 #[cfg(feature = "NSApplication")]
 mod application;
 #[cfg(feature = "NSEvent")]
@@ -58,10 +50,15 @@ mod text;
 #[cfg(feature = "NSResponder")]
 pub use self::application::*;
 pub use self::generated::*;
-#[cfg(feature = "NSImage")]
-pub use self::image::*;
-#[cfg(feature = "NSText")]
-pub use self::text::*;
+
+/// (!TARGET_CPU_X86_64 || (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST))
+///
+/// <https://github.com/xamarin/xamarin-macios/issues/12111>
+#[allow(unused)]
+#[allow(unexpected_cfgs)]
+pub(crate) const TARGET_ABI_USES_IOS_VALUES: bool = !cfg!(target_arch = "x86_64")
+    || (cfg!(all(target_vendor = "apple", not(target_os = "macos")))
+        && !cfg!(target_env = "macabi"));
 
 // MacTypes.h
 #[allow(unused)]

@@ -65,9 +65,11 @@ class.NSLayoutXAxisAnchor.derives = "Debug"
 class.NSLayoutYAxisAnchor.derives = "Debug"
 class.NSLayoutDimension.derives = "Debug"
 
-# Different definitions depending on target
-enum.NSImageResizingMode.skipped = true
-enum.NSTextAlignment.skipped = true
+# Different definitions depending on target.
+const.NSImageResizingModeTile.skipped = true
+const.NSImageResizingModeStretch.skipped = true
+const.NSTextAlignmentCenter.skipped = true
+const.NSTextAlignmentRight.skipped = true
 
 # Uses constants from IOKit
 enum.NSPointingDeviceType.use-value = true

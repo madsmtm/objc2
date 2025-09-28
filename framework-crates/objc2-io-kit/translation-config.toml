@@ -64,6 +64,8 @@ const.kIOUSBInterfaceInterfaceID.skipped = true
 # Redefine for kUSBHostMessageRenegotiateCurrent
 const.kIOUSBMessageRenegotiateCurrent.skipped = true
 
+# TODO: Check cfgs with `TARGET_OS_MACCATALYST`.
+
 # Requires C++
 module.video.skipped = true
 

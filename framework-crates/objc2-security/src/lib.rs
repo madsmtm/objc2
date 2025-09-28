@@ -22,9 +22,18 @@ pub use self::generated::*;
 // Manual fixes.
 #[cfg(all(feature = "libc", feature = "Authorization"))]
 mod authorization;
+#[cfg(feature = "CipherSuite")]
+mod cipher_suite;
+#[cfg(feature = "cssmapple")]
+mod cssmapple;
 #[cfg(all(feature = "libc", feature = "Authorization"))]
 #[allow(unused_imports, unreachable_pub)]
 pub use self::authorization::*;
+#[cfg(feature = "CipherSuite")]
+pub use self::cipher_suite::*;
+#[cfg(feature = "cssmapple")]
+#[allow(unused_imports, unreachable_pub)]
+pub use self::cssmapple::*;
 
 #[cfg(all(feature = "cssmtype", feature = "cssmconfig", feature = "objc2"))]
 use objc2::encode::{Encode, Encoding, RefEncode};

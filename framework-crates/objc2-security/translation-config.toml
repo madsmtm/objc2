@@ -177,3 +177,9 @@ fn.SecKeychainAttributeInfoForItemID.implementor = "Security.SecBase.SecKeychain
 fn.CSSM_ListAttachedModuleManagers.no-implementor = true
 fn.CSSM_QuerySize.no-implementor = true
 fn.CSSM_QueryKeySizeInBits.no-implementor = true
+
+# Differs depending on platform.
+typedef.SSLCipherSuite.skipped = true
+
+# Has an extra field on TARGET_OS_IPHONE.
+struct.CSSM_TP_APPLE_EVIDENCE_INFO.skipped = true

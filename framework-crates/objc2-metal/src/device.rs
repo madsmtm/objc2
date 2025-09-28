@@ -13,6 +13,7 @@ use objc2_foundation::NSArray;
 /// device that MTLCreateSystemDefaultDevice would have returned, or an empty
 /// array if it would have failed.
 #[inline]
+#[allow(unexpected_cfgs)]
 pub extern "C-unwind" fn MTLCopyAllDevices() -> Retained<NSArray<ProtocolObject<dyn MTLDevice>>> {
     // MTLCopyAllDevices is always available on macOS and Mac Catalyst, but
     // only available recently on iOS 18.0 / tvOS 18.0 / visionOS 2.0.
@@ -20,10 +21,9 @@ pub extern "C-unwind" fn MTLCopyAllDevices() -> Retained<NSArray<ProtocolObject<
     // Instead, we do the fallback to MTLCreateSystemDefaultDevice on those
     // platforms that they do themselves on newer systems.
     //
-    // TODO: Add `target_abi = "macabi" once in MSRV.
     // TODO: Use something like <https://github.com/rust-lang/rfcs/pull/3750>
     // to call the actual API when available.
-    #[cfg(target_os = "macos")]
+    #[cfg(any(target_os = "macos", target_env = "macabi"))]
     {
         extern "C-unwind" {
             fn MTLCopyAllDevices() -> *mut NSArray<ProtocolObject<dyn MTLDevice>>;
@@ -34,7 +34,7 @@ pub extern "C-unwind" fn MTLCopyAllDevices() -> Retained<NSArray<ProtocolObject<
         unsafe { Retained::from_raw(ret) }
             .expect("function was marked as returning non-null, but actually returned NULL")
     }
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(not(any(target_os = "macos", target_env = "macabi")))]
     {
         let device = crate::MTLCreateSystemDefaultDevice();
         let slice: &[_] = if let Some(device) = device.as_deref() {

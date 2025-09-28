@@ -25,6 +25,8 @@ mod generated;
 mod geometry;
 #[cfg(feature = "UIGestureRecognizer")]
 mod gesture_recognizer;
+#[cfg(feature = "UIImage")]
+mod image;
 #[cfg(feature = "UIPasteConfigurationSupporting")]
 mod paste_configuration;
 #[cfg(feature = "UIResponder")]
@@ -42,5 +44,12 @@ pub use self::generated::*;
 pub use self::geometry::*;
 #[cfg(feature = "UIResponder")]
 pub use self::responder::*;
-#[cfg(feature = "NSText")]
-pub use self::text::*;
+
+/// (!TARGET_CPU_X86_64 || (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST))
+///
+/// <https://github.com/xamarin/xamarin-macios/issues/12111>
+#[allow(unused)]
+#[allow(unexpected_cfgs)]
+pub(crate) const TARGET_ABI_USES_IOS_VALUES: bool = !cfg!(target_arch = "x86_64")
+    || (cfg!(all(target_vendor = "apple", not(target_os = "macos")))
+        && !cfg!(target_env = "macabi"));
