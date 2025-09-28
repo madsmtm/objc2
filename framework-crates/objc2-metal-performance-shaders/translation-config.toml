@@ -32,3 +32,11 @@ const.MPSNDArrayConstantMultiDestIndex1.skipped = false
 const.MPSNDArrayConstantMultiDestSrcAddressingIndex.skipped = false
 const.MPSNDArrayConstantMultiDestDstAddressingIndex.skipped = false
 const.MPSUserAvailableFunctionConstantStartIndex.skipped = false
+
+##
+## Safety
+##
+
+# Unarchival may be unsafe if not requiring secure encoding, so let's
+# be conservative in what we mark safe for now.
+class.MPSKeyedUnarchiver.unsafe = true

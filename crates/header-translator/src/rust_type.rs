@@ -1068,6 +1068,10 @@ impl PointeeTy {
                 } else if id.name == "NSObject" {
                     // `NSObject` has similar safety to `AnyObject`.
                     safety = TypeSafety::unknown_in_argument("should be of the correct type");
+                } else if id.name == "NSEnumerator" {
+                    safety = TypeSafety::unsafe_in_return(
+                        "enumerator's underlying collection should not be mutated while in use",
+                    );
                 }
 
                 if id.name.contains("Mutable") {

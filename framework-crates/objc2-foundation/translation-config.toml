@@ -330,19 +330,8 @@ unsafe-default-safety.functions = true
 # Foundation's methods are bounds-checked and throw exceptions.
 unsafe-default-safety.not-bounds-affecting = false
 
-# Collections may not be mutated while enumerating.
-class.NSArray.methods.objectEnumerator.unsafe = true
-class.NSArray.methods.reverseObjectEnumerator.unsafe = true
-class.NSDictionary.methods.objectEnumerator.unsafe = true
-class.NSDictionary.methods.keyEnumerator.unsafe = true
-class.NSSet.methods.objectEnumerator.unsafe = true
-class.NSCountedSet.methods.objectEnumerator.unsafe = true
-class.NSOrderedSet.methods.objectEnumerator.unsafe = true
-class.NSOrderedSet.methods.reverseObjectEnumerator.unsafe = true
-class.NSMapTable.methods.objectEnumerator.unsafe = true
-class.NSMapTable.methods.keyEnumerator.unsafe = true
-class.NSHashTable.methods.objectEnumerator.unsafe = true
-# Enumerators themselves are safe to use, we move unsoundness to their creation above.
+# Enumerators themselves are safe to use, we move unsoundness to their creation
+# in `header-translator`.
 class.NSEnumerator.methods.nextObject.unsafe = false
 class.NSEnumerator.methods.allObjects.unsafe = false
 
