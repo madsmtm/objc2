@@ -685,6 +685,7 @@ pub enum Stmt {
         documentation: Documentation,
     },
     /// typedef struct CF_BRIDGED_TYPE(id) CGColorSpace *CGColorSpaceRef;
+    /// NW_OBJECT_DECL, NW_SENDABLE_OBJECT_DECL
     OpaqueDecl {
         id: ItemIdentifier,
         generics: Vec<GenericWithBound>,
@@ -697,6 +698,17 @@ pub enum Stmt {
         bridged: Option<String>,
         superclass: Option<ItemIdentifier>,
     },
+    /// NW_OBJECT_DECL, NW_SENDABLE_OBJECT_DECL
+    // NetworkDecl {
+    //     id: ItemIdentifier,
+    //     generics: Vec<GenericWithBound>,
+    //     encoding_name: String,
+    //     availability: Availability,
+    //     documentation: Documentation,
+    //     sendable: Option<bool>,
+    //     bridged: Option<String>,
+    //     superclass: Option<ItemIdentifier>,
+    // },
     GeneralImpl {
         location: Location,
         item: ItemTree, // TODO: Make this a Ty?

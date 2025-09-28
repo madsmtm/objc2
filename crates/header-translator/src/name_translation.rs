@@ -276,7 +276,7 @@ pub(crate) fn find_fn_implementor(
         // This should be treated as an instance method of NWTxtRecord instead
         //
         // todo: needs some system
-        const nw_instance_methods: [&str; 45] = [
+        const nw_instance_methods: [&str; 46] = [
             "nw_protocol_copy_ws_definition",
             "nw_quic_get_application_error",
             "nw_quic_get_application_error_reason",
@@ -319,6 +319,7 @@ pub(crate) fn find_fn_implementor(
             "nw_ws_options_set_skip_handshake",
             "nw_ws_request_enumerate_additional_headers",
             "nw_ws_request_enumerate_subprotocols",
+            "nw_ws_response_add_additional_header",
             "nw_ws_response_enumerate_additional_headers",
             "nw_ws_response_get_selected_subprotocol",
             "nw_ws_response_get_status",
