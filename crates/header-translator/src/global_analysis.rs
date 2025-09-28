@@ -139,6 +139,25 @@ fn update_module(
                     )
                 };
 
+                // Replace the first argument with self when translating standalone functions into instance methods
+                //
+                // nw_txt_record_t nw_txt_record_copy(nw_txt_record_t txt_record);
+                //
+                // To:
+                //
+                // impl NWTxtRecord {
+                //   fn copy(&self) -> NWRetained<NWTxtRecord>;
+                // }
+                //
+                if id.library_name() == "Network"
+                    && arguments
+                        .first()
+                        .and_then(|(_, first_arg_ty)| first_arg_ty.implementable())
+                        .is_some_and(|v| v == cf_item)
+                {
+                    *first_arg_is_self = true;
+                }
+
                 // TODO(breaking): Remove in next version
                 if body.is_none()
                     && id.library_name() != "Dispatch"

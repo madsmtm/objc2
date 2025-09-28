@@ -239,8 +239,9 @@ pub(crate) fn enum_prefix<'a>(
     ep
 }
 
-pub(crate) fn cf_no_ref(type_name: &str) -> &str {
-    type_name.strip_suffix("Ref").unwrap_or(type_name)
+pub(crate) fn strip_needless_suffix(type_name: &str) -> &str {
+    let type_name = type_name.strip_suffix("Ref").unwrap_or(type_name);
+    type_name.strip_suffix("_t").unwrap_or(type_name)
 }
 
 /// Find the type onto whom a function should be inserted.
@@ -267,7 +268,7 @@ pub(crate) fn find_fn_implementor(
         }
 
         if let Some(item) = first_arg_ty.implementable() {
-            let type_name = cf_no_ref(&item.id().name).replace("Mutable", "");
+            let type_name = strip_needless_suffix(&item.id().name).replace("Mutable", "");
             if is_method_candidate(fn_name, &type_name) {
                 // Only emit if in same crate (otherwise it requires a helper trait).
                 if fn_location.library_name() == item.id().library_name() {
@@ -281,7 +282,7 @@ pub(crate) fn find_fn_implementor(
     if let Some(item) = result_type.implementable() {
         // Allowing this means that things like `CGPathCreateMutableCopy`
         // are considered part of `CFMutablePath`.
-        let type_name = cf_no_ref(&item.id().name).replace("Mutable", "");
+        let type_name = strip_needless_suffix(&item.id().name).replace("Mutable", "");
 
         if is_method_candidate(fn_name, &type_name) {
             // Only emit if in same crate (otherwise it requires a helper trait).
@@ -321,7 +322,7 @@ pub(crate) fn find_fn_implementor(
         if fn_name.contains("CTFontManager") {
             continue;
         }
-        if is_method_candidate(fn_name, cf_no_ref(&item.id().name)) {
+        if is_method_candidate(fn_name, strip_needless_suffix(&item.id().name)) {
             candidates.push(item.clone());
         }
     }
@@ -357,7 +358,7 @@ pub(crate) fn cf_fn_name(
     omit_memory_management_words: bool,
 ) -> String {
     let is_mutable = type_name.contains("Mutable");
-    let type_name = cf_no_ref(type_name).replace("Mutable", "");
+    let type_name = strip_needless_suffix(type_name).replace("Mutable", "");
 
     debug_assert!(is_method_candidate(fn_name, &type_name));
 
@@ -378,7 +379,7 @@ pub(crate) fn cf_fn_name(
     }
 
     if words.is_empty() {
-        return "".to_string();
+        return "new".to_owned();
     }
 
     // Keep "create" and "copy" if needed for the user to be able to determine
@@ -666,6 +667,23 @@ mod tests {
         check("FooBar", "MutableFoo", "bar");
         check("FooBar", "FooRef", "bar");
         check("FooBar", "MutableFooRef", "bar");
+
+        check("sec_trust_create", "SecTrust", "new");
+        check("sec_trust_create", "SecTrustRef", "new");
+        assert_eq!(
+            cf_fn_name("sec_trust_create", "SecTrustRef", true, true),
+            "new"
+        );
+
+        assert_eq!(
+            cf_fn_name(
+                "nw_txt_record_find_key",
+                "nw_txt_record_find_key_t",
+                true,
+                true
+            ),
+            "new"
+        );
 
         // check("AbcDef", "AbcDef", "");
         // check("Ac", "Bc", None);

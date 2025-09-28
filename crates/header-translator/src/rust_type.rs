@@ -7,7 +7,7 @@ use crate::{
     context::Context,
     display_helper::FormatterFn,
     id::{ItemIdentifier, ItemTree},
-    name_translation::cf_no_ref,
+    name_translation::strip_needless_suffix,
     protocol::ProtocolRef,
     stmt::{
         anonymous_record_name, bridged_to, parse_class_generics, parse_superclasses,
@@ -622,15 +622,20 @@ fn get_class_data(
 }
 
 fn parse_protocol(entity: Entity<'_>, context: &Context<'_>) -> (ProtocolRef, ThreadSafety) {
-    let entity = entity.get_definition().unwrap_or(entity);
+    let mut entity = entity.get_definition().unwrap_or(entity);
     // @protocol produces a ObjCProtocolDecl if we didn't
     // load the actual declaration, but we don't actually
     // want that, since it'll point to the wrong place.
-    let entity = entity
+    let source_entity = entity
         .get_location()
         .expect("itemref location")
         .get_entity()
         .expect("itemref entity");
+
+    // Workaround for OS_OBJECT_DECL.
+    if source_entity.get_kind() != EntityKind::MacroExpansion {
+        entity = source_entity;
+    }
 
     let id = ItemIdentifier::new(&entity, context);
 
@@ -1146,7 +1151,7 @@ impl PointeeTy {
             // Dispatch objects have strong type-safety, and are thus
             // safe in both positions.
             Self::DispatchTypeDef { .. } => TypeSafety::SAFE,
-            // Akin to dispatch objects
+            // Same for Network types.
             Self::NetworkTypeDef { .. } => TypeSafety::SAFE,
             // &CStr is safe as a parameter, though probably not when
             // returning (since we wouldn't know the lifetime).
@@ -2050,7 +2055,7 @@ impl Ty {
                         && inner.get_kind() == TypeKind::ObjCObjectPointer =>
                     {
                         let id = ItemIdentifier::new(&declaration, context);
-                        let id = context.replace_typedef_name(id, false);
+                        let id = context.replace_typedef_name(id, false, false);
                         let pointee = Box::new(Self::Pointee(PointeeTy::DispatchTypeDef { id }));
                         return Self::Pointer {
                             nullability,
@@ -2065,7 +2070,7 @@ impl Ty {
                         && inner.get_kind() == TypeKind::ObjCObjectPointer =>
                     {
                         let id = ItemIdentifier::new(&declaration, context);
-                        let id = context.replace_typedef_name(id, false);
+                        let id = context.replace_typedef_name(id, false, true);
                         let pointee = Box::new(Self::Pointee(PointeeTy::NetworkTypeDef { id }));
                         return Self::Pointer {
                             nullability,
@@ -2153,7 +2158,7 @@ impl Ty {
                         // here, as that's also what determines whether the
                         // type is a CF type or not... But that's how it is
                         // currently.
-                        let id = context.replace_typedef_name(id, true);
+                        let id = context.replace_typedef_name(id, true, false);
                         *pointee = Box::new(Self::Pointee(PointeeTy::CFTypeDef {
                             id,
                             declaration_generics,
@@ -2161,7 +2166,11 @@ impl Ty {
                         return inner;
                     } else if pointee.is_object_like() {
                         if let Self::Pointee(pointee_ty) = &mut **pointee {
-                            let id = context.replace_typedef_name(id, pointee_ty.is_cf_type());
+                            let id = context.replace_typedef_name(
+                                id,
+                                pointee_ty.is_cf_type(),
+                                pointee_ty.is_network_type(),
+                            );
                             // Replace with a dummy type (will be re-replaced
                             // on the line below).
                             let to = Box::new(mem::replace(pointee_ty, PointeeTy::Self_));
@@ -2571,7 +2580,10 @@ impl Ty {
     }
 
     fn is_object_like(&self) -> bool {
-        self.is_objc_type() || self.is_cf_type() || self.is_dispatch_type()
+        self.is_objc_type()
+            || self.is_cf_type()
+            || self.is_dispatch_type()
+            || self.is_network_type()
     }
 
     /// Determine whether the inner type of a `Pointer` is object-like.
@@ -2601,7 +2613,7 @@ impl Ty {
         }
     }
 
-    /// Determine whether the pointee inside a `Pointer` is a Network object-like type.
+    /// Determine whether the pointee inside a `Pointer` is a Network-like type.
     fn is_network_type(&self) -> bool {
         if let Self::Pointee(pointee_ty) = self.through_typedef() {
             pointee_ty.is_network_type()
@@ -2650,6 +2662,13 @@ impl Ty {
             pointee.is_cf_type()
         } else {
             false
+        }
+    }
+
+    pub(crate) fn is_nw_type_ptr(&self) -> bool {
+        match self {
+            Self::Pointer { pointee, .. } => pointee.is_network_type(),
+            _ => false,
         }
     }
 
@@ -2966,7 +2985,7 @@ impl Ty {
                 items.push(ItemTree::dispatch("DispatchRetained"));
             }
             Self::Pointer { pointee, .. } if pointee.is_network_type() => {
-                items.push(ItemTree::dispatch("NWRetained"));
+                items.push(ItemTree::network("NWRetained"));
             }
             _ => {}
         }
@@ -3735,7 +3754,7 @@ impl Ty {
                     PointeeTy::CFTypeDef { id, .. } => id,
                     _ => return,
                 };
-                let type_name = cf_no_ref(&id.name);
+                let type_name = strip_needless_suffix(&id.name);
                 // We don't ever want to mark these as non-NULL, as they have NULL
                 // statics (`kCFAllocatorDefault` and `kODSessionDefault`).
                 if fn_name.contains(type_name) && !matches!(type_name, "ODSession" | "CFAllocator")

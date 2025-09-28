@@ -1271,7 +1271,7 @@ impl Stmt {
                     );
 
                     if is_cf {
-                        let id = context.replace_typedef_name(id, is_cf);
+                        let id = context.replace_typedef_name(id, is_cf, false);
 
                         if id.name != c_name {
                             documentation.set_alias(c_name);
@@ -1363,7 +1363,7 @@ impl Stmt {
                     warn!(name = ?id.name, ?sendable, "unhandled sendability attribute on typedef");
                 }
 
-                let id = context.replace_typedef_name(id, ty.is_cf_type_ptr());
+                let id = context.replace_typedef_name(id, ty.is_cf_type_ptr(), ty.is_nw_type_ptr());
 
                 if id.name != c_name {
                     documentation.set_alias(c_name);
