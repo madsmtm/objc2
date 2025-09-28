@@ -14,10 +14,9 @@ extern crate alloc;
 
 #[cfg(feature = "std")]
 extern crate std;
-
 mod generated;
 #[macro_use]
-mod macros;
+pub(crate) mod macros;
 mod object;
 mod retained;
 
@@ -28,11 +27,8 @@ use core::{
 
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+pub use self::object::NWObject;
 pub use self::retained::NWRetained;
-pub use object::NWObject;
-
-// Generated types that should be made public
-pub use self::generated::*;
 
 // Helper type
 type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;

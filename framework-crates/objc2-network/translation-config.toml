@@ -35,8 +35,8 @@ typedef.nw_object_t.skipped = true
 protocol.OS_nw_object.skipped = true
 
 # ethernet_channel.h
-typedef.nw_ethernet_channel_t.skipped = true
-protocol.OS_nw_ethernet_channel.skipped = true
+# typedef.nw_ethernet_channel_t.skipped = true
+# protocol.OS_nw_ethernet_channel.skipped = true
 
 # ethernet_channel.h
 # fixme: Generated as ArrayUnknownABI

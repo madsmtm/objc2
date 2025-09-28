@@ -3491,6 +3491,30 @@ impl Ty {
         Self::parse(ty, Lifetime::Unspecified, context)
     }
 
+    pub(crate) fn is_pointer_to_nw_object(&self, typedef_name: &str) -> bool {
+        if !typedef_name.starts_with("nw_") {
+            return false;
+        }
+
+        println!("#### THIS: {:?}", self);
+
+        if let Self::Pointer {
+            pointee,
+            is_const: _, // const-ness doesn't matter when defining the type
+            ..
+        } = self
+        {
+            // Self::Pointee should point at NSObject
+            if let Self::Pointee(pty) = &**pointee {
+                println!("Pointee: {pty:?}");
+                if let PointeeTy::Class { id, .. } = pty {
+                    return id.name == "NSObject";
+                }
+            }
+        }
+        false
+    }
+
     pub(crate) fn pointer_to_opaque_struct_or_void(
         &self,
         typedef_name: &str,

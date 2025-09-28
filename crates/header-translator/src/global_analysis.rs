@@ -161,6 +161,7 @@ fn update_module(
                 // TODO(breaking): Remove in next version
                 if body.is_none()
                     && id.library_name() != "Dispatch"
+                    && id.library_name() != "Network"
                     && !link_name.contains("GetTypeID")
                 {
                     deprecated_fns.push(Stmt::FnDecl {

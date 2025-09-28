@@ -692,6 +692,7 @@ pub enum Stmt {
         availability: Availability,
         documentation: Documentation,
         is_cf: bool,
+        is_nw: bool,
         sendable: Option<bool>,
         bridged: Option<String>,
         superclass: Option<ItemIdentifier>,
@@ -1327,6 +1328,7 @@ impl Stmt {
                             availability,
                             documentation,
                             is_cf,
+                            is_nw: false,
                             sendable,
                             bridged: bridged.flatten(),
                             superclass,
@@ -1344,6 +1346,7 @@ impl Stmt {
                                 availability: Availability::parse(&entity, context),
                                 documentation: Documentation::from_entity(&entity, context),
                                 is_cf,
+                                is_nw: false,
                                 sendable,
                                 bridged: bridged.flatten(),
                                 superclass: None,
@@ -1357,6 +1360,32 @@ impl Stmt {
                             },
                         ];
                     }
+                }
+
+                if ty.is_pointer_to_nw_object(&c_name) {
+                    let id = context.replace_typedef_name(id, false, true);
+                    if id.name != c_name {
+                        documentation.set_alias(c_name);
+                    }
+
+                    let encoding_name = id.name.to_owned();
+                    // todo: define with nw_object!(pub struct XXX)
+                    return vec![Self::OpaqueDecl {
+                        id,
+                        generics: data
+                            .generics
+                            .iter()
+                            .map(|generic| (generic.clone(), None))
+                            .collect(),
+                        encoding_name,
+                        availability: Availability::parse(&entity, context),
+                        documentation: Documentation::from_entity(&entity, context),
+                        is_cf: false,
+                        is_nw: true,
+                        sendable,
+                        bridged: bridged.flatten(),
+                        superclass: None,
+                    }];
                 }
 
                 if sendable.is_some() {
@@ -3308,10 +3337,21 @@ impl Stmt {
                     availability,
                     documentation,
                     is_cf,
+                    is_nw,
                     sendable,
                     bridged: _,
                     superclass,
                 } => {
+                    if *is_nw {
+                        writeln!(f, "nw_object!(")?;
+                        write!(f, "{}", documentation.fmt(Some(id)))?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        write!(f, "{availability}")?;
+                        writeln!(f, "pub struct {};", id.name)?;
+                        writeln!(f, ");")?;
+                        return Ok(());
+                    }
+
                     write!(f, "{}", documentation.fmt(Some(id)))?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;

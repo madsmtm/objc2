@@ -274,7 +274,56 @@ pub(crate) fn find_fn_implementor(
         // nw_txt_record_find_key_t nw_txt_record_find_key(nw_txt_record_t)
         //
         // This should be treated as an instance method of NWTxtRecord instead
-        if fn_location.library_name() == "Network" && fn_name == "nw_txt_record_find_key" {
+        //
+        // todo: needs some system
+        const nw_instance_methods: [&str; 45] = [
+            "nw_protocol_copy_ws_definition",
+            "nw_quic_get_application_error",
+            "nw_quic_get_application_error_reason",
+            "nw_quic_get_keepalive_interval",
+            "nw_quic_get_local_max_streams_bidirectional",
+            "nw_quic_get_local_max_streams_unidirectional",
+            "nw_quic_get_remote_idle_timeout",
+            "nw_quic_get_remote_max_streams_bidirectional",
+            "nw_quic_get_remote_max_streams_unidirectional",
+            "nw_quic_get_stream_application_error",
+            "nw_quic_get_stream_id",
+            "nw_quic_get_stream_type",
+            "nw_quic_get_stream_usable_datagram_frame_size",
+            "nw_quic_set_application_error",
+            "nw_quic_set_keepalive_interval",
+            "nw_quic_set_local_max_streams_bidirectional",
+            "nw_quic_set_local_max_streams_unidirectional",
+            "nw_quic_set_stream_application_error",
+            "nw_tcp_options_set_enable_keepalive",
+            "nw_tcp_options_set_keepalive_count",
+            "nw_tcp_options_set_keepalive_idle_time",
+            "nw_tcp_options_set_keepalive_interval",
+            "nw_tcp_options_set_no_delay",
+            "nw_tcp_options_set_no_options",
+            "nw_tcp_options_set_no_push",
+            "nw_txt_record_access_bytes",
+            "nw_txt_record_access_key",
+            "nw_txt_record_find_key",
+            "nw_udp_options_set_prefer_no_checksum",
+            "nw_ws_metadata_copy_server_response",
+            "nw_ws_metadata_get_close_code",
+            "nw_ws_metadata_get_opcode",
+            "nw_ws_metadata_set_close_code",
+            "nw_ws_metadata_set_pong_handler",
+            "nw_ws_options_add_additional_header",
+            "nw_ws_options_add_subprotocol",
+            "nw_ws_options_set_auto_reply_ping",
+            "nw_ws_options_set_client_request_handler",
+            "nw_ws_options_set_maximum_message_size",
+            "nw_ws_options_set_skip_handshake",
+            "nw_ws_request_enumerate_additional_headers",
+            "nw_ws_request_enumerate_subprotocols",
+            "nw_ws_response_enumerate_additional_headers",
+            "nw_ws_response_get_selected_subprotocol",
+            "nw_ws_response_get_status",
+        ];
+        if fn_location.library_name() == "Network" && nw_instance_methods.contains(&fn_name) {
             if let Some(item) = first_arg_ty.implementable() {
                 return Some(item);
             }
@@ -375,21 +424,33 @@ pub(crate) fn cf_fn_name(
 
     debug_assert!(is_method_candidate(fn_name, &type_name));
 
-    let mut type_words = lowercase_words(&type_name);
+    // Hack: NWWS in network framework is not properly parsed into two words
+    let temp_type_name = if type_name.starts_with("NWWs") {
+        type_name.replace("NWWs", "NwWs")
+    } else {
+        type_name
+    };
+
+    let mut type_words = lowercase_words(&temp_type_name);
     let mut words = lowercase_words(fn_name)
         .skip_while(|fn_word| {
             if let Some(type_word) = type_words.next() {
-                assert_eq!(*fn_word, type_word);
-                true
+                // This can fail for various types:
+                //
+                // type_name: nw_protocol_metadata
+                // fn_name: nw_quic_get_stream_id
+                //
+                //assert_eq!(*fn_word, type_word);
+                *fn_word == type_word
             } else {
                 false
             }
         })
         .collect::<VecDeque<_>>();
 
-    if type_words.count() != 0 {
-        panic!("function name must prefix type: {fn_name:?}, {type_name:?}");
-    }
+    // if type_words.count() != 0 {
+    //     panic!("function name must prefix type: {fn_name:?}, {type_name:?}");
+    // }
 
     if words.is_empty() {
         return "new".to_owned();

@@ -1,3 +1,4 @@
+#[macro_export]
 macro_rules! nw_object {
     (
         $(#[$m:meta])*
