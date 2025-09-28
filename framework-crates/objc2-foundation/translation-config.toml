@@ -375,6 +375,12 @@ class.NSArray.methods."setValue:forKey:".unsafe = true
 class.NSMutableDictionary.methods."setValue:forKey:".unsafe = true
 class.NSOrderedSet.methods."setValue:forKey:".unsafe = true
 class.NSSet.methods."setValue:forKey:".unsafe = true
+class.NSObject.methods."mutableArrayValueForKey:".unsafe = true
+class.NSObject.methods."mutableArrayValueForKeyPath:".unsafe = true
+class.NSObject.methods."mutableOrderedSetValueForKey:".unsafe = true
+class.NSObject.methods."mutableOrderedSetValueForKeyPath:".unsafe = true
+class.NSObject.methods."mutableSetValueForKey:".unsafe = true
+class.NSObject.methods."mutableSetValueForKeyPath:".unsafe = true
 
 # Key-value observing requires that the observer is removed.
 class.NSObject.methods."addObserver:forKeyPath:options:context:".unsafe = true
@@ -421,18 +427,6 @@ class.NSMutableDictionary.methods."dictionaryWithContentsOfURL:".unsafe = true
 class.NSMutableDictionary.methods."initWithContentsOfFile:".unsafe = true
 class.NSMutableDictionary.methods."initWithContentsOfURL:".unsafe = true
 
-# Breaks type-safety by returning an untyped mutable collection,
-# which is invariant.
-#
-# TODO: Detect these cases in the translator.
-class.NSObject.methods."mutableArrayValueForKey:".unsafe = true # + KVC constraints
-class.NSObject.methods."mutableArrayValueForKeyPath:".unsafe = true # + KVC constraints
-class.NSObject.methods."mutableOrderedSetValueForKey:".unsafe = true # + KVC constraints
-class.NSObject.methods."mutableOrderedSetValueForKeyPath:".unsafe = true # + KVC constraints
-class.NSObject.methods."mutableSetValueForKey:".unsafe = true # + KVC constraints
-class.NSObject.methods."mutableSetValueForKeyPath:".unsafe = true # + KVC constraints
-class.NSThread.methods.threadDictionary.unsafe = true
-
 # Breaks type-safety by copying without the copy helper.
 class.NSArray.methods."initWithArray:copyItems:".unsafe = true
 class.NSDictionary.methods."initWithDictionary:copyItems:".unsafe = true
@@ -460,7 +454,6 @@ class.NSDictionary.methods."sharedKeySetForKeys:".unsafe = true
 
 # Breaks lifetime safety unless you call `retainArguments`.
 class.NSInvocation.unsafe = true
-
 # Getting it from anywhere else is thus also perilous.
 class.NSDistantObjectRequest.methods.invocation.unsafe = true
 class.NSInvocationOperation.methods."initWithInvocation:".unsafe = true
