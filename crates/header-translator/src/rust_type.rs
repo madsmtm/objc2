@@ -3496,8 +3496,6 @@ impl Ty {
             return false;
         }
 
-        println!("#### THIS: {:?}", self);
-
         if let Self::Pointer {
             pointee,
             is_const: _, // const-ness doesn't matter when defining the type
