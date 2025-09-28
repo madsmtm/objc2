@@ -1065,6 +1065,9 @@ impl PointeeTy {
                         "must implement {}",
                         separate_with_comma_and(protocols.iter().map(|(p, _)| &p.id.name))
                     )));
+                } else if id.name == "NSObject" {
+                    // `NSObject` has similar safety to `AnyObject`.
+                    safety = TypeSafety::unknown_in_argument("should be of the correct type");
                 }
 
                 if id.name.contains("Mutable") {
@@ -1084,16 +1087,32 @@ impl PointeeTy {
 
                 safety
             }
-            Self::AnyObject { protocols } => match protocols.len() {
+            Self::AnyObject { protocols } => match &**protocols {
                 // Make `AnyObject` conservatively disallowed as argument,
                 // see https://github.com/madsmtm/objc2/issues/562.
                 //
                 // Returning it is fine though, since if you actually
                 // want to do anything with the type, you have to downcast it,
                 // and `objc2` checks that at runtime.
-                0 => TypeSafety::unknown_in_argument("should be of the correct type"),
-                // `ProtocolObject<dyn MyProtocol>` is well-typed.
-                1 => TypeSafety::SAFE,
+                [] => TypeSafety::unknown_in_argument("should be of the correct type"),
+                // Certain protocols are not descriptive enough, and often
+                // essentially amount to `AnyObject`.
+                [(protocol, _)]
+                    if matches!(
+                        &*protocol.id.name,
+                        "NSObjectProtocol"
+                            | "NSCoding"
+                            | "NSSecureCoding"
+                            | "NSCopying"
+                            | "NSMutableCopying"
+                            | "NSFastEnumeration"
+                    ) =>
+                {
+                    TypeSafety::unknown_in_argument("should be of the correct type")
+                }
+                // Other `ProtocolObject<dyn MyProtocol>`s are treated as
+                // proper types. (An example here is delegate protocols).
+                [_] => TypeSafety::SAFE,
                 // FIXME: Only a single protocol is properly supported,
                 // multiple protocol restrictions are currently `AnyObject`.
                 _ => TypeSafety::unknown_in_argument("should be of the correct type"),
