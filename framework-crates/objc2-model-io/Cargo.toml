@@ -70,6 +70,7 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
+unstable-darwin-objc = []
 
 MDLAnimatedValueTypes = [
     "objc2-foundation/NSArray",

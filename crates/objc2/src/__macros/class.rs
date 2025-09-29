@@ -92,6 +92,23 @@ macro_rules! __class_inner {
 #[doc(hidden)]
 #[macro_export]
 #[cfg(all(
+    feature = "unstable-static-class",
+    feature = "unstable-darwin-objc",
+    not(feature = "gnustep-1-7"),
+))]
+macro_rules! __class_inner {
+    ($name:expr, $_hash:expr) => {{
+        let ptr = $crate::__macros::core_darwin_objc::class!($name);
+        let ptr = ptr.cast_const().cast::<$crate::runtime::AnyClass>();
+        #[allow(unused_unsafe)]
+        let r: &'static $crate::runtime::AnyClass = unsafe { &*ptr };
+        r
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(
     target_vendor = "apple",
     not(all(target_os = "macos", target_arch = "x86"))
 ))]
@@ -175,6 +192,7 @@ macro_rules! __statics_class {
 #[macro_export]
 #[cfg(all(
     feature = "unstable-static-class",
+    not(feature = "unstable-darwin-objc"),
     not(feature = "gnustep-1-7"),
     not(feature = "unstable-static-class-inlined")
 ))]
@@ -199,6 +217,7 @@ macro_rules! __class_inner {
 #[macro_export]
 #[cfg(all(
     feature = "unstable-static-class",
+    not(feature = "unstable-darwin-objc"),
     not(feature = "gnustep-1-7"),
     feature = "unstable-static-class-inlined"
 ))]

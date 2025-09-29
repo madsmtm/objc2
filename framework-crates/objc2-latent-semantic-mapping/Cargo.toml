@@ -46,3 +46,4 @@ objc2 = [
     "dep:objc2",
     "objc2-core-foundation/objc2",
 ]
+unstable-darwin-objc = []

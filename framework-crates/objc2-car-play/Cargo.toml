@@ -142,6 +142,7 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-map-kit = ["dep:objc2-map-kit"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
+unstable-darwin-objc = []
 
 CPActionSheetTemplate = [
     "objc2-foundation/NSArray",

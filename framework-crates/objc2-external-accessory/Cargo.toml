@@ -55,6 +55,7 @@ alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
+unstable-darwin-objc = []
 
 EAAccessory = [
     "objc2-foundation/NSArray",

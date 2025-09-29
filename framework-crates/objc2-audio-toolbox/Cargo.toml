@@ -111,6 +111,7 @@ objc2-core-audio = ["dep:objc2-core-audio"]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-midi = ["dep:objc2-core-midi"]
+unstable-darwin-objc = []
 
 AUAudioUnit = [
     "bitflags",

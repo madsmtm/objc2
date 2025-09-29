@@ -96,6 +96,7 @@ block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-background-assets = ["dep:objc2-background-assets"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
+unstable-darwin-objc = []
 
 SKANError = ["objc2-foundation/NSString"]
 SKAdImpression = [

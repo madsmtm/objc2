@@ -91,6 +91,7 @@ objc2 = [
 objc2-core-audio = ["dep:objc2-core-audio"]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-video = ["dep:objc2-core-video"]
+unstable-darwin-objc = []
 
 CMAttachment = ["objc2-core-foundation/CFDictionary"]
 CMAudioClock = []

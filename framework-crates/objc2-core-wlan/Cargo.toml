@@ -62,6 +62,7 @@ bitflags = ["dep:bitflags"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-security = ["dep:objc2-security"]
 objc2-security-foundation = ["dep:objc2-security-foundation"]
+unstable-darwin-objc = []
 
 CWChannel = ["objc2-foundation/NSObject"]
 CWConfiguration = [

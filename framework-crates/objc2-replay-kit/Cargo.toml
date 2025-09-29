@@ -73,6 +73,7 @@ block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-media = ["dep:objc2-core-media"]
+unstable-darwin-objc = []
 
 RPBroadcast = [
     "objc2-foundation/NSDictionary",

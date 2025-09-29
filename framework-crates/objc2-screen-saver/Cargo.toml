@@ -48,6 +48,7 @@ default = [
 std = ["alloc"]
 alloc = []
 objc2-app-kit = ["dep:objc2-app-kit"]
+unstable-darwin-objc = []
 
 ScreenSaverDefaults = [
     "objc2-foundation/NSString",

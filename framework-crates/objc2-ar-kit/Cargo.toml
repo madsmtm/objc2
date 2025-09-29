@@ -188,6 +188,7 @@ objc2-scene-kit = ["dep:objc2-scene-kit"]
 objc2-sprite-kit = ["dep:objc2-sprite-kit"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 objc2-vision = ["dep:objc2-vision"]
+unstable-darwin-objc = []
 
 ARAnchor = []
 ARAppClipCodeAnchor = []

@@ -97,6 +97,7 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-io-surface = ["dep:objc2-io-surface"]
 objc2-metal = ["dep:objc2-metal"]
 objc2-open-gl = ["dep:objc2-open-gl"]
+unstable-darwin-objc = []
 
 CVBase = ["bitflags"]
 CVBuffer = ["objc2-core-foundation/CFDictionary"]

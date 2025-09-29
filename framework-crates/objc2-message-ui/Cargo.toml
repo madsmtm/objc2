@@ -57,6 +57,7 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-messages = ["dep:objc2-messages"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
+unstable-darwin-objc = []
 
 MFMailComposeControllerDeferredAction = []
 MFMailComposeViewController = [

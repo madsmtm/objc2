@@ -41,3 +41,4 @@ targets = [
 default = ["std"]
 std = ["alloc"]
 alloc = []
+unstable-darwin-objc = []

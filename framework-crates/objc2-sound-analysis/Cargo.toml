@@ -67,6 +67,7 @@ block2 = ["dep:block2"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]
 objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-ml = ["dep:objc2-core-ml"]
+unstable-darwin-objc = []
 
 SNAnalyzer = [
     "objc2-foundation/NSError",

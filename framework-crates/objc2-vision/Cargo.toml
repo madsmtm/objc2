@@ -159,6 +159,7 @@ objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-ml = ["dep:objc2-core-ml"]
 objc2-core-video = ["dep:objc2-core-video"]
 objc2-image-io = ["dep:objc2-image-io"]
+unstable-darwin-objc = []
 
 VNCalculateImageAestheticsScoresRequest = [
     "objc2-foundation/NSArray",

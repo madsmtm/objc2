@@ -97,6 +97,7 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-model-io = ["dep:objc2-model-io"]
 objc2-open-gl = ["dep:objc2-open-gl"]
+unstable-darwin-objc = []
 
 GLKBaseEffect = [
     "objc2-foundation/NSArray",

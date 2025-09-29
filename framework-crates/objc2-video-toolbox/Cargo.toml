@@ -119,6 +119,7 @@ objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-video = ["dep:objc2-core-video"]
 objc2-foundation = ["dep:objc2-foundation"]
 objc2-metal = ["dep:objc2-metal"]
+unstable-darwin-objc = []
 
 VTBase = []
 VTCompressionProperties = []

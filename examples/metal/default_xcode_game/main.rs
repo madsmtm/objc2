@@ -7,6 +7,8 @@
 //! NOTE: Using a Storyboard outside of Xcode is quite involved, so instead,
 //! we set up the entire UI (menubar and window) ourselves.
 
+#![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
+
 #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
 use objc2::MainThreadMarker;
 #[cfg(all(target_os = "macos", target_arch = "aarch64"))]

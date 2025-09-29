@@ -86,6 +86,7 @@ block2 = ["dep:block2"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-model-io = ["dep:objc2-model-io"]
+unstable-darwin-objc = []
 
 PHASEAssetRegistry = [
     "objc2-foundation/NSData",

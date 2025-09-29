@@ -118,6 +118,7 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-video = ["dep:objc2-core-video"]
 objc2-metal = ["dep:objc2-metal"]
 objc2-open-gl = ["dep:objc2-open-gl"]
+unstable-darwin-objc = []
 
 CAAnimation = [
     "objc2-foundation/NSArray",

@@ -83,6 +83,7 @@ libc = ["dep:libc"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-video = ["dep:objc2-core-video"]
+unstable-darwin-objc = []
 
 CMIOExtension = []
 CMIOExtensionDevice = [

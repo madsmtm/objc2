@@ -43,6 +43,7 @@ default = [
 std = ["alloc"]
 alloc = []
 objc2-io-surface = ["dep:objc2-io-surface"]
+unstable-darwin-objc = []
 
 CGLCurrent = []
 CGLDevice = []

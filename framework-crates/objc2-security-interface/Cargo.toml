@@ -57,6 +57,7 @@ std = ["alloc"]
 alloc = []
 objc2-security = ["dep:objc2-security"]
 objc2-security-foundation = ["dep:objc2-security-foundation"]
+unstable-darwin-objc = []
 
 SFAuthorizationPluginView = [
     "objc2-app-kit/NSResponder",

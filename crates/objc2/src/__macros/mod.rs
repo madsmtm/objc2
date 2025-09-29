@@ -52,6 +52,9 @@ pub use core::primitive::{bool, isize, str, u8};
 pub use core::{compile_error, concat, env, module_path, panic, stringify};
 pub use std::sync::Once;
 
+#[cfg(feature = "unstable-darwin-objc")]
+pub use core::os::darwin::objc as core_darwin_objc;
+
 pub use self::available::{is_available, AvailableVersion, OSVersion};
 pub use self::class::{disallow_in_static, CachedClass};
 pub use self::convert::{ConvertArgument, ConvertArguments, ConvertReturn, TupleExtender};

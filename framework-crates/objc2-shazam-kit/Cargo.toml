@@ -66,6 +66,7 @@ block2 = ["dep:block2"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
+unstable-darwin-objc = []
 
 SHCatalog = ["objc2-foundation/NSDate"]
 SHCustomCatalog = [

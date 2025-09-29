@@ -72,6 +72,7 @@ alloc = []
 dispatch2 = ["dep:dispatch2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-security-foundation = ["dep:objc2-security-foundation"]
+unstable-darwin-objc = []
 
 CFODContext = []
 CFODNode = ["objc2-foundation/NSString"]

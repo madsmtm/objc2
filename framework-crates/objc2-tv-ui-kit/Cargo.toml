@@ -57,6 +57,7 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
+unstable-darwin-objc = []
 
 TVCaptionButtonView = [
     "objc2-foundation/NSCoder",

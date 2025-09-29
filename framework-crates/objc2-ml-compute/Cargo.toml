@@ -103,6 +103,7 @@ alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-metal = ["dep:objc2-metal"]
+unstable-darwin-objc = []
 
 MLCActivationDescriptor = ["objc2-foundation/NSObject"]
 MLCActivationLayer = []

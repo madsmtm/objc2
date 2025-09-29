@@ -12,6 +12,7 @@
 //! Works on macOS >= 10.7 and iOS > 7.0.
 #![deny(unsafe_op_in_unsafe_fn)]
 #![allow(unused_imports)]
+#![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 
 use std::thread;
 use std::time::Duration;

@@ -42,6 +42,7 @@ default = [
 std = ["alloc"]
 alloc = []
 objc2-security = ["dep:objc2-security"]
+unstable-darwin-objc = []
 
 SFAuthorization = [
     "objc2-foundation/NSError",

@@ -70,6 +70,7 @@ objc2 = [
     "objc2-security?/objc2",
 ]
 objc2-security = ["dep:objc2-security"]
+unstable-darwin-objc = []
 
 CaptiveNetwork = [
     "objc2-core-foundation/CFArray",

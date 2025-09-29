@@ -62,6 +62,7 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]
 objc2-core-media = ["dep:objc2-core-media"]
+unstable-darwin-objc = []
 
 SFErrors = [
     "objc2-foundation/NSError",

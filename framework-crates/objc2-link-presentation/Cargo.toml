@@ -58,6 +58,7 @@ std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
+unstable-darwin-objc = []
 
 LPError = [
     "objc2-foundation/NSError",

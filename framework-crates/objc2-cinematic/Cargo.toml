@@ -89,6 +89,7 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-media = ["dep:objc2-core-media"]
 objc2-core-video = ["dep:objc2-core-video"]
 objc2-metal = ["dep:objc2-metal"]
+unstable-darwin-objc = []
 
 CNAssetInfo = [
     "objc2-foundation/NSArray",

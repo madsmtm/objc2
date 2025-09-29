@@ -78,6 +78,7 @@ objc2 = [
     "dispatch2?/objc2",
     "objc2-core-foundation/objc2",
 ]
+unstable-darwin-objc = []
 
 AppleUSBDefinitions = []
 IOUSBHostFamilyDefinitions = []

@@ -424,6 +424,7 @@ objc2-core-video = ["dep:objc2-core-video"]
 objc2-open-gl = ["dep:objc2-open-gl"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
+unstable-darwin-objc = []
 
 AppKitDefines = []
 AppKitErrors = []

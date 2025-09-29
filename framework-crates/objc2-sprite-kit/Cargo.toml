@@ -151,6 +151,7 @@ objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
 objc2-gl-kit = ["dep:objc2-gl-kit"]
 objc2-metal = ["dep:objc2-metal"]
+unstable-darwin-objc = []
 
 SK3DNode = [
     "objc2-foundation/NSCoder",

@@ -162,6 +162,7 @@ block2 = ["dep:block2"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-local-authentication = ["dep:objc2-local-authentication"]
 objc2-security = ["dep:objc2-security"]
+unstable-darwin-objc = []
 
 ASAccountAuthenticationModificationController = [
     "objc2-app-kit/NSResponder",

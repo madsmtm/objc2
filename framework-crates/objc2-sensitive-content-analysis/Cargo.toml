@@ -64,6 +64,7 @@ objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-video = ["dep:objc2-core-video"]
 objc2-video-toolbox = ["dep:objc2-video-toolbox"]
+unstable-darwin-objc = []
 
 SCSensitivityAnalysis = []
 SCSensitivityAnalyzer = [

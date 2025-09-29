@@ -84,6 +84,7 @@ objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-javascript-core = ["dep:objc2-javascript-core"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
+unstable-darwin-objc = []
 
 TVApplicationController = [
     "objc2-foundation/NSDictionary",

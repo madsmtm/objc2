@@ -100,6 +100,7 @@ objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-av-routing = ["dep:objc2-av-routing"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-media = ["dep:objc2-core-media"]
+unstable-darwin-objc = []
 
 AVCaptureView = [
     "objc2-foundation/NSCoder",

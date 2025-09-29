@@ -53,6 +53,7 @@ libc = ["dep:libc"]
 objc2 = ["dep:objc2"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]
 objc2-foundation = ["dep:objc2-foundation"]
+unstable-darwin-objc = []
 
 BEAudioSession = []
 BEMemory = []

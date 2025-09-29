@@ -53,6 +53,7 @@ default = [
 std = ["alloc"]
 alloc = []
 objc2-app-kit = ["dep:objc2-app-kit"]
+unstable-darwin-objc = []
 
 EXAppExtensionBrowserViewController = [
     "objc2-foundation/NSBundle",

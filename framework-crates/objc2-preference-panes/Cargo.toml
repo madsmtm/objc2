@@ -41,6 +41,7 @@ default = [
 std = ["alloc"]
 alloc = []
 objc2-app-kit = ["dep:objc2-app-kit"]
+unstable-darwin-objc = []
 
 NSPreferencePane = [
     "objc2-foundation/NSArray",

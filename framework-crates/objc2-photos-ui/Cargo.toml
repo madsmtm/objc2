@@ -105,6 +105,7 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-location = ["dep:objc2-core-location"]
 objc2-map-kit = ["dep:objc2-map-kit"]
 objc2-photos = ["dep:objc2-photos"]
+unstable-darwin-objc = []
 
 PHContentEditingController = []
 PHLivePhotoView = [

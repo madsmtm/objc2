@@ -48,6 +48,7 @@ std = ["alloc"]
 alloc = []
 block2 = ["dep:block2"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
+unstable-darwin-objc = []
 
 AVCustomDeviceRoute = ["objc2-foundation/NSUUID"]
 AVCustomRoutingActionItem = ["objc2-foundation/NSString"]

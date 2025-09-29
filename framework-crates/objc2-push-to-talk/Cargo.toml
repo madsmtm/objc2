@@ -51,6 +51,7 @@ alloc = []
 block2 = ["dep:block2"]
 objc2-avf-audio = ["dep:objc2-avf-audio"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
+unstable-darwin-objc = []
 
 PTBase = []
 PTChannelDescriptor = ["objc2-foundation/NSString"]

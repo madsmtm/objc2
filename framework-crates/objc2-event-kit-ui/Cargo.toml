@@ -60,6 +60,7 @@ std = ["alloc"]
 alloc = []
 objc2-event-kit = ["dep:objc2-event-kit"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
+unstable-darwin-objc = []
 
 EKCalendarChooser = [
     "objc2-foundation/NSBundle",

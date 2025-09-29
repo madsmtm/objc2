@@ -134,6 +134,7 @@ objc2-map-kit = ["dep:objc2-map-kit"]
 objc2-scene-kit = ["dep:objc2-scene-kit"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 objc2-user-notifications = ["dep:objc2-user-notifications"]
+unstable-darwin-objc = []
 
 WKAccessibility = ["objc2-foundation/NSString"]
 WKAlertAction = ["objc2-foundation/NSString"]

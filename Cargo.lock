@@ -453,6 +453,7 @@ dependencies = [
  "objc2-metal",
  "objc2-metal-kit",
  "objc2-model-io",
+ "objc2-quartz-core",
 ]
 
 [[package]]

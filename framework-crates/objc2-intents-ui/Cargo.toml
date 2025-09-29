@@ -75,6 +75,7 @@ alloc = []
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-intents = ["dep:objc2-intents"]
+unstable-darwin-objc = []
 
 INImage_IntentsUI = []
 INUIAddVoiceShortcutButton = [

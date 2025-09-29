@@ -64,6 +64,7 @@ libc = ["dep:libc"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-services = ["dep:objc2-core-services"]
 objc2-security = ["dep:objc2-security"]
+unstable-darwin-objc = []
 
 CBIdentity = [
     "objc2-foundation/NSArray",
