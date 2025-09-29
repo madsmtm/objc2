@@ -15,11 +15,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `IOKit` "serial" submodule.
 * Marked a bunch of functions safe in:
+  - `CoreGraphics` / `objc2-core-graphics`.
   - `CoreFoundation` / `objc2-core-foundation`.
   - `CoreVideo` / `objc2-core-video`.
   - `Foundation` / `objc2-foundation`.
   - `IOKit` / `objc2-io-kit`.
   - `QuartzCore` / `objc2-quartz-core`.
+  - `UIKit` / `objc2-ui-kit`.
+  - `UserNotifications` / `objc2-user-notifications`.
 * Added a lot of missing APIs.
 * Added `AsRef` impls for toll-free bridging between types like `CFString` and `NSString`.
 * Added `cast_unchecked` methods on collection types like `NSArray<T>` and `CFDictionary<K, V>`.

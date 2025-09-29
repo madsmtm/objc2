@@ -15,3 +15,15 @@ class.UNMutableNotificationContent.counterpart = "ImmutableSuperclass(UserNotifi
 
 # Unsure whether this should depend on Intents, or vice-versa
 class.UNNotificationAttributedMessageContext.methods."contextWithSendMessageIntent:attributedContent:".skipped = true
+
+##
+## Safety
+##
+
+# SAFETY: UserNotifications is well-behaved.
+unsafe-default-safety.property-getters = true
+unsafe-default-safety.property-setters = true
+unsafe-default-safety.instance-methods = true
+unsafe-default-safety.class-methods = true
+unsafe-default-safety.functions = true
+unsafe-default-safety.not-bounds-affecting = false
