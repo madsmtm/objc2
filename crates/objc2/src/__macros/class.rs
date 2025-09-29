@@ -27,9 +27,9 @@ use crate::runtime::AnyClass;
 ///
 /// # Features
 ///
-/// If the experimental `"unstable-static-class"` or `"unstable-darwin-objc"`
-/// features are enabled, this will emit special statics that will be replaced
-/// by dyld when the program starts up.
+/// If the experimental `"unstable-static-class"` feature is enabled, this
+/// will emit special statics that will be replaced by dyld when the program
+/// starts up.
 ///
 /// Errors that were previously runtime panics may now turn into linker errors
 /// if you try to use a class which is not available. Additionally, you may
@@ -78,10 +78,7 @@ macro_rules! class {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(not(any(
-    feature = "unstable-darwin-objc",
-    feature = "unstable-static-class"
-)))]
+#[cfg(not(feature = "unstable-static-class"))]
 macro_rules! __class_inner {
     ($name:expr, $_hash:expr) => {{
         static CACHED_CLASS: $crate::__macros::CachedClass = $crate::__macros::CachedClass::new();
@@ -95,8 +92,9 @@ macro_rules! __class_inner {
 #[doc(hidden)]
 #[macro_export]
 #[cfg(all(
+    feature = "unstable-static-class",
     feature = "unstable-darwin-objc",
-    not(feature = "unstable-static-class")
+    not(feature = "gnustep-1-7"),
 ))]
 macro_rules! __class_inner {
     ($name:expr, $_hash:expr) => {{
@@ -194,6 +192,7 @@ macro_rules! __statics_class {
 #[macro_export]
 #[cfg(all(
     feature = "unstable-static-class",
+    not(feature = "unstable-darwin-objc"),
     not(feature = "gnustep-1-7"),
     not(feature = "unstable-static-class-inlined")
 ))]
@@ -218,6 +217,7 @@ macro_rules! __class_inner {
 #[macro_export]
 #[cfg(all(
     feature = "unstable-static-class",
+    not(feature = "unstable-darwin-objc"),
     not(feature = "gnustep-1-7"),
     feature = "unstable-static-class-inlined"
 ))]

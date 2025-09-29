@@ -67,9 +67,6 @@ use crate::runtime::Sel;
 ///
 /// See [rust-lang/rust#145496] for the tracking issue for the feature.
 ///
-/// `"unstable-static-sel"` and `"unstable-static-sel-inlined"` take
-/// precedence over `"unstable-darwin-objc"`.
-///
 /// [rust-lang/rust#53929]: https://github.com/rust-lang/rust/issues/53929
 /// [rust-lang/rust#145496]: https://github.com/rust-lang/rust/issues/145496
 ///
@@ -241,7 +238,7 @@ macro_rules! __sel_data {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(not(any(feature = "unstable-darwin-objc", feature = "unstable-static-sel")))]
+#[cfg(not(feature = "unstable-static-sel"))]
 macro_rules! __sel_inner {
     ($data:expr, $_hash:expr) => {{
         static CACHED_SEL: $crate::__macros::CachedSel = $crate::__macros::CachedSel::new();
@@ -254,10 +251,7 @@ macro_rules! __sel_inner {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(all(
-    feature = "unstable-darwin-objc",
-    not(feature = "unstable-static-sel")
-))]
+#[cfg(all(feature = "unstable-static-sel", feature = "unstable-darwin-objc"))]
 macro_rules! __sel_inner {
     ($data:expr, $_hash:expr) => {{
         let ptr = $crate::__macros::core_darwin_objc::selector!($data);
@@ -353,7 +347,8 @@ macro_rules! __statics_sel {
 #[macro_export]
 #[cfg(all(
     feature = "unstable-static-sel",
-    not(feature = "unstable-static-sel-inlined")
+    not(feature = "unstable-darwin-objc"),
+    not(feature = "unstable-static-sel-inlined"),
 ))]
 macro_rules! __sel_inner {
     ($data:expr, $hash:expr) => {{
@@ -385,7 +380,11 @@ macro_rules! __sel_inner {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(feature = "unstable-static-sel-inlined")]
+#[cfg(all(
+    feature = "unstable-static-sel",
+    not(feature = "unstable-darwin-objc"),
+    feature = "unstable-static-sel-inlined",
+))]
 macro_rules! __sel_inner {
     ($data:expr, $hash:expr) => {{
         $crate::__statics_sel! {
