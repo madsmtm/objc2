@@ -14,7 +14,16 @@ name = "default_xcode_game"
 path = "default_xcode_game/main.rs"
 
 [features]
-unstable-darwin-objc = []
+unstable-darwin-objc = [
+    "objc2/unstable-darwin-objc",
+    "objc2-app-kit/unstable-darwin-objc",
+    "objc2-core-foundation/unstable-darwin-objc",
+    "objc2-foundation/unstable-darwin-objc",
+    "objc2-metal-kit/unstable-darwin-objc",
+    "objc2-metal/unstable-darwin-objc",
+    "objc2-model-io/unstable-darwin-objc",
+    "objc2-quartz-core/unstable-darwin-objc",
+]
 
 [dependencies]
 objc2 = "0.6.2"
@@ -65,6 +74,7 @@ objc2-core-foundation = { version = "0.3.1", default-features = false, features 
     "std",
     "CFCGTypes",
 ] }
+objc2-quartz-core = { version = "0.3.1", default-features = false, features = [] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit = { version = "0.3.1", default-features = false, features = [

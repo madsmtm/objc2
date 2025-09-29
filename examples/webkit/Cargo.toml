@@ -10,7 +10,12 @@ name = "browser"
 path = "browser.rs"
 
 [features]
-unstable-darwin-objc = []
+unstable-darwin-objc = [
+    "objc2/unstable-darwin-objc",
+    "objc2-app-kit/unstable-darwin-objc",
+    "objc2-foundation/unstable-darwin-objc",
+    "objc2-web-kit/unstable-darwin-objc",
+]
 
 [dependencies]
 objc2 = "0.6.2"

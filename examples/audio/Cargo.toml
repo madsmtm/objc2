@@ -10,7 +10,10 @@ name = "speech_synthesis"
 path = "speech_synthesis.rs"
 
 [features]
-unstable-darwin-objc = []
+unstable-darwin-objc = [
+    "objc2/unstable-darwin-objc",
+    "objc2-foundation/unstable-darwin-objc",
+]
 
 [dependencies]
 objc2 = "0.6.2"
