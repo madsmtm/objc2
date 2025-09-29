@@ -310,6 +310,9 @@ jobs:
     - name: Use system Rust
       run: rustup override set stable
 
+    - name: Install rustfmt
+      run: rustup component add rustfmt
+
     - name: Cache Cargo
       uses: actions/cache@v4
       with:
