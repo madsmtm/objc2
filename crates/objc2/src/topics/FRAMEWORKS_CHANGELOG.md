@@ -98,6 +98,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed the value of `SFSpeechErrorCode::Timeout`.
 * Fixed the definition of `SSLCipherSuite` on older platforms.
 * Fixed the definition of various things on Mac Catalyst.
+* Added a few missing AppKit methods (duplicated, so were skipped before).
 
 ## [0.3.1] - 2025-04-19
 [0.3.1]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.0...frameworks-0.3.1

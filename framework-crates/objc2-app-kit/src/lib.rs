@@ -41,8 +41,14 @@ mod application;
 #[cfg(feature = "NSEvent")]
 mod event;
 mod generated;
+#[cfg(feature = "NSGestureRecognizer")]
+mod gesture_recognizer;
 #[cfg(feature = "NSImage")]
 mod image;
+#[cfg(feature = "NSSlider")]
+mod slider;
+#[cfg(feature = "NSSliderCell")]
+mod slider_cell;
 #[cfg(feature = "NSText")]
 mod text;
 
