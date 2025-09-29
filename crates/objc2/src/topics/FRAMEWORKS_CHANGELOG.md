@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `IOKit` / `objc2-io-kit`.
   - `QuartzCore` / `objc2-quartz-core`.
   - `UIKit` / `objc2-ui-kit`.
+  - `UniformTypeIdentifiers` / `objc2-uniform-type-identifiers`.
   - `UserNotifications` / `objc2-user-notifications`.
 * Added a lot of missing APIs.
 * Added `AsRef` impls for toll-free bridging between types like `CFString` and `NSString`.
