@@ -33,6 +33,24 @@ enum.MTLTensorDataType.use-value = true
 ### Safety
 ###
 
+# TODO: Can we rely on Metal being bounds-checked?
+# Maybe the various array types are bounds-checked on the CPU side?
+# There are also a lot of false positives from this check.
+unsafe-default-safety.not-bounds-affecting = true
+
+# TODO(breaking): Figure out whether these are bounds-checked or not?
+class.MTLAccelerationStructureGeometryDescriptor.methods."setIntersectionFunctionTableOffset:".unsafe = false
+protocol.MTLAccelerationStructureCommandEncoder.methods."buildAccelerationStructure:descriptor:scratchBuffer:scratchBufferOffset:".unsafe = false
+protocol.MTLAccelerationStructureCommandEncoder.methods."writeCompactedAccelerationStructureSize:toBuffer:offset:".unsafe = false
+protocol.MTLBuffer.methods."didModifyRange:".unsafe = false
+protocol.MTLBuffer.methods."newTextureWithDescriptor:offset:bytesPerRow:".unsafe = false
+protocol.MTLBuffer.methods."addDebugMarker:range:".unsafe = false
+class.MTLAttributeDescriptor.methods."setOffset:".unsafe = false
+protocol.MTLRenderCommandEncoder.methods."setVisibilityResultMode:offset:".unsafe = false
+protocol.MTLBlitCommandEncoder.methods."fillBuffer:range:value:".unsafe = false
+class.MTLArgumentDescriptor.methods."setIndex:".unsafe = false
+protocol.MTLIntersectionFunctionTable.methods."setFunction:atIndex:".unsafe = false
+
 # TODO(breaking): Mark these as unsafe (they take unsafe functions).
 protocol.MTLDevice.methods."newComputePipelineStateWithFunction:error:".unsafe = false
 protocol.MTLComputePipelineState.methods."functionHandleWithFunction:".unsafe = false
@@ -40,8 +58,6 @@ protocol.MTLComputePipelineState.methods."newComputePipelineStateWithAdditionalB
 class.MTLComputePipelineDescriptor.methods."setComputeFunction:".unsafe = false
 class.MTLRenderPipelineDescriptor.methods."setVertexFunction:".unsafe = false
 class.MTLRenderPipelineDescriptor.methods."setFragmentFunction:".unsafe = false
-
-# TODO: Verify that index out-of-bounds is sound for various arrays.
 
 fn.MTLCreateSystemDefaultDevice.unsafe = false
 fn.MTLCopyAllDevices.unsafe = false
@@ -52,7 +68,6 @@ class.MTLPrimitiveAccelerationStructureDescriptor.methods."setGeometryDescriptor
 class.MTLAccelerationStructureGeometryDescriptor.methods."setPrimitiveDataBuffer:".unsafe = false
 class.MTLAccelerationStructureGeometryDescriptor.methods."setPrimitiveDataStride:".unsafe = false
 class.MTLAccelerationStructureGeometryDescriptor.methods."setPrimitiveDataElementSize:".unsafe = false
-class.MTLAccelerationStructureGeometryDescriptor.methods."setIntersectionFunctionTableOffset:".unsafe = false
 
 class.MTLAccelerationStructureTriangleGeometryDescriptor.methods.descriptor.unsafe = false
 class.MTLAccelerationStructureTriangleGeometryDescriptor.methods."setIndexBuffer:".unsafe = false
@@ -70,15 +85,11 @@ class.MTLInstanceAccelerationStructureDescriptor.methods."setInstancedAccelerati
 class.MTLInstanceAccelerationStructureDescriptor.methods."setInstanceCount:".unsafe = false
 class.MTLInstanceAccelerationStructureDescriptor.methods."setInstanceDescriptorBuffer:".unsafe = false
 
-protocol.MTLAccelerationStructureCommandEncoder.methods."buildAccelerationStructure:descriptor:scratchBuffer:scratchBufferOffset:".unsafe = false
-protocol.MTLAccelerationStructureCommandEncoder.methods."writeCompactedAccelerationStructureSize:toBuffer:offset:".unsafe = false
 protocol.MTLAccelerationStructureCommandEncoder.methods."copyAndCompactAccelerationStructure:toAccelerationStructure:".unsafe = false
 
 class.MTLIntersectionFunctionTableDescriptor.methods.init.unsafe = false
 class.MTLIntersectionFunctionTableDescriptor.methods.new.unsafe = false
 class.MTLIntersectionFunctionTableDescriptor.methods."setFunctionCount:".unsafe = false
-
-protocol.MTLIntersectionFunctionTable.methods."setFunction:atIndex:".unsafe = false
 
 class.MTLStructMember.methods.name.unsafe = false
 class.MTLStructMember.methods.offset.unsafe = false
@@ -111,16 +122,11 @@ class.MTLArgument.methods.textureDataType.unsafe = false
 
 class.MTLArgumentDescriptor.methods.argumentDescriptor.unsafe = false
 class.MTLArgumentDescriptor.methods."setDataType:".unsafe = false
-class.MTLArgumentDescriptor.methods."setIndex:".unsafe = false
 class.MTLArgumentDescriptor.methods."setAccess:".unsafe = false
-# class.MTLArgumentDescriptor.methods."setArrayLength:".unsafe = false
 class.MTLArgumentDescriptor.methods."setTextureType:".unsafe = false
 
 protocol.MTLBuffer.methods.length.unsafe = false
 protocol.MTLBuffer.methods.contents.unsafe = false
-protocol.MTLBuffer.methods."didModifyRange:".unsafe = false
-protocol.MTLBuffer.methods."newTextureWithDescriptor:offset:bytesPerRow:".unsafe = false
-protocol.MTLBuffer.methods."addDebugMarker:range:".unsafe = false
 protocol.MTLBuffer.methods.removeAllDebugMarkers.unsafe = false
 protocol.MTLBuffer.methods.remoteStorageBuffer.unsafe = false
 protocol.MTLBuffer.methods."newRemoteBufferViewForDevice:".unsafe = false
@@ -272,12 +278,7 @@ protocol.MTLCommandEncoder.methods.popDebugGroup.unsafe = false
 
 protocol.MTLParallelRenderCommandEncoder.methods.renderCommandEncoder.unsafe = false
 
-# TODO: Verify that offset out-of-bounds is sound.
-# TODO: Verify that index out-of-bounds is sound.
 protocol.MTLRenderCommandEncoder.methods."setRenderPipelineState:".unsafe = false
-# setVertexBuffer:offset:atIndex:
-# setVertexTexture:atIndex:
-# ...
 protocol.MTLRenderCommandEncoder.methods."setViewport:".unsafe = false
 protocol.MTLRenderCommandEncoder.methods."setFrontFacingWinding:".unsafe = false
 protocol.MTLRenderCommandEncoder.methods."setCullMode:".unsafe = false
@@ -285,50 +286,34 @@ protocol.MTLRenderCommandEncoder.methods."setDepthClipMode:".unsafe = false
 protocol.MTLRenderCommandEncoder.methods."setDepthBias:slopeScale:clamp:".unsafe = false
 protocol.MTLRenderCommandEncoder.methods."setScissorRect:".unsafe = false
 protocol.MTLRenderCommandEncoder.methods."setTriangleFillMode:".unsafe = false
-# setFragmentBuffer:...
-# ...
 protocol.MTLRenderCommandEncoder.methods."setBlendColorRed:green:blue:alpha:".unsafe = false
 protocol.MTLRenderCommandEncoder.methods."setDepthStencilState:".unsafe = false
 protocol.MTLRenderCommandEncoder.methods."setStencilReferenceValue:".unsafe = false
 protocol.MTLRenderCommandEncoder.methods."setStencilFrontReferenceValue:backReferenceValue:".unsafe = false
-protocol.MTLRenderCommandEncoder.methods."setVisibilityResultMode:offset:".unsafe = false
-# drawPrimitives:...
-# ...
 protocol.MTLRenderCommandEncoder.methods."updateFence:afterStages:".unsafe = false
 protocol.MTLRenderCommandEncoder.methods."waitForFence:beforeStages:".unsafe = false
-# setThreadgroupMemoryLength:offset:atIndex:
 protocol.MTLRenderCommandEncoder.methods."useResource:usage:".unsafe = false
 protocol.MTLRenderCommandEncoder.methods."useResource:usage:stages:".unsafe = false
 protocol.MTLRenderCommandEncoder.methods."useHeap:".unsafe = false
 protocol.MTLRenderCommandEncoder.methods."useHeap:stages:".unsafe = false
 
-# TODO: Verify out-of-bounds access is sound.
 protocol.MTLBlitCommandEncoder.methods."synchronizeResource:".unsafe = false
-# copyFrom...
 protocol.MTLBlitCommandEncoder.methods."generateMipmapsForTexture:".unsafe = false
-protocol.MTLBlitCommandEncoder.methods."fillBuffer:range:value:".unsafe = false
 protocol.MTLBlitCommandEncoder.methods."updateFence:".unsafe = false
 protocol.MTLBlitCommandEncoder.methods."waitForFence:".unsafe = false
 protocol.MTLBlitCommandEncoder.methods."optimizeContentsForGPUAccess:".unsafe = false
 # optimizeContentsForGPUAccess:slice:level:
 
-# TODO: Verify out-of-bounds access is sound.
 protocol.MTLComputeCommandEncoder.methods."setComputePipelineState:".unsafe = false
-# setBuffer:...
-# setIntersectionFunctionTable:atBufferIndex:
 protocol.MTLComputeCommandEncoder.methods."dispatchThreadgroups:threadsPerThreadgroup:".unsafe = false
-# dispatchThreadgroupsWithIndirectBuffer:indirectBufferOffset:threadsPerThreadgroup:
 protocol.MTLComputeCommandEncoder.methods."dispatchThreads:threadsPerThreadgroup:".unsafe = false
 protocol.MTLComputeCommandEncoder.methods."updateFence:".unsafe = false
 protocol.MTLComputeCommandEncoder.methods."waitForFence:".unsafe = false
 protocol.MTLComputeCommandEncoder.methods."useResource:usage:".unsafe = false
 protocol.MTLComputeCommandEncoder.methods."useHeap:".unsafe = false
 
-# TODO: Verify out-of-bounds access is sound.
 protocol.MTLArgumentEncoder.methods.encodedLength.unsafe = false
 protocol.MTLArgumentEncoder.methods.alignment.unsafe = false
-# setArgumentBuffer:offset:
-# ...
 
 class.MTLHeapDescriptor.methods.size.unsafe = false
 class.MTLHeapDescriptor.methods."setSize:".unsafe = false
@@ -358,9 +343,6 @@ protocol.MTLHeap.methods."newBufferWithLength:options:".unsafe = false
 protocol.MTLHeap.methods."newTextureWithDescriptor:".unsafe = false
 protocol.MTLHeap.methods."setPurgeableState:".unsafe = false
 # TODO: type
-# TODO: Verify that offset out-of-bounds is sound.
-# newBufferWithLength:options:offset:
-# newTextureWithDescriptor:offset:
 
 class.MTLIndirectCommandBufferDescriptor.methods.commandTypes.unsafe = false
 class.MTLIndirectCommandBufferDescriptor.methods."setCommandTypes:".unsafe = false
@@ -376,10 +358,6 @@ class.MTLIndirectCommandBufferDescriptor.methods.maxKernelBufferBindCount.unsafe
 class.MTLIndirectCommandBufferDescriptor.methods."setMaxKernelBufferBindCount:".unsafe = false
 
 protocol.MTLIndirectCommandBuffer.methods.size.unsafe = false
-# TODO: Verify that index out-of-bounds is sound.
-# resetWithRange:
-# indirectRenderCommandAtIndex:
-# indirectComputeCommandAtIndex:
 
 class.MTLVertexAttribute.methods.name.unsafe = false
 class.MTLVertexAttribute.methods.attributeIndex.unsafe = false
@@ -711,7 +689,6 @@ class.MTLBufferLayoutDescriptor.methods."setStepRate:".unsafe = false
 class.MTLAttributeDescriptor.methods.format.unsafe = false
 class.MTLAttributeDescriptor.methods."setFormat:".unsafe = false
 class.MTLAttributeDescriptor.methods.offset.unsafe = false
-class.MTLAttributeDescriptor.methods."setOffset:".unsafe = false
 class.MTLAttributeDescriptor.methods.bufferIndex.unsafe = false
 # TODO: Verify that index out-of-bounds is sound.
 # setBufferIndex:
@@ -719,34 +696,33 @@ class.MTLAttributeDescriptor.methods.bufferIndex.unsafe = false
 class.MTLVertexBufferLayoutDescriptor.methods.init.unsafe = false
 class.MTLVertexBufferLayoutDescriptor.methods.new.unsafe = false
 class.MTLVertexBufferLayoutDescriptor.methods.stride.unsafe = false
-# setStride: must be a multiple of 4
+# Must be a multiple of 4.
+class.MTLVertexBufferLayoutDescriptor.methods."setStride:".unsafe = true
 class.MTLVertexBufferLayoutDescriptor.methods.stepFunction.unsafe = false
 class.MTLVertexBufferLayoutDescriptor.methods.stepRate.unsafe = false
-# setStepFunction: and setStepRate: must be done in lockstep
+# These must be done in lockstep.
+class.MTLVertexBufferLayoutDescriptor.methods."setFunction:".unsafe = true
+class.MTLVertexBufferLayoutDescriptor.methods."setStepRate:".unsafe = true
 
 class.MTLVertexAttributeDescriptor.methods.init.unsafe = false
 class.MTLVertexAttributeDescriptor.methods.new.unsafe = false
 class.MTLVertexAttributeDescriptor.methods.format.unsafe = false
 class.MTLVertexAttributeDescriptor.methods."setFormat:".unsafe = false
 class.MTLVertexAttributeDescriptor.methods.offset.unsafe = false
-# setOffset: must be a multiple of 4
+# Must be a multiple of 4.
+class.MTLVertexAttributeDescriptor.methods."setOffset:".unsafe = true
 class.MTLVertexAttributeDescriptor.methods.bufferIndex.unsafe = false
-# TODO: Verify that index out-of-bounds is sound.
-# setBufferIndex:
 
 class.MTLVertexDescriptor.methods.vertexDescriptor.unsafe = false
 class.MTLVertexDescriptor.methods.layouts.unsafe = false
 class.MTLVertexDescriptor.methods.attributes.unsafe = false
 class.MTLVertexDescriptor.methods.reset.unsafe = false
 
-# TODO:
 class.MTLStageInputOutputDescriptor.methods.stageInputOutputDescriptor.unsafe = false
 class.MTLStageInputOutputDescriptor.methods.layouts.unsafe = false
 class.MTLStageInputOutputDescriptor.methods.attributes.unsafe = false
 class.MTLStageInputOutputDescriptor.methods.indexType.unsafe = false
-# setIndexType:
 class.MTLStageInputOutputDescriptor.methods.indexBufferIndex.unsafe = false
-# setIndexBufferIndex:
 class.MTLStageInputOutputDescriptor.methods.reset.unsafe = false
 
 class.MTLPipelineBufferDescriptor.methods.mutability.unsafe = false

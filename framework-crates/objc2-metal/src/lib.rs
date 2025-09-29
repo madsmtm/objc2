@@ -48,6 +48,11 @@
 //! apparent.
 //!
 //! [msl-spec]: https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf
+//!
+//! ## Bounds checks
+//!
+//! It is yet unclear whether Metal APIs are bounds-checked on the CPU side or
+//! not, so APIs that take offsets / lengths are often unsafe.
 #![recursion_limit = "256"]
 #![allow(non_snake_case)]
 #![no_std]
