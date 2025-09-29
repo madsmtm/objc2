@@ -12,6 +12,10 @@ use objc2_foundation::NSString;
 /// We conservatively don't mark `-[UIColor setShadowColor:]` as safe because
 /// of this, see also <https://github.com/madsmtm/objc2/issues/562>.
 #[test]
+#[cfg_attr(
+    feature = "catch-all",
+    ignore = "messes with our use of `exception::catch`"
+)]
 fn test_invalid_color() {
     let shadow = unsafe { NSShadow::new() };
     // This cast is unsafe in AppKit, but `setShadowColor` in UIKit takes

@@ -18,6 +18,8 @@ mod backtrace;
 #[cfg(test)]
 mod block;
 #[cfg(test)]
+mod bound_checks;
+#[cfg(test)]
 mod enumerator;
 #[cfg(all(test, feature = "exception"))]
 mod exception;
