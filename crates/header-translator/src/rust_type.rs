@@ -1138,6 +1138,36 @@ impl PointeeTy {
                 {
                     TypeSafety::unknown_in_argument("should be of the correct type")
                 }
+                // Passing `MTLFunction` is spiritually similar to passing an
+                // `unsafe` function pointer; we can't know without inspecting
+                // the function (or it's documentation) whether it has special
+                // safety requirements. Example:
+                //
+                // ```metal
+                // constant float data[5] = { 1.0, 2.0, 3.0, 4.0, 5.0 };
+                //
+                // // Safety: Must not be called with an index < 5.
+                // kernel void add_static(
+                //     device const float* input,
+                //     device float* result,
+                //     uint index [[thread_position_in_grid]]
+                // ) {
+                //     if (5 <= index) {
+                //         // For illustration purposes.
+                //         __builtin_unreachable();
+                //     }
+                //     result[index] = input[index] + data[index];
+                // }
+                // ```
+                [(protocol, _)]
+                    if matches!(&*protocol.id.name, "MTLFunction" | "MTLFunctionHandle") =>
+                {
+                    TypeSafety::unknown_in_argument("must be safe to call").merge(
+                        TypeSafety::unknown_in_argument(
+                            "must have the correct argument and return types",
+                        ),
+                    )
+                }
                 // Other `ProtocolObject<dyn MyProtocol>`s are treated as
                 // proper types. (An example here is delegate protocols).
                 [_] => TypeSafety::SAFE,

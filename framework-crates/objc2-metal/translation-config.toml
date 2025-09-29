@@ -33,6 +33,14 @@ enum.MTLTensorDataType.use-value = true
 ### Safety
 ###
 
+# TODO(breaking): Mark these as unsafe (they take unsafe functions).
+protocol.MTLDevice.methods."newComputePipelineStateWithFunction:error:".unsafe = false
+protocol.MTLComputePipelineState.methods."functionHandleWithFunction:".unsafe = false
+protocol.MTLComputePipelineState.methods."newComputePipelineStateWithAdditionalBinaryFunctions:error:".unsafe = false
+class.MTLComputePipelineDescriptor.methods."setComputeFunction:".unsafe = false
+class.MTLRenderPipelineDescriptor.methods."setVertexFunction:".unsafe = false
+class.MTLRenderPipelineDescriptor.methods."setFragmentFunction:".unsafe = false
+
 # TODO: Verify that index out-of-bounds is sound for various arrays.
 
 fn.MTLCreateSystemDefaultDevice.unsafe = false
@@ -229,7 +237,6 @@ protocol.MTLDevice.methods.newDefaultLibrary.unsafe = false
 protocol.MTLDevice.methods."newLibraryWithFile:error:".unsafe = false
 protocol.MTLDevice.methods."newLibraryWithSource:options:error:".unsafe = false
 protocol.MTLDevice.methods."newRenderPipelineStateWithDescriptor:error:".unsafe = false
-protocol.MTLDevice.methods."newComputePipelineStateWithFunction:error:".unsafe = false
 protocol.MTLDevice.methods.newFence.unsafe = false
 protocol.MTLDevice.methods."supportsFeatureSet:".unsafe = false
 protocol.MTLDevice.methods."supportsFamily:".unsafe = false
@@ -752,7 +759,6 @@ class.MTLComputePipelineDescriptor.methods.new.unsafe = false
 class.MTLComputePipelineDescriptor.methods.label.unsafe = false
 class.MTLComputePipelineDescriptor.methods."setLabel:".unsafe = false
 class.MTLComputePipelineDescriptor.methods.computeFunction.unsafe = false
-class.MTLComputePipelineDescriptor.methods."setComputeFunction:".unsafe = false
 class.MTLComputePipelineDescriptor.methods.threadGroupSizeIsMultipleOfThreadExecutionWidth.unsafe = false
 # setThreadGroupSizeIsMultipleOfThreadExecutionWidth:
 class.MTLComputePipelineDescriptor.methods.maxTotalThreadsPerThreadgroup.unsafe = false
@@ -783,8 +789,6 @@ protocol.MTLComputePipelineState.methods.threadExecutionWidth.unsafe = false
 protocol.MTLComputePipelineState.methods.staticThreadgroupMemoryLength.unsafe = false
 # imageblockMemoryLengthForDimensions:
 protocol.MTLComputePipelineState.methods.supportIndirectCommandBuffers.unsafe = false
-protocol.MTLComputePipelineState.methods."functionHandleWithFunction:".unsafe = false
-protocol.MTLComputePipelineState.methods."newComputePipelineStateWithAdditionalBinaryFunctions:error:".unsafe = false
 protocol.MTLComputePipelineState.methods."newVisibleFunctionTableWithDescriptor:".unsafe = false
 protocol.MTLComputePipelineState.methods."newIntersectionFunctionTableWithDescriptor:".unsafe = false
 
@@ -797,9 +801,7 @@ class.MTLRenderPipelineDescriptor.methods.new.unsafe = false
 class.MTLRenderPipelineDescriptor.methods.label.unsafe = false
 class.MTLRenderPipelineDescriptor.methods."setLabel:".unsafe = false
 class.MTLRenderPipelineDescriptor.methods.vertexFunction.unsafe = false
-class.MTLRenderPipelineDescriptor.methods."setVertexFunction:".unsafe = false
 class.MTLRenderPipelineDescriptor.methods.fragmentFunction.unsafe = false
-class.MTLRenderPipelineDescriptor.methods."setFragmentFunction:".unsafe = false
 class.MTLRenderPipelineDescriptor.methods.vertexDescriptor.unsafe = false
 class.MTLRenderPipelineDescriptor.methods."setVertexDescriptor:".unsafe = false
 class.MTLRenderPipelineDescriptor.methods.sampleCount.unsafe = false

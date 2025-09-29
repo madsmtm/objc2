@@ -23,6 +23,31 @@
     not(feature = "MTLDevice"),
     doc = "[`MTLCreateSystemDefaultDevice`]: #needs-MTLDevice-feature"
 )]
+//!
+//! # Safety considerations
+//!
+//! Metal allows running arbitrary code on the GPU. We treat memory safety
+//! issues on the GPU as just as unsafe as that which applies to the CPU. A
+//! few notes on this below.
+//!
+//! ## Shaders
+//!
+//! Loading shaders (via `MTLLibrary`, function stitching etc.) is perfectly
+//! safe, it is similar to dynamic linking. The restrictions that e.g.
+//! `libloading::Library::new` labours under do not apply, since there are no
+//! ctors in [the Metal Shading Language][msl-spec] (see section 4.2).
+//!
+//! Similarly, getting individual shaders (`MTLFunction`) is safe, we can
+//! model this as the same as calling `dlsym` (which just returns a pointer).
+//!
+//! _Calling_ functions though, is not safe. Even though they can have their
+//! parameter and return types checked at runtime, they may have additional
+//! restrictions not present in the signature (e.g. `__builtin_unreachable()`
+//! is possible in MSL, so is out-of-bounds accesses). If you view
+//! `MTLFunction` as essentially just an `unsafe fn()` pointer, this should be
+//! apparent.
+//!
+//! [msl-spec]: https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf
 #![recursion_limit = "256"]
 #![allow(non_snake_case)]
 #![no_std]
