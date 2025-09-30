@@ -22,7 +22,7 @@
 #![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-app-kit/0.3.1")]
+#![doc(html_root_url = "https://docs.rs/objc2-app-kit/0.3.2")]
 #![recursion_limit = "512"]
 #![allow(non_snake_case)]
 #![allow(unused_imports)]

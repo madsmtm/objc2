@@ -23,15 +23,15 @@ unstable-darwin-objc = [
 
 [dependencies]
 objc2 = "0.6.2"
-objc2-foundation = { version = "0.3.1", default-features = false, features = [
+objc2-foundation = { version = "0.3.2", default-features = false, features = [
     "std",
     "NSObject",
     "NSString",
 ] }
-objc2-xc-test = { version = "0.3.1", default-features = false, features = [
+objc2-xc-test = { version = "0.3.2", default-features = false, features = [
     "std",
 ] }
-objc2-xc-ui-automation = { version = "0.3.1", default-features = false, features = [
+objc2-xc-ui-automation = { version = "0.3.2", default-features = false, features = [
     "std",
 ] }
 libc = "0.2"

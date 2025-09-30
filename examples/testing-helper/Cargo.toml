@@ -11,7 +11,7 @@ path = "run_xc_test.rs"
 
 [dependencies]
 objc2 = "0.6.2"
-objc2-foundation = { version = "0.3.1", default-features = false, features = [
+objc2-foundation = { version = "0.3.2", default-features = false, features = [
     "std",
     "NSArray",
     "NSCoder",

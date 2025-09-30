@@ -27,14 +27,14 @@ unstable-darwin-objc = [
 
 [dependencies]
 objc2 = "0.6.2"
-objc2-foundation = { version = "0.3.1", default-features = false, features = [
+objc2-foundation = { version = "0.3.2", default-features = false, features = [
     "std",
     "NSNotification",
     "NSString",
     "NSObject",
     "NSThread",
 ] }
-objc2-app-kit = { version = "0.3.1", default-features = false, features = [
+objc2-app-kit = { version = "0.3.2", default-features = false, features = [
     "std",
     "objc2-core-foundation",
     "NSApplication",

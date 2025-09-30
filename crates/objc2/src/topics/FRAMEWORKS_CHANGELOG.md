@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+## [0.3.2] - 2025-10-01
+[0.3.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.1...frameworks-0.3.2
+
 ### Added
 * Added `IOKit` "serial" submodule.
 * Marked a bunch of functions safe in:
