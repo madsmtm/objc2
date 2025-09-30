@@ -4012,6 +4012,43 @@ impl Ty {
         }
     }
 
+    /// Whether the type could in theory affect the bounds of the receiver.
+    ///
+    /// This is meant to catch `NSInteger`, `NSRange`, `MTL4BufferRange` and
+    /// similar constructs.
+    pub(crate) fn can_affect_bounds(&self) -> bool {
+        match self.through_typedef() {
+            Self::Pointer { pointee, .. } | Self::IncompleteArray { pointee, .. } => {
+                pointee.can_affect_bounds()
+            }
+            Self::Array { element_type, .. } => element_type.can_affect_bounds(),
+            Self::Primitive(prim) | Self::Simd { ty: prim, .. } => matches!(
+                prim,
+                // 32-bit and 64-bit integers.
+                Primitive::I32
+                    | Primitive::I64
+                    | Primitive::Int
+                    | Primitive::Long
+                    | Primitive::ISize
+                    | Primitive::NSInteger
+                    | Primitive::U32
+                    | Primitive::U64
+                    | Primitive::UInt
+                    | Primitive::ULong
+                    | Primitive::USize
+                    | Primitive::NSUInteger
+                    | Primitive::PtrDiff
+            ),
+            Self::Struct { fields, .. } | Self::Union { fields, .. } => {
+                fields.iter().any(|field| field.can_affect_bounds())
+            }
+            // Enumerations are intentionally not bounds-affecting (e.g. not
+            // `MTLIndexType`).
+            Self::Pointee(_) | Self::Enum { .. } | Self::Sel { .. } => false,
+            Self::TypeDef { .. } => unreachable!("using through_typedef"),
+        }
+    }
+
     fn into_pointee(self) -> Option<PointeeTy> {
         match self {
             Self::Pointee(pointee) => Some(pointee),
