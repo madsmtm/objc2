@@ -4014,7 +4014,7 @@ impl Ty {
 
     /// Whether the type could in theory affect the bounds of the receiver.
     ///
-    /// This is meant to catch `NSInteger`, `NSRange`, `MTL4BufferRange` and
+    /// This is meant to catch `NSInteger`, `NSRange`, `MTL4BufferRange`, `MTLGPUAddress` and
     /// similar constructs.
     pub(crate) fn can_affect_bounds(&self) -> bool {
         match self.through_typedef() {

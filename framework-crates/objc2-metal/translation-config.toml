@@ -75,6 +75,9 @@ class.MTLIndirectCommandBufferDescriptor.methods."setMaxKernelBufferBindCount:".
 class.MTLRenderPassDescriptor.methods."setDefaultRasterSampleCount:".unsafe = false
 class.MTLRenderPipelineDescriptor.methods."setSampleCount:".unsafe = false
 class.MTLRenderPipelineDescriptor.methods."setRasterSampleCount:".unsafe = false
+class.MTL4ArgumentTableDescriptor.methods."setMaxBufferBindCount:".unsafe = false
+class.MTL4ArgumentTableDescriptor.methods."setMaxTextureBindCount:".unsafe = false
+class.MTL4ArgumentTableDescriptor.methods."setMaxSamplerStateBindCount:".unsafe = false
 
 # TODO(breaking): Mark these as unsafe (they take unsafe functions).
 protocol.MTLDevice.methods."newComputePipelineStateWithFunction:error:".unsafe = false
@@ -110,8 +113,8 @@ class.MTLTextureDescriptor.methods."setHazardTrackingMode:".unsafe = true
 # by default?
 class.MTLHeapDescriptor.methods."setHazardTrackingMode:".unsafe = false
 
-# TODO.
-class.MTLHeapDescriptor.methods."setType:".unsafe = true
+# TODO(breaking): Mark this as unsafe.
+class.MTLHeapDescriptor.methods."setType:".unsafe = false
 
 # These affect lifetime safety, and can cause use-after-free if used incorrectly.
 class.MTLCommandBufferDescriptor.methods."setRetainedReferences:".unsafe = true
@@ -150,6 +153,14 @@ class.MTLRenderPipelineDescriptor.methods."setTessellationPartitionMode:".unsafe
 
 # Requires specific values when using indexed control points.
 class.MTLRenderPipelineDescriptor.methods."setTessellationControlPointIndexType:".unsafe = true
+
+# Takes a MTLGPUAddress
+protocol.MTL4ComputeCommandEncoder.methods."dispatchThreadgroupsWithIndirectBuffer:threadsPerThreadgroup:".unsafe = true
+# Takes a MTL4BufferRange
+class.MTL4InstanceAccelerationStructureDescriptor.methods."setInstanceDescriptorBuffer:".unsafe = true
+class.MTL4IndirectInstanceAccelerationStructureDescriptor.methods."setInstanceDescriptorBuffer:".unsafe = true
+class.MTL4AccelerationStructureGeometryDescriptor.methods."setPrimitiveDataBuffer:".unsafe = true
+class.MTL4AccelerationStructureTriangleGeometryDescriptor.methods."setVertexBuffer:".unsafe = true
 
 # TODO: Unclear whether changing MTLDataType is safe?
 class.MTLArgumentDescriptor.methods."setDataType:".unsafe = true
