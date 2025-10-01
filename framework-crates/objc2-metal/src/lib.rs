@@ -54,9 +54,11 @@
 //! It is yet unclear whether Metal APIs are bounds-checked on the CPU side or
 //! not, so APIs that take offsets / lengths are often unsafe.
 //!
-//! ## Threading
+//! ## Synchronization
 //!
-//! TODO.
+//! `MTLResource` subclasses such as `MTLBuffer` require synchronization
+//! between the CPU and the GPU, or between different threads on the GPU
+//! itself, so APIs taking these are often unsafe.
 //!
 //! ## Resource allocation and memory management
 //!

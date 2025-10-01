@@ -69,4 +69,16 @@ impl ProtocolRef {
             ItemTree::objc("__macros__"),
         ]
     }
+
+    pub(crate) fn is_subprotocol_of(&self, protocol_name: &str) -> bool {
+        if self.id.name == protocol_name {
+            return true;
+        }
+        for p in &self.super_protocols {
+            if p.is_subprotocol_of(protocol_name) {
+                return true;
+            }
+        }
+        false
+    }
 }

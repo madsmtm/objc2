@@ -99,22 +99,85 @@ class.MTLLinkedFunctions.methods."setPrivateFunctions:".unsafe = false
 # nothing. Metal enables this by default, so we must assume that their
 # configuration of it is sound (?), and that we don't need to mark compilation
 # as unsafe.
+#
 # class.MTLCompileOptions.methods."setMathMode:".unsafe = false
 # class.MTLCompileOptions.methods."setFastMathEnabled:".unsafe = false
+
+# SAFETY: Mark any accesses to the contents of `MTLResource`s as unsafe.
+#
+# Reading or writing to resources is unsynchronized and effectively equivalent
+# to (non-atomically?) sharing these between threads. The user needs to
+# explicitly synchronize accesses to these. (Explicit synchronization could
+# maybe in some cases be avoided with `MTLStorageModeShared` and
+# `MTLHazardTrackingModeTracked`, but that's dangerous to solely rely on).
+#
+# In `header-translator`, subprotocols of `MTLResource` is marked as unsafe in
+# argument position to ensure that any accesses to these on the GPU side are
+# properly synchronized.
+#
+# Here, we mark all inherent methods that read/write on these as `unsafe` to
+# also make things unsafe on the CPU side.
+protocol.MTLBuffer.methods.contents.unsafe = false # Raw pointer, unsafe in itself.
+protocol.MTLTensor.methods."getBytes:strides:fromSliceOrigin:sliceDimensions:".unsafe = true
+protocol.MTLTensor.methods."replaceSliceOrigin:sliceDimensions:withBytes:strides:".unsafe = true
+protocol.MTLTexture.methods."getBytes:bytesPerRow:bytesPerImage:fromRegion:mipmapLevel:slice:".unsafe = true
+protocol.MTLTexture.methods."getBytes:bytesPerRow:fromRegion:mipmapLevel:".unsafe = true
+protocol.MTLTexture.methods."replaceRegion:mipmapLevel:slice:withBytes:bytesPerRow:bytesPerImage:".unsafe = true
+protocol.MTLTexture.methods."replaceRegion:mipmapLevel:withBytes:bytesPerRow:".unsafe = true
+protocol.MTLAccelerationStructure.unsafe = true
+protocol.MTLAccelerationStructure.methods.gpuResourceID.unsafe = false
+protocol.MTLAccelerationStructure.methods.size.unsafe = false
+protocol.MTLIndirectCommandBuffer.unsafe = true
+protocol.MTLIndirectCommandBuffer.methods.gpuResourceID.unsafe = false
+protocol.MTLIndirectCommandBuffer.methods.size.unsafe = false
+protocol.MTLIntersectionFunctionTable.unsafe = true
+protocol.MTLIntersectionFunctionTable.methods.gpuResourceID.unsafe = false
+protocol.MTLVisibleFunctionTable.unsafe = true
+protocol.MTLVisibleFunctionTable.methods.gpuResourceID.unsafe = false
+
+# TODO(breaking): Mark these as unsafe, they probably require synchronization.
+class.MTLRenderPassAttachmentDescriptor.methods."setTexture:".unsafe = false
+class.MTLRenderPassAttachmentDescriptor.methods."setResolveTexture:".unsafe = false
+class.MTLAccelerationStructureBoundingBoxGeometryDescriptor.methods."setBoundingBoxBuffer:".unsafe = false
+class.MTLRenderPassDescriptor.methods."setVisibilityResultBuffer:".unsafe = false
+class.MTLInstanceAccelerationStructureDescriptor.methods."setInstanceDescriptorBuffer:".unsafe = false
+class.MTLInstanceAccelerationStructureDescriptor.methods."setInstancedAccelerationStructures:".unsafe = false
+class.MTLAccelerationStructureGeometryDescriptor.methods."setPrimitiveDataBuffer:".unsafe = false
+class.MTLAccelerationStructureTriangleGeometryDescriptor.methods."setVertexBuffer:".unsafe = false
+protocol.MTLRenderCommandEncoder.methods."useResource:usage:".unsafe = false
+protocol.MTLRenderCommandEncoder.methods."useResource:usage:stages:".unsafe = false
+protocol.MTLComputeCommandEncoder.methods."useResource:usage:".unsafe = false
+protocol.MTLBlitCommandEncoder.methods."synchronizeResource:".unsafe = false
+protocol.MTLBlitCommandEncoder.methods."generateMipmapsForTexture:".unsafe = false
+protocol.MTLBlitCommandEncoder.methods."optimizeContentsForGPUAccess:".unsafe = false
+protocol.MTLAccelerationStructureCommandEncoder.methods."copyAndCompactAccelerationStructure:toAccelerationStructure:".unsafe = false
+
+# SAFETY: Resource options are safe to specify:
+# - Hazard tracking and storage modes change the required synchronization, but
+#   we handle that above. Also, we wouldn't really be able to prevent
+#   untracked resources, these are the only option in Metal 4.
+# - The CPU cache mode is safe, it should only affect performance, not
+#   correctness.
+#
+# class.*.methods."setResourceOptions:".unsafe = false
+
+# TODO(breaking): Mark these as unsafe, setting `MTLPurgeableState::Volatile)`
+# is probably not safe, as you have to lock resources to prevent them from
+# being purged while in use.
+# TODO: How would you do such locking?
+protocol.MTLResource.methods."setPurgeableState:".unsafe = false
+protocol.MTLHeap.methods."setPurgeableState:".unsafe = false
 
 # Using the resource's contents in a memory-safe manner is very difficult
 # after this is called.
 protocol.MTLResource.methods.makeAliasable.unsafe = true
 
-# Using `MTLHazardTrackingModeUntracked` requires extra synchronization.
-# TODO(breaking): Mark all of these as unsafe.
-class.MTLTensorDescriptor.methods."setHazardTrackingMode:".unsafe = true
-class.MTLTextureDescriptor.methods."setHazardTrackingMode:".unsafe = false
-# TODO: MTLHeap should maybe be unsafe by default, since it has untracked
-# by default?
-class.MTLHeapDescriptor.methods."setHazardTrackingMode:".unsafe = false
+# SAFETY: Modifying residency is safe, it's effectively the same as
+# controlling what's in the L1/L2/L3 cache on the CPU.
+# protocol.MTLResidencySet.methods.requestResidency.unsafe = false
+# protocol.MTLResidencySet.methods.endResidency.unsafe = false
 
-# TODO(breaking): Mark this as unsafe.
+# TODO(breaking): Mark this as unsafe?
 class.MTLHeapDescriptor.methods."setType:".unsafe = false
 
 # These affect lifetime safety, and can cause use-after-free if used incorrectly.
