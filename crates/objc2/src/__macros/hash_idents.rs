@@ -24,8 +24,6 @@ macro_rules! __hash_idents {
 #[cfg(test)]
 #[cfg(any(feature = "unstable-static-sel", feature = "unstable-static-class"))]
 mod tests {
-    use crate::__hash_idents;
-
     #[test]
     fn hash_idents_different() {
         assert_ne!(__hash_idents!(abc), __hash_idents!(def));
