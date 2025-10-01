@@ -24,7 +24,13 @@ unsafe impl RefEncode for NSUInteger {
 }
 
 fn main() {
-    assert!(NSUInteger::ENCODING.equivalent_to_str("Q"));
-    assert!(<&NSUInteger>::ENCODING.equivalent_to_str("^Q"));
-    assert!(<&NSUInteger>::ENCODING.equivalent_to_str("r^Q"));
+    if cfg!(target_pointer_width = "64") {
+        assert!(NSUInteger::ENCODING.equivalent_to_str("Q"));
+        assert!(<&NSUInteger>::ENCODING.equivalent_to_str("^Q"));
+        assert!(<&NSUInteger>::ENCODING.equivalent_to_str("r^Q"));
+    } else {
+        assert!(NSUInteger::ENCODING.equivalent_to_str("I"));
+        assert!(<&NSUInteger>::ENCODING.equivalent_to_str("^I"));
+        assert!(<&NSUInteger>::ENCODING.equivalent_to_str("r^I"));
+    }
 }
