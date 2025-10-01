@@ -197,7 +197,7 @@ impl NSURL {
 #[cfg(test)]
 #[cfg(unix)]
 mod tests {
-    use std::{fs, os::unix::ffi::OsStrExt};
+    use std::os::unix::ffi::OsStrExt;
 
     use super::*;
 
@@ -236,7 +236,7 @@ mod tests {
         let url = NSURL::from_file_path("%F8").unwrap();
 
         // Create, read and remove file, using different APIs.
-        fs::write(path, "").unwrap();
+        std::fs::write(path, "").unwrap();
         assert_eq!(NSData::dataWithContentsOfURL(&url), Some(NSData::new()));
         manager.removeItemAtURL_error(&url).unwrap();
     }
