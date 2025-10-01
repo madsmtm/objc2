@@ -433,7 +433,7 @@ macro_rules! __extern_protocol_method_id_deprecated {
 
 #[cfg(test)]
 mod tests {
-    use crate::{extern_protocol, ProtocolType};
+    use crate::ProtocolType;
 
     #[test]
     fn explicit_name() {

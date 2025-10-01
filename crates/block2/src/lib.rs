@@ -358,8 +358,7 @@
 #![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block2/0.6.1")]
-#![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide))]
-#![cfg_attr(docsrs, doc(cfg_hide(doc)))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(feature = "unstable-coerce-pointee", feature(derive_coerce_pointee))]
 
 #[cfg(not(feature = "alloc"))]

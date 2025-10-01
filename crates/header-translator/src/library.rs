@@ -238,7 +238,7 @@ impl Library {
                     "#![cfg_attr(feature = \"unstable-darwin-objc\", feature(darwin_objc))]"
                 )?;
             }
-            writeln!(lib_rs, "#![cfg_attr(docsrs, feature(doc_auto_cfg))]")?;
+            writeln!(lib_rs, "#![cfg_attr(docsrs, feature(doc_cfg))]")?;
             writeln!(lib_rs, "// Update in Cargo.toml as well.")?;
             writeln!(
                 lib_rs,

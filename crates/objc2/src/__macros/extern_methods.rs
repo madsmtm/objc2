@@ -362,7 +362,6 @@ pub const fn extern_methods_unsafe_impl() {}
 
 #[cfg(test)]
 mod tests {
-    use crate::extern_methods;
     use crate::runtime::{NSObject, NSObjectProtocol};
 
     #[test]

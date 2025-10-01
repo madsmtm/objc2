@@ -117,8 +117,8 @@
 )]
 // Note: `doc_notable_trait` doesn't really make sense for us, it's only shown
 // for functions returning a specific trait.
-#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg, doc_cfg_hide))]
-#![cfg_attr(docsrs, doc(cfg_hide(doc)))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
+#![cfg_attr(docsrs, doc(auto_cfg(hide(feature = "unstable-objfw"))))]
 #![warn(missing_docs)]
 #![warn(missing_debug_implementations)]
 #![warn(clippy::missing_errors_doc)]

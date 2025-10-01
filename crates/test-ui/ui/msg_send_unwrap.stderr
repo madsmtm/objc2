@@ -2,6 +2,4 @@ error[E0282]: type annotations needed
  --> ui/msg_send_unwrap.rs
   |
   |     let _: Retained<NSObject> = unsafe { msg_send![cls, new].unwrap() };
-  |                                          ^^^^^^^^^^^^^^^^^^^ cannot infer type
-  |
-  = note: this error originates in the macro `$crate::__msg_send_parse` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  |                                                              ^^^^^^ cannot infer type

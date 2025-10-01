@@ -63,7 +63,7 @@ env:
   # END AUTOMATICALLY GENERATED
 
   # The current nightly Rust version. Keep this synced with `rust-toolchain.toml`
-  CURRENT_NIGHTLY: nightly-2025-08-24
+  CURRENT_NIGHTLY: nightly-2025-09-30
   # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
   # Note: We don't cache `~/.cargo/bin`, that is done separately when needed.
   CARGO_CACHE_PATH: |

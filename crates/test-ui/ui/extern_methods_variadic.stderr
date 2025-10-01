@@ -31,23 +31,29 @@ error: variadic methods are not yet supported
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: only foreign, `unsafe extern "C"`, or `unsafe extern "C-unwind"` functions may have a C-variadic arg
+error: `...` is not supported for non-extern functions
  --> ui/extern_methods_variadic.rs
   |
   |         fn variadic_class(arg: i32, arg2: ...);
   |                                     ^^^^^^^^^
+  |
+  = help: only `extern "C"` and `extern "C-unwind"` functions may have a C variable argument list
 
-error: only foreign, `unsafe extern "C"`, or `unsafe extern "C-unwind"` functions may have a C-variadic arg
+error: `...` is not supported for non-extern functions
  --> ui/extern_methods_variadic.rs
   |
   |         fn variadic_instance(&self, arg: i32, ...);
   |                                               ^^^
+  |
+  = help: only `extern "C"` and `extern "C-unwind"` functions may have a C variable argument list
 
-error: only foreign, `unsafe extern "C"`, or `unsafe extern "C-unwind"` functions may have a C-variadic arg
+error: `...` is not supported for non-extern functions
  --> ui/extern_methods_variadic.rs
   |
   |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
   |                           ^^^^^^^^^
+  |
+  = help: only `extern "C"` and `extern "C-unwind"` functions may have a C variable argument list
 
 error[E0658]: C-variadic functions are unstable
  --> ui/extern_methods_variadic.rs
