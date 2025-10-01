@@ -53,6 +53,15 @@ pub type UTF32Char = u32; // Or maybe Rust's char?
 pub type ByteCount = core::ffi::c_ulong;
 pub type OSErr = i16;
 
+// OpenGL/gltypes.h
+pub type GLbitfield = u32;
+pub type GLboolean = u8;
+pub type GLenum = u32;
+pub type GLfloat = core::ffi::c_float;
+pub type GLint = i32;
+pub type GLsizei = i32;
+pub type GLuint = u32;
+
 #[cfg(target_pointer_width = "64")]
 pub type URefCon = *mut core::ffi::c_void;
 #[cfg(target_pointer_width = "64")]
