@@ -1,3 +1,4 @@
+#![cfg(all(feature = "NSControl", feature = "NSResponder", feature = "NSView"))]
 use crate::NSSlider;
 use objc2::extern_methods;
 

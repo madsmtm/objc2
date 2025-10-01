@@ -1,3 +1,4 @@
+#![cfg(all(feature = "NSActionCell", feature = "NSCell"))]
 use crate::NSSliderCell;
 use objc2::extern_methods;
 
