@@ -141,6 +141,7 @@ Copy and fill out the following checklist into the release PR:
     - Framework crates
 - [ ] Tests have been run on macOS 10.12.
 - [ ] Tests have been run on macOS 10.12 32bit.
+- [ ] Run `cargo semver-checks --default-features`.
 
 Post merge:
 - [ ] Run `cargo release`.
