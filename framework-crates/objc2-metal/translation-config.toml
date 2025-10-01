@@ -59,6 +59,7 @@ protocol.MTLRenderCommandEncoder.methods."setVisibilityResultMode:offset:".unsaf
 protocol.MTLBlitCommandEncoder.methods."fillBuffer:range:value:".unsafe = false
 class.MTLArgumentDescriptor.methods."setIndex:".unsafe = false
 protocol.MTLIntersectionFunctionTable.methods."setFunction:atIndex:".unsafe = false
+protocol.MTLDevice.methods."supportsVertexAmplificationCount:".unsafe = false
 
 # SAFETY: These are not bounds-affecting.
 class.MTLAccelerationStructureTriangleGeometryDescriptor.methods."setIndexBuffer:".unsafe = false
@@ -106,9 +107,9 @@ class.MTLLinkedFunctions.methods."setPrivateFunctions:".unsafe = false
 protocol.MTLResource.methods.makeAliasable.unsafe = true
 
 # Using `MTLHazardTrackingModeUntracked` requires extra synchronization.
+# TODO(breaking): Mark all of these as unsafe.
 class.MTLTensorDescriptor.methods."setHazardTrackingMode:".unsafe = true
-class.MTLTextureDescriptor.methods."setHazardTrackingMode:".unsafe = true
-# TODO(breaking): Mark this as unsafe.
+class.MTLTextureDescriptor.methods."setHazardTrackingMode:".unsafe = false
 # TODO: MTLHeap should maybe be unsafe by default, since it has untracked
 # by default?
 class.MTLHeapDescriptor.methods."setHazardTrackingMode:".unsafe = false
@@ -163,7 +164,7 @@ class.MTL4AccelerationStructureGeometryDescriptor.methods."setPrimitiveDataBuffe
 class.MTL4AccelerationStructureTriangleGeometryDescriptor.methods."setVertexBuffer:".unsafe = true
 
 # TODO: Unclear whether changing MTLDataType is safe?
-class.MTLArgumentDescriptor.methods."setDataType:".unsafe = true
+class.MTLArgumentDescriptor.methods."setDataType:".unsafe = false # TODO(breaking)
 class.MTLFunctionConstantValues.methods."setConstantValue:type:atIndex:".unsafe = true
 class.MTLFunctionConstantValues.methods."setConstantValues:type:withRange:".unsafe = true
 class.MTLFunctionConstantValues.methods."setConstantValue:type:withName:".unsafe = true
