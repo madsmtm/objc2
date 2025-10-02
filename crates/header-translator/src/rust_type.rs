@@ -1175,6 +1175,18 @@ impl PointeeTy {
                 // `MTLFence` (GPU side).
                 [(protocol, _)] if protocol.is_subprotocol_of("MTLResource") => {
                     let safety = TypeSafety::unknown_in_argument("may need to be synchronized");
+
+                    // Additionally, resources in a command buffer must be
+                    // kept alive by the application for as long as they're
+                    // used. If this is not done, it is possible to encounter
+                    // use-after-frees with:
+                    // - `MTLCommandBufferDescriptor::setRetainedReferences(false)`.
+                    // - `MTLCommandQueue::commandBufferWithUnretainedReferences()`.
+                    // - All `MTL4CommandBuffer`s.
+                    let safety = safety.merge(TypeSafety::unknown_in_argument(
+                        "may be unretained, you must ensure it is kept alive while in use",
+                    ));
+
                     // `MTLBuffer` is effectively a `Box<[u8]>` stored on the
                     // GPU (and depending on the storage mode, optionally also
                     // on the CPU). Type-safety of the contents is left

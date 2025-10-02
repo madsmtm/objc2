@@ -32,7 +32,9 @@
 //!
 //! ## Shaders
 //!
-//! Loading shaders (via `MTLLibrary`, function stitching etc.) is perfectly
+//! Shaders are (often) written in an unsafe C-like language.
+//!
+//! Loading them (via `MTLLibrary`, function stitching etc.) is perfectly
 //! safe, it is similar to dynamic linking. The restrictions that e.g.
 //! `libloading::Library::new` labours under do not apply, since there are no
 //! ctors in [the Metal Shading Language][msl-spec] (see section 4.2).
@@ -56,17 +58,23 @@
 //!
 //! ## Synchronization
 //!
-//! `MTLResource` subclasses such as `MTLBuffer` require synchronization
-//! between the CPU and the GPU, or between different threads on the GPU
-//! itself, so APIs taking these are often unsafe.
+//! `MTLResource` subclasses such as `MTLBuffer` and `MTLTexture` require
+//! synchronization between the CPU and the GPU, or between different threads
+//! on the GPU itself, so APIs taking these are often unsafe.
 //!
-//! ## Resource allocation and memory management
+//! ## Memory management and lifetimes
 //!
-//! TODO.
+//! Resources used in `MTL4CommandBuffer`s or command buffers with created
+//! with one of:
+//! - `MTLCommandBufferDescriptor::setRetainedReferences(false)`.
+//! - `MTLCommandQueue::commandBufferWithUnretainedReferences()`.
+//!
+//! Must be kept alive for as long as they're used.
 //!
 //! ## Type safety
 //!
-//! TODO.
+//! `MTLBuffer` is untyped (in a similar manner as a `[u8]` slice), you must
+//! ensure that any usage of it is done with valid types.
 #![recursion_limit = "256"]
 #![allow(non_snake_case)]
 #![no_std]

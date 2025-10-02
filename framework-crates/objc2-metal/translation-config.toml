@@ -190,10 +190,15 @@ protocol.MTLResource.methods.makeAliasable.unsafe = true
 # TODO(breaking): Mark this as unsafe?
 class.MTLHeapDescriptor.methods."setType:".unsafe = false
 
-# These affect lifetime safety, and can cause use-after-free if used incorrectly.
-class.MTLCommandBufferDescriptor.methods."setRetainedReferences:".unsafe = true
-protocol.MTLCommandQueue.methods.commandBufferWithUnretainedReferences.unsafe = true
-protocol.MTLIOCommandQueue.methods.commandBufferWithUnretainedReferences.unsafe = true
+# SAFETY: We could consider marking these as unsafe, since they affect
+# lifetime safety, and can cause use-after-free if used incorrectly.
+#
+# Unretained references are the only option for `MTL4CommandBuffer`s though,
+# and we already mark `MTLResource`s as unsafe, so we choose to move the
+# unsafety of this to the resources instead.
+# class.MTLCommandBufferDescriptor.methods."setRetainedReferences:".unsafe = true
+# protocol.MTLCommandQueue.methods.commandBufferWithUnretainedReferences.unsafe = true
+# protocol.MTLIOCommandQueue.methods.commandBufferWithUnretainedReferences.unsafe = true
 
 # Must be a multiple of 4.
 class.MTLVertexBufferLayoutDescriptor.methods."setStride:".unsafe = true
