@@ -1160,13 +1160,32 @@ impl PointeeTy {
                 // }
                 // ```
                 [(protocol, _)]
-                    if matches!(&*protocol.id.name, "MTLFunction" | "MTLFunctionHandle") =>
+                    if protocol.is_subprotocol_of("MTLFunction")
+                        || protocol.is_subprotocol_of("MTLFunctionHandle") =>
                 {
                     TypeSafety::unknown_in_argument("must be safe to call").merge(
                         TypeSafety::unknown_in_argument(
                             "must have the correct argument and return types",
                         ),
                     )
+                }
+                // Access to the contents of a resource has to be manually
+                // synchronized using things like `didModifyRange:` (CPU side)
+                // or `synchronizeResource:`, `useResource:usage:` and
+                // `MTLFence` (GPU side).
+                [(protocol, _)] if protocol.is_subprotocol_of("MTLResource") => {
+                    let safety = TypeSafety::unknown_in_argument("may need to be synchronized");
+                    // `MTLBuffer` is effectively a `Box<[u8]>` stored on the
+                    // GPU (and depending on the storage mode, optionally also
+                    // on the CPU). Type-safety of the contents is left
+                    // completely up to the user.
+                    if protocol.id.name == "MTLBuffer" {
+                        safety.merge(TypeSafety::unknown_in_argument(
+                            "contents should be of the correct type",
+                        ))
+                    } else {
+                        safety
+                    }
                 }
                 // Other `ProtocolObject<dyn MyProtocol>`s are treated as
                 // proper types. (An example here is delegate protocols).
