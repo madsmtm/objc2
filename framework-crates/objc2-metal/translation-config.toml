@@ -228,6 +228,11 @@ class.MTL4IndirectInstanceAccelerationStructureDescriptor.methods."setInstanceDe
 class.MTL4AccelerationStructureGeometryDescriptor.methods."setPrimitiveDataBuffer:".unsafe = true
 class.MTL4AccelerationStructureTriangleGeometryDescriptor.methods."setVertexBuffer:".unsafe = true
 
+# Takes a MTLResourceID, unsure if this allows doing bad things.
+protocol.MTL4ArgumentTable.methods."setResource:atBufferIndex:".unsafe = true
+protocol.MTL4ArgumentTable.methods."setTexture:atIndex:".unsafe = true
+protocol.MTL4ArgumentTable.methods."setSamplerState:atIndex:".unsafe = true
+
 # TODO: Unclear whether changing MTLDataType is safe?
 class.MTLArgumentDescriptor.methods."setDataType:".unsafe = false # TODO(breaking)
 class.MTLFunctionConstantValues.methods."setConstantValue:type:atIndex:".unsafe = true
