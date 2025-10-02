@@ -460,6 +460,9 @@ pub(crate) fn is_likely_bounds_affecting(name: &str) -> bool {
         || name.contains("offset")
         || name.contains("count")
         || name.contains("stride")
+        || name.contains("size")
+    // Probably not necessary?
+    // || name.contains("length")
 }
 
 fn lowercase_words(s: &str) -> impl Iterator<Item = String> + '_ {

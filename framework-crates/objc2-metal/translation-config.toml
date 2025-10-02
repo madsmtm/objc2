@@ -77,6 +77,11 @@ class.MTLRenderPipelineDescriptor.methods."setRasterSampleCount:".unsafe = false
 class.MTLBufferLayoutDescriptor.methods."setStride:".unsafe = false
 class.MTLAccelerationStructureGeometryDescriptor.methods."setPrimitiveDataStride:".unsafe = false
 class.MTLAccelerationStructureTriangleGeometryDescriptor.methods."setVertexStride:".unsafe = false
+class.MTLHeapDescriptor.methods."setSize:".unsafe = false
+class.MTLAccelerationStructureGeometryDescriptor.methods."setPrimitiveDataElementSize:".unsafe = false
+protocol.MTLDevice.methods."heapBufferSizeAndAlignWithLength:options:".unsafe = false
+protocol.MTLDevice.methods."newAccelerationStructureWithSize:".unsafe = false
+protocol.MTLHeap.methods."maxAvailableSizeWithAlignment:".unsafe = false
 
 # SAFETY: The values are checked later:
 # > -[MTLDebugDevice newArgumentTableWithDescriptor:error:]:4160: failed assertion `Argument Table Descriptor Validation
