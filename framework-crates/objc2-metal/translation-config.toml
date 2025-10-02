@@ -154,13 +154,31 @@ class.MTLInstanceAccelerationStructureDescriptor.methods."setInstanceDescriptorB
 class.MTLInstanceAccelerationStructureDescriptor.methods."setInstancedAccelerationStructures:".unsafe = false
 class.MTLAccelerationStructureGeometryDescriptor.methods."setPrimitiveDataBuffer:".unsafe = false
 class.MTLAccelerationStructureTriangleGeometryDescriptor.methods."setVertexBuffer:".unsafe = false
-protocol.MTLRenderCommandEncoder.methods."useResource:usage:".unsafe = false
-protocol.MTLRenderCommandEncoder.methods."useResource:usage:stages:".unsafe = false
-protocol.MTLComputeCommandEncoder.methods."useResource:usage:".unsafe = false
-protocol.MTLBlitCommandEncoder.methods."synchronizeResource:".unsafe = false
 protocol.MTLBlitCommandEncoder.methods."generateMipmapsForTexture:".unsafe = false
 protocol.MTLBlitCommandEncoder.methods."optimizeContentsForGPUAccess:".unsafe = false
 protocol.MTLAccelerationStructureCommandEncoder.methods."copyAndCompactAccelerationStructure:toAccelerationStructure:".unsafe = false
+
+# SAFETY: Synchronizing a resource is safe, as it:
+# - Doesn't need to the resource to be bound.
+# - Doesn't access the contents of the resource.
+# - Doesn't need the resource to be retained by the user, since it already is
+#   guaranteed to be since they've used the resource elsewhere.
+#   TODO(breaking): Is that claim true?
+protocol.MTLBlitCommandEncoder.methods."synchronizeResource:".unsafe = false
+
+# SAFETY: We consider resource's bound-ness as safe, the safety is moved to
+# command encoding methods such as `setTexture:atIndex:` instead.
+#
+# Calling this with a resource is safe, since it:
+# - Doesn't access the contents of the resource.
+# - Doesn't need the resource to be retained by the user, since it already is
+#   guaranteed to be since they've used the resource elsewhere.
+#
+# TODO(breaking): Are those claims true?
+protocol.MTLAccelerationStructureCommandEncoder.methods."useResource:usage:".unsafe = false
+protocol.MTLComputeCommandEncoder.methods."useResource:usage:".unsafe = false
+protocol.MTLRenderCommandEncoder.methods."useResource:usage:".unsafe = false
+protocol.MTLRenderCommandEncoder.methods."useResource:usage:stages:".unsafe = false
 
 # SAFETY: Resource options are safe to specify:
 # - Hazard tracking and storage modes change the required synchronization, but
@@ -182,8 +200,12 @@ protocol.MTLHeap.methods."setPurgeableState:".unsafe = false
 # after this is called.
 protocol.MTLResource.methods.makeAliasable.unsafe = true
 
-# SAFETY: Modifying residency is safe, it's effectively the same as
-# controlling what's in the L1/L2/L3 cache on the CPU.
+# Modifying residency has similar safety as modifying a resource's bound-ness,
+# it does mostly the same thing.
+# protocol.MTLResidencySet.methods."addAllocation:".unsafe = false
+
+# Taking a residency set in or out of residency is only a performance knob,
+# it's similar to controlling what's in the L1/L2/L3 cache on the CPU.
 # protocol.MTLResidencySet.methods.requestResidency.unsafe = false
 # protocol.MTLResidencySet.methods.endResidency.unsafe = false
 

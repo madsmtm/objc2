@@ -1187,6 +1187,11 @@ impl PointeeTy {
                         "may be unretained, you must ensure it is kept alive while in use",
                     ));
 
+                    // TODO: Should we also document the requirement for
+                    // resources to be properly bound? What exactly are the
+                    // requirements though, and when does Metal automatically
+                    // bind resources?
+
                     // `MTLBuffer` is effectively a `Box<[u8]>` stored on the
                     // GPU (and depending on the storage mode, optionally also
                     // on the CPU). Type-safety of the contents is left
