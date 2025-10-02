@@ -60,8 +60,6 @@ protocol.MTLBlitCommandEncoder.methods."fillBuffer:range:value:".unsafe = false
 class.MTLArgumentDescriptor.methods."setIndex:".unsafe = false
 protocol.MTLIntersectionFunctionTable.methods."setFunction:atIndex:".unsafe = false
 protocol.MTLDevice.methods."supportsVertexAmplificationCount:".unsafe = false
-
-# SAFETY: These are not bounds-affecting.
 class.MTLAccelerationStructureTriangleGeometryDescriptor.methods."setIndexBuffer:".unsafe = false
 class.MTLAccelerationStructureTriangleGeometryDescriptor.methods."setTriangleCount:".unsafe = false
 class.MTLAccelerationStructureBoundingBoxGeometryDescriptor.methods."setBoundingBoxCount:".unsafe = false
@@ -76,6 +74,10 @@ class.MTLIndirectCommandBufferDescriptor.methods."setMaxKernelBufferBindCount:".
 class.MTLRenderPassDescriptor.methods."setDefaultRasterSampleCount:".unsafe = false
 class.MTLRenderPipelineDescriptor.methods."setSampleCount:".unsafe = false
 class.MTLRenderPipelineDescriptor.methods."setRasterSampleCount:".unsafe = false
+
+# SAFETY: The values are checked later:
+# > -[MTLDebugDevice newArgumentTableWithDescriptor:error:]:4160: failed assertion `Argument Table Descriptor Validation
+# > max texture bind count must not be more than 128.
 class.MTL4ArgumentTableDescriptor.methods."setMaxBufferBindCount:".unsafe = false
 class.MTL4ArgumentTableDescriptor.methods."setMaxTextureBindCount:".unsafe = false
 class.MTL4ArgumentTableDescriptor.methods."setMaxSamplerStateBindCount:".unsafe = false
