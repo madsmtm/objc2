@@ -505,3 +505,15 @@ class.NSGarbageCollector.unsafe = true
 # Documentation says these must be balanced.
 class.NSURL.methods.startAccessingSecurityScopedResource.unsafe = true
 class.NSURL.methods.stopAccessingSecurityScopedResource.unsafe = true
+
+# Incorrectly overwritten, breaks type-safety.
+class.NSMachPort.methods."setDelegate:".unsafe = true
+class.NSPort.methods."setDelegate:".unsafe = true
+class.NSDistributedNotificationCenter.methods."addObserver:selector:name:object:".unsafe = true
+class.NSDistributedNotificationCenter.methods."postNotificationName:object:".unsafe = true
+class.NSDistributedNotificationCenter.methods."postNotificationName:object:userInfo:".unsafe = true
+class.NSDistributedNotificationCenter.methods."removeObserver:name:object:".unsafe = true
+class.NSNotificationCenter.methods."addObserver:selector:name:object:".unsafe = true
+class.NSNotificationCenter.methods."postNotificationName:object:".unsafe = true
+class.NSNotificationCenter.methods."postNotificationName:object:userInfo:".unsafe = true
+class.NSNotificationCenter.methods."removeObserver:name:object:".unsafe = true

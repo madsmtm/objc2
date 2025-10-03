@@ -976,6 +976,62 @@ impl Method {
         }
     }
 
+    pub(crate) fn valid_to_override_as(&self, new: &Self) -> bool {
+        debug_assert_eq!(self.id(), new.id());
+
+        // Hard requirement: Memory management must be equal.
+        if self.memory_management != new.memory_management {
+            return false;
+        }
+
+        // Init methods are (probably) valid to override however you want.
+        if self.memory_management == MemoryManagement::RetainedInit {
+            return true; // Success!
+        }
+
+        // Thread-safety attributes must be equal.
+        if self.mainthreadonly != new.mainthreadonly || self.non_isolated != new.non_isolated {
+            return false;
+        }
+
+        // The new result types must be a subtypes of the overwritten type.
+        //
+        // E.g. the following is allowed:
+        // ```
+        // impl Superclass {
+        //     fn method(&self) -> Retained<NSObject>;
+        // }
+        // impl Subclass {
+        //     fn method(&self) -> Retained<NSString>;
+        // }
+        // ```
+        if !new.result_type.is_subtype_of(&self.result_type) {
+            return false;
+        }
+
+        // This should be impossible apart from when translating `NSError`
+        // methods.
+        if self.arguments.len() != new.arguments.len() {
+            return false;
+        }
+
+        // The old argument types must be subtypes of the new argument types.
+        //
+        // E.g. the following is allowed:
+        // ```
+        // impl Superclass {
+        //     fn method(&self, obj: &NSString);
+        // }
+        // impl Subclass {
+        //     fn method(&self, obj: &NSObject);
+        // }
+        // ```
+        self.arguments
+            .iter()
+            .zip(&new.arguments)
+            .all(|((_, this), (_, new))| this.is_subtype_of(new))
+    }
+
     pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
         let mut items = Vec::new();
         for (_, arg_ty) in &self.arguments {

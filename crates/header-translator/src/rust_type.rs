@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::fmt::Display;
 use std::str::FromStr;
 use std::sync::LazyLock;
@@ -655,6 +656,24 @@ fn parse_protocol(entity: Entity<'_>, context: &Context<'_>) -> (ProtocolRef, Th
     }
 }
 
+/// Pad generics with `AnyObject` until it is of the given size.
+fn pad_generics<'a>(
+    generics: &'a [PointeeTy],
+    len: usize,
+) -> impl Iterator<Item = Cow<'a, PointeeTy>> + 'a {
+    const ANY_OBJECT: PointeeTy = PointeeTy::AnyObject { protocols: vec![] };
+
+    let missing = len.checked_sub(generics.len()).unwrap_or_else(|| {
+        error!(?generics, ?len, "had too many generics");
+        0
+    });
+
+    generics
+        .iter()
+        .map(Cow::Borrowed)
+        .chain(iter::repeat_n(Cow::Owned(ANY_OBJECT), missing))
+}
+
 /// Types that are only valid behind pointers.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum PointeeTy {
@@ -1295,6 +1314,84 @@ impl PointeeTy {
             Self::TypeDef { to, .. } => to.is_dispatch_type(),
             Self::DispatchTypeDef { .. } => true,
             _ => false,
+        }
+    }
+
+    fn is_subtype_of(&self, other: &Self) -> bool {
+        /// Ensure that the other protocols are upheld by our protocols.
+        fn protocols_is_subtype_of(
+            this: &[(ProtocolRef, ThreadSafety)],
+            other: &[(ProtocolRef, ThreadSafety)],
+        ) -> bool {
+            other.iter().all(|(other_protocol, _)| {
+                this.iter()
+                    .any(|(p, _)| p.is_subprotocol_of(&other_protocol.id.name))
+            })
+        }
+
+        // Again, typedefness doesn't matter for subtyping.
+        match (self.through_typedef(), other.through_typedef()) {
+            // Classes are subtypes if they are subclasses.
+            (
+                Self::Class {
+                    id,
+                    thread_safety: _,
+                    superclasses,
+                    generics,
+                    declaration_generics,
+                    protocols,
+                },
+                Self::Class {
+                    id: other_id,
+                    thread_safety: _,
+                    superclasses: _,
+                    generics: other_generics,
+                    declaration_generics: other_declaration_generics,
+                    protocols: other_protocols,
+                },
+            ) => {
+                // Inexhaustive list of types with __covariant generics.
+                let generics_are_subtypes = if matches!(
+                    &*id.name,
+                    "NSArray" | "NSDictionary" | "NSSet" | "NSOrderedSet" | "NSFetchRequest"
+                ) {
+                    let len = generics
+                        .len()
+                        .max(other_generics.len())
+                        .max(declaration_generics.len())
+                        .max(other_declaration_generics.len());
+                    pad_generics(generics, len)
+                        .zip(pad_generics(other_generics, len))
+                        .all(|(this, other)| this.is_subtype_of(&other))
+                } else {
+                    generics == other_generics
+                };
+
+                generics_are_subtypes
+                    && protocols_is_subtype_of(protocols, other_protocols)
+                    && id == other_id
+                    || superclasses.contains(other_id)
+            }
+
+            // All classes are subtypes of a plain `AnyObject`.
+            //
+            // TODO: Handle classes with `protocols` set.
+            (Self::Class { .. }, Self::AnyObject { protocols }) if protocols.is_empty() => true,
+
+            // Protocol objects are subtypes of protocol objects with fewer
+            // requirements.
+            (
+                Self::AnyObject { protocols },
+                Self::AnyObject {
+                    protocols: other_protocols,
+                },
+            ) => protocols_is_subtype_of(protocols, other_protocols),
+
+            // TODO: Track the type of `Self` instead!
+            (Self::Self_, _) | (_, Self::Self_) => true,
+
+            // Everything else is invariant for now.
+            (this, other) => this == other,
         }
     }
 }
@@ -3807,6 +3904,84 @@ impl Ty {
         }
     }
 
+    /// Whether the type is valid.
+    ///
+    /// Examples:
+    /// - `&NSString` is a subtype of `&NSObject`.
+    /// - `&NSString` is a subtype of `Option<&NSString>`.
+    /// - `&NSArray<NString>` is a subtype of `&NSArray<NSObject>`
+    ///   (arrays arecovariant).
+    /// - `&NSMutableArray<NString>` is _NOT_ a subtype of
+    ///   `&NSMutableArray<NSObject>` (mutable arrays are invariant).
+    /// - `&ProtocolObject<dyn NSApplicationDelegate>` is a subtype of
+    ///   `&ProtocolObject<dyn NSObjectProtocol>`.
+    pub(crate) fn is_subtype_of(&self, other: &Self) -> bool {
+        /// Non-null pointers are subtypes of nullable pointers.
+        fn nullability_is_subtype(this: &Nullability, other: &Nullability) -> bool {
+            match (this, other) {
+                (Nullability::NonNull, _) => true,
+                (this, other) => this == other,
+            }
+        }
+
+        // Typedefs doesn't matter for subtyping (in that sense, they are covariant).
+        match (self.through_typedef(), other.through_typedef()) {
+            (
+                Self::Pointer {
+                    nullability,
+                    is_const,
+                    lifetime,
+                    pointee,
+                },
+                Self::Pointer {
+                    nullability: other_nullability,
+                    is_const: other_is_const,
+                    lifetime: other_lifetime,
+                    pointee: other_pointee,
+                },
+            ) => {
+                #[allow(clippy::match_single_binding)]
+                let const_is_subtype = match (is_const, other_is_const) {
+                    // (true, false) => true,
+                    (this, other) => this == other,
+                };
+
+                let lifetime_is_subtype = match (lifetime, other_lifetime) {
+                    (Lifetime::Unspecified, _) => true,
+                    (this, other) => this == other,
+                };
+
+                nullability_is_subtype(nullability, other_nullability)
+                    && const_is_subtype
+                    && lifetime_is_subtype
+                    && pointee.is_subtype_of(other_pointee)
+            }
+            (
+                Self::Sel { nullability },
+                Self::Sel {
+                    nullability: other_nullability,
+                },
+            ) => nullability_is_subtype(nullability, other_nullability),
+            // Arrays are covariant.
+            (
+                Self::Array {
+                    element_type,
+                    num_elements,
+                },
+                Self::Array {
+                    element_type: other_element_type,
+                    num_elements: other_num_elements,
+                },
+            ) => {
+                num_elements == other_num_elements && element_type.is_subtype_of(other_element_type)
+            }
+            // Forward to PointeeTy::is_subtype_of
+            (Self::Pointee(this), Self::Pointee(other)) => this.is_subtype_of(other),
+            // Everything else is invariant (for now at least).
+            (this, other) => this == other,
+        }
+    }
+
     fn into_pointee(self) -> Option<PointeeTy> {
         match self {
             Self::Pointee(pointee) => Some(pointee),
@@ -3876,6 +4051,8 @@ fn separate_with_comma_and<T: Display>(items: impl IntoIterator<Item = T> + Clon
 
 #[cfg(test)]
 mod tests {
+    use core::slice;
+
     use super::*;
 
     #[test]
@@ -3937,5 +4114,122 @@ mod tests {
         )];
 
         assert_eq!(ty.required_items().collect::<Vec<_>>(), required_items);
+    }
+
+    #[test]
+    fn subtyping() {
+        let nonnull = Ty::Pointer {
+            nullability: Nullability::NonNull,
+            is_const: false,
+            lifetime: Lifetime::Unspecified,
+            pointee: Box::new(Ty::Primitive(Primitive::Void)),
+        };
+        let nullable = Ty::Pointer {
+            nullability: Nullability::Nullable,
+            is_const: false,
+            lifetime: Lifetime::Unspecified,
+            pointee: Box::new(Ty::Primitive(Primitive::Void)),
+        };
+
+        // NonNull pointers are subtypes of nullable pointers.
+        assert!(nonnull.is_subtype_of(&nullable));
+        // The reverse isn't true.
+        assert!(!nullable.is_subtype_of(&nonnull));
+
+        fn simple_class(name: &str, superclasses: &[&str]) -> PointeeTy {
+            PointeeTy::Class {
+                id: ItemIdentifier::builtin(name),
+                thread_safety: ThreadSafety::dummy(),
+                superclasses: superclasses
+                    .iter()
+                    .map(|name| ItemIdentifier::builtin(*name))
+                    .collect(),
+                generics: vec![],
+                declaration_generics: vec![],
+                protocols: vec![],
+            }
+        }
+
+        // `NSString` is a subtype of `NSObject`.
+        assert!(
+            simple_class("NSString", &["NSObject"]).is_subtype_of(&simple_class("NSObject", &[]))
+        );
+        // Same with `NSMutableString` and `NSString`.
+        assert!(simple_class("NSMutableString", &["NSString", "NSObject"])
+            .is_subtype_of(&simple_class("NSString", &["NSObject"])));
+        // Not the other direction.
+        assert!(
+            !simple_class("NSObject", &[]).is_subtype_of(&simple_class("NSString", &["NSObject"]))
+        );
+
+        // It is also not enough to simply have a common ancestor.
+        assert!(!simple_class("NSString", &["NSObject"])
+            .is_subtype_of(&simple_class("NSValue", &["NSObject"])));
+
+        fn generic(name: &str, generic: PointeeTy) -> PointeeTy {
+            PointeeTy::Class {
+                id: ItemIdentifier::builtin(name),
+                thread_safety: ThreadSafety::dummy(),
+                superclasses: vec![],
+                generics: vec![generic],
+                declaration_generics: vec![("ObjectType".to_string(), None)],
+                protocols: vec![],
+            }
+        }
+
+        // NSArray is covariant, so this should pass.
+        assert!(generic("NSArray", simple_class("NSString", &["NSObject"]))
+            .is_subtype_of(&generic("NSArray", simple_class("NSObject", &[]))));
+        // Though not in the opposite direction.
+        assert!(!generic("NSArray", simple_class("NSObject", &[]))
+            .is_subtype_of(&generic("NSArray", simple_class("NSString", &[]))));
+
+        // NSMutableArray is invariant, so this shouldn't pass.
+        assert!(
+            !generic("NSMutableArray", simple_class("NSString", &["NSObject"]))
+                .is_subtype_of(&generic("NSMutableArray", simple_class("NSObject", &[])))
+        );
+
+        fn protocol(name: &str, super_protocols: &[ProtocolRef]) -> ProtocolRef {
+            ProtocolRef {
+                id: ItemIdentifier::builtin(name),
+                super_protocols: super_protocols.to_vec(),
+            }
+        }
+
+        let nsobject_protocol = protocol("NSObjectProtocol", &[]);
+
+        let text_field_delegate = protocol(
+            "NSTextFieldDelegate",
+            &[protocol(
+                "NSControlTextEditingDelegate",
+                slice::from_ref(&nsobject_protocol),
+            )],
+        );
+
+        let search_field_delegate = protocol(
+            "NSSearchFieldDelegate",
+            slice::from_ref(&text_field_delegate),
+        );
+
+        let text_field_delegate = PointeeTy::AnyObject {
+            protocols: vec![(text_field_delegate, ThreadSafety::dummy())],
+        };
+        let search_field_delegate = PointeeTy::AnyObject {
+            protocols: vec![(search_field_delegate, ThreadSafety::dummy())],
+        };
+        let nsobject_protocol = PointeeTy::AnyObject {
+            protocols: vec![(nsobject_protocol, ThreadSafety::dummy())],
+        };
+        let anyobject = PointeeTy::AnyObject { protocols: vec![] };
+
+        // Protocol objects are subtypes one way, but not the other.
+        assert!(search_field_delegate.is_subtype_of(&text_field_delegate));
+        assert!(!text_field_delegate.is_subtype_of(&search_field_delegate));
+
+        // Everything is a subtype of AnyObject.
+        assert!(simple_class("NSObject", &[]).is_subtype_of(&anyobject));
+        assert!(search_field_delegate.is_subtype_of(&anyobject));
+        assert!(nsobject_protocol.is_subtype_of(&anyobject));
     }
 }

@@ -186,3 +186,24 @@ fn.UIGraphicsPopContext.unsafe = true
 
 # This is safe, but note that it's unsafe to override.
 class.UIPrintFormatter.methods.requiresMainThread.unsafe = false
+
+# Incorrectly overwritten, breaks type-safety.
+class.UIKeyCommand.methods.action.unsafe = true
+class.UICommand.methods.action.unsafe = true
+class.UICollectionView.methods."setDelegate:".unsafe = true
+class.UITableView.methods."setDelegate:".unsafe = true
+class.UIScrollView.methods."setDelegate:".unsafe = true
+class.UITextView.methods."setDelegate:".unsafe = true
+class.UIPageControlTimerProgress.methods."setDelegate:".unsafe = true
+class.UIPageControlProgress.methods."setDelegate:".unsafe = true
+class.UIVideoEditorController.methods."setDelegate:".unsafe = true
+class.UINavigationController.methods."setDelegate:".unsafe = true
+class.UISheetPresentationController.methods."setDelegate:".unsafe = true
+class.UIPopoverPresentationController.methods."setDelegate:".unsafe = true
+class.UIPresentationController.methods."setDelegate:".unsafe = true
+class.NSTextContentStorage.methods."setDelegate:".unsafe = true
+class.NSTextContentManager.methods."setDelegate:".unsafe = true
+class.UITargetedDragPreview.methods."retargetedPreviewWithTarget:".unsafe = true
+class.UITargetedPreview.methods."retargetedPreviewWithTarget:".unsafe = true
+class.UIPointerStyle.methods."styleWithEffect:shape:".unsafe = true
+class.UIHoverStyle.methods."styleWithEffect:shape:".unsafe = true

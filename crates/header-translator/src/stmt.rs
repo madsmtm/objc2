@@ -1,7 +1,6 @@
 use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
-use std::collections::BTreeSet;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
@@ -807,8 +806,10 @@ impl Stmt {
 
                 // Used for duplicate checking (sometimes the subclass
                 // defines the same method that the superclass did).
-                let mut seen_methods: BTreeSet<_> =
-                    methods.iter().map(|method| method.id()).collect();
+                let mut seen_methods: BTreeMap<_, _> = methods
+                    .iter()
+                    .map(|method| (method.id(), Some(method)))
+                    .collect();
 
                 let superclass_methods: Vec<_> = superclasses_full
                     .iter()
@@ -833,10 +834,51 @@ impl Stmt {
                             true,
                             context,
                         );
-                        methods.retain(|method| {
-                            method.emit_on_subclasses() && !seen_methods.contains(&method.id())
+                        methods.retain(|superclass_method| {
+                            // Extra: Validate the signature of overwritten
+                            // methods. These are unsound.
+                            //
+                            // AppKit breaks protocol type-safety with e.g.
+                            // `dataSource`, you can set the data source on an
+                            // outline view, and then re-interpret the object
+                            // as-if it was a table data source (without it
+                            // actually implementing that protocol). Example:
+                            //
+                            // ```
+                            // let view: &NSOutlineView = ...;
+                            // let source: &ProtocolObject<dyn NSOutlineViewDataSource> = ...;
+                            // view.setDataSource(source);
+                            // let view: &NSTableView = &**view;
+                            // let source: ProtocolObject<dyn NSTableViewDataSource> = view.dataSource();
+                            // ```
+                            if let Some(Some(method)) = seen_methods.get(&superclass_method.id()) {
+                                if !superclass_method.valid_to_override_as(method) {
+                                    if method.safe || superclass_method.safe {
+                                        // Ideally, we'd just automatically
+                                        // unmark these as unsafe, but that's
+                                        // kinda hard with the current setup,
+                                        // so give an error instead.
+                                        error!(
+                                            class = ?id.name,
+                                            superclass = ?superclass_id.name,
+                                            selector = method.selector,
+                                            "incorrectly overwritten method was marked safe"
+                                        );
+                                    } else {
+                                        warn!(
+                                            class = ?id.name,
+                                            superclass = ?superclass_id.name,
+                                            selector = method.selector,
+                                            "incorrectly overwritten method"
+                                        );
+                                    }
+                                }
+                            }
+
+                            superclass_method.emit_on_subclasses()
+                                && !seen_methods.contains_key(&superclass_method.id())
                         });
-                        seen_methods.extend(methods.iter().map(|method| method.id()));
+                        seen_methods.extend(methods.iter().map(|method| (method.id(), None)));
                         if methods.is_empty() {
                             None
                         } else {
