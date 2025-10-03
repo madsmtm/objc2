@@ -53,6 +53,18 @@
 //!
 //! It is yet unclear whether Metal APIs are bounds-checked on the CPU side or
 //! not, so APIs that take offsets / lengths are often unsafe.
+//!
+//! ## Threading
+//!
+//! TODO.
+//!
+//! ## Resource allocation and memory management
+//!
+//! TODO.
+//!
+//! ## Type safety
+//!
+//! TODO.
 #![recursion_limit = "256"]
 #![allow(non_snake_case)]
 #![no_std]

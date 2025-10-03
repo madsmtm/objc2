@@ -167,7 +167,7 @@ fn load_pipeline_state(
 }
 
 fn load_vertex_descriptor() -> Retained<MTLVertexDescriptor> {
-    let vertex_descriptor = unsafe { MTLVertexDescriptor::new() };
+    let vertex_descriptor = MTLVertexDescriptor::new();
 
     unsafe {
         let attributes = vertex_descriptor.attributes();
@@ -201,7 +201,7 @@ fn load_vertex_descriptor() -> Retained<MTLVertexDescriptor> {
 fn load_depth_state(
     device: &ProtocolObject<dyn MTLDevice>,
 ) -> Retained<ProtocolObject<dyn MTLDepthStencilState>> {
-    let depth_state_desc = unsafe { MTLDepthStencilDescriptor::new() };
+    let depth_state_desc = MTLDepthStencilDescriptor::new();
     depth_state_desc.setDepthCompareFunction(MTLCompareFunction::Less);
     depth_state_desc.setDepthWriteEnabled(true);
     device
