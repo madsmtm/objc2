@@ -33,20 +33,19 @@ define_class!(
 
             // Create a new MTKView and configure Renderer to render into it.
 
-            let device = MTLCreateSystemDefaultDevice().expect("Metal is not supported on this device");
+            let device =
+                MTLCreateSystemDefaultDevice().expect("Metal is not supported on this device");
 
-            let view = unsafe {
-                MTKView::initWithFrame_device(
-                    MTKView::alloc(mtm),
-                    CGRect::new(CGPoint::ZERO, CGSize::new(800.0, 600.0)),
-                    Some(&device),
-                )
-            };
+            let view = MTKView::initWithFrame_device(
+                MTKView::alloc(mtm),
+                CGRect::new(CGPoint::ZERO, CGSize::new(800.0, 600.0)),
+                Some(&device),
+            );
             self.setView(&view);
 
             let renderer = Renderer::new(&view);
-            unsafe { renderer.mtkView_drawableSizeWillChange(&view, view.drawableSize()) };
-            unsafe { view.setDelegate(Some(ProtocolObject::from_ref(&*renderer))) };
+            renderer.mtkView_drawableSizeWillChange(&view, view.drawableSize());
+            view.setDelegate(Some(ProtocolObject::from_ref(&*renderer)));
             let _ = self.ivars().renderer.set(renderer);
         }
     }

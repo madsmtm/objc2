@@ -10,3 +10,17 @@ visionos = "1.0"
 # TODO: Re-enable these once the relevant frameworks are present
 class.MTKMeshBufferAllocator.skipped-protocols = ["MDLMeshBufferAllocator"]
 class.MTKMeshBuffer.skipped-protocols = ["MDLMeshBuffer", "MDLNamed"]
+
+###
+### Safety
+###
+
+# SAFETY: MetalKit is mostly glue-code between AppKit/UIKit, QuartzCore and
+# Metal, it doesn't do much interesting stuff on its own.
+unsafe-default-safety.property-getters = true
+unsafe-default-safety.property-setters = true
+unsafe-default-safety.instance-methods = true
+unsafe-default-safety.class-methods = true
+unsafe-default-safety.functions = true
+# MetalKit doesn't have any bounds-affecting methods.
+unsafe-default-safety.not-bounds-affecting = false

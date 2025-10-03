@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Foundation` / `objc2-foundation`.
   - `IOKit` / `objc2-io-kit`.
   - `Metal` / `objc2-metal`.
+  - `MetalKit` / `objc2-metal-kit`.
   - `QuartzCore` / `objc2-quartz-core`.
   - `UIKit` / `objc2-ui-kit`.
   - `UniformTypeIdentifiers` / `objc2-uniform-type-identifiers`.

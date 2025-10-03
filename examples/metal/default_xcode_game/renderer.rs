@@ -87,13 +87,11 @@ impl Renderer {
     pub fn new(view: &MTKView) -> Retained<Self> {
         let in_flight_semaphore = DispatchSemaphore::new(MAX_BUFFERS_IN_FLIGHT as isize);
 
-        unsafe {
-            view.setDepthStencilPixelFormat(MTLPixelFormat::Depth32Float_Stencil8);
-            view.setColorPixelFormat(MTLPixelFormat::BGRA8Unorm_sRGB);
-            view.setSampleCount(1);
-        }
+        view.setDepthStencilPixelFormat(MTLPixelFormat::Depth32Float_Stencil8);
+        view.setColorPixelFormat(MTLPixelFormat::BGRA8Unorm_sRGB);
+        view.setSampleCount(1);
 
-        let device = unsafe { view.device() }.unwrap();
+        let device = view.device().unwrap();
 
         let command_queue = device.newCommandQueue().unwrap();
 
@@ -228,7 +226,7 @@ fn load_mesh(
     vertex_descriptor: &MTLVertexDescriptor,
 ) -> Retained<MTKMesh> {
     let metal_allocator =
-        unsafe { MTKMeshBufferAllocator::initWithDevice(MTKMeshBufferAllocator::alloc(), device) };
+        MTKMeshBufferAllocator::initWithDevice(MTKMeshBufferAllocator::alloc(), device);
 
     let mdl_mesh: Retained<MDLMesh> = unsafe {
         msg_send![
@@ -262,8 +260,7 @@ fn load_mesh(
 fn load_color_map(
     device: &ProtocolObject<dyn MTLDevice>,
 ) -> Retained<ProtocolObject<dyn MTLTexture>> {
-    let texture_loader =
-        unsafe { MTKTextureLoader::initWithDevice(MTKTextureLoader::alloc(), device) };
+    let texture_loader = MTKTextureLoader::initWithDevice(MTKTextureLoader::alloc(), device);
     let options = NSDictionary::from_slices(
         unsafe {
             &[
@@ -346,7 +343,7 @@ impl Renderer {
         // Delay getting the currentRenderPassDescriptor until we absolutely
         // need it to avoid holding onto the drawable and blocking the display
         // pipeline any longer than necessary.
-        let render_pass_descriptor = unsafe { view.currentRenderPassDescriptor() };
+        let render_pass_descriptor = view.currentRenderPassDescriptor();
 
         if let Some(render_pass_descriptor) = render_pass_descriptor {
             // Final pass rendering code here.
@@ -379,7 +376,7 @@ impl Renderer {
                 )
             };
 
-            let vertex_buffers = unsafe { self.ivars().mesh.vertexBuffers() };
+            let vertex_buffers = self.ivars().mesh.vertexBuffers();
             for (i, vertex_buffer) in vertex_buffers.into_iter().enumerate() {
                 if **vertex_buffer == **NSNull::null() {
                     eprintln!("got null vertex_buffer");
@@ -399,7 +396,7 @@ impl Renderer {
                     .setFragmentTexture_atIndex(Some(&self.ivars().color_map), TextureIndexColor)
             };
 
-            for submesh in unsafe { self.ivars().mesh.submeshes() } {
+            for submesh in self.ivars().mesh.submeshes() {
                 unsafe {
                     render_encoder
                         .drawIndexedPrimitives_indexCount_indexType_indexBuffer_indexBufferOffset(
@@ -416,9 +413,8 @@ impl Renderer {
 
             render_encoder.endEncoding();
 
-            command_buffer.presentDrawable(ProtocolObject::from_ref(
-                &*unsafe { view.currentDrawable() }.unwrap(),
-            ));
+            command_buffer
+                .presentDrawable(ProtocolObject::from_ref(&*view.currentDrawable().unwrap()));
         } else {
             eprintln!("no render_pass_descriptor");
         }

@@ -115,9 +115,7 @@ define_class!(
             // create the metal view
             let mtk_view = {
                 let frame_rect = window.frame();
-                unsafe {
-                    MTKView::initWithFrame_device(MTKView::alloc(mtm), frame_rect, Some(&device))
-                }
+                MTKView::initWithFrame_device(MTKView::alloc(mtm), frame_rect, Some(&device))
             };
 
             // create the pipeline descriptor
@@ -152,10 +150,8 @@ define_class!(
                 .expect("Failed to create a pipeline state.");
 
             // configure the metal view delegate
-            unsafe {
-                let object = ProtocolObject::from_ref(self);
-                mtk_view.setDelegate(Some(object));
-            }
+            let object = ProtocolObject::from_ref(self);
+            mtk_view.setDelegate(Some(object));
 
             // configure the window
             window.setContentView(Some(&mtk_view));
@@ -180,13 +176,13 @@ define_class!(
             idcell!(pipeline_state <= self);
 
             // prepare for drawing
-            let Some(current_drawable) = (unsafe { mtk_view.currentDrawable() }) else {
+            let Some(current_drawable) = mtk_view.currentDrawable() else {
                 return;
             };
             let Some(command_buffer) = command_queue.commandBuffer() else {
                 return;
             };
-            let Some(pass_descriptor) = (unsafe { mtk_view.currentRenderPassDescriptor() }) else {
+            let Some(pass_descriptor) = mtk_view.currentRenderPassDescriptor() else {
                 return;
             };
             let Some(encoder) = command_buffer.renderCommandEncoderWithDescriptor(&pass_descriptor)
