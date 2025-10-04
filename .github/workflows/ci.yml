@@ -634,7 +634,8 @@ jobs:
         echo "SIM_ID=$SIM_ID" >> $GITHUB_ENV
 
     - name: Test
-      run: cargo-dinghy --device=$SIM_ID test $PUBLIC_CRATES $FRAMEWORKS_IOS_10 -ptests --features=catch-all
+      # Use `--all-targets` to avoid running doctests (these are _very_ slow).
+      run: cargo-dinghy --device=$SIM_ID test $PUBLIC_CRATES $FRAMEWORKS_IOS_10 -ptests --features=catch-all --all-targets
 
   test-gnustep:
     name: ${{ matrix.name }}
