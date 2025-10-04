@@ -152,7 +152,7 @@ checksum = "5c8214115b7bf84099f1309324e63141d4c5d7cc26862f97a0a857dbefe165bd"
 
 [[package]]
 name = "block2"
-version = "0.6.1"
+version = "0.6.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
@@ -603,7 +603,7 @@ dependencies = [
 
 [[package]]
 name = "objc2"
-version = "0.6.2"
+version = "0.6.3"
 dependencies = [
  "backtrace",
  "block2",

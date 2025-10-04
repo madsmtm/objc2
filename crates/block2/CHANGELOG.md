@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
+## [0.6.2] - 2025-10-04
+[0.6.2]: https://github.com/madsmtm/objc2/compare/block2-0.6.1...block2-0.6.2
+
+## Fixed
+* Fixed documentation on docs.rs.
+
+
 ## [0.6.1] - 2025-04-19
 [0.6.1]: https://github.com/madsmtm/objc2/compare/block2-0.6.0...block2-0.6.1
 
