@@ -1138,6 +1138,72 @@ impl PointeeTy {
                 {
                     TypeSafety::unknown_in_argument("should be of the correct type")
                 }
+                // Passing `MTLFunction` is spiritually similar to passing an
+                // `unsafe` function pointer; we can't know without inspecting
+                // the function (or it's documentation) whether it has special
+                // safety requirements. Example:
+                //
+                // ```metal
+                // constant float data[5] = { 1.0, 2.0, 3.0, 4.0, 5.0 };
+                //
+                // // Safety: Must not be called with an index < 5.
+                // kernel void add_static(
+                //     device const float* input,
+                //     device float* result,
+                //     uint index [[thread_position_in_grid]]
+                // ) {
+                //     if (5 <= index) {
+                //         // For illustration purposes.
+                //         __builtin_unreachable();
+                //     }
+                //     result[index] = input[index] + data[index];
+                // }
+                // ```
+                [(protocol, _)]
+                    if protocol.is_subprotocol_of("MTLFunction")
+                        || protocol.is_subprotocol_of("MTLFunctionHandle") =>
+                {
+                    TypeSafety::unknown_in_argument("must be safe to call").merge(
+                        TypeSafety::unknown_in_argument(
+                            "must have the correct argument and return types",
+                        ),
+                    )
+                }
+                // Access to the contents of a resource has to be manually
+                // synchronized using things like `didModifyRange:` (CPU side)
+                // or `synchronizeResource:`, `useResource:usage:` and
+                // `MTLFence` (GPU side).
+                [(protocol, _)] if protocol.is_subprotocol_of("MTLResource") => {
+                    let safety = TypeSafety::unknown_in_argument("may need to be synchronized");
+
+                    // Additionally, resources in a command buffer must be
+                    // kept alive by the application for as long as they're
+                    // used. If this is not done, it is possible to encounter
+                    // use-after-frees with:
+                    // - `MTLCommandBufferDescriptor::setRetainedReferences(false)`.
+                    // - `MTLCommandQueue::commandBufferWithUnretainedReferences()`.
+                    // - All `MTL4CommandBuffer`s.
+                    let safety = safety.merge(TypeSafety::unknown_in_argument(
+                        "may be unretained, you must ensure it is kept alive while in use",
+                    ));
+
+                    // TODO: Should we also document the requirement for
+                    // resources to be properly bound? What exactly are the
+                    // requirements though, and when does Metal automatically
+                    // bind resources?
+
+                    // `MTLBuffer` is effectively a `Box<[u8]>` stored on the
+                    // GPU (and depending on the storage mode, optionally also
+                    // on the CPU). Type-safety of the contents is left
+                    // completely up to the user.
+                    if protocol.id.name == "MTLBuffer" {
+                        safety.merge(TypeSafety::unknown_in_argument(
+                            "contents should be of the correct type",
+                        ))
+                    } else {
+                        safety
+                    }
+                }
                 // Other `ProtocolObject<dyn MyProtocol>`s are treated as
                 // proper types. (An example here is delegate protocols).
                 [_] => TypeSafety::SAFE,
@@ -3979,6 +4045,43 @@ impl Ty {
             (Self::Pointee(this), Self::Pointee(other)) => this.is_subtype_of(other),
             // Everything else is invariant (for now at least).
             (this, other) => this == other,
+        }
+    }
+
+    /// Whether the type could in theory affect the bounds of the receiver.
+    ///
+    /// This is meant to catch `NSInteger`, `NSRange`, `MTL4BufferRange`, `MTLGPUAddress` and
+    /// similar constructs.
+    pub(crate) fn can_affect_bounds(&self) -> bool {
+        match self.through_typedef() {
+            Self::Pointer { pointee, .. } | Self::IncompleteArray { pointee, .. } => {
+                pointee.can_affect_bounds()
+            }
+            Self::Array { element_type, .. } => element_type.can_affect_bounds(),
+            Self::Primitive(prim) | Self::Simd { ty: prim, .. } => matches!(
+                prim,
+                // 32-bit and 64-bit integers.
+                Primitive::I32
+                    | Primitive::I64
+                    | Primitive::Int
+                    | Primitive::Long
+                    | Primitive::ISize
+                    | Primitive::NSInteger
+                    | Primitive::U32
+                    | Primitive::U64
+                    | Primitive::UInt
+                    | Primitive::ULong
+                    | Primitive::USize
+                    | Primitive::NSUInteger
+                    | Primitive::PtrDiff
+            ),
+            Self::Struct { fields, .. } | Self::Union { fields, .. } => {
+                fields.iter().any(|field| field.can_affect_bounds())
+            }
+            // Enumerations are intentionally not bounds-affecting (e.g. not
+            // `MTLIndexType`).
+            Self::Pointee(_) | Self::Enum { .. } | Self::Sel { .. } => false,
+            Self::TypeDef { .. } => unreachable!("using through_typedef"),
         }
     }
 

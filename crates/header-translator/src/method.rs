@@ -603,7 +603,10 @@ impl Method {
         let mut safety = arguments
             .iter()
             .fold(SafetyProperty::Safe, |mut safety, (arg_name, arg_ty)| {
-                if default_safety.not_bounds_affecting && is_likely_bounds_affecting(arg_name) {
+                if default_safety.not_bounds_affecting
+                    && is_likely_bounds_affecting(arg_name)
+                    && arg_ty.can_affect_bounds()
+                {
                     any_argument_bounds_affecting = true;
                     safety = safety.merge(SafetyProperty::new_unknown(format!(
                         "`{arg_name}` might not be bounds-checked"
@@ -613,9 +616,13 @@ impl Method {
             })
             .merge(result_type.safety_in_fn_return());
 
+        // Probably overly conservative
         if default_safety.not_bounds_affecting
             && !any_argument_bounds_affecting
             && is_likely_bounds_affecting(&selector)
+            && arguments
+                .iter()
+                .any(|(_, arg_ty)| arg_ty.can_affect_bounds())
         {
             safety = safety.merge(SafetyProperty::new_unknown(
                 "This might not be bounds-checked",
@@ -888,7 +895,10 @@ impl Method {
                     safety =
                         safety.merge(SafetyProperty::new_unknown("This might not be thread-safe"));
                 };
-                if default_safety.not_bounds_affecting && is_likely_bounds_affecting(&selector) {
+                if default_safety.not_bounds_affecting
+                    && is_likely_bounds_affecting(&selector)
+                    && ty.can_affect_bounds()
+                {
                     safety = safety.merge(SafetyProperty::new_unknown(
                         "This might not be bounds-checked",
                     ));

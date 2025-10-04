@@ -23,6 +23,58 @@
     not(feature = "MTLDevice"),
     doc = "[`MTLCreateSystemDefaultDevice`]: #needs-MTLDevice-feature"
 )]
+//!
+//! # Safety considerations
+//!
+//! Metal allows running arbitrary code on the GPU. We treat memory safety
+//! issues on the GPU as just as unsafe as that which applies to the CPU. A
+//! few notes on this below.
+//!
+//! ## Shaders
+//!
+//! Shaders are (often) written in an unsafe C-like language.
+//!
+//! Loading them (via `MTLLibrary`, function stitching etc.) is perfectly
+//! safe, it is similar to dynamic linking. The restrictions that e.g.
+//! `libloading::Library::new` labours under do not apply, since there are no
+//! ctors in [the Metal Shading Language][msl-spec] (see section 4.2).
+//!
+//! Similarly, getting individual shaders (`MTLFunction`) is safe, we can
+//! model this as the same as calling `dlsym` (which just returns a pointer).
+//!
+//! _Calling_ functions though, is not safe. Even though they can have their
+//! parameter and return types checked at runtime, they may have additional
+//! restrictions not present in the signature (e.g. `__builtin_unreachable()`
+//! is possible in MSL, so is out-of-bounds accesses). If you view
+//! `MTLFunction` as essentially just an `unsafe fn()` pointer, this should be
+//! apparent.
+//!
+//! [msl-spec]: https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf
+//!
+//! ## Bounds checks
+//!
+//! It is yet unclear whether Metal APIs are bounds-checked on the CPU side or
+//! not, so APIs that take offsets / lengths are often unsafe.
+//!
+//! ## Synchronization
+//!
+//! `MTLResource` subclasses such as `MTLBuffer` and `MTLTexture` require
+//! synchronization between the CPU and the GPU, or between different threads
+//! on the GPU itself, so APIs taking these are often unsafe.
+//!
+//! ## Memory management and lifetimes
+//!
+//! Resources used in `MTL4CommandBuffer`s or command buffers with created
+//! with one of:
+//! - `MTLCommandBufferDescriptor::setRetainedReferences(false)`.
+//! - `MTLCommandQueue::commandBufferWithUnretainedReferences()`.
+//!
+//! Must be kept alive for as long as they're used.
+//!
+//! ## Type safety
+//!
+//! `MTLBuffer` is untyped (in a similar manner as a `[u8]` slice), you must
+//! ensure that any usage of it is done with valid types.
 #![recursion_limit = "256"]
 #![allow(non_snake_case)]
 #![no_std]
