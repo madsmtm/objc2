@@ -62,7 +62,11 @@ objc2-app-kit = { workspace = true, features = [
 ] }
 
 [target.'cfg(all(target_vendor = "apple", not(target_os = "macos")))'.dev-dependencies]
-objc2-ui-kit = { workspace = true, features = ["std", "UIApplication"] }
+objc2-ui-kit = { workspace = true, features = [
+    "std",
+    "UIApplication",
+    "UIResponder",
+] }
 
 [build-dependencies]
 cc = "1.0"
