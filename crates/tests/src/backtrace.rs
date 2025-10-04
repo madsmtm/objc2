@@ -43,10 +43,22 @@ fn merge_objc_symbols(exc: &NSException) -> Vec<String> {
 #[cfg(feature = "exception")]
 #[cfg_attr(feature = "catch-all", ignore = "catch-all interferes with our catch")]
 fn array_exception() {
-    use objc2::rc::Retained;
+    use objc2::{available, rc::Retained};
     use objc2_foundation::NSArray;
 
+    // Foreign backtraces seem completely broken on macOS 10.12? It returns:
+    // "___CFSortIndexesNMerge",
+    // "AssociationsManager::_map",
+    // "_CFBitVectorFlipBitAtIndex",
+    //
+    // Which is definitely not what we're calling!
+    if !available!(macos = 11.0) {
+        // Unsure of the exact version
+        return;
+    }
+
     #[no_mangle]
+    #[inline(never)]
     fn array_exception_via_msg_send() {
         let arr = NSArray::<NSObject>::new();
         let _: Retained<NSObject> = unsafe { msg_send![&arr, objectAtIndex: 0usize] };
@@ -55,14 +67,19 @@ fn array_exception() {
         "__exceptionPreprocess",
         "objc_exception_throw",
         "CFArrayApply",
+        #[cfg(debug_assertions)]
         "<(A,) as objc2::encode::EncodeArguments>::__invoke",
+        #[cfg(debug_assertions)]
         "objc2::runtime::message_receiver::msg_send_primitive::send",
+        #[cfg(debug_assertions)]
         "objc2::runtime::message_receiver::MessageReceiver::send_message",
+        #[cfg(debug_assertions)]
         "<MethodFamily as objc2::__macros::msg_send::retained::MsgSend<Receiver,Return>>::send_message",
         "array_exception_via_msg_send",
     ];
 
     #[no_mangle]
+    #[inline(never)]
     fn array_exception_via_extern_methods() {
         let arr = NSArray::<NSObject>::new();
         let _ = arr.objectAtIndex(0);
@@ -71,10 +88,15 @@ fn array_exception() {
         "__exceptionPreprocess",
         "objc_exception_throw",
         "CFArrayApply",
+        #[cfg(debug_assertions)]
         "<(A,) as objc2::encode::EncodeArguments>::__invoke",
+        #[cfg(debug_assertions)]
         "objc2::runtime::message_receiver::msg_send_primitive::send",
+        #[cfg(debug_assertions)]
         "objc2::runtime::message_receiver::MessageReceiver::send_message",
+        #[cfg(debug_assertions)]
         "<MethodFamily as objc2::__macros::msg_send::retained::MsgSend<Receiver,Return>>::send_message",
+        #[cfg(debug_assertions)]
         "objc2_foundation::generated::__NSArray::NSArray<ObjectType>::objectAtIndex",
         "array_exception_via_extern_methods",
     ];
@@ -134,6 +156,7 @@ impl Thrower {
 #[cfg_attr(feature = "catch-all", ignore = "catch-all changes the backtrace")]
 fn capture_backtrace() {
     #[no_mangle]
+    #[inline(never)]
     fn rust_backtrace_via_msg_send() -> backtrace::Backtrace {
         let ptr: *mut c_void = unsafe { msg_send![Thrower::class(), backtrace] };
         *unsafe { Box::from_raw(ptr.cast()) }
@@ -141,14 +164,19 @@ fn capture_backtrace() {
     let expected_msg_send: &[_] = &[
         "Backtrace::new",
         "Thrower::__backtrace",
+        #[cfg(debug_assertions)]
         "<() as objc2::encode::EncodeArguments>::__invoke",
+        #[cfg(debug_assertions)]
         "objc2::runtime::message_receiver::msg_send_primitive::send",
+        #[cfg(debug_assertions)]
         "objc2::runtime::message_receiver::MessageReceiver::send_message",
+        #[cfg(debug_assertions)]
         "<MethodFamily as objc2::__macros::msg_send::retained::MsgSend<Receiver,Return>>::send_message",
         "rust_backtrace_via_msg_send",
     ];
 
     #[no_mangle]
+    #[inline(never)]
     fn rust_backtrace_via_extern_methods() -> backtrace::Backtrace {
         let ptr = Thrower::backtrace();
         *unsafe { Box::from_raw(ptr.cast()) }
@@ -156,10 +184,15 @@ fn capture_backtrace() {
     let expected_extern_methods: &[_] = &[
         "Backtrace::new",
         "Thrower::__backtrace",
+        #[cfg(debug_assertions)]
         "<() as objc2::encode::EncodeArguments>::__invoke",
+        #[cfg(debug_assertions)]
         "objc2::runtime::message_receiver::msg_send_primitive::send",
+        #[cfg(debug_assertions)]
         "objc2::runtime::message_receiver::MessageReceiver::send_message",
+        #[cfg(debug_assertions)]
         "<MethodFamily as objc2::__macros::msg_send::retained::MsgSend<Receiver,Return>>::send_message",
+        #[cfg(debug_assertions)]
         "Thrower::backtrace",
         "rust_backtrace_via_extern_methods",
     ];
