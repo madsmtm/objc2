@@ -603,7 +603,7 @@ impl Method {
         let mut safety = arguments
             .iter()
             .fold(SafetyProperty::Safe, |mut safety, (arg_name, arg_ty)| {
-                if default_safety.not_bounds_affecting
+                if !default_safety.bounds_checked_internally
                     && is_likely_bounds_affecting(arg_name)
                     && arg_ty.can_affect_bounds()
                 {
@@ -617,7 +617,7 @@ impl Method {
             .merge(result_type.safety_in_fn_return());
 
         // Probably overly conservative
-        if default_safety.not_bounds_affecting
+        if !default_safety.bounds_checked_internally
             && !any_argument_bounds_affecting
             && is_likely_bounds_affecting(&selector)
             && arguments
@@ -629,12 +629,6 @@ impl Method {
             ));
         }
 
-        let default_safe = if is_class || memory_management == MemoryManagement::RetainedInit {
-            default_safety.class_methods
-        } else {
-            default_safety.instance_methods
-        };
-
         let safe = if let Some(unsafe_) = data.unsafe_ {
             if safety.is_unsafe() && !unsafe_ {
                 // TODO(breaking): Disallow these.
@@ -643,7 +637,7 @@ impl Method {
             !unsafe_
         } else {
             // TODO(breaking): Remove unavailable instead of just marking them unsafe.
-            safety.is_safe() && default_safe && availability.is_available()
+            safety.is_safe() && default_safety.automatically_safe && availability.is_available()
         };
 
         let mut documentation = Documentation::from_entity(&entity, context);
@@ -822,7 +816,7 @@ impl Method {
                 !unsafe_
             } else {
                 // TODO(breaking): Remove unavailable instead of just marking them unsafe.
-                safety.is_safe() && default_safety.property_getters && availability.is_available()
+                safety.is_safe() && default_safety.automatically_safe && availability.is_available()
             };
 
             if let Some(safety) = safety.to_safety_comment() {
@@ -895,7 +889,7 @@ impl Method {
                     safety =
                         safety.merge(SafetyProperty::new_unknown("This might not be thread-safe"));
                 };
-                if default_safety.not_bounds_affecting
+                if !default_safety.bounds_checked_internally
                     && is_likely_bounds_affecting(&selector)
                     && ty.can_affect_bounds()
                 {
@@ -913,7 +907,7 @@ impl Method {
                 } else {
                     // TODO(breaking): Remove unavailable instead of just marking them unsafe.
                     safety.is_safe()
-                        && default_safety.property_setters
+                        && default_safety.automatically_safe
                         && availability.is_available()
                 };
 

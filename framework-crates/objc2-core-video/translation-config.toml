@@ -54,9 +54,9 @@ static.kCVImageBufferPostDecodeProcessingFrameMetadataKey.nullability = "nullabl
 #
 # We only support macOS 10.12 and above though, so this should be fine. In the
 # future, we should make these distinct types though.
-unsafe-default-safety.functions = true
+unsafe-default-safety.documentation-is-reviewed = true
 # SAFETY: CoreVideo is bounds-checked internally.
-unsafe-default-safety.not-bounds-affecting = false
+unsafe-default-safety.bounds-checked-internally = true
 
 # Unsure of soundness of over-unlocking?
 fn.CVPixelBufferLockBaseAddress.unsafe = true

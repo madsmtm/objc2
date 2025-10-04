@@ -359,48 +359,42 @@ pub struct LibraryConfig {
 ///
 /// As such, each framework must be explicitly marked with the kinds of safety
 /// it has been reviewed for.
-#[derive(Deserialize, Default, Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[serde(deny_unknown_fields)]
 pub struct DefaultSafety {
-    /// Property getters are marked as safe by default.
-    #[serde(rename = "property-getters")]
+    /// All methods, functions and properties are marked as safe by default,
+    /// provided that they do not take pointers or other such things as
+    /// arguments.
+    #[serde(rename = "documentation-is-reviewed")]
     #[serde(default)]
-    pub property_getters: bool,
-    /// Property setters are marked as safe by default, provided that they do
-    /// not take pointers as arguments.
-    #[serde(rename = "property-setters")]
-    #[serde(default)]
-    pub property_setters: bool,
-    /// Class and protocol instance methods are marked as safe by default,
-    /// provided that they do not take pointers as arguments.
-    #[serde(rename = "instance-methods")]
-    #[serde(default)]
-    pub instance_methods: bool,
-    /// Class and protocol class methods are marked as safe by default,
-    /// provided that they do not take pointers as arguments.
-    ///
-    /// This includes initializers.
-    #[serde(rename = "class-methods")]
-    #[serde(default)]
-    pub class_methods: bool,
-    /// Functions are marked as safe by default, provided that they do not
-    /// take pointers as arguments.
-    #[serde(default)]
-    pub functions: bool,
+    pub automatically_safe: bool,
     /// Whether functions or methods with bounds-affecting parameters are
-    /// excluded from this default.
+    /// checked internally, and thus don't need to be unsafe.
     ///
     /// The documentation in CoreFoundation-like frameworks often say it's
     /// "undefined behaviour" to have indexes or ranges out of bounds - but
     /// then the function often checks it anyhow, so whether that is something
     /// we can rely on is unclear?
-    #[serde(rename = "not-bounds-affecting")]
-    #[serde(default)]
-    pub not_bounds_affecting: bool,
+    #[serde(rename = "bounds-checked-internally")]
+    #[serde(default = "bounds_checked_internally_default")]
+    pub bounds_checked_internally: bool,
 }
 
 fn link_default() -> bool {
     true
+}
+
+fn bounds_checked_internally_default() -> bool {
+    true
+}
+
+impl Default for DefaultSafety {
+    fn default() -> Self {
+        Self {
+            automatically_safe: false,
+            bounds_checked_internally: bounds_checked_internally_default(),
+        }
+    }
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

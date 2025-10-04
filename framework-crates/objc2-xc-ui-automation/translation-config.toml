@@ -21,9 +21,4 @@ class.XCUIElementQuery.main-thread-only = true
 # SAFETY: XCUIAutomation is well-behaved, and since it's only used for test
 # code, it doesn't matter _that_ much anyhow if it's unsound (though we'd
 # still like to avoid it of course).
-unsafe-default-safety.property-getters = true
-unsafe-default-safety.property-setters = true
-unsafe-default-safety.instance-methods = true
-unsafe-default-safety.class-methods = true
-unsafe-default-safety.functions = true
-unsafe-default-safety.not-bounds-affecting = false
+unsafe-default-safety.documentation-is-reviewed = true

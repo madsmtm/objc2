@@ -10,7 +10,7 @@ visionos = "1.0"
 
 # SAFETY: SystemConfiguration has no memory-safety violating
 # functions (apart from those that take pointers).
-unsafe-default-safety.functions = true
+unsafe-default-safety.documentation-is-reviewed = true
 
 # TODO(breaking): Make these unsafe, or fix the type.
 fn.SCNetworkInterfaceCopyMediaSubTypes.unsafe = false

@@ -1862,7 +1862,7 @@ impl Stmt {
                 let mut safety = arguments
                     .iter()
                     .fold(SafetyProperty::Safe, |mut safety, (arg_name, arg_ty)| {
-                        if default_safety.not_bounds_affecting
+                        if !default_safety.bounds_checked_internally
                             && is_likely_bounds_affecting(arg_name)
                             && arg_ty.can_affect_bounds()
                         {
@@ -1875,7 +1875,7 @@ impl Stmt {
                     })
                     .merge(result_type.safety_in_fn_return());
 
-                if default_safety.not_bounds_affecting
+                if !default_safety.bounds_checked_internally
                     && !any_argument_bounds_affecting
                     && is_likely_bounds_affecting(&c_name)
                     && arguments
@@ -1894,7 +1894,9 @@ impl Stmt {
                     !unsafe_
                 } else {
                     // TODO(breaking): Remove unavailable instead of just marking them unsafe.
-                    safety.is_safe() && default_safety.functions && availability.is_available()
+                    safety.is_safe()
+                        && default_safety.automatically_safe
+                        && availability.is_available()
                 };
 
                 if let Some(safety) = safety.to_safety_comment() {

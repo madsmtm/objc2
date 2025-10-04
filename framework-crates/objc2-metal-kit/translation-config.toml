@@ -17,10 +17,6 @@ class.MTKMeshBuffer.skipped-protocols = ["MDLMeshBuffer", "MDLNamed"]
 
 # SAFETY: MetalKit is mostly glue-code between AppKit/UIKit, QuartzCore and
 # Metal, it doesn't do much interesting stuff on its own.
-unsafe-default-safety.property-getters = true
-unsafe-default-safety.property-setters = true
-unsafe-default-safety.instance-methods = true
-unsafe-default-safety.class-methods = true
-unsafe-default-safety.functions = true
+unsafe-default-safety.documentation-is-reviewed = true
 # MetalKit doesn't have any bounds-affecting methods.
-unsafe-default-safety.not-bounds-affecting = false
+unsafe-default-safety.bounds-checked-internally = true

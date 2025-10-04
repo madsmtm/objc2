@@ -318,17 +318,11 @@ class.NSURL.bridged-to = "CoreFoundation.CFURL.CFURL"
 ### Safety
 ###
 
-# Foundation's properties are well-behaved.
-unsafe-default-safety.property-getters = true
-unsafe-default-safety.property-setters = true
-# Methods are mostly well-behaved, apart from a few exceptions described below.
-unsafe-default-safety.instance-methods = true
-unsafe-default-safety.class-methods = true
-# Foundation's functions are well-behaved, apart from a few related to memory
-# management that we've skipped above.
-unsafe-default-safety.functions = true
+# Foundation is mostly well-behaved, apart from a few methods described below,
+# and a few methods related to memory management that we've skipped above.
+unsafe-default-safety.documentation-is-reviewed = true
 # Foundation's methods are bounds-checked and throw exceptions.
-unsafe-default-safety.not-bounds-affecting = false
+unsafe-default-safety.bounds-checked-internally = true
 
 # Enumerators themselves are safe to use, we move unsoundness to their creation
 # in `header-translator`.

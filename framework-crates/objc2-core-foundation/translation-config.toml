@@ -122,10 +122,10 @@ fn.CFURLGetString.renamed = "__string"
 # nullability instead.
 #
 # TODO(breaking): Generally, review these again.
-unsafe-default-safety.functions = true
+unsafe-default-safety.documentation-is-reviewed = true
 # Generally not guaranteed to be bounds-checked.
 # TODO(breaking): Change to `true`.
-unsafe-default-safety.not-bounds-affecting = false
+unsafe-default-safety.bounds-checked-internally = true
 
 # CFArray
 fn.CFArrayCreateMutableCopy.unsafe = true # UB if capacity not large enough

@@ -86,9 +86,9 @@ fn.CGBitmapContextCreate.skipped = true
 ##
 
 # SAFETY: CoreGraphics is well-behaved when it comes to memory safety.
-unsafe-default-safety.functions = true
+unsafe-default-safety.documentation-is-reviewed = true
 # TODO: Things like `CGPDFArrayGetNull` are maybe not bounds-checked?
-unsafe-default-safety.not-bounds-affecting = false
+unsafe-default-safety.bounds-checked-internally = true
 
 # TODO: Unsure if the run loop source must be sendable?
 # https://github.com/madsmtm/objc2/issues/696

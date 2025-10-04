@@ -232,12 +232,7 @@ fn.dispatch_workloop_create_inactive.renamed = "__new_inactive"
 ## Safety + API
 ##
 
-unsafe-default-safety.property-getters = true
-unsafe-default-safety.property-setters = true
-unsafe-default-safety.instance-methods = true
-unsafe-default-safety.class-methods = true
-unsafe-default-safety.functions = true
-unsafe-default-safety.not-bounds-affecting = false
+unsafe-default-safety.documentation-is-reviewed = true
 
 # Unsure if does range check?
 fn.dispatch_data_create_subrange.unsafe = true

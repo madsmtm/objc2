@@ -106,11 +106,7 @@ Everything is unsafe by default, but the default for the entire framework can be
 
 ```toml
 # Automatically mark properties, methods and free functions as safe.
-unsafe-default-safety.property-getters = true
-unsafe-default-safety.property-setters = true
-unsafe-default-safety.instance-methods = true
-unsafe-default-safety.class-methods = true
-unsafe-default-safety.functions = true
+unsafe-default-safety.documentation-is-reviewed = true
 ```
 
 The safety is conservative, and is determined by inspecting the signature of the method/function, so you probably still have to change the safety of some methods that fall outside common patterns.
@@ -119,7 +115,7 @@ You can opt-in to some stricter heuristics with the following:
 
 ```toml
 # Heuristic, don't mark as safe if method contains a name like `index` or `offset`.
-unsafe-default-safety.not-bounds-affecting = true
+unsafe-default-safety.bounds-checked-internally = false
 ```
 
 Note: It is _not_ considered a breaking change for a method to be marked safe, so marking things as safe can be done in a minor/patch version!

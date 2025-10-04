@@ -13,9 +13,4 @@ visionos = "1.0"
 ##
 
 # SAFETY: UniformTypeIdentifiers is well-behaved.
-unsafe-default-safety.property-getters = true
-unsafe-default-safety.property-setters = true
-unsafe-default-safety.instance-methods = true
-unsafe-default-safety.class-methods = true
-unsafe-default-safety.functions = true
-unsafe-default-safety.not-bounds-affecting = false
+unsafe-default-safety.documentation-is-reviewed = true

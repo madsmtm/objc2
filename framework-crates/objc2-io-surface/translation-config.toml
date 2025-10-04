@@ -30,12 +30,7 @@ external.IOSurfaceRef.module = "IOSurface.IOSurfaceRef"
 ##
 
 # SAFETY: IOSurface methods and functions are well-behaved.
-unsafe-default-safety.property-getters = true
-unsafe-default-safety.property-setters = true
-unsafe-default-safety.instance-methods = true
-unsafe-default-safety.class-methods = true
-unsafe-default-safety.functions = true
-unsafe-default-safety.not-bounds-affecting = false
+unsafe-default-safety.documentation-is-reviewed = true
 
 # TODO(breaking): Mark as unsafe (takes pointer)
 class.IOSurface.methods."lockWithOptions:seed:".unsafe = false

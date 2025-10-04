@@ -265,7 +265,7 @@ const.kIONetworkLinkNoNetworkChange.use-value = true
 # must be set before activation, or that register functions shouldn't be called
 # after activation, but it's hard to see how that would cause memory safety
 # (as compared to just logical safety).
-unsafe-default-safety.functions = true
+unsafe-default-safety.documentation-is-reviewed = true
 
 # Unsure if memory (un-)mapping has further constraints?
 fn.IOConnectMapMemory.unsafe = true

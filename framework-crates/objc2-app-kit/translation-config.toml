@@ -197,13 +197,9 @@ class.NSWindow.main-thread-only = true
 # and `-[Xyz setTarget:]`, AppKit methods are generally well-behaved.
 #
 # AppKit is huge though, so I (madsmtm) have only skimmed it while reviewing.
-unsafe-default-safety.property-getters = true
-unsafe-default-safety.property-setters = true
-unsafe-default-safety.instance-methods = true
-unsafe-default-safety.class-methods = true
-unsafe-default-safety.functions = true
+unsafe-default-safety.documentation-is-reviewed = true
 # AppKit is internally bounds-checked.
-unsafe-default-safety.not-bounds-affecting = false
+unsafe-default-safety.bounds-checked-internally = true
 
 # Any modification of either the target or the action has to remain `unsafe`,
 # as there's no way to guarantee that the action method is safe and of the

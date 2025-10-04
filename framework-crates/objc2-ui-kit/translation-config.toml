@@ -152,13 +152,9 @@ class.UIViewController.methods."setView:".arguments.0.nullability = "nullable"
 # It is surprisingly well-behaved though!
 #
 # (At least assuming we got the main thread safety stuff right above).
-unsafe-default-safety.property-getters = true
-unsafe-default-safety.property-setters = true
-unsafe-default-safety.instance-methods = true
-unsafe-default-safety.class-methods = true
-unsafe-default-safety.functions = true
+unsafe-default-safety.documentation-is-reviewed = true
 # UIKit is bounds-checked and throw exceptions.
-unsafe-default-safety.not-bounds-affecting = false
+unsafe-default-safety.bounds-checked-internally = true
 
 # TODO(breaking): Are these actually safe, even though they're nonatomic?
 # Maybe we need to mark the classes themselves as MainThreadOnly?

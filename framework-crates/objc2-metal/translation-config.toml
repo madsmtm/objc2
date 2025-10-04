@@ -36,16 +36,12 @@ enum.MTLTensorDataType.use-value = true
 # SAFETY: Metal is has a _lot_ of low-level functionality since it basically
 # has to model the entire GPU, and since it has very tight performance
 # constraints, which we must manually mark a lot of things as unsafe.
-unsafe-default-safety.property-getters = true
-unsafe-default-safety.property-setters = true
-unsafe-default-safety.instance-methods = true
-unsafe-default-safety.class-methods = true
-unsafe-default-safety.functions = true
+unsafe-default-safety.documentation-is-reviewed = true
 
 # TODO: Can we rely on Metal being bounds-checked?
 # Maybe the various array types are bounds-checked on the CPU side?
 # There are also a lot of false positives from this check.
-unsafe-default-safety.not-bounds-affecting = true
+unsafe-default-safety.bounds-checked-internally = false
 
 # TODO(breaking): Figure out whether these are bounds-checked or not?
 class.MTLAccelerationStructureGeometryDescriptor.methods."setIntersectionFunctionTableOffset:".unsafe = false
