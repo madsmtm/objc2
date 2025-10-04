@@ -653,6 +653,10 @@ mod tests {
     #[test]
     #[should_panic = "tried to initialize ivars after they were already initialized"]
     #[cfg_attr(not(debug_assertions), ignore = "only checked with debug assertions")]
+    #[cfg_attr(
+        all(debug_assertions, target_os = "macos", target_arch = "x86"),
+        ignore = "SIGSEGVs with the old runtime for some reason?"
+    )]
     fn test_super_init_not_initialized() {
         let obj = RcTestObject::alloc().set_ivars(());
         let _: Retained<RcTestObject> =

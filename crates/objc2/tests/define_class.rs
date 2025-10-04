@@ -432,7 +432,7 @@ impl OutParam {
 #[test]
 #[should_panic = "`&mut Retained<_>` is not supported in `define_class!` yet"]
 #[cfg_attr(
-    feature = "gnustep-1-7",
+    any(feature = "gnustep-1-7", all(target_os = "macos", target_arch = "x86")),
     ignore = "unwinding seems to not work properly here"
 )]
 fn out_param1() {
@@ -443,7 +443,7 @@ fn out_param1() {
 #[test]
 #[should_panic = "`Option<&mut Retained<_>>` is not supported in `define_class!` yet"]
 #[cfg_attr(
-    feature = "gnustep-1-7",
+    any(feature = "gnustep-1-7", all(target_os = "macos", target_arch = "x86")),
     ignore = "unwinding seems to not work properly here"
 )]
 fn out_param2() {
@@ -453,7 +453,7 @@ fn out_param2() {
 #[test]
 #[should_panic = "`&mut Option<Retained<_>>` is not supported in `define_class!` yet"]
 #[cfg_attr(
-    feature = "gnustep-1-7",
+    any(feature = "gnustep-1-7", all(target_os = "macos", target_arch = "x86")),
     ignore = "unwinding seems to not work properly here"
 )]
 fn out_param3() {
@@ -464,7 +464,7 @@ fn out_param3() {
 #[test]
 #[should_panic = "`Option<&mut Option<Retained<_>>>` is not supported in `define_class!` yet"]
 #[cfg_attr(
-    feature = "gnustep-1-7",
+    any(feature = "gnustep-1-7", all(target_os = "macos", target_arch = "x86")),
     ignore = "unwinding seems to not work properly here"
 )]
 fn out_param4() {
