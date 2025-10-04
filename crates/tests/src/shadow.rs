@@ -27,6 +27,12 @@ fn test_invalid_color() {
     // AppKit ends up calling the `CGColor` selector.
     let err = catch(|| shadow.set()).unwrap_err().unwrap().to_string();
 
-    assert!(err.contains("CGColor"));
-    assert!(err.contains("unrecognized selector sent to instance"));
+    assert!(
+        err.contains("CGColor") || err.contains("colorUsingColorSpaceName:"),
+        "{err:?} did not have expected message"
+    );
+    assert!(
+        err.contains("unrecognized selector sent to instance"),
+        "{err:?} did not have expected message"
+    );
 }
