@@ -893,7 +893,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-accessibility"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -905,7 +905,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-accessory-setup-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -918,7 +918,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-accounts"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -927,7 +927,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-ad-services"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
@@ -935,7 +935,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-ad-support"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
@@ -943,7 +943,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-app-clip"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -953,7 +953,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-app-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -974,7 +974,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-app-tracking-transparency"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -982,7 +982,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-application-services"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "libc",
@@ -995,7 +995,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-ar-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1019,7 +1019,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-audio-toolbox"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1035,7 +1035,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-authentication-services"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1049,7 +1049,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-automatic-assessment-configuration"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "objc2",
@@ -1058,7 +1058,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-automator"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
@@ -1069,7 +1069,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-av-foundation"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1091,7 +1091,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-av-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1106,7 +1106,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-av-routing"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1116,7 +1116,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-avf-audio"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1130,7 +1130,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-background-assets"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1140,7 +1140,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-background-tasks"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1151,7 +1151,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-browser-engine-core"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "libc",
  "objc2",
@@ -1161,7 +1161,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-browser-engine-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1177,7 +1177,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-business-chat"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
@@ -1186,7 +1186,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-call-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "dispatch2",
@@ -1197,7 +1197,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-car-play"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1212,11 +1212,11 @@ dependencies = [
 
 [[package]]
 name = "objc2-carbon"
-version = "0.3.1"
+version = "0.3.2"
 
 [[package]]
 name = "objc2-cf-network"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "objc2",
@@ -1225,7 +1225,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-cinematic"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1239,7 +1239,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-class-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1249,7 +1249,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-clock-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1261,7 +1261,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-cloud-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1273,7 +1273,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-collaboration"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "libc",
@@ -1286,7 +1286,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-color-sync"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-core-foundation",
@@ -1294,7 +1294,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-compositor-services"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "objc2",
@@ -1304,7 +1304,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-contacts"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1313,7 +1313,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-contacts-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
@@ -1323,7 +1323,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-audio"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "dispatch2",
@@ -1336,7 +1336,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-audio-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1349,7 +1349,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-audio-types"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "objc2",
@@ -1357,7 +1357,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-bluetooth"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "dispatch2",
@@ -1368,7 +1368,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-data"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1380,7 +1380,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-foundation"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1392,7 +1392,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-graphics"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1406,7 +1406,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-haptics"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1416,7 +1416,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-image"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1433,7 +1433,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-location"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "dispatch2",
@@ -1444,7 +1444,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-location-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-core-foundation",
@@ -1455,7 +1455,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-media"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1469,7 +1469,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-media-io"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1484,7 +1484,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-midi"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1495,7 +1495,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-ml"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1509,7 +1509,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-motion"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1520,7 +1520,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-nfc"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1531,7 +1531,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-services"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1544,7 +1544,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-spotlight"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1555,7 +1555,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-telephony"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1564,7 +1564,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-text"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1577,7 +1577,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-video"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1591,7 +1591,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-core-wlan"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "objc2",
@@ -1603,7 +1603,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-crypto-token-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1614,7 +1614,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-data-detection"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
@@ -1622,7 +1622,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-device-check"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1631,7 +1631,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-device-discovery-extension"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1642,7 +1642,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-disk-arbitration"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "dispatch2",
  "libc",
@@ -1656,7 +1656,7 @@ version = "4.1.0"
 
 [[package]]
 name = "objc2-event-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1670,7 +1670,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-event-kit-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-event-kit",
@@ -1680,7 +1680,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-exception-handling"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
@@ -1695,7 +1695,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-execution-policy"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1704,7 +1704,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-exposure-notification"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1715,7 +1715,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-extension-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
@@ -1724,7 +1724,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-external-accessory"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1735,7 +1735,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-file-provider"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1747,7 +1747,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-file-provider-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1758,7 +1758,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-finder-sync"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1768,7 +1768,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-foundation"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1781,7 +1781,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-fs-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1792,7 +1792,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-game-controller"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1806,7 +1806,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-game-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1817,7 +1817,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-gameplay-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1831,7 +1831,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-gl-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "dispatch2",
@@ -1846,7 +1846,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-health-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1858,7 +1858,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-health-kit-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-core-foundation",
@@ -1870,7 +1870,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-home-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1884,7 +1884,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-identity-lookup"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1893,7 +1893,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-identity-lookup-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
@@ -1903,7 +1903,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-image-capture-core"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "libc",
@@ -1915,7 +1915,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-image-io"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -1925,7 +1925,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-input-method-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
@@ -1934,7 +1934,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-intents"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1947,7 +1947,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-intents-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
@@ -1958,7 +1958,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-io-bluetooth"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "libc",
  "objc2",
@@ -1968,7 +1968,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-io-bluetooth-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
@@ -1979,7 +1979,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-io-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -1991,7 +1991,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-io-surface"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "libc",
@@ -2002,7 +2002,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-io-usb-host"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2015,7 +2015,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-itunes-library"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2025,7 +2025,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-javascript-core"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2035,7 +2035,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-latent-semantic-mapping"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-core-foundation",
@@ -2043,7 +2043,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-link-presentation"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2053,7 +2053,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-local-authentication"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2063,7 +2063,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-local-authentication-embedded-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2074,7 +2074,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-mail-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2084,7 +2084,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-map-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2100,7 +2100,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-media-accessibility"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2113,7 +2113,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-media-extension"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2128,7 +2128,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-media-player"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2142,7 +2142,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-media-setup"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
@@ -2151,7 +2151,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-media-toolbox"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-core-audio-types",
@@ -2161,7 +2161,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-message-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2172,7 +2172,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-messages"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2184,7 +2184,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-metal"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2197,7 +2197,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-metal-fx"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
@@ -2206,7 +2206,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-metal-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2221,7 +2221,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-metal-performance-shaders"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2234,7 +2234,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-metal-performance-shaders-graph"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2247,7 +2247,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-metric-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "libc",
  "objc2",
@@ -2256,7 +2256,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-ml-compute"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2267,7 +2267,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-model-io"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2278,7 +2278,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-multipeer-connectivity"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2288,7 +2288,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-natural-language"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2299,7 +2299,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-nearby-interaction"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "dispatch2",
  "objc2",
@@ -2309,7 +2309,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-network-extension"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "dispatch2",
@@ -2322,7 +2322,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-notification-center"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2332,7 +2332,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-open-directory"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "dispatch2",
  "objc2",
@@ -2343,7 +2343,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-open-gl"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-io-surface",
@@ -2351,7 +2351,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-open-gl-es"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-core-foundation",
@@ -2361,7 +2361,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-os-log"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "libc",
@@ -2371,7 +2371,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-osa-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "objc2",
@@ -2381,7 +2381,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-paravirtualized-graphics"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "dispatch2",
@@ -2393,7 +2393,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-pass-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2407,7 +2407,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-pdf-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "objc2",
@@ -2419,7 +2419,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-pencil-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2431,7 +2431,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-phase"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2444,7 +2444,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-photos"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2463,7 +2463,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-photos-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2478,7 +2478,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-preference-panes"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
@@ -2491,7 +2491,7 @@ version = "0.2.0"
 
 [[package]]
 name = "objc2-push-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "dispatch2",
@@ -2501,7 +2501,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-push-to-talk"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2512,7 +2512,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-quartz"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
@@ -2526,7 +2526,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-quartz-core"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2542,7 +2542,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-quick-look"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "dispatch2",
  "objc2",
@@ -2552,7 +2552,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-quick-look-thumbnailing"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2567,7 +2567,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-quick-look-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2581,7 +2581,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-replay-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2593,7 +2593,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-safari-services"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2603,7 +2603,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-safety-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2613,7 +2613,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-scene-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2635,7 +2635,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-screen-capture-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2652,7 +2652,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-screen-saver"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
@@ -2661,7 +2661,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-screen-time"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "dispatch2",
@@ -2672,7 +2672,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-scripting-bridge"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "libc",
  "objc2",
@@ -2682,7 +2682,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-security"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2693,7 +2693,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-security-foundation"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
@@ -2702,7 +2702,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-security-interface"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-app-kit",
@@ -2713,7 +2713,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-sensitive-content-analysis"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2726,7 +2726,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-sensor-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2742,7 +2742,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-service-management"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2753,7 +2753,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-shared-with-you"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2766,7 +2766,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-shared-with-you-core"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
@@ -2774,7 +2774,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-shazam-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2786,7 +2786,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-social"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2797,7 +2797,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-sound-analysis"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2809,7 +2809,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-speech"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2820,7 +2820,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-sprite-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2839,7 +2839,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-store-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2852,7 +2852,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-symbols"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
@@ -2860,7 +2860,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-system-configuration"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "dispatch2",
@@ -2872,7 +2872,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-system-extensions"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "dispatch2",
  "objc2",
@@ -2881,7 +2881,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-thread-network"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2890,7 +2890,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-tv-ml-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2903,7 +2903,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-tv-services"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2914,7 +2914,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-tv-ui-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2926,7 +2926,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-ui-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2947,7 +2947,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-uniform-type-identifiers"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2956,7 +2956,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-user-notifications"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2967,7 +2967,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-user-notifications-ui"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -2979,7 +2979,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-video-subscriber-account"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -2990,7 +2990,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-video-toolbox"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -3005,7 +3005,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-virtualization"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -3018,7 +3018,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-vision"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -3035,7 +3035,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-watch-connectivity"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "block2",
  "objc2",
@@ -3044,7 +3044,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-watch-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -3064,7 +3064,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-web-kit"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -3078,7 +3078,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-xc-test"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",
@@ -3090,7 +3090,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-xc-ui-automation"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "bitflags",
  "block2",

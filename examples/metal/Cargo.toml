@@ -29,7 +29,7 @@ unstable-darwin-objc = [
 objc2 = "0.6.2"
 dispatch2 = "0.3.0"
 block2 = "0.6.1"
-objc2-metal = { version = "0.3.1", default-features = false, features = [
+objc2-metal = { version = "0.3.2", default-features = false, features = [
     "std",
     "objc2-core-foundation",
     "MTLAllocation",
@@ -46,7 +46,7 @@ objc2-metal = { version = "0.3.1", default-features = false, features = [
     "MTLRenderPass",
     "default" # temp
 ] }
-objc2-metal-kit = { version = "0.3.1", default-features = false, features = [
+objc2-metal-kit = { version = "0.3.2", default-features = false, features = [
     "std",
     "objc2-core-foundation",
     "objc2-app-kit",
@@ -56,12 +56,12 @@ objc2-metal-kit = { version = "0.3.1", default-features = false, features = [
     "MTKModel",
     "default" # temporary
 ] }
-objc2-model-io = { version = "0.3.1", default-features = false, features = [
+objc2-model-io = { version = "0.3.2", default-features = false, features = [
     "std",
     "MDLTypes",
     "MDLMesh",
 ] }
-objc2-foundation = { version = "0.3.1", default-features = false, features = [
+objc2-foundation = { version = "0.3.2", default-features = false, features = [
     "std",
     "NSError",
     "NSString",
@@ -70,14 +70,14 @@ objc2-foundation = { version = "0.3.1", default-features = false, features = [
     "NSThread",
     "NSGeometry",
 ] }
-objc2-core-foundation = { version = "0.3.1", default-features = false, features = [
+objc2-core-foundation = { version = "0.3.2", default-features = false, features = [
     "std",
     "CFCGTypes",
 ] }
-objc2-quartz-core = { version = "0.3.1", default-features = false, features = [] }
+objc2-quartz-core = { version = "0.3.2", default-features = false, features = [] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
-objc2-app-kit = { version = "0.3.1", default-features = false, features = [
+objc2-app-kit = { version = "0.3.2", default-features = false, features = [
     "std",
     "NSApplication",
     "NSGraphics",

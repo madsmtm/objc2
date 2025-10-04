@@ -7,8 +7,8 @@ use std::ptr::{self, NonNull};
 
 use objc2_core_foundation::CFRetained;
 use objc2_core_video::{
-    kCVPixelFormatType_32BGRA, kCVReturnSuccess, CVMetalBufferGetBuffer,
-    CVOpenGLBufferGetAttributes, CVPixelBuffer, CVPixelBufferCreate, CVPixelBufferGetWidthOfPlane,
+    kCVPixelFormatType_32BGRA, kCVReturnSuccess, CVPixelBuffer, CVPixelBufferCreate,
+    CVPixelBufferGetWidthOfPlane,
 };
 
 fn new_buffer() -> CFRetained<CVPixelBuffer> {
@@ -32,11 +32,19 @@ fn new_buffer() -> CFRetained<CVPixelBuffer> {
 ///
 /// Ideally, this should be prevented at compile-time (e.g. by making
 /// `CVMetalBuffer` a different type from `CVBuffer`).
+//
+// `CVOpenGLBufferGetAttributes` is only available on macOS.
+#[cfg(target_os = "macos")]
 #[test]
 fn invalid_type() {
+    use objc2_core_video::CVOpenGLBufferGetAttributes;
+
     let buffer = new_buffer();
     // Using a pixel buffer as a Metal / OpenGL buffer just returns `None`.
-    assert_eq!(CVMetalBufferGetBuffer(&buffer), None);
+    //
+    // `CVMetalBufferGetBuffer` was added in macOS 15.0, so we can't actually
+    // test this yet.
+    // assert_eq!(CVMetalBufferGetBuffer(&buffer), None);
     assert_eq!(CVOpenGLBufferGetAttributes(&buffer), None);
 }
 

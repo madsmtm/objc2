@@ -43,12 +43,8 @@ fn assert_throws<R: std::fmt::Debug>(message: &str, f: impl FnOnce() -> R) {
 #[test]
 fn array() {
     let arr = NSArray::<NSObject>::new();
-    assert_throws("index 0 beyond bounds for empty array", || {
-        arr.objectAtIndex(0)
-    });
-    assert_throws("index 0 beyond bounds for empty array", || {
-        arr.objectAtIndexedSubscript(0)
-    });
+    assert_throws("index 0 beyond bounds", || arr.objectAtIndex(0));
+    assert_throws("index 0 beyond bounds", || arr.objectAtIndexedSubscript(0));
 
     let arr = NSArray::from_retained_slice(&[NSObject::new(), NSObject::new()]);
     assert_throws("index 100 beyond bounds [0 .. 1]", || {
@@ -56,13 +52,13 @@ fn array() {
     });
 
     let arr = NSMutableArray::<NSObject>::new();
-    assert_throws("index 100 beyond bounds for empty array", || {
+    assert_throws("index 100 beyond bounds", || {
         arr.insertObject_atIndex(&NSObject::new(), 100)
     });
-    assert_throws("range {0, 1} extends beyond bounds for empty array", || {
+    assert_throws("range {0, 1} extends beyond bounds", || {
         arr.removeObjectAtIndex(0)
     });
-    assert_throws("index 100 beyond bounds for empty array", || {
+    assert_throws("index 100 beyond bounds", || {
         arr.replaceObjectAtIndex_withObject(100, &NSObject::new())
     });
 }

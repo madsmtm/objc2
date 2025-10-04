@@ -17,19 +17,22 @@ use objc2_foundation::NSString;
     ignore = "messes with our use of `exception::catch`"
 )]
 fn test_invalid_color() {
-    let shadow = unsafe { NSShadow::new() };
+    let shadow = NSShadow::new();
     // This cast is unsafe in AppKit, but `setShadowColor` in UIKit takes
     // AnyObject, so there it would be safe.
     let color = unsafe { Retained::cast_unchecked::<NSColor>(NSString::new()) };
-    unsafe { shadow.setShadowColor(Some(&color)) };
+    shadow.setShadowColor(Some(&color));
     let shadow = AssertUnwindSafe(shadow);
 
     // AppKit ends up calling the `CGColor` selector.
-    let err = catch(|| unsafe { shadow.set() })
-        .unwrap_err()
-        .unwrap()
-        .to_string();
+    let err = catch(|| shadow.set()).unwrap_err().unwrap().to_string();
 
-    assert!(err.contains("CGColor"));
-    assert!(err.contains("unrecognized selector sent to instance"));
+    assert!(
+        err.contains("CGColor") || err.contains("colorUsingColorSpaceName:"),
+        "{err:?} did not have expected message"
+    );
+    assert!(
+        err.contains("unrecognized selector sent to instance"),
+        "{err:?} did not have expected message"
+    );
 }

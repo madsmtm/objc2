@@ -269,8 +269,13 @@ mod tests {
         let s = CFString::from_str("a\0b\0c\0d");
         // Works with `CFStringGetBytes`.
         assert_eq!(s.to_string(), "a\0b\0c\0d");
-        // `CFStringGetCStringPtr` does not seem to work on very short strings.
-        assert_eq!(unsafe { s.as_str_unchecked() }, None);
+        // `CFStringGetCStringPtr` does not seem to work here on very short
+        // strings (probably those that are stored inline?).
+        if cfg!(target_pointer_width = "64") {
+            assert_eq!(unsafe { s.as_str_unchecked() }, None);
+        } else {
+            assert_eq!(unsafe { s.as_str_unchecked() }, Some("a\0b\0c\0d"));
+        }
 
         // Test `CFStringGetCString`.
         let mut buf = [0u8; 10];

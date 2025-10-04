@@ -704,13 +704,13 @@ mod tests {
             not(feature = "disable-encoding-assertions"),
             not(feature = "relax-sign-encoding")
         ),
-        should_panic = "defined invalid method +[TestClassBuilderInvalidClassMethod classFoo]: expected return to have type code 'I', but found 'i'"
+        should_panic = "defined invalid method +[TestClassBuilderInvalidClassMethod classFoo]: expected return to have type code 'I', but found 'c'"
     )]
     fn invalid_class_method() {
         let cls = test_utils::custom_class();
         let mut builder = ClassBuilder::new(&c("TestClassBuilderInvalidClassMethod"), cls).unwrap();
 
-        extern "C" fn class_foo(_cls: &AnyClass, _cmd: Sel) -> i32 {
+        extern "C" fn class_foo(_cls: &AnyClass, _cmd: Sel) -> i8 {
             0
         }
 
