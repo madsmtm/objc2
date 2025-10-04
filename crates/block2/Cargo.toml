@@ -1,6 +1,6 @@
 [package]
 name = "block2"
-version = "0.6.1" # Remember to update html_root_url in lib.rs
+version = "0.6.2" # Remember to update html_root_url in lib.rs
 description = "Apple's C language extension of blocks"
 keywords = ["objective-c", "macos", "ios", "blocks"]
 categories = [
