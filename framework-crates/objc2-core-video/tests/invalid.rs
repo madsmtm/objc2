@@ -35,16 +35,16 @@ fn new_buffer() -> CFRetained<CVPixelBuffer> {
 //
 // `CVOpenGLBufferGetAttributes` is only available on macOS.
 #[cfg(target_os = "macos")]
-// `CVMetalBufferGetBuffer` is added in macOS 15.0, only test on Aarch64 as a
-// (bad) proxy for that.
-#[cfg(target_arch = "aarch64")]
 #[test]
 fn invalid_type() {
-    use objc2_core_video::{CVMetalBufferGetBuffer, CVOpenGLBufferGetAttributes};
+    use objc2_core_video::CVOpenGLBufferGetAttributes;
 
     let buffer = new_buffer();
     // Using a pixel buffer as a Metal / OpenGL buffer just returns `None`.
-    assert_eq!(CVMetalBufferGetBuffer(&buffer), None);
+    //
+    // `CVMetalBufferGetBuffer` was added in macOS 15.0, so we can't actually
+    // test this yet.
+    // assert_eq!(CVMetalBufferGetBuffer(&buffer), None);
     assert_eq!(CVOpenGLBufferGetAttributes(&buffer), None);
 }
 
