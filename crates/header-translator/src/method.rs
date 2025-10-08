@@ -4,7 +4,7 @@ use std::fmt;
 use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
 
 use crate::availability::Availability;
-use crate::config::{MethodData, TypeOverride};
+use crate::config::MethodData;
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
@@ -532,7 +532,7 @@ impl Method {
                 let mut ty = Ty::parse_method_argument(ty, qualifier, sendable, no_escape, context);
 
                 if let Some(ty_or) = data.arguments.get(&index) {
-                    apply_type_override(&mut ty, ty_or);
+                    ty.apply_override(ty_or);
                 }
 
                 (name, ty)
@@ -554,6 +554,7 @@ impl Method {
         let result_type = entity.get_result_type().expect("method return type");
         let default_nonnull = (selector == "init" && !is_class) || (selector == "new" && is_class);
         let mut result_type = Ty::parse_method_return(result_type, default_nonnull, context);
+        result_type.apply_override(&data.return_);
 
         if result_type.needs_simd() || arguments.iter().any(|(_, arg_ty)| arg_ty.needs_simd()) {
             debug!("simd types are not yet possible in methods");
@@ -583,8 +584,6 @@ impl Method {
             is_class,
             modifiers.mainthreadonly,
         );
-
-        apply_type_override(&mut result_type, &data.return_);
 
         let encoding = entity
             .get_objc_type_encoding()
@@ -749,6 +748,8 @@ impl Method {
                 context,
             );
 
+            ty.apply_override(&getter_data.return_);
+
             if kind == PropertyKind::Copy && ty.is_class_with_mutable_in_name() {
                 // Unclear what the semantics are here? How can this be of
                 // the correct type if the type is immutably copied?
@@ -769,8 +770,6 @@ impl Method {
                 is_class,
                 modifiers.mainthreadonly,
             );
-
-            apply_type_override(&mut ty, &getter_data.return_);
 
             let mut documentation = Documentation::from_entity(&entity, context);
 
@@ -858,6 +857,10 @@ impl Method {
                     context,
                 );
 
+                if let Some(ty_or) = setter_data.arguments.get(&0) {
+                    ty.apply_override(ty_or);
+                }
+
                 let fn_name = selector.strip_suffix(':').unwrap().to_string();
                 let memory_management =
                     MemoryManagement::new(is_class, &selector, &result_type, modifiers);
@@ -869,10 +872,6 @@ impl Method {
                     is_class,
                     modifiers.mainthreadonly,
                 );
-
-                if let Some(ty_or) = setter_data.arguments.get(&0) {
-                    apply_type_override(&mut ty, ty_or);
-                }
 
                 let mut safety = ty.safety_in_fn_argument(&crate::to_snake_case(&name));
                 if kind == PropertyKind::UnsafeRetained && !ty.is_primitive_or_record() {
@@ -1235,11 +1234,5 @@ pub(crate) fn handle_reserved(name: &str) -> String {
         "param1".into()
     } else {
         name.into()
-    }
-}
-
-pub(crate) fn apply_type_override(ty: &mut Ty, or: &TypeOverride) {
-    if let Some(nullability) = or.nullability {
-        ty.change_nullability(nullability.into());
     }
 }

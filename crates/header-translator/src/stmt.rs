@@ -23,7 +23,7 @@ use crate::id::ItemIdentifier;
 use crate::id::ItemTree;
 use crate::id::Location;
 use crate::immediate_children;
-use crate::method::{apply_type_override, handle_reserved, Method};
+use crate::method::{handle_reserved, Method};
 use crate::name_translation::is_likely_bounds_affecting;
 use crate::name_translation::{enum_prefix, split_words};
 use crate::protocol::parse_direct_protocols;
@@ -1740,7 +1740,7 @@ impl Stmt {
 
                 let result_type = entity.get_result_type().expect("function result type");
                 let mut result_type = Ty::parse_function_return(result_type, context);
-                apply_type_override(&mut result_type, &data.return_);
+                result_type.apply_override(&data.return_);
                 let mut arguments = Vec::new();
                 let mut must_use = false;
                 // Assume by default that functions can unwind.
@@ -1786,8 +1786,8 @@ impl Stmt {
                         let name = entity.get_name().unwrap_or_else(|| "_".into());
                         let ty = entity.get_type().expect("function argument type");
                         let mut ty = Ty::parse_function_argument(ty, attr, context);
-                        if let Some(ty_or) = data.arguments.get(&arguments.len()) {
-                            apply_type_override(&mut ty, ty_or);
+                        if let Some(override_) = data.arguments.get(&arguments.len()) {
+                            ty.apply_override(override_);
                         }
                         arguments.push((name, ty))
                     }

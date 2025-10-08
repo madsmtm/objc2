@@ -701,6 +701,8 @@ impl From<Nullability> for clang::Nullability {
 pub struct TypeOverride {
     #[serde(default)]
     pub nullability: Option<Nullability>,
+    #[serde(default)]
+    pub generics: Option<Vec<ItemGeneric>>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
@@ -855,4 +857,63 @@ where
         return Err(de::Error::custom("duplicate integer key"));
     }
     Ok(data)
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ItemGeneric {
+    pub id: ItemIdentifier,
+    pub generics: Vec<ItemGeneric>,
+}
+
+impl FromStr for ItemGeneric {
+    type Err = Box<dyn Error>;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if let Some((id, generics)) = s.rsplit_once('<') {
+            let (generics, rest) = generics
+                .rsplit_once('>')
+                .ok_or_else(|| std::io::Error::other("missing closing >"))?;
+            if !rest.is_empty() {
+                Err(std::io::Error::other("unexpected after >"))?;
+            }
+            Ok(Self {
+                id: ItemIdentifier::from_str(id)?,
+                // Simplistic, only handles one level
+                generics: generics
+                    .split(",")
+                    .map(|generic| generic.trim().parse::<ItemGeneric>())
+                    .collect::<Result<Vec<_>, _>>()?,
+            })
+        } else {
+            Ok(Self {
+                id: ItemIdentifier::from_str(s)?,
+                generics: vec![],
+            })
+        }
+    }
+}
+
+impl<'de> de::Deserialize<'de> for ItemGeneric {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: de::Deserializer<'de>,
+    {
+        struct ItemGenericVisitor;
+
+        impl de::Visitor<'_> for ItemGenericVisitor {
+            type Value = ItemGeneric;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("item identifier")
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                ItemGeneric::from_str(value).map_err(de::Error::custom)
+            }
+        }
+
+        deserializer.deserialize_str(ItemGenericVisitor)
+    }
 }

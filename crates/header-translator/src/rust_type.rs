@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use std::fmt::Display;
 use std::str::FromStr;
 use std::sync::LazyLock;
@@ -7,6 +6,7 @@ use std::{fmt, iter, mem};
 use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
 
+use crate::config::{ItemGeneric, TypeOverride};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::id::{ItemIdentifier, ItemTree};
@@ -659,19 +659,15 @@ fn parse_protocol(entity: Entity<'_>, context: &Context<'_>) -> (ProtocolRef, Th
 /// Pad generics with `AnyObject` until it is of the given size.
 fn pad_generics<'a>(
     generics: &'a [PointeeTy],
+    pad_with: &'a PointeeTy,
     len: usize,
-) -> impl Iterator<Item = Cow<'a, PointeeTy>> + 'a {
-    const ANY_OBJECT: PointeeTy = PointeeTy::AnyObject { protocols: vec![] };
-
+) -> impl Iterator<Item = &'a PointeeTy> {
     let missing = len.checked_sub(generics.len()).unwrap_or_else(|| {
         error!(?generics, ?len, "had too many generics");
         0
     });
 
-    generics
-        .iter()
-        .map(Cow::Borrowed)
-        .chain(iter::repeat_n(Cow::Owned(ANY_OBJECT), missing))
+    generics.iter().chain(iter::repeat_n(pad_with, missing))
 }
 
 /// Types that are only valid behind pointers.
@@ -710,8 +706,10 @@ pub enum PointeeTy {
     },
     CFTypeDef {
         id: ItemIdentifier,
-        declaration_generics: Vec<String>,
+        generics: Vec<PointeeTy>,
+        num_declaration_generics: usize,
     },
+    CFOpaque,
     DispatchTypeDef {
         id: ItemIdentifier,
     },
@@ -827,9 +825,13 @@ impl PointeeTy {
                 .chain(result_type.required_items())
                 .chain(arguments.iter().flat_map(|arg| arg.required_items()))
                 .collect(),
-            Self::CFTypeDef { id, .. } | Self::DispatchTypeDef { id } => {
+            Self::CFTypeDef { id, generics, .. } => iter::once(ItemTree::from_id(id.clone()))
+                .chain(generics.iter().flat_map(|generic| generic.required_items()))
+                .collect(),
+            Self::DispatchTypeDef { id } => {
                 vec![ItemTree::from_id(id.clone())]
             }
+            Self::CFOpaque => vec![],
             Self::TypeDef { id, to } => {
                 vec![ItemTree::new(id.clone(), to.required_items())]
             }
@@ -884,7 +886,11 @@ impl PointeeTy {
                     .any(|arg| arg.requires_mainthreadmarker(self_requires))
                     || result_type.requires_mainthreadmarker(self_requires)
             }
-            Self::CFTypeDef { .. } | Self::DispatchTypeDef { .. } => false,
+            Self::CFTypeDef { generics, .. } => generics
+                .iter()
+                .any(|generic| generic.requires_mainthreadmarker(self_requires)),
+            Self::CFOpaque => false,
+            Self::DispatchTypeDef { .. } => false,
             Self::TypeDef { to, .. } => to.requires_mainthreadmarker(self_requires),
             Self::CStr => false,
         }
@@ -976,7 +982,18 @@ impl PointeeTy {
                 }
                 write!(f, ">")
             }
-            Self::CFTypeDef { id, .. } => write!(f, "{}", id.path()),
+            Self::CFTypeDef { id, generics, .. } => {
+                write!(f, "{}", id.path())?;
+                if !generics.is_empty() {
+                    write!(f, "<")?;
+                    for generic in generics {
+                        write!(f, "{},", generic.behind_pointer())?;
+                    }
+                    write!(f, ">")?;
+                }
+                Ok(())
+            }
+            Self::CFOpaque => write!(f, "Opaque"),
             Self::DispatchTypeDef { id } => write!(f, "{}", id.path()),
             Self::TypeDef { id, .. } => write!(f, "{}", id.path()),
             Self::CStr => write!(f, "CStr"),
@@ -1219,25 +1236,22 @@ impl PointeeTy {
             Self::Self_ => TypeSafety::SAFE,
             Self::CFTypeDef {
                 id,
-                declaration_generics,
+                generics,
+                num_declaration_generics,
             } => {
                 let mut safety = if matches!(&*id.name, "CFType" | "CFTypeRef") {
                     // `CFType`, like `AnyObject`, is not known to be safe.
                     TypeSafety::unknown_in_argument("should be of the correct type")
-                } else if declaration_generics.is_empty() {
-                    // `&CFString` and similar are safe.
-                    TypeSafety::SAFE
                 } else {
-                    // Types like `&CFArray` are not safe, since their generic
-                    // can be anything (including `usize`, i.e. they don't
-                    // have to be objects).
-                    TypeSafety::unsafe_in_argument("must be of the correct type").context(
-                        if declaration_generics.len() == 1 {
-                            "generic"
-                        } else {
-                            "generics"
-                        },
-                    )
+                    // `&CFString` and similar are safe, but types like
+                    // `&CFArray` are not safe, since their generic can be
+                    // anything (including `usize`, i.e. they don't even have
+                    // to be objects).
+                    let padded =
+                        pad_generics(generics, &PointeeTy::CFOpaque, *num_declaration_generics);
+                    padded.fold(TypeSafety::SAFE, |safety, generic| {
+                        safety.merge(generic.safety().context("generic"))
+                    })
                 };
 
                 if id.name.contains("Mutable") {
@@ -1250,6 +1264,7 @@ impl PointeeTy {
 
                 safety
             }
+            Self::CFOpaque => TypeSafety::unsafe_in_argument("must be of the correct type"),
             // Dispatch objects have strong type-safety, and are thus
             // safe in both positions.
             Self::DispatchTypeDef { .. } => TypeSafety::SAFE,
@@ -1426,9 +1441,10 @@ impl PointeeTy {
                         .max(other_generics.len())
                         .max(declaration_generics.len())
                         .max(other_declaration_generics.len());
-                    pad_generics(generics, len)
-                        .zip(pad_generics(other_generics, len))
-                        .all(|(this, other)| this.is_subtype_of(&other))
+                    const ANYOBJECT: PointeeTy = PointeeTy::AnyObject { protocols: vec![] };
+                    pad_generics(generics, &ANYOBJECT, len)
+                        .zip(pad_generics(other_generics, &ANYOBJECT, len))
+                        .all(|(this, other)| this.is_subtype_of(other))
                 } else {
                     generics == other_generics
                 };
@@ -2317,7 +2333,8 @@ impl Ty {
                         let id = context.replace_typedef_name(id, true);
                         *pointee = Box::new(Self::Pointee(PointeeTy::CFTypeDef {
                             id,
-                            declaration_generics,
+                            generics: vec![],
+                            num_declaration_generics: declaration_generics.len(),
                         }));
                         return inner;
                     } else if pointee.is_object_like() {
@@ -3914,7 +3931,8 @@ impl Ty {
             lifetime: Lifetime::Unspecified,
             pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef {
                 id: ItemIdentifier::cf_string(),
-                declaration_generics: vec![],
+                generics: vec![],
+                num_declaration_generics: 0,
             })),
         }
     }
@@ -3942,7 +3960,8 @@ impl Ty {
             lifetime: Lifetime::Unspecified,
             pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef {
                 id: ItemIdentifier::cf_uuid(),
-                declaration_generics: vec![],
+                generics: vec![],
+                num_declaration_generics: 0,
             })),
         }
     }
@@ -3967,6 +3986,41 @@ impl Ty {
                 *nullability = new;
             }
             ty => error!(?ty, "unexpected type for nullability attribute"),
+        }
+    }
+
+    #[allow(unused, clippy::only_used_in_recursion)]
+    fn change_generics(&mut self, new: &[ItemGeneric]) {
+        fn to_cf(generic: &ItemGeneric) -> PointeeTy {
+            PointeeTy::CFTypeDef {
+                id: generic.id.clone(),
+                generics: generic.generics.iter().map(to_cf).collect(),
+                // TODO: How would we get this information correctly?
+                num_declaration_generics: generic.generics.len(),
+            }
+        }
+
+        match self {
+            // Recurse through pointers, e.g. it's unambiguous to change the
+            // generic of `**CFArray` to `**CFArray<CFString>`.
+            Ty::Pointer { pointee, .. } => pointee.change_generics(new),
+            Ty::Pointee(pointee) => match pointee {
+                PointeeTy::CFTypeDef { generics, .. } => {
+                    // TODO(breaking): Enable this to actually do the overrides
+                    // *generics = new.iter().map(to_cf).collect();
+                }
+                ty => error!(?ty, "unsupported type for generics attribute"),
+            },
+            ty => error!(?ty, "unexpected type for generics attribute"),
+        }
+    }
+
+    pub(crate) fn apply_override(&mut self, override_: &TypeOverride) {
+        if let Some(nullability) = override_.nullability {
+            self.change_nullability(nullability.into());
+        }
+        if let Some(generics) = &override_.generics {
+            self.change_generics(generics);
         }
     }
 
