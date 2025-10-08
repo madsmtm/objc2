@@ -4252,7 +4252,6 @@ impl Ty {
         }
     }
 
-    #[allow(unused, clippy::only_used_in_recursion)]
     fn change_generics(&mut self, new: &[ItemGeneric]) {
         fn to_cf(generic: &ItemGeneric) -> PointeeTy {
             PointeeTy::CFTypeDef {
@@ -4269,8 +4268,7 @@ impl Ty {
             Ty::Pointer { pointee, .. } => pointee.change_generics(new),
             Ty::Pointee(pointee) => match pointee {
                 PointeeTy::CFTypeDef { generics, .. } => {
-                    // TODO(breaking): Enable this to actually do the overrides
-                    // *generics = new.iter().map(to_cf).collect();
+                    *generics = new.iter().map(to_cf).collect();
                 }
                 ty => error!(?ty, "unsupported type for generics attribute"),
             },
