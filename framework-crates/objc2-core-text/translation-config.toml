@@ -26,3 +26,23 @@ const.kCTRubyOverhangInvalid.use-value = true
 const.kMORTLigLastAction.use-value = true
 const.kMORXCoverVertical.use-value = true
 const.kKERXVertical.use-value = true
+
+##
+## Safety
+##
+
+# SAFETY: CoreText is generally well-behaved. It even often documents things
+# like "if X is valid, then this returns Y, otherwise it returns Z".
+unsafe-default-safety.documentation-is-reviewed = true
+# SAFETY: CoreText is bounds-checked, at least for cases where it can be
+# (e.g. where we're not working with raw pointers).
+#
+# Examples:
+# - `CTRunGetImageBounds` returns `CGRectNull` if range is invalid.
+# - `CTTypesetterCreateLineWithOffset`: "otherwise the call will fail".
+# - `CTRunGetStringIndices` takes buffer pointer, so ofc. isn't safe.
+unsafe-default-safety.bounds-checked-internally = true
+
+# TODO(breaking): Mark this as nullable? `CTRunDelegateCreate` creates it from
+# a nullable parameter.
+fn.CTRunDelegateGetRefCon.unsafe = true
