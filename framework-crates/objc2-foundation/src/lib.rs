@@ -245,3 +245,7 @@ pub const NSTimeIntervalSince1970: crate::NSTimeInterval = 978307200.0;
 #[allow(non_upper_case_globals)]
 #[cfg(feature = "NSURLResponse")]
 pub const NSURLResponseUnknownLength: core::ffi::c_longlong = -1;
+
+// uuid/uuid_t.h
+#[allow(dead_code, non_camel_case_types)]
+pub(crate) type uuid_t = [u8; 16];

@@ -20,6 +20,10 @@ mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 
+// uuid/uuid_t.h
+#[allow(dead_code, non_camel_case_types)]
+pub(crate) type uuid_t = [u8; 16];
+
 // IOKit/IOReturn.h
 #[allow(dead_code)]
 pub(crate) type IOReturn = core::ffi::c_int; // kern_return_t

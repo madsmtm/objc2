@@ -14,6 +14,8 @@ extern crate alloc;
 extern crate std;
 
 #[cfg(test)]
+mod array_ivars;
+#[cfg(test)]
 mod backtrace;
 #[cfg(test)]
 mod block;

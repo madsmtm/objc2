@@ -9,9 +9,6 @@ ios = "2.0"
 tvos = "9.0"
 visionos = "1.0"
 
-# I'm unsure of the ABI of the array this takes
-class.CAMediaTimingFunction.methods."getControlPointAtIndex:values:".skipped = true
-
 ###
 ### Safety
 ###

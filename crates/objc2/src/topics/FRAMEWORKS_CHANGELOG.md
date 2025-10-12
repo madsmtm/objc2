@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Marked a bunch of functions safe in:
   - `CoreText` / `objc2-core-text`.
+* Added a few missing APIs that uses arrays.
+
+### Fixed
+* Fixed the encoding check in `NSUUID` methods.
 
 ## [0.3.2] - 2025-10-04
 [0.3.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.1...frameworks-0.3.2

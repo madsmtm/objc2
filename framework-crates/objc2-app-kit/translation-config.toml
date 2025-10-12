@@ -15,6 +15,12 @@ class.NSMutableFontCollection.bridged-to = "CoreText.CTFontCollection.CTMutableF
 class.NSFontDescriptor.bridged-to = "CoreText.CTFontDescriptor.CTFontDescriptor"
 class.NSGlyphInfo.bridged-to = "CoreText.CTGlyphInfo.CTGlyphInfo"
 
+# Unsure if `data` is really bound to 5, and if it's mutable or immutable.
+fn.NSDrawBitmap.arguments.10.bounds = "unsafe"
+
+# Make the `count` use `&mut NSInteger`.
+class.NSView.methods."getRectsExposedDuringLiveResize:count:".arguments.1.bounds = "single"
+
 # `objc_ownership` in .apinotes
 class.NSBundle.methods."loadNibNamed:owner:topLevelObjects:".skipped = true
 class.NSNib.methods."instantiateWithOwner:topLevelObjects:".skipped = true
@@ -85,10 +91,6 @@ static.NSModalPanelWindowLevel.use-value = true
 static.NSPopUpMenuWindowLevel.use-value = true
 static.NSScreenSaverWindowLevel.use-value = true
 static.NSDockWindowLevel.use-value = true
-
-# I'm unsure of the ABI of the array this takes
-fn.NSDrawBitmap.skipped = true
-class.NSView.methods."getRectsExposedDuringLiveResize:count:".skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 protocol.NSMenuDelegate.methods."menuHasKeyEquivalent:forEvent:target:action:".skipped = true

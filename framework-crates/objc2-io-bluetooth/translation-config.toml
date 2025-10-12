@@ -24,10 +24,6 @@ typedef.IOBluetoothUserNotificationRef.renamed = "IOBluetoothUserNotificationRef
 fn.IOBluetoothPackDataList.skipped = true
 fn.IOBluetoothUnpackDataList.skipped = true
 
-# The ABI of arrays is unclear, but this is only used within a struct,
-# and there the ABI is defined.
-typedef.BluetoothDeviceName.skipped = true
-
 # ns_consumes_self / NS_REPLACES_RECEIVER
 class.IOBluetoothDevice.methods."awakeAfterUsingCoder:".skipped = true
 

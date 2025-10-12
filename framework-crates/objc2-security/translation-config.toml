@@ -24,11 +24,6 @@ typedef.OpaqueSecIdentityRef.skipped = true
 typedef.OpaqueSecKeyRef.skipped = true
 typedef.OpaqueSecAccessRef.skipped = true
 
-# Unsure how to handle ABI of arrays?
-typedef.SecAFPServerSignature.skipped = true
-typedef.SecPublicKeyHash.skipped = true
-typedef.CSSM_STRING.skipped = true
-
 # Needs audit_token_t which is not exposed by libc
 fn.SecTaskCreateWithAuditToken.skipped = true
 

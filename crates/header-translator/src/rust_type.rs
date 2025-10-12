@@ -730,7 +730,7 @@ impl PointeeTy {
     }
 
     pub(crate) fn parse_generic_bound(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = Ty::parse(ty, Lifetime::Unspecified, context);
+        let ty = Ty::parse(ty, Lifetime::Unspecified, false, context);
         match ty {
             Ty::Pointee(pointee) => pointee,
             Ty::Pointer {
@@ -1531,7 +1531,12 @@ pub enum Ty {
 }
 
 impl Ty {
-    fn parse(attributed_ty: Type<'_>, mut lifetime: Lifetime, context: &Context<'_>) -> Self {
+    fn parse(
+        attributed_ty: Type<'_>,
+        mut lifetime: Lifetime,
+        array_decays_to_pointer: bool,
+        context: &Context<'_>,
+    ) -> Self {
         let mut ty = attributed_ty;
         let _span = debug_span!("ty", ?ty, ?lifetime).entered();
 
@@ -1688,6 +1693,7 @@ impl Ty {
                             Self::parse(
                                 field.get_type().expect("struct field type"),
                                 Lifetime::Unspecified,
+                                false,
                                 context,
                             )
                         })
@@ -1727,6 +1733,7 @@ impl Ty {
                             .get_enum_underlying_type()
                             .expect("enum underlying type"),
                         Lifetime::Unspecified,
+                        false,
                         context,
                     )),
                 }
@@ -1820,7 +1827,7 @@ impl Ty {
                 let generics: Vec<_> = ty
                     .get_objc_type_arguments()
                     .into_iter()
-                    .map(|param| Self::parse(param, Lifetime::Unspecified, context))
+                    .map(|param| Self::parse(param, Lifetime::Unspecified, false, context))
                     .map(|generic| match generic {
                         Self::Pointer { pointee, .. } => {
                             pointee.into_pointee().unwrap_or_else(|| {
@@ -1909,7 +1916,8 @@ impl Ty {
                     check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
                 };
 
-                let pointee = Self::parse(pointee, Lifetime::Unspecified, context);
+                // Only top-level arrays decay to pointers.
+                let pointee = Self::parse(pointee, Lifetime::Unspecified, false, context);
                 let bounds = if matches!(pointee, Ty::Pointee(_)) {
                     // Object-like pointers default to being a pointer to a
                     // single object.
@@ -1943,7 +1951,7 @@ impl Ty {
                 };
 
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                match Self::parse(ty, Lifetime::Unspecified, context) {
+                match Self::parse(ty, Lifetime::Unspecified, false, context) {
                     Self::Pointee(PointeeTy::Fn {
                         is_variadic: false,
                         no_escape: fn_no_escape,
@@ -2042,7 +2050,7 @@ impl Ty {
                     written: !is_const,
                     lifetime,
                     bounds: PointerBounds::Single,
-                    pointee: Box::new(Self::parse(ty, lifetime, context)),
+                    pointee: Box::new(Self::parse(ty, lifetime, false, context)),
                 }
             }
             TypeKind::Typedef => {
@@ -2296,7 +2304,7 @@ impl Ty {
                     };
                 }
 
-                let mut inner = Self::parse(inner, Lifetime::Unspecified, context);
+                let mut inner = Self::parse(inner, Lifetime::Unspecified, false, context);
 
                 let id = ItemIdentifier::new(&declaration, context);
 
@@ -2394,9 +2402,24 @@ impl Ty {
                     // typedef NSArray<NSNumber*> MPSShape;
                 }
 
-                Self::TypeDef {
-                    id,
-                    to: Box::new(inner),
+                if array_decays_to_pointer && matches!(inner.through_typedef(), Self::Array { .. })
+                {
+                    Self::Pointer {
+                        nullability,
+                        read: true,
+                        written: !is_const,
+                        lifetime,
+                        bounds: PointerBounds::Single,
+                        pointee: Box::new(Self::TypeDef {
+                            id,
+                            to: Box::new(inner),
+                        }),
+                    }
+                } else {
+                    Self::TypeDef {
+                        id,
+                        to: Box::new(inner),
+                    }
                 }
             }
             // Assume that functions without a prototype simply have 0 arguments.
@@ -2412,11 +2435,11 @@ impl Ty {
                     .get_argument_types()
                     .expect("fn type to have argument types")
                     .into_iter()
-                    .map(|ty| Self::parse(ty, Lifetime::Unspecified, context))
+                    .map(|ty| Self::parse(ty, Lifetime::Unspecified, true, context))
                     .collect();
 
                 let result_type = ty.get_result_type().expect("fn type to have result type");
-                let result_type = Self::parse(result_type, Lifetime::Unspecified, context);
+                let result_type = Self::parse(result_type, Lifetime::Unspecified, false, context);
 
                 Self::Pointee(PointeeTy::Fn {
                     is_variadic: ty.get_kind() == TypeKind::FunctionPrototype && ty.is_variadic(),
@@ -2441,7 +2464,7 @@ impl Ty {
                     .get_element_type()
                     .expect("incomplete array to have element type");
 
-                let pointee = Self::parse(ty, Lifetime::Unspecified, context);
+                let pointee = Self::parse(ty, Lifetime::Unspecified, false, context);
                 Self::Pointer {
                     nullability,
                     read: true,
@@ -2454,22 +2477,52 @@ impl Ty {
             TypeKind::ConstantArray => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
                 parser.set_constant_array();
-                let _is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
-                let _nullability = if let Some(nullability) = unexposed_nullability {
+                let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
+                let nullability = if let Some(nullability) = unexposed_nullability {
                     nullability
                 } else {
                     check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
                 };
 
+                // Only top-level arrays decay to pointers. E.g.
+                // int[4][2] -> int(*)[2]
                 let element = ty.get_element_type().expect("array to have element type");
-                let element_type = Self::parse(element, lifetime, context);
+                let element_type = Box::new(Self::parse(element, lifetime, false, context));
+
                 let num_elements = ty
                     .get_size()
                     .expect("constant array to have element length");
-                // TODO: PointerBounds::CountedBy(format!("{num_elements}"))
-                Self::Array {
-                    element_type: Box::new(element_type),
-                    num_elements,
+
+                if array_decays_to_pointer {
+                    Self::Pointer {
+                        nullability,
+                        read: true,
+                        written: !is_const,
+                        lifetime,
+                        // The ABI of arrays is such that `&[T; N]` -> `*const T`.
+                        //
+                        // So in that sense, since the array already contains
+                        // bounds information in its type, this is a "single"
+                        // object.
+                        //
+                        // See also:
+                        // <https://play.rust-lang.org/?version=stable&mode=debug&edition=2024&gist=5a75ef9f07259901c4a220bb09001f44>
+                        //
+                        // Note that C does not support returning arrays
+                        // directly, they must be either wrapped in a struct,
+                        // or given as a parameter. So we don't have to handle
+                        // that.
+                        bounds: PointerBounds::Single,
+                        pointee: Box::new(Self::Array {
+                            element_type,
+                            num_elements,
+                        }),
+                    }
+                } else {
+                    Self::Array {
+                        element_type,
+                        num_elements,
+                    }
                 }
             }
             _ => {
@@ -2599,8 +2652,8 @@ impl Ty {
                 };
                 TypeSafety::unsafe_in_argument(reason).merge(pointee.safety().ignore_in_argument())
             }
-            // Only safe in structs, not safe directly or behind typedefs.
-            Self::Array { .. } => TypeSafety::always_unsafe("Array TODO"),
+            // Safe as long as the inner element type is.
+            Self::Array { element_type, .. } => element_type.safety().context("array element"),
             // Enums are safe in both positions.
             //
             // Note that enums don't strictly prevent passing invalid
@@ -2613,14 +2666,7 @@ impl Ty {
                     .iter()
                     .enumerate()
                     .fold(TypeSafety::SAFE, |safety, (i, field)| {
-                        safety.merge(
-                            match field {
-                                // Arrays are safe when inside structs.
-                                Self::Array { element_type, .. } => element_type.safety(),
-                                field => field.safety(),
-                            }
-                            .context(format!("struct field {}", i + 1)),
-                        )
+                        safety.merge(field.safety().context(format!("struct field {}", i + 1)))
                     })
             }
             // Conservative.
@@ -2980,11 +3026,7 @@ impl Ty {
                 Self::Array {
                     element_type,
                     num_elements,
-                } => write!(
-                    f,
-                    "ArrayUnknownABI<[{}; {num_elements}]>",
-                    element_type.plain()
-                ),
+                } => write!(f, "[{}; {num_elements}]", element_type.plain()),
                 Self::Struct { id, .. } => {
                     write!(f, "{}", id.path())
                 }
@@ -3507,13 +3549,7 @@ impl Ty {
     }
 
     pub(crate) fn record(&self) -> impl fmt::Display + '_ {
-        FormatterFn(move |f| match self {
-            Self::Array {
-                element_type,
-                num_elements,
-            } => write!(f, "[{}; {num_elements}]", element_type.plain()),
-            _ => write!(f, "{}", self.plain()),
-        })
+        self.plain()
     }
 
     fn fn_contains_bool(&self) -> bool {
@@ -3586,7 +3622,7 @@ impl Ty {
         mut arg_no_escape: bool,
         context: &Context<'_>,
     ) -> Self {
-        let mut ty = Self::parse(ty, Lifetime::Unspecified, context);
+        let mut ty = Self::parse(ty, Lifetime::Unspecified, true, context);
 
         match &mut ty {
             Self::Pointer { pointee, .. } => match &mut **pointee {
@@ -3633,7 +3669,7 @@ impl Ty {
         default_nonnull: bool,
         context: &Context<'_>,
     ) -> Self {
-        let mut ty = Self::parse(ty, Lifetime::Unspecified, context);
+        let mut ty = Self::parse(ty, Lifetime::Unspecified, false, context);
 
         // As in `parse_property_return`, the nullability is not guaranteed by
         // the method, and can also fail in OOM situations, but that is
@@ -3677,7 +3713,7 @@ impl Ty {
     }
 
     pub(crate) fn parse_typedef(ty: Type<'_>, context: &Context<'_>) -> Self {
-        Self::parse(ty, Lifetime::Unspecified, context)
+        Self::parse(ty, Lifetime::Unspecified, false, context)
     }
 
     pub(crate) fn pointer_to_opaque_struct_or_void(
@@ -3721,7 +3757,7 @@ impl Ty {
         _sendable: Option<bool>,
         context: &Context<'_>,
     ) -> Self {
-        let mut ty = Self::parse(ty, Lifetime::Unspecified, context);
+        let mut ty = Self::parse(ty, Lifetime::Unspecified, false, context);
 
         // `@property(copy)` is expected to always return a nonnull instance
         // (e.g. for strings it returns the empty string, while
@@ -3763,7 +3799,7 @@ impl Ty {
         _sendable: Option<bool>,
         context: &Context<'_>,
     ) -> Self {
-        let mut ty = Self::parse(ty, Lifetime::Unspecified, context);
+        let mut ty = Self::parse(ty, Lifetime::Unspecified, true, context);
 
         // See `parse_property_getter` above.
         if is_copy {
@@ -3782,7 +3818,7 @@ impl Ty {
     }
 
     pub(crate) fn parse_record_field(ty: Type<'_>, context: &Context<'_>) -> Self {
-        Self::parse(ty, Lifetime::Unspecified, context)
+        Self::parse(ty, Lifetime::Unspecified, false, context)
     }
 
     pub fn is_signed(&self) -> Option<bool> {
@@ -3795,7 +3831,7 @@ impl Ty {
     }
 
     pub(crate) fn parse_enum(ty: Type<'_>, context: &Context<'_>) -> Self {
-        Self::parse(ty, Lifetime::Unspecified, context)
+        Self::parse(ty, Lifetime::Unspecified, false, context)
     }
 
     pub(crate) fn is_simple_uint(&self) -> bool {
@@ -3803,7 +3839,7 @@ impl Ty {
     }
 
     pub(crate) fn parse_static(ty: Type<'_>, context: &Context<'_>) -> Self {
-        Self::parse(ty, Lifetime::Unspecified, context)
+        Self::parse(ty, Lifetime::Unspecified, false, context)
     }
 
     pub(crate) fn argument_is_error_out(&self) -> bool {

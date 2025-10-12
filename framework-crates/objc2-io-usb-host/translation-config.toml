@@ -9,9 +9,6 @@ maccatalyst = "14.0"
 class.IOUSBHostControllerInterface.methods."getPortStateMachineForCommand:error:".return.nullability = "nullable"
 class.IOUSBHostControllerInterface.methods."getPortStateMachineForPort:error:".return.nullability = "nullable"
 
-# Needs uuid_t, unsure about the ABI.
-fn.IOUSBGetPlatformCapabilityDescriptorWithUUID.skipped = true
-
 # Declared twice.
 static.IOUSBHostMatchingPropertyKeyProductIDMask.skipped = true
 

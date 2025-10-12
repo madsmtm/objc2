@@ -37,7 +37,3 @@ pub(crate) type IOItemCount = u32; // UInt32
 pub(crate) type Boolean = u8;
 #[allow(dead_code)]
 pub(crate) type ByteCount = core::ffi::c_ulong;
-
-#[cfg(feature = "Bluetooth")]
-/// [Apple's documentation](https://developer.apple.com/documentation/iobluetooth/bluetoothdevicename?language=objc)
-pub type BluetoothDeviceName = [u8; kBluetoothDeviceNameMaxLength as usize];

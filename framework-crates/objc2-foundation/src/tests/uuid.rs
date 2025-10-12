@@ -19,6 +19,13 @@ fn test_new() {
 }
 
 #[test]
+fn nil() {
+    let nil1 = NSUUID::nil();
+    let nil2 = NSUUID::from_bytes([0; 16]);
+    assert_eq!(nil1, nil2);
+}
+
+#[test]
 #[ignore = "encoding depends on Foundation version"]
 fn test_bytes() {
     let uuid = NSUUID::from_bytes([10; 16]);

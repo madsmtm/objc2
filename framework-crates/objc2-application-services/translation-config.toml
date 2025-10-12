@@ -53,11 +53,6 @@ const.kProcessDictionaryIncludeAllInformationMask.skipped = true
 const.kICFileSpecHeaderSize.skipped = true
 const.extendedBlockLen.skipped = true
 
-# Uses Str255 (an array) directly in parameter, which is unclear ABI-wise.
-fn.ICGetConfigName.skipped = true
-fn.ICGetIndPref.skipped = true
-fn.ICGetProfileName.skipped = true
-
 # Needs ApplicationServices.QD
 fn.HIShapeCreateWithQDRgn.skipped = true
 fn.HIShapeGetAsQDRgn.skipped = true

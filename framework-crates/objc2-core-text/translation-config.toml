@@ -9,10 +9,6 @@ tvos = "9.0"
 watchos = "2.0"
 visionos = "1.0"
 
-# Unknown calling convention / ABI
-fn.CTRubyAnnotationCreate.skipped = true
-typedef.BslnBaselineRecord.skipped = true
-
 # Needs ATSFontRef from ATS framework
 fn.CTFontGetPlatformFont.skipped = true
 fn.CTFontCreateWithPlatformFont.skipped = true
@@ -26,6 +22,8 @@ const.kCTRubyOverhangInvalid.use-value = true
 const.kMORTLigLastAction.use-value = true
 const.kMORXCoverVertical.use-value = true
 const.kKERXVertical.use-value = true
+
+fn.CTRubyAnnotationCreate.arguments.3.written = false
 
 ##
 ## Safety

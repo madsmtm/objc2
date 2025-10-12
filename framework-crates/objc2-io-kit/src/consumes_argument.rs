@@ -93,7 +93,7 @@ pub unsafe extern "C-unwind" fn IOServiceGetMatchingServices(
 /// Returns: A kern_return_t error code.
 pub unsafe extern "C-unwind" fn IOServiceAddMatchingNotification(
     notify_port: IONotificationPortRef,
-    notification_type: io_name_t,
+    notification_type: *mut io_name_t,
     matching: Option<CFRetained<CFDictionary>>,
     callback: IOServiceMatchingCallback,
     ref_con: *mut c_void,
@@ -102,7 +102,7 @@ pub unsafe extern "C-unwind" fn IOServiceAddMatchingNotification(
     extern "C-unwind" {
         fn IOServiceAddMatchingNotification(
             notify_port: IONotificationPortRef,
-            notification_type: io_name_t,
+            notification_type: *mut io_name_t,
             matching: *mut CFDictionary,
             callback: IOServiceMatchingCallback,
             ref_con: *mut c_void,

@@ -41,10 +41,6 @@ fn.vAEBuildDesc.skipped = true
 fn.vAEBuildParameters.skipped = true
 fn.vAEBuildAppleEvent.skipped = true
 
-# Uses Str255 (an array) directly in parameter, which is unclear ABI-wise.
-fn.GetComponentPublicIndString.skipped = true
-fn.GetComponentIndString.skipped = true
-
 # Dependent on target endianness
 typedef.WideChar.skipped = true # union+typedef
 

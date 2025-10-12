@@ -54,10 +54,6 @@ pub(crate) type OSStatus = i32;
 pub(crate) type kr_policy_list_item = core::ffi::c_void;
 
 #[allow(non_camel_case_types)]
-#[cfg(feature = "cssmtype")]
-pub type CSSM_STRING = [core::ffi::c_char; 68];
-
-#[allow(non_camel_case_types)]
 #[allow(non_snake_case)]
 #[allow(deprecated)]
 #[cfg(all(

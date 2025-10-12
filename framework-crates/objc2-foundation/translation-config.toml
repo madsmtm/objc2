@@ -119,8 +119,6 @@ class.NSData.methods.bytes.skipped = true
 class.NSMutableData.methods.length.skipped = true
 class.NSError.methods.new.skipped = true
 class.NSException.methods.new.skipped = true
-class.NSUUID.methods."initWithUUIDBytes:".skipped = true
-class.NSUUID.methods."getUUIDBytes:".skipped = true
 
 # Wrong type on GNUStep
 class.NSMutableData.methods.mutableBytes.skipped = true

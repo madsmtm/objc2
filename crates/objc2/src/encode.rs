@@ -397,13 +397,56 @@ pub trait EncodeArguments: args_private::Sealed {
     ) -> R;
 }
 
+/// Handle array -> pointer decay.
+///
+/// A C method like:
+/// ```c
+/// void foo(uint8_t[10] arr);
+/// ```
+///
+/// Actually has the following ABI;
+/// ```c
+/// void foo(uint8_t* arr);
+/// ```
+///
+/// Whereas the equivalent Rust function:
+/// ```
+/// extern "C-unwind" {
+///     fn foo(arr: [u8; 10]);
+/// }
+/// ```
+///
+/// Doesn't have a stable ABI (it might choose to pass a pointer, it might
+/// choose to inline).
+///
+/// This happens through typedefs too, so when auto-generating these, it's
+/// kinda hard to know what to output.
+///
+/// To handle this, we'd like to have the Rust signature be `*const [u8; 10]`,
+/// as that still carries the bounds information, while still accurately
+/// describing the ABI.
+///
+/// That type has an encoding of `Pointer(Array(10, u8))` though, which is
+/// correct if it were used in e.g. a struct field, but it isn't when used
+/// here in a function argument. So we decay the encoding parameter.
+const fn decay_parameter_encoding(enc: Encoding) -> Encoding {
+    match enc {
+        // Only decay a single time, doubly nested arrays don't decay twice.
+        Encoding::Pointer(Encoding::Array(len, ty)) => Encoding::Array(*len, ty),
+        // Direct `Encoding::Array(..)` is allowed, since that's what
+        // `objc2-foundation v0.3.2` and lower does (and we still have to
+        // support that).
+        enc => enc,
+    }
+}
+
 macro_rules! encode_args_impl {
     ($($a:ident: $T: ident),*) => {
         impl<$($T: EncodeArgument),*> args_private::Sealed for ($($T,)*) {}
 
         impl<$($T: EncodeArgument),*> EncodeArguments for ($($T,)*) {
             const ENCODINGS: &'static [Encoding] = &[
-                $($T::ENCODING_ARGUMENT),*
+                $(decay_parameter_encoding($T::ENCODING_ARGUMENT)),*
             ];
 
             #[inline]
@@ -1027,5 +1070,12 @@ mod tests {
         assert_eq!(<()>::ENCODINGS, &[] as &[Encoding]);
         assert_eq!(<(i8,)>::ENCODINGS, &[i8::ENCODING]);
         assert_eq!(<(i8, u32)>::ENCODINGS, &[i8::ENCODING, u32::ENCODING]);
+        assert_eq!(<([u32; 10],)>::ENCODINGS, &[<[u32; 10]>::ENCODING]);
+        assert_eq!(<(&[u32; 10],)>::ENCODINGS, &[<[u32; 10]>::ENCODING]); // decay
+        assert_eq!(<(&&[u32; 10],)>::ENCODINGS, &[<&&[u32; 10]>::ENCODING]); // don't decay double pointers
+        assert_eq!(
+            <(&[[u32; 10]; 20],)>::ENCODINGS,
+            &[<[[u32; 10]; 20]>::ENCODING]
+        );
     }
 }

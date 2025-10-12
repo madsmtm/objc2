@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Fixed
 * Fixed encoding check when using SIMD types in signatures.
+* Fixed encoding check when using decaying arrays in signatures.
 * Allow declaring classes with ivars that require high alignment.
 * Allow classes created with `define_class!` to be used in multiple shared
   dynamic libraries in the same process.

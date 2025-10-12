@@ -183,7 +183,24 @@ pub(crate) fn verify_method_signature(
         if let Some(res) = iter.next() {
             // TODO: Verify stack layout
             let (expected, _stack_layout) = res?;
-            if !relaxed_equivalent_to_box(actual, &expected) {
+
+            let mut equivalent = relaxed_equivalent_to_box(actual, &expected);
+
+            if !equivalent {
+                if let Encoding::Array(_size, actual) = actual {
+                    // Arrays decay to pointers in argument position.
+                    //
+                    // So one can have the following in the public API:
+                    // void foo(uint8_t[10] arr);
+                    //
+                    // And have the implementation be one of:
+                    // void foo(uint8_t[10] arr) { ... }
+                    // void foo(uint8_t* arr) { ... }
+                    equivalent = relaxed_equivalent_to_box(&Encoding::Pointer(actual), &expected);
+                }
+            }
+
+            if !equivalent {
                 return Err(Inner::MismatchedArgument(i, expected, actual.clone()).into());
             }
         } else {
@@ -209,8 +226,9 @@ mod tests {
     use super::*;
     use crate::encode::Encode;
     use crate::ffi;
-    use crate::runtime::{test_utils, Sel};
-    use crate::{msg_send, sel};
+    use crate::runtime::{test_utils, NSObject, Sel};
+    use crate::{define_class, msg_send, sel, ClassType};
+    use alloc::boxed::Box;
     use alloc::string::ToString;
     use core::ffi::c_void;
     use core::panic::{RefUnwindSafe, UnwindSafe};
@@ -358,5 +376,74 @@ mod tests {
             cls.verify_sel::<(SimdTy, u32), SimdTy>(sel!(withSimd:andArg:)),
             Ok(())
         );
+    }
+
+    #[test]
+    fn array_decay() {
+        define_class!(
+            #[unsafe(super(NSObject))]
+            struct TestArrayDecay;
+
+            impl TestArrayDecay {
+                #[unsafe(method(sumArray1:))]
+                fn sum_array1(arr: &[i32; 4]) -> i32 {
+                    arr.iter().sum()
+                }
+
+                #[unsafe(method(sumArray2:))]
+                fn sum_array2(arr: *const i32) -> i32 {
+                    let arr = unsafe { core::slice::from_raw_parts(arr, 4) };
+                    arr.iter().sum()
+                }
+            }
+        );
+
+        let cls = TestArrayDecay::class();
+        let metaclass = cls.metaclass();
+
+        // Sanity check that it decayed as expected.
+        let arg = cls.class_method(sel!(sumArray1:)).unwrap().argument_type(2);
+        assert_eq!(arg.unwrap().as_ref().to_str().unwrap(), "[4i]");
+        let arg = cls.class_method(sel!(sumArray2:)).unwrap().argument_type(2);
+        assert_eq!(arg.unwrap().as_ref().to_str().unwrap(), "^i");
+
+        // Test that we verify correctly.
+        assert_eq!(
+            metaclass.verify_sel::<(&[i32; 4],), i32>(sel!(sumArray1:)),
+            Ok(())
+        );
+        assert_eq!(
+            metaclass.verify_sel::<(&[i32; 4],), i32>(sel!(sumArray2:)),
+            Ok(())
+        );
+        assert_eq!(
+            metaclass.verify_sel::<([i32; 4],), i32>(sel!(sumArray2:)),
+            Ok(())
+        );
+        // Intentionally don't allow it the other way around (at least not yet).
+        assert_eq!(
+            metaclass.verify_sel::<(&i32,), i32>(sel!(sumArray1:)),
+            Err(VerificationError(Inner::MismatchedArgument(
+                0,
+                EncodingBox::Array(4, Box::new(EncodingBox::Int)),
+                Encoding::Pointer(&Encoding::Int)
+            )))
+        );
+
+        // Sanity check that our ABI assumption here is right.
+        let arr = [1000, 200, 30, 4];
+        let expected = 1234;
+
+        let actual: i32 = unsafe { msg_send![cls, sumArray1: &arr] };
+        assert_eq!(expected, actual);
+        let actual: i32 = unsafe { msg_send![cls, sumArray2: &arr] };
+        assert_eq!(expected, actual);
+
+        if !cfg!(debug_assertions) {
+            let actual: i32 = unsafe { msg_send![cls, sumArray1: arr.as_slice().as_ptr()] };
+            assert_eq!(expected, actual);
+        }
+        let actual: i32 = unsafe { msg_send![cls, sumArray2: arr.as_slice().as_ptr()] };
+        assert_eq!(expected, actual);
     }
 }

@@ -30,6 +30,7 @@ objc2-foundation = { workspace = true, features = [
     "std",
     "NSArray",
     "NSAttributedString",
+    "NSDecimalNumber",
     "NSDictionary",
     "NSEnumerator",
     "NSException",
@@ -44,6 +45,7 @@ objc2-foundation = { workspace = true, features = [
     "NSRunLoop",
     "NSSet",
     "NSString",
+    "NSThread",
     "NSValue",
 ] }
 
