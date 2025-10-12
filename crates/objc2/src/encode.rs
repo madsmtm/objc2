@@ -901,6 +901,9 @@ mod tests {
             Encoding::Pointer(&Encoding::String)
         );
         assert_eq!(<&&u8>::ENCODING, Encoding::Pointer(&Encoding::String));
+
+        assert!(<&u8>::ENCODING.equivalent_to(&Encoding::Pointer(&Encoding::UChar)));
+        assert!(<&u8>::ENCODING.equivalent_to(&Encoding::Pointer(&Encoding::Char)));
     }
 
     #[test]

@@ -1,7 +1,6 @@
 use core::ffi;
 use core::fmt;
 use core::mem;
-use core::slice;
 use core::write;
 
 use crate::parse::verify_name;
@@ -60,7 +59,6 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
     level: NestingLevel,
     include_all: bool,
 ) -> bool {
-    use Helper::*;
     // Note: Ideally `Block` and sequence of `Object, Unknown` in struct
     // should compare equivalent, but we don't bother since in practice a
     // plain `Unknown` will never appear.
@@ -72,24 +70,61 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
     };
 
     match (enc1.helper(), enc2.helper()) {
-        (Primitive(p1), Primitive(p2)) => p1.equivalents().contains(&p2),
-        (BitField(size1, Some((offset1, type1))), BitField(size2, Some((offset2, type2)))) => {
+        // Classes, blocks and objects can all be used in places where `id` is
+        // expected (i.e. where the encoding is for objects).
+        //
+        // So to support those use-cases, we compare them as equivalent.
+        (
+            Helper::Primitive(Primitive::Block | Primitive::Object | Primitive::Class),
+            Helper::Primitive(Primitive::Block | Primitive::Object | Primitive::Class),
+        ) => true,
+        // `*` and `^C`/`^c` are basically the same type (`char*`), so we
+        // compare those as equivalent as well.
+        (
+            Helper::Primitive(Primitive::String),
+            Helper::Indirection(IndirectionKind::Pointer, t),
+        ) if matches!(
+            t.helper(),
+            Helper::Primitive(Primitive::Char | Primitive::UChar)
+        ) =>
+        {
+            true
+        }
+        (
+            Helper::Indirection(IndirectionKind::Pointer, t),
+            Helper::Primitive(Primitive::String),
+        ) if matches!(
+            t.helper(),
+            Helper::Primitive(Primitive::Char | Primitive::UChar)
+        ) =>
+        {
+            true
+        }
+        (Helper::Primitive(p1), Helper::Primitive(p2)) => p1 == p2,
+
+        (
+            Helper::BitField(size1, Some((offset1, type1))),
+            Helper::BitField(size2, Some((offset2, type2))),
+        ) => {
             size1 == size2
                 && offset1 == offset2
                 && compare_encodings(type1, type2, level.bitfield(), include_all)
         }
-        (BitField(size1, None), BitField(size2, None)) => size1 == size2,
+        (Helper::BitField(size1, None), Helper::BitField(size2, None)) => size1 == size2,
         // The type-encoding of a bitfield is always either available, or it
         // is not (depends on platform); so if it was available in one, but
         // not the other, we should compare the encodings unequal.
-        (BitField(_, _), BitField(_, _)) => false,
-        (Indirection(kind1, t1), Indirection(kind2, t2)) => {
+        (Helper::BitField(_, _), Helper::BitField(_, _)) => false,
+
+        (Helper::Indirection(kind1, t1), Helper::Indirection(kind2, t2)) => {
             kind1 == kind2 && compare_encodings(t1, t2, level.indirection(kind1), include_all)
         }
-        (Array(len1, item1), Array(len2, item2)) => {
+
+        (Helper::Array(len1, item1), Helper::Array(len2, item2)) => {
             len1 == len2 && compare_encodings(item1, item2, level.array(), include_all)
         }
-        (Container(kind1, name1, items1), Container(kind2, name2, items2)) => {
+
+        (Helper::Container(kind1, name1, items1), Helper::Container(kind2, name2, items2)) => {
             kind1 == kind2 && name1 == name2 && {
                 if let Some(level) = level.container_include_fields() {
                     // If either container is empty, then they are equivalent
@@ -110,7 +145,8 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
                 }
             }
         }
-        (NoneInvalid, NoneInvalid) => true,
+
+        (Helper::NoneInvalid, Helper::NoneInvalid) => true,
         (_, _) => false,
     }
 }
@@ -176,17 +212,6 @@ impl Primitive {
             Class => "#",
             Sel => ":",
             Unknown => "?",
-        }
-    }
-
-    /// Classes, blocks and objects can all be used in places where `id` is
-    /// expected (i.e. where the encoding is for objects).
-    ///
-    /// So to support those use-cases, we compare them as equivalent.
-    pub(crate) fn equivalents(&self) -> &[Self] {
-        match self {
-            Self::Block | Self::Object | Self::Class => &[Self::Block, Self::Object, Self::Class],
-            _ => slice::from_ref(self),
         }
     }
 

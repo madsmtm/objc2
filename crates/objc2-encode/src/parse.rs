@@ -269,8 +269,28 @@ impl Parser<'_> {
     pub(crate) fn expect_encoding(&mut self, enc: &Encoding, level: NestingLevel) -> Option<()> {
         match enc.helper() {
             Helper::Primitive(primitive) => {
-                self.expect_one_of_str(primitive.equivalents().iter().map(|p| p.to_str()))?;
+                match primitive {
+                    Primitive::Block | Primitive::Object | Primitive::Class => {
+                        self.expect_one_of_str([
+                            Primitive::Block.to_str(),
+                            Primitive::Object.to_str(),
+                            Primitive::Class.to_str(),
+                        ])?;
+                    }
+                    Primitive::String => {
+                        self.expect_one_of_str([
+                            Primitive::String.to_str(),
+                            // u8 and i8 are ABI compatible behind a pointer.
+                            "^c", // Indirection(IndirectionKind::Pointer, Primitive::Char).to_str()
+                            "^C", // Indirection(IndirectionKind::Pointer, Primitive::UChar).to_str()
+                        ])?;
+                    }
+                    _ => {
+                        self.expect_one_of_str([primitive.to_str()])?;
+                    }
+                }
 
+                // Ignore name for now.
                 if primitive == Primitive::Object && self.try_peek() == Some(b'"') {
                     self.advance();
                     self.consume_while(|b| b != b'"');

@@ -215,6 +215,7 @@ impl Encoding {
     ///   "opqaue" types, and will therefore be equivalent to all other
     ///   structs / unions.
     /// - [`Object`], [`Block`] and [`Class`] compare as equivalent.
+    /// - [`String`] and pointers to [`Char`]/[`UChar`] compare as equivalent.
     ///
     /// The comparison may be changed in the future to e.g. ignore struct
     /// names or similar changes that may be required because of limitations
@@ -226,6 +227,9 @@ impl Encoding {
     /// [`Object`]: Self::Object
     /// [`Block`]: Self::Block
     /// [`Class`]: Self::Class
+    /// [`String`]: Self::String
+    /// [`Char`]: Self::Char
+    /// [`UChar`]: Self::UChar
     pub fn equivalent_to(&self, other: &Self) -> bool {
         compare_encodings(self, other, NestingLevel::new(), false)
     }
@@ -306,6 +310,7 @@ mod tests {
         assert!(Encoding::Void.equivalent_to_str("Vv"));
         assert!(Encoding::String.equivalent_to_str("*"));
         assert!(Encoding::String.equivalent_to_str("r*"));
+        assert!(Encoding::String.equivalent_to_str("r^c"));
     }
 
     macro_rules! assert_enc {
@@ -676,6 +681,21 @@ mod tests {
             !Encoding::LongLong;
             "t";
             !"T";
+        }
+
+        fn string() {
+            Encoding::String;
+            ~Encoding::Pointer(&Encoding::Char);
+            ~Encoding::Pointer(&Encoding::UChar);
+            !Encoding::Pointer(&Encoding::Int);
+            !Encoding::Int;
+            "*";
+            ~"^C";
+            ~"^c";
+            !"c";
+            !"**";
+            !"*c";
+            !"^^c";
         }
     }
 

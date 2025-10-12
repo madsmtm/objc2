@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `Encoding::Int128` and `Encoding::UInt128`.
 
+### Changed
+* Equivalence comparisons now consider `Encoding::String` as equivalent to
+  `Encoding::Pointer(&Encoding::Char)`/`Encoding::Pointer(&Encoding::UChar)`.
+
 
 ## [4.1.0] - 2025-01-22
 [4.1.0]: https://github.com/madsmtm/objc2/compare/objc2-encode-4.0.3...objc2-encode-4.1.0
