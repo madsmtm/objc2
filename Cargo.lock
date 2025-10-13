@@ -136,15 +136,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "basic-toml"
-version = "0.1.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ba62675e8242a4c4e806d12f11d136e626e6c8361d6b829310732241652a178a"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "bitflags"
 version = "2.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -573,7 +564,6 @@ name = "header-translator"
 version = "0.1.0"
 dependencies = [
  "apple-sdk",
- "basic-toml",
  "clang",
  "clang-sys",
  "clap",
@@ -586,6 +576,7 @@ dependencies = [
  "semver",
  "serde",
  "syn",
+ "toml 0.9.5",
  "toml_edit 0.23.4",
  "tracing",
  "tracing-subscriber",

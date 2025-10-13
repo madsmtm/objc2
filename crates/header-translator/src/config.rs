@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::error::Error;
 use std::fs;
@@ -24,7 +25,7 @@ pub fn load_skipped() -> Result<BTreeMap<String, String>, Box<dyn Error + Send +
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("configs")
         .join("skipped.toml");
-    Ok(basic_toml::from_str(&fs::read_to_string(path)?)?)
+    Ok(toml::from_str(&fs::read_to_string(path)?)?)
 }
 
 pub fn load_config() -> Result<Config, Box<dyn Error + Send + Sync>> {
@@ -51,21 +52,21 @@ pub fn load_config() -> Result<Config, Box<dyn Error + Send + Sync>> {
         .join("crates")
         .join("block2")
         .join("translation-config.toml");
-    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
+    let objc = toml::from_str(&fs::read_to_string(path)?)?;
     libraries.insert("block".to_string(), objc);
 
     let path = workspace_dir
         .join("crates")
         .join("objc2")
         .join("translation-config.toml");
-    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
+    let objc = toml::from_str(&fs::read_to_string(path)?)?;
     libraries.insert("ObjectiveC".to_string(), objc);
 
     let path = workspace_dir
         .join("crates")
         .join("dispatch2")
         .join("translation-config.toml");
-    let objc = basic_toml::from_str(&fs::read_to_string(path)?)?;
+    let objc = toml::from_str(&fs::read_to_string(path)?)?;
     libraries.insert("Dispatch".to_string(), objc);
 
     Config::new(libraries)
@@ -85,7 +86,7 @@ impl Config {
 
         for builtin_file in builtin_files {
             let path = configs_dir.join(builtin_file);
-            let config: LibraryConfig = basic_toml::from_str(&fs::read_to_string(path)?)?;
+            let config: LibraryConfig = toml::from_str(&fs::read_to_string(path)?)?;
             libraries.insert(config.framework.clone(), config);
         }
 
@@ -205,7 +206,7 @@ fn get_version<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Option<Vers
             Ok(None)
         }
 
-        fn visit_borrowed_str<E>(self, v: &str) -> Result<Self::Value, E>
+        fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
         where
             E: de::Error,
         {
@@ -747,7 +748,7 @@ impl LibraryConfig {
     pub fn from_file(file: &Path) -> Result<Self, Box<dyn Error>> {
         let s = fs::read_to_string(file)?;
 
-        let config: Self = basic_toml::from_str(&s)?;
+        let config: Self = toml::from_str(&s)?;
 
         assert_eq!(
             config.framework.to_lowercase(),
@@ -836,7 +837,7 @@ fn deserialize_argument_overrides<'de, D>(
 where
     D: de::Deserializer<'de>,
 {
-    let str_map = HashMap::<&str, TypeOverride>::deserialize(deserializer)?;
+    let str_map = HashMap::<Cow<'_, str>, TypeOverride>::deserialize(deserializer)?;
     let original_len = str_map.len();
     let data = {
         str_map
@@ -845,7 +846,7 @@ where
                 Ok(int_key) => Ok((int_key, value)),
                 Err(_) => Err({
                     de::Error::invalid_value(
-                        de::Unexpected::Str(str_key),
+                        de::Unexpected::Str(&str_key),
                         &"a non-negative integer",
                     )
                 }),

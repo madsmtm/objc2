@@ -33,7 +33,7 @@ fn get_pairs<'a>(items: &'a [&'a str]) -> impl Iterator<Item = (&'a str, &'a str
 
 fn get_features(cargo_toml: &Path) -> Result<Vec<String>, Box<dyn Error>> {
     let cargo_toml = fs::read_to_string(cargo_toml)?;
-    let CargoToml { features } = basic_toml::from_str(&cargo_toml)?;
+    let CargoToml { features } = toml::from_str(&cargo_toml)?;
 
     // Skip GNUStep-related, unstable and default/std/alloc features
     Ok(features
