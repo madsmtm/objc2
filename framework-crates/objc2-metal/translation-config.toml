@@ -12,8 +12,8 @@ visionos = "1.0"
 class.MTLRasterizationRateLayerDescriptor.methods.sampleCount.skipped = true
 
 # Gets emitted as an out pointer, but the pointer is actually an array.
-# Swift also skips this.
-class.MTLRasterizationRateMapDescriptor.methods."rasterizationRateMapDescriptorWithScreenSize:layerCount:layers:".skipped = true
+# Swift also handles this differently.
+class.MTLRasterizationRateMapDescriptor.methods."rasterizationRateMapDescriptorWithScreenSize:layerCount:layers:".arguments.2.bounds = { counted-by = "layerCount" }
 
 # Needs mach / kernel types
 protocol.MTLResource.methods."setOwnerWithIdentity:".skipped = true

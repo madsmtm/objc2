@@ -682,9 +682,10 @@ pub struct CategoryData {
 
 #[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-#[serde(rename_all = "lowercase")]
 pub enum Nullability {
+    #[serde(rename = "nullable")]
     Nullable,
+    #[serde(rename = "nonnull")]
     NonNull,
 }
 
@@ -697,6 +698,29 @@ impl From<Nullability> for clang::Nullability {
     }
 }
 
+/// The bounds of a raw pointer.
+///
+/// Modelled after <https://clang.llvm.org/docs/BoundsSafety.html>.
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq, Hash, Default)]
+#[serde(deny_unknown_fields)]
+pub enum PointerBounds {
+    #[default]
+    #[serde(rename = "unspecified")]
+    Unspecified,
+    #[serde(rename = "unsafe")]
+    Unsafe,
+    #[serde(rename = "single")]
+    Single,
+    #[serde(rename = "null-terminated")]
+    NullTerminated, // Or TerminatedBy(b'\0')
+    #[serde(rename = "counted-by")]
+    CountedBy(String),
+    #[serde(rename = "sized-by")]
+    SizedBy(String),
+    #[serde(rename = "ended-by")]
+    EndedBy(String),
+}
+
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct TypeOverride {
@@ -704,6 +728,8 @@ pub struct TypeOverride {
     pub nullability: Option<Nullability>,
     #[serde(default)]
     pub generics: Option<Vec<ItemGeneric>>,
+    #[serde(default)]
+    pub bounds: PointerBounds,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

@@ -6,7 +6,7 @@ use std::{fmt, iter, mem};
 use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
 
-use crate::config::{ItemGeneric, TypeOverride};
+use crate::config::{ItemGeneric, PointerBounds, TypeOverride};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::id::{ItemIdentifier, ItemTree};
@@ -737,6 +737,7 @@ impl PointeeTy {
                 nullability: Nullability::Unspecified,
                 is_const: false,
                 lifetime: Lifetime::Unspecified,
+                bounds: PointerBounds::Single,
                 pointee,
             } => match *pointee {
                 Ty::Pointee(pointee) => pointee,
@@ -1494,16 +1495,12 @@ pub enum Ty {
         nullability: Nullability,
         is_const: bool,
         lifetime: Lifetime,
+        bounds: PointerBounds,
         pointee: Box<Self>,
     },
     TypeDef {
         id: ItemIdentifier,
         to: Box<Self>,
-    },
-    IncompleteArray {
-        nullability: Nullability,
-        is_const: bool,
-        pointee: Box<Self>,
     },
     Array {
         element_type: Box<Self>,
@@ -1751,6 +1748,7 @@ impl Ty {
                     nullability,
                     is_const,
                     lifetime,
+                    bounds: PointerBounds::Single,
                     pointee: Box::new(Self::Pointee(PointeeTy::AnyObject { protocols: vec![] })),
                 }
             }
@@ -1766,6 +1764,7 @@ impl Ty {
                     nullability,
                     is_const: true,
                     lifetime,
+                    bounds: PointerBounds::Single,
                     pointee: Box::new(Self::Pointee(PointeeTy::AnyClass { protocols: vec![] })),
                 }
             }
@@ -1905,10 +1904,18 @@ impl Ty {
                 };
 
                 let pointee = Self::parse(pointee, Lifetime::Unspecified, context);
+                let bounds = if matches!(pointee, Ty::Pointee(_)) {
+                    // Object-like pointers default to being a pointer to a
+                    // single object.
+                    PointerBounds::Single
+                } else {
+                    PointerBounds::Unspecified
+                };
                 Self::Pointer {
                     nullability,
                     is_const,
                     lifetime,
+                    bounds,
                     pointee: Box::new(pointee),
                 }
             }
@@ -1936,6 +1943,7 @@ impl Ty {
                         nullability,
                         is_const,
                         lifetime,
+                        bounds: PointerBounds::Single,
                         pointee: Box::new(Self::Pointee(PointeeTy::Block {
                             sendable,
                             no_escape: fn_no_escape || no_escape,
@@ -2020,6 +2028,7 @@ impl Ty {
                     nullability,
                     is_const,
                     lifetime,
+                    bounds: PointerBounds::Single,
                     pointee: Box::new(Self::parse(ty, lifetime, context)),
                 }
             }
@@ -2219,6 +2228,7 @@ impl Ty {
                             nullability,
                             is_const,
                             lifetime,
+                            bounds: PointerBounds::Single,
                             pointee: Box::new(Self::Pointee(PointeeTy::Self_)),
                         }
                     }
@@ -2230,6 +2240,7 @@ impl Ty {
                             nullability,
                             is_const,
                             lifetime,
+                            bounds: PointerBounds::Unspecified,
                             pointee: Box::new(Self::TypeDef {
                                 id: ItemIdentifier::builtin("dispatch_object_s"),
                                 to: Box::new(Self::Primitive(Primitive::PtrDiff)),
@@ -2248,6 +2259,7 @@ impl Ty {
                             nullability,
                             is_const,
                             lifetime,
+                            bounds: PointerBounds::Single,
                             pointee,
                         };
                     }
@@ -2260,6 +2272,7 @@ impl Ty {
                         nullability,
                         is_const,
                         lifetime,
+                        bounds: PointerBounds::Single,
                         pointee: Box::new(Self::Pointee(PointeeTy::GenericParam {
                             name: typedef_name,
                         })),
@@ -2298,6 +2311,7 @@ impl Ty {
                     nullability: inner_nullability,
                     is_const: inner_is_const,
                     lifetime: inner_lifetime,
+                    bounds: inner_bounds,
                     pointee,
                 } = &mut inner
                 {
@@ -2315,6 +2329,7 @@ impl Ty {
                     if lifetime != Lifetime::Unspecified {
                         *inner_lifetime = lifetime;
                     }
+                    *inner_bounds = PointerBounds::Single;
 
                     if pointee
                         .is_direct_cf_type(&id.name, bridged_to(&declaration, context).is_some())
@@ -2408,10 +2423,12 @@ impl Ty {
                     .get_element_type()
                     .expect("incomplete array to have element type");
 
-                let pointee = Self::parse(ty, lifetime, context);
-                Self::IncompleteArray {
+                let pointee = Self::parse(ty, Lifetime::Unspecified, context);
+                Self::Pointer {
                     nullability,
                     is_const,
+                    lifetime,
+                    bounds: PointerBounds::CountedBy("Unknown".into()),
                     pointee: Box::new(pointee),
                 }
             }
@@ -2430,6 +2447,7 @@ impl Ty {
                 let num_elements = ty
                     .get_size()
                     .expect("constant array to have element length");
+                // TODO: PointerBounds::CountedBy(format!("{num_elements}"))
                 Self::Array {
                     element_type: Box::new(element_type),
                     num_elements,
@@ -2465,11 +2483,6 @@ impl Ty {
                 pointee,
                 nullability,
                 ..
-            }
-            | Self::IncompleteArray {
-                pointee,
-                nullability,
-                ..
             } => pointee
                 .required_items()
                 .chain((*nullability == Nullability::NonNull).then(ItemTree::core_ptr_nonnull))
@@ -2495,9 +2508,6 @@ impl Ty {
             Self::Simd { .. } => false,
             Self::Sel { .. } => false,
             Self::Pointer { pointee, .. } => pointee.requires_mainthreadmarker(self_requires),
-            Self::IncompleteArray { pointee, .. } => {
-                pointee.requires_mainthreadmarker(self_requires)
-            }
             Self::TypeDef { to, .. } => to.requires_mainthreadmarker(self_requires),
             Self::Array { element_type, .. } => {
                 element_type.requires_mainthreadmarker(self_requires)
@@ -2516,8 +2526,9 @@ impl Ty {
         match self {
             Self::Pointee(pointee_ty) => pointee_ty.provides_mainthreadmarker(self_provides),
             Self::Pointer {
-                // Only visit non-null pointers
+                // Only visit non-null single pointers.
                 nullability: Nullability::NonNull,
+                bounds: PointerBounds::Single,
                 pointee,
                 ..
             } => pointee.provides_mainthreadmarker(self_provides),
@@ -2548,21 +2559,16 @@ impl Ty {
             // always safe. Note though that we still defer to the actual
             // function pointee to figure out if it's safe in that particular
             // situation.
-            Self::Pointer { pointee, .. }
-                if matches!(**pointee, Ty::Pointee(PointeeTy::Fn { .. })) =>
-            {
-                pointee.safety()
-            }
+            Self::Pointer {
+                bounds: PointerBounds::Single,
+                pointee,
+                ..
+            } if matches!(**pointee, Ty::Pointee(PointeeTy::Fn { .. })) => pointee.safety(),
             // By default, all other pointers aren't safe in arguments, though
             // they are generally safe to return (at least if the pointee is).
             Self::Pointer {
-                pointee,
                 nullability,
-                ..
-            }
-            | Self::IncompleteArray {
                 pointee,
-                nullability,
                 ..
             } => {
                 let reason = if *nullability == Nullability::Nullable {
@@ -2610,15 +2616,11 @@ impl Ty {
             //
             // This is safe if the pointee is.
             Self::Pointer {
+                bounds: PointerBounds::Single,
                 nullability,
                 pointee,
                 ..
-            } if pointee.is_object_like()
-                || matches!(
-                    &**pointee,
-                    Self::Pointee(PointeeTy::Block { .. }) | Self::Pointee(PointeeTy::Fn { .. })
-                ) =>
-            {
+            } => {
                 let mut safety = pointee.safety();
                 if *nullability == Nullability::Unspecified {
                     // Mark as unknown in argument, to avoid situations where
@@ -2642,6 +2644,7 @@ impl Ty {
             nullability,
             is_const: false,
             lifetime: Lifetime::Unspecified,
+            bounds: PointerBounds::Unspecified, // TODO: Is this correct?
             pointee,
         } = self
         {
@@ -2649,6 +2652,7 @@ impl Ty {
                 nullability: inner_nullability,
                 is_const: _,
                 lifetime: Lifetime::Autoreleasing,
+                bounds: PointerBounds::Single,
                 pointee,
             } = &**pointee
             {
@@ -2713,7 +2717,6 @@ impl Ty {
             Self::Primitive(_) | Self::Simd { .. } | Self::Sel { .. } => None,
             Self::Pointee(pointee) => pointee.implementable(),
             Self::Pointer { pointee, .. }
-            | Self::IncompleteArray { pointee, .. }
             | Self::Array {
                 element_type: pointee,
                 ..
@@ -2906,6 +2909,7 @@ impl Ty {
                     is_const,
                     // Ignore
                     lifetime: _,
+                    bounds,
                     pointee,
                 } => match &**pointee {
                     Self::Pointee(PointeeTy::Fn {
@@ -2913,7 +2917,7 @@ impl Ty {
                         no_escape: _,
                         arguments,
                         result_type,
-                    }) => {
+                    }) if *bounds == PointerBounds::Single => {
                         if *nullability != Nullability::NonNull {
                             write!(f, "Option<")?;
                         }
@@ -2947,19 +2951,6 @@ impl Ty {
                 },
                 Self::TypeDef { id, .. } => {
                     write!(f, "{}", id.path())
-                }
-                Self::IncompleteArray {
-                    nullability,
-                    is_const,
-                    pointee,
-                } => {
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "NonNull<{}>", pointee.behind_pointer())
-                    } else if *is_const {
-                        write!(f, "*const {}", pointee.behind_pointer())
-                    } else {
-                        write!(f, "*mut {}", pointee.behind_pointer())
-                    }
                 }
                 Self::Array {
                     element_type,
@@ -2996,6 +2987,7 @@ impl Ty {
             Self::Pointer {
                 nullability,
                 pointee,
+                bounds: PointerBounds::Single,
                 ..
             } if pointee.is_static_object() => {
                 if *nullability == Nullability::NonNull {
@@ -3008,6 +3000,7 @@ impl Ty {
             Self::Pointer {
                 nullability,
                 lifetime: _, // TODO: Use this somehow?
+                bounds: PointerBounds::Single,
                 pointee,
                 ..
             } if pointee.is_object_like() && !pointee.is_static_object() => {
@@ -3038,6 +3031,7 @@ impl Ty {
             Self::Pointer {
                 nullability: Nullability::Nullable,
                 lifetime: Lifetime::Unspecified,
+                bounds: PointerBounds::Single,
                 pointee,
                 ..
             } if pointee.is_static_object() => {
@@ -3054,6 +3048,7 @@ impl Ty {
             Self::Pointer {
                 nullability: Nullability::Nullable,
                 lifetime: Lifetime::Unspecified,
+                bounds: PointerBounds::Single,
                 pointee,
                 ..
             } if pointee.is_object_like() => {
@@ -3105,6 +3100,7 @@ impl Ty {
             Self::Pointer {
                 nullability,
                 pointee,
+                bounds: PointerBounds::Single,
                 ..
             } if pointee.is_static_object() => {
                 if *nullability == Nullability::NonNull {
@@ -3122,16 +3118,26 @@ impl Ty {
     pub(crate) fn fn_return_required_items(&self) -> impl Iterator<Item = ItemTree> {
         let mut items: Vec<_> = self.required_items().collect();
         match self {
-            Self::Pointer { pointee, .. } if pointee.is_cf_type() => {
+            Self::Pointer {
+                bounds: PointerBounds::Single,
+                pointee,
+                ..
+            } if pointee.is_cf_type() => {
                 items.push(ItemTree::cf("CFRetained"));
                 items.push(ItemTree::core_ptr_nonnull());
             }
-            Self::Pointer { pointee, .. }
-                if pointee.is_objc_type() && !pointee.is_static_object() =>
-            {
+            Self::Pointer {
+                bounds: PointerBounds::Single,
+                pointee,
+                ..
+            } if pointee.is_objc_type() && !pointee.is_static_object() => {
                 items.push(ItemTree::objc("Retained"));
             }
-            Self::Pointer { pointee, .. } if pointee.is_dispatch_type() => {
+            Self::Pointer {
+                bounds: PointerBounds::Single,
+                pointee,
+                ..
+            } if pointee.is_dispatch_type() => {
                 items.push(ItemTree::dispatch("DispatchRetained"));
             }
             _ => {}
@@ -3193,8 +3199,9 @@ impl Ty {
             Self::Pointer {
                 nullability,
                 is_const,
+                lifetime: _,
+                bounds: _,
                 pointee,
-                ..
             } => {
                 // Ignore nullability, always emit a nullable pointer. We will
                 // unwrap it later in `fn_return_converter`.
@@ -3226,9 +3233,10 @@ impl Ty {
             }
             Self::Pointer {
                 nullability,
+                is_const: _,
                 lifetime,
+                bounds,
                 pointee,
-                ..
             } => {
                 match lifetime {
                     Lifetime::Autoreleasing if !returns_retained => {}
@@ -3237,7 +3245,7 @@ impl Ty {
                     _ => error!(?lifetime, returns_retained, "invalid lifetime"),
                 }
 
-                if pointee.is_static_object() {
+                if pointee.is_static_object() && *bounds == PointerBounds::Single {
                     if *nullability == Nullability::NonNull {
                         let res = format!(" -> &'static {}", pointee.behind_pointer());
                         Some((res, start, ";\nret.expect(\"function was marked as returning non-null, but actually returned NULL\")"))
@@ -3245,21 +3253,24 @@ impl Ty {
                         // No conversion necessary
                         None
                     }
-                } else if pointee.is_cf_type() {
+                } else if pointee.is_cf_type() && *bounds == PointerBounds::Single {
                     let res = if *nullability == Nullability::NonNull {
                         format!(" -> CFRetained<{}>", pointee.behind_pointer())
                     } else {
                         format!(" -> Option<CFRetained<{}>>", pointee.behind_pointer())
                     };
                     Some((res, start, end_cf(*nullability)))
-                } else if pointee.is_dispatch_type() {
+                } else if pointee.is_dispatch_type() && *bounds == PointerBounds::Single {
                     let res = if *nullability == Nullability::NonNull {
                         format!(" -> DispatchRetained<{}>", pointee.behind_pointer())
                     } else {
                         format!(" -> Option<DispatchRetained<{}>>", pointee.behind_pointer())
                     };
                     Some((res, start, end_dispatch(*nullability)))
-                } else if pointee.is_objc_type() && !pointee.is_static_object() {
+                } else if pointee.is_objc_type()
+                    && !pointee.is_static_object()
+                    && *bounds == PointerBounds::Single
+                {
                     let res = if *nullability == Nullability::NonNull {
                         format!(" -> Retained<{}>", pointee.behind_pointer())
                     } else {
@@ -3288,6 +3299,7 @@ impl Ty {
                 // constant.
                 is_const: _,
                 lifetime: Lifetime::Strong | Lifetime::Unspecified,
+                bounds: PointerBounds::Single,
                 pointee,
             } if pointee.is_object_like() || **pointee == Ty::Pointee(PointeeTy::CStr) => {
                 if *nullability == Nullability::NonNull {
@@ -3308,6 +3320,7 @@ impl Ty {
                 // constant.
                 is_const: _,
                 lifetime: Lifetime::Strong | Lifetime::Unspecified,
+                bounds: PointerBounds::Single,
                 pointee,
             } if pointee.is_object_like() || **pointee == Ty::Pointee(PointeeTy::CStr) => {
                 if *nullability == Nullability::NonNull {
@@ -3326,13 +3339,10 @@ impl Ty {
                 nullability: _,
                 is_const: _,
                 lifetime: _,
+                bounds: _,
                 pointee,
             } if pointee.is_object_like() => {
                 write!(f, "{}", pointee.behind_pointer())
-            }
-            Self::IncompleteArray { .. } => {
-                error!("incomplete array in typedef");
-                write!(f, "{}", self.behind_pointer())
             }
             // We mark `typedefs` as-if behind a pointer, as even though
             // typedefs are _usually_ to a pointer of the type (handled
@@ -3349,22 +3359,23 @@ impl Ty {
         FormatterFn(move |f| match self {
             Self::Pointer {
                 nullability,
-                is_const: _,
+                is_const,
                 lifetime,
+                bounds: PointerBounds::Single,
                 pointee,
-            } if pointee.is_object_like()
-                || matches!(
-                    **pointee,
-                    Self::Pointee(PointeeTy::AnyClass { .. } | PointeeTy::Block { .. })
-                ) =>
-            {
+            } if !matches!(**pointee, Self::Pointee(PointeeTy::Fn { .. })) => {
+                let mut_ = if *is_const || matches!(pointee.through_typedef(), Self::Pointee(_)) {
+                    ""
+                } else {
+                    "mut "
+                };
                 if *lifetime == Lifetime::Autoreleasing {
                     error!(?self, "autoreleasing in fn argument");
                 }
                 if *nullability == Nullability::NonNull {
-                    write!(f, "&{}", pointee.behind_pointer())
+                    write!(f, "&{mut_}{}", pointee.behind_pointer())
                 } else {
-                    write!(f, "Option<&{}>", pointee.behind_pointer())
+                    write!(f, "Option<&{mut_}{}>", pointee.behind_pointer())
                 }
             }
             _ => write!(f, "{}", self.plain()),
@@ -3394,6 +3405,7 @@ impl Ty {
                 nullability,
                 is_const: false,
                 lifetime: Lifetime::Unspecified,
+                bounds: PointerBounds::Unspecified, // TODO: Is this correct?
                 pointee,
             } => match &**pointee {
                 Self::Pointer {
@@ -3401,6 +3413,7 @@ impl Ty {
                     // Don't care about the const-ness of the id.
                     is_const: _,
                     lifetime: Lifetime::Autoreleasing,
+                    bounds: PointerBounds::Single,
                     pointee,
                 } => Some(FormatterFn(move |f| {
                     let tokens = if *inner_nullability == Nullability::NonNull {
@@ -3629,6 +3642,7 @@ impl Ty {
             pointee,
             is_const: _, // const-ness doesn't matter when defining the type
             nullability,
+            bounds: _,
             lifetime,
         } = self
         {
@@ -3752,6 +3766,7 @@ impl Ty {
             nullability: Nullability::NonNull | Nullability::Nullable,
             is_const,
             lifetime: Lifetime::Unspecified,
+            bounds: PointerBounds::Unspecified, // TODO.
             pointee,
         } = self
         {
@@ -3759,6 +3774,7 @@ impl Ty {
                 nullability: inner_nullability,
                 is_const: inner_is_const,
                 lifetime,
+                bounds: PointerBounds::Single,
                 pointee,
             } = &**pointee
             {
@@ -3830,9 +3846,7 @@ impl Ty {
     pub(crate) fn needs_simd(&self) -> bool {
         match self.through_typedef() {
             Self::Simd { .. } => true,
-            Self::Pointer { pointee, .. } | Self::IncompleteArray { pointee, .. } => {
-                pointee.needs_simd()
-            }
+            Self::Pointer { pointee, .. } => pointee.needs_simd(),
             Self::Array { element_type, .. } => element_type.needs_simd(),
             Self::Struct { fields, .. } | Self::Union { fields, .. } => {
                 fields.iter().any(|field| field.needs_simd())
@@ -3903,6 +3917,7 @@ impl Ty {
                 // Only non-NULL pointers are valid `self` types.
                 // (at least until we get arbitrary self types).
                 nullability: Nullability::NonNull,
+                bounds: PointerBounds::Single,
                 pointee,
                 ..
             } => match &**pointee {
@@ -3929,6 +3944,7 @@ impl Ty {
             nullability: Nullability::NonNull,
             is_const: true,
             lifetime: Lifetime::Unspecified,
+            bounds: PointerBounds::Single,
             pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef {
                 id: ItemIdentifier::cf_string(),
                 generics: vec![],
@@ -3942,6 +3958,7 @@ impl Ty {
             nullability: Nullability::NonNull,
             is_const: true,
             lifetime: Lifetime::Unspecified,
+            bounds: PointerBounds::Single,
             pointee: Box::new(Self::Pointee(PointeeTy::Class {
                 id: ItemIdentifier::ns_string(),
                 thread_safety: ThreadSafety::dummy(),
@@ -3958,6 +3975,7 @@ impl Ty {
             nullability: Nullability::NonNull,
             is_const: true,
             lifetime: Lifetime::Unspecified,
+            bounds: PointerBounds::Single,
             pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef {
                 id: ItemIdentifier::cf_uuid(),
                 generics: vec![],
@@ -3971,15 +3989,14 @@ impl Ty {
             nullability: Nullability::NonNull,
             is_const: true,
             lifetime: Lifetime::Unspecified,
+            bounds: PointerBounds::Single,
             pointee: Box::new(Self::Pointee(PointeeTy::CStr)),
         }
     }
 
     pub(crate) fn change_nullability(&mut self, new: Nullability) {
         match self {
-            Ty::Pointer { nullability, .. }
-            | Ty::Sel { nullability, .. }
-            | Ty::IncompleteArray { nullability, .. } => {
+            Ty::Pointer { nullability, .. } | Ty::Sel { nullability, .. } => {
                 if *nullability == new {
                     warn!(?nullability, ?new, "nullability already set");
                 }
@@ -4022,6 +4039,17 @@ impl Ty {
         if let Some(generics) = &override_.generics {
             self.change_generics(generics);
         }
+        if override_.bounds != PointerBounds::Unspecified {
+            match &mut *self {
+                Ty::Pointer { bounds, .. } => {
+                    if *bounds == override_.bounds {
+                        warn!(?bounds, new = ?override_.bounds, "bounds already set");
+                    }
+                    *bounds = override_.bounds.clone();
+                }
+                ty => error!(?ty, "unexpected type for bounds attribute"),
+            }
+        }
     }
 
     /// Whether the type is valid.
@@ -4051,12 +4079,14 @@ impl Ty {
                     nullability,
                     is_const,
                     lifetime,
+                    bounds,
                     pointee,
                 },
                 Self::Pointer {
                     nullability: other_nullability,
                     is_const: other_is_const,
                     lifetime: other_lifetime,
+                    bounds: other_bounds,
                     pointee: other_pointee,
                 },
             ) => {
@@ -4071,9 +4101,16 @@ impl Ty {
                     (this, other) => this == other,
                 };
 
+                // TODO.
+                let bounds_is_subtype = match (bounds, other_bounds) {
+                    (PointerBounds::Unspecified, _) => true,
+                    (this, other) => this == other,
+                };
+
                 nullability_is_subtype(nullability, other_nullability)
                     && const_is_subtype
                     && lifetime_is_subtype
+                    && bounds_is_subtype
                     && pointee.is_subtype_of(other_pointee)
             }
             (
@@ -4108,9 +4145,7 @@ impl Ty {
     /// similar constructs.
     pub(crate) fn can_affect_bounds(&self) -> bool {
         match self.through_typedef() {
-            Self::Pointer { pointee, .. } | Self::IncompleteArray { pointee, .. } => {
-                pointee.can_affect_bounds()
-            }
+            Self::Pointer { pointee, .. } => pointee.can_affect_bounds(),
             Self::Array { element_type, .. } => element_type.can_affect_bounds(),
             Self::Primitive(prim) | Self::Simd { ty: prim, .. } => matches!(
                 prim,
@@ -4279,12 +4314,14 @@ mod tests {
             nullability: Nullability::NonNull,
             is_const: false,
             lifetime: Lifetime::Unspecified,
+            bounds: PointerBounds::Unspecified,
             pointee: Box::new(Ty::Primitive(Primitive::Void)),
         };
         let nullable = Ty::Pointer {
             nullability: Nullability::Nullable,
             is_const: false,
             lifetime: Lifetime::Unspecified,
+            bounds: PointerBounds::Unspecified,
             pointee: Box::new(Ty::Primitive(Primitive::Void)),
         };
 
