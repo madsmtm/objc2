@@ -895,6 +895,13 @@ impl ItemTree {
         })
     }
 
+    pub fn core_mem_maybeuninit() -> Self {
+        Self::from_id(ItemIdentifier {
+            name: "MaybeUninit".into(),
+            location: Location::new("__core__.mem"),
+        })
+    }
+
     pub fn core_simd_simd() -> Self {
         Self::from_id(ItemIdentifier {
             name: "Simd".into(),
@@ -1171,6 +1178,9 @@ impl ItemTree {
                 "__core__.ffi" => Some("core::ffi::*".into()),
                 // HACKs
                 "__core__.ptr" if self.id.name == "NonNull" => Some("core::ptr::NonNull".into()),
+                "__core__.mem" if self.id.name == "MaybeUninit" => {
+                    Some("core::mem::MaybeUninit".into())
+                }
                 "__core__.simd" if self.id.name == "Simd" => Some("core::simd::*".into()),
                 "__core__.cell" if self.id.name == "UnsafeCell" => {
                     Some("core::cell::UnsafeCell".into())

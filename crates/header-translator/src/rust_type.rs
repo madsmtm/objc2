@@ -735,7 +735,8 @@ impl PointeeTy {
             Ty::Pointee(pointee) => pointee,
             Ty::Pointer {
                 nullability: Nullability::Unspecified,
-                is_const: false,
+                read: _,
+                written: _,
                 lifetime: Lifetime::Unspecified,
                 bounds: PointerBounds::Single,
                 pointee,
@@ -1493,7 +1494,10 @@ pub enum Ty {
     },
     Pointer {
         nullability: Nullability,
-        is_const: bool,
+        /// Whether this pointer may be read through.
+        read: bool,
+        /// Whether this pointer may be written to.
+        written: bool,
         lifetime: Lifetime,
         bounds: PointerBounds,
         pointee: Box<Self>,
@@ -1746,7 +1750,8 @@ impl Ty {
 
                 Self::Pointer {
                     nullability,
-                    is_const,
+                    read: true,
+                    written: !is_const,
                     lifetime,
                     bounds: PointerBounds::Single,
                     pointee: Box::new(Self::Pointee(PointeeTy::AnyObject { protocols: vec![] })),
@@ -1762,7 +1767,8 @@ impl Ty {
 
                 Self::Pointer {
                     nullability,
-                    is_const: true,
+                    read: true,
+                    written: false,
                     lifetime,
                     bounds: PointerBounds::Single,
                     pointee: Box::new(Self::Pointee(PointeeTy::AnyClass { protocols: vec![] })),
@@ -1913,7 +1919,11 @@ impl Ty {
                 };
                 Self::Pointer {
                     nullability,
-                    is_const,
+                    // Assuming the pointer may be read from is the safe default.
+                    read: true,
+                    // Assuming the pointer may be written to is a safe default,
+                    // but we can probably relax this if the pointer is `const`.
+                    written: !is_const, // Heuristic
                     lifetime,
                     bounds,
                     pointee: Box::new(pointee),
@@ -1941,7 +1951,9 @@ impl Ty {
                         result_type,
                     }) => Self::Pointer {
                         nullability,
-                        is_const,
+                        read: true,
+                        // TODO: What does `const` mean on block pointers?
+                        written: !is_const,
                         lifetime,
                         bounds: PointerBounds::Single,
                         pointee: Box::new(Self::Pointee(PointeeTy::Block {
@@ -2026,7 +2038,8 @@ impl Ty {
 
                 Self::Pointer {
                     nullability,
-                    is_const,
+                    read: true,
+                    written: !is_const,
                     lifetime,
                     bounds: PointerBounds::Single,
                     pointee: Box::new(Self::parse(ty, lifetime, context)),
@@ -2226,7 +2239,8 @@ impl Ty {
                     "instancetype" => {
                         return Self::Pointer {
                             nullability,
-                            is_const,
+                            read: true,
+                            written: !is_const,
                             lifetime,
                             bounds: PointerBounds::Single,
                             pointee: Box::new(Self::Pointee(PointeeTy::Self_)),
@@ -2238,7 +2252,8 @@ impl Ty {
                     "dispatch_object_t" => {
                         return Self::Pointer {
                             nullability,
-                            is_const,
+                            read: true,
+                            written: !is_const,
                             lifetime,
                             bounds: PointerBounds::Unspecified,
                             pointee: Box::new(Self::TypeDef {
@@ -2257,7 +2272,8 @@ impl Ty {
                         let pointee = Box::new(Self::Pointee(PointeeTy::DispatchTypeDef { id }));
                         return Self::Pointer {
                             nullability,
-                            is_const,
+                            read: true,
+                            written: !is_const,
                             lifetime,
                             bounds: PointerBounds::Single,
                             pointee,
@@ -2270,7 +2286,8 @@ impl Ty {
                 if let EntityKind::TemplateTypeParameter = declaration.get_kind() {
                     return Self::Pointer {
                         nullability,
-                        is_const,
+                        read: true,
+                        written: !is_const,
                         lifetime,
                         bounds: PointerBounds::Single,
                         pointee: Box::new(Self::Pointee(PointeeTy::GenericParam {
@@ -2309,7 +2326,8 @@ impl Ty {
                 // parameter.
                 if let Self::Pointer {
                     nullability: inner_nullability,
-                    is_const: inner_is_const,
+                    read: _,
+                    written: inner_writes,
                     lifetime: inner_lifetime,
                     bounds: inner_bounds,
                     pointee,
@@ -2324,7 +2342,7 @@ impl Ty {
                         *inner_nullability = nullability;
                     }
                     if is_const {
-                        *inner_is_const = is_const;
+                        *inner_writes = !is_const;
                     }
                     if lifetime != Lifetime::Unspecified {
                         *inner_lifetime = lifetime;
@@ -2426,7 +2444,8 @@ impl Ty {
                 let pointee = Self::parse(ty, Lifetime::Unspecified, context);
                 Self::Pointer {
                     nullability,
-                    is_const,
+                    read: true,
+                    written: !is_const,
                     lifetime,
                     bounds: PointerBounds::CountedBy("Unknown".into()),
                     pointee: Box::new(pointee),
@@ -2481,11 +2500,13 @@ impl Ty {
             Self::Sel { .. } => vec![ItemTree::objc("Sel")],
             Self::Pointer {
                 pointee,
+                read,
                 nullability,
                 ..
             } => pointee
                 .required_items()
                 .chain((*nullability == Nullability::NonNull).then(ItemTree::core_ptr_nonnull))
+                .chain((!read).then(ItemTree::core_mem_maybeuninit))
                 .collect(),
             Self::TypeDef { id, to, .. } => vec![ItemTree::new(id.clone(), to.required_items())],
             Self::Array { element_type, .. } => element_type.required_items().collect(),
@@ -2642,7 +2663,8 @@ impl Ty {
         // Out pointers
         if let Self::Pointer {
             nullability,
-            is_const: false,
+            read: _,
+            written: true,
             lifetime: Lifetime::Unspecified,
             bounds: PointerBounds::Unspecified, // TODO: Is this correct?
             pointee,
@@ -2650,7 +2672,8 @@ impl Ty {
         {
             if let Self::Pointer {
                 nullability: inner_nullability,
-                is_const: _,
+                read: _,
+                written: _,
                 lifetime: Lifetime::Autoreleasing,
                 bounds: PointerBounds::Single,
                 pointee,
@@ -2906,7 +2929,8 @@ impl Ty {
                 }
                 Self::Pointer {
                     nullability,
-                    is_const,
+                    read,
+                    written,
                     // Ignore
                     lifetime: _,
                     bounds,
@@ -2940,12 +2964,13 @@ impl Ty {
                         Ok(())
                     }
                     pointee => {
+                        let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
                         if *nullability == Nullability::NonNull {
-                            write!(f, "NonNull<{}>", pointee.behind_pointer())
-                        } else if *is_const {
-                            write!(f, "*const {}", pointee.behind_pointer())
+                            write!(f, "NonNull<{pointee}>")
+                        } else if *written {
+                            write!(f, "*mut {pointee}")
                         } else {
-                            write!(f, "*mut {}", pointee.behind_pointer())
+                            write!(f, "*const {pointee}")
                         }
                     }
                 },
@@ -3198,7 +3223,8 @@ impl Ty {
             Self::Primitive(Primitive::Void) => Ok(()),
             Self::Pointer {
                 nullability,
-                is_const,
+                read,
+                written,
                 lifetime: _,
                 bounds: _,
                 pointee,
@@ -3215,12 +3241,13 @@ impl Ty {
                 } else if pointee.is_objc_type() {
                     write!(f, "-> *mut {}", pointee.behind_pointer())
                 } else {
+                    let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
                     if *nullability == Nullability::NonNull {
-                        write!(f, "-> Option<NonNull<{}>>", pointee.behind_pointer())
-                    } else if *is_const {
-                        write!(f, " -> *const {}", pointee.behind_pointer())
+                        write!(f, "-> Option<NonNull<{pointee}>>",)
+                    } else if *written {
+                        write!(f, " -> *mut {pointee}")
                     } else {
-                        write!(f, " -> *mut {}", pointee.behind_pointer())
+                        write!(f, " -> *const {pointee}",)
                     }
                 }
             }
@@ -3233,7 +3260,8 @@ impl Ty {
             }
             Self::Pointer {
                 nullability,
-                is_const: _,
+                read,
+                written: _,
                 lifetime,
                 bounds,
                 pointee,
@@ -3278,8 +3306,9 @@ impl Ty {
                     };
                     Some((res, start, end_objc(*nullability)))
                 } else {
+                    let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
                     if *nullability == Nullability::NonNull {
-                        let res = format!(" -> NonNull<{}>", pointee.behind_pointer());
+                        let res = format!(" -> NonNull<{pointee}>");
                         Some((res, start, ";\nret.expect(\"function was marked as returning non-null, but actually returned NULL\")"))
                     } else {
                         None
@@ -3295,17 +3324,19 @@ impl Ty {
         FormatterFn(move |f| match self {
             Self::Pointer {
                 nullability,
+                read,
                 // `const` is irrelevant in statics since they're always
                 // constant.
-                is_const: _,
+                written: _,
                 lifetime: Lifetime::Strong | Lifetime::Unspecified,
                 bounds: PointerBounds::Single,
                 pointee,
             } if pointee.is_object_like() || **pointee == Ty::Pointee(PointeeTy::CStr) => {
+                let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
                 if *nullability == Nullability::NonNull {
-                    write!(f, "&'static {}", pointee.behind_pointer())
+                    write!(f, "&'static {pointee}")
                 } else {
-                    write!(f, "Option<&'static {}>", pointee.behind_pointer())
+                    write!(f, "Option<&'static {pointee}>")
                 }
             }
             _ => write!(f, "{}", self.behind_pointer()),
@@ -3316,17 +3347,19 @@ impl Ty {
         FormatterFn(move |f| match self {
             Self::Pointer {
                 nullability,
+                read,
                 // `const` is irrelevant in constants since they're always
                 // constant.
-                is_const: _,
+                written: _,
                 lifetime: Lifetime::Strong | Lifetime::Unspecified,
                 bounds: PointerBounds::Single,
                 pointee,
             } if pointee.is_object_like() || **pointee == Ty::Pointee(PointeeTy::CStr) => {
+                let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
                 if *nullability == Nullability::NonNull {
-                    write!(f, "&{}", pointee.behind_pointer())
+                    write!(f, "&{pointee}")
                 } else {
-                    write!(f, "Option<&{}>", pointee.behind_pointer())
+                    write!(f, "Option<&{pointee}>")
                 }
             }
             _ => write!(f, "{}", self.plain()),
@@ -3337,7 +3370,8 @@ impl Ty {
         FormatterFn(move |f| match self {
             Self::Pointer {
                 nullability: _,
-                is_const: _,
+                read: _,
+                written: _,
                 lifetime: _,
                 bounds: _,
                 pointee,
@@ -3359,23 +3393,28 @@ impl Ty {
         FormatterFn(move |f| match self {
             Self::Pointer {
                 nullability,
-                is_const,
+                read,
+                written,
                 lifetime,
                 bounds: PointerBounds::Single,
                 pointee,
             } if !matches!(**pointee, Self::Pointee(PointeeTy::Fn { .. })) => {
-                let mut_ = if *is_const || matches!(pointee.through_typedef(), Self::Pointee(_)) {
+                if *lifetime == Lifetime::Autoreleasing {
+                    error!(?self, "autoreleasing in fn argument");
+                }
+
+                let inner = maybemaybeuninit(*read, pointee.behind_pointer());
+                // We don't care if `PointeeTy` pointers may be written to,
+                // since those use interior mutability anyhow.
+                let mut_ = if !written || matches!(pointee.through_typedef(), Self::Pointee(_)) {
                     ""
                 } else {
                     "mut "
                 };
-                if *lifetime == Lifetime::Autoreleasing {
-                    error!(?self, "autoreleasing in fn argument");
-                }
                 if *nullability == Nullability::NonNull {
-                    write!(f, "&{mut_}{}", pointee.behind_pointer())
+                    write!(f, "&{mut_}{inner}")
                 } else {
-                    write!(f, "Option<&{mut_}{}>", pointee.behind_pointer())
+                    write!(f, "Option<&{mut_}{inner}>")
                 }
             }
             _ => write!(f, "{}", self.plain()),
@@ -3403,7 +3442,8 @@ impl Ty {
         match self {
             Self::Pointer {
                 nullability,
-                is_const: false,
+                read,
+                written: true,
                 lifetime: Lifetime::Unspecified,
                 bounds: PointerBounds::Unspecified, // TODO: Is this correct?
                 pointee,
@@ -3411,20 +3451,27 @@ impl Ty {
                 Self::Pointer {
                     nullability: inner_nullability,
                     // Don't care about the const-ness of the id.
-                    is_const: _,
+                    read: _,
+                    written: _,
                     lifetime: Lifetime::Autoreleasing,
                     bounds: PointerBounds::Single,
                     pointee,
                 } => Some(FormatterFn(move |f| {
-                    let tokens = if *inner_nullability == Nullability::NonNull {
-                        format!("Retained<{}>", pointee.behind_pointer())
-                    } else {
-                        format!("Option<Retained<{}>>", pointee.behind_pointer())
-                    };
+                    if !read {
+                        // We don't (yet) support `&mut MaybeUninit<Retained<T>>`.
+                        error!("out pointers must currently be readable");
+                    }
+                    let inner = FormatterFn(|f| {
+                        if *inner_nullability == Nullability::NonNull {
+                            write!(f, "Retained<{}>", pointee.behind_pointer())
+                        } else {
+                            write!(f, "Option<Retained<{}>>", pointee.behind_pointer())
+                        }
+                    });
                     if *nullability == Nullability::NonNull {
-                        write!(f, "&mut {tokens}")
+                        write!(f, "&mut {inner}")
                     } else {
-                        write!(f, "Option<&mut {tokens}>")
+                        write!(f, "Option<&mut {inner}>")
                     }
                 })),
                 _ => None,
@@ -3640,7 +3687,8 @@ impl Ty {
     ) -> Option<(bool, Option<&str>)> {
         if let Self::Pointer {
             pointee,
-            is_const: _, // const-ness doesn't matter when defining the type
+            read: _,
+            written: _, // const-ness doesn't matter when defining the type
             nullability,
             bounds: _,
             lifetime,
@@ -3764,7 +3812,8 @@ impl Ty {
             // so doesn't matter whether it's optional or not.
             // TODO(breaking): Allow Unspecified here too.
             nullability: Nullability::NonNull | Nullability::Nullable,
-            is_const,
+            read: _,
+            written,
             lifetime: Lifetime::Unspecified,
             bounds: PointerBounds::Unspecified, // TODO.
             pointee,
@@ -3772,7 +3821,8 @@ impl Ty {
         {
             if let Self::Pointer {
                 nullability: inner_nullability,
-                is_const: inner_is_const,
+                read: inner_read,
+                written: inner_written,
                 lifetime,
                 bounds: PointerBounds::Single,
                 pointee,
@@ -3788,13 +3838,14 @@ impl Ty {
                     if !id.is_nserror() {
                         return false;
                     }
-                    assert!(!is_const, "expected error not const {self:?}");
+                    assert!(*written, "expected error written {self:?}");
                     assert_ne!(
                         *inner_nullability,
                         Nullability::NonNull,
                         "invalid inner error nullability {self:?}"
                     );
-                    assert!(!inner_is_const, "expected inner error not const {self:?}");
+                    assert!(*inner_read, "expected inner error read {self:?}");
+                    assert!(*inner_written, "expected inner error written {self:?}");
 
                     assert_eq!(generics, &[], "invalid error generics {self:?}");
                     assert_eq!(protocols, &[], "invalid error protocols {self:?}");
@@ -3942,7 +3993,8 @@ impl Ty {
     pub(crate) fn const_cf_string_ref() -> Self {
         Self::Pointer {
             nullability: Nullability::NonNull,
-            is_const: true,
+            read: true,
+            written: false,
             lifetime: Lifetime::Unspecified,
             bounds: PointerBounds::Single,
             pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef {
@@ -3956,7 +4008,8 @@ impl Ty {
     pub(crate) fn const_ns_string_ref() -> Self {
         Self::Pointer {
             nullability: Nullability::NonNull,
-            is_const: true,
+            read: true,
+            written: false,
             lifetime: Lifetime::Unspecified,
             bounds: PointerBounds::Single,
             pointee: Box::new(Self::Pointee(PointeeTy::Class {
@@ -3973,7 +4026,8 @@ impl Ty {
     pub(crate) fn const_cf_uuid_ref() -> Self {
         Self::Pointer {
             nullability: Nullability::NonNull,
-            is_const: true,
+            read: true,
+            written: false,
             lifetime: Lifetime::Unspecified,
             bounds: PointerBounds::Single,
             pointee: Box::new(Self::Pointee(PointeeTy::CFTypeDef {
@@ -3987,7 +4041,8 @@ impl Ty {
     pub(crate) fn const_cstr_ref() -> Self {
         Self::Pointer {
             nullability: Nullability::NonNull,
-            is_const: true,
+            read: true,
+            written: false,
             lifetime: Lifetime::Unspecified,
             bounds: PointerBounds::Single,
             pointee: Box::new(Self::Pointee(PointeeTy::CStr)),
@@ -4050,6 +4105,28 @@ impl Ty {
                 ty => error!(?ty, "unexpected type for bounds attribute"),
             }
         }
+        if let Some(new) = override_.read {
+            match &mut *self {
+                Ty::Pointer { read, .. } => {
+                    if *read == new {
+                        warn!(read, new, "read-ness already set");
+                    }
+                    *read = new;
+                }
+                ty => error!(?ty, "unexpected type for read attribute"),
+            }
+        }
+        if let Some(new) = override_.written {
+            match &mut *self {
+                Ty::Pointer { written, .. } => {
+                    if *written == new {
+                        warn!(written, new, "write-ness already set");
+                    }
+                    *written = new;
+                }
+                ty => error!(?ty, "unexpected type for written attribute"),
+            }
+        }
     }
 
     /// Whether the type is valid.
@@ -4077,21 +4154,29 @@ impl Ty {
             (
                 Self::Pointer {
                     nullability,
-                    is_const,
+                    read,
+                    written,
                     lifetime,
                     bounds,
                     pointee,
                 },
                 Self::Pointer {
                     nullability: other_nullability,
-                    is_const: other_is_const,
+                    read: other_read,
+                    written: other_written,
                     lifetime: other_lifetime,
                     bounds: other_bounds,
                     pointee: other_pointee,
                 },
             ) => {
                 #[allow(clippy::match_single_binding)]
-                let const_is_subtype = match (is_const, other_is_const) {
+                let read_is_subtype = match (read, other_read) {
+                    // (true, false) => true,
+                    (this, other) => this == other,
+                };
+
+                #[allow(clippy::match_single_binding)]
+                let written_is_subtype = match (written, other_written) {
                     // (true, false) => true,
                     (this, other) => this == other,
                 };
@@ -4108,7 +4193,8 @@ impl Ty {
                 };
 
                 nullability_is_subtype(nullability, other_nullability)
-                    && const_is_subtype
+                    && read_is_subtype
+                    && written_is_subtype
                     && lifetime_is_subtype
                     && bounds_is_subtype
                     && pointee.is_subtype_of(other_pointee)
@@ -4184,6 +4270,16 @@ impl Ty {
             _ => None,
         }
     }
+}
+
+fn maybemaybeuninit(read: bool, inner: impl Display) -> impl Display {
+    FormatterFn(move |f| {
+        if read {
+            write!(f, "{inner}")
+        } else {
+            write!(f, "MaybeUninit<{inner}>")
+        }
+    })
 }
 
 /// Strip macros from unexposed types.
@@ -4312,14 +4408,16 @@ mod tests {
     fn subtyping() {
         let nonnull = Ty::Pointer {
             nullability: Nullability::NonNull,
-            is_const: false,
+            read: true,
+            written: true,
             lifetime: Lifetime::Unspecified,
             bounds: PointerBounds::Unspecified,
             pointee: Box::new(Ty::Primitive(Primitive::Void)),
         };
         let nullable = Ty::Pointer {
             nullability: Nullability::Nullable,
-            is_const: false,
+            read: true,
+            written: true,
             lifetime: Lifetime::Unspecified,
             bounds: PointerBounds::Unspecified,
             pointee: Box::new(Ty::Primitive(Primitive::Void)),

@@ -730,6 +730,19 @@ pub struct TypeOverride {
     pub generics: Option<Vec<ItemGeneric>>,
     #[serde(default)]
     pub bounds: PointerBounds,
+    /// Override whether this pointer is read from.
+    ///
+    /// By default, this is assumed for all pointers, but if we set this to
+    /// `false`, we can generate `MaybeUninit<T>` instead.
+    #[serde(default)]
+    pub read: Option<bool>,
+    /// Override whether this pointer is written to.
+    ///
+    /// By default, this is the inverse of the `const`-ness of the pointer.
+    /// That is safe by default, but in many cases we want to set this to
+    /// `false` to generate `*const T`/`&T` instead of `*mut T`/`&mut T`.
+    #[serde(default)]
+    pub written: Option<bool>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
