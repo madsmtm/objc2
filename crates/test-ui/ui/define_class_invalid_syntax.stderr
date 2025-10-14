@@ -175,7 +175,7 @@ error: unexpected end of macro invocation
   |                          ^ missing tokens in macro arguments
   |
 note: while trying to match `:`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/register_impls.rs
   |
   |         $param:ident : $param_ty:ty $(, $($rest:tt)*)?
   |                      ^
@@ -229,7 +229,7 @@ error: expected one of `->`, `<`, `where`, or `{`, found `test_fn_fn`
   |         fn fn test_fn_fn() {}
   |               ^^^^^^^^^^ expected one of `->`, `<`, `where`, or `{`
   |
- ::: $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ ::: $WORKSPACE/crates/objc2/src/__macros/define_class/register_impls.rs
   |
   |         $_associated_item:item
   |         ---------------------- while parsing argument for this `item` macro fragment
@@ -240,7 +240,7 @@ error: expected one of `->`, `where`, or `{`, found `<eof>`
   |         fn test_unfinished()
   |                            ^ expected one of `->`, `where`, or `{`
   |
- ::: $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ ::: $WORKSPACE/crates/objc2/src/__macros/define_class/register_impls.rs
   |
   |         $_associated_item:item
   |         ---------------------- while parsing argument for this `item` macro fragment
@@ -260,7 +260,7 @@ error: expected an item keyword
   |         #![doc = "inner_attribute"]
   |                                   ^
   |
- ::: $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ ::: $WORKSPACE/crates/objc2/src/__macros/define_class/register_impls.rs
   |
   |         $_associated_item:item
   |         ---------------------- while parsing argument for this `item` macro fragment
@@ -272,7 +272,7 @@ error: no rules expected `(`
   |                         ^ no rules expected this token in macro call
   |
 note: while trying to match reserved identifier `_`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
   |         (_ : $param_ty:ty $(, $($params_rest:tt)*)?)
   |          ^
@@ -288,7 +288,7 @@ error: no rules expected `)`
   | |_^ no rules expected this token in macro call
   |
 note: while trying to match `:`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
   |         ($param:ident : $param_ty:ty $(, $($params_rest:tt)*)?)
   |                       ^
@@ -301,7 +301,7 @@ error: no rules expected keyword `pub`
   |         ^^^ no rules expected this token in macro call
   |
 note: while trying to match keyword `unsafe`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
   |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
@@ -313,7 +313,7 @@ error: no rules expected keyword `const`
   |         ^^^^^ no rules expected this token in macro call
   |
 note: while trying to match keyword `unsafe`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
   |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
@@ -325,7 +325,7 @@ error: no rules expected keyword `async`
   |         ^^^^^ no rules expected this token in macro call
   |
 note: while trying to match keyword `unsafe`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
   |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
@@ -337,7 +337,7 @@ error: no rules expected keyword `extern`
   |         ^^^^^^ no rules expected this token in macro call
   |
 note: while trying to match keyword `unsafe`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
   |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
@@ -349,7 +349,7 @@ error: no rules expected `test_fn_fn`
   |               ^^^^^^^^^^ no rules expected this token in macro call
   |
 note: while trying to match `(`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
   |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |                       ^
@@ -361,7 +361,7 @@ error: no rules expected `<`
   |                        ^ no rules expected this token in macro call
   |
 note: while trying to match `(`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
   |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |                       ^
@@ -373,7 +373,7 @@ error: no rules expected `;`
   |                               ^ no rules expected this token in macro call
   |
 note: while trying to match meta-variable `$body:block`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
   |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |                                                       ^^^^^^^^^^^
@@ -385,7 +385,7 @@ error: unexpected end of macro invocation
   |                             ^ missing tokens in macro arguments
   |
 note: while trying to match meta-variable `$body:block`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
   |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |                                                       ^^^^^^^^^^^
@@ -397,7 +397,7 @@ error: no rules expected `!`
   |          ^ no rules expected this token in macro call
   |
 note: while trying to match `[`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
   |         $(#[$($m:tt)*])*
   |            ^
