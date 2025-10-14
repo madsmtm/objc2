@@ -89,9 +89,10 @@ where
     // only do that while the DispatchOnce is in use somewhere (i.e. it should
     // not be able to do that while the DispatchOnce is being moved).
     //
-    // Outside of being moved, the DispatchOnce can only be in two states:
-    // - Initialized.
-    // - Done.
+    // Outside of being in progress of initializing, the DispatchOnce can only
+    // be in two states:
+    // - Initialized == 0.
+    // - Done == !0.
     //
     // And those two states are freely movable.
     unsafe { DispatchOnce::once_f(predicate, context, invoke_closure::<F>) };
