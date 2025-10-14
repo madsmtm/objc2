@@ -180,32 +180,6 @@ note: while trying to match `:`
   |         $param:ident : $param_ty:ty $(, $($rest:tt)*)?
   |                      ^
 
-error: no rules expected `(`
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct BasicBadSyntax;
-... |
-  | | );
-  | |_^ no rules expected this token in macro call
-  |
-  = note: while trying to match end of macro
-  = note: this error originates in the macro `$crate::__define_class_register_methods` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: no rules expected `(`
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct BasicBadSyntax;
-... |
-  | | );
-  | |_^ no rules expected this token in macro call
-  |
-  = note: while trying to match end of macro
-  = note: this error originates in the macro `$crate::__define_class_register_methods` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
 error: expected identifier, found keyword `fn`
  --> ui/define_class_invalid_syntax.rs
   |

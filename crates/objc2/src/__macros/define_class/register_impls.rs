@@ -158,7 +158,7 @@ macro_rules! __define_class_register_methods {
 
         $($rest:tt)*
     } => {
-        $crate::__define_class_output_methods! {
+        $crate::__define_class_register_methods! {
             ($builder)
 
             $($rest)*
