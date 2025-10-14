@@ -676,7 +676,11 @@ macro_rules! __define_class_inner {
             }
 
             impl $crate::DefinedClass for $class {
-                type Ivars = $crate::__select_ivars!($($ivars)?);
+                type Ivars = $crate::__fallback_if_not_set!(
+                    ($($ivars)?)
+                    // Default ivars to unit.
+                    (())
+                );
 
                 #[inline]
                 fn __ivars_offset() -> $crate::__macros::isize {
@@ -864,18 +868,6 @@ macro_rules! __define_class_derives {
             ($for)
             ($($($rest)*)?)
         }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __select_ivars {
-    ($ivars:ty) => {
-        $ivars
-    };
-    () => {
-        // Default ivars to unit
-        ()
     };
 }
 
