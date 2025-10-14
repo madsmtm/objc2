@@ -482,11 +482,15 @@ macro_rules! define_class {
             ($crate::__define_class_inner)
             ($v)
             ($class)
+            // We duplicate the impls here, since we need them to create a
+            // thunk that is inserted into the class' method table.
             ($($impls)*)
         }
 
         // Methods.
         $crate::__define_class_output_impls! {
+            // TODO: Add $class here and verify that the same item is being
+            // implemented everywhere.
             $($impls)*
         }
     };

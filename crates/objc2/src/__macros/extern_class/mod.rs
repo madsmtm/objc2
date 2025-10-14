@@ -355,6 +355,7 @@ macro_rules! __extern_class_check_super_unsafe {
 #[macro_export]
 macro_rules! __extern_class_map_anyobject {
     ($t:ident) => {
+        // TODO: Take this from the generic default instead (if there is one).
         $crate::runtime::AnyObject
     };
 }
