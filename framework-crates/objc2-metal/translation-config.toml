@@ -29,6 +29,9 @@ fn.MTLCopyAllDevices.skipped = true
 # isize referencing usize.
 enum.MTLTensorDataType.use-value = true
 
+# Has different encoding on the simulator.
+struct.MTLResourceID.skipped = true
+
 ###
 ### Safety
 ###
