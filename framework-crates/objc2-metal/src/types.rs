@@ -22,11 +22,11 @@ unsafe impl Encode for MTLResourceID {
         // use `target_abi = "sim"`, it'd work on Rust 1.78, but it would also
         // cause a compilation error on lower versions (and our MSRV is still
         // at Rust 1.71, so that's probably unacceptable).
-        &[if cfg!(target_env = "sim") {
-            Encoding::Union("?", &[<u64>::ENCODING, <u64>::ENCODING])
+        if cfg!(target_env = "sim") {
+            &[Encoding::Union("?", &[<u64>::ENCODING, <u64>::ENCODING])]
         } else {
-            <u64>::ENCODING
-        }],
+            &[<u64>::ENCODING]
+        },
     );
 }
 
