@@ -13,7 +13,7 @@ impl RefUnwindSafe for NSUUID {}
 impl NSUUID {
     /// The 'nil UUID'.
     pub fn nil() -> Retained<Self> {
-        Self::initWithUUIDBytes(Self::alloc(), None)
+        Self::from_bytes([0; 16])
     }
 
     /// Create a new `NSUUID` from the given bytes.
@@ -33,7 +33,7 @@ impl NSUUID {
     /// assert_eq!(obj.as_bytes(), uuid.into_bytes());
     /// ```
     pub fn from_bytes(bytes: [u8; 16]) -> Retained<Self> {
-        Self::initWithUUIDBytes(Self::alloc(), Some(&bytes))
+        Self::initWithUUIDBytes(Self::alloc(), &bytes)
     }
 
     #[cfg(feature = "NSString")]

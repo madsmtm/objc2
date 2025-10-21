@@ -312,6 +312,14 @@ class.NSURL.bridged-to = "CoreFoundation.CFURL.CFURL"
 # TODO: Custom-define this bridging (needs extra feature in Cargo.toml)
 # class.NSNumber.bridged-to = "CoreFoundation.CFNumber.?"
 
+##
+## Fix types
+##
+
+# Passing NULL works, but only on later OS versions, doesn't work on e.g.
+# macOS 10.12 or iOS Simulator 17.2.
+class.NSUUID.methods."initWithUUIDBytes:".arguments.0.nullability = "nonnull"
+
 ###
 ### Safety
 ###
