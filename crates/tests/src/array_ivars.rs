@@ -25,20 +25,24 @@ use objc2_foundation::{NSDecimalNumber, NSThread};
 #[cfg_attr(feature = "gnustep-1-7", ignore = "bitfields have types")]
 fn nsdecimal_ivar_encoding() {
     let cls = NSDecimalNumber::class();
-    let expected = [
-        ("_exponent", EncodingBox::BitField(8, None)),
-        ("_length", EncodingBox::BitField(4, None)),
-        ("_isNegative", EncodingBox::BitField(1, None)),
-        ("_isCompact", EncodingBox::BitField(1, None)),
-        ("_reserved", EncodingBox::BitField(1, None)),
-        ("_hasExternalRefCount", EncodingBox::BitField(1, None)),
-        ("_refs", EncodingBox::BitField(16, None)),
-        // Incomplete arrays -> pointer.
-        (
-            "_mantissa",
-            EncodingBox::Pointer(Box::new(EncodingBox::UShort)),
-        ),
-    ];
+    let expected = |last| {
+        [
+            ("_exponent", EncodingBox::BitField(8, None)),
+            ("_length", EncodingBox::BitField(4, None)),
+            ("_isNegative", EncodingBox::BitField(1, None)),
+            ("_isCompact", EncodingBox::BitField(1, None)),
+            ("_reserved", EncodingBox::BitField(1, None)),
+            ("_hasExternalRefCount", EncodingBox::BitField(1, None)),
+            ("_refs", EncodingBox::BitField(16, None)),
+            ("_mantissa", last),
+        ]
+    };
+
+    // Incomplete arrays -> pointer here on newer Foundation versions, but
+    // -> zero-sized array on older versions.
+    let expected1 = expected(EncodingBox::Pointer(Box::new(EncodingBox::UShort)));
+    let expected2 = expected(EncodingBox::Array(0, Box::new(EncodingBox::UShort)));
+
     let actual: Vec<_> = (*cls.instance_variables())
         .iter()
         .map(|ivar| {
@@ -48,7 +52,7 @@ fn nsdecimal_ivar_encoding() {
             )
         })
         .collect();
-    assert_eq!(expected, *actual);
+    assert!(expected1 == *actual || expected2 == *actual, "{actual:#?}");
 }
 
 /// Defined in the header as:
