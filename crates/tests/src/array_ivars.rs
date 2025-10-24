@@ -64,6 +64,10 @@ fn nsdecimal_ivar_encoding() {
 /// }
 /// ```
 #[test]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "GNUStep has a different set of ivars"
+)]
 fn nsthread_ivar_encoding() {
     let cls = NSThread::class();
     let expected = [
