@@ -49,3 +49,10 @@ MTLDevice = [
     "MTLResource",
     "MTLGPUAddress",
 ]
+# Missed in v0.3.2, see <github.com/Traverse-Research/saxaboom/pull/44>
+MTLBuffer = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "MTLGPUAddress",
+]
