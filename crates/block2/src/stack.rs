@@ -351,7 +351,7 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
         } else {
             BlockFlags::EMPTY
         };
-        // See discussion in `new` above with regards to the safety of the
+        // See discussion in `maybe_encoded` above with regards to the safety of the
         // pointer to the descriptor.
         let descriptor = match (mem::needs_drop::<Self>(), E::IS_NONE) {
             (true, true) => {
