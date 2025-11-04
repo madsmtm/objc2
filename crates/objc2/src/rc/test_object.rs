@@ -4,7 +4,7 @@ use core::ptr;
 
 use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{NSObject, NSObjectProtocol, NSZone};
-use crate::{define_class, msg_send, ClassType};
+use crate::{define_class, msg_send, ClassType, Ivars};
 
 // TODO: Put tests that use this in another crate
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -108,7 +108,7 @@ define_class!(
         #[unsafe(method_id(init))]
         unsafe fn init(this: Allocated<Self>) -> Retained<Self> {
             TEST_DATA.with(|data| data.borrow_mut().init += 1);
-            let this = this.set_ivars(());
+            let this = this.set_ivars(Ivars::<RcTestObject> {});
             unsafe { msg_send![super(this), init] }
         }
 

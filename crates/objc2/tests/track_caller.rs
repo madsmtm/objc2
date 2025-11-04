@@ -10,7 +10,7 @@ use std::sync::Mutex;
 use objc2::encode::Encode;
 use objc2::rc::{self, Allocated, Retained};
 use objc2::runtime::{self, NSObject};
-use objc2::{class, define_class, msg_send, AnyThread, ClassType};
+use objc2::{class, define_class, msg_send, AnyThread, ClassType, Ivars};
 
 #[path = "../src/rc/test_object.rs"]
 #[allow(dead_code)]

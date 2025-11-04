@@ -516,7 +516,7 @@ mod tests {
             impl ImplsDrop {
                 #[unsafe(method_id(init))]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-                    unsafe { msg_send![super(this.set_ivars(())), init] }
+                    unsafe { msg_send![super(this.set_ivars(Ivars::<Self> {})), init] }
                 }
             }
         );
@@ -533,7 +533,7 @@ mod tests {
         let _ = unsafe { init_only_superclasses(ImplsDrop::alloc()) };
         check([]);
 
-        let _ = unsafe { init_no_finalize(ImplsDrop::alloc(), ()) };
+        let _ = unsafe { init_no_finalize(ImplsDrop::alloc(), Ivars::<ImplsDrop> {}) };
         check([]);
 
         let _ = unsafe { init(ImplsDrop::alloc()) };
@@ -877,7 +877,7 @@ mod tests {
             }
         }
 
-        let obj = DropPanics::alloc().set_ivars(());
+        let obj = DropPanics::alloc().set_ivars(Ivars::<DropPanics> {});
         let obj: Retained<DropPanics> = unsafe { msg_send![super(obj), init] };
         drop(obj);
     }
@@ -937,7 +937,7 @@ mod tests {
             }
         }
 
-        let obj = DropRetainsAndLeaksSelf::alloc().set_ivars(());
+        let obj = DropRetainsAndLeaksSelf::alloc().set_ivars(Ivars::<DropRetainsAndLeaksSelf> {});
         let obj: Retained<DropRetainsAndLeaksSelf> = unsafe { msg_send![super(obj), init] };
         drop(obj);
 

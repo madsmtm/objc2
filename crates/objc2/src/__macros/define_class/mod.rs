@@ -726,10 +726,9 @@ macro_rules! __define_class_inner {
             $crate::__define_class_ivar_accessors!(($class) $($ivars)*);
 
             impl $crate::DefinedClass for $class {
-                type Ivars = $crate::__define_class_ivars_type!(
-                    (__Objc2IvarsContainer)
-                    $($ivars)*
-                );
+                // NOTE: We could have used `()` here when there are no ivars,
+                // but it's more consistent to always use the container.
+                type Ivars = __Objc2IvarsContainer;
 
                 #[inline]
                 fn __ivars_offset() -> $crate::__macros::isize {
@@ -1015,18 +1014,4 @@ macro_rules! __define_class_ivar_accessors {
             $crate::__macros::stringify!($($ivars)*),
         ));
     }
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __define_class_ivars_type {
-    (($ivars_ty:ident)) => {
-        // Default to `Ivars = ()` when no ivars are specified.
-        //
-        // We might remove this in the future, but let's keep it for now.
-        ()
-    };
-    (($ivars_ty:ident) $($t:tt)*) => {
-        $ivars_ty
-    };
 }

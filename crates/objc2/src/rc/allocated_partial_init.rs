@@ -361,6 +361,7 @@ mod tests {
     use super::*;
     use crate::rc::RcTestObject;
     use crate::runtime::NSObject;
+    use crate::Ivars;
 
     #[test]
     fn auto_traits() {
@@ -396,7 +397,7 @@ mod tests {
     fn test_set_ivars_null() {
         // SAFETY: The pointer is NULL
         let obj: Allocated<RcTestObject> = unsafe { Allocated::new(ptr::null_mut()) };
-        let _ = obj.set_ivars(());
+        let _ = obj.set_ivars(Ivars::<RcTestObject> {});
     }
 
     #[test]

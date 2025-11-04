@@ -320,7 +320,7 @@ mod tests {
 
     use crate::rc::{autoreleasepool, Allocated, PartialInit, RcTestObject, ThreadTestData};
     use crate::runtime::{AnyObject, NSObject, NSObjectProtocol, NSZone};
-    use crate::{class, define_class, extern_methods, msg_send, AnyThread};
+    use crate::{class, define_class, extern_methods, msg_send, AnyThread, Ivars};
 
     #[test]
     fn test_send_message_manuallydrop() {
@@ -616,7 +616,7 @@ mod tests {
         expected.drop += 1;
         expected.assert_current();
 
-        let obj = RcTestObject::alloc().set_ivars(());
+        let obj = RcTestObject::alloc().set_ivars(Ivars::<RcTestObject> {});
         let _: Retained<RcTestObject> = unsafe { msg_send![super(obj), init] };
         expected.alloc += 1;
         expected.release += 1;
@@ -658,7 +658,7 @@ mod tests {
         ignore = "SIGSEGVs with the old runtime for some reason?"
     )]
     fn test_super_init_not_initialized() {
-        let obj = RcTestObject::alloc().set_ivars(());
+        let obj = RcTestObject::alloc().set_ivars(Ivars::<RcTestObject> {});
         let _: Retained<RcTestObject> =
             unsafe { msg_send![super(obj, RcTestObject::class()), init] };
     }

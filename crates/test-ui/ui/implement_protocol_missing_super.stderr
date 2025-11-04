@@ -46,8 +46,8 @@ error[E0277]: `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be s
   |
   = help: within `CustomObject`, the trait `Sync` is not implemented for `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>`
   = help: the trait `Sync` is implemented for `ThreadKindAutoTraits<dyn AllocAnyThread>`
-  = note: required because it appears within the type `((), ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)`
-note: required because it appears within the type `PhantomData<((), ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)>`
+  = note: required because it appears within the type `(__Objc2IvarsContainer, ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)`
+note: required because it appears within the type `PhantomData<(__Objc2IvarsContainer, ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: PointeeSized>;
@@ -78,8 +78,8 @@ error[E0277]: `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be s
   |
   = help: within `CustomObject`, the trait `Send` is not implemented for `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>`
   = help: the trait `Send` is implemented for `ThreadKindAutoTraits<dyn AllocAnyThread>`
-  = note: required because it appears within the type `((), ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)`
-note: required because it appears within the type `PhantomData<((), ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)>`
+  = note: required because it appears within the type `(__Objc2IvarsContainer, ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)`
+note: required because it appears within the type `PhantomData<(__Objc2IvarsContainer, ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: PointeeSized>;

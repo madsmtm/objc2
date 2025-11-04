@@ -56,7 +56,6 @@ define_class!(
     #[derive(Debug)]
     struct AppDelegate {
         // Whatever state you want to store in your delegate.
-        state: i32,
     }
 
     impl AppDelegate {
@@ -66,7 +65,6 @@ define_class!(
         fn init(this: Allocated<Self>) -> Retained<Self> {
             let this = this.set_ivars(Ivars::<Self> {
                 // Initialize state.
-                state: 42,
             });
             unsafe { msg_send![super(this), init] }
         }

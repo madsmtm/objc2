@@ -44,16 +44,13 @@ impl UIApplication {
     ///     #[derive(Debug)]
     ///     struct AppDelegate {
     ///         // Whatever state you want to store in your delegate.
-    ///         state: i32,
     ///     }
     ///
     ///     impl AppDelegate {
     ///         // Called by `UIApplication::main`.
     ///         #[unsafe(method_id(init))]
     ///         fn init(this: Allocated<Self>) -> Retained<Self> {
-    ///             let this = this.set_ivars(Ivars::<Self> {
-    ///                 state: 42,
-    ///             });
+    ///             let this = this.set_ivars(Ivars::<Self> {});
     ///             unsafe { msg_send![super(this), init] }
     ///         }
     ///     }

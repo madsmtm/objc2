@@ -1,6 +1,6 @@
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
-use objc2::{define_class, msg_send, MainThreadMarker, MainThreadOnly};
+use objc2::{define_class, msg_send, Ivars, MainThreadMarker, MainThreadOnly};
 use objc2_app_kit::{NSResponder, NSViewController};
 use objc2_foundation::{NSObject, NSObjectProtocol};
 
@@ -40,7 +40,7 @@ impl ViewController {
     // FIXME: Make it possible to avoid this boilerplate.
     pub fn new(mtm: MainThreadMarker) -> Retained<Self> {
         let this = Self::alloc(mtm);
-        let this = this.set_ivars(());
+        let this = this.set_ivars(Ivars::<Self> {});
         // SAFETY: `ViewController` is safe to initialize.
         unsafe { msg_send![super(this), init] }
     }
