@@ -12,7 +12,7 @@ use std::hint::black_box;
 use arbitrary::Arbitrary;
 use objc2::rc::{autoreleasepool, Retained};
 use objc2::runtime::AnyObject;
-use objc2::{define_class, msg_send, AnyThread, ClassType, DefinedClass, Message};
+use objc2::{define_class, msg_send, AnyThread, ClassType, Ivars, Message};
 use objc2_foundation::{
     CopyingHelper, NSCopying, NSMutableDictionary, NSMutableSet, NSObject, NSObjectProtocol,
     NSUInteger, NSZone,
@@ -41,16 +41,13 @@ enum Operation {
     SetEqualToMask(KeyIndex, u8),
 }
 
-struct KeyIvars {
-    index: KeyIndex,
-    hash: Cell<usize>,
-    equal_to_mask: Cell<u8>,
-}
-
 define_class!(
     #[unsafe(super(NSObject))]
-    #[ivars = KeyIvars]
-    struct Key;
+    struct Key {
+        index: KeyIndex,
+        hash: Cell<usize>,
+        equal_to_mask: Cell<u8>,
+    }
 
     unsafe impl NSObjectProtocol for Key {
         #[unsafe(method(isEqual:))]
@@ -61,12 +58,12 @@ define_class!(
             // SAFETY: Just checked that the object is of this class
             let other: &Self = unsafe { &*other };
 
-            (other.ivars().index & self.ivars().equal_to_mask.get()) != 0
+            (other.index() & self.equal_to_mask().get()) != 0
         }
 
         #[unsafe(method(hash))]
         fn hash_(&self) -> NSUInteger {
-            self.ivars().hash.get()
+            self.hash().get()
         }
     }
 
@@ -84,7 +81,7 @@ unsafe impl CopyingHelper for Key {
 
 impl Key {
     fn new(index: KeyIndex) -> Retained<Self> {
-        let key = Key::alloc().set_ivars(KeyIvars {
+        let key = Key::alloc().set_ivars(Ivars::<Self> {
             index,
             hash: Cell::new(0),
             equal_to_mask: Cell::new(0),
@@ -93,8 +90,8 @@ impl Key {
     }
 
     fn validate(&self) {
-        black_box(self.ivars().index);
-        black_box(self.ivars().hash.get());
+        black_box(*self.index());
+        black_box(self.hash().get());
     }
 }
 
@@ -135,10 +132,10 @@ fn run(ops: Vec<Operation>) {
                 dict.removeObjectForKey(key(idx));
             }
             Operation::SetHash(idx, hash) => {
-                key(idx).ivars().hash.set(hash);
+                key(idx).hash().set(hash);
             }
             Operation::SetEqualToMask(idx, equal_to_mask) => {
-                key(idx).ivars().equal_to_mask.set(equal_to_mask);
+                key(idx).equal_to_mask().set(equal_to_mask);
             }
         });
     }

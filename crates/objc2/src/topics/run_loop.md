@@ -37,7 +37,7 @@ In graphical applications, the main run loop needs to be managed by the applicat
 
 ```rust, no_run
 use objc2::rc::{Allocated, Retained};
-use objc2::{define_class, msg_send, ClassType, DefinedClass, MainThreadOnly};
+use objc2::{define_class, msg_send, ClassType, Ivars, MainThreadOnly};
 use objc2_foundation::{NSNotification, NSObject, NSObjectProtocol};
 
 // Application delegate protocols happens to share a few methods,
@@ -47,26 +47,27 @@ use objc2_app_kit::NSApplicationDelegate as DelegateProtocol;
 #[cfg(not(target_os = "macos"))]
 use objc2_ui_kit::UIApplicationDelegate as DelegateProtocol;
 
-#[derive(Default)]
-struct AppState {
-    // Whatever state you want to store in your delegate.
-}
-
 define_class!(
     // SAFETY:
     // - NSObject does not have any subclassing requirements.
     // - `AppDelegate` does not implement `Drop`.
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[ivars = AppState]
-    struct AppDelegate;
+    #[derive(Debug)]
+    struct AppDelegate {
+        // Whatever state you want to store in your delegate.
+        state: i32,
+    }
 
     impl AppDelegate {
         // Called by `NSApplicationMain`, `UIApplicationMain`
         // or our `msg_send![AppDelegate::class(), new]`.
         #[unsafe(method_id(init))]
         fn init(this: Allocated<Self>) -> Retained<Self> {
-            let this = this.set_ivars(AppState::default());
+            let this = this.set_ivars(Ivars::<Self> {
+                // Initialize state.
+                state: 42,
+            });
             unsafe { msg_send![super(this), init] }
         }
     }

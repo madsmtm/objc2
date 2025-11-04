@@ -8,7 +8,7 @@ use objc2::{
     define_class, msg_send,
     rc::Retained,
     runtime::{AnyObject, ProtocolObject, Sel},
-    sel, DefinedClass, MainThreadMarker, MainThreadOnly,
+    sel, Ivars, MainThreadMarker, MainThreadOnly,
 };
 #[allow(deprecated)]
 #[cfg(target_os = "macos")]
@@ -27,30 +27,20 @@ use objc2_web_kit::{WKNavigation, WKNavigationDelegate, WKWebView};
 
 macro_rules! idcell {
     ($name:ident => $this:expr) => {
-        $this.ivars().$name.set($name).expect(&format!(
+        $this.$name().set($name).expect(&format!(
             "ivar should not already be initialized: `{}`",
             stringify!($name)
         ));
     };
     ($name:ident <= $this:expr) => {
         #[rustfmt::skip]
-        let Some($name) = $this.ivars().$name.get() else {
+        let Some($name) = $this.$name().get() else {
             unreachable!(
                 "ivar should be initialized: `{}`",
                 stringify!($name)
             )
         };
     };
-}
-
-#[derive(Default)]
-struct Ivars {
-    #[cfg(target_os = "macos")]
-    nav_url: OnceCell<Retained<NSTextField>>,
-    #[cfg(target_os = "macos")]
-    web_view: OnceCell<Retained<WKWebView>>,
-    #[cfg(target_os = "macos")]
-    window: OnceCell<Retained<NSWindow>>,
 }
 
 define_class!(
@@ -60,8 +50,14 @@ define_class!(
     // - `Delegate` does not implement `Drop`.
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[ivars = Ivars]
-    struct Delegate;
+    struct Delegate {
+        #[cfg(target_os = "macos")]
+        nav_url: OnceCell<Retained<NSTextField>>,
+        #[cfg(target_os = "macos")]
+        web_view: OnceCell<Retained<WKWebView>>,
+        #[cfg(target_os = "macos")]
+        window: OnceCell<Retained<NSWindow>>,
+    }
 
     unsafe impl NSObjectProtocol for Delegate {}
 
@@ -275,7 +271,14 @@ define_class!(
 impl Delegate {
     fn new(mtm: MainThreadMarker) -> Retained<Self> {
         let this = Self::alloc(mtm);
-        let this = this.set_ivars(Ivars::default());
+        let this = this.set_ivars(Ivars::<Self> {
+            #[cfg(target_os = "macos")]
+            nav_url: Default::default(),
+            #[cfg(target_os = "macos")]
+            web_view: Default::default(),
+            #[cfg(target_os = "macos")]
+            window: Default::default(),
+        });
         unsafe { msg_send![super(this), init] }
     }
 }

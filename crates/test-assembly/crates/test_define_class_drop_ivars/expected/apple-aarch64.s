@@ -651,7 +651,7 @@ l_anon.[ID].10:
 	.p2align	3, 0x0
 l_anon.[ID].11:
 	.quad	l_anon.[ID].10
-	.asciz	"?\000\000\000\000\000\000\000\023\000\000\000\001\000\000"
+	.asciz	"?\000\000\000\000\000\000\000\016\000\000\000\001\000\000"
 
 	.globl	___CLASS_DropIvars
 .zerofill __DATA,__common,___CLASS_DropIvars,8,3

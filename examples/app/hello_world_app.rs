@@ -4,7 +4,7 @@ use std::cell::OnceCell;
 
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2::{define_class, msg_send, DefinedClass, MainThreadOnly};
+use objc2::{define_class, msg_send, Ivars, MainThreadOnly};
 use objc2_app_kit::{
     NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSAutoresizingMaskOptions,
     NSBackingStoreType, NSColor, NSFont, NSTextAlignment, NSTextField, NSWindow, NSWindowDelegate,
@@ -15,19 +15,16 @@ use objc2_foundation::{
     NSSize,
 };
 
-#[derive(Debug, Default)]
-struct AppDelegateIvars {
-    window: OnceCell<Retained<NSWindow>>,
-}
-
 define_class!(
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
     // - `Delegate` does not implement `Drop`.
     #[unsafe(super = NSObject)]
     #[thread_kind = MainThreadOnly]
-    #[ivars = AppDelegateIvars]
-    struct Delegate;
+    #[derive(Debug)]
+    struct Delegate {
+        window: OnceCell<Retained<NSWindow>>,
+    }
 
     // SAFETY: `NSObjectProtocol` has no safety requirements.
     unsafe impl NSObjectProtocol for Delegate {}
@@ -93,7 +90,7 @@ define_class!(
             window.makeKeyAndOrderFront(None);
 
             // Store the window in the delegate.
-            self.ivars().window.set(window).unwrap();
+            self.window().set(window).unwrap();
 
             app.setActivationPolicy(NSApplicationActivationPolicy::Regular);
 
@@ -117,7 +114,9 @@ define_class!(
 
 impl Delegate {
     fn new(mtm: MainThreadMarker) -> Retained<Self> {
-        let this = Self::alloc(mtm).set_ivars(AppDelegateIvars::default());
+        let this = Self::alloc(mtm).set_ivars(Ivars::<Self> {
+            window: Default::default(),
+        });
         // SAFETY: The signature of `NSObject`'s `init` method is correct.
         unsafe { msg_send![super(this), init] }
     }

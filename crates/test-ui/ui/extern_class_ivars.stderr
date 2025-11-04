@@ -1,11 +1,24 @@
-error: #[ivars] is not supported in extern_class!
+error: no rules expected `{`
  --> ui/extern_class_ivars.rs
   |
-  | / extern_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     #[ivars = i32]
-  | |     struct IvarsEqual;
-  | | );
-  | |_^
+  |     struct Ivars {
+  |                  ^ no rules expected this token in macro call
   |
-  = note: this error originates in the macro `$crate::__extern_class_check_no_ivars` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+note: while trying to match `;`
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_class/mod.rs
+  |
+  |         $v:vis struct $class:ident;
+  |                                   ^
+
+error: the syntax for specifying instance variables has changed, move the ivars to a field in the struct instead
+       #[ivars = i32] -> ivars: i32
+  --> ui/extern_class_ivars.rs
+   |
+   | / extern_class!(
+   | |     #[unsafe(super(NSObject))]
+   | |     #[ivars = i32]
+   | |     struct IvarsAttribute;
+   | | );
+   | |_^
+   |
+   = note: this error originates in the macro `$crate::__extract_attributes_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

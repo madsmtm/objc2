@@ -24,7 +24,7 @@ Let's take an example: We define a class that contains an [`i32`] and a [`Vec`].
 
 ```rust
 use std::cell::{Cell, RefCell};
-use objc2::{define_class, DefinedClass};
+use objc2::{define_class, Ivars};
 use objc2::runtime::NSObject;
 
 // Usually, you would just do:
@@ -43,28 +43,23 @@ impl MyStruct {
 
 // But when interfacing with Objective-C, you have to do:
 
-struct Ivars {
-    // `Copy` types that we want to mutate have to be wrapped in Cell
-    my_int: Cell<i32>,
-    // non-`Copy` types that we want to mutate have to be wrapped in RefCell
-    my_vec: RefCell<Vec<i32>>,
-}
-
 define_class!(
     #[unsafe(super(NSObject))]
-    #[ivars = Ivars]
-    struct MyClass;
+    struct MyClass {
+        // `Copy` types that we want to mutate have to be wrapped in Cell
+        my_int: Cell<i32>,
+        // non-`Copy` types that we want to mutate have to be wrapped in RefCell
+        my_vec: RefCell<Vec<i32>>,
+    }
 
     impl MyClass {
         #[unsafe(method(myMethod))]
         fn add_next(&self) {
-            let ivars = self.ivars();
-
             // self.my_int += 1;
-            ivars.my_int.set(ivars.my_int.get() + 1);
+            self.my_int().set(self.my_int().get() + 1);
 
             // self.my_vec.push(self.my_int);
-            ivars.my_vec.borrow_mut().push(ivars.my_int.get());
+            self.my_vec().borrow_mut().push(self.my_int().get());
         }
     }
 );

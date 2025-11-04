@@ -8,26 +8,23 @@ use core::ptr;
 
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::AnyClass;
-use objc2::{define_class, msg_send, ClassType, DefinedClass};
+use objc2::{define_class, msg_send, ClassType, Ivars};
 use objc2_foundation::NSObject;
-
-pub struct Ivars {
-    obj: Retained<NSObject>,
-    obj_option: Option<Retained<NSObject>>,
-}
 
 define_class!(
     #[no_mangle]
     #[unsafe(super(NSObject))]
     #[name = "DropIvars"]
-    #[ivars = Ivars]
-    pub struct DropIvars;
+    pub struct DropIvars{
+        obj: Retained<NSObject>,
+        obj_option: Option<Retained<NSObject>>,
+    }
 
     impl DropIvars {
         #[export_name = "fn1_init"]
         #[unsafe(method_id(init))]
         fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-            let this = this.set_ivars(Ivars {
+            let this = this.set_ivars(Ivars::<Self> {
                 obj: NSObject::new(),
                 obj_option: Some(NSObject::new()),
             });
@@ -53,9 +50,8 @@ impl DropIvars {
     #[export_name = "fn3_access_ivars"]
     pub fn access_drop_ivars(&self) -> (*const NSObject, *const NSObject) {
         (
-            Retained::as_ptr(&self.ivars().obj),
-            self.ivars()
-                .obj_option
+            Retained::as_ptr(self.obj()),
+            self.obj_option()
                 .as_ref()
                 .map(Retained::as_ptr)
                 .unwrap_or_else(ptr::null),

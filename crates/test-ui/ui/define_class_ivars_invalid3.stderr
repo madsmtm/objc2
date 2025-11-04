@@ -1,0 +1,29 @@
+error: expected type, found `}`
+ --> ui/define_class_ivars_invalid3.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct MissingType {
+  | |         ivar1:
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_expected type
+  |   while parsing this struct
+  |
+  = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: invalid ivars
+       ivar1:
+  --> ui/define_class_ivars_invalid3.rs
+   |
+   | / define_class!(
+   | |     #[unsafe(super(NSObject))]
+   | |     struct MissingType {
+   | |         ivar1:
+   | |     }
+   | | );
+   | |_^
+   |
+   = note: this error originates in the macro `$crate::__define_class_ivar_accessors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -8,7 +8,7 @@ use core::{cell::OnceCell, ptr::NonNull};
 
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2::{define_class, msg_send, DefinedClass, MainThreadMarker, MainThreadOnly};
+use objc2::{define_class, msg_send, Ivars, MainThreadMarker, MainThreadOnly};
 #[cfg(target_os = "macos")]
 use objc2_app_kit::{
     NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSBackingStoreType,
@@ -40,14 +40,14 @@ struct VertexInput {
 
 macro_rules! idcell {
     ($name:ident => $this:expr) => {
-        $this.ivars().$name.set($name).expect(&format!(
+        $this.$name().set($name).expect(&format!(
             "ivar should not already be initialized: `{}`",
             stringify!($name)
         ));
     };
     ($name:ident <= $this:expr) => {
         #[rustfmt::skip]
-        let Some($name) = $this.ivars().$name.get() else {
+        let Some($name) = $this.$name().get() else {
             unreachable!(
                 "ivar should be initialized: `{}`",
                 stringify!($name)
@@ -56,24 +56,22 @@ macro_rules! idcell {
     };
 }
 
-// The state of our application.
-struct Ivars {
-    start_date: Retained<NSDate>,
-    command_queue: OnceCell<Retained<ProtocolObject<dyn MTLCommandQueue>>>,
-    pipeline_state: OnceCell<Retained<ProtocolObject<dyn MTLRenderPipelineState>>>,
-    #[cfg(target_os = "macos")]
-    window: OnceCell<Retained<NSWindow>>,
-}
-
 define_class!(
+    /// The state of our application.
+    //
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
     // - `MainThreadOnly` is correct, since this is an application delegate.
     // - `Delegate` does not implement `Drop`.
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[ivars = Ivars]
-    struct Delegate;
+    struct Delegate {
+        start_date: Retained<NSDate>,
+        command_queue: OnceCell<Retained<ProtocolObject<dyn MTLCommandQueue>>>,
+        pipeline_state: OnceCell<Retained<ProtocolObject<dyn MTLRenderPipelineState>>>,
+        #[cfg(target_os = "macos")]
+        window: OnceCell<Retained<NSWindow>>,
+    }
 
     unsafe impl NSObjectProtocol for Delegate {}
 
@@ -192,7 +190,7 @@ define_class!(
 
             // compute the scene properties
             let scene_properties_data = &SceneProperties {
-                time: self.ivars().start_date.timeIntervalSinceNow() as f32,
+                time: self.start_date().timeIntervalSinceNow() as f32,
             };
             // write the scene properties to the vertex shader argument buffer at index 0
             let scene_properties_bytes = NonNull::from(scene_properties_data);
@@ -276,7 +274,7 @@ define_class!(
 impl Delegate {
     fn new(mtm: MainThreadMarker) -> Retained<Self> {
         let this = Self::alloc(mtm);
-        let this = this.set_ivars(Ivars {
+        let this = this.set_ivars(Ivars::<Self> {
             start_date: NSDate::now(),
             command_queue: OnceCell::default(),
             pipeline_state: OnceCell::default(),

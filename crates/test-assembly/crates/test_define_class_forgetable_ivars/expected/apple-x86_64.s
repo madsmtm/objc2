@@ -241,7 +241,7 @@ L_anon.[ID].7:
 	.p2align	3, 0x0
 l_anon.[ID].8:
 	.quad	L_anon.[ID].7
-	.asciz	"E\000\000\000\000\000\000\000\022\000\000\000\001\000\000"
+	.asciz	"E\000\000\000\000\000\000\000\r\000\000\000\001\000\000"
 
 	.globl	___CLASS_ForgetableIvars
 .zerofill __DATA,__common,___CLASS_ForgetableIvars,8,3

@@ -10,8 +10,8 @@ note: expected this to be `dyn MainThreadOnly`
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
   | |     #[thread_kind = AnyThread]
-  | |     #[ivars = *mut ()]
-  | |     struct Normal;
+  | |     struct Normal {
+... |
   | | );
   | |_^
   = note: expected trait object `dyn MainThreadOnly`

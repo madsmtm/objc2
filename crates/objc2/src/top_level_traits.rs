@@ -291,7 +291,8 @@ pub trait DefinedClass: ClassType {
     /// carries.
     #[inline]
     #[track_caller]
-    fn ivars(&self) -> &Self::Ivars
+    #[doc(hidden)]
+    fn __get_ivars(&self) -> &Self::Ivars
     where
         Self: Sized, // Required because of MSRV
     {
@@ -314,6 +315,107 @@ pub trait DefinedClass: ClassType {
     #[doc(hidden)]
     const __UNSAFE_OFFSETS_CORRECT: ();
 }
+
+/// A helper type alias for getting the type for the instance variables in a
+/// class defined in Rust.
+///
+/// This is useful when calling [`set_ivars`] on a newly allocated instance.
+///
+/// [`set_ivars`]: Allocated::set_ivars
+///
+/// # Examples
+///
+/// Initialize a custom class.
+///
+/// ```
+/// use objc2::runtime::NSObject;
+/// use objc2::rc::{Allocated, Retained};
+/// use objc2::{define_class, msg_send, AnyThread, Ivars};
+///
+/// define_class!(
+///     #[unsafe(super(NSObject))]
+///     #[derive(Debug)]
+///     struct MyClass {
+///         x: i32,
+///     }
+/// );
+///
+/// impl MyClass {
+///     fn new(x: i32) -> Retained<Self> {
+///         // Initialize the class' ivars.
+///         let this = Self::alloc().set_ivars(Ivars::<Self> { x });
+///         // Initialize superclass.
+///         unsafe { msg_send![super(this), init] }
+///     }
+/// }
+///
+/// let obj = MyClass::new(42);
+/// assert_eq!(*obj.x(), 42);
+/// ```
+///
+/// Override the `init` method in a custom class (to allow it to be called by
+/// Objective-C instead).
+///
+/// ```
+/// use objc2::runtime::NSObject;
+/// use objc2::rc::{Allocated, Retained};
+/// use objc2::{define_class, msg_send, ClassType, Ivars};
+///
+/// define_class!(
+///     #[unsafe(super(NSObject))]
+///     #[derive(Debug)]
+///     struct MyClass {
+///         x: i32,
+///     }
+///
+///     impl MyClass {
+///         #[unsafe(method_id(init))]
+///         fn init(this: Allocated<Self>) -> Retained<Self> {
+///             let this = this.set_ivars(Ivars::<Self> {
+///                 // Initialize to some default value.
+///                 x: 42,
+///             });
+///             // Initialize superclass.
+///             unsafe { msg_send![super(this), init] }
+///         }
+///     }
+/// );
+///
+/// // Simulate initialization from Objective-C
+/// let obj: Retained<MyClass> = unsafe { msg_send![MyClass::class(), new] };
+/// assert_eq!(*obj.x(), 42);
+/// ```
+///
+/// # Minutae
+///
+/// When constructing ivars using a [struct expression], it is actually
+/// required to use this type alias; e.g. you cannot inline the alias:
+///
+/// ```rust,compile_fail
+/// # use objc2::runtime::NSObject;
+/// # use objc2::{define_class, Ivars, DefinedClass};
+/// #
+/// # define_class!(
+/// #     #[unsafe(super(NSObject))]
+/// #     struct MyClass {
+/// #         x: i32,
+/// #     }
+/// # );
+/// #
+/// // Works.
+/// let ivars = Ivars::<MyClass> {
+///     x: 42,
+/// };
+///
+/// // Doesn't work, errors with:
+/// // error[E0658]: usage of qualified paths in this context is experimental
+/// let ivars = <MyClass as DefinedClass>::Ivars {
+///     x: 42,
+/// };
+/// ```
+///
+/// [struct expression]: https://doc.rust-lang.org/reference/expressions/struct-expr.html
+pub type Ivars<T> = <T as DefinedClass>::Ivars;
 
 /// Marks types that represent specific protocols.
 ///

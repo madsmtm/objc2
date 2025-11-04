@@ -1,0 +1,23 @@
+error[E0124]: field `ivar` is already declared
+ --> ui/define_class_ivars_invalid2.rs
+  |
+  |         ivar: i32,
+  |         --------- `ivar` first declared here
+  |         ivar: i32,
+  |         ^^^^^^^^^ field already declared
+
+error[E0592]: duplicate definitions with name `ivar`
+ --> ui/define_class_ivars_invalid2.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct Duplicate {
+  | |         ivar: i32,
+... |
+  | | );
+  | | ^
+  | | |
+  | |_duplicate definitions for `ivar`
+  |   other definition for `ivar`
+  |
+  = note: this error originates in the macro `$crate::__define_class_ivar_accessors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

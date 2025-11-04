@@ -515,12 +515,12 @@ fn test_auto_traits() {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[ivars = (NotSend, NotSync, NotUnwindSafe)]
-        struct NonThreadSafeHelper;
+        struct NonThreadSafeHelper {
+            _marker: (NotSend, NotSync, NotUnwindSafe),
+        }
     );
     define_class!(
         #[unsafe(super(NonThreadSafeHelper))]
-        #[ivars = ()]
         struct InheritsCustomWithNonSendIvar;
     );
     let _ = InheritsCustomWithNonSendIvar::class();
@@ -531,7 +531,6 @@ fn test_auto_traits() {
     define_class!(
         #[unsafe(super(NSObject))]
         #[thread_kind = MainThreadOnly]
-        #[ivars = ()]
         struct InheritsNSObjectMainThreadOnly;
     );
     let _ = InheritsNSObjectMainThreadOnly::class();
@@ -542,7 +541,6 @@ fn test_auto_traits() {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[ivars = ()]
         struct InheritsNSObject;
     );
     let _ = InheritsNSObject::class();
@@ -551,8 +549,9 @@ fn test_auto_traits() {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[ivars = NotSend]
-        struct InheritsNSObjectWithNonSendIvar;
+        struct InheritsNSObjectWithNonSendIvar {
+            _marker: NotSend,
+        }
     );
     let _ = InheritsNSObjectWithNonSendIvar::class();
     assert_impl_all!(InheritsNSObjectWithNonSendIvar: Sync, UnwindSafe, RefUnwindSafe);
@@ -560,8 +559,9 @@ fn test_auto_traits() {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[ivars = NotSync]
-        struct InheritsNSObjectWithNonSyncIvar;
+        struct InheritsNSObjectWithNonSyncIvar {
+            _marker: NotSync,
+        }
     );
     let _ = InheritsNSObjectWithNonSyncIvar::class();
     assert_impl_all!(InheritsNSObjectWithNonSyncIvar: Send, UnwindSafe, RefUnwindSafe);
@@ -569,8 +569,9 @@ fn test_auto_traits() {
 
     define_class!(
         #[unsafe(super(NSObject))]
-        #[ivars = NotUnwindSafe]
-        struct InheritsNSObjectWithNonUnwindSafeIvar;
+        struct InheritsNSObjectWithNonUnwindSafeIvar {
+            _marker: NotUnwindSafe,
+        }
     );
     let _ = InheritsNSObjectWithNonUnwindSafeIvar::class();
     assert_impl_all!(InheritsNSObjectWithNonUnwindSafeIvar: Send, Sync);
@@ -581,7 +582,6 @@ fn test_auto_traits() {
 fn auto_name() {
     define_class!(
         #[unsafe(super(NSObject))]
-        #[ivars = ()]
         struct AutoName;
     );
 

@@ -446,7 +446,7 @@ mod tests {
     use super::*;
     use crate::rc::{Allocated, PartialInit, RcTestObject, Retained, ThreadTestData};
     use crate::runtime::NSObject;
-    use crate::{define_class, msg_send, AnyThread, Message};
+    use crate::{define_class, msg_send, AnyThread, Ivars, Message};
 
     /// Initialize superclasses, but not own class.
     unsafe fn init_only_superclasses<T: DefinedClass>(obj: Allocated<T>) -> Retained<T>
@@ -458,12 +458,11 @@ mod tests {
 
     /// Initialize, but fail to finalize (which is done internally by
     /// `msg_send!` when returning `Retained`).
-    unsafe fn init_no_finalize<T: DefinedClass>(obj: Allocated<T>) -> Retained<T>
+    unsafe fn init_no_finalize<T: DefinedClass>(obj: Allocated<T>, ivars: T::Ivars) -> Retained<T>
     where
         T::Super: ClassType,
-        T::Ivars: Default,
     {
-        let obj = obj.set_ivars(Default::default());
+        let obj = obj.set_ivars(ivars);
         unsafe { Retained::from_raw(msg_send![super(PartialInit::into_ptr(obj)), init]) }.unwrap()
     }
 
@@ -481,6 +480,8 @@ mod tests {
     #[cfg(feature = "std")]
     fn test_dealloc_and_dealloc_subclasses() {
         use std::sync::Mutex;
+
+        use crate::Ivars;
 
         #[derive(Debug, PartialEq)]
         enum Operation {
@@ -510,7 +511,6 @@ mod tests {
 
         define_class!(
             #[unsafe(super(NSObject))]
-            #[ivars = ()]
             struct ImplsDrop;
 
             impl ImplsDrop {
@@ -533,7 +533,7 @@ mod tests {
         let _ = unsafe { init_only_superclasses(ImplsDrop::alloc()) };
         check([]);
 
-        let _ = unsafe { init_no_finalize(ImplsDrop::alloc()) };
+        let _ = unsafe { init_no_finalize(ImplsDrop::alloc(), ()) };
         check([]);
 
         let _ = unsafe { init(ImplsDrop::alloc()) };
@@ -543,13 +543,14 @@ mod tests {
 
         define_class!(
             #[unsafe(super(ImplsDrop))]
-            #[ivars = IvarThatImplsDrop]
-            struct IvarsImplDrop;
+            struct IvarsImplDrop {
+                _ivar: IvarThatImplsDrop,
+            }
 
             impl IvarsImplDrop {
                 #[unsafe(method_id(init))]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-                    unsafe { msg_send![super(this.set_ivars(IvarThatImplsDrop)), init] }
+                    unsafe { msg_send![super(this.set_ivars(Ivars::<Self> { _ivar: IvarThatImplsDrop })), init] }
                 }
             }
         );
@@ -560,7 +561,14 @@ mod tests {
         let _ = unsafe { init_only_superclasses(IvarsImplDrop::alloc()) };
         check([Operation::DropClass]);
 
-        let _ = unsafe { init_no_finalize(IvarsImplDrop::alloc()) };
+        let _ = unsafe {
+            init_no_finalize(
+                IvarsImplDrop::alloc(),
+                Ivars::<IvarsImplDrop> {
+                    _ivar: IvarThatImplsDrop,
+                },
+            )
+        };
         check([Operation::DropIvar, Operation::DropClass]);
 
         let _ = unsafe { init(IvarsImplDrop::alloc()) };
@@ -570,13 +578,14 @@ mod tests {
 
         define_class!(
             #[unsafe(super(IvarsImplDrop))]
-            #[ivars = IvarThatImplsDrop]
-            struct BothIvarsAndTypeImplsDrop;
+            struct BothIvarsAndTypeImplsDrop {
+                _ivar: IvarThatImplsDrop,
+            }
 
             impl BothIvarsAndTypeImplsDrop {
                 #[unsafe(method_id(init))]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-                    unsafe { msg_send![super(this.set_ivars(IvarThatImplsDrop)), init] }
+                    unsafe { msg_send![super(this.set_ivars(Ivars::<Self> { _ivar: IvarThatImplsDrop })), init] }
                 }
             }
         );
@@ -593,7 +602,14 @@ mod tests {
         let _ = unsafe { init_only_superclasses(BothIvarsAndTypeImplsDrop::alloc()) };
         check([Operation::DropIvar, Operation::DropClass]);
 
-        let _ = unsafe { init_no_finalize(BothIvarsAndTypeImplsDrop::alloc()) };
+        let _ = unsafe {
+            init_no_finalize(
+                BothIvarsAndTypeImplsDrop::alloc(),
+                Ivars::<BothIvarsAndTypeImplsDrop> {
+                    _ivar: IvarThatImplsDrop,
+                },
+            )
+        };
         check([
             Operation::DropIvar,
             Operation::DropIvar,
@@ -619,8 +635,9 @@ mod tests {
 
         define_class!(
             #[unsafe(super(NSObject))]
-            #[ivars = Ivar]
-            struct IvarsNoDrop;
+            struct IvarsNoDrop {
+                _ivar: Ivar,
+            }
         );
 
         assert!(!mem::needs_drop::<IvarsNoDrop>());
@@ -639,13 +656,17 @@ mod tests {
         define_class!(
             #[unsafe(super(NSObject))]
             #[name = "IvarZst"]
-            #[ivars = Cell<Ivar>]
-            struct IvarZst;
+            struct IvarZst {
+                ivar: Cell<Ivar>,
+            }
 
             impl IvarZst {
                 #[unsafe(method_id(init))]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-                    unsafe { msg_send![super(this.set_ivars(Cell::new(Ivar))), init] }
+                    let this = this.set_ivars(Ivars::<Self> {
+                        ivar: Cell::new(Ivar)
+                    });
+                    unsafe { msg_send![super(this), init] }
                 }
             }
         );
@@ -664,8 +685,8 @@ mod tests {
 
         let obj = unsafe { init(IvarZst::alloc()) };
         #[cfg(feature = "std")]
-        std::println!("{:?}", obj.ivars().get());
-        obj.ivars().set(Ivar);
+        std::println!("{:?}", obj.ivar().get());
+        obj.ivar().set(Ivar);
     }
 
     #[test]
@@ -676,8 +697,9 @@ mod tests {
         define_class!(
             #[unsafe(super(NSObject))]
             #[name = "HasIvarWithHighAlignment"]
-            #[ivars = HighAlignment]
-            struct HasIvarWithHighAlignment;
+            struct HasIvarWithHighAlignment {
+                _ivar: HighAlignment,
+            }
         );
 
         // Have to allocate up to the desired alignment, but no need to go
@@ -700,13 +722,16 @@ mod tests {
     fn test_ivar_access() {
         define_class!(
             #[unsafe(super(NSObject))]
-            #[ivars = Cell<Option<Retained<RcTestObject>>>]
-            struct RcIvar;
+            struct RcIvar {
+                ivar: Cell<Option<Retained<RcTestObject>>>,
+            }
 
             impl RcIvar {
                 #[unsafe(method_id(init))]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-                    let this = this.set_ivars(Cell::new(Some(RcTestObject::new())));
+                    let this = this.set_ivars(Ivars::<Self> {
+                        ivar: Cell::new(Some(RcTestObject::new())),
+                    });
                     unsafe { msg_send![super(this), init] }
                 }
             }
@@ -721,10 +746,17 @@ mod tests {
         expected.assert_current();
 
         // Ivar access is valid even if the class is not finalized.
-        let obj = unsafe { init_no_finalize(RcIvar::alloc()) };
+        let obj = unsafe {
+            init_no_finalize(
+                RcIvar::alloc(),
+                Ivars::<RcIvar> {
+                    ivar: Default::default(),
+                },
+            )
+        };
         expected.assert_current();
 
-        obj.ivars().set(Some(RcTestObject::new()));
+        obj.ivar().set(Some(RcTestObject::new()));
         expected.alloc += 1;
         expected.init += 1;
         expected.assert_current();
@@ -740,8 +772,8 @@ mod tests {
         expected.assert_current();
 
         // SAFETY: Cloned immediately after, so not accessed while borrowed
-        let ivar = unsafe { &*obj.ivars().as_ptr() }.clone();
-        obj.ivars().set(ivar);
+        let ivar = unsafe { &*obj.ivar().as_ptr() }.clone();
+        obj.ivar().set(ivar);
         expected.retain += 1;
         expected.release += 1;
         expected.assert_current();
@@ -751,21 +783,17 @@ mod tests {
         expected.drop += 1;
         expected.assert_current();
 
-        #[derive(Default)]
-        struct RcIvarSubclassIvars {
-            int: Cell<i32>,
-            obj: Cell<Retained<RcTestObject>>,
-        }
-
         define_class!(
             #[unsafe(super(RcIvar))]
-            #[ivars = RcIvarSubclassIvars]
-            struct RcIvarSubclass;
+            struct RcIvarSubclass {
+                int: Cell<i32>,
+                obj: Cell<Retained<RcTestObject>>,
+            }
 
             impl RcIvarSubclass {
                 #[unsafe(method_id(init))]
                 fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
-                    let this = this.set_ivars(RcIvarSubclassIvars {
+                    let this = this.set_ivars(Ivars::<Self> {
                         int: Cell::new(42),
                         obj: Cell::new(RcTestObject::new()),
                     });
@@ -778,21 +806,21 @@ mod tests {
         expected.alloc += 2;
         expected.init += 2;
         expected.assert_current();
-        assert_eq!(obj.ivars().int.get(), 42);
+        assert_eq!(obj.int().get(), 42);
 
-        obj.ivars().int.set(obj.ivars().int.get() + 1);
-        assert_eq!(obj.ivars().int.get(), 43);
+        obj.int().set(obj.int().get() + 1);
+        assert_eq!(obj.int().get(), 43);
 
         // SAFETY: Cloned immediately after, so not accessed while borrowed
-        let ivar = unsafe { &*(**obj).ivars().as_ptr() }.clone().unwrap();
-        obj.ivars().obj.set(ivar);
+        let ivar = unsafe { &*(**obj).ivar().as_ptr() }.clone().unwrap();
+        obj.obj().set(ivar);
         expected.retain += 1;
         expected.release += 1;
         expected.drop += 1;
         expected.assert_current();
 
         // Change super ivars
-        (**obj).ivars().set(None);
+        (**obj).ivar().set(None);
         expected.release += 1;
         expected.assert_current();
 
@@ -809,7 +837,7 @@ mod tests {
         // Accessing superclass ivars is valid
         // SAFETY: Cell not accessed while ivar is borrowed
         #[cfg(feature = "std")]
-        std::println!("{:?}", unsafe { &*(**obj).ivars().as_ptr() });
+        std::println!("{:?}", unsafe { &*(**obj).ivar().as_ptr() });
 
         drop(obj);
         expected.release += 1;
@@ -823,14 +851,15 @@ mod tests {
     fn access_invalid() {
         define_class!(
             #[unsafe(super(NSObject))]
-            // Type has to have a drop flag to detect invalid access
-            #[ivars = Retained<NSObject>]
-            struct InvalidAccess;
+            struct InvalidAccess {
+                // Type has to have a drop flag to detect invalid access
+                ivar: Retained<NSObject>,
+            }
         );
 
         let obj = unsafe { init_only_superclasses(InvalidAccess::alloc()) };
         #[cfg(feature = "std")]
-        std::println!("{:?}", obj.ivars());
+        std::println!("{:?}", obj.ivar());
     }
 
     #[test]
@@ -867,11 +896,12 @@ mod tests {
 
         define_class!(
             #[unsafe(super(NSObject))]
-            #[ivars = DropPanics]
-            struct IvarDropPanics;
+            struct IvarDropPanics {
+                _ivar: DropPanics,
+            }
         );
 
-        let obj = IvarDropPanics::alloc().set_ivars(DropPanics);
+        let obj = IvarDropPanics::alloc().set_ivars(Ivars::<IvarDropPanics> { _ivar: DropPanics });
         let obj: Retained<IvarDropPanics> = unsafe { msg_send![super(obj), init] };
         drop(obj);
     }
@@ -913,5 +943,70 @@ mod tests {
 
         // Suddenly, the object is alive again!
         let _ = OBJ.get().unwrap();
+    }
+
+    #[test]
+    fn test_derive_debug() {
+        define_class!(
+            #[unsafe(super(NSObject))]
+            #[derive(Debug)]
+            #[name = "TestDeriveDebug"]
+            struct DeriveDebug {
+                #[allow(dead_code)]
+                ivar1: i32,
+                #[cfg(debug_assertions)]
+                #[allow(dead_code)]
+                pub(crate) ivar2: i32,
+            }
+        );
+
+        let obj = DeriveDebug::alloc().set_ivars(Ivars::<DeriveDebug> {
+            ivar1: 42,
+            #[cfg(debug_assertions)]
+            ivar2: 43,
+        });
+        let obj: Retained<DeriveDebug> = unsafe { msg_send![super(obj), init] };
+
+        let expected = if cfg!(debug_assertions) {
+            format!("DeriveDebug {{ super: <TestDeriveDebug: {obj:p}>, ivar1: 42, ivar2: 43 }}")
+        } else {
+            format!("DeriveDebug {{ super: <TestDeriveDebug: {obj:p}>, ivar1: 42 }}")
+        };
+        assert_eq!(format!("{obj:?}"), expected);
+    }
+
+    #[test]
+    fn test_deprecated() {
+        define_class!(
+            #[unsafe(super(NSObject))]
+            #[derive(Debug)]
+            struct Deprecated {
+                #[deprecated = "ivar deprecated"]
+                ivar: i32,
+            }
+        );
+
+        let obj = Deprecated::alloc().set_ivars(Ivars::<Deprecated> {
+            #[expect(deprecated)]
+            ivar: 42,
+        });
+        let obj: Retained<Deprecated> = unsafe { msg_send![super(obj), init] };
+
+        #[expect(deprecated)]
+        let _ = obj.ivar();
+    }
+
+    #[test]
+    fn test_trailing_comma() {
+        define_class!(
+            #[unsafe(super(NSObject))]
+            #[rustfmt::skip]
+            struct TrailingComma {
+                _ivar1: i32,
+                _ivar2: i32
+            }
+        );
+
+        let _ = TrailingComma::class();
     }
 }

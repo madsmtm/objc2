@@ -6,7 +6,7 @@ use block2::RcBlock;
 use dispatch2::{DispatchRetained, DispatchSemaphore, DispatchTime};
 use objc2::rc::Retained;
 use objc2::runtime::{Bool, ProtocolObject};
-use objc2::{define_class, msg_send, AnyThread, ClassType, DeclaredClass, MainThreadOnly};
+use objc2::{define_class, msg_send, AnyThread, ClassType, Ivars, MainThreadOnly};
 use objc2_core_foundation::CGSize;
 use objc2_foundation::{
     ns_string, NSDictionary, NSNull, NSNumber, NSObject, NSObjectProtocol, NSURL,
@@ -39,34 +39,30 @@ use crate::shader_types::{
 const MAX_BUFFERS_IN_FLIGHT: usize = 3;
 const ALIGNED_UNIFORMS_SIZE: usize = (size_of::<Uniforms>() & !0xFF) + 0x100;
 
-#[derive(Debug)]
-pub struct Ivars {
-    in_flight_semaphore: DispatchRetained<DispatchSemaphore>,
-    command_queue: Retained<ProtocolObject<dyn MTLCommandQueue>>,
-
-    dynamic_uniform_buffer: Retained<ProtocolObject<dyn MTLBuffer>>,
-    pipeline_state: Retained<ProtocolObject<dyn MTLRenderPipelineState>>,
-    depth_state: Retained<ProtocolObject<dyn MTLDepthStencilState>>,
-    mesh: Retained<MTKMesh>,
-    color_map: Retained<ProtocolObject<dyn MTLTexture>>,
-
-    uniform_buffer_offset: Cell<usize>,
-    uniform_buffer_index: Cell<u8>,
-    uniform_buffer_address: Cell<Option<NonNull<Uniforms>>>,
-
-    projection_matrix: Cell<Float4x4>,
-    rotation: Cell<f32>,
-}
-
 define_class!(
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
     // - `Renderer` does not implement `Drop`.
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[ivars = Ivars]
     #[derive(Debug)]
-    pub struct Renderer;
+    pub struct Renderer {
+        in_flight_semaphore: DispatchRetained<DispatchSemaphore>,
+        command_queue: Retained<ProtocolObject<dyn MTLCommandQueue>>,
+
+        dynamic_uniform_buffer: Retained<ProtocolObject<dyn MTLBuffer>>,
+        pipeline_state: Retained<ProtocolObject<dyn MTLRenderPipelineState>>,
+        depth_state: Retained<ProtocolObject<dyn MTLDepthStencilState>>,
+        mesh: Retained<MTKMesh>,
+        color_map: Retained<ProtocolObject<dyn MTLTexture>>,
+
+        uniform_buffer_offset: Cell<usize>,
+        uniform_buffer_index: Cell<u8>,
+        uniform_buffer_address: Cell<Option<NonNull<Uniforms>>>,
+
+        projection_matrix: Cell<Float4x4>,
+        rotation: Cell<f32>,
+    }
 
     unsafe impl NSObjectProtocol for Renderer {}
 
@@ -105,7 +101,7 @@ impl Renderer {
         let color_map = load_color_map(&device);
 
         let this = Self::alloc(view.mtm());
-        let this = this.set_ivars(Ivars {
+        let this = this.set_ivars(Ivars::<Self> {
             in_flight_semaphore,
             command_queue,
             pipeline_state,
@@ -287,49 +283,44 @@ fn load_color_map(
 impl Renderer {
     /// Update the state of our uniform buffers before rendering.
     fn update_dynamic_buffer_state(&self) {
-        self.ivars()
-            .uniform_buffer_index
-            .set((self.ivars().uniform_buffer_index.get() + 1) % MAX_BUFFERS_IN_FLIGHT as u8);
+        self.uniform_buffer_index()
+            .set((self.uniform_buffer_index().get() + 1) % MAX_BUFFERS_IN_FLIGHT as u8);
 
-        self.ivars()
-            .uniform_buffer_offset
-            .set(ALIGNED_UNIFORMS_SIZE * self.ivars().uniform_buffer_index.get() as usize);
+        self.uniform_buffer_offset()
+            .set(ALIGNED_UNIFORMS_SIZE * self.uniform_buffer_index().get() as usize);
 
-        self.ivars().uniform_buffer_address.set(Some(unsafe {
-            self.ivars()
-                .dynamic_uniform_buffer
+        self.uniform_buffer_address().set(Some(unsafe {
+            self.dynamic_uniform_buffer()
                 .contents()
                 .cast::<Uniforms>()
-                .byte_add(self.ivars().uniform_buffer_offset.get())
+                .byte_add(self.uniform_buffer_offset().get())
         }));
     }
 
     /// Update any game state before encoding rendering commands to our drawable.
     fn update_game_state(&self) {
         // SAFETY: TODO.
-        let uniforms = unsafe { self.ivars().uniform_buffer_address.get().unwrap().as_mut() };
+        let uniforms = unsafe { self.uniform_buffer_address().get().unwrap().as_mut() };
 
-        uniforms.projection_matrix = self.ivars().projection_matrix.get();
+        uniforms.projection_matrix = self.projection_matrix().get();
 
         let rotation_axis = (1.0, 1.0, 0.0);
-        let model_matrix = matrix_rotation(self.ivars().rotation.get(), rotation_axis);
+        let model_matrix = matrix_rotation(self.rotation().get(), rotation_axis);
         let view_matrix = matrix_translation(0.0, 0.0, -8.0);
 
         uniforms.model_view_matrix = matrix_multiply(model_matrix, view_matrix);
 
-        self.ivars()
-            .rotation
-            .set(self.ivars().rotation.get() + 0.01);
+        self.rotation().set(self.rotation().get() + 0.01);
     }
 
     /// Per frame updates.
     fn draw(&self, view: &MTKView) {
-        self.ivars().in_flight_semaphore.wait(DispatchTime::FOREVER);
+        self.in_flight_semaphore().wait(DispatchTime::FOREVER);
 
-        let command_buffer = self.ivars().command_queue.commandBuffer().unwrap();
+        let command_buffer = self.command_queue().commandBuffer().unwrap();
         command_buffer.setLabel(Some(ns_string!("MyCommand")));
 
-        let block_sema = self.ivars().in_flight_semaphore.clone();
+        let block_sema = self.in_flight_semaphore().clone();
         unsafe {
             command_buffer.addCompletedHandler(RcBlock::as_ptr(&RcBlock::new(move |_buffer| {
                 block_sema.signal();
@@ -357,26 +348,26 @@ impl Renderer {
 
             render_encoder.setFrontFacingWinding(MTLWinding::CounterClockwise);
             render_encoder.setCullMode(MTLCullMode::Back);
-            render_encoder.setRenderPipelineState(&self.ivars().pipeline_state);
-            render_encoder.setDepthStencilState(Some(&self.ivars().depth_state));
+            render_encoder.setRenderPipelineState(self.pipeline_state());
+            render_encoder.setDepthStencilState(Some(self.depth_state()));
 
             unsafe {
                 render_encoder.setVertexBuffer_offset_atIndex(
-                    Some(&self.ivars().dynamic_uniform_buffer),
-                    self.ivars().uniform_buffer_offset.get(),
+                    Some(self.dynamic_uniform_buffer()),
+                    self.uniform_buffer_offset().get(),
                     BufferIndexUniforms,
                 )
             };
 
             unsafe {
                 render_encoder.setFragmentBuffer_offset_atIndex(
-                    Some(&self.ivars().dynamic_uniform_buffer),
-                    self.ivars().uniform_buffer_offset.get(),
+                    Some(self.dynamic_uniform_buffer()),
+                    self.uniform_buffer_offset().get(),
                     BufferIndexUniforms,
                 )
             };
 
-            let vertex_buffers = self.ivars().mesh.vertexBuffers();
+            let vertex_buffers = self.mesh().vertexBuffers();
             for (i, vertex_buffer) in vertex_buffers.into_iter().enumerate() {
                 if **vertex_buffer == **NSNull::null() {
                     eprintln!("got null vertex_buffer");
@@ -392,11 +383,10 @@ impl Renderer {
             }
 
             unsafe {
-                render_encoder
-                    .setFragmentTexture_atIndex(Some(&self.ivars().color_map), TextureIndexColor)
+                render_encoder.setFragmentTexture_atIndex(Some(self.color_map()), TextureIndexColor)
             };
 
-            for submesh in self.ivars().mesh.submeshes() {
+            for submesh in self.mesh().submeshes() {
                 unsafe {
                     render_encoder
                         .drawIndexedPrimitives_indexCount_indexType_indexBuffer_indexBufferOffset(
@@ -425,13 +415,11 @@ impl Renderer {
     /// Respond to drawable size or orientation changes.
     fn size_will_change(&self, size: CGSize) {
         let aspect = size.width / size.height;
-        self.ivars()
-            .projection_matrix
-            .set(matrix_perspective_right_hand(
-                65.0 * (f32::consts::PI / 180.0),
-                aspect as f32,
-                0.1,
-                100.0,
-            ));
+        self.projection_matrix().set(matrix_perspective_right_hand(
+            65.0 * (f32::consts::PI / 180.0),
+            aspect as f32,
+            0.1,
+            100.0,
+        ));
     }
 }

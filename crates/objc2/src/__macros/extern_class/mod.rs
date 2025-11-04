@@ -36,6 +36,13 @@ pub use self::checks::*;
 /// [`PhantomData`]: core::marker::PhantomData
 ///
 ///
+/// ## Instance variables
+///
+/// Accessing public instance variables is not yet supported by this macro.
+///
+/// [Add a method][crate::extern_methods] to access a the property instead.
+///
+///
 /// ## Attributes
 ///
 /// You can add most normal attributes to the class, including `#[cfg(...)]`,
@@ -243,7 +250,6 @@ macro_rules! __extern_class_inner {
         ($($safety:tt $superclass:path $(, $superclasses:path)* $(,)?)?)
         ($($($thread_kind:tt)+)?)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_struct:tt)*)
         ($($attr_impl:tt)*)
@@ -331,9 +337,6 @@ macro_rules! __extern_class_inner {
 
         $($attr_impl)*
         $crate::__extern_class_check_super_unsafe!($($safety $superclass)?);
-
-        $($attr_impl)*
-        $crate::__extern_class_check_no_ivars!($($ivars)*);
     };
 }
 
@@ -357,15 +360,6 @@ macro_rules! __extern_class_map_anyobject {
     ($t:ident) => {
         // TODO: Take this from the generic default instead (if there is one).
         $crate::runtime::AnyObject
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __extern_class_check_no_ivars {
-    () => {};
-    ($($ivars:tt)*) => {
-        $crate::__macros::compile_error!("#[ivars] is not supported in extern_class!");
     };
 }
 

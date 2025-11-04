@@ -3,22 +3,11 @@
 #![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2::{define_class, msg_send, DefinedClass, MainThreadMarker, MainThreadOnly};
+use objc2::{define_class, msg_send, Ivars, MainThreadMarker, MainThreadOnly};
 use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate};
 use objc2_foundation::{
     ns_string, NSCopying, NSNotification, NSObject, NSObjectProtocol, NSString,
 };
-
-#[derive(Debug)]
-#[allow(unused)]
-struct Ivars {
-    ivar: u8,
-    another_ivar: bool,
-    box_ivar: Box<i32>,
-    maybe_box_ivar: Option<Box<i32>>,
-    id_ivar: Retained<NSString>,
-    maybe_retained_ivar: Option<Retained<NSString>>,
-}
 
 define_class!(
     // SAFETY:
@@ -26,8 +15,16 @@ define_class!(
     // - `AppDelegate` does not implement `Drop`.
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[ivars = Ivars]
-    struct AppDelegate;
+    #[derive(Debug)]
+    #[allow(unused)]
+    struct AppDelegate {
+        ivar: u8,
+        another_ivar: bool,
+        box_ivar: Box<i32>,
+        maybe_box_ivar: Option<Box<i32>>,
+        id_ivar: Retained<NSString>,
+        maybe_retained_ivar: Option<Retained<NSString>>,
+    }
 
     unsafe impl NSObjectProtocol for AppDelegate {}
 
@@ -37,8 +34,9 @@ define_class!(
             println!("Did finish launching!");
             // Do something with the notification
             dbg!(notification);
-            // Access instance variables
-            dbg!(self.ivars());
+            // Print some instance variables
+            dbg!(self.ivar());
+            dbg!(self.another_ivar());
 
             NSApplication::main(MainThreadMarker::from(self));
         }
@@ -53,7 +51,7 @@ define_class!(
 impl AppDelegate {
     fn new(ivar: u8, another_ivar: bool, mtm: MainThreadMarker) -> Retained<Self> {
         let this = Self::alloc(mtm);
-        let this = this.set_ivars(Ivars {
+        let this = this.set_ivars(Ivars::<Self> {
             ivar,
             another_ivar,
             box_ivar: Box::new(2),

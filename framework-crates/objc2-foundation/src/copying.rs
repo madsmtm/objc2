@@ -116,20 +116,24 @@ extern_protocol!(
     /// Implement `NSCopying` for a custom class.
     ///
     /// ```
-    /// use objc2::{define_class, msg_send, AnyThread, DefinedClass};
+    /// use objc2::{define_class, msg_send, AnyThread, Ivars};
     /// use objc2::rc::Retained;
     /// use objc2::runtime::NSZone;
     /// use objc2_foundation::{CopyingHelper, NSCopying, NSObject};
     ///
     /// define_class!(
     ///     #[unsafe(super(NSObject))]
-    ///     struct CustomClass;
+    ///     struct CustomClass {
+    ///         data: Retained<NSObject>,
+    ///     }
     ///
     ///     unsafe impl NSCopying for CustomClass {
     ///         #[unsafe(method_id(copyWithZone:))]
     ///         fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
-    ///             // Create new class, and transfer ivars
-    ///             let new = Self::alloc().set_ivars(self.ivars().clone());
+    ///             // Create new class, and transfer ivars.
+    ///             let new = Self::alloc().set_ivars(Ivars::<Self> {
+    ///                 data: self.data().clone(),
+    ///             });
     ///             unsafe { msg_send![super(new), init] }
     ///         }
     ///     }

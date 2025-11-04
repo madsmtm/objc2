@@ -8,10 +8,88 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Implement `Encode` for i128 and u128, allowing using them in more FFI situations.
+* Added `Ivars<T>` type alias for more easily accessing `<T as DefineClass>::Ivars`.
 
 ## Changed
 * **BREAKING** (very slightly): `define_class!` now rejects non-static and
   non-unique class names.
+* **BREAKING**: Changed syntax for `define_class!` ivars (instance variables).
+
+  Note in particular the new `Ivars::<Self> { ... }` syntax, when
+  initializing, and that you no longer need `.ivars()` when accessing.
+
+  ```rust
+  //
+  // Before
+  //
+
+  use objc2::rc::Retained;
+  use objc2::runtime::NSObject;
+  use objc2::{define_class, msg_send, AnyThread, DefinedClass};
+
+  struct MyIvars {
+      x: i32,
+      y: i32,
+  }
+
+  define_class!(
+      #[unsafe(super(NSObject))]
+      #[name = "MyObject"]
+      #[ivars = MyIvars]
+      struct MyObject;
+
+      impl MyObject {
+          // ...
+      }
+  );
+
+  impl MyObject {
+      fn new() -> Retained<Self> {
+          let this = Self::alloc().set_ivars(MyIvars { x: 10, y: 20 });
+          unsafe { msg_send![super(this), init] }
+      }
+  }
+
+  let obj = MyObject::new();
+  assert_eq!(obj.ivars().x, 10);
+  assert_eq!(obj.ivars().y, 20);
+
+  //
+  // After
+  //
+
+  use objc2::rc::Retained;
+  use objc2::runtime::NSObject;
+  // Import `Ivars` instead of `DefinedClass`.
+  use objc2::{define_class, msg_send, AnyThread, Ivars};
+
+  define_class!(
+      #[unsafe(super(NSObject))]
+      #[name = "MyObject"]
+      struct MyObject {
+          // Ivars moved into `define_class!` macro.
+          x: i32,
+          y: i32,
+      }
+
+      impl MyObject {
+          // ...
+      }
+  );
+
+  impl MyObject {
+      fn new() -> Retained<Self> {
+          // Use `Ivars::<Self>` to refer to all the instance variables.
+          let this = Self::alloc().set_ivars(Ivars::<Self> { x: 10, y: 20 });
+          unsafe { msg_send![super(this), init] }
+      }
+  }
+
+  let obj = MyObject::new();
+  assert_eq!(*obj.x(), 10); // No longer need `.ivars()`
+  assert_eq!(*obj.y(), 20);
+  ```
+* Improved the derived `Debug` impl for classes defined with `define_class!`.
 
 ## Fixed
 * Fixed encoding check when using SIMD types in signatures.

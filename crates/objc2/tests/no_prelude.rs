@@ -90,8 +90,9 @@ struct MyCustomIvars {
 
 new_objc2::define_class!(
     #[unsafe(super(new_objc2::runtime::NSObject))]
-    #[ivars = MyCustomIvars]
-    struct CustomObject;
+    struct CustomObject {
+        ivar: MyCustomIvars,
+    }
 
     impl CustomObject {
         #[unsafe(method(a))]

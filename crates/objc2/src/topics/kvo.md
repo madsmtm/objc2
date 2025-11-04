@@ -21,17 +21,11 @@ use core::ptr;
 
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
-use objc2::{define_class, msg_send, AnyThread, ClassType, DefinedClass};
+use objc2::{define_class, msg_send, AnyThread, ClassType, Ivars};
 use objc2_foundation::{
     ns_string, NSCopying, NSDictionary, NSKeyValueChangeKey, NSKeyValueObservingOptions, NSObject,
     NSObjectNSKeyValueObserverRegistration, NSObjectProtocol, NSString,
 };
-
-struct Ivars {
-    object: Retained<NSObject>,
-    key_path: Retained<NSString>,
-    handler: Box<dyn Fn(&NSDictionary<NSKeyValueChangeKey, AnyObject>) + 'static>,
-}
 
 define_class!(
     // SAFETY:
@@ -40,8 +34,11 @@ define_class!(
     //   - It does not call an overridden method.
     //   - It does not `retain` itself.
     #[unsafe(super(NSObject))]
-    #[ivars = Ivars]
-    struct MyObserver;
+    struct MyObserver {
+        object: Retained<NSObject>,
+        key_path: Retained<NSString>,
+        handler: Box<dyn Fn(&NSDictionary<NSKeyValueChangeKey, AnyObject>) + 'static>,
+    }
 
     impl MyObserver {
         #[unsafe(method(observeValueForKeyPath:ofObject:change:context:))]
@@ -53,9 +50,9 @@ define_class!(
             _context: *mut c_void,
         ) {
             if let Some(change) = change {
-                (self.ivars().handler)(change);
+                (self.handler())(change);
             } else {
-                (self.ivars().handler)(&NSDictionary::new());
+                (self.handler())(&NSDictionary::new());
             }
         }
     }
@@ -72,7 +69,7 @@ impl MyObserver {
         // object is later moved to another thread.
         handler: impl Fn(&NSDictionary<NSKeyValueChangeKey, AnyObject>) + 'static + Send + Sync,
     ) -> Retained<Self> {
-        let observer = Self::alloc().set_ivars(Ivars {
+        let observer = Self::alloc().set_ivars(Ivars::<Self> {
             object,
             key_path: key_path.copy(),
             handler: Box::new(handler),
@@ -84,15 +81,12 @@ impl MyObserver {
         // Passing `NULL` as the `context` parameter here is fine, as the observer does not
         // have any subclasses, and the superclass (NSObject) is not observing anything.
         unsafe {
-            observer
-                .ivars()
-                .object
-                .addObserver_forKeyPath_options_context(
-                    &observer,
-                    key_path,
-                    options,
-                    ptr::null_mut(),
-                );
+            observer.object().addObserver_forKeyPath_options_context(
+                &observer,
+                key_path,
+                options,
+                ptr::null_mut(),
+            );
         }
 
         observer
@@ -101,11 +95,7 @@ impl MyObserver {
 
 impl Drop for MyObserver {
     fn drop(&mut self) {
-        unsafe {
-            self.ivars()
-                .object
-                .removeObserver_forKeyPath(&self, &self.ivars().key_path);
-        }
+        unsafe { self.object().removeObserver_forKeyPath(&self, &self.key_path()) };
     }
 }
 

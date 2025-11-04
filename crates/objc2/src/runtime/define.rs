@@ -916,8 +916,7 @@ mod tests {
         assert_ne!(obj1, obj2);
 
         // description
-        let expected =
-            format!("Custom {{ super: <TestInheritedNSObjectMethodsWork: {obj1:p}>, ivars: () }}");
+        let expected = format!("Custom {{ super: <TestInheritedNSObjectMethodsWork: {obj1:p}> }}");
         assert_eq!(format!("{obj1:?}"), expected);
 
         // hash
@@ -1086,7 +1085,6 @@ mod tests {
     fn auto_name() {
         define_class!(
             #[unsafe(super(NSObject))]
-            #[ivars = ()]
             struct AutoName;
         );
 

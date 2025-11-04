@@ -1,0 +1,12 @@
+error: the syntax for specifying instance variables has changed, move the ivars to a field in the struct instead
+       #[ivars = i32] -> ivars: i32
+ --> ui/define_class_old_ivars.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     #[ivars = i32]
+  | |     struct OldIvars;
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extract_attributes_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

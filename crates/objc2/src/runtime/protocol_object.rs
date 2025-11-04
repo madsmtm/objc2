@@ -381,7 +381,7 @@ mod tests {
 
         assert_eq!(
             format!("{obj:?}"),
-            format!("DummyClass {{ super: {foobar:?}, ivars: () }}"),
+            format!("DummyClass {{ super: {foobar:?} }}"),
         );
         assert_eq!(obj == obj2, foobar == foobar2);
 

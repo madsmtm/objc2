@@ -889,9 +889,10 @@ mod tests {
                 define_class!(
                     #[unsafe(super(NSObject))]
                     #[name = concat!(stringify!($name), "Test")]
-                    // Make the type not thread safe by default.
-                    #[ivars = *const ()]
-                    struct $name;
+                    struct $name {
+                        // Make the type not thread safe by default.
+                        _marker: *const (),
+                    }
                 );
             };
         }

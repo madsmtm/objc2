@@ -178,8 +178,12 @@ impl<T: ?Sized + Message> Allocated<T> {
     /// This works very similarly to [Swift's two-phase initialization
     /// scheme][two-phase-init], see that for details.
     ///
+    /// See also the [`Ivars`] type alias which you will likely need when
+    /// using this.
+    ///
     /// [`msg_send!`]: crate::msg_send
     /// [two-phase-init]: https://docs.swift.org/swift-book/documentation/the-swift-programming-language/initialization/#Two-Phase-Initialization
+    /// [`Ivars`]: crate::Ivars
     ///
     ///
     /// # Panics

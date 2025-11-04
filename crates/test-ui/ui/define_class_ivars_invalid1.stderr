@@ -1,0 +1,11 @@
+error: no rules expected `(`
+ --> ui/define_class_ivars_invalid1.rs
+  |
+  |     struct TupleStruct(i32);
+  |                       ^ no rules expected this token in macro call
+  |
+note: while trying to match `{`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/mod.rs
+  |
+  |         $v:vis struct $class:ident {
+  |                                    ^

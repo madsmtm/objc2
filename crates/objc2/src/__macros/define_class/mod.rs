@@ -34,7 +34,7 @@ pub use self::ivars::*;
 /// # Specification
 ///
 /// This macro consists of the following parts:
-/// - The type definition, along with special attributes.
+/// - The type definition, along with special attributes and it's fields.
 /// - Any number of inherent implementations.
 /// - Any number of protocol implementations.
 ///
@@ -55,6 +55,37 @@ pub use self::ivars::*;
 /// [`extern_methods!`]: crate::extern_methods
 /// [ec_spec]: crate::extern_class#specification
 /// [`DefinedClass`]: crate::DefinedClass
+///
+///
+/// ## Instance variables (struct fields)
+///
+/// Fields on the struct correspond to [instance variables] on the class. This
+/// is the intended way to specify the data your class stores. Fields are not
+/// directly accessible, since the offsets needed to access them cannot be
+/// computed at compile-time. Instead, this macro generates corresponding
+/// getter functions, e.g. a field `foo: i32` generates a function
+/// `fn foo(&self) -> &i32`.
+///
+/// Additionally, you can access the semi-internal helper struct that contains
+/// all the fields with the [`Ivars`] type alias, e.g. as `Ivars::<MyClass>`.
+/// This is useful when initializing the class with [`set_ivars`].
+///
+/// It is recommended that you wrap your instance variables in [`Cell`],
+/// [`RefCell`], atomics or other similar interior mutability abstractions to
+/// allow mutating your instance variables. See [the docs on interior
+/// mutability][interior_mutability] for further details.
+///
+/// Beware that if you want to use the class' inherited initializers (such as
+/// `init`), you must override the subclass' designated initializers, and
+/// initialize your ivars properly in there.
+///
+/// [instance variables]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocDefiningClasses.html#//apple_ref/doc/uid/TP30001163-CH12-TPXREF126
+/// [`set_ivars`]: crate::rc::Allocated::set_ivars
+/// [`Ivars`]: crate::Ivars
+/// [`Cell`]: core::cell::Cell
+/// [`RefCell`]: core::cell::RefCell
+/// [interior_mutability]: crate::topics::interior_mutability
+///
 ///
 ///
 /// ## Attributes
@@ -95,27 +126,6 @@ pub use self::ivars::*;
 ///
 /// If the name is auto-generated, the class will also be allowed to be used
 /// across multiple shared dynamic libraries in the same process.
-///
-///
-/// ### `#[ivars = ...]` (optional)
-///
-/// Controls [the instance variables] of the class; this is the intended way
-/// to specify the data your class stores. If you don't set this attribute,
-/// the macro will default to [`()`][unit].
-///
-/// It is recommended that you wrap your instance variables in [`Cell`],
-/// [`RefCell`], atomics or other similar interior mutability abstractions to
-/// allow mutating your instance variables. See [the docs on interior
-/// mutability][interior_mutability] for further details.
-///
-/// Beware that if you want to use the class' inherited initializers (such as
-/// `init`), you must override the subclass' designated initializers, and
-/// initialize your ivars properly in there.
-///
-/// [the instance variables]: crate::DefinedClass::Ivars
-/// [`Cell`]: core::cell::Cell
-/// [`RefCell`]: core::cell::RefCell
-/// [interior_mutability]: crate::topics::interior_mutability
 ///
 ///
 /// ### `#[derive(...)]`
@@ -297,15 +307,8 @@ pub use self::ivars::*;
 /// use objc2::rc::{Allocated, Retained};
 /// use objc2::{
 ///     define_class, extern_methods, extern_protocol, msg_send, AnyThread,
-///     ClassType, DefinedClass, ProtocolType,
+///     ClassType, Ivars, ProtocolType,
 /// };
-///
-/// #[derive(Clone)]
-/// struct Ivars {
-///     foo: u8,
-///     bar: c_int,
-///     object: Retained<NSObject>,
-/// }
 ///
 /// define_class!(
 ///     // SAFETY:
@@ -321,19 +324,23 @@ pub use self::ivars::*;
 ///     // name here explicitly.
 ///     // #[name = "MyCustomObject"]
 ///
-///     // Specify the instance variables this class has.
-///     #[ivars = Ivars]
-///     struct MyCustomObject;
+///     struct MyCustomObject {
+///         // Specify the instance variables this class has.
+///         foo: u8,
+///         bar: c_int,
+///         object: Retained<NSObject>,
+///     }
 ///
 ///     impl MyCustomObject {
+///         // Access instance variable, and expose it to Objective-C.
 ///         #[unsafe(method(foo))]
 ///         fn __get_foo(&self) -> u8 {
-///             self.ivars().foo
+///             *self.foo()
 ///         }
 ///
 ///         #[unsafe(method_id(object))]
 ///         fn __get_object(&self) -> Retained<NSObject> {
-///             self.ivars().object.clone()
+///             self.object().clone()
 ///         }
 ///
 ///         #[unsafe(method(myClassMethod))]
@@ -347,7 +354,11 @@ pub use self::ivars::*;
 ///     unsafe impl NSCopying for MyCustomObject {
 ///         #[unsafe(method_id(copyWithZone:))]
 ///         fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
-///             let new = Self::alloc().set_ivars(self.ivars().clone());
+///             let new = Self::alloc().set_ivars(Ivars::<Self> {
+///                 foo: *self.foo(),
+///                 bar: *self.bar(),
+///                 object: self.object().clone(),
+///             });
 ///             unsafe { msg_send![super(new), init] }
 ///         }
 ///
@@ -366,7 +377,7 @@ pub use self::ivars::*;
 /// impl MyCustomObject {
 ///     fn new(foo: u8) -> Retained<Self> {
 ///         // Initialize instance variables.
-///         let this = Self::alloc().set_ivars(Ivars {
+///         let this = Self::alloc().set_ivars(Ivars::<Self> {
 ///             foo,
 ///             bar: 42,
 ///             object: NSObject::new(),
@@ -393,9 +404,9 @@ pub use self::ivars::*;
 /// # // Intentionally use `fn main` for clarity
 /// fn main() {
 ///     let obj = MyCustomObject::new(3);
-///     assert_eq!(obj.ivars().foo, 3);
-///     assert_eq!(obj.ivars().bar, 42);
-///     assert!(obj.ivars().object.isKindOfClass(NSObject::class()));
+///     assert_eq!(*obj.foo(), 3);
+///     assert_eq!(*obj.bar(), 42);
+///     assert!(obj.object().isKindOfClass(NSObject::class()));
 ///
 ///     let obj = obj.copy();
 ///
@@ -451,7 +462,8 @@ pub use self::ivars::*;
 /// // NSCopying
 ///
 /// - (id)copyWithZone:(NSZone *)_zone {
-///     MyCustomObject* new = [[MyCustomObject alloc] initWithFoo: self->foo];
+///     MyCustomObject* new = [[MyCustomObject alloc] init];
+///     new->foo = self->foo;
 ///     new->bar = self->bar;
 ///     new->obj = self->obj;
 ///     return new;
@@ -469,9 +481,11 @@ macro_rules! define_class {
         // - #[unsafe(super = $superclass:path)]
         // - #[thread_kind = $thread_kind:path]
         // - #[name = $name:literal]
-        // - #[ivars = $ivars:path]
         $(#[$($attrs:tt)*])*
-        $v:vis struct $class:ident;
+        $v:vis struct $class:ident {
+            // Instance variables (written as struct fields).
+            $($ivars:tt)*
+        }
 
         // unsafe impl Protocol for $class { ... }
         // impl $class { ... }
@@ -484,6 +498,7 @@ macro_rules! define_class {
             ($crate::__define_class_inner)
             ($v)
             ($class)
+            ($($ivars)*)
             // We duplicate the impls here, since we need them to create a
             // thunk that is inserted into the class' method table.
             ($($impls)*)
@@ -493,6 +508,23 @@ macro_rules! define_class {
         $crate::__define_class_output_impls! {
             // TODO: Add $class here and verify that the same item is being
             // implemented everywhere.
+            $($impls)*
+        }
+    };
+
+    {
+        // Same as above, but without any instance variables.
+        $(#[$($attrs:tt)*])*
+        $v:vis struct $class:ident;
+
+        $($impls:tt)*
+    } => {
+        $crate::define_class! {
+            $(#[$($attrs)*])*
+            $v struct $class {
+                // No ivars
+            }
+
             $($impls)*
         }
     };
@@ -534,12 +566,12 @@ macro_rules! __define_class_inner {
     (
         ($v:vis)
         ($class:ident)
+        ($($ivars:tt)*)
         ($($impls:tt)*)
 
         ($($safety:tt $superclass:path $(, $superclasses:path)* $(,)?)?)
         ($($($thread_kind:tt)+)?)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_struct:tt)*)
         ($($attr_impl:tt)*)
@@ -576,6 +608,7 @@ macro_rules! __define_class_inner {
         $crate::__define_class_derives! {
             ($($attr_impl)*)
             ($class)
+            ($($ivars)*)
             ($($derives)*)
         }
 
@@ -681,11 +714,21 @@ macro_rules! __define_class_inner {
                 type __SubclassingType = Self;
             }
 
+            // Pub because everyone that see `$class` can access this via
+            // `<$class as DefinedClass>::Ivars`.
+            #[allow(unreachable_pub)]
+            pub struct __Objc2IvarsContainer {
+                // These are intentionally not parsed when inserted here, to
+                // allow rust-analyzer to better work with incomplete fields.
+                $($ivars)*
+            }
+
+            $crate::__define_class_ivar_accessors!(($class) $($ivars)*);
+
             impl $crate::DefinedClass for $class {
-                type Ivars = $crate::__fallback_if_not_set!(
-                    ($($ivars)?)
-                    // Default ivars to unit.
-                    (())
+                type Ivars = $crate::__define_class_ivars_type!(
+                    (__Objc2IvarsContainer)
+                    $($ivars)*
                 );
 
                 #[inline]
@@ -744,6 +787,7 @@ macro_rules! __define_class_derives {
     (
         ($($attr_impl:tt)*)
         ($for:path)
+        ($($ivars:tt)*)
         ($(,)*)
     ) => {};
 
@@ -751,6 +795,7 @@ macro_rules! __define_class_derives {
     (
         ($($attr_impl:tt)*)
         ($for:path)
+        ($($(#[$($ivar_attrs:tt)*])* $ivar_vis:vis $ivar:ident: $ivar_ty:ty),* $(,)?)
         (
             $(,)*
             Debug
@@ -761,16 +806,25 @@ macro_rules! __define_class_derives {
         #[automatically_derived]
         impl $crate::__macros::fmt::Debug for $for {
             fn fmt(&self, f: &mut $crate::__macros::fmt::Formatter<'_>) -> $crate::__macros::fmt::Result {
-                f.debug_struct($crate::__macros::stringify!($for))
-                    .field("super", &**self.__superclass)
-                    .field("ivars", <Self as $crate::DefinedClass>::ivars(self))
-                    .finish()
+                let mut fmt = f.debug_struct($crate::__macros::stringify!($for));
+                fmt.field("super", &**self.__superclass);
+                $(
+                    $crate::__extract_and_apply_cfg_attributes! {
+                        ($(#[$($ivar_attrs)*])*)
+
+                        // In case the user's ivar is marked `deprecated`.
+                        #[allow(deprecated)]
+                        fmt.field(stringify!($ivar), Self::$ivar(self));
+                    }
+                )*
+                fmt.finish()
             }
         }
 
         $crate::__define_class_derives! {
             ($($attr_impl)*)
             ($for)
+            ($($(#[$($ivar_attrs)*])* $ivar_vis $ivar: $ivar_ty,)*)
             ($($rest)*)
         }
     };
@@ -779,6 +833,7 @@ macro_rules! __define_class_derives {
     (
         ($($attr_impl:tt)*)
         ($for:path)
+        ($($ivars:tt)*)
         (
             $(,)*
             PartialEq
@@ -798,6 +853,7 @@ macro_rules! __define_class_derives {
         $crate::__define_class_derives! {
             ($($attr_impl)*)
             ($for)
+            ($($ivars)*)
             ($($rest)*)
         }
     };
@@ -806,6 +862,7 @@ macro_rules! __define_class_derives {
     (
         ($($attr_impl:tt)*)
         ($for:path)
+        ($($ivars:tt)*)
         (
             $(,)*
             Eq
@@ -819,6 +876,7 @@ macro_rules! __define_class_derives {
         $crate::__define_class_derives! {
             ($($attr_impl)*)
             ($for)
+            ($($ivars)*)
             ($($rest)*)
         }
     };
@@ -827,6 +885,7 @@ macro_rules! __define_class_derives {
     (
         ($($attr_impl:tt)*)
         ($for:path)
+        ($($ivars:tt)*)
         (
             $(,)*
             Hash
@@ -846,6 +905,7 @@ macro_rules! __define_class_derives {
         $crate::__define_class_derives! {
             ($($attr_impl)*)
             ($for)
+            ($($ivars)*)
             ($($rest)*)
         }
     };
@@ -854,6 +914,7 @@ macro_rules! __define_class_derives {
     (
         ($($attr_impl:tt)*)
         ($for:path)
+        ($($ivars:tt)*)
         (
             $(,)*
             $derive:path
@@ -872,6 +933,7 @@ macro_rules! __define_class_derives {
         $crate::__define_class_derives! {
             ($($attr_impl)*)
             ($for)
+            ($($ivars)*)
             ($($($rest)*)?)
         }
     };
@@ -904,5 +966,67 @@ macro_rules! __define_class_name {
             $crate::__macros::stringify!($class),
             $crate::__macros::env!("CARGO_PKG_VERSION"),
         )
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __define_class_ivar_accessors {
+    (
+        ($class:ident)
+        $(,)?
+    ) => {
+        // No ivars
+    };
+    (
+        ($class:ident)
+        $(
+            $(#[$($ivar_attrs:tt)*])*
+            $ivar_vis:vis $ivar:ident: $ivar_ty:ty
+        ),+
+        $(,)?
+    ) => {
+        /// Instance variable accessors.
+        impl $class {
+            $(
+                $(#[$($ivar_attrs)*])*
+                $ivar_vis fn $ivar(&self) -> &$ivar_ty {
+                    // TODO: Change how instance variables are registered,
+                    // such that each struct field gets its own instance
+                    // variable in the runtime.
+                    //
+                    // And maybe allow a custom attribute `#[name = "..."]`
+                    // that overrides the auto-generated (private/unique)
+                    // name? Should that be `#[unsafe(name = "...")]`?
+
+                    // In case the user's ivar is marked `deprecated`.
+                    #[allow(deprecated)]
+                    &<Self as $crate::DefinedClass>::__get_ivars(self).$ivar
+                }
+            )+
+        }
+    };
+    (
+        ($class:ident)
+        $($ivars:tt)*
+    ) => {
+        $crate::__macros::compile_error!($crate::__macros::concat!(
+            "invalid ivars\n",
+            $crate::__macros::stringify!($($ivars)*),
+        ));
+    }
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __define_class_ivars_type {
+    (($ivars_ty:ident)) => {
+        // Default to `Ivars = ()` when no ivars are specified.
+        //
+        // We might remove this in the future, but let's keep it for now.
+        ()
+    };
+    (($ivars_ty:ident) $($t:tt)*) => {
+        $ivars_ty
     };
 }

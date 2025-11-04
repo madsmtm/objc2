@@ -547,9 +547,6 @@ macro_rules! __extract_attributes {
         // The contents of the `name` attribute, if any.
         // ($($name:expr)?)
         //
-        // The contents of the `ivars` attribute, if any.
-        // ($($ivars:path)?)
-        //
         // The list of paths in all `derive` attributes.
         // ($($derives:path),*)
         //
@@ -566,7 +563,6 @@ macro_rules! __extract_attributes {
             () // superclasses
             () // thread_kind
             () // name
-            () // ivars
             () // derive
             () // attr_item
             () // attr_impl
@@ -588,7 +584,6 @@ macro_rules! __extract_attributes_inner {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
@@ -604,7 +599,6 @@ macro_rules! __extract_attributes_inner {
             ($($superclasses)*)
             ($($thread_kind)*)
             ($($name)*)
-            ($($ivars)*)
             ($($derives)*)
             ($($attr_item)*)
             ($($attr_impl)*)
@@ -621,7 +615,6 @@ macro_rules! __extract_attributes_inner {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
@@ -636,7 +629,6 @@ macro_rules! __extract_attributes_inner {
             (unsafe $($parsed)*)
             ($($thread_kind)*)
             ($($name)*)
-            ($($ivars)*)
             ($($derives)*)
             ($($attr_item)*)
             ($($attr_impl)*)
@@ -655,7 +647,6 @@ macro_rules! __extract_attributes_inner {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
@@ -670,7 +661,6 @@ macro_rules! __extract_attributes_inner {
             (unsafe $parsed)
             ($($thread_kind)*)
             ($($name)*)
-            ($($ivars)*)
             ($($derives)*)
             ($($attr_item)*)
             ($($attr_impl)*)
@@ -690,7 +680,6 @@ macro_rules! __extract_attributes_inner {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
@@ -705,7 +694,6 @@ macro_rules! __extract_attributes_inner {
             (safe $($parsed)*)
             ($($thread_kind)*)
             ($($name)*)
-            ($($ivars)*)
             ($($derives)*)
             ($($attr_item)*)
             ($($attr_impl)*)
@@ -724,7 +712,6 @@ macro_rules! __extract_attributes_inner {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
@@ -739,7 +726,6 @@ macro_rules! __extract_attributes_inner {
             (safe $parsed)
             ($($thread_kind)*)
             ($($name)*)
-            ($($ivars)*)
             ($($derives)*)
             ($($attr_item)*)
             ($($attr_impl)*)
@@ -759,7 +745,6 @@ macro_rules! __extract_attributes_inner {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
@@ -774,7 +759,6 @@ macro_rules! __extract_attributes_inner {
             ($($superclasses)*)
             ($($parsed)+)
             ($($name)*)
-            ($($ivars)*)
             ($($derives)*)
             ($($attr_item)*)
             ($($attr_impl)*)
@@ -794,7 +778,6 @@ macro_rules! __extract_attributes_inner {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
@@ -809,7 +792,6 @@ macro_rules! __extract_attributes_inner {
             ($($superclasses)*)
             ($($thread_kind)*)
             ($($parsed)+)
-            ($($ivars)*)
             ($($derives)*)
             ($($attr_item)*)
             ($($attr_impl)*)
@@ -819,7 +801,7 @@ macro_rules! __extract_attributes_inner {
         }
     };
 
-    // `ivars = ...`
+    // `ivars = ...` (old syntax, removed)
     {
         (
             #[ivars = $($parsed:tt)+]
@@ -829,7 +811,6 @@ macro_rules! __extract_attributes_inner {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
@@ -837,14 +818,22 @@ macro_rules! __extract_attributes_inner {
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__handle_duplicate!("ivars"; $($ivars)*);
+        $crate::__macros::compile_error!(
+            $crate::__macros::concat!(
+                "the syntax for specifying instance variables has changed, move the ivars to a field in the struct instead\n",
+                // For better support in rust-analyzer.
+                "#[ivars = ",
+                $crate::__macros::stringify!($($parsed)+),
+                "] -> ivars: ",
+                $crate::__macros::stringify!($($parsed)+),
+            )
+        );
         $crate::__extract_attributes_inner! {
             ($($rest)*)
 
             ($($superclasses)*)
             ($($thread_kind)*)
             ($($name)*)
-            ($($parsed)+)
             ($($derives)*)
             ($($attr_item)*)
             ($($attr_impl)*)
@@ -864,7 +853,6 @@ macro_rules! __extract_attributes_inner {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
@@ -878,7 +866,6 @@ macro_rules! __extract_attributes_inner {
             ($($superclasses)*)
             ($($thread_kind)*)
             ($($name)*)
-            ($($ivars)*)
             // Combine all #[derive(...)] into one list.
             ($($derives)*, $($parsed)*)
             ($($attr_item)*)
@@ -899,7 +886,6 @@ macro_rules! __extract_attributes_inner {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
@@ -913,7 +899,6 @@ macro_rules! __extract_attributes_inner {
             ($($superclasses)*)
             ($($thread_kind)*)
             ($($name)*)
-            ($($ivars)*)
             ($($derives)*)
             (
                 $($attr_item)*
@@ -940,7 +925,6 @@ macro_rules! __extract_attributes_inner {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
@@ -954,7 +938,6 @@ macro_rules! __extract_attributes_inner {
             ($($superclasses)*)
             ($($thread_kind)*)
             ($($name)*)
-            ($($ivars)*)
             ($($derives)*)
             (
                 $($attr_item)*
@@ -982,7 +965,6 @@ macro_rules! __extract_attributes_inner {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_item:tt)*)
         ($($attr_impl:tt)*)
@@ -996,7 +978,6 @@ macro_rules! __extract_attributes_inner {
             ($($superclasses)*)
             ($($thread_kind)*)
             ($($name)*)
-            ($($ivars)*)
             ($($derives)*)
             // Pass all other attributes onwards to the struct.
             (

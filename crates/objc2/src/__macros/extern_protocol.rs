@@ -185,7 +185,6 @@ macro_rules! __inner_extern_protocol {
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
         ($($name:tt)*)
-        ($($ivars:tt)*)
         ($($derives:tt)*)
         ($($attr_protocol:tt)*)
         ($($attr_impl:tt)*)
@@ -227,8 +226,6 @@ macro_rules! __inner_extern_protocol {
 
         $crate::__extern_protocol_check_no_thread_kind!($($thread_kind)*);
 
-        $crate::__extern_protocol_check_no_ivars!($($ivars)*);
-
         $crate::__extern_protocol_check_no_derives!($($derives)*);
     };
 }
@@ -250,15 +247,6 @@ macro_rules! __extern_protocol_check_no_thread_kind {
         $crate::__macros::compile_error!(
             "#[thread_kind = ...] is not supported in extern_protocol!. Add MainThreadOnly or AnyThread bound instead"
         );
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __extern_protocol_check_no_ivars {
-    () => {};
-    ($($ivars:tt)*) => {
-        $crate::__macros::compile_error!("#[ivars] is not supported in extern_protocol!");
     };
 }
 

@@ -2,7 +2,7 @@ use std::cell::OnceCell;
 
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2::{define_class, msg_send, sel, DefinedClass, MainThreadMarker, MainThreadOnly};
+use objc2::{define_class, msg_send, sel, Ivars, MainThreadMarker, MainThreadOnly};
 use objc2_app_kit::{
     NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSMenu, NSMenuItem,
     NSWindow, NSWindowController,
@@ -11,20 +11,16 @@ use objc2_foundation::{ns_string, NSNotification, NSObject, NSObjectProtocol};
 
 use crate::game_view_controller::GameViewController;
 
-#[derive(Default)]
-pub struct Ivars {
-    window: OnceCell<Retained<NSWindow>>,
-    window_controller: OnceCell<Retained<NSWindowController>>,
-}
-
 define_class!(
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
     // - `AppDelegate` does not implement `Drop`.
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[ivars = Ivars]
-    pub struct AppDelegate;
+    pub struct AppDelegate {
+        window: OnceCell<Retained<NSWindow>>,
+        window_controller: OnceCell<Retained<NSWindowController>>,
+    }
 
     // SAFETY: No problematic methods on `NSObjectProtocol` are implemented.
     unsafe impl NSObjectProtocol for AppDelegate {}
@@ -61,11 +57,8 @@ define_class!(
             app.activateIgnoringOtherApps(false);
 
             // Store for later use.
-            self.ivars().window.set(window).unwrap();
-            self.ivars()
-                .window_controller
-                .set(window_controller)
-                .unwrap();
+            self.window().set(window).unwrap();
+            self.window_controller().set(window_controller).unwrap();
         }
 
         // SAFETY: The signature is correct.
@@ -80,7 +73,10 @@ impl AppDelegate {
     // FIXME: Make it possible to avoid this boilerplate.
     fn new(mtm: MainThreadMarker) -> Retained<Self> {
         let this = Self::alloc(mtm);
-        let this = this.set_ivars(Default::default());
+        let this = this.set_ivars(Ivars::<Self> {
+            window: Default::default(),
+            window_controller: Default::default(),
+        });
         // SAFETY: `AppDelegate` is safe to initialize.
         unsafe { msg_send![super(this), init] }
     }

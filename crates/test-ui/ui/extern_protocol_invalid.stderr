@@ -44,16 +44,17 @@ error: cannot specify the `name` attribute twice
   |
   = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: #[ivars] is not supported in extern_protocol!
- --> ui/extern_protocol_invalid.rs
-  |
-  | / extern_protocol!(
-  | |     #[ivars = i32]
-  | |     unsafe trait HasIvars {}
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__extern_protocol_check_no_ivars` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
+error: the syntax for specifying instance variables has changed, move the ivars to a field in the struct instead
+       #[ivars = i32] -> ivars: i32
+  --> ui/extern_protocol_invalid.rs
+   |
+   | / extern_protocol!(
+   | |     #[ivars = i32]
+   | |     unsafe trait HasIvars {}
+   | | );
+   | |_^
+   |
+   = note: this error originates in the macro `$crate::__extract_attributes_inner` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: #[thread_kind = ...] is not supported in extern_protocol!. Add MainThreadOnly or AnyThread bound instead
  --> ui/extern_protocol_invalid.rs

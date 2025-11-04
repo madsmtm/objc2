@@ -5,8 +5,9 @@ use objc2::{define_class, AnyThread, MainThreadOnly};
 define_class!(
     #[unsafe(super(NSObject))]
     #[thread_kind = AnyThread]
-    #[ivars = *mut ()]
-    struct Normal;
+    struct Normal {
+        marker: *mut (),
+    }
 );
 
 unsafe impl MainThreadOnly for Normal {}
