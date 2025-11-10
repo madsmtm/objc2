@@ -4330,7 +4330,10 @@ fn parse_unexposed_tokens(s: &str) -> (String, Option<UnexposedAttr>) {
     let mut iter = tokens.into_iter().peekable();
     let attr = if let Some(TokenTree::Ident(ident)) = iter.peek() {
         let ident = ident.to_string();
+        let mut has_advanced = false;
         if let Ok(attr) = UnexposedAttr::from_name(&ident, || {
+            iter.next();
+            has_advanced = true;
             if let Some(TokenTree::Group(_)) = iter.peek() {
                 let Some(TokenTree::Group(group)) = iter.next() else {
                     unreachable!();
@@ -4342,7 +4345,9 @@ fn parse_unexposed_tokens(s: &str) -> (String, Option<UnexposedAttr>) {
                 TokenStream::new()
             }
         }) {
-            iter.next();
+            if !has_advanced {
+                iter.next();
+            }
             attr
         } else {
             None
@@ -4390,6 +4395,10 @@ mod tests {
         check("NS_RETURNS_INNER_POINTER const char *", "const char *");
         check(
             "API_UNAVAILABLE(macos) NSString *const __strong",
+            "NSString * const __strong",
+        );
+        check(
+            "API_UNAVAILABLE NSString *const __strong",
             "NSString * const __strong",
         );
         check("NS_REFINED_FOR_SWIFT NSNumber *", "NSNumber *");

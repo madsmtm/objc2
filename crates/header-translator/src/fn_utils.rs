@@ -32,6 +32,7 @@ mod tests {
         assert!(follows_create_rule("CreateThing"));
         assert!(follows_create_rule("CopyCreateThing"));
         assert!(follows_create_rule("create_thing"));
+        assert!(follows_create_rule("thing_create"));
 
         assert!(!follows_create_rule("Created"));
         assert!(!follows_create_rule("created"));
