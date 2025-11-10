@@ -16,9 +16,6 @@ visionos = "1.0"
 fn.IOSurfaceCreateXPCObject.skipped = true
 fn.IOSurfaceLookupFromXPCObject.skipped = true
 
-# Needs task_id_token_t
-fn.IOSurfaceSetOwnershipIdentity.skipped = true
-
 # Defined in other crates too, so needs manual definition
 typedef.IOSurfaceRef.renamed = "IOSurfaceRef" # TODO: Merge IOSurface and IOSurfaceRef somehow
 typedef.IOSurfaceRef.skipped = true
@@ -39,3 +36,7 @@ class.IOSurface.methods."unlockWithOptions:seed:".unsafe = false
 # TODO(breaking): Maybe mark as `unsafe`? Takes `AnyObject` generic.
 class.IOSurface.methods."initWithProperties:".unsafe = false
 class.IOSurface.methods."setAllAttachments:".unsafe = false
+
+# Unsure if `task_id_token_t` means that this remaps the underlying memory
+# somehow?
+fn.IOSurfaceSetOwnershipIdentity.unsafe = true

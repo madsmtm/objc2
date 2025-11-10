@@ -15,9 +15,6 @@ class.MTLRasterizationRateLayerDescriptor.methods.sampleCount.skipped = true
 # Swift also handles this differently.
 class.MTLRasterizationRateMapDescriptor.methods."rasterizationRateMapDescriptorWithScreenSize:layerCount:layers:".arguments.2.bounds = { counted-by = "layerCount" }
 
-# Needs mach / kernel types
-protocol.MTLResource.methods."setOwnerWithIdentity:".skipped = true
-
 # Has a union field, but we'd rather have it as just a struct
 struct._MTLPackedFloat3.skipped = true
 typedef.MTLPackedFloat3.skipped = true
@@ -284,3 +281,7 @@ class.MTLTextureDescriptor.methods."setSampleCount:".unsafe = true
 class.MTLTextureDescriptor.methods."setArrayLength:".unsafe = true
 class.MTLComputePipelineDescriptor.methods."setThreadGroupSizeIsMultipleOfThreadExecutionWidth:".unsafe = true
 protocol.MTLComputePipelineState.methods."imageblockMemoryLengthForDimensions:".unsafe = true
+
+# Documentation says something about memory ownership, which might not be safe
+# from Rust's AM?
+protocol.MTLResource.methods."setOwnerWithIdentity:".unsafe = true

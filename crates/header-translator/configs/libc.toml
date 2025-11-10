@@ -14,8 +14,10 @@ watchos = "2.0"
 visionos = "1.0"
 gnustep = true
 
-# HACK: Define `task_port_t` in the using crate (it's a simple alias to `task_t`).
+# HACK: Define `task_port_t` and `task_id_token_t` in the using crate
+# These are simple aliases to `task_t` and `mach_port_t` respectively.
 external.task_port_t.module = "__builtin__"
+external.task_id_token_t.module = "__builtin__"
 
 # Redefined by CoreFoundation with a name that makes it hard to see
 # that this is `libc::malloc_zone_t`.

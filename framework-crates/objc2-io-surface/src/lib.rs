@@ -30,3 +30,8 @@ pub use self::io_surface::IOSurfaceRef;
 pub(crate) type Boolean = u8;
 #[allow(dead_code)]
 pub(crate) type OSType = u32;
+
+// mach/mach_types.h
+#[allow(dead_code, non_camel_case_types)]
+#[cfg(feature = "libc")]
+pub(crate) type task_id_token_t = libc::mach_port_t;

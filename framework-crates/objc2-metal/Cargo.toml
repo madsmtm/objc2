@@ -22,6 +22,7 @@ dispatch2 = { workspace = true, optional = true, features = [
     "alloc",
     "objc2",
 ] }
+libc = { workspace = true, optional = true }
 objc2 = { workspace = true, features = ["std"] }
 objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFDate",
@@ -147,6 +148,7 @@ default = [
     "bitflags",
     "block2",
     "dispatch2",
+    "libc",
     "objc2-core-foundation",
 ]
 std = ["alloc"]
@@ -204,6 +206,7 @@ MTLBuffer = [
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
+libc = ["dep:libc"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-io-surface = ["dep:objc2-io-surface"]
 unstable-darwin-objc = []

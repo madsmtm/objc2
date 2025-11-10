@@ -128,3 +128,8 @@ pub use self::slice::MTLRenderCommandEncoderSliceExt;
 pub use self::texture::*;
 #[cfg(feature = "MTLTypes")]
 pub use self::types::MTLResourceID;
+
+// mach/mach_types.h
+#[allow(dead_code, non_camel_case_types)]
+#[cfg(feature = "libc")]
+pub(crate) type task_id_token_t = libc::mach_port_t;
