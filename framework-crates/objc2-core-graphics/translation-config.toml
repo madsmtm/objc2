@@ -3,7 +3,7 @@ crate = "objc2-core-graphics"
 required-crates = ["objc2-core-foundation"]
 flags = [
     # TODO(breaking): Add this to disable cg_nullable and get better nullability information.
-    # "-D__swift__=0",
+    "-D__swift__=0",
 ]
 custom-lib-rs = true
 macos = "10.8"
