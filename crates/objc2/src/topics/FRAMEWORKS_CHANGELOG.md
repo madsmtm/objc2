@@ -18,10 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added a few missing APIs that uses arrays.
 
 ### Changed
-* Updated SDK from Xcode 26.0.1 to 26.1.
+* Updated SDK from Xcode 26.0.1 to 26.1.1.
 
   View the release notes to learn more details:
-  - [26.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_1-release-notes)
+  - [26.1.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_1-release-notes)
 
   Breaking changes are noted elsewhere in this changelog entry.
 

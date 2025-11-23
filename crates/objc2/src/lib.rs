@@ -73,7 +73,7 @@
 //! versions will also work, but the framework crates will not have bindings
 //! available for newer APIs.
 //!
-//! The framework bindings are generated from the SDKs in Xcode 26.1. The
+//! The framework bindings are generated from the SDKs in Xcode 26.1.1. The
 //! Xcode version are updated usually within a week of [GitHub Actions]
 //! supporting the new Xcode version, and we try to schedule crate releases
 //! such that align fairly closely with Xcode updates. We only support stable
