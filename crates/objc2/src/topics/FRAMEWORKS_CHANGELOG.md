@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Marked a bunch of functions safe in:
   - `CoreText` / `objc2-core-text`.
 * Added a few missing APIs that uses arrays.
+* Added `CGBitmapInfo::new`.
 
 ### Changed
 * Updated SDK from Xcode 26.0.1 to 26.1.1.

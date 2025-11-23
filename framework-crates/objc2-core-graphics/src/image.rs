@@ -1,4 +1,7 @@
-use crate::{CGBitmapInfo, CGImageByteOrderInfo};
+use crate::{
+    CGBitmapInfo, CGImageAlphaInfo, CGImageByteOrderInfo, CGImageComponentInfo,
+    CGImagePixelFormatInfo,
+};
 
 #[allow(non_upper_case_globals, deprecated)]
 impl CGBitmapInfo {
@@ -32,4 +35,17 @@ impl CGImageByteOrderInfo {
     } else {
         Self::Order32Little
     };
+}
+
+impl CGBitmapInfo {
+    /// Create a bitmap info structure from its four component parts.
+    #[doc(alias = "CGBitmapInfoMake")]
+    pub fn new(
+        alpha: CGImageAlphaInfo,
+        component: CGImageComponentInfo,
+        byte_order: CGImageByteOrderInfo,
+        pixel_format: CGImagePixelFormatInfo,
+    ) -> Self {
+        Self(alpha.0 | component.0 | byte_order.0 | pixel_format.0)
+    }
 }
