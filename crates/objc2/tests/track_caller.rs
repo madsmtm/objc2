@@ -102,7 +102,7 @@ fn test_track_caller() {
 fn test_nil(checker: &PanicChecker) {
     let nil: *mut NSObject = ptr::null_mut();
 
-    let msg = "messsaging description to nil";
+    let msg = "messaging description to nil";
     checker.assert_panics(msg, line!() + 1, || {
         let _: *mut NSObject = unsafe { msg_send![nil, description] };
     });
@@ -131,7 +131,7 @@ fn test_verify(checker: &PanicChecker) {
 fn test_error_methods(checker: &PanicChecker) {
     let nil: *mut NSObject = ptr::null_mut();
 
-    let msg = "messsaging someSelectorWithError: to nil";
+    let msg = "messaging someSelectorWithError: to nil";
     checker.assert_panics(msg, line!() + 1, || {
         let _: Result<(), Retained<NSObject>> = unsafe { msg_send![nil, someSelectorWithError: _] };
     });
@@ -162,7 +162,7 @@ fn test_retained_unwrap(checker: &PanicChecker) {
     });
 
     let msg = if cfg!(debug_assertions) {
-        "messsaging init to nil"
+        "messaging init to nil"
     } else {
         "failed allocating object"
     };

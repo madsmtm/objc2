@@ -339,7 +339,7 @@ fn msg_send_check_class(
 #[cfg(debug_assertions)]
 #[track_caller]
 fn panic_null(sel: Sel) -> ! {
-    panic!("messsaging {sel} to nil")
+    panic!("messaging {sel} to nil")
 }
 
 #[cfg(debug_assertions)]
@@ -592,7 +592,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(debug_assertions, should_panic = "messsaging description to nil")]
+    #[cfg_attr(debug_assertions, should_panic = "messaging description to nil")]
     fn test_send_message_nil() {
         let nil: *mut NSObject = ::core::ptr::null_mut();
 

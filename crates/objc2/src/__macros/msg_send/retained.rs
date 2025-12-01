@@ -523,7 +523,7 @@ mod tests {
     #[test]
     #[cfg_attr(
         debug_assertions,
-        should_panic = "messsaging newMethodOnInstance to nil"
+        should_panic = "messaging newMethodOnInstance to nil"
     )]
     #[cfg_attr(
         not(debug_assertions),
@@ -537,7 +537,7 @@ mod tests {
     #[test]
     #[cfg_attr(
         debug_assertions,
-        should_panic = "messsaging newMethodOnInstance to nil"
+        should_panic = "messaging newMethodOnInstance to nil"
     )]
     #[cfg_attr(
         not(debug_assertions),
@@ -642,7 +642,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(debug_assertions, should_panic = "messsaging init to nil")]
+    #[cfg_attr(debug_assertions, should_panic = "messaging init to nil")]
     #[cfg_attr(not(debug_assertions), ignore = "failed allocating object")]
     fn test_init_with_null_receiver() {
         let obj: Allocated<RcTestObject> =
@@ -778,7 +778,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(debug_assertions, should_panic = "messsaging description to nil")]
+    #[cfg_attr(debug_assertions, should_panic = "messaging description to nil")]
     #[cfg_attr(
         not(debug_assertions),
         ignore = "unexpected NULL description; receiver was NULL"
