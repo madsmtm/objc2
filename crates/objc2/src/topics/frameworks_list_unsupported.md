@@ -7,6 +7,7 @@
 | `AddressBookUI` | Deprecated, use Contacts instead. |
 | `AlarmKit` | Mostly Swift-only. |
 | `AppIntents` | Swift-only. |
+| `AppMigrationKit` | Swift-only. |
 | `AppleScriptKit` | Basically empty nowadays. |
 | `AppleScriptObjC` | Basically empty nowadays. |
 | `AssetsLibrary` | Deprecated, use PhotoKit instead. |

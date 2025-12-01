@@ -66,8 +66,10 @@ unstable-darwin-objc = []
 ASAccessory = [
     "bitflags",
     "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
     "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",
+    "objc2-foundation/NSValue",
 ]
 ASAccessoryEvent = ["objc2-foundation/NSError"]
 ASAccessorySession = [
@@ -92,4 +94,7 @@ ASPickerDisplayItem = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",
 ]
-ASPickerDisplaySettings = ["objc2-foundation/NSDate"]
+ASPickerDisplaySettings = [
+    "bitflags",
+    "objc2-foundation/NSDate",
+]

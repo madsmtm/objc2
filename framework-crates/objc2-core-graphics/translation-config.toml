@@ -81,6 +81,14 @@ fn.CGColorSpaceCopyBaseColorSpace.renamed = "copy_base_color_space"
 fn.CGBitmapContextCreateWithData.skipped = true
 fn.CGBitmapContextCreate.skipped = true
 
+# TODO(breaking): Has better nullability when `-D__swift__` is set.
+fn.CGColorSpaceSupportsOutput.arguments.0.nullability = "nonnull"
+fn.CGColorSpaceUsesExtendedRange.arguments.0.nullability = "nonnull"
+fn.CGColorSpaceCreateLinearized.arguments.0.nullability = "nonnull"
+fn.CGColorSpaceCreateExtended.arguments.0.nullability = "nonnull"
+fn.CGColorSpaceCreateExtendedLinearized.arguments.0.nullability = "nonnull"
+fn.CGColorSpaceCreateCopyWithStandardRange.arguments.0.nullability = "nonnull"
+
 ##
 ## Safety
 ##

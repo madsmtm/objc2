@@ -29,6 +29,7 @@ ActivityKit = "Swift-only"
 AdAttributionKit = "Swift-only"
 AlarmKit = "Mostly Swift-only"
 AppIntents = "Swift-only"
+AppMigrationKit = "Swift-only"
 Assignables = "Swift-only"
 AutomatedDeviceEnrollment = "Swift-only"
 CarKey = "Swift-only" # Also requires special entitlement

@@ -63,6 +63,7 @@ default = [
     "HMAccessorySetupRequest",
     "HMAccessorySetupResult",
     "HMAccessory_Camera",
+    "HMAccessory_Vendor",
     "HMAction",
     "HMActionSet",
     "HMAddAccessoryRequest",
@@ -94,6 +95,7 @@ default = [
     "HMHome",
     "HMHomeAccessControl",
     "HMHomeManager",
+    "HMHomeManager_Vendor",
     "HMLocationEvent",
     "HMNetworkConfigurationProfile",
     "HMNumberRange",
@@ -158,6 +160,7 @@ HMAccessorySetupResult = [
     "objc2-foundation/NSUUID",
 ]
 HMAccessory_Camera = ["objc2-foundation/NSArray"]
+HMAccessory_Vendor = ["objc2-foundation/NSValue"]
 HMAction = ["objc2-foundation/NSUUID"]
 HMActionSet = [
     "objc2-foundation/NSDate",
@@ -240,6 +243,10 @@ HMHomeManager = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
+]
+HMHomeManager_Vendor = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
 ]
 HMLocationEvent = [
     "objc2-foundation/NSError",

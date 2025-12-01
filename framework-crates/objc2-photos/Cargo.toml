@@ -73,6 +73,8 @@ default = [
     "PHAssetCreationRequest",
     "PHAssetResource",
     "PHAssetResourceManager",
+    "PHAssetResourceUploadJob",
+    "PHAssetResourceUploadJobChangeRequest",
     "PHChange",
     "PHChangeRequest",
     "PHCloudIdentifier",
@@ -167,6 +169,11 @@ PHAssetResourceManager = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSURL",
 ]
+PHAssetResourceUploadJob = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSURLRequest",
+]
+PHAssetResourceUploadJobChangeRequest = ["objc2-foundation/NSURLRequest"]
 PHChangeRequest = []
 PHCloudIdentifier = [
     "objc2-foundation/NSArray",

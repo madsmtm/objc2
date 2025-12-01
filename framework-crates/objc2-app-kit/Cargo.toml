@@ -275,6 +275,7 @@ default = [
     "NSRunningApplication",
     "NSSavePanel",
     "NSScreen",
+    "NSScrollEdgeEffect",
     "NSScrollView",
     "NSScroller",
     "NSScrubber",
@@ -1608,6 +1609,7 @@ NSScreen = [
     "objc2-foundation/NSString",
     "objc2-foundation/objc2-core-foundation",
 ]
+NSScrollEdgeEffect = []
 NSScrollView = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",

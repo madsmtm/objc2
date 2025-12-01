@@ -105,6 +105,7 @@ default = [
     "CPMessageComposeBarButton",
     "CPMessageListItem",
     "CPNavigationAlert",
+    "CPNavigationEnum",
     "CPNavigationSession",
     "CPNowPlayingButton",
     "CPNowPlayingMode",
@@ -271,6 +272,7 @@ CPNavigationAlert = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+CPNavigationEnum = ["objc2-foundation/NSString"]
 CPNavigationSession = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",

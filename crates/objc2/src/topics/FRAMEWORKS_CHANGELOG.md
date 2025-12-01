@@ -17,6 +17,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreText` / `objc2-core-text`.
 * Added a few missing APIs that uses arrays.
 
+### Changed
+* Updated SDK from Xcode 26.0.1 to 26.1.
+
+  View the release notes to learn more details:
+  - [26.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_1-release-notes)
+
+  Breaking changes are noted elsewhere in this changelog entry.
+
+### Removed
+* **BREAKING**: Removed `UIButtonConfiguration::tintedGlassButtonConfiguration`.
+* **BREAKING**: Removed `UIDocumentBrowserAction::imageOnlyForContextMenu` and
+  `UIDocumentBrowserAction::setImageOnlyForContextMenu`.
+
 ### Fixed
 * Fixed the encoding check in `NSUUID` methods.
 * Fixed the encoding of `MTLResourceID` on simulator targets.
