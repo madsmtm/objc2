@@ -17,13 +17,10 @@ impl DispatchWorkloop {
     pub fn new(label: &str, inactive: bool) -> DispatchRetained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
-        // Safety: label can only be valid.
-        unsafe {
-            if inactive {
-                DispatchWorkloop::__new_inactive(label.as_ptr())
-            } else {
-                DispatchWorkloop::__new(label.as_ptr())
-            }
+        if inactive {
+            DispatchWorkloop::__new_inactive(Some(&label))
+        } else {
+            DispatchWorkloop::__new(Some(&label))
         }
     }
 }

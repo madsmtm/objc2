@@ -228,6 +228,11 @@ fn.dispatch_queue_create_with_target.renamed = "__new_with_target"
 fn.dispatch_workloop_create.renamed = "__new"
 fn.dispatch_workloop_create_inactive.renamed = "__new_inactive"
 
+fn.dispatch_queue_create.arguments.0.bounds = "null-terminated"
+fn.dispatch_queue_create_with_target.arguments.0.bounds = "null-terminated"
+fn.dispatch_workloop_create.arguments.0.bounds = "null-terminated"
+fn.dispatch_workloop_create_inactive.arguments.0.bounds = "null-terminated"
+
 ##
 ## Safety + API
 ##

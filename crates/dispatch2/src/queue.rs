@@ -73,8 +73,7 @@ impl DispatchQueue {
     pub fn new(label: &str, queue_attribute: Option<&DispatchQueueAttr>) -> DispatchRetained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
-        // SAFETY: The label is a valid C string.
-        unsafe { Self::__new(label.as_ptr(), queue_attribute) }
+        Self::__new(Some(&label), queue_attribute)
     }
 
     /// Create a new [`DispatchQueue`] with a given target [`DispatchQueue`].
@@ -85,8 +84,8 @@ impl DispatchQueue {
     ) -> DispatchRetained<Self> {
         let label = CString::new(label).expect("Invalid label!");
 
-        // SAFETY: The label is a valid C string.
-        unsafe { Self::__new_with_target(label.as_ptr(), queue_attribute, target) }
+        // SAFETY: `target` queue TODO.
+        unsafe { Self::__new_with_target(Some(&label), queue_attribute, target) }
     }
 
     /// Return a system-defined global concurrent [`DispatchQueue`] with the priority derived from [GlobalQueueIdentifier].
