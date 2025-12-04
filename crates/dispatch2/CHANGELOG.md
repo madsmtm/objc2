@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Fixed
+- Fixed reference counting in `DispatchSemaphoreGuard::release`.
+
 
 ## [0.3.0] - 2025-04-19
 [0.3.0]: https://github.com/madsmtm/objc2/compare/dispatch2-0.2.0...dispatch2-0.3.0
