@@ -1,0 +1,55 @@
+[package]
+name = "doc-viewer"
+version = "0.0.0"
+edition = "2021"
+license = "Zlib OR Apache-2.0 OR MIT"
+publish = false
+
+# Make the `src/main.rs` an example instead.
+autobins = false
+[[example]]
+name = "doc-viewer"
+path = "src/main.rs"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+block2 = "0.6.1"
+objc2 = "0.6.2"
+objc2-core-foundation = { version = "0.3.1", default-features = false, features = ["CFCGTypes"] }
+objc2-foundation = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "block2",
+    "NSString",
+    "NSGeometry",
+    "NSNotification",
+    "NSURL",
+    "NSURLRequest",
+    "NSThread",
+] }
+objc2-app-kit = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "NSResponder",
+    "NSView",
+    "NSColor",
+    "NSButton",
+    "NSButtonCell",
+    "NSMenu",
+    "NSMenuItem",
+    "NSStackView",
+    "NSText",
+    "NSTextField",
+    "NSTextView",
+    "NSWindow",
+    "NSControl",
+    "NSApplication",
+    "NSRunningApplication",
+    "NSGraphics",
+    "NSLayoutConstraint",
+    "NSUserInterfaceLayout",
+    "default", # TEMPORARY
+] }
+
+# Depend on the `apple-doc` crate for the documentation data we display.
+#
+# In a real-world application, you probably don't want this dependency,
+# but rather take your data from somewhere else.
+apple-doc = { path = "../../crates/apple-doc" }
