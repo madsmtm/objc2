@@ -1,7 +1,7 @@
 #[cfg(feature = "objc2")]
 use objc2::encode::{Encode, Encoding, RefEncode};
 
-use crate::{CGAffineTransform, CGVector};
+use crate::CGVector;
 
 #[cfg(target_pointer_width = "64")]
 type InnerFloat = f64;
@@ -342,32 +342,11 @@ impl CGRect {
     // TODO: NSWidth / CGRectGetWidth (standardized)
 }
 
-// TODO: Derive this
-impl Default for CGVector {
-    fn default() -> Self {
-        Self { dx: 0.0, dy: 0.0 }
-    }
-}
-
 impl CGVector {
     #[inline]
     #[doc(alias = "CGVectorMake")]
     pub const fn new(dx: CGFloat, dy: CGFloat) -> Self {
         Self { dx, dy }
-    }
-}
-
-// TODO: Derive this
-impl Default for CGAffineTransform {
-    fn default() -> Self {
-        Self {
-            a: 0.0,
-            b: 0.0,
-            c: 0.0,
-            d: 0.0,
-            tx: 0.0,
-            ty: 0.0,
-        }
     }
 }
 

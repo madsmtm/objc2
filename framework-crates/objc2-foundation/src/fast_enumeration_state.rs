@@ -4,7 +4,7 @@ use objc2::encode::{Encode, Encoding, RefEncode};
 use objc2::runtime::AnyObject;
 
 #[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Default)]
 pub struct NSFastEnumerationState {
     pub state: c_ulong,
     pub itemsPtr: *mut *mut AnyObject,

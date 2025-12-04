@@ -12,12 +12,9 @@ use crate::{NSDecimal, NSDecimalNumber};
     feature = "gnustep-1-7",
     ignore = "has different encoding, yet unsupported"
 )]
-fn test_decimal_encoding() {
-    let decimal = NSDecimal {
-        _inner: 0,
-        _mantissa: [0; 8],
-    };
-
+fn zero() {
+    let decimal = NSDecimal::default();
     let obj = NSDecimalNumber::initWithDecimal(NSDecimalNumber::alloc(), decimal);
     assert_eq!(decimal, obj.decimalValue());
+    assert_eq!(NSDecimalNumber::zero(), obj);
 }

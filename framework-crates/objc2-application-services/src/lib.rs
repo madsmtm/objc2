@@ -49,7 +49,7 @@ mod mac_types {
     pub(crate) type Style = core::ffi::c_uchar;
 
     #[repr(C)]
-    #[derive(Clone, Copy, Debug, PartialEq)]
+    #[derive(Clone, Copy, Debug, PartialEq, Default)]
     #[allow(unreachable_pub)] // Intentionally don't make this truly public
     pub struct ProcessSerialNumber {
         high_long_of_psn: u32,
@@ -68,7 +68,7 @@ mod mac_types {
     }
 
     #[repr(C)]
-    #[derive(Clone, Copy, Debug, PartialEq)]
+    #[derive(Clone, Copy, Debug, PartialEq, Default)]
     #[allow(unreachable_pub)] // Intentionally don't make this truly public
     pub struct Point {
         v: core::ffi::c_short,

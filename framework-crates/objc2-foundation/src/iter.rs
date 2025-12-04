@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 use core::ffi::c_ulong;
-use core::ptr::{self, NonNull};
+use core::ptr::NonNull;
 
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
@@ -31,7 +31,7 @@ type MutationState = Option<c_ulong>;
 /// See the following other implementations of this:
 /// - [Swift](https://github.com/apple/swift-corelibs-foundation/blob/2d23cf3dc07951ed2b988608d08d7a54cc53b26e/Darwin/Foundation-swiftoverlay/NSFastEnumeration.swift#L23)
 /// - [Clang](https://github.com/llvm/llvm-project/blob/28d85d207fc37b5593c17a25f687c91b7afda5b4/clang/lib/Frontend/Rewrite/RewriteModernObjC.cpp#L1653-L1850)
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Default)]
 struct FastEnumeratorHelper {
     state: NSFastEnumerationState,
     buf: [*mut AnyObject; BUF_SIZE],
@@ -80,21 +80,6 @@ fn mutation_detected() -> ! {
 }
 
 impl FastEnumeratorHelper {
-    #[inline]
-    fn new() -> Self {
-        Self {
-            state: NSFastEnumerationState {
-                state: 0,
-                itemsPtr: ptr::null_mut(),
-                mutationsPtr: ptr::null_mut(),
-                extra: [0; 5],
-            },
-            buf: [ptr::null_mut(); BUF_SIZE],
-            current_item: 0,
-            items_count: 0,
-        }
-    }
-
     #[inline]
     const fn remaining_items_at_least(&self) -> usize {
         self.items_count - self.current_item
@@ -301,7 +286,7 @@ pub(crate) struct IterUnchecked<'a, C: ?Sized + 'a> {
 impl<'a, C: ?Sized + FastEnumerationHelper> IterUnchecked<'a, C> {
     pub(crate) fn new(collection: &'a C) -> Self {
         Self {
-            helper: FastEnumeratorHelper::new(),
+            helper: FastEnumeratorHelper::default(),
             collection,
             #[cfg(debug_assertions)]
             mutations_state: None,
@@ -357,7 +342,7 @@ pub(crate) struct Iter<'a, C: ?Sized + 'a> {
 impl<'a, C: ?Sized + FastEnumerationHelper> Iter<'a, C> {
     pub(crate) fn new(collection: &'a C) -> Self {
         Self {
-            helper: FastEnumeratorHelper::new(),
+            helper: FastEnumeratorHelper::default(),
             collection,
             mutations_state: None,
         }
@@ -407,7 +392,7 @@ pub(crate) struct IntoIter<C: ?Sized> {
 impl<C: ?Sized + FastEnumerationHelper> IntoIter<C> {
     pub(crate) fn new(collection: Retained<C>) -> Self {
         Self {
-            helper: FastEnumeratorHelper::new(),
+            helper: FastEnumeratorHelper::default(),
             collection,
             mutations_state: None,
         }
@@ -419,7 +404,7 @@ impl<C: ?Sized + FastEnumerationHelper> IntoIter<C> {
         C: Sized,
     {
         Self {
-            helper: FastEnumeratorHelper::new(),
+            helper: FastEnumeratorHelper::default(),
             // SAFETY: Same as `Retained::into_super`, except we avoid the
             // `'static` bounds, which aren't needed because the superclass
             // carries the same generics.
@@ -475,7 +460,7 @@ where
 {
     pub(crate) unsafe fn new(collection: &'a C, enumerator: Retained<E>) -> Self {
         Self {
-            helper: FastEnumeratorHelper::new(),
+            helper: FastEnumeratorHelper::default(),
             collection,
             enumerator,
             #[cfg(debug_assertions)]
@@ -535,7 +520,7 @@ where
 {
     pub(crate) unsafe fn new(collection: &'a C, enumerator: Retained<E>) -> Self {
         Self {
-            helper: FastEnumeratorHelper::new(),
+            helper: FastEnumeratorHelper::default(),
             collection,
             enumerator,
             mutations_state: None,

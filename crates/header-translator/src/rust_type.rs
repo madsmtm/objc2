@@ -2979,6 +2979,44 @@ impl Ty {
         matches!(self.through_typedef(), Self::Primitive(Primitive::ObjcBool))
     }
 
+    pub(crate) fn has_zero_default(&self) -> bool {
+        match self.through_typedef() {
+            Self::Primitive(Primitive::Void | Primitive::VaList) => false,
+            Self::Primitive(_) => true,
+            Self::Simd { .. } => true,
+            Self::Sel {
+                nullability: Nullability::Nullable,
+            } => true,
+            Self::Pointer {
+                // Conservative, we could add `Nullability::Unspecified` here
+                // too, but not emitting a `Default` impl for those makes it
+                // less of a breaking change if we change the fields to be
+                // `NonNull` in the future.
+                nullability: Nullability::Nullable,
+                ..
+            } => true,
+            // Only arrays up to size 32 implement Default.
+            Self::Array {
+                element_type,
+                num_elements,
+            } if *num_elements <= 32 => element_type.has_zero_default(),
+            // Almost all enums have a default, and the type-system will catch
+            // errors here, so let's keep the check simple.
+            Self::Enum { id, ty } if id.name != "MIDINotificationMessageID" => {
+                ty.has_zero_default()
+            }
+            // NOTE: `MTLResourceID` is not `Default` for now, since we still
+            // need to figure out if creating it from invalid IDs is safe.
+            Self::Struct { id, .. } if id.name == "MTLResourceID" => false,
+            Self::Struct {
+                fields,
+                is_bridged: false,
+                ..
+            } => fields.iter().all(|field| field.has_zero_default()),
+            _ => false,
+        }
+    }
+
     fn plain(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| {
             match self {

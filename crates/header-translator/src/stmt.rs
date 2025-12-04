@@ -2832,7 +2832,16 @@ impl Stmt {
                             // TODO(breaking): Maybe remove the PartialEq implementation here?
                             writeln!(f, "#[allow(unpredictable_function_pointer_comparisons)]")?;
                         }
-                        writeln!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
+
+                        let has_default = fields.iter().all(|(name, _, field)| {
+                            !name.starts_with('_') && field.has_zero_default()
+                        });
+
+                        writeln!(
+                            f,
+                            "#[derive(Clone, Copy, Debug, PartialEq{})]",
+                            if has_default { ", Default" } else { "" },
+                        )?;
                     }
                     if *is_union {
                         writeln!(f, "pub union {} {{", id.name)?;

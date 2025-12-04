@@ -44,7 +44,7 @@ mod mac_types {
     pub(crate) type Fract = i32;
 
     #[repr(C)]
-    #[derive(Clone, Copy, Debug, PartialEq)]
+    #[derive(Clone, Copy, Debug, PartialEq, Default)]
     pub(crate) struct Float80 {
         exp: i16,
         man: [i16; 4],

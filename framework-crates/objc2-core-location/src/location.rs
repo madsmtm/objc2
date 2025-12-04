@@ -40,7 +40,7 @@ pub type CLLocationDirectionAccuracy = c_double;
 
 /// [Apple's documentation](https://developer.apple.com/documentation/corelocation/cllocationcoordinate2d?language=objc)
 #[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Default)]
 pub struct CLLocationCoordinate2D {
     pub latitude: CLLocationDegrees,
     pub longitude: CLLocationDegrees,

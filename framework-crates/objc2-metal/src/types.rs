@@ -9,6 +9,7 @@ use objc2::encode::{Encode, Encoding, RefEncode};
 ///
 /// See also [Apple's documentation](https://developer.apple.com/documentation/metal/mtlresourceid?language=objc)
 #[repr(C)]
+// Not Default, see `header-translator/src/rust_type.rs` `has_zero_default`
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct MTLResourceID {
     pub(crate) _impl: u64,

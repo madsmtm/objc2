@@ -2,8 +2,10 @@ use core::ffi::c_ushort;
 
 use objc2::encode::{Encode, Encoding, RefEncode};
 
+/// A structure representing a base-10 number.
+// Default = 0.0
 #[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Default)]
 pub struct NSDecimal {
     // signed   int _exponent:8;
     // unsigned int _length:4;

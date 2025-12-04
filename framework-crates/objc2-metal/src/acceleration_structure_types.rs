@@ -8,7 +8,7 @@ use objc2::encode::{Encode, Encoding, RefEncode};
 //
 // <https://users.rust-lang.org/t/mapping-nested-packed-union-from-c-to-rust/87334>
 #[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Default)]
 pub struct MTLPackedFloat3 {
     pub x: c_float,
     pub y: c_float,

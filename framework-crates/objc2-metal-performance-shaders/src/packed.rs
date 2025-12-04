@@ -6,7 +6,7 @@ use objc2::encode::{Encode, Encoding, RefEncode};
 ///
 /// This is similar to `MTLPackedFloat3`.
 #[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Default)]
 pub struct MPSPackedFloat3 {
     pub x: c_float,
     pub y: c_float,
