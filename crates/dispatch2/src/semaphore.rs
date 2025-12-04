@@ -45,7 +45,7 @@ pub struct DispatchSemaphoreGuard(ManuallyDrop<DispatchRetained<DispatchSemaphor
 impl DispatchSemaphoreGuard {
     /// Release the [`DispatchSemaphore`].
     pub fn release(self) -> bool {
-        // We suppress `Drop` for the guard because that would signal the sempahore again.
+        // We suppress `Drop` for the guard because that would signal the semaphore again.
         // The inner `DispatchRetained` is wrapped in `ManuallyDrop` so that it can be
         // separated from the guard and dropped normally.
         let mut this = ManuallyDrop::new(self);
