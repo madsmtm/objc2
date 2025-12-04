@@ -4,14 +4,17 @@ error[E0283]: type annotations needed
   |     unsafe { msg_send![cls, new] };
   |              ^^^^^^^^^^^^^^^^^^^ cannot infer type
   |
-  = note: multiple `impl`s satisfying `_: ConvertReturn<MethodFamily<1>>` found in the `objc2` crate:
-          - impl<MethodFamily> ConvertReturn<MethodFamily> for bool;
-          - impl<T, MethodFamily> ConvertReturn<MethodFamily> for T
-            where T: EncodeReturn;
-          - impl<T> ConvertReturn<MethodFamily<1>> for Option<Retained<T>>
-            where T: Message;
-          - impl<T> ConvertReturn<MethodFamily<1>> for Retained<T>
-            where T: Message;
+  = note: cannot satisfy `_: ConvertReturn<MethodFamily<1>>`
+  = help: the following types implement trait `ConvertReturn<MethodFamily>`:
+            `&CStr` implements `ConvertReturn<MethodFamily>`
+            `Option<&CStr>` implements `ConvertReturn<MethodFamily>`
+            `Option<Retained<T>>` implements `ConvertReturn<MethodFamily<1>>`
+            `Option<Retained<T>>` implements `ConvertReturn<MethodFamily<4>>`
+            `Option<Retained<T>>` implements `ConvertReturn<MethodFamily<5>>`
+            `Option<Retained<T>>` implements `ConvertReturn<MethodFamily<6>>`
+            `Retained<T>` implements `ConvertReturn<MethodFamily<1>>`
+            `Retained<T>` implements `ConvertReturn<MethodFamily<4>>`
+          and $N others
   = note: required for `MethodFamily<1>` to implement `RetainSemantics<&AnyClass, _, KindSendMessage>`
   = note: required for `MethodFamily<1>` to implement `MsgSend<&AnyClass, _>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

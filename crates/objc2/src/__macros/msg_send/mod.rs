@@ -186,6 +186,12 @@ pub use self::retained::*;
 /// [`runtime::Bool`]: crate::runtime::Bool
 ///
 ///
+/// # `CStr` handling
+///
+/// Since the ABI of [`CStr`][std::ffi::CStr] isn't yet stable, `&CStr` and
+/// `Option<&CStr>` are converted to/from `*const c_char`.
+///
+///
 /// # Out-parameters
 ///
 /// Parameters like `NSString**` in Objective-C are passed by "writeback",

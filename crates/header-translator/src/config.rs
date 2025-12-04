@@ -705,7 +705,7 @@ impl From<Nullability> for clang::Nullability {
 #[serde(deny_unknown_fields)]
 pub enum PointerBounds {
     #[default]
-    #[serde(rename = "unspecified")]
+    #[serde(skip)]
     Unspecified,
     #[serde(rename = "unsafe")]
     Unsafe,

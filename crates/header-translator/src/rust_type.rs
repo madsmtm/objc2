@@ -717,7 +717,6 @@ pub enum PointeeTy {
         id: ItemIdentifier,
         to: Box<PointeeTy>,
     },
-    CStr,
 }
 
 impl PointeeTy {
@@ -837,7 +836,6 @@ impl PointeeTy {
             Self::TypeDef { id, to } => {
                 vec![ItemTree::new(id.clone(), to.required_items())]
             }
-            Self::CStr => vec![ItemTree::core_ffi("CStr")],
         }
         .into_iter()
     }
@@ -894,7 +892,6 @@ impl PointeeTy {
             Self::CFOpaque => false,
             Self::DispatchTypeDef { .. } => false,
             Self::TypeDef { to, .. } => to.requires_mainthreadmarker(self_requires),
-            Self::CStr => false,
         }
     }
 
@@ -998,7 +995,6 @@ impl PointeeTy {
             Self::CFOpaque => write!(f, "Opaque"),
             Self::DispatchTypeDef { id } => write!(f, "{}", id.path()),
             Self::TypeDef { id, .. } => write!(f, "{}", id.path()),
-            Self::CStr => write!(f, "CStr"),
         })
     }
 
@@ -1270,9 +1266,6 @@ impl PointeeTy {
             // Dispatch objects have strong type-safety, and are thus
             // safe in both positions.
             Self::DispatchTypeDef { .. } => TypeSafety::SAFE,
-            // &CStr is safe as a parameter, though probably not when
-            // returning (since we wouldn't know the lifetime).
-            Self::CStr => TypeSafety::unsafe_in_return("must bound the lifetime"),
             // Taking `&AnyClass` can be perilous if the method tries to
             // assume it can e.g. create new instances of the class. Some uses
             // are safe though, such as `NSStringFromClass`.
@@ -2263,7 +2256,7 @@ impl Ty {
                             read: true,
                             written: !is_const,
                             lifetime,
-                            bounds: PointerBounds::Unspecified,
+                            bounds: PointerBounds::Unsafe,
                             pointee: Box::new(Self::TypeDef {
                                 id: ItemIdentifier::builtin("dispatch_object_s"),
                                 to: Box::new(Self::Primitive(Primitive::PtrDiff)),
@@ -2552,14 +2545,20 @@ impl Ty {
                 .collect(),
             Self::Sel { .. } => vec![ItemTree::objc("Sel")],
             Self::Pointer {
-                pointee,
-                read,
                 nullability,
-                ..
+                read,
+                written: _,  // `&mut` doesn't require any imports.
+                lifetime: _, // `'static` doesn't require any imports.
+                bounds,
+                pointee,
             } => pointee
                 .required_items()
                 .chain((*nullability == Nullability::NonNull).then(ItemTree::core_ptr_nonnull))
                 .chain((!read).then(ItemTree::core_mem_maybeuninit))
+                .chain(
+                    (*bounds == PointerBounds::NullTerminated && pointee.is_pointee_cstr())
+                        .then(|| ItemTree::core_ffi("CStr")),
+                )
                 .collect(),
             Self::TypeDef { id, to, .. } => vec![ItemTree::new(id.clone(), to.required_items())],
             Self::Array { element_type, .. } => element_type.required_items().collect(),
@@ -2701,6 +2700,23 @@ impl Ty {
                 }
                 safety
             }
+            // `&CStr`.
+            Self::Pointer {
+                bounds: PointerBounds::NullTerminated,
+                nullability,
+                pointee,
+                ..
+            } if pointee.is_pointee_cstr() => {
+                let mut safety = pointee.safety();
+                if *nullability == Nullability::Unspecified {
+                    safety =
+                        safety.merge(TypeSafety::unknown_in_argument("might not allow `None`"));
+                }
+                // TODO: Allow setting correct lifetime bounds (currently we
+                // assume that the pointer won't escape in argument position).
+                safety = safety.merge(TypeSafety::unsafe_in_return("must bound the lifetime"));
+                safety
+            }
             _ => self.safety(),
         }
     }
@@ -2743,7 +2759,7 @@ impl Ty {
                     safety = safety.merge(SafetyProperty::new_unknown("might not allow `None`"));
                 }
 
-                return safety.context(format!("`{arg_name}`"));
+                return safety.preface(format!("`{arg_name}`"));
             }
         }
         debug_assert!(self.fmt_out_pointer().is_none());
@@ -2930,6 +2946,12 @@ impl Ty {
         }
     }
 
+    fn is_pointee_cstr(&self) -> bool {
+        // Only check `char`; `unsigned char` or `signed char` are not
+        // converted to `CStr` automatically.
+        matches!(self.through_typedef(), Self::Primitive(Primitive::Char))
+    }
+
     pub(crate) fn contains_union(&self) -> bool {
         match self {
             Self::Union { .. } => true,
@@ -3077,6 +3099,19 @@ impl Ty {
                     write!(f, " -> Retained<{}>", pointee.behind_pointer())
                 } else {
                     write!(f, " -> Option<Retained<{}>>", pointee.behind_pointer())
+                }
+            }
+            Self::Pointer {
+                nullability,
+                lifetime: _, // TODO
+                bounds: PointerBounds::NullTerminated,
+                pointee,
+                ..
+            } if pointee.is_pointee_cstr() => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, " -> &CStr")
+                } else {
+                    write!(f, " -> Option<&CStr>")
                 }
             }
             Self::Primitive(Primitive::C99Bool) => {
@@ -3303,7 +3338,7 @@ impl Ty {
             Self::Pointer {
                 nullability,
                 read,
-                written: _,
+                written,
                 lifetime,
                 bounds,
                 pointee,
@@ -3347,6 +3382,26 @@ impl Ty {
                         format!(" -> Option<Retained<{}>>", pointee.behind_pointer())
                     };
                     Some((res, start, end_objc(*nullability)))
+                } else if pointee.is_pointee_cstr()
+                    && *bounds == PointerBounds::NullTerminated
+                    && !returns_retained
+                {
+                    // TODO: Return `Box<CStr, std::alloc::System>` when `returns_retained`.
+
+                    // TODO: Use `'static` here when specified.
+                    if *nullability == Nullability::NonNull {
+                        Some((" -> &CStr".to_string(), start, ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { CStr::from_ptr(ret.as_ptr()) }"))
+                    } else {
+                        Some((
+                            " -> Option<&CStr>".to_string(),
+                            start,
+                            if *written {
+                                ";\nNonNull::new(ret).map(|ret| unsafe { CStr::from_ptr(ret.as_ptr()) })"
+                            } else {
+                                ";\nNonNull::new(ret.cast_mut()).map(|ret| unsafe { CStr::from_ptr(ret.as_ptr()) })"
+                            },
+                        ))
+                    }
                 } else {
                     let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
                     if *nullability == Nullability::NonNull {
@@ -3373,7 +3428,7 @@ impl Ty {
                 lifetime: Lifetime::Strong | Lifetime::Unspecified,
                 bounds: PointerBounds::Single,
                 pointee,
-            } if pointee.is_object_like() || **pointee == Ty::Pointee(PointeeTy::CStr) => {
+            } if pointee.is_object_like() => {
                 let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
                 if *nullability == Nullability::NonNull {
                     write!(f, "&'static {pointee}")
@@ -3396,12 +3451,26 @@ impl Ty {
                 lifetime: Lifetime::Strong | Lifetime::Unspecified,
                 bounds: PointerBounds::Single,
                 pointee,
-            } if pointee.is_object_like() || **pointee == Ty::Pointee(PointeeTy::CStr) => {
+            } if pointee.is_object_like() => {
                 let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
                 if *nullability == Nullability::NonNull {
                     write!(f, "&{pointee}")
                 } else {
                     write!(f, "Option<&{pointee}>")
+                }
+            }
+            Self::Pointer {
+                nullability,
+                read: _,
+                written: _,
+                lifetime: Lifetime::Unspecified, // TODO
+                bounds: PointerBounds::NullTerminated,
+                pointee,
+            } if pointee.is_pointee_cstr() => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, "&CStr")
+                } else {
+                    write!(f, "Option<&CStr>")
                 }
             }
             _ => write!(f, "{}", self.plain()),
@@ -3475,6 +3544,29 @@ impl Ty {
             Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
                 Some(("bool", "", " as _"))
             }
+            Self::Pointer {
+                nullability,
+                read: _,
+                // Map both `const` and non-`const` to `&CStr`.
+                written,
+                lifetime: Lifetime::Unspecified, // TODO
+                bounds: PointerBounds::NullTerminated,
+                pointee,
+            } if pointee.is_pointee_cstr() => {
+                if *nullability == Nullability::NonNull {
+                    Some(("&CStr", "NonNull::new(", ".as_ptr().cast_mut()).unwrap()"))
+                } else {
+                    Some((
+                        "Option<&CStr>",
+                        "",
+                        if *written {
+                            ".map(|ptr| ptr.as_ptr().cast_mut()).unwrap_or_else(core::ptr::null_mut)"
+                        } else {
+                            ".map(|ptr| ptr.as_ptr()).unwrap_or_else(core::ptr::null)"
+                        },
+                    ))
+                }
+            }
             // TODO: Support out / autoreleasing pointers?
             _ => None,
         }
@@ -3530,6 +3622,20 @@ impl Ty {
             }
             Self::Primitive(Primitive::ObjcBool) => {
                 write!(f, "bool")
+            }
+            Self::Pointer {
+                nullability,
+                read: _,
+                written: _,
+                lifetime: Lifetime::Unspecified, // TODO
+                bounds: PointerBounds::NullTerminated,
+                pointee,
+            } if pointee.is_pointee_cstr() => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, "&CStr")
+                } else {
+                    write!(f, "Option<&CStr>")
+                }
             }
             _ => {
                 if let Some(fmt) = self.fmt_out_pointer() {
@@ -4080,8 +4186,8 @@ impl Ty {
             read: true,
             written: false,
             lifetime: Lifetime::Unspecified,
-            bounds: PointerBounds::Single,
-            pointee: Box::new(Self::Pointee(PointeeTy::CStr)),
+            bounds: PointerBounds::NullTerminated,
+            pointee: Box::new(Self::Primitive(Primitive::Char)),
         }
     }
 

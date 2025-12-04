@@ -1,3 +1,6 @@
+use core::ffi::{c_char, CStr};
+use core::ptr::NonNull;
+
 use crate::encode::{EncodeArgument, EncodeArguments, EncodeReturn};
 use crate::rc::{Allocated, Retained};
 use crate::runtime::{AnyObject, Bool, Sel};
@@ -83,6 +86,46 @@ impl ConvertArgument for bool {
     }
 }
 
+impl argument_private::Sealed for &CStr {}
+impl ConvertArgument for &CStr {
+    type __Inner = NonNull<c_char>;
+
+    type __WritebackOnDrop = ();
+
+    #[inline]
+    fn __from_defined_param(inner: Self::__Inner) -> Self {
+        // SAFETY: The pointer comes from the caller, and the signature the
+        // user wrote for the defined method denotes the lifetime.
+        unsafe { CStr::from_ptr(inner.as_ptr()) }
+    }
+
+    #[inline]
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
+        let ptr = NonNull::new(self.as_ptr().cast_mut()).unwrap();
+        (ptr, ())
+    }
+}
+
+impl argument_private::Sealed for Option<&CStr> {}
+impl ConvertArgument for Option<&CStr> {
+    type __Inner = Option<NonNull<c_char>>;
+
+    type __WritebackOnDrop = ();
+
+    #[inline]
+    fn __from_defined_param(inner: Self::__Inner) -> Self {
+        // SAFETY: The pointer comes from the caller, and the signature the
+        // user wrote for the defined method denotes the lifetime.
+        inner.map(|x| unsafe { CStr::from_ptr(x.as_ptr()) })
+    }
+
+    #[inline]
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
+        let ptr = self.map(|x| NonNull::new(x.as_ptr().cast_mut()).unwrap());
+        (ptr, ())
+    }
+}
+
 mod return_private {
     pub trait Sealed {}
 }
@@ -138,6 +181,48 @@ impl<MethodFamily> ConvertReturn<MethodFamily> for bool {
     #[inline]
     fn convert_defined_return(self) -> Self::Inner {
         Bool::new(self)
+    }
+}
+
+impl return_private::Sealed for &CStr {}
+impl<MethodFamily> ConvertReturn<MethodFamily> for &CStr {
+    type Inner = NonNull<c_char>;
+
+    #[inline]
+    unsafe fn convert_message_return(
+        inner: Self::Inner,
+        _receiver_ptr: *mut AnyObject,
+        _sel: Sel,
+    ) -> Self {
+        // SAFETY: The pointer comes from the caller, and the signature the
+        // user wrote for the called method denotes the lifetime.
+        unsafe { CStr::from_ptr(inner.as_ptr()) }
+    }
+
+    #[inline]
+    fn convert_defined_return(self) -> Self::Inner {
+        NonNull::new(self.as_ptr().cast_mut()).unwrap()
+    }
+}
+
+impl return_private::Sealed for Option<&CStr> {}
+impl<MethodFamily> ConvertReturn<MethodFamily> for Option<&CStr> {
+    type Inner = Option<NonNull<c_char>>;
+
+    #[inline]
+    unsafe fn convert_message_return(
+        inner: Self::Inner,
+        _receiver_ptr: *mut AnyObject,
+        _sel: Sel,
+    ) -> Self {
+        // SAFETY: The pointer comes from the caller, and the signature the
+        // user wrote for the called method denotes the lifetime.
+        inner.map(|x| unsafe { CStr::from_ptr(x.as_ptr()) })
+    }
+
+    #[inline]
+    fn convert_defined_return(self) -> Self::Inner {
+        self.map(|x| NonNull::new(x.as_ptr().cast_mut()).unwrap())
     }
 }
 
@@ -305,7 +390,7 @@ mod tests {
     use core::any::TypeId;
     use core::ptr;
 
-    use crate::sel;
+    use crate::{define_class, msg_send, runtime::NSObject, sel, ClassType};
 
     #[test]
     fn convert_normally_noop() {
@@ -351,5 +436,38 @@ mod tests {
             <bool as ConvertArgument>::__Inner::ENCODING_ARGUMENT,
             crate::encode::Encoding::Char,
         );
+    }
+
+    #[test]
+    fn convert_cstr() {
+        define_class!(
+            #[unsafe(super(NSObject))]
+            struct Foo;
+
+            impl Foo {
+                // NOTE: Current rewriting of defined methods cause lifetimes
+                // to be incorrect here!
+                #[unsafe(method(foo:))]
+                fn foo(arg: &CStr) -> &'static CStr {
+                    arg
+                }
+
+                #[unsafe(method(fooOptional:))]
+                fn foo_optional(arg: Option<&CStr>) -> Option<&'static CStr> {
+                    arg
+                }
+            }
+        );
+
+        let cls = Foo::class();
+        let cstr = CStr::from_bytes_with_nul(b"foobar\0").unwrap();
+
+        let result: &CStr = unsafe { msg_send![cls, foo: cstr] };
+        assert_eq!(result, cstr);
+
+        let result: Option<&CStr> = unsafe { msg_send![cls, fooOptional: Some(cstr)] };
+        assert_eq!(result.unwrap(), cstr);
+        let result: Option<&CStr> = unsafe { msg_send![cls, fooOptional: None::<&CStr>] };
+        assert_eq!(result, None);
     }
 }
