@@ -132,7 +132,7 @@ impl<F: ?Sized> fmt::Debug for GlobalBlock<F> {
 /// assert_eq!(ADDER_BLOCK.call((5, 7)), 12);
 /// ```
 ///
-/// The following does not compile because [`Box`] is not [`EncodeReturn`]:
+/// The following does not compile because [`Box`] is not [`EncodeArgument`]:
 ///
 /// ```compile_fail,E0277
 /// use block2::global_block;

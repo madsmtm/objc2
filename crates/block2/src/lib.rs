@@ -218,7 +218,7 @@
 //! }
 //! ```
 //!
-//! This can similarly be done for Objcective-C methods declared with
+//! This can similarly be done for Objective-C methods declared with
 //! [`objc2::extern_methods!`] (though most of the time, the [framework
 //! crates][framework-crates] will take care of that for you).
 //!

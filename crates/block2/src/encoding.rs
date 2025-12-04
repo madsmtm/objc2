@@ -12,6 +12,10 @@ use objc2::encode::{EncodeArguments, EncodeReturn, Encoding};
 /// still serve as a good way to obtain what to fill in the encoding string
 /// when implementing [`crate::ManualBlockEncoding`].
 ///
+/// See
+/// [`crate::ManualBlockEncoding`](crate::ManualBlockEncoding#encoding-string-generation)
+/// for an overview of the encoding string construction.
+///
 /// # Example
 ///
 /// ```ignore
