@@ -212,13 +212,6 @@ impl core::borrow::Borrow<objc2::runtime::AnyObject> for CFType {
 // NOTE: impl AsRef<CFType> for AnyObject would probably not be valid, since
 // not all Objective-C objects can be used as CoreFoundation objects (?)
 
-impl Default for CFComparisonResult {
-    #[inline]
-    fn default() -> Self {
-        Self::CompareEqualTo
-    }
-}
-
 impl From<Ordering> for CFComparisonResult {
     #[inline]
     fn from(order: Ordering) -> Self {

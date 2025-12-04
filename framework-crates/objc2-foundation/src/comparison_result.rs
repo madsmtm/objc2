@@ -6,21 +6,15 @@ use objc2::encode::{Encode, Encoding, RefEncode};
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nscomparisonresult?language=objc).
 #[repr(isize)] // NSInteger
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Default)]
 pub enum NSComparisonResult {
     /// The left operand is smaller than the right operand.
     Ascending = -1,
     /// The two operands are equal.
+    #[default]
     Same = 0,
     /// The left operand is greater than the right operand.
     Descending = 1,
-}
-
-impl Default for NSComparisonResult {
-    #[inline]
-    fn default() -> Self {
-        Self::Same
-    }
 }
 
 unsafe impl Encode for NSComparisonResult {

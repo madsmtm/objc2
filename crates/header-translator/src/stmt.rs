@@ -612,7 +612,7 @@ pub enum Stmt {
         availability: Availability,
         ty: Ty,
         kind: Option<UnexposedAttr>,
-        variants: Vec<(String, Documentation, Availability, Expr)>,
+        variants: Vec<(String, Documentation, Availability, Expr, bool)>,
         sendable: Option<bool>,
         documentation: Documentation,
     },
@@ -1606,7 +1606,7 @@ impl Stmt {
                             ty = expr.guess_type(id.location());
                         }
 
-                        variants.push((id.name, documentation, availability, expr));
+                        variants.push((id.name, documentation, availability, expr, value.0 == 0));
                     }
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
@@ -1654,7 +1654,7 @@ impl Stmt {
                         .into_iter()
                         .enumerate()
                         .map(
-                            |(i, (name, documentation, availability, value))| Self::ConstDecl {
+                            |(i, (name, documentation, availability, value, _))| Self::ConstDecl {
                                 id: id.clone().map_name(|_| name),
                                 availability,
                                 ty: ty.clone(),
@@ -2002,13 +2002,13 @@ impl Stmt {
             } => {
                 let mut relevant_enum_cases = variants
                     .iter()
-                    .filter(|(_, _, availability, _)| availability.is_available_non_deprecated())
-                    .map(|(name, _, _, _)| &**name)
+                    .filter(|(_, _, availability, _, _)| availability.is_available_non_deprecated())
+                    .map(|(name, _, _, _, _)| &**name)
                     .peekable();
                 let prefix = if relevant_enum_cases.peek().is_some() {
                     enum_prefix(&id.name, relevant_enum_cases)
                 } else {
-                    enum_prefix(&id.name, variants.iter().map(|(name, _, _, _)| &**name))
+                    enum_prefix(&id.name, variants.iter().map(|(name, _, _, _, _)| &**name))
                 };
 
                 for (name, ..) in variants {
@@ -2279,7 +2279,7 @@ impl Stmt {
             Self::EnumDecl { kind, variants, .. } => {
                 let mut items: Vec<_> = variants
                     .iter()
-                    .flat_map(|(_, _, _, expr)| expr.required_items())
+                    .flat_map(|(_, _, _, expr, _)| expr.required_items())
                     .collect();
                 if let Some(UnexposedAttr::Options) = kind {
                     items.push(ItemTree::bitflags());
@@ -2901,16 +2901,18 @@ impl Stmt {
 
                     let mut relevant_enum_cases = variants
                         .iter()
-                        .filter(|(_, _, availability, _)| {
+                        .filter(|(_, _, availability, _, _)| {
                             availability.is_available_non_deprecated()
                         })
-                        .map(|(name, _, _, _)| &**name)
+                        .map(|(name, _, _, _, _)| &**name)
                         .peekable();
                     let prefix = if relevant_enum_cases.peek().is_some() {
                         enum_prefix(&id.name, relevant_enum_cases)
                     } else {
-                        enum_prefix(&id.name, variants.iter().map(|(name, _, _, _)| &**name))
+                        enum_prefix(&id.name, variants.iter().map(|(name, _, _, _, _)| &**name))
                     };
+
+                    let has_zero_variant = variants.iter().any(|(_, _, _, _, is_zero)| *is_zero);
 
                     match kind {
                     // TODO: Once Rust gains support for more precisely
@@ -2939,7 +2941,8 @@ impl Stmt {
                         // TODO: Implement `Debug` manually
                         writeln!(
                             f,
-                            "#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]"
+                            "#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord{})]",
+                            if has_zero_variant { ", Default" } else { "" },
                         )?;
                         // External enums can be safely constructed from the
                         // raw value, and as such it is safe to expose it
@@ -2960,7 +2963,7 @@ impl Stmt {
                         write!(f, "{}", self.cfg_gate_ln(config))?;
                         writeln!(f, "impl {} {{", id.name)?;
 
-                        for (name, documentation, availability, expr) in variants {
+                        for (name, documentation, availability, expr, _) in variants {
                             write!(f, "{}", documentation.fmt(None))?;
                             let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
@@ -2979,9 +2982,11 @@ impl Stmt {
                         write!(f, "{}", self.cfg_gate_ln(config))?;
                         write!(f, "{availability}")?;
                         writeln!(f, "#[repr(transparent)]")?;
+                        // NS_OPTIONS always have a Default which is `::empty()`,
+                        // even if they don't have any variants that are zero.
                         writeln!(
                             f,
-                            "#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]"
+                            "#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Default)]"
                         )?;
                         // TODO(breaking): Make the inner field private
                         writeln!(f, "pub struct {}(pub {});", id.name, ty.enum_())?;
@@ -2991,7 +2996,7 @@ impl Stmt {
 
                         writeln!(f, "    impl {}: {} {{", id.name, ty.enum_())?;
 
-                        for (name, documentation, availability, expr) in variants {
+                        for (name, documentation, availability, expr, _) in variants {
                             write!(f, "{}", documentation.fmt(None))?;
                             let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
@@ -3016,11 +3021,12 @@ impl Stmt {
                         writeln!(f, "{}", ty.closed_enum_repr())?;
                         writeln!(
                             f,
-                            "#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]"
+                            "#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord{})]",
+                            if has_zero_variant { ", Default" } else { "" },
                         )?;
                         writeln!(f, "pub enum {} {{", id.name)?;
 
-                        for (name, documentation, availability, expr) in variants {
+                        for (name, documentation, availability, expr, is_zero) in variants {
                             write!(f, "{}", documentation.fmt(None))?;
                             let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
@@ -3028,6 +3034,9 @@ impl Stmt {
                             }
                             write!(f, "    {}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
                             write!(f, "    {availability}")?;
+                            if *is_zero {
+                                write!(f, "    #[default]")?;
+                            }
                             writeln!(f, "    {pretty_name} = {expr},")?;
                         }
                         writeln!(f, "}}")?;
