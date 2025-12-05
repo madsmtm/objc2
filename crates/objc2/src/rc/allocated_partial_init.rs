@@ -205,7 +205,7 @@ impl<T: ?Sized + Message> Allocated<T> {
     where
         T: DefinedClass + Sized,
     {
-        if let Some(ptr) = NonNull::new(ManuallyDrop::new(self).ptr as *mut T) {
+        if let Some(ptr) = NonNull::new(Self::into_ptr(self)) {
             // SAFETY: The pointer came from `self`, so it is valid.
             unsafe { initialize_ivars::<T>(ptr, ivars) };
 
