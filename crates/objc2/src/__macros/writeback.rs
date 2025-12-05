@@ -157,7 +157,7 @@ impl<T: Message> Drop for WritebackOnDropNullable<T> {
 
         // SAFETY: Same as for `&mut Retained`
         //
-        // Note: We explicitly keep the `if old == nil { objc_release(old) }`
+        // Note: We explicitly keep the `if old != nil { objc_release(old) }`
         // check, since we expect that the user would often do:
         //
         // ```

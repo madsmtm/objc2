@@ -12,7 +12,7 @@ use crate::{msg_send, ClassType};
 // wants to do that or not.
 #[cold]
 pub(crate) unsafe fn encountered_error<E: ClassType>(err: *mut E) -> Retained<E> {
-    // SAFETY: Caller ensures that the pointer is valid.
+    // SAFETY: Caller ensures that the pointer is valid or null.
     unsafe { Retained::retain(err) }.unwrap_or_else(|| {
         let err = null_error();
         assert!(E::IS_NSERROR_COMPATIBLE);
@@ -106,7 +106,7 @@ fn create_null_error() -> NSErrorWrapper {
         let domain: &NSObject = &domain;
         let code: NSInteger = 0;
         let user_info: Option<&NSObject> = None;
-        // SAFETY: The signate is correct.
+        // SAFETY: The signature is correct.
         let err: Retained<NSObject> =
             unsafe { msg_send![cls, errorWithDomain: domain, code: code, userInfo: user_info] };
         NSErrorWrapper(err)

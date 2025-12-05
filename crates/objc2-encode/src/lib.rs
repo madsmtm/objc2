@@ -55,8 +55,7 @@ mod encoding_box;
 mod helper;
 mod parse;
 
-// Will be used at some point when generic constants are available
-#[allow(dead_code)]
+#[cfg(test)]
 mod static_str;
 
 pub use self::encoding::Encoding;

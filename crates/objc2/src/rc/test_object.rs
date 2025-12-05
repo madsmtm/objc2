@@ -1,4 +1,4 @@
-//! Note: This file is included in the `tests` crate viaa symlink as well.
+//! Note: This file is included in the `tests` crate via symlink as well.
 use core::cell::RefCell;
 use core::ptr;
 
