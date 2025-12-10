@@ -8,7 +8,7 @@ use objc2::encode::{Encode, Encoding, RefEncode};
 #[cfg(all(feature = "SecAsn1Types", feature = "cssmconfig", feature = "cssmtype"))]
 #[deprecated]
 #[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Default)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct CSSM_TP_APPLE_EVIDENCE_INFO {
     pub StatusBits: CSSM_TP_APPLE_CERT_STATUS,
     pub NumStatusCodes: uint32,

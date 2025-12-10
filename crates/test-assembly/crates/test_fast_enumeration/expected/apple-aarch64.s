@@ -2,21 +2,21 @@
 	.globl	_fn1_iter_create
 	.p2align	2
 _fn1_iter_create:
+	stp	xzr, xzr, [x8, #192]
 	movi.2d	v0, #0000000000000000
-	stur	q0, [x8, #200]
-	stur	q0, [x8, #184]
-	stur	q0, [x8, #168]
-	stur	q0, [x8, #152]
-	stur	q0, [x8, #136]
-	stur	q0, [x8, #120]
-	stur	q0, [x8, #104]
-	stur	q0, [x8, #88]
-	stur	q0, [x8, #72]
-	stur	q0, [x8, #56]
-	stur	q0, [x8, #40]
-	stur	q0, [x8, #24]
+	stp	q0, q0, [x8, #160]
 	stur	q0, [x8, #8]
+	stur	q0, [x8, #24]
+	stur	q0, [x8, #40]
+	stur	q0, [x8, #56]
+	stur	q0, [x8, #72]
+	stur	q0, [x8, #88]
+	stur	q0, [x8, #104]
+	stur	q0, [x8, #120]
 	str	x0, [x8]
+	stp	xzr, xzr, [x8, #144]
+	str	xzr, [x8, #136]
+	str	xzr, [x8, #208]
 	ret
 
 	.globl	_fn2_iter_once
@@ -89,18 +89,21 @@ _fn4_iter:
 	stp	x20, x19, [sp, #256]
 	stp	x29, x30, [sp, #272]
 	add	x29, sp, #272
-	add	x21, sp, #8
+	mov	x9, #0
+	mov	x8, #0
+	stp	xzr, xzr, [sp, #200]
 	movi.2d	v0, #0000000000000000
-	stur	q0, [x21, #200]
-	stur	q0, [x21, #184]
-	stur	q0, [x21, #168]
-	stur	q0, [x21, #152]
-	stur	q0, [x21, #136]
-	stp	q0, q0, [sp, #112]
-	stp	q0, q0, [sp, #80]
-	stp	q0, q0, [sp, #48]
+	stur	q0, [sp, #184]
+	stur	q0, [sp, #168]
+	add	x21, sp, #8
 	stp	q0, q0, [sp, #16]
+	stp	q0, q0, [sp, #48]
+	stp	q0, q0, [sp, #80]
+	stp	q0, q0, [sp, #112]
 	str	x0, [sp, #8]
+	stp	xzr, xzr, [sp, #152]
+	str	xzr, [sp, #144]
+	str	xzr, [sp, #216]
 Lloh4:
 	adrp	x19, l_anon.[ID].0@PAGE
 Lloh5:
@@ -117,8 +120,8 @@ LBB3_1:
 	ldr	x0, [x9, x8, lsl #3]
 	bl	_fn3_use_obj
 	ldr	x0, [sp, #8]
-LBB3_2:
 	ldp	x8, x9, [sp, #208]
+LBB3_2:
 	cmp	x8, x9
 	b.lo	LBB3_1
 	ldr	x1, [x20]
@@ -164,19 +167,21 @@ _fn5_iter_noop:
 	stp	x20, x19, [sp, #256]
 	stp	x29, x30, [sp, #272]
 	add	x29, sp, #272
-	add	x21, sp, #8
+	mov	x8, #0
+	mov	x9, #0
+	stp	xzr, xzr, [sp, #200]
 	movi.2d	v0, #0000000000000000
-	stur	q0, [x21, #200]
-	stur	q0, [x21, #184]
-	stur	q0, [x21, #168]
-	stur	q0, [x21, #152]
-	stur	q0, [x21, #136]
-	stp	q0, q0, [sp, #112]
-	stp	q0, q0, [sp, #80]
-	stp	q0, q0, [sp, #48]
+	stur	q0, [sp, #184]
+	stur	q0, [sp, #168]
+	add	x21, sp, #8
 	stp	q0, q0, [sp, #16]
+	stp	q0, q0, [sp, #48]
+	stp	q0, q0, [sp, #80]
+	stp	q0, q0, [sp, #112]
 	str	x0, [sp, #8]
-	ldp	x9, x8, [sp, #208]
+	stp	xzr, xzr, [sp, #152]
+	str	xzr, [sp, #144]
+	str	xzr, [sp, #216]
 Lloh8:
 	adrp	x19, l_anon.[ID].0@PAGE
 Lloh9:
@@ -238,21 +243,23 @@ Lfunc_begin0:
 	stp	x20, x19, [sp, #272]
 	stp	x29, x30, [sp, #288]
 	add	x29, sp, #288
-	add	x22, sp, #8
+	mov	x9, #0
+	mov	x8, #0
+	stp	xzr, xzr, [sp, #216]
 	movi.2d	v0, #0000000000000000
-	stur	q0, [x22, #216]
-	stur	q0, [x22, #200]
-	stur	q0, [x22, #184]
-	stur	q0, [x22, #168]
-	stur	q0, [x22, #152]
-	stur	q0, [x22, #136]
-	stp	q0, q0, [sp, #112]
-	stp	q0, q0, [sp, #80]
-	stp	q0, q0, [sp, #48]
-	stur	q0, [sp, #32]
-	mov	w23, #1
+	stur	q0, [sp, #200]
+	stur	q0, [sp, #184]
+	add	x22, sp, #8
+	stp	q0, q0, [sp, #32]
+	stp	q0, q0, [sp, #64]
+	stp	q0, q0, [sp, #96]
+	stp	q0, q0, [sp, #128]
 	str	xzr, [sp, #8]
 	str	x0, [sp, #24]
+	stp	xzr, xzr, [sp, #168]
+	str	xzr, [sp, #160]
+	mov	w23, #1
+	str	xzr, [sp, #232]
 Lloh12:
 	adrp	x19, l_anon.[ID].0@PAGE
 Lloh13:
@@ -261,7 +268,6 @@ Lloh14:
 	adrp	x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh15:
 	ldr	x20, [x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
-	ldp	x8, x9, [sp, #224]
 	cmp	x8, x9
 	b.lo	LBB5_5
 LBB5_1:

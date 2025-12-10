@@ -2993,8 +2993,16 @@ impl Ty {
                 // less of a breaking change if we change the fields to be
                 // `NonNull` in the future.
                 nullability: Nullability::Nullable,
+                pointee,
                 ..
-            } => true,
+                // TODO: Return `true` here always once MSRV is 1.88, that's
+                // when pointer types started implementing `Default` (which
+                // allows us to derive the `Default`).
+                //
+                // Alternatively, we could implement `Default` manually on
+                // these, but that's a bit of a hassle, so we won't bother for
+                // now.
+            } => matches!(&**pointee, Ty::Pointee(PointeeTy::Fn { .. })),
             // Only arrays up to size 32 implement Default.
             Self::Array {
                 element_type,

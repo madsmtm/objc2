@@ -6,20 +6,21 @@
 fn1_iter_create:
 	mov	rax, rdi
 	xorps	xmm0, xmm0
-	movups	xmmword ptr [rdi + 200], xmm0
-	movups	xmmword ptr [rdi + 184], xmm0
-	movups	xmmword ptr [rdi + 168], xmm0
-	movups	xmmword ptr [rdi + 152], xmm0
-	movups	xmmword ptr [rdi + 136], xmm0
-	movups	xmmword ptr [rdi + 120], xmm0
-	movups	xmmword ptr [rdi + 104], xmm0
-	movups	xmmword ptr [rdi + 88], xmm0
-	movups	xmmword ptr [rdi + 72], xmm0
-	movups	xmmword ptr [rdi + 56], xmm0
-	movups	xmmword ptr [rdi + 40], xmm0
-	movups	xmmword ptr [rdi + 24], xmm0
+	movups	xmmword ptr [rdi + 176], xmm0
+	movups	xmmword ptr [rdi + 160], xmm0
+	mov	qword ptr [rdi + 192], 0
 	movups	xmmword ptr [rdi + 8], xmm0
+	movups	xmmword ptr [rdi + 24], xmm0
+	movups	xmmword ptr [rdi + 40], xmm0
+	movups	xmmword ptr [rdi + 56], xmm0
+	movups	xmmword ptr [rdi + 72], xmm0
+	movups	xmmword ptr [rdi + 88], xmm0
+	movups	xmmword ptr [rdi + 104], xmm0
+	movups	xmmword ptr [rdi + 120], xmm0
 	mov	qword ptr [rdi], rsi
+	movups	xmmword ptr [rdi + 136], xmm0
+	mov	qword ptr [rdi + 152], 0
+	movups	xmmword ptr [rdi + 200], xmm0
 	ret
 .Lfunc_end0:
 	.size	fn1_iter_create, .Lfunc_end0-fn1_iter_create
@@ -108,25 +109,28 @@ fn4_iter:
 	push	rbx
 	sub	rsp, 216
 	mov	r13, rdi
-	lea	r14, [rsp + 136]
 	xorps	xmm0, xmm0
-	movups	xmmword ptr [rsp + 200], xmm0
-	movups	xmmword ptr [rsp + 184], xmm0
-	movups	xmmword ptr [rsp + 168], xmm0
-	movups	xmmword ptr [rsp + 152], xmm0
-	movups	xmmword ptr [rsp + 136], xmm0
-	movups	xmmword ptr [rsp + 120], xmm0
-	movups	xmmword ptr [rsp + 104], xmm0
-	movups	xmmword ptr [rsp + 88], xmm0
-	movups	xmmword ptr [rsp + 72], xmm0
-	movups	xmmword ptr [rsp + 56], xmm0
-	movups	xmmword ptr [rsp + 40], xmm0
-	movups	xmmword ptr [rsp + 24], xmm0
+	movups	xmmword ptr [rsp + 176], xmm0
+	movups	xmmword ptr [rsp + 160], xmm0
+	mov	qword ptr [rsp + 192], 0
 	movups	xmmword ptr [rsp + 8], xmm0
+	movups	xmmword ptr [rsp + 24], xmm0
+	movups	xmmword ptr [rsp + 40], xmm0
+	movups	xmmword ptr [rsp + 56], xmm0
+	movups	xmmword ptr [rsp + 72], xmm0
+	movups	xmmword ptr [rsp + 88], xmm0
+	movups	xmmword ptr [rsp + 104], xmm0
+	movups	xmmword ptr [rsp + 120], xmm0
 	mov	qword ptr [rsp], rdi
+	lea	r14, [rsp + 136]
+	movups	xmmword ptr [rsp + 136], xmm0
+	mov	qword ptr [rsp + 152], 0
+	movups	xmmword ptr [rsp + 200], xmm0
+	xor	ecx, ecx
 	mov	r12, qword ptr [rip + fn3_use_obj@GOTPCREL]
 	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	mov	rbx, qword ptr [rip + objc_msg_lookup@GOTPCREL]
+	xor	eax, eax
 	jmp	.LBB3_1
 	.p2align	4
 .LBB3_6:
@@ -136,9 +140,10 @@ fn4_iter:
 	mov	rdi, qword ptr [rcx + 8*rax]
 	call	r12
 	mov	r13, qword ptr [rsp]
-.LBB3_1:
 	mov	rax, qword ptr [rsp + 200]
-	cmp	rax, qword ptr [rsp + 208]
+	mov	rcx, qword ptr [rsp + 208]
+.LBB3_1:
+	cmp	rax, rcx
 	jb	.LBB3_6
 	mov	rbp, qword ptr [r15]
 	test	rbp, rbp
@@ -188,28 +193,29 @@ fn5_iter_noop:
 	push	r12
 	push	rbx
 	sub	rsp, 216
-	mov	r15, rdi
-	lea	rbx, [rsp + 8]
-	lea	r14, [rsp + 136]
+	mov	r14, rdi
 	xorps	xmm0, xmm0
-	movups	xmmword ptr [rsp + 200], xmm0
-	movups	xmmword ptr [rsp + 184], xmm0
-	movups	xmmword ptr [rsp + 168], xmm0
-	movups	xmmword ptr [rsp + 152], xmm0
-	movups	xmmword ptr [rsp + 136], xmm0
-	movups	xmmword ptr [rsp + 120], xmm0
-	movups	xmmword ptr [rsp + 104], xmm0
-	movups	xmmword ptr [rsp + 88], xmm0
-	movups	xmmword ptr [rsp + 72], xmm0
-	movups	xmmword ptr [rsp + 56], xmm0
-	movups	xmmword ptr [rsp + 40], xmm0
-	movups	xmmword ptr [rsp + 24], xmm0
+	movups	xmmword ptr [rsp + 176], xmm0
+	movups	xmmword ptr [rsp + 160], xmm0
+	mov	qword ptr [rsp + 192], 0
+	lea	rbx, [rsp + 8]
 	movups	xmmword ptr [rsp + 8], xmm0
+	movups	xmmword ptr [rsp + 24], xmm0
+	movups	xmmword ptr [rsp + 40], xmm0
+	movups	xmmword ptr [rsp + 56], xmm0
+	movups	xmmword ptr [rsp + 72], xmm0
+	movups	xmmword ptr [rsp + 88], xmm0
+	movups	xmmword ptr [rsp + 104], xmm0
+	movups	xmmword ptr [rsp + 120], xmm0
 	mov	qword ptr [rsp], rdi
-	mov	rcx, qword ptr [rsp + 200]
-	mov	rax, qword ptr [rsp + 208]
+	lea	r15, [rsp + 136]
+	movups	xmmword ptr [rsp + 136], xmm0
+	mov	qword ptr [rsp + 152], 0
+	movups	xmmword ptr [rsp + 200], xmm0
+	xor	eax, eax
 	mov	r12, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	mov	r13, qword ptr [rip + objc_msg_lookup@GOTPCREL]
+	xor	ecx, ecx
 	jmp	.LBB4_1
 	.p2align	4
 .LBB4_6:
@@ -222,19 +228,19 @@ fn5_iter_noop:
 	test	rbp, rbp
 	je	.LBB4_3
 .LBB4_4:
-	mov	rdi, r15
+	mov	rdi, r14
 	mov	rsi, rbp
 	call	r13
 	mov	r8d, 16
-	mov	rdi, r15
+	mov	rdi, r14
 	mov	rsi, rbp
-	mov	rdx, r14
+	mov	rdx, r15
 	mov	rcx, rbx
 	call	rax
 	mov	qword ptr [rsp + 208], rax
 	test	rax, rax
 	je	.LBB4_7
-	mov	r15, qword ptr [rsp]
+	mov	r14, qword ptr [rsp]
 	xor	ecx, ecx
 	jmp	.LBB4_6
 .LBB4_3:
@@ -270,27 +276,29 @@ fn6_iter_retained:
 	sub	rsp, 232
 	mov	r13, rdi
 	xorps	xmm0, xmm0
-	movups	xmmword ptr [rsp + 216], xmm0
-	movups	xmmword ptr [rsp + 200], xmm0
-	movups	xmmword ptr [rsp + 184], xmm0
-	movups	xmmword ptr [rsp + 168], xmm0
-	movups	xmmword ptr [rsp + 152], xmm0
-	movups	xmmword ptr [rsp + 136], xmm0
-	movups	xmmword ptr [rsp + 120], xmm0
-	movups	xmmword ptr [rsp + 104], xmm0
-	movups	xmmword ptr [rsp + 88], xmm0
-	movups	xmmword ptr [rsp + 72], xmm0
-	movups	xmmword ptr [rsp + 56], xmm0
-	movups	xmmword ptr [rsp + 40], xmm0
+	movups	xmmword ptr [rsp + 192], xmm0
+	movups	xmmword ptr [rsp + 176], xmm0
+	mov	qword ptr [rsp + 208], 0
 	movups	xmmword ptr [rsp + 24], xmm0
+	movups	xmmword ptr [rsp + 40], xmm0
+	movups	xmmword ptr [rsp + 56], xmm0
+	movups	xmmword ptr [rsp + 72], xmm0
+	movups	xmmword ptr [rsp + 88], xmm0
+	movups	xmmword ptr [rsp + 104], xmm0
+	movups	xmmword ptr [rsp + 120], xmm0
+	movups	xmmword ptr [rsp + 136], xmm0
 	mov	qword ptr [rsp], 0
 	mov	qword ptr [rsp + 16], rdi
+	movups	xmmword ptr [rsp + 152], xmm0
+	mov	qword ptr [rsp + 168], 0
+	movups	xmmword ptr [rsp + 216], xmm0
+	xor	ecx, ecx
 	mov	r12, qword ptr [rip + objc_retain@GOTPCREL]
 	mov	rbx, qword ptr [rip + fn3_use_obj@GOTPCREL]
 	mov	r14, qword ptr [rip + objc_release@GOTPCREL]
 	mov	r15, qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rax, qword ptr [rsp + 216]
-	cmp	rax, qword ptr [rsp + 224]
+	xor	eax, eax
+	cmp	rax, rcx
 	jb	.LBB5_7
 	.p2align	4
 .LBB5_2:
@@ -344,7 +352,8 @@ fn6_iter_retained:
 	call	r14
 	mov	r13, qword ptr [rsp + 16]
 	mov	rax, qword ptr [rsp + 216]
-	cmp	rax, qword ptr [rsp + 224]
+	mov	rcx, qword ptr [rsp + 224]
+	cmp	rax, rcx
 	jae	.LBB5_2
 	jmp	.LBB5_7
 .LBB5_3:

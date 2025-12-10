@@ -4,12 +4,25 @@ use objc2::encode::{Encode, Encoding, RefEncode};
 use objc2::runtime::AnyObject;
 
 #[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Default)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct NSFastEnumerationState {
     pub state: c_ulong,
     pub itemsPtr: *mut *mut AnyObject,
     pub mutationsPtr: *mut c_ulong,
     pub extra: [c_ulong; 5],
+}
+
+// TODO: Derive this once MSRV reaches 1.88.
+impl Default for NSFastEnumerationState {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            state: Default::default(),
+            itemsPtr: std::ptr::null_mut(),
+            mutationsPtr: std::ptr::null_mut(),
+            extra: Default::default(),
+        }
+    }
 }
 
 unsafe impl Encode for NSFastEnumerationState {
