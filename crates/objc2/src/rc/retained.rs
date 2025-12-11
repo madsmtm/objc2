@@ -445,7 +445,7 @@ impl<T: Message> Retained<T> {
     #[doc(alias = "objc_retain")]
     #[inline]
     pub unsafe fn retain(ptr: *mut T) -> Option<Retained<T>> {
-        // SAFETY: The caller upholds that the pointer is valid
+        // SAFETY: The caller upholds that the pointer is valid or null
         let res: *mut T = unsafe { objc_retain_fast(ptr.cast()) }.cast();
         debug_assert_eq!(res, ptr, "objc_retain did not return the same pointer");
         // SAFETY: We just retained the object, so it has +1 retain count
