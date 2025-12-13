@@ -127,6 +127,9 @@ default = [
     "ASCredentialServiceIdentifier",
     "ASExtensionErrors",
     "ASFoundation",
+    "ASGeneratePasswordsRequest",
+    "ASGeneratedPassword",
+    "ASGeneratedPasswordKind",
     "ASOneTimeCodeCredential",
     "ASOneTimeCodeCredentialIdentity",
     "ASOneTimeCodeCredentialRequest",
@@ -144,6 +147,7 @@ default = [
     "ASPasswordCredentialRequest",
     "ASPublicKeyCredential",
     "ASPublicKeyCredentialClientData",
+    "ASSavePasswordRequest",
     "ASSettingsHelper",
     "ASWebAuthenticationSession",
     "ASWebAuthenticationSessionCallback",
@@ -451,6 +455,15 @@ ASExtensionErrors = [
     "objc2-foundation/NSString",
 ]
 ASFoundation = []
+ASGeneratePasswordsRequest = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+ASGeneratedPassword = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+ASGeneratedPasswordKind = ["objc2-foundation/NSString"]
 ASOneTimeCodeCredential = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -507,6 +520,10 @@ ASPublicKeyCredential = [
 ]
 ASPublicKeyCredentialClientData = [
     "objc2-foundation/NSData",
+    "objc2-foundation/NSString",
+]
+ASSavePasswordRequest = [
+    "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 ASSettingsHelper = ["objc2-foundation/NSError"]

@@ -71,6 +71,7 @@ default = [
     "BETextSelectionTypes",
     "BETextSuggestion",
     "BEWebAppManifest",
+    "BEWebContentFilter",
     "BEWebContentProcess",
     "bitflags",
     "block2",
@@ -237,6 +238,11 @@ BETextSelectionTypes = ["bitflags"]
 BETextSuggestion = ["objc2-foundation/NSString"]
 BEWebAppManifest = [
     "objc2-foundation/NSData",
+    "objc2-foundation/NSURL",
+]
+BEWebContentFilter = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
     "objc2-foundation/NSURL",
 ]
 BEWebContentProcess = [

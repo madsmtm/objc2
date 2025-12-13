@@ -1,6 +1,7 @@
 | Framework | Why is this unsupported? |
 | --- | --- |
 | `Accelerate` | Very C-centric, hard for us to map. |
+| `AccessoryTransportExtension` | Swift-only. |
 | `ActivityKit` | Swift-only. |
 | `AdAttributionKit` | Swift-only. |
 | `AddressBook` | Deprecated, use Contacts instead. |
@@ -100,6 +101,7 @@
 | `Ruby` | Very C-centric and old. |
 | `SecureElementCredential` | Swift-only. |
 | `SecurityUI` | TODO. |
+| `ServicesAccountLinking` | Effectively Swift-only. |
 | `StickerFoundation` | Basically empty. |
 | `StickerKit` | Basically empty. |
 | `StoreKitTest` | TODO. Developer-only. |
@@ -126,6 +128,7 @@
 | `VisualIntelligence` | Swift-only. |
 | `WeatherKit` | Swift-only. |
 | `WiFiAware` | Swift-only. |
+| `WiFiInfrastructure` | Swift-only. |
 | `WidgetKit` | Mostly Swift-only. |
 | `WirelessInsights` | Swift-only. |
 | `WorkoutKit` | Swift-only. |

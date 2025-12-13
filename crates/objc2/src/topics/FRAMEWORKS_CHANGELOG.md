@@ -20,17 +20,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Default` implementations for enumerations, bitflags and structs.
 
 ### Changed
-* Updated SDK from Xcode 26.0.1 to 26.1.1.
+* Updated SDK from Xcode 26.0.1 to 26.2.
 
   View the release notes to learn more details:
   - [26.1.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_1-release-notes)
+  - [26.2](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_2-release-notes)
 
   Breaking changes are noted elsewhere in this changelog entry.
+* Changed the value of `kUSBHostPortPropertyPortNumber`.
 
 ### Removed
 * **BREAKING**: Removed `UIButtonConfiguration::tintedGlassButtonConfiguration`.
 * **BREAKING**: Removed `UIDocumentBrowserAction::imageOnlyForContextMenu` and
   `UIDocumentBrowserAction::setImageOnlyForContextMenu`.
+* **BREAKING**: Removed `ColorSyncProfile::tag_count`.
+* **BREAKING**: Removed `HMErrorCode::QuotaExceeded`.
 
 ### Fixed
 * Fixed the encoding check in `NSUUID` methods.
