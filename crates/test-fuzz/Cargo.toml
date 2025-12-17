@@ -16,7 +16,7 @@ objc2 = { path = "../objc2" }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = ["std"] }
 objc2-core-foundation = { path = "../../framework-crates/objc2-core-foundation", default-features = false, features = ["std"] }
 arbitrary = { version = "1", features = ["derive"] }
-afl = { version = "0.15", optional = true }
+afl = { version = "0.17", optional = true }
 
 [features]
 gnustep-1-7 = ["objc2-foundation/gnustep-1-7"]

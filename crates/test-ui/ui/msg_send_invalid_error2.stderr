@@ -5,13 +5,13 @@ error[E0080]: evaluation panicked: error parameter must be either `NSError` or `
   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ evaluation of `<objc2_foundation::NSString as objc2::__macros::msg_send::null_error::IsNSError>::IS_NSERROR_COMPATIBLE` failed here
 
 note: erroneous constant encountered
-  --> $WORKSPACE/crates/objc2/src/__macros/msg_send/null_error.rs
-   |
-   |         assert!(E::IS_NSERROR_COMPATIBLE);
-   |                 ^^^^^^^^^^^^^^^^^^^^^^^^
+ --> $WORKSPACE/crates/objc2/src/__macros/msg_send/null_error.rs
+  |
+  |         assert!(E::IS_NSERROR_COMPATIBLE);
+  |                 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 note: the above error was encountered while instantiating `fn __macros::msg_send::null_error::encountered_error::<NSString>::{closure#0}`
-    --> $RUST/core/src/option.rs
-     |
-     |             None => f(),
-     |                     ^^^
+ --> $RUST/core/src/option.rs
+  |
+  |             None => f(),
+  |                     ^^^

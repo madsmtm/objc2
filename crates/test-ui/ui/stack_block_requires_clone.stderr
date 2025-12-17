@@ -27,6 +27,6 @@ note: required by a bound in `StackBlock::<'f, A, R, Closure>::new`
   |            --- required by a bound in this associated function
 help: consider annotating `Foo` with `#[derive(Clone)]`
   |
-  3 + #[derive(Clone)]
-  4 | struct Foo;
-    |
+3 + #[derive(Clone)]
+4 | struct Foo;
+  |

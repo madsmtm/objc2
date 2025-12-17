@@ -35,4 +35,4 @@ objc2-xc-ui-automation = { version = "0.3.2", default-features = false, features
     "std",
 ] }
 libc = "0.2"
-ctor = { version = "0.5", default-features = false, features = ["proc_macro"] }
+ctor = { version = "0.6", default-features = false, features = ["proc_macro"] }

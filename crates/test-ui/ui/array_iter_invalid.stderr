@@ -14,46 +14,46 @@ help: consider removing the leading `&`-reference
   |
 
 error[E0277]: `&mut Retained<NSArray<NSMutableArray>>` is not an iterator
- --> ui/array_iter_invalid.rs
-  |
-  |     for s in &mut arr {
-  |              ^^^^^^^^ `&mut Retained<NSArray<NSMutableArray>>` is not an iterator
-  |
-  = help: the trait `Iterator` is not implemented for `Retained<NSArray<NSMutableArray>>`
-  = note: required for `&mut Retained<NSArray<NSMutableArray>>` to implement `Iterator`
-  = note: required for `&mut Retained<NSArray<NSMutableArray>>` to implement `IntoIterator`
+  --> ui/array_iter_invalid.rs
+   |
+   |     for s in &mut arr {
+   |              ^^^^^^^^ `&mut Retained<NSArray<NSMutableArray>>` is not an iterator
+   |
+   = help: the trait `Iterator` is not implemented for `Retained<NSArray<NSMutableArray>>`
+   = note: required for `&mut Retained<NSArray<NSMutableArray>>` to implement `Iterator`
+   = note: required for `&mut Retained<NSArray<NSMutableArray>>` to implement `IntoIterator`
 help: consider removing the leading `&`-reference
-  |
+   |
 11 -     for s in &mut arr {
 11 +     for s in arr {
    |
 
 error[E0277]: `&mut Retained<NSMutableArray<NSArray>>` is not an iterator
- --> ui/array_iter_invalid.rs
-  |
-  |     for s in &mut arr {
-  |              ^^^^^^^^ `&mut Retained<NSMutableArray<NSArray>>` is not an iterator
-  |
-  = help: the trait `Iterator` is not implemented for `Retained<NSMutableArray<NSArray>>`
-  = note: required for `&mut Retained<NSMutableArray<NSArray>>` to implement `Iterator`
-  = note: required for `&mut Retained<NSMutableArray<NSArray>>` to implement `IntoIterator`
+  --> ui/array_iter_invalid.rs
+   |
+   |     for s in &mut arr {
+   |              ^^^^^^^^ `&mut Retained<NSMutableArray<NSArray>>` is not an iterator
+   |
+   = help: the trait `Iterator` is not implemented for `Retained<NSMutableArray<NSArray>>`
+   = note: required for `&mut Retained<NSMutableArray<NSArray>>` to implement `Iterator`
+   = note: required for `&mut Retained<NSMutableArray<NSArray>>` to implement `IntoIterator`
 help: consider removing the leading `&`-reference
-  |
+   |
 16 -     for s in &mut arr {
 16 +     for s in arr {
    |
 
 error[E0277]: `&mut Retained<NSMutableArray<NSMutableArray>>` is not an iterator
- --> ui/array_iter_invalid.rs
-  |
-  |     for s in &mut arr {
-  |              ^^^^^^^^ `&mut Retained<NSMutableArray<NSMutableArray>>` is not an iterator
-  |
-  = help: the trait `Iterator` is not implemented for `Retained<NSMutableArray<NSMutableArray>>`
-  = note: required for `&mut Retained<NSMutableArray<NSMutableArray>>` to implement `Iterator`
-  = note: required for `&mut Retained<NSMutableArray<NSMutableArray>>` to implement `IntoIterator`
+  --> ui/array_iter_invalid.rs
+   |
+   |     for s in &mut arr {
+   |              ^^^^^^^^ `&mut Retained<NSMutableArray<NSMutableArray>>` is not an iterator
+   |
+   = help: the trait `Iterator` is not implemented for `Retained<NSMutableArray<NSMutableArray>>`
+   = note: required for `&mut Retained<NSMutableArray<NSMutableArray>>` to implement `Iterator`
+   = note: required for `&mut Retained<NSMutableArray<NSMutableArray>>` to implement `IntoIterator`
 help: consider removing the leading `&`-reference
-  |
+   |
 21 -     for s in &mut arr {
 21 +     for s in arr {
    |
