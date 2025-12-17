@@ -177,7 +177,8 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: cargo doc
-      run: cargo doc --no-deps --document-private-items ${{ matrix.args }}
+      # HACK: Using `-Zrustdoc-mergeable-info` before it's stable to alleviate https://github.com/rust-lang/rust/issues/146895
+      run: cargo doc -Zrustdoc-mergeable-info --no-deps --document-private-items ${{ matrix.args }}
       env:
         # docsrs runs on nightly, so we can use nightly features when `docsrs` is enabled.
         RUSTDOCFLAGS: "--deny=warnings --cfg=docsrs"
