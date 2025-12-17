@@ -14,7 +14,7 @@ LBB0_2:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)]
 	lea	rsi, [rip + L_anon.[ID].0]
 	pop	rbp
-	jmp	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	jmp	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 
 	.globl	_fn2_get_same_sel
 	.p2align	4
@@ -30,7 +30,7 @@ LBB1_2:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_same_sel::CACHED_SEL, 0)]
 	lea	rsi, [rip + L_anon.[ID].0]
 	pop	rbp
-	jmp	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	jmp	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 
 	.globl	_fn3_get_common_twice
 	.p2align	4
@@ -39,7 +39,7 @@ _fn3_get_common_twice:
 	mov	rbp, rsp
 	push	rbx
 	push	rax
-	mov	rbx, qword ptr [rip + SYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	rbx, qword ptr [rip + SYM(objc2[CRATE_ID]::__macros::sel::alloc_sel::CACHED_SEL, 0)@GOTPCREL]
 	mov	rax, qword ptr [rbx]
 	test	rax, rax
 	je	LBB2_1
@@ -52,17 +52,17 @@ LBB2_4:
 	pop	rbp
 	ret
 LBB2_1:
-	mov	rdi, qword ptr [rip + SYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	rdi, qword ptr [rip + SYM(objc2[CRATE_ID]::__macros::sel::alloc_sel::CACHED_SEL, 0)@GOTPCREL]
 	lea	rsi, [rip + L_anon.[ID].1]
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	rdx, qword ptr [rbx]
 	test	rdx, rdx
 	jne	LBB2_4
 LBB2_3:
-	mov	rdi, qword ptr [rip + SYM(objc2::__macros::sel::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	rdi, qword ptr [rip + SYM(objc2[CRATE_ID]::__macros::sel::alloc_sel::CACHED_SEL, 0)@GOTPCREL]
 	lea	rsi, [rip + L_anon.[ID].1]
 	mov	rbx, rax
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	rdx, rax
 	mov	rax, rbx
 	add	rsp, 8
@@ -84,7 +84,7 @@ LBB3_2:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_different_sel::CACHED_SEL, 0)]
 	lea	rsi, [rip + L_anon.[ID].2]
 	pop	rbp
-	jmp	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	jmp	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 
 	.globl	_fn5_unused_sel
 	.p2align	4
@@ -100,7 +100,7 @@ LBB4_2:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::unused_sel::CACHED_SEL, 0)]
 	lea	rsi, [rip + L_anon.[ID].3]
 	pop	rbp
-	jmp	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	jmp	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 
 	.globl	_fn6_use_fns
 	.p2align	4
@@ -141,7 +141,7 @@ LBB5_1:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)]
 	lea	rsi, [rip + L_anon.[ID].0]
 	mov	r14, rax
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	rbx, rax
 	mov	rax, r14
 	mov	r14, qword ptr [rip + SYM(test_dynamic_sel[CRATE_ID]::get_same_sel::CACHED_SEL, 0)]
@@ -151,7 +151,7 @@ LBB5_3:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_same_sel::CACHED_SEL, 0)]
 	lea	rsi, [rip + L_anon.[ID].0]
 	mov	r15, rax
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	r14, rax
 	mov	rax, r15
 	mov	r15, qword ptr [rip + SYM(test_dynamic_sel[CRATE_ID]::get_different_sel::CACHED_SEL, 0)]
@@ -161,7 +161,7 @@ LBB5_5:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_different_sel::CACHED_SEL, 0)]
 	lea	rsi, [rip + L_anon.[ID].2]
 	mov	r12, rax
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	r15, rax
 	mov	rax, r12
 	mov	rcx, qword ptr [rip + SYM(test_dynamic_sel[CRATE_ID]::use_fns::CACHED_SEL, 0)]
@@ -171,7 +171,7 @@ LBB5_7:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::use_fns::CACHED_SEL, 0)]
 	lea	rsi, [rip + L_anon.[ID].4]
 	mov	r12, rax
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	rcx, rax
 	mov	rax, r12
 	jmp	LBB5_8
@@ -201,7 +201,7 @@ LBB6_1:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)]
 	lea	rsi, [rip + L_anon.[ID].0]
 	mov	r14, rax
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	rbx, rax
 	mov	rax, r14
 	mov	rcx, qword ptr [rip + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)]
@@ -211,7 +211,7 @@ LBB6_3:
 	lea	rdi, [rip + SYM(test_dynamic_sel[CRATE_ID]::get_sel::CACHED_SEL, 0)]
 	lea	rsi, [rip + L_anon.[ID].0]
 	mov	r14, rax
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	rcx, rax
 	mov	rax, r14
 	jmp	LBB6_4
@@ -241,7 +241,7 @@ LBB7_3:
 	mov	r15, rdi
 	mov	rdi, rbx
 	mov	rsi, r14
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	rdi, r15
 	dec	rdi
 	jne	LBB7_2

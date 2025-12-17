@@ -27,7 +27,7 @@ Ltmp0:
 	lea	rdi, [rbp - 16]
 	mov	edx, 8
 	xor	ecx, ecx
-	call	SYM(objc2::runtime::define::ClassBuilder::add_class_method_inner::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp1:
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_7af348e2d6ca08be]
 Ltmp2:
@@ -36,7 +36,7 @@ Ltmp2:
 	lea	rdi, [rbp - 16]
 	mov	edx, 8
 	xor	ecx, ecx
-	call	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp3:
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_59b65ebff80505d9]
 Ltmp4:
@@ -45,7 +45,7 @@ Ltmp4:
 	lea	rdi, [rbp - 16]
 	mov	ecx, 1
 	mov	r8, rdx
-	call	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp5:
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_f8d5ad39f22c9fc5]
 Ltmp6:
@@ -54,7 +54,7 @@ Ltmp6:
 	lea	rdi, [rbp - 16]
 	mov	edx, 8
 	xor	ecx, ecx
-	call	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp7:
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_31d62824a4f71757]
 Ltmp8:
@@ -63,12 +63,12 @@ Ltmp8:
 	lea	r9, [rip + _fn5_method_retained_with_param]
 	lea	rdi, [rbp - 16]
 	mov	ecx, 1
-	call	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp9:
 Ltmp10:
 	lea	rdi, [rip + L_anon.[ID].7]
 	mov	esi, 8
-	call	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
 Ltmp11:
 	test	rax, rax
 	je	LBB0_10
@@ -79,7 +79,7 @@ LBB0_10:
 Ltmp12:
 	lea	rdi, [rip + l_anon.[ID].8]
 	mov	esi, 9
-	call	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
 Ltmp13:
 	test	rax, rax
 	je	LBB0_13
@@ -94,7 +94,7 @@ Ltmp14:
 	lea	r9, [rip + _fn6_copyWithZone]
 	lea	rdi, [rbp - 16]
 	mov	ecx, 1
-	call	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp15:
 	mov	rbx, qword ptr [rbp - 16]
 	mov	rdi, rbx
@@ -106,12 +106,12 @@ Ltmp15:
 	ret
 LBB0_17:
 	lea	rdi, [rip + l_anon.[ID].2]
-	call	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
 LBB0_16:
 	lea	rdi, [rip + L_anon.[ID].12]
 	lea	rdx, [rip + l_anon.[ID].14]
 	mov	esi, 8
-	call	SYM(objc2::__macros::define_class::checks::class_not_unique::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
 LBB0_15:
 Ltmp16:
 	mov	rbx, rax
@@ -174,7 +174,7 @@ LBB2_1:
 	lea	r8, [rip + l_anon.[ID].14]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
-	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	add	rsp, 16
 	pop	rbp
 	mov	rax, qword ptr [rip + ___CLASS_NoIvars]
@@ -200,7 +200,7 @@ LBB3_1:
 	lea	r8, [rip + l_anon.[ID].14]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
-	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	add	rsp, 16
 	pop	rbp
 	mov	rax, qword ptr [rip + ___CLASS_NoIvars]
@@ -253,7 +253,7 @@ LBB6_1:
 	lea	r8, [rip + l_anon.[ID].14]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
-	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	jmp	LBB6_2
 
 	.globl	_fn5_method_retained_with_param
@@ -265,12 +265,12 @@ Lfunc_begin1:
 	push	r14
 	push	rbx
 	mov	r14d, edx
-	call	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
 	mov	rbx, rax
 	test	r14b, r14b
 	je	LBB7_3
 Ltmp17:
-	call	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
 Ltmp18:
 	mov	r14, rax
 	mov	rdi, rbx
@@ -293,7 +293,7 @@ Ltmp21:
 	call	__Unwind_Resume
 LBB7_4:
 Ltmp22:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end1:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -361,7 +361,7 @@ LBB8_1:
 	lea	r8, [rip + l_anon.[ID].14]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
-	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	jmp	LBB8_2
 
 	.section	__TEXT,__objc_methname,cstring_literals

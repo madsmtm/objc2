@@ -52,7 +52,7 @@ fn2_iter_once:
 	mov	dword ptr [esp + 8], eax
 	lea	eax, [edi + 68]
 	mov	dword ptr [esp + 4], eax
-	mov	eax, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	mov	eax, dword ptr [ebx + SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOT]
 	mov	esi, dword ptr [eax]
 	test	esi, esi
 	je	.LBB1_2
@@ -92,7 +92,7 @@ fn2_iter_once:
 	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
 	push	ecx
 	push	eax
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)@PLT
 	add	esp, 16
 	mov	esi, eax
 	jmp	.LBB1_3
@@ -144,7 +144,7 @@ fn4_iter:
 	movsd	qword ptr [esp + 60], xmm0
 	movsd	qword ptr [esp + 68], xmm0
 	movsd	qword ptr [esp + 76], xmm0
-	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	mov	edi, dword ptr [ebx + SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOT]
 	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
 	mov	dword ptr [esp + 12], ecx
 	xor	ecx, ecx
@@ -197,7 +197,7 @@ fn4_iter:
 	sub	esp, 8
 	push	dword ptr [esp + 20]
 	push	edi
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)@PLT
 	add	esp, 16
 	mov	esi, eax
 	jmp	.LBB3_4
@@ -240,7 +240,7 @@ fn5_iter_noop:
 	movsd	qword ptr [esp + 60], xmm0
 	movsd	qword ptr [esp + 68], xmm0
 	movsd	qword ptr [esp + 76], xmm0
-	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	mov	edi, dword ptr [ebx + SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOT]
 	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
 	mov	dword ptr [esp + 12], ecx
 	xor	ecx, ecx
@@ -286,7 +286,7 @@ fn5_iter_noop:
 	sub	esp, 8
 	push	dword ptr [esp + 20]
 	push	edi
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)@PLT
 	add	esp, 16
 	mov	esi, eax
 	jmp	.LBB4_4
@@ -331,7 +331,7 @@ fn6_iter_retained:
 	movsd	qword ptr [esp + 84], xmm0
 	movsd	qword ptr [esp + 92], xmm0
 	mov	dword ptr [esp + 24], 0
-	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	mov	edi, dword ptr [ebx + SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOT]
 	lea	eax, [ebx + .Lanon.[ID].0@GOTOFF]
 	mov	dword ptr [esp + 20], eax
 	xor	eax, eax
@@ -405,7 +405,7 @@ fn6_iter_retained:
 	mov	eax, dword ptr [esp + 20]
 	mov	dword ptr [esp], edi
 	mov	dword ptr [esp + 4], eax
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)@PLT
 	mov	esi, eax
 	jmp	.LBB5_4
 .LBB5_13:
@@ -416,9 +416,9 @@ fn6_iter_retained:
 	pop	ebp
 	ret
 .LBB5_6:
-	call	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation[CRATE_ID]::iter::items_ptr_null, 0)@PLT
 .LBB5_9:
-	call	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)@PLT
+	call	SYM(objc2_foundation[CRATE_ID]::iter::mutation_detected, 0)@PLT
 .LBB5_15:
 .Ltmp5:
 	mov	edi, eax
@@ -430,7 +430,7 @@ fn6_iter_retained:
 	call	_Unwind_Resume@PLT
 .LBB5_14:
 .Ltmp8:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end5:
 	.size	fn6_iter_retained, .Lfunc_end5-fn6_iter_retained
 	.section	.gcc_except_table.fn6_iter_retained,"a",@progbits

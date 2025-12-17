@@ -34,7 +34,7 @@ LBB0_1:
 	add	esp, 16
 	test	eax, eax
 	jne	LBB0_3
-	call	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::msg_send::null_error::null_error, 0)
 	add	esp, 4
 	pop	esi
 	pop	ebp
@@ -73,7 +73,7 @@ LBB1_2:
 	mov	eax, 1
 	test	edx, edx
 	jne	LBB1_4
-	call	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::msg_send::null_error::null_error, 0)
 	mov	edx, eax
 	mov	eax, 1
 	add	esp, 8
@@ -113,7 +113,7 @@ LBB2_2:
 	mov	eax, 1
 	test	edx, edx
 	jne	LBB2_4
-	call	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::msg_send::null_error::null_error, 0)
 	mov	edx, eax
 	mov	eax, 1
 	add	esp, 8
@@ -153,7 +153,7 @@ LBB3_2:
 	mov	eax, 1
 	test	edx, edx
 	jne	LBB3_4
-	call	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::msg_send::null_error::null_error, 0)
 	mov	edx, eax
 	mov	eax, 1
 	add	esp, 8
@@ -193,7 +193,7 @@ LBB4_2:
 	mov	eax, 1
 	test	edx, edx
 	jne	LBB4_4
-	call	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::msg_send::null_error::null_error, 0)
 	mov	edx, eax
 	mov	eax, 1
 	add	esp, 8
@@ -237,7 +237,7 @@ LBB5_2:
 	mov	eax, 1
 	test	edx, edx
 	jne	LBB5_4
-	call	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::msg_send::null_error::null_error, 0)
 	mov	edx, eax
 	mov	eax, 1
 	add	esp, 24

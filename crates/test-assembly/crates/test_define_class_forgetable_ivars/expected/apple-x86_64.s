@@ -28,7 +28,7 @@ Ltmp0:
 	lea	rdi, [rbp - 16]
 	mov	edx, 8
 	xor	ecx, ecx
-	call	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp1:
 	mov	qword ptr [rbp - 48], 2
 	lea	rax, [rip + l_anon.[ID].1]
@@ -41,7 +41,7 @@ Ltmp2:
 	mov	edx, 6
 	mov	ecx, 8
 	mov	r8d, 2
-	call	SYM(objc2::runtime::define::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_ivar_inner_mono, 0)
 Ltmp3:
 	mov	rbx, qword ptr [rbp - 16]
 	mov	rdi, rbx
@@ -61,14 +61,14 @@ Ltmp3:
 	ret
 LBB0_8:
 	lea	rdi, [rip + l_anon.[ID].4]
-	call	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
 LBB0_6:
 	lea	rdi, [rip + L_anon.[ID].6]
 	lea	rdx, [rip + l_anon.[ID].8]
 	mov	esi, 16
-	call	SYM(objc2::__macros::define_class::checks::class_not_unique::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
 LBB0_5:
-	call	SYM(objc2::__macros::define_class::ivars::ivars_offset::get_ivar_failed::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::ivars_offset::get_ivar_failed, 0)
 LBB0_9:
 Ltmp4:
 	mov	rbx, rax
@@ -131,7 +131,7 @@ LBB2_1:
 	lea	r8, [rip + l_anon.[ID].8]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
-	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	add	rsp, 16
 	pop	rbp
 	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
@@ -181,7 +181,7 @@ LBB4_1:
 	lea	r8, [rip + l_anon.[ID].8]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
-	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	add	rsp, 16
 	pop	rbp
 	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]

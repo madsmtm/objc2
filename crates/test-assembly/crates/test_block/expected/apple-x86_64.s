@@ -90,7 +90,7 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::crea
 LBB8_2:
 	mov	edi, 4
 	mov	esi, 4
-	call	SYM(alloc::alloc::handle_alloc_error::GENERATED_ID, 0)
+	call	SYM(alloc[CRATE_ID]::alloc::handle_alloc_error, 0)
 
 	.p2align	4
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>>::empty_clone_closure, 0):
@@ -154,7 +154,7 @@ _fn1_stack_block_to_rc:
 	pop	rbp
 	ret
 LBB14_2:
-	call	SYM(block2::rc_block::block_copy_fail::GENERATED_ID, 0)
+	call	SYM(block2[CRATE_ID]::rc_block::block_copy_fail, 0)
 
 	.globl	_fn2_rc_block
 	.p2align	4
@@ -177,7 +177,7 @@ _fn2_rc_block:
 	pop	rbp
 	ret
 LBB15_2:
-	call	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
+	call	SYM(block2[CRATE_ID]::rc_block::rc_new_fail, 0)
 
 	.globl	_fn3_rc_block_drop
 	.p2align	4
@@ -201,7 +201,7 @@ _fn3_rc_block_drop:
 	pop	rbp
 	ret
 LBB16_2:
-	call	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
+	call	SYM(block2[CRATE_ID]::rc_block::rc_new_fail, 0)
 
 	.globl	_fn4_create_and_use_stack_block
 	.p2align	4
@@ -277,7 +277,7 @@ _fn6_create_and_use_rc_block:
 	pop	rbp
 	ret
 LBB19_2:
-	call	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
+	call	SYM(block2[CRATE_ID]::rc_block::rc_new_fail, 0)
 
 	.section	__DATA,__const
 	.p2align	3, 0x0

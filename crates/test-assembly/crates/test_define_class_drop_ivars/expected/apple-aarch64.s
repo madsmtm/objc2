@@ -62,7 +62,7 @@ LBB0_9:
 	bl	__Unwind_Resume
 LBB0_10:
 Ltmp5:
-	bl	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	bl	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 	.loh AdrpLdr	Lloh0, Lloh1
 	.loh AdrpLdr	Lloh2, Lloh3
 	.loh AdrpLdrGotLdr	Lloh4, Lloh5, Lloh6
@@ -151,7 +151,7 @@ Lloh18:
 	mov	x0, sp
 	mov	w2, #8
 	mov	x3, #0
-	bl	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp7:
 Lloh19:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
@@ -171,7 +171,7 @@ Lloh25:
 	mov	x0, sp
 	mov	w2, #8
 	mov	x3, #0
-	bl	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp9:
 	mov	w8, #2
 Lloh26:
@@ -191,7 +191,7 @@ Lloh29:
 	mov	w2, #6
 	mov	w3, #16
 	mov	w4, #3
-	bl	SYM(objc2::runtime::define::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_ivar_inner_mono, 0)
 Ltmp11:
 Ltmp12:
 Lloh30:
@@ -206,7 +206,7 @@ Lloh33:
 	mov	w2, #10
 	mov	w3, #1
 	mov	w4, #0
-	bl	SYM(objc2::runtime::define::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_ivar_inner_mono, 0)
 Ltmp13:
 	ldr	x19, [sp]
 	mov	x0, x19
@@ -246,7 +246,7 @@ Lloh41:
 	adrp	x0, l_anon.[ID].7@PAGE
 Lloh42:
 	add	x0, x0, l_anon.[ID].7@PAGEOFF
-	bl	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
+	bl	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
 LBB1_10:
 Lloh43:
 	adrp	x0, l_anon.[ID].9@PAGE
@@ -257,11 +257,11 @@ Lloh45:
 Lloh46:
 	add	x2, x2, l_anon.[ID].11@PAGEOFF
 	mov	w1, #10
-	bl	SYM(objc2::__macros::define_class::checks::class_not_unique::GENERATED_ID, 0)
+	bl	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
 LBB1_11:
-	bl	SYM(objc2::__macros::define_class::ivars::ivars_offset::get_ivar_failed::GENERATED_ID, 0)
+	bl	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::ivars_offset::get_ivar_failed, 0)
 LBB1_12:
-	bl	SYM(objc2::__macros::define_class::ivars::drop_flag_offset::get_drop_flag_failed::GENERATED_ID, 0)
+	bl	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::drop_flag_offset::get_drop_flag_failed, 0)
 LBB1_13:
 Ltmp14:
 	mov	x19, x0
@@ -359,7 +359,7 @@ Lloh56:
 	add	x4, x4, l_anon.[ID].11@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
-	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 Lloh57:
@@ -385,11 +385,11 @@ Lfunc_begin2:
 	add	x29, sp, #48
 	mov	x19, x0
 Ltmp15:
-	bl	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
 Ltmp16:
 Ltmp18:
 	mov	x20, x0
-	bl	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
 Ltmp19:
 	mov	x21, x0
 	adrp	x22, ___DROP_FLAG_OFFSET_DropIvars@PAGE
@@ -447,7 +447,7 @@ Ltmp30:
 	b	LBB4_14
 LBB4_10:
 Ltmp31:
-	bl	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	bl	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB4_11:
 Ltmp20:
 	mov	x8, x20
@@ -470,7 +470,7 @@ LBB4_14:
 	bl	__Unwind_Resume
 LBB4_15:
 Ltmp25:
-	bl	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	bl	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 	.loh AdrpLdr	Lloh59, Lloh60
 	.loh AdrpLdrGotLdr	Lloh64, Lloh65, Lloh66
 	.loh AdrpLdrGotLdr	Lloh61, Lloh62, Lloh63
@@ -566,7 +566,7 @@ Lloh76:
 	add	x4, x4, l_anon.[ID].11@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
-	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 Lloh77:

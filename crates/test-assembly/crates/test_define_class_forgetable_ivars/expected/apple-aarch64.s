@@ -43,7 +43,7 @@ Lloh11:
 	mov	x0, sp
 	mov	w2, #8
 	mov	x3, #0
-	bl	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp1:
 	mov	w8, #2
 Lloh12:
@@ -63,7 +63,7 @@ Lloh15:
 	mov	w2, #6
 	mov	w3, #8
 	mov	w4, #2
-	bl	SYM(objc2::runtime::define::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_ivar_inner_mono, 0)
 Ltmp3:
 	ldr	x19, [sp]
 	mov	x0, x19
@@ -91,7 +91,7 @@ Lloh20:
 	adrp	x0, l_anon.[ID].4@PAGE
 Lloh21:
 	add	x0, x0, l_anon.[ID].4@PAGEOFF
-	bl	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
+	bl	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
 LBB0_7:
 Lloh22:
 	adrp	x0, l_anon.[ID].6@PAGE
@@ -102,9 +102,9 @@ Lloh24:
 Lloh25:
 	add	x2, x2, l_anon.[ID].8@PAGEOFF
 	mov	w1, #16
-	bl	SYM(objc2::__macros::define_class::checks::class_not_unique::GENERATED_ID, 0)
+	bl	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
 LBB0_8:
-	bl	SYM(objc2::__macros::define_class::ivars::ivars_offset::get_ivar_failed::GENERATED_ID, 0)
+	bl	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::ivars_offset::get_ivar_failed, 0)
 LBB0_9:
 Ltmp4:
 	mov	x19, x0
@@ -195,7 +195,7 @@ Lloh35:
 	add	x4, x4, l_anon.[ID].8@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
-	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 Lloh36:
@@ -285,7 +285,7 @@ Lloh55:
 	add	x4, x4, l_anon.[ID].8@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
-	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 Lloh56:

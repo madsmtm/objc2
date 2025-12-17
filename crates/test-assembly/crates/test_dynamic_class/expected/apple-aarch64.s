@@ -21,7 +21,7 @@ Lloh6:
 	adrp	x2, l_anon.[ID].2@PAGE
 Lloh7:
 	add	x2, x2, l_anon.[ID].2@PAGEOFF
-	b	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	b	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	.loh AdrpLdr	Lloh0, Lloh1
 	.loh AdrpAdd	Lloh6, Lloh7
 	.loh AdrpAdd	Lloh4, Lloh5
@@ -49,7 +49,7 @@ Lloh14:
 	adrp	x2, l_anon.[ID].3@PAGE
 Lloh15:
 	add	x2, x2, l_anon.[ID].3@PAGEOFF
-	b	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	b	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	.loh AdrpLdr	Lloh8, Lloh9
 	.loh AdrpAdd	Lloh14, Lloh15
 	.loh AdrpAdd	Lloh12, Lloh13
@@ -77,7 +77,7 @@ Lloh22:
 	adrp	x2, l_anon.[ID].5@PAGE
 Lloh23:
 	add	x2, x2, l_anon.[ID].5@PAGEOFF
-	b	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	b	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	.loh AdrpLdr	Lloh16, Lloh17
 	.loh AdrpAdd	Lloh22, Lloh23
 	.loh AdrpAdd	Lloh20, Lloh21
@@ -105,7 +105,7 @@ Lloh30:
 	adrp	x2, l_anon.[ID].7@PAGE
 Lloh31:
 	add	x2, x2, l_anon.[ID].7@PAGEOFF
-	b	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	b	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	.loh AdrpLdr	Lloh24, Lloh25
 	.loh AdrpAdd	Lloh30, Lloh31
 	.loh AdrpAdd	Lloh28, Lloh29
@@ -161,7 +161,7 @@ Lloh44:
 Lloh45:
 	add	x2, x2, l_anon.[ID].2@PAGEOFF
 	mov	x19, x8
-	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	x8, x19
 	mov	x19, x0
 Lloh46:
@@ -183,7 +183,7 @@ Lloh52:
 Lloh53:
 	add	x2, x2, l_anon.[ID].3@PAGEOFF
 	mov	x20, x8
-	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	x8, x20
 	mov	x20, x0
 Lloh54:
@@ -205,7 +205,7 @@ Lloh60:
 Lloh61:
 	add	x2, x2, l_anon.[ID].5@PAGEOFF
 	mov	x21, x8
-	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	x8, x21
 	mov	x21, x0
 Lloh62:
@@ -227,7 +227,7 @@ Lloh68:
 Lloh69:
 	add	x2, x2, l_anon.[ID].9@PAGEOFF
 	mov	x22, x8
-	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	x8, x22
 	b	LBB4_4
 	.loh AdrpLdr	Lloh32, Lloh33
@@ -280,7 +280,7 @@ Lloh74:
 Lloh75:
 	add	x2, x2, l_anon.[ID].2@PAGEOFF
 	mov	x19, x8
-	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	x8, x19
 	mov	x19, x0
 	ldr	x0, [x20, __MergedGlobals@PAGEOFF+24]
@@ -299,7 +299,7 @@ Lloh80:
 Lloh81:
 	add	x2, x2, l_anon.[ID].2@PAGEOFF
 	mov	x20, x8
-	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	x8, x20
 	b	LBB5_2
 	.loh AdrpAdd	Lloh74, Lloh75
@@ -342,7 +342,7 @@ LBB6_4:
 	mov	x0, x19
 	mov	x1, x20
 	mov	x2, x21
-	bl	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	subs	x0, x23, #1
 	b.ne	LBB6_2
 LBB6_5:

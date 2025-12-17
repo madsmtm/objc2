@@ -22,7 +22,7 @@ fn1_get_ascii:
 	lea	eax, [ebx + .Lanon.[ID].1@GOTOFF]
 	push	3
 	push	eax
-	call	SYM(objc2_foundation::string::<impl objc2_foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2_foundation[CRATE_ID]::generated::__NSString::NSString>::from_str, 0)@PLT
 	add	esp, 16
 	mov	ecx, eax
 	xchg	dword ptr [ebx + SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0@GOTOFF], ecx
@@ -55,7 +55,7 @@ fn2_get_utf16:
 	lea	eax, [ebx + .Lanon.[ID].2@GOTOFF]
 	push	5
 	push	eax
-	call	SYM(objc2_foundation::string::<impl objc2_foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2_foundation[CRATE_ID]::generated::__NSString::NSString>::from_str, 0)@PLT
 	add	esp, 16
 	mov	ecx, eax
 	xchg	dword ptr [ebx + SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0@GOTOFF], ecx
@@ -88,7 +88,7 @@ fn3_get_with_nul:
 	lea	eax, [ebx + .Lanon.[ID].0@GOTOFF]
 	push	6
 	push	eax
-	call	SYM(objc2_foundation::string::<impl objc2_foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2_foundation[CRATE_ID]::generated::__NSString::NSString>::from_str, 0)@PLT
 	add	esp, 16
 	mov	ecx, eax
 	xchg	dword ptr [ebx + SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0@GOTOFF], ecx

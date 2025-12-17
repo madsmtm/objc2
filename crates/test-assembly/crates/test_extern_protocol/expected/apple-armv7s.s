@@ -12,7 +12,7 @@ LPC0_0:
 	add	r0, pc, r0
 	mov	r1, #10
 	pop	{r7, lr}
-	b	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
+	b	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
 
 	.globl	_fn2_dyn_call
 	.p2align	2

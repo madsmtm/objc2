@@ -34,7 +34,7 @@ _fn4_high:
 	mov	rbp, rsp
 	push	rbx
 	push	rax
-	mov	rbx, qword ptr [rip + SYM(objc2::__macros::available::apple::current_version::CURRENT_VERSION::GENERATED_ID, 0)@GOTPCREL]
+	mov	rbx, qword ptr [rip + SYM(objc2[CRATE_ID]::__macros::available::apple::current_version::CURRENT_VERSION, 0)@GOTPCREL]
 	mov	eax, dword ptr [rbx]
 	test	eax, eax
 	je	LBB3_1
@@ -46,7 +46,7 @@ LBB3_2:
 	pop	rbp
 	ret
 LBB3_1:
-	call	SYM(objc2::__macros::available::apple::lookup_version::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::available::apple::lookup_version, 0)
 	mov	dword ptr [rbx], eax
 	jmp	LBB3_2
 
@@ -66,7 +66,7 @@ _fn6_two_checks:
 	mov	rbp, rsp
 	push	r14
 	push	rbx
-	mov	r14, qword ptr [rip + SYM(objc2::__macros::available::apple::current_version::CURRENT_VERSION::GENERATED_ID, 0)@GOTPCREL]
+	mov	r14, qword ptr [rip + SYM(objc2[CRATE_ID]::__macros::available::apple::current_version::CURRENT_VERSION, 0)@GOTPCREL]
 	mov	ebx, dword ptr [r14]
 	test	ebx, ebx
 	je	LBB5_1
@@ -84,14 +84,14 @@ LBB5_4:
 	pop	rbp
 	ret
 LBB5_1:
-	call	SYM(objc2::__macros::available::apple::lookup_version::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::available::apple::lookup_version, 0)
 	mov	ebx, eax
 	mov	dword ptr [r14], eax
 	mov	eax, dword ptr [r14]
 	test	eax, eax
 	jne	LBB5_4
 LBB5_3:
-	call	SYM(objc2::__macros::available::apple::lookup_version::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::available::apple::lookup_version, 0)
 	mov	dword ptr [r14], eax
 	jmp	LBB5_4
 

@@ -57,7 +57,7 @@ LBB1_2:
 	push	eax
 	push	ebx
 	push	esi
-	call	SYM(objc2::__macros::retain_semantics::init_fail::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::retain_semantics::init_fail, 0)
 
 	.globl	_fn3_use_generic
 	.p2align	4

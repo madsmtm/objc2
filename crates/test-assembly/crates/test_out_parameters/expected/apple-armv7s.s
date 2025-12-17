@@ -152,7 +152,7 @@ Ltmp9:
 	ldr	r0, [sp, #20]
 	ldr	r0, [sp, #24]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 	.p2align	2
 	.data_region
 LCPI2_0:
@@ -309,7 +309,7 @@ Ltmp17:
 	ldr	r0, [sp, #20]
 	ldr	r0, [sp, #24]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB4_9:
 	mvn	r0, #0
 	str	r0, [sp, #16]
@@ -456,7 +456,7 @@ Ltmp23:
 	ldr	r0, [sp, #20]
 	ldr	r0, [sp, #24]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB5_13:
 	mvn	r0, #0
 	str	r0, [sp, #16]
@@ -596,7 +596,7 @@ Ltmp29:
 	ldr	r0, [sp, #20]
 	ldr	r0, [sp, #24]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB6_10:
 	mvn	r0, #0
 	str	r0, [sp, #16]
@@ -744,7 +744,7 @@ Ltmp35:
 	ldr	r0, [sp, #20]
 	ldr	r0, [sp, #24]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB7_14:
 	mvn	r0, #0
 	str	r0, [sp, #16]
@@ -933,13 +933,13 @@ Ltmp41:
 	ldr	r0, [sp, #52]
 	ldr	r0, [sp, #56]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB8_13:
 Ltmp51:
 	ldr	r0, [sp, #52]
 	ldr	r0, [sp, #56]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 	.p2align	2
 	.data_region
 LCPI8_0:
@@ -1127,13 +1127,13 @@ Ltmp63:
 	ldr	r0, [sp, #36]
 	ldr	r0, [sp, #40]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB11_13:
 Ltmp57:
 	ldr	r0, [sp, #36]
 	ldr	r0, [sp, #40]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 	.p2align	2
 	.data_region
 LCPI11_0:
@@ -1297,13 +1297,13 @@ Ltmp75:
 	ldr	r0, [sp, #36]
 	ldr	r0, [sp, #40]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB12_13:
 Ltmp69:
 	ldr	r0, [sp, #36]
 	ldr	r0, [sp, #40]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 	.p2align	2
 	.data_region
 LCPI12_0:
@@ -1477,13 +1477,13 @@ Ltmp83:
 	ldr	r0, [sp, #36]
 	ldr	r0, [sp, #40]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB13_14:
 Ltmp91:
 	ldr	r0, [sp, #36]
 	ldr	r0, [sp, #40]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 	.p2align	2
 	.data_region
 LCPI13_0:
@@ -1666,13 +1666,13 @@ Ltmp99:
 	ldr	r0, [sp, #36]
 	ldr	r0, [sp, #40]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB14_15:
 Ltmp107:
 	ldr	r0, [sp, #36]
 	ldr	r0, [sp, #40]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 	.p2align	2
 	.data_region
 LCPI14_0:
@@ -1855,13 +1855,13 @@ Ltmp115:
 	ldr	r0, [sp, #36]
 	ldr	r0, [sp, #40]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB15_15:
 Ltmp123:
 	ldr	r0, [sp, #36]
 	ldr	r0, [sp, #40]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 	.p2align	2
 	.data_region
 LCPI15_0:

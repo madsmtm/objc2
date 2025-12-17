@@ -41,7 +41,7 @@ Lloh10:
 	add	x0, sp, #8
 	mov	w2, #8
 	mov	x3, #0
-	bl	SYM(objc2::runtime::define::ClassBuilder::add_class_method_inner::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp1:
 Lloh11:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_7af348e2d6ca08be@PAGE
@@ -59,7 +59,7 @@ Lloh16:
 	add	x0, sp, #8
 	mov	w2, #8
 	mov	x3, #0
-	bl	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp3:
 Lloh17:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_59b65ebff80505d9@PAGE
@@ -77,7 +77,7 @@ Lloh22:
 	add	x0, sp, #8
 	mov	w3, #1
 	mov	x4, x2
-	bl	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp5:
 Lloh23:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_f8d5ad39f22c9fc5@PAGE
@@ -95,7 +95,7 @@ Lloh28:
 	add	x0, sp, #8
 	mov	w2, #8
 	mov	x3, #0
-	bl	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp7:
 Lloh29:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_31d62824a4f71757@PAGE
@@ -116,7 +116,7 @@ Lloh36:
 	add	x5, x5, _fn5_method_retained_with_param@PAGEOFF
 	add	x0, sp, #8
 	mov	w3, #1
-	bl	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp9:
 Ltmp10:
 Lloh37:
@@ -124,7 +124,7 @@ Lloh37:
 Lloh38:
 	add	x0, x0, l_anon.[ID].7@PAGEOFF
 	mov	w1, #8
-	bl	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
+	bl	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
 	mov	x1, x0
 Ltmp11:
 	cbz	x1, LBB0_10
@@ -137,7 +137,7 @@ Lloh39:
 Lloh40:
 	add	x0, x0, l_anon.[ID].8@PAGEOFF
 	mov	w1, #9
-	bl	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
+	bl	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
 	mov	x1, x0
 Ltmp13:
 	cbz	x1, LBB0_13
@@ -163,7 +163,7 @@ Lloh48:
 	add	x5, x5, _fn6_copyWithZone@PAGEOFF
 	add	x0, sp, #8
 	mov	w3, #1
-	bl	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp15:
 	ldr	x19, [sp, #8]
 	mov	x0, x19
@@ -179,7 +179,7 @@ Lloh49:
 	adrp	x0, l_anon.[ID].2@PAGE
 Lloh50:
 	add	x0, x0, l_anon.[ID].2@PAGEOFF
-	bl	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
+	bl	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
 LBB0_16:
 Lloh51:
 	adrp	x0, l_anon.[ID].12@PAGE
@@ -190,7 +190,7 @@ Lloh53:
 Lloh54:
 	add	x2, x2, l_anon.[ID].14@PAGEOFF
 	mov	w1, #8
-	bl	SYM(objc2::__macros::define_class::checks::class_not_unique::GENERATED_ID, 0)
+	bl	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
 LBB0_17:
 Ltmp16:
 	mov	x19, x0
@@ -296,7 +296,7 @@ Lloh64:
 	add	x4, x4, l_anon.[ID].14@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
-	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 Lloh65:
@@ -347,7 +347,7 @@ Lloh76:
 	add	x4, x4, l_anon.[ID].14@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
-	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 Lloh77:
@@ -420,7 +420,7 @@ Lloh91:
 	add	x4, x4, l_anon.[ID].14@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
-	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	b	LBB6_1
 	.loh AdrpAdd	Lloh79, Lloh80
 	.loh AdrpLdrGotLdr	Lloh83, Lloh84, Lloh85
@@ -438,11 +438,11 @@ Lfunc_begin1:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	mov	x20, x2
-	bl	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
 	mov	x19, x0
 	cbz	w20, LBB7_3
 Ltmp17:
-	bl	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
 Ltmp18:
 	mov	x20, x0
 	mov	x0, x19
@@ -464,7 +464,7 @@ Ltmp21:
 	bl	__Unwind_Resume
 LBB7_6:
 Ltmp22:
-	bl	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	bl	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end1:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -552,7 +552,7 @@ Lloh104:
 	add	x4, x4, l_anon.[ID].14@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
-	bl	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	b	LBB8_1
 	.loh AdrpAdd	Lloh92, Lloh93
 	.loh AdrpLdrGotLdr	Lloh96, Lloh97, Lloh98

@@ -52,7 +52,7 @@ _fn2_iter_once:
 	lea	rcx, [rbx + 8]
 	mov	rdi, qword ptr [rbx]
 	lea	rdx, [rbx + 136]
-	mov	rax, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	rax, qword ptr [rip + SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 	test	rsi, rsi
 	je	LBB1_2
@@ -78,13 +78,13 @@ LBB1_5:
 	pop	rbp
 	ret
 LBB1_2:
-	mov	rax, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	rax, qword ptr [rip + SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPCREL]
 	lea	rsi, [rip + L_anon.[ID].0]
 	mov	r14, rdi
 	mov	rdi, rax
 	mov	r15, rcx
 	mov	r12, rdx
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	rdi, r14
 	mov	rdx, r12
 	mov	rcx, r15
@@ -144,7 +144,7 @@ _fn4_iter:
 	mov	qword ptr [rbp - 48], 0
 	mov	qword ptr [rbp - 56], 0
 	xor	ecx, ecx
-	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	r15, qword ptr [rip + SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPCREL]
 	lea	r12, [rip + L_anon.[ID].0]
 	xor	eax, eax
 	jmp	LBB3_1
@@ -178,7 +178,7 @@ LBB3_3:
 	mov	r13, rdi
 	mov	rdi, r15
 	mov	rsi, r12
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB3_4
@@ -233,7 +233,7 @@ _fn5_iter_noop:
 	mov	qword ptr [rbp - 48], 0
 	mov	qword ptr [rbp - 56], 0
 	xor	eax, eax
-	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	r15, qword ptr [rip + SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPCREL]
 	lea	r12, [rip + L_anon.[ID].0]
 	xor	ecx, ecx
 	jmp	LBB4_1
@@ -262,7 +262,7 @@ LBB4_3:
 	mov	r13, rdi
 	mov	rdi, r15
 	mov	rsi, r12
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB4_4
@@ -319,7 +319,7 @@ Lfunc_begin0:
 	mov	qword ptr [rbp - 48], 0
 	mov	qword ptr [rbp - 56], 0
 	xor	ecx, ecx
-	mov	r15, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	r15, qword ptr [rip + SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPCREL]
 	lea	r12, [rip + L_anon.[ID].0]
 	xor	eax, eax
 	cmp	rax, rcx
@@ -378,7 +378,7 @@ LBB5_3:
 	mov	r13, rdi
 	mov	rdi, r15
 	mov	rsi, r12
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB5_4
@@ -392,9 +392,9 @@ LBB5_14:
 	pop	rbp
 	ret
 LBB5_18:
-	call	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)
+	call	SYM(objc2_foundation[CRATE_ID]::iter::items_ptr_null, 0)
 LBB5_10:
-	call	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)
+	call	SYM(objc2_foundation[CRATE_ID]::iter::mutation_detected, 0)
 LBB5_16:
 Ltmp2:
 	mov	rbx, rax
@@ -406,7 +406,7 @@ Ltmp4:
 	call	__Unwind_Resume
 LBB5_15:
 Ltmp5:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end0:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0

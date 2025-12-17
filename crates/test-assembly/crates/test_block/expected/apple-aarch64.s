@@ -62,7 +62,7 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::crea
 LBB8_2:
 	mov	w0, #4
 	mov	w1, #4
-	bl	SYM(alloc::alloc::handle_alloc_error::GENERATED_ID, 0)
+	bl	SYM(alloc[CRATE_ID]::alloc::handle_alloc_error, 0)
 
 	.p2align	2
 SYM(<block2[CRATE_ID]::stack::StackBlock<(i32,), i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>>::empty_clone_closure, 0):
@@ -118,7 +118,7 @@ Lloh5:
 	add	sp, sp, #48
 	ret
 LBB14_2:
-	bl	SYM(block2::rc_block::block_copy_fail::GENERATED_ID, 0)
+	bl	SYM(block2[CRATE_ID]::rc_block::block_copy_fail, 0)
 	.loh AdrpAdd	Lloh4, Lloh5
 	.loh AdrpAdd	Lloh2, Lloh3
 	.loh AdrpLdrGot	Lloh0, Lloh1
@@ -150,7 +150,7 @@ Lloh11:
 	add	sp, sp, #48
 	ret
 LBB15_2:
-	bl	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
+	bl	SYM(block2[CRATE_ID]::rc_block::rc_new_fail, 0)
 	.loh AdrpAdd	Lloh10, Lloh11
 	.loh AdrpAdd	Lloh8, Lloh9
 	.loh AdrpLdrGot	Lloh6, Lloh7
@@ -184,7 +184,7 @@ Lloh17:
 	add	sp, sp, #64
 	ret
 LBB16_2:
-	bl	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
+	bl	SYM(block2[CRATE_ID]::rc_block::rc_new_fail, 0)
 	.loh AdrpAdd	Lloh16, Lloh17
 	.loh AdrpAdd	Lloh14, Lloh15
 	.loh AdrpLdrGot	Lloh12, Lloh13
@@ -290,7 +290,7 @@ Lloh35:
 	add	sp, sp, #64
 	ret
 LBB19_2:
-	bl	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
+	bl	SYM(block2[CRATE_ID]::rc_block::rc_new_fail, 0)
 	.loh AdrpAdd	Lloh34, Lloh35
 	.loh AdrpAdd	Lloh32, Lloh33
 	.loh AdrpLdrGot	Lloh30, Lloh31

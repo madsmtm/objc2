@@ -12,7 +12,7 @@ fn1_get_ascii:
 	push	rax
 	lea	rdi, [rip + .Lanon.[ID].1]
 	mov	esi, 3
-	call	qword ptr [rip + SYM(objc2_foundation::string::<impl objc2_foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(<objc2_foundation[CRATE_ID]::generated::__NSString::NSString>::from_str, 0)@GOTPCREL]
 	mov	rcx, rax
 	xchg	qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0], rcx
 	add	rsp, 8
@@ -33,7 +33,7 @@ fn2_get_utf16:
 	push	rax
 	lea	rdi, [rip + .Lanon.[ID].2]
 	mov	esi, 5
-	call	qword ptr [rip + SYM(objc2_foundation::string::<impl objc2_foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(<objc2_foundation[CRATE_ID]::generated::__NSString::NSString>::from_str, 0)@GOTPCREL]
 	mov	rcx, rax
 	xchg	qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0], rcx
 	add	rsp, 8
@@ -54,7 +54,7 @@ fn3_get_with_nul:
 	push	rax
 	lea	rdi, [rip + .Lanon.[ID].0]
 	mov	esi, 6
-	call	qword ptr [rip + SYM(objc2_foundation::string::<impl objc2_foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(<objc2_foundation[CRATE_ID]::generated::__NSString::NSString>::from_str, 0)@GOTPCREL]
 	mov	rcx, rax
 	xchg	qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0], rcx
 	add	rsp, 8

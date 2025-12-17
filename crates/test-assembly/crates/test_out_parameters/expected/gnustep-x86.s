@@ -113,7 +113,7 @@ SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::
 	call	_Unwind_Resume@PLT
 .LBB2_6:
 .Ltmp11:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end2:
 	.size	SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0), .Lfunc_end2-SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0)
 	.section	.gcc_except_table.SYM(core[CRATE_ID]::ptr::drop_in_place::<(objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>, objc2[CRATE_ID]::__macros::writeback::WritebackOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject>)>, 0),"a",@progbits
@@ -242,7 +242,7 @@ fn1_nonnull_nonnull:
 	call	_Unwind_Resume@PLT
 .LBB4_6:
 .Ltmp23:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end4:
 	.size	fn1_nonnull_nonnull, .Lfunc_end4-fn1_nonnull_nonnull
 	.section	.gcc_except_table.fn1_nonnull_nonnull,"a",@progbits
@@ -346,7 +346,7 @@ fn2_null_nonnull:
 	call	_Unwind_Resume@PLT
 .LBB5_8:
 .Ltmp32:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end5:
 	.size	fn2_null_nonnull, .Lfunc_end5-fn2_null_nonnull
 	.section	.gcc_except_table.fn2_null_nonnull,"a",@progbits
@@ -445,7 +445,7 @@ fn3_nonnull_null:
 	call	_Unwind_Resume@PLT
 .LBB6_5:
 .Ltmp41:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end6:
 	.size	fn3_nonnull_null, .Lfunc_end6-fn3_nonnull_null
 	.section	.gcc_except_table.fn3_nonnull_null,"a",@progbits
@@ -551,7 +551,7 @@ fn4_null_null:
 	call	_Unwind_Resume@PLT
 .LBB7_9:
 .Ltmp50:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end7:
 	.size	fn4_null_null, .Lfunc_end7-fn4_null_null
 	.section	.gcc_except_table.fn4_null_null,"a",@progbits
@@ -669,7 +669,7 @@ fn5_two_nonnull_nonnull:
 	jmp	.LBB8_8
 .LBB8_10:
 .Ltmp69:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .LBB8_5:
 .Ltmp56:
 	mov	edi, eax
@@ -682,7 +682,7 @@ fn5_two_nonnull_nonnull:
 	call	_Unwind_Resume@PLT
 .LBB8_9:
 .Ltmp59:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end8:
 	.size	fn5_two_nonnull_nonnull, .Lfunc_end8-fn5_two_nonnull_nonnull
 	.section	.gcc_except_table.fn5_two_nonnull_nonnull,"a",@progbits
@@ -860,10 +860,10 @@ fn6_call_with_none3:
 	call	_Unwind_Resume@PLT
 .LBB11_10:
 .Ltmp86:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .LBB11_5:
 .Ltmp80:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end11:
 	.size	fn6_call_with_none3, .Lfunc_end11-fn6_call_with_none3
 	.section	.gcc_except_table.fn6_call_with_none3,"a",@progbits
@@ -973,10 +973,10 @@ fn6_call_with_none4:
 	call	_Unwind_Resume@PLT
 .LBB12_10:
 .Ltmp101:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .LBB12_5:
 .Ltmp95:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end12:
 	.size	fn6_call_with_none4, .Lfunc_end12-fn6_call_with_none4
 	.section	.gcc_except_table.fn6_call_with_none4,"a",@progbits
@@ -1093,10 +1093,10 @@ fn7_call_with_some1:
 	call	_Unwind_Resume@PLT
 .LBB13_11:
 .Ltmp120:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .LBB13_7:
 .Ltmp112:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end13:
 	.size	fn7_call_with_some1, .Lfunc_end13-fn7_call_with_some1
 	.section	.gcc_except_table.fn7_call_with_some1,"a",@progbits
@@ -1217,10 +1217,10 @@ fn7_call_with_some2:
 	call	_Unwind_Resume@PLT
 .LBB14_12:
 .Ltmp139:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .LBB14_7:
 .Ltmp131:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end14:
 	.size	fn7_call_with_some2, .Lfunc_end14-fn7_call_with_some2
 	.section	.gcc_except_table.fn7_call_with_some2,"a",@progbits
@@ -1341,10 +1341,10 @@ fn7_call_with_some3:
 	call	_Unwind_Resume@PLT
 .LBB15_12:
 .Ltmp158:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .LBB15_7:
 .Ltmp150:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end15:
 	.size	fn7_call_with_some3, .Lfunc_end15-fn7_call_with_some3
 	.section	.gcc_except_table.fn7_call_with_some3,"a",@progbits

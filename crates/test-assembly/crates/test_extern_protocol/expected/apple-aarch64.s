@@ -7,7 +7,7 @@ Lloh0:
 Lloh1:
 	add	x0, x0, l_anon.[ID].0@PAGEOFF
 	mov	w1, #10
-	b	SYM(objc2::top_level_traits::get_protocol::GENERATED_ID, 0)
+	b	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
 	.loh AdrpAdd	Lloh0, Lloh1
 
 	.globl	_fn2_dyn_call

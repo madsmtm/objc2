@@ -92,7 +92,7 @@ Ltmp8:
 	call	__Unwind_Resume
 LBB2_6:
 Ltmp9:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end0:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -199,7 +199,7 @@ Ltmp16:
 	call	__Unwind_Resume
 LBB4_5:
 Ltmp17:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end1:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -290,7 +290,7 @@ Ltmp22:
 	call	__Unwind_Resume
 LBB5_7:
 Ltmp23:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end2:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -376,7 +376,7 @@ Ltmp28:
 	call	__Unwind_Resume
 LBB6_4:
 Ltmp29:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end3:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -469,7 +469,7 @@ Ltmp34:
 	call	__Unwind_Resume
 LBB7_8:
 Ltmp35:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end4:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -568,7 +568,7 @@ Ltmp40:
 	jmp	LBB8_7
 LBB8_8:
 Ltmp41:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB8_5:
 Ltmp46:
 	mov	esi, eax
@@ -587,7 +587,7 @@ LBB8_7:
 	call	__Unwind_Resume
 LBB8_9:
 Ltmp51:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end5:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -718,10 +718,10 @@ LBB11_8:
 	call	__Unwind_Resume
 LBB11_9:
 Ltmp63:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB11_4:
 Ltmp57:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end6:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -818,10 +818,10 @@ LBB12_8:
 	call	__Unwind_Resume
 LBB12_9:
 Ltmp75:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB12_4:
 Ltmp69:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end7:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -914,7 +914,7 @@ Ltmp82:
 	jmp	LBB13_8
 LBB13_6:
 Ltmp83:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB13_7:
 Ltmp88:
 	mov	esi, eax
@@ -928,7 +928,7 @@ Ltmp90:
 	call	__Unwind_Resume
 LBB13_10:
 Ltmp91:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end8:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -1022,7 +1022,7 @@ Ltmp98:
 	jmp	LBB14_8
 LBB14_6:
 Ltmp99:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB14_7:
 Ltmp104:
 	mov	esi, eax
@@ -1039,7 +1039,7 @@ LBB14_10:
 	call	__Unwind_Resume
 LBB14_11:
 Ltmp107:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end9:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -1133,7 +1133,7 @@ Ltmp114:
 	jmp	LBB15_8
 LBB15_6:
 Ltmp115:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB15_7:
 Ltmp120:
 	mov	esi, eax
@@ -1150,7 +1150,7 @@ LBB15_10:
 	call	__Unwind_Resume
 LBB15_11:
 Ltmp123:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end10:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0

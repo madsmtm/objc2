@@ -15,7 +15,7 @@ LBB0_2:
 	lea	rsi, [rip + L_anon.[ID].0]
 	lea	rdx, [rip + l_anon.[ID].2]
 	pop	rbp
-	jmp	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	jmp	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 
 	.globl	_fn1_get_same_class
 	.p2align	4
@@ -32,7 +32,7 @@ LBB1_2:
 	lea	rsi, [rip + L_anon.[ID].0]
 	lea	rdx, [rip + l_anon.[ID].3]
 	pop	rbp
-	jmp	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	jmp	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 
 	.globl	_fn3_get_different_class
 	.p2align	4
@@ -49,7 +49,7 @@ LBB2_2:
 	lea	rsi, [rip + L_anon.[ID].4]
 	lea	rdx, [rip + l_anon.[ID].5]
 	pop	rbp
-	jmp	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	jmp	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 
 	.globl	_fn4_unused_class
 	.p2align	4
@@ -66,7 +66,7 @@ LBB3_2:
 	lea	rsi, [rip + L_anon.[ID].6]
 	lea	rdx, [rip + l_anon.[ID].7]
 	pop	rbp
-	jmp	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	jmp	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 
 	.globl	_fn5_use_fns
 	.p2align	4
@@ -108,7 +108,7 @@ LBB4_1:
 	lea	rsi, [rip + L_anon.[ID].0]
 	lea	rdx, [rip + l_anon.[ID].2]
 	mov	r14, rax
-	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	rbx, rax
 	mov	rax, r14
 	mov	r14, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)]
@@ -119,7 +119,7 @@ LBB4_3:
 	lea	rsi, [rip + L_anon.[ID].0]
 	lea	rdx, [rip + l_anon.[ID].3]
 	mov	r15, rax
-	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	r14, rax
 	mov	rax, r15
 	mov	r15, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)]
@@ -130,7 +130,7 @@ LBB4_5:
 	lea	rsi, [rip + L_anon.[ID].4]
 	lea	rdx, [rip + l_anon.[ID].5]
 	mov	r12, rax
-	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	r15, rax
 	mov	rax, r12
 	mov	rcx, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)]
@@ -141,7 +141,7 @@ LBB4_7:
 	lea	rsi, [rip + L_anon.[ID].8]
 	lea	rdx, [rip + l_anon.[ID].9]
 	mov	r12, rax
-	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	rcx, rax
 	mov	rax, r12
 	jmp	LBB4_8
@@ -172,7 +172,7 @@ LBB5_1:
 	lea	rsi, [rip + L_anon.[ID].0]
 	lea	rdx, [rip + l_anon.[ID].2]
 	mov	r14, rax
-	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	rbx, rax
 	mov	rax, r14
 	mov	rcx, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)]
@@ -183,7 +183,7 @@ LBB5_3:
 	lea	rsi, [rip + L_anon.[ID].0]
 	lea	rdx, [rip + l_anon.[ID].2]
 	mov	r14, rax
-	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	rcx, rax
 	mov	rax, r14
 	jmp	LBB5_4
@@ -215,7 +215,7 @@ LBB6_3:
 	mov	rdi, rbx
 	mov	rsi, r14
 	mov	rdx, r15
-	call	SYM(objc2::__macros::class::CachedClass::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::class::CachedClass>::fetch, 0)
 	mov	rdi, r12
 	dec	rdi
 	jne	LBB6_2

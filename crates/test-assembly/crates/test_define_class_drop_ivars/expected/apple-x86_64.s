@@ -59,7 +59,7 @@ LBB0_9:
 	call	__Unwind_Resume
 LBB0_10:
 Ltmp5:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end0:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -130,7 +130,7 @@ Ltmp6:
 	lea	rdi, [rbp - 24]
 	mov	edx, 8
 	xor	ecx, ecx
-	call	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp7:
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
@@ -140,7 +140,7 @@ Ltmp8:
 	lea	rdi, [rbp - 24]
 	mov	edx, 8
 	xor	ecx, ecx
-	call	SYM(objc2::runtime::define::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp9:
 	mov	qword ptr [rbp - 56], 2
 	lea	rax, [rip + l_anon.[ID].2]
@@ -153,7 +153,7 @@ Ltmp10:
 	mov	edx, 6
 	mov	ecx, 16
 	mov	r8d, 3
-	call	SYM(objc2::runtime::define::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_ivar_inner_mono, 0)
 Ltmp11:
 Ltmp12:
 	lea	rsi, [rip + L_anon.[ID].4]
@@ -162,7 +162,7 @@ Ltmp12:
 	mov	edx, 10
 	mov	ecx, 1
 	xor	r8d, r8d
-	call	SYM(objc2::runtime::define::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_ivar_inner_mono, 0)
 Ltmp13:
 	mov	rbx, qword ptr [rbp - 24]
 	mov	rdi, rbx
@@ -192,16 +192,16 @@ Ltmp13:
 	ret
 LBB1_11:
 	lea	rdi, [rip + l_anon.[ID].7]
-	call	SYM(core::option::unwrap_failed::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
 LBB1_8:
 	lea	rdi, [rip + L_anon.[ID].9]
 	lea	rdx, [rip + l_anon.[ID].11]
 	mov	esi, 10
-	call	SYM(objc2::__macros::define_class::checks::class_not_unique::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
 LBB1_7:
-	call	SYM(objc2::__macros::define_class::ivars::ivars_offset::get_ivar_failed::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::ivars_offset::get_ivar_failed, 0)
 LBB1_13:
-	call	SYM(objc2::__macros::define_class::ivars::drop_flag_offset::get_drop_flag_failed::GENERATED_ID, 0)
+	call	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::drop_flag_offset::get_drop_flag_failed, 0)
 LBB1_12:
 Ltmp14:
 	mov	rbx, rax
@@ -264,7 +264,7 @@ LBB3_1:
 	lea	r8, [rip + l_anon.[ID].11]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
-	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	add	rsp, 16
 	pop	rbp
 	mov	rax, qword ptr [rip + ___CLASS_DropIvars]
@@ -283,11 +283,11 @@ Lfunc_begin2:
 	sub	rsp, 16
 	mov	rbx, rdi
 Ltmp15:
-	call	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
 Ltmp16:
 Ltmp18:
 	mov	r15, rax
-	call	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
 Ltmp19:
 	mov	r12, rax
 	test	rbx, rbx
@@ -336,7 +336,7 @@ Ltmp30:
 	jmp	LBB4_15
 LBB4_7:
 Ltmp31:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 LBB4_5:
 Ltmp20:
 	mov	r14, rax
@@ -358,7 +358,7 @@ LBB4_15:
 	call	__Unwind_Resume
 LBB4_12:
 Ltmp25:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end2:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -438,7 +438,7 @@ LBB6_1:
 	lea	r8, [rip + l_anon.[ID].11]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
-	call	SYM(std::sys::sync::once::queue::Once::call::GENERATED_ID, 0)
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	add	rsp, 16
 	pop	rbp
 	mov	rax, qword ptr [rip + ___CLASS_DropIvars]

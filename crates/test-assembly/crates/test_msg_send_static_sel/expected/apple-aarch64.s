@@ -42,7 +42,7 @@ Lloh9:
 	add	x2, x2, l_anon.[ID].1@PAGEOFF
 	mov	x0, x19
 	mov	x1, x20
-	bl	SYM(objc2::__macros::retain_semantics::init_fail::GENERATED_ID, 0)
+	bl	SYM(objc2[CRATE_ID]::__macros::retain_semantics::init_fail, 0)
 	.loh AdrpLdrGotLdr	Lloh5, Lloh6, Lloh7
 	.loh AdrpLdrGotLdr	Lloh2, Lloh3, Lloh4
 	.loh AdrpAdd	Lloh8, Lloh9

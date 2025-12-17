@@ -48,7 +48,7 @@ L1$pb:
 	mov	eax, dword ptr [esi]
 	mov	dword ptr [ebp - 16], eax
 	lea	edi, [esi + 68]
-	mov	edx, dword ptr [ecx + LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L1$pb]
+	mov	edx, dword ptr [ecx + LSYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)$non_lazy_ptr-L1$pb]
 	mov	eax, dword ptr [edx]
 	test	eax, eax
 	je	LBB1_2
@@ -84,7 +84,7 @@ LBB1_2:
 	lea	eax, [ecx + L_anon.[ID].0-L1$pb]
 	push	eax
 	push	edx
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	add	esp, 16
 	jmp	LBB1_3
 
@@ -135,7 +135,7 @@ L3$pb:
 	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
 	mov	dword ptr [ebp - 20], 0
-	mov	esi, dword ptr [eax + LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L3$pb]
+	mov	esi, dword ptr [eax + LSYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)$non_lazy_ptr-L3$pb]
 	lea	eax, [eax + L_anon.[ID].0-L3$pb]
 	mov	dword ptr [ebp - 16], eax
 	xor	eax, eax
@@ -178,7 +178,7 @@ LBB3_3:
 	sub	esp, 8
 	push	dword ptr [ebp - 16]
 	push	esi
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	add	esp, 16
 	jmp	LBB3_4
 LBB3_6:
@@ -221,7 +221,7 @@ L4$pb:
 	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
 	mov	dword ptr [ebp - 20], 0
-	mov	esi, dword ptr [eax + LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L4$pb]
+	mov	esi, dword ptr [eax + LSYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)$non_lazy_ptr-L4$pb]
 	lea	eax, [eax + L_anon.[ID].0-L4$pb]
 	mov	dword ptr [ebp - 16], eax
 	xor	eax, eax
@@ -257,7 +257,7 @@ LBB4_3:
 	sub	esp, 8
 	push	dword ptr [ebp - 16]
 	push	esi
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	add	esp, 16
 	jmp	LBB4_4
 LBB4_7:
@@ -302,7 +302,7 @@ L5$pb:
 	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
 	mov	dword ptr [ebp - 20], 0
-	mov	edi, dword ptr [eax + LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L5$pb]
+	mov	edi, dword ptr [eax + LSYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)$non_lazy_ptr-L5$pb]
 	lea	eax, [eax + L_anon.[ID].0-L5$pb]
 	mov	dword ptr [ebp - 16], eax
 	xor	ecx, ecx
@@ -367,7 +367,7 @@ LBB5_3:
 	mov	eax, dword ptr [ebp - 16]
 	mov	dword ptr [esp + 4], eax
 	mov	dword ptr [esp], edi
-	call	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	call	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	jmp	LBB5_4
 LBB5_13:
 	add	esp, 140
@@ -377,9 +377,9 @@ LBB5_13:
 	pop	ebp
 	ret
 LBB5_6:
-	call	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)
+	call	SYM(objc2_foundation[CRATE_ID]::iter::items_ptr_null, 0)
 LBB5_9:
-	call	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)
+	call	SYM(objc2_foundation[CRATE_ID]::iter::mutation_detected, 0)
 LBB5_15:
 Ltmp2:
 	mov	edi, eax
@@ -391,7 +391,7 @@ Ltmp4:
 	call	__Unwind_Resume
 LBB5_14:
 Ltmp5:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end0:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -437,8 +437,8 @@ L_anon.[ID].0:
 	.asciz	"countByEnumeratingWithState:objects:count:"
 
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
-LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
-	.indirect_symbol	SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)
+LSYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)$non_lazy_ptr:
+	.indirect_symbol	SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)
 	.long	0
 L_rust_eh_personality$non_lazy_ptr:
 	.indirect_symbol	_rust_eh_personality

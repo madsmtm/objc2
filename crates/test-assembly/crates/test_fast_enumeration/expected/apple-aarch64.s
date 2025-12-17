@@ -32,9 +32,9 @@ _fn2_iter_once:
 	b.lo	LBB1_3
 	ldr	x0, [x19]
 Lloh0:
-	adrp	x8, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x8, SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPAGE
 Lloh1:
-	ldr	x8, [x8, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x8, [x8, SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPAGEOFF]
 	ldr	x1, [x8]
 	cbz	x1, LBB1_5
 LBB1_2:
@@ -62,7 +62,7 @@ Lloh3:
 	add	x1, x1, l_anon.[ID].0@PAGEOFF
 	str	x0, [sp, #8]
 	mov	x0, x8
-	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	x1, x0
 	ldr	x0, [sp, #8]
 	b	LBB1_2
@@ -109,9 +109,9 @@ Lloh4:
 Lloh5:
 	add	x19, x19, l_anon.[ID].0@PAGEOFF
 Lloh6:
-	adrp	x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x20, SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPAGE
 Lloh7:
-	ldr	x20, [x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x20, [x20, SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPAGEOFF]
 	b	LBB3_2
 LBB3_1:
 	ldr	x9, [sp, #152]
@@ -139,7 +139,7 @@ LBB3_6:
 	mov	x22, x0
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	x1, x0
 	mov	x0, x22
 	add	x2, x21, #136
@@ -187,9 +187,9 @@ Lloh8:
 Lloh9:
 	add	x19, x19, l_anon.[ID].0@PAGEOFF
 Lloh10:
-	adrp	x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x20, SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPAGE
 Lloh11:
-	ldr	x20, [x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x20, [x20, SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPAGEOFF]
 	b	LBB4_2
 LBB4_1:
 	add	x9, x9, #1
@@ -214,7 +214,7 @@ LBB4_6:
 	mov	x22, x0
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	x1, x0
 	mov	x0, x22
 	add	x2, x21, #136
@@ -265,9 +265,9 @@ Lloh12:
 Lloh13:
 	add	x19, x19, l_anon.[ID].0@PAGEOFF
 Lloh14:
-	adrp	x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x20, SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPAGE
 Lloh15:
-	ldr	x20, [x20, SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x20, [x20, SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPAGEOFF]
 	cmp	x8, x9
 	b.lo	LBB5_5
 LBB5_1:
@@ -317,7 +317,7 @@ LBB5_11:
 	mov	x21, x0
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(objc2::__macros::sel::CachedSel::fetch::GENERATED_ID, 0)
+	bl	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	x1, x0
 	mov	x0, x21
 	add	x2, x22, #152
@@ -334,9 +334,9 @@ LBB5_12:
 	add	sp, sp, #304
 	ret
 LBB5_13:
-	bl	SYM(objc2_foundation::iter::items_ptr_null::GENERATED_ID, 0)
+	bl	SYM(objc2_foundation[CRATE_ID]::iter::items_ptr_null, 0)
 LBB5_14:
-	bl	SYM(objc2_foundation::iter::mutation_detected::GENERATED_ID, 0)
+	bl	SYM(objc2_foundation[CRATE_ID]::iter::mutation_detected, 0)
 LBB5_15:
 Ltmp3:
 	mov	x19, x0
@@ -348,7 +348,7 @@ Ltmp5:
 	bl	__Unwind_Resume
 LBB5_17:
 Ltmp6:
-	bl	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)
+	bl	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 	.loh AdrpLdrGot	Lloh14, Lloh15
 	.loh AdrpAdd	Lloh12, Lloh13
 Lfunc_end0:

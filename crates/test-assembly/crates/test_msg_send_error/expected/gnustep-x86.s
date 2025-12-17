@@ -48,7 +48,7 @@ fn1_error_bool:
 	add	esp, 16
 	test	eax, eax
 	jne	.LBB0_3
-	call	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)@PLT
+	call	SYM(objc2[CRATE_ID]::__macros::msg_send::null_error::null_error, 0)@PLT
 	jmp	.LBB0_3
 .Lfunc_end0:
 	.size	fn1_error_bool, .Lfunc_end0-fn1_error_bool
@@ -100,7 +100,7 @@ fn2_error_new:
 	mov	eax, 1
 	test	edx, edx
 	jne	.LBB1_4
-	call	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)@PLT
+	call	SYM(objc2[CRATE_ID]::__macros::msg_send::null_error::null_error, 0)@PLT
 	mov	edx, eax
 	mov	eax, 1
 	jmp	.LBB1_4
@@ -160,7 +160,7 @@ fn3_error_init:
 	pop	ebx
 	ret
 .LBB2_6:
-	call	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)@PLT
+	call	SYM(objc2[CRATE_ID]::__macros::msg_send::null_error::null_error, 0)@PLT
 	mov	edx, eax
 	mov	eax, 1
 	jmp	.LBB2_7
@@ -217,7 +217,7 @@ fn4_error_copy:
 	mov	eax, 1
 	test	edx, edx
 	jne	.LBB3_4
-	call	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)@PLT
+	call	SYM(objc2[CRATE_ID]::__macros::msg_send::null_error::null_error, 0)@PLT
 	mov	edx, eax
 	mov	eax, 1
 	jmp	.LBB3_4
@@ -271,7 +271,7 @@ fn5_error_mutable_copy:
 	mov	eax, 1
 	test	edx, edx
 	jne	.LBB4_4
-	call	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)@PLT
+	call	SYM(objc2[CRATE_ID]::__macros::msg_send::null_error::null_error, 0)@PLT
 	mov	edx, eax
 	mov	eax, 1
 	jmp	.LBB4_4
@@ -323,7 +323,7 @@ fn6_error_autoreleased:
 	mov	eax, 1
 	test	edx, edx
 	jne	.LBB5_4
-	call	SYM(objc2::__macros::msg_send::null_error::null_error::GENERATED_ID, 0)@PLT
+	call	SYM(objc2[CRATE_ID]::__macros::msg_send::null_error::null_error, 0)@PLT
 	mov	edx, eax
 	mov	eax, 1
 	jmp	.LBB5_4

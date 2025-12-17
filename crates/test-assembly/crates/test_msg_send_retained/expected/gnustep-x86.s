@@ -66,7 +66,7 @@ fn02_handle_new_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(objc2::__macros::retain_semantics::new_fail::GENERATED_ID, 0)@PLT
+	call	SYM(objc2[CRATE_ID]::__macros::retain_semantics::new_fail, 0)@PLT
 .Lfunc_end1:
 	.size	fn02_handle_new_fallible, .Lfunc_end1-fn02_handle_new_fallible
 
@@ -178,7 +178,7 @@ fn05_handle_init_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(objc2::__macros::retain_semantics::init_fail::GENERATED_ID, 0)@PLT
+	call	SYM(objc2[CRATE_ID]::__macros::retain_semantics::init_fail, 0)@PLT
 .Lfunc_end4:
 	.size	fn05_handle_init_fallible, .Lfunc_end4-fn05_handle_init_fallible
 
@@ -369,7 +369,7 @@ fn10_handle_copy_fallible:
 .LBB9_2:
 	lea	eax, [ebx + .Lanon.[ID].3@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2::__macros::retain_semantics::copy_fail::GENERATED_ID, 0)@PLT
+	call	SYM(objc2[CRATE_ID]::__macros::retain_semantics::copy_fail, 0)@PLT
 .Lfunc_end9:
 	.size	fn10_handle_copy_fallible, .Lfunc_end9-fn10_handle_copy_fallible
 
@@ -436,7 +436,7 @@ fn12_handle_mutable_copy_fallible:
 .LBB11_2:
 	lea	eax, [ebx + .Lanon.[ID].4@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(objc2::__macros::retain_semantics::mutable_copy_fail::GENERATED_ID, 0)@PLT
+	call	SYM(objc2[CRATE_ID]::__macros::retain_semantics::mutable_copy_fail, 0)@PLT
 .Lfunc_end11:
 	.size	fn12_handle_mutable_copy_fallible, .Lfunc_end11-fn12_handle_mutable_copy_fallible
 
@@ -550,7 +550,7 @@ fn15_handle_autoreleased_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(objc2::__macros::retain_semantics::none_fail::GENERATED_ID, 0)@PLT
+	call	SYM(objc2[CRATE_ID]::__macros::retain_semantics::none_fail, 0)@PLT
 .Lfunc_end14:
 	.size	fn15_handle_autoreleased_fallible, .Lfunc_end14-fn15_handle_autoreleased_fallible
 
@@ -621,7 +621,7 @@ fn16_handle_with_out_param:
 	call	_Unwind_Resume@PLT
 .LBB15_7:
 .Ltmp26:
-	call	SYM(core::panicking::panic_in_cleanup::GENERATED_ID, 0)@PLT
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@PLT
 .Lfunc_end15:
 	.size	fn16_handle_with_out_param, .Lfunc_end15-fn16_handle_with_out_param
 	.section	.gcc_except_table.fn16_handle_with_out_param,"a",@progbits
