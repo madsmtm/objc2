@@ -555,6 +555,9 @@ jobs:
       # iOS SDKs:
       # - https://github.com/xybp888/iOS-SDKs
       # - https://github.com/theos/sdks
+      #
+      # NOTE: These are non-official sources, and are only used to test
+      # older platforms.
       run: |
         wget https://github.com/alexey-lysiuk/macos-sdk/releases/download/${{ matrix.sdk }}/MacOSX${{ matrix.sdk }}.tar.bz2
         tar -xyf MacOSX${{ matrix.sdk }}.tar.bz2
