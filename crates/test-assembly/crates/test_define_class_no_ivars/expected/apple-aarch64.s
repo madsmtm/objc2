@@ -1,6 +1,6 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin0:
 	sub	sp, sp, #48
 	stp	x20, x19, [sp, #16]
@@ -248,14 +248,14 @@ Lcst_end0:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	ldr	x8, [x0]
 	str	x8, [sp, #8]
 	add	x0, sp, #8
-	bl	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	bl	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
@@ -653,18 +653,18 @@ L_OBJC_IMAGE_INFO_f8d5ad39f22c9fc5:
 	.p2align	3, 0x0
 l_anon.[ID].0:
 	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
 	.section	__TEXT,__cstring,cstring_literals
 l_anon.[ID].1:
-	.asciz	"$RUSTC/library/std/src/sync/poison/once.rs"
+	.asciz	"$RUSTC/library/std/src/sync/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].2:
 	.quad	l_anon.[ID].1
-	.asciz	"\20x\000\000\000\000\000\000\000\234\000\000\0002\000\000"
+	.asciz	"p\000\000\000\000\000\000\000\237\000\000\0002\000\000"
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0

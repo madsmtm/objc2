@@ -51,7 +51,6 @@ fn main() {
             .arg("--emit=asm")
             // .arg("-Zplt=no")
             .arg("-Cllvm-args=--x86-asm-syntax=intel")
-            .env("RUSTFLAGS", format!("{} {}", std::env::var("RUSTFLAGS").unwrap_or_default(), "-Csymbol-mangling-version=v0 -Zunstable-options"))
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit())
             .output()

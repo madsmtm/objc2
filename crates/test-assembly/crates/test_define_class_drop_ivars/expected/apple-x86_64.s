@@ -102,7 +102,7 @@ Lttbase0:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	4
-SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin1:
 	push	rbp
 	mov	rbp, rsp
@@ -125,7 +125,7 @@ Lfunc_begin1:
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_dealloc@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 Ltmp6:
-	lea	r8, [rip + l_anon.[ID].5]
+	lea	r8, [rip + l_anon.[ID].3]
 	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)]
 	lea	rdi, [rbp - 24]
 	mov	edx, 8
@@ -143,11 +143,11 @@ Ltmp8:
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp9:
 	mov	qword ptr [rbp - 56], 2
-	lea	rax, [rip + l_anon.[ID].2]
+	lea	rax, [rip + l_anon.[ID].4]
 	mov	qword ptr [rbp - 48], rax
 	mov	byte ptr [rbp - 64], 29
 Ltmp10:
-	lea	rsi, [rip + L_anon.[ID].3]
+	lea	rsi, [rip + L_anon.[ID].1]
 	lea	rdi, [rbp - 24]
 	lea	r9, [rbp - 64]
 	mov	edx, 6
@@ -156,8 +156,8 @@ Ltmp10:
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_ivar_inner_mono, 0)
 Ltmp11:
 Ltmp12:
-	lea	rsi, [rip + L_anon.[ID].4]
-	lea	r9, [rip + l_anon.[ID].1]
+	lea	rsi, [rip + L_anon.[ID].2]
+	lea	r9, [rip + l_anon.[ID].5]
 	lea	rdi, [rbp - 24]
 	mov	edx, 10
 	mov	ecx, 1
@@ -167,7 +167,7 @@ Ltmp13:
 	mov	rbx, qword ptr [rbp - 24]
 	mov	rdi, rbx
 	call	_objc_registerClassPair
-	lea	rsi, [rip + L_anon.[ID].3]
+	lea	rsi, [rip + L_anon.[ID].1]
 	mov	rdi, rbx
 	call	_class_getInstanceVariable
 	test	rax, rax
@@ -175,7 +175,7 @@ Ltmp13:
 	mov	rdi, rax
 	call	_ivar_getOffset
 	mov	r14, rax
-	lea	rsi, [rip + L_anon.[ID].4]
+	lea	rsi, [rip + L_anon.[ID].2]
 	mov	rdi, rbx
 	call	_class_getInstanceVariable
 	test	rax, rax
@@ -232,14 +232,14 @@ Lcst_end1:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	4
-SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
 	mov	rax, qword ptr [rdi]
 	mov	qword ptr [rbp - 8], rax
 	lea	rdi, [rbp - 8]
-	call	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	call	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	add	rsp, 16
 	pop	rbp
 	ret
@@ -459,42 +459,41 @@ _fn3_access_ivars:
 	.p2align	3, 0x0
 l_anon.[ID].0:
 	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
-
-	.section	__TEXT,__const
-	.p2align	3, 0x0
-l_anon.[ID].1:
-	.byte	6
-	.space	39
-
-	.p2align	3, 0x0
-l_anon.[ID].2:
-	.byte	10
-	.space	39
+	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
 	.section	__TEXT,__cstring,cstring_literals
-L_anon.[ID].3:
+L_anon.[ID].1:
 	.asciz	"ivars"
 
-L_anon.[ID].4:
+L_anon.[ID].2:
 	.asciz	"drop_flag"
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].5:
+l_anon.[ID].3:
 	.byte	19
+	.space	39
+
+	.p2align	3, 0x0
+l_anon.[ID].4:
+	.byte	10
+	.space	39
+
+	.p2align	3, 0x0
+l_anon.[ID].5:
+	.byte	6
 	.space	39
 
 	.section	__TEXT,__cstring,cstring_literals
 L_anon.[ID].6:
-	.asciz	"$RUSTC/library/std/src/sync/poison/once.rs"
+	.asciz	"$RUSTC/library/std/src/sync/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].7:
 	.quad	L_anon.[ID].6
-	.asciz	"\20x\000\000\000\000\000\000\000\234\000\000\0002\000\000"
+	.asciz	"p\000\000\000\000\000\000\000\237\000\000\0002\000\000"
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0

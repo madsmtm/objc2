@@ -32,7 +32,6 @@ pub(crate) const fn static_int_str_array<const RES: usize>(mut n: u64) -> [u8; R
     while 0 < i {
         i -= 1;
         rev[rev_i] = res[i];
-        n /= 10;
         rev_i += 1;
     }
     rev

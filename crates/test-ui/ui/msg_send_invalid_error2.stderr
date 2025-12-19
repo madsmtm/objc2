@@ -1,8 +1,13 @@
 error[E0080]: evaluation panicked: error parameter must be either `NSError` or `NSObject`
- --> $WORKSPACE/crates/objc2/src/__macros/msg_send/null_error.rs
+ --> $RUST/core/src/panic.rs
+  |
+  |         $crate::panicking::panic_fmt($crate::const_format_args!($($t)+));
+  |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ evaluation of `<objc2_foundation::NSString as objc2::__macros::msg_send::null_error::IsNSError>::IS_NSERROR_COMPATIBLE` failed here
+  |
+ ::: $WORKSPACE/crates/objc2/src/__macros/msg_send/null_error.rs
   |
   |             panic!("error parameter must be either `NSError` or `NSObject`")
-  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ evaluation of `<objc2_foundation::NSString as objc2::__macros::msg_send::null_error::IsNSError>::IS_NSERROR_COMPATIBLE` failed here
+  |             ---------------------------------------------------------------- in this macro invocation
 
 note: erroneous constant encountered
  --> $WORKSPACE/crates/objc2/src/__macros/msg_send/null_error.rs

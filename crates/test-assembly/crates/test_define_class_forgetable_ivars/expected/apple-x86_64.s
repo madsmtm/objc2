@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.p2align	4
-SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin0:
 	push	rbp
 	mov	rbp, rsp
@@ -31,11 +31,11 @@ Ltmp0:
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp1:
 	mov	qword ptr [rbp - 48], 2
-	lea	rax, [rip + l_anon.[ID].1]
+	lea	rax, [rip + l_anon.[ID].2]
 	mov	qword ptr [rbp - 40], rax
 	mov	byte ptr [rbp - 56], 29
 Ltmp2:
-	lea	rsi, [rip + L_anon.[ID].2]
+	lea	rsi, [rip + L_anon.[ID].1]
 	lea	rdi, [rbp - 16]
 	lea	r9, [rbp - 56]
 	mov	edx, 6
@@ -46,7 +46,7 @@ Ltmp3:
 	mov	rbx, qword ptr [rbp - 16]
 	mov	rdi, rbx
 	call	_objc_registerClassPair
-	lea	rsi, [rip + L_anon.[ID].2]
+	lea	rsi, [rip + L_anon.[ID].1]
 	mov	rdi, rbx
 	call	_class_getInstanceVariable
 	test	rax, rax
@@ -99,14 +99,14 @@ Lcst_end0:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	4
-SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
 	mov	rax, qword ptr [rdi]
 	mov	qword ptr [rbp - 8], rax
 	lea	rdi, [rbp - 8]
-	call	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	call	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	add	rsp, 16
 	pop	rbp
 	ret
@@ -202,27 +202,28 @@ _fn3_access_ivars:
 	.p2align	3, 0x0
 l_anon.[ID].0:
 	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].1:
+	.asciz	"ivars"
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].1:
+l_anon.[ID].2:
 	.byte	8
 	.space	39
 
 	.section	__TEXT,__cstring,cstring_literals
-L_anon.[ID].2:
-	.asciz	"ivars"
-
 L_anon.[ID].3:
-	.asciz	"$RUSTC/library/std/src/sync/poison/once.rs"
+	.asciz	"$RUSTC/library/std/src/sync/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	L_anon.[ID].3
-	.asciz	"\20x\000\000\000\000\000\000\000\234\000\000\0002\000\000"
+	.asciz	"p\000\000\000\000\000\000\000\237\000\000\0002\000\000"
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0

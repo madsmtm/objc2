@@ -26,7 +26,12 @@ help: the trait `NSObjectProtocol` is not implemented for `CustomObject`
             NSMeasurement<UnitType>
           and $N others
 note: required by a bound in `NSURLSessionDelegate`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSURLSession.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_protocol.rs
+  |
+  |               ($v unsafe trait $protocol $(: $conforms_to $(+ $conforms_to_rest)*)? {
+  |                                              ^^^^^^^^^^^^ required by this bound in `NSURLSessionDelegate`
+  |
+ ::: $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSURLSession.rs
   |
   | / extern_protocol!(
   | |     /// [Apple's documentation](https://developer.apple.com/documentation/foundation/nsurlsessiondelegate?language=objc)
@@ -35,7 +40,7 @@ note: required by a bound in `NSURLSessionDelegate`
   | |         #[cfg(feature = "NSError")]
 ... |
   | | );
-  | |_^ required by this bound in `NSURLSessionDelegate`
+  | |_- in this macro invocation
   = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be shared between threads safely
@@ -45,7 +50,11 @@ error[E0277]: `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be s
   |                                          ^^^^^^^^^^^^ `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be shared between threads safely
   |
   = help: within `CustomObject`, the trait `Sync` is not implemented for `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>`
-  = help: the trait `Sync` is implemented for `ThreadKindAutoTraits<dyn AllocAnyThread>`
+help: the trait `Sync` is implemented for `ThreadKindAutoTraits<dyn AllocAnyThread>`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
+  |
+  | unsafe impl Sync for ThreadKindAutoTraits<dyn AnyThread> {}
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   = note: required because it appears within the type `(__Objc2IvarsContainer, ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)`
 note: required because it appears within the type `PhantomData<(__Objc2IvarsContainer, ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)>`
  --> $RUST/core/src/marker.rs
@@ -58,7 +67,12 @@ note: required because it appears within the type `CustomObject`
   |     struct CustomObject;
   |            ^^^^^^^^^^^^
 note: required by a bound in `NSURLSessionDelegate`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSURLSession.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_protocol.rs
+  |
+  |               ($v unsafe trait $protocol $(: $conforms_to $(+ $conforms_to_rest)*)? {
+  |                                                               ^^^^^^^^^^^^^^^^^ required by this bound in `NSURLSessionDelegate`
+  |
+ ::: $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSURLSession.rs
   |
   | / extern_protocol!(
   | |     /// [Apple's documentation](https://developer.apple.com/documentation/foundation/nsurlsessiondelegate?language=objc)
@@ -67,7 +81,7 @@ note: required by a bound in `NSURLSessionDelegate`
   | |         #[cfg(feature = "NSError")]
 ... |
   | | );
-  | |_^ required by this bound in `NSURLSessionDelegate`
+  | |_- in this macro invocation
   = note: this error originates in the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be sent between threads safely
@@ -77,7 +91,11 @@ error[E0277]: `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be s
   |                                          ^^^^^^^^^^^^ `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be sent between threads safely
   |
   = help: within `CustomObject`, the trait `Send` is not implemented for `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>`
-  = help: the trait `Send` is implemented for `ThreadKindAutoTraits<dyn AllocAnyThread>`
+help: the trait `Send` is implemented for `ThreadKindAutoTraits<dyn AllocAnyThread>`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
+  |
+  | unsafe impl Send for ThreadKindAutoTraits<dyn AnyThread> {}
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   = note: required because it appears within the type `(__Objc2IvarsContainer, ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)`
 note: required because it appears within the type `PhantomData<(__Objc2IvarsContainer, ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)>`
  --> $RUST/core/src/marker.rs
@@ -90,7 +108,12 @@ note: required because it appears within the type `CustomObject`
   |     struct CustomObject;
   |            ^^^^^^^^^^^^
 note: required by a bound in `NSURLSessionDelegate`
- --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSURLSession.rs
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_protocol.rs
+  |
+  |               ($v unsafe trait $protocol $(: $conforms_to $(+ $conforms_to_rest)*)? {
+  |                                                               ^^^^^^^^^^^^^^^^^ required by this bound in `NSURLSessionDelegate`
+  |
+ ::: $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSURLSession.rs
   |
   | / extern_protocol!(
   | |     /// [Apple's documentation](https://developer.apple.com/documentation/foundation/nsurlsessiondelegate?language=objc)
@@ -99,5 +122,5 @@ note: required by a bound in `NSURLSessionDelegate`
   | |         #[cfg(feature = "NSError")]
 ... |
   | | );
-  | |_^ required by this bound in `NSURLSessionDelegate`
+  | |_- in this macro invocation
   = note: this error originates in the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)

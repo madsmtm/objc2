@@ -337,7 +337,14 @@ error[E0277]: the trait bound `MethodFamily<3>: MessageReceiveRetained<&CustomOb
   | | );
   | |_^ the trait `MessageReceiveRetained<&CustomObject, Retained<CustomObject>>` is not implemented for `MethodFamily<3>`
   |
-  = help: the trait `MessageReceiveRetained<&CustomObject, Retained<CustomObject>>` is not implemented for `MethodFamily<3>`
-          but trait `MessageReceiveRetained<Allocated<CustomObject>, Retained<CustomObject>>` is implemented for it
+help: the trait `MessageReceiveRetained<&CustomObject, Retained<CustomObject>>` is not implemented for `MethodFamily<3>`
+      but trait `MessageReceiveRetained<Allocated<CustomObject>, Retained<CustomObject>>` is implemented for it
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
+  |
+  | / impl<Ret, T> MessageReceiveRetained<Allocated<T>, Ret> for InitFamily
+  | | where
+  | |     T: Message,
+  | |     Ret: MaybeOptionRetained<Inner = T>,
+  | |________________________________________^
   = help: for that trait implementation, expected `Allocated<CustomObject>`, found `&CustomObject`
   = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

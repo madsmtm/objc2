@@ -38,10 +38,25 @@ error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
   | | );
   | |_^ the trait `ClassType` is not implemented for `AnyObject`
   |
-  = help: the following other types implement trait `ClassType`:
-            MyRootClass
-            NSObject
-            __NSProxy
+help: the following other types implement trait `ClassType`
+ --> ui/extern_class_subclass_object.rs
+  |
+  | / extern_class!(
+  | |     #[unsafe(super(AnyObject))]
+  | |     #[thread_kind = AnyThread]
+  | |     pub struct MyRootClass;
+  | | );
+  | |_^ `MyRootClass`
+  |
+ ::: $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
+  |
+  |   unsafe impl ClassType for NSObject {
+  |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `NSObject`
+  |
+ ::: $WORKSPACE/crates/objc2/src/runtime/nsproxy.rs
+  |
+  |   unsafe impl ClassType for NSProxy {
+  |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `__NSProxy`
 note: required by a bound in `ValidThreadKind::check`
  --> $WORKSPACE/crates/objc2/src/__macros/extern_class/checks.rs
   |

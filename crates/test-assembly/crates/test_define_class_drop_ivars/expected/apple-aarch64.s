@@ -108,7 +108,7 @@ Lttbase0:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin1:
 	sub	sp, sp, #80
 	stp	x20, x19, [sp, #48]
@@ -141,9 +141,9 @@ Lloh14:
 	ldr	x1, [x8]
 Ltmp6:
 Lloh15:
-	adrp	x4, l_anon.[ID].5@PAGE
+	adrp	x4, l_anon.[ID].3@PAGE
 Lloh16:
-	add	x4, x4, l_anon.[ID].5@PAGEOFF
+	add	x4, x4, l_anon.[ID].3@PAGEOFF
 Lloh17:
 	adrp	x5, SYM(objc2[CRATE_ID]::__macros::define_class::ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGE
 Lloh18:
@@ -175,17 +175,17 @@ Lloh25:
 Ltmp9:
 	mov	w8, #2
 Lloh26:
-	adrp	x9, l_anon.[ID].2@PAGE
+	adrp	x9, l_anon.[ID].4@PAGE
 Lloh27:
-	add	x9, x9, l_anon.[ID].2@PAGEOFF
+	add	x9, x9, l_anon.[ID].4@PAGEOFF
 	stp	x8, x9, [sp, #16]
 	mov	w8, #29
 	strb	w8, [sp, #8]
 Ltmp10:
 Lloh28:
-	adrp	x1, l_anon.[ID].3@PAGE
+	adrp	x1, l_anon.[ID].1@PAGE
 Lloh29:
-	add	x1, x1, l_anon.[ID].3@PAGEOFF
+	add	x1, x1, l_anon.[ID].1@PAGEOFF
 	mov	x0, sp
 	add	x5, sp, #8
 	mov	w2, #6
@@ -195,13 +195,13 @@ Lloh29:
 Ltmp11:
 Ltmp12:
 Lloh30:
-	adrp	x1, l_anon.[ID].4@PAGE
+	adrp	x1, l_anon.[ID].2@PAGE
 Lloh31:
-	add	x1, x1, l_anon.[ID].4@PAGEOFF
+	add	x1, x1, l_anon.[ID].2@PAGEOFF
 Lloh32:
-	adrp	x5, l_anon.[ID].1@PAGE
+	adrp	x5, l_anon.[ID].5@PAGE
 Lloh33:
-	add	x5, x5, l_anon.[ID].1@PAGEOFF
+	add	x5, x5, l_anon.[ID].5@PAGEOFF
 	mov	x0, sp
 	mov	w2, #10
 	mov	w3, #1
@@ -212,18 +212,18 @@ Ltmp13:
 	mov	x0, x19
 	bl	_objc_registerClassPair
 Lloh34:
-	adrp	x1, l_anon.[ID].3@PAGE
+	adrp	x1, l_anon.[ID].1@PAGE
 Lloh35:
-	add	x1, x1, l_anon.[ID].3@PAGEOFF
+	add	x1, x1, l_anon.[ID].1@PAGEOFF
 	mov	x0, x19
 	bl	_class_getInstanceVariable
 	cbz	x0, LBB1_11
 	bl	_ivar_getOffset
 	mov	x20, x0
 Lloh36:
-	adrp	x1, l_anon.[ID].4@PAGE
+	adrp	x1, l_anon.[ID].2@PAGE
 Lloh37:
-	add	x1, x1, l_anon.[ID].4@PAGEOFF
+	add	x1, x1, l_anon.[ID].2@PAGEOFF
 	mov	x0, x19
 	bl	_class_getInstanceVariable
 	cbz	x0, LBB1_12
@@ -311,14 +311,14 @@ Lcst_end1:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	ldr	x8, [x0]
 	str	x8, [sp, #8]
 	add	x0, sp, #8
-	bl	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	bl	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
@@ -597,42 +597,41 @@ Lloh80:
 	.p2align	3, 0x0
 l_anon.[ID].0:
 	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
-
-	.section	__TEXT,__const
-	.p2align	3, 0x0
-l_anon.[ID].1:
-	.byte	6
-	.space	39
-
-	.p2align	3, 0x0
-l_anon.[ID].2:
-	.byte	10
-	.space	39
+	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
 	.section	__TEXT,__cstring,cstring_literals
-l_anon.[ID].3:
+l_anon.[ID].1:
 	.asciz	"ivars"
 
-l_anon.[ID].4:
+l_anon.[ID].2:
 	.asciz	"drop_flag"
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].5:
+l_anon.[ID].3:
 	.byte	19
+	.space	39
+
+	.p2align	3, 0x0
+l_anon.[ID].4:
+	.byte	10
+	.space	39
+
+	.p2align	3, 0x0
+l_anon.[ID].5:
+	.byte	6
 	.space	39
 
 	.section	__TEXT,__cstring,cstring_literals
 l_anon.[ID].6:
-	.asciz	"$RUSTC/library/std/src/sync/poison/once.rs"
+	.asciz	"$RUSTC/library/std/src/sync/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].7:
 	.quad	l_anon.[ID].6
-	.asciz	"\20x\000\000\000\000\000\000\000\234\000\000\0002\000\000"
+	.asciz	"p\000\000\000\000\000\000\000\237\000\000\0002\000\000"
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0

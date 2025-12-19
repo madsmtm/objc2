@@ -1,17 +1,19 @@
 error[E0433]: failed to resolve: use of undeclared type `MyTestDisabled`
- --> ui/extern_class_feature_flag.rs
-  |
-  |     let _cls = MyTestDisabled::class();
-  |                ^^^^^^^^^^^^^^
-  |                |
-  |                use of undeclared type `MyTestDisabled`
-  |                help: a struct with a similar name exists: `MyTestEnabled`
-  |
+  --> ui/extern_class_feature_flag.rs
+   |
+   |     let _cls = MyTestDisabled::class();
+   |                ^^^^^^^^^^^^^^ use of undeclared type `MyTestDisabled`
+   |
 note: found an item that was configured out
- --> ui/extern_class_feature_flag.rs
-  |
-  |     #[cfg(test)]
-  |           ---- the item is gated here
-  |     #[unsafe(super(NSObject))]
-  |     pub struct MyTestDisabled;
-  |                ^^^^^^^^^^^^^^
+  --> ui/extern_class_feature_flag.rs
+   |
+   |     #[cfg(test)]
+   |           ---- the item is gated here
+   |     #[unsafe(super(NSObject))]
+   |     pub struct MyTestDisabled;
+   |                ^^^^^^^^^^^^^^
+help: a struct with a similar name exists
+   |
+19 -     let _cls = MyTestDisabled::class();
+19 +     let _cls = MyTestEnabled::class();
+   |

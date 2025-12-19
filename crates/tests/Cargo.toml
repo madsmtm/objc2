@@ -48,6 +48,7 @@ objc2-foundation = { workspace = true, features = [
     "NSThread",
     "NSValue",
 ] }
+rustc-demangle = "0.1.26"
 
 [target.'cfg(target_vendor = "apple")'.dev-dependencies]
 core-graphics = "0.25.0"

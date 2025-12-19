@@ -185,23 +185,6 @@ error: expected identifier, found keyword `fn`
   |
   |         fn fn test_fn_fn() {}
   |            ^^ expected identifier, found keyword
-
-error: missing parameters for function definition
-   --> ui/define_class_invalid_syntax.rs
-    |
-    |         fn fn test_fn_fn() {}
-    |              ^
-    |
-help: add a parameter list
-    |
-123 |         fn fn() test_fn_fn() {}
-    |              ++
-
-error: expected one of `->`, `<`, `where`, or `{`, found `test_fn_fn`
- --> ui/define_class_invalid_syntax.rs
-  |
-  |         fn fn test_fn_fn() {}
-  |               ^^^^^^^^^^ expected one of `->`, `<`, `where`, or `{`
   |
  ::: $WORKSPACE/crates/objc2/src/__macros/define_class/register_impls.rs
   |

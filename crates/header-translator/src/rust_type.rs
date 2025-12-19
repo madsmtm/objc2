@@ -2365,11 +2365,11 @@ impl Ty {
                         // type is a CF type or not... But that's how it is
                         // currently.
                         let id = context.replace_typedef_name(id, true);
-                        *pointee = Box::new(Self::Pointee(PointeeTy::CFTypeDef {
+                        **pointee = Self::Pointee(PointeeTy::CFTypeDef {
                             id,
                             generics: vec![],
                             num_declaration_generics: declaration_generics.len(),
-                        }));
+                        });
                         return inner;
                     } else if pointee.is_object_like() {
                         if let Self::Pointee(pointee_ty) = &mut **pointee {
@@ -2377,7 +2377,7 @@ impl Ty {
                             // Replace with a dummy type (will be re-replaced
                             // on the line below).
                             let to = Box::new(mem::replace(pointee_ty, PointeeTy::Self_));
-                            *pointee = Box::new(Self::Pointee(PointeeTy::TypeDef { id, to }));
+                            **pointee = Self::Pointee(PointeeTy::TypeDef { id, to });
                             return inner;
                         } else {
                             error!(

@@ -1,6 +1,6 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin0:
 	sub	sp, sp, #80
 	stp	x20, x19, [sp, #48]
@@ -47,17 +47,17 @@ Lloh11:
 Ltmp1:
 	mov	w8, #2
 Lloh12:
-	adrp	x9, l_anon.[ID].1@PAGE
+	adrp	x9, l_anon.[ID].2@PAGE
 Lloh13:
-	add	x9, x9, l_anon.[ID].1@PAGEOFF
+	add	x9, x9, l_anon.[ID].2@PAGEOFF
 	stp	x8, x9, [sp, #16]
 	mov	w8, #29
 	strb	w8, [sp, #8]
 Ltmp2:
 Lloh14:
-	adrp	x1, l_anon.[ID].2@PAGE
+	adrp	x1, l_anon.[ID].1@PAGE
 Lloh15:
-	add	x1, x1, l_anon.[ID].2@PAGEOFF
+	add	x1, x1, l_anon.[ID].1@PAGEOFF
 	mov	x0, sp
 	add	x5, sp, #8
 	mov	w2, #6
@@ -69,9 +69,9 @@ Ltmp3:
 	mov	x0, x19
 	bl	_objc_registerClassPair
 Lloh16:
-	adrp	x1, l_anon.[ID].2@PAGE
+	adrp	x1, l_anon.[ID].1@PAGE
 Lloh17:
-	add	x1, x1, l_anon.[ID].2@PAGEOFF
+	add	x1, x1, l_anon.[ID].1@PAGEOFF
 	mov	x0, x19
 	bl	_class_getInstanceVariable
 	cbz	x0, LBB0_8
@@ -147,14 +147,14 @@ Lcst_end0:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	ldr	x8, [x0]
 	str	x8, [sp, #8]
 	add	x0, sp, #8
-	bl	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	bl	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
@@ -317,27 +317,28 @@ Lloh59:
 	.p2align	3, 0x0
 l_anon.[ID].0:
 	.asciz	"\000\000\000\000\000\000\000\000\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::poison::once::Once>::call_once<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::poison::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::poison::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
+
+	.section	__TEXT,__cstring,cstring_literals
+l_anon.[ID].1:
+	.asciz	"ivars"
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].1:
+l_anon.[ID].2:
 	.byte	8
 	.space	39
 
 	.section	__TEXT,__cstring,cstring_literals
-l_anon.[ID].2:
-	.asciz	"ivars"
-
 l_anon.[ID].3:
-	.asciz	"$RUSTC/library/std/src/sync/poison/once.rs"
+	.asciz	"$RUSTC/library/std/src/sync/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	l_anon.[ID].3
-	.asciz	"\20x\000\000\000\000\000\000\000\234\000\000\0002\000\000"
+	.asciz	"p\000\000\000\000\000\000\000\237\000\000\0002\000\000"
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0

@@ -276,8 +276,6 @@ mod tests {
             &platform,
             r#"any(target_os = "watchos", target_os = "visionos")"#,
         );
-
-        platform.watchos = CfgState::AlreadyGated;
     }
 
     #[test]

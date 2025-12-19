@@ -1,8 +1,13 @@
 error[E0080]: evaluation panicked: invalid OptionEncode + RefEncode implementation
- --> $WORKSPACE/crates/objc2/src/encode.rs
+ --> $RUST/core/src/panic.rs
+  |
+  |         $crate::panicking::panic_fmt($crate::const_format_args!($($t)+));
+  |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ evaluation of `<std::option::Option<MyType> as objc2::RefEncode>::ENCODING_REF` failed here
+  |
+ ::: $WORKSPACE/crates/objc2/src/encode.rs
   |
   |             panic!("invalid OptionEncode + RefEncode implementation");
-  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ evaluation of `<std::option::Option<MyType> as objc2::RefEncode>::ENCODING_REF` failed here
+  |             --------------------------------------------------------- in this macro invocation
 
 note: erroneous constant encountered
  --> ui/invalid_option_encode_impl_ref.rs

@@ -492,7 +492,7 @@ pub use self::retained::*;
 /// let url: &NSURL;
 /// # url = todo!();
 /// let mut result_url: Option<Retained<NSURL>> = None;
-/// unsafe {
+/// let _: () = unsafe {
 ///     msg_send![
 ///         obj,
 ///         trashItemAtURL: url,

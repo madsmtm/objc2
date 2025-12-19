@@ -93,3 +93,17 @@ error[E0658]: C-variadic functions are unstable
   = note: see issue #44930 <https://github.com/rust-lang/rust/issues/44930> for more information
   = help: add `#![feature(c_variadic)]` to the crate attributes to enable
   = note: this error originates in the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: missing pattern for `...` argument
+  --> ui/extern_methods_variadic.rs
+   |
+   |         fn variadic_instance(&self, arg: i32, ...);
+   |                                               ^^^
+   |
+   = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
+   = note: for more information, see issue #145544 <https://github.com/rust-lang/rust/issues/145544>
+   = note: `#[warn(varargs_without_pattern)]` (part of `#[warn(future_incompatible)]`) on by default
+help: name the argument, or use `_` to continue ignoring it
+   |
+18 |         fn variadic_instance(&self, arg: i32, _: ...);
+   |                                               ++

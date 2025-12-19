@@ -4,47 +4,17 @@ use std::boxed::Box;
 use std::ffi::c_void;
 use std::string::{String, ToString};
 use std::vec::Vec;
-use std::{format, vec};
 
 use objc2::{define_class, extern_methods, msg_send, ClassType};
-use objc2_foundation::{NSException, NSObject};
+use objc2_foundation::NSObject;
 
-#[allow(dead_code)]
-fn merge_objc_symbols(exc: &NSException) -> Vec<String> {
-    // Objective-C and Rust have different mangling schemes, and don't really
-    // understand each other. So we use both `NSException`'s backtrace, and
-    // `backtrace`' resolving mechanism, to figure out the full list of
-    // demangled symbols.
-    let mut demangled_symbols = vec![];
-
-    let nssymbols = exc.callStackSymbols();
-    let return_addrs = exc.callStackReturnAddresses();
-
-    for (nssymbol, addr) in nssymbols.iter().zip(return_addrs) {
-        let addr = addr.as_usize() as *mut c_void;
-        let mut call_count = 0;
-        backtrace::resolve(addr, |symbol| {
-            if let Some(name) = symbol.name() {
-                demangled_symbols.push(name.to_string());
-            } else {
-                demangled_symbols.push(format!("{nssymbol} ({:?})", symbol.addr()));
-            }
-            call_count += 1;
-        });
-        if call_count == 0 {
-            demangled_symbols.push(nssymbol.to_string());
-        }
-    }
-
-    demangled_symbols
-}
-
+/// Test an exception unwinding from Objective-C into Rust.
 #[test]
 #[cfg(feature = "exception")]
 #[cfg_attr(feature = "catch-all", ignore = "catch-all interferes with our catch")]
 fn array_exception() {
     use objc2::{available, rc::Retained};
-    use objc2_foundation::NSArray;
+    use objc2_foundation::{NSArray, NSException};
 
     // Foreign backtraces seem completely broken on macOS 10.12? It returns:
     // "___CFSortIndexesNMerge",
@@ -68,13 +38,13 @@ fn array_exception() {
         "objc_exception_throw",
         "CFArrayApply",
         #[cfg(debug_assertions)]
-        "<(A,) as objc2::encode::EncodeArguments>::__invoke",
+        "<(usize,) as objc2::encode::EncodeArguments>::__invoke::<*mut objc2::runtime::nsobject::NSObject>",
         #[cfg(debug_assertions)]
-        "objc2::runtime::message_receiver::msg_send_primitive::send",
+        "objc2::runtime::message_receiver::msg_send_primitive::send::<(usize,), *mut objc2::runtime::nsobject::NSObject>",
         #[cfg(debug_assertions)]
-        "objc2::runtime::message_receiver::MessageReceiver::send_message",
+        "<*mut objc2::runtime::anyobject::AnyObject as objc2::runtime::message_receiver::MessageReceiver>::send_message::<(usize,), *mut objc2::runtime::nsobject::NSObject>",
         #[cfg(debug_assertions)]
-        "<MethodFamily as objc2::__macros::msg_send::retained::MsgSend<Receiver,Return>>::send_message",
+        "<objc2::__macros::method_family::MethodFamily<6u8> as objc2::__macros::msg_send::retained::MsgSend<&objc2::rc::retained::Retained<objc2_foundation::generated::__NSArray::NSArray<objc2::runtime::nsobject::NSObject>>, objc2::rc::retained::Retained<objc2::runtime::nsobject::NSObject>>>::send_message::<(usize,)>",
         "array_exception_via_msg_send",
     ];
 
@@ -89,15 +59,15 @@ fn array_exception() {
         "objc_exception_throw",
         "CFArrayApply",
         #[cfg(debug_assertions)]
-        "<(A,) as objc2::encode::EncodeArguments>::__invoke",
+        "<(usize,) as objc2::encode::EncodeArguments>::__invoke::<*mut objc2::runtime::nsobject::NSObject>",
         #[cfg(debug_assertions)]
-        "objc2::runtime::message_receiver::msg_send_primitive::send",
+        "objc2::runtime::message_receiver::msg_send_primitive::send::<(usize,), *mut objc2::runtime::nsobject::NSObject>",
         #[cfg(debug_assertions)]
-        "objc2::runtime::message_receiver::MessageReceiver::send_message",
+        "<*mut objc2::runtime::anyobject::AnyObject as objc2::runtime::message_receiver::MessageReceiver>::send_message::<(usize,), *mut objc2::runtime::nsobject::NSObject>",
         #[cfg(debug_assertions)]
-        "<MethodFamily as objc2::__macros::msg_send::retained::MsgSend<Receiver,Return>>::send_message",
+        "<objc2::__macros::method_family::MethodFamily<6u8> as objc2::__macros::msg_send::retained::MsgSend<&objc2_foundation::generated::__NSArray::NSArray<objc2::runtime::nsobject::NSObject>, objc2::rc::retained::Retained<objc2::runtime::nsobject::NSObject>>>::send_message::<(usize,)>",
         #[cfg(debug_assertions)]
-        "objc2_foundation::generated::__NSArray::NSArray<ObjectType>::objectAtIndex",
+        "<objc2_foundation::generated::__NSArray::NSArray<objc2::runtime::nsobject::NSObject>>::objectAtIndex",
         "array_exception_via_extern_methods",
     ];
 
@@ -112,22 +82,20 @@ fn array_exception() {
         let exc = res.unwrap_err().unwrap();
         let exc = exc.downcast::<NSException>().unwrap();
 
-        let symbols = merge_objc_symbols(&exc);
+        let symbols = extract_nsexception_symbols(exc.callStackSymbols());
 
         // No debug info available, such as when using `--release`.
-        if symbols[3] == "__mh_execute_header" {
-            continue;
+        // if symbols[3] == "__mh_execute_header" {
+        //     continue;
+        // }
+
+        for (expected, actual) in expected.iter().zip(&symbols) {
+            let actual = remove_crate_id(actual);
+            assert_eq!(actual, *expected, "{symbols:#?}");
         }
 
         if symbols.len() < expected.len() {
-            panic!("did not find enough symbols: {symbols:?}");
-        }
-
-        for (expected, actual) in expected.iter().zip(&symbols) {
-            assert!(
-                actual.contains(expected),
-                "{expected:?} must be in {actual:?}:\n{symbols:#?}",
-            );
+            panic!("did not find enough symbols: {symbols:#?}");
         }
     }
 }
@@ -152,6 +120,7 @@ impl Thrower {
     );
 }
 
+/// Test an exception unwinding from Rust through Objective-C and into Rust.
 #[test]
 #[cfg_attr(feature = "catch-all", ignore = "catch-all changes the backtrace")]
 fn capture_backtrace() {
@@ -162,16 +131,15 @@ fn capture_backtrace() {
         *unsafe { Box::from_raw(ptr.cast()) }
     }
     let expected_msg_send: &[_] = &[
-        "Backtrace::new",
-        "Thrower::__backtrace",
+        "<tests::backtrace::Thrower>::__backtrace",
         #[cfg(debug_assertions)]
-        "<() as objc2::encode::EncodeArguments>::__invoke",
+        "<() as objc2::encode::EncodeArguments>::__invoke::<*mut core::ffi::c_void>",
         #[cfg(debug_assertions)]
-        "objc2::runtime::message_receiver::msg_send_primitive::send",
+        "objc2::runtime::message_receiver::msg_send_primitive::send::<(), *mut core::ffi::c_void>",
         #[cfg(debug_assertions)]
-        "objc2::runtime::message_receiver::MessageReceiver::send_message",
+        "<*mut objc2::runtime::anyobject::AnyObject as objc2::runtime::message_receiver::MessageReceiver>::send_message::<(), *mut core::ffi::c_void>",
         #[cfg(debug_assertions)]
-        "<MethodFamily as objc2::__macros::msg_send::retained::MsgSend<Receiver,Return>>::send_message",
+        "<objc2::__macros::method_family::MethodFamily<6u8> as objc2::__macros::msg_send::retained::MsgSend<&objc2::runtime::anyclass::AnyClass, *mut core::ffi::c_void>>::send_message::<()>",
         "rust_backtrace_via_msg_send",
     ];
 
@@ -182,18 +150,17 @@ fn capture_backtrace() {
         *unsafe { Box::from_raw(ptr.cast()) }
     }
     let expected_extern_methods: &[_] = &[
-        "Backtrace::new",
-        "Thrower::__backtrace",
+        "<tests::backtrace::Thrower>::__backtrace",
         #[cfg(debug_assertions)]
-        "<() as objc2::encode::EncodeArguments>::__invoke",
+        "<() as objc2::encode::EncodeArguments>::__invoke::<*mut core::ffi::c_void>",
         #[cfg(debug_assertions)]
-        "objc2::runtime::message_receiver::msg_send_primitive::send",
+        "objc2::runtime::message_receiver::msg_send_primitive::send::<(), *mut core::ffi::c_void>",
         #[cfg(debug_assertions)]
-        "objc2::runtime::message_receiver::MessageReceiver::send_message",
+        "<*mut objc2::runtime::anyobject::AnyObject as objc2::runtime::message_receiver::MessageReceiver>::send_message::<(), *mut core::ffi::c_void>",
         #[cfg(debug_assertions)]
-        "<MethodFamily as objc2::__macros::msg_send::retained::MsgSend<Receiver,Return>>::send_message",
+        "<objc2::__macros::method_family::MethodFamily<6u8> as objc2::__macros::msg_send::retained::MsgSend<&objc2::runtime::anyclass::AnyClass, *mut core::ffi::c_void>>::send_message::<()>",
         #[cfg(debug_assertions)]
-        "Thrower::backtrace",
+        "<tests::backtrace::Thrower>::backtrace",
         "rust_backtrace_via_extern_methods",
     ];
 
@@ -211,7 +178,7 @@ fn capture_backtrace() {
                     .map(|name| name.to_string())
                     .unwrap_or_default()
             })
-            .skip_while(|name| !name.contains("Backtrace::new"))
+            .skip_while(|name| !name.contains("__backtrace"))
             .collect();
 
         // No debug info available, such as when using `--release`.
@@ -224,15 +191,81 @@ fn capture_backtrace() {
             continue;
         }
 
-        if symbols.len() < expected.len() {
-            panic!("did not find enough symbols: {backtrace:?}");
+        for (expected, actual) in expected.iter().zip(&symbols) {
+            let actual = remove_crate_id(actual);
+            // FIXME: `backtrace` includes an extra `_` in symbols when
+            // figuring out names from symbol names instead of debug info.
+            let actual = actual.strip_prefix("_").unwrap_or(&actual);
+            assert_eq!(actual, *expected, "{symbols:#?}");
         }
 
-        for (expected, actual) in expected.iter().zip(&symbols) {
-            assert!(
-                actual.contains(expected),
-                "{expected:?} must be in {actual:?}:\n{symbols:#?}",
-            );
+        if symbols.len() < expected.len() {
+            panic!("did not find enough symbols: {backtrace:?}\n{symbols:?}");
         }
     }
+}
+
+fn extract_nsexception_symbols<T: std::string::ToString>(
+    data: impl IntoIterator<Item = T>,
+) -> Vec<String> {
+    data.into_iter()
+        .map(|item| {
+            // `callStackSymbols` contains more data than just symbols, it
+            // also contains the address and such. Here, we extract just the
+            // symbol name.
+            let item = item.to_string();
+            let item = item
+                .rsplit_once(" + ")
+                .map(|(symbol, _offset)| symbol)
+                .unwrap_or(&item);
+            let symbol = item.rsplit_once(' ').unwrap().1;
+
+            // Objective-C and Rust have different mangling schemes, and while
+            // some of Apple's software (mostly the ones based on LLVM, such
+            // as Xcode or `c++-filt`) understands Rust's v0 mangling scheme,
+            // the built-in demangler doesn't seem to.
+            //
+            // So we demangle all symbols manually.
+            rustc_demangle::demangle(symbol).to_string()
+        })
+        .collect()
+}
+
+#[test]
+fn test_extract_nsexception_symbols() {
+    let inp = [
+        "0   CoreFoundation                      0x0000000184d5fae0 __exceptionPreprocess + 176",
+        "1   libobjc.A.dylib                     0x0000000184822b90 objc_exception_throw + 88",
+        "18  tests-64165e8a00f54cd5              0x00000001023be98c _RNCNvCsRhuSZWqZya_4test8run_test0B3_ + 908",
+    ];
+    let result = [
+        "__exceptionPreprocess",
+        "objc_exception_throw",
+        "test[a0285ec8061feec]::run_test::{closure#0}",
+    ];
+    assert_eq!(extract_nsexception_symbols(inp), result);
+}
+
+/// Remove the crate ID present in demangled symbols, like `xyz` in `foo[xyz]`.
+///
+/// These are present because there can be multiple crates with the same name,
+/// but we don't want to worry about them in these tests.
+fn remove_crate_id(symbol: &str) -> String {
+    let mut symbol = symbol.to_string();
+    while let Some(start_idx) = symbol.find('[') {
+        if let Some(end_idx) = symbol[start_idx..].find(']') {
+            symbol.replace_range(start_idx..(start_idx + end_idx + 1), "");
+        } else {
+            break;
+        }
+    }
+    symbol
+}
+
+#[test]
+fn test_remove_crate_id() {
+    assert_eq!(
+        remove_crate_id("test[a0285ec8061feec]::run_test::{closure#0}"),
+        "test::run_test::{closure#0}"
+    );
 }

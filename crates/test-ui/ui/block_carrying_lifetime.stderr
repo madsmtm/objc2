@@ -14,7 +14,3 @@ error[E0521]: borrowed data escapes outside of function
   | |      |
   | |______`block` escapes the function body here
   |        argument requires that `'1` must outlive `'static`
-  |
-  = note: requirement occurs because of the type `OnceCell<RcBlock<dyn Fn()>>`, which makes the generic argument `RcBlock<dyn Fn()>` invariant
-  = note: the struct `OnceCell<T>` is invariant over the parameter `T`
-  = help: see <https://doc.rust-lang.org/nomicon/subtyping.html> for more information about variance

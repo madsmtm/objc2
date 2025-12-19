@@ -6,9 +6,25 @@ error[E0277]: the trait bound `NSArray<NSString>: objc2::downcast::DowncastTarge
   |                    |
   |                    required by a bound introduced by this call
   |
-  = help: the trait `objc2::downcast::DowncastTarget` is implemented for `NSArray`
+help: the trait `objc2::downcast::DowncastTarget` is implemented for `NSArray`
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_class/mod.rs
+  |
+  |           unsafe impl $crate::DowncastTarget for $class $(<$($crate::__extern_class_map_anyobject!($generic)),+>)? {}
+  |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+ ::: $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
+  |
+  | / extern_class!(
+  | |     /// **************    Immutable Array        ***************
+  | |     ///
+  | |     /// See also [Apple's documentation](https://developer.apple.com/documentation/foundation/nsarray?language=objc)
+... |
+  | |     pub struct NSArray<ObjectType: ?Sized = AnyObject>;
+  | | );
+  | |_- in this macro invocation
 note: required by a bound in `objc2::runtime::anyobject::AnyObject::downcast_ref`
  --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
   |
   |     pub fn downcast_ref<T: DowncastTarget>(&self) -> Option<&T> {
   |                            ^^^^^^^^^^^^^^ required by this bound in `AnyObject::downcast_ref`
+  = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
