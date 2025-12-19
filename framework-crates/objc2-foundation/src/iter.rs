@@ -57,7 +57,7 @@ impl Default for FastEnumeratorHelper {
     fn default() -> Self {
         Self {
             state: Default::default(),
-            buf: [std::ptr::null_mut(); BUF_SIZE],
+            buf: [core::ptr::null_mut(); BUF_SIZE],
             current_item: Default::default(),
             items_count: Default::default(),
         }

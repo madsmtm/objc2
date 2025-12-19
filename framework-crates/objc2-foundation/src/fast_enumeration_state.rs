@@ -18,8 +18,8 @@ impl Default for NSFastEnumerationState {
     fn default() -> Self {
         Self {
             state: Default::default(),
-            itemsPtr: std::ptr::null_mut(),
-            mutationsPtr: std::ptr::null_mut(),
+            itemsPtr: core::ptr::null_mut(),
+            mutationsPtr: core::ptr::null_mut(),
             extra: Default::default(),
         }
     }
