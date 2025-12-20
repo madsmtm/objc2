@@ -295,7 +295,7 @@ jobs:
 
   header-translator:
     name: Verify header translator output
-    runs-on: macos-15 # Aarch64
+    runs-on: macos-26 # Aarch64
     needs:
     - fmt
     - lint
@@ -423,14 +423,14 @@ jobs:
       matrix:
         include:
         # Reasonably varied set of macOS targets.
-        - name: macOS 13 x86_64
+        - name: macOS 15 x86_64
           target: x86_64-apple-darwin
-          os: macos-13 # x86_64
+          os: macos-15-intel # x86_64
           frameworks: MACOS_13
           test: true
-        - name: macOS 15 AArch64
+        - name: macOS 26 AArch64
           target: aarch64-apple-darwin
-          os: macos-15 # Aarch64
+          os: macos-26 # Aarch64
           frameworks: MACOS_15
           test: true
         - name: macOS 14 Aarch64 nightly
@@ -444,7 +444,7 @@ jobs:
         - name: macOS 13 x86 with 10.13 SDK
           target: i686-apple-darwin
           # The SDK itself only supports compiling build scripts for x86_64
-          os: macos-13 # x86_64
+          os: macos-15-intel # x86_64
           frameworks: MACOS_10_13
           nightly: true
           build-std: true
@@ -452,7 +452,7 @@ jobs:
           sdk: "10.13"
         - name: macOS 13 x86_64 with 10.12 SDK
           target: x86_64-apple-darwin
-          os: macos-13 # x86_64
+          os: macos-15-intel # x86_64
           frameworks: MACOS_10_12
           # Oldest macOS version we support.
           # The SDK itself only supports compiling build scripts for x86_64.
@@ -462,28 +462,28 @@ jobs:
         # A reasonably varied set of iOS/tvOS/watchOS/visionOS targets.
         - name: iOS x86_64 simulator
           target: x86_64-apple-ios
-          os: macos-14 # Aarch64
+          os: macos-26 # Aarch64
           frameworks: IOS_17
         - name: Mac Catalyst Aarch64
           target: aarch64-apple-ios-macabi
-          os: macos-14 # Aarch64
+          os: macos-26 # Aarch64
           frameworks: MAC_CATALYST_17
           test: true
         - name: visionOS Aarch64
           target: aarch64-apple-visionos
-          os: macos-14 # Aarch64
+          os: macos-26 # Aarch64
           frameworks: VISIONOS_1
           nightly: true
           build-std: true
         - name: tvOS Aarch64
           target: aarch64-apple-tvos
-          os: macos-14 # Aarch64
+          os: macos-26 # Aarch64
           frameworks: TVOS_17
           nightly: true
           build-std: true
         - name: watchOS ARM64_32
           target: arm64_32-apple-watchos
-          os: macos-14 # Aarch64
+          os: macos-26 # Aarch64
           frameworks: WATCHOS_10
           nightly: true
           build-std: true
@@ -599,7 +599,7 @@ jobs:
   test-ios:
     if: ${{ github.ref_name == 'ci-full' }}
     name: Test on iOS simulator w. dinghy
-    runs-on: macos-13 # x86_64
+    runs-on: macos-15-intel # x86_64
     needs:
     - fmt
     - lint
