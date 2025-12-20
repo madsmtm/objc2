@@ -62,6 +62,9 @@ pub type GLint = i32;
 pub type GLsizei = i32;
 pub type GLuint = u32;
 
+// uuid/uuid_t.h
+pub type uuid_t = [u8; 16];
+
 #[cfg(target_pointer_width = "64")]
 pub type URefCon = *mut core::ffi::c_void;
 #[cfg(target_pointer_width = "64")]
