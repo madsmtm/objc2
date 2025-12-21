@@ -1,0 +1,28 @@
+[package]
+name = "apple-doc"
+version = "0.1.0"
+edition = "2021"
+publish = false
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+heed = "0.22"
+brotli-decompressor = "5.0"
+c-enum = "0.2.3"
+bytemuck = { version = "1.23.2", features = ["derive", "extern_crate_std"] }
+plist = { version = "1.7.4", features = ["serde"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.143"
+rusqlite = { version = "0.37.0", features = ["bundled"] }
+hex = "0.4.3"
+apple-sdk = "0.6.0"
+base64 = "0.22.1"
+sha1 = "0.10.6"
+
+[package.metadata.release]
+release = false
+
+[features]
+std = []
+full-test = []

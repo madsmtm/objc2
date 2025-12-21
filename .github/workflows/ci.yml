@@ -112,7 +112,7 @@ jobs:
             --workspace
             --exclude header-translator --exclude test-assembly
             --exclude test-ui --exclude test-fuzz --exclude tests
-            --exclude objc2-exception-helper
+            --exclude objc2-exception-helper --exclude apple-doc
         - name: iOS ARMv7s
           target: armv7s-apple-ios
           build-std: true
@@ -122,7 +122,7 @@ jobs:
             --workspace
             --exclude header-translator --exclude test-assembly
             --exclude test-ui --exclude test-fuzz --exclude tests
-            --exclude objc2-exception-helper
+            --exclude objc2-exception-helper --exclude apple-doc
             --exclude objc2-io-usb-host
         - name: visionOS Aarch64 simulator
           target: aarch64-apple-visionos-sim
@@ -132,7 +132,7 @@ jobs:
             --workspace
             --exclude header-translator --exclude test-assembly
             --exclude test-ui --exclude test-fuzz --exclude tests
-            --exclude objc2-exception-helper
+            --exclude objc2-exception-helper --exclude apple-doc
 
         - name: GNUStep + exceptions
           target: x86_64-unknown-linux-gnu
