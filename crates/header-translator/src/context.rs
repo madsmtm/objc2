@@ -5,6 +5,7 @@ use clang::Entity;
 use proc_macro2::TokenStream;
 
 use crate::config::Config;
+use crate::documentation::DocState;
 use crate::expr::Expr;
 use crate::unexposed_attr::{get_argument_tokens, parse_macro_arguments};
 use crate::ItemIdentifier;
@@ -77,15 +78,24 @@ pub struct Context<'config> {
     pub macro_invocations: HashMap<MacroLocation, MacroEntity>,
     pub ident_mapping: HashMap<String, Expr>,
     pub current_library: &'config str,
+    pub current_library_title: &'config str,
+    pub doc: &'config DocState<'config>,
 }
 
 impl<'config> Context<'config> {
-    pub fn new(config: &'config Config, current_library: &'config str) -> Self {
+    pub fn new(
+        config: &'config Config,
+        current_library: &'config str,
+        current_library_title: &'config str,
+        doc: &'config DocState<'config>,
+    ) -> Self {
         Self {
             config,
             macro_invocations: Default::default(),
             ident_mapping: Default::default(),
             current_library,
+            current_library_title,
+            doc,
         }
     }
 }

@@ -487,11 +487,11 @@ impl LibraryConfig {
         let allowed_in = self.class_data.values();
         for data in all.clone().filter(filter_ptr(allowed_in)) {
             assert_eq!(data.derives, Default::default());
-            assert_eq!(data.definition_skipped, Default::default());
+            assert_eq!(data.definition_skipped, false);
             assert_eq!(data.categories, Default::default());
             assert_eq!(data.counterpart, Default::default());
             assert_eq!(data.skipped_protocols, Default::default());
-            assert_eq!(data.main_thread_only, Default::default());
+            assert_eq!(data.main_thread_only, false);
             assert_eq!(data.bridged_to, Default::default());
         }
 
@@ -507,7 +507,7 @@ impl LibraryConfig {
 
         let allowed_in = self.fns.values();
         for data in all.clone().filter(filter_ptr(allowed_in)) {
-            assert_eq!(data.no_implementor, Default::default());
+            assert_eq!(data.no_implementor, false);
             assert_eq!(data.implementor, Default::default());
             assert_eq!(data.arguments, Default::default());
             assert_eq!(data.return_, Default::default());

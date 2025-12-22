@@ -1,13 +1,95 @@
+use std::cell::RefCell;
+use std::collections::BTreeMap;
 use std::fmt::{self, Write as _};
 
+use apple_doc::{BlobStore, Doc, Kind, SqliteDb};
 use clang::documentation::{
     BlockCommand, CommentChild, HtmlStartTag, InlineCommand, InlineCommandStyle, ParamCommand,
     TParamCommand,
 };
-use clang::Entity;
+use clang::{Entity, EntityKind};
 
 use crate::display_helper::FormatterFn;
 use crate::{Context, ItemIdentifier};
+
+pub type TxtMap<'a> = BTreeMap<(&'a str, Kind), Vec<&'a str>>;
+
+pub struct DocState<'data> {
+    txts: &'data TxtMap<'data>,
+    sqlite_db: &'data SqliteDb,
+    blobs: &'data RefCell<BlobStore>,
+}
+
+impl<'data> DocState<'data> {
+    pub fn new(
+        txts: &'data TxtMap<'data>,
+        sqlite_db: &'data SqliteDb,
+        blobs: &'data RefCell<BlobStore>,
+    ) -> Self {
+        Self {
+            txts,
+            sqlite_db,
+            blobs,
+        }
+    }
+
+    pub fn get<'r: 'data, 's: 'r, 'n: 'r>(
+        &'s self,
+        name: &'n str,
+        kind: Kind,
+    ) -> impl Iterator<Item = Doc> + 'r {
+        let ids = self
+            .txts
+            .get(&(name, kind))
+            .map(|ids| &**ids)
+            .unwrap_or(&[]);
+        ids.into_iter().filter_map(move |id| {
+            // Some entries in `*.txt` don't have a documentation entry.
+            let r = self.sqlite_db.get_ref(id).unwrap()?;
+            let mut blobs = self.blobs.borrow_mut();
+            Some(blobs.parse_doc(&r).unwrap())
+        })
+    }
+
+    #[track_caller]
+    pub fn one_doc(&self, name: &str, kind: Kind, context: &Context<'_>) -> Option<Doc> {
+        let mut current = None;
+
+        let mut iter = self.get(name, kind).enumerate().peekable();
+
+        while let Some((i, doc)) = iter.next() {
+            // HACK: Use item when there's only one, regardless of the module.
+            if iter.peek().is_none() && i == 0 {
+                return Some(doc);
+            }
+
+            // Remove documentation entries for items in other modules than
+            // the current module.
+            //
+            // TODO: Is there a better way to do this?
+            if doc.metadata.modules.is_empty()
+                || doc
+                    .metadata
+                    .modules
+                    .iter()
+                    .any(|module| module.name.as_deref() == Some(context.current_library_title))
+            {
+                if current.is_some() {
+                    error!(
+                        name,
+                        ?kind,
+                        ?current,
+                        ?doc,
+                        "must have only one matching doc item"
+                    );
+                }
+                current = Some(doc);
+            }
+        }
+
+        current
+    }
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Documentation {
@@ -15,6 +97,7 @@ pub struct Documentation {
     from_header: Vec<CommentChild>,
     extras: Vec<String>,
     alias: Option<String>,
+    apple: Option<Doc>,
 }
 
 impl Documentation {
@@ -24,6 +107,7 @@ impl Documentation {
             from_header: vec![],
             extras: vec![],
             alias: None,
+            apple: None,
         }
     }
 
@@ -53,11 +137,40 @@ impl Documentation {
             None
         };
 
+        let txt_kind = match entity.get_kind() {
+            EntityKind::ObjCInterfaceDecl => Some(Kind::Class),
+            EntityKind::ObjCCategoryDecl => None,
+            EntityKind::ObjCProtocolDecl => Some(Kind::Protocol),
+            EntityKind::TypedefDecl => Some(Kind::Typedef),
+            EntityKind::StructDecl => Some(Kind::Struct),
+            EntityKind::UnionDecl => Some(Kind::Union),
+            EntityKind::EnumDecl => Some(Kind::Enum),
+            EntityKind::VarDecl => Some(Kind::GlobalVariable),
+            EntityKind::FunctionDecl => None, // TODO Function
+            EntityKind::ObjCInstanceMethodDecl => None, // TODO
+            EntityKind::ObjCPropertyDecl => None, // TODO
+            EntityKind::ObjCClassMethodDecl => None, // TODO
+            EntityKind::EnumConstantDecl => Some(Kind::EnumCase),
+            EntityKind::FieldDecl => None,       // TODO
+            EntityKind::MacroDefinition => None, // TODO
+            _ => {
+                warn!(?entity, "unknown entity being documented");
+                None
+            }
+        };
+
+        let apple = txt_kind.and_then(|txt_kind| {
+            entity
+                .get_name()
+                .and_then(|c_name| context.doc.one_doc(&c_name, txt_kind, context))
+        });
+
         Self {
             first: None,
             from_header,
             extras: vec![],
             alias,
+            apple,
         }
     }
 
@@ -73,7 +186,11 @@ impl Documentation {
         self.alias = Some(alias);
     }
 
-    pub fn fmt<'a>(&'a self, doc_id: Option<&'a ItemIdentifier>) -> impl fmt::Display + 'a {
+    pub fn set_apple(&mut self, apple: Option<Doc>) {
+        self.apple = apple;
+    }
+
+    pub fn fmt<'a>(&'a self) -> impl fmt::Display + 'a {
         FormatterFn(move |f| {
             let mut from_header = String::new();
 
@@ -89,27 +206,23 @@ impl Documentation {
             };
 
             // Generate a markdown link to Apple's documentation.
-            //
-            // This is best effort only, and doesn't work for functions and
-            // methods, and possibly some renamed classes and traits.
-            //
-            // Additionally, the link may redirect.
             let mut first = None;
             let mut last = None;
-            if let Some(id) = doc_id {
-                let doc_link = format_args!(
-                    "[Apple's documentation](https://developer.apple.com/documentation/{}/{}?language=objc)",
-                    id.library_name().to_lowercase(),
-                    id.name.to_lowercase()
-                );
-
+            if let Some(doc) = &self.apple {
+                // Output the URL only if we know the true one.
+                let url_path = doc
+                    .identifier
+                    .url
+                    .strip_prefix("doc://com.apple.documentation")
+                    .unwrap();
+                let doc_link = format_args!("https://developer.apple.com{url_path}?language=objc");
                 if from_header.is_none() && self.first.is_none() {
                     // If there is no documentation, put this as the primary
                     // docs. This looks better in rustdoc.
-                    first = Some(format!("{doc_link}"));
+                    first = Some(format!("[Apple's documentation]({doc_link})"));
                 } else {
                     // Otherwise, put it at the very end.
-                    last = Some(format!("See also {doc_link}"));
+                    last = Some(format!("See also [Apple's documentation]({doc_link})"));
                 }
             }
 
@@ -341,8 +454,9 @@ mod tests {
             from_header: children.to_vec(),
             extras: vec![],
             alias: None,
+            apple: None,
         }
-        .fmt(None)
+        .fmt()
         .to_string();
 
         assert_eq!(actual, expected, "{children:?} was not");

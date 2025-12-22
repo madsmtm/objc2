@@ -1600,7 +1600,10 @@ impl Stmt {
                             });
                         };
 
-                        let documentation = Documentation::from_entity(&entity, context);
+                        let mut documentation = Documentation::from_entity(&entity, context);
+                        if c_name.is_some() {
+                            documentation.set_apple(None); // TEMPORARY
+                        }
 
                         if ty.is_simple_uint() {
                             ty = expr.guess_type(id.location());
@@ -2380,7 +2383,7 @@ impl Stmt {
                     let cfg = self.cfg_gate_ln_for([ItemTree::objc("extern_class")], config);
                     write!(f, "{cfg}")?;
                     writeln!(f, "extern_class!(")?;
-                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{}", documentation.fmt())?;
                     write!(f, "    #[unsafe(super(")?;
                     for (i, (superclass, generics)) in superclasses.iter().enumerate() {
                         if 0 < i {
@@ -2508,7 +2511,7 @@ impl Stmt {
                     methods,
                     documentation,
                 } => {
-                    write!(f, "{}", documentation.fmt(None))?;
+                    write!(f, "{}", documentation.fmt())?;
                     write!(f, "{availability}")?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     // TODO: Add ?Sized here once `extern_methods!` supports it.
@@ -2568,7 +2571,7 @@ impl Stmt {
 
                     writeln!(f)?;
 
-                    write!(f, "{}", documentation.fmt(None))?;
+                    write!(f, "{}", documentation.fmt())?;
 
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
@@ -2751,7 +2754,7 @@ impl Stmt {
                     write!(f, "{cfg}")?;
                     writeln!(f, "extern_protocol!(")?;
 
-                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{}", documentation.fmt())?;
                     write!(f, "    {}", self.cfg_gate_ln(config))?;
                     write!(f, "    {availability}")?;
                     if *objc_name != id.name {
@@ -2810,7 +2813,7 @@ impl Stmt {
                     documentation,
                     is_union,
                 } => {
-                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{}", documentation.fmt())?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
 
@@ -2849,7 +2852,7 @@ impl Stmt {
                         writeln!(f, "pub struct {} {{", id.name)?;
                     }
                     for (name, documentation, ty) in fields {
-                        write!(f, "{}", documentation.fmt(None))?;
+                        write!(f, "{}", documentation.fmt())?;
                         write!(f, "    ")?;
                         if name.starts_with('_') {
                             write!(f, "pub(crate) ")?;
@@ -2906,7 +2909,7 @@ impl Stmt {
                     sendable,
                     documentation,
                 } => {
-                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{}", documentation.fmt())?;
 
                     let mut relevant_enum_cases = variants
                         .iter()
@@ -2973,7 +2976,7 @@ impl Stmt {
                         writeln!(f, "impl {} {{", id.name)?;
 
                         for (name, documentation, availability, expr, _) in variants {
-                            write!(f, "{}", documentation.fmt(None))?;
+                            write!(f, "{}", documentation.fmt())?;
                             let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
                                 writeln!(f, "    #[doc(alias = \"{name}\")]")?;
@@ -3006,7 +3009,7 @@ impl Stmt {
                         writeln!(f, "    impl {}: {} {{", id.name, ty.enum_())?;
 
                         for (name, documentation, availability, expr, _) in variants {
-                            write!(f, "{}", documentation.fmt(None))?;
+                            write!(f, "{}", documentation.fmt())?;
                             let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
                                 writeln!(f, "        #[doc(alias = \"{name}\")]")?;
@@ -3036,7 +3039,7 @@ impl Stmt {
                         writeln!(f, "pub enum {} {{", id.name)?;
 
                         for (name, documentation, availability, expr, is_zero) in variants {
-                            write!(f, "{}", documentation.fmt(None))?;
+                            write!(f, "{}", documentation.fmt())?;
                             let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
                             if pretty_name != name {
                                 writeln!(f, "    #[doc(alias = \"{name}\")]")?;
@@ -3085,7 +3088,7 @@ impl Stmt {
                     is_last,
                     documentation,
                 } => {
-                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{}", documentation.fmt())?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     write!(f, "pub const {}: {} = {value};", id.name, ty.const_())?;
@@ -3102,7 +3105,7 @@ impl Stmt {
                     documentation,
                 } => {
                     writeln!(f, "extern \"C\" {{")?;
-                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{}", documentation.fmt())?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     if *link_name != id.name {
@@ -3119,7 +3122,7 @@ impl Stmt {
                     value: Some(expr),
                     documentation,
                 } => {
-                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{}", documentation.fmt())?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     write!(f, "pub static {}: {} = ", id.name, ty.var())?;
@@ -3209,7 +3212,7 @@ impl Stmt {
                     };
 
                     if needs_wrapper {
-                        write!(f, "{}", documentation.fmt(None))?;
+                        write!(f, "{}", documentation.fmt())?;
                         write!(f, "{}", self.cfg_gate_ln(config))?;
                         write!(f, "{availability}")?;
                         if *must_use {
@@ -3286,7 +3289,7 @@ impl Stmt {
                     } else {
                         writeln!(f, "{}{{", abi.extern_outer())?;
 
-                        write!(f, "{}", documentation.fmt(None))?;
+                        write!(f, "{}", documentation.fmt())?;
                         write!(f, "    {}", self.cfg_gate_ln(config))?;
                         write!(f, "    {availability}")?;
                         if *must_use {
@@ -3316,7 +3319,7 @@ impl Stmt {
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     writeln!(f, "unsafe impl ConcreteType for {} {{", cf_item.id().path())?;
 
-                    write!(f, "{}", documentation.fmt(None))?;
+                    write!(f, "{}", documentation.fmt())?;
                     writeln!(f, "    #[inline]")?;
                     writeln!(f, "    {}fn {}(){ret} {{", abi.extern_outer(), id.name)?;
 
@@ -3337,7 +3340,7 @@ impl Stmt {
                     kind,
                     documentation,
                 } => {
-                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{}", documentation.fmt())?;
                     write!(f, "{availability}")?;
                     match kind {
                         Some(UnexposedAttr::TypedEnum) => {
@@ -3378,7 +3381,7 @@ impl Stmt {
                     bridged: _,
                     superclass,
                 } => {
-                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{}", documentation.fmt())?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     writeln!(f, "#[repr(C)]")?;

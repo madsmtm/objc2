@@ -36,6 +36,7 @@ pub use self::availability::HOST_MACOS;
 pub use self::cfgs::PlatformCfg;
 pub use self::config::{load_config, load_skipped, Config, LibraryConfig};
 pub use self::context::{Context, MacroEntity, MacroLocation};
+pub use self::documentation::TxtMap;
 pub use self::global_analysis::global_analysis;
 pub use self::id::{ItemIdentifier, Location};
 pub use self::library::{EntryExt, Library};
