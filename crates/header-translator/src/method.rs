@@ -1109,7 +1109,7 @@ impl fmt::Display for Method {
         // Attributes
         //
 
-        write!(f, "{}", self.documentation.fmt(None))?;
+        write!(f, "{}", self.documentation.fmt())?;
         write!(f, "{}", self.availability)?;
 
         if self.must_use {

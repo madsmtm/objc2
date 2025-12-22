@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
 use std::io::{ErrorKind, Read, Seek, Write};
@@ -7,6 +8,7 @@ use std::{fs, io};
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, EntityKind, EntityVisitResult, Index, TranslationUnit};
 use clap::Parser;
+use header_translator::documentation::DocState;
 use semver::VersionReq;
 use tracing::{debug_span, error, info, info_span, trace_span};
 use tracing_subscriber::filter::LevelFilter;
@@ -17,7 +19,8 @@ use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
     global_analysis, load_config, load_skipped, run_cargo_fmt, Config, Context, EntryExt, Library,
-    LibraryConfig, Location, MacroEntity, MacroLocation, PlatformCfg, Stmt, HOST_MACOS, VERSION,
+    LibraryConfig, Location, MacroEntity, MacroLocation, PlatformCfg, Stmt, TxtMap, HOST_MACOS,
+    VERSION,
 };
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -116,6 +119,22 @@ fn main() -> Result<(), BoxError> {
 
     update_root_cargo_toml(workspace_dir, &config);
 
+    let _span = info_span!("load documentation helpers").entered();
+    let external_dir = apple_doc::external_dir();
+    let txt = fs::read_to_string(external_dir.join("1.txt")).unwrap(); // Use ObjC docs
+    let mut txt_map = TxtMap::new();
+    for item in apple_doc::TxtItem::iter(&txt) {
+        txt_map
+            .entry((item.name, item.kind))
+            .or_default()
+            .push(item.uuid);
+    }
+    let sqlite_db = apple_doc::SqliteDb::from_external_dir(&external_dir).unwrap();
+    let blobs =
+        RefCell::new(apple_doc::BlobStore::from_external_dir(&sqlite_db, &external_dir).unwrap());
+    let doc_state = DocState::new(&txt_map, &sqlite_db, &blobs);
+    drop(_span);
+
     let mut found = false;
     for (name, data) in config.to_parse() {
         if let Some(framework) = &framework {
@@ -126,7 +145,7 @@ fn main() -> Result<(), BoxError> {
         found = true;
 
         let _span = info_span!("framework", name).entered();
-        let library = parse_library(&index, &config, data, name, &sdks, &tempdir);
+        let library = parse_library(&index, &config, data, name, &sdks, &doc_state, &tempdir);
         output_library(workspace_dir, name, &library, &config).unwrap();
     }
     if !found {
@@ -217,6 +236,7 @@ fn parse_library(
     data: &LibraryConfig,
     name: &str,
     sdks: &[SdkPath],
+    doc_state: &DocState<'_>,
     tempdir: &Path,
 ) -> Library {
     let mut result = None;
@@ -274,10 +294,19 @@ fn parse_library(
         _ => unimplemented!("SDK platform {sdk:?}"),
     };
 
+    let mut iter = doc_state.get(name, apple_doc::Kind::Module);
+    let current_library_title = if let Some(current_library_doc) = iter.next() {
+        current_library_doc.metadata.title
+    } else {
+        name.to_string()
+    };
+    assert_eq!(iter.next(), None);
+
     for llvm_target in llvm_targets {
         let _span = info_span!("target", platform = ?sdk.platform, llvm_target).entered();
 
-        let mut context = Context::new(config, name);
+        let mut context = Context::new(config, name, &current_library_title, doc_state);
+
         let mut library = Library::new(name, data);
         let tu = get_translation_unit(index, sdk, llvm_target, data, tempdir);
         parse_translation_unit(tu, &mut context, &mut library);
