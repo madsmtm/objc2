@@ -20,40 +20,20 @@ mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 
-#[cfg(feature = "std")]
-impl<T> std::ops::Index<T> for XCUIElementQuery
-where
-    T: AsRef<str>,
-{
-    type Output = Self;
-    /// This will return the same thing as `XCUIElementQuery::matchingIdentifier` which is what the
-    /// swift subscript implementation does:
-    /// <https://developer.apple.com/documentation/xcuiautomation/xcuielementquery/matching(identifier:)>
-    /// <https://developer.apple.com/documentation/xcuiautomation/xcuielementquery/subscript(_:)>
-    fn index(&self, index: T) -> &Self::Output {
-        // TODO: Safety evaluation.
-        unsafe {
-            &*objc2::rc::Retained::autorelease_return(
-                self.matchingIdentifier(&objc2_foundation::NSString::from_str(index.as_ref())),
-            )
-        }
-    }
-}
-
 // Everything but macOS.
-#[cfg(not(target_os = "macos"))]
+#[cfg(not(any(target_os = "macos", target_env = "macabi")))]
 mod device_buttons;
 
 #[cfg(target_os = "ios")]
 mod siri;
 
-#[cfg(target_os = "ios")]
+#[cfg(all(target_os = "ios", feature = "objc2-ui-kit"))]
 mod orientation;
 
 #[cfg(not(target_os = "macos"))]
 pub use device_buttons::*;
 
-#[cfg(target_os = "ios")]
+#[cfg(all(target_os = "ios", feature = "objc2-ui-kit"))]
 pub use orientation::*;
 
 #[cfg(target_os = "ios")]
