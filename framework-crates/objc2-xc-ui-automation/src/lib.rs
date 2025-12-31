@@ -21,23 +21,43 @@ mod generated;
 pub use self::generated::*;
 
 #[cfg(feature = "std")]
-impl std::ops::Index<std::string::String> for XCUIElementQuery {
+impl<T> std::ops::Index<T> for XCUIElementQuery
+where
+    T: AsRef<str>,
+{
     type Output = Self;
     /// This will return the same thing as `XCUIElementQuery::matchingIdentifier` which is what the
     /// swift subscript implementation does:
     /// <https://developer.apple.com/documentation/xcuiautomation/xcuielementquery/matching(identifier:)>
     /// <https://developer.apple.com/documentation/xcuiautomation/xcuielementquery/subscript(_:)>
-    fn index(&self, index: std::string::String) -> &Self::Output {
+    fn index(&self, index: T) -> &Self::Output {
         // TODO: Safety evaluation.
         unsafe {
             &*objc2::rc::Retained::autorelease_return(
-                self.matchingIdentifier(&objc2_foundation::NSString::from_str(index.as_str())),
+                self.matchingIdentifier(&objc2_foundation::NSString::from_str(index.as_ref())),
             )
         }
     }
 }
-#[cfg(target_os = "ios")]
+
+// Everything but macOS.
+#[cfg(not(target_os = "macos"))]
 mod device_buttons;
+
+#[cfg(target_os = "ios")]
+mod siri;
+
+#[cfg(target_os = "ios")]
+mod orientation;
+
+#[cfg(not(target_os = "macos"))]
+pub use device_buttons::*;
+
+#[cfg(target_os = "ios")]
+pub use orientation::*;
+
+#[cfg(target_os = "ios")]
+pub use siri::*;
 
 // Link to XCTest instead of XCUIAutomation, since the latter is only
 // available in newer Xcode versions.
