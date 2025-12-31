@@ -25,18 +25,19 @@ impl std::ops::Index<std::string::String> for XCUIElementQuery {
     type Output = Self;
     /// This will return the same thing as `XCUIElementQuery::matchingIdentifier` which is what the
     /// swift subscript implementation does:
-    /// https://developer.apple.com/documentation/xcuiautomation/xcuielementquery/matching(identifier:)
-    /// https://developer.apple.com/documentation/xcuiautomation/xcuielementquery/subscript(_:)
+    /// <https://developer.apple.com/documentation/xcuiautomation/xcuielementquery/matching(identifier:)>
+    /// <https://developer.apple.com/documentation/xcuiautomation/xcuielementquery/subscript(_:)>
     fn index(&self, index: std::string::String) -> &Self::Output {
-
         // TODO: Safety evaluation.
         unsafe {
             &*objc2::rc::Retained::autorelease_return(
-                self.matchingIdentifier(&objc2_foundation::NSString::from_str(index.as_str()))
+                self.matchingIdentifier(&objc2_foundation::NSString::from_str(index.as_str())),
             )
         }
     }
 }
+#[cfg(target_os = "ios")]
+mod device_buttons;
 
 // Link to XCTest instead of XCUIAutomation, since the latter is only
 // available in newer Xcode versions.
