@@ -3016,6 +3016,9 @@ impl Ty {
             // NOTE: `MTLResourceID` is not `Default` for now, since we still
             // need to figure out if creating it from invalid IDs is safe.
             Self::Struct { id, .. } if id.name == "MTLResourceID" => false,
+            // HACK: MTLPackedFloat3 is redefined as a simple struct, which
+            // implements `Default`.
+            Self::Struct { id, .. } if matches!(&*id.name, "_MTLPackedFloat3" | "_MPSPackedFloat3") => true,
             Self::Struct {
                 fields,
                 is_bridged: false,
