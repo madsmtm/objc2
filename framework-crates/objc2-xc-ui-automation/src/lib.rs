@@ -20,6 +20,25 @@ mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 
+// Everything but macOS.
+#[cfg(not(any(target_os = "macos", target_env = "macabi")))]
+mod device_buttons;
+
+#[cfg(target_os = "ios")]
+mod siri;
+
+#[cfg(all(target_os = "ios", feature = "objc2-ui-kit"))]
+mod orientation;
+
+#[cfg(not(target_os = "macos"))]
+pub use device_buttons::*;
+
+#[cfg(all(target_os = "ios", feature = "objc2-ui-kit"))]
+pub use orientation::*;
+
+#[cfg(target_os = "ios")]
+pub use siri::*;
+
 // Link to XCTest instead of XCUIAutomation, since the latter is only
 // available in newer Xcode versions.
 #[link(name = "XCTest", kind = "framework")]

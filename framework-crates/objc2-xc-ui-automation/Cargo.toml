@@ -11,6 +11,8 @@ keywords = ["cocoa", "apple", "framework", "macos", "ios"]
 categories.workspace = true
 repository.workspace = true
 license.workspace = true
+[target.'cfg(target_os = "ios")'.dependencies]
+objc2-ui-kit = { workspace = true, optional = true, features = ["UIOrientation"] }
 
 [lints]
 workspace = true
@@ -63,6 +65,7 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
+objc2-ui-kit = ["dep:objc2-ui-kit"]
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
