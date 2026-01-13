@@ -4,11 +4,11 @@ use std::cell::OnceCell;
 
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
-use objc2::{define_class, msg_send, Ivars, MainThreadOnly};
+use objc2::{define_class, msg_send, sel, Ivars, MainThreadOnly};
 use objc2_app_kit::{
     NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSAutoresizingMaskOptions,
-    NSBackingStoreType, NSColor, NSFont, NSTextAlignment, NSTextField, NSWindow, NSWindowDelegate,
-    NSWindowStyleMask,
+    NSBackingStoreType, NSColor, NSFont, NSMenu, NSMenuItem, NSTextAlignment, NSTextField,
+    NSWindow, NSWindowDelegate, NSWindowStyleMask,
 };
 use objc2_foundation::{
     ns_string, MainThreadMarker, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect,
@@ -36,12 +36,36 @@ define_class!(
         fn did_finish_launching(&self, notification: &NSNotification) {
             let mtm = self.mtm();
 
+            // Retrieve the NSApplication.
             let app = notification
                 .object()
                 .unwrap()
                 .downcast::<NSApplication>()
                 .unwrap();
 
+            // Create a minimal menubar with a "Quit" entry.
+            let menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), ns_string!(""));
+            let menu_app_item = unsafe {
+                NSMenuItem::initWithTitle_action_keyEquivalent(
+                    NSMenuItem::alloc(mtm),
+                    ns_string!(""),
+                    None,
+                    ns_string!(""),
+                )
+            };
+            let menu_app_menu = NSMenu::initWithTitle(NSMenu::alloc(mtm), ns_string!(""));
+            unsafe {
+                menu_app_menu.addItemWithTitle_action_keyEquivalent(
+                    ns_string!("Quit"),
+                    Some(sel!(terminate:)),
+                    ns_string!("q"),
+                )
+            };
+            menu_app_item.setSubmenu(Some(&menu_app_menu));
+            menu.addItem(&menu_app_item);
+            app.setMainMenu(Some(&menu));
+
+            // Create a window and display a text field inside that.
             let text_field = {
                 let text_field = NSTextField::labelWithString(ns_string!("Hello, World!"), mtm);
                 text_field.setFrame(NSRect::new(
