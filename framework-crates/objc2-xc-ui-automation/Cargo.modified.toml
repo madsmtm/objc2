@@ -3,13 +3,3 @@ objc2-ui-kit = { workspace = true, optional = true, features = ["UIOrientation"]
 
 [features]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
-
-# Maybe, unsure if desirable:
-default = [
-    "std",
-    "block2",
-    "objc2-app-kit",
-    "objc2-core-foundation",
-    "objc2-core-location",
-    "objc2-ui-kit",
-]
