@@ -1,0 +1,5 @@
+[target.'cfg(target_os = "ios")'.dependencies]
+objc2-ui-kit = { workspace = true, optional = true, features = ["UIOrientation"] }
+
+[features]
+objc2-ui-kit = ["dep:objc2-ui-kit"]
