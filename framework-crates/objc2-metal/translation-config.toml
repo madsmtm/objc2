@@ -29,6 +29,15 @@ enum.MTLTensorDataType.use-value = true
 # Has different encoding on the simulator.
 struct.MTLResourceID.skipped = true
 
+# The "autoreleased" in the name is handled by `header-translator`, so it
+# doesn't make sense to expose the type aliases.
+typedef.MTLAutoreleasedArgument.renamed = "MTLArgument"
+typedef.MTLAutoreleasedArgument.skipped = true
+typedef.MTLAutoreleasedRenderPipelineReflection.renamed = "MTLRenderPipelineReflection"
+typedef.MTLAutoreleasedRenderPipelineReflection.skipped = true
+typedef.MTLAutoreleasedComputePipelineReflection.renamed = "MTLComputePipelineReflection"
+typedef.MTLAutoreleasedComputePipelineReflection.skipped = true
+
 ###
 ### Safety
 ###
