@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Fixed reference counting in `DispatchSemaphoreGuard::release`.
+- Inlined more functions. This should allow using this library on macOS 10.12 with `crate-type = ["dylib"]`.
 
 
 ## [0.3.0] - 2025-04-19
