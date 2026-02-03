@@ -575,7 +575,11 @@ impl Method {
             result_type.try_fix_related_result_type();
         }
 
-        let fn_name = selector.trim_end_matches(':').replace(':', "_");
+        let fn_name = if let Some(renamed) = &data.renamed {
+            renamed.clone()
+        } else {
+            selector.trim_end_matches(':').replace(':', "_")
+        };
 
         let mainthreadonly = mainthreadonly_override(
             &result_type,
@@ -825,9 +829,15 @@ impl Method {
                 }
             }
 
+            let fn_name = if let Some(renamed) = &getter_data.renamed {
+                renamed.clone()
+            } else {
+                getter_sel.clone()
+            };
+
             Some(Method {
                 selector: getter_sel.clone(),
-                fn_name: getter_sel.clone(),
+                fn_name,
                 availability: availability.clone(),
                 is_class,
                 is_optional: entity.is_objc_optional(),
@@ -861,7 +871,12 @@ impl Method {
                     ty.apply_override(ty_or);
                 }
 
-                let fn_name = selector.strip_suffix(':').unwrap().to_string();
+                let fn_name = if let Some(renamed) = &setter_data.renamed {
+                    renamed.clone()
+                } else {
+                    selector.strip_suffix(':').unwrap().to_string()
+                };
+
                 let memory_management =
                     MemoryManagement::new(is_class, &selector, &result_type, modifiers);
 
@@ -1082,7 +1097,7 @@ impl Method {
 
 impl fmt::Display for Method {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let _span = debug_span!("method", self.fn_name).entered();
+        let _span = debug_span!("method", self.selector).entered();
 
         let mut arguments = &self.arguments[..];
         let error_return = if let Some(((_, ty), rest)) = arguments.split_last() {
