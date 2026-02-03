@@ -7,11 +7,11 @@
 #![cfg(feature = "CGPDFContext")]
 #![cfg(feature = "CGBitmapContext")]
 #![cfg(feature = "CGImage")]
-#![allow(deprecated)]
 
 use objc2_core_graphics::{
-    CGBitmapContextCreate, CGBitmapInfo, CGColorConversionInfoCreate, CGColorSpace, CGContext,
-    CGImageAlphaInfo, CGPDFContextClose,
+    CGBitmapContextCreate, CGBitmapInfo, CGColorConversionInfo, CGColorSpace, CGContext,
+    CGImageAlphaInfo, CGImageByteOrderInfo, CGImageComponentInfo, CGImagePixelFormatInfo,
+    CGPDFContextClose,
 };
 
 #[test]
@@ -21,7 +21,7 @@ fn null_context() {
 
 #[test]
 fn null_colorspace() {
-    assert_eq!(CGColorConversionInfoCreate(None, None), None);
+    assert_eq!(CGColorConversionInfo::new(None, None), None);
 }
 
 #[test]
@@ -35,7 +35,13 @@ fn non_pdf_context() {
             8,
             0,
             Some(&color_space),
-            CGBitmapInfo::ByteOrder32Little.0 | CGImageAlphaInfo::NoneSkipFirst.0,
+            CGBitmapInfo::new(
+                CGImageAlphaInfo::NoneSkipFirst,
+                CGImageComponentInfo::Integer,
+                CGImageByteOrderInfo::Order32Little,
+                CGImagePixelFormatInfo::Packed,
+            )
+            .0,
         )
         .unwrap()
     };

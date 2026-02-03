@@ -204,15 +204,13 @@ impl CFURL {
     /// Construct and inspect a `CFURL`.
     ///
     /// ```
-    /// use objc2_core_foundation::{
-    ///     CFString, CFURL, CFURLCopyHostName, CFURLCopyScheme, CFURLCopyPath,
-    /// };
+    /// use objc2_core_foundation::{CFString, CFURL};
     ///
     /// let url = CFURL::from_string(None, &CFString::from_str("http://example.com/foo"), None).unwrap();
     /// assert_eq!(url.string().to_string(), "http://example.com/foo");
-    /// assert_eq!(CFURLCopyScheme(&url).unwrap().to_string(), "http");
-    /// assert_eq!(CFURLCopyHostName(&url).unwrap().to_string(), "example.com");
-    /// assert_eq!(CFURLCopyPath(&url).unwrap().to_string(), "/foo");
+    /// assert_eq!(url.scheme().unwrap().to_string(), "http");
+    /// assert_eq!(url.host_name().unwrap().to_string(), "example.com");
+    /// assert_eq!(url.path().unwrap().to_string(), "/foo");
     /// ```
     ///
     /// Fail parsing certain strings.

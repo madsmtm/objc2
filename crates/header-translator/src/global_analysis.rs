@@ -6,7 +6,6 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::mem;
 
 use crate::availability::Availability;
-use crate::documentation::Documentation;
 use crate::expr::Expr;
 use crate::id::ItemTree;
 use crate::method::Method;
@@ -82,8 +81,6 @@ fn update_module(
     ident_mapping: &HashMap<String, Expr>,
     expected_bridged_types: &mut BTreeMap<&str, &ItemIdentifier>,
 ) {
-    let mut deprecated_fns = vec![];
-
     // Fix location for GetTypeId functions
     for stmt in module.stmts.iter_mut() {
         if let Stmt::FnDecl {
@@ -95,7 +92,7 @@ fn update_module(
             first_arg_is_self,
             result_type,
             body,
-            safe,
+            safe: _,
             must_use,
             abi,
             returns_retained,
@@ -138,35 +135,6 @@ fn update_module(
                         omit_memory_management_words,
                     )
                 };
-
-                // TODO(breaking): Remove in next version
-                if body.is_none()
-                    && id.library_name() != "Dispatch"
-                    && !link_name.contains("GetTypeID")
-                {
-                    deprecated_fns.push(Stmt::FnDecl {
-                        // Emit with the actual, non-renamed name.
-                        id: id.clone().map_name(|_| c_name.clone()),
-                        c_name: c_name.clone(),
-                        link_name: link_name.clone(),
-                        availability: Availability::new_deprecated(format!(
-                            "renamed to `{}::{}`",
-                            cf_item.id().name,
-                            name,
-                        )),
-                        arguments: arguments.clone(),
-                        result_type: result_type.clone(),
-                        first_arg_is_self: *first_arg_is_self,
-                        body: *body,
-                        safe: *safe,
-                        must_use: *must_use,
-                        abi: abi.clone(),
-                        returns_retained: *returns_retained,
-                        documentation: Documentation::empty(),
-                        no_implementor: false,
-                        custom_implementor: None,
-                    });
-                }
 
                 *id = id.clone().map_name(|_| name.clone());
 
@@ -214,8 +182,6 @@ fn update_module(
             }
         }
     }
-
-    module.stmts.extend(deprecated_fns);
 
     // Propagate availability information of `init` to `new`.
     // NOTE: this only works within single files.
