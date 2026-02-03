@@ -23,7 +23,172 @@ const.kMORTLigLastAction.use-value = true
 const.kMORXCoverVertical.use-value = true
 const.kKERXVertical.use-value = true
 
+##
+## Fixing bounds information.
+##
+
+fn.CTFontCreateWithName.arguments.2.bounds = "single"
+fn.CTFontCreateWithFontDescriptor.arguments.2.bounds = "single"
+fn.CTFontCreateWithNameAndOptions.arguments.2.bounds = "single"
+fn.CTFontCreateWithFontDescriptorAndOptions.arguments.2.bounds = "single"
+fn.CTFontCreateCopyWithAttributes.arguments.2.bounds = "single"
+fn.CTFontCreateCopyWithSymbolicTraits.arguments.2.bounds = "single"
+fn.CTFontCreateCopyWithFamily.arguments.2.bounds = "single"
+fn.CTFontCopyLocalizedName.arguments.2.bounds = "single"
+fn.CTFontGetGlyphsForCharacters.arguments.1.bounds.counted-by = "count"
+fn.CTFontGetGlyphsForCharacters.arguments.2.bounds.counted-by = "count"
+fn.CTFontGetBoundingRectsForGlyphs.arguments.2.bounds.counted-by = "count"
+fn.CTFontGetBoundingRectsForGlyphs.arguments.3.bounds.counted-by = "count"
+fn.CTFontGetOpticalBoundsForGlyphs.arguments.1.bounds.counted-by = "count"
+fn.CTFontGetOpticalBoundsForGlyphs.arguments.2.bounds.counted-by = "count"
+fn.CTFontGetAdvancesForGlyphs.arguments.2.bounds.counted-by = "count"
+fn.CTFontGetAdvancesForGlyphs.arguments.3.bounds.counted-by = "count"
+fn.CTFontGetVerticalTranslationsForGlyphs.arguments.1.bounds.counted-by = "count"
+fn.CTFontGetVerticalTranslationsForGlyphs.arguments.2.bounds.counted-by = "count"
+fn.CTFontCreatePathForGlyph.arguments.2.bounds = "single"
+fn.CTFontCopyGraphicsFont.arguments.1.bounds = "single"
+fn.CTFontCreateWithGraphicsFont.arguments.2.bounds = "single"
+fn.CTFontDrawGlyphs.arguments.1.bounds.counted-by = "count"
+fn.CTFontDrawGlyphs.arguments.2.bounds.counted-by = "count" # Or glyphs
+fn.CTFontGetLigatureCaretPositions.arguments.2.bounds.counted-by = "maxPositions"
+
+fn.CTFontDescriptorCopyLocalizedAttribute.arguments.2.bounds = "single"
+
+fn.CTFontManagerRegisterFontsForURL.arguments.2.bounds = "single"
+fn.CTFontManagerUnregisterFontsForURL.arguments.2.bounds = "single"
+fn.CTFontManagerRegisterGraphicsFont.arguments.1.bounds = "single"
+fn.CTFontManagerUnregisterGraphicsFont.arguments.1.bounds = "single"
+fn.CTFontManagerRegisterFontsForURLs.arguments.2.bounds = "single"
+fn.CTFontManagerUnregisterFontsForURLs.arguments.2.bounds = "single"
+
+fn.CTFrameGetLineOrigins.arguments.2.bounds.counted-by = "range.length"
+
+fn.CTFramesetterSuggestFrameSizeWithConstraints.arguments.4.bounds = "single"
+
+fn.CTLineGetTypographicBounds.arguments.1.bounds = "single"
+fn.CTLineGetTypographicBounds.arguments.2.bounds = "single"
+fn.CTLineGetTypographicBounds.arguments.3.bounds = "single"
+fn.CTLineGetOffsetForStringIndex.arguments.2.bounds = "single"
+
+fn.CTParagraphStyleCreate.arguments.0.bounds.counted-by = "settingCount"
+fn.CTParagraphStyleGetValueForSpecifier.arguments.3.bounds.sized-by = "value_buffer_size"
+
 fn.CTRubyAnnotationCreate.arguments.3.written = false
+
+fn.CTRunGetGlyphsPtr.return.bounds.counted-by = "self.glyph_count()"
+fn.CTRunGetGlyphs.arguments.2.bounds.counted-by = "range.length"
+fn.CTRunGetPositionsPtr.return.bounds.counted-by = "self.glyph_count()"
+fn.CTRunGetPositions.arguments.2.bounds.counted-by = "range.length"
+fn.CTRunGetAdvancesPtr.return.bounds.counted-by = "self.glyph_count()"
+fn.CTRunGetAdvances.arguments.2.bounds.counted-by = "range.length"
+fn.CTRunGetStringIndicesPtr.return.bounds.counted-by = "self.glyph_count()"
+fn.CTRunGetStringIndices.arguments.2.bounds.counted-by = "range.length"
+fn.CTRunGetTypographicBounds.arguments.2.bounds = "single"
+fn.CTRunGetTypographicBounds.arguments.3.bounds = "single"
+fn.CTRunGetTypographicBounds.arguments.4.bounds = "single"
+fn.CTRunGetBaseAdvancesAndOrigins.arguments.2.bounds.counted-by = "range.length"
+fn.CTRunGetBaseAdvancesAndOrigins.arguments.3.bounds.counted-by = "range.length"
+
+protocol.CTAdaptiveImageProviding.methods."imageForProposedSize:scaleFactor:imageOffset:imageSize:".arguments.2.bounds = "single"
+protocol.CTAdaptiveImageProviding.methods."imageForProposedSize:scaleFactor:imageOffset:imageSize:".arguments.3.bounds = "single"
+
+fn.CTRunDelegateCreate.arguments.0.bounds = "single"
+
+##
+## Fixing generics.
+##
+
+# `kCTFont*` in CTFontTraits.h.
+fn.CTFontCopyTraits.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CTFontCopyDefaultCascadeListForLanguages.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.CTFontCopyDefaultCascadeListForLanguages.return.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontCopySupportedLanguages.return.generics = ["CoreFoundation.CFString.CFString"]
+# Variation axis dictionaries with `kCTFontVariationAxis*` as keys.
+fn.CTFontCopyVariationAxes.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.CTFontCopyVariation.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+# Feature dictionaries with `kCTFontFeature*` as keys.
+fn.CTFontCopyFeatures.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.CTFontCopyFeatureSettings.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+# Array of CTFontTableTag (which is a u32, TODO).
+fn.CTFontCopyAvailableTables.return.generics = []
+
+# `kCTFontCollection*` options.
+fn.CTFontCollectionCreateFromAvailableFonts.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CTFontCollectionCreateWithFontDescriptors.arguments.0.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontCollectionCreateWithFontDescriptors.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CTFontCollectionCreateCopyWithFontDescriptors.arguments.1.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontCollectionCreateCopyWithFontDescriptors.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CTFontCollectionCopyQueryDescriptors.return.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontCollectionSetQueryDescriptors.arguments.1.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontCollectionCopyExclusionDescriptors.return.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontCollectionSetExclusionDescriptors.arguments.1.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontCollectionCreateMatchingFontDescriptors.return.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontCollectionCreateMatchingFontDescriptorsSortedWithCallback.return.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontCollectionCreateMatchingFontDescriptorsWithOptions.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CTFontCollectionCreateMatchingFontDescriptorsWithOptions.return.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontCollectionCreateMatchingFontDescriptorsForFamily.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CTFontCollectionCreateMatchingFontDescriptorsForFamily.return.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontCollectionCopyFontAttribute.return.generics = ["CoreFoundation.CFType"]
+fn.CTFontCollectionCopyFontAttributes.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+# An array containing one CFDictionary value for each descriptor mapping the requested attribute names
+fn.CTFontCollectionCopyFontAttributes.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+
+# `kCTFont*` in CFFontDescriptor.h.
+fn.CTFontDescriptorCreateWithAttributes.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CTFontDescriptorCreateCopyWithAttributes.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CTFontDescriptorCopyAttributes.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+# A set of attribute keys.
+fn.CTFontDescriptorCreateMatchingFontDescriptor.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.CTFontDescriptorCreateMatchingFontDescriptors.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.CTFontDescriptorMatchFontDescriptorsWithProgressHandler.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+# Array of "normalized font descriptors".
+fn.CTFontDescriptorCreateMatchingFontDescriptors.return.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+# Array of "descriptors to match".
+fn.CTFontDescriptorMatchFontDescriptorsWithProgressHandler.arguments.0.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+
+# Documentation states what these return.
+fn.CTFontManagerCopyAvailablePostScriptNames.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CTFontManagerCopyAvailableFontFamilyNames.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CTFontManagerCopyAvailableFontURLs.return.generics = ["CoreFoundation.CFURL.CFURL"]
+fn.CTFontManagerCreateFontDescriptorsFromURL.return.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontManagerCreateFontDescriptorsFromData.return.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontManagerRegisterFontsForURLs.arguments.0.generics = ["CoreFoundation.CFURL.CFURL"]
+fn.CTFontManagerRegisterFontsForURLs.arguments.2.generics = ["CoreFoundation.CFError.CFError"]
+fn.CTFontManagerUnregisterFontsForURLs.arguments.0.generics = ["CoreFoundation.CFURL.CFURL"]
+fn.CTFontManagerUnregisterFontsForURLs.arguments.2.generics = ["CoreFoundation.CFError.CFError"]
+fn.CTFontManagerRegisterFontURLs.arguments.0.generics = ["CoreFoundation.CFURL.CFURL"]
+fn.CTFontManagerUnregisterFontURLs.arguments.0.generics = ["CoreFoundation.CFURL.CFURL"]
+fn.CTFontManagerRegisterFontDescriptors.arguments.0.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontManagerUnregisterFontDescriptors.arguments.0.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontManagerRegisterFontsWithAssetNames.arguments.0.generics = ["CoreFoundation.CFString.CFString"]
+fn.CTFontManagerEnableFontDescriptors.arguments.0.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontManagerCopyRegisteredFontDescriptors.return.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+fn.CTFontManagerRequestFonts.arguments.0.generics = ["CoreText.CTFontDescriptor.CTFontDescriptor"]
+
+# `kCTFrame*`.
+fn.CTFrameGetFrameAttributes.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+# Documented to return CTLine.
+fn.CTFrameGetLines.return.generics = ["CoreText.CTLine.CTLine"]
+
+# `kCTFrame*`.
+fn.CTFramesetterCreateFrame.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CTFramesetterSuggestFrameSizeWithConstraints.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+# Documented to return CTRun.
+fn.CTLineGetGlyphRuns.return.generics = ["CoreText.CTRun.CTRun"]
+
+# `kCTRubyAnnotation*`.
+fn.CTRubyAnnotationCreateWithAttributes.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+# Same as on CFAttributedString.
+fn.CTRunGetAttributes.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+# `kCTTab*`.
+fn.CTTextTabCreate.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CTTextTabGetOptions.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+# `kCTTypesetter*`
+fn.CTTypesetterCreateWithAttributedStringAndOptions.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 
 ##
 ## Safety
@@ -44,3 +209,8 @@ unsafe-default-safety.bounds-checked-internally = true
 # TODO(breaking): Mark this as nullable? `CTRunDelegateCreate` creates it from
 # a nullable parameter.
 fn.CTRunDelegateGetRefCon.unsafe = true
+
+# Documents that:
+# > The return value is undefined if CTFontCollectionCreateFromAvailableFonts was used to create the collection.
+# But that probably isn't language-level UB.
+# fn.CTFontCollectionCopyQueryDescriptors.unsafe = false

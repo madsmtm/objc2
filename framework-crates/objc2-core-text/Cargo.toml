@@ -98,6 +98,7 @@ CTFontCollection = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFSet",
+    "objc2-core-foundation/CFString",
 ]
 CTFontDescriptor = [
     "objc2-core-foundation/CFArray",
@@ -105,6 +106,7 @@ CTFontDescriptor = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFNumber",
     "objc2-core-foundation/CFSet",
+    "objc2-core-foundation/CFString",
 ]
 CTFontManager = [
     "objc2-core-foundation/CFArray",
@@ -113,6 +115,7 @@ CTFontManager = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
     "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 CTFontManagerErrors = []
@@ -121,11 +124,13 @@ CTFrame = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 CTFramesetter = [
     "objc2-core-foundation/CFAttributedString",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 CTGlyphInfo = []
 CTLine = [
@@ -138,18 +143,24 @@ CTParagraphStyle = []
 CTRubyAnnotation = [
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 CTRun = [
     "bitflags",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 CTRunDelegate = ["objc2-core-foundation/CFCGTypes"]
 CTStringAttributes = ["bitflags"]
-CTTextTab = ["objc2-core-foundation/CFDictionary"]
+CTTextTab = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 CTTypesetter = [
     "objc2-core-foundation/CFAttributedString",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 SFNTLayoutTypes = []
 SFNTTypes = []
