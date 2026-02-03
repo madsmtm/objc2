@@ -34,13 +34,13 @@ mod unexposed_attr;
 
 pub use self::availability::HOST_MACOS;
 pub use self::cfgs::PlatformCfg;
-pub use self::config::{load_config, load_skipped, Config, LibraryConfig};
+pub use self::config::{load_config, load_skipped, Config, Counterpart, LibraryConfig};
 pub use self::context::{Context, MacroEntity, MacroLocation};
 pub use self::global_analysis::global_analysis;
 pub use self::id::{ItemIdentifier, Location};
 pub use self::library::{EntryExt, Library};
 pub use self::module::Module;
-pub use self::stmt::{Counterpart, Stmt};
+pub use self::stmt::Stmt;
 
 pub fn run_cargo_fmt(packages: impl IntoIterator<Item = impl Display>) {
     let status = Command::new("cargo")

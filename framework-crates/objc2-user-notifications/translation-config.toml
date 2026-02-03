@@ -10,8 +10,8 @@ visionos = "1.0"
 
 external.CLRegion.module = "CoreLocation.CLRegion"
 
-class.UNNotificationContent.counterpart = "MutableSubclass(UserNotifications.UNNotificationContent.UNMutableNotificationContent)"
-class.UNMutableNotificationContent.counterpart = "ImmutableSuperclass(UserNotifications.UNNotificationContent.UNNotificationContent)"
+class.UNNotificationContent.counterpart.mutable-subclass = "UserNotifications.UNNotificationContent.UNMutableNotificationContent"
+class.UNMutableNotificationContent.counterpart.immutable-superclass = "UserNotifications.UNNotificationContent.UNNotificationContent"
 
 # Unsure whether this should depend on Intents, or vice-versa
 class.UNNotificationAttributedMessageContext.methods."contextWithSendMessageIntent:attributedContent:".skipped = true

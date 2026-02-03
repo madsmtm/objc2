@@ -13,7 +13,6 @@ use semver::Version;
 use serde::{de, Deserialize, Deserializer};
 
 use crate::name_translation::cf_no_ref;
-use crate::stmt::{Counterpart, Derives};
 use crate::{ItemIdentifier, Location};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -830,46 +829,33 @@ impl LibraryConfig {
     }
 }
 
-impl<'de> de::Deserialize<'de> for Counterpart {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: de::Deserializer<'de>,
-    {
-        struct CounterpartVisitor;
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
+pub struct Derives(Cow<'static, str>);
 
-        impl de::Visitor<'_> for CounterpartVisitor {
-            type Value = Counterpart;
-
-            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                formatter.write_str("item identifier")
-            }
-
-            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-            where
-                E: de::Error,
-            {
-                if let Some(value) = value.strip_prefix("ImmutableSuperclass(") {
-                    let value = value
-                        .strip_suffix(')')
-                        .ok_or_else(|| de::Error::custom("end parenthesis"))?;
-                    let item = ItemIdentifier::from_str(value).map_err(de::Error::custom)?;
-                    return Ok(Counterpart::ImmutableSuperclass(item));
-                }
-
-                if let Some(value) = value.strip_prefix("MutableSubclass(") {
-                    let value = value
-                        .strip_suffix(')')
-                        .ok_or_else(|| de::Error::custom("end parenthesis"))?;
-                    let item = ItemIdentifier::from_str(value).map_err(de::Error::custom)?;
-                    return Ok(Counterpart::MutableSubclass(item));
-                }
-
-                Err(de::Error::custom(format!("unknown variant {value:?}")))
-            }
-        }
-
-        deserializer.deserialize_str(CounterpartVisitor)
+impl Default for Derives {
+    fn default() -> Self {
+        Derives("Debug, PartialEq, Eq, Hash".into())
     }
+}
+
+impl fmt::Display for Derives {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if !self.0.is_empty() {
+            write!(f, "#[derive({})]", self.0)?;
+        }
+        Ok(())
+    }
+}
+
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq, Hash, Default)]
+pub enum Counterpart {
+    #[serde(rename = "no-counterpart")]
+    #[default]
+    NoCounterpart,
+    #[serde(rename = "immutable-superclass")]
+    ImmutableSuperclass(ItemIdentifier),
+    #[serde(rename = "mutable-subclass")]
+    MutableSubclass(ItemIdentifier),
 }
 
 fn deserialize_argument_overrides<'de, D>(

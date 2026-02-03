@@ -8,4 +8,4 @@ visionos = "1.0"
 
 # Protocol conformance has mostly carried over from NSString, and a mutable
 # copy returns NSMutableString.
-class.CSLocalizedString.counterpart = "MutableSubclass(Foundation.NSString.NSMutableString)"
+class.CSLocalizedString.counterpart.mutable-subclass = "Foundation.NSString.NSMutableString"

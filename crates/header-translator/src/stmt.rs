@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -11,8 +10,8 @@ use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::availability::Availability;
 use crate::cfgs::PlatformCfg;
-use crate::config::StmtData;
-use crate::config::{Config, LibraryConfig, MethodData};
+use crate::config::Derives;
+use crate::config::{Config, Counterpart, LibraryConfig, MethodData, StmtData};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
@@ -33,24 +32,6 @@ use crate::rust_type::SafetyProperty;
 use crate::rust_type::Ty;
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
-
-#[derive(serde::Deserialize, Debug, Clone, PartialEq, Eq)]
-pub struct Derives(Cow<'static, str>);
-
-impl Default for Derives {
-    fn default() -> Self {
-        Derives("Debug, PartialEq, Eq, Hash".into())
-    }
-}
-
-impl fmt::Display for Derives {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if !self.0.is_empty() {
-            write!(f, "#[derive({})]", self.0)?;
-        }
-        Ok(())
-    }
-}
 
 /// Find all protocols, protocol's protocols and superclass' protocols.
 fn parse_protocols<'tu>(
@@ -443,14 +424,6 @@ where
             )
         })
         .chain(iter::once(ItemTree::objc("__macros__")))
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
-pub enum Counterpart {
-    #[default]
-    NoCounterpart,
-    ImmutableSuperclass(ItemIdentifier),
-    MutableSubclass(ItemIdentifier),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

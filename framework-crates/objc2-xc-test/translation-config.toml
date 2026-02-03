@@ -11,8 +11,8 @@ tvos = "9.0"
 watchos = "2.0"
 visionos = "1.0"
 
-class.XCTIssue.counterpart = "MutableSubclass(XCTest.XCTMutableIssue)"
-class.XCTMutableIssue.counterpart = "ImmutableSuperclass(XCTest.XCTIssue)"
+class.XCTIssue.counterpart.mutable-subclass = "XCTest.XCTMutableIssue"
+class.XCTMutableIssue.counterpart.immutable-superclass = "XCTest.XCTIssue"
 
 # Uses va_list
 class.XCTestLog.methods."testLogWithFormat:arguments:".skipped = true
