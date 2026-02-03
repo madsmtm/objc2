@@ -25,8 +25,7 @@ fn non_pdf_context() {
                 CGImageComponentInfo::Integer,
                 CGImageByteOrderInfo::Order32Little,
                 CGImagePixelFormatInfo::Packed,
-            )
-            .0,
+            ),
         )
         .unwrap()
     };

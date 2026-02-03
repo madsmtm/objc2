@@ -76,10 +76,6 @@ fn.CGColorSpaceGetName.renamed = "get_name"
 # Conflicts with `CGColorSpaceGetBaseColorSpace`.
 fn.CGColorSpaceCopyBaseColorSpace.renamed = "copy_base_color_space"
 
-# TODO(breaking): Has better typed parameter.
-fn.CGBitmapContextCreateWithData.skipped = true
-fn.CGBitmapContextCreate.skipped = true
-
 # Swift-only wrappers.
 fn.__CGBitmapContextCreateWithData.skipped = true
 fn.__CGBitmapContextCreate.skipped = true
