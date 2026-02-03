@@ -13,6 +13,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **BREAKING**: Changed `DispatchData::map` to take a reference instead of a pointer.
 - **BREAKING**: Changed `DispatchData::region` to take a reference instead of a pointer. This makes it the method safe.
 - **BREAKING**: Changed `DispatchIO::with_path` to take a `&CStr`.
+- **BREAKING**: Renamed `DispatchQueue::new_with_target` to `::with_target`.
+- **BREAKING**: Split `DispatchWorkloop::new` into `::new` and `::new_inactive`.
+- **BREAKING**: Use `&CStr` instead of `&str` in `DispatchQueue` and `DispatchWorkloop` creation methods.
+
+### Removed
+- **BREAKING**: Removed `QueueAfterError`.
 
 ### Fixed
 - Fixed reference counting in `DispatchSemaphoreGuard::release`.

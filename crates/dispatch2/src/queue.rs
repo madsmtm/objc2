@@ -1,5 +1,4 @@
 use alloc::boxed::Box;
-use alloc::ffi::CString;
 use core::ffi::c_long;
 use core::ptr::NonNull;
 
@@ -11,14 +10,6 @@ use crate::generated::{
 use crate::{
     DispatchObject, DispatchQoS, DispatchRetained, DispatchTime, QualityOfServiceClassFloorError,
 };
-
-/// Error returned by [`DispatchQueue::after`].
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-#[non_exhaustive]
-pub enum QueueAfterError {
-    /// The given timeout value will result in an overflow when converting to dispatch time.
-    TimeOverflow,
-}
 
 enum_with_val! {
     /// Queue priority.
@@ -40,7 +31,7 @@ enum_with_val! {
     }
 }
 
-/// Global queue identifier definition for [`DispatchQueue::new`] and [`DispatchQueue::new_with_target`].
+/// Global queue identifier definition for [`DispatchQueue::global_queue`].
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum GlobalQueueIdentifier {
     /// Standard priority based queue.
@@ -70,27 +61,6 @@ dispatch_object!(
 dispatch_object_not_data!(unsafe DispatchQueue);
 
 impl DispatchQueue {
-    /// Create a new [`DispatchQueue`].
-    #[inline]
-    pub fn new(label: &str, queue_attribute: Option<&DispatchQueueAttr>) -> DispatchRetained<Self> {
-        let label = CString::new(label).expect("Invalid label!");
-
-        Self::__new(Some(&label), queue_attribute)
-    }
-
-    /// Create a new [`DispatchQueue`] with a given target [`DispatchQueue`].
-    #[inline]
-    pub fn new_with_target(
-        label: &str,
-        queue_attribute: Option<&DispatchQueueAttr>,
-        target: Option<&DispatchQueue>,
-    ) -> DispatchRetained<Self> {
-        let label = CString::new(label).expect("Invalid label!");
-
-        // SAFETY: `target` queue TODO.
-        unsafe { Self::__new_with_target(Some(&label), queue_attribute, target) }
-    }
-
     /// Return a system-defined global concurrent [`DispatchQueue`] with the priority derived from [GlobalQueueIdentifier].
     #[inline]
     pub fn global_queue(identifier: GlobalQueueIdentifier) -> DispatchRetained<Self> {
@@ -144,7 +114,7 @@ impl DispatchQueue {
 
     /// Enqueue a function for execution at the specified time on the [`DispatchQueue`].
     #[inline]
-    pub fn after<F>(&self, when: DispatchTime, work: F) -> Result<(), QueueAfterError>
+    pub fn after<F>(&self, when: DispatchTime, work: F)
     where
         F: Send + FnOnce(),
     {
@@ -152,8 +122,6 @@ impl DispatchQueue {
 
         // Safety: object cannot be null and work is wrapped to avoid ABI incompatibility.
         unsafe { Self::exec_after_f(when, self, work_boxed, function_wrapper::<F>) };
-
-        Ok(())
     }
 
     /// Enqueue a barrier function for asynchronous execution on the [`DispatchQueue`] and return immediately.
@@ -283,6 +251,7 @@ pub fn dispatch_main() -> ! {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use core::ffi::CStr;
 
     #[test]
     fn test_create_main_queue() {
@@ -292,7 +261,10 @@ mod tests {
     #[test]
     #[cfg(feature = "std")]
     fn test_serial_queue() {
-        let queue = DispatchQueue::new("com.github.madsmtm.objc2", DispatchQueueAttr::SERIAL);
+        let queue = DispatchQueue::new(
+            Some(CStr::from_bytes_with_nul(b"com.github.madsmtm.objc2\0").unwrap()),
+            DispatchQueueAttr::SERIAL,
+        );
         let (tx, rx) = std::sync::mpsc::channel();
         queue.exec_async(move || {
             tx.send(()).unwrap();
@@ -303,7 +275,10 @@ mod tests {
     #[test]
     #[cfg(feature = "std")]
     fn test_concurrent_queue() {
-        let queue = DispatchQueue::new("com.github.madsmtm.objc2", DispatchQueueAttr::concurrent());
+        let queue = DispatchQueue::new(
+            Some(CStr::from_bytes_with_nul(b"com.github.madsmtm.objc2\0").unwrap()),
+            DispatchQueueAttr::concurrent(),
+        );
         let (tx, rx) = std::sync::mpsc::channel();
         let cloned_tx = tx.clone();
         queue.exec_async(move || {
@@ -333,7 +308,10 @@ mod tests {
     #[test]
     #[cfg(feature = "std")]
     fn test_share_queue_across_threads() {
-        let queue = DispatchQueue::new("com.github.madsmtm.objc2", DispatchQueueAttr::SERIAL);
+        let queue = DispatchQueue::new(
+            Some(CStr::from_bytes_with_nul(b"com.github.madsmtm.objc2\0").unwrap()),
+            DispatchQueueAttr::SERIAL,
+        );
         let (tx, rx) = std::sync::mpsc::channel();
         let cloned_tx = tx.clone();
         let cloned_queue = queue.clone();
@@ -353,7 +331,10 @@ mod tests {
     #[test]
     #[cfg(feature = "std")]
     fn test_move_queue_between_threads() {
-        let queue = DispatchQueue::new("com.github.madsmtm.objc2", DispatchQueueAttr::SERIAL);
+        let queue = DispatchQueue::new(
+            Some(CStr::from_bytes_with_nul(b"com.github.madsmtm.objc2\0").unwrap()),
+            DispatchQueueAttr::SERIAL,
+        );
         let (tx, rx) = std::sync::mpsc::channel();
         std::thread::spawn(move || {
             queue.exec_async(move || {

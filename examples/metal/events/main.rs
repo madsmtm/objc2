@@ -25,7 +25,7 @@ fn main() {
 
     // Shareable event listener
     let my_queue = DispatchQueue::new(
-        "com.example.apple-samplecode.MyQueue",
+        Some(c"com.example.apple-samplecode.MyQueue"),
         DispatchQueueAttr::SERIAL,
     );
 

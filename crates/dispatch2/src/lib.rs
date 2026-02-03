@@ -12,7 +12,7 @@
 //! ```
 //! use dispatch2::{DispatchQueue, DispatchQueueAttr};
 //!
-//! let queue = DispatchQueue::new("example_queue", DispatchQueueAttr::SERIAL);
+//! let queue = DispatchQueue::new(Some(c"example_queue"), DispatchQueueAttr::SERIAL);
 //! queue.exec_async(|| println!("Hello"));
 //! queue.exec_sync(|| println!("World"));
 //! ```
@@ -96,7 +96,7 @@ pub use self::object::{
 pub use self::once::DispatchOnce;
 pub use self::queue::{
     dispatch_main, DispatchQueue, DispatchQueueAttr, DispatchQueueGlobalPriority,
-    GlobalQueueIdentifier, QueueAfterError,
+    GlobalQueueIdentifier,
 };
 pub use self::retained::DispatchRetained;
 pub use self::semaphore::{DispatchSemaphore, DispatchSemaphoreGuard};

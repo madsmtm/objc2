@@ -1,7 +1,6 @@
-use alloc::ffi::CString;
 use core::{borrow::Borrow, ops::Deref};
 
-use crate::{DispatchQueue, DispatchRetained};
+use crate::DispatchQueue;
 
 dispatch_object!(
     /// Dispatch workloop queue.
@@ -11,20 +10,6 @@ dispatch_object!(
 );
 
 dispatch_object_not_data!(unsafe DispatchWorkloop);
-
-impl DispatchWorkloop {
-    /// Create a new [`DispatchWorkloop`].
-    #[inline]
-    pub fn new(label: &str, inactive: bool) -> DispatchRetained<Self> {
-        let label = CString::new(label).expect("Invalid label!");
-
-        if inactive {
-            DispatchWorkloop::__new_inactive(Some(&label))
-        } else {
-            DispatchWorkloop::__new(Some(&label))
-        }
-    }
-}
 
 impl Deref for DispatchWorkloop {
     type Target = DispatchQueue;

@@ -222,12 +222,6 @@ fn.dispatch_once.renamed = "once_with_block"
 fn.dispatch_once_f.implementor = "Dispatch.DispatchOnce"
 fn.dispatch_once_f.renamed = "once_f"
 
-# Mapped to convert label CStr.
-fn.dispatch_queue_create.renamed = "__new"
-fn.dispatch_queue_create_with_target.renamed = "__new_with_target"
-fn.dispatch_workloop_create.renamed = "__new"
-fn.dispatch_workloop_create_inactive.renamed = "__new_inactive"
-
 ##
 ## Bounds information
 ##
