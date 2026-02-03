@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Implement `Encode` for i128 and u128, allowing using them in more FFI situations.
 * Added `Ivars<T>` type alias for more easily accessing `<T as DefineClass>::Ivars`.
 * Added support for `&CStr` in method argument and return types.
+* Implement `Encode` on `Result<(), T>` when `T: OptionEncode`.
 
 ## Changed
 * **BREAKING** (very slightly): `define_class!` now rejects non-static and

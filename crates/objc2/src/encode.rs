@@ -241,8 +241,12 @@ pub unsafe trait RefEncode {
 /// prevent you from implementing [`Encode`]/[`RefEncode`] for
 /// `Option<CustomType>`.
 ///
-/// [option-repr]: https://doc.rust-lang.org/1.75.0/std/option/index.html#representation
-/// [nomicon-npo]: https://doc.rust-lang.org/nightly/nomicon/ffi.html#the-nullable-pointer-optimization
+/// This trait also adds implementations for `Result<(), T>`, as [this follows
+/// similar rules][result-repr].
+///
+/// [option-repr]: https://doc.rust-lang.org/std/option/index.html#representation
+/// [nomicon-npo]: https://doc.rust-lang.org/nomicon/ffi.html#the-nullable-pointer-optimization
+/// [result-repr]: https://doc.rust-lang.org/std/result/index.html#representation
 ///
 ///
 /// # Safety
@@ -272,6 +276,33 @@ pub unsafe trait RefEncode {
 ///
 /// assert_eq!(<Option<MyBlockType>>::ENCODING, MyBlockType::ENCODING);
 /// ```
+///
+/// Create a custom error type.
+///
+/// ```
+/// use objc2::encode::{Encode, RefEncode, Encoding, OptionEncode};
+/// use core::num::NonZero;
+///
+/// #[repr(transparent)]
+/// struct CGError(NonZero<i32>);
+///
+/// // SAFETY: `MyBlockType` is `repr(transparent)` over `NonZero<i32>`.
+/// unsafe impl Encode for CGError {
+///     const ENCODING: Encoding = <NonZero<i32>>::ENCODING;
+/// }
+///
+/// // SAFETY: `MyBlockType` is `repr(transparent)` over `NonZero<i32>`.
+/// unsafe impl RefEncode for CGError {
+///     const ENCODING_REF: Encoding = <NonZero<i32>>::ENCODING_REF;
+/// }
+///
+/// // SAFETY: `MyBlockType` is `repr(transparent)` over `NonZero<i32>`, which
+/// // means it follows the null-pointer optimization.
+/// unsafe impl OptionEncode for CGError {}
+///
+/// // Can now use `Result<(), CGError>` in methods.
+/// assert_eq!(<Result<(), CGError>>::ENCODING, i32::ENCODING);
+/// ```
 pub unsafe trait OptionEncode {}
 
 // SAFETY: Implementor of `OptionEncode` guarantees this impl is sound
@@ -288,6 +319,35 @@ unsafe impl<T: Encode + OptionEncode> Encode for Option<T> {
 unsafe impl<T: RefEncode + OptionEncode> RefEncode for Option<T> {
     const ENCODING_REF: Encoding = {
         if mem::size_of::<T>() != mem::size_of::<Option<T>>() {
+            panic!("invalid OptionEncode + RefEncode implementation");
+        }
+        T::ENCODING_REF
+    };
+}
+
+// SAFETY: `Result<(), T>` has the same ABI as `Option<T>` when
+// `size_of::<T>() == size_of::<Option<T>>()`, as is the case here.
+// https://doc.rust-lang.org/std/result/index.html#representation
+//
+// These impls allow us to write e.g. `Result<(), NonZero<u32>>`, and have
+// that mean "0 => success, anything else => error".
+//
+// Cases where you want "0 => error, anything else => success" are harder to
+// do, since we can't be generic over the error type while still allowing this
+// impl. That's probably fine though.
+unsafe impl<T: Encode + OptionEncode> Encode for Result<(), T> {
+    const ENCODING: Encoding = {
+        if mem::size_of::<T>() != mem::size_of::<Result<(), T>>() {
+            panic!("invalid OptionEncode + Encode implementation");
+        }
+        T::ENCODING
+    };
+}
+
+// SAFETY: Same as above.
+unsafe impl<T: RefEncode + OptionEncode> RefEncode for Result<(), T> {
+    const ENCODING_REF: Encoding = {
+        if mem::size_of::<T>() != mem::size_of::<Result<(), T>>() {
             panic!("invalid OptionEncode + RefEncode implementation");
         }
         T::ENCODING_REF
@@ -1033,6 +1093,12 @@ mod tests {
             <extern "C-unwind" fn()>::ENCODING,
             Encoding::Pointer(&Encoding::Unknown)
         );
+    }
+
+    #[test]
+    fn option_encode() {
+        assert_eq!(<Option<NonZeroU32>>::ENCODING, u32::ENCODING);
+        assert_eq!(<Result<(), NonZeroU32>>::ENCODING, u32::ENCODING);
     }
 
     #[test]
