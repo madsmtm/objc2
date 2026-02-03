@@ -1512,14 +1512,14 @@ pub enum Ty {
     Struct {
         id: ItemIdentifier,
         /// FIXME: This does not work for recursive structs.
-        fields: Vec<Ty>,
+        fields: Vec<(String, Ty)>,
         /// Whether the struct's declaration has a bridge attribute.
         is_bridged: bool,
     },
     Union {
         id: ItemIdentifier,
         /// FIXME: This does not work for recursive structs.
-        fields: Vec<Ty>,
+        fields: Vec<(String, Ty)>,
     },
 }
 
@@ -1677,17 +1677,21 @@ impl Ty {
                     )
                 ) {
                     // Fake fields, we'll have to define it ourselves
-                    vec![Self::Pointee(PointeeTy::Self_)]
+                    vec![("foo".to_string(), Self::Pointee(PointeeTy::Self_))]
                 } else {
                     ty.get_fields()
                         .expect("struct fields")
                         .into_iter()
                         .map(|field| {
-                            Self::parse(
-                                field.get_type().expect("struct field type"),
-                                Lifetime::Unspecified,
-                                false,
-                                context,
+                            let field_name = field.get_name().unwrap();
+                            (
+                                field_name,
+                                Self::parse(
+                                    field.get_type().expect("struct field type"),
+                                    Lifetime::Unspecified,
+                                    false,
+                                    context,
+                                ),
                             )
                         })
                         .collect()
@@ -2566,7 +2570,7 @@ impl Ty {
                 vec![ItemTree::new(id.clone(), ty.required_items())]
             }
             Self::Struct { id, fields, .. } | Self::Union { id, fields, .. } => {
-                let fields = fields.iter().flat_map(|field| field.required_items());
+                let fields = fields.iter().flat_map(|(_, field)| field.required_items());
                 vec![ItemTree::new(id.clone(), fields)]
             }
         };
@@ -2588,7 +2592,7 @@ impl Ty {
             Self::Enum { ty, .. } => ty.requires_mainthreadmarker(self_requires),
             Self::Struct { fields, .. } | Self::Union { fields, .. } => fields
                 .iter()
-                .any(|field| field.requires_mainthreadmarker(self_requires)),
+                .any(|(_, field)| field.requires_mainthreadmarker(self_requires)),
         }
     }
 
@@ -2609,10 +2613,10 @@ impl Ty {
             Self::Enum { ty, .. } => ty.provides_mainthreadmarker(self_provides),
             Self::Struct { fields, .. } => fields
                 .iter()
-                .any(|field| field.provides_mainthreadmarker(self_provides)),
+                .any(|(_, field)| field.provides_mainthreadmarker(self_provides)),
             Self::Union { fields, .. } => fields
                 .iter()
-                .all(|field| field.provides_mainthreadmarker(self_provides)),
+                .all(|(_, field)| field.provides_mainthreadmarker(self_provides)),
             _ => false,
         }
     }
@@ -2663,9 +2667,12 @@ impl Ty {
             Self::Struct { fields, .. } => {
                 fields
                     .iter()
-                    .enumerate()
-                    .fold(TypeSafety::SAFE, |safety, (i, field)| {
-                        safety.merge(field.safety().context(format!("struct field {}", i + 1)))
+                    .fold(TypeSafety::SAFE, |safety, (field_name, field)| {
+                        safety.merge(
+                            field
+                                .safety()
+                                .context(format!("struct field `{field_name}`")),
+                        )
                     })
             }
             // Conservative.
@@ -2816,7 +2823,7 @@ impl Ty {
                 .filter(|implementor| implementor.id() == id),
             Self::Enum { id, ty } => Some(ItemTree::new(id.clone(), ty.required_items())),
             Self::Struct { id, fields, .. } | Self::Union { id, fields } => {
-                let fields = fields.iter().flat_map(|field| field.required_items());
+                let fields = fields.iter().flat_map(|(_, field)| field.required_items());
                 Some(ItemTree::new(id.clone(), fields))
             }
         }
@@ -2962,7 +2969,7 @@ impl Ty {
                 false
             }
             Self::TypeDef { to, .. } => to.contains_union(),
-            Self::Struct { fields, .. } => fields.iter().any(|field| field.contains_union()),
+            Self::Struct { fields, .. } => fields.iter().any(|(_, field)| field.contains_union()),
             _ => false,
         }
     }
@@ -3023,7 +3030,7 @@ impl Ty {
                 fields,
                 is_bridged: false,
                 ..
-            } => fields.iter().all(|field| field.has_zero_default()),
+            } => fields.iter().all(|(_, field)| field.has_zero_default()),
             _ => false,
         }
     }
@@ -4091,7 +4098,7 @@ impl Ty {
             Self::Pointer { pointee, .. } => pointee.needs_simd(),
             Self::Array { element_type, .. } => element_type.needs_simd(),
             Self::Struct { fields, .. } | Self::Union { fields, .. } => {
-                fields.iter().any(|field| field.needs_simd())
+                fields.iter().any(|(_, field)| field.needs_simd())
             }
             Self::Pointee(
                 PointeeTy::Fn {
@@ -4440,7 +4447,7 @@ impl Ty {
                     | Primitive::PtrDiff
             ),
             Self::Struct { fields, .. } | Self::Union { fields, .. } => {
-                fields.iter().any(|field| field.can_affect_bounds())
+                fields.iter().any(|(_, field)| field.can_affect_bounds())
             }
             // Enumerations are intentionally not bounds-affecting (e.g. not
             // `MTLIndexType`).
@@ -4587,7 +4594,7 @@ mod tests {
             id: ItemIdentifier::dummy(0),
             to: Box::new(Ty::Struct {
                 id: ItemIdentifier::dummy(1),
-                fields: vec![Ty::Primitive(Primitive::Char)],
+                fields: vec![("foo".to_string(), Ty::Primitive(Primitive::Char))],
                 is_bridged: false,
             }),
         };
