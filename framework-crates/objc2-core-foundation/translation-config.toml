@@ -111,6 +111,111 @@ fn.CFURLCreateWithString.renamed = "__from_string"
 fn.CFURLGetString.renamed = "__string"
 
 ##
+## Fixing generics.
+##
+
+# Key-value is same as for NSAttributedString.
+fn.CFAttributedStringCreate.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFAttributedStringGetAttributes.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFAttributedStringGetAttributesAndLongestEffectiveRange.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFAttributedStringSetAttributes.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+# Key being string for info dictionaries is same as NSBundle.infoDictionary.
+fn.CFBundleGetAllBundles.return.generics = ["CoreFoundation.CFBundle.CFBundle"]
+fn.CFBundleCreateBundlesFromDirectory.return.generics = ["CoreFoundation.CFBundle.CFBundle"]
+fn.CFBundleGetInfoDictionary.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+fn.CFBundleGetLocalInfoDictionary.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+fn.CFBundleCopyInfoDictionaryInDirectory.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+fn.CFBundleCopyResourceURLsOfType.return.generics = ["CoreFoundation.CFURL.CFURL"]
+fn.CFBundleCopyLocalizedStringForLocalizations.arguments.4.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFBundleCopyResourceURLsOfTypeInDirectory.return.generics = ["CoreFoundation.CFURL.CFURL"]
+fn.CFBundleCopyBundleLocalizations.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFBundleCopyPreferredLocalizationsFromArray.arguments.0.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFBundleCopyPreferredLocalizationsFromArray.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFBundleCopyLocalizationsForPreferences.arguments.0.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFBundleCopyLocalizationsForPreferences.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFBundleCopyLocalizationsForPreferences.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFBundleCopyResourceURLsOfTypeForLocalization.return.generics = ["CoreFoundation.CFURL.CFURL"]
+fn.CFBundleCopyInfoDictionaryForURL.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+fn.CFBundleCopyLocalizationsForURL.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFBundleCopyExecutableArchitecturesForURL.return.generics = ["CoreFoundation.CFNumber.CFNumber"]
+fn.CFBundleCopyExecutableArchitectures.return.generics = ["CoreFoundation.CFNumber.CFNumber"]
+fn.CFBundleGetFunctionPointersForNames.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFBundleGetDataPointersForNames.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+
+# Key-value is same as for NSError.
+fn.CFErrorCreate.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFErrorCopyUserInfo.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CFLocaleCopyAvailableLocaleIdentifiers.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFLocaleCopyISOLanguageCodes.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFLocaleCopyISOCountryCodes.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFLocaleCopyISOCurrencyCodes.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFLocaleCopyCommonISOCurrencyCodes.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFLocaleCopyPreferredLanguages.return.generics = ["CoreFoundation.CFLocale.CFLocaleIdentifier"] # TODO: Somehow communicate that CFString is required for this to be available
+fn.CFLocaleCreateComponentsFromLocaleIdentifier.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFString.CFString"]
+fn.CFLocaleCreateLocaleIdentifierFromComponents.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFString.CFString"]
+
+# `userInfo` dict generics are allowed to be anything, except if a "distributed" notification.
+# typedef.CFNotificationCallback.arguments.4.generics = []
+fn.CFNotificationCenterPostNotification.arguments.3.generics = []
+fn.CFNotificationCenterPostNotificationWithOptions.arguments.3.generics = []
+
+fn.CFPlugInFindFactoriesForPlugInType.return.generics = ["CoreFoundation.CFUUID.CFUUID"]
+fn.CFPlugInFindFactoriesForPlugInTypeInPlugIn.return.generics = ["CoreFoundation.CFUUID.CFUUID"]
+
+# Preferences are property lists
+fn.CFPreferencesCopyMultiple.arguments.0.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFPreferencesCopyMultiple.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFPreferencesSetMultiple.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFPreferencesSetMultiple.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFPreferencesCopyKeyList.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFPreferencesCopyApplicationList.return.generics = [] # TODO: Maybe String?
+
+fn.CFRunLoopCopyAllModes.return.generics = ["CoreFoundation.CFRunLoop.CFRunLoopMode"]
+
+fn.CFStringCreateArrayWithFindResults.return.generics = [] # TODO: Pointers to CFRange.
+fn.CFStringCreateByCombiningStrings.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFStringCreateArrayBySeparatingStrings.return.generics = ["CoreFoundation.CFString.CFString"]
+
+# TODO: Unclear type.
+fn.CFStringTokenizerGetCurrentSubTokens.arguments.3.generics = []
+
+fn.CFTimeZoneCopyKnownNames.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFTimeZoneCopyAbbreviationDictionary.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFString.CFString"]
+fn.CFTimeZoneSetAbbreviationDictionary.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFString.CFString"]
+
+# Resource property keys are CFString keys.
+# See also `-[NSURL bookmarkDataWithOptions:includingResourceValuesForKeys:relativeToURL:error:]`.
+fn.CFURLCopyResourcePropertiesForKeys.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFURLCopyResourcePropertiesForKeys.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFURLSetResourcePropertiesForKeys.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFURLCreateBookmarkData.arguments.3.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFURLCreateByResolvingBookmarkData.arguments.4.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFURLCreateResourcePropertiesForKeysFromBookmarkData.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFURLCreateResourcePropertiesForKeysFromBookmarkData.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CFURLCreateDataAndPropertiesFromResource.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFURLCreateDataAndPropertiesFromResource.arguments.4.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFURLWriteDataAndPropertiesToResource.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CFURLEnumeratorCreateForDirectoryURL.arguments.3.generics = ["CoreFoundation.CFString.CFString"]
+fn.CFURLEnumeratorCreateForMountedVolumes.arguments.2.generics = ["CoreFoundation.CFString.CFString"]
+
+fn.CFUserNotificationCreate.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFUserNotificationGetResponseDictionary.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFUserNotificationUpdate.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+# TODO: Support this in `header-translator`
+# struct.CFXMLElementInfo.fields.0.generics = [...]
+# struct.CFXMLElementInfo.fields.1.generics = [...]
+
+# TODO.
+fn.CFXMLTreeCreateFromDataWithError.arguments.5.generics = []
+fn.CFXMLCreateStringByEscapingEntities.arguments.2.generics = []
+fn.CFXMLCreateStringByUnescapingEntities.arguments.2.generics = []
+
+##
 ## Safety
 ##
 
