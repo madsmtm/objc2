@@ -75,12 +75,16 @@ unstable-darwin-objc = []
 CaptiveNetwork = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFPropertyList",
+    "objc2-core-foundation/CFString",
 ]
 DHCPClientPreferences = []
 SCDynamicStore = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFPropertyList",
     "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFString",
 ]
 SCDynamicStoreCopyDHCPInfo = [
     "objc2-core-foundation/CFData",
@@ -97,10 +101,12 @@ SCNetworkConfiguration = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFNumber",
+    "objc2-core-foundation/CFString",
 ]
 SCNetworkConnection = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFString",
 ]
 SCNetworkReachability = [
     "bitflags",
@@ -111,7 +117,12 @@ SCPreferences = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFString",
 ]
-SCPreferencesPath = ["objc2-core-foundation/CFDictionary"]
+SCPreferencesPath = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFPropertyList",
+    "objc2-core-foundation/CFString",
+]
 SCPreferencesSetSpecific = ["objc2-core-foundation/CFString"]
 SCSchemaDefinitions = []

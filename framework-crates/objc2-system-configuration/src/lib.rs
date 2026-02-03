@@ -16,6 +16,8 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+// TODO(breaking): Figure out `SCNetworkInterfaceRefreshConfiguration`'s ABI
+#[allow(improper_ctypes_definitions)]
 mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
