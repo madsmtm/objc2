@@ -10,10 +10,6 @@ watchos = "2.0"
 visionos = "1.0"
 gnustep = true
 
-# FIXME: Avoid the need for this
-external.NSImage.module = "AppKit.NSImage"
-external.NSPortMessage.module = "Foundation.NSPortMessage"
-
 # ns_consumed / NS_RELEASES_ARGUMENT / cf_consumed / CF_CONSUMED
 fn.CFBridgingRelease.skipped = true
 fn.CFBridgingRetain.skipped = true
@@ -21,29 +17,22 @@ fn.NSMakeCollectable.skipped = true
 fn.NSFreeMapTable.skipped = true
 protocol.NSKeyedUnarchiverDelegate.methods."unarchiver:didDecodeObject:".skipped = true
 
-# TODO(breaking): Memory-management affecting, should be skipped instead.
-fn.NSDeallocateObject.unsafe = true
-fn.NSIncrementExtraRefCount.unsafe = true
-fn.NSDecrementExtraRefCountWasZero.unsafe = true
-fn.NSExtraRefCount.unsafe = true
+# Also memory-management affecting
+fn.NSDeallocateObject.skipped = true
+fn.NSIncrementExtraRefCount.skipped = true
+fn.NSDecrementExtraRefCountWasZero.skipped = true
+fn.NSExtraRefCount.skipped = true
 
 # ns_consumes_self / NS_REPLACES_RECEIVER
 class.NSObject.methods."awakeAfterUsingCoder:".skipped = true
 
 # Uses `NSArray<void (^)(void)>`, which is difficult to handle
+# Specifically, we have to be able to retain and release `Block`s.
 class.NSBlockOperation.methods.executionBlocks.skipped = true
-
-# These use `Class<NSItemProvider...>`, which is unsupported
-class.NSItemProvider.methods."registerObjectOfClass:visibility:loadHandler:".skipped = true
-class.NSItemProvider.methods."canLoadObjectOfClass:".skipped = true
-class.NSItemProvider.methods."loadObjectOfClass:completionHandler:".skipped = true
 
 # Has `error:` parameter, but returns NSInteger (where 0 means error)
 class.NSJSONSerialization.methods."writeJSONObject:toStream:options:error:".skipped = true
 class.NSPropertyListSerialization.methods."writePropertyList:toStream:format:options:error:".skipped = true
-
-# Not supported on clang 11.0.0
-class.NSBundle.methods."localizedAttributedStringForKey:value:table:".skipped = true
 
 # Root class, defined in `objc2` for now
 class.NSProxy.skipped = true
@@ -55,7 +44,7 @@ typedef.NSZone.skipped = true
 # Contains bitfields
 struct.NSDecimal.skipped = true
 
-# Uses `c_ulong` which means we need to specify the encoding manually.
+# Uses `c_ulong` in an array which means we need to specify the encoding manually.
 struct.NSFastEnumerationState.skipped = true
 
 # Overridden fmt::Debug because it's prettier
@@ -113,15 +102,22 @@ enum.NSRectEdge.skipped = true
 protocol.NSCopying.skipped = true
 protocol.NSMutableCopying.skipped = true
 
-# Manual definitions
-class.NSException.methods.raise.skipped = true
-class.NSData.methods.bytes.skipped = true
-class.NSMutableData.methods.length.skipped = true
+# Manual definitions with better return type.
+class.NSException.methods.raise.renamed = "__raise"
+class.NSData.methods.bytes.renamed = "__bytes"
+class.NSMutableData.methods.mutableBytes.renamed = "__mutableBytes"
+
+# You shouldn't create empty `NSError`/`NSException`s.
 class.NSError.methods.new.skipped = true
 class.NSException.methods.new.skipped = true
 
-# Wrong type on GNUStep
-class.NSMutableData.methods.mutableBytes.skipped = true
+# GNUStep returns NULL from these methods, and Apple's documentation says
+# that's valid (even though the headers say otherwise).
+class.NSData.methods.bytes.return.nullability = "nullable"
+class.NSMutableData.methods.mutableBytes.return.nullability = "nullable"
+
+# Unnecessary, this derefs to `NSData` which has a `length` method.
+class.NSMutableData.methods.length.skipped = true
 
 # Uses va_list
 class.NSAttributedString.methods."initWithFormat:options:locale:arguments:".skipped = true
@@ -135,20 +131,6 @@ class.NSString.methods."initWithValidatedFormat:validFormatSpecifiers:locale:arg
 class.NSAttributedString.methods."initWithFormat:options:locale:context:arguments:".skipped = true
 class.NSMutableAttributedString.methods."initWithFormat:options:locale:context:arguments:".skipped = true
 fn.NSLogv.skipped = true
-
-# Our implementation of superclass methods currently place them in the wrong
-# module, so we do this hack for now.
-class.NSMutableAttributedString.methods."initWithURL:options:documentAttributes:error:".skipped = true
-class.NSMutableAttributedString.methods."initWithData:options:documentAttributes:error:".skipped = true
-class.NSMutableAttributedString.methods."initWithRTF:documentAttributes:".skipped = true
-class.NSMutableAttributedString.methods."initWithRTFD:documentAttributes:".skipped = true
-class.NSMutableAttributedString.methods."initWithHTML:documentAttributes:".skipped = true
-class.NSMutableAttributedString.methods."initWithHTML:baseURL:documentAttributes:".skipped = true
-class.NSMutableAttributedString.methods."initWithDocFormat:documentAttributes:".skipped = true
-class.NSMutableAttributedString.methods."initWithHTML:options:documentAttributes:".skipped = true
-class.NSMutableAttributedString.methods."initWithRTFDFileWrapper:documentAttributes:".skipped = true
-class.NSMutableAttributedString.methods."initWithURL:documentAttributes:".skipped = true
-class.NSMutableAttributedString.methods."initWithPath:documentAttributes:".skipped = true
 
 # Marked as API_UNAVAILABLE in a category, so we hit the duplicate checking
 class.NSLocale.methods.init.skipped = true
@@ -334,6 +316,10 @@ unsafe-default-safety.bounds-checked-internally = true
 # in `header-translator`.
 class.NSEnumerator.methods.nextObject.unsafe = false
 class.NSEnumerator.methods.allObjects.unsafe = false
+
+# `NSException` is immutable, so it is safe to give to the place where
+# `@catch` receives it.
+class.NSException.methods.raise.unsafe = false
 
 # Taking `&AnyClass` is not always safe, but this specific instance is
 # fine, since it only converts the class name to NSString.

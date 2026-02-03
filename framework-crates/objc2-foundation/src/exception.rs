@@ -5,7 +5,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::exception::Exception;
 use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, NSObject, NSObjectProtocol};
-use objc2::{extern_methods, msg_send, sel, ClassType};
+use objc2::{msg_send, sel, ClassType};
 
 use crate::{util, NSException};
 
@@ -16,13 +16,6 @@ unsafe impl Send for NSException {}
 
 impl UnwindSafe for NSException {}
 impl RefUnwindSafe for NSException {}
-
-impl NSException {
-    extern_methods!(
-        #[unsafe(method(raise))]
-        unsafe fn raise_raw(&self);
-    );
-}
 
 impl NSException {
     /// Create a new [`NSException`] object.
@@ -53,9 +46,7 @@ impl NSException {
     ///
     /// This is equivalent to using `objc2::exception::throw`.
     pub fn raise(&self) -> ! {
-        // SAFETY: `NSException` is immutable, so it is safe to give to
-        // the place where `@catch` receives it.
-        unsafe { self.raise_raw() };
+        self.__raise();
         // SAFETY: `raise` will throw an exception, or abort if something
         // unexpected happened.
         unsafe { unreachable_unchecked() }

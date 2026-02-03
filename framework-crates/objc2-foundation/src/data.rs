@@ -11,28 +11,12 @@ use core::slice::{self};
 use objc2::rc::Retained;
 #[cfg(feature = "block2")]
 use objc2::rc::RetainedFromIterator;
-use objc2::{extern_methods, AnyThread};
+use objc2::AnyThread;
 
 use crate::{NSData, NSMutableData};
 
 impl UnwindSafe for NSData {}
 impl RefUnwindSafe for NSData {}
-
-// GNUStep returns NULL from these methods, and Apple's documentation says
-// that's valid (even though the headers say otherwise).
-impl NSData {
-    extern_methods!(
-        #[unsafe(method(bytes))]
-        pub(crate) fn bytes_raw(&self) -> *const c_void;
-    );
-}
-
-impl NSMutableData {
-    extern_methods!(
-        #[unsafe(method(mutableBytes))]
-        pub(crate) fn mutable_bytes_raw(&self) -> *mut c_void;
-    );
-}
 
 impl NSData {
     // TODO: Rename to `from_bytes` to match `CFData::from_bytes`.
@@ -81,7 +65,7 @@ impl NSData {
     ///
     /// [`to_vec`]: Self::to_vec
     pub unsafe fn as_bytes_unchecked(&self) -> &[u8] {
-        let ptr = self.bytes_raw();
+        let ptr = self.__bytes();
         if !ptr.is_null() {
             let ptr: *const u8 = ptr.cast();
             // SAFETY: The pointer is checked to not be NULL, and since we're
@@ -133,7 +117,7 @@ impl NSMutableData {
     #[doc(alias = "mutableBytes")]
     #[allow(clippy::mut_from_ref)]
     pub unsafe fn as_mut_bytes_unchecked(&self) -> &mut [u8] {
-        let ptr = self.mutable_bytes_raw();
+        let ptr = self.__mutableBytes();
         // &Cell<[u8]> is safe because the slice length is not actually in the
         // cell
         if !ptr.is_null() {
