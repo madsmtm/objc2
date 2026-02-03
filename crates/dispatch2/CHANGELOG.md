@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **BREAKING**: Split `DispatchWorkloop::new` into `::new` and `::new_inactive`.
 - **BREAKING**: Use `&CStr` instead of `&str` in `DispatchQueue` and `DispatchWorkloop` creation methods.
 - **BREAKING**: Renamed `WaitError` to `TimeoutError`.
+- **BREAKING**: `DispatchGroupGuard` and `DispatchSemaphoreGuard` now include a lifetime.
 
 ### Removed
 - **BREAKING**: Removed `QueueAfterError`.

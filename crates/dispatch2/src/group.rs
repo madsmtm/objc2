@@ -2,7 +2,7 @@ use alloc::boxed::Box;
 use core::ffi::c_void;
 use core::num::NonZeroIsize;
 
-use crate::{DispatchObject, DispatchQueue, DispatchRetained, DispatchTime, DispatchTimeoutError};
+use crate::{DispatchQueue, DispatchTime, DispatchTimeoutError};
 
 use super::utils::function_wrapper;
 
@@ -61,20 +61,21 @@ impl DispatchGroup {
 
     /// Explicitly indicates that the function has entered the [`DispatchGroup`].
     #[inline]
-    pub fn enter(&self) -> DispatchGroupGuard {
+    pub fn enter(&self) -> DispatchGroupGuard<'_> {
         // SAFETY: TODO: Is it a soundness requirement that this is paired with leave?
         unsafe { Self::__enter(self) };
 
-        DispatchGroupGuard(self.retain())
+        DispatchGroupGuard(self)
     }
 }
 
 /// Dispatch group guard.
 #[derive(Debug)]
-pub struct DispatchGroupGuard(DispatchRetained<DispatchGroup>);
+pub struct DispatchGroupGuard<'group>(&'group DispatchGroup);
 
-impl DispatchGroupGuard {
-    /// Explicitly indicate that the function in the [`DispatchGroup`] finished executing.
+impl DispatchGroupGuard<'_> {
+    /// Explicitly indicate that the function in the [`DispatchGroup`]
+    /// finished executing.
     #[inline]
     pub fn leave(self) {
         // Drop.
@@ -82,10 +83,11 @@ impl DispatchGroupGuard {
     }
 }
 
-impl Drop for DispatchGroupGuard {
+impl Drop for DispatchGroupGuard<'_> {
     #[inline]
     fn drop(&mut self) {
-        // SAFETY: TODO: Is it a soundness requirement that this is paired with enter?
+        // SAFETY: TODO: Is it a soundness requirement that this is paired
+        // with enter?
         unsafe { self.0.leave() };
     }
 }

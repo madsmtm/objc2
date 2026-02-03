@@ -1,7 +1,7 @@
 use core::mem::ManuallyDrop;
 use core::num::NonZeroIsize;
 
-use crate::{DispatchObject, DispatchRetained, DispatchTimeoutError};
+use crate::DispatchTimeoutError;
 
 use crate::DispatchTime;
 
@@ -24,12 +24,12 @@ impl DispatchSemaphore {
     pub fn try_acquire(
         &self,
         timeout: DispatchTime,
-    ) -> Result<DispatchSemaphoreGuard, DispatchTimeoutError> {
+    ) -> Result<DispatchSemaphoreGuard<'_>, DispatchTimeoutError> {
         // Safety: DispatchSemaphore cannot be null.
         let result = Self::wait(self, timeout);
 
         match NonZeroIsize::new(result) {
-            None => Ok(DispatchSemaphoreGuard(ManuallyDrop::new(self.retain()))),
+            None => Ok(DispatchSemaphoreGuard(self)),
             Some(result) => Err(DispatchTimeoutError(result)),
         }
     }
@@ -37,34 +37,28 @@ impl DispatchSemaphore {
 
 /// Dispatch semaphore guard.
 ///
-/// The semaphore will be signaled when the guard is dropped, or when [`release`] is called.
+/// The semaphore will be signaled when the guard is dropped, or when
+/// [`release`] is called.
 ///
 /// [`release`]: DispatchSemaphoreGuard::release
-//
-// See `release` for discussion of the `ManuallyDrop`.
 #[derive(Debug)]
-pub struct DispatchSemaphoreGuard(ManuallyDrop<DispatchRetained<DispatchSemaphore>>);
+pub struct DispatchSemaphoreGuard<'semaphore>(&'semaphore DispatchSemaphore);
 
-impl DispatchSemaphoreGuard {
+impl DispatchSemaphoreGuard<'_> {
     /// Release the [`DispatchSemaphore`].
     #[inline]
     pub fn release(self) -> bool {
-        // We suppress `Drop` for the guard because that would signal the semaphore again.
-        // The inner `DispatchRetained` is wrapped in `ManuallyDrop` so that it can be
-        // separated from the guard and dropped normally.
-        let mut this = ManuallyDrop::new(self);
-        // SAFETY: The guard is being consumed; the `ManuallyDrop` contents will not be used again.
-        let semaphore = unsafe { ManuallyDrop::take(&mut this.0) };
-        semaphore.signal() != 0
+        // We suppress `Drop` for the guard because that would signal the
+        // semaphore again.
+        let this = ManuallyDrop::new(self);
+        this.0.signal() != 0
     }
 }
 
-impl Drop for DispatchSemaphoreGuard {
+impl Drop for DispatchSemaphoreGuard<'_> {
     #[inline]
     fn drop(&mut self) {
-        // SAFETY: The guard is being dropped; the `ManuallyDrop` contents will not be used again.
-        let semaphore = unsafe { ManuallyDrop::take(&mut self.0) };
-        semaphore.signal();
+        self.0.signal();
     }
 }
 
@@ -90,12 +84,12 @@ mod tests {
         assert_eq!(retain_count(&semaphore), 1);
         {
             let _guard = semaphore.try_acquire(DispatchTime::NOW).unwrap();
-            assert_eq!(retain_count(&semaphore), 2);
+            assert_eq!(retain_count(&semaphore), 1);
         }
         assert_eq!(retain_count(&semaphore), 1);
         {
             let guard = semaphore.try_acquire(DispatchTime::NOW).unwrap();
-            assert_eq!(retain_count(&semaphore), 2);
+            assert_eq!(retain_count(&semaphore), 1);
             guard.release();
             assert_eq!(retain_count(&semaphore), 1);
         }
