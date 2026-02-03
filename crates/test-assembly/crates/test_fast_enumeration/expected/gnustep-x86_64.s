@@ -266,7 +266,6 @@ fn5_iter_noop:
 	.p2align	4
 	.type	fn6_iter_retained,@function
 fn6_iter_retained:
-.Lfunc_begin0:
 	push	rbp
 	push	r15
 	push	r14
@@ -298,10 +297,28 @@ fn6_iter_retained:
 	mov	r14, qword ptr [rip + objc_release@GOTPCREL]
 	mov	r15, qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	xor	eax, eax
+	jmp	.LBB5_1
+	.p2align	4
+.LBB5_11:
+	mov	qword ptr [rsp], 1
+	mov	qword ptr [rsp + 8], rcx
+.LBB5_12:
+	mov	rcx, qword ptr [rsp + 160]
+	lea	rdx, [rax + 1]
+	mov	qword ptr [rsp + 216], rdx
+	mov	rdi, qword ptr [rcx + 8*rax]
+	call	r12
+	mov	r13, rax
+	mov	rdi, rax
+	call	rbx
+	mov	rdi, r13
+	call	r14
+	mov	r13, qword ptr [rsp + 16]
+	mov	rax, qword ptr [rsp + 216]
+	mov	rcx, qword ptr [rsp + 224]
+.LBB5_1:
 	cmp	rax, rcx
 	jb	.LBB5_7
-	.p2align	4
-.LBB5_2:
 	mov	rax, qword ptr [rip + SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPCREL]
 	mov	rbp, qword ptr [rax]
 	test	rbp, rbp
@@ -319,9 +336,9 @@ fn6_iter_retained:
 	mov	qword ptr [rsp + 224], rax
 	mov	qword ptr [rsp + 216], 0
 	test	rax, rax
-	je	.LBB5_14
+	je	.LBB5_13
 	cmp	qword ptr [rsp + 160], 0
-	je	.LBB5_18
+	je	.LBB5_14
 	xor	eax, eax
 .LBB5_7:
 	mov	rcx, qword ptr [rsp + 168]
@@ -333,36 +350,13 @@ fn6_iter_retained:
 	cmp	qword ptr [rsp + 8], rcx
 	je	.LBB5_12
 	jmp	.LBB5_10
-	.p2align	4
-.LBB5_11:
-	mov	qword ptr [rsp], 1
-	mov	qword ptr [rsp + 8], rcx
-.LBB5_12:
-	mov	rcx, qword ptr [rsp + 160]
-	lea	rdx, [rax + 1]
-	mov	qword ptr [rsp + 216], rdx
-	mov	rdi, qword ptr [rcx + 8*rax]
-	call	r12
-	mov	r13, rax
-.Ltmp0:
-	mov	rdi, rax
-	call	rbx
-.Ltmp1:
-	mov	rdi, r13
-	call	r14
-	mov	r13, qword ptr [rsp + 16]
-	mov	rax, qword ptr [rsp + 216]
-	mov	rcx, qword ptr [rsp + 224]
-	cmp	rax, rcx
-	jae	.LBB5_2
-	jmp	.LBB5_7
 .LBB5_3:
 	mov	rdi, qword ptr [rip + SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPCREL]
 	lea	rsi, [rip + .Lanon.[ID].0]
 	call	qword ptr [rip + SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)@GOTPCREL]
 	mov	rbp, rax
 	jmp	.LBB5_4
-.LBB5_14:
+.LBB5_13:
 	add	rsp, 232
 	pop	rbx
 	pop	r12
@@ -371,62 +365,12 @@ fn6_iter_retained:
 	pop	r15
 	pop	rbp
 	ret
-.LBB5_18:
+.LBB5_14:
 	call	qword ptr [rip + SYM(objc2_foundation[CRATE_ID]::iter::items_ptr_null, 0)@GOTPCREL]
 .LBB5_10:
 	call	qword ptr [rip + SYM(objc2_foundation[CRATE_ID]::iter::mutation_detected, 0)@GOTPCREL]
-.LBB5_16:
-.Ltmp2:
-	mov	rbx, rax
-.Ltmp3:
-	mov	rdi, r13
-	call	qword ptr [rip + objc_release@GOTPCREL]
-.Ltmp4:
-	mov	rdi, rbx
-	call	_Unwind_Resume@PLT
-.LBB5_15:
-.Ltmp5:
-	call	qword ptr [rip + SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)@GOTPCREL]
 .Lfunc_end5:
 	.size	fn6_iter_retained, .Lfunc_end5-fn6_iter_retained
-	.section	.gcc_except_table.fn6_iter_retained,"a",@progbits
-	.p2align	2, 0x0
-GCC_except_table5:
-.Lexception0:
-	.byte	255
-	.byte	155
-	.uleb128 .Lttbase0-.Lttbaseref0
-.Lttbaseref0:
-	.byte	1
-	.uleb128 .Lcst_end0-.Lcst_begin0
-.Lcst_begin0:
-	.uleb128 .Lfunc_begin0-.Lfunc_begin0
-	.uleb128 .Ltmp0-.Lfunc_begin0
-	.byte	0
-	.byte	0
-	.uleb128 .Ltmp0-.Lfunc_begin0
-	.uleb128 .Ltmp1-.Ltmp0
-	.uleb128 .Ltmp2-.Lfunc_begin0
-	.byte	0
-	.uleb128 .Ltmp1-.Lfunc_begin0
-	.uleb128 .Ltmp3-.Ltmp1
-	.byte	0
-	.byte	0
-	.uleb128 .Ltmp3-.Lfunc_begin0
-	.uleb128 .Ltmp4-.Ltmp3
-	.uleb128 .Ltmp5-.Lfunc_begin0
-	.byte	1
-	.uleb128 .Ltmp4-.Lfunc_begin0
-	.uleb128 .Lfunc_end5-.Ltmp4
-	.byte	0
-	.byte	0
-.Lcst_end0:
-	.byte	127
-	.byte	0
-	.p2align	2, 0x0
-.Lttbase0:
-	.byte	0
-	.p2align	2, 0x0
 
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata.str1.1,"aMS",@progbits,1
@@ -434,12 +378,4 @@ GCC_except_table5:
 	.asciz	"countByEnumeratingWithState:objects:count:"
 	.size	.Lanon.[ID].0, 43
 
-	.hidden	DW.ref.rust_eh_personality
-	.weak	DW.ref.rust_eh_personality
-	.section	.data.DW.ref.rust_eh_personality,"awG",@progbits,DW.ref.rust_eh_personality,comdat
-	.p2align	3, 0x0
-	.type	DW.ref.rust_eh_personality,@object
-	.size	DW.ref.rust_eh_personality, 8
-DW.ref.rust_eh_personality:
-	.quad	rust_eh_personality
 	.section	".note.GNU-stack","",@progbits

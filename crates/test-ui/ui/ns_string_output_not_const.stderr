@@ -1,4 +1,4 @@
-error[E0015]: cannot call non-const method `CachedRetained::<NSString>::get::<{closure@$WORKSPACE/framework-crates/objc2-foundation/src/macros/ns_string.rs:189:29: 189:31}>` in statics
+error[E0015]: cannot call non-const method `objc2_foundation::__ns_macro_helpers::CachedRetained::<NSString>::get::<{closure@$WORKSPACE/framework-crates/objc2-foundation/src/macros/ns_string.rs:189:29: 189:31}>` in statics
  --> ui/ns_string_output_not_const.rs
   |
   |     static STRING: SyncString = SyncString(ns_string!("abc"));

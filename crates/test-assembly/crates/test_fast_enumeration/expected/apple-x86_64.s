@@ -279,7 +279,6 @@ LBB4_7:
 	.globl	_fn6_iter_retained
 	.p2align	4
 _fn6_iter_retained:
-Lfunc_begin0:
 	push	rbp
 	mov	rbp, rsp
 	push	r15
@@ -322,35 +321,7 @@ Lfunc_begin0:
 	mov	r15, qword ptr [rip + SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPCREL]
 	lea	r12, [rip + L_anon.[ID].0]
 	xor	eax, eax
-	cmp	rax, rcx
-	jb	LBB5_7
-	.p2align	4
-LBB5_2:
-	mov	rsi, qword ptr [r15]
-	test	rsi, rsi
-	je	LBB5_3
-LBB5_4:
-	mov	r8d, 16
-	mov	rdx, r14
-	mov	rcx, rbx
-	call	_objc_msgSend
-	mov	qword ptr [rbp - 48], rax
-	mov	qword ptr [rbp - 56], 0
-	test	rax, rax
-	je	LBB5_14
-	cmp	qword ptr [rbp - 112], 0
-	je	LBB5_18
-	xor	eax, eax
-LBB5_7:
-	mov	rcx, qword ptr [rbp - 104]
-	test	rcx, rcx
-	je	LBB5_12
-	mov	rcx, qword ptr [rcx]
-	cmp	dword ptr [rbp - 272], 1
-	jne	LBB5_11
-	cmp	qword ptr [rbp - 264], rcx
-	je	LBB5_12
-	jmp	LBB5_10
+	jmp	LBB5_1
 	.p2align	4
 LBB5_11:
 	mov	qword ptr [rbp - 272], 1
@@ -362,18 +333,41 @@ LBB5_12:
 	mov	rdi, qword ptr [rcx + 8*rax]
 	call	_objc_retain
 	mov	r13, rax
-Ltmp0:
 	mov	rdi, rax
 	call	_fn3_use_obj
-Ltmp1:
 	mov	rdi, r13
 	call	_objc_release
 	mov	rdi, qword ptr [rbp - 256]
 	mov	rax, qword ptr [rbp - 56]
 	mov	rcx, qword ptr [rbp - 48]
+LBB5_1:
 	cmp	rax, rcx
-	jae	LBB5_2
-	jmp	LBB5_7
+	jb	LBB5_7
+	mov	rsi, qword ptr [r15]
+	test	rsi, rsi
+	je	LBB5_3
+LBB5_4:
+	mov	r8d, 16
+	mov	rdx, r14
+	mov	rcx, rbx
+	call	_objc_msgSend
+	mov	qword ptr [rbp - 48], rax
+	mov	qword ptr [rbp - 56], 0
+	test	rax, rax
+	je	LBB5_13
+	cmp	qword ptr [rbp - 112], 0
+	je	LBB5_14
+	xor	eax, eax
+LBB5_7:
+	mov	rcx, qword ptr [rbp - 104]
+	test	rcx, rcx
+	je	LBB5_12
+	mov	rcx, qword ptr [rcx]
+	cmp	dword ptr [rbp - 272], 1
+	jne	LBB5_11
+	cmp	qword ptr [rbp - 264], rcx
+	je	LBB5_12
+	jmp	LBB5_10
 LBB5_3:
 	mov	r13, rdi
 	mov	rdi, r15
@@ -382,7 +376,7 @@ LBB5_3:
 	mov	rdi, r13
 	mov	rsi, rax
 	jmp	LBB5_4
-LBB5_14:
+LBB5_13:
 	add	rsp, 232
 	pop	rbx
 	pop	r12
@@ -391,61 +385,10 @@ LBB5_14:
 	pop	r15
 	pop	rbp
 	ret
-LBB5_18:
+LBB5_14:
 	call	SYM(objc2_foundation[CRATE_ID]::iter::items_ptr_null, 0)
 LBB5_10:
 	call	SYM(objc2_foundation[CRATE_ID]::iter::mutation_detected, 0)
-LBB5_16:
-Ltmp2:
-	mov	rbx, rax
-Ltmp3:
-	mov	rdi, r13
-	call	_objc_release
-Ltmp4:
-	mov	rdi, rbx
-	call	__Unwind_Resume
-LBB5_15:
-Ltmp5:
-	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
-Lfunc_end0:
-	.section	__TEXT,__gcc_except_tab
-	.p2align	2, 0x0
-GCC_except_table5:
-Lexception0:
-	.byte	255
-	.byte	155
-	.uleb128 Lttbase0-Lttbaseref0
-Lttbaseref0:
-	.byte	1
-	.uleb128 Lcst_end0-Lcst_begin0
-Lcst_begin0:
-	.uleb128 Lfunc_begin0-Lfunc_begin0
-	.uleb128 Ltmp0-Lfunc_begin0
-	.byte	0
-	.byte	0
-	.uleb128 Ltmp0-Lfunc_begin0
-	.uleb128 Ltmp1-Ltmp0
-	.uleb128 Ltmp2-Lfunc_begin0
-	.byte	0
-	.uleb128 Ltmp1-Lfunc_begin0
-	.uleb128 Ltmp3-Ltmp1
-	.byte	0
-	.byte	0
-	.uleb128 Ltmp3-Lfunc_begin0
-	.uleb128 Ltmp4-Ltmp3
-	.uleb128 Ltmp5-Lfunc_begin0
-	.byte	1
-	.uleb128 Ltmp4-Lfunc_begin0
-	.uleb128 Lfunc_end0-Ltmp4
-	.byte	0
-	.byte	0
-Lcst_end0:
-	.byte	127
-	.byte	0
-	.p2align	2, 0x0
-Lttbase0:
-	.byte	0
-	.p2align	2, 0x0
 
 	.section	__TEXT,__cstring,cstring_literals
 L_anon.[ID].0:

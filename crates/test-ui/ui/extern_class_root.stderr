@@ -32,7 +32,7 @@ help: the following other types implement trait `ClassType`
   |
   |   unsafe impl ClassType for NSProxy {
   |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `__NSProxy`
-note: required by a bound in `ValidThreadKind::check`
+note: required by a bound in `objc2::__macros::ValidThreadKind::check`
  --> $WORKSPACE/crates/objc2/src/__macros/extern_class/checks.rs
   |
   |     Self::Super: ClassType,

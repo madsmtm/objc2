@@ -15,9 +15,9 @@ error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
             AtomicI8
           and $N others
   = note: required for `Retained<NSObject>` to implement `EncodeReturn`
-  = note: required for `Retained<NSObject>` to implement `ConvertReturn<MethodFamily<8>>`
-  = note: required for `MethodFamily<8>` to implement `RetainSemantics<&NSObject, Retained<NSObject>, KindSendMessage>`
-  = note: required for `MethodFamily<8>` to implement `MsgSend<&NSObject, Retained<NSObject>>`
+  = note: required for `Retained<NSObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<8>>`
+  = note: required for `objc2::__macros::MethodFamily<8>` to implement `objc2::__macros::RetainSemantics<&NSObject, Retained<NSObject>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<8>` to implement `objc2::__macros::MsgSend<&NSObject, Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
@@ -37,9 +37,9 @@ error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
             AtomicI8
           and $N others
   = note: required for `Retained<NSObject>` to implement `EncodeReturn`
-  = note: required for `Retained<NSObject>` to implement `ConvertReturn<MethodFamily<9>>`
-  = note: required for `MethodFamily<9>` to implement `RetainSemantics<&NSObject, Retained<NSObject>, KindSendMessage>`
-  = note: required for `MethodFamily<9>` to implement `MsgSend<&NSObject, Retained<NSObject>>`
+  = note: required for `Retained<NSObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<9>>`
+  = note: required for `objc2::__macros::MethodFamily<9>` to implement `objc2::__macros::RetainSemantics<&NSObject, Retained<NSObject>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<9>` to implement `objc2::__macros::MsgSend<&NSObject, Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
@@ -59,9 +59,9 @@ error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
             AtomicI8
           and $N others
   = note: required for `Retained<NSObject>` to implement `EncodeReturn`
-  = note: required for `Retained<NSObject>` to implement `ConvertReturn<MethodFamily<10>>`
-  = note: required for `MethodFamily<10>` to implement `RetainSemantics<&NSObject, Retained<NSObject>, KindSendMessage>`
-  = note: required for `MethodFamily<10>` to implement `MsgSend<&NSObject, Retained<NSObject>>`
+  = note: required for `Retained<NSObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<10>>`
+  = note: required for `objc2::__macros::MethodFamily<10>` to implement `objc2::__macros::RetainSemantics<&NSObject, Retained<NSObject>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<10>` to implement `objc2::__macros::MsgSend<&NSObject, Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
@@ -81,7 +81,7 @@ error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
             AtomicI8
           and $N others
   = note: required for `Retained<NSObject>` to implement `EncodeReturn`
-  = note: required for `Retained<NSObject>` to implement `ConvertReturn<MethodFamily<11>>`
-  = note: required for `MethodFamily<11>` to implement `RetainSemantics<&NSObject, Retained<NSObject>, KindSendMessage>`
-  = note: required for `MethodFamily<11>` to implement `MsgSend<&NSObject, Retained<NSObject>>`
+  = note: required for `Retained<NSObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<11>>`
+  = note: required for `objc2::__macros::MethodFamily<11>` to implement `objc2::__macros::RetainSemantics<&NSObject, Retained<NSObject>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<11>` to implement `objc2::__macros::MsgSend<&NSObject, Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

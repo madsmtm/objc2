@@ -1,10 +1,10 @@
 use std::collections::{BTreeMap, BTreeSet};
+use std::fmt;
 use std::fs;
 use std::io::ErrorKind;
 use std::io::Write;
 use std::iter;
 use std::path::Path;
-use std::{fmt, isize};
 
 use toml_edit::InlineTable;
 use toml_edit::{value, Array, DocumentMut, Item, Table, Value};

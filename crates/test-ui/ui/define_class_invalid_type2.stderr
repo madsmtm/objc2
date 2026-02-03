@@ -8,10 +8,10 @@ error[E0271]: type mismatch resolving `<Retained<NSObject> as MaybeOptionRetaine
   | | );
   | |_^ expected `CustomObject`, found `NSObject`
   |
-  = note: required for `MethodFamily<3>` to implement `MessageReceiveRetained<Allocated<CustomObject>, Retained<NSObject>>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MessageReceiveRetained<Allocated<CustomObject>, Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `i32: MaybeOptionRetained` is not satisfied
+error[E0277]: the trait bound `i32: objc2::__macros::MaybeOptionRetained` is not satisfied
  --> ui/define_class_invalid_type2.rs
   |
   | / define_class!(
@@ -19,9 +19,9 @@ error[E0277]: the trait bound `i32: MaybeOptionRetained` is not satisfied
   | |     struct CustomObject;
 ... |
   | | );
-  | |_^ the trait `MaybeOptionRetained` is not implemented for `i32`
+  | |_^ the trait `objc2::__macros::MaybeOptionRetained` is not implemented for `i32`
   |
-help: the following other types implement trait `MaybeOptionRetained`
+help: the following other types implement trait `objc2::__macros::MaybeOptionRetained`
  --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
   |
   | impl<T: Message> MaybeOptionRetained for Retained<T> {
@@ -29,5 +29,5 @@ help: the following other types implement trait `MaybeOptionRetained`
 ...
   | impl<T: Message> MaybeOptionRetained for Option<Retained<T>> {
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `Option<Retained<T>>`
-  = note: required for `MethodFamily<6>` to implement `MessageReceiveRetained<&CustomObject, i32>`
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::MessageReceiveRetained<&CustomObject, i32>`
   = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

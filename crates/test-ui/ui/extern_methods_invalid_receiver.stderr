@@ -14,8 +14,8 @@ error[E0277]: the trait bound `&mut MyObject: MessageReceiver` is not satisfied
             *mut T
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&MyObject`, but not for `&mut MyObject`
-  = note: required for `MethodFamily<3>` to implement `RetainSemantics<&mut MyObject, _, KindSendMessage>`
-  = note: required for `MethodFamily<3>` to implement `MsgSend<&mut MyObject, _>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<&mut MyObject, _, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<&mut MyObject, _>`
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<MyObject>: Encode` is not satisfied
@@ -39,9 +39,9 @@ error[E0277]: the trait bound `Retained<MyObject>: Encode` is not satisfied
           and $N others
   = note: required for `Option<Retained<MyObject>>` to implement `Encode`
   = note: required for `Option<Retained<MyObject>>` to implement `EncodeReturn`
-  = note: required for `Option<Retained<MyObject>>` to implement `ConvertReturn<MethodFamily<3>>`
-  = note: required for `MethodFamily<3>` to implement `RetainSemantics<&mut MyObject, Option<Retained<MyObject>>, KindSendMessage>`
-  = note: required for `MethodFamily<3>` to implement `MsgSend<&mut MyObject, Option<Retained<MyObject>>>`
+  = note: required for `Option<Retained<MyObject>>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<&mut MyObject, Option<Retained<MyObject>>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<&mut MyObject, Option<Retained<MyObject>>>`
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfied
@@ -65,9 +65,9 @@ error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfie
           and $N others
   = note: required for `Option<Retained<MyObject>>` to implement `Encode`
   = note: required for `Option<Retained<MyObject>>` to implement `EncodeReturn`
-  = note: required for `Option<Retained<MyObject>>` to implement `ConvertReturn<MethodFamily<3>>`
-  = note: required for `MethodFamily<3>` to implement `RetainSemantics<&mut MyObject, Option<Retained<MyObject>>, KindSendMessage>`
-  = note: required for `MethodFamily<3>` to implement `MsgSend<&mut MyObject, Option<Retained<MyObject>>>`
+  = note: required for `Option<Retained<MyObject>>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<&mut MyObject, Option<Retained<MyObject>>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<&mut MyObject, Option<Retained<MyObject>>>`
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Option<Allocated<MyObject>>: MessageReceiver` is not satisfied
@@ -85,8 +85,8 @@ error[E0277]: the trait bound `Option<Allocated<MyObject>>: MessageReceiver` is 
             *const T
             *mut T
             NonNull<T>
-  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Option<Allocated<MyObject>>, _, KindSendMessage>`
-  = note: required for `MethodFamily<3>` to implement `MsgSend<Option<Allocated<MyObject>>, _>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Option<Allocated<MyObject>>, _, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Option<Allocated<MyObject>>, _>`
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<MyObject>: Encode` is not satisfied
@@ -110,9 +110,9 @@ error[E0277]: the trait bound `Retained<MyObject>: Encode` is not satisfied
           and $N others
   = note: required for `Option<Retained<MyObject>>` to implement `Encode`
   = note: required for `Option<Retained<MyObject>>` to implement `EncodeReturn`
-  = note: required for `Option<Retained<MyObject>>` to implement `ConvertReturn<MethodFamily<3>>`
-  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Option<Allocated<MyObject>>, Option<Retained<MyObject>>, KindSendMessage>`
-  = note: required for `MethodFamily<3>` to implement `MsgSend<Option<Allocated<MyObject>>, Option<Retained<MyObject>>>`
+  = note: required for `Option<Retained<MyObject>>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Option<Allocated<MyObject>>, Option<Retained<MyObject>>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Option<Allocated<MyObject>>, Option<Retained<MyObject>>>`
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfied
@@ -136,7 +136,7 @@ error[E0277]: the trait bound `Retained<MyObject>: OptionEncode` is not satisfie
           and $N others
   = note: required for `Option<Retained<MyObject>>` to implement `Encode`
   = note: required for `Option<Retained<MyObject>>` to implement `EncodeReturn`
-  = note: required for `Option<Retained<MyObject>>` to implement `ConvertReturn<MethodFamily<3>>`
-  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Option<Allocated<MyObject>>, Option<Retained<MyObject>>, KindSendMessage>`
-  = note: required for `MethodFamily<3>` to implement `MsgSend<Option<Allocated<MyObject>>, Option<Retained<MyObject>>>`
+  = note: required for `Option<Retained<MyObject>>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Option<Allocated<MyObject>>, Option<Retained<MyObject>>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Option<Allocated<MyObject>>, Option<Retained<MyObject>>>`
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -7,7 +7,7 @@ error[E0277]: the trait bound `&Retained<NSObject>: runtime::message_receiver::p
    |                             required by a bound introduced by this call
    |
    = note: required for `&Retained<NSObject>` to implement `runtime::message_receiver::private::Sealed`
-note: required by a bound in `objc2::runtime::MessageReceiver::send_message`
+note: required by a bound in `send_message`
   --> $WORKSPACE/crates/objc2/src/runtime/message_receiver.rs
    |
    | pub unsafe trait MessageReceiver: private::Sealed + Sized {
@@ -40,7 +40,7 @@ error[E0277]: the trait bound `bool: Encode` is not satisfied
           and $N others
   = note: required for `bool` to implement `EncodeArgument`
   = note: required for `(bool,)` to implement `EncodeArguments`
-note: required by a bound in `objc2::runtime::MessageReceiver::send_message`
+note: required by a bound in `send_message`
  --> $WORKSPACE/crates/objc2/src/runtime/message_receiver.rs
   |
   |     unsafe fn send_message<A: EncodeArguments, R: EncodeReturn>(self, sel: Sel, args: A) -> R {
@@ -63,7 +63,7 @@ error[E0277]: the trait bound `bool: EncodeReturn` is not satisfied
             AtomicI8
           and $N others
   = note: required for `bool` to implement `EncodeReturn`
-note: required by a bound in `objc2::runtime::MessageReceiver::send_message`
+note: required by a bound in `send_message`
  --> $WORKSPACE/crates/objc2/src/runtime/message_receiver.rs
   |
   |     unsafe fn send_message<A: EncodeArguments, R: EncodeReturn>(self, sel: Sel, args: A) -> R {

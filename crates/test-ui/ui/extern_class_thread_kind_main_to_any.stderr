@@ -20,5 +20,5 @@ note: expected this to be `dyn AllocAnyThread`
   = note: expected trait object `dyn AllocAnyThread`
              found trait object `(dyn MainThreadOnly + 'static)`
   = help: `(dyn MainThreadOnly + 'static)` implements `AnyThread` so you could box the found value and coerce it to the trait object `Box<dyn AnyThread>`, you will have to change the expected type as well
-  = note: required for `AnyThreadButSubclassesOnlyMain` to implement `ValidThreadKind<(dyn AllocAnyThread + 'static)>`
+  = note: required for `AnyThreadButSubclassesOnlyMain` to implement `objc2::__macros::ValidThreadKind<(dyn AllocAnyThread + 'static)>`
   = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

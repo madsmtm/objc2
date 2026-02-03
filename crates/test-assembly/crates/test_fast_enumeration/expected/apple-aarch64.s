@@ -236,7 +236,6 @@ LBB4_7:
 	.globl	_fn6_iter_retained
 	.p2align	2
 _fn6_iter_retained:
-Lfunc_begin0:
 	sub	sp, sp, #304
 	stp	x24, x23, [sp, #240]
 	stp	x22, x21, [sp, #256]
@@ -268,9 +267,24 @@ Lloh14:
 	adrp	x20, SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPAGE
 Lloh15:
 	ldr	x20, [x20, SYM(objc2_foundation[CRATE_ID]::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL, 0)@GOTPAGEOFF]
-	cmp	x8, x9
-	b.lo	LBB5_5
+	b	LBB5_3
 LBB5_1:
+	stp	x23, x9, [sp, #8]
+LBB5_2:
+	ldr	x9, [sp, #168]
+	add	x10, x8, #1
+	str	x10, [sp, #224]
+	ldr	x0, [x9, x8, lsl #3]
+	bl	_objc_retain
+	mov	x21, x0
+	bl	_fn3_use_obj
+	mov	x0, x21
+	bl	_objc_release
+	ldr	x0, [sp, #24]
+	ldp	x8, x9, [sp, #224]
+LBB5_3:
+	cmp	x8, x9
+	b.lo	LBB5_8
 	ldr	x1, [x20]
 	cbz	x1, LBB5_11
 	add	x2, x22, #152
@@ -279,40 +293,21 @@ LBB5_1:
 	bl	_objc_msgSend
 	stp	xzr, x0, [sp, #224]
 	cbz	x0, LBB5_12
-LBB5_3:
+LBB5_6:
 	ldr	x8, [sp, #168]
 	cbz	x8, LBB5_13
 	mov	x8, #0
-LBB5_5:
+LBB5_8:
 	ldr	x9, [sp, #176]
-	cbz	x9, LBB5_9
+	cbz	x9, LBB5_2
 	ldr	x9, [x9]
-	ldr	w10, [sp, #8]
-	cmp	w10, #1
-	b.ne	LBB5_8
+	ldr	x10, [sp, #8]
+	cmp	x10, #1
+	b.ne	LBB5_1
 	ldr	x10, [sp, #16]
 	cmp	x10, x9
-	b.eq	LBB5_9
+	b.eq	LBB5_2
 	b	LBB5_14
-LBB5_8:
-	stp	x23, x9, [sp, #8]
-LBB5_9:
-	ldr	x9, [sp, #168]
-	add	x10, x8, #1
-	str	x10, [sp, #224]
-	ldr	x0, [x9, x8, lsl #3]
-	bl	_objc_retain
-	mov	x21, x0
-Ltmp1:
-	bl	_fn3_use_obj
-Ltmp2:
-	mov	x0, x21
-	bl	_objc_release
-	ldr	x0, [sp, #24]
-	ldp	x8, x9, [sp, #224]
-	cmp	x8, x9
-	b.hs	LBB5_1
-	b	LBB5_5
 LBB5_11:
 	mov	x21, x0
 	mov	x0, x20
@@ -325,7 +320,7 @@ LBB5_11:
 	mov	w4, #16
 	bl	_objc_msgSend
 	stp	xzr, x0, [sp, #224]
-	cbnz	x0, LBB5_3
+	cbnz	x0, LBB5_6
 LBB5_12:
 	ldp	x29, x30, [sp, #288]
 	ldp	x20, x19, [sp, #272]
@@ -337,59 +332,8 @@ LBB5_13:
 	bl	SYM(objc2_foundation[CRATE_ID]::iter::items_ptr_null, 0)
 LBB5_14:
 	bl	SYM(objc2_foundation[CRATE_ID]::iter::mutation_detected, 0)
-LBB5_15:
-Ltmp3:
-	mov	x19, x0
-Ltmp4:
-	mov	x0, x21
-	bl	_objc_release
-Ltmp5:
-	mov	x0, x19
-	bl	__Unwind_Resume
-LBB5_17:
-Ltmp6:
-	bl	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 	.loh AdrpLdrGot	Lloh14, Lloh15
 	.loh AdrpAdd	Lloh12, Lloh13
-Lfunc_end0:
-	.section	__TEXT,__gcc_except_tab
-	.p2align	2, 0x0
-GCC_except_table5:
-Lexception0:
-	.byte	255
-	.byte	155
-	.uleb128 Lttbase0-Lttbaseref0
-Lttbaseref0:
-	.byte	1
-	.uleb128 Lcst_end0-Lcst_begin0
-Lcst_begin0:
-	.uleb128 Lfunc_begin0-Lfunc_begin0
-	.uleb128 Ltmp1-Lfunc_begin0
-	.byte	0
-	.byte	0
-	.uleb128 Ltmp1-Lfunc_begin0
-	.uleb128 Ltmp2-Ltmp1
-	.uleb128 Ltmp3-Lfunc_begin0
-	.byte	0
-	.uleb128 Ltmp2-Lfunc_begin0
-	.uleb128 Ltmp4-Ltmp2
-	.byte	0
-	.byte	0
-	.uleb128 Ltmp4-Lfunc_begin0
-	.uleb128 Ltmp5-Ltmp4
-	.uleb128 Ltmp6-Lfunc_begin0
-	.byte	1
-	.uleb128 Ltmp5-Lfunc_begin0
-	.uleb128 Lfunc_end0-Ltmp5
-	.byte	0
-	.byte	0
-Lcst_end0:
-	.byte	127
-	.byte	0
-	.p2align	2, 0x0
-Lttbase0:
-	.byte	0
-	.p2align	2, 0x0
 
 	.section	__TEXT,__cstring,cstring_literals
 l_anon.[ID].0:

@@ -15,9 +15,9 @@ error[E0277]: the trait bound `Retained<AnyObject>: Encode` is not satisfied
             AtomicI8
           and $N others
   = note: required for `Retained<AnyObject>` to implement `EncodeReturn`
-  = note: required for `Retained<AnyObject>` to implement `ConvertReturn<MethodFamily<2>>`
-  = note: required for `MethodFamily<2>` to implement `RetainSemantics<&AnyClass, Retained<AnyObject>, KindSendMessage>`
-  = note: required for `MethodFamily<2>` to implement `MsgSend<&AnyClass, Retained<AnyObject>>`
+  = note: required for `Retained<AnyObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<2>>`
+  = note: required for `objc2::__macros::MethodFamily<2>` to implement `objc2::__macros::RetainSemantics<&AnyClass, Retained<AnyObject>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<2>` to implement `objc2::__macros::MsgSend<&AnyClass, Retained<AnyObject>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: Encode` is not satisfied
@@ -38,9 +38,9 @@ error[E0277]: the trait bound `Allocated<AnyObject>: Encode` is not satisfied
           and $N others
   = note: required for `Option<Allocated<AnyObject>>` to implement `Encode`
   = note: required for `Option<Allocated<AnyObject>>` to implement `EncodeReturn`
-  = note: required for `Option<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<2>>`
-  = note: required for `MethodFamily<2>` to implement `RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, KindSendMessage>`
-  = note: required for `MethodFamily<2>` to implement `MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
+  = note: required for `Option<Allocated<AnyObject>>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<2>>`
+  = note: required for `objc2::__macros::MethodFamily<2>` to implement `objc2::__macros::RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<2>` to implement `objc2::__macros::MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: OptionEncode` is not satisfied
@@ -61,9 +61,9 @@ error[E0277]: the trait bound `Allocated<AnyObject>: OptionEncode` is not satisf
           and $N others
   = note: required for `Option<Allocated<AnyObject>>` to implement `Encode`
   = note: required for `Option<Allocated<AnyObject>>` to implement `EncodeReturn`
-  = note: required for `Option<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<2>>`
-  = note: required for `MethodFamily<2>` to implement `RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, KindSendMessage>`
-  = note: required for `MethodFamily<2>` to implement `MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
+  = note: required for `Option<Allocated<AnyObject>>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<2>>`
+  = note: required for `objc2::__macros::MethodFamily<2>` to implement `objc2::__macros::RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<2>` to implement `objc2::__macros::MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<Allocated<AnyObject>>: Encode` is not satisfied
@@ -83,9 +83,9 @@ error[E0277]: the trait bound `Retained<Allocated<AnyObject>>: Encode` is not sa
             AtomicI8
           and $N others
   = note: required for `Retained<Allocated<AnyObject>>` to implement `EncodeReturn`
-  = note: required for `Retained<Allocated<AnyObject>>` to implement `ConvertReturn<MethodFamily<2>>`
-  = note: required for `MethodFamily<2>` to implement `RetainSemantics<&AnyClass, Retained<Allocated<AnyObject>>, KindSendMessage>`
-  = note: required for `MethodFamily<2>` to implement `MsgSend<&AnyClass, Retained<Allocated<AnyObject>>>`
+  = note: required for `Retained<Allocated<AnyObject>>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<2>>`
+  = note: required for `objc2::__macros::MethodFamily<2>` to implement `objc2::__macros::RetainSemantics<&AnyClass, Retained<Allocated<AnyObject>>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<2>` to implement `objc2::__macros::MsgSend<&AnyClass, Retained<Allocated<AnyObject>>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not satisfied
@@ -100,8 +100,8 @@ error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not sat
             *const T
             *mut T
             NonNull<T>
-  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, &AnyObject, KindSendMessage>`
-  = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, &AnyObject>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Allocated<AnyObject>, &AnyObject, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Allocated<AnyObject>, &AnyObject>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not satisfied
@@ -116,8 +116,8 @@ error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not sat
             *const T
             *mut T
             NonNull<T>
-  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, Retained<AnyClass>, KindSendMessage>`
-  = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, Retained<AnyClass>>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Allocated<AnyObject>, Retained<AnyClass>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Allocated<AnyObject>, Retained<AnyClass>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<AnyClass>: Encode` is not satisfied
@@ -137,9 +137,9 @@ error[E0277]: the trait bound `Retained<AnyClass>: Encode` is not satisfied
             AtomicI8
           and $N others
   = note: required for `Retained<AnyClass>` to implement `EncodeReturn`
-  = note: required for `Retained<AnyClass>` to implement `ConvertReturn<MethodFamily<3>>`
-  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, Retained<AnyClass>, KindSendMessage>`
-  = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, Retained<AnyClass>>`
+  = note: required for `Retained<AnyClass>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Allocated<AnyObject>, Retained<AnyClass>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Allocated<AnyObject>, Retained<AnyClass>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not satisfied
@@ -154,8 +154,8 @@ error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not sat
             *const T
             *mut T
             NonNull<T>
-  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, Retained<NSObject>, KindSendMessage>`
-  = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, Retained<NSObject>>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Allocated<AnyObject>, Retained<NSObject>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Allocated<AnyObject>, Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
@@ -175,7 +175,7 @@ error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
             AtomicI8
           and $N others
   = note: required for `Retained<NSObject>` to implement `EncodeReturn`
-  = note: required for `Retained<NSObject>` to implement `ConvertReturn<MethodFamily<3>>`
-  = note: required for `MethodFamily<3>` to implement `RetainSemantics<Allocated<AnyObject>, Retained<NSObject>, KindSendMessage>`
-  = note: required for `MethodFamily<3>` to implement `MsgSend<Allocated<AnyObject>, Retained<NSObject>>`
+  = note: required for `Retained<NSObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Allocated<AnyObject>, Retained<NSObject>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Allocated<AnyObject>, Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

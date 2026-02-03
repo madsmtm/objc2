@@ -11,8 +11,8 @@ error[E0277]: the trait bound `&mut NSObject: MessageReceiver` is not satisfied
             *mut T
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&NSObject`, but not for `&mut NSObject`
-  = note: required for `MethodFamily<6>` to implement `RetainSemantics<&mut NSObject, _, KindSendMessage>`
-  = note: required for `MethodFamily<6>` to implement `MsgSend<&mut NSObject, _>`
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&mut NSObject, _, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::MsgSend<&mut NSObject, _>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `&mut NSObject: MessageReceiver` is not satisfied
@@ -28,6 +28,6 @@ error[E0277]: the trait bound `&mut NSObject: MessageReceiver` is not satisfied
             *mut T
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&NSObject`, but not for `&mut NSObject`
-  = note: required for `MethodFamily<6>` to implement `RetainSemantics<&mut NSObject, _, KindSendMessage>`
-  = note: required for `MethodFamily<6>` to implement `MsgSend<&mut NSObject, _>`
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&mut NSObject, _, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::MsgSend<&mut NSObject, _>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

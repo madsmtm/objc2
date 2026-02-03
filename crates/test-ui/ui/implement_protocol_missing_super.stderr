@@ -43,20 +43,20 @@ note: required by a bound in `NSURLSessionDelegate`
   | |_- in this macro invocation
   = note: this error originates in the macro `$crate::__define_class_inner` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be shared between threads safely
+error[E0277]: `objc2::__macros::ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be shared between threads safely
  --> ui/implement_protocol_missing_super.rs
   |
   |     unsafe impl NSURLSessionDelegate for CustomObject {}
-  |                                          ^^^^^^^^^^^^ `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be shared between threads safely
+  |                                          ^^^^^^^^^^^^ `objc2::__macros::ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be shared between threads safely
   |
-  = help: within `CustomObject`, the trait `Sync` is not implemented for `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>`
-help: the trait `Sync` is implemented for `ThreadKindAutoTraits<dyn AllocAnyThread>`
+  = help: within `CustomObject`, the trait `Sync` is not implemented for `objc2::__macros::ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>`
+help: the trait `Sync` is implemented for `objc2::__macros::ThreadKindAutoTraits<dyn AllocAnyThread>`
  --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
   |
   | unsafe impl Sync for ThreadKindAutoTraits<dyn AnyThread> {}
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  = note: required because it appears within the type `(__Objc2IvarsContainer, ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)`
-note: required because it appears within the type `PhantomData<(__Objc2IvarsContainer, ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)>`
+  = note: required because it appears within the type `(__Objc2IvarsContainer, objc2::__macros::ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)`
+note: required because it appears within the type `PhantomData<(__Objc2IvarsContainer, objc2::__macros::ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: PointeeSized>;
@@ -84,20 +84,20 @@ note: required by a bound in `NSURLSessionDelegate`
   | |_- in this macro invocation
   = note: this error originates in the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be sent between threads safely
+error[E0277]: `objc2::__macros::ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be sent between threads safely
  --> ui/implement_protocol_missing_super.rs
   |
   |     unsafe impl NSURLSessionDelegate for CustomObject {}
-  |                                          ^^^^^^^^^^^^ `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be sent between threads safely
+  |                                          ^^^^^^^^^^^^ `objc2::__macros::ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>` cannot be sent between threads safely
   |
-  = help: within `CustomObject`, the trait `Send` is not implemented for `ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>`
-help: the trait `Send` is implemented for `ThreadKindAutoTraits<dyn AllocAnyThread>`
+  = help: within `CustomObject`, the trait `Send` is not implemented for `objc2::__macros::ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>`
+help: the trait `Send` is implemented for `objc2::__macros::ThreadKindAutoTraits<dyn AllocAnyThread>`
  --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
   |
   | unsafe impl Send for ThreadKindAutoTraits<dyn AnyThread> {}
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  = note: required because it appears within the type `(__Objc2IvarsContainer, ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)`
-note: required because it appears within the type `PhantomData<(__Objc2IvarsContainer, ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)>`
+  = note: required because it appears within the type `(__Objc2IvarsContainer, objc2::__macros::ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)`
+note: required because it appears within the type `PhantomData<(__Objc2IvarsContainer, objc2::__macros::ThreadKindAutoTraits<(dyn MainThreadOnly + 'static)>)>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: PointeeSized>;

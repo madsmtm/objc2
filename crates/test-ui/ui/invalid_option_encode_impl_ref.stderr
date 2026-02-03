@@ -20,5 +20,3 @@ note: erroneous constant encountered
   |
   |     assert_eq!(<Option<MyType>>::ENCODING_REF, MyType::ENCODING_REF);
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  |
-  = note: this note originates in the macro `assert_eq` (in Nightly builds, run with -Z macro-backtrace for more info)

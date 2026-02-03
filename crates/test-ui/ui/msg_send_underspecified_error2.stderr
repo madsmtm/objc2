@@ -10,9 +10,9 @@ error[E0283]: type annotations needed
   |     let _: Result<_, Retained<NSError>> = unsafe { msg_send![obj, error: _] };
   |                                                    ^^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type
   |
-  = note: multiple `impl`s satisfying `MethodFamily<6>: MsgSendError<&NSObject, _>` found in the `objc2` crate:
-          - impl<Receiver, MethodFamily> MsgSendError<Receiver, ()> for MethodFamily
-            where MethodFamily: MsgSend<Receiver, bool>;
-          - impl<Receiver, Return, MethodFamily> MsgSendError<Receiver, Retained<Return>> for MethodFamily
-            where MethodFamily: MsgSend<Receiver, Option<Retained<Return>>>;
+  = note: multiple `impl`s satisfying `objc2::__macros::MethodFamily<6>: objc2::__macros::MsgSendError<&NSObject, _>` found in the `objc2` crate:
+          - impl<Receiver, MethodFamily> objc2::__macros::MsgSendError<Receiver, ()> for MethodFamily
+            where MethodFamily: objc2::__macros::MsgSend<Receiver, bool>;
+          - impl<Receiver, Return, MethodFamily> objc2::__macros::MsgSendError<Receiver, Retained<Return>> for MethodFamily
+            where MethodFamily: objc2::__macros::MsgSend<Receiver, Option<Retained<Return>>>;
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

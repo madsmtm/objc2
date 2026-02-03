@@ -72,10 +72,6 @@ Lttbaseref0:
 	.byte	1
 	.uleb128 Lcst_end0-Lcst_begin0
 Lcst_begin0:
-	.uleb128 Lfunc_begin0-Lfunc_begin0
-	.uleb128 Ltmp0-Lfunc_begin0
-	.byte	0
-	.byte	0
 	.uleb128 Ltmp0-Lfunc_begin0
 	.uleb128 Ltmp1-Ltmp0
 	.uleb128 Ltmp2-Lfunc_begin0

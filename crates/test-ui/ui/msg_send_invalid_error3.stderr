@@ -15,7 +15,7 @@ note: erroneous constant encountered
   |         assert!(E::IS_NSERROR_COMPATIBLE);
   |                 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-note: the above error was encountered while instantiating `fn __macros::msg_send::null_error::encountered_error::<NSString>::{closure#0}`
+note: the above error was encountered while instantiating `fn objc2::__macros::msg_send::null_error::encountered_error::<NSString>::{closure#0}`
  --> $RUST/core/src/option.rs
   |
   |             None => f(),

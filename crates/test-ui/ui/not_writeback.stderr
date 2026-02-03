@@ -16,11 +16,11 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
           and $N others
   = note: required for `&mut Retained<NSObject>` to implement `Encode`
   = note: required for `&mut Retained<NSObject>` to implement `EncodeReturn`
-  = note: required for `&mut Retained<NSObject>` to implement `ConvertReturn<MethodFamily<6>>`
-  = note: required for `MethodFamily<6>` to implement `RetainSemantics<*const NSObject, &mut Retained<NSObject>, KindSendMessage>`
+  = note: required for `&mut Retained<NSObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<6>>`
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<*const NSObject, &mut Retained<NSObject>, objc2::__macros::KindSendMessage>`
   = note: 1 redundant requirement hidden
-  = note: required for `MethodFamily<6>` to implement `RetainSemantics<&Retained<NSObject>, &mut Retained<NSObject>, KindSendMessage>`
-  = note: required for `MethodFamily<6>` to implement `MsgSend<&Retained<NSObject>, &mut Retained<NSObject>>`
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&Retained<NSObject>, &mut Retained<NSObject>, objc2::__macros::KindSendMessage>`
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::MsgSend<&Retained<NSObject>, &mut Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
@@ -43,9 +43,9 @@ error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
             AtomicI8
           and $N others
   = note: required for `Retained<NSObject>` to implement `EncodeArgument`
-  = note: required for `Retained<NSObject>` to implement `ConvertArgument`
-  = note: required for `(Retained<NSObject>,)` to implement `ConvertArguments`
-note: required by a bound in `MsgSend::send_message`
+  = note: required for `Retained<NSObject>` to implement `objc2::__macros::ConvertArgument`
+  = note: required for `(Retained<NSObject>,)` to implement `objc2::__macros::ConvertArguments`
+note: required by a bound in `objc2::__macros::MsgSend::send_message`
  --> $WORKSPACE/crates/objc2/src/__macros/msg_send/retained.rs
   |
   |     unsafe fn send_message<A: ConvertArguments>(receiver: Receiver, sel: Sel, args: A) -> Return;
@@ -73,9 +73,9 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
           and $N others
   = note: required for `&Retained<NSObject>` to implement `Encode`
   = note: required for `&Retained<NSObject>` to implement `EncodeArgument`
-  = note: required for `&Retained<NSObject>` to implement `ConvertArgument`
-  = note: required for `(&Retained<NSObject>,)` to implement `ConvertArguments`
-note: required by a bound in `MsgSend::send_message`
+  = note: required for `&Retained<NSObject>` to implement `objc2::__macros::ConvertArgument`
+  = note: required for `(&Retained<NSObject>,)` to implement `objc2::__macros::ConvertArguments`
+note: required by a bound in `objc2::__macros::MsgSend::send_message`
  --> $WORKSPACE/crates/objc2/src/__macros/msg_send/retained.rs
   |
   |     unsafe fn send_message<A: ConvertArguments>(receiver: Receiver, sel: Sel, args: A) -> Return;
@@ -105,9 +105,9 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
   = note: 1 redundant requirement hidden
   = note: required for `Option<&Retained<NSObject>>` to implement `Encode`
   = note: required for `Option<&Retained<NSObject>>` to implement `EncodeArgument`
-  = note: required for `Option<&Retained<NSObject>>` to implement `ConvertArgument`
-  = note: required for `(Option<&Retained<NSObject>>,)` to implement `ConvertArguments`
-note: required by a bound in `MsgSend::send_message`
+  = note: required for `Option<&Retained<NSObject>>` to implement `objc2::__macros::ConvertArgument`
+  = note: required for `(Option<&Retained<NSObject>>,)` to implement `objc2::__macros::ConvertArguments`
+note: required by a bound in `objc2::__macros::MsgSend::send_message`
  --> $WORKSPACE/crates/objc2/src/__macros/msg_send/retained.rs
   |
   |     unsafe fn send_message<A: ConvertArguments>(receiver: Receiver, sel: Sel, args: A) -> Return;
@@ -135,9 +135,9 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
           and $N others
   = note: required for `*mut Retained<NSObject>` to implement `Encode`
   = note: required for `*mut Retained<NSObject>` to implement `EncodeArgument`
-  = note: required for `*mut Retained<NSObject>` to implement `ConvertArgument`
-  = note: required for `(*mut Retained<NSObject>,)` to implement `ConvertArguments`
-note: required by a bound in `MsgSend::send_message`
+  = note: required for `*mut Retained<NSObject>` to implement `objc2::__macros::ConvertArgument`
+  = note: required for `(*mut Retained<NSObject>,)` to implement `objc2::__macros::ConvertArguments`
+note: required by a bound in `objc2::__macros::MsgSend::send_message`
  --> $WORKSPACE/crates/objc2/src/__macros/msg_send/retained.rs
   |
   |     unsafe fn send_message<A: ConvertArguments>(receiver: Receiver, sel: Sel, args: A) -> Return;
@@ -166,9 +166,9 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
   = note: required for `&mut Retained<NSObject>` to implement `RefEncode`
   = note: required for `&mut &mut Retained<NSObject>` to implement `Encode`
   = note: required for `&mut &mut Retained<NSObject>` to implement `EncodeArgument`
-  = note: required for `&mut &mut Retained<NSObject>` to implement `ConvertArgument`
-  = note: required for `(&mut &mut Retained<NSObject>,)` to implement `ConvertArguments`
-note: required by a bound in `MsgSend::send_message`
+  = note: required for `&mut &mut Retained<NSObject>` to implement `objc2::__macros::ConvertArgument`
+  = note: required for `(&mut &mut Retained<NSObject>,)` to implement `objc2::__macros::ConvertArguments`
+note: required by a bound in `objc2::__macros::MsgSend::send_message`
  --> $WORKSPACE/crates/objc2/src/__macros/msg_send/retained.rs
   |
   |     unsafe fn send_message<A: ConvertArguments>(receiver: Receiver, sel: Sel, args: A) -> Return;
