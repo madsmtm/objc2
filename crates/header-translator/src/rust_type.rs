@@ -2668,11 +2668,14 @@ impl Ty {
                 fields
                     .iter()
                     .fold(TypeSafety::SAFE, |safety, (field_name, field)| {
-                        safety.merge(
-                            field
-                                .safety()
-                                .context(format!("struct field `{field_name}`")),
-                        )
+                        let mut field_safety = field.safety();
+                        if field_name == "version" {
+                            // Setting the right version in e.g.
+                            // `CFRunLoopObserverContext` is important.
+                            field_safety = field_safety
+                                .merge(TypeSafety::unsafe_in_argument("must be set correctly"));
+                        }
+                        safety.merge(field_safety.context(format!("struct field `{field_name}`")))
                     })
             }
             // Conservative.
