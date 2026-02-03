@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Changed
+- **BREAKING**: Changed `DispatchTime::walltime` to take a reference instead of a pointer. This makes it the method safe.
+- **BREAKING**: Changed `DispatchQueue::label` to return a `&CStr`.
+- **BREAKING**: Changed `DispatchQueue::qos_class` to take a reference instead of a pointer.
+- **BREAKING**: Changed `DispatchData::map` to take a reference instead of a pointer.
+- **BREAKING**: Changed `DispatchData::region` to take a reference instead of a pointer. This makes it the method safe.
+- **BREAKING**: Changed `DispatchIO::with_path` to take a `&CStr`.
+
 ### Fixed
 - Fixed reference counting in `DispatchSemaphoreGuard::release`.
 - Inlined more functions. This should allow using this library on macOS 10.12 with `crate-type = ["dylib"]`.

@@ -228,13 +228,31 @@ fn.dispatch_queue_create_with_target.renamed = "__new_with_target"
 fn.dispatch_workloop_create.renamed = "__new"
 fn.dispatch_workloop_create_inactive.renamed = "__new_inactive"
 
-fn.dispatch_queue_create.arguments.0.bounds = "null-terminated"
+##
+## Bounds information
+##
+
+fn.dispatch_walltime.arguments.0.bounds = "single"
+
 fn.dispatch_queue_create_with_target.arguments.0.bounds = "null-terminated"
+fn.dispatch_queue_create.arguments.0.bounds = "null-terminated"
+fn.dispatch_queue_get_label.return.bounds = "null-terminated"
+fn.dispatch_queue_get_qos_class.arguments.1.bounds = "single"
+
+fn.dispatch_once.arguments.0.bounds = "unsafe"
+fn.dispatch_once_f.arguments.0.bounds = "unsafe"
+
+fn.dispatch_data_create_map.arguments.1.bounds = "single"
+fn.dispatch_data_create_map.arguments.2.bounds = "single"
+fn.dispatch_data_copy_region.arguments.2.bounds = "single"
+
+fn.dispatch_io_create_with_path.arguments.1.bounds = "null-terminated"
+
 fn.dispatch_workloop_create.arguments.0.bounds = "null-terminated"
 fn.dispatch_workloop_create_inactive.arguments.0.bounds = "null-terminated"
 
 ##
-## Safety + API
+## Safety
 ##
 
 unsafe-default-safety.documentation-is-reviewed = true
