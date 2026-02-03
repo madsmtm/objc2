@@ -157,6 +157,7 @@ CGDirectDisplay = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 CGDirectDisplayMetal = []
 CGDirectPalette = []
@@ -164,12 +165,14 @@ CGDisplayConfiguration = [
     "bitflags",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 CGDisplayFade = []
 CGDisplayStream = [
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFString",
 ]
 CGEXRToneMappingGamma = ["objc2-core-foundation/CFDictionary"]
 CGError = []
@@ -185,6 +188,8 @@ CGFont = [
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFNumber",
+    "objc2-core-foundation/CFString",
 ]
 CGFunction = ["objc2-core-foundation/CFCGTypes"]
 CGGeometry = [
@@ -211,6 +216,7 @@ CGPDFContext = [
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 CGPDFDictionary = ["objc2-core-foundation/CFCGTypes"]
@@ -239,12 +245,16 @@ CGRemoteOperation = [
     "objc2-core-foundation/CFMachPort",
 ]
 CGRenderingBufferProvider = ["objc2-core-foundation/CFData"]
-CGSession = ["objc2-core-foundation/CFDictionary"]
+CGSession = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 CGShading = ["objc2-core-foundation/CFCGTypes"]
 CGToneMapping = ["objc2-core-foundation/CFDictionary"]
 CGWindow = [
     "bitflags",
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
 ]
 CGWindowLevel = []

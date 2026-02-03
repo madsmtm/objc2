@@ -90,6 +90,76 @@ fn.CGColorSpaceCreateExtendedLinearized.arguments.0.nullability = "nonnull"
 fn.CGColorSpaceCreateCopyWithStandardRange.arguments.0.nullability = "nonnull"
 
 ##
+## Fixing generics.
+##
+
+# Undocumented what the representation is.
+fn.CGPointCreateDictionaryRepresentation.return.generics = []
+fn.CGPointMakeWithDictionaryRepresentation.arguments.0.generics = []
+fn.CGSizeCreateDictionaryRepresentation.return.generics = []
+fn.CGSizeMakeWithDictionaryRepresentation.arguments.0.generics = []
+fn.CGRectCreateDictionaryRepresentation.return.generics = []
+fn.CGRectMakeWithDictionaryRepresentation.arguments.0.generics = []
+
+# Variation axes are specified to be `CFDictionary<CFString, CFNumber>`.
+fn.CGFontCreateCopyWithVariations.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFNumber.CFNumber"]
+fn.CGFontCopyVariationAxes.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFNumber.CFNumber>"]
+fn.CGFontCopyVariations.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFNumber.CFNumber"]
+fn.CGFontCopyTableTags.return.generics = [] # uint32_t
+
+fn.CGGradientCreateWithColors.arguments.1.generics = ["CoreGraphics.CGColor.CGColor"]
+
+fn.CGPDFContentStreamGetStreams.return.generics = ["CoreGraphics.CGPDFContentStream.CGPDFContentStream"]
+fn.CGPDFContextCreate.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGPDFContextCreateWithURL.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGPDFContextBeginPage.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CGWindowListCopyWindowInfo.return.generics = ["CoreFoundation.CFDictionary.CFDictionary"] # Unsure of dictionary keys/values
+fn.CGWindowListCreate.return.generics = [] # CGWindowID (u32)
+fn.CGWindowListCreateDescriptionFromArray.arguments.0.generics = [] # CGWindowID (u32)
+fn.CGWindowListCreateDescriptionFromArray.return.generics = ["CoreFoundation.CFDictionary.CFDictionary"] # Unsure of dictionary keys/values
+fn.CGWindowListCreateImageFromArray.arguments.1.generics = [] # CGWindowID (u32)
+
+fn.CGDisplayCopyAllDisplayModes.return.generics = ["CoreGraphics.CGDirectDisplay.CGDisplayMode"]
+fn.CGDisplayAvailableModes.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.CGDisplayBestModeForParameters.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGDisplayBestModeForParametersAndRefreshRate.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGDisplayCurrentMode.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGDisplaySwitchToMode.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGConfigureDisplayMode.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGDisplayStreamCreate.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGDisplayStreamCreateWithDispatchQueue.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CGSessionCopyCurrentDictionary.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+# Unsure, docs just say "additional information or NULL".
+fn.CGContextBeginTransparencyLayer.arguments.1.generics = []
+fn.CGContextBeginTransparencyLayerWithRect.arguments.2.generics = []
+
+# Reserved, pass NULL.
+fn.CGColorCreateCopyByMatchingToColorSpace.arguments.3.generics = []
+fn.CGPSConverterCreate.arguments.2.generics = []
+fn.CGPSConverterConvert.arguments.3.generics = []
+fn.CGLayerCreateWithContext.arguments.2.generics = []
+fn.CGDisplayCopyAllDisplayModes.arguments.1.generics = []
+fn.CGDisplaySetDisplayMode.arguments.2.generics = []
+fn.CGConfigureDisplayWithDisplayMode.arguments.3.generics = []
+
+# No documentation.
+fn.CGBitmapContextCreateAdaptive.arguments.2.generics = []
+fn.CGColorConversionInfoConvertData.arguments.7.generics = []
+fn.CGColorConversionInfoCreateForToneMapping.arguments.5.generics = []
+fn.CGColorConversionInfoCreateWithOptions.arguments.2.generics = []
+fn.CGContextDrawImageApplyingToneMapping.arguments.4.generics = []
+fn.CGConvertColorDataWithFormat.arguments.6.generics = []
+fn.CGEXRToneMappingGammaGetDefaultOptions.return.generics = []
+fn.CGPathCreateSeparateComponents.return.generics = []
+fn.CGPDFContextBeginTag.arguments.2.generics = []
+fn.CGPDFContextSetOutline.arguments.1.generics = []
+fn.CGPDFContextSetPageTagStructureTree.arguments.1.generics = []
+fn.CGPDFDocumentGetOutline.return.generics = []
+
+##
 ## Safety
 ##
 
