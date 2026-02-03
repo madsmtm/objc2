@@ -31,6 +31,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 * **BREAKING**: Removed a lot of deprecated function aliases. Use the methods instead.
+* **BREAKING**: Fixed a bunch of nullability and generics information in:
+  - `CoreFoundation` / `objc2-core-foundation`.
+  - `CoreGraphics` / `objc2-core-graphics`.
+  - `CoreText` / `objc2-core-text`.
+  - `SystemConfiguration` / `objc2-system-configuration`.
 * **BREAKING**: Removed `UIButtonConfiguration::tintedGlassButtonConfiguration`.
 * **BREAKING**: Removed `UIDocumentBrowserAction::imageOnlyForContextMenu` and
   `UIDocumentBrowserAction::setImageOnlyForContextMenu`.

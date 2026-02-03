@@ -1,32 +1,17 @@
-//! Ensure that passing NULL to cg_nullable methods doesn't crash.
-//!
-//! TODO(breaking): Make these take a non-null parameter instead.
 #![cfg(feature = "CGContext")]
 #![cfg(feature = "CGColorSpace")]
-#![cfg(feature = "CGColorConversionInfo")]
 #![cfg(feature = "CGPDFContext")]
 #![cfg(feature = "CGBitmapContext")]
 #![cfg(feature = "CGImage")]
 
 use objc2_core_graphics::{
-    CGBitmapContextCreate, CGBitmapInfo, CGColorConversionInfo, CGColorSpace, CGContext,
-    CGImageAlphaInfo, CGImageByteOrderInfo, CGImageComponentInfo, CGImagePixelFormatInfo,
-    CGPDFContextClose,
+    CGBitmapContextCreate, CGBitmapInfo, CGColorSpace, CGImageAlphaInfo, CGImageByteOrderInfo,
+    CGImageComponentInfo, CGImagePixelFormatInfo, CGPDFContextClose,
 };
 
 #[test]
-fn null_context() {
-    CGContext::save_g_state(None);
-}
-
-#[test]
-fn null_colorspace() {
-    assert_eq!(CGColorConversionInfo::new(None, None), None);
-}
-
-#[test]
 fn non_pdf_context() {
-    let color_space = CGColorSpace::new_device_rgb().unwrap();
+    let color_space = CGColorSpace::new_device_rgb();
     let context = unsafe {
         CGBitmapContextCreate(
             std::ptr::null_mut(),
@@ -47,5 +32,5 @@ fn non_pdf_context() {
     };
 
     // Close a non-PDF context.
-    CGPDFContextClose(Some(&context));
+    CGPDFContextClose(&context);
 }
