@@ -4011,8 +4011,7 @@ impl Ty {
         if let Self::Pointer {
             // We always pass a place to write the error information,
             // so doesn't matter whether it's optional or not.
-            // TODO(breaking): Allow Unspecified here too.
-            nullability: Nullability::NonNull | Nullability::Nullable,
+            nullability: _,
             read: _,
             written,
             lifetime: Lifetime::Unspecified,
