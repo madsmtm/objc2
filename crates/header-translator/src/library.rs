@@ -1,10 +1,10 @@
 use std::collections::{BTreeMap, BTreeSet};
-use std::fmt;
 use std::fs;
 use std::io::ErrorKind;
 use std::io::Write;
 use std::iter;
 use std::path::Path;
+use std::{fmt, isize};
 
 use toml_edit::InlineTable;
 use toml_edit::{value, Array, DocumentMut, Item, Table, Value};
@@ -392,7 +392,7 @@ see that for related crates.", self.data.krate)?;
 
                 let target = cargo_toml.entry("target").implicit_table();
 
-                target.set_position(dep_position);
+                target.set_position(Some(dep_position));
 
                 let key = format!("'cfg({cfgs})'").parse().unwrap();
                 target
@@ -571,12 +571,12 @@ fn merge_toml_table(original: &mut Table, addition: Table) {
             toml_edit::Entry::Vacant(original) => {
                 match &mut addition {
                     Item::Table(table) => {
-                        table.set_position(isize::MAX);
+                        table.set_position(Some(isize::MAX));
                         table.decor_mut().clear();
                     }
                     Item::ArrayOfTables(array) => {
                         for table in array.iter_mut() {
-                            table.set_position(isize::MAX);
+                            table.set_position(Some(isize::MAX));
                             table.decor_mut().clear();
                         }
                     }
