@@ -1,11 +1,10 @@
 use alloc::boxed::Box;
 use core::ffi::c_void;
+use core::num::NonZeroIsize;
 
-use crate::generated::{dispatch_group_enter, dispatch_group_wait};
-use crate::{DispatchObject, DispatchQueue, DispatchRetained, DispatchTime};
+use crate::{DispatchObject, DispatchQueue, DispatchRetained, DispatchTime, DispatchTimeoutError};
 
 use super::utils::function_wrapper;
-use super::WaitError;
 
 dispatch_object!(
     /// Dispatch group.
@@ -35,14 +34,14 @@ impl DispatchGroup {
     ///
     /// # Errors
     ///
-    /// Return [WaitError::Timeout] in case of timeout.
+    /// Returns [`DispatchTimeoutError`] in case of timeout.
     #[inline]
-    pub fn wait(&self, timeout: DispatchTime) -> Result<(), WaitError> {
-        let result = dispatch_group_wait(self, timeout);
+    pub fn wait(&self, timeout: DispatchTime) -> Result<(), DispatchTimeoutError> {
+        let result = Self::__wait(self, timeout);
 
-        match result {
-            0 => Ok(()),
-            _ => Err(WaitError::Timeout),
+        match NonZeroIsize::new(result) {
+            None => Ok(()),
+            Some(result) => Err(DispatchTimeoutError(result)),
         }
     }
 
@@ -64,7 +63,7 @@ impl DispatchGroup {
     #[inline]
     pub fn enter(&self) -> DispatchGroupGuard {
         // SAFETY: TODO: Is it a soundness requirement that this is paired with leave?
-        unsafe { dispatch_group_enter(self) };
+        unsafe { Self::__enter(self) };
 
         DispatchGroupGuard(self.retain())
     }
@@ -87,6 +86,6 @@ impl Drop for DispatchGroupGuard {
     #[inline]
     fn drop(&mut self) {
         // SAFETY: TODO: Is it a soundness requirement that this is paired with enter?
-        unsafe { DispatchGroup::leave(&self.0) };
+        unsafe { self.0.leave() };
     }
 }

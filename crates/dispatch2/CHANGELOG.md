@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **BREAKING**: Renamed `DispatchQueue::new_with_target` to `::with_target`.
 - **BREAKING**: Split `DispatchWorkloop::new` into `::new` and `::new_inactive`.
 - **BREAKING**: Use `&CStr` instead of `&str` in `DispatchQueue` and `DispatchWorkloop` creation methods.
+- **BREAKING**: Renamed `WaitError` to `TimeoutError`.
 
 ### Removed
 - **BREAKING**: Removed `QueueAfterError`.

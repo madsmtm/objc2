@@ -3,10 +3,7 @@ use core::ffi::c_long;
 use core::ptr::NonNull;
 
 use super::utils::function_wrapper;
-use crate::generated::{
-    _dispatch_main_q, _dispatch_queue_attr_concurrent, dispatch_get_global_queue,
-    dispatch_queue_set_specific,
-};
+use crate::generated::{_dispatch_main_q, _dispatch_queue_attr_concurrent};
 use crate::{
     DispatchObject, DispatchQoS, DispatchRetained, DispatchTime, QualityOfServiceClassFloorError,
 };
@@ -67,7 +64,7 @@ impl DispatchQueue {
         let raw_identifier = identifier.to_identifier();
 
         // Safety: raw_identifier cannot be invalid, flags is reserved.
-        dispatch_get_global_queue(raw_identifier, 0)
+        Self::__global(raw_identifier, 0)
     }
 
     /// Return the main queue.
@@ -177,9 +174,7 @@ impl DispatchQueue {
         //
         // The key is never dereferenced, so passing _any_ pointer here is
         // safe and allowed.
-        unsafe {
-            dispatch_queue_set_specific(self, key.cast(), destructor_boxed, function_wrapper::<F>)
-        }
+        unsafe { self.__set_specific(key.cast(), destructor_boxed, function_wrapper::<F>) }
     }
 
     /// Set the QOS class floor of the [`DispatchQueue`].

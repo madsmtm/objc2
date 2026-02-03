@@ -143,12 +143,9 @@ fn.dispatch_notify.skipped = true
 fn.dispatch_cancel.skipped = true
 fn.dispatch_testcancel.skipped = true
 
-# TODO: Map these properly
-fn.dispatch_group_wait.no-implementor = true
-fn.dispatch_group_enter.no-implementor = true
-fn.dispatch_queue_set_specific.no-implementor = true
-fn.dispatch_get_global_queue.no-implementor = true
-
+fn.dispatch_group_wait.renamed = "__wait"
+fn.dispatch_group_enter.renamed = "__enter"
+fn.dispatch_queue_set_specific.renamed = "__set_specific"
 fn.dispatch_source_set_event_handler.renamed = "set_event_handler_with_block"
 fn.dispatch_source_set_cancel_handler.renamed = "set_cancel_handler_with_block"
 fn.dispatch_source_set_registration_handler.renamed = "set_registration_handler_with_block"
@@ -159,7 +156,7 @@ fn.dispatch_get_current_queue.renamed = "current"
 fn.dispatch_get_main_queue.implementor = "Dispatch.DispatchQueue"
 fn.dispatch_get_main_queue.renamed = "main"
 fn.dispatch_get_global_queue.implementor = "Dispatch.DispatchQueue"
-# fn.dispatch_get_global_queue.renamed = "global"
+fn.dispatch_get_global_queue.renamed = "__global"
 
 # Map queue assertions to DispatchQueue.
 fn.dispatch_assert_queue.implementor = "Dispatch.DispatchQueue"

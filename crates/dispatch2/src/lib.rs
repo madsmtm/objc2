@@ -53,18 +53,9 @@ mod retained;
 mod semaphore;
 mod source;
 mod time;
+mod timeout_error;
 mod utils;
 mod workloop;
-
-/// Wait error.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-#[non_exhaustive]
-pub enum WaitError {
-    /// The given timeout value will result in an overflow when converting to dispatch time.
-    TimeOverflow,
-    /// The operation timed out.
-    Timeout,
-}
 
 pub use self::data::DispatchData;
 #[cfg(feature = "block2")]
@@ -107,6 +98,7 @@ pub use self::source::{
     dispatch_source_vnode_flags_t, DispatchSource,
 };
 pub use self::time::DispatchTime;
+pub use self::timeout_error::DispatchTimeoutError;
 pub use self::workloop::DispatchWorkloop;
 
 // Helper type
