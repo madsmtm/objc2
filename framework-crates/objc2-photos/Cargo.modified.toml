@@ -1,10 +1,2 @@
 [package]
 description = "Bindings to the Photos/PhotoKit framework"
-
-[features]
-# TODO(breaking): Remove this
-PHChange = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSIndexSet",
-    "PHObject",
-]

@@ -255,9 +255,8 @@ fn.dispatch_data_create_subrange.unsafe = true
 fn.dispatch_group_enter.unsafe = true
 fn.dispatch_group_leave.unsafe = true
 
-# TODO(breaking): The cleanup handler is run on the queue, so it must be
-# Send + Sync.
-fn.dispatch_io_create_with_io.unsafe = false
+# The cleanup handler is run on the queue, so it must be Send + Sync.
+fn.dispatch_io_create_with_io.unsafe = true
 
 # object.h
 # NOTE: These work on a raw context pointer, but that's
@@ -297,7 +296,7 @@ fn.dispatch_allow_send_signals.unsafe = true
 # All values allowed, negative will return NULL
 fn.dispatch_semaphore_create.unsafe = false
 
-# TODO(breaking): Make these unsafe (the handler function must be correct).
-fn.dispatch_source_set_event_handler_f.unsafe = false
-fn.dispatch_source_set_cancel_handler_f.unsafe = false
-fn.dispatch_source_set_registration_handler_f.unsafe = false
+# The handler function must be correct.
+fn.dispatch_source_set_event_handler_f.unsafe = true
+fn.dispatch_source_set_cancel_handler_f.unsafe = true
+fn.dispatch_source_set_registration_handler_f.unsafe = true

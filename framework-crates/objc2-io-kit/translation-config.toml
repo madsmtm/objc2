@@ -234,59 +234,6 @@ const.kIONetworkLinkValid.use-value = true
 const.kIONetworkLinkActive.use-value = true
 const.kIONetworkLinkNoNetworkChange.use-value = true
 
-# TODO(breaking): Remove these
-fn.IOObjectGetClass.arguments.1.bounds = "unsafe"
-fn.IOObjectConformsTo.arguments.1.written = true
-fn.IOObjectConformsTo.arguments.1.bounds = "unsafe"
-fn.IOServiceAddNotification.arguments.1.written = true
-fn.IOServiceAddNotification.arguments.1.bounds = "unsafe"
-fn.IOServiceAddInterestNotification.arguments.2.written = true
-fn.IOServiceAddInterestNotification.arguments.2.bounds = "unsafe"
-fn.IORegistryEntryFromPath.arguments.1.written = true
-fn.IORegistryEntryFromPath.arguments.1.bounds = "unsafe"
-fn.IORegistryCreateIterator.arguments.1.written = true
-fn.IORegistryCreateIterator.arguments.1.bounds = "unsafe"
-fn.IORegistryEntryCreateIterator.arguments.1.written = true
-fn.IORegistryEntryCreateIterator.arguments.1.bounds = "unsafe"
-fn.IORegistryEntryGetName.arguments.1.written = true
-fn.IORegistryEntryGetName.arguments.1.bounds = "unsafe"
-fn.IORegistryEntryGetNameInPlane.arguments.1.written = true
-fn.IORegistryEntryGetNameInPlane.arguments.1.bounds = "unsafe"
-fn.IORegistryEntryGetNameInPlane.arguments.2.bounds = "unsafe"
-fn.IORegistryEntryGetLocationInPlane.arguments.1.written = true
-fn.IORegistryEntryGetLocationInPlane.arguments.1.bounds = "unsafe"
-fn.IORegistryEntryGetLocationInPlane.arguments.2.bounds = "unsafe"
-fn.IORegistryEntryGetPath.arguments.1.written = true
-fn.IORegistryEntryGetPath.arguments.1.bounds = "unsafe"
-fn.IORegistryEntryGetPath.arguments.2.bounds = "unsafe"
-fn.IORegistryEntryCopyPath.arguments.1.written = true
-fn.IORegistryEntryCopyPath.arguments.1.bounds = "unsafe"
-fn.IORegistryEntrySearchCFProperty.arguments.1.written = true
-fn.IORegistryEntrySearchCFProperty.arguments.1.bounds = "unsafe"
-fn.IORegistryEntryGetProperty.arguments.1.written = true
-fn.IORegistryEntryGetProperty.arguments.1.bounds = "unsafe"
-fn.IORegistryEntryGetProperty.arguments.2.bounds = "unsafe"
-fn.IORegistryEntryGetChildIterator.arguments.1.written = true
-fn.IORegistryEntryGetChildIterator.arguments.1.bounds = "unsafe"
-fn.IORegistryEntryGetChildEntry.arguments.1.written = true
-fn.IORegistryEntryGetChildEntry.arguments.1.bounds = "unsafe"
-fn.IORegistryEntryGetParentIterator.arguments.1.written = true
-fn.IORegistryEntryGetParentIterator.arguments.1.bounds = "unsafe"
-fn.IORegistryEntryGetParentEntry.arguments.1.written = true
-fn.IORegistryEntryGetParentEntry.arguments.1.bounds = "unsafe"
-fn.IORegistryEntryInPlane.arguments.1.written = true
-fn.IORegistryEntryInPlane.arguments.1.bounds = "unsafe"
-fn.IOServiceOFPathToBSDName.arguments.1.written = true
-fn.IOServiceOFPathToBSDName.arguments.1.bounds = "unsafe"
-fn.IOServiceOFPathToBSDName.arguments.2.bounds = "unsafe"
-fn.IOCatalogueTerminate.arguments.2.bounds = "unsafe"
-fn.IOCatalogueModuleLoaded.arguments.1.bounds = "unsafe"
-
-fn.IONetworkSetPacketFiltersMask.arguments.1.written = true
-fn.IONetworkSetPacketFiltersMask.arguments.1.bounds = "unsafe"
-fn.IONetworkGetPacketFiltersMask.arguments.1.written = true
-fn.IONetworkGetPacketFiltersMask.arguments.1.bounds = "unsafe"
-
 ##
 ## Safety
 ##

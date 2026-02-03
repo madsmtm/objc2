@@ -110,11 +110,6 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
-PHChange = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSIndexSet",
-    "PHObject",
-]
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
@@ -174,6 +169,10 @@ PHAssetResourceUploadJob = [
     "objc2-foundation/NSURLRequest",
 ]
 PHAssetResourceUploadJobChangeRequest = ["objc2-foundation/NSURLRequest"]
+PHChange = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSIndexSet",
+]
 PHChangeRequest = []
 PHCloudIdentifier = [
     "objc2-foundation/NSArray",

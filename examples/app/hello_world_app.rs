@@ -108,7 +108,7 @@ define_class!(
             view.addSubview(&text_field);
             window.center();
             window.setContentMinSize(NSSize::new(300.0, 300.0));
-            window.setDelegate(Some(ProtocolObject::from_ref(self)));
+            unsafe { window.setDelegate(Some(ProtocolObject::from_ref(self))) };
 
             // Show the window.
             window.makeKeyAndOrderFront(None);

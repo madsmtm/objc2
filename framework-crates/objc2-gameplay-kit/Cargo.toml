@@ -102,22 +102,6 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
-GKGridGraph = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSObject",
-    "GKGraphNode",
-]
-GKMeshGraph = [
-    "bitflags",
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSObject",
-    "GKGraphNode",
-]
-GKObstacleGraph = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSObject",
-    "GKGraphNode",
-]
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
@@ -181,6 +165,15 @@ GKGraphNode = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
 ]
+GKGridGraph = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
+GKMeshGraph = [
+    "bitflags",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
 GKMinmaxStrategist = []
 GKMonteCarloStrategist = []
 GKNoise = [
@@ -191,6 +184,10 @@ GKNoise = [
 GKNoiseMap = []
 GKNoiseSource = []
 GKObstacle = ["objc2-foundation/NSObject"]
+GKObstacleGraph = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
 GKOctree = []
 GKPath = ["objc2-foundation/NSArray"]
 GKPrimitives = []

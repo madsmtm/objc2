@@ -1,0 +1,11 @@
+error: no rules expected `#`
+ --> ui/cf_type_old_syntax.rs
+  |
+  |     #[encoding_name = "__TISInputSource"]
+  |     ^ no rules expected this token in macro call
+  |
+note: while trying to match keyword `unsafe`
+ --> $WORKSPACE/framework-crates/objc2-core-foundation/src/cf_type.rs
+  |
+  | ...   unsafe impl $(<$($generic:ident : ?$sized:ident),* $(,)?>)? $ty:ident $(<$($generic_param:ident),* $(,)?>)? $(: $superclass:ty...
+  |       ^^^^^^

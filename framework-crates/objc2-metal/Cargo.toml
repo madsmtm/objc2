@@ -157,52 +157,6 @@ unstable-private = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSError",
 ]
-MTLAccelerationStructureCommandEncoder = [
-    "objc2-foundation/NSObject",
-    "MTLAccelerationStructure",
-]
-MTLArgument = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSString",
-    "MTLDataType",
-]
-MTLStageInputOutputDescriptor = [
-    "objc2-foundation/NSObject",
-    "MTLArgument",
-]
-MTLComputePipeline = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
-    "MTLAllocation",
-]
-MTLRenderPipeline = [
-    "bitflags",
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
-    "MTLAllocation",
-]
-MTLDevice = [
-    "bitflags",
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSBundle",
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
-    "objc2-foundation/NSURL",
-    "MTLLibrary",
-    "MTLResource",
-    "MTLGPUAddress",
-]
-MTLBuffer = [
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSRange",
-    "objc2-foundation/NSString",
-    "MTLGPUAddress",
-]
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
@@ -326,8 +280,13 @@ MTLAccelerationStructure = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+MTLAccelerationStructureCommandEncoder = ["objc2-foundation/NSObject"]
 MTLAccelerationStructureTypes = []
 MTLAllocation = []
+MTLArgument = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+]
 MTLArgumentEncoder = [
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
@@ -343,6 +302,11 @@ MTLBlitCommandEncoder = [
     "objc2-foundation/NSRange",
 ]
 MTLBlitPass = ["objc2-foundation/NSObject"]
+MTLBuffer = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
 MTLCaptureManager = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -368,6 +332,12 @@ MTLCommandQueue = [
 ]
 MTLComputeCommandEncoder = ["objc2-foundation/NSRange"]
 MTLComputePass = ["objc2-foundation/NSObject"]
+MTLComputePipeline = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 MTLCounters = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
@@ -381,6 +351,15 @@ MTLDefines = []
 MTLDepthStencil = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+]
+MTLDevice = [
+    "bitflags",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
 MTLDeviceCertification = [
     "objc2-foundation/NSNotification",
@@ -481,6 +460,13 @@ MTLRenderPass = [
     "bitflags",
     "objc2-foundation/NSObject",
 ]
+MTLRenderPipeline = [
+    "bitflags",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 MTLResidencySet = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
@@ -501,6 +487,7 @@ MTLSampler = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+MTLStageInputOutputDescriptor = ["objc2-foundation/NSObject"]
 MTLTensor = [
     "bitflags",
     "objc2-foundation/NSError",

@@ -23,6 +23,10 @@ const.kMORTLigLastAction.use-value = true
 const.kMORXCoverVertical.use-value = true
 const.kKERXVertical.use-value = true
 
+# `CTRunDelegateCreate` creates this from a nullable parameter, so this is
+# probably also nullable.
+fn.CTRunDelegateGetRefCon.return.nullability = "nullable"
+
 ##
 ## Fixing bounds information.
 ##
@@ -205,10 +209,6 @@ unsafe-default-safety.documentation-is-reviewed = true
 # - `CTTypesetterCreateLineWithOffset`: "otherwise the call will fail".
 # - `CTRunGetStringIndices` takes buffer pointer, so ofc. isn't safe.
 unsafe-default-safety.bounds-checked-internally = true
-
-# TODO(breaking): Mark this as nullable? `CTRunDelegateCreate` creates it from
-# a nullable parameter.
-fn.CTRunDelegateGetRefCon.unsafe = true
 
 # Documents that:
 # > The return value is undefined if CTFontCollectionCreateFromAvailableFonts was used to create the collection.

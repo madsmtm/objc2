@@ -121,20 +121,6 @@ gnustep-1-8 = []
 gnustep-1-9 = []
 gnustep-2-0 = []
 gnustep-2-1 = []
-NSFetchedResultsController = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSIndexPath",
-    "objc2-foundation/NSOrderedCollectionDifference",
-    "objc2-foundation/NSString",
-    "NSFetchRequest",
-]
-NSPersistentStoreResult = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSProgress",
-    "NSFetchRequest",
-]
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-cloud-kit = ["dep:objc2-cloud-kit"]
@@ -247,6 +233,13 @@ NSFetchRequestExpression = [
     "objc2-foundation/NSObject",
 ]
 NSFetchedPropertyDescription = ["objc2-foundation/NSObject"]
+NSFetchedResultsController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSIndexPath",
+    "objc2-foundation/NSOrderedCollectionDifference",
+    "objc2-foundation/NSString",
+]
 NSIncrementalStore = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
@@ -395,6 +388,11 @@ NSPersistentStoreDescription = [
 NSPersistentStoreRequest = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
+]
+NSPersistentStoreResult = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSProgress",
 ]
 NSPropertyDescription = [
     "objc2-foundation/NSArray",

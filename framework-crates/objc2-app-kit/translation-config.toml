@@ -304,10 +304,9 @@ class.NSColorSampler.methods."showSamplerWithSelectionHandler:".unsafe = true
 # Rust's minimum supported macOS version, so that's fine.
 class.NSOutlineView.methods."setStronglyReferencesItems:".unsafe = true
 
-# TODO(breaking): These crash, should probably be skipped (and marked
-# `NS_UNAVAILABLE` in the header).
-class.NSStatusBar.methods.new.unsafe = true
-class.NSStatusBar.methods.init.unsafe = true
+# These crash, should probably be marked `NS_UNAVAILABLE` in the header.
+class.NSStatusBar.methods.new.skipped = true
+class.NSStatusBar.methods.init.skipped = true
 
 # Incorrectly overwritten, breaks type-safety.
 class.NSTableView.methods.dataSource.unsafe = true
@@ -326,8 +325,7 @@ class.NSTextContentStorage.methods."setDelegate:".unsafe = true
 class.NSTextContentManager.methods."setDelegate:".unsafe = true
 class.NSSavePanel.methods.delegate.unsafe = true
 class.NSSavePanel.methods."setDelegate:".unsafe = true
-# TODO(breaking): Mark this unsafe (or allow delegate protocols to break type-safety).
-class.NSWindow.methods.delegate.unsafe = false
-class.NSWindow.methods."setDelegate:".unsafe = false
+class.NSWindow.methods.delegate.unsafe = true
+class.NSWindow.methods."setDelegate:".unsafe = true
 class.NSComboButton.methods."setMenu:".unsafe = true
 class.NSResponder.methods."setMenu:".unsafe = true

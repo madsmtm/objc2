@@ -540,19 +540,6 @@ default = [
 ]
 std = ["alloc"]
 alloc = []
-UISceneSession = [
-    "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
-    "objc2-foundation/NSUserActivity",
-    "UISceneConfiguration",
-]
-UIWindowScene = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSString",
-    "UISceneSizeRestrictions",
-]
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-cloud-kit = ["dep:objc2-cloud-kit"]
@@ -1760,6 +1747,12 @@ UISceneOptions = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSUserActivity",
 ]
+UISceneSession = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUserActivity",
+]
 UISceneSessionActivationRequest = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -2213,6 +2206,11 @@ UIWindow = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+UIWindowScene = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
 UIWindowSceneActivationAction = [
