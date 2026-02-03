@@ -87,8 +87,8 @@ impl<K: ?Sized, V: ?Sized> CFDictionary<K, V> {
                 keys,
                 values,
                 len,
-                &kCFTypeDictionaryKeyCallBacks,
-                &kCFTypeDictionaryValueCallBacks,
+                Some(&kCFTypeDictionaryKeyCallBacks),
+                Some(&kCFTypeDictionaryValueCallBacks),
             )
         }
         .unwrap_or_else(|| failed_creating_dictionary(len));
@@ -129,8 +129,8 @@ impl<K: ?Sized, V: ?Sized> CFMutableDictionary<K, V> {
             CFMutableDictionary::new(
                 None,
                 capacity,
-                &kCFTypeDictionaryKeyCallBacks,
-                &kCFTypeDictionaryValueCallBacks,
+                Some(&kCFTypeDictionaryKeyCallBacks),
+                Some(&kCFTypeDictionaryValueCallBacks),
             )
         }
         .unwrap_or_else(|| failed_creating_dictionary(capacity));

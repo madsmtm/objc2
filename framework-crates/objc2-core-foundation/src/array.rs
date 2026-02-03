@@ -77,7 +77,7 @@ impl<T: ?Sized> CFArray<T> {
         //
         // The objects are retained internally by the array, so we do not need
         // to keep them alive ourselves after this.
-        let array = unsafe { CFArray::new(None, ptr, len, &kCFTypeArrayCallBacks) }
+        let array = unsafe { CFArray::new(None, ptr, len, Some(&kCFTypeArrayCallBacks)) }
             .unwrap_or_else(|| failed_creating_array(len));
 
         // SAFETY: The objects came from `T`.
@@ -107,7 +107,7 @@ impl<T: ?Sized> CFArray<T> {
         let ptr = objects.as_ptr().cast::<*const c_void>().cast_mut();
 
         // SAFETY: Same as in `from_objects`.
-        let array = unsafe { CFArray::new(None, ptr, len, &kCFTypeArrayCallBacks) }
+        let array = unsafe { CFArray::new(None, ptr, len, Some(&kCFTypeArrayCallBacks)) }
             .unwrap_or_else(|| failed_creating_array(len));
 
         // SAFETY: The objects came from `T`.
@@ -139,7 +139,7 @@ impl<T: ?Sized> CFMutableArray<T> {
 
         // SAFETY: The objects are CFTypes (`T: Type` bound), and the array
         // callbacks are thus correct.
-        let array = unsafe { CFMutableArray::new(None, capacity, &kCFTypeArrayCallBacks) }
+        let array = unsafe { CFMutableArray::new(None, capacity, Some(&kCFTypeArrayCallBacks)) }
             .unwrap_or_else(|| failed_creating_array(capacity));
 
         // SAFETY: The array contains no objects yet, and thus it's safe to
@@ -540,7 +540,7 @@ mod tests {
     fn array_with_invalid_pointers() {
         // without_provenance
         let ptr = [0 as _, 1 as _, 2 as _, 3 as _, usize::MAX as _].as_mut_ptr();
-        let array = unsafe { CFArray::new(None, ptr, 1, null()) }.unwrap();
+        let array = unsafe { CFArray::new(None, ptr, 1, None) }.unwrap();
         let value = unsafe { array.value_at_index(0) };
         assert!(value.is_null());
     }
@@ -550,7 +550,7 @@ mod tests {
     #[ignore = "aborts (as expected)"]
     fn object_array_cannot_contain_null() {
         let ptr = [null()].as_mut_ptr();
-        let _array = unsafe { CFArray::new(None, ptr, 1, &kCFTypeArrayCallBacks) };
+        let _array = unsafe { CFArray::new(None, ptr, 1, Some(&kCFTypeArrayCallBacks)) };
     }
 
     #[test]

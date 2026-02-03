@@ -165,9 +165,7 @@ unsafe fn create_observer_unchecked<F: Fn(&CFRunLoopObserver, CFRunLoopActivity)
         callback(observer, activity);
     }
 
-    // This is marked `mut` to match the signature of `CFRunLoopObserver::new`,
-    // but the information is copied, and not actually mutated.
-    let mut context = CFRunLoopObserverContext {
+    let context = CFRunLoopObserverContext {
         version: 0,
         // This pointer is retained by CF on creation.
         info: Arc::as_ptr(&callback) as *mut c_void,
@@ -187,7 +185,7 @@ unsafe fn create_observer_unchecked<F: Fn(&CFRunLoopObserver, CFRunLoopActivity)
             repeats,
             order,
             Some(callout::<F>),
-            &mut context,
+            Some(&context),
         )
     }
     .unwrap()
@@ -246,9 +244,7 @@ unsafe fn create_timer_unchecked<F: Fn(&CFRunLoopTimer) + 'static>(
         callback(timer);
     }
 
-    // This is marked `mut` to match the signature of `CFRunLoopTimer::new`,
-    // but the information is copied, and not actually mutated.
-    let mut context = CFRunLoopTimerContext {
+    let context = CFRunLoopTimerContext {
         version: 0,
         // This pointer is retained by CF on creation.
         info: Arc::as_ptr(&callback) as *mut c_void,
@@ -269,7 +265,7 @@ unsafe fn create_timer_unchecked<F: Fn(&CFRunLoopTimer) + 'static>(
             0, // Documentation says to pass 0 for future compat.
             order,
             Some(callout::<F>),
-            &mut context,
+            Some(&context),
         )
     }
     .unwrap()
@@ -353,9 +349,7 @@ fn create_source<F: Fn(SourceData<'_>) + Send + Sync + 'static>(
         (signaller)(SourceData::Perform);
     }
 
-    // This is marked `mut` to match the signature of `CFRunLoopSource::new`,
-    // but the information is copied, and not actually mutated.
-    let mut context = CFRunLoopSourceContext {
+    let context = CFRunLoopSourceContext {
         version: 0, // Version 0 source
         // This pointer is retained by CF on creation.
         info: Arc::as_ptr(&callback) as *mut c_void,
@@ -373,5 +367,5 @@ fn create_source<F: Fn(SourceData<'_>) + Send + Sync + 'static>(
     // with `Send + Sync`, so that is thread-safe too.
     //
     // `F: 'static`, so extending the lifetime of the closure is fine.
-    unsafe { CFRunLoopSource::new(kCFAllocatorDefault, order, &mut context) }.unwrap()
+    unsafe { CFRunLoopSource::new(kCFAllocatorDefault, order, &context) }.unwrap()
 }

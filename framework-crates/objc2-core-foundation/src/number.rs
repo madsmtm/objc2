@@ -117,7 +117,7 @@ impl Ord for CFNumber {
     fn cmp(&self, other: &Self) -> Ordering {
         // Documented that one should pass NULL here.
         let context = ptr::null_mut();
-        unsafe { self.compare(Some(other), context) }.into()
+        unsafe { self.compare(other, context) }.into()
     }
 }
 

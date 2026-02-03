@@ -712,7 +712,9 @@ pub enum PointerBounds {
     #[serde(rename = "single")]
     Single,
     #[serde(rename = "null-terminated")]
-    NullTerminated, // Or TerminatedBy(b'\0')
+    NullTerminated, // Equivalent to TerminatedBy(b'\0')
+    #[serde(rename = "terminated-by")]
+    TerminatedBy(String),
     #[serde(rename = "counted-by")]
     CountedBy(String),
     #[serde(rename = "sized-by")]

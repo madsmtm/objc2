@@ -159,7 +159,7 @@ impl fmt::Display for CFString {
                     false,
                     buf.as_mut_ptr(),
                     buf.len() as _,
-                    &mut read_utf8,
+                    Some(&mut read_utf8),
                 )
             };
             if read_utf16 <= 0 {
@@ -243,7 +243,7 @@ mod tests {
         ];
         for (cstr, encoding, expected) in table {
             let cstr = CStr::from_bytes_with_nul(cstr).unwrap();
-            let s = unsafe { CFString::with_c_string(None, cstr.as_ptr(), encoding.0) }.unwrap();
+            let s = unsafe { CFString::with_c_string(None, cstr, encoding.0) }.unwrap();
             assert_eq!(s.to_string(), expected);
         }
     }
@@ -335,7 +335,7 @@ mod tests {
         let s = unsafe {
             CFString::with_c_string(
                 None,
-                b"\x65\x26\0".as_ptr().cast(),
+                CStr::from_bytes_with_nul_unchecked(b"\x65\x26\0"),
                 CFStringBuiltInEncodings::EncodingUnicode.0,
             )
         }
