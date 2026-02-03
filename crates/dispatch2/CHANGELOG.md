@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - **BREAKING**: Removed `QueueAfterError`.
 - **BREAKING**: Removed incorrect `TryFrom<Duration>` impl on `DispatchTime`.
+- **BREAKING**: Removed deprecated aliases.
 
 ### Fixed
 - Fixed reference counting in `DispatchSemaphoreGuard::release`.

@@ -104,26 +104,6 @@ pub use self::workloop::DispatchWorkloop;
 // Helper type
 type OpaqueData = UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>;
 
-/// Deprecated alias for [`DispatchGroup`].
-#[deprecated = "renamed to DispatchGroup"]
-pub type Group = DispatchGroup;
-
-/// Deprecated alias for [`DispatchOnce`].
-#[deprecated = "renamed to DispatchOnce"]
-pub type Once = DispatchOnce;
-
-/// Deprecated alias for [`DispatchQueue`].
-#[deprecated = "renamed to DispatchQueue"]
-pub type Queue = DispatchQueue;
-
-/// Deprecated alias for [`DispatchSemaphore`].
-#[deprecated = "renamed to DispatchSemaphore"]
-pub type Semaphore = DispatchSemaphore;
-
-/// Deprecated alias for [`DispatchWorkloop`].
-#[deprecated = "renamed to DispatchWorkloop"]
-pub type WorkloopQueue = DispatchWorkloop;
-
 #[cfg_attr(target_vendor = "apple", link(name = "System", kind = "dylib"))]
 #[cfg_attr(not(target_vendor = "apple"), link(name = "dispatch", kind = "dylib"))]
 extern "C" {}
