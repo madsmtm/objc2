@@ -2,6 +2,8 @@ use clang::source::{SourceLocation, SourceRange};
 use clang::token::{Token, TokenKind};
 use clang::{Entity, EntityKind};
 use proc_macro2::TokenStream;
+use std::ffi::{c_int, c_void};
+use std::sync::LazyLock;
 
 use crate::context::{Context, MacroLocation};
 
@@ -455,6 +457,30 @@ impl UnexposedAttr {
     }
 
     pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Option<Self> {
+        let (cursor, tu) = entity.as_raw();
+        #[derive(Hash, PartialEq, Eq, Debug)]
+        struct CacheKey(
+            clang_sys::CXCursorKind,
+            c_int,
+            [*const c_void; 3],
+            clang_sys::CXTranslationUnit,
+        );
+        unsafe impl Send for CacheKey {}
+        unsafe impl Sync for CacheKey {}
+
+        let key = CacheKey(cursor.kind, cursor.kind, cursor.data, tu.as_raw());
+
+        static CACHE: LazyLock<moka::sync::Cache<CacheKey, Option<UnexposedAttr>>> =
+            LazyLock::new(|| moka::sync::Cache::new(100000));
+
+        CACHE
+            .entry(key)
+            .or_insert_with(|| Self::parse_inner(entity, context))
+            .into_value()
+    }
+
+    // This function is fairly expensive, so let's memoize it above ^.
+    fn parse_inner(entity: &Entity<'_>, context: &Context<'_>) -> Option<Self> {
         if let Some(location) = entity.get_location() {
             if let Some(entity) = context
                 .macro_invocations

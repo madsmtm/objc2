@@ -28,6 +28,7 @@ four-char-code = "2.3.0"
 regex = "1.6"
 clap = { version = "4.5.31", features = ["derive"] }
 itertools = "0.14.0"
+moka = { version = "0.12.13", features = ["sync"] }
 
 [package.metadata.release]
 release = false
