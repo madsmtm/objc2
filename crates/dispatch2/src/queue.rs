@@ -236,15 +236,23 @@ impl DispatchQueueAttr {
 }
 
 /// Executes blocks submitted to the main queue.
+///
+/// This function "parks" the main thread and waits for blocks to be submitted
+/// to the main queue. This function never returns.
+///
+/// Applications that call NSApplicationMain() or CFRunLoopRun() on the
+/// main thread do not need to call dispatch_main().
 #[inline]
+// Doesn't take `MainThreadMarker` even though it probably should; we want to
+// be able to use this without depending on `objc2`.
 pub fn dispatch_main() -> ! {
     extern "C" {
         // `dispatch_main` is marked DISPATCH_NOTHROW.
         fn dispatch_main() -> !;
     }
 
-    // SAFETY: TODO: Must this be run on the main thread? Do we need to take
-    // `MainThreadMarker`?
+    // SAFETY: `dispatch_main` is safe to call from any thread, though it'll
+    // (safely) crash if not called from the main thread.
     unsafe { dispatch_main() }
 }
 
