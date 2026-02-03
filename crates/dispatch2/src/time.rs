@@ -1,9 +1,10 @@
-use core::time::Duration;
-
 #[cfg(feature = "objc2")]
 use objc2::encode::{Encode, Encoding, RefEncode};
 
 /// An abstract representation of time.
+///
+/// Zero means "now" and DISPATCH_TIME_FOREVER means "infinity" and every
+/// value in between is an opaque encoding.
 #[doc(alias = "dispatch_time_t")]
 #[repr(transparent)]
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, Eq, Ord)]
@@ -31,26 +32,12 @@ impl DispatchTime {
     // TODO: Swift calls this `distantFuture`
     pub const FOREVER: Self = Self(u64::MAX);
 
-    /// TODO.
+    /// The current time relative to the clock used in `gettimeofday(3)`.
     #[doc(alias = "DISPATCH_WALLTIME_NOW")]
     pub const WALLTIME_NOW: Self = Self(!1);
 }
 
-impl TryFrom<Duration> for DispatchTime {
-    type Error = ();
-
-    #[inline]
-    fn try_from(value: Duration) -> Result<Self, Self::Error> {
-        let secs = value.as_secs() as i64;
-
-        let delta = secs
-            .checked_mul(1_000_000_000)
-            .and_then(|x| x.checked_add(i64::from(value.subsec_nanos())))
-            .ok_or(())?;
-        // delta cannot overflow
-        Ok(Self::NOW.time(delta))
-    }
-}
-
 // TODO: Expand this with inspiration from Time.swift in:
 // https://github.com/swiftlang/swift-corelibs-libdispatch/blob/swift-6.1-RELEASE/src/swift/Time.swift
+//
+// Needs to invoke `mach_timebase_info`.
