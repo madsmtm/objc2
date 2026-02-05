@@ -1,12 +1,16 @@
 //! Output code for the function itself.
 
+/// Handle implementing protocols and stripping custom attributes from
+/// methods (as these are only used when registering the method).
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __define_class_output_impls {
-    // Base-case
+    // This is implemented as an incremental tt-muncher.
+
+    // Base-case.
     () => {};
 
-    // With protocol
+    // With protocol.
     (
         $(#[$m:meta])*
         unsafe impl $protocol:ident for $for:ty {
@@ -15,13 +19,18 @@ macro_rules! __define_class_output_impls {
 
         $($rest:tt)*
     ) => {
-        // SAFETY: Upheld by caller
+        // SAFETY: Upheld by caller.
         $(#[$m])*
         unsafe impl $protocol for $for {}
 
+        // TODO: Move this into `impl $protocol` in the future? That would
+        // allow much better checking that the signature etc. is correct, but
+        // would also prevent the user from doing more complex things, and
+        // would make changing a protocol method to be safe a breaking change.
         $(#[$m])*
         impl $for {
-            $crate::__define_class_output_methods! {
+            $crate::__define_class_strip_custom_method_attributes! {
+                ()
                 $($methods)*
             }
         }
@@ -31,7 +40,7 @@ macro_rules! __define_class_output_impls {
         }
     };
 
-    // Without protocol
+    // Without protocol.
     (
         $(#[$m:meta])*
         impl $for:ty {
@@ -42,7 +51,8 @@ macro_rules! __define_class_output_impls {
     ) => {
         $(#[$m])*
         impl $for {
-            $crate::__define_class_output_methods! {
+            $crate::__define_class_strip_custom_method_attributes! {
+                ()
                 $($methods)*
             }
         }
@@ -53,317 +63,158 @@ macro_rules! __define_class_output_impls {
     };
 }
 
+/// Strip custom attributes from methods.
+///
+/// Things like `const` or functions with crazy signatures are not checked in
+/// here, but instead checked when registering the method. This is
+/// intentionally very lenient, which should give us better diagnostics and
+/// Rust-Analyzer support.
+///
+/// This does not support custom attributes inside `#[cfg_attr(...)]`.
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __define_class_output_methods {
-    // Base case
-    {} => {};
+macro_rules! __define_class_strip_custom_method_attributes {
+    // This is implemented as an incremental tt-muncher that inspects all
+    // attributes, strips the custom ones, and then emits the remaining
+    // content.
+    //
+    // TODO: This can be implemented more cleanly with [RFC 3697], with that,
+    // we'd wrap the contents in a `const _: () = ...`, and `use` an empty
+    // attribute macro as the custom attributes:
+    //
+    // [RFC 3697]: https://github.com/rust-lang/rfcs/pull/3697
 
-    // Unsafe variant
+    // Base-case.
+    (
+        ($($parsed:tt)*)
+    ) => {
+        // With any well-formed program, there shouldn't be any "floating"
+        // syntax left over here, but in case there are, emit it here for
+        // better diagnostics.
+        $($parsed)*
+    };
+
+    // Skip custom attributes.
     {
-        $(#[$($m:tt)*])*
-        unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
-
+        ($($parsed:tt)*)
+        #[unsafe(method $($_args:tt)*)]
         $($rest:tt)*
     } => {
-        $crate::__extract_method_attributes! {
-            ($(#[$($m)*])*)
-
-            ($crate::__rewrite_self_param)
-            ($($params)*)
-
-            ($crate::__define_class_method_out)
-            (unsafe)
-            ($name)
-            ($($ret)?)
-            ($body)
+        $crate::__define_class_strip_custom_method_attributes! {
+            ($($parsed)*)
+            $($rest)*
         }
-
-        $crate::__define_class_output_methods! {
+    };
+    {
+        ($($parsed:tt)*)
+        #[method $($_args:tt)*]
+        $($rest:tt)*
+    } => {
+        $crate::__define_class_strip_custom_method_attributes! {
+            ($($parsed)*)
+            $($rest)*
+        }
+    };
+    {
+        ($($parsed:tt)*)
+        #[unsafe(method_id $($_args:tt)*)]
+        $($rest:tt)*
+    } => {
+        $crate::__define_class_strip_custom_method_attributes! {
+            ($($parsed)*)
+            $($rest)*
+        }
+    };
+    {
+        ($($parsed:tt)*)
+        #[method_id $($_args:tt)*]
+        $($rest:tt)*
+    } => {
+        $crate::__define_class_strip_custom_method_attributes! {
+            ($($parsed)*)
+            $($rest)*
+        }
+    };
+    {
+        ($($parsed:tt)*)
+        #[unsafe(method_family $($_args:tt)*)]
+        $($rest:tt)*
+    } => {
+        $crate::__define_class_strip_custom_method_attributes! {
+            ($($parsed)*)
+            $($rest)*
+        }
+    };
+    {
+        ($($parsed:tt)*)
+        #[method_family $($_args:tt)*]
+        $($rest:tt)*
+    } => {
+        $crate::__define_class_strip_custom_method_attributes! {
+            ($($parsed)*)
+            $($rest)*
+        }
+    };
+    {
+        ($($parsed:tt)*)
+        #[optional $($_args:tt)*]
+        $($rest:tt)*
+    } => {
+        $crate::__define_class_strip_custom_method_attributes! {
+            ($($parsed)*)
             $($rest)*
         }
     };
 
-    // Safe variant
+    // Bundle up other attributes.
     {
-        $(#[$($m:tt)*])*
-        fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
-
+        ($($parsed:tt)*)
+        // Note: we effectively replace the `#[]` here which slightly worsens
+        // some diagnostics, for example some for `#[test]`. Could be worked
+        // around but it's probably not something we need to worry about.
+        #[$($attr:tt)*]
         $($rest:tt)*
     } => {
-        $crate::__extract_method_attributes! {
-            ($(#[$($m)*])*)
-
-            ($crate::__rewrite_self_param)
-            ($($params)*)
-
-            ($crate::__define_class_method_out)
-            ()
-            ($name)
-            ($($ret)?)
-            ($body)
-        }
-
-        $crate::__define_class_output_methods! {
+        $crate::__define_class_strip_custom_method_attributes! {
+            ($($parsed)* #[$($attr)*])
             $($rest)*
         }
     };
-}
 
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __define_class_method_out {
+    // Output item (together with currently parsed attributes).
     {
-        ($($qualifiers:tt)*)
-        ($name:ident)
-        ($($ret:ty)?)
-        ($body:block)
+        ($($parsed:tt)*)
+        $item:item
 
-        ($($m_method:tt)*)
-        ($($method_family:tt)*)
-        ($($optional:tt)*)
-        ($($attr_method:tt)*)
-        ($($attr_use:tt)*)
-
-        ($builder_method:ident)
-        ($receiver:expr)
-        ($receiver_ty:ty)
-        ($($params_prefix:tt)*)
-        ($($params_rest:tt)*)
+        $($rest:tt)*
     } => {
-        $crate::__define_class_rewrite_params! {
-            ($($params_rest)*)
+        $($parsed)*
+        $item
+
+        // Munch the rest.
+        $crate::__define_class_strip_custom_method_attributes! {
             ()
-            ()
-
-            ($crate::__define_class_method_out_inner)
-
-            ($($qualifiers)*)
-            ($name)
-            ($($ret)?)
-            ($body)
-
-            ($builder_method)
-            ($receiver)
-            ($receiver_ty)
-            ($($params_prefix)*)
-
-            ($($m_method)*)
-            ($($method_family)*)
-            ($($optional)*)
-            ($($attr_method)*)
-            ($($attr_use)*)
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __define_class_rewrite_params {
-    // Convert _
-    {
-        (_ : $param_ty:ty $(, $($params_rest:tt)*)?)
-        ($($params_converted:tt)*)
-        ($($body_prefix:tt)*)
-
-        ($out_macro:path)
-        $($macro_args:tt)*
-    } => {
-        $crate::__define_class_rewrite_params! {
-            ($($($params_rest)*)?)
-            ($($params_converted)* _ : <$param_ty as $crate::__macros::ConvertArgument>::__Inner,)
-            ($($body_prefix)*)
-
-            ($out_macro)
-            $($macro_args)*
-        }
-    };
-    // Convert mut
-    {
-        (mut $param:ident : $param_ty:ty $(, $($params_rest:tt)*)?)
-        ($($params_converted:tt)*)
-        ($($body_prefix:tt)*)
-
-        ($out_macro:path)
-        $($macro_args:tt)*
-    } => {
-        $crate::__define_class_rewrite_params! {
-            ($($($params_rest)*)?)
-            ($($params_converted)* $param : <$param_ty as $crate::__macros::ConvertArgument>::__Inner,)
-            (
-                $($body_prefix)*
-                let mut $param = <$param_ty as $crate::__macros::ConvertArgument>::__from_defined_param($param);
-            )
-
-            ($out_macro)
-            $($macro_args)*
-        }
-    };
-    // Convert
-    {
-        ($param:ident : $param_ty:ty $(, $($params_rest:tt)*)?)
-        ($($params_converted:tt)*)
-        ($($body_prefix:tt)*)
-
-        ($out_macro:path)
-        $($macro_args:tt)*
-    } => {
-        $crate::__define_class_rewrite_params! {
-            ($($($params_rest)*)?)
-            ($($params_converted)* $param : <$param_ty as $crate::__macros::ConvertArgument>::__Inner,)
-            (
-                $($body_prefix)*
-                let $param = <$param_ty as $crate::__macros::ConvertArgument>::__from_defined_param($param);
-            )
-
-            ($out_macro)
-            $($macro_args)*
-        }
-    };
-    // Output result
-    {
-        ()
-        ($($params_converted:tt)*)
-        ($($body_prefix:tt)*)
-
-        ($out_macro:path)
-        $($macro_args:tt)*
-    } => {
-        $out_macro! {
-            $($macro_args)*
-
-            ($($params_converted)*)
-            ($($body_prefix)*)
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __define_class_method_out_inner {
-    // #[unsafe(method(...))]
-    {
-        ($($qualifiers:tt)*)
-        ($name:ident)
-        ($($ret:ty)?)
-        ($body:block)
-
-        ($__builder_method:ident)
-        ($__receiver:expr)
-        ($__receiver_ty:ty)
-        ($($params_prefix:tt)*)
-
-        (method($($__sel:tt)*))
-        ($($method_family:tt)*)
-        ($($optional:tt)*)
-        ($($attr_method:tt)*)
-        ($($attr_use:tt)*)
-
-        ($($params_converted:tt)*)
-        ($($body_prefix:tt)*)
-    } => {
-        $($attr_method)*
-        #[allow(clippy::diverging_sub_expression)]
-        $($qualifiers)* extern "C-unwind" fn $name(
-            $($params_prefix)*
-            $($params_converted)*
-        ) $(-> <$ret as $crate::__macros::ConvertReturn<()>>::Inner)? {
-            $crate::__define_class_no_method_family!($($method_family)*);
-            $($body_prefix)*
-            $crate::__convert_result! {
-                $body $(; $ret)?
-            }
+            $($rest)*
         }
     };
 
-    // #[unsafe(method_id(...))]
-    {
-        ($($qualifiers:tt)*)
-        ($name:ident)
-        ($ret:ty)
-        ($body:block)
+    // Fallback, in case the syntax could not be parsed as an `$item`.
+    //
+    // In theory, we could avoid the two branches above and only have this,
+    // but in practice, don't want to rely on this, since it requires a lot
+    // of recursion (1 for each top-level token). In practice, that'd limit us
+    // to around 15-25 methods without the user raising the default recursion
+    // limit (which for example is too few for Winit).
+    (
+        ($($parsed:tt)*)
+        $extra:tt
 
-        ($__builder_method:ident)
-        ($__receiver:expr)
-        ($receiver_ty:ty)
-        ($($params_prefix:tt)*)
-
-        (method_id($($sel:tt)*))
-        ($($method_family:tt)*)
-        ($($optional:tt)*)
-        ($($attr_method:tt)*)
-        ($($attr_use:tt)*)
-
-        ($($params_converted:tt)*)
-        ($($body_prefix:tt)*)
-    } => {
-        $($attr_method)*
-        #[allow(clippy::diverging_sub_expression)]
-        $($qualifiers)* extern "C-unwind" fn $name(
-            $($params_prefix)*
-            $($params_converted)*
-        ) -> $crate::__macros::RetainedReturnValue {
-            // TODO: Somehow tell the compiler that `this: Allocated<Self>` is non-null.
-
-            $($body_prefix)*
-
-            let __objc2_result = $body;
-
-            #[allow(unreachable_code)]
-            <$crate::__method_family!(($($method_family)*) ($($sel)*)) as $crate::__macros::MessageReceiveRetained<
-                $receiver_ty,
-                $ret,
-            >>::into_return(__objc2_result)
+        $($rest:tt)*
+    ) => {
+        $crate::__define_class_strip_custom_method_attributes! {
+            // Bundle it up, and rely on it being emitted in the base case.
+            ($($parsed)* $extra)
+            $($rest)*
         }
-    };
-
-    {
-        ($($qualifiers:tt)*)
-        ($name:ident)
-        ()
-        ($body:block)
-
-        ($__builder_method:ident)
-        ($__receiver:expr)
-        ($__receiver_ty:ty)
-        ($($params_prefix:tt)*)
-
-        (method_id($($sel:tt)*))
-        ($($method_family:tt)*)
-        ($($optional:tt)*)
-        ($($attr_method:tt)*)
-        ($($attr_use:tt)*)
-
-        ($($params_converted:tt)*)
-        ($($body_prefix:tt)*)
-    } => {
-        $($attr_method)*
-        $($qualifiers)* extern "C-unwind" fn $name() {
-            $crate::__macros::compile_error!("`#[unsafe(method_id(...))]` must have a return type")
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __convert_result {
-    ($body:block) => {
-        $body
-    };
-    ($body:block; $ret:ty) => {
-        let __objc2_result = $body;
-        #[allow(unreachable_code)]
-        <$ret as $crate::__macros::ConvertReturn<()>>::convert_defined_return(__objc2_result)
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __define_class_no_method_family {
-    () => {};
-    ($($t:tt)+) => {
-        $crate::__macros::compile_error!(
-            "`#[unsafe(method_family = ...)]` is not yet supported in `define_class!` together with `#[unsafe(method(...))]`"
-        )
-    };
+    }
 }

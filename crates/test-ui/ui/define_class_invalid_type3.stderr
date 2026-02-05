@@ -1,12 +1,12 @@
-error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
- --> ui/define_class_invalid_type.rs
+error[E0277]: the trait bound `Retained<BadSelectors>: Encode` is not satisfied
+ --> ui/define_class_invalid_type3.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct BadSelectors;
 ... |
   | | );
-  | |_^ the trait `Encode` is not implemented for `Vec<()>`
+  | |_^ the trait `Encode` is not implemented for `Retained<BadSelectors>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -18,10 +18,10 @@ error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
             AtomicI64
             AtomicI8
           and $N others
-  = note: required for `Vec<()>` to implement `EncodeReturn`
-  = note: required for `Vec<()>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<6>>`
-  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&AnyClass, Vec<()>, objc2::__macros::KindDefined>`
-  = note: required for `fn() -> Vec<()>` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for CustomObject>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::ClassFnKind<&AnyClass>, CustomObject>`
+  = note: required for `Retained<BadSelectors>` to implement `EncodeReturn`
+  = note: required for `Retained<BadSelectors>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<8>>`
+  = note: required for `objc2::__macros::MethodFamily<8>` to implement `objc2::__macros::RetainSemantics<&AnyClass, Retained<BadSelectors>, objc2::__macros::KindDefined>`
+  = note: required for `fn() -> Retained<BadSelectors>` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for BadSelectors>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<8>, objc2::__macros::ClassFnKind<&AnyClass>, BadSelectors>`
 note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
  --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
   |
@@ -29,15 +29,15 @@ note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
   = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
- --> ui/define_class_invalid_type.rs
+error[E0277]: the trait bound `Retained<BadSelectors>: Encode` is not satisfied
+ --> ui/define_class_invalid_type3.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct BadSelectors;
 ... |
   | | );
-  | |_^ the trait `Encode` is not implemented for `Box<u32>`
+  | |_^ the trait `Encode` is not implemented for `Retained<BadSelectors>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -49,9 +49,10 @@ error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
             AtomicI64
             AtomicI8
           and $N others
-  = note: required for `Box<u32>` to implement `EncodeArgument`
-  = note: required for `Box<u32>` to implement `objc2::__macros::ConvertArgument`
-  = note: required for `fn(&'__function CustomObject, Box<u32>)` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for CustomObject>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
+  = note: required for `Retained<BadSelectors>` to implement `EncodeReturn`
+  = note: required for `Retained<BadSelectors>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<9>>`
+  = note: required for `objc2::__macros::MethodFamily<9>` to implement `objc2::__macros::RetainSemantics<&AnyClass, Retained<BadSelectors>, objc2::__macros::KindDefined>`
+  = note: required for `fn() -> Retained<BadSelectors>` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for BadSelectors>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<9>, objc2::__macros::ClassFnKind<&AnyClass>, BadSelectors>`
 note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
  --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
   |
@@ -59,25 +60,16 @@ note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
   = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
- --> ui/define_class_invalid_type.rs
+error[E0277]: the trait bound `Retained<BadSelectors>: Encode` is not satisfied
+ --> ui/define_class_invalid_type3.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct BadSelectors;
 ... |
   | | );
-  | |_^ unsatisfied trait bound
+  | |_^ the trait `Encode` is not implemented for `Retained<BadSelectors>`
   |
-help: the trait `Encode` is not implemented for `CustomObject`
- --> ui/define_class_invalid_type.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
-... |
-  | | );
-  | |_^
   = help: the following other types implement trait `Encode`:
             &'a T
             &'a mut T
@@ -88,9 +80,10 @@ help: the trait `Encode` is not implemented for `CustomObject`
             AtomicI64
             AtomicI8
           and $N others
-  = note: required for `CustomObject` to implement `EncodeArgument`
-  = note: required for `CustomObject` to implement `objc2::__macros::ConvertArgument`
-  = note: required for `fn(&'__function CustomObject, CustomObject)` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for CustomObject>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
+  = note: required for `Retained<BadSelectors>` to implement `EncodeReturn`
+  = note: required for `Retained<BadSelectors>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<10>>`
+  = note: required for `objc2::__macros::MethodFamily<10>` to implement `objc2::__macros::RetainSemantics<&AnyClass, Retained<BadSelectors>, objc2::__macros::KindDefined>`
+  = note: required for `fn() -> Retained<BadSelectors>` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for BadSelectors>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<10>, objc2::__macros::ClassFnKind<&AnyClass>, BadSelectors>`
 note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
  --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
   |
@@ -98,15 +91,15 @@ note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
   = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
- --> ui/define_class_invalid_type.rs
+error[E0277]: the trait bound `Retained<BadSelectors>: EncodeReturn` is not satisfied
+ --> ui/define_class_invalid_type3.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct BadSelectors;
 ... |
   | | );
-  | |_^ the trait `Encode` is not implemented for `Vec<()>`
+  | |_^ the trait `Encode` is not implemented for `Retained<BadSelectors>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -118,19 +111,19 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
             AtomicI64
             AtomicI8
           and $N others
-  = note: required for `Vec<()>` to implement `EncodeReturn`
-  = note: required for `Vec<()>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<6>>`
+  = note: required for `Retained<BadSelectors>` to implement `EncodeReturn`
+  = note: required for `Retained<BadSelectors>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<8>>`
   = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
- --> ui/define_class_invalid_type.rs
+error[E0277]: the trait bound `Retained<BadSelectors>: EncodeReturn` is not satisfied
+ --> ui/define_class_invalid_type3.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct BadSelectors;
 ... |
   | | );
-  | |_^ the trait `Encode` is not implemented for `Box<u32>`
+  | |_^ the trait `Encode` is not implemented for `Retained<BadSelectors>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -142,29 +135,20 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
             AtomicI64
             AtomicI8
           and $N others
-  = note: required for `Box<u32>` to implement `EncodeArgument`
-  = note: required for `Box<u32>` to implement `objc2::__macros::ConvertArgument`
+  = note: required for `Retained<BadSelectors>` to implement `EncodeReturn`
+  = note: required for `Retained<BadSelectors>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<9>>`
   = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
- --> ui/define_class_invalid_type.rs
+error[E0277]: the trait bound `Retained<BadSelectors>: EncodeReturn` is not satisfied
+ --> ui/define_class_invalid_type3.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct BadSelectors;
 ... |
   | | );
-  | |_^ unsatisfied trait bound
+  | |_^ the trait `Encode` is not implemented for `Retained<BadSelectors>`
   |
-help: the trait `Encode` is not implemented for `CustomObject`
- --> ui/define_class_invalid_type.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
-... |
-  | | );
-  | |_^
   = help: the following other types implement trait `Encode`:
             &'a T
             &'a mut T
@@ -175,6 +159,6 @@ help: the trait `Encode` is not implemented for `CustomObject`
             AtomicI64
             AtomicI8
           and $N others
-  = note: required for `CustomObject` to implement `EncodeArgument`
-  = note: required for `CustomObject` to implement `objc2::__macros::ConvertArgument`
+  = note: required for `Retained<BadSelectors>` to implement `EncodeReturn`
+  = note: required for `Retained<BadSelectors>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<10>>`
   = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

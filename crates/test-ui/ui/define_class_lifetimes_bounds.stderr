@@ -1,0 +1,13 @@
+error: not a supported method:
+       #[unsafe(method(lifetimesBound))] fn
+       lifetimes_bound<'a>(_input1: &'a i32, _input2: &'a i32) {}
+  --> ui/define_class_lifetimes_bounds.rs
+   |
+   | / define_class!(
+   | |     #[unsafe(super(NSObject))]
+   | |     struct LifetimesBound;
+...  |
+   | | );
+   | |_^
+   |
+   = note: this error originates in the macro `$crate::__define_class_register_methods` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

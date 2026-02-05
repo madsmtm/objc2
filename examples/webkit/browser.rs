@@ -241,7 +241,7 @@ define_class!(
             if command_selector == sel!(insertNewline:) {
                 if let Some(url) = NSURL::URLWithString(&text_view.string()) {
                     unsafe { web_view.loadRequest(&NSURLRequest::requestWithURL(&url)) };
-                    return true.into();
+                    return true;
                 }
             }
             false

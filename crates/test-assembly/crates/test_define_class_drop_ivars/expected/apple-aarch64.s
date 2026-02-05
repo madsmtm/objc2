@@ -16,7 +16,7 @@ Lloh1:
 	ldrb	w8, [x0, x8]
 	cmp	w8, #255
 	b.ne	LBB0_6
-	bl	_fn2_drop
+	bl	SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>::drop, 0)
 LBB0_2:
 Lloh2:
 	adrp	x8, ___IVAR_OFFSET_DropIvars@PAGE
@@ -104,6 +104,10 @@ Lttbase0:
 
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
+SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_drop_ivars[CRATE_ID]::DropIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0):
+	b	SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars>::init, 0)
+
+	.p2align	2
 SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin1:
 	sub	sp, sp, #80
@@ -114,7 +118,7 @@ Lfunc_begin1:
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
 	cmp	w9, #1
-	b.ne	LBB1_9
+	b.ne	LBB2_9
 Lloh7:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh8:
@@ -127,7 +131,7 @@ Lloh11:
 	add	x1, x1, l_anon.[ID].9@PAGEOFF
 	mov	x2, #0
 	bl	_objc_allocateClassPair
-	cbz	x0, LBB1_10
+	cbz	x0, LBB2_10
 	str	x0, [sp]
 Lloh12:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_dealloc@GOTPAGE
@@ -161,9 +165,9 @@ Lloh22:
 Lloh23:
 	add	x4, x4, l_anon.[ID].8@PAGEOFF
 Lloh24:
-	adrp	x5, _fn1_init@PAGE
+	adrp	x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_drop_ivars[CRATE_ID]::DropIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGE
 Lloh25:
-	add	x5, x5, _fn1_init@PAGEOFF
+	add	x5, x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_drop_ivars[CRATE_ID]::DropIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGEOFF
 	mov	x0, sp
 	mov	w2, #8
 	mov	x3, #0
@@ -213,7 +217,7 @@ Lloh35:
 	add	x1, x1, l_anon.[ID].1@PAGEOFF
 	mov	x0, x19
 	bl	_class_getInstanceVariable
-	cbz	x0, LBB1_11
+	cbz	x0, LBB2_11
 	bl	_ivar_getOffset
 	mov	x20, x0
 Lloh36:
@@ -222,7 +226,7 @@ Lloh37:
 	add	x1, x1, l_anon.[ID].2@PAGEOFF
 	mov	x0, x19
 	bl	_class_getInstanceVariable
-	cbz	x0, LBB1_12
+	cbz	x0, LBB2_12
 	bl	_ivar_getOffset
 Lloh38:
 	adrp	x8, ___CLASS_DropIvars@PAGE
@@ -237,13 +241,13 @@ Lloh40:
 	ldp	x20, x19, [sp, #48]
 	add	sp, sp, #80
 	ret
-LBB1_9:
+LBB2_9:
 Lloh41:
 	adrp	x0, l_anon.[ID].7@PAGE
 Lloh42:
 	add	x0, x0, l_anon.[ID].7@PAGEOFF
 	bl	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
-LBB1_10:
+LBB2_10:
 Lloh43:
 	adrp	x0, l_anon.[ID].9@PAGE
 Lloh44:
@@ -254,11 +258,11 @@ Lloh46:
 	add	x2, x2, l_anon.[ID].11@PAGEOFF
 	mov	w1, #10
 	bl	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
-LBB1_11:
+LBB2_11:
 	bl	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::ivars_offset::get_ivar_failed, 0)
-LBB1_12:
+LBB2_12:
 	bl	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::drop_flag_offset::get_drop_flag_failed, 0)
-LBB1_13:
+LBB2_13:
 Ltmp14:
 	mov	x19, x0
 	ldr	x0, [sp]
@@ -287,7 +291,7 @@ Ltmp14:
 Lfunc_end1:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
-GCC_except_table1:
+GCC_except_table2:
 Lexception1:
 	.byte	255
 	.byte	255
@@ -319,60 +323,9 @@ SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_drop_ivars[
 	add	sp, sp, #32
 	ret
 
-	.globl	SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
+	.globl	SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars>::init, 0)
 	.p2align	2
-SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
-Lloh47:
-	adrp	x8, ___REGISTER_CLASS_DropIvars@PAGE
-Lloh48:
-	add	x8, x8, ___REGISTER_CLASS_DropIvars@PAGEOFF
-	ldapr	x8, [x8]
-	cbnz	x8, LBB3_2
-Lloh49:
-	adrp	x8, ___CLASS_DropIvars@PAGE
-Lloh50:
-	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
-	ret
-LBB3_2:
-	sub	sp, sp, #32
-	stp	x29, x30, [sp, #16]
-	add	x29, sp, #16
-	mov	w8, #1
-	strb	w8, [sp, #7]
-	add	x8, sp, #7
-	str	x8, [sp, #8]
-Lloh51:
-	adrp	x0, ___REGISTER_CLASS_DropIvars@PAGE
-Lloh52:
-	add	x0, x0, ___REGISTER_CLASS_DropIvars@PAGEOFF
-Lloh53:
-	adrp	x3, l_anon.[ID].0@PAGE
-Lloh54:
-	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh55:
-	adrp	x4, l_anon.[ID].11@PAGE
-Lloh56:
-	add	x4, x4, l_anon.[ID].11@PAGEOFF
-	add	x2, sp, #8
-	mov	w1, #0
-	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
-Lloh57:
-	adrp	x8, ___CLASS_DropIvars@PAGE
-Lloh58:
-	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
-	ret
-	.loh AdrpAdd	Lloh47, Lloh48
-	.loh AdrpLdr	Lloh49, Lloh50
-	.loh AdrpLdr	Lloh57, Lloh58
-	.loh AdrpAdd	Lloh55, Lloh56
-	.loh AdrpAdd	Lloh53, Lloh54
-	.loh AdrpAdd	Lloh51, Lloh52
-
-	.globl	_fn1_init
-	.p2align	2
-_fn1_init:
+SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars>::init, 0):
 Lfunc_begin2:
 	sub	sp, sp, #64
 	stp	x22, x21, [sp, #16]
@@ -390,9 +343,9 @@ Ltmp19:
 	mov	x21, x0
 	adrp	x22, ___DROP_FLAG_OFFSET_DropIvars@PAGE
 	cbz	x19, LBB4_4
-Lloh59:
+Lloh47:
 	adrp	x8, ___IVAR_OFFSET_DropIvars@PAGE
-Lloh60:
+Lloh48:
 	ldr	x8, [x8, ___IVAR_OFFSET_DropIvars@PAGEOFF]
 	add	x8, x19, x8
 	stp	x20, x21, [x8]
@@ -408,17 +361,17 @@ Ltmp27:
 	mov	x0, x21
 	bl	_objc_release
 LBB4_6:
-Lloh61:
+Lloh49:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
-Lloh62:
+Lloh50:
 	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
-Lloh63:
+Lloh51:
 	ldr	x1, [x8]
-Lloh64:
+Lloh52:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
-Lloh65:
+Lloh53:
 	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
-Lloh66:
+Lloh54:
 	ldr	x8, [x8]
 	stp	x19, x8, [sp]
 	mov	x0, sp
@@ -467,9 +420,9 @@ LBB4_14:
 LBB4_15:
 Ltmp25:
 	bl	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
-	.loh AdrpLdr	Lloh59, Lloh60
-	.loh AdrpLdrGotLdr	Lloh64, Lloh65, Lloh66
-	.loh AdrpLdrGotLdr	Lloh61, Lloh62, Lloh63
+	.loh AdrpLdr	Lloh47, Lloh48
+	.loh AdrpLdrGotLdr	Lloh52, Lloh53, Lloh54
+	.loh AdrpLdrGotLdr	Lloh49, Lloh50, Lloh51
 Lfunc_end2:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
@@ -519,28 +472,79 @@ Lttbase1:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_fn2_drop
+	.globl	SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>::drop, 0)
 	.p2align	2
-_fn2_drop:
+SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>::drop, 0):
 	; InlineAsm Start
 	; InlineAsm End
 	ret
 
-	.globl	_fn3_access_class
+	.globl	SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	2
-_fn3_access_class:
+SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
+Lloh55:
+	adrp	x8, ___REGISTER_CLASS_DropIvars@PAGE
+Lloh56:
+	add	x8, x8, ___REGISTER_CLASS_DropIvars@PAGEOFF
+	ldapr	x8, [x8]
+	cbnz	x8, LBB6_2
+Lloh57:
+	adrp	x8, ___CLASS_DropIvars@PAGE
+Lloh58:
+	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
+	ret
+LBB6_2:
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+	mov	w8, #1
+	strb	w8, [sp, #7]
+	add	x8, sp, #7
+	str	x8, [sp, #8]
+Lloh59:
+	adrp	x0, ___REGISTER_CLASS_DropIvars@PAGE
+Lloh60:
+	add	x0, x0, ___REGISTER_CLASS_DropIvars@PAGEOFF
+Lloh61:
+	adrp	x3, l_anon.[ID].0@PAGE
+Lloh62:
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
+Lloh63:
+	adrp	x4, l_anon.[ID].11@PAGE
+Lloh64:
+	add	x4, x4, l_anon.[ID].11@PAGEOFF
+	add	x2, sp, #8
+	mov	w1, #0
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
+Lloh65:
+	adrp	x8, ___CLASS_DropIvars@PAGE
+Lloh66:
+	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
+	ret
+	.loh AdrpAdd	Lloh55, Lloh56
+	.loh AdrpLdr	Lloh57, Lloh58
+	.loh AdrpLdr	Lloh65, Lloh66
+	.loh AdrpAdd	Lloh63, Lloh64
+	.loh AdrpAdd	Lloh61, Lloh62
+	.loh AdrpAdd	Lloh59, Lloh60
+
+	.globl	_fn_access_class
+	.p2align	2
+_fn_access_class:
 Lloh67:
 	adrp	x8, ___REGISTER_CLASS_DropIvars@PAGE
 Lloh68:
 	add	x8, x8, ___REGISTER_CLASS_DropIvars@PAGEOFF
 	ldapr	x8, [x8]
-	cbnz	x8, LBB6_2
+	cbnz	x8, LBB7_2
 Lloh69:
 	adrp	x8, ___CLASS_DropIvars@PAGE
 Lloh70:
 	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
 	ret
-LBB6_2:
+LBB7_2:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -577,9 +581,9 @@ Lloh78:
 	.loh AdrpAdd	Lloh73, Lloh74
 	.loh AdrpAdd	Lloh71, Lloh72
 
-	.globl	_fn3_access_ivars
+	.globl	_fn_access_ivars
 	.p2align	2
-_fn3_access_ivars:
+_fn_access_ivars:
 Lloh79:
 	adrp	x8, ___IVAR_OFFSET_DropIvars@PAGE
 Lloh80:

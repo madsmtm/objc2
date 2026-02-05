@@ -11,7 +11,6 @@ use objc2::{define_class, msg_send, ClassType, Ivars};
 use objc2_foundation::NSObject;
 
 define_class!(
-    #[no_mangle]
     #[unsafe(super(NSObject))]
     #[name = "ForgetableIvars"]
     pub struct ForgetableIvars {
@@ -20,7 +19,6 @@ define_class!(
     }
 
     impl ForgetableIvars {
-        #[export_name = "fn1_init"]
         #[unsafe(method_id(init))]
         fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
             let this = this.set_ivars(Ivars::<Self> { foo: 42, bar: 43 });
@@ -30,12 +28,12 @@ define_class!(
 );
 
 impl ForgetableIvars {
-    #[export_name = "fn2_access_class"]
+    #[export_name = "fn_access_class"]
     pub fn access_class() -> &'static AnyClass {
         Self::class()
     }
 
-    #[export_name = "fn3_access_ivars"]
+    #[export_name = "fn_access_ivars"]
     pub fn access_ivars(&self) -> (u8, u32) {
         (*self.foo(), *self.bar())
     }

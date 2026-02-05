@@ -37,24 +37,29 @@ impl IsSuper for KindSendMessageSuper {}
 
 /// Trait for restricting the possible Receiver/Return type combinations.
 ///
-/// This is used to convert receiver and return types in `extern_methods!`
-/// and `msg_send!`.
+/// This is also used to convert receiver and return types in `msg_send!`,
+/// `extern_methods!`, `extern_protocol!` and `define_class!`.
 ///
-/// Having both the receiver, return type and whether the message send is a
-/// super-message send is especially important for `init` methods, which must
-/// return the same type as they were called with, and must restrict the
-/// receiver to either `Allocated` or `PartialInit` depending on the super-ness.
+/// In most cases, this simply "forwards" to `ConvertReturn`, but for certain
+/// method families, namely `alloc` and `init`, we need further information:
+/// - The receiver type (`Receiver`).
+/// - The return type (`Return`).
+/// - Whether the message send is a super-message send (`Kind`).
+///
+/// This allows us for example to restrict that `init` methods return the same
+/// type that they were called with, and change the receiver to either
+/// `Allocated` or `PartialInit` depending on super-ness.
 ///
 /// # Summary
 ///
 /// ```text
-/// new: Receiver -> Option<Retained<Return>>
-/// alloc: &AnyClass -> Allocated<Return>
-/// init: Allocated<T> -> Option<Retained<T>>
-/// init super: PartialInit<T> -> Option<Retained<T>>
-/// copy: Receiver -> Option<Retained<Return>>
-/// mutableCopy: Receiver -> Option<Retained<Return>>
-/// others: Receiver -> Option<Retained<Return>>
+/// new:         Receiver       -> Option<Retained<Return>>
+/// alloc:       &AnyClass      -> Allocated<Return>
+/// init normal: Allocated<T>   -> Option<Retained<T>>
+/// init super:  PartialInit<T> -> Option<Retained<T>>
+/// copy:        Receiver       -> Option<Retained<Return>>
+/// mutableCopy: Receiver       -> Option<Retained<Return>>
+/// none:        Receiver       -> Option<Retained<Return>> (autoreleased)
 /// ```
 pub trait RetainSemantics<Receiver, Return, Kind>: Sized {
     /// The inner receiver type that is used directly at the ABI boundary of
@@ -65,7 +70,6 @@ pub trait RetainSemantics<Receiver, Return, Kind>: Sized {
     fn prepare_message_send(receiver: Receiver) -> Self::ReceiverInner;
 
     /// Prepare the receiver for receiving a message.
-    ///
     ///
     /// # Safety
     ///
@@ -79,7 +83,6 @@ pub trait RetainSemantics<Receiver, Return, Kind>: Sized {
     /// Convert a received return value according to the specified retain
     /// semantics.
     ///
-    ///
     /// # Panics
     ///
     /// If conversion fails (such as when converting to `Retained<T>`), this
@@ -88,7 +91,6 @@ pub trait RetainSemantics<Receiver, Return, Kind>: Sized {
     /// NOTE: The behavior that returning `Retained<T>` always unwraps
     /// instead of using `unwrap_unchecked` is relied upon by
     /// `header-translator` for soundness, see e.g. `parse_property_return`.
-    ///
     ///
     /// # Safety
     ///
@@ -101,7 +103,8 @@ pub trait RetainSemantics<Receiver, Return, Kind>: Sized {
         sel: Sel,
     ) -> Return;
 
-    // TODO: Use this in `define_class!`.
+    /// Convert the return value from a defined method according to the
+    /// specified retain semantics.
     fn convert_defined_return(ret: Return) -> Self::ReturnInner;
 }
 
@@ -395,6 +398,9 @@ where
 
     #[inline]
     unsafe fn prepare_defined_method(receiver: *mut T) -> Allocated<T> {
+        // TODO: We know that `receiver` is non-null here, can we help the
+        // optimizer understand that? Maybe `NonNull::new_unchecked(receiver)`?
+
         // SAFETY: The receiver of an `init` method is `Allocated` and
         // consumed, and thus has +1 retain count.
         //

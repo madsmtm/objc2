@@ -1,5 +1,4 @@
 use objc2::define_class;
-use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 
 define_class!(
@@ -7,9 +6,17 @@ define_class!(
     struct NoAttribute;
 
     impl NoAttribute {
-        fn test_no_attribute() {
-            unimplemented!()
-        }
+        fn test_no_attribute() {}
+    }
+);
+
+define_class!(
+    #[unsafe(super(NSObject))]
+    struct EmptyAttribute;
+
+    impl EmptyAttribute {
+        #[unsafe(method())]
+        fn test_empty() {}
     }
 );
 
@@ -30,73 +37,47 @@ define_class!(
 
 define_class!(
     #[unsafe(super(NSObject))]
-    struct BadSelectors;
+    struct Dealloc;
 
-    // method_id
-    impl BadSelectors {
-        #[unsafe(method_id(alloc))]
-        fn alloc() -> Retained<Self> {
-            unimplemented!()
-        }
-
-        #[unsafe(method_id(retain))]
-        fn retain() -> Retained<Self> {
-            unimplemented!()
-        }
-
-        #[unsafe(method_id(release))]
-        fn release() -> Retained<Self> {
-            unimplemented!()
-        }
-
-        #[unsafe(method_id(autorelease))]
-        fn autorelease() -> Retained<Self> {
-            unimplemented!()
-        }
-
-        #[unsafe(method_id(dealloc))]
-        fn dealloc() -> Retained<Self> {
-            unimplemented!()
-        }
-    }
-
-    // method
-    impl BadSelectors {
+    impl Dealloc {
         #[unsafe(method(dealloc))]
-        fn dealloc_mut(&mut self) {}
+        fn dealloc(&self) {}
     }
 );
 
 define_class!(
     #[unsafe(super(NSObject))]
-    struct InvalidRetain;
+    struct InvalidBody;
 
-    impl InvalidRetain {
-        #[unsafe(method_id(testMethodRetained))]
-        fn test_retained_no_return() {
-            unimplemented!()
-        }
+    impl InvalidBody {
+        #[unsafe(method(testInvalidBody))]
+        fn test_invalid_body() { a - }
+    }
+);
+
+define_class!(
+    #[unsafe(super(NSObject))]
+    struct Pattern;
+
+    impl Pattern {
+        #[unsafe(method(testPattern:))]
+        fn test_pattern((_a, _b): (u32, i32)) {}
+    }
+);
+
+define_class!(
+    #[unsafe(super(NSObject))]
+    struct BareSelf;
+
+    impl BareSelf {
+        #[unsafe(method(testSelf))]
+        fn test_self(self) {}
     }
 );
 
 define_class!(
     #[unsafe(super(NSObject))]
     struct BasicBadSyntax;
-
-    impl BasicBadSyntax {
-        #[unsafe(method(testInvalidBody))]
-        fn test_invalid_body() { a - }
-
-        #[unsafe(method(testPattern:))]
-        fn test_pattern((a, b): (u32, i32)) {
-            unimplemented!()
-        }
-
-        #[unsafe(method(testSelf))]
-        fn test_self(self) {
-            unimplemented!()
-        }
-    }
 
     impl BasicBadSyntax {
         #[unsafe(method(testPub))]

@@ -1,0 +1,44 @@
+error[E0277]: the trait bound `objc2::__macros::MethodFamily<6>: objc2::__macros::RetainSemantics<&'__function Retained<CustomObject>, (), objc2::__macros::KindDefined>` is not satisfied
+ --> ui/define_class_invalid_receiver_retain_semantics.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^ unsatisfied trait bound
+  |
+  = help: the trait `objc2::__macros::RetainSemantics<&'__function Retained<CustomObject>, (), objc2::__macros::KindDefined>` is not implemented for `objc2::__macros::MethodFamily<6>`
+  = help: the following other types implement trait `objc2::__macros::RetainSemantics<Receiver, Return, Kind>`:
+            `objc2::__macros::MethodFamily<2>` implements `objc2::__macros::RetainSemantics<&AnyClass, Allocated<Return>, Kind>`
+            `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<Allocated<T>, Option<Retained<T>>, Kind>`
+            `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<Allocated<T>, Retained<T>, Kind>`
+            `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<PartialInit<T>, Option<Retained<T>>, Kind>`
+            `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<PartialInit<T>, Retained<T>, Kind>`
+  = note: required for `fn(&'__function Retained<CustomObject>)` to implement `objc2::__macros::define_class::thunk::FnToExternFn<__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
+note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
+  |
+  |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `objc2::__macros::MethodFamily<6>: objc2::__macros::RetainSemantics<&Retained<CustomObject>, (), objc2::__macros::KindDefined>` is not satisfied
+ --> ui/define_class_invalid_receiver_retain_semantics.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^ unsatisfied trait bound
+  |
+  = help: the trait `objc2::__macros::RetainSemantics<&Retained<CustomObject>, (), objc2::__macros::KindDefined>` is not implemented for `objc2::__macros::MethodFamily<6>`
+  = help: the following other types implement trait `objc2::__macros::RetainSemantics<Receiver, Return, Kind>`:
+            `objc2::__macros::MethodFamily<2>` implements `objc2::__macros::RetainSemantics<&AnyClass, Allocated<Return>, Kind>`
+            `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<Allocated<T>, Option<Retained<T>>, Kind>`
+            `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<Allocated<T>, Retained<T>, Kind>`
+            `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<PartialInit<T>, Option<Retained<T>>, Kind>`
+            `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<PartialInit<T>, Retained<T>, Kind>`
+  = note: required for `fn(&Retained<CustomObject>)` to implement `objc2::__macros::define_class::thunk::FnToExternFn<__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

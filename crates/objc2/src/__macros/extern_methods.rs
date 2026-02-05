@@ -232,11 +232,9 @@ macro_rules! extern_methods {
         $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
 
-            ($crate::__rewrite_self_param)
-            ($($params)*)
-
-            ($crate::__extern_methods_method_out)
+            ($crate::__extern_methods_inner)
             ($v unsafe fn $fn_name($($params)*) $(-> $ret)? $(where $($where : $bound ,)+)?)
+            ($($params)*)
         }
 
         $crate::extern_methods!($($rest)*);
@@ -259,11 +257,9 @@ macro_rules! extern_methods {
         $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
 
-            ($crate::__rewrite_self_param)
-            ($($params)*)
-
-            ($crate::__extern_methods_method_out)
+            ($crate::__extern_methods_inner)
             ($v fn $fn_name($($params)*) $(-> $ret)? $(where $($where : $bound ,)+)?)
+            ($($params)*)
         }
 
         $crate::extern_methods!($($rest)*);
@@ -293,41 +289,97 @@ macro_rules! extern_methods {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __extern_methods_method_out {
+macro_rules! __extern_methods_inner {
     {
         ($($function_start:tt)*)
+        ($($params:tt)*)
 
         ($method_or_method_id:ident($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
-        ($($attr_use:tt)*)
-
-        ($__builder_method:ident)
-        ($receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
+        ($($__attr_use:tt)*)
     } => {
         $($attr_method)*
         $($function_start)* {
             $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel)*));
             $crate::__extern_methods_no_optional!($($optional)*);
 
+            // SAFETY: Upheld by writer of `#[unsafe(method(...))]`.
             #[allow(unused_unsafe)]
             unsafe {
-                $crate::__method_msg_send! {
-                    ($receiver)
+                $crate::__parse_sel_and_params! {
                     ($($sel)*)
-                    ($($params_rest)*)
+                    ($($params)*)
 
-                    ()
-                    ()
+                    ($crate::__extern_methods_call_method)
                     ($($method_family)*)
                 }
             }
         }
+    }
+}
+
+/// Forward selector and arguments to `MsgSend::send_message[_error]`.
+///
+/// Note: We can't forward to `msg_send!` since that doesn't support selectors
+/// with space between.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_methods_call_method {
+    // Normal return
+    (
+        ($($method_family:tt)*)
+
+        (fn($($receiver:ident: $__receiver_ty:ty)?))
+        ($($sel:tt)*)
+        ($($param:ident,)*)
+        ($($param_ty:tt)*)
+        ($($ignored_param:ident,)*)
+    ) => {
+        $(let _ = $ignored_param;)*
+
+        <$crate::__method_family!(($($method_family)*) ($($sel)*)) as $crate::__macros::MsgSend<_, _>>::send_message(
+            $crate::__fallback_if_not_set!(
+                ($($receiver)?)
+                (<Self as $crate::ClassType>::class())
+            ),
+            $crate::sel!($($sel)*),
+            ($($param,)*),
+        )
     };
+
+    // Error return
+    (
+        ($($method_family:tt)*)
+
+        (fn_result($($receiver:ident: $__receiver_ty:ty)?))
+        ($($sel:tt)*)
+        ($($param:ident,)*)
+        ($($param_ty:tt)*)
+        ($($ignored_param:ident,)*)
+    ) => {
+        $(let _ = $ignored_param;)*
+
+        // Use error method
+        <$crate::__method_family!(($($method_family)*) ($($sel)*)) as $crate::__macros::MsgSendError<_, _>>::send_message_error(
+            $crate::__fallback_if_not_set!(
+                ($($receiver)?)
+                (<Self as $crate::ClassType>::class())
+            ),
+            $crate::sel!($($sel)*),
+            ($($param,)*),
+        )
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_methods_ignore_mainthreadonly {
+    (
+        ($($param:ident,)*)
+        ($($param_ty:tt)*)
+    ) => {};
 }
 
 #[doc(hidden)]

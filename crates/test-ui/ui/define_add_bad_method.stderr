@@ -7,14 +7,14 @@ error[E0277]: the trait bound `fn(_, _): MethodImplementation` is not satisfied
   |                 required by a bound introduced by this call
   |
   = help: the following other types implement trait `MethodImplementation`:
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F, G) -> objc2::__macros::RetainedReturnValue
+            extern "C" fn(T, objc2::runtime::Sel) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
           and $N others
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/runtime/define.rs
@@ -34,14 +34,14 @@ error[E0277]: the trait bound `fn(_, _): MethodImplementation` is not satisfied
   |                 required by a bound introduced by this call
   |
   = help: the following other types implement trait `MethodImplementation`:
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F, G) -> objc2::__macros::RetainedReturnValue
+            extern "C" fn(T, objc2::runtime::Sel) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
           and $N others
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/runtime/define.rs
@@ -61,14 +61,14 @@ error[E0277]: the trait bound `fn(_, _) -> _: MethodImplementation` is not satis
   |                 required by a bound introduced by this call
   |
   = help: the following other types implement trait `MethodImplementation`:
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F, G) -> objc2::__macros::RetainedReturnValue
+            extern "C" fn(T, objc2::runtime::Sel) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
           and $N others
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/runtime/define.rs
@@ -88,14 +88,14 @@ error[E0277]: the trait bound `fn(_, _) -> _: MethodImplementation` is not satis
   |                 required by a bound introduced by this call
   |
   = help: the following other types implement trait `MethodImplementation`:
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F, G) -> objc2::__macros::RetainedReturnValue
+            extern "C" fn(T, objc2::runtime::Sel) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
           and $N others
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/runtime/define.rs
@@ -115,14 +115,14 @@ error[E0277]: the trait bound `fn(_, _, _): MethodImplementation` is not satisfi
   |                 required by a bound introduced by this call
   |
   = help: the following other types implement trait `MethodImplementation`:
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F) -> objc2::__macros::RetainedReturnValue
-            extern "C" fn(Allocated<T>, objc2::runtime::Sel, A, B, C, D, E, F, G) -> objc2::__macros::RetainedReturnValue
+            extern "C" fn(T, objc2::runtime::Sel) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+            extern "C" fn(T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
           and $N others
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/runtime/define.rs

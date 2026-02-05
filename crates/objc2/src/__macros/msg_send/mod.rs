@@ -169,7 +169,7 @@ pub use self::retained::*;
 /// [`Retained::autorelease_ptr`]: crate::rc::Retained::autorelease_ptr
 ///
 ///
-/// # `bool` handling
+/// ## `bool` handling
 ///
 /// Objective-C's `BOOL` is slightly different from Rust's [`bool`], and hence
 /// a conversion step must be performed before using it. This is _very_ easy
@@ -186,13 +186,13 @@ pub use self::retained::*;
 /// [`runtime::Bool`]: crate::runtime::Bool
 ///
 ///
-/// # `CStr` handling
+/// ## `CStr` handling
 ///
 /// Since the ABI of [`CStr`][std::ffi::CStr] isn't yet stable, `&CStr` and
 /// `Option<&CStr>` are converted to/from `*const c_char`.
 ///
 ///
-/// # Out-parameters
+/// ## Out-parameters
 ///
 /// Parameters like `NSString**` in Objective-C are passed by "writeback",
 /// which means that the callee autoreleases any value that they may write
@@ -213,7 +213,7 @@ pub use self::retained::*;
 /// [clang-out-params]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#passing-to-an-out-parameter-by-writeback
 ///
 ///
-/// # Errors
+/// ## Errors
 ///
 /// The most common place you'll see out-parameters is as `NSError**` the last
 /// parameter, which is used to communicate errors to the caller, see [Error

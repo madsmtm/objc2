@@ -4,7 +4,7 @@ use std::cell::UnsafeCell;
 use std::marker::PhantomData;
 use std::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::rc::Retained;
+use objc2::rc::{Allocated, Retained};
 use objc2::runtime::NSObject;
 use objc2::{define_class, extern_methods, sel, ClassType, MainThreadOnly};
 use static_assertions::{assert_impl_all, assert_not_impl_any};
@@ -614,4 +614,23 @@ fn name_can_be_expr() {
     let expected = "Name5Concat";
     assert_eq!(Name5Concat::class().name().to_str().unwrap(), expected);
     assert_eq!(Name5Concat::NAME, expected);
+}
+
+// Test overriding `alloc` method
+#[test]
+fn alloc() {
+    define_class!(
+        #[unsafe(super(NSObject))]
+        struct Alloc;
+
+        impl Alloc {
+            #[allow(clippy::self_named_constructors)]
+            #[unsafe(method(alloc))]
+            fn alloc() -> Allocated<Self> {
+                unsafe { objc2::msg_send![super(Self::class(), NSObject::class()), alloc] }
+            }
+        }
+    );
+
+    let _ = Alloc::class();
 }

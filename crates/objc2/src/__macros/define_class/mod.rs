@@ -2,9 +2,11 @@ mod checks;
 mod ivars;
 mod output_impls;
 mod register_impls;
+mod thunk;
 
 pub use self::checks::*;
 pub use self::ivars::*;
+pub use self::thunk::*;
 
 /// Create a new Objective-C class.
 ///
@@ -15,9 +17,9 @@ pub use self::ivars::*;
 ///
 /// This macro is the declarative way of creating classes, in contrast with
 /// [`ClassBuilder`], which allows creating classes in an imperative fashion.
-/// It is highly recommended that you use this macro though, since it contains
-/// a lot of extra debug assertions and niceties that help ensure the
-/// soundness of your code.
+/// It is highly recommended that you use this macro, since it contains a lot
+/// of extra debug assertions and niceties that help ensure the soundness of
+/// your code.
 ///
 /// The class is guaranteed to have been created and registered with the
 /// Objective-C runtime after the [`ClassType::class`] function has been
@@ -34,7 +36,7 @@ pub use self::ivars::*;
 /// # Specification
 ///
 /// This macro consists of the following parts:
-/// - The type definition, along with special attributes and it's fields.
+/// - The type definition, along with special attributes.
 /// - Any number of inherent implementations.
 /// - Any number of protocol implementations.
 ///
@@ -168,44 +170,39 @@ pub use self::ivars::*;
 /// your method will be registered as an instance method, and if you don't it
 /// will be registered as a class method.
 ///
-/// On instance methods, you can freely choose between different types of
-/// receivers, e.g. `&self`, `self: *const Self`, `this: *const Self`, and so
-/// on. Note that using `&mut self` is not possible, if you need mutation of
-/// your class' instance variables, consider using [`Cell`] or similar
-/// instead.
+/// On instance methods, you can choose between different types of receivers,
+/// e.g. `&self`, `self: *const Self`, `this: *const Self`, and so on. Note
+/// that using `&mut self` is not possible, if you need mutation of your
+/// class' instance variables, consider using [`Cell`] or similar instead.
 ///
 /// The desired selector can be specified using the
 /// `#[unsafe(method(my:selector:))]` or `#[unsafe(method_id(my:selector:))]`
 /// attributes, similar to the [`extern_methods!`] macro.
-///
-/// If the `#[unsafe(method_id(...))]` attribute is used, the return type must
-/// be `Option<Retained<T>>` or `Retained<T>`. Additionally, if the selector
-/// is in the "init"-family, the `self`/`this` parameter must be
-/// `Allocated<Self>`.
 ///
 /// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
 /// `deprecated` and so on is supported. However, note that `cfg_attr` may not
 /// work correctly, due to implementation difficulty - if you have a concrete
 /// use-case, please [open an issue], then we can discuss it.
 ///
-/// A transformation step is performed on the functions (to make them have the
-/// correct ABI) and hence they shouldn't really be called manually. (You
-/// can't mark them as `pub` for the same reason). Instead, use the
-/// [`extern_methods!`] macro to create a Rust interface to the methods.
+/// Internally, a thunk is generated for each function. This is what will
+/// actually be called by the Objective-C runtime, and it will later forward
+/// to your function. This means that if you call the original function, your
+/// code will statically look up that function instead of going through the
+/// Objective-C runtime. This is probably what you'd expect, but if you're
+/// coming from Objective-C, it may be a little weird (this behaves similarly
+/// as-if the `objc_direct` attribute was applied to the method).
 ///
-/// If the parameter or return type is [`bool`], a conversion is performed to
-/// make it behave similarly to the Objective-C `BOOL`. Use [`runtime::Bool`]
-/// if you want to control this manually.
-///
-/// Note that `&mut Retained<_>` and other such out parameters are not yet
-/// supported, and may generate a panic at runtime.
+/// See [`msg_send!`][msg-send-spec] for supported parameters and return
+/// types. An exception to this is that `&mut Retained<_>` and other such out
+/// parameters are not yet supported, and result in a panic at runtime.
 ///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// [`Cell`]: core::cell::Cell
 /// [open an issue]: https://github.com/madsmtm/objc2/issues/new
-/// [`msg_send!`]: crate::msg_send
-/// [`runtime::Bool`]: crate::runtime::Bool
+/// [msg-send-spec]: crate::msg_send#specification
+/// [`Encode`]: crate::encode::Encode
+/// [`Retained`]: crate::rc::Retained
 ///
 ///
 /// ## Protocol implementations
@@ -499,8 +496,8 @@ macro_rules! define_class {
             ($v)
             ($class)
             ($($ivars)*)
-            // We duplicate the impls here, since we need them to create a
-            // thunk that is inserted into the class' method table.
+            // We duplicate the impls here, since we need data from them to
+            // create a thunk that is inserted into the class' method table.
             ($($impls)*)
         }
 
@@ -714,7 +711,7 @@ macro_rules! __define_class_inner {
                 type __SubclassingType = Self;
             }
 
-            // Pub because everyone that see `$class` can access this via
+            // `pub` because everyone that see `$class` can access this via
             // `<$class as DefinedClass>::Ivars`.
             #[allow(unreachable_pub)]
             pub struct __Objc2IvarsContainer {

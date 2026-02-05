@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Ivars<T>` type alias for more easily accessing `<T as DefineClass>::Ivars`.
 * Added support for `&CStr` in method argument and return types.
 * Implement `Encode` on `Result<(), T>` when `T: OptionEncode`.
+* Allow returning `Result<T, Retained<NSError>>` from `define_class!`.
 
 ## Changed
 * **BREAKING** (very slightly): `define_class!` now rejects non-static and
@@ -99,6 +100,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Allow declaring classes with ivars that require high alignment.
 * Allow classes created with `define_class!` to be used in multiple shared
   dynamic libraries in the same process.
+* Allow `return` in methods defined in `define_class!`.
+* Improved Rust-Analyzer support in `define_class!`.
 
 
 ## [0.6.3] - 2025-10-04

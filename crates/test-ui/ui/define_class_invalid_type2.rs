@@ -7,13 +7,8 @@ define_class!(
     struct CustomObject;
 
     impl CustomObject {
-        #[unsafe(method_id(initNotSameGenerics))]
-        fn test_init_not_same_generics(this: Allocated<Self>) -> Retained<NSObject> {
-            unimplemented!()
-        }
-
-        #[unsafe(method_id(notRetained))]
-        fn test_not_retained(&self) -> i32 {
+        #[unsafe(method(initNotSameGenerics))]
+        fn test_init_not_same_generics(_this: Allocated<Self>) -> Retained<NSObject> {
             unimplemented!()
         }
     }

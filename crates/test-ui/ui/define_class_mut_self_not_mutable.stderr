@@ -1,35 +1,30 @@
-error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
- --> ui/define_class_mut_self_not_mutable.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
-... |
-  | | );
-  | | ^
-  | | |
-  | |_the trait `MessageReceiver` is not implemented for `&mut CustomObject`
-  |   required by a bound introduced by this call
-  |
-  = help: the following other types implement trait `MessageReceiver`:
-            &T
-            &mut AnyObject
-            *const T
-            *mut T
-            NonNull<T>
-  = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
-  = note: required for `extern "C-unwind" fn(&mut CustomObject, objc2::runtime::Sel) -> &mut CustomObject` to implement `MethodImplementation`
-note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_method`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
-  |
-  |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
-  |                   ---------- required by a bound in this associated function
-  |     where
-  |         F: MethodImplementation<Callee = T>,
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
-  = note: this error originates in the macro `$crate::__define_class_register_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+error: missing lifetime in associated type
+  --> ui/define_class_mut_self_not_mutable.rs
+   |
+   | / define_class!(
+   | |     #[unsafe(super(NSObject))]
+   | |     struct CustomObject;
+...  |
+   | |         fn init_test(&mut self) -> &mut Self {
+   | |                                    ^ this lifetime must come from the implemented type
+...  |
+   | | );
+   | |_- there is a named lifetime specified on the impl block you could use
+   |
+note: in the trait the associated type is declared without lifetime parameters, so using a borrowed type for them requires that lifetime to come from the implemented type
+  --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
+   |
+   | pub trait ConvertDefinedFn<'f, FnMarker, MethodFamily, Kind>: ClassType {
+   | -----------------------------------------------------------------------
+   |     /// The type of the function that we want to create a thunk for.
+   |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: consider using the lifetime from the impl block
+   |
+11 |         fn init_test(&mut self) -> &'__function mut Self {
+   |                                     +++++++++++
 
-error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
+error[E0277]: the trait bound `&'__function mut CustomObject: MessageReceiver` is not satisfied
  --> ui/define_class_mut_self_not_mutable.rs
   |
   | / define_class!(
@@ -37,10 +32,7 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   | |     struct CustomObject;
 ... |
   | | );
-  | | ^
-  | | |
-  | |_the trait `MessageReceiver` is not implemented for `&mut CustomObject`
-  |   required by a bound introduced by this call
+  | |_^ the trait `MessageReceiver` is not implemented for `&'__function mut CustomObject`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T
@@ -48,19 +40,17 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
             *const T
             *mut T
             NonNull<T>
-  = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
-  = note: required for `extern "C-unwind" fn(&mut CustomObject, objc2::runtime::Sel)` to implement `MethodImplementation`
-note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_method`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
+  = note: `MessageReceiver` is implemented for `&'__function CustomObject`, but not for `&'__function mut CustomObject`
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&'__function mut CustomObject, (), objc2::__macros::KindDefined>`
+  = note: required for `fn(&'__function mut CustomObject)` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for CustomObject>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
+note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
   |
-  |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
-  |                   ---------- required by a bound in this associated function
-  |     where
-  |         F: MethodImplementation<Callee = T>,
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
-  = note: this error originates in the macro `$crate::__define_class_register_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
+error[E0277]: the trait bound `&'__function mut CustomObject: MessageReceiver` is not satisfied
  --> ui/define_class_mut_self_not_mutable.rs
   |
   | / define_class!(
@@ -68,10 +58,7 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
   | |     struct CustomObject;
 ... |
   | | );
-  | | ^
-  | | |
-  | |_the trait `MessageReceiver` is not implemented for `&mut CustomObject`
-  |   required by a bound introduced by this call
+  | |_^ the trait `MessageReceiver` is not implemented for `&'__function mut CustomObject`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T
@@ -79,17 +66,15 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
             *const T
             *mut T
             NonNull<T>
-  = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
-  = note: required for `extern "C-unwind" fn(&mut CustomObject, objc2::runtime::Sel) -> objc2::__macros::RetainedReturnValue` to implement `MethodImplementation`
-note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_method`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
+  = note: `MessageReceiver` is implemented for `&'__function CustomObject`, but not for `&'__function mut CustomObject`
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&'__function mut CustomObject, Retained<CustomObject>, objc2::__macros::KindDefined>`
+  = note: required for `fn(&'__function mut CustomObject) -> Retained<CustomObject>` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for CustomObject>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
+note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
   |
-  |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
-  |                   ---------- required by a bound in this associated function
-  |     where
-  |         F: MethodImplementation<Callee = T>,
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
-  = note: this error originates in the macro `$crate::__define_class_register_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
  --> ui/define_class_mut_self_not_mutable.rs
@@ -108,5 +93,25 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
             *mut T
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
-  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::MessageReceiveRetained<&mut CustomObject, Retained<CustomObject>>`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&mut CustomObject, (), objc2::__macros::KindDefined>`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
+ --> ui/define_class_mut_self_not_mutable.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `&mut CustomObject`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&mut CustomObject, Retained<CustomObject>, objc2::__macros::KindDefined>`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -16,4 +16,4 @@ error[E0411]: cannot find type `Self` in this scope
   | | );
   | |_^ `Self` is only available in impls, traits, and type definitions
   |
-  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extern_methods_call_method` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

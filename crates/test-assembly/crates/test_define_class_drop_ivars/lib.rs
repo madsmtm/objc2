@@ -12,7 +12,6 @@ use objc2::{define_class, msg_send, ClassType, Ivars};
 use objc2_foundation::NSObject;
 
 define_class!(
-    #[no_mangle]
     #[unsafe(super(NSObject))]
     #[name = "DropIvars"]
     pub struct DropIvars{
@@ -21,7 +20,6 @@ define_class!(
     }
 
     impl DropIvars {
-        #[export_name = "fn1_init"]
         #[unsafe(method_id(init))]
         fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
             let this = this.set_ivars(Ivars::<Self> {
@@ -34,7 +32,6 @@ define_class!(
 );
 
 impl Drop for DropIvars {
-    #[export_name = "fn2_drop"]
     #[inline(never)]
     fn drop(&mut self) {
         std::hint::black_box(());
@@ -42,12 +39,12 @@ impl Drop for DropIvars {
 }
 
 impl DropIvars {
-    #[export_name = "fn3_access_class"]
+    #[export_name = "fn_access_class"]
     pub fn access_class() -> &'static AnyClass {
         Self::class()
     }
 
-    #[export_name = "fn3_access_ivars"]
+    #[export_name = "fn_access_ivars"]
     pub fn access_drop_ivars(&self) -> (*const NSObject, *const NSObject) {
         (
             Retained::as_ptr(self.obj()),

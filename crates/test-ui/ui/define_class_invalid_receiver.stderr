@@ -1,15 +1,12 @@
-error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisfied
+error[E0277]: the trait bound `Box<TestBox>: MessageReceiver` is not satisfied
  --> ui/define_class_invalid_receiver.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct TestBox;
 ... |
   | | );
-  | | ^
-  | | |
-  | |_the trait `MessageReceiver` is not implemented for `Box<CustomObject>`
-  |   required by a bound introduced by this call
+  | |_^ the trait `MessageReceiver` is not implemented for `Box<TestBox>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T
@@ -17,29 +14,24 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C-unwind" fn(Box<CustomObject>, objc2::runtime::Sel)` to implement `MethodImplementation`
-note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_method`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<Box<TestBox>, (), objc2::__macros::KindDefined>`
+  = note: required for `fn(Box<TestBox>)` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for TestBox>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, TestBox>`
+note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
   |
-  |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
-  |                   ---------- required by a bound in this associated function
-  |     where
-  |         F: MethodImplementation<Callee = T>,
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
-  = note: this error originates in the macro `$crate::__define_class_register_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not satisfied
+error[E0277]: the trait bound `Retained<TestRetainedSelf>: MessageReceiver` is not satisfied
  --> ui/define_class_invalid_receiver.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct TestRetainedSelf;
 ... |
   | | );
-  | | ^
-  | | |
-  | |_the trait `MessageReceiver` is not implemented for `Retained<CustomObject>`
-  |   required by a bound introduced by this call
+  | |_^ the trait `MessageReceiver` is not implemented for `Retained<TestRetainedSelf>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T
@@ -47,36 +39,31 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C-unwind" fn(Retained<CustomObject>, objc2::runtime::Sel)` to implement `MethodImplementation`
-note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_method`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<Retained<TestRetainedSelf>, (), objc2::__macros::KindDefined>`
+  = note: required for `fn(Retained<TestRetainedSelf>)` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for TestRetainedSelf>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, TestRetainedSelf>`
+note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
   |
-  |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
-  |                   ---------- required by a bound in this associated function
-  |     where
-  |         F: MethodImplementation<Callee = T>,
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
-  = note: this error originates in the macro `$crate::__define_class_register_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
+error[E0277]: the trait bound `TestSelf: MessageReceiver` is not satisfied
  --> ui/define_class_invalid_receiver.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct TestSelf;
 ... |
   | | );
-  | | ^
-  | | |
-  | |_unsatisfied trait bound
-  |   required by a bound introduced by this call
+  | |_^ unsatisfied trait bound
   |
-help: the trait `MessageReceiver` is not implemented for `CustomObject`
+help: the trait `MessageReceiver` is not implemented for `TestSelf`
  --> ui/define_class_invalid_receiver.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct TestSelf;
 ... |
   | | );
   | |_^
@@ -86,28 +73,198 @@ help: the trait `MessageReceiver` is not implemented for `CustomObject`
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C-unwind" fn(CustomObject, objc2::runtime::Sel)` to implement `MethodImplementation`
-note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_method`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<TestSelf, (), objc2::__macros::KindDefined>`
+  = note: required for `fn(TestSelf)` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for TestSelf>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, TestSelf>`
+note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
   |
-  |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
-  |                   ---------- required by a bound in this associated function
-  |     where
-  |         F: MethodImplementation<Callee = T>,
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
-  = note: this error originates in the macro `$crate::__define_class_register_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0271]: type mismatch resolving `<extern "C-unwind" fn(&AnyClass, Sel) as MethodImplementation>::Callee == CustomObject`
+error[E0277]: the trait bound `Box<TestBoxReturnRetained>: MessageReceiver` is not satisfied
  --> ui/define_class_invalid_receiver.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct TestBoxReturnRetained;
+... |
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `Box<TestBoxReturnRetained>`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<Box<TestBoxReturnRetained>, Retained<TestBoxReturnRetained>, objc2::__macros::KindDefined>`
+  = note: required for `fn(Box<TestBoxReturnRetained>) -> Retained<TestBoxReturnRetained>` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for TestBoxReturnRetained>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, TestBoxReturnRetained>`
+note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
+  |
+  |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Retained<TestRetainedReturnRetained>: MessageReceiver` is not satisfied
+ --> ui/define_class_invalid_receiver.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct TestRetainedReturnRetained;
+... |
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `Retained<TestRetainedReturnRetained>`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<Retained<TestRetainedReturnRetained>, Retained<TestRetainedReturnRetained>, objc2::__macros::KindDefined>`
+  = note: required for `fn(Retained<TestRetainedReturnRetained>) -> Retained<TestRetainedReturnRetained>` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for TestRetainedReturnRetained>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, TestRetainedReturnRetained>`
+note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
+  |
+  |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Allocated<NormalNotInit>: MessageReceiver` is not satisfied
+ --> ui/define_class_invalid_receiver.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct NormalNotInit;
+... |
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `Allocated<NormalNotInit>`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<Allocated<NormalNotInit>, Retained<NormalNotInit>, objc2::__macros::KindDefined>`
+  = note: required for `fn(Allocated<NormalNotInit>) -> Retained<NormalNotInit>` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for NormalNotInit>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, NormalNotInit>`
+note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
+  |
+  |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Retained<InitNotAlloc>: Encode` is not satisfied
+ --> ui/define_class_invalid_receiver.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct InitNotAlloc;
+... |
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Retained<InitNotAlloc>`
+  |
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Retained<InitNotAlloc>` to implement `EncodeReturn`
+  = note: required for `Retained<InitNotAlloc>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<&'__function InitNotAlloc, Retained<InitNotAlloc>, objc2::__macros::KindDefined>`
+  = note: required for `fn(&'__function InitNotAlloc) -> Retained<InitNotAlloc>` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for InitNotAlloc>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<3>, objc2::__macros::MethodKind, InitNotAlloc>`
+note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
+  |
+  |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Box<TestBox>: MessageReceiver` is not satisfied
+ --> ui/define_class_invalid_receiver.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct TestBox;
+... |
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `Box<TestBox>`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<Box<TestBox>, (), objc2::__macros::KindDefined>`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Retained<TestRetainedSelf>: MessageReceiver` is not satisfied
+ --> ui/define_class_invalid_receiver.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct TestRetainedSelf;
+... |
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `Retained<TestRetainedSelf>`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<Retained<TestRetainedSelf>, (), objc2::__macros::KindDefined>`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `TestSelf: MessageReceiver` is not satisfied
+ --> ui/define_class_invalid_receiver.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct TestSelf;
+... |
+  | | );
+  | |_^ unsatisfied trait bound
+  |
+help: the trait `MessageReceiver` is not implemented for `TestSelf`
+ --> ui/define_class_invalid_receiver.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct TestSelf;
+... |
+  | | );
+  | |_^
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<TestSelf, (), objc2::__macros::KindDefined>`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0271]: type mismatch resolving `<extern "C-unwind" fn(&AnyClass, Sel) as MethodImplementation>::Callee == TestClass`
+ --> ui/define_class_invalid_receiver.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct TestClass;
 ... |
   | | );
   | | ^
   | | |
-  | |_expected `CustomObject`, found `AnyClass`
+  | |_expected `TestClass`, found `AnyClass`
   |   required by a bound introduced by this call
   |
 note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_method`
@@ -118,19 +275,19 @@ note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_meth
   |     where
   |         F: MethodImplementation<Callee = T>,
   |                                 ^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
-  = note: this error originates in the macro `$crate::__define_class_register_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0271]: type mismatch resolving `<extern "C-unwind" fn(&NSObject, Sel) as MethodImplementation>::Callee == CustomObject`
+error[E0271]: type mismatch resolving `<extern "C-unwind" fn(&NSObject, Sel) as MethodImplementation>::Callee == TestObject`
  --> ui/define_class_invalid_receiver.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct TestObject;
 ... |
   | | );
   | | ^
   | | |
-  | |_expected `CustomObject`, found `NSObject`
+  | |_expected `TestObject`, found `NSObject`
   |   required by a bound introduced by this call
   |
 note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_method`
@@ -141,20 +298,17 @@ note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_meth
   |     where
   |         F: MethodImplementation<Callee = T>,
   |                                 ^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
-  = note: this error originates in the macro `$crate::__define_class_register_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisfied
+error[E0277]: the trait bound `Box<TestBoxReturnRetained>: MessageReceiver` is not satisfied
  --> ui/define_class_invalid_receiver.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct TestBoxReturnRetained;
 ... |
   | | );
-  | | ^
-  | | |
-  | |_the trait `MessageReceiver` is not implemented for `Box<CustomObject>`
-  |   required by a bound introduced by this call
+  | |_^ the trait `MessageReceiver` is not implemented for `Box<TestBoxReturnRetained>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T
@@ -162,29 +316,18 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C-unwind" fn(Box<CustomObject>, objc2::runtime::Sel) -> objc2::__macros::RetainedReturnValue` to implement `MethodImplementation`
-note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_method`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
-  |
-  |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
-  |                   ---------- required by a bound in this associated function
-  |     where
-  |         F: MethodImplementation<Callee = T>,
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
-  = note: this error originates in the macro `$crate::__define_class_register_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<Box<TestBoxReturnRetained>, Retained<TestBoxReturnRetained>, objc2::__macros::KindDefined>`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not satisfied
+error[E0277]: the trait bound `Retained<TestRetainedReturnRetained>: MessageReceiver` is not satisfied
  --> ui/define_class_invalid_receiver.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct TestRetainedReturnRetained;
 ... |
   | | );
-  | | ^
-  | | |
-  | |_the trait `MessageReceiver` is not implemented for `Retained<CustomObject>`
-  |   required by a bound introduced by this call
+  | |_^ the trait `MessageReceiver` is not implemented for `Retained<TestRetainedReturnRetained>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T
@@ -192,65 +335,18 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
             *const T
             *mut T
             NonNull<T>
-  = note: required for `extern "C-unwind" fn(Retained<CustomObject>, objc2::runtime::Sel) -> objc2::__macros::RetainedReturnValue` to implement `MethodImplementation`
-note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_method`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
-  |
-  |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
-  |                   ---------- required by a bound in this associated function
-  |     where
-  |         F: MethodImplementation<Callee = T>,
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
-  = note: this error originates in the macro `$crate::__define_class_register_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<Retained<TestRetainedReturnRetained>, Retained<TestRetainedReturnRetained>, objc2::__macros::KindDefined>`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
+error[E0277]: the trait bound `Allocated<NormalNotInit>: MessageReceiver` is not satisfied
  --> ui/define_class_invalid_receiver.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct NormalNotInit;
 ... |
   | | );
-  | | ^
-  | | |
-  | |_unsatisfied trait bound
-  |   required by a bound introduced by this call
-  |
-help: the trait `MessageReceiver` is not implemented for `CustomObject`
- --> ui/define_class_invalid_receiver.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
-... |
-  | | );
-  | |_^
-  = help: the following other types implement trait `MessageReceiver`:
-            &T
-            &mut AnyObject
-            *const T
-            *mut T
-            NonNull<T>
-  = note: required for `extern "C-unwind" fn(CustomObject, objc2::runtime::Sel) -> objc2::__macros::RetainedReturnValue` to implement `MethodImplementation`
-note: required by a bound in `objc2::__macros::ClassBuilderHelper::<T>::add_method`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
-  |
-  |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
-  |                   ---------- required by a bound in this associated function
-  |     where
-  |         F: MethodImplementation<Callee = T>,
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
-  = note: this error originates in the macro `$crate::__define_class_register_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisfied
- --> ui/define_class_invalid_receiver.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
-... |
-  | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `Box<CustomObject>`
+  | |_^ the trait `MessageReceiver` is not implemented for `Allocated<NormalNotInit>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             &T
@@ -258,93 +354,29 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
             *const T
             *mut T
             NonNull<T>
-  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::MessageReceiveRetained<Box<CustomObject>, Retained<CustomObject>>`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<Allocated<NormalNotInit>, Retained<NormalNotInit>, objc2::__macros::KindDefined>`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not satisfied
+error[E0277]: the trait bound `Retained<InitNotAlloc>: EncodeReturn` is not satisfied
  --> ui/define_class_invalid_receiver.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
+  | |     struct InitNotAlloc;
 ... |
   | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `Retained<CustomObject>`
+  | |_^ the trait `Encode` is not implemented for `Retained<InitNotAlloc>`
   |
-  = help: the following other types implement trait `MessageReceiver`:
-            &T
-            &mut AnyObject
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
             *const T
             *mut T
-            NonNull<T>
-  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::MessageReceiveRetained<Retained<CustomObject>, Retained<CustomObject>>`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
- --> ui/define_class_invalid_receiver.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
-... |
-  | | );
-  | |_^ unsatisfied trait bound
-  |
-help: the trait `MessageReceiver` is not implemented for `CustomObject`
- --> ui/define_class_invalid_receiver.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
-... |
-  | | );
-  | |_^
-  = help: the following other types implement trait `MessageReceiver`:
-            &T
-            &mut AnyObject
-            *const T
-            *mut T
-            NonNull<T>
-  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::MessageReceiveRetained<CustomObject, Retained<CustomObject>>`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not satisfied
- --> ui/define_class_invalid_receiver.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
-... |
-  | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `Allocated<CustomObject>`
-  |
-  = help: the following other types implement trait `MessageReceiver`:
-            &T
-            &mut AnyObject
-            *const T
-            *mut T
-            NonNull<T>
-  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::MessageReceiveRetained<Allocated<CustomObject>, Retained<CustomObject>>`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `objc2::__macros::MethodFamily<3>: objc2::__macros::MessageReceiveRetained<&CustomObject, Retained<CustomObject>>` is not satisfied
- --> ui/define_class_invalid_receiver.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct CustomObject;
-... |
-  | | );
-  | |_^ unsatisfied trait bound
-  |
-help: the trait `MessageReceiveRetained<&CustomObject, Retained<CustomObject>>` is not implemented for `objc2::__macros::MethodFamily<3>`
-      but trait `MessageReceiveRetained<Allocated<CustomObject>, Retained<CustomObject>>` is implemented for it
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/checks.rs
-  |
-  | / impl<Ret, T> MessageReceiveRetained<Allocated<T>, Ret> for InitFamily
-  | | where
-  | |     T: Message,
-  | |     Ret: MaybeOptionRetained<Inner = T>,
-  | |________________________________________^
-  = help: for that trait implementation, expected `Allocated<CustomObject>`, found `&CustomObject`
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
+          and $N others
+  = note: required for `Retained<InitNotAlloc>` to implement `EncodeReturn`
+  = note: required for `Retained<InitNotAlloc>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -1,6 +1,29 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.p2align	4
+SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, 0):
+	test	rdi, rdi
+	je	LBB0_2
+	mov	rax, qword ptr [rip + ___IVAR_OFFSET_ForgetableIvars]
+	mov	dword ptr [rdi + rax], 43
+	mov	byte ptr [rdi + rax + 4], 42
+LBB0_2:
+	push	rbp
+	mov	rbp, rsp
+	sub	rsp, 16
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
+	mov	rsi, qword ptr [rax]
+	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rax, qword ptr [rax]
+	mov	qword ptr [rbp - 16], rdi
+	mov	qword ptr [rbp - 8], rax
+	lea	rdi, [rbp - 16]
+	call	_objc_msgSendSuper
+	add	rsp, 16
+	pop	rbp
+	ret
+
+	.p2align	4
 SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 Lfunc_begin0:
 	push	rbp
@@ -11,20 +34,20 @@ Lfunc_begin0:
 	movzx	ecx, byte ptr [rax]
 	mov	byte ptr [rax], 0
 	cmp	cl, 1
-	jne	LBB0_8
+	jne	LBB1_8
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdi, qword ptr [rax]
 	lea	rsi, [rip + L_anon.[ID].6]
 	xor	edx, edx
 	call	_objc_allocateClassPair
 	test	rax, rax
-	je	LBB0_6
+	je	LBB1_6
 	mov	qword ptr [rbp - 16], rax
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 Ltmp0:
 	lea	r8, [rip + l_anon.[ID].5]
-	lea	r9, [rip + _fn1_init]
+	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, 0)]
 	lea	rdi, [rbp - 16]
 	mov	edx, 8
 	xor	ecx, ecx
@@ -50,7 +73,7 @@ Ltmp3:
 	mov	rdi, rbx
 	call	_class_getInstanceVariable
 	test	rax, rax
-	je	LBB0_5
+	je	LBB1_5
 	mov	rdi, rax
 	call	_ivar_getOffset
 	mov	qword ptr [rip + ___CLASS_ForgetableIvars], rbx
@@ -59,17 +82,17 @@ Ltmp3:
 	pop	rbx
 	pop	rbp
 	ret
-LBB0_8:
+LBB1_8:
 	lea	rdi, [rip + l_anon.[ID].4]
 	call	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
-LBB0_6:
+LBB1_6:
 	lea	rdi, [rip + L_anon.[ID].6]
 	lea	rdx, [rip + l_anon.[ID].8]
 	mov	esi, 16
 	call	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
-LBB0_5:
+LBB1_5:
 	call	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::ivars_offset::get_ivar_failed, 0)
-LBB0_9:
+LBB1_9:
 Ltmp4:
 	mov	rbx, rax
 	mov	rdi, qword ptr [rbp - 16]
@@ -79,7 +102,7 @@ Ltmp4:
 Lfunc_end0:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
-GCC_except_table0:
+GCC_except_table1:
 Lexception0:
 	.byte	255
 	.byte	255
@@ -111,35 +134,9 @@ SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_forgetable_
 	pop	rbp
 	ret
 
-	.globl	SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
+	.globl	SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>::init, 0)
 	.p2align	4
-SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
-	mov	rax, qword ptr [rip + ___REGISTER_CLASS_ForgetableIvars]
-	test	rax, rax
-	jne	LBB2_1
-	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
-	ret
-LBB2_1:
-	push	rbp
-	mov	rbp, rsp
-	sub	rsp, 16
-	mov	byte ptr [rbp - 1], 1
-	lea	rax, [rbp - 1]
-	mov	qword ptr [rbp - 16], rax
-	lea	rdi, [rip + ___REGISTER_CLASS_ForgetableIvars]
-	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].8]
-	lea	rdx, [rbp - 16]
-	xor	esi, esi
-	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
-	add	rsp, 16
-	pop	rbp
-	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
-	ret
-
-	.globl	_fn1_init
-	.p2align	4
-_fn1_init:
+SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>::init, 0):
 	test	rdi, rdi
 	je	LBB3_2
 	mov	rax, qword ptr [rip + ___IVAR_OFFSET_ForgetableIvars]
@@ -161,9 +158,9 @@ LBB3_2:
 	pop	rbp
 	ret
 
-	.globl	_fn2_access_class
+	.globl	SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	4
-_fn2_access_class:
+SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 	mov	rax, qword ptr [rip + ___REGISTER_CLASS_ForgetableIvars]
 	test	rax, rax
 	jne	LBB4_1
@@ -187,9 +184,35 @@ LBB4_1:
 	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
 	ret
 
-	.globl	_fn3_access_ivars
+	.globl	_fn_access_class
 	.p2align	4
-_fn3_access_ivars:
+_fn_access_class:
+	mov	rax, qword ptr [rip + ___REGISTER_CLASS_ForgetableIvars]
+	test	rax, rax
+	jne	LBB5_1
+	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
+	ret
+LBB5_1:
+	push	rbp
+	mov	rbp, rsp
+	sub	rsp, 16
+	mov	byte ptr [rbp - 1], 1
+	lea	rax, [rbp - 1]
+	mov	qword ptr [rbp - 16], rax
+	lea	rdi, [rip + ___REGISTER_CLASS_ForgetableIvars]
+	lea	rcx, [rip + l_anon.[ID].0]
+	lea	r8, [rip + l_anon.[ID].8]
+	lea	rdx, [rbp - 16]
+	xor	esi, esi
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+	add	rsp, 16
+	pop	rbp
+	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
+	ret
+
+	.globl	_fn_access_ivars
+	.p2align	4
+_fn_access_ivars:
 	push	rbp
 	mov	rbp, rsp
 	mov	rcx, qword ptr [rip + ___IVAR_OFFSET_ForgetableIvars]

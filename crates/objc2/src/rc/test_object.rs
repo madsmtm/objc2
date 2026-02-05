@@ -70,23 +70,23 @@ define_class!(
     pub(crate) struct RcTestObject;
 
     impl RcTestObject {
-        #[unsafe(method_id(newReturningNull))]
+        #[unsafe(method(newReturningNull))]
         fn new_returning_null() -> Option<Retained<Self>> {
             None
         }
 
-        #[unsafe(method_id(newMethodOnInstance))]
+        #[unsafe(method(newMethodOnInstance))]
         fn new_method_on_instance(&self) -> Retained<Self> {
             Self::new()
         }
 
-        #[unsafe(method_id(newMethodOnInstanceNull))]
+        #[unsafe(method(newMethodOnInstanceNull))]
         fn new_method_on_instance_null(&self) -> Option<Retained<Self>> {
             None
         }
 
         #[unsafe(method(alloc))]
-        fn alloc_() -> *mut Self {
+        fn alloc_() -> Allocated<Self> {
             TEST_DATA.with(|data| data.borrow_mut().alloc += 1);
             let superclass = NSObject::class().metaclass();
             let zone: *const NSZone = ptr::null();
@@ -94,7 +94,7 @@ define_class!(
         }
 
         #[unsafe(method(allocWithZone:))]
-        fn alloc_with_zone(zone: *const NSZone) -> *mut Self {
+        fn alloc_with_zone(zone: *const NSZone) -> Allocated<Self> {
             TEST_DATA.with(|data| data.borrow_mut().alloc += 1);
             let superclass = NSObject::class().metaclass();
             unsafe { msg_send![super(Self::class(), superclass), allocWithZone: zone] }
@@ -105,14 +105,14 @@ define_class!(
             ptr::null_mut()
         }
 
-        #[unsafe(method_id(init))]
+        #[unsafe(method(init))]
         unsafe fn init(this: Allocated<Self>) -> Retained<Self> {
             TEST_DATA.with(|data| data.borrow_mut().init += 1);
             let this = this.set_ivars(Ivars::<RcTestObject> {});
             unsafe { msg_send![super(this), init] }
         }
 
-        #[unsafe(method_id(initReturningNull))]
+        #[unsafe(method(initReturningNull))]
         fn init_returning_null(_this: Allocated<Self>) -> Option<Retained<Self>> {
             None
         }
@@ -146,104 +146,80 @@ define_class!(
             res
         }
 
-        #[unsafe(method_id(copyWithZone:))]
+        #[unsafe(method(copyWithZone:))]
         fn copy_with_zone(&self, _zone: *const NSZone) -> Retained<Self> {
             TEST_DATA.with(|data| data.borrow_mut().copy += 1);
             Self::new()
         }
 
-        #[unsafe(method_id(mutableCopyWithZone:))]
+        #[unsafe(method(mutableCopyWithZone:))]
         fn mutable_copy_with_zone(&self, _zone: *const NSZone) -> Retained<Self> {
             TEST_DATA.with(|data| data.borrow_mut().mutable_copy += 1);
             Self::new()
         }
 
-        #[unsafe(method_id(copyReturningNull))]
+        #[unsafe(method(copyReturningNull))]
         fn copy_returning_null(_this: &Self) -> Option<Retained<Self>> {
             None
         }
 
-        #[unsafe(method_id(methodReturningNull))]
-        fn method_returning_null(self: &Self) -> Option<Retained<Self>> {
+        #[unsafe(method(methodReturningNull))]
+        fn method_returning_null(&self) -> Option<Retained<Self>> {
             None
         }
 
-        #[unsafe(method_id(aMethod:))]
+        #[unsafe(method(aMethod:))]
         fn a_method(&self, param: bool) -> Option<Retained<Self>> {
             param.then(Self::new)
         }
 
-        #[unsafe(method(boolAndShouldError:error:))]
-        fn class_error_bool(should_error: bool, err: Option<&mut *mut RcTestObject>) -> bool {
+        #[unsafe(method(boolAndShouldError:error:_))]
+        fn class_error_bool(should_error: bool) -> Result<(), Retained<RcTestObject>> {
             if should_error {
-                if let Some(err) = err {
-                    *err = Retained::autorelease_ptr(RcTestObject::new());
-                }
-                false
+                Err(RcTestObject::new())
             } else {
-                true
+                Ok(())
             }
         }
 
-        #[unsafe(method(boolAndShouldError:error:))]
-        fn instance_error_bool(
+        #[unsafe(method(boolAndShouldError:error:_))]
+        fn instance_error_bool(&self, should_error: bool) -> Result<(), Retained<RcTestObject>> {
+            if should_error {
+                Err(RcTestObject::new())
+            } else {
+                Ok(())
+            }
+        }
+
+        #[unsafe(method(idAndShouldError:error:_))]
+        fn class_error_retained(should_error: bool) -> Result<Retained<Self>, Retained<RcTestObject>> {
+            if should_error {
+                Err(RcTestObject::new())
+            } else {
+                Ok(Self::new())
+            }
+        }
+
+        #[unsafe(method(idAndShouldError:error:_))]
+        fn instance_error_retained(
             &self,
             should_error: bool,
-            err: Option<&mut *mut RcTestObject>,
-        ) -> bool {
+        ) -> Result<Retained<Self>, Retained<RcTestObject>> {
             if should_error {
-                if let Some(err) = err {
-                    *err = Retained::autorelease_ptr(RcTestObject::new());
-                }
-                false
+                Err(RcTestObject::new())
             } else {
-                true
+                Ok(Self::new())
             }
         }
 
-        #[unsafe(method_id(idAndShouldError:error:))]
-        fn class_error_retained(
-            should_error: bool,
-            err: Option<&mut *mut RcTestObject>,
-        ) -> Option<Retained<Self>> {
-            if should_error {
-                if let Some(err) = err {
-                    *err = Retained::autorelease_ptr(RcTestObject::new());
-                }
-                None
-            } else {
-                Some(Self::new())
-            }
-        }
-
-        #[unsafe(method_id(idAndShouldError:error:))]
-        fn instance_error_retained(
-            self: &Self,
-            should_error: bool,
-            err: Option<&mut *mut RcTestObject>,
-        ) -> Option<Retained<Self>> {
-            if should_error {
-                if let Some(err) = err {
-                    *err = Retained::autorelease_ptr(RcTestObject::new());
-                }
-                None
-            } else {
-                Some(Self::new())
-            }
-        }
-
-        #[unsafe(method_id(newAndShouldError:error:))]
+        #[unsafe(method(newAndShouldError:error:_))]
         fn new_error(
             should_error: bool,
-            err: Option<&mut *mut RcTestObject>,
-        ) -> Option<Retained<Self>> {
+        ) -> Result<Retained<Self>, Retained<RcTestObject>> {
             if should_error {
-                if let Some(err) = err {
-                    *err = Retained::autorelease_ptr(RcTestObject::new());
-                }
-                None
+                Err(RcTestObject::new())
             } else {
-                unsafe { msg_send![Self::class(), new] }
+                Ok(Self::new())
             }
         }
 
@@ -259,19 +235,15 @@ define_class!(
             }
         }
 
-        #[unsafe(method_id(initAndShouldError:error:))]
+        #[unsafe(method(initAndShouldError:error:_))]
         fn init_error(
             this: Allocated<Self>,
             should_error: bool,
-            err: Option<&mut *mut RcTestObject>,
-        ) -> Option<Retained<Self>> {
+        ) -> Result<Retained<Self>, Retained<RcTestObject>> {
             if should_error {
-                if let Some(err) = err {
-                    *err = Retained::autorelease_ptr(RcTestObject::new());
-                }
-                None
+                Err(RcTestObject::new())
             } else {
-                unsafe { msg_send![this, init] }
+                Ok(unsafe { msg_send![this, init] })
             }
         }
 

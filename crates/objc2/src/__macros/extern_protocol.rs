@@ -278,12 +278,10 @@ macro_rules! __extern_protocol_rewrite_methods {
         $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
 
-            ($crate::__rewrite_self_param)
-            ($($params)*)
-
-            ($crate::__extern_protocol_method_out)
+            ($crate::__extern_protocol_inner)
             ($v unsafe fn $name($($params)*) $(-> $ret)?)
-            ($($($where : $bound ,)+)?)
+            ($($($where: $bound,)+)?)
+            ($($params)*)
         }
 
         $crate::__extern_protocol_rewrite_methods! {
@@ -303,12 +301,10 @@ macro_rules! __extern_protocol_rewrite_methods {
         $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
 
-            ($crate::__rewrite_self_param)
-            ($($params)*)
-
-            ($crate::__extern_protocol_method_out)
+            ($crate::__extern_protocol_inner)
             ($v fn $name($($params)*) $(-> $ret)?)
-            ($($($where : $bound ,)+)?)
+            ($($($where: $bound,)+)?)
+            ($($params)*)
         }
 
         $crate::__extern_protocol_rewrite_methods! {
@@ -319,85 +315,106 @@ macro_rules! __extern_protocol_rewrite_methods {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __extern_protocol_method_out {
-    // Instance method
+macro_rules! __extern_protocol_inner {
     {
         ($($function_start:tt)*)
-        ($($where:ty : $bound:path ,)*)
+        ($($where:ty: $bound:path,)*)
+        ($($params:tt)*)
 
         ($method_or_method_id:ident($($sel:tt)*))
         ($($method_family:tt)*)
-        ($($optional:tt)*)
+        ($($optional:tt)*) // TODO: Use this?
         ($($attr_method:tt)*)
-        ($($attr_use:tt)*)
-
-        (add_method)
-        ($receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
+        ($($__attr_use:tt)*)
     } => {
-        $($attr_method)*
-        $($function_start)*
-        where
-            Self: $crate::__macros::Sized + $crate::Message
-            $(, $where : $bound)*
-        {
-            $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel)*));
+        $crate::__parse_sel_and_params! {
+            ($($sel)*)
+            ($($params)*)
 
-            #[allow(unused_unsafe)]
-            unsafe {
-                $crate::__method_msg_send! {
-                    ($receiver)
-                    ($($sel)*)
-                    ($($params_rest)*)
+            ($crate::__extern_protocol_method_out)
+            ($($attr_method)*)
+            ($($function_start)*)
+            ($($where: $bound,)*)
+            ($($method_family)*)
+            ($method_or_method_id($($sel)*))
+        }
+    }
+}
 
-                    ()
-                    ()
-                    ($($method_family)*)
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_protocol_method_out {
+    {
+        ($($attr_method:tt)*)
+        ($($function_start:tt)*)
+        ($($where:ty: $bound:path,)*)
+        ($($method_family:tt)*)
+        ($method_or_method_id:ident($($sel_unparsed:tt)*))
+
+        ($fn_or_fn_result:ident($($receiver:ident: $receiver_ty:ty)?))
+        ($($sel:tt)*)
+        ($($param:ident,)*)
+        ($($param_ty:tt)*)
+        ($($ignored_param:tt)*)
+    } => {
+        $crate::__extern_protocol_apply_bounds! {
+            ($($receiver)?)
+            ($($attr_method)*)
+            ($($function_start)*)
+            ($($where: $bound,)*)
+            ({
+                $crate::__extern_protocol_method_id_deprecated!($method_or_method_id($($sel_unparsed)*));
+
+                // SAFETY: Upheld by writer of `#[unsafe(method(...))]`.
+                #[allow(unused_unsafe)]
+                unsafe {
+                    $crate::__extern_methods_call_method! {
+                        ($($method_family)*)
+
+                        ($fn_or_fn_result($($receiver: $receiver_ty)?))
+                        ($($sel)*)
+                        ($($param,)*)
+                        ($($param_ty)*)
+                        ($($ignored_param)*)
+                    }
                 }
-            }
+            })
         }
     };
+}
 
-    // Class method
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_protocol_apply_bounds {
+    // Instance method.
     {
+        ($receiver:ident)
+        ($($attr_method:tt)*)
         ($($function_start:tt)*)
         ($($where:ty : $bound:path ,)*)
-
-        ($method_or_method_id:ident($($sel:tt)*))
-        ($($method_family:tt)*)
-        ($($optional:tt)*)
-        ($($attr_method:tt)*)
-        ($($attr_use:tt)*)
-
-        (add_class_method)
-        ($receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
+        ($body:block)
     } => {
         $($attr_method)*
         $($function_start)*
         where
-            Self: $crate::__macros::Sized + $crate::ClassType
-            $(, $where : $bound)*
-        {
-            $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel)*));
-
-            #[allow(unused_unsafe)]
-            unsafe {
-                $crate::__method_msg_send! {
-                    ($receiver)
-                    ($($sel)*)
-                    ($($params_rest)*)
-
-                    ()
-                    ()
-                    ($($method_family)*)
-                }
-            }
-        }
+            Self: $crate::__macros::Sized + $crate::Message,
+            $($where : $bound,)*
+        $body
+    };
+    // Class method.
+    {
+        ()
+        ($($attr_method:tt)*)
+        ($($function_start:tt)*)
+        ($($where:ty : $bound:path ,)*)
+        ($body:block)
+    } => {
+        $($attr_method)*
+        $($function_start)*
+        where
+            Self: $crate::__macros::Sized + $crate::ClassType,
+            $($where : $bound,)*
+        $body
     };
 }
 

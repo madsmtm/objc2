@@ -1,0 +1,93 @@
+error: missing lifetime in associated type
+  --> ui/define_class_return_lifetime.rs
+   |
+   | / define_class!(
+   | |     #[unsafe(super(NSObject))]
+   | |     struct ReturnSelf;
+...  |
+   | |         fn return_self(&self) -> &Self {
+   | |                                  ^ this lifetime must come from the implemented type
+...  |
+   | | );
+   | |_- there is a named lifetime specified on the impl block you could use
+   |
+note: in the trait the associated type is declared without lifetime parameters, so using a borrowed type for them requires that lifetime to come from the implemented type
+  --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
+   |
+   | pub trait ConvertDefinedFn<'f, FnMarker, MethodFamily, Kind>: ClassType {
+   | -----------------------------------------------------------------------
+   |     /// The type of the function that we want to create a thunk for.
+   |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: consider using the lifetime from the impl block
+   |
+10 |         fn return_self(&self) -> &'__function Self {
+   |                                   +++++++++++
+
+error: missing lifetime in associated type
+  --> ui/define_class_return_lifetime.rs
+   |
+   | / define_class!(
+   | |     #[unsafe(super(NSObject))]
+   | |     struct ReturnIvar {
+   | |         ivar: i32,
+...  |
+   | |         fn return_ivar(&self) -> &i32 {
+   | |                                  ^ this lifetime must come from the implemented type
+...  |
+   | | );
+   | |_- there is a named lifetime specified on the impl block you could use
+   |
+note: in the trait the associated type is declared without lifetime parameters, so using a borrowed type for them requires that lifetime to come from the implemented type
+  --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
+   |
+   | pub trait ConvertDefinedFn<'f, FnMarker, MethodFamily, Kind>: ClassType {
+   | -----------------------------------------------------------------------
+   |     /// The type of the function that we want to create a thunk for.
+   |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: consider using the lifetime from the impl block
+   |
+24 |         fn return_ivar(&self) -> &'__function i32 {
+   |                                   +++++++++++
+
+error: missing lifetime in associated type
+  --> ui/define_class_return_lifetime.rs
+   |
+   | / define_class!(
+   | |     #[unsafe(super(NSObject))]
+   | |     struct ReturnOther;
+...  |
+   | |         fn return_other(&self, other: &i32) -> &i32 {
+   | |                                                ^ this lifetime must come from the implemented type
+...  |
+   | | );
+   | |_- there is a named lifetime specified on the impl block you could use
+   |
+note: in the trait the associated type is declared without lifetime parameters, so using a borrowed type for them requires that lifetime to come from the implemented type
+  --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
+   |
+   | pub trait ConvertDefinedFn<'f, FnMarker, MethodFamily, Kind>: ClassType {
+   | -----------------------------------------------------------------------
+   |     /// The type of the function that we want to create a thunk for.
+   |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: consider using the lifetime from the impl block
+   |
+36 |         fn return_other(&self, other: &i32) -> &'__function i32 {
+   |                                                 +++++++++++
+
+error: lifetime may not live long enough
+  --> ui/define_class_return_lifetime.rs
+   |
+   |         fn return_other(&self, other: &i32) -> &i32 {
+   |                         -             - let's call the lifetime of this reference `'1`
+   |                         |
+   |                         let's call the lifetime of this reference `'2`
+   |             other
+   |             ^^^^^ method was supposed to return data with lifetime `'2` but it is returning data with lifetime `'1`
+   |
+help: consider introducing a named lifetime parameter and update trait if needed
+   |
+36 |         fn return_other<'a>(&self, other: &'a i32) -> &'a i32 {
+   |                        ++++                ++          ++

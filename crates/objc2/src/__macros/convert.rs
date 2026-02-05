@@ -236,6 +236,7 @@ pub trait ConvertError: Sized {
     /// The type that is returned internally.
     type Inner;
     fn into_option(inner: Self::Inner) -> Option<Self>;
+    fn from_option(option: Option<Self>) -> Self::Inner;
 }
 
 // `bool` -> `Result<(), _>`.
@@ -246,6 +247,11 @@ impl ConvertError for () {
     fn into_option(inner: bool) -> Option<()> {
         inner.then_some(())
     }
+
+    #[inline]
+    fn from_option(option: Option<()>) -> bool {
+        option.is_some()
+    }
 }
 
 // `Option<Retained<T>>` -> `Result<Retained<T>, _>`.
@@ -255,6 +261,11 @@ impl<T: ?Sized> ConvertError for Retained<T> {
     #[inline]
     fn into_option(inner: Option<Self>) -> Option<Self> {
         inner
+    }
+
+    #[inline]
+    fn from_option(option: Option<Self>) -> Option<Self> {
+        option
     }
 }
 
@@ -472,16 +483,16 @@ mod tests {
             struct Foo;
 
             impl Foo {
-                // NOTE: Current rewriting of defined methods cause lifetimes
-                // to be incorrect here!
                 #[unsafe(method(foo:))]
                 fn foo(arg: &CStr) -> &'static CStr {
-                    arg
+                    // TODO: Add syntax for allowing returning internal pointers.
+                    unsafe { std::mem::transmute(arg) }
                 }
 
                 #[unsafe(method(fooOptional:))]
                 fn foo_optional(arg: Option<&CStr>) -> Option<&'static CStr> {
-                    arg
+                    // TODO: Add syntax for allowing returning internal pointers.
+                    unsafe { std::mem::transmute(arg) }
                 }
             }
         );

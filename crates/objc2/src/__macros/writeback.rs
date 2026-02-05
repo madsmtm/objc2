@@ -239,7 +239,13 @@ mod tests {
         }
 
         bool_error(false, None);
+        expected.assert_current();
+
         bool_error(true, None);
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.release += 1;
+        expected.drop += 1;
         expected.assert_current();
 
         fn helper(

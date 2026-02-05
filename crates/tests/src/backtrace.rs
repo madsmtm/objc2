@@ -133,6 +133,8 @@ fn capture_backtrace() {
     let expected_msg_send: &[_] = &[
         "<tests::backtrace::Thrower>::__backtrace",
         #[cfg(debug_assertions)]
+        "objc2::__macros::define_class::thunk::_::thunk::<<tests::backtrace::Thrower as objc2::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2::runtime::anyclass::AnyClass, *mut core::ffi::c_void, objc2::__macros::method_family::MethodFamily<6u8>, tests::backtrace::Thrower>",
+        #[cfg(debug_assertions)]
         "<() as objc2::encode::EncodeArguments>::__invoke::<*mut core::ffi::c_void>",
         #[cfg(debug_assertions)]
         "objc2::runtime::message_receiver::msg_send_primitive::send::<(), *mut core::ffi::c_void>",
@@ -151,6 +153,8 @@ fn capture_backtrace() {
     }
     let expected_extern_methods: &[_] = &[
         "<tests::backtrace::Thrower>::__backtrace",
+        #[cfg(debug_assertions)]
+        "objc2::__macros::define_class::thunk::_::thunk::<<tests::backtrace::Thrower as objc2::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2::runtime::anyclass::AnyClass, *mut core::ffi::c_void, objc2::__macros::method_family::MethodFamily<6u8>, tests::backtrace::Thrower>",
         #[cfg(debug_assertions)]
         "<() as objc2::encode::EncodeArguments>::__invoke::<*mut core::ffi::c_void>",
         #[cfg(debug_assertions)]

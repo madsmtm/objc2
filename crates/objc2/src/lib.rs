@@ -126,6 +126,7 @@
 #![allow(clippy::needless_doctest_main)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2/0.6.3")]
+#![recursion_limit = "10240"] // TEMPORARY
 
 #[cfg(not(feature = "alloc"))]
 compile_error!("The `alloc` feature currently must be enabled.");

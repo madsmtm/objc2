@@ -1,7 +1,252 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0):
+Lloh0:
+	adrp	x8, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh1:
+	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
+	ldapr	x8, [x8]
+	cbnz	x8, LBB0_2
+Lloh2:
+	adrp	x8, ___CLASS_NoIvars@PAGE
+Lloh3:
+	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
+	ret
+LBB0_2:
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+	mov	w8, #1
+	strb	w8, [sp, #7]
+	add	x8, sp, #7
+	str	x8, [sp, #8]
+Lloh4:
+	adrp	x0, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh5:
+	add	x0, x0, ___REGISTER_CLASS_NoIvars@PAGEOFF
+Lloh6:
+	adrp	x3, l_anon.[ID].0@PAGE
+Lloh7:
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
+Lloh8:
+	adrp	x4, l_anon.[ID].14@PAGE
+Lloh9:
+	add	x4, x4, l_anon.[ID].14@PAGEOFF
+	add	x2, sp, #8
+	mov	w1, #0
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
+Lloh10:
+	adrp	x8, ___CLASS_NoIvars@PAGE
+Lloh11:
+	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
+	ret
+	.loh AdrpAdd	Lloh0, Lloh1
+	.loh AdrpLdr	Lloh2, Lloh3
+	.loh AdrpLdr	Lloh10, Lloh11
+	.loh AdrpAdd	Lloh8, Lloh9
+	.loh AdrpAdd	Lloh6, Lloh7
+	.loh AdrpAdd	Lloh4, Lloh5
+
+	.p2align	2
+SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, bool, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0):
+	eor	w0, w2, #0x1
+	ret
+
+	.p2align	2
+SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0):
 Lfunc_begin0:
+	stp	x20, x19, [sp, #-32]!
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+	mov	x20, x2
+	bl	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
+	mov	x19, x0
+	cbz	w20, LBB2_3
+Ltmp0:
+	bl	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
+Ltmp1:
+	mov	x20, x0
+	mov	x0, x19
+	bl	_objc_release
+	mov	x19, x20
+LBB2_3:
+	mov	x0, x19
+	ldp	x29, x30, [sp, #16]
+	ldp	x20, x19, [sp], #32
+	b	_objc_autoreleaseReturnValue
+LBB2_4:
+Ltmp2:
+	mov	x20, x0
+Ltmp3:
+	mov	x0, x19
+	bl	_objc_release
+Ltmp4:
+	mov	x0, x20
+	bl	__Unwind_Resume
+LBB2_6:
+Ltmp5:
+	bl	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
+Lfunc_end0:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table2:
+Lexception0:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase0-Lttbaseref0
+Lttbaseref0:
+	.byte	1
+	.uleb128 Lcst_end0-Lcst_begin0
+Lcst_begin0:
+	.uleb128 Lfunc_begin0-Lfunc_begin0
+	.uleb128 Ltmp0-Lfunc_begin0
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp0-Lfunc_begin0
+	.uleb128 Ltmp1-Ltmp0
+	.uleb128 Ltmp2-Lfunc_begin0
+	.byte	0
+	.uleb128 Ltmp1-Lfunc_begin0
+	.uleb128 Ltmp3-Ltmp1
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp3-Lfunc_begin0
+	.uleb128 Ltmp4-Ltmp3
+	.uleb128 Ltmp5-Lfunc_begin0
+	.byte	1
+	.uleb128 Ltmp4-Lfunc_begin0
+	.uleb128 Lfunc_end0-Ltmp4
+	.byte	0
+	.byte	0
+Lcst_end0:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase0:
+	.byte	0
+	.p2align	2, 0x0
+
+	.section	__TEXT,__text,regular,pure_instructions
+	.p2align	2
+SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_no_ivars[CRATE_ID]::NoIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<4u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, *const objc2[CRATE_ID]::runtime::nszone::NSZone>, 0):
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+Lloh12:
+	adrp	x8, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh13:
+	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
+	ldapr	x8, [x8]
+	cbnz	x8, LBB3_2
+LBB3_1:
+Lloh14:
+	adrp	x8, ___CLASS_NoIvars@PAGE
+Lloh15:
+	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
+Lloh16:
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
+Lloh17:
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
+Lloh18:
+	ldr	x1, [x8]
+	bl	_objc_msgSend
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
+	ret
+LBB3_2:
+	mov	w8, #1
+	strb	w8, [sp, #7]
+	add	x8, sp, #7
+	str	x8, [sp, #8]
+Lloh19:
+	adrp	x0, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh20:
+	add	x0, x0, ___REGISTER_CLASS_NoIvars@PAGEOFF
+Lloh21:
+	adrp	x3, l_anon.[ID].0@PAGE
+Lloh22:
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
+Lloh23:
+	adrp	x4, l_anon.[ID].14@PAGE
+Lloh24:
+	add	x4, x4, l_anon.[ID].14@PAGEOFF
+	add	x2, sp, #8
+	mov	w1, #0
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+	b	LBB3_1
+	.loh AdrpAdd	Lloh12, Lloh13
+	.loh AdrpLdrGotLdr	Lloh16, Lloh17, Lloh18
+	.loh AdrpAdrp	Lloh14, Lloh16
+	.loh AdrpLdr	Lloh14, Lloh15
+	.loh AdrpAdd	Lloh23, Lloh24
+	.loh AdrpAdd	Lloh21, Lloh22
+	.loh AdrpAdd	Lloh19, Lloh20
+
+	.p2align	2
+SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0):
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+Lloh25:
+	adrp	x8, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh26:
+	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
+	ldapr	x8, [x8]
+	cbnz	x8, LBB4_2
+LBB4_1:
+Lloh27:
+	adrp	x8, ___CLASS_NoIvars@PAGE
+Lloh28:
+	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
+Lloh29:
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
+Lloh30:
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
+Lloh31:
+	ldr	x1, [x8]
+	bl	_objc_msgSend
+	bl	_objc_autoreleaseReturnValue
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
+	ret
+LBB4_2:
+	mov	w8, #1
+	strb	w8, [sp, #7]
+	add	x8, sp, #7
+	str	x8, [sp, #8]
+Lloh32:
+	adrp	x0, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh33:
+	add	x0, x0, ___REGISTER_CLASS_NoIvars@PAGEOFF
+Lloh34:
+	adrp	x3, l_anon.[ID].0@PAGE
+Lloh35:
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
+Lloh36:
+	adrp	x4, l_anon.[ID].14@PAGE
+Lloh37:
+	add	x4, x4, l_anon.[ID].14@PAGEOFF
+	add	x2, sp, #8
+	mov	w1, #0
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+	b	LBB4_1
+	.loh AdrpAdd	Lloh25, Lloh26
+	.loh AdrpLdrGotLdr	Lloh29, Lloh30, Lloh31
+	.loh AdrpAdrp	Lloh27, Lloh29
+	.loh AdrpLdr	Lloh27, Lloh28
+	.loh AdrpAdd	Lloh36, Lloh37
+	.loh AdrpAdd	Lloh34, Lloh35
+	.loh AdrpAdd	Lloh32, Lloh33
+
+	.p2align	2
+SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0):
+	ret
+
+	.p2align	2
+SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
+Lfunc_begin1:
 	sub	sp, sp, #48
 	stp	x20, x19, [sp, #16]
 	stp	x29, x30, [sp, #32]
@@ -10,161 +255,161 @@ Lfunc_begin0:
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
 	cmp	w9, #1
-	b.ne	LBB0_15
-Lloh0:
+	b.ne	LBB6_15
+Lloh38:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
-Lloh1:
+Lloh39:
 	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
-Lloh2:
+Lloh40:
 	ldr	x0, [x8]
-Lloh3:
+Lloh41:
 	adrp	x1, l_anon.[ID].12@PAGE
-Lloh4:
+Lloh42:
 	add	x1, x1, l_anon.[ID].12@PAGEOFF
 	mov	x2, #0
 	bl	_objc_allocateClassPair
-	cbz	x0, LBB0_16
+	cbz	x0, LBB6_16
 	str	x0, [sp, #8]
-Lloh5:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_7a01db584ce7207f@PAGE
-Lloh6:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_7a01db584ce7207f@PAGEOFF]
-Ltmp0:
-Lloh7:
+Lloh43:
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297@PAGE
+Lloh44:
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297@PAGEOFF]
+Ltmp6:
+Lloh45:
 	adrp	x4, l_anon.[ID].3@PAGE
-Lloh8:
+Lloh46:
 	add	x4, x4, l_anon.[ID].3@PAGEOFF
-Lloh9:
-	adrp	x5, _fn1_get_class@PAGE
-Lloh10:
-	add	x5, x5, _fn1_get_class@PAGEOFF
+Lloh47:
+	adrp	x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)@PAGE
+Lloh48:
+	add	x5, x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)@PAGEOFF
 	add	x0, sp, #8
 	mov	w2, #8
 	mov	x3, #0
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
-Ltmp1:
-Lloh11:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_7af348e2d6ca08be@PAGE
-Lloh12:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_7af348e2d6ca08be@PAGEOFF]
-Ltmp2:
-Lloh13:
+Ltmp7:
+Lloh49:
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755@PAGE
+Lloh50:
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755@PAGEOFF]
+Ltmp8:
+Lloh51:
 	adrp	x4, l_anon.[ID].4@PAGE
-Lloh14:
+Lloh52:
 	add	x4, x4, l_anon.[ID].4@PAGEOFF
-Lloh15:
-	adrp	x5, _fn2_method_simple@PAGE
-Lloh16:
-	add	x5, x5, _fn2_method_simple@PAGEOFF
+Lloh53:
+	adrp	x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)@PAGE
+Lloh54:
+	add	x5, x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)@PAGEOFF
 	add	x0, sp, #8
 	mov	w2, #8
 	mov	x3, #0
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
-Ltmp3:
-Lloh17:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_59b65ebff80505d9@PAGE
-Lloh18:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_59b65ebff80505d9@PAGEOFF]
-Ltmp4:
-Lloh19:
+Ltmp9:
+Lloh55:
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9@PAGE
+Lloh56:
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9@PAGEOFF]
+Ltmp10:
+Lloh57:
 	adrp	x2, l_anon.[ID].5@PAGE
-Lloh20:
+Lloh58:
 	add	x2, x2, l_anon.[ID].5@PAGEOFF
-Lloh21:
-	adrp	x5, _fn3_method_bool@PAGE
-Lloh22:
-	add	x5, x5, _fn3_method_bool@PAGEOFF
+Lloh59:
+	adrp	x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, bool, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)@PAGE
+Lloh60:
+	add	x5, x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, bool, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)@PAGEOFF
 	add	x0, sp, #8
 	mov	w3, #1
 	mov	x4, x2
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
-Ltmp5:
-Lloh23:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_f8d5ad39f22c9fc5@PAGE
-Lloh24:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_f8d5ad39f22c9fc5@PAGEOFF]
-Ltmp6:
-Lloh25:
+Ltmp11:
+Lloh61:
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_67a6d939e037a80c@PAGE
+Lloh62:
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_67a6d939e037a80c@PAGEOFF]
+Ltmp12:
+Lloh63:
 	adrp	x4, l_anon.[ID].6@PAGE
-Lloh26:
+Lloh64:
 	add	x4, x4, l_anon.[ID].6@PAGEOFF
-Lloh27:
-	adrp	x5, _fn4_method_retained@PAGE
-Lloh28:
-	add	x5, x5, _fn4_method_retained@PAGEOFF
+Lloh65:
+	adrp	x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)@PAGE
+Lloh66:
+	add	x5, x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)@PAGEOFF
 	add	x0, sp, #8
 	mov	w2, #8
 	mov	x3, #0
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
-Ltmp7:
-Lloh29:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_31d62824a4f71757@PAGE
-Lloh30:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_31d62824a4f71757@PAGEOFF]
-Ltmp8:
-Lloh31:
-	adrp	x2, l_anon.[ID].5@PAGE
-Lloh32:
-	add	x2, x2, l_anon.[ID].5@PAGEOFF
-Lloh33:
-	adrp	x4, l_anon.[ID].6@PAGE
-Lloh34:
-	add	x4, x4, l_anon.[ID].6@PAGEOFF
-Lloh35:
-	adrp	x5, _fn5_method_retained_with_param@PAGE
-Lloh36:
-	add	x5, x5, _fn5_method_retained_with_param@PAGEOFF
-	add	x0, sp, #8
-	mov	w3, #1
-	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
-Ltmp9:
-Ltmp10:
-Lloh37:
-	adrp	x0, l_anon.[ID].7@PAGE
-Lloh38:
-	add	x0, x0, l_anon.[ID].7@PAGEOFF
-	mov	w1, #8
-	bl	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
-	mov	x1, x0
-Ltmp11:
-	cbz	x1, LBB0_10
-	ldr	x0, [sp, #8]
-	bl	_class_addProtocol
-LBB0_10:
-Ltmp12:
-Lloh39:
-	adrp	x0, l_anon.[ID].8@PAGE
-Lloh40:
-	add	x0, x0, l_anon.[ID].8@PAGEOFF
-	mov	w1, #9
-	bl	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
-	mov	x1, x0
 Ltmp13:
-	cbz	x1, LBB0_13
-	ldr	x0, [sp, #8]
-	bl	_class_addProtocol
-LBB0_13:
-Lloh41:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_217b1b90b2d164b1@PAGE
-Lloh42:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_217b1b90b2d164b1@PAGEOFF]
+Lloh67:
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_a83bccc921370512@PAGE
+Lloh68:
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_a83bccc921370512@PAGEOFF]
 Ltmp14:
-Lloh43:
-	adrp	x2, l_anon.[ID].11@PAGE
-Lloh44:
-	add	x2, x2, l_anon.[ID].11@PAGEOFF
-Lloh45:
+Lloh69:
+	adrp	x2, l_anon.[ID].5@PAGE
+Lloh70:
+	add	x2, x2, l_anon.[ID].5@PAGEOFF
+Lloh71:
 	adrp	x4, l_anon.[ID].6@PAGE
-Lloh46:
+Lloh72:
 	add	x4, x4, l_anon.[ID].6@PAGEOFF
-Lloh47:
-	adrp	x5, _fn6_copyWithZone@PAGE
-Lloh48:
-	add	x5, x5, _fn6_copyWithZone@PAGEOFF
+Lloh73:
+	adrp	x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)@PAGE
+Lloh74:
+	add	x5, x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)@PAGEOFF
 	add	x0, sp, #8
 	mov	w3, #1
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp15:
+Ltmp16:
+Lloh75:
+	adrp	x0, l_anon.[ID].7@PAGE
+Lloh76:
+	add	x0, x0, l_anon.[ID].7@PAGEOFF
+	mov	w1, #8
+	bl	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
+	mov	x1, x0
+Ltmp17:
+	cbz	x1, LBB6_10
+	ldr	x0, [sp, #8]
+	bl	_class_addProtocol
+LBB6_10:
+Ltmp18:
+Lloh77:
+	adrp	x0, l_anon.[ID].8@PAGE
+Lloh78:
+	add	x0, x0, l_anon.[ID].8@PAGEOFF
+	mov	w1, #9
+	bl	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
+	mov	x1, x0
+Ltmp19:
+	cbz	x1, LBB6_13
+	ldr	x0, [sp, #8]
+	bl	_class_addProtocol
+LBB6_13:
+Lloh79:
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_0be654719a6c0ed4@PAGE
+Lloh80:
+	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_0be654719a6c0ed4@PAGEOFF]
+Ltmp20:
+Lloh81:
+	adrp	x2, l_anon.[ID].11@PAGE
+Lloh82:
+	add	x2, x2, l_anon.[ID].11@PAGEOFF
+Lloh83:
+	adrp	x4, l_anon.[ID].6@PAGE
+Lloh84:
+	add	x4, x4, l_anon.[ID].6@PAGEOFF
+Lloh85:
+	adrp	x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_no_ivars[CRATE_ID]::NoIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<4u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, *const objc2[CRATE_ID]::runtime::nszone::NSZone>, 0)@PAGE
+Lloh86:
+	add	x5, x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_no_ivars[CRATE_ID]::NoIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<4u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, *const objc2[CRATE_ID]::runtime::nszone::NSZone>, 0)@PAGEOFF
+	add	x0, sp, #8
+	mov	w3, #1
+	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
+Ltmp21:
 	ldr	x19, [sp, #8]
 	mov	x0, x19
 	bl	_objc_registerClassPair
@@ -174,76 +419,76 @@ Ltmp15:
 	ldp	x20, x19, [sp, #16]
 	add	sp, sp, #48
 	ret
-LBB0_15:
-Lloh49:
+LBB6_15:
+Lloh87:
 	adrp	x0, l_anon.[ID].2@PAGE
-Lloh50:
+Lloh88:
 	add	x0, x0, l_anon.[ID].2@PAGEOFF
 	bl	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
-LBB0_16:
-Lloh51:
+LBB6_16:
+Lloh89:
 	adrp	x0, l_anon.[ID].12@PAGE
-Lloh52:
+Lloh90:
 	add	x0, x0, l_anon.[ID].12@PAGEOFF
-Lloh53:
+Lloh91:
 	adrp	x2, l_anon.[ID].14@PAGE
-Lloh54:
+Lloh92:
 	add	x2, x2, l_anon.[ID].14@PAGEOFF
 	mov	w1, #8
 	bl	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
-LBB0_17:
-Ltmp16:
+LBB6_17:
+Ltmp22:
 	mov	x19, x0
 	ldr	x0, [sp, #8]
 	bl	_objc_disposeClassPair
 	mov	x0, x19
 	bl	__Unwind_Resume
-	.loh AdrpAdd	Lloh3, Lloh4
-	.loh AdrpLdrGotLdr	Lloh0, Lloh1, Lloh2
-	.loh AdrpAdd	Lloh9, Lloh10
-	.loh AdrpAdd	Lloh7, Lloh8
-	.loh AdrpLdr	Lloh5, Lloh6
-	.loh AdrpAdd	Lloh15, Lloh16
-	.loh AdrpAdd	Lloh13, Lloh14
-	.loh AdrpLdr	Lloh11, Lloh12
-	.loh AdrpAdd	Lloh21, Lloh22
-	.loh AdrpAdd	Lloh19, Lloh20
-	.loh AdrpLdr	Lloh17, Lloh18
-	.loh AdrpAdd	Lloh27, Lloh28
-	.loh AdrpAdd	Lloh25, Lloh26
-	.loh AdrpLdr	Lloh23, Lloh24
-	.loh AdrpAdd	Lloh35, Lloh36
-	.loh AdrpAdd	Lloh33, Lloh34
-	.loh AdrpAdd	Lloh31, Lloh32
-	.loh AdrpLdr	Lloh29, Lloh30
-	.loh AdrpAdd	Lloh37, Lloh38
-	.loh AdrpAdd	Lloh39, Lloh40
+	.loh AdrpAdd	Lloh41, Lloh42
+	.loh AdrpLdrGotLdr	Lloh38, Lloh39, Lloh40
 	.loh AdrpAdd	Lloh47, Lloh48
 	.loh AdrpAdd	Lloh45, Lloh46
-	.loh AdrpAdd	Lloh43, Lloh44
-	.loh AdrpLdr	Lloh41, Lloh42
-	.loh AdrpAdd	Lloh49, Lloh50
+	.loh AdrpLdr	Lloh43, Lloh44
 	.loh AdrpAdd	Lloh53, Lloh54
 	.loh AdrpAdd	Lloh51, Lloh52
-Lfunc_end0:
+	.loh AdrpLdr	Lloh49, Lloh50
+	.loh AdrpAdd	Lloh59, Lloh60
+	.loh AdrpAdd	Lloh57, Lloh58
+	.loh AdrpLdr	Lloh55, Lloh56
+	.loh AdrpAdd	Lloh65, Lloh66
+	.loh AdrpAdd	Lloh63, Lloh64
+	.loh AdrpLdr	Lloh61, Lloh62
+	.loh AdrpAdd	Lloh73, Lloh74
+	.loh AdrpAdd	Lloh71, Lloh72
+	.loh AdrpAdd	Lloh69, Lloh70
+	.loh AdrpLdr	Lloh67, Lloh68
+	.loh AdrpAdd	Lloh75, Lloh76
+	.loh AdrpAdd	Lloh77, Lloh78
+	.loh AdrpAdd	Lloh85, Lloh86
+	.loh AdrpAdd	Lloh83, Lloh84
+	.loh AdrpAdd	Lloh81, Lloh82
+	.loh AdrpLdr	Lloh79, Lloh80
+	.loh AdrpAdd	Lloh87, Lloh88
+	.loh AdrpAdd	Lloh91, Lloh92
+	.loh AdrpAdd	Lloh89, Lloh90
+Lfunc_end1:
 	.section	__TEXT,__gcc_except_tab
 	.p2align	2, 0x0
-GCC_except_table0:
-Lexception0:
+GCC_except_table6:
+Lexception1:
 	.byte	255
 	.byte	255
 	.byte	1
-	.uleb128 Lcst_end0-Lcst_begin0
-Lcst_begin0:
-	.uleb128 Ltmp0-Lfunc_begin0
-	.uleb128 Ltmp15-Ltmp0
-	.uleb128 Ltmp16-Lfunc_begin0
+	.uleb128 Lcst_end1-Lcst_begin1
+Lcst_begin1:
+	.uleb128 Ltmp6-Lfunc_begin1
+	.uleb128 Ltmp21-Ltmp6
+	.uleb128 Ltmp22-Lfunc_begin1
 	.byte	0
-	.uleb128 Ltmp15-Lfunc_begin0
-	.uleb128 Lfunc_end0-Ltmp15
+	.uleb128 Ltmp21-Lfunc_begin1
+	.uleb128 Lfunc_end1-Ltmp21
 	.byte	0
 	.byte	0
-Lcst_end0:
+Lcst_end1:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
@@ -260,274 +505,28 @@ SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_define_class_no_ivars[CR
 	add	sp, sp, #32
 	ret
 
-	.globl	SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
+	.globl	SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars>::method_retained, 0)
 	.p2align	2
-SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
-Lloh55:
-	adrp	x8, ___REGISTER_CLASS_NoIvars@PAGE
-Lloh56:
-	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
-	ldapr	x8, [x8]
-	cbnz	x8, LBB2_2
-Lloh57:
-	adrp	x8, ___CLASS_NoIvars@PAGE
-Lloh58:
-	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
-	ret
-LBB2_2:
+SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars>::method_retained, 0):
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
-	mov	w8, #1
-	strb	w8, [sp, #7]
-	add	x8, sp, #7
-	str	x8, [sp, #8]
-Lloh59:
-	adrp	x0, ___REGISTER_CLASS_NoIvars@PAGE
-Lloh60:
-	add	x0, x0, ___REGISTER_CLASS_NoIvars@PAGEOFF
-Lloh61:
-	adrp	x3, l_anon.[ID].0@PAGE
-Lloh62:
-	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh63:
-	adrp	x4, l_anon.[ID].14@PAGE
-Lloh64:
-	add	x4, x4, l_anon.[ID].14@PAGEOFF
-	add	x2, sp, #8
-	mov	w1, #0
-	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
-Lloh65:
-	adrp	x8, ___CLASS_NoIvars@PAGE
-Lloh66:
-	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
-	ret
-	.loh AdrpAdd	Lloh55, Lloh56
-	.loh AdrpLdr	Lloh57, Lloh58
-	.loh AdrpLdr	Lloh65, Lloh66
-	.loh AdrpAdd	Lloh63, Lloh64
-	.loh AdrpAdd	Lloh61, Lloh62
-	.loh AdrpAdd	Lloh59, Lloh60
-
-	.globl	_fn1_get_class
-	.p2align	2
-_fn1_get_class:
-Lloh67:
-	adrp	x8, ___REGISTER_CLASS_NoIvars@PAGE
-Lloh68:
-	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
-	ldapr	x8, [x8]
-	cbnz	x8, LBB3_2
-Lloh69:
-	adrp	x8, ___CLASS_NoIvars@PAGE
-Lloh70:
-	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
-	ret
-LBB3_2:
-	sub	sp, sp, #32
-	stp	x29, x30, [sp, #16]
-	add	x29, sp, #16
-	mov	w8, #1
-	strb	w8, [sp, #7]
-	add	x8, sp, #7
-	str	x8, [sp, #8]
-Lloh71:
-	adrp	x0, ___REGISTER_CLASS_NoIvars@PAGE
-Lloh72:
-	add	x0, x0, ___REGISTER_CLASS_NoIvars@PAGEOFF
-Lloh73:
-	adrp	x3, l_anon.[ID].0@PAGE
-Lloh74:
-	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh75:
-	adrp	x4, l_anon.[ID].14@PAGE
-Lloh76:
-	add	x4, x4, l_anon.[ID].14@PAGEOFF
-	add	x2, sp, #8
-	mov	w1, #0
-	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
-Lloh77:
-	adrp	x8, ___CLASS_NoIvars@PAGE
-Lloh78:
-	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
-	ret
-	.loh AdrpAdd	Lloh67, Lloh68
-	.loh AdrpLdr	Lloh69, Lloh70
-	.loh AdrpLdr	Lloh77, Lloh78
-	.loh AdrpAdd	Lloh75, Lloh76
-	.loh AdrpAdd	Lloh73, Lloh74
-	.loh AdrpAdd	Lloh71, Lloh72
-
-	.globl	_fn2_method_simple
-	.p2align	2
-_fn2_method_simple:
-	ret
-
-	.globl	_fn3_method_bool
-	.p2align	2
-_fn3_method_bool:
-	eor	w0, w2, #0x1
-	ret
-
-	.globl	_fn4_method_retained
-	.p2align	2
-_fn4_method_retained:
-	sub	sp, sp, #32
-	stp	x29, x30, [sp, #16]
-	add	x29, sp, #16
-Lloh79:
-	adrp	x8, ___REGISTER_CLASS_NoIvars@PAGE
-Lloh80:
-	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
-	ldapr	x8, [x8]
-	cbnz	x8, LBB6_2
-LBB6_1:
-Lloh81:
-	adrp	x8, ___CLASS_NoIvars@PAGE
-Lloh82:
-	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
-Lloh83:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
-Lloh84:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
-Lloh85:
-	ldr	x1, [x8]
-	bl	_objc_msgSend
-	bl	_objc_autoreleaseReturnValue
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
-	ret
-LBB6_2:
-	mov	w8, #1
-	strb	w8, [sp, #7]
-	add	x8, sp, #7
-	str	x8, [sp, #8]
-Lloh86:
-	adrp	x0, ___REGISTER_CLASS_NoIvars@PAGE
-Lloh87:
-	add	x0, x0, ___REGISTER_CLASS_NoIvars@PAGEOFF
-Lloh88:
-	adrp	x3, l_anon.[ID].0@PAGE
-Lloh89:
-	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh90:
-	adrp	x4, l_anon.[ID].14@PAGE
-Lloh91:
-	add	x4, x4, l_anon.[ID].14@PAGEOFF
-	add	x2, sp, #8
-	mov	w1, #0
-	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
-	b	LBB6_1
-	.loh AdrpAdd	Lloh79, Lloh80
-	.loh AdrpLdrGotLdr	Lloh83, Lloh84, Lloh85
-	.loh AdrpAdrp	Lloh81, Lloh83
-	.loh AdrpLdr	Lloh81, Lloh82
-	.loh AdrpAdd	Lloh90, Lloh91
-	.loh AdrpAdd	Lloh88, Lloh89
-	.loh AdrpAdd	Lloh86, Lloh87
-
-	.globl	_fn5_method_retained_with_param
-	.p2align	2
-_fn5_method_retained_with_param:
-Lfunc_begin1:
-	stp	x20, x19, [sp, #-32]!
-	stp	x29, x30, [sp, #16]
-	add	x29, sp, #16
-	mov	x20, x2
-	bl	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
-	mov	x19, x0
-	cbz	w20, LBB7_3
-Ltmp17:
-	bl	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
-Ltmp18:
-	mov	x20, x0
-	mov	x0, x19
-	bl	_objc_release
-	mov	x19, x20
-LBB7_3:
-	mov	x0, x19
-	ldp	x29, x30, [sp, #16]
-	ldp	x20, x19, [sp], #32
-	b	_objc_autoreleaseReturnValue
-LBB7_4:
-Ltmp19:
-	mov	x20, x0
-Ltmp20:
-	mov	x0, x19
-	bl	_objc_release
-Ltmp21:
-	mov	x0, x20
-	bl	__Unwind_Resume
-LBB7_6:
-Ltmp22:
-	bl	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
-Lfunc_end1:
-	.section	__TEXT,__gcc_except_tab
-	.p2align	2, 0x0
-GCC_except_table7:
-Lexception1:
-	.byte	255
-	.byte	155
-	.uleb128 Lttbase0-Lttbaseref0
-Lttbaseref0:
-	.byte	1
-	.uleb128 Lcst_end1-Lcst_begin1
-Lcst_begin1:
-	.uleb128 Lfunc_begin1-Lfunc_begin1
-	.uleb128 Ltmp17-Lfunc_begin1
-	.byte	0
-	.byte	0
-	.uleb128 Ltmp17-Lfunc_begin1
-	.uleb128 Ltmp18-Ltmp17
-	.uleb128 Ltmp19-Lfunc_begin1
-	.byte	0
-	.uleb128 Ltmp18-Lfunc_begin1
-	.uleb128 Ltmp20-Ltmp18
-	.byte	0
-	.byte	0
-	.uleb128 Ltmp20-Lfunc_begin1
-	.uleb128 Ltmp21-Ltmp20
-	.uleb128 Ltmp22-Lfunc_begin1
-	.byte	1
-	.uleb128 Ltmp21-Lfunc_begin1
-	.uleb128 Lfunc_end1-Ltmp21
-	.byte	0
-	.byte	0
-Lcst_end1:
-	.byte	127
-	.byte	0
-	.p2align	2, 0x0
-Lttbase0:
-	.byte	0
-	.p2align	2, 0x0
-
-	.section	__TEXT,__text,regular,pure_instructions
-	.globl	_fn6_copyWithZone
-	.p2align	2
-_fn6_copyWithZone:
-	sub	sp, sp, #32
-	stp	x29, x30, [sp, #16]
-	add	x29, sp, #16
-Lloh92:
-	adrp	x8, ___REGISTER_CLASS_NoIvars@PAGE
 Lloh93:
+	adrp	x8, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh94:
 	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
 	ldapr	x8, [x8]
 	cbnz	x8, LBB8_2
 LBB8_1:
-Lloh94:
-	adrp	x8, ___CLASS_NoIvars@PAGE
 Lloh95:
-	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
+	adrp	x8, ___CLASS_NoIvars@PAGE
 Lloh96:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
+	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
 Lloh97:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
 Lloh98:
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
+Lloh99:
 	ldr	x1, [x8]
 	bl	_objc_msgSend
 	ldp	x29, x30, [sp, #16]
@@ -538,115 +537,349 @@ LBB8_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh99:
-	adrp	x0, ___REGISTER_CLASS_NoIvars@PAGE
 Lloh100:
-	add	x0, x0, ___REGISTER_CLASS_NoIvars@PAGEOFF
+	adrp	x0, ___REGISTER_CLASS_NoIvars@PAGE
 Lloh101:
-	adrp	x3, l_anon.[ID].0@PAGE
+	add	x0, x0, ___REGISTER_CLASS_NoIvars@PAGEOFF
 Lloh102:
-	add	x3, x3, l_anon.[ID].0@PAGEOFF
+	adrp	x3, l_anon.[ID].0@PAGE
 Lloh103:
-	adrp	x4, l_anon.[ID].14@PAGE
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
 Lloh104:
+	adrp	x4, l_anon.[ID].14@PAGE
+Lloh105:
 	add	x4, x4, l_anon.[ID].14@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	b	LBB8_1
-	.loh AdrpAdd	Lloh92, Lloh93
-	.loh AdrpLdrGotLdr	Lloh96, Lloh97, Lloh98
-	.loh AdrpAdrp	Lloh94, Lloh96
-	.loh AdrpLdr	Lloh94, Lloh95
-	.loh AdrpAdd	Lloh103, Lloh104
-	.loh AdrpAdd	Lloh101, Lloh102
-	.loh AdrpAdd	Lloh99, Lloh100
+	.loh AdrpAdd	Lloh93, Lloh94
+	.loh AdrpLdrGotLdr	Lloh97, Lloh98, Lloh99
+	.loh AdrpAdrp	Lloh95, Lloh97
+	.loh AdrpLdr	Lloh95, Lloh96
+	.loh AdrpAdd	Lloh104, Lloh105
+	.loh AdrpAdd	Lloh102, Lloh103
+	.loh AdrpAdd	Lloh100, Lloh101
+
+	.globl	SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars>::method_retained_with_param, 0)
+	.p2align	2
+SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars>::method_retained_with_param, 0):
+Lfunc_begin2:
+	stp	x20, x19, [sp, #-32]!
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+	mov	x20, x1
+	bl	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
+	mov	x19, x0
+	cbz	w20, LBB9_3
+Ltmp23:
+	bl	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
+Ltmp24:
+	mov	x20, x0
+	mov	x0, x19
+	bl	_objc_release
+	mov	x19, x20
+LBB9_3:
+	mov	x0, x19
+	ldp	x29, x30, [sp, #16]
+	ldp	x20, x19, [sp], #32
+	ret
+LBB9_4:
+Ltmp25:
+	mov	x20, x0
+Ltmp26:
+	mov	x0, x19
+	bl	_objc_release
+Ltmp27:
+	mov	x0, x20
+	bl	__Unwind_Resume
+LBB9_6:
+Ltmp28:
+	bl	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
+Lfunc_end2:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table9:
+Lexception2:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase1-Lttbaseref1
+Lttbaseref1:
+	.byte	1
+	.uleb128 Lcst_end2-Lcst_begin2
+Lcst_begin2:
+	.uleb128 Lfunc_begin2-Lfunc_begin2
+	.uleb128 Ltmp23-Lfunc_begin2
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp23-Lfunc_begin2
+	.uleb128 Ltmp24-Ltmp23
+	.uleb128 Ltmp25-Lfunc_begin2
+	.byte	0
+	.uleb128 Ltmp24-Lfunc_begin2
+	.uleb128 Ltmp26-Ltmp24
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp26-Lfunc_begin2
+	.uleb128 Ltmp27-Ltmp26
+	.uleb128 Ltmp28-Lfunc_begin2
+	.byte	1
+	.uleb128 Ltmp27-Lfunc_begin2
+	.uleb128 Lfunc_end2-Ltmp27
+	.byte	0
+	.byte	0
+Lcst_end2:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase1:
+	.byte	0
+	.p2align	2, 0x0
+
+	.section	__TEXT,__text,regular,pure_instructions
+	.globl	SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars>::get_class, 0)
+	.p2align	2
+SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars>::get_class, 0):
+Lloh106:
+	adrp	x8, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh107:
+	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
+	ldapr	x8, [x8]
+	cbnz	x8, LBB10_2
+Lloh108:
+	adrp	x8, ___CLASS_NoIvars@PAGE
+Lloh109:
+	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
+	ret
+LBB10_2:
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+	mov	w8, #1
+	strb	w8, [sp, #7]
+	add	x8, sp, #7
+	str	x8, [sp, #8]
+Lloh110:
+	adrp	x0, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh111:
+	add	x0, x0, ___REGISTER_CLASS_NoIvars@PAGEOFF
+Lloh112:
+	adrp	x3, l_anon.[ID].0@PAGE
+Lloh113:
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
+Lloh114:
+	adrp	x4, l_anon.[ID].14@PAGE
+Lloh115:
+	add	x4, x4, l_anon.[ID].14@PAGEOFF
+	add	x2, sp, #8
+	mov	w1, #0
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
+Lloh116:
+	adrp	x8, ___CLASS_NoIvars@PAGE
+Lloh117:
+	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
+	ret
+	.loh AdrpAdd	Lloh106, Lloh107
+	.loh AdrpLdr	Lloh108, Lloh109
+	.loh AdrpLdr	Lloh116, Lloh117
+	.loh AdrpAdd	Lloh114, Lloh115
+	.loh AdrpAdd	Lloh112, Lloh113
+	.loh AdrpAdd	Lloh110, Lloh111
+
+	.globl	SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars>::copy_with_zone, 0)
+	.p2align	2
+SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars>::copy_with_zone, 0):
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+Lloh118:
+	adrp	x8, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh119:
+	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
+	ldapr	x8, [x8]
+	cbnz	x8, LBB11_2
+LBB11_1:
+Lloh120:
+	adrp	x8, ___CLASS_NoIvars@PAGE
+Lloh121:
+	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
+Lloh122:
+	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
+Lloh123:
+	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
+Lloh124:
+	ldr	x1, [x8]
+	bl	_objc_msgSend
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
+	ret
+LBB11_2:
+	mov	w8, #1
+	strb	w8, [sp, #7]
+	add	x8, sp, #7
+	str	x8, [sp, #8]
+Lloh125:
+	adrp	x0, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh126:
+	add	x0, x0, ___REGISTER_CLASS_NoIvars@PAGEOFF
+Lloh127:
+	adrp	x3, l_anon.[ID].0@PAGE
+Lloh128:
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
+Lloh129:
+	adrp	x4, l_anon.[ID].14@PAGE
+Lloh130:
+	add	x4, x4, l_anon.[ID].14@PAGEOFF
+	add	x2, sp, #8
+	mov	w1, #0
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+	b	LBB11_1
+	.loh AdrpAdd	Lloh118, Lloh119
+	.loh AdrpLdrGotLdr	Lloh122, Lloh123, Lloh124
+	.loh AdrpAdrp	Lloh120, Lloh122
+	.loh AdrpLdr	Lloh120, Lloh121
+	.loh AdrpAdd	Lloh129, Lloh130
+	.loh AdrpAdd	Lloh127, Lloh128
+	.loh AdrpAdd	Lloh125, Lloh126
+
+	.globl	SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
+	.p2align	2
+SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
+Lloh131:
+	adrp	x8, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh132:
+	add	x8, x8, ___REGISTER_CLASS_NoIvars@PAGEOFF
+	ldapr	x8, [x8]
+	cbnz	x8, LBB12_2
+Lloh133:
+	adrp	x8, ___CLASS_NoIvars@PAGE
+Lloh134:
+	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
+	ret
+LBB12_2:
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+	mov	w8, #1
+	strb	w8, [sp, #7]
+	add	x8, sp, #7
+	str	x8, [sp, #8]
+Lloh135:
+	adrp	x0, ___REGISTER_CLASS_NoIvars@PAGE
+Lloh136:
+	add	x0, x0, ___REGISTER_CLASS_NoIvars@PAGEOFF
+Lloh137:
+	adrp	x3, l_anon.[ID].0@PAGE
+Lloh138:
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
+Lloh139:
+	adrp	x4, l_anon.[ID].14@PAGE
+Lloh140:
+	add	x4, x4, l_anon.[ID].14@PAGEOFF
+	add	x2, sp, #8
+	mov	w1, #0
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
+Lloh141:
+	adrp	x8, ___CLASS_NoIvars@PAGE
+Lloh142:
+	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
+	ret
+	.loh AdrpAdd	Lloh131, Lloh132
+	.loh AdrpLdr	Lloh133, Lloh134
+	.loh AdrpLdr	Lloh141, Lloh142
+	.loh AdrpAdd	Lloh139, Lloh140
+	.loh AdrpAdd	Lloh137, Lloh138
+	.loh AdrpAdd	Lloh135, Lloh136
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_217b1b90b2d164b1
-L_OBJC_METH_VAR_NAME_217b1b90b2d164b1:
+	.globl	L_OBJC_METH_VAR_NAME_0be654719a6c0ed4
+L_OBJC_METH_VAR_NAME_0be654719a6c0ed4:
 	.asciz	"copyWithZone:"
 
-	.globl	L_OBJC_METH_VAR_NAME_31d62824a4f71757
-L_OBJC_METH_VAR_NAME_31d62824a4f71757:
-	.asciz	"methodRetainedWithParam:"
-
-	.globl	L_OBJC_METH_VAR_NAME_59b65ebff80505d9
-L_OBJC_METH_VAR_NAME_59b65ebff80505d9:
-	.asciz	"methodBool:"
-
-	.globl	L_OBJC_METH_VAR_NAME_7a01db584ce7207f
-L_OBJC_METH_VAR_NAME_7a01db584ce7207f:
-	.asciz	"classMethod"
-
-	.globl	L_OBJC_METH_VAR_NAME_7af348e2d6ca08be
-L_OBJC_METH_VAR_NAME_7af348e2d6ca08be:
-	.asciz	"method"
-
-	.globl	L_OBJC_METH_VAR_NAME_f8d5ad39f22c9fc5
-L_OBJC_METH_VAR_NAME_f8d5ad39f22c9fc5:
+	.globl	L_OBJC_METH_VAR_NAME_67a6d939e037a80c
+L_OBJC_METH_VAR_NAME_67a6d939e037a80c:
 	.asciz	"methodRetained"
 
+	.globl	L_OBJC_METH_VAR_NAME_71045e8f6bc4d4f9
+L_OBJC_METH_VAR_NAME_71045e8f6bc4d4f9:
+	.asciz	"methodBool:"
+
+	.globl	L_OBJC_METH_VAR_NAME_a83bccc921370512
+L_OBJC_METH_VAR_NAME_a83bccc921370512:
+	.asciz	"methodRetainedWithParam:"
+
+	.globl	L_OBJC_METH_VAR_NAME_a9fb958c74006297
+L_OBJC_METH_VAR_NAME_a9fb958c74006297:
+	.asciz	"classMethod"
+
+	.globl	L_OBJC_METH_VAR_NAME_adfe2eb45443b755
+L_OBJC_METH_VAR_NAME_adfe2eb45443b755:
+	.asciz	"method"
+
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_217b1b90b2d164b1
+	.globl	L_OBJC_SELECTOR_REFERENCES_0be654719a6c0ed4
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_217b1b90b2d164b1:
-	.quad	L_OBJC_METH_VAR_NAME_217b1b90b2d164b1
+L_OBJC_SELECTOR_REFERENCES_0be654719a6c0ed4:
+	.quad	L_OBJC_METH_VAR_NAME_0be654719a6c0ed4
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_31d62824a4f71757
+	.globl	L_OBJC_SELECTOR_REFERENCES_67a6d939e037a80c
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_31d62824a4f71757:
-	.quad	L_OBJC_METH_VAR_NAME_31d62824a4f71757
+L_OBJC_SELECTOR_REFERENCES_67a6d939e037a80c:
+	.quad	L_OBJC_METH_VAR_NAME_67a6d939e037a80c
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_59b65ebff80505d9
+	.globl	L_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_59b65ebff80505d9:
-	.quad	L_OBJC_METH_VAR_NAME_59b65ebff80505d9
+L_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9:
+	.quad	L_OBJC_METH_VAR_NAME_71045e8f6bc4d4f9
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_7a01db584ce7207f
+	.globl	L_OBJC_SELECTOR_REFERENCES_a83bccc921370512
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_7a01db584ce7207f:
-	.quad	L_OBJC_METH_VAR_NAME_7a01db584ce7207f
+L_OBJC_SELECTOR_REFERENCES_a83bccc921370512:
+	.quad	L_OBJC_METH_VAR_NAME_a83bccc921370512
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_7af348e2d6ca08be
+	.globl	L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_7af348e2d6ca08be:
-	.quad	L_OBJC_METH_VAR_NAME_7af348e2d6ca08be
+L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297:
+	.quad	L_OBJC_METH_VAR_NAME_a9fb958c74006297
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_f8d5ad39f22c9fc5
+	.globl	L_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_f8d5ad39f22c9fc5:
-	.quad	L_OBJC_METH_VAR_NAME_f8d5ad39f22c9fc5
+L_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755:
+	.quad	L_OBJC_METH_VAR_NAME_adfe2eb45443b755
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_217b1b90b2d164b1
+	.globl	L_OBJC_IMAGE_INFO_0be654719a6c0ed4
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_217b1b90b2d164b1:
+L_OBJC_IMAGE_INFO_0be654719a6c0ed4:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_31d62824a4f71757
+	.globl	L_OBJC_IMAGE_INFO_67a6d939e037a80c
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_31d62824a4f71757:
+L_OBJC_IMAGE_INFO_67a6d939e037a80c:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_59b65ebff80505d9
+	.globl	L_OBJC_IMAGE_INFO_71045e8f6bc4d4f9
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_59b65ebff80505d9:
+L_OBJC_IMAGE_INFO_71045e8f6bc4d4f9:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_7a01db584ce7207f
+	.globl	L_OBJC_IMAGE_INFO_a83bccc921370512
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_7a01db584ce7207f:
+L_OBJC_IMAGE_INFO_a83bccc921370512:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_7af348e2d6ca08be
+	.globl	L_OBJC_IMAGE_INFO_a9fb958c74006297
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_7af348e2d6ca08be:
+L_OBJC_IMAGE_INFO_a9fb958c74006297:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_f8d5ad39f22c9fc5
+	.globl	L_OBJC_IMAGE_INFO_adfe2eb45443b755
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_f8d5ad39f22c9fc5:
+L_OBJC_IMAGE_INFO_adfe2eb45443b755:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__const

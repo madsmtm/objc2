@@ -1,10 +1,7 @@
 use core::mem;
 
-use crate::__macros::RetainedReturnValue;
 use crate::encode::{EncodeArgument, EncodeArguments, EncodeReturn, RefEncode};
-use crate::rc::Allocated;
 use crate::runtime::{Imp, MessageReceiver, Sel};
-use crate::Message;
 
 mod private {
     pub trait Sealed {}
@@ -51,35 +48,6 @@ macro_rules! method_impl_inner {
 
             fn __imp(self) -> Imp {
                 // SAFETY: Transmuting to an `unsafe` function pointer
-                unsafe { mem::transmute(self) }
-            }
-        }
-
-        impl<T, $($t),*> private::Sealed for $($unsafe)? extern $abi fn(Allocated<T>, Sel $(, $t)*) -> RetainedReturnValue
-        where
-            T: ?Sized + Message,
-            $($t: EncodeArgument,)*
-        {}
-
-        #[doc(hidden)]
-        impl<T, $($t),*> MethodImplementation for $($unsafe)? extern $abi fn(Allocated<T>, Sel $(, $t)*) -> RetainedReturnValue
-        where
-            T: ?Sized + Message,
-            $($t: EncodeArgument,)*
-        {
-            type Callee = T;
-            type Arguments = ($($t,)*);
-            type Return = RetainedReturnValue;
-
-            fn __imp(self) -> Imp {
-                // SAFETY: `Allocated<T>` is the same as `NonNull<T>`, except
-                // with the assumption of a +1 calling convention.
-                //
-                // The calling convention is ensured to be upheld by having
-                // `RetainedReturnValue` in the type, since that type is private
-                // and hence only internal macros like `#[method_id]` will be
-                // able to produce it (and that, in turn, only allows it if
-                // the selector is `init` as checked by `MessageReceiveRetained`).
                 unsafe { mem::transmute(self) }
             }
         }

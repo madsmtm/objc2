@@ -26,11 +26,10 @@ mod fallback;
 mod hash_idents;
 mod image_info;
 mod method_family;
-mod method_msg_send;
 mod module_info;
 mod msg_send;
+mod parse_sel_and_params;
 mod retain_semantics;
-mod rewrite_self_param;
 mod sel;
 mod static_helpers;
 mod sync_unsafe_cell;
@@ -61,9 +60,9 @@ pub use self::convert::{
     ConvertArgument, ConvertArguments, ConvertError, ConvertReturn, TupleExtender,
 };
 pub use self::define_class::{
-    class_c_name, define_class, ClassBuilderHelper, ClassProtocolMethodsBuilder,
-    DefinedIvarsHelper, MaybeOptionRetained, MessageReceiveRetained, RetainedReturnValue,
-    ThreadKindAutoTraits,
+    class_c_name, define_class, ClassBuilderHelper, ClassFnKind, ClassFnResultKind,
+    ClassProtocolMethodsBuilder, ConvertDefinedFn, DefinedIvarsHelper, LifetimeAssign, MethodKind,
+    MethodResultKind, ThreadKindAutoTraits,
 };
 pub use self::extern_class::{DoesNotImplDrop, MainThreadOnlyDoesNotImplSendSync, ValidThreadKind};
 #[allow(deprecated)]

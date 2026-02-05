@@ -10,17 +10,17 @@ error: must specify the desired selector using `#[unsafe(method(...))]` or `#[un
   |
   = note: this error originates in the macro `$crate::__extract_method_attributes_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: must specify the desired selector using `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`
+error: failed parsing selector `` or parameters ``
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct NoAttribute;
+  | |     struct EmptyAttribute;
 ... |
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__extract_method_attributes_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__parse_sel_and_params_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: cannot specify the `method`/`method_id` attribute twice
  --> ui/define_class_invalid_syntax.rs
@@ -45,114 +45,18 @@ error: cannot specify the `method`/`method_id` attribute twice
   | |_^
   |
   = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: cannot specify the `method`/`method_id` attribute twice
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct DuplicateAttributes;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: cannot specify the `method`/`method_id` attribute twice
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct DuplicateAttributes;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__handle_duplicate` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `#[unsafe(method_id(alloc))]` is not supported. Use `#[unsafe(method(alloc))]` and do the memory management yourself
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct BadSelectors;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `#[unsafe(method_id(retain))]` is not supported. Use `#[unsafe(method(retain))]` and do the memory management yourself
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct BadSelectors;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `#[unsafe(method_id(release))]` is not supported. Use `#[unsafe(method(release))]` and do the memory management yourself
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct BadSelectors;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `#[unsafe(method_id(autorelease))]` is not supported. Use `#[unsafe(method(autorelease))]` and do the memory management yourself
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct BadSelectors;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `#[unsafe(method_id(dealloc))]` is not supported. Implement `Drop` for the type instead
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct BadSelectors;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: `#[unsafe(method(dealloc))]` is not supported. Implement `Drop` for the type instead
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
   | |     #[unsafe(super(NSObject))]
-  | |     struct BadSelectors;
+  | |     struct Dealloc;
 ... |
   | | );
   | |_^
   |
   = note: this error originates in the macro `$crate::__define_class_invalid_selectors` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `#[unsafe(method_id(...))]` must have a return type
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct InvalidRetain;
-... |
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__define_class_method_out_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected expression, found `}`
  --> ui/define_class_invalid_syntax.rs
@@ -160,25 +64,81 @@ error: expected expression, found `}`
   |         fn test_invalid_body() { a - }
   |                                      ^ expected expression
 
-error: no rules expected `(`
+error: failed parsing selector `testPattern:` or parameters `(_a, _b): (u32, i32)`
  --> ui/define_class_invalid_syntax.rs
   |
-  |         fn test_pattern((a, b): (u32, i32)) {
-  |                         ^ no rules expected this token in macro call
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct Pattern;
+... |
+  | | );
+  | |_^
   |
-  = note: while trying to match sequence start
+  = note: this error originates in the macro `$crate::__parse_sel_and_params_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: unexpected end of macro invocation
+error: number of arguments in function and selector did not match
  --> ui/define_class_invalid_syntax.rs
   |
-  |         fn test_self(self) {
-  |                          ^ missing tokens in macro arguments
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct BareSelf;
+... |
+  | | );
+  | |_^
   |
-note: while trying to match `:`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/register_impls.rs
-  |
-  |         $param:ident : $param_ty:ty $(, $($rest:tt)*)?
-  |                      ^
+  = note: this error originates in the macro `$crate::__parse_sel_and_params_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: not a supported method:
+       #[unsafe(method(testPub))] pub fn test_pub() {}
+   --> ui/define_class_invalid_syntax.rs
+    |
+    | / define_class!(
+    | |     #[unsafe(super(NSObject))]
+    | |     struct BasicBadSyntax;
+...   |
+    | | );
+    | |_^
+    |
+    = note: this error originates in the macro `$crate::__define_class_register_methods` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: not a supported method:
+       #[unsafe(method(testConst))] const fn test_const() {}
+   --> ui/define_class_invalid_syntax.rs
+    |
+    | / define_class!(
+    | |     #[unsafe(super(NSObject))]
+    | |     struct BasicBadSyntax;
+...   |
+    | | );
+    | |_^
+    |
+    = note: this error originates in the macro `$crate::__define_class_register_methods` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: not a supported method:
+       #[unsafe(method(testAsync))] async fn test_async() {}
+   --> ui/define_class_invalid_syntax.rs
+    |
+    | / define_class!(
+    | |     #[unsafe(super(NSObject))]
+    | |     struct BasicBadSyntax;
+...   |
+    | | );
+    | |_^
+    |
+    = note: this error originates in the macro `$crate::__define_class_register_methods` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: not a supported method:
+       #[unsafe(method(testExtern))] extern "C" fn test_extern() {}
+   --> ui/define_class_invalid_syntax.rs
+    |
+    | / define_class!(
+    | |     #[unsafe(super(NSObject))]
+    | |     struct BasicBadSyntax;
+...   |
+    | | );
+    | |_^
+    |
+    = note: this error originates in the macro `$crate::__define_class_register_methods` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected identifier, found keyword `fn`
  --> ui/define_class_invalid_syntax.rs
@@ -188,8 +148,34 @@ error: expected identifier, found keyword `fn`
   |
  ::: $WORKSPACE/crates/objc2/src/__macros/define_class/register_impls.rs
   |
-  |         $_associated_item:item
-  |         ---------------------- while parsing argument for this `item` macro fragment
+  |         $item:item
+  |         ---------- while parsing argument for this `item` macro fragment
+
+error: not a supported method:
+       #[unsafe(method(testGeneric))] fn test_generic<T>() {}
+   --> ui/define_class_invalid_syntax.rs
+    |
+    | / define_class!(
+    | |     #[unsafe(super(NSObject))]
+    | |     struct BasicBadSyntax;
+...   |
+    | | );
+    | |_^
+    |
+    = note: this error originates in the macro `$crate::__define_class_register_methods` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: not a supported method:
+       #[unsafe(method(testNoBody))] fn test_no_body(&self);
+   --> ui/define_class_invalid_syntax.rs
+    |
+    | / define_class!(
+    | |     #[unsafe(super(NSObject))]
+    | |     struct BasicBadSyntax;
+...   |
+    | | );
+    | |_^
+    |
+    = note: this error originates in the macro `$crate::__define_class_register_methods` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: expected one of `->`, `where`, or `{`, found `<eof>`
  --> ui/define_class_invalid_syntax.rs
@@ -199,8 +185,8 @@ error: expected one of `->`, `where`, or `{`, found `<eof>`
   |
  ::: $WORKSPACE/crates/objc2/src/__macros/define_class/register_impls.rs
   |
-  |         $_associated_item:item
-  |         ---------------------- while parsing argument for this `item` macro fragment
+  |         $item:item
+  |         ---------- while parsing argument for this `item` macro fragment
 
 error: an inner attribute is not permitted in this context
  --> ui/define_class_invalid_syntax.rs
@@ -219,161 +205,67 @@ error: expected an item keyword
   |
  ::: $WORKSPACE/crates/objc2/src/__macros/define_class/register_impls.rs
   |
-  |         $_associated_item:item
-  |         ---------------------- while parsing argument for this `item` macro fragment
+  |         $item:item
+  |         ---------- while parsing argument for this `item` macro fragment
 
-error: no rules expected `(`
- --> ui/define_class_invalid_syntax.rs
-  |
-  |         fn test_pattern((a, b): (u32, i32)) {
-  |                         ^ no rules expected this token in macro call
-  |
-note: while trying to match reserved identifier `_`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
-  |
-  |         (_ : $param_ty:ty $(, $($params_rest:tt)*)?)
-  |          ^
+error: not a supported method:
+       type TypeAlias = Self;
+   --> ui/define_class_invalid_syntax.rs
+    |
+    | / define_class!(
+    | |     #[unsafe(super(NSObject))]
+    | |     struct BasicBadSyntax;
+...   |
+    | | );
+    | |_^
+    |
+    = note: this error originates in the macro `$crate::__define_class_register_methods` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: no rules expected `)`
- --> ui/define_class_invalid_syntax.rs
-  |
-  | / define_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct BasicBadSyntax;
-... |
-  | | );
-  | |_^ no rules expected this token in macro call
-  |
-note: while trying to match `:`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
-  |
-  |         ($param:ident : $param_ty:ty $(, $($params_rest:tt)*)?)
-  |                       ^
-  = note: this error originates in the macro `$crate::__define_class_method_out` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+error: not a supported method:
+       const CONSTANT: () = ();
+   --> ui/define_class_invalid_syntax.rs
+    |
+    | / define_class!(
+    | |     #[unsafe(super(NSObject))]
+    | |     struct BasicBadSyntax;
+...   |
+    | | );
+    | |_^
+    |
+    = note: this error originates in the macro `$crate::__define_class_register_methods` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: no rules expected keyword `pub`
- --> ui/define_class_invalid_syntax.rs
-  |
-  |         pub fn test_pub() {}
-  |         ^^^ no rules expected this token in macro call
-  |
-note: while trying to match keyword `unsafe`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
-  |
-  |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
-  |         ^^^^^^
-
-error: no rules expected keyword `const`
- --> ui/define_class_invalid_syntax.rs
-  |
-  |         const fn test_const() {}
-  |         ^^^^^ no rules expected this token in macro call
-  |
-note: while trying to match keyword `unsafe`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
-  |
-  |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
-  |         ^^^^^^
-
-error: no rules expected keyword `async`
- --> ui/define_class_invalid_syntax.rs
-  |
-  |         async fn test_async() {}
-  |         ^^^^^ no rules expected this token in macro call
-  |
-note: while trying to match keyword `unsafe`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
-  |
-  |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
-  |         ^^^^^^
-
-error: no rules expected keyword `extern`
- --> ui/define_class_invalid_syntax.rs
-  |
-  |         extern "C" fn test_extern() {}
-  |         ^^^^^^ no rules expected this token in macro call
-  |
-note: while trying to match keyword `unsafe`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
-  |
-  |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
-  |         ^^^^^^
-
-error: no rules expected `test_fn_fn`
+error: expected identifier, found keyword `fn`
  --> ui/define_class_invalid_syntax.rs
   |
   |         fn fn test_fn_fn() {}
-  |               ^^^^^^^^^^ no rules expected this token in macro call
+  |            ^^ expected identifier, found keyword
   |
-note: while trying to match `(`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
+ ::: $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
-  |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
-  |                       ^
+  |         $item:item
+  |         ---------- while parsing argument for this `item` macro fragment
 
-error: no rules expected `<`
- --> ui/define_class_invalid_syntax.rs
-  |
-  |         fn test_generic<T>() {}
-  |                        ^ no rules expected this token in macro call
-  |
-note: while trying to match `(`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
-  |
-  |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
-  |                       ^
-
-error: no rules expected `;`
- --> ui/define_class_invalid_syntax.rs
-  |
-  |         fn test_no_body(&self);
-  |                               ^ no rules expected this token in macro call
-  |
-note: while trying to match meta-variable `$body:block`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
-  |
-  |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
-  |                                                       ^^^^^^^^^^^
-
-error: unexpected end of macro invocation
+error: expected one of `->`, `where`, or `{`, found `<eof>`
  --> ui/define_class_invalid_syntax.rs
   |
   |         fn test_unfinished()
-  |                             ^ missing tokens in macro arguments
+  |                            ^ expected one of `->`, `where`, or `{`
   |
-note: while trying to match meta-variable `$body:block`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
+ ::: $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
-  |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
-  |                                                       ^^^^^^^^^^^
+  |         $item:item
+  |         ---------- while parsing argument for this `item` macro fragment
 
-error: no rules expected `!`
+error: expected an item keyword
  --> ui/define_class_invalid_syntax.rs
   |
   |         #![doc = "inner_attribute"]
-  |          ^ no rules expected this token in macro call
+  |                                   ^
   |
-note: while trying to match `[`
- --> $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
+ ::: $WORKSPACE/crates/objc2/src/__macros/define_class/output_impls.rs
   |
-  |         $(#[$($m:tt)*])*
-  |            ^
-
-error: no rules expected keyword `type`
- --> ui/define_class_invalid_syntax.rs
-  |
-  |         type TypeAlias = Self;
-  |         ^^^^ no rules expected this token in macro call
-  |
-  = note: while trying to match end of macro
-
-error: no rules expected keyword `const`
- --> ui/define_class_invalid_syntax.rs
-  |
-  |         const CONSTANT: () = ();
-  |         ^^^^^ no rules expected this token in macro call
-  |
-  = note: while trying to match end of macro
+  |         $item:item
+  |         ---------- while parsing argument for this `item` macro fragment
 
 error: must specify the superclass with #[unsafe(super(...))]
  --> ui/define_class_invalid_syntax.rs
@@ -395,3 +287,20 @@ error: #[super(...)] must be wrapped in `unsafe`, as in #[unsafe(super(...))]
   | |_^
   |
   = note: this error originates in the macro `$crate::__extern_class_check_super_unsafe` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: associated function in `impl` without body
+ --> ui/define_class_invalid_syntax.rs
+  |
+  |         fn test_no_body(&self);
+  |         ^^^^^^^^^^^^^^^^^^^^^^-
+  |                               |
+  |                               help: provide a definition for the function: `{ <body> }`
+
+error[E0658]: inherent associated types are unstable
+ --> ui/define_class_invalid_syntax.rs
+  |
+  |         type TypeAlias = Self;
+  |         ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: see issue #8995 <https://github.com/rust-lang/rust/issues/8995> for more information
+  = help: add `#![feature(inherent_associated_types)]` to the crate attributes to enable
