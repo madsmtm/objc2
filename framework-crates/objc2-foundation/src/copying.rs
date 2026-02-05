@@ -128,8 +128,8 @@ extern_protocol!(
     ///     }
     ///
     ///     unsafe impl NSCopying for CustomClass {
-    ///         #[unsafe(method_id(copyWithZone:))]
-    ///         fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
+    ///         #[unsafe(method(copyWithZone:))]
+    ///         fn copyWithZone(&self, _zone: *mut NSZone) -> Retained<Self> {
     ///             // Create new class, and transfer ivars.
     ///             let new = Self::alloc().set_ivars(Ivars::<Self> {
     ///                 data: self.data().clone(),

@@ -50,7 +50,7 @@ macro_rules! __extract_and_apply_cfg_attributes {
 /// Extract our custom method attributes, and send it to another macro.
 ///
 /// Handles:
-/// - `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`.
+/// - `#[unsafe(method(...))]`.
 /// - `#[unsafe(method_family(...))]`.
 /// - `#[optional]`.
 ///
@@ -71,28 +71,31 @@ macro_rules! __extract_method_attributes {
 
         // The following arguments will be appended to the output macro:
         //
-        // The `method` or `method_id` attribute.
-        // ($method_or_method_id:ident($($sel:tt)*))
+        // 1. The `#[unsafe(method(...))]` attribute.
+        //    (method($($sel:tt)*))
         //
-        // The requested method family, if any was present. One of `new`,
-        // `alloc`, `init`, `copy`, `mutableCopy` or `none`.
-        // ($($method_family:tt)*)
+        // 2. The requested method family, if any was present. One of `new`,
+        //    `alloc`, `init`, `copy`, `mutableCopy` or `none`.
+        //    ($($method_family:tt)*)
         //
-        // The `optional` attribute, if any.
-        // ($(#[optional])?)
+        // 3. The `optional` attribute, if any.
+        //    ($(#[optional])?)
         //
-        // The remaining attributes that should be placed on the method
-        // definition itself.
-        // ($(#[$($attr_method:tt)*])*)
+        // 4. The remaining attributes that should be placed on the method
+        //    definition itself.
+        //    ($(#[$($attr_method:tt)*])*)
         //
-        // Attributes like `cfg` and `allow` that should be placed on the
-        // usage site of the method.
-        // ($(#[$($attr_use:tt)*])*)
+        // 5. Attributes like `cfg` and `allow` that should be placed on the
+        //    usage site of the method.
+        //    ($(#[$($attr_use:tt)*])*)
     } => {
         $crate::__extract_method_attributes_inner! {
+            // Duplicate to allow for better diagnostics
             ($($m)*)
+            ($($m)*)
+
             // No already parsed attributes
-            () // method/method_id
+            () // method
             () // method family
             () // optional
             () // attr_method
@@ -107,12 +110,13 @@ macro_rules! __extract_method_attributes {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extract_method_attributes_inner {
-    // No method/method_id attribute found
+    // No method attribute found
     {
         // No attributes left to process
         ()
+        ()
 
-        // And we found no `method` or `method_id` attributes
+        // And we found no `method` attribute
         ()
         ($($method_family:tt)*)
         ($($optional:tt)*)
@@ -122,7 +126,7 @@ macro_rules! __extract_method_attributes_inner {
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__macros::compile_error!("must specify the desired selector using `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`");
+        $crate::__macros::compile_error!("must specify the desired selector using `#[unsafe(method(...))]`");
 
         // Try to output anyhow, for better UI.
         $out_macro! {
@@ -140,9 +144,10 @@ macro_rules! __extract_method_attributes_inner {
     {
         // No attributes left to process
         ()
+        ()
 
-        // And we found a `method` or `method_id` attribute
-        ($($method:tt)*)
+        // And we found a `method` attribute
+        ($($method:tt)+)
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
@@ -155,7 +160,7 @@ macro_rules! __extract_method_attributes_inner {
         $out_macro! {
             $($out_args)*
             // Append attributes to the end of the macro arguments
-            ($($method)*)
+            ($($method)+)
             ($($method_family)*)
             ($($optional)*)
             ($($attr_method)*)
@@ -166,7 +171,11 @@ macro_rules! __extract_method_attributes_inner {
     // `unsafe(method)` attribute
     {
         (
-            #[unsafe(method($($parsed:tt)*))]
+            #[unsafe(method($($_parsed:tt)*))]
+            $($_rest:tt)*
+        )
+        (
+            #[unsafe($method_ident:ident($($parsed:tt)*))]
             $($rest:tt)*
         )
 
@@ -179,12 +188,13 @@ macro_rules! __extract_method_attributes_inner {
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__handle_duplicate!("method`/`method_id"; $($method)*);
+        $crate::__handle_duplicate!("method"; $($method)*);
         $crate::__extract_method_attributes_inner! {
+            ($($_rest)*)
             ($($rest)*)
 
             // Add method attribute
-            (method($($parsed)*))
+            ($method_ident($($parsed)*))
             ($($method_family)*)
             ($($optional)*)
             ($($attr_method)*)
@@ -198,7 +208,11 @@ macro_rules! __extract_method_attributes_inner {
     // `method` attribute
     {
         (
-            #[method($($parsed:tt)*)]
+            #[method($($_parsed:tt)*)]
+            $($_rest:tt)*
+        )
+        (
+            #[$method_ident:ident($($parsed:tt)*)]
             $($rest:tt)*
         )
 
@@ -218,11 +232,12 @@ macro_rules! __extract_method_attributes_inner {
         ));
 
         // Continue for better UI.
-        $crate::__handle_duplicate!("method`/`method_id"; $($method)*);
+        $crate::__handle_duplicate!("method"; $($method)*);
         $crate::__extract_method_attributes_inner! {
+            ($($_rest)*)
             ($($rest)*)
 
-            (method($($parsed)*))
+            ($method_ident($($parsed)*))
             ($($method_family)*)
             ($($optional)*)
             ($($attr_method)*)
@@ -236,7 +251,11 @@ macro_rules! __extract_method_attributes_inner {
     // `unsafe(method_id)` attribute
     {
         (
-            #[unsafe(method_id($($parsed:tt)*))]
+            #[unsafe(method_id($($_parsed:tt)*))]
+            $($_rest:tt)*
+        )
+        (
+            #[unsafe($method_id:ident($($parsed:tt)*))]
             $($rest:tt)*
         )
 
@@ -249,12 +268,13 @@ macro_rules! __extract_method_attributes_inner {
         ($out_macro:path)
         $($out_args:tt)*
     } => {
-        $crate::__handle_duplicate!("method`/`method_id"; $($method)*);
+        $crate::__handle_duplicate!("method"; $($method)*);
         $crate::__extract_method_attributes_inner! {
+            ($($_rest)*)
             ($($rest)*)
 
             // Add method_id attribute
-            (method_id($($parsed)*))
+            ($method_id($($parsed)*))
             ($($method_family)*)
             ($($optional)*)
             ($($attr_method)*)
@@ -268,7 +288,11 @@ macro_rules! __extract_method_attributes_inner {
     // `method_id` attribute
     {
         (
-            #[method_id($($parsed:tt)*)]
+            #[method_id($($_parsed:tt)*)]
+            $($_rest:tt)*
+        )
+        (
+            #[$method_id:ident($($parsed:tt)*)]
             $($rest:tt)*
         )
 
@@ -288,11 +312,12 @@ macro_rules! __extract_method_attributes_inner {
         ));
 
         // Continue for better UI.
-        $crate::__handle_duplicate!("method`/`method_id"; $($method)*);
+        $crate::__handle_duplicate!("method"; $($method)*);
         $crate::__extract_method_attributes_inner! {
+            ($($_rest)*)
             ($($rest)*)
 
-            (method_id($($parsed)*))
+            ($method_id($($parsed)*))
             ($($method_family)*)
             ($($optional)*)
             ($($attr_method)*)
@@ -306,9 +331,14 @@ macro_rules! __extract_method_attributes_inner {
     // `unsafe(method_family)` attribute
     {
         (
-            #[unsafe(method_family = $($parsed:tt)+)]
+            #[unsafe(method_family = $($_parsed:tt)+)]
+            $($_rest:tt)*
+        )
+        (
+            #[unsafe(method_family = $($parsed:tt)*)]
             $($rest:tt)*
         )
+
         ($($method:tt)*)
         ($($method_family:tt)*)
         ($($optional:tt)*)
@@ -320,6 +350,7 @@ macro_rules! __extract_method_attributes_inner {
     } => {
         $crate::__handle_duplicate!("method_family"; $($method_family)*);
         $crate::__extract_method_attributes_inner! {
+            ($($_rest)*)
             ($($rest)*)
 
             ($($method)*)
@@ -337,9 +368,14 @@ macro_rules! __extract_method_attributes_inner {
     // `method_family` attribute
     {
         (
-            #[method_family = $($parsed:tt)+]
+            #[method_family = $($_parsed:tt)+]
+            $($_rest:tt)*
+        )
+        (
+            #[method_family = $($parsed:tt)*]
             $($rest:tt)*
         )
+
         ($($method:tt)*)
         ($($method_family:tt)*)
         ($($optional:tt)*)
@@ -358,6 +394,7 @@ macro_rules! __extract_method_attributes_inner {
         // Continue for better UI.
         $crate::__handle_duplicate!("method_family"; $($method_family)*);
         $crate::__extract_method_attributes_inner! {
+            ($($_rest)*)
             ($($rest)*)
 
             ($($method)*)
@@ -375,6 +412,10 @@ macro_rules! __extract_method_attributes_inner {
     {
         (
             #[optional]
+            $($_rest:tt)*
+        )
+        (
+            #[$optional_ident:ident]
             $($rest:tt)*
         )
 
@@ -389,12 +430,13 @@ macro_rules! __extract_method_attributes_inner {
     } => {
         $crate::__handle_duplicate!("optional"; $($optional)*);
         $crate::__extract_method_attributes_inner! {
+            ($($_rest)*)
             ($($rest)*)
 
             ($($method)*)
             ($($method_family)*)
             // Add optional attribute
-            (#[optional])
+            (#[$optional_ident])
             ($($attr_method)*)
             ($($attr_use)*)
 
@@ -406,7 +448,11 @@ macro_rules! __extract_method_attributes_inner {
     // Special-case `cfg(...)`
     {
         (
-            #[cfg $($parsed:tt)*]
+            #[cfg $($_parsed:tt)*]
+            $($_rest:tt)*
+        )
+        (
+            #[$cfg:ident $($parsed:tt)*]
             $($rest:tt)*
         )
 
@@ -420,6 +466,7 @@ macro_rules! __extract_method_attributes_inner {
         $($out_args:tt)*
     } => {
         $crate::__extract_method_attributes_inner! {
+            ($($_rest)*)
             ($($rest)*)
 
             ($($method)*)
@@ -427,12 +474,12 @@ macro_rules! __extract_method_attributes_inner {
             ($($optional)*)
             (
                 $($attr_method)*
-                #[cfg $($parsed)*]
+                #[$cfg $($parsed)*]
             )
             // Add `cfg` attributes to use site as well.
             (
                 $($attr_use)*
-                #[cfg $($parsed)*]
+                #[$cfg $($parsed)*]
             )
 
             ($out_macro)
@@ -443,7 +490,11 @@ macro_rules! __extract_method_attributes_inner {
     // Special-case `allow(...)`
     {
         (
-            #[allow $($parsed:tt)*]
+            #[allow $($_parsed:tt)*]
+            $($_rest:tt)*
+        )
+        (
+            #[$allow:ident $($parsed:tt)*]
             $($rest:tt)*
         )
 
@@ -457,6 +508,7 @@ macro_rules! __extract_method_attributes_inner {
         $($out_args:tt)*
     } => {
         $crate::__extract_method_attributes_inner! {
+            ($($_rest)*)
             ($($rest)*)
 
             ($($method)*)
@@ -464,12 +516,12 @@ macro_rules! __extract_method_attributes_inner {
             ($($optional)*)
             (
                 $($attr_method)*
-                #[allow $($parsed)*]
+                #[$allow $($parsed)*]
             )
             // Add `allow` attributes to use site as well.
             (
                 $($attr_use)*
-                #[allow $($parsed)*]
+                #[$allow $($parsed)*]
             )
 
             ($out_macro)
@@ -481,6 +533,10 @@ macro_rules! __extract_method_attributes_inner {
     // (`doc`, `deprecated`, `expect/warn/deny/forbid`, `cfg_attr`,
     // `no_mangle`, `inline`, `cold`, `track_caller`, etc.)
     {
+        (
+            #[$($_parsed:tt)*]
+            $($_rest:tt)*
+        )
         (
             #[$($parsed:tt)*]
             $($rest:tt)*
@@ -496,6 +552,7 @@ macro_rules! __extract_method_attributes_inner {
         $($out_args:tt)*
     } => {
         $crate::__extract_method_attributes_inner! {
+            ($($_rest)*)
             ($($rest)*)
 
             ($($method)*)

@@ -20,7 +20,7 @@ define_class!(
     }
 
     impl DropIvars {
-        #[unsafe(method_id(init))]
+        #[unsafe(method(init))]
         fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
             let this = this.set_ivars(Ivars::<Self> {
                 obj: NSObject::new(),

@@ -634,9 +634,9 @@ mod tests {
     }
 
     #[test]
-    fn test_method_id() {
+    fn test_method_retained() {
         impl MyClass {
-            fn method_id(&self, _arg1: bool, _arg2: u32) -> Retained<Self> {
+            fn method_retained(&self, _arg1: bool, _arg2: u32) -> Retained<Self> {
                 unimplemented!()
             }
         }
@@ -646,7 +646,7 @@ mod tests {
         impl<'f> ConvertDefinedFn<'f, FnMarker, NoneFamily, MethodKind> for MyClass {
             type Func =
                 <(fn(&'f ()) -> (&Self, bool, u32), Retained<Self>) as LifetimeAssign>::OutputFn;
-            const FN: Self::Func = MyClass::method_id;
+            const FN: Self::Func = MyClass::method_retained;
         }
 
         type Expected<'a> = extern "C-unwind" fn(&'a MyClass, Sel, Bool, u32) -> *mut MyClass;

@@ -166,7 +166,7 @@ define_class!(
                 .count() as isize
         }
 
-        #[unsafe(method_id(outlineView:child:ofItem:))]
+        #[unsafe(method(outlineView:child:ofItem:))]
         fn outlineView_child_ofItem(
             &self,
             _outline_view: &NSOutlineView,
@@ -198,7 +198,7 @@ define_class!(
         }
 
         // Only used for cell-based views, not actually needed any longer.
-        #[unsafe(method_id(outlineView:objectValueForTableColumn:byItem:))]
+        #[unsafe(method(outlineView:objectValueForTableColumn:byItem:))]
         fn outlineView_objectValueForTableColumn_byItem(
             &self,
             _outline_view: &NSOutlineView,
@@ -212,14 +212,14 @@ define_class!(
         }
 
         // TODO: Persist open menu state.
-        // #[unsafe(method_id(outlineView:itemForPersistentObject:))]
+        // #[unsafe(method(outlineView:itemForPersistentObject:))]
         // unsafe fn outlineView_itemForPersistentObject(
         //     &self,
         //     outline_view: &NSOutlineView,
         //     object: &AnyObject,
         // ) -> Option<Retained<AnyObject>> { todo!() }
         //
-        // #[unsafe(method_id(outlineView:persistentObjectForItem:))]
+        // #[unsafe(method(outlineView:persistentObjectForItem:))]
         // unsafe fn outlineView_persistentObjectForItem(
         //     &self,
         //     outline_view: &NSOutlineView,
@@ -239,7 +239,7 @@ define_class!(
             false
         }
 
-        #[unsafe(method_id(outlineView:viewForTableColumn:item:))]
+        #[unsafe(method(outlineView:viewForTableColumn:item:))]
         fn outlineView_viewForTableColumn_item(
             &self,
             outline_view: &NSOutlineView,

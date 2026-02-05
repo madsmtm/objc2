@@ -28,7 +28,7 @@ define_class!(
             arg + 1
         }
 
-        #[unsafe(method_id(myMethodRetained:))]
+        #[unsafe(method(myMethodRetained:))]
         fn _my_mainthreadonly_method_retained(arg: &Self) -> Retained<Self> {
             unsafe { Retained::retain(arg as *const Self as *mut Self).unwrap() }
         }

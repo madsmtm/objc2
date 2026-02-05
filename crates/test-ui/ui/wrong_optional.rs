@@ -42,7 +42,7 @@ define_class!(
     impl CustomObject2 {
         #[optional]
         /// Doc comment
-        #[unsafe(method_id(d))]
+        #[unsafe(method(d))]
         fn d(&self) -> Retained<Self> {
             unimplemented!()
         }

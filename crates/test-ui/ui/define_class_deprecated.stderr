@@ -1,11 +1,11 @@
-error: use of deprecated function `MyObject::my_method::method_id`: use `method` instead
- --> ui/extern_methods_deprecated.rs
+error: use of deprecated function `_::<impl objc2::ClassType for MyObject>::class::{closure#0}::{closure#0}::method_id`: use `method` instead
+ --> ui/define_class_deprecated.rs
   |
   |         #[unsafe(method_id(myMethod:))]
   |                  ^^^^^^^^^
   |
 note: the lint level is defined here
- --> ui/extern_methods_deprecated.rs
+ --> ui/define_class_deprecated.rs
   |
   | #![deny(warnings)]
   |         ^^^^^^^^

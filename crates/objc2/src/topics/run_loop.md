@@ -61,7 +61,7 @@ define_class!(
     impl AppDelegate {
         // Called by `NSApplicationMain`, `UIApplicationMain`
         // or our `msg_send![AppDelegate::class(), new]`.
-        #[unsafe(method_id(init))]
+        #[unsafe(method(init))]
         fn init(this: Allocated<Self>) -> Retained<Self> {
             let this = this.set_ivars(Ivars::<Self> {
                 // Initialize state.

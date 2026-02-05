@@ -1,4 +1,4 @@
-error: must specify the desired selector using `#[unsafe(method(...))]` or `#[unsafe(method_id(...))]`
+error: must specify the desired selector using `#[unsafe(method(...))]`
  --> ui/extern_methods_missing_method.rs
   |
   | /     extern_methods!(

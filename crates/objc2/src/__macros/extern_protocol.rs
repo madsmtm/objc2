@@ -363,7 +363,7 @@ macro_rules! __extern_protocol_method_out {
             ($($function_start)*)
             ($($where: $bound,)*)
             ({
-                $crate::__extern_protocol_method_id_deprecated!($method_or_method_id($($sel_unparsed)*));
+                $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel_unparsed)*));
 
                 // SAFETY: Upheld by writer of `#[unsafe(method(...))]`.
                 #[allow(unused_unsafe)]
@@ -416,24 +416,6 @@ macro_rules! __extern_protocol_apply_bounds {
             $($where : $bound,)*
         $body
     };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __extern_protocol_method_id_deprecated {
-    (method($($sel:tt)*)) => {};
-    (method_id($($sel:tt)*)) => {{
-        #[deprecated = $crate::__macros::concat!(
-            "using #[unsafe(method_id(",
-            $crate::__macros::stringify!($($sel)*),
-            "))] inside extern_protocol! is deprecated.\nUse #[unsafe(method(",
-            $crate::__macros::stringify!($($sel)*),
-            "))] instead",
-        )]
-        #[inline]
-        fn method_id() {}
-        method_id();
-    }};
 }
 
 #[cfg(test)]

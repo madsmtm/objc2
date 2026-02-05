@@ -29,13 +29,13 @@ define_class!(
             !val
         }
 
-        #[unsafe(method_id(methodRetained))]
+        #[unsafe(method(methodRetained))]
         fn method_retained(&self) -> Option<Retained<NSObject>> {
             unsafe { msg_send![Self::class(), new] }
         }
 
         // Test that `objc_autoreleaseReturnValue` is tail-called
-        #[unsafe(method_id(methodRetainedWithParam:))]
+        #[unsafe(method(methodRetainedWithParam:))]
         fn method_retained_with_param(&self, param: bool) -> Option<Retained<NSObject>> {
             // Intentionally create this outside condition
             let obj = NSObject::new();
@@ -50,7 +50,7 @@ define_class!(
     unsafe impl NSObjectProtocol for NoIvars {}
 
     unsafe impl NSCopying for NoIvars {
-        #[unsafe(method_id(copyWithZone:))]
+        #[unsafe(method(copyWithZone:))]
         fn copy_with_zone(&self, _zone: *const NSZone) -> Option<Retained<Self>> {
             unsafe { msg_send![Self::class(), new] }
         }

@@ -98,7 +98,7 @@ new_objc2::define_class!(
         #[unsafe(method(a))]
         fn _a() {}
 
-        #[unsafe(method_id(b))]
+        #[unsafe(method(b))]
         fn _b() -> new_objc2::rc::Retained<CustomObject> {
             ::core::unimplemented!()
         }

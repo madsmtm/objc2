@@ -68,7 +68,7 @@ define_class!(
     }
 
     unsafe impl NSCopying for Key {
-        #[unsafe(method_id(copyWithZone:))]
+        #[unsafe(method(copyWithZone:))]
         fn copy_with_zone(&self, _zone: *mut NSZone) -> Retained<Self> {
             self.retain()
         }

@@ -1,4 +1,4 @@
-error: cannot specify the `method`/`method_id` attribute twice
+error: cannot specify the `method` attribute twice
  --> ui/extern_methods_selector_twice.rs
   |
   | /     extern_methods!(

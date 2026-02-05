@@ -241,7 +241,7 @@ define_class!(
             true
         }
 
-        #[unsafe(method_id(test:::withObject:))]
+        #[unsafe(method(test:::withObject:))]
         fn _test_object(
             &self,
             _arg1: i32,
@@ -330,12 +330,12 @@ define_class!(
             b
         }
 
-        #[unsafe(method_id(idTakesBool:))]
+        #[unsafe(method(idTakesBool:))]
         fn id_takes_bool(_b: bool) -> Option<Retained<Self>> {
             None
         }
 
-        #[unsafe(method_id(idTakesBoolInstance:))]
+        #[unsafe(method(idTakesBoolInstance:))]
         fn id_takes_bool_instance(&self, _b: bool) -> Option<Retained<Self>> {
             None
         }
@@ -373,12 +373,12 @@ define_class!(
             unreachable!()
         }
 
-        #[unsafe(method_id(unreachableRetained))]
+        #[unsafe(method(unreachableRetained))]
         fn unreachable_retained(&self) -> Retained<Self> {
             unreachable!()
         }
 
-        #[unsafe(method_id(unreachableClassRetained))]
+        #[unsafe(method(unreachableClassRetained))]
         fn unreachable_class_retained() -> Retained<Self> {
             unreachable!()
         }

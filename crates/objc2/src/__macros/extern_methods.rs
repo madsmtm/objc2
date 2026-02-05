@@ -394,19 +394,15 @@ macro_rules! __extern_methods_no_optional {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extern_methods_method_id_deprecated {
-    (method ($($sel:tt)*)) => {};
-    ($method_id:ident ($($sel:tt)*)) => {{
-        #[deprecated = $crate::__macros::concat!(
-            "using #[unsafe(method_id(",
-            $crate::__macros::stringify!($($sel)*),
-            "))] inside extern_methods! is deprecated.\nUse #[unsafe(method(",
-            $crate::__macros::stringify!($($sel)*),
-            "))] instead",
-        )]
+    (method($($sel:tt)*)) => {};
+    ($method_id:ident ($($sel:tt)*)) => {
+        // To get better diagnostics, we use the `method_id` identifier, that
+        // should make the span nicer.
+        #[deprecated = "use `method` instead"]
         #[inline]
         fn $method_id() {}
         $method_id();
-    }};
+    };
 }
 
 #[deprecated = "having the `impl` inside `extern_methods!` is deprecated, move it outside instead"]

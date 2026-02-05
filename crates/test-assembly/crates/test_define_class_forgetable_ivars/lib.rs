@@ -19,7 +19,7 @@ define_class!(
     }
 
     impl ForgetableIvars {
-        #[unsafe(method_id(init))]
+        #[unsafe(method(init))]
         fn init(this: Allocated<Self>) -> Option<Retained<Self>> {
             let this = this.set_ivars(Ivars::<Self> { foo: 42, bar: 43 });
             unsafe { msg_send![super(this), init] }

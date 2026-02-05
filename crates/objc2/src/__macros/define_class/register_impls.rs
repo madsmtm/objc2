@@ -268,6 +268,7 @@ macro_rules! __define_class_register_method {
     } => {
         $($attr_use)*
         {
+            $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel)*));
             $crate::__define_class_invalid_selectors!($($sel)*);
             $crate::__define_class_no_optional!($($optional)*);
 

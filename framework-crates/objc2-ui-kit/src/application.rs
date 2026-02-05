@@ -48,7 +48,7 @@ impl UIApplication {
     ///
     ///     impl AppDelegate {
     ///         // Called by `UIApplication::main`.
-    ///         #[unsafe(method_id(init))]
+    ///         #[unsafe(method(init))]
     ///         fn init(this: Allocated<Self>) -> Retained<Self> {
     ///             let this = this.set_ivars(Ivars::<Self> {});
     ///             unsafe { msg_send![super(this), init] }

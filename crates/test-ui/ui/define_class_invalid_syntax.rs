@@ -29,7 +29,7 @@ define_class!(
         #[unsafe(method(duplicateAttribute))]
         fn test_duplicate_attribute() {}
 
-        #[unsafe(method_id(duplicateAttributeDifferent))]
+        #[unsafe(method(duplicateAttributeDifferent))]
         #[unsafe(method(duplicateAttributeDifferent))]
         fn test_duplicate_attribute_different() {}
     }

@@ -17,7 +17,7 @@ define_class!(
             unimplemented!()
         }
 
-        #[unsafe(method_id(testRetained))]
+        #[unsafe(method(testRetained))]
         fn test_retained(&mut self) -> Retained<Self> {
             unimplemented!()
         }

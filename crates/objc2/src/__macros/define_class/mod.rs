@@ -176,8 +176,8 @@ pub use self::thunk::*;
 /// class' instance variables, consider using [`Cell`] or similar instead.
 ///
 /// The desired selector can be specified using the
-/// `#[unsafe(method(my:selector:))]` or `#[unsafe(method_id(my:selector:))]`
-/// attributes, similar to the [`extern_methods!`] macro.
+/// `#[unsafe(method(my:selector:))]` attribute, similar to the
+/// [`extern_methods!`] macro.
 ///
 /// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
 /// `deprecated` and so on is supported. However, note that `cfg_attr` may not
@@ -335,7 +335,7 @@ pub use self::thunk::*;
 ///             *self.foo()
 ///         }
 ///
-///         #[unsafe(method_id(object))]
+///         #[unsafe(method(object))]
 ///         fn __get_object(&self) -> Retained<NSObject> {
 ///             self.object().clone()
 ///         }
@@ -349,7 +349,7 @@ pub use self::thunk::*;
 ///     unsafe impl NSObjectProtocol for MyCustomObject {}
 ///
 ///     unsafe impl NSCopying for MyCustomObject {
-///         #[unsafe(method_id(copyWithZone:))]
+///         #[unsafe(method(copyWithZone:))]
 ///         fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
 ///             let new = Self::alloc().set_ivars(Ivars::<Self> {
 ///                 foo: *self.foo(),
