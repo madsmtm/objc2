@@ -231,6 +231,33 @@ impl<T: ?Sized + Message> return_private::Sealed for Retained<T> {}
 impl<T: ?Sized + Message> return_private::Sealed for Option<Retained<T>> {}
 impl<T: ?Sized + Message> return_private::Sealed for Allocated<T> {}
 
+/// Helper for converting types when handling `Result<T, Retained<NSError>>`.
+pub trait ConvertError: Sized {
+    /// The type that is returned internally.
+    type Inner;
+    fn into_option(inner: Self::Inner) -> Option<Self>;
+}
+
+// `bool` -> `Result<(), _>`.
+impl ConvertError for () {
+    type Inner = bool;
+
+    #[inline]
+    fn into_option(inner: bool) -> Option<()> {
+        inner.then_some(())
+    }
+}
+
+// `Option<Retained<T>>` -> `Result<Retained<T>, _>`.
+impl<T: ?Sized> ConvertError for Retained<T> {
+    type Inner = Option<Retained<T>>;
+
+    #[inline]
+    fn into_option(inner: Option<Self>) -> Option<Self> {
+        inner
+    }
+}
+
 pub trait ConvertArguments {
     #[doc(hidden)]
     type __Inner: EncodeArguments;

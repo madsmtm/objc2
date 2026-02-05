@@ -6,7 +6,8 @@ use crate::runtime::{AnyClass, MessageReceiver, Sel};
 use crate::ClassType;
 
 use super::super::{
-    ConvertArguments, KindSendMessage, KindSendMessageSuper, RetainSemantics, TupleExtender,
+    ConvertArguments, ConvertError, KindSendMessage, KindSendMessageSuper, RetainSemantics,
+    TupleExtender,
 };
 use super::null_error::encountered_error;
 
@@ -125,17 +126,17 @@ pub trait MsgSendError<Receiver, Return> {
         E: ClassType;
 }
 
-// `Option<Retained<T>>` return.
-impl<Receiver, Return, MethodFamily> MsgSendError<Receiver, Retained<Return>> for MethodFamily
+impl<Receiver, Return, MethodFamily> MsgSendError<Receiver, Return> for MethodFamily
 where
-    MethodFamily: MsgSend<Receiver, Option<Retained<Return>>>,
+    Return: ConvertError,
+    MethodFamily: MsgSend<Receiver, Return::Inner>,
 {
     #[inline]
     unsafe fn send_message_error<A, E>(
         receiver: Receiver,
         sel: Sel,
         args: A,
-    ) -> Result<Retained<Return>, Retained<E>>
+    ) -> Result<Return, Retained<E>>
     where
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
@@ -153,7 +154,7 @@ where
         // > `nil` or `NO`, you should always check that the return value is
         // > `nil` or `NO` before attempting to do anything with the `NSError`
         // > object.
-        if let Some(ret) = ret {
+        if let Some(ret) = Return::into_option(ret) {
             // In this case, the error is likely not created. If it is, it is
             // autoreleased anyhow, so it would be a waste to retain and
             // release it here.
@@ -167,34 +168,6 @@ where
             // SAFETY: The message send is guaranteed to populate the error
             // object, or leave it as NULL. The error is shared, and all
             // holders of the error know this, so is safe to retain.
-            Err(unsafe { encountered_error(err) })
-        }
-    }
-}
-
-// Bool return.
-impl<Receiver, MethodFamily> MsgSendError<Receiver, ()> for MethodFamily
-where
-    MethodFamily: MsgSend<Receiver, bool>,
-{
-    #[inline]
-    unsafe fn send_message_error<A, E>(
-        receiver: Receiver,
-        sel: Sel,
-        args: A,
-    ) -> Result<(), Retained<E>>
-    where
-        *mut *mut E: Encode,
-        A: TupleExtender<*mut *mut E>,
-        <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
-        E: ClassType,
-    {
-        let mut err: *mut E = ptr::null_mut();
-        let args = args.add_argument(&mut err);
-        let ret = unsafe { Self::send_message(receiver, sel, args) };
-        if ret {
-            Ok(())
-        } else {
             Err(unsafe { encountered_error(err) })
         }
     }
@@ -246,12 +219,12 @@ pub trait MsgSendSuperError<Receiver, Return> {
     }
 }
 
-// `Option<Retained<T>>` return.
-impl<Receiver, Return, MethodFamily> MsgSendSuperError<Receiver, Retained<Return>> for MethodFamily
+impl<Receiver, Return, MethodFamily> MsgSendSuperError<Receiver, Return> for MethodFamily
 where
-    MethodFamily: MsgSendSuper<Receiver, Option<Retained<Return>>>,
+    Return: ConvertError,
+    MethodFamily: MsgSendSuper<Receiver, Return::Inner>,
 {
-    type Inner = <MethodFamily as MsgSendSuper<Receiver, Option<Retained<Return>>>>::Inner;
+    type Inner = <MethodFamily as MsgSendSuper<Receiver, Return::Inner>>::Inner;
 
     #[inline]
     unsafe fn send_super_message_error<A, E>(
@@ -259,7 +232,7 @@ where
         superclass: &AnyClass,
         sel: Sel,
         args: A,
-    ) -> Result<Retained<Return>, Retained<E>>
+    ) -> Result<Return, Retained<E>>
     where
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
@@ -270,41 +243,8 @@ where
         let args = args.add_argument(&mut err);
         // SAFETY: See `send_message_error`
         let ret = unsafe { Self::send_super_message(receiver, superclass, sel, args) };
-        if let Some(ret) = ret {
+        if let Some(ret) = Return::into_option(ret) {
             Ok(ret)
-        } else {
-            // SAFETY: See `send_message_error`
-            Err(unsafe { encountered_error(err) })
-        }
-    }
-}
-
-// Bool return.
-impl<Receiver, MethodFamily> MsgSendSuperError<Receiver, ()> for MethodFamily
-where
-    MethodFamily: MsgSendSuper<Receiver, bool>,
-{
-    type Inner = <MethodFamily as MsgSendSuper<Receiver, bool>>::Inner;
-
-    #[inline]
-    unsafe fn send_super_message_error<A, E>(
-        receiver: Receiver,
-        superclass: &AnyClass,
-        sel: Sel,
-        args: A,
-    ) -> Result<(), Retained<E>>
-    where
-        *mut *mut E: Encode,
-        A: TupleExtender<*mut *mut E>,
-        <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
-        E: ClassType,
-    {
-        let mut err: *mut E = ptr::null_mut();
-        let args = args.add_argument(&mut err);
-        // SAFETY: See `send_message_error`
-        let ret = unsafe { Self::send_super_message(receiver, superclass, sel, args) };
-        if ret {
-            Ok(())
         } else {
             // SAFETY: See `send_message_error`
             Err(unsafe { encountered_error(err) })

@@ -57,7 +57,9 @@ pub use core::os::darwin::objc as core_darwin_objc;
 
 pub use self::available::{is_available, AvailableVersion, OSVersion};
 pub use self::class::{disallow_in_static, CachedClass};
-pub use self::convert::{ConvertArgument, ConvertArguments, ConvertReturn, TupleExtender};
+pub use self::convert::{
+    ConvertArgument, ConvertArguments, ConvertError, ConvertReturn, TupleExtender,
+};
 pub use self::define_class::{
     class_c_name, define_class, ClassBuilderHelper, ClassProtocolMethodsBuilder,
     DefinedIvarsHelper, MaybeOptionRetained, MessageReceiveRetained, RetainedReturnValue,
