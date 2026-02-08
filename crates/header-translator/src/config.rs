@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use std::collections::hash_map::Entry;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::error::Error;
 use std::fs;
@@ -746,6 +747,22 @@ pub struct TypeOverride {
     pub written: Option<bool>,
 }
 
+impl TypeOverride {
+    fn merge_with_superclass(self, superclass: Self) -> Self {
+        Self {
+            nullability: self.nullability.or(superclass.nullability),
+            generics: self.generics.or(superclass.generics),
+            bounds: if self.bounds != PointerBounds::Unspecified {
+                self.bounds
+            } else {
+                superclass.bounds
+            },
+            read: self.read.or(superclass.read),
+            written: self.written.or(superclass.written),
+        }
+    }
+}
+
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct MethodData {
@@ -774,12 +791,27 @@ impl MethodData {
             // Otherwise assume nothing.
             _ => None,
         };
+
+        let mut arguments = self.arguments;
+        for (i, superclass_arg) in superclass.arguments {
+            match arguments.entry(i) {
+                Entry::Occupied(arg) => {
+                    let arg = arg.remove();
+                    let arg = arg.merge_with_superclass(superclass_arg);
+                    arguments.insert(i, arg);
+                }
+                Entry::Vacant(entry) => {
+                    entry.insert(superclass_arg);
+                }
+            }
+        }
+
         Self {
             unsafe_,
-            renamed: self.renamed.or(superclass.renamed).clone(),
-            skipped: self.skipped | superclass.skipped,
-            arguments: self.arguments,
-            return_: self.return_,
+            renamed: self.renamed.or(superclass.renamed),
+            skipped: self.skipped || superclass.skipped,
+            arguments,
+            return_: self.return_.merge_with_superclass(superclass.return_),
         }
     }
 }
