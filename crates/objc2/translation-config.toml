@@ -18,3 +18,13 @@ protocol.NSObject.renamed = "NSObjectProtocol"
 
 # Return type `oneway void`
 class.NSObject.methods.release.skipped = true
+
+# Zones aren't really supported anymore, but they were definitely a single
+# object, and they very likely would need to use interior mutation (hence we
+# can change the argument to be `Option<&NSZone>`).
+class.NSObject.methods."allocWithZone:".arguments.0.written = false
+class.NSObject.methods."allocWithZone:".arguments.0.bounds = "single"
+class.NSObject.methods."copyWithZone:".arguments.0.written = false
+class.NSObject.methods."copyWithZone:".arguments.0.bounds = "single"
+class.NSObject.methods."mutableCopyWithZone:".arguments.0.written = false
+class.NSObject.methods."mutableCopyWithZone:".arguments.0.bounds = "single"

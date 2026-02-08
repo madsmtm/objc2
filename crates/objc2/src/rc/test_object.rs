@@ -147,13 +147,13 @@ define_class!(
         }
 
         #[unsafe(method(copyWithZone:))]
-        fn copy_with_zone(&self, _zone: *const NSZone) -> Retained<Self> {
+        fn copy_with_zone(&self, _zone: Option<&NSZone>) -> Retained<Self> {
             TEST_DATA.with(|data| data.borrow_mut().copy += 1);
             Self::new()
         }
 
         #[unsafe(method(mutableCopyWithZone:))]
-        fn mutable_copy_with_zone(&self, _zone: *const NSZone) -> Retained<Self> {
+        fn mutable_copy_with_zone(&self, _zone: Option<&NSZone>) -> Retained<Self> {
             TEST_DATA.with(|data| data.borrow_mut().mutable_copy += 1);
             Self::new()
         }

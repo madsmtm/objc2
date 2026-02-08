@@ -296,7 +296,7 @@ pub use self::thunk::*;
 /// #         #[unsafe(method(copy))]
 /// #         fn copy(&self) -> Retained<Self>;
 /// #         #[unsafe(method(copyWithZone:))]
-/// #         unsafe fn copyWithZone(&self, zone: *mut NSZone) -> Retained<Self>;
+/// #         unsafe fn copyWithZone(&self, zone: Option<&NSZone>) -> Retained<Self>;
 /// #     }
 /// # );
 /// # #[cfg(requires_foundation)]
@@ -350,7 +350,7 @@ pub use self::thunk::*;
 ///
 ///     unsafe impl NSCopying for MyCustomObject {
 ///         #[unsafe(method(copyWithZone:))]
-///         fn copyWithZone(&self, _zone: *const NSZone) -> Retained<Self> {
+///         fn copyWithZone(&self, _zone: Option<&NSZone>) -> Retained<Self> {
 ///             let new = Self::alloc().set_ivars(Ivars::<Self> {
 ///                 foo: *self.foo(),
 ///                 bar: *self.bar(),

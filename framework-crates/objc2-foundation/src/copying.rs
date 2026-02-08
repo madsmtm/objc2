@@ -129,7 +129,7 @@ extern_protocol!(
     ///
     ///     unsafe impl NSCopying for CustomClass {
     ///         #[unsafe(method(copyWithZone:))]
-    ///         fn copyWithZone(&self, _zone: *mut NSZone) -> Retained<Self> {
+    ///         fn copyWithZone(&self, _zone: Option<&NSZone>) -> Retained<Self> {
     ///             // Create new class, and transfer ivars.
     ///             let new = Self::alloc().set_ivars(Ivars::<Self> {
     ///                 data: self.data().clone(),
@@ -161,14 +161,9 @@ extern_protocol!(
         ///
         /// This is only used when implementing `NSCopying`, call
         /// [`copy`][NSCopying::copy] instead.
-        ///
-        ///
-        /// # Safety
-        ///
-        /// The zone pointer must be valid or NULL.
         #[unsafe(method(copyWithZone:))]
         #[unsafe(method_family = copy)]
-        unsafe fn copyWithZone(&self, zone: *mut NSZone) -> Retained<Self::Result>
+        fn copyWithZone(&self, zone: Option<&NSZone>) -> Retained<Self::Result>
         where
             Self: CopyingHelper;
     }
@@ -231,14 +226,9 @@ extern_protocol!(
         ///
         /// This is only used when implementing `NSMutableCopying`, call
         /// [`mutableCopy`][NSMutableCopying::mutableCopy] instead.
-        ///
-        ///
-        /// # Safety
-        ///
-        /// The zone pointer must be valid or NULL.
         #[unsafe(method(mutableCopyWithZone:))]
         #[unsafe(method_family = mutableCopy)]
-        unsafe fn mutableCopyWithZone(&self, zone: *mut NSZone) -> Retained<Self::Result>
+        fn mutableCopyWithZone(&self, zone: Option<&NSZone>) -> Retained<Self::Result>
         where
             Self: MutableCopyingHelper;
     }

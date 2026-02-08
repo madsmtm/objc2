@@ -38,13 +38,7 @@ impl NSValue {
     pub fn new<T: 'static + Copy + Encode>(value: T) -> Retained<Self> {
         let bytes: NonNull<T> = NonNull::from(&value);
         let encoding = CString::new(T::ENCODING.to_string()).unwrap();
-        unsafe {
-            Self::initWithBytes_objCType(
-                Self::alloc(),
-                bytes.cast(),
-                NonNull::new(encoding.as_ptr() as *mut _).unwrap(),
-            )
-        }
+        unsafe { Self::initWithBytes_objCType(Self::alloc(), bytes.cast(), &encoding) }
     }
 }
 

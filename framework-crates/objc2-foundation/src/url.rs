@@ -34,18 +34,15 @@ impl NSURL {
 
         // TODO: Should we strip trailing \0 to fully match CoreFoundation?
         let cstr = CString::new(bytes).ok()?;
-        let ptr = NonNull::new(cstr.as_ptr().cast_mut()).unwrap();
 
-        // SAFETY: The pointer is a C string, and valid for the duration of
-        // the call.
-        Some(unsafe {
+        Some(
             Self::initFileURLWithFileSystemRepresentation_isDirectory_relativeToURL(
                 Self::alloc(),
-                ptr,
+                &cstr,
                 is_directory,
                 base_url,
-            )
-        })
+            ),
+        )
     }
 
     /// Create a file url from a [`Path`].

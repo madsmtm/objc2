@@ -12,7 +12,7 @@ fn test_define_class_protocol() {
 
         unsafe impl NSCopying for Custom {
             #[unsafe(method(copyWithZone:))]
-            fn copy_with_zone(&self, _zone: *mut NSZone) -> Retained<Self> {
+            fn copy_with_zone(&self, _zone: Option<&NSZone>) -> Retained<Self> {
                 unimplemented!()
             }
         }
@@ -73,7 +73,7 @@ fn test_define_class_invalid_protocol_method() {
         unsafe impl NSCopying for Custom {
             // Override with a bad return type
             #[unsafe(method(copyWithZone:))]
-            fn copy_with_zone(&self, _zone: *mut NSZone) -> u8 {
+            fn copy_with_zone(&self, _zone: Option<&NSZone>) -> u8 {
                 42
             }
         }
@@ -95,7 +95,7 @@ fn test_define_class_extra_protocol_method() {
 
         unsafe impl NSCopying for Custom {
             #[unsafe(method(copyWithZone:))]
-            fn copy_with_zone(&self, _zone: *mut NSZone) -> Retained<Self> {
+            fn copy_with_zone(&self, _zone: Option<&NSZone>) -> Retained<Self> {
                 unimplemented!()
             }
 

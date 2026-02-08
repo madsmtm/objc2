@@ -118,7 +118,7 @@ impl FastEnumeratorHelper {
         // - The collection and state are guaranteed by the caller to match.
         self.items_count = unsafe {
             collection.countByEnumeratingWithState_objects_count(
-                NonNull::from(&mut self.state),
+                &mut self.state,
                 buf_ptr,
                 self.buf.len(),
             )

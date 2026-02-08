@@ -299,8 +299,249 @@ class.NSURL.bridged-to = "CoreFoundation.CFURL.CFURL"
 # class.NSNumber.bridged-to = "CoreFoundation.CFNumber.?"
 
 ##
-## Fix types
+## Fix pointer bounds and nullability
 ##
+
+class.NSAppleEventDescriptor.methods."initWithAEDescNoCopy:".arguments.0.bounds = "unsafe" # TODO: lifetime move
+class.NSAppleEventDescriptor.methods.aeDesc.return.bounds = "single"
+class.NSAppleEventManager.methods."dispatchRawAppleEvent:withRawReply:handlerRefCon:".arguments.0.bounds = "single"
+class.NSAppleEventManager.methods."dispatchRawAppleEvent:withRawReply:handlerRefCon:".arguments.1.bounds = "single"
+
+class.NSMutableArray.methods."removeObjectsFromIndices:numIndices:".arguments.0.bounds.counted-by = "cnt"
+
+protocol.NSCopying.methods."copyWithZone:".arguments.0.written = false
+protocol.NSCopying.methods."copyWithZone:".arguments.0.bounds = "single"
+protocol.NSMutableCopying.methods."mutableCopyWithZone:".arguments.0.written = false
+protocol.NSMutableCopying.methods."mutableCopyWithZone:".arguments.0.bounds = "single"
+
+class.NSCalendar.methods."rangeOfUnit:startDate:interval:forDate:".arguments.2.bounds = "single"
+class.NSCalendar.methods."getEra:year:month:day:fromDate:".arguments.0.bounds = "single"
+class.NSCalendar.methods."getEra:year:month:day:fromDate:".arguments.1.bounds = "single"
+class.NSCalendar.methods."getEra:year:month:day:fromDate:".arguments.2.bounds = "single"
+class.NSCalendar.methods."getEra:year:month:day:fromDate:".arguments.3.bounds = "single"
+class.NSCalendar.methods."getEra:yearForWeekOfYear:weekOfYear:weekday:fromDate:".arguments.0.bounds = "single"
+class.NSCalendar.methods."getEra:yearForWeekOfYear:weekOfYear:weekday:fromDate:".arguments.1.bounds = "single"
+class.NSCalendar.methods."getEra:yearForWeekOfYear:weekOfYear:weekday:fromDate:".arguments.2.bounds = "single"
+class.NSCalendar.methods."getEra:yearForWeekOfYear:weekOfYear:weekday:fromDate:".arguments.3.bounds = "single"
+class.NSCalendar.methods."getHour:minute:second:nanosecond:fromDate:".arguments.0.bounds = "single"
+class.NSCalendar.methods."getHour:minute:second:nanosecond:fromDate:".arguments.1.bounds = "single"
+class.NSCalendar.methods."getHour:minute:second:nanosecond:fromDate:".arguments.2.bounds = "single"
+class.NSCalendar.methods."getHour:minute:second:nanosecond:fromDate:".arguments.3.bounds = "single"
+class.NSCalendar.methods."rangeOfWeekendStartDate:interval:containingDate:".arguments.1.bounds = "single"
+class.NSCalendar.methods."nextWeekendStartDate:interval:options:afterDate:".arguments.1.bounds = "single"
+class.NSCalendarDate.methods."years:months:days:hours:minutes:seconds:sinceDate:".arguments.0.bounds = "single"
+class.NSCalendarDate.methods."years:months:days:hours:minutes:seconds:sinceDate:".arguments.1.bounds = "single"
+class.NSCalendarDate.methods."years:months:days:hours:minutes:seconds:sinceDate:".arguments.2.bounds = "single"
+class.NSCalendarDate.methods."years:months:days:hours:minutes:seconds:sinceDate:".arguments.3.bounds = "single"
+class.NSCalendarDate.methods."years:months:days:hours:minutes:seconds:sinceDate:".arguments.4.bounds = "single"
+class.NSCalendarDate.methods."years:months:days:hours:minutes:seconds:sinceDate:".arguments.5.bounds = "single"
+
+class.NSCoder.methods."encodeValueOfObjCType:at:".arguments.0.bounds = "null-terminated"
+class.NSCoder.methods."decodeValueOfObjCType:at:".arguments.0.bounds = "null-terminated"
+class.NSCoder.methods."decodeValueOfObjCType:at:size:".arguments.0.bounds = "null-terminated"
+class.NSCoder.methods."encodeArrayOfObjCType:count:at:".arguments.0.bounds = "null-terminated"
+class.NSCoder.methods."decodeArrayOfObjCType:count:at:".arguments.0.bounds = "null-terminated"
+class.NSCoder.methods."decodeBytesWithReturnedLength:".arguments.0.bounds = "single"
+class.NSCoder.methods."setObjectZone:".arguments.0.bounds = "unsafe" # Unsure of the memory management implications here
+class.NSCoder.methods.objectZone.return.bounds = "unsafe" # Unsure of the memory management implications here
+class.NSCoder.methods."encodeBytes:length:".arguments.0.bounds.sized-by = "length"
+class.NSCoder.methods."encodeBytes:length:forKey:".arguments.0.bounds.counted-by = "length"
+class.NSCoder.methods."decodeBytesForKey:returnedLength:".arguments.1.bounds = "single"
+class.NSCoder.methods."decodeBytesForKey:returnedLength:".return.bounds.counted-by = "lengthp"
+class.NSCoder.methods."decodeBytesForKey:minimumLength:".return.bounds.counted-by = "length"
+
+fn.NSDecimalIsNotANumber.arguments.0.bounds = "single"
+fn.NSDecimalCopy.arguments.0.bounds = "single"
+fn.NSDecimalCopy.arguments.1.bounds = "single"
+fn.NSDecimalCompact.arguments.0.bounds = "single"
+fn.NSDecimalCompare.arguments.0.bounds = "single"
+fn.NSDecimalCompare.arguments.1.bounds = "single"
+fn.NSDecimalRound.arguments.0.bounds = "single"
+fn.NSDecimalRound.arguments.1.bounds = "single"
+fn.NSDecimalNormalize.arguments.0.bounds = "single"
+fn.NSDecimalNormalize.arguments.1.bounds = "single"
+fn.NSDecimalAdd.arguments.0.bounds = "single"
+fn.NSDecimalAdd.arguments.1.bounds = "single"
+fn.NSDecimalAdd.arguments.2.bounds = "single"
+fn.NSDecimalSubtract.arguments.0.bounds = "single"
+fn.NSDecimalSubtract.arguments.1.bounds = "single"
+fn.NSDecimalSubtract.arguments.2.bounds = "single"
+fn.NSDecimalMultiply.arguments.0.bounds = "single"
+fn.NSDecimalMultiply.arguments.1.bounds = "single"
+fn.NSDecimalMultiply.arguments.2.bounds = "single"
+fn.NSDecimalDivide.arguments.0.bounds = "single"
+fn.NSDecimalDivide.arguments.1.bounds = "single"
+fn.NSDecimalDivide.arguments.2.bounds = "single"
+fn.NSDecimalPower.arguments.0.bounds = "single"
+fn.NSDecimalPower.arguments.1.bounds = "single"
+fn.NSDecimalMultiplyByPowerOf10.arguments.0.bounds = "single"
+fn.NSDecimalMultiplyByPowerOf10.arguments.1.bounds = "single"
+fn.NSDecimalString.arguments.0.bounds = "single"
+class.NSDecimalNumber.methods.objCType.return.bounds = "unsafe" # TODO: null-terminated, but unknown lifetime?
+
+protocol.NSFastEnumeration.methods."countByEnumeratingWithState:objects:count:".arguments.0.bounds = "single"
+protocol.NSFastEnumeration.methods."countByEnumeratingWithState:objects:count:".arguments.1.bounds.counted-by = "len"
+
+class.NSFileHandle.methods."getOffset:error:".arguments.0.bounds = "single"
+class.NSFileHandle.methods."seekToEndReturningOffset:error:".arguments.0.bounds = "single"
+class.NSFileManager.methods."getRelationship:ofDirectoryAtURL:toItemAtURL:error:".arguments.0.bounds = "single"
+class.NSFileManager.methods."getRelationship:ofDirectory:inDomain:toItemAtURL:error:".arguments.0.bounds = "single"
+class.NSFileManager.methods."fileExistsAtPath:isDirectory:".arguments.1.bounds = "single"
+class.NSFileManager.methods."fileSystemRepresentationWithPath:".return.bounds = "unsafe" # TODO: null-terminated, but unknown lifetime?
+class.NSFileManager.methods."stringWithFileSystemRepresentation:length:".arguments.0.bounds.counted-by = "len"
+
+class.NSDateFormatter.methods."getObjectValue:forString:range:error:".arguments.2.bounds = "single"
+class.NSNumberFormatter.methods."getObjectValue:forString:range:error:".arguments.2.bounds = "single"
+class.NSMassFormatter.methods."unitStringFromKilograms:usedUnit:".arguments.1.bounds = "single"
+class.NSLengthFormatter.methods."unitStringFromMeters:usedUnit:".arguments.1.bounds = "single"
+class.NSEnergyFormatter.methods."unitStringFromJoules:usedUnit:".arguments.1.bounds = "single"
+
+class.NSGarbageCollector.methods.zone.return.bounds = "single"
+
+fn.NSDivideRect.arguments.1.bounds = "single"
+fn.NSDivideRect.arguments.2.bounds = "single"
+
+fn.NSCopyHashTableWithZone.arguments.1.written = false
+fn.NSCopyHashTableWithZone.arguments.1.bounds = "single"
+fn.NSNextHashEnumeratorItem.arguments.0.bounds = "unsafe" # Unsure, see below.
+fn.NSEndHashTableEnumeration.arguments.0.bounds = "unsafe" # Lifetime: Consumes / moves the enumerator
+fn.NSCreateHashTableWithZone.arguments.2.written = false
+fn.NSCreateHashTableWithZone.arguments.2.bounds = "single"
+
+class.NSIndexSet.methods."getIndexes:maxCount:inIndexRange:".arguments.0.bounds.counted-by = "buffer_size"
+
+class.NSIndexPath.methods."getIndexes:range:".arguments.0.bounds.counted-by = "position_range.length"
+class.NSIndexPath.methods."getIndexes:".arguments.0.bounds.counted-by = "self.length()"
+
+class.NSKeyedArchiver.methods."encodeBytes:length:forKey:".arguments.0.bounds.counted-by = "length"
+class.NSKeyedUnarchiver.methods."decodeBytesForKey:returnedLength:".arguments.1.bounds = "single"
+class.NSKeyedUnarchiver.methods."decodeBytesForKey:returnedLength:".return.bounds.counted-by = "lengthp"
+
+fn.NSCopyMapTableWithZone.arguments.1.written = false
+fn.NSCopyMapTableWithZone.arguments.1.bounds = "single"
+fn.NSMapMember.arguments.2.bounds = "single"
+fn.NSMapMember.arguments.3.bounds = "single"
+fn.NSNextMapEnumeratorPair.arguments.0.bounds = "unsafe" # Unsure
+fn.NSNextMapEnumeratorPair.arguments.1.bounds = "single"
+fn.NSNextMapEnumeratorPair.arguments.2.bounds = "single"
+fn.NSEndMapTableEnumeration.arguments.0.bounds = "unsafe" # Lifetime: Consumes / moves the enumerator
+fn.NSCreateMapTableWithZone.arguments.3.written = false
+fn.NSCreateMapTableWithZone.arguments.3.bounds = "single"
+
+class.NSMethodSignature.methods."signatureWithObjCTypes:".arguments.0.bounds = "null-terminated"
+class.NSMethodSignature.methods."getArgumentTypeAtIndex:".return.bounds = "unsafe" # Lifetime: bound to self or autoreleased?
+class.NSMethodSignature.methods.methodReturnType.return.bounds = "unsafe" # Lifetime: bound to self or autoreleased?
+
+# TODO: Re-enable once we no longer emit this method as `extern "C"`
+# fn.NSGetSizeAndAlignment.arguments.0.bounds = "unsafe"
+fn.NSGetSizeAndAlignment.arguments.1.bounds = "single"
+fn.NSGetSizeAndAlignment.arguments.2.bounds = "single"
+fn.NSGetSizeAndAlignment.return.bounds = "unsafe" # Lifetime: bound to argument `type_ptr` (and still null-terminated)
+
+class.NSPropertyListSerialization.methods."propertyListWithData:options:format:error:".arguments.2.bounds = "single"
+class.NSPropertyListSerialization.methods."propertyListWithStream:options:format:error:".arguments.2.bounds = "single"
+class.NSPropertyListSerialization.methods."propertyListFromData:mutabilityOption:format:errorDescription:".arguments.2.bounds = "single"
+
+class.NSScanner.methods."scanInt:".arguments.0.bounds = "single"
+class.NSScanner.methods."scanInteger:".arguments.0.bounds = "single"
+class.NSScanner.methods."scanLongLong:".arguments.0.bounds = "single"
+class.NSScanner.methods."scanUnsignedLongLong:".arguments.0.bounds = "single"
+class.NSScanner.methods."scanFloat:".arguments.0.bounds = "single"
+class.NSScanner.methods."scanDouble:".arguments.0.bounds = "single"
+class.NSScanner.methods."scanHexInt:".arguments.0.bounds = "single"
+class.NSScanner.methods."scanHexLongLong:".arguments.0.bounds = "single"
+class.NSScanner.methods."scanHexFloat:".arguments.0.bounds = "single"
+class.NSScanner.methods."scanHexDouble:".arguments.0.bounds = "single"
+class.NSScanner.methods."scanDecimal:".arguments.0.bounds = "single"
+
+class.NSScriptCommandDescription.methods."createCommandInstanceWithZone:".arguments.0.written = false
+class.NSScriptCommandDescription.methods."createCommandInstanceWithZone:".arguments.0.bounds = "single"
+class.NSScriptObjectSpecifier.methods."indicesOfObjectsByEvaluatingWithContainer:count:".arguments.1.bounds = "single"
+class.NSScriptObjectSpecifier.methods."indicesOfObjectsByEvaluatingWithContainer:count:".return.bounds.counted-by = "count"
+
+protocol.NSSpellServerDelegate.methods."spellServer:findMisspelledWordInString:language:wordCount:countOnly:".arguments.3.bounds = "single"
+protocol.NSSpellServerDelegate.methods."spellServer:checkString:offset:types:options:orthography:wordCount:".arguments.6.bounds = "single"
+
+class.NSInputStream.methods."read:maxLength:".arguments.0.bounds.counted-by = "len"
+class.NSInputStream.methods."getBuffer:length:".arguments.0.bounds.counted-by = "len"
+class.NSInputStream.methods."getBuffer:length:".arguments.1.bounds = "single"
+class.NSOutputStream.methods."write:maxLength:".arguments.0.bounds.counted-by = "len"
+class.NSOutputStream.methods."initToBuffer:capacity:".arguments.0.bounds.counted-by = "capacity"
+class.NSOutputStream.methods."outputStreamToBuffer:capacity:".arguments.0.bounds.counted-by = "capacity"
+
+class.NSString.methods."getCharacters:range:".arguments.0.bounds.counted-by = "range.length"
+class.NSString.methods."getLineStart:end:contentsEnd:forRange:".arguments.0.bounds = "single"
+class.NSString.methods."getLineStart:end:contentsEnd:forRange:".arguments.1.bounds = "single"
+class.NSString.methods."getLineStart:end:contentsEnd:forRange:".arguments.2.bounds = "single"
+class.NSString.methods."getParagraphStart:end:contentsEnd:forRange:".arguments.0.bounds = "single"
+class.NSString.methods."getParagraphStart:end:contentsEnd:forRange:".arguments.1.bounds = "single"
+class.NSString.methods."getParagraphStart:end:contentsEnd:forRange:".arguments.2.bounds = "single"
+class.NSString.methods.UTF8String.return.bounds = "unsafe" # Lifetime: bound to self or autoreleased? Also sized to NSString.length
+class.NSString.methods."cStringUsingEncoding:".return.bounds = "unsafe" # Lifetime: autoreleased?
+class.NSString.methods."getCString:maxLength:encoding:".arguments.0.bounds.counted-by = "max_buffer_count"
+class.NSString.methods."getBytes:maxLength:usedLength:encoding:options:range:remainingRange:".arguments.0.bounds.sized-by = "max_buffer_count"
+class.NSString.methods."getBytes:maxLength:usedLength:encoding:options:range:remainingRange:".arguments.2.bounds = "single"
+class.NSString.methods.availableStringEncodings.return.bounds = "null-terminated" # Or at least zero-terminated
+class.NSString.methods."initWithCharactersNoCopy:length:freeWhenDone:".arguments.0.bounds = "unsafe" # lifetime: 'static
+class.NSString.methods."initWithCharactersNoCopy:length:deallocator:".arguments.0.bounds = "unsafe" # lifetime: 'static
+class.NSString.methods."initWithCharacters:length:".arguments.0.bounds.counted-by = "length"
+class.NSString.methods."initWithUTF8String:".arguments.0.bounds = "null-terminated"
+class.NSString.methods."stringWithCharacters:length:".arguments.0.bounds.counted-by = "length"
+class.NSString.methods."stringWithUTF8String:".arguments.0.bounds = "null-terminated"
+class.NSString.methods."initWithCString:encoding:".arguments.0.bounds = "null-terminated"
+class.NSString.methods."stringWithCString:encoding:".arguments.0.bounds = "null-terminated"
+class.NSString.methods."initWithContentsOfURL:usedEncoding:error:".arguments.1.bounds = "single"
+class.NSString.methods."initWithContentsOfFile:usedEncoding:error:".arguments.1.bounds = "single"
+class.NSString.methods."stringWithContentsOfURL:usedEncoding:error:".arguments.1.bounds = "single"
+class.NSString.methods."stringWithContentsOfFile:usedEncoding:error:".arguments.1.bounds = "single"
+class.NSString.methods."stringEncodingForData:encodingOptions:convertedString:usedLossyConversion:".arguments.3.bounds = "single"
+class.NSString.methods.cString.return.bounds = "unsafe" # Lifetime: autoreleased?
+class.NSString.methods.lossyCString.return.bounds = "unsafe" # Lifetime: autoreleased?
+class.NSString.methods."getCString:".arguments.0.bounds.counted-by = "self.cStringLength()"
+class.NSString.methods."getCString:maxLength:".arguments.0.bounds.counted-by = "max_length"
+class.NSString.methods."getCString:maxLength:range:remainingRange:".arguments.0.bounds.counted-by = "max_length"
+class.NSString.methods."initWithCStringNoCopy:length:freeWhenDone:".arguments.0.bounds = "unsafe" # lifetime: 'static
+class.NSString.methods."initWithCString:length:".arguments.0.bounds.counted-by = "length"
+class.NSString.methods."initWithCString:".arguments.0.bounds = "null-terminated"
+class.NSString.methods."stringWithCString:length:".arguments.0.bounds.counted-by = "length"
+class.NSString.methods."stringWithCString:".arguments.0.bounds = "null-terminated"
+class.NSString.methods."getCharacters:".arguments.0.bounds.counted-by = "self.length()"
+
+class.NSString.methods.fileSystemRepresentation.return.bounds = "unsafe" # Lifetime: autoreleased?
+class.NSString.methods."getFileSystemRepresentation:maxLength:".arguments.0.bounds.counted-by = "max"
+
+class.NSUnarchiver.methods."setObjectZone:".arguments.0.bounds = "unsafe" # Unsure of the memory management implications here
+class.NSUnarchiver.methods.objectZone.return.bounds = "unsafe" # Unsure of the memory management implications here
+
+class.NSURL.methods."initFileURLWithFileSystemRepresentation:isDirectory:relativeToURL:".arguments.0.bounds = "null-terminated"
+class.NSURL.methods."fileURLWithFileSystemRepresentation:isDirectory:relativeToURL:".arguments.0.bounds = "null-terminated"
+class.NSURL.methods."getFileSystemRepresentation:maxLength:".arguments.0.bounds.counted-by = "max_buffer_length"
+class.NSURL.methods.fileSystemRepresentation.return.bounds = "unsafe" # Lifetime: autoreleased?
+class.NSURL.methods."initByResolvingBookmarkData:options:relativeToURL:bookmarkDataIsStale:error:".arguments.3.bounds = "single"
+class.NSURL.methods."URLByResolvingBookmarkData:options:relativeToURL:bookmarkDataIsStale:error:".arguments.3.bounds = "single"
+
+class.NSValue.methods.objCType.return.bounds = "unsafe" # Lifetime: bound to self?
+class.NSValue.methods."initWithBytes:objCType:".arguments.0.bounds.sized-by = "value_encoding_size(r#type)"
+class.NSValue.methods."initWithBytes:objCType:".arguments.1.bounds = "null-terminated"
+class.NSValue.methods."valueWithBytes:objCType:".arguments.0.bounds.sized-by = "value_encoding_size(r#type)"
+class.NSValue.methods."valueWithBytes:objCType:".arguments.1.bounds = "null-terminated"
+class.NSValue.methods."value:withObjCType:".arguments.0.bounds.sized-by = "value_encoding_size(r#type)"
+class.NSValue.methods."value:withObjCType:".arguments.1.bounds = "null-terminated"
+
+# TODO.
+fn.NSDefaultMallocZone.return.bounds = "unsafe"
+fn.NSCreateZone.return.bounds = "unsafe"
+fn.NSRecycleZone.arguments.0.bounds = "unsafe"
+fn.NSSetZoneName.arguments.0.bounds = "unsafe"
+fn.NSZoneName.arguments.0.bounds = "unsafe"
+fn.NSZoneFromPointer.return.bounds = "unsafe"
+fn.NSZoneMalloc.arguments.0.bounds = "unsafe"
+fn.NSZoneCalloc.arguments.0.bounds = "unsafe"
+fn.NSZoneRealloc.arguments.0.bounds = "unsafe"
+fn.NSZoneFree.arguments.0.bounds = "unsafe"
+fn.NSAllocateObject.arguments.2.bounds = "unsafe"
+fn.NSCopyObject.arguments.2.bounds = "unsafe"
+fn.NSShouldRetainWithZone.arguments.1.bounds = "unsafe"
 
 # Passing NULL works, but only on later OS versions, doesn't work on e.g.
 # macOS 10.12 or iOS Simulator 17.2.
