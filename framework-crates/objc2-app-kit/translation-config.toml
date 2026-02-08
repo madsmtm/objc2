@@ -192,6 +192,193 @@ class.NSWindow.main-thread-only = true
 # class.NSResponder.sendable = false
 
 ###
+### Fixing pointer bounds.
+###
+
+class.NSApplication.methods."searchString:inUserInterfaceItemString:searchRange:foundRange:".arguments.3.bounds = "single"
+
+fn.NSApplicationMain.arguments.1.bounds.counted-by = "argc"
+
+class.NSBezierPath.methods."drawPackedGlyphs:atPoint:".arguments.0.bounds = "null-terminated"
+class.NSBezierPath.methods."getLineDash:count:phase:".arguments.0.bounds = "unsafe" # call method twice to get size of this
+class.NSBezierPath.methods."getLineDash:count:phase:".arguments.1.bounds = "single"
+class.NSBezierPath.methods."getLineDash:count:phase:".arguments.2.bounds = "single"
+class.NSBezierPath.methods."setLineDash:count:phase:".arguments.0.bounds.counted-by = "count"
+class.NSBezierPath.methods."appendBezierPathWithCGGlyphs:count:inFont:".arguments.0.bounds.counted-by = "count"
+class.NSBezierPath.methods."appendBezierPathWithGlyphs:count:inFont:".arguments.0.bounds.counted-by = "count"
+class.NSBezierPath.methods."appendBezierPathWithPackedGlyphs:".arguments.0.bounds = "null-terminated"
+
+# Bitmap data size is a bit more complex, so let's mark it unsafe for now.
+class.NSBitmapImageRep.methods."initWithBitmapDataPlanes:pixelsWide:pixelsHigh:bitsPerSample:samplesPerPixel:hasAlpha:isPlanar:colorSpaceName:bytesPerRow:bitsPerPixel:".arguments.0.bounds = "unsafe"
+class.NSBitmapImageRep.methods."initWithBitmapDataPlanes:pixelsWide:pixelsHigh:bitsPerSample:samplesPerPixel:hasAlpha:isPlanar:colorSpaceName:bitmapFormat:bytesPerRow:bitsPerPixel:".arguments.0.bounds = "unsafe"
+class.NSBitmapImageRep.methods.bitmapData.return.bounds = "unsafe"
+class.NSBitmapImageRep.methods."getBitmapDataPlanes:".arguments.0.bounds = "unsafe"
+class.NSBitmapImageRep.methods."getCompression:factor:".arguments.0.bounds = "single"
+class.NSBitmapImageRep.methods."getCompression:factor:".arguments.1.bounds = "single"
+class.NSBitmapImageRep.methods."getTIFFCompressionTypes:count:".arguments.0.bounds = "single" # Inner array counted by `num_types`
+class.NSBitmapImageRep.methods."getTIFFCompressionTypes:count:".arguments.1.bounds = "single"
+
+class.NSBrowser.methods."getRow:column:forPoint:".arguments.0.bounds = "single"
+class.NSBrowser.methods."getRow:column:forPoint:".arguments.1.bounds = "single"
+protocol.NSBrowserDelegate.methods."browser:validateDrop:proposedRow:column:dropOperation:".arguments.2.bounds = "single"
+protocol.NSBrowserDelegate.methods."browser:validateDrop:proposedRow:column:dropOperation:".arguments.3.bounds = "single"
+protocol.NSBrowserDelegate.methods."browser:validateDrop:proposedRow:column:dropOperation:".arguments.4.bounds = "single"
+
+class.NSBundle.methods."loadNibFile:externalNameTable:withZone:".arguments.2.written = false
+class.NSBundle.methods."loadNibFile:externalNameTable:withZone:".arguments.2.bounds = "single"
+
+class.NSButton.methods."getPeriodicDelay:interval:".arguments.0.bounds = "single"
+class.NSButton.methods."getPeriodicDelay:interval:".arguments.1.bounds = "single"
+class.NSButtonCell.methods."getPeriodicDelay:interval:".arguments.0.bounds = "single"
+class.NSButtonCell.methods."getPeriodicDelay:interval:".arguments.1.bounds = "single"
+
+class.NSCell.methods."getPeriodicDelay:interval:".arguments.0.bounds = "single"
+class.NSCell.methods."getPeriodicDelay:interval:".arguments.1.bounds = "single"
+
+protocol.NSCollectionViewDelegate.methods."collectionView:validateDrop:proposedIndexPath:dropOperation:".arguments.3.bounds = "single"
+protocol.NSCollectionViewDelegate.methods."collectionView:validateDrop:proposedIndex:dropOperation:".arguments.2.bounds = "single"
+protocol.NSCollectionViewDelegate.methods."collectionView:validateDrop:proposedIndex:dropOperation:".arguments.3.bounds = "single"
+
+class.NSColor.methods."colorWithColorSpace:components:count:".arguments.1.bounds.counted-by = "number_of_components"
+class.NSColor.methods."getRed:green:blue:alpha:".arguments.0.bounds = "single"
+class.NSColor.methods."getRed:green:blue:alpha:".arguments.1.bounds = "single"
+class.NSColor.methods."getRed:green:blue:alpha:".arguments.2.bounds = "single"
+class.NSColor.methods."getRed:green:blue:alpha:".arguments.3.bounds = "single"
+class.NSColor.methods."getHue:saturation:brightness:alpha:".arguments.0.bounds = "single"
+class.NSColor.methods."getHue:saturation:brightness:alpha:".arguments.1.bounds = "single"
+class.NSColor.methods."getHue:saturation:brightness:alpha:".arguments.2.bounds = "single"
+class.NSColor.methods."getHue:saturation:brightness:alpha:".arguments.3.bounds = "single"
+class.NSColor.methods."getWhite:alpha:".arguments.0.bounds = "single"
+class.NSColor.methods."getWhite:alpha:".arguments.1.bounds = "single"
+class.NSColor.methods."getCyan:magenta:yellow:black:alpha:".arguments.0.bounds = "single"
+class.NSColor.methods."getCyan:magenta:yellow:black:alpha:".arguments.1.bounds = "single"
+class.NSColor.methods."getCyan:magenta:yellow:black:alpha:".arguments.2.bounds = "single"
+class.NSColor.methods."getCyan:magenta:yellow:black:alpha:".arguments.3.bounds = "single"
+class.NSColor.methods."getCyan:magenta:yellow:black:alpha:".arguments.4.bounds = "single"
+class.NSColor.methods."getComponents:".arguments.0.bounds.counted-by = "self.numberOfComponents()"
+
+protocol.NSControlTextEditingDelegate.methods."control:textView:completions:forPartialWordRange:indexOfSelectedItem:".arguments.4.bounds = "single"
+
+protocol.NSDatePickerCellDelegate.methods."datePickerCell:validateProposedDateValue:timeInterval:".arguments.2.bounds = "single"
+
+class.NSFont.methods."fontWithName:matrix:".arguments.1.bounds.counted-by = "6"
+class.NSFont.methods.matrix.return.bounds.counted-by = "6"
+class.NSFont.methods."getBoundingRects:forCGGlyphs:count:".arguments.1.bounds.counted-by = "glyph_count"
+class.NSFont.methods."getAdvancements:forCGGlyphs:count:".arguments.1.bounds.counted-by = "glyph_count"
+class.NSFont.methods."getBoundingRects:forGlyphs:count:".arguments.1.bounds.counted-by = "glyph_count"
+class.NSFont.methods."getAdvancements:forGlyphs:count:".arguments.1.bounds.counted-by = "glyph_count"
+fn.NSConvertGlyphsToPackedGlyphs.arguments.0.bounds.counted-by = "count"
+fn.NSConvertGlyphsToPackedGlyphs.arguments.3.bounds.counted-by = "(4 * count) + 1"
+
+class.NSGradient.methods."initWithColors:atLocations:colorSpace:".arguments.1.bounds.counted-by = "color_array.length()"
+class.NSGradient.methods."getColor:location:atIndex:".arguments.1.bounds = "single"
+
+# NSGraphics
+fn.NSBestDepth.arguments.4.bounds = "single"
+fn.NSAvailableWindowDepths.return.bounds = "null-terminated"
+fn.NSRectFillList.arguments.0.bounds.counted-by = "count"
+fn.NSRectFillListWithGrays.arguments.0.bounds.counted-by = "num"
+fn.NSRectFillListWithGrays.arguments.1.bounds.counted-by = "num"
+fn.NSRectFillListWithColors.arguments.0.bounds.counted-by = "num"
+fn.NSRectFillListWithColors.arguments.1.bounds.counted-by = "num"
+fn.NSRectFillListUsingOperation.arguments.0.bounds.counted-by = "count"
+fn.NSRectFillListWithColorsUsingOperation.arguments.0.bounds.counted-by = "num"
+fn.NSRectFillListWithColorsUsingOperation.arguments.1.bounds.counted-by = "num"
+fn.NSRectClipList.arguments.0.bounds.counted-by = "count"
+fn.NSDrawTiledRects.arguments.2.bounds.counted-by = "count"
+fn.NSDrawTiledRects.arguments.3.bounds.counted-by = "count"
+fn.NSGetWindowServerMemory.arguments.1.bounds = "single"
+fn.NSGetWindowServerMemory.arguments.2.bounds = "single"
+fn.NSDrawColorTiledRects.arguments.2.bounds.counted-by = "count"
+fn.NSDrawColorTiledRects.arguments.3.bounds.counted-by = "count"
+fn.NSCountWindows.arguments.0.bounds = "single"
+fn.NSCountWindowsForContext.arguments.1.bounds = "single"
+
+protocol.NSGlyphStorage.methods."insertGlyphs:length:forStartingGlyphAtIndex:characterIndex:".arguments.0.bounds.counted-by = "length"
+class.NSGlyphGenerator.methods."generateGlyphsForGlyphStorage:desiredNumberOfCharacters:glyphIndex:characterIndex:".arguments.2.bounds = "single"
+class.NSGlyphGenerator.methods."generateGlyphsForGlyphStorage:desiredNumberOfCharacters:glyphIndex:characterIndex:".arguments.3.bounds = "unsafe" # Unclear from docs
+
+class.NSImageRep.methods."CGImageForProposedRect:context:hints:".arguments.0.bounds = "single"
+class.NSImage.methods."CGImageForProposedRect:context:hints:".arguments.0.bounds = "single"
+
+# TODO: class.NSLayoutManager.methods.*.bounds = "..."
+
+class.NSMatrix.methods."getNumberOfRows:columns:".arguments.0.bounds = "single"
+class.NSMatrix.methods."getNumberOfRows:columns:".arguments.1.bounds = "single"
+class.NSMatrix.methods."getRow:column:ofCell:".arguments.0.bounds = "single"
+class.NSMatrix.methods."getRow:column:ofCell:".arguments.1.bounds = "single"
+class.NSMatrix.methods."getRow:column:forPoint:".arguments.0.bounds = "single"
+class.NSMatrix.methods."getRow:column:forPoint:".arguments.1.bounds = "single"
+
+class.NSMenu.methods.menuZone.return.bounds = "single"
+class.NSMenu.methods."setMenuZone:".arguments.0.written = false
+class.NSMenu.methods."setMenuZone:".arguments.0.bounds = "single"
+
+class.NSView.methods."getRectsBeingDrawn:count:".arguments.0.bounds = "single" # inner counted by `*count`
+class.NSView.methods."getRectsBeingDrawn:count:".arguments.1.bounds = "single"
+class.NSView.methods."adjustPageWidthNew:left:right:limit:".arguments.0.bounds = "single"
+class.NSView.methods."adjustPageHeightNew:top:bottom:limit:".arguments.0.bounds = "single"
+
+class.NSWorkspace.methods."getFileSystemInfoForPath:isRemovable:isWritable:isUnmountable:description:type:".arguments.1.bounds = "single"
+class.NSWorkspace.methods."getFileSystemInfoForPath:isRemovable:isWritable:isUnmountable:description:type:".arguments.2.bounds = "single"
+class.NSWorkspace.methods."getFileSystemInfoForPath:isRemovable:isWritable:isUnmountable:description:type:".arguments.3.bounds = "single"
+class.NSWorkspace.methods."performFileOperation:source:destination:files:tag:".arguments.4.bounds = "single"
+
+fn.NSOpenGLGetOption.arguments.1.bounds = "single"
+fn.NSOpenGLGetVersion.arguments.0.bounds = "single"
+fn.NSOpenGLGetVersion.arguments.1.bounds = "single"
+class.NSOpenGLPixelFormat.methods."initWithAttributes:".arguments.0.bounds = "null-terminated"
+class.NSOpenGLPixelFormat.methods."getValues:forAttribute:forVirtualScreen:".arguments.0.bounds = "unsafe" # depends on attribute
+class.NSOpenGLContext.methods."setValues:forParameter:".arguments.0.bounds = "unsafe" # depends on parameter
+class.NSOpenGLContext.methods."getValues:forParameter:".arguments.0.bounds = "unsafe" # depends on parameter
+class.NSOpenGLLayer.methods."canDrawInOpenGLContext:pixelFormat:forLayerTime:displayTime:".arguments.3.bounds = "single"
+class.NSOpenGLLayer.methods."drawInOpenGLContext:pixelFormat:forLayerTime:displayTime:".arguments.3.bounds = "single"
+
+protocol.NSSharingServiceDelegate.methods."sharingService:transitionImageForShareItem:contentRect:".arguments.2.bounds = "single"
+protocol.NSSharingServiceDelegate.methods."sharingService:sourceWindowForShareItems:sharingContentScope:".arguments.2.bounds = "single"
+protocol.NSSharingServiceDelegate.methods."anchoringViewForSharingService:showRelativeToRect:preferredEdge:".arguments.1.bounds = "single"
+protocol.NSSharingServiceDelegate.methods."anchoringViewForSharingService:showRelativeToRect:preferredEdge:".arguments.2.bounds = "single"
+
+class.NSSpellChecker.methods."checkSpellingOfString:startingAt:language:wrap:inSpellDocumentWithTag:wordCount:".arguments.5.bounds = "single"
+class.NSSpellChecker.methods."checkString:range:types:options:inSpellDocumentWithTag:orthography:wordCount:".arguments.6.bounds = "single"
+
+class.NSScreen.methods.supportedWindowDepths.return.bounds = "null-terminated"
+
+protocol.NSTextFinderClient.methods."stringAtIndex:effectiveRange:endsWithSearchBoundary:".arguments.2.bounds = "single"
+class.NSTextContainer.methods."lineFragmentRectForProposedRect:atIndex:writingDirection:remainingRect:".arguments.3.bounds = "single"
+
+class.NSTextView.methods."completionsForPartialWordRange:indexOfSelectedItem:".arguments.1.bounds = "single"
+protocol.NSTextViewDelegate.methods."textView:completions:forPartialWordRange:indexOfSelectedItem:".arguments.3.bounds = "single"
+protocol.NSTextViewDelegate.methods."textView:willCheckTextInRange:options:types:".arguments.3.bounds = "single"
+
+protocol.NSTokenFieldCellDelegate.methods."tokenFieldCell:completionsForSubstring:indexOfToken:indexOfSelectedItem:".arguments.3.bounds = "single"
+protocol.NSTokenFieldDelegate.methods."tokenField:completionsForSubstring:indexOfToken:indexOfSelectedItem:".arguments.3.bounds = "single"
+
+class.NSTypesetter.methods."layoutGlyphsInLayoutManager:startingAtGlyphIndex:maxNumberOfLineFragments:nextGlyphIndex:".arguments.3.bounds = "single"
+class.NSTypesetter.methods."printingAdjustmentInLayoutManager:forNominallySpacedGlyphRange:packedGlyphs:count:".arguments.2.bounds.counted-by = "packed_glyphs_count"
+class.NSTypesetter.methods."willSetLineFragmentRect:forGlyphRange:usedRect:baselineOffset:".arguments.1.bounds = "single"
+class.NSTypesetter.methods."willSetLineFragmentRect:forGlyphRange:usedRect:baselineOffset:".arguments.2.bounds = "single"
+class.NSTypesetter.methods."willSetLineFragmentRect:forGlyphRange:usedRect:baselineOffset:".arguments.3.bounds = "single"
+class.NSTypesetter.methods."setLocation:withAdvancements:forStartOfGlyphRange:".arguments.1.bounds = "unsafe" # Unclear?
+class.NSTypesetter.methods."setBidiLevels:forGlyphRange:".arguments.0.bounds.counted-by = "range.length"
+class.NSTypesetter.methods."getGlyphsInRange:glyphs:characterIndexes:glyphInscriptions:elasticBits:bidiLevels:".arguments.1.bounds.counted-by = "glyphs_range.length"
+class.NSTypesetter.methods."getGlyphsInRange:glyphs:characterIndexes:glyphInscriptions:elasticBits:bidiLevels:".arguments.2.bounds = "unsafe" # Unclear
+class.NSTypesetter.methods."getGlyphsInRange:glyphs:characterIndexes:glyphInscriptions:elasticBits:bidiLevels:".arguments.3.bounds = "unsafe" # Unclear
+class.NSTypesetter.methods."getGlyphsInRange:glyphs:characterIndexes:glyphInscriptions:elasticBits:bidiLevels:".arguments.4.bounds = "unsafe" # Unclear
+class.NSTypesetter.methods."getGlyphsInRange:glyphs:characterIndexes:glyphInscriptions:elasticBits:bidiLevels:".arguments.5.bounds = "unsafe" # Unclear
+class.NSTypesetter.methods."substituteGlyphsInRange:withGlyphs:".arguments.1.bounds.counted-by = "glyph_range.length"
+class.NSATSTypesetter.methods."layoutParagraphAtPoint:".arguments.0.bounds = "single"
+class.NSATSTypesetter.methods."getLineFragmentRect:usedRect:forParagraphSeparatorGlyphRange:atProposedOrigin:".arguments.0.bounds = "single"
+class.NSATSTypesetter.methods."getLineFragmentRect:usedRect:forParagraphSeparatorGlyphRange:atProposedOrigin:".arguments.1.bounds = "single"
+class.NSATSTypesetter.methods."willSetLineFragmentRect:forGlyphRange:usedRect:baselineOffset:".arguments.0.bounds = "single"
+class.NSATSTypesetter.methods."willSetLineFragmentRect:forGlyphRange:usedRect:baselineOffset:".arguments.2.bounds = "single"
+class.NSATSTypesetter.methods."willSetLineFragmentRect:forGlyphRange:usedRect:baselineOffset:".arguments.3.bounds = "single"
+class.NSATSTypesetter.methods."getGlyphsInRange:glyphs:characterIndexes:glyphInscriptions:elasticBits:".arguments.1.bounds.counted-by = "glyphs_range.length"
+class.NSATSTypesetter.methods."getGlyphsInRange:glyphs:characterIndexes:glyphInscriptions:elasticBits:".arguments.2.bounds = "unsafe" # Unclear
+class.NSATSTypesetter.methods."getGlyphsInRange:glyphs:characterIndexes:glyphInscriptions:elasticBits:".arguments.3.bounds = "unsafe" # Unclear
+class.NSATSTypesetter.methods."getGlyphsInRange:glyphs:characterIndexes:glyphInscriptions:elasticBits:".arguments.4.bounds = "unsafe" # Unclear
+
+###
 ### Safety
 ###
 

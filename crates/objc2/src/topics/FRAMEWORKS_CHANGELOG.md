@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Breaking changes are noted elsewhere in this changelog entry.
 * Changed the value of `kUSBHostPortPropertyPortNumber`.
 * **BREAKING**: Fixed a bunch of nullability, bounds and generics information in:
+  - `AppKit` / `objc2-app-kit`.
   - `CoreFoundation` / `objc2-core-foundation`.
   - `CoreGraphics` / `objc2-core-graphics`.
   - `CoreText` / `objc2-core-text`.
