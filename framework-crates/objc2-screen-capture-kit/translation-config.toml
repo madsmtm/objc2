@@ -10,3 +10,12 @@ macos = "12.3"
 # While the intention was:
 # @interface SCContentSharingPickerConfiguration : NSObject <NSCopying>
 class.SCContentSharingPickerConfiguration.generics = []
+
+###
+### Safety
+###
+
+# SAFETY: ScreenCaptureKit methods are well-behaved.
+unsafe-default-safety.documentation-is-reviewed = true
+# ScreenCaptureKit is internally bounds-checked.
+unsafe-default-safety.bounds-checked-internally = true

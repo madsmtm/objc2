@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Marked a bunch of functions safe in:
   - `CoreText` / `objc2-core-text`.
+  - `ScreenCaptureKit` / `objc2-screen-capture-kit`.
 * Added a few missing APIs that uses arrays.
 * Added `CGBitmapInfo::new`.
 * Added `Default` implementations for enumerations, bitflags and structs.
