@@ -90,7 +90,10 @@ fn.CGColorSpaceCreateCalibratedRGB.arguments.3.written = false
 fn.CGColorSpaceCreateLab.arguments.0.written = false
 fn.CGColorSpaceCreateLab.arguments.1.written = false
 fn.CGColorSpaceCreateLab.arguments.2.written = false
+fn.CGColorSpaceCreateICCBased.arguments.1.bounds.counted-by = "n_components * 2"
+fn.CGColorSpaceCreateIndexed.arguments.2.bounds.counted-by = "base_space.number_of_components() * (last_index + 1)"
 fn.CGColorSpaceGetColorTable.arguments.1.written = false
+fn.CGColorSpaceGetColorTable.arguments.1.bounds.counted-by = "self.color_table_count()"
 
 fn.CGContextSetLineDash.arguments.2.bounds.counted-by = "count"
 fn.CGContextAddRects.arguments.1.bounds.counted-by = "count"
