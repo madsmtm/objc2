@@ -39,6 +39,33 @@ typedef.MTLAutoreleasedComputePipelineReflection.renamed = "MTLComputePipelineRe
 typedef.MTLAutoreleasedComputePipelineReflection.skipped = true
 
 ###
+### Pointer bounds information.
+###
+
+protocol.MTLDevice.methods."getDefaultSamplePositions:count:".arguments.0.bounds.counted-by = "count"
+protocol.MTLDevice.methods."sampleTimestamps:gpuTimestamp:".arguments.0.bounds = "single"
+protocol.MTLDevice.methods."sampleTimestamps:gpuTimestamp:".arguments.1.bounds = "single"
+
+class.MTLRasterizationRateLayerDescriptor.methods."initWithSampleCount:horizontal:vertical:".arguments.1.bounds.counted-by = "sample_count.width"
+class.MTLRasterizationRateLayerDescriptor.methods."initWithSampleCount:horizontal:vertical:".arguments.2.bounds.counted-by = "sample_count.height"
+class.MTLRasterizationRateLayerDescriptor.methods.horizontalSampleStorage.return.bounds.counted-by = "self.maxSampleCount().width"
+class.MTLRasterizationRateLayerDescriptor.methods.verticalSampleStorage.return.bounds.counted-by = "self.maxSampleCount().height"
+
+protocol.MTLRenderCommandEncoder.methods."setVertexAmplificationCount:viewMappings:".arguments.1.bounds = "unsafe" # `count`? Unsure.
+protocol.MTL4RenderCommandEncoder.methods."setVertexAmplificationCount:viewMappings:".arguments.1.bounds = "unsafe" # `count`? Unsure.
+
+class.MTLRenderPassDescriptor.methods."setSamplePositions:count:".arguments.0.bounds.counted-by = "count"
+class.MTLRenderPassDescriptor.methods."getSamplePositions:count:".arguments.0.bounds.counted-by = "count"
+
+class.MTL4RenderPassDescriptor.methods."setSamplePositions:count:".arguments.0.bounds.counted-by = "count"
+class.MTL4RenderPassDescriptor.methods."getSamplePositions:count:".arguments.0.bounds.counted-by = "count"
+
+class.MTLTensorExtents.methods."initWithRank:values:".arguments.1.bounds.counted-by = "rank"
+
+# TODO: Re-enable once we no longer emit this method as `extern "C"`
+# fn.MTLIOCreateCompressionContext.arguments.0.bounds = "null-terminated"
+
+###
 ### Safety
 ###
 

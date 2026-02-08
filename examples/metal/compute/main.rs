@@ -29,12 +29,7 @@ fn main() {
         let device = MTLCreateSystemDefaultDevice().expect("No device found");
         let mut cpu_start = 0;
         let mut gpu_start = 0;
-        unsafe {
-            device.sampleTimestamps_gpuTimestamp(
-                NonNull::from(&mut cpu_start),
-                NonNull::from(&mut gpu_start),
-            )
-        };
+        device.sampleTimestamps_gpuTimestamp(&mut cpu_start, &mut gpu_start);
 
         let counter_sample_buffer = create_counter_sample_buffer(&device);
         let destination_buffer = device
@@ -89,12 +84,7 @@ fn main() {
         command_buffer.waitUntilCompleted();
         let mut cpu_end = 0;
         let mut gpu_end = 0;
-        unsafe {
-            device.sampleTimestamps_gpuTimestamp(
-                NonNull::from(&mut cpu_end),
-                NonNull::from(&mut gpu_end),
-            )
-        };
+        device.sampleTimestamps_gpuTimestamp(&mut cpu_end, &mut gpu_end);
 
         let sum = unsafe { sum.contents().cast::<u32>().read() };
         println!("Compute shader sum: {}", sum);

@@ -28,10 +28,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   Breaking changes are noted elsewhere in this changelog entry.
 * Changed the value of `kUSBHostPortPropertyPortNumber`.
-* **BREAKING**: Fixed a bunch of nullability and generics information in:
+* **BREAKING**: Fixed a bunch of nullability, bounds and generics information in:
   - `CoreFoundation` / `objc2-core-foundation`.
   - `CoreGraphics` / `objc2-core-graphics`.
   - `CoreText` / `objc2-core-text`.
+  - `Foundation` / `objc2-foundation`.
+  - `Metal` / `objc2-metal`.
   - `SystemConfiguration` / `objc2-system-configuration`.
 * **BREAKING**: Made `NSWindow::delegate`/`NSWindow::setDelegate` `unsafe`, it breaks type-safety if used together with `NSSavePanel`.
 

@@ -350,12 +350,7 @@ impl TimeSampler {
     fn new(device: &ProtocolObject<dyn MTLDevice>) -> Self {
         let mut cpu_start = 0;
         let mut gpu_start = 0;
-        unsafe {
-            device.sampleTimestamps_gpuTimestamp(
-                NonNull::from(&mut cpu_start),
-                NonNull::from(&mut gpu_start),
-            )
-        };
+        device.sampleTimestamps_gpuTimestamp(&mut cpu_start, &mut gpu_start);
 
         let counter_sample_buffer_desc = MTLCounterSampleBufferDescriptor::new();
         counter_sample_buffer_desc.setStorageMode(MTLStorageMode::Shared);
@@ -421,12 +416,8 @@ impl TimeSampler {
     fn print_timings(&self) {
         let mut cpu_end = 0;
         let mut gpu_end = 0;
-        unsafe {
-            self.device.sampleTimestamps_gpuTimestamp(
-                NonNull::from(&mut cpu_end),
-                NonNull::from(&mut gpu_end),
-            )
-        };
+        self.device
+            .sampleTimestamps_gpuTimestamp(&mut cpu_end, &mut gpu_end);
 
         let samples = unsafe {
             std::slice::from_raw_parts(self.destination_buffer.contents().as_ptr().cast::<u64>(), 4)
