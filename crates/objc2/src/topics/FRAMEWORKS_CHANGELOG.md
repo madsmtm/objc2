@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreText` / `objc2-core-text`.
   - `Foundation` / `objc2-foundation`.
   - `Metal` / `objc2-metal`.
+  - `QuartzCore` / `objc2-quartz-core`.
   - `SystemConfiguration` / `objc2-system-configuration`.
 * **BREAKING**: Made `NSWindow::delegate`/`NSWindow::setDelegate` `unsafe`, it breaks type-safety if used together with `NSSavePanel`.
 

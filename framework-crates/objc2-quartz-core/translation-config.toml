@@ -10,6 +10,15 @@ tvos = "9.0"
 visionos = "1.0"
 
 ###
+### Fixing pointer bounds information.
+###
+
+class.CARenderer.methods."beginFrameAtTime:timeStamp:".arguments.1.bounds = "single"
+
+class.CAOpenGLLayer.methods."canDrawInCGLContext:pixelFormat:forLayerTime:displayTime:".arguments.3.bounds = "single"
+class.CAOpenGLLayer.methods."drawInCGLContext:pixelFormat:forLayerTime:displayTime:".arguments.3.bounds = "single"
+
+###
 ### Safety
 ###
 
