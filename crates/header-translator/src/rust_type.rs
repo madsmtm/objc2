@@ -6,7 +6,7 @@ use std::{fmt, iter, mem};
 use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
 
-use crate::config::{ItemGeneric, PointerBounds, TypeOverride};
+use crate::config::{ItemGeneric, PointerBounds, StmtData, TypeOverride};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::id::{ItemIdentifier, ItemTree};
@@ -577,7 +577,12 @@ impl fmt::Display for Primitive {
 fn get_class_data(
     entity_ref: &Entity<'_>,
     context: &Context<'_>,
-) -> (ItemIdentifier, ThreadSafety, Vec<ItemIdentifier>) {
+) -> (
+    ItemIdentifier,
+    Vec<GenericWithBound>,
+    ThreadSafety,
+    Vec<ItemIdentifier>,
+) {
     // @class produces a ObjCInterfaceDecl if we didn't load the actual
     // declaration, but we don't actually want that, since it'll point to the
     // wrong place.
@@ -589,6 +594,14 @@ fn get_class_data(
 
     let mut id = ItemIdentifier::new(&entity, context);
 
+    let data = context
+        .library(&id)
+        .class_data
+        .get(&id.name)
+        .unwrap_or(StmtData::empty());
+
+    let declaration_generics = parse_class_generics(&entity, context, data);
+
     match entity.get_kind() {
         EntityKind::ObjCInterfaceDecl => {
             let thread_safety = ThreadSafety::from_decl(&entity, context);
@@ -597,11 +610,11 @@ fn get_class_data(
                 .map(|(id, _, _)| id)
                 .collect();
 
-            (id, thread_safety, superclasses)
+            (id, declaration_generics, thread_safety, superclasses)
         }
         EntityKind::ObjCClassRef => {
             let thread_safety = ThreadSafety::from_ref(&entity, context);
-            (id, thread_safety, vec![])
+            (id, declaration_generics, thread_safety, vec![])
         }
         EntityKind::MacroExpansion => {
             id.name = entity_ref.get_name().unwrap_or_else(|| {
@@ -612,11 +625,11 @@ fn get_class_data(
             let thread_safety = ThreadSafety::dummy();
             // Similarly, we cannot get for required items
             let superclasses = vec![];
-            (id, thread_safety, superclasses)
+            (id, declaration_generics, thread_safety, superclasses)
         }
         _ => {
             error!(?entity, "was not a class");
-            (id, ThreadSafety::dummy(), vec![])
+            (id, declaration_generics, ThreadSafety::dummy(), vec![])
         }
     }
 }
@@ -1789,7 +1802,6 @@ impl Ty {
             }
             TypeKind::ObjCInterface => {
                 let declaration = ty.get_declaration().expect("ObjCInterface declaration");
-                let declaration_generics = parse_class_generics(&declaration, context);
 
                 if !ty.get_objc_type_arguments().is_empty() {
                     panic!("generics not empty: {ty:?}");
@@ -1801,7 +1813,8 @@ impl Ty {
                 if name == "Protocol" {
                     Self::Pointee(PointeeTy::AnyProtocol)
                 } else {
-                    let (id, thread_safety, superclasses) = get_class_data(&declaration, context);
+                    let (id, declaration_generics, thread_safety, superclasses) =
+                        get_class_data(&declaration, context);
                     if id.name != name.strip_prefix("const ").unwrap_or(&name) {
                         error!(?name, "invalid interface name");
                     }
@@ -1859,9 +1872,8 @@ impl Ty {
                         let declaration = base_ty
                             .get_declaration()
                             .expect("ObjCObject -> ObjCInterface declaration");
-                        let (id, thread_safety, superclasses) =
+                        let (id, declaration_generics, thread_safety, superclasses) =
                             get_class_data(&declaration, context);
-                        let declaration_generics = parse_class_generics(&declaration, context);
                         if id.name != name {
                             error!(?name, "ObjCObject -> ObjCInterface invalid name");
                         }
@@ -2362,6 +2374,7 @@ impl Ty {
                             .typedef_data
                             .get(&id.name)
                             .map(|data| data.generics.clone())
+                            .unwrap_or_default()
                             .unwrap_or_default();
 
                         // A bit annoying that we replace the typedef name

@@ -500,9 +500,9 @@ impl LibraryConfig {
             assert_eq!(data.requires_mainthreadonly, Default::default());
         }
 
-        let allowed_in = self.typedef_data.values();
+        let allowed_in = self.class_data.values().chain(self.typedef_data.values());
         for data in all.clone().filter(filter_ptr(allowed_in)) {
-            assert!(data.generics.is_empty());
+            assert!(data.generics.is_none());
         }
 
         let allowed_in = self.fns.values();
@@ -628,9 +628,9 @@ pub struct StmtData {
     #[serde(rename = "requires-mainthreadonly")]
     pub requires_mainthreadonly: Option<bool>,
 
-    // Typedef only.
+    // Classes and typedefs
     #[serde(default)]
-    pub generics: Vec<String>,
+    pub generics: Option<Vec<String>>,
 
     // Functions only.
     #[serde(rename = "no-implementor")]

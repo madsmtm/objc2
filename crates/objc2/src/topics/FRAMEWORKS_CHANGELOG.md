@@ -51,6 +51,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed the encoding check in `NSUUID` methods.
 * Fixed the encoding of `MTLResourceID` on simulator targets.
 * **BREAKING**: Use `Result<(), Retained<NSError>>` in more methods.
+* Fixed `SCContentSharingPickerConfiguration` having generics even though it shouldn't.
 
 ## [0.3.2] - 2025-10-04
 [0.3.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.1...frameworks-0.3.2
