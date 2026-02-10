@@ -22,6 +22,11 @@ typedef.IOSurfaceRef.skipped = true
 struct.__IOSurface.skipped = true
 external.IOSurfaceRef.module = "IOSurface.IOSurfaceRef"
 
+# Fix generics
+fn.IOSurfaceCreate.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOSurfaceSetValues.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOSurfaceCopyAllValues.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
 ##
 ## Safety
 ##

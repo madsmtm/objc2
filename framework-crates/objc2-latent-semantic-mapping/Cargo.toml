@@ -23,6 +23,7 @@ objc2-core-foundation = { workspace = true, features = [
     "CFDictionary",
     "CFLocale",
     "CFStream",
+    "CFString",
     "CFURL",
 ] }
 

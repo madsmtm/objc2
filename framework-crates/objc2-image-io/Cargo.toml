@@ -65,6 +65,7 @@ unstable-darwin-objc = []
 CGImageAnimation = [
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 CGImageDestination = [
@@ -72,6 +73,7 @@ CGImageDestination = [
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 CGImageMetadata = [
@@ -79,12 +81,14 @@ CGImageMetadata = [
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
+    "objc2-core-foundation/CFString",
 ]
 CGImageProperties = []
 CGImageSource = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 ImageIOBase = []

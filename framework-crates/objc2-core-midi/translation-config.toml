@@ -29,3 +29,8 @@ fn.MIDISetupToData.arguments.1.lifetime = "out-pointer-retained"
 fn.MIDIGetSerialPortOwner.arguments.1.lifetime = "out-pointer-not-retained"
 # Docs say: The array should be released by the caller.
 fn.MIDIGetSerialPortDrivers.arguments.0.lifetime = "out-pointer-retained"
+
+# Fix property generics.
+fn.MIDIObjectGetDictionaryProperty.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.MIDIObjectSetDictionaryProperty.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.MIDIGetSerialPortDrivers.arguments.0.generics = ["CoreFoundation.CFString.CFString"]

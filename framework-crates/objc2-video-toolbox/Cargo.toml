@@ -126,9 +126,13 @@ VTCompressionProperties = []
 VTCompressionSession = [
     "bitflags",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 VTDecompressionProperties = []
-VTDecompressionSession = ["objc2-core-foundation/CFDictionary"]
+VTDecompressionSession = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 VTErrors = ["bitflags"]
 VTFrameProcessor = []
 VTFrameProcessorConfiguration = []
@@ -144,16 +148,22 @@ VTFrameProcessor_SuperResolutionScaler = []
 VTFrameProcessor_TemporalNoiseFilter = []
 VTFrameSilo = [
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
-VTHDRPerFrameMetadataGenerationSession = ["objc2-core-foundation/CFDictionary"]
+VTHDRPerFrameMetadataGenerationSession = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 VTMotionEstimationSession = [
     "bitflags",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 VTMotionEstimationSessionProperties = []
 VTMultiPassStorage = [
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 VTPixelRotationProperties = []
@@ -165,10 +175,18 @@ VTRAWProcessingProperties = []
 VTRAWProcessingSession = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
-VTSession = ["objc2-core-foundation/CFDictionary"]
-VTUtilities = ["objc2-core-foundation/CFDictionary"]
+VTSession = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
+VTUtilities = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 VTVideoEncoderList = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]

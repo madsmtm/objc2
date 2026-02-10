@@ -15,3 +15,6 @@ class.CWMutableNetworkProfile.counterpart.immutable-superclass = "CoreWLAN.CWNet
 
 # See #828: the method has a wrongly-declared return nullability.
 class.CWConfiguration.methods.networkProfiles.return.nullability = "nullable"
+
+# Fix generics
+fn.CWKeychainCopyEAPIdentityList.arguments.0.generics = ["Security.SecIdentity.SecIdentity"]

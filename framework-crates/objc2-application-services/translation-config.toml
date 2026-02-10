@@ -167,6 +167,38 @@ fn.ATSFontGetName.arguments.2.lifetime = "out-pointer-not-retained"
 fn.ATSFontGetPostScriptName.arguments.2.lifetime = "out-pointer-not-retained"
 
 ##
+## Generics
+##
+
+fn.ProcessInformationCopyDictionary.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.PasteboardCopyItemFlavors.arguments.2.generics = ["CoreFoundation.CFString.CFString"]
+fn.TranslationCreateWithSourceArray.arguments.0.generics = ["CoreFoundation.CFString.CFString"]
+fn.TranslationCreateWithSourceArray.arguments.2.generics = ["CoreFoundation.CFString.CFString"]
+fn.TranslationCreateWithSourceArray.arguments.3.generics = ["CoreFoundation.CFString.CFString", "ApplicationServices.HIServices.TranslationServices.Translation"]
+fn.AXIsProcessTrustedWithOptions.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.AXUIElementCopyAttributeNames.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.AXUIElementCopyAttributeValues.arguments.4.generics = ["CoreFoundation.CFType"]
+fn.AXUIElementCopyMultipleAttributeValues.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.AXUIElementCopyMultipleAttributeValues.arguments.3.generics = ["CoreFoundation.CFType"]
+fn.AXUIElementCopyParameterizedAttributeNames.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.AXUIElementCopyActionNames.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.PMSessionCopyOutputFormatList.arguments.2.generics = ["CoreFoundation.CFString.CFString"]
+fn.PMSessionCreatePageFormatList.arguments.2.generics = ["ApplicationServices.PMDefinitions.OpaquePMPageFormat"] # CFArrayRef of PMPageFormat
+fn.PMSessionCreatePrinterList.arguments.1.generics = ["ApplicationServices.PMDefinitions.OpaquePMPrinter"] # CFArrayRef of PMPrinter
+fn.PMPrintSettingsCopyAsDictionary.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.PMPrintSettingsCopyKeys.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.PMServerCreatePrinterList.arguments.1.generics = ["ApplicationServices.PMDefinitions.OpaquePMPrinter"] # CFArrayRef of PMPrinter
+fn.PMServerLaunchPrinterBrowser.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Probably?
+fn.PMPrinterCopyPresets.arguments.1.generics = ["ApplicationServices.PMDefinitions.OpaquePMPreset"] # CFArrayRef of PMPreset
+fn.PMPrinterGetMimeTypes.arguments.2.generics = ["CoreFoundation.CFString.CFString"]
+fn.PMPrinterGetPaperList.arguments.1.generics = ["ApplicationServices.PMDefinitions.OpaquePMPaper"] # CFArrayRef of PMPaper
+fn.PMPresetGetAttributes.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Probably?
+fn.PMWorkflowCopyItems.arguments.0.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.PMPrinterSendCommand.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Reserved, though probably this.
+fn.PMPrinterCopyState.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.PMCopyAvailablePPDs.arguments.1.generics = ["CoreFoundation.CFURL.CFURL"]
+
+##
 ## Safety
 ##
 

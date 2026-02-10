@@ -6,3 +6,29 @@ macos = "10.5"
 maccatalyst = "13.0"
 ios = "4.0"
 visionos = "1.0"
+
+##
+## Generics
+##
+
+# QLGenerator
+fn.QLThumbnailRequestCopyOptions.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLThumbnailRequestSetImage.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLThumbnailRequestSetImageWithData.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLThumbnailRequestCreateContext.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLThumbnailRequestSetImageAtURL.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLThumbnailRequestSetThumbnailWithDataRepresentation.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLThumbnailRequestSetThumbnailWithDataRepresentation.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLThumbnailRequestSetThumbnailWithURLRepresentation.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLThumbnailRequestSetThumbnailWithURLRepresentation.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLPreviewRequestCopyOptions.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLPreviewRequestSetDataRepresentation.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLPreviewRequestSetURLRepresentation.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLPreviewRequestCreateContext.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLPreviewRequestCreatePDFContext.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLPreviewRequestCreatePDFContext.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.QLThumbnailImageCreate.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.QLThumbnailCreate.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.QLThumbnailCopyOptions.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]

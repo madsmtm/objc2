@@ -69,16 +69,19 @@ QLGenerator = [
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFPlugInCOM",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
     "objc2-core-foundation/CFUUID",
 ]
 QLThumbnail = [
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 QLThumbnailImage = [
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]

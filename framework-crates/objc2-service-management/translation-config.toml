@@ -4,3 +4,8 @@ required-crates = []
 custom-lib-rs = true
 macos = "10.6"
 maccatalyst = "13.0"
+
+# Set job dictionary generics. A bit unsure
+fn.SMJobCopyDictionary.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SMCopyAllJobDictionaries.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.SMJobSubmit.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]

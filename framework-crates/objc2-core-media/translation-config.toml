@@ -36,3 +36,51 @@ fn.CMClockMakeHostTimeFromSystemUnits.renamed = "make_host_time_from_system_unit
 
 # Translated as "new_empty", but it's common in Rust to just use "empty".
 fn.CMTimeMappingMakeEmpty.renamed = "empty"
+
+##
+## Generics
+##
+
+# Intentionally opaque
+fn.CMTimeCopyAsDictionary.return.generics = []
+fn.CMTimeMakeFromDictionary.arguments.0.generics = []
+fn.CMTimeRangeCopyAsDictionary.return.generics = []
+fn.CMTimeRangeMakeFromDictionary.arguments.0.generics = []
+fn.CMTimeMappingCopyAsDictionary.return.generics = []
+fn.CMTimeMappingMakeFromDictionary.arguments.0.generics = []
+fn.CMTagCopyAsDictionary.return.generics = []
+fn.CMTagMakeFromDictionary.arguments.0.generics = []
+fn.CMTagCollectionCopyAsDictionary.return.generics = []
+fn.CMTagCollectionCreateFromDictionary.arguments.0.generics = []
+
+fn.CMFormatDescriptionCreate.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+fn.CMFormatDescriptionGetExtensions.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+fn.CMAudioFormatDescriptionCreate.arguments.6.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+fn.CMAudioFormatDescriptionCreateSummary.arguments.1.generics = ["CoreMedia.CMFormatDescription.CMAudioFormatDescription"]
+fn.CMVideoFormatDescriptionCreate.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+fn.CMVideoFormatDescriptionCreateFromHEVCParameterSets.arguments.5.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+fn.CMVideoFormatDescriptionGetExtensionKeysCommonWithImageBuffers.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CMVideoFormatDescriptionCopyTagCollectionArray.arguments.1.generics = ["CoreMedia.CMTagCollection.CMTagCollection"]
+fn.CMMuxedFormatDescriptionCreate.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+fn.CMTimeCodeFormatDescriptionCreate.arguments.5.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+fn.CMMetadataFormatDescriptionCreateWithKeys.arguments.2.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.CMMetadataFormatDescriptionCreateWithMetadataSpecifications.arguments.2.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.CMMetadataFormatDescriptionCreateWithMetadataFormatDescriptionAndMetadataSpecifications.arguments.2.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.CMMetadataFormatDescriptionGetKeyWithLocalID.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CMMetadataFormatDescriptionGetIdentifiers.return.generics = ["CoreFoundation.CFString.CFString"] # I think
+
+fn.CMCopyDictionaryOfAttachments.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CMSetAttachments.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CMSampleBufferGetSampleAttachmentsArray.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+
+fn.CMTaggedBufferGroupCreate.arguments.1.generics = ["CoreMedia.CMTagCollection.CMTagCollection"]
+fn.CMTaggedBufferGroupCreate.arguments.2.generics = ["CoreFoundation.CFType"] # CMSampleBuffer or CVPixelBuffer
+fn.CMTaggedBufferGroupCreateCombined.arguments.1.generics = ["CoreMedia.CMTaggedBufferGroup.CMTaggedBufferGroup"]
+fn.CMTaggedBufferGroupFormatDescriptionCreateForTaggedBufferGroupWithExtensions.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+
+fn.CMMemoryPoolCreate.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CMMetadataDataTypeRegistryRegisterDataType.arguments.2.generics = ["CoreFoundation.CFString.CFString"]
+fn.CMMetadataDataTypeRegistryGetConformingDataTypes.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CMMetadataDataTypeRegistryGetBaseDataTypes.return.generics = ["CoreFoundation.CFString.CFString"]

@@ -54,3 +54,30 @@ const.kBluetoothHCIEventMaskUserPasskeyNotificationEvent.skipped = true
 const.kBluetoothHCIEventMaskKeypressNotificationEvent.skipped = true
 const.kBluetoothHCIEventMaskRemoteHostSupportedFeaturesNotificationEvent.skipped = true
 const.kBluetoothHCIEventMaskLEMetaEvent.skipped = true
+
+##
+## Generics
+##
+
+fn.IOBluetoothAddSCOAudioDevice.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Probably
+
+fn.OBEXGetHeaders.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXHeadersToBytes.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddNameHeader.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddDescriptionHeader.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddCountHeader.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddTime4ByteHeader.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddLengthHeader.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddTypeHeader.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddTimeISOHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddTargetHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddHTTPHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddBodyHeader.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddWhoHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddConnectionIDHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddApplicationParameterHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddByteSequenceHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddObjectClassHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddAuthorizationChallengeHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddAuthorizationResponseHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.OBEXAddUserDefinedHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]

@@ -162,6 +162,8 @@ Appearance = []
 CarbonEvents = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 CarbonEventsCore = ["objc2-core-foundation/CFCGTypes"]
 ControlDefinitions = []
@@ -183,8 +185,10 @@ HIImageViews = []
 HILittleArrows = []
 HIMenuView = []
 HIObject = [
+    "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFBundle",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 HIPopupButton = []
 HIProgressViews = []
@@ -232,6 +236,7 @@ TextEdit = []
 TextInputSources = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 TextServices = []

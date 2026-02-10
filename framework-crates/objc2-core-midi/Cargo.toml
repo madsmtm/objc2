@@ -25,6 +25,7 @@ objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFDictionary",
     "CFPlugInCOM",
     "CFRunLoop",
+    "CFString",
     "CFUUID",
 ] }
 objc2-foundation = { workspace = true, optional = true, features = [

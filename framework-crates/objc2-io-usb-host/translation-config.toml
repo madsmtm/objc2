@@ -23,3 +23,7 @@ const.IOUSBHostCIEndpointSetNextTransferCommandData1Address.skipped = true
 const.IOUSBHostCISetupTransferData1wIndex.skipped = true
 const.IOUSBHostCISetupTransferData1wLength.skipped = true
 const.IOUSBHostCITransferCompletionMessageData1TransferStructure.skipped = true
+
+# Fix generics.
+class.IOUSBHostDevice.methods."createMatchingDictionaryWithVendorID:productID:bcdDevice:deviceClass:deviceSubclass:deviceProtocol:speed:productIDArray:".return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+class.IOUSBHostInterface.methods."createMatchingDictionaryWithVendorID:productID:bcdDevice:interfaceNumber:configurationValue:interfaceClass:interfaceSubclass:interfaceProtocol:speed:productIDArray:".return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]

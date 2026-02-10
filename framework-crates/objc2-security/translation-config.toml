@@ -180,6 +180,119 @@ typedef.SSLCipherSuite.skipped = true
 struct.CSSM_TP_APPLE_EVIDENCE_INFO.skipped = true
 
 ##
+## Generics
+##
+
+fn.SecAccessCreate.arguments.1.generics = ["Security.SecBase.SecTrustedApplication"]
+fn.SecAccessCreateWithOwnerAndACL.arguments.3.generics = ["Security.SecBase.SecACL"] # Likely
+fn.SecAccessCopyOwnerAndACL.arguments.4.generics = ["Security.SecBase.SecACL"]
+fn.SecAccessCopyACLList.arguments.1.generics = ["Security.SecBase.SecACL"]
+fn.SecAccessCopySelectedACLList.arguments.2.generics = ["Security.SecBase.SecACL"] # Likely
+fn.SecAccessCopyMatchingACLList.return.generics = ["Security.SecBase.SecACL"] # Likely
+
+fn.SecACLCreateFromSimpleContents.arguments.1.generics = ["Security.SecBase.SecTrustedApplication"]
+fn.SecACLCreateWithSimpleContents.arguments.1.generics = ["Security.SecBase.SecTrustedApplication"]
+fn.SecACLCopySimpleContents.arguments.1.generics = ["Security.SecBase.SecTrustedApplication"]
+fn.SecACLCopyContents.arguments.1.generics = ["Security.SecBase.SecTrustedApplication"]
+fn.SecACLSetSimpleContents.arguments.1.generics = ["Security.SecBase.SecTrustedApplication"] # Likely
+fn.SecACLSetContents.arguments.1.generics = ["Security.SecBase.SecTrustedApplication"] # Likely
+fn.SecACLCopyAuthorizations.return.generics = ["CoreFoundation.CFString.CFString"] # Apparently
+fn.SecACLUpdateAuthorizations.arguments.1.generics = ["CoreFoundation.CFString.CFString"] # Apparently
+
+fn.SecCertificateCopyEmailAddresses.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.SecCertificateCopyPreferred.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.SecCertificateSetPreferred.arguments.2.generics = ["CoreFoundation.CFString.CFString"]
+fn.SecCertificateCopyValues.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.SecCertificateCopyValues.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.SecCodeCopyGuestWithAttributes.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecCodeCopySigningInformation.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecStaticCodeCreateWithPathAndAttributes.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.SecHostCreateGuest.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecHostSetGuestStatus.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.SecIdentityCopyPreference.arguments.2.generics = ["CoreFoundation.CFData.CFData"]
+fn.SecIdentityCopyPreferred.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.SecIdentityCopyPreferred.arguments.2.generics = ["CoreFoundation.CFData.CFData"]
+fn.SecIdentitySetPreferred.arguments.2.generics = ["CoreFoundation.CFString.CFString"]
+
+fn.SecItemImport.arguments.7.generics = ["CoreFoundation.CFType"] # SecCertificate or SecKey or SecIdentity
+fn.SecPKCS12Import.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecPKCS12Import.arguments.2.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+
+fn.SecItemCopyMatching.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecItemAdd.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecItemUpdate.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecItemUpdate.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecItemDelete.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.SecKeyGenerateSymmetric.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecKeyCreateFromData.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecKeyDeriveFromPassword.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecKeyWrapSymmetric.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecKeyUnwrapSymmetric.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecKeyGeneratePair.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecKeyCreateRandomKey.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecKeyCreateWithData.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecKeyCopyAttributes.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecKeyCopyKeyExchangeResult.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.SecKeychainCopySearchList.arguments.0.generics = ["Security.SecBase.SecKeychain"]
+fn.SecKeychainSetSearchList.arguments.0.generics = ["Security.SecBase.SecKeychain"]
+fn.SecKeychainCopyDomainSearchList.arguments.1.generics = ["Security.SecBase.SecKeychain"]
+fn.SecKeychainSetDomainSearchList.arguments.1.generics = ["Security.SecBase.SecKeychain"]
+fn.SecKeychainItemImport.arguments.7.generics = ["CoreFoundation.CFType"] # SecCertificate or SecKey or SecIdentity
+
+fn.SecPolicyCopyProperties.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecPolicyCreateWithProperties.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecPolicySetProperties.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.SecTaskCopyValuesForEntitlements.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.SecTaskCopyValuesForEntitlements.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Probably
+
+# Used for roundtrips, must be property list.
+fn.SecTransformCreateFromExternalRepresentation.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+fn.SecTransformCopyExternalRepresentation.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"]
+
+fn.SecTrustCopyPolicies.arguments.1.generics = ["Security.SecBase.SecPolicy"]
+fn.SecTrustSetAnchorCertificates.arguments.1.generics = ["Security.SecBase.SecCertificate"]
+fn.SecTrustCopyCustomAnchorCertificates.arguments.1.generics = ["Security.SecBase.SecCertificate"]
+fn.SecTrustCopyProperties.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.SecTrustCopyResult.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SecTrustSetSignedCertificateTimestamps.arguments.1.generics = ["CoreFoundation.CFData.CFData"]
+fn.SecTrustCopyCertificateChain.return.generics = ["Security.SecBase.SecCertificate"]
+fn.SecTrustGetResult.arguments.2.generics = ["Security.SecBase.SecCertificate"] # Likely
+fn.SecTrustCopyAnchorCertificates.arguments.0.generics = ["Security.SecBase.SecCertificate"]
+
+fn.SecTrustSettingsCopyTrustSettings.arguments.2.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.SecTrustSettingsCopyCertificates.arguments.1.generics = ["Security.SecBase.SecCertificate"]
+
+
+fn.AuthorizationRightGet.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CMSDecoderCopyAllCerts.arguments.1.generics = ["Security.SecBase.SecCertificate"]
+fn.CMSDecoderCopySignerTimestampCertificates.arguments.2.generics = ["Security.SecBase.SecCertificate"]
+fn.CMSEncoderCopySigners.arguments.1.generics = ["Security.SecBase.SecIdentity"]
+fn.CMSEncoderCopyRecipients.arguments.1.generics = ["Security.SecBase.SecCertificate"]
+fn.CMSEncoderCopySupportingCerts.arguments.1.generics = ["Security.SecBase.SecCertificate"]
+
+fn.SecureDownloadCopyURLs.arguments.1.generics = ["CoreFoundation.CFURL.CFURL"]
+
+fn.SSLSetCertificate.arguments.1.generics = ["CoreFoundation.CFType"] # SecCertificate or SecIdentity
+fn.SSLSetTrustedRoots.arguments.1.generics = ["Security.SecBase.SecCertificate"]
+fn.SSLCopyTrustedRoots.arguments.1.generics = ["Security.SecBase.SecCertificate"]
+fn.SSLCopyPeerCertificates.arguments.1.generics = ["Security.SecBase.SecCertificate"]
+fn.SSLSetALPNProtocols.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.SSLCopyALPNProtocols.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.SSLSetEncryptionCertificate.arguments.1.generics = ["Security.SecBase.SecCertificate"]
+fn.SSLCopyCertificateAuthorities.arguments.1.generics = ["Security.SecBase.SecCertificate"]
+fn.SSLCopyDistinguishedNames.arguments.1.generics = ["CoreFoundation.CFData.CFData"]
+
+fn.sec_identity_create_with_certificates.arguments.1.generics = ["Security.SecBase.SecCertificate"]
+fn.sec_identity_copy_certificates_ref.return.generics = ["Security.SecBase.SecCertificate"]
+
+##
 ## Fixing nullability, lifetime and pointer bounds.
 ##
 

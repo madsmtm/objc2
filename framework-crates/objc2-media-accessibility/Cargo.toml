@@ -75,10 +75,14 @@ objc2-foundation = ["dep:objc2-foundation"]
 objc2-io-surface = ["dep:objc2-io-surface"]
 unstable-darwin-objc = []
 
-MAAudibleMedia = ["objc2-core-foundation/CFArray"]
+MAAudibleMedia = [
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFString",
+]
 MACaptionAppearance = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFString",
 ]
 MADefinitions = []
 MAFlashingLightsProcessing = ["objc2-core-foundation/CFDate"]

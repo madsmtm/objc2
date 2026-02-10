@@ -22,6 +22,7 @@ objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFArray",
     "CFDictionary",
     "CFError",
+    "CFString",
 ] }
 objc2-foundation = { workspace = true, optional = true, features = [
     "NSError",

@@ -24,6 +24,49 @@ fn.ODNodeCreateRecord.renamed = "create_record"
 fn.ODNodeCopyRecord.renamed = "copy_record"
 
 ##
+## Generics.
+##
+
+fn.ODNodeCopySubnodeNames.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.ODNodeCopyUnreachableSubnodeNames.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.ODNodeCopyDetails.arguments.1.generics = ["OpenDirectory.CFOpenDirectory.CFOpenDirectoryConstants.ODAttributeType"]
+fn.ODNodeCopyDetails.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFArray.CFArray<CoreFoundation.CFType>"]
+fn.ODNodeCopySupportedRecordTypes.return.generics = ["OpenDirectory.CFOpenDirectory.CFOpenDirectoryConstants.ODRecordType"]
+fn.ODNodeCopySupportedAttributes.return.generics = ["OpenDirectory.CFOpenDirectory.CFOpenDirectoryConstants.ODAttributeType"]
+fn.ODNodeSetCredentialsExtended.arguments.3.generics = ["CoreFoundation.CFType"] # CFString or CFData
+fn.ODNodeSetCredentialsExtended.arguments.4.generics = ["CoreFoundation.CFData.CFData"]
+fn.ODNodeCreateRecord.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODNodeCopyPolicies.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODNodeCopySupportedPolicies.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODNodeSetPolicies.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODNodeAddAccountPolicy.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODNodeRemoveAccountPolicy.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODNodeSetAccountPolicies.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODNodeCopyAccountPolicies.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.ODQueryCopyResults.return.generics = ["OpenDirectory.ODRecord.ODRecord"]
+
+fn.ODRecordSetNodeCredentialsExtended.arguments.3.generics = ["CoreFoundation.CFType"] # CFString or CFData
+fn.ODRecordSetNodeCredentialsExtended.arguments.4.generics = ["CoreFoundation.CFData.CFData"]
+fn.ODRecordVerifyPasswordExtended.arguments.2.generics = ["CoreFoundation.CFType"] # CFString or CFData
+fn.ODRecordVerifyPasswordExtended.arguments.3.generics = ["CoreFoundation.CFData.CFData"]
+fn.ODRecordCopyValues.return.generics = ["CoreFoundation.CFType"] # CFString or CFData
+fn.ODRecordCopyDetails.arguments.1.generics = ["OpenDirectory.CFOpenDirectory.CFOpenDirectoryConstants.ODAttributeType"]
+fn.ODRecordCopyDetails.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODRecordCopyPasswordPolicy.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODRecordCopyPolicies.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODRecordCopyEffectivePolicies.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODRecordCopySupportedPolicies.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODRecordSetPolicies.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODRecordAddAccountPolicy.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODRecordRemoveAccountPolicy.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODRecordSetAccountPolicies.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODRecordCopyAccountPolicies.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.ODSessionCreate.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ODSessionCopyNodeNames.return.generics = ["CoreFoundation.CFString.CFString"]
+
+##
 ## Nullability, lifetime and pointer bounds.
 ##
 

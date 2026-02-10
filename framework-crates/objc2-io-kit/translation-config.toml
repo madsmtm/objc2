@@ -243,6 +243,67 @@ const.kIONetworkLinkActive.use-value = true
 const.kIONetworkLinkNoNetworkChange.use-value = true
 
 ##
+## Generics.
+##
+
+# TODO
+fn.IOServiceAddNotification.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOServiceMatchPropertyTable.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IORegistryEntryCreateCFProperties.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOServiceMatching.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOServiceNameMatching.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOBSDNameMatching.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOOpenFirmwarePathMatching.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IORegistryEntryIDMatching.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+# Same as CFURL methods.
+fn.IOURLCreateDataAndPropertiesFromResource.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOURLCreateDataAndPropertiesFromResource.arguments.4.generics = ["CoreFoundation.CFString.CFString"]
+fn.IOURLWriteDataAndPropertiesToResource.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.IODisplayCreateInfoDictionary.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IODisplayMatchDictionaries.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IODisplayMatchDictionaries.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+# IODisplaySetFloatParameter and IODisplaySetIntegerParameter converts to CFNumber before adding to the dict.
+fn.IODisplaySetParameters.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IODisplayCopyParameters.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IODisplayCopyFloatParameters.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.IOHIDDeviceCopyMatchingElements.return.generics = ["IOKit.hid.IOHIDElement"]
+fn.IOHIDDeviceCopyMatchingElements.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOHIDDeviceSetInputValueMatching.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOHIDDeviceSetInputValueMatchingMultiple.arguments.1.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.IOHIDDeviceSetValueMultiple.arguments.1.generics = ["IOKit.hid.IOHIDElement", "IOKit.hid.IOHIDValue"]
+fn.IOHIDDeviceSetValueMultipleWithCallback.arguments.1.generics = ["IOKit.hid.IOHIDElement", "IOKit.hid.IOHIDValue"]
+fn.IOHIDDeviceCopyValueMultiple.arguments.1.generics = ["IOKit.hid.IOHIDElement"]
+fn.IOHIDDeviceCopyValueMultiple.arguments.2.generics = ["IOKit.hid.IOHIDElement", "IOKit.hid.IOHIDValue"]
+fn.IOHIDDeviceCopyValueMultipleWithCallback.arguments.1.generics = ["IOKit.hid.IOHIDElement"]
+fn.IOHIDDeviceCopyValueMultipleWithCallback.arguments.2.generics = ["IOKit.hid.IOHIDElement", "IOKit.hid.IOHIDValue"]
+fn.IOHIDElementCreateWithDictionary.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOHIDElementGetChildren.return.generics = ["IOKit.hid.IOHIDElement"]
+fn.IOHIDElementCopyAttached.return.generics = ["IOKit.hid.IOHIDElement"]
+fn.IOHIDManagerSetDeviceMatching.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOHIDManagerSetDeviceMatchingMultiple.arguments.1.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.IOHIDManagerCopyDevices.return.generics = ["IOKit.hid.IOHIDDevice"]
+fn.IOHIDManagerSetInputValueMatching.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOHIDManagerSetInputValueMatchingMultiple.arguments.1.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.IOHIDEventSystemClientCopyServices.return.generics = ["IOKit.hidsystem.IOHIDServiceClient"]
+fn.IOHIDUserDeviceCreateWithProperties.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.IOPSCopyPowerSourcesList.return.generics = ["CoreFoundation.CFType"]
+fn.IOPSGetPowerSourceDescription.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOPSCopyExternalPowerAdapterDetails.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.IOPMCopyBatteryInfo.arguments.1.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.IOPMCopyScheduledPowerEvents.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.IOPMAssertionCreateWithProperties.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOPMAssertionCopyProperties.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOPMCopyAssertionsByProcess.arguments.0.generics = ["CoreFoundation.CFNumber.CFNumber", "CoreFoundation.CFArray.CFArray<CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>>"]
+fn.IOPMCopyAssertionsStatus.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOPMCopyCPUPowerStatus.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOCopySystemLoadAdvisoryDetailed.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+##
 ## Lifetime
 ##
 

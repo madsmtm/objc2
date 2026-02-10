@@ -7,3 +7,27 @@ maccatalyst = "13.0"
 ios = "2.0"
 tvos = "9.0"
 visionos = "1.0"
+
+##
+## Generics
+##
+
+fn.CFFTPCreateParsedResourceListing.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CFHostGetAddressing.return.generics = ["CoreFoundation.CFData.CFData"]
+fn.CFHostGetNames.return.generics = ["CoreFoundation.CFString.CFString"]
+
+fn.CFHTTPMessageApplyCredentialDictionary.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFHTTPAuthenticationCopyDomains.return.generics = ["CoreFoundation.CFURL.CFURL"] # Probably
+
+fn.CFHTTPMessageCopyAllHeaderFields.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Maybe CFString value?
+
+fn.CFNetServiceGetAddressing.return.generics = ["CoreFoundation.CFData.CFData"]
+fn.CFNetServiceCreateDictionaryWithTXTData.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFData.CFData"]
+# Dict values can also be CFString for convenience, but let's not support that to allow passing ^ directly to this.
+fn.CFNetServiceCreateTXTDataWithDictionary.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFData.CFData"]
+
+fn.CFNetworkCopySystemProxySettings.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFNetworkCopyProxiesForURL.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CFNetworkCopyProxiesForURL.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.CFNetworkCopyProxiesForAutoConfigurationScript.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]

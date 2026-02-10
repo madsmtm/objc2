@@ -58,6 +58,7 @@ ColorSyncCMM = [
 ]
 ColorSyncDevice = [
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFUUID",
 ]
 ColorSyncProfile = [
@@ -65,10 +66,12 @@ ColorSyncProfile = [
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
     "objc2-core-foundation/CFUUID",
 ]
 ColorSyncTransform = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]

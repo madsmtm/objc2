@@ -70,6 +70,16 @@ const.kTXNQDFontColorAttributeSize.skipped = true
 const._KeyboardDispatch.skipped = true
 
 ##
+## Generics
+##
+
+fn.HIObjectCopyDelegates.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFArray.CFArray<Carbon.HIToolbox.HIObject.HIObject>"]
+fn.CopySymbolicHotKeys.arguments.0.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.TISCreateInputSourceList.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.TISCreateInputSourceList.return.generics = ["Carbon.HIToolbox.TextInputSources.TISInputSource"]
+fn.TISCreateASCIICapableInputSourceList.return.generics = ["Carbon.HIToolbox.TextInputSources.TISInputSource"]
+
+##
 ## Nullability, lifetime and pointer bounds.
 ##
 

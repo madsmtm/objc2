@@ -6,3 +6,10 @@ maccatalyst = "13.0"
 ios = "17.0"
 tvos = "17.0"
 visionos = "1.0"
+
+# Fix generics.
+fn.MACaptionAppearanceDidDisplayCaptions.arguments.0.generics = ["CoreFoundation.CFType"] # CFString or CFAttributedString
+fn.MACaptionAppearanceCopySelectedLanguages.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.MACaptionAppearanceCopyProfileIDs.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.MAAudibleMediaCopyPreferredCharacteristics.return.generics = ["CoreFoundation.CFString.CFString"]

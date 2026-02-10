@@ -17,3 +17,41 @@ const.IMAGEIO_PNG_FILTER_UP.skipped = false
 const.IMAGEIO_PNG_FILTER_AVG.skipped = false
 const.IMAGEIO_PNG_FILTER_PAETH.skipped = false
 const.IMAGEIO_PNG_ALL_FILTERS.skipped = false
+
+##
+## Generics
+##
+
+fn.CGAnimateImageAtURLWithBlock.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGAnimateImageDataWithBlock.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CGImageDestinationCopyTypeIdentifiers.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CGImageDestinationCreateWithData.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Future
+fn.CGImageDestinationCreateWithDataConsumer.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Future
+fn.CGImageDestinationCreateWithURL.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Future
+fn.CGImageDestinationSetProperties.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageDestinationAddImage.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageDestinationAddImageFromSource.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageDestinationAddImageAndMetadata.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageDestinationCopyImageSource.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageDestinationAddAuxiliaryDataInfo.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CGImageMetadataTagCopyQualifiers.return.generics = ["ImageIO.CGImageMetadata.CGImageMetadataTag"]
+fn.CGImageMetadataCopyTags.return.generics = ["ImageIO.CGImageMetadata.CGImageMetadataTag"]
+fn.CGImageMetadataEnumerateTagsUsingBlock.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageMetadataCreateXMPData.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Future
+
+fn.CGImageSourceCopyTypeIdentifiers.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CGImageSourceCreateWithData.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageSourceCreateWithDataProvider.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageSourceCreateWithURL.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageSourceCopyProperties.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageSourceCopyProperties.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageSourceCopyPropertiesAtIndex.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageSourceCopyPropertiesAtIndex.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageSourceCopyMetadataAtIndex.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageSourceCreateImageAtIndex.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageSourceCreateThumbnailAtIndex.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageSourceCreateIncremental.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageSourceCopyAuxiliaryDataInfoAtIndex.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CGImageSourceSetAllowableTypes.arguments.0.generics = ["CoreFoundation.CFString.CFString"]

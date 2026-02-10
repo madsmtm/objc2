@@ -13,3 +13,48 @@ const.kVTDecodeFrame_EnableAsynchronousDecompression.renamed = "Frame_EnableAsyn
 const.kVTDecodeFrame_DoNotOutputFrame.renamed = "Frame_DoNotOutputFrame"
 const.kVTDecodeFrame_1xRealTimePlayback.renamed = "Frame_1xRealTimePlayback"
 const.kVTDecodeFrame_EnableTemporalProcessing.renamed = "Frame_EnableTemporalProcessing"
+
+##
+## Generics
+##
+
+fn.VTSessionCopySupportedPropertyDictionary.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTSessionSetProperties.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTSessionCopySerializableProperties.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.VTCompressionSessionCreate.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTCompressionSessionCreate.arguments.5.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTCompressionSessionEncodeFrame.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTCompressionSessionEncodeFrameWithOutputHandler.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTCompressionSessionEncodeMultiImageFrame.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTCompressionSessionEncodeMultiImageFrameWithOutputHandler.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.VTDecompressionSessionCreate.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTDecompressionSessionCreate.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTDecompressionSessionDecodeFrameWithOptions.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTDecompressionSessionDecodeFrameWithOptionsAndOutputHandler.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.VTFrameSiloCreate.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Reserved
+
+fn.VTMultiPassStorageCreate.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.VTCopyVideoEncoderList.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTCopyVideoEncoderList.arguments.1.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.VTCopySupportedPropertyDictionaryForEncoder.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTCopySupportedPropertyDictionaryForEncoder.arguments.5.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.VTCreateCGImageFromCVPixelBuffer.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Pass NULL
+fn.VTCopyVideoDecoderExtensionProperties.arguments.1.generics = ["VideoToolbox.VTUtilities.VTExtensionPropertiesKey", "CoreFoundation.CFType"]
+fn.VTCopyRAWProcessorExtensionProperties.arguments.1.generics = ["VideoToolbox.VTUtilities.VTExtensionPropertiesKey", "CoreFoundation.CFType"]
+
+fn.VTRAWProcessingSessionCreate.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTRAWProcessingSessionCreate.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTRAWProcessingSessionProcessFrame.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Pass NULL
+fn.VTRAWProcessingSessionCopyProcessingParameters.arguments.1.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.VTRAWProcessingSessionSetProcessingParameters.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.VTHDRPerFrameMetadataGenerationSessionCreate.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.VTMotionEstimationSessionCreate.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTMotionEstimationSessionCopySourcePixelBufferAttributes.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.VTMotionEstimationSessionEstimateMotionVectors.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Future

@@ -964,7 +964,27 @@ pub struct ItemGeneric {
 impl FromStr for ItemGeneric {
     type Err = Box<dyn Error>;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if let Some((id, generics)) = s.rsplit_once('<') {
+        fn split_top_level_commas(s: &str) -> Vec<&str> {
+            let mut parts = Vec::new();
+            let mut depth = 0usize;
+            let mut start = 0;
+
+            for (i, c) in s.char_indices() {
+                match c {
+                    '<' => depth += 1,
+                    '>' => depth = depth.saturating_sub(1),
+                    ',' if depth == 0 => {
+                        parts.push(s[start..i].trim());
+                        start = i + 1;
+                    }
+                    _ => {}
+                }
+            }
+            parts.push(s[start..].trim());
+            parts
+        }
+
+        if let Some((id, generics)) = s.split_once('<') {
             let (generics, rest) = generics
                 .rsplit_once('>')
                 .ok_or_else(|| std::io::Error::other("missing closing >"))?;
@@ -973,10 +993,9 @@ impl FromStr for ItemGeneric {
             }
             Ok(Self {
                 id: ItemIdentifier::from_str(id)?,
-                // Simplistic, only handles one level
-                generics: generics
-                    .split(",")
-                    .map(|generic| generic.trim().parse::<ItemGeneric>())
+                generics: split_top_level_commas(generics)
+                    .into_iter()
+                    .map(|g| g.parse::<ItemGeneric>())
                     .collect::<Result<Vec<_>, _>>()?,
             })
         } else {
@@ -1011,5 +1030,71 @@ impl<'de> de::Deserialize<'de> for ItemGeneric {
         }
 
         deserializer.deserialize_str(ItemGenericVisitor)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn item_generic_parse() {
+        assert_eq!(
+            ItemGeneric::from_str("Foo.Bar").unwrap(),
+            ItemGeneric {
+                id: ItemIdentifier::from_str("Foo.Bar").unwrap(),
+                generics: vec![],
+            }
+        );
+
+        assert_eq!(
+            ItemGeneric::from_str("Foo.Bar<X.Y.Z, A.B.C>").unwrap(),
+            ItemGeneric {
+                id: ItemIdentifier::from_str("Foo.Bar").unwrap(),
+                generics: vec![
+                    ItemGeneric {
+                        id: ItemIdentifier::from_str("X.Y.Z").unwrap(),
+                        generics: vec![],
+                    },
+                    ItemGeneric {
+                        id: ItemIdentifier::from_str("A.B.C").unwrap(),
+                        generics: vec![],
+                    },
+                ],
+            }
+        );
+
+        assert_eq!(
+            ItemGeneric::from_str(
+                "Foo.Bar<X.Y.Z, Inner.Item<With.Generic, Second.Generic>, A.B.C>"
+            )
+            .unwrap(),
+            ItemGeneric {
+                id: ItemIdentifier::from_str("Foo.Bar").unwrap(),
+                generics: vec![
+                    ItemGeneric {
+                        id: ItemIdentifier::from_str("X.Y.Z").unwrap(),
+                        generics: vec![],
+                    },
+                    ItemGeneric {
+                        id: ItemIdentifier::from_str("Inner.Item").unwrap(),
+                        generics: vec![
+                            ItemGeneric {
+                                id: ItemIdentifier::from_str("With.Generic").unwrap(),
+                                generics: vec![],
+                            },
+                            ItemGeneric {
+                                id: ItemIdentifier::from_str("Second.Generic").unwrap(),
+                                generics: vec![],
+                            }
+                        ],
+                    },
+                    ItemGeneric {
+                        id: ItemIdentifier::from_str("A.B.C").unwrap(),
+                        generics: vec![],
+                    },
+                ],
+            }
+        );
     }
 }

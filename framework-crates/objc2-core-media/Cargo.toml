@@ -93,7 +93,10 @@ objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-video = ["dep:objc2-core-video"]
 unstable-darwin-objc = []
 
-CMAttachment = ["objc2-core-foundation/CFDictionary"]
+CMAttachment = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 CMAudioClock = []
 CMAudioDeviceClock = []
 CMBase = []
@@ -103,14 +106,24 @@ CMFormatDescription = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFPropertyList",
+    "objc2-core-foundation/CFString",
 ]
 CMFormatDescriptionBridge = ["objc2-core-foundation/CFString"]
-CMMemoryPool = ["objc2-core-foundation/CFDictionary"]
+CMMemoryPool = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 CMMetadata = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFData",
+    "objc2-core-foundation/CFString",
 ]
-CMSampleBuffer = ["objc2-core-foundation/CFArray"]
+CMSampleBuffer = [
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 CMSimpleQueue = []
 CMSync = ["objc2-core-foundation/CFRunLoop"]
 CMTag = [
@@ -124,6 +137,8 @@ CMTagCollection = [
 CMTaggedBufferGroup = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFPropertyList",
+    "objc2-core-foundation/CFString",
 ]
 CMTextMarkup = []
 CMTime = [

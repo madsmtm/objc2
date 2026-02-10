@@ -23,3 +23,14 @@ const.kDAReturnNotPrivileged.use-value = true
 const.kDAReturnNotReady.use-value = true
 const.kDAReturnNotWritable.use-value = true
 const.kDAReturnUnsupported.use-value = true
+
+# Fix generics
+fn.DADiskCopyDescription.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.DARegisterDiskAppearedCallback.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.DARegisterDiskDescriptionChangedCallback.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.DARegisterDiskDescriptionChangedCallback.arguments.2.generics = ["CoreFoundation.CFString.CFString"]
+fn.DARegisterDiskDisappearedCallback.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.DARegisterDiskMountApprovalCallback.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.DARegisterDiskUnmountApprovalCallback.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.DARegisterDiskEjectApprovalCallback.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.DARegisterDiskPeekCallback.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]

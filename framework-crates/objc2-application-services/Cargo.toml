@@ -160,6 +160,7 @@ AXUIElement = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFString",
 ]
 AXValue = []
 AXValueConstants = []
@@ -176,6 +177,7 @@ PMCore = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 PMDefinitions = []
@@ -187,10 +189,14 @@ Pasteboard = [
     "bitflags",
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFData",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 PrintCore = []
-Processes = ["objc2-core-foundation/CFDictionary"]
+Processes = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 QD = []
 QDAvailability = []
 Quickdraw = []
@@ -200,6 +206,7 @@ TranslationServices = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 UniversalAccess = ["objc2-core-foundation/CFCGTypes"]

@@ -156,6 +156,99 @@ fn.CSDiskSpaceStartRecovery.arguments.3.lifetime = "out-pointer-retained"
 fn.InvokeIndexToUCStringUPP.arguments.3.lifetime = "out-pointer-retained"
 
 ##
+## Generics
+##
+
+fn.AERemoteProcessResolverGetProcesses.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+
+fn.CSIdentityGetAliases.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.CSIdentityQueryCopyResults.return.generics = ["CoreServices.OSServices.CSIdentity.CSIdentity"]
+
+fn.FSFileOperationCopyStatus.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Probably?
+fn.FSPathFileOperationCopyStatus.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Probably?
+
+fn.FSEventStreamCreate.arguments.3.generics = ["CoreFoundation.CFString.CFString"]
+fn.FSEventStreamCreateRelativeToDevice.arguments.4.generics = ["CoreFoundation.CFString.CFString"]
+fn.FSEventStreamCopyPathsBeingWatched.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.FSEventStreamSetExclusionPaths.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+
+fn.LSCopyApplicationURLsForBundleIdentifier.return.generics = ["CoreFoundation.CFURL.CFURL"]
+fn.LSCopyApplicationURLsForURL.return.generics = ["CoreFoundation.CFURL.CFURL"]
+fn.LSCopyAllRoleHandlersForContentType.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.LSCopyAllHandlersForURLScheme.return.generics = ["CoreFoundation.CFString.CFString"]
+
+fn.LSSharedFileListCopySnapshot.return.generics = ["CoreServices.SharedFileList.LSSharedFileList.LSSharedFileListItem"]
+fn.LSSharedFileListInsertItemURL.arguments.5.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.LSSharedFileListInsertItemURL.arguments.6.generics = ["CoreFoundation.CFString.CFString"]
+fn.LSSharedFileListInsertItemFSRef.arguments.5.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.LSSharedFileListInsertItemFSRef.arguments.6.generics = ["CoreFoundation.CFString.CFString"]
+
+fn.MDItemsCreateWithURLs.arguments.1.generics = ["CoreFoundation.CFURL.CFURL"]
+fn.MDItemsCreateWithURLs.return.generics = ["CoreServices.Metadata.MDItem.MDItem"]
+fn.MDItemCopyAttributes.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDItemCopyAttributes.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.MDItemCopyAttributeNames.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDItemsCopyAttributes.arguments.0.generics = ["CoreServices.Metadata.MDItem.MDItem"]
+fn.MDItemsCopyAttributes.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDItemsCopyAttributes.return.generics = ["CoreFoundation.CFType"] # CFNull or CFArray<CFType>
+fn.MDItemGetCacheFileDescriptors.arguments.0.generics = ["CoreServices.Metadata.MDItem.MDItem"]
+
+fn.MDQueryCreate.arguments.2.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDQueryCreate.arguments.3.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDQueryCreateSubset.arguments.3.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDQueryCreateSubset.arguments.4.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDQueryCreateForItems.arguments.2.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDQueryCreateForItems.arguments.3.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDQueryCreateForItems.arguments.4.generics = ["CoreServices.Metadata.MDItem.MDItem"]
+fn.MDQueryCopyValueListAttributes.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDQueryCopySortingAttributes.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDQueryCopyValuesOfAttribute.return.generics = ["CoreFoundation.CFType"]
+fn.MDQuerySetSortOrder.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDQuerySetSearchScope.arguments.1.generics = ["CoreFoundation.CFType"] # CFString or CFURL
+
+fn.MDItemCopyLabels.return.generics = ["CoreServices.Metadata.MDLabel.MDLabel"]
+fn.MDLabelSetAttributes.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.MDCopyLabelKinds.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.MDCopyLabelsMatchingExpression.return.generics = ["CoreServices.Metadata.MDLabel.MDLabel"]
+fn.MDCopyLabelsWithKind.return.generics = ["CoreServices.Metadata.MDLabel.MDLabel"]
+
+fn.MDSchemaCopyAttributesForContentType.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.MDSchemaCopyMetaAttributesForAttribute.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Probably
+fn.MDSchemaCopyAllAttributes.return.generics = ["CoreFoundation.CFString.CFString"]
+
+fn.SKIndexCreateWithURL.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SKIndexCreateWithMutableData.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SKIndexGetAnalysisProperties.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.SKIndexCopyDocumentProperties.return.generics = [] # User-defined
+fn.SKIndexSetDocumentProperties.arguments.2.generics = [] # User-defined
+fn.SKIndexCopyTermIDArrayForDocumentID.return.generics = ["CoreFoundation.CFNumber.CFNumber"]
+fn.SKIndexCopyDocumentIDArrayForTermID.return.generics = ["CoreFoundation.CFNumber.CFNumber"]
+fn.SKSearchGroupCreate.arguments.0.generics = ["CoreServices.SearchKit.SKIndex.SKIndex"]
+fn.SKSearchGroupCopyIndexes.return.generics = ["CoreServices.SearchKit.SKIndex.SKIndex"]
+fn.SKSearchResultsCreateWithDocuments.arguments.1.generics = ["CoreServices.SearchKit.SKDocument.SKDocument"] # Probably?
+fn.SKSearchResultsCopyMatchingTerms.return.generics = [] # Unsure, possibly CFIndex directly
+
+fn.UTTypeCreateAllIdentifiersForTag.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.UTTypeCopyAllTagsWithClass.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.UTTypeCopyDeclaration.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFPropertyList.CFPropertyList"] # Info plist
+
+fn.WSMethodInvocationSetParameters.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.WSMethodInvocationSetParameters.arguments.2.generics = ["CoreFoundation.CFString.CFString"]
+fn.WSMethodInvocationCopyParameters.arguments.1.generics = ["CoreFoundation.CFString.CFString"]
+fn.WSMethodInvocationCopyParameters.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.WSMethodInvocationInvoke.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.WSMethodResultIsFault.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.WSProtocolHandlerCopyRequestDictionary.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.WSProtocolHandlerCopyReplyDictionary.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.WSProtocolHandlerCopyReplyDocument.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.WSProtocolHandlerCopyFaultDocument.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.WSProtocolHandlerCopyFaultDocument.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.WSProtocolHandlerCopyRequestDocument.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.WSProtocolHandlerCopyRequestDocument.arguments.3.generics = ["CoreFoundation.CFString.CFString"]
+fn.WSProtocolHandlerCopyRequestDocument.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+##
 ## Safety.
 ##
 

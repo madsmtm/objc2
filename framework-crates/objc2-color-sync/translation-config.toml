@@ -12,3 +12,28 @@ visionos = "1.0"
 const.icVersion4Number.skipped = false
 const.COLORSYNC_PROFILE_INSTALL_ENTITLEMENT.skipped = false
 const.COLORSYNC_MD5_LENGTH.skipped = false
+
+##
+## Generics
+##
+
+# ColorSyncProfile
+fn.ColorSyncProfileCreateWithURLAndOptions.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ColorSyncProfileCreateLink.arguments.0.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.ColorSyncProfileCreateLink.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ColorSyncProfileCopyTagSignatures.return.generics = ["CoreFoundation.CFString.CFString"]
+fn.ColorSyncIterateInstalledProfilesWithOptions.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+# ColorSyncTransform
+fn.ColorSyncTransformCreate.arguments.0.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.ColorSyncTransformCreate.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ColorSyncTransformCopyProperty.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Probably
+fn.ColorSyncTransformGetProfileSequence.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.ColorSyncTransformConvert.arguments.11.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Probably
+fn.ColorSyncCreateCodeFragment.arguments.0.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.ColorSyncCreateCodeFragment.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"] # Same as ColorSyncTransformCreate
+
+# ColorSyncDevice
+fn.ColorSyncRegisterDevice.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ColorSyncDeviceSetCustomProfiles.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.ColorSyncDeviceCopyDeviceInfo.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]

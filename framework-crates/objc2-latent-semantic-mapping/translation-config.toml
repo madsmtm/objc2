@@ -4,3 +4,14 @@ required-crates = ["objc2-core-foundation"]
 custom-lib-rs = true
 macos = "10.5"
 maccatalyst = "13.1"
+
+# Property lists (ish)
+fn.LSMMapSetProperties.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.LSMMapGetProperties.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+# Generics of clusters aren't documented.
+fn.LSMMapCreateClusters.return.generics = []
+fn.LSMMapCreateClusters.arguments.2.generics = [] # subset
+fn.LSMMapApplyClusters.arguments.1.generics = []
+fn.LSMResultCopyWordCluster.return.generics = []
+fn.LSMResultCopyTokenCluster.return.generics = []

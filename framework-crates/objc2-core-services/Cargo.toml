@@ -175,8 +175,10 @@ AVLTree = []
 Aliases = []
 AppleEvents = [
     "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFRunLoop",
     "objc2-core-foundation/CFStream",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 BackupCore = ["objc2-core-foundation/CFURL"]
@@ -185,6 +187,7 @@ CSIdentity = [
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFError",
     "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
     "objc2-core-foundation/CFUUID",
 ]
@@ -216,12 +219,14 @@ FSEvents = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDate",
     "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFUUID",
 ]
 Files = [
     "objc2-core-foundation/CFDate",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
     "objc2-core-foundation/CFUUID",
 ]
@@ -238,6 +243,7 @@ LSInfo = [
     "bitflags",
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFError",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 LSOpen = [
@@ -251,6 +257,7 @@ LSSharedFileList = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFError",
     "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 LaunchServices = []
@@ -264,17 +271,23 @@ MDImporter = [
 MDItem = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 MDLabel = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFUUID",
 ]
-MDQuery = ["objc2-core-foundation/CFArray"]
+MDQuery = [
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFString",
+]
 MDSchema = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 MacErrors = []
 MacLocales = []
@@ -297,6 +310,8 @@ SKIndex = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFNumber",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 SKSearch = [
@@ -322,6 +337,8 @@ UTCoreTypes = []
 UTType = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFPropertyList",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFURL",
 ]
 UnicodeConverter = []
@@ -331,6 +348,7 @@ WSMethodInvocation = [
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFTree",
     "objc2-core-foundation/CFURL",
     "objc2-core-foundation/CFXMLNode",
@@ -339,6 +357,7 @@ WSProtocolHandler = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFData",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFTree",
     "objc2-core-foundation/CFXMLNode",
 ]

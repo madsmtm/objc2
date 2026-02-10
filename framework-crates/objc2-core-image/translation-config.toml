@@ -18,3 +18,6 @@ protocol.CIFilter.renamed = "CIFilterProtocol"
 class.CIImage.categories.AVDepthData.skipped = true
 class.CIImage.categories.AVPortraitEffectsMatte.skipped = true
 class.CIImage.categories.AVSemanticSegmentationMatte.skipped = true
+
+# Reserved for future use, pass NULL.
+class.CIContext.methods."createCGLayerWithSize:info:".arguments.1.generics = []
