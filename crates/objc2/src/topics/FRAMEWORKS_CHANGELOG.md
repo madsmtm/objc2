@@ -39,6 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Metal` / `objc2-metal`.
   - `QuartzCore` / `objc2-quartz-core`.
   - `SystemConfiguration` / `objc2-system-configuration`.
+  - `UIKit` / `objc2-ui-kit`.
 * **BREAKING**: Made `NSWindow::delegate`/`NSWindow::setDelegate` `unsafe`, it breaks type-safety if used together with `NSSavePanel`.
 
 ### Removed

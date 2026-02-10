@@ -146,6 +146,42 @@ fn.UIApplicationMain.renamed = "__main"
 class.UIViewController.methods."setView:".arguments.0.nullability = "nullable"
 
 ###
+### Fixing pointer bounds.
+###
+
+fn.UIApplicationMain.arguments.1.bounds.counted-by = "argc"
+
+class.UIBezierPath.methods."getLineDash:count:phase:".arguments.0.bounds = "unsafe" # call method twice to get size of this
+class.UIBezierPath.methods."getLineDash:count:phase:".arguments.1.bounds = "single"
+class.UIBezierPath.methods."getLineDash:count:phase:".arguments.2.bounds = "single"
+class.UIBezierPath.methods."setLineDash:count:phase:".arguments.0.bounds.counted-by = "count"
+
+class.UIColor.methods."getWhite:alpha:".arguments.0.bounds = "single"
+class.UIColor.methods."getWhite:alpha:".arguments.1.bounds = "single"
+class.UIColor.methods."getHue:saturation:brightness:alpha:".arguments.0.bounds = "single"
+class.UIColor.methods."getHue:saturation:brightness:alpha:".arguments.1.bounds = "single"
+class.UIColor.methods."getHue:saturation:brightness:alpha:".arguments.2.bounds = "single"
+class.UIColor.methods."getHue:saturation:brightness:alpha:".arguments.3.bounds = "single"
+class.UIColor.methods."getRed:green:blue:alpha:".arguments.0.bounds = "single"
+class.UIColor.methods."getRed:green:blue:alpha:".arguments.1.bounds = "single"
+class.UIColor.methods."getRed:green:blue:alpha:".arguments.2.bounds = "single"
+class.UIColor.methods."getRed:green:blue:alpha:".arguments.3.bounds = "single"
+
+protocol.UINavigationItemRenameDelegate.methods."navigationItem:willBeginRenamingWithSuggestedTitle:selectedRange:".arguments.2.bounds = "single"
+
+protocol.UIPopoverControllerDelegate.methods."popoverController:willRepositionPopoverToRect:inView:".arguments.1.bounds = "single"
+protocol.UIPopoverPresentationControllerDelegate.methods."popoverPresentationController:willRepositionPopoverToRect:inView:".arguments.1.bounds = "single"
+
+protocol.UIScrollViewDelegate.methods."scrollViewWillEndDragging:withVelocity:targetContentOffset:".arguments.2.bounds = "single"
+
+class.UITextDragPreviewRenderer.methods."adjustFirstLineRect:bodyRect:lastLineRect:textOrigin:".arguments.0.bounds = "single"
+class.UITextDragPreviewRenderer.methods."adjustFirstLineRect:bodyRect:lastLineRect:textOrigin:".arguments.1.bounds = "single"
+class.UITextDragPreviewRenderer.methods."adjustFirstLineRect:bodyRect:lastLineRect:textOrigin:".arguments.2.bounds = "single"
+
+# TODO: class.NSLayoutManager.methods.*.bounds = "...", probably same as in AppKit.
+class.NSTextContainer.methods."lineFragmentRectForProposedRect:atIndex:writingDirection:remainingRect:".arguments.3.bounds = "single"
+
+###
 ### Safety
 ###
 
