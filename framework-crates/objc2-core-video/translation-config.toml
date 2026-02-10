@@ -37,9 +37,71 @@ fn.CVPixelBufferGetTypeID.unsafe = false
 fn.CVBufferGetAttachment.renamed = "get_attachment"
 fn.CVBufferGetAttachments.renamed = "get_attachments"
 
-# TODO(breaking): Make these nonnull
-static.kCVImageBufferPostDecodeProcessingSequenceMetadataKey.nullability = "nullable"
-static.kCVImageBufferPostDecodeProcessingFrameMetadataKey.nullability = "nullable"
+##
+## Fixing pointer bounds.
+##
+
+fn.CVDisplayLinkCreateWithCGDisplays.arguments.0.bounds.counted-by = "count"
+fn.CVDisplayLinkGetCurrentTime.arguments.1.bounds = "single"
+fn.CVDisplayLinkTranslateTime.arguments.1.bounds = "single"
+fn.CVDisplayLinkTranslateTime.arguments.2.bounds = "single"
+fn.CVBufferGetAttachment.arguments.2.bounds = "single"
+
+fn.CVBufferCopyAttachment.arguments.2.bounds = "single"
+
+fn.CVPixelBufferGetExtendedPixels.arguments.1.bounds = "single"
+fn.CVPixelBufferGetExtendedPixels.arguments.2.bounds = "single"
+fn.CVPixelBufferGetExtendedPixels.arguments.3.bounds = "single"
+fn.CVPixelBufferGetExtendedPixels.arguments.4.bounds = "single"
+
+##
+## Generics.
+##
+
+fn.CVBufferGetAttachments.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVBufferSetAttachments.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVBufferCopyAttachments.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CVImageBufferCreateColorSpaceFromAttachments.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+# No public attributes currently exist, so a bit unknown.
+fn.CVMetalBufferCacheCreate.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CVMetalTextureCacheCreate.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVMetalTextureCacheCreate.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVMetalTextureCacheCreateTextureFromImage.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+# TODO: Might be able to use `CFValue` for the attribute type of `CVOpenGLBuffer`?
+fn.CVOpenGLBufferCreate.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVOpenGLBufferGetAttributes.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVOpenGLBufferPoolCreate.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVOpenGLBufferPoolCreate.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVOpenGLBufferPoolGetAttributes.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVOpenGLBufferPoolGetOpenGLBufferAttributes.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CVOpenGLTextureCacheCreate.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVOpenGLTextureCacheCreate.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVOpenGLTextureCacheCreateTextureFromImage.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CVPixelBufferCreateResolvedAttributesDictionary.arguments.1.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.CVPixelBufferCreateResolvedAttributesDictionary.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVPixelBufferCreate.arguments.4.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVPixelBufferCreateWithBytes.arguments.8.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVPixelBufferCreateWithPlanarBytes.arguments.13.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVPixelBufferCopyCreationAttributes.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVPixelBufferIsCompatibleWithAttributes.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CVPixelBufferCreateWithIOSurface.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CVPixelBufferPoolCreate.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVPixelBufferPoolCreate.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVPixelBufferPoolGetAttributes.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVPixelBufferPoolGetPixelBufferAttributes.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVPixelBufferPoolCreatePixelBufferWithAuxAttributes.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.CVPixelFormatDescriptionCreateWithPixelFormatType.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.CVPixelFormatDescriptionArrayCreateWithAllPixelFormatTypes.return.generics = ["CoreFoundation.CFDictionary.CFDictionary<CoreFoundation.CFString.CFString, CoreFoundation.CFType>"]
+fn.CVPixelFormatDescriptionRegisterDescriptionWithPixelFormatType.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 
 ##
 ## Safety

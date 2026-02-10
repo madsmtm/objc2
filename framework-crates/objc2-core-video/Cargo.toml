@@ -100,33 +100,58 @@ objc2-open-gl = ["dep:objc2-open-gl"]
 unstable-darwin-objc = []
 
 CVBase = ["bitflags"]
-CVBuffer = ["objc2-core-foundation/CFDictionary"]
+CVBuffer = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 CVDisplayLink = []
 CVHostTime = []
 CVImageBuffer = [
     "objc2-core-foundation/CFCGTypes",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 CVMetalBuffer = []
-CVMetalBufferCache = ["objc2-core-foundation/CFDictionary"]
+CVMetalBufferCache = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 CVMetalTexture = []
-CVMetalTextureCache = ["objc2-core-foundation/CFDictionary"]
-CVOpenGLBuffer = ["objc2-core-foundation/CFDictionary"]
-CVOpenGLBufferPool = ["objc2-core-foundation/CFDictionary"]
+CVMetalTextureCache = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
+CVOpenGLBuffer = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
+CVOpenGLBufferPool = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 CVOpenGLTexture = []
-CVOpenGLTextureCache = ["objc2-core-foundation/CFDictionary"]
+CVOpenGLTextureCache = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 CVPixelBuffer = [
     "bitflags",
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
-CVPixelBufferIOSurface = ["objc2-core-foundation/CFDictionary"]
+CVPixelBufferIOSurface = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 CVPixelBufferPool = [
     "bitflags",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 CVPixelFormatDescription = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
 ]
 CVReturn = []

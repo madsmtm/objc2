@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreFoundation` / `objc2-core-foundation`.
   - `CoreGraphics` / `objc2-core-graphics`.
   - `CoreText` / `objc2-core-text`.
+  - `CoreVideo` / `objc2-core-video`.
   - `Foundation` / `objc2-foundation`.
   - `Metal` / `objc2-metal`.
   - `QuartzCore` / `objc2-quartz-core`.
