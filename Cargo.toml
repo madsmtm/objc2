@@ -132,6 +132,7 @@ objc2-background-assets = { path = "framework-crates/objc2-background-assets", v
 objc2-background-tasks = { path = "framework-crates/objc2-background-tasks", version = "0.3.2", default-features = false }
 objc2-browser-engine-core = { path = "framework-crates/objc2-browser-engine-core", version = "0.3.2", default-features = false }
 objc2-browser-engine-kit = { path = "framework-crates/objc2-browser-engine-kit", version = "0.3.2", default-features = false }
+objc2-browser-kit = { path = "framework-crates/objc2-browser-kit", version = "0.3.2", default-features = false }
 objc2-business-chat = { path = "framework-crates/objc2-business-chat", version = "0.3.2", default-features = false }
 objc2-cf-network = { path = "framework-crates/objc2-cf-network", version = "0.3.2", default-features = false }
 objc2-call-kit = { path = "framework-crates/objc2-call-kit", version = "0.3.2", default-features = false }
@@ -327,6 +328,7 @@ objc2-background-assets = { path = "framework-crates/objc2-background-assets" }
 objc2-background-tasks = { path = "framework-crates/objc2-background-tasks" }
 objc2-browser-engine-core = { path = "framework-crates/objc2-browser-engine-core" }
 objc2-browser-engine-kit = { path = "framework-crates/objc2-browser-engine-kit" }
+objc2-browser-kit = { path = "framework-crates/objc2-browser-kit" }
 objc2-business-chat = { path = "framework-crates/objc2-business-chat" }
 objc2-cf-network = { path = "framework-crates/objc2-cf-network" }
 objc2-call-kit = { path = "framework-crates/objc2-call-kit" }

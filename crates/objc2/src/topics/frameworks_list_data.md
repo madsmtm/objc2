@@ -22,6 +22,7 @@
 | `BackgroundTasks` | [`objc2-background-tasks`](https://crates.io/crates/objc2-background-tasks) | [![docs.rs](https://docs.rs/objc2-background-tasks/badge.svg)](https://docs.rs/objc2-background-tasks/) |
 | `BrowserEngineCore` | [`objc2-browser-engine-core`](https://crates.io/crates/objc2-browser-engine-core) | [![docs.rs](https://docs.rs/objc2-browser-engine-core/badge.svg)](https://docs.rs/objc2-browser-engine-core/) |
 | `BrowserEngineKit` | [`objc2-browser-engine-kit`](https://crates.io/crates/objc2-browser-engine-kit) | [![docs.rs](https://docs.rs/objc2-browser-engine-kit/badge.svg)](https://docs.rs/objc2-browser-engine-kit/) |
+| `BrowserKit` | [`objc2-browser-kit`](https://crates.io/crates/objc2-browser-kit) | [![docs.rs](https://docs.rs/objc2-browser-kit/badge.svg)](https://docs.rs/objc2-browser-kit/) |
 | `BusinessChat` | [`objc2-business-chat`](https://crates.io/crates/objc2-business-chat) | [![docs.rs](https://docs.rs/objc2-business-chat/badge.svg)](https://docs.rs/objc2-business-chat/) |
 | `CFNetwork` | [`objc2-cf-network`](https://crates.io/crates/objc2-cf-network) | [![docs.rs](https://docs.rs/objc2-cf-network/badge.svg)](https://docs.rs/objc2-cf-network/) |
 | `CallKit` | [`objc2-call-kit`](https://crates.io/crates/objc2-call-kit) | [![docs.rs](https://docs.rs/objc2-call-kit/badge.svg)](https://docs.rs/objc2-call-kit/) |

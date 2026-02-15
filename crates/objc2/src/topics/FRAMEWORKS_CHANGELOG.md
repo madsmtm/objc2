@@ -19,6 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added a few missing APIs that uses arrays.
 * Added `CGBitmapInfo::new`.
 * Added `Default` implementations for enumerations, bitflags and structs.
+* Added new framework crates:
+  - `BrowserKit` / `objc2-browser-kit`.
 
 ### Changed
 * Updated SDK from Xcode 26.0.1 to 26.2.

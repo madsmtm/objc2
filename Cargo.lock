@@ -1536,6 +1536,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-browser-kit"
+version = "0.3.2"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-business-chat"
 version = "0.3.2"
 dependencies = [
@@ -4040,6 +4049,7 @@ dependencies = [
  "objc2-background-tasks",
  "objc2-browser-engine-core",
  "objc2-browser-engine-kit",
+ "objc2-browser-kit",
  "objc2-business-chat",
  "objc2-call-kit",
  "objc2-car-play",

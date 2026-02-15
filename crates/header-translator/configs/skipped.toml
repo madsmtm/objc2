@@ -145,7 +145,6 @@ StoreKitTest = "TODO. Developer-only"
 Network = "TODO, see [#646](https://github.com/madsmtm/objc2/issues/646)"
 DeviceDiscoveryUI = "Needs Network first"
 
-BrowserKit = "TODO"
 SecurityUI = "TODO"
 GameSave = "TODO"
 TouchController = "TODO"

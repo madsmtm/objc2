@@ -16,7 +16,6 @@
 | `AudioUnit` | Deprecated, use AudioToolbox instead. |
 | `AudioVideoBridging` | Deprecated, use AVKit/AVFoundation instead (maybe?). |
 | `AutomatedDeviceEnrollment` | Swift-only. |
-| `BrowserKit` | TODO. |
 | `CalendarStore` | Very deprecated. |
 | `CarKey` | Swift-only. |
 | `Charts` | Swift-only. |

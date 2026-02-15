@@ -1,0 +1,4 @@
+framework = "BrowserKit"
+crate = "objc2-browser-kit"
+required-crates = ["objc2", "objc2-foundation"]
+ios = "18.4"
