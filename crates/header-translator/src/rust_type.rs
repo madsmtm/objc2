@@ -1,7 +1,4 @@
-use std::fmt::Display;
-use std::str::FromStr;
-use std::sync::LazyLock;
-use std::{fmt, iter, mem};
+use std::{fmt, fmt::Display, iter, mem, str::FromStr, sync::LazyLock};
 
 use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
@@ -733,6 +730,9 @@ pub enum PointeeTy {
     DispatchTypeDef {
         id: ItemIdentifier,
     },
+    NetworkTypeDef {
+        id: ItemIdentifier,
+    },
     TypeDef {
         id: ItemIdentifier,
         to: Box<PointeeTy>,
@@ -852,6 +852,9 @@ impl PointeeTy {
             Self::DispatchTypeDef { id } => {
                 vec![ItemTree::from_id(id.clone())]
             }
+            Self::NetworkTypeDef { id } => {
+                vec![ItemTree::from_id(id.clone())]
+            }
             Self::CFOpaque => vec![],
             Self::TypeDef { id, to } => {
                 vec![ItemTree::new(id.clone(), to.required_items())]
@@ -911,6 +914,7 @@ impl PointeeTy {
                 .any(|generic| generic.requires_mainthreadmarker(self_requires)),
             Self::CFOpaque => false,
             Self::DispatchTypeDef { .. } => false,
+            Self::NetworkTypeDef { .. } => false,
             Self::TypeDef { to, .. } => to.requires_mainthreadmarker(self_requires),
         }
     }
@@ -1014,6 +1018,7 @@ impl PointeeTy {
             }
             Self::CFOpaque => write!(f, "Opaque"),
             Self::DispatchTypeDef { id } => write!(f, "{}", id.path()),
+            Self::NetworkTypeDef { id } => write!(f, "{}", id.path()),
             Self::TypeDef { id, .. } => write!(f, "{}", id.path()),
         })
     }
@@ -1286,6 +1291,8 @@ impl PointeeTy {
             // Dispatch objects have strong type-safety, and are thus
             // safe in both positions.
             Self::DispatchTypeDef { .. } => TypeSafety::SAFE,
+            // Same for Network types.
+            Self::NetworkTypeDef { .. } => TypeSafety::SAFE,
             // Taking `&AnyClass` can be perilous if the method tries to
             // assume it can e.g. create new instances of the class. Some uses
             // are safe though, such as `NSStringFromClass`.
@@ -1365,9 +1372,10 @@ impl PointeeTy {
 
     pub(crate) fn implementable(&self) -> Option<ItemTree> {
         match self {
-            Self::CFTypeDef { id, .. } | Self::Class { id, .. } | Self::DispatchTypeDef { id } => {
-                Some(ItemTree::from_id(id.clone()))
-            }
+            Self::CFTypeDef { id, .. }
+            | Self::Class { id, .. }
+            | Self::DispatchTypeDef { id }
+            | Self::NetworkTypeDef { id } => Some(ItemTree::from_id(id.clone())),
             // We shouldn't encounter this here, since `Self` is only on
             // Objective-C methods, but if we do, it's very unclear how we
             // should translate it.
@@ -1409,6 +1417,15 @@ impl PointeeTy {
             // Recurse into typedefs
             Self::TypeDef { to, .. } => to.is_dispatch_type(),
             Self::DispatchTypeDef { .. } => true,
+            _ => false,
+        }
+    }
+
+    fn is_network_type(&self) -> bool {
+        match self {
+            // Recurse into typedefs
+            Self::TypeDef { to, .. } => to.is_network_type(),
+            Self::NetworkTypeDef { .. } => true,
             _ => false,
         }
     }
@@ -1823,7 +1840,7 @@ impl Ty {
                     let (id, declaration_generics, thread_safety, superclasses) =
                         get_class_data(&declaration, context);
                     if id.name != name.strip_prefix("const ").unwrap_or(&name) {
-                        error!(?name, "invalid interface name");
+                        warn!(?name, "invalid interface name");
                     }
                     Self::Pointee(PointeeTy::Class {
                         id,
@@ -2294,6 +2311,23 @@ impl Ty {
                         let id = ItemIdentifier::new(&declaration, context);
                         let id = context.replace_typedef_name(id, false);
                         let pointee = Box::new(Self::Pointee(PointeeTy::DispatchTypeDef { id }));
+                        return Self::Pointer {
+                            nullability,
+                            read: true,
+                            written: !is_const,
+                            lifetime,
+                            bounds: PointerBounds::Single,
+                            pointee,
+                        };
+                    }
+
+                    // Handle other Network Objective-C objects.
+                    name if name.starts_with("nw_")
+                        && inner.get_kind() == TypeKind::ObjCObjectPointer =>
+                    {
+                        let id = ItemIdentifier::new(&declaration, context);
+                        let id = context.replace_typedef_name(id, false);
+                        let pointee = Box::new(Self::Pointee(PointeeTy::NetworkTypeDef { id }));
                         return Self::Pointer {
                             nullability,
                             read: true,
@@ -2867,7 +2901,10 @@ impl Ty {
     }
 
     fn is_object_like(&self) -> bool {
-        self.is_objc_type() || self.is_cf_type() || self.is_dispatch_type()
+        self.is_objc_type()
+            || self.is_cf_type()
+            || self.is_dispatch_type()
+            || self.is_network_type()
     }
 
     /// Determine whether the inner type of a `Pointer` is object-like.
@@ -2892,6 +2929,15 @@ impl Ty {
     fn is_dispatch_type(&self) -> bool {
         if let Self::Pointee(pointee_ty) = self.through_typedef() {
             pointee_ty.is_dispatch_type()
+        } else {
+            false
+        }
+    }
+
+    /// Determine whether the pointee inside a `Pointer` is a Network-like type.
+    fn is_network_type(&self) -> bool {
+        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+            pointee_ty.is_network_type()
         } else {
             false
         }
@@ -3321,6 +3367,13 @@ impl Ty {
             } if pointee.is_dispatch_type() => {
                 items.push(ItemTree::dispatch("DispatchRetained"));
             }
+            Self::Pointer {
+                bounds: PointerBounds::Single,
+                pointee,
+                ..
+            } if pointee.is_network_type() => {
+                items.push(ItemTree::network("NWRetained"));
+            }
             _ => {}
         }
         items.into_iter()
@@ -3361,6 +3414,14 @@ impl Ty {
                 (_, false) => ";\nret.map(|ret| unsafe { DispatchRetained::retain(ret) })",
             }
         };
+        let end_network = |nullability| {
+            match (nullability, returns_retained) {
+                (Nullability::NonNull, true) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { NWRetained::from_raw(ret) }",
+                (Nullability::NonNull, false) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { NWRetained::retain(ret) }",
+                (_, true) => ";\nret.map(|ret| unsafe { NWRetained::from_raw(ret) })",
+                (_, false) => ";\nret.map(|ret| unsafe { NWRetained::retain(ret) })",
+            }
+        };
         let end_objc = |nullability| {
             match (nullability, returns_retained) {
                 (Nullability::NonNull, true) => {
@@ -3392,7 +3453,10 @@ impl Ty {
                 // are a hint, and not an ABI stable promise.
                 if pointee.is_static_object() {
                     write!(f, "-> Option<&'static {}>", pointee.behind_pointer())
-                } else if pointee.is_cf_type() || pointee.is_dispatch_type() {
+                } else if pointee.is_cf_type()
+                    || pointee.is_dispatch_type()
+                    || pointee.is_network_type()
+                {
                     write!(f, "-> Option<NonNull<{}>>", pointee.behind_pointer())
                 } else if pointee.is_objc_type() {
                     write!(f, "-> *mut {}", pointee.behind_pointer())
@@ -3451,6 +3515,13 @@ impl Ty {
                         format!(" -> Option<DispatchRetained<{}>>", pointee.behind_pointer())
                     };
                     Some((res, start, end_dispatch(*nullability)))
+                } else if pointee.is_network_type() && *bounds == PointerBounds::Single {
+                    let res = if *nullability == Nullability::NonNull {
+                        format!(" -> NWRetained<{}>", pointee.behind_pointer())
+                    } else {
+                        format!(" -> Option<NWRetained<{}>>", pointee.behind_pointer())
+                    };
+                    Some((res, start, end_network(*nullability)))
                 } else if pointee.is_objc_type()
                     && !pointee.is_static_object()
                     && *bounds == PointerBounds::Single
@@ -3920,6 +3991,25 @@ impl Ty {
         None
     }
 
+    fn pointee_network_type_protocol(&self, typedef_name: &str) -> Option<&ProtocolRef> {
+        if !typedef_name.starts_with("nw_") {
+            return None;
+        }
+
+        // Should point to a `NSObject<OS_nw_*>`.
+        if let Self::Pointee(PointeeTy::Class { id, protocols, .. }) = self {
+            if id.name == "NSObject" {
+                if let Some((protocol, _)) = protocols.first() {
+                    if protocol.id.name.starts_with("OS_nw_") {
+                        return Some(protocol);
+                    }
+                }
+            }
+        }
+
+        None
+    }
+
     pub(crate) fn pointer_to_opaque(
         &self,
         typedef_name: &str,
@@ -3938,6 +4028,10 @@ impl Ty {
                 // TODO: Implement `Deref` on Dispatch objects when we have a
                 // super protocol?
                 return Some((OpaqueKind::Dispatch, Some(&protocol.id.name)));
+            }
+
+            if let Some(protocol) = pointee.pointee_network_type_protocol(typedef_name) {
+                return Some((OpaqueKind::Network, Some(&protocol.id.name)));
             }
 
             let kind = if pointee.is_direct_cf_type(typedef_name, typedef_is_bridged) {

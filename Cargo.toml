@@ -232,6 +232,7 @@ objc2-model-io = { path = "framework-crates/objc2-model-io", version = "0.3.2", 
 objc2-multipeer-connectivity = { path = "framework-crates/objc2-multipeer-connectivity", version = "0.3.2", default-features = false }
 objc2-natural-language = { path = "framework-crates/objc2-natural-language", version = "0.3.2", default-features = false }
 objc2-nearby-interaction = { path = "framework-crates/objc2-nearby-interaction", version = "0.3.2", default-features = false }
+objc2-network = { path = "framework-crates/objc2-network", version = "0.3.2", default-features = false }
 objc2-network-extension = { path = "framework-crates/objc2-network-extension", version = "0.3.2", default-features = false }
 objc2-notification-center = { path = "framework-crates/objc2-notification-center", version = "0.3.2", default-features = false }
 objc2-osa-kit = { path = "framework-crates/objc2-osa-kit", version = "0.3.2", default-features = false }
@@ -431,6 +432,7 @@ objc2-model-io = { path = "framework-crates/objc2-model-io" }
 objc2-multipeer-connectivity = { path = "framework-crates/objc2-multipeer-connectivity" }
 objc2-natural-language = { path = "framework-crates/objc2-natural-language" }
 objc2-nearby-interaction = { path = "framework-crates/objc2-nearby-interaction" }
+objc2-network = { path = "framework-crates/objc2-network" }
 objc2-network-extension = { path = "framework-crates/objc2-network-extension" }
 objc2-notification-center = { path = "framework-crates/objc2-notification-center" }
 objc2-osa-kit = { path = "framework-crates/objc2-osa-kit" }

@@ -1,8 +1,8 @@
 //! Trivial forwarding impls on `Retained`-like types.
 //!
 //! Kept here to keep `retained.rs` free from this boilerplate, and to allow
-//! re-use in `objc2-core-foundation` and `dispatch2` (this file is symlinked
-//! there as well).
+//! re-use in `objc2-core-foundation`, `objc2-network` and `dispatch2` (this
+//! file is symlinked there as well).
 
 #![forbid(unsafe_code)]
 

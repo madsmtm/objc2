@@ -476,6 +476,7 @@ pub enum OpaqueKind {
     Normal,
     CoreFoundation,
     Dispatch,
+    Network,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -672,6 +673,8 @@ pub enum Stmt {
         documentation: Documentation,
     },
     /// typedef struct CF_BRIDGED_TYPE(id) CGColorSpace *CGColorSpaceRef;
+    /// Dispatch objects.
+    /// NW_OBJECT_DECL and NW_SENDABLE_OBJECT_DECL.
     OpaqueDecl {
         id: ItemIdentifier,
         generics: Vec<GenericWithBound>,
@@ -1182,9 +1185,7 @@ impl Stmt {
 
                 // Skip OS_dispatch_* and OS_nw_*
                 if objc_name.starts_with("OS_") {
-                    if !objc_name.starts_with("OS_dispatch_")
-                        && !objc_name.starts_with("OS_dispatch_")
-                    {
+                    if !objc_name.starts_with("OS_dispatch_") && !objc_name.starts_with("OS_nw_") {
                         error!(?id, "unexpectedly skipped protocol");
                     }
                     return vec![];
@@ -1294,6 +1295,12 @@ impl Stmt {
                                 // can contain `NSData`.
                                 "DISPATCH_DATA_DECL_SWIFT" => {
                                     sendable = Some(false);
+                                }
+                                // Delegates to `OS_OBJECT_DECL`.
+                                "NW_OBJECT_DECL" => {}
+                                // Delegates to `NW_SWIFT_SENDABLE` + `NW_OBJECT_DECL`.
+                                "NW_SENDABLE_OBJECT_DECL" => {
+                                    sendable = Some(true);
                                 }
                                 _ => error!(macro_name, "unknown OS protocol macro"),
                             }
@@ -2345,6 +2352,7 @@ impl Stmt {
                     vec![ItemTree::cf("cf_type"), ItemTree::objc("cf_objc2_type")]
                 }
                 OpaqueKind::Dispatch => vec![ItemTree::dispatch("dispatch_object")],
+                OpaqueKind::Network => vec![ItemTree::network("nw_object")],
             },
             Self::GeneralImpl { stmts, .. } => stmts
                 .iter()
@@ -3536,6 +3544,13 @@ impl Stmt {
                             // SAFETY: The type is a Dispatch object and
                             // correctly declared as a #[repr(C)] ZST.
                             writeln!(f, "dispatch_object!(")?;
+                            writeln!(f, "    unsafe impl {} {{}}", id.name)?;
+                            writeln!(f, ");")?;
+                        }
+                        OpaqueKind::Network => {
+                            // SAFETY: The type is a Network object and
+                            // correctly declared as a #[repr(C)] ZST.
+                            writeln!(f, "nw_object!(")?;
                             writeln!(f, "    unsafe impl {} {{}}", id.name)?;
                             writeln!(f, ");")?;
                         }

@@ -135,6 +135,7 @@ test-frameworks = [
     "objc2-multipeer-connectivity",
     "objc2-natural-language",
     "objc2-nearby-interaction",
+    "objc2-network",
     "objc2-network-extension",
     "objc2-notification-center",
     "objc2-osa-kit",
@@ -389,6 +390,7 @@ objc2-browser-kit = ["dep:objc2-browser-kit"]
 objc2-game-save = ["dep:objc2-game-save"]
 objc2-security-ui = ["dep:objc2-security-ui"]
 objc2-touch-controller = ["dep:objc2-touch-controller"]
+objc2-network = ["dep:objc2-network"]
 
 [dependencies]
 block2 = { workspace = true, default-features = true }
@@ -426,6 +428,7 @@ objc2-intents = { workspace = true, optional = true, default-features = true }
 objc2-map-kit = { workspace = true, optional = true, default-features = true }
 objc2-media-player = { workspace = true, optional = true, default-features = true }
 objc2-natural-language = { workspace = true, optional = true, default-features = true }
+objc2-network = { workspace = true, optional = true, default-features = true }
 objc2-network-extension = { workspace = true, optional = true, default-features = true }
 objc2-os-log = { workspace = true, optional = true, default-features = true }
 objc2-photos-ui = { workspace = true, optional = true, default-features = true }

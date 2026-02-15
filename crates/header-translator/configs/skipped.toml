@@ -142,7 +142,6 @@ InterfaceBuilderKit = "TODO. Developer-only"
 XcodeKit = "TODO. Developer-only"
 StoreKitTest = "TODO. Developer-only"
 
-Network = "TODO, see [#646](https://github.com/madsmtm/objc2/issues/646)"
 DeviceDiscoveryUI = "Needs Network first"
 
 # LiveExecutionResultsLogger = "Removed in Xcode 26"

@@ -13,6 +13,18 @@ external.ASAccessory.module = "AccessorySetupKit.ASAccessory"
 # See #778: the method has a wrongly-declared return nullability.
 class.NWHostEndpoint.methods.hostname.return.nullability = "nullable"
 
+# Rename classes to allow Network structs to have the proper names.
+class.NWBonjourServiceEndpoint.renamed = "NEBonjourServiceEndpoint"
+class.NWEndpoint.renamed = "NEEndpoint"
+class.NWHostEndpoint.renamed = "NEHostEndpoint"
+class.NWPath.renamed = "NEPath"
+class.NWPathStatus.renamed = "NEPathStatus"
+class.NWTCPConnection.renamed = "NETCPConnection"
+class.NWTCPConnectionState.renamed = "NETCPConnectionState"
+class.NWTLSParameters.renamed = "NETLSParameters"
+class.NWUDPSession.renamed = "NEUDPSession"
+class.NWUDPSessionState.renamed = "NEUDPSessionState"
+
 # Needs Network framework
 class.NEAppProxyFlow.methods."setMetadata:".skipped = true
 class.NEAppProxyFlow.methods.networkInterface.skipped = true

@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `GameSave` / `objc2-game-save`.
   - `SecurityUI` / `objc2-security-ui`.
   - `TouchController` / `objc2-touch-controller`.
+  - `Network` / `objc2-network`.
 
 ### Changed
 * Updated SDK from Xcode 26.0.1 to 26.2.
@@ -46,6 +47,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `SystemConfiguration` / `objc2-system-configuration`.
   - `UIKit` / `objc2-ui-kit`.
 * **BREAKING**: Made `NSWindow::delegate`/`NSWindow::setDelegate` `unsafe`, it breaks type-safety if used together with `NSSavePanel`.
+* **BREAKING**: Renamed some deprecated `objc2-network-extension` classes to have a `NE` prefix instead of `NW` (to not clash with the types from `objc2-network`).
 
 ### Removed
 * **BREAKING**: Removed a lot of deprecated function aliases. Use the methods instead.

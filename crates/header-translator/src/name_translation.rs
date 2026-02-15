@@ -40,10 +40,11 @@ use crate::{id::ItemTree, rust_type::Ty, Location};
 /// >    ("lowercase_example" becomes "lowercase _ example").
 ///
 /// <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/docs/CToSwiftNameTranslation.md#word-boundaries>
-pub(crate) fn split_words(s: &str) -> impl Iterator<Item = &str> + '_ {
+pub(crate) fn split_words(s: &str) -> impl Iterator<Item = &str> + Clone + '_ {
     Iter { remaining: s }
 }
 
+#[derive(Clone)]
 struct Iter<'a> {
     remaining: &'a str,
 }
@@ -243,6 +244,11 @@ pub(crate) fn cf_no_ref(type_name: &str) -> &str {
     type_name.strip_suffix("Ref").unwrap_or(type_name)
 }
 
+fn strip_needless_suffix(type_name: &str) -> &str {
+    let type_name = cf_no_ref(type_name);
+    type_name.strip_suffix("_t").unwrap_or(type_name)
+}
+
 /// Find the type onto whom a function should be inserted.
 pub(crate) fn find_fn_implementor(
     implementable_mapping: &BTreeSet<ItemTree>,
@@ -267,7 +273,7 @@ pub(crate) fn find_fn_implementor(
         }
 
         if let Some(item) = first_arg_ty.implementable() {
-            let type_name = cf_no_ref(&item.id().name).replace("Mutable", "");
+            let type_name = strip_needless_suffix(&item.id().name).replace("Mutable", "");
             if is_method_candidate(fn_name, &type_name) {
                 // Only emit if in same crate (otherwise it requires a helper trait).
                 if fn_location.library_name() == item.id().library_name() {
@@ -281,7 +287,7 @@ pub(crate) fn find_fn_implementor(
     if let Some(item) = result_type.implementable() {
         // Allowing this means that things like `CGPathCreateMutableCopy`
         // are considered part of `CFMutablePath`.
-        let type_name = cf_no_ref(&item.id().name).replace("Mutable", "");
+        let type_name = strip_needless_suffix(&item.id().name).replace("Mutable", "");
 
         if is_method_candidate(fn_name, &type_name) {
             // Only emit if in same crate (otherwise it requires a helper trait).
@@ -321,7 +327,7 @@ pub(crate) fn find_fn_implementor(
         if fn_name.contains("CTFontManager") {
             continue;
         }
-        if is_method_candidate(fn_name, cf_no_ref(&item.id().name)) {
+        if is_method_candidate(fn_name, strip_needless_suffix(&item.id().name)) {
             candidates.push(item.clone());
         }
     }
@@ -342,7 +348,7 @@ pub(crate) fn find_fn_implementor(
 
 /// Translate CoreFoundation-like function name to a method name.
 ///
-/// To better match  Rust's name scheme: <https://rust-lang.github.io/api-guidelines/naming.html>
+/// To better match Rust's name scheme: <https://rust-lang.github.io/api-guidelines/naming.html>
 ///
 /// Swift does this manually for CoreGraphics, but not in general.
 ///
@@ -350,32 +356,29 @@ pub(crate) fn find_fn_implementor(
 /// <https://github.com/swiftlang/swift/blob/swift-6.1-RELEASE/docs/CToSwiftNameTranslation-OmitNeedlessWords.md>
 ///
 /// See motivation in <https://github.com/madsmtm/objc2/issues/736>.
-pub(crate) fn cf_fn_name(
+pub(crate) fn shorten_name_when_on_parent(
     fn_name: &str,
     type_name: &str,
     is_instance_method: bool,
     omit_memory_management_words: bool,
 ) -> String {
     let is_mutable = type_name.contains("Mutable");
-    let type_name = cf_no_ref(type_name).replace("Mutable", "");
-
-    debug_assert!(is_method_candidate(fn_name, &type_name));
+    let type_name = strip_needless_suffix(type_name).replace("Mutable", "");
 
     let mut type_words = lowercase_words(&type_name);
     let mut words = lowercase_words(fn_name)
-        .skip_while(|fn_word| {
-            if let Some(type_word) = type_words.next() {
-                assert_eq!(*fn_word, type_word);
-                true
-            } else {
+        .filter(|fn_word| {
+            if let Some((count, _)) = type_words
+                .clone()
+                .find_position(|type_word| fn_word == type_word)
+            {
+                type_words.nth(count);
                 false
+            } else {
+                true
             }
         })
         .collect::<VecDeque<_>>();
-
-    if type_words.count() != 0 {
-        panic!("function name must prefix type: {fn_name:?}, {type_name:?}");
-    }
 
     if words.is_empty() {
         return "".to_string();
@@ -465,7 +468,7 @@ pub(crate) fn is_likely_bounds_affecting(name: &str) -> bool {
     // || name.contains("length")
 }
 
-fn lowercase_words(s: &str) -> impl Iterator<Item = String> + '_ {
+fn lowercase_words(s: &str) -> impl Iterator<Item = String> + Clone + '_ {
     // Removing `_` is desirable everywhere except in the beginning, it makes
     // things like `CGColorCreateGenericGrayGamma2_2` work, and we merge it
     // back with `.join("_")` anyhow.
@@ -643,7 +646,10 @@ mod tests {
     fn test_cf_fn() {
         #[track_caller]
         fn check(fn_name: &str, type_name: &str, expected: &str) {
-            assert_eq!(cf_fn_name(fn_name, type_name, false, true), expected);
+            assert_eq!(
+                shorten_name_when_on_parent(fn_name, type_name, false, true),
+                expected
+            );
         }
 
         // Successful cases.
@@ -670,6 +676,28 @@ mod tests {
         check("FooBar", "MutableFoo", "bar");
         check("FooBar", "FooRef", "bar");
         check("FooBar", "MutableFooRef", "bar");
+
+        check("sec_trust_create", "SecTrust", "new");
+        check("sec_trust_create", "SecTrustRef", "new");
+        assert_eq!(
+            shorten_name_when_on_parent("sec_trust_create", "SecTrustRef", true, true),
+            ""
+        );
+
+        assert_eq!(
+            shorten_name_when_on_parent("nw_txt_record_find_key", "NWTxtRecord", true, true),
+            "find_key"
+        );
+        check(
+            "nw_ws_metadata_get_opcode",
+            "NWProtocolMetadata",
+            "ws_get_opcode",
+        );
+        check(
+            "nw_multicast_group_descriptor_set_specific_source",
+            "nw_group_descriptor_t",
+            "multicast_set_specific_source",
+        );
 
         // check("AbcDef", "AbcDef", "");
         // check("Ac", "Bc", None);

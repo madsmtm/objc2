@@ -10,7 +10,7 @@ use crate::expr::Expr;
 use crate::id::ItemTree;
 use crate::method::Method;
 use crate::module::Module;
-use crate::name_translation::{cf_fn_name, find_fn_implementor};
+use crate::name_translation::{find_fn_implementor, shorten_name_when_on_parent};
 use crate::stmt::Stmt;
 use crate::{Config, ItemIdentifier, Library};
 
@@ -117,10 +117,10 @@ fn update_module(
                 )
             };
 
-            if let Some(cf_item) = implementor {
+            if let Some(parent_item) = implementor {
                 let is_instance_method = arguments
                     .first()
-                    .is_some_and(|(_, arg_ty)| arg_ty.is_self_ty_legal(cf_item.id()));
+                    .is_some_and(|(_, arg_ty)| arg_ty.is_self_ty_legal(parent_item.id()));
                 let omit_memory_management_words =
                     result_type.fn_return(*returns_retained).1.is_some();
 
@@ -128,9 +128,9 @@ fn update_module(
                     // Has been renamed already
                     id.name.clone()
                 } else {
-                    cf_fn_name(
+                    shorten_name_when_on_parent(
                         c_name,
-                        &cf_item.id().name,
+                        &parent_item.id().name,
                         is_instance_method,
                         omit_memory_management_words,
                     )
@@ -156,7 +156,7 @@ fn update_module(
 
                     *stmt = Stmt::FnGetTypeId {
                         id: id.clone(),
-                        cf_item,
+                        cf_item: parent_item,
                         link_name: link_name.clone(),
                         result_type: result_type.clone(),
                         availability: availability.clone(),
@@ -169,7 +169,7 @@ fn update_module(
                         stmt,
                         Stmt::GeneralImpl {
                             location,
-                            item: cf_item,
+                            item: parent_item,
                             stmts: vec![],
                         },
                     );

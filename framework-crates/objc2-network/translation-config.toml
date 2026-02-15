@@ -1,0 +1,346 @@
+framework = "Network"
+crate = "objc2-network"
+required-crates = ["block2"]
+custom-lib-rs = true
+macos = "10.14"
+maccatalyst = "13.0"
+ios = "12.0"
+tvos = "12.0"
+watchos = "6.0"
+visionos = "1.0"
+
+# Affects memory management.
+fn.nw_retain.skipped = true
+fn.nw_release.skipped = true
+
+# We want this as a trait instead of a struct.
+typedef.nw_object_t.skipped = true
+
+# fixme: Return pointer to pointer which does not work with Retained::from_raw()
+fn.nw_quic_copy_sec_protocol_options.skipped = true
+fn.nw_tls_copy_sec_protocol_metadata.skipped = true
+fn.nw_quic_copy_sec_protocol_metadata.skipped = true
+fn.nw_tls_copy_sec_protocol_options.skipped = true
+
+# Enum generated with integer identifiers
+const.nw_ip_version_any.renamed = "any"
+const.nw_ip_version_4.renamed = "version_4"
+const.nw_ip_version_6.renamed = "version_6"
+
+# Enum generated with integer identifiers
+const.nw_multipath_version_unspecified.renamed = "unspecified"
+const.nw_multipath_version_0.renamed = "version_0"
+const.nw_multipath_version_1.renamed = "version_1"
+
+# Enum generated with integer identifiers
+const.nw_ws_version_invalid.renamed = "invalid"
+const.nw_ws_version_13.renamed = "version_13"
+
+# Rename to match Swift's naming scheme.
+typedef.nw_txt_record_t.renamed = "NWTxtRecord"
+typedef.nw_advertise_descriptor_t.renamed = "NWAdvertiseDescriptor"
+typedef.nw_protocol_definition_t.renamed = "NWProtocolDefinition"
+typedef.nw_protocol_options_t.renamed = "NWProtocolOptions"
+typedef.nw_protocol_metadata_t.renamed = "NWProtocolMetadata"
+typedef.nw_interface_t.renamed = "NWInterface"
+typedef.nw_endpoint_t.renamed = "NWEndpoint"
+typedef.nw_resolver_config_t.renamed = "NWResolverConfig"
+typedef.nw_proxy_config_t.renamed = "NWProxyConfig"
+typedef.nw_relay_hop_t.renamed = "NWRelayHop"
+typedef.nw_privacy_context_t.renamed = "NWPrivacyContext"
+typedef.nw_parameters_t.renamed = "NWParameters"
+typedef.nw_protocol_stack_t.renamed = "NWProtocolStack"
+typedef.nw_browse_descriptor_t.renamed = "NWBrowseDescriptor"
+typedef.nw_browse_result_t.renamed = "NWBrowseResult"
+typedef.nw_error_t.renamed = "NWError"
+typedef.nw_browser_t.renamed = "NWBrowser"
+typedef.nw_path_t.renamed = "NWPath"
+typedef.nw_content_context_t.renamed = "NWContentContext"
+typedef.nw_connection_t.renamed = "NWConnection"
+typedef.nw_group_descriptor_t.renamed = "NWGroupDescriptor"
+typedef.nw_connection_group_t.renamed = "NWConnectionGroup"
+typedef.nw_establishment_report_t.renamed = "NWEstablishmentReport"
+typedef.nw_resolution_report_t.renamed = "NWResolutionReport"
+typedef.nw_data_transfer_report_t.renamed = "NWDataTransferReport"
+typedef.nw_ethernet_channel_t.renamed = "NWEthernetChannel"
+typedef.nw_framer_t.renamed = "NWFramer"
+typedef.nw_listener_t.renamed = "NWListener"
+typedef.nw_path_monitor_t.renamed = "NWPathMonitor"
+typedef.nw_ws_request_t.renamed = "NWWsRequest"
+typedef.nw_ws_response_t.renamed = "NWWsResponse"
+
+# Rename aliases
+typedef.nw_framer_message_t.renamed = "NWFramerMessage"
+# typedef.nw_browse_result_change_t.renamed = "todo"
+typedef.nw_ethernet_address_t.renamed = "NWEthernetAddress"
+
+# Place functions as methods on relevant types.
+fn.nw_protocol_copy_ip_definition.implementor = "Network.NWProtocolDefinition"
+fn.nw_protocol_copy_ws_definition.implementor = "Network.NWProtocolDefinition"
+fn.nw_protocol_copy_quic_definition.implementor = "Network.NWProtocolDefinition"
+fn.nw_protocol_copy_tcp_definition.implementor = "Network.NWProtocolDefinition"
+fn.nw_protocol_copy_tls_definition.implementor = "Network.NWProtocolDefinition"
+fn.nw_protocol_copy_udp_definition.implementor = "Network.NWProtocolDefinition"
+
+fn.nw_ip_options_set_version.implementor = "Network.NWProtocolOptions"
+fn.nw_ip_options_set_hop_limit.implementor = "Network.NWProtocolOptions"
+fn.nw_ip_options_set_use_minimum_mtu.implementor = "Network.NWProtocolOptions"
+fn.nw_ip_options_set_disable_fragmentation.implementor = "Network.NWProtocolOptions"
+fn.nw_ip_options_set_calculate_receive_time.implementor = "Network.NWProtocolOptions"
+fn.nw_ip_options_set_local_address_preference.implementor = "Network.NWProtocolOptions"
+fn.nw_ip_options_set_disable_multicast_loopback.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_create_options.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_create_options.renamed = "tcp"
+fn.nw_tcp_options_set_enable_keepalive.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_keepalive_count.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_keepalive_idle_time.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_keepalive_interval.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_no_delay.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_no_options.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_no_push.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_maximum_segment_size.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_connection_timeout.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_persist_timeout.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_retransmit_connection_drop_time.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_retransmit_fin_drop.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_disable_ack_stretching.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_enable_fast_open.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_disable_ecn.implementor = "Network.NWProtocolOptions"
+fn.nw_tcp_options_set_multipath_force_version.implementor = "Network.NWProtocolOptions"
+fn.nw_ws_create_options.implementor = "Network.NWProtocolOptions"
+fn.nw_ws_create_options.renamed = "ws"
+fn.nw_ws_options_add_additional_header.implementor = "Network.NWProtocolOptions"
+fn.nw_ws_options_add_subprotocol.implementor = "Network.NWProtocolOptions"
+fn.nw_ws_options_set_auto_reply_ping.implementor = "Network.NWProtocolOptions"
+fn.nw_ws_options_set_client_request_handler.implementor = "Network.NWProtocolOptions"
+fn.nw_ws_options_set_maximum_message_size.implementor = "Network.NWProtocolOptions"
+fn.nw_ws_options_set_skip_handshake.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_create_options.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_create_options.renamed = "quic"
+fn.nw_quic_get_stream_is_unidirectional.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_stream_is_unidirectional.renamed = "quic_stream_is_unidirectional"
+fn.nw_quic_set_stream_is_unidirectional.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_stream_is_datagram.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_stream_is_datagram.renamed = "quic_stream_is_datagram"
+fn.nw_quic_set_stream_is_datagram.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_initial_max_data.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_initial_max_data.renamed = "quic_initial_max_data"
+fn.nw_quic_set_initial_max_data.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_max_udp_payload_size.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_max_udp_payload_size.renamed = "quic_max_udp_payload_size"
+fn.nw_quic_set_max_udp_payload_size.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_idle_timeout.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_idle_timeout.renamed = "quic_idle_timeout"
+fn.nw_quic_set_idle_timeout.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_initial_max_streams_bidirectional.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_initial_max_streams_bidirectional.renamed = "quic_initial_max_streams_bidirectional"
+fn.nw_quic_set_initial_max_streams_bidirectional.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_initial_max_streams_unidirectional.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_initial_max_streams_unidirectional.renamed = "quic_initial_max_streams_unidirectional"
+fn.nw_quic_set_initial_max_streams_unidirectional.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_initial_max_stream_data_bidirectional_local.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_initial_max_stream_data_bidirectional_local.renamed = "quic_initial_max_stream_data_bidirectional_local"
+fn.nw_quic_set_initial_max_stream_data_bidirectional_local.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_initial_max_stream_data_bidirectional_remote.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_initial_max_stream_data_bidirectional_remote.renamed = "quic_initial_max_stream_data_bidirectional_remote"
+fn.nw_quic_set_initial_max_stream_data_bidirectional_remote.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_initial_max_stream_data_unidirectional.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_initial_max_stream_data_unidirectional.renamed = "quic_initial_max_stream_data_unidirectional"
+fn.nw_quic_set_initial_max_stream_data_unidirectional.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_max_datagram_frame_size.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_get_max_datagram_frame_size.renamed = "quic_max_datagram_frame_size"
+fn.nw_quic_set_max_datagram_frame_size.implementor = "Network.NWProtocolOptions"
+fn.nw_quic_add_tls_application_protocol.implementor = "Network.NWProtocolOptions"
+fn.nw_tls_create_options.implementor = "Network.NWProtocolOptions"
+fn.nw_tls_create_options.renamed = "tls"
+fn.nw_udp_create_options.implementor = "Network.NWProtocolOptions"
+fn.nw_udp_create_options.renamed = "udp"
+fn.nw_udp_options_set_prefer_no_checksum.implementor = "Network.NWProtocolOptions"
+
+fn.nw_quic_get_application_error.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_get_application_error.renamed = "quic_application_error"
+fn.nw_quic_get_application_error_reason.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_get_application_error_reason.renamed = "quic_application_error_reason"
+fn.nw_quic_get_keepalive_interval.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_get_keepalive_interval.renamed = "quic_keepalive_interval"
+fn.nw_quic_get_local_max_streams_bidirectional.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_get_local_max_streams_bidirectional.renamed = "quic_local_max_streams_bidirectional"
+fn.nw_quic_get_local_max_streams_unidirectional.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_get_local_max_streams_unidirectional.renamed = "quic_local_max_streams_unidirectional"
+fn.nw_quic_get_remote_idle_timeout.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_get_remote_idle_timeout.renamed = "quic_remote_idle_timeout"
+fn.nw_quic_get_remote_max_streams_bidirectional.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_get_remote_max_streams_bidirectional.renamed = "quic_remote_max_streams_bidirectional"
+fn.nw_quic_get_remote_max_streams_unidirectional.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_get_remote_max_streams_unidirectional.renamed = "quic_remote_max_streams_unidirectional"
+fn.nw_quic_get_stream_application_error.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_get_stream_application_error.renamed = "quic_stream_application_error"
+fn.nw_quic_get_stream_id.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_get_stream_id.renamed = "quic_stream_id"
+fn.nw_quic_get_stream_type.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_get_stream_type.renamed = "quic_stream_type"
+fn.nw_quic_get_stream_usable_datagram_frame_size.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_get_stream_usable_datagram_frame_size.renamed = "quic_stream_usable_datagram_frame_size"
+fn.nw_quic_set_application_error.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_set_keepalive_interval.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_set_local_max_streams_bidirectional.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_set_local_max_streams_unidirectional.implementor = "Network.NWProtocolMetadata"
+fn.nw_quic_set_stream_application_error.implementor = "Network.NWProtocolMetadata"
+fn.nw_ws_metadata_copy_server_response.implementor = "Network.NWProtocolMetadata"
+fn.nw_ws_metadata_get_close_code.implementor = "Network.NWProtocolMetadata"
+fn.nw_ws_metadata_get_close_code.renamed = "ws_close_code"
+fn.nw_ws_metadata_get_opcode.implementor = "Network.NWProtocolMetadata"
+fn.nw_ws_metadata_get_opcode.renamed = "ws_opcode"
+fn.nw_ws_metadata_set_close_code.implementor = "Network.NWProtocolMetadata"
+fn.nw_ws_metadata_set_pong_handler.implementor = "Network.NWProtocolMetadata"
+fn.nw_ip_create_metadata.implementor = "Network.NWProtocolMetadata"
+fn.nw_ip_create_metadata.renamed = "ip"
+fn.nw_ip_metadata_set_ecn_flag.implementor = "Network.NWProtocolMetadata"
+fn.nw_ip_metadata_get_ecn_flag.implementor = "Network.NWProtocolMetadata"
+fn.nw_ip_metadata_get_ecn_flag.renamed = "ip_ecn_flag"
+fn.nw_ip_metadata_set_service_class.implementor = "Network.NWProtocolMetadata"
+fn.nw_ip_metadata_get_service_class.implementor = "Network.NWProtocolMetadata"
+fn.nw_ip_metadata_get_service_class.renamed = "ip_service_class"
+fn.nw_ip_metadata_get_receive_time.implementor = "Network.NWProtocolMetadata"
+fn.nw_ip_metadata_get_receive_time.renamed = "ip_receive_time"
+fn.nw_udp_create_metadata.implementor = "Network.NWProtocolMetadata"
+fn.nw_udp_create_metadata.renamed = "udp"
+fn.nw_ws_create_metadata.implementor = "Network.NWProtocolMetadata"
+fn.nw_ws_create_metadata.renamed = "ws"
+fn.nw_tcp_get_available_receive_buffer.implementor = "Network.NWProtocolMetadata"
+fn.nw_tcp_get_available_receive_buffer.renamed = "tcp_available_receive_buffer"
+fn.nw_tcp_get_available_send_buffer.implementor = "Network.NWProtocolMetadata"
+fn.nw_tcp_get_available_send_buffer.renamed = "tcp_available_send_buffer"
+
+fn.nw_multicast_group_descriptor_set_specific_source.implementor = "Network.NWGroupDescriptor"
+fn.nw_multicast_group_descriptor_set_disable_unicast_traffic.implementor = "Network.NWGroupDescriptor"
+fn.nw_multicast_group_descriptor_get_disable_unicast_traffic.implementor = "Network.NWGroupDescriptor"
+fn.nw_multicast_group_descriptor_get_disable_unicast_traffic.renamed = "multicast_disable_unicast_traffic"
+
+# NWWs in network framework is not properly parsed into two words.
+# FIXME: We should figure out the implementable mapping based on C names
+# instead.
+fn.nw_ws_request_enumerate_additional_headers.implementor = "Network.NWWsRequest"
+fn.nw_ws_request_enumerate_additional_headers.renamed = "enumerate_additional_headers"
+fn.nw_ws_request_enumerate_subprotocols.implementor = "Network.NWWsRequest"
+fn.nw_ws_request_enumerate_subprotocols.renamed = "enumerate_subprotocols"
+fn.nw_ws_response_create.implementor = "Network.NWWsResponse"
+fn.nw_ws_response_create.renamed = "new"
+fn.nw_ws_response_add_additional_header.implementor = "Network.NWWsResponse"
+fn.nw_ws_response_add_additional_header.renamed = "add_additional_header"
+fn.nw_ws_response_enumerate_additional_headers.implementor = "Network.NWWsResponse"
+fn.nw_ws_response_enumerate_additional_headers.renamed = "enumerate_additional_headers"
+fn.nw_ws_response_get_selected_subprotocol.implementor = "Network.NWWsResponse"
+fn.nw_ws_response_get_selected_subprotocol.renamed = "selected_subprotocol"
+fn.nw_ws_response_get_status.implementor = "Network.NWWsResponse"
+fn.nw_ws_response_get_status.renamed = "status"
+
+# Incorrectly placed on `nw_txt_record_find_key_t`.
+fn.nw_txt_record_find_key.implementor = "Network.NWTxtRecord"
+
+# Incorrectly placed on `nw_framer_t`.
+# Works a bit weirdly because `NWFramerMessage` is a type-alias.
+fn.nw_framer_protocol_create_message.implementor = "Network.NWProtocolDefinition"
+fn.nw_framer_protocol_create_message.renamed = "new_framer_message"
+fn.nw_framer_message_set_value.implementor = "Network.NWFramerMessage"
+fn.nw_framer_message_set_value.renamed = "framer_set_value"
+fn.nw_framer_message_access_value.implementor = "Network.NWFramerMessage"
+fn.nw_framer_message_access_value.renamed = "framer_access_value"
+fn.nw_framer_message_set_object_value.implementor = "Network.NWFramerMessage"
+fn.nw_framer_message_set_object_value.renamed = "framer_set_object_value"
+fn.nw_framer_message_copy_object_value.implementor = "Network.NWFramerMessage"
+fn.nw_framer_message_copy_object_value.renamed = "framer_copy_object_value"
+fn.nw_framer_create_definition.implementor = "Network.NWProtocolDefinition"
+fn.nw_framer_create_definition.renamed = "framer"
+fn.nw_framer_create_options.implementor = "Network.NWProtocolOptions"
+fn.nw_framer_create_options.renamed = "framer"
+fn.nw_framer_options_set_object_value.implementor = "Network.NWProtocolOptions"
+fn.nw_framer_options_copy_object_value.implementor = "Network.NWProtocolOptions"
+
+# Remove "create" from name.
+fn.nw_framer_message_create.renamed = "new_message"
+
+##
+## Fixing bounds information
+##
+
+fn.nw_txt_record_create_with_bytes.arguments.0.bounds.counted-by = "txt_len"
+fn.nw_txt_record_find_key.arguments.1.bounds = "null-terminated"
+fn.nw_txt_record_access_key.arguments.1.bounds = "null-terminated"
+fn.nw_txt_record_set_key.arguments.1.bounds = "null-terminated"
+fn.nw_txt_record_set_key.arguments.2.bounds.counted-by = "value_len"
+fn.nw_txt_record_remove_key.arguments.1.bounds = "null-terminated"
+fn.nw_advertise_descriptor_create_bonjour_service.arguments.0.bounds = "null-terminated"
+fn.nw_advertise_descriptor_create_bonjour_service.arguments.1.bounds = "null-terminated"
+fn.nw_advertise_descriptor_create_bonjour_service.arguments.2.bounds = "null-terminated"
+fn.nw_advertise_descriptor_create_application_service.arguments.0.bounds = "null-terminated"
+# fn.nw_advertise_descriptor_get_application_service_name.return.bounds = "null-terminated" # TODO: Lifetime?
+# fn.nw_interface_get_name.return.bounds = "null-terminated" # TODO: Lifetime?
+fn.nw_endpoint_create_host.arguments.0.bounds = "null-terminated"
+fn.nw_endpoint_create_host.arguments.1.bounds = "null-terminated"
+# fn.nw_endpoint_get_hostname.return.bounds = "null-terminated" # TODO: Lifetime?
+# fn.nw_endpoint_copy_port_string.return.bounds = "null-terminated" # TODO: Lifetime strong
+fn.nw_endpoint_create_address.arguments.0.bounds = "unsafe" # sockaddr
+# fn.nw_endpoint_copy_address_string.return.bounds = "null-terminated" # TODO: Lifetime?
+fn.nw_endpoint_get_address.return.bounds = "unsafe" # sockaddr
+fn.nw_endpoint_create_bonjour_service.arguments.0.bounds = "null-terminated"
+fn.nw_endpoint_create_bonjour_service.arguments.1.bounds = "null-terminated"
+fn.nw_endpoint_create_bonjour_service.arguments.2.bounds = "null-terminated"
+# fn.nw_endpoint_get_bonjour_service_name.return.bounds = "null-terminated" # TODO: Lifetime?
+# fn.nw_endpoint_get_bonjour_service_type.return.bounds = "null-terminated" # TODO: Lifetime?
+# fn.nw_endpoint_get_bonjour_service_domain.return.bounds = "null-terminated" # TODO: Lifetime?
+fn.nw_endpoint_create_url.arguments.0.bounds = "null-terminated"
+# fn.nw_endpoint_get_url.return.bounds = "null-terminated" # TODO: Lifetime?
+fn.nw_endpoint_get_signature.arguments.1.bounds = "single"
+fn.nw_endpoint_get_signature.return.bounds.counted-by = "*out_signature_length" # TODO: Lifetime?
+fn.nw_relay_hop_add_additional_http_header_field.arguments.1.bounds = "null-terminated"
+fn.nw_relay_hop_add_additional_http_header_field.arguments.2.bounds = "null-terminated"
+fn.nw_proxy_config_create_oblivious_http.arguments.1.bounds = "null-terminated"
+fn.nw_proxy_config_create_oblivious_http.arguments.2.bounds.counted-by = "gateway_key_config_length"
+fn.nw_proxy_config_set_username_and_password.arguments.1.bounds = "null-terminated"
+fn.nw_proxy_config_set_username_and_password.arguments.2.bounds = "null-terminated"
+fn.nw_proxy_config_add_match_domain.arguments.1.bounds = "null-terminated"
+fn.nw_proxy_config_add_excluded_domain.arguments.1.bounds = "null-terminated"
+fn.nw_privacy_context_create.arguments.0.bounds = "null-terminated"
+fn.nw_browse_descriptor_create_bonjour_service.arguments.0.bounds = "null-terminated"
+fn.nw_browse_descriptor_create_bonjour_service.arguments.1.bounds = "null-terminated"
+# fn.nw_browse_descriptor_get_bonjour_service_type.return.bounds = "null-terminated" # TODO: Lifetime?
+# fn.nw_browse_descriptor_get_bonjour_service_domain.return.bounds = "null-terminated" # TODO: Lifetime?
+fn.nw_browse_descriptor_create_application_service.arguments.0.bounds = "null-terminated"
+# fn.nw_browse_descriptor_get_application_service_name.return.bounds = "null-terminated" # TODO: Lifetime?
+fn.nw_content_context_create.arguments.0.bounds = "null-terminated"
+# fn.nw_content_context_get_identifier.return.bounds = "null-terminated" # TODO: Lifetime?
+# fn.nw_connection_copy_description.return.bounds = "null-terminated" # TODO: Lifetime?
+fn.nw_framer_message_set_value.arguments.1.bounds = "null-terminated"
+fn.nw_framer_message_access_value.arguments.1.bounds = "null-terminated"
+fn.nw_framer_message_set_object_value.arguments.1.bounds = "null-terminated"
+fn.nw_framer_message_copy_object_value.arguments.1.bounds = "null-terminated"
+fn.nw_framer_create_definition.arguments.0.bounds = "null-terminated"
+fn.nw_framer_options_set_object_value.arguments.1.bounds = "null-terminated"
+fn.nw_framer_options_copy_object_value.arguments.1.bounds = "null-terminated"
+fn.nw_framer_parse_input.arguments.3.bounds.counted-by = "maximum_length"
+fn.nw_framer_deliver_input.arguments.1.bounds.counted-by = "input_length"
+fn.nw_framer_parse_output.arguments.3.bounds.counted-by = "maximum_length"
+fn.nw_framer_write_output.arguments.1.bounds.counted-by = "output_length"
+fn.nw_listener_create_with_port.arguments.0.bounds = "null-terminated"
+fn.nw_listener_create_with_launchd_key.arguments.1.bounds = "null-terminated"
+fn.nw_quic_add_tls_application_protocol.arguments.1.bounds = "null-terminated"
+# fn.nw_quic_get_application_error_reason.return.bounds = "null-terminated" # TODO: Lifetime?
+fn.nw_quic_set_application_error.arguments.2.bounds = "null-terminated"
+fn.nw_ws_options_add_additional_header.arguments.1.bounds = "null-terminated"
+fn.nw_ws_options_add_additional_header.arguments.2.bounds = "null-terminated"
+fn.nw_ws_options_add_subprotocol.arguments.1.bounds = "null-terminated"
+fn.nw_ws_response_create.arguments.1.bounds = "null-terminated"
+# fn.nw_ws_response_get_selected_subprotocol.return.bounds = "null-terminated" # TODO: Lifetime?
+fn.nw_ws_response_add_additional_header.arguments.1.bounds = "null-terminated"
+fn.nw_ws_response_add_additional_header.arguments.2.bounds = "null-terminated"
+
+##
+## Safety
+##
+
+# SAFETY: Network objects seem fairly well-behaved?
+#
+# Some types have multiple "modes" they can be in, but it is (probably?) just
+# an error / no-op if you use a type in an incorrect mode.
+unsafe-default-safety.documentation-is-reviewed = true

@@ -117,6 +117,7 @@ impl Location {
             "libkern.OSTypes" => "__builtin__".into(),
             "Darwin.net.if_media" => "__builtin__".into(),
             "XPC" => "__builtin__".into(),
+            "dnssd" => "__builtin__".into(),
 
             // We don't emit the `hfs`, so let's act as-if CoreServices is the
             // one that defines the types in there (such as HFSUniStr255).
@@ -864,6 +865,13 @@ impl ItemTree {
         Self::from_id(ItemIdentifier {
             name: name.into(),
             location: Location::new("Dispatch"),
+        })
+    }
+
+    pub fn network(name: impl Into<String>) -> Self {
+        Self::from_id(ItemIdentifier {
+            name: name.into(),
+            location: Location::new("Network"),
         })
     }
 
