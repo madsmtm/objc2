@@ -54,23 +54,23 @@ mod timeout_error;
 mod utils;
 mod workloop;
 
+#[cfg(feature = "block2")]
+pub use self::generated::{
+    _dispatch_data_destructor_free, _dispatch_data_destructor_munmap, dispatch_block_cancel,
+    dispatch_block_create, dispatch_block_create_with_qos_class, dispatch_block_notify,
+    dispatch_block_perform, dispatch_block_t, dispatch_block_testcancel, dispatch_block_wait,
+    dispatch_data_applier_t, dispatch_io_handler_t, dispatch_read, dispatch_write,
+};
 pub use self::generated::{
     dispatch_allow_send_signals, dispatch_fd_t, dispatch_get_specific, dispatch_once_t,
-    DispatchAutoReleaseFrequency, _dispatch_source_type_data_add, _dispatch_source_type_data_or,
+    DispatchAutoReleaseFrequency, DispatchData, DispatchGroup, DispatchIO, DispatchQueue,
+    DispatchQueueAttr, DispatchSemaphore, DispatchSource, DispatchWorkloop,
+    _dispatch_source_type_data_add, _dispatch_source_type_data_or,
     _dispatch_source_type_data_replace, _dispatch_source_type_mach_recv,
     _dispatch_source_type_mach_send, _dispatch_source_type_memorypressure,
     _dispatch_source_type_proc, _dispatch_source_type_read, _dispatch_source_type_signal,
     _dispatch_source_type_timer, _dispatch_source_type_vnode, _dispatch_source_type_write,
     DISPATCH_API_VERSION,
-};
-#[cfg(feature = "block2")]
-pub use self::generated::{
-    DispatchData, _dispatch_data_destructor_free, _dispatch_data_destructor_munmap,
-    dispatch_block_cancel, dispatch_block_create, dispatch_block_create_with_qos_class,
-    dispatch_block_notify, dispatch_block_perform, dispatch_block_t, dispatch_block_testcancel,
-    dispatch_block_wait, dispatch_data_applier_t, dispatch_io_handler_t, dispatch_read,
-    dispatch_write, DispatchGroup, DispatchIO, DispatchQueue, DispatchQueueAttr, DispatchSemaphore,
-    DispatchSource, DispatchWorkloop,
 };
 pub use self::group::DispatchGroupGuard;
 pub use self::io::{DispatchIOCloseFlags, DispatchIOIntervalFlags, DispatchIOStreamType};
