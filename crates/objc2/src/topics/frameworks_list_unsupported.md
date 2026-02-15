@@ -48,7 +48,6 @@
 | `FoundationModels` | Swift-only. |
 | `GLUT` | Apple's redistribution of GLUT headers, better served by a different crate. |
 | `GSS` | Very C-centric and old. |
-| `GameSave` | TODO. |
 | `GeoToolbox` | Swift-only. |
 | `GroupActivities` | Swift-only. |
 | `Hypervisor` | Very low-level, consider crates like `applevisor` instead. |

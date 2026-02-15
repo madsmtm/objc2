@@ -93,6 +93,7 @@ test-frameworks = [
     "objc2-gl-kit",
     "objc2-game-controller",
     "objc2-game-kit",
+    "objc2-game-save",
     "objc2-gameplay-kit",
     "objc2-health-kit",
     "objc2-health-kit-ui",
@@ -383,6 +384,7 @@ objc2-gl-kit = ["dep:objc2-gl-kit"]
 objc2-open-gl = ["dep:objc2-open-gl"]
 objc2-open-gl-es = ["dep:objc2-open-gl-es", "objc2-open-gl-es?/objc2-io-surface"]
 objc2-browser-kit = ["dep:objc2-browser-kit"]
+objc2-game-save = ["dep:objc2-game-save"]
 
 [dependencies]
 block2 = { workspace = true, default-features = true }
@@ -452,6 +454,7 @@ objc2-core-spotlight = { workspace = true, optional = true, default-features = t
 objc2-device-discovery-extension = { workspace = true, optional = true, default-features = true }
 objc2-file-provider = { workspace = true, optional = true, default-features = true }
 objc2-file-provider-ui = { workspace = true, optional = true, default-features = true }
+objc2-game-save = { workspace = true, optional = true, default-features = true }
 objc2-io-kit = { workspace = true, optional = true, default-features = true }
 objc2-identity-lookup = { workspace = true, optional = true, default-features = true }
 objc2-image-capture-core = { workspace = true, optional = true, default-features = true }

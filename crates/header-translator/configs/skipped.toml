@@ -146,7 +146,6 @@ Network = "TODO, see [#646](https://github.com/madsmtm/objc2/issues/646)"
 DeviceDiscoveryUI = "Needs Network first"
 
 SecurityUI = "TODO"
-GameSave = "TODO"
 TouchController = "TODO"
 
 # LiveExecutionResultsLogger = "Removed in Xcode 26"

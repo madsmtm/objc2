@@ -80,6 +80,7 @@
 | `GLKit` | [`objc2-gl-kit`](https://crates.io/crates/objc2-gl-kit) | [![docs.rs](https://docs.rs/objc2-gl-kit/badge.svg)](https://docs.rs/objc2-gl-kit/) |
 | `GameController` | [`objc2-game-controller`](https://crates.io/crates/objc2-game-controller) | [![docs.rs](https://docs.rs/objc2-game-controller/badge.svg)](https://docs.rs/objc2-game-controller/) |
 | `GameKit` | [`objc2-game-kit`](https://crates.io/crates/objc2-game-kit) | [![docs.rs](https://docs.rs/objc2-game-kit/badge.svg)](https://docs.rs/objc2-game-kit/) |
+| `GameSave` | [`objc2-game-save`](https://crates.io/crates/objc2-game-save) | [![docs.rs](https://docs.rs/objc2-game-save/badge.svg)](https://docs.rs/objc2-game-save/) |
 | `GameplayKit` | [`objc2-gameplay-kit`](https://crates.io/crates/objc2-gameplay-kit) | [![docs.rs](https://docs.rs/objc2-gameplay-kit/badge.svg)](https://docs.rs/objc2-gameplay-kit/) |
 | `HealthKit` | [`objc2-health-kit`](https://crates.io/crates/objc2-health-kit) | [![docs.rs](https://docs.rs/objc2-health-kit/badge.svg)](https://docs.rs/objc2-health-kit/) |
 | `HealthKitUI` | [`objc2-health-kit-ui`](https://crates.io/crates/objc2-health-kit-ui) | [![docs.rs](https://docs.rs/objc2-health-kit-ui/badge.svg)](https://docs.rs/objc2-health-kit-ui/) |

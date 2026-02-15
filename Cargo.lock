@@ -2185,6 +2185,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-game-save"
+version = "0.3.2"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-gameplay-kit"
 version = "0.3.2"
 dependencies = [
@@ -4106,6 +4116,7 @@ dependencies = [
  "objc2-fs-kit",
  "objc2-game-controller",
  "objc2-game-kit",
+ "objc2-game-save",
  "objc2-gameplay-kit",
  "objc2-gl-kit",
  "objc2-health-kit",

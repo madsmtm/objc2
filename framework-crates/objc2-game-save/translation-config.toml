@@ -1,0 +1,7 @@
+framework = "GameSave"
+crate = "objc2-game-save"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "26.0"
+maccatalyst = "26.0"
+ios = "26.0"
+visionos = "26.0"

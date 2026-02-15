@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Default` implementations for enumerations, bitflags and structs.
 * Added new framework crates:
   - `BrowserKit` / `objc2-browser-kit`.
+  - `GameSave` / `objc2-game-save`.
 
 ### Changed
 * Updated SDK from Xcode 26.0.1 to 26.2.

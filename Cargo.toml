@@ -190,6 +190,7 @@ objc2-foundation = { path = "framework-crates/objc2-foundation", version = "0.3.
 objc2-gl-kit = { path = "framework-crates/objc2-gl-kit", version = "0.3.2", default-features = false }
 objc2-game-controller = { path = "framework-crates/objc2-game-controller", version = "0.3.2", default-features = false }
 objc2-game-kit = { path = "framework-crates/objc2-game-kit", version = "0.3.2", default-features = false }
+objc2-game-save = { path = "framework-crates/objc2-game-save", version = "0.3.2", default-features = false }
 objc2-gameplay-kit = { path = "framework-crates/objc2-gameplay-kit", version = "0.3.2", default-features = false }
 objc2-health-kit = { path = "framework-crates/objc2-health-kit", version = "0.3.2", default-features = false }
 objc2-health-kit-ui = { path = "framework-crates/objc2-health-kit-ui", version = "0.3.2", default-features = false }
@@ -386,6 +387,7 @@ objc2-foundation = { path = "framework-crates/objc2-foundation" }
 objc2-gl-kit = { path = "framework-crates/objc2-gl-kit" }
 objc2-game-controller = { path = "framework-crates/objc2-game-controller" }
 objc2-game-kit = { path = "framework-crates/objc2-game-kit" }
+objc2-game-save = { path = "framework-crates/objc2-game-save" }
 objc2-gameplay-kit = { path = "framework-crates/objc2-gameplay-kit" }
 objc2-health-kit = { path = "framework-crates/objc2-health-kit" }
 objc2-health-kit-ui = { path = "framework-crates/objc2-health-kit-ui" }
