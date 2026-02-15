@@ -1,0 +1,11 @@
+framework = "SecurityUI"
+crate = "objc2-security-ui"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "15.4"
+maccatalyst = "18.4"
+ios = "18.4"
+tvos = "18.4"
+watchos = "11.4"
+visionos = "2.4"
+
+external.NSWindow.module = "AppKit.NSWindow"

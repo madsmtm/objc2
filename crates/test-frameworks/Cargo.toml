@@ -168,6 +168,7 @@ test-frameworks = [
     "objc2-security",
     "objc2-security-foundation",
     "objc2-security-interface",
+    "objc2-security-ui",
     "objc2-sensitive-content-analysis",
     "objc2-sensor-kit",
     "objc2-service-management",
@@ -385,6 +386,7 @@ objc2-open-gl = ["dep:objc2-open-gl"]
 objc2-open-gl-es = ["dep:objc2-open-gl-es", "objc2-open-gl-es?/objc2-io-surface"]
 objc2-browser-kit = ["dep:objc2-browser-kit"]
 objc2-game-save = ["dep:objc2-game-save"]
+objc2-security-ui = ["dep:objc2-security-ui"]
 
 [dependencies]
 block2 = { workspace = true, default-features = true }
@@ -427,6 +429,7 @@ objc2-os-log = { workspace = true, optional = true, default-features = true }
 objc2-photos-ui = { workspace = true, optional = true, default-features = true }
 objc2-scene-kit = { workspace = true, optional = true, default-features = true }
 objc2-security = { workspace = true, optional = true, default-features = true }
+objc2-security-ui = { workspace = true, optional = true, default-features = true }
 objc2-shazam-kit = { workspace = true, optional = true, default-features = true }
 objc2-sound-analysis = { workspace = true, optional = true, default-features = true }
 objc2-sprite-kit = { workspace = true, optional = true, default-features = true }

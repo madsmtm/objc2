@@ -3092,6 +3092,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-security-ui"
+version = "0.3.2"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+ "objc2-security",
+]
+
+[[package]]
 name = "objc2-sensitive-content-analysis"
 version = "0.3.2"
 dependencies = [
@@ -4193,6 +4204,7 @@ dependencies = [
  "objc2-security",
  "objc2-security-foundation",
  "objc2-security-interface",
+ "objc2-security-ui",
  "objc2-sensitive-content-analysis",
  "objc2-sensor-kit",
  "objc2-service-management",

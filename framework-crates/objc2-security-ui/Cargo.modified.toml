@@ -1,0 +1,3 @@
+# Add `NSResponder` (dependent feature of `NSWindow`)
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2-app-kit = { workspace = true, optional = true, features = ["NSWindow", "NSResponder"] }

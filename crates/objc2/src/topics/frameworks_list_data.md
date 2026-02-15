@@ -155,6 +155,7 @@
 | `Security` | [`objc2-security`](https://crates.io/crates/objc2-security) | [![docs.rs](https://docs.rs/objc2-security/badge.svg)](https://docs.rs/objc2-security/) |
 | `SecurityFoundation` | [`objc2-security-foundation`](https://crates.io/crates/objc2-security-foundation) | [![docs.rs](https://docs.rs/objc2-security-foundation/badge.svg)](https://docs.rs/objc2-security-foundation/) |
 | `SecurityInterface` | [`objc2-security-interface`](https://crates.io/crates/objc2-security-interface) | [![docs.rs](https://docs.rs/objc2-security-interface/badge.svg)](https://docs.rs/objc2-security-interface/) |
+| `SecurityUI` | [`objc2-security-ui`](https://crates.io/crates/objc2-security-ui) | [![docs.rs](https://docs.rs/objc2-security-ui/badge.svg)](https://docs.rs/objc2-security-ui/) |
 | `SensitiveContentAnalysis` | [`objc2-sensitive-content-analysis`](https://crates.io/crates/objc2-sensitive-content-analysis) | [![docs.rs](https://docs.rs/objc2-sensitive-content-analysis/badge.svg)](https://docs.rs/objc2-sensitive-content-analysis/) |
 | `SensorKit` | [`objc2-sensor-kit`](https://crates.io/crates/objc2-sensor-kit) | [![docs.rs](https://docs.rs/objc2-sensor-kit/badge.svg)](https://docs.rs/objc2-sensor-kit/) |
 | `ServiceManagement` | [`objc2-service-management`](https://crates.io/crates/objc2-service-management) | [![docs.rs](https://docs.rs/objc2-service-management/badge.svg)](https://docs.rs/objc2-service-management/) |

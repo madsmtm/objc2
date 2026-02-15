@@ -98,7 +98,6 @@
 | `RoomPlan` | Swift-only. |
 | `Ruby` | Very C-centric and old. |
 | `SecureElementCredential` | Swift-only. |
-| `SecurityUI` | TODO. |
 | `ServicesAccountLinking` | Effectively Swift-only. |
 | `StickerFoundation` | Basically empty. |
 | `StickerKit` | Basically empty. |
