@@ -115,7 +115,6 @@
 | `Testing` | Swift-only. |
 | `TipKit` | Swift-only. |
 | `Tk` | Very C-centric and old. |
-| `TouchController` | TODO. |
 | `Translation` | Swift-only. |
 | `TranslationUIProvider` | Swift-only. |
 | `Twitter` | Deprecated, use Social instead. |

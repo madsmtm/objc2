@@ -284,6 +284,7 @@ objc2-tv-ml-kit = { path = "framework-crates/objc2-tv-ml-kit", version = "0.3.2"
 objc2-tv-services = { path = "framework-crates/objc2-tv-services", version = "0.3.2", default-features = false }
 objc2-tv-ui-kit = { path = "framework-crates/objc2-tv-ui-kit", version = "0.3.2", default-features = false }
 objc2-thread-network = { path = "framework-crates/objc2-thread-network", version = "0.3.2", default-features = false }
+objc2-touch-controller = { path = "framework-crates/objc2-touch-controller", version = "0.3.2", default-features = false }
 objc2-ui-kit = { path = "framework-crates/objc2-ui-kit", version = "0.3.2", default-features = false }
 objc2-uniform-type-identifiers = { path = "framework-crates/objc2-uniform-type-identifiers", version = "0.3.2", default-features = false }
 objc2-user-notifications = { path = "framework-crates/objc2-user-notifications", version = "0.3.2", default-features = false }
@@ -482,6 +483,7 @@ objc2-tv-ml-kit = { path = "framework-crates/objc2-tv-ml-kit" }
 objc2-tv-services = { path = "framework-crates/objc2-tv-services" }
 objc2-tv-ui-kit = { path = "framework-crates/objc2-tv-ui-kit" }
 objc2-thread-network = { path = "framework-crates/objc2-thread-network" }
+objc2-touch-controller = { path = "framework-crates/objc2-touch-controller" }
 objc2-ui-kit = { path = "framework-crates/objc2-ui-kit" }
 objc2-uniform-type-identifiers = { path = "framework-crates/objc2-uniform-type-identifiers" }
 objc2-user-notifications = { path = "framework-crates/objc2-user-notifications" }

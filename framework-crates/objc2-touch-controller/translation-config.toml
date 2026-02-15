@@ -1,0 +1,10 @@
+framework = "TouchController"
+crate = "objc2-touch-controller"
+required-crates = ["objc2", "objc2-foundation"]
+maccatalyst = "26.0"
+ios = "26.0"
+visionos = "26.0"
+
+# Requires MTKView, but describing that dependency isn't properly supported
+# in this `translation-config.toml`.
+class.TCTouchControllerDescriptor.methods."initWithMTKView:".skipped = true

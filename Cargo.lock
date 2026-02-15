@@ -3280,6 +3280,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-touch-controller"
+version = "0.3.2"
+dependencies = [
+ "objc2",
+ "objc2-core-foundation",
+ "objc2-core-graphics",
+ "objc2-foundation",
+ "objc2-game-controller",
+ "objc2-metal",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-tv-ml-kit"
 version = "0.3.2"
 dependencies = [
@@ -4220,6 +4233,7 @@ dependencies = [
  "objc2-system-configuration",
  "objc2-system-extensions",
  "objc2-thread-network",
+ "objc2-touch-controller",
  "objc2-tv-ml-kit",
  "objc2-tv-services",
  "objc2-tv-ui-kit",

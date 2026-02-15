@@ -187,6 +187,7 @@ test-frameworks = [
     "objc2-tv-services",
     "objc2-tv-ui-kit",
     "objc2-thread-network",
+    "objc2-touch-controller",
     "objc2-ui-kit",
     "objc2-uniform-type-identifiers",
     "objc2-user-notifications",
@@ -387,6 +388,7 @@ objc2-open-gl-es = ["dep:objc2-open-gl-es", "objc2-open-gl-es?/objc2-io-surface"
 objc2-browser-kit = ["dep:objc2-browser-kit"]
 objc2-game-save = ["dep:objc2-game-save"]
 objc2-security-ui = ["dep:objc2-security-ui"]
+objc2-touch-controller = ["dep:objc2-touch-controller"]
 
 [dependencies]
 block2 = { workspace = true, default-features = true }
@@ -444,6 +446,7 @@ objc2-event-kit-ui = { workspace = true, optional = true, default-features = tru
 objc2-identity-lookup-ui = { workspace = true, optional = true, default-features = true }
 objc2-media-setup = { workspace = true, optional = true, default-features = true }
 objc2-message-ui = { workspace = true, optional = true, default-features = true }
+objc2-touch-controller = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(not(any(target_os = "tvos", target_os = "watchos")))'.dependencies]
 objc2-av-routing = { workspace = true, optional = true, default-features = true }

@@ -174,6 +174,7 @@
 | `TVServices` | [`objc2-tv-services`](https://crates.io/crates/objc2-tv-services) | [![docs.rs](https://docs.rs/objc2-tv-services/badge.svg)](https://docs.rs/objc2-tv-services/) |
 | `TVUIKit` | [`objc2-tv-ui-kit`](https://crates.io/crates/objc2-tv-ui-kit) | [![docs.rs](https://docs.rs/objc2-tv-ui-kit/badge.svg)](https://docs.rs/objc2-tv-ui-kit/) |
 | `ThreadNetwork` | [`objc2-thread-network`](https://crates.io/crates/objc2-thread-network) | [![docs.rs](https://docs.rs/objc2-thread-network/badge.svg)](https://docs.rs/objc2-thread-network/) |
+| `TouchController` | [`objc2-touch-controller`](https://crates.io/crates/objc2-touch-controller) | [![docs.rs](https://docs.rs/objc2-touch-controller/badge.svg)](https://docs.rs/objc2-touch-controller/) |
 | `UIKit` | [`objc2-ui-kit`](https://crates.io/crates/objc2-ui-kit) | [![docs.rs](https://docs.rs/objc2-ui-kit/badge.svg)](https://docs.rs/objc2-ui-kit/) |
 | `UniformTypeIdentifiers` | [`objc2-uniform-type-identifiers`](https://crates.io/crates/objc2-uniform-type-identifiers) | [![docs.rs](https://docs.rs/objc2-uniform-type-identifiers/badge.svg)](https://docs.rs/objc2-uniform-type-identifiers/) |
 | `UserNotifications` | [`objc2-user-notifications`](https://crates.io/crates/objc2-user-notifications) | [![docs.rs](https://docs.rs/objc2-user-notifications/badge.svg)](https://docs.rs/objc2-user-notifications/) |

@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `BrowserKit` / `objc2-browser-kit`.
   - `GameSave` / `objc2-game-save`.
   - `SecurityUI` / `objc2-security-ui`.
+  - `TouchController` / `objc2-touch-controller`.
 
 ### Changed
 * Updated SDK from Xcode 26.0.1 to 26.2.
