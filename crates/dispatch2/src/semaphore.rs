@@ -1,18 +1,7 @@
 use core::mem::ManuallyDrop;
 use core::num::NonZeroIsize;
 
-use crate::DispatchTimeoutError;
-
-use crate::DispatchTime;
-
-dispatch_object!(
-    /// Dispatch semaphore.
-    #[doc(alias = "dispatch_semaphore_t")]
-    #[doc(alias = "dispatch_semaphore_s")]
-    pub struct DispatchSemaphore;
-);
-
-dispatch_object_not_data!(unsafe DispatchSemaphore);
+use crate::{DispatchSemaphore, DispatchTime, DispatchTimeoutError};
 
 impl DispatchSemaphore {
     /// Attempt to acquire the [`DispatchSemaphore`] and return a [`DispatchSemaphoreGuard`].

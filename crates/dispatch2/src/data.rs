@@ -2,14 +2,7 @@
 use core::ptr::{self, NonNull};
 
 use crate::generated::_dispatch_data_empty;
-use crate::DispatchRetained;
-
-dispatch_object!(
-    /// Dispatch data.
-    #[doc(alias = "dispatch_data_t")]
-    #[doc(alias = "dispatch_data_s")]
-    pub struct DispatchData;
-);
+use crate::{DispatchData, DispatchRetained};
 
 impl DispatchData {
     // TODO: Expose this once possible in MSRV.

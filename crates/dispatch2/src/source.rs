@@ -1,22 +1,18 @@
 #![allow(non_camel_case_types)] // TODO
 #![allow(missing_docs)] // TODO
-use core::ffi::c_ulong;
-
-dispatch_object!(
-    /// Dispatch source.
-    #[doc(alias = "dispatch_source_t")]
-    #[doc(alias = "dispatch_source_s")]
-    pub struct DispatchSource;
-);
-
-dispatch_object_not_data!(unsafe DispatchSource);
+use core::{
+    cell::UnsafeCell,
+    ffi::c_ulong,
+    marker::{PhantomData, PhantomPinned},
+};
 
 #[repr(C)]
 #[derive(Debug)]
 pub struct dispatch_source_type_s {
     /// opaque value
     _inner: [u8; 0],
-    _p: crate::OpaqueData,
+    // OpaqueData
+    _p: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,
 }
 
 #[cfg(feature = "objc2")]

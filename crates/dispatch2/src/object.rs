@@ -195,13 +195,19 @@ pub unsafe trait DispatchObject {
 // directly, as there's no way to safely down- nor upcast to the other types.
 // Instead, they should use `DispatchObject`.
 mod private {
+    use core::{
+        cell::UnsafeCell,
+        marker::{PhantomData, PhantomPinned},
+    };
+
     #[allow(non_camel_case_types)]
     #[repr(C)]
     #[derive(Debug)]
     pub struct dispatch_object_s {
         /// opaque value
         _inner: [u8; 0],
-        _p: crate::OpaqueData,
+        // OpaqueData
+        _p: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,
     }
 
     #[cfg(feature = "objc2")]

@@ -1,15 +1,6 @@
 use core::{borrow::Borrow, ops::Deref};
 
-use crate::DispatchQueue;
-
-dispatch_object!(
-    /// Dispatch workloop queue.
-    #[doc(alias = "dispatch_workloop_t")]
-    #[doc(alias = "dispatch_workloop_s")]
-    pub struct DispatchWorkloop;
-);
-
-dispatch_object_not_data!(unsafe DispatchWorkloop);
+use crate::{DispatchQueue, DispatchWorkloop};
 
 impl Deref for DispatchWorkloop {
     type Target = DispatchQueue;

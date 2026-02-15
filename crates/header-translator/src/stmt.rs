@@ -472,6 +472,13 @@ impl Abi {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum OpaqueKind {
+    Normal,
+    CoreFoundation,
+    Dispatch,
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum Stmt {
     /// @interface name: superclass <protocols*>
     /// ->
@@ -671,7 +678,7 @@ pub enum Stmt {
         encoding_name: String,
         availability: Availability,
         documentation: Documentation,
-        is_cf: bool,
+        kind: OpaqueKind,
         sendable: Option<bool>,
         bridged: Option<String>,
         superclass: Option<ItemIdentifier>,
@@ -1173,6 +1180,16 @@ impl Stmt {
                 let id = id.require_name();
                 let objc_name = c_name.unwrap();
 
+                // Skip OS_dispatch_* and OS_nw_*
+                if objc_name.starts_with("OS_") {
+                    if !objc_name.starts_with("OS_dispatch_")
+                        && !objc_name.starts_with("OS_dispatch_")
+                    {
+                        error!(?id, "unexpectedly skipped protocol");
+                    }
+                    return vec![];
+                }
+
                 let thread_safety = ThreadSafety::from_decl(entity, context);
 
                 verify_objc_decl(entity, context);
@@ -1206,8 +1223,8 @@ impl Stmt {
                 let id = id.require_name();
                 let c_name = c_name.unwrap();
 
-                let mut kind = None;
-                let mut inner_struct = None;
+                let mut alias_kind = None;
+                let mut inner_item = None;
                 let mut sendable = None;
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
@@ -1222,22 +1239,71 @@ impl Stmt {
                                     warn!(name = ?id.name, "main-thread-only typedef");
                                 }
                                 _ => {
-                                    if kind.is_some() {
-                                        warn!(?kind, ?attr, "got multiple unexposed attributes");
+                                    if alias_kind.is_some() {
+                                        warn!(
+                                            ?alias_kind,
+                                            ?attr,
+                                            "got multiple unexposed attributes"
+                                        );
                                     }
-                                    kind = Some(attr);
+                                    alias_kind = Some(attr);
                                 }
                             }
                         }
                     }
                     EntityKind::TypeRef => {
-                        inner_struct =
+                        inner_item =
                             Some(entity.get_reference().expect("typeref to have reference"));
+                    }
+                    EntityKind::ObjCProtocolRef => {
+                        let declaration =
+                            entity.get_reference().expect("typeref to have reference");
+
+                        // Handle OS_OBJECT_DECL
+                        let protocol_name = entity.get_name().unwrap();
+                        if protocol_name.starts_with("OS_") {
+                            let macro_invocation = declaration
+                                .get_location()
+                                .expect("itemref location")
+                                .get_entity()
+                                .expect("itemref entity");
+
+                            assert_eq!(macro_invocation.get_kind(), EntityKind::MacroExpansion);
+
+                            let macro_name = macro_invocation.get_name().unwrap();
+
+                            match &*macro_name {
+                                // Delegates to `OS_OBJECT_DECL_SENDABLE_SWIFT`,
+                                // which marks the type `OS_OBJECT_SWIFT_SENDABLE`.
+                                "DISPATCH_DECL"
+                                | "DISPATCH_DECL_SWIFT"
+                                | "DISPATCH_SOURCE_DECL_SWIFT" => {
+                                    sendable = Some(true);
+                                }
+                                // Delegates to `DISPATCH_DECL_SWIFT`
+                                "DISPATCH_DECL_FACTORY_CLASS_SWIFT" => {
+                                    sendable = Some(true);
+                                    // TODO: OS_OBJECT_SWIFT_HAS_MISSING_DESIGNATED_INIT?
+                                }
+                                "DISPATCH_DECL_SERIAL_EXECUTOR_SWIFT" => {
+                                    sendable = Some(true);
+                                    // TODO: superclass?
+                                }
+                                // Delegates to `OS_OBJECT_DECL_SENDABLE_SWIFT`,
+                                // but actually isn't `Send + Sync` because it
+                                // can contain `NSData`.
+                                "DISPATCH_DATA_DECL_SWIFT" => {
+                                    sendable = Some(false);
+                                }
+                                _ => error!(macro_name, "unknown OS protocol macro"),
+                            }
+                        }
+
+                        inner_item = Some(declaration);
                     }
                     EntityKind::StructDecl
                     | EntityKind::UnionDecl
                     | EntityKind::ObjCClassRef
-                    | EntityKind::ObjCProtocolRef
                     | EntityKind::ParmDecl
                     | EntityKind::EnumDecl
                     | EntityKind::IntegerLiteral
@@ -1271,30 +1337,33 @@ impl Stmt {
                     return vec![];
                 }
 
-                let mut bridged = if let Some(inner_struct) = &inner_struct {
-                    bridged_to(inner_struct, context)
+                let mut bridged = if let Some(inner_item) = &inner_item {
+                    bridged_to(inner_item, context)
                 } else {
                     bridged_to(entity, context)
                 };
 
-                if let Some((is_cf, encoding_name)) =
-                    ty.pointer_to_opaque_struct_or_void(&c_name, bridged.is_some())
+                if let Some((opaque_kind, encoding_name)) =
+                    ty.pointer_to_opaque(&c_name, bridged.is_some())
                 {
-                    if kind.is_some() {
-                        error!(?kind, "unknown kind on opaque type");
+                    if alias_kind.is_some() {
+                        error!(?alias_kind, "unknown kind on opaque type");
                     }
 
                     assert_eq!(
-                        inner_struct
+                        inner_item
                             .as_ref()
                             .map(|entity| entity.get_name().unwrap())
                             .as_deref(),
                         encoding_name,
-                        "inner struct must be the same that `pointer_to_opaque_struct_or_void` found",
+                        "inner item must be the same that `pointer_to_opaque` found",
                     );
 
-                    if is_cf {
-                        let id = context.replace_typedef_name(id, is_cf);
+                    if !matches!(opaque_kind, OpaqueKind::Normal) {
+                        let id = context.replace_typedef_name(
+                            id,
+                            matches!(opaque_kind, OpaqueKind::CoreFoundation),
+                        );
 
                         if id.name != c_name {
                             documentation.set_alias(c_name);
@@ -1350,25 +1419,25 @@ impl Stmt {
                                 .collect(),
                             availability,
                             documentation,
-                            is_cf,
+                            kind: opaque_kind,
                             sendable,
                             bridged: bridged.flatten(),
                             superclass,
                         }];
-                    } else if let Some(entity) = inner_struct {
+                    } else if let Some(entity) = inner_item {
                         return vec![
                             Self::OpaqueDecl {
                                 id: ItemIdentifier::new(&entity, context),
+                                encoding_name: encoding_name.unwrap().to_string(),
                                 generics: data
                                     .generics
                                     .iter()
                                     .flatten()
                                     .map(|generic| (generic.clone(), None))
                                     .collect(),
-                                encoding_name: encoding_name.unwrap().to_string(),
                                 availability: Availability::parse(&entity, context),
                                 documentation: Documentation::from_entity(&entity, context),
-                                is_cf,
+                                kind: opaque_kind,
                                 sendable,
                                 bridged: bridged.flatten(),
                                 superclass: None,
@@ -1377,7 +1446,7 @@ impl Stmt {
                                 id,
                                 availability,
                                 ty,
-                                kind,
+                                kind: alias_kind,
                                 documentation,
                             },
                         ];
@@ -1398,7 +1467,7 @@ impl Stmt {
                     id,
                     availability,
                     ty,
-                    kind,
+                    kind: alias_kind,
                     documentation,
                 }]
             }
@@ -2270,13 +2339,13 @@ impl Stmt {
                 items.push(ItemTree::objc("Encoding"));
                 items
             }
-            Self::OpaqueDecl { is_cf, .. } => {
-                if *is_cf {
+            Self::OpaqueDecl { kind, .. } => match kind {
+                OpaqueKind::Normal => vec![ItemTree::objc("Encoding")],
+                OpaqueKind::CoreFoundation => {
                     vec![ItemTree::cf("cf_type"), ItemTree::objc("cf_objc2_type")]
-                } else {
-                    vec![ItemTree::objc("Encoding")]
                 }
-            }
+                OpaqueKind::Dispatch => vec![ItemTree::dispatch("dispatch_object")],
+            },
             Self::GeneralImpl { stmts, .. } => stmts
                 .iter()
                 .flat_map(|stmt| stmt.required_items().chain(stmt.required_items_inner()))
@@ -3356,7 +3425,7 @@ impl Stmt {
                     encoding_name,
                     availability,
                     documentation,
-                    is_cf,
+                    kind,
                     sendable,
                     bridged: _,
                     superclass,
@@ -3365,7 +3434,7 @@ impl Stmt {
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     writeln!(f, "#[repr(C)]")?;
-                    if !*is_cf {
+                    if matches!(kind, OpaqueKind::Normal) {
                         // To avoid warnings, though mostly useless.
                         writeln!(f, "#[derive(Debug)]")?;
                     }
@@ -3396,70 +3465,80 @@ impl Stmt {
                     writeln!(f)?;
 
                     // Similar to the output of extern_class!
-                    if *is_cf {
-                        let required_items = self
-                            .required_items()
-                            .chain(iter::once(ItemTree::cf("cf_type")));
-                        let cfg_cf = self.cfg_gate_ln_for(required_items, config);
-                        write!(f, "{cfg_cf}")?;
-                        // SAFETY: The type is a CoreFoundation type, and
-                        // correctly declared as a #[repr(C)] ZST.
-                        writeln!(f, "cf_type!(")?;
-
-                        // SAFETY: It's fine to implement helper traits for
-                        // all generics (e.g. all of `CFArray<u32>`,
-                        // `CFArray<CFString>` and `CFArray<Box<String>>`),
-                        // since unlike e.g. `NSArray<u32>`, these are all
-                        // perfectly valid types (their correct construction
-                        // is controlled with CFArrayCallBacks).
-                        write!(
-                            f,
-                            "    unsafe impl{} {}{}",
-                            GenericParamsHelper(generics, "?Sized"),
-                            id.name,
-                            generic_ty(generics),
-                        )?;
-                        if let Some(superclass) = superclass {
-                            write!(f, ": {}{}", superclass.name, generic_ty(generics))?;
+                    match kind {
+                        OpaqueKind::Normal => {
+                            let required_items = self
+                                .required_items()
+                                .chain(iter::once(ItemTree::objc("Encoding")));
+                            let cfg_encoding = self.cfg_gate_ln_for(required_items, config);
+                            // SAFETY: The struct is a ZST type marked `#[repr(C)]`.
+                            write!(f, "{cfg_encoding}")?;
+                            writeln!(
+                                f,
+                                "unsafe impl{} RefEncode for {}{} {{",
+                                GenericParamsHelper(generics, "UnknownBound"),
+                                id.name,
+                                generic_ty(generics)
+                            )?;
+                            write!(f, "    const ENCODING_REF: Encoding = ")?;
+                            writeln!(f, "Encoding::Pointer(&Encoding::Struct(")?;
+                            writeln!(f, "        {encoding_name:?},")?;
+                            writeln!(f, "        &[],")?;
+                            writeln!(f, "    ));")?;
+                            writeln!(f, "}}")?;
                         }
-                        writeln!(f, " {{}}")?;
-                        writeln!(f, ");")?;
+                        OpaqueKind::CoreFoundation => {
+                            let required_items = self
+                                .required_items()
+                                .chain(iter::once(ItemTree::cf("cf_type")));
+                            let cfg_cf = self.cfg_gate_ln_for(required_items, config);
+                            write!(f, "{cfg_cf}")?;
+                            // SAFETY: The type is a CoreFoundation type, and
+                            // correctly declared as a #[repr(C)] ZST.
+                            writeln!(f, "cf_type!(")?;
 
-                        let required_items = self
-                            .required_items()
-                            .chain(iter::once(ItemTree::objc("cf_objc2_type")));
-                        let cfg_objc2 = self.cfg_gate_ln_for(required_items, config);
-                        write!(f, "{cfg_objc2}")?;
-                        writeln!(f, "cf_objc2_type!(")?;
-                        // SAFETY: The type is a CoreFoundation type.
-                        writeln!(
-                            f,
-                            "    unsafe impl{} RefEncode<{encoding_name:?}> for {}{} {{}}",
-                            GenericParamsHelper(generics, "?Sized"),
-                            id.name,
-                            generic_ty(generics),
-                        )?;
-                        writeln!(f, ");")?;
-                    } else {
-                        let required_items = self
-                            .required_items()
-                            .chain(iter::once(ItemTree::objc("Encoding")));
-                        let cfg_encoding = self.cfg_gate_ln_for(required_items, config);
-                        // SAFETY: The struct is a ZST type marked `#[repr(C)]`.
-                        write!(f, "{cfg_encoding}")?;
-                        writeln!(
-                            f,
-                            "unsafe impl{} RefEncode for {}{} {{",
-                            GenericParamsHelper(generics, "UnknownBound"),
-                            id.name,
-                            generic_ty(generics)
-                        )?;
-                        write!(f, "    const ENCODING_REF: Encoding = ")?;
-                        writeln!(f, "Encoding::Pointer(&Encoding::Struct(")?;
-                        writeln!(f, "        {encoding_name:?},")?;
-                        writeln!(f, "        &[],")?;
-                        writeln!(f, "    ));")?;
-                        writeln!(f, "}}")?;
+                            // SAFETY: It's fine to implement helper traits for
+                            // all generics (e.g. all of `CFArray<u32>`,
+                            // `CFArray<CFString>` and `CFArray<Box<String>>`),
+                            // since unlike e.g. `NSArray<u32>`, these are all
+                            // perfectly valid types (their correct construction
+                            // is controlled with CFArrayCallBacks).
+                            write!(
+                                f,
+                                "    unsafe impl{} {}{}",
+                                GenericParamsHelper(generics, "?Sized"),
+                                id.name,
+                                generic_ty(generics),
+                            )?;
+                            if let Some(superclass) = superclass {
+                                write!(f, ": {}{}", superclass.name, generic_ty(generics))?;
+                            }
+                            writeln!(f, " {{}}")?;
+                            writeln!(f, ");")?;
+
+                            let required_items = self
+                                .required_items()
+                                .chain(iter::once(ItemTree::objc("cf_objc2_type")));
+                            let cfg_objc2 = self.cfg_gate_ln_for(required_items, config);
+                            write!(f, "{cfg_objc2}")?;
+                            writeln!(f, "cf_objc2_type!(")?;
+                            // SAFETY: The type is a CoreFoundation type.
+                            writeln!(
+                                f,
+                                "    unsafe impl{} RefEncode<{encoding_name:?}> for {}{} {{}}",
+                                GenericParamsHelper(generics, "?Sized"),
+                                id.name,
+                                generic_ty(generics),
+                            )?;
+                            writeln!(f, ");")?
+                        }
+                        OpaqueKind::Dispatch => {
+                            // SAFETY: The type is a Dispatch object and
+                            // correctly declared as a #[repr(C)] ZST.
+                            writeln!(f, "dispatch_object!(")?;
+                            writeln!(f, "    unsafe impl {} {{}}", id.name)?;
+                            writeln!(f, ");")?;
+                        }
                     }
 
                     if let Some(true) = sendable {

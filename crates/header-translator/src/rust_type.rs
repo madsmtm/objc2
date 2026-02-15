@@ -12,7 +12,9 @@ use crate::display_helper::FormatterFn;
 use crate::id::{ItemIdentifier, ItemTree};
 use crate::name_translation::cf_no_ref;
 use crate::protocol::ProtocolRef;
-use crate::stmt::{anonymous_record_name, bridged_to, parse_class_generics, GenericWithBound};
+use crate::stmt::{
+    anonymous_record_name, bridged_to, parse_class_generics, GenericWithBound, OpaqueKind,
+};
 use crate::stmt::{parse_superclasses, superclasses_required_items};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -635,15 +637,20 @@ fn get_class_data(
 }
 
 fn parse_protocol(entity: Entity<'_>, context: &Context<'_>) -> (ProtocolRef, ThreadSafety) {
-    let entity = entity.get_definition().unwrap_or(entity);
+    let mut entity = entity.get_definition().unwrap_or(entity);
     // @protocol produces a ObjCProtocolDecl if we didn't
     // load the actual declaration, but we don't actually
     // want that, since it'll point to the wrong place.
-    let entity = entity
+    let source_entity = entity
         .get_location()
         .expect("itemref location")
         .get_entity()
         .expect("itemref entity");
+
+    // Workaround for OS_OBJECT_DECL.
+    if source_entity.get_kind() != EntityKind::MacroExpansion {
+        entity = source_entity;
+    }
 
     let id = ItemIdentifier::new(&entity, context);
 
@@ -3894,11 +3901,30 @@ impl Ty {
         Self::parse(ty, Lifetime::Unspecified, false, context)
     }
 
-    pub(crate) fn pointer_to_opaque_struct_or_void(
+    fn pointee_dispatch_type_protocol(&self, typedef_name: &str) -> Option<&ProtocolRef> {
+        if !typedef_name.starts_with("dispatch_") {
+            return None;
+        }
+
+        // Should point to a `NSObject<OS_dispatch_*>`.
+        if let Self::Pointee(PointeeTy::Class { id, protocols, .. }) = self {
+            if id.name == "NSObject" {
+                if let Some((protocol, _)) = protocols.first() {
+                    if protocol.id.name.starts_with("OS_dispatch_") {
+                        return Some(protocol);
+                    }
+                }
+            }
+        }
+
+        None
+    }
+
+    pub(crate) fn pointer_to_opaque(
         &self,
         typedef_name: &str,
         typedef_is_bridged: bool,
-    ) -> Option<(bool, Option<&str>)> {
+    ) -> Option<(OpaqueKind, Option<&str>)> {
         if let Self::Pointer {
             pointee,
             read: _,
@@ -3908,7 +3934,17 @@ impl Ty {
             lifetime,
         } = self
         {
-            let is_cf = pointee.is_direct_cf_type(typedef_name, typedef_is_bridged);
+            if let Some(protocol) = pointee.pointee_dispatch_type_protocol(typedef_name) {
+                // TODO: Implement `Deref` on Dispatch objects when we have a
+                // super protocol?
+                return Some((OpaqueKind::Dispatch, Some(&protocol.id.name)));
+            }
+
+            let kind = if pointee.is_direct_cf_type(typedef_name, typedef_is_bridged) {
+                OpaqueKind::CoreFoundation
+            } else {
+                OpaqueKind::Normal
+            };
             if let Self::Struct { id, fields, .. } = &**pointee {
                 if fields.is_empty() {
                     // Extra checks to ensure we don't loose information
@@ -3919,11 +3955,11 @@ impl Ty {
                         error!(?id, ?lifetime, "opaque pointer had lifetime");
                     }
 
-                    return Some((is_cf, Some(&id.name)));
+                    return Some((kind, Some(&id.name)));
                 }
             }
             if let Self::Primitive(Primitive::Void) = &**pointee {
-                return Some((is_cf, None));
+                return Some((kind, None));
             }
         }
         None

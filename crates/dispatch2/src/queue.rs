@@ -5,7 +5,8 @@ use core::ptr::NonNull;
 use super::utils::function_wrapper;
 use crate::generated::{_dispatch_main_q, _dispatch_queue_attr_concurrent};
 use crate::{
-    DispatchObject, DispatchQoS, DispatchRetained, DispatchTime, QualityOfServiceClassFloorError,
+    DispatchObject, DispatchQoS, DispatchQueue, DispatchQueueAttr, DispatchRetained, DispatchTime,
+    QualityOfServiceClassFloorError,
 };
 
 enum_with_val! {
@@ -47,15 +48,6 @@ impl GlobalQueueIdentifier {
         }
     }
 }
-
-dispatch_object!(
-    /// Dispatch queue.
-    #[doc(alias = "dispatch_queue_t")]
-    #[doc(alias = "dispatch_queue_s")]
-    pub struct DispatchQueue;
-);
-
-dispatch_object_not_data!(unsafe DispatchQueue);
 
 impl DispatchQueue {
     /// Return a system-defined global concurrent [`DispatchQueue`] with the priority derived from [GlobalQueueIdentifier].
@@ -200,15 +192,6 @@ impl DispatchQueue {
     #[doc(alias = "DISPATCH_CURRENT_QUEUE_LABEL")]
     pub const CURRENT_QUEUE_LABEL: Option<&DispatchQueue> = None;
 }
-
-dispatch_object!(
-    /// Dispatch queue attribute.
-    #[doc(alias = "dispatch_queue_attr_t")]
-    #[doc(alias = "dispatch_queue_attr_s")]
-    pub struct DispatchQueueAttr;
-);
-
-dispatch_object_not_data!(unsafe DispatchQueueAttr);
 
 impl DispatchQueueAttr {
     /// A dispatch queue that executes blocks serially in FIFO order.

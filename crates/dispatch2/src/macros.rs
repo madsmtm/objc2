@@ -1,15 +1,7 @@
 macro_rules! dispatch_object {
     (
-        $(#[$m:meta])*
-        pub struct $type:ident;
+        unsafe impl $type:ident {}
     ) => {
-        $(#[$m])*
-        #[repr(C)]
-        pub struct $type {
-            inner: [u8; 0],
-            _p: $crate::OpaqueData,
-        }
-
         // SAFETY: The object is a dispatch object.
         unsafe impl $crate::DispatchObject for $type {}
 
@@ -82,18 +74,6 @@ macro_rules! dispatch_object {
         //
         // They cannot be subclassed / cannot have categories defined for them
         // though (they're marked `objc_runtime_visible`).
-    };
-}
-
-macro_rules! dispatch_object_not_data {
-    (unsafe $type:ident) => {
-        // SAFETY: All Dispatch objects, except for DispatchObject and
-        // DispatchData, go through `DISPATCH_DECL` or `DISPATCH_DECL_SUBCLASS`,
-        // which delegate to `OS_OBJECT_DECL_SENDABLE_SUBCLASS_SWIFT`, which
-        // in turn marks the type as `OS_OBJECT_SWIFT_SENDABLE`.
-        unsafe impl Send for $type {}
-        // SAFETY: Same as above.
-        unsafe impl Sync for $type {}
     };
 }
 

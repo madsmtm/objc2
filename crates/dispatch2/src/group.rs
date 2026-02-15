@@ -2,18 +2,9 @@ use alloc::boxed::Box;
 use core::ffi::c_void;
 use core::num::NonZeroIsize;
 
-use crate::{DispatchQueue, DispatchTime, DispatchTimeoutError};
+use crate::{DispatchGroup, DispatchQueue, DispatchTime, DispatchTimeoutError};
 
 use super::utils::function_wrapper;
-
-dispatch_object!(
-    /// Dispatch group.
-    #[doc(alias = "dispatch_group_t")]
-    #[doc(alias = "dispatch_group_s")]
-    pub struct DispatchGroup;
-);
-
-dispatch_object_not_data!(unsafe DispatchGroup);
 
 impl DispatchGroup {
     /// Submit a function to a [`DispatchQueue`] and associates it with the [`DispatchGroup`].

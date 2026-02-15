@@ -40,7 +40,6 @@ const.DISPATCH_WALLTIME_NOW.skipped = true
 # of dispatch objects, but that won't work in Rust.
 union.dispatch_object_t.skipped = true
 typedef.dispatch_object_t.skipped = true
-protocol.OS_dispatch_object.skipped = true
 
 # Marked as noreturn, but header-translator doesn't handle that yet.
 fn.dispatch_main.skipped = true
@@ -54,42 +53,21 @@ typedef.dispatch_function_t.skipped = true
 # The libc definition is unsound (?)
 typedef.dispatch_qos_class_t.skipped = true
 
-# We custom-define these instead.
-typedef.dispatch_queue_t.skipped = true
-protocol.OS_dispatch_queue.skipped = true
+# We redefine these as `DispatchQueue` for now.
 typedef.dispatch_queue_global_t.skipped = true
-protocol.OS_dispatch_queue_global.skipped = true
+typedef.dispatch_queue_global_t.renamed = "DispatchQueue"
 typedef.dispatch_queue_serial_executor_t.skipped = true
-protocol.OS_dispatch_queue_serial_executor.skipped = true
+typedef.dispatch_queue_serial_executor_t.renamed = "DispatchQueue"
 typedef.dispatch_queue_serial_t.skipped = true
-protocol.OS_dispatch_queue_serial.skipped = true
+typedef.dispatch_queue_serial_t.renamed = "DispatchQueue"
 typedef.dispatch_queue_main_t.skipped = true
-protocol.OS_dispatch_queue_main.skipped = true
+typedef.dispatch_queue_main_t.renamed = "DispatchQueue"
 typedef.dispatch_queue_concurrent_t.skipped = true
-protocol.OS_dispatch_queue_concurrent.skipped = true
-typedef.dispatch_queue_attr_t.skipped = true
-protocol.OS_dispatch_queue_attr.skipped = true
-typedef.dispatch_source_t.skipped = true
-protocol.OS_dispatch_source.skipped = true
-typedef.dispatch_group_t.skipped = true
-protocol.OS_dispatch_group.skipped = true
-typedef.dispatch_semaphore_t.skipped = true
-protocol.OS_dispatch_semaphore.skipped = true
-typedef.dispatch_data_t.skipped = true
-protocol.OS_dispatch_data.skipped = true
-typedef.dispatch_io_t.skipped = true
-protocol.OS_dispatch_io.skipped = true
-typedef.dispatch_workloop_t.skipped = true
-protocol.OS_dispatch_workloop.skipped = true
+typedef.dispatch_queue_concurrent_t.renamed = "DispatchQueue"
 
 # Rename typedefs to match Swift naming scheme.
 struct.dispatch_queue_s.renamed = "DispatchQueue"
 typedef.dispatch_queue_t.renamed = "DispatchQueue"
-typedef.dispatch_queue_global_t.renamed = "DispatchQueue" # For now
-typedef.dispatch_queue_serial_executor_t.renamed = "DispatchQueue" # For now
-typedef.dispatch_queue_serial_t.renamed = "DispatchQueue" # For now
-typedef.dispatch_queue_main_t.renamed = "DispatchQueue" # For now
-typedef.dispatch_queue_concurrent_t.renamed = "DispatchQueue" # For now
 struct.dispatch_queue_attr_s.renamed = "DispatchQueueAttr"
 typedef.dispatch_queue_attr_t.renamed = "DispatchQueueAttr"
 typedef.dispatch_source_t.renamed = "DispatchSource"
