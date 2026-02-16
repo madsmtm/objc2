@@ -1,6 +1,5 @@
 //! Utilities for the `NSSet` and `NSMutableSet` classes.
 use alloc::vec::Vec;
-#[cfg(feature = "NSEnumerator")]
 use core::fmt;
 
 use objc2::rc::{Retained, RetainedFromIterator};
@@ -270,15 +269,17 @@ __impl_into_iter! {
     }
 }
 
-#[cfg(feature = "NSEnumerator")]
 impl<ObjectType: fmt::Debug + Message> fmt::Debug for NSSet<ObjectType> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_set().entries(self).finish()
+        #[cfg(feature = "NSEnumerator")]
+        f.debug_set().entries(self).finish()?;
+        #[cfg(not(feature = "NSEnumerator"))]
+        f.write_str("{unknown (enable NSEnumerator feature)}")?;
+        Ok(())
     }
 }
 
-#[cfg(feature = "NSEnumerator")]
 impl<ObjectType: fmt::Debug + Message> fmt::Debug for NSMutableSet<ObjectType> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -286,7 +287,6 @@ impl<ObjectType: fmt::Debug + Message> fmt::Debug for NSMutableSet<ObjectType> {
     }
 }
 
-#[cfg(feature = "NSEnumerator")]
 impl<ObjectType: fmt::Debug + Message> fmt::Debug for crate::NSCountedSet<ObjectType> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

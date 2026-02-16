@@ -56,6 +56,7 @@ fn test_allowed_mutation_while_iterating() {
     feature = "gnustep-1-7",
     ignore = "thread safety issues regarding initialization"
 )]
+#[cfg(feature = "NSEnumerator")]
 fn test_iter_mutation_detection() {
     let array = NSMutableArray::from_retained_slice(&[NSObject::new(), NSObject::new()]);
 

@@ -173,6 +173,10 @@ fn test_copy() {
 
 #[test]
 #[allow(clippy::literal_string_with_formatting_args)] // Intentional "{}"
+#[cfg_attr(
+    not(feature = "NSEnumerator"),
+    ignore = "requires NSEnumerator feature"
+)]
 fn test_debug() {
     let set = NSSet::<NSObject>::new();
     assert_eq!(format!("{set:?}"), "{}");

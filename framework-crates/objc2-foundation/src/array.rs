@@ -1,6 +1,5 @@
 //! Utilities for the `NSArray` and `NSMutableArray` classes.
 use alloc::vec::Vec;
-#[cfg(feature = "NSEnumerator")]
 use core::fmt;
 use core::mem;
 use core::ptr::NonNull;
@@ -400,15 +399,17 @@ __impl_into_iter! {
     }
 }
 
-#[cfg(feature = "NSEnumerator")]
 impl<ObjectType: fmt::Debug + Message> fmt::Debug for NSArray<ObjectType> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_list().entries(self).finish()
+        #[cfg(feature = "NSEnumerator")]
+        let enumerator = self;
+        #[cfg(not(feature = "NSEnumerator"))]
+        let enumerator = self.to_vec();
+        f.debug_list().entries(enumerator).finish()
     }
 }
 
-#[cfg(feature = "NSEnumerator")]
 impl<ObjectType: fmt::Debug + Message> fmt::Debug for NSMutableArray<ObjectType> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
