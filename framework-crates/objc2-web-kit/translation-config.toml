@@ -9,7 +9,3 @@ visionos = "1.0"
 
 # Not marked as nullable, but should be.
 class.WKNavigationAction.methods.sourceFrame.return.nullability = "nullable"
-
-# Needs `nw_proxy_config_t` from the Network framework
-class.WKWebsiteDataStore.methods.proxyConfigurations.skipped = true
-class.WKWebsiteDataStore.methods."setProxyConfigurations:".skipped = true

@@ -4,7 +4,3 @@ required-crates = ["objc2", "objc2-foundation"]
 macos = "15.0"
 ios = "16.0"
 visionos = "1.0"
-
-# Needs the Network framework
-class.DDDevice.methods.networkEndpoint.skipped = true
-class.DDDevice.methods."setNetworkEndpoint:".skipped = true

@@ -1471,6 +1471,7 @@ dependencies = [
  "block2",
  "objc2",
  "objc2-foundation",
+ "objc2-network",
  "objc2-uniform-type-identifiers",
 ]
 
@@ -2006,6 +2007,7 @@ dependencies = [
  "block2",
  "objc2",
  "objc2-foundation",
+ "objc2-network",
  "objc2-uniform-type-identifiers",
 ]
 
@@ -2709,6 +2711,7 @@ dependencies = [
  "objc2",
  "objc2-accessory-setup-kit",
  "objc2-foundation",
+ "objc2-network",
  "objc2-security",
 ]
 
@@ -3489,6 +3492,7 @@ dependencies = [
  "objc2-core-foundation",
  "objc2-foundation",
  "objc2-javascript-core",
+ "objc2-network",
  "objc2-security",
 ]
 

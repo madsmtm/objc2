@@ -30,6 +30,7 @@ objc2-javascript-core = { workspace = true, optional = true, features = [
     "JSValue",
     "objc2",
 ] }
+objc2-network = { workspace = true, optional = true, features = ["objc2"] }
 objc2-security = { workspace = true, optional = true, features = [
     "SecTrust",
     "objc2",
@@ -69,6 +70,7 @@ targets = [
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
 ]
+features = ["objc2-network"]
 
 [features]
 default = [
@@ -301,6 +303,7 @@ block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-javascript-core = ["dep:objc2-javascript-core"]
+objc2-network = ["dep:objc2-network"]
 objc2-security = ["dep:objc2-security"]
 unstable-darwin-objc = []
 

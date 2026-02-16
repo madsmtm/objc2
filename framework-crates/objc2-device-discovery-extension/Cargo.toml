@@ -20,6 +20,7 @@ bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 objc2 = { workspace = true, features = ["std"] }
 objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-network = { workspace = true, optional = true, features = ["objc2"] }
 objc2-uniform-type-identifiers = { workspace = true, optional = true, features = ["UTType"] }
 
 [package.metadata.docs.rs]
@@ -42,12 +43,14 @@ default = [
     "DDExtension",
     "bitflags",
     "block2",
+    "objc2-network",
     "objc2-uniform-type-identifiers",
 ]
 std = ["alloc"]
 alloc = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
+objc2-network = ["dep:objc2-network"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 unstable-darwin-objc = []
 

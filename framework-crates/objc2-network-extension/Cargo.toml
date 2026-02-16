@@ -39,6 +39,7 @@ objc2-foundation = { workspace = true, features = [
     "NSValue",
     "alloc",
 ] }
+objc2-network = { workspace = true, optional = true, features = ["objc2"] }
 objc2-security = { workspace = true, optional = true, features = [
     "Authorization",
     "SecBase",
@@ -61,7 +62,10 @@ targets = [
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
 ]
-features = ["objc2-accessory-setup-kit"]
+features = [
+    "objc2-accessory-setup-kit",
+    "objc2-network",
+]
 
 [features]
 default = [
@@ -77,5 +81,6 @@ block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 libc = ["dep:libc"]
 objc2-accessory-setup-kit = ["dep:objc2-accessory-setup-kit"]
+objc2-network = ["dep:objc2-network"]
 objc2-security = ["dep:objc2-security"]
 unstable-darwin-objc = []
