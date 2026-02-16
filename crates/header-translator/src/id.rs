@@ -455,6 +455,11 @@ impl ItemIdentifier {
         self.library_name() == "Foundation" && self.name == "NSError"
     }
 
+    pub fn is_cfallocator(&self) -> bool {
+        self.library_name() == "CoreFoundation"
+            && matches!(&*self.name, "CFAllocator" | "CFAllocatorRef")
+    }
+
     pub fn nserror() -> Self {
         Self {
             name: "NSError".into(),

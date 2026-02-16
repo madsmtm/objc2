@@ -2437,6 +2437,14 @@ impl Ty {
                     }
                     *inner_bounds = PointerBounds::Single;
 
+                    if id.is_cfallocator() {
+                        // CFAllocatorRef is safely nullable, the default
+                        // allocator is a typedef to NULL.
+                        if *inner_nullability == Nullability::Unspecified {
+                            *inner_nullability = Nullability::Nullable;
+                        }
+                    }
+
                     if pointee
                         .is_direct_cf_type(&id.name, bridged_to(&declaration, context).is_some())
                     {
@@ -3020,11 +3028,10 @@ impl Ty {
         }
     }
 
-    #[allow(dead_code)]
     pub(crate) fn is_cf_allocator(&self) -> bool {
         if let Self::Pointer { pointee, .. } = self {
             if let Ty::Pointee(PointeeTy::CFTypeDef { id, .. }) = &**pointee {
-                if id.name == "CFAllocator" {
+                if id.is_cfallocator() {
                     return true;
                 }
             }
