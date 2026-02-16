@@ -833,6 +833,7 @@ dependencies = [
  "clap",
  "four-char-code",
  "heck",
+ "indexmap",
  "itertools",
  "lenient_semver_parser",
  "moka",

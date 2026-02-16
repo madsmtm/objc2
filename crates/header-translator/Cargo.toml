@@ -29,6 +29,7 @@ regex = "1.6"
 clap = { version = "4.5.31", features = ["derive"] }
 itertools = "0.14.0"
 moka = { version = "0.12.13", features = ["sync"] }
+indexmap = "2.13.0"
 
 [package.metadata.release]
 release = false

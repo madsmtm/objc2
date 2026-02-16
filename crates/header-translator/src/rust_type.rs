@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::{fmt, fmt::Display, iter, mem, str::FromStr, sync::LazyLock};
 
 use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
@@ -699,6 +700,10 @@ pub enum PointeeTy {
         protocols: Vec<(ProtocolRef, ThreadSafety)>,
     },
     GenericParam {
+        /// Whether the generic parameter is guaranteed to be an object type.
+        ///
+        /// `CFArray` etc. sets this to `false`.
+        object_like: bool,
         name: String,
     },
     AnyObject {
@@ -764,6 +769,7 @@ impl PointeeTy {
                 ty => {
                     error!(?ty, "invalid generic bound pointer");
                     PointeeTy::GenericParam {
+                        object_like: true,
                         name: "Unknown".to_string(),
                     }
                 }
@@ -771,6 +777,7 @@ impl PointeeTy {
             ty => {
                 error!(?ty, "invalid generic bound");
                 PointeeTy::GenericParam {
+                    object_like: true,
                     name: "Unknown".to_string(),
                 }
             }
@@ -806,7 +813,7 @@ impl PointeeTy {
                     )
                     .collect()
             }
-            Self::GenericParam { name: _ } => vec![],
+            Self::GenericParam { .. } => vec![],
             Self::AnyObject { protocols } => {
                 let protocols = protocols
                     .iter()
@@ -938,7 +945,7 @@ impl PointeeTy {
         }
     }
 
-    fn behind_pointer(&self) -> impl fmt::Display + '_ {
+    fn behind_pointer(&self, allow_generic_param: bool) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Class {
                 id,
@@ -952,13 +959,22 @@ impl PointeeTy {
                 if !generics.is_empty() {
                     write!(f, "<")?;
                     for generic in generics {
-                        write!(f, "{},", generic.behind_pointer())?;
+                        if !allow_generic_param && matches!(generic, Self::GenericParam { .. }) {
+                            continue;
+                        }
+                        write!(f, "{},", generic.behind_pointer(allow_generic_param))?;
                     }
                     write!(f, ">")?;
                 }
                 Ok(())
             }
-            Self::GenericParam { name } => write!(f, "{name}"),
+            Self::GenericParam { name, .. } => {
+                if allow_generic_param {
+                    write!(f, "{name}")
+                } else {
+                    write!(f, "c_void")
+                }
+            }
             Self::AnyObject { protocols } => match &**protocols {
                 [] => write!(f, "AnyObject"),
                 [(protocol, _)] => write!(f, "ProtocolObject<dyn {}>", protocol.id.path()),
@@ -991,7 +1007,7 @@ impl PointeeTy {
             } => {
                 write!(f, "block2::DynBlock<dyn Fn(")?;
                 for arg in arguments {
-                    write!(f, "{}, ", arg.plain())?;
+                    write!(f, "{}, ", arg.plain(allow_generic_param))?;
                 }
                 write!(f, ")")?;
                 write!(f, "{}", result_type.fn_type_return())?;
@@ -1010,7 +1026,10 @@ impl PointeeTy {
                 if !generics.is_empty() {
                     write!(f, "<")?;
                     for generic in generics {
-                        write!(f, "{},", generic.behind_pointer())?;
+                        if !allow_generic_param && matches!(generic, Self::GenericParam { .. }) {
+                            continue;
+                        }
+                        write!(f, "{},", generic.behind_pointer(allow_generic_param))?;
                     }
                     write!(f, ">")?;
                 }
@@ -1041,7 +1060,7 @@ impl PointeeTy {
                 // other reasons than subclassing. We really need a general
                 // `SubclassOf` trait, but this is at least better than
                 // nothing.
-                write!(f, "AsRef<{}>", self.behind_pointer())
+                write!(f, "AsRef<{}>", self.behind_pointer(true))
             }
             Self::AnyObject { protocols } => match &**protocols {
                 // Should be avoided by `is_plain_anyobject` above
@@ -1056,7 +1075,7 @@ impl PointeeTy {
             },
             pointee => {
                 error!(?pointee, "unhandled generic bound");
-                write!(f, "/* {} */", pointee.behind_pointer())
+                write!(f, "/* {} */", pointee.behind_pointer(true))
             }
         })
     }
@@ -1251,9 +1270,14 @@ impl PointeeTy {
                 // multiple protocol restrictions are currently `AnyObject`.
                 _ => TypeSafety::unknown_in_argument("should be of the correct type"),
             },
-            // Generic parameters are safe.
+            // Object generic parameters are safe.
             // TODO: NSDictionary's KeyType perhaps isn't really?
-            Self::GenericParam { .. } => TypeSafety::SAFE,
+            Self::GenericParam {
+                object_like: true, ..
+            } => TypeSafety::SAFE,
+            Self::GenericParam {
+                object_like: false, ..
+            } => PointeeTy::CFOpaque.safety(),
             // Self types have all generics specified on the impl, so they are
             // basically `Class { generics: vec![GenericParam...] }`.
             Self::Self_ => TypeSafety::SAFE,
@@ -1395,7 +1419,10 @@ impl PointeeTy {
         matches!(
             self.through_typedef(),
             Self::Class { .. }
-                | Self::GenericParam { .. }
+                | Self::GenericParam {
+                    object_like: true,
+                    ..
+                }
                 | Self::AnyObject { .. }
                 | Self::AnyProtocol
                 | Self::AnyClass { .. }
@@ -1691,6 +1718,7 @@ impl Ty {
                 // https://github.com/rust-lang/rust/issues/116909
                 error!("long double is not yet supported in Rust");
                 Self::Pointee(PointeeTy::GenericParam {
+                    object_like: false,
                     name: "UnknownLongDouble".to_string(),
                 })
             }
@@ -1753,6 +1781,7 @@ impl Ty {
                     _ => {
                         error!(?declaration, "unknown record type decl");
                         Self::Pointee(PointeeTy::GenericParam {
+                            object_like: false,
                             name: "UnknownRecord".into(),
                         })
                     }
@@ -2349,6 +2378,7 @@ impl Ty {
                         lifetime,
                         bounds: PointerBounds::Single,
                         pointee: Box::new(Self::Pointee(PointeeTy::GenericParam {
+                            object_like: true,
                             name: typedef_name,
                         })),
                     };
@@ -2579,6 +2609,7 @@ impl Ty {
             _ => {
                 error!(?ty, "unknown type kind");
                 Self::Pointee(PointeeTy::GenericParam {
+                    object_like: false,
                     name: "Unknown".to_string(),
                 })
             }
@@ -2805,7 +2836,7 @@ impl Ty {
                 pointee,
             } = &**pointee
             {
-                debug_assert!(self.fmt_out_pointer().is_some());
+                debug_assert!(self.fmt_out_pointer(true).is_some());
 
                 let safety = pointee.safety();
 
@@ -2826,7 +2857,7 @@ impl Ty {
                 return safety.preface(format!("`{arg_name}`"));
             }
         }
-        debug_assert!(self.fmt_out_pointer().is_none());
+        debug_assert!(self.fmt_out_pointer(true).is_none());
 
         self.safety_in_fn_argument(arg_name)
     }
@@ -3104,13 +3135,13 @@ impl Ty {
         }
     }
 
-    fn plain(&self) -> impl fmt::Display + '_ {
+    fn plain(&self, allow_generic_param: bool) -> impl fmt::Display + '_ {
         FormatterFn(move |f| {
             match self {
                 Self::Primitive(prim) => write!(f, "{prim}"),
                 Self::Pointee(pointee) => {
                     error!(?self, "must be behind pointer");
-                    write!(f, "{}", pointee.behind_pointer())
+                    write!(f, "{}", pointee.behind_pointer(allow_generic_param))
                 }
                 Self::Simd { ty, size } => write!(f, "Simd<{ty}, {size}>"),
                 Self::Sel { nullability } => {
@@ -3144,7 +3175,7 @@ impl Ty {
                         // it will be for all of Apple's frameworks.
                         write!(f, "unsafe extern \"C-unwind\" fn(")?;
                         for arg in arguments {
-                            write!(f, "{},", arg.plain())?;
+                            write!(f, "{},", arg.plain(allow_generic_param))?;
                         }
                         if *is_variadic {
                             write!(f, "...")?;
@@ -3157,7 +3188,8 @@ impl Ty {
                         Ok(())
                     }
                     pointee => {
-                        let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
+                        let pointee =
+                            maybemaybeuninit(*read, pointee.behind_pointer(allow_generic_param));
                         if *nullability == Nullability::NonNull {
                             write!(f, "NonNull<{pointee}>")
                         } else if *written {
@@ -3173,7 +3205,11 @@ impl Ty {
                 Self::Array {
                     element_type,
                     num_elements,
-                } => write!(f, "[{}; {num_elements}]", element_type.plain()),
+                } => write!(
+                    f,
+                    "[{}; {num_elements}]",
+                    element_type.plain(allow_generic_param)
+                ),
                 Self::Struct { id, .. } => {
                     write!(f, "{}", id.path())
                 }
@@ -3187,10 +3223,10 @@ impl Ty {
         })
     }
 
-    fn behind_pointer(&self) -> impl fmt::Display + '_ {
+    fn behind_pointer(&self, allow_generic_param: bool) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
-            Self::Pointee(pointee) => write!(f, "{}", pointee.behind_pointer()),
-            _ => write!(f, "{}", self.plain()),
+            Self::Pointee(pointee) => write!(f, "{}", pointee.behind_pointer(allow_generic_param)),
+            _ => write!(f, "{}", self.plain(allow_generic_param)),
         })
     }
 
@@ -3206,9 +3242,9 @@ impl Ty {
             } if pointee.is_static_object() => {
                 if *nullability == Nullability::NonNull {
                     // TODO: Add runtime nullability check here.
-                    write!(f, " -> &'static {}", pointee.behind_pointer())
+                    write!(f, " -> &'static {}", pointee.behind_pointer(true))
                 } else {
-                    write!(f, " -> Option<&'static {}>", pointee.behind_pointer())
+                    write!(f, " -> Option<&'static {}>", pointee.behind_pointer(true))
                 }
             }
             Self::Pointer {
@@ -3221,9 +3257,9 @@ impl Ty {
                 // NOTE: We return CF types as `Retained` for now, since we
                 // don't have support for the CF wrapper in msg_send! yet.
                 if *nullability == Nullability::NonNull {
-                    write!(f, " -> Retained<{}>", pointee.behind_pointer())
+                    write!(f, " -> Retained<{}>", pointee.behind_pointer(true))
                 } else {
-                    write!(f, " -> Option<Retained<{}>>", pointee.behind_pointer())
+                    write!(f, " -> Option<Retained<{}>>", pointee.behind_pointer(true))
                 }
             }
             Self::Pointer {
@@ -3244,7 +3280,7 @@ impl Ty {
                 write!(f, " -> bool")
             }
             Self::Primitive(Primitive::ObjcBool) => write!(f, " -> bool"),
-            _ => write!(f, " -> {}", self.plain()),
+            _ => write!(f, " -> {}", self.plain(true)),
         })
     }
 
@@ -3267,7 +3303,7 @@ impl Ty {
                     write!(
                         f,
                         " -> Result<&'static {}, Retained<{}>>",
-                        pointee.behind_pointer(),
+                        pointee.behind_pointer(true),
                         ItemIdentifier::nserror().path(),
                     )
                 })
@@ -3284,7 +3320,7 @@ impl Ty {
                     write!(
                         f,
                         " -> Result<Retained<{}>, Retained<{}>>",
-                        pointee.behind_pointer(),
+                        pointee.behind_pointer(true),
                         ItemIdentifier::nserror().path(),
                     )
                 })
@@ -3316,11 +3352,12 @@ impl Ty {
             Self::Pointer { pointee, .. } if **pointee == Self::Pointee(PointeeTy::Self_) => {
                 write!(f, "*mut This")
             }
-            _ => write!(f, "{}", self.plain()),
+            _ => write!(f, "{}", self.plain(true)),
         })
     }
 
     fn fn_type_return(&self) -> impl fmt::Display + '_ {
+        let allow_generic_param = true; // Might not be entirely correct?
         FormatterFn(move |f| match self {
             // Don't output anything here.
             Self::Primitive(Primitive::Void) => Ok(()),
@@ -3333,12 +3370,20 @@ impl Ty {
                 if *nullability == Nullability::NonNull {
                     // TODO: Add runtime nullability check here (can we even
                     // do that?).
-                    write!(f, " -> &'static {}", pointee.behind_pointer())
+                    write!(
+                        f,
+                        " -> &'static {}",
+                        pointee.behind_pointer(allow_generic_param)
+                    )
                 } else {
-                    write!(f, " -> Option<&'static {}>", pointee.behind_pointer())
+                    write!(
+                        f,
+                        " -> Option<&'static {}>",
+                        pointee.behind_pointer(allow_generic_param)
+                    )
                 }
             }
-            _ => write!(f, " -> {}", self.plain()),
+            _ => write!(f, " -> {}", self.plain(allow_generic_param)),
         })
     }
 
@@ -3406,6 +3451,15 @@ impl Ty {
                 (_, false) => ";\nret.map(|ret| unsafe { CFRetained::retain(ret) })",
             }
         };
+        // HACK to support CFArray<T>.
+        let end_cf_with_cast = |nullability| {
+            match (nullability, returns_retained) {
+                (Nullability::NonNull, true) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { CFRetained::from_raw(ret.cast()) }",
+                (Nullability::NonNull, false) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { CFRetained::retain(ret.cast()) }",
+                (_, true) => ";\nret.map(|ret| unsafe { CFRetained::from_raw(ret.cast()) })",
+                (_, false) => ";\nret.map(|ret| unsafe { CFRetained::retain(ret.cast()) })",
+            }
+        };
         let end_dispatch = |nullability| {
             match (nullability, returns_retained) {
                 (Nullability::NonNull, true) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { DispatchRetained::from_raw(ret) }",
@@ -3452,16 +3506,16 @@ impl Ty {
                 // This is required because nullability attributes in Clang
                 // are a hint, and not an ABI stable promise.
                 if pointee.is_static_object() {
-                    write!(f, "-> Option<&'static {}>", pointee.behind_pointer())
+                    write!(f, "-> Option<&'static {}>", pointee.behind_pointer(false))
                 } else if pointee.is_cf_type()
                     || pointee.is_dispatch_type()
                     || pointee.is_network_type()
                 {
-                    write!(f, "-> Option<NonNull<{}>>", pointee.behind_pointer())
+                    write!(f, "-> Option<NonNull<{}>>", pointee.behind_pointer(false))
                 } else if pointee.is_objc_type() {
-                    write!(f, "-> *mut {}", pointee.behind_pointer())
+                    write!(f, "-> *mut {}", pointee.behind_pointer(false))
                 } else {
-                    let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
+                    let pointee = maybemaybeuninit(*read, pointee.behind_pointer(false));
                     if *nullability == Nullability::NonNull {
                         write!(f, "-> Option<NonNull<{pointee}>>",)
                     } else if *written {
@@ -3471,7 +3525,7 @@ impl Ty {
                     }
                 }
             }
-            _ => write!(f, " -> {}", self.plain()),
+            _ => write!(f, " -> {}", self.plain(false)),
         });
         let converter = match self {
             _ if self.is_objc_bool() => Some((" -> bool".to_string(), "", ".as_bool()")),
@@ -3495,7 +3549,7 @@ impl Ty {
 
                 if pointee.is_static_object() && *bounds == PointerBounds::Single {
                     if *nullability == Nullability::NonNull {
-                        let res = format!(" -> &'static {}", pointee.behind_pointer());
+                        let res = format!(" -> &'static {}", pointee.behind_pointer(true));
                         Some((res, start, ";\nret.expect(\"function was marked as returning non-null, but actually returned NULL\")"))
                     } else {
                         // No conversion necessary
@@ -3503,23 +3557,33 @@ impl Ty {
                     }
                 } else if pointee.is_cf_type() && *bounds == PointerBounds::Single {
                     let res = if *nullability == Nullability::NonNull {
-                        format!(" -> CFRetained<{}>", pointee.behind_pointer())
+                        format!(" -> CFRetained<{}>", pointee.behind_pointer(true))
                     } else {
-                        format!(" -> Option<CFRetained<{}>>", pointee.behind_pointer())
+                        format!(" -> Option<CFRetained<{}>>", pointee.behind_pointer(true))
                     };
-                    Some((res, start, end_cf(*nullability)))
+                    if matches!(&**pointee, Self::Pointee(PointeeTy::CFTypeDef { generics, .. }) if generics
+                            .iter()
+                            .any(|generic| matches!(generic, PointeeTy::GenericParam { .. })))
+                    {
+                        Some((res, start, end_cf_with_cast(*nullability)))
+                    } else {
+                        Some((res, start, end_cf(*nullability)))
+                    }
                 } else if pointee.is_dispatch_type() && *bounds == PointerBounds::Single {
                     let res = if *nullability == Nullability::NonNull {
-                        format!(" -> DispatchRetained<{}>", pointee.behind_pointer())
+                        format!(" -> DispatchRetained<{}>", pointee.behind_pointer(true))
                     } else {
-                        format!(" -> Option<DispatchRetained<{}>>", pointee.behind_pointer())
+                        format!(
+                            " -> Option<DispatchRetained<{}>>",
+                            pointee.behind_pointer(true)
+                        )
                     };
                     Some((res, start, end_dispatch(*nullability)))
                 } else if pointee.is_network_type() && *bounds == PointerBounds::Single {
                     let res = if *nullability == Nullability::NonNull {
-                        format!(" -> NWRetained<{}>", pointee.behind_pointer())
+                        format!(" -> NWRetained<{}>", pointee.behind_pointer(true))
                     } else {
-                        format!(" -> Option<NWRetained<{}>>", pointee.behind_pointer())
+                        format!(" -> Option<NWRetained<{}>>", pointee.behind_pointer(true))
                     };
                     Some((res, start, end_network(*nullability)))
                 } else if pointee.is_objc_type()
@@ -3527,9 +3591,9 @@ impl Ty {
                     && *bounds == PointerBounds::Single
                 {
                     let res = if *nullability == Nullability::NonNull {
-                        format!(" -> Retained<{}>", pointee.behind_pointer())
+                        format!(" -> Retained<{}>", pointee.behind_pointer(true))
                     } else {
-                        format!(" -> Option<Retained<{}>>", pointee.behind_pointer())
+                        format!(" -> Option<Retained<{}>>", pointee.behind_pointer(true))
                     };
                     Some((res, start, end_objc(*nullability)))
                 } else if pointee.is_pointee_cstr()
@@ -3552,8 +3616,14 @@ impl Ty {
                             },
                         ))
                     }
+                } else if matches!(&**pointee, Self::Pointee(PointeeTy::GenericParam { .. }))
+                    || matches!(&**pointee, Self::Pointer { pointee, .. }
+                        if matches!(&**pointee, Self::Pointee(PointeeTy::GenericParam { .. }))
+                    )
+                {
+                    Some((format!(" -> {}", self.plain(true)), "", ".cast()"))
                 } else {
-                    let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
+                    let pointee = maybemaybeuninit(*read, pointee.behind_pointer(true));
                     if *nullability == Nullability::NonNull {
                         let res = format!(" -> NonNull<{pointee}>");
                         Some((res, start, ";\nret.expect(\"function was marked as returning non-null, but actually returned NULL\")"))
@@ -3568,6 +3638,8 @@ impl Ty {
     }
 
     pub(crate) fn var(&self) -> impl fmt::Display + '_ {
+        // Might not be correct, but probably doesn't matter.
+        let allow_generic_param = true;
         FormatterFn(move |f| match self {
             Self::Pointer {
                 nullability,
@@ -3579,18 +3651,20 @@ impl Ty {
                 bounds: PointerBounds::Single,
                 pointee,
             } if pointee.is_object_like() => {
-                let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
+                let pointee = maybemaybeuninit(*read, pointee.behind_pointer(allow_generic_param));
                 if *nullability == Nullability::NonNull {
                     write!(f, "&'static {pointee}")
                 } else {
                     write!(f, "Option<&'static {pointee}>")
                 }
             }
-            _ => write!(f, "{}", self.behind_pointer()),
+            _ => write!(f, "{}", self.behind_pointer(allow_generic_param)),
         })
     }
 
     pub(crate) fn const_(&self) -> impl fmt::Display + '_ {
+        // Might not be correct, but probably doesn't matter.
+        let allow_generic_param = true;
         FormatterFn(move |f| match self {
             Self::Pointer {
                 nullability,
@@ -3602,7 +3676,7 @@ impl Ty {
                 bounds: PointerBounds::Single,
                 pointee,
             } if pointee.is_object_like() => {
-                let pointee = maybemaybeuninit(*read, pointee.behind_pointer());
+                let pointee = maybemaybeuninit(*read, pointee.behind_pointer(allow_generic_param));
                 if *nullability == Nullability::NonNull {
                     write!(f, "&{pointee}")
                 } else {
@@ -3623,11 +3697,12 @@ impl Ty {
                     write!(f, "Option<&CStr>")
                 }
             }
-            _ => write!(f, "{}", self.plain()),
+            _ => write!(f, "{}", self.plain(allow_generic_param)),
         })
     }
 
     pub(crate) fn typedef(&self) -> impl fmt::Display + '_ {
+        let allow_generic_param = true; // Might not be correct?
         FormatterFn(move |f| match self {
             Self::Pointer {
                 nullability: _,
@@ -3637,7 +3712,7 @@ impl Ty {
                 bounds: _,
                 pointee,
             } if pointee.is_object_like() => {
-                write!(f, "{}", pointee.behind_pointer())
+                write!(f, "{}", pointee.behind_pointer(allow_generic_param))
             }
             // We mark `typedefs` as-if behind a pointer, as even though
             // typedefs are _usually_ to a pointer of the type (handled
@@ -3646,11 +3721,11 @@ impl Ty {
             // Examples:
             // typedef NSDictionary<NSString *, MPSGraphExecutable *> MPSGraphCallableMap;
             // typedef void NSUncaughtExceptionHandler(NSException *exception);
-            _ => write!(f, "{}", self.behind_pointer()),
+            _ => write!(f, "{}", self.behind_pointer(allow_generic_param)),
         })
     }
 
-    pub(crate) fn fn_argument(&self) -> impl fmt::Display + '_ {
+    pub(crate) fn fn_argument(&self, allow_generic_param: bool) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Pointer {
                 nullability,
@@ -3664,7 +3739,7 @@ impl Ty {
                     error!(?self, "autoreleasing in fn argument");
                 }
 
-                let inner = maybemaybeuninit(*read, pointee.behind_pointer());
+                let inner = maybemaybeuninit(*read, pointee.behind_pointer(allow_generic_param));
                 // We don't care if `PointeeTy` pointers may be written to,
                 // since those use interior mutability anyhow.
                 let mut_ = if !written || matches!(pointee.through_typedef(), Self::Pointee(_)) {
@@ -3678,7 +3753,7 @@ impl Ty {
                     write!(f, "Option<&{mut_}{inner}>")
                 }
             }
-            _ => write!(f, "{}", self.plain()),
+            _ => write!(f, "{}", self.plain(allow_generic_param)),
         })
     }
 
@@ -3690,9 +3765,9 @@ impl Ty {
         impl fmt::Display + '_,
     )> {
         match self {
-            _ if self.is_objc_bool() => Some(("bool", "Bool::new(", ")")),
+            _ if self.is_objc_bool() => Some((Cow::Borrowed("bool"), "Bool::new(", ")")),
             Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
-                Some(("bool", "", " as _"))
+                Some((Cow::Borrowed("bool"), "", " as _"))
             }
             Self::Pointer {
                 nullability,
@@ -3704,10 +3779,14 @@ impl Ty {
                 pointee,
             } if pointee.is_pointee_cstr() => {
                 if *nullability == Nullability::NonNull {
-                    Some(("&CStr", "NonNull::new(", ".as_ptr().cast_mut()).unwrap()"))
+                    Some((
+                        Cow::Borrowed("&CStr"),
+                        "NonNull::new(",
+                        ".as_ptr().cast_mut()).unwrap()",
+                    ))
                 } else {
                     Some((
-                        "Option<&CStr>",
+                        Cow::Borrowed("Option<&CStr>"),
                         "",
                         if *written {
                             ".map(|ptr| ptr.as_ptr().cast_mut()).unwrap_or_else(core::ptr::null_mut)"
@@ -3717,12 +3796,56 @@ impl Ty {
                     ))
                 }
             }
+            // HACK to support CFArray<T>.
+            Self::Pointer {
+                nullability,
+                pointee,
+                bounds,
+                ..
+            } => {
+                if matches!(&**pointee, Self::Pointee(PointeeTy::GenericParam { .. }))
+                    || matches!(&**pointee, Self::Pointer { pointee, .. }
+                        if matches!(&**pointee, Self::Pointee(PointeeTy::GenericParam { .. }))
+                    )
+                {
+                    let true_type = Cow::Owned(self.fn_argument(true).to_string());
+                    if *nullability == Nullability::NonNull {
+                        if *bounds == PointerBounds::Single {
+                            Some((true_type, "std::mem::transmute(", ")"))
+                        } else {
+                            Some((true_type, "", ".map(|x| x.cast())"))
+                        }
+                    } else {
+                        if *bounds == PointerBounds::Single {
+                            Some((true_type, "", ".map(|x| std::mem::transmute(x))"))
+                        } else {
+                            Some((true_type, "", ".cast()"))
+                        }
+                    }
+                } else if let Self::Pointee(PointeeTy::CFTypeDef { generics, .. }) = &**pointee {
+                    if generics
+                        .iter()
+                        .any(|generic| matches!(generic, PointeeTy::GenericParam { .. }))
+                    {
+                        let true_type = Cow::Owned(self.fn_argument(true).to_string());
+                        if *nullability == Nullability::NonNull {
+                            Some((true_type, "", ".as_opaque()"))
+                        } else {
+                            Some((true_type, "", ".map(|obj| obj.as_opaque())"))
+                        }
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            }
             // TODO: Support out / autoreleasing pointers?
             _ => None,
         }
     }
 
-    fn fmt_out_pointer(&self) -> Option<impl fmt::Display + '_> {
+    fn fmt_out_pointer(&self, allow_generic_param: bool) -> Option<impl fmt::Display + '_> {
         match self {
             Self::Pointer {
                 nullability,
@@ -3747,9 +3870,17 @@ impl Ty {
                     }
                     let inner = FormatterFn(|f| {
                         if *inner_nullability == Nullability::NonNull {
-                            write!(f, "Retained<{}>", pointee.behind_pointer())
+                            write!(
+                                f,
+                                "Retained<{}>",
+                                pointee.behind_pointer(allow_generic_param)
+                            )
                         } else {
-                            write!(f, "Option<Retained<{}>>", pointee.behind_pointer())
+                            write!(
+                                f,
+                                "Option<Retained<{}>>",
+                                pointee.behind_pointer(allow_generic_param)
+                            )
                         }
                     });
                     if *nullability == Nullability::NonNull {
@@ -3788,10 +3919,10 @@ impl Ty {
                 }
             }
             _ => {
-                if let Some(fmt) = self.fmt_out_pointer() {
+                if let Some(fmt) = self.fmt_out_pointer(true) {
                     write!(f, "{fmt}")
                 } else {
-                    write!(f, "{}", self.fn_argument())
+                    write!(f, "{}", self.fn_argument(true))
                 }
             }
         })
@@ -3800,12 +3931,12 @@ impl Ty {
     pub(crate) fn method_argument_encoding_type(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Primitive(Primitive::C99Bool) => write!(f, "Bool"),
-            _ => write!(f, "{}", self.plain()),
+            _ => write!(f, "{}", self.plain(true)),
         })
     }
 
     pub(crate) fn record(&self) -> impl fmt::Display + '_ {
-        self.plain()
+        self.plain(true)
     }
 
     fn fn_contains_bool(&self) -> bool {
@@ -3846,7 +3977,7 @@ impl Ty {
     }
 
     pub(crate) fn enum_(&self) -> impl fmt::Display + '_ {
-        FormatterFn(move |f| write!(f, "{}", self.plain()))
+        FormatterFn(move |f| write!(f, "{}", self.plain(true)))
     }
 
     pub(crate) fn enum_encoding(&self) -> impl fmt::Display + '_ {
@@ -4467,6 +4598,52 @@ impl Ty {
                 }
                 ty => error!(?ty, "unexpected type for written attribute"),
             }
+        }
+    }
+
+    /// Replaces `void*` with `name*`.
+    ///
+    /// Returns `true` if a replacement happened.
+    pub(crate) fn try_replace_void_with_generic(&mut self, name: &str) {
+        if let Self::Pointer { pointee, .. } = self {
+            match &mut **pointee {
+                this @ Self::Primitive(Primitive::Void) => {
+                    *this = Self::Pointee(PointeeTy::GenericParam {
+                        object_like: false,
+                        name: name.to_string(),
+                    });
+                }
+                pointee => pointee.try_replace_void_with_generic(name),
+            }
+        }
+    }
+
+    pub(crate) fn add_default_generics_when_matching(
+        &mut self,
+        matching: &ItemIdentifier,
+        new_generics: impl Iterator<Item = String>,
+    ) {
+        match self {
+            Self::Pointer { pointee, .. } => {
+                pointee.add_default_generics_when_matching(matching, new_generics)
+            }
+            Self::Array { element_type, .. } => {
+                element_type.add_default_generics_when_matching(matching, new_generics)
+            }
+            Self::Pointee(pointee) => match pointee {
+                PointeeTy::CFTypeDef { id, generics, .. }
+                    if id == matching && generics.is_empty() =>
+                {
+                    *generics = new_generics
+                        .map(|name| PointeeTy::GenericParam {
+                            object_like: false,
+                            name,
+                        })
+                        .collect();
+                }
+                _ => {}
+            },
+            _ => {}
         }
     }
 

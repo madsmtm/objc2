@@ -689,6 +689,7 @@ pub enum Stmt {
     GeneralImpl {
         location: Location,
         item: ItemTree, // TODO: Make this a Ty?
+        generics: Vec<GenericWithBound>,
         stmts: Vec<Self>,
     },
 }
@@ -2136,14 +2137,17 @@ impl Stmt {
     }
 
     /// Whether it is possible to attach `impl` stmts to the provided item.
-    pub(crate) fn implementable(&self) -> bool {
-        matches!(
-            self,
-            Self::ClassDecl { skipped: false, .. }
-                | Self::RecordDecl { .. }
-                | Self::EnumDecl { .. }
-                | Self::OpaqueDecl { .. }
-        )
+    pub(crate) fn implementable(&self) -> Option<Vec<GenericWithBound>> {
+        match self {
+            Self::ClassDecl {
+                skipped: false,
+                generics,
+                ..
+            } => Some(generics.clone()),
+            Self::RecordDecl { .. } | Self::EnumDecl { .. } => Some(Vec::new()),
+            Self::OpaqueDecl { generics, .. } => Some(generics.clone()),
+            _ => None,
+        }
     }
 
     pub(crate) fn location(&self) -> &Location {
@@ -3204,7 +3208,7 @@ impl Stmt {
                     write!(f, "pub fn {c_name}(")?;
                     for (param, arg_ty) in arguments {
                         let param = handle_reserved(&crate::to_snake_case(param));
-                        write!(f, "{param}: {},", arg_ty.fn_argument())?;
+                        write!(f, "{param}: {},", arg_ty.fn_argument(true))?;
                     }
                     let (ret, _) = result_type.fn_return(*returns_retained);
                     writeln!(f, "){ret};")?;
@@ -3261,7 +3265,7 @@ impl Stmt {
                         write!(f, "{vis}fn {c_name}(")?;
                         for (param, arg_ty) in arguments {
                             let param = handle_reserved(&crate::to_snake_case(param));
-                            write!(f, "{param}: {},", arg_ty.fn_argument())?;
+                            write!(f, "{param}: {},", arg_ty.fn_argument(false))?;
                         }
                         writeln!(f, "){ret};")?;
 
@@ -3303,7 +3307,7 @@ impl Stmt {
                                 if let Some((converted_ty, _, _)) = arg_ty.fn_argument_converter() {
                                     write!(f, "{converted_ty}")?;
                                 } else {
-                                    write!(f, "{}", arg_ty.fn_argument())?;
+                                    write!(f, "{}", arg_ty.fn_argument(true))?;
                                 }
                             }
                             write!(f, ",")?;
@@ -3582,10 +3586,18 @@ impl Stmt {
                 Self::GeneralImpl {
                     location: _,
                     item,
+                    generics,
                     stmts,
                 } => {
                     write!(f, "{}", self.cfg_gate_ln(config))?;
-                    writeln!(f, "impl {} {{", item.id().path())?;
+                    writeln!(
+                        f,
+                        "impl{} {}{} {{",
+                        // Requires Sized for now
+                        GenericParamsHelper(generics, "Sized"),
+                        item.id().path(),
+                        generic_ty(generics),
+                    )?;
                     for stmt in stmts {
                         writeln!(f, "{}", stmt.fmt(config))?;
                     }

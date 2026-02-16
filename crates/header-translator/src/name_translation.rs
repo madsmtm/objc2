@@ -5,10 +5,7 @@
 //! Kinda ugly and under-tested, may not work for all cases.
 #![allow(clippy::if_same_then_else)]
 
-use std::{
-    collections::{BTreeSet, VecDeque},
-    iter::FusedIterator,
-};
+use std::{collections::VecDeque, iter::FusedIterator};
 
 use itertools::Itertools;
 
@@ -250,8 +247,8 @@ fn strip_needless_suffix(type_name: &str) -> &str {
 }
 
 /// Find the type onto whom a function should be inserted.
-pub(crate) fn find_fn_implementor(
-    implementable_mapping: &BTreeSet<ItemTree>,
+pub(crate) fn find_fn_implementor<'a>(
+    implementable_mapping: impl Iterator<Item = &'a ItemTree>,
     fn_name: &str,
     fn_location: &Location,
     arguments: &[(String, Ty)],

@@ -37,6 +37,7 @@ mod error;
 mod filedescriptor;
 // Allow `default` methods on CFAllocator and CFTimeZone
 #[allow(clippy::should_implement_trait)]
+#[allow(clippy::missing_transmute_annotations)]
 mod generated;
 #[cfg(feature = "CFCGTypes")]
 mod geometry;

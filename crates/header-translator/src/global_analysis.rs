@@ -2,8 +2,8 @@
 //!
 //! Try to keep these as few as possible, since they have a hard time
 //! inspecting other crates.
-use std::collections::{BTreeMap, BTreeSet, HashMap};
-use std::mem;
+use std::collections::{BTreeMap, HashMap};
+use std::{iter, mem};
 
 use crate::availability::Availability;
 use crate::expr::Expr;
@@ -11,7 +11,7 @@ use crate::id::ItemTree;
 use crate::method::Method;
 use crate::module::Module;
 use crate::name_translation::{find_fn_implementor, shorten_name_when_on_parent};
-use crate::stmt::Stmt;
+use crate::stmt::{GenericWithBound, Stmt};
 use crate::{Config, ItemIdentifier, Library};
 
 pub fn global_analysis(library: &mut Library, config: &Config) {
@@ -21,9 +21,10 @@ pub fn global_analysis(library: &mut Library, config: &Config) {
     let mut implementable_mapping = create_implementable_mapping(&library.module);
 
     for (external_name, external_data) in &library.data.external {
-        implementable_mapping.insert(ItemTree::from_id(
-            external_data.clone().into_id(external_name.clone()),
-        ));
+        implementable_mapping.insert(
+            ItemTree::from_id(external_data.clone().into_id(external_name.clone())),
+            Vec::new(),
+        );
     }
 
     let mut expected_bridged_types = config
@@ -47,14 +48,14 @@ pub fn global_analysis(library: &mut Library, config: &Config) {
     }
 }
 
-fn create_implementable_mapping(module: &Module) -> BTreeSet<ItemTree> {
-    let mut types = BTreeSet::new();
+fn create_implementable_mapping(module: &Module) -> BTreeMap<ItemTree, Vec<GenericWithBound>> {
+    let mut types = BTreeMap::new();
     for stmt in &module.stmts {
-        if stmt.implementable() {
-            types.insert(ItemTree::new(
-                stmt.provided_item().unwrap(),
-                stmt.required_items(),
-            ));
+        if let Some(generics) = stmt.implementable() {
+            types.insert(
+                ItemTree::new(stmt.provided_item().unwrap(), stmt.required_items()),
+                generics,
+            );
         }
     }
     for submodule in module.submodules.values() {
@@ -77,7 +78,7 @@ fn create_ident_mapping(module: &Module) -> HashMap<String, Expr> {
 
 fn update_module(
     module: &mut Module,
-    implementable_mapping: &BTreeSet<ItemTree>,
+    implementable_mapping: &BTreeMap<ItemTree, Vec<GenericWithBound>>,
     ident_mapping: &HashMap<String, Expr>,
     expected_bridged_types: &mut BTreeMap<&str, &ItemIdentifier>,
 ) {
@@ -109,7 +110,7 @@ fn update_module(
                 Some(implementor.clone())
             } else {
                 find_fn_implementor(
-                    implementable_mapping,
+                    implementable_mapping.keys(),
                     c_name,
                     id.location(),
                     arguments,
@@ -147,6 +148,49 @@ fn update_module(
                 // Wrappers have normal Rust ABI (mostly to unclutter docs).
                 *abi = abi.as_rust_outer();
 
+                let generics = implementable_mapping
+                    .get(&parent_item)
+                    .cloned()
+                    .unwrap_or_default();
+
+                // Workarounds needed because CoreFoundation types don't
+                // specify template type parameters themselves.
+                for (name, ty) in arguments
+                    .iter_mut()
+                    .map(|(arg_name, arg_ty)| (&**arg_name, arg_ty))
+                    .chain(iter::once(("return", &mut *result_type)))
+                {
+                    // Replace `CFArray` with `CFArray<T>`.
+                    ty.add_default_generics_when_matching(
+                        parent_item.id(),
+                        generics.iter().map(|(name, _)| name.clone()),
+                    );
+
+                    // Replace `void*` with generics in appropriate order.
+                    match &*generics {
+                        [] => {}
+                        [(generic_name, _)] => {
+                            if matches!(
+                                name,
+                                "value" | "values" | "new_values" | "candidate" | "return"
+                            ) {
+                                ty.try_replace_void_with_generic(generic_name);
+                            }
+                        }
+                        // Ultra hacky, though that's fine, we only need to
+                        // support `CFDictionary<K, V>` here.
+                        [(key, _), (value, _)] => match name {
+                            "key" | "keys" => ty.try_replace_void_with_generic(key),
+                            "value" | "values" => ty.try_replace_void_with_generic(value),
+                            "return" if c_name == "CFDictionaryGetValue" => {
+                                ty.try_replace_void_with_generic(value)
+                            }
+                            _ => {}
+                        },
+                        generics => unimplemented!("unimplemented generics: {generics:?}"),
+                    }
+                }
+
                 if link_name.contains("GetTypeID") {
                     assert!(arguments.is_empty(), "{id:?} must have no arguments");
                     assert!(result_type.is_cf_type_id(), "{id:?} must return CFTypeID");
@@ -169,6 +213,7 @@ fn update_module(
                         stmt,
                         Stmt::GeneralImpl {
                             location,
+                            generics,
                             item: parent_item,
                             stmts: vec![],
                         },
