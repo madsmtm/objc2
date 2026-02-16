@@ -403,10 +403,7 @@ VNTrackTranslationalImageRegistrationRequest = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
 ]
-VNTrackingRequest = [
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSObject",
-]
+VNTrackingRequest = ["objc2-foundation/NSObject"]
 VNTypes = ["objc2-foundation/NSString"]
 VNUtils = []
 VNVideoProcessor = [

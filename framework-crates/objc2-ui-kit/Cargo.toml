@@ -812,8 +812,6 @@ UIActivityItemsConfigurationReading_ShareSheet = ["objc2-foundation/NSString"]
 UIActivityViewController = [
     "bitflags",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -943,8 +941,6 @@ UICellConfigurationState = [
 ]
 UICloudSharingController = [
     "bitflags",
-    "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -1023,10 +1019,8 @@ UIColor = [
     "objc2-foundation/NSString",
 ]
 UIColorPickerViewController = [
-    "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
 ]
 UIColorWell = [
     "objc2-foundation/NSCoder",
@@ -1148,7 +1142,6 @@ UIDocumentBrowserAction = [
 ]
 UIDocumentBrowserViewController = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -1288,10 +1281,8 @@ UIFontDescriptor = [
 ]
 UIFontMetrics = ["objc2-foundation/NSString"]
 UIFontPickerViewController = [
-    "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
 ]
 UIFontPickerViewControllerConfiguration = [
     "objc2-foundation/NSArray",
@@ -1695,7 +1686,6 @@ UIProgressView = [
 ]
 UIPushBehavior = ["objc2-foundation/NSArray"]
 UIReferenceLibraryViewController = [
-    "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -2001,10 +1991,8 @@ UITextFormattingCoordinator = [
     "objc2-foundation/NSString",
 ]
 UITextFormattingViewController = [
-    "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
 ]
 UITextFormattingViewControllerChangeValue = [
     "objc2-foundation/NSObject",

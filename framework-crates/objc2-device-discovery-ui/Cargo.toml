@@ -44,10 +44,7 @@ objc2-network = ["dep:objc2-network"]
 unstable-darwin-objc = []
 
 DDDevicePickerViewController = [
-    "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
     "objc2-ui-kit/UIAppearance",
     "objc2-ui-kit/UIFocus",
     "objc2-ui-kit/UIResponder",

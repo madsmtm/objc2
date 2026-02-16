@@ -1051,7 +1051,12 @@ impl Method {
     }
 
     pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
-        if !self.availability.is_available() && matches!(&*self.selector, "init" | "new") {
+        if !self.availability.is_available()
+            && matches!(
+                self.memory_management,
+                MemoryManagement::RetainedInit | MemoryManagement::RetainedNew { .. }
+            )
+        {
             return Vec::new().into_iter();
         }
 
@@ -1107,7 +1112,12 @@ impl Method {
         FormatterFn(move |f| {
             let _span = debug_span!("method", self.selector).entered();
 
-            if !self.availability.is_available() && matches!(&*self.selector, "init" | "new") {
+            if !self.availability.is_available()
+                && matches!(
+                    self.memory_management,
+                    MemoryManagement::RetainedInit | MemoryManagement::RetainedNew { .. }
+                )
+            {
                 writeln!(
                     f,
                     "        // {}{} (unavailable)",

@@ -84,17 +84,13 @@ INUIAddVoiceShortcutButton = [
     "objc2-foundation/NSString",
 ]
 INUIAddVoiceShortcutViewController = [
-    "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
 ]
 INUIEditVoiceShortcutViewController = [
-    "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",
 ]

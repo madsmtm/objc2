@@ -40,7 +40,6 @@ objc2-app-kit = { workspace = true, optional = true, features = [
     "NSDragging",
     "NSImage",
     "NSKeyValueBinding",
-    "NSNib",
     "NSResponder",
     "NSStoryboardSegue",
     "NSUserInterfaceItemIdentification",
@@ -117,8 +116,6 @@ PHLivePhotoView = [
 PHPicker = [
     "bitflags",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
