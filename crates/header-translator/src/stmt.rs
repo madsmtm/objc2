@@ -640,7 +640,8 @@ pub enum Stmt {
         link_name: String,
         availability: Availability,
         arguments: Vec<(String, Ty)>,
-        first_arg_is_self: bool,
+        /// The nth argument is the `&self` argument.
+        arg_is_self: Option<usize>,
         result_type: Ty,
         // Some -> inline function.
         body: Option<()>,
@@ -1970,7 +1971,7 @@ impl Stmt {
                     availability,
                     arguments,
                     // May be changed by global analysis.
-                    first_arg_is_self: false,
+                    arg_is_self: None,
                     result_type,
                     body,
                     safe,
@@ -3219,7 +3220,7 @@ impl Stmt {
                     link_name,
                     availability,
                     arguments,
-                    first_arg_is_self,
+                    arg_is_self,
                     result_type,
                     body: None,
                     safe,
@@ -3289,29 +3290,40 @@ impl Stmt {
                         let unsafe_ = if *safe { "" } else { "unsafe " };
                         let fn_name = handle_reserved(&id.name);
                         write!(f, "{vis} {unsafe_}{}fn {fn_name}(", abi.extern_outer())?;
-                        for (i, (param, arg_ty)) in arguments.iter().enumerate() {
-                            if i == 0 && *first_arg_is_self {
-                                // Might not be completely correct, but typeck
-                                // should figure out for us when calling the
-                                // inner function if the argument type isn't
-                                // the same type this one.
-                                if arg_ty.is_object_like_ptr() {
-                                    write!(f, "&self")?;
-                                } else {
-                                    write!(f, "self")?;
-                                }
-                            } else {
-                                let param = handle_reserved(&crate::to_snake_case(param));
-                                write!(f, "{param}: ")?;
 
-                                if let Some((converted_ty, _, _)) = arg_ty.fn_argument_converter() {
-                                    write!(f, "{converted_ty}")?;
-                                } else {
-                                    write!(f, "{}", arg_ty.fn_argument(true))?;
-                                }
+                        // Emit self-argument first.
+                        if let Some(arg_is_self) = arg_is_self {
+                            let (_, arg_ty) = arguments.get(*arg_is_self).unwrap();
+                            // Might not be completely correct, but typeck
+                            // should figure out for us when calling the
+                            // inner function if the argument type isn't
+                            // the same type this one.
+                            if arg_ty.is_object_like_ptr() {
+                                write!(f, "&self, ")?;
+                            } else {
+                                write!(f, "self, ")?;
                             }
+                        }
+
+                        // Emit rest of arguments.
+                        for (i, (param, arg_ty)) in arguments.iter().enumerate() {
+                            if arg_is_self.unwrap_or(usize::MAX) == i {
+                                // Emitted above.
+                                continue;
+                            }
+
+                            let param = handle_reserved(&crate::to_snake_case(param));
+                            write!(f, "{param}: ")?;
+
+                            if let Some((converted_ty, _, _)) = arg_ty.fn_argument_converter() {
+                                write!(f, "{converted_ty}")?;
+                            } else {
+                                write!(f, "{}", arg_ty.fn_argument(true))?;
+                            }
+
                             write!(f, ",")?;
                         }
+
                         write!(f, ")")?;
                         if let Some((ty, _, _)) = &return_converter {
                             write!(f, "{ty}")?;
@@ -3332,7 +3344,7 @@ impl Stmt {
                         }
                         write!(f, "unsafe {{ {c_name}(")?;
                         for (i, (param, ty)) in arguments.iter().enumerate() {
-                            let param = if i == 0 && *first_arg_is_self {
+                            let param = if arg_is_self.unwrap_or(usize::MAX) == i {
                                 "self".to_string()
                             } else {
                                 handle_reserved(&crate::to_snake_case(param))

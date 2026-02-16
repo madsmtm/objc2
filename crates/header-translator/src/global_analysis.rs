@@ -90,7 +90,7 @@ fn update_module(
             link_name,
             availability,
             arguments,
-            first_arg_is_self,
+            arg_is_self,
             result_type,
             body,
             safe: _,
@@ -119,9 +119,22 @@ fn update_module(
             };
 
             if let Some(parent_item) = implementor {
-                let is_instance_method = arguments
-                    .first()
-                    .is_some_and(|(_, arg_ty)| arg_ty.is_self_ty_legal(parent_item.id()));
+                if let Some((_, first_arg_ty)) = arguments.first() {
+                    if first_arg_ty.is_self_ty_legal(parent_item.id()) {
+                        *arg_is_self = Some(0);
+                    } else if let Some((_, second_arg_ty)) = arguments.get(1) {
+                        // CFAllocatorRef is often the first argument, with
+                        // the logical self-type as the second argument.
+                        //
+                        // E.g. CFAttributedStringCreateCopy.
+                        if first_arg_ty.is_cf_allocator()
+                            && second_arg_ty.is_self_ty_legal(parent_item.id())
+                        {
+                            *arg_is_self = Some(1);
+                        }
+                    }
+                }
+
                 let omit_memory_management_words =
                     result_type.fn_return(*returns_retained).1.is_some();
 
@@ -132,16 +145,12 @@ fn update_module(
                     shorten_name_when_on_parent(
                         c_name,
                         &parent_item.id().name,
-                        is_instance_method,
+                        arg_is_self.is_some(),
                         omit_memory_management_words,
                     )
                 };
 
                 *id = id.clone().map_name(|_| name.clone());
-
-                if is_instance_method {
-                    *first_arg_is_self = true;
-                }
 
                 documentation.set_alias(c_name.clone());
 
