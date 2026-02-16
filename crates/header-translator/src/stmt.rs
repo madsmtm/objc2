@@ -1952,10 +1952,7 @@ impl Stmt {
                     }
                     !unsafe_
                 } else {
-                    // TODO(breaking): Remove unavailable instead of just marking them unsafe.
-                    safety.is_safe()
-                        && default_safety.automatically_safe
-                        && availability.is_available()
+                    safety.is_safe() && default_safety.automatically_safe
                 };
 
                 if let Some(safety) = safety.to_safety_comment() {
@@ -2123,7 +2120,12 @@ impl Stmt {
             Self::EnumDecl { id, .. } => Some(id.clone()),
             Self::ConstDecl { id, .. } => Some(id.clone()),
             Self::VarDecl { id, .. } => Some(id.clone()),
-            Self::FnDecl { id, body: None, .. } => Some(id.clone()),
+            Self::FnDecl {
+                id,
+                availability,
+                body: None,
+                ..
+            } => availability.is_available().then(|| id.clone()),
             // TODO
             Self::FnDecl { body: Some(_), .. } => None,
             Self::FnGetTypeId { .. } => None, // Emits a trait impl
@@ -3224,6 +3226,13 @@ impl Stmt {
                     no_implementor: _,
                     custom_implementor: _,
                 } => {
+                    if !availability.is_available() {
+                        // Functions generally aren't marked unavailable, but
+                        // let's keep this for consistency with methods.
+                        writeln!(f, "// fn {c_name} (unavailable)")?;
+                        return Ok(());
+                    }
+
                     let (ret, return_converter) = result_type.fn_return(*returns_retained);
 
                     let needs_wrapper = *safe
