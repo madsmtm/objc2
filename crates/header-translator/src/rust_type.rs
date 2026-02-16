@@ -2765,6 +2765,9 @@ impl Ty {
             }
             // Conservative.
             Self::Union { .. } => TypeSafety::always_unsafe("must be correctly initialized"),
+            Self::TypeDef { id, .. } if id.name == "CFStringEncoding" => {
+                TypeSafety::unknown_in_argument("should be set correctly")
+            }
             Self::TypeDef { to, .. } => to.safety(),
         }
     }

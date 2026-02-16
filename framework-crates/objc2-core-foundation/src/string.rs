@@ -98,8 +98,8 @@ impl CFString {
     /// internally, and could thus mutate the string inside there.
     #[doc(alias = "CFStringGetCStringPtr")]
     pub unsafe fn as_str_unchecked(&self) -> Option<&str> {
-        // NOTE: The encoding is an 8-bit encoding.
-        let bytes = self.c_string_ptr(CFStringBuiltInEncodings::EncodingASCII.0);
+        // SAFETY: The encoding is an 8-bit encoding.
+        let bytes = unsafe { self.c_string_ptr(CFStringBuiltInEncodings::EncodingASCII.0) };
         NonNull::new(bytes as *mut c_char).map(|bytes| {
             // NOTE: The returned string may contain interior NUL bytes:
             // https://github.com/swiftlang/swift-corelibs-foundation/issues/5200
