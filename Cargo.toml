@@ -174,6 +174,7 @@ objc2-crypto-token-kit = { path = "framework-crates/objc2-crypto-token-kit", ver
 objc2-data-detection = { path = "framework-crates/objc2-data-detection", version = "0.3.2", default-features = false }
 objc2-device-check = { path = "framework-crates/objc2-device-check", version = "0.3.2", default-features = false }
 objc2-device-discovery-extension = { path = "framework-crates/objc2-device-discovery-extension", version = "0.3.2", default-features = false }
+objc2-device-discovery-ui = { path = "framework-crates/objc2-device-discovery-ui", version = "0.3.2", default-features = false }
 objc2-disk-arbitration = { path = "framework-crates/objc2-disk-arbitration", version = "0.3.2", default-features = false }
 objc2-event-kit = { path = "framework-crates/objc2-event-kit", version = "0.3.2", default-features = false }
 objc2-event-kit-ui = { path = "framework-crates/objc2-event-kit-ui", version = "0.3.2", default-features = false }
@@ -374,6 +375,7 @@ objc2-crypto-token-kit = { path = "framework-crates/objc2-crypto-token-kit" }
 objc2-data-detection = { path = "framework-crates/objc2-data-detection" }
 objc2-device-check = { path = "framework-crates/objc2-device-check" }
 objc2-device-discovery-extension = { path = "framework-crates/objc2-device-discovery-extension" }
+objc2-device-discovery-ui = { path = "framework-crates/objc2-device-discovery-ui" }
 objc2-disk-arbitration = { path = "framework-crates/objc2-disk-arbitration" }
 objc2-event-kit = { path = "framework-crates/objc2-event-kit" }
 objc2-event-kit-ui = { path = "framework-crates/objc2-event-kit-ui" }

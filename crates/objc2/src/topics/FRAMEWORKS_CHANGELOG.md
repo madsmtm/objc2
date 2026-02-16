@@ -16,11 +16,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Marked a bunch of functions safe in:
   - `CoreText` / `objc2-core-text`.
   - `ScreenCaptureKit` / `objc2-screen-capture-kit`.
+  - `Network` / `objc2-network`.
 * Added a few missing APIs that uses arrays.
 * Added `CGBitmapInfo::new`.
 * Added `Default` implementations for enumerations, bitflags and structs.
 * Added new framework crates:
   - `BrowserKit` / `objc2-browser-kit`.
+  - `DeviceDiscoveryUI` / `objc2-device-discovery-ui`.
   - `GameSave` / `objc2-game-save`.
   - `SecurityUI` / `objc2-security-ui`.
   - `TouchController` / `objc2-touch-controller`.

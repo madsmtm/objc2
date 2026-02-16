@@ -64,6 +64,7 @@
 | `DataDetection` | [`objc2-data-detection`](https://crates.io/crates/objc2-data-detection) | [![docs.rs](https://docs.rs/objc2-data-detection/badge.svg)](https://docs.rs/objc2-data-detection/) |
 | `DeviceCheck` | [`objc2-device-check`](https://crates.io/crates/objc2-device-check) | [![docs.rs](https://docs.rs/objc2-device-check/badge.svg)](https://docs.rs/objc2-device-check/) |
 | `DeviceDiscoveryExtension` | [`objc2-device-discovery-extension`](https://crates.io/crates/objc2-device-discovery-extension) | [![docs.rs](https://docs.rs/objc2-device-discovery-extension/badge.svg)](https://docs.rs/objc2-device-discovery-extension/) |
+| `DeviceDiscoveryUI` | [`objc2-device-discovery-ui`](https://crates.io/crates/objc2-device-discovery-ui) | [![docs.rs](https://docs.rs/objc2-device-discovery-ui/badge.svg)](https://docs.rs/objc2-device-discovery-ui/) |
 | `DiskArbitration` | [`objc2-disk-arbitration`](https://crates.io/crates/objc2-disk-arbitration) | [![docs.rs](https://docs.rs/objc2-disk-arbitration/badge.svg)](https://docs.rs/objc2-disk-arbitration/) |
 | `EventKit` | [`objc2-event-kit`](https://crates.io/crates/objc2-event-kit) | [![docs.rs](https://docs.rs/objc2-event-kit/badge.svg)](https://docs.rs/objc2-event-kit/) |
 | `EventKitUI` | [`objc2-event-kit-ui`](https://crates.io/crates/objc2-event-kit-ui) | [![docs.rs](https://docs.rs/objc2-event-kit-ui/badge.svg)](https://docs.rs/objc2-event-kit-ui/) |

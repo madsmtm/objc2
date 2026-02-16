@@ -2012,6 +2012,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-device-discovery-ui"
+version = "0.3.2"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-foundation",
+ "objc2-network",
+ "objc2-ui-kit",
+]
+
+[[package]]
 name = "objc2-disk-arbitration"
 version = "0.3.2"
 dependencies = [
@@ -4141,6 +4152,7 @@ dependencies = [
  "objc2-data-detection",
  "objc2-device-check",
  "objc2-device-discovery-extension",
+ "objc2-device-discovery-ui",
  "objc2-disk-arbitration",
  "objc2-event-kit",
  "objc2-event-kit-ui",

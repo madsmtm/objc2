@@ -76,6 +76,7 @@ test-frameworks = [
     "objc2-data-detection",
     "objc2-device-check",
     "objc2-device-discovery-extension",
+    "objc2-device-discovery-ui",
     "objc2-disk-arbitration",
     "dispatch2",
     "objc2-event-kit",
@@ -391,6 +392,7 @@ objc2-game-save = ["dep:objc2-game-save"]
 objc2-security-ui = ["dep:objc2-security-ui"]
 objc2-touch-controller = ["dep:objc2-touch-controller"]
 objc2-network = ["dep:objc2-network"]
+objc2-device-discovery-ui = ["dep:objc2-device-discovery-ui"]
 
 [dependencies]
 block2 = { workspace = true, default-features = true }
@@ -598,6 +600,12 @@ objc2-core-location-ui = { workspace = true, optional = true, default-features =
 [target.'cfg(target_os = "visionos")'.dependencies]
 objc2-compositor-services = { workspace = true, optional = true, default-features = true }
 
+[target.'cfg(target_os = "tvos")'.dependencies]
+objc2-device-discovery-ui = { workspace = true, optional = true, default-features = true }
+objc2-tv-ml-kit = { workspace = true, optional = true, default-features = true }
+objc2-tv-services = { workspace = true, optional = true, default-features = true }
+objc2-tv-ui-kit = { workspace = true, optional = true, default-features = true }
+
 [target.'cfg(any(target_os = "ios", target_os = "watchos", target_os = "visionos"))'.dependencies]
 objc2-health-kit-ui = { workspace = true, optional = true, default-features = true }
 objc2-watch-connectivity = { workspace = true, optional = true, default-features = true }
@@ -609,11 +617,6 @@ objc2-ui-kit = { workspace = true, optional = true, default-features = true }
 [target.'cfg(any(target_os = "macos", target_os = "ios", target_os = "watchos"))'.dependencies]
 objc2-nearby-interaction = { workspace = true, optional = true, default-features = true }
 objc2-safety-kit = { workspace = true, optional = true, default-features = true }
-
-[target.'cfg(target_os = "tvos")'.dependencies]
-objc2-tv-ml-kit = { workspace = true, optional = true, default-features = true }
-objc2-tv-services = { workspace = true, optional = true, default-features = true }
-objc2-tv-ui-kit = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(target_os = "watchos")'.dependencies]
 objc2-watch-kit = { workspace = true, optional = true, default-features = true }

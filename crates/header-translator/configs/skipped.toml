@@ -142,7 +142,5 @@ InterfaceBuilderKit = "TODO. Developer-only"
 XcodeKit = "TODO. Developer-only"
 StoreKitTest = "TODO. Developer-only"
 
-DeviceDiscoveryUI = "Needs Network first"
-
 # LiveExecutionResultsLogger = "Removed in Xcode 26"
 # AGL = "Removed in Xcode 26"

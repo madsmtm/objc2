@@ -33,7 +33,6 @@
 | `DeclaredAgeRange` | Swift-only. |
 | `DeveloperToolsSupport` | Swift-only. |
 | `DeviceActivity` | Swift-only. |
-| `DeviceDiscoveryUI` | Needs Network first. |
 | `DirectoryService` | Deprecated, use OpenDirectory instead. |
 | `DiscRecording` | Deprecated, use AVKit/AVFoundation instead. |
 | `DiscRecordingUI` | Deprecated, use AVKit/AVFoundation instead. |
