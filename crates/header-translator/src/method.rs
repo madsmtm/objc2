@@ -639,8 +639,7 @@ impl Method {
             }
             !unsafe_
         } else {
-            // TODO(breaking): Remove unavailable instead of just marking them unsafe.
-            safety.is_safe() && default_safety.automatically_safe && availability.is_available()
+            safety.is_safe() && default_safety.automatically_safe
         };
 
         let mut documentation = Documentation::from_entity(&entity, context);
@@ -818,8 +817,7 @@ impl Method {
                 }
                 !unsafe_
             } else {
-                // TODO(breaking): Remove unavailable instead of just marking them unsafe.
-                safety.is_safe() && default_safety.automatically_safe && availability.is_available()
+                safety.is_safe() && default_safety.automatically_safe
             };
 
             if let Some(safety) = safety.to_safety_comment() {
@@ -919,10 +917,7 @@ impl Method {
                     }
                     !unsafe_
                 } else {
-                    // TODO(breaking): Remove unavailable instead of just marking them unsafe.
-                    safety.is_safe()
-                        && default_safety.automatically_safe
-                        && availability.is_available()
+                    safety.is_safe() && default_safety.automatically_safe
                 };
 
                 // Do not emit normal docs on setters, otherwise we'd be
@@ -1051,12 +1046,7 @@ impl Method {
     }
 
     pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
-        if !self.availability.is_available()
-            && matches!(
-                self.memory_management,
-                MemoryManagement::RetainedInit | MemoryManagement::RetainedNew { .. }
-            )
-        {
+        if !self.availability.is_available() {
             return Vec::new().into_iter();
         }
 
@@ -1112,12 +1102,20 @@ impl Method {
         FormatterFn(move |f| {
             let _span = debug_span!("method", self.selector).entered();
 
-            if !self.availability.is_available()
-                && matches!(
-                    self.memory_management,
-                    MemoryManagement::RetainedInit | MemoryManagement::RetainedNew { .. }
-                )
-            {
+            if !self.availability.is_available() {
+                // Unavailable methods aren't ever useful to emit.
+                //
+                // If they're `init`/`new` methods, we can statically prevent
+                // the user from calling them, so there we don't have to worry
+                // about correctness.
+                //
+                // If they're not constructors, the user might still call them
+                // through the super chain. If they're marked unavailable
+                // though, the framework is gonna contain checks internally
+                // that will either throw an exception or just not work.
+                //
+                // For example, `-[NSOpenPanel setShowsContentTypes:]` throws
+                // a `NSInternalInconsistencyException`.
                 writeln!(
                     f,
                     "        // {}{} (unavailable)",

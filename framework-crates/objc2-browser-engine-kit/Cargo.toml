@@ -114,15 +114,7 @@ BECapability = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSURL",
 ]
-BEContextMenuConfiguration = [
-    "objc2-foundation/NSObject",
-    "objc2-ui-kit/UIContextMenuConfiguration",
-    "objc2-ui-kit/UIMenu",
-    "objc2-ui-kit/UIMenuElement",
-    "objc2-ui-kit/UIResponder",
-    "objc2-ui-kit/UIViewController",
-    "objc2-ui-kit/block2",
-]
+BEContextMenuConfiguration = ["objc2-ui-kit/UIContextMenuConfiguration"]
 BEDownloads = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",

@@ -208,7 +208,6 @@ MPSCNNGroupNormalization = [
     "objc2-metal/MTLCommandBuffer",
     "objc2-metal/MTLDevice",
     "objc2-metal/MTLResource",
-    "objc2-metal/MTLTexture",
 ]
 MPSCNNInstanceNormalization = [
     "objc2-foundation/NSArray",
@@ -221,7 +220,6 @@ MPSCNNInstanceNormalization = [
     "objc2-metal/MTLCommandBuffer",
     "objc2-metal/MTLDevice",
     "objc2-metal/MTLResource",
-    "objc2-metal/MTLTexture",
 ]
 MPSCNNKernel = [
     "objc2-foundation/NSArray",

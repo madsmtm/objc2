@@ -2131,7 +2131,6 @@ dependencies = [
 name = "objc2-file-provider-ui"
 version = "0.3.2"
 dependencies = [
- "block2",
  "objc2",
  "objc2-app-kit",
  "objc2-file-provider",

@@ -99,7 +99,6 @@ CXCallController = [
 ]
 CXCallDirectory = []
 CXCallDirectoryExtensionContext = [
-    "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSExtensionContext",
     "objc2-foundation/NSString",

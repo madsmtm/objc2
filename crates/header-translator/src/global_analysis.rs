@@ -219,10 +219,6 @@ fn update_module(
                     method
                         .availability
                         .method_update_new_from_init(init_availability);
-                    // TODO(breaking): Remove unavailable instead of just marking them unsafe.
-                    if !method.availability.is_available() {
-                        method.safe = false;
-                    }
                 }
             }
         }

@@ -261,10 +261,7 @@ CPMapTemplate = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
 ]
-CPMessageComposeBarButton = [
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
-]
+CPMessageComposeBarButton = ["objc2-foundation/NSObject"]
 CPMessageListItem = ["objc2-foundation/NSString"]
 CPNavigationAlert = [
     "objc2-foundation/NSArray",
