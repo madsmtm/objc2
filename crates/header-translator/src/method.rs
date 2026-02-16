@@ -8,13 +8,13 @@ use crate::config::MethodData;
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
-use crate::id::ItemTree;
-use crate::immediate_children;
+use crate::id::{cfg_gate_ln, ItemTree};
 use crate::name_translation::is_likely_bounds_affecting;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{MethodArgumentQualifier, SafetyProperty, Ty};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
+use crate::{immediate_children, Config, Location};
 
 impl MethodArgumentQualifier {
     pub fn parse(qualifiers: ObjCQualifiers) -> Self {
@@ -1051,6 +1051,10 @@ impl Method {
     }
 
     pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
+        if !self.availability.is_available() && matches!(&*self.selector, "init" | "new") {
+            return Vec::new().into_iter();
+        }
+
         let mut items = Vec::new();
         for (_, arg_ty) in &self.arguments {
             items.extend(arg_ty.required_items());
@@ -1093,137 +1097,159 @@ impl Method {
             Ok(())
         })
     }
-}
 
-impl fmt::Display for Method {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let _span = debug_span!("method", self.selector).entered();
+    pub fn fmt<'a>(
+        &'a self,
+        implied_items: impl IntoIterator<Item = ItemTree> + Clone + 'a,
+        location: &'a Location,
+        config: &'a Config,
+    ) -> impl fmt::Display + 'a {
+        FormatterFn(move |f| {
+            let _span = debug_span!("method", self.selector).entered();
 
-        let mut arguments = &self.arguments[..];
-        let error_return = if let Some(((_, ty), rest)) = arguments.split_last() {
-            if ty.argument_is_error_out() {
-                if let Some(error_return) = self.result_type.method_return_with_error() {
-                    arguments = rest;
-                    Some(error_return)
+            if !self.availability.is_available() && matches!(&*self.selector, "init" | "new") {
+                writeln!(
+                    f,
+                    "        // {}{} (unavailable)",
+                    if self.is_class { "+" } else { "-" },
+                    self.selector
+                )?;
+                return Ok(());
+            }
+
+            let mut arguments = &self.arguments[..];
+            let error_return = if let Some(((_, ty), rest)) = arguments.split_last() {
+                if ty.argument_is_error_out() {
+                    if let Some(error_return) = self.result_type.method_return_with_error() {
+                        arguments = rest;
+                        Some(error_return)
+                    } else {
+                        None
+                    }
                 } else {
                     None
                 }
             } else {
                 None
+            };
+
+            // TODO: Use this somehow?
+            // if self.non_isolated {
+            //     writeln!(f, "// non_isolated")?;
+            // }
+
+            //
+            // Attributes
+            //
+
+            let cfg_gate = cfg_gate_ln(
+                self.required_items(),
+                implied_items.clone(),
+                config,
+                location,
+            );
+            write!(f, "{cfg_gate}")?;
+            write!(f, "{}", self.documentation.fmt(None))?;
+            write!(f, "{}", self.availability)?;
+
+            if self.must_use {
+                writeln!(f, "        #[must_use]")?;
             }
-        } else {
-            None
-        };
 
-        // TODO: Use this somehow?
-        // if self.non_isolated {
-        //     writeln!(f, "// non_isolated")?;
-        // }
+            if self.is_optional {
+                writeln!(f, "        #[optional]")?;
+            }
 
-        //
-        // Attributes
-        //
-
-        write!(f, "{}", self.documentation.fmt(None))?;
-        write!(f, "{}", self.availability)?;
-
-        if self.must_use {
-            writeln!(f, "        #[must_use]")?;
-        }
-
-        if self.is_optional {
-            writeln!(f, "        #[optional]")?;
-        }
-
-        let error_trailing = if error_return.is_some() { "_" } else { "" };
-        writeln!(
-            f,
-            "        #[unsafe(method({}{}))]",
-            self.selector, error_trailing
-        )?;
-
-        let (method_family, attr) = match &self.memory_management {
-            MemoryManagement::RetainedAlloc => ("alloc", None),
-            MemoryManagement::RetainedCopy {
-                returns_not_retained: false,
-            } => ("copy", None),
-            MemoryManagement::RetainedCopy {
-                returns_not_retained: true,
-            } => ("none", Some("returns_not_retained")),
-            MemoryManagement::RetainedMutableCopy {
-                returns_not_retained: false,
-            } => ("mutableCopy", None),
-            MemoryManagement::RetainedMutableCopy {
-                returns_not_retained: true,
-            } => ("none", Some("returns_not_retained")),
-            MemoryManagement::RetainedNew {
-                returns_not_retained: false,
-            } => ("new", None),
-            MemoryManagement::RetainedNew {
-                returns_not_retained: true,
-            } => ("none", Some("returns_not_retained")),
-            MemoryManagement::RetainedInit => ("init", None),
-            MemoryManagement::RetainedNone {
-                returns_retained: false,
-            } => ("none", None),
-            MemoryManagement::RetainedNone {
-                returns_retained: true,
-            } => ("copy", Some("returns_retained")),
-            MemoryManagement::InnerPointer => ("none", None),
-            MemoryManagement::Normal => ("none", None),
-        };
-        if let Some(attr) = attr {
+            let error_trailing = if error_return.is_some() { "_" } else { "" };
             writeln!(
                 f,
-                "        // required for soundness, method has `{attr}` attribute."
+                "        #[unsafe(method({}{}))]",
+                self.selector, error_trailing
             )?;
-        }
-        writeln!(f, "        #[unsafe(method_family = {method_family})]")?;
 
-        //
-        // Signature
-        //
+            let (method_family, attr) = match &self.memory_management {
+                MemoryManagement::RetainedAlloc => ("alloc", None),
+                MemoryManagement::RetainedCopy {
+                    returns_not_retained: false,
+                } => ("copy", None),
+                MemoryManagement::RetainedCopy {
+                    returns_not_retained: true,
+                } => ("none", Some("returns_not_retained")),
+                MemoryManagement::RetainedMutableCopy {
+                    returns_not_retained: false,
+                } => ("mutableCopy", None),
+                MemoryManagement::RetainedMutableCopy {
+                    returns_not_retained: true,
+                } => ("none", Some("returns_not_retained")),
+                MemoryManagement::RetainedNew {
+                    returns_not_retained: false,
+                } => ("new", None),
+                MemoryManagement::RetainedNew {
+                    returns_not_retained: true,
+                } => ("none", Some("returns_not_retained")),
+                MemoryManagement::RetainedInit => ("init", None),
+                MemoryManagement::RetainedNone {
+                    returns_retained: false,
+                } => ("none", None),
+                MemoryManagement::RetainedNone {
+                    returns_retained: true,
+                } => ("copy", Some("returns_retained")),
+                MemoryManagement::InnerPointer => ("none", None),
+                MemoryManagement::Normal => ("none", None),
+            };
+            if let Some(attr) = attr {
+                writeln!(
+                    f,
+                    "        // required for soundness, method has `{attr}` attribute."
+                )?;
+            }
+            writeln!(f, "        #[unsafe(method_family = {method_family})]")?;
 
-        write!(f, "        ")?;
-        if self.is_pub {
-            write!(f, "pub ")?;
-        }
+            //
+            // Signature
+            //
 
-        if !self.safe {
-            write!(f, "unsafe ")?;
-        }
-        write!(f, "fn {}(", handle_reserved(&self.fn_name))?;
+            write!(f, "        ")?;
+            if self.is_pub {
+                write!(f, "pub ")?;
+            }
 
-        // Receiver
-        if let MemoryManagement::RetainedInit = self.memory_management {
-            write!(f, "this: Allocated<Self>, ")?;
-        } else if self.is_class {
-            // Insert nothing; a class method is assumed
-        } else {
-            write!(f, "&self, ")?;
-        }
+            if !self.safe {
+                write!(f, "unsafe ")?;
+            }
+            write!(f, "fn {}(", handle_reserved(&self.fn_name))?;
 
-        // Arguments
-        for (param, arg_ty) in arguments {
-            let param = handle_reserved(&crate::to_snake_case(param));
-            write!(f, "{param}: {}, ", arg_ty.method_argument())?;
-        }
-        if self.mainthreadonly {
-            write!(f, "mtm: MainThreadMarker")?;
-        }
-        write!(f, ")")?;
+            // Receiver
+            if let MemoryManagement::RetainedInit = self.memory_management {
+                write!(f, "this: Allocated<Self>, ")?;
+            } else if self.is_class {
+                // Insert nothing; a class method is assumed
+            } else {
+                write!(f, "&self, ")?;
+            }
 
-        // Result
-        if let MemoryManagement::InnerPointer = self.memory_management {
-            write!(f, "{}", self.result_type.method_return_inner_pointer())?;
-        } else if let Some(error_return) = error_return {
-            write!(f, "{error_return}")?;
-        } else {
-            write!(f, "{}", self.result_type.method_return())?;
-        }
-        writeln!(f, ";")?;
+            // Arguments
+            for (param, arg_ty) in arguments {
+                let param = handle_reserved(&crate::to_snake_case(param));
+                write!(f, "{param}: {}, ", arg_ty.method_argument())?;
+            }
+            if self.mainthreadonly {
+                write!(f, "mtm: MainThreadMarker")?;
+            }
+            write!(f, ")")?;
 
-        Ok(())
+            // Result
+            if let MemoryManagement::InnerPointer = self.memory_management {
+                write!(f, "{}", self.result_type.method_return_inner_pointer())?;
+            } else if let Some(error_return) = error_return {
+                write!(f, "{error_return}")?;
+            } else {
+                write!(f, "{}", self.result_type.method_return())?;
+            }
+            writeln!(f, ";")?;
+
+            Ok(())
+        })
     }
 }
 

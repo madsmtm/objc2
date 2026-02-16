@@ -1,0 +1,16 @@
+error[E0599]: no function or associated item named `new` found for struct `NSUnit` in the current scope
+ --> ui/call_unavailable_method.rs
+  |
+  |     let _ = NSUnit::new();
+  |                     ^^^ function or associated item not found in `NSUnit`
+  |
+help: there is a method `ne` with a similar name, but with different arguments
+ --> $RUST/core/src/cmp.rs
+  |
+  |     fn ne(&self, other: &Rhs) -> bool {
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+note: the function `new` is implemented on `NSObject`
+ --> ui/call_unavailable_method.rs
+  |
+  |     let _ = NSUnit::new();
+  |             ^^^^^^

@@ -2164,7 +2164,7 @@ impl Stmt {
     }
 
     /// Items required by the statement at the top-level.
-    pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
+    pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> + Clone {
         let items: Vec<ItemTree> = match self {
             Self::ClassDecl {
                 superclasses,
@@ -2581,12 +2581,11 @@ impl Stmt {
                     )?;
                     writeln!(f, "    extern_methods!(")?;
                     for method in methods {
-                        write!(
+                        writeln!(
                             f,
                             "{}",
-                            self.cfg_gate_ln_inner(method.required_items(), config)
+                            method.fmt(self.required_items(), self.location(), config)
                         )?;
-                        writeln!(f, "{method}")?;
                     }
                     writeln!(f, "    );")?;
                     writeln!(f, "}}")?;
@@ -2641,12 +2640,11 @@ impl Stmt {
                     )?;
                     writeln!(f, "    extern_methods!(")?;
                     for method in methods {
-                        write!(
+                        writeln!(
                             f,
                             "{}",
-                            self.cfg_gate_ln_inner(method.required_items(), config)
+                            method.fmt(self.required_items(), self.location(), config)
                         )?;
-                        writeln!(f, "{method}")?;
                     }
                     writeln!(f, "    );")?;
                     writeln!(f, "}}")?;
@@ -2847,12 +2845,11 @@ impl Stmt {
                     writeln!(f, " {{")?;
 
                     for method in methods {
-                        write!(
+                        writeln!(
                             f,
                             "{}",
-                            self.cfg_gate_ln_inner(method.required_items(), config)
+                            method.fmt(self.required_items(), self.location(), config)
                         )?;
-                        writeln!(f, "{method}")?;
                     }
                     writeln!(f, "    }}")?;
                     writeln!(f)?;
