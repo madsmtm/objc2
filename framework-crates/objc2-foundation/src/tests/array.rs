@@ -6,9 +6,9 @@ use alloc::vec::Vec;
 use core::ptr;
 
 use crate::{NSArray, NSNumber, NSObject, NSValue};
-use objc2::extern_protocol;
 use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, ProtocolObject};
+use objc2::{extern_conformance, extern_protocol};
 
 fn sample_array(len: usize) -> Retained<NSArray<NSObject>> {
     let mut vec = Vec::with_capacity(len);
@@ -169,7 +169,9 @@ fn test_trait_retainable() {
         unsafe trait TestProtocol {}
     );
 
-    unsafe impl TestProtocol for NSNumber {}
+    extern_conformance!(
+        unsafe impl TestProtocol for NSNumber {}
+    );
 
     let obj: Retained<ProtocolObject<dyn TestProtocol>> =
         ProtocolObject::from_retained(NSNumber::new_i32(42));

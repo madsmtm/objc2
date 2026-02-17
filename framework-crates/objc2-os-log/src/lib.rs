@@ -27,4 +27,9 @@ pub(crate) type os_activity_id_t = u64;
 #[allow(dead_code, non_camel_case_types)]
 pub(crate) type os_signpost_id_t = u64;
 
-unsafe impl objc2_foundation::NSCoding for OSLogEntry {}
+use objc2::extern_conformance;
+use objc2_foundation::NSCoding;
+
+extern_conformance!(
+    unsafe impl NSCoding for OSLogEntry {}
+);

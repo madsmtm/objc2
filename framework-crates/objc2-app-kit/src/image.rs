@@ -1,4 +1,7 @@
-use crate::{NSImageResizingMode, TARGET_ABI_USES_IOS_VALUES};
+use objc2::extern_conformance;
+use objc2_foundation::NSCoding;
+
+use crate::{NSImage, NSImageResizingMode, TARGET_ABI_USES_IOS_VALUES};
 
 #[allow(non_upper_case_globals)]
 #[allow(clippy::bool_to_int_with_if)]
@@ -9,4 +12,6 @@ impl NSImageResizingMode {
     pub const Tile: Self = Self(if TARGET_ABI_USES_IOS_VALUES { 1 } else { 0 });
 }
 
-unsafe impl objc2_foundation::NSCoding for crate::NSImage {}
+extern_conformance!(
+    unsafe impl NSCoding for NSImage {}
+);
