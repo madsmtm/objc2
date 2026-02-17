@@ -3821,13 +3821,13 @@ impl Ty {
                     let true_type = Cow::Owned(self.fn_argument(true).to_string());
                     if *nullability == Nullability::NonNull {
                         if *bounds == PointerBounds::Single {
-                            Some((true_type, "std::mem::transmute(", ")"))
+                            Some((true_type, "core::mem::transmute(", ")"))
                         } else {
                             Some((true_type, "", ".map(|x| x.cast())"))
                         }
                     } else {
                         if *bounds == PointerBounds::Single {
-                            Some((true_type, "", ".map(|x| std::mem::transmute(x))"))
+                            Some((true_type, "", ".map(|x| core::mem::transmute(x))"))
                         } else {
                             Some((true_type, "", ".cast()"))
                         }
