@@ -275,6 +275,9 @@ fn.dispatch_allow_send_signals.unsafe = true
 fn.dispatch_semaphore_create.unsafe = false
 
 # The handler function must be correct.
+fn.dispatch_source_set_event_handler.unsafe = true
 fn.dispatch_source_set_event_handler_f.unsafe = true
+fn.dispatch_source_set_cancel_handler.unsafe = true
 fn.dispatch_source_set_cancel_handler_f.unsafe = true
+fn.dispatch_source_set_registration_handler.unsafe = true
 fn.dispatch_source_set_registration_handler_f.unsafe = true

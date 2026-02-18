@@ -21,7 +21,7 @@ impl DispatchData {
     #[inline]
     pub fn from_bytes(data: &[u8]) -> DispatchRetained<Self> {
         // TODO: Autogenerate?
-        const DISPATCH_DATA_DESTRUCTOR_DEFAULT: crate::dispatch_block_t = ptr::null_mut();
+        const DISPATCH_DATA_DESTRUCTOR_DEFAULT: Option<&crate::dispatch_block_t> = None;
 
         let ptr = NonNull::new(data.as_ptr().cast_mut()).unwrap().cast();
 
@@ -50,12 +50,10 @@ impl DispatchData {
         // We don't care which queue ends up running the destructor.
         let queue = None;
 
-        let destructor = (&*NOOP_BLOCK as *const block2::Block<_>).cast_mut();
-
         // SAFETY: Buffer pointer is valid for the given number of bytes.
         // Queue handle is valid, and the destructor is a NULL value which
         // indicates the buffer should be copied.
-        unsafe { Self::new(ptr, data.len(), queue, destructor) }
+        unsafe { Self::new(ptr, data.len(), queue, Some(&NOOP_BLOCK)) }
     }
 
     /// Creates a dispatch data object with ownership of the given contiguous
@@ -74,7 +72,6 @@ impl DispatchData {
             // dispatch_data_create().
             let _ = unsafe { alloc::boxed::Box::<[u8]>::from_raw(raw) };
         });
-        let destructor = block2::RcBlock::as_ptr(&destructor);
 
         // We don't care which queue ends up running the destructor.
         // Box<[u8]> is sendable, so it's fine for us to potentially pass it
@@ -84,7 +81,7 @@ impl DispatchData {
         // SAFETY: Buffer pointer is valid for the given number of bytes.
         //
         // The destructor is valid and correctly destroys the buffer.
-        unsafe { Self::new(ptr, data_len, queue, destructor) }
+        unsafe { Self::new(ptr, data_len, queue, Some(&destructor)) }
     }
 
     /// Copy all the non-contiguous parts of the data into a contiguous
@@ -114,23 +111,24 @@ impl DispatchData {
             },
         );
 
-        let block = block2::RcBlock::as_ptr(&block);
         // SAFETY: Transmute from return type `u8` to `bool` is safe, since we
         // only ever return `1` / `true`.
         // TODO: Fix the need for this in `block2`.
         let block = unsafe {
             core::mem::transmute::<
-                *mut block2::Block<
-                    dyn Fn(NonNull<DispatchData>, usize, NonNull<core::ffi::c_void>, usize) -> u8,
+                &'_ block2::Block<
+                    dyn Fn(NonNull<DispatchData>, usize, NonNull<core::ffi::c_void>, usize) -> u8
+                        + '_,
                 >,
-                *mut block2::Block<
-                    dyn Fn(NonNull<DispatchData>, usize, NonNull<core::ffi::c_void>, usize) -> bool,
+                &'_ block2::Block<
+                    dyn Fn(NonNull<DispatchData>, usize, NonNull<core::ffi::c_void>, usize) -> bool
+                        + '_,
                 >,
-            >(block)
+            >(&block)
         };
 
         // SAFETY: The block is implemented correctly.
-        unsafe { self.apply(block) };
+        self.apply(block);
         contents.take()
     }
 }
@@ -195,7 +193,7 @@ mod tests {
                 NonNull::new(data.as_ptr().cast_mut()).unwrap().cast(),
                 data.len(),
                 None,
-                RcBlock::as_ptr(&destructor),
+                Some(&destructor),
             )
         };
 

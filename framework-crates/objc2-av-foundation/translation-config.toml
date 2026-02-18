@@ -69,3 +69,7 @@ class.AVPlayerInterstitialEvent.categories.MutableEvents.skipped = true
 
 # Breaks type-safety, you must check encodings before accessing a value.
 class.NSValue.unsafe = true
+
+# Must be unsafe, non-block parameters have `NS_SWIFT_SENDABLE` which we don't
+# know how to handle.
+class.AVContentKeySession.methods."processContentKeyRequestWithIdentifier:initializationData:options:".unsafe = true

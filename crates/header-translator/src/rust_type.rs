@@ -1431,30 +1431,19 @@ impl PointeeTy {
     }
 
     fn is_cf_type(&self) -> bool {
-        match self {
-            // Recurse into typedefs
-            Self::TypeDef { to, .. } => to.is_cf_type(),
-            Self::CFTypeDef { .. } => true,
-            _ => false,
-        }
+        matches!(self.through_typedef(), Self::CFTypeDef { .. })
     }
 
     fn is_dispatch_type(&self) -> bool {
-        match self {
-            // Recurse into typedefs
-            Self::TypeDef { to, .. } => to.is_dispatch_type(),
-            Self::DispatchTypeDef { .. } => true,
-            _ => false,
-        }
+        matches!(self.through_typedef(), Self::DispatchTypeDef { .. })
     }
 
     fn is_network_type(&self) -> bool {
-        match self {
-            // Recurse into typedefs
-            Self::TypeDef { to, .. } => to.is_network_type(),
-            Self::NetworkTypeDef { .. } => true,
-            _ => false,
-        }
+        matches!(self.through_typedef(), Self::NetworkTypeDef { .. })
+    }
+
+    fn is_block_type(&self) -> bool {
+        matches!(self.through_typedef(), Self::Block { .. })
     }
 
     fn is_subtype_of(&self, other: &Self) -> bool {
@@ -2476,10 +2465,7 @@ impl Ty {
                             **pointee = Self::Pointee(PointeeTy::TypeDef { id, to });
                             return inner;
                         } else {
-                            error!(
-                                ?pointee,
-                                "is_object_like/is_cf_type/is_os_type but not Pointee"
-                            );
+                            error!(?pointee, "is_object_like but not Pointee");
                         }
                     }
                 } else {
@@ -2947,6 +2933,7 @@ impl Ty {
             || self.is_cf_type()
             || self.is_dispatch_type()
             || self.is_network_type()
+            || self.is_block_type()
     }
 
     /// Determine whether the inner type of a `Pointer` is object-like.
@@ -2980,6 +2967,15 @@ impl Ty {
     fn is_network_type(&self) -> bool {
         if let Self::Pointee(pointee_ty) = self.through_typedef() {
             pointee_ty.is_network_type()
+        } else {
+            false
+        }
+    }
+
+    /// Determine whether the inner type of a `Pointer` is a block.
+    fn is_block_type(&self) -> bool {
+        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+            pointee_ty.is_block_type()
         } else {
             false
         }
@@ -3258,12 +3254,22 @@ impl Ty {
                 }
             }
             Self::Pointer {
+                nullability: _,
+                lifetime: _, // TODO
+                bounds: PointerBounds::Single,
+                pointee,
+                ..
+            } if pointee.is_block_type() => {
+                // TODO: Emit `RcBlock` or similar.
+                write!(f, " -> {}", self.plain(true))
+            }
+            Self::Pointer {
                 nullability,
                 lifetime: _, // TODO: Use this somehow?
                 bounds: PointerBounds::Single,
                 pointee,
                 ..
-            } if pointee.is_object_like() && !pointee.is_static_object() => {
+            } if pointee.is_object_like() => {
                 // NOTE: We return CF types as `Retained` for now, since we
                 // don't have support for the CF wrapper in msg_send! yet.
                 if *nullability == Nullability::NonNull {
@@ -3324,7 +3330,7 @@ impl Ty {
                 bounds: PointerBounds::Single,
                 pointee,
                 ..
-            } if pointee.is_object_like() => {
+            } if pointee.is_object_like() && !pointee.is_block_type() => {
                 // NULL -> error
                 Box::new(move |f| {
                     write!(
@@ -4038,18 +4044,22 @@ impl Ty {
                     *no_escape = arg_no_escape;
                     arg_no_escape = false;
                 }
+                // Ignore `arg_no_escape` on typedefs for now.
+                Self::Pointee(PointeeTy::TypeDef { .. }) => {
+                    arg_no_escape = false;
+                }
                 _ => {}
             },
-            // Ignore typedefs for now
+            // Ignore `arg_no_escape` on typedefs for now.
             Self::TypeDef { .. } => {
-                arg_sendable = None;
                 arg_no_escape = false;
             }
             _ => {}
         }
 
         if arg_sendable.is_some() {
-            warn!(?ty, "did not consume sendable in argument");
+            // Important for soundness.
+            error!(?ty, "did not consume sendable in argument");
         }
 
         if arg_no_escape {
@@ -4347,7 +4357,8 @@ impl Ty {
 
     pub(crate) fn is_retainable(&self) -> bool {
         if let Self::Pointer { pointee, .. } = self {
-            pointee.is_object_like() && !pointee.is_static_object()
+            // Unsure if static items and blocks should be considered retainable?
+            pointee.is_object_like() && !pointee.is_static_object() && !pointee.is_block_type()
         } else {
             false
         }
@@ -4386,7 +4397,7 @@ impl Ty {
             Self::Struct { fields, .. } | Self::Union { fields, .. } => {
                 fields.iter().any(|(_, field)| field.needs_simd())
             }
-            Self::Pointee(
+            Self::Pointee(pointee) => match pointee.through_typedef() {
                 PointeeTy::Fn {
                     result_type,
                     arguments,
@@ -4396,8 +4407,9 @@ impl Ty {
                     result_type,
                     arguments,
                     ..
-                },
-            ) => result_type.needs_simd() || arguments.iter().any(|arg| arg.needs_simd()),
+                } => result_type.needs_simd() || arguments.iter().any(|arg| arg.needs_simd()),
+                _ => false,
+            },
             _ => false,
         }
     }

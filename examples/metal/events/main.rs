@@ -44,13 +44,7 @@ fn main() {
         },
     );
 
-    unsafe {
-        shared_event.notifyListener_atValue_block(
-            &shared_event_listener,
-            2,
-            RcBlock::as_ptr(&notify_block),
-        )
-    };
+    unsafe { shared_event.notifyListener_atValue_block(&shared_event_listener, 2, &notify_block) };
 
     // Encode GPU work
     command_buffer.encodeSignalEvent_value(shared_event.as_ref(), 1);
