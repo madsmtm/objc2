@@ -8,8 +8,9 @@ use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, EntityKind, EntityVisitResult, Index, TranslationUnit};
 use clap::Parser;
 use semver::VersionReq;
+use tracing::level_filters::LevelFilter;
 use tracing::{debug_span, error, info, info_span, trace_span};
-use tracing_subscriber::filter::LevelFilter;
+use tracing_subscriber::filter::EnvFilter;
 use tracing_subscriber::layer::{Layer, SubscriberExt};
 use tracing_subscriber::registry::Registry;
 use tracing_subscriber::util::SubscriberInitExt;
@@ -33,26 +34,18 @@ struct Cli {
 }
 
 fn main() -> Result<(), BoxError> {
-    // use tracing_subscriber::fmt;
+    // Run with `RUST_LOG=debug RUST_LOG_NO_DEFERRED=1` to get more context
+    // for errors.
+    let filter = EnvFilter::builder()
+        .with_default_directive(LevelFilter::INFO.into())
+        .from_env_lossy();
     Registry::default()
-        // .with(
-        //     fmt::Layer::default()
-        //         .compact()
-        //         .without_time()
-        //         .with_target(false)
-        //         .with_span_events(fmt::format::FmtSpan::ACTIVE)
-        //         .with_filter(LevelFilter::INFO)
-        //         .with_filter(tracing_subscriber::filter::filter_fn(|metadata| {
-        //             metadata.is_span() && metadata.level() == &tracing::Level::INFO
-        //         })),
-        // )
-        // .with(tracing_subscriber::fmt::Layer::default().with_filter(LevelFilter::ERROR))
         .with(
             HierarchicalLayer::new(2)
                 .with_targets(false)
                 .with_indent_lines(true)
-                // Note: Change this to DEBUG if you want to see more info
-                .with_filter(LevelFilter::INFO),
+                .with_deferred_spans(std::env::var_os("RUST_LOG_NO_DEFERRED").is_some())
+                .with_filter(filter),
         )
         .init();
 
