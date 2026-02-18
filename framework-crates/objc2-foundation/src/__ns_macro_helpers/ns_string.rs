@@ -32,24 +32,40 @@ extern "C" {
 /// This struct is the same as [`CF_CONST_STRING`], which contains
 /// [`CFRuntimeBase`]. While the documentation clearly says that the ABI of
 /// `CFRuntimeBase` should not be relied on, we can rely on it as long as we
-/// only do it with regards to `CFString` (because `clang` does this as well).
+/// only do it with regards to `CFString`, because `clang` does this as well:
+/// <https://github.com/llvm/llvm-project/blob/llvmorg-21.1.8/clang/lib/AST/ASTContext.cpp#L8338-L8345>
 ///
 /// [`CFRuntimeBase`]: <https://github.com/apple-oss-distributions/CF/blob/CF-1153.18/CFRuntime.h#L216-L228>
 /// [`CF_CONST_STRING`]: <https://github.com/apple-oss-distributions/CF/blob/CF-1153.18/CFInternal.h#L332-L336>
 #[repr(C)]
 #[derive(Debug)]
 pub struct CFConstString {
+    /// A pointer to the object's Objective-C class instance.
     isa: &'static AnyClass,
-    // Important that we don't use `usize` here, since that would be wrong on
-    // big-endian systems!
+    /// Bits 0..7 is type-specific (`CF_INFO_BITS`).
+    /// Bits 8..22 contain the type ID.
+    /// Bit 23 is set if the type uses custom reference counting.
+    /// Bits 24..31 are used to track the reference count.
+    ///
+    /// Swift's CoreFoundation has a bit different layout:
+    /// <https://github.com/swiftlang/swift-corelibs-foundation/blob/swift-6.2.3-RELEASE/Sources/CoreFoundation/CFRuntime.c#L351-L368>
     cfinfo: u32,
+    /// Extended reference count information.
     #[cfg(target_pointer_width = "64")]
     _rc: u32,
+    /// A pointer to the string buffer.
     data: *const c_void,
+    /// If the string is encoded using ASCII, the number of bytes excluding
+    /// the `NUL` terminator. Otherwise, if the string is encoding using
+    /// UTF-16, the number of code units.
+    ///
+    /// Must be less than `CFIndex::MAX`.
     len: usize,
 }
 
-// Required to place in a `static`.
+// SAFETY: This string is immutable, and hence safe to share between threads.
+unsafe impl Send for CFConstString {}
+// SAFETY: Same as above.
 unsafe impl Sync for CFConstString {}
 
 impl CFConstString {
@@ -75,6 +91,10 @@ impl CFConstString {
             _rc: 0,
             data: data.as_ptr().cast(),
             // The length does not include the trailing NUL.
+            //
+            // We don't need to check that this is less than `CFIndex::MAX`,
+            // Rust won't let you create strings this large anyhow.
+            // See also `core::alloc::Layout`.
             len: data.len() - 1,
         }
     }

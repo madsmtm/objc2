@@ -67,6 +67,8 @@
 // For auto_doc_cfg
 #[cfg(feature = "NSString")]
 #[macro_export]
+#[doc(alias = "CFSTR")]
+#[doc(alias = "@")]
 macro_rules! ns_string {
     ($s:expr) => {{
         // Immediately place in constant for better UI

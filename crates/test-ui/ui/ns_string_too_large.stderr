@@ -1,0 +1,5 @@
+error[E0080]: values of the type `[u8; 4611686018427387903]` are too big for the target architecture
+ --> ui/ns_string_too_large.rs
+  |
+  |         ns_string!(unsafe { std::str::from_utf8_unchecked(&[b'A'; (isize::MAX / 2) as usize]) });
+  |                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ evaluation of `main::INPUT` failed here
