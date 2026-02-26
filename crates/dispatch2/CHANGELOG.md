@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **BREAKING**: Removed incorrect `TryFrom<Duration>` impl on `DispatchTime`.
 - **BREAKING**: Removed deprecated aliases.
 
+
+## [0.3.1] - 2025-04-19
+[0.3.1]: https://github.com/madsmtm/objc2/compare/dispatch2-0.3.0...dispatch2-0.3.1
+
 ### Fixed
 - Fixed reference counting in `DispatchSemaphoreGuard::release`.
 - Inlined more functions. This should allow using this library on macOS 10.12 with `crate-type = ["dylib"]`.

@@ -517,7 +517,7 @@ dependencies = [
 
 [[package]]
 name = "dispatch2"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "bitflags",
  "block2",
@@ -1220,7 +1220,7 @@ checksum = "cf97ec579c3c42f953ef76dbf8d55ac91fb219dde70e49aa4a6b7d74e9919050"
 
 [[package]]
 name = "objc2"
-version = "0.6.3"
+version = "0.6.4"
 dependencies = [
  "iai",
  "libc",
