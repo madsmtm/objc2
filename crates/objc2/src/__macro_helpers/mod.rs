@@ -14,6 +14,9 @@ pub use core::{compile_error, concat, env, module_path, panic, stringify};
 // TODO: Use `core::cell::LazyCell`
 pub use std::sync::Once;
 
+#[cfg(feature = "unstable-darwin-objc")]
+pub use core::os::darwin::objc as core_darwin_objc;
+
 mod cache;
 mod class;
 mod common_selectors;
