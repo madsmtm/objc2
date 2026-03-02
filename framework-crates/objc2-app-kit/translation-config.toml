@@ -468,7 +468,11 @@ class.NSPanel.methods."initWithContentRect:styleMask:backing:defer:screen:".unsa
 class.NSView.methods."setCanDrawConcurrently:".unsafe = true
 class.NSWindow.methods."setAllowsConcurrentViewDrawing:".unsafe = true
 
-# TODO(breaking): Might need to be unsafe, if this is truly unretained?
+# This is `unsafe_unretained`, but `NSWindow` sets it on its child views upon
+# deallocation (and there is no exposed `setWindow:` method), so it will
+# always either be a valid window, or NULL.
+#
+# (It's effectively a weak pointer).
 class.NSView.methods.window.unsafe = false
 
 # Documentation says that you shouldn't create cycles (though unsure if UB?).
