@@ -107,6 +107,8 @@ pub use self::verify::VerificationError;
 #[allow(deprecated)]
 pub use crate::ffi::{BOOL, NO, YES};
 
+#[cfg(test)]
+pub(crate) use self::define::method_type_encoding;
 pub(crate) use self::malloc::{MallocCStr, MallocSlice};
 pub(crate) use self::method::MethodDescription;
 pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};

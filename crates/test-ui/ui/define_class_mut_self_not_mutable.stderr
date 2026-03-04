@@ -42,7 +42,7 @@ error[E0277]: the trait bound `&'__function mut CustomObject: MessageReceiver` i
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&'__function CustomObject`, but not for `&'__function mut CustomObject`
   = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&'__function mut CustomObject, (), objc2::__macros::KindDefined>`
-  = note: required for `fn(&'__function mut CustomObject)` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for CustomObject>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
+  = note: required for `fn(&'__function mut CustomObject)` to implement `objc2::__macros::FnToExternFn<_::<impl ClassType for CustomObject>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
 note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
  --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
   |
@@ -68,7 +68,7 @@ error[E0277]: the trait bound `&'__function mut CustomObject: MessageReceiver` i
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&'__function CustomObject`, but not for `&'__function mut CustomObject`
   = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&'__function mut CustomObject, Retained<CustomObject>, objc2::__macros::KindDefined>`
-  = note: required for `fn(&'__function mut CustomObject) -> Retained<CustomObject>` to implement `objc2::__macros::define_class::thunk::FnToExternFn<_::<impl ClassType for CustomObject>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
+  = note: required for `fn(&'__function mut CustomObject) -> Retained<CustomObject>` to implement `objc2::__macros::FnToExternFn<_::<impl ClassType for CustomObject>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
 note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
  --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
   |

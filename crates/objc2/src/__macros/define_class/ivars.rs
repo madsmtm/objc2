@@ -52,8 +52,11 @@ use core::ffi::CStr;
 use core::mem;
 use core::ptr::{self, NonNull};
 
+use crate::__macros::{method_encoding_str_array, method_encoding_str_len};
 use crate::encode::{Encode, Encoding};
-use crate::runtime::{AnyClass, AnyObject, ClassBuilder, MessageReceiver, Sel};
+use crate::runtime::{
+    AnyClass, AnyObject, ClassBuilder, MessageReceiver, MethodImplementation, Sel,
+};
 use crate::{sel, ClassType, DefinedClass};
 
 /// A type representing the drop flags that may be set for a type.
@@ -144,9 +147,15 @@ where
     // Add dealloc if the class or the ivars need dropping.
     if mem::needs_drop::<T>() || mem::needs_drop::<T::Ivars>() {
         let func: unsafe extern "C-unwind" fn(_, _) = dealloc::<T>;
-        // SAFETY: The function signature is correct, and method contract is
-        // upheld inside `dealloc`.
-        unsafe { builder.add_method(sel!(dealloc), func) };
+
+        const ENCODING_LEN: usize = method_encoding_str_len(&Encoding::Void, &[]);
+        const ENCODING_ARRAY: [u8; ENCODING_LEN + 1] =
+            method_encoding_str_array::<{ ENCODING_LEN + 1 }>(&Encoding::Void, &[]);
+        const ENCODING: &CStr = unsafe { CStr::from_bytes_with_nul_unchecked(&ENCODING_ARRAY) };
+
+        // SAFETY: The function signature is correct, the encoding is correct,
+        // and method contract is upheld inside `dealloc`.
+        unsafe { builder.add_method_inner(sel!(dealloc), func.__imp(), ENCODING) };
     } else {
         // Users should not rely on this omission, it is only an optimization.
     }

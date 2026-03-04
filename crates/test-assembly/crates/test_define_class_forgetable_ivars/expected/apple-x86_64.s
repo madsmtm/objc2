@@ -46,11 +46,10 @@ Lfunc_begin0:
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 Ltmp0:
-	lea	r8, [rip + l_anon.[ID].5]
-	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, 0)]
+	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, 0)]
+	lea	rcx, [rip + L_anon.[ID].5]
 	lea	rdi, [rbp - 16]
-	mov	edx, 8
-	xor	ecx, ecx
+	mov	r8d, 4
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp1:
 	mov	qword ptr [rbp - 48], 2
@@ -248,13 +247,10 @@ l_anon.[ID].4:
 	.quad	L_anon.[ID].3
 	.asciz	"p\000\000\000\000\000\000\000\237\000\000\0002\000\000"
 
-	.section	__TEXT,__const
-	.p2align	3, 0x0
-l_anon.[ID].5:
-	.byte	21
-	.space	39
-
 	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].5:
+	.asciz	"@@:"
+
 L_anon.[ID].6:
 	.asciz	"ForgetableIvars"
 

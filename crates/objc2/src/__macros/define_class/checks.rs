@@ -6,6 +6,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 #[cfg(debug_assertions)]
 use std::collections::HashSet;
 
+use crate::encode::{EncodeArguments, EncodeReturn};
 use crate::runtime::{AnyClass, ClassBuilder, MethodImplementation, Sel};
 #[cfg(debug_assertions)]
 use crate::runtime::{AnyProtocol, MethodDescription};
@@ -215,21 +216,43 @@ impl<T: DefinedClass> ClassBuilderHelper<T> {
 
     // Addition: This restricts to callee `T`
     #[inline]
-    pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
+    pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F, encoding: &CStr)
     where
         F: MethodImplementation<Callee = T>,
     {
+        if cfg!(all(
+            debug_assertions,
+            not(feature = "disable-encoding-assertions")
+        )) {
+            self.builder
+                .verify_method(sel, F::Arguments::ENCODINGS, &F::Return::ENCODING_RETURN);
+        }
+
         // SAFETY: Checked by caller
-        unsafe { self.builder.add_method(sel, func) }
+        unsafe { self.builder.add_method_inner(sel, func.__imp(), encoding) }
     }
 
     #[inline]
-    pub unsafe fn add_class_method<F>(&mut self, sel: Sel, func: F)
+    pub unsafe fn add_class_method<F>(&mut self, sel: Sel, func: F, encoding: &CStr)
     where
         F: MethodImplementation<Callee = AnyClass>,
     {
+        if cfg!(all(
+            debug_assertions,
+            not(feature = "disable-encoding-assertions")
+        )) {
+            self.builder.verify_class_method(
+                sel,
+                F::Arguments::ENCODINGS,
+                &F::Return::ENCODING_RETURN,
+            );
+        }
+
         // SAFETY: Checked by caller
-        unsafe { self.builder.add_class_method(sel, func) }
+        unsafe {
+            self.builder
+                .add_class_method_inner(sel, func.__imp(), encoding)
+        }
     }
 }
 
@@ -259,7 +282,7 @@ pub struct ClassProtocolMethodsBuilder<'a, T: ?Sized> {
 impl<T: DefinedClass> ClassProtocolMethodsBuilder<'_, T> {
     // Addition: This restricts to callee `T`
     #[inline]
-    pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
+    pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F, encoding: &CStr)
     where
         F: MethodImplementation<Callee = T>,
     {
@@ -279,7 +302,7 @@ impl<T: DefinedClass> ClassProtocolMethodsBuilder<'_, T> {
         }
 
         // SAFETY: Checked by caller
-        unsafe { self.builder.add_method(sel, func) };
+        unsafe { self.builder.add_method(sel, func, encoding) };
 
         #[cfg(debug_assertions)]
         if !self.registered_instance_methods.insert(sel) {
@@ -288,7 +311,7 @@ impl<T: DefinedClass> ClassProtocolMethodsBuilder<'_, T> {
     }
 
     #[inline]
-    pub unsafe fn add_class_method<F>(&mut self, sel: Sel, func: F)
+    pub unsafe fn add_class_method<F>(&mut self, sel: Sel, func: F, encoding: &CStr)
     where
         F: MethodImplementation<Callee = AnyClass>,
     {
@@ -308,7 +331,7 @@ impl<T: DefinedClass> ClassProtocolMethodsBuilder<'_, T> {
         }
 
         // SAFETY: Checked by caller
-        unsafe { self.builder.add_class_method(sel, func) };
+        unsafe { self.builder.add_class_method(sel, func, encoding) };
 
         #[cfg(debug_assertions)]
         if !self.registered_class_methods.insert(sel) {

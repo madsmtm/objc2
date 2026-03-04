@@ -348,12 +348,28 @@ macro_rules! __declare_class_register_thunk {
             // TODO: `<Self $(as $protocol)?>` once we emit on protocols.
         }
 
+        const __ENCODING_LEN: $crate::__macros::usize = $crate::__macros::method_encoding_str_len(
+            &<$for as $crate::__macros::ConvertDefinedFn<'_, __FnMarker, __RetainSemantics, __Kind<'_>>>::RETURN_ENCODING,
+            <$for as $crate::__macros::ConvertDefinedFn<'_, __FnMarker, __RetainSemantics, __Kind<'_>>>::ARGUMENT_ENCODINGS,
+        );
+
+        // SAFETY: The array is guaranteed to be contain no interior NUL
+        // bytes (`verify_name` in `objc2-encode`), and a NUL byte at the end
+        // because we specify `__ENCODING_LEN + 1`.
+        const __ENCODING: &$crate::__macros::CStr = unsafe {
+            $crate::__macros::CStr::from_bytes_with_nul_unchecked(&$crate::__macros::method_encoding_str_array::<{__ENCODING_LEN + 1}>(
+                &<$for as $crate::__macros::ConvertDefinedFn<'_, __FnMarker, __RetainSemantics, __Kind<'_>>>::RETURN_ENCODING,
+                <$for as $crate::__macros::ConvertDefinedFn<'_, __FnMarker, __RetainSemantics, __Kind<'_>>>::ARGUMENT_ENCODINGS,
+            ))
+        };
+
         unsafe {
             $crate::__declare_class_call_builder_method! {
                 ($builder)
                 ($crate::sel!($($sel)*))
                 (<Self as $crate::__macros::ConvertDefinedFn<'_, __FnMarker, __RetainSemantics, __Kind<'_>>>::THUNK)
                 ($($receiver_ty)?)
+                (__ENCODING)
             }
         };
     );
@@ -385,8 +401,9 @@ macro_rules! __declare_class_call_builder_method {
         ($sel:expr)
         ($fnptr:expr)
         ()
+        ($encoding:expr)
     } => {
-        $builder.add_class_method($sel, $fnptr)
+        $builder.add_class_method($sel, $fnptr, $encoding)
     };
 
     // Instance method
@@ -395,8 +412,9 @@ macro_rules! __declare_class_call_builder_method {
         ($sel:expr)
         ($fnptr:expr)
         ($_receiver_ty:ty)
+        ($encoding:expr)
     } => {
-        $builder.add_method($sel, $fnptr)
+        $builder.add_method($sel, $fnptr, $encoding)
     };
 }
 

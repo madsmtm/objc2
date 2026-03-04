@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added support for `&CStr` in method argument and return types.
 * Implement `Encode` on `Result<(), T>` when `T: OptionEncode`.
 * Allow returning `Result<T, Retained<NSError>>` from `define_class!`.
+* Optimized adding `define_class!` methods to avoid a few string allocations.
 
 ## Changed
 * **BREAKING**: Changed syntax for `define_class!` ivars (instance variables).

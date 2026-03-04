@@ -15,7 +15,7 @@ error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not 
             *mut T
             NonNull<T>
   = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Allocated<CustomObject>, Retained<NSObject>, objc2::__macros::KindDefined>`
-  = note: required for `fn(Allocated<CustomObject>) -> Retained<NSObject>` to implement `objc2::__macros::define_class::thunk::FnToExternFn<__FnMarker, objc2::__macros::MethodFamily<3>, objc2::__macros::MethodKind, CustomObject>`
+  = note: required for `fn(Allocated<CustomObject>) -> Retained<NSObject>` to implement `objc2::__macros::FnToExternFn<__FnMarker, objc2::__macros::MethodFamily<3>, objc2::__macros::MethodKind, CustomObject>`
 note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
  --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
   |
@@ -46,7 +46,7 @@ error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
   = note: required for `Retained<NSObject>` to implement `EncodeReturn`
   = note: required for `Retained<NSObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
   = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Allocated<CustomObject>, Retained<NSObject>, objc2::__macros::KindDefined>`
-  = note: required for `fn(Allocated<CustomObject>) -> Retained<NSObject>` to implement `objc2::__macros::define_class::thunk::FnToExternFn<__FnMarker, objc2::__macros::MethodFamily<3>, objc2::__macros::MethodKind, CustomObject>`
+  = note: required for `fn(Allocated<CustomObject>) -> Retained<NSObject>` to implement `objc2::__macros::FnToExternFn<__FnMarker, objc2::__macros::MethodFamily<3>, objc2::__macros::MethodKind, CustomObject>`
 note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
  --> $WORKSPACE/crates/objc2/src/__macros/define_class/thunk.rs
   |

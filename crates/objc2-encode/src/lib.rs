@@ -54,9 +54,6 @@ mod encoding;
 mod encoding_box;
 mod helper;
 mod parse;
-
-// Will be used outside tests at some point when generic constants are available
-#[cfg(test)]
 mod static_str;
 
 pub use self::encoding::Encoding;

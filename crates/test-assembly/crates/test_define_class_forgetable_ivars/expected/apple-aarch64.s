@@ -71,16 +71,15 @@ Lloh15:
 	ldr	x1, [x8]
 Ltmp0:
 Lloh16:
-	adrp	x4, l_anon.[ID].5@PAGE
+	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, 0)@PAGE
 Lloh17:
-	add	x4, x4, l_anon.[ID].5@PAGEOFF
+	add	x2, x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, 0)@PAGEOFF
 Lloh18:
-	adrp	x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, 0)@PAGE
+	adrp	x3, l_anon.[ID].5@PAGE
 Lloh19:
-	add	x5, x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, 0)@PAGEOFF
+	add	x3, x3, l_anon.[ID].5@PAGEOFF
 	mov	x0, sp
-	mov	w2, #8
-	mov	x3, #0
+	mov	w4, #4
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp1:
 	mov	w8, #2
@@ -378,13 +377,10 @@ l_anon.[ID].4:
 	.quad	l_anon.[ID].3
 	.asciz	"p\000\000\000\000\000\000\000\237\000\000\0002\000\000"
 
-	.section	__TEXT,__const
-	.p2align	3, 0x0
-l_anon.[ID].5:
-	.byte	21
-	.space	39
-
 	.section	__TEXT,__cstring,cstring_literals
+l_anon.[ID].5:
+	.asciz	"@@:"
+
 l_anon.[ID].6:
 	.asciz	"ForgetableIvars"
 
